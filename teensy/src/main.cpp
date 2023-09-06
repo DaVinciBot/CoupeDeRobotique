@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <TimerOne.h>
 #include <rolling_basis.h>
+#include <com.h>
 #include <util/atomic.h>
 
 // Mouvement params
@@ -69,8 +70,8 @@ byte action_index = 0;
 Action **strat_test = new Action *[STRAT_SIZE]
 {
   new Curve_Go_To(Point(100.0, 0.0), Point(50.0, 0.0), 5, forward, 100, classic_params),
-  new Go_To(Point(30.0, 0.0), backward, 100, classic_params),
-  new Go_To(Point(0.0, 0.0), forward, 100, classic_params),
+  //new Go_To(Point(30.0, 0.0), backward, 100, classic_params),
+  //new Go_To(Point(0.0, 0.0), forward, 100, classic_params),
 };
 
 /******* Attach Interrupt *******/
@@ -103,8 +104,24 @@ long start_time = -1;
 
 void handle();
 
+Com* com;
+
 void setup()
 {
+  com = new Com(&Serial, 115200);
+  while (true)
+  {
+    byte size = com->handle();
+    if (size > 0)
+    {
+      byte *msg = com->read_buffer();
+      com->send_msg(msg, size);
+    }
+  }
+
+
+  
+
   Serial.begin(115200);
   pinMode(pin_on_off, INPUT);
   pinMode(pin_green_side, INPUT);
@@ -136,6 +153,7 @@ void setup()
 
 void loop()
 {
+
   rolling_basis_ptr->odometrie_handle();
   rolling_basis_ptr->is_running_update();
 
