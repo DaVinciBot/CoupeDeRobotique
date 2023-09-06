@@ -1,0 +1,14 @@
+{
+    "cmake.configureOnOpen": false,
+    "cmake.sourceDirectory": "${workspaceFolder}/.pio/libdeps/teensy41/ArduinoJson/src",
+    "files.associations": {
+        "*.tcc": "cpp",
+        "exception": "cpp",
+        "iosfwd": "cpp",
+        "new": "cpp",
+        "ostream": "cpp",
+        "sstream": "cpp",
+        "streambuf": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}

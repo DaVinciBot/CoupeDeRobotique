@@ -1,0 +1,10 @@
+{
+    "name": "actions",
+    "version": "1.0.0",
+    "description": "Library dedicated to actions to control the rolling basis",
+    "keywords": "actions",
+    "dependencies": {
+    },
+    "frameworks": "*",
+    "platforms": "*"
+  }
