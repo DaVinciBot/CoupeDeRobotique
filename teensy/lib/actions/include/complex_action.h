@@ -12,6 +12,9 @@ public:
     // Property
     virtual inline byte get_id() = 0;
 
+    // Operators
+    //virtual bool operator==(Complex_Action &other) = 0;
+
     // Atributes
     // Trajectory parameters
     Precision_Params precision_params;

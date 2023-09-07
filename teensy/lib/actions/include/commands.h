@@ -6,3 +6,4 @@
 
 extern void (*functions[256])(byte *msg, byte size);
 extern void handle_callback(Com *com);
+

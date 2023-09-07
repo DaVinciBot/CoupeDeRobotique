@@ -63,34 +63,37 @@ Precision_Params classic_params{
 Rolling_Basis_Ptrs rolling_basis_ptrs;
 
 /* Strat part */
+template <typename T>
+T decode(byte *data, size_t size)
+{
+  T value;
+  memcpy(&value, data, size);
+  return value;
+}
+
 Complex_Action *current_action = nullptr;
 
 void swap_action(Complex_Action *new_action)
 {
   // implémentation des destructeurs manquante
-  //if(current_action != nullptr)
-  //  delete current_action;
+  if(current_action != nullptr)
+    free(current_action);
   current_action = new_action;
 }
 
 void go_to(byte *msg, byte size)
 {
+  float x = decode<float>(msg               , sizeof(float));
+  float y = decode<float>(msg+sizeof(float) , sizeof(float));
 
-  float x; memcpy(&x, (msg + 1)                 , sizeof(float));
-  float y; memcpy(&y, (msg + 1 + sizeof(float)) , sizeof(float));
+  bool is_forward = decode<bool>(msg+2*sizeof(float), sizeof(bool));
 
-  byte is_forward_byte;
-  memcpy(&is_forward_byte, (msg + 1 + 2*sizeof(float)), sizeof(byte));
-  bool is_forward = is_forward_byte > 0;
+  byte speed = (byte)msg[2 * sizeof(float) + sizeof(bool)];
 
-  
+  uint16_t next_position_delay  = decode<uint16_t>(msg + 2 * sizeof(float) + sizeof(bool) + sizeof(byte), sizeof(uint16_t));
+  uint16_t action_error_auth = decode<uint16_t>(msg + 2 * sizeof(float) + sizeof(bool) + sizeof(byte) + sizeof(uint16_t), sizeof(uint16_t));
+  uint16_t traj_precision = decode<uint16_t>(msg + 2 * sizeof(float) + sizeof(bool) + sizeof(byte) + 2 * sizeof(uint16_t), sizeof(uint16_t));
 
-  byte speed = (byte)msg[2 * sizeof(float) + sizeof(byte)];
-
-  uint16_t next_position_delay  = (uint16_t)(msg[2 * sizeof(float) + sizeof(byte)]);
-  uint16_t action_error_auth    = (uint16_t)(msg[2 * sizeof(float) + sizeof(byte) +   sizeof(uint16_t)]);
-  uint16_t traj_precision       = (uint16_t)(msg[2 * sizeof(float) + sizeof(byte) + 2*sizeof(uint16_t)]);
-  
   Point target_point(x, y);
 
   Precision_Params params{
@@ -99,20 +102,7 @@ void go_to(byte *msg, byte size)
     traj_precision
   };
 
-  bool is_identical = current_action->get_id() == GO_TO;
-  if(is_identical)
-  {
-    Go_To *casted_action = (Go_To *)current_action;
-    is_identical &= casted_action->target_point == target_point;
-    is_identical &= casted_action->direction == is_forward;
-    is_identical &= casted_action->precision_params.end_movement_presicion == params.end_movement_presicion;
-    is_identical &= casted_action->precision_params.error_precision == params.error_precision;
-    is_identical &= casted_action->precision_params.trajectory_precision == params.trajectory_precision;
-  }
-
-  if(!is_identical)
-    swap_action(new Go_To(target_point, is_forward ? forward : backward, 0, params));
-
+  swap_action(new Go_To(target_point, is_forward ? forward : backward, 0, params));
 }
 /*
 void curve_go_to(byte *msg, byte size)
@@ -126,7 +116,7 @@ void curve_go_to(byte *msg, byte size)
   unsigned short interval = (unsigned short)(msg[4 * sizeof(float)]);
 
   Point target_point = Point(target_x, target_y);
-  Point center_point = Point(center_x, center_y);  
+  Point center_point = Point(center_x, center_y);
 
   bool is_identical = current_action->get_id() == CURVE_GO_TO;
   if (is_identical)
@@ -179,30 +169,6 @@ Com* com;
 void setup()
 {
   com = new Com(&Serial, 115200);
-  while (true)
-  {
-    byte size = com->handle();
-    if (size > 0)
-    {
-      byte *msg = com->read_buffer();
-
-     
-      float x;
-      memcpy(&x, (msg + 1), sizeof(float));
-
-      float y;
-      memcpy(&y, (msg + 1 + sizeof(float)), sizeof(float));
-
-      float theta;
-      memcpy(&theta, (msg + 1 + 2*sizeof(float)), sizeof(float));
-
-      float new_msg[3]= {x*2.0f, y*3.9f, theta*-32.5f};
-
-      
-
-      com->send_msg((byte*)new_msg, 3 * sizeof(float));
-    }
-  }
 
   Serial.begin(115200);
   pinMode(pin_on_off, INPUT);
@@ -240,13 +206,35 @@ void loop()
 
   if (start_time == -1 && digitalReadFast(pin_on_off))
     start_time = millis();
+
+  // Com
+  handle_callback(com);
 }
 
 void handle(){
+  // test
+  if(current_action != nullptr)
+  {
+    Point current_position = rolling_basis_ptr->get_current_position();
+    last_ticks_position = rolling_basis_ptr->get_current_ticks();
+    if(!current_action->is_finished())
+      current_action->handle(
+        current_position,
+        last_ticks_position,
+        &rolling_basis_ptrs
+      );
+  }
+
+  
 
   // // Not end of the game ?
   // if ((millis() - start_time) < STOP_MOTORS_DELAY || start_time == -1)
   // {
+
+  //   strat_test[0]->handle(
+  //       current_position,
+  //       last_ticks_position,
+  //       &rolling_basis_ptrs);
   //   // Authorize to move ?
   //   if (digitalReadFast(pin_on_off))
   //   {
@@ -264,7 +252,6 @@ void handle(){
   //         //rolling_basis_ptr->action_handle(&return_position);
   //     }
   //     */
-     
   //     // Do classic trajectory
   //     if (0 < 1)
   //     {
