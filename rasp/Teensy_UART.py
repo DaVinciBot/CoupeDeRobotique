@@ -67,6 +67,6 @@ class Teensy:
             print(msg.hex(sep="|"))
             print(msg[-5])
             msg = msg[:-5]
-            self.odometrie = [struct.unpack("f", msg[0:4]),
-                              struct.unpack("f", msg[4:8]),
-                              struct.unpack("f", msg[8:12])]            # time.sleep(0.1)
+            self.odometrie = [struct.unpack("f", msg[1:5]),
+                              struct.unpack("f", msg[5:9]),
+                              struct.unpack("f", msg[9:13])]            # time.sleep(0.1)

@@ -4,13 +4,15 @@ import Teensy_UART
 
 def app():
     global teensy
-    old = teensy.odometrie
+    old = None
+    pywebio.output.put_button("set_coord",
+                                set_coords
+                                )
+    table = pywebio.output.output(pywebio.output.put_table(teensy.odometrie))
+    table.send()
     while (True):
-        pywebio.output.put_button("set_coord",
-                                  set_coords
-                                  )
         if old != teensy.odometrie:
-            pywebio.output.put_table(teensy.odometrie)
+            table.reset(pywebio.output.put_table(teensy.odometrie))
             old = teensy.odometrie
 
 
