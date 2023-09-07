@@ -2,6 +2,8 @@ import serial
 import serial.tools.list_ports
 import struct
 from typing import Any
+import threading
+import time
 
 
 class Command:
@@ -18,6 +20,8 @@ class Teensy:
                 break
         if self._teensy == None:
             raise Exception("No Device found!")
+        self._reciever = threading.Thread(target=self.__receiver__, name= "TeensyReceiver")
+        self._reciever.run()
 
     def send_bytes(self, data: bytes, end_bytes: bytes = b'\xBA\xDD\x1C\xC5'):
         self._teensy.reset_output_buffer()
@@ -36,4 +40,7 @@ class Teensy:
         msg = Command.GoToPoint + struct.pack(speed, "f")
         self.send_bytes(msg)
 
-
+    def __receiver__(self) -> None :
+        while True :
+            print(self.read_bytes())
+            time.sleep(0.1)
