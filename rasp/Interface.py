@@ -15,10 +15,10 @@ def app():
                                                    "theta", name="theta", type=pywebio.input.FLOAT),
                                            ]
                                            )
-        teensy.Go_To(coords["x"], coords["y"], coords["theta"])
+        teensy.Go_To(coords["x"], coords["y"])
 
 
 if __name__ == "__main__":
     global teensy
     teensy = Teensy_UART.Teensy()
-    pywebio.start_server(app)
+    pywebio.start_server(app, port=42069)
