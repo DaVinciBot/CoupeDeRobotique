@@ -8,7 +8,7 @@ void handle_callback(Com *com)
         byte *msg = com->read_buffer();
 
         if (functions[msg[0]] != 0)
-            functions[msg[0]](msg + 1, size - 1);
+            functions[msg[0]](msg, size);
     }
 }
 

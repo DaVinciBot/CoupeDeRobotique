@@ -3,7 +3,7 @@
 
 #define GO_TO 0
 #define CURVE_GO_TO 1
+#define UPDATE_POSITION 128
 
 extern void (*functions[256])(byte *msg, byte size);
 extern void handle_callback(Com *com);
-

@@ -2,6 +2,7 @@
 #include <TimerOne.h>
 #include <rolling_basis.h>
 #include <util/atomic.h>
+#include <messages.h>
 
 // Mouvement params
 #define ACTION_ERROR_AUTH 20
@@ -63,13 +64,20 @@ Precision_Params classic_params{
 Rolling_Basis_Ptrs rolling_basis_ptrs;
 
 /* Strat part */
-template <typename T>
-T decode(byte *data, size_t size)
-{
-  T value;
-  memcpy(&value, data, size);
-  return value;
-}
+Com *com;
+// template <typename T>
+// T decode(byte *data, size_t size)
+// {
+//   T value;
+//   memcpy(&value, data, size);
+//   return value;
+// }
+
+// template <typename T>
+// void encode(byte *data, T value, size_t size)
+// {
+//   memcpy(data, &value, size);
+// }
 
 Complex_Action *current_action = nullptr;
 
@@ -83,26 +91,19 @@ void swap_action(Complex_Action *new_action)
 
 void go_to(byte *msg, byte size)
 {
-  float x = decode<float>(msg               , sizeof(float));
-  float y = decode<float>(msg+sizeof(float) , sizeof(float));
-
-  bool is_forward = decode<bool>(msg+2*sizeof(float), sizeof(bool));
-
-  byte speed = (byte)msg[2 * sizeof(float) + sizeof(bool)];
-
-  uint16_t next_position_delay  = decode<uint16_t>(msg + 2 * sizeof(float) + sizeof(bool) + sizeof(byte), sizeof(uint16_t));
-  uint16_t action_error_auth = decode<uint16_t>(msg + 2 * sizeof(float) + sizeof(bool) + sizeof(byte) + sizeof(uint16_t), sizeof(uint16_t));
-  uint16_t traj_precision = decode<uint16_t>(msg + 2 * sizeof(float) + sizeof(bool) + sizeof(byte) + 2 * sizeof(uint16_t), sizeof(uint16_t));
-
-  Point target_point(x, y);
+  msg_Go_To *go_to_msg = (msg_Go_To *)msg;
+  Point target_point(go_to_msg->x, go_to_msg->y);
 
   Precision_Params params{
-    next_position_delay,
-    action_error_auth,
-    traj_precision
+    go_to_msg->next_position_delay,
+    go_to_msg->action_error_auth,
+    go_to_msg->traj_precision
   };
 
-  swap_action(new Go_To(target_point, is_forward ? forward : backward, 0, params));
+  Go_To *new_action = new Go_To(target_point, go_to_msg->is_forward ? backward : forward, go_to_msg->speed, params);
+  if(current_action == new_action)
+    free(new_action);
+  else swap_action(new_action);
 }
 /*
 void curve_go_to(byte *msg, byte size)
@@ -164,7 +165,7 @@ long start_time = -1;
 
 void handle();
 
-Com* com;
+
 
 void setup()
 {
@@ -199,6 +200,8 @@ void setup()
   Timer1.attachInterrupt(handle);
 }
 
+byte counter = 0;
+
 void loop()
 {
   rolling_basis_ptr->odometrie_handle();
@@ -209,6 +212,15 @@ void loop()
 
   // Com
   handle_callback(com);
+
+  // Send odometrie
+  msg_Update_Position pos_msg;
+  pos_msg.x = rolling_basis_ptr->X;
+  pos_msg.y = rolling_basis_ptr->Y;
+  pos_msg.theta = rolling_basis_ptr->THETA;
+ 
+  if (counter++ == 0)
+    com->send_msg((byte *)&pos_msg, sizeof(msg_Update_Position));
 }
 
 void handle(){
@@ -223,11 +235,13 @@ void handle(){
         last_ticks_position,
         &rolling_basis_ptrs
       );
+    else
+      rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
   }
+  else
+    rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
 
-  
-
-  // // Not end of the game ?
+    // // Not end of the game ?
   // if ((millis() - start_time) < STOP_MOTORS_DELAY || start_time == -1)
   // {
 
