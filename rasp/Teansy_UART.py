@@ -34,6 +34,7 @@ class Teensy:
 
     def Go_To_Point(self, x: float, y: float, theta: float) -> None:
         msg = Command.GoToPoint + struct.pack(x, "f") + struct.pack(y, "f") + struct.pack(theta, "f")
+        print(msg)
         self.send_bytes(msg)
     
     def Set_Speed(self, speed : float) -> None:
@@ -42,5 +43,11 @@ class Teensy:
 
     def __receiver__(self) -> None :
         while True :
-            print(self.read_bytes())
-            time.sleep(0.1)
+            msg = self.read_bytes()
+            print(msg)
+            msg = msg [-5:-1]
+            print(int(msg[-1:]))
+            print(struct.unpack("f",msg[-5:-1]))
+            print(struct.unpack("f",msg[-9:-5]))
+            print(struct.unpack("f",msg[-13:-9]))
+            # time.sleep(0.1)
