@@ -21,7 +21,7 @@ class Teensy:
         if self._teensy == None:
             raise Exception("No Device found!")
         self._reciever = threading.Thread(target=self.__receiver__, name= "TeensyReceiver")
-        self._reciever.run()
+        self._reciever.start()
 
     def send_bytes(self, data: bytes, end_bytes: bytes = b'\xBA\xDD\x1C\xC5'):
         self._teensy.reset_output_buffer()
@@ -33,8 +33,8 @@ class Teensy:
         return self._teensy.read_until(end_bytes)
 
     def Go_To_Point(self, x: float, y: float, theta: float) -> None:
-        msg = Command.GoToPoint + struct.pack(x, "f") + struct.pack(y, "f") + struct.pack(theta, "f")
-        print(msg)
+        msg = Command.GoToPoint + struct.pack("f",x) + struct.pack("f",y) + struct.pack("f",theta)
+        print(msg.hex(sep="|"))
         self.send_bytes(msg)
     
     def Set_Speed(self, speed : float) -> None:
@@ -44,10 +44,10 @@ class Teensy:
     def __receiver__(self) -> None :
         while True :
             msg = self.read_bytes()
-            print(msg)
-            msg = msg [-5:-1]
-            print(int(msg[-1:]))
-            print(struct.unpack("f",msg[-5:-1]))
-            print(struct.unpack("f",msg[-9:-5]))
-            print(struct.unpack("f",msg[-13:-9]))
+            print(msg.hex(sep="|"))
+            print(msg[-5])
+            msg = msg [:-5]
+            print(struct.unpack("f",msg[-4:]))
+            print(struct.unpack("f",msg[-8:-4]))
+            print(struct.unpack("f",msg[-12:-8]))
             # time.sleep(0.1)
