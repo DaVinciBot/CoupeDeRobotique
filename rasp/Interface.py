@@ -11,9 +11,7 @@ def app():
                                                    "x", name="x", type=pywebio.input.FLOAT),
                                                pywebio.input.input(
                                                    "y", name="y", type=pywebio.input.FLOAT),
-                                               pywebio.input.input(
-                                                   "theta", name="theta", type=pywebio.input.FLOAT),
-                                           ]
+                                           ],
                                            )
         teensy.Go_To(coords["x"], coords["y"])
 
