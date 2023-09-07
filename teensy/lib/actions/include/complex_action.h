@@ -1,4 +1,5 @@
 #include <basic_action.h>
+#include <commands.h>
 
 // Complex deplacement action generic class
 class Complex_Action : public Action
@@ -8,6 +9,9 @@ public:
     // so they are only stored in the high-level class; 
     // lower-level classes access them via pointers
     
+    // Property
+    virtual inline byte get_id() = 0;
+
     // Atributes
     // Trajectory parameters
     Precision_Params precision_params;
@@ -31,6 +35,9 @@ public:
 class Go_To : public Complex_Action
 {
 public:
+    // Property
+    inline byte get_id() {return GO_TO; } 
+
     // Atribute
     Point target_point;
 
@@ -45,6 +52,9 @@ public:
 class Curve_Go_To : public Complex_Action
 {
 public:
+    // Property
+    inline byte get_id() { return CURVE_GO_TO; }
+
     // Atributes
     Point target_point, center_point;
     unsigned short interval;

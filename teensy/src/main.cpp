@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <TimerOne.h>
 #include <rolling_basis.h>
-#include <com.h>
 #include <util/atomic.h>
 
 // Mouvement params
@@ -64,15 +63,86 @@ Precision_Params classic_params{
 Rolling_Basis_Ptrs rolling_basis_ptrs;
 
 /* Strat part */
-#define STRAT_SIZE 1
-byte action_index = 0;
+Complex_Action *current_action = nullptr;
 
-Action **strat_test = new Action *[STRAT_SIZE]
+void swap_action(Complex_Action *new_action)
 {
-  new Curve_Go_To(Point(100.0, 0.0), Point(50.0, 0.0), 5, forward, 100, classic_params),
-  //new Go_To(Point(30.0, 0.0), backward, 100, classic_params),
-  //new Go_To(Point(0.0, 0.0), forward, 100, classic_params),
+  // implémentation des destructeurs manquante
+  //if(current_action != nullptr)
+  //  delete current_action;
+  current_action = new_action;
+}
+
+void go_to(byte *msg, byte size)
+{
+
+  float x; memcpy(&x, (msg + 1)                 , sizeof(float));
+  float y; memcpy(&y, (msg + 1 + sizeof(float)) , sizeof(float));
+
+  byte is_forward_byte;
+  memcpy(&is_forward_byte, (msg + 1 + 2*sizeof(float)), sizeof(byte));
+  bool is_forward = is_forward_byte > 0;
+
+  
+
+  byte speed = (byte)msg[2 * sizeof(float) + sizeof(byte)];
+
+  uint16_t next_position_delay  = (uint16_t)(msg[2 * sizeof(float) + sizeof(byte)]);
+  uint16_t action_error_auth    = (uint16_t)(msg[2 * sizeof(float) + sizeof(byte) +   sizeof(uint16_t)]);
+  uint16_t traj_precision       = (uint16_t)(msg[2 * sizeof(float) + sizeof(byte) + 2*sizeof(uint16_t)]);
+  
+  Point target_point(x, y);
+
+  Precision_Params params{
+    next_position_delay,
+    action_error_auth,
+    traj_precision
+  };
+
+  bool is_identical = current_action->get_id() == GO_TO;
+  if(is_identical)
+  {
+    Go_To *casted_action = (Go_To *)current_action;
+    is_identical &= casted_action->target_point == target_point;
+    is_identical &= casted_action->direction == is_forward;
+    is_identical &= casted_action->precision_params.end_movement_presicion == params.end_movement_presicion;
+    is_identical &= casted_action->precision_params.error_precision == params.error_precision;
+    is_identical &= casted_action->precision_params.trajectory_precision == params.trajectory_precision;
+  }
+
+  if(!is_identical)
+    swap_action(new Go_To(target_point, is_forward ? forward : backward, 0, params));
+
+}
+/*
+void curve_go_to(byte *msg, byte size)
+{
+  float target_x = (float)(msg[0]);
+  float target_y = (float)(msg[sizeof(float)]);
+
+  float center_x = (float)(msg[2 * sizeof(float)]);
+  float center_y = (float)(msg[3 * sizeof(float)]);
+
+  unsigned short interval = (unsigned short)(msg[4 * sizeof(float)]);
+
+  Point target_point = Point(target_x, target_y);
+  Point center_point = Point(center_x, center_y);  
+
+  bool is_identical = current_action->get_id() == CURVE_GO_TO;
+  if (is_identical)
+  {
+    Go_To *casted_action = ;
+    is_identical = ((Go_To *)current_action)->target_point == target_point;
+  }
+}*/
+
+void (*functions[256])(byte *msg, byte size) = {
+    [GO_TO] = &go_to
 };
+
+extern void handle_callback(Com *com);
+
+
 
 /******* Attach Interrupt *******/
 inline void left_motor_read_encoder()
@@ -115,12 +185,24 @@ void setup()
     if (size > 0)
     {
       byte *msg = com->read_buffer();
-      com->send_msg(msg, size);
+
+     
+      float x;
+      memcpy(&x, (msg + 1), sizeof(float));
+
+      float y;
+      memcpy(&y, (msg + 1 + sizeof(float)), sizeof(float));
+
+      float theta;
+      memcpy(&theta, (msg + 1 + 2*sizeof(float)), sizeof(float));
+
+      float new_msg[3]= {x*2.0f, y*3.9f, theta*-32.5f};
+
+      
+
+      com->send_msg((byte*)new_msg, 3 * sizeof(float));
     }
   }
-
-
-  
 
   Serial.begin(115200);
   pinMode(pin_on_off, INPUT);
@@ -153,7 +235,6 @@ void setup()
 
 void loop()
 {
-
   rolling_basis_ptr->odometrie_handle();
   rolling_basis_ptr->is_running_update();
 
@@ -163,49 +244,48 @@ void loop()
 
 void handle(){
 
-  // Not end of the game ?
-  if ((millis() - start_time) < STOP_MOTORS_DELAY || start_time == -1)
-  {
-    // Authorize to move ?
-    if (digitalReadFast(pin_on_off))
-    {
-      /*
-      // Must return to start position ?
-      if ((millis() - start_time) > RETURN_START_POSITION_DELAY && false)
-      {
-        // Calculate distance from start position
-        float d_x = rolling_basis_ptr->X;
-        float d_y = rolling_basis_ptr->Y;
-        float dist_robot_start_position = sqrt((d_x * d_x) + (d_y * d_y));
+  // // Not end of the game ?
+  // if ((millis() - start_time) < STOP_MOTORS_DELAY || start_time == -1)
+  // {
+  //   // Authorize to move ?
+  //   if (digitalReadFast(pin_on_off))
+  //   {
+  //     /*
+  //     // Must return to start position ?
+  //     if ((millis() - start_time) > RETURN_START_POSITION_DELAY && false)
+  //     {
+  //       // Calculate distance from start position
+  //       float d_x = rolling_basis_ptr->X;
+  //       float d_y = rolling_basis_ptr->Y;
+  //       float dist_robot_start_position = sqrt((d_x * d_x) + (d_y * d_y));
 
-        // Check if we are already in the start position (> 5 cm -> go to home)
-          //if (dist_robot_start_position > DISTANCE_NEAR_START_POSITION)
-          //rolling_basis_ptr->action_handle(&return_position);
-      }
-      */
+  //       // Check if we are already in the start position (> 5 cm -> go to home)
+  //         //if (dist_robot_start_position > DISTANCE_NEAR_START_POSITION)
+  //         //rolling_basis_ptr->action_handle(&return_position);
+  //     }
+  //     */
      
-      // Do classic trajectory
-      if (action_index < STRAT_SIZE)
-      {
-        Point current_position = rolling_basis_ptr->get_current_position();
-        last_ticks_position = rolling_basis_ptr->get_current_ticks();
+  //     // Do classic trajectory
+  //     if (0 < 1)
+  //     {
+  //       Point current_position = rolling_basis_ptr->get_current_position();
+  //       last_ticks_position = rolling_basis_ptr->get_current_ticks();
 
-        if (!strat_test[action_index]->is_finished())
-          strat_test[action_index]->handle(
-              current_position,
-              last_ticks_position,
-              &rolling_basis_ptrs);
-        else
-          action_index++;
-      }
-      else
-        rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
-    }
-    else
-      rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
-  }
-  else
-    rolling_basis_ptr->shutdown_motor();  
+  //       if (!strat_test[0]->is_finished())
+  //         strat_test[0]->handle(
+  //             current_position,
+  //             last_ticks_position,
+  //             &rolling_basis_ptrs);
+
+  //     }
+  //     else
+  //       rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+  //   }
+  //   else
+  //     rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+  // }
+  // else
+  //   rolling_basis_ptr->shutdown_motor();  
 }
 
 // This code was realized by Florian BARRE

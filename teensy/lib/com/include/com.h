@@ -5,7 +5,7 @@ class Com {
 
 private:
     byte* buffer = new byte[256];
-    byte signature[4] = {0xDE, 0xAD, 0xBE, 0xEF};
+    byte signature[4] = {0xBA, 0xDD, 0x1C, 0xC5};
     byte pointer = 0;
     Stream* stream;
    

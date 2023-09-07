@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include <com.h>
 
-Com::Com(usb_serial_class* stream, uint32_t baudrate) {
+Com::Com(usb_serial_class* stream, uint32_t baudrate) 
+{
     this->stream = stream;
     stream->begin(baudrate);
 
@@ -18,7 +19,8 @@ Com::Com(HardwareSerial *stream, uint32_t baudrate)
         this->buffer[k] = 0;
 }
 
-byte Com::handle() {
+byte Com::handle() 
+{
     while(this->stream->available()) {
         byte data = this->stream->read();
         this->buffer[this->pointer++] = data;
@@ -41,7 +43,6 @@ byte Com::handle() {
             this->pointer = 0;
         }
     }
-
     return 0;
 }
 
@@ -56,3 +57,5 @@ void Com::send_msg(byte *msg, byte size)
     this->stream->write(this->signature, 4);
     this->stream->flush();
 }
+
+ 
