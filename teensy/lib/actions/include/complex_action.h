@@ -13,7 +13,7 @@ public:
     virtual inline byte get_id() = 0;
 
     // Operators
-    //virtual bool operator==(Complex_Action &other) = 0;
+    virtual bool operator==(Complex_Action &other) = 0;
 
     // Atributes
     // Trajectory parameters
@@ -39,7 +39,10 @@ class Go_To : public Complex_Action
 {
 public:
     // Property
-    inline byte get_id() {return GO_TO; } 
+    inline byte get_id() {return GO_TO; }
+
+    // Operators
+    bool operator==(Complex_Action &other);
 
     // Atribute
     Point target_point;
@@ -57,6 +60,9 @@ class Curve_Go_To : public Complex_Action
 public:
     // Property
     inline byte get_id() { return CURVE_GO_TO; }
+
+    // Operators
+    bool operator==(Complex_Action &other);
 
     // Atributes
     Point target_point, center_point;
