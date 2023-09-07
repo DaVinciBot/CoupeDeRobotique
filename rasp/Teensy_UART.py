@@ -20,6 +20,7 @@ class Teensy:
                 break
         if self._teensy == None:
             raise Exception("No Device found!")
+        self.odometrie = [0.0, 0.0, 0.0]
         self._reciever = threading.Thread(
             target=self.__receiver__, name="TeensyReceiver")
         self._reciever.start()
@@ -66,7 +67,6 @@ class Teensy:
             print(msg.hex(sep="|"))
             print(msg[-5])
             msg = msg[:-5]
-            print(struct.unpack("f", msg[-4:]))
-            print(struct.unpack("f", msg[-8:-4]))
-            print(struct.unpack("f", msg[-12:-8]))
-            # time.sleep(0.1)
+            self.odometrie = [struct.unpack("f", msg[0:4]),
+                              struct.unpack("f", msg[4:8]),
+                              struct.unpack("f", msg[8:12])]            # time.sleep(0.1)
