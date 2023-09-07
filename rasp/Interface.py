@@ -8,14 +8,12 @@ def app():
     pywebio.output.put_button("set_coord",
                                 set_coords
                                 )
-    table = pywebio.output.output()
-    table.append(pywebio.output.put_table(teensy.odometrie))
-    table.show
+    table = pywebio.output.put_scope("data")
+    pywebio.output.put_table(teensy.odometrie,scope="data")
     while (True):
         if old != teensy.odometrie:
-            table.reset(pywebio.output.put_table(teensy.odometrie))
-            # table.append(pywebio.output.put_table(teensy.odometrie))
-            table.show
+            pywebio.output.clear_scope("data")
+            pywebio.output.put_table(teensy.odometrie,scope="data")
             old = teensy.odometrie
 
 
