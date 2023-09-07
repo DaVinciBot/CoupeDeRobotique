@@ -1,5 +1,6 @@
 import pywebio
 import Teensy_UART
+import time
 
 
 def app():
@@ -8,9 +9,10 @@ def app():
     pywebio.output.put_button("set_coord",
                                 set_coords
                                 )
-    table = pywebio.output.put_scope("data")
+    pywebio.output.put_scope("data")
     pywebio.output.put_table(teensy.odometrie,scope="data")
     while (True):
+        time.sleep(0.5)
         if old != teensy.odometrie:
             pywebio.output.clear_scope("data")
             pywebio.output.put_table(teensy.odometrie,scope="data")
