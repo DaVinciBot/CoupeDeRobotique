@@ -1,0 +1,77 @@
+\doxysection{basic\+\_\+action.\+h}
+\hypertarget{basic__action_8h_source}{}\label{basic__action_8h_source}\index{C:/Users/Howne/Documents/ESILV/DVB\_CDR/teensy/lib/actions/include/basic\_action.h@{C:/Users/Howne/Documents/ESILV/DVB\_CDR/teensy/lib/actions/include/basic\_action.h}}
+\mbox{\hyperlink{basic__action_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ <\mbox{\hyperlink{step__action_8h}{step\_action.h}}>}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Basic\ deplacement\ action\ generic\ class}}
+\DoxyCodeLine{00004\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_basic___action}{Basic\_Action}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_action}{Action}}}
+\DoxyCodeLine{00005\ \{}
+\DoxyCodeLine{00006\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00007\ \ \ \ \ \textcolor{comment}{//\ Values\ for\ speed,\ precision,\ ...\ are\ constant\ throughout\ the\ trajectory,}}
+\DoxyCodeLine{00008\ \ \ \ \ \textcolor{comment}{//\ so\ they\ are\ only\ stored\ in\ the\ high-\/level\ class;}}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{comment}{//\ lower-\/level\ classes\ access\ them\ via\ pointers}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{comment}{//\ Atributes}}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{comment}{//\ Trajectory\ parameters}}
+\DoxyCodeLine{00013\ \ \ \ \ \mbox{\hyperlink{struct_precision___params}{Precision\_Params}}\ *\mbox{\hyperlink{class_basic___action_aa143bb0e128f7a11a7fb33327ea4f983}{precision\_params}};}
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{keywordtype}{byte}\ *\mbox{\hyperlink{class_basic___action_aaad7d35757a46acf7aa9cd236f0ad4c2}{speed}};}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{structures_8h_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}}\ *\mbox{\hyperlink{class_basic___action_a24dc31e0da3f98cc2c57533e7ef969d3}{direction}};}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \mbox{\hyperlink{class_step___action}{Step\_Action}}\ *\mbox{\hyperlink{class_basic___action_a46fa9d0efecac18f98f184dbb39d422c}{step\_action}};}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{comment}{//\ Constructor}}
+\DoxyCodeLine{00020\ \ \ \ \ \mbox{\hyperlink{class_basic___action_a02e21daf34e4170ad9e5b58f5e2ff2f3}{Basic\_Action}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{comment}{//\ Methods}}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_basic___action_a238e129791e7bdbab86d8c97bf820cfa}{compute}}(\mbox{\hyperlink{class_point}{Point}}\ current\_point,\ \mbox{\hyperlink{struct_ticks}{Ticks}}\ current\_ticks,\ \mbox{\hyperlink{struct_rolling___basis___params}{Rolling\_Basis\_Params}}\ *\mbox{\hyperlink{main_8cpp_a5d185b1e30e3e7427667ff498d56e487}{rolling\_basis\_params}})\ =\ 0;}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{main_8cpp_a37c2d0658e498b1bf878f8a3d9a7c5b4}{handle}}(\mbox{\hyperlink{class_point}{Point}}\ current\_point,\ \mbox{\hyperlink{struct_ticks}{Ticks}}\ current\_ticks,\ \mbox{\hyperlink{struct_rolling___basis___ptrs}{Rolling\_Basis\_Ptrs}}\ *\mbox{\hyperlink{main_8cpp_a44554c587faf39790ad3451bd317ddc1}{rolling\_basis\_ptrs}})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00025\ \};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ This\ basic\ action\ going\ straight\ by\ the\ distance\ between\ its\ current\ position}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ and\ the\ target\ position,\ it\ will\ not\ rotate\ ensure\ you\ are\ correctly\ oriented}}
+\DoxyCodeLine{00029\ \textcolor{comment}{//\ before\ using\ it\ }}
+\DoxyCodeLine{00030\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_move___straight}{Move\_Straight}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_basic___action}{Basic\_Action}}}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{comment}{//\ Atributes}}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_move___straight_a23827eb815d54fc2e593db793bdbb19f}{target\_x}},\ \mbox{\hyperlink{class_move___straight_a965672fd6e77fea10ffde6a36b44afd5}{target\_y}};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \textcolor{comment}{//\ Constructor}}
+\DoxyCodeLine{00037\ \ \ \ \ \mbox{\hyperlink{class_move___straight}{Move\_Straight}}(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_move___straight_a23827eb815d54fc2e593db793bdbb19f}{target\_x}},\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_move___straight_a965672fd6e77fea10ffde6a36b44afd5}{target\_y}},\ \mbox{\hyperlink{structures_8h_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}}*\ \mbox{\hyperlink{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}},\ \textcolor{keywordtype}{byte}*\ \mbox{\hyperlink{class_basic___action_aaad7d35757a46acf7aa9cd236f0ad4c2}{speed}},\mbox{\hyperlink{struct_precision___params}{Precision\_Params}}\ *\mbox{\hyperlink{class_basic___action_aa143bb0e128f7a11a7fb33327ea4f983}{precision\_params}});}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{comment}{//\ Method}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_move___straight_a83b75453abe7e277efb121e1ace890e6}{compute}}(\mbox{\hyperlink{class_point}{Point}}\ current\_point,\ \mbox{\hyperlink{struct_ticks}{Ticks}}\ current\_ticks,\ \mbox{\hyperlink{struct_rolling___basis___params}{Rolling\_Basis\_Params}}\ *\mbox{\hyperlink{main_8cpp_a5d185b1e30e3e7427667ff498d56e487}{rolling\_basis\_params}})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00041\ \};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{comment}{//\ This\ basic\ action\ turns\ the\ robot\ to\ face\ the\ target\ point}}
+\DoxyCodeLine{00044\ \textcolor{comment}{//\ Get\ Orientation\ in\ front\ of\ a\ point\ (turn\ on\ itself)}}
+\DoxyCodeLine{00045\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_get___orientation}{Get\_Orientation}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_basic___action}{Basic\_Action}}}
+\DoxyCodeLine{00046\ \{}
+\DoxyCodeLine{00047\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{comment}{//\ Atributes}}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_get___orientation_a095d175bb8e8f348914fe07834b7fa45}{target\_x}},\ \mbox{\hyperlink{class_get___orientation_aa0d1079c7fe3f15b6629abee4cb8d292}{target\_y}};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{comment}{//\ Constructor}}
+\DoxyCodeLine{00052\ \ \ \ \ \mbox{\hyperlink{class_get___orientation}{Get\_Orientation}}(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_get___orientation_a095d175bb8e8f348914fe07834b7fa45}{target\_x}},\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_get___orientation_aa0d1079c7fe3f15b6629abee4cb8d292}{target\_y}},\ \mbox{\hyperlink{structures_8h_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}}\ *\mbox{\hyperlink{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}},\ \textcolor{keywordtype}{byte}\ *\mbox{\hyperlink{class_basic___action_aaad7d35757a46acf7aa9cd236f0ad4c2}{speed}},\ \mbox{\hyperlink{struct_precision___params}{Precision\_Params}}\ *\mbox{\hyperlink{class_basic___action_aa143bb0e128f7a11a7fb33327ea4f983}{precision\_params}});}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ Method}}
+\DoxyCodeLine{00055\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_get___orientation_ae5e8672ef35d441a9528cd63a42c490a}{compute}}(\mbox{\hyperlink{class_point}{Point}}\ current\_point,\ \mbox{\hyperlink{struct_ticks}{Ticks}}\ current\_ticks,\ \mbox{\hyperlink{struct_rolling___basis___params}{Rolling\_Basis\_Params}}\ *\mbox{\hyperlink{main_8cpp_a5d185b1e30e3e7427667ff498d56e487}{rolling\_basis\_params}})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \textcolor{comment}{//\ This\ basic\ action\ will\ rotate\ the\ robot\ to\ the\ target\ angle}}
+\DoxyCodeLine{00059\ \textcolor{comment}{//\ Do\ a\ Rotation\ (turn\ on\ itself)}}
+\DoxyCodeLine{00060\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_move___rotation}{Move\_Rotation}}\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_basic___action}{Basic\_Action}}}
+\DoxyCodeLine{00061\ \{}
+\DoxyCodeLine{00062\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{comment}{//\ Atribute}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_move___rotation_a67e30f8f7171731df53d66c5d55080e3}{target\_theta}};}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{comment}{//\ Constructor}}
+\DoxyCodeLine{00067\ \ \ \ \ \mbox{\hyperlink{class_move___rotation}{Move\_Rotation}}(\textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_move___rotation_a67e30f8f7171731df53d66c5d55080e3}{target\_theta}},\ \mbox{\hyperlink{structures_8h_a224b9163917ac32fc95a60d8c1eec3aa}{Direction}}\ *\mbox{\hyperlink{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}},\ \textcolor{keywordtype}{byte}\ *\mbox{\hyperlink{class_basic___action_aaad7d35757a46acf7aa9cd236f0ad4c2}{speed}},\ \mbox{\hyperlink{struct_precision___params}{Precision\_Params}}\ *\mbox{\hyperlink{class_basic___action_aa143bb0e128f7a11a7fb33327ea4f983}{precision\_params}});}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{comment}{//\ Method}}
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_move___rotation_aee4134951d98474ff741a4c506fa008f}{compute}}(\mbox{\hyperlink{class_point}{Point}}\ current\_point,\ \mbox{\hyperlink{struct_ticks}{Ticks}}\ current\_ticks,\ \mbox{\hyperlink{struct_rolling___basis___params}{Rolling\_Basis\_Params}}\ *\mbox{\hyperlink{main_8cpp_a5d185b1e30e3e7427667ff498d56e487}{rolling\_basis\_params}})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00071\ \};}
+
+\end{DoxyCode}

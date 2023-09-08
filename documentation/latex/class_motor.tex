@@ -1,0 +1,109 @@
+\doxysection{Motor Class Reference}
+\hypertarget{class_motor}{}\label{class_motor}\index{Motor@{Motor}}
+
+
+{\ttfamily \#include $<$motors\+\_\+driver.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{class_motor_acb82f41362b0448e5bfd90cd53062f02}{delta\+\_\+time\+\_\+calculator}} ()
+\item 
+\mbox{\hyperlink{class_motor_aa6913eb512639e37ae199ad4bd185c00}{Motor}} (byte pin\+\_\+forward, byte pin\+\_\+backward, byte pin\+\_\+pwm, byte pin\+\_\+enca, byte pin\+\_\+encb, float kp, float kd, float ki, float \mbox{\hyperlink{class_motor_a27ef50622bbc8a1d76affd229c7e58a1}{correction\+\_\+factor}}, byte \mbox{\hyperlink{class_motor_abc2dcb690e254bb34c5481e3aeb6acb7}{threshold\+\_\+pwm\+\_\+value}})
+\item 
+void \mbox{\hyperlink{class_motor_ac33814c8814d6b576531149ee945516d}{init}} ()
+\item 
+void \mbox{\hyperlink{class_motor_a38fc483558d654c701a31593974fd56a}{set\+\_\+motor}} (int8\+\_\+t dir, byte pwm\+Val)
+\item 
+void \mbox{\hyperlink{class_motor_af239abc8e2e8640f12b633fa9ed2105c}{handle}} (long target\+\_\+pos, byte max\+\_\+speed)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+long \mbox{\hyperlink{class_motor_a8fadb92eea06e48c7c81669dc970c093}{prevT}} = 0
+\item 
+volatile long \mbox{\hyperlink{class_motor_a7688548263e2aade11b1343bd34249dc}{ticks}} = 0
+\item 
+float \mbox{\hyperlink{class_motor_a27ef50622bbc8a1d76affd229c7e58a1}{correction\+\_\+factor}}
+\item 
+byte \mbox{\hyperlink{class_motor_abc2dcb690e254bb34c5481e3aeb6acb7}{threshold\+\_\+pwm\+\_\+value}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_motor_aa6913eb512639e37ae199ad4bd185c00}\label{class_motor_aa6913eb512639e37ae199ad4bd185c00} 
+\index{Motor@{Motor}!Motor@{Motor}}
+\index{Motor@{Motor}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{Motor()}{Motor()}}
+{\footnotesize\ttfamily Motor\+::\+Motor (\begin{DoxyParamCaption}\item[{byte}]{pin\+\_\+forward,  }\item[{byte}]{pin\+\_\+backward,  }\item[{byte}]{pin\+\_\+pwm,  }\item[{byte}]{pin\+\_\+enca,  }\item[{byte}]{pin\+\_\+encb,  }\item[{float}]{kp,  }\item[{float}]{kd,  }\item[{float}]{ki,  }\item[{float}]{correction\+\_\+factor = {\ttfamily 1.0},  }\item[{byte}]{threshold\+\_\+pwm\+\_\+value = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_motor_acb82f41362b0448e5bfd90cd53062f02}\label{class_motor_acb82f41362b0448e5bfd90cd53062f02} 
+\index{Motor@{Motor}!delta\_time\_calculator@{delta\_time\_calculator}}
+\index{delta\_time\_calculator@{delta\_time\_calculator}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{delta\_time\_calculator()}{delta\_time\_calculator()}}
+{\footnotesize\ttfamily double Motor\+::delta\+\_\+time\+\_\+calculator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 0
+\Hypertarget{class_motor_af239abc8e2e8640f12b633fa9ed2105c}\label{class_motor_af239abc8e2e8640f12b633fa9ed2105c} 
+\index{Motor@{Motor}!handle@{handle}}
+\index{handle@{handle}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{handle()}{handle()}}
+{\footnotesize\ttfamily void Motor\+::handle (\begin{DoxyParamCaption}\item[{long}]{target\+\_\+pos,  }\item[{byte}]{max\+\_\+speed }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 1
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{class_motor_ac33814c8814d6b576531149ee945516d}\label{class_motor_ac33814c8814d6b576531149ee945516d} 
+\index{Motor@{Motor}!init@{init}}
+\index{init@{init}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily void Motor\+::init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 3
+\Hypertarget{class_motor_a38fc483558d654c701a31593974fd56a}\label{class_motor_a38fc483558d654c701a31593974fd56a} 
+\index{Motor@{Motor}!set\_motor@{set\_motor}}
+\index{set\_motor@{set\_motor}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{set\_motor()}{set\_motor()}}
+{\footnotesize\ttfamily void Motor\+::set\+\_\+motor (\begin{DoxyParamCaption}\item[{int8\+\_\+t}]{dir,  }\item[{byte}]{pwm\+Val }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 4
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_motor_a27ef50622bbc8a1d76affd229c7e58a1}\label{class_motor_a27ef50622bbc8a1d76affd229c7e58a1} 
+\index{Motor@{Motor}!correction\_factor@{correction\_factor}}
+\index{correction\_factor@{correction\_factor}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{correction\_factor}{correction\_factor}}
+{\footnotesize\ttfamily float Motor\+::correction\+\_\+factor}
+
+\Hypertarget{class_motor_a8fadb92eea06e48c7c81669dc970c093}\label{class_motor_a8fadb92eea06e48c7c81669dc970c093} 
+\index{Motor@{Motor}!prevT@{prevT}}
+\index{prevT@{prevT}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{prevT}{prevT}}
+{\footnotesize\ttfamily long Motor\+::prevT = 0}
+
+\Hypertarget{class_motor_abc2dcb690e254bb34c5481e3aeb6acb7}\label{class_motor_abc2dcb690e254bb34c5481e3aeb6acb7} 
+\index{Motor@{Motor}!threshold\_pwm\_value@{threshold\_pwm\_value}}
+\index{threshold\_pwm\_value@{threshold\_pwm\_value}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{threshold\_pwm\_value}{threshold\_pwm\_value}}
+{\footnotesize\ttfamily byte Motor\+::threshold\+\_\+pwm\+\_\+value}
+
+\Hypertarget{class_motor_a7688548263e2aade11b1343bd34249dc}\label{class_motor_a7688548263e2aade11b1343bd34249dc} 
+\index{Motor@{Motor}!ticks@{ticks}}
+\index{ticks@{ticks}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{ticks}{ticks}}
+{\footnotesize\ttfamily volatile long Motor\+::ticks = 0}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Howne/\+Documents/\+ESILV/\+DVB\+\_\+\+CDR/teensy/lib/motors\+\_\+driver/include/\mbox{\hyperlink{motors__driver_8h}{motors\+\_\+driver.\+h}}\item 
+C\+:/\+Users/\+Howne/\+Documents/\+ESILV/\+DVB\+\_\+\+CDR/teensy/lib/motors\+\_\+driver/src/\mbox{\hyperlink{motors__driver_8cpp}{motors\+\_\+driver.\+cpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,48 @@
+\doxysection{motors\+\_\+driver.\+h}
+\hypertarget{motors__driver_8h_source}{}\label{motors__driver_8h_source}\index{C:/Users/Howne/Documents/ESILV/DVB\_CDR/teensy/lib/motors\_driver/include/motors\_driver.h@{C:/Users/Howne/Documents/ESILV/DVB\_CDR/teensy/lib/motors\_driver/include/motors\_driver.h}}
+\mbox{\hyperlink{motors__driver_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#include\ <Arduino.h>}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Motor\ class}}
+\DoxyCodeLine{00004\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_motor}{Motor}}\ \{}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00007\ \ \ \ \ \textcolor{comment}{//\ Pins\ Motor}}
+\DoxyCodeLine{00008\ \ \ \ \ \textcolor{keywordtype}{byte}\ pin\_forward;}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keywordtype}{byte}\ pin\_backward;}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keywordtype}{byte}\ pin\_pwm;\ \ \textcolor{comment}{//\ PWM\ pin\ only\ !}}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keywordtype}{byte}\ pin\_enca;\ \textcolor{comment}{//\ AttachInterrupt\ pin\ only\ !}}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordtype}{byte}\ pin\_encb;\ \textcolor{comment}{//\ AttachInterrupt\ pin\ only\ !}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ \textcolor{comment}{//\ PID\ constantes}}
+\DoxyCodeLine{00015\ \ \ \ \ \textcolor{keywordtype}{float}\ kp;}
+\DoxyCodeLine{00016\ \ \ \ \ \textcolor{keywordtype}{float}\ kd;}
+\DoxyCodeLine{00017\ \ \ \ \ \textcolor{keywordtype}{float}\ ki;}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{comment}{//\ Variables}}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keywordtype}{int}\ error\_prev\ =\ 0;}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keywordtype}{float}\ error\_integral\ =\ 0;}
+\DoxyCodeLine{00022\ \ \ \ \ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{comment}{//\ Delta\ Time\ saver}}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{long}\ \mbox{\hyperlink{class_motor_a8fadb92eea06e48c7c81669dc970c093}{prevT}}\ =\ 0;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{double}\ \mbox{\hyperlink{class_motor_acb82f41362b0448e5bfd90cd53062f02}{delta\_time\_calculator}}();}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{comment}{//\ Position\ in\ ticks\ variable}}
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{volatile}\ \textcolor{keywordtype}{long}\ \mbox{\hyperlink{class_motor_a7688548263e2aade11b1343bd34249dc}{ticks}}\ =\ 0;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \ \ \ \ \textcolor{comment}{//\ Correction\ speed\ factor}}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_motor_a27ef50622bbc8a1d76affd229c7e58a1}{correction\_factor}};}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keywordtype}{byte}\ \mbox{\hyperlink{class_motor_abc2dcb690e254bb34c5481e3aeb6acb7}{threshold\_pwm\_value}};}
+\DoxyCodeLine{00034\ \ \ \ \ }
+\DoxyCodeLine{00035\ \ \ \ \ \textcolor{comment}{//\ Constructor}}
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{class_motor}{Motor}}(\textcolor{keywordtype}{byte}\ pin\_forward,\ \textcolor{keywordtype}{byte}\ pin\_backward,\ \textcolor{keywordtype}{byte}\ pin\_pwm,\ \textcolor{keywordtype}{byte}\ pin\_enca,\ \textcolor{keywordtype}{byte}\ pin\_encb,\ \textcolor{keywordtype}{float}\ kp,\ \textcolor{keywordtype}{float}\ kd,\ \textcolor{keywordtype}{float}\ ki,\ \textcolor{keywordtype}{float}\ \mbox{\hyperlink{class_motor_a27ef50622bbc8a1d76affd229c7e58a1}{correction\_factor}},\ \textcolor{keywordtype}{byte}\ \mbox{\hyperlink{class_motor_abc2dcb690e254bb34c5481e3aeb6acb7}{threshold\_pwm\_value}});}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{comment}{//\ Methods}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_motor_ac33814c8814d6b576531149ee945516d}{init}}();}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_motor_a38fc483558d654c701a31593974fd56a}{set\_motor}}(int8\_t\ dir,\ \textcolor{keywordtype}{byte}\ pwmVal);}
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{main_8cpp_a37c2d0658e498b1bf878f8a3d9a7c5b4}{handle}}(\textcolor{keywordtype}{long}\ target\_pos,\ \textcolor{keywordtype}{byte}\ max\_speed);}
+\DoxyCodeLine{00042\ \};}
+
+\end{DoxyCode}
