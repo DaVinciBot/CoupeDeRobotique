@@ -36,6 +36,52 @@ class Teensy:
     def read_bytes(self, end_bytes: bytes = MSG_END_BYTES) -> bytes:
         return self._teensy.read_until(end_bytes)
 
+    def __receiver__(self) -> None:
+        """This is started as a thread, handles the data acording to the decided format :
+
+        msg_type | msg_data | msg_length | MSG_END_BYTES
+        size : 1 | msg_length | 1 | 4
+
+        The size is in bytes.
+        It will call the corresponding function 
+        """
+        while True:
+            msg = self.read_bytes()
+            lenmsg = msg[-5]
+            if lenmsg + 5 > len(msg):
+                logging.warn(
+                    "Received Teensy message does not match declared length")
+                continue
+            try:
+                self.messagetype[msg[0]](self=self,msg=msg[1:-5])
+            except Exception as e:
+                logging.error("Received message handling crashed :\n" + e.args)
+                time.sleep(0.5)
+
+    #############################
+    # Received message handling #
+    #############################
+
+    def rcv_odometrie(self, msg: bytes):
+        self.odometrie = [struct.unpack("<f", msg[0:4]),
+                          struct.unpack("<f", msg[4:8]),
+                          struct.unpack("<f", msg[8:12])]
+
+    """
+    This is used to match a handling function to a message type.
+    """
+    messagetype = {
+        128: rcv_odometrie # \x80
+    }
+
+    #########################
+    # User facing functions #
+    #########################
+
+    class Command:
+        GoToPoint = b"\x00"
+        SetSpeed = b"\x01"
+
     def Go_To(self, x: float, y: float, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """Got to a point
 
