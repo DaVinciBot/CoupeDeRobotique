@@ -1,0 +1,172 @@
+\doxysection{Teensy\+\_\+\+UART.\+Teensy Class Reference}
+\hypertarget{class_teensy___u_a_r_t_1_1_teensy}{}\label{class_teensy___u_a_r_t_1_1_teensy}\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_1_1_command}{Command}}
+\begin{DoxyCompactList}\small\item\em User facing functions \#. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_a44d2a061abaea187bf62a27ab36e8c54}{\+\_\+\+\_\+init\+\_\+\+\_\+}} (self, int vid=0x16\+C0, int pid=0x0483, int baudrate=115200)
+\item 
+\mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_ab37e731be0af73444c9a5fa2a87f358c}{send\+\_\+bytes}} (self, bytes data, bytes end\+\_\+bytes=\mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_adadb029c69c89a06fe48dc9d551b472e}{MSG\+\_\+\+END\+\_\+\+BYTES}})
+\item 
+bytes \mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_a975dfaa83afc64a699669c0d83a6f94c}{read\+\_\+bytes}} (self, bytes end\+\_\+bytes=\mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_adadb029c69c89a06fe48dc9d551b472e}{MSG\+\_\+\+END\+\_\+\+BYTES}})
+\item 
+None \mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_ac3a9972a13a4a4fabe9dd37a7374a32a}{\+\_\+\+\_\+receiver\+\_\+\+\_\+}} (self)
+\item 
+\mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_a1fc2b98005a78332e4acefbb388082a0}{rcv\+\_\+odometrie}} (self, bytes msg)
+\begin{DoxyCompactList}\small\item\em Received message handling \#. \end{DoxyCompactList}\item 
+None \mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_a2d8d1d31ee8b0bbd54a11013213b5700}{Go\+\_\+\+To}} (self, float x, float y, bool \mbox{\hyperlink{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}}=False, bytes speed=b\textquotesingle{}\textbackslash{}x\+FF\textquotesingle{}, int next\+\_\+position\+\_\+delay=100, int action\+\_\+error\+\_\+auth=20, int traj\+\_\+precision=50)
+\item 
+None \mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_a6e84d47475b3bb5a7863231282aa8e6b}{Set\+\_\+\+Speed}} (self, float speed)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_a908ea83ca6edf73429834ed7442eae04}{odometrie}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+str \mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_adadb029c69c89a06fe48dc9d551b472e}{MSG\+\_\+\+END\+\_\+\+BYTES}} = b\textquotesingle{}\textbackslash{}x\+BA\textbackslash{}x\+DD\textbackslash{}x1\+C\textbackslash{}x\+C5\textquotesingle{}
+\begin{DoxyCompactList}\small\item\em Internals \#. \end{DoxyCompactList}\item 
+dict \mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_a92e0c0667ec32b777de2a4ba5e516655}{messagetype}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_aac46f1a338beadac8fb4577db1c3973f}{\+\_\+teensy}}
+\item 
+\mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_a775fa155ca498ac9fd8e4fe2fd85e0ce}{\+\_\+reciever}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_a44d2a061abaea187bf62a27ab36e8c54}\label{class_teensy___u_a_r_t_1_1_teensy_a44d2a061abaea187bf62a27ab36e8c54} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!\_\_init\_\_@{\_\_init\_\_}}
+\index{\_\_init\_\_@{\_\_init\_\_}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{\_\_init\_\_()}{\_\_init\_\_()}}
+{\footnotesize\ttfamily Teensy\+\_\+\+UART.\+Teensy.\+\_\+\+\_\+init\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{int }]{vid = {\ttfamily 0x16C0},  }\item[{int }]{pid = {\ttfamily 0x0483},  }\item[{int }]{baudrate = {\ttfamily 115200} }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_ac3a9972a13a4a4fabe9dd37a7374a32a}\label{class_teensy___u_a_r_t_1_1_teensy_ac3a9972a13a4a4fabe9dd37a7374a32a} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!\_\_receiver\_\_@{\_\_receiver\_\_}}
+\index{\_\_receiver\_\_@{\_\_receiver\_\_}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{\_\_receiver\_\_()}{\_\_receiver\_\_()}}
+{\footnotesize\ttfamily  None Teensy\+\_\+\+UART.\+Teensy.\+\_\+\+\_\+receiver\+\_\+\+\_\+ (\begin{DoxyParamCaption}\item[{}]{self }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}This is started as a thread, handles the data acording to the decided format :
+
+msg_type | msg_data | msg_length | MSG_END_BYTES
+size : 1 | msg_length | 1 | 4
+
+The size is in bytes.
+It will call the corresponding function 
+\end{DoxyVerb}
+ Here is the call graph for this function\+:
+% FIG 0
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_a2d8d1d31ee8b0bbd54a11013213b5700}\label{class_teensy___u_a_r_t_1_1_teensy_a2d8d1d31ee8b0bbd54a11013213b5700} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!Go\_To@{Go\_To}}
+\index{Go\_To@{Go\_To}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{Go\_To()}{Go\_To()}}
+{\footnotesize\ttfamily  None Teensy\+\_\+\+UART.\+Teensy.\+Go\+\_\+\+To (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{float}]{x,  }\item[{float}]{y,  }\item[{bool }]{direction = {\ttfamily False},  }\item[{bytes }]{speed = {\ttfamily b\textquotesingle{}\textbackslash{}xFF\textquotesingle{}},  }\item[{int }]{next\+\_\+position\+\_\+delay = {\ttfamily 100},  }\item[{int }]{action\+\_\+error\+\_\+auth = {\ttfamily 20},  }\item[{int }]{traj\+\_\+precision = {\ttfamily 50} }\end{DoxyParamCaption})}
+
+\begin{DoxyVerb}Got to a point
+
+Args:
+    x (float): x coordinate
+    y (float): y coordinate
+    direction (bool, optional): whether to go backwards or forwards. Defaults to False.
+    next_position_delay (int, optional): _description_. Defaults to 100.
+    action_error_auth (int, optional): _description_. Defaults to 20.
+    traj_precision (int, optional): _description_. Defaults to 50.
+\end{DoxyVerb}
+ Here is the call graph for this function\+:
+% FIG 1
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_a1fc2b98005a78332e4acefbb388082a0}\label{class_teensy___u_a_r_t_1_1_teensy_a1fc2b98005a78332e4acefbb388082a0} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!rcv\_odometrie@{rcv\_odometrie}}
+\index{rcv\_odometrie@{rcv\_odometrie}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{rcv\_odometrie()}{rcv\_odometrie()}}
+{\footnotesize\ttfamily Teensy\+\_\+\+UART.\+Teensy.\+rcv\+\_\+odometrie (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{bytes}]{msg }\end{DoxyParamCaption})}
+
+
+
+Received message handling \#. 
+
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_a975dfaa83afc64a699669c0d83a6f94c}\label{class_teensy___u_a_r_t_1_1_teensy_a975dfaa83afc64a699669c0d83a6f94c} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!read\_bytes@{read\_bytes}}
+\index{read\_bytes@{read\_bytes}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{read\_bytes()}{read\_bytes()}}
+{\footnotesize\ttfamily  bytes Teensy\+\_\+\+UART.\+Teensy.\+read\+\_\+bytes (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{bytes }]{end\+\_\+bytes = {\ttfamily \mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_adadb029c69c89a06fe48dc9d551b472e}{MSG\+\_\+\+END\+\_\+\+BYTES}}} }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 2
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_ab37e731be0af73444c9a5fa2a87f358c}\label{class_teensy___u_a_r_t_1_1_teensy_ab37e731be0af73444c9a5fa2a87f358c} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!send\_bytes@{send\_bytes}}
+\index{send\_bytes@{send\_bytes}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{send\_bytes()}{send\_bytes()}}
+{\footnotesize\ttfamily Teensy\+\_\+\+UART.\+Teensy.\+send\+\_\+bytes (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{bytes}]{data,  }\item[{bytes }]{end\+\_\+bytes = {\ttfamily \mbox{\hyperlink{class_teensy___u_a_r_t_1_1_teensy_adadb029c69c89a06fe48dc9d551b472e}{MSG\+\_\+\+END\+\_\+\+BYTES}}} }\end{DoxyParamCaption})}
+
+Here is the caller graph for this function\+:
+% FIG 3
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_a6e84d47475b3bb5a7863231282aa8e6b}\label{class_teensy___u_a_r_t_1_1_teensy_a6e84d47475b3bb5a7863231282aa8e6b} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!Set\_Speed@{Set\_Speed}}
+\index{Set\_Speed@{Set\_Speed}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{Set\_Speed()}{Set\_Speed()}}
+{\footnotesize\ttfamily  None Teensy\+\_\+\+UART.\+Teensy.\+Set\+\_\+\+Speed (\begin{DoxyParamCaption}\item[{}]{self,  }\item[{float}]{speed }\end{DoxyParamCaption})}
+
+Here is the call graph for this function\+:
+% FIG 4
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_a775fa155ca498ac9fd8e4fe2fd85e0ce}\label{class_teensy___u_a_r_t_1_1_teensy_a775fa155ca498ac9fd8e4fe2fd85e0ce} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!\_reciever@{\_reciever}}
+\index{\_reciever@{\_reciever}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{\_reciever}{\_reciever}}
+{\footnotesize\ttfamily Teensy\+\_\+\+UART.\+Teensy.\+\_\+reciever\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_aac46f1a338beadac8fb4577db1c3973f}\label{class_teensy___u_a_r_t_1_1_teensy_aac46f1a338beadac8fb4577db1c3973f} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!\_teensy@{\_teensy}}
+\index{\_teensy@{\_teensy}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{\_teensy}{\_teensy}}
+{\footnotesize\ttfamily Teensy\+\_\+\+UART.\+Teensy.\+\_\+teensy\hspace{0.3cm}{\ttfamily [protected]}}
+
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_a92e0c0667ec32b777de2a4ba5e516655}\label{class_teensy___u_a_r_t_1_1_teensy_a92e0c0667ec32b777de2a4ba5e516655} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!messagetype@{messagetype}}
+\index{messagetype@{messagetype}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{messagetype}{messagetype}}
+{\footnotesize\ttfamily dict Teensy\+\_\+\+UART.\+Teensy.\+messagetype\hspace{0.3cm}{\ttfamily [static]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ b\textcolor{stringliteral}{'\(\backslash\)x80'}:\ rcv\_odometrie}
+\DoxyCodeLine{\ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_adadb029c69c89a06fe48dc9d551b472e}\label{class_teensy___u_a_r_t_1_1_teensy_adadb029c69c89a06fe48dc9d551b472e} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!MSG\_END\_BYTES@{MSG\_END\_BYTES}}
+\index{MSG\_END\_BYTES@{MSG\_END\_BYTES}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{MSG\_END\_BYTES}{MSG\_END\_BYTES}}
+{\footnotesize\ttfamily str Teensy\+\_\+\+UART.\+Teensy.\+MSG\+\_\+\+END\+\_\+\+BYTES = b\textquotesingle{}\textbackslash{}x\+BA\textbackslash{}x\+DD\textbackslash{}x1\+C\textbackslash{}x\+C5\textquotesingle{}\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Internals \#. 
+
+\Hypertarget{class_teensy___u_a_r_t_1_1_teensy_a908ea83ca6edf73429834ed7442eae04}\label{class_teensy___u_a_r_t_1_1_teensy_a908ea83ca6edf73429834ed7442eae04} 
+\index{Teensy\_UART.Teensy@{Teensy\_UART.Teensy}!odometrie@{odometrie}}
+\index{odometrie@{odometrie}!Teensy\_UART.Teensy@{Teensy\_UART.Teensy}}
+\doxysubsubsection{\texorpdfstring{odometrie}{odometrie}}
+{\footnotesize\ttfamily Teensy\+\_\+\+UART.\+Teensy.\+odometrie}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Howne/\+Documents/\+ESILV/\+DVB\+\_\+\+CDR/rasp/\mbox{\hyperlink{_teensy___u_a_r_t_8py}{Teensy\+\_\+\+UART.\+py}}\end{DoxyCompactItemize}

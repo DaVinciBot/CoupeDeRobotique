@@ -1,0 +1,92 @@
+\doxysection{C\+:/\+Users/\+Howne/\+Documents/\+ESILV/\+DVB\+\_\+\+CDR/teensy/test/old\+\_\+step\+\_\+actions.h File Reference}
+\hypertarget{old__step__actions_8h}{}\label{old__step__actions_8h}\index{C:/Users/Howne/Documents/ESILV/DVB\_CDR/teensy/test/old\_step\_actions.h@{C:/Users/Howne/Documents/ESILV/DVB\_CDR/teensy/test/old\_step\_actions.h}}
+{\ttfamily \#include $<$Arduino.\+h$>$}\newline
+{\ttfamily \#include $<$motors\+\_\+driver.\+h$>$}\newline
+Include dependency graph for old\+\_\+step\+\_\+actions.\+h\+:
+% FIG 0
+This graph shows which files directly or indirectly include this file\+:
+% FIG 1
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_movement___params}{Movement\+\_\+\+Params}}
+\item 
+struct \mbox{\hyperlink{struct_rolling___basis___params}{Rolling\+\_\+\+Basis\+\_\+\+Params}}
+\item 
+class \mbox{\hyperlink{class_step___movement}{Step\+\_\+\+Movement}}
+\item 
+class \mbox{\hyperlink{class_step___forward___backward}{Step\+\_\+\+Forward\+\_\+\+Backward}}
+\item 
+class \mbox{\hyperlink{class_step___rotation}{Step\+\_\+\+Rotation}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8}{action\+\_\+state}} \{ \mbox{\hyperlink{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8a5318f25cd0a061e996afbb7ad6ab2121}{not\+\_\+started}}
+, \mbox{\hyperlink{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8ac66a9c3a70b4ca472b83474aba3a87f0}{in\+\_\+progress}}
+, \mbox{\hyperlink{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8aaf38e35232eb6728664f98c8110d11a4}{finished}}
+ \}
+\item 
+enum \mbox{\hyperlink{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}} \{ \mbox{\hyperlink{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098a726a0af5164861adac8c015a742dcf21}{forward}} = 1
+, \mbox{\hyperlink{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098ab3d7481243d86f5bf31d617c7ba70220}{backward}} = -\/1
+ \}
+\item 
+enum \mbox{\hyperlink{old__step__actions_8h_aa65e3b592c27609a542733310b34f5d9}{sens}} \{ \mbox{\hyperlink{old__step__actions_8h_aa65e3b592c27609a542733310b34f5d9ac3ef8d29df737c0d8cdb803b1e5c839a}{clockwise}}
+, \mbox{\hyperlink{old__step__actions_8h_aa65e3b592c27609a542733310b34f5d9a7edb41bb0a4cf6a97c97434f3126c268}{counterclockwise}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8}\label{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8} 
+\index{old\_step\_actions.h@{old\_step\_actions.h}!action\_state@{action\_state}}
+\index{action\_state@{action\_state}!old\_step\_actions.h@{old\_step\_actions.h}}
+\doxysubsubsection{\texorpdfstring{action\_state}{action\_state}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8}{action\+\_\+state}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{not\_started@{not\_started}!old\_step\_actions.h@{old\_step\_actions.h}}\index{old\_step\_actions.h@{old\_step\_actions.h}!not\_started@{not\_started}}}\Hypertarget{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8a5318f25cd0a061e996afbb7ad6ab2121}\label{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8a5318f25cd0a061e996afbb7ad6ab2121} 
+not\+\_\+started&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{in\_progress@{in\_progress}!old\_step\_actions.h@{old\_step\_actions.h}}\index{old\_step\_actions.h@{old\_step\_actions.h}!in\_progress@{in\_progress}}}\Hypertarget{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8ac66a9c3a70b4ca472b83474aba3a87f0}\label{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8ac66a9c3a70b4ca472b83474aba3a87f0} 
+in\+\_\+progress&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{finished@{finished}!old\_step\_actions.h@{old\_step\_actions.h}}\index{old\_step\_actions.h@{old\_step\_actions.h}!finished@{finished}}}\Hypertarget{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8aaf38e35232eb6728664f98c8110d11a4}\label{old__step__actions_8h_a058a8d6761ba974a376e77dc7166f9c8aaf38e35232eb6728664f98c8110d11a4} 
+finished&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098}\label{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098} 
+\index{old\_step\_actions.h@{old\_step\_actions.h}!direction@{direction}}
+\index{direction@{direction}!old\_step\_actions.h@{old\_step\_actions.h}}
+\doxysubsubsection{\texorpdfstring{direction}{direction}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098}{direction}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{forward@{forward}!old\_step\_actions.h@{old\_step\_actions.h}}\index{old\_step\_actions.h@{old\_step\_actions.h}!forward@{forward}}}\Hypertarget{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098a726a0af5164861adac8c015a742dcf21}\label{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098a726a0af5164861adac8c015a742dcf21} 
+forward&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{backward@{backward}!old\_step\_actions.h@{old\_step\_actions.h}}\index{old\_step\_actions.h@{old\_step\_actions.h}!backward@{backward}}}\Hypertarget{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098ab3d7481243d86f5bf31d617c7ba70220}\label{old__step__actions_8h_a99f26e6ee9fcd62f75203b5402df8098ab3d7481243d86f5bf31d617c7ba70220} 
+backward&\\
+\hline
+
+\end{DoxyEnumFields}
+\Hypertarget{old__step__actions_8h_aa65e3b592c27609a542733310b34f5d9}\label{old__step__actions_8h_aa65e3b592c27609a542733310b34f5d9} 
+\index{old\_step\_actions.h@{old\_step\_actions.h}!sens@{sens}}
+\index{sens@{sens}!old\_step\_actions.h@{old\_step\_actions.h}}
+\doxysubsubsection{\texorpdfstring{sens}{sens}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{old__step__actions_8h_aa65e3b592c27609a542733310b34f5d9}{sens}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{clockwise@{clockwise}!old\_step\_actions.h@{old\_step\_actions.h}}\index{old\_step\_actions.h@{old\_step\_actions.h}!clockwise@{clockwise}}}\Hypertarget{old__step__actions_8h_aa65e3b592c27609a542733310b34f5d9ac3ef8d29df737c0d8cdb803b1e5c839a}\label{old__step__actions_8h_aa65e3b592c27609a542733310b34f5d9ac3ef8d29df737c0d8cdb803b1e5c839a} 
+clockwise&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{counterclockwise@{counterclockwise}!old\_step\_actions.h@{old\_step\_actions.h}}\index{old\_step\_actions.h@{old\_step\_actions.h}!counterclockwise@{counterclockwise}}}\Hypertarget{old__step__actions_8h_aa65e3b592c27609a542733310b34f5d9a7edb41bb0a4cf6a97c97434f3126c268}\label{old__step__actions_8h_aa65e3b592c27609a542733310b34f5d9a7edb41bb0a4cf6a97c97434f3126c268} 
+counterclockwise&\\
+\hline
+
+\end{DoxyEnumFields}

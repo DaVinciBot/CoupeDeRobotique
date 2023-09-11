@@ -1,0 +1,75 @@
+\doxysection{Action Class Reference}
+\hypertarget{class_action}{}\label{class_action}\index{Action@{Action}}
+
+
+{\ttfamily \#include $<$action.\+h$>$}
+
+
+
+Inheritance diagram for Action\+:
+% FIG 0
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_action_a46167d95a3687f68e0ecdb768ceb0e66}{is\+\_\+finished}} ()
+\item 
+\mbox{\hyperlink{class_action_ae56128e86ad3c35aa154954fc3e39dc0}{Action}} ()=default
+\item 
+virtual void \mbox{\hyperlink{class_action_a906a016586ec6c213f27a4e425281df9}{handle}} (\mbox{\hyperlink{class_point}{Point}} current\+\_\+point, \mbox{\hyperlink{struct_ticks}{Ticks}} current\+\_\+ticks, \mbox{\hyperlink{struct_rolling___basis___ptrs}{Rolling\+\_\+\+Basis\+\_\+\+Ptrs}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{main_8cpp_a44554c587faf39790ad3451bd317ddc1}{rolling\+\_\+basis\+\_\+ptrs}})=0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_action_ac0cd41a8165c7b0a50aa8646796d64f9}{is\+\_\+computed}} = false
+\item 
+\mbox{\hyperlink{structures_8h_a1d6d82e28b68a19e087ed6a0b9d77493}{Action\+\_\+state}} \mbox{\hyperlink{class_action_ad57a87ee3df2a95d2668af59a8a373ca}{state}} = \mbox{\hyperlink{structures_8h_a1d6d82e28b68a19e087ed6a0b9d77493a5318f25cd0a061e996afbb7ad6ab2121}{not\+\_\+started}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_action_ae56128e86ad3c35aa154954fc3e39dc0}\label{class_action_ae56128e86ad3c35aa154954fc3e39dc0} 
+\index{Action@{Action}!Action@{Action}}
+\index{Action@{Action}!Action@{Action}}
+\doxysubsubsection{\texorpdfstring{Action()}{Action()}}
+{\footnotesize\ttfamily Action\+::\+Action (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [default]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_action_a906a016586ec6c213f27a4e425281df9}\label{class_action_a906a016586ec6c213f27a4e425281df9} 
+\index{Action@{Action}!handle@{handle}}
+\index{handle@{handle}!Action@{Action}}
+\doxysubsubsection{\texorpdfstring{handle()}{handle()}}
+{\footnotesize\ttfamily virtual void Action\+::handle (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_point}{Point}}}]{current\+\_\+point,  }\item[{\mbox{\hyperlink{struct_ticks}{Ticks}}}]{current\+\_\+ticks,  }\item[{\mbox{\hyperlink{struct_rolling___basis___ptrs}{Rolling\+\_\+\+Basis\+\_\+\+Ptrs}} \texorpdfstring{$\ast$}{*}}]{rolling\+\_\+basis\+\_\+ptrs }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Implemented in \mbox{\hyperlink{class_basic___action_ab2418b75c7835cc8a8c0706bf6d08428}{Basic\+\_\+\+Action}}, \mbox{\hyperlink{class_complex___action_aee02ccea441e74a9eae3247a5f5f07db}{Complex\+\_\+\+Action}}, and \mbox{\hyperlink{class_step___action_a20e067d5f1101f802c6e8e174858a3db}{Step\+\_\+\+Action}}.
+
+\Hypertarget{class_action_a46167d95a3687f68e0ecdb768ceb0e66}\label{class_action_a46167d95a3687f68e0ecdb768ceb0e66} 
+\index{Action@{Action}!is\_finished@{is\_finished}}
+\index{is\_finished@{is\_finished}!Action@{Action}}
+\doxysubsubsection{\texorpdfstring{is\_finished()}{is\_finished()}}
+{\footnotesize\ttfamily bool Action\+::is\+\_\+finished (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_action_ac0cd41a8165c7b0a50aa8646796d64f9}\label{class_action_ac0cd41a8165c7b0a50aa8646796d64f9} 
+\index{Action@{Action}!is\_computed@{is\_computed}}
+\index{is\_computed@{is\_computed}!Action@{Action}}
+\doxysubsubsection{\texorpdfstring{is\_computed}{is\_computed}}
+{\footnotesize\ttfamily bool Action\+::is\+\_\+computed = false}
+
+\Hypertarget{class_action_ad57a87ee3df2a95d2668af59a8a373ca}\label{class_action_ad57a87ee3df2a95d2668af59a8a373ca} 
+\index{Action@{Action}!state@{state}}
+\index{state@{state}!Action@{Action}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structures_8h_a1d6d82e28b68a19e087ed6a0b9d77493}{Action\+\_\+state}} Action\+::state = \mbox{\hyperlink{structures_8h_a1d6d82e28b68a19e087ed6a0b9d77493a5318f25cd0a061e996afbb7ad6ab2121}{not\+\_\+started}}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+C\+:/\+Users/\+Howne/\+Documents/\+ESILV/\+DVB\+\_\+\+CDR/teensy/lib/actions/include/\mbox{\hyperlink{action_8h}{action.\+h}}\item 
+C\+:/\+Users/\+Howne/\+Documents/\+ESILV/\+DVB\+\_\+\+CDR/teensy/lib/actions/src/\mbox{\hyperlink{action_8cpp}{action.\+cpp}}\end{DoxyCompactItemize}
