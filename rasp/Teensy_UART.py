@@ -4,6 +4,7 @@ import struct
 from typing import Any
 import threading
 import time
+import logging
 
 
 class Command:
