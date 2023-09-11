@@ -106,13 +106,3 @@ class Teensy:
     def Set_Speed(self, speed: float) -> None:
         msg = Command.GoToPoint + struct.pack(speed, "f")
         self.send_bytes(msg)
-
-    def __receiver__(self) -> None:
-        while True:
-            msg = self.read_bytes()
-            # print(msg.hex(sep="|"))
-            # print(msg[-5])
-            msg = msg[:-5]
-            self.odometrie = [struct.unpack("f", msg[1:5]),
-                              struct.unpack("f", msg[5:9]),
-                              struct.unpack("f", msg[9:13])]            # time.sleep(0.1)
