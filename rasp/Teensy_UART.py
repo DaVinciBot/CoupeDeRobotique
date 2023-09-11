@@ -34,7 +34,7 @@ class Teensy:
     def read_bytes(self, end_bytes: bytes = b'\xBA\xDD\x1C\xC5') -> bytes:
         return self._teensy.read_until(end_bytes)
 
-    def Go_To(self, x: float, y: float, direction: bool = False, speed: bytes = b'\xFF', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
+    def Go_To(self, x: float, y: float, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """Got to a point
 
         Args:
