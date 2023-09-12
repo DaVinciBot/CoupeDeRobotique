@@ -14,6 +14,7 @@ class Command:
 
 class Teensy:
     def __init__(self, vid: int = 0x16C0, pid: int = 0x0483, baudrate: int = 115200):
+        self._action_fin = False
         self._teensy = None
         for port in serial.tools.list_ports.comports():
             if port.vid == vid and port.pid == pid:
@@ -65,12 +66,15 @@ class Teensy:
         self.odometrie = [struct.unpack("<f", msg[0:4]),
                           struct.unpack("<f", msg[4:8]),
                           struct.unpack("<f", msg[8:12])]
+    def rcv_action_finish(self,msg: bytes):
+        self._action_fin = True
 
     """
     This is used to match a handling function to a message type.
     """
     messagetype = {
-        128: rcv_odometrie # \x80
+        128: rcv_odometrie, # \x80
+        69: rcv_action_finish # \x45
     }
 
     #########################
@@ -107,3 +111,10 @@ class Teensy:
     def Set_Speed(self, speed: float) -> None:
         msg = Command.GoToPoint + struct.pack(speed, "f")
         self.send_bytes(msg)
+        
+    @property
+    def action_finished(self):
+        if(self._action_fin):
+            self._action_fin = False
+            return True
+        return False
