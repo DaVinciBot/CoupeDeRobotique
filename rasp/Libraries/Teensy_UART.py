@@ -1,6 +1,6 @@
 import serial
 import serial.tools.list_ports
-from typing import Any
+from typing import Any, Callable
 import threading
 import time
 import logging
@@ -30,6 +30,9 @@ class Teensy():
     def read_bytes(self, end_bytes: bytes = b'\xBA\xDD\x1C\xC5') -> bytes:
         return self._teensy.read_until(end_bytes)
 
+    def add_callback(self, func: Callable[[bytes], None], id: int):
+        self.messagetype[id] = func
+
     def __receiver__(self) -> None:
         """This is started as a thread, handles the data acording to the decided format :
 
@@ -47,11 +50,7 @@ class Teensy():
                     "Received Teensy message does not match declared length")
                 continue
             try:
-                self.messagetype[msg[0]](self=self, msg=msg[1:-5])
+                self.messagetype[msg[0]](msg=msg[1:-5])
             except Exception as e:
                 logging.error("Received message handling crashed :\n" + e.args)
                 time.sleep(0.5)
-                
-    """
-    This is used to match a handling function to a message type.
-    """

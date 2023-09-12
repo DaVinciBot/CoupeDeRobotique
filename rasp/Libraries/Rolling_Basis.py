@@ -12,6 +12,7 @@ class Rolling_basis(Teensy):
         self.action_finished = False
         """
         This is used to match a handling function to a message type.
+        add_callback can also be used.
         """
         self.messagetype = {
             128: self.rcv_odometrie,  # \x80
@@ -60,7 +61,6 @@ class Rolling_basis(Teensy):
         # https://docs.python.org/3/library/struct.html#format-characters
 
         self.send_bytes(msg)
-        
         self.action_finished = True
 
     def Set_Speed(self, speed: float) -> None:
