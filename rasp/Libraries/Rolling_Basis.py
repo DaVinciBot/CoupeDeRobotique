@@ -7,8 +7,8 @@ class Rolling_basis(Teensy):
     # Rolling basis init #
     ######################
 
-    def __init__(self, vid: int = 5824, pid: int = 1155, baudrate: int = 115200):
-        super().__init__(vid, pid, baudrate)
+    def __init__(self, vid: int = 5824, pid: int = 1155, baudrate: int = 115200, crc: bool = True):
+        super().__init__(vid, pid, baudrate, crc)
         self.action_finished = False
         """
         This is used to match a handling function to a message type.
