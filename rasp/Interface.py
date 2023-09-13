@@ -57,6 +57,6 @@ class dummy:
 
 if __name__ == "__main__":
     global teensy
-    # teensy = Rolling_basis()
-    teensy = dummy()
+    teensy = Rolling_basis()
+    # teensy = dummy()
     pywebio.start_server(app, port=42069)
