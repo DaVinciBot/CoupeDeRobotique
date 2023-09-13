@@ -79,7 +79,7 @@ class Teensy():
                     "Received Teensy message does not match declared length")
                 continue
             try:
-                self.messagetype[msg[0]](msg)
+                self.messagetype[msg[0]](msg[1:-1])
             except Exception as e:
                 logging.error("Received message handling crashed :\n" + e.args)
                 time.sleep(0.5)
@@ -120,6 +120,7 @@ class Rolling_basis(Teensy):
     #############################
 
     def rcv_odometrie(self, msg: bytes):
+        # print(msg.hex(sep =  " "))
         self.odometrie = (struct.unpack("<f", msg[0:4])[0],
                           struct.unpack("<f", msg[4:8])[0],
                           struct.unpack("<f", msg[8:12])[0])
@@ -178,12 +179,13 @@ class Rolling_basis(Teensy):
                 continue
             if time.time() - timer > timeout:
                 offset[0] = self.odometrie[0]
-                offset[3] = self.odometrie[3]
+                offset[2] = self.odometrie[2]
                 break
 
         self.Go_To([0, 0, 0])
-        while not self.action_finished:
-            time.sleep(0.1)
+        # while not self.action_finished:
+        #     time.sleep(0.1)
+        time.sleep(5)
 
         pos = self.odometrie[1]
         self.Go_To([0, -100, 0], False, b'\x0A')
@@ -200,5 +202,7 @@ class Rolling_basis(Teensy):
 
         self.position_offset = offset
         self.Go_To([30, 30, 0])
-        while not self.action_finished:
-            time.sleep(0.1)
+        # while not self.action_finished:
+        #     time.sleep(0.1)
+        time.sleep(5)
+        
