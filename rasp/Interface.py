@@ -17,7 +17,7 @@ def app():
         scope="buttons"
     )
     pywebio.output.put_scope("data")
-    pywebio.output.put_table(teensy.odometrie, scope="data")
+    pywebio.output.put_table([teensy.odometrie], scope="data")
     while (True):
         time.sleep(0.5)
         if old != teensy.odometrie:
@@ -36,12 +36,11 @@ def pin():
                                                    "y", name="y", type=pywebio.input.FLOAT),
                                            ],
                                            )
-        teensy.Go_To(coords["x"], coords["y"])
+        teensy.Go_To([float(coords["x"]), float(coords["y"]),0])
 
 
 def buttons(button):
-    match button:
-        case "Home":
+    if button == "Home":
             teensy.Home_Position()
 
 
@@ -57,6 +56,6 @@ class dummy:
 
 if __name__ == "__main__":
     global teensy
-    teensy = Rolling_basis()
+    teensy = Rolling_basis(crc = False)
     # teensy = dummy()
     pywebio.start_server(app, port=42069)
