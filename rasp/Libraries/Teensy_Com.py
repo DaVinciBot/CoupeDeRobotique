@@ -14,6 +14,10 @@ import crc8
 import struct
 
 
+class TeensyException(Exception):
+    pass
+
+
 class Teensy():
     def __init__(self, vid: int = 0x16C0, pid: int = 0x0483, baudrate: int = 115200, crc: bool = True):
         self._teensy = None
@@ -25,7 +29,7 @@ class Teensy():
                 self._teensy = serial.Serial(port.device, baudrate=baudrate)
                 break
         if self._teensy == None:
-            raise Exception("No Device found!")
+            raise TeensyException("No Device !")
         self.messagetype = {}
         self._reciever = threading.Thread(
             target=self.__receiver__, name="TeensyReceiver")
