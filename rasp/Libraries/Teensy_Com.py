@@ -63,7 +63,7 @@ class Teensy():
         """
         while True:
             msg = self.read_bytes()
-
+            
             if (self.crc):
                 crc = msg[-5:-5]
                 msg = msg[:-5]
@@ -76,13 +76,14 @@ class Teensy():
             else:
                 msg = msg[:-4]
 
-            lenmsg = msg[:-1]
-            if lenmsg + 5 > len(msg):
+            lenmsg = msg[-1]
+        
+            if lenmsg > len(msg):
                 logging.warn(
                     "Received Teensy message does not match declared length")
                 continue
             try:
-                self.messagetype[msg[0]](msg=msg[1:-6])
+                self.messagetype[msg[0]](msg)
             except Exception as e:
                 logging.error("Received message handling crashed :\n" + e.args)
                 time.sleep(0.5)
@@ -112,8 +113,11 @@ class Rolling_basis(Teensy):
     # Position handling #
     #####################
 
-    def true_pos(self, position: tuple[float, float, float]) -> tuple[float, float, float]:
-        return (a+b for a, b in zip(position, self.position_offset))
+    def true_pos(self, position: list[float, float, float]) -> tuple[float, float, float]:
+        ret = []
+        for i in range(3):
+            ret.append(position[i] + self.position_offset[i])
+        return ret
 
     #############################
     # Received message handling #
@@ -135,7 +139,7 @@ class Rolling_basis(Teensy):
         GoToPoint = b"\x00"
         SetSpeed = b"\x01"
 
-    def Go_To(self, position: tuple[float, float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
+    def Go_To(self, position: list[float, float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """Got to a point
 
         Args:
@@ -167,9 +171,9 @@ class Rolling_basis(Teensy):
 
     def Home_Position(self, timeout: float = 1, epsilon: float = 1):
         pos = self.odometrie[0]
-        self.Go_To((-100, 0, 0), True, b'\x0A')
+        self.Go_To([-100, 0, 0], True, b'\x0A')
         timer = time.time()
-        offset = (0.0, 0.0, 0.0)
+        offset = [0.0, 0.0, 0.0]
 
         while True:
             if abs(pos - self.odometrie[0]) > epsilon:
@@ -181,12 +185,12 @@ class Rolling_basis(Teensy):
                 offset[3] = self.odometrie[3]
                 break
 
-        self.Go_To((0, 0, 0))
+        self.Go_To([0, 0, 0])
         while not self.action_finished:
             time.sleep(0.1)
 
         pos = self.odometrie[1]
-        self.Go_To((0, -100, 0), False, b'\x0A')
+        self.Go_To([0, -100, 0], False, b'\x0A')
         timer = time.time()
 
         while True:
@@ -199,6 +203,6 @@ class Rolling_basis(Teensy):
                 break
 
         self.position_offset = offset
-        self.Go_To((30, 30, 0))
+        self.Go_To([30, 30, 0])
         while not self.action_finished:
             time.sleep(0.1)
