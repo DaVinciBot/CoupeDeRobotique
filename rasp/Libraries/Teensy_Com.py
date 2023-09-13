@@ -91,7 +91,9 @@ class Rolling_basis(Teensy):
 
     def __init__(self, vid: int = 5824, pid: int = 1155, baudrate: int = 115200, crc: bool = True):
         super().__init__(vid, pid, baudrate, crc)
-        self.odometrie = [[0.0, 0.0, 0.0]]
+        # All position are in the form tuple(X, Y, THETA)
+        self.odometrie = (0.0, 0.0, 0.0)
+        self.position_offset = (0.0, 0.0, 0.0)
         self.action_finished = False
         """
         This is used to match a handling function to a message type.
@@ -102,14 +104,21 @@ class Rolling_basis(Teensy):
             69: self.rcv_action_finish  # \x45
         }
 
+    #####################
+    # Position handling #
+    #####################
+
+    def true_pos(self, position: tuple[float, float, float]) -> tuple[float, float, float]:
+        return (a+b for a, b in zip(position, self.position_offset))
+
     #############################
     # Received message handling #
     #############################
 
     def rcv_odometrie(self, msg: bytes):
-        self.odometrie = [struct.unpack("<f", msg[0:4]),
-                          struct.unpack("<f", msg[4:8]),
-                          struct.unpack("<f", msg[8:12])]
+        self.odometrie = (struct.unpack("<f", msg[0:4])[0],
+                          struct.unpack("<f", msg[4:8])[0],
+                          struct.unpack("<f", msg[8:12])[0])
 
     def rcv_action_finish(self, msg: bytes):
         self.action_finished = True
@@ -122,7 +131,7 @@ class Rolling_basis(Teensy):
         GoToPoint = b"\x00"
         SetSpeed = b"\x01"
 
-    def Go_To(self, x: float, y: float, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
+    def Go_To(self, position: tuple[float, float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """Got to a point
 
         Args:
@@ -133,9 +142,11 @@ class Rolling_basis(Teensy):
             action_error_auth (int, optional): _description_. Defaults to 20.
             traj_precision (int, optional): _description_. Defaults to 50.
         """
+
+        pos = self.true_pos(position)
         msg = self.Command.GoToPoint + \
-            struct.pack("<f", x) + \
-            struct.pack("<f", y) + \
+            struct.pack("<f", pos[0]) + \
+            struct.pack("<f", pos[1]) + \
             struct.pack("<?", direction) + \
             speed + \
             struct.pack("<H", next_position_delay) + \
@@ -150,5 +161,40 @@ class Rolling_basis(Teensy):
         msg = self.Command.GoToPoint + struct.pack(speed, "f")
         self.send_bytes(msg)
 
-    def Home_Position(self):
-        print("homing")
+    def Home_Position(self, timeout: float = 1, epsilon: float = 1):
+        pos = self.odometrie[0]
+        self.Go_To((-100, 0, 0), True, b'\x0A')
+        timer = time.time()
+        offset = (0.0, 0.0, 0.0)
+
+        while True:
+            if abs(pos - self.odometrie[0]) > epsilon:
+                pos = self.odometrie[0]
+                timer = time.time()
+                continue
+            if time.time() - timer > timeout:
+                offset[0] = self.odometrie[0]
+                offset[3] = self.odometrie[3]
+                break
+
+        self.Go_To((0, 0, 0))
+        while not self.action_finished:
+            time.sleep(0.1)
+
+        pos = self.odometrie[1]
+        self.Go_To((0, -100, 0), False, b'\x0A')
+        timer = time.time()
+
+        while True:
+            if abs(pos - self.odometrie[1]) > epsilon:
+                pos = self.odometrie[1]
+                timer = time.time()
+                continue
+            if time.time() - timer > timeout:
+                offset[1] = self.odometrie[1]
+                break
+
+        self.position_offset = offset
+        self.Go_To((30, 30, 0))
+        while not self.action_finished:
+            time.sleep(0.1)

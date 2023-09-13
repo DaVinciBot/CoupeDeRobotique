@@ -22,7 +22,7 @@ def app():
         time.sleep(0.5)
         if old != teensy.odometrie:
             pywebio.output.clear_scope("data")
-            pywebio.output.put_table(teensy.odometrie, scope="data")
+            pywebio.output.put_table([teensy.odometrie], scope="data")
             old = teensy.odometrie
 
 
