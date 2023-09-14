@@ -213,13 +213,13 @@ void loop()
   // Com
   handle_callback(com);
 
-  // Send odometrie
-  msg_Update_Position pos_msg;
-  pos_msg.x = rolling_basis_ptr->X;
-  pos_msg.y = rolling_basis_ptr->Y;
-  pos_msg.theta = rolling_basis_ptr->THETA;
  
   if (counter++ == 0)
+    // Send odometrie
+    msg_Update_Position pos_msg;
+    pos_msg.x = rolling_basis_ptr->X;
+    pos_msg.y = rolling_basis_ptr->Y;
+    pos_msg.theta = rolling_basis_ptr->THETA;
     com->send_msg((byte *)&pos_msg, sizeof(msg_Update_Position));
 }
 
