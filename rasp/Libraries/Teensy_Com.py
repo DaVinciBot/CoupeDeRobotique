@@ -80,9 +80,11 @@ class Teensy():
 
             if lenmsg > len(msg):
                 logging.warn(
-                    "Received Teensy message does not match declared length")
+                    "Received Teensy message that does not match declared length " + msg.hex(sep = " "))
                 continue
             try:
+                if msg[0] != 128 :
+                    print(msg)
                 self.messagetype[msg[0]](msg[1:-1])
             except Exception as e:
                 logging.error("Received message handling crashed :\n" + e.args)
@@ -130,6 +132,7 @@ class Rolling_basis(Teensy):
                           struct.unpack("<f", msg[8:12])[0])
 
     def rcv_action_finish(self, msg: bytes):
+        print(msg.hex())
         self.action_finished = True
 
     #########################
