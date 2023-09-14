@@ -133,12 +133,18 @@ void keep_current_position(byte *msg, byte size)
   free(current_action);
   Ticks current_ticks_position = rolling_basis_ptr->get_current_ticks();
   rolling_basis_ptr->keep_position(current_ticks_position.right, current_ticks_position.left);
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = KEEP_CURRENT_POSITION;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
 void disable_pid(byte *msg, byte size)
 {
   free(current_action);
   rolling_basis_ptr->shutdown_motor();
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = DISABLE_PID;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
 void enable_pid(byte *msg, byte size)
@@ -146,6 +152,9 @@ void enable_pid(byte *msg, byte size)
   free(current_action);
   Ticks current_ticks_position = rolling_basis_ptr->get_current_ticks();
   rolling_basis_ptr->keep_position(current_ticks_position.right, current_ticks_position.left);
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = ENABLE_PID;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
 void (*functions[256])(byte *msg, byte size);
@@ -221,7 +230,7 @@ void setup()
   Timer1.attachInterrupt(handle);
 }
 
-byte counter = 0;
+int counter = 0;
 
 void loop()
 {
@@ -236,12 +245,13 @@ void loop()
 
   // Send odometrie
   msg_Update_Position pos_msg;
-  if (counter++ == 0)
+  if (counter++ > 1024)
   {
     pos_msg.x = rolling_basis_ptr->X;
     pos_msg.y = rolling_basis_ptr->Y;
     pos_msg.theta = rolling_basis_ptr->THETA;
     com->send_msg((byte *)&pos_msg, sizeof(msg_Update_Position));
+    counter = 0;
   }
 }
 
