@@ -202,9 +202,9 @@ class Rolling_basis(Teensy):
                 break
 
         self.Go_To([0, 0, 0])
-        # while not self.action_finished:
-        #     time.sleep(0.1)
-        time.sleep(5)
+        while not self.action_finished:
+            time.sleep(0.1)
+        # time.sleep(5)
 
         pos = self.odometrie[1]
         self.Go_To([0, -100, 0], False, b'\x0A')
@@ -221,6 +221,6 @@ class Rolling_basis(Teensy):
 
         self.position_offset = offset
         self.Go_To([30, 30, 0])
-        # while not self.action_finished:
-        #     time.sleep(0.1)
-        time.sleep(5)
+        while not self.action_finished:
+            time.sleep(0.1)
+        # time.sleep(5)
