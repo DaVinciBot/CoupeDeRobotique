@@ -63,7 +63,7 @@ class Teensy():
         """
         while True:
             msg = self.read_bytes()
-            
+
             if (self.crc):
                 crc = msg[-5:-5]
                 msg = msg[:-5]
@@ -77,7 +77,7 @@ class Teensy():
                 msg = msg[:-4]
 
             lenmsg = msg[-1]
-        
+
             if lenmsg > len(msg):
                 logging.warn(
                     "Received Teensy message does not match declared length")
@@ -106,7 +106,7 @@ class Rolling_basis(Teensy):
         """
         self.messagetype = {
             128: self.rcv_odometrie,  # \x80
-            69: self.rcv_action_finish  # \x45
+            129: self.rcv_action_finish  # \x45
         }
 
     #####################
@@ -139,6 +139,9 @@ class Rolling_basis(Teensy):
     class Command:
         GoToPoint = b"\x00"
         SetSpeed = b"\x01"
+        KeepCurrentPosition = b'\02'
+        DisablePid = b'\03'
+        EnablePid = b'\04'
 
     def Go_To(self, position: list[float, float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """Got to a point
@@ -168,6 +171,18 @@ class Rolling_basis(Teensy):
 
     def Set_Speed(self, speed: float) -> None:
         msg = self.Command.GoToPoint + struct.pack(speed, "f")
+        self.send_bytes(msg)
+
+    def Keep_Current_Position(self):
+        msg = self.Command.KeepCurrentPosition
+        self.send_bytes(msg)
+
+    def Disable_Pid(self):
+        msg = self.Command.DisablePid
+        self.send_bytes(msg)
+
+    def Enable_Pid(self):
+        msg = self.Command.EnablePid
         self.send_bytes(msg)
 
     def Home_Position(self, timeout: float = 1, epsilon: float = 1):
@@ -209,4 +224,3 @@ class Rolling_basis(Teensy):
         # while not self.action_finished:
         #     time.sleep(0.1)
         time.sleep(5)
-        

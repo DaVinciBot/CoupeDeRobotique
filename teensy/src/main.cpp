@@ -58,7 +58,7 @@ Rolling_Basis_Params rolling_basis_params{
 Precision_Params classic_params{
     NEXT_POSITION_DELAY,
     ACTION_ERROR_AUTH,
-    TRAJECTORY_PRECISION
+    TRAJECTORY_PRECISION,
 };
 
 Rolling_Basis_Ptrs rolling_basis_ptrs;
@@ -84,7 +84,7 @@ Complex_Action *current_action = nullptr;
 void swap_action(Complex_Action *new_action)
 {
   // implémentation des destructeurs manquante
-  if(current_action != nullptr)
+  if (current_action != nullptr)
     free(current_action);
   current_action = new_action;
 }
@@ -95,45 +95,62 @@ void go_to(byte *msg, byte size)
   Point target_point(go_to_msg->x, go_to_msg->y);
 
   Precision_Params params{
-    go_to_msg->next_position_delay,
-    go_to_msg->action_error_auth,
-    go_to_msg->traj_precision
+      go_to_msg->next_position_delay,
+      go_to_msg->action_error_auth,
+      go_to_msg->traj_precision,
   };
 
   Go_To *new_action = new Go_To(target_point, go_to_msg->is_forward ? backward : forward, go_to_msg->speed, params);
-  if(current_action == new_action)
+  if (current_action == new_action)
     free(new_action);
-  else swap_action(new_action);
+  else
+    swap_action(new_action);
 }
-/*
+
 void curve_go_to(byte *msg, byte size)
 {
-  float target_x = (float)(msg[0]);
-  float target_y = (float)(msg[sizeof(float)]);
+  // float target_x = (float)(msg[0]);
+  // float target_y = (float)(msg[sizeof(float)]);
 
-  float center_x = (float)(msg[2 * sizeof(float)]);
-  float center_y = (float)(msg[3 * sizeof(float)]);
+  // float center_x = (float)(msg[2 * sizeof(float)]);
+  // float center_y = (float)(msg[3 * sizeof(float)]);
 
-  unsigned short interval = (unsigned short)(msg[4 * sizeof(float)]);
+  // unsigned short interval = (unsigned short)(msg[4 * sizeof(float)]);
 
-  Point target_point = Point(target_x, target_y);
-  Point center_point = Point(center_x, center_y);
+  // Point target_point = Point(target_x, target_y);
+  // Point center_point = Point(center_x, center_y);
 
-  bool is_identical = current_action->get_id() == CURVE_GO_TO;
-  if (is_identical)
-  {
-    Go_To *casted_action = ;
-    is_identical = ((Go_To *)current_action)->target_point == target_point;
-  }
-}*/
+  // bool is_identical = current_action->get_id() == CURVE_GO_TO;
+  // if (is_identical)
+  // {
+  //   Go_To *casted_action = ;
+  //   is_identical = ((Go_To *)current_action)->target_point == target_point;
+  // }
+}
 
-void (*functions[256])(byte *msg, byte size) = {
-    [GO_TO] = &go_to
-};
+void keep_current_position(byte *msg, byte size)
+{
+  free(current_action);
+  Ticks current_ticks_position = rolling_basis_ptr->get_current_ticks();
+  rolling_basis_ptr->keep_position(current_ticks_position.right, current_ticks_position.left);
+}
+
+void disable_pid(byte *msg, byte size)
+{
+  free(current_action);
+  rolling_basis_ptr->shutdown_motor();
+}
+
+void enable_pid(byte *msg, byte size)
+{
+  free(current_action);
+  Ticks current_ticks_position = rolling_basis_ptr->get_current_ticks();
+  rolling_basis_ptr->keep_position(current_ticks_position.right, current_ticks_position.left);
+}
+
+void (*functions[256])(byte *msg, byte size);
 
 extern void handle_callback(Com *com);
-
-
 
 /******* Attach Interrupt *******/
 inline void left_motor_read_encoder()
@@ -158,18 +175,22 @@ byte pin_on_off = 19;
 // Switch side
 byte pin_green_side = 18;
 
-// Globales variables 
+// Globales variables
 Ticks last_ticks_position;
 
 long start_time = -1;
 
 void handle();
 
-
-
 void setup()
 {
   com = new Com(&Serial, 115200);
+
+  functions[GO_TO] = &go_to,
+  functions[CURVE_GO_TO] = &curve_go_to,
+  functions[KEEP_CURRENT_POSITION] = &keep_current_position,
+  functions[DISABLE_PID] = &disable_pid,
+  functions[ENABLE_PID] = &enable_pid,
 
   Serial.begin(115200);
   pinMode(pin_on_off, INPUT);
@@ -213,35 +234,44 @@ void loop()
   // Com
   handle_callback(com);
 
- 
+  // Send odometrie
+  msg_Update_Position pos_msg;
   if (counter++ == 0)
-    // Send odometrie
-    msg_Update_Position pos_msg;
+  {
     pos_msg.x = rolling_basis_ptr->X;
     pos_msg.y = rolling_basis_ptr->Y;
     pos_msg.theta = rolling_basis_ptr->THETA;
     com->send_msg((byte *)&pos_msg, sizeof(msg_Update_Position));
+  }
 }
 
-void handle(){
+void handle()
+{
   // test
-  if(current_action != nullptr)
+  if (current_action != nullptr)
   {
     Point current_position = rolling_basis_ptr->get_current_position();
     last_ticks_position = rolling_basis_ptr->get_current_ticks();
-    if(!current_action->is_finished())
+    if (!current_action->is_finished())
+    {
       current_action->handle(
-        current_position,
-        last_ticks_position,
-        &rolling_basis_ptrs
-      );
+          current_position,
+          last_ticks_position,
+          &rolling_basis_ptrs);
+    }
     else
+    {
+      msg_Action_Finished fin_msg;
+      fin_msg.action_id = current_action->get_id();
       rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+      com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+    }
+    
   }
   else
     rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
 
-    // // Not end of the game ?
+  // // Not end of the game ?
   // if ((millis() - start_time) < STOP_MOTORS_DELAY || start_time == -1)
   // {
 
@@ -286,13 +316,15 @@ void handle(){
   //     rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
   // }
   // else
-  //   rolling_basis_ptr->shutdown_motor();  
+  //   rolling_basis_ptr->shutdown_motor();
 }
 
-// This code was realized by Florian BARRE
-//     ____ __
-//    / __// /___
-//   / _/ / // _ \
-//  /_/  /_/ \___/
+/*
 
+ This code was realized by Florian BARRE
+    ____ __
+   / __// /___<
+  / _/ / // _ \ 
+ /_/  /_/ \___/ 
 
+*/
