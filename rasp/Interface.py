@@ -12,7 +12,12 @@ def app():
     th.start()
     pywebio.output.put_scope("buttons")
     pywebio.output.put_buttons(
-        ["Home", "dummy"],
+        [
+            "Home",
+            "Disable PID",
+            "Enable PID",
+            "Keep Current Position"
+        ],
         onclick=buttons,
         scope="buttons"
     )
@@ -36,12 +41,18 @@ def pin():
                                                    "y", name="y", type=pywebio.input.FLOAT),
                                            ],
                                            )
-        teensy.Go_To([float(coords["x"]), float(coords["y"]),0])
+        teensy.Go_To([float(coords["x"]), float(coords["y"]), 0])
 
 
 def buttons(button):
     if button == "Home":
-            teensy.Home_Position()
+        teensy.Home_Position()
+    if button == "Disable PID":
+        teensy.Disable_Pid()
+    if button == "Enable PID":
+        teensy.Enable_Pid()
+    if button == "Keep Current Position":
+        teensy.Keep_Current_Position()
 
 
 class dummy:
@@ -56,6 +67,6 @@ class dummy:
 
 if __name__ == "__main__":
     global teensy
-    teensy = Rolling_basis(crc = False)
+    teensy = Rolling_basis(crc=False)
     # teensy = dummy()
     pywebio.start_server(app, port=42069)
