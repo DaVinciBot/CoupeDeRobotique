@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"path": "teensy"
+		},
+		{
+			"path": "rasp"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.tcc": "cpp",
+			"exception": "cpp",
+			"iosfwd": "cpp",
+			"new": "cpp",
+			"ostream": "cpp",
+			"sstream": "cpp",
+			"streambuf": "cpp",
+			"array": "cpp",
+			"string_view": "cpp",
+			"initializer_list": "cpp",
+			"utility": "cpp"
+		},
+		"[python]": {
+			"editor.defaultFormatter": "ms-python.autopep8"
+		},
+	}
+}
