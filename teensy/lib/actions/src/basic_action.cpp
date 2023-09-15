@@ -123,3 +123,13 @@ void Move_Rotation::compute(Point current_point, Ticks current_ticks, Rolling_Ba
     this->step_action->compute(current_ticks, rolling_basis_params);
     this->is_computed = true;
 }
+
+Stay_Put::Stay_Put()
+{
+    this->current_ticks_position = rolling_basis_ptr->get_current_ticks();
+}
+Stay_Put::compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params)
+{
+    Ticks current_ticks_position = rolling_basis_ptr->get_current_ticks();
+    rolling_basis_ptr->keep_position(current_ticks_position.right, current_ticks_position.left);
+}

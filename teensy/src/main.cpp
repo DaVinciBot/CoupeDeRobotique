@@ -131,6 +131,7 @@ void curve_go_to(byte *msg, byte size)
 void keep_current_position(byte *msg, byte size)
 {
   free(current_action);
+  current_action = nullptr;
   Ticks current_ticks_position = rolling_basis_ptr->get_current_ticks();
   rolling_basis_ptr->keep_position(current_ticks_position.right, current_ticks_position.left);
   msg_Action_Finished fin_msg;
@@ -141,6 +142,7 @@ void keep_current_position(byte *msg, byte size)
 void disable_pid(byte *msg, byte size)
 {
   free(current_action);
+  current_action = nullptr;
   rolling_basis_ptr->shutdown_motor();
   msg_Action_Finished fin_msg;
   fin_msg.action_id = DISABLE_PID;
@@ -150,6 +152,7 @@ void disable_pid(byte *msg, byte size)
 void enable_pid(byte *msg, byte size)
 {
   free(current_action);
+  current_action = nullptr;
   Ticks current_ticks_position = rolling_basis_ptr->get_current_ticks();
   rolling_basis_ptr->keep_position(current_ticks_position.right, current_ticks_position.left);
   msg_Action_Finished fin_msg;
@@ -273,13 +276,12 @@ void handle()
     {
       msg_Action_Finished fin_msg;
       fin_msg.action_id = current_action->get_id();
-      rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
       com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
-    }
-    
+      rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+    } 
   }
-  else
-    rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+  // else
+  //   rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
 
   // // Not end of the game ?
   // if ((millis() - start_time) < STOP_MOTORS_DELAY || start_time == -1)
