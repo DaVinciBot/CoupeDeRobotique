@@ -128,12 +128,16 @@ void curve_go_to(byte *msg, byte size)
   // }
 }
 
+// Whether to keep position when no action is active
+bool keep_curr_pos_when_no_action = true;
+
 void keep_current_position(byte *msg, byte size)
 {
   free(current_action);
   current_action = nullptr;
-  Ticks current_ticks_position = rolling_basis_ptr->get_current_ticks();
-  rolling_basis_ptr->keep_position(current_ticks_position.right, current_ticks_position.left);
+
+  keep_curr_pos_when_no_action = true;
+
   msg_Action_Finished fin_msg;
   fin_msg.action_id = KEEP_CURRENT_POSITION;
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
@@ -141,9 +145,8 @@ void keep_current_position(byte *msg, byte size)
 
 void disable_pid(byte *msg, byte size)
 {
-  free(current_action);
-  current_action = nullptr;
-  rolling_basis_ptr->shutdown_motor();
+  keep_curr_pos_when_no_action = false;
+
   msg_Action_Finished fin_msg;
   fin_msg.action_id = DISABLE_PID;
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
@@ -151,10 +154,9 @@ void disable_pid(byte *msg, byte size)
 
 void enable_pid(byte *msg, byte size)
 {
-  free(current_action);
-  current_action = nullptr;
-  Ticks current_ticks_position = rolling_basis_ptr->get_current_ticks();
-  rolling_basis_ptr->keep_position(current_ticks_position.right, current_ticks_position.left);
+
+  keep_curr_pos_when_no_action = true;
+
   msg_Action_Finished fin_msg;
   fin_msg.action_id = ENABLE_PID;
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
@@ -261,27 +263,30 @@ void loop()
 void handle()
 {
   // test
-  if (current_action != nullptr)
+
+  if (current_action == nullptr)
   {
-    Point current_position = rolling_basis_ptr->get_current_position();
-    last_ticks_position = rolling_basis_ptr->get_current_ticks();
-    if (!current_action->is_finished())
-    {
-      current_action->handle(
-          current_position,
-          last_ticks_position,
-          &rolling_basis_ptrs);
-    }
-    else
-    {
-      msg_Action_Finished fin_msg;
-      fin_msg.action_id = current_action->get_id();
-      com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+    if (keep_curr_pos_when_no_action)
       rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
-    } 
+    return
   }
-  // else
-  //   rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+
+  Point current_position = rolling_basis_ptr->get_current_position();
+  last_ticks_position = rolling_basis_ptr->get_current_ticks();
+
+  if (!current_action->is_finished())
+  {
+    current_action->handle(
+        current_position,
+        last_ticks_position,
+        &rolling_basis_ptrs);
+    return
+  }
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = current_action->get_id();
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+  rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
 
   // // Not end of the game ?
   // if ((millis() - start_time) < STOP_MOTORS_DELAY || start_time == -1)
@@ -336,7 +341,7 @@ void handle()
  This code was realized by Florian BARRE
     ____ __
    / __// /___<
-  / _/ / // _ \ 
- /_/  /_/ \___/ 
+  / _/ / // _ \
+ /_/  /_/ \___/
 
 */
