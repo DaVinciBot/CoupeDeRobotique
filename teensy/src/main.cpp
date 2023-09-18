@@ -267,7 +267,7 @@ void handle()
   {
     if (keep_curr_pos_when_no_action)
       rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
-    return
+    return;
   }
 
   Point current_position = rolling_basis_ptr->get_current_position();
