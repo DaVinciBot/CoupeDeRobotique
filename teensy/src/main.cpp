@@ -135,6 +135,7 @@ void keep_current_position(byte *msg, byte size)
 {
   free(current_action);
   current_action = nullptr;
+  last_ticks_position = rolling_basis_ptr->get_current_ticks();
 
   keep_curr_pos_when_no_action = true;
 
@@ -154,7 +155,7 @@ void disable_pid(byte *msg, byte size)
 
 void enable_pid(byte *msg, byte size)
 {
-
+  last_ticks_position = rolling_basis_ptr->get_current_ticks();
   keep_curr_pos_when_no_action = true;
 
   msg_Action_Finished fin_msg;
@@ -262,9 +263,7 @@ void loop()
 
 void handle()
 {
-  // test
-
-  if (current_action == nullptr)
+  if (current_action == nullptr || current_action->is_finished())
   {
     if (keep_curr_pos_when_no_action)
       rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
@@ -274,66 +273,16 @@ void handle()
   Point current_position = rolling_basis_ptr->get_current_position();
   last_ticks_position = rolling_basis_ptr->get_current_ticks();
 
-  if (!current_action->is_finished())
-  {
-    current_action->handle(
-        current_position,
-        last_ticks_position,
-        &rolling_basis_ptrs);
-    return
-  }
+  current_action->handle(
+      current_position,
+      last_ticks_position,
+      &rolling_basis_ptrs);
+
 
   msg_Action_Finished fin_msg;
   fin_msg.action_id = current_action->get_id();
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
-  rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
-
-  // // Not end of the game ?
-  // if ((millis() - start_time) < STOP_MOTORS_DELAY || start_time == -1)
-  // {
-
-  //   strat_test[0]->handle(
-  //       current_position,
-  //       last_ticks_position,
-  //       &rolling_basis_ptrs);
-  //   // Authorize to move ?
-  //   if (digitalReadFast(pin_on_off))
-  //   {
-  //     /*
-  //     // Must return to start position ?
-  //     if ((millis() - start_time) > RETURN_START_POSITION_DELAY && false)
-  //     {
-  //       // Calculate distance from start position
-  //       float d_x = rolling_basis_ptr->X;
-  //       float d_y = rolling_basis_ptr->Y;
-  //       float dist_robot_start_position = sqrt((d_x * d_x) + (d_y * d_y));
-
-  //       // Check if we are already in the start position (> 5 cm -> go to home)
-  //         //if (dist_robot_start_position > DISTANCE_NEAR_START_POSITION)
-  //         //rolling_basis_ptr->action_handle(&return_position);
-  //     }
-  //     */
-  //     // Do classic trajectory
-  //     if (0 < 1)
-  //     {
-  //       Point current_position = rolling_basis_ptr->get_current_position();
-  //       last_ticks_position = rolling_basis_ptr->get_current_ticks();
-
-  //       if (!strat_test[0]->is_finished())
-  //         strat_test[0]->handle(
-  //             current_position,
-  //             last_ticks_position,
-  //             &rolling_basis_ptrs);
-
-  //     }
-  //     else
-  //       rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
-  //   }
-  //   else
-  //     rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
-  // }
-  // else
-  //   rolling_basis_ptr->shutdown_motor();
+  return;
 }
 
 /*
