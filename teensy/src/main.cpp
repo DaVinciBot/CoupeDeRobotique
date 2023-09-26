@@ -135,7 +135,7 @@ void keep_current_position(byte *msg, byte size)
 {
   free(current_action);
   current_action = nullptr;
-  last_ticks_position = rolling_basis_ptr->get_current_ticks();
+  // last_ticks_position = rolling_basis_ptr->get_current_ticks();
 
   keep_curr_pos_when_no_action = true;
 
@@ -155,7 +155,7 @@ void disable_pid(byte *msg, byte size)
 
 void enable_pid(byte *msg, byte size)
 {
-  last_ticks_position = rolling_basis_ptr->get_current_ticks();
+  // last_ticks_position = rolling_basis_ptr->get_current_ticks();
   keep_curr_pos_when_no_action = true;
 
   msg_Action_Finished fin_msg;
