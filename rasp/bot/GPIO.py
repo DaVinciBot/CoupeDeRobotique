@@ -1,7 +1,6 @@
-import RPi.GPIO as libGPIO
+import RPi.GPIO as IO
 
-
-class GPIO:
+class PIN:
     """
     Classe permettant de gérer les pins GPIO de la rapberry pi
     """
@@ -20,10 +19,10 @@ class GPIO:
         self.pin = pin
         if mode not in ["OUTPUT", "INPUT"]:
             raise Exception("Le mode doit être OUTPUT ou INPUT")
-        self.mode = libGPIO.OUT if mode == "OUTPUT" else libGPIO.IN
+        self.mode = IO.OUT if mode == "OUTPUT" else IO.IN
 
-        libGPIO.setmode(libGPIO.BOARD)
-        libGPIO.setup(self.pin, self.mode)
+        IO.setmode(IO.BOARD)
+        IO.setup(self.pin, self.mode)
 
     def set(self, state: bool) -> None:
         """
@@ -32,11 +31,11 @@ class GPIO:
         :param state: Etat du pin
         :type state: bool
         """
-        if self.mode == libGPIO.IN:
+        if self.mode == IO.IN:
             raise Exception(
                 "Le pin est en mode INPUT, il n'est pas possible de le modifier"
             )
-        libGPIO.output(self.pin, state)
+        IO.output(self.pin, state)
 
     def get(self) -> bool:
         """
@@ -45,12 +44,12 @@ class GPIO:
         :return: Etat du pin
         :rtype: bool
         """
-        return libGPIO.input(self.pin)
+        return IO.input(self.pin)
 
     def __del__(self) -> None:
         """
         Destructeur de la classe
         """
-        libGPIO.cleanup(self.pin)
+        IO.cleanup(self.pin)
         del self.pin
         del self.mode
