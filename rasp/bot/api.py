@@ -21,10 +21,9 @@ class API:
             log = f.read()
         return jsonify(log)
         
+
     
-    @app.route("/api/state")
-    def api_state():
-        return jsonify("state")
+    @app.route('api/state/:')
     
     @app.route("/")
     def index():
