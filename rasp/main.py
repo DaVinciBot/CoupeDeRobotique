@@ -1,4 +1,4 @@
-from bot import Logger, Utils, GPIO, Rolling_basis
+from bot import Logger, Utils, GPIO, Rolling_basis, Lidar
 import time
 
 
@@ -6,6 +6,8 @@ import time
 def main():
     Utils.start_api()
     state = Utils.load_state()
+
+    lidar = Lidar.Lidar()
     
     com = Rolling_basis()
     com.Go_To([10, 100, 0])
