@@ -2,7 +2,7 @@ import math
 import pysicktim as lidar
 
 
-def scan_values_to_polar(scan_values: list, min_angle: float, max_angl: float) -> list[list[float,float,float]]:
+def scan_values_to_polar(scan_values: list[float], min_angle: float, max_angle: float) -> list[list[float,float]]:
     angle_step = (max_angle - min_angle) / len(scan_values)
     polar_coordinates = []
     for i in range(len(scan_values)):
@@ -67,7 +67,7 @@ def is_under_threshold(
 
 class Lidar:
     """
-    Classe permettant de récupérer les données du lidar, et de les traiter
+    Classe permettant de récupérer les données du lidar, et de les traiter, la résultion angulaire est de 1/3 de degré
     """
 
     def __init__(self, min_angle: float = -math.pi, max_angle: float = math.pi):
@@ -114,13 +114,25 @@ class Lidar:
 
     def get_face_nearest_point(self) -> float:
         """
-        Retourne le point le plus proche en face du lidar
+        Retourne le point le plus proche en face du lidar (entre -45° et 45° degrés, 0 étant la direction du lidar)
 
-        :return: _description_
+        :return: le point le plus proche par rapport au lidar, en mètres
         :rtype: float
         """
         lidar.scan()
         points = [val for val in lidar.scan.distances[269:-271] if val > 0.01]
+        points.sort()
+        return points[0]
+    
+    def get_angle_nearest_point(self, start_angle:int, end_angle:int) -> float:
+        """
+        Retourne le point le plus proche dans un angle donné
+
+        :return: le point le plus proche par rapport au lidar, en mètres
+        :rtype: float
+        """
+        lidar.scan()
+        points = [val for val in lidar.scan.distances[(start_angle+45)*3:(end_angle+45)*3] if val > 0.01]
         points.sort()
         return points[0]
 
@@ -146,7 +158,7 @@ class Lidar:
 
     def safe_face_get_nearest_point(self, nombre_essai: int = 10) -> float:
         """
-        Renvoie le point le plus proche en face du lidar, en prennant la médianne de {nombre_essai} mesures pour éviter les erreurs
+        Renvoie le point le plus proche en face du lidar (entre -45° et 45° degrés, 0 étant la direction du lidar), en prennant la médianne de {nombre_essai} mesures pour éviter les erreurs 
 
         :param nombre_essai: le nombre de detection du lidar sur lequels faire une médianne, defaults to 10
         :type nombre_essai: int, optional
