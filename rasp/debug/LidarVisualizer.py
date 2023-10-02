@@ -3,10 +3,18 @@ import pygame_gui
 import math
 import random
 
+import requests
+
 
 class LidarVisualizer:
-    def show(lidar):
+
+    def __init__(self) -> None:
+        self.lidar_data = []
+
+    def show(self):
         pygame.init()
+        
+        self.update_data()
 
         pygame.display.set_caption("Lidar Visualizer - CDR 2023")
         window_surface = pygame.display.set_mode((800, 600))
@@ -32,8 +40,6 @@ class LidarVisualizer:
             # clear the screen
             background.fill(pygame.Color("#000000"))
 
-            #dummy_data = [250 * random.random() for i in range(810)]
-            lidar_data = lidar.__scan_values()
             time_delta = clock.tick(60) / 1000.0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -50,17 +56,17 @@ class LidarVisualizer:
             manager.update(time_delta)
 
             # lidar data are in polar coordinates, we need to convert them to cartesian coordinates
-            for i in range(len(lidar_data)):
-                if lidar_data[i] > 0:
+            for i in range(len(self.lidar_data)):
+                if self.lidar_data[i] > 0:
                     pygame.draw.line(
                         background,
                         pygame.Color("#FFFFFF"),
                         (400, 300),
                         (
                             400
-                            + lidar_data[i] * math.cos(math.radians(i / 3) + rotation),
+                            + self.lidar_data[i] * math.cos(math.radians(i / 3) + rotation),
                             300
-                            + lidar_data[i] * math.sin(math.radians(i / 3) + rotation),
+                            + self.lidar_data[i] * math.sin(math.radians(i / 3) + rotation),
                         ),
                     )
 
@@ -73,3 +79,9 @@ class LidarVisualizer:
             manager.draw_ui(window_surface)
 
             pygame.display.update()
+
+    def update_data(self):
+        # fetch data from /api/lidar
+        response = requests.get("http://robot1:5000/api/lidar")
+        self.lidar_data = response.json()["data"]
+        

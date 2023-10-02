@@ -34,6 +34,12 @@ def main():
         state.set("led", str(gpios[1].get()))
         state.set("tirette", str(gpios[0].get()))
 
+        lidar.__scan()
+        val = lidar.__scan_values()
+        
+        # write val to json file
+        with open("lidar.json", "w") as f:
+            f.write(str(val))
 
         time.sleep(1)
 

@@ -2,7 +2,7 @@ from datetime import datetime
 from multiprocessing import Process
 from .api import API
 import json
-
+import os
 
 def run_api():
     a = API()
@@ -84,6 +84,9 @@ class Utils:
         """
         Charge l'état du serveur depuis le fichier state.json
         """
+        if not (os.path.isdir("state.json") or os.path.exists("state.json")):
+            with open("state.json", "w") as f:
+                json.dump({}, f)
         with open("state.json", "r") as f:
             return State(json.load(f))
         

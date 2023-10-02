@@ -30,3 +30,8 @@ class API:
     def index():
         return send_from_directory("../", "index.html")
 
+    @app.route("/api/lidar")
+    def get_lidar():
+        with open("lidar.json", "r") as f:
+            log = f.read()
+        return jsonify(log)
