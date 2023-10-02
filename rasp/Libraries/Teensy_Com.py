@@ -108,7 +108,8 @@ class Rolling_basis(Teensy):
         """
         self.messagetype = {
             128: self.rcv_odometrie,  # \x80
-            129: self.rcv_action_finish  # \x45
+            129: self.rcv_action_finish,  # \x45
+            255: self.rcv_unknown_msg_type,
         }
 
     #####################
@@ -131,9 +132,13 @@ class Rolling_basis(Teensy):
                           struct.unpack("<f", msg[4:8])[0],
                           struct.unpack("<f", msg[8:12])[0])
 
+
     def rcv_action_finish(self, msg: bytes):
         print(msg.hex())
         self.action_finished = True
+
+    def rcv_unknown_msg_type(self, msg: bytes):
+        print(f"The function with id {msg.hex()} isn't defined on the teensy")
 
     #########################
     # User facing functions #
