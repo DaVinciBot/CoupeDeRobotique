@@ -1,4 +1,5 @@
 from bot import Logger, Utils, GPIO, Rolling_basis, Lidar
+from debug import LidarVisualizer
 import time
 
 
@@ -8,6 +9,8 @@ def main():
     state = Utils.load_state()
 
     lidar = Lidar.Lidar()
+
+    LidarVisualizer.LidarVisualizer.show(lidar)
     
     com = Rolling_basis()
     com.Go_To([10, 100, 0])
