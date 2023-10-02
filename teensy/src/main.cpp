@@ -201,6 +201,7 @@ void setup()
 {
   com = new Com(&Serial, 115200);
 
+  // only the messages received by the teensy are listed here
   functions[GO_TO] = &go_to,
   functions[CURVE_GO_TO] = &curve_go_to,
   functions[KEEP_CURRENT_POSITION] = &keep_current_position,
