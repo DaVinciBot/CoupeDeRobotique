@@ -92,7 +92,7 @@ class Lidar:
         """give the nearest point between the requiered angles 
 
         Args:
-            start_angle (float): the angle from were start the mesure
+            start_angle (float): the angle from were to start mesuring
             end_angle (float): the last angle of the mesure 
             step_angle (float): every mesusre from the lidar is separeted from a given angle
 
@@ -110,9 +110,25 @@ class Lidar:
 
         points.sort()
         return points[len(points) // 2]
+    
+    def is_obstacle_infront(self, robot_pos, start_angle = 90, end_angle = 180, step_angle = 1/3, treshold=0.2):
+        """this function enable to detect an obstacle in front of the robot. Do not exclude objects outside the bord. Therefore treshold must be low to avoid stopping for nothing
+
+        Args:
+            robot_pos (_type_): the actual position of the robot gieven by (x,y,theta), theta is the way the robot is turned
+            start_angle (int, optional): the angle from were to start measuring. Defaults to 90 because of the actual position of the lidar
+            end_angle (int, optional): the angle from were to stop mesuring. Defaults to 180 beacause of the actual position of the lidar
+            step_angle (_type_, optional): _description_. Defaults to 1/3 because of the acual lidar configuration
+            treshold (float, optional): _description_. Defaults to 0.2. Must be low to avoid detecting objects outside of the board
+        """
+        nearest_point = self.safe_get_nearest_point_between(self, start_angle, end_angle, step_angle, treshold)
+        if(nearest_point<=treshold):
+            print("appeler fonction mise en pause du robot")
+            
         
     def get_cartesian_points(self):
         return self.__polar_to_cartesian()
+    
 
     def get_polar_points(self):
         return self.__scan_values_to_polar()
