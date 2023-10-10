@@ -1,5 +1,5 @@
 from bot import Logger, Utils, GPIO, Rolling_basis, Lidar
-from debug import LidarVisualizer
+from bot.api import update_lidar
 import time
 
 
@@ -9,39 +9,26 @@ def main():
     state = Utils.load_state()
 
     lidar = Lidar.Lidar()
-
-    LidarVisualizer.LidarVisualizer.show(lidar)
     
-    com = Rolling_basis()
-    com.Go_To([10, 100, 0])
+    com = Rolling_basis(crc=False)
+    #com.Go_To([10, 100, 0]) ça fonctione peut etre 
     
     l = Logger() # le pin 33 ne fonctionne pas
-    pins = {"tirette": {"pin": 37, "mode": "INPUT"}, "led": {"pin": 8, "mode":"OUTPUT"}}
-    
+    tirette_pin = GPIO.PIN(37, "INPUT")
+    led_pin = GPIO.PIN(8, "OUTPUT")
     state.set("tirette", "0")
     state.set("led", "0")
-    gpios: list[GPIO.PIN] = []
-    for pin in pins:
-        gpios.append(GPIO.PIN(pins[pin]["pin"], pins[pin]["mode"]))
-        if pins[pin]["mode"] == "OUTPUT": gpios[-1].set(False)
-        
-    gpios[1].set(False)
+
     while True:
-        
-        for gpio in gpios:
-            l.log(f"Pin: {gpio.pin}, Value: {gpio.get()}", 0)
             
-        state.set("led", str(gpios[1].get()))
-        state.set("tirette", str(gpios[0].get()))
+        state.set("led", str(led_pin.get()))
+        state.set("tirette", str(tirette_pin.get()))
 
         lidar.__scan()
         val = lidar.__scan_values()
-        
-        # write val to json file
-        with open("lidar.json", "w") as f:
-            f.write(str(val))
+        update_lidar(val) # update lidar data on the server
 
-        time.sleep(1)
+        time.sleep(0.5)
 
 
 if __name__ == "__main__":
