@@ -2,9 +2,9 @@ import point
 import area
 
 class RectangleArena:
-    """Represent the arena
+    """Represent the arena. Only works if it's a rectangle one
     """
-    def __init__(self, own_parterres, own_protect_parterres,rival_own_parterres, rival_own_protect_parterres, zones_plants, starting_position : point, origin : point = point(0,0), opposite_corner : point = point(2,3)):
+    def __init__(self, origin : point = point(0,0), opposite_corner : point = point(2,3), starting_position : point = (0,0), own_parterres : area = None, own_protect_parterres : area = None,rival_own_parterres : area = None, rival_own_protect_parterres : area = None, zones_plants : area = None):
         self.zone_plants = zones_plants
         self.own_parterres = own_parterres
         self.own_protected_parterres = own_protect_parterres
