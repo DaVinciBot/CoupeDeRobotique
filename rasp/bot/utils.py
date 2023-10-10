@@ -1,13 +1,7 @@
 from datetime import datetime
 from multiprocessing import Process, Queue
-from api import API
 import json
 import os
-
-def run_api(queue: Queue):
-    obj = queue.get()
-    a = API(obj)
-    a.run()
 
 class State:
     """
@@ -74,14 +68,6 @@ class Utils:
         now = datetime.now()
         timestamp = datetime.timestamp(now)
         return {"date": now, "date_timespamp": timestamp}
-
-    def start_api() -> None:
-        """
-        Lance l'API dans un processus séparé
-        """
-        queue = Queue()
-        p = Process(target=run_api, args=(queue,))
-        p.start()
 
     def load_state() -> State:
         """
