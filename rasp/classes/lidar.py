@@ -121,7 +121,7 @@ class Lidar:
             step_angle (_type_, optional): _description_. Defaults to 1/3 because of the acual lidar configuration
             treshold (float, optional): _description_. Defaults to 0.2. Must be low to avoid detecting objects outside of the board
         """
-        nearest_point = self.safe_get_nearest_point_between(self, start_angle, end_angle, step_angle, treshold)
+        nearest_point = self.safe_get_nearest_point_between(self, start_angle, end_angle, step_angle)
         if(nearest_point<=treshold): return True
         else : return False
             
