@@ -1,3 +1,4 @@
 logs
 state.json
-bot/__pycache__
+lidar.json
+*/__pycache__

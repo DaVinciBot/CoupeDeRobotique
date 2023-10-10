@@ -1,11 +1,12 @@
 from datetime import datetime
-from multiprocessing import Process
-from .api import API
+from multiprocessing import Process, Queue
+from api import API
 import json
 import os
 
-def run_api():
-    a = API()
+def run_api(queue: Queue):
+    obj = queue.get()
+    a = API(obj)
     a.run()
 
 class State:
@@ -14,6 +15,7 @@ class State:
     """
     def __init__(self, state: dict, file: str = "state.json") -> None:
         self.state = state
+        self.lidar_data = []
         self.file = file
         
     def get(self, key: str) -> str:
@@ -77,7 +79,8 @@ class Utils:
         """
         Lance l'API dans un processus séparé
         """
-        p = Process(target=run_api)
+        queue = Queue()
+        p = Process(target=run_api, args=(queue,))
         p.start()
 
     def load_state() -> State:

@@ -2,6 +2,7 @@ import pygame
 import pygame_gui
 import math
 import random
+import time
 
 import requests
 
@@ -40,7 +41,9 @@ class LidarVisualizer:
             # clear the screen
             background.fill(pygame.Color("#000000"))
 
-            time_delta = clock.tick(60) / 1000.0
+            self.update_data()
+
+            time_delta = clock.tick(10) / 1000.0
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     is_running = False
@@ -64,9 +67,21 @@ class LidarVisualizer:
                         (400, 300),
                         (
                             400
-                            + self.lidar_data[i] * math.cos(math.radians(i / 3) + rotation),
+                            + self.lidar_data[i] * 25 * math.cos(math.radians(i / 3) + rotation),
                             300
-                            + self.lidar_data[i] * math.sin(math.radians(i / 3) + rotation),
+                            + self.lidar_data[i] * 25 * math.sin(math.radians(i / 3) + rotation),
+                        ),
+                    )
+                else:
+                    pygame.draw.line(
+                        background,
+                        pygame.Color("#FFFFFF"),
+                        (400, 300),
+                        (
+                            400
+                            + 10 * 25 * math.cos(math.radians(i / 3) + rotation),
+                            300
+                            + 10 * 25 * math.sin(math.radians(i / 3) + rotation),
                         ),
                     )
 
@@ -77,11 +92,15 @@ class LidarVisualizer:
 
             window_surface.blit(background, (0, 0))
             manager.draw_ui(window_surface)
-
             pygame.display.update()
 
     def update_data(self):
         # fetch data from /api/lidar
         response = requests.get("http://robot1:5000/api/lidar")
-        self.lidar_data = response.json()["data"]
-        
+        self.lidar_data = [float(el) for el in response.text.replace("[", "").replace("]", "").replace('"', "").split(",")]
+        time.sleep(0.1)
+
+
+if __name__ == "__main__":
+    visualizer = LidarVisualizer()
+    visualizer.show()
