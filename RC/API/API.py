@@ -111,7 +111,7 @@ async def handle_log_ws(websocket: websockets.WebSocketServerProtocol, CONNECTIO
             for client in CONNECTIONS_LOG:
                 await client.send("new$=$" + json.dumps(data))
             await websocket.send("ok")
-        elif msg.split(":")[0] == "update":
+        elif msg.split("$=$")[0] == "update":
             data = list(
                 map(
                     str,

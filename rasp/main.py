@@ -27,7 +27,10 @@ async def main():
         state.set("tirette", str(tirette_pin.get()))
 
         val = lidar.get_values()
-        await update_lidar(val) # update lidar data on the server
+        try:
+            await update_lidar(val) # update lidar data on the server
+        except:
+            pass
         await l.log('lidar update')
 
 
