@@ -1,5 +1,6 @@
 import os
 from .utils import Utils
+from api import update_log
 
 
 class Logger:
@@ -28,6 +29,7 @@ class Logger:
         date_str = Utils.get_current_date()["date"]
         message = f"{date_str} | {self.levels[level]} | {message}"
         print(message)
+        update_log(message)
         with open(f"logs/{self.log_file}", "a") as f:
             f.write(message + "\n")
         self.log_history += message + "\n"
