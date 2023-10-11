@@ -1,6 +1,6 @@
 import os
 from .utils import Utils
-from api import update_log
+from .api import update_log
 
 
 class Logger:
