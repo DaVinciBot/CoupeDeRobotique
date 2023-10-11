@@ -26,10 +26,10 @@ async def main():
         state.set("tirette", str(tirette_pin.get()))
 
         val = lidar.get_values()
-        await update_lidar(val) # update lidar data on the server
+        update_lidar(val) # update lidar data on the server
 
         time.sleep(0.5)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
