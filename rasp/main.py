@@ -6,7 +6,7 @@ import asyncio
 
 
 
-def main():
+async def main():
     state = Utils.load_state()
 
     lidar = Lidar.Lidar()
@@ -14,7 +14,8 @@ def main():
     com = Rolling_basis(crc=False)
     #com.Go_To([10, 100, 0]) ça fonctione peut etre 
     
-    l = Logger()
+    l =  Logger()
+    await l.log('Logger initialized')
     tirette_pin = GPIO.PIN(37, "INPUT")
     led_pin = GPIO.PIN(8, "OUTPUT")
     state.set("tirette", "0")
@@ -26,10 +27,9 @@ def main():
         state.set("tirette", str(tirette_pin.get()))
 
         val = lidar.get_values()
-        update_lidar(val) # update lidar data on the server
-
-        time.sleep(0.5)
+        await update_lidar(val) # update lidar data on the server
+        await l.log('lidar update')
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

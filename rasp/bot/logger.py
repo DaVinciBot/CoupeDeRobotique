@@ -15,9 +15,8 @@ class Logger:
         self.log_file = f"{date.strftime('%Y-%m-%d')}.log"
         self.levels = ["INFO", "WARNING", "ERROR", "CRITICAL"]
         self.log_history = ""
-        self.log("Logger initialized", 0)
 
-    def log(self, message: str, level: int = 0) -> None:
+    async def log(self, message: str, level: int = 0) -> None:
         """
         Log un message dans le fichier de log et dans la sortie standard
 
@@ -29,7 +28,7 @@ class Logger:
         date_str = Utils.get_current_date()["date"]
         message = f"{date_str} | {self.levels[level]} | {message}"
         print(message)
-        update_log(message)
+        await update_log(message)
         with open(f"logs/{self.log_file}", "a") as f:
             f.write(message + "\n")
         self.log_history += message + "\n"
