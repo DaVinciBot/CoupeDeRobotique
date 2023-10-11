@@ -5,7 +5,6 @@ import time
 
 
 def main():
-    Utils.start_api()
     state = Utils.load_state()
 
     lidar = Lidar.Lidar()
@@ -13,7 +12,7 @@ def main():
     com = Rolling_basis(crc=False)
     #com.Go_To([10, 100, 0]) ça fonctione peut etre 
     
-    l = Logger() # le pin 33 ne fonctionne pas
+    l = Logger()
     tirette_pin = GPIO.PIN(37, "INPUT")
     led_pin = GPIO.PIN(8, "OUTPUT")
     state.set("tirette", "0")
