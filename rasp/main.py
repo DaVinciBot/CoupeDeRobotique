@@ -6,7 +6,7 @@ import asyncio
 
 
 
-async def main():
+def main():
     state = Utils.load_state()
 
     lidar = Lidar.Lidar()
