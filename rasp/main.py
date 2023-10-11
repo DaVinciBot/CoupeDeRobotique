@@ -2,9 +2,11 @@ from bot import Logger, Utils, GPIO, Rolling_basis, Lidar
 from bot.api import update_lidar
 import time
 
+import asyncio
 
 
-def main():
+
+async def main():
     state = Utils.load_state()
 
     lidar = Lidar.Lidar()
@@ -23,12 +25,11 @@ def main():
         state.set("led", str(led_pin.get()))
         state.set("tirette", str(tirette_pin.get()))
 
-        lidar.__scan()
-        val = lidar.__scan_values()
-        update_lidar(val) # update lidar data on the server
+        val = lidar.get_values()
+        await update_lidar(val) # update lidar data on the server
 
         time.sleep(0.5)
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

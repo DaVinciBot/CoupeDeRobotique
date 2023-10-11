@@ -177,3 +177,7 @@ class Lidar:
 
     def get_polar_points(self) -> list:
         return self.__scan_values_to_polar()
+    
+    def get_values(self) -> list:
+        lidar.scan()
+        return self.lidar_obj.scan.distances
