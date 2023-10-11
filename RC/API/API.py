@@ -69,20 +69,20 @@ async def handle_lidar_ws(
     :type websocket: websockets.WebSocketServerProtocol
     """
     async for msg in websocket:
-        if msg.split(":")[0] == "get":
+        if msg.split("$=$")[0] == "get":
             data = get_lidar_data()
-            await websocket.send("current:" + json.dumps(data))
-        elif msg.split(":")[0] == "set":
+            await websocket.send("current$=$" + json.dumps(data))
+        elif msg.split("$=$")[0] == "set":
             data = list(
                 map(
                     float,
-                    msg.split(":")[1].replace("[", "").replace("]", "").split(","),
+                    msg.split("$=$")[1].replace("[", "").replace("]", "").split(","),
                 )
             )
             set_lidar_data(data)
             # then notify all clients
             for client in CONNECTIONS_LIDAR:
-                await client.send("new:" + json.dumps(data))
+                await client.send("new$=$" + json.dumps(data))
             await websocket.send("ok")
         else:
             await websocket.send("error")
@@ -96,32 +96,32 @@ async def handle_log_ws(websocket: websockets.WebSocketServerProtocol, CONNECTIO
     :type websocket: _type_
     """
     async for msg in websocket:
-        if msg.split(":")[0] == "get":
+        if msg.split("$=$")[0] == "get":
             data = get_log_data()
-            await websocket.send("current:" + json.dumps(data))
-        elif msg.split(":")[0] == "set":
+            await websocket.send("current$=$" + json.dumps(data))
+        elif msg.split("$=$")[0] == "set":
             data = list(
                 map(
                     str,
-                    msg.split(":")[1].replace("[", "").replace("]", "").split(","),
+                    msg.split("$=$")[1].replace("[", "").replace("]", "").split(","),
                 )
             )
             set_log_data(data)
             # then notify all clients
             for client in CONNECTIONS_LOG:
-                await client.send("new:" + json.dumps(data))
+                await client.send("new$=$" + json.dumps(data))
             await websocket.send("ok")
         elif msg.split(":")[0] == "update":
             data = list(
                 map(
                     str,
-                    msg.split(":")[1].replace("[", "").replace("]", "").split(","),
+                    msg.split("$=$")[1].replace("[", "").replace("]", "").split(","),
                 )
             )
             update_log_data(data)
             # then notify all clients
             for client in CONNECTIONS_LOG:
-                await client.send("new:" + json.dumps(data))
+                await client.send("new$=$" + json.dumps(data))
             await websocket.send("ok")
         else:
             await websocket.send("error")

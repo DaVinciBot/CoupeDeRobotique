@@ -19,9 +19,8 @@ for (let i = 0; i < 270*3; i++) {
 
 let lidar = new WebSocket("ws://127.0.0.1:3000/lidar");
 lidar.onmessage = function (event) {
-    console.log('new lidar data');
-    if (event.data.startsWith("new:") || event.data.startsWith("current:")) {
-        let data = event.data.split(":")[1].split(",");
+    if (event.data.startsWith("new$=$") || event.data.startsWith("current$=$")) {
+        let data = event.data.split("$=$")[1].split(",");
         for (let i = 0; i < data.length; i++) {
             lidarData[i] = parseFloat(data[i]);
         }
@@ -66,7 +65,6 @@ function draw() {
 document.addEventListener("DOMContentLoaded", function () {
     lidar.onopen = function () {
         console.log("lidar connected");
-        // send "get" and parse the response
         lidar.send("get");
     }
     draw();
