@@ -13,14 +13,27 @@ async def lidar_loop(lidar):
 async def main():
     lidar = Lidar.Lidar()
     
-    com = Rolling_basis(crc=False)    
+    com = Rolling_basis(crc=False)
+    Points = [(0, 0, 0), (20, 0, 0), (0, 20, 0), (-20, 0, 0), (0, -20, 0)]
     l =  Logger()
     await l.log('Logger initialized')
-    await handle_command(com)
-    l.log('command handler started')
-    await lidar_loop(lidar)
-    l.log('lidar loop started')
-
+    i = 0
+    await l.log(f"new action: {i}")
+    com.Go_To(Points[i])
+    i+=1
+    dt = 0 
+    while True:
+        dt += 1
+        val = lidar.get_values()
+        await update_lidar(val)
+        if dt % 300 == 0:
+            if i == len(Points):
+                return
+            await l.log(f"new action: {i}")
+            com.Go_To(Points[i], speed=b'\x40')
+            i+=1
+            
+        
 
 if __name__ == "__main__":
     asyncio.run(main())
