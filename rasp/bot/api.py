@@ -16,5 +16,20 @@ async def update_log(data: str):
     async with websockets.connect(uri+"/log") as websocket:
         await websocket.send("update$=$["+data+"]")
 
+async def handle_command(com):
+    # connect to /command endpoint and listen for commands
+    async with websockets.connect(uri+"/command") as websocket:
+        while True:
+            data = await websocket.recv()
+            if data == "foward":
+                com.Go_To([1, 0, 0])
+            elif data == "backward":
+                com.Go_To([1, 0, 0], direction=True)
+            elif data == "left":
+                com.Go_To([0, 1, 0])
+            elif data == "right":
+                com.Go_To([0, 1, 0], direction=True)
+            elif data == "stop":
+                com.Go_To([0, 0, 0])
 
 

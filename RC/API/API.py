@@ -127,6 +127,20 @@ async def handle_log_ws(websocket: websockets.WebSocketServerProtocol, CONNECTIO
             await websocket.send("error")
 
 
+async def handle_cmd_ws(websocket: websockets.WebSocketServerProtocol, CONNECTIONS_CMD: set):
+    """
+    Redirect all messages to all clients
+
+    :param websocket: the websocket connection
+    :type websocket: websockets.WebSocketServerProtocol
+    :param CONNECTIONS_CMD: set of connections
+    :type CONNECTIONS_CMD: set
+    """
+    async for msg in websocket:
+        for client in CONNECTIONS_CMD: 
+            await websocket.send(msg)
+
+
 class API:
     """
     Wrapper for websockets server, take a dict of endpoints, with a set of connections and a handler for each endpoint

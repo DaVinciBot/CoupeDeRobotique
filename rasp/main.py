@@ -1,37 +1,25 @@
-from bot import Logger, Utils, GPIO, Rolling_basis, Lidar
-from bot.api import update_lidar
+from bot import Logger, Rolling_basis, Lidar
+from bot.api import update_lidar, handle_command
 import time
 
 import asyncio
 
-
+async def lidar_loop(lidar):
+    while True:
+        time.sleep(0.016)
+        val = lidar.get_values()
+        await update_lidar(val) # update lidar data on the server
 
 async def main():
-    state = Utils.load_state()
-
     lidar = Lidar.Lidar()
     
-    com = Rolling_basis(crc=False)
-    #com.Go_To([10, 100, 0]) ça fonctione peut etre 
-    
+    com = Rolling_basis(crc=False)    
     l =  Logger()
     await l.log('Logger initialized')
-    tirette_pin = GPIO.PIN(37, "INPUT")
-    led_pin = GPIO.PIN(8, "OUTPUT")
-    state.set("tirette", "0")
-    state.set("led", "0")
-
-    while True:
-            
-        state.set("led", str(led_pin.get()))
-        state.set("tirette", str(tirette_pin.get()))
-
-        val = lidar.get_values()
-        try:
-            await update_lidar(val) # update lidar data on the server
-        except:
-            pass
-        await l.log('lidar update')
+    await handle_command(com)
+    l.log('command handler started')
+    await lidar_loop(lidar)
+    l.log('lidar loop started')
 
 
 if __name__ == "__main__":
