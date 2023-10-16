@@ -5,6 +5,18 @@
     --accent-color: #8a10cb;
 }
 
+#max_range{
+    width: 20%;
+    margin-left: 10px;
+}
+.card_header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    max-height: 5vh;
+}
+
 
 body {
     height: 100vh;

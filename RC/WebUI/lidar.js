@@ -2,6 +2,12 @@ let canvas = document.getElementById("lidar");
 let ctx = canvas.getContext("2d");
 ctx.translate(0.5, 0.5);
 
+let max_range = document.getElementById("max_range");
+let MAX_DISTANCE = max_range.valueAsNumber; // meters
+max_range.addEventListener("input", function () {
+    MAX_DISTANCE = max_range.valueAsNumber;
+    draw();
+});
 
 let width = canvas.width;
 let height = canvas.height;
@@ -11,6 +17,7 @@ let centerY = height / 2;
 
 let radius = 100;
 let angle = 0;
+
 
 let lidarData = [];
 for (let i = 0; i < 270*3; i++) {
@@ -35,13 +42,23 @@ function overlay() {
     ctx.strokeStyle = "red";
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
     ctx.stroke();
+
+    ctx.beginPath();
+    ctx.strokeStyle = "red";
+    ctx.moveTo(centerX-radius-10, centerY-radius);
+    ctx.lineTo(centerX-radius-10, centerY+radius);
+    ctx.stroke();
+
+    ctx.fillStyle = "red";
+    ctx.font = "15px Arial";
+    ctx.fillText(`${MAX_DISTANCE}m`, centerX-radius-50, centerY);
 }
 
 function draw_data(decalage = 45) {
     ctx.strokeStyle = "#095af1";
     for (let i = 0; i < lidarData.length; i++) {
         let angle = i * (1 / 3) * -Math.PI / 180 + decalage * Math.PI / 180;
-        let distance = lidarData[i]*(radius/10);
+        let distance = lidarData[i] > MAX_DISTANCE || lidarData[i] < 0.001 ? radius : lidarData[i]*(radius/MAX_DISTANCE);
         draw_line(angle, distance);
     }
 }
