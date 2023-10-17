@@ -4,13 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <title>CDR Dashboard</title>
+    <link rel="stylesheet" href="./assets/style/roboto.css">
+    <link rel="stylesheet" href="./assets/style/icons.css">
+    <link rel="stylesheet" href="./assets/style/materialize.css">
+    <link rel="stylesheet" href="./assets/style/switch_btn.css">
+    <link rel="stylesheet" href="./assets/style/dpad.css">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@13.0.0"></script>
     <link rel="shortcut icon" href="./assets/fav.ico" type="image/x-icon">
+    <title>CDR Dashboard</title>
 </head>
 
 <body>
@@ -35,7 +36,7 @@
                 <p style="margin: 0;">Console</p>
                 <div class="console">> Dummy Data<br>> Hello World</div>
             </div>
-            <div class="container">
+            <div class="container flex-column">
                 <div class="card_header">
                     <p style="margin: 0;">Lidar</p>
                     <input type="range" min="0.1" max="10.0" step="0.1" value="3" id="max_range">
@@ -43,8 +44,40 @@
                 <canvas id="lidar" width="500px" height="250px"></canvas>
             </div>
             <div class="container">
-                <p style="margin: 0;">Pins</p>
-                <div class="pinstate"></div>
+                <p style="margin: 0;">Contrôles</p>
+                <div class="control">
+                    <div class="dpad">
+                        <div></div>
+                        <div class="center">
+                            <div class="up">
+                                <div class="square">▲</div>
+                                <div class="triangle"></div>
+                            </div>
+                        </div>
+                        <div></div>
+                        <div class="center">
+                            <div class="left">
+                                <div class="square">▲</div>
+                                <div class="triangle"></div>
+                            </div>
+                        </div>
+                        <div></div>
+                        <div class="center">
+                            <div class="right">
+                                <div class="square">▲</div>
+                                <div class="triangle"></div>
+                            </div>
+                        </div>
+                        <div></div>
+                        <div class="center">
+                            <div class="down">
+                                <div class="square">▲</div>
+                                <div class="triangle"></div>
+                            </div>
+                        </div>
+                        <div></div>
+                    </div>
+                </div>
             </div>
             <div class="container">
                 <p style="margin: 0;">Etat</p>
@@ -133,7 +166,7 @@
 
     <script src="main.js"></script>
     <script src="lidar.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="dpad.js"></script>
 </body>
 
 </html>

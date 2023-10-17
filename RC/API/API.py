@@ -137,8 +137,22 @@ async def handle_cmd_ws(websocket: websockets.WebSocketServerProtocol, CONNECTIO
     :type CONNECTIONS_CMD: set
     """
     async for msg in websocket:
-        for client in CONNECTIONS_CMD: 
-            await websocket.send(msg)
+        # save message, and send it when get$=$ is received
+        if msg.split("$=$")[0] == "set":
+            data = msg.split("$=$")[1]
+            with open("last_command.txt", "w") as f:
+                f.write(data)
+            await websocket.send("ok")
+        elif msg.split("$=$")[0] == "get":
+            with open("last_command.txt") as f:
+                data = f.read()
+            await websocket.send(data)
+        elif msg.split("$=$")[0] == "finished":
+            with open("last_command.txt", "w") as f:
+                f.write("None")
+            await websocket.send("ok")
+        else:
+            await websocket.send("error")
 
 
 class API:
@@ -152,8 +166,8 @@ class API:
         self.SERVER = SERVER
 
     async def __server(self):
-        print("Starting server...")
         async with websockets.serve(self.middleware, self.ip, self.port):
+            print("Server started")
             await asyncio.Future()  # serve forever
 
     def run(self):
