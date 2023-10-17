@@ -18,17 +18,17 @@ public :
     Motor *left_motor;
 
     // Odometrie
-    float X = 0.0;
-    float Y = 0.0;
-    float THETA = 0.0;
+    float X = 0.0f;
+    float Y = 0.0f;
+    float THETA = 0.0f;
     bool IS_RUNNING = false;
 
     // Inactive check
-    long last_running_check = 0;
-    long last_position_update = 0;
-    long running_check_right = 0;
-    long running_check_left = 0;
-    long inactive_delay = 0;
+    long last_running_check = 0L;
+    long last_position_update = 0L;
+    long running_check_right = 0L;
+    long running_check_left = 0L;
+    long inactive_delay = 0L;
 
     // Ticks
     long left_ticks = 0;

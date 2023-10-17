@@ -26,7 +26,7 @@ public:
 
 // This basic action going straight by the distance between its current position
 // and the target position, it will not rotate ensure you are correctly oriented
-// before using it 
+// before using it
 class Move_Straight : public Basic_Action
 {
 public:
@@ -34,7 +34,7 @@ public:
     float target_x, target_y;
 
     // Constructor
-    Move_Straight(float target_x, float target_y, Direction* direction, byte* speed,Precision_Params *precision_params);
+    Move_Straight(float target_x, float target_y, Direction *direction, byte *speed, Precision_Params *precision_params);
 
     // Method
     void compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params) override;
@@ -66,6 +66,17 @@ public:
     // Constructor
     Move_Rotation(float target_theta, Direction *direction, byte *speed, Precision_Params *precision_params);
 
+    // Method
+    void compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params) override;
+};
+
+class Stay_Put : public Basic_Action
+{
+public:
+    // Atribute
+    Ticks current_ticks_position;
+    // Constructor
+    Stay_Put(float target_theta, Direction *direction, byte *speed, Precision_Params *precision_params);
     // Method
     void compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params) override;
 };
