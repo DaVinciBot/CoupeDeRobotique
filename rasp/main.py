@@ -2,6 +2,9 @@
 from classes.tools import get_current_date
 from classes.lidar import Lidar
 from classes.pinInteract import PIN
+from classes.arena import RectangleArena
+from classes.point import point
+import Libraries.Teensy_Com as teensy
 import math
 
 # Get Lidar
@@ -36,37 +39,58 @@ led_time.digitalWrite(False)
 start_time = 0
 time_to_return_to_home = 80
 
+# Get arena
+arena : RectangleArena = RectangleArena()
+
+# Get Rolling_basis
+rolling_basis = teensy.Rolling_basis()
+
+def select_action_at_position(zone : int):
+    if zone == 0:
+        print("taking plant")
+    elif zone == 1:
+        print("deposing plant into depot zone")
+    elif zone == 2:
+        print("deposing plant into gardener")
+    else:
+        print(f"zone {zone} isn't take in cahrge")
+
+# 0 = pots_area
+# 1 = depot_zone
+# 2 = gardener 
+
+actions_list = [(point,0), (point,1)] 
+
 while True:
-    # Get Nearest point
-    nearest_point = 0
+    
+    # is_there an obstacle in front of the robot ? 
+    is_obstacle : bool = True # for safety in case of lidar dysfunction
     try:
-        nearest_point = lidar.safe_get_nearest_point()
+        is_obstacle = lidar.is_obstacle_infront()
         led_lidar.digitalWrite(True)
     except:
         led_lidar.digitalWrite(False)
 
     # Run authorize ?
-    run_auth = nearest_point >= 0.4 and tirette_pin.digitalRead()
+    run_auth : bool = not is_obstacle and tirette_pin.digitalRead()
 
-    # Supervize Teensy
-    on_off_pin.digitalWrite(run_auth)
-    led_start.digitalWrite(run_auth)
+    if not run_auth:
+        rolling_basis.Keep_Current_Position()
 
     # Check if there is enought time
     if tirette_pin.digitalRead() and start_time == 0:
         start_time = get_current_date()["date_timespamp"]
 
-    led_time.digitalWrite(
-        start_time !=0 and 
-        get_current_date()["date_timespamp"] - start_time > time_to_return_to_home
-    )
+    # if time exceeds time_to_return_home then go to the starting posistion
+    if start_time !=0 and get_current_date()["date_timespamp"] - start_time > time_to_return_to_home:
+        rolling_basis.Go_To(arena.starting_position)
 
     # A print every 500 ms
     if (get_current_date()["date_timespamp"] - last_print) > 0.5:
         last_print = get_current_date()["date_timespamp"]
 
         print(f"#-- Lidar --#\n"
-              f"Distance: {nearest_point}\n\n"
+              f"is_obstacle: {is_obstacle}\n\n"
               f"#-- Pins --#\n"
               f"State ON / OFF: {on_off_pin.digitalRead()}\n"
               f"State Tirette: {tirette_pin.digitalRead()}\n"
