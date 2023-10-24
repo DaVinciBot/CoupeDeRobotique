@@ -1,5 +1,5 @@
 from classes.lidar import Lidar
-from rasp.Libraries.Teensy_Com import Teensy as teensy
+from Libraries.Teensy_Com import Teensy as teensy
 from classes.point import point as p
 import math
 
