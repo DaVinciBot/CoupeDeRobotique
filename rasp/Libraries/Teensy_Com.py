@@ -117,8 +117,8 @@ class Rolling_basis(Teensy):
     #####################
 
     def true_pos(self, point: p) -> p:
+        print((point+self.position_offset).__str__())
         return point+self.position_offset
-        
 
     #############################
     # Received message handling #
