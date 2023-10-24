@@ -12,13 +12,13 @@ class RectangleArena:
             print("origin must be a point, set to default (0,0)")
             origin = p.point(0,0)
 
-        if opposite_corner == None or type(opposite_corner) == type(p.point):
+        if opposite_corner == None or type(opposite_corner) == p.point:
             self.opposite_corner = opposite_corner
         else :
             print("opposite_corner must be a point, set to default (200,300)")
             self.opposite_corner = p.point(2,3)
 
-        if opposite_corner == None or type(starting_position) == type(p.point):
+        if opposite_corner == None or type(starting_position) == p.point:
             self.starting_position == starting_position
         else :
             print("starting position must be a point, set to default (0,0)")
