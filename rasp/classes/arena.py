@@ -6,7 +6,7 @@ class RectangleArena:
     """Represent the arena. Only works if it's a rectangle one
     """
     def __init__(self, starting_position : p.point = (0,0), origin : p.point = p.point(0,0), opposite_corner : p.point = p.point(200,300), plants_zone = None, own_protected_gardeners = None, own_gardeners = None, own_protected_depot_zone = None, own_depot_zone = None, rival_own_gardeners = None):
-        if origin == None or type(origin) == type(p.point):
+        if origin == None or type(origin) == p.point:
             self.origin = origin
         else:
             print("origin must be a point, set to default (0,0)")
