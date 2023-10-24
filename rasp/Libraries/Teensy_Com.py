@@ -117,7 +117,7 @@ class Rolling_basis(Teensy):
     #####################
 
     def true_pos(self, point: p) -> p:
-        return p+point
+        return point+self.position_offset
         
 
     #############################
