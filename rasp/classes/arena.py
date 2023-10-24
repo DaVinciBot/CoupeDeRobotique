@@ -62,7 +62,7 @@ class RectangleArena:
         
 
 
-    def is_in_arena(self, point : point):
+    def is_in_arena(self, point : p.point):
         if(point.x<self.opposite_corner.x and point.y<self.opposite_corner.y and point.x>=self.origin.x and point.y>= self.origin.y):
             return True
         else:
