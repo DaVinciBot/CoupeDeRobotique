@@ -1,5 +1,3 @@
-import point
-
 def get_current_date():
     from datetime import datetime
     now = datetime.now()
