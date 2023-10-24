@@ -122,8 +122,7 @@ class Lidar:
             treshold (float, optional): _description_. Defaults to 0.2. Must be low to avoid detecting objects outside of the board
         """
         nearest_point = self.safe_get_nearest_point_between(start_angle, end_angle, step_angle)
-        if(nearest_point<=treshold): return True
-        else : return False
+        return nearest_point<=treshold
             
         
     def get_cartesian_points(self):

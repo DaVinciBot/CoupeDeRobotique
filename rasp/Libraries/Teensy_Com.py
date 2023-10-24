@@ -12,6 +12,7 @@ import time
 import logging
 import crc8
 import struct
+from classes.point import point as p
 
 
 class TeensyException(Exception):
@@ -116,11 +117,9 @@ class Rolling_basis(Teensy):
     # Position handling #
     #####################
 
-    def true_pos(self, position: list[float, float, float]) -> tuple[float, float, float]:
-        ret = []
-        for i in range(3):
-            ret.append(position[i] + self.position_offset[i])
-        return ret
+    def true_pos(self, point: p) -> p:
+        return p(point.x+self.position_offset, point.y+self.position_offset)
+        
 
     #############################
     # Received message handling #
@@ -151,8 +150,8 @@ class Rolling_basis(Teensy):
         DisablePid = b'\03'
         EnablePid = b'\04'
 
-    def Go_To(self, position: list[float, float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
-        """Got to a point
+    def Go_To(self, point : p, theta : float = 0, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
+        """Got the specified point
 
         Args:
             x (float): x coordinate
@@ -163,10 +162,10 @@ class Rolling_basis(Teensy):
             traj_precision (int, optional): _description_. Defaults to 50.
         """
 
-        pos = self.true_pos(position)
+        point = self.true_pos(point)
         msg = self.Command.GoToPoint + \
-            struct.pack("<f", pos[0]) + \
-            struct.pack("<f", pos[1]) + \
+            struct.pack("<f", point.x) + \
+            struct.pack("<f", point.y) + \
             struct.pack("<?", direction) + \
             speed + \
             struct.pack("<H", next_position_delay) + \

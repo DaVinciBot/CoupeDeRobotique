@@ -10,7 +10,7 @@ class RectangleArena:
             self.origin = origin
         else:
             print("origin must be a point, set to default (0,0)")
-            origin = p.point(0,0)
+            self.origin = p.point(0,0)
 
         if opposite_corner == None or type(opposite_corner) == p.point:
             self.opposite_corner = opposite_corner
