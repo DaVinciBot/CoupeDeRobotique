@@ -38,7 +38,7 @@ time_to_return_to_home = 80
 arena : RectangleArena = RectangleArena()
 
 # Get Rolling_basis
-rolling_basis = teensy.Rolling_basis()
+rolling_basis = teensy.Rolling_basis(crc=False) # error correcting code (code correcteur d'erreur d'où crc) isn't implemented yet
 
 def select_action_at_position(zone : int):
     if zone == 0:
