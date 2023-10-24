@@ -99,9 +99,8 @@ class Rolling_basis(Teensy):
 
     def __init__(self, vid: int = 5824, pid: int = 1155, baudrate: int = 115200, crc: bool = True):
         super().__init__(vid, pid, baudrate, crc)
-        # All position are in the form tuple(X, Y, THETA)
         self.odometrie = (0.0, 0.0, 0.0)
-        self.position_offset = (0.0, 0.0, 0.0)
+        self.position_offset = p(0.0,0.0)
         self.go_to_finished = False
         """
         This is used to match a handling function to a message type.
@@ -118,7 +117,7 @@ class Rolling_basis(Teensy):
     #####################
 
     def true_pos(self, point: p) -> p:
-        return p(point.x+self.position_offset, point.y+self.position_offset)
+        return p+point
         
 
     #############################
