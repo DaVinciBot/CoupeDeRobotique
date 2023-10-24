@@ -1,4 +1,4 @@
-import point as p
+import .point as p
 import area
 import tools as t
 
