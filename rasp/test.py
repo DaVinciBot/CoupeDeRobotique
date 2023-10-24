@@ -8,6 +8,6 @@ lidar = Lidar(-math.pi, math.pi)
 
 print(f"is_obstacle : {lidar.is_obstacle_infront()}")
 rolling_basis = teensy.Rolling_basis(crc=None)
-point = p(10,0)
+point = p(20,0)
 print(f"going to : {point.__str__()}")
 rolling_basis.Go_To(point)
