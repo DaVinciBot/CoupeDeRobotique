@@ -195,7 +195,7 @@ class Rolling_basis(Teensy):
         pos = self.odometrie[0]
         self.Go_To([-100, 0, 0], True, b'\x0A')
         timer = time.time()
-        offset = [0.0, 0.0, 0.0]
+        offset = p(0.0,0.0)
 
         while True:
             if abs(pos - self.odometrie[0]) > epsilon:
