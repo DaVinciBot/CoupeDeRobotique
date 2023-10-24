@@ -1,6 +1,6 @@
-import .point as p
-import area
-import tools as t
+from . import point as p
+from . import area
+from . import tools as t
 
 class RectangleArena:
     """Represent the arena. Only works if it's a rectangle one

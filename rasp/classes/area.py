@@ -1,5 +1,4 @@
-import point
-import rasp.classes.point
+from . import point
 
 class rectangle_area:
 
