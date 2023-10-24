@@ -1,4 +1,4 @@
-from classes.lidar import Lidar
+from rasp.classes.lidar import Lidar
 import math
 
 # Get Lidar
