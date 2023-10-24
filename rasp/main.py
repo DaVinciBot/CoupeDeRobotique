@@ -56,7 +56,6 @@ def select_action_at_position(zone : int):
 
 # A list of tuples representing the points to be reached and the according action to execute once reached
 points_list = [(point(10,0),0), (point(20,0),1)]
-
 # index of our destination point
 index_destination_point : int = 0
 
@@ -85,8 +84,8 @@ while True:
         rolling_basis.go_to_finished = False # not necessary but for safety 
 
     # Check if there is enought time
-    if tirette_pin.digitalRead() and start_time == 0:
-        start_time = get_current_date()["date_timespamp"]
+    #if tirette_pin.digitalRead() and start_time == 0:
+        #start_time = get_current_date()["date_timespamp"]
 
     # if time exceeds time_to_return_home then go to the starting posistion
     if start_time !=0 and get_current_date()["date_timespamp"] - start_time > time_to_return_to_home:
