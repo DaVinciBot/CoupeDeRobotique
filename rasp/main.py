@@ -10,10 +10,6 @@ import math
 # Get Lidar
 lidar = Lidar(-math.pi, math.pi)
 
-# Get On Off Pin
-on_off_pin = PIN(19)
-on_off_pin.setup("OUTPUT")
-
 # Get Tirette Pin
 tirette_pin = PIN(26)
 tirette_pin.setup("input_pulldown", reverse_state=True)
@@ -30,7 +26,6 @@ led_time.setup("OUTPUT")
 last_print = get_current_date()["date_timespamp"]
 
 # Init All pins states
-on_off_pin.digitalWrite(False)
 led_start.digitalWrite(False)
 led_lidar.digitalWrite(False)
 led_time.digitalWrite(False)
@@ -59,7 +54,11 @@ def select_action_at_position(zone : int):
 # 1 = depot_zone
 # 2 = gardener 
 
-actions_list = [(point,0), (point,1)] 
+# The list of points to run throught
+points_list = [(point,0), (point,1)]
+
+# index of our destination point
+index_destination_point : int = 0
 
 while True:
     
@@ -74,8 +73,15 @@ while True:
     # Run authorize ?
     run_auth : bool = not is_obstacle and tirette_pin.digitalRead()
 
+    # Go to the next point. If an obstacle is detected stop the robot
     if not run_auth:
         rolling_basis.Keep_Current_Position()
+    else:
+        rolling_basis.Go_To(points_list[index_destination_point])
+
+    # Handle next point if current one is reached
+    if rolling_basis.action_finished:
+        index_destination_point += 1
 
     # Check if there is enought time
     if tirette_pin.digitalRead() and start_time == 0:
@@ -92,7 +98,6 @@ while True:
         print(f"#-- Lidar --#\n"
               f"is_obstacle: {is_obstacle}\n\n"
               f"#-- Pins --#\n"
-              f"State ON / OFF: {on_off_pin.digitalRead()}\n"
               f"State Tirette: {tirette_pin.digitalRead()}\n"
               f"#-- Timer (return to home) --#\n"
               f"Timer to return: {time_to_return_to_home}\n"
