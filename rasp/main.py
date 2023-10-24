@@ -11,8 +11,8 @@ import math
 lidar = Lidar(-math.pi, math.pi)
 
 # Get Tirette Pin
-tirette_pin = PIN(26)
-tirette_pin.setup("input_pulldown", reverse_state=True)
+#tirette_pin = PIN(26)
+#tirette_pin.setup("input_pulldown", reverse_state=True)
 
 # Led States
 led_lidar = PIN(13)
@@ -71,7 +71,7 @@ while True:
         led_lidar.digitalWrite(False)
 
     # Run authorize ?
-    run_auth : bool = not is_obstacle and tirette_pin.digitalRead()
+    run_auth : bool = not is_obstacle #and tirette_pin.digitalRead()
 
     # Go to the next point. If an obstacle is detected stop the robot
     if not run_auth:
@@ -99,7 +99,7 @@ while True:
         print(f"#-- Lidar --#\n"
               f"is_obstacle: {is_obstacle}\n\n"
               f"#-- Pins --#\n"
-              f"State Tirette: {tirette_pin.digitalRead()}\n"
+              #f"State Tirette: {tirette_pin.digitalRead()}\n"
               f"#-- Timer (return to home) --#\n"
               f"Timer to return: {time_to_return_to_home}\n"
               f"Current time: {round(get_current_date()['date_timespamp'] - start_time)}\n"
