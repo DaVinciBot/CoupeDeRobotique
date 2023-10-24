@@ -54,8 +54,8 @@ def select_action_at_position(zone : int):
 # 1 = depot_zone
 # 2 = gardener 
 
-# The list of points to run throught
-points_list = [(point,0), (point,1)]
+# A list of tuples representing the points to be reached and the according action to execute once reached
+points_list = [(point(10,0),0), (point(20,0),1)]
 
 # index of our destination point
 index_destination_point : int = 0
@@ -78,7 +78,7 @@ while True:
         rolling_basis.Keep_Current_Position()
         rolling_basis.go_to_finished = False
     else:
-        rolling_basis.Go_To(points_list[index_destination_point])
+        rolling_basis.Go_To(points_list[index_destination_point][0])
 
     if rolling_basis.go_to_finished:
         index_destination_point += 1
