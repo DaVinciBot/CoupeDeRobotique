@@ -76,12 +76,13 @@ while True:
     # Go to the next point. If an obstacle is detected stop the robot
     if not run_auth:
         rolling_basis.Keep_Current_Position()
+        rolling_basis.go_to_finished = False
     else:
         rolling_basis.Go_To(points_list[index_destination_point])
 
-    # Handle next point if current one is reached
-    if rolling_basis.action_finished:
+    if rolling_basis.go_to_finished:
         index_destination_point += 1
+        rolling_basis.go_to_finished = False # not necessary but for safety 
 
     # Check if there is enought time
     if tirette_pin.digitalRead() and start_time == 0:

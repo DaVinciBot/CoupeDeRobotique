@@ -101,7 +101,7 @@ class Rolling_basis(Teensy):
         # All position are in the form tuple(X, Y, THETA)
         self.odometrie = (0.0, 0.0, 0.0)
         self.position_offset = (0.0, 0.0, 0.0)
-        self.action_finished = False
+        self.go_to_finished = False
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
@@ -135,7 +135,7 @@ class Rolling_basis(Teensy):
 
     def rcv_action_finish(self, msg: bytes):
         print(msg.hex())
-        self.action_finished = True
+        self.go_to_finished = True
 
     def rcv_unknown_msg_type(self, msg: bytes):
         print(f"The function with id {msg.hex()} isn't defined on the teensy")
@@ -175,7 +175,7 @@ class Rolling_basis(Teensy):
         # https://docs.python.org/3/library/struct.html#format-characters
 
         self.send_bytes(msg)
-        self.action_finished = False
+        self.go_to_finished = False
 
     def Set_Speed(self, speed: float) -> None:
         msg = self.Command.GoToPoint + struct.pack(speed, "f")
@@ -210,7 +210,7 @@ class Rolling_basis(Teensy):
                 break
 
         self.Go_To([0, 0, 0])
-        while not self.action_finished:
+        while not self.go_to_finished:
             time.sleep(0.1)
         # time.sleep(5)
 
@@ -229,6 +229,6 @@ class Rolling_basis(Teensy):
 
         self.position_offset = offset
         self.Go_To([30, 30, 0])
-        while not self.action_finished:
+        while not self.go_to_finished:
             time.sleep(0.1)
         # time.sleep(5)
