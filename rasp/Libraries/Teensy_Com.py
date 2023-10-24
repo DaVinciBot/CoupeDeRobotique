@@ -149,7 +149,7 @@ class Rolling_basis(Teensy):
         DisablePid = b'\03'
         EnablePid = b'\04'
 
-    def Go_To(self, point : p, theta : float = 0, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
+    def Go_To(self, point : p(0,0), theta : float = 0, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """Got the specified point
 
         Args:
