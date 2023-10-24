@@ -111,7 +111,7 @@ class Lidar:
         points.sort()
         return points[len(points) // 2]
     
-    def is_obstacle_infront(self, robot_pos, start_angle = 90, end_angle = 180, step_angle = 1/3, treshold=0.2):
+    def is_obstacle_infront(self, start_angle = 90, end_angle = 180, step_angle = 1/3, treshold=0.2):
         """this function enable to detect an obstacle in front of the robot. Do not exclude objects outside the bord. Therefore treshold must be low to avoid stopping for nothing
 
         Args:
