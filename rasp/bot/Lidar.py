@@ -2,7 +2,19 @@ import math
 import pysicktim as lidar
 
 
-def scan_values_to_polar(scan_values: list[float], min_angle: float, max_angle: float) -> list[list[float,float]]:
+def scan_values_to_polar(
+    scan_values: list[float], min_angle: float, max_angle: float
+) -> list[list[float, float]]:
+    """permet de
+
+    Args:
+        scan_values (_type_): _description_
+        min_angle (_type_): _description_
+        max_angle (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     angle_step = (max_angle - min_angle) / len(scan_values)
     polar_coordinates = []
     for i in range(len(scan_values)):
@@ -10,7 +22,9 @@ def scan_values_to_polar(scan_values: list[float], min_angle: float, max_angle: 
     return polar_coordinates
 
 
-def polar_to_cartesian(polar_coordinates: list[list[float, float, float]]) -> list[list[float,float]]:
+def polar_to_cartesian(
+    polar_coordinates: list[list[float, float, float]]
+) -> list[list[float, float]]:
     cartesian_coordinates = []
 
     for coordinate in polar_coordinates:
@@ -112,42 +126,9 @@ class Lidar:
         points.sort()
         return points[0]
 
-    def get_face_nearest_point(self) -> float:
-        """
-        Retourne le point le plus proche en face du lidar (entre -45° et 45° degrés, 0 étant la direction du lidar)
-
-        :return: le point le plus proche par rapport au lidar, en mètres
-        :rtype: float
-        """
-        lidar.scan()
-        points = [val for val in lidar.scan.distances[269:-271] if val > 0.01]
-        points.sort()
-        return points[0]
-    
-    def get_angle_nearest_point(self, start_angle:int, end_angle:int) -> float:
-        """
-        Retourne le point le plus proche dans un angle donné
-
-        :return: le point le plus proche par rapport au lidar, en mètres
-        :rtype: float
-        """
-        lidar.scan()
-        points = [val for val in lidar.scan.distances[(start_angle+45)*3:(end_angle+45)*3] if val > 0.01]
-        points.sort()
-        return points[0]
-
-    def safe_get_nearest_point(self, nombre_essai: int = 10) -> float:
-        """
-        Renvoie le point le plus proche par rapport au lidar, en prennant la médianne de {nombre_essai} mesures pour éviter les erreurs
-
-
-        :param nombre_essai: le nombre de detection du lidar sur lequels faire une médianne, defaults to 10
-        :type nombre_essai: int, optional
-        :return: le point le plus proche par rapport au lidar, en mètres
-        :rtype: float
-        """
+    def safe_get_nearest_point(self, nb_mesure: int = 30) -> float:
         points = []
-        for _ in range(nombre_essai):
+        for _ in range(nb_mesure):
             lidar.scan()
             scan = [val for val in lidar.scan.distances if val > 0.01]
             scan.sort()
@@ -156,28 +137,56 @@ class Lidar:
         points.sort()
         return points[len(points) // 2]
 
-    def safe_face_get_nearest_point(self, nombre_essai: int = 10) -> float:
-        """
-        Renvoie le point le plus proche en face du lidar (entre -45° et 45° degrés, 0 étant la direction du lidar), en prennant la médianne de {nombre_essai} mesures pour éviter les erreurs 
+    def safe_get_nearest_point_between(
+        self, start_angle: float, end_angle: float
+    ) -> float:
+        """Retourne la distance du point le plus proche par rapport au lidar entre les angles donnés (testé)
 
-        :param nombre_essai: le nombre de detection du lidar sur lequels faire une médianne, defaults to 10
-        :type nombre_essai: int, optional
-        :return: le point le plus proche en face du lidar, en mètres
+        :param start_angle: l'angle de départ de la mesure, en degrés
+        :type start_angle: float
+        :param end_angle: l'angle de fin de la mesure, en degrés
+        :type end_angle: float
+        :return: la distance du point le plus proche, en mètres
         :rtype: float
         """
         points = []
-        for _ in range(nombre_essai):
-            points.append(self.get_face_nearest_point())
+
+        for _ in range(30):
+            lidar.scan()
+            scan = [
+                val
+                for val in lidar.scan.distances[
+                    (start_angle + 45) * 3 : (end_angle + 45) * 3
+                ]
+                if val > 0.01
+            ]
+            scan.sort()
+            points.append(scan[0])
 
         points.sort()
         return points[len(points) // 2]
 
-    def get_cartesian_points(self) -> list:
+    def is_obstacle_infront(self, start_angle=90, end_angle=180, treshold=0.2) -> bool:
+        """Retourne True si un obstacle est détecté entre les angles donnés, False sinon
+
+        :param start_angle: l'angle de départ de la mesure, defaults to 90
+        :type start_angle: int, optional
+        :param end_angle: l'angle de fin de la mesure, defaults to 180
+        :type end_angle: int, optional
+        :param treshold:  filtre les valeurs plus petites, en mètres, defaults to 0.2
+        :type treshold: float, optional
+        :return: True si un obstacle est détecté entre les angles donnés
+        :rtype: bool
+        """
+        nearest_point = self.safe_get_nearest_point_between(start_angle, end_angle)
+        return nearest_point <= treshold
+
+    def get_cartesian_points(self):
         return self.__polar_to_cartesian()
 
-    def get_polar_points(self) -> list:
+    def get_polar_points(self):
         return self.__scan_values_to_polar()
-    
+
     def get_values(self) -> list:
         lidar.scan()
         return self.lidar_obj.scan.distances
