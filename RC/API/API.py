@@ -3,6 +3,7 @@ import json
 import os
 import websockets
 import datetime
+import socket
 
 
 def get_lidar_data() -> list[float]:
@@ -57,6 +58,80 @@ def update_log_data(data: list[str]):
         # add \n to each line
         data = [line + "\n" for line in data]
         f.writelines(data)
+
+
+def load_state_from_file():
+    try:
+        with open("state.json", "r") as file:
+            state = json.load(file)
+    except FileNotFoundError:
+        state = {
+            "pins": {},
+            "position": {},
+            "current_action": "",
+            "action_list": [],
+        }
+        # charge default value if the document does not exist
+    return state
+
+
+# retreive information
+def get_state(key=None):
+    current_state = load_state_from_file()
+    if key is None or key == "all" or key == "":
+        return current_state
+    if key in current_state:
+        return {key: current_state[key]}
+    return None
+
+
+# define the state for a specific key
+def set_state(key, value):
+    current_state = load_state_from_file()
+    if key in current_state:
+        current_state[key] = value
+        with open("state.json", "w") as file:
+            json.dump(current_state, file)
+        return f"OK"
+    return f"ERROR: key '{key}' not found"
+
+
+# update with new infos
+def update_state(data):
+    current_state = load_state_from_file()
+    current_state.update(data)
+
+
+async def handle_state_ws(websocket, CONNECTIONS_STATE):
+
+    # sending the current state of the client on connection
+    state_message = json.dumps(load_state_from_file())
+    await websocket.send(state_message)
+
+    async for message in websocket:
+        try:
+            data = json.loads(message)
+        except json.JSONDecodeError:
+            await websocket.send("error: message non valide")
+            continue
+        operation = data.get("operation")
+        key = data.get("key")
+
+        if operation == "get":
+            # get a state of a specific key
+            response = get_state(key)
+            await websocket.send(json.dumps(response))
+        elif operation == "set" and key:
+            # modify state of a specific key
+            new_value = data.get("value")
+            response = set_state(key, new_value)
+            await websocket.send(json.dumps(response))
+        elif operation == "update" and key:
+            # update with new infos
+            new_data = data.get("data")
+            update_state(new_data)
+        else:
+            await websocket.send("error : operation non valide")
 
 
 async def handle_lidar_ws(
@@ -127,7 +202,9 @@ async def handle_log_ws(websocket: websockets.WebSocketServerProtocol, CONNECTIO
             await websocket.send("error")
 
 
-async def handle_cmd_ws(websocket: websockets.WebSocketServerProtocol, CONNECTIONS_CMD: set):
+async def handle_cmd_ws(
+    websocket: websockets.WebSocketServerProtocol, CONNECTIONS_CMD: set
+):
     """
     Redirect all messages to all clients
 
@@ -155,6 +232,19 @@ async def handle_cmd_ws(websocket: websockets.WebSocketServerProtocol, CONNECTIO
             await websocket.send("error")
 
 
+COLORS = {
+    "GREEN": "\x1b[6;30;42m",
+    "RED": "\x1b[6;30;41m",
+    "YELLOW": "\x1b[6;30;43m",
+    "BLUE": "\x1b[6;30;44m",
+    "GRAY": "\x1b[90m",
+    "WHITE": "\x1b[97m",
+    "UNDERLINE": "\x1b[4m",
+    "END_UNDERLINE": "\x1b[24m",
+    "END": "\x1b[0m",
+}
+
+
 class API:
     """
     Wrapper for websockets server, take a dict of endpoints, with a set of connections and a handler for each endpoint
@@ -165,16 +255,24 @@ class API:
         self.port = port
         self.SERVER = SERVER
 
+        self.__local_ip = socket.gethostbyname(socket.gethostname())
+
     async def __server(self):
         async with websockets.serve(self.middleware, self.ip, self.port):
-            print("Server started")
+            print(
+                f"{COLORS['GREEN']} Server started on port {self.port} and interface {self.ip} {COLORS['END']}\n{COLORS['GRAY']}→  access from local computer: {COLORS['UNDERLINE'] + COLORS['WHITE']}ws://localhost:{self.port}/<route>{COLORS['END_UNDERLINE']+COLORS['GRAY']}\n→  from other computer: {COLORS['UNDERLINE'] + COLORS['WHITE']}ws://{self.__local_ip}:{self.port}/<route>{COLORS['END_UNDERLINE']+COLORS['GRAY']} {COLORS['END']}\n\nLog:"
+            )
             await asyncio.Future()  # serve forever
 
     def run(self):
-        asyncio.run(self.__server())
+        try:
+            asyncio.run(self.__server())
+        except KeyboardInterrupt:
+            print(f"{COLORS['YELLOW']} Server stopped {COLORS['END']}")
 
     async def middleware(self, websocket: websockets.WebSocketServerProtocol):
         # use SERVER for set of connections and handler
+        print(f"{COLORS['BLUE']} New connection on route {COLORS['UNDERLINE']+websocket.path} {COLORS['END']}")
         for key in self.SERVER:
             if websocket.path == f"/{key}":
                 self.SERVER[key]["connections"].add(websocket)
@@ -184,4 +282,5 @@ class API:
                     )
                     await websocket.wait_closed()
                 finally:
+                    print(f"{COLORS['BLUE']} Connection closed on route {COLORS['UNDERLINE']+websocket.path} {COLORS['END']}")
                     self.SERVER[key]["connections"].remove(websocket)
