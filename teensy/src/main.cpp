@@ -2,6 +2,7 @@
 #include <TimerOne.h>
 #include <rolling_basis.h>
 #include <util/atomic.h>
+#include <messages.h>
 
 // Mouvement params
 #define ACTION_ERROR_AUTH 20
@@ -57,21 +58,114 @@ Rolling_Basis_Params rolling_basis_params{
 Precision_Params classic_params{
     NEXT_POSITION_DELAY,
     ACTION_ERROR_AUTH,
-    TRAJECTORY_PRECISION
+    TRAJECTORY_PRECISION,
 };
 
 Rolling_Basis_Ptrs rolling_basis_ptrs;
 
 /* Strat part */
-#define STRAT_SIZE 1
-byte action_index = 0;
+Com *com;
+// template <typename T>
+// T decode(byte *data, size_t size)
+// {
+//   T value;
+//   memcpy(&value, data, size);
+//   return value;
+// }
 
-Action **strat_test = new Action *[STRAT_SIZE]
+// template <typename T>
+// void encode(byte *data, T value, size_t size)
+// {
+//   memcpy(data, &value, size);
+// }
+
+Complex_Action *current_action = nullptr;
+
+void swap_action(Complex_Action *new_action)
 {
-  new Curve_Go_To(Point(100.0, 0.0), Point(50.0, 0.0), 5, forward, 100, classic_params),
-  new Go_To(Point(30.0, 0.0), backward, 100, classic_params),
-  new Go_To(Point(0.0, 0.0), forward, 100, classic_params),
-};
+  // implémentation des destructeurs manquante
+  if (current_action != nullptr)
+    free(current_action);
+  current_action = new_action;
+}
+
+void go_to(byte *msg, byte size)
+{
+  msg_Go_To *go_to_msg = (msg_Go_To *)msg;
+  Point target_point(go_to_msg->x, go_to_msg->y);
+
+  Precision_Params params{
+      go_to_msg->next_position_delay,
+      go_to_msg->action_error_auth,
+      go_to_msg->traj_precision,
+  };
+
+  Go_To *new_action = new Go_To(target_point, go_to_msg->is_forward ? backward : forward, go_to_msg->speed, params);
+  if (current_action == new_action)
+    free(new_action);
+  else
+    swap_action(new_action);
+}
+
+void curve_go_to(byte *msg, byte size)
+{
+  // float target_x = (float)(msg[0]);
+  // float target_y = (float)(msg[sizeof(float)]);
+
+  // float center_x = (float)(msg[2 * sizeof(float)]);
+  // float center_y = (float)(msg[3 * sizeof(float)]);
+
+  // unsigned short interval = (unsigned short)(msg[4 * sizeof(float)]);
+
+  // Point target_point = Point(target_x, target_y);
+  // Point center_point = Point(center_x, center_y);
+
+  // bool is_identical = current_action->get_id() == CURVE_GO_TO;
+  // if (is_identical)
+  // {
+  //   Go_To *casted_action = ;
+  //   is_identical = ((Go_To *)current_action)->target_point == target_point;
+  // }
+}
+
+// Whether to keep position when no action is active
+bool keep_curr_pos_when_no_action = true;
+
+void keep_current_position(byte *msg, byte size)
+{
+  free(current_action);
+  current_action = nullptr;
+  // last_ticks_position = rolling_basis_ptr->get_current_ticks();
+
+  keep_curr_pos_when_no_action = true;
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = KEEP_CURRENT_POSITION;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+void disable_pid(byte *msg, byte size)
+{
+  keep_curr_pos_when_no_action = false;
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = DISABLE_PID;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+void enable_pid(byte *msg, byte size)
+{
+  // last_ticks_position = rolling_basis_ptr->get_current_ticks();
+  keep_curr_pos_when_no_action = true;
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = ENABLE_PID;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+void (*functions[256])(byte *msg, byte size);
+
+extern void handle_callback(Com *com);
 
 /******* Attach Interrupt *******/
 inline void left_motor_read_encoder()
@@ -96,7 +190,7 @@ byte pin_on_off = 19;
 // Switch side
 byte pin_green_side = 18;
 
-// Globales variables 
+// Globales variables
 Ticks last_ticks_position;
 
 long start_time = -1;
@@ -105,6 +199,15 @@ void handle();
 
 void setup()
 {
+  com = new Com(&Serial, 115200);
+
+  // only the messages received by the teensy are listed here
+  functions[GO_TO] = &go_to,
+  functions[CURVE_GO_TO] = &curve_go_to,
+  functions[KEEP_CURRENT_POSITION] = &keep_current_position,
+  functions[DISABLE_PID] = &disable_pid,
+  functions[ENABLE_PID] = &enable_pid,
+
   Serial.begin(115200);
   pinMode(pin_on_off, INPUT);
   pinMode(pin_green_side, INPUT);
@@ -134,6 +237,8 @@ void setup()
   Timer1.attachInterrupt(handle);
 }
 
+int counter = 0;
+
 void loop()
 {
   rolling_basis_ptr->odometrie_handle();
@@ -141,59 +246,52 @@ void loop()
 
   if (start_time == -1 && digitalReadFast(pin_on_off))
     start_time = millis();
-}
 
-void handle(){
+  // Com
+  handle_callback(com);
 
-  // Not end of the game ?
-  if ((millis() - start_time) < STOP_MOTORS_DELAY || start_time == -1)
+  // Send odometrie
+  msg_Update_Position pos_msg;
+  if (counter++ > 1024)
   {
-    // Authorize to move ?
-    if (digitalReadFast(pin_on_off))
-    {
-      /*
-      // Must return to start position ?
-      if ((millis() - start_time) > RETURN_START_POSITION_DELAY && false)
-      {
-        // Calculate distance from start position
-        float d_x = rolling_basis_ptr->X;
-        float d_y = rolling_basis_ptr->Y;
-        float dist_robot_start_position = sqrt((d_x * d_x) + (d_y * d_y));
-
-        // Check if we are already in the start position (> 5 cm -> go to home)
-          //if (dist_robot_start_position > DISTANCE_NEAR_START_POSITION)
-          //rolling_basis_ptr->action_handle(&return_position);
-      }
-      */
-     
-      // Do classic trajectory
-      if (action_index < STRAT_SIZE)
-      {
-        Point current_position = rolling_basis_ptr->get_current_position();
-        last_ticks_position = rolling_basis_ptr->get_current_ticks();
-
-        if (!strat_test[action_index]->is_finished())
-          strat_test[action_index]->handle(
-              current_position,
-              last_ticks_position,
-              &rolling_basis_ptrs);
-        else
-          action_index++;
-      }
-      else
-        rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
-    }
-    else
-      rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+    pos_msg.x = rolling_basis_ptr->X;
+    pos_msg.y = rolling_basis_ptr->Y;
+    pos_msg.theta = rolling_basis_ptr->THETA;
+    com->send_msg((byte *)&pos_msg, sizeof(msg_Update_Position));
+    counter = 0;
   }
-  else
-    rolling_basis_ptr->shutdown_motor();  
 }
 
-// This code was realized by Florian BARRE
-//     ____ __
-//    / __// /___
-//   / _/ / // _ \
-//  /_/  /_/ \___/
+void handle()
+{
+  if (current_action == nullptr || current_action->is_finished())
+  {
+    if (keep_curr_pos_when_no_action)
+      rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+    return;
+  }
+
+  Point current_position = rolling_basis_ptr->get_current_position();
+  last_ticks_position = rolling_basis_ptr->get_current_ticks();
+
+  current_action->handle(
+      current_position,
+      last_ticks_position,
+      &rolling_basis_ptrs);
 
 
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = current_action->get_id();
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+  return;
+}
+
+/*
+
+ This code was realized by Florian BARRE
+    ____ __
+   / __// /___<
+  / _/ / // _ \
+ /_/  /_/ \___/
+
+*/
