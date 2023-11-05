@@ -22,7 +22,7 @@ void Complex_Action::handle(Point current_point, Ticks current_ticks, Rolling_Ba
     {
         this->state = in_progress;
 
-        // Handle action
+        // Handle basic action
         if (
                 this->basic_movements[this->movement_index]->state == not_started ||
                 this->basic_movements[this->movement_index]->state == in_progress
@@ -33,7 +33,7 @@ void Complex_Action::handle(Point current_point, Ticks current_ticks, Rolling_Ba
                 rolling_basis_ptrs
             );
         
-        // End of the action
+        // End of the basic action
         else if (this->basic_movements[this->movement_index]->is_finished())
             this->movement_index++;  
     }
@@ -42,11 +42,11 @@ void Complex_Action::handle(Point current_point, Ticks current_ticks, Rolling_Ba
 }
 
 // Simple action for going to a point
-Go_To::Go_To(Point target_point, Direction direction, byte speed, Precision_Params precision_params)
+Go_To::Go_To(Point target_point, Direction direction, Speed_Driver speed_driver, Precision_Params precision_params)
 {
     this->target_point = target_point;
     this->direction = direction;
-    this->speed = speed;
+    this->speed_driver = speed_driver;
     this->precision_params = precision_params;
 }
 
@@ -59,27 +59,27 @@ void Go_To::compute(Point current_point, Ticks current_ticks, Rolling_Basis_Para
     this->basic_movements[0] = new Get_Orientation(
         this->target_point.x, this->target_point.y,
         &this->direction,
-        &this->speed,
+        &this->speed_driver,
         &this->precision_params
     );
 
     this->basic_movements[1] = new Move_Straight(
         this->target_point.x, this->target_point.y,
         &this->direction,
-        &this->speed,
+        &this->speed_driver,
         &this->precision_params
     );
     this->is_computed = true;
 }
 
 // Action for going to a point with a curve
-Curve_Go_To::Curve_Go_To(Point target_point, Point center_point, unsigned short interval, Direction direction, byte speed, Precision_Params precision_params)
+Curve_Go_To::Curve_Go_To(Point target_point, Point center_point, unsigned short interval, Direction direction, Speed_Driver speed_driver, Precision_Params precision_params)
 {
     this->target_point = target_point;
     this->center_point = center_point;
     this->interval = interval;
     this->direction = direction;
-    this->speed = speed;
+    this->speed_driver = speed_driver;
     this->precision_params = precision_params;
 }
 
@@ -108,13 +108,13 @@ void Curve_Go_To::compute(Point current_point, Ticks current_ticks, Rolling_Basi
         this->basic_movements[k] = new Get_Orientation(
                 x, y,
                 &this->direction,
-                &this->speed,
+                &this->speed_driver,
                 &this->precision_params
             );
         this->basic_movements[k+1] = new Move_Straight(
                 x, y,
                 &this->direction,
-                &this->speed,
+                &this->speed_driver,
                 &this->precision_params
             );
     }

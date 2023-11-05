@@ -68,9 +68,9 @@ byte action_index = 0;
 
 Action **strat_test = new Action *[STRAT_SIZE]
 {
-  new Curve_Go_To(Point(100.0, 0.0), Point(50.0, 0.0), 5, forward, 100, classic_params),
-  new Go_To(Point(30.0, 0.0), backward, 100, classic_params),
-  new Go_To(Point(0.0, 0.0), forward, 100, classic_params),
+  new Curve_Go_To(Point(100.0, 0.0), Point(50.0, 0.0), 5, forward, new Speed_Driver_From_Distance(100, 50, 0.1f), classic_params),
+      new Go_To(Point(30.0, 0.0), backward, new Speed_Driver_From_Distance(100, 50, 5.0f), classic_params),
+      new Go_To(Point(0.0, 0.0), forward, new Speed_Driver_From_Distance(100, 50, 10.0f), classic_params),
 };
 
 /******* Attach Interrupt *******/

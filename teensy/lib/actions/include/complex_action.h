@@ -12,7 +12,7 @@ public:
     // Trajectory parameters
     Precision_Params precision_params;
     Direction direction;
-    byte speed;
+    Speed_Driver speed_driver;
 
     Basic_Action **basic_movements;
     short nb_basic_movements;
@@ -35,8 +35,8 @@ public:
     Point target_point;
 
     // Constructor
-    Go_To(Point target_point, Direction direction, byte speed, Precision_Params precision_params);
-    
+    Go_To(Point target_point, Direction direction, Speed_Driver speed_driver, Precision_Params precision_params);
+
     // Method
     void compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params);
 };
@@ -50,7 +50,7 @@ public:
     unsigned short interval;
 
     // Constructor
-    Curve_Go_To(Point target_point, Point center_point, unsigned short interval, Direction direction, byte speed, Precision_Params precision_params);
+    Curve_Go_To(Point target_point, Point center_point, unsigned short interval, Direction direction, Speed_Driver speed_driver, Precision_Params precision_params);
 
     // Method
     void compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params);

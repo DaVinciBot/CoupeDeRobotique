@@ -16,12 +16,12 @@ void Basic_Action::handle(Point current_point, Ticks current_ticks, Rolling_Basi
 }
 
 // Move Straight
-Move_Straight::Move_Straight(float target_x, float target_y, Direction *direction, byte *speed, Precision_Params *precision_params)
+Move_Straight::Move_Straight(float target_x, float target_y, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params)
 {
     this->target_x = target_x;
     this->target_y = target_y;
     this->direction = direction;
-    this->speed = speed;
+    this->speed_driver = speed_driver;
     this->precision_params = precision_params;
 }
 
@@ -31,7 +31,7 @@ void Move_Straight::compute(Point current_point, Ticks current_ticks, Rolling_Ba
     float distance = Point::distance(current_point, Point(this->target_x, this->target_y)) * (*this->direction);
     
     // Create the step action
-    this->step_action = new Step_Forward_Backward(distance, this->speed, this->precision_params);
+    this->step_action = new Step_Forward_Backward(distance, this->speed_driver, this->precision_params);
 
     // Compute the step action
     this->step_action->compute(current_ticks, rolling_basis_params);
@@ -39,47 +39,17 @@ void Move_Straight::compute(Point current_point, Ticks current_ticks, Rolling_Ba
 }
 
 // Get Orientation in front of a point (turn on itself)
-Get_Orientation::Get_Orientation(float target_x, float target_y, Direction *direction, byte *speed, Precision_Params *precision_params)
+Get_Orientation::Get_Orientation(float target_x, float target_y, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params)
 {
     this->target_x = target_x;
     this->target_y = target_y;
     this->direction = direction;
-    this->speed = speed;
+    this->speed_driver = speed_driver;
     this->precision_params = precision_params;
 }
 
 void Get_Orientation::compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params)
 {   
-    /*
-    EXREMUM ROTATION VALUE (not used)
-    float delta_x = this->target_x - current_x;
-    float delta_y = this->target_y - current_y;
-    float theta;
-
-    // Extremum rotation
-    // delta y null
-    if (delta_y == 0)
-    {
-        if (target_x > current_x)
-            theta = 0.0;
-        else if (target_x < current_x)
-            theta = PI;
-    }
-    // delta x null
-    else if (delta_x == 0)
-    {
-        if (target_y > current_y)
-            theta = PI / 2.0;
-        else if (target_x < current_y)
-            theta = -(PI / 2.0);
-    }
-
-
-    // Any cases
-    else
-        theta = fmod((atan2(delta_y, delta_x) - current_theta + PI), (2 * PI)) - PI;
-    */
-
     // Compute the angle to turn
     float theta_dif = Point::angle(Point(this->target_x, this->target_y), current_point);
     float theta = fmod((theta_dif - current_point.theta + PI), (2 * PI));
@@ -89,7 +59,7 @@ void Get_Orientation::compute(Point current_point, Ticks current_ticks, Rolling_
         theta += PI;
 
     // Create the step action
-    this->step_action = new Step_Rotation(theta, this->speed, this->precision_params);
+    this->step_action = new Step_Rotation(theta, this->speed_driver, this->precision_params);
 
     // Compute the step action
     this->step_action->compute(current_ticks, rolling_basis_params);
@@ -97,11 +67,11 @@ void Get_Orientation::compute(Point current_point, Ticks current_ticks, Rolling_
 }
 
 // Do a Rotation (turn on itself)
-Move_Rotation::Move_Rotation(float target_theta, Direction *direction, byte *speed, Precision_Params *precision_params)
+Move_Rotation::Move_Rotation(float target_theta, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params)
 {   
     this->target_theta = target_theta;
     this->direction = direction;
-    this->speed = speed;
+    this->speed_driver = speed_driver;
     this->precision_params = precision_params;
 }
 
@@ -117,7 +87,7 @@ void Move_Rotation::compute(Point current_point, Ticks current_ticks, Rolling_Ba
     float delta_theta = this->target_theta - mod_current_theta;
 
     // Create the step action
-    this->step_action = new Step_Rotation(delta_theta, this->speed, this->precision_params);
+    this->step_action = new Step_Rotation(delta_theta, this->speed_driver, this->precision_params);
 
     // Compute the step action
     this->step_action->compute(current_ticks, rolling_basis_params);

@@ -22,6 +22,7 @@ struct Precision_Params
     unsigned int error_precision;
     unsigned int trajectory_precision;
 };
+
 struct Rolling_Basis_Params
 {
     int encoder_resolution;
@@ -76,5 +77,68 @@ public:
     static float angle(Point p1, Point p2)
     {
         return atan2(p2.y - p1.y, p2.x - p1.x);
+    }
+};
+
+class Speed_Driver
+{
+    // How to use speed Driver:
+    // Give gamma and offset
+    // 2 cases:
+    // 1°) Give Gamma value, it will be directly use to compute the speed (use Speed_Driver_From_Gamma class)
+    // speed = gamma * ticks + offset (speed <= max_speed)
+    // 2°) Give distance_to_max_speed, it will be use to compute gamma (use Speed_Driver_From_Distance class)
+    // The distance_to_max_speed has to be given in cm, when the compute function will be
+    // called, the encoder_resolution and wheel_perimeter will be used to convert it in ticks
+    // Gamma = (max_speed - offset) / (distance_to_max_speed * encoder_resoltion / wheel_perimeter)
+public:
+    // Attributes
+    byte max_speed;
+    byte offset;
+    float gamma = -1.0f; // Gamma is the slope of the affine line representing the acceleration profile
+    float distance_to_max_speed = -1.0f;
+
+    Speed_Driver() = default;
+
+    // Methodes
+    void compute_acceleration_profile(Rolling_Basis_Params *rolling_basis_params)
+    {
+        if (this->gamma == -1.0f)
+        {
+            byte y_delta = this->max_speed - this->offset;
+            float distance_to_max_speed_ticks = (this->distance_to_max_speed * rolling_basis_params->encoder_resolution) / rolling_basis_params->wheel_perimeter;
+            this->gamma = (float)y_delta / distance_to_max_speed_ticks;
+        }
+    }
+
+    byte compute_local_speed(long ticks)
+    {
+        byte local_speed = (byte)(this->gamma * ticks + this->offset);
+        return (local_speed > this->max_speed) ? this->max_speed : local_speed;
+    }
+
+    float get_gamma()
+    {
+        return this->gamma;
+    }
+};
+
+class Speed_Driver_From_Gamma : public Speed_Driver
+{
+    Speed_Driver_From_Gamma(byte max_speed, byte offset, float gamma)
+    {
+        this->max_speed = max_speed;
+        this->offset = offset;
+        this->gamma = gamma;
+    }
+};
+
+class Speed_Driver_From_Distance : public Speed_Driver
+{
+    Speed_Driver_From_Distance(byte max_speed, byte offset, float distance_to_max_speed)
+    {
+        this->max_speed = max_speed;
+        this->offset = offset;
+        this->distance_to_max_speed = distance_to_max_speed;
     }
 };

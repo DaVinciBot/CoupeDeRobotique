@@ -10,7 +10,7 @@ public:
 
     // Trajectory parameters
     Precision_Params *precision_params;
-    byte *speed;
+    Speed_Driver *speed_driver;
 
     long total_ticks;
     long ticks_cursor = 0;
@@ -42,7 +42,7 @@ public:
     Direction direction;
 
     // Constructor
-    Step_Forward_Backward(float distance, byte *speed, Precision_Params *precision_params);
+    Step_Forward_Backward(float distance, Speed_Driver *speed_driver, Precision_Params *precision_params);
 
     // Method
     void compute(Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params) override;
@@ -57,7 +57,7 @@ public:
     Sens rotation_sens;
 
     // Constructor
-    Step_Rotation(float theta, byte *speed, Precision_Params *precision_params);
+    Step_Rotation(float theta, Speed_Driver *speed_driver, Precision_Params *precision_params);
 
     // Method
     void compute(Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params) override;

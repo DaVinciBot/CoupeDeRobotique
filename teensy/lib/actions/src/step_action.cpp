@@ -45,10 +45,12 @@ void Step_Action::handle(Point current_point, Ticks current_ticks, Rolling_Basis
 
     // Handle the action 
     else if (this->state == not_started || this->state == in_progress){
-      
+        // Compute speed
+        byte local_speed = this->speed_driver->compute_local_speed(this->ticks_cursor);
+
         // Set motor order
-        rolling_basis_ptrs->right_motor->handle((this->right_ref + this->right_sign * this->ticks_cursor), *this->speed);
-        rolling_basis_ptrs->left_motor->handle((this->left_ref + this->left_sign * this->ticks_cursor), *this->speed);
+        rolling_basis_ptrs->right_motor->handle((this->right_ref + this->right_sign * this->ticks_cursor), local_speed);
+        rolling_basis_ptrs->left_motor->handle((this->left_ref + this->left_sign * this->ticks_cursor), local_speed);
 
         // Update action progression cursor
         this->update_action_cursor(current_ticks);
@@ -59,16 +61,20 @@ void Step_Action::handle(Point current_point, Ticks current_ticks, Rolling_Basis
 }
 
 // Move Forward or Backward
-Step_Forward_Backward::Step_Forward_Backward(float distance, byte *speed, Precision_Params *precision_params)
+Step_Forward_Backward::Step_Forward_Backward(float distance, Speed_Driver *speed_driver, Precision_Params *precision_params)
 {
     this->distance = fabs(distance);
-    this->speed = speed;
+    this->speed_driver = speed_driver;
     this->direction = (distance < 0) ? backward : forward;
     this->precision_params = precision_params;
 }
 
 void Step_Forward_Backward::compute(Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params)
 {
+    // Compute acceleration profile
+    this->speed_params->compute_acceleration_profile(rolling_basis_params);
+
+    // Compute ticks to do
     this->total_ticks = (rolling_basis_params->encoder_resolution / rolling_basis_params->wheel_perimeter) * this->distance;
     if (this->direction == forward)
     {
@@ -87,16 +93,20 @@ void Step_Forward_Backward::compute(Ticks current_ticks, Rolling_Basis_Params *r
 }
 
 // Move Rotation
-Step_Rotation::Step_Rotation(float theta, byte *speed, Precision_Params *precision_params)
+Step_Rotation::Step_Rotation(float theta, Speed_Driver *speed_driver, Precision_Params *precision_params)
 {
     this->theta = fabs(theta);
-    this->speed = speed;
+    this->speed_driver = speed_driver;
     this->rotation_sens = (theta < 0) ? clockwise : counterclockwise;
     this->precision_params = precision_params;
 }
 
 void Step_Rotation::compute(Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params)
 {
+    // Compute acceleration profile
+    this->speed_params->compute_acceleration_profile(rolling_basis_params);
+
+    // Compute ticks to do
     float distance = (fabs(this->theta) * rolling_basis_params->radius);
     this->total_ticks = (rolling_basis_params->encoder_resolution / rolling_basis_params->wheel_perimeter) * distance;
 
