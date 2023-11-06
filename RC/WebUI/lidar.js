@@ -15,13 +15,14 @@ let height = canvas.height;
 let centerX = width / 2;
 let centerY = height / 2;
 
-let radius = 100;
+let radius = 200;
 let angle = 0;
 
+let screen_angular_resolution = 3; // number of ray per value
 
 
 let lidarData = [];
-for (let i = 0; i < 270 * 3; i++) {
+for (let i = 0; i < 270 * 3 * screen_angular_resolution; i++) {
     lidarData.push(5);
 }
 
@@ -29,22 +30,19 @@ let lidar = new WebSocket("ws://127.0.0.1:3000/lidar");
 lidar.onmessage = function (event) {
     if (event.data.startsWith("new$=$") || event.data.startsWith("current$=$")) {
         let data = event.data.split("$=$")[1].split(",");
-        for (let i = 0; i < data.length; i++) {
-            lidarData[i] = parseFloat(data[i]);
+        for (let i = 0; i < data.length; i+=screen_angular_resolution) {
+            for (let j = 0; j < screen_angular_resolution; j++) {
+                lidarData[i+j] = data[i];
+            }
         }
         draw();
     }
 }
 
-function toggle_alt_design() {
-    alt_design = !alt_design;
-    draw();
-}
-
-function draw_red_dot(){
+function draw_red_dot(size = 15){
     // center dot
     ctx.fillStyle = "red";
-    ctx.fillRect(centerX - 2.5, centerY - 2.5, 5, 5);
+    ctx.fillRect(centerX - (size/2), centerY - (size/2), size, size);
 }
 
 function overlay() {
@@ -69,14 +67,14 @@ function overlay() {
     ctx.stroke();
     // diameter size text
     ctx.fillStyle = "red";
-    ctx.font = "15px Arial";
-    ctx.fillText(`${MAX_DISTANCE * 2}m`, centerX - radius - 60, centerY);
+    ctx.font = "25px Arial";
+    ctx.fillText(`${MAX_DISTANCE * 2}m`, centerX - radius - 80, centerY);
 }
 
 function draw_data(decalage = 45) {
     ctx.strokeStyle = "#fff";
     for (let i = 0; i < lidarData.length; i++) {
-        let angle = i * (1 / 3) * -Math.PI / 180 + decalage * Math.PI / 180;
+        let angle = i * (1 / (3*screen_angular_resolution)) * -Math.PI / 180 + decalage * Math.PI / 180;
         let distance = lidarData[i] > MAX_DISTANCE || lidarData[i] < 0.001 ? radius : lidarData[i] * (radius / MAX_DISTANCE);
         draw_line(angle, distance);
     }
