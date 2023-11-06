@@ -1,4 +1,4 @@
-from Libraries.Teensy_Com import Rolling_basis
+from bot import Rolling_basis
 import pywebio
 import time
 import threading
