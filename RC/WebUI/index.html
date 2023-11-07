@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="./assets/style/materialize.css">
     <link rel="stylesheet" href="./assets/style/switch_btn.css">
     <link rel="stylesheet" href="./assets/style/dpad.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="./assets/style/sidebar.css">
+    <link rel="stylesheet" href="./assets/style/index.css">
+    <link rel="stylesheet" href="main.css">
     <link rel="shortcut icon" href="./assets/fav.ico" type="image/x-icon">
     <title>CDR Dashboard</title>
 </head>
@@ -21,10 +23,10 @@
         </div>
         <div class="menu">
             <ul>
-                <li class="active"><i class="material-icons">home</i><a href="./index.html">Dashboard</a></li>
-                <li><i class="material-icons">build</i><a href="./map.html">Config</a></li>
-                <li><i class="material-icons">gamepad</i><a href="./map.html">Pilotage</a></li>
-                <li><i class="material-icons">settings</i><a href="./settings.html">Settings</a></li>
+                <a href="./index.html"><li class="active"><i class="material-icons">home</i><span>Dashboard</span></li></a>
+                <a href="./pages/config.html"><li><i class="material-icons">build</i><span>Config</span></li></a>
+                <a href="./pages/map.html"><li><i class="material-icons">gamepad</i><span>Pilotage</span></li></a>
+                <a href="./pages/settings.html"><li><i class="material-icons">settings</i><span>Settings</span></li></a>
             </ul>
         </div>
     </div>
@@ -44,8 +46,14 @@
                 <canvas id="lidar" width="600px" height="500px"></canvas>
             </div>
             <div class="container">
-                <p style="margin: 0;">Contrôles</p>
+                <div class="card_header">
+                    <p style="margin: 0;">Contrôles</p>
+                    <div id="refresh">
+                        <i class="material-icons">restart_alt</i>
+                    </div>
+                </div>
                 <div class="control">
+                    
                     <div class="dpad">
                         <div></div>
                         <div class="center">

@@ -1,3 +1,15 @@
+#refresh{
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: .625rem;
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    display: flex;
+}
+#refresh i{
+    margin: auto;
+}
 .dpad{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;

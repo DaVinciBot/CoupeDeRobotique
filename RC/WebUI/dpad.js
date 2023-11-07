@@ -3,6 +3,8 @@ let down = document.querySelector(".down");
 let left = document.querySelector(".left");
 let right = document.querySelector(".right");
 
+let refresh = document.querySelector("#refresh");
+
 let robot = new WebSocket("ws://127.0.0.1:3000/cmd");
 
 
@@ -23,3 +25,7 @@ for (let i = 0; i < dpad_divs.length; i++) {
         robot.send("set$=$goto"+msg);
     });
 }
+
+refresh.addEventListener("click", function (event) {
+    robot.send("set$=$home");
+});
