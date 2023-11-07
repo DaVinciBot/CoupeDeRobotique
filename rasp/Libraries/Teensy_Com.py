@@ -83,13 +83,13 @@ class Teensy():
                 logging.warn(
                     "Received Teensy message that does not match declared length " + msg.hex(sep = " "))
                 continue
-            try:
+            """try:
                 if msg[0] != 128 :
                     print(msg)
                 self.messagetype[msg[0]](msg[1:-1])
             except Exception as e:
                 logging.error("Received message handling crashed :\n" + e.args)
-                time.sleep(0.5)
+                time.sleep(0.5)"""
 
 
 class Rolling_basis(Teensy):

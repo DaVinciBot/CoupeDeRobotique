@@ -58,6 +58,8 @@ def select_action_at_position(zone : int):
 points_list = [(point(10,0),0), (point(20,0),1)]
 # index of our destination point
 index_destination_point : int = 0
+# enable to say if the robot habe been previously stopped
+have_been_stopped = False; 
 
 while True:
     
@@ -66,18 +68,21 @@ while True:
     try:
         is_obstacle = lidar.is_obstacle_infront()
         led_lidar.digitalWrite(True)
-    except:
+    except Exception as e:*
+        print(eù)
         led_lidar.digitalWrite(False)
 
     # Run authorize ?
-    run_auth : bool = not is_obstacle #and tirette_pin.digitalRead()
+    run_auth : bool = not is_obstacle
 
     # Go to the next point. If an obstacle is detected stop the robot
     if not run_auth:
         rolling_basis.Keep_Current_Position()
         rolling_basis.go_to_finished = False
-    else:
+        have_been_stopped = True
+    elif have_been_stopped:
         rolling_basis.Go_To(points_list[index_destination_point][0])
+        have_been_stopped = False
 
     if rolling_basis.go_to_finished:
         index_destination_point += 1
