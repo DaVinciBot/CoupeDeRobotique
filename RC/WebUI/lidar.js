@@ -30,9 +30,9 @@ let lidar = new WebSocket("ws://127.0.0.1:3000/lidar");
 lidar.onmessage = function (event) {
     if (event.data.startsWith("new$=$") || event.data.startsWith("current$=$")) {
         let data = event.data.split("$=$")[1].split(",");
-        for (let i = 0; i < data.length; i+=screen_angular_resolution) {
+        for (let i = 0; i < data.length; i++) {
             for (let j = 0; j < screen_angular_resolution; j++) {
-                lidarData[i+j] = data[i];
+                lidarData[i*screen_angular_resolution+j] = data[i];
             }
         }
         draw();
