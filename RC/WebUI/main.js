@@ -2,6 +2,12 @@ let console_div = document.querySelector('.console')
 let state_div = document.querySelector('.state')
 
 let log = new WebSocket("ws://localhost:3000/log");
+log.onopen = function () {
+    console.log("log connected");
+    // send "get" and parse the response
+    log.send("get");
+}
+
 log.onmessage = function (event) {
     if (event.data.startsWith("current$=$")) {
         show_console_data(event.data.split("$=$")[1].replaceAll('"', '').replace('[', '').replace(']', '').split(",").join('<br>'))
@@ -24,11 +30,3 @@ function show_console_data(data, add=false) {
 
 }
 console.scrollTop = console.scrollHeight
-
-document.addEventListener("DOMContentLoaded", function () {
-    log.onopen = function () {
-        console.log("log connected");
-        // send "get" and parse the response
-        log.send("get");
-    }
-})

@@ -27,6 +27,11 @@ for (let i = 0; i < 270 * 3 * screen_angular_resolution; i++) {
 }
 
 let lidar = new WebSocket("ws://127.0.0.1:3000/lidar");
+lidar.onopen = function () {
+    console.log("lidar connected");
+    lidar.send("get");
+}
+
 lidar.onmessage = function (event) {
     if (event.data.startsWith("new$=$") || event.data.startsWith("current$=$")) {
         let data = event.data.split("$=$")[1].split(",");
@@ -97,9 +102,5 @@ function draw() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    lidar.onopen = function () {
-        console.log("lidar connected");
-        lidar.send("get");
-    }
     draw();
 });

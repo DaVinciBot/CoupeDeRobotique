@@ -6,7 +6,9 @@ let right = document.querySelector(".right");
 let refresh = document.querySelector("#refresh");
 
 let robot = new WebSocket("ws://127.0.0.1:3000/cmd");
-
+robot.onopen = function () {
+    console.log("/cmd connected");
+}
 
 let dpad_divs = [...up.children,...down.children,...left.children,...right.children];
 for (let i = 0; i < dpad_divs.length; i++) {
