@@ -55,11 +55,11 @@ def select_action_at_position(zone : int):
 # 2 = gardener 
 
 # A list of tuples representing the points to be reached and the according action to execute once reached
-points_list = [(point(10,0),0), (point(20,0),1)]
+points_list = [(point(10,0),0), (point(0,10),1)]
 # index of our destination point
 index_destination_point : int = 0
 # enable to say if the robot habe been previously stopped
-have_been_stopped = False; 
+have_been_stopped = True; 
 
 while True:
     
@@ -67,10 +67,8 @@ while True:
     is_obstacle : bool = True # for safety in case of lidar dysfunction
     try:
         is_obstacle = lidar.is_obstacle_infront()
-        led_lidar.digitalWrite(True)
-    except Exception as e:*
-        print(eù)
-        led_lidar.digitalWrite(False)
+    except Exception as e:
+        print(e)
 
     # Run authorize ?
     run_auth : bool = not is_obstacle
@@ -85,6 +83,7 @@ while True:
         have_been_stopped = False
 
     if rolling_basis.go_to_finished:
+        print("oscour")
         index_destination_point += 1
         rolling_basis.go_to_finished = False # not necessary but for safety 
 
@@ -100,7 +99,7 @@ while True:
     if (get_current_date()["date_timespamp"] - last_print) > 0.5:
         last_print = get_current_date()["date_timespamp"]
 
-        print(f"#-- Lidar --#\n"
+        """print(f"#-- Lidar --#\n"
               f"is_obstacle: {is_obstacle}\n\n"
               f"#-- Pins --#\n"
               #f"State Tirette: {tirette_pin.digitalRead()}\n"
@@ -108,5 +107,5 @@ while True:
               f"Timer to return: {time_to_return_to_home}\n"
               f"Current time: {round(get_current_date()['date_timespamp'] - start_time)}\n"
               f"#-- Run --#\n"
-              f"Auth state: {run_auth}\n")
+              f"Auth state: {run_auth}\n")"""
 
