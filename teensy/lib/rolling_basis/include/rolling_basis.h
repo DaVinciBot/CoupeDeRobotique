@@ -51,6 +51,7 @@ public :
     // Odometrie function
     void odometrie_handle();
     void is_running_update();
+    void reset_position();
 
     // Motors action function
 

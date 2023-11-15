@@ -54,6 +54,7 @@ void Com::send_msg(byte *msg, byte size)
 {
     this->stream->write(msg, size);
     this->stream->write(size);
+    this->stream->write(CRC.digest(msg, size));
     this->stream->write(this->signature, 4);
     this->stream->flush();
 }
