@@ -17,7 +17,7 @@ async def main():
     """
     lidar = Lidar()
     l = Logger()
-    robot = Rolling_basis(crc=False)
+    robot = Rolling_basis()
     await l.log('Logger initialized')
     while True:
         tmp = await get_last_command()

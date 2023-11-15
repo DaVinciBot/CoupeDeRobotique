@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <com.h>
+#include <crc.h>
 
 Com::Com(usb_serial_class* stream, uint32_t baudrate) 
 {
@@ -52,11 +53,19 @@ byte* Com::read_buffer() {
 
 void Com::send_msg(byte *msg, byte size)
 {
+    CRC crc;
+    // add size at the end of msg
+    byte* full_msg = new byte[size + 1];
+    for (byte i = 0; i < size; i++)
+        full_msg[i] = msg[i];
+    full_msg[size] = size;  
+    // compute crc
+    byte crc_b = crc.digest(full_msg, size + 1);
+
+    // send msg
     this->stream->write(msg, size);
     this->stream->write(size);
-    this->stream->write(CRC.digest(msg, size));
+    this->stream->write(crc_b);
     this->stream->write(this->signature, 4);
     this->stream->flush();
 }
-
- 

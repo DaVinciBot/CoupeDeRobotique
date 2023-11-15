@@ -33,8 +33,10 @@ class Teensy():
         self._teensy.reset_output_buffer()
         msg = data + bytes([len(data)])
         if self.crc:
+            self._crc8.reset()
             self._crc8.update(msg)
             msg += self._crc8.digest()
+            self._crc8.reset()
 
         self._teensy.write(msg + end_bytes)
         while self._teensy.out_waiting:
@@ -59,14 +61,18 @@ class Teensy():
             msg = self.read_bytes()
 
             if (self.crc):
-                crc = msg[-5:-5]
+                crc = msg[-5:-4]
                 msg = msg[:-5]
+                self._crc8.reset()
                 self._crc8.update(msg)
                 if (self._crc8.digest() != crc):
                     logging.warn(
-                        "Inivalid CRC8 skipping message"
+                        "Invalid CRC8, skipping message"
                     )
+                    self._crc8.reset()
+                    continue
                 self._crc8.reset()
+                    
             else:
                 msg = msg[:-4]
 
@@ -77,8 +83,6 @@ class Teensy():
                     "Received Teensy message that does not match declared length " + msg.hex(sep = " "))
                 continue
             try:
-                if msg[0] != 128 :
-                    print(msg)
                 self.messagetype[msg[0]](msg[1:-1])
             except Exception as e:
                 logging.error("Received message handling crashed :\n" + e.args)

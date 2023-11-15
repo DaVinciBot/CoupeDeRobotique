@@ -1,7 +1,7 @@
 #include <crc.h>
 
 
-CRC::digest(byte *data, byte size)
+byte CRC::digest(byte *data, byte size)
 {
     // create a 8 bit CRC
     byte crc = 0;

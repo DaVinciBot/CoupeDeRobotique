@@ -219,8 +219,6 @@ void setup()
   functions[RESET_POSITION] = &reset_position,
 
   Serial.begin(115200);
-  pinMode(pin_on_off, INPUT);
-  pinMode(pin_green_side, INPUT);
 
   // Change pwm frequency
   analogWriteFrequency(R_PWM, 40000);
@@ -254,7 +252,7 @@ void loop()
   rolling_basis_ptr->odometrie_handle();
   rolling_basis_ptr->is_running_update();
 
-  if (start_time == -1 && digitalReadFast(pin_on_off))
+  if (start_time == -1)
     start_time = millis();
 
   // Com
