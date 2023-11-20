@@ -92,7 +92,7 @@ void swap_action(Complex_Action *new_action)
 void go_to(byte *msg, byte size)
 {
   msg_Go_To *go_to_msg = (msg_Go_To *)msg;
-  Point target_point(go_to_msg->x, go_to_msg->y);
+  Point target_point(go_to_msg->x, go_to_msg->y, 0.0f);
 
   Precision_Params params{
       go_to_msg->next_position_delay,
@@ -129,7 +129,7 @@ void curve_go_to(byte *msg, byte size)
 }
 
 // Whether to keep position when no action is active
-bool keep_curr_pos_when_no_action = true;
+bool keep_curr_pos_when_no_action = false;
 
 void keep_current_position(byte *msg, byte size)
 {
@@ -160,6 +160,15 @@ void enable_pid(byte *msg, byte size)
 
   msg_Action_Finished fin_msg;
   fin_msg.action_id = ENABLE_PID;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+void reset_position(byte *msg, byte size)
+{
+  rolling_basis_ptr->reset_position();
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = RESET_POSITION;
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
@@ -207,10 +216,9 @@ void setup()
   functions[KEEP_CURRENT_POSITION] = &keep_current_position,
   functions[DISABLE_PID] = &disable_pid,
   functions[ENABLE_PID] = &enable_pid,
+  functions[RESET_POSITION] = &reset_position,
 
   Serial.begin(115200);
-  pinMode(pin_on_off, INPUT);
-  pinMode(pin_green_side, INPUT);
 
   // Change pwm frequency
   analogWriteFrequency(R_PWM, 40000);
@@ -244,7 +252,7 @@ void loop()
   rolling_basis_ptr->odometrie_handle();
   rolling_basis_ptr->is_running_update();
 
-  if (start_time == -1 && digitalReadFast(pin_on_off))
+  if (start_time == -1)
     start_time = millis();
 
   // Com
@@ -279,10 +287,12 @@ void handle()
       last_ticks_position,
       &rolling_basis_ptrs);
 
-
-  msg_Action_Finished fin_msg;
-  fin_msg.action_id = current_action->get_id();
-  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+  if (current_action->is_finished())
+  {
+    msg_Action_Finished fin_msg;
+    fin_msg.action_id = current_action->get_id();
+    com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+  }
   return;
 }
 

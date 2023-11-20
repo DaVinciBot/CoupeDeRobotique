@@ -1,6 +1,6 @@
 import websockets
 
-IP = "10.3.141.218"  # Replace by the Remote Compute IP
+IP = "rc.local"
 PORT = 3000
 uri = f"ws://{IP}:{PORT}"
 
@@ -17,7 +17,7 @@ async def update_log(data: str):
         await websocket.send("update$=$[" + data + "]")
 
 
-async def get_last_command() -> list[str] or None:
+async def get_last_command():
     # connect to /cmd endpoint and listen for commands
     # check if message is received
     # if yes, return it
@@ -28,8 +28,15 @@ async def get_last_command() -> list[str] or None:
         if resp == "None" or resp == "error" or resp == "":
             return None
         else:
-            cmd = resp.split("$=$")[0]
-            args = list(map(float,resp.split("$=$")[1].replace("[", "").replace("]", "").split(",")))
+            cmd = resp[:4]
+            args = None
+            try:
+                args = list(map(float,resp[4:].replace("[", "").replace("]", "").split(",")))
+            except IndexError:
+                pass
             return cmd, args
 
-    
+
+async def send_action_finished():
+    async with websockets.connect(uri + "/cmd") as websocket:
+        await websocket.send("finished$=$")

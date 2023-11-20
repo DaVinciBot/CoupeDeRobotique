@@ -33,8 +33,10 @@ class Teensy():
         self._teensy.reset_output_buffer()
         msg = data + bytes([len(data)])
         if self.crc:
+            self._crc8.reset()
             self._crc8.update(msg)
             msg += self._crc8.digest()
+            self._crc8.reset()
 
         self._teensy.write(msg + end_bytes)
         while self._teensy.out_waiting:
@@ -59,14 +61,18 @@ class Teensy():
             msg = self.read_bytes()
 
             if (self.crc):
-                crc = msg[-5:-5]
+                crc = msg[-5:-4]
                 msg = msg[:-5]
+                self._crc8.reset()
                 self._crc8.update(msg)
                 if (self._crc8.digest() != crc):
                     logging.warn(
-                        "Inivalid CRC8 skipping message"
+                        "Invalid CRC8, skipping message"
                     )
+                    self._crc8.reset()
+                    continue
                 self._crc8.reset()
+                    
             else:
                 msg = msg[:-4]
 
@@ -77,8 +83,6 @@ class Teensy():
                     "Received Teensy message that does not match declared length " + msg.hex(sep = " "))
                 continue
             try:
-                if msg[0] != 128 :
-                    print(msg)
                 self.messagetype[msg[0]](msg[1:-1])
             except Exception as e:
                 logging.error("Received message handling crashed :\n" + e.args)
@@ -139,17 +143,24 @@ class Rolling_basis(Teensy):
         KeepCurrentPosition = b'\02'
         DisablePid = b'\03'
         EnablePid = b'\04'
+        ResetPosition = b'\05'
 
     def Go_To(self, position: list[float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
-        """Got to a point
+        """
+        Va à la position donnée en paramètre
 
-        Args:
-            x (float): x coordinate
-            y (float): y coordinate
-            direction (bool, optional): whether to go backwards or forwards. Defaults to False.
-            next_position_delay (int, optional): _description_. Defaults to 100.
-            action_error_auth (int, optional): _description_. Defaults to 20.
-            traj_precision (int, optional): _description_. Defaults to 50.
+        :param position: Liste de deux float, la position en X et Y
+        :type position: list[float, float]
+        :param direction: en avant (false) ou en arrière (true), defaults to False
+        :type direction: bool, optional
+        :param speed: Vitesse du déplacement, defaults to b'\x64'
+        :type speed: bytes, optional
+        :param next_position_delay: delay avant la prochaine position, defaults to 100
+        :type next_position_delay: int, optional
+        :param action_error_auth: l'erreur autorisé dans le déplacement, defaults to 20
+        :type action_error_auth: int, optional
+        :param traj_precision: la précision du déplacement, defaults to 50
+        :type traj_precision: int, optional
         """
 
         pos = self.true_pos(position)
@@ -182,42 +193,6 @@ class Rolling_basis(Teensy):
         msg = self.Command.EnablePid
         self.send_bytes(msg)
 
-    def Home_Position(self, timeout: float = 1, epsilon: float = 1):
-        pos = self.odometrie[0]
-        self.Go_To([-100, 0, 0], True, b'\x0A')
-        timer = time.time()
-        offset = [0.0, 0.0, 0.0]
-
-        while True:
-            if abs(pos - self.odometrie[0]) > epsilon:
-                pos = self.odometrie[0]
-                timer = time.time()
-                continue
-            if time.time() - timer > timeout:
-                offset[0] = self.odometrie[0]
-                offset[2] = self.odometrie[2]
-                break
-
-        self.Go_To([0, 0, 0])
-        while not self.action_finished:
-            time.sleep(0.1)
-        # time.sleep(5)
-
-        pos = self.odometrie[1]
-        self.Go_To([0, -100, 0], False, b'\x0A')
-        timer = time.time()
-
-        while True:
-            if abs(pos - self.odometrie[1]) > epsilon:
-                pos = self.odometrie[1]
-                timer = time.time()
-                continue
-            if time.time() - timer > timeout:
-                offset[1] = self.odometrie[1]
-                break
-
-        self.position_offset = offset
-        self.Go_To([30, 30, 0])
-        while not self.action_finished:
-            time.sleep(0.1)
-        # time.sleep(5)
+    def Set_Home(self):
+        msg = self.Command.ResetPosition
+        self.send_bytes(msg)

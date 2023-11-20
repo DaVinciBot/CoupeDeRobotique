@@ -8,6 +8,7 @@ void handle_callback(Com *com)
     {
         byte *msg = com->read_buffer();
 
+
         if (functions[msg[0]] != 0) // verifies if the id of the function received by com is defined
         {
             functions[msg[0]](msg, size); // call the function by it's id and with the parameters received by com

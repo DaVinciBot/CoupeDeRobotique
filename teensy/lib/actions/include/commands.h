@@ -7,6 +7,7 @@
 #define KEEP_CURRENT_POSITION 2
 #define DISABLE_PID 3
 #define ENABLE_PID 4
+#define RESET_POSITION 5
 
 // teensy -> rasp : 128-255 (Convention)
 #define UPDATE_POSITION 128
