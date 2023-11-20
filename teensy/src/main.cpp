@@ -287,10 +287,12 @@ void handle()
       last_ticks_position,
       &rolling_basis_ptrs);
 
-
-  msg_Action_Finished fin_msg;
-  fin_msg.action_id = current_action->get_id();
-  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+  if (current_action->is_finished())
+  {
+    msg_Action_Finished fin_msg;
+    fin_msg.action_id = current_action->get_id();
+    com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+  }
   return;
 }
 
