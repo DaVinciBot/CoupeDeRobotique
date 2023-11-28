@@ -169,32 +169,6 @@ class Rolling_basis(Teensy):
 
 
     
-    """ test des curve_go_to """
-def curve_go_to(self, destination: list[float, float], center: list[float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
-        """Go to a point with a curve"""
-        
-        # Calculate the center of the path
-        center_pos = self.true_pos(center)
-
-        # angle between the actual position and the destination
-        angle_to_destination = math.atan2(destination[1] - center_pos[1], destination[0] - center_pos[0])
-
-        # distance between the center and the destination (rayon)
-        radius = math.sqrt((destination[0] - center_pos[0]) ** 2 + (destination[1] - center_pos[1]) ** 2)
-
-        # new coordinates of the destination 
-        new_destination_x = center_pos[0] + radius * math.cos(angle_to_destination)
-        new_destination_y = center_pos[1] + radius * math.sin(angle_to_destination)
-
-        self.send_curve_command(new_destination_x, new_destination_y, direction, speed, next_position_delay, action_error_auth, traj_precision)
-
- def send_curve_command(self, x: float, y: float, direction: bool, speed: bytes, next_position_delay: int, action_error_auth: int, traj_precision: int) -> None:
-        """Send a curve command to reach a point"""
-        #specific logic of the curve
-      
-        curve_msg = b'\x01\x02\x03'  #jsp quoi mettre exactement pour curve_msg : commande spécifique à la trajectoire de la courbe
-        self.send_bytes(curve_msg)
-        self.action_finished = True
 
     
 
