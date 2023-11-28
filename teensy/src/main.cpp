@@ -246,6 +246,7 @@ void setup()
 }
 
 int counter = 0;
+int cooldown = 0;
 
 void loop()
 {
@@ -265,7 +266,12 @@ void loop()
     pos_msg.x = rolling_basis_ptr->X;
     pos_msg.y = rolling_basis_ptr->Y;
     pos_msg.theta = rolling_basis_ptr->THETA;
-    com->send_msg((byte *)&pos_msg, sizeof(msg_Update_Position));
+    if (cooldown > 10){
+      com->send_msg((byte *)&pos_msg, sizeof(msg_Update_Position));
+      cooldown = 0;
+    }
+    else
+      cooldown++;
     counter = 0;
   }
 }
