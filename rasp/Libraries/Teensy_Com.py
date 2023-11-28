@@ -20,7 +20,7 @@ class TeensyException(Exception):
 
 
 class Teensy():
-    def __init__(self, vid: int = 0x16C0, pid: int = 0x0483, baudrate: int = 115200, crc: bool = True):
+    def __init__(self, vid: int = 0x16C0, pid: int = 0x0483, baudrate: int = 115200, crc: bool = False):
         self._teensy = None
         self.crc = crc
         self._crc8 = crc8.crc8()
@@ -32,8 +32,7 @@ class Teensy():
         if self._teensy == None:
             raise TeensyException("No Device !")
         self.messagetype = {}
-        self._reciever = threading.Thread(
-            target=self.__receiver__, name="TeensyReceiver")
+        self._reciever = threading.Thread(target=self.__receiver__, name="TeensyReceiver")
         self._reciever.start()
 
     def send_bytes(self, data: bytes, end_bytes: bytes = b'\xBA\xDD\x1C\xC5'):

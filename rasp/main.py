@@ -85,6 +85,7 @@ while True:
     if rolling_basis.go_to_finished:
         print("oscour")
         index_destination_point += 1
+        have_been_stopped = True
         rolling_basis.go_to_finished = False # not necessary but for safety 
 
     # Check if there is enought time
