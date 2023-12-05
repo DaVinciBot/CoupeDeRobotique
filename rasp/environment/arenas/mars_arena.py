@@ -1,6 +1,6 @@
-from geometric_shapes.point import Point
-from geometric_shapes.rectangle import Rectangle
-from .arena import Arena
+from environment.geometric_shapes.point import Point
+from environment.geometric_shapes.rectangle import Rectangle
+from environment.arenas.arena import Arena
 
 class MarsArena(Arena):
     """Represent the arena of the CDR 2023-2024
