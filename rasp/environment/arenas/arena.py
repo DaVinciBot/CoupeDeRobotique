@@ -1,5 +1,5 @@
-from geometric_shapes.point import Point
-from geometric_shapes.rectangle import Rectangle
+from environment.geometric_shapes.point import Point
+from environment.geometric_shapes.rectangle import Rectangle
 
 class Arena:
     """Represent an arena
