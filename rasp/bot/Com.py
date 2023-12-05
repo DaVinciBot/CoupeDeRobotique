@@ -141,6 +141,7 @@ class Rolling_basis(Teensy):
         EnablePid = b'\04'
 
     def Go_To(self, position: list[float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
+       
         """Got to a point
 
         Args:
@@ -152,6 +153,7 @@ class Rolling_basis(Teensy):
             traj_precision (int, optional): _description_. Defaults to 50.
         """
 
+        
         pos = self.true_pos(position)
         msg = self.Command.GoToPoint + \
             struct.pack("<f", pos[0]) + \
@@ -165,6 +167,7 @@ class Rolling_basis(Teensy):
 
         self.send_bytes(msg)
         self.action_finished = True
+        
 
 
 
@@ -229,3 +232,37 @@ class Rolling_basis(Teensy):
         while not self.action_finished:
             time.sleep(0.1)
         # time.sleep(5)
+
+
+
+"""TEST curve_go_to"""
+
+def curve_go_to(self, destination: list[float, float], center: list[float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
+        """Go to a point with a curve"""
+        
+        # Calculate the center of the path
+        center_pos = self.true_pos(center)
+
+        # angle between the actual position and the destination
+        angle_to_destination = math.atan2(destination[1] - center_pos[1], destination[0] - center_pos[0])
+
+        # distance between the center and the destination (rayon)
+        radius = math.sqrt((destination[0] - center_pos[0]) ** 2 + (destination[1] - center_pos[1]) ** 2)
+
+        # calculate chord length 
+        chord_length = math.sqrt((destination[0] - center_pos[0]) ** 2 + (destination[1] - center_pos[1]) ** 2)
+        
+        #arc distance
+        arc_length = radius * angle_to_destination
+        
+        #send specific commands with new arc_length
+        curve_msg = (
+        struct.pack("<ff", destination[0], destination[1]) +  # target_point
+        struct.pack("<ff", center[0], center[1]) +  # center_point
+        struct.pack("<H", next_position_delay) +  # interval
+        struct.pack("<?", direction) +  # direction
+        speed +  # speed
+        struct.pack("<H", traj_precision)
+        )
+        self.send_bytes(curve_msg)
+        self.action_finished = True
