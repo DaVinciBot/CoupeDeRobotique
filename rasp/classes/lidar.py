@@ -1,6 +1,6 @@
 import math
 import pysicktim as lidar
-
+import time
 
 def scan_values_to_polar(scan_values, min_angle, max_angle):
     """permet de 
@@ -58,6 +58,12 @@ class Lidar:
         self.min_angle = min_angle
         self.max_angle = max_angle
         self.lidar_obj = lidar
+        # Constants describing the mouvement of the opposant robot
+        self.ROBOT_LOST : int = -1
+        self.STRAIGHT : int = 0
+        self.LEFT : int = 1
+        self.RIGHT : int = 1
+        self.get_closer : bool
 
     def __scan(self):
         self.lidar_obj.scan()
@@ -123,7 +129,6 @@ class Lidar:
         """
         nearest_point = self.safe_get_nearest_point_between(start_angle, end_angle, step_angle)
         return nearest_point<=treshold
-            
         
     def get_cartesian_points(self):
         return self.__polar_to_cartesian()
