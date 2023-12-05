@@ -1,4 +1,4 @@
-from lidar import Lidar
+from classes.lidar import Lidar
 import math
 
 # Get Lidar
