@@ -2,7 +2,7 @@
 from classes.tools import get_current_date
 from classes.lidar import Lidar
 from classes.pinInteract import PIN
-from classes.arena import RectangleArena
+from environment.arenas import mars_arena
 from classes.point import point
 import Libraries.Teensy_Com as teensy
 import math
@@ -35,7 +35,7 @@ start_time = 0
 time_to_return_to_home = 80
 
 # Get arena
-arena : RectangleArena = RectangleArena()
+arena : mars_arena = mars_arena()
 
 # Get Rolling_basis
 rolling_basis = teensy.Rolling_basis(crc=True)
