@@ -6,6 +6,7 @@ import time
 import logging
 import crc8
 import struct
+from environment.geometric_shapes.point import Point
 
 
 class TeensyException(Exception):
@@ -145,7 +146,7 @@ class Rolling_basis(Teensy):
         EnablePid = b'\04'
         ResetPosition = b'\05'
 
-    def Go_To(self, position: list[float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
+    def Go_To(self, position: Point, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """
         Va à la position donnée en paramètre
 
@@ -165,8 +166,8 @@ class Rolling_basis(Teensy):
 
         pos = self.true_pos(position)
         msg = self.Command.GoToPoint + \
-            struct.pack("<f", pos[0]) + \
-            struct.pack("<f", pos[1]) + \
+            struct.pack("<f", position.x) + \
+            struct.pack("<f", position.y) + \
             struct.pack("<?", direction) + \
             speed + \
             struct.pack("<H", next_position_delay) + \
