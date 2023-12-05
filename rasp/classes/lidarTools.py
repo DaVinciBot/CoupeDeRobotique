@@ -1,3 +1,5 @@
+import math
+
 def scan_values_to_polar(scan_values, min_angle, max_angle):
     angle_step = (max_angle - min_angle)/ len(scan_values)
     polar_coordinates = []
