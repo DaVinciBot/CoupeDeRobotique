@@ -100,7 +100,7 @@ class Rolling_basis(Teensy):
         # All position are in the form OrientedPoint
         self.odometrie = OrientedPoint(0,0,0)
         self.position_offset = OrientedPoint(0,0,0)
-        self.action_finished = False # used for actions that have a real world time of execution 
+        self.action_finished = True # used for actions that have a real world time of execution 
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
