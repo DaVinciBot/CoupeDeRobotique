@@ -199,11 +199,10 @@ class Rolling_basis(Teensy):
                           struct.unpack("<f", msg[8:12])[0])
 
     def rcv_action_finish(self, msg: bytes):
-        id_cmd : int = msg.hex()
         try:
-            print(self.action_finished_message[id_cmd])
+            print(self.action_finished_message[msg])
         except:
-            print(f"the action with id n°{id_cmd} was sucesfully completed")
+            print(f"the action with id n°{msg} was sucesfully completed")
         finally:
-            if(id_cmd == self.Command.GoToPoint):
+            if(msg == self.Command.GoToPoint):
                 self.action_finished = True
