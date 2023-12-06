@@ -56,3 +56,8 @@ struct msg_Action_Finished
     byte command = ACTION_FINISHED;
     byte action_id;
 };
+
+struct msg_Stop_signal
+{
+    byte command = STOP;
+};
