@@ -6,7 +6,7 @@ import time
 import logging
 import crc8
 import struct
-from environment.geometric_shapes.point import Point
+from environment.geometric_shapes.oriented_point import OrientedPoint
 
 
 class TeensyException(Exception):
@@ -97,9 +97,9 @@ class Rolling_basis(Teensy):
 
     def __init__(self, vid: int = 5824, pid: int = 1155, baudrate: int = 115200, crc: bool = True):
         super().__init__(vid, pid, baudrate, crc)
-        # All position are in the form tuple(X, Y, THETA)
-        self.odometrie = (0.0, 0.0, 0.0)
-        self.position_offset = (0.0, 0.0, 0.0)
+        # All position are in the form OrientedPoint
+        self.odometrie = OrientedPoint(0,0,0)
+        self.position_offset = OrientedPoint(0,0,0)
         self.action_finished = False
         """
         This is used to match a handling function to a message type.
@@ -114,11 +114,8 @@ class Rolling_basis(Teensy):
     # Position handling #
     #####################
 
-    def true_pos(self, position: list[float, float, float]) -> tuple[float, float, float]:
-        ret = []
-        for i in range(3):
-            ret.append(position[i] + self.position_offset[i])
-        return ret
+    def true_pos(self, position: OrientedPoint) -> OrientedPoint:
+        return position+self.position_offset
 
     #############################
     # Received message handling #
@@ -146,12 +143,12 @@ class Rolling_basis(Teensy):
         EnablePid = b'\04'
         ResetPosition = b'\05'
 
-    def Go_To(self, position: Point, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
+    def Go_To(self, position: OrientedPoint, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """
         Va à la position donnée en paramètre
 
-        :param position: Liste de deux float, la position en X et Y
-        :type position: list[float, float]
+        :param position: an OrientedPoint containing the x and y position to reach, theta isn't implemented yet
+        :type position: OrientedPoint
         :param direction: en avant (false) ou en arrière (true), defaults to False
         :type direction: bool, optional
         :param speed: Vitesse du déplacement, defaults to b'\x64'

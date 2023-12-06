@@ -2,33 +2,17 @@
 from classes.tools import get_current_date
 from classes.lidar import Lidar
 from classes.pinInteract import PIN
+from classes.constants import *
 from environment.arenas.mars_arena import MarsArena
-from classes.point import point
+from environment.geometric_shapes.oriented_point import OrientedPoint as op
 import Libraries.Teensy_Com as teensy
 import math
 
 # Get Lidar
 lidar = Lidar(-math.pi, math.pi)
 
-# Get Tirette Pin
-#tirette_pin = PIN(26)
-#tirette_pin.setup("input_pulldown", reverse_state=True)
-
-# Led States
-led_lidar = PIN(13)
-led_lidar.setup("OUTPUT")
-led_start = PIN(6)
-led_start.setup("OUTPUT")
-led_time = PIN(5)
-led_time.setup("OUTPUT")
-
 # Print variables
 last_print = get_current_date()["date_timespamp"]
-
-# Init All pins states
-led_start.digitalWrite(False)
-led_lidar.digitalWrite(False)
-led_time.digitalWrite(False)
 
 # Return to start timing
 start_time = 0
@@ -41,21 +25,17 @@ arena : MarsArena = MarsArena()
 rolling_basis = teensy.Rolling_basis(crc=True)
 
 def select_action_at_position(zone : int):
-    if zone == 0:
+    if zone == CMD_POTAREA:
         print("taking plant")
-    elif zone == 1:
+    elif zone == CMD_DEPOTZONE:
         print("deposing plant into depot zone")
-    elif zone == 2:
+    elif zone == CMD_GARDENER:
         print("deposing plant into gardener")
     else:
         print(f"zone {zone} isn't take in cahrge")
 
-# 0 = pots_area
-# 1 = depot_zone
-# 2 = gardener 
-
 # A list of tuples representing the points to be reached and the according action to execute once reached
-points_list = [(point(10,0),0), (point(0,10),1)]
+points_list = [(op(10,0),CMD_POTAREA), (op(0,10),CMD_DEPOTZONE)]
 # index of our destination point
 index_destination_point : int = 0
 # enable to say if the robot habe been previously stopped
@@ -83,7 +63,6 @@ while True:
         have_been_stopped = False
 
     if rolling_basis.go_to_finished:
-        print("oscour")
         index_destination_point += 1
         have_been_stopped = True
         rolling_basis.go_to_finished = False # not necessary but for safety 
