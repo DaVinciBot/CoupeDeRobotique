@@ -1,6 +1,7 @@
 from classes import lidar
 import time
 from classes import constants
+from classes.lidar import Lidar
 
 def get_current_date():
     from datetime import datetime
@@ -29,7 +30,7 @@ def is_list_of(list : list, type)->bool:
         n+=1
     return test
 
-def get_possible_directions(self, start_angle = 90, end_angle = 180, step_angle = 1/3, treshold = 0.2, delay_mili = 10) -> int:
+def get_possible_directions(lidar : Lidar, start_angle = 90, end_angle = 180, step_angle = 1/3, treshold = 0.2, delay_mili = 10) -> int:
     """a basic function that enable to analyse the moving direction of an obstacle and return the possible directions for us 
 
     Args:
