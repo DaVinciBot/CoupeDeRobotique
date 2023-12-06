@@ -173,7 +173,6 @@ class Rolling_basis(Teensy):
         # https://docs.python.org/3/library/struct.html#format-characters
 
         self.send_bytes(msg)
-        self.action_finished = True
 
     def Set_Speed(self, speed: float) -> None:
         msg = self.Command.GoToPoint + struct.pack(speed, "f")
