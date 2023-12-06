@@ -31,8 +31,6 @@ if(test):
     rolling_basis.Set_Home()
     print(rolling_basis.odometrie)
     time.sleep(0.01)
-    # temporary
-    rolling_basis.action_finished = False
     
 
 def select_action_at_position(zone : int):
@@ -69,7 +67,6 @@ while True:
         # Go to the next point. If an obstacle is detected stop the robot
         if not run_auth:
             rolling_basis.Keep_Current_Position()
-            rolling_basis.action_finished = False
             have_been_stopped = True
         elif have_been_stopped:
             rolling_basis.Go_To(points_list[index_destination_point][0])
@@ -79,7 +76,6 @@ while True:
             print(f"arrived at {points_list[index_destination_point][0]}")
             index_destination_point += 1
             have_been_stopped = True
-            rolling_basis.action_finished = False # not necessary but for safety 
 
         # Check if there is enought time
         #if tirette_pin.digitalRead() and start_time == 0:

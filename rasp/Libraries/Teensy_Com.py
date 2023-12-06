@@ -100,7 +100,7 @@ class Rolling_basis(Teensy):
         # All position are in the form OrientedPoint
         self.odometrie = OrientedPoint(0,0,0)
         self.position_offset = OrientedPoint(0,0,0)
-        self.action_finished = False
+        self.action_finished = False # used for actions that have a real world time of execution 
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
@@ -117,20 +117,6 @@ class Rolling_basis(Teensy):
     def true_pos(self, position: OrientedPoint) -> OrientedPoint:
         return position+self.position_offset
 
-    #############################
-    # Received message handling #
-    #############################
-
-    def rcv_odometrie(self, msg: bytes):
-        # print(msg.hex(sep =  " "))
-        self.odometrie = (struct.unpack("<f", msg[0:4])[0],
-                          struct.unpack("<f", msg[4:8])[0],
-                          struct.unpack("<f", msg[8:12])[0])
-
-    def rcv_action_finish(self, msg: bytes):
-        print(msg.hex())
-        self.action_finished = True
-
     #########################
     # User facing functions #
     #########################
@@ -142,6 +128,14 @@ class Rolling_basis(Teensy):
         DisablePid = b'\03'
         EnablePid = b'\04'
         ResetPosition = b'\05'
+
+    action_finished_message = {
+        Command.GoToPoint : "GoTo finished",
+        Command.KeepCurrentPosition : "KeepCurrentPosition finished",
+        Command.DisablePid :"Disabled Pid succesfully",
+        Command.EnablePid : "Enabled Pid succesfully",
+        Command.ResetPosition : "Reseted position sucesfully"
+    }
 
     def Go_To(self, position: OrientedPoint, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """
@@ -160,8 +154,8 @@ class Rolling_basis(Teensy):
         :param traj_precision: la précision du déplacement, defaults to 50
         :type traj_precision: int, optional
         """
-
-        pos = self.true_pos(position)
+        self.action_finished = False
+        position = self.true_pos(position)
         msg = self.Command.GoToPoint + \
             struct.pack("<f", position.x) + \
             struct.pack("<f", position.y) + \
@@ -193,3 +187,23 @@ class Rolling_basis(Teensy):
     def Set_Home(self):
         msg = self.Command.ResetPosition
         self.send_bytes(msg)
+
+    #############################
+    # Received message handling #
+    #############################
+
+    def rcv_odometrie(self, msg: bytes):
+        # print(msg.hex(sep =  " "))
+        self.odometrie = (struct.unpack("<f", msg[0:4])[0],
+                          struct.unpack("<f", msg[4:8])[0],
+                          struct.unpack("<f", msg[8:12])[0])
+
+    def rcv_action_finish(self, msg: bytes):
+        id_cmd : int = msg.hex()
+        try:
+            print(self.action_finished_message[id_cmd])
+        except:
+            print(f"the action with id n°{id_cmd} was sucesfully completed")
+        finally:
+            if(id_cmd == self.Command.GoToPoint):
+                self.action_finished = True
