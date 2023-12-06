@@ -31,6 +31,7 @@ if(test):
     rolling_basis.Set_Home()
     print(rolling_basis.odometrie)
     time.sleep(0.01)
+    start = get_current_date()["date_timespamp"]
     
 
 def select_action_at_position(zone : int):
@@ -45,41 +46,40 @@ def select_action_at_position(zone : int):
 
 # A list of tuples representing the points to be reached and the according action to execute once reached
 points_list = [(op(5,0),CMD_POTAREA), (op(0,5),CMD_DEPOTZONE)]
-# index of our destination point
-index_destination_point : int = 0
-index_last_point : int = len(points_list)-1
-# enable to say if the robot habe been previously stopped
-have_been_stopped = True
+index_destination_point : int = 0 # index of our destination point
+index_last_point : int = len(points_list)-1 # the index of the last point
 is_obstacle : bool = True # for safety in case of lidar dysfunction
+game_finished = False
+lauch_go_to : bool = True # enable to lauch go_to again if the robot has to stop
+start_time = get_current_date()["date_timespamp"]
 
 while True:
-    is_obstacle : bool = True # for safety in case of lidar dysfunction
-    game_finished = False
     while(index_destination_point<index_last_point+1 and not game_finished): # while there are points left to go through and time is under treshold 
         # is_there an obstacle in front of the robot ? 
         # Run authorize ?
         try:
             is_obstacle = lidar.is_obstacle_infront()
         except Exception as e:
-            print("oo")
             print(e)
         run_auth : bool = not is_obstacle
+        if(test):
+            print
+            (
+                f"run_auth : {run_auth}"
+                f"action_finished : {rolling_basis.action_finished}"
+            )
         # Go to the next point. If an obstacle is detected stop the robot
         if not run_auth:
             rolling_basis.Keep_Current_Position()
-            have_been_stopped = True
-        elif have_been_stopped:
+            lauch_go_to = True
+        elif lauch_go_to:
             rolling_basis.Go_To(points_list[index_destination_point][0])
-            have_been_stopped = False
+            lauch_go_to = False
 
         if rolling_basis.action_finished:
             print(f"arrived at {points_list[index_destination_point][0]}")
             index_destination_point += 1
-            have_been_stopped = True
-
-        # Check if there is enought time
-        #if tirette_pin.digitalRead() and start_time == 0:
-            #start_time = get_current_date()["date_timespamp"]
+            lauch_go_to = True
 
         # if time exceeds time_to_return_home then go to the starting posistion
         if start_time !=0 and get_current_date()["date_timespamp"] - start_time > time_to_return_to_home:
