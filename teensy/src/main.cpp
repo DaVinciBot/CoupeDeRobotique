@@ -47,6 +47,9 @@
 #define R_IN2 1
 #define R_IN1 0
 
+// Slow communication to avoid closing of serial port on the computer
+#define ODO_COOLDOWN 1
+
 Rolling_Basis *rolling_basis_ptr = new Rolling_Basis(ENCODER_RESOLUTION, CENTER_DISTANCE, WHEEL_DIAMETER);
 
 Rolling_Basis_Params rolling_basis_params{
@@ -266,11 +269,11 @@ void loop()
     pos_msg.x = rolling_basis_ptr->X;
     pos_msg.y = rolling_basis_ptr->Y;
     pos_msg.theta = rolling_basis_ptr->THETA;
-    if (cooldown > 10){
+    if (cooldown > ODO_COOLDOWN){
       com->send_msg((byte *)&pos_msg, sizeof(msg_Update_Position));
       cooldown = 0;
     }
-    else
+    else 
       cooldown++;
     counter = 0;
   }
