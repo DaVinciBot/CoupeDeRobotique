@@ -172,6 +172,18 @@ void reset_position(byte *msg, byte size)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
+void stop(byte *msg, byte size)
+{
+  free(current_action);
+  current_action = nullptr;
+
+  rolling_basis_ptr->shutdown_motor();
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = STOP;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
 void (*functions[256])(byte *msg, byte size);
 
 extern void handle_callback(Com *com);
@@ -217,6 +229,7 @@ void setup()
   functions[DISABLE_PID] = &disable_pid,
   functions[ENABLE_PID] = &enable_pid,
   functions[RESET_POSITION] = &reset_position,
+  functions[STOP] = &stop;
 
   Serial.begin(115200);
 

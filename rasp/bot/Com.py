@@ -51,7 +51,7 @@ class Teensy():
     def __receiver__(self) -> None:
         """This is started as a thread, handles the data acording to the decided format :
 
-        msg_type | msg_data | msg_length | CRC8 (optional) |MSG_END_BYTES
+        msg_type | msg_data | msg_length | CRC8 |MSG_END_BYTES
         size : 1 | msg_length | 1 | 1 | 4
 
         The size is in bytes.
@@ -85,7 +85,7 @@ class Teensy():
             try:
                 self.messagetype[msg[0]](msg[1:-1])
             except Exception as e:
-                logging.error("Received message handling crashed :\n" + e.args)
+                logging.error("Received message handling crashed :\n" + str(e.args))
                 time.sleep(0.5)
 
 
@@ -106,16 +106,17 @@ class Rolling_basis(Teensy):
         """
         self.messagetype = {
             128: self.rcv_odometrie,  # \x80
-            129: self.rcv_action_finish  # \x45
+            129: self.rcv_action_finish,  # \x45
+            255: self.unknowed_msg
         }
 
     #####################
     # Position handling #
     #####################
 
-    def true_pos(self, position: list[float, float, float]) -> tuple[float, float, float]:
+    def true_pos(self, position: list[float, float]) -> tuple[float, float]:
         ret = []
-        for i in range(3):
+        for i in range(len(position)):
             ret.append(position[i] + self.position_offset[i])
         return ret
 
@@ -130,8 +131,11 @@ class Rolling_basis(Teensy):
                           struct.unpack("<f", msg[8:12])[0])
 
     def rcv_action_finish(self, msg: bytes):
-        print(msg.hex())
+        print("Action finished : "+msg.hex())
         self.action_finished = True
+    
+    def unknowed_msg(self, msg: bytes):
+        print(f"Teensy does not know the command {msg.hex()}")
 
     #########################
     # User facing functions #
@@ -144,6 +148,7 @@ class Rolling_basis(Teensy):
         DisablePid = b'\03'
         EnablePid = b'\04'
         ResetPosition = b'\05'
+        Stop = b'\x7E' # 7E = 126
 
     def Go_To(self, position: list[float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """
@@ -175,7 +180,6 @@ class Rolling_basis(Teensy):
         # https://docs.python.org/3/library/struct.html#format-characters
 
         self.send_bytes(msg)
-        self.action_finished = True
 
     def Set_Speed(self, speed: float) -> None:
         msg = self.Command.GoToPoint + struct.pack(speed, "f")
@@ -195,4 +199,8 @@ class Rolling_basis(Teensy):
 
     def Set_Home(self):
         msg = self.Command.ResetPosition
+        self.send_bytes(msg)
+        
+    def Stop(self):
+        msg = self.Command.Stop
         self.send_bytes(msg)

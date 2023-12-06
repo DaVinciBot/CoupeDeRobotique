@@ -9,6 +9,8 @@
 #define ENABLE_PID 4
 #define RESET_POSITION 5
 
+#define STOP 126
+
 // teensy -> rasp : 128-255 (Convention)
 #define UPDATE_POSITION 128
 #define ACTION_FINISHED 129
