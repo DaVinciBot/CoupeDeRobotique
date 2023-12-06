@@ -50,7 +50,7 @@ index_destination_point : int = 0 # index of our destination point
 index_last_point : int = len(points_list)-1 # the index of the last point
 is_obstacle : bool = True # for safety in case of lidar dysfunction
 game_finished = False
-lauch_go_to : bool = True # enable to lauch go_to again if the robot has to stop
+is_moving : bool = True # enable to lauch go_to again if the robot has to stop
 start_time = get_current_date()["date_timespamp"]
 
 while True:
@@ -63,23 +63,21 @@ while True:
             print(e)
         run_auth : bool = not is_obstacle
         if(test):
-            print
-            (
-                f"run_auth : {run_auth}"
-                f"action_finished : {rolling_basis.action_finished}"
-            )
+            print(f"action_finished : {rolling_basis.action_finished}")
+
         # Go to the next point. If an obstacle is detected stop the robot
         if not run_auth:
-            rolling_basis.Keep_Current_Position()
-            lauch_go_to = True
-        elif lauch_go_to:
+            if is_moving :
+                rolling_basis.Keep_Current_Position()
+                is_moving = False
+            print(f"obstacle detected")
+        if run_auth and not is_moving:
             rolling_basis.Go_To(points_list[index_destination_point][0])
-            lauch_go_to = False
-
+            is_moving = True
         if rolling_basis.action_finished:
             print(f"arrived at {points_list[index_destination_point][0]}")
             index_destination_point += 1
-            lauch_go_to = True
+            is_moving = False
 
         # if time exceeds time_to_return_home then go to the starting posistion
         if start_time !=0 and get_current_date()["date_timespamp"] - start_time > time_to_return_to_home:
