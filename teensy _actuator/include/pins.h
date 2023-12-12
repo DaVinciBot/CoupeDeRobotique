@@ -1,0 +1,1 @@
+#define SERVO1_PIN 5

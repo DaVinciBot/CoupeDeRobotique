@@ -2,7 +2,7 @@
 #include <com.h>
 
 // rasp -> teensy : 0-127 (Convention)
-#define GO_TO 0
+#define SERVO_GO_TO 0
 #define CURVE_GO_TO 1
 #define KEEP_CURRENT_POSITION 2
 #define DISABLE_PID 3
