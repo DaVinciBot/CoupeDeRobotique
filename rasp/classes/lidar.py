@@ -132,7 +132,3 @@ class Lidar:
         
     def get_cartesian_points(self):
         return self.__polar_to_cartesian()
-    
-
-    def get_polar_points(self):
-        return self.__scan_values_to_polar()

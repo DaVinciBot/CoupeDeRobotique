@@ -1,11 +1,15 @@
 # Used to represent the possible directions of the robot
-ERROR = -1
-STRAIGHT = 0
-LEFT = 1
-RIGHT = 2
-BOTH = 3 # represents that both right and left are possible
+ERROR :int = -1
+STRAIGHT :int = 0
+LEFT :int = 1
+RIGHT :int = 2
+BOTH :int = 3 # represents that both right and left are possible
 
 # Commands to execute at the specified area
-CMD_POTAREA = 0
-CMD_DEPOTZONE = 1
-CMD_GARDENER = 2
+CMD_POTAREA :int = 0
+CMD_DEPOTZONE :int = 1
+CMD_GARDENER :int = 2
+
+# Actuators
+SERVO1_PIN :int = 5 # pins must correspond to the one defined on the teensy
+SERVOS_PIN = [SERVO1_PIN]

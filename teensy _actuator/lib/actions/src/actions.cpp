@@ -1,5 +1,4 @@
 #include <actions.h>
-#include <messages.h>
 // tries to call the functions called by the rasp and send back an error message otherwise
 void handle_callback(Com *com)
 {

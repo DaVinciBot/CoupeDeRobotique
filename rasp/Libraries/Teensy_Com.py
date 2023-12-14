@@ -7,6 +7,8 @@ import logging
 import crc8
 import struct
 from environment.geometric_shapes.oriented_point import OrientedPoint
+from classes.constants import SERVOS_PIN
+from classes.tools import is_in_tab
 
 
 class TeensyException(Exception):
@@ -206,3 +208,25 @@ class Rolling_basis(Teensy):
         finally:
             if(msg == self.Command.GoToPoint):
                 self.action_finished = True
+
+class Actuators(Teensy):
+    def __init__(self, vid: int = 5824, pid: int = 1155, baudrate: int = 115200, crc: bool = True, pin_servos : list[int] = SERVOS_PIN):
+        super().__init__(vid, pid, baudrate, crc)
+        self.pin_servos = pin_servos
+
+    class Command: # values must correspond to the one defined on the teensy
+        ServoGoTo = b"\x01"
+
+    #########################
+    # User facing functions #
+    #########################
+    
+    def servo_go_to(self, pin :int, angle :int):
+        if is_in_tab(pin):
+            msg = self.Command.ServoGoTo + \
+                struct.pack("<b", pin) + \
+                struct.pack("<b", angle)
+                # https://docs.python.org/3/library/struct.html#format-characters
+            self.send_bytes(msg)
+        else:
+            print (f"You tried to use servo_go_to on pin {pin} whereas it is not declared as a servo pin")
