@@ -259,6 +259,7 @@ void setup()
 }
 
 int counter = 0;
+int cooldown = 0;
 
 void loop()
 {
