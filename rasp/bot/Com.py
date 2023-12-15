@@ -28,6 +28,19 @@ class Teensy():
         self._reciever = threading.Thread(
             target=self.__receiver__, name="TeensyReceiver")
         self._reciever.start()
+        
+    def send_dummy(self, end_bytes: bytes = b'\xBA\xDD\x1C\xC5'):
+        """
+        Send false data to trigger the teensy to send data back
+
+        :param end_bytes: DONT CHANGE, defaults to b'\xBA\xDD\x1C\xC5'
+        :type end_bytes: bytes, optional
+        """
+        self.reset_input_buffer()
+        msg = b'\xFF\xFF\xEE\x66'
+        self._teensy.write(msg + bytes[len(msg)] + end_bytes)
+        while self._teensy.out_waiting:
+            pass
 
     def send_bytes(self, data: bytes, end_bytes: bytes = b'\xBA\xDD\x1C\xC5'):
         self._teensy.reset_output_buffer()
@@ -51,7 +64,7 @@ class Teensy():
     def __receiver__(self) -> None:
         """This is started as a thread, handles the data acording to the decided format :
 
-        msg_type | msg_data | msg_length | CRC8 |MSG_END_BYTES
+        msg_type | msg_data | msg_length | CRC8 | MSG_END_BYTES
         size : 1 | msg_length | 1 | 1 | 4
 
         The size is in bytes.
@@ -69,6 +82,7 @@ class Teensy():
                     logging.warn(
                         "Invalid CRC8, skipping message"
                     )
+                    self.send_bytes(b'\x00')
                     self._crc8.reset()
                     continue
                 self._crc8.reset()
@@ -99,7 +113,7 @@ class Rolling_basis(Teensy):
         # All position are in the form tuple(X, Y, THETA)
         self.odometrie = (0.0, 0.0, 0.0)
         self.position_offset = (0.0, 0.0, 0.0)
-        self.action_finished = False
+        self.action_finished = True
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
@@ -125,7 +139,6 @@ class Rolling_basis(Teensy):
     #############################
 
     def rcv_odometrie(self, msg: bytes):
-        # print(msg.hex(sep =  " "))
         self.odometrie = (struct.unpack("<f", msg[0:4])[0],
                           struct.unpack("<f", msg[4:8])[0],
                           struct.unpack("<f", msg[8:12])[0])
@@ -149,6 +162,7 @@ class Rolling_basis(Teensy):
         EnablePid = b'\04'
         ResetPosition = b'\05'
         Stop = b'\x7E' # 7E = 126
+        Invalid = b'\xFF'
 
     def Go_To(self, position: list[float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """
@@ -167,7 +181,7 @@ class Rolling_basis(Teensy):
         :param traj_precision: la précision du déplacement, defaults to 50
         :type traj_precision: int, optional
         """
-
+        self.action_finished = False
         pos = self.true_pos(position)
         msg = self.Command.GoToPoint + \
             struct.pack("<f", pos[0]) + \
@@ -182,25 +196,31 @@ class Rolling_basis(Teensy):
         self.send_bytes(msg)
 
     def Set_Speed(self, speed: float) -> None:
+        self.action_finished = False
         msg = self.Command.GoToPoint + struct.pack(speed, "f")
         self.send_bytes(msg)
 
     def Keep_Current_Position(self):
+        self.action_finished = False
         msg = self.Command.KeepCurrentPosition
         self.send_bytes(msg)
 
     def Disable_Pid(self):
+        self.action_finished = False
         msg = self.Command.DisablePid
         self.send_bytes(msg)
 
     def Enable_Pid(self):
+        self.action_finished = False
         msg = self.Command.EnablePid
         self.send_bytes(msg)
 
     def Set_Home(self):
+        self.action_finished = False
         msg = self.Command.ResetPosition
         self.send_bytes(msg)
         
     def Stop(self):
+        self.action_finished = False
         msg = self.Command.Stop
         self.send_bytes(msg)

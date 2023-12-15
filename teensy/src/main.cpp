@@ -124,7 +124,6 @@ void curve_go_to(byte *msg, byte size)
   msg_Action_Finished fin_msg;
   fin_msg.action_id = CURVE_GO_TO;
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
-
   Curve_Go_To *new_action = new Curve_Go_To(target_point, center_point, curve_msg->interval, curve_msg->direction, curve_msg->speed, params);
   swap_action(new_action);
 }

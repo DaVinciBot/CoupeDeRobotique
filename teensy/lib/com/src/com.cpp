@@ -45,6 +45,8 @@ byte Com::handle()
             byte crc_b = crc.digest(this->buffer, msg_size + 1);
             if (crc_b != this->buffer[msg_size + 1])
             {
+                byte invalid_crc_msg = 0x7F;
+                send_msg(&invalid_crc_msg, 1);
                 this->pointer = 0;
                 continue;
             }

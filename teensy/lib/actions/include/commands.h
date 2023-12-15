@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <com.h>
 
-// rasp -> teensy : 0-127 (Convention)
+// rasp -> teensy : 0-126 (Convention)
 #define GO_TO 0
 #define CURVE_GO_TO 1
 #define KEEP_CURRENT_POSITION 2
@@ -10,6 +10,9 @@
 #define RESET_POSITION 5
 
 #define STOP 126
+
+// two ways : 127 (Convention)
+#define INVALID_CRC 127
 
 // teensy -> rasp : 128-255 (Convention)
 #define UPDATE_POSITION 128
