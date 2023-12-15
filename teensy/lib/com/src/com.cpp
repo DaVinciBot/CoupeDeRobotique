@@ -81,4 +81,6 @@ void Com::send_msg(byte *msg, byte size)
     this->stream->write(crc_b);
     this->stream->write(this->signature, 4);
     this->stream->flush();
+    // BUG DE MERDE
+    free(full_msg);
 }
