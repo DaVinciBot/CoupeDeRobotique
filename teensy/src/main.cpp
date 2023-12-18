@@ -2,6 +2,7 @@
 #include <TimerOne.h>
 #include <rolling_basis.h>
 #include <util/atomic.h>
+#include <messages.h>
 
 // Mouvement params
 #define ACTION_ERROR_AUTH 20
@@ -57,21 +58,136 @@ Rolling_Basis_Params rolling_basis_params{
 Precision_Params classic_params{
     NEXT_POSITION_DELAY,
     ACTION_ERROR_AUTH,
-    TRAJECTORY_PRECISION
+    TRAJECTORY_PRECISION,
 };
 
 Rolling_Basis_Ptrs rolling_basis_ptrs;
 
 /* Strat part */
-#define STRAT_SIZE 1
-byte action_index = 0;
+Com *com;
+// template <typename T>
+// T decode(byte *data, size_t size)
+// {
+//   T value;
+//   memcpy(&value, data, size);
+//   return value;
+// }
 
-Action **strat_test = new Action *[STRAT_SIZE]
+// template <typename T>
+// void encode(byte *data, T value, size_t size)
+// {
+//   memcpy(data, &value, size);
+// }
+
+Complex_Action *current_action = nullptr;
+
+void swap_action(Complex_Action *new_action)
 {
-  new Curve_Go_To(Point(100.0, 0.0), Point(50.0, 0.0), 5, forward, 100, classic_params),
-  new Go_To(Point(30.0, 0.0), backward, 100, classic_params),
-  new Go_To(Point(0.0, 0.0), forward, 100, classic_params),
-};
+  // implémentation des destructeurs manquante
+  if (current_action == new_action)
+  {
+    free(new_action);
+    return;
+  }
+  if (current_action != nullptr)
+    free(current_action);
+  current_action = new_action;
+}
+
+void go_to(byte *msg, byte size)
+{
+  msg_Go_To *go_to_msg = (msg_Go_To *)msg;
+  Point target_point(go_to_msg->x, go_to_msg->y, 0.0f);
+
+  Precision_Params params{
+      go_to_msg->next_position_delay,
+      go_to_msg->action_error_auth,
+      go_to_msg->traj_precision,
+  };
+
+  Go_To *new_action = new Go_To(target_point, go_to_msg->is_forward ? backward : forward, go_to_msg->speed, params);
+  swap_action(new_action);
+}
+
+void curve_go_to(byte *msg, byte size)
+{
+  msg_Curve_Go_To *curve_msg = (msg_Curve_Go_To *)msg;
+
+  Point target_point = Point(curve_msg->target_x, curve_msg->target_y);
+  Point center_point = Point(curve_msg->center_x, curve_msg->center_y);
+
+  Precision_Params params{
+      curve_msg->next_position_delay,
+      curve_msg->action_error_auth,
+      curve_msg->traj_precision,
+  };
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = CURVE_GO_TO;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+
+  Curve_Go_To *new_action = new Curve_Go_To(target_point, center_point, curve_msg->interval, curve_msg->direction, curve_msg->speed, params);
+  swap_action(new_action);
+}
+
+// Whether to keep position when no action is active
+bool keep_curr_pos_when_no_action = false;
+
+void keep_current_position(byte *msg, byte size)
+{
+  free(current_action);
+  current_action = nullptr;
+  // last_ticks_position = rolling_basis_ptr->get_current_ticks();
+
+  keep_curr_pos_when_no_action = true;
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = KEEP_CURRENT_POSITION;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+void disable_pid(byte *msg, byte size)
+{
+  keep_curr_pos_when_no_action = false;
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = DISABLE_PID;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+void enable_pid(byte *msg, byte size)
+{
+  // last_ticks_position = rolling_basis_ptr->get_current_ticks();
+  keep_curr_pos_when_no_action = true;
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = ENABLE_PID;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+void reset_position(byte *msg, byte size)
+{
+  rolling_basis_ptr->reset_position();
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = RESET_POSITION;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+void stop(byte *msg, byte size)
+{
+  free(current_action);
+  current_action = nullptr;
+
+  rolling_basis_ptr->shutdown_motor();
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = STOP;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+void (*functions[256])(byte *msg, byte size);
+
+extern void handle_callback(Com *com);
 
 /******* Attach Interrupt *******/
 inline void left_motor_read_encoder()
@@ -96,7 +212,7 @@ byte pin_on_off = 19;
 // Switch side
 byte pin_green_side = 18;
 
-// Globales variables 
+// Globales variables
 Ticks last_ticks_position;
 
 long start_time = -1;
@@ -105,9 +221,18 @@ void handle();
 
 void setup()
 {
+  com = new Com(&Serial, 115200);
+
+  // only the messages received by the teensy are listed here
+  functions[GO_TO] = &go_to,
+  functions[CURVE_GO_TO] = &curve_go_to,
+  functions[KEEP_CURRENT_POSITION] = &keep_current_position,
+  functions[DISABLE_PID] = &disable_pid,
+  functions[ENABLE_PID] = &enable_pid,
+  functions[RESET_POSITION] = &reset_position,
+  functions[STOP] = &stop,
+
   Serial.begin(115200);
-  pinMode(pin_on_off, INPUT);
-  pinMode(pin_green_side, INPUT);
 
   // Change pwm frequency
   analogWriteFrequency(R_PWM, 40000);
@@ -134,66 +259,65 @@ void setup()
   Timer1.attachInterrupt(handle);
 }
 
+int counter = 0;
+int cooldown = 0;
+
 void loop()
 {
   rolling_basis_ptr->odometrie_handle();
   rolling_basis_ptr->is_running_update();
 
-  if (start_time == -1 && digitalReadFast(pin_on_off))
+  if (start_time == -1)
     start_time = millis();
-}
 
-void handle(){
+  // Com
+  handle_callback(com);
 
-  // Not end of the game ?
-  if ((millis() - start_time) < STOP_MOTORS_DELAY || start_time == -1)
+  // Send odometrie
+  msg_Update_Position pos_msg;
+  if (counter++ > 1024)
   {
-    // Authorize to move ?
-    if (digitalReadFast(pin_on_off))
-    {
-      /*
-      // Must return to start position ?
-      if ((millis() - start_time) > RETURN_START_POSITION_DELAY && false)
-      {
-        // Calculate distance from start position
-        float d_x = rolling_basis_ptr->X;
-        float d_y = rolling_basis_ptr->Y;
-        float dist_robot_start_position = sqrt((d_x * d_x) + (d_y * d_y));
+    pos_msg.x = rolling_basis_ptr->X;
+    pos_msg.y = rolling_basis_ptr->Y;
+    pos_msg.theta = rolling_basis_ptr->THETA;
+    com->send_msg((byte *)&pos_msg, sizeof(msg_Update_Position));
 
-        // Check if we are already in the start position (> 5 cm -> go to home)
-          //if (dist_robot_start_position > DISTANCE_NEAR_START_POSITION)
-          //rolling_basis_ptr->action_handle(&return_position);
-      }
-      */
-     
-      // Do classic trajectory
-      if (action_index < STRAT_SIZE)
-      {
-        Point current_position = rolling_basis_ptr->get_current_position();
-        last_ticks_position = rolling_basis_ptr->get_current_ticks();
-
-        if (!strat_test[action_index]->is_finished())
-          strat_test[action_index]->handle(
-              current_position,
-              last_ticks_position,
-              &rolling_basis_ptrs);
-        else
-          action_index++;
-      }
-      else
-        rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
-    }
-    else
-      rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+    counter = 0;
   }
-  else
-    rolling_basis_ptr->shutdown_motor();  
 }
 
-// This code was realized by Florian BARRE
-//     ____ __
-//    / __// /___
-//   / _/ / // _ \
-//  /_/  /_/ \___/
+void handle()
+{
+  if (current_action == nullptr || current_action->is_finished())
+  {
+    if (keep_curr_pos_when_no_action)
+      rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+    return;
+  }
 
+  Point current_position = rolling_basis_ptr->get_current_position();
+  last_ticks_position = rolling_basis_ptr->get_current_ticks();
 
+  current_action->handle(
+      current_position,
+      last_ticks_position,
+      &rolling_basis_ptrs);
+
+  if (current_action->is_finished())
+  {
+    msg_Action_Finished fin_msg;
+    fin_msg.action_id = current_action->get_id();
+    com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+  }
+  return;
+}
+
+/*
+
+ This code was realized by Florian BARRE
+    ____ __
+   / __// /___<
+  / _/ / // _ \
+ /_/  /_/ \___/
+
+*/

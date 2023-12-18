@@ -4,13 +4,13 @@
 void Basic_Action::handle(Point current_point, Ticks current_ticks, Rolling_Basis_Ptrs *rolling_basis_ptrs)
 {
     // Check if the action is computed
-    if(!this->is_computed)
+    if (!this->is_computed)
         this->compute(current_point, current_ticks, rolling_basis_ptrs->rolling_basis_params);
-    
+
     // Handle the action
     else if (this->state == not_started || this->state == in_progress)
         this->step_action->handle(current_point, current_ticks, rolling_basis_ptrs);
-    
+
     // Update action state base on the step action state
     this->state = this->step_action->state;
 }
@@ -29,7 +29,7 @@ void Move_Straight::compute(Point current_point, Ticks current_ticks, Rolling_Ba
 {
     // Compute the distance to travel
     float distance = Point::distance(current_point, Point(this->target_x, this->target_y)) * (*this->direction);
-    
+
     // Create the step action
     this->step_action = new Step_Forward_Backward(distance, this->speed, this->precision_params);
 
@@ -49,7 +49,7 @@ Get_Orientation::Get_Orientation(float target_x, float target_y, Direction *dire
 }
 
 void Get_Orientation::compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params)
-{   
+{
     /*
     EXREMUM ROTATION VALUE (not used)
     float delta_x = this->target_x - current_x;
@@ -98,7 +98,7 @@ void Get_Orientation::compute(Point current_point, Ticks current_ticks, Rolling_
 
 // Do a Rotation (turn on itself)
 Move_Rotation::Move_Rotation(float target_theta, Direction *direction, byte *speed, Precision_Params *precision_params)
-{   
+{
     this->target_theta = target_theta;
     this->direction = direction;
     this->speed = speed;

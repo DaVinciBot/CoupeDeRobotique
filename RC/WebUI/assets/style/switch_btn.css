@@ -1,0 +1,117 @@
+/*Counter materialize.css */
+input{
+    pointer-events: all !important;
+}
+
+/*Finito*/
+
+/* Switch 4 Specific Style Start */
+.state h4 {
+    font-size: medium;
+    font-weight: 700;
+}
+.state div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.switch_box {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    max-width: 75px;
+    min-width: 75px;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+  }
+
+.input_wrapper {
+    width: 80px;
+    height: 40px;
+    position: relative;
+    cursor: pointer;
+}
+
+.input_wrapper input[type="checkbox"] {
+    width: 80px;
+    height: 40px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: #315e7f;
+    border-radius: 20px;
+    position: relative;
+    outline: 0;
+    -webkit-transition: all .2s;
+    transition: all .2s;
+    opacity: 1 !important;
+}
+
+.input_wrapper input[type="checkbox"]:after {
+    position: absolute;
+    content: "";
+    top: 3px;
+    left: 3px;
+    width: 34px;
+    height: 34px;
+    background: #dfeaec;
+    z-index: 2;
+    border-radius: 20px;
+    -webkit-transition: all .35s;
+    transition: all .35s;
+}
+
+.input_wrapper svg {
+    position: absolute;
+    top: 50%;
+    -webkit-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+    fill: #fff;
+    -webkit-transition: all .35s;
+    transition: all .35s;
+    z-index: 1;
+}
+
+.input_wrapper .is_checked {
+    width: 18px;
+    left: 18%;
+    -webkit-transform: translateX(190%) translateY(-50%) scale(0);
+    transform: translateX(190%) translateY(-50%) scale(0);
+}
+
+.input_wrapper .is_unchecked {
+    width: 15px;
+    right: 10%;
+    -webkit-transform: translateX(-35%) translateY(-50%) scale(1);
+    transform: translateX(-35%) translateY(-50%) scale(1);
+}
+
+/* Checked State */
+.input_wrapper input[type="checkbox"]:checked {
+    background: #23da87;
+}
+
+.input_wrapper input[type="checkbox"]:checked:after {
+    left: calc(100% - 37px);
+}
+
+.input_wrapper input[type="checkbox"]:checked+.is_checked {
+    -webkit-transform: translateX(0) translateY(-50%) scale(1);
+    transform: translateX(0) translateY(-50%) scale(1);
+}
+
+.input_wrapper input[type="checkbox"]:checked~.is_unchecked {
+    -webkit-transform: translateX(-190%) translateY(-50%) scale(0);
+    transform: translateX(-190%) translateY(-50%) scale(0);
+}
+
+/* Switch 4 Specific Style End */
