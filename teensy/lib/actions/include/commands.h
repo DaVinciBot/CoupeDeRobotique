@@ -11,6 +11,9 @@
 
 #define STOP 126
 
+// two ways : 127 (Convention)
+#define NACK 127
+
 // teensy -> rasp : 128-255 (Convention)
 #define UPDATE_POSITION 128
 #define ACTION_FINISHED 129

@@ -5,6 +5,7 @@
     "tasks": [
         {
             "label": "Compile and flash robot1",
+            "isBuildCommand": true,
             "dependsOn": [
                 "PlatformIO: Build",
                 "Copy Hex on remote",
@@ -25,29 +26,13 @@
             "problemMatcher": [
                 "$platformio"
             ],
-            "group": "build",
+            
             "label": "PlatformIO: Build"
         },
         {
             "label": "Copy Hex on remote",
             "type": "shell",
             "command": "scp .pio\\build\\teensy41\\firmware.hex dvb@robot1.local:/tmp ",
-            "problemMatcher": []
-        },
-        {
-            "label": "Launch Interface",
-            "type": "shell",
-            "command": "ssh dvb@robot1.local 'python /home/dvb/CDR_2024/rasp/Interface.py'",
-            "dependsOn": [
-                // "Kill Interface"
-            ],
-            "dependsOrder": "sequence",
-            "problemMatcher": []
-        },
-        {
-            "label": "Kill Python",
-            "type": "shell",
-            "command": "ssh dvb@robot1.local 'sudo pkill python'",
             "problemMatcher": []
         },
     ]
