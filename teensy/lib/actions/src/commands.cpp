@@ -15,14 +15,15 @@ void handle_callback(Com *com)
         }
         else if (msg[0] == NACK)
         {
-            // send again the message that wasn't received by the teensy
+            // send again the message that wasn't received by the rasp
             com->send_msg((byte*)&com->last_msg->msg, com->last_msg->size, true);
         }
         else
         {
+            // If message is unknown, inform the rasp 
             msg_Unknown_Msg_Type error_message;
             error_message.type_id = msg[0];
-            com->send_msg((byte *)&error_message, sizeof(msg_Unknown_Msg_Type)); // raise an error by sending 255 to the rasp if it tries to send a message that isn't defined by the teensy
+            com->send_msg((byte *)&error_message, sizeof(msg_Unknown_Msg_Type)); 
         }
     }
 }
