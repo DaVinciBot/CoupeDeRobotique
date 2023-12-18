@@ -3,6 +3,7 @@ from classes.tools import get_current_date
 from classes.lidar import Lidar
 from classes.pinInteract import PIN
 from classes.constants import *
+import classes.data as data
 from environment.arenas.mars_arena import MarsArena
 from environment.geometric_shapes.oriented_point import OrientedPoint as op
 import Libraries.Teensy_Com as teensy
@@ -18,7 +19,6 @@ lidar = Lidar(-math.pi, math.pi)
 last_print = get_current_date()["date_timespamp"]
 
 # Return to start timing
-start_time = 0
 time_to_return_to_home = 80
 
 # Get arena
@@ -51,7 +51,7 @@ index_last_point : int = len(points_list)-1 # the index of the last point
 is_obstacle : bool = True # for safety in case of lidar dysfunction
 game_finished = False
 is_moving : bool = True # enable to lauch go_to again if the robot has to stop
-start_time = get_current_date()["date_timespamp"]
+data.start_time = get_current_date()["date_timespamp"]
 
 while True:
     while(index_destination_point<index_last_point+1 and not game_finished): # while there are points left to go through and time is under treshold 
@@ -80,7 +80,7 @@ while True:
             is_moving = False
 
         # if time exceeds time_to_return_home then go to the starting posistion
-        if start_time !=0 and get_current_date()["date_timespamp"] - start_time > time_to_return_to_home:
+        if data.start_time !=0 and get_current_date()["date_timespamp"] - data.start_time > time_to_return_to_home:
             game_finished = True
 
         # A print every 500 ms

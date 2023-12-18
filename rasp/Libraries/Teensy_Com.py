@@ -8,7 +8,7 @@ import crc8
 import struct
 from environment.geometric_shapes.oriented_point import OrientedPoint
 from classes.constants import SERVOS_PIN
-from classes.tools import is_in_tab
+from classes.tools import is_in_tab, register_call, register_rcv
 
 
 class TeensyException(Exception):
@@ -96,7 +96,7 @@ class Rolling_basis(Teensy):
     ######################
     # Rolling basis init #
     ######################
-
+    name = "rolling_basis"
     def __init__(self, vid: int = 5824, pid: int = 1155, baudrate: int = 115200, crc: bool = True):
         super().__init__(vid, pid, baudrate, crc)
         # All position are in the form OrientedPoint
@@ -139,6 +139,7 @@ class Rolling_basis(Teensy):
         Command.ResetPosition : "Reseted position sucesfully"
     }
 
+    @register_call(name)
     def Go_To(self, position: OrientedPoint, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """
         Va à la position donnée en paramètre
@@ -170,22 +171,27 @@ class Rolling_basis(Teensy):
 
         self.send_bytes(msg)
 
+    @register_call(name)
     def Set_Speed(self, speed: float) -> None:
         msg = self.Command.GoToPoint + struct.pack(speed, "f")
         self.send_bytes(msg)
 
+    @register_call(name)
     def Keep_Current_Position(self):
         msg = self.Command.KeepCurrentPosition
         self.send_bytes(msg)
 
+    @register_call(name)
     def Disable_Pid(self):
         msg = self.Command.DisablePid
         self.send_bytes(msg)
 
+    @register_call(name)
     def Enable_Pid(self):
         msg = self.Command.EnablePid
         self.send_bytes(msg)
 
+    @register_call(name)
     def Set_Home(self):
         msg = self.Command.ResetPosition
         self.send_bytes(msg)
@@ -200,9 +206,10 @@ class Rolling_basis(Teensy):
                           struct.unpack("<f", msg[4:8])[0],
                           struct.unpack("<f", msg[8:12])[0])
 
+    @register_rcv(name, action_finished_message)
     def rcv_action_finish(self, msg: bytes):
         try:
-            print(self.action_finished_message[msg])
+            print(self.action_finished_message[msg]+" finished")
         except:
             print(f"the action with id n°{msg} was sucesfully completed")
         finally:
@@ -210,6 +217,7 @@ class Rolling_basis(Teensy):
                 self.action_finished = True
 
 class Actuators(Teensy):
+    name = "actuators"
     def __init__(self, vid: int = 5824, pid: int = 1155, baudrate: int = 115200, crc: bool = True, pin_servos : list[int] = SERVOS_PIN):
         super().__init__(vid, pid, baudrate, crc)
         self.pin_servos = pin_servos
@@ -221,8 +229,9 @@ class Actuators(Teensy):
     # User facing functions #
     #########################
     
+    @register_call(name)
     def servo_go_to(self, pin :int, angle :int):
-        if is_in_tab(pin):
+        if is_in_tab(SERVOS_PIN, pin):
             msg = self.Command.ServoGoTo + \
                 struct.pack("<b", pin) + \
                 struct.pack("<b", angle)

@@ -10,4 +10,7 @@ class OrientedPoint(Point):
     
     def __sub__(self, p : object) -> object:
         return OrientedPoint(self.x-p.x, self.y-p.y, self.theta-p.theta)
+    
+    def __str__(self) -> str:
+        return f"Point(x={self.x}, y={self.y}, theta={self.theta})"
  
