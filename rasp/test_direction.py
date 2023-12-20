@@ -1,18 +1,9 @@
-from classes.lidar import Lidar
 from classes.tools import *
 import Libraries.Teensy_Com as teensy
+from classes.constants import *
 import math
 import time
-import pysicktim as lidar
 
-print(f"Direction possible : {get_possible_directions_debug(lidar,treshold=30)}")
-input("enter to continue")
-print(f"Direction possible : {get_possible_directions_debug(lidar,treshold=30)}")
-input("enter to continue")
-print(f"Direction possible : {get_possible_directions_debug(lidar,treshold=30)}")
-input("enter to continue")
-print(f"Direction possible : {get_possible_directions_debug(lidar,treshold=30)}")
-input("enter to continue")
-print(f"Direction possible : {get_possible_directions_debug(lidar,treshold=30)}")
-input("enter to continue")
+print(is_in_tab(SERVOS_PIN,SERVO1_PIN))
+print(is_in_tab(SERVOS_PIN,5))
 

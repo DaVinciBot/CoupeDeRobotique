@@ -8,7 +8,8 @@ import crc8
 import struct
 from environment.geometric_shapes.oriented_point import OrientedPoint
 from classes.constants import SERVOS_PIN
-from classes.tools import is_in_tab, register_call, register_rcv
+from classes.tools import is_in_tab
+from log.log import*
 
 
 class TeensyException(Exception):
@@ -111,6 +112,9 @@ class Rolling_basis(Teensy):
             128: self.rcv_odometrie,  # \x80
             129: self.rcv_action_finish  # \x45
         }
+        
+    def __str__(self) -> str:
+        return self.name
 
     #####################
     # Position handling #
@@ -139,7 +143,7 @@ class Rolling_basis(Teensy):
         Command.ResetPosition : "Reseted position sucesfully"
     }
 
-    @register_call(name)
+    @log_call(name)
     def Go_To(self, position: OrientedPoint, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """
         Va à la position donnée en paramètre
@@ -171,27 +175,27 @@ class Rolling_basis(Teensy):
 
         self.send_bytes(msg)
 
-    @register_call(name)
+    @log_call(name)
     def Set_Speed(self, speed: float) -> None:
         msg = self.Command.GoToPoint + struct.pack(speed, "f")
         self.send_bytes(msg)
 
-    @register_call(name)
+    @log_call(name)
     def Keep_Current_Position(self):
         msg = self.Command.KeepCurrentPosition
         self.send_bytes(msg)
 
-    @register_call(name)
+    @log_call(name)
     def Disable_Pid(self):
         msg = self.Command.DisablePid
         self.send_bytes(msg)
 
-    @register_call(name)
+    @log_call(name)
     def Enable_Pid(self):
         msg = self.Command.EnablePid
         self.send_bytes(msg)
 
-    @register_call(name)
+    @log_call(name)
     def Set_Home(self):
         msg = self.Command.ResetPosition
         self.send_bytes(msg)
@@ -206,7 +210,7 @@ class Rolling_basis(Teensy):
                           struct.unpack("<f", msg[4:8])[0],
                           struct.unpack("<f", msg[8:12])[0])
 
-    @register_rcv(name, action_finished_message)
+    @log_rcv(name,action_finished_message)
     def rcv_action_finish(self, msg: bytes):
         try:
             print(self.action_finished_message[msg]+" finished")
@@ -224,18 +228,20 @@ class Actuators(Teensy):
 
     class Command: # values must correspond to the one defined on the teensy
         ServoGoTo = b"\x01"
+        
+    def __str__(self) -> str:
+        return self.name
 
     #########################
     # User facing functions #
     #########################
     
-    @register_call(name)
-    def servo_go_to(self, pin :int, angle :int):
-        if is_in_tab(SERVOS_PIN, pin):
+    @log_call(name)
+    def servo_go_to(self, pin :int, angle :int, min_angle : int = 0, max_angle : int = 180):
+        if angle>=min_angle and angle<=max_angle :
             msg = self.Command.ServoGoTo + \
-                struct.pack("<b", pin) + \
-                struct.pack("<b", angle)
-                # https://docs.python.org/3/library/struct.html#format-characters
+                    struct.pack("<B", pin)+\
+                    struct.pack("B",angle)
+                    # https://docs.python.org/3/library/struct.html#format-characters
             self.send_bytes(msg)
-        else:
-            print (f"You tried to use servo_go_to on pin {pin} whereas it is not declared as a servo pin")
+        else : print(f"you tried to write {angle}° on pin {pin} wheras angle must be between {min_angle} and {max_angle}°")

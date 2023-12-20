@@ -35,7 +35,7 @@ def is_under_threshold(polar_coordinates, threshold):
     return (min([x[1] for x in polar_coordinates]) < threshold)
 
 def get_possible_directions(self, start_angle = 90, end_angle = 180, step_angle = 1/3, treshold = 0.2, delay_mili = 10) -> int:
-        """a basic function that enable to analyse the moving direction of an obstacle and return the possible directions for us 
+        """NOT OPERATIONAL YET : a basic function that enable to analyse the moving direction of an obstacle and return the possible directions for us 
 
         Args:
             start_angle (int, optional): the first angle taken into account in the process. Defaults to 0.

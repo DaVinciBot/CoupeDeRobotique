@@ -8,7 +8,7 @@ Com *com;
 void (*functions[256])(byte *msg, byte size); // a tab a pointer to void functions
 
 // Define a global array of Servo_Motor. Some name of variables are not allowed becaused they are used in Servo
-int servo_pins[] = {SERVO1_PIN};
+int servo_pins[] = {SERVO1_PIN,SERVO2_PIN,SERVO3_PIN};
 constexpr int nb_servos = sizeof(servo_pins)/sizeof(servo_pins[0]);
 Servo_Motor s[nb_servos];
 
