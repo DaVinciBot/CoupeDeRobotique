@@ -1,19 +1,32 @@
 from environment.geometric_shapes.point import Point
 from environment.geometric_shapes.rectangle import Rectangle
+from log.log import log_function
 
 class Arena:
     """Represent an arena
     """
-    def __init__(self, origin : Point = Point(0,0), opposite_corner : Point = Point(200,300), forbidden_area : Rectangle = Rectangle(Point(0,0),Point(0,0)), home : Rectangle = Rectangle(Point(0,0),Point(0,0))):
+    def __init__(
+        self,
+        origin : Point = Point(0,0),
+        opposite_corner : Point = Point(200,300),
+        forbidden_area : Rectangle = Rectangle(Point(0,0),Point(0,0)),
+        starting_area : Rectangle = Rectangle(Point(0,0),Point(0,0))
+        ):
+        
         self.origin = origin
         self.opposite_corner = opposite_corner
         self.forbidden_area = forbidden_area
-        self.home = home
+        self.starting_area = starting_area
+        self.finish_are = starting_area # by default we come back to the position we started with
 
     def __str__(self) -> str:
+        return "arena"
+    
+    
+    def Display(self) -> str:
         return(
             "MarsArena :\n"
-            f"\thome.center : {self.home.center.__str__()}\n"
+            f"\tstarting_area : {self.starting_position.center.__str__()}\n"
             f"\torigin : {self.origin.__str__()}\n"
             f"\topposite corner : {self.opposite_corner.__str__()}\n"
             f"\trival_protected_depot_zone : {self.rival_protected_depot_zone.__str__()}\n"
@@ -24,6 +37,7 @@ class Arena:
             "\town_depot_zone : "
         )
 
+    @log_function
     def is_in(self, point : Point) -> bool:
         try : return point.x<=self.opposite_corner.x and point.y<=self.opposite_corner.y and point.x>=self.origin.x and point.y>= self.origin.y
         except : raise Exception("arena isn't correctly initialized")

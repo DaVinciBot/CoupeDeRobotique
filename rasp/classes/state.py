@@ -4,7 +4,8 @@ from classes.constants import *
 start_time = 0 # set to 0 to avoid errors
 
 # *OPTIONS*
-activate_log : bool = True # enable or disable logging's functionnalities
+activate_com_log : bool = True # enable or disable comunnication logging's functionnalities
+activate_decision_process_log : bool = True # enable or disable decision making process logging's functionnalities 
 test = True
 activate_print : bool = True
 check_collisions : bool = False

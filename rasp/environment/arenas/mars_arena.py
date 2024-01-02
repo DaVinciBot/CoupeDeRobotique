@@ -5,18 +5,29 @@ from environment.arenas.arena import Arena
 class MarsArena(Arena):
     """Represent the arena of the CDR 2023-2024
     """
-
-    def __init__(self, color : str = "yellow"):
-        origin = Point(0,0)
-        opposite_corner = Point(200,300)
-        if color == "blue":
-            super().__init__(origin=origin,opposite_corner=opposite_corner,forbidden_area=Rectangle(Point(0,255),Point(45,300)),home= Rectangle(Point(0,0),Point(45,45)))
-        elif color == "yellow":
-            super().__init__(origin=origin,opposite_corner=opposite_corner,forbidden_area=Rectangle(Point(0,0),Point(45,45)),home= Rectangle(Point(0,255),Point(45,300)))
-        else :
-            raise Exception("the given color doesn't exist")
+            
+    def __init__(
+        self,
+        forbidden_area : Rectangle,
+        starting_area : Rectangle,
+        home : Rectangle = None, # the area to go to at the end
+        origin : Point = Point(0,0),
+        opposite_corner : Point = Point(200,300)
+        ):
+        
+        if home == None:
+            home = starting_area
+        super().__init__(
+            forbidden_area=forbidden_area,
+            starting_area=starting_area,
+            home=home,origin=origin,
+            opposite_corner=opposite_corner
+            )
 
     def __str__(self) -> str:
+        return "mars arena"
+
+    def Display(self) -> str:
         return(
             "MarsArena :\n"
             f"\tstarting_position : {self.home.center.__str__()}\n"
@@ -29,4 +40,6 @@ class MarsArena(Arena):
             "\town_protected_depot_zone : \n"
             "\town_depot_zone : "
         )
+        
+    
             

@@ -10,7 +10,27 @@ from environment.arenas.mars_arena import MarsArena
 from environment.geometric_shapes.oriented_point import OrientedPoint as op
 import Libraries.Teensy_Com as teensy
 
+def add_op(oriented_point : op)->bool:  # op stands for oriented point
+    if state.check_collisions:
+        if MarsArena.enable_go_to(state.points_list[-1],oriented_point):
+            state.points_list.append(oriented_point)
+            state.index_last_point += 1
+            return True
+        return False
+    else:
+        state.points_list.append(oriented_point)
+        state.index_last_point += 1
+        return True
 
+def select_action_at_position(zone : int):
+    if zone == CMD_POTAREA:
+        print("taking plant")
+    elif zone == CMD_DEPOTZONE:
+        print("deposing plant into depot zone")
+    elif zone == CMD_GARDENER:
+        print("deposing plant into gardener")
+    else:
+        print(f"zone {zone} isn't taken in charge")
 
 lidar = Lidar(-math.pi, math.pi)
 arena : MarsArena = MarsArena()
@@ -24,7 +44,7 @@ if state.test:
     time.sleep(0.01)
     
 state.start_time = get_current_date()["date_timespamp"]
-if state.activate_log:
+if state.activate_com_log:
     log_start("main")
     
 while True:
