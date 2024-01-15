@@ -84,6 +84,11 @@ Complex_Action *current_action = nullptr;
 void swap_action(Complex_Action *new_action)
 {
   // implémentation des destructeurs manquante
+  if (current_action == new_action)
+  {
+    free(new_action);
+    return;
+  }
   if (current_action != nullptr)
     free(current_action);
   current_action = new_action;
@@ -92,7 +97,7 @@ void swap_action(Complex_Action *new_action)
 void go_to(byte *msg, byte size)
 {
   msg_Go_To *go_to_msg = (msg_Go_To *)msg;
-  Point target_point(go_to_msg->x, go_to_msg->y);
+  Point target_point(go_to_msg->x, go_to_msg->y, 0.0f);
 
   Precision_Params params{
       go_to_msg->next_position_delay,
@@ -101,35 +106,31 @@ void go_to(byte *msg, byte size)
   };
 
   Go_To *new_action = new Go_To(target_point, go_to_msg->is_forward ? backward : forward, go_to_msg->speed, params);
-  if (current_action == new_action)
-    free(new_action);
-  else
-    swap_action(new_action);
+  swap_action(new_action);
 }
 
 void curve_go_to(byte *msg, byte size)
 {
-  // float target_x = (float)(msg[0]);
-  // float target_y = (float)(msg[sizeof(float)]);
+  msg_Curve_Go_To *curve_msg = (msg_Curve_Go_To *)msg;
 
-  // float center_x = (float)(msg[2 * sizeof(float)]);
-  // float center_y = (float)(msg[3 * sizeof(float)]);
+  Point target_point = Point(curve_msg->target_x, curve_msg->target_y);
+  Point center_point = Point(curve_msg->center_x, curve_msg->center_y);
 
-  // unsigned short interval = (unsigned short)(msg[4 * sizeof(float)]);
+  Precision_Params params{
+      curve_msg->next_position_delay,
+      curve_msg->action_error_auth,
+      curve_msg->traj_precision,
+  };
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = CURVE_GO_TO;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 
-  // Point target_point = Point(target_x, target_y);
-  // Point center_point = Point(center_x, center_y);
-
-  // bool is_identical = current_action->get_id() == CURVE_GO_TO;
-  // if (is_identical)
-  // {
-  //   Go_To *casted_action = ;
-  //   is_identical = ((Go_To *)current_action)->target_point == target_point;
-  // }
+  Curve_Go_To *new_action = new Curve_Go_To(target_point, center_point, curve_msg->interval, curve_msg->direction, curve_msg->speed, params);
+  swap_action(new_action);
 }
 
 // Whether to keep position when no action is active
-bool keep_curr_pos_when_no_action = true;
+bool keep_curr_pos_when_no_action = false;
 
 void keep_current_position(byte *msg, byte size)
 {
@@ -160,6 +161,27 @@ void enable_pid(byte *msg, byte size)
 
   msg_Action_Finished fin_msg;
   fin_msg.action_id = ENABLE_PID;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+void reset_position(byte *msg, byte size)
+{
+  rolling_basis_ptr->reset_position();
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = RESET_POSITION;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+void stop(byte *msg, byte size)
+{
+  free(current_action);
+  current_action = nullptr;
+
+  rolling_basis_ptr->shutdown_motor();
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = STOP;
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
@@ -207,10 +229,10 @@ void setup()
   functions[KEEP_CURRENT_POSITION] = &keep_current_position,
   functions[DISABLE_PID] = &disable_pid,
   functions[ENABLE_PID] = &enable_pid,
+  functions[RESET_POSITION] = &reset_position,
+  functions[STOP] = &stop,
 
   Serial.begin(115200);
-  pinMode(pin_on_off, INPUT);
-  pinMode(pin_green_side, INPUT);
 
   // Change pwm frequency
   analogWriteFrequency(R_PWM, 40000);
@@ -238,13 +260,14 @@ void setup()
 }
 
 int counter = 0;
+int cooldown = 0;
 
 void loop()
 {
   rolling_basis_ptr->odometrie_handle();
   rolling_basis_ptr->is_running_update();
 
-  if (start_time == -1 && digitalReadFast(pin_on_off))
+  if (start_time == -1)
     start_time = millis();
 
   // Com
@@ -258,6 +281,7 @@ void loop()
     pos_msg.y = rolling_basis_ptr->Y;
     pos_msg.theta = rolling_basis_ptr->THETA;
     com->send_msg((byte *)&pos_msg, sizeof(msg_Update_Position));
+
     counter = 0;
   }
 }
@@ -279,10 +303,12 @@ void handle()
       last_ticks_position,
       &rolling_basis_ptrs);
 
-
-  msg_Action_Finished fin_msg;
-  fin_msg.action_id = current_action->get_id();
-  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+  if (current_action->is_finished())
+  {
+    msg_Action_Finished fin_msg;
+    fin_msg.action_id = current_action->get_id();
+    com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+  }
   return;
 }
 

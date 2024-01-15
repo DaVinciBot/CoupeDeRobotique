@@ -21,12 +21,16 @@ struct msg_Go_To
 struct msg_Curve_Go_To
 {
     byte command = CURVE_GO_TO;
-    Point target_point;
-    Point center_point;
+    float target_x;
+    float target_y;
+    float center_x;
+    float center_y;
     unsigned short interval;
     Direction direction;
     byte speed;
-    Precision_Params precision_params;
+    uint16_t next_position_delay;
+    uint16_t action_error_auth;
+    uint16_t traj_precision;
 };
 
 struct msg_Keep_Current_Position
@@ -56,3 +60,9 @@ struct msg_Action_Finished
     byte command = ACTION_FINISHED;
     byte action_id;
 };
+
+struct msg_Stop_signal
+{
+    byte command = STOP;
+};
+

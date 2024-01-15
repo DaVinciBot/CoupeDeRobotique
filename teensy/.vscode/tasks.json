@@ -5,6 +5,7 @@
     "tasks": [
         {
             "label": "Compile and flash robot1",
+            "isBuildCommand": true,
             "dependsOn": [
                 "PlatformIO: Build",
                 "Copy Hex on remote",
@@ -16,7 +17,7 @@
         {
             "label": "Flash local hex robot1",
             "type": "shell",
-            "command": "ssh dvb@10.3.141.1 'teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex; exit'",
+            "command": "ssh dvb@robot1.local 'sudo teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex; exit'",
             "problemMatcher": []
         },
         {
@@ -25,29 +26,13 @@
             "problemMatcher": [
                 "$platformio"
             ],
-            "group": "build",
+            
             "label": "PlatformIO: Build"
         },
         {
             "label": "Copy Hex on remote",
             "type": "shell",
-            "command": "scp .pio\\build\\teensy41\\firmware.hex dvb@10.3.141.1:/tmp ",
-            "problemMatcher": []
-        },
-        {
-            "label": "Launch Interface",
-            "type": "shell",
-            "command": "ssh dvb@ 10.3.141.1 'python /home/dvb/CDR_2024/rasp/Interface.py'",
-            "dependsOn": [
-                // "Kill Interface"
-            ],
-            "dependsOrder": "sequence",
-            "problemMatcher": []
-        },
-        {
-            "label": "Kill Python",
-            "type": "shell",
-            "command": "ssh dvb@robot1 'sudo pkill python'",
+            "command": "scp .pio\\build\\teensy41\\firmware.hex dvb@robot1.local:/tmp ",
             "problemMatcher": []
         },
     ]

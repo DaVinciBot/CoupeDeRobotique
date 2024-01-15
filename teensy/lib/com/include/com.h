@@ -1,6 +1,12 @@
 #include <Arduino.h>
 
 // Com class
+
+struct last_message
+{
+    byte size;
+    byte msg[256];
+};
 class Com {
 
 private:
@@ -14,5 +20,7 @@ public:
     Com(HardwareSerial *stream, uint32_t baudrate);
     byte handle();
     byte * read_buffer();
-    void send_msg(byte *msg, byte size);
+    void send_msg(byte *msg, byte size, bool is_nack = false);
+    last_message* last_msg = new last_message();
 };
+
