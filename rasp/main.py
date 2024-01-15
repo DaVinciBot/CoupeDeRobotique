@@ -1,25 +1,17 @@
-import math
 import time
-from log.log import log_start
-from classes.tools import *
-from classes.lidar import Lidar
-from classes.pinInteract import PIN
-from classes.constants import *
-import classes.state as state
-from environment.arenas.mars_arena import MarsArena
-from environment.geometric_shapes.oriented_point import OrientedPoint as op
-import Libraries.Teensy_Com as teensy
 
-def add_op(oriented_point : op)->bool:  # op stands for oriented point
-    if state.check_collisions:
-        if MarsArena.enable_go_to(state.points_list[-1],oriented_point):
-            state.points_list.append(oriented_point)
-            state.index_last_point += 1
+from bot import MarsArena, RollingBasis, State, Lidar, Utils, Logger, Shapes
+
+def add_op(oriented_point : Shapes.OrientedPoint)->bool:  # op stands for oriented point
+    if State.check_collisions:
+        if MarsArena.enable_go_to(State.points_list[-1],oriented_point):
+            State.points_list.append(oriented_point)
+            State.index_last_point += 1
             return True
         return False
     else:
-        state.points_list.append(oriented_point)
-        state.index_last_point += 1
+        State.points_list.append(oriented_point)
+        State.index_last_point += 1
         return True
 
 def select_action_at_position(zone : int):
@@ -32,66 +24,65 @@ def select_action_at_position(zone : int):
     else:
         print(f"zone {zone} isn't taken in charge")
 
-lidar = Lidar(-math.pi, math.pi)
-arena : MarsArena = MarsArena()
-rolling_basis = teensy.Rolling_basis(crc=True)
+lidar = Lidar()
+arena = MarsArena(1)
+l = Logger()
+rolling_basis = RollingBasis()
+last_print = Utils.get_current_date()["date_timespamp"]
 
-last_print = get_current_date()["date_timespamp"]
-
-if state.test:
+if State.test:
     rolling_basis.Set_Home()
     print(rolling_basis.odometrie)
     time.sleep(0.01)
     
-state.start_time = get_current_date()["date_timespamp"]
-if state.activate_com_log:
-    log_start("main")
+    
+State.start_time = Utils.get_current_date()["date_timespamp"]
     
 while True:
-    while(state.index_destination_point<state.index_last_point+1 and not state.game_finished): # while there are points left to go through and time is under treshold 
+    while(State.index_destination_point<State.index_last_point+1 and not State.game_finished): # while there are points left to go through and time is under treshold 
         # is_there an obstacle in front of the robot ? 
         # Run authorize ?
         try:
-            state.is_obstacle = lidar.is_obstacle_infront()
+            State.is_obstacle = lidar.is_obstacle_infront()
         except Exception as e:
             print(e)
-        state.run_auth : bool = not state.is_obstacle
+        State.run_auth : bool = not State.is_obstacle
         
-        if state.test:
+        if State.test:
             print(f"action_finished : {rolling_basis.action_finished}")
 
         # Go to the next point. If an obstacle is detected stop the robot
-        if not state.run_auth:
-            if state.is_moving :
+        if not State.run_auth:
+            if State.is_moving :
                 rolling_basis.Keep_Current_Position()
-                state.is_moving = False
-        if state.run_auth and not state.is_moving:
-            rolling_basis.Go_To(state.points_list[state.index_destination_point][0])
-            state.is_moving = True
+                State.is_moving = False
+        if State.run_auth and not State.is_moving:
+            rolling_basis.Go_To(State.points_list[State.index_destination_point][0])
+            State.is_moving = True
         if rolling_basis.action_finished:
-            print(f"arrived at {state.points_list[state.index_destination_point][0]}")
-            state.index_destination_point += 1
-            state.is_moving = False
+            print(f"arrived at {State.points_list[State.index_destination_point][0]}")
+            State.index_destination_point += 1
+            State.is_moving = False
 
         # if time exceeds time_to_return_home then go to the starting posistion
-        if state.start_time !=0 and get_current_date()["date_timespamp"] - state.start_time > state.time_to_return_to_home:
-            if not state.test:
+        if State.start_time !=0 and Utils.get_current_date()["date_timespamp"] - State.start_time > State.time_to_return_to_home:
+            if not State.test:
                 rolling_basis.Go_To(arena.home.center)
 
         # A print every 500 ms if activated
-        if state.activate_print and (get_current_date()["date_timespamp"] - last_print) > 0.5:
-            last_print = get_current_date()["date_timespamp"]
+        if State.activate_print and (Utils.get_current_date()["date_timespamp"] - last_print) > 0.5:
+            last_print = Utils.get_current_date()["date_timespamp"]
 
             print
             (
                 f"#-- Lidar --#\n"
-                f"is_obstacle: {state.is_obstacle}\n\n"
+                f"is_obstacle: {State.is_obstacle}\n\n"
                 f"#-- Pins --#\n"
                 #f"State Tirette: {tirette_pin.digitalRead()}\n"
                 f"#-- Timer (return to home) --#\n"
-                f"Timer to return: {state.time_to_return_to_home}\n"
-                f"Current time: {round(get_current_date()['date_timespamp'] - state.start_time)}\n"
+                f"Timer to return: {State.time_to_return_to_home}\n"
+                f"Current time: {round(Utils.get_current_date()['date_timespamp'] - State.start_time)}\n"
                 f"#-- Run --#\n"
-                f"Auth state: {state.run_auth}\n"
+                f"Auth State: {State.run_auth}\n"
             )
 
