@@ -5,8 +5,8 @@
 ##################################################
 
 
-from bot import Logger, Lidar, Rolling_basis
-from bot.api import update_lidar, get_last_command, send_action_finished
+from bot import Logger, Lidar, RollingBasis
+from bot.API import update_lidar, get_last_command, send_action_finished
 
 import asyncio
 
@@ -17,7 +17,7 @@ async def main():
     """
     lidar = Lidar()
     l = Logger()
-    robot = Rolling_basis()
+    robot = RollingBasis()
     await l.log('Logger initialized')
     while True:
         tmp = await get_last_command()

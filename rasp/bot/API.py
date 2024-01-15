@@ -20,7 +20,7 @@ async def update_log(data: str):
 def update_log_sync(data: str):
     """
     Task to run on a new thread to update the log on the server
-
+    
     Exemple : 
     ```py
     from .API import update_log_sync

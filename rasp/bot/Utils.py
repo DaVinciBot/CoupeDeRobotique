@@ -1,5 +1,6 @@
 from datetime import datetime
-    
+
+
 class Utils:
     def get_current_date() -> dict:
         """
@@ -11,6 +12,3 @@ class Utils:
         now = datetime.now()
         timestamp = datetime.timestamp(now)
         return {"date": now, "date_timespamp": timestamp}
-        
-    
-            

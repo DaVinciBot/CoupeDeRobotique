@@ -34,7 +34,6 @@ class Logger:
     def log(self, message: str, level: int = 0) -> None:
         """
         Log un message dans le fichier de log et dans la sortie standard
-
         :param message: message à logger
         :type message: str
         :param level: 0: INFO, 1: WARNING, 2: ERROR, 3: CRITICAL, defaults to 0

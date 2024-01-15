@@ -1,7 +1,7 @@
-from bot import Rolling_basis
+from bot import RollingBasis
 
 def main():
-    robot = Rolling_basis()
+    robot = RollingBasis()
     while True:
         print("Enter command :")
         cmd = input()
