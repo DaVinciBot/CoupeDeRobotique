@@ -1,6 +1,57 @@
 import math
-import pysicktim as lidar
+from .Shapes import OrientedPoint, Point
 
+
+class Direction:
+    STRAIGHT = 0
+    LEFT = 1
+    RIGHT = 2
+    BOTH = 3
+    ERROR = 4
+
+def get_possible_directions(scan1: list, scan2: list, start_angle=90, end_angle=180, step_angle=1/3, threshold=0.2, delay_mili=10) -> int:
+    """a basic function that enables the analysis of the moving direction of an obstacle and returns possible directions for us.
+
+    Args:
+        start_angle (int, optional): the first angle taken into account in the process. Defaults to 0.
+        end_angle (type, optional): the last angle taken into account in the process. Defaults to len(lidar.scan.distances).
+        step_angle (type, optional): enables the computation of indices of the given angles in the tab. Defaults to 1/3.
+        threshold (float, optional): if the distance between the robot and an element is under the threshold, then consider it as an obstacle. Defaults to 0.2.
+        delay_mili (int, optional): the delay between the two measurements of the lidar. Defaults to 10.
+
+    Returns:
+        int: description
+    """
+    i: int = int(start_angle / step_angle)
+    i_max: int = int(end_angle / step_angle)
+    first_start: int = -1  # must be set to -1
+    second_start: int = -1
+    # get the index of the first distance under threshold of each scan
+    while i < i_max and (first_start == -1 or second_start == -1):
+        if scan1[i] <= threshold and first_start == -1:
+            first_start = i
+        if scan2[i] <= threshold and second_start == -1:
+            second_start = i
+        i += 1
+    if second_start == -1:  # no distance under threshold
+        return Direction.STRAIGHT
+    i = i_max
+    first_stop: int = -1
+    second_stop: int = -1
+    # get the index of the last distance under threshold of each scan
+    while i > -1 and (first_stop == -1 or second_stop == -1):
+        if scan1[i] <= threshold and first_stop == -1:
+            first_stop = i
+        if scan2[i] <= threshold and second_stop == -1:
+            second_stop = i
+        i -= 1
+    if second_start < first_start and second_stop < first_stop:  # is the other robot going left ?
+        return Direction.LEFT
+    if second_start > first_start and second_stop > first_stop:  # is the other robot going right ?
+        return Direction.RIGHT
+    if second_start == first_start and second_stop == first_stop:
+        return Direction.BOTH
+    return Direction.ERROR
 
 def scan_values_to_polar(
     scan_values: list[float], min_angle: float, max_angle: float
@@ -49,9 +100,9 @@ def threshold(
 
 
 def relative_to_absolute_cartesian_coordinates(
-    cartesian_coordinates: list[list[float, float]],
-    robot_pos: tuple[float, float, float],
-) -> list[float]:
+    cartesian_coordinates: list[Point],
+    robot_pos: OrientedPoint,
+) -> list[Point]:
     """
     Convertit des coordonnées cartésiennes relatives à un robot en coordonnées absolues de la table
 
@@ -65,18 +116,18 @@ def relative_to_absolute_cartesian_coordinates(
     res = []
     for coordinate in cartesian_coordinates:
         res.append(
-            (
-                robot_pos[0] + coordinate[0] * math.cos(robot_pos[2]),
-                robot_pos[1] + coordinate[1] * math.sin(robot_pos[2]),
+            Point(
+                robot_pos.x + coordinate.x * math.cos(robot_pos.theta),
+                robot_pos.y + coordinate.y * math.sin(robot_pos.theta),
             )
         )
     return res
 
 
 def is_under_threshold(
-    polar_coordinates: list[list[float, float, float]], threshold: float
+    polar_coordinates: list[OrientedPoint], threshold: float
 ) -> bool:
-    return min([x[1] for x in polar_coordinates]) < threshold
+    return min([x.y for x in polar_coordinates]) < threshold
 
 
 class Lidar:
@@ -93,6 +144,8 @@ class Lidar:
         :param max_angle: l'angle de lecture maximal, defaults to math.pi
         :type max_angle: float, optional
         """
+        import pysicktim as lidar
+
         self.min_angle = min_angle
         self.max_angle = max_angle
         self.lidar_obj = lidar
@@ -121,16 +174,16 @@ class Lidar:
         :return: distance en mètres
         :rtype: float
         """
-        lidar.scan()
-        points = [val for val in lidar.scan.distances if val > 0.01]
+        self.lidar_obj.scan()
+        points = [val for val in self.lidar_obj.scan.distances if val > 0.01]
         points.sort()
         return points[0]
 
     def safe_get_nearest_point(self, nb_mesure: int = 30) -> float:
         points = []
         for _ in range(nb_mesure):
-            lidar.scan()
-            scan = [val for val in lidar.scan.distances if val > 0.01]
+            self.lidar_obj.scan()
+            scan = [val for val in self.lidar_obj.scan.distances if val > 0.01]
             scan.sort()
             points.append(scan[0])
 
@@ -152,10 +205,10 @@ class Lidar:
         points = []
 
         for _ in range(30):
-            lidar.scan()
+            self.lidar_obj.scan()
             scan = [
                 val
-                for val in lidar.scan.distances[
+                for val in self.lidar_obj.scan.distances[
                     (start_angle + 45) * 3 : (end_angle + 45) * 3
                 ]
                 if val > 0.01
@@ -188,5 +241,5 @@ class Lidar:
         return self.__scan_values_to_polar()
 
     def get_values(self) -> list:
-        lidar.scan()
+        self.lidar_obj.scan()
         return self.lidar_obj.scan.distances
