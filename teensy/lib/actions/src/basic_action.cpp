@@ -87,7 +87,14 @@ void Get_Orientation::compute(Point current_point, Ticks current_ticks, Rolling_
     // Add PI rad if the direction is backward
     if ((*this->direction) == backward)
         theta += PI;
-
+    
+     //Check if the angle is greater than PI
+    if (theta > PI)
+    {
+        //adjust the directun, turn to the left
+        theata -= (2* PI); 
+    }
+    
     // Create the step action
     this->step_action = new Step_Rotation(theta, this->speed, this->precision_params);
 
