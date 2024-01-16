@@ -1,5 +1,5 @@
 from typing import Any, Callable
-import serial, threading, time, crc8, struct, serial.tools.list_ports
+import serial, threading, time, crc8, struct, serial.tools.list_ports, math
 from .State import SERVOS_PIN
 
 from .Logger import Logger
@@ -264,7 +264,7 @@ class RollingBasis(Teensy):
         self.send_bytes(msg)
 
     @Logger
-    def curve_go_to(self, destination: list[float, float], center: list[float, float], direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
+    def curve_go_to(self, destination: list[float, float], center: list[float, float], interval: int, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
         """Go to a point with a curve"""
         
         # center 
@@ -286,7 +286,8 @@ class RollingBasis(Teensy):
         curve_msg = (
         struct.pack("<ff", destination[0], destination[1]) +  # target_point
         struct.pack("<ff", center[0], center[1]) +  # center_point
-        struct.pack("<H", next_position_delay) +  # interval
+        struct.pack("<H", interval) +  # interval
+        struct.pack("<H", next_position_delay) +  # delay
         struct.pack("<?", direction) +  # direction
         speed +  # speed
         struct.pack("<H", traj_precision)
