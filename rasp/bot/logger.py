@@ -1,7 +1,7 @@
-from .Utils import Utils
 from threading import Thread
-from .State import is_logger_init, LOG_LEVEL, PRINT_LOG
-from .API import update_log_sync
+from bot.State import is_logger_init, LOG_LEVEL, PRINT_LOG
+from bot.api import update_log_sync
+from bot.utils import Utils
 import os, types, functools
 
 

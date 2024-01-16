@@ -1,5 +1,5 @@
 import math
-from .Shapes import OrientedPoint, Point
+from bot.Shapes import OrientedPoint, Point
 
 
 class Direction:

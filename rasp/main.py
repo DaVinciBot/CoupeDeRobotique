@@ -1,6 +1,7 @@
 import time
-
-from bot import MarsArena, RollingBasis, State, Lidar, Utils, Logger, Shapes
+from bot import MarsArena, RollingBasis, State, Lidar, Shapes
+from bot.utils import Utils
+from bot.logger import Logger
 
 def add_op(oriented_point : Shapes.OrientedPoint)->bool:  # op stands for oriented point
     if State.check_collisions:

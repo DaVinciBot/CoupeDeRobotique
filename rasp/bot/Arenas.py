@@ -1,4 +1,4 @@
-from .Shapes import Point, Rectangle
+from bot.Shapes import Point, Rectangle
 
 
 class Arena:

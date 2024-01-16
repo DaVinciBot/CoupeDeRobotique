@@ -1,9 +1,8 @@
 from typing import Any, Callable
 import serial, threading, time, crc8, struct, serial.tools.list_ports
-from .State import SERVOS_PIN
-
-from .Logger import Logger
-from .Shapes import OrientedPoint
+from bot.State import SERVOS_PIN
+from bot.logger import Logger
+from bot.Shapes import OrientedPoint
 
 class TeensyException(Exception):
     pass
@@ -243,7 +242,7 @@ class RollingBasis(Teensy):
         :type speed: bytes, optional
         :param next_position_delay: delay avant la prochaine position, defaults to 100
         :type next_position_delay: int, optional
-        :param action_error_auth: l'erreur autorisé dans le déplacement, defaults to 20
+        :param action_error_auth: l'erreur autorisée dans le déplacement, defaults to 20
         :type action_error_auth: int, optional
         :param traj_precision: la précision du déplacement, defaults to 50
         :type traj_precision: int, optional

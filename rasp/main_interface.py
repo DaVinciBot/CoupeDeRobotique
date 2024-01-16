@@ -5,8 +5,9 @@
 ##################################################
 
 
-from bot import Logger, Lidar, RollingBasis
-from bot.API import update_lidar, get_last_command, send_action_finished
+from bot import Lidar, RollingBasis
+from bot.logger import Logger
+from bot.api import update_lidar, get_last_command, send_action_finished
 
 import asyncio
 
