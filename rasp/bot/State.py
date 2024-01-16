@@ -38,7 +38,8 @@ LOG_LEVEL = 0
 PRINT_LOG = True
 is_logger_init = False
 
-# Pins of the servos (int)
+# Pins of the servos (int), the maximum of pin is 12
 SERVOS_PIN = []
 
 test = False
+activate_print = True
