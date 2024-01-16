@@ -15,13 +15,13 @@ def add_op(oriented_point : Shapes.OrientedPoint)->bool:  # op stands for orient
         State.index_last_point += 1
         return True
 
-POT_AREA = 0
+PLANT_AREA = 0
 DROP_ZONE = 1
 GARDENER = 2
 
 # call the function corresponding to the given zone
 def select_action_at_position(zone : int):
-    if zone == POT_AREA:
+    if zone == PLANT_AREA:
         print("taking plant")
     elif zone == DROP_ZONE:
         print("deposing plant into the drop zone")

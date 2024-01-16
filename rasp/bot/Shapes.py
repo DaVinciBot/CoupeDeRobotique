@@ -83,6 +83,9 @@ class Circle:
 
     def __str__(self) -> str:
         return f"Circle(\n\tcenter : {self.center}\n\tradius : {self.radius})"
+    
+    def is_in(self, point : Point)->bool:
+        return math.Sqrt(math.Pow(point.x-self.center.x,2)+math.Pow(point.y-self.center.y,2))<= self.radius
 
 
 class Rectangle:

@@ -1,4 +1,4 @@
-from bot.Shapes import Point, Rectangle
+from bot.Shapes import Point, Rectangle, Circle
 
 
 class Arena:
@@ -198,6 +198,16 @@ class Arena:
         ):
             return False
         return True
+    
+    def __str__(self) -> str:
+        return "Arena"
+    
+    def display(self)->str:
+        return f"""{self.__str__}: \n
+        \tArea : {self.area}
+        \tForbidden area : {self.forbidden_area}
+        \tHome : {self.home}
+        """
 
 
 class MarsArena(Arena):
@@ -215,28 +225,38 @@ class MarsArena(Arena):
             raise ValueError("start_zone must be between 1 and 6")
         origin = Point(0, 0)
         opposite_corner = Point(200, 300)
+        
+        # (zone,plant_left)
+        plant_areas = [
+            (Circle(Point(70,100),250),True),
+            (Circle(Point(130,100),250),True),
+            (Circle(Point(150,150),250),True),
+            (Circle(Point(130,200),250),True),
+            (Circle(Point(70,200),250),True),
+            (Circle(Point(50,150),250),True)
+        ]
+        
+        # (zone,full)
         zones = [
-            Rectangle(Point(0, 0), Point(45, 45)),  # 1 - Blue (Possible forbidden area)
-            Rectangle(Point(77.5, 0), Point(122.5, 45)),  # 2 - Yellow
-            Rectangle(Point(155, 0), Point(200, 45)),  # 3 - Blue
-            Rectangle(
-                Point(0, 255), Point(45, 300)
-            ),  # 4 - Yellow (Possible forbidden area)
-            Rectangle(Point(77.5, 255), Point(122, 300)),  # 5 - Blue
-            Rectangle(Point(155, 255), Point(200, 300)),  # 6 - Yellow
+            (Rectangle(Point(0, 0), Point(45, 45)),False),  # 1 - Blue (Possible forbidden area)
+            (Rectangle(Point(77.5, 0), Point(122.5, 45)),False),  # 2 - Yellow
+            (Rectangle(Point(155, 0), Point(200, 45)),False),  # 3 - Blue
+            (Rectangle(Point(0, 255), Point(45, 300)),False),  # 4 - Yellow (Possible forbidden area)
+            (Rectangle(Point(77.5, 255), Point(122, 300)),False),  # 5 - Blue
+            (Rectangle(Point(155, 255), Point(200, 300)),False)  # 6 - Yellow
         ]
         self.color = "yellow" if start_zone % 2 == 0 else "blue"
         super().__init__(
             area=Rectangle(origin, opposite_corner),
-            forbidden_area=zones[(start_zone % 2) * 3],
-            home=zones[start_zone - 1],
+            forbidden_area=zones[(start_zone % 2) * 3][0],
+            home=zones[start_zone - 1][0],
         )
 
     def __str__(self) -> str:
         return "MarsArena"
     
     def display(self)->str:
-        return f"""MarsArena: \n
+        return f"""{self.__str__}: \n
         \tArea : {self.area}
         \tForbidden area : {self.forbidden_area}
         \tHome : {self.home}
