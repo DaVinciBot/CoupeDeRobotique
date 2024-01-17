@@ -92,7 +92,7 @@ void Get_Orientation::compute(Point current_point, Ticks current_ticks, Rolling_
     if (theta > PI)
     {
         //adjust the directun, turn to the left
-        theata -= (2* PI); 
+        theta -= (2* PI); 
     }
     
     // Create the step action

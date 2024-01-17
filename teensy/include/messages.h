@@ -26,7 +26,7 @@ struct msg_Curve_Go_To
     float center_x;
     float center_y;
     unsigned short interval;
-    Direction direction;
+    bool direction;
     byte speed;
     uint16_t next_position_delay;
     uint16_t action_error_auth;

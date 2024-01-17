@@ -3,11 +3,12 @@ let ctx = canvas.getContext("2d");
 ctx.translate(0.5, 0.5);
 
 let max_range = document.getElementById("max_range");
-let MAX_DISTANCE = max_range.valueAsNumber; // meters
+let MAX_DISTANCE = 10;
+/*let MAX_DISTANCE = max_range.valueAsNumber; // meters
 max_range.addEventListener("input", function () {
     MAX_DISTANCE = max_range.valueAsNumber;
     draw();
-});
+});*/
 
 let width = canvas.width;
 let height = canvas.height;
@@ -15,7 +16,7 @@ let height = canvas.height;
 let centerX = width / 2;
 let centerY = height / 2;
 
-let radius = 100;
+let radius = 150;
 let angle = 0;
 
 
@@ -43,38 +44,24 @@ function toggle_alt_design() {
 
 function draw_red_dot(){
     // center dot
-    ctx.fillStyle = "red";
+    ctx.fillStyle = "#0232FF";
     ctx.fillRect(centerX - 2.5, centerY - 2.5, 5, 5);
 }
 
 function overlay() {
     // full circle
     ctx.beginPath();
-    ctx.strokeStyle = "red";
+    ctx.strokeStyle = "#0232FF";
     ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-    ctx.fillStyle = "#095af1";
+    ctx.fillStyle = "#fff";
     ctx.fill()
     ctx.stroke();
-    ctx.fillStyle = "red";
+    ctx.fillStyle = "#0232FF";
     ctx.fillRect(centerX - 2.5, centerY - 2.5, 5, 5);
-    // diameter line
-    ctx.beginPath();
-    ctx.strokeStyle = "red";
-    ctx.moveTo(centerX - radius - 5, centerY - radius);
-    ctx.lineTo(centerX - radius - 15, centerY - radius);
-    ctx.moveTo(centerX - radius - 10, centerY - radius);
-    ctx.lineTo(centerX - radius - 10, centerY + radius);
-    ctx.moveTo(centerX - radius - 15, centerY + radius);
-    ctx.lineTo(centerX - radius - 5, centerY + radius);
-    ctx.stroke();
-    // diameter size text
-    ctx.fillStyle = "red";
-    ctx.font = "15px Arial";
-    ctx.fillText(`${MAX_DISTANCE * 2}m`, centerX - radius - 60, centerY);
 }
 
 function draw_data(decalage = 45) {
-    ctx.strokeStyle = "#fff";
+    ctx.strokeStyle = "#B3C2FF";
     for (let i = 0; i < lidarData.length; i++) {
         let angle = i * (1 / 3) * -Math.PI / 180 + decalage * Math.PI / 180;
         let distance = lidarData[i] > MAX_DISTANCE || lidarData[i] < 0.001 ? radius : lidarData[i] * (radius / MAX_DISTANCE);

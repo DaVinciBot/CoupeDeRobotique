@@ -1,172 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./assets/style/roboto.css">
     <link rel="stylesheet" href="./assets/style/icons.css">
-    <link rel="stylesheet" href="./assets/style/materialize.css">
-    <link rel="stylesheet" href="./assets/style/switch_btn.css">
     <link rel="stylesheet" href="./assets/style/dpad.css">
+    <link rel="stylesheet" href="./assets/style/inter.css">
+    <link rel="stylesheet" href="./assets/style/bento.css">
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="./assets/fav.ico" type="image/x-icon">
     <title>CDR Dashboard</title>
 </head>
 
 <body>
-    <div class="sidebar">
-        <div class="header">
-            <img src="./assets/white_logo.webp" alt="" class="logo">
+    <div class="menu sushi">
+        <a href="index.html" class="item_menu active"><i class="menu_icon icon"></i>Général</a>
+        <a href="./page/map.html" class="item_menu"><i class="map_icon icon"></i>Map</a>
+        <a href="./page/cam.html" class="item_menu"><i class="cam_icon icon"></i>Caméra</a>
+        <a href="index.html" class="item_menu"><i class="save_icon icon"></i>...</a>
+    </div>
+    <div class="log sushi">
+        <div class="pilule">
+            <i class="save_icon icon"></i>
+            Log
         </div>
-        <div class="menu">
-            <ul>
-                <li class="active"><i class="material-icons">home</i><a href="./index.html">Dashboard</a></li>
-                <li><i class="material-icons">build</i><a href="./map.html">Config</a></li>
-                <li><i class="material-icons">gamepad</i><a href="./map.html">Pilotage</a></li>
-                <li><i class="material-icons">settings</i><a href="./settings.html">Settings</a></li>
-            </ul>
+        01:31:04.888520 | INFO | Logger initialized, level: INFO <br>
+        01:31:04.937912 | CRITICAL | No Teensy found !<br>
+        01:32:16.590280 | INFO | Logger initialized, level: INFO<br>
+        01:32:16.629798 | CRITICAL | No Teensy found !<br>
+        01:33:12.793636 | INFO | Logger initialized, level: INFO<br>
+        01:33:12.842476 | CRITICAL | No Teensy found !<br>
+        01:33:44.686306 | INFO | Logger initialized, level: INFO<br>
+        01:33:44.734744 | CRITICAL | No Teensy found !<br>
+        01:34:31.497323 | INFO | Logger initialized, level: INFO<br>
+        01:34:31.547785 | CRITICAL | No Teensy found !<br>
+        01:35:06.627651 | INFO | Logger initialized, level: INFO<br>
+        01:35:24.035992 | INFO | Logger initialized, level: INFO<br>
+        01:36:53.196984 | INFO | Logger initialized, level: INFO<br>
+        01:36:53.255457 | CRITICAL | No Teensy found !<br>
+        01:37:08.585714 | INFO | Logger initialized, level: INFO<br>
+        01:37:08.634718 | CRITICAL | No Teensy found !<br>
+        01:37:17.199023 | INFO | Logger initialized, level: INFO<br>
+        01:37:31.565094 | INFO | Logger initialized, level: INFO<br>
+        01:38:17.311660 | INFO | Logger initialized, level: INFO<br>
+        01:31:04.888520 | INFO | Logger initialized, level: INFO <br>
+        01:31:04.937912 | CRITICAL | No Teensy found !<br>
+        01:32:16.590280 | INFO | Logger initialized, level: INFO<br>
+        01:32:16.629798 | CRITICAL | No Teensy found !<br>
+        01:33:12.793636 | INFO | Logger initialized, level: INFO<br>
+        01:33:12.842476 | CRITICAL | No Teensy found !<br>
+        01:33:44.686306 | INFO | Logger initialized, level: INFO<br>
+        01:33:44.734744 | CRITICAL | No Teensy found !<br>
+        01:34:31.497323 | INFO | Logger initialized, level: INFO<br>
+        01:34:31.547785 | CRITICAL | No Teensy found !<br>
+        01:35:06.627651 | INFO | Logger initialized, level: INFO<br>
+        01:35:24.035992 | INFO | Logger initialized, level: INFO<br>
+        01:36:53.196984 | INFO | Logger initialized, level: INFO<br>
+        01:36:53.255457 | CRITICAL | No Teensy found !<br>
+        01:37:08.585714 | INFO | Logger initialized, level: INFO<br>
+        01:37:08.634718 | CRITICAL | No Teensy found !<br>
+        01:37:17.199023 | INFO | Logger initialized, level: INFO<br>
+        01:37:31.565094 | INFO | Logger initialized, level: INFO<br>
+        01:38:17.311660 | INFO | Logger initialized, level: INFO<br>
+        01:31:04.888520 | INFO | Logger initialized, level: INFO <br>
+        01:31:04.937912 | CRITICAL | No Teensy found !<br>
+        01:32:16.590280 | INFO | Logger initialized, level: INFO<br>
+        01:32:16.629798 | CRITICAL | No Teensy found !<br>
+        01:33:12.793636 | INFO | Logger initialized, level: INFO<br>
+        01:33:12.842476 | CRITICAL | No Teensy found !<br>
+        01:33:44.686306 | INFO | Logger initialized, level: INFO<br>
+        01:33:44.734744 | CRITICAL | No Teensy found !<br>
+        01:34:31.497323 | INFO | Logger initialized, level: INFO<br>
+        01:34:31.547785 | CRITICAL | No Teensy found !<br>
+        01:35:06.627651 | INFO | Logger initialized, level: INFO<br>
+        01:35:24.035992 | INFO | Logger initialized, level: INFO<br>
+        01:36:53.196984 | INFO | Logger initialized, level: INFO<br>
+        01:36:53.255457 | CRITICAL | No Teensy found !<br>
+        01:37:08.585714 | INFO | Logger initialized, level: INFO<br>
+        01:37:08.634718 | CRITICAL | No Teensy found !<br>
+        01:37:17.199023 | INFO | Logger initialized, level: INFO<br>
+        01:37:31.565094 | INFO | Logger initialized, level: INFO<br>
+        01:38:17.311660 | INFO | Logger initialized, level: INFO<br>
+    </div>
+    <div class="lidar sushi">
+        <div class="pilule">
+            <i class="icon eye_icon"></i>
+            Lidar
+        </div>
+        <div class="make_center">
+            <canvas id="lidar" width="350px" height="350px"></canvas>
         </div>
     </div>
-    <div class="body">
-        <div class="title">
+    <div class="remote sushi">
+        <div class="pilule">
+            <i class="icon compass_icon"></i>
+            Remote
         </div>
-        <div class="grid main-grid">
-            <div class="container">
-                <p style="margin: 0;">Console</p>
-                <div class="console">> Dummy Data<br>> Hello World</div>
-            </div>
-            <div class="container flex-column">
-                <div class="card_header">
-                    <p style="margin: 0;">Lidar</p>
-                    <input type="range" min="0.1" max="10.0" step="0.1" value="3" id="max_range">
-                </div>
-                <canvas id="lidar" width="500px" height="250px"></canvas>
-            </div>
-            <div class="container">
-                <p style="margin: 0;">Contrôles</p>
-                <div class="control">
-                    <div class="dpad">
+        <div class="make_center">
+            <div class="dpad">
                         <div></div>
-                        <div class="center">
+                        <div class="make_center">
                             <div class="up">
-                                <div class="square">▲</div>
+                                <div class="square make_center"><img src="./assets/icons/arrow-up.svg" alt=""></div>
                                 <div class="triangle"></div>
                             </div>
                         </div>
                         <div></div>
-                        <div class="center">
+                        <div class="make_center">
                             <div class="left">
-                                <div class="square">▲</div>
+                                <div class="square make_center"><img src="./assets/icons/arrow-turn-right.svg" alt=""></div>
                                 <div class="triangle"></div>
                             </div>
                         </div>
                         <div></div>
-                        <div class="center">
+                        <div class="make_center">
                             <div class="right">
-                                <div class="square">▲</div>
+                                <div class="square make_center"><img src="./assets/icons/arrow-turn-right.svg" alt=""></div>
                                 <div class="triangle"></div>
                             </div>
                         </div>
                         <div></div>
-                        <div class="center">
+                        <div class="make_center">
                             <div class="down">
-                                <div class="square">▲</div>
+                                <div class="square make_center"><img src="./assets/icons/arrow-up.svg" alt=""></div>
                                 <div class="triangle"></div>
                             </div>
                         </div>
                         <div></div>
                     </div>
-                </div>
-            </div>
-            <div class="container">
-                <p style="margin: 0;">Etat</p>
-                <div class="state">
-                    <div>
-                        <h4>Déguisement : </h4>
-                        <div class="switch_box box_4">
-                            <div class="input_wrapper">
-                                <input type="checkbox" class="switch_4">
-                                <svg class="is_checked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 426.67 426.67">
-                                    <path
-                                        d="M153.504 366.84c-8.657 0-17.323-3.303-23.927-9.912L9.914 237.265c-13.218-13.218-13.218-34.645 0-47.863 13.218-13.218 34.645-13.218 47.863 0l95.727 95.727 215.39-215.387c13.218-13.214 34.65-13.218 47.86 0 13.22 13.218 13.22 34.65 0 47.863L177.435 356.928c-6.61 6.605-15.27 9.91-23.932 9.91z" />
-                                </svg>
-                                <svg class="is_unchecked" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 212.982 212.982">
-                                    <path
-                                        d="M131.804 106.49l75.936-75.935c6.99-6.99 6.99-18.323 0-25.312-6.99-6.99-18.322-6.99-25.312 0L106.49 81.18 30.555 5.242c-6.99-6.99-18.322-6.99-25.312 0-6.99 6.99-6.99 18.323 0 25.312L81.18 106.49 5.24 182.427c-6.99 6.99-6.99 18.323 0 25.312 6.99 6.99 18.322 6.99 25.312 0L106.49 131.8l75.938 75.937c6.99 6.99 18.322 6.99 25.312 0 6.99-6.99 6.99-18.323 0-25.313l-75.936-75.936z"
-                                        fill-rule="evenodd" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4>Tirette : </h4>
-                        <div class="switch_box box_4">
-                            <div class="input_wrapper">
-                                <input type="checkbox" class="switch_4">
-                                <svg class="is_checked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 426.67 426.67">
-                                    <path
-                                        d="M153.504 366.84c-8.657 0-17.323-3.303-23.927-9.912L9.914 237.265c-13.218-13.218-13.218-34.645 0-47.863 13.218-13.218 34.645-13.218 47.863 0l95.727 95.727 215.39-215.387c13.218-13.214 34.65-13.218 47.86 0 13.22 13.218 13.22 34.65 0 47.863L177.435 356.928c-6.61 6.605-15.27 9.91-23.932 9.91z" />
-                                </svg>
-                                <svg class="is_unchecked" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 212.982 212.982">
-                                    <path
-                                        d="M131.804 106.49l75.936-75.935c6.99-6.99 6.99-18.323 0-25.312-6.99-6.99-18.322-6.99-25.312 0L106.49 81.18 30.555 5.242c-6.99-6.99-18.322-6.99-25.312 0-6.99 6.99-6.99 18.323 0 25.312L81.18 106.49 5.24 182.427c-6.99 6.99-6.99 18.323 0 25.312 6.99 6.99 18.322 6.99 25.312 0L106.49 131.8l75.938 75.937c6.99 6.99 18.322 6.99 25.312 0 6.99-6.99 6.99-18.323 0-25.313l-75.936-75.936z"
-                                        fill-rule="evenodd" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4> JSP : </h4>
-                        <div class="switch_box box_4">
-                            <div class="input_wrapper">
-                                <input type="checkbox" class="switch_4">
-                                <svg class="is_checked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 426.67 426.67">
-                                    <path
-                                        d="M153.504 366.84c-8.657 0-17.323-3.303-23.927-9.912L9.914 237.265c-13.218-13.218-13.218-34.645 0-47.863 13.218-13.218 34.645-13.218 47.863 0l95.727 95.727 215.39-215.387c13.218-13.214 34.65-13.218 47.86 0 13.22 13.218 13.22 34.65 0 47.863L177.435 356.928c-6.61 6.605-15.27 9.91-23.932 9.91z" />
-                                </svg>
-                                <svg class="is_unchecked" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 212.982 212.982">
-                                    <path
-                                        d="M131.804 106.49l75.936-75.935c6.99-6.99 6.99-18.323 0-25.312-6.99-6.99-18.322-6.99-25.312 0L106.49 81.18 30.555 5.242c-6.99-6.99-18.322-6.99-25.312 0-6.99 6.99-6.99 18.323 0 25.312L81.18 106.49 5.24 182.427c-6.99 6.99-6.99 18.323 0 25.312 6.99 6.99 18.322 6.99 25.312 0L106.49 131.8l75.938 75.937c6.99 6.99 18.322 6.99 25.312 0 6.99-6.99 6.99-18.323 0-25.313l-75.936-75.936z"
-                                        fill-rule="evenodd" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h4>Déguisement : </h4>
-                        <div class="switch_box box_4">
-                            <div class="input_wrapper">
-                                <input type="checkbox" class="switch_4">
-                                <svg class="is_checked" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 426.67 426.67">
-                                    <path
-                                        d="M153.504 366.84c-8.657 0-17.323-3.303-23.927-9.912L9.914 237.265c-13.218-13.218-13.218-34.645 0-47.863 13.218-13.218 34.645-13.218 47.863 0l95.727 95.727 215.39-215.387c13.218-13.214 34.65-13.218 47.86 0 13.22 13.218 13.22 34.65 0 47.863L177.435 356.928c-6.61 6.605-15.27 9.91-23.932 9.91z" />
-                                </svg>
-                                <svg class="is_unchecked" xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 212.982 212.982">
-                                    <path
-                                        d="M131.804 106.49l75.936-75.935c6.99-6.99 6.99-18.323 0-25.312-6.99-6.99-18.322-6.99-25.312 0L106.49 81.18 30.555 5.242c-6.99-6.99-18.322-6.99-25.312 0-6.99 6.99-6.99 18.323 0 25.312L81.18 106.49 5.24 182.427c-6.99 6.99-6.99 18.323 0 25.312 6.99 6.99 18.322 6.99 25.312 0L106.49 131.8l75.938 75.937c6.99 6.99 18.322 6.99 25.312 0 6.99-6.99 6.99-18.323 0-25.313l-75.936-75.936z"
-                                        fill-rule="evenodd" clip-rule="evenodd" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-
-
-
-    <script src="main.js"></script>
     <script src="lidar.js"></script>
-    <script src="dpad.js"></script>
 </body>
 
 </html>

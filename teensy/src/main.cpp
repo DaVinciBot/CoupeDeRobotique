@@ -113,19 +113,16 @@ void curve_go_to(byte *msg, byte size)
 {
   msg_Curve_Go_To *curve_msg = (msg_Curve_Go_To *)msg;
 
-  Point target_point = Point(curve_msg->target_x, curve_msg->target_y);
-  Point center_point = Point(curve_msg->center_x, curve_msg->center_y);
+  Point target_point = Point(curve_msg->target_x, curve_msg->target_y, 0.0f);
+  Point center_point = Point(curve_msg->center_x, curve_msg->center_y, 0.0f);
 
   Precision_Params params{
       curve_msg->next_position_delay,
       curve_msg->action_error_auth,
       curve_msg->traj_precision,
   };
-  msg_Action_Finished fin_msg;
-  fin_msg.action_id = CURVE_GO_TO;
-  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 
-  Curve_Go_To *new_action = new Curve_Go_To(target_point, center_point, curve_msg->interval, curve_msg->direction, curve_msg->speed, params);
+  Curve_Go_To *new_action = new Curve_Go_To(target_point, center_point, curve_msg->interval, curve_msg->direction ? backward : forward, curve_msg->speed, params);
   swap_action(new_action);
 }
 

@@ -1,3 +1,8 @@
+:root{
+    --scale: 1.9;
+    --border-radius: 15px;
+}
+
 .dpad{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -9,36 +14,54 @@
 .dpad > div{
     width: min-content;
 }
-.center{
-    width: 100% !important;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+
 .up div, .down div, .left div, .right div{
-    padding-top: 9px;
-    background-color: #dddbff;
-    color: #095af1;
+    padding-top: calc(9px * var(--scale));
+    background-color: var(--secondary);
+    color: var(--primary);
     cursor: pointer;
 }
+
 .up{
-    transform: translateY(30px);
+    transform: translateY(calc(45px * var(--scale)));
 }
 .left{
-    transform: rotate(-90deg);
+    transform: rotate(-90deg) translateY(calc(10px * var(--scale)));
 }
 .right{
-    transform: rotate(90deg);
+    transform: rotate(90deg) translateY(calc(10px * var(--scale)));
 }
 .down{
-    transform: rotate(180deg) translateY(30px);
+    transform: rotate(180deg) translateY(calc(45px * var(--scale)));
 }
 div.square {
-    width: 50px;
-    height: 50px;
+    width: calc(50px * var(--scale));
+    height: calc(50px * var(--scale));
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    z-index: 10 !important;
 }
 div.triangle {
-    width : 35.3px;
-    height: 35.3px;
-    transform: translateY(-17.5px) translateX(7.5px) rotate(45deg);
+    position: relative;
+    width : calc(35.3px * var(--scale));
+    height: calc(35.3px * var(--scale));
+    transform: translateY(calc(-17.5px * var(--scale))) translateX(calc(7.5px * var(--scale))) rotate(45deg);
+    border-radius: 0 0 var(--border-radius) 0;
+    z-index: 0 !important;
+}
+.up img{
+    z-index: 1 !important;
+    transform: translateX(calc(1px * var(--scale))) translateY(calc(4px * var(--scale)));
+}
+.down img{
+    z-index: 1 !important;
+    transform: translateX(calc(1px * var(--scale))) translateY(calc(4px * var(--scale)));
+}
+
+.left img{
+    z-index: 1 !important;
+    transform: rotate(90deg) translateX(calc(0px * var(--scale))) translateY(calc(0px * var(--scale))) scaleX(-1)!important;
+}
+.right img{
+    z-index: 1 !important;
+    transform: rotate(270deg) translateX(calc(0px * var(--scale))) translateY(calc(0px * var(--scale)))!important;
 }
