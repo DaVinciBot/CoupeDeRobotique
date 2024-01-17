@@ -1,6 +1,6 @@
 from typing import Any, Callable
 import serial, threading, time, crc8, struct, serial.tools.list_ports
-from bot.State import SERVOS_PIN
+from bot.State import SERVOS_PIN, ULTRASONICS_PINS
 from bot.logger import Logger
 from bot.Shapes import OrientedPoint
 
@@ -170,7 +170,7 @@ class RollingBasis(Teensy):
         self.messagetype = {
             128: self.rcv_odometrie,  # \x80
             129: self.rcv_action_finish,  # \x45
-            255: self.unknowed_msg,
+            255: self.unknown_msg,
         }
 
     #####################
@@ -204,7 +204,7 @@ class RollingBasis(Teensy):
         self.l.log("Action finished : " + msg.hex())
         self.action_finished = True
 
-    def unknowed_msg(self, msg: bytes):
+    def unknown_msg(self, msg: bytes):
         self.l.log(f"Teensy does not know the command {msg.hex()}")
 
     #########################
@@ -306,16 +306,37 @@ class Actuators(Teensy):
         pid: int = 1155,
         baudrate: int = 115200,
         crc: bool = True,
-        pin_servos: list[int] = SERVOS_PIN,
+        # Pins of the servos (int), the maximum of pin is 12
+        servos_pin : list[int] = SERVOS_PIN,
+        ultrasonics_pins : list[(int,int)] = ULTRASONICS_PINS,
     ):
         super().__init__(vid, pid, baudrate, crc)
-        self.pin_servos = pin_servos
-
+        self.pin_servos = servos_pin
+        self.ultrasonics_pins = ultrasonics_pins
+        self.distances_ultrasonic = []
+        """
+        This is used to match a handling function to a message type.
+        add_callback can also be used.
+        """
+        self.messagetype = {
+            127 : self.rcv_ultrasonic_call_back,
+            255: self.unknown_msg
+        }
     class Command:  # values must correspond to the one defined on the teensy
         ServoGoTo = b"\x01"
+        ReadUltrasonic = b"\x02"
 
     def __str__(self) -> str:
         return self.__class__.__name__
+        
+    def get_accurate_ultrasound_distance(self, nb_measure : int, delay_milis : float):
+        for _ in range(nb_measure):
+            self.read_ultrasound()
+            time.sleep(delay_milis/1000)
+        time.sleep(delay_milis/1000)
+        try : return sum(self.distances_ultrasonic)/len(self.distances_ultrasonic)
+        except : return -1
+        
 
     #########################
     # User facing functions #
@@ -325,11 +346,12 @@ class Actuators(Teensy):
     def servo_go_to(
         self, pin: int, angle: int, min_angle: int = 0, max_angle: int = 180
     ):
+        if not self.pin_servos.__contains__(pin) : raise ValueError 
         if angle >= min_angle and angle <= max_angle:
             msg = (
                 self.Command.ServoGoTo
                 + struct.pack("<B", pin)
-                + struct.pack("B", angle)
+                + struct.pack("<B", angle)
             )
             # https://docs.python.org/3/library/struct.html#format-characters
             self.send_bytes(msg)
@@ -337,3 +359,28 @@ class Actuators(Teensy):
             print(
                 f"you tried to write {angle}° on pin {pin} wheras angle must be between {min_angle} and {max_angle}°"
             )
+            
+    @Logger
+    def read_ultrasonic(self,pin_trig : int, pin_echo : int):
+        if self.ultrasonics_pins.__contains__((pin_trig,pin_echo)):
+            msg = (
+                    self.Command.ReadUltrasonic
+                    + struct.pack("<b", pin_trig)
+                    + struct.pack("<b", pin_echo)
+                )
+                # https://docs.python.org/3/library/struct.html#format-characters
+            self.send_bytes(msg)
+        
+    #############################
+    # Received message handling #
+    #############################
+    
+    def unknown_msg(self, msg: bytes):
+        self.l.log(f"Teensy does not know the command {msg.hex()}")
+
+    @Logger
+    def rcv_ultrasonic_call_back(self, msg: bytes):
+        self.distances_ultrasonic.append(
+            struct.unpack("<b", msg[0])[0],
+        )
+        

@@ -19,3 +19,16 @@ struct msg_Servo_Go_To
     byte pin;
     byte angle;
 };
+
+struct msg_Ultrasonic_Read
+{
+    byte command = ULTRASONIC_READ;
+    byte trigger_pin;
+    byte echo_pin;
+};
+
+struct msg_Ultrasonic_Call_Back
+{
+    byte command = ULTRASONIC_CALL_BACK;
+    byte distance;
+};

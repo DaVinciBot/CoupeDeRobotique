@@ -20,10 +20,19 @@ void handle_callback(Com *com)
     }
 }
 
-/// @brief if the given servo exists this function enables to write the given angle on it  
+/// @brief writes the angle on the given servo
 /// @param servo a pointer to an instance of Servo_Motor
 /// @param angle the angle to write of the servo
 void servo_go_to(Servo* servo, int angle)
 {
     servo->write(angle);
+}
+
+/// @brief send to the rasp the distance measured by the given ultrasonic sensor
+/// @param ultrasonic 
+void ultrasonic_read(Ultrasonic* ultrasonic, Com *com)
+{
+    msg_Ultrasonic_Call_Back ultrasonic_msg;
+    ultrasonic_msg.distance = ultrasonic->read();
+    com->send_msg((byte *)&ultrasonic_msg, sizeof(msg_Ultrasonic_Call_Back));
 }

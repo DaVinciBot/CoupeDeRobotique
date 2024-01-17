@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <actions.h>
 #include <pins.h>
 //#include <Servo.h>
@@ -7,10 +6,16 @@ Com *com;
 
 void (*functions[256])(byte *msg, byte size); // a tab a pointer to void functions
 
-// Define a global array of Servo_Motor. Some name of variables are not allowed becaused they are used in Servo
-int servo_pins[] = {SERVO1_PIN,SERVO2_PIN,SERVO3_PIN};
+// Define an array of Servo_Motor (max = 12). Some name of variables are not allowed becaused they are used in Servo
+int servo_pins[] = {SERVO1_PIN};
 constexpr int nb_servos = sizeof(servo_pins)/sizeof(servo_pins[0]);
 Servo_Motor s[nb_servos];
+
+// Define an array of Ultrasonic 
+int trigger_pins[] = {TRIGGER1_PIN}; // index must correspond to echo_pins ones
+int echo_pins[] = {ECHO1_PIN}; // index must correspond to trigger_pins ones
+constexpr int nb_ultrasonic = sizeof(trigger_pins)/sizeof(trigger_pins[0]);
+Ultrasonic_Sensor u[nb_ultrasonic];
 
 void call_servo_go_to(byte *msg, byte size)
 {
@@ -26,12 +31,27 @@ void call_servo_go_to(byte *msg, byte size)
     }
 }
 
+void call_read_ultrasonic(byte *msg, byte size)
+{
+    msg_Ultrasonic_Read *servo_ultrasonic_msg = (msg_Ultrasonic_Read*) msg;
+    bool lauched = false;
+    for(int i=0; !lauched && i<nb_ultrasonic;i++)
+    {
+        if(u[i].trigger_pin==servo_ultrasonic_msg->trigger_pin && u[i].echo_pin==servo_ultrasonic_msg->echo_pin )
+        {
+          ultrasonic_read(u[i].actuator,com);
+          lauched = true;
+        }
+    }
+}
+
 void setup()
 {
   com = new Com(&Serial, 115200);
 
   // only the messages received by the teensy are listed here
   functions[SERVO_GO_TO] = &call_servo_go_to;
+  functions[ULTRASONIC_READ] = &call_read_ultrasonic;
 
   Serial.begin(115200);
 
@@ -43,11 +63,18 @@ void setup()
     s[i].pin = servo_pins[i];
   }
 
+  // Init Ultrasonics
+  for(int i=0;i<nb_ultrasonic;i++)
+  {
+    u[i].actuator = new Ultrasonic(trigger_pins[i],echo_pins[i]);
+    u[i].trigger_pin = trigger_pins[i];
+    u[i].echo_pin = echo_pins[i];
+  }
+
 }
 
 void loop()
 {
-
   // Com
   handle_callback(com);
 }
