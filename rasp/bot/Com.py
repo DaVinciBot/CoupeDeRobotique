@@ -284,6 +284,7 @@ class RollingBasis(Teensy):
 
         #send specific commands with new arc_length
         curve_msg = (
+        self.Command.GoToPoint +
         struct.pack("<ff", destination[0], destination[1]) +  # target_point
         struct.pack("<ff", center[0], center[1]) +  # center_point
         struct.pack("<H", interval) +  # interval
