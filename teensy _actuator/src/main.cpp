@@ -39,7 +39,8 @@ void call_read_ultrasonic(byte *msg, byte size)
     {
         if(u[i].trigger_pin==servo_ultrasonic_msg->trigger_pin && u[i].echo_pin==servo_ultrasonic_msg->echo_pin )
         {
-          ultrasonic_read(u[i].actuator,com);
+          msg_Ultrasonic_Call_Back msg = ultrasonic_read(u[i].actuator);
+          com->send_msg((byte *)&msg, sizeof(msg_Ultrasonic_Call_Back));
           lauched = true;
         }
     }

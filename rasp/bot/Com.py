@@ -319,7 +319,7 @@ class Actuators(Teensy):
         add_callback can also be used.
         """
         self.messagetype = {
-            127 : self.rcv_ultrasonic_call_back,
+            130 : self.rcv_ultrasonic_call_back,
             255: self.unknown_msg
         }
     class Command:  # values must correspond to the one defined on the teensy
@@ -331,7 +331,7 @@ class Actuators(Teensy):
         
     def get_accurate_ultrasound_distance(self, nb_measure : int, delay_milis : float):
         for _ in range(nb_measure):
-            self.read_ultrasound()
+            self.read_ultrasonic()
             time.sleep(delay_milis/1000)
         time.sleep(delay_milis/1000)
         try : return sum(self.distances_ultrasonic)/len(self.distances_ultrasonic)

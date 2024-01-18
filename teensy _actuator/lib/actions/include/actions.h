@@ -8,5 +8,5 @@
 extern void (*functions[256])(byte *msg, byte size);
 extern void handle_callback(Com *com);
 extern void servo_go_to(Servo* servo, int angle);
-extern void ultrasonic_read(Ultrasonic* ultrasonic,Com *com);
+extern msg_Ultrasonic_Call_Back ultrasonic_read(Ultrasonic* ultrasonic);
 
