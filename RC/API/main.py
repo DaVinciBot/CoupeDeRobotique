@@ -1,4 +1,4 @@
-from API import API, handle_lidar_ws, handle_log_ws, handle_cmd_ws, handle_state_ws
+from API import API, handle_lidar_ws, handle_log_ws, handle_cmd_ws, handle_state_ws, handle_pos_ws
 
 
 SERVER = {
@@ -6,6 +6,7 @@ SERVER = {
     "log": {"connections": set(), "handler": handle_log_ws},
     "cmd": {"connections": set(), "handler": handle_cmd_ws},
     "state": {"connections": set(), "handler": handle_state_ws},
+    "position": {"connections": set(), "handler": handle_pos_ws},
 }
 
 

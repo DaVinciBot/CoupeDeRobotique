@@ -6,7 +6,7 @@
 
 
 from bot import Logger, Lidar, RollingBasis
-from bot.API import update_lidar, get_last_command, send_action_finished
+from bot.API import update_lidar, get_last_command, send_action_finished, send_position
 
 import asyncio
 
@@ -39,6 +39,8 @@ async def main():
         
         val = lidar.get_values()
         await update_lidar(val)
+        await send_position(robot.odometrie.x, robot.odometrie.y, robot.odometrie.theta)
+        
             
 
 if __name__ == "__main__":

@@ -200,6 +200,37 @@ async def handle_log_ws(websocket: websockets.WebSocketServerProtocol, CONNECTIO
             await websocket.send("ok")
         else:
             await websocket.send("error")
+            
+async def handle_pos_ws(
+    websocket: websockets.WebSocketServerProtocol, CONNECTIONS_POS: set
+):
+    """
+    Redirect all messages to all clients
+
+    :param websocket: the websocket connection
+    :type websocket: websockets.WebSocketServerProtocol
+    :param CONNECTIONS_CMD: set of connections
+    :type CONNECTIONS_CMD: set
+    """
+    async for msg in websocket:
+        # save message, and send it when get$=$ is received
+        if msg.split("$=$")[0] == "set":
+            data = msg.split("$=$")[1]
+            with open("position.txt", "w") as f:
+                f.write(data)
+            await websocket.send("ok")
+            for client in CONNECTIONS_POS:
+                await client.send("new$=$" + str(data))
+        elif msg.split("$=$")[0] == "get":
+            with open("position.txt") as f:
+                data = f.read()
+            await websocket.send("current$=$" + str(data))
+        elif msg.split("$=$")[0] == "finished":
+            with open("last_command.txt", "w") as f:
+                f.write("None")
+            await websocket.send("ok")
+        else:
+            await websocket.send("error")
 
 
 async def handle_cmd_ws(

@@ -73,3 +73,7 @@ async def get_last_command() -> tuple[str, list[float]] or None:
 async def send_action_finished(id : int):
     async with websockets.connect(uri + "/cmd", open_timeout=1) as websocket:
         await websocket.send(f"finished$=${str(id)}")
+        
+async def send_position(x : float, y : float, theta : float):
+    async with websockets.connect(uri + "/position", open_timeout=1) as websocket:
+        await websocket.send(f"set$=$[{x},{y},{theta}]")

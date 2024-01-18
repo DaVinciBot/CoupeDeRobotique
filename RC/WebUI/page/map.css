@@ -7,7 +7,7 @@
 .map .rob{
     position: relative;
     transform: translate(200px, 500px) rotate(0deg);
-    animation: rob 15s linear infinite;
+    /*animation: rob 15s linear infinite;*/
 }
 .map .bad{
     position: relative;

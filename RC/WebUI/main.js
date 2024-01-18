@@ -1,5 +1,4 @@
-let console_div = document.querySelector('.console')
-let state_div = document.querySelector('.state')
+let console_div = document.querySelector('.log')
 
 let log = new WebSocket("ws://localhost:3000/log");
 log.onmessage = function (event) {
