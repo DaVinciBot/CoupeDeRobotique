@@ -72,7 +72,7 @@ Step_Forward_Backward::Step_Forward_Backward(float distance, Speed_Driver *speed
 void Step_Forward_Backward::compute(Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params)
 {
     // Compute acceleration profile
-    this->speed_params->compute_acceleration_profile(rolling_basis_params);
+    this->speed_driver->compute_acceleration_profile(rolling_basis_params);
 
     // Compute ticks to do
     this->total_ticks = (rolling_basis_params->encoder_resolution / rolling_basis_params->wheel_perimeter) * this->distance;
@@ -104,7 +104,7 @@ Step_Rotation::Step_Rotation(float theta, Speed_Driver *speed_driver, Precision_
 void Step_Rotation::compute(Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params)
 {
     // Compute acceleration profile
-    this->speed_params->compute_acceleration_profile(rolling_basis_params);
+    this->speed_driver->compute_acceleration_profile(rolling_basis_params);
 
     // Compute ticks to do
     float distance = (fabs(this->theta) * rolling_basis_params->radius);

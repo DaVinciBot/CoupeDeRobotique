@@ -125,6 +125,7 @@ public:
 
 class Speed_Driver_From_Gamma : public Speed_Driver
 {
+public:
     Speed_Driver_From_Gamma(byte max_speed, byte offset, float gamma)
     {
         this->max_speed = max_speed;
@@ -135,6 +136,7 @@ class Speed_Driver_From_Gamma : public Speed_Driver
 
 class Speed_Driver_From_Distance : public Speed_Driver
 {
+public:
     Speed_Driver_From_Distance(byte max_speed, byte offset, float distance_to_max_speed)
     {
         this->max_speed = max_speed;
