@@ -35,6 +35,10 @@ void Step_Action::update_action_cursor(Ticks current_ticks)
         if (this->ticks_cursor > this->total_ticks)
             this->ticks_cursor = this->total_ticks;
     }
+    // Correct the trajectory -> reduce motor power 
+    else
+        this->speed_driver->next_move_correction = true;
+    
 }
 
 void Step_Action::handle(Point current_point, Ticks current_ticks, Rolling_Basis_Ptrs *rolling_basis_ptrs)

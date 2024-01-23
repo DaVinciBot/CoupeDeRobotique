@@ -87,6 +87,14 @@ struct Profil_params
     float distance;
 };
 
+/*
+struct Profil_params
+{
+    byte offset;
+    float gamma; // Gamma is the slope of the affine line representing the acceleration profile
+    float distance;
+};
+
 class Speed_Driver
 {
     // How to use speed Driver:
@@ -102,12 +110,15 @@ public:
     // Attributes
     byte max_speed;
     long end_ticks;
+    bool correction = false;
 
     // Acceleration params
     Profil_params acceleration_params = {0, -1.0f, -1.0f};
 
     // Deceleration params
     Profil_params deceleration_params = {0, -1.0f, -1.0f};
+
+    
 
     Speed_Driver() = default;
 
@@ -139,20 +150,21 @@ public:
         long debut_plateau_ticks = (this->max_speed - this->acceleration_params.offset) / this->acceleration_params.gamma;
         long fin_plateau_ticks = ((this->max_speed - this->deceleration_params.offset) / this->deceleration_params.gamma) + this->end_ticks;
 
+        byte speed = 0;
         // On verifie qu'il y a un plateau
         if (debut_plateau_ticks < fin_plateau_ticks)
         {
             // On est dans la phase d'acceleration
             if (ticks < debut_plateau_ticks)
-                return (byte)(this->acceleration_params.gamma * ticks + this->acceleration_params.offset);
+                speed = (byte)(this->acceleration_params.gamma * ticks + this->acceleration_params.offset);
             
             // On est dans la phase de plateau
             else if (ticks < fin_plateau_ticks)
-                return this->max_speed;
+                speed =  this->max_speed;
             
             // On est dans la phase de deceleration
             else
-                return (byte)(this->deceleration_params.gamma * (ticks - this->end_ticks) + this->deceleration_params.offset);
+                speed = (byte)(this->deceleration_params.gamma * (ticks - this->end_ticks) + this->deceleration_params.offset);
         }
         // Pas de plateau
         else
@@ -162,12 +174,19 @@ public:
 
             // phase acceleration
             if(ticks < intersection_ticks)
-                return (byte)(this->acceleration_params.gamma * ticks + this->acceleration_params.offset);
+                speed = (byte)(this->acceleration_params.gamma * ticks + this->acceleration_params.offset);
             
             // phase deceleration
             else
-                return (byte)(this->deceleration_params.gamma * (ticks - this->end_ticks) + this->deceleration_params.offset);
+                speed = (byte)(this->deceleration_params.gamma * (ticks - this->end_ticks) + this->deceleration_params.offset);
         }
+
+        if (this->correction)
+        {                 
+            this->correction = false;
+            return 80;
+        }
+        return speed;
     }
 };
 
@@ -206,3 +225,4 @@ public:
         this->deceleration_params.distance = deceleration.distance;
     }
 };
+*/

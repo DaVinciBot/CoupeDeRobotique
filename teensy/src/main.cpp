@@ -63,15 +63,15 @@ Precision_Params classic_params{
 Rolling_Basis_Ptrs rolling_basis_ptrs;
 
 /* Strat part */
-#define STRAT_SIZE 3
+#define STRAT_SIZE 1
 byte action_index = 0;
 
-Profil_params a = {80, -1.0f, 100.0};
-Profil_params d = {80, -1.0f, 100.0};
+Profil_params a = {80, -1.0f, 30.0};
+Profil_params d = {80, -1.0f, 10.0};
 
 Action **strat_test = new Action *[STRAT_SIZE]
 {
-  new Go_To(Point(150.0, 0.0),  forward, Speed_Driver_From_Distance(150, a, d), classic_params), 
+  new Go_To(Point(130.0, 0.0),  forward, Speed_Driver_From_Distance(150, 80, a, d), classic_params), 
   //new Go_To(Point(100.0, 50.0), forward, Speed_Driver_From_Distance(150, a, d), classic_params), 
   //new Go_To(Point(0.0, 50.0),   forward, Speed_Driver_From_Distance(150, a, d), classic_params), 
   //new Go_To(Point(30.0, 0.0), backward, Speed_Driver_From_Distance(100, 50, 5.0), classic_params),
