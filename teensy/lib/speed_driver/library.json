@@ -1,0 +1,11 @@
+{
+    "name": "motors_driver",
+    "version": "1.0.0",
+    "description": "Library dedicated to the servo control of DC motors, controlled by an H-bridge",
+    "keywords": "motors_driver",
+    "dependencies": {
+        "paulstoffregen/Encoder": "^1.4.2"
+    },
+    "frameworks": "*",
+    "platforms": "*"
+  }

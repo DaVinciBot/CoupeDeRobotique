@@ -22,7 +22,7 @@ float Ki = 0.0f;
 float Kd = 0.0f;
 
 #define RIGHT_MOTOR_POWER_FACTOR 1.0
-#define LEFT_MOTOR_POWER_FACTOR 1.17
+#define LEFT_MOTOR_POWER_FACTOR 1.0
 
 // Default position
 #define START_X 0.0
@@ -207,12 +207,6 @@ inline void right_motor_read_encoder()
   else
     rolling_basis_ptr->right_motor->ticks--;
 }
-
-// Pin ON / OFF
-byte pin_on_off = 19;
-
-// Switch side
-byte pin_green_side = 18;
 
 // Globales variables
 Ticks last_ticks_position;

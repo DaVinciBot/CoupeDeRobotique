@@ -9,6 +9,7 @@
         "ostream": "cpp",
         "sstream": "cpp",
         "streambuf": "cpp",
+        "cmath": "cpp",
         "array": "cpp",
         "string_view": "cpp",
         "initializer_list": "cpp",

@@ -8,10 +8,10 @@ public:
     // so they are only stored in the high-level class;
     // lower-level classes access them via pointers
 
-    // Atributes
+    // Attributes
     // Trajectory parameters
     Precision_Params *precision_params;
-    byte *speed;
+    Speed_Driver *speed_driver;
     Direction *direction;
 
     Step_Action *step_action;
@@ -30,11 +30,11 @@ public:
 class Move_Straight : public Basic_Action
 {
 public:
-    // Atributes
+    // Attributes
     float target_x, target_y;
 
     // Constructor
-    Move_Straight(float target_x, float target_y, Direction *direction, byte *speed, Precision_Params *precision_params);
+    Move_Straight(float target_x, float target_y, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params);
 
     // Method
     void compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params) override;
@@ -45,11 +45,11 @@ public:
 class Get_Orientation : public Basic_Action
 {
 public:
-    // Atributes
+    // Attributes
     float target_x, target_y;
 
     // Constructor
-    Get_Orientation(float target_x, float target_y, Direction *direction, byte *speed, Precision_Params *precision_params);
+    Get_Orientation(float target_x, float target_y, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params);
 
     // Method
     void compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params) override;
@@ -60,11 +60,11 @@ public:
 class Move_Rotation : public Basic_Action
 {
 public:
-    // Atribute
+    // Attribute
     float target_theta;
 
     // Constructor
-    Move_Rotation(float target_theta, Direction *direction, byte *speed, Precision_Params *precision_params);
+    Move_Rotation(float target_theta, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params);
 
     // Method
     void compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params) override;
