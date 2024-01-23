@@ -15,9 +15,9 @@
 // PID
 #define MAX_PWM 150
 #define LOW_PWM 80 // To use for pecise action with low speed
-#define Kp 6.5
+#define Kp 7.5
 #define Ki 0.0
-#define Kd 0.0
+#define Kd 1.0
 
 #define RIGHT_MOTOR_POWER_FACTOR 1.0
 #define LEFT_MOTOR_POWER_FACTOR 1.0
@@ -63,12 +63,17 @@ Precision_Params classic_params{
 Rolling_Basis_Ptrs rolling_basis_ptrs;
 
 /* Strat part */
-#define STRAT_SIZE 1
+#define STRAT_SIZE 3
 byte action_index = 0;
+
+Profil_params a = {80, -1.0f, 100.0};
+Profil_params d = {80, -1.0f, 100.0};
 
 Action **strat_test = new Action *[STRAT_SIZE]
 {
-  new Go_To(Point(100.0, 0.0), forward, Speed_Driver_From_Distance(150, 60, 20.0), classic_params),
+  new Go_To(Point(150.0, 0.0),  forward, Speed_Driver_From_Distance(150, a, d), classic_params), 
+  //new Go_To(Point(100.0, 50.0), forward, Speed_Driver_From_Distance(150, a, d), classic_params), 
+  //new Go_To(Point(0.0, 50.0),   forward, Speed_Driver_From_Distance(150, a, d), classic_params), 
   //new Go_To(Point(30.0, 0.0), backward, Speed_Driver_From_Distance(100, 50, 5.0), classic_params),
   //new Go_To(Point(0.0, 0.0), backward, Speed_Driver_From_Distance(100, 50, 10.0), classic_params),
   //new Curve_Go_To(Point(100.0, 0.0), Point(50.0, 0.0), 5, forward, Speed_Driver_From_Distance(100, 50, 0.1), classic_params),

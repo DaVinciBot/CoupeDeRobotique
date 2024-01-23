@@ -80,6 +80,13 @@ public:
     }
 };
 
+struct Profil_params
+{
+    byte offset;
+    float gamma; // Gamma is the slope of the affine line representing the acceleration profile
+    float distance;
+};
+
 class Speed_Driver
 {
     // How to use speed Driver:
@@ -94,10 +101,13 @@ class Speed_Driver
 public:
     // Attributes
     byte max_speed;
-    byte offset;
-    float gamma = -1.0f; // Gamma is the slope of the affine line representing the acceleration profile
-    float distance_to_max_speed = -1.0f;
     long end_ticks;
+
+    // Acceleration params
+    Profil_params acceleration_params = {0, -1.0f, -1.0f};
+
+    // Deceleration params
+    Profil_params deceleration_params = {0, -1.0f, -1.0f};
 
     Speed_Driver() = default;
 
@@ -106,59 +116,93 @@ public:
     {
         this->end_ticks = end_ticks;
 
-        if (this->gamma == -1.0f)
+        // Compute acceleration profile
+        if (this->acceleration_params.gamma == -1.0f)
         {
-            byte y_delta = this->max_speed - this->offset;
-            float distance_to_max_speed_ticks = (this->distance_to_max_speed * rolling_basis_params->encoder_resolution) / rolling_basis_params->wheel_perimeter;
-            this->gamma = (float)y_delta / distance_to_max_speed_ticks;
+            byte y_delta = this->max_speed - this->acceleration_params.offset;
+            float distance_to_max_speed_ticks = (this->acceleration_params.distance * rolling_basis_params->encoder_resolution) / rolling_basis_params->wheel_perimeter;
+            this->acceleration_params.gamma = (float)y_delta / distance_to_max_speed_ticks;
+        }
+
+        // Compute deceleration profile
+        if (this->deceleration_params.gamma == -1.0f)
+        {
+            byte y_delta = this->max_speed - this->deceleration_params.offset; 
+            float distance_to_speed_down_ticks = this->end_ticks - (this->deceleration_params.distance * rolling_basis_params->encoder_resolution) / rolling_basis_params->wheel_perimeter;
+            this->deceleration_params.gamma = (float)y_delta / distance_to_speed_down_ticks; // Negative because we want to decelerate
         }
     }
 
-    /*byte compute_local_speed(long ticks)
-    {
-        byte local_speed = (byte)(this->gamma * ticks + this->offset);
-        return (local_speed > this->max_speed) ? this->max_speed : local_speed;
-    }*/
     byte compute_local_speed(long ticks)
     {
-        // Calculer la progression du mouvement en tant que ratio
-        float progress = (float)ticks / this->end_ticks;
+        // Calcul des points de changement de vitesse (acceleration -> plateau -> deceleration)
+        long debut_plateau_ticks = (this->max_speed - this->acceleration_params.offset) / this->acceleration_params.gamma;
+        long fin_plateau_ticks = ((this->max_speed - this->deceleration_params.offset) / this->deceleration_params.gamma) + this->end_ticks;
 
-        // Ajuster gamma pour l'accélération et la décélération
-        // Utilisation d'une fonction comme une parabole inversée pour la progression
-        float adjusted_gamma = this->gamma * (1 - 4 * (progress - 0.5) * (progress - 0.5));
+        // On verifie qu'il y a un plateau
+        if (debut_plateau_ticks < fin_plateau_ticks)
+        {
+            // On est dans la phase d'acceleration
+            if (ticks < debut_plateau_ticks)
+                return (byte)(this->acceleration_params.gamma * ticks + this->acceleration_params.offset);
+            
+            // On est dans la phase de plateau
+            else if (ticks < fin_plateau_ticks)
+                return this->max_speed;
+            
+            // On est dans la phase de deceleration
+            else
+                return (byte)(this->deceleration_params.gamma * (ticks - this->end_ticks) + this->deceleration_params.offset);
+        }
+        // Pas de plateau
+        else
+        {
+            // Calcul du point d'intersection de l'accélération et de la décélération
+            long intersection_ticks = (this->deceleration_params.offset - this->acceleration_params.offset - (this->deceleration_params.gamma * this->end_ticks)) / (this->acceleration_params.gamma - this->deceleration_params.gamma);
 
-        // Calculer la vitesse locale
-        byte local_speed = (byte)(adjusted_gamma * ticks + this->offset);
-
-        // Limiter la vitesse à max_speed
-        return (local_speed > this->max_speed) ? this->max_speed : local_speed;
-    }
-
-    float get_gamma()
-    {
-        return this->gamma;
+            // phase acceleration
+            if(ticks < intersection_ticks)
+                return (byte)(this->acceleration_params.gamma * ticks + this->acceleration_params.offset);
+            
+            // phase deceleration
+            else
+                return (byte)(this->deceleration_params.gamma * (ticks - this->end_ticks) + this->deceleration_params.offset);
+        }
     }
 };
 
 class Speed_Driver_From_Gamma : public Speed_Driver
 {
 public:
-    Speed_Driver_From_Gamma(byte max_speed, byte offset, float gamma)
+    // We only need to give gamma and offset, the distance is not used in this case (it's set to -1.0f by default and will be ingored if given)
+    Speed_Driver_From_Gamma(byte max_speed, Profil_params acceleration, Profil_params deceleration)
     {
         this->max_speed = max_speed;
-        this->offset = offset;
-        this->gamma = gamma;
+
+        // Acceleration params
+        this->acceleration_params.offset = acceleration.offset;
+        this->acceleration_params.gamma = acceleration.gamma;
+        
+        // Deceleration params
+        this->deceleration_params.offset = deceleration.offset;
+        this->deceleration_params.gamma = deceleration.gamma;
     }
 };
 
 class Speed_Driver_From_Distance : public Speed_Driver
 {
 public:
-    Speed_Driver_From_Distance(byte max_speed, byte offset, float distance_to_max_speed)
+    // We only need to give distance and offset, the gamma is not used in this case (it's set to -1.0f by default and will be ingored if given)
+    Speed_Driver_From_Distance(byte max_speed, Profil_params acceleration, Profil_params deceleration)
     {
         this->max_speed = max_speed;
-        this->offset = offset;
-        this->distance_to_max_speed = distance_to_max_speed;
+
+        // Acceleration params
+        this->acceleration_params.offset = acceleration.offset;
+        this->acceleration_params.distance = acceleration.distance;
+        
+        // Deceleration params
+        this->deceleration_params.offset = deceleration.offset;
+        this->deceleration_params.distance = deceleration.distance;
     }
 };
