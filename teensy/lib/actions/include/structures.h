@@ -97,12 +97,15 @@ public:
     byte offset;
     float gamma = -1.0f; // Gamma is the slope of the affine line representing the acceleration profile
     float distance_to_max_speed = -1.0f;
+    long end_ticks;
 
     Speed_Driver() = default;
 
     // Methodes
-    void compute_acceleration_profile(Rolling_Basis_Params *rolling_basis_params)
+    void compute_acceleration_profile(Rolling_Basis_Params *rolling_basis_params, long end_ticks)
     {
+        this->end_ticks = end_ticks;
+
         if (this->gamma == -1.0f)
         {
             byte y_delta = this->max_speed - this->offset;
@@ -111,9 +114,24 @@ public:
         }
     }
 
-    byte compute_local_speed(long ticks)
+    /*byte compute_local_speed(long ticks)
     {
         byte local_speed = (byte)(this->gamma * ticks + this->offset);
+        return (local_speed > this->max_speed) ? this->max_speed : local_speed;
+    }*/
+    byte compute_local_speed(long ticks)
+    {
+        // Calculer la progression du mouvement en tant que ratio
+        float progress = (float)ticks / this->end_ticks;
+
+        // Ajuster gamma pour l'accélération et la décélération
+        // Utilisation d'une fonction comme une parabole inversée pour la progression
+        float adjusted_gamma = this->gamma * (1 - 4 * (progress - 0.5) * (progress - 0.5));
+
+        // Calculer la vitesse locale
+        byte local_speed = (byte)(adjusted_gamma * ticks + this->offset);
+
+        // Limiter la vitesse à max_speed
         return (local_speed > this->max_speed) ? this->max_speed : local_speed;
     }
 

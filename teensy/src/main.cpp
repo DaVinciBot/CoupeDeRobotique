@@ -15,12 +15,12 @@
 // PID
 #define MAX_PWM 150
 #define LOW_PWM 80 // To use for pecise action with low speed
-#define Kp 1.5
+#define Kp 6.5
 #define Ki 0.0
 #define Kd 0.0
 
 #define RIGHT_MOTOR_POWER_FACTOR 1.0
-#define LEFT_MOTOR_POWER_FACTOR 1.17
+#define LEFT_MOTOR_POWER_FACTOR 1.0
 
 // Default position
 #define START_X 0.0
@@ -63,14 +63,15 @@ Precision_Params classic_params{
 Rolling_Basis_Ptrs rolling_basis_ptrs;
 
 /* Strat part */
-#define STRAT_SIZE 3
+#define STRAT_SIZE 1
 byte action_index = 0;
 
 Action **strat_test = new Action *[STRAT_SIZE]
 {
-  new Curve_Go_To(Point(100.0, 0.0), Point(50.0, 0.0), 5, forward, Speed_Driver_From_Distance(100, 50, 0.1), classic_params),
-  new Go_To(Point(30.0, 0.0), backward, Speed_Driver_From_Distance(100, 50, 5.0), classic_params),
-  new Go_To(Point(0.0, 0.0), forward, Speed_Driver_From_Distance(100, 50, 10.0), classic_params),
+  new Go_To(Point(100.0, 0.0), forward, Speed_Driver_From_Distance(150, 60, 20.0), classic_params),
+  //new Go_To(Point(30.0, 0.0), backward, Speed_Driver_From_Distance(100, 50, 5.0), classic_params),
+  //new Go_To(Point(0.0, 0.0), backward, Speed_Driver_From_Distance(100, 50, 10.0), classic_params),
+  //new Curve_Go_To(Point(100.0, 0.0), Point(50.0, 0.0), 5, forward, Speed_Driver_From_Distance(100, 50, 0.1), classic_params),
 };
 
 /******* Attach Interrupt *******/
@@ -90,12 +91,6 @@ inline void right_motor_read_encoder()
     rolling_basis_ptr->right_motor->ticks--;
 }
 
-// Pin ON / OFF
-byte pin_on_off = 19;
-
-// Switch side
-byte pin_green_side = 18;
-
 // Globales variables 
 Ticks last_ticks_position;
 
@@ -106,8 +101,6 @@ void handle();
 void setup()
 {
   Serial.begin(115200);
-  pinMode(pin_on_off, INPUT);
-  pinMode(pin_green_side, INPUT);
 
   // Change pwm frequency
   analogWriteFrequency(R_PWM, 40000);
@@ -138,56 +131,26 @@ void loop()
 {
   rolling_basis_ptr->odometrie_handle();
   rolling_basis_ptr->is_running_update();
-
-  if (start_time == -1 && digitalReadFast(pin_on_off))
-    start_time = millis();
 }
 
 void handle(){
-
-  // Not end of the game ?
-  if ((millis() - start_time) < STOP_MOTORS_DELAY || start_time == -1)
-  {
-    // Authorize to move ?
-    if (digitalReadFast(pin_on_off))
+    // Do classic trajectory
+    if (action_index < STRAT_SIZE)
     {
-      /*
-      // Must return to start position ?
-      if ((millis() - start_time) > RETURN_START_POSITION_DELAY && false)
-      {
-        // Calculate distance from start position
-        float d_x = rolling_basis_ptr->X;
-        float d_y = rolling_basis_ptr->Y;
-        float dist_robot_start_position = sqrt((d_x * d_x) + (d_y * d_y));
+      Point current_position = rolling_basis_ptr->get_current_position();
+      last_ticks_position = rolling_basis_ptr->get_current_ticks();
 
-        // Check if we are already in the start position (> 5 cm -> go to home)
-          //if (dist_robot_start_position > DISTANCE_NEAR_START_POSITION)
-          //rolling_basis_ptr->action_handle(&return_position);
-      }
-      */
-     
-      // Do classic trajectory
-      if (action_index < STRAT_SIZE)
-      {
-        Point current_position = rolling_basis_ptr->get_current_position();
-        last_ticks_position = rolling_basis_ptr->get_current_ticks();
-
-        if (!strat_test[action_index]->is_finished())
-          strat_test[action_index]->handle(
-              current_position,
-              last_ticks_position,
-              &rolling_basis_ptrs);
-        else
-          action_index++;
-      }
+      if (!strat_test[action_index]->is_finished())
+        strat_test[action_index]->handle(
+            current_position,
+            last_ticks_position,
+            &rolling_basis_ptrs);
       else
-        rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+        action_index++;
     }
     else
       rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
-  }
-  else
-    rolling_basis_ptr->shutdown_motor();  
+
 }
 
 // This code was realized by Florian BARRE
