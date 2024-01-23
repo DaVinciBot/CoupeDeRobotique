@@ -1,7 +1,7 @@
 import pytest
 
 # works with the py -m unittest discover commands launched from Perso_cdr
-from bot.Shapes import Point, Rectangle
+from bot.Shapes import Point, Rectangle, OrientedPoint
 
 
 class TestPoint:
@@ -54,3 +54,29 @@ class TestRectangle:
         r = Rectangle(corner, opposite_corner)
         point_on_boundary = Point(4.0, 4.0)
         assert r.is_in(point_on_boundary)
+
+class TestOrientedPoint:
+    def test_constructor(self):
+        p = OrientedPoint(1, 2, 3)
+        assert p.x == 1 and p.y == 2 and p.theta == 3
+    def test_str(self):
+        p = OrientedPoint(1, 2, 3)
+        assert p.__str__() == "Point(x=1, y=2, theta=3)"
+        
+    def test_add(self):
+        p1 = OrientedPoint(1, 2, 3)
+        p2 = OrientedPoint(1, 2, 3)
+        p3 = OrientedPoint(2, 4, 6)
+        assert p1 + p2 == p3
+        
+    def test_sub(self):
+        p1 = OrientedPoint(1, 2, 3)
+        p2 = OrientedPoint(1, 2, 3)
+        p3 = OrientedPoint(0, 0, 0)
+        assert p1 - p2 == p3
+        
+    def test_equal(self):
+        p1 = OrientedPoint(1, 2, 3)
+        p2 = OrientedPoint(1, 2, 3)
+        assert p1 == p2
+    

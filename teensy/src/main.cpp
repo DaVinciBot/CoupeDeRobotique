@@ -16,9 +16,10 @@
 // PID
 #define MAX_PWM 150
 #define LOW_PWM 80 // To use for pecise action with low speed
-#define Kp 1.5
-#define Ki 0.0
-#define Kd 0.0
+
+float Kp = 1.5f;
+float Ki = 0.0f;
+float Kd = 0.0f;
 
 #define RIGHT_MOTOR_POWER_FACTOR 1.0
 #define LEFT_MOTOR_POWER_FACTOR 1.17
@@ -161,24 +162,28 @@ void enable_pid(byte *msg, byte size)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void reset_position(byte *msg, byte size)
+void reset_odo(byte *msg, byte size)
 {
   rolling_basis_ptr->reset_position();
 
   msg_Action_Finished fin_msg;
-  fin_msg.action_id = RESET_POSITION;
+  fin_msg.action_id = RESET_ODO;
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
-
-void stop(byte *msg, byte size)
+void set_pid(byte *msg, byte size)
 {
-  free(current_action);
-  current_action = nullptr;
+  msg_Set_PID *pid_msg = (msg_Set_PID *)msg;
+  // Update motors PID
+  rolling_basis_ptr->right_motor->kp = pid_msg->kp;
+  rolling_basis_ptr->right_motor->ki = pid_msg->ki;
+  rolling_basis_ptr->right_motor->kd = pid_msg->kd;
 
-  rolling_basis_ptr->shutdown_motor();
+  rolling_basis_ptr->left_motor->kp = pid_msg->kp;
+  rolling_basis_ptr->left_motor->ki = pid_msg->ki;
+  rolling_basis_ptr->left_motor->kd = pid_msg->kd;
 
   msg_Action_Finished fin_msg;
-  fin_msg.action_id = STOP;
+  fin_msg.action_id = SET_PID;
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
@@ -226,8 +231,8 @@ void setup()
   functions[KEEP_CURRENT_POSITION] = &keep_current_position,
   functions[DISABLE_PID] = &disable_pid,
   functions[ENABLE_PID] = &enable_pid,
-  functions[RESET_POSITION] = &reset_position,
-  functions[STOP] = &stop,
+  functions[RESET_ODO] = &reset_odo,
+  functions[SET_PID] = &set_pid,
 
   Serial.begin(115200);
 

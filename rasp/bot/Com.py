@@ -5,6 +5,37 @@ from .State import SERVOS_PIN
 from .Logger import Logger
 from .Shapes import OrientedPoint
 
+
+# Used for curve_go_to
+# DO NOT REMOVE
+def calc_tmp(a: OrientedPoint, b: OrientedPoint) -> float:
+    return (a.x**2 - b.x**2 + a.y**2 - b.y**2) / (2 * (a.y - b.y))
+
+
+def frac_tmp(a: OrientedPoint, b: OrientedPoint) -> float:
+    return (a.x - b.x) / (a.y - b.y)
+
+
+def calc_center(a: OrientedPoint, b: OrientedPoint, c: OrientedPoint) -> OrientedPoint:
+    """
+    Permet de calculer le centre d'un cercle passant par 3 points
+    https://cral-perso.univ-lyon1.fr/labo/fc/Ateliers_archives/ateliers_2005-06/cercle_3pts.pdf
+
+    Attention, pour qu'il n'y ai pas de division par 0, les deux premiers points doivent avoir des ordonnées différentes (a.y != b.y)
+    Même s'il a une permutation au cas où, il est préférable de que les ordonnées soient différentes
+    """
+    if a.y == b.y:
+        a, b = b, c
+    if a == b or a == c or b == c:  # not a circle
+        return a
+    x_c = (calc_tmp(c, b) - calc_tmp(b, a)) / (frac_tmp(b, a) - frac_tmp(c, b))
+    center = OrientedPoint(
+        (-x_c),
+        (frac_tmp(b, a) * x_c + calc_tmp(b, a)),
+    )
+    return center
+
+
 class TeensyException(Exception):
     pass
 
@@ -16,6 +47,7 @@ class Teensy:
         pid: int = 0x0483,
         baudrate: int = 115200,
         crc: bool = True,
+        dummy: bool = False,
     ):
         self._teensy = None
         self.crc = crc
@@ -29,13 +61,17 @@ class Teensy:
                 self._teensy = serial.Serial(port.device, baudrate=baudrate)
                 break
         if self._teensy == None:
-            self.l.log("No Teensy found !", 3)
-            #raise TeensyException("No Device !")
+            if dummy:
+                self.l.log("Dummy mode", 1)
+            else:
+                self.l.log("No Teensy found !", 3)
+                raise TeensyException("No Device !")
         self.messagetype = {}
-        self._reciever = threading.Thread(
-            target=self.__receiver__, name="TeensyReceiver"
-        )
-        #self._reciever.start()
+        if not dummy:
+            self._reciever = threading.Thread(
+                target=self.__receiver__, name="TeensyReceiver"
+            )
+            self._reciever.start()
 
     def send_dummy(self, type):
         """
@@ -122,8 +158,8 @@ class Teensy:
                 self._crc8.reset()
                 self._crc8.update(msg)
                 if self._crc8.digest() != crc:
-                    self.l.log("Invalid CRC8, skipping message", 1)
-                    self.send_bytes(b"\x7F")
+                    self.l.log("Invalid CRC8, sending NACK ... ", 1)
+                    self.send_bytes(b"\x7F")  # send NACK
                     self._crc8.reset()
                     continue
                 self._crc8.reset()
@@ -136,7 +172,8 @@ class Teensy:
             if lenmsg > len(msg):
                 self.l.log(
                     "Received Teensy message that does not match declared length "
-                    + msg.hex(sep=" "), 1
+                    + msg.hex(sep=" "),
+                    1,
                 )
                 continue
             try:
@@ -157,13 +194,18 @@ class RollingBasis(Teensy):
     # Rolling basis init #
     ######################
     def __init__(
-        self, vid: int = 5824, pid: int = 1155, baudrate: int = 115200, crc: bool = True
+        self,
+        vid: int = 5824,
+        pid: int = 1155,
+        baudrate: int = 115200,
+        crc: bool = True,
+        dummy: bool = False,
     ):
-        super().__init__(vid, pid, baudrate, crc)
+        super().__init__(vid, pid, baudrate, crc, dummy)
         # All position are in the form tuple(X, Y, THETA)
         self.odometrie = OrientedPoint(0.0, 0.0, 0.0)
         self.position_offset = OrientedPoint(0.0, 0.0, 0.0)
-        self.action_finished = True
+        self.current_action = None
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
@@ -174,10 +216,11 @@ class RollingBasis(Teensy):
             255: self.unknowed_msg,
         }
 
+        self.queue = []
+
     #####################
     # Position handling #
     #####################
-    @Logger
     def true_pos(self, position: OrientedPoint) -> OrientedPoint:
         """
         _summary_
@@ -192,7 +235,6 @@ class RollingBasis(Teensy):
     #############################
     # Received message handling #
     #############################
-
     def rcv_odometrie(self, msg: bytes):
         self.odometrie = OrientedPoint(
             struct.unpack("<f", msg[0:4])[0],
@@ -200,13 +242,27 @@ class RollingBasis(Teensy):
             struct.unpack("<f", msg[8:12])[0],
         )
 
-    @Logger
     def rcv_action_finish(self, msg: bytes):
         self.l.log("Action finished : " + msg.hex())
-        self.action_finished = True
+        if not self.queue or len(self.queue) == 0:
+            self.l.log("Received action_finished but no action in queue", 1)
+            return
+        # remove the action that just finished
+        for i in range(len(self.queue)):
+            if list(self.queue[i].keys())[0] == msg:
+                self.l.log(f"Removing action {i} from queue : " + str(self.queue[i]))
+                self.queue.pop(i)
+                break
+        if len(self.queue) == 0:
+            self.l.log("Queue is empty")
+            self.current_action = None
+            return
+        self.send_bytes(list(self.queue[0].values())[0])
+        self.current_action = list(self.queue[0].keys())[0]
+        self.l.log("Sending next action in queue")
 
     def unknowed_msg(self, msg: bytes):
-        self.l.log(f"Teensy does not know the command {msg.hex()}")
+        self.l.log(f"Teensy does not know the command {msg.hex()}", 1)
 
     #########################
     # User facing functions #
@@ -214,11 +270,12 @@ class RollingBasis(Teensy):
 
     class Command:
         GoToPoint = b"\x00"
-        SetSpeed = b"\x01"
+        CurveGoTo = b"\x01"
         KeepCurrentPosition = b"\02"
         DisablePid = b"\03"
         EnablePid = b"\04"
         ResetPosition = b"\05"
+        SetPID = b"\06"
         Stop = b"\x7E"  # 7E = 126
         Invalid = b"\xFF"
 
@@ -226,10 +283,12 @@ class RollingBasis(Teensy):
     def Go_To(
         self,
         position: OrientedPoint,
+        *,  # force keyword arguments
+        skip_queue=False,
         direction: bool = False,
         speed: bytes = b"\x64",
         next_position_delay: int = 100,
-        action_error_auth: int = 20,
+        action_error_auth: int = 50,
         traj_precision: int = 50,
     ) -> None:
         """
@@ -248,7 +307,6 @@ class RollingBasis(Teensy):
         :param traj_precision: la précision du déplacement, defaults to 50
         :type traj_precision: int, optional
         """
-        self.action_finished = False
         pos = self.true_pos(position)
         msg = (
             self.Command.GoToPoint
@@ -261,76 +319,115 @@ class RollingBasis(Teensy):
             + struct.pack("<H", traj_precision)
         )
         # https://docs.python.org/3/library/struct.html#format-characters
-        self.send_bytes(msg)
+        if skip_queue:
+            self.queue.insert(0, {self.Command.GoToPoint: msg})
+            self.send_bytes(msg)
+        else:
+            self.queue.append({self.Command.GoToPoint: msg})
 
     @Logger
-    def curve_go_to(self, destination: list[float, float], center: list[float, float], interval: int, direction: bool = False, speed: bytes = b'\x64', next_position_delay: int = 100, action_error_auth: int = 20, traj_precision: int = 50) -> None:
+    def curve_go_to(
+        self,
+        destination: OrientedPoint,
+        corde: float,
+        interval: int,
+        *,  # force keyword arguments
+        skip_queue=False,
+        direction: bool = False,
+        speed: int = 150,
+        next_position_delay: int = 100,
+        action_error_auth: int = 20,
+        traj_precision: int = 50,
+        test: bool = False,
+    ) -> None:
         """Go to a point with a curve"""
-        
-        # center 
-        center_pos = self.true_pos(center)
 
-        # angle between the actual position and the destination
-        angle_to_destination = math.atan2(destination[1] - center_pos[1], destination[0] - center_pos[0])
-
-        # distance between the center and the destination (rayon)
-        radius = math.sqrt((destination[0] - center_pos[0]) ** 2 + (destination[1] - center_pos[1]) ** 2)
-
-        # chord length 
-        chord_length = math.sqrt((destination[0] - center_pos[0]) ** 2 + (destination[1] - center_pos[1]) ** 2)
-        
-        #arc distance
-        arc_length = radius * angle_to_destination
-
-        #send specific commands with new arc_length
-        curve_msg = (
-        self.Command.GoToPoint +
-        struct.pack("<ff", destination[0], destination[1]) +  # target_point
-        struct.pack("<ff", center[0], center[1]) +  # center_point
-        struct.pack("<H", interval) +  # interval
-        struct.pack("<H", next_position_delay) +  # delay
-        struct.pack("<?", direction) +  # direction
-        speed +  # speed
-        struct.pack("<H", traj_precision)
+        middle_point = OrientedPoint(
+            (self.odometrie.x + destination.x) / 2,
+            (self.odometrie.y + destination.y) / 2,
         )
-        self.send_bytes(curve_msg)
-        self.action_finished = True
-    
-    @Logger
-    def Set_Speed(self, speed: float) -> None:
-        self.action_finished = False
-        msg = self.Command.GoToPoint + struct.pack(speed, "f")
-        self.send_bytes(msg)
+        # alpha est l'angle entre la droite (position, destination) et l'axe des ordonnées (y)
+        alpha = math.atan2(
+            destination.y - self.odometrie.y, destination.x - self.odometrie.x
+        )
+        # theta est l'angle entre la droite (position, destination) et l'axe des abscisses (x)
+        theta = math.pi / 2 - alpha
+
+        third_point = OrientedPoint(
+            middle_point.x + math.cos(theta) * corde,
+            middle_point.y + math.sin(theta) * corde,
+        )
+
+        center = calc_center(self.odometrie, third_point, destination)
+        destination = self.true_pos(destination)
+        center = self.true_pos(center)
+        if test:
+            return center
+        curve_msg = (
+            self.Command.CurveGoTo  # command
+            + struct.pack("<ff", destination.x, destination.y)  # target_point
+            + struct.pack("<ff", center.x, center.y)  # center_point
+            + struct.pack("<H", interval)  # interval (distance between two points)
+            + struct.pack("<?", direction)  # direction
+            + struct.pack("<H", speed) # speed
+            + struct.pack("<H", next_position_delay)  # delay
+            + struct.pack("<H", action_error_auth)  # error_auth
+            + struct.pack("<H", traj_precision)  # precision
+        )
+        if skip_queue:
+            self.l.log("Skipping Queue ...")
+            self.queue.insert(0, {self.Command.CurveGoTo: curve_msg})
+            self.l.log(self.queue)
+            self.send_bytes(curve_msg)
+        else:
+            self.queue.append({self.Command.CurveGoTo: curve_msg})
 
     @Logger
-    def Keep_Current_Position(self):
-        self.action_finished = False
+    def Keep_Current_Position(self, skip_queue=False):
         msg = self.Command.KeepCurrentPosition
-        self.send_bytes(msg)
+        if skip_queue:
+            self.queue.insert(0, {self.Command.KeepCurrentPosition: msg})
+            self.send_bytes(msg)
+        else:
+            self.queue.append({self.Command.KeepCurrentPosition: msg})
 
     @Logger
-    def Disable_Pid(self):
-        self.action_finished = False
+    def Disable_Pid(self, skip_queue=False):
         msg = self.Command.DisablePid
-        self.send_bytes(msg)
+        if skip_queue:
+            self.queue.insert(0, {self.Command.DisablePid: msg})
+            self.send_bytes(msg)
+        else:
+            self.queue.append({self.Command.DisablePid: msg})
 
     @Logger
-    def Enable_Pid(self):
-        self.action_finished = False
+    def Enable_Pid(self, skip_queue=False):
         msg = self.Command.EnablePid
-        self.send_bytes(msg)
+        if skip_queue:
+            self.queue.insert(0, {self.Command.EnablePid: msg})
+            self.send_bytes(msg)
+        else:
+            self.queue.append({self.Command.EnablePid: msg})
 
     @Logger
-    def Set_Home(self):
-        self.action_finished = False
+    def Set_Home(self, skip_queue=False):
         msg = self.Command.ResetPosition
-        self.send_bytes(msg)
+        if skip_queue:
+            self.queue.insert(0, {self.Command.ResetPosition: msg})
+            self.send_bytes(msg)
+        else:
+            self.queue.append({self.Command.ResetPosition: msg})
 
-    @Logger
-    def Stop(self):
-        self.action_finished = False
-        msg = self.Command.Stop
-        self.send_bytes(msg)
+    def Set_PID(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
+        msg = (
+            self.Command.SetPID
+            + struct.pack("<fff", Kp, Ki, Kp)
+        )
+        if skip_queue:
+            self.queue.insert(0, {self.Command.SetPID: msg})
+            self.send_bytes(msg)
+        else:
+            self.queue.append({self.Command.SetPID: msg})
 
 
 class Actuators(Teensy):

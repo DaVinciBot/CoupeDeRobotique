@@ -7,9 +7,9 @@
 #define KEEP_CURRENT_POSITION 2
 #define DISABLE_PID 3
 #define ENABLE_PID 4
-#define RESET_POSITION 5
+#define RESET_ODO 5
+#define SET_PID 6
 
-#define STOP 126
 
 // two ways : 127 (Convention)
 #define NACK 127

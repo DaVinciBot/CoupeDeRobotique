@@ -29,7 +29,8 @@ function parse_pos() {
 }
 
 function set_rob_pos() {
-    rob.style.transform = `translate(${x}px,${y}px) rotate(${theta}deg)`
+    rob.style.transformOrigin = "top left"
+    rob.style.transform = `translate(${x}px, ${y}px) rotate(${theta}deg)`
 }
 
 document.addEventListener("DOMContentLoaded", function () {

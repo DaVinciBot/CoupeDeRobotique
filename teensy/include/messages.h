@@ -61,8 +61,10 @@ struct msg_Action_Finished
     byte action_id;
 };
 
-struct msg_Stop_signal
+struct msg_Set_PID
 {
-    byte command = STOP;
+    byte command = SET_PID;
+    float kp;
+    float ki;
+    float kd;
 };
-
