@@ -240,11 +240,11 @@ class RollingBasis(Teensy):
         :type direction: bool, optional
         :param speed: Vitesse du déplacement, defaults to b'\x64'
         :type speed: bytes, optional
-        :param next_position_delay: delay avant la prochaine position, defaults to 100
+        :param next_position_delay: delay avant la prochaine position, defaults to 100 en ticks roue codeuse
         :type next_position_delay: int, optional
-        :param action_error_auth: l'erreur autorisée dans le déplacement, defaults to 20
+        :param action_error_auth: l'erreur autorisée dans le déplacement, defaults to 20 en ticks roue codeuse
         :type action_error_auth: int, optional
-        :param traj_precision: la précision du déplacement, defaults to 50
+        :param traj_precision: la précision du déplacement, defaults to 50 en ticks roue codeuse
         :type traj_precision: int, optional
         """
         self.action_finished = False

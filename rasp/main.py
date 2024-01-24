@@ -29,7 +29,7 @@ def select_action_at_position(zone : int):
         print("deposing plant into gardener")
     else:
         print(f"zone {zone} isn't taken in charge")
-
+   
 lidar = Lidar()
 arena = MarsArena(1)
 l = Logger()

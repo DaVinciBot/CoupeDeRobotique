@@ -2,8 +2,8 @@ from bot.Com import Actuators
 import time
 
 servo = True
-ultrasonic = True
-actuators = Actuators(crc=False)
+ultrasonic = False
+actuators = Actuators()
 if servo:
     time.sleep(1.3)
     actuators.servo_go_to(5,50)
@@ -17,6 +17,6 @@ if servo:
     actuators.servo_go_to(5,0)
 
 if ultrasonic:
-    actuators.read_ultrasonic(12,14)
+    actuators.read_ultrasonic(11,17)
     time.sleep(3)
     print(actuators.distances_ultrasonic)
