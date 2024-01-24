@@ -20,6 +20,13 @@ class Point:
             return self.x == p.x and self.y == p.y
         else:
             False
+    
+    def __round__(self,nb_digits : int = None)->None:
+        self.x = self.x.__round__(nb_digits)
+        self.y = self.y.__round__(nb_digits)
+        
+    def to_OrientedPoint(self):
+        return OrientedPoint(self.x,self.y)
 
     @staticmethod
     def get_distance(p1, p2, nb_digits: int = 2):
@@ -82,6 +89,10 @@ class OrientedPoint(Point):
         if isinstance(p,Point):
             return super().__eq__(p)
         else : return False
+    
+    def __round__(self, nb_digits: int = None)->None:
+        super().__round__(nb_digits)
+        self.theta = self.theta.__round__(nb_digits)
         
     def to_Point(self):
         return Point(self.x,self.y)

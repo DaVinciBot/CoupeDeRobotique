@@ -33,6 +33,14 @@ class TestPoint:
         assert not p1==p4
         assert not p3==p4
         assert not n==p1
+    
+    def test_round(test):
+        p1 = Point(1.144444,1.6)
+        p2 = Point(1.144444,1.668)
+        p1.__round__(2)
+        p2.__round__(2)
+        assert p1 == Point(1.14,1.6)
+        assert p2 == OrientedPoint(1.14,1.67)
         
     def test_to_OrientedPoint(self):
         p1 = Point(1,1)
@@ -50,6 +58,14 @@ class TestOrientedPoint:
         assert not p1==p3
         assert p1 == p4
         assert p4 == p1
+    
+    def test_round(self):
+        p1 = OrientedPoint(1.144444,1.6)
+        p2 = OrientedPoint(1.144444,1.668, 0.119)
+        p1.__round__(2)
+        p2.__round__(2)
+        assert  p1 == OrientedPoint(1.14,1.6)
+        assert p2 == OrientedPoint(1.14,1.67,0.12)
 
 class TestRectangle:
     def test_constructor(self):
