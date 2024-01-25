@@ -8,7 +8,7 @@ from .Shapes import OrientedPoint
 
 # Used for curve_go_to
 # DO NOT REMOVE
-def calc_tmp(a: OrientedPoint, b: OrientedPoint) -> float:
+def calc_tmp(a: OrientedPoint, b: OrientedPoint) -> float:  
     return (a.x**2 - b.x**2 + a.y**2 - b.y**2) / (2 * (a.y - b.y))
 
 
@@ -43,12 +43,40 @@ class TeensyException(Exception):
 class Teensy:
     def __init__(
         self,
+        ser: int,
         vid: int = 0x16C0,
         pid: int = 0x0483,
         baudrate: int = 115200,
         crc: bool = True,
         dummy: bool = False,
     ):
+        """
+        Crée un objet Serial Teensy, qui permet la communication entre le code et la carte
+        Si vous ne savez pas ce que vous faites, ne changez que le paramètre `ser`
+
+        Exemple:
+        ```py
+        carte = Teensy(123456)
+        carte.send_bytes(...)
+        ```
+
+        Les paramètres vid et pid permettent de restreindre la recherche au teensy,
+        le paramètre ser permet de choisir parmis les teensy
+
+        :param ser: Numéro de Série
+        :type ser: int
+        :param vid: _description_, defaults to 0x16C0
+        :type vid: int, optional
+        :param pid: _description_, defaults to 0x0483
+        :type pid: int, optional
+        :param baudrate: _description_, defaults to 115200
+        :type baudrate: int, optional
+        :param crc: _description_, defaults to True
+        :type crc: bool, optional
+        :param dummy: _description_, defaults to False
+        :type dummy: bool, optional
+        :raises TeensyException: _description_
+        """
         self._teensy = None
         self.crc = crc
         self._crc8 = crc8.crc8()
@@ -57,7 +85,7 @@ class Teensy:
         self.l = Logger()
 
         for port in serial.tools.list_ports.comports():
-            if port.vid == vid and port.pid == pid:
+            if port.vid == vid and port.pid == pid and int(port.serial_number) == ser:
                 self._teensy = serial.Serial(port.device, baudrate=baudrate)
                 break
         if self._teensy == None:
@@ -196,13 +224,14 @@ class RollingBasis(Teensy):
     ######################
     def __init__(
         self,
+        ser=12678590,
         vid: int = 5824,
         pid: int = 1155,
         baudrate: int = 115200,
         crc: bool = True,
         dummy: bool = False,
     ):
-        super().__init__(vid, pid, baudrate, crc, dummy)
+        super().__init__(ser, vid, pid, baudrate, crc, dummy)
         # All position are in the form tuple(X, Y, THETA)
         self.odometrie = OrientedPoint(0.0, 0.0, 0.0)
         self.position_offset = OrientedPoint(0.0, 0.0, 0.0)
@@ -214,7 +243,7 @@ class RollingBasis(Teensy):
         self.messagetype = {
             128: self.rcv_odometrie,  # \x80
             129: self.rcv_action_finish,  # \x81
-            130: self.rcv_print, # \x82
+            130: self.rcv_print,  # \x82
             255: self.unknowed_msg,
         }
 
@@ -239,7 +268,7 @@ class RollingBasis(Teensy):
     #############################
     def rcv_print(self, msg: bytes):
         self.l.log("Teensy says : " + msg.decode("ascii", errors="ignore"))
-    
+
     def rcv_odometrie(self, msg: bytes):
         self.odometrie = OrientedPoint(
             struct.unpack("<f", msg[0:4])[0],
@@ -334,7 +363,7 @@ class RollingBasis(Teensy):
             + struct.pack("<f", deceleration_distance)
         )
         # https://docs.python.org/3/library/struct.html#format-characters
-        if skip_queue:
+        if skip_queue or len(self.queue) == 0:
             self.queue.insert(0, {self.Command.GoToPoint: msg})
             self.send_bytes(msg)
         else:
@@ -384,12 +413,12 @@ class RollingBasis(Teensy):
             + struct.pack("<ff", center.x, center.y)  # center_point
             + struct.pack("<H", interval)  # interval (distance between two points)
             + struct.pack("<?", direction)  # direction
-            + struct.pack("<H", speed) # speed
+            + struct.pack("<H", speed)  # speed
             + struct.pack("<H", next_position_delay)  # delay
             + struct.pack("<H", action_error_auth)  # error_auth
             + struct.pack("<H", traj_precision)  # precision
         )
-        if skip_queue:
+        if skip_queue or len(self.queue) == 0:
             self.l.log("Skipping Queue ...")
             self.queue.insert(0, {self.Command.CurveGoTo: curve_msg})
             self.l.log(self.queue)
@@ -409,7 +438,7 @@ class RollingBasis(Teensy):
     @Logger
     def Disable_Pid(self, skip_queue=False):
         msg = self.Command.DisablePid
-        if skip_queue:
+        if skip_queue or len(self.queue) == 0:
             self.queue.insert(0, {self.Command.DisablePid: msg})
             self.send_bytes(msg)
         else:
@@ -418,7 +447,7 @@ class RollingBasis(Teensy):
     @Logger
     def Enable_Pid(self, skip_queue=False):
         msg = self.Command.EnablePid
-        if skip_queue:
+        if skip_queue or len(self.queue) == 0:
             self.queue.insert(0, {self.Command.EnablePid: msg})
             self.send_bytes(msg)
         else:
@@ -427,18 +456,15 @@ class RollingBasis(Teensy):
     @Logger
     def Set_Home(self, skip_queue=False):
         msg = self.Command.ResetPosition
-        if skip_queue:
+        if skip_queue or len(self.queue) == 0:
             self.queue.insert(0, {self.Command.ResetPosition: msg})
             self.send_bytes(msg)
         else:
             self.queue.append({self.Command.ResetPosition: msg})
 
     def Set_PID(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
-        msg = (
-            self.Command.SetPID
-            + struct.pack("<fff", Kp, Ki, Kp)
-        )
-        if skip_queue:
+        msg = self.Command.SetPID + struct.pack("<fff", Kp, Ki, Kp)
+        if skip_queue or len(self.queue) == 0:
             self.queue.insert(0, {self.Command.SetPID: msg})
             self.send_bytes(msg)
         else:

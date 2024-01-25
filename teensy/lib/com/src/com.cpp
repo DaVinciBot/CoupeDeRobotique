@@ -96,17 +96,18 @@ void Com::send_msg(byte *msg, byte size, bool is_nack = false)
     free(full_msg);
     // free(crc_b);
 }
-/// @brief Envoi un message text pour le debug
-/// @param text DOIT ETRE EN ASCII et MAX 249 charactères
+/// @brief Envoi un message text pour le debug 
+/// @param text DOIT ETRE EN ASCII et MAX 253 charactères
+/// @example com->print("hehe ca marche grace a Thomas Ledos")
 void Com::print(char* text)
 {
     // use send_msg to send the text input 
-    byte *msg = new byte[strlen(text)+1];
+    byte *msg = new byte[strlen(text)+2];
     msg[0] = 0x82; // ID for STRING message
-    for (byte i = 0; i < strlen(text); i++)
+    for (byte i = 0; i <= strlen(text); i++)
     {
         msg[i+1] = text[i];
     }
-    this->send_msg(msg, strlen(msg)-2);
+    this->send_msg(msg, strlen(msg)+1);
     free(msg);
 }
