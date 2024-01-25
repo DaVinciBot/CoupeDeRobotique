@@ -2,6 +2,18 @@ from bot.Shapes import Point,OrientedPoint,Rectangle,Circle
 from typing import Union
 
 def compute_go_to_destination(actual_position : OrientedPoint, __object : object,  distance = 0, nb_digits : int = 2, closer = True)->Union[OrientedPoint,bool]:
+    """ Given the actual position and a destination zone return the Oriented point to reach
+
+    Args:
+        actual_position (OrientedPoint): the actual position of the bot
+        __object (object): the object to reach (OrientedPoint,Point,Rectangle,Circle)
+        distance (int, optional): _description_. Defaults to 0. the returned OrientedPoint will be situated on a straight betwen the actual_position and the deffault oriented_point at distance cm from it
+        nb_digits (int, optional): _description_. Defaults to 2. x and y number of decimal digits to return
+        closer (bool, optional): _description_. Defaults to True. If True the returned OrientedPoint will be distance closer from actual_position than the default returned point. Ohterwise further
+
+    Returns:
+        Union[OrientedPoint,bool]: the OrientedPoint to reach or False if parameters are wrong
+    """
     def compute_detination(destination_point : OrientedPoint):
         if(destination_point.y == actual_position.y):
             if destination_point.x>actual_position.x: # compute wether the starting point is on the  bottom or on the top of the robot
