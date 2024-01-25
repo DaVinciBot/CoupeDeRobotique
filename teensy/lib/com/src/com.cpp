@@ -37,7 +37,6 @@ byte Com::handle()
         if (!is_signature)
             continue;
 
-
         byte msg_size = this->buffer[pointer - 6];
         if (this->pointer >= msg_size + 6)
         {
@@ -70,16 +69,17 @@ void Com::send_msg(byte *msg, byte size, bool is_nack = false)
 {
     if (!is_nack)
         free(this->last_msg);
-        this->last_msg = new last_message();
-        this->last_msg->size = size;
+    this->last_msg = new last_message();
+    this->last_msg->size = size;
     CRC crc;
     // add size at the end of msg
     byte *full_msg = new byte[size + 1];
-    
+
     for (byte i = 0; i < size; i++)
     {
         full_msg[i] = msg[i];
-        if (!is_nack) last_msg->msg[i] = msg[i];
+        if (!is_nack)
+            last_msg->msg[i] = msg[i];
     }
     full_msg[size] = size;
 
@@ -92,7 +92,21 @@ void Com::send_msg(byte *msg, byte size, bool is_nack = false)
     this->stream->write(crc_b);
     this->stream->write(this->signature, 4);
     this->stream->flush();
- 
+
     free(full_msg);
-    //free(crc_b);
+    // free(crc_b);
+}
+/// @brief Envoi un message text pour le debug
+/// @param text DOIT ETRE EN ASCII et MAX 249 charactères
+void Com::print(char* text)
+{
+    // use send_msg to send the text input 
+    byte *msg = new byte[strlen(text)+1];
+    msg[0] = 0x82; // ID for STRING message
+    for (byte i = 0; i < strlen(text); i++)
+    {
+        msg[i+1] = text[i];
+    }
+    this->send_msg(msg, strlen(msg)-2);
+    free(msg);
 }

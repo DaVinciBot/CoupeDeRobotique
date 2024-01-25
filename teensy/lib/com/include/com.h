@@ -21,6 +21,7 @@ public:
     byte handle();
     byte * read_buffer();
     void send_msg(byte *msg, byte size, bool is_nack = false);
+    void print(char* text);
     last_message* last_msg = new last_message();
 };
 

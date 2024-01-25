@@ -181,6 +181,7 @@ class Teensy:
                     self.l.log("Received a NACK")
                     if self.last_message != None:
                         self.send_bytes(self.last_message)
+                        self.l.log(f"Sending back action : {self.last_message[0]}")
                         self.last_message = None
                 else:
                     self.messagetype[msg[0]](msg[1:-1])
@@ -212,7 +213,8 @@ class RollingBasis(Teensy):
         """
         self.messagetype = {
             128: self.rcv_odometrie,  # \x80
-            129: self.rcv_action_finish,  # \x45
+            129: self.rcv_action_finish,  # \x81
+            130: self.rcv_print, # \x82
             255: self.unknowed_msg,
         }
 
@@ -235,6 +237,9 @@ class RollingBasis(Teensy):
     #############################
     # Received message handling #
     #############################
+    def rcv_print(self, msg: bytes):
+        self.l.log("Teensy says : " + msg.decode("ascii", errors="ignore"))
+    
     def rcv_odometrie(self, msg: bytes):
         self.odometrie = OrientedPoint(
             struct.unpack("<f", msg[0:4])[0],
@@ -286,10 +291,15 @@ class RollingBasis(Teensy):
         *,  # force keyword arguments
         skip_queue=False,
         direction: bool = False,
-        speed: bytes = b"\x64",
+        max_speed: int = 150,
         next_position_delay: int = 100,
         action_error_auth: int = 50,
         traj_precision: int = 50,
+        correction_trajectory_speed: int = 80,
+        acceleration_start_speed: int = 80,
+        acceleration_distance: float = 10,
+        deceleration_end_speed: int = 80,
+        deceleration_distance: float = 10,
     ) -> None:
         """
         Va à la position donnée en paramètre
@@ -313,10 +323,15 @@ class RollingBasis(Teensy):
             + struct.pack("<f", pos.x)
             + struct.pack("<f", pos.y)
             + struct.pack("<?", direction)
-            + speed
+            + struct.pack("<H", max_speed)
             + struct.pack("<H", next_position_delay)
             + struct.pack("<H", action_error_auth)
             + struct.pack("<H", traj_precision)
+            + struct.pack("<H", correction_trajectory_speed)
+            + struct.pack("<H", acceleration_start_speed)
+            + struct.pack("<f", acceleration_distance)
+            + struct.pack("<H", deceleration_end_speed)
+            + struct.pack("<f", deceleration_distance)
         )
         # https://docs.python.org/3/library/struct.html#format-characters
         if skip_queue:

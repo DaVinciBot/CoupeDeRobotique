@@ -10,13 +10,13 @@
 #define RESET_ODO 5
 #define SET_PID 6
 
-
 // two ways : 127 (Convention)
 #define NACK 127
 
 // teensy -> rasp : 128-255 (Convention)
 #define UPDATE_POSITION 128
 #define ACTION_FINISHED 129
+#define STRING 130
 #define UNKNOWN_MSG_TYPE 255
 
 extern void (*functions[256])(byte *msg, byte size);

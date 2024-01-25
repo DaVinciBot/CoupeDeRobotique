@@ -17,9 +17,9 @@
 #define MAX_PWM 150
 #define LOW_PWM 80 // To use for pecise action with low speed
 
-float Kp = 1.5f;
+float Kp = 7.5f;
 float Ki = 0.0f;
-float Kd = 0.0f;
+float Kd = 1.0f;
 
 #define RIGHT_MOTOR_POWER_FACTOR 1.0
 #define LEFT_MOTOR_POWER_FACTOR 1.0
@@ -100,16 +100,39 @@ void go_to(byte *msg, byte size)
   msg_Go_To *go_to_msg = (msg_Go_To *)msg;
   Point target_point(go_to_msg->x, go_to_msg->y, 0.0f);
 
+
   Precision_Params params{
       go_to_msg->next_position_delay,
       go_to_msg->action_error_auth,
       go_to_msg->traj_precision,
   };
 
-  Go_To *new_action = new Go_To(target_point, go_to_msg->is_forward ? backward : forward, go_to_msg->speed, params);
+  Profil_params acceleration {
+    go_to_msg->acceleration_start_speed,
+    -1.0f,
+    go_to_msg->acceleration_distance
+  };
+
+  Profil_params deceleration {
+    go_to_msg->deceleration_end_speed,
+    -1.0f,
+    go_to_msg->deceleration_distance
+  };
+
+  Go_To *new_action = new Go_To(
+    target_point, 
+    go_to_msg->is_forward ? backward : forward, 
+    Speed_Driver_From_Distance(
+      go_to_msg->max_speed,
+      go_to_msg->correction_trajectory_speed,
+      acceleration,
+      deceleration
+    ),
+    params
+  );
   swap_action(new_action);
 }
-
+/*
 void curve_go_to(byte *msg, byte size)
 {
   msg_Curve_Go_To *curve_msg = (msg_Curve_Go_To *)msg;
@@ -125,7 +148,7 @@ void curve_go_to(byte *msg, byte size)
 
   Curve_Go_To *new_action = new Curve_Go_To(target_point, center_point, curve_msg->interval, curve_msg->direction ? backward : forward, curve_msg->speed, params);
   swap_action(new_action);
-}
+}*/
 
 // Whether to keep position when no action is active
 bool keep_curr_pos_when_no_action = false;
@@ -221,7 +244,7 @@ void setup()
 
   // only the messages received by the teensy are listed here
   functions[GO_TO] = &go_to,
-  functions[CURVE_GO_TO] = &curve_go_to,
+  //functions[CURVE_GO_TO] = &curve_go_to,
   functions[KEEP_CURRENT_POSITION] = &keep_current_position,
   functions[DISABLE_PID] = &disable_pid,
   functions[ENABLE_PID] = &enable_pid,

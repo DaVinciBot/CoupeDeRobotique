@@ -8,7 +8,7 @@ import os, types, functools
 class Logger:
     """
     Log dans un fichier (logs/YYYY-MM-DD.log) + sortie standard
-    affiche dans le format YYYY-MM-DD HH:MM:SS | NIVEAU | message
+    affiche dans le format HH:MM:SS | NIVEAU | message
     """
 
     def __init__(self, func=None, *, level: int = 0):
@@ -41,7 +41,7 @@ class Logger:
         """
         if level < LOG_LEVEL or level > 3:
             return
-        date_str = Utils.get_current_date()["date"]
+        date_str = Utils.get_current_date()["date"].strftime("%H:%M:%S")
         message = f"{date_str} | {self.levels[level]} | {message}"
         if PRINT_LOG:
             print(message)
