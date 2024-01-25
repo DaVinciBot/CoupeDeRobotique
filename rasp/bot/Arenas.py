@@ -219,17 +219,17 @@ class MarsArena(Arena):
         :type start_zone: int
         :raises ValueError: If start_zone is not between 1 and 6
         """
-        if not (start_zone >= 1 and start_zone <= 6):
-            raise ValueError("start_zone must be between 1 and 6")
+        if not (start_zone >= 0 and start_zone <= 5):
+            raise ValueError("start_zone must be between 0 and 5")
         origin = Point(200, 0)
         opposite_corner = Point(0, 300)
         
         # (zone,is_full)
         self.gardeners = [
-            (Rectangle(Point(77.5,-15), Point(45,-3)),False),  # 1 - Blue
-            (Rectangle(Point(155,-15), Point(122.5,-3)),False),  # 2 - Yellow
-            (Rectangle(Point(77.5,303), Point(45,315)),False),  # 3 - Blue
-            (Rectangle(Point(155,303), Point(122.5,315)),False),  # 4 - Yellow
+            (Rectangle(Point(77.5,-15), Point(45,-3)),False),  # 0 - Blue
+            (Rectangle(Point(155,-15), Point(122.5,-3)),False),  # 1 - Yellow
+            (Rectangle(Point(77.5,303), Point(45,315)),False),  # 2 - Blue
+            (Rectangle(Point(155,303), Point(122.5,315)),False),  # 3 - Yellow
         ]
 
         # (zone,still_plants)
@@ -244,14 +244,14 @@ class MarsArena(Arena):
         
         # (zone,is_full)
         self.drop_zones = [
-            (Rectangle(Point(45, 0), Point(0, 45)),False),  # 1 - Blue (Possible forbidden area)
-            (Rectangle(Point(122.5, 0), Point(77.5, 45)),False),  # 2 - Yellow
-            (Rectangle(Point(200, 0), Point(155, 45)),False),  # 3 - Blue
-            (Rectangle(Point(45, 255), Point(0, 300)),False),  # 4 - Yellow (Possible forbidden area)
-            (Rectangle(Point(122, 255), Point(77.5, 300)),False),  # 5 - Blue
-            (Rectangle(Point(200, 255), Point(155, 300)),False)  # 6 - Yellow
+            (Rectangle(Point(45, 0), Point(0, 45)),False),  # 0 - Blue (Possible forbidden area)
+            (Rectangle(Point(122.5, 0), Point(77.5, 45)),False),  # 1 - Yellow
+            (Rectangle(Point(200, 0), Point(155, 45)),False),  # 2 - Blue
+            (Rectangle(Point(45, 255), Point(0, 300)),False),  # 3 - Yellow (Possible forbidden area)
+            (Rectangle(Point(122, 255), Point(77.5, 300)),False),  # 4 - Blue
+            (Rectangle(Point(200, 255), Point(155, 300)),False)  # 5 - Yellow
         ]
-        self.color = "yellow" if start_zone % 2 == 0 else "blue"
+        self.color = "blue" if start_zone % 2 == 0 else "yellow"
         super().__init__(
             area=Rectangle(origin, opposite_corner),
             forbidden_area=self.drop_zones[(start_zone % 2) * 3][0],
@@ -262,7 +262,7 @@ class MarsArena(Arena):
         return "MarsArena"
     
     def is_our_zone(self, zone, zones )->bool:
-        """this function tells wether the given zone is in zones
+        """this function tells wether the given zone is in zones and that it is ours 
 
         Args:
             zone (_type_): the zone to serch for
@@ -272,7 +272,7 @@ class MarsArena(Arena):
             bool: is zone in zones
         """
         for i in range(0,len(zones)):
-            if len(zones)>0 and zones[i][0]==zone:
+            if zones[i][0]==zone:
                 if self.color == "blue": return i%2 == 0
                 else: return i%2 != 0
                 

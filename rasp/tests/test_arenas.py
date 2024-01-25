@@ -55,3 +55,31 @@ class TestMarsArena:
         assert arena.enable_go_to(Point(10, 10), Point(100, 100))
         assert not arena.enable_go_to(Point(10, 10), Point(100, 400))
         assert not arena.enable_go_to(Point(10, 10), Point(10, 275))
+    
+    def test_is_our_zone(self):
+        arena = MarsArena(0)
+        verif = True
+        for i in range(len(arena.drop_zones)):
+            if i%2 != 0 and arena.is_our_zone(arena.drop_zones[i],arena.drop_zones):
+                verif = False
+                break
+            if i%2 == 0 and not arena.is_our_zone(arena.drop_zones[i][0],arena.drop_zones):
+                verif = False
+                break
+        assert verif
+        for i in range(len(arena.gardeners)):
+            if i%2 != 0 and arena.is_our_zone(arena.gardeners[i],arena.gardeners):
+                verif = False
+                break
+            if i%2 == 0 and not arena.is_our_zone(arena.gardeners[i][0],arena.gardeners):
+                verif = False
+                break
+        assert verif
+        for i in range(len(arena.plant_areas)):
+            if i%2 != 0 and arena.is_our_zone(arena.plant_areas[i],arena.plant_areas):
+                verif = False
+                break
+            if i%2 == 0 and not arena.is_our_zone(arena.plant_areas[i][0],arena.plant_areas):
+                verif = False
+                break
+        assert verif
