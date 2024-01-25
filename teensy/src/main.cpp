@@ -99,7 +99,7 @@ void go_to(byte *msg, byte size)
 {
   msg_Go_To *go_to_msg = (msg_Go_To *)msg;
   Point target_point(go_to_msg->x, go_to_msg->y, 0.0f);
-
+  com->print("go_to");
 
   Precision_Params params{
       go_to_msg->next_position_delay,
@@ -130,6 +130,7 @@ void go_to(byte *msg, byte size)
     ),
     params
   );
+  
   swap_action(new_action);
 }
 /*
@@ -151,7 +152,7 @@ void curve_go_to(byte *msg, byte size)
 }*/
 
 // Whether to keep position when no action is active
-bool keep_curr_pos_when_no_action = false;
+bool keep_curr_pos_when_no_action = true;
 
 void keep_current_position(byte *msg, byte size)
 {

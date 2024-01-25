@@ -13,7 +13,7 @@ def add_op(oriented_point : Shapes.OrientedPoint)->bool:  # op stands for orient
         State.points_list.append(oriented_point)
         State.index_last_point += 1
         return True
-
+"""
 def select_action_at_position(zone : int):
     if zone == CMD_POTAREA:
         print("taking plant")
@@ -23,6 +23,7 @@ def select_action_at_position(zone : int):
         print("deposing plant into gardener")
     else:
         print(f"zone {zone} isn't taken in charge")
+"""
 
 lidar = Lidar()
 arena = MarsArena(1)
