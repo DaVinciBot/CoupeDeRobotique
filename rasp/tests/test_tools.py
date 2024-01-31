@@ -38,6 +38,7 @@ class TestCompute_go_to:
         
     def test_default(self):
         a = Point(2,2)
+        b = OrientedPoint(2,2)
         p1 = Point(0,0)
         p2 = Point(0,4)
         p3 = Point(4,0)
@@ -46,6 +47,9 @@ class TestCompute_go_to:
         q2 = Point(1,3)
         q3 = Point(3,1)
         q4 = Point(3,3)
+        q5 = OrientedPoint(3,3)
+        assert isinstance(compute_go_to_destination(a,a),OrientedPoint)
+        assert isinstance(compute_go_to_destination(a,b),OrientedPoint)
         assert compute_go_to_destination(p1,a,distance=2**(1/2),nb_digits=1) == q1
         assert compute_go_to_destination(p1,a,distance=2**(1/2),nb_digits=1, closer=False) == q4
         assert compute_go_to_destination(p2,a,distance=2**(1/2),nb_digits=1) == q2
@@ -54,6 +58,8 @@ class TestCompute_go_to:
         assert compute_go_to_destination(p3,a,distance=2**(1/2),nb_digits=1, closer=False) == q2
         assert compute_go_to_destination(p4,a,distance=2**(1/2),nb_digits=1) == q4
         assert compute_go_to_destination(p4,a,distance=2**(1/2),nb_digits=1, closer=False) == q1
+        assert compute_go_to_destination(q5,a,distance=2**(1/2),nb_digits=1, closer=False) == q1
+        assert compute_go_to_destination(q5,b,distance=2**(1/2),nb_digits=1, closer=False) == q1
         
         
         

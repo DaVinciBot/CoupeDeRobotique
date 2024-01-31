@@ -44,8 +44,9 @@ def compute_go_to_destination(actual_position : OrientedPoint, __object : object
         
         
     if isinstance(__object, (Rectangle,Circle)):
-        if distance == 0: return __object.center
-        arrival = compute_detination(__object.center)
+        __object = __object.center.to_OrientedPOint()
+        if distance == 0: return __object
+        arrival = compute_detination(__object)
         arrival.__round__(nb_digits)
         return arrival
     if isinstance(__object,OrientedPoint):
@@ -54,8 +55,9 @@ def compute_go_to_destination(actual_position : OrientedPoint, __object : object
         arrival.__round__(nb_digits)
         return arrival
     if isinstance(__object,Point):
-        if distance ==0 : return __object.to_OrientedPoint()
-        arrival : OrientedPoint = compute_detination(__object)
+        __object = __object.to_OrientedPOint()
+        if distance ==0 : return __object
+        arrival = compute_detination(__object)
         arrival.__round__(nb_digits)
         return arrival
     return False

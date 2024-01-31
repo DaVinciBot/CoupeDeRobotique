@@ -39,12 +39,12 @@ PRINT_LOG = True
 is_logger_init = False
 
 go_to_verif = True # when true trajectory is checked to avoid forbidden moves
-activate_lidar = True # when true stop when an obstacle is detected
+activate_lidar = True # when true stops when an obstacle is detected
 
 time_to_return_to_home = 80
 
-SERVOS_PIN = [5] # the maxmimun number of servos is 12
 
+SERVOS_PIN = [5] # the maxmimun number of servos is 12
 ULTRASONICS_PINS = [(12,14)]
 
 test = False
