@@ -16,22 +16,7 @@ def go_to(__object : object,  distance = 0, nb_digits : int = 2, closer = True)-
         rolling_basis.Go_To(destination_point)
         return True
     return False
-    
-# PLANT_AREA = 0
-# DROP_ZONE = 1
-# GARDENER = 2
 
-# call the function corresponding to the given zone
-# def select_action_at_position(zone : int):
-#     if zone == PLANT_AREA:
-#         print("taking plant")
-#     elif zone == DROP_ZONE:
-#         print("deposing plant into the drop zone")
-#     elif zone == GARDENER:
-#         print("deposing plant into gardener")
-#     else:
-#         print(f"zone {zone} isn't taken in charge")
-   
 lidar = Lidar()
 arena = MarsArena(1)
 l = Logger()

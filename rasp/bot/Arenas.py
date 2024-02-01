@@ -1,5 +1,6 @@
 from bot.Shapes import Point, Rectangle, Circle, OrientedPoint
 from typing import Union
+from bot.tools import closest_zone
 
 class Arena:
     """Represent an arena"""
@@ -233,7 +234,7 @@ class MarsArena(Arena):
         ]
 
         # (zone,still_plants)
-        self.plant_areas = [
+        self.plant_zones = [
             (Circle(Point(70,100),250),True),
             (Circle(Point(130,100),250),True),
             (Circle(Point(150,150),250),True),
@@ -261,6 +262,15 @@ class MarsArena(Arena):
     def __str__(self) -> str:
         return "MarsArena"
     
+    def closest_gardener(self,actual_position : OrientedPoint, our=True, exclude_empty=True):
+        return closest_zone(self.gardeners,actual_position,our,exclude_empty,self.color)
+    
+    def closest_drop_zone(self,actual_position : OrientedPoint, our=True, exclude_empty=True):
+        return closest_zone(self.drop_zones,actual_position,our,exclude_empty,self.color)
+    
+    def closest_plant_zones(self,actual_position : OrientedPoint, our=True, exclude_empty=True):
+        return closest_zone(self.plant_zones,actual_position,our,exclude_empty,self.color,True)
+        
     def is_our_zone(self, zone, zones )->bool:
         """this function tells wether the given zone is in zones and that it is ours 
 

@@ -75,11 +75,11 @@ class TestMarsArena:
                 verif = False
                 break
         assert verif
-        for i in range(len(arena.plant_areas)):
-            if i%2 != 0 and arena.is_our_zone(arena.plant_areas[i],arena.plant_areas):
+        for i in range(len(arena.plant_zones)):
+            if i%2 != 0 and arena.is_our_zone(arena.plant_zones[i],arena.plant_zones):
                 verif = False
                 break
-            if i%2 == 0 and not arena.is_our_zone(arena.plant_areas[i][0],arena.plant_areas):
+            if i%2 == 0 and not arena.is_our_zone(arena.plant_zones[i][0],arena.plant_zones):
                 verif = False
                 break
         assert verif

@@ -61,5 +61,86 @@ class TestCompute_go_to:
         assert compute_go_to_destination(q5,a,distance=2**(1/2),nb_digits=1, closer=False) == q1
         assert compute_go_to_destination(q5,b,distance=2**(1/2),nb_digits=1, closer=False) == q1
         
+class TestClosest_zone:
+    def test_distance(self):
+        zones ={
+            0:(Rectangle(Point(45, 0), Point(0, 45)),False),  # 0 - Blue (Possible forbidden area)
+            1:(Rectangle(Point(122.5, 0), Point(77.5, 45)),False),  # 1 - Yellow
+            2:(Rectangle(Point(200, 0), Point(155, 45)),False),  # 2 - Blue
+            3:(Rectangle(Point(45, 255), Point(0, 300)),False),  # 3 - Yellow (Possible forbidden area)
+            4:(Rectangle(Point(122, 255), Point(77.5, 300)),False),  # 4 - Blue
+            5:(Rectangle(Point(200, 255), Point(155, 300)),False)  # 5 - Yellow
+        }
+        drop_zones = [
+            (Rectangle(Point(45, 0), Point(0, 45)),False),  # 0 - Blue (Possible forbidden area)
+            (Rectangle(Point(122.5, 0), Point(77.5, 45)),False),  # 1 - Yellow
+            (Rectangle(Point(200, 0), Point(155, 45)),False),  # 2 - Blue
+            (Rectangle(Point(45, 255), Point(0, 300)),False),  # 3 - Yellow (Possible forbidden area)
+            (Rectangle(Point(122, 255), Point(77.5, 300)),False),  # 4 - Blue
+            (Rectangle(Point(200, 255), Point(155, 300)),False)  # 5 - Yellow
+        ]
+        
+        p1 = Point(0,0)
+        p2 = Point(99,120)
+        p3 = Point(160,5)
+        
+        x1 = closest_zone(drop_zones,p1,False,False)
+        r1 = [zones[0],zones[1],zones[2],zones[3],zones[4],zones[5]]
+        x2 = closest_zone(drop_zones,p2,False,False)
+        r2 = [zones[1],zones[0],zones[2],zones[4],zones[3],zones[5]]
+        x3 = closest_zone(drop_zones,p3,False,False)
+        r3 = [zones[2],zones[1],zones[0],zones[5],zones[4],zones[3]]
+        
+        results = [x1,x2,x3]
+        responses = [r1,r2,r3]
+        for j in range(len(results)):
+            for i in range(len(zones)):
+                assert results[j][i][0]==responses[j][i][0]
+                
+    def test_exlude(self):
+        zones ={
+            0:(Rectangle(Point(45, 0), Point(0, 45)),False),  # 0 - Blue (Possible forbidden area)
+            1:(Rectangle(Point(122.5, 0), Point(77.5, 45)),False),  # 1 - Yellow
+            2:(Rectangle(Point(200, 0), Point(155, 45)),False),  # 2 - Blue
+            3:(Rectangle(Point(45, 255), Point(0, 300)),False),  # 3 - Yellow (Possible forbidden area)
+            4:(Rectangle(Point(122, 255), Point(77.5, 300)),False),  # 4 - Blue
+            5:(Rectangle(Point(200, 255), Point(155, 300)),False)  # 5 - Yellow
+        }
+        drop_zones = [
+            (Rectangle(Point(45, 0), Point(0, 45)),True),  # 0 - Blue (Possible forbidden area)
+            (Rectangle(Point(122.5, 0), Point(77.5, 45)),False),  # 1 - Yellow
+            (Rectangle(Point(200, 0), Point(155, 45)),False),  # 2 - Blue
+            (Rectangle(Point(45, 255), Point(0, 300)),False),  # 3 - Yellow (Possible forbidden area)
+            (Rectangle(Point(122, 255), Point(77.5, 300)),True),  # 4 - Blue
+            (Rectangle(Point(200, 255), Point(155, 300)),False)  # 5 - Yellow
+        ]
+        
+        p1 = Point(0,0)
+        p2 = Point(99,120)
+        p3 = Point(160,5)
+        p4 = Point(199,299)
+        
+        x1 = closest_zone(drop_zones,p1,False,True,basic = False)
+        r1 = [zones[1],zones[2],zones[3],zones[5], zones[0],zones[4]]
+        x2 = closest_zone(drop_zones,p2,False,True,basic = False)
+        r2 = [zones[1],zones[2],zones[3],zones[5],zones[0],zones[4]]
+        x3 = closest_zone(drop_zones,p3,False,True,basic = False)
+        r3 = [zones[2],zones[1],zones[5],zones[3],zones[0],zones[4]]
+        x4 = closest_zone(drop_zones,p4,False,True,basic = False)
+        r4 = [zones[5],zones[3],zones[2],zones[1],zones[4],zones[0]]
+        x5 = closest_zone(drop_zones,p1,False,True,basic = True)
+        r5 = [zones[0],zones[4],zones[1],zones[2],zones[3],zones[5]]
+        x6 = closest_zone(drop_zones,p1,True,False,basic = False,color = "blue")
+        r6 = [zones[0],zones[2],zones[4]]
+        x7 = closest_zone(drop_zones,p1,True,False,basic = False,color = "yellow")
+        r7 = [zones[1],zones[3],zones[5]]
+        x8 = closest_zone(drop_zones,p1,True,True,basic = False,color = "blue")
+        r8 = [zones[2],zones[0],zones[4]]
+        
+        results = [x1,x2,x3,x4,x5,x6,x7,x8]
+        responses = [r1,r2,r3,r4,r5,r6,r7,r8]
+        for j in range(len(results)):
+            for i in range(len(results[j])):
+                assert results[j][i][0]==responses[j][i][0]
         
         
