@@ -17,7 +17,6 @@ void Basic_Action::handle(Point current_point, Ticks current_ticks, Rolling_Basi
 
 // Move Straight
 Move_Straight::Move_Straight(float target_x, float target_y, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params)
-Move_Straight::Move_Straight(float target_x, float target_y, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params)
 {
     this->target_x = target_x;
     this->target_y = target_y;
@@ -42,7 +41,6 @@ void Move_Straight::compute(Point current_point, Ticks current_ticks, Rolling_Ba
 }
 
 // Get Orientation in front of a point (turn on itself)
-Get_Orientation::Get_Orientation(float target_x, float target_y, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params)
 Get_Orientation::Get_Orientation(float target_x, float target_y, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params)
 {
     this->target_x = target_x;
@@ -81,7 +79,6 @@ void Get_Orientation::compute(Point current_point, Ticks current_ticks, Rolling_
 }
 
 // Do a Rotation (turn on itself)
-Move_Rotation::Move_Rotation(float target_theta, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params)
 Move_Rotation::Move_Rotation(float target_theta, Direction *direction, Speed_Driver *speed_driver, Precision_Params *precision_params)
 {   
     this->target_theta = target_theta;
