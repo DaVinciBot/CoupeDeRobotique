@@ -4,12 +4,6 @@
 #include <util/atomic.h>
 #include <messages.h>
 
-// Mouvement params
-#define ACTION_ERROR_AUTH 10
-#define TRAJECTORY_PRECISION 100
-#define NEXT_POSITION_DELAY 100
-#define INACTIVE_DELAY 1000
-
 // PID
 #define MAX_PWM 200
 #define Kp 7.5
@@ -17,7 +11,6 @@
 #define Kd 1.0
 
 #define RIGHT_MOTOR_POWER_FACTOR 1.0
-#define LEFT_MOTOR_POWER_FACTOR 1.0
 #define LEFT_MOTOR_POWER_FACTOR 1.0
 
 // Default position
@@ -52,29 +45,10 @@ Rolling_Basis_Params rolling_basis_params{
     rolling_basis_ptr->radius(),
 };
 
-Precision_Params classic_params{
-    NEXT_POSITION_DELAY,
-    ACTION_ERROR_AUTH,
-    TRAJECTORY_PRECISION,
-};
-
 Rolling_Basis_Ptrs rolling_basis_ptrs;
 
 /* Strat part */
 Com *com;
-// template <typename T>
-// T decode(byte *data, size_t size)
-// {
-//   T value;
-//   memcpy(&value, data, size);
-//   return value;
-// }
-
-// template <typename T>
-// void encode(byte *data, T value, size_t size)
-// {
-//   memcpy(data, &value, size);
-// }
 
 Complex_Action *current_action = nullptr;
 
@@ -96,7 +70,6 @@ void go_to(byte *msg, byte size)
   msg_Go_To *go_to_msg = (msg_Go_To *)msg;
   Point target_point(go_to_msg->x, go_to_msg->y, 0.0f);
   com->print("go_to");
-  
 
   Precision_Params params{
       go_to_msg->next_position_delay,
@@ -118,7 +91,7 @@ void go_to(byte *msg, byte size)
 
   Go_To *new_action = new Go_To(
     target_point, 
-    go_to_msg->is_forward ? backward : forward, 
+    go_to_msg->is_forward ? forward : backward, 
     Speed_Driver_From_Distance(
       go_to_msg->max_speed,
       go_to_msg->correction_trajectory_speed,
@@ -129,6 +102,7 @@ void go_to(byte *msg, byte size)
   );
 
   swap_action(new_action);
+  com->print("swap action");
 }
 /*
 void curve_go_to(byte *msg, byte size)
@@ -191,6 +165,7 @@ void reset_odo(byte *msg, byte size)
   fin_msg.action_id = RESET_ODO;
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
+
 void set_pid(byte *msg, byte size)
 {
   msg_Set_PID *pid_msg = (msg_Set_PID *)msg;
@@ -317,10 +292,10 @@ void handle()
   last_ticks_position = rolling_basis_ptr->get_current_ticks();
 
   current_action->handle(
-      current_position,
-      last_ticks_position,
-      &rolling_basis_ptrs
-    );
+    current_position,
+    last_ticks_position,
+    &rolling_basis_ptrs
+  );
 
   if (current_action->is_finished())
   {
@@ -329,8 +304,6 @@ void handle()
     fin_msg.action_id = current_action->get_id();
     com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
   }
-  else
-    rolling_basis_ptr->shutdown_motor();  
 }
 
 /*
