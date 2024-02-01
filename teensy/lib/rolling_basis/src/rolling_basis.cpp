@@ -52,13 +52,13 @@ void Rolling_Basis::init_motors()
     this->left_motor->init();
 }
 
-void Rolling_Basis::init_rolling_basis(float x, float y, float theta, long inactive_delay, byte max_pwm)
+void Rolling_Basis::init_rolling_basis(float x, float y, float theta, long inactive_delay, byte standby_pwm)
 {
     this->X = x;
     this->Y = y;
     this->THETA = theta;
     this->inactive_delay = inactive_delay; 
-    this->max_pwm = max_pwm;
+    this->standby_pwm = standby_pwm;
 }
 
 // Odometrie function
@@ -108,8 +108,8 @@ void Rolling_Basis::reset_position(){
 
 // Motors action function
 void Rolling_Basis::keep_position(long current_right_ticks, long current_left_ticks) {
-    this->right_motor->handle(current_right_ticks, this->max_pwm);
-    this->left_motor->handle(current_left_ticks, this->max_pwm);
+    this->right_motor->handle(current_right_ticks, this->standby_pwm);
+    this->left_motor->handle(current_left_ticks, this->standby_pwm);
 }
 
 void Rolling_Basis::shutdown_motor()

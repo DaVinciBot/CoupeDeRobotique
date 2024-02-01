@@ -5,23 +5,19 @@
 #include <messages.h>
 
 // Mouvement params
-#define ACTION_ERROR_AUTH 20
-#define TRAJECTORY_PRECISION 50
+#define ACTION_ERROR_AUTH 10
+#define TRAJECTORY_PRECISION 100
 #define NEXT_POSITION_DELAY 100
-#define INACTIVE_DELAY 2000
-#define RETURN_START_POSITION_DELAY 999999
-#define STOP_MOTORS_DELAY 999999
-#define DISTANCE_NEAR_START_POSITION 30.0
+#define INACTIVE_DELAY 1000
 
 // PID
-#define MAX_PWM 150
-#define LOW_PWM 80 // To use for pecise action with low speed
-
-float Kp = 7.5f;
-float Ki = 0.0f;
-float Kd = 1.0f;
+#define MAX_PWM 200
+#define Kp 7.5
+#define Ki 0.0
+#define Kd 1.0
 
 #define RIGHT_MOTOR_POWER_FACTOR 1.0
+#define LEFT_MOTOR_POWER_FACTOR 1.0
 #define LEFT_MOTOR_POWER_FACTOR 1.0
 
 // Default position
@@ -333,7 +329,8 @@ void handle()
     fin_msg.action_id = current_action->get_id();
     com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
   }
-  return;
+  else
+    rolling_basis_ptr->shutdown_motor();  
 }
 
 /*

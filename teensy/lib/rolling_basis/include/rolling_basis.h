@@ -7,7 +7,7 @@ public :
     inline float radius() { return this->center_distance / 2.0; };
     inline float wheel_perimeter() { return this->wheel_diameter * PI; };
     inline float wheel_unit_tick_cm() { return this->wheel_perimeter() / this->encoder_resolution; };
-    byte max_pwm;
+    byte standby_pwm;
 
     // Properties
     Point get_current_position();
