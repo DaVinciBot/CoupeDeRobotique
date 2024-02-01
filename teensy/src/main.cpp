@@ -100,6 +100,7 @@ void go_to(byte *msg, byte size)
   msg_Go_To *go_to_msg = (msg_Go_To *)msg;
   Point target_point(go_to_msg->x, go_to_msg->y, 0.0f);
   com->print("go_to");
+  
 
   Precision_Params params{
       go_to_msg->next_position_delay,
@@ -130,7 +131,7 @@ void go_to(byte *msg, byte size)
     ),
     params
   );
-  
+
   swap_action(new_action);
 }
 /*
@@ -310,8 +311,9 @@ void handle()
 {
   if (current_action == nullptr || current_action->is_finished())
   {
-    if (keep_curr_pos_when_no_action)
+    if (keep_curr_pos_when_no_action){
       rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
+    }
     return;
   }
 
@@ -321,10 +323,12 @@ void handle()
   current_action->handle(
       current_position,
       last_ticks_position,
-      &rolling_basis_ptrs);
+      &rolling_basis_ptrs
+    );
 
   if (current_action->is_finished())
   {
+    com->print("action finished");
     msg_Action_Finished fin_msg;
     fin_msg.action_id = current_action->get_id();
     com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
@@ -336,7 +340,7 @@ void handle()
 
  This code was realized by Florian BARRE
     ____ __
-   / __// /___<
+   / __// /___
   / _/ / // _ \
  /_/  /_/ \___/
 
