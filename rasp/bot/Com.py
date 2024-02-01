@@ -310,6 +310,7 @@ class RollingBasis(Teensy):
         EnablePid = b"\04"
         ResetPosition = b"\05"
         SetPID = b"\06"
+        SetHome = b'\07'
         Stop = b"\x7E"  # 7E = 126
         Invalid = b"\xFF"
 
@@ -454,13 +455,21 @@ class RollingBasis(Teensy):
             self.queue.append({self.Command.EnablePid: msg})
 
     @Logger
-    def Set_Home(self, skip_queue=False):
+    def Reset_Odo(self, skip_queue=False):
         msg = self.Command.ResetPosition
         if skip_queue or len(self.queue) == 0:
             self.queue.insert(0, {self.Command.ResetPosition: msg})
             self.send_bytes(msg)
         else:
             self.queue.append({self.Command.ResetPosition: msg})
+    
+    def Set_Home(self, x, y, theta, *,skip_queue=False):
+        msg = self.Command.SetHome + struct.pack("<fff", x,y,theta)
+        if skip_queue or len(self.queue) == 0:
+            self.queue.insert(0, {self.Command.SetHome: msg})
+            self.send_bytes(msg)
+        else:
+            self.queue.append({self.Command.SetHome: msg})
 
     def Set_PID(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
         msg = self.Command.SetPID + struct.pack("<fff", Kp, Ki, Kp)

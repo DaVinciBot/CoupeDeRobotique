@@ -9,6 +9,7 @@
 #define ENABLE_PID 4
 #define RESET_ODO 5
 #define SET_PID 6
+#define SET_HOME 7
 
 // two ways : 127 (Convention)
 #define NACK 127

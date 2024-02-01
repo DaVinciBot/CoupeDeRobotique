@@ -208,6 +208,19 @@ void set_pid(byte *msg, byte size)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
+void set_home(byte *msg, byte size)
+{
+  msg_Set_Home *home_msg = (msg_Set_Home *)msg;
+  rolling_basis_ptr->X = home_msg->x;
+  rolling_basis_ptr->Y = home_msg->y;
+  rolling_basis_ptr->THETA = home_msg->theta;
+
+  msg_Action_Finished fin_msg;
+  fin_msg.action_id = SET_HOME;
+  com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+}
+
+
 void (*functions[256])(byte *msg, byte size);
 
 extern void handle_callback(Com *com);
@@ -248,6 +261,7 @@ void setup()
   functions[ENABLE_PID] = &enable_pid,
   functions[RESET_ODO] = &reset_odo,
   functions[SET_PID] = &set_pid,
+  functions[SET_HOME] = &set_home,
 
   Serial.begin(115200);
 
