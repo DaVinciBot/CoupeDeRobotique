@@ -4,6 +4,8 @@
 #include <util/atomic.h>
 #include <messages.h>
 
+#define INACTIVE_DELAY 4000
+
 // PID
 #define MAX_PWM 200
 #define Kp 7.5
