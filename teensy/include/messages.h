@@ -60,6 +60,14 @@ struct msg_Update_Position
     float theta;
 };
 
+struct msg_Set_Home
+{
+    byte command = SET_HOME;
+    float x;
+    float y;
+    float theta;
+};
+
 struct msg_Action_Finished
 {
     byte command = ACTION_FINISHED;
