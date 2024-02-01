@@ -52,12 +52,20 @@ void Get_Orientation::compute(Point current_point, Ticks current_ticks, Rolling_
 {   
     // Compute the angle to turn
     float theta_dif = Point::angle(Point(this->target_x, this->target_y), current_point);
-    float theta = fmod((theta_dif - current_point.theta + PI), (2 * PI));
+    float theta = fmod((theta_dif - current_point.theta + PI), 2 * PI);
 
     // Add PI rad if the direction is backward
     if ((*this->direction) == backward)
         theta += PI;
 
+    // Normalize the angle between -PI and PI
+    if (theta > PI) {
+        theta -= 2 * PI;
+    } else if (theta < -PI) {
+        theta += 2 * PI;
+    }
+
+   
     // Create the step action
     this->step_action = new Step_Rotation(theta, this->speed_driver, this->precision_params);
 

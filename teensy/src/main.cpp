@@ -4,17 +4,13 @@
 #include <util/atomic.h>
 
 // Mouvement params
-#define ACTION_ERROR_AUTH 20
-#define TRAJECTORY_PRECISION 50
+#define ACTION_ERROR_AUTH 10
+#define TRAJECTORY_PRECISION 100
 #define NEXT_POSITION_DELAY 100
-#define INACTIVE_DELAY 2000
-#define RETURN_START_POSITION_DELAY 999999
-#define STOP_MOTORS_DELAY 999999
-#define DISTANCE_NEAR_START_POSITION 30.0
+#define INACTIVE_DELAY 1000
 
 // PID
-#define MAX_PWM 150
-#define LOW_PWM 80 // To use for pecise action with low speed
+#define MAX_PWM 200
 #define Kp 7.5
 #define Ki 0.0
 #define Kd 1.0
@@ -63,20 +59,25 @@ Precision_Params classic_params{
 Rolling_Basis_Ptrs rolling_basis_ptrs;
 
 /* Strat part */
-#define STRAT_SIZE 1
+#define STRAT_SIZE 4
 byte action_index = 0;
 
-Profil_params a = {80, -1.0f, 30.0};
-Profil_params d = {80, -1.0f, 10.0};
+Profil_params a = {90, -1.0f, 30.0};
+Profil_params d = {90, -1.0f, 10.0};
 
+byte max_power = 180;
+byte correction_power = 110;
 Action **strat_test = new Action *[STRAT_SIZE]
 {
-  new Go_To(Point(130.0, 0.0),  forward, Speed_Driver_From_Distance(150, 80, a, d), classic_params), 
-  //new Go_To(Point(100.0, 50.0), forward, Speed_Driver_From_Distance(150, a, d), classic_params), 
-  //new Go_To(Point(0.0, 50.0),   forward, Speed_Driver_From_Distance(150, a, d), classic_params), 
-  //new Go_To(Point(30.0, 0.0), backward, Speed_Driver_From_Distance(100, 50, 5.0), classic_params),
-  //new Go_To(Point(0.0, 0.0), backward, Speed_Driver_From_Distance(100, 50, 10.0), classic_params),
-  //new Curve_Go_To(Point(100.0, 0.0), Point(50.0, 0.0), 5, forward, Speed_Driver_From_Distance(100, 50, 0.1), classic_params),
+  new Go_To(Point(130.0, 0.0) , forward, Speed_Driver_From_Distance(max_power, correction_power, a, d), classic_params), 
+  new Go_To(Point(130.0, 50.0), forward, Speed_Driver_From_Distance(max_power, correction_power, a, d), classic_params),  
+  new Go_To(Point(0.0, 50.0) , forward, Speed_Driver_From_Distance(max_power, correction_power, a, d), classic_params),  
+  new Go_To(Point(0.0, 0.0)  , forward, Speed_Driver_From_Distance(max_power, correction_power, a, d), classic_params), 
+
+  //new Go_To(Point(50.0, 50.0), backward, Speed_Driver_From_Distance(max_power, correction_power, a, d), classic_params),  
+  //new Go_To(Point(0.0, 50.0) , backward, Speed_Driver_From_Distance(max_power, correction_power, a, d), classic_params),  
+  //new Go_To(Point(0.0, 0.0)  , backward, Speed_Driver_From_Distance(max_power, correction_power, a, d), classic_params), 
+  //new Curve_Go_To(Point(100.0, 0.0), Point(50.0, 0.0), 10, forward, Speed_Driver_From_Distance(max_power, correction_power, a, d), classic_params)
 };
 
 /******* Attach Interrupt *******/
