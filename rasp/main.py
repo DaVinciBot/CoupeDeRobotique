@@ -1,78 +1,89 @@
-#from classes.intercom_tools import intercom, send_coords, update_target_point
-from classes.tools import get_current_date
-from classes.lidar import Lidar
-from classes.pinInteract import PIN
-import math
+import time
 
-# Get Lidar
-lidar = Lidar(-math.pi, math.pi)
+from bot import MarsArena, RollingBasis, State, Lidar, Utils, Logger, Shapes
 
-# Get On Off Pin
-on_off_pin = PIN(19)
-on_off_pin.setup("OUTPUT")
+def add_op(oriented_point : Shapes.OrientedPoint)->bool:  # op stands for oriented point
+    if State.check_collisions:
+        if MarsArena.enable_go_to(State.points_list[-1],oriented_point):
+            State.points_list.append(oriented_point)
+            State.index_last_point += 1
+            return True
+        return False
+    else:
+        State.points_list.append(oriented_point)
+        State.index_last_point += 1
+        return True
+"""
+def select_action_at_position(zone : int):
+    if zone == CMD_POTAREA:
+        print("taking plant")
+    elif zone == CMD_DEPOTZONE:
+        print("deposing plant into depot zone")
+    elif zone == CMD_GARDENER:
+        print("deposing plant into gardener")
+    else:
+        print(f"zone {zone} isn't taken in charge")
+"""
 
-# Get Tirette Pin
-tirette_pin = PIN(26)
-tirette_pin.setup("input_pulldown", reverse_state=True)
+lidar = Lidar()
+arena = MarsArena(1)
+l = Logger()
+rolling_basis = RollingBasis()
+last_print = Utils.get_current_date()["date_timespamp"]
 
-# Led States
-led_lidar = PIN(13)
-led_lidar.setup("OUTPUT")
-led_start = PIN(6)
-led_start.setup("OUTPUT")
-led_time = PIN(5)
-led_time.setup("OUTPUT")
-
-# Print variables
-last_print = get_current_date()["date_timespamp"]
-
-# Init All pins states
-on_off_pin.digitalWrite(False)
-led_start.digitalWrite(False)
-led_lidar.digitalWrite(False)
-led_time.digitalWrite(False)
-
-# Return to start timing
-start_time = 0
-time_to_return_to_home = 80
-
+if State.test:
+    rolling_basis.Set_Home()
+    print(rolling_basis.odometrie)
+    time.sleep(0.01)
+    
+    
+State.start_time = Utils.get_current_date()["date_timespamp"]
+    
 while True:
-    # Get Nearest point
-    nearest_point = 0
-    try:
-        nearest_point = lidar.safe_get_nearest_point()
-        led_lidar.digitalWrite(True)
-    except:
-        led_lidar.digitalWrite(False)
+    while(State.index_destination_point<State.index_last_point+1 and not State.game_finished): # while there are points left to go through and time is under treshold 
+        # is_there an obstacle in front of the robot ? 
+        # Run authorize ?
+        try:
+            State.is_obstacle = lidar.is_obstacle_infront()
+        except Exception as e:
+            print(e)
+        State.run_auth : bool = not State.is_obstacle
+        
+        if State.test:
+            print(f"action_finished : {rolling_basis.action_finished}")
 
-    # Run authorize ?
-    run_auth = nearest_point >= 0.4 and tirette_pin.digitalRead()
+        # Go to the next point. If an obstacle is detected stop the robot
+        if not State.run_auth:
+            if State.is_moving :
+                rolling_basis.Keep_Current_Position()
+                State.is_moving = False
+        if State.run_auth and not State.is_moving:
+            rolling_basis.Go_To(State.points_list[State.index_destination_point][0])
+            State.is_moving = True
+        if rolling_basis.action_finished:
+            print(f"arrived at {State.points_list[State.index_destination_point][0]}")
+            State.index_destination_point += 1
+            State.is_moving = False
 
-    # Supervize Teensy
-    on_off_pin.digitalWrite(run_auth)
-    led_start.digitalWrite(run_auth)
+        # if time exceeds time_to_return_home then go to the starting posistion
+        if State.start_time !=0 and Utils.get_current_date()["date_timespamp"] - State.start_time > State.time_to_return_to_home:
+            if not State.test:
+                rolling_basis.Go_To(arena.home.center)
 
-    # Check if there is enought time
-    if tirette_pin.digitalRead() and start_time == 0:
-        start_time = get_current_date()["date_timespamp"]
+        # A print every 500 ms if activated
+        if State.activate_print and (Utils.get_current_date()["date_timespamp"] - last_print) > 0.5:
+            last_print = Utils.get_current_date()["date_timespamp"]
 
-    led_time.digitalWrite(
-        start_time !=0 and 
-        get_current_date()["date_timespamp"] - start_time > time_to_return_to_home
-    )
-
-    # A print every 500 ms
-    if (get_current_date()["date_timespamp"] - last_print) > 0.5:
-        last_print = get_current_date()["date_timespamp"]
-
-        print(f"#-- Lidar --#\n"
-              f"Distance: {nearest_point}\n\n"
-              f"#-- Pins --#\n"
-              f"State ON / OFF: {on_off_pin.digitalRead()}\n"
-              f"State Tirette: {tirette_pin.digitalRead()}\n"
-              f"#-- Timer (return to home) --#\n"
-              f"Timer to return: {time_to_return_to_home}\n"
-              f"Current time: {round(get_current_date()['date_timespamp'] - start_time)}\n"
-              f"#-- Run --#\n"
-              f"Auth state: {run_auth}\n")
+            print
+            (
+                f"#-- Lidar --#\n"
+                f"is_obstacle: {State.is_obstacle}\n\n"
+                f"#-- Pins --#\n"
+                #f"State Tirette: {tirette_pin.digitalRead()}\n"
+                f"#-- Timer (return to home) --#\n"
+                f"Timer to return: {State.time_to_return_to_home}\n"
+                f"Current time: {round(Utils.get_current_date()['date_timespamp'] - State.start_time)}\n"
+                f"#-- Run --#\n"
+                f"Auth State: {State.run_auth}\n"
+            )
 

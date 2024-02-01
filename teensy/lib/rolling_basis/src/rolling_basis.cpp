@@ -98,6 +98,14 @@ void Rolling_Basis::is_running_update(){
     }
 }
 
+void Rolling_Basis::reset_position(){
+    // Reset the position of the robot
+    this->X = 0.0f;
+    this->Y = 0.0f;
+    this->THETA = 0.0f;
+    this->IS_RUNNING = false;
+}
+
 // Motors action function
 void Rolling_Basis::keep_position(long current_right_ticks, long current_left_ticks) {
     this->right_motor->handle(current_right_ticks, this->standby_pwm);

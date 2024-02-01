@@ -23,6 +23,7 @@ struct Precision_Params
     unsigned int trajectory_precision;
 };
 
+
 struct Rolling_Basis_Params
 {
     int encoder_resolution;
@@ -68,6 +69,11 @@ public:
             theta = other.theta;
         }
         return *this;
+    }
+
+    bool operator==(const Point &other)
+    {
+        return x == other.x && y == other.y && theta == other.theta;
     }
 
     static float distance(Point p1, Point p2)

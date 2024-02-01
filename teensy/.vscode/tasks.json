@@ -1,0 +1,39 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Compile and flash robot1",
+            "isBuildCommand": true,
+            "dependsOn": [
+                "PlatformIO: Build",
+                "Copy Hex on remote",
+                "Flash local hex robot1"
+            ],
+            "dependsOrder": "sequence",
+            "problemMatcher": []
+        },
+        {
+            "label": "Flash local hex robot1",
+            "type": "shell",
+            "command": "ssh dvb@robot1.local 'sudo teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex; exit'",
+            "problemMatcher": []
+        },
+        {
+            "type": "PlatformIO",
+            "task": "Build",
+            "problemMatcher": [
+                "$platformio"
+            ],
+            
+            "label": "PlatformIO: Build"
+        },
+        {
+            "label": "Copy Hex on remote",
+            "type": "shell",
+            "command": "scp .pio\\build\\teensy41\\firmware.hex dvb@robot1.local:/tmp ",
+            "problemMatcher": []
+        },
+    ]
+}

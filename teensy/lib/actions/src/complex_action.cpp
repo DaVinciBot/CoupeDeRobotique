@@ -50,6 +50,14 @@ Go_To::Go_To(Point target_point, Direction direction, Speed_Driver speed_driver,
     this->precision_params = precision_params;
 }
 
+bool Go_To::operator==(Complex_Action &other)
+{
+    if (other.get_id() != GO_TO)
+        return false;
+
+    Go_To *other_go_to = (Go_To *)&other;
+    return this->target_point == other_go_to->target_point && this->direction == other_go_to->direction && !memcmp(&this->precision_params, &other_go_to->precision_params, sizeof(Precision_Params));
+}
 void Go_To::compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params)
 {
     //  Go to is simple move
@@ -81,6 +89,15 @@ Curve_Go_To::Curve_Go_To(Point target_point, Point center_point, unsigned short 
     this->direction = direction;
     this->speed_driver = speed_driver;
     this->precision_params = precision_params;
+}
+
+bool Curve_Go_To::operator==(Complex_Action &other)
+{
+    if (other.get_id() != CURVE_GO_TO)
+        return false;
+
+    Curve_Go_To *other_curve_go_to = (Curve_Go_To *)&other;
+    return this->target_point == other_curve_go_to->target_point && this->center_point == other_curve_go_to->center_point && this->interval == other_curve_go_to->interval && this->direction == other_curve_go_to->direction && !memcmp(&this->precision_params, &other_curve_go_to->precision_params, sizeof(Precision_Params));
 }
 
 void Curve_Go_To::compute(Point current_point, Ticks current_ticks, Rolling_Basis_Params *rolling_basis_params)

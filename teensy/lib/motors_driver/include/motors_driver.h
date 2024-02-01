@@ -11,16 +11,16 @@ private:
     byte pin_enca; // AttachInterrupt pin only !
     byte pin_encb; // AttachInterrupt pin only !
 
-    // PID constantes
-    float kp;
-    float kd;
-    float ki;
-
     // Variables
     int error_prev = 0;
     float error_integral = 0;
     
 public:
+    // PID constantes
+    float kp;
+    float kd;
+    float ki;
+    
     // Delta Time saver
     long prevT = 0;
     double delta_time_calculator();
