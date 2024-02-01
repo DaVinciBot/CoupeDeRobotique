@@ -359,7 +359,7 @@ class RollingBasis(Teensy):
             + struct.pack("<B", correction_trajectory_speed)
             + struct.pack("<B", acceleration_start_speed)
             + struct.pack("<f", acceleration_distance)
-            + struct.pack("<H", deceleration_end_speed)
+            + struct.pack("<B", deceleration_end_speed)
             + struct.pack("<f", deceleration_distance)
         )
         # https://docs.python.org/3/library/struct.html#format-characters
