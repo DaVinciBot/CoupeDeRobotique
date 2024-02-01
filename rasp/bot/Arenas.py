@@ -216,9 +216,9 @@ class MarsArena(Arena):
         """
         Generate the arena of the CDR 2023-2024
 
-        :param start_zone: The start zone of the robot, must be between 1 and 6
+        :param start_zone: The start zone of the robot, must be between 0 and 5
         :type start_zone: int
-        :raises ValueError: If start_zone is not between 1 and 6
+        :raises ValueError: If start_zone is not between 0 and 5
         """
         if not (start_zone >= 0 and start_zone <= 5):
             raise ValueError("start_zone must be between 0 and 5")
@@ -249,7 +249,7 @@ class MarsArena(Arena):
             (Rectangle(Point(122.5, 0), Point(77.5, 45)),False),  # 1 - Yellow
             (Rectangle(Point(200, 0), Point(155, 45)),False),  # 2 - Blue
             (Rectangle(Point(45, 255), Point(0, 300)),False),  # 3 - Yellow (Possible forbidden area)
-            (Rectangle(Point(122, 255), Point(77.5, 300)),False),  # 4 - Blue
+            (Rectangle(Point(122.5, 255), Point(77.5, 300)),False),  # 4 - Blue
             (Rectangle(Point(200, 255), Point(155, 300)),False)  # 5 - Yellow
         ]
         self.color = "blue" if start_zone % 2 == 0 else "yellow"
@@ -262,14 +262,14 @@ class MarsArena(Arena):
     def __str__(self) -> str:
         return "MarsArena"
     
-    def closest_gardener(self,actual_position : OrientedPoint, our=True, exclude_empty=True):
-        return closest_zone(self.gardeners,actual_position,our,exclude_empty,self.color)
+    def closest_gardener(self,actual_position : OrientedPoint, our=True, exclude_not_basic = True,basic =False):
+        return closest_zone(zone_bool=self.gardeners,actual_position=actual_position,our=our,exclude_not_basic=exclude_not_basic,color=self.color,basic=basic)
     
-    def closest_drop_zone(self,actual_position : OrientedPoint, our=True, exclude_empty=True):
-        return closest_zone(self.drop_zones,actual_position,our,exclude_empty,self.color)
+    def closest_drop_zone(self,actual_position : OrientedPoint, our=True, exclude_not_basic = True,basic =False):
+        return closest_zone(zone_bool=self.drop_zones,actual_position=actual_position,our=our,exclude_not_basic=exclude_not_basic,color=self.color,basic=basic)
     
-    def closest_plant_zones(self,actual_position : OrientedPoint, our=True, exclude_empty=True):
-        return closest_zone(self.plant_zones,actual_position,our,exclude_empty,self.color,True)
+    def closest_plant_zones(self,actual_position : OrientedPoint, our=True, exclude_not_basic=True,basic=True):
+        return closest_zone(zone_bool=self.plant_zones,actual_position=actual_position,our=our,exclude_not_basic=exclude_not_basic,color=self.color,basic=basic)
         
     def is_our_zone(self, zone, zones )->bool:
         """this function tells wether the given zone is in zones and that it is ours 

@@ -1,6 +1,6 @@
 import pytest
 from bot import MarsArena, Arenas
-from bot.Shapes import Point, Rectangle
+from bot.Shapes import Point, Rectangle, Circle
 
 
 class TestArena():
@@ -83,3 +83,53 @@ class TestMarsArena:
                 verif = False
                 break
         assert verif
+        
+    def test_closest_zone(self):
+        arena = MarsArena(0)
+        gardeners = [
+            (Rectangle(Point(77.5,-15), Point(45,-3)),False),  # 0 - Blue
+            (Rectangle(Point(155,-15), Point(122.5,-3)),False),  # 1 - Yellow
+            (Rectangle(Point(77.5,303), Point(45,315)),False),  # 2 - Blue
+            (Rectangle(Point(155,303), Point(122.5,315)),False),  # 3 - Yellow
+        ]
+
+        # (zone,still_plants)
+        plant_zones = [
+            (Circle(Point(70,100),250),True),
+            (Circle(Point(130,100),250),True),
+            (Circle(Point(150,150),250),True),
+            (Circle(Point(130,200),250),True),
+            (Circle(Point(70,200),250),True),
+            (Circle(Point(50,150),250),True)
+        ]
+        
+        # (zone,is_full)
+        drop_zones = [
+            (Rectangle(Point(45, 0), Point(0, 45)),False),  # 0 - Blue (Possible forbidden area)
+            (Rectangle(Point(122.5, 0), Point(77.5, 45)),False),  # 1 - Yellow
+            (Rectangle(Point(200, 0), Point(155, 45)),False),  # 2 - Blue
+            (Rectangle(Point(45, 255), Point(0, 300)),False),  # 3 - Yellow (Possible forbidden area)
+            (Rectangle(Point(122.5, 255), Point(77.5, 300)),False),  # 4 - Blue
+            (Rectangle(Point(200, 255), Point(155, 300)),False)  # 5 - Yellow
+        ]
+        p1 = Point(2,2)
+        x1 = arena.closest_drop_zone(p1,exclude_not_basic=False)
+        x2 = arena.closest_drop_zone(p1,our=False)
+        x3 = arena.closest_gardener(p1,exclude_not_basic=False)
+        x4 = arena.closest_gardener(p1,our=False)
+        x5 = arena.closest_plant_zones(p1,exclude_not_basic=False)
+        x6 = arena.closest_plant_zones(p1,our=False)
+        r1 = [drop_zones[0],drop_zones[2],drop_zones[4]]
+        r2 = [drop_zones[0],drop_zones[1],drop_zones[2],drop_zones[3],drop_zones[4],drop_zones[5]]
+        r3 = [gardeners[0],gardeners[2]]
+        r4 = [gardeners[0],gardeners[1],gardeners[2],gardeners[3]]
+        r5 = [plant_zones[0],plant_zones[2],plant_zones[4]]
+        r6 = [plant_zones[0],plant_zones[5],plant_zones[1],plant_zones[2],plant_zones[4],plant_zones[3]]
+        arena = MarsArena(1)
+        x7 = arena.closest_drop_zone(p1,exclude_not_basic=False)
+        r7 = [drop_zones[1],drop_zones[3],drop_zones[5]]
+        results = [x1,x2,x3,x4,x5,x6,x7]
+        responses = [r1,r2,r3,r4,r5,r6,r7]
+        for j in range(len(results)):
+            for i in range(len(results[j])):
+                assert results[j][i][0]==responses[j][i][0]
