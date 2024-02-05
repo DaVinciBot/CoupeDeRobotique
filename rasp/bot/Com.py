@@ -8,7 +8,7 @@ from .Shapes import OrientedPoint
 
 # Used for curve_go_to
 # DO NOT REMOVE
-def calc_tmp(a: OrientedPoint, b: OrientedPoint) -> float:  
+def calc_tmp(a: OrientedPoint, b: OrientedPoint) -> float:
     return (a.x**2 - b.x**2 + a.y**2 - b.y**2) / (2 * (a.y - b.y))
 
 
@@ -236,6 +236,7 @@ class RollingBasis(Teensy):
         self.odometrie = OrientedPoint(0.0, 0.0, 0.0)
         self.position_offset = OrientedPoint(0.0, 0.0, 0.0)
         self.current_action = None
+        self.next_action = None
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
@@ -287,13 +288,29 @@ class RollingBasis(Teensy):
                 self.l.log(f"Removing action {i} from queue : " + str(self.queue[i]))
                 self.queue.pop(i)
                 break
+            
         if len(self.queue) == 0:
             self.l.log("Queue is empty")
             self.current_action = None
-            return
-        self.send_bytes(list(self.queue[0].values())[0])
-        self.current_action = list(self.queue[0].keys())[0]
-        self.l.log("Sending next action in queue")
+        elif self.next_action != None and len(self.queue) == 1:
+            self.l.log("Action already sent and Queue empty, waiting for confirmation")
+            self.current_action = self.next_action
+            self.next_action = None
+        elif self.next_action != None:
+            self.l.log("Preshot next+1 action in queue")
+            self.send_bytes(self.Command.Preshot + list(self.queue[1].values())[0])
+            self.current_action = self.next_action
+            self.next_action = list(self.queue[1].keys())[0]
+        elif len(self.queue) > 1:
+            self.l.log("Sending the two next actions in queue")
+            self.send_bytes(list(self.queue[0].values())[0])
+            self.current_action = list(self.queue[0].keys())[0]
+            self.send_bytes(self.Command.Preshot + list(self.queue[1].values())[0])
+            self.next_action = list(self.queue[1].keys())[0]
+        else:
+            self.send_bytes(list(self.queue[0].values())[0])
+            self.current_action = list(self.queue[0].keys())[0]
+            self.l.log("Sending next action in queue")
 
     def unknowed_msg(self, msg: bytes):
         self.l.log(f"Teensy does not know the command {msg.hex()}", 1)
@@ -310,9 +327,27 @@ class RollingBasis(Teensy):
         EnablePid = b"\04"
         ResetPosition = b"\05"
         SetPID = b"\06"
-        SetHome = b'\07'
-        Stop = b"\x7E"  # 7E = 126
+        SetHome = b"\07"
+        Preshot = b"\08"
         Invalid = b"\xFF"
+        
+    def clear_queue(self):
+        """Clear the queue of actions to do, and stop the robot
+        """
+        self.queue = []
+        self.current_action = None
+        self.next_action = None
+        self.Keep_Current_Position()
+
+    def handle_queue(self, skip_queue: bool, command: bytes, msg: bytes):
+        """
+        Permet de gérer la queue d'actions, notamment d'envoyer la prochaine action si nécessaire
+        """
+        if skip_queue or len(self.queue) == 0:
+            self.queue.insert(0, {command: msg})
+            self.send_bytes(msg)
+        else:
+            self.queue.append({command: msg})
 
     @Logger
     def Go_To(
@@ -364,11 +399,7 @@ class RollingBasis(Teensy):
             + struct.pack("<f", deceleration_distance)
         )
         # https://docs.python.org/3/library/struct.html#format-characters
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.GoToPoint: msg})
-            self.send_bytes(msg)
-        else:
-            self.queue.append({self.Command.GoToPoint: msg})
+        self.handle_queue(skip_queue, self.Command.GoToPoint, msg)
 
     @Logger
     def curve_go_to(
@@ -419,65 +450,35 @@ class RollingBasis(Teensy):
             + struct.pack("<H", action_error_auth)  # error_auth
             + struct.pack("<H", traj_precision)  # precision
         )
-        if skip_queue or len(self.queue) == 0:
-            self.l.log("Skipping Queue ...")
-            self.queue.insert(0, {self.Command.CurveGoTo: curve_msg})
-            self.l.log(self.queue)
-            self.send_bytes(curve_msg)
-        else:
-            self.queue.append({self.Command.CurveGoTo: curve_msg})
+        self.handle_queue(skip_queue, self.Command.CurveGoTo, curve_msg)
 
     @Logger
     def Keep_Current_Position(self, skip_queue=False):
         msg = self.Command.KeepCurrentPosition
-        if skip_queue:
-            self.queue.insert(0, {self.Command.KeepCurrentPosition: msg})
-            self.send_bytes(msg)
-        else:
-            self.queue.append({self.Command.KeepCurrentPosition: msg})
+        self.handle_queue(skip_queue, self.Command.KeepCurrentPosition, msg)
 
     @Logger
     def Disable_Pid(self, skip_queue=False):
         msg = self.Command.DisablePid
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.DisablePid: msg})
-            self.send_bytes(msg)
-        else:
-            self.queue.append({self.Command.DisablePid: msg})
+        self.handle_queue(skip_queue, self.Command.DisablePid, msg)
 
     @Logger
     def Enable_Pid(self, skip_queue=False):
         msg = self.Command.EnablePid
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.EnablePid: msg})
-            self.send_bytes(msg)
-        else:
-            self.queue.append({self.Command.EnablePid: msg})
+        self.handle_queue(skip_queue, self.Command.EnablePid, msg)
 
     @Logger
     def Reset_Odo(self, skip_queue=False):
         msg = self.Command.ResetPosition
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.ResetPosition: msg})
-            self.send_bytes(msg)
-        else:
-            self.queue.append({self.Command.ResetPosition: msg})
-    
-    def Set_Home(self, x, y, theta, *,skip_queue=False):
-        msg = self.Command.SetHome + struct.pack("<fff", x,y,theta)
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.SetHome: msg})
-            self.send_bytes(msg)
-        else:
-            self.queue.append({self.Command.SetHome: msg})
+        self.handle_queue(skip_queue, self.Command.ResetPosition, msg)
+
+    def Set_Home(self, x, y, theta, *, skip_queue=False):
+        msg = self.Command.SetHome + struct.pack("<fff", x, y, theta)
+        self.handle_queue(skip_queue, self.Command.SetHome, msg)
 
     def Set_PID(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
         msg = self.Command.SetPID + struct.pack("<fff", Kp, Ki, Kp)
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.SetPID: msg})
-            self.send_bytes(msg)
-        else:
-            self.queue.append({self.Command.SetPID: msg})
+        self.handle_queue(skip_queue, self.Command.SetPID, msg)
 
 
 class Actuators(Teensy):

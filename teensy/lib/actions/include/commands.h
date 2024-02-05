@@ -10,6 +10,7 @@
 #define RESET_ODO 5
 #define SET_PID 6
 #define SET_HOME 7
+#define PRESHOT 8
 
 // two ways : 127 (Convention)
 #define NACK 127

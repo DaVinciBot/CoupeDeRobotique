@@ -53,6 +53,7 @@ Rolling_Basis_Ptrs rolling_basis_ptrs;
 Com *com;
 
 Complex_Action *current_action = nullptr;
+Complex_Action *next_action = nullptr;
 
 void swap_action(Complex_Action *new_action)
 {
@@ -79,29 +80,25 @@ void go_to(byte *msg, byte size)
       go_to_msg->traj_precision,
   };
 
-  Profil_params acceleration {
-    go_to_msg->acceleration_start_speed,
-    -1.0f,
-    go_to_msg->acceleration_distance
-  };
+  Profil_params acceleration{
+      go_to_msg->acceleration_start_speed,
+      -1.0f,
+      go_to_msg->acceleration_distance};
 
-  Profil_params deceleration {
-    go_to_msg->deceleration_end_speed,
-    -1.0f,
-    go_to_msg->deceleration_distance
-  };
+  Profil_params deceleration{
+      go_to_msg->deceleration_end_speed,
+      -1.0f,
+      go_to_msg->deceleration_distance};
 
   Go_To *new_action = new Go_To(
-    target_point, 
-    go_to_msg->is_forward ? forward : backward, 
-    Speed_Driver_From_Distance(
-      go_to_msg->max_speed,
-      go_to_msg->correction_trajectory_speed,
-      acceleration,
-      deceleration
-    ),
-    params
-  );
+      target_point,
+      go_to_msg->is_forward ? forward : backward,
+      Speed_Driver_From_Distance(
+          go_to_msg->max_speed,
+          go_to_msg->correction_trajectory_speed,
+          acceleration,
+          deceleration),
+      params);
 
   swap_action(new_action);
   com->print("swap action");
@@ -197,6 +194,21 @@ void set_home(byte *msg, byte size)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
+void preshot(byte *msg, byte size)
+{
+  // get the second byte to get the data type
+  msg_Preshot *preshot_msg = (msg_Preshot *)msg;
+  byte msg_type = preshot_msg->msg_type;
+
+  //create a blob with data type + data
+  byte data[250];
+  data[0] = msg_type;
+  for (int i = 0; i < 249; i++)
+  {
+    data[i+1] = preshot_msg->data[i];
+  }
+  functions[msg_type](data, 250);
+}
 
 void (*functions[256])(byte *msg, byte size);
 
@@ -239,6 +251,7 @@ void setup()
   functions[RESET_ODO] = &reset_odo,
   functions[SET_PID] = &set_pid,
   functions[SET_HOME] = &set_home,
+  functions[PRESHOT] = &preshot,
 
   Serial.begin(115200);
 
@@ -298,7 +311,8 @@ void handle()
 {
   if (current_action == nullptr || current_action->is_finished())
   {
-    if (keep_curr_pos_when_no_action){
+    if (keep_curr_pos_when_no_action)
+    {
       rolling_basis_ptr->keep_position(last_ticks_position.right, last_ticks_position.left);
     }
     return;
@@ -308,17 +322,16 @@ void handle()
   last_ticks_position = rolling_basis_ptr->get_current_ticks();
 
   current_action->handle(
-    current_position,
-    last_ticks_position,
-    &rolling_basis_ptrs
-  );
+      current_position,
+      last_ticks_position,
+      &rolling_basis_ptrs);
 
   if (current_action->is_finished())
   {
-    com->print("action finished");
     msg_Action_Finished fin_msg;
     fin_msg.action_id = current_action->get_id();
     com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+    swap_action(next_action);
   }
 }
 
