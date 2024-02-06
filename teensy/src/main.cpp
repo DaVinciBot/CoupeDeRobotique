@@ -55,7 +55,9 @@ Com *com;
 Complex_Action *current_action = nullptr;
 Complex_Action *next_action = nullptr;
 
-void swap_action(Complex_Action *new_action)
+bool keep_curr_pos_when_no_action = true;
+
+void swap_action(Complex_Action *new_action, bool is_preshot = false)
 {
   // implémentation des destructeurs manquante
   if (current_action == new_action)
@@ -65,14 +67,20 @@ void swap_action(Complex_Action *new_action)
   }
   if (current_action != nullptr)
     free(current_action);
-  current_action = new_action;
+  if (is_preshot)
+  {
+    next_action = new_action;
+  }
+  else
+  {
+    current_action = new_action;
+  }
 }
 
-void go_to(byte *msg, byte size)
+void go_to(byte *msg, byte size, bool is_preshot = false)
 {
   msg_Go_To *go_to_msg = (msg_Go_To *)msg;
   Point target_point(go_to_msg->x, go_to_msg->y, 0.0f);
-  com->print("go_to");
 
   Precision_Params params{
       go_to_msg->next_position_delay,
@@ -100,11 +108,10 @@ void go_to(byte *msg, byte size)
           deceleration),
       params);
 
-  swap_action(new_action);
-  com->print("swap action");
+  swap_action(new_action, is_preshot);
 }
 /*
-void curve_go_to(byte *msg, byte size)
+void curve_go_to(byte *msg, byte size, bool is_preshot = false)
 {
   msg_Curve_Go_To *curve_msg = (msg_Curve_Go_To *)msg;
 
@@ -122,9 +129,8 @@ void curve_go_to(byte *msg, byte size)
 }*/
 
 // Whether to keep position when no action is active
-bool keep_curr_pos_when_no_action = true;
 
-void keep_current_position(byte *msg, byte size)
+void keep_current_position(byte *msg, byte size, bool is_preshot = false)
 {
   free(current_action);
   current_action = nullptr;
@@ -137,7 +143,7 @@ void keep_current_position(byte *msg, byte size)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void disable_pid(byte *msg, byte size)
+void disable_pid(byte *msg, byte size, bool is_preshot = false)
 {
   keep_curr_pos_when_no_action = false;
 
@@ -146,7 +152,7 @@ void disable_pid(byte *msg, byte size)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void enable_pid(byte *msg, byte size)
+void enable_pid(byte *msg, byte size, bool is_preshot = false)
 {
   // last_ticks_position = rolling_basis_ptr->get_current_ticks();
   keep_curr_pos_when_no_action = true;
@@ -156,7 +162,7 @@ void enable_pid(byte *msg, byte size)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void reset_odo(byte *msg, byte size)
+void reset_odo(byte *msg, byte size, bool is_preshot = false)
 {
   rolling_basis_ptr->reset_position();
 
@@ -165,7 +171,7 @@ void reset_odo(byte *msg, byte size)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void set_pid(byte *msg, byte size)
+void set_pid(byte *msg, byte size, bool is_preshot = false)
 {
   msg_Set_PID *pid_msg = (msg_Set_PID *)msg;
   // Update motors PID
@@ -182,7 +188,7 @@ void set_pid(byte *msg, byte size)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void set_home(byte *msg, byte size)
+void set_home(byte *msg, byte size, bool is_preshot = false)
 {
   msg_Set_Home *home_msg = (msg_Set_Home *)msg;
   rolling_basis_ptr->X = home_msg->x;
@@ -194,7 +200,11 @@ void set_home(byte *msg, byte size)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void preshot(byte *msg, byte size)
+
+
+void (*functions[256])(byte *msg, byte size, bool is_preshot);
+
+void preshot(byte *msg, byte size, bool is_preshot = false)
 {
   // get the second byte to get the data type
   msg_Preshot *preshot_msg = (msg_Preshot *)msg;
@@ -207,10 +217,8 @@ void preshot(byte *msg, byte size)
   {
     data[i+1] = preshot_msg->data[i];
   }
-  functions[msg_type](data, 250);
+  functions[msg_type](data, 250, true);
 }
-
-void (*functions[256])(byte *msg, byte size);
 
 extern void handle_callback(Com *com);
 
@@ -281,7 +289,6 @@ void setup()
 }
 
 int counter = 0;
-int cooldown = 0;
 
 void loop()
 {

@@ -21,7 +21,7 @@
 #define STRING 130
 #define UNKNOWN_MSG_TYPE 255
 
-extern void (*functions[256])(byte *msg, byte size);
+extern void (*functions[256])(byte *msg, byte size, bool is_preshot);
 extern void handle_callback(Com *com);
 
 struct msg_Unknown_Msg_Type
