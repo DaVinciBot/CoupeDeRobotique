@@ -365,8 +365,8 @@ class Actuators(Teensy):
         if self.ultrasonics_pins.__contains__((pin_trig,pin_echo)):
             msg = (
                     self.Command.ReadUltrasonic
-                    + struct.pack("<b", pin_trig)
-                    + struct.pack("<b", pin_echo)
+                    + struct.pack("<B", pin_trig)
+                    + struct.pack("<B", pin_echo)
                 )
                 # https://docs.python.org/3/library/struct.html#format-characters
             self.send_bytes(msg)
