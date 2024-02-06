@@ -83,6 +83,8 @@ class Teensy:
         self.last_message = None
         self.end_bytes = b"\xBA\xDD\x1C\xC5"
         self.l = Logger()
+        self.end_bytes = b"\xBA\xDD\x1C\xC5"
+        self.l = Logger()
 
         for port in serial.tools.list_ports.comports():
             if port.vid == vid and port.pid == pid and int(port.serial_number) == ser:
@@ -109,7 +111,9 @@ class Teensy:
             case "bad_crc":
                 self._teensy.reset_output_buffer()
                 msg = b"\xFF\xFF\xEE\x66"
+                msg = b"\xFF\xFF\xEE\x66"
                 self.last_message = msg
+                self._teensy.write(msg + bytes([len(msg)]) + b"\x00" + self.end_bytes)
                 self._teensy.write(msg + bytes([len(msg)]) + b"\x00" + self.end_bytes)
                 while self._teensy.out_waiting:
                     pass
@@ -120,11 +124,16 @@ class Teensy:
                 self._teensy.write(
                     msg + bytes([len(msg) + 1]) + b"\x00" + self.end_bytes
                 )
+                msg = b"\xFF\xFF\xEE\x66"
+                self._teensy.write(
+                    msg + bytes([len(msg) + 1]) + b"\x00" + self.end_bytes
+                )
                 while self._teensy.out_waiting:
                     pass
                 return
             case "bad_id":
                 self._teensy.reset_output_buffer()
+                msg = b"\x2F\xFF\xEE\x66"
                 msg = b"\x2F\xFF\xEE\x66"
                 msg += bytes([len(msg)])
                 self._crc8.reset()
@@ -132,11 +141,13 @@ class Teensy:
                 msg += self._crc8.digest()
                 self._crc8.reset()
                 self._teensy.write(msg + self.end_bytes)
+                self._teensy.write(msg + self.end_bytes)
                 while self._teensy.out_waiting:
                     pass
                 return
             case "send_nack":
                 self._teensy.reset_output_buffer()
+                msg = b"\x7F"
                 msg = b"\x7F"
                 msg += bytes([len(msg)])
                 self._crc8.reset()
@@ -144,9 +155,12 @@ class Teensy:
                 msg += self._crc8.digest()
                 self._crc8.reset()
                 self._teensy.write(msg + self.end_bytes)
+                self._teensy.write(msg + self.end_bytes)
                 while self._teensy.out_waiting:
                     pass
                 return
+
+    def send_bytes(self, data: bytes):
 
     def send_bytes(self, data: bytes):
         self.last_message = data
@@ -159,9 +173,12 @@ class Teensy:
             self._crc8.reset()
 
         self._teensy.write(msg + self.end_bytes)
+        self._teensy.write(msg + self.end_bytes)
         while self._teensy.out_waiting:
             pass
 
+    def read_bytes(self) -> bytes:
+        return self._teensy.read_until(self.end_bytes)
     def read_bytes(self) -> bytes:
         return self._teensy.read_until(self.end_bytes)
 
@@ -176,10 +193,12 @@ class Teensy:
 
         The size is in bytes.
         It will call the corresponding function
+        It will call the corresponding function
         """
         while True:
             msg = self.read_bytes()
 
+            if self.crc:
             if self.crc:
                 crc = msg[-5:-4]
                 msg = msg[:-5]
@@ -191,6 +210,7 @@ class Teensy:
                     self._crc8.reset()
                     continue
                 self._crc8.reset()
+
 
             else:
                 msg = msg[:-4]
@@ -208,16 +228,21 @@ class Teensy:
                 if msg[0] == 127:
                     self.l.log("Received a NACK")
                     if self.last_message != None:
+                    self.l.log("Received a NACK")
+                    if self.last_message != None:
                         self.send_bytes(self.last_message)
                         self.l.log(f"Sending back action : {self.last_message[0]}")
                         self.last_message = None
                 else:
+                else:
                     self.messagetype[msg[0]](msg[1:-1])
             except Exception as e:
+                self.l.log("Received message handling crashed :\n" + str(e.args), 2)
                 self.l.log("Received message handling crashed :\n" + str(e.args), 2)
                 time.sleep(0.5)
 
 
+class RollingBasis(Teensy):
 class RollingBasis(Teensy):
     ######################
     # Rolling basis init #
@@ -275,7 +300,13 @@ class RollingBasis(Teensy):
             struct.unpack("<f", msg[4:8])[0],
             struct.unpack("<f", msg[8:12])[0],
         )
+        self.odometrie = OrientedPoint(
+            struct.unpack("<f", msg[0:4])[0],
+            struct.unpack("<f", msg[4:8])[0],
+            struct.unpack("<f", msg[8:12])[0],
+        )
 
+    @Logger
     def rcv_action_finish(self, msg: bytes):
         self.l.log("Action finished : " + msg.hex())
         if not self.queue or len(self.queue) == 0:
@@ -340,11 +371,11 @@ class RollingBasis(Teensy):
         :type direction: bool, optional
         :param speed: Vitesse du déplacement, defaults to b'\x64'
         :type speed: bytes, optional
-        :param next_position_delay: delay avant la prochaine position, defaults to 100
+        :param next_position_delay: delay avant la prochaine position, defaults to 100 en ticks roue codeuse
         :type next_position_delay: int, optional
-        :param action_error_auth: l'erreur autorisé dans le déplacement, defaults to 20
+        :param action_error_auth: l'erreur autorisée dans le déplacement, defaults to 20 en ticks roue codeuse
         :type action_error_auth: int, optional
-        :param traj_precision: la précision du déplacement, defaults to 50
+        :param traj_precision: la précision du déplacement, defaults to 50 en ticks roue codeuse
         :type traj_precision: int, optional
         """
         pos = self.true_pos(position)
@@ -487,16 +518,37 @@ class Actuators(Teensy):
         pid: int = 1155,
         baudrate: int = 115200,
         crc: bool = True,
-        pin_servos: list[int] = SERVOS_PIN,
+        # Pins of the servos (int), the maximum of pin is 12
+        servos_pin : list[int] = SERVOS_PIN,
+        ultrasonics_pins : list[(int,int)] = ULTRASONICS_PINS,
     ):
         super().__init__(vid, pid, baudrate, crc)
-        self.pin_servos = pin_servos
-
+        self.pin_servos = servos_pin
+        self.ultrasonics_pins = ultrasonics_pins
+        self.distances_ultrasonic = []
+        """
+        This is used to match a handling function to a message type.
+        add_callback can also be used.
+        """
+        self.messagetype = {
+            130 : self.rcv_ultrasonic_call_back,
+            255: self.unknown_msg
+        }
     class Command:  # values must correspond to the one defined on the teensy
         ServoGoTo = b"\x01"
+        ReadUltrasonic = b"\x02"
 
     def __str__(self) -> str:
         return self.__class__.__name__
+        
+    def get_accurate_ultrasound_distance(self, nb_measure : int, delay_milis : float):
+        for _ in range(nb_measure):
+            self.read_ultrasonic()
+            time.sleep(delay_milis/1000)
+        time.sleep(delay_milis/1000)
+        try : return sum(self.distances_ultrasonic)/len(self.distances_ultrasonic)
+        except : return -1
+        
 
     #########################
     # User facing functions #
@@ -506,11 +558,12 @@ class Actuators(Teensy):
     def servo_go_to(
         self, pin: int, angle: int, min_angle: int = 0, max_angle: int = 180
     ):
+        if not self.pin_servos.__contains__(pin) : raise ValueError 
         if angle >= min_angle and angle <= max_angle:
             msg = (
                 self.Command.ServoGoTo
                 + struct.pack("<B", pin)
-                + struct.pack("B", angle)
+                + struct.pack("<B", angle)
             )
             # https://docs.python.org/3/library/struct.html#format-characters
             self.send_bytes(msg)
@@ -518,3 +571,28 @@ class Actuators(Teensy):
             print(
                 f"you tried to write {angle}° on pin {pin} wheras angle must be between {min_angle} and {max_angle}°"
             )
+            
+    @Logger
+    def read_ultrasonic(self,pin_trig : int, pin_echo : int):
+        if self.ultrasonics_pins.__contains__((pin_trig,pin_echo)):
+            msg = (
+                    self.Command.ReadUltrasonic
+                    + struct.pack("<B", pin_trig)
+                    + struct.pack("<B", pin_echo)
+                )
+                # https://docs.python.org/3/library/struct.html#format-characters
+            self.send_bytes(msg)
+        
+    #############################
+    # Received message handling #
+    #############################
+    
+    def unknown_msg(self, msg: bytes):
+        self.l.log(f"Teensy does not know the command {msg.hex()}")
+
+    @Logger
+    def rcv_ultrasonic_call_back(self, msg: bytes):
+        self.distances_ultrasonic.append(
+            struct.unpack("<b", msg[0])[0],
+        )
+        

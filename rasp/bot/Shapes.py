@@ -16,10 +16,17 @@ class Point:
         return f"Point(x={self.x}, y={self.y})"
 
     def __eq__(self, p: object) -> bool:
-        if isinstance(p, Point):
+        if isinstance(p, (Point,OrientedPoint)):
             return self.x == p.x and self.y == p.y
         else:
-            return super().__eq__(p)
+            False
+    
+    def __round__(self,nb_digits : int = None)->None:
+        self.x = self.x.__round__(nb_digits)
+        self.y = self.y.__round__(nb_digits)
+        
+    def to_OrientedPoint(self):
+        return OrientedPoint(self.x,self.y)
 
     @staticmethod
     def get_distance(p1, p2, nb_digits: int = 2):
@@ -54,6 +61,9 @@ class Point:
             ),
             nb_digits,
         )
+    
+    def to_OrientedPOint(self):
+        return OrientedPoint(self.x,self.y)
 
 
 class OrientedPoint(Point):
@@ -72,6 +82,20 @@ class OrientedPoint(Point):
 
     def __str__(self) -> str:
         return f"Point(x={self.x}, y={self.y}, theta={self.theta})"
+    
+    def __eq__(self, p: object) -> bool:
+        if isinstance(p, OrientedPoint):
+            return super().__eq__(p) and self.theta == p.theta
+        if isinstance(p,Point):
+            return super().__eq__(p)
+        else : return False
+    
+    def __round__(self, nb_digits: int = None)->None:
+        super().__round__(nb_digits)
+        self.theta = self.theta.__round__(nb_digits)
+        
+    def to_Point(self):
+        return Point(self.x,self.y)
 
 
 class Circle:
@@ -80,9 +104,16 @@ class Circle:
             raise TypeError("center must be a Point")
         self.center = center
         self.radius = radius
+        
+    def __eq__(self, __value: object) -> bool:
+        if isinstance(__value,Circle):
+            return self.center==__value.center and self.radius==__value.radius
 
     def __str__(self) -> str:
         return f"Circle(\n\tcenter : {self.center}\n\tradius : {self.radius})"
+    
+    def is_in(self, point : Point)->bool:
+        return math.sqrt(math.Pow(point.x-self.center.x,2)+math.Pow(point.y-self.center.y,2))<= self.radius
 
 
 class Rectangle:
@@ -103,10 +134,15 @@ class Rectangle:
         )
 
     def are_valid(self, corner: Point, opposite_corner: Point) -> bool:
-        return not (corner.x > opposite_corner.x or corner.y > opposite_corner.y)
+        return corner.x>=opposite_corner.x and corner.y<=opposite_corner.y
 
     def __str__(self):
         return f"Rectangle(corner = {self.corner.__str__()},opposite_corner = {self.opposite_corner.__str__()},center = {self.center.__str__()})"
+    
+    def __eq__(self, __value: object) -> bool:
+        if isinstance(__value, Rectangle):
+            return self.corner == __value.corner and self.opposite_corner == __value.opposite_corner
+        return False
 
     def get_distance_between_centers(self, r, nb_digits: int = 2) -> float:
         """return the distance between its center and the center of another rectangle
@@ -122,8 +158,8 @@ class Rectangle:
 
     def is_in(self, point: Point) -> bool:
         return (
-            point.x <= self.opposite_corner.x
+            point.x >= self.opposite_corner.x
             and point.y <= self.opposite_corner.y
-            and point.x >= self.corner.x
+            and point.x <= self.corner.x
             and point.y >= self.corner.y
         )

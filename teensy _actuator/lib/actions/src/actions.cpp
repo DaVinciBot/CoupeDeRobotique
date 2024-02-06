@@ -20,10 +20,19 @@ void handle_callback(Com *com)
     }
 }
 
-/// @brief if the given servo exists this function enables to write the given angle on it  
+/// @brief writes the angle on the given servo
 /// @param servo a pointer to an instance of Servo_Motor
 /// @param angle the angle to write of the servo
 void servo_go_to(Servo* servo, int angle)
 {
     servo->write(angle);
+}
+
+/// @brief create a msg representing a measure on the ultrasonic sensor
+/// @param ultrasonic 
+msg_Ultrasonic_Call_Back ultrasonic_read(Ultrasonic* ultrasonic)
+{
+    msg_Ultrasonic_Call_Back ultrasonic_msg = *new msg_Ultrasonic_Call_Back();
+    ultrasonic_msg.distance = ultrasonic->read();
+    return ultrasonic_msg;
 }

@@ -1,12 +1,13 @@
-from .Shapes import Point, Rectangle
-
+from bot.Shapes import Point, Rectangle, Circle, OrientedPoint
+from typing import Union
+from bot.tools import closest_zone
 
 class Arena:
     """Represent an arena"""
 
     def __init__(
         self,
-        area: Rectangle = Rectangle(Point(0, 0), Point(200, 300)),
+        area: Rectangle = Rectangle(Point(200, 0), Point(0, 300)),
         forbidden_area: Rectangle = Rectangle(Point(0, 0), Point(0, 0)),
         home: Rectangle = Rectangle(Point(0, 0), Point(0, 0)),
     ):
@@ -60,12 +61,9 @@ class Arena:
         # verify that the point is in the arena and do not collide with boarders
         distance = robot_length / 2
         valid_area = Rectangle(
-            Point(distance, distance),
-            Point(
-                self.area.opposite_corner.x - distance,
-                self.area.opposite_corner.y - distance,
-            ),
-        )
+            Point(self.area.corner.x-distance, distance),
+            Point(distance,self.area.opposite_corner.y - distance)
+            )
         if not valid_area.is_in(destination_point):
             return False
 
@@ -73,20 +71,20 @@ class Arena:
         if destination_point.x == starting_point.x:  # line = |
             # Check for collisions with the forbidden area
             if (
-                destination_point.x >= self.forbidden_area.corner.x
-                and destination_point.x <= self.forbidden_area.opposite_corner.x
+                destination_point.x <= self.forbidden_area.corner.x
+                and destination_point.x >= self.forbidden_area.opposite_corner.x
             ):
                 return False
             elif (
-                destination_point.x - robot_width >= self.forbidden_area.corner.x
+                destination_point.x - robot_width <= self.forbidden_area.corner.x
                 and destination_point.x - robot_width
-                <= self.forbidden_area.opposite_corner.x
+                >= self.forbidden_area.opposite_corner.x
             ):
                 return False
             elif (
-                destination_point.x + robot_width >= self.forbidden_area.corner.x
+                destination_point.x + robot_width <= self.forbidden_area.corner.x
                 and destination_point.x + robot_width
-                <= self.forbidden_area.opposite_corner.x
+                >= self.forbidden_area.opposite_corner.x
             ):
                 return False
             else:
@@ -147,6 +145,7 @@ class Arena:
             or self.forbidden_area.is_in(c4)
         ):
             return False
+            
         # Calculate collision points between the right side line and the forbidden area's sides
         c1 = Point(
             self.forbidden_area.corner.x,
@@ -198,6 +197,16 @@ class Arena:
         ):
             return False
         return True
+            
+    def __str__(self) -> str:
+        return "Arena"
+    
+    def display(self)->str:
+        return f"""{self.__str__}: \n
+        \tArea : {self.area}
+        \tForbidden area : {self.forbidden_area}
+        \tHome : {self.home}
+        """
 
 
 class MarsArena(Arena):
@@ -207,38 +216,80 @@ class MarsArena(Arena):
         """
         Generate the arena of the CDR 2023-2024
 
-        :param start_zone: The start zone of the robot, must be between 1 and 6
+        :param start_zone: The start zone of the robot, must be between 0 and 5
         :type start_zone: int
-        :raises ValueError: If start_zone is not between 1 and 6
+        :raises ValueError: If start_zone is not between 0 and 5
         """
-        if not (start_zone >= 1 and start_zone <= 6):
-            raise ValueError("start_zone must be between 1 and 6")
-        origin = Point(0, 0)
-        opposite_corner = Point(200, 300)
-        zones = [
-            Rectangle(Point(0, 0), Point(45, 45)),  # 1 - Blue (Possible forbidden area)
-            Rectangle(Point(77.5, 0), Point(122.5, 45)),  # 2 - Yellow
-            Rectangle(Point(155, 0), Point(200, 45)),  # 3 - Blue
-            Rectangle(
-                Point(0, 255), Point(45, 300)
-            ),  # 4 - Yellow (Possible forbidden area)
-            Rectangle(Point(77.5, 255), Point(122, 300)),  # 5 - Blue
-            Rectangle(Point(155, 255), Point(200, 300)),  # 6 - Yellow
+        if not (start_zone >= 0 and start_zone <= 5):
+            raise ValueError("start_zone must be between 0 and 5")
+        origin = Point(200, 0)
+        opposite_corner = Point(0, 300)
+        
+        # (zone,is_full)
+        self.gardeners = [
+            (Rectangle(Point(77.5,-15), Point(45,-3)),False),  # 0 - Blue
+            (Rectangle(Point(155,-15), Point(122.5,-3)),False),  # 1 - Yellow
+            (Rectangle(Point(77.5,303), Point(45,315)),False),  # 2 - Blue
+            (Rectangle(Point(155,303), Point(122.5,315)),False),  # 3 - Yellow
         ]
-        self.color = "yellow" if start_zone % 2 == 0 else "blue"
+
+        # (zone,still_plants)
+        self.plant_zones = [
+            (Circle(Point(70,100),250),True),
+            (Circle(Point(130,100),250),True),
+            (Circle(Point(150,150),250),True),
+            (Circle(Point(130,200),250),True),
+            (Circle(Point(70,200),250),True),
+            (Circle(Point(50,150),250),True)
+        ]
+        
+        # (zone,is_full)
+        self.drop_zones = [
+            (Rectangle(Point(45, 0), Point(0, 45)),False),  # 0 - Blue (Possible forbidden area)
+            (Rectangle(Point(122.5, 0), Point(77.5, 45)),False),  # 1 - Yellow
+            (Rectangle(Point(200, 0), Point(155, 45)),False),  # 2 - Blue
+            (Rectangle(Point(45, 255), Point(0, 300)),False),  # 3 - Yellow (Possible forbidden area)
+            (Rectangle(Point(122.5, 255), Point(77.5, 300)),False),  # 4 - Blue
+            (Rectangle(Point(200, 255), Point(155, 300)),False)  # 5 - Yellow
+        ]
+        self.color = "blue" if start_zone % 2 == 0 else "yellow"
         super().__init__(
             area=Rectangle(origin, opposite_corner),
-            forbidden_area=zones[(start_zone % 2) * 3],
-            home=zones[start_zone - 1],
+            forbidden_area=self.drop_zones[(start_zone % 2) * 3][0],
+            home=self.drop_zones[start_zone - 1][0],
         )
 
     def __str__(self) -> str:
         return "MarsArena"
     
+    def closest_gardener(self,actual_position : OrientedPoint, our=True, exclude_not_basic = True,basic =False):
+        return closest_zone(zone_bool=self.gardeners,actual_position=actual_position,our=our,exclude_not_basic=exclude_not_basic,color=self.color,basic=basic)
+    
+    def closest_drop_zone(self,actual_position : OrientedPoint, our=True, exclude_not_basic = True,basic =False):
+        return closest_zone(zone_bool=self.drop_zones,actual_position=actual_position,our=our,exclude_not_basic=exclude_not_basic,color=self.color,basic=basic)
+    
+    def closest_plant_zones(self,actual_position : OrientedPoint, our=True, exclude_not_basic=True,basic=True):
+        return closest_zone(zone_bool=self.plant_zones,actual_position=actual_position,our=our,exclude_not_basic=exclude_not_basic,color=self.color,basic=basic)
+        
+    def is_our_zone(self, zone, zones )->bool:
+        """this function tells wether the given zone is in zones and that it is ours 
+
+        Args:
+            zone (_type_): the zone to serch for
+            zones (list[(type(zone),bool)]): the list of zones to serch in. 
+
+        Returns:
+            bool: is zone in zones
+        """
+        for i in range(0,len(zones)):
+            if zones[i][0]==zone:
+                if self.color == "blue": return i%2 == 0
+                else: return i%2 != 0
+                
+
     def display(self)->str:
-        return f"""MarsArena: \n
+        return f"""{self.__str__}: \n
         \tArea : {self.area}
         \tForbidden area : {self.forbidden_area}
         \tHome : {self.home}
         """
-        
