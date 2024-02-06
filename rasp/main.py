@@ -6,7 +6,7 @@ from bot.utils import Utils
 from bot.logger import Logger
 
 def go_to(__object : object,  distance = 0, nb_digits : int = 2, closer = True)->bool:
-    destination_point = compute_go_to_destination(rolling_basis.odometrie,__object,distance,nb_digits=nb_digits,closer=True)
+    destination_point = compute_go_to_destination(rolling_basis.odometrie,__object,distance,nb_digits=nb_digits,closer=closer)
     if isinstance(destination_point,OrientedPoint):
         if State.go_to_verif:
             if arena.enable_go_to():
@@ -18,7 +18,7 @@ def go_to(__object : object,  distance = 0, nb_digits : int = 2, closer = True)-
     return False
 
 lidar = Lidar()
-arena = MarsArena(1)
+arena = MarsArena(0)
 l = Logger()
 rolling_basis = RollingBasis()
 actuators = Actuators()
