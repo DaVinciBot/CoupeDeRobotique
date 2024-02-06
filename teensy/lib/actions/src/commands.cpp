@@ -11,7 +11,7 @@ void handle_callback(Com *com)
 
         if (functions[msg[0]] != 0) // verifies if the id of the function received by com is defined
         {
-            functions[msg[0]](msg, size); // call the function by it's id and with the parameters received by com
+            functions[msg[0]](msg, size, false); // call the function by it's id and with the parameters received by com
         }
         else if (msg[0] == NACK)
         {
