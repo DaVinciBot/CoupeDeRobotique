@@ -68,10 +68,9 @@ byte *Com::read_buffer()
 
 void Com::send_msg(byte *msg, byte size, bool is_nack = false)
 {
-    if (!is_nack)
-        free(this->last_msg);
-        this->last_msg = new last_message();
-        this->last_msg->size = size;
+    if (!is_nack) free(this->last_msg);
+    this->last_msg = new last_message();
+    this->last_msg->size = size;
     CRC crc;
     // add size at the end of msg
     byte *full_msg = new byte[size + 1];
