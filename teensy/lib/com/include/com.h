@@ -7,6 +7,13 @@ struct last_message
     byte size;
     byte msg[256];
 };
+struct msg_Preshot
+{
+    byte command = 126;
+    byte msg_type;
+    byte data_size;
+    byte data[248];
+};
 class Com {
 
 private:
@@ -23,5 +30,6 @@ public:
     void send_msg(byte *msg, byte size, bool is_nack = false);
     void print(char* text);
     last_message* last_msg = new last_message();
+    msg_Preshot* next_action = new msg_Preshot();
 };
 
