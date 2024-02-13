@@ -14,7 +14,7 @@ class Point:
 
     def __str__(self) -> str:
         return f"Point(x={self.x}, y={self.y})"
-    
+
     def __repr__(self) -> str:
         return self.__str__()
 

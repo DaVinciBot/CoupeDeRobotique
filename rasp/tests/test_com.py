@@ -42,9 +42,11 @@ class TestRollingBasis:
         test if the robot is already at the destination
         """
         bot = RollingBasis(dummy=True)
-        bot.odometrie = Shapes.OrientedPoint(0,0,0)
-        assert bot.curve_go_to(Shapes.OrientedPoint(0,0,0), 5, 20, test=True) == Shapes.OrientedPoint(0,0,0)
-        
+        bot.odometrie = Shapes.OrientedPoint(0, 0, 0)
+        assert bot.curve_go_to(
+            Shapes.OrientedPoint(0, 0, 0), 5, 20, test=True
+        ) == Shapes.OrientedPoint(0, 0, 0)
+
     def test_queue_1(self):
         bot = RollingBasis(dummy=True)
         bot.Go_To(Shapes.OrientedPoint(5,5,0))
