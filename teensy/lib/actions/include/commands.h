@@ -10,7 +10,7 @@
 #define RESET_ODO 5
 #define SET_PID 6
 #define SET_HOME 7
-#define PRESHOT 8
+#define PRESHOT 126
 
 // two ways : 127 (Convention)
 #define NACK 127
@@ -21,11 +21,19 @@
 #define STRING 130
 #define UNKNOWN_MSG_TYPE 255
 
-extern void (*functions[256])(byte *msg, byte size, bool is_preshot);
+extern void (*functions[256])(byte *msg, byte size);
 extern void handle_callback(Com *com);
+
 
 struct msg_Unknown_Msg_Type
 {
     byte command = UNKNOWN_MSG_TYPE;
     byte type_id;
+};
+struct msg_Preshot
+{
+    byte command = PRESHOT;
+    byte msg_type;
+    byte data_size;
+    byte data[248];
 };
