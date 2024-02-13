@@ -34,5 +34,6 @@ jobs:
         black .
     - name: Test with pytest
       run: |
+        cd rasp
         pytest .
 
