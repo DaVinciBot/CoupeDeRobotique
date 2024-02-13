@@ -49,7 +49,9 @@ class TestRollingBasis:
 
     def test_queue_1(self):
         bot = RollingBasis(dummy=True)
-        bot.Go_To(Shapes.OrientedPoint(5,5,0))
-        assert bot.queue == [{b'\00':b"\x00\x00\x00\xa0@\x00\x00\xa0@\x00\x96d\x002\x002\x00PP\x00\x00 AP\x00\x00 A"}]
-        
-        
+        bot.Go_To(Shapes.OrientedPoint(5, 5, 0))
+        assert bot.queue == [
+            {
+                b"\00": b"\x00\x00\x00\xa0@\x00\x00\xa0@\x00\x96d\x002\x002\x00PP\x00\x00 AP\x00\x00 A"
+            }
+        ]
