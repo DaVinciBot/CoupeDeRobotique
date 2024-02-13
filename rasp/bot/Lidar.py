@@ -88,15 +88,15 @@ def scan_values_to_polar(
 
 
 def polar_to_cartesian(
-    polar_coordinates: list[list[float, float, float]]
-) -> list[list[float, float]]:
+    polar_coordinates: list[Point]
+) -> list[Point]:
     cartesian_coordinates = []
 
     for coordinate in polar_coordinates:
         cartesian_coordinates.append(
-            (
-                coordinate[1] * math.cos(coordinate[0]),
-                coordinate[1] * math.sin(coordinate[0]),
+            Point(
+                round(coordinate.y * math.cos(coordinate.x), 14),
+                round(coordinate.y * math.sin(coordinate.x), 14),
             )
         )
 
@@ -121,18 +121,18 @@ def relative_to_absolute_cartesian_coordinates(
     Convertit des coordonnées cartésiennes relatives à un robot en coordonnées absolues de la table
 
     :param cartesian_coordinates: les coordonnées cartésiennes relatives au robot
-    :type cartesian_coordinates: list[float]
+    :type cartesian_coordinates: list[Point]
     :param robot_pos: la position du robot sur la table (x, y, theta), theta est l'angle de rotation du robot
-    :type robot_pos: tuple[float, float, float]
+    :type robot_pos: OrientedPoint
     :return: les coordonnées cartésiennes absolues
-    :rtype: list[float]
+    :rtype: list[Point]
     """
     res = []
     for coordinate in cartesian_coordinates:
         res.append(
             Point(
-                robot_pos.x + coordinate.x * math.cos(robot_pos.theta),
-                robot_pos.y + coordinate.y * math.sin(robot_pos.theta),
+                robot_pos.x + coordinate.x,
+                robot_pos.y + coordinate.y,
             )
         )
     return res

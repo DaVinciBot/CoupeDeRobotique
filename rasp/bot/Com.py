@@ -4,6 +4,8 @@ from .State import SERVOS_PIN
 
 from .Logger import Logger
 from .Shapes import OrientedPoint
+from .DummySerial import DummySerial
+
 
 
 # Used for curve_go_to
@@ -91,6 +93,7 @@ class Teensy:
         if self._teensy == None:
             if dummy:
                 self.l.log("Dummy mode", 1)
+                self._teensy = DummySerial()
             else:
                 self.l.log("No Teensy found !", 3)
                 raise TeensyException("No Device !")
