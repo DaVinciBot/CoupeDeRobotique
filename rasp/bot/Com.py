@@ -7,7 +7,6 @@ from .Shapes import OrientedPoint
 from .DummySerial import DummySerial
 
 
-
 # Used for curve_go_to
 # DO NOT REMOVE
 def calc_tmp(a: OrientedPoint, b: OrientedPoint) -> float:

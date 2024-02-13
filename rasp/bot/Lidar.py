@@ -87,9 +87,7 @@ def scan_values_to_polar(
     return polar_coordinates
 
 
-def polar_to_cartesian(
-    polar_coordinates: list[Point]
-) -> list[Point]:
+def polar_to_cartesian(polar_coordinates: list[Point]) -> list[Point]:
     cartesian_coordinates = []
 
     for coordinate in polar_coordinates:
