@@ -53,11 +53,10 @@ Rolling_Basis_Ptrs rolling_basis_ptrs;
 Com *com;
 
 Complex_Action *current_action = nullptr;
-Complex_Action *next_action = nullptr;
 
 bool keep_curr_pos_when_no_action = true;
 
-void swap_action(Complex_Action *new_action, bool is_preshot = false)
+void swap_action(Complex_Action *new_action)
 {
   // implémentation des destructeurs manquante
   if (current_action == new_action)
@@ -67,17 +66,9 @@ void swap_action(Complex_Action *new_action, bool is_preshot = false)
   }
   if (current_action != nullptr)
     free(current_action);
-  if (is_preshot)
-  {
-    next_action = new_action;
-  }
-  else
-  {
-    current_action = new_action;
-  }
 }
 
-void go_to(byte *msg, byte size, bool is_preshot = false)
+void go_to(byte *msg, byte size)
 {
   msg_Go_To *go_to_msg = (msg_Go_To *)msg;
   Point target_point(go_to_msg->x, go_to_msg->y, 0.0f);
@@ -108,10 +99,10 @@ void go_to(byte *msg, byte size, bool is_preshot = false)
           deceleration),
       params);
 
-  swap_action(new_action, is_preshot);
+  swap_action(new_action);
 }
 /*
-void curve_go_to(byte *msg, byte size, bool is_preshot = false)
+void curve_go_to(byte *msg, byte size)
 {
   msg_Curve_Go_To *curve_msg = (msg_Curve_Go_To *)msg;
 
@@ -130,10 +121,11 @@ void curve_go_to(byte *msg, byte size, bool is_preshot = false)
 
 // Whether to keep position when no action is active
 
-void keep_current_position(byte *msg, byte size, bool is_preshot = false)
+void keep_current_position(byte *msg, byte size)
 {
   free(current_action);
   current_action = nullptr;
+  //next_action = nullptr;
   // last_ticks_position = rolling_basis_ptr->get_current_ticks();
 
   keep_curr_pos_when_no_action = true;
@@ -143,7 +135,7 @@ void keep_current_position(byte *msg, byte size, bool is_preshot = false)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void disable_pid(byte *msg, byte size, bool is_preshot = false)
+void disable_pid(byte *msg, byte size)
 {
   keep_curr_pos_when_no_action = false;
 
@@ -152,7 +144,7 @@ void disable_pid(byte *msg, byte size, bool is_preshot = false)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void enable_pid(byte *msg, byte size, bool is_preshot = false)
+void enable_pid(byte *msg, byte size)
 {
   // last_ticks_position = rolling_basis_ptr->get_current_ticks();
   keep_curr_pos_when_no_action = true;
@@ -162,7 +154,7 @@ void enable_pid(byte *msg, byte size, bool is_preshot = false)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void reset_odo(byte *msg, byte size, bool is_preshot = false)
+void reset_odo(byte *msg, byte size)
 {
   rolling_basis_ptr->reset_position();
 
@@ -171,7 +163,7 @@ void reset_odo(byte *msg, byte size, bool is_preshot = false)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void set_pid(byte *msg, byte size, bool is_preshot = false)
+void set_pid(byte *msg, byte size)
 {
   msg_Set_PID *pid_msg = (msg_Set_PID *)msg;
   // Update motors PID
@@ -188,7 +180,7 @@ void set_pid(byte *msg, byte size, bool is_preshot = false)
   com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
 }
 
-void set_home(byte *msg, byte size, bool is_preshot = false)
+void set_home(byte *msg, byte size)
 {
   msg_Set_Home *home_msg = (msg_Set_Home *)msg;
   rolling_basis_ptr->X = home_msg->x;
@@ -202,23 +194,7 @@ void set_home(byte *msg, byte size, bool is_preshot = false)
 
 
 
-void (*functions[256])(byte *msg, byte size, bool is_preshot);
-
-void preshot(byte *msg, byte size, bool is_preshot = false)
-{
-  // get the second byte to get the data type
-  msg_Preshot *preshot_msg = (msg_Preshot *)msg;
-  byte msg_type = preshot_msg->msg_type;
-
-  //create a blob with data type + data
-  byte data[250];
-  data[0] = msg_type;
-  for (int i = 0; i < 249; i++)
-  {
-    data[i+1] = preshot_msg->data[i];
-  }
-  functions[msg_type](data, 250, true);
-}
+void (*functions[256])(byte *msg, byte size);
 
 extern void handle_callback(Com *com);
 
@@ -259,7 +235,6 @@ void setup()
   functions[RESET_ODO] = &reset_odo,
   functions[SET_PID] = &set_pid,
   functions[SET_HOME] = &set_home,
-  functions[PRESHOT] = &preshot,
 
   Serial.begin(115200);
 
@@ -286,6 +261,9 @@ void setup()
   // Init motors handle timer
   Timer1.initialize(10000);
   Timer1.attachInterrupt(handle);
+
+  // create a pointer and print his size
+  com->print("Size:"+sizeof(rolling_basis_ptr));
 }
 
 int counter = 0;
@@ -338,7 +316,7 @@ void handle()
     msg_Action_Finished fin_msg;
     fin_msg.action_id = current_action->get_id();
     com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
-    swap_action(next_action);
+    //swap_action(next_action);
   }
 }
 

@@ -2,5 +2,5 @@ crc8>=0.2.0
 pyserial>=3.5
 pysicktim>=0.0.9
 pyusb>=1.2.1
-RPi.GPIO>=0.7.1
+#RPi.GPIO>=0.7.1
 websockets>=12.0

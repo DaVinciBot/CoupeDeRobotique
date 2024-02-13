@@ -8,10 +8,20 @@ void handle_callback(Com *com)
     {
         byte *msg = com->read_buffer();
 
-
-        if (functions[msg[0]] != 0) // verifies if the id of the function received by com is defined
+        if (msg[0] == PRESHOT)
         {
-            functions[msg[0]](msg, size, false); // call the function by it's id and with the parameters received by com
+            // send the preshot message to the rasp
+            msg_Preshot *preshot_msg = (msg_Preshot *)msg;
+            // alloc the memory for the message
+            byte *data = (byte *)malloc(preshot_msg->data_size);
+            // copy the data from the message to the allocated memory
+            memcpy(data, preshot_msg->data, preshot_msg->data_size);
+            // save 
+            free(data);
+        }
+        else if (functions[msg[0]] != 0) // verifies if the id of the function received by com is defined
+        {
+            functions[msg[0]](msg, size); // call the function by it's id and with the parameters received by com
         }
         else if (msg[0] == NACK)
         {

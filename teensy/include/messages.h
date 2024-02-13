@@ -87,9 +87,3 @@ struct msg_String
     byte command = STRING;
     char str[249]; // Max size is 256 - 6 (Intercom) - 1 (cmd ID)
 };
-struct msg_Preshot
-{
-    byte command = PRESHOT;
-    byte msg_type;
-    byte data[248];
-};
