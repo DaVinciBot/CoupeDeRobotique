@@ -68,6 +68,14 @@ void swap_action(Complex_Action *new_action)
     free(current_action);
 }
 
+void handle_next_action()
+{
+  if (com->next_action != nullptr)
+  {
+    functions[com->next_action->msg_type]((byte *)com->next_action->data, com->next_action->data_size);
+  } 
+}
+
 void go_to(byte *msg, byte size)
 {
   msg_Go_To *go_to_msg = (msg_Go_To *)msg;
@@ -316,7 +324,7 @@ void handle()
     msg_Action_Finished fin_msg;
     fin_msg.action_id = current_action->get_id();
     com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
-    //swap_action(next_action);
+    handle_next_action();
   }
 }
 

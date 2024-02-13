@@ -10,7 +10,6 @@
 #define RESET_ODO 5
 #define SET_PID 6
 #define SET_HOME 7
-#define PRESHOT 126
 
 // two ways : 127 (Convention)
 #define NACK 127
@@ -29,11 +28,4 @@ struct msg_Unknown_Msg_Type
 {
     byte command = UNKNOWN_MSG_TYPE;
     byte type_id;
-};
-struct msg_Preshot
-{
-    byte command = PRESHOT;
-    byte msg_type;
-    byte data_size;
-    byte data[248];
 };
