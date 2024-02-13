@@ -5,9 +5,9 @@ name: Lint + Test
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev", "dev-preshot" ]
   pull_request:
-    branches: [ "competition", "dev", "dev-preshot"]
+    branches: [ "competition", "dev"]
 
 permissions:
   contents: read
