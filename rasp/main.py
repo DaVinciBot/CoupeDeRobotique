@@ -2,8 +2,8 @@ import time
 from bot import MarsArena, RollingBasis, State, Lidar, Actuators
 from bot.Shapes import OrientedPoint
 from bot.tools import compute_go_to_destination
-from bot.utils import Utils
-from bot.logger import Logger
+from bot.Utils import Utils
+from bot.Logger import Logger
 
 def go_to(__object : object,  distance = 0, nb_digits : int = 2, closer = True)->bool:
     destination_point = compute_go_to_destination(rolling_basis.odometrie,__object,distance,nb_digits=nb_digits,closer=closer)
@@ -40,7 +40,7 @@ while True:
             except Exception as e:
                 print(e)
         else: State.is_obstacle = False 
-        State.run_auth : bool = not State.is_obstacle # usefull to add conditions if necessary 
+        State.run_auth = not State.is_obstacle # usefull to add conditions if necessary 
 
         if not State.run_auth:
             if State.is_moving :
@@ -55,7 +55,7 @@ while True:
             State.is_moving = False
 
         # if time exceeds time_to_return_home then go to the starting posistion
-        if State.start_time !=0 and Utils.get_current_date()["date_timespamp"] - State.start_time > State.time_to_return_to_home:
+        if State.start_time !=0 and Utils.get_current_date()["date_timespamp"] - State.start_time > State.time_to_return_home:
             if not State.test:
                 if not go_to(arena.home):
                     State.points_list.append(arena.home.center) # we must use points_list to keep lidar anticollison system

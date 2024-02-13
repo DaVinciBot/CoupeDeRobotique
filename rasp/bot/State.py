@@ -1,3 +1,5 @@
+from queue import Queue
+
 ################
 #     INIT     #
 ################
@@ -41,7 +43,10 @@ is_logger_init = False
 go_to_verif = True # when true trajectory is checked to avoid forbidden moves
 activate_lidar = True # when true stops when an obstacle is detected
 
-time_to_return_to_home = 80
+
+plant_time = 0
+solar_panel_time = 5
+time_to_return_home = 10
 
 
 SERVOS_PIN = [5] # the maxmimun number of servos is 12
