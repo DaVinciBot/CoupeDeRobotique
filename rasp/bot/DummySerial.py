@@ -1,7 +1,7 @@
 import time
 
 class DummySerial:
-    def __init__(self, baudrate):
+    def __init__(self, baudrate = 115200):
         self.output_buffer = b''
         self.input_buffer = b''
         self.baudrate = baudrate
