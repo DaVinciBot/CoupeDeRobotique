@@ -1,6 +1,6 @@
 from typing import Any, Callable
 import serial, threading, time, crc8, struct, serial.tools.list_ports, math
-from .State import SERVOS_PIN
+from .State import SERVOS_PIN, ULTRASONICS_PINS
 
 from .Logger import Logger
 from .Shapes import OrientedPoint
@@ -161,8 +161,6 @@ class Teensy:
                 return
 
     def send_bytes(self, data: bytes):
-
-    def send_bytes(self, data: bytes):
         self.last_message = data
         self._teensy.reset_output_buffer()
         msg = data + bytes([len(data)])
@@ -199,7 +197,6 @@ class Teensy:
             msg = self.read_bytes()
 
             if self.crc:
-            if self.crc:
                 crc = msg[-5:-4]
                 msg = msg[:-5]
                 self._crc8.reset()
@@ -228,12 +225,11 @@ class Teensy:
                 if msg[0] == 127:
                     self.l.log("Received a NACK")
                     if self.last_message != None:
-                    self.l.log("Received a NACK")
+                        self.l.log("Received a NACK")
                     if self.last_message != None:
                         self.send_bytes(self.last_message)
                         self.l.log(f"Sending back action : {self.last_message[0]}")
                         self.last_message = None
-                else:
                 else:
                     self.messagetype[msg[0]](msg[1:-1])
             except Exception as e:
@@ -242,7 +238,6 @@ class Teensy:
                 time.sleep(0.5)
 
 
-class RollingBasis(Teensy):
 class RollingBasis(Teensy):
     ######################
     # Rolling basis init #
