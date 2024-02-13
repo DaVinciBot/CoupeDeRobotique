@@ -18,7 +18,7 @@ async def main():
     lidar = Lidar()
     l = Logger()
     robot = RollingBasis()
-    await l.log('Logger initialized')
+    await l.log("Logger initialized")
     while True:
         tmp = await get_last_command()
         if tmp != None and robot.action_finished:
@@ -33,15 +33,14 @@ async def main():
                 robot.Enable_Pid()
             elif cmd == "kpos":
                 robot.Keep_Current_Position()
-        
+
         if robot.action_finished:
             await send_action_finished()
-        
+
         val = lidar.get_values()
         await update_lidar(val)
         await send_position(robot.odometrie.x, robot.odometrie.y, robot.odometrie.theta)
-        
-            
+
 
 if __name__ == "__main__":
     asyncio.run(main())

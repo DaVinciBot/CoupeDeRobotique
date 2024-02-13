@@ -60,6 +60,7 @@ class OrientedPoint(Point):
     """
     Oriented point, inherits from Point, use to represent destination points
     """
+
     def __init__(self, x: float, y: float, theta: float = 0):
         super().__init__(x, y)
         self.theta = theta

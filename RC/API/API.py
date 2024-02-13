@@ -200,7 +200,8 @@ async def handle_log_ws(websocket: websockets.WebSocketServerProtocol, CONNECTIO
             await websocket.send("ok")
         else:
             await websocket.send("error")
-            
+
+
 async def handle_pos_ws(
     websocket: websockets.WebSocketServerProtocol, CONNECTIONS_POS: set
 ):
@@ -303,7 +304,9 @@ class API:
 
     async def middleware(self, websocket: websockets.WebSocketServerProtocol):
         # use SERVER for set of connections and handler
-        print(f"{COLORS['BLUE']} New connection on route {COLORS['UNDERLINE']+websocket.path} {COLORS['END']}")
+        print(
+            f"{COLORS['BLUE']} New connection on route {COLORS['UNDERLINE']+websocket.path} {COLORS['END']}"
+        )
         for key in self.SERVER:
             if websocket.path == f"/{key}":
                 self.SERVER[key]["connections"].add(websocket)
@@ -313,5 +316,7 @@ class API:
                     )
                     await websocket.wait_closed()
                 finally:
-                    print(f"{COLORS['BLUE']} Connection closed on route {COLORS['UNDERLINE']+websocket.path} {COLORS['END']}")
+                    print(
+                        f"{COLORS['BLUE']} Connection closed on route {COLORS['UNDERLINE']+websocket.path} {COLORS['END']}"
+                    )
                     self.SERVER[key]["connections"].remove(websocket)
