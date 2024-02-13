@@ -2,9 +2,13 @@ name: Lint
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "dev", "dev-CI/CD" ]
   pull_request:
     branches: [ "competition", "dev"]
+
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
   lint:
@@ -12,3 +16,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: psf/black@stable
+        with:
+          args: .

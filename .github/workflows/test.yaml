@@ -1,10 +1,10 @@
 name: Lint + Test
 
 on:
-  push:
-    branches: [ "dev" ]
-  pull_request:
-    branches: [ "competition", "dev"]
+    push:
+      branches: [ "dev", "dev-CI/CD" ]
+    pull_request:
+      branches: [ "competition", "dev"]
 
 permissions:
   contents: read
