@@ -29,7 +29,6 @@ index_destination_point = 0
 game_finished = False
 
 
-
 ################
 #    CONFIG    #
 ################

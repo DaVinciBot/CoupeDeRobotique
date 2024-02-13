@@ -2,6 +2,7 @@ class PIN:
     """
     Classe permettant de gérer les pins GPIO de la rapberry pi
     """
+
     def __init__(self, pin: int, mode: str) -> None:
         """
         Initialise un pin GPIO

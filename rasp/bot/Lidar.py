@@ -9,7 +9,16 @@ class Direction:
     BOTH = 3
     ERROR = 4
 
-def get_possible_directions(scan1: list, scan2: list, start_angle=90, end_angle=180, step_angle=1/3, threshold=0.2, delay_mili=10) -> int:
+
+def get_possible_directions(
+    scan1: list,
+    scan2: list,
+    start_angle=90,
+    end_angle=180,
+    step_angle=1 / 3,
+    threshold=0.2,
+    delay_mili=10,
+) -> int:
     """a basic function that enables the analysis of the moving direction of an obstacle and returns possible directions for us.
 
     Args:
@@ -45,13 +54,18 @@ def get_possible_directions(scan1: list, scan2: list, start_angle=90, end_angle=
         if scan2[i] <= threshold and second_stop == -1:
             second_stop = i
         i -= 1
-    if second_start < first_start and second_stop < first_stop:  # is the other robot going left ?
+    if (
+        second_start < first_start and second_stop < first_stop
+    ):  # is the other robot going left ?
         return Direction.LEFT
-    if second_start > first_start and second_stop > first_stop:  # is the other robot going right ?
+    if (
+        second_start > first_start and second_stop > first_stop
+    ):  # is the other robot going right ?
         return Direction.RIGHT
     if second_start == first_start and second_stop == first_stop:
         return Direction.BOTH
     return Direction.ERROR
+
 
 def scan_values_to_polar(
     scan_values: list[float], min_angle: float, max_angle: float

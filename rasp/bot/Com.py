@@ -8,7 +8,7 @@ from .Shapes import OrientedPoint
 
 # Used for curve_go_to
 # DO NOT REMOVE
-def calc_tmp(a: OrientedPoint, b: OrientedPoint) -> float:  
+def calc_tmp(a: OrientedPoint, b: OrientedPoint) -> float:
     return (a.x**2 - b.x**2 + a.y**2 - b.y**2) / (2 * (a.y - b.y))
 
 
@@ -310,7 +310,7 @@ class RollingBasis(Teensy):
         EnablePid = b"\04"
         ResetPosition = b"\05"
         SetPID = b"\06"
-        SetHome = b'\07'
+        SetHome = b"\07"
         Stop = b"\x7E"  # 7E = 126
         Invalid = b"\xFF"
 
@@ -462,9 +462,9 @@ class RollingBasis(Teensy):
             self.send_bytes(msg)
         else:
             self.queue.append({self.Command.ResetPosition: msg})
-    
-    def Set_Home(self, x, y, theta, *,skip_queue=False):
-        msg = self.Command.SetHome + struct.pack("<fff", x,y,theta)
+
+    def Set_Home(self, x, y, theta, *, skip_queue=False):
+        msg = self.Command.SetHome + struct.pack("<fff", x, y, theta)
         if skip_queue or len(self.queue) == 0:
             self.queue.insert(0, {self.Command.SetHome: msg})
             self.send_bytes(msg)

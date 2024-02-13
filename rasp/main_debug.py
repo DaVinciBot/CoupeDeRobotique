@@ -1,5 +1,6 @@
 from bot import RollingBasis
 
+
 def main():
     robot = RollingBasis()
     while True:
@@ -23,6 +24,7 @@ def main():
             break
         else:
             print("Unknown command")
-            
+
+
 if __name__ == "__main__":
     main()

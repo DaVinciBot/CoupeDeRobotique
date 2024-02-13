@@ -1,0 +1,23 @@
+name: Lint
+
+on:
+  - push
+  - workflow_dispatch
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v3
+      - name: Install Python dependencies
+        run: |
+          pip install black
+      - uses: wearerequired/lint-action@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          black: true
+          auto_fix: true  
+          commit_message: "chore: apply linting fixes"
+          git_name: "DaVinci Bot"
+          git_email: "davincibot@devinci.fr"

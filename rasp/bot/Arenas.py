@@ -234,11 +234,10 @@ class MarsArena(Arena):
 
     def __str__(self) -> str:
         return "MarsArena"
-    
-    def display(self)->str:
+
+    def display(self) -> str:
         return f"""MarsArena: \n
         \tArea : {self.area}
         \tForbidden area : {self.forbidden_area}
         \tHome : {self.home}
         """
-        
