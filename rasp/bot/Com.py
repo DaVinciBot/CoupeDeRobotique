@@ -290,7 +290,7 @@ class RollingBasis(Teensy):
                 self.l.log(f"Removing action {i} from queue : " + str(self.queue[i]))
                 self.queue.pop(i)
                 break
-            
+
         if len(self.queue) == 0:
             self.l.log("Queue is empty")
             self.current_action = None
@@ -332,10 +332,9 @@ class RollingBasis(Teensy):
         SetHome = b"\07"
         Preshot = b"\08"
         Invalid = b"\xFF"
-        
+
     def clear_queue(self):
-        """Clear the queue of actions to do, and stop the robot
-        """
+        """Clear the queue of actions to do, and stop the robot"""
         self.queue = []
         self.current_action = None
         self.next_action = None
