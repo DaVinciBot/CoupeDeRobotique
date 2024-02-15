@@ -301,7 +301,9 @@ class RollingBasis(Teensy):
         elif self.next_action != None:
             self.l.log("Preshot next+1 action in queue")
             msg = list(self.queue[1].values())[0]
-            self.send_bytes(self.Command.Preshot + msg[0] + struct.pack("<B",len(msg)) + msg)
+            self.send_bytes(
+                self.Command.Preshot + msg[0] + struct.pack("<B", len(msg)) + msg
+            )
             self.current_action = self.next_action
             self.next_action = list(self.queue[1].keys())[0]
         elif len(self.queue) > 1:
@@ -309,7 +311,9 @@ class RollingBasis(Teensy):
             self.send_bytes(list(self.queue[0].values())[0])
             self.current_action = list(self.queue[0].keys())[0]
             msg = list(self.queue[1].values())[0]
-            self.send_bytes(self.Command.Preshot + msg[0] + struct.pack("<B",len(msg)) + msg)
+            self.send_bytes(
+                self.Command.Preshot + msg[0] + struct.pack("<B", len(msg)) + msg
+            )
             self.next_action = list(self.queue[1].keys())[0]
         else:
             self.send_bytes(list(self.queue[0].values())[0])
@@ -350,8 +354,10 @@ class RollingBasis(Teensy):
             self.queue.insert(0, {command: msg})
             self.send_bytes(msg)
         elif len(self.queue) == 1:
-            self.send_bytes(self.Command.Preshot + command + struct.pack("<B",len(msg)) + msg)
-            self.queue.append({command: msg})   
+            self.send_bytes(
+                self.Command.Preshot + command + struct.pack("<B", len(msg)) + msg
+            )
+            self.queue.append({command: msg})
         else:
             self.queue.append({command: msg})
 
