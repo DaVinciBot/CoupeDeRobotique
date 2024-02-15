@@ -300,14 +300,16 @@ class RollingBasis(Teensy):
             self.next_action = None
         elif self.next_action != None:
             self.l.log("Preshot next+1 action in queue")
-            self.send_bytes(self.Command.Preshot + list(self.queue[1].values())[0])
+            msg = list(self.queue[1].values())[0]
+            self.send_bytes(self.Command.Preshot + msg[0] + struct.pack("<B",len(msg)) + msg)
             self.current_action = self.next_action
             self.next_action = list(self.queue[1].keys())[0]
         elif len(self.queue) > 1:
             self.l.log("Sending the two next actions in queue")
             self.send_bytes(list(self.queue[0].values())[0])
             self.current_action = list(self.queue[0].keys())[0]
-            self.send_bytes(self.Command.Preshot + list(self.queue[1].values())[0])
+            msg = list(self.queue[1].values())[0]
+            self.send_bytes(self.Command.Preshot + msg[0] + struct.pack("<B",len(msg)) + msg)
             self.next_action = list(self.queue[1].keys())[0]
         else:
             self.send_bytes(list(self.queue[0].values())[0])
@@ -330,7 +332,7 @@ class RollingBasis(Teensy):
         ResetPosition = b"\05"
         SetPID = b"\06"
         SetHome = b"\07"
-        Preshot = b"\08"
+        Preshot = b"\7E"
         Invalid = b"\xFF"
 
     def clear_queue(self):
@@ -347,6 +349,9 @@ class RollingBasis(Teensy):
         if skip_queue or len(self.queue) == 0:
             self.queue.insert(0, {command: msg})
             self.send_bytes(msg)
+        elif len(self.queue) == 1:
+            self.send_bytes(self.Command.Preshot + command + struct.pack("<B",len(msg)) + msg)
+            self.queue.append({command: msg})   
         else:
             self.queue.append({command: msg})
 
@@ -356,7 +361,7 @@ class RollingBasis(Teensy):
         position: OrientedPoint,
         *,  # force keyword arguments
         skip_queue=False,
-        is_backward: bool = False,
+        is_backward: bool = True,
         max_speed: int = 150,
         next_position_delay: int = 100,
         action_error_auth: int = 50,

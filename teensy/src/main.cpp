@@ -59,6 +59,7 @@ bool keep_curr_pos_when_no_action = true;
 void swap_action(Complex_Action *new_action)
 {
   // implémentation des destructeurs manquante
+  com->print("swap");
   if (current_action == new_action)
   {
     free(new_action);
@@ -66,13 +67,16 @@ void swap_action(Complex_Action *new_action)
   }
   if (current_action != nullptr)
     free(current_action);
+  current_action = new_action;
 }
 
 void handle_next_action()
 {
+  com->print("handle next");
   if (com->next_action != nullptr)
   {
     functions[com->next_action->msg_type]((byte *)com->next_action->data, com->next_action->data_size);
+    free(com->next_action);
   } 
 }
 
@@ -80,6 +84,7 @@ void go_to(byte *msg, byte size)
 {
   msg_Go_To *go_to_msg = (msg_Go_To *)msg;
   Point target_point(go_to_msg->x, go_to_msg->y, 0.0f);
+  com->print("goto");
 
   Precision_Params params{
       go_to_msg->next_position_delay,
@@ -269,9 +274,6 @@ void setup()
   // Init motors handle timer
   Timer1.initialize(10000);
   Timer1.attachInterrupt(handle);
-
-  // create a pointer and print his size
-  com->print("Size:"+sizeof(rolling_basis_ptr));
 }
 
 int counter = 0;
@@ -324,6 +326,7 @@ void handle()
     msg_Action_Finished fin_msg;
     fin_msg.action_id = current_action->get_id();
     com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
+    free(current_action);
     handle_next_action();
   }
 }
