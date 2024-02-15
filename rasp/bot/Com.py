@@ -264,7 +264,7 @@ class RollingBasis(Teensy):
             128: self.rcv_odometrie,  # \x80
             129: self.rcv_action_finish,  # \x81
             130: self.rcv_print,  # \x82
-            255: self.unknowed_msg,
+            255: self.unknown_msg,
         }
 
         self.queue = []
@@ -321,7 +321,7 @@ class RollingBasis(Teensy):
         self.current_action = list(self.queue[0].keys())[0]
         self.l.log("Sending next action in queue")
 
-    def unknowed_msg(self, msg: bytes):
+    def unknown_msg(self, msg: bytes):
         self.l.log(f"Teensy does not know the command {msg.hex()}", 1)
 
     #########################
