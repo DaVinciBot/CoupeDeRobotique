@@ -2,7 +2,7 @@ from typing import Any, Callable
 import serial, threading, time, crc8, struct, serial.tools.list_ports, math
 from .State import SERVOS_PIN, ULTRASONICS_PINS
 
-from .Logger import Logger
+from bot.Logger import Logger
 from .Shapes import OrientedPoint
 
 

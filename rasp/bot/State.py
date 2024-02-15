@@ -18,10 +18,10 @@ is_obstacle = True
 run_auth = False
 
 # A list of tuples representing the points to be reached and the according action to execute once reached
-points_list = []
+destination_list = []
 
 # the index of the last point
-index_last_point = len(points_list) - 1
+index_last_point = len(destination_list) - 1
 
 # index of our destination point
 index_destination_point = 0
@@ -41,7 +41,7 @@ is_logger_init = False
 go_to_verif = True # when true trajectory is checked to avoid forbidden moves
 activate_lidar = True # when true stops when an obstacle is detected
 
-time_to_return_to_home = 80
+time_to_return_home = 80
 
 
 SERVOS_PIN = [5] # the maxmimun number of servos is 12
