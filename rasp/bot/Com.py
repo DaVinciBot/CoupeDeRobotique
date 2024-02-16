@@ -293,9 +293,19 @@ class RollingBasis(Teensy):
             self.l.log("Action already sent and Queue empty, waiting for confirmation")
         else:
             msg = list(self.queue[1].values())[0]
-            self.send_bytes(self.Command.Preshot + list(self.queue[1].keys())[0] + struct.pack("<B", len(msg)) + msg)
+            self.send_bytes(
+                self.Command.Preshot
+                + list(self.queue[1].keys())[0]
+                + struct.pack("<B", len(msg))
+                + msg
+            )
             self.l.log("Preshot n+1 action")
-            self.l.log(self.Command.Preshot + list(self.queue[1].keys())[0] + struct.pack("<B", len(msg)) + msg)
+            self.l.log(
+                self.Command.Preshot
+                + list(self.queue[1].keys())[0]
+                + struct.pack("<B", len(msg))
+                + msg
+            )
 
     def unknowed_msg(self, msg: bytes):
         self.l.log(f"Teensy does not know the command {msg.hex()}", 1)
@@ -332,7 +342,9 @@ class RollingBasis(Teensy):
             self.send_bytes(
                 self.Command.Preshot + command + struct.pack("<B", len(msg)) + msg
             )
-            self.l.log(self.Command.Preshot + command + struct.pack("<B", len(msg)) + msg)
+            self.l.log(
+                self.Command.Preshot + command + struct.pack("<B", len(msg)) + msg
+            )
             self.queue.append({command: msg})
         else:
             self.queue.append({command: msg})
