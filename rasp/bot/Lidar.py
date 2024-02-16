@@ -255,7 +255,7 @@ class Lidar:
     def get_values(self) -> list:
         self.lidar_obj.scan()
         return self.lidar_obj.scan.distances
-    
+
 
 # class Lidar:
 #     """
@@ -276,20 +276,20 @@ class Lidar:
 #         self.min_angle = min_angle
 #         self.max_angle = max_angle
 #         self.lidar_obj = lidar
-        
+
 #     def __scan(self):
 #         self.lidar_obj.scan()
 
 #     def __get_scan_distances(self) -> list[float]:
 #         return self.lidar_obj.scan.distances
-    
+
 #     def __get_polar(self) -> list[list[float, float]]:
 #         angle_step = (self.max_angle - self.min_angle) / len(self.__get_scan_distances())
 #         polar_coordinates = []
 #         for i in range(len(self.__get_scan_distances())):
 #             polar_coordinates.append((self.min_angle + (i * angle_step), self.__get_scan_distances()[i]))
 #         return polar_coordinates
-    
+
 #     def __get_cartesian(self) -> list[list[float, float]]:
 #         cartesian_coordinates = []
 #         for coordinate in self.__get_polar():
@@ -300,7 +300,7 @@ class Lidar:
 #                 )
 #             )
 #         return cartesian_coordinates
-    
+
 #     def __get_absolute_cartesian(self, robot_pos: OrientedPoint) -> list[Point]:
 #         """
 #         Convertit des coordonnées cartésiennes relatives à un robot en coordonnées absolues de la table
@@ -321,16 +321,16 @@ class Lidar:
 #                 )
 #             )
 #         return res
-        
-    
+
+
 #     def scan_to_polar(self) -> list[list[float, float]]:
 #         self.__scan()
 #         return self.__get_polar()
-        
+
 #     def scan_to_cartesian(self) -> list[list[float, float]]:
 #         self.__scan()
 #         return self.__get_cartesian()
-    
+
 #     def scan_to_absolute_cartesian(self, robot_pos: OrientedPoint) -> list[Point]:
 #         self.__scan()
 #         return self.__get_absolute_cartesian(robot_pos)

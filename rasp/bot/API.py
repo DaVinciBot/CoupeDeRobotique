@@ -11,14 +11,8 @@ async def update_lidar(data: list[float]):
         # data = list(map(str, data))
         # data = "[" + ",".join(data) + "]"
         # await websocket.send("set$=$" + data)
-        await websocket.send_json(
-            {  
-                "sender":"robot",
-                "action":"set",
-                "data": data
-            }
-        )
-        
+        await websocket.send_json({"sender": "robot", "action": "set", "data": data})
+
 
 async def update_log(data: str):
     async with websockets.connect(
