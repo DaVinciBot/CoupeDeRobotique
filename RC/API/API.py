@@ -14,6 +14,7 @@ Format of communication between server and robot through websockets, in JSON:
 }
 """
 
+
 def get_lidar_data() -> list[float]:
     if "lidar.json" not in os.listdir("."):
         create_lidar_data()
@@ -157,32 +158,22 @@ async def handle_lidar_ws(
         if content["action"] == "get":
             data = get_lidar_data()
 
-            await websocket.send_json({
-                "sender":"server",
-                "action":"response",
-                "data":data
-            })
+            await websocket.send_json(
+                {"sender": "server", "action": "response", "data": data}
+            )
 
         elif content["action"] == "set":
             data = content["data"]
             set_lidar_data(data)
 
-        # then notify all clients
+            # then notify all clients
             for client in CONNECTIONS_LIDAR:
-                await client.send_json({
-                    "sender":"server",
-                    "action":"new",
-                    "data":data
-                })
-            await websocket.send_json({
-                    "sender":"server",
-                    "action":"ok"
-                })
+                await client.send_json(
+                    {"sender": "server", "action": "new", "data": data}
+                )
+            await websocket.send_json({"sender": "server", "action": "ok"})
         else:
-            await websocket.send_json({
-                    "sender":"server",
-                    "action":"error"
-                })
+            await websocket.send_json({"sender": "server", "action": "error"})
 
         # if msg.split("$=$")[0] == "get":
         #     data = get_lidar_data()
