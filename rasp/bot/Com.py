@@ -237,8 +237,6 @@ class RollingBasis(Teensy):
         # All position are in the form tuple(X, Y, THETA)
         self.odometrie = OrientedPoint(0.0, 0.0, 0.0)
         self.position_offset = OrientedPoint(0.0, 0.0, 0.0)
-        self.current_action = None
-        self.next_action = None
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
@@ -291,34 +289,13 @@ class RollingBasis(Teensy):
                 self.queue.pop(i)
                 break
 
-        if len(self.queue) == 0:
-            self.l.log("Queue is empty")
-            self.current_action = None
-        elif self.next_action != None and len(self.queue) == 1:
+        if len(self.queue) == 1:
             self.l.log("Action already sent and Queue empty, waiting for confirmation")
-            self.current_action = self.next_action
-            self.next_action = None
-        elif self.next_action != None:
-            self.l.log("Preshot next+1 action in queue")
-            msg = list(self.queue[1].values())[0]
-            self.send_bytes(
-                self.Command.Preshot + msg[0] + struct.pack("<B", len(msg)) + msg
-            )
-            self.current_action = self.next_action
-            self.next_action = list(self.queue[1].keys())[0]
-        elif len(self.queue) > 1:
-            self.l.log("Sending the two next actions in queue")
-            self.send_bytes(list(self.queue[0].values())[0])
-            self.current_action = list(self.queue[0].keys())[0]
-            msg = list(self.queue[1].values())[0]
-            self.send_bytes(
-                self.Command.Preshot + msg[0] + struct.pack("<B", len(msg)) + msg
-            )
-            self.next_action = list(self.queue[1].keys())[0]
         else:
-            self.send_bytes(list(self.queue[0].values())[0])
-            self.current_action = list(self.queue[0].keys())[0]
-            self.l.log("Sending next action in queue")
+            msg = list(self.queue[1].values())[0]
+            self.send_bytes(self.Command.Preshot + list(self.queue[1].keys())[0] + struct.pack("<B", len(msg)) + msg)
+            self.l.log("Preshot n+1 action")
+            self.l.log(self.Command.Preshot + list(self.queue[1].keys())[0] + struct.pack("<B", len(msg)) + msg)
 
     def unknowed_msg(self, msg: bytes):
         self.l.log(f"Teensy does not know the command {msg.hex()}", 1)
@@ -336,14 +313,12 @@ class RollingBasis(Teensy):
         ResetPosition = b"\05"
         SetPID = b"\06"
         SetHome = b"\07"
-        Preshot = b"\7E"
+        Preshot = b"\x7E"
         Invalid = b"\xFF"
 
     def clear_queue(self):
         """Clear the queue of actions to do, and stop the robot"""
         self.queue = []
-        self.current_action = None
-        self.next_action = None
         self.Keep_Current_Position()
 
     def handle_queue(self, skip_queue: bool, command: bytes, msg: bytes):
@@ -357,6 +332,7 @@ class RollingBasis(Teensy):
             self.send_bytes(
                 self.Command.Preshot + command + struct.pack("<B", len(msg)) + msg
             )
+            self.l.log(self.Command.Preshot + command + struct.pack("<B", len(msg)) + msg)
             self.queue.append({command: msg})
         else:
             self.queue.append({command: msg})

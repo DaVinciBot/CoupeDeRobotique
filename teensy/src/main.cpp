@@ -78,6 +78,7 @@ void handle_next_action()
     functions[com->next_action->msg_type]((byte *)com->next_action->data, com->next_action->data_size);
     free(com->next_action);
   } 
+
 }
 
 void go_to(byte *msg, byte size)
@@ -326,7 +327,6 @@ void handle()
     msg_Action_Finished fin_msg;
     fin_msg.action_id = current_action->get_id();
     com->send_msg((byte *)&fin_msg, sizeof(msg_Action_Finished));
-    free(current_action);
     handle_next_action();
   }
 }
