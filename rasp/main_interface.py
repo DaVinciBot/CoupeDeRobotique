@@ -18,24 +18,26 @@ async def main():
     lidar = Lidar()
     l = Logger()
     robot = RollingBasis()
-    await l.log("Logger initialized")
+    #await l.log("Logger initialized")
     while True:
-        tmp = await get_last_command()
-        if tmp != None and robot.action_finished:
-            cmd, args = tmp
-            if cmd == "goto":
-                robot.Go_To(args, speed=b"\x50")
-            elif cmd == "home":
-                robot.Set_Home()
-            elif cmd == "dpid":
-                robot.Disable_Pid()
-            elif cmd == "epid":
-                robot.Enable_Pid()
-            elif cmd == "kpos":
-                robot.Keep_Current_Position()
+        try:
+            tmp = await get_last_command()
+            if tmp != None and robot.action_finished:
+                cmd, args = tmp
+                if cmd == "goto":
+                    robot.Go_To(args, speed=b"\x50")
+                elif cmd == "home":
+                    robot.Set_Home()
+                elif cmd == "dpid":
+                    robot.Disable_Pid()
+                elif cmd == "epid":
+                    robot.Enable_Pid()
+                elif cmd == "kpos":
+                    robot.Keep_Current_Position()
 
-        if robot.action_finished:
-            await send_action_finished()
+            if robot.action_finished:
+                await send_action_finished()
+        except: pass
 
         val = lidar.get_values()
         await update_lidar(val)
