@@ -28,6 +28,16 @@ for (let i = 0; i < 270 * 3; i++) {
 
 let lidar = new WebSocket("ws://127.0.0.1:3000/lidar");
 lidar.onmessage = function (event) {
+    content = JSON.parse(event.data)
+    if (content["action"] == "new" || content["action"] == "current") {
+        console.log(content["data"]);
+        for (let i = 0; i < content["data"].length; i++) {
+
+            lidarData[i] = 5;
+        }
+        draw();
+    }
+
     if (event.data.startsWith("new$=$") || event.data.startsWith("current$=$")) {
         let data = event.data.split("$=$")[1].split(",");
         for (let i = 0; i < data.length; i++) {
@@ -42,7 +52,7 @@ function toggle_alt_design() {
     draw();
 }
 
-function draw_red_dot(){
+function draw_red_dot() {
     // center dot
     ctx.fillStyle = "#0232FF";
     ctx.fillRect(centerX - 2.5, centerY - 2.5, 5, 5);

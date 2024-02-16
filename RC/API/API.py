@@ -5,6 +5,14 @@ import websockets
 import datetime
 import socket
 
+"""
+Format of communication between server and robot through websockets, in JSON:
+{
+    "sender":"robot/server/...",
+    "action":"get/set/...",
+    "data":... (optional)
+}
+"""
 
 def get_lidar_data() -> list[float]:
     if "lidar.json" not in os.listdir("."):
@@ -144,23 +152,55 @@ async def handle_lidar_ws(
     :type websocket: websockets.WebSocketServerProtocol
     """
     async for msg in websocket:
-        if msg.split("$=$")[0] == "get":
+        content = json.loads(msg)
+
+        if content["action"] == "get":
             data = get_lidar_data()
-            await websocket.send("current$=$" + json.dumps(data))
-        elif msg.split("$=$")[0] == "set":
-            data = list(
-                map(
-                    float,
-                    msg.split("$=$")[1].replace("[", "").replace("]", "").split(","),
-                )
-            )
+
+            await websocket.send_json({
+                "sender":"server",
+                "action":"response",
+                "data":data
+            })
+
+        elif content["action"] == "set":
+            data = content["data"]
             set_lidar_data(data)
-            # then notify all clients
+
+        # then notify all clients
             for client in CONNECTIONS_LIDAR:
-                await client.send("new$=$" + json.dumps(data))
-            await websocket.send("ok")
+                await client.send_json({
+                    "sender":"server",
+                    "action":"new",
+                    "data":data
+                })
+            await websocket.send_json({
+                    "sender":"server",
+                    "action":"ok"
+                })
         else:
-            await websocket.send("error")
+            await websocket.send_json({
+                    "sender":"server",
+                    "action":"error"
+                })
+
+        # if msg.split("$=$")[0] == "get":
+        #     data = get_lidar_data()
+        #     await websocket.send("current$=$" + json.dumps(data))
+        # elif msg.split("$=$")[0] == "set":
+        #     data = list(
+        #         map(
+        #             float,
+        #             msg.split("$=$")[1].replace("[", "").replace("]", "").split(","),
+        #         )
+        #     )
+        #     set_lidar_data(data)
+        #     # then notify all clients
+        #     for client in CONNECTIONS_LIDAR:
+        #         await client.send("new$=$" + json.dumps(data))
+        #     await websocket.send("ok")
+        # else:
+        #     await websocket.send("error")
 
 
 async def handle_log_ws(websocket: websockets.WebSocketServerProtocol, CONNECTIONS_LOG):
