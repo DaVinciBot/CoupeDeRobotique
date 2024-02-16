@@ -8,10 +8,17 @@ uri = f"ws://{IP}:{PORT}"
 
 async def update_lidar(data: list[float]):
     async with websockets.connect(uri + "/lidar", open_timeout=1) as websocket:
-        data = list(map(str, data))
-        data = "[" + ",".join(data) + "]"
-        await websocket.send("set$=$" + data)
-
+        # data = list(map(str, data))
+        # data = "[" + ",".join(data) + "]"
+        # await websocket.send("set$=$" + data)
+        await websocket.send_json(
+            {  
+                "sender":"robot",
+                "action":"set",
+                "data": data
+            }
+        )
+        
 
 async def update_log(data: str):
     async with websockets.connect(
