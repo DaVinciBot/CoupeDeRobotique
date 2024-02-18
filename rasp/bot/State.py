@@ -38,7 +38,7 @@ LOG_LEVEL = 0
 PRINT_LOG = True
 is_logger_init = False
 
-go_to_verif = True # when true trajectory is checked to avoid forbidden moves
+go_to_verif = False # when true trajectory is checked to avoid forbidden moves
 activate_lidar = True # when true stops when an obstacle is detected
 
 time_to_return_home = 80

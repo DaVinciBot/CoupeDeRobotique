@@ -11,18 +11,17 @@ def go_to(__object : object,  distance = 0, nb_digits : int = 2, closer = True)-
     if isinstance(destination_point,OrientedPoint):
         if State.go_to_verif:
             if arena.enable_go_to(rolling_basis.odometrie,destination_point):
-                print(destination_point)
                 rolling_basis.Go_To(destination_point)
                 return True
             return False
         rolling_basis.Go_To(destination_point)
-        print(destination_point)
         return True
     return False
-r = Rectangle(Point(10,0),Point(0,10))
+
 lidar = Lidar()
 arena = MarsArena(0)
 l = Logger()
 rolling_basis = RollingBasis()
-go_to(r)
-go_to(Point(10,0))
+
+rolling_basis.Reset_Odo()
+go_to(arena.drop_zones[0])
