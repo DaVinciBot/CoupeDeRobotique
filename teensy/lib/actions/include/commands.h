@@ -18,6 +18,7 @@
 #define UPDATE_POSITION 128
 #define ACTION_FINISHED 129
 #define STRING 130
+#define GOTO_FINISHED 131
 #define UNKNOWN_MSG_TYPE 255
 
 extern void (*functions[256])(byte *msg, byte size);

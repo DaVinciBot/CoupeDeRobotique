@@ -1,7 +1,7 @@
 from typing import Any, Callable
 import serial, threading, time, crc8, struct, serial.tools.list_ports, math
-from .State import SERVOS_PIN, ULTRASONICS_PINS
-
+from bot import State
+from bot.tools import no_action
 from bot.Logger import Logger
 from .Shapes import OrientedPoint
 
@@ -264,6 +264,7 @@ class RollingBasis(Teensy):
             128: self.rcv_odometrie,  # \x80
             129: self.rcv_action_finish,  # \x81
             130: self.rcv_print,  # \x82
+            130: self.rcv_goto_finish,  # \x83
             255: self.unknown_msg,
         }
 
@@ -288,6 +289,10 @@ class RollingBasis(Teensy):
     #############################
     def rcv_print(self, msg: bytes):
         self.l.log("Teensy says : " + msg.decode("ascii", errors="ignore"))
+    
+    @Logger   
+    def rcv_goto_finish(self,msg:bytes):
+        State.actions_at[struct.unpack("<B",msg[0])[0]]()
 
     def rcv_odometrie(self, msg: bytes):
         self.odometrie = OrientedPoint(
@@ -356,6 +361,7 @@ class RollingBasis(Teensy):
         acceleration_distance: float = 10,
         deceleration_end_speed: int = 80,
         deceleration_distance: float = 10,
+        action : function = no_action
     ) -> None:
         """
         Va à la position donnée en paramètre
@@ -388,6 +394,7 @@ class RollingBasis(Teensy):
             + struct.pack("<f", acceleration_distance)
             + struct.pack("<B", deceleration_end_speed)
             + struct.pack("<f", deceleration_distance)
+            + struct.pack("B",State.id_current_GoTo)
         )
         # https://docs.python.org/3/library/struct.html#format-characters
         if skip_queue or len(self.queue) == 0:
@@ -395,6 +402,8 @@ class RollingBasis(Teensy):
             self.send_bytes(msg)
         else:
             self.queue.append({self.Command.GoToPoint: msg})
+        State.id_current_GoTo += 1
+        State.actions_at.append(action)
 
     @Logger
     def curve_go_to(
@@ -514,8 +523,8 @@ class Actuators(Teensy):
         baudrate: int = 115200,
         crc: bool = True,
         # Pins of the servos (int), the maximum of pin is 12
-        servos_pin : list[int] = SERVOS_PIN,
-        ultrasonics_pins : list[(int,int)] = ULTRASONICS_PINS,
+        servos_pin : list[int] = State.SERVOS_PIN,
+        ultrasonics_pins : list[(int,int)] = State.ULTRASONICS_PINS,
     ):
         super().__init__(vid, pid, baudrate, crc)
         self.pin_servos = servos_pin

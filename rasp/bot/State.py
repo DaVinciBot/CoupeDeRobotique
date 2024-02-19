@@ -17,18 +17,19 @@ is_obstacle = True
 # for safety in case of lidar dysfunction
 run_auth = False
 
-# A list of tuples representing the points to be reached and the according action to execute once reached
-destination_list = []
-
-# the index of the last point
-index_last_point = len(destination_list) - 1
+# enable to manage actions once a given position is reached
+actions_at : list[function]= []
 
 # index of our destination point
 index_destination_point = 0
 
 game_finished = False
 
+# enable to give a unique id to each GoTo
+id_current_GoTo = 0 
 
+# usefull to lauch actions once the previous finished
+action_selector = 0
 
 ################
 #    CONFIG    #
@@ -46,6 +47,8 @@ time_to_return_home = 80
 
 SERVOS_PIN = [5] # the maxmimun number of servos is 12
 ULTRASONICS_PINS = [(12,14)]
+
+
 
 test = False
 activate_print = True

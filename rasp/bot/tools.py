@@ -1,5 +1,6 @@
 from bot.Shapes import Point,OrientedPoint,Rectangle,Circle
 from typing import Union
+from bot import State
 
 def compute_go_to_destination(actual_position : OrientedPoint, __object : object,  distance = 0, nb_digits : int = 2, closer = True)->Union[OrientedPoint,bool]:
     """ Given the actual position and a destination zone return the Oriented point to reach
@@ -72,3 +73,28 @@ def closest_zone(zone_bool,actual_position : OrientedPoint, our=True, exclude_no
             zones = zone_bool
         if exclude_not_basic: return sorted(zones, key = lambda x:(x[1]!=basic,x[0].center.get_distance(actual_position))) # False before True
         return sorted(zones, key = lambda x:(x[0].center.get_distance(actual_position)))
+        
+
+def take_plant():
+    # coder ici l'action de prendre une plante
+    State.action_selector = 2
+    if State.test:
+        print("plante ramassé")
+    
+def drop_plant_gardener():
+    # coder ici l'action de déposer une plante dans une jardinière
+    if State.test:
+        print("plante déposée")
+    State.action_selector = 0
+
+def drop_plant():
+    # coder ici l'action de déposer une plante dans une zone de dépot
+    if State.test:
+        print("plante déposée")
+    State.action_selector = 0
+      
+def no_action():
+   pass
+
+
+    

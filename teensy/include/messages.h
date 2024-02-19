@@ -21,6 +21,7 @@ struct msg_Go_To
     float acceleration_distance;
     byte deceleration_end_speed;
     float deceleration_distance;
+    byte id_Go_To;
 };
 
 struct msg_Curve_Go_To
@@ -73,6 +74,12 @@ struct msg_Action_Finished
     byte command = ACTION_FINISHED;
     byte action_id;
 };
+
+struct msg_GoTo_Finished
+{
+    byte command = GOTO_FINISHED;
+    byte goto_id;
+}
 
 struct msg_Set_PID
 {

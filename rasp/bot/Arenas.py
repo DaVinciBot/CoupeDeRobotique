@@ -286,6 +286,19 @@ class MarsArena(Arena):
                 if self.color == "blue": return i%2 == 0
                 else: return i%2 != 0
                 
+        # should not be used because of the possible positions of the forbidden areas but in case       
+        def get_intermediary_point(self, color):
+            """return an intermediary point avoid the forbidden area. Specific to mars arena an  not optimized. Must be improved 
+
+            Args:
+                color (_type_): _description_
+
+            Returns:
+                OrientedPoint: _description_
+            """
+            if color == "blue": return OrientedPoint(22.5,250)
+            return OrientedPoint(22.5, 50)
+                    
 
     def display(self)->str:
         return f"""{self.__str__}: \n
