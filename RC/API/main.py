@@ -1,26 +1,48 @@
-from API import (
-    API,
-    handle_lidar_ws,
-    handle_log_ws,
-    handle_cmd_ws,
-    handle_state_ws,
-    handle_pos_ws,
+# TODO: Constants for the server, it has to be in a config file !
+HOSTNAME = "localhost"
+PORT = 8080
+SENDER_NAME = "server"
+
+import sys
+from pathlib import Path
+
+current_dir = Path(__file__).parent.parent
+sys.path.append(str(current_dir.parent / 'common'))
+
+from common.WS import (
+    WServer, WServerRouteManager,
+    WSender, WSreceiver,
+    WSmsg
 )
 
 
-SERVER = {
-    "lidar": {"connections": set(), "handler": handle_lidar_ws},
-    "log": {"connections": set(), "handler": handle_log_ws},
-    "cmd": {"connections": set(), "handler": handle_cmd_ws},
-    "state": {"connections": set(), "handler": handle_state_ws},
-    "position": {"connections": set(), "handler": handle_pos_ws},
-}
-
-
-def main():
-    api = API(SERVER)
-    api.run()
-
-
 if __name__ == "__main__":
-    main()
+    ws_server = WServer(HOSTNAME, PORT)
+
+    # Lidar
+    lidar = WServerRouteManager(
+        WSreceiver(keep_memory=True),
+        WSender(SENDER_NAME)
+    )
+
+    # Log
+    log = WServerRouteManager(
+        WSreceiver(use_queue=True),
+        WSender(SENDER_NAME)
+    )
+
+    # Odometer
+    odometer = WServerRouteManager(
+        WSreceiver(keep_memory=True),
+        WSender(SENDER_NAME)
+    )
+
+    # Bind routes
+    ws_server.add_route_handler("/lidar", lidar)
+    ws_server.add_route_handler("/log", log)
+    ws_server.add_route_handler("/odometer", odometer)
+
+    # Add background tasks
+    ws_server.add_background_task(lidar_brain)
+
+    ws_server.run()
