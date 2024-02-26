@@ -1,11 +1,11 @@
 from configuration import APP_CONFIG
 
+import asyncio
+
 from bot import Logger, Lidar, RollingBasis
 from bot.Shapes import OrientedPoint
 
 from WS import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
-
-import asyncio
 
 
 async def lidar_brain():
