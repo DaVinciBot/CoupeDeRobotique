@@ -2,14 +2,18 @@ from configuration import APP_CONFIG
 
 import asyncio
 
-from common.WS import WServer, WServerRouteManager, WSender, WSreceiver, WSmsg
+from WS import WServer, WServerRouteManager, WSender, WSreceiver, WSmsg
 
 
 async def lidar_brain():
     while True:
         msg = await lidar.receiver.get()
-        print(f"#--> Message lidar: {msg}")
-        await asyncio.sleep(1)
+        if msg != WSmsg():
+            print(f"#--> Message lidar: {msg.msg}, {msg.sender}, {len(msg.data)}, queue: {lidar.receiver.get_queue_size()}")
+        else:
+            print(f"#--> Message lidar: {msg}")
+
+        await asyncio.sleep(0.1)
 
 
 if __name__ == "__main__":
@@ -17,7 +21,7 @@ if __name__ == "__main__":
 
     # Lidar
     lidar = WServerRouteManager(
-        WSreceiver(keep_memory=True), WSender(APP_CONFIG.WS_SENDER_NAME)
+        WSreceiver(keep_memory=True, use_queue=True), WSender(APP_CONFIG.WS_SENDER_NAME)
     )
 
     # Log

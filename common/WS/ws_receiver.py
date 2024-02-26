@@ -31,7 +31,7 @@ class WSreceiver:
         if self.use_queue:
             await self.queue.put(msg)
         self.last_state = msg
-        print(f"New message {msg}")
+        # print(f"New message {msg}")
 
     async def get(self, skip_queue: bool = False, wait_msg: bool = False) -> WSmsg:
         """
@@ -46,14 +46,15 @@ class WSreceiver:
         if self.use_queue:
             if wait_msg:
                 return await self.queue.get()
+            elif not self.queue.empty():
+                return await self.queue.get()
 
-        if skip_queue or not self.use_queue or (self.use_queue and not wait_msg):
-            if self.keep_memory:
-                return self.last_state
+        if self.keep_memory:
+            return self.last_state
 
-            state = self.last_state
-            self.last_state = WSmsg()
-            return state
+        state = self.last_state
+        self.last_state = WSmsg()
+        return state
 
     def get_queue_size(self) -> int:
         """

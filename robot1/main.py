@@ -10,26 +10,23 @@ from WS import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
 
 async def lidar_brain():
     while True:
-        print("lidar brain")
         try:
             scan = lidar_obj.scan_to_absolute_cartesian(
                 robot_pos=OrientedPoint(
                     robot.odometrie.x, robot.odometrie.y, robot.odometrie.theta
                 )
             )
-            print("a")
+            deserialized_scan = [[s.x, s.y] for s in scan]
             await lidar.sender.send(
-                await lidar.get_ws(), WSmsg(msg="lidar_scan", data=scan)
+                await lidar.get_ws(), WSmsg(msg="lidar_scan", data=deserialized_scan)
             )
-            print("b")
         except Exception as e:
             print(f"Lidar error : {e}")
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.1)
 
 
 async def odometer_brain():
     while True:
-        print("odo brain")
         await odometer.sender.send(
             await odometer.get_ws(),
             WSmsg(
