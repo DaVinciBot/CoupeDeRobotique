@@ -1,5 +1,3 @@
-import pytest
-
 
 # works with the py -m pytest discover commands launched from rasp
 from bot.Shapes import Point, Rectangle, OrientedPoint

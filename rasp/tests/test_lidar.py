@@ -1,4 +1,3 @@
-import pytest
 from bot.Lidar import *
 
 class TestLidar:

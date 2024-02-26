@@ -24,7 +24,7 @@ async def main():
         if tmp != None and robot.action_finished:
             cmd, args = tmp
             if cmd == "goto":
-                robot.Go_To(args, speed=b"\x50")
+                robot.Go_ToPoint(args, speed=b"\x50")
             elif cmd == "home":
                 robot.Set_Home()
             elif cmd == "dpid":

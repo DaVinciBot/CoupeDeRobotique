@@ -1,9 +1,10 @@
 from typing import Any, Callable
 import serial, threading, time, crc8, struct, serial.tools.list_ports, math
 from bot import State
-from bot.tools import no_action
+from bot.Bob import Bob
 from bot.Logger import Logger
-from .Shapes import OrientedPoint
+from bot.Shapes import OrientedPoint
+from bot.action_block import Instruction,Action,Lock
 
 
 # Used for curve_go_to
@@ -267,8 +268,7 @@ class RollingBasis(Teensy):
             130: self.rcv_goto_finish,  # \x83
             255: self.unknown_msg,
         }
-
-        self.queue = []
+        self.name = "rolling_basis"
 
     #####################
     # Position handling #
@@ -289,10 +289,6 @@ class RollingBasis(Teensy):
     #############################
     def rcv_print(self, msg: bytes):
         self.l.log("Teensy says : " + msg.decode("ascii", errors="ignore"))
-    
-    @Logger   
-    def rcv_goto_finish(self,msg:bytes):
-        State.actions_at[struct.unpack("<B",msg[0])[0]]()
 
     def rcv_odometrie(self, msg: bytes):
         self.odometrie = OrientedPoint(
@@ -308,23 +304,7 @@ class RollingBasis(Teensy):
 
     @Logger
     def rcv_action_finish(self, msg: bytes):
-        self.l.log("Action finished : " + msg.hex())
-        if not self.queue or len(self.queue) == 0:
-            self.l.log("Received action_finished but no action in queue", 1)
-            return
-        # remove the action that just finished
-        for i in range(len(self.queue)):
-            if list(self.queue[i].keys())[0] == msg:
-                self.l.log(f"Removing action {i} from queue : " + str(self.queue[i]))
-                self.queue.pop(i)
-                break
-        if len(self.queue) == 0:
-            self.l.log("Queue is empty")
-            self.current_action = None
-            return
-        self.send_bytes(list(self.queue[0].values())[0])
-        self.current_action = list(self.queue[0].keys())[0]
-        self.l.log("Sending next action in queue")
+        Bob.handle_call_back(block_name=self.name,msg=msg)
 
     def unknown_msg(self, msg: bytes):
         self.l.log(f"Teensy does not know the command {msg.hex()}", 1)
@@ -346,7 +326,7 @@ class RollingBasis(Teensy):
         Invalid = b"\xFF"
 
     @Logger
-    def Go_To(
+    def Go_ToPoint(
         self,
         position: OrientedPoint,
         *,  # force keyword arguments
@@ -361,7 +341,6 @@ class RollingBasis(Teensy):
         acceleration_distance: float = 10,
         deceleration_end_speed: int = 80,
         deceleration_distance: float = 10,
-        action : function = no_action
     ) -> None:
         """
         Va à la position donnée en paramètre
@@ -394,16 +373,14 @@ class RollingBasis(Teensy):
             + struct.pack("<f", acceleration_distance)
             + struct.pack("<B", deceleration_end_speed)
             + struct.pack("<f", deceleration_distance)
-            + struct.pack("B",State.id_current_GoTo)
         )
         # https://docs.python.org/3/library/struct.html#format-characters
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.GoToPoint: msg})
+            
+        if skip_queue or len(Bob.instructions) == 0:
+            Bob.instructions.insert(0, Instruction(block_name=self.name,process=Action(self.Command.GoToPoint,msg)))
             self.send_bytes(msg)
         else:
-            self.queue.append({self.Command.GoToPoint: msg})
-        State.id_current_GoTo += 1
-        State.actions_at.append(action)
+            Bob.instructions.append(Instruction(block_name=self.name,process=Action(self.Command.GoToPoint,msg)))
 
     @Logger
     def curve_go_to(
@@ -454,65 +431,65 @@ class RollingBasis(Teensy):
             + struct.pack("<H", action_error_auth)  # error_auth
             + struct.pack("<H", traj_precision)  # precision
         )
-        if skip_queue or len(self.queue) == 0:
+        if skip_queue or len(Bob.instructions) == 0:
             self.l.log("Skipping Queue ...")
-            self.queue.insert(0, {self.Command.CurveGoTo: curve_msg})
-            self.l.log(self.queue)
+            Bob.instructions.insert(0, {self.Command.CurveGoTo: curve_msg})
+            self.l.log(Bob.instructions)
             self.send_bytes(curve_msg)
         else:
-            self.queue.append({self.Command.CurveGoTo: curve_msg})
+            Bob.instructions.append({self.Command.CurveGoTo: curve_msg})
 
     @Logger
     def Keep_Current_Position(self, skip_queue=False):
         msg = self.Command.KeepCurrentPosition
         if skip_queue:
-            self.queue.insert(0, {self.Command.KeepCurrentPosition: msg})
+            Bob.instructions.insert(0, {self.Command.KeepCurrentPosition: msg})
             self.send_bytes(msg)
         else:
-            self.queue.append({self.Command.KeepCurrentPosition: msg})
+            Bob.instructions.append({self.Command.KeepCurrentPosition: msg})
 
     @Logger
     def Disable_Pid(self, skip_queue=False):
         msg = self.Command.DisablePid
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.DisablePid: msg})
+        if skip_queue or len(Bob.instructions) == 0:
+            Bob.instructions.insert(0, {self.Command.DisablePid: msg})
             self.send_bytes(msg)
         else:
-            self.queue.append({self.Command.DisablePid: msg})
+            Bob.instructions.append({self.Command.DisablePid: msg})
 
     @Logger
     def Enable_Pid(self, skip_queue=False):
         msg = self.Command.EnablePid
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.EnablePid: msg})
+        if skip_queue or len(Bob.instructions) == 0:
+            Bob.instructions.insert(0, {self.Command.EnablePid: msg})
             self.send_bytes(msg)
         else:
-            self.queue.append({self.Command.EnablePid: msg})
+            Bob.instructions.append({self.Command.EnablePid: msg})
 
     @Logger
     def Reset_Odo(self, skip_queue=False):
         msg = self.Command.ResetPosition
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.ResetPosition: msg})
+        if skip_queue or len(Bob.instructions) == 0:
+            Bob.instructions.insert(0, {self.Command.ResetPosition: msg})
             self.send_bytes(msg)
         else:
-            self.queue.append({self.Command.ResetPosition: msg})
+            Bob.instructions.append({self.Command.ResetPosition: msg})
     
     def Set_Home(self, x, y, theta, *,skip_queue=False):
         msg = self.Command.SetHome + struct.pack("<fff", x,y,theta)
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.SetHome: msg})
+        if skip_queue or len(Bob.instructions) == 0:
+            Bob.instructions.insert(0, {self.Command.SetHome: msg})
             self.send_bytes(msg)
         else:
-            self.queue.append({self.Command.SetHome: msg})
+            Bob.instructions.append({self.Command.SetHome: msg})
 
     def Set_PID(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
         msg = self.Command.SetPID + struct.pack("<fff", Kp, Ki, Kp)
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.SetPID: msg})
+        if skip_queue or len(Bob.instructions) == 0:
+            Bob.instructions.insert(0, {self.Command.SetPID: msg})
             self.send_bytes(msg)
         else:
-            self.queue.append({self.Command.SetPID: msg})
+            Bob.instructions.append({self.Command.SetPID: msg})
 
 
 class Actuators(Teensy):
@@ -538,6 +515,8 @@ class Actuators(Teensy):
             130 : self.rcv_ultrasonic_call_back,
             255: self.unknown_msg
         }
+        self.name = "actuators"
+        
     class Command:  # values must correspond to the one defined on the teensy
         ServoGoTo = b"\x01"
         ReadUltrasonic = b"\x02"
@@ -575,9 +554,14 @@ class Actuators(Teensy):
             print(
                 f"you tried to write {angle}° on pin {pin} wheras angle must be between {min_angle} and {max_angle}°"
             )
-            
     @Logger
     def read_ultrasonic(self,pin_trig : int, pin_echo : int):
+        """not opérational yet
+
+        Args:
+            pin_trig (int): _description_
+            pin_echo (int): _description_
+        """
         if self.ultrasonics_pins.__contains__((pin_trig,pin_echo)):
             msg = (
                     self.Command.ReadUltrasonic

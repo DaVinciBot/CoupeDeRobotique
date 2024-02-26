@@ -10,7 +10,7 @@ def main():
             x = float(input())
             print("Enter Y :")
             y = float(input())
-            robot.Go_To((x, y, 0.0))
+            robot.Go_ToPoint((x, y, 0.0))
         elif cmd == "home":
             robot.Set_Home()
         elif cmd == "dpid":

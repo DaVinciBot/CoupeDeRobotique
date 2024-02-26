@@ -10,10 +10,10 @@ def go_to(__object : object,  distance = 0, nb_digits : int = 2, closer = True)-
     if isinstance(destination_point,OrientedPoint):
         if State.go_to_verif:
             if arena.enable_go_to(rolling_basis.odometrie,destination_point):
-                rolling_basis.Go_To(destination_point)
+                rolling_basis.Go_ToPoint(destination_point)
                 return True
             return False
-        rolling_basis.Go_To(destination_point)
+        rolling_basis.Go_ToPoint(destination_point)
         return True
     return False
 
@@ -47,7 +47,7 @@ while True:
                 rolling_basis.Keep_Current_Position()
                 State.is_moving = False
         if State.run_auth and not State.is_moving:
-            rolling_basis.Go_To(State.destination_list[State.index_destination_point][0])
+            rolling_basis.Go_ToPoint(State.destination_list[State.index_destination_point][0])
             State.is_moving = True
         if rolling_basis.action_finished:
             print(f"arrived at {State.destination_list[State.index_destination_point][0]}")
@@ -59,7 +59,7 @@ while True:
             if not State.test:
                 if not go_to(arena.home):
                     State.destination_list.append(arena.home.center) # we must use points_list to keep lidar anticollison system
-                    rolling_basis.Go_To(State.destination_list[-1])
+                    rolling_basis.Go_ToPoint(State.destination_list[-1])
 
         # A print every 500 ms if activated
         if State.activate_print and (Utils.get_current_date()["date_timespamp"] - last_print) > 0.5:

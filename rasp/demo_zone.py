@@ -13,10 +13,10 @@ def go_to(__object : object,  distance = 0, nb_digits : int = 2, closer = True, 
         if State.go_to_verif:
             # forbidden area souldn't be crossed because of its position
             if arena.enable_go_to(rolling_basis.odometrie,destination_point):
-                rolling_basis.Go_To(destination_point, action_at = action_at)
+                rolling_basis.Go_ToPoint(destination_point, action_at = action_at)
                 return True
             return False
-        rolling_basis.Go_To(destination_point, action_at = action_at)
+        rolling_basis.Go_ToPoint(destination_point, action_at = action_at)
         return True
     return False
 
