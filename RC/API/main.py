@@ -9,7 +9,9 @@ async def lidar_brain():
     while True:
         msg = await lidar.receiver.get()
         if msg != WSmsg():
-            print(f"#--> Message lidar: {msg.msg}, {msg.sender}, {len(msg.data)}, queue: {lidar.receiver.get_queue_size()}")
+            print(
+                f"#--> Message lidar: {msg.msg}, {msg.sender}, {len(msg.data)}, queue: {lidar.receiver.get_queue_size()}"
+            )
         else:
             print(f"#--> Message lidar: {msg}")
 

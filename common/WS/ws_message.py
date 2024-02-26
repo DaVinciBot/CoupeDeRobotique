@@ -14,7 +14,9 @@ class WSmsg:
     }
     """
 
-    def __init__(self, sender: str = None, msg: str = None, data: any = None, ts: int = None) -> None:
+    def __init__(
+        self, sender: str = None, msg: str = None, data: any = None, ts: int = None
+    ) -> None:
         self.sender = sender
         self.msg = msg
         self.data = data
@@ -31,7 +33,7 @@ class WSmsg:
             sender=str(msg.get("sender")),
             msg=str(msg.get("msg")),
             data=msg.get("data"),
-            ts=int(msg.get("ts"))
+            ts=int(msg.get("ts")),
         )
 
     @classmethod
@@ -57,7 +59,7 @@ class WSmsg:
                 sender=msg_json.get("sender"),
                 msg=msg_json.get("msg"),
                 data=msg_json.get("data"),
-                ts=msg_json.get("ts")
+                ts=msg_json.get("ts"),
             )
         else:
             print(f"Unknown message type: {msg.type}")
@@ -79,7 +81,7 @@ class WSmsg:
             "sender": self.sender,
             "msg": self.msg,
             "data": self.data,
-            "ts": self.ts
+            "ts": self.ts,
         }
 
     def prepare(self, str_format=True) -> str or dict:
@@ -113,8 +115,8 @@ class WSmsg:
         if not isinstance(other, WSmsg):
             return NotImplemented
         return (
-                self.sender == other.sender and
-                self.msg == other.msg and
-                self.data == other.data and
-                self.ts == other.ts
+            self.sender == other.sender
+            and self.msg == other.msg
+            and self.data == other.data
+            and self.ts == other.ts
         )

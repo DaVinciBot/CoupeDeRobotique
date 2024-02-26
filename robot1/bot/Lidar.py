@@ -17,6 +17,7 @@ class Lidar:
         :type max_angle: float, optional
         """
         import pysicktim as lidar
+
         # TODO: mise en place d'un erreur si le lidar n'est pas trouvé !
         self.min_angle = min_angle
         self.max_angle = max_angle
