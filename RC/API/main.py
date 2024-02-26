@@ -1,13 +1,6 @@
-# TODO: Constants for the server, it has to be in a config file !
-HOSTNAME = "localhost"
-PORT = 8080
-SENDER_NAME = "server"
+from configuration import APP_CONFIG
 
-import sys
-from pathlib import Path
-
-current_dir = Path(__file__).parent.parent
-sys.path.append(str(current_dir.parent / 'common'))
+import asyncio
 
 from common.WS import (
     WServer, WServerRouteManager,
@@ -16,31 +9,38 @@ from common.WS import (
 )
 
 
+async def lidar_brain():
+    while True:
+        msg = await lidar.receiver.get()
+        print(f"#--> Message lidar: {msg}")
+        await asyncio.sleep(1)
+
+
 if __name__ == "__main__":
-    ws_server = WServer(HOSTNAME, PORT)
+    ws_server = WServer(APP_CONFIG.WS_HOSTNAME, APP_CONFIG.WS_PORT)
 
     # Lidar
     lidar = WServerRouteManager(
         WSreceiver(keep_memory=True),
-        WSender(SENDER_NAME)
+        WSender(APP_CONFIG.WS_SENDER_NAME)
     )
 
     # Log
     log = WServerRouteManager(
         WSreceiver(use_queue=True),
-        WSender(SENDER_NAME)
+        WSender(APP_CONFIG.WS_SENDER_NAME)
     )
 
     # Odometer
     odometer = WServerRouteManager(
         WSreceiver(keep_memory=True),
-        WSender(SENDER_NAME)
+        WSender(APP_CONFIG.WS_SENDER_NAME)
     )
 
     # Bind routes
-    ws_server.add_route_handler("/lidar", lidar)
-    ws_server.add_route_handler("/log", log)
-    ws_server.add_route_handler("/odometer", odometer)
+    ws_server.add_route_handler(APP_CONFIG.WS_LIDAR_ROUTE, lidar)
+    ws_server.add_route_handler(APP_CONFIG.WS_LOG_ROUTE, log)
+    ws_server.add_route_handler(APP_CONFIG.WS_ODOMETER_ROUTE, odometer)
 
     # Add background tasks
     ws_server.add_background_task(lidar_brain)

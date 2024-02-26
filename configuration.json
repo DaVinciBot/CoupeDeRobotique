@@ -1,0 +1,29 @@
+{
+  "general":
+  {
+    "ws":
+    {
+      "port": 8080,
+      "lidar_route": "/lidar",
+      "odometer_route": "/odometer",
+      "log_route": "/log"
+    }
+  },
+  "RC":
+  {
+    "ws":
+    {
+      "sender_name": "RC",
+      "hostname": "0.0.0.0"
+    }
+
+  },
+  "robot1":
+  {
+    "ws":
+    {
+      "sender_name": "robot1",
+      "server_ip": "192.168.1.104"
+    }
+  }
+}
