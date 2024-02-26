@@ -21,11 +21,13 @@ def load_json_file(file_path):
 # Get usefully directories
 BASE_DIR = pathlib.Path(__file__).resolve().parent
 ROOT_DIR = BASE_DIR.parent
-COMMON_DIR = str(ROOT_DIR / 'common')
-sys.path.append(COMMON_DIR)  # Add common directory to the path (to be able to import common modules)
+COMMON_DIR = str(ROOT_DIR / "common")
+sys.path.append(
+    COMMON_DIR
+)  # Add common directory to the path (to be able to import common modules)
 
 # Load configuration file
-CONFIG_FILE_PATH = os.path.join(ROOT_DIR, 'configuration.json')
+CONFIG_FILE_PATH = os.path.join(ROOT_DIR, "configuration.json")
 CONFIG_STORE = load_json_file(CONFIG_FILE_PATH)
 
 
@@ -47,11 +49,10 @@ class Config:
 
     # Specific config
     SPECIFIC_CONFIG = CONFIG_STORE[CURRENT_FOLDER_NAME]
+    SPECIFIC_WS_CONFIG = SPECIFIC_CONFIG["ws"]
 
-    WS_SENDER_NAME = SPECIFIC_CONFIG["sender_name"]
-    WS_SERVER_IP = SPECIFIC_CONFIG["server_ip"]
-
-
+    WS_SENDER_NAME = SPECIFIC_WS_CONFIG["sender_name"]
+    WS_SERVER_IP = SPECIFIC_WS_CONFIG["server_ip"]
 
 
 class Configuration(dict):

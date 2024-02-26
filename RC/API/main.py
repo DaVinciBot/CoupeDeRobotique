@@ -2,11 +2,7 @@ from configuration import APP_CONFIG
 
 import asyncio
 
-from common.WS import (
-    WServer, WServerRouteManager,
-    WSender, WSreceiver,
-    WSmsg
-)
+from common.WS import WServer, WServerRouteManager, WSender, WSreceiver, WSmsg
 
 
 async def lidar_brain():
@@ -21,20 +17,17 @@ if __name__ == "__main__":
 
     # Lidar
     lidar = WServerRouteManager(
-        WSreceiver(keep_memory=True),
-        WSender(APP_CONFIG.WS_SENDER_NAME)
+        WSreceiver(keep_memory=True), WSender(APP_CONFIG.WS_SENDER_NAME)
     )
 
     # Log
     log = WServerRouteManager(
-        WSreceiver(use_queue=True),
-        WSender(APP_CONFIG.WS_SENDER_NAME)
+        WSreceiver(use_queue=True), WSender(APP_CONFIG.WS_SENDER_NAME)
     )
 
     # Odometer
     odometer = WServerRouteManager(
-        WSreceiver(keep_memory=True),
-        WSender(APP_CONFIG.WS_SENDER_NAME)
+        WSreceiver(keep_memory=True), WSender(APP_CONFIG.WS_SENDER_NAME)
     )
 
     # Bind routes
