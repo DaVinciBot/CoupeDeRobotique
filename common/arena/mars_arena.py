@@ -1,4 +1,5 @@
 from arena.arena import Arena
+from geometry import Point, Rectangle
 
 
 class MarsArena(Arena):
