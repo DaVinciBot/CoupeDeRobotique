@@ -17,9 +17,7 @@ async def lidar_brain():
                 )
             )
             deserialized_scan = [[s.x, s.y] for s in scan]
-            await lidar.sender.send(
-                await lidar.get_ws(), WSmsg(msg="lidar_scan", data=deserialized_scan)
-            )
+            await lidar.sender.send(WSmsg(msg="lidar_scan", data=deserialized_scan))
         except Exception as e:
             print(f"Lidar error : {e}")
         await asyncio.sleep(0.1)

@@ -21,6 +21,7 @@ class WSclientRouteManager:
 
     def set_ws(self, ws: aiohttp.ClientWebSocketResponse) -> None:
         self.__ws = ws
+        self.sender.update_clients(ws)
 
     async def get_ws(self, skip_set=False) -> aiohttp.ClientWebSocketResponse or None:
         # Wait until the ws is connected

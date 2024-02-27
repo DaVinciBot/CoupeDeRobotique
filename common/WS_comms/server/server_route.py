@@ -55,6 +55,9 @@ class WServerRouteManager:
         #    raise ValueError(f"Client with source [{name}] does not exist.")
         return self.clients.get(name)
 
+    def get_all_clients(self):
+        return [val for val in self.clients.values()]
+
     async def routine(
         self, request: aiohttp.web_request.Request
     ) -> aiohttp.web_ws.WebSocketResponse or None:
@@ -69,6 +72,7 @@ class WServerRouteManager:
 
         client_name = self.add_client(request, client)
         print("New client : ", client_name)
+        self.sender.update_clients(self.get_all_clients())
         try:
             async for msg in client:
                 await self.receiver.routine(msg)

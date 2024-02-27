@@ -2,6 +2,7 @@ import aiohttp
 
 from WS.ws_message import WSmsg
 
+import asyncio
 
 class WSender:
     """
@@ -17,7 +18,21 @@ class WSender:
         """
         self.name = name
 
-    async def send(self, clients, msg: WSmsg) -> None:
+        self.__route_manager_clients = []
+
+    def update_clients(self, clients) -> None:
+        if type(clients) is not list:
+            self.__route_manager_clients = [clients]
+        else:
+            self.__route_manager_clients = clients
+
+    async def get_clients(self, wait_clients: bool = False) -> list:
+        while len(self.__route_manager_clients) == 0 and not wait_clients:
+            await asyncio.sleep(0.5)
+        return self.__route_manager_clients
+
+
+    async def send(self, clients = None, msg: WSmsg, wait_client: bool = False) -> None:
         """
         Send a message to one or multiple clients.
         :param clients:
@@ -26,6 +41,14 @@ class WSender:
         """
         # Add the source value to the message
         msg.sender = self.name
+
+        # By default send to attributes clients
+        if clients is None:
+            clients = await self.get_clients(wait_client)
+
+        if clients is None:
+            print("Error, no clients found.")
+            return
 
         if type(clients) is not list:
             clients = [clients]
