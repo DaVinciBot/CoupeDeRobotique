@@ -2,13 +2,14 @@ from datetime import datetime
 
 
 class Utils:
-    def get_current_date(self) -> dict:
-        """
-        Récupère la date actuelle et son timestamp
+    @staticmethod
+    def get_date() -> datetime:
+        return datetime.now()
 
-        :return: date actuelle (datetime obj) et timestamp (int)
-        :rtype: dict
-        """
-        now = datetime.now()
-        timestamp = datetime.timestamp(now)
-        return {"date": now, "date_timespamp": timestamp}
+    @staticmethod
+    def get_str_date(format: str = "%H:%M:%S") -> str:
+        return datetime.now().strftime(format)
+
+    @staticmethod
+    def get_ts() -> float:
+        return datetime.timestamp(datetime.now())

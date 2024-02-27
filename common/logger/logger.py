@@ -1,6 +1,6 @@
-from .Utils import Utils
-from .State import is_logger_init, LOG_LEVEL, PRINT_LOG
-from .API import update_log_sync
+from utils.utils import Utils
+from log_levels import LogLevels
+
 
 import os, types, functools
 from threading import Thread
@@ -12,27 +12,42 @@ class Logger:
     affiche dans le format HH:MM:SS | NIVEAU | message
     """
 
-    def __init__(self, func=None, *, level: int = 0):
-        global is_logger_init
+    def __init__(
+        self,
+        func=None,
+        *,
+        identifier: str = "unknown",
+        dec_level: LogLevels = LogLevels.DEBUG,
+        log_level: LogLevels = LogLevels.DEBUG,
+        print_log: bool = True,
+        write_to_file: bool = True,
+    ):
         """
         Logger init, ignore func and level param (for decorator)
         """
         # Decorator only
         if func is not None:
             self.func = func
-            self.dec_level = level
+            self.dec_level = dec_level
             functools.update_wrapper(self, self.func)
             self.__code__ = self.func.__code__
-        # Normal init
-        os.mkdir("logs") if not os.path.isdir("logs") else None
-        date = Utils.get_current_date()["date"]
-        self.log_file = f"{date.strftime('%Y-%m-%d')}.log"
-        self.levels = ["INFO", "WARNING", "ERROR", "CRITICAL", "NONE"]
-        if not is_logger_init:
-            self.log(f"Logger initialized, level: {self.levels[LOG_LEVEL]}")
-            is_logger_init = True
 
-    def log(self, message: str, level: int = 0) -> None:
+        # Normal init
+        # Init attributes
+        self.identifier = identifier
+        self.log_level = log_level
+        self.print_log = print_log
+        self.write_to_file = write_to_file
+
+        os.mkdir("logs") if not os.path.isdir("logs") else None
+        date = Utils.get_date()
+        self.log_file = f"{date.strftime('%Y-%m-%d')}.log"
+
+        self.log(
+            f"Logger initialized [{self.identifier}], level: {self.log_level.name}"
+        )
+
+    def log(self, message: str, level: LogLevels = LogLevels.WARNING) -> None:
         """
         Log un message dans le fichier de log et dans la sortie standard
         :param message: message à logger
@@ -40,18 +55,21 @@ class Logger:
         :param level: 0: INFO, 1: WARNING, 2: ERROR, 3: CRITICAL, defaults to 0
         :type level: int, optional
         """
-        if level < LOG_LEVEL or level > 3:
-            return
-        date_str = Utils.get_current_date()["date"].strftime("%H:%M:%S")
-        message = f"{date_str} | {self.levels[level]} | {message}"
-        if PRINT_LOG:
-            print(message)
-        with open(f"logs/{self.log_file}", "a") as f:
-            f.write(message + "\n")
-        try:
-            Thread(target=update_log_sync, args=(message,)).start()
-        except:
-            pass
+        if level >= self.log_level:
+            date_str = Utils.get_str_date()
+            message = f"{date_str} -> [{self.identifier}] {level.name} | {message}"
+            if self.print_log:
+                print(message)
+
+            if self.log_file:
+                with open(f"logs/{self.log_file}", "a") as f:
+                    f.write(message + "\n")
+
+        # Sync logs to server (deprecated for now)
+        # try:
+        #     Thread(target=update_log_sync, args=(message,)).start()
+        # except:
+        #     pass
 
     def __call__(self, *args, **kwargs):
         """
