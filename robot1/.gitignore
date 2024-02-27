@@ -1,8 +1,0 @@
-*.json
-*/__pycache__
-logs
-*.log
-
-.pytest_cache
-.idea
-venv
