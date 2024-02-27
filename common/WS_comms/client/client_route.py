@@ -1,8 +1,8 @@
 import aiohttp
 import asyncio
 
-from WS.ws_receiver import WSreceiver
-from WS.ws_sender import WSender
+from WS_comms.receiver import WSreceiver
+from WS_comms.sender import WSender
 
 
 class WSclientRouteManager:

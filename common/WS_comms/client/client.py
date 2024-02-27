@@ -1,7 +1,7 @@
 import aiohttp
 import asyncio
 
-from WS.ws_client.ws_client_route import WSclientRouteManager
+from WS_comms.client.client_route import WSclientRouteManager
 
 
 class WSclient:

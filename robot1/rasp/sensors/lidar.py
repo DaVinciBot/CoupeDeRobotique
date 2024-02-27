@@ -1,5 +1,9 @@
+from config_loader import CONFIG
+
+# Import from common
+from geometry import OrientedPoint, Point
+
 import math
-from .Shapes import OrientedPoint, Point
 
 
 class Lidar:

@@ -15,7 +15,7 @@ class WSmsg:
     """
 
     def __init__(
-        self, sender: str = None, msg: str = None, data: any = None, ts: int = None
+        self, sender: str = "", msg: str = "", data=None, ts: int = -1
     ) -> None:
         self.sender = sender
         self.msg = msg
@@ -30,10 +30,10 @@ class WSmsg:
         :return:
         """
         return cls(
-            sender=str(msg.get("sender")),
-            msg=str(msg.get("msg")),
-            data=msg.get("data"),
-            ts=int(msg.get("ts")),
+            sender=str(msg.get("sender", "")),
+            msg=str(msg.get("msg", "")),
+            data=msg.get("data", None),
+            ts=int(msg.get("ts", -1)),
         )
 
     @classmethod
@@ -56,10 +56,10 @@ class WSmsg:
         if msg.type == aiohttp.WSMsgType.TEXT:
             msg_json = msg.json()
             return cls(
-                sender=msg_json.get("sender"),
-                msg=msg_json.get("msg"),
-                data=msg_json.get("data"),
-                ts=msg_json.get("ts"),
+                sender=msg_json.get("sender", ""),
+                msg=msg_json.get("msg", ""),
+                data=msg_json.get("data", None),
+                ts=msg_json.get("ts", -1),
             )
         else:
             print(f"Unknown message type: {msg.type}")
@@ -93,15 +93,15 @@ class WSmsg:
         :param str_format:
         :return:
         """
-        if self.sender is None:
+        if self.sender == "":
             raise ValueError("Sender value is None. PREPARATION FAILED.")
 
-        if self.msg is None:
+        if self.msg == "":
             print("Warning: msg is not set.")
         if self.data is None:
             print("Warning: data is not set.")
 
-        if self.ts is None:
+        if self.ts == -1:
             self.ts = int(time.time())
 
         if str_format:
@@ -111,7 +111,7 @@ class WSmsg:
     def __str__(self) -> str:
         return f"(sender: {self.sender}, msg: {self.msg}, data: {self.data}, ts: {self.ts})"
 
-    def __eq__(self, other: any) -> bool:
+    def __eq__(self, other) -> bool:
         if not isinstance(other, WSmsg):
             return NotImplemented
         return (

@@ -1,3 +1,6 @@
+from arena.arena import Arena
+
+
 class MarsArena(Arena):
     """Represent the arena of the CDR 2023-2024"""
 

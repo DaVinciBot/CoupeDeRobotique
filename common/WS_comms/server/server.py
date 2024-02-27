@@ -1,7 +1,7 @@
 from aiohttp import web
 import asyncio
 
-from WS.ws_server.ws_server_route import WServerRouteManager
+from WS_comms.server.server_route import WServerRouteManager
 
 
 class WServer:
@@ -32,7 +32,7 @@ class WServer:
         """
         self.app.router.add_get(route, route_manager.routine)
 
-    def add_background_task(self, task: callable, name: str = None) -> None:
+    def add_background_task(self, task: callable, name: str = "") -> None:
         """
         Add a new background task to the server. It is useful to execute task in parallel with the server.
         * The task have to be a coroutine (async function).
@@ -42,7 +42,7 @@ class WServer:
         :param name:
         :return:
         """
-        name = task.__name__ if name is None else name
+        name = task.__name__ if name == "" else name
 
         async def background_task(app):
             app[name] = asyncio.create_task(task())

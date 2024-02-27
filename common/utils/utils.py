@@ -2,7 +2,7 @@ from datetime import datetime
 
 
 class Utils:
-    def get_current_date() -> dict:
+    def get_current_date(self) -> dict:
         """
         Récupère la date actuelle et son timestamp
 

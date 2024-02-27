@@ -1,8 +1,9 @@
 from .Utils import Utils
-from threading import Thread
 from .State import is_logger_init, LOG_LEVEL, PRINT_LOG
 from .API import update_log_sync
+
 import os, types, functools
+from threading import Thread
 
 
 class Logger:

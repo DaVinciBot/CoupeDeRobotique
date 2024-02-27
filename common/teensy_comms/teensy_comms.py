@@ -1,10 +1,9 @@
 from typing import Any, Callable
-import serial, threading, time, crc8, struct, serial.tools.list_ports, math
-from .State import SERVOS_PIN
+import serial, threading, time, crc8, serial.tools.list_ports
 
-from .Logger import Logger
-from .Shapes import OrientedPoint
-from .DummySerial import DummySerial
+from logger import Logger
+from geometry import OrientedPoint
+from teensy_comms.dummy_serial import DummySerial
 
 
 # Used for curve_go_to

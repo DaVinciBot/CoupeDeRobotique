@@ -1,3 +1,12 @@
+from config_loader import CONFIG
+
+# Import from common
+from teensy_comms import Teensy
+from logger import Logger
+
+import struct
+
+
 class Actuators(Teensy):
     def __init__(
         self,
@@ -5,7 +14,7 @@ class Actuators(Teensy):
         pid: int = 1155,
         baudrate: int = 115200,
         crc: bool = True,
-        pin_servos: list[int] = SERVOS_PIN,
+        pin_servos: list[int] = CONFIG.SERVO_PINS,
     ):
         super().__init__(vid, pid, baudrate, crc)
         self.pin_servos = pin_servos

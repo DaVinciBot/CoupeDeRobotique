@@ -1,29 +1,27 @@
 {
-  "general":
-  {
-    "ws":
-    {
+  "general": {
+    "ws": {
       "port": 8080,
       "lidar_route": "/lidar",
       "odometer_route": "/odometer",
       "log_route": "/log"
     }
   },
-  "RC":
-  {
-    "ws":
-    {
+  "computer": {
+    "ws": {
       "sender_name": "RC",
       "hostname": "0.0.0.0"
     }
-
   },
-  "robot1":
-  {
-    "ws":
-    {
+  "robot1": {
+    "log_level": 0,
+    "print_log": true,
+    "ws": {
       "sender_name": "robot1",
       "server_ip": "192.168.0.104"
+    },
+    "actuators": {
+      "servo_pins": []
     }
   }
 }

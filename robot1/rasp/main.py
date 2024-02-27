@@ -1,11 +1,15 @@
-from configuration import APP_CONFIG
+from config_loader import CONFIG
+
+# Import from common
+from logger import Logger
+from geometry import OrientedPoint
+from WS_comms import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
+
+# Import from local path
+from sensors import Lidar
+from controllers import RollingBasis
 
 import asyncio
-
-from bot import Logger, Lidar, RollingBasis
-from bot.Shapes import OrientedPoint
-
-from WS import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
 
 
 async def lidar_brain():
@@ -41,21 +45,21 @@ if __name__ == "__main__":
     lidar_obj = Lidar()
 
     # WS connection
-    ws_client = WSclient(APP_CONFIG.WS_SERVER_IP, APP_CONFIG.WS_PORT)
+    ws_client = WSclient(CONFIG.WS_SERVER_IP, CONFIG.WS_PORT)
 
     # Lidar
-    lidar = WSclientRouteManager(WSreceiver(), WSender(APP_CONFIG.WS_SENDER_NAME))
+    lidar = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
 
     # Log
-    log = WSclientRouteManager(WSreceiver(), WSender(APP_CONFIG.WS_SENDER_NAME))
+    log = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
 
     # Odometer
-    odometer = WSclientRouteManager(WSreceiver(), WSender(APP_CONFIG.WS_SENDER_NAME))
+    odometer = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
 
     # Bind routes
-    ws_client.add_route_handler(APP_CONFIG.WS_LIDAR_ROUTE, lidar)
-    ws_client.add_route_handler(APP_CONFIG.WS_LOG_ROUTE, log)
-    ws_client.add_route_handler(APP_CONFIG.WS_ODOMETER_ROUTE, odometer)
+    ws_client.add_route_handler(CONFIG.WS_LIDAR_ROUTE, lidar)
+    ws_client.add_route_handler(CONFIG.WS_LOG_ROUTE, log)
+    ws_client.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, odometer)
 
     # Add background tasks
     ws_client.add_background_task(lidar_brain)

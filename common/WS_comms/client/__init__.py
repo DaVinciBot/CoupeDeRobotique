@@ -1,2 +1,2 @@
-from WS.ws_client.ws_client import WSclient
-from WS.ws_client.ws_client_route import WSclientRouteManager
+from WS_comms.client.client import WSclient
+from WS_comms.client.client_route import WSclientRouteManager

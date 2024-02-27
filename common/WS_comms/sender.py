@@ -1,8 +1,9 @@
 import aiohttp
 
-from WS.ws_message import WSmsg
+from WS_comms.message import WSmsg
 
 import asyncio
+
 
 class WSender:
     """
@@ -31,8 +32,7 @@ class WSender:
             await asyncio.sleep(0.5)
         return self.__route_manager_clients
 
-
-    async def send(self, clients = None, msg: WSmsg, wait_client: bool = False) -> None:
+    async def send(self, msg: WSmsg, clients=None, wait_client: bool = False) -> None:
         """
         Send a message to one or multiple clients.
         :param clients:

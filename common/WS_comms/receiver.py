@@ -3,7 +3,7 @@ import json
 
 import aiohttp
 
-from WS.ws_message import WSmsg
+from WS_comms.message import WSmsg
 
 
 class WSreceiver:
@@ -26,12 +26,12 @@ class WSreceiver:
         """
         Coroutine to read received messages and add them in queues (one for each task).
         """
-        msg = WSmsg.from_aiohttp_message(msg)
+        retyped_msg = WSmsg.from_aiohttp_message(msg)
 
         if self.use_queue:
-            await self.queue.put(msg)
-        self.last_state = msg
-        # print(f"New message {msg}")
+            await self.queue.put(retyped_msg)
+        self.last_state = retyped_msg
+        # print(f"New message {retyped_msg}")
 
     async def get(self, skip_queue: bool = False, wait_msg: bool = False) -> WSmsg:
         """
