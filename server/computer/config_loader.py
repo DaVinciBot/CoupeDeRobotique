@@ -42,5 +42,8 @@ class CONFIG:
     # Specific config
     SPECIFIC_CONFIG = CONFIG_STORE[SPECIFIC_CONFIG_KEY]
 
-    WS_SENDER_NAME = SPECIFIC_CONFIG["sender_name"]
-    WS_HOSTNAME = SPECIFIC_CONFIG["hostname"]
+    # Specific ws config
+    SPECIFIC_WS_CONFIG = SPECIFIC_CONFIG["ws"]
+
+    WS_SENDER_NAME = SPECIFIC_WS_CONFIG["sender_name"]
+    WS_HOSTNAME = SPECIFIC_WS_CONFIG["hostname"]

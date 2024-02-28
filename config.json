@@ -9,7 +9,7 @@
   },
   "computer": {
     "ws": {
-      "sender_name": "RC",
+      "sender_name": "computer",
       "hostname": "0.0.0.0"
     }
   },

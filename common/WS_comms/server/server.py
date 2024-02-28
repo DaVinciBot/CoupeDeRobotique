@@ -32,20 +32,25 @@ class WServer:
         """
         self.app.router.add_get(route, route_manager.routine)
 
-    def add_background_task(self, task: callable, name: str = "") -> None:
+    def add_background_task(
+        self, task: callable, *args, name: str = "", **kwargs
+    ) -> None:
         """
         Add a new background task to the server. It is useful to execute task in parallel with the server.
         * The task have to be a coroutine (async function).
         * To create the task we add a key in the app dictionary with the name of the task.
         * The task will be created when the server will start.
+        * Format: add_background_task(func, (optional) func_params, (optional) name)
         :param task:
+        :param args:
         :param name:
+        :param kwargs:
         :return:
         """
         name = task.__name__ if name == "" else name
 
         async def background_task(app):
-            app[name] = asyncio.create_task(task())
+            app[name] = asyncio.create_task(task(*args, **kwargs))
 
         self.app.on_startup.append(background_task)
 

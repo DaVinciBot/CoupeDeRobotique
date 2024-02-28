@@ -1,5 +1,5 @@
 from utils.utils import Utils
-from log_levels import LogLevels
+from logger.log_levels import LogLevels
 
 
 import os, types, functools

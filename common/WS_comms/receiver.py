@@ -43,7 +43,7 @@ class WSreceiver:
         :param wait_msg:
         :return:
         """
-        if self.use_queue:
+        if self.use_queue and not skip_queue:
             if wait_msg:
                 return await self.queue.get()
             elif not self.queue.empty():
