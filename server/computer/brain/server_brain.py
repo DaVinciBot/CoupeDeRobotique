@@ -31,8 +31,6 @@ async def server_brain(
                     ),
                     clients=robot1,
                 )
-
-            print("Server Brain is working")
         except Exception as e:
             logger.log(f"Server Brain error: {e}", LogLevels.ERROR)
             print("Server Brain error: ", e)

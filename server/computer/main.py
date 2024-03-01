@@ -10,23 +10,6 @@ from brain.server_brain import server_brain
 import asyncio
 
 
-# async def lidar_brain(lidar: WServerRouteManager, logger: Logger):
-#     while True:
-#         msg = await lidar.receiver.get()
-#         if msg != WSmsg():
-#             logger.log(
-#                 f"Message lidar: {msg.msg}, {msg.sender}, {len(msg.data)}",
-#                 LogLevels.INFO,
-#             )
-#             print(
-#                 f"#--> Message lidar: {msg.msg}, {msg.sender}, {len(msg.data)}, queue: {lidar.receiver.get_queue_size()}"
-#             )
-#         else:
-#             print(f"#--> Message lidar: {msg}")
-
-#         await asyncio.sleep(5)
-
-
 if __name__ == "__main__":
     logger = Logger(
         identifier="computer",
@@ -57,7 +40,7 @@ if __name__ == "__main__":
     ws_server.add_route_handler(CONFIG.WS_LIDAR_ROUTE, lidar)
     ws_server.add_route_handler(CONFIG.WS_LOG_ROUTE, log)
     ws_server.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, odometer)
-    ws_server.add_route_handler("/cmd", cmd)
+    ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, cmd)
 
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
     ws_server.add_background_task(server_brain, logger, lidar, odometer, cmd)

@@ -1,8 +1,9 @@
 from config_loader import CONFIG
 
 # Import from common
-from logger import Logger
+from logger import Logger, LogLevels
 from geometry import OrientedPoint
+from arena import MarsArena
 from WS_comms import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
 
 # Import from local path
@@ -40,6 +41,16 @@ async def odometer_brain():
 
 
 if __name__ == "__main__":
+    # Logger
+    logger = Logger(
+        identifier="robot1",
+        dec_level=LogLevels.INFO,
+        log_level=LogLevels.DEBUG,
+    )
+    
+    # Arene 
+    arena = MarsArena(1)
+    
     # Robot
     robot = RollingBasis()
     lidar_obj = Lidar()
