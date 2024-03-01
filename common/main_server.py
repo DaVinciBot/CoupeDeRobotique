@@ -14,8 +14,7 @@ async def lidar_brain():
         client = lidar.get_client("robot1")
         if client is not None:
             await lidar.sender.send(
-                client,
-                WSmsg(sender="server", data="Hello from server !")
+                client, WSmsg(sender="server", data="Hello from server !")
             )
         await asyncio.sleep(1)
 
@@ -24,10 +23,7 @@ if __name__ == "__main__":
     ws_server = WServer("0.0.0.0", 8080)
 
     # Lidar route
-    lidar = WServerRouteManager(
-        WSreceiver(use_queue=True),
-        WSender("server")
-    )
+    lidar = WServerRouteManager(WSreceiver(use_queue=True), WSender("server"))
 
     # Bind routes
     ws_server.add_route_handler("/lidar", lidar)

@@ -47,10 +47,10 @@ if __name__ == "__main__":
         dec_level=LogLevels.INFO,
         log_level=LogLevels.DEBUG,
     )
-    
-    # Arene 
+
+    # Arene
     arena = MarsArena(1)
-    
+
     # Robot
     robot = RollingBasis()
     lidar_obj = Lidar()
