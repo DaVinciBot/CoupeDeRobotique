@@ -9,10 +9,9 @@ from WS_comms import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
 # Import from local path
 from sensors import Lidar
 from controllers import RollingBasis
-from brain import robot1_brain
+from brains import Robot1Brain
 
 import asyncio
-
 
 
 if __name__ == "__main__":
@@ -41,6 +40,9 @@ if __name__ == "__main__":
 
     # Odometer
     odometer = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
+    
+    # Brain
+    brain = Robot1Brain(logger, arena, lidar_obj, robot, lidar, odometer, cmd)
 
     # Bind routes
     ws_client.add_route_handler(CONFIG.WS_LIDAR_ROUTE, lidar)
@@ -48,7 +50,7 @@ if __name__ == "__main__":
     ws_client.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, odometer)
 
     # Add background tasks
-    ws_client.add_background_task(robot1_brain, logger, arena, lidar_obj, robot, lidar, odometer, cmd)
+    ws_client.add_background_task(brain.routine)
 
     
     ws_client.run()
