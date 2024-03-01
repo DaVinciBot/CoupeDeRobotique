@@ -38,6 +38,7 @@ class CONFIG:
     WS_LIDAR_ROUTE = GENERAL_WS_CONFIG["lidar_route"]
     WS_LOG_ROUTE = GENERAL_WS_CONFIG["log_route"]
     WS_ODOMETER_ROUTE = GENERAL_WS_CONFIG["odometer_route"]
+    WS_CMD_ROUTE = GENERAL_WS_CONFIG["cmd_route"]
 
     # Specific config
     SPECIFIC_CONFIG = CONFIG_STORE[SPECIFIC_CONFIG_KEY]
