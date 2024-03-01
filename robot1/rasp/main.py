@@ -14,7 +14,6 @@ from brain import robot1_brain
 import asyncio
 
 
-
 if __name__ == "__main__":
     # Logger
     logger = Logger(
@@ -48,7 +47,8 @@ if __name__ == "__main__":
     ws_client.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, odometer)
 
     # Add background tasks
-    ws_client.add_background_task(robot1_brain, logger, arena, lidar_obj, robot, lidar, odometer, cmd)
+    ws_client.add_background_task(
+        robot1_brain, logger, arena, lidar_obj, robot, lidar, odometer, cmd
+    )
 
-    
     ws_client.run()
