@@ -36,8 +36,9 @@ class Arena:
         return self.forbidden_area.contains(point)
 
     def enable_go_to(self, path: LineString, buffer_distance: float = 0) -> bool:
-        """this function checks if a given line (or series of connected lines) move can be made into the arena. It avoid collisions with the boarders and the forbidden area.
-            takes into account the width and the length of the robot
+        """this function checks if a given line (or series of connected lines) move can be made into the arena. It
+        avoids collisions with the boarders and the forbidden area. takes into account the width and the length of
+        the robot
 
         Args:
             path (LineString): _description_
@@ -65,7 +66,7 @@ class Arena:
 
         # verify that the area touched isn't in the forbidden area (if it exists)
         if (
-            self.forbidden_area != None
+            self.forbidden_area is not None
             and area_touched_by_buffer_along_path.intersects(self.forbidden_area)
         ):
             return False
