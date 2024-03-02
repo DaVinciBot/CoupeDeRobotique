@@ -63,8 +63,11 @@ class Arena:
         if not self.area.contains_properly(area_touched_by_buffer_along_path):
             return False
 
-        # verify that the area touched isn't in the forbidden area
-        if area_touched_by_buffer_along_path.intersects(self.forbidden_area):
+        # verify that the area touched isn't in the forbidden area (if it exists)
+        if (
+            self.forbidden_area != None
+            and area_touched_by_buffer_along_path.intersects(self.forbidden_area)
+        ):
             return False
 
         return True
