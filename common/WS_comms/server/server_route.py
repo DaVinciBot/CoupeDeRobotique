@@ -56,7 +56,7 @@ class WServerRouteManager:
         return self.clients.get(name)
 
     def get_all_clients(self):
-        return [val for val in self.clients.values()]
+        return list(self.clients.values())
 
     async def routine(
         self, request: aiohttp.web_request.Request
@@ -82,6 +82,7 @@ class WServerRouteManager:
 
         finally:
             del self.clients[client_name]
+            self.sender.update_clients(self.get_all_clients())
             print(f"Client disconnected [{client_name}]")
 
         return client
