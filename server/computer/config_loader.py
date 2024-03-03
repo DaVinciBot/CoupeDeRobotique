@@ -14,6 +14,19 @@ def load_json_file(file_path):
     return file_json
 
 
+def format_path(path: str) -> str:
+    """
+    Transform a path with this shape: '.|folder|sub_folder|file.txt'
+    to the path with the correct separator  ('\' for Windows or '/' for Unix-based systems),
+    depending on the operating system.
+    """
+    try:
+        path_parts = path.split('|')
+        return os.path.join(*path_parts)
+    except Exception:
+        raise
+
+
 class CONFIG:
     # TO CONFIG !
     RELATIVE_ROOT_PATH = os.path.join("..", "..")
@@ -48,3 +61,17 @@ class CONFIG:
 
     WS_SENDER_NAME = SPECIFIC_WS_CONFIG["sender_name"]
     WS_HOSTNAME = SPECIFIC_WS_CONFIG["hostname"]
+
+    # Specific camera config
+    SPECIFIC_CAMERA_CONFIG = SPECIFIC_CONFIG["camera"]
+
+    CAMERA_RESOLUTION = SPECIFIC_CAMERA_CONFIG["resolution"]
+    CAMERA_CHESSBOARD_SIZE = SPECIFIC_CAMERA_CONFIG["chessboard_size"]
+    CAMERA_CHESSBOARD_SQUARE_SIZE = float(SPECIFIC_CAMERA_CONFIG["chessboard_square_size"])
+    CAMERA_DISTANCE_CAM_TABLE = float(SPECIFIC_CAMERA_CONFIG["distance_cam_table"])
+    CAMERA_CAM_OBJ_FUNCTION_A = float(SPECIFIC_CAMERA_CONFIG["cam_obj_function_a"])
+    CAMERA_CAM_OBJ_FUNCTION_B = float(SPECIFIC_CAMERA_CONFIG["cam_obj_function_b"])
+    CAMERA_ARUCO_DICT_TYPE = SPECIFIC_CAMERA_CONFIG["aruco_dict_type"]
+    CAMERA_SAVE_PATH = format_path(SPECIFIC_CAMERA_CONFIG["save_path"])
+    CAMERA_CALIBRATION_PATH = format_path(SPECIFIC_CAMERA_CONFIG["calibration_path"])
+    CAMERA_COEFFICIENTS_PATH = format_path(SPECIFIC_CAMERA_CONFIG["coefficients_path"])

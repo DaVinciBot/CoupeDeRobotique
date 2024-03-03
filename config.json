@@ -12,6 +12,23 @@
     "ws": {
       "sender_name": "computer",
       "hostname": "0.0.0.0"
+    },
+    "camera":
+    {
+      "resolution": [800, 800],
+
+      "chessboard_size": [9, 6],
+      "chessboard_square_size": 0.044,
+      "distance_cam_table": 0.2,
+
+      "cam_obj_function_a": 1077.2,
+      "cam_obj_function_b": -0.809,
+
+      "aruco_dict_type": "DICT_4X4_100",
+
+      "save_path": "|controllers|camera|images_save",
+      "calibration_path": "|controllers|camera|calibration_path",
+      "coefficients_path": "|controllers|camera|undistort_coef.json"
     }
   },
   "robot1": {

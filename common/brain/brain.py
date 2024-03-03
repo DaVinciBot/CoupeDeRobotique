@@ -13,4 +13,4 @@ class Brain:
             try:
                 await self.logical()
             except Exception as error:
-                self.logger(f"Brain [{self.__class__.__name__}] error: {error}", LogLevels.ERROR)
+                self.logger.log(f"Brain [{self.__class__.__name__}] error: {error}", LogLevels.ERROR)
