@@ -1,16 +1,89 @@
 from logger import Logger, LogLevels
 
+import asyncio
+
+from typing import TypeVar, Type, List, Callable, Coroutine
+import inspect
+
+TBrain = TypeVar('TBrain', bound='Brain')
+
+
 class Brain:
-    def __init__(self, logger: Logger) -> None:
-        self.logger = logger 
-    
-    async def logical(self):
-        pass
-    
-    async def routine(self):
-        self.logger.log(f"Brain [{self.__class__.__name__}] started", LogLevels.INFO)
+    """
+    The brain is a main controller of applications.
+    """
+
+    def __init__(self, logger: Logger, child: TBrain) -> None:
+        """
+        This constructor have to be called in the __init__ method of the child class.
+        By using super().__init__(logger, self)
+        """
+        if logger is None:
+            raise ValueError("Logger is required for the brain to work properly.")
+        self.logger = logger
+        child.dynamic_init()
+
+    def dynamic_init(self):
+        """
+        This method is used to dynamically initialize the instance with the parameters of the caller.
+        * You only have to call this method in the __init__ method of the child class.
+        By Using super().__init__(logger, self)
+        * The attributes of the child class will be initialized, based on the parameters of the caller.
+        They will have the same name as the parameters of the child's __init__.
+        """
+        # Get the frame of the caller (the __init__ method of the child class)
+        frame = inspect.currentframe().f_back.f_back
+        # Get the params of the frame
+        params = frame.f_locals
+
+        # Assign the params to the instance
+        for name, value in params.items():
+            if name not in ["self", "logger"]:
+                setattr(self, name, value)
+
+    @classmethod
+    def logical(cls, refresh_rate=1):
+        """
+        Decorator to add a logical function to the brain with a specified refresh rate.
+        The logical function is called in the main loop of the brain according to its refresh rate.
+        :param refresh_rate: The refresh rate of the logical function.
+        :return: The logical function.
+        """
+
+        def decorator(func: Callable[['Brain'], Coroutine[None, None, None]]):
+            if not hasattr(cls, 'logical_functions'):
+                cls.logical_functions = []
+            # Save the logical function and its refresh rate as a tuple
+            cls.logical_functions.append((func, refresh_rate))
+            return func
+
+        return decorator
+
+    async def make_routine(self, logical_function, refresh_rate) -> None:
+        """
+        This method wraps the logical function in a loop and calls it according to the refresh rate.
+        * It also handles the exceptions and logs them.
+        :param logical_function: The logical function to be called in the main loop.
+        :param refresh_rate: The refresh rate of the logical function.
+        :return: None
+        """
+        self.logger.log(f"Brain [{self}], logical function [{logical_function.__name__}] started", LogLevels.INFO)
         while True:
             try:
-                await self.logical()
+                await logical_function(self)
+                await asyncio.sleep(refresh_rate)
             except Exception as error:
-                self.logger.log(f"Brain [{self.__class__.__name__}] error: {error}", LogLevels.ERROR)
+                self.logger.log(f"Brain [{self}]-[{logical_function.__name__}] error: {error}", LogLevels.ERROR)
+
+    def get_routines(self) -> List[Callable[[], Coroutine[None, None, None]]]:
+        """
+        This method return a list of the brain's routines. They have to be added to
+        the background tasks of the main loop.
+        """
+        return [
+            lambda logical_function=logical_func, refresh_rate=rate: self.make_routine(logical_function, refresh_rate)
+            for logical_func, rate in self.logical_functions
+        ]
+
+    def __str__(self) -> str:
+        return self.__class__.__name__

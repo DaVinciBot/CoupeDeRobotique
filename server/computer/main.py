@@ -34,10 +34,14 @@ if __name__ == "__main__":
         WSreceiver(use_queue=True),
         WSender(CONFIG.WS_SENDER_NAME)
     )
+    ws_log = WServerRouteManager(
+        WSreceiver(), WSender(CONFIG.WS_SENDER_NAME)
+    )
 
     ws_server.add_route_handler(CONFIG.WS_LIDAR_ROUTE, ws_lidar)
     ws_server.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, ws_odometer)
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
+    ws_server.add_route_handler(CONFIG.WS_LOG_ROUTE, ws_log)
 
     # Camera
     camera = Camera(
@@ -62,12 +66,23 @@ if __name__ == "__main__":
     arena = MarsArena(1)
 
     # Brain
-    brain = ServerBrain(logger, ws_lidar, ws_odometer, ws_cmd, camera, aruco_recognizer, plan_transposer, arena)
+    brain = ServerBrain(
+        logger=logger,
+        ws_lidar=ws_lidar,
+        ws_odometer=ws_odometer,
+        ws_cmd=ws_cmd,
+        ws_log=ws_log,
+        camera=camera,
+        aruco_recognizer=aruco_recognizer,
+        plan_transposer=plan_transposer,
+        arena=arena
+    )
 
     """
         ###--- Run ---###
     """
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
-    ws_server.add_background_task(brain.routine)
+    for routine in brain.get_routines():
+        ws_server.add_background_task(routine)
 
     ws_server.run()

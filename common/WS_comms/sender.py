@@ -22,13 +22,13 @@ class WSender:
         self.__route_manager_clients = []
 
     def update_clients(self, clients) -> None:
-        if type(clients) is not list:
+        if not isinstance(clients, list):
             self.__route_manager_clients = [clients]
         else:
             self.__route_manager_clients = clients
 
     async def get_clients(self, wait_clients: bool = False) -> list:
-        while len(self.__route_manager_clients) == 0 and not wait_clients:
+        while len(self.__route_manager_clients) == 0 and wait_clients:
             await asyncio.sleep(0.5)
             print("No clients ...")
         return self.__route_manager_clients
@@ -36,8 +36,9 @@ class WSender:
     async def send(self, msg: WSmsg, clients=None, wait_client: bool = False) -> None:
         """
         Send a message to one or multiple clients.
-        :param clients:
         :param msg:
+        :param clients:
+        :param wait_client:
         :return:
         """
         # Add the source value to the message
