@@ -10,37 +10,50 @@ from utils import Utils
 from sensors import Lidar
 from controllers import RollingBasis
 
-import asyncio
-
 
 class Robot1Brain(Brain):
     def __init__(
             self,
             logger: Logger,
-            arene: MarsArena,
+
+            ws_lidar: WSclientRouteManager,
+            ws_odometer: WSclientRouteManager,
+            ws_cmd: WSclientRouteManager,
+
             lidar: Lidar,
+
             rolling_basis: RollingBasis,
-            lidar_ws: WSclientRouteManager,
-            odometer_ws: WSclientRouteManager,
-            cmd_ws: WSclientRouteManager
+
+            arena: MarsArena
     ) -> None:
-        super().__init__(logger)
+        super().__init__(logger, self)
 
-        self.arene = arene
-        self.lidar = lidar
-        self.rolling_basis = rolling_basis
-        self.lidar_ws = lidar_ws
-        self.odometer_ws = odometer_ws
-        self.cmd_ws = cmd_ws
+        self.lidar_scan = []
 
-        self.last_feedback = Utils.get_ts()
-        self.feedback_refresh_rate = 0.5
-
-    async def logical(self):
-        # Get controllers feedback
-        lidar_scan = self.lidar.scan_to_absolute_cartesian(
+    @Brain.routine(refresh_rate=1)
+    async def lidar_scan(self):
+        self.lidar_scan = self.lidar.scan_to_absolute_cartesian(
             robot_pos=self.rolling_basis.odometrie
         )
+
+    @Brain.routine(refresh_rate=1)
+    async def send_feedback_to_server(self):
+        await self.ws_lidar.sender.send(
+            WSmsg(msg="lidar_scan", data=[[s.x, s.y] for s in self.lidar_scan])
+        )
+        await self.ws_odometer.sender.send(
+            WSmsg(
+                msg="odometer",
+                data=[
+                    self.rolling_basis.odometrie.x,
+                    self.rolling_basis.odometrie.y,
+                    self.rolling_basis.odometrie.theta,
+                ],
+            )
+        )
+
+    @Brain.routine(refresh_rate=0.5)
+    async def main(self):
 
         # Get the message from routes
         cmd = await self.cmd_ws.receiver.get()
@@ -69,23 +82,3 @@ class Robot1Brain(Brain):
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
                     LogLevels.WARNING,
                 )
-
-        # Send the controllers feedback to the server
-        if Utils.get_ts() - self.last_feedback > self.feedback_refresh_rate:
-            await self.send_feedback(lidar_scan)
-            self.last_feedback = Utils.get_ts()
-
-    async def send_feedback(self, lidar_scan):
-        await self.lidar_ws.sender.send(
-            WSmsg(msg="lidar_scan", data=[[s.x, s.y] for s in lidar_scan])
-        )
-        await self.odometer_ws.sender.send(
-            WSmsg(
-                msg="odometer",
-                data=[
-                    self.rolling_basis.odometrie.x,
-                    self.rolling_basis.odometrie.y,
-                    self.rolling_basis.odometrie.theta,
-                ],
-            )
-        )

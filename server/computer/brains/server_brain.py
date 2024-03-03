@@ -8,8 +8,6 @@ from brain import Brain
 # Import from local path
 from controllers import Camera, ArucoRecognizer, PlanTransposer
 
-import asyncio
-
 
 class ServerBrain(Brain):
     """
@@ -24,9 +22,11 @@ class ServerBrain(Brain):
             ws_odometer: WServerRouteManager,
             ws_cmd: WServerRouteManager,
             ws_log: WServerRouteManager,
+
             camera: Camera,
             aruco_recognizer: ArucoRecognizer,
             plan_transposer: PlanTransposer,
+
             arena: MarsArena
     ) -> None:
         super().__init__(logger, self)
@@ -34,10 +34,10 @@ class ServerBrain(Brain):
         self.arucos = []
 
     """
-        Logical functions
+        Routines
     """
 
-    @Brain.logical(refresh_rate=1)
+    @Brain.routine(refresh_rate=1)
     async def camera_capture(self):
         self.logger.log("Server Brain-camera_capture is working", LogLevels.INFO)
 
@@ -47,16 +47,20 @@ class ServerBrain(Brain):
         ellipses = frame.compute_ellipses()
 
         self.arucos = []
+        # Add arucos to the list following the format: (id, x, y)
         self.arucos.extend(
-            self.plan_transposer.image_to_relative_position(
-                img=frame.img,
-                segment=ellipse.get("max_radius"),
-                center_point=ellipse.get("center"),
+            (
+                int(frame.ids[index][0]),
+                self.plan_transposer.image_to_relative_position(
+                    img=frame.img,
+                    segment=ellipse.get("max_radius"),
+                    center_point=ellipse.get("center"),
+                ),
             )
-            for ellipse in ellipses
+            for index, ellipse in enumerate(ellipses)
         )
 
-    @Brain.logical(refresh_rate=1)
+    @Brain.routine(refresh_rate=1)
     async def main(self):
         self.logger.log("Server Brain-main is working", LogLevels.INFO)
 
