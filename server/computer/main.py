@@ -7,7 +7,7 @@ from arena import MarsArena
 
 # Import from local path
 from brains import ServerBrain
-from controllers import Camera, ArucoRecognizer, PlanTransposer
+from controllers import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Frame
 
 import asyncio
 
@@ -55,12 +55,35 @@ if __name__ == "__main__":
         aruco_type=CONFIG.CAMERA_ARUCO_DICT_TYPE
     )
 
+    import numpy as np
+    color_recognizer = ColorRecognizer(
+        detection_range=(
+            np.array([30, 80, 80]),
+            np.array([90, 255, 255])
+        ),
+        name="green"
+    )
+
     plan_transposer = PlanTransposer(
         camera_table_distance=CONFIG.CAMERA_DISTANCE_CAM_TABLE,
         alpha=CONFIG.CAMERA_CAM_OBJ_FUNCTION_A,
         beta=CONFIG.CAMERA_CAM_OBJ_FUNCTION_B
     )
     camera.load_undistor_coefficients()
+
+
+    while True:
+        camera.capture()
+        camera.undistor_image()
+        img = camera.get_capture()
+        a = aruco_recognizer.detect(img)
+        b = color_recognizer.detect(img, reduce_noise=True)
+        r = Frame(img, [a, b])
+
+        r.draw_markers()
+        r.write_labels()
+        camera.update_monitor(r.img)
+
 
     # Arena
     arena = MarsArena(1)
