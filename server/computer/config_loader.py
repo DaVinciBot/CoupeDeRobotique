@@ -9,7 +9,7 @@ def load_json_file(file_path):
     try:
         with open(file_path) as config:
             file_json = json.load(config)
-    except Exception as error
+    except Exception as error:
         raise error
 
     return file_json
