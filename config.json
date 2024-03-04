@@ -21,14 +21,26 @@
       "chessboard_square_size": 0.044,
       "distance_cam_table": 0.2,
 
-      "cam_obj_function_a": 1077.2,
-      "cam_obj_function_b": -0.809,
-
-      "aruco_dict_type": "DICT_4X4_100",
-
       "save_path": "|controllers|camera|images_save",
       "calibration_path": "|controllers|camera|calibration_path",
-      "coefficients_path": "|controllers|camera|undistort_coef.json"
+      "coefficients_path": "|controllers|camera|undistort_coef.json",
+
+      "aruco":
+      {
+        "cam_obj_function_a": 1077.2,
+        "cam_obj_function_b": -0.809,
+
+        "aruco_dict_type": "DICT_4X4_100"
+      },
+
+      "color_object":
+      {
+        "color": "green",
+        "hsv_min": [30, 80, 80],
+        "hsv_max": [90, 255, 255],
+        "clustering_eps": 20,
+        "clustering_min_samples": 20
+      }
     }
   },
   "robot1": {

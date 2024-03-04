@@ -1,3 +1,4 @@
+import numpy as np
 import pathlib
 import json
 import sys
@@ -8,8 +9,8 @@ def load_json_file(file_path):
     try:
         with open(file_path) as config:
             file_json = json.load(config)
-    except Exception:
-        raise
+    except Exception as error
+        raise error
 
     return file_json
 
@@ -23,8 +24,8 @@ def format_path(path: str) -> str:
     try:
         path_parts = path.split('|')
         return os.path.join(*path_parts)
-    except Exception:
-        raise
+    except Exception as error:
+        raise error
 
 
 class CONFIG:
@@ -69,9 +70,18 @@ class CONFIG:
     CAMERA_CHESSBOARD_SIZE = SPECIFIC_CAMERA_CONFIG["chessboard_size"]
     CAMERA_CHESSBOARD_SQUARE_SIZE = float(SPECIFIC_CAMERA_CONFIG["chessboard_square_size"])
     CAMERA_DISTANCE_CAM_TABLE = float(SPECIFIC_CAMERA_CONFIG["distance_cam_table"])
-    CAMERA_CAM_OBJ_FUNCTION_A = float(SPECIFIC_CAMERA_CONFIG["cam_obj_function_a"])
-    CAMERA_CAM_OBJ_FUNCTION_B = float(SPECIFIC_CAMERA_CONFIG["cam_obj_function_b"])
-    CAMERA_ARUCO_DICT_TYPE = SPECIFIC_CAMERA_CONFIG["aruco_dict_type"]
     CAMERA_SAVE_PATH = format_path(SPECIFIC_CAMERA_CONFIG["save_path"])
     CAMERA_CALIBRATION_PATH = format_path(SPECIFIC_CAMERA_CONFIG["calibration_path"])
     CAMERA_COEFFICIENTS_PATH = format_path(SPECIFIC_CAMERA_CONFIG["coefficients_path"])
+
+    CAMERA_CAM_OBJ_FUNCTION_A = float(SPECIFIC_CAMERA_CONFIG["aruco"]["cam_obj_function_a"])
+    CAMERA_CAM_OBJ_FUNCTION_B = float(SPECIFIC_CAMERA_CONFIG["aruco"]["cam_obj_function_b"])
+    CAMERA_ARUCO_DICT_TYPE = SPECIFIC_CAMERA_CONFIG["aruco"]["aruco_dict_type"]
+
+    CAMERA_COLOR_FILTER_NAME = SPECIFIC_CAMERA_CONFIG["color_object"]["color"]
+    CAMERA_COLOR_FILTER_RANGE = (
+        np.array(SPECIFIC_CAMERA_CONFIG["color_object"]["hsv_min"]),
+        np.array(SPECIFIC_CAMERA_CONFIG["color_object"]["hsv_max"])
+    )
+    CAMERA_COLOR_CLUSTERING_EPS = int(SPECIFIC_CAMERA_CONFIG["color_object"]["clustering_eps"])
+    CAMERA_COLOR_CLUSTERING_MIN_SAMPLES = int(SPECIFIC_CAMERA_CONFIG["color_object"]["clustering_min_samples"])

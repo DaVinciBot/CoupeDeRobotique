@@ -54,8 +54,7 @@ class ColorRecognizer:
     def __extract_positive_points(mask: np.ndarray) -> np.ndarray:
         return np.column_stack(np.nonzero(mask))
 
-    @staticmethod
-    def __find_clusters(points: np.ndarray) -> np.ndarray:
+    def __find_clusters(self, points: np.ndarray) -> np.ndarray:
         if points.size > 0:
             dbscan = DBSCAN(eps=self.clustering_eps, min_samples=self.clustering_min_samples)
             return dbscan.fit_predict(points)

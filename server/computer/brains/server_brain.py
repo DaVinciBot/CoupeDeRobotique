@@ -6,7 +6,7 @@ from WS_comms import WSmsg, WServerRouteManager
 from brain import Brain
 
 # Import from local path
-from controllers import Camera, ArucoRecognizer, PlanTransposer
+from controllers import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer
 
 
 class ServerBrain(Brain):
@@ -25,6 +25,7 @@ class ServerBrain(Brain):
 
             camera: Camera,
             aruco_recognizer: ArucoRecognizer,
+            color_recognizer: ColorRecognizer,
             plan_transposer: PlanTransposer,
 
             arena: MarsArena
@@ -32,6 +33,7 @@ class ServerBrain(Brain):
         super().__init__(logger, self)
 
         self.arucos = []
+        self.green_objects = []
 
     """
         Routines
@@ -43,22 +45,27 @@ class ServerBrain(Brain):
 
         self.camera.capture()
         self.camera.undistor_image()
-        frame = self.aruco_recognizer.detect(self.camera.get_capture())
-        ellipses = frame.compute_ellipses()
+        arucos = self.aruco_recognizer.detect(self.camera.get_capture())
+        green_objects = self.color_recognizer.detect(self.camera.get_capture())
 
         self.arucos = []
-        # Add arucos to the list following the format: (id, x, y)
-        self.arucos.extend(
-            (
-                int(frame.ids[index][0]),
-                self.plan_transposer.image_to_relative_position(
-                    img=frame.img,
-                    segment=ellipse.get("max_radius"),
-                    center_point=ellipse.get("center"),
-                ),
+        for aruco in arucos:
+            self.arucos.append(
+                (
+                    aruco.encoded_number,
+                    self.plan_transposer.image_to_relative_position(
+                        img=self.camera.get_capture(),
+                        segment=aruco.max_radius,
+                        center_point=aruco.centroid,
+                    ),
+                )
             )
-            for index, ellipse in enumerate(ellipses)
-        )
+
+        self.green_objects = []
+        for green_object in green_objects:
+            self.green_objects.append(
+                green_object.centroid
+            )
 
     @Brain.routine(refresh_rate=1)
     async def main(self):
@@ -81,6 +88,7 @@ class ServerBrain(Brain):
                 msg="States",
                 data={
                     "arucos": self.arucos,
+                    "green_objects": self.green_objects,
                     "lidar": lidar_state.data,
                     "odometer": odometer_state.data,
                     "cmd": cmd_state.data

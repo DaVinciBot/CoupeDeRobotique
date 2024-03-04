@@ -55,13 +55,11 @@ if __name__ == "__main__":
         aruco_type=CONFIG.CAMERA_ARUCO_DICT_TYPE
     )
 
-    import numpy as np
     color_recognizer = ColorRecognizer(
-        detection_range=(
-            np.array([30, 80, 80]),
-            np.array([90, 255, 255])
-        ),
-        name="green"
+        detection_range=CONFIG.CAMERA_COLOR_FILTER_RANGE,
+        name=CONFIG.CAMERA_COLOR_FILTER_NAME,
+        clustering_eps=CONFIG.CAMERA_COLOR_CLUSTERING_EPS,
+        clustering_min_samples=CONFIG.CAMERA_COLOR_CLUSTERING_MIN_SAMPLES
     )
 
     plan_transposer = PlanTransposer(
@@ -70,20 +68,6 @@ if __name__ == "__main__":
         beta=CONFIG.CAMERA_CAM_OBJ_FUNCTION_B
     )
     camera.load_undistor_coefficients()
-
-
-    while True:
-        camera.capture()
-        camera.undistor_image()
-        img = camera.get_capture()
-        a = aruco_recognizer.detect(img)
-        b = color_recognizer.detect(img, reduce_noise=True)
-        r = Frame(img, [a, b])
-
-        r.draw_markers()
-        r.write_labels()
-        camera.update_monitor(r.img)
-
 
     # Arena
     arena = MarsArena(1)
@@ -97,6 +81,7 @@ if __name__ == "__main__":
         ws_log=ws_log,
         camera=camera,
         aruco_recognizer=aruco_recognizer,
+        color_recognizer=color_recognizer,
         plan_transposer=plan_transposer,
         arena=arena
     )

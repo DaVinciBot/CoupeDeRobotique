@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import numpy as np
 
 
 class DetectedObject:
@@ -22,7 +23,7 @@ class DetectedObject:
 
 class Aruco(DetectedObject):
     def __init__(self, encoded_number, corners):
-        self.encoded_number = encoded_number
+        self.encoded_number = int(encoded_number)
         self.corners = corners
 
         self._centroid = None
@@ -33,12 +34,12 @@ class Aruco(DetectedObject):
         Private methods
     """
 
-    def __compute_ellipses(self):
+    def __compute_ellipse(self):
         points = np.array([
-            [self.corners[0][0][0], self.corners[0][0][1]],
-            [self.corners[0][1][0], self.corners[0][1][1]],
-            [self.corners[0][2][0], self.corners[0][2][1]],
-            [self.corners[0][3][0], self.corners[0][3][1]]
+            [self.corners[0][0], self.corners[0][1]],
+            [self.corners[1][0], self.corners[1][1]],
+            [self.corners[2][0], self.corners[2][1]],
+            [self.corners[3][0], self.corners[3][1]]
         ])
 
         center = points.mean(axis=0)
