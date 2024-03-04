@@ -55,7 +55,7 @@ class Arena:
 
         area_touched_by_buffer_along_path = path.buffer(
             buffer_distance,
-            cap_style=BufferCapStyle.square,
+            cap_style=BufferCapStyle.round,
             join_style=BufferJoinStyle.round,
         )
 
