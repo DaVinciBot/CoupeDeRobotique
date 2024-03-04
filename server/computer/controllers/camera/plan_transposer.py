@@ -16,7 +16,8 @@ class PlanTransposer:
             # We use Pythagoras to find the real distance between the camera and
             # the object from the table's point of view.
             real_distance_camera_object = math.sqrt(
-                math.pow(distance_camera_object_on_table, 2) - math.pow(self.camera_table_distance, 2)
+                math.pow(distance_camera_object_on_table, 2)
+                - math.pow(self.camera_table_distance, 2)
             )
         except Exception as error:
             print(f"Error during real_distance_camera_object computation [{error}]")
@@ -39,15 +40,18 @@ class PlanTransposer:
         distance_object_camera = self.image_distance_to_relative_distance(segment)
 
         # Get the distance between the camera and the object projected on center of the image
-        distance_camera_center_object = (center_point[0] - img.shape[1] / 2)
+        distance_camera_center_object = center_point[0] - img.shape[1] / 2
         # Convert this distance to a real distance
         k = 0.001285
-        distance_camera_center_object = distance_camera_center_object * k * distance_object_camera
+        distance_camera_center_object = (
+            distance_camera_center_object * k * distance_object_camera
+        )
 
         # Compute the relative position of the object
         x = distance_camera_center_object
         y = math.sqrt(
-            math.pow(distance_object_camera, 2) - math.pow(distance_camera_center_object, 2)
+            math.pow(distance_object_camera, 2)
+            - math.pow(distance_camera_center_object, 2)
         )
 
         return x, y

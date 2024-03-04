@@ -15,20 +15,17 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-
-            ws_lidar: WServerRouteManager,
-            ws_odometer: WServerRouteManager,
-            ws_cmd: WServerRouteManager,
-            ws_log: WServerRouteManager,
-
-            camera: Camera,
-            aruco_recognizer: ArucoRecognizer,
-            color_recognizer: ColorRecognizer,
-            plan_transposer: PlanTransposer,
-
-            arena: MarsArena
+        self,
+        logger: Logger,
+        ws_lidar: WServerRouteManager,
+        ws_odometer: WServerRouteManager,
+        ws_cmd: WServerRouteManager,
+        ws_log: WServerRouteManager,
+        camera: Camera,
+        aruco_recognizer: ArucoRecognizer,
+        color_recognizer: ColorRecognizer,
+        plan_transposer: PlanTransposer,
+        arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -63,9 +60,7 @@ class ServerBrain(Brain):
 
         self.green_objects = []
         for green_object in green_objects:
-            self.green_objects.append(
-                green_object.centroid
-            )
+            self.green_objects.append(green_object.centroid)
 
     @Brain.routine(refresh_rate=1)
     async def main(self):
@@ -91,7 +86,7 @@ class ServerBrain(Brain):
                     "green_objects": self.green_objects,
                     "lidar": lidar_state.data,
                     "odometer": odometer_state.data,
-                    "cmd": cmd_state.data
+                    "cmd": cmd_state.data,
                 },
             )
         )

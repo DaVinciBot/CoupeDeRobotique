@@ -40,7 +40,7 @@ if __name__ == "__main__":
 
     # Odometer
     odometer = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
-    
+
     # Brain
     brain = Robot1Brain(logger, arena, lidar_obj, robot, lidar, odometer, cmd)
 
@@ -52,5 +52,4 @@ if __name__ == "__main__":
     # Add background tasks
     ws_client.add_background_task(brain.routine)
 
-    
     ws_client.run()

@@ -9,8 +9,11 @@ from imutils.video import VideoStream
 
 from utils import Utils
 
+
 class Camera:
-    def __init__(self, res_w=800, res_h=800, captures_path="./", undistorted_coefficients_path=""):
+    def __init__(
+        self, res_w=800, res_h=800, captures_path="./", undistorted_coefficients_path=""
+    ):
         self.resolution = [res_h, res_w]
         self.camera = VideoStream(src=0).start()
         self.captures_path = captures_path
@@ -24,7 +27,9 @@ class Camera:
         self.last_record_image = None
         self.undistor_coefficients = dict()
 
-    def chessboard_calibration_images_capture(self, save_path, nb_pictures=50, frequency=1):
+    def chessboard_calibration_images_capture(
+        self, save_path, nb_pictures=50, frequency=1
+    ):
         total_duration = nb_pictures * frequency
 
         if not os.path.isdir(save_path):
@@ -39,7 +44,9 @@ class Camera:
             current_timestamp = Utils.get_ts()
             self.capture()
             self.update_monitor(monitor_name="Chessboard calibration")
-            print(f"Countdown before start of pictures taking: {5 - (current_timestamp - start_timestamp)}")
+            print(
+                f"Countdown before start of pictures taking: {5 - (current_timestamp - start_timestamp)}"
+            )
 
         start_timestamp = Utils.get_ts()
         current_timestamp = start_timestamp
@@ -57,7 +64,9 @@ class Camera:
                 frame_index += 1
                 last_capture_time = current_timestamp
 
-                print(f"Countdown: {total_duration - (current_timestamp - start_timestamp)}")
+                print(
+                    f"Countdown: {total_duration - (current_timestamp - start_timestamp)}"
+                )
 
     def load_undistor_coefficients(self):
         with open(self.undistorted_coefficients_path) as file:
@@ -65,9 +74,7 @@ class Camera:
 
     def capture(self):
         self.last_record_image = imutils.resize(
-            self.camera.read(),
-            height=self.resolution[0],
-            width=self.resolution[1]
+            self.camera.read(), height=self.resolution[0], width=self.resolution[1]
         )
         return self.last_record_image
 
@@ -78,8 +85,12 @@ class Camera:
         self.last_record_image = cv2.undistort(
             src=self.last_record_image,
             cameraMatrix=np.array(self.undistor_coefficients.get("camera_matrix")),
-            distCoeffs=np.array(self.undistor_coefficients.get("distortion_coefficients")),
-            newCameraMatrix=np.array(self.undistor_coefficients.get("optimized_camera_matrix"))
+            distCoeffs=np.array(
+                self.undistor_coefficients.get("distortion_coefficients")
+            ),
+            newCameraMatrix=np.array(
+                self.undistor_coefficients.get("optimized_camera_matrix")
+            ),
         )
 
     def save(self, save_path=None, image=None):

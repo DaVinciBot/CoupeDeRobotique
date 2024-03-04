@@ -5,7 +5,7 @@ import asyncio
 from typing import TypeVar, Type, List, Callable, Coroutine
 import inspect
 
-TBrain = TypeVar('TBrain', bound='Brain')
+TBrain = TypeVar("TBrain", bound="Brain")
 
 
 class Brain:
@@ -50,8 +50,8 @@ class Brain:
         :return: The routine function.
         """
 
-        def decorator(func: Callable[['Brain'], Coroutine[None, None, None]]):
-            if not hasattr(cls, 'routines'):
+        def decorator(func: Callable[["Brain"], Coroutine[None, None, None]]):
+            if not hasattr(cls, "routines"):
                 cls.routines = []
             # Save the routine and its refresh rate as a tuple
             cls.routines.append((func, refresh_rate))
@@ -67,13 +67,18 @@ class Brain:
         :param refresh_rate: The refresh rate of the routine
         :return: None
         """
-        self.logger.log(f"Brain [{self}], routine [{routine.__name__}] started", LogLevels.INFO)
+        self.logger.log(
+            f"Brain [{self}], routine [{routine.__name__}] started", LogLevels.INFO
+        )
         while True:
             try:
                 await routine(self)
                 await asyncio.sleep(refresh_rate)
             except Exception as error:
-                self.logger.log(f"Brain [{self}]-[{routine.__name__}] error: {error}", LogLevels.ERROR)
+                self.logger.log(
+                    f"Brain [{self}]-[{routine.__name__}] error: {error}",
+                    LogLevels.ERROR,
+                )
 
     def get_routines(self) -> List[Callable[[], Coroutine[None, None, None]]]:
         """
@@ -81,7 +86,9 @@ class Brain:
         the background tasks of the main loop.
         """
         return [
-            lambda routine=routine, refresh_rate=rate: self.make_routine(routine, refresh_rate)
+            lambda routine=routine, refresh_rate=rate: self.make_routine(
+                routine, refresh_rate
+            )
             for routine, rate in self.routines
         ]
 
