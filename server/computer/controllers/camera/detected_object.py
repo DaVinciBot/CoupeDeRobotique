@@ -35,12 +35,14 @@ class Aruco(DetectedObject):
     """
 
     def __compute_ellipse(self):
-        points = np.array([
-            [self.corners[0][0], self.corners[0][1]],
-            [self.corners[1][0], self.corners[1][1]],
-            [self.corners[2][0], self.corners[2][1]],
-            [self.corners[3][0], self.corners[3][1]]
-        ])
+        points = np.array(
+            [
+                [self.corners[0][0], self.corners[0][1]],
+                [self.corners[1][0], self.corners[1][1]],
+                [self.corners[2][0], self.corners[2][1]],
+                [self.corners[3][0], self.corners[3][1]],
+            ]
+        )
 
         center = points.mean(axis=0)
 
@@ -60,7 +62,7 @@ class Aruco(DetectedObject):
             "center": center,
             "axis_length": axis_length,
             "angle_degrees": angle_degrees,
-            "max_radius": max_radius
+            "max_radius": max_radius,
         }
 
     """
@@ -112,7 +114,7 @@ class Aruco(DetectedObject):
             "type": "aruco",
             "bounding_box": self.bounding_box,
             "centroid": self.centroid,
-            "corners": self.corners
+            "corners": self.corners,
         }
         if extra_info:
             info["encoded_number"] = self.encoded_number
@@ -139,7 +141,7 @@ class ColorObject(DetectedObject):
                 (self.bounding_box[0][0], self.bounding_box[0][1]),
                 (self.bounding_box[1][0], self.bounding_box[0][1]),
                 (self.bounding_box[1][0], self.bounding_box[1][1]),
-                (self.bounding_box[0][0], self.bounding_box[1][1])
+                (self.bounding_box[0][0], self.bounding_box[1][1]),
             ]
         return self._corners
 
@@ -148,7 +150,7 @@ class ColorObject(DetectedObject):
             "type": "color_object",
             "bounding_box": self.bounding_box,
             "centroid": self.centroid,
-            "corners": self.corners
+            "corners": self.corners,
         }
         if extra_info:
             info["color"] = self.name

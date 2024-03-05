@@ -220,7 +220,6 @@ class RollingBasis(Teensy):
         else:
             self.queue.append({self.Command.CurveGoTo: curve_msg})
 
-
     # TODO: grosse redondance sur le skip queue, utile de mettre en place un decorateur pour faire ça automatiquement ?
     @Logger
     def Keep_Current_Position(self, skip_queue=False):

@@ -13,7 +13,9 @@ class ArucoRecognizer:
         self.params = cv2.aruco.DetectorParameters_create()
 
     def detect(self, img: np.ndarray, **extra_params) -> list[Aruco]:
-        founds = cv2.aruco.detectMarkers(img, self.dictionary, parameters=self.params, **extra_params)
+        founds = cv2.aruco.detectMarkers(
+            img, self.dictionary, parameters=self.params, **extra_params
+        )
 
         if founds[1] is None:
             return []
@@ -23,8 +25,13 @@ class ArucoRecognizer:
 
 
 class ColorRecognizer:
-    def __init__(self, detection_range: tuple[np.array, np.array], clustering_eps: int = 10,
-                 clustering_min_samples: int = 10, name: str = "unknow") -> None:
+    def __init__(
+        self,
+        detection_range: tuple[np.array, np.array],
+        clustering_eps: int = 10,
+        clustering_min_samples: int = 10,
+        name: str = "unknow",
+    ) -> None:
         self.range_low = detection_range[0]
         self.range_high = detection_range[1]
         self.clustering_eps = clustering_eps
@@ -56,7 +63,9 @@ class ColorRecognizer:
 
     def __find_clusters(self, points: np.ndarray) -> np.ndarray:
         if points.size > 0:
-            dbscan = DBSCAN(eps=self.clustering_eps, min_samples=self.clustering_min_samples)
+            dbscan = DBSCAN(
+                eps=self.clustering_eps, min_samples=self.clustering_min_samples
+            )
             return dbscan.fit_predict(points)
 
         return np.array([])
@@ -74,11 +83,20 @@ class ColorRecognizer:
             cluster_points = points[clusters == cluster]
             if cluster_points.size > 0:
                 centroid = np.mean(cluster_points, axis=0)
-                min_x, max_x = np.min(cluster_points[:, 1]), np.max(cluster_points[:, 1])
-                min_y, max_y = np.min(cluster_points[:, 0]), np.max(cluster_points[:, 0])
+                min_x, max_x = np.min(cluster_points[:, 1]), np.max(
+                    cluster_points[:, 1]
+                )
+                min_y, max_y = np.min(cluster_points[:, 0]), np.max(
+                    cluster_points[:, 0]
+                )
                 bounding_box = ((min_x, min_y), (max_x, max_y))
 
-                clusters_info.append({"centroid": (centroid[1], centroid[0]), "bounding_box": bounding_box})
+                clusters_info.append(
+                    {
+                        "centroid": (centroid[1], centroid[0]),
+                        "bounding_box": bounding_box,
+                    }
+                )
 
         return clusters_info
 

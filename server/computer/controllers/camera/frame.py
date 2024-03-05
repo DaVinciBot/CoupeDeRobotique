@@ -5,7 +5,11 @@ from controllers.camera.detected_object import DetectedObject, Aruco, ColorObjec
 
 
 class Frame:
-    def __init__(self, img: np.ndarray, detected_object: list[DetectedObject] or list[list[DetectedObject]] = None):
+    def __init__(
+        self,
+        img: np.ndarray,
+        detected_object: list[DetectedObject] or list[list[DetectedObject]] = None,
+    ):
         self.img = img
 
         if detected_object is not None:
@@ -31,13 +35,14 @@ class Frame:
     def draw_markers(self):
         for obj in self.detected_object:
             cv2.aruco.drawDetectedMarkers(
-                self.img,
-                corners=np.array([[obj.corners]], dtype=np.float32)
+                self.img, corners=np.array([[obj.corners]], dtype=np.float32)
             )
 
     def draw_bounding_boxes(self):
         for obj in self.detected_object:
-            cv2.rectangle(self.img, obj.bounding_box[0], obj.bounding_box[1], (0, 255, 0), 2)
+            cv2.rectangle(
+                self.img, obj.bounding_box[0], obj.bounding_box[1], (0, 255, 0), 2
+            )
 
     def write_labels(self):
         for obj in self.detected_object:
@@ -48,7 +53,7 @@ class Frame:
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.5,
                 (0, 255, 0),
-                2
+                2,
             )
 
 
