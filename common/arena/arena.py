@@ -1,4 +1,13 @@
-from geometry import Point, Rectangle
+from geometry import (
+    Point,
+    Polygon,
+    MultiPolygon,
+    LineString,
+    BufferCapStyle,
+    BufferJoinStyle,
+    Geometry,
+    create_straight_rectangle,
+)
 
 
 class Arena:
@@ -6,195 +15,74 @@ class Arena:
 
     def __init__(
         self,
-        area: Rectangle = Rectangle(Point(0, 0), Point(200, 300)),
-        forbidden_area: Rectangle = Rectangle(Point(0, 0), Point(0, 0)),
-        home: Rectangle = Rectangle(Point(0, 0), Point(0, 0)),
+        game_borders: Polygon = create_straight_rectangle(Point(0, 0), Point(200, 300)),
+        zones: dict[str, MultiPolygon] or None = None,
     ):
-        if (
-            not isinstance(area, Rectangle)
-            or not isinstance(forbidden_area, Rectangle)
-            or not isinstance(home, Rectangle)
-        ):
-            raise TypeError("Arguments must be Rectangle")
-        self.area = area
-        self.forbidden_area = forbidden_area
-        self.home = home
 
-    def is_in(self, point: Point) -> bool:
-        """Check if a point is in the arena
+        self.game_borders = game_borders
+        if zones is not None:
+            self.zones = zones
+        else:
+            self.zones = {}
+
+    def contains(self, element: Geometry) -> bool:
+        """Check if a point is in the arena bounds
 
         Args:
-            point (Point): The point to check
+            element (Geometry): The point to check. Points, Polygons etc. are all Geometries.
 
         Returns:
-            bool: True if the point is in the arena, False otherwise
+            bool: True if the element is entirely in the arena, False otherwise
         """
-        return self.area.is_in(point)
+        return self.game_borders.contains(element)
 
-    def is_in_forbidden_area(self, point: Point) -> bool:
-        return self.forbidden_area.is_in(point)
+    def zone_intersects(self, zone_name: str, element: Geometry) -> bool:
+
+        if zone_name not in self.zones:
+            raise ValueError("Tried to check intersection with unknown zone in arena")
+
+        return self.zones[zone_name].intersects(element)
 
     def enable_go_to(
         self,
-        starting_point: Point,
-        destination_point: Point,
-        robot_width: int = 0,
-        robot_length: int = 0,
+        path: LineString,
+        buffer_distance: float = 0,
+        forbidden_zone_name: str = "forbidden",
     ) -> bool:
-        """this function checks if a given straight line move can be made into the arena. It avoid collisions with the boarders and the forbidden area.
-            takes into account the width and the length of the robot
+        """this function checks if a given line (or series of connected lines) move can be made into the arena. It
+        avoids collisions with the boarders and the forbidden area. takes into account the width and the length of
+        the robot
 
         Args:
-            starting_point (Point): _description_
-            destination_point (Point): _description_
-            robot_width (int, optional): _description_. Defaults to 22.
-            robot_length (int, optional): _description_. Defaults to 31.
+            path (LineString): Path to check
+            buffer_distance (float, optional): Max distance around the path to be checked (in all directions). Defaults to 0.
+            forbidden_zone_name (str): Name of the zone to check against (in addition to game borders). Defaults to "forbidden".
 
         Raises:
             Exception: _description_
 
         Returns:
-            bool: _description_
+            bool: Whether this path is theoretically allowed
         """
 
-        # verify that the point is in the arena and do not collide with boarders
-        distance = robot_length / 2
-        valid_area = Rectangle(
-            Point(distance, distance),
-            Point(
-                self.area.opposite_corner.x - distance,
-                self.area.opposite_corner.y - distance,
-            ),
+        # define the area touched by the buffer, for example the sides of a robot moving
+
+        geometry_to_check = (
+            path.buffer(
+                buffer_distance,
+                cap_style=BufferCapStyle.round,
+                join_style=BufferJoinStyle.round,
+            )
+            if buffer_distance > 0
+            else path
         )
-        if not valid_area.is_in(destination_point):
+        # Important to check buffer_distance > 0, otherwise the geometry can become a polygon without surface that never
+        # intersects with anything
+
+        # verify that the area touched is in the arena and do not collide with boarders
+        if not self.game_borders.contains(geometry_to_check):
             return False
 
-        # check if go_to describe an horizontal or vertical line
-        if destination_point.x == starting_point.x:  # line = |
-            # Check for collisions with the forbidden area
-            if (
-                destination_point.x >= self.forbidden_area.corner.x
-                and destination_point.x <= self.forbidden_area.opposite_corner.x
-            ):
-                return False
-            elif (
-                destination_point.x - robot_width >= self.forbidden_area.corner.x
-                and destination_point.x - robot_width
-                <= self.forbidden_area.opposite_corner.x
-            ):
-                return False
-            elif (
-                destination_point.x + robot_width >= self.forbidden_area.corner.x
-                and destination_point.x + robot_width
-                <= self.forbidden_area.opposite_corner.x
-            ):
-                return False
-            else:
-                return True
-        if destination_point.y == starting_point.y:  # line = --
-            # Check for collisions with the forbidden area
-            if (
-                destination_point.y >= self.forbidden_area.corner.y
-                and destination_point.y <= self.forbidden_area.opposite_corner.y
-            ):
-                return False
-            elif (
-                destination_point.y - robot_width >= self.forbidden_area.corner.y
-                and destination_point.y - robot_width
-                <= self.forbidden_area.opposite_corner.y
-            ):
-                return False
-            elif (
-                destination_point.y + robot_width >= self.forbidden_area.corner.y
-                and destination_point.y + robot_width
-                <= self.forbidden_area.opposite_corner.y
-            ):
-                return False
-            else:
-                return True
-        # get the equation of the center straight line
-        a = (destination_point.y - starting_point.y) / (
-            destination_point.x - starting_point.x
-        )
-        b = destination_point.y - a * destination_point.x
-        b2 = b - robot_width / 2
-        b3 = b + robot_width / 2
-        # given the folowing restricted area :
-        # BC
-        # AD
-        # Calculate collision points between the center line and the forbidden area's sides
-        c1 = Point(
-            self.forbidden_area.corner.x,
-            a * self.forbidden_area.corner.x + b,
-        )  # collision point between center line and AB
-        c2 = Point(
-            (self.forbidden_area.opposite_corner.y - b) / a,
-            self.forbidden_area.opposite_corner.y,
-        )  # collision point between center line and BC
-        c3 = Point(
-            self.forbidden_area.opposite_corner.x,
-            a * self.forbidden_area.opposite_corner.x + b,
-        )  # collision point between center line and CD
-        c4 = Point(
-            (self.forbidden_area.corner.y - b) / a,
-            self.forbidden_area.corner.y,
-        )  # collision point between center line and CD
-        # Check for collisions
-        if (
-            self.forbidden_area.is_in(c1)
-            or self.forbidden_area.is_in(c2)
-            or self.forbidden_area.is_in(c3)
-            or self.forbidden_area.is_in(c4)
-        ):
-            return False
-        # Calculate collision points between the right side line and the forbidden area's sides
-        c1 = Point(
-            self.forbidden_area.corner.x,
-            a * self.forbidden_area.corner.x + b2,
-        )  # collision point between right side line and AB
-        c2 = Point(
-            (self.forbidden_area.opposite_corner.y - b2) / a,
-            self.forbidden_area.opposite_corner.y,
-        )  # collision point between right side line and BC
-        c3 = Point(
-            self.forbidden_area.opposite_corner.x,
-            a * self.forbidden_area.opposite_corner.x + b2,
-        )  # collision point between right side line and CD
-        c4 = Point(
-            (self.forbidden_area.corner.y - b2) / a,
-            self.forbidden_area.corner.y,
-        )  # collision point between right side line and CD
-        # Check for collisions
-        if (
-            self.forbidden_area.is_in(c1)
-            or self.forbidden_area.is_in(c2)
-            or self.forbidden_area.is_in(c3)
-            or self.forbidden_area.is_in(c4)
-        ):
-            return False
-        # Calculate collision points between the left side line and the forbidden area's sides
-        c1 = Point(
-            self.forbidden_area.corner.x,
-            a * self.forbidden_area.corner.x + b3,
-        )  # collision point between left side line and AB
-        c2 = Point(
-            (self.forbidden_area.opposite_corner.y - b3) / a,
-            self.forbidden_area.opposite_corner.y,
-        )  # collision point between left side line and BC
-        c3 = Point(
-            self.forbidden_area.opposite_corner.x,
-            a * self.forbidden_area.opposite_corner.x + b3,
-        )  # collision point between left side line and CD
-        c4 = Point(
-            (self.forbidden_area.corner.y - b3) / a,
-            self.forbidden_area.corner.y,
-        )  # collision point between left side line and CD
-        # Check for collisions
-        if (
-            self.forbidden_area.is_in(c1)
-            or self.forbidden_area.is_in(c2)
-            or self.forbidden_area.is_in(c3)
-            or self.forbidden_area.is_in(c4)
-        ):
-            return False
-        return True
+        # verify that the area touched isn't in the forbidden area
+
+        return not self.zone_intersects(forbidden_zone_name, geometry_to_check)
