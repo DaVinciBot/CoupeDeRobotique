@@ -6,7 +6,7 @@ from WS_comms import WSmsg, WServerRouteManager
 from brain import Brain
 
 # Import from local path
-from controllers import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer
+from controllers import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Frame
 
 
 class ServerBrain(Brain):
@@ -15,6 +15,17 @@ class ServerBrain(Brain):
     """
 
     def __init__(
+        self,
+        logger: Logger,
+        ws_lidar: WServerRouteManager,
+        ws_odometer: WServerRouteManager,
+        ws_cmd: WServerRouteManager,
+        ws_log: WServerRouteManager,
+        camera: Camera,
+        aruco_recognizer: ArucoRecognizer,
+        color_recognizer: ColorRecognizer,
+        plan_transposer: PlanTransposer,
+        arena: MarsArena,
         self,
         logger: Logger,
         ws_lidar: WServerRouteManager,
@@ -61,6 +72,11 @@ class ServerBrain(Brain):
         self.green_objects = []
         for green_object in green_objects:
             self.green_objects.append(green_object.centroid)
+
+        frame = Frame(self.camera.get_capture(), [green_objects, arucos])
+        frame.draw_markers()
+        frame.write_labels()
+        self.camera.update_monitor(frame.img)
 
     @Brain.routine(refresh_rate=1)
     async def main(self):
