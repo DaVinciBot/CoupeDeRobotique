@@ -49,7 +49,8 @@ if __name__ == "__main__":
     ws_client.add_route_handler(CONFIG.WS_CMD_ROUTE, cmd)
     ws_client.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, odometer)
 
-    # Add background tasks
-    ws_client.add_background_task(brain.routine)
+    # Add background tasks, in format ws_server.add_background_task(func, func_params)
+    for routine in brain.get_routines():
+        ws_client.add_background_task(routine)
 
     ws_client.run()
