@@ -18,15 +18,15 @@ class ServerBrain(Brain):
         arene: MarsArena,
         lidar_ws: WServerRouteManager,
         odometer_ws: WServerRouteManager,
-        cmd_ws: WServerRouteManager
+        cmd_ws: WServerRouteManager,
     ) -> None:
         super().__init__(logger)
-            
+
         self.arene = arene
         self.lidar_ws = lidar_ws
         self.odometer_ws = odometer_ws
         self.cmd_ws = cmd_ws
-        
+
     async def logical(self):
         self.logger.log("Server Brain is working", LogLevels.INFO)
 

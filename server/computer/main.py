@@ -21,7 +21,7 @@ if __name__ == "__main__":
 
     # Arene
     arene = MarsArena(1)
-    
+
     # Lidar
     lidar = WServerRouteManager(
         WSreceiver(keep_memory=True, use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     # Brain
     brain = ServerBrain(logger, arene, lidar, odometer, cmd)
-    
+
     # Bind routes
     ws_server.add_route_handler(CONFIG.WS_LIDAR_ROUTE, lidar)
     ws_server.add_route_handler(CONFIG.WS_LOG_ROUTE, log)
