@@ -36,16 +36,18 @@ class Utils:
 
     @staticmethod
     def create_straight_rectangle(p1: Point, p2: Point) -> Polygon:
-        return geometry.box(min(p1.x, p2.x), min(p1.y, p2.y), max(p1.x, p2.x), max(p1.y, p2.y))
+        return geometry.box(
+            min(p1.x, p2.x), min(p1.y, p2.y), max(p1.x, p2.x), max(p1.y, p2.y)
+        )
 
 
 class Arena:
     """Represent an arena"""
 
     def __init__(
-            self,
-            game_borders: Polygon = geometry.box(0, 0, 200, 300),
-            zones: dict[str, MultiPolygon] or None = None,
+        self,
+        game_borders: Polygon = geometry.box(0, 0, 200, 300),
+        zones: dict[str, MultiPolygon] or None = None,
     ):
 
         self.game_borders = game_borders
@@ -72,8 +74,12 @@ class Arena:
 
         return self.zones[zone_name].intersects(element)
 
-    def enable_go_to(self, path: LineString, buffer_distance: float = 0,
-                     forbidden_zone_name: str = "forbidden") -> bool:
+    def enable_go_to(
+        self,
+        path: LineString,
+        buffer_distance: float = 0,
+        forbidden_zone_name: str = "forbidden",
+    ) -> bool:
         """this function checks if a given line (or series of connected lines) move can be made into the arena. It
         avoids collisions with the boarders and the forbidden area. takes into account the width and the length of
         the robot
@@ -92,11 +98,15 @@ class Arena:
 
         # define the area touched by the buffer, for example the sides of a robot moving
 
-        area_to_check = path.buffer(
-            buffer_distance,
-            cap_style=BufferCapStyle.round,
-            join_style=BufferJoinStyle.round,
-        ) if buffer_distance > 0 else path
+        area_to_check = (
+            path.buffer(
+                buffer_distance,
+                cap_style=BufferCapStyle.round,
+                join_style=BufferJoinStyle.round,
+            )
+            if buffer_distance > 0
+            else path
+        )
 
         # verify that the area touched is in the arena and do not collide with boarders
 
@@ -136,12 +146,22 @@ class MarsArena(Arena):
         self.color = "yellow" if start_zone % 2 == 0 else "blue"
 
         all_zones = [
-            Utils.create_straight_rectangle(Point(0, 0), Point(45, 45)),  # 1 - Blue (Possible forbidden area)
-            Utils.create_straight_rectangle(Point(77.5, 0), Point(122.5, 45)),  # 2 - Yellow
+            Utils.create_straight_rectangle(
+                Point(0, 0), Point(45, 45)
+            ),  # 1 - Blue (Possible forbidden area)
+            Utils.create_straight_rectangle(
+                Point(77.5, 0), Point(122.5, 45)
+            ),  # 2 - Yellow
             Utils.create_straight_rectangle(Point(155, 0), Point(200, 45)),  # 3 - Blue
-            Utils.create_straight_rectangle(Point(0, 255), Point(45, 300)),  # 4 - Yellow (Possible forbidden area)
-            Utils.create_straight_rectangle(Point(77.5, 255), Point(122, 300)),  # 5 - Blue
-            Utils.create_straight_rectangle(Point(155, 255), Point(200, 300)),  # 6 - Yellow
+            Utils.create_straight_rectangle(
+                Point(0, 255), Point(45, 300)
+            ),  # 4 - Yellow (Possible forbidden area)
+            Utils.create_straight_rectangle(
+                Point(77.5, 255), Point(122, 300)
+            ),  # 5 - Blue
+            Utils.create_straight_rectangle(
+                Point(155, 255), Point(200, 300)
+            ),  # 6 - Yellow
         ]
 
         super().__init__(
@@ -149,7 +169,7 @@ class MarsArena(Arena):
             zones={
                 "forbidden": all_zones[(start_zone % 2) * 3],
                 "home": all_zones[start_zone - 1],
-            }
+            },
         )
 
     def __str__(self) -> str:
@@ -165,7 +185,11 @@ class MarsArena(Arena):
 
 class TestArena:
     def test_enable_go_to(self):
-        arena = Arena(zones={"forbidden": Utils.create_straight_rectangle(Point(2, 2), Point(5, 5))})
+        arena = Arena(
+            zones={
+                "forbidden": Utils.create_straight_rectangle(Point(2, 2), Point(5, 5))
+            }
+        )
         a = Point(1, 1)
         b = Point(1, 6)
         c = Point(3, 1)
