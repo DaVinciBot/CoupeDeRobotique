@@ -78,6 +78,7 @@ class RollingBasis(Teensy):
                 self.l.log(f"Removing action {i} from queue : " + str(self.queue[i]))
                 self.queue.pop(i)
                 break
+        # TODO: jamais execute car on le teste deja dans le if not self.queue or len(self.queue) == 0:
         if len(self.queue) == 0:
             self.l.log("Queue is empty")
             self.current_action = None
@@ -92,7 +93,7 @@ class RollingBasis(Teensy):
     #########################
     # User facing functions #
     #########################
-
+    # TODO: class command a definir ailleurs ?
     class Command:
         GoToPoint = b"\x00"
         CurveGoTo = b"\x01"
@@ -105,6 +106,7 @@ class RollingBasis(Teensy):
         Stop = b"\x7E"  # 7E = 126
         Invalid = b"\xFF"
 
+    # TODO: nommage avec majuscule a revoir -> il faut en full minisucule
     @Logger
     def Go_To(
         self,
@@ -218,6 +220,8 @@ class RollingBasis(Teensy):
         else:
             self.queue.append({self.Command.CurveGoTo: curve_msg})
 
+
+    # TODO: grosse redondance sur le skip queue, utile de mettre en place un decorateur pour faire ça automatiquement ?
     @Logger
     def Keep_Current_Position(self, skip_queue=False):
         msg = self.Command.KeepCurrentPosition
