@@ -8,4 +8,5 @@ from geometry.geometry import (
     OrientedPoint,
     create_straight_rectangle,
     Geometry,
+    prepare,
 )

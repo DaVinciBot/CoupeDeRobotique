@@ -1,18 +1,29 @@
 from shapely import (
+    Point,
     Polygon,
     MultiPolygon,
     LineString,
-    geometry,
     BufferCapStyle,
     BufferJoinStyle,
     Geometry,
+    geometry,
+    prepare,
 )
-
-from datetime import datetime
-from shapely import geometry, Point, Polygon
 
 import matplotlib.pyplot as plt
 import geopandas as gpd
+
+
+def create_straight_rectangle(p1: Point, p2: Point) -> Polygon:
+    return geometry.box(
+        min(p1.x, p2.x), min(p1.y, p2.y), max(p1.x, p2.x), max(p1.y, p2.y)
+    )
+
+
+class OrientedPoint(Point):
+    def __init__(self, x: float, y: float, theta: float = 0.0):
+        super().__init__(x, y)
+        self.theta = theta
 
 
 def show(e):
@@ -21,38 +32,23 @@ def show(e):
     plt.show()
 
 
-class Utils:
-    @staticmethod
-    def get_date() -> datetime:
-        return datetime.now()
-
-    @staticmethod
-    def get_str_date(format: str = "%H:%M:%S") -> str:
-        return datetime.now().strftime(format)
-
-    @staticmethod
-    def get_ts() -> float:
-        return datetime.timestamp(datetime.now())
-
-    @staticmethod
-    def create_straight_rectangle(p1: Point, p2: Point) -> Polygon:
-        return geometry.box(
-            min(p1.x, p2.x), min(p1.y, p2.y), max(p1.x, p2.x), max(p1.y, p2.y)
-        )
-
-
 class Arena:
     """Represent an arena"""
 
     def __init__(
         self,
-        game_borders: Polygon = geometry.box(0, 0, 200, 300),
+        game_borders: Polygon = create_straight_rectangle(Point(0, 0), Point(200, 300)),
         zones: dict[str, MultiPolygon] or None = None,
     ):
 
         self.game_borders = game_borders
         if zones is not None:
             self.zones = zones
+
+            for zone in self.zones.values():
+                prepare(zone)  # Optimizes future intersection calulations etc.
+                # https://shapely.readthedocs.io/en/stable/reference/shapely.prepare.html#shapely.prepare
+
         else:
             self.zones = {}
 
@@ -98,7 +94,7 @@ class Arena:
 
         # define the area touched by the buffer, for example the sides of a robot moving
 
-        area_to_check = (
+        geometry_to_check = (
             path.buffer(
                 buffer_distance,
                 cap_style=BufferCapStyle.round,
@@ -107,23 +103,16 @@ class Arena:
             if buffer_distance > 0
             else path
         )
+        # Important to check buffer_distance > 0, otherwise the geometry can become a polygon without surface that never
+        # intersects with anything
 
         # verify that the area touched is in the arena and do not collide with boarders
-
-        # if input(f"Show intersection with game zone?") in ("yes", "y"):
-        #     show(self.game_borders)
-        #     show(area_to_check)
-        #     show(self.game_borders.intersection(area_to_check))
-
-        if not self.game_borders.contains(area_to_check):
+        if not self.game_borders.contains(geometry_to_check):
             return False
 
         # verify that the area touched isn't in the forbidden area
 
-        return not self.zone_intersects(forbidden_zone_name, area_to_check)
-
-
-from shapely import Point, Polygon, geometry
+        return not self.zone_intersects(forbidden_zone_name, geometry_to_check)
 
 
 class MarsArena(Arena):
@@ -146,28 +135,22 @@ class MarsArena(Arena):
         self.color = "yellow" if start_zone % 2 == 0 else "blue"
 
         all_zones = [
-            Utils.create_straight_rectangle(
+            create_straight_rectangle(
                 Point(0, 0), Point(45, 45)
             ),  # 1 - Blue (Possible forbidden area)
-            Utils.create_straight_rectangle(
-                Point(77.5, 0), Point(122.5, 45)
-            ),  # 2 - Yellow
-            Utils.create_straight_rectangle(Point(155, 0), Point(200, 45)),  # 3 - Blue
-            Utils.create_straight_rectangle(
+            create_straight_rectangle(Point(77.5, 0), Point(122.5, 45)),  # 2 - Yellow
+            create_straight_rectangle(Point(155, 0), Point(200, 45)),  # 3 - Blue
+            create_straight_rectangle(
                 Point(0, 255), Point(45, 300)
             ),  # 4 - Yellow (Possible forbidden area)
-            Utils.create_straight_rectangle(
-                Point(77.5, 255), Point(122, 300)
-            ),  # 5 - Blue
-            Utils.create_straight_rectangle(
-                Point(155, 255), Point(200, 300)
-            ),  # 6 - Yellow
+            create_straight_rectangle(Point(77.5, 255), Point(122, 300)),  # 5 - Blue
+            create_straight_rectangle(Point(155, 255), Point(200, 300)),  # 6 - Yellow
         ]
 
         super().__init__(
-            game_borders=Utils.create_straight_rectangle(origin, opposite_corner),
+            game_borders=create_straight_rectangle(origin, opposite_corner),
             zones={
-                "forbidden": all_zones[(start_zone % 2) * 3],
+                "forbidden": MultiPolygon([all_zones[(start_zone % 2) * 3]]),
                 "home": all_zones[start_zone - 1],
             },
         )
@@ -186,9 +169,7 @@ class MarsArena(Arena):
 class TestArena:
     def test_enable_go_to(self):
         arena = Arena(
-            zones={
-                "forbidden": Utils.create_straight_rectangle(Point(2, 2), Point(5, 5))
-            }
+            zones={"forbidden": create_straight_rectangle(Point(2, 2), Point(5, 5))}
         )
         a = Point(1, 1)
         b = Point(1, 6)

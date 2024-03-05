@@ -7,6 +7,7 @@ from geometry import (
     BufferJoinStyle,
     Geometry,
     create_straight_rectangle,
+    prepare,
 )
 
 
@@ -22,8 +23,16 @@ class Arena:
         self.game_borders = game_borders
         if zones is not None:
             self.zones = zones
+
         else:
             self.zones = {}
+
+        self.prepare_zones()  # Not necessary but should optimize future intersection calulations etc.
+
+    def prepare_zones(self):
+        """Prepare all values of self.zones, to optimize later calculations"""
+        for zone in self.zones.values():
+            prepare(zone)
 
     def contains(self, element: Geometry) -> bool:
         """Check if a point is in the arena bounds

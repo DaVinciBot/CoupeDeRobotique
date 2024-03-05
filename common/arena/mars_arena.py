@@ -1,5 +1,5 @@
 from arena.arena import Arena
-from geometry import Point, Polygon, create_straight_rectangle
+from geometry import Point, Polygon, create_straight_rectangle, MultiPolygon
 
 
 class MarsArena(Arena):
@@ -37,7 +37,7 @@ class MarsArena(Arena):
         super().__init__(
             game_borders=create_straight_rectangle(origin, opposite_corner),
             zones={
-                "forbidden": all_zones[(start_zone % 2) * 3],
+                "forbidden": MultiPolygon([all_zones[(start_zone % 2) * 3]]),
                 "home": all_zones[start_zone - 1],
             },
         )

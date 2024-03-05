@@ -7,6 +7,7 @@ from shapely import (
     BufferJoinStyle,
     Geometry,
     geometry,
+    prepare,
 )
 
 
