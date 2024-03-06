@@ -1,6 +1,7 @@
 # Installation
 1. Create venv
-* You have to use python 3.9 of anoher version compatible with the requirements and especially with 'opencv-contrib-python==3.4.11.45'
+* You have to use python 3.9 of anoher version compatible with the requirements and especially with 
+* 'opencv-contrib-python==3.4.11.45' or 'win' (use this version on rasp)
 * Use this command to create a virtual environment:
 ```bash
 python -m venv venv
