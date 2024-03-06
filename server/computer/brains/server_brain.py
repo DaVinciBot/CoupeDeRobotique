@@ -95,6 +95,7 @@ class ServerBrain(Brain):
         x_vals, y_vals = zip(*self.lidar_state.data)
         self.ax.scatter(x_vals, y_vals)
         plt.draw()
+        plt.show()
 
     @Brain.routine(refresh_rate=0.5)
     async def main(self):
