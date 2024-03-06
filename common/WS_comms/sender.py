@@ -30,7 +30,7 @@ class WSender:
     async def get_clients(self, wait_clients: bool = False) -> list:
         while len(self.__route_manager_clients) == 0 and wait_clients:
             await asyncio.sleep(0.5)
-            #print("No clients ...")
+            # print("No clients ...")
         return self.__route_manager_clients
 
     async def send(self, msg: WSmsg, clients=None, wait_client: bool = False) -> None:
@@ -49,7 +49,7 @@ class WSender:
             clients = await self.get_clients(wait_client)
 
         if clients is None:
-            #print("Error, no clients found.")
+            # print("Error, no clients found.")
             return
 
         if type(clients) is not list:

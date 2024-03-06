@@ -62,7 +62,7 @@ class WSmsg:
                 ts=msg_json.get("ts", -1),
             )
         else:
-            #print(f"Unknown message type: {msg.type}")
+            # print(f"Unknown message type: {msg.type}")
             return cls()
 
     def to_str(self) -> str:
