@@ -107,6 +107,7 @@ class ServerBrain(Brain):
 
         # Log states
         self.logger.log(f"Odometer state: {odometer_state}", LogLevels.INFO)
+        self.logger.log(f"Lidar state: {self.lidar_state.data}", LogLevels.INFO)
         self.logger.log(f"CMD state: {cmd_state}", LogLevels.INFO)
         self.logger.log(f"Recognized aruco number: {len(self.arucos)}", LogLevels.INFO)
 
