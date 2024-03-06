@@ -13,18 +13,16 @@ from controllers import RollingBasis
 
 class Robot1Brain(Brain):
     def __init__(
-            self,
-            logger: Lidar,
-            ws_cmd: WSclientRouteManager,
-            ws_log: WSclientRouteManager,
-
-            ws_lidar: WSclientRouteManager,
-            ws_odometer: WSclientRouteManager,
-            ws_camera: WSclientRouteManager,
-
-            rolling_basis: RollingBasis,
-            lidar: Lidar,
-            arena: MarsArena
+        self,
+        logger: Lidar,
+        ws_cmd: WSclientRouteManager,
+        ws_log: WSclientRouteManager,
+        ws_lidar: WSclientRouteManager,
+        ws_odometer: WSclientRouteManager,
+        ws_camera: WSclientRouteManager,
+        rolling_basis: RollingBasis,
+        lidar: Lidar,
+        arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -76,10 +74,10 @@ class Robot1Brain(Brain):
             if cmd.msg == "Go_To":
                 # Verify if the point is accessible
                 if MarsArena.enable_go_to(
-                        starting_point=Point(
-                            self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y
-                        ),
-                        destination_point=Point(cmd.data[0], cmd.data[1]),
+                    starting_point=Point(
+                        self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y
+                    ),
+                    destination_point=Point(cmd.data[0], cmd.data[1]),
                 ):
                     self.rolling_basis.Go_To(
                         OrientedPoint(cmd.data[0], cmd.data[1], cmd.data[2])

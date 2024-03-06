@@ -17,21 +17,18 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-
-            ws_cmd: WServerRouteManager,
-            ws_log: WServerRouteManager,
-
-            ws_lidar: WServerRouteManager,
-            ws_odometer: WServerRouteManager,
-            ws_camera: WServerRouteManager,
-
-            camera: Camera,
-            aruco_recognizer: ArucoRecognizer,
-            color_recognizer: ColorRecognizer,
-            plan_transposer: PlanTransposer,
-            arena: MarsArena
+        self,
+        logger: Logger,
+        ws_cmd: WServerRouteManager,
+        ws_log: WServerRouteManager,
+        ws_lidar: WServerRouteManager,
+        ws_odometer: WServerRouteManager,
+        ws_camera: WServerRouteManager,
+        camera: Camera,
+        aruco_recognizer: ArucoRecognizer,
+        color_recognizer: ColorRecognizer,
+        plan_transposer: PlanTransposer,
+        arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -83,7 +80,7 @@ class ServerBrain(Brain):
         await self.ws_camera.sender.send(
             WSmsg(
                 msg="camera",
-                data={"aruco": self.arucos, "green_objects": self.green_objects}
+                data={"aruco": self.arucos, "green_objects": self.green_objects},
             )
         )
 
@@ -121,6 +118,6 @@ class ServerBrain(Brain):
                     "lidar": self.lidar_state.data,
                     "odometer": odometer_state.data,
                     "cmd": cmd_state.data,
-                }
+                },
             )
         )
