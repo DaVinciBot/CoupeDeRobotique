@@ -78,19 +78,16 @@ if __name__ == "__main__":
     # Brain
     brain = ServerBrain(
         logger=logger,
-
         ws_cmd=ws_cmd,
         ws_log=ws_log,
-
         ws_lidar=ws_lidar,
         ws_odometer=ws_odometer,
         ws_camera=ws_camera,
-
         camera=camera,
         aruco_recognizer=aruco_recognizer,
         color_recognizer=color_recognizer,
         plan_transposer=plan_transposer,
-        arena=arena
+        arena=arena,
     )
 
     """

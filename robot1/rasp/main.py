@@ -58,11 +58,9 @@ if __name__ == "__main__":
         logger=logger,
         ws_cmd=ws_cmd,
         ws_log=ws_log,
-
         ws_lidar=ws_lidar,
         ws_odometer=ws_odometer,
         ws_camera=ws_camera,
-
         rolling_basis=robot,
         lidar=lidar,
         arena=arena,
