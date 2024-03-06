@@ -85,7 +85,7 @@ class ServerBrain(Brain):
                 clients=robot1,
             )
 
-    @Brain.routine(refresh_state=1)
+    @Brain.routine(refresh_rate=1)
     async def update_lidar_scan(self):
         lidar_state = await self.ws_lidar.receiver.get()
 
