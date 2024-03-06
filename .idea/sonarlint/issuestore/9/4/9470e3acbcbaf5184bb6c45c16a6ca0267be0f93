@@ -1,0 +1,17 @@
+
+cpython:S1192#"FDefine a constant instead of duplicating this literal "logs/" 3 times.(‘½ßòúÿÿÿÿ
+hpython:S1192
+"KDefine a constant instead of duplicating this literal "lidar.json" 4 times.(Ğ©É¯øÿÿÿÿ
+epython:S1192 "GDefine a constant instead of duplicating this literal "new$=$" 4 times.(µÿËÑúÿÿÿÿ
+jpython:S1192æ"QDefine a constant instead of duplicating this literal "last_command.txt" 4 times.(´ç„¬
+ipython:S1192•"KDefine a constant instead of duplicating this literal "current$=$" 3 times.(Ş©ˆ²üÿÿÿÿ
+=python:S1481"%Remove the unused local variable "i".(µÇÒÇ
+bpython:S3457_"EAdd replacement fields or use a normal string instead of an f-string.(ÔÔ•ÿÿÿÿÿ
+Vpython:S1172i"9Remove the unused function parameter "CONNECTIONS_STATE".(©¥ÉÙÿÿÿÿÿ
+ypython:S117i"]Rename this parameter "CONNECTIONS_STATE" to match the regular expression ^[_a-z][a-z0-9_]*$.(©¥ÉÙÿÿÿÿÿ
+upython:S117Š"]Rename this parameter "CONNECTIONS_LIDAR" to match the regular expression ^[_a-z][a-z0-9_]*$.(¬€·Š
+xpython:S117¦"[Rename this parameter "CONNECTIONS_LOG" to match the regular expression ^[_a-z][a-z0-9_]*$.(ş¾úÿÿÿÿ
+xpython:S117Î"[Rename this parameter "CONNECTIONS_POS" to match the regular expression ^[_a-z][a-z0-9_]*$.(ãÍ»¬øÿÿÿÿ
+Opython:S1172î"7Remove the unused function parameter "CONNECTIONS_CMD".(Õ ˆk
+rpython:S117î"[Rename this parameter "CONNECTIONS_CMD" to match the regular expression ^[_a-z][a-z0-9_]*$.(Õ ˆk
+opython:S117"RRename this parameter "SERVER" to match the regular expression ^[_a-z][a-z0-9_]*$.(µüÃ„úÿÿÿÿ
