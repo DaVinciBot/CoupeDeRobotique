@@ -8,6 +8,7 @@ from brain import Brain
 # Import from local path
 from sensors import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Frame
 
+import matplotlib.pyplot as plt
 
 class ServerBrain(Brain):
     """
@@ -32,6 +33,11 @@ class ServerBrain(Brain):
 
         self.arucos = []
         self.green_objects = []
+
+        plt.ion()
+        self.fig, self.ax = plt.subplots()
+        self.ax.set_xlim(0, 10)
+        self.ax.set_ylim(0, 10)
 
     """
         Routines
@@ -81,15 +87,30 @@ class ServerBrain(Brain):
                 clients=robot1,
             )
 
+    @Brain.routine(refresh_state=1)
+    async def update_lidar_scan(self):
+        lidar_state = await self.ws_lidar.receiver.get()
+
+        self.ax.clear()
+        self.ax.set_xlim(0, 10)
+        self.ax.set_ylim(0, 10)
+
+        # Décomposition des points en listes de x et y
+        x_vals, y_vals = zip(*lidar_state)
+        # Affiche les points
+        self.ax.scatter(x_vals, y_vals)
+
+        # Affiche le graphique mis à jour
+        plt.draw()
+        plt.pause(1)  # Pause pour 1 seconde
+
     @Brain.routine(refresh_rate=0.5)
     async def main(self):
         # Get the message from routes
-        lidar_state = await self.ws_lidar.receiver.get()
         odometer_state = await self.ws_odometer.receiver.get()
         cmd_state = await self.ws_cmd.receiver.get()
 
         # Log states
-        self.logger.log(f"Lidar state: {lidar_state}", LogLevels.INFO)
         self.logger.log(f"Odometer state: {odometer_state}", LogLevels.INFO)
         self.logger.log(f"CMD state: {cmd_state}", LogLevels.INFO)
         self.logger.log(f"Recognized aruco number: {len(self.arucos)}", LogLevels.INFO)
