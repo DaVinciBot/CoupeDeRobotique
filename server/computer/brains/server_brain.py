@@ -87,14 +87,14 @@ class ServerBrain(Brain):
 
     @Brain.routine(refresh_rate=1)
     async def update_lidar_scan(self):
-        lidar_state = await self.ws_lidar.receiver.get()
+        self.lidar_state = await self.ws_lidar.receiver.get()
 
         self.ax.clear()
         self.ax.set_xlim(0, 10)
         self.ax.set_ylim(0, 10)
 
         # Décomposition des points en listes de x et y
-        x_vals, y_vals = zip(*lidar_state.data)
+        x_vals, y_vals = zip(*self.lidar_state.data)
         # Affiche les points
         self.ax.scatter(x_vals, y_vals)
 
@@ -120,7 +120,7 @@ class ServerBrain(Brain):
                 data={
                     "arucos": self.arucos,
                     "green_objects": self.green_objects,
-                    "lidar": lidar_state.data,
+                    "lidar": self.lidar_state.data,
                     "odometer": odometer_state.data,
                     "cmd": cmd_state.data,
                 },
