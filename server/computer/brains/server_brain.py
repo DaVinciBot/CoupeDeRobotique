@@ -17,29 +17,24 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        ws_cmd: WServerRouteManager,
-        ws_log: WServerRouteManager,
-        ws_lidar: WServerRouteManager,
-        ws_odometer: WServerRouteManager,
-        ws_camera: WServerRouteManager,
-        camera: Camera,
-        aruco_recognizer: ArucoRecognizer,
-        color_recognizer: ColorRecognizer,
-        plan_transposer: PlanTransposer,
-        arena: MarsArena,
+            self,
+            logger: Logger,
+            ws_cmd: WServerRouteManager,
+            ws_log: WServerRouteManager,
+            ws_lidar: WServerRouteManager,
+            ws_odometer: WServerRouteManager,
+            ws_camera: WServerRouteManager,
+            camera: Camera,
+            aruco_recognizer: ArucoRecognizer,
+            color_recognizer: ColorRecognizer,
+            plan_transposer: PlanTransposer,
+            arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
         self.arucos = []
         self.green_objects = []
         self.lidar_state = []
-
-        plt.ion()
-        self.fig, self.ax = plt.subplots()
-        self.ax.set_xlim(0, 10)
-        self.ax.set_ylim(0, 10)
 
     """
         Routines
@@ -87,13 +82,12 @@ class ServerBrain(Brain):
     async def update_lidar_scan(self):
         self.lidar_state = await self.ws_lidar.receiver.get()
 
-        self.ax.clear()
-        self.ax.set_xlim(0, 10)
-        self.ax.set_ylim(0, 10)
-
+        fig, ax = plt.subplots()
         x_vals, y_vals = zip(*self.lidar_state.data)
-        self.ax.scatter(x_vals, y_vals)
+        ax.scatter(x_vals, y_vals)
         plt.show()
+
+
 
     @Brain.routine(refresh_rate=0.5)
     async def main(self):
