@@ -16,18 +16,18 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            ws_lidar: WServerRouteManager,
-            ws_odometer: WServerRouteManager,
-            ws_cmd: WServerRouteManager,
-            ws_camera: WServerRouteManager,
-            ws_log: WServerRouteManager,
-            camera: Camera,
-            aruco_recognizer: ArucoRecognizer,
-            color_recognizer: ColorRecognizer,
-            plan_transposer: PlanTransposer,
-            arena: MarsArena,
+        self,
+        logger: Logger,
+        ws_lidar: WServerRouteManager,
+        ws_odometer: WServerRouteManager,
+        ws_cmd: WServerRouteManager,
+        ws_camera: WServerRouteManager,
+        ws_log: WServerRouteManager,
+        camera: Camera,
+        aruco_recognizer: ArucoRecognizer,
+        color_recognizer: ColorRecognizer,
+        plan_transposer: PlanTransposer,
+        arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -79,10 +79,7 @@ class ServerBrain(Brain):
             await self.ws_camera.sender.send(
                 WSmsg(
                     msg="camera",
-                    data={
-                        "arcuo": self.arucos,
-                        "green_objects": self.green_objects
-                    },
+                    data={"arcuo": self.arucos, "green_objects": self.green_objects},
                 ),
                 clients=robot1,
             )
@@ -128,5 +125,3 @@ class ServerBrain(Brain):
                 },
             )
         )
-
-
