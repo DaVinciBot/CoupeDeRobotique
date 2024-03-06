@@ -55,7 +55,7 @@ class Robot1Brain(Brain):
         cmd = await self.ws_cmd.receiver.get()
         camera = await self.ws_camera.receiver.get()
 
-        #self.logger.log(f"New message from camera: {camera}", LogLevels.INFO)
+        # self.logger.log(f"New message from camera: {camera}", LogLevels.INFO)
 
         if cmd != WSmsg():
             # New command received
