@@ -29,10 +29,12 @@ if __name__ == "__main__":
     ws_lidar = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
     ws_odometer = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
     ws_cmd = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
+    ws_camera = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
 
     ws_client.add_route_handler(CONFIG.WS_LIDAR_ROUTE, ws_lidar)
     ws_client.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
     ws_client.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, ws_odometer)
+    ws_client.add_route_handler(CONFIG.WS_CAMERA_ROUTE, ws_camera)
 
     # Robot
     robot = RollingBasis()
@@ -49,6 +51,7 @@ if __name__ == "__main__":
         ws_lidar=ws_lidar,
         ws_odometer=ws_odometer,
         ws_cmd=ws_cmd,
+        ws_camera=ws_camera,
         lidar=lidar,
         rolling_basis=robot,
         arena=arena,

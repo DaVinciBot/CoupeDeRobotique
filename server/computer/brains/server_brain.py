@@ -15,17 +15,18 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        ws_lidar: WServerRouteManager,
-        ws_odometer: WServerRouteManager,
-        ws_cmd: WServerRouteManager,
-        ws_log: WServerRouteManager,
-        camera: Camera,
-        aruco_recognizer: ArucoRecognizer,
-        color_recognizer: ColorRecognizer,
-        plan_transposer: PlanTransposer,
-        arena: MarsArena,
+            self,
+            logger: Logger,
+            ws_lidar: WServerRouteManager,
+            ws_odometer: WServerRouteManager,
+            ws_cmd: WServerRouteManager,
+            ws_camera: WServerRouteManager,
+            ws_log: WServerRouteManager,
+            camera: Camera,
+            aruco_recognizer: ArucoRecognizer,
+            color_recognizer: ColorRecognizer,
+            plan_transposer: PlanTransposer,
+            arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -36,10 +37,8 @@ class ServerBrain(Brain):
         Routines
     """
 
-    @Brain.routine(refresh_rate=1)
+    @Brain.routine(refresh_rate=0.1)
     async def camera_capture(self):
-        self.logger.log("Server Brain-camera_capture is working", LogLevels.INFO)
-
         self.camera.capture()
         self.camera.undistor_image()
         arucos = self.aruco_recognizer.detect(self.camera.get_capture())
@@ -67,10 +66,23 @@ class ServerBrain(Brain):
         frame.write_labels()
         self.camera.update_monitor(frame.img)
 
-    @Brain.routine(refresh_rate=1)
-    async def main(self):
-        self.logger.log("Server Brain-main is working", LogLevels.INFO)
+    @Brain.routine(refresh_state=0.5)
+    async def send_feedback_to_robot1(self):
+        robot1 = self.ws_cmd.get_client("robot1")
+        if robot1 is not None:
+            await self.ws_camera.sender.send(
+                WSmsg(
+                    msg="camera",
+                    data={
+                        "arcuo": self.arucos,
+                        "green_objects": self.green_objects
+                    },
+                ),
+                clients=robot1,
+            )
 
+    @Brain.routine(refresh_rate=0.5)
+    async def main(self):
         # Get the message from routes
         lidar_state = await self.ws_lidar.receiver.get()
         odometer_state = await self.ws_odometer.receiver.get()
@@ -96,13 +108,4 @@ class ServerBrain(Brain):
             )
         )
 
-        # Send message to Robot1
-        robot1 = self.ws_cmd.get_client("robot1")
-        if robot1 is not None:
-            await self.ws_cmd.sender.send(
-                WSmsg(
-                    msg="test_cmd",
-                    data="coucou",
-                ),
-                clients=robot1,
-            )
+

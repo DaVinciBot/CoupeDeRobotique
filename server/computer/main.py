@@ -30,6 +30,9 @@ if __name__ == "__main__":
     ws_odometer = WServerRouteManager(
         WSreceiver(keep_memory=True), WSender(CONFIG.WS_SENDER_NAME)
     )
+    ws_camera = WServerRouteManager(
+        WSreceiver(keep_memory=True), WSender(CONFIG.WS_SENDER_NAME)
+    )
     ws_cmd = WServerRouteManager(
         WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
     )
@@ -37,6 +40,7 @@ if __name__ == "__main__":
 
     ws_server.add_route_handler(CONFIG.WS_LIDAR_ROUTE, ws_lidar)
     ws_server.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, ws_odometer)
+    ws_server.add_route_handler(CONFIG.WS_CAMERA_ROUTE, ws_camera)
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
     ws_server.add_route_handler(CONFIG.WS_LOG_ROUTE, ws_log)
 
@@ -73,6 +77,7 @@ if __name__ == "__main__":
         ws_lidar=ws_lidar,
         ws_odometer=ws_odometer,
         ws_cmd=ws_cmd,
+        ws_camera=ws_camera,
         ws_log=ws_log,
         camera=camera,
         aruco_recognizer=aruco_recognizer,

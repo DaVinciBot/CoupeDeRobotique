@@ -4,6 +4,7 @@
       "port": 8080,
       "lidar_route": "/lidar",
       "odometer_route": "/odometer",
+      "camera_route": "/camera",
       "log_route": "/log",
       "cmd_route": "/cmd"
     }

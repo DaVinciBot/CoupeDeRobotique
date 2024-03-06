@@ -53,6 +53,7 @@ class CONFIG:
     WS_PORT = int(GENERAL_WS_CONFIG["port"])
     WS_LIDAR_ROUTE = GENERAL_WS_CONFIG["lidar_route"]
     WS_LOG_ROUTE = GENERAL_WS_CONFIG["log_route"]
+    WS_CAMERA_ROUTE = GENERAL_WS_CONFIG["camera_route"]
     WS_ODOMETER_ROUTE = GENERAL_WS_CONFIG["odometer_route"]
     WS_CMD_ROUTE = GENERAL_WS_CONFIG["cmd_route"]
 

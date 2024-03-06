@@ -18,6 +18,7 @@ class Robot1Brain(Brain):
         ws_lidar: WSclientRouteManager,
         ws_odometer: WSclientRouteManager,
         ws_cmd: WSclientRouteManager,
+        ws_camera: WSclientRouteManager,
         lidar: Lidar,
         rolling_basis: RollingBasis,
         arena: MarsArena,
@@ -52,6 +53,10 @@ class Robot1Brain(Brain):
     async def main(self):
         # Get the message from routes
         cmd = await self.ws_cmd.receiver.get()
+        camera = await self.ws_camera.receiver.get()
+
+        self.logger.log(f"New message from camera: {camera}", LogLevels.INFO)
+
         if cmd != WSmsg():
             # New command received
             self.logger.log(
