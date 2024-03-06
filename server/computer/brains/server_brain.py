@@ -100,7 +100,6 @@ class ServerBrain(Brain):
 
         # Affiche le graphique mis à jour
         plt.draw()
-        plt.pause(1)  # Pause pour 1 seconde
 
     @Brain.routine(refresh_rate=0.5)
     async def main(self):
