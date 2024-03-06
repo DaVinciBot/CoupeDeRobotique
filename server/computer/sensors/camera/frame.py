@@ -1,7 +1,7 @@
 import numpy as np
 import cv2
 
-from controllers.camera.detected_object import DetectedObject, Aruco, ColorObject
+from sensors.camera.detected_object import DetectedObject, Aruco, ColorObject
 
 
 class Frame:

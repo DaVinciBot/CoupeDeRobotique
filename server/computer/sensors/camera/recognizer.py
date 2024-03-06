@@ -1,5 +1,5 @@
-from controllers.camera.frame import Frame
-from controllers.camera.detected_object import DetectedObject, Aruco, ColorObject
+from sensors.camera.frame import Frame
+from sensors.camera.detected_object import DetectedObject, Aruco, ColorObject
 
 from sklearn.cluster import DBSCAN
 import numpy as np
