@@ -34,8 +34,10 @@ class ServerBrain(Brain):
 
         self.arucos = []
         self.green_objects = []
+        self.lidar_state = []
 
         plt.ion()
+        plt.show(block=True)
         self.fig, self.ax = plt.subplots()
         self.ax.set_xlim(0, 10)
         self.ax.set_ylim(0, 10)
@@ -93,12 +95,8 @@ class ServerBrain(Brain):
         self.ax.set_xlim(0, 10)
         self.ax.set_ylim(0, 10)
 
-        # Décomposition des points en listes de x et y
         x_vals, y_vals = zip(*self.lidar_state.data)
-        # Affiche les points
         self.ax.scatter(x_vals, y_vals)
-
-        # Affiche le graphique mis à jour
         plt.draw()
 
     @Brain.routine(refresh_rate=0.5)
