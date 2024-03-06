@@ -73,12 +73,12 @@ class Brain:
         while True:
             try:
                 await routine(self)
-                await asyncio.sleep(refresh_rate)
             except Exception as error:
                 self.logger.log(
                     f"Brain [{self}]-[{routine.__name__}] error: {error}",
                     LogLevels.ERROR,
                 )
+            await asyncio.sleep(refresh_rate)
 
     def get_routines(self) -> List[Callable[[], Coroutine[None, None, None]]]:
         """
