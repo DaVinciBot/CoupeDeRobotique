@@ -72,7 +72,7 @@ class ServerBrain(Brain):
         frame.write_labels()
         self.camera.update_monitor(frame.img)
 
-    @Brain.routine(refresh_state=0.5)
+    @Brain.routine(refresh_rate=0.5)
     async def send_feedback_to_robot1(self):
         robot1 = self.ws_cmd.get_client("robot1")
         if robot1 is not None:
