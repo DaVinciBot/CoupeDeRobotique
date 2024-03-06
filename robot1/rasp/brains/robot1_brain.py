@@ -43,7 +43,7 @@ class Robot1Brain(Brain):
                 data=[
                     self.rolling_basis.odometrie.x,
                     self.rolling_basis.odometrie.y,
-                    #self.rolling_basis.odometrie.theta,
+                    # self.rolling_basis.odometrie.theta,
                 ],
             )
         )

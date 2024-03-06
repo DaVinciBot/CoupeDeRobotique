@@ -15,7 +15,7 @@ import asyncio
 
 if __name__ == "__main__":
     """
-        ###--- Initialization ---###
+    ###--- Initialization ---###
     """
     # Logger
     logger = Logger(
@@ -26,15 +26,9 @@ if __name__ == "__main__":
 
     # Websocket server
     ws_client = WSclient(CONFIG.WS_SERVER_IP, CONFIG.WS_PORT)
-    ws_lidar = WSclientRouteManager(
-        WSreceiver(), WSender(CONFIG.WS_SENDER_NAME)
-    )
-    ws_odometer = WSclientRouteManager(
-        WSreceiver(), WSender(CONFIG.WS_SENDER_NAME)
-    )
-    ws_cmd = WSclientRouteManager(
-        WSreceiver(), WSender(CONFIG.WS_SENDER_NAME)
-    )
+    ws_lidar = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
+    ws_odometer = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
+    ws_cmd = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
 
     ws_client.add_route_handler(CONFIG.WS_LIDAR_ROUTE, ws_lidar)
     ws_client.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
@@ -57,7 +51,7 @@ if __name__ == "__main__":
         ws_cmd=ws_cmd,
         lidar=lidar,
         rolling_basis=robot,
-        arena=arena
+        arena=arena,
     )
 
     """
