@@ -17,7 +17,11 @@ def create_straight_rectangle(p1: Point, p2: Point) -> Polygon:
     )
 
 
-class OrientedPoint(Point):
+class OrientedPoint:
     def __init__(self, x: float, y: float, theta: float = 0.0):
-        super().__init__(x, y)
+        self.__point = Point(x, y)
         self.theta = theta
+
+    def __getattr__(self, attr):
+        """Redirect all other attribute calls to the point object"""
+        return getattr(self.__point, attr)
