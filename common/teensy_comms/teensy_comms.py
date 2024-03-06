@@ -5,7 +5,7 @@ from logger import Logger
 from geometry import OrientedPoint
 from teensy_comms.dummy_serial import DummySerial
 
-
+# TODO: n'a pas trop ça place ici voir pour déplacer
 # Used for curve_go_to
 # DO NOT REMOVE
 def calc_tmp(a: OrientedPoint, b: OrientedPoint) -> float:
@@ -88,7 +88,7 @@ class Teensy:
             if port.vid == vid and port.pid == pid and int(port.serial_number) == ser:
                 self._teensy = serial.Serial(port.device, baudrate=baudrate)
                 break
-        if self._teensy == None:
+        if self._teensy is None:
             if dummy:
                 self.l.log("Dummy mode", 1)
                 self._teensy = DummySerial()
@@ -106,6 +106,7 @@ class Teensy:
         """
         Send false data to trigger the teensy to send data back
         """
+        # TODO: utiliser if else au lieu de match car pas compatible avec python 3.9
         match (type):
             case "bad_crc":
                 self._teensy.reset_output_buffer()

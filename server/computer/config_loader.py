@@ -10,6 +10,7 @@ def load_json_file(file_path):
         with open(file_path) as config:
             file_json = json.load(config)
     except Exception as error:
+        print(f"Error while loading the file {file_path}: {error}")
         raise error
 
     return file_json
@@ -25,6 +26,7 @@ def format_path(path: str) -> str:
         path_parts = path.split("|")
         return os.path.join(*path_parts)
     except Exception as error:
+        print(f"Error while formatting the path {path}: {error}")
         raise error
 
 
