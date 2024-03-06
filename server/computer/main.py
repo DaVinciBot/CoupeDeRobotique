@@ -7,7 +7,7 @@ from arena import MarsArena
 
 # Import from local path
 from brains import ServerBrain
-from controllers import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Frame
+from sensors import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Frame
 
 import asyncio
 

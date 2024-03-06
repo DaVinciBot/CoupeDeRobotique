@@ -35,7 +35,7 @@ class Robot1Brain(Brain):
     @Brain.routine(refresh_rate=1)
     async def send_feedback_to_server(self):
         await self.ws_lidar.sender.send(
-            WSmsg(msg="lidar_scan", data=[[s[0], s[1]] for s in self.lidar_scan])
+            WSmsg(msg="lidar_scan", data=[[p.x, p.y] for p in self.lidar_scan])
         )
         await self.ws_odometer.sender.send(
             WSmsg(
@@ -43,7 +43,7 @@ class Robot1Brain(Brain):
                 data=[
                     self.rolling_basis.odometrie.x,
                     self.rolling_basis.odometrie.y,
-                    #self.rolling_basis.odometrie.theta,
+                    self.rolling_basis.odometrie.theta,
                 ],
             )
         )
