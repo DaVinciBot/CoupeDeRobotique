@@ -6,7 +6,7 @@ from WS_comms import WSmsg, WServerRouteManager
 from brain import Brain
 
 # Import from local path
-from controllers import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Frame
+from sensors import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Frame
 
 
 class ServerBrain(Brain):
