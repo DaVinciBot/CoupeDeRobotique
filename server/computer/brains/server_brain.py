@@ -17,18 +17,18 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            ws_cmd: WServerRouteManager,
-            ws_log: WServerRouteManager,
-            ws_lidar: WServerRouteManager,
-            ws_odometer: WServerRouteManager,
-            ws_camera: WServerRouteManager,
-            camera: Camera,
-            aruco_recognizer: ArucoRecognizer,
-            color_recognizer: ColorRecognizer,
-            plan_transposer: PlanTransposer,
-            arena: MarsArena,
+        self,
+        logger: Logger,
+        ws_cmd: WServerRouteManager,
+        ws_log: WServerRouteManager,
+        ws_lidar: WServerRouteManager,
+        ws_odometer: WServerRouteManager,
+        ws_camera: WServerRouteManager,
+        camera: Camera,
+        aruco_recognizer: ArucoRecognizer,
+        color_recognizer: ColorRecognizer,
+        plan_transposer: PlanTransposer,
+        arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -86,8 +86,6 @@ class ServerBrain(Brain):
         x_vals, y_vals = zip(*self.lidar_state.data)
         ax.scatter(x_vals, y_vals)
         plt.show()
-
-
 
     @Brain.routine(refresh_rate=0.5)
     async def main(self):
