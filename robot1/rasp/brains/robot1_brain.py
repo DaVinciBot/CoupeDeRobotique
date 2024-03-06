@@ -38,6 +38,7 @@ class Robot1Brain(Brain):
         await self.ws_lidar.sender.send(
             WSmsg(msg="lidar_scan", data=[[p.x, p.y] for p in self.lidar_scan])
         )
+        print("send")
         await self.ws_odometer.sender.send(
             WSmsg(
                 msg="odometer",
