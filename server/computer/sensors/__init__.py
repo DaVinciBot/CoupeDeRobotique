@@ -1,4 +1,4 @@
-from controllers.camera import (
+from sensors.camera import (
     Camera,
     ArucoRecognizer,
     ColorRecognizer,
