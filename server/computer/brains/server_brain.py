@@ -10,6 +10,7 @@ from sensors import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Fr
 
 import matplotlib.pyplot as plt
 
+
 class ServerBrain(Brain):
     """
     This brain is the main controller of the server.
