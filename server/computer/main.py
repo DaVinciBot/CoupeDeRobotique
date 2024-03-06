@@ -42,11 +42,11 @@ if __name__ == "__main__":
     )
 
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
-    ws_client.add_route_handler(CONFIG.WS_LOG_ROUTE, ws_log)
+    ws_server.add_route_handler(CONFIG.WS_LOG_ROUTE, ws_log)
 
-    ws_client.add_route_handler(CONFIG.WS_LIDAR_ROUTE, ws_lidar)
-    ws_client.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, ws_odometer)
-    ws_client.add_route_handler(CONFIG.WS_CAMERA_ROUTE, ws_camera)
+    ws_server.add_route_handler(CONFIG.WS_LIDAR_ROUTE, ws_lidar)
+    ws_server.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, ws_odometer)
+    ws_server.add_route_handler(CONFIG.WS_CAMERA_ROUTE, ws_camera)
 
     # Camera
     camera = Camera(
