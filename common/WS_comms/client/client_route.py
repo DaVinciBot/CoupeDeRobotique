@@ -36,7 +36,7 @@ class WSclientRouteManager:
         """
         try:
             async for msg in self.__ws:
-                print("Received message : ", msg)
+                #print("Received message : ", msg)
                 await self.receiver.routine(msg)
 
         except Exception as error:
