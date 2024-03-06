@@ -5,6 +5,7 @@ from logger import Logger
 from geometry import OrientedPoint
 from teensy_comms.dummy_serial import DummySerial
 
+
 # TODO: n'a pas trop ça place ici voir pour déplacer
 # Used for curve_go_to
 # DO NOT REMOVE
