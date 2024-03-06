@@ -94,7 +94,7 @@ class ServerBrain(Brain):
         self.ax.set_ylim(0, 10)
 
         # Décomposition des points en listes de x et y
-        x_vals, y_vals = zip(*lidar_state)
+        x_vals, y_vals = zip(*lidar_state.data)
         # Affiche les points
         self.ax.scatter(x_vals, y_vals)
 
