@@ -24,8 +24,15 @@ if __name__ == "__main__":
 
     # Websocket server
     ws_server = WServer(CONFIG.WS_HOSTNAME, CONFIG.WS_PORT)
+    ws_cmd = WServerRouteManager(
+        WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+    )
+    ws_log = WServerRouteManager(
+        WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+    )
+    # Sensors
     ws_lidar = WServerRouteManager(
-        WSreceiver(keep_memory=True, use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+        WSreceiver(keep_memory=True), WSender(CONFIG.WS_SENDER_NAME)
     )
     ws_odometer = WServerRouteManager(
         WSreceiver(keep_memory=True), WSender(CONFIG.WS_SENDER_NAME)
@@ -33,16 +40,13 @@ if __name__ == "__main__":
     ws_camera = WServerRouteManager(
         WSreceiver(keep_memory=True), WSender(CONFIG.WS_SENDER_NAME)
     )
-    ws_cmd = WServerRouteManager(
-        WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
-    )
-    ws_log = WServerRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
 
-    ws_server.add_route_handler(CONFIG.WS_LIDAR_ROUTE, ws_lidar)
-    ws_server.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, ws_odometer)
-    ws_server.add_route_handler(CONFIG.WS_CAMERA_ROUTE, ws_camera)
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
-    ws_server.add_route_handler(CONFIG.WS_LOG_ROUTE, ws_log)
+    ws_client.add_route_handler(CONFIG.WS_LOG_ROUTE, ws_log)
+
+    ws_client.add_route_handler(CONFIG.WS_LIDAR_ROUTE, ws_lidar)
+    ws_client.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, ws_odometer)
+    ws_client.add_route_handler(CONFIG.WS_CAMERA_ROUTE, ws_camera)
 
     # Camera
     camera = Camera(
@@ -74,16 +78,19 @@ if __name__ == "__main__":
     # Brain
     brain = ServerBrain(
         logger=logger,
+
+        ws_cmd=ws_cmd,
+        ws_log=ws_log,
+
         ws_lidar=ws_lidar,
         ws_odometer=ws_odometer,
-        ws_cmd=ws_cmd,
         ws_camera=ws_camera,
-        ws_log=ws_log,
+
         camera=camera,
         aruco_recognizer=aruco_recognizer,
         color_recognizer=color_recognizer,
         plan_transposer=plan_transposer,
-        arena=arena,
+        arena=arena
     )
 
     """

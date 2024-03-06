@@ -26,13 +26,21 @@ if __name__ == "__main__":
 
     # Websocket server
     ws_client = WSclient(CONFIG.WS_SERVER_IP, CONFIG.WS_PORT)
+    ws_cmd = WSclientRouteManager(
+        WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+    )
+    ws_log = WSclientRouteManager(
+        WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+    )
+    # Sensors
     ws_lidar = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
     ws_odometer = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
-    ws_cmd = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
     ws_camera = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
 
-    ws_client.add_route_handler(CONFIG.WS_LIDAR_ROUTE, ws_lidar)
     ws_client.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
+    ws_client.add_route_handler(CONFIG.WS_LOG_ROUTE, ws_log)
+
+    ws_client.add_route_handler(CONFIG.WS_LIDAR_ROUTE, ws_lidar)
     ws_client.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, ws_odometer)
     ws_client.add_route_handler(CONFIG.WS_CAMERA_ROUTE, ws_camera)
 
@@ -48,12 +56,15 @@ if __name__ == "__main__":
     # Brain
     brain = Robot1Brain(
         logger=logger,
+        ws_cmd=ws_cmd,
+        ws_log=ws_log,
+
         ws_lidar=ws_lidar,
         ws_odometer=ws_odometer,
-        ws_cmd=ws_cmd,
         ws_camera=ws_camera,
-        lidar=lidar,
+
         rolling_basis=robot,
+        lidar=lidar,
         arena=arena,
     )
 

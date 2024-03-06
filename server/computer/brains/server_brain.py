@@ -17,18 +17,21 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        ws_lidar: WServerRouteManager,
-        ws_odometer: WServerRouteManager,
-        ws_cmd: WServerRouteManager,
-        ws_camera: WServerRouteManager,
-        ws_log: WServerRouteManager,
-        camera: Camera,
-        aruco_recognizer: ArucoRecognizer,
-        color_recognizer: ColorRecognizer,
-        plan_transposer: PlanTransposer,
-        arena: MarsArena,
+            self,
+            logger: Logger,
+
+            ws_cmd: WServerRouteManager,
+            ws_log: WServerRouteManager,
+
+            ws_lidar: WServerRouteManager,
+            ws_odometer: WServerRouteManager,
+            ws_camera: WServerRouteManager,
+
+            camera: Camera,
+            aruco_recognizer: ArucoRecognizer,
+            color_recognizer: ColorRecognizer,
+            plan_transposer: PlanTransposer,
+            arena: MarsArena
     ) -> None:
         super().__init__(logger, self)
 
@@ -76,16 +79,13 @@ class ServerBrain(Brain):
         self.camera.update_monitor(frame.img)
 
     @Brain.routine(refresh_rate=0.5)
-    async def send_feedback_to_robot1(self):
-        robot1 = self.ws_camera.get_client("robot1")
-        if robot1 is not None:
-            await self.ws_camera.sender.send(
-                WSmsg(
-                    msg="camera",
-                    data={"arcuo": self.arucos, "green_objects": self.green_objects},
-                ),
-                clients=robot1,
+    async def send_camera_to_clients(self):
+        await self.ws_camera.sender.send(
+            WSmsg(
+                msg="camera",
+                data={"aruco": self.arucos, "green_objects": self.green_objects}
             )
+        )
 
     @Brain.routine(refresh_rate=1)
     async def update_lidar_scan(self):
@@ -121,6 +121,6 @@ class ServerBrain(Brain):
                     "lidar": self.lidar_state.data,
                     "odometer": odometer_state.data,
                     "cmd": cmd_state.data,
-                },
+                }
             )
         )

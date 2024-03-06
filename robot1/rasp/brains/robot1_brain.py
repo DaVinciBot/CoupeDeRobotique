@@ -13,32 +13,38 @@ from controllers import RollingBasis
 
 class Robot1Brain(Brain):
     def __init__(
-        self,
-        logger: Logger,
-        ws_lidar: WSclientRouteManager,
-        ws_odometer: WSclientRouteManager,
-        ws_cmd: WSclientRouteManager,
-        ws_camera: WSclientRouteManager,
-        lidar: Lidar,
-        rolling_basis: RollingBasis,
-        arena: MarsArena,
+            self,
+            logger: Lidar,
+            ws_cmd: WSclientRouteManager,
+            ws_log: WSclientRouteManager,
+
+            ws_lidar: WSclientRouteManager,
+            ws_odometer: WSclientRouteManager,
+            ws_camera: WSclientRouteManager,
+
+            rolling_basis: RollingBasis,
+            lidar: Lidar,
+            arena: MarsArena
     ) -> None:
         super().__init__(logger, self)
 
         self.lidar_scan = []
 
-    @Brain.routine(refresh_rate=1)
+    @Brain.routine(refresh_rate=0.5)
     async def lidar_scan(self):
-        self.lidar_scan = self.lidar.scan_to_absolute_cartesian(
+        scan = self.lidar.scan_to_absolute_cartesian(
             robot_pos=self.rolling_basis.odometrie
         )
+        self.lidar_scan = scan
 
     @Brain.routine(refresh_rate=1)
-    async def send_feedback_to_server(self):
+    async def send_lidar_to_server(self):
         await self.ws_lidar.sender.send(
             WSmsg(msg="lidar_scan", data=[[p.x, p.y] for p in self.lidar_scan])
         )
-        print("send")
+
+    @Brain.routine(refresh_rate=1)
+    async def send_odometer_to_server(self):
         await self.ws_odometer.sender.send(
             WSmsg(
                 msg="odometer",
@@ -70,10 +76,10 @@ class Robot1Brain(Brain):
             if cmd.msg == "Go_To":
                 # Verify if the point is accessible
                 if MarsArena.enable_go_to(
-                    starting_point=Point(
-                        self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y
-                    ),
-                    destination_point=Point(cmd.data[0], cmd.data[1]),
+                        starting_point=Point(
+                            self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y
+                        ),
+                        destination_point=Point(cmd.data[0], cmd.data[1]),
                 ):
                     self.rolling_basis.Go_To(
                         OrientedPoint(cmd.data[0], cmd.data[1], cmd.data[2])
