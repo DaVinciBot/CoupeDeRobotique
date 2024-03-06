@@ -26,17 +26,6 @@ class ServerBrain(Brain):
         color_recognizer: ColorRecognizer,
         plan_transposer: PlanTransposer,
         arena: MarsArena,
-        self,
-        logger: Logger,
-        ws_lidar: WServerRouteManager,
-        ws_odometer: WServerRouteManager,
-        ws_cmd: WServerRouteManager,
-        ws_log: WServerRouteManager,
-        camera: Camera,
-        aruco_recognizer: ArucoRecognizer,
-        color_recognizer: ColorRecognizer,
-        plan_transposer: PlanTransposer,
-        arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
