@@ -22,9 +22,9 @@
       "chessboard_square_size": 0.044,
       "distance_cam_table": 0.2,
 
-      "save_path": "|controllers|camera|images_save",
-      "calibration_path": "|controllers|camera|calibration_path",
-      "coefficients_path": "|controllers|camera|undistort_coef.json",
+      "save_path": "|sensors|camera|images_save",
+      "calibration_path": "|sensors|camera|calibration_path",
+      "coefficients_path": "|sensors|camera|undistort_coef.json",
 
       "aruco":
       {

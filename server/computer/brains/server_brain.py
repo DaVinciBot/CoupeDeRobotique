@@ -77,7 +77,7 @@ class ServerBrain(Brain):
 
     @Brain.routine(refresh_rate=0.5)
     async def send_feedback_to_robot1(self):
-        robot1 = self.ws_cmd.get_client("robot1")
+        robot1 = self.ws_camera.get_client("robot1")
         if robot1 is not None:
             await self.ws_camera.sender.send(
                 WSmsg(
