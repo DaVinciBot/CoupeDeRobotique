@@ -1,10 +1,10 @@
 from typing import Any, Callable
 import serial, threading, time, crc8, struct, serial.tools.list_ports, math
 from bot import State
-from bot.Bob import Bob
 from bot.Logger import Logger
 from bot.Shapes import OrientedPoint
 from bot.action_block import Instruction,Action,Lock
+from bot.State import instructions
 
 
 # Used for curve_go_to
@@ -239,12 +239,13 @@ class Teensy:
                 time.sleep(0.5)
 
 
-class RollingBasis(Teensy):
+class RollingBasis(Teensy,):
     ######################
     # Rolling basis init #
     ######################
     def __init__(
         self,
+        com_call_back,
         ser=12678590,
         vid: int = 5824,
         pid: int = 1155,
@@ -253,6 +254,7 @@ class RollingBasis(Teensy):
         dummy: bool = False,
     ):
         super().__init__(ser, vid, pid, baudrate, crc, dummy)
+        self.com_call_back = com_call_back
         # All position are in the form tuple(X, Y, THETA)
         self.odometrie = OrientedPoint(0.0, 0.0, 0.0)
         self.position_offset = OrientedPoint(0.0, 0.0, 0.0)
@@ -304,7 +306,7 @@ class RollingBasis(Teensy):
 
     @Logger
     def rcv_action_finish(self, msg: bytes):
-        Bob.handle_call_back(block_name=self.name,msg=msg)
+        self.com_call_back(block_name=self.name,msg=msg)
 
     def unknown_msg(self, msg: bytes):
         self.l.log(f"Teensy does not know the command {msg.hex()}", 1)
@@ -376,11 +378,11 @@ class RollingBasis(Teensy):
         )
         # https://docs.python.org/3/library/struct.html#format-characters
             
-        if skip_queue or len(Bob.instructions) == 0:
-            Bob.instructions.insert(0, Instruction(block_name=self.name,process=Action(self.Command.GoToPoint,msg)))
+        if skip_queue or len(instructions) == 0:
+            instructions.insert(0, Instruction(block_name=self.name,process=Action(self.Command.GoToPoint,msg)))
             self.send_bytes(msg)
         else:
-            Bob.instructions.append(Instruction(block_name=self.name,process=Action(self.Command.GoToPoint,msg)))
+            instructions.append(Instruction(block_name=self.name,process=Action(self.Command.GoToPoint,msg)))
 
     @Logger
     def curve_go_to(
@@ -431,65 +433,65 @@ class RollingBasis(Teensy):
             + struct.pack("<H", action_error_auth)  # error_auth
             + struct.pack("<H", traj_precision)  # precision
         )
-        if skip_queue or len(Bob.instructions) == 0:
+        if skip_queue or len(instructions) == 0:
             self.l.log("Skipping Queue ...")
-            Bob.instructions.insert(0, {self.Command.CurveGoTo: curve_msg})
-            self.l.log(Bob.instructions)
+            instructions.insert(0, {self.Command.CurveGoTo: curve_msg})
+            self.l.log(instructions)
             self.send_bytes(curve_msg)
         else:
-            Bob.instructions.append({self.Command.CurveGoTo: curve_msg})
+            instructions.append({self.Command.CurveGoTo: curve_msg})
 
     @Logger
     def Keep_Current_Position(self, skip_queue=False):
         msg = self.Command.KeepCurrentPosition
         if skip_queue:
-            Bob.instructions.insert(0, {self.Command.KeepCurrentPosition: msg})
+            instructions.insert(0, {self.Command.KeepCurrentPosition: msg})
             self.send_bytes(msg)
         else:
-            Bob.instructions.append({self.Command.KeepCurrentPosition: msg})
+            instructions.append({self.Command.KeepCurrentPosition: msg})
 
     @Logger
     def Disable_Pid(self, skip_queue=False):
         msg = self.Command.DisablePid
-        if skip_queue or len(Bob.instructions) == 0:
-            Bob.instructions.insert(0, {self.Command.DisablePid: msg})
+        if skip_queue or len(instructions) == 0:
+            instructions.insert(0, {self.Command.DisablePid: msg})
             self.send_bytes(msg)
         else:
-            Bob.instructions.append({self.Command.DisablePid: msg})
+            instructions.append({self.Command.DisablePid: msg})
 
     @Logger
     def Enable_Pid(self, skip_queue=False):
         msg = self.Command.EnablePid
-        if skip_queue or len(Bob.instructions) == 0:
-            Bob.instructions.insert(0, {self.Command.EnablePid: msg})
+        if skip_queue or len(instructions) == 0:
+            instructions.insert(0, {self.Command.EnablePid: msg})
             self.send_bytes(msg)
         else:
-            Bob.instructions.append({self.Command.EnablePid: msg})
+            instructions.append({self.Command.EnablePid: msg})
 
     @Logger
     def Reset_Odo(self, skip_queue=False):
         msg = self.Command.ResetPosition
-        if skip_queue or len(Bob.instructions) == 0:
-            Bob.instructions.insert(0, {self.Command.ResetPosition: msg})
+        if skip_queue or len(instructions) == 0:
+            instructions.insert(0, {self.Command.ResetPosition: msg})
             self.send_bytes(msg)
         else:
-            Bob.instructions.append({self.Command.ResetPosition: msg})
+            instructions.append({self.Command.ResetPosition: msg})
     
     def Set_Home(self, x, y, theta, *,skip_queue=False):
         msg = self.Command.SetHome + struct.pack("<fff", x,y,theta)
-        if skip_queue or len(Bob.instructions) == 0:
-            Bob.instructions.insert(0, {self.Command.SetHome: msg})
+        if skip_queue or len(instructions) == 0:
+            instructions.insert(0, {self.Command.SetHome: msg})
             self.send_bytes(msg)
         else:
-            Bob.instructions.append({self.Command.SetHome: msg})
+            instructions.append({self.Command.SetHome: msg})
 
     def Set_PID(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
         msg = self.Command.SetPID + struct.pack("<fff", Kp, Ki, Kp)
-        if skip_queue or len(Bob.instructions) == 0:
-            Bob.instructions.insert(0, {self.Command.SetPID: msg})
+        if skip_queue or len(instructions) == 0:
+            instructions.insert(0, {self.Command.SetPID: msg})
             self.send_bytes(msg)
         else:
-            Bob.instructions.append({self.Command.SetPID: msg})
+            instructions.append({self.Command.SetPID: msg})
 
 
 class Actuators(Teensy):

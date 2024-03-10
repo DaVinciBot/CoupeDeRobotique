@@ -17,9 +17,6 @@ is_obstacle = True
 # for safety in case of lidar dysfunction
 run_auth = False
 
-# enable to manage actions once a given position is reached
-actions_at : list[function]= []
-
 # index of our destination point
 index_destination_point = 0
 
@@ -48,7 +45,7 @@ time_to_return_home = 80
 SERVOS_PIN = [5] # the maxmimun number of servos is 12
 ULTRASONICS_PINS = [(12,14)]
 
-
+instructions = [] # the list of instructions to execute on rolling_basis or actuator, separated to avoid circular importation 
 
 test = False
 activate_print = True

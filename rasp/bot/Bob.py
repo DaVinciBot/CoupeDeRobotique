@@ -2,6 +2,7 @@ from bot.Com import RollingBasis, Actuators
 from bot.Lidar import Lidar
 from bot.Logger import Logger
 from bot.action_block import Lock,Action,Instruction
+from bot.State import instructions
 
 class Bob:
     
@@ -31,7 +32,6 @@ class Bob:
         self.rolling_basis = RollingBasis()
         self.actuators = Actuators()
         self.Lidar = Lidar()
-        self.instructions : list[Instruction] = [] # the list of instructions to execute on rolling_basis or actuator. 
         self.is_on = False # must be activated by the game
         self.is_obstacle = False
         # actuator's config
@@ -57,22 +57,22 @@ class Bob:
         - None
         """
         self.l.log(f"Action finished on {block_name} : {msg.hex()}")
-        try : length = len(self.instructions)
+        try : length = len(instructions)
         except : length = 0
         found = False
         if length == 0 :
             self.l.log(f"received action finished {msg} from {block_name} but instruction is empty")
             return
         for i in range(length):
-            if self.instructions[i].block_name == block_name and self.isAction() and self.instructions[i].process.id == msg:
+            if instructions[i].block_name == block_name and self.isAction() and instructions[i].process.id == msg:
                 self.found = True
-                self.instructions.pop(i) # delete the finished instruction
-                self.l.log(f"removed instruction {i} from instructions : {self.instructions[i]}")
+                instructions.pop(i) # delete the finished instruction
+                self.l.log(f"removed instruction {i} from instructions : {instructions[i]}")
                 self.delete_lock(block_name=block_name,action_id=msg,first_i=i) # if exists delete the lock corresponding to the finished action
                 self.send_action(block_name=block_name)
         if not found:
             self.l.log(f"Received the action finished {msg.hex()} but couldn't find an action with the same id in instructions",1)
-        if len(self.instructions)==0:
+        if len(instructions)==0:
             self.l.log("instructions is empty")
                 
                 
@@ -87,10 +87,10 @@ class Bob:
         Returns:
             bool: wether a lock have been deleted or not
         """
-        for i in range(first_i,len(self.instructions)):
-            if self.instructions[i].block_name == block_name:
-                if self.isLock() and self.instructions[i].process.id == action_id:
-                    self.instructions.pop(i)
+        for i in range(first_i,len(instructions)):
+            if instructions[i].block_name == block_name:
+                if self.isLock() and instructions[i].process.id == action_id:
+                    instructions.pop(i)
                     return True
                 elif not self.isLock():
                     return False
@@ -106,14 +106,14 @@ class Bob:
         Returns:
         - bool: True if the action was sent successfully, False otherwise.
         """
-        for i in range(len(self.instructions)):
-            if self.instructions[i].block_name != block_name and self.isLock():
+        for i in range(len(instructions)):
+            if instructions[i].block_name != block_name and self.isLock():
                 return False
-            if self.instructions[i].block_name == block_name and self.isAction():
+            if instructions[i].block_name == block_name and self.isAction():
                 if block_name == self.rolling_basis.name:
-                    self.rolling_basis.send_bytes(self.instructions[i].process.msg)
+                    self.rolling_basis.send_bytes(instructions[i].process.msg)
                 if block_name == self.actuators.name:
-                    self.actuators.send_bytes(self.instructions[i].process.msg)
+                    self.actuators.send_bytes(instructions[i].process.msg)
                 else:
                     self.l.log(f"tried to send an instruction to {block_name} whereas the bord isn't known",1)
                     return False
@@ -129,11 +129,11 @@ class Bob:
         self.rolling_basis.Keep_Current_Position()
         while True:
             if not self.is_obstacle():
-                for i in range(len(self.instructions)):
-                    if self.instructions[i].block_name != self.rolling_basis.name and self.isLock():
+                for i in range(len(instructions)):
+                    if instructions[i].block_name != self.rolling_basis.name and self.isLock():
                         break
-                    elif self.instructions[i].block_name == self.rolling_basis.name and self.isAction():
-                        self.rolling_basis.send_bytes(self.instructions[i].process.msg)
+                    elif instructions[i].block_name == self.rolling_basis.name and self.isAction():
+                        self.rolling_basis.send_bytes(instructions[i].process.msg)
                 break
                         
     def isAction(self,i):
@@ -146,7 +146,7 @@ class Bob:
         Returns:
         - bool: True if the process is an Action, False otherwise.
         """
-        return isinstance(self.instructions[i].process,Action)
+        return isinstance(instructions[i].process,Action)
     
     def isLock(self,i):
         """
@@ -158,7 +158,9 @@ class Bob:
         Returns:
         - bool: True if the process is a Lock, False otherwise.
         """
-        return isinstance(self.instructions[i].process,Lock)
+        return isinstance(instructions[i].process,Lock)
+    
+    
     
     def main(self):
         while self.is_on:
