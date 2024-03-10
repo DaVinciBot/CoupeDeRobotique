@@ -44,7 +44,7 @@ class Brain:
     @classmethod
     def routine(cls, refresh_rate=1):
         """
-        Decorator to add a routine function to the brain with a specified refresh rate.
+        Decorator to add a routine function to the brain with a specified refresh rate in seconds.
         The routine is called in the main loop of the brain according to its refresh rate.
         :param refresh_rate: The refresh rate of the routine function.
         :return: The routine function.
