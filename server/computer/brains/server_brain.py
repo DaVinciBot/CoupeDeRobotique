@@ -85,16 +85,21 @@ class ServerBrain(Brain):
             self.ws_cmd.sender.send(cmd)
 
     @Brain.routine(refresh_rate=0.5)
+    async def update_lidar(self):
+        lidar_msg = self.ws_lidar.receiver.get()
+        if lidar_msg != WSmsg():
+            self.lidar_state = lidar_msg.data
+
+    @Brain.routine(refresh_rate=0.5)
     async def main(self):
         # Get the message from routes
         odometer_state = await self.ws_odometer.receiver.get()
 
-
         # Log states
         self.logger.log(f"Odometer state: {odometer_state}", LogLevels.INFO)
-        if isinstance(self.lidar_state.data, list):
+        if isinstance(self.lidar_state, list):
             self.logger.log(
-                f"Lidar state: {len(self.lidar_state.data)}", LogLevels.INFO
+                f"Lidar state: {len(self.lidar_state)}", LogLevels.INFO
             )
         self.logger.log(f"Recognized aruco number: {len(self.arucos)}", LogLevels.INFO)
 
@@ -105,7 +110,7 @@ class ServerBrain(Brain):
                 data={
                     "arucos": self.arucos,
                     "green_objects": self.green_objects,
-                    "lidar": self.lidar_state.data,
+                    "lidar": self.lidar_state,
                     "odometer": odometer_state.data
                 },
             )
