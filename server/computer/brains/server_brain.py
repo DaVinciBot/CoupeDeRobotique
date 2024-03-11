@@ -82,7 +82,10 @@ class ServerBrain(Brain):
     async def transmit_cmd_to_robot1(self):
         cmd = await self.ws_cmd.receiver.get()
         if cmd != WSmsg():
-            await self.ws_cmd.sender.send(cmd)
+            await self.ws_cmd.sender.send(
+                cmd,
+                clients=self.ws_cmd.get_client("robot1")
+            )
 
     @Brain.routine(refresh_rate=0.5)
     async def update_lidar(self):
