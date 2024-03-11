@@ -1,16 +1,18 @@
 from logger import Logger, LogLevels
-
+import multiprocessing
 import asyncio
 
 from typing import TypeVar, Type, List, Callable, Coroutine
 import inspect
+from brain.stage import Stage
+from time import sleep
 
 TBrain = TypeVar("TBrain", bound="Brain")
 
 
 class Brain:
     """
-    The brain is a main controller of applications.
+    The brain is a main controller of applications, a rasp can only handle one brain instance 
     """
 
     def __init__(self, logger: Logger, child: TBrain) -> None:
@@ -21,6 +23,8 @@ class Brain:
         if logger is None:
             raise ValueError("Logger is required for the brain to work properly.")
         self.logger = logger
+        self.routines = []
+        self.stages : list[Stage] = []
         child.dynamic_init()
 
     def dynamic_init(self):
@@ -51,8 +55,6 @@ class Brain:
         """
 
         def decorator(func: Callable[["Brain"], Coroutine[None, None, None]]):
-            if not hasattr(cls, "routines"):
-                cls.routines = []
             # Save the routine and its refresh rate as a tuple
             cls.routines.append((func, refresh_rate))
             return func
@@ -91,6 +93,58 @@ class Brain:
             )
             for routine, rate in self.routines
         ]
+
+    @classmethod
+    def stage(cls, stime):
+        def decorator(func):
+            cls.stages.append(Stage(func, len(cls.stages), stime))
+            return func
+        return decorator
+    
+    def make_stage(self,stage)->None:
+        """
+        This method wraps the routine in a loop and calls it continuously.
+        * It also handles the exceptions and logs them
+        :param stage: Stage's function
+        :return: None
+        """
+        self.logger.log(
+            f"Brain [{self}], routine [{stage.__name__}] started", LogLevels.INFO
+        )
+        while True:
+            try:
+                stage(self)
+            except Exception as error:
+                self.logger.log(
+                    f"Brain [{self}]-[{stage.__name__}] error: {error}",
+                    LogLevels.ERROR,
+                )
+
+    def stage_manager(self)->None: # devrait être défini comme une routine pour être exécutée en // mais conflit avec le type du décorateur, décorer la dernière fonction avec un etime
+        """executes stages one after the other according to the time given into the decorators 
+        """
+        if len(self.stages) > 0:
+            self.stages.sort(key=lambda x: x.stime)
+            current_process = None
+            sleep(self.stages[0].stime)
+            for i in range(len(self.stages) - 1):
+                current_process = multiprocessing.Process(target=self.make_stage, args=(self.stages[i].func,))
+                current_process.start()
+                if(self.stages[i].etime!=-1) and self.stages[i+1].stime>self.stages[i].etime:
+                    sleep(self.stages[i].etime-self.stages[i].stime)
+                    current_process.terminate()
+                    current_process.join()
+                    sleep(self.stages[i+1].stime-self.stages[i].etime)
+                else:
+                    sleep(self.stages[i + 1].stime - self.stages[i].stime)
+                    current_process.terminate()
+                    current_process.join()
+            current_process = multiprocessing.Process(target=self.make_stage, args=(self.stages[-1].func,))
+            current_process.start()
+            if self.stages[-1].etime != -1:
+                sleep(self.stages[-1].etime)
+                current_process.terminate()
+                current_process.join()
 
     def __str__(self) -> str:
         return self.__class__.__name__
