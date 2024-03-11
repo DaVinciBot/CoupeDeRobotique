@@ -62,7 +62,7 @@ class Robot1Brain(Brain):
 
         # Log states
         self.logger.log(f"CMD state: {cmd}", LogLevels.INFO)
-        #self.logger.log(f"New message from camera: {camera}", LogLevels.INFO)
+        # self.logger.log(f"New message from camera: {camera}", LogLevels.INFO)
 
         if cmd != WSmsg():
             # New command received
