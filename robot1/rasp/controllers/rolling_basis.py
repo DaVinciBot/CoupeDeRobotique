@@ -58,7 +58,9 @@ class RollingBasis(Teensy):
     # Received message handling #
     #############################
     def rcv_print(self, msg: bytes):
-        self.l.log("Teensy says : " + msg.decode("ascii", errors="ignore"))
+        m = msg.decode("ascii", errors="ignore")
+        print(m)
+        self.l.log("Teensy says : " + m)
 
     def rcv_odometrie(self, msg: bytes):
         self.odometrie = OrientedPoint(

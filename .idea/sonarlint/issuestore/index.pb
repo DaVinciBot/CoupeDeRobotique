@@ -172,3 +172,7 @@ J
 common/WS_comms/message.py,9\7\9738b0b45e1b23317c2b6c6b942dd4b2cafbf003
 K
 common/WS_comms/receiver.py,6\8\68f5c263ffdd7a456bff19ed29228f2c26f96c8a
+\
+,robot1/teensy_moteur/.vscode/extensions.json,b\5\b57446ffb8f47fc735b8cd2793e0b9d7c521dc8b
+L
+robot1/rasp/requirements.txt,f\4\f4778ec340612d309de19ae8208b0b481e470c47
