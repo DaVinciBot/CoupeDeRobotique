@@ -86,7 +86,7 @@ class ServerBrain(Brain):
 
     @Brain.routine(refresh_rate=0.5)
     async def update_lidar(self):
-        lidar_msg = self.ws_lidar.receiver.get()
+        lidar_msg = await self.ws_lidar.receiver.get()
 
         if lidar_msg != WSmsg():
             self.lidar_state = lidar_msg.data
