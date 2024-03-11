@@ -74,15 +74,10 @@ class Robot1Brain(Brain):
             if cmd.msg == "Go_To":
                 # Verify if the point is accessible
                 print("Starting point: ", type(self.rolling_basis.odometrie))
-                if MarsArena.enable_go_to(
-                    starting_point=Point(
-                        self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y
-                    ),
-                    destination_point=Point(cmd.data[0], cmd.data[1]),
-                ):
-                    self.rolling_basis.Go_To(
-                        OrientedPoint(cmd.data[0], cmd.data[1], cmd.data[2])
-                    )
+                self.rolling_basis.Go_To(
+                    OrientedPoint(cmd.data[0], cmd.data[1], cmd.data[2])
+                )
+
             elif cmd.msg == "Keep_Current_Position":
                 self.rolling_basis.Keep_Current_Position()
             else:
