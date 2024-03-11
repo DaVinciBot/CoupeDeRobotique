@@ -35,3 +35,9 @@ class OrientedPoint:
         return OrientedPoint(
             self.__point.x + p.x, self.__point.y - p.y, self.theta - p.theta
         )
+
+    def __str__(self) -> str:
+        return f"Point(x={self.__point.x}, y={self.__point.y}, theta={self.theta})"
+
+    def __repr__(self) -> str:
+        return self.__str__()
