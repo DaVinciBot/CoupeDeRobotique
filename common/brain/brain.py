@@ -103,13 +103,13 @@ class Brain:
     
     def make_stage(self,stage)->None:
         """
-        This method wraps the routine in a loop and calls it continuously.
+        This method wraps the routine in an infinite call loop.
         * It also handles the exceptions and logs them
         :param stage: Stage's function
         :return: None
         """
         self.logger.log(
-            f"Brain [{self}], routine [{stage.__name__}] started", LogLevels.INFO
+            f"Brain [{self}], stage [{stage.__name__}] started", LogLevels.INFO
         )
         while True:
             try:
@@ -120,7 +120,7 @@ class Brain:
                     LogLevels.ERROR,
                 )
 
-    def stage_manager(self)->None: # devrait être défini comme une routine pour être exécutée en // mais conflit avec le type du décorateur, décorer la dernière fonction avec un etime
+    def run_stage(self)->None: # devrait être défini comme une routine pour être exécutée en // mais conflit avec le type du décorateur, décorer la dernière fonction avec un etime
         """executes stages one after the other according to the time given into the decorators 
         """
         if len(self.stages) > 0:
@@ -145,6 +145,15 @@ class Brain:
                 sleep(self.stages[-1].etime)
                 current_process.terminate()
                 current_process.join()
+    
+    def log_stage(self,stage)->None:
+        string = ""
+        for nom_parametre, valeur_parametre in stage.__dict__.items():
+            if callable(valeur_parametre):
+                string+=f"{nom_parametre}: {valeur_parametre.__name__} ,"
+            else:
+                string+=f"{nom_parametre}: {valeur_parametre} ,"
+        self.logger.log(f"Brain [{self}], stage [{string[:-1]}] added", LogLevels.INFO)   
 
     def __str__(self) -> str:
         return self.__class__.__name__
