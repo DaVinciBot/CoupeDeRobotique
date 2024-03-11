@@ -89,7 +89,6 @@ class ServerBrain(Brain):
         # Get the message from routes
         odometer_state = await self.ws_odometer.receiver.get()
 
-
         # Log states
         self.logger.log(f"Odometer state: {odometer_state}", LogLevels.INFO)
         if isinstance(self.lidar_state.data, list):
@@ -106,7 +105,7 @@ class ServerBrain(Brain):
                     "arucos": self.arucos,
                     "green_objects": self.green_objects,
                     "lidar": self.lidar_state.data,
-                    "odometer": odometer_state.data
+                    "odometer": odometer_state.data,
                 },
             )
         )
