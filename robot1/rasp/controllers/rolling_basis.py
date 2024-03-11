@@ -113,7 +113,7 @@ class RollingBasis(Teensy):
         position: OrientedPoint,
         *,  # force keyword arguments
         skip_queue=False,
-        is_backward: bool = False,
+        is_forward: bool = True,
         max_speed: int = 150,
         next_position_delay: int = 100,
         action_error_auth: int = 50,
@@ -129,7 +129,7 @@ class RollingBasis(Teensy):
 
         :param position: la position en X et Y (et theta)
         :type position: OrientedPoint
-        :param is_backward: en avant (false) ou en arrière (true), defaults to False
+        :param is_forward: en avant (false) ou en arrière (true), defaults to False
         :type direction: bool, optional
         :param speed: Vitesse du déplacement, defaults to b'\x64'
         :type speed: bytes, optional
@@ -145,7 +145,7 @@ class RollingBasis(Teensy):
             self.Command.GoToPoint
             + struct.pack("<f", pos.x)
             + struct.pack("<f", pos.y)
-            + struct.pack("<?", is_backward)
+            + struct.pack("<?", is_forward)
             + struct.pack("<B", max_speed)
             + struct.pack("<H", next_position_delay)
             + struct.pack("<H", action_error_auth)
