@@ -99,9 +99,7 @@ class ServerBrain(Brain):
         # Log states
         self.logger.log(f"Odometer state: {odometer_state}", LogLevels.INFO)
         if isinstance(self.lidar_state, list):
-            self.logger.log(
-                f"Lidar state: {len(self.lidar_state)}", LogLevels.INFO
-            )
+            self.logger.log(f"Lidar state: {len(self.lidar_state)}", LogLevels.INFO)
         self.logger.log(f"Recognized aruco number: {len(self.arucos)}", LogLevels.INFO)
 
         # Send log to all clients
@@ -112,7 +110,7 @@ class ServerBrain(Brain):
                     "arucos": self.arucos,
                     "green_objects": self.green_objects,
                     "lidar": self.lidar_state,
-                    "odometer": odometer_state.data
+                    "odometer": odometer_state.data,
                 },
             )
         )
