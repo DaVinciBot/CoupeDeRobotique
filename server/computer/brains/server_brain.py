@@ -78,20 +78,17 @@ class ServerBrain(Brain):
             )
         )
 
-    @Brain.routine(refresh_rate=1)
-    async def update_lidar_scan(self):
-        self.lidar_state = await self.ws_lidar.receiver.get()
-
-        fig, ax = plt.subplots()
-        x_vals, y_vals = zip(*self.lidar_state.data)
-        ax.scatter(x_vals, y_vals)
-        plt.show()
+    @Brain.routine(refresh_rate=0.5)
+    async def transmit_cmd_to_robot1(self):
+        cmd = await self.ws_cmd.receiver.get()
+        if cmd != WSmsg():
+            self.ws_cmd.sender.send(cmd)
 
     @Brain.routine(refresh_rate=0.5)
     async def main(self):
         # Get the message from routes
         odometer_state = await self.ws_odometer.receiver.get()
-        cmd_state = await self.ws_cmd.receiver.get()
+
 
         # Log states
         self.logger.log(f"Odometer state: {odometer_state}", LogLevels.INFO)
@@ -99,7 +96,6 @@ class ServerBrain(Brain):
             self.logger.log(
                 f"Lidar state: {len(self.lidar_state.data)}", LogLevels.INFO
             )
-        self.logger.log(f"CMD state: {cmd_state}", LogLevels.INFO)
         self.logger.log(f"Recognized aruco number: {len(self.arucos)}", LogLevels.INFO)
 
         # Send log to all clients
@@ -110,8 +106,7 @@ class ServerBrain(Brain):
                     "arucos": self.arucos,
                     "green_objects": self.green_objects,
                     "lidar": self.lidar_state.data,
-                    "odometer": odometer_state.data,
-                    "cmd": cmd_state.data,
+                    "odometer": odometer_state.data
                 },
             )
         )
