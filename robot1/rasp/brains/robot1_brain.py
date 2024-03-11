@@ -13,16 +13,16 @@ from controllers import RollingBasis
 
 class Robot1Brain(Brain):
     def __init__(
-        self,
-        logger: Lidar,
-        ws_cmd: WSclientRouteManager,
-        ws_log: WSclientRouteManager,
-        ws_lidar: WSclientRouteManager,
-        ws_odometer: WSclientRouteManager,
-        ws_camera: WSclientRouteManager,
-        rolling_basis: RollingBasis,
-        lidar: Lidar,
-        arena: MarsArena,
+            self,
+            logger: Lidar,
+            ws_cmd: WSclientRouteManager,
+            ws_log: WSclientRouteManager,
+            ws_lidar: WSclientRouteManager,
+            ws_odometer: WSclientRouteManager,
+            ws_camera: WSclientRouteManager,
+            rolling_basis: RollingBasis,
+            lidar: Lidar,
+            arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -62,6 +62,8 @@ class Robot1Brain(Brain):
 
         # Log states
         self.logger.log(f"CMD state: {cmd}", LogLevels.INFO)
+        self.logger.log(
+            f"Robot position: ({self.rolling_basis.odometrie.x}, {self.rolling_basis.odometrie.y}, {self.rolling_basis.odometrie.theta})")
         # self.logger.log(f"New message from camera: {camera}", LogLevels.INFO)
 
         if cmd != WSmsg():
