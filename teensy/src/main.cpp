@@ -75,17 +75,19 @@ void handle_next_action()
   com->print("handle next");
   if (com->next_action != nullptr)
   {
-    functions[com->next_action->msg_type]((byte *)com->next_action->data, com->next_action->data_size);
-    free(com->next_action);
+    com->print("handle with preshot");
+    functions[com->next_action->msg_type]((byte *)com->next_action->data, com->next_action->data_size);   
+    free(com->next_action); 
+    com->next_action = nullptr;
   } 
 
 }
 
 void go_to(byte *msg, byte size)
 {
+  com->print("goto");
   msg_Go_To *go_to_msg = (msg_Go_To *)msg;
   Point target_point(go_to_msg->x, go_to_msg->y, 0.0f);
-  com->print("goto");
 
   Precision_Params params{
       go_to_msg->next_position_delay,

@@ -17,7 +17,12 @@
         {
             "label": "Flash local hex robot1",
             "type": "shell",
-            "command": "ssh dvb@192.168.0.11 'sudo teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex; exit'",
+            "windows":{
+                "command": "ssh dvb@192.168.0.11 'sudo teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex; exit'",
+            },
+            "linux":{
+                "command": "sudo teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex; exit"
+            },
             "problemMatcher": []
         },
         {
@@ -32,7 +37,12 @@
         {
             "label": "Copy Hex on remote",
             "type": "shell",
-            "command": "scp .pio\\build\\teensy41\\firmware.hex dvb@192.168.0.11:/tmp ",
+            "windows" :{
+                "command": "scp .pio\\build\\teensy41\\firmware.hex dvb@192.168.0.11:/tmp ",
+            },
+            "linux":{
+                "command": "mv .pio/build/teensy41/firmware.hex /tmp/firmware.hex",
+            },
             "problemMatcher": []
         },
     ]

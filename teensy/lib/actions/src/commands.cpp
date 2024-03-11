@@ -10,9 +10,7 @@ void handle_callback(Com *com)
         if (msg[0] == PRESHOT)
         {
             com->print("received preshot");
-            if (com->next_action != nullptr)
-                free(com->next_action);
-            com->next_action = (msg_Preshot *)msg;    
+            com->next_action = (msg_Preshot *)msg;   
         }
         else if (functions[msg[0]] != 0) // verifies if the id of the function received by com is defined
         {

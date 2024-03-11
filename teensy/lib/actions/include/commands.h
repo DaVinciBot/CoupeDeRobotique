@@ -11,15 +11,15 @@
 #define SET_PID 6
 #define SET_HOME 7
 
-#define PRESHOT 126 // hardcode in other places
+#define PRESHOT 126 // hardcoded in other places
 
 // two ways : 127 (Convention)
-#define NACK 127
+#define NACK 127  // hardcoded in com.cpp
 
 // teensy -> rasp : 128-255 (Convention)
 #define UPDATE_POSITION 128
 #define ACTION_FINISHED 129
-#define STRING 130
+#define STRING 130 // hardcoded in com.cpp
 #define UNKNOWN_MSG_TYPE 255
 
 extern void (*functions[256])(byte *msg, byte size);
