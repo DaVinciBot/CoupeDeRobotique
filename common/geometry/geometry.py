@@ -27,7 +27,11 @@ class OrientedPoint:
         return getattr(self.__point, attr)
 
     def __add__(self, p: object) -> object:
-        return OrientedPoint(self.__point.x + p.x, self.__point.y + p.y, self.theta + p.theta)
+        return OrientedPoint(
+            self.__point.x + p.x, self.__point.y + p.y, self.theta + p.theta
+        )
 
     def __sub__(self, p: object) -> object:
-        return OrientedPoint(self.__point.x + p.x, self.__point.y - p.y, self.theta - p.theta)
+        return OrientedPoint(
+            self.__point.x + p.x, self.__point.y - p.y, self.theta - p.theta
+        )
