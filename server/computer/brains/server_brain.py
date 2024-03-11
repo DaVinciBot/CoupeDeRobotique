@@ -81,7 +81,7 @@ class ServerBrain(Brain):
     @Brain.routine(refresh_rate=0.5)
     async def transmit_cmd_to_robot1(self):
         cmd = await self.ws_cmd.receiver.get()
-        #if cmd != WSmsg():
+        # if cmd != WSmsg():
         #    await self.ws_cmd.sender.send(cmd)
 
     @Brain.routine(refresh_rate=0.5)
