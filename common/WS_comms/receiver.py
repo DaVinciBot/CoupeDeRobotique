@@ -51,8 +51,9 @@ class WSreceiver:
             if wait_msg:
                 return await self.queue.get()
             elif not self.queue.empty():
+                print("elif not self.queue.empty()")
                 return await self.queue.get()
-
+        print("ELSE")
         if self.keep_memory:
             return self.last_state
 
