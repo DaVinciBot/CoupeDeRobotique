@@ -74,9 +74,7 @@ class Robot1Brain(Brain):
     @Brain.routine(refresh_rate=1)
     async def send_odometer_to_server(self):
         if self.odometer:
-            await self.ws_lidar.sender.send(
-                WSmsg(msg="odometer", data=self.odometer)
-            )
+            await self.ws_lidar.sender.send(WSmsg(msg="odometer", data=self.odometer))
 
     @Brain.routine(refresh_rate=0.5)
     async def main(self):
