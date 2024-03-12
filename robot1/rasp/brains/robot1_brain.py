@@ -66,18 +66,16 @@ class Robot1Brain(Brain):
 
     @Brain.routine(refresh_rate=1)
     async def send_lidar_scan_to_server(self):
-        if self.lidar_scan != [] and self.ws_lidar.get_client("computer"):
+        if self.lidar_scan:
             await self.ws_lidar.sender.send(
-                WSmsg(msg="lidar_scan", data=self.lidar_scan),
-                clients=self.ws_lidar.get_client("computer"),
+                WSmsg(msg="lidar_scan", data=self.lidar_scan)
             )
 
     @Brain.routine(refresh_rate=1)
     async def send_odometer_to_server(self):
-        if self.odometer != [] and self.ws_odometer.get_client("computer"):
+        if self.odometer:
             await self.ws_lidar.sender.send(
-                WSmsg(msg="odometer", data=self.odometer),
-                clients=self.ws_odometer.get_client("computer"),
+                WSmsg(msg="odometer", data=self.odometer)
             )
 
     @Brain.routine(refresh_rate=0.5)
