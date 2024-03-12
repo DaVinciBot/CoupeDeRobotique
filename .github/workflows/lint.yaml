@@ -1,8 +1,10 @@
 name: Lint
 
 on:
-  - push
-  - workflow_dispatch
+    push:
+      branches: [ "dev", "dev-CI/CD" ]
+    pull_request:
+      branches: [ "competition", "dev"]
 
 jobs:
   lint:
