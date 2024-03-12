@@ -57,7 +57,7 @@ class ServerBrain(Brain):
                 data = type(data)
             logger_msg = f"New msg on [{route_name}]: [{msg.sender}] -> [{data}]"
             self.logger.log(logger_msg, LogLevels.INFO)
-            await self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
+            #await self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
 
     @Brain.routine(refresh_rate=0.1)
     async def routes_receiver(self):
@@ -131,14 +131,14 @@ class ServerBrain(Brain):
         Send computer feedback to associates routes (camera)
     """
 
-    @Brain.routine(refresh_rate=1)
+"""    @Brain.routine(refresh_rate=1)
     async def send_camera_to_clients(self):
         await self.ws_camera.sender.send(
             WSmsg(
                 msg="camera",
                 data={"aruco": self.arucos, "green_objects": self.green_objects},
             )
-        )
+        )"""
 
 
     """@Brain.routine(refresh_rate=0.5)
