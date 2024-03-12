@@ -1,5 +1,19 @@
 from arena.arena import Arena
-from geometry import Point, Polygon, create_straight_rectangle, MultiPolygon
+from geometry import (
+    Point,
+    Polygon,
+    create_straight_rectangle,
+    MultiPolygon,
+    OrientedPoint,
+)
+from shapely import distance
+from sys import maxsize
+
+
+class plants_zone:
+    def __init__(self, zone, nb_plant: int = 0) -> None:
+        self.zone = zone
+        self.nb_plant = nb_plant
 
 
 class MarsArena(Arena):
@@ -21,25 +35,121 @@ class MarsArena(Arena):
 
         self.color = "yellow" if start_zone % 2 == 0 else "blue"
 
-        all_zones = [
-            create_straight_rectangle(
-                Point(0, 0), Point(45, 45)
+        self.drop_zones = [
+            plants_zone(
+                create_straight_rectangle(Point(45, 0), Point(0, 45))
             ),  # 1 - Blue (Possible forbidden area)
             create_straight_rectangle(Point(77.5, 0), Point(122.5, 45)),  # 2 - Yellow
             create_straight_rectangle(Point(155, 0), Point(200, 45)),  # 3 - Blue
             create_straight_rectangle(
                 Point(0, 255), Point(45, 300)
             ),  # 4 - Yellow (Possible forbidden area)
-            create_straight_rectangle(Point(77.5, 255), Point(122, 300)),  # 5 - Blue
-            create_straight_rectangle(Point(155, 255), Point(200, 300)),  # 6 - Yellow
+            plants_zone(
+                create_straight_rectangle(Point(122.5, 255), Point(77.5, 300))
+            ),  # 5 - Blue
+            plants_zone(
+                create_straight_rectangle(Point(200, 255), Point(155, 300))
+            ),  # 6 - Yellow
+        ]
+
+        self.pickup_zones = [
+            plants_zone(Point(70, 100).buffer(25), 6),
+            plants_zone(Point(130, 100).buffer(25), 6),
+            plants_zone(Point(150, 150).buffer(25), 6),
+            plants_zone(Point(130, 200).buffer(25), 6),
+            plants_zone(Point(70, 200).buffer(25), 6),
+            plants_zone(Point(50, 150).buffer(25), 6),
+        ]
+
+        self.gardeners = [
+            (
+                plants_zone(create_straight_rectangle(Point(77.5, -15), Point(45, -3)))
+            ),  # 0 - Blue
+            (
+                plants_zone(
+                    create_straight_rectangle(Point(155, -15), Point(122.5, -3)),
+                )
+            ),  # 1 - Yellow
+            (
+                plants_zone(create_straight_rectangle(Point(77.5, 303), Point(45, 315)))
+            ),  # 2 - Blue
+            (
+                plants_zone(
+                    create_straight_rectangle(Point(155, 303), Point(122.5, 315))
+                )
+            ),  # 3 - Yellow
         ]
 
         super().__init__(
             game_borders=create_straight_rectangle(origin, opposite_corner),
             zones={
-                "forbidden": MultiPolygon([all_zones[(start_zone % 2) * 3]]),
-                "home": all_zones[start_zone - 1],
+                "forbidden": MultiPolygon([self.drop_zones[(start_zone % 2) * 3]]),
+                "home": self.drop_zones[start_zone - 1],
             },
+        )
+
+    def sort_zone(
+        self,
+        zones: list[plants_zone],
+        actual_position: OrientedPoint,
+        our=True,
+        mini=0,
+        maxi=maxsize,
+        color="blue",
+        reverse_plant=False,
+    ):
+        if our:
+            if color == "blue":
+                s = 0
+            else:
+                s = 1
+            zones: list[plants_zone] = [
+                zones[i]
+                for i in range(s, len(zones), 2)
+                if zones[i].nb_plant >= mini and zones[i].nb_plant <= maxi
+            ]
+        zones = sorted(
+            zones, key=lambda x: distance(x.zone, actual_position)
+        )  # sort according to the required bound and by distance
+        if reverse_plant:
+            zones = sorted(zones, key=lambda x: (x.nb_plant), reverse=True)
+
+    def sort_gardener(
+        self, actual_position: OrientedPoint, our=True, mini=0, maxi=6, reverse=True
+    ):
+        return self.sort_zone(
+            actual_position=actual_position,
+            our=our,
+            zones=self.gardeners,
+            mini=mini,
+            maxi=maxi,
+            color=self.color,
+            reverse=reverse,
+        )
+
+    def sort_drop_zone(
+        self, actual_position: OrientedPoint, our=True, mini=0, maxi=6, reverse=True
+    ):
+        return self.sort_zone(
+            actual_position=actual_position,
+            our=our,
+            zones=self.drop_zones,
+            mini=mini,
+            maxi=maxi,
+            color=self.color,
+            reverse=reverse,
+        )
+
+    def sort_pickup_zone(
+        self, actual_position: OrientedPoint, our=True, mini=2, reverse=False
+    ):
+        return self.sort_zone(
+            actual_position=actual_position,
+            our=our,
+            zones=self.pickup_zones,
+            mini=mini,
+            color=self.color,
+            reverse=reverse,
         )
 
     def __str__(self) -> str:
