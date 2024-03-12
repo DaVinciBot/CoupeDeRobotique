@@ -25,6 +25,10 @@ class OrientedPoint:
         self.__point = Point(x, y)
         self.theta = theta
 
+    @classmethod
+    def from_Point(cls, point: Point, theta: float or None = None):
+        return cls(point.x, point.y, theta)
+
     def __getattr__(self, attr):
         """Redirect all other attribute calls to the point object"""
         return getattr(self.__point, attr)

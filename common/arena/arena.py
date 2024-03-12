@@ -120,7 +120,7 @@ class Arena:
         ):
             return None
 
-        # return closest or furthest intersection
+        # Return closest or furthest intersection
 
         else:
             if distance(start_point, intersections.geoms[0]) <= distance(
