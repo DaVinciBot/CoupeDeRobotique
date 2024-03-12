@@ -8,7 +8,10 @@ from shapely import (
     Geometry,
     geometry,
     prepare,
+    distance,
 )
+
+from shapely.affinity import scale
 
 
 def create_straight_rectangle(p1: Point, p2: Point) -> Polygon:
