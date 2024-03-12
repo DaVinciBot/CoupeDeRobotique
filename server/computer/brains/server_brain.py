@@ -48,7 +48,7 @@ class ServerBrain(Brain):
         Routines
     """
 
-    def __print_new_msg_from_route(self, route_name, msg):
+    async def __print_new_msg_from_route(self, route_name, msg):
         if msg != WSmsg():
             logger_msg = f"New msg on [{route_name}]: [{msg.sender}] -> [{msg.data}]"
             self.logger.log(logger_msg, LogLevels.INFO)
@@ -62,11 +62,11 @@ class ServerBrain(Brain):
         self.ws_odometer_state = await self.ws_odometer.receiver.get()
         self.ws_camera_state = await self.ws_camera.receiver.get()
 
-        self.__print_new_msg_from_route("CMD", self.ws_cmd_state)
-        self.__print_new_msg_from_route("LOG", self.ws_log_state)
-        self.__print_new_msg_from_route("LIDAR", self.ws_lidar_state)
-        self.__print_new_msg_from_route("ODOMETER", self.ws_odometer_state)
-        self.__print_new_msg_from_route("CAMERA", self.ws_camera_state)
+        await self.__print_new_msg_from_route("CMD", self.ws_cmd_state)
+        await self.__print_new_msg_from_route("LOG", self.ws_log_state)
+        await self.__print_new_msg_from_route("LIDAR", self.ws_lidar_state)
+        await self.__print_new_msg_from_route("ODOMETER", self.ws_odometer_state)
+        await self.__print_new_msg_from_route("CAMERA", self.ws_camera_state)
 
     """
         Controllers / Sensors feedback processing
