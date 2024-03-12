@@ -52,7 +52,7 @@ class ServerBrain(Brain):
         if msg != WSmsg():
             logger_msg = f"New msg on [{route_name}]: [{msg.sender}] -> [{msg.data}]"
             self.logger.log(logger_msg, LogLevels.INFO)
-            self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
+            await self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
 
     @Brain.routine(refresh_rate=0.1)
     async def routes_receiver(self):
