@@ -75,6 +75,15 @@ class ServerBrain(Brain):
         await self.__print_new_msg_from_route("ODOMETER", self.ws_odometer_state)
         await self.__print_new_msg_from_route("CAMERA", self.ws_camera_state)
 
+        # Transmit cmd to robot1
+        if (
+            self.ws_cmd_state != WSmsg() and self.ws_cmd_state.sender != "computer"
+            and self.ws_cmd.get_client("robot1") is not None
+        ):
+            await self.ws_cmd.sender.send(
+                self.ws_cmd_state, clients=self.ws_cmd.get_client("robot1")
+            )
+
     """
         Controllers / Sensors feedback processing
     """
@@ -131,19 +140,6 @@ class ServerBrain(Brain):
             )
         )
 
-    """
-        Send received command from postman to robot1 (for demo)
-    """
-
-    @Brain.routine(refresh_rate=0.5)
-    async def send_cmd_to_robot1(self):
-        if (
-            self.ws_cmd_state != WSmsg() and self.ws_cmd_state.sender != "computer"
-            and self.ws_cmd.get_client("robot1") is not None
-        ):
-            await self.ws_cmd.sender.send(
-                self.ws_cmd_state, clients=self.ws_cmd.get_client("robot1")
-            )
 
     """@Brain.routine(refresh_rate=0.5)
     async def main(self):
