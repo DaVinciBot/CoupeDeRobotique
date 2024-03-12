@@ -28,7 +28,7 @@ class WSreceiver:
         """
         retyped_msg = WSmsg.from_aiohttp_message(msg)
         try:
-            print(f"New msg received! {msg.sender} {msg.msg}")
+            print(f"New msg received! {retyped_msg.sender} {retyped_msg.msg}")
         except Exception as error:
             print(f"New msg received! Error {error}")
         if self.use_queue:
