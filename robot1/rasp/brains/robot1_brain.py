@@ -10,6 +10,7 @@ from utils import Utils
 from sensors import Lidar
 from controllers import RollingBasis
 
+import asyncio
 
 class Robot1Brain(Brain):
     def __init__(
@@ -98,3 +99,5 @@ class Robot1Brain(Brain):
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
                     LogLevels.WARNING
                 )
+
+        await asyncio.sleep(1)

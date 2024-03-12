@@ -46,6 +46,7 @@ class WSreceiver:
         :param wait_msg:
         :return:
         """
+        print("GET !!")
         if self.use_queue and not skip_queue:
             if wait_msg:
                 return await self.queue.get()
