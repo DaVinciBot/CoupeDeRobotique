@@ -55,5 +55,6 @@ class WSender:
         if type(clients) is not list:
             clients = [clients]
 
+        print(f"New msg send! {msg.sender} {msg.msg}")
         for client in clients:
             await client.send_str(msg.prepare())
