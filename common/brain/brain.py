@@ -121,9 +121,12 @@ class Brain:
                     LogLevels.ERROR,
                 )
 
-    def run_stage(self)->None: # devrait être défini comme une routine pour être exécutée en // mais conflit avec le type du décorateur, décorer la dernière fonction avec un etime
-        """executes stages one after the other according to the time given into the decorators 
-        """
+    def run_stage(
+        self,
+    ) -> (
+        None
+    ):  # devrait être défini comme une routine pour être exécutée en // mais conflit avec le type du décorateur, décorer la dernière fonction avec un etime
+        """executes stages one after the other according to the time given into the decorators"""
         if len(self.stages) > 0:
             self.stages.sort(key=lambda x: x.stime)
             current_process = None
@@ -152,15 +155,15 @@ class Brain:
                 sleep(self.stages[-1].etime)
                 current_process.terminate()
                 current_process.join()
-    
-    def log_stage(self,stage)->None:
+
+    def log_stage(self, stage) -> None:
         string = ""
         for nom_parametre, valeur_parametre in stage.__dict__.items():
             if callable(valeur_parametre):
-                string+=f"{nom_parametre}: {valeur_parametre.__name__} ,"
+                string += f"{nom_parametre}: {valeur_parametre.__name__} ,"
             else:
-                string+=f"{nom_parametre}: {valeur_parametre} ,"
-        self.logger.log(f"Brain [{self}], stage [{string[:-1]}] added", LogLevels.INFO)   
+                string += f"{nom_parametre}: {valeur_parametre} ,"
+        self.logger.log(f"Brain [{self}], stage [{string[:-1]}] added", LogLevels.INFO)
 
     def __str__(self) -> str:
         return self.__class__.__name__
