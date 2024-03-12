@@ -152,6 +152,8 @@ class Teensy:
                 return
 
     def send_bytes(self, data: bytes):
+
+        print("BYTES SENT !!!!!!!")
         self.last_message = data
         self._teensy.reset_output_buffer()
         msg = data + bytes([len(data)])
