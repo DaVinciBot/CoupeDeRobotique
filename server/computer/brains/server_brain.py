@@ -17,18 +17,18 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        ws_cmd: WServerRouteManager,
-        ws_log: WServerRouteManager,
-        ws_lidar: WServerRouteManager,
-        ws_odometer: WServerRouteManager,
-        ws_camera: WServerRouteManager,
-        camera: Camera,
-        aruco_recognizer: ArucoRecognizer,
-        color_recognizer: ColorRecognizer,
-        plan_transposer: PlanTransposer,
-        arena: MarsArena,
+            self,
+            logger: Logger,
+            ws_cmd: WServerRouteManager,
+            ws_log: WServerRouteManager,
+            ws_lidar: WServerRouteManager,
+            ws_odometer: WServerRouteManager,
+            ws_camera: WServerRouteManager,
+            camera: Camera,
+            aruco_recognizer: ArucoRecognizer,
+            color_recognizer: ColorRecognizer,
+            plan_transposer: PlanTransposer,
+            arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -49,7 +49,7 @@ class ServerBrain(Brain):
     """
 
     async def __print_new_msg_from_route(self, route_name, msg, minimize_data=False):
-        if msg != WSmsg():
+        if msg != WSmsg() and msg.sender != "computer":  # Exclude auto send message
             data = msg.data
             if minimize_data:
                 data = type(data)
@@ -131,11 +131,11 @@ class ServerBrain(Brain):
         Send received command from postman to robot1 (for demo)
     """
 
-    @Brain.routine(refresh_rate=0.1)
+    @Brain.routine(refresh_rate=0.5)
     async def send_cmd_to_robot1(self):
         if (
-            self.ws_cmd_state != WSmsg()
-            and self.ws_cmd.get_client("robot1") is not None
+                self.ws_cmd_state != WSmsg()
+                and self.ws_cmd.get_client("robot1") is not None
         ):
             await self.ws_cmd.sender.send(
                 self.ws_cmd_state, clients=self.ws_cmd.get_client("robot1")
