@@ -48,9 +48,12 @@ class ServerBrain(Brain):
         Routines
     """
 
-    async def __print_new_msg_from_route(self, route_name, msg):
+    async def __print_new_msg_from_route(self, route_name, msg, minimize_data=False):
         if msg != WSmsg():
-            logger_msg = f"New msg on [{route_name}]: [{msg.sender}] -> [{msg.data}]"
+            data = msg.data
+            if minimize_data:
+                data = type(data)
+            logger_msg = f"New msg on [{route_name}]: [{msg.sender}] -> [{data}]"
             self.logger.log(logger_msg, LogLevels.INFO)
             await self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
 
