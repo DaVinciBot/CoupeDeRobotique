@@ -10,6 +10,7 @@ from sensors import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Fr
 
 import matplotlib.pyplot as plt
 
+import asyncio
 
 class ServerBrain(Brain):
     """
