@@ -143,28 +143,23 @@ class ServerBrain(Brain):
                 self.ws_cmd_state, clients=self.ws_cmd.get_client("robot1")
             )
 
-
-"""    @Brain.routine(refresh_rate=0.5)
+    @Brain.routine(refresh_rate=0.5)
     async def main(self):
-        # Get the message from routes
-        odometer_state = await self.ws_odometer.receiver.get()
-
-        # Log states
-        self.logger.log(f"Odometer state: {odometer_state}", LogLevels.INFO)
-        if isinstance(self.lidar_state, list):
-            self.logger.log(f"Lidar state: {len(self.lidar_state)}", LogLevels.INFO)
-        self.logger.log(f"Recognized aruco number: {len(self.arucos)}", LogLevels.INFO)
-
-        # Send log to all clients
-        await self.ws_log.sender.send(
+        await self.ws_cmd.sender.send(
             WSmsg(
-                msg="States",
-                data={
-                    "arucos": self.arucos,
-                    "green_objects": self.green_objects,
-                    "lidar": self.lidar_state,
-                    "odometer": odometer_state.data,
-                },
-            )
+                msg="Go_To",
+                data=[10.0, 0.0, 0.0]
+            ),
+            clients=self.ws_cmd.get_client("robot1")
         )
-"""
+        print("Go_To [10.0, 0.0, 0.0]")
+        await asyncio.sleep(10)
+        print("Go_To [20.0, 0.0, 0.0]")
+        await self.ws_cmd.sender.send(
+            WSmsg(
+                msg="Go_To",
+                data=[20.0, 0.0, 0.0]
+            ),
+            clients=self.ws_cmd.get_client("robot1")
+        )
+        await asyncio.sleep(10)
