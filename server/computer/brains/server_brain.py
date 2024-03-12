@@ -64,7 +64,7 @@ class ServerBrain(Brain):
         self.ws_cmd_state = await self.ws_cmd.receiver.get()
         self.ws_log_state = await self.ws_log.receiver.get()
         self.ws_lidar_state = await self.ws_lidar.receiver.get()
-        self.ws_odometer_state = await self.ws_odoemter.receiver.get()
+        self.ws_odometer_state = await self.ws_odometer.receiver.get()
         self.ws_camera_state = await self.ws_camera.receiver.get()
 
         self.__print_new_msg_from_route("CMD", self.ws_cmd_state)
