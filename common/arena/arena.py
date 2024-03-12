@@ -1,3 +1,4 @@
+from typing import Union
 from geometry import (
     Point,
     Polygon,
@@ -17,7 +18,7 @@ class Arena:
     def __init__(
         self,
         game_borders: Polygon = create_straight_rectangle(Point(0, 0), Point(200, 300)),
-        zones: dict[str, MultiPolygon] or None = None,
+        zones: Union[dict[str, MultiPolygon], None] = None,
     ):
 
         self.game_borders = game_borders
