@@ -138,7 +138,7 @@ class ServerBrain(Brain):
             )
         )
 
-    @Brain.routine(refresh_rate=0.5)
+"""    @Brain.routine(refresh_rate=0.5)
     async def main(self):
         await self.ws_cmd.sender.send(
             WSmsg(msg="Go_To", data=[10.0, 0.0, 0.0]),
@@ -152,3 +152,4 @@ class ServerBrain(Brain):
             WSmsg(msg="Go_To", data=[20.0, 0.0, 0.0]),
             clients=self.ws_cmd.get_client("robot1"),
         )
+"""
