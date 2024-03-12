@@ -27,51 +27,72 @@ class Robot1Brain(Brain):
         super().__init__(logger, self)
 
         self.lidar_scan = []
+        self.odometer = []
+        self.camera = {}
+
+    """
+        Routines
+    """
+
+    """
+        Get controllers / sensors feedback (odometer / lidar + extern (camera))
+    """
 
     @Brain.routine(refresh_rate=0.5)
     async def lidar_scan(self):
         scan = self.lidar.scan_to_absolute_cartesian(
             robot_pos=self.rolling_basis.odometrie
         )
-        self.lidar_scan = scan
+
+        self.lidar_scan = [[p.x, p.y] for p in scan]
+
+    @Brain.routine(refresh_rate=0.5)
+    async def odometer_update(self):
+        self.odometer = [
+            self.rolling_basis.odometrie.x,
+            self.rolling_basis.odometrie.y,
+            self.rolling_basis.odometrie.theta,
+        ]
+
+    @Brain.routine(refresh_rate=0.5)
+    async def get_camera(self):
+        msg = await self.ws_camera.receiver.get()
+        if msg != WSmsg():
+            self.camera = msg.data
+
+    """
+        Send controllers / sensors feedback (odometer / lidar)
+    """
 
     @Brain.routine(refresh_rate=1)
-    async def send_lidar_to_server(self):
-        await self.ws_lidar.sender.send(
-            WSmsg(msg="lidar_scan", data=[[p.x, p.y] for p in self.lidar_scan])
-        )
+    async def send_lidar_scan_to_server(self):
+        if self.lidar_scan != [] and self.ws_lidar.get_client("computer"):
+            await self.ws_lidar.sender.send(
+                WSmsg(
+                    msg="lidar_scan",
+                    data=self.lidar_scan
+                ),
+                clients=self.ws_lidar.get_client("computer")
+            )
 
     @Brain.routine(refresh_rate=1)
     async def send_odometer_to_server(self):
-        await self.ws_odometer.sender.send(
-            WSmsg(
-                msg="odometer",
-                data=[
-                    self.rolling_basis.odometrie.x,
-                    self.rolling_basis.odometrie.y,
-                    self.rolling_basis.odometrie.theta,
-                ],
+        if self.odometer != [] and self.ws_odometer.get_client("computer"):
+            await self.ws_lidar.sender.send(
+                WSmsg(
+                    msg="odometer",
+                    data=self.odometer
+                ),
+                clients=self.ws_odometer.get_client("computer")
             )
-        )
 
     @Brain.routine(refresh_rate=0.5)
     async def main(self):
-        # Get the message from routes
+        # Check cmd
         cmd = await self.ws_cmd.receiver.get()
-        camera = await self.ws_camera.receiver.get()
-
-        # Log states
-        self.logger.log(f"CMD state: {cmd}", LogLevels.INFO)
-        self.logger.log(
-            f"Robot position: ({self.rolling_basis.odometrie.x}, {self.rolling_basis.odometrie.y}, {self.rolling_basis.odometrie.theta})")
-        # self.logger.log(f"New message from camera: {camera}", LogLevels.INFO)
-
         if cmd != WSmsg():
-            # New command received
-            self.logger.log(
-                f"Command received: {cmd.msg}, {cmd.sender}, {len(cmd.data)}",
-                LogLevels.INFO,
-            )
+            self.logger.log(f"New cmd received: {cmd}", LogLevels.INFO)
+
             # Handle it (implemented only for Go_To and Keep_Current_Position)
             if cmd.msg == "Go_To":
                 self.rolling_basis.Go_To(

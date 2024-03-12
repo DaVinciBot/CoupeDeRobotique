@@ -30,7 +30,7 @@ if __name__ == "__main__":
         WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
     )
     ws_log = WSclientRouteManager(
-        WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+        WSreceiver(), WSender(CONFIG.WS_SENDER_NAME)
     )
     # Sensors
     ws_lidar = WSclientRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
