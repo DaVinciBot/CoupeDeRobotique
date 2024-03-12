@@ -17,18 +17,18 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            ws_cmd: WServerRouteManager,
-            ws_log: WServerRouteManager,
-            ws_lidar: WServerRouteManager,
-            ws_odometer: WServerRouteManager,
-            ws_camera: WServerRouteManager,
-            camera: Camera,
-            aruco_recognizer: ArucoRecognizer,
-            color_recognizer: ColorRecognizer,
-            plan_transposer: PlanTransposer,
-            arena: MarsArena,
+        self,
+        logger: Logger,
+        ws_cmd: WServerRouteManager,
+        ws_log: WServerRouteManager,
+        ws_lidar: WServerRouteManager,
+        ws_odometer: WServerRouteManager,
+        ws_camera: WServerRouteManager,
+        camera: Camera,
+        aruco_recognizer: ArucoRecognizer,
+        color_recognizer: ColorRecognizer,
+        plan_transposer: PlanTransposer,
+        arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -52,12 +52,7 @@ class ServerBrain(Brain):
         if msg != WSmsg():
             logger_msg = f"New msg on [{route_name}]: [{msg.sender}] -> [{msg.data}]"
             self.logger.log(logger_msg, LogLevels.INFO)
-            self.ws_log.sender.send(
-                WSmsg(
-                    msg="Msg received",
-                    data=logger_msg
-                )
-            )
+            self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
 
     @Brain.routine(refresh_rate=0.1)
     async def routes_receiver(self):
@@ -135,10 +130,12 @@ class ServerBrain(Brain):
 
     @Brain.routine(refresh_rate=0.1)
     async def send_cmd_to_robot1(self):
-        if self.ws_cmd_state != WSmsg() and self.ws_cmd.get_client("robot1") is not None:
+        if (
+            self.ws_cmd_state != WSmsg()
+            and self.ws_cmd.get_client("robot1") is not None
+        ):
             await self.ws_cmd.sender.send(
-                self.ws_cmd_state,
-                clients=self.ws_cmd.get_client("robot1")
+                self.ws_cmd_state, clients=self.ws_cmd.get_client("robot1")
             )
 
 

@@ -31,15 +31,9 @@ if __name__ == "__main__":
         WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
     )
     # Sensors
-    ws_lidar = WServerRouteManager(
-        WSreceiver(), WSender(CONFIG.WS_SENDER_NAME)
-    )
-    ws_odometer = WServerRouteManager(
-        WSreceiver(), WSender(CONFIG.WS_SENDER_NAME)
-    )
-    ws_camera = WServerRouteManager(
-        WSreceiver(), WSender(CONFIG.WS_SENDER_NAME)
-    )
+    ws_lidar = WServerRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
+    ws_odometer = WServerRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
+    ws_camera = WServerRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
 
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
     ws_server.add_route_handler(CONFIG.WS_LOG_ROUTE, ws_log)

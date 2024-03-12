@@ -13,16 +13,16 @@ from controllers import RollingBasis
 
 class Robot1Brain(Brain):
     def __init__(
-            self,
-            logger: Lidar,
-            ws_cmd: WSclientRouteManager,
-            ws_log: WSclientRouteManager,
-            ws_lidar: WSclientRouteManager,
-            ws_odometer: WSclientRouteManager,
-            ws_camera: WSclientRouteManager,
-            rolling_basis: RollingBasis,
-            lidar: Lidar,
-            arena: MarsArena,
+        self,
+        logger: Lidar,
+        ws_cmd: WSclientRouteManager,
+        ws_log: WSclientRouteManager,
+        ws_lidar: WSclientRouteManager,
+        ws_odometer: WSclientRouteManager,
+        ws_camera: WSclientRouteManager,
+        rolling_basis: RollingBasis,
+        lidar: Lidar,
+        arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -68,22 +68,16 @@ class Robot1Brain(Brain):
     async def send_lidar_scan_to_server(self):
         if self.lidar_scan != [] and self.ws_lidar.get_client("computer"):
             await self.ws_lidar.sender.send(
-                WSmsg(
-                    msg="lidar_scan",
-                    data=self.lidar_scan
-                ),
-                clients=self.ws_lidar.get_client("computer")
+                WSmsg(msg="lidar_scan", data=self.lidar_scan),
+                clients=self.ws_lidar.get_client("computer"),
             )
 
     @Brain.routine(refresh_rate=1)
     async def send_odometer_to_server(self):
         if self.odometer != [] and self.ws_odometer.get_client("computer"):
             await self.ws_lidar.sender.send(
-                WSmsg(
-                    msg="odometer",
-                    data=self.odometer
-                ),
-                clients=self.ws_odometer.get_client("computer")
+                WSmsg(msg="odometer", data=self.odometer),
+                clients=self.ws_odometer.get_client("computer"),
             )
 
     @Brain.routine(refresh_rate=0.5)
