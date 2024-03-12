@@ -33,7 +33,10 @@ class WSreceiver:
             print(f"New msg received! Error {error}")
         if self.use_queue:
             await self.queue.put(retyped_msg)
-        self.last_state = retyped_msg
+
+        if not self.use_queue or self.keep_memory:
+            self.last_state = retyped_msg
+
         # print(f"New message {retyped_msg}")
 
     async def get(self, skip_queue: bool = False, wait_msg: bool = False) -> WSmsg:
