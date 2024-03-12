@@ -82,6 +82,7 @@ class Robot1Brain(Brain):
     async def main(self):
         # Check cmd
         cmd = await self.ws_cmd.receiver.get()
+
         if cmd != WSmsg():
             self.logger.log(f"New cmd received: {cmd}", LogLevels.INFO)
 
