@@ -8,6 +8,8 @@ from geometry import (
     Geometry,
     create_straight_rectangle,
     prepare,
+    distance,
+    scale,
 )
 
 
@@ -95,3 +97,35 @@ class Arena:
         # verify that the area touched isn't in the forbidden area
 
         return not self.zone_intersects(forbidden_zone_name, geometry_to_check)
+
+    def compute_go_to_destination(
+        self, start_point: Point, zone_name: str, delta: float = 0, closer: bool = True
+    ):
+        center = self.zones[zone_name].centroid
+
+        # Get the boundary (circle) of the disc of radius delta around the center
+        circle_delta = center.buffer(delta).boundary
+
+        # Compute the line from start_point to the center of the zone, then scale it by 2 to make sure it interesects
+        # the circle twice (unless start_point is inside the circle_delta, which will be checked)
+        line = scale(LineString([start_point, center]), xfact=2, yfact=2)
+
+        intersections = circle_delta.intersection(line)
+
+        # Check that we found at least 2 intersections, should always be ok unless start_point is inside circle_delta
+        # (therefore the scale function wasn't enough to reach the far away intersection)
+        # or the circle is a point (delta = 0)
+        if (delta > 0 and len(intersections.geoms) < 2) or (
+            delta == 0 and len(intersections.geoms) < 1
+        ):
+            return None
+
+        # return closest or furthest intersection
+
+        else:
+            if distance(start_point, intersections.geoms[0]) <= distance(
+                start_point, intersections.geoms[1]
+            ):
+                return intersections.geoms[0] if closer else intersections.geoms[1]
+            else:
+                return intersections.geoms[1] if closer else intersections.geoms[0]
