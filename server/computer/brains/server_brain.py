@@ -137,7 +137,7 @@ class ServerBrain(Brain):
     @Brain.routine(refresh_rate=0.5)
     async def send_cmd_to_robot1(self):
         if (
-            self.ws_cmd_state != WSmsg()
+            self.ws_cmd_state != WSmsg() and self.ws_cmd_state.sender != "computer"
             and self.ws_cmd.get_client("robot1") is not None
         ):
             await self.ws_cmd.sender.send(
@@ -152,6 +152,7 @@ class ServerBrain(Brain):
         )
         print("Go_To [10.0, 0.0, 0.0]")
         await asyncio.sleep(10)
+
         print("Go_To [20.0, 0.0, 0.0]")
         await self.ws_cmd.sender.send(
             WSmsg(msg="Go_To", data=[20.0, 0.0, 0.0]),
