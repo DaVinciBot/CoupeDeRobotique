@@ -63,9 +63,9 @@ class Robot1Brain(Brain):
 
     """
         Send controllers / sensors feedback (odometer / lidar)
-    """
+    
 
-"""    @Brain.routine(refresh_rate=1)
+   @Brain.routine(refresh_rate=1)
     async def send_lidar_scan_to_server(self):
         if self.lidar_scan:
             await self.ws_lidar.sender.send(

@@ -138,10 +138,10 @@ class ServerBrain(Brain):
                 msg="camera",
                 data={"aruco": self.arucos, "green_objects": self.green_objects},
             )
-        )"""
+        )
 
 
-    """@Brain.routine(refresh_rate=0.5)
+    @Brain.routine(refresh_rate=0.5)
     async def main(self):
         await self.ws_cmd.sender.send(
             WSmsg(msg="Go_To", data=[10.0, 0.0, 0.0]),
