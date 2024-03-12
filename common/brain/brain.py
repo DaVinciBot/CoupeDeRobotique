@@ -12,7 +12,7 @@ TBrain = TypeVar("TBrain", bound="Brain")
 
 class Brain:
     """
-    The brain is a main controller of applications, a rasp can only handle one brain instance 
+    The brain is a main controller of applications, a rasp can only handle one brain instance
     """
 
     def __init__(self, logger: Logger, child: TBrain) -> None:
@@ -24,7 +24,7 @@ class Brain:
             raise ValueError("Logger is required for the brain to work properly.")
         self.logger = logger
         self.routines = []
-        self.stages : list[Stage] = []
+        self.stages: list[Stage] = []
         child.dynamic_init()
 
     def dynamic_init(self):
@@ -99,9 +99,10 @@ class Brain:
         def decorator(func):
             cls.stages.append(Stage(func, len(cls.stages), stime))
             return func
+
         return decorator
-    
-    def make_stage(self,stage)->None:
+
+    def make_stage(self, stage) -> None:
         """
         This method wraps the routine in an infinite call loop.
         * It also handles the exceptions and logs them
@@ -128,18 +129,24 @@ class Brain:
             current_process = None
             sleep(self.stages[0].stime)
             for i in range(len(self.stages) - 1):
-                current_process = multiprocessing.Process(target=self.make_stage, args=(self.stages[i].func,))
+                current_process = multiprocessing.Process(
+                    target=self.make_stage, args=(self.stages[i].func,)
+                )
                 current_process.start()
-                if(self.stages[i].etime!=-1) and self.stages[i+1].stime>self.stages[i].etime:
-                    sleep(self.stages[i].etime-self.stages[i].stime)
+                if (self.stages[i].etime != -1) and self.stages[
+                    i + 1
+                ].stime > self.stages[i].etime:
+                    sleep(self.stages[i].etime - self.stages[i].stime)
                     current_process.terminate()
                     current_process.join()
-                    sleep(self.stages[i+1].stime-self.stages[i].etime)
+                    sleep(self.stages[i + 1].stime - self.stages[i].etime)
                 else:
                     sleep(self.stages[i + 1].stime - self.stages[i].stime)
                     current_process.terminate()
                     current_process.join()
-            current_process = multiprocessing.Process(target=self.make_stage, args=(self.stages[-1].func,))
+            current_process = multiprocessing.Process(
+                target=self.make_stage, args=(self.stages[-1].func,)
+            )
             current_process.start()
             if self.stages[-1].etime != -1:
                 sleep(self.stages[-1].etime)
