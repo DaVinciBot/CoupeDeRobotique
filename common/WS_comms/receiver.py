@@ -27,7 +27,10 @@ class WSreceiver:
         Coroutine to read received messages and add them in queues (one for each task).
         """
         retyped_msg = WSmsg.from_aiohttp_message(msg)
-        print(f"New msg received! {msg.sender} {msg.msg}")
+        try:
+            print(f"New msg received! {msg.sender} {msg.msg}")
+        except Exception as error:
+            print(f"New msg received! Error {error}")
         if self.use_queue:
             await self.queue.put(retyped_msg)
         self.last_state = retyped_msg
