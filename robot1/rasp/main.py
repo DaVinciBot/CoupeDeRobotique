@@ -62,7 +62,7 @@ if __name__ == "__main__":
         ws_camera=ws_camera,
         rolling_basis=robot,
         lidar=lidar,
-        arena=arena,
+        arena=arena
     )
 
     """

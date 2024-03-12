@@ -78,7 +78,7 @@ class Robot1Brain(Brain):
                 WSmsg(msg="odometer", data=self.odometer)
             )
 
-    @Brain.routine(refresh_rate=0.5)
+    @Brain.routine(refresh_rate=0.1)
     async def main(self):
         # Check cmd
         cmd = await self.ws_cmd.receiver.get()
@@ -91,7 +91,6 @@ class Robot1Brain(Brain):
                 self.rolling_basis.Go_To(
                     OrientedPoint(cmd.data[0], cmd.data[1], cmd.data[2]), skip_queue=True
                 )
-
             elif cmd.msg == "Keep_Current_Position":
                 self.rolling_basis.Keep_Current_Position()
             else:
