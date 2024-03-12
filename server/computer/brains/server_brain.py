@@ -67,7 +67,9 @@ class ServerBrain(Brain):
 
         await self.__print_new_msg_from_route("CMD", self.ws_cmd_state)
         await self.__print_new_msg_from_route("LOG", self.ws_log_state)
-        await self.__print_new_msg_from_route("LIDAR", self.ws_lidar_state, minimize_data=True)
+        await self.__print_new_msg_from_route(
+            "LIDAR", self.ws_lidar_state, minimize_data=True
+        )
         await self.__print_new_msg_from_route("ODOMETER", self.ws_odometer_state)
         await self.__print_new_msg_from_route("CAMERA", self.ws_camera_state)
 
