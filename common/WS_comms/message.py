@@ -102,7 +102,7 @@ class WSmsg:
             print("Warning: data is not set.")
 
         if self.ts == -1:
-            self.ts = int(time.time())
+            self.ts = time.time()
 
         if str_format:
             return self.to_str()

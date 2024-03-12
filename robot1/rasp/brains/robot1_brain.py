@@ -96,5 +96,5 @@ class Robot1Brain(Brain):
             else:
                 self.logger.log(
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
-                    LogLevels.WARNING,
+                    LogLevels.WARNING
                 )
