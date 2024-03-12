@@ -104,7 +104,7 @@ class ServerBrain(Brain):
     @Brain.routine(refresh_rate=0.5)
     async def update_lidar(self):
         if self.ws_lidar_state != WSmsg:
-            self.lidar_state = lidar_msg.data
+            self.lidar_state = self.ws_lidar_state.data
 
     @Brain.routine(refresh_rate=0.5)
     async def update_odometer(self):
