@@ -55,9 +55,5 @@ class WSender:
         if type(clients) is not list:
             clients = [clients]
 
-        try:
-            print(f"New msg send! {msg.sender} {msg.msg}")
-        except Exception as error:
-            print(f"New msg send! Error {error}")
         for client in clients:
             await client.send_str(msg.prepare())

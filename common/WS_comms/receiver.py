@@ -27,10 +27,7 @@ class WSreceiver:
         Coroutine to read received messages and add them in queues (one for each task).
         """
         retyped_msg = WSmsg.from_aiohttp_message(msg)
-        try:
-            print(f"New msg received! {retyped_msg.sender} {retyped_msg.msg}")
-        except Exception as error:
-            print(f"New msg received! Error {error}")
+
         if self.use_queue:
             await self.queue.put(retyped_msg)
 
@@ -49,14 +46,11 @@ class WSreceiver:
         :param wait_msg:
         :return:
         """
-        print("GET !!")
         if self.use_queue and not skip_queue:
             if wait_msg:
                 return await self.queue.get()
             elif not self.queue.empty():
-                print("elif not self.queue.empty()")
                 return await self.queue.get()
-        print("ELSE")
         if self.keep_memory:
             return self.last_state
 

@@ -10,8 +10,6 @@ from sensors import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Fr
 
 import matplotlib.pyplot as plt
 
-import asyncio
-
 
 class ServerBrain(Brain):
     """
@@ -19,18 +17,18 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        ws_cmd: WServerRouteManager,
-        ws_log: WServerRouteManager,
-        ws_lidar: WServerRouteManager,
-        ws_odometer: WServerRouteManager,
-        ws_camera: WServerRouteManager,
-        camera: Camera,
-        aruco_recognizer: ArucoRecognizer,
-        color_recognizer: ColorRecognizer,
-        plan_transposer: PlanTransposer,
-        arena: MarsArena,
+            self,
+            logger: Logger,
+            ws_cmd: WServerRouteManager,
+            ws_log: WServerRouteManager,
+            ws_lidar: WServerRouteManager,
+            ws_odometer: WServerRouteManager,
+            ws_camera: WServerRouteManager,
+            camera: Camera,
+            aruco_recognizer: ArucoRecognizer,
+            color_recognizer: ColorRecognizer,
+            plan_transposer: PlanTransposer,
+            arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -57,7 +55,7 @@ class ServerBrain(Brain):
                 data = type(data)
             logger_msg = f"New msg on [{route_name}]: [{msg.sender}] -> [{data}]"
             self.logger.log(logger_msg, LogLevels.INFO)
-            #await self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
+            await self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
 
     @Brain.routine(refresh_rate=0.1)
     async def routes_receiver(self):
@@ -77,8 +75,8 @@ class ServerBrain(Brain):
 
         # Transmit cmd to robot1
         if (
-            self.ws_cmd_state != WSmsg() and self.ws_cmd_state.sender != "computer"
-            and self.ws_cmd.get_client("robot1") is not None
+                self.ws_cmd_state != WSmsg() and self.ws_cmd_state.sender != "computer"
+                and self.ws_cmd.get_client("robot1") is not None
         ):
             await self.ws_cmd.sender.send(
                 self.ws_cmd_state, clients=self.ws_cmd.get_client("robot1")
@@ -131,7 +129,7 @@ class ServerBrain(Brain):
         Send computer feedback to associates routes (camera)
     """
 
-"""    @Brain.routine(refresh_rate=1)
+    @Brain.routine(refresh_rate=1)
     async def send_camera_to_clients(self):
         await self.ws_camera.sender.send(
             WSmsg(
@@ -139,7 +137,6 @@ class ServerBrain(Brain):
                 data={"aruco": self.arucos, "green_objects": self.green_objects},
             )
         )
-
 
     @Brain.routine(refresh_rate=0.5)
     async def main(self):
@@ -155,4 +152,3 @@ class ServerBrain(Brain):
             WSmsg(msg="Go_To", data=[20.0, 0.0, 0.0]),
             clients=self.ws_cmd.get_client("robot1"),
         )
-        await asyncio.sleep(10)"""

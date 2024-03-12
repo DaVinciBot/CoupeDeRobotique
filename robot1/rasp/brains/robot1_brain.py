@@ -10,20 +10,19 @@ from utils import Utils
 from sensors import Lidar
 from controllers import RollingBasis
 
-import asyncio
 
 class Robot1Brain(Brain):
     def __init__(
-        self,
-        logger: Lidar,
-        ws_cmd: WSclientRouteManager,
-        ws_log: WSclientRouteManager,
-        ws_lidar: WSclientRouteManager,
-        ws_odometer: WSclientRouteManager,
-        ws_camera: WSclientRouteManager,
-        rolling_basis: RollingBasis,
-        lidar: Lidar,
-        arena: MarsArena,
+            self,
+            logger: Lidar,
+            ws_cmd: WSclientRouteManager,
+            ws_log: WSclientRouteManager,
+            ws_lidar: WSclientRouteManager,
+            ws_odometer: WSclientRouteManager,
+            ws_camera: WSclientRouteManager,
+            rolling_basis: RollingBasis,
+            lidar: Lidar,
+            arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -63,9 +62,9 @@ class Robot1Brain(Brain):
 
     """
         Send controllers / sensors feedback (odometer / lidar)
-    
+    """
 
-   @Brain.routine(refresh_rate=1)
+    @Brain.routine(refresh_rate=1)
     async def send_lidar_scan_to_server(self):
         if self.lidar_scan:
             await self.ws_lidar.sender.send(
@@ -78,7 +77,7 @@ class Robot1Brain(Brain):
             await self.ws_odometer.sender.send(
                 WSmsg(msg="odometer", data=self.odometer)
             )
-"""
+
     @Brain.routine(refresh_rate=0.1)
     async def main(self):
         # Check cmd
@@ -99,5 +98,3 @@ class Robot1Brain(Brain):
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
                     LogLevels.WARNING
                 )
-
-        await asyncio.sleep(1)
