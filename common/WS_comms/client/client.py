@@ -42,7 +42,7 @@ class WSclient:
         async def routine(url, handler):
             async with aiohttp.ClientSession() as session:
                 async with session.ws_connect(
-                    url, headers={"sender": handler.sender.name}
+                    f"{url}?sender={handler.sender.name}"
                 ) as ws:
                     handler.set_ws(ws)
                     await handler.routine()
