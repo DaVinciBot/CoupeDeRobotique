@@ -154,8 +154,8 @@ class Brain:
                 sleep(self.stages[-1].etime)
                 current_process.terminate()
                 current_process.join()
-    
-    def log_stage(self,stage)->None:
+
+    def log_stage(self, stage) -> None:
         """not used for the moment
 
         Args:

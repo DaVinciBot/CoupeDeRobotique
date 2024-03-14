@@ -5,6 +5,7 @@ from arena import MarsArena
 from WS_comms import WSclientRouteManager, WSmsg
 from brain import Brain
 from utils import Utils
+
 # Import from local path
 from sensors import Lidar
 from controllers import RollingBasis
@@ -89,9 +90,10 @@ class Robot1Brain(Brain):
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
                     LogLevels.WARNING,
                 )
-    
-    # pas super logique que ce soit ici mais c'est le seul endroit où tout est acessible. Mélange de la la notion de robot de partie à mon sens 
-    Brain.stage(0,70)           
+
+    # pas super logique que ce soit ici mais c'est le seul endroit où tout est acessible. Mélange de la la notion de robot de partie à mon sens
+    Brain.stage(0, 70)
+
     def get_plant(self):
         running = True
         while running:
@@ -102,14 +104,17 @@ class Robot1Brain(Brain):
             # faire la même chose pour toute les zones de la phase avec les actuators correspondants
             else:
                 print("log un message d'erreur et kill stage")
+
             # si le temps est sup à une variable définie dans config alors running = False
             def go_to_zone(zones):
                 for zone in sorted_zones:
                     destination_point = self.arena.compute_go_to_destination(zone)
-                    if self.arena.enable_go_to(destination_point): # ajouter le check de la position du robot adverse
-                        if not self.rolling_basis.Go_To(destination_point): # à lancer surement dans une nouvelle fonction enrobée avec un timeout et await. Retourne true destinatinon reached and false otherwise 
+                    if self.arena.enable_go_to(
+                        destination_point
+                    ):  # ajouter le check de la position du robot adverse
+                        if not self.rolling_basis.Go_To(
+                            destination_point
+                        ):  # à lancer surement dans une nouvelle fonction enrobée avec un timeout et await. Retourne true destinatinon reached and false otherwise
                             go_to_zone(zones)
                     return True
                 return False
-            
-            
