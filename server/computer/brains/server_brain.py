@@ -114,6 +114,7 @@ class ServerBrain(Brain):
         frame.draw_markers()
         frame.write_labels()
         self.camera.update_monitor(frame.img)
+        self.camera.save(name="realtime")
 
     @Brain.routine(refresh_rate=0.5)
     async def update_lidar(self):

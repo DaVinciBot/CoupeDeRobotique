@@ -93,13 +93,13 @@ class Camera:
             ),
         )
 
-    def save(self, save_path=None, image=None):
+    def save(self, save_path=None, image=None, *, name=None):
         if save_path is None:
             save_path = self.captures_path
         if image is None:
             image = self.last_record_image
 
-        file_name = Utils.get_date()
+        file_name = Utils.get_date() if name is None else name
         full_path = os.path.join(save_path, f"{file_name}.jpg")
         cv2.imwrite(full_path, image)
 
