@@ -122,7 +122,7 @@ class ServerBrain(Brain):
             client = self.ws_odometer.get_client("WebUI")
             if client is not None:
                 await self.ws_odometer.sender.send(
-                    WSmsg(msg="odometer", data=self.odometer),
+                    WSmsg(msg="lidar", data=self.lidar_state),
                     clients=client,
                 )
 
@@ -133,7 +133,7 @@ class ServerBrain(Brain):
             client = self.ws_odometer.get_client("WebUI")
             if client is not None:
                 await self.ws_odometer.sender.send(
-                    WSmsg(msg="odometer", data=self.odometer),
+                    WSmsg(msg="odometer", data=self.ws_odometer_state.data),
                     clients=client,
                 )
 
