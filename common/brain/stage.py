@@ -1,5 +1,5 @@
 class Stage:
-    def __init__(self, func: function, identifient, stime, etime) -> None:
+    def __init__(self, func: function, identifient, start_t, end_time) -> None:
         """a stage contain a function, the time it needs to be executed and the time it must be aborted
 
         Args:
@@ -10,8 +10,8 @@ class Stage:
         """
         self.func = func
         self.identifient = identifient
-        self.stime = stime  # starting time
-        if etime < 0:
-            self.etime = etime  # default ending_time
+        self.stime = start_t  # starting time
+        if end_time < 0:
+            self.etime = end_time  # default ending_time
         else:
             self.etime = -1
