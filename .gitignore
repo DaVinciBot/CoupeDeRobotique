@@ -157,6 +157,10 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+rasp/bot_venv/
+robot1/rasp/test_zones.py
+robot1/rasp/test_stage.py
+
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore

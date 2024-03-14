@@ -112,14 +112,13 @@ class Brain:
         self.logger.log(
             f"Brain [{self}], stage [{stage.__name__}] started", LogLevels.INFO
         )
-        while True:
-            try:
-                stage(self)
-            except Exception as error:
-                self.logger.log(
-                    f"Brain [{self}]-[{stage.__name__}] error: {error}",
-                    LogLevels.ERROR,
-                )
+        try:
+            stage(self)
+        except Exception as error:
+            self.logger.log(
+                f"Brain [{self}]-[{stage.__name__}] error: {error}",
+                LogLevels.ERROR,
+            )
 
     def run_stage(self)->None: # devrait être défini comme une routine pour être exécutée en // mais conflit avec le type du décorateur, décorer la dernière fonction avec un etime
         """executes stages one after the other according to the time given into the decorators 
@@ -154,6 +153,11 @@ class Brain:
                 current_process.join()
     
     def log_stage(self,stage)->None:
+        """not used for the moment
+
+        Args:
+            stage (_type_): the stage to log
+        """
         string = ""
         for nom_parametre, valeur_parametre in stage.__dict__.items():
             if callable(valeur_parametre):
