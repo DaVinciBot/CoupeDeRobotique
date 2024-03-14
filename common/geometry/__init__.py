@@ -9,4 +9,6 @@ from geometry.geometry import (
     create_straight_rectangle,
     Geometry,
     prepare,
+    distance,
+    scale,
 )

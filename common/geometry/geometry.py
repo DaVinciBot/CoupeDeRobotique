@@ -8,7 +8,10 @@ from shapely import (
     Geometry,
     geometry,
     prepare,
+    distance,
 )
+
+from shapely.affinity import scale
 
 
 def create_straight_rectangle(p1: Point, p2: Point) -> Polygon:
@@ -21,6 +24,10 @@ class OrientedPoint:
     def __init__(self, x: float, y: float, theta: float = 0.0):
         self.__point = Point(x, y)
         self.theta = theta
+
+    @classmethod
+    def from_Point(cls, point: Point, theta: float or None = None):
+        return cls(point.x, point.y, theta)
 
     def __getattr__(self, attr):
         """Redirect all other attribute calls to the point object"""

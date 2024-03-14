@@ -2,7 +2,7 @@ from config_loader import CONFIG
 
 # Import from common
 from teensy_comms import Teensy
-from geometry import OrientedPoint
+from geometry import OrientedPoint, Point
 from logger import Logger
 
 import struct
@@ -110,7 +110,7 @@ class RollingBasis(Teensy):
     @Logger
     def Go_To(
         self,
-        position: OrientedPoint,
+        position: Point,
         *,  # force keyword arguments
         skip_queue=False,
         is_backward: bool = False,
@@ -140,7 +140,7 @@ class RollingBasis(Teensy):
         :param traj_precision: la précision du déplacement, defaults to 50
         :type traj_precision: int, optional
         """
-        pos = self.true_pos(position)
+        pos = position + Point(self.position_offset.x, self.position_offset.y)
         msg = (
             self.Command.GoToPoint
             + struct.pack("<f", pos.x)
