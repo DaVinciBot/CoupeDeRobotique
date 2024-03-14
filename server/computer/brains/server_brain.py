@@ -119,9 +119,9 @@ class ServerBrain(Brain):
     async def update_lidar(self):
         if self.ws_lidar_state != WSmsg:
             self.lidar_state = self.ws_lidar_state.data
-            client = self.ws_odometer.get_client("WebUI")
+            client = self.ws_lidar.get_client("WebUI")
             if client is not None:
-                await self.ws_odometer.sender.send(
+                await self.ws_lidar.sender.send(
                     WSmsg(msg="lidar", data=self.lidar_state),
                     clients=client,
                 )
