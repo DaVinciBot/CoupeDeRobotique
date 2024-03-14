@@ -26,7 +26,7 @@ for (let i = 0; i < 270 * 3; i++) {
     lidarData.push(5);
 }
 
-let lidar = new WebSocket("ws://127.0.0.1:3000/lidar");
+let lidar = new WebSocket(`ws://${host}:${port}/lidar?sender=${user}`);
 lidar.onmessage = function (event) {
     if (event.data.startsWith("new$=$") || event.data.startsWith("current$=$")) {
         let data = event.data.split("$=$")[1].split(",");
@@ -42,7 +42,7 @@ function toggle_alt_design() {
     draw();
 }
 
-function draw_red_dot(){
+function draw_red_dot() {
     // center dot
     ctx.fillStyle = "#0232FF";
     ctx.fillRect(centerX - 2.5, centerY - 2.5, 5, 5);
@@ -85,10 +85,6 @@ function draw() {
     draw_red_dot();
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    lidar.onopen = function () {
-        console.log("lidar connected");
-        lidar.send("get");
-    }
-    draw();
-});
+lidar.onopen = function () {
+    console.log("lidar connected");
+}

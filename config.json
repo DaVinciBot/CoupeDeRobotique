@@ -6,7 +6,8 @@
       "odometer_route": "/odometer",
       "camera_route": "/camera",
       "log_route": "/log",
-      "cmd_route": "/cmd"
+      "cmd_route": "/cmd",
+      "frame_route": "/frame"
     }
   },
   "computer": {

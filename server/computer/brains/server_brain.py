@@ -119,11 +119,23 @@ class ServerBrain(Brain):
     async def update_lidar(self):
         if self.ws_lidar_state != WSmsg:
             self.lidar_state = self.ws_lidar_state.data
+            client = self.ws_odometer.get_client("WebUI")
+            if client is not None:
+                await self.ws_odometer.sender.send(
+                    WSmsg(msg="odometer", data=self.odometer),
+                    clients=client,
+                )
 
     @Brain.routine(refresh_rate=0.5)
     async def update_odometer(self):
         if self.ws_odometer_state != WSmsg:
             self.odometer = self.ws_odometer_state.data
+            client = self.ws_odometer.get_client("WebUI")
+            if client is not None:
+                await self.ws_odometer.sender.send(
+                    WSmsg(msg="odometer", data=self.odometer),
+                    clients=client,
+                )
 
     """
         Send computer feedback to associates routes (camera)

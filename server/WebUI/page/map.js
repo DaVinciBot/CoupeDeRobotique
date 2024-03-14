@@ -1,4 +1,4 @@
-let position_ws = new WebSocket("ws://127.0.0.1:3000/position")
+let position_ws = new WebSocket(`ws://${host}:${port}/odometer?sender=${user}`);
 let rob = document.querySelector(".rob")
 
 let x = 0
@@ -11,20 +11,15 @@ let theta = 0
 // en Y : 1 m = 500 px    | 1cm = 5 px
 
 position_ws.onmessage = function (event) {
-    console.log(event.data.split("$=$")[1].replaceAll('"', '').replace('[', '').replace(']', '').split(","))
-    if (event.data.startsWith("current$=$")) {
-        [x, y, theta] = event.data.split("$=$")[1].replaceAll('"', '').replace('[', '').replace(']', '').split(",")
-    }
-    if (event.data.startsWith("new$=$")) {
-        [x, y], theta = event.data.split("$=$")[1].replaceAll('"', '').replace('[', '').replace(']', '').split(",")
-    }
+    data = JSON.parse(event.data);
+    [x, y, theta] = 0, 0, 0
     parse_pos()
     set_rob_pos()
 }
 
 function parse_pos() {
-    x = Math.min(parseFloat(x) * 4.9633, 300*4.9633)
-    y = Math.min(parseFloat(y) * 5.0,200*5)
+    x = Math.min(parseFloat(x) * 4.9633, 300 * 4.9633)
+    y = Math.min(parseFloat(y) * 5.0, 200 * 5)
     theta = parseFloat(theta) * 180 / Math.PI
 }
 
@@ -33,10 +28,6 @@ function set_rob_pos() {
     rob.style.transform = `translate(${x}px, ${y}px) rotate(${theta}deg)`
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    position_ws.onopen = function () {
-        console.log("map connected");
-        // send "get" and parse the response
-        position_ws.send("get");
-    }
-})
+position_ws.onopen = function () {
+    console.log("map connected");
+}

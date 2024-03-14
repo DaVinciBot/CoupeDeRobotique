@@ -1,18 +1,17 @@
 let console_div = document.querySelector('.log')
 
-let log = new WebSocket("ws://localhost:3000/log");
+let log = new WebSocket(`ws://${host}:${port}/log?sender=${user}`);
 log.onmessage = function (event) {
-    if (event.data.startsWith("current$=$")) {
-        show_console_data(event.data.split("$=$")[1].replaceAll('"', '').replace('[', '').replace(']', '').split(",").join('<br>'))
-    }
-    if (event.data.startsWith("new$=$")){
-        show_console_data(event.data.split("$=$")[1].replace('["', '').replace('"]', '')+"<br>", true)
+    // parse JSON then display it
+    let data = JSON.parse(event.data);
+    if (data.msg == "Msg received") {
+        show_console_data(data.data, true)
     }
 }
 
-function show_console_data(data, add=false) {
+function show_console_data(data, add = false) {
     if (add) {
-        console_div.innerHTML += data
+        console_div.innerHTML += data + "<br>"
     } else {
         console_div.innerHTML = data
     }
@@ -24,10 +23,6 @@ function show_console_data(data, add=false) {
 }
 console.scrollTop = console.scrollHeight
 
-document.addEventListener("DOMContentLoaded", function () {
-    log.onopen = function () {
-        console.log("log connected");
-        // send "get" and parse the response
-        log.send("get");
-    }
-})
+log.onopen = function () {
+    console.log("log connected");
+}
