@@ -28,8 +28,8 @@ class WServerRouteManager:
         :param client:
         :return:
         """
-        
-        #client_name = request.headers.get("sender") 
+
+        # client_name = request.headers.get("sender")
         # Use get URL value instead
         client_name = request.query.get("sender")
 

@@ -13,16 +13,16 @@ from controllers import RollingBasis
 
 class Robot1Brain(Brain):
     def __init__(
-            self,
-            logger: Lidar,
-            ws_cmd: WSclientRouteManager,
-            ws_log: WSclientRouteManager,
-            ws_lidar: WSclientRouteManager,
-            ws_odometer: WSclientRouteManager,
-            ws_camera: WSclientRouteManager,
-            rolling_basis: RollingBasis,
-            lidar: Lidar,
-            arena: MarsArena,
+        self,
+        logger: Lidar,
+        ws_cmd: WSclientRouteManager,
+        ws_log: WSclientRouteManager,
+        ws_lidar: WSclientRouteManager,
+        ws_odometer: WSclientRouteManager,
+        ws_camera: WSclientRouteManager,
+        rolling_basis: RollingBasis,
+        lidar: Lidar,
+        arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -90,7 +90,8 @@ class Robot1Brain(Brain):
             if cmd.msg == "Go_To":
                 self.rolling_basis.queue = []
                 self.rolling_basis.Go_To(
-                    OrientedPoint(cmd.data[0], cmd.data[1], cmd.data[2]), skip_queue=True
+                    OrientedPoint(cmd.data[0], cmd.data[1], cmd.data[2]),
+                    skip_queue=True,
                 )
             elif cmd.msg == "Keep_Current_Position":
                 self.rolling_basis.queue = []
@@ -98,5 +99,5 @@ class Robot1Brain(Brain):
             else:
                 self.logger.log(
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
-                    LogLevels.WARNING
+                    LogLevels.WARNING,
                 )
