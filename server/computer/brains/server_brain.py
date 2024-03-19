@@ -17,18 +17,18 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            ws_cmd: WServerRouteManager,
-            ws_log: WServerRouteManager,
-            ws_lidar: WServerRouteManager,
-            ws_odometer: WServerRouteManager,
-            ws_camera: WServerRouteManager,
-            camera: Camera,
-            aruco_recognizer: ArucoRecognizer,
-            color_recognizer: ColorRecognizer,
-            plan_transposer: PlanTransposer,
-            # arena: MarsArena,
+        self,
+        logger: Logger,
+        ws_cmd: WServerRouteManager,
+        ws_log: WServerRouteManager,
+        ws_lidar: WServerRouteManager,
+        ws_odometer: WServerRouteManager,
+        ws_camera: WServerRouteManager,
+        camera: Camera,
+        aruco_recognizer: ArucoRecognizer,
+        color_recognizer: ColorRecognizer,
+        plan_transposer: PlanTransposer,
+        #arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -53,18 +53,9 @@ class ServerBrain(Brain):
     async def __print_new_msg_from_route(self, route_name, msg, minimize_data=False):
         if msg != WSmsg() and msg.sender != "computer":  # Exclude auto send message
             data = msg.data
-
-            if minimize_data:
-                data_print = type(data)
-            else:
-                data_print = data
-            self.logger.log(f"New msg on [{route_name}]: [{msg.sender}] -> [{data_print}]", LogLevels.INFO)
-            await self.ws_log.sender.send(
-                WSmsg(
-                    msg="Msg received",
-                    data=f"New msg on [{route_name}]: [{msg.sender}] -> [{data}]"
-                )
-            )
+            logger_msg = f"New msg on [{route_name}]: [{msg.sender}] -> [{data}]"
+            self.logger.log(logger_msg, LogLevels.INFO)
+            await self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
 
     @Brain.task(refresh_rate=0.1)
     async def routes_receiver(self):
@@ -84,9 +75,9 @@ class ServerBrain(Brain):
 
         # Transmit cmd to robot1
         if (
-                self.ws_cmd_state != WSmsg()
-                and self.ws_cmd_state.sender != "computer"
-                and self.ws_cmd.get_client("robot1") is not None
+            self.ws_cmd_state != WSmsg()
+            and self.ws_cmd_state.sender != "computer"
+            and self.ws_cmd.get_client("robot1") is not None
         ):
             await self.ws_cmd.sender.send(
                 self.ws_cmd_state, clients=self.ws_cmd.get_client("robot1")
@@ -152,10 +143,12 @@ class ServerBrain(Brain):
         Send computer feedback to associates routes (camera)
     """
 
+
+
+
     """
         Main routine
     """
-
 
 """    @Brain.routine(refresh_rate=0.5)
     async def main(self):
