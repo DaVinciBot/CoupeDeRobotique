@@ -154,7 +154,7 @@ class ServerBrain(Brain):
             )
         )
 
-    @Brain.task(process=True, refresh_rate=1)
+    @Brain.task(refresh_rate=1)
     async def shared_var_modifier(self):
         print("modifier")
 

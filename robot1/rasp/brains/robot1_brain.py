@@ -14,7 +14,7 @@ from controllers import RollingBasis
 class Robot1Brain(Brain):
     def __init__(
         self,
-        logger: Lidar,
+        logger: Logger,
         ws_cmd: WSclientRouteManager,
         ws_log: WSclientRouteManager,
         ws_lidar: WSclientRouteManager,
@@ -46,19 +46,6 @@ class Robot1Brain(Brain):
 
         self.lidar_scan = [[p.x, p.y] for p in scan]
 
-    @Brain.task(refresh_rate=0.5)
-    async def odometer_update(self):
-        self.odometer = [
-            self.rolling_basis.odometrie.x,
-            self.rolling_basis.odometrie.y,
-            self.rolling_basis.odometrie.theta,
-        ]
-
-    @Brain.task(refresh_rate=0.5)
-    async def get_camera(self):
-        msg = await self.ws_camera.receiver.get()
-        if msg != WSmsg():
-            self.camera = msg.data
 
     """
         Send controllers / sensors feedback (odometer / lidar)
@@ -96,6 +83,11 @@ class Robot1Brain(Brain):
             elif cmd.msg == "Keep_Current_Position":
                 self.rolling_basis.queue = []
                 self.rolling_basis.Keep_Current_Position()
+
+            elif cmd.msg == "Set_PID":
+                self.rolling_basis.queue = []
+                self.rolling_basis.Set_PID(Kp=cmd.data[0], Ki=cmd.data[1], Kd=cmd.data[2])
+
             else:
                 self.logger.log(
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
