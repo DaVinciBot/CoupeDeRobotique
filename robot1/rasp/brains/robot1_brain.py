@@ -38,7 +38,7 @@ class Robot1Brain(Brain):
         Get controllers / sensors feedback (odometer / lidar + extern (camera))
     """
 
-    @Brain.routine(refresh_rate=0.5)
+    @Brain.task(refresh_rate=0.5)
     async def lidar_scan(self):
         scan = self.lidar.scan_to_absolute_cartesian(
             robot_pos=self.rolling_basis.odometrie
@@ -46,7 +46,7 @@ class Robot1Brain(Brain):
 
         self.lidar_scan = [[p.x, p.y] for p in scan]
 
-    @Brain.routine(refresh_rate=0.5)
+    @Brain.task(refresh_rate=0.5)
     async def odometer_update(self):
         self.odometer = [
             self.rolling_basis.odometrie.x,
@@ -54,7 +54,7 @@ class Robot1Brain(Brain):
             self.rolling_basis.odometrie.theta,
         ]
 
-    @Brain.routine(refresh_rate=0.5)
+    @Brain.task(refresh_rate=0.5)
     async def get_camera(self):
         msg = await self.ws_camera.receiver.get()
         if msg != WSmsg():
@@ -64,21 +64,21 @@ class Robot1Brain(Brain):
         Send controllers / sensors feedback (odometer / lidar)
     """
 
-    @Brain.routine(refresh_rate=1)
+    @Brain.task(refresh_rate=1)
     async def send_lidar_scan_to_server(self):
         if self.lidar_scan:
             await self.ws_lidar.sender.send(
                 WSmsg(msg="lidar_scan", data=self.lidar_scan)
             )
 
-    @Brain.routine(refresh_rate=1)
+    @Brain.task(refresh_rate=1)
     async def send_odometer_to_server(self):
         if self.odometer:
             await self.ws_odometer.sender.send(
                 WSmsg(msg="odometer", data=self.odometer)
             )
 
-    @Brain.routine(refresh_rate=0.1)
+    @Brain.task(refresh_rate=0.1)
     async def main(self):
         # Check cmd
         cmd = await self.ws_cmd.receiver.get()
