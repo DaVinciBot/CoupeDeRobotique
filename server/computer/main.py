@@ -67,7 +67,7 @@ if __name__ == "__main__":
     camera.load_undistor_coefficients()
 
     # Arena
-    arena = MarsArena(1)
+    #arena = MarsArena(1)
 
     # Brain
     brain = ServerBrain(
@@ -81,14 +81,14 @@ if __name__ == "__main__":
         aruco_recognizer=aruco_recognizer,
         color_recognizer=color_recognizer,
         plan_transposer=plan_transposer,
-        arena=arena,
+        #arena=arena,
     )
 
     """
         ###--- Run ---###
     """
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
-    for routine in brain.get_routines():
+    for routine in brain.get_tasks():
         ws_server.add_background_task(routine)
 
     ws_server.run()

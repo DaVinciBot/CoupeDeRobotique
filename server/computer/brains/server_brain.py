@@ -28,7 +28,7 @@ class ServerBrain(Brain):
         aruco_recognizer: ArucoRecognizer,
         color_recognizer: ColorRecognizer,
         plan_transposer: PlanTransposer,
-        arena: MarsArena,
+        #arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -44,6 +44,8 @@ class ServerBrain(Brain):
         self.lidar_state = []
         self.odometer = []
 
+        self.shared = 0
+
     """
         Routines
     """
@@ -57,7 +59,7 @@ class ServerBrain(Brain):
             self.logger.log(logger_msg, LogLevels.INFO)
             await self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
 
-    @Brain.routine(refresh_rate=0.1)
+    @Brain.task(refresh_rate=0.1)
     async def routes_receiver(self):
         self.ws_cmd_state = await self.ws_cmd.receiver.get()
         self.ws_log_state = await self.ws_log.receiver.get()
@@ -87,7 +89,7 @@ class ServerBrain(Brain):
         Controllers / Sensors feedback processing
     """
 
-    @Brain.routine(refresh_rate=1)
+    @Brain.task(refresh_rate=0.1)
     async def camera_capture(self):
         self.camera.capture()
         self.camera.undistor_image()
@@ -117,7 +119,7 @@ class ServerBrain(Brain):
         self.camera.update_monitor(frame.img)
         self.camera.save(name="realtime")
 
-    @Brain.routine(refresh_rate=0.5)
+    @Brain.task(refresh_rate=0.5)
     async def update_lidar(self):
         if self.ws_lidar_state != WSmsg:
             self.lidar_state = self.ws_lidar_state.data
@@ -128,7 +130,7 @@ class ServerBrain(Brain):
                     clients=client,
                 )
 
-    @Brain.routine(refresh_rate=0.5)
+    @Brain.task(refresh_rate=0.5)
     async def update_odometer(self):
         if self.ws_odometer_state != WSmsg:
             self.odometer = self.ws_odometer_state.data
@@ -143,7 +145,7 @@ class ServerBrain(Brain):
         Send computer feedback to associates routes (camera)
     """
 
-    @Brain.routine(refresh_rate=1)
+    @Brain.task(refresh_rate=1)
     async def send_camera_to_clients(self):
         await self.ws_camera.sender.send(
             WSmsg(
@@ -152,6 +154,17 @@ class ServerBrain(Brain):
             )
         )
 
+    @Brain.task(process=True, refresh_rate=1)
+    async def shared_var_modifier(self):
+        print("modifier")
+
+    @Brain.task(refresh_rate=1)
+    async def shared_var_printer(self):
+        print("printer")
+
+    """
+        Main routine
+    """
 
 """    @Brain.routine(refresh_rate=0.5)
     async def main(self):
