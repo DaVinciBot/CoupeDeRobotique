@@ -53,9 +53,12 @@ class ServerBrain(Brain):
     async def __print_new_msg_from_route(self, route_name, msg, minimize_data=False):
         if msg != WSmsg() and msg.sender != "computer":  # Exclude auto send message
             data = msg.data
+
             if minimize_data:
-                data = type(data)
-            logger_msg = f"New msg on [{route_name}]: [{msg.sender}] -> [{data}]"
+                data_print = type(data)
+            else:
+                data_print = data
+            logger_msg = f"New msg on [{route_name}]: [{msg.sender}] -> [{data_print}]"
             self.logger.log(logger_msg, LogLevels.INFO)
             await self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
 
@@ -145,22 +148,8 @@ class ServerBrain(Brain):
         Send computer feedback to associates routes (camera)
     """
 
-    @Brain.task(refresh_rate=1)
-    async def send_camera_to_clients(self):
-        await self.ws_camera.sender.send(
-            WSmsg(
-                msg="camera",
-                data={"aruco": self.arucos, "green_objects": self.green_objects},
-            )
-        )
 
-    @Brain.task(refresh_rate=1)
-    async def shared_var_modifier(self):
-        print("modifier")
 
-    @Brain.task(refresh_rate=1)
-    async def shared_var_printer(self):
-        print("printer")
 
     """
         Main routine
