@@ -39,7 +39,7 @@ class Robot1Brain(Brain):
     """
 
     @Brain.task(refresh_rate=0.5)
-    async def lidar_scan(self):
+    async def update_lidar_scan(self):
         scan = self.lidar.scan_to_absolute_cartesian(
             robot_pos=self.rolling_basis.odometrie
         )
