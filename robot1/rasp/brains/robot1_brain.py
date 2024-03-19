@@ -77,7 +77,7 @@ class Robot1Brain(Brain):
             if cmd.msg == "Go_To":
                 self.rolling_basis.queue = []
                 self.rolling_basis.Go_To(
-                    OrientedPoint(cmd.data[0], cmd.data[1], cmd.data[2]),
+                    Point(cmd.data[0], cmd.data[1]),
                     skip_queue=True,
                 )
             elif cmd.msg == "Keep_Current_Position":
