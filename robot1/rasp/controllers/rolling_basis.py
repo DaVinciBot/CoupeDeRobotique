@@ -52,7 +52,7 @@ class RollingBasis(Teensy):
         :return: _description_
         :rtype: OrientedPoint
         """
-        return position + self.position_offset
+        return Point(position.x + self.position_offset.x, position.y + self.position_offset.y)
 
     #############################
     # Received message handling #
@@ -140,7 +140,8 @@ class RollingBasis(Teensy):
         :param traj_precision: la précision du déplacement, defaults to 50
         :type traj_precision: int, optional
         """
-        pos = position + Point(self.position_offset.x, self.position_offset.y)
+        # pos = position + Point(self.position_offset.x, self.position_offset.y)
+        pos = position
         msg = (
             self.Command.GoToPoint
             + struct.pack("<f", pos.x)
