@@ -22,7 +22,7 @@ class Robot1Brain(Brain):
         ws_camera: WSclientRouteManager,
         rolling_basis: RollingBasis,
         lidar: Lidar,
-        arena: MarsArena,
+        #arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 

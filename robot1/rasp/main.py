@@ -50,7 +50,7 @@ if __name__ == "__main__":
     lidar = Lidar()
 
     # Arene
-    arena = MarsArena(1)
+    #arena = MarsArena(1)
 
     # Brain
     brain = Robot1Brain(
