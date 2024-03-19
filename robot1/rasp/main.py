@@ -69,7 +69,7 @@ if __name__ == "__main__":
         ###--- Run ---###
     """
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
-    for routine in brain.get_routines():
+    for routine in brain.get_tasks():
         ws_client.add_background_task(routine)
 
     ws_client.run()
