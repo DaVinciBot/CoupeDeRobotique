@@ -13,16 +13,16 @@ from controllers import RollingBasis
 
 class Robot1Brain(Brain):
     def __init__(
-        self,
-        logger: Logger,
-        ws_cmd: WSclientRouteManager,
-        ws_log: WSclientRouteManager,
-        ws_lidar: WSclientRouteManager,
-        ws_odometer: WSclientRouteManager,
-        ws_camera: WSclientRouteManager,
-        rolling_basis: RollingBasis,
-        lidar: Lidar,
-        #arena: MarsArena,
+            self,
+            logger: Logger,
+            ws_cmd: WSclientRouteManager,
+            ws_log: WSclientRouteManager,
+            ws_lidar: WSclientRouteManager,
+            ws_odometer: WSclientRouteManager,
+            ws_camera: WSclientRouteManager,
+            rolling_basis: RollingBasis,
+            lidar: Lidar,
+            # arena: MarsArena,
     ) -> None:
         super().__init__(logger, self)
 
@@ -45,7 +45,6 @@ class Robot1Brain(Brain):
         )
 
         self.lidar_scan = [[p.x, p.y] for p in scan]
-
 
     """
         Send controllers / sensors feedback (odometer / lidar)
@@ -77,7 +76,16 @@ class Robot1Brain(Brain):
             if cmd.msg == "Go_To":
                 self.rolling_basis.queue = []
                 self.rolling_basis.Go_To(
-                    Point(cmd.data[0], cmd.data[1]),
+                    position=Point(cmd.data[0], cmd.data[1]),
+                    max_speed=cmd.data[2],
+                    next_position_delay=cmd.data[3],
+                    action_error_auth=cmd.data[4],
+                    traj_precision=cmd.data[5],
+                    correction_trajectory_speed=cmd.data[6],
+                    acceleration_start_speed=cmd.data[7],
+                    acceleration_distance=cmd.data[8],
+                    deceleration_end_speed=cmd.data[9],
+                    deceleration_distance=cmd.data[10],
                     skip_queue=True,
                 )
             elif cmd.msg == "Keep_Current_Position":
