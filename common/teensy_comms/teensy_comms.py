@@ -1,7 +1,6 @@
 from typing import Any, Callable
 import serial, threading, time, crc8, serial.tools.list_ports
-
-from logger import Logger
+from logger import Logger, LogLevels
 from geometry import OrientedPoint
 from teensy_comms.dummy_serial import DummySerial
 
@@ -91,10 +90,10 @@ class Teensy:
                 break
         if self._teensy is None:
             if dummy:
-                self.l.log("Dummy mode", 1)
+                self.l.log("Dummy mode")
                 self._teensy = DummySerial()
             else:
-                self.l.log("No Teensy found !", 3)
+                self.l.log("No Teensy found !",LogLevels.ERROR)
                 raise TeensyException("No Device !")
         self.messagetype = {}
         if not dummy:

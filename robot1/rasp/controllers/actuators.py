@@ -1,22 +1,24 @@
 from config_loader import CONFIG
-
+from logger import Logger
 # Import from common
 from teensy_comms import Teensy
-from logger import Logger
 
 import struct
 
 
 class Actuators(Teensy):
+    name = "actuators"
     def __init__(
         self,
+        ser=12678600, # T1
         vid: int = 5824,
         pid: int = 1155,
         baudrate: int = 115200,
         crc: bool = True,
         pin_servos: list[int] = CONFIG.SERVO_PINS,
+        
     ):
-        super().__init__(vid, pid, baudrate, crc)
+        super().__init__(ser,vid, pid, baudrate, crc)
         self.pin_servos = pin_servos
 
     class Command:  # values must correspond to the one defined on the teensy
