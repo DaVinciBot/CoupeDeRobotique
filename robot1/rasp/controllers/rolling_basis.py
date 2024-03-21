@@ -228,6 +228,7 @@ class RollingBasis(Teensy):
             await asyncio.sleep(0.2)
 
         if time.time() - start_time > timeout:
+            self.Stop_and_clear_queue()
             return 1
         elif distance(self.odometrie.__point, position) > tolerance:
             return 2
