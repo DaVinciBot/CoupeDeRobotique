@@ -29,6 +29,7 @@ class RollingBasis(Teensy):
         self.odometrie = OrientedPoint(0.0, 0.0, 0.0)
         self.position_offset = OrientedPoint(0.0, 0.0, 0.0)
         self.current_action = None
+        self.isGo_To = False
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
@@ -54,7 +55,7 @@ class RollingBasis(Teensy):
         :return: _description_
         :rtype: OrientedPoint
         """
-        return position + self.position_offset
+        return OrientedPoint(position.x+self.position_offset.x,position.y+self.position_offset.y,position.theta+self.position_offset.theta)
 
     #############################
     # Received message handling #
@@ -71,6 +72,8 @@ class RollingBasis(Teensy):
 
     def rcv_action_finish(self, msg: bytes):
         self.l.log("Action finished : " + msg.hex())
+        if msg == self.Command.GoToPoint:
+            self.isGo_To = False
         if not self.queue or len(self.queue) == 0:
             self.l.log("Received action_finished but no action in queue", 1)
             return
@@ -166,6 +169,8 @@ class RollingBasis(Teensy):
             self.send_bytes(msg)
         else:
             self.queue.append({self.Command.GoToPoint: msg})
+            
+        self.isGo_To = True
 
     @Logger
     async def Go_To_And_Wait(
@@ -224,7 +229,7 @@ class RollingBasis(Teensy):
         )
 
         # len(self.queue)>0 is very generic, might not trigger enough if other commands try to execute before this is other
-        while time.time() - start_time < timeout and len(self.queue) > 0:
+        while time.time() - start_time < timeout and (len(self.queue) > 0 or not self.isGo_To):
             await asyncio.sleep(0.2)
 
         if time.time() - start_time > timeout:
