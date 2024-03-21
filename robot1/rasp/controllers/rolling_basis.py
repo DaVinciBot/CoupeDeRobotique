@@ -2,11 +2,13 @@ from config_loader import CONFIG
 
 # Import from common
 from teensy_comms import Teensy
-from geometry import OrientedPoint, Point
+from geometry import OrientedPoint, Point, distance
 from logger import Logger
 
 import struct
 import math
+import time
+import asyncio
 
 
 class RollingBasis(Teensy):
@@ -128,7 +130,7 @@ class RollingBasis(Teensy):
         Va à la position donnée en paramètre
 
         :param position: la position en X et Y (et theta)
-        :type position: OrientedPoint
+        :type position: Point
         :param is_forward: en avant (false) ou en arrière (true), defaults to False
         :type direction: bool, optional
         :param speed: Vitesse du déplacement, defaults to b'\x64'
@@ -162,6 +164,73 @@ class RollingBasis(Teensy):
             self.send_bytes(msg)
         else:
             self.queue.append({self.Command.GoToPoint: msg})
+
+    @Logger
+    async def Got_To_And_Wait(
+        self,
+        position: Point,
+        *,  # force keyword arguments
+        tolerance: float = 5,
+        timeout: float = -1,  # in seconds
+        skip_queue: bool = False,
+        is_forward: bool = True,
+        max_speed: int = 150,
+        next_position_delay: int = 100,
+        action_error_auth: int = 50,
+        traj_precision: int = 50,
+        correction_trajectory_speed: int = 80,
+        acceleration_start_speed: int = 80,
+        acceleration_distance: float = 10,
+        deceleration_end_speed: int = 80,
+        deceleration_distance: float = 10,
+    ) -> int:
+        """Waits to go over timeout or finish the queue (by finishing movement or being interrupted)
+
+        Args:
+            position (Point): Target.
+            tolerance (float): Distance to be within to return a success if not timed out.
+            timeout (float): Max time to wait in s, -1 for no limit. Defaults to -1.
+            is_forward (bool, optional): _description_. Defaults to True.
+            max_speed (int, optional): _description_. Defaults to 150.
+            next_position_delay (int, optional): _description_. Defaults to 100.
+            action_error_auth (int, optional): _description_. Defaults to 50.
+            traj_precision (int, optional): _description_. Defaults to 50.
+            correction_trajectory_speed (int, optional): _description_. Defaults to 80.
+            acceleration_start_speed (int, optional): _description_. Defaults to 80.
+            acceleration_distance (float, optional): _description_. Defaults to 10.
+            deceleration_end_speed (int, optional): _description_. Defaults to 80.
+            deceleration_distance (float, optional): _description_. Defaults to 10.
+
+        Returns:
+            int: 0 if finished normally, 1 if timed out, 2 if finished without timeout but not at targret position
+        """
+
+        start_time = time.time()
+        self.Go_To(
+            position,
+            skip_queue=skip_queue,
+            is_forward=is_forward,
+            max_speed=max_speed,
+            next_position_delay=next_position_delay,
+            action_error_auth=action_error_auth,
+            traj_precision=traj_precision,
+            correction_trajectory_speed=correction_trajectory_speed,
+            acceleration_start_speed=acceleration_start_speed,
+            acceleration_distance=acceleration_distance,
+            deceleration_end_speed=deceleration_end_speed,
+            deceleration_distance=deceleration_distance,
+        )
+
+        # len(self.queue)>0 is very generic, might not trigger enough if other commands try to execute before this is other
+        while time.time() - start_time < timeout and len(self.queue) > 0:
+            await asyncio.sleep(0.2)
+
+        if time.time() - start_time > timeout:
+            return 1
+        elif distance(self.odometrie.__point, position) > tolerance:
+            return 2
+        else:
+            return 0
 
     @Logger
     def curve_go_to(

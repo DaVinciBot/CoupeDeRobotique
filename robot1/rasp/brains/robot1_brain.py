@@ -58,13 +58,13 @@ class Robot1Brain(Brain):
 
         self.ACS_by_distances()
 
-    @Brain.task(refresh_rate=0.5)
-    async def lidar_scan(self):
-        scan = self.lidar.scan_to_absolute_cartesian(
-            robot_pos=self.rolling_basis.odometrie
-        )
+    # @Brain.task(refresh_rate=0.5)
+    # async def lidar_scan(self):
+    #     scan = self.lidar.scan_to_absolute_cartesian(
+    #         robot_pos=self.rolling_basis.odometrie
+    #     )
 
-        self.lidar_scan = [[p.x, p.y] for p in scan]
+    #     self.lidar_scan = [[p.x, p.y] for p in scan]
 
     @Brain.task(refresh_rate=0.5)
     async def odometer_update(self):
@@ -84,12 +84,12 @@ class Robot1Brain(Brain):
         Send controllers / sensors feedback (odometer / lidar)
     """
 
-    @Brain.task(refresh_rate=1)
-    async def send_lidar_scan_to_server(self):
-        if self.lidar_scan:
-            await self.ws_lidar.sender.send(
-                WSmsg(msg="lidar_scan", data=self.lidar_scan)
-            )
+    # @Brain.task(refresh_rate=1)
+    # async def send_lidar_scan_to_server(self):
+    #     if self.lidar_scan:
+    #         await self.ws_lidar.sender.send(
+    #             WSmsg(msg="lidar_scan", data=self.lidar_scan)
+    #         )
 
     @Brain.task(refresh_rate=1)
     async def send_odometer_to_server(self):
@@ -121,3 +121,15 @@ class Robot1Brain(Brain):
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
                     LogLevels.WARNING,
                 )
+
+    async def go_to_and_wait_test(self):
+        result = await self.rolling_basis.Got_To_And_Wait(
+            Point(50, 50), tolerance=5, timout=20
+        )
+
+        if result == 0:
+            self.logger.log("Success of movement test")
+        elif result == 1:
+            self.logger.log("Timed out of movement test")
+        elif result == 2:
+            self.logger.log("Error moving: didn't reach destination")
