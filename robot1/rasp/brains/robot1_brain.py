@@ -9,6 +9,7 @@ from utils import Utils
 # Import from local path
 from sensors import Lidar
 from controllers import RollingBasis
+import asyncio
 
 
 class Robot1Brain(Brain):
@@ -122,7 +123,9 @@ class Robot1Brain(Brain):
                     LogLevels.WARNING,
                 )
 
+    @Brain.task()
     async def go_to_and_wait_test(self):
+        await asyncio.sleep(10)
         result = await self.rolling_basis.Got_To_And_Wait(
             Point(50, 50), tolerance=5, timout=20
         )
