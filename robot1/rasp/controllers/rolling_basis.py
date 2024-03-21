@@ -142,7 +142,9 @@ class RollingBasis(Teensy):
         :param traj_precision: la précision du déplacement, defaults to 50
         :type traj_precision: int, optional
         """
-        pos = position + Point(self.position_offset.x, self.position_offset.y)
+        pos = Point(
+            position.x + self.position_offset.x, position.y + self.position_offset.y
+        )
         msg = (
             self.Command.GoToPoint
             + struct.pack("<f", pos.x)
