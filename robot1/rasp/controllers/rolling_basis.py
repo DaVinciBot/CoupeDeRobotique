@@ -166,7 +166,7 @@ class RollingBasis(Teensy):
             self.queue.append({self.Command.GoToPoint: msg})
 
     @Logger
-    async def Got_To_And_Wait(
+    async def Go_To_And_Wait(
         self,
         position: Point,
         *,  # force keyword arguments

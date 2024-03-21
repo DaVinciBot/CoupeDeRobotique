@@ -126,8 +126,8 @@ class Robot1Brain(Brain):
     @Brain.task()
     async def go_to_and_wait_test(self):
         await asyncio.sleep(10)
-        result = await self.rolling_basis.Got_To_And_Wait(
-            Point(50, 50), tolerance=5, timout=20
+        result = await self.rolling_basis.Go_To_And_Wait(
+            Point(50, 50), tolerance=5, timeout=20
         )
 
         if result == 0:
