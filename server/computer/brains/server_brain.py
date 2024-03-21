@@ -17,151 +17,35 @@ class ServerBrain(Brain):
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        ws_cmd: WServerRouteManager,
-        ws_log: WServerRouteManager,
-        ws_lidar: WServerRouteManager,
-        ws_odometer: WServerRouteManager,
-        ws_camera: WServerRouteManager,
-        camera: Camera,
-        aruco_recognizer: ArucoRecognizer,
-        color_recognizer: ColorRecognizer,
-        plan_transposer: PlanTransposer,
-        #arena: MarsArena,
+            self,
+            logger: Logger,
+            ws_cmd: WServerRouteManager,
+            ws_log: WServerRouteManager,
+            ws_lidar: WServerRouteManager,
+            ws_odometer: WServerRouteManager,
+            ws_camera: WServerRouteManager,
+            camera: Camera,
+            aruco_recognizer: ArucoRecognizer,
+            color_recognizer: ColorRecognizer,
+            plan_transposer: PlanTransposer,
+            # arena: MarsArena,
     ) -> None:
-        super().__init__(logger, self)
-
-        # Route rcvr
-        self.ws_cmd_state = WSmsg()
-        self.ws_log_state = WSmsg()
-        self.ws_lidar_state = WSmsg()
-        self.ws_odometer_state = WSmsg()
-        self.ws_camera_state = WSmsg()
-
-        self.arucos = []
-        self.green_objects = []
-        self.lidar_state = []
-        self.odometer = []
 
         self.shared = 0
+
+        super().__init__(logger, self)
 
     """
         Routines
     """
+    @Brain.task(process=True, refresh_rate=1)
+    def writer(self):
+        print("writer: ", self.shared)
+        self.shared += 1
 
-    async def __print_new_msg_from_route(self, route_name, msg, minimize_data=False):
-        if msg != WSmsg() and msg.sender != "computer":  # Exclude auto send message
-            data = msg.data
-            logger_msg = f"New msg on [{route_name}]: [{msg.sender}] -> [{data}]"
-            self.logger.log(logger_msg, LogLevels.INFO)
-            await self.ws_log.sender.send(WSmsg(msg="Msg received", data=logger_msg))
-
-    @Brain.task(refresh_rate=0.1)
-    async def routes_receiver(self):
-        self.ws_cmd_state = await self.ws_cmd.receiver.get()
-        self.ws_log_state = await self.ws_log.receiver.get()
-        self.ws_lidar_state = await self.ws_lidar.receiver.get()
-        self.ws_odometer_state = await self.ws_odometer.receiver.get()
-        self.ws_camera_state = await self.ws_camera.receiver.get()
-
-        await self.__print_new_msg_from_route("CMD", self.ws_cmd_state)
-        await self.__print_new_msg_from_route("LOG", self.ws_log_state)
-        await self.__print_new_msg_from_route(
-            "LIDAR", self.ws_lidar_state, minimize_data=True
-        )
-        await self.__print_new_msg_from_route("ODOMETER", self.ws_odometer_state)
-        await self.__print_new_msg_from_route("CAMERA", self.ws_camera_state)
-
-        # Transmit cmd to robot1
-        if (
-            self.ws_cmd_state != WSmsg()
-            and self.ws_cmd_state.sender != "computer"
-            and self.ws_cmd.get_client("robot1") is not None
-        ):
-            await self.ws_cmd.sender.send(
-                self.ws_cmd_state, clients=self.ws_cmd.get_client("robot1")
-            )
-
-    """
-        Controllers / Sensors feedback processing
-    """
-
-    @Brain.task(refresh_rate=0.1)
-    async def camera_capture(self):
-        self.camera.capture()
-        self.camera.undistor_image()
-        arucos = self.aruco_recognizer.detect(self.camera.get_capture())
-        green_objects = self.color_recognizer.detect(self.camera.get_capture())
-
-        self.arucos = []
-        for aruco in arucos:
-            self.arucos.append(
-                (
-                    aruco.encoded_number,
-                    self.plan_transposer.image_to_relative_position(
-                        img=self.camera.get_capture(),
-                        segment=aruco.max_radius,
-                        center_point=aruco.centroid,
-                    ),
-                )
-            )
-
-        self.green_objects = []
-        for green_object in green_objects:
-            self.green_objects.append(green_object.centroid)
-
-        frame = Frame(self.camera.get_capture(), [green_objects, arucos])
-        frame.draw_markers()
-        frame.write_labels()
-        self.camera.update_monitor(frame.img)
-        self.camera.save(name="realtime")
-
-    @Brain.task(refresh_rate=0.5)
-    async def update_lidar(self):
-        if self.ws_lidar_state != WSmsg:
-            self.lidar_state = self.ws_lidar_state.data
-            client = self.ws_lidar.get_client("WebUI")
-            if client is not None:
-                await self.ws_lidar.sender.send(
-                    WSmsg(msg="lidar", data=self.lidar_state),
-                    clients=client,
-                )
-
-    @Brain.task(refresh_rate=0.5)
-    async def update_odometer(self):
-        if self.ws_odometer_state != WSmsg:
-            self.odometer = self.ws_odometer_state.data
-            client = self.ws_odometer.get_client("WebUI")
-            if client is not None:
-                await self.ws_odometer.sender.send(
-                    WSmsg(msg="odometer", data=self.ws_odometer_state.data),
-                    clients=client,
-                )
-
-    """
-        Send computer feedback to associates routes (camera)
-    """
+    @Brain.task(refresh_rate=1)
+    async def reader(self):
+        print("reader: ", self.shared)
 
 
 
-
-    """
-        Main routine
-    """
-
-"""    @Brain.routine(refresh_rate=0.5)
-    async def main(self):
-        await self.ws_cmd.sender.send(
-            WSmsg(msg="Go_To", data=[10.0, 0.0, 0.0]),
-            clients=self.ws_cmd.get_client("robot1"),
-        )
-        print("Go_To [10.0, 0.0, 0.0]")
-        await asyncio.sleep(10)
-
-        print("Go_To [20.0, 0.0, 0.0]")
-        await self.ws_cmd.sender.send(
-            WSmsg(msg="Go_To", data=[20.0, 0.0, 0.0]),
-            clients=self.ws_cmd.get_client("robot1"),
-        )
-"""
