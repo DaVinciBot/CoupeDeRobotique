@@ -45,10 +45,14 @@ class MarsArena(Arena):
             plants_zone(
                 create_straight_rectangle(Point(45, 0), Point(0, 45))
             ),  # 1 - Blue (Possible forbidden area)
-            create_straight_rectangle(Point(77.5, 0), Point(122.5, 45)),  # 2 - Yellow
-            create_straight_rectangle(Point(155, 0), Point(200, 45)),  # 3 - Blue
-            create_straight_rectangle(
-                Point(0, 255), Point(45, 300)
+            plants_zone(
+                create_straight_rectangle(Point(77.5, 0), Point(122.5, 45))
+            ),  # 2 - Yellow
+            plants_zone(
+                create_straight_rectangle(Point(155, 0), Point(200, 45))
+            ),  # 3 - Blue
+            plants_zone(
+                create_straight_rectangle(Point(0, 255), Point(45, 300))
             ),  # 4 - Yellow (Possible forbidden area)
             plants_zone(
                 create_straight_rectangle(Point(122.5, 255), Point(77.5, 300))
