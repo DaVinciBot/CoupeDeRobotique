@@ -11,7 +11,12 @@ from geometry import (
     prepare,
     distance,
     scale,
+    OrientedPoint,
+    rad,
 )
+
+from math import cos, sin
+from shapely import GeometryCollection
 
 
 class Arena:
@@ -19,11 +24,15 @@ class Arena:
 
     def __init__(
         self,
+        safe_collision_distance: float = 30,
         game_borders: Polygon = create_straight_rectangle(Point(0, 0), Point(200, 300)),
         zones: Union[dict[str, MultiPolygon], None] = None,
     ):
 
         self.game_borders = game_borders
+        self.game_borders_buffered = self.game_borders.buffer(-10)
+        self.safe_collision_distance = safe_collision_distance
+
         if zones is not None:
             self.zones = zones
 
@@ -34,6 +43,8 @@ class Arena:
 
     def prepare_zones(self):
         """Prepare all values of self.zones, to optimize later calculations"""
+        prepare(self.game_borders)
+        prepare(self.game_borders_buffered)
         for zone in self.zones.values():
             prepare(zone)
 
@@ -130,3 +141,36 @@ class Arena:
                 return intersections.geoms[0] if closer else intersections.geoms[1]
             else:
                 return intersections.geoms[1] if closer else intersections.geoms[0]
+
+    def check_collision_by_distances(
+        self, distances_to_check: list[float], pos_robot: OrientedPoint
+    ):
+        """Currently hard-coded for 90-180° with 3 distances/°
+
+        Args:
+            distances_to_check (list[float]): _description_
+            pos_robot (OrientedPoint): _description_
+        """
+
+        for i in range(len(distances_to_check)):
+
+            # Check if the point is close enough to be a risk, and far enough to remove lidar aberrations (might be done in lidar code as well)
+            if 3 < distances_to_check[i] < self.safe_collision_distance:
+                # Then check that it isn't outside the game zone (with a buffer)
+                if self.game_borders_buffered.intersects(
+                    self.translate_relative_polar(
+                        distances_to_check[i], i / 3, pos_robot
+                    )
+                ):
+                    return True
+
+        return False
+
+    @staticmethod
+    def translate_relative_polar(
+        distance: float, relative_angle: float, pos_robot: OrientedPoint
+    ):
+        return Point(
+            pos_robot.x + distance * cos(rad(pos_robot.theta - 45 + relative_angle)),
+            pos_robot.y + distance * sin(rad(pos_robot.theta - 45 + relative_angle)),
+        )

@@ -231,6 +231,15 @@ class RollingBasis(Teensy):
             self.queue.append({self.Command.KeepCurrentPosition: msg})
 
     @Logger
+    def Clear_Queue(self):
+        self.queue.clear()
+
+    @Logger
+    def Stop_and_clear_queue(self):
+        self.Clear_Queue()
+        self.Keep_Current_Position(True)
+
+    @Logger
     def Disable_Pid(self, skip_queue=False):
         msg = self.Command.DisablePid
         if skip_queue or len(self.queue) == 0:

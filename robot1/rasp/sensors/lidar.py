@@ -87,17 +87,21 @@ class Lidar:
     def scan_to_absolute_cartesian(self, robot_pos: OrientedPoint) -> list[Point]:
         self.__scan()
         return self.__get_absolute_cartesian(robot_pos)
-    
-    def scan_distance(self,start_angle, end_angle, step_angle=1/3):
-        """return a list of distances between start_angle and end engle 
+
+    def scan_distance(self, start_angle, end_angle, step_angle=1 / 3):
+        """return a list of distances between start_angle and end engle
 
         Args:
             start_angle (float): the angle from were to start mesuring
-            end_angle (float): the last angle of the mesure 
+            end_angle (float): the last angle of the mesure
             step_angle (float): every mesure from the lidar is separeted from a given angle
 
         Returns:
             _type_: a list of float representing the distance between the lidar and detected points at each angle between the required ones
         """
         self.__scan()
-        return [self.lidar_obj.scan.distances[i] for i in range(int(start_angle/step_angle), int(end_angle/step_angle)) if self.lidar_obj.scan.distances[i] > 0.01]
+        return [
+            self.lidar_obj.scan.distances[i]
+            for i in range(int(start_angle / step_angle), int(end_angle / step_angle))
+            if self.lidar_obj.scan.distances[i] > 0.01
+        ]

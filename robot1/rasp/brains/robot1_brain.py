@@ -14,7 +14,7 @@ from controllers import RollingBasis
 class Robot1Brain(Brain):
     def __init__(
         self,
-        logger: Lidar,
+        logger: Logger,
         ws_cmd: WSclientRouteManager,
         ws_log: WSclientRouteManager,
         ws_lidar: WSclientRouteManager,
@@ -26,8 +26,10 @@ class Robot1Brain(Brain):
     ) -> None:
         super().__init__(logger, self)
 
-        self.lidar_scan = []
-        self.odometer = []
+        # self.lidar_scan = []
+        self.lidar_values_in_distances = []
+        self.lidar_angles = (90, 180)
+        self.odometer = None
         self.camera = {}
 
     """
@@ -37,6 +39,24 @@ class Robot1Brain(Brain):
     """
         Get controllers / sensors feedback (odometer / lidar + extern (camera))
     """
+
+    async def ACS_by_distances(self):
+        if self.arena.check_collision_by_distances(
+            self.lidar_values_in_distances, self.odometer
+        ):
+            self.rolling_basis.Stop_and_clear_queue()
+            # It is the currently runing action's responsibility to detect the stop
+
+    @Brain.task(refresh_rate=0.5)
+    async def lidar_scan_distance(self):
+        # Warning, currently hard-coded for 3 values/degree
+        self.lidar_values_in_distances = self.lidar.scan_distances(
+            robot_pos=self.rolling_basis.odometrie,
+            start_angle=self.lidar_angles[0],
+            end_angle=self.lidar_angles[1],
+        )
+
+        self.ACS_by_distances()
 
     @Brain.task(refresh_rate=0.5)
     async def lidar_scan(self):
@@ -48,11 +68,11 @@ class Robot1Brain(Brain):
 
     @Brain.task(refresh_rate=0.5)
     async def odometer_update(self):
-        self.odometer = [
+        self.odometer = OrientedPoint(
             self.rolling_basis.odometrie.x,
             self.rolling_basis.odometrie.y,
             self.rolling_basis.odometrie.theta,
-        ]
+        )
 
     @Brain.task(refresh_rate=0.5)
     async def get_camera(self):
@@ -73,9 +93,9 @@ class Robot1Brain(Brain):
 
     @Brain.task(refresh_rate=1)
     async def send_odometer_to_server(self):
-        if self.odometer:
+        if self.odometer is not None:
             await self.ws_odometer.sender.send(
-                WSmsg(msg="odometer", data=self.odometer)
+                WSmsg(msg="odometer", data=self.odometer)  # To check
             )
 
     @Brain.task(refresh_rate=0.1)
