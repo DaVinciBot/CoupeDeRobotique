@@ -11,4 +11,5 @@ from geometry.geometry import (
     prepare,
     distance,
     scale,
+    rad,
 )
