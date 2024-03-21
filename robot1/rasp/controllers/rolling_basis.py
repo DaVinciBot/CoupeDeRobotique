@@ -227,10 +227,16 @@ class RollingBasis(Teensy):
         while time.time() - start_time < timeout and len(self.queue) > 0:
             await asyncio.sleep(0.2)
 
+        print(self.odometrie.__point)
         if time.time() - start_time > timeout:
             self.Stop_and_clear_queue()
             return 1
-        elif distance(self.odometrie.__point, position) > tolerance:
+        elif (
+            distance(
+                Point(self.odometrie.__point.x, self.odometrie.__point.y), position
+            )
+            > tolerance
+        ):
             return 2
         else:
             return 0
