@@ -97,7 +97,6 @@ class SynchronousWrapper:
         # Extact the two function parts: initialization and loop
         init_src, loop_src = parts[0], start_loop_marker.join(parts[1:])
 
-
         # Prepapre the init function
         # Add a return statement to the initialization part to return all local variables which has been initialized
         init_src = init_src + "return locals()"
@@ -120,7 +119,8 @@ class SynchronousWrapper:
         exec(loop_code, task.__globals__, local_vars)
         loop_func = local_vars[f'{original_signature}__loop_func']
         # Create a partial function with the initialized variables except the self instance because it is given in sync_wrap_to_routine
-        loop_func_partial_initialized = functools.partial(loop_func, **{k: v for k, v in var_initialized.items() if k != 'self'})
+        loop_func_partial_initialized = functools.partial(loop_func,
+                                                          **{k: v for k, v in var_initialized.items() if k != 'self'})
         loop_func_partial_initialized.__name__ = f'{original_signature}__loop_func'
 
         SynchronousWrapper.sync_wrap_to_routine(self, loop_func_partial_initialized, refresh_rate)
@@ -149,4 +149,3 @@ def remove_task_signature(src):
         raise ValueError("Unable to find the function body.")
 
     return "\n" + src[newline_after_signature_index + 1:]
-

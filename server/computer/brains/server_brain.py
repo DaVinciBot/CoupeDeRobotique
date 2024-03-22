@@ -26,7 +26,6 @@ class ServerBrain(Brain):
             ws_camera: WServerRouteManager,
             config
     ) -> None:
-
         self.shared = 0
         self.arucos = []
         self.green_objects = []
@@ -38,7 +37,7 @@ class ServerBrain(Brain):
     """
 
     @Brain.task(process=True, refresh_rate=0, define_loop_later=True)
-    def test_process_cutter(self):
+    def camera_capture(self):
         camera = Camera(
             res_w=self.config.CAMERA_RESOLUTION[0],
             res_h=self.config.CAMERA_RESOLUTION[1],
@@ -92,7 +91,6 @@ class ServerBrain(Brain):
         frame.draw_markers()
         frame.write_labels()
         camera.update_monitor(frame.img)
-
 
     @Brain.task(process=True, refresh_rate=1)
     def writer(self):
