@@ -103,27 +103,21 @@ class Brain:
     """
 
     @classmethod
-    def task(cls, refresh_rate: float or int = -1, process=False):
+    def task(cls, refresh_rate: float or int = -1, process=False, define_loop_later=False,
+             start_loop_marker="# ---Loop--- #"):
         """
         Decorator to add a task function to the brain. There are 3 cases:
         - If the task has a refresh rate, it becomes a 'routine' (perpetual task)
         - If the task has no refresh rate, it becomes a 'one-shot' task
         - If the task is a subprocess, it becomes a 'subprocess' task --> it can also be a 'routine'
         or a 'one-shot' task (depending on the refresh rate)
-        Parameters
-        ----------
-        refresh_rate
-        process
-
-        Returns
-        -------
         """
 
         def decorator(func: Callable[[TBrain], None]):
             if not hasattr(cls, "tasks"):
                 cls.tasks = []
 
-            cls.tasks.append((func, refresh_rate, process))
+            cls.tasks.append((func, refresh_rate, process, define_loop_later, start_loop_marker))
             return func
 
         return decorator
@@ -155,19 +149,31 @@ class Brain:
             f"Brain [{self}], task [{task.__name__}] started", LogLevels.INFO
         )
         await self.__async_safe_execute(task)
+        self.logger.log(
+            f"Brain [{self}], task [{task.__name__}] ended", LogLevels.INFO
+        )
 
     """
         Task evaluation 
     """
 
-    def __evaluate_task(self, task, refresh_rate, is_process):
+    def __evaluate_task(self, task, refresh_rate, is_process, define_loop_later, start_loop_marker):
         """
             Evaluate the type of the task and add it to the list of async functions or processes.
         """
         # Process task (only synchronous tasks), create a process then add it in the process list
         if is_process:
             # One-shot task
-            if refresh_rate == -1:
+            if define_loop_later:
+                if refresh_rate is None or refresh_rate < 0:
+                    raise ValueError(
+                        f"Error while evaluate [{task.__name__}] task: it a process with a "
+                        f"'define_loop_later' but no refresh rate is defined.")
+                process_task = functools.partial(
+                    SynchronousWrapper.sync_wrap_routine_with_initialization,
+                    self.__shared_self, task, refresh_rate, start_loop_marker
+                )
+            elif refresh_rate == -1:
                 process_task = functools.partial(
                     SynchronousWrapper.sync_wrap_to_one_shot,
                     self.__shared_self, task
@@ -232,11 +238,11 @@ class Brain:
 
     def get_tasks(self):
         # Evaluate all tasks and add them to the list of async functions or processes
-        for task, refresh_rate, subprocess in self.tasks:
-            self.__evaluate_task(task, refresh_rate, subprocess)
+        for task, refresh_rate, subprocess, define_loop_later, start_loop_marker in self.tasks:
+            self.__evaluate_task(task, refresh_rate, subprocess, define_loop_later, start_loop_marker)
 
         # Add a one-shot task to start all processes if there are any
-        if any(is_process for _, _, is_process in self.tasks):
+        if any(is_process for _, _, is_process, _, _ in self.tasks):
             self.__async_functions.append(
                 lambda: self.__async_wrap_to_one_shot(self.__start_subprocesses)
             )

@@ -37,10 +37,8 @@ class ServerBrain(Brain):
         Routines
     """
 
-    @Brain.task(process=True)
-    def camera_analyser(self):
-        print("Init camera analyser")
-        # Initialize camera and aruco recognizer
+    @Brain.task(process=True, refresh_rate=0, define_loop_later=True)
+    def test_process_cutter(self):
         camera = Camera(
             res_w=self.config.CAMERA_RESOLUTION[0],
             res_h=self.config.CAMERA_RESOLUTION[1],
@@ -64,40 +62,37 @@ class ServerBrain(Brain):
             beta=self.config.CAMERA_CAM_OBJ_FUNCTION_B,
         )
 
-        print("Camera and aruco recognizer initialized")
-        while True:
-            try:
-                camera.capture()
-                camera.undistor_image()
-                arucos = aruco_recognizer.detect(camera.get_capture())
-                green_objects = color_recognizer.detect(camera.get_capture())
+        # ---Loop--- #
+        camera.capture()
+        camera.undistor_image()
+        arucos = aruco_recognizer.detect(camera.get_capture())
+        green_objects = color_recognizer.detect(camera.get_capture())
 
-                arucos_tmp = []
-                arucos_tmp.extend(
-                    (
-                        aruco.encoded_number,
-                        plan_transposer.image_to_relative_position(
-                            img=camera.get_capture(),
-                            segment=aruco.max_radius,
-                            center_point=aruco.centroid,
-                        ),
-                    )
-                    for aruco in arucos
-                )
-                self.arucos = arucos_tmp
+        arucos_tmp = []
+        arucos_tmp.extend(
+            (
+                aruco.encoded_number,
+                plan_transposer.image_to_relative_position(
+                    img=camera.get_capture(),
+                    segment=aruco.max_radius,
+                    center_point=aruco.centroid,
+                ),
+            )
+            for aruco in arucos
+        )
+        self.arucos = arucos_tmp
 
-                green_objects_tmp = []
-                green_objects_tmp.extend(
-                    green_object.centroid for green_object in green_objects
-                )
-                self.green_objects = green_objects_tmp
+        green_objects_tmp = []
+        green_objects_tmp.extend(
+            green_object.centroid for green_object in green_objects
+        )
+        self.green_objects = green_objects_tmp
 
-                frame = Frame(camera.get_capture(), [green_objects, arucos])
-                frame.draw_markers()
-                frame.write_labels()
-                camera.update_monitor(frame.img)
-            except Exception as e:
-                print(f"Camera analyser error: {e}")
+        frame = Frame(camera.get_capture(), [green_objects, arucos])
+        frame.draw_markers()
+        frame.write_labels()
+        camera.update_monitor(frame.img)
+
 
     @Brain.task(process=True, refresh_rate=1)
     def writer(self):
