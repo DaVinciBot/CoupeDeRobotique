@@ -50,7 +50,7 @@ class WSclient:
         # Add the new routine to the client tasks list with its associated url
         self.tasks.append(routine(self.__get_url(route), route_manager))
 
-    def add_background_task(self, task: callable, *args, **kwaargs) -> None:
+    def add_background_task(self, task: callable, *args, **kwargs) -> None:
         """
         Add a new background task to the client. It is useful to execute task in parallel with the client.
         * The task have to be a coroutine (async function).
@@ -58,7 +58,7 @@ class WSclient:
         :param task:
         :return:
         """
-        self.tasks.append(task(*args, **kwaargs))
+        self.tasks.append(task(*args, **kwargs))
 
     def run(self) -> None:
         asyncio.run(self.__run_tasks())
