@@ -102,3 +102,14 @@ class ServerBrain(Brain):
         print("reader: ", self.shared)
         print("arucos: ", self.arucos)
         print("green_objects: ", self.green_objects)
+
+    @Brain.task(refresh_rate=1)
+    async def main(self):
+        print(f"ServerBrain: {await self.ws_log.receiver.get()} / {self.shared}")
+        self.shared += 1
+        await self.ws_log.sender.send(
+            WSmsg(
+                msg="shared",
+                data=self.shared
+            )
+        )

@@ -32,5 +32,11 @@ class Robot1Brain(Brain):
 
     @Brain.task(refresh_rate=1)
     async def main(self):
-        print(self.shared)
+        print(f"Robot1Brain: {await self.ws_log.receiver.get()} / {self.shared}")
         self.shared += 1
+        await self.ws_log.sender.send(
+            WSmsg(
+                msg="shared",
+                data=self.shared
+            )
+        )
