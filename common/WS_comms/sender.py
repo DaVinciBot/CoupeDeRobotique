@@ -33,7 +33,7 @@ class WSender:
             # print("No clients ...")
         return self.__route_manager_clients
 
-    async def send(self, msg: WSmsg, clients=None, wait_client: bool = False) -> None:
+    async def send(self, msg: WSmsg, clients=None, wait_client: bool = False) -> bool:
         """
         Send a message to one or multiple clients.
         :param msg:
@@ -50,10 +50,15 @@ class WSender:
 
         if clients is None:
             # print("Error, no clients found.")
-            return
+            return False
 
         if type(clients) is not list:
             clients = [clients]
 
         for client in clients:
-            await client.send_str(msg.prepare())
+            try:
+                await client.send_str(msg.prepare())
+                return True
+            except Exception as error:
+                print(f"Error during sending message: {error}")
+                return False
