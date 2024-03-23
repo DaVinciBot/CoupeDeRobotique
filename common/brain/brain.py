@@ -93,7 +93,10 @@ class Brain:
                 try:
                     setattr(self.__shared_self, name, value)
                 except Exception as error:
-                    print(f"Cannot serialize attribute [{name}]. ({error})")
+                    self.logger.log(
+                        f"Brain [{self}]-[dynamic_init] cannot serialize attribute [{name}]. ({error})",
+                        LogLevels.WARNING
+                    )
 
         # Add attributes name to shared_self, it will be used by logger to identify the source of the logs
         self.__shared_self.name = self.__str__()
