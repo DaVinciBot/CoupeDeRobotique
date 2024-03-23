@@ -2,6 +2,7 @@ import aiohttp
 import asyncio
 
 from WS_comms.client.client_route import WSclientRouteManager
+from logger import Logger, LogLevels
 
 
 class WSclient:
@@ -13,9 +14,11 @@ class WSclient:
     * It can receive messages from the server.
     """
 
-    def __init__(self, host: str, port: int) -> None:
+    def __init__(self, host: str, port: int, logger: Logger) -> None:
         self.__host = host
         self.__port = port
+
+        self.logger = logger
 
         self.tasks = []
 
@@ -25,8 +28,42 @@ class WSclient:
     async def __run_tasks(self) -> None:
         await asyncio.gather(*self.tasks)
 
+    async def __route_handler_routine(self, route, handler):
+        """
+        This function is a coroutine that connects to a websocket server and binds a handler to it.
+        It handle connection errors and try to reconnect to the server.
+        :param url:
+        :param handler:
+        :return:
+        """
+        while True:
+            self.logger.log(
+                f"WSclient [{route}] started, route url: [{self.__get_url(route)}]",
+                LogLevels.INFO,
+            )
+            try:
+                self.logger.log(
+                    f"WSclient [{route}] try to connect server...",
+                    LogLevels.INFO,
+                )
+                async with aiohttp.ClientSession() as session:
+                    async with session.ws_connect(
+                            f"{self.__get_url(route)}?sender={handler.sender.name}"
+                    ) as ws:
+                        self.logger.log(
+                            f"WSclient [{route}] connected !",
+                            LogLevels.INFO,
+                        )
+                        handler.set_ws(ws)
+                        await handler.routine()
+            except Exception as error:
+                self.logger.log(
+                    f"WSclient [{route}] error: ({error}), try to reconnect...",
+                    LogLevels.ERROR,
+                )
+
     def add_route_handler(
-        self, route: str, route_manager: WSclientRouteManager
+            self, route: str, route_manager: WSclientRouteManager
     ) -> None:
         """
         Add a new route to the client.
@@ -37,18 +74,10 @@ class WSclient:
         :param route_manager:
         :return:
         """
-
-        # Create a new routine to handle the new route
-        async def routine(url, handler):
-            async with aiohttp.ClientSession() as session:
-                async with session.ws_connect(
-                    f"{url}?sender={handler.sender.name}"
-                ) as ws:
-                    handler.set_ws(ws)
-                    await handler.routine()
-
         # Add the new routine to the client tasks list with its associated url
-        self.tasks.append(routine(self.__get_url(route), route_manager))
+        self.tasks.append(
+            self.__route_handler_routine(route, route_manager)
+        )
 
     def add_background_task(self, task: callable, *args, **kwargs) -> None:
         """
