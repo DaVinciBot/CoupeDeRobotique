@@ -14,16 +14,16 @@ from dataclasses import dataclass
 
 
 class Command(Enum):
-    GoToPoint = b"\x00"
-    CurveGoTo = b"\x01"
-    KeepCurrentPosition = b"\02"
-    DisablePid = b"\03"
-    EnablePid = b"\04"
-    ResetPosition = b"\05"
-    SetPID = b"\06"
-    SetHome = b"\07"
-    Stop = b"\x7E"  # 7E = 126
-    Invalid = b"\xFF"
+    GO_TO_POINT = b"\x00"
+    CURVE_GO_TO = b"\x01"
+    KEEP_CURRENT_POSITION = b"\02"
+    DISABLE_PID = b"\03"
+    ENABLE_PID = b"\04"
+    RESET_POSITION = b"\05"
+    SET_PID = b"\06"
+    SET_HOME = b"\07"
+    STOP = b"\x7E"  # 7E = 126
+    INVALID = b"\xFF"
 
 
 @dataclass
@@ -34,7 +34,7 @@ class Instruction:
 
 class RB_Queue:
 
-    tracked_commands = (Command.GoToPoint, Command.CurveGoTo)
+    tracked_commands = (Command.GO_TO_POINT, Command.CURVE_GO_TO)
 
     def __init__(self, l: Logger) -> None:
         self.id_counter = 0
@@ -231,7 +231,7 @@ class RollingBasis(Teensy):
             position.x + self.position_offset.x, position.y + self.position_offset.y
         )
         msg = (
-            Command.GoToPoint.value
+            Command.GO_TO_POINT.value
             + struct.pack("<f", pos.x)
             + struct.pack("<f", pos.y)
             + struct.pack("<?", is_forward)
@@ -247,7 +247,7 @@ class RollingBasis(Teensy):
         )
         # https://docs.python.org/3/library/struct.html#format-characters
 
-        return self.append_to_queue(Instruction(Command.GoToPoint, msg))
+        return self.append_to_queue(Instruction(Command.GO_TO_POINT, msg))
 
     @Logger
     async def Go_To_And_Wait(
@@ -375,7 +375,7 @@ class RollingBasis(Teensy):
         if test:
             return center
         curve_msg = (
-            Command.CurveGoTo.value  # command
+            Command.CURVE_GO_TO.value  # command
             + struct.pack("<ff", destination.x, destination.y)  # target_point
             + struct.pack("<ff", center.x, center.y)  # center_point
             + struct.pack("<H", interval)  # interval (distance between two points)
@@ -387,20 +387,22 @@ class RollingBasis(Teensy):
         )
         if skip_queue or len(self.queue) == 0:
             self.l.log("Skipping Queue ...")
-            self.queue._insert(0, Instruction(Command.CurveGoTo, curve_msg))
+            self.queue._insert(0, Instruction(Command.CURVE_GO_TO, curve_msg))
             self.l.log(str(self.queue))
             self.send_bytes(curve_msg)
         else:
-            self.queue._append(Instruction(Command.CurveGoTo, curve_msg))
+            self.queue._append(Instruction(Command.CURVE_GO_TO, curve_msg))
 
     # TODO: grosse redondance sur le skip queue, utile de mettre en place un decorateur pour faire ça automatiquement ?
     @Logger
     def Keep_Current_Position(self, skip_queue=False):
-        msg = Command.KeepCurrentPosition.value
+        msg = Command.KEEP_CURRENT_POSITION.value
         if skip_queue:
-            self.insert_in_queue(0, Instruction(Command.KeepCurrentPosition, msg), True)
+            self.insert_in_queue(
+                0, Instruction(Command.KEEP_CURRENT_POSITION, msg), True
+            )
         else:
-            self.append_to_queue(Instruction(Command.KeepCurrentPosition, msg))
+            self.append_to_queue(Instruction(Command.KEEP_CURRENT_POSITION, msg))
 
     @Logger
     def Clear_Queue(self):
@@ -413,38 +415,38 @@ class RollingBasis(Teensy):
 
     @Logger
     def Disable_Pid(self, skip_queue=False):
-        msg = Command.DisablePid.value
+        msg = Command.DISABLE_PID.value
         if skip_queue:
-            self.insert_in_queue(0, Instruction(Command.DisablePid, msg), True)
+            self.insert_in_queue(0, Instruction(Command.DISABLE_PID, msg), True)
         else:
-            self.queue._append(Instruction(Command.DisablePid, msg))
+            self.queue._append(Instruction(Command.DISABLE_PID, msg))
 
     @Logger
     def Enable_Pid(self, skip_queue=False):
-        msg = Command.EnablePid.value
+        msg = Command.ENABLE_PID.value
         if skip_queue:
-            self.insert_in_queue(0, Instruction(Command.EnablePid, msg), True)
+            self.insert_in_queue(0, Instruction(Command.ENABLE_PID, msg), True)
         else:
-            self.append_to_queue(Instruction(Command.EnablePid, msg))
+            self.append_to_queue(Instruction(Command.ENABLE_PID, msg))
 
     @Logger
     def Reset_Odo(self, skip_queue=False):
-        msg = Command.ResetPosition.value
+        msg = Command.RESET_POSITION.value
         if skip_queue:
-            self.insert_in_queue(0, Instruction(Command.ResetPosition, msg), True)
+            self.insert_in_queue(0, Instruction(Command.RESET_POSITION, msg), True)
         else:
-            self.append_to_queue(Instruction(Command.ResetPosition, msg))
+            self.append_to_queue(Instruction(Command.RESET_POSITION, msg))
 
     def Set_Home(self, x, y, theta, *, skip_queue=False):
-        msg = Command.SetHome.value + struct.pack("<fff", x, y, theta)
+        msg = Command.SET_HOME.value + struct.pack("<fff", x, y, theta)
         if skip_queue:
-            self.insert_in_queue(0, Instruction(Command.SetHome, msg), True)
+            self.insert_in_queue(0, Instruction(Command.SET_HOME, msg), True)
         else:
-            self.append_to_queue(Instruction(Command.SetHome, msg))
+            self.append_to_queue(Instruction(Command.SET_HOME, msg))
 
     def Set_PID(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
-        msg = Command.SetPID.value + struct.pack("<fff", Kp, Ki, Kd)
+        msg = Command.SET_PID.value + struct.pack("<fff", Kp, Ki, Kd)
         if skip_queue:
-            self.insert_in_queue(0, Instruction(Command.SetPID, msg), True)
+            self.insert_in_queue(0, Instruction(Command.SET_PID, msg), True)
         else:
-            self.append_to_queue(Instruction(Command.SetPID, msg))
+            self.append_to_queue(Instruction(Command.SET_PID, msg))
