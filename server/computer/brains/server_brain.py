@@ -70,7 +70,7 @@ class ServerBrain(Brain):
         zones_plant = [ zone  for zone in zones_plant if zone.bounding_box.area>CONFIG.CAMERA_PLANT_MIN_AREA]
         if len(zones_plant)<6 : print("error in zone_plant detection")
         # calcultate aproximative center and exclude neareast cluster until there is 6 zones remaing
-        elif len(zones_plant>6):
+        elif len(zones_plant)>6:
             mx = 0
             my = 0
             for z in zones_plant:
