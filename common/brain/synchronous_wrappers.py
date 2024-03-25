@@ -1,7 +1,6 @@
 from logger import LogLevels
-
+from typing import Union
 from brain.dict_proxy import DictProxyAccessor
-
 import functools
 import inspect
 import time
@@ -15,7 +14,7 @@ class SynchronousWrapper:
     """
 
     @staticmethod
-    def sync_safe_execute(self: DictProxyAccessor, func, error_sleep: float or int = 0.5) -> None:
+    def sync_safe_execute(self: DictProxyAccessor, func, error_sleep: Union[float,int] = 0.5) -> None:
         """
         It executes the function and logs the error if there is one
         :param self: the shared_self which has to be synchronized with the main process

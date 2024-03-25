@@ -37,7 +37,7 @@ class ServerBrain(Brain):
         Routines
     """
 
-    @Brain.task(process=True, refresh_rate=0, define_loop_later=True)
+    @Brain.task(process=True, refresh_rate=3, define_loop_later=True)
     def test_process_cutter(self):
         camera = Camera(
             res_w=self.config.CAMERA_RESOLUTION[0],

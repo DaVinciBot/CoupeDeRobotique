@@ -2,7 +2,7 @@ from logger import Logger, LogLevels
 
 from brain.synchronous_wrappers import SynchronousWrapper
 from brain.dict_proxy import DictProxyAccessor
-
+from typing import Union
 from typing import TypeVar, Type, List, Callable, Coroutine
 from multiprocessing import Process
 
@@ -103,7 +103,7 @@ class Brain:
     """
 
     @classmethod
-    def task(cls, refresh_rate: float or int = -1, process=False, define_loop_later=False,
+    def task(cls, refresh_rate: Union[float,int] = -1, process=False, define_loop_later=False,
              start_loop_marker="# ---Loop--- #"):
         """
         Decorator to add a task function to the brain. There are 3 cases:
@@ -126,7 +126,7 @@ class Brain:
         Async functions wrappers
     """
 
-    async def __async_safe_execute(self, func, error_sleep: float or int = 0.5):
+    async def __async_safe_execute(self, func, error_sleep: Union[float,int] = 0.5):
         try:
             await func(self)
         except Exception as error:

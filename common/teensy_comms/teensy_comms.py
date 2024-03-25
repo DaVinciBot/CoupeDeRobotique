@@ -1,7 +1,7 @@
 from typing import Any, Callable
 import serial, threading, time, crc8, serial.tools.list_ports
 
-from logger import Logger
+from logger import Logger, LogLevels
 from geometry import OrientedPoint
 from teensy_comms.dummy_serial import DummySerial
 
@@ -50,6 +50,7 @@ class Teensy:
         baudrate: int = 115200,
         crc: bool = True,
         dummy: bool = False,
+        logger = Logger(identifier=f"Teensy")
     ):
         """
         Crée un objet Serial Teensy, qui permet la communication entre le code et la carte
@@ -83,7 +84,7 @@ class Teensy:
         self._crc8 = crc8.crc8()
         self.last_message = None
         self.end_bytes = b"\xBA\xDD\x1C\xC5"
-        self.l = Logger()
+        self.l = logger
 
         for port in serial.tools.list_ports.comports():
             if port.vid == vid and port.pid == pid and int(port.serial_number) == ser:
@@ -91,10 +92,10 @@ class Teensy:
                 break
         if self._teensy is None:
             if dummy:
-                self.l.log("Dummy mode", 1)
+                self.l.log("Dummy mode", LogLevels.INFO)
                 self._teensy = DummySerial()
             else:
-                self.l.log("No Teensy found !", 3)
+                self.l.log("No Teensy found !", LogLevels.ERROR)
                 raise TeensyException("No Device !")
         self.messagetype = {}
         if not dummy:
