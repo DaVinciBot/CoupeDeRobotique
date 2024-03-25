@@ -29,7 +29,7 @@ class Command(Enum):
 @dataclass
 class Instruction:
     cmd: Command
-    msg: bytes
+    msg: bytes  # msg is often the same as cmd, but can contain extra info
 
 
 class RB_Queue:
