@@ -5,7 +5,7 @@ from arena import MarsArena
 from WS_comms import WSmsg, WServerRouteManager
 from brain import Brain
 from config_loader import CONFIG
-from geometry import create_straight_rectangle,Point,Polygon
+from geometry import Point
 
 # Import from local path
 from sensors import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Frame
@@ -79,7 +79,7 @@ class ServerBrain(Brain):
                 mx+=z.centroid[0]
                 my+=z.centroid[1]
             apro_center = Point(mx,my)
-            zones_plant = sorted(zones_plant,key=lambda zone : apro_center.distance(zone.centroid))
+            zones_plant = sorted(zones_plant,key=lambda zone : apro_center.distance(Point(zone.centroid[0],zone.centroid[1])))
             while len(zones_plant)>6:
                 zones_plant.pop()
                 
