@@ -114,7 +114,7 @@ class SynchronousWrapper:
             if run_duration() < timeout:
                 self.logger.log(
                     f"Brain [{self}]-[{task_name}] timed task (Subprocess: sync function) -> "
-                    f"ended before the timeout [{run_duration():.Of}s/{timeout}s]",
+                    f"ended before the timeout [{run_duration():.1f}s/{timeout:.1f}s]",
                     LogLevels.INFO
                 )
                 return 0  # No error
@@ -260,7 +260,7 @@ class AsynchronousWrapper:
 
             self.logger.log(
                 f"Brain [{self}]-[{task_name}] timed task (Main-process: async function) -> "
-                f"ended before the timeout [{(Utils.get_ts() - run_start):.Of}s/{timeout}s]",
+                f"ended before the timeout [{(Utils.get_ts() - run_start):.1f}s/{timeout:.1f}s]",
                 LogLevels.INFO
             )
             return 0  # No error

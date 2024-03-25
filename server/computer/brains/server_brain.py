@@ -116,3 +116,8 @@ class ServerBrain(Brain):
             )
         )
 
+    @Brain.task(run_on_start=True, process=False, timeout=5)
+    async def test(self):
+        print("test")
+        await asyncio.sleep(2)
+        print("test end")
