@@ -431,7 +431,7 @@ class RollingBasis(Teensy):
             self.append_to_queue(Instruction(Command.SetHome, msg))
 
     def Set_PID(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
-        msg = Command.SetPID.value + struct.pack("<fff", Kp, Ki, Kp)
+        msg = Command.SetPID.value + struct.pack("<fff", Kp, Ki, Kd)
         if skip_queue:
             self.insert_in_queue(0, Instruction(Command.SetPID, msg), True)
         else:
