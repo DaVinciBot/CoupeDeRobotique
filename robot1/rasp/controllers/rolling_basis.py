@@ -1,7 +1,7 @@
 from config_loader import CONFIG
 
 # Import from common
-from teensy_comms import Teensy
+from teensy_comms import Teensy, calc_center
 from geometry import OrientedPoint, Point, distance
 from logger import Logger, LogLevels
 from utils import Utils
@@ -349,7 +349,6 @@ class RollingBasis(Teensy):
         next_position_delay: int = 100,
         action_error_auth: int = 20,
         traj_precision: int = 50,
-        test: bool = False,
     ) -> None:
         """Go to a point with a curve"""
 
@@ -372,8 +371,7 @@ class RollingBasis(Teensy):
         center = calc_center(self.odometrie, third_point, destination)
         destination = self.true_pos(destination)
         center = self.true_pos(center)
-        if test:
-            return center
+
         curve_msg = (
             Command.CURVE_GO_TO.value  # command
             + struct.pack("<ff", destination.x, destination.y)  # target_point
