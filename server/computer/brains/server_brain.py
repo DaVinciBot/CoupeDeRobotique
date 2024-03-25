@@ -76,8 +76,8 @@ class ServerBrain(Brain):
             mx = 0
             my = 0
             for z in zones_plant:
-                mx+=z.centroid.x
-                my+=z.centroid.y
+                mx+=z.centroid[0]
+                my+=z.centroid[1]
             apro_center = Point(mx,my)
             zones_plant = sorted(zones_plant,key=lambda zone : apro_center.distance(zone.centroid))
             while len(zones_plant)>6:
