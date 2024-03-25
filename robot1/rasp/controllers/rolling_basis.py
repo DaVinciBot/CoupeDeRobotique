@@ -4,10 +4,10 @@ from config_loader import CONFIG
 from teensy_comms import Teensy
 from geometry import OrientedPoint, Point, distance
 from logger import Logger, LogLevels
+from utils import Utils
 
 import struct
 import math
-import time
 import asyncio
 from enum import Enum
 from dataclasses import dataclass
@@ -289,7 +289,7 @@ class RollingBasis(Teensy):
             int: 0 if finished normally, 1 if timed out, 2 if finished without timeout but not at targret position
         """
 
-        start_time = time.time()
+        start_time = Utils.get_ts()
         queue_id = self.Go_To(
             position,
             skip_queue=skip_queue,
@@ -306,23 +306,35 @@ class RollingBasis(Teensy):
         )
 
         while (
-            time.time() - start_time < timeout and self.queue.last_deleted_id < queue_id
+            Utils.get_ts() - start_time < timeout
+            and self.queue.last_deleted_id < queue_id
         ):
             await asyncio.sleep(0.2)
 
-        self.l.log(self.odometrie.__point, LogLevels.INFO)
-        if time.time() - start_time > timeout:
+        self.l.log(
+            f"Exited Go_To_And_Wait while loop at point: {self.odometrie.__point}",
+            LogLevels.INFO,
+        )
+        if Utils.get_ts() - start_time >= timeout:
+            self.l.log(
+                "Reached timeout in Go_To_And_Wait, clearing queue", LogLevels.WARNING
+            )
             self.Stop_and_clear_queue()
             return 1
         elif (
             distance(
                 Point(self.odometrie.__point.x, self.odometrie.__point.y), position
             )
-            > tolerance
+            <= tolerance
         ):
-            return 2
-        else:
             return 0
+        else:
+            self.l.log(
+                "Unexpected: didn't timeout in Go_To_And_Wait but did not arrive, clearing queue",
+                LogLevels.ERROR,
+            )
+            self.Stop_and_clear_queue()
+            return 2
 
     @Logger
     def curve_go_to(
