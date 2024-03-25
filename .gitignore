@@ -168,6 +168,7 @@ robot1/rasp/test_servo.py
 bob_venv/
 server/computer/cam_venv/
 server/computeur/start_headless_server.sh
+__pycache__/
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
 #  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore

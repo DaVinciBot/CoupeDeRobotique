@@ -5,10 +5,11 @@ from arena import MarsArena
 from WS_comms import WSclientRouteManager, WSmsg
 from brain import Brain
 from utils import Utils
-
+from config_loader import CONFIG 
 # Import from local path
 from sensors import Lidar
-from controllers import RollingBasis
+from controllers import RollingBasis, Actuators
+from time import sleep
 
 
 class Robot1Brain(Brain):
@@ -21,6 +22,7 @@ class Robot1Brain(Brain):
             ws_odometer: WSclientRouteManager,
             ws_camera: WSclientRouteManager,
             rolling_basis: RollingBasis,
+            actuators: Actuators,
             lidar: Lidar,
             # arena: MarsArena,
     ) -> None:
@@ -101,3 +103,11 @@ class Robot1Brain(Brain):
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
                     LogLevels.WARNING,
                 )
+                
+    def take_plant(self):
+        for pin in CONFIG.GODS_HAND_SERVO_PINS():
+            self.actuators.servo_go_to(pin,50)
+        sleep(2)
+        for pin in CONFIG.GODS_HAND_SERVO_PINS():
+            self.actuators.servo_go_to(pin,50)
+        

@@ -26,7 +26,7 @@
       "save_path": "|sensors|camera|images_save",
       "calibration_path": "|sensors|camera|calibration_path",
       "coefficients_path": "|sensors|camera|undistort_coef.json",
-
+      "plant_zone_min_area" : 30,
       "aruco":
       {
         "cam_obj_function_a": 1077.2,
@@ -53,7 +53,8 @@
       "server_ip": "192.168.0.104"
     },
     "actuators": {
-      "servo_pins": []
+      "servo_pins": [],
+      "god_hand_servo_pins" : []
     }
   }
 }

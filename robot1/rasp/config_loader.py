@@ -51,3 +51,4 @@ class CONFIG:
     ## Actuators
     ACTUATORS_CONFIG = SPECIFIC_CONFIG["actuators"]
     SERVO_PINS = ACTUATORS_CONFIG["servo_pins"]
+    GODS_HAND_SERVO_PINS = ACTUATORS_CONFIG["god_hand_servo_pins"]

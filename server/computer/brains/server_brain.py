@@ -4,6 +4,7 @@ from geometry import OrientedPoint, Point
 from arena import MarsArena
 from WS_comms import WSmsg, WServerRouteManager
 from brain import Brain
+from config_loader import CONFIG
 
 # Import from local path
 from sensors import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Frame
@@ -61,6 +62,26 @@ class ServerBrain(Brain):
             alpha=self.config.CAMERA_CAM_OBJ_FUNCTION_A,
             beta=self.config.CAMERA_CAM_OBJ_FUNCTION_B,
         )
+        
+        camera.capture()
+        camera.undistor_image()
+        zones_plant = color_recognizer.detect(camera.get_capture())
+        # plant zone area be bigger than a certain area, exclude the one that are too small
+        zones_plant = [ zone  for zone in zones_plant if zone.bounding_box.area>CONFIG.CAMERA_PLANT_MIN_AREA]
+        if len(zones_plant<6) : print("error in zone_plant detection")
+        # calcultate aproximative center and exclude neareast cluster until there is 6 zones remaing
+        elif len(zones_plant>6):
+            mx = 0
+            my = 0
+            for z in zones_plant:
+                mx+=z.centroid.x
+                my+=z.centroid.y
+            apro_center = Point(mx,my)
+            zones_plant = sorted(zones_plant,key=lambda zone : apro_center.distance(zone.centroid))
+            while len(zones_plant>6):
+                zones_plant.pop()
+                
+        for zone in zones_plant : print(zone.centroid)
 
         # ---Loop--- #
         camera.capture()
