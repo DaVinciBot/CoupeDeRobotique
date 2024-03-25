@@ -39,8 +39,6 @@ class ServerBrain(Brain):
     """
         Routines
     """
-    def get_zone(self,bounding_box)->Polygon:
-        return create_straight_rectangle(Point(bounding_box[0][0],bounding_box[0][1]),Point(bounding_box[1][0],bounding_box[1][1]))
         
     @Brain.task(process=True, refresh_rate=3, define_loop_later=True)
     def test_process_cutter(self):
@@ -71,7 +69,7 @@ class ServerBrain(Brain):
         camera.undistor_image()
         zones_plant = color_recognizer.detect(camera.get_capture())
         # plant zone area be bigger than a certain area, exclude the one that are too small
-        zones_plant = [ zone  for zone in zones_plant if self.get_zone(zone.bounding_box).area>CONFIG.CAMERA_PLANT_MIN_AREA]
+        zones_plant = [ zone  for zone in zones_plant if create_straight_rectangle(Point(zone.bounding_box[0][0],zone.bounding_box[0][1]),Point(zone.bounding_box[1][0],zone.bounding_box[1][1])).area>CONFIG.CAMERA_PLANT_MIN_AREA]
         if len(zones_plant)<6 : print("error in zone_plant detection")
         # calcultate aproximative center and exclude neareast cluster until there is 6 zones remaing
         elif len(zones_plant)>6:
