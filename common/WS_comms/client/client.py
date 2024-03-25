@@ -36,11 +36,11 @@ class WSclient:
         :param handler:
         :return:
         """
+        self.logger.log(
+            f"WSclient [{route}] started, route url: [{self.__get_url(route)}]",
+            LogLevels.INFO,
+        )
         while True:
-            self.logger.log(
-                f"WSclient [{route}] started, route url: [{self.__get_url(route)}]",
-                LogLevels.INFO,
-            )
             try:
                 self.logger.log(
                     f"WSclient [{route}] try to connect server...",

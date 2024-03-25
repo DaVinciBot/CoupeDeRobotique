@@ -1,4 +1,6 @@
 # Import from common
+import asyncio
+
 from logger import Logger, LogLevels
 from geometry import OrientedPoint, Point
 from arena import MarsArena
@@ -36,7 +38,7 @@ class ServerBrain(Brain):
         Routines
     """
 
-    @Brain.task(process=True, refresh_rate=0, define_loop_later=True)
+    @Brain.task(process=True, run_on_start=True, refresh_rate=0, define_loop_later=True)
     def camera_capture(self):
         camera = Camera(
             res_w=self.config.CAMERA_RESOLUTION[0],
@@ -92,18 +94,18 @@ class ServerBrain(Brain):
         frame.write_labels()
         camera.update_monitor(frame.img)
 
-    @Brain.task(process=True, refresh_rate=1)
+    @Brain.task(process=True, refresh_rate=1, run_on_start=True)
     def writer(self):
         print("writer: ", self.shared)
         self.shared += 1
 
-    @Brain.task(refresh_rate=1)
+    @Brain.task(refresh_rate=1, run_on_start=True, process=False)
     async def reader(self):
         print("reader: ", self.shared)
         print("arucos: ", self.arucos)
         print("green_objects: ", self.green_objects)
 
-    @Brain.task(refresh_rate=1)
+    @Brain.task(refresh_rate=1, run_on_start=True, process=False)
     async def main(self):
         print(f"ServerBrain: {await self.ws_log.receiver.get()} / {self.shared}")
         self.shared += 1
@@ -113,3 +115,4 @@ class ServerBrain(Brain):
                 data=self.shared
             )
         )
+

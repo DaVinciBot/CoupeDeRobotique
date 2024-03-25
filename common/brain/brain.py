@@ -1,10 +1,13 @@
 from logger import Logger, LogLevels
+from utils import Utils
 
-from brain.synchronous_wrappers import SynchronousWrapper
+from brain.task_wrappers import SynchronousWrapper, AsynchronousWrapper
 from brain.dict_proxy import DictProxyAccessor
+from brain.task import Task
 
 from typing import TypeVar, Type, List, Callable, Coroutine
 from multiprocessing import Process
+import threading
 
 import functools
 import inspect
@@ -14,33 +17,6 @@ TBrain = TypeVar("TBrain", bound="Brain")
 
 
 class Brain:
-    """
-    The brain is a main controller of applications.
-    It manages tasks which can be routines or one-shot tasks.
-    It is also able to manage subprocesses.
-    How to use it ?
-    - Create a child class of Brain
-    - In the child's __init__ first define all attributes, who will use through the brain.
-    Then, at the END of the __init__ method, call super().__init__(logger, self).
-    Every child's __init__ parameters will be instantiated as attributes available in the brain.
-    - Transform your method into task by using the decorator @Brain.task()
-    - Classic task (executed in the main process), they have to be asynchronous
-        * Create a one-shot task by using the decorator @Brain.task() (it will be executed only once and in the
-        main process)
-        * Create a routine task by using the decorator @Brain.task(refresh_rate=<refresh rate you want>) (it will be
-        executed periodically according to the refresh rate and in the main process)
-    - Subprocess task (executed in a subprocess), they have to be synchronous
-        * Create a subprocess one-shot task by using the decorator @Brain.task(process=True) (it will be executed only
-        once in a subprocess)
-        * Create a routine subprocess task by using the decorator @Brain.task(
-        refresh_rate=<refresh rate you want>, process=True) (it will be executed periodically according to the refresh
-        and in a subprocess)
-    - Get the tasks by calling the method brain.get_tasks() and add them to the background tasks of the application
-
-    -> Be careful by using subprocesses, the shared data between the main process and the subprocesses is limited,
-    only serializable data can be shared. More over the data synchronization is not real-time, it is done by a routine.
-    Subprocesses are useful to execute heavy tasks or tasks that can block the main process.
-    """
 
     def __init__(self, logger: Logger, child: TBrain) -> None:
         """
@@ -51,7 +27,7 @@ class Brain:
             raise ValueError("Logger is required for the brain to work properly.")
         self.logger = logger
 
-        self.__shared_self = DictProxyAccessor()
+        self.__shared_self = DictProxyAccessor(name=child.__str__())
         self.__processes = []
         self.__async_functions = []
 
@@ -98,16 +74,31 @@ class Brain:
                         LogLevels.WARNING
                     )
 
-        # Add attributes name to shared_self, it will be used by logger to identify the source of the logs
-        self.__shared_self.name = self.__str__()
+    """
+        Properties
+    """
+
+    @property
+    def shared_self(self):
+        return self.__shared_self
 
     """
         Task decorator
     """
 
     @classmethod
-    def task(cls, refresh_rate: float or int = -1, process=False, define_loop_later=False,
-             start_loop_marker="# ---Loop--- #"):
+    def task(cls,
+             # Force to define parameter by using param=... synthax
+             *,
+             # Force user to define there params
+             process: bool,
+             run_on_start: bool,
+             # Params with default value
+             refresh_rate: float or int = -1,
+             timeout: int = -1,
+             define_loop_later: bool = False,
+             start_loop_marker="# ---Loop--- #"
+             ):
         """
         Decorator to add a task function to the brain. There are 3 cases:
         - If the task has a refresh rate, it becomes a 'routine' (perpetual task)
@@ -117,100 +108,37 @@ class Brain:
         """
 
         def decorator(func: Callable[[TBrain], None]):
-            if not hasattr(cls, "tasks"):
-                cls.tasks = []
+            if not hasattr(cls, "_tasks"):
+                cls._tasks = []
 
-            cls.tasks.append((func, refresh_rate, process, define_loop_later, start_loop_marker))
+            cls._tasks.append(
+                Task(func, process, run_on_start, refresh_rate, timeout, define_loop_later, start_loop_marker)
+            )
             return func
 
         return decorator
 
     """
-        Async functions wrappers
+        Task evaluation
     """
 
-    async def __async_safe_execute(self, func, error_sleep: float or int = 0.5):
-        try:
-            await func(self)
-        except Exception as error:
-            self.logger.log(
-                f"Brain [{self}]-[{func.__name__}] error: {error}",
-                LogLevels.ERROR,
-            )
-            await asyncio.sleep(max(error_sleep, 0.5))  # Avoid spamming the logs
+    def __evaluate_task(self, task: Task):
+        evaluated_task = task.evaluate(brain_executor=self, shared_brain_executor=self.shared_self)
 
-    async def __async_wrap_to_routine(self, task, refresh_rate):
-        self.logger.log(
-            f"Brain [{self}], routine [{task.__name__}] started", LogLevels.INFO
-        )
-        while True:
-            await self.__async_safe_execute(task, error_sleep=refresh_rate)
-            await asyncio.sleep(refresh_rate)
-
-    async def __async_wrap_to_one_shot(self, task):
-        self.logger.log(
-            f"Brain [{self}], task [{task.__name__}] started", LogLevels.INFO
-        )
-        await self.__async_safe_execute(task)
-        self.logger.log(
-            f"Brain [{self}], task [{task.__name__}] ended", LogLevels.INFO
-        )
-
-    """
-        Task evaluation 
-    """
-
-    def __evaluate_task(self, task, refresh_rate, is_process, define_loop_later, start_loop_marker):
-        """
-            Evaluate the type of the task and add it to the list of async functions or processes.
-        """
-        # Process task (only synchronous tasks), create a process then add it in the process list
-        if is_process:
-            # One-shot task
-            if define_loop_later:
-                if refresh_rate is None or refresh_rate < 0:
-                    raise ValueError(
-                        f"Error while evaluate [{task.__name__}] task: it a process with a "
-                        f"'define_loop_later' but no refresh rate is defined.")
-                process_task = functools.partial(
-                    SynchronousWrapper.sync_wrap_routine_with_initialization,
-                    self.__shared_self, task, refresh_rate, start_loop_marker
-                )
-            elif refresh_rate == -1:
-                process_task = functools.partial(
-                    SynchronousWrapper.sync_wrap_to_one_shot,
-                    self.__shared_self, task
-                )
-            # Routine task
+        if task.run_to_start:
+            if task.is_process:
+                self.__processes.append(evaluated_task)
             else:
-                process_task = functools.partial(
-                    SynchronousWrapper.sync_wrap_to_routine,
-                    self.__shared_self, task, refresh_rate
-                )
-            self.__processes.append(Process(target=process_task))
-
-        # Classic task executed in the main process (only asynchronous tasks), add it to the list of async functions
+                self.__async_functions.append(lambda: evaluated_task)
         else:
-            # One-shot task
-            if refresh_rate == -1:
-                async_task = self.__async_wrap_to_one_shot(task)
-            # Routine task
-            else:
-                async_task = self.__async_wrap_to_routine(task, refresh_rate)
-            self.__async_functions.append(lambda: async_task)
+            setattr(self, task.name, evaluated_task)
 
     """
         Background routines enabling the subprocesses to operate
     """
 
     async def __start_subprocesses(self, _):
-        """
-        It is a one-shot task dedicating to start all processes.
-        * Need to be wrap by one-shot task wrapper.
-        * Add this method in the async functions list only if a subprocess task is defined.
-        """
-        for process in self.__processes:
-            process.start()
+        await asyncio.gather(*self.__processes)
 
     async def __sync_self_and_shared_self(self, _):
         """
@@ -220,7 +148,6 @@ class Brain:
         * Add this method in the async functions list only if a subprocess task is defined.
         """
         self_shared_reference = self.__shared_self.get_dict()
-
         # Iterate on each attribute of the self instance (there are the only ones that can be synchronized)
         for key, value in self_shared_reference.items():
             # Verify if the value is different between the instance and the shared data
@@ -241,16 +168,16 @@ class Brain:
 
     def get_tasks(self):
         # Evaluate all tasks and add them to the list of async functions or processes
-        for task, refresh_rate, subprocess, define_loop_later, start_loop_marker in self.tasks:
-            self.__evaluate_task(task, refresh_rate, subprocess, define_loop_later, start_loop_marker)
+        for task in self._tasks:
+            self.__evaluate_task(task)
 
-        # Add a one-shot task to start all processes if there are any
-        if any(is_process for _, _, is_process, _, _ in self.tasks):
+        # Add a one-shot task to start all processes and routine to synchronize self_shared and self
+        if any(task.is_process for task in self._tasks):
             self.__async_functions.append(
-                lambda: self.__async_wrap_to_one_shot(self.__start_subprocesses)
+                lambda: AsynchronousWrapper.wrap_to_one_shot(self, self.__start_subprocesses)
             )
             self.__async_functions.append(
-                lambda: self.__async_wrap_to_routine(self.__sync_self_and_shared_self, 0)
+                lambda: AsynchronousWrapper.wrap_to_routine(self, self.__sync_self_and_shared_self, 0)
             )
 
         return self.__async_functions

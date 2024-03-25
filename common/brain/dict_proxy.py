@@ -7,11 +7,12 @@ class DictProxyAccessor:
     Avoid dict["key"] notation by using dict.key notation
     """
 
-    def __init__(self) -> None:
+    def __init__(self, name="Undefined name") -> None:
         """
         Initialize the DictProxyAccessor by creating a DictProxy object
         """
         self._dict_proxy = Manager().dict()
+        self.name = name
 
     def __getattr__(self, key):
         """
@@ -54,3 +55,6 @@ class DictProxyAccessor:
         Return the DictProxy object
         """
         return dict(self._dict_proxy.items())
+
+    def __str__(self):
+        return self.name
