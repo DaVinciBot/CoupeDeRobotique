@@ -1,6 +1,6 @@
 from sensors.camera.frame import Frame
 from sensors.camera.detected_object import DetectedObject, Aruco, ColorObject
-from geometry import create_straight_rectangle,Point
+
 from sklearn.cluster import DBSCAN
 import numpy as np
 import cv2
@@ -89,11 +89,11 @@ class ColorRecognizer:
                 min_y, max_y = np.min(cluster_points[:, 0]), np.max(
                     cluster_points[:, 0]
                 )
-                bounding_box = create_straight_rectangle(Point(min_x, min_y), Point(max_x, max_y))
+                bounding_box = ((min_x, min_y), (max_x, max_y))
 
                 clusters_info.append(
                     {
-                        "centroid": Point(centroid[1], centroid[0]),
+                        "centroid": (centroid[1], centroid[0]),
                         "bounding_box": bounding_box,
                     }
                 )

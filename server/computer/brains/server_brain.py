@@ -5,6 +5,7 @@ from arena import MarsArena
 from WS_comms import WSmsg, WServerRouteManager
 from brain import Brain
 from config_loader import CONFIG
+from geometry import create_straight_rectangle,Point,Polygon
 
 # Import from local path
 from sensors import Camera, ArucoRecognizer, ColorRecognizer, PlanTransposer, Frame
@@ -16,7 +17,7 @@ class ServerBrain(Brain):
     """
     This brain is the main controller of the server.
     """
-
+    
     def __init__(
             self,
             logger: Logger,
@@ -34,10 +35,13 @@ class ServerBrain(Brain):
 
         super().__init__(logger, self)
 
+        
     """
         Routines
     """
-
+    def get_zone(self,bounding_box)->Polygon:
+        return create_straight_rectangle(Point(bounding_box[0][0],bounding_box[0][1]),Point(bounding_box[1][0],bounding_box[1][1]))
+        
     @Brain.task(process=True, refresh_rate=3, define_loop_later=True)
     def test_process_cutter(self):
         camera = Camera(
@@ -67,7 +71,7 @@ class ServerBrain(Brain):
         camera.undistor_image()
         zones_plant = color_recognizer.detect(camera.get_capture())
         # plant zone area be bigger than a certain area, exclude the one that are too small
-        zones_plant = [ zone  for zone in zones_plant if zone.bounding_box.area>CONFIG.CAMERA_PLANT_MIN_AREA]
+        zones_plant = [ zone  for zone in zones_plant if self.get_zone(zone.bounding_box).area>CONFIG.CAMERA_PLANT_MIN_AREA]
         if len(zones_plant)<6 : print("error in zone_plant detection")
         # calcultate aproximative center and exclude neareast cluster until there is 6 zones remaing
         elif len(zones_plant)>6:
@@ -114,14 +118,10 @@ class ServerBrain(Brain):
         frame.write_labels()
         camera.update_monitor(frame.img)
 
-
-    @Brain.task(process=True, refresh_rate=1)
-    def writer(self):
-        print("writer: ", self.shared)
-        self.shared += 1
-
     @Brain.task(refresh_rate=1)
     async def reader(self):
         print("reader: ", self.shared)
         print("arucos: ", self.arucos)
         print("green_objects: ", self.green_objects)
+        
+    
