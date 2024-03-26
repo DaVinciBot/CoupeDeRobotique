@@ -165,7 +165,8 @@ class RollingBasis(Teensy):
         for i in range(len(self.queue)):
             if self.queue[i].cmd.value == cmd_finished:
                 self.l.log(
-                    f"Removing actions up to {i} from queue : " + str(self.queue[:i]),
+                    f"Removing actions up to {i} from queue : "
+                    + str(self.queue[: i + 1]),
                     LogLevels.ERROR,
                 )
                 self.queue.delete_up_to(i)
