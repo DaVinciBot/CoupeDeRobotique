@@ -8,7 +8,7 @@ from WS_comms import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
 
 # Import from local path
 from sensors import Lidar
-from controllers import RollingBasis
+from controllers import RollingBasis, Actuators
 from brains import Robot1Brain
 
 if __name__ == "__main__":
@@ -44,6 +44,8 @@ if __name__ == "__main__":
     robot = RollingBasis(logger=logger)
     robot.set_home(0.0, 0.0, 0.0)
 
+    actuators = Actuators()
+
     # Lidar
     lidar = Lidar()
 
@@ -52,7 +54,7 @@ if __name__ == "__main__":
 
     # Brain
     brain = Robot1Brain(
-        actuators=None,
+        actuators=actuators,
         logger=logger,
         ws_cmd=ws_cmd,
         ws_log=ws_log,
