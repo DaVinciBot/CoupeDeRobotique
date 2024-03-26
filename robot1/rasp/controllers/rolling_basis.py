@@ -314,10 +314,6 @@ class RollingBasis(Teensy):
         ):
             await asyncio.sleep(0.2)
 
-        self.l.log(
-            f"Exited Go_To_And_Wait while loop at point: {self.odometrie}",
-            LogLevels.INFO,
-        )
         if Utils.get_ts() - start_time >= timeout:
             self.l.log(
                 "Reached timeout in Go_To_And_Wait, clearing queue", LogLevels.WARNING
@@ -325,10 +321,14 @@ class RollingBasis(Teensy):
             self.stop_and_clear_queue()
             return 1
         elif distance(Point(self.odometrie.x, self.odometrie.y), position) <= tolerance:
+            self.l.log(
+                f"Reached target in go_to_and_wait, at: {self.odometrie}",
+                LogLevels.INFO,
+            )
             return 0
         else:
             self.l.log(
-                "Unexpected: didn't timeout in Go_To_And_Wait but did not arrive, clearing queue",
+                f"Unexpected: didn't timeout in Go_To_And_Wait but did not arrive, clearing queue, at: {self.odometrie}",
                 LogLevels.ERROR,
             )
             self.stop_and_clear_queue()
