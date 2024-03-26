@@ -43,6 +43,7 @@ class TeensyException(Exception):
 class Teensy:
     def __init__(
         self,
+        logger: Logger,
         ser: int,
         vid: int = 0x16C0,
         pid: int = 0x0483,
@@ -77,23 +78,28 @@ class Teensy:
         :type dummy: bool, optional
         :raises TeensyException: _description_
         """
-        self._teensy = None
+        self._teensy = DummySerial()
         self.crc = crc
         self._crc8 = crc8.crc8()
         self.last_message = None
         self.end_bytes = b"\xBA\xDD\x1C\xC5"
-        self.l = Logger()
+        self.l = logger
 
         for port in serial.tools.list_ports.comports():
-            if port.vid == vid and port.pid == pid and int(port.serial_number) == ser:
+            if (
+                port.vid == vid
+                and port.pid == pid
+                and port.serial_number is not None
+                and int(port.serial_number) == ser
+            ):
                 self._teensy = serial.Serial(port.device, baudrate=baudrate)
                 break
         if self._teensy is None:
             if dummy:
                 self.l.log("Dummy mode")
-                self._teensy = DummySerial()
             else:
-                self.l.log("No Teensy found !",LogLevels.ERROR)
+                self.l.log("No Teensy found !", LogLevels.ERROR)
+                self.l.log("Dummy mode")
                 raise TeensyException("No Device !")
         self.messagetype = {}
         if not dummy:
@@ -188,7 +194,7 @@ class Teensy:
                 self._crc8.reset()
                 self._crc8.update(msg)
                 if self._crc8.digest() != crc:
-                    self.l.log("Invalid CRC8, sending NACK ... ", 1)
+                    self.l.log("Invalid CRC8, sending NACK ... ", LogLevels.WARNING)
                     self.send_bytes(b"\x7F")  # send NACK
                     self._crc8.reset()
                     continue
@@ -203,7 +209,7 @@ class Teensy:
                 self.l.log(
                     "Received Teensy message that does not match declared length "
                     + msg.hex(sep=" "),
-                    1,
+                    LogLevels.WARNING,
                 )
                 continue
             try:
@@ -216,5 +222,8 @@ class Teensy:
                 else:
                     self.messagetype[msg[0]](msg[1:-1])
             except Exception as e:
-                self.l.log("Received message handling crashed :\n" + str(e.args), 2)
+                self.l.log(
+                    "Received message handling crashed :\n" + str(e.args),
+                    LogLevels.ERROR,
+                )
                 time.sleep(0.5)

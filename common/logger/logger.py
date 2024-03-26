@@ -56,6 +56,8 @@ class Logger:
         :type level: int, optional
         """
         if level >= self.log_level:
+            # Evaluate the str value now to make sure no weird operators happen
+            message = str(message)
             date_str = Utils.get_str_date()
             message = f"{date_str} -> [{self.identifier}] {level.name} | {message}"
             if self.print_log:

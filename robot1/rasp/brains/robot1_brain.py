@@ -42,18 +42,17 @@ class Robot1Brain(Brain):
         Get controllers / sensors feedback (odometer / lidar + extern (camera))
     """
 
-    async def ACS_by_distances(self):
+    def ACS_by_distances(self):
         if self.arena.check_collision_by_distances(
             self.lidar_values_in_distances, self.odometer
         ):
-            self.rolling_basis.Stop_and_clear_queue()
-            # It is the currently runing action's responsibility to detect the stop
+            self.rolling_basis.stop_and_clear_queue()
+            # It is the currently running action's responsibility to detect the stop if it needs to
 
     @Brain.task(refresh_rate=0.5)
-    async def lidar_scan_distance(self):
+    async def lidar_scan_distances(self):
         # Warning, currently hard-coded for 3 values/degree
         self.lidar_values_in_distances = self.lidar.scan_distances(
-            robot_pos=self.rolling_basis.odometrie,
             start_angle=self.lidar_angles[0],
             end_angle=self.lidar_angles[1],
         )
@@ -110,24 +109,23 @@ class Robot1Brain(Brain):
 
             # Handle it (implemented only for Go_To and Keep_Current_Position)
             if cmd.msg == "Go_To":
-                self.rolling_basis.queue = []
-                self.rolling_basis.Go_To(
+                self.rolling_basis.stop_and_clear_queue()
+                self.rolling_basis.go_to(
                     OrientedPoint(cmd.data[0], cmd.data[1], cmd.data[2]),
                     skip_queue=True,
                 )
             elif cmd.msg == "Keep_Current_Position":
-                self.rolling_basis.queue = []
-                self.rolling_basis.Keep_Current_Position()
+                self.rolling_basis.stop_and_clear_queue()
             else:
                 self.logger.log(
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
-                    LogLevels.WARNING,
+                    LogLevels.ERROR,
                 )
 
     @Brain.task()
     async def go_to_and_wait_test(self):
         await asyncio.sleep(1)
-        result = await self.rolling_basis.Go_To_And_Wait(
+        result = await self.rolling_basis.go_to_and_wait(
             Point(50, 50), tolerance=5, timeout=20
         )
 
