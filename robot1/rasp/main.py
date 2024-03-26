@@ -25,7 +25,7 @@ if __name__ == "__main__":
     )
 
     # Websocket server
-    ws_client = WSclient(CONFIG.WS_SERVER_IP, CONFIG.WS_PORT)
+    ws_client = WSclient(CONFIG.WS_SERVER_IP, CONFIG.WS_PORT, logger)
     ws_cmd = WSclientRouteManager(
         WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
     )

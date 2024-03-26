@@ -37,21 +37,23 @@ class ServerBrain(Brain):
         super().__init__(logger, self)
 
     """
-        Routines
+        Tasks
     """
 
-    @Brain.task(process=True, run_on_start=True, timeout=10, define_loop_later=True, refresh_rate=1)
-    def test(self):
-        local_var = 0
-
-        # ---Loop--- #
-        print("test, BEFORE: ", local_var)
-        local_var += 1
-        print("test, AFTER: ", local_var)
-
-    @Brain.task(process=False, run_on_start=True)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
     async def main(self):
-        print("Main start")
-        #print("OUTPUT:", await self.test())
-        #print("OUTPUT:", await self.test())
-        print("Main end", self.shared)
+        cmd_state = await self.ws_cmd.receiver.get()
+        # New cmd received !
+        if cmd_state != WSmsg():
+            print(f"New cmd received ! [{cmd_state}]")
+            if self.ws_cmd.get_client("robot1") is not None:
+                result = await self.ws_cmd.sender.send(
+                    WSmsg(
+                        sender="server",
+                        msg=cmd_state.msg,
+                        data=cmd_state.data
+                    ),
+                    clients=self.ws_cmd.get_client("robot1")
+                )
+                print("Result of sending cmd to robot1:", result)
+
