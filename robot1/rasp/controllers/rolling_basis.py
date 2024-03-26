@@ -157,10 +157,10 @@ class RollingBasis(Teensy):
         )
 
     def rcv_action_finish(self, cmd_finished: bytes):
-        self.l.log("Action finished : " + cmd_finished.hex())
+        self.l.log("Action finished : " + cmd_finished.hex(), LogLevels.INFO)
         if not self.queue or len(self.queue) == 0:
             self.l.log(
-                "Received action_finished but no action in queue", LogLevels.WARNING
+                "Received action_finish but no action in queue", LogLevels.WARNING
             )
             return
         # remove actions up to the one that just finished
