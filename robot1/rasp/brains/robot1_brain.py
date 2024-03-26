@@ -62,7 +62,7 @@ class Robot1Brain(Brain):
         else:
             self.logger.log("ACS not triggered", LogLevels.DEBUG)
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=False, refresh_rate=0.5)
     async def lidar_scan_distances(self):
         # Warning, currently hard-coded for 3 values/degree
         self.lidar_values_in_distances = self.lidar.scan_distances(
