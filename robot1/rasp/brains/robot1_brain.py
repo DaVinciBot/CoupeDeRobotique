@@ -127,12 +127,12 @@ class Robot1Brain(Brain):
     @Brain.task(process=False, run_on_start=False, timeout=70)
     async def plant_stage(self):
 
-        async def go_best_zone(plant_zones: list[Plants_zone]):
+        async def go_best_zone(plant_zones: list[Plants_zone], delta=0):
             destination_point = None
             destination_plant_zone = None
             for plant_zone in plant_zones:
                 point = self.arena.compute_go_to_destination(
-                    start_point=self.odometer, zone=plant_zone
+                    start_point=self.odometer, zone=plant_zone, delta=delta
                 )
                 if self.arena.enable_go_to(point):
                     destination_point = point
