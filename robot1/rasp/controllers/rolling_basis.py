@@ -316,7 +316,8 @@ class RollingBasis(Teensy):
 
         if Utils.get_ts() - start_time >= timeout:
             self.l.log(
-                "Reached timeout in Go_To_And_Wait, clearing queue", LogLevels.WARNING
+                f"Reached timeout in Go_To_And_Wait, clearing queue, at: {self.odometrie}",
+                LogLevels.WARNING,
             )
             self.stop_and_clear_queue()
             return 1
