@@ -105,7 +105,7 @@ class ServerBrain(Brain):
         print("arucos: ", self.arucos)
         print("green_objects: ", self.green_objects)
 
-    @Brain.task(refresh_rate=1, run_on_start=True, process=False)
+    @Brain.task(refresh_rate=1, run_on_start=False, process=False, timeout=10)
     async def main(self):
         print(f"ServerBrain: {await self.ws_log.receiver.get()} / {self.shared}")
         self.shared += 1
