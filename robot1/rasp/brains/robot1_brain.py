@@ -129,6 +129,22 @@ class Robot1Brain(Brain):
         elif result == 2:
             self.logger.log("Error moving: didn't reach destination")
 
+    def open_god_hand(self):
+        for pin in CONFIG.GOD_HAND_GRAB_SERVO_PINS_LEFT:
+            self.actuators.update_servo(pin, CONFIG.GOD_HAND_GRAB_SERVO_OPEN_ANGLE)
+        for pin in CONFIG.GOD_HAND_GRAB_SERVO_PINS_RIGHT:
+            self.actuators.update_servo(pin, CONFIG.GOD_HAND_GRAB_SERVO_OPEN_ANGLE)
+
+    def close_god_hand(self):
+        for pin in CONFIG.GOD_HAND_GRAB_SERVO_PINS_LEFT:
+            self.actuators.update_servo(
+                pin, CONFIG.GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_LEFT
+            )
+        for pin in CONFIG.GOD_HAND_GRAB_SERVO_PINS_RIGHT:
+            self.actuators.update_servo(
+                pin, CONFIG.GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_RIGHT
+            )
+
     @Brain.task(process=False, run_on_start=False, timeout=70)
     async def plant_stage(self):
 
@@ -154,14 +170,12 @@ class Robot1Brain(Brain):
             return False, destination_plant_zone
 
         is_arrived: bool = False
-        for pin in CONFIG.GODS_HAND_SERVO_PINS:
-            self.actuators.update_servo(pin, CONFIG.GOD_HAND_SERVO_OPEN_ANGLE)
+        self.open_god_hand()
         while not is_arrived:
             plant_zones = self.arena.sort_pickup_zone(self.odometer)
             is_arrived, destination_plant_zone = await go_best_zone(plant_zones)
             if is_arrived:
-                for pin in CONFIG.GODS_HAND_SERVO_PINS:
-                    self.actuators.update_servo(pin, CONFIG.GOD_HAND_SERVO_CLOSE_ANGLE)
+                self.close_god_hand()
                 destination_plant_zone.take_plant(5)
 
         is_arrived: bool = False
@@ -169,8 +183,7 @@ class Robot1Brain(Brain):
             plant_zones = self.arena.sort_drop_zone(self.odometer)
             is_arrived, destination_plant_zone = await go_best_zone(plant_zones)
             if is_arrived:
-                for pin in CONFIG.GODS_HAND_SERVO_PINS:
-                    self.actuators.update_servo(pin, CONFIG.GOD_HAND_SERVO_OPEN_ANGLE)
+                self.open_god_hand()
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def zombie_mode(self):

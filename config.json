@@ -53,10 +53,12 @@
       "server_ip": "192.168.0.104"
     },
     "actuators": {
-      "servo_pins": [],
-      "god_hand_servo_pins" : [2,3,4,5],
-      "god_hand_servo_open_angle" : 80,
-      "god_hand_servo_close_angle" : 50
+      "god_hand_grab_servo_pins_left" : [2,3],
+      "god_hand_grab_servo_pins_right" : [4,5],
+      "god_hand_deployment_servo_pin" : 6,
+      "god_hand_grab_servo_open_angle" : 90,
+      "god_hand_grab_servo_close_angle_left" : 22,
+      "god_hand_grab_servo_close_angle_right" : -22
     }
   }
 }

@@ -1,5 +1,6 @@
 from config_loader import CONFIG
-from logger import Logger
+from logger import Logger, LogLevels
+
 # Import from common
 from teensy_comms import Teensy
 
@@ -8,18 +9,22 @@ import struct
 
 class Actuators(Teensy):
     name = "actuators"
+
     def __init__(
         self,
-        ser=12678600, # T1
+        logger: Logger,
+        ser=12678600,  # T1
         vid: int = 5824,
         pid: int = 1155,
         baudrate: int = 115200,
         crc: bool = True,
-        pin_servos: list[int] = CONFIG.SERVO_PINS,
-        
+        pin_servos_left: list[int] = CONFIG.GOD_HAND_GRAB_SERVO_PINS_LEFT,
+        pin_servos_right: list[int] = CONFIG.GOD_HAND_GRAB_SERVO_PINS_RIGHT,
+        pin_deployment: int = CONFIG.GOD_HAND_DEPLOYMENT_SERVO_PIN,
     ):
-        super().__init__(ser,vid, pid, baudrate, crc)
-        self.pin_servos = pin_servos
+        super().__init__(logger, ser, vid, pid, baudrate, crc)
+        self.pin_servos_left = pin_servos_left
+        self.pin_servos_right = pin_servos_right
 
     class Command:  # values must correspond to the one defined on the teensy
         ServoGoTo = b"\x01"
@@ -44,6 +49,7 @@ class Actuators(Teensy):
             # https://docs.python.org/3/library/struct.html#format-characters
             self.send_bytes(msg)
         else:
-            print(
-                f"you tried to write {angle}° on pin {pin} wheras angle must be between {min_angle} and {max_angle}°"
+            self.l.log(
+                f"you tried to write {angle}° on pin {pin} whereas angle must be between {min_angle} and {max_angle}°",
+                LogLevels.ERROR,
             )

@@ -50,7 +50,13 @@ class CONFIG:
 
     ## Actuators
     ACTUATORS_CONFIG = SPECIFIC_CONFIG["actuators"]
-    SERVO_PINS = ACTUATORS_CONFIG["servo_pins"]
-    GODS_HAND_SERVO_PINS = ACTUATORS_CONFIG["god_hand_servo_pins"]
-    GOD_HAND_SERVO_OPEN_ANGLE = ACTUATORS_CONFIG["god_hand_servo_open_angle"]
-    GOD_HAND_SERVO_CLOSE_ANGLE = ACTUATORS_CONFIG["god_hand_servo_close_angle"]
+    GOD_HAND_GRAB_SERVO_PINS_LEFT = ACTUATORS_CONFIG["god_hand_grab_servo_pins_left"]
+    GOD_HAND_GRAB_SERVO_PINS_RIGHT = ACTUATORS_CONFIG["god_hand_grab_servo_pins_right"]
+    GOD_HAND_DEPLOYMENT_SERVO_PIN = ACTUATORS_CONFIG["god_hand_deployment_servo_pin"]
+    GOD_HAND_GRAB_SERVO_OPEN_ANGLE = ACTUATORS_CONFIG["god_hand_grab_servo_open_angle"]
+    GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_LEFT = ACTUATORS_CONFIG[
+        "god_hand_grab_servo_close_angle_left"
+    ]
+    GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_RIGHT = ACTUATORS_CONFIG[
+        "god_hand_grab_servo_close_angle_right"
+    ]
