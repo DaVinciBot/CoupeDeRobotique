@@ -41,7 +41,7 @@ class Robot1Brain(Brain):
         Get controllers / sensors feedback (odometer / lidar + extern (camera))
     """
 
-    async def ACS_by_distances(self):
+    def ACS_by_distances(self):
         if self.arena.check_collision_by_distances(
             self.lidar_values_in_distances, self.odometer
         ):
