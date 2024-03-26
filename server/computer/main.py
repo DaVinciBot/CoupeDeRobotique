@@ -43,6 +43,7 @@ if __name__ == "__main__":
     ws_server.add_route_handler(CONFIG.WS_CAMERA_ROUTE, ws_camera)
 
     # Camera
+    """
     camera = Camera(
         res_w=CONFIG.CAMERA_RESOLUTION[0],
         res_h=CONFIG.CAMERA_RESOLUTION[1],
@@ -51,6 +52,7 @@ if __name__ == "__main__":
     )
 
     aruco_recognizer = ArucoRecognizer(aruco_type=CONFIG.CAMERA_ARUCO_DICT_TYPE)
+    
 
     color_recognizer = ColorRecognizer(
         detection_range=CONFIG.CAMERA_COLOR_FILTER_RANGE,
@@ -65,7 +67,7 @@ if __name__ == "__main__":
         beta=CONFIG.CAMERA_CAM_OBJ_FUNCTION_B,
     )
     camera.load_undistor_coefficients()
-
+    """
     # Arena
     #arena = MarsArena(1)
 
@@ -77,10 +79,7 @@ if __name__ == "__main__":
         ws_lidar=ws_lidar,
         ws_odometer=ws_odometer,
         ws_camera=ws_camera,
-        camera=camera,
-        aruco_recognizer=aruco_recognizer,
-        color_recognizer=color_recognizer,
-        plan_transposer=plan_transposer,
+        config=CONFIG,
         #arena=arena,
     )
 

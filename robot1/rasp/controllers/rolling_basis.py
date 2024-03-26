@@ -359,6 +359,7 @@ class RollingBasis(Teensy):
 
     def Set_PID(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
         msg = self.Command.SetPID + struct.pack("<fff", Kp, Ki, Kd)
+        msg = self.Command.SetPID + struct.pack("<fff", Kp, Ki, Kd)
         if skip_queue or len(self.queue) == 0:
             self.queue.insert(0, {self.Command.SetPID: msg})
             self.send_bytes(msg)
