@@ -13,6 +13,7 @@ from controllers import RollingBasis, Actuators
 import asyncio
 from geometry import Polygon
 from config_loader import CONFIG
+import time
 
 
 class Robot1Brain(Brain):
@@ -142,12 +143,14 @@ class Robot1Brain(Brain):
                 CONFIG.GOD_HAND_GRAB_SERVO_OPEN_ANGLE
                 + CONFIG.GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_DIFF_LEFT,
             )
+            time.sleep(1)
         for pin in CONFIG.GOD_HAND_GRAB_SERVO_PINS_RIGHT:
             self.actuators.update_servo(
                 pin,
                 CONFIG.GOD_HAND_GRAB_SERVO_OPEN_ANGLE
                 + CONFIG.GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_DIFF_RIGHT,
             )
+            time.sleep(1)
 
     @Brain.task(process=False, run_on_start=False, timeout=70)
     async def plant_stage(self):
