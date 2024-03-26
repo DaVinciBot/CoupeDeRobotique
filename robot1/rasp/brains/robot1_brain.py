@@ -104,7 +104,10 @@ class Robot1Brain(Brain):
     async def send_odometer_to_server(self):
         if self.odometer is not None:
             await self.ws_odometer.sender.send(
-                WSmsg(msg="odometer", data=self.odometer)  # To check
+                WSmsg(
+                    msg="odometer",
+                    data=[self.odometer.x, self.odometer.y, self.odometer.theta],
+                )
             )
 
     @Brain.task(process=False, run_on_start=False)
