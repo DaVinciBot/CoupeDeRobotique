@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     # Robot
     robot = RollingBasis(logger=logger)
-    robot.Set_Home(0.0, 0.0, 0.0)
+    robot.set_home(0.0, 0.0, 0.0)
 
     # Lidar
     lidar = Lidar()

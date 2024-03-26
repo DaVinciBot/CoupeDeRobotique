@@ -116,7 +116,7 @@ class RollingBasis(Teensy):
             128: self.rcv_odometrie,  # \x80
             129: self.rcv_action_finish,  # \x81
             130: self.rcv_print,  # \x82
-            255: self.unknown_msg,
+            255: self.rcv_unknown_msg,
         }
 
         self.queue = RB_Queue(self.l)
@@ -174,7 +174,7 @@ class RollingBasis(Teensy):
             self.l.log("Sending next action in queue")
             self.send_bytes(self.queue[0].msg)
 
-    def unknown_msg(self, msg: bytes):
+    def rcv_unknown_msg(self, msg: bytes):
         self.l.log(f"Teensy does not know the command {msg.hex()}", LogLevels.WARNING)
 
     def append_to_queue(self, instruction: Instruction) -> int:
@@ -188,15 +188,14 @@ class RollingBasis(Teensy):
     def insert_in_queue(
         self, index: int, instruction: Instruction, force_send: bool = False
     ) -> None:
-        """Should only take non tracked instructions"""
+        """Should only take non tracked instructions. To use carefully, adding an action in front of an unfinished one may trigger the unfinished one again afterwards."""
         self.queue._insert(index, instruction)
 
         if len(self.queue) == 1 or force_send:
             self.send_bytes(self.queue[0].msg)
 
-    # TODO: nommage avec majuscule a revoir -> il faut en full minisucule
     @Logger
-    def Go_To(
+    def go_to(
         self,
         position: Point,
         *,  # force keyword arguments
@@ -250,7 +249,7 @@ class RollingBasis(Teensy):
         return self.append_to_queue(Instruction(Command.GO_TO_POINT, msg))
 
     @Logger
-    async def Go_To_And_Wait(
+    async def go_to_and_wait(
         self,
         position: Point,
         *,  # force keyword arguments
@@ -290,7 +289,7 @@ class RollingBasis(Teensy):
         """
 
         start_time = Utils.get_ts()
-        queue_id = self.Go_To(
+        queue_id = self.go_to(
             position,
             skip_queue=skip_queue,
             is_forward=is_forward,
@@ -319,7 +318,7 @@ class RollingBasis(Teensy):
             self.l.log(
                 "Reached timeout in Go_To_And_Wait, clearing queue", LogLevels.WARNING
             )
-            self.Stop_and_clear_queue()
+            self.stop_and_clear_queue()
             return 1
         elif (
             distance(
@@ -333,7 +332,7 @@ class RollingBasis(Teensy):
                 "Unexpected: didn't timeout in Go_To_And_Wait but did not arrive, clearing queue",
                 LogLevels.ERROR,
             )
-            self.Stop_and_clear_queue()
+            self.stop_and_clear_queue()
             return 2
 
     @Logger
@@ -393,7 +392,7 @@ class RollingBasis(Teensy):
 
     # TODO: grosse redondance sur le skip queue, utile de mettre en place un decorateur pour faire ça automatiquement ?
     @Logger
-    def Keep_Current_Position(self, skip_queue=False):
+    def keep_current_pos(self, skip_queue=False):
         msg = Command.KEEP_CURRENT_POSITION.value
         if skip_queue:
             self.insert_in_queue(
@@ -403,16 +402,16 @@ class RollingBasis(Teensy):
             self.append_to_queue(Instruction(Command.KEEP_CURRENT_POSITION, msg))
 
     @Logger
-    def Clear_Queue(self):
+    def clear_queue(self):
         self.queue.clear()
 
     @Logger
-    def Stop_and_clear_queue(self):
-        self.Clear_Queue()
-        self.Keep_Current_Position(True)
+    def stop_and_clear_queue(self):
+        self.clear_queue()
+        self.keep_current_pos(True)
 
     @Logger
-    def Disable_Pid(self, skip_queue=False):
+    def disable_pid(self, skip_queue=False):
         msg = Command.DISABLE_PID.value
         if skip_queue:
             self.insert_in_queue(0, Instruction(Command.DISABLE_PID, msg), True)
@@ -420,7 +419,7 @@ class RollingBasis(Teensy):
             self.queue._append(Instruction(Command.DISABLE_PID, msg))
 
     @Logger
-    def Enable_Pid(self, skip_queue=False):
+    def enable_pid(self, skip_queue=False):
         msg = Command.ENABLE_PID.value
         if skip_queue:
             self.insert_in_queue(0, Instruction(Command.ENABLE_PID, msg), True)
@@ -428,21 +427,21 @@ class RollingBasis(Teensy):
             self.append_to_queue(Instruction(Command.ENABLE_PID, msg))
 
     @Logger
-    def Reset_Odo(self, skip_queue=False):
+    def reset_odo(self, skip_queue=False):
         msg = Command.RESET_POSITION.value
         if skip_queue:
             self.insert_in_queue(0, Instruction(Command.RESET_POSITION, msg), True)
         else:
             self.append_to_queue(Instruction(Command.RESET_POSITION, msg))
 
-    def Set_Home(self, x, y, theta, *, skip_queue=False):
+    def set_home(self, x, y, theta, *, skip_queue=False):
         msg = Command.SET_HOME.value + struct.pack("<fff", x, y, theta)
         if skip_queue:
             self.insert_in_queue(0, Instruction(Command.SET_HOME, msg), True)
         else:
             self.append_to_queue(Instruction(Command.SET_HOME, msg))
 
-    def Set_PID(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
+    def set_pid(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
         msg = Command.SET_PID.value + struct.pack("<fff", Kp, Ki, Kd)
         if skip_queue:
             self.insert_in_queue(0, Instruction(Command.SET_PID, msg), True)
