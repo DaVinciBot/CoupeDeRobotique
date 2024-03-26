@@ -177,7 +177,7 @@ class Robot1Brain(Brain):
 
             # Handle it (implemented only for Go_To and Keep_Current_Position)
             if cmd.msg == "Go_To":
-                self.rolling_basis.queue = []
+                self.rolling_basis.clear_queue()
                 self.rolling_basis.go_to(
                     position=Point(cmd.data[0], cmd.data[1]),
                     max_speed=cmd.data[2],
@@ -189,7 +189,6 @@ class Robot1Brain(Brain):
                     acceleration_distance=cmd.data[8],
                     deceleration_end_speed=cmd.data[9],
                     deceleration_distance=cmd.data[10],
-                    skip_queue=True,
                 )
             elif cmd.msg == "Keep_Current_Position":
                 self.rolling_basis.clear_queue()
