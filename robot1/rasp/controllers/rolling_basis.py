@@ -11,6 +11,7 @@ import math
 import asyncio
 from enum import Enum
 from dataclasses import dataclass
+import time
 
 
 class Command(Enum):
@@ -69,11 +70,12 @@ class RB_Queue:
         self.__queue.clear()
 
     def delete_up_to(self, __index: int) -> None:
-        if self.__is_tracked_command_at_index(__index):
-            self.last_deleted_id += 1
-        del self.__queue[__index]
+        for i in range(__index + 1):
+            if self.__is_tracked_command_at_index(0):
+                self.last_deleted_id += 1
+            del self.__queue[0]
 
-    def _insert(self, __index: int, __object: Instruction) -> None:
+    def insert(self, __index: int, __object: Instruction) -> None:
         """Cannot insert tracked elements to keep things simple"""
         assert not RB_Queue.__is_tracked_command(
             __object.cmd
@@ -97,7 +99,7 @@ class RollingBasis(Teensy):
     def __init__(
         self,
         logger: Logger,
-        ser=12678590,
+        ser=12675800,
         vid: int = 5824,
         pid: int = 1155,
         baudrate: int = 115200,
@@ -159,11 +161,12 @@ class RollingBasis(Teensy):
                 "Received action_finished but no action in queue", LogLevels.WARNING
             )
             return
-        # remove the action that just finished
+        # remove actions up to the one that just finished
         for i in range(len(self.queue)):
-            if self.queue[i].cmd == cmd_finished:
+            if self.queue[i].cmd.value == cmd_finished:
                 self.l.log(
-                    f"Removing actions up to {i} from queue : " + str(self.queue[:i])
+                    f"Removing actions up to {i} from queue : " + str(self.queue[:i]),
+                    LogLevels.ERROR,
                 )
                 self.queue.delete_up_to(i)
                 break
@@ -189,7 +192,7 @@ class RollingBasis(Teensy):
         self, index: int, instruction: Instruction, force_send: bool = False
     ) -> None:
         """Should only take non tracked instructions. To use carefully, adding an action in front of an unfinished one may trigger the unfinished one again afterwards."""
-        self.queue._insert(index, instruction)
+        self.queue.insert(index, instruction)
 
         if len(self.queue) == 1 or force_send:
             self.send_bytes(self.queue[0].msg)
@@ -384,11 +387,11 @@ class RollingBasis(Teensy):
         )
         if skip_queue or len(self.queue) == 0:
             self.l.log("Skipping Queue ...")
-            self.queue._insert(0, Instruction(Command.CURVE_GO_TO, curve_msg))
+            self.queue.insert(0, Instruction(Command.CURVE_GO_TO, curve_msg))
             self.l.log(str(self.queue))
             self.send_bytes(curve_msg)
         else:
-            self.queue._append(Instruction(Command.CURVE_GO_TO, curve_msg))
+            self.queue.append(Instruction(Command.CURVE_GO_TO, curve_msg))
 
     # TODO: grosse redondance sur le skip queue, utile de mettre en place un decorateur pour faire ça automatiquement ?
     @Logger
@@ -441,11 +444,9 @@ class RollingBasis(Teensy):
         else:
             self.append_to_queue(Instruction(Command.SET_HOME, msg))
 
-    def Set_PID(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
-        msg = self.Command.SetPID + struct.pack("<fff", Kp, Ki, Kd)
-        msg = self.Command.SetPID + struct.pack("<fff", Kp, Ki, Kd)
-        if skip_queue or len(self.queue) == 0:
-            self.queue.insert(0, {self.Command.SetPID: msg})
-            self.send_bytes(msg)
+    def set_pid(self, Kp: float, Ki: float, Kd: float, skip_queue=False):
+        msg = Command.SET_PID.value + struct.pack("<fff", Kp, Ki, Kd)
+        if skip_queue:
+            self.queue.insert_in_queue(0, {Command.SET_PID: msg}, True)
         else:
             self.append_to_queue(Instruction(Command.SET_PID, msg))
