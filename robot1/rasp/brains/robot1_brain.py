@@ -57,7 +57,7 @@ class Robot1Brain(Brain):
             self.rolling_basis.stop_and_clear_queue()
             # It is the currently running action's responsibility to detect the stop if it needs to
 
-    @Brain.task(refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def lidar_scan_distances(self):
         # Warning, currently hard-coded for 3 values/degree
         self.lidar_values_in_distances = self.lidar.scan_distances(
@@ -75,7 +75,7 @@ class Robot1Brain(Brain):
 
     #     self.lidar_scan = [[p.x, p.y] for p in scan]
 
-    @Brain.task(refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def odometer_update(self):
         self.odometer = OrientedPoint(
             self.rolling_basis.odometrie.x,
@@ -83,7 +83,7 @@ class Robot1Brain(Brain):
             self.rolling_basis.odometrie.theta,
         )
 
-    @Brain.task(refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def get_camera(self):
         msg = await self.ws_camera.receiver.get()
         if msg != WSmsg():
@@ -100,37 +100,14 @@ class Robot1Brain(Brain):
     #             WSmsg(msg="lidar_scan", data=self.lidar_scan)
     #         )
 
-    @Brain.task(refresh_rate=1)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def send_odometer_to_server(self):
         if self.odometer is not None:
             await self.ws_odometer.sender.send(
                 WSmsg(msg="odometer", data=self.odometer)  # To check
             )
 
-    @Brain.task(refresh_rate=0.1)
-    async def main(self):
-        # Check cmd
-        cmd = await self.ws_cmd.receiver.get()
-
-        if cmd != WSmsg():
-            self.logger.log(f"New cmd received: {cmd}", LogLevels.INFO)
-
-            # Handle it (implemented only for Go_To and Keep_Current_Position)
-            if cmd.msg == "Go_To":
-                self.rolling_basis.stop_and_clear_queue()
-                self.rolling_basis.go_to(
-                    OrientedPoint(cmd.data[0], cmd.data[1], cmd.data[2]),
-                    skip_queue=True,
-                )
-            elif cmd.msg == "Keep_Current_Position":
-                self.rolling_basis.stop_and_clear_queue()
-            else:
-                self.logger.log(
-                    f"Command not implemented: {cmd.msg} / {cmd.data}",
-                    LogLevels.ERROR,
-                )
-
-    @Brain.task()
+    @Brain.task(process=False, run_on_start=False)
     async def go_to_and_wait_test(self):
         await asyncio.sleep(1)
         result = await self.rolling_basis.go_to_and_wait(
@@ -187,8 +164,8 @@ class Robot1Brain(Brain):
                 for pin in CONFIG.GODS_HAND_SERVO_PINS:
                     self.actuators.update_servo(pin, CONFIG.GOD_HAND_SERVO_OPEN_ANGLE)
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
-    async def main(self):
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
+    async def zombie_mode(self):
         # Check cmd
         cmd = await self.ws_cmd.receiver.get()
 

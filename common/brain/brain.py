@@ -61,9 +61,9 @@ class Brain:
         for name, value in vars(self).items():
             # Get only public attributes
             if (
-                    not name.startswith("__")
-                    and not name.startswith("_")
-                    and name != "self"
+                not name.startswith("__")
+                and not name.startswith("_")
+                and name != "self"
             ):
                 # Try to serialize the attribute
                 try:
@@ -71,7 +71,7 @@ class Brain:
                 except Exception as error:
                     self.logger.log(
                         f"Brain [{self}]-[dynamic_init] cannot serialize attribute [{name}]. ({error})",
-                        LogLevels.WARNING
+                        LogLevels.WARNING,
                     )
 
     """
@@ -87,18 +87,19 @@ class Brain:
     """
 
     @classmethod
-    def task(cls,
-             # Force to define parameter by using param=... synthax
-             *,
-             # Force user to define there params
-             process: bool,
-             run_on_start: bool,
-             # Params with default value
-             refresh_rate: float or int = -1,
-             timeout: int = -1,
-             define_loop_later: bool = False,
-             start_loop_marker="# ---Loop--- #"
-             ):
+    def task(
+        cls,
+        # Force to define parameter by using param=... synthax
+        *,
+        # Force user to define there params
+        process: bool,
+        run_on_start: bool,
+        # Params with default value
+        refresh_rate: float or int = -1,
+        timeout: int = -1,
+        define_loop_later: bool = False,
+        start_loop_marker="# ---Loop--- #",
+    ):
         """
         Decorator to add a task function to the brain. There are 3 cases:
         - If the task has a refresh rate, it becomes a 'routine' (perpetual task)
@@ -107,12 +108,20 @@ class Brain:
         or a 'one-shot' task (depending on the refresh rate)
         """
 
-        def decorator(func: Callable[[TBrain], None]):
+        def decorator(func):
             if not hasattr(cls, "_tasks"):
                 cls._tasks = []
 
             cls._tasks.append(
-                Task(func, process, run_on_start, refresh_rate, timeout, define_loop_later, start_loop_marker)
+                Task(
+                    func,
+                    process,
+                    run_on_start,
+                    refresh_rate,
+                    timeout,
+                    define_loop_later,
+                    start_loop_marker,
+                )
             )
             return func
 
@@ -124,17 +133,22 @@ class Brain:
 
     def __evaluate_task(self, task: Task):
         if task.run_to_start:
-            evaluated_task = task.evaluate(brain_executor=self, shared_brain_executor=self.shared_self)
+            evaluated_task = task.evaluate(
+                brain_executor=self, shared_brain_executor=self.shared_self
+            )
             if task.is_process:
                 self.__processes.append(evaluated_task)
             else:
                 self.__async_functions.append(lambda: evaluated_task)
         else:
-            async def coroutine_executor():
-                evaluated_task = task.evaluate(brain_executor=self, shared_brain_executor=self.shared_self)
-                return await evaluated_task
-            setattr(self, task.name, coroutine_executor)
 
+            async def coroutine_executor():
+                evaluated_task = task.evaluate(
+                    brain_executor=self, shared_brain_executor=self.shared_self
+                )
+                return await evaluated_task
+
+            setattr(self, task.name, coroutine_executor)
 
     """
         Background routines enabling the subprocesses to operate
@@ -160,7 +174,9 @@ class Brain:
                 if value != getattr(self.__shared_self, key):
                     # If the value is the instance one, update the shared data
                     setattr(self.__shared_self, key, getattr(self, key))
-                    self_shared_reference[key] = getattr(self, key)  # Update also the reference
+                    self_shared_reference[key] = getattr(
+                        self, key
+                    )  # Update also the reference
                 else:
                     # If the value is the shared data one, update the instance
                     setattr(self, key, getattr(self.__shared_self, key))
@@ -178,10 +194,14 @@ class Brain:
             # Add a one-shot task to start all processes and routine to synchronize self_shared and self
             if any(task.is_process for task in self._tasks):
                 self.__async_functions.append(
-                    lambda: AsynchronousWrapper.wrap_to_one_shot(self, self.__start_subprocesses)
+                    lambda: AsynchronousWrapper.wrap_to_one_shot(
+                        self, self.__start_subprocesses
+                    )
                 )
                 self.__async_functions.append(
-                    lambda: AsynchronousWrapper.wrap_to_routine(self, self.__sync_self_and_shared_self, 0)
+                    lambda: AsynchronousWrapper.wrap_to_routine(
+                        self, self.__sync_self_and_shared_self, 0
+                    )
                 )
 
         return self.__async_functions
