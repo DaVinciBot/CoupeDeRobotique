@@ -200,7 +200,11 @@ class Robot1Brain(Brain):
                     Kp=cmd.data[0], Ki=cmd.data[1], Kd=cmd.data[2]
                 )
             elif cmd.msg == "go_to_and_wait":
-                await self.rolling_basis.go_to_and_wait(position=Point(-40.0, 0.0))
+                await self.rolling_basis.go_to_and_wait(
+                    position=Point(cmd.data[0], cmd.data[1]),
+                    timeout=cmd.data[2],
+                    tolerance=cmd.data[3],
+                )
             elif cmd.msg == "eval":
                 eval(cmd.data[0])
             elif cmd.msg == "await_eval":
