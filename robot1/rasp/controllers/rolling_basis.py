@@ -145,7 +145,9 @@ class RollingBasis(Teensy):
     # Received message handling #
     #############################
     def rcv_print(self, msg: bytes):
-        self.l.log("Teensy says : " + msg.decode("ascii", errors="ignore"))
+        self.l.log(
+            "Teensy says : " + msg.decode("ascii", errors="ignore"), LogLevels.INFO
+        )
 
     def rcv_odometrie(self, msg: bytes):
         self.odometrie = OrientedPoint(
@@ -167,7 +169,7 @@ class RollingBasis(Teensy):
                 self.l.log(
                     f"Removing actions up to {i} from queue : "
                     + str(self.queue[: i + 1]),
-                    LogLevels.ERROR,
+                    LogLevels.INFO,
                 )
                 self.queue.delete_up_to(i)
                 break

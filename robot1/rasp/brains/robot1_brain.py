@@ -199,8 +199,12 @@ class Robot1Brain(Brain):
                 self.rolling_basis.set_pid(
                     Kp=cmd.data[0], Ki=cmd.data[1], Kd=cmd.data[2]
                 )
+            elif cmd.msg == "go_to_and_wait":
+                await self.rolling_basis.go_to_and_wait(position=Point(-40.0, 0.0))
             elif cmd.msg == "eval":
                 eval(cmd.data[0])
+            elif cmd.msg == "await_eval":
+                await eval(cmd.data[0])
             else:
                 self.logger.log(
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
