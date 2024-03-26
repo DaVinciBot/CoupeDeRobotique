@@ -46,13 +46,12 @@ class Robot1Brain(Brain):
             self.lidar_values_in_distances, self.odometer
         ):
             self.rolling_basis.stop_and_clear_queue()
-            # It is the currently runing action's responsibility to detect the stop
+            # It is the currently running action's responsibility to detect the stop if it needs to
 
     @Brain.task(refresh_rate=0.5)
-    async def lidar_scan_distance(self):
+    async def lidar_scan_distances(self):
         # Warning, currently hard-coded for 3 values/degree
         self.lidar_values_in_distances = self.lidar.scan_distances(
-            robot_pos=self.rolling_basis.odometrie,
             start_angle=self.lidar_angles[0],
             end_angle=self.lidar_angles[1],
         )

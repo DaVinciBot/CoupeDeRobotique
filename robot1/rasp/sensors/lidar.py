@@ -88,7 +88,7 @@ class Lidar:
         self.__scan()
         return self.__get_absolute_cartesian(robot_pos)
 
-    def scan_distance(self, start_angle, end_angle, step_angle=1 / 3):
+    def scan_distances(self, start_angle, end_angle, step_angle=1 / 3):
         """return a list of distances between start_angle and end engle
 
         Args:
