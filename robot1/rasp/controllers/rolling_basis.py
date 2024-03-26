@@ -315,7 +315,7 @@ class RollingBasis(Teensy):
             await asyncio.sleep(0.2)
 
         self.l.log(
-            f"Exited Go_To_And_Wait while loop at point: {self.odometrie.__point}",
+            f"Exited Go_To_And_Wait while loop at point: {self.odometrie}",
             LogLevels.INFO,
         )
         if Utils.get_ts() - start_time >= timeout:
