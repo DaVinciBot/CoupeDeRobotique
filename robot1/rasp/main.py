@@ -43,7 +43,7 @@ if __name__ == "__main__":
     ws_client.add_route_handler(CONFIG.WS_CAMERA_ROUTE, ws_camera)
 
     # Robot
-    robot = RollingBasis()
+    robot = RollingBasis(logger=logger)
     robot.Set_Home(0.0, 0.0, 0.0)
 
     # Lidar
