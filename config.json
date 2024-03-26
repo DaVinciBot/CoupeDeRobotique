@@ -64,8 +64,8 @@
         3
       ],
       "god_hand_grab_servo_pins_right": [
-        5,
-        4
+        4,
+        5
       ],
       "god_hand_deployment_servo_pin": 6,
       "god_hand_grab_servo_open_angle": 90,
