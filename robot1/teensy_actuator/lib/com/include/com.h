@@ -24,3 +24,4 @@ public:
     void print(char* text);
     last_message* last_msg = new last_message();
 };
+

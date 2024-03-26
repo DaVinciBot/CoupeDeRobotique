@@ -223,7 +223,7 @@ class Teensy:
                     self.messagetype[msg[0]](msg[1:-1])
             except Exception as e:
                 self.l.log(
-                    "Received message handling crashed :\n" + str(e.args),
+                    "Received message handling crashed :\n" + str(e),
                     LogLevels.ERROR,
                 )
                 time.sleep(0.5)
