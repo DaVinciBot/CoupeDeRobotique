@@ -54,8 +54,13 @@ class Robot1Brain(Brain):
         if self.arena.check_collision_by_distances(
             self.lidar_values_in_distances, self.odometer
         ):
+            self.logger.log(
+                "ACS triggered, performing emergency stop", LogLevels.WARNING
+            )
             self.rolling_basis.stop_and_clear_queue()
             # It is the currently running action's responsibility to detect the stop if it needs to
+        else:
+            self.logger.log("ACS not triggered", LogLevels.DEBUG)
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def lidar_scan_distances(self):
