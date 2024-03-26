@@ -44,7 +44,7 @@ if __name__ == "__main__":
     robot = RollingBasis(logger=logger)
     robot.set_home(0.0, 0.0, 0.0)
 
-    actuators = Actuators()
+    actuators = Actuators(logger=logger)
 
     # Lidar
     lidar = Lidar()
