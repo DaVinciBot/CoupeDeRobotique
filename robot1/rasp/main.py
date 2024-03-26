@@ -11,8 +11,6 @@ from sensors import Lidar
 from controllers import RollingBasis
 from brains import Robot1Brain
 
-import asyncio
-
 if __name__ == "__main__":
     """
     ###--- Initialization ---###
@@ -54,6 +52,7 @@ if __name__ == "__main__":
 
     # Brain
     brain = Robot1Brain(
+        actuators=None,
         logger=logger,
         ws_cmd=ws_cmd,
         ws_log=ws_log,
