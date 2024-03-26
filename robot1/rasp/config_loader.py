@@ -51,3 +51,6 @@ class CONFIG:
     ## Actuators
     ACTUATORS_CONFIG = SPECIFIC_CONFIG["actuators"]
     SERVO_PINS = ACTUATORS_CONFIG["servo_pins"]
+    GODS_HAND_SERVO_PINS = ACTUATORS_CONFIG["god_hand_servo_pins"]
+    GOD_HAND_SERVO_OPEN_ANGLE = ACTUATORS_CONFIG["god_hand_servo_open_angle"]
+    GOD_HAND_SERVO_CLOSE_ANGLE = ACTUATORS_CONFIG["god_hand_servo_close_angle"]

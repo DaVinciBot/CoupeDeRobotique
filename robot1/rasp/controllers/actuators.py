@@ -32,7 +32,7 @@ class Actuators(Teensy):
     #########################
 
     @Logger
-    def servo_go_to(
+    def update_servo(
         self, pin: int, angle: int, min_angle: int = 0, max_angle: int = 180
     ):
         if angle >= min_angle and angle <= max_angle:

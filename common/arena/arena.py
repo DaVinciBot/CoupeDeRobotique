@@ -111,9 +111,20 @@ class Arena:
         return not self.zone_intersects(forbidden_zone_name, geometry_to_check)
 
     def compute_go_to_destination(
-        self, start_point: Point, zone_name: str, delta: float = 0, closer: bool = True
-    ):
-        center = self.zones[zone_name].centroid
+        self, start_point: Point, zone: Polygon, delta: float = 0, closer: bool = True
+    ) -> Point:
+        """_summary_
+
+        Args:
+            start_point (Point): _description_
+            zone (Polygon): _description_
+            delta (float, optional): _description_. Defaults to 0.
+            closer (bool, optional): _description_. Defaults to True.
+
+        Returns:
+            _type_: _description_
+        """
+        center : zone.centroid
 
         # Get the boundary (circle) of the disc of radius delta around the center
         circle_delta = center.buffer(delta).boundary

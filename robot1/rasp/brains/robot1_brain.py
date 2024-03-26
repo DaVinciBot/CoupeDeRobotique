@@ -1,7 +1,7 @@
 # Import from common
 from logger import Logger, LogLevels
 from geometry import OrientedPoint, Point
-from arena import MarsArena
+from arena import MarsArena,Plants_zone
 from WS_comms import WSclientRouteManager, WSmsg
 from brain import Brain
 from utils import Utils
@@ -9,8 +9,10 @@ from utils import Utils
 
 # Import from local path
 from sensors import Lidar
-from controllers import RollingBasis
+from controllers import RollingBasis,Actuators
 import asyncio
+from geometry import Polygon
+from config_loader import CONFIG
 
 
 class Robot1Brain(Brain):
@@ -22,6 +24,7 @@ class Robot1Brain(Brain):
         ws_lidar: WSclientRouteManager,
         ws_odometer: WSclientRouteManager,
         ws_camera: WSclientRouteManager,
+        actuators : Actuators,
         rolling_basis: RollingBasis,
         lidar: Lidar,
         arena: MarsArena,
@@ -33,6 +36,11 @@ class Robot1Brain(Brain):
         self.lidar_angles = (90, 180)
         self.odometer = None
         self.camera = {}
+        
+        # to delete, only use for completion 
+        # self.rolling_basis:  RollingBasis 
+        # self.actuators : Actuators
+        # self.arena: MarsArena
 
     """
         Routines
@@ -135,3 +143,48 @@ class Robot1Brain(Brain):
             self.logger.log("Timed out of movement test")
         elif result == 2:
             self.logger.log("Error moving: didn't reach destination")
+             
+    @Brain.task(process=False, run_on_start=False, timeout=70)        
+    async def plant_stage(self):
+    
+        async def go_best_zone(plant_zones : list[Plants_zone]):
+            destination_point = None
+            destination_plant_zone = None
+            for plant_zone in plant_zones:
+                point = self.arena.compute_go_to_destination(start_point=self.odometer,zone=plant_zone)
+                if self.arena.enable_go_to(point):
+                    destination_point = point
+                    destination_plant_zone = plant_zone
+                    break
+            if destination_point != None and await self.rolling_basis.go_to_and_wait(position = destination_point,timeout=10) == 0:      
+                return True,destination_plant_zone
+            return False,destination_plant_zone
+        
+        
+        is_arrived : bool = False
+        for pin in CONFIG.GODS_HAND_SERVO_PINS:
+                self.actuators.update_servo(pin,CONFIG.GOD_HAND_SERVO_OPEN_ANGLE)
+        while not is_arrived:
+            plant_zones = self.arena.sort_pickup_zone(self.odometer)
+            is_arrived, destination_plant_zone = await go_best_zone(plant_zones)
+            if is_arrived:
+                for pin in CONFIG.GODS_HAND_SERVO_PINS:
+                    self.actuators.update_servo(pin,CONFIG.GOD_HAND_SERVO_CLOSE_ANGLE)
+                destination_plant_zone.take_plant(5)
+                
+        is_arrived : bool = False
+        while not is_arrived:
+            plant_zones = self.arena.sort_drop_zone(self.odometer)
+            is_arrived, destination_plant_zone = await go_best_zone(plant_zones)
+            if is_arrived:
+                for pin in CONFIG.GODS_HAND_SERVO_PINS:
+                    self.actuators.update_servo(pin,CONFIG.GOD_HAND_SERVO_OPEN_ANGLE)
+
+
+                
+                
+        
+        
+            
+            
+        

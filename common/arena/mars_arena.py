@@ -10,7 +10,7 @@ from shapely import distance
 from sys import maxsize
 
 
-class plants_zone:
+class Plants_zone:
     def __init__(self, zone, nb_plant: int = 0) -> None:
         self.zone = zone
         self.nb_plant = nb_plant
@@ -20,6 +20,12 @@ class plants_zone:
 
     def __repr__(self) -> str:
         return self.__str__()
+    
+    def take_plant(self, nb):
+        self.nb_plant -= nb
+        
+    def drop_plant(self, nb):
+        self.nb_plant += nb
 
 
 class MarsArena(Arena):
@@ -41,50 +47,50 @@ class MarsArena(Arena):
 
         self.color = "yellow" if start_zone % 2 == 0 else "blue"
 
-        self.drop_zones: list[plants_zone] = [
-            plants_zone(
+        self.drop_zones: list[Plants_zone] = [
+            Plants_zone(
                 create_straight_rectangle(Point(45, 0), Point(0, 45))
             ),  # 1 - Blue (Possible forbidden area)
-            plants_zone(
+            Plants_zone(
                 create_straight_rectangle(Point(77.5, 0), Point(122.5, 45))
             ),  # 2 - Yellow
-            plants_zone(
+            Plants_zone(
                 create_straight_rectangle(Point(155, 0), Point(200, 45))
             ),  # 3 - Blue
-            plants_zone(
+            Plants_zone(
                 create_straight_rectangle(Point(0, 255), Point(45, 300))
             ),  # 4 - Yellow (Possible forbidden area)
-            plants_zone(
+            Plants_zone(
                 create_straight_rectangle(Point(122.5, 255), Point(77.5, 300))
             ),  # 5 - Blue
-            plants_zone(
+            Plants_zone(
                 create_straight_rectangle(Point(200, 255), Point(155, 300))
             ),  # 6 - Yellow
         ]
 
-        self.pickup_zones: list[plants_zone] = [
-            plants_zone(Point(70, 100).buffer(25), 6),
-            plants_zone(Point(130, 100).buffer(25), 6),
-            plants_zone(Point(150, 150).buffer(25), 6),
-            plants_zone(Point(130, 200).buffer(25), 6),
-            plants_zone(Point(70, 200).buffer(25), 6),
-            plants_zone(Point(50, 150).buffer(25), 6),
+        self.pickup_zones: list[Plants_zone] = [
+            Plants_zone(Point(70, 100).buffer(25), 6),
+            Plants_zone(Point(130, 100).buffer(25), 6),
+            Plants_zone(Point(150, 150).buffer(25), 6),
+            Plants_zone(Point(130, 200).buffer(25), 6),
+            Plants_zone(Point(70, 200).buffer(25), 6),
+            Plants_zone(Point(50, 150).buffer(25), 6),
         ]
 
-        self.gardeners: list[plants_zone] = [
+        self.gardeners: list[Plants_zone] = [
             (
-                plants_zone(create_straight_rectangle(Point(77.5, -15), Point(45, -3)))
+                Plants_zone(create_straight_rectangle(Point(77.5, -15), Point(45, -3)))
             ),  # 0 - Blue
             (
-                plants_zone(
+                Plants_zone(
                     create_straight_rectangle(Point(155, -15), Point(122.5, -3)),
                 )
             ),  # 1 - Yellow
             (
-                plants_zone(create_straight_rectangle(Point(77.5, 303), Point(45, 315)))
+                Plants_zone(create_straight_rectangle(Point(77.5, 303), Point(45, 315)))
             ),  # 2 - Blue
             (
-                plants_zone(
+                Plants_zone(
                     create_straight_rectangle(Point(155, 303), Point(122.5, 315))
                 )
             ),  # 3 - Yellow
@@ -100,7 +106,7 @@ class MarsArena(Arena):
 
     def sort_zone(
         self,
-        zones: list[plants_zone],
+        zones: list[Plants_zone],
         actual_position: OrientedPoint,
         our=True,
         mini=-1,
@@ -113,7 +119,7 @@ class MarsArena(Arena):
                 s = 0
             else:
                 s = 1
-            zones: list[plants_zone] = [
+            zones: list[Plants_zone] = [
                 zones[i]
                 for i in range(s, len(zones), 2)
                 if zones[i].nb_plant > mini and zones[i].nb_plant < maxi
