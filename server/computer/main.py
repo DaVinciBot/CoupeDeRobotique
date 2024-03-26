@@ -69,7 +69,7 @@ if __name__ == "__main__":
     camera.load_undistor_coefficients()
     """
     # Arena
-    #arena = MarsArena(1)
+    arena = MarsArena(1)
 
     # Brain
     brain = ServerBrain(
@@ -79,8 +79,8 @@ if __name__ == "__main__":
         ws_lidar=ws_lidar,
         ws_odometer=ws_odometer,
         ws_camera=ws_camera,
+        arena=arena,
         config=CONFIG,
-        #arena=arena,
     )
 
     """

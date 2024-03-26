@@ -142,6 +142,7 @@ class SynchronousWrapper:
     async def wrap_to_dummy_async(task):
         process = Process(target=task)
         process.start()
+        process.join()
 
     @staticmethod
     def wrap_routine_with_initialization(self, task, refresh_rate, start_loop_marker):

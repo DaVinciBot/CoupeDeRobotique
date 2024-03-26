@@ -123,15 +123,18 @@ class Brain:
     """
 
     def __evaluate_task(self, task: Task):
-        evaluated_task = task.evaluate(brain_executor=self, shared_brain_executor=self.shared_self)
-
         if task.run_to_start:
+            evaluated_task = task.evaluate(brain_executor=self, shared_brain_executor=self.shared_self)
             if task.is_process:
                 self.__processes.append(evaluated_task)
             else:
                 self.__async_functions.append(lambda: evaluated_task)
         else:
-            setattr(self, task.name, evaluated_task)
+            async def coroutine_executor():
+                evaluated_task = task.evaluate(brain_executor=self, shared_brain_executor=self.shared_self)
+                return await evaluated_task
+            setattr(self, task.name, coroutine_executor)
+
 
     """
         Background routines enabling the subprocesses to operate
@@ -168,17 +171,18 @@ class Brain:
 
     def get_tasks(self):
         # Evaluate all tasks and add them to the list of async functions or processes
-        for task in self._tasks:
-            self.__evaluate_task(task)
+        if hasattr(self, "_tasks"):
+            for task in self._tasks:
+                self.__evaluate_task(task)
 
-        # Add a one-shot task to start all processes and routine to synchronize self_shared and self
-        if any(task.is_process for task in self._tasks):
-            self.__async_functions.append(
-                lambda: AsynchronousWrapper.wrap_to_one_shot(self, self.__start_subprocesses)
-            )
-            self.__async_functions.append(
-                lambda: AsynchronousWrapper.wrap_to_routine(self, self.__sync_self_and_shared_self, 0)
-            )
+            # Add a one-shot task to start all processes and routine to synchronize self_shared and self
+            if any(task.is_process for task in self._tasks):
+                self.__async_functions.append(
+                    lambda: AsynchronousWrapper.wrap_to_one_shot(self, self.__start_subprocesses)
+                )
+                self.__async_functions.append(
+                    lambda: AsynchronousWrapper.wrap_to_routine(self, self.__sync_self_and_shared_self, 0)
+                )
 
         return self.__async_functions
 

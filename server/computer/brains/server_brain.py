@@ -1,5 +1,6 @@
 # Import from common
 import asyncio
+import time
 
 from logger import Logger, LogLevels
 from geometry import OrientedPoint, Point
@@ -26,6 +27,7 @@ class ServerBrain(Brain):
             ws_lidar: WServerRouteManager,
             ws_odometer: WServerRouteManager,
             ws_camera: WServerRouteManager,
+            arena: MarsArena,
             config
     ) -> None:
         self.shared = 0
@@ -35,89 +37,23 @@ class ServerBrain(Brain):
         super().__init__(logger, self)
 
     """
-        Routines
+        Tasks
     """
 
-    @Brain.task(process=True, run_on_start=True, refresh_rate=0, define_loop_later=True)
-    def camera_capture(self):
-        camera = Camera(
-            res_w=self.config.CAMERA_RESOLUTION[0],
-            res_h=self.config.CAMERA_RESOLUTION[1],
-            captures_path=self.config.CAMERA_SAVE_PATH,
-            undistorted_coefficients_path=self.config.CAMERA_COEFFICIENTS_PATH,
-        )
-        camera.load_undistor_coefficients()
-
-        aruco_recognizer = ArucoRecognizer(aruco_type=self.config.CAMERA_ARUCO_DICT_TYPE)
-
-        color_recognizer = ColorRecognizer(
-            detection_range=self.config.CAMERA_COLOR_FILTER_RANGE,
-            name=self.config.CAMERA_COLOR_FILTER_NAME,
-            clustering_eps=self.config.CAMERA_COLOR_CLUSTERING_EPS,
-            clustering_min_samples=self.config.CAMERA_COLOR_CLUSTERING_MIN_SAMPLES,
-        )
-
-        plan_transposer = PlanTransposer(
-            camera_table_distance=self.config.CAMERA_DISTANCE_CAM_TABLE,
-            alpha=self.config.CAMERA_CAM_OBJ_FUNCTION_A,
-            beta=self.config.CAMERA_CAM_OBJ_FUNCTION_B,
-        )
-
-        # ---Loop--- #
-        camera.capture()
-        camera.undistor_image()
-        arucos = aruco_recognizer.detect(camera.get_capture())
-        green_objects = color_recognizer.detect(camera.get_capture())
-
-        arucos_tmp = []
-        arucos_tmp.extend(
-            (
-                aruco.encoded_number,
-                plan_transposer.image_to_relative_position(
-                    img=camera.get_capture(),
-                    segment=aruco.max_radius,
-                    center_point=aruco.centroid,
-                ),
-            )
-            for aruco in arucos
-        )
-        self.arucos = arucos_tmp
-
-        green_objects_tmp = []
-        green_objects_tmp.extend(
-            green_object.centroid for green_object in green_objects
-        )
-        self.green_objects = green_objects_tmp
-
-        frame = Frame(camera.get_capture(), [green_objects, arucos])
-        frame.draw_markers()
-        frame.write_labels()
-        camera.update_monitor(frame.img)
-
-    @Brain.task(process=True, refresh_rate=1, run_on_start=True)
-    def writer(self):
-        print("writer: ", self.shared)
-        self.shared += 1
-
-    @Brain.task(refresh_rate=1, run_on_start=True, process=False)
-    async def reader(self):
-        print("reader: ", self.shared)
-        print("arucos: ", self.arucos)
-        print("green_objects: ", self.green_objects)
-
-    @Brain.task(refresh_rate=1, run_on_start=False, process=False, timeout=10)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
     async def main(self):
-        print(f"ServerBrain: {await self.ws_log.receiver.get()} / {self.shared}")
-        self.shared += 1
-        await self.ws_log.sender.send(
-            WSmsg(
-                msg="shared",
-                data=self.shared
-            )
-        )
+        cmd_state = await self.ws_cmd.receiver.get()
+        # New cmd received !
+        if cmd_state != WSmsg():
+            print(f"New cmd received ! [{cmd_state}]")
+            if self.ws_cmd.get_client("robot1") is not None:
+                result = await self.ws_cmd.sender.send(
+                    WSmsg(
+                        sender="server",
+                        msg=cmd_state.msg,
+                        data=cmd_state.data
+                    ),
+                    clients=self.ws_cmd.get_client("robot1")
+                )
+                print("Result of sending cmd to robot1:", result)
 
-    @Brain.task(run_on_start=True, process=False, timeout=5)
-    async def test(self):
-        print("test")
-        await asyncio.sleep(2)
-        print("test end")
