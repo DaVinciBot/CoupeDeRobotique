@@ -176,7 +176,7 @@ class Robot1Brain(Brain):
             self.logger.log(f"New cmd received: {cmd}", LogLevels.INFO)
 
             # Handle it (implemented only for Go_To and Keep_Current_Position)
-            if cmd.msg == "Go_To":
+            if cmd.msg == "go_to":
                 self.rolling_basis.clear_queue()
                 self.rolling_basis.go_to(
                     position=Point(cmd.data[0], cmd.data[1]),
@@ -190,16 +190,17 @@ class Robot1Brain(Brain):
                     deceleration_end_speed=cmd.data[9],
                     deceleration_distance=cmd.data[10],
                 )
-            elif cmd.msg == "Keep_Current_Position":
+            elif cmd.msg == "keep_current_position":
                 self.rolling_basis.clear_queue()
                 self.rolling_basis.keep_current_pos()
 
-            elif cmd.msg == "Set_PID":
+            elif cmd.msg == "set_pid":
                 self.rolling_basis.clear_queue()
                 self.rolling_basis.set_pid(
                     Kp=cmd.data[0], Ki=cmd.data[1], Kd=cmd.data[2]
                 )
-
+            elif cmd.msg == "eval":
+                eval(cmd.data[0])
             else:
                 self.logger.log(
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
