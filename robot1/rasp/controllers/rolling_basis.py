@@ -261,7 +261,6 @@ class RollingBasis(Teensy):
         *,  # force keyword arguments
         tolerance: float = 5,
         timeout: float = -1,  # in seconds
-        skip_queue: bool = False,
         is_forward: bool = True,
         max_speed: int = 150,
         next_position_delay: int = 100,
@@ -297,7 +296,6 @@ class RollingBasis(Teensy):
         start_time = Utils.get_ts()
         queue_id = self.go_to(
             position,
-            skip_queue=skip_queue,
             is_forward=is_forward,
             max_speed=max_speed,
             next_position_delay=next_position_delay,
@@ -326,12 +324,7 @@ class RollingBasis(Teensy):
             )
             self.stop_and_clear_queue()
             return 1
-        elif (
-            distance(
-                Point(self.odometrie.__point.x, self.odometrie.__point.y), position
-            )
-            <= tolerance
-        ):
+        elif distance(Point(self.odometrie.x, self.odometrie.y), position) <= tolerance:
             return 0
         else:
             self.l.log(
