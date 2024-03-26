@@ -57,8 +57,8 @@
       "god_hand_grab_servo_pins_right" : [4,5],
       "god_hand_deployment_servo_pin" : 6,
       "god_hand_grab_servo_open_angle" : 90,
-      "god_hand_grab_servo_close_angle_left" : 22,
-      "god_hand_grab_servo_close_angle_right" : -22
+      "god_hand_grab_servo_close_angle_diff_left" : 22,
+      "god_hand_grab_servo_close_angle_diff_right" : -22
     }
   }
 }

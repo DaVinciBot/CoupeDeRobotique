@@ -138,11 +138,15 @@ class Robot1Brain(Brain):
     def close_god_hand(self):
         for pin in CONFIG.GOD_HAND_GRAB_SERVO_PINS_LEFT:
             self.actuators.update_servo(
-                pin, CONFIG.GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_LEFT
+                pin,
+                CONFIG.GOD_HAND_GRAB_SERVO_OPEN_ANGLE
+                + CONFIG.GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_DIFF_LEFT,
             )
         for pin in CONFIG.GOD_HAND_GRAB_SERVO_PINS_RIGHT:
             self.actuators.update_servo(
-                pin, CONFIG.GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_RIGHT
+                pin,
+                CONFIG.GOD_HAND_GRAB_SERVO_OPEN_ANGLE
+                + CONFIG.GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_DIFF_RIGHT,
             )
 
     @Brain.task(process=False, run_on_start=False, timeout=70)
