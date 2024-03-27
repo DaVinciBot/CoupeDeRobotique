@@ -42,15 +42,15 @@ if __name__ == "__main__":
 
     # Robot
     robot = RollingBasis(logger=logger)
-    robot.set_home(26.0, 26.0, 0.0)
 
     actuators = Actuators(logger=logger)
 
     # Lidar
     lidar = Lidar()
 
-    # Arene
-    arena = MarsArena(2)
+    # Arena
+    arena = MarsArena(2) # must be declared from external calculus interface or switch on the robot
+    robot.set_home(OrientedPoint.from_Point(arena.zones["home"].centroid))
 
     # Brain
     brain = Robot1Brain(

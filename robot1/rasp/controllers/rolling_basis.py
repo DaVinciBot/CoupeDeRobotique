@@ -434,8 +434,8 @@ class RollingBasis(Teensy):
         else:
             self.append_to_queue(Instruction(Command.RESET_POSITION, msg))
 
-    def set_home(self, x, y, theta, *, skip_queue=False):
-        msg = Command.SET_HOME.value + struct.pack("<fff", x, y, theta)
+    def set_home(self, new_home : OrientedPoint, *, skip_queue=False):
+        msg = Command.SET_HOME.value + struct.pack("<fff", new_home.x, new_home.y, new_home.theta)
         if skip_queue:
             self.insert_in_queue(0, Instruction(Command.SET_HOME, msg), True)
         else:

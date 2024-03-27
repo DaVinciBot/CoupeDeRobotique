@@ -33,7 +33,7 @@ class OrientedPoint:
         self.theta = theta
 
     @classmethod
-    def from_Point(cls, point: Point, theta: float or None = None):
+    def from_Point(cls, point: Point, theta: float = 0):
         return cls(point.x, point.y, theta)
 
     def __getattr__(self, attr):
