@@ -4,6 +4,20 @@ from logger.log_levels import LogLevels
 
 import os, types, functools
 from threading import Thread
+from dataclasses import dataclass
+
+
+@dataclass
+class COLORS:
+    NO_FORMAT = "\033[0m"
+    F_INVERT = "\033[7m"
+    ORANGE = "\033[38;5;208m"
+    C_GOLD1 = "\033[38;5;220m"
+    C_CHARTREUSE3 = "\033[38;5;76m"
+    C_RED1 = "\033[38;5;196m"
+    C_SILVER = "\033[38;5;7m"
+    CRITICAL = "\033[38;5;196m" + "\033[38;5;220m"
+    DATE = "\033[7m" + "\033[38;5;220m"
 
 
 class Logger:
@@ -59,7 +73,25 @@ class Logger:
             # Evaluate the str value now to make sure no weird operators happen
             message = str(message)
             date_str = Utils.get_str_date()
-            message = f"{date_str} -> [{self.identifier}] {level.name} | {message}"
+            level_text_color = COLORS.NO_FORMAT
+            match level:
+                case LogLevels.DEBUG:
+                    level_text_color = COLORS.NO_FORMAT
+                case LogLevels.INFO:
+                    level_text_color = COLORS.C_CHARTREUSE3
+                case LogLevels.WARNING:
+                    level_text_color = COLORS.ORANGE
+                case LogLevels.ERROR:
+                    level_text_color = COLORS.C_RED1
+                case LogLevels.CRITICAL:
+                    level_text_color = COLORS.CRITICAL
+
+            message = (
+                f"{COLORS.DATE}{date_str}{COLORS.NO_FORMAT} -> "
+                + f"[{COLORS.C_SILVER}{self.identifier}{COLORS.NO_FORMAT}] "
+                + f"{level_text_color}{level.name}{COLORS.NO_FORMAT} | "
+                + f"{COLORS.NO_FORMAT}{message}{COLORS.NO_FORMAT}"
+            )
             if self.print_log:
                 print(message)
 
