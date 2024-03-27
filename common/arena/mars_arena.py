@@ -104,28 +104,22 @@ class MarsArena(Arena):
             },
         )
 
-    def sort_zone(
+    def sort_plant_zones(
         self,
         zones_to_sort: list[Plants_zone],
         actual_position: OrientedPoint,
-        our=True,
         mini=-1,
         maxi=maxsize,
-        color="blue",
         reverse=False,
     ):
         print(f"zones_to_sort ({len(zones_to_sort)}): {zones_to_sort}")
         zones: list[Plants_zone] = []
-        if our:
 
-            zones = [
-                zone
-                for zone in zones_to_sort
-                if zone.nb_plant > mini and zone.nb_plant < maxi
-            ]
-        else:
-            # TODO
-            pass
+        zones = [
+            zone
+            for zone in zones_to_sort
+            if zone.nb_plant > mini and zone.nb_plant < maxi
+        ]
 
         print(f"zones_pre_sort ({len(zones)}): {zones}")
 
@@ -141,40 +135,33 @@ class MarsArena(Arena):
     def sort_gardener(
         self, actual_position: OrientedPoint, our=True, maxi=6, reverse=True
     ):
-        return self.sort_zone(
+        return self.sort_plant_zones(
             actual_position=actual_position,
-            our=our,
-            zones_to_sort=self.gardeners,
+            zones_to_sort=self.gardeners,  # TODO: filter ours
             maxi=maxi,
-            color=self.color,
             reverse=reverse,
         )
 
     def sort_drop_zone(
         self, actual_position: OrientedPoint, our=True, maxi=6, reverse=True
     ):
-        return self.sort_zone(
+        return self.sort_plant_zones(
             actual_position=actual_position,
-            our=our,
-            zones_to_sort=self.drop_zones,
+            zones_to_sort=self.drop_zones,  # TODO: filter ours
             maxi=maxi,
-            color=self.color,
             reverse=reverse,
         )
 
     def sort_pickup_zone(
         self,
         actual_position: OrientedPoint,
-        our=False,  # there isn't a notion of propriety for pickup zones
         mini=2,
         reverse=False,
     ):
-        return self.sort_zone(
+        return self.sort_plant_zones(
             actual_position=actual_position,
-            our=our,
             zones_to_sort=self.pickup_zones,
             mini=mini,
-            color=self.color,
             reverse=reverse,
         )
 
