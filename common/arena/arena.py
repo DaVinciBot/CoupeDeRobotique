@@ -71,7 +71,7 @@ class Arena:
         self,
         start: Point,
         target: Point,
-        buffer_distance: float = 0,
+        buffer_distance: float = 15,
         forbidden_zone_name: str = "forbidden",
     ) -> bool:
         return self.enable_go_on_path(

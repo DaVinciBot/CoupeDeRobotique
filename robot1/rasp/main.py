@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     # Robot
     robot = RollingBasis(logger=logger)
-    robot.set_home(0.0, 0.0, 0.0)
+    robot.set_home(26.0, 26.0, 0.0)
 
     actuators = Actuators(logger=logger)
 
