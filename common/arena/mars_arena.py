@@ -20,10 +20,10 @@ class Plants_zone:
 
     def __repr__(self) -> str:
         return self.__str__()
-    
+
     def take_plant(self, nb):
         self.nb_plant -= nb
-        
+
     def drop_plant(self, nb):
         self.nb_plant += nb
 
@@ -106,7 +106,7 @@ class MarsArena(Arena):
 
     def sort_zone(
         self,
-        zones: list[Plants_zone],
+        zones_to_sort: list[Plants_zone],
         actual_position: OrientedPoint,
         our=True,
         mini=-1,
@@ -120,12 +120,13 @@ class MarsArena(Arena):
             else:
                 s = 1
             zones: list[Plants_zone] = [
-                zones[i]
-                for i in range(s, len(zones), 2)
-                if zones[i].nb_plant > mini and zones[i].nb_plant < maxi
+                zones_to_sort[i]
+                for i in range(s, len(zones_to_sort), 2)
+                if zones_to_sort[i].nb_plant > mini and zones_to_sort[i].nb_plant < maxi
             ]
         zones = sorted(
-            zones, key=lambda x: distance(x.zone, actual_position)
+            zones,
+            key=lambda x: distance(x.zone, Point(actual_position.x, actual_position.y)),
         )  # sort according to the required bound and by distance
         if reverse:
             zones = sorted(zones, key=lambda x: (x.nb_plant), reverse=True)
@@ -137,7 +138,7 @@ class MarsArena(Arena):
         return self.sort_zone(
             actual_position=actual_position,
             our=our,
-            zones=self.gardeners,
+            zones_to_sort=self.gardeners,
             maxi=maxi,
             color=self.color,
             reverse=reverse,
@@ -149,7 +150,7 @@ class MarsArena(Arena):
         return self.sort_zone(
             actual_position=actual_position,
             our=our,
-            zones=self.drop_zones,
+            zones_to_sort=self.drop_zones,
             maxi=maxi,
             color=self.color,
             reverse=reverse,
@@ -165,7 +166,7 @@ class MarsArena(Arena):
         return self.sort_zone(
             actual_position=actual_position,
             our=our,
-            zones=self.pickup_zones,
+            zones_to_sort=self.pickup_zones,
             mini=mini,
             color=self.color,
             reverse=reverse,
