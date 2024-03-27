@@ -135,7 +135,7 @@ class Arena:
         Returns:
             _type_: _description_
         """
-        center: zone.centroid
+        center: Point = zone.centroid
 
         # Get the boundary (circle) of the disc of radius delta around the center
         circle_delta = center.buffer(delta).boundary
