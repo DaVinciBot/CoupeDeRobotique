@@ -114,16 +114,14 @@ class MarsArena(Arena):
         color="blue",
         reverse=False,
     ):
+        print(f"zones ({len(zones_to_sort)}): {zones_to_sort}")
         zones: list[Plants_zone] = []
         if our:
-            if color == "blue":
-                s = 0
-            else:
-                s = 1
+
             zones = [
                 zones_to_sort[i]
-                for i in range(s, len(zones_to_sort), 2)
-                if zones_to_sort[i].nb_plant > mini and zones_to_sort[i].nb_plant < maxi
+                for zone in zones_to_sort:
+                if zone.nb_plant > mini and zone.nb_plant < maxi
             ]
         else:
             # TODO
@@ -134,7 +132,7 @@ class MarsArena(Arena):
         )  # sort according to the required bound and by distance
         if reverse:
             zones = sorted(zones, key=lambda x: (x.nb_plant), reverse=True)
-        print(f"zones ({len(zones)}: {zones}")
+        print(f"zones ({len(zones)}): {zones}")
         return zones
 
     def sort_gardener(
