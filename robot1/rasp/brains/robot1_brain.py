@@ -184,7 +184,9 @@ class Robot1Brain(Brain):
         is_arrived: bool = False
         self.open_god_hand()
         while not is_arrived:
+            print("Sorting zones...")
             plant_zones = self.arena.sort_pickup_zone(self.odometer)
+            print("Going to best...")
             is_arrived, destination_plant_zone = await go_best_zone(plant_zones)
             if is_arrived:
                 self.close_god_hand()
