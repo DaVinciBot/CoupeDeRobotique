@@ -150,6 +150,7 @@ class Arena:
         # Check that we found at least 2 intersections, should always be ok unless start_point is inside circle_delta
         # (therefore the scale function wasn't enough to reach the far away intersection)
         # or the circle is a point (delta = 0)
+        print(f"Delta: {delta}, intersections: {intersections}")
         if (
             delta > 0
             and (
