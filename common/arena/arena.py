@@ -1,6 +1,7 @@
 from typing import Union
 from geometry import (
     Point,
+    MultiPoint,
     Polygon,
     MultiPolygon,
     LineString,
@@ -66,10 +67,21 @@ class Arena:
 
         return self.zones[zone_name].intersects(element)
 
-    def enable_go_to(
+    def enable_go_to_point(
+        self,
+        start: Point,
+        target: Point,
+        buffer_distance: float = 15,
+        forbidden_zone_name: str = "forbidden",
+    ) -> bool:
+        return self.enable_go_on_path(
+            LineString([start, target]), buffer_distance, forbidden_zone_name
+        )
+
+    def enable_go_on_path(
         self,
         path: LineString,
-        buffer_distance: float = 0,
+        buffer_distance: float = 15,
         forbidden_zone_name: str = "forbidden",
     ) -> bool:
         """this function checks if a given line (or series of connected lines) move can be made into the arena. It
@@ -104,15 +116,18 @@ class Arena:
 
         # verify that the area touched is in the arena and do not collide with boarders
         if not self.game_borders.contains(geometry_to_check):
+            print("not self.game_borders.contains(geometry_to_check)")
             return False
 
         # verify that the area touched isn't in the forbidden area
-
+        print(
+            f"returning not self.zone_intersects(forbidden_zone_name, geometry_to_check) with {geometry_to_check}"
+        )
         return not self.zone_intersects(forbidden_zone_name, geometry_to_check)
 
     def compute_go_to_destination(
-        self, start_point: Point, zone: Polygon, delta: float = 0, closer: bool = True
-    ) -> Point:
+        self, start_point: Point, zone: Polygon, delta: float = 5, closer: bool = True
+    ) -> Point | None:
         """_summary_
 
         Args:
@@ -124,7 +139,7 @@ class Arena:
         Returns:
             _type_: _description_
         """
-        center : zone.centroid
+        center: Point = zone.centroid
 
         # Get the boundary (circle) of the disc of radius delta around the center
         circle_delta = center.buffer(delta).boundary
@@ -138,20 +153,28 @@ class Arena:
         # Check that we found at least 2 intersections, should always be ok unless start_point is inside circle_delta
         # (therefore the scale function wasn't enough to reach the far away intersection)
         # or the circle is a point (delta = 0)
-        if (delta > 0 and len(intersections.geoms) < 2) or (
-            delta == 0 and len(intersections.geoms) < 1
-        ):
+        print(f"Delta: {delta}, intersections: {intersections}")
+        if (
+            delta > 0
+            and (
+                not isinstance(intersections, MultiPoint)
+                or not len(intersections.geoms) == 2
+            )
+        ) or (delta == 0 and not isinstance(intersections, Point)):
             return None
 
         # Return closest or furthest intersection
 
         else:
-            if distance(start_point, intersections.geoms[0]) <= distance(
-                start_point, intersections.geoms[1]
-            ):
-                return intersections.geoms[0] if closer else intersections.geoms[1]
+            if isinstance(intersections, Point):
+                return intersections
             else:
-                return intersections.geoms[1] if closer else intersections.geoms[0]
+                if distance(start_point, intersections.geoms[0]) <= distance(
+                    start_point, intersections.geoms[1]
+                ):
+                    return intersections.geoms[0] if closer else intersections.geoms[1]
+                else:
+                    return intersections.geoms[1] if closer else intersections.geoms[0]
 
     def check_collision_by_distances(
         self, distances_to_check: list[float], pos_robot: OrientedPoint

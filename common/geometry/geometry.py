@@ -1,5 +1,6 @@
 from shapely import (
     Point,
+    MultiPoint,
     Polygon,
     MultiPolygon,
     LineString,
