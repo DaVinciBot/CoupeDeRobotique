@@ -114,7 +114,7 @@ class MarsArena(Arena):
         color="blue",
         reverse=False,
     ):
-        print(f"zones ({len(zones_to_sort)}): {zones_to_sort}")
+        print(f"zones_to_sort ({len(zones_to_sort)}): {zones_to_sort}")
         zones: list[Plants_zone] = []
         if our:
 
@@ -126,12 +126,15 @@ class MarsArena(Arena):
         else:
             # TODO
             pass
+
+        print(f"zones_pre_sort ({len(zones)}): {zones}")
+
         zones = sorted(
             zones,
             key=lambda x: distance(x.zone, Point(actual_position.x, actual_position.y)),
+            reverse=reverse,
         )  # sort according to the required bound and by distance
-        if reverse:
-            zones = sorted(zones, key=lambda x: (x.nb_plant), reverse=True)
+
         print(f"zones ({len(zones)}): {zones}")
         return zones
 
