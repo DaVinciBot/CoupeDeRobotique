@@ -119,7 +119,6 @@ class MarsArena(Arena):
         maxi=maxsize,
         reverse=False,
     ):
-        print(f"zones_to_sort ({len(zones_to_sort)}): {zones_to_sort}")
         zones: list[Plants_zone] = []
 
         zones = [
@@ -128,15 +127,12 @@ class MarsArena(Arena):
             if zone.nb_plant > mini and zone.nb_plant < maxi
         ]
 
-        print(f"zones_pre_sort ({len(zones)}): {zones}")
-
         zones = sorted(
             zones,
             key=lambda x: distance(x.zone, Point(actual_position.x, actual_position.y)),
             reverse=reverse,
         )  # sort according to the required bound and by distance
 
-        print(f"zones ({len(zones)}): {zones}")
         return zones
 
     def sort_gardener(
