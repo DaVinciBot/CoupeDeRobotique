@@ -119,8 +119,8 @@ class MarsArena(Arena):
         if our:
 
             zones = [
-                zones_to_sort[i]
-                for zone in zones_to_sort:
+                zone
+                for zone in zones_to_sort
                 if zone.nb_plant > mini and zone.nb_plant < maxi
             ]
         else:
