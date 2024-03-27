@@ -150,44 +150,44 @@ class Robot1Brain(Brain):
                 + CONFIG.GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_DIFF_RIGHT,
             )
 
+    async def go_best_zone(self, plant_zones: list[Plants_zone], delta=15):
+        destination_point = None
+        destination_plant_zone = None
+        for plant_zone in plant_zones:
+            print(f"Testing zone {plant_zone}")
+            target = self.arena.compute_go_to_destination(
+                start_point=Point(self.odometer.x, self.odometer.y),
+                zone=plant_zone.zone,
+                delta=delta,
+            )
+            print(f"Target {target}")
+            print(f"Odo {self.odometer}")
+            if self.arena.enable_go_to_point(
+                Point(self.odometer.x, self.odometer.y), target
+            ):
+                destination_point = target
+                destination_plant_zone = plant_zone
+                break
+        if (
+            destination_point != None
+            and await self.rolling_basis.go_to_and_wait(
+                position=destination_point, timeout=10
+            )
+            == 0
+        ):
+            return True, destination_plant_zone
+        return False, destination_plant_zone
+
     @Brain.task(process=False, run_on_start=False, timeout=70)
     async def plant_stage(self):
-
-        async def go_best_zone(plant_zones: list[Plants_zone], delta=5):
-            destination_point = None
-            destination_plant_zone = None
-            for plant_zone in plant_zones:
-                print(f"Testing zone {plant_zone}")
-                target = self.arena.compute_go_to_destination(
-                    start_point=Point(self.odometer.x, self.odometer.y),
-                    zone=plant_zone.zone,
-                    delta=delta,
-                )
-                print(f"Target {target}")
-                print(f"Odo {self.odometer}")
-                if self.arena.enable_go_to_point(
-                    Point(self.odometer.x, self.odometer.y), target
-                ):
-                    destination_point = target
-                    destination_plant_zone = plant_zone
-                    break
-            if (
-                destination_point != None
-                and await self.rolling_basis.go_to_and_wait(
-                    position=destination_point, timeout=10
-                )
-                == 0
-            ):
-                return True, destination_plant_zone
-            return False, destination_plant_zone
 
         is_arrived: bool = False
         self.open_god_hand()
         while not is_arrived:
-            print("Sorting zones...")
+            print("Sorting pickup zones...")
             plant_zones = self.arena.sort_pickup_zone(self.odometer)
-            print("Going to best...")
-            is_arrived, destination_plant_zone = await go_best_zone(plant_zones)
+            print("Going to best pickup zone...")
+            is_arrived, destination_plant_zone = await self.go_best_zone(plant_zones)
             print(f"Done go_best_zone: {is_arrived}, {destination_plant_zone}")
 
             if is_arrived:
@@ -196,8 +196,11 @@ class Robot1Brain(Brain):
 
         is_arrived = False
         while not is_arrived:
+            print("Sorting drop zones...")
             plant_zones = self.arena.sort_drop_zone(self.odometer)
-            is_arrived, destination_plant_zone = await go_best_zone(plant_zones)
+            print("Going to best drop zone...")
+            is_arrived, destination_plant_zone = await self.go_best_zone(plant_zones)
+            print(f"Done go_best_zone: {is_arrived}, {destination_plant_zone}")
             if is_arrived:
                 self.open_god_hand()
 
