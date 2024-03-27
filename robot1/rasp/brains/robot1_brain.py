@@ -161,7 +161,9 @@ class Robot1Brain(Brain):
             for plant_zone in plant_zones:
                 print(f"Testing zone {plant_zone}")
                 target = self.arena.compute_go_to_destination(
-                    start_point=self.odometer, zone=plant_zone.zone, delta=delta
+                    start_point=Point(self.odometer.x, self.odometer.y),
+                    zone=plant_zone.zone,
+                    delta=delta,
                 )
                 print(f"Target {target}")
                 print(f"Odo {self.odometer}")

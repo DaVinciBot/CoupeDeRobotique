@@ -123,7 +123,7 @@ class Arena:
 
     def compute_go_to_destination(
         self, start_point: Point, zone: Polygon, delta: float = 0, closer: bool = True
-    ) -> Point:
+    ) -> Point | None:
         """_summary_
 
         Args:
