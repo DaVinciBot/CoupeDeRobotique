@@ -56,6 +56,7 @@ class CONFIG:
     WS_CAMERA_ROUTE = GENERAL_WS_CONFIG["camera_route"]
     WS_ODOMETER_ROUTE = GENERAL_WS_CONFIG["odometer_route"]
     WS_CMD_ROUTE = GENERAL_WS_CONFIG["cmd_route"]
+    WS_PAMI_ROUTE = GENERAL_WS_CONFIG["pami_route"]
 
     # Specific config
     SPECIFIC_CONFIG = CONFIG_STORE[SPECIFIC_CONFIG_KEY]

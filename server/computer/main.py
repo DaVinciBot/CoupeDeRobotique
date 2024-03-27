@@ -34,6 +34,7 @@ if __name__ == "__main__":
     ws_lidar = WServerRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
     ws_odometer = WServerRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
     ws_camera = WServerRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
+    ws_pami = WServerRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
 
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
     ws_server.add_route_handler(CONFIG.WS_LOG_ROUTE, ws_log)
@@ -41,6 +42,7 @@ if __name__ == "__main__":
     ws_server.add_route_handler(CONFIG.WS_LIDAR_ROUTE, ws_lidar)
     ws_server.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, ws_odometer)
     ws_server.add_route_handler(CONFIG.WS_CAMERA_ROUTE, ws_camera)
+    ws_server.add_route_handler(CONFIG.WS_PAMI_ROUTE, ws_pami)
 
     # Camera
     """

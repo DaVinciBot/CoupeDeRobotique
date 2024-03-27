@@ -7,7 +7,8 @@
       "camera_route": "/camera",
       "log_route": "/log",
       "cmd_route": "/cmd",
-      "frame_route": "/frame"
+      "frame_route": "/frame",
+      "pami_route": "/pami"
     }
   },
   "computer": {
