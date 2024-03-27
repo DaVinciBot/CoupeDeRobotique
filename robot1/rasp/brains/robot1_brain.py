@@ -211,7 +211,6 @@ class Robot1Brain(Brain):
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def zombie_mode(self):
-        self.logger.log("Starting zombie mode", LogLevels.INFO)
         # Check cmd
         cmd = await self.ws_cmd.receiver.get()
 
