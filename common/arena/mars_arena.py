@@ -31,7 +31,7 @@ class Plants_zone:
 class MarsArena(Arena):
     """Represent the arena of the CDR 2023-2024"""
 
-    def __init__(self, start_zone: int):
+    def __init__(self, start_zone_id: int):
         """
         Generate the arena of the CDR 2023-2024
 
@@ -39,13 +39,14 @@ class MarsArena(Arena):
         :type start_zone: int
         :raises ValueError: If start_zone is not between 1 and 6
         """
-        if not (0 <= start_zone <= 5):
+        if not (0 <= start_zone_id <= 5):
             raise ValueError("start_zone must be between 0 and 5")
 
         origin = Point(0, 0)
         opposite_corner = Point(200, 300)
 
-        self.color = "yellow" if start_zone % 2 == 0 else "blue"
+        self.color = "yellow" if start_zone_id % 2 == 0 else "blue"
+        self.start_zone_id = start_zone_id
 
         self.drop_zones: list[Plants_zone] = [
             Plants_zone(
@@ -79,21 +80,21 @@ class MarsArena(Arena):
 
         self.gardeners: list[Plants_zone] = [
             (
-                Plants_zone(create_straight_rectangle(Point(77.5, -15), Point(45, -3)))
-            ),  # 0 - Blue
-            (
                 Plants_zone(
                     create_straight_rectangle(Point(155, -15), Point(122.5, -3)),
                 )
-            ),  # 1 - Yellow
+            ),  # 0 - Yellow
             (
-                Plants_zone(create_straight_rectangle(Point(77.5, 303), Point(45, 315)))
-            ),  # 2 - Blue
+                Plants_zone(create_straight_rectangle(Point(77.5, -15), Point(45, -3)))
+            ),  # 1 - Blue
             (
                 Plants_zone(
                     create_straight_rectangle(Point(155, 303), Point(122.5, 315))
                 )
-            ),  # 3 - Yellow
+            ),  # 2 - Yellow
+            (
+                Plants_zone(create_straight_rectangle(Point(77.5, 303), Point(45, 315)))
+            ),  # 3 - Blue
         ]
 
         super().__init__(
@@ -103,10 +104,10 @@ class MarsArena(Arena):
                     [
                         self.drop_zones[i].zone
                         for i in range(6)
-                        if i % 2 != start_zone % 2
+                        if i % 2 != start_zone_id % 2
                     ]
                 ),
-                "home": self.drop_zones[start_zone].zone,
+                "home": self.drop_zones[start_zone_id].zone,
             },
         )
 
@@ -139,21 +140,39 @@ class MarsArena(Arena):
         return zones
 
     def sort_gardener(
-        self, actual_position: OrientedPoint, our=True, maxi=6, reverse=False
+        self, actual_position: OrientedPoint, friendly_only=True, maxi=6, reverse=False
     ):
+        zones_to_sort = (
+            [
+                self.gardeners[i]
+                for i in range(len(self.gardeners))
+                if i % 2 == self.start_zone_id % 2
+            ]
+            if friendly_only
+            else self.gardeners
+        )
         return self.sort_plant_zones(
             actual_position=actual_position,
-            zones_to_sort=self.gardeners,  # TODO: filter ours
+            zones_to_sort=zones_to_sort,
             maxi=maxi,
             reverse=reverse,
         )
 
     def sort_drop_zone(
-        self, actual_position: OrientedPoint, our=True, maxi=6, reverse=False
+        self, actual_position: OrientedPoint, friendly_only=True, maxi=6, reverse=False
     ):
+        zones_to_sort = (
+            [
+                self.drop_zones[i]
+                for i in range(len(self.drop_zones))
+                if i % 2 == self.start_zone_id % 2
+            ]
+            if friendly_only
+            else self.drop_zones
+        )
         return self.sort_plant_zones(
             actual_position=actual_position,
-            zones_to_sort=self.drop_zones,  # TODO: filter ours
+            zones_to_sort=zones_to_sort,
             maxi=maxi,
             reverse=reverse,
         )
