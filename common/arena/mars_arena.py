@@ -114,16 +114,20 @@ class MarsArena(Arena):
         color="blue",
         reverse=False,
     ):
+        zones: list[Plants_zone] = []
         if our:
             if color == "blue":
                 s = 0
             else:
                 s = 1
-            zones: list[Plants_zone] = [
+            zones = [
                 zones_to_sort[i]
                 for i in range(s, len(zones_to_sort), 2)
                 if zones_to_sort[i].nb_plant > mini and zones_to_sort[i].nb_plant < maxi
             ]
+        else:
+            # TODO
+            pass
         zones = sorted(
             zones,
             key=lambda x: distance(x.zone, Point(actual_position.x, actual_position.y)),
