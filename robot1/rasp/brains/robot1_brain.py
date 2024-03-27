@@ -180,29 +180,34 @@ class Robot1Brain(Brain):
 
     @Brain.task(process=False, run_on_start=False, timeout=70)
     async def plant_stage(self):
+        start_stage_time = Utils.get_ts()
+        while 70 - (Utils.get_ts() - start_stage_time) < 10:
+            is_arrived: bool = False
+            self.open_god_hand()
+            while not is_arrived:
+                print("Sorting pickup zones...")
+                plant_zones = self.arena.sort_pickup_zone(self.odometer)
+                print("Going to best pickup zone...")
+                is_arrived, destination_plant_zone = await self.go_best_zone(
+                    plant_zones
+                )
+                print(f"Done go_best_zone: {is_arrived}, {destination_plant_zone}")
 
-        is_arrived: bool = False
-        self.open_god_hand()
-        while not is_arrived:
-            print("Sorting pickup zones...")
-            plant_zones = self.arena.sort_pickup_zone(self.odometer)
-            print("Going to best pickup zone...")
-            is_arrived, destination_plant_zone = await self.go_best_zone(plant_zones)
-            print(f"Done go_best_zone: {is_arrived}, {destination_plant_zone}")
+                if is_arrived:
+                    self.close_god_hand()
+                    destination_plant_zone.take_plant(5)
 
-            if is_arrived:
-                self.close_god_hand()
-                destination_plant_zone.take_plant(5)
-
-        is_arrived = False
-        while not is_arrived:
-            print("Sorting drop zones...")
-            plant_zones = self.arena.sort_drop_zone(self.odometer)
-            print("Going to best drop zone...")
-            is_arrived, destination_plant_zone = await self.go_best_zone(plant_zones)
-            print(f"Done go_best_zone: {is_arrived}, {destination_plant_zone}")
-            if is_arrived:
-                self.open_god_hand()
+            is_arrived = False
+            while not is_arrived:
+                print("Sorting drop zones...")
+                plant_zones = self.arena.sort_drop_zone(self.odometer)
+                print("Going to best drop zone...")
+                is_arrived, destination_plant_zone = await self.go_best_zone(
+                    plant_zones
+                )
+                print(f"Done go_best_zone: {is_arrived}, {destination_plant_zone}")
+                if is_arrived:
+                    self.open_god_hand()
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def zombie_mode(self):
