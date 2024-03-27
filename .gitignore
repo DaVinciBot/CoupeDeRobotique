@@ -161,6 +161,7 @@ cython_debug/
 
 rasp/bot_venv/
 robot1/rasp/test_zones.py
+robot1/rasp/test.py
 robot1/rasp/test_stage.py
 server/computer/cam_venv/
 
