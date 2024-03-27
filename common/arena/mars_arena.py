@@ -39,8 +39,8 @@ class MarsArena(Arena):
         :type start_zone: int
         :raises ValueError: If start_zone is not between 1 and 6
         """
-        if not (1 <= start_zone <= 6):
-            raise ValueError("start_zone must be between 1 and 6")
+        if not (0 <= start_zone <= 5):
+            raise ValueError("start_zone must be between 0 and 5")
 
         origin = Point(0, 0)
         opposite_corner = Point(200, 300)
@@ -50,22 +50,22 @@ class MarsArena(Arena):
         self.drop_zones: list[Plants_zone] = [
             Plants_zone(
                 create_straight_rectangle(Point(45, 0), Point(0, 45))
-            ),  # 1 - Blue (Possible forbidden area)
+            ),  # 0 - Yellow (Possible forbidden area)
             Plants_zone(
                 create_straight_rectangle(Point(77.5, 0), Point(122.5, 45))
-            ),  # 2 - Yellow
+            ),  # 1 - Blue
             Plants_zone(
                 create_straight_rectangle(Point(155, 0), Point(200, 45))
-            ),  # 3 - Blue
+            ),  # 2 - Yellow
             Plants_zone(
                 create_straight_rectangle(Point(0, 255), Point(45, 300))
-            ),  # 4 - Yellow (Possible forbidden area)
+            ),  # 3 - Blue (Possible forbidden area)
             Plants_zone(
                 create_straight_rectangle(Point(122.5, 255), Point(77.5, 300))
-            ),  # 5 - Blue
+            ),  # 4 - Yellow
             Plants_zone(
                 create_straight_rectangle(Point(200, 255), Point(155, 300))
-            ),  # 6 - Yellow
+            ),  # 5 - Blue
         ]
 
         self.pickup_zones: list[Plants_zone] = [
@@ -99,8 +99,14 @@ class MarsArena(Arena):
         super().__init__(
             game_borders=create_straight_rectangle(origin, opposite_corner),
             zones={
-                "forbidden": MultiPolygon([self.drop_zones[(start_zone % 2) * 3].zone]),
-                "home": self.drop_zones[start_zone - 1].zone,
+                "forbidden": MultiPolygon(
+                    [
+                        self.drop_zones[i].zone
+                        for i in range(6)
+                        if i % 2 != start_zone % 2
+                    ]
+                ),
+                "home": self.drop_zones[start_zone].zone,
             },
         )
 
