@@ -81,7 +81,7 @@ class Arena:
     def enable_go_on_path(
         self,
         path: LineString,
-        buffer_distance: float = 0,
+        buffer_distance: float = 15,
         forbidden_zone_name: str = "forbidden",
     ) -> bool:
         """this function checks if a given line (or series of connected lines) move can be made into the arena. It
@@ -116,10 +116,13 @@ class Arena:
 
         # verify that the area touched is in the arena and do not collide with boarders
         if not self.game_borders.contains(geometry_to_check):
+            print("not self.game_borders.contains(geometry_to_check)")
             return False
 
         # verify that the area touched isn't in the forbidden area
-
+        print(
+            f"returning not self.zone_intersects(forbidden_zone_name, geometry_to_check) with {geometry_to_check}"
+        )
         return not self.zone_intersects(forbidden_zone_name, geometry_to_check)
 
     def compute_go_to_destination(
