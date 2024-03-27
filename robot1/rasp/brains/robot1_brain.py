@@ -183,7 +183,9 @@ class Robot1Brain(Brain):
 
         is_arrived: bool = False
         self.open_god_hand()
-        while not is_arrived:
+        i = 0
+        while not is_arrived and i < 5:
+            i += 1
             print("Sorting zones...")
             plant_zones = self.arena.sort_pickup_zone(self.odometer)
             print("Going to best...")

@@ -134,6 +134,7 @@ class MarsArena(Arena):
         )  # sort according to the required bound and by distance
         if reverse:
             zones = sorted(zones, key=lambda x: (x.nb_plant), reverse=True)
+        print(f"zones ({len(zones)}: {zones}")
         return zones
 
     def sort_gardener(
