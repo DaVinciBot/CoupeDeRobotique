@@ -211,6 +211,7 @@ class Robot1Brain(Brain):
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def zombie_mode(self):
+        self.logger.log("Starting zombie mode", LogLevels.INFO)
         # Check cmd
         cmd = await self.ws_cmd.receiver.get()
 
@@ -248,9 +249,25 @@ class Robot1Brain(Brain):
                     tolerance=cmd.data[3],
                 )
             elif cmd.msg == "eval":
-                eval(cmd.data[0])
+                instructions = []
+                if isinstance(cmd.data, str):
+                    instructions.append(cmd.data)
+                elif isinstance(cmd.data, list):
+                    instructions = cmd.data
+
+                for instruction in instructions:
+                    eval(instruction)
+
             elif cmd.msg == "await_eval":
-                await eval(cmd.data[0])
+                instructions = []
+                if isinstance(cmd.data, str):
+                    instructions.append(cmd.data)
+                elif isinstance(cmd.data, list):
+                    instructions = cmd.data
+
+                for instruction in instructions:
+                    await eval(instruction)
+
             else:
                 self.logger.log(
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
