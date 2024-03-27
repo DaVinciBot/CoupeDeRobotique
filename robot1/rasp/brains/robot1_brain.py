@@ -159,11 +159,13 @@ class Robot1Brain(Brain):
             destination_point = None
             destination_plant_zone = None
             for plant_zone in plant_zones:
-                point = self.arena.compute_go_to_destination(
-                    start_point=self.odometer, zone=plant_zone, delta=delta
+                target = self.arena.compute_go_to_destination(
+                    start_point=self.odometer, zone=plant_zone.zone, delta=delta
                 )
-                if self.arena.enable_go_to(point):
-                    destination_point = point
+                if self.arena.enable_go_to_point(
+                    Point(self.odometer.x, self.odometer.y), target
+                ):
+                    destination_point = target
                     destination_plant_zone = plant_zone
                     break
             if (
@@ -185,7 +187,7 @@ class Robot1Brain(Brain):
                 self.close_god_hand()
                 destination_plant_zone.take_plant(5)
 
-        is_arrived: bool = False
+        is_arrived = False
         while not is_arrived:
             plant_zones = self.arena.sort_drop_zone(self.odometer)
             is_arrived, destination_plant_zone = await go_best_zone(plant_zones)

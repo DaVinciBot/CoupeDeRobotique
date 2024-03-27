@@ -66,7 +66,18 @@ class Arena:
 
         return self.zones[zone_name].intersects(element)
 
-    def enable_go_to(
+    def enable_go_to_point(
+        self,
+        start: Point,
+        target: Point,
+        buffer_distance: float = 0,
+        forbidden_zone_name: str = "forbidden",
+    ) -> bool:
+        return self.enable_go_on_path(
+            LineString([start, target]), buffer_distance, forbidden_zone_name
+        )
+
+    def enable_go_on_path(
         self,
         path: LineString,
         buffer_distance: float = 0,
@@ -124,7 +135,7 @@ class Arena:
         Returns:
             _type_: _description_
         """
-        center : zone.centroid
+        center: zone.centroid
 
         # Get the boundary (circle) of the disc of radius delta around the center
         circle_delta = center.buffer(delta).boundary
