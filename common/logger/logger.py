@@ -8,12 +8,16 @@ from dataclasses import dataclass
 
 
 @dataclass
-class ANSI_color_codes:
-    R = "\033[0;31m"  #'0;31' is Red's ANSI color code
-    G = "\033[0;32m"  #'0;32' is Green's ANSI color code
-    Y = "\033[1;32m"  #'1;32' is Yellow's ANSI color code
-    B = "\033[0;34m"  #'0;34' is Blue's ANSI color code
-    N = "\033[0m"  # No color
+class COLORS:
+    NO_FORMAT = "\033[0m"
+    F_INVERT = "\033[7m"
+    ORANGE = "\033[38;5;208m"
+    C_GOLD1 = "\033[38;5;220m"
+    C_CHARTREUSE3 = "\033[38;5;76m"
+    C_RED1 = "\033[38;5;196m"
+    C_SILVER = "\033[38;5;7m"
+    CRITICAL = "\033[38;5;196m" + "\033[38;5;220m"
+    DATE = "\033[7m" + "\033[38;5;220m"
 
 
 class Logger:
@@ -69,20 +73,25 @@ class Logger:
             # Evaluate the str value now to make sure no weird operators happen
             message = str(message)
             date_str = Utils.get_str_date()
-            text_color = ANSI_color_codes.N
+            level_text_color = COLORS.NO_FORMAT
             match level:
                 case LogLevels.DEBUG:
-                    text_color = ANSI_color_codes.N
+                    level_text_color = COLORS.NO_FORMAT
                 case LogLevels.INFO:
-                    text_color = ANSI_color_codes.G
+                    level_text_color = COLORS.C_CHARTREUSE3
                 case LogLevels.WARNING:
-                    text_color = ANSI_color_codes.Y
+                    level_text_color = COLORS.ORANGE
                 case LogLevels.ERROR:
-                    text_color = ANSI_color_codes.R
+                    level_text_color = COLORS.C_RED1
                 case LogLevels.CRITICAL:
-                    text_color = ANSI_color_codes.R
+                    level_text_color = COLORS.CRITICAL
 
-            message = f"{ANSI_color_codes.Y}{date_str} -> [{ANSI_color_codes.G}{self.identifier}] {text_color}{level.name} | {message}"
+            message = (
+                f"{COLORS.DATE}{date_str}{COLORS.NO_FORMAT} -> "
+                + f"[{COLORS.C_SILVER}{self.identifier}{COLORS.NO_FORMAT}] "
+                + f"{level_text_color}{level.name}{COLORS.NO_FORMAT} | "
+                + f"{COLORS.NO_FORMAT}{message}{COLORS.NO_FORMAT}"
+            )
             if self.print_log:
                 print(message)
 
