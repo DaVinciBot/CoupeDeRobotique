@@ -139,7 +139,7 @@ class MarsArena(Arena):
         return zones
 
     def sort_gardener(
-        self, actual_position: OrientedPoint, our=True, maxi=6, reverse=True
+        self, actual_position: OrientedPoint, our=True, maxi=6, reverse=False
     ):
         return self.sort_plant_zones(
             actual_position=actual_position,
@@ -149,7 +149,7 @@ class MarsArena(Arena):
         )
 
     def sort_drop_zone(
-        self, actual_position: OrientedPoint, our=True, maxi=6, reverse=True
+        self, actual_position: OrientedPoint, our=True, maxi=6, reverse=False
     ):
         return self.sort_plant_zones(
             actual_position=actual_position,
