@@ -155,7 +155,7 @@ class Robot1Brain(Brain):
     @Brain.task(process=False, run_on_start=False, timeout=70)
     async def plant_stage(self):
 
-        async def go_best_zone(plant_zones: list[Plants_zone], delta=0):
+        async def go_best_zone(plant_zones: list[Plants_zone], delta=5):
             destination_point = None
             destination_plant_zone = None
             for plant_zone in plant_zones:

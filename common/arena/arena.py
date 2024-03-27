@@ -123,7 +123,7 @@ class Arena:
         return not self.zone_intersects(forbidden_zone_name, geometry_to_check)
 
     def compute_go_to_destination(
-        self, start_point: Point, zone: Polygon, delta: float = 0, closer: bool = True
+        self, start_point: Point, zone: Polygon, delta: float = 5, closer: bool = True
     ) -> Point | None:
         """_summary_
 
