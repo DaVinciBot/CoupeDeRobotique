@@ -143,14 +143,12 @@ class Robot1Brain(Brain):
                 CONFIG.GOD_HAND_GRAB_SERVO_OPEN_ANGLE
                 + CONFIG.GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_DIFF_LEFT,
             )
-            time.sleep(1)
         for pin in CONFIG.GOD_HAND_GRAB_SERVO_PINS_RIGHT:
             self.actuators.update_servo(
                 pin,
                 CONFIG.GOD_HAND_GRAB_SERVO_OPEN_ANGLE
                 + CONFIG.GOD_HAND_GRAB_SERVO_CLOSE_ANGLE_DIFF_RIGHT,
             )
-            time.sleep(1)
 
     @Brain.task(process=False, run_on_start=False, timeout=70)
     async def plant_stage(self):
@@ -191,7 +189,7 @@ class Robot1Brain(Brain):
             print("Going to best...")
             is_arrived, destination_plant_zone = await go_best_zone(plant_zones)
             print(f"Done go_best_zone: {is_arrived}, {destination_plant_zone}")
-            await asyncio.sleep(10)
+
             if is_arrived:
                 self.close_god_hand()
                 destination_plant_zone.take_plant(5)
