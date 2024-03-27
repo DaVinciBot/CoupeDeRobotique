@@ -8,9 +8,9 @@
 
 // PID
 #define MAX_PWM 200
-#define Kp 7.5
+#define Kp 3.0
 #define Ki 0.0
-#define Kd 1.0
+#define Kd 0.0
 
 #define RIGHT_MOTOR_POWER_FACTOR 1.0
 #define LEFT_MOTOR_POWER_FACTOR 1.0
@@ -26,18 +26,18 @@
 #define WHEEL_DIAMETER 6.1
 
 // Motor Left
-#define L_ENCA 12
-#define L_ENCB 11
+#define L_ENCA 11
+#define L_ENCB 12
 #define L_PWM 5
-#define L_IN2 3
-#define L_IN1 4
+#define L_IN2 4
+#define L_IN1 3
 
 // Motor Right
-#define R_ENCA 14
-#define R_ENCB 13
+#define R_ENCA 13
+#define R_ENCB 14
 #define R_PWM 2
-#define R_IN2 1
-#define R_IN1 0
+#define R_IN2 0
+#define R_IN1 1
 
 Rolling_Basis *rolling_basis_ptr = new Rolling_Basis(ENCODER_RESOLUTION, CENTER_DISTANCE, WHEEL_DIAMETER);
 
