@@ -1,6 +1,7 @@
 from geometry.geometry import (
     Point,
     Polygon,
+    MultiPoint,
     MultiPolygon,
     LineString,
     BufferCapStyle,

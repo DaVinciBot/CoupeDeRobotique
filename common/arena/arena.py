@@ -1,6 +1,7 @@
 from typing import Union
 from geometry import (
     Point,
+    MultiPoint,
     Polygon,
     MultiPolygon,
     LineString,
@@ -149,9 +150,13 @@ class Arena:
         # Check that we found at least 2 intersections, should always be ok unless start_point is inside circle_delta
         # (therefore the scale function wasn't enough to reach the far away intersection)
         # or the circle is a point (delta = 0)
-        if (delta > 0 and len(intersections.geoms) < 2) or (
-            delta == 0 and len(intersections.geoms) < 1
-        ):
+        if (
+            delta > 0
+            and (
+                not isinstance(intersections, MultiPoint)
+                or not len(intersections.geoms) == 2
+            )
+        ) or (delta == 0 and not isinstance(intersections, Point)):
             return None
 
         # Return closest or furthest intersection
