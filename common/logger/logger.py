@@ -4,6 +4,16 @@ from logger.log_levels import LogLevels
 
 import os, types, functools
 from threading import Thread
+from dataclasses import dataclass
+
+
+@dataclass
+class ANSI_color_codes:
+    R = "\033[0;31m"  #'0;31' is Red's ANSI color code
+    G = "\033[0;32m"  #'0;32' is Green's ANSI color code
+    Y = "\033[1;32m"  #'1;32' is Yellow's ANSI color code
+    B = "\033[0;34m"  #'0;34' is Blue's ANSI color code
+    N = "\033[0m"  # No color
 
 
 class Logger:
@@ -59,7 +69,20 @@ class Logger:
             # Evaluate the str value now to make sure no weird operators happen
             message = str(message)
             date_str = Utils.get_str_date()
-            message = f"{date_str} -> [{self.identifier}] {level.name} | {message}"
+            text_color = ANSI_color_codes.N
+            match level:
+                case LogLevels.DEBUG:
+                    text_color = ANSI_color_codes.N
+                case LogLevels.INFO:
+                    text_color = ANSI_color_codes.G
+                case LogLevels.WARNING:
+                    text_color = ANSI_color_codes.Y
+                case LogLevels.ERROR:
+                    text_color = ANSI_color_codes.R
+                case LogLevels.CRITICAL:
+                    text_color = ANSI_color_codes.R
+
+            message = f"{ANSI_color_codes.Y}{date_str} -> [{ANSI_color_codes.G}{self.identifier}] {text_color}{level.name} | {message}"
             if self.print_log:
                 print(message)
 
