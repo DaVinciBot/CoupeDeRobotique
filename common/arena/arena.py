@@ -162,12 +162,15 @@ class Arena:
         # Return closest or furthest intersection
 
         else:
-            if distance(start_point, intersections.geoms[0]) <= distance(
-                start_point, intersections.geoms[1]
-            ):
-                return intersections.geoms[0] if closer else intersections.geoms[1]
+            if isinstance(intersections, Point):
+                return intersections
             else:
-                return intersections.geoms[1] if closer else intersections.geoms[0]
+                if distance(start_point, intersections.geoms[0]) <= distance(
+                    start_point, intersections.geoms[1]
+                ):
+                    return intersections.geoms[0] if closer else intersections.geoms[1]
+                else:
+                    return intersections.geoms[1] if closer else intersections.geoms[0]
 
     def check_collision_by_distances(
         self, distances_to_check: list[float], pos_robot: OrientedPoint
