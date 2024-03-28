@@ -36,3 +36,7 @@ def center_and_limit(string: str, width: int, trailing_dots: int = 2):
         if len(string) > width
         else string.center(width)
     )
+
+
+def style(content: str, style: str) -> str:
+    return style + content + STYLES.RESET_ALL
