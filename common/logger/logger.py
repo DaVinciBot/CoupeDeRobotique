@@ -16,8 +16,9 @@ class Logger:
         func=None,
         *,
         identifier: str = "unknown",
-        dec_level: LogLevels = LogLevels.DEBUG,
-        log_level: LogLevels = LogLevels.DEBUG,
+        decorator_level: LogLevels = LogLevels.DEBUG,
+        print_log_level: LogLevels = LogLevels.DEBUG,
+        file_log_level: LogLevels = LogLevels.DEBUG,
         print_log: bool = True,
         write_to_file: bool = True,
     ):
@@ -27,7 +28,7 @@ class Logger:
         # Decorator only
         if func is not None:
             self.func = func
-            self.dec_level = dec_level
+            self.dec_level = decorator_level
             functools.update_wrapper(self, self.func)
             self.__code__ = self.func.__code__
 
@@ -41,7 +42,8 @@ class Logger:
             if len(self.identifier) > identifier_width
             else self.identifier.center(identifier_width)
         )
-        self.log_level = log_level
+        self.print_log_level = print_log_level
+        self.file_log_level = file_log_level
         self.print_log = print_log
         self.write_to_file = write_to_file
 
@@ -50,29 +52,35 @@ class Logger:
         self.log_file = f"{date.strftime('%Y-%m-%d')}.log"
 
         self.log(
-            f"Logger initialized [{self.identifier}], level: {self.log_level.name}"
+            f"Logger initialized, "
+            + f"print: {self.frame(self.print_log_level.name.center(self.log_level_width), STYLES.LogLevelsColorsDict[self.print_log_level]) if self.print_log else 'NO'}, "
+            + f"write to file: {self.frame(self.file_log_level.name.center(self.log_level_width), STYLES.LogLevelsColorsDict[self.file_log_level]) if self.log_file else 'NO'}",
+            level=LogLevels.INFO,
         )
 
+    @staticmethod
+    def frame(content: str, style: str) -> str:
+        return style + content + STYLES.RESET_ALL
+
     def message_factory(
-        self, date_str: str, level: LogLevels, message: str, colors: bool = False
+        self, date_str: str, level: LogLevels, message: str, styles: bool = False
     ) -> str:
 
-        def frame(content: str, style: str) -> str:
-            if colors:
-                content = style + content + STYLES.RESET_ALL
-            return content
-
         return (
-            frame(date_str, STYLES.DATE)
+            (self.frame(date_str, STYLES.DATE) if styles else "")
             + " -> ["
-            + frame(self.identifier_str, STYLES.IDENTIFIER)
+            + (self.frame(self.identifier_str, STYLES.IDENTIFIER) if styles else "")
             + "] "
-            + frame(
-                level.name.center(self.log_level_width),
-                STYLES.LogLevelsColorsDict[level],
+            + (
+                self.frame(
+                    level.name.center(self.log_level_width),
+                    STYLES.LogLevelsColorsDict[level],
+                )
+                if styles
+                else ""
             )
             + " | "
-            + frame(message, STYLES.MESSAGE)
+            + (self.frame(message, STYLES.MESSAGE) if styles else "")
         )
 
     def log(self, message: str, level: LogLevels = LogLevels.WARNING) -> None:
@@ -83,29 +91,28 @@ class Logger:
         :param level: 0: INFO, 1: WARNING, 2: ERROR, 3: CRITICAL, defaults to 0
         :type level: int, optional
         """
-        if level >= self.log_level:
-            # Evaluate the str value now to make sure no weird operators happen
-            message_str = str(message)
-            date_str = Utils.get_str_date()
+        # Evaluate the str value now to make sure no weird operators happen
+        message_str = str(message)
+        date_str = Utils.get_str_date()
 
-            if self.print_log:
-                print(
-                    self.message_factory(
-                        date_str=date_str, level=level, message=message_str, colors=True
-                    )
+        if self.print_log and level >= self.print_log_level:
+            print(
+                self.message_factory(
+                    date_str=date_str, level=level, message=message_str, styles=True
                 )
+            )
 
-            if self.log_file:
-                with open(f"logs/{self.log_file}", "a") as f:
-                    f.write(
-                        self.message_factory(
-                            date_str=date_str,
-                            level=level,
-                            message=message_str,
-                            colors=False,
-                        )
-                        + "\n"
+        if self.log_file and level >= self.file_log_level:
+            with open(f"logs/{self.log_file}", "a") as f:
+                f.write(
+                    self.message_factory(
+                        date_str=date_str,
+                        level=level,
+                        message=message_str,
+                        styles=False,
                     )
+                    + "\n"
+                )
 
         # Sync logs to server (deprecated for now)
         # try:

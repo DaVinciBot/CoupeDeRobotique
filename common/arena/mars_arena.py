@@ -6,6 +6,8 @@ from geometry import (
     MultiPolygon,
     OrientedPoint,
 )
+from logger import Logger, LogLevels
+
 from shapely import distance
 from sys import maxsize
 
@@ -31,7 +33,7 @@ class Plants_zone:
 class MarsArena(Arena):
     """Represent the arena of the CDR 2023-2024"""
 
-    def __init__(self, start_zone_id: int):
+    def __init__(self, start_zone_id: int, logger: Logger):
         """
         Generate the arena of the CDR 2023-2024
 
@@ -99,6 +101,7 @@ class MarsArena(Arena):
 
         super().__init__(
             game_borders=create_straight_rectangle(origin, opposite_corner),
+            logger=logger,
             zones={
                 "forbidden": MultiPolygon(
                     [
