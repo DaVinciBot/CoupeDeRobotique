@@ -40,20 +40,21 @@ class ServerBrain(Brain):
         Tasks
     """
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
-    async def main(self):
-        cmd_state = await self.ws_cmd.receiver.get()
-        # New cmd received !
-        if cmd_state != WSmsg():
-            print(f"New cmd received ! [{cmd_state}]")
-            if self.ws_cmd.get_client("robot1") is not None:
-                result = await self.ws_cmd.sender.send(
-                    WSmsg(
-                        sender="server",
-                        msg=cmd_state.msg,
-                        data=cmd_state.data
-                    ),
-                    clients=self.ws_cmd.get_client("robot1")
-                )
-                print("Result of sending cmd to robot1:", result)
+    @Brain.task(process=True, run_on_start=True, refresh_rate=1.0)
+    def test0(self):
+        print("self", self)
+        self.shared += 1
+
+        time.sleep(0.4)
+        print("Salut TEST0", self.shared)
+
+    @Brain.task(process=False, run_on_start=True, refresh_rate=1.2)
+    async def test1(self):
+        await asyncio.sleep(0.2)
+        print("Salut TEST1", self.shared)
+
+    @Brain.task(process=False, run_on_start=True, refresh_rate=1.4)
+    async def test2(self):
+        print("Salut TEST2", self.shared)
+
 

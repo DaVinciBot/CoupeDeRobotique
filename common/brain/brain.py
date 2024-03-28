@@ -150,20 +150,20 @@ class Brain:
         * Need to be wrap by routine task wrapper.
         * Add this method in the async functions list only if a subprocess task is defined.
         """
-        self_shared_reference = self.__shared_self.get_dict()
-        # Iterate on each attribute of the self instance (there are the only ones that can be synchronized)
-        for key, value in self_shared_reference.items():
-            # Verify if the value is different between the instance and the shared data
-            if key != "name" and getattr(self, key) != getattr(self.__shared_self, key):
-                # If different check the self_shared_reference value to know if it is the instance
-                # or self_shared which have been updated
-                if value != getattr(self.__shared_self, key):
-                    # If the value is the instance one, update the shared data
-                    setattr(self.__shared_self, key, getattr(self, key))
-                    self_shared_reference[key] = getattr(self, key)  # Update also the reference
-                else:
-                    # If the value is the shared data one, update the instance
-                    setattr(self, key, getattr(self.__shared_self, key))
+        while True:
+            for key in self.shared_self.get_dict().keys():
+                self_attr_value = getattr(self, key)
+                self_shared_attr_value = eval(f'self.shared_self.{key}')
+
+                # Verify if the value is different between the instance and the shared data
+                if self_attr_value != self_shared_attr_value:
+                    # The value has changed on the virtual self ?
+                    if key in self.shared_self.get_updated_attributes():
+                        setattr(self, key, self_shared_attr_value)
+                        self.shared_self.remove_updated_attribute(key)
+                    else:
+                        setattr(self.shared_self, key, self_attr_value)
+            await asyncio.sleep(0.01)
 
     """
         Get evaluated tasks which need to be added to the background tasks of the application
@@ -181,7 +181,8 @@ class Brain:
                     lambda: AsynchronousWrapper.wrap_to_one_shot(self, self.__start_subprocesses)
                 )
                 self.__async_functions.append(
-                    lambda: AsynchronousWrapper.wrap_to_routine(self, self.__sync_self_and_shared_self, 0)
+                    #lambda: AsynchronousWrapper.wrap_to_routine(self, self.__sync_self_and_shared_self, 0)
+                    lambda: AsynchronousWrapper.wrap_to_one_shot(self, self.__sync_self_and_shared_self)
                 )
 
         return self.__async_functions
