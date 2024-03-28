@@ -1,5 +1,5 @@
 from utils.utils import Utils
-from logger.log_levels import LogLevels
+from logger.log_tools import LogLevels, STYLES, center_and_limit, style, strip_ANSI
 
 
 import os, types, functools
@@ -31,8 +31,9 @@ class Logger:
         func=None,
         *,
         identifier: str = "unknown",
-        dec_level: LogLevels = LogLevels.DEBUG,
-        log_level: LogLevels = LogLevels.DEBUG,
+        decorator_level: LogLevels = LogLevels.DEBUG,
+        print_log_level: LogLevels = LogLevels.DEBUG,
+        file_log_level: LogLevels = LogLevels.DEBUG,
         print_log: bool = True,
         write_to_file: bool = True,
     ):
@@ -42,14 +43,18 @@ class Logger:
         # Decorator only
         if func is not None:
             self.func = func
-            self.dec_level = dec_level
+            self.dec_level = decorator_level
             functools.update_wrapper(self, self.func)
             self.__code__ = self.func.__code__
 
         # Normal init
         # Init attributes
+        identifier_width = 12
+        self.log_level_width = max([len(loglvl.name) for loglvl in LogLevels]) + 2
         self.identifier = identifier
-        self.log_level = log_level
+        self.identifier_str = center_and_limit(self.identifier, identifier_width)
+        self.print_log_level = print_log_level
+        self.file_log_level = file_log_level
         self.print_log = print_log
         self.write_to_file = write_to_file
 
@@ -58,7 +63,29 @@ class Logger:
         self.log_file = f"{date.strftime('%Y-%m-%d')}.log"
 
         self.log(
-            f"Logger initialized [{self.identifier}], level: {self.log_level.name}"
+            f"Logger initialized, "
+            + f"print: {style(center_and_limit(self.print_log_level.name,self.log_level_width),STYLES.LogLevelsColorsDict[self.print_log_level]) if self.print_log else style(center_and_limit('NO',self.log_level_width),STYLES.RESET_ALL)}, "
+            + f"write to file: {style(center_and_limit(self.file_log_level.name,self.log_level_width),STYLES.LogLevelsColorsDict[self.file_log_level]) if self.log_file else style(center_and_limit('NO',self.log_level_width),STYLES.RESET_ALL)}",
+            level=LogLevels.INFO,
+        )
+
+    def message_factory(
+        self, date_str: str, level: LogLevels, message: str, styles: bool = True
+    ) -> str:
+
+        return (
+            (style(date_str, STYLES.DATE))
+            + " -> ["
+            + (style(self.identifier_str, STYLES.IDENTIFIER))
+            + "] "
+            + (
+                style(
+                    level.name.center(self.log_level_width),
+                    STYLES.LogLevelsColorsDict[level],
+                )
+            )
+            + " | "
+            + (style(message, STYLES.MESSAGE))
         )
 
     def log(self, message: str, level: LogLevels = LogLevels.WARNING) -> None:

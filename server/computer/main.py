@@ -18,8 +18,9 @@ if __name__ == "__main__":
     # Logger
     logger = Logger(
         identifier="computer",
-        dec_level=LogLevels.INFO,
-        log_level=LogLevels.DEBUG,
+        decorator_level=LogLevels.INFO,
+        print_log_level=LogLevels.INFO,
+        file_log_level=LogLevels.INFO,
     )
 
     # Websocket server
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     )
 
     aruco_recognizer = ArucoRecognizer(aruco_type=CONFIG.CAMERA_ARUCO_DICT_TYPE)
-    
+
 
     color_recognizer = ColorRecognizer(
         detection_range=CONFIG.CAMERA_COLOR_FILTER_RANGE,
@@ -71,11 +72,11 @@ if __name__ == "__main__":
     camera.load_undistor_coefficients()
     """
     # Arena
-    arena = MarsArena(1)
+    arena = MarsArena(2, Logger(identifier="arena", print_log_level=LogLevels.INFO))
 
     # Brain
     brain = ServerBrain(
-        logger=logger,
+        logger=Logger(identifier="ServerBrain", print_log_level=LogLevels.INFO),
         ws_cmd=ws_cmd,
         ws_log=ws_log,
         ws_lidar=ws_lidar,

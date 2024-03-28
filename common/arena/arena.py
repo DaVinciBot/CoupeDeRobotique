@@ -1,4 +1,7 @@
 from typing import Union
+from math import cos, sin
+from shapely import GeometryCollection
+
 from geometry import (
     Point,
     MultiPoint,
@@ -15,9 +18,7 @@ from geometry import (
     OrientedPoint,
     rad,
 )
-
-from math import cos, sin
-from shapely import GeometryCollection
+from logger import Logger, LogLevels
 
 
 class Arena:
@@ -25,11 +26,12 @@ class Arena:
 
     def __init__(
         self,
+        logger: Logger,
         safe_collision_distance: float = 30,
         game_borders: Polygon = create_straight_rectangle(Point(0, 0), Point(200, 300)),
         zones: Union[dict[str, MultiPolygon], None] = None,
     ):
-
+        self.l = logger
         self.game_borders = game_borders
         self.game_borders_buffered = self.game_borders.buffer(-10)
         self.safe_collision_distance = safe_collision_distance
@@ -103,13 +105,7 @@ class Arena:
         # define the area touched by the buffer, for example the sides of a robot moving
 
         geometry_to_check = (
-            path.buffer(
-                buffer_distance,
-                cap_style=BufferCapStyle.round,
-                join_style=BufferJoinStyle.round,
-            )
-            if buffer_distance > 0
-            else path
+            path.buffer(buffer_distance) if buffer_distance > 0 else path
         )
         # Important to check buffer_distance > 0, otherwise the geometry can become a polygon without surface that never
         # intersects with anything

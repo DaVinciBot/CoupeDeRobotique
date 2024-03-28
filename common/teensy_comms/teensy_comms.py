@@ -83,7 +83,7 @@ class Teensy:
         self._crc8 = crc8.crc8()
         self.last_message = None
         self.end_bytes = b"\xBA\xDD\x1C\xC5"
-        self.l = logger
+        self.l = Logger(identifier="Teensy")
 
         for port in serial.tools.list_ports.comports():
             if (
@@ -96,10 +96,10 @@ class Teensy:
                 break
         if self._teensy is None:
             if dummy:
-                self.l.log("Dummy mode")
+                self.l.log("Dummy mode", self.l.log_level.INFO)
+                self._teensy = DummySerial()
             else:
-                self.l.log("No Teensy found !", LogLevels.ERROR)
-                self.l.log("Dummy mode")
+                self.l.log("No Teensy found !", self.l.log_level.CRITICAL)
                 raise TeensyException("No Device !")
         self.messagetype = {}
         if not dummy:

@@ -2,6 +2,7 @@ from logger import LogLevels
 from utils import Utils
 
 from brain.dict_proxy import DictProxyAccessor
+from brain.execution_states import ExecutionStates
 from multiprocessing import Process
 
 import functools
@@ -42,11 +43,11 @@ class SynchronousWrapper:
             return func(self)
         except Exception as error:
             self.logger.log(
-                f"Brain [{self}]-[{func.__name__}] executor (Subprocess: sync function) -> error: {error}",
+                f"[{func.__name__}] executor (Subprocess: sync function) -> error: {error}",
                 LogLevels.ERROR,
             )
             time.sleep(error_sleep)
-            return None
+            return ExecutionStates.ERROR_OCCURRED
 
     @staticmethod
     def wrap_to_routine(self, task, refresh_rate):
@@ -59,8 +60,8 @@ class SynchronousWrapper:
         :return:
         """
         self.logger.log(
-            f"Brain [{self}]-[{task.__name__}] routine (Subprocess: sync function) -> started",
-            LogLevels.INFO
+            f"[{task.__name__}] routine (Subprocess: sync function) -> started",
+            LogLevels.INFO,
         )
         while True:
             SynchronousWrapper.safe_execute(self, task, error_sleep=refresh_rate)
@@ -76,14 +77,14 @@ class SynchronousWrapper:
         :return:
         """
         self.logger.log(
-            f"Brain [{self}]-[{task.__name__}] one-shot (Subprocess: sync function) -> started",
-            LogLevels.INFO
+            f"[{task.__name__}] one-shot (Subprocess: sync function) -> started",
+            LogLevels.INFO,
         )
         output = SynchronousWrapper.safe_execute(self, task)
         self.logger.log(
-            f"Brain [{self}]-[{task.__name__}] one-shot (Subprocess: sync function) -> ended, "
+            f"[{task.__name__}] one-shot (Subprocess: sync function) -> ended, "
             f"output [{output}]",
-            LogLevels.INFO
+            LogLevels.INFO,
         )
         return output
 
@@ -93,8 +94,8 @@ class SynchronousWrapper:
             task_name = task.__name__
 
         self.logger.log(
-            f"Brain [{self}]-[{task_name}] timed task (Subprocess: sync function) -> started",
-            LogLevels.INFO
+            f"[{task_name}] timed task (Subprocess: sync function) -> started",
+            LogLevels.INFO,
         )
         try:
             process = Process(target=task)
@@ -103,7 +104,7 @@ class SynchronousWrapper:
             run_start = Utils.get_ts()
 
             def run_duration():
-                return Utils.get_ts() - run_start
+                return Utils.time_since(run_start)
 
             while process.is_alive() and run_duration() < timeout:
                 await asyncio.sleep(0.1)
@@ -113,26 +114,26 @@ class SynchronousWrapper:
 
             if run_duration() < timeout:
                 self.logger.log(
-                    f"Brain [{self}]-[{task_name}] timed task (Subprocess: sync function) -> "
+                    f"[{task_name}] timed task (Subprocess: sync function) -> "
                     f"ended before the timeout [{run_duration():.1f}s/{timeout:.1f}s]",
-                    LogLevels.INFO
+                    LogLevels.INFO,
                 )
-                return 0  # No error
+                return ExecutionStates.CORRECTLY
 
             else:
                 self.logger.log(
-                    f"Brain [{self}]-[{task_name}] timed task (Subprocess: sync function) -> "
+                    f"[{task_name}] timed task (Subprocess: sync function) -> "
                     f"ended by reaching the timeout [{timeout}]",
-                    LogLevels.INFO
+                    LogLevels.INFO,
                 )
-                return 1  # Error -> timeout reached
+                return ExecutionStates.TIMEOUT
         except Exception as error:
             self.logger.log(
-                f"Brain [{self}]-[{task_name}] timed task (Subprocess: sync function) -> "
+                f"[{task_name}] timed task (Subprocess: sync function) -> "
                 f"ended because an error occurred [{error}]",
-                LogLevels.INFO
+                LogLevels.INFO,
             )
-            return 2  # Error -> error occurred (crash)
+            return ExecutionStates.ERROR_OCCURRED
 
     """
         Specific to synchronous task (task executed as subprocess)
@@ -142,7 +143,7 @@ class SynchronousWrapper:
     async def wrap_to_dummy_async(task):
         process = Process(target=task)
         process.start()
-        process.join()
+        # process.join()
 
     @staticmethod
     def wrap_routine_with_initialization(self, task, refresh_rate, start_loop_marker):
@@ -163,12 +164,16 @@ class SynchronousWrapper:
 
         # Checking for the presence of the loop marker in the source code
         if start_loop_marker not in src:
-            raise ValueError(f"The start loop marker '{start_loop_marker}' was not found in the source code.")
+            raise ValueError(
+                f"The start loop marker '{start_loop_marker}' was not found in the source code."
+            )
 
         # Splitting the source code into initialization and loop parts using the loop marker
         parts = src.split(start_loop_marker)
         if len(parts) < 2:
-            raise ValueError("The source code does not contain distinct parts separated by the marker.")
+            raise ValueError(
+                "The source code does not contain distinct parts separated by the marker."
+            )
 
         # Extact the two function parts: initialization and loop
         init_src, loop_src = parts[0], start_loop_marker.join(parts[1:])
@@ -177,7 +182,9 @@ class SynchronousWrapper:
         # Add a return statement to the initialization part to return all local variables which has been initialized
         init_src = init_src + "return locals()"
         # Create a new function with the initialization part
-        init_code = f"def {original_signature}__init_func(self):\n    " + "\n    ".join(init_src.split("\n"))
+        init_code = f"def {original_signature}__init_func(self):\n    " + "\n    ".join(
+            init_src.split("\n")
+        )
 
         # Compiling and executing the initialization part
         local_vars = {}
@@ -189,16 +196,22 @@ class SynchronousWrapper:
         # Get all parameters of the loop function
         param_list = ", ".join(var_initialized.keys())
         # Create a new function with the loop part
-        loop_code = f"def {original_signature}__loop_func({param_list}):\n    " + "\n    ".join(loop_src.split("\n"))
+        loop_code = (
+                f"def {original_signature}__loop_func({param_list}):\n    "
+                + "\n    ".join(loop_src.split("\n"))
+        )
 
         # Compiling and executing the initialization part
         exec(loop_code, task.__globals__, local_vars)
-        loop_func = local_vars[f'{original_signature}__loop_func']
+        loop_func = local_vars[f"{original_signature}__loop_func"]
         # Create a partial function with the initialized variables except the self instance because it is given in sync_wrap_to_routine
-        loop_func_partial_initialized = functools.partial(loop_func,
-                                                          **{k: v for k, v in var_initialized.items() if k != 'self'})
-        loop_func_partial_initialized.__name__ = f'{original_signature}__loop_func'
-        SynchronousWrapper.wrap_to_routine(self, loop_func_partial_initialized, refresh_rate)
+        loop_func_partial_initialized = functools.partial(
+            loop_func, **{k: v for k, v in var_initialized.items() if k != "self"}
+        )
+        loop_func_partial_initialized.__name__ = f"{original_signature}__loop_func"
+        SynchronousWrapper.wrap_to_routine(
+            self, loop_func_partial_initialized, refresh_rate
+        )
 
 
 """
@@ -213,17 +226,17 @@ class AsynchronousWrapper:
             return await func(self)
         except Exception as error:
             self.logger.log(
-                f"Brain [{self}]-[{func.__name__}] executor (Main-process: async function) -> error: {error}",
+                f"[{func.__name__}] executor (Main-process: async function) -> error: {error}",
                 LogLevels.ERROR,
             )
             await asyncio.sleep(max(error_sleep, 0.5))  # Avoid spamming the logs
-            return None
+            return ExecutionStates.ERROR_OCCURRED
 
     @staticmethod
     async def wrap_to_routine(self: TBrain, task, refresh_rate: float or int):
         self.logger.log(
-            f"Brain [{self}]-[{task.__name__}] routine (Main-process: async function) -> started",
-            LogLevels.INFO
+            f"[{task.__name__}] routine (Main-process: async function) -> started",
+            LogLevels.INFO,
         )
         while True:
             await AsynchronousWrapper.safe_execute(self, task, error_sleep=refresh_rate)
@@ -232,14 +245,14 @@ class AsynchronousWrapper:
     @staticmethod
     async def wrap_to_one_shot(self, task):
         self.logger.log(
-            f"Brain [{self}]-[{task.__name__}] one-shot (Main-process: async function) -> started",
-            LogLevels.INFO
+            f"[{task.__name__}] one-shot (Main-process: async function) -> started",
+            LogLevels.INFO,
         )
         output = await AsynchronousWrapper.safe_execute(self, task)
         self.logger.log(
-            f"Brain [{self}]-[{task.__name__}] one-shot (Main-process: async function) -> ended, "
+            f"[{task.__name__}] one-shot (Main-process: async function) -> ended, "
             f"output [{output}]",
-            LogLevels.INFO
+            LogLevels.INFO,
         )
         return output
 
@@ -249,10 +262,11 @@ class AsynchronousWrapper:
             task_name = task.__name__
 
         self.logger.log(
-            f"Brain [{self}]-[{task_name}] timed task (Main-process: async function) -> started",
-            LogLevels.INFO
+            f"[{task_name}] timed task (Main-process: async function) -> started",
+            LogLevels.INFO,
         )
         try:
+
             async def coroutine_executor():
                 await task
 
@@ -260,25 +274,25 @@ class AsynchronousWrapper:
             await asyncio.wait_for(coroutine_executor(), timeout=timeout)
 
             self.logger.log(
-                f"Brain [{self}]-[{task_name}] timed task (Main-process: async function) -> "
-                f"ended before the timeout [{(Utils.get_ts() - run_start):.1f}s/{timeout:.1f}s]",
-                LogLevels.INFO
+                f"[{task_name}] timed task (Main-process: async function) -> "
+                f"ended before the timeout [{(Utils.time_since(run_start)):.1f}s/{timeout:.1f}s]",
+                LogLevels.INFO,
             )
-            return 0  # No error
+            return ExecutionStates.CORRECTLY
         except asyncio.TimeoutError:
             self.logger.log(
-                f"Brain [{self}]-[{task_name}] timed task (Main-process: async function) -> "
+                f"[{task_name}] timed task (Main-process: async function) -> "
                 f"ended by reaching the timeout [{timeout}]",
-                LogLevels.INFO
+                LogLevels.INFO,
             )
-            return 1  # Error -> timeout reached
+            return ExecutionStates.TIMEOUT
         except Exception as error:
             self.logger.log(
-                f"Brain [{self}]-[{task_name}] timed task (Main-process: async function) -> "
+                f"[{task_name}] timed task (Main-process: async function) -> "
                 f"ended because an error occurred [{error}]",
-                LogLevels.INFO
+                LogLevels.INFO,
             )
-            return 2  # Error -> error occured (crash)
+            return ExecutionStates.ERROR_OCCURRED
 
 
 """
@@ -298,8 +312,8 @@ def remove_task_signature(src):
     Removes the signature of the task function from the source code.
     * Without delete the indentation.
     """
-    signature_end_index = src.find(':') + 1
-    newline_after_signature_index = src.find('\n', signature_end_index)
+    signature_end_index = src.find(":") + 1
+    newline_after_signature_index = src.find("\n", signature_end_index)
     if newline_after_signature_index == -1:
         raise ValueError("Unable to find the function body.")
 

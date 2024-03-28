@@ -178,7 +178,7 @@ class Robot1Brain(Brain):
     @Brain.task(process=False, run_on_start=False, timeout=300)
     async def plant_stage(self):
         start_stage_time = Utils.get_ts()
-        while 300 - (Utils.get_ts() - start_stage_time) > 10:
+        while 300 - Utils.time_since(start_stage_time) > 10:
             is_arrived: bool = False
             self.open_god_hand()
             while not is_arrived:
@@ -199,7 +199,7 @@ class Robot1Brain(Brain):
 
                 if is_arrived:
                     self.close_god_hand()
-                    destination_plant_zone.take_plant(5)
+                    destination_plant_zone.take_plants(5)
 
             is_arrived = False
             while not is_arrived:
@@ -219,6 +219,7 @@ class Robot1Brain(Brain):
                 )
                 if is_arrived:
                     self.open_god_hand()
+                    destination_plant_zone.drop_plants(5)
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def zombie_mode(self):

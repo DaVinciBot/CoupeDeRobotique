@@ -309,12 +309,12 @@ class RollingBasis(Teensy):
         )
 
         while (
-            Utils.get_ts() - start_time < timeout
+            Utils.time_since(start_time) < timeout
             and self.queue.last_deleted_id < queue_id
         ):
             await asyncio.sleep(0.2)
 
-        if Utils.get_ts() - start_time >= timeout:
+        if Utils.time_since(start_time) >= timeout:
             self.l.log(
                 f"Reached timeout in Go_To_And_Wait, clearing queue, at: {self.odometrie}",
                 LogLevels.WARNING,
@@ -434,8 +434,10 @@ class RollingBasis(Teensy):
         else:
             self.append_to_queue(Instruction(Command.RESET_POSITION, msg))
 
-    def set_home(self, new_home : OrientedPoint, *, skip_queue=False):
-        msg = Command.SET_HOME.value + struct.pack("<fff", new_home.x, new_home.y, new_home.theta)
+    def set_home(self, new_home: OrientedPoint, *, skip_queue=False):
+        msg = Command.SET_HOME.value + struct.pack(
+            "<fff", new_home.x, new_home.y, new_home.theta
+        )
         if skip_queue:
             self.insert_in_queue(0, Instruction(Command.SET_HOME, msg), True)
         else:
