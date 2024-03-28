@@ -23,10 +23,10 @@ class Plants_zone:
     def __repr__(self) -> str:
         return self.__str__()
 
-    def take_plant(self, nb):
+    def take_plants(self, nb):
         self.nb_plant -= nb
 
-    def drop_plant(self, nb):
+    def drop_plants(self, nb):
         self.nb_plant += nb
 
 
