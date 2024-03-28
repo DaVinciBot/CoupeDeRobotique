@@ -39,4 +39,4 @@ def center_and_limit(string: str, width: int, trailing_dots: int = 2):
 
 
 def style(content: str, style: str) -> str:
-    return style + content + STYLES.RESET_ALL
+    return style + content + (STYLES.RESET_ALL if style != "" else "")
