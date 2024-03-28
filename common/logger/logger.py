@@ -1,5 +1,5 @@
 from utils.utils import Utils
-from logger.log_tools import LogLevels, STYLES, center_and_limit, style
+from logger.log_tools import LogLevels, STYLES, center_and_limit, style, strip_ANSI
 
 
 import os, types, functools
@@ -49,28 +49,28 @@ class Logger:
 
         self.log(
             f"Logger initialized, "
-            + f"print: {center_and_limit(self.print_log_level.name if self.print_log else 'NO', self.log_level_width)}, "
-            + f"write to file: {center_and_limit(self.file_log_level.name if self.log_file else 'NO', self.log_level_width)}",
+            + f"print: {style(center_and_limit(self.print_log_level.name,self.log_level_width),STYLES.LogLevelsColorsDict[self.print_log_level]) if self.print_log else style(center_and_limit('NO',self.log_level_width),STYLES.RESET_ALL)}, "
+            + f"write to file: {style(center_and_limit(self.file_log_level.name,self.log_level_width),STYLES.LogLevelsColorsDict[self.file_log_level]) if self.log_file else style(center_and_limit('NO',self.log_level_width),STYLES.RESET_ALL)}",
             level=LogLevels.INFO,
         )
 
     def message_factory(
-        self, date_str: str, level: LogLevels, message: str, styles: bool = False
+        self, date_str: str, level: LogLevels, message: str, styles: bool = True
     ) -> str:
 
         return (
-            (style(date_str, STYLES.DATE if styles else ""))
+            (style(date_str, STYLES.DATE))
             + " -> ["
-            + (style(self.identifier_str, STYLES.IDENTIFIER if styles else ""))
+            + (style(self.identifier_str, STYLES.IDENTIFIER))
             + "] "
             + (
                 style(
                     level.name.center(self.log_level_width),
-                    STYLES.LogLevelsColorsDict[level] if styles else "",
+                    STYLES.LogLevelsColorsDict[level],
                 )
             )
             + " | "
-            + (style(message, STYLES.MESSAGE if styles else ""))
+            + (style(message, STYLES.MESSAGE))
         )
 
     def log(self, message: str, level: LogLevels = LogLevels.WARNING) -> None:
@@ -81,26 +81,26 @@ class Logger:
         :param level: 0: INFO, 1: WARNING, 2: ERROR, 3: CRITICAL, defaults to 0
         :type level: int, optional
         """
-        # Evaluate the str value now to make sure no weird operators happen
-        message_str = str(message)
+
         date_str = Utils.get_str_date()
 
+        # Evaluate the str(message) value manually to make sure no weird operators happen
+        message_str = self.message_factory(
+            date_str=date_str,
+            level=level,
+            message=str(message),
+            styles=False,
+        )
+
         if self.print_log and level >= self.print_log_level:
-            print(
-                self.message_factory(
-                    date_str=date_str, level=level, message=message_str, styles=True
-                )
-            )
+            print(message_str)
 
         if self.log_file and level >= self.file_log_level:
             with open(f"logs/{self.log_file}", "a") as f:
                 f.write(
-                    self.message_factory(
-                        date_str=date_str,
-                        level=level,
-                        message=message_str,
-                        styles=False,
-                    )
+                    strip_ANSI(
+                        message_str
+                    )  # Remove ANSI escape sequences from the string to save to file, or it will not display properly no most interfaces (could keep them if displayed through cat for example)
                     + "\n"
                 )
 

@@ -1,3 +1,4 @@
+import re
 from enum import IntEnum
 
 from colorama import just_fix_windows_console, Fore, Back, Style
@@ -30,13 +31,51 @@ class STYLES:
     BRIGHT = Style.BRIGHT
 
 
-def center_and_limit(string: str, width: int, trailing_dots: int = 2):
+def center_and_limit(text: str, width: int, trailing_dots: int = 2):
     return (
-        (string[: width - trailing_dots] + "." * trailing_dots)
-        if len(string) > width
-        else string.center(width)
+        (text[: width - trailing_dots] + "." * trailing_dots)
+        if len(text) > width
+        else text.center(width)
     )
 
 
-def style(content: str, style: str) -> str:
-    return style + content + (STYLES.RESET_ALL if style != "" else "")
+def style(text: str, style: str) -> str:
+    """Style text with ANSI escape sequences
+
+    Args:
+        text (str): Text to style
+        style (str): Style to apply (should be ANSI)
+
+    Returns:
+        str: Result
+    """
+    return style + text + (STYLES.RESET_ALL if style != "" else "")
+
+
+# 7-bit C1 ANSI sequences
+ansi_escape = re.compile(
+    r"""
+    \x1B  # ESC
+    (?:   # 7-bit C1 Fe (except CSI)
+        [@-Z\\-_]
+    |     # or [ for CSI, followed by a control sequence
+        \[
+        [0-?]*  # Parameter bytes
+        [ -/]*  # Intermediate bytes
+        [@-~]   # Final byte
+    )
+""",
+    re.VERBOSE,
+)
+
+
+def strip_ANSI(text: str) -> str:
+    """Remove ANSI escape sequences from the text through RegEx
+
+    Args:
+        text (str): Text to strip from
+
+    Returns:
+        str: Result
+    """
+    return ansi_escape.sub("", text)
