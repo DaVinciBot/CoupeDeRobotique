@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     # Brain
     brain = ServerBrain(
-        logger=logger,
+        logger=Logger(identifier="ServerBrain", print_log_level=LogLevels.INFO),
         ws_cmd=ws_cmd,
         ws_log=ws_log,
         ws_lidar=ws_lidar,
