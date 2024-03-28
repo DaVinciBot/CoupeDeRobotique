@@ -1,23 +1,8 @@
 from utils.utils import Utils
-from logger.log_levels import LogLevels
+from logger.log_tools import LogLevels, STYLES
 
 
 import os, types, functools
-from threading import Thread
-from dataclasses import dataclass
-
-
-@dataclass
-class COLORS:
-    NO_FORMAT = "\033[0m"
-    F_INVERT = "\033[7m"
-    ORANGE = "\033[38;5;208m"
-    C_GOLD1 = "\033[38;5;220m"
-    C_CHARTREUSE3 = "\033[38;5;76m"
-    C_RED1 = "\033[38;5;196m"
-    C_SILVER = "\033[38;5;7m"
-    CRITICAL = "\033[38;5;196m" + "\033[38;5;220m"
-    DATE = "\033[7m" + "\033[38;5;220m"
 
 
 class Logger:
@@ -48,7 +33,14 @@ class Logger:
 
         # Normal init
         # Init attributes
+        identifier_width = 12
+        self.log_level_width = max([len(loglvl.name) for loglvl in LogLevels]) + 2
         self.identifier = identifier
+        self.identifier_str = (
+            (self.identifier[: identifier_width - 2] + "..")
+            if len(self.identifier) > identifier_width
+            else self.identifier.center(identifier_width)
+        )
         self.log_level = log_level
         self.print_log = print_log
         self.write_to_file = write_to_file
@@ -61,6 +53,28 @@ class Logger:
             f"Logger initialized [{self.identifier}], level: {self.log_level.name}"
         )
 
+    def message_factory(
+        self, date_str: str, level: LogLevels, message: str, colors: bool = False
+    ) -> str:
+
+        def frame(content: str, style: str) -> str:
+            if colors:
+                content = style + content + STYLES.RESET_ALL
+            return content
+
+        return (
+            frame(date_str, STYLES.DATE)
+            + " -> ["
+            + frame(self.identifier_str, STYLES.IDENTIFIER)
+            + "] "
+            + frame(
+                level.name.center(self.log_level_width),
+                STYLES.LogLevelsColorsDict[level],
+            )
+            + " | "
+            + frame(message, STYLES.MESSAGE)
+        )
+
     def log(self, message: str, level: LogLevels = LogLevels.WARNING) -> None:
         """
         Log un message dans le fichier de log et dans la sortie standard
@@ -71,33 +85,27 @@ class Logger:
         """
         if level >= self.log_level:
             # Evaluate the str value now to make sure no weird operators happen
-            message = str(message)
+            message_str = str(message)
             date_str = Utils.get_str_date()
-            level_text_color = COLORS.NO_FORMAT
-            match level:
-                case LogLevels.DEBUG:
-                    level_text_color = COLORS.NO_FORMAT
-                case LogLevels.INFO:
-                    level_text_color = COLORS.C_CHARTREUSE3
-                case LogLevels.WARNING:
-                    level_text_color = COLORS.ORANGE
-                case LogLevels.ERROR:
-                    level_text_color = COLORS.C_RED1
-                case LogLevels.CRITICAL:
-                    level_text_color = COLORS.CRITICAL
 
-            message = (
-                f"{COLORS.DATE}{date_str}{COLORS.NO_FORMAT} -> "
-                + f"[{COLORS.C_SILVER}{self.identifier}{COLORS.NO_FORMAT}] "
-                + f"{level_text_color}{level.name}{COLORS.NO_FORMAT} | "
-                + f"{COLORS.NO_FORMAT}{message}{COLORS.NO_FORMAT}"
-            )
             if self.print_log:
-                print(message)
+                print(
+                    self.message_factory(
+                        date_str=date_str, level=level, message=message_str, colors=True
+                    )
+                )
 
             if self.log_file:
                 with open(f"logs/{self.log_file}", "a") as f:
-                    f.write(message + "\n")
+                    f.write(
+                        self.message_factory(
+                            date_str=date_str,
+                            level=level,
+                            message=message_str,
+                            colors=False,
+                        )
+                        + "\n"
+                    )
 
         # Sync logs to server (deprecated for now)
         # try:
