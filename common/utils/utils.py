@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class Utils:
@@ -13,3 +13,7 @@ class Utils:
     @staticmethod
     def get_ts() -> float:
         return datetime.timestamp(datetime.now())
+
+    @staticmethod
+    def time_since(ts: float) -> float:
+        return Utils.get_ts() - ts
