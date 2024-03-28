@@ -49,8 +49,8 @@ class Logger:
 
         self.log(
             f"Logger initialized, "
-            + f"print: {style(self.print_log_level.name.center(self.log_level_width), STYLES.LogLevelsColorsDict[self.print_log_level]) if self.print_log else 'NO'}, "
-            + f"write to file: {style(self.file_log_level.name.center(self.log_level_width), STYLES.LogLevelsColorsDict[self.file_log_level]) if self.log_file else 'NO'}",
+            + f"print: {center_and_limit(self.print_log_level.name if self.print_log else 'NO', self.log_level_width)}, "
+            + f"write to file: {center_and_limit(self.file_log_level.name if self.log_file else 'NO', self.log_level_width)}",
             level=LogLevels.INFO,
         )
 
@@ -59,20 +59,18 @@ class Logger:
     ) -> str:
 
         return (
-            (style(date_str, STYLES.DATE) if styles else "")
+            (style(date_str, STYLES.DATE if styles else ""))
             + " -> ["
-            + (style(self.identifier_str, STYLES.IDENTIFIER) if styles else "")
+            + (style(self.identifier_str, STYLES.IDENTIFIER if styles else ""))
             + "] "
             + (
                 style(
                     level.name.center(self.log_level_width),
-                    STYLES.LogLevelsColorsDict[level],
+                    STYLES.LogLevelsColorsDict[level] if styles else "",
                 )
-                if styles
-                else ""
             )
             + " | "
-            + (style(message, STYLES.MESSAGE) if styles else "")
+            + (style(message, STYLES.MESSAGE if styles else ""))
         )
 
     def log(self, message: str, level: LogLevels = LogLevels.WARNING) -> None:
