@@ -28,3 +28,11 @@ class STYLES:
     MESSAGE = Style.RESET_ALL
     DIM = Style.DIM
     BRIGHT = Style.BRIGHT
+
+
+def center_and_limit(string: str, width: int, trailing_dots: int = 2):
+    return (
+        (string[: width - trailing_dots] + "." * trailing_dots)
+        if len(string) > width
+        else string.center(width)
+    )

@@ -1,5 +1,5 @@
 from utils.utils import Utils
-from logger.log_tools import LogLevels, STYLES
+from logger.log_tools import LogLevels, STYLES, center_and_limit
 
 
 import os, types, functools
@@ -37,11 +37,7 @@ class Logger:
         identifier_width = 12
         self.log_level_width = max([len(loglvl.name) for loglvl in LogLevels]) + 2
         self.identifier = identifier
-        self.identifier_str = (
-            (self.identifier[: identifier_width - 2] + "..")
-            if len(self.identifier) > identifier_width
-            else self.identifier.center(identifier_width)
-        )
+        self.identifier_str = center_and_limit(self.identifier, identifier_width)
         self.print_log_level = print_log_level
         self.file_log_level = file_log_level
         self.print_log = print_log
