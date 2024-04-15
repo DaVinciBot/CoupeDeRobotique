@@ -11,6 +11,8 @@ from logger import Logger, LogLevels
 from shapely import distance
 from sys import maxsize
 
+import numpy as np
+
 
 class Plants_zone:
     def __init__(self, zone, nb_plant: int = 0) -> None:
@@ -198,3 +200,33 @@ class MarsArena(Arena):
         \tForbidden area : {self.zones["forbidden"]}
         \tHome : {self.zones["home"]}
         """
+
+    def get_grid(self, precision=1):
+        """
+        Transform the arena into a grid, the chunk size is defined by the precision.
+        The grid is a list of boolean. True -> authorized, False -> forbidden
+        """
+        # Precision have to be a multiple of width and height of arena
+        if 300 % precision != 0 or 200 % precision != 0:
+            raise ValueError(
+                "Precision have to be a multiple of width and height of arena"
+            )
+
+        # Compute horizontal and vertical nb of chunks
+        height = 300 // precision
+        width = 200 // precision
+
+        # Create empty grid
+        grid = np.ones((height, width), dtype=bool)
+
+        for x in range(width):
+            for y in range(height):
+                # Create check as rectangle
+                chunk = create_straight_rectangle(
+                    Point(x * precision, y * precision),
+                    Point((x + 1) * precision, (y + 1) * precision),
+                )
+                # Check if the chunk is intersecting with the forbidden area
+                grid[y, x] = self.zones["forbidden"].intersects(chunk)
+
+        return grid
