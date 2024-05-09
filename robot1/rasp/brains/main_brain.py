@@ -299,7 +299,7 @@ class MainBrain(Brain):
             asyncio.create_task(self.deploy_god_hand())
             asyncio.create_task(self.open_god_hand())
             asyncio.create_task(self.actuators.elevator_bottom())
-            self.leds.set_score(35)
+            self.leds.set_score(self.score_estimate + 5)
         except Exception:
             pass
         finally:
