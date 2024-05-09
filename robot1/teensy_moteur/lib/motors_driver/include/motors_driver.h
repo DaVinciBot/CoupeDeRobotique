@@ -13,7 +13,8 @@ private:
 
     // Variables
     int error_prev = 0;
-    float error_integral = 0;
+    float error_integral = 0.0f;
+    float error_derivative = 0.0f;
     
 public:
     // PID constantes

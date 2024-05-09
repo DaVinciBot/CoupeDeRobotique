@@ -65,6 +65,7 @@ void Motor::handle(long target_pos, byte max_speed)
 
     // Calculate derivative
     double dedt = (error - this->error_prev) / delta_time;
+    dedt = (0.5f * dedt) + ((1 - 0.5f) * this->error_derivative);
 
     // Calculate integral
     this->error_integral = this->error_integral + (error * delta_time);
@@ -91,5 +92,6 @@ void Motor::handle(long target_pos, byte max_speed)
 
     // Save error
     this->error_prev = error;
+    this->error_derivative = dedt;
 }
 
