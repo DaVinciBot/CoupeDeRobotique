@@ -83,16 +83,16 @@ async def compute_ennemy_position(self):
             distance(self.rolling_basis.odometrie, self.arena.ennemy_position)
             < CONFIG.STOP_TRESHOLD
         ):
+            angle = self.anticollision_mode
+            if angle > math.pi:  # Tmp, ugly
+                angle = (-angle) % math.tau
             if self.anticollision_mode == AntiCollisionMode.CIRCULAR:
                 trigger_acs = True
             if self.anticollision_mode == AntiCollisionMode.FRONTAL:
-                if abs(self.get_ennemy_angle()) < CONFIG.LIDAR_FRONTAL_DETECTION_ANGLE:
+                if angle < CONFIG.LIDAR_FRONTAL_DETECTION_ANGLE:
                     trigger_acs = True
             if self.anticollision_mode == AntiCollisionMode.SEMI_CIRCULAR:
-                if (
-                    abs(self.get_ennemy_angle())
-                    < CONFIG.LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE
-                ):
+                if angle < CONFIG.LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE:
                     trigger_acs = True
 
     if trigger_acs:
