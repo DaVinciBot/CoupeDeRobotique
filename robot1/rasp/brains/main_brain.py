@@ -450,7 +450,7 @@ class MainBrain(Brain):
         ):
 
             final_target: Point = Point(
-                200 - 12.75, self.rolling_basis.odometrie.y
+                200 - 12, self.rolling_basis.odometrie.y
             )  # To make sure to be orthogonal to the wall, use a relative y
 
             if (
