@@ -538,7 +538,7 @@ class MainBrain(Brain):
 
             if (
                 Utils.time_since(start_stage_time) + current_objective.time_estimate
-                > 60
+                > 50
                 and current_objective.time_estimate >= 0
             ):
                 self.logger.log(
