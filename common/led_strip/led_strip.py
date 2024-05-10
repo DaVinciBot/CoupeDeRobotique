@@ -160,7 +160,7 @@ class LEDStrip:
             min_angle (float): min possible angle (default 0.0)
         """
 
-        if angle == None:
+        if angle is None:
             self.set_color(
                 Colors.ORANGE if triggered else Colors.BLACK,
                 self.led_indexes["lidar"],

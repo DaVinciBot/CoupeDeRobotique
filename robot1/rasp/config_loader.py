@@ -112,10 +112,24 @@ class CONFIG:
     LIDAR_FRONTAL_DETECTION_ANGLE = LIDAR_CONFIG["frontal_detection_angle"]
     LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE = LIDAR_CONFIG["semi_circular_detection_angle"]
 
-    # Robot1 brain
-    ANTICOLLISION_MODE = SPECIFIC_CONFIG["anticollision_mode"]
-    ANTICOLLISION_HANDLE = SPECIFIC_CONFIG["anticollision_handle"]
-    STOP_TRESHOLD = SPECIFIC_CONFIG["stop_treshold"]
+    # ACS
+    ACS_CONFIG = SPECIFIC_CONFIG["acs"]
+    STOP_TRESHOLD = ACS_CONFIG["stop_treshold"]
+    ANTICOLLISION_MODE = ACS_CONFIG["anticollision_mode"]
+    ANTICOLLISION_HANDLE = ACS_CONFIG["anticollision_handle"]
+    ANTICOLLISION_WAIT_AND_FAIL_DELAY = ACS_CONFIG["anticollision_wait_and_fail_delay"]
+    ANTICOLLISION_WAIT_AND_RETRY_DELAY = ACS_CONFIG[
+        "anticollision_wait_and_retry_delay"
+    ]
+    ANTICOLLISION_WAIT_AND_RETRY_MAX_TRIES = ACS_CONFIG[
+        "anticollision_wait_and_retry_max_tries"
+    ]
+    ANTICOLLISION_WAIT_AND_AVOID_DISTANCE = ACS_CONFIG[
+        "anticollision_wait_and_avoid_distance"
+    ]
+    ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES = ACS_CONFIG[
+        "anticollision_wait_and_avoid_max_tries"
+    ]
 
     # arena
     ARENA_CONFIG = CONFIG_STORE[ARENA_CONFIG_KEY]

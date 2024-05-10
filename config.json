@@ -69,9 +69,16 @@
     },
     "log_level": 0,
     "print_log": true,
-    "stop_treshold": 50,
-    "anticollision_mode": 2,
-    "anticollision_handle": 2,
+    "acs": {
+      "stop_treshold": 50,
+      "anticollision_mode": 2,
+      "anticollision_handle": 2,
+      "anticollision_wait_and_fail_delay": 5,
+      "anticollision_wait_and_retry_delay": 2,
+      "anticollision_wait_and_retry_max_tries": 2,
+      "anticollision_wait_and_avoid_distance": 20,
+      "anticollision_wait_and_avoid_max_tries": 1
+    },
     "zombie_mode": false,
     "jack": {
       "pin": 23
@@ -383,7 +390,7 @@
       "max_angle": 3.926991,
       "min_distance_detection": 5.0,
       "frontal_detection_angle": 1.308997,
-      "semi_circular_detection_angle": 3.141593
+      "semi_circular_detection_angle": 1.570796
     }
   },
   "arena": {

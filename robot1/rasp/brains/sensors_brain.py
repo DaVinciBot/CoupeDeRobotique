@@ -27,7 +27,7 @@ from brains.acs import AntiCollisionMode, AntiCollisionHandle
 
 
 def get_ennemy_angle(self) -> float | None:
-    if self.arena.ennemy_position == None:
+    if self.arena.ennemy_position is None:
         return None
     else:
         return (
@@ -74,26 +74,31 @@ async def compute_ennemy_position(self):
 
     trigger_acs = False
 
-    # For now, just stop if close. When updating, consider self.arena.check_collision_by_distances
-    if (
-        self.anticollision_mode != AntiCollisionMode.DISABLED
-        and self.arena.ennemy_position is not None
-    ):
+    if self.arena.ennemy_position is not None:
         if (
             distance(self.rolling_basis.odometrie, self.arena.ennemy_position)
-            < CONFIG.STOP_TRESHOLD
+            <= CONFIG.STOP_TRESHOLD
         ):
-            angle = abs(self.get_ennemy_angle())
+
+            angle = self.get_ennemy_angle()
             if angle > math.pi:  # Tmp, ugly
                 angle = (-angle) % math.tau
-            if self.anticollision_mode == AntiCollisionMode.CIRCULAR:
-                trigger_acs = True
-            if self.anticollision_mode == AntiCollisionMode.FRONTAL:
-                if angle < CONFIG.LIDAR_FRONTAL_DETECTION_ANGLE:
+
+            match AntiCollisionMode:
+
+                case AntiCollisionMode.DISABLED:
+                    pass
+
+                case AntiCollisionMode.CIRCULAR:
                     trigger_acs = True
-            if self.anticollision_mode == AntiCollisionMode.SEMI_CIRCULAR:
-                if angle < CONFIG.LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE:
-                    trigger_acs = True
+
+                case AntiCollisionMode.FRONTAL:
+                    trigger_acs = abs(angle) < CONFIG.LIDAR_FRONTAL_DETECTION_ANGLE
+
+                case AntiCollisionMode.SEMI_CIRCULAR:
+                    trigger_acs = (
+                        abs(angle) < CONFIG.LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE
+                    )
 
     if trigger_acs:
         self.logger.log(

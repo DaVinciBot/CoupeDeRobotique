@@ -192,7 +192,7 @@ async def smart_go_to(
     acceleration_distance: float = 0,
     deceleration_end_speed: int = 160,
     deceleration_distance: float = 0,
-    fails: int = 0
+    fails: int = 0,
 ) -> int:
 
     result: int = await self.rolling_basis.go_to_and_wait(
@@ -254,35 +254,71 @@ async def avoid_obstacle(
     acceleration_distance: float = 0,
     deceleration_end_speed: int = 160,
     deceleration_distance: float = 0,
-    fails: int = 0
+    fails: int = 0,
 ) -> int:
-    if self.anticollision_handle == AntiCollisionHandle.NOTHING:
-        return 2
-    elif self.anticollision_handle == AntiCollisionHandle.WAIT_AND_FAIL:
-        await asyncio.sleep(5)
-        return 2
-    elif self.anticollision_handle == AntiCollisionHandle.WAIT_AND_RETRY and fails < 1:
-        await asyncio.sleep(2)
-        return await self.smart_go_to(
-            original_target,
-            skip_and_clear_queue=skip_and_clear_queue,
-            tolerance=tolerance,
-            timeout=timeout,
-            forward=forward,
-            relative=relative,
-            max_speed=max_speed,
-            next_position_delay=next_position_delay,
-            action_error_auth=action_error_auth,
-            traj_precision=traj_precision,
-            correction_trajectory_speed=correction_trajectory_speed,
-            acceleration_start_speed=acceleration_start_speed,
-            acceleration_distance=acceleration_distance,
-            deceleration_end_speed=deceleration_end_speed,
-            deceleration_distance=deceleration_distance,
-            fails=fails + 1,
-        )
-    else:
-        raise Exception("No AntiCollisionHandle implementation?")
+    match self.anticollision_handle:
+        case AntiCollisionHandle.NOTHING:
+            return 2
+        case AntiCollisionHandle.WAIT_AND_FAIL:
+            await asyncio.sleep(CONFIG.ANTICOLLISION_WAIT_AND_FAIL_DELAY)
+            return 2
+        case AntiCollisionHandle.WAIT_AND_RETRY:
+            if fails < CONFIG.ANTICOLLISION_WAIT_AND_RETRY_MAX_TRIES:
+                await asyncio.sleep(CONFIG.ANTICOLLISION_WAIT_AND_RETRY_DELAY)
+                return await self.smart_go_to(
+                    original_target,
+                    skip_and_clear_queue=skip_and_clear_queue,
+                    tolerance=tolerance,
+                    timeout=timeout,
+                    forward=forward,
+                    relative=relative,
+                    max_speed=max_speed,
+                    next_position_delay=next_position_delay,
+                    action_error_auth=action_error_auth,
+                    traj_precision=traj_precision,
+                    correction_trajectory_speed=correction_trajectory_speed,
+                    acceleration_start_speed=acceleration_start_speed,
+                    acceleration_distance=acceleration_distance,
+                    deceleration_end_speed=deceleration_end_speed,
+                    deceleration_distance=deceleration_distance,
+                    fails=fails + 1,
+                )
+            else:
+                return 2
+        case AntiCollisionHandle.AVOID:
+            if fails < CONFIG.ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES:
+                await self.smart_go_to(
+                    Point(-CONFIG.ANTICOLLISION_WAIT_AND_AVOID_DISTANCE, 0),
+                    skip_and_clear_queue=skip_and_clear_queue,
+                    tolerance=tolerance,
+                    timeout=timeout,
+                    forward=not forward,
+                    relative=True,
+                    **CONFIG.GO_TO_PROFILES["slow_and_precise"]
+                    fails=fails + 1,
+                )
+                return await self.smart_go_to(
+                    original_target,
+                    skip_and_clear_queue=skip_and_clear_queue,
+                    tolerance=tolerance,
+                    timeout=timeout,
+                    forward=forward,
+                    relative=relative,
+                    max_speed=max_speed,
+                    next_position_delay=next_position_delay,
+                    action_error_auth=action_error_auth,
+                    traj_precision=traj_precision,
+                    correction_trajectory_speed=correction_trajectory_speed,
+                    acceleration_start_speed=acceleration_start_speed,
+                    acceleration_distance=acceleration_distance,
+                    deceleration_end_speed=deceleration_end_speed,
+                    deceleration_distance=deceleration_distance,
+                    fails=fails + 1,
+                )
+            else:
+                return 2
+        case _:
+            raise Exception(f"No {self.anticollision_handle.value} implementation")
 
 
 async def go_best_zone(self, plant_zones: list[Plants_zone]):
@@ -310,7 +346,7 @@ async def go_best_zone(self, plant_zones: list[Plants_zone]):
                 position=destination_point,
                 timeout=30,
                 **CONFIG.SPEED_PROFILES["cruise_speed"],
-                **CONFIG.PRECISION_PROFILES["classic_precision"]
+                **CONFIG.PRECISION_PROFILES["classic_precision"],
             )
         )
         == 0
