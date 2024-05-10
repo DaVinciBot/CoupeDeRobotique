@@ -620,9 +620,8 @@ class MainBrain(Brain):
                 self.logger.log("Engaging objective", LogLevels.INFO)
                 await self.engage_objective(current_objective)
 
-    @Brain.task(process=False, run_on_start=False, timeout=20)
+    @Brain.task(process=False, run_on_start=False, timeout=21)
     async def solar_panels_stage(self) -> None:
-
         target_y = (
             (max(self.arena.solar_panels_y) + 7.0)
             if self.team == "y"
@@ -638,20 +637,6 @@ class MainBrain(Brain):
         if go_to_result in [0, 2]:
             self.score_estimate += 1
             self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
-
-        all_solar_panels_y = self.arena.solar_panels_y[:]
-        current_y = (
-            self.rolling_basis.odometrie.y
-        )  # Copied to avoid changing it between operations
-        all_solar_panels_y.append(current_y)
-        all_solar_panels_y.sort()
-        if self.team == "b":
-            all_solar_panels_y.reverse()
-        self.score_estimate += all_solar_panels_y.index(current_y) * 5
-        self.logger.log(
-            f"Scored {all_solar_panels_y.index(current_y) * 5} for flipping solar panels",
-            LogLevels.DEBUG,
-        )
 
     @Brain.task(process=False, run_on_start=False, timeout=30)
     async def control_solar_panels(
@@ -675,6 +660,11 @@ class MainBrain(Brain):
                     remaining_solar_panels_y.pop(i)
                     await self.deploy_team_solar_panel(
                         small=(len(remaining_solar_panels_y) > 3)
+                    )
+                    self.score_estimate += 5
+                    self.logger.log(
+                        f"New solar panel done, total score: {self.score_estimate}",
+                        LogLevels.DEBUG
                     )
                     break
 
