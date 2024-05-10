@@ -83,7 +83,7 @@ async def compute_ennemy_position(self):
             distance(self.rolling_basis.odometrie, self.arena.ennemy_position)
             < CONFIG.STOP_TRESHOLD
         ):
-            angle = self.anticollision_mode
+            angle = self.get_ennemy_angle()
             if angle > math.pi:  # Tmp, ugly
                 angle = (-angle) % math.tau
             if self.anticollision_mode == AntiCollisionMode.CIRCULAR:
