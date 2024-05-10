@@ -351,7 +351,7 @@ class MainBrain(Brain):
             ):
                 await self.close_god_hand
                 break
-            await asyncio.slee(0.1)
+            await asyncio.sleep(0.1)
 
     @Logger
     async def go_and_pickup(
