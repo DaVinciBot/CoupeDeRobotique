@@ -287,7 +287,7 @@ async def avoid_obstacle(
                 return 2
         case AntiCollisionHandle.AVOID:
             if fails < CONFIG.ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES:
-                await self.smart_go_to(
+                await self.rolling_basis.go_to_and_wait(
                     Point(-CONFIG.ANTICOLLISION_WAIT_AND_AVOID_DISTANCE, 0),
                     skip_and_clear_queue=skip_and_clear_queue,
                     tolerance=tolerance,
