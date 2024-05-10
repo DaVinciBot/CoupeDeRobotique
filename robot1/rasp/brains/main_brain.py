@@ -450,17 +450,14 @@ class MainBrain(Brain):
         ):
 
             final_target: Point = Point(
-                200 - 12, self.rolling_basis.odometrie.y
+                200 - 10, self.rolling_basis.odometrie.y
             )  # To make sure to be orthogonal to the wall, use a relative y
 
-            if (
-                await self.smart_go_to(
-                    final_target,
-                    **CONFIG.GO_TO_PROFILES["slow_and_precise"],
-                    timeout=10,
-                )
-                == 0
-            ):
+            if await self.smart_go_to(
+                final_target,
+                **CONFIG.GO_TO_PROFILES["slow_and_precise"],
+                timeout=3,
+            ) in [0, 1]:
 
                 await self.deploy_god_hand()
                 await self.actuators.elevator_intermediate()
