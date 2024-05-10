@@ -214,8 +214,15 @@ class MainBrain(Brain):
         await self.drift()
 
         # Plant Stage
-        self.logger.log("Starting plant stage...", LogLevels.INFO, self.leds)
+        self.logger.log(
+            "Starting plant stage and solar panels control...",
+            LogLevels.INFO,
+            self.leds,
+        )
+
+        solar_panel_control = asyncio.create_task(self.control_solar_panels())
         await self.plant_stage()
+        solar_panel_control.cancel()
 
         self.logger.log("Going to regular endzone if needed", LogLevels.INFO)
         await self.go_to_endzone()
@@ -402,13 +409,10 @@ class MainBrain(Brain):
             delta=20,
         )
 
-        r = (
-            await self.smart_go_to(
-                position=target,
-                timeout=15,
-                **CONFIG.GO_TO_PROFILES["plant_approach"],
-            )
-            == 0
+        r = await self.smart_go_to(
+            position=target,
+            timeout=15,
+            **CONFIG.GO_TO_PROFILES["plant_approach"],
         )
 
         # Drop plants
@@ -580,7 +584,6 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=False, timeout=30)
     async def solar_panels_stage(self) -> None:
 
-        asyncio.create_task(self.control_solar_panels())
         target_y = (
             (max(self.arena.solar_panels_y) + 7.0)
             if self.team == "y"
