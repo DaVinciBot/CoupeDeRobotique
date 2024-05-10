@@ -367,7 +367,7 @@ class MainBrain(Brain):
         pickup_target = self.arena.compute_go_to_destination(
             start_point=self.rolling_basis.odometrie,
             zone=target_pickup_zone.zone,
-            delta=-15,
+            delta=-20,
         )
 
         # Passthrough the target plant zone and pickup plants

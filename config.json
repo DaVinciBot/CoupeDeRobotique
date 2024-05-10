@@ -281,8 +281,8 @@
           "acceleration_start_speed": 180,
           "acceleration_distance": 0,
           "deceleration_end_speed": 100,
-          "deceleration_distance": 40,
-          "next_position_delay": 100,
+          "deceleration_distance": 30,
+          "next_position_delay": 90,
           "action_error_auth": 20,
           "traj_precision": 40
         },
