@@ -609,14 +609,16 @@ class MainBrain(Brain):
             self.score_estimate += all_solar_panels_y.index(current_y) * 5
 
     @Brain.task(process=False, run_on_start=False, timeout=30)
-    async def control_solar_panels(self, solar_panel_timeout: float = 25.0) -> None:
+    async def control_solar_panels(
+        self,
+    ) -> None:
 
         start_time = Utils.get_ts()
         remaining_solar_panels_y = self.arena.solar_panels_y[:]
 
         await self.deploy_team_solar_panel(small=True)
-
-        while Utils.time_since(start_time) < solar_panel_timeout:
+        finished: bool = False
+        while not finished:
             await asyncio.sleep(0.05)
             for i, y in enumerate(remaining_solar_panels_y):
                 if (
@@ -630,6 +632,7 @@ class MainBrain(Brain):
                     await self.deploy_team_solar_panel(
                         small=(len(remaining_solar_panels_y) > 3)
                     )
+                    finished = True
                     break
 
     @Brain.task(process=False, run_on_start=not CONFIG.ZOMBIE_MODE, refresh_rate=2)
