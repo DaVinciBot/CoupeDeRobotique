@@ -359,7 +359,6 @@ class MainBrain(Brain):
         asyncio.create_task(self.deploy_god_hand())
         asyncio.create_task(self.open_god_hand())
 
-        # TODO: modify to to just one go to and close hand
         pickup_target = self.arena.compute_go_to_destination(
             start_point=self.rolling_basis.odometrie,
             zone=target_pickup_zone.zone,
