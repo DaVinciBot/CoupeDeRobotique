@@ -429,32 +429,44 @@ class MainBrain(Brain):
             target_gardener.zone.centroid.y,
         )
 
-        await self.smart_go_to(
-            approach_target, **CONFIG.GO_TO_PROFILES["garden_approach"], timeout=8
-        )
+        if (
+            await self.smart_go_to(
+                approach_target, **CONFIG.GO_TO_PROFILES["garden_approach"], timeout=10
+            )
+            == 0
+        ):
 
-        final_target: Point = Point(
-            200 - 12.75, self.rolling_basis.odometrie.y
-        )  # To make sure to be orthogonal to the wall, use a relative y
+            final_target: Point = Point(
+                200 - 12.75, self.rolling_basis.odometrie.y
+            )  # To make sure to be orthogonal to the wall, use a relative y
 
-        await self.smart_go_to(
-            final_target, **CONFIG.GO_TO_PROFILES["slow_and_precise"], timeout=5
-        )
+            if (
+                await self.smart_go_to(
+                    final_target,
+                    **CONFIG.GO_TO_PROFILES["slow_and_precise"],
+                    timeout=10,
+                )
+                == 0
+            ):
 
-        await self.deploy_god_hand()
-        await self.actuators.elevator_intermediate()
-        await self.open_god_hand()
+                await self.deploy_god_hand()
+                await self.actuators.elevator_intermediate()
+                await self.open_god_hand()
 
-        # Step back
-        await self.smart_go_to(
-            Point(-CONFIG.ARENA_CONFIG["robot_buffer"], 0),
-            timeout=5,
-            forward=False,
-            relative=True,
-            **CONFIG.GO_TO_PROFILES["plant_pickup"],
-        )
+                # Step back
+                await self.smart_go_to(
+                    Point(-CONFIG.ARENA_CONFIG["robot_buffer"], 0),
+                    timeout=5,
+                    forward=False,
+                    relative=True,
+                    **CONFIG.GO_TO_PROFILES["plant_pickup"],
+                )
 
-        target_gardener.drop_plants(5)
+                target_gardener.drop_plants(5)
+            else:
+                await self.deploy_god_hand()
+                await self.actuators.elevator_bottom()
+                await self.open_god_hand()
 
     async def engage_objective(self, objective: Objective):
         match objective.task:
