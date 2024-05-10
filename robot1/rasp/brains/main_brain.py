@@ -618,7 +618,7 @@ class MainBrain(Brain):
 
         await self.deploy_team_solar_panel(small=True)
         finished: bool = False
-        while not finished:
+        while not finished and len(remaining_solar_panels_y) > 0:
             await asyncio.sleep(0.05)
             for i, y in enumerate(remaining_solar_panels_y):
                 if (
