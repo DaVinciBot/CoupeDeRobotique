@@ -664,7 +664,7 @@ class MainBrain(Brain):
                     self.score_estimate += 5
                     self.logger.log(
                         f"New solar panel done, total score: {self.score_estimate}",
-                        LogLevels.DEBUG
+                        LogLevels.DEBUG,
                     )
                     break
 
