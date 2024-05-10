@@ -9,7 +9,7 @@ from config_loader import CONFIG
 from brain import Brain
 
 from WS_comms import WSmsg, WSclientRouteManager, WServerRouteManager
-from geometry import OrientedPoint, Point, distance
+from geometry import OrientedPoint, Point, distance, Polygon
 from arena import MarsArena, Plants_zone
 from logger import Logger, LogLevels
 from led_strip import LEDStrip
@@ -340,6 +340,17 @@ class MainBrain(Brain):
         await asyncio.sleep(time_to_close)
         await self.close_god_hand()
 
+    async def smart_close_god_hand(self, plant_zone: Polygon):
+        is_in_plant_zone = False
+        while True:
+            if plant_zone.intersects(self.rolling_basis.odometrie):
+                is_in_plant_zone = True
+            # We have passthrough the plant zone
+            if is_in_plant_zone and not plant_zone.intersects(self.rolling_basis.odometrie):
+                await self.close_god_hand
+                break
+            await asyncio.slee(0.1)
+
     @Logger
     async def go_and_pickup(
         self,
@@ -348,33 +359,21 @@ class MainBrain(Brain):
         asyncio.create_task(self.deploy_god_hand())
         asyncio.create_task(self.open_god_hand())
 
-        # Approach
-        approach_target = self.arena.compute_go_to_destination(
-            start_point=self.rolling_basis.odometrie,
-            zone=target_pickup_zone.zone,
-            delta=25,
-        )
-        await self.smart_go_to(
-            position=approach_target,
-            timeout=15,
-            **CONFIG.GO_TO_PROFILES["plant_approach"],
-        )
-
-        # Go through
+        # TODO: modify to to just one go to and close hand
         pickup_target = self.arena.compute_go_to_destination(
             start_point=self.rolling_basis.odometrie,
             zone=target_pickup_zone.zone,
-            delta=-7,
-        )
-        asyncio.create_task(self.god_hand_timer(2))  # Close while moving
-        await self.smart_go_to(
-            position=pickup_target,
-            timeout=3,
-            **CONFIG.GO_TO_PROFILES["plant_pickup"],
+            delta=-10
         )
 
-        # Grab plants
-        await self.close_god_hand()
+        # Passthrough the target plant zone and pickup plants
+        god_hand_closing_task = asyncio.create_task(self.smart_close_god_hand(target_pickup_zone.zone))
+        await self.smart_go_to(
+            position=pickup_target,
+            timeout=15,
+            **CONFIG.GO_TO_PROFILES["plant_approach"]
+        )
+        god_hand_closing_task.cancel()
 
         # Account for removed plants
         target_pickup_zone.take_plants(5)
