@@ -296,15 +296,6 @@ class MainBrain(Brain):
                     **CONFIG.GO_TO_PROFILES["plant_approach"],
                 )
 
-        await self.rolling_basis.go_to_and_wait(
-            Point(
-                self.rolling_basis.odometrie.x,
-                self.rolling_basis.odometrie.y + (1 if self.team == "y" else -1),
-            ),
-            timeout=3.0,
-            **CONFIG.GO_TO_PROFILES["slow_and_precise"],
-        )
-
     def show_team_led(self):
         self.get_team_from_switch()
         self.leds.set_team(self.team)
