@@ -119,6 +119,7 @@ class MainBrain(Brain):
         self.return_eta: float = -1.0
 
         self.score_estimate: int = 0
+        self.leds.set_score(self.score_estimate)
 
         # Init CONFIG
         self.logger.log(
@@ -349,6 +350,7 @@ class MainBrain(Brain):
                 self.score_estimate += (
                     10  # For going to a safe zone that isn't the starting one
                 )
+                self.leds.set_score(self.score_estimate)
                 self.logger.log(
                     "Scored 10 for going to a safe zone that isn't the starting one",
                     LogLevels.DEBUG,
@@ -364,7 +366,9 @@ class MainBrain(Brain):
                     "Scored 5 for going to the starting zone (after leaving)",
                     LogLevels.DEBUG,
                 )
+                self.leds.set_score(self.score_estimate)
             self.score_estimate += 5  # Pami
+            self.leds.set_score(self.score_estimate)
             self.logger.log("Scored 5 from PAMI (hopefully)", LogLevels.DEBUG)
 
             self.logger.log(
@@ -531,6 +535,7 @@ class MainBrain(Brain):
                     self.arena.drop_zones[objective.target_index]
                 )
                 self.score_estimate += 3
+                self.leds.set_score(self.score_estimate)
                 self.logger.log(
                     f"Scored 3 for dropping to drop_zone {objective.target_index}",
                     LogLevels.DEBUG,
@@ -547,6 +552,7 @@ class MainBrain(Brain):
                     self.arena.gardeners[objective.target_index]
                 )
                 self.score_estimate += 8
+                self.leds.set_score(self.score_estimate)
                 self.logger.log(
                     f"Scored 8 for dropping to gardener {objective.target_index}",
                     LogLevels.DEBUG,
@@ -627,6 +633,7 @@ class MainBrain(Brain):
 
         if go_to_result in [0, 2]:
             self.score_estimate += 1
+            self.leds.set_score(self.score_estimate)
             self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
 
     @Brain.task(process=False, run_on_start=False, timeout=30)
@@ -653,6 +660,7 @@ class MainBrain(Brain):
                         small=(len(remaining_solar_panels_y) > 3)
                     )
                     self.score_estimate += 5
+                    self.leds.set_score(self.score_estimate)
                     self.logger.log(
                         f"New solar panel done, total score: {self.score_estimate}",
                         LogLevels.DEBUG,
