@@ -80,11 +80,11 @@ async def compute_ennemy_position(self):
             <= CONFIG.STOP_TRESHOLD
         ):
 
-            angle = abs(self.get_ennemy_angle())
+            angle = self.get_ennemy_angle()
             if angle > math.pi:  # Tmp, ugly
                 angle = (-angle) % math.tau
 
-            match AntiCollisionMode:
+            match self.anticollision_mode:
 
                 case AntiCollisionMode.DISABLED:
                     pass
@@ -99,6 +99,8 @@ async def compute_ennemy_position(self):
                     trigger_acs = (
                         abs(angle) < CONFIG.LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE
                     )
+                case _:
+                    raise Exception(f"Unimplemented {self.anticollision_mode}")
 
     if trigger_acs:
         self.logger.log(
