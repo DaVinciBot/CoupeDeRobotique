@@ -582,9 +582,9 @@ class MainBrain(Brain):
 
         asyncio.create_task(self.control_solar_panels())
         target_y = (
-            (max(self.arena.solar_panels_y) + 10.0)
+            (max(self.arena.solar_panels_y) + 7.0)
             if self.team == "y"
-            else (min(self.arena.solar_panels_y) - 10.0)
+            else (min(self.arena.solar_panels_y) - 7.0)
         )
 
         go_to_result = await self.rolling_basis.go_to_and_wait(
