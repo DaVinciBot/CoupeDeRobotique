@@ -217,20 +217,6 @@ class MainBrain(Brain):
         self.logger.log("Starting plant stage...", LogLevels.INFO, self.leds)
         await self.plant_stage()
 
-        already_safe, target = self.compute_return_target()
-        if not already_safe:
-            # Custom return to let PAMIs do their thing
-            self.logger.log("Going to custom endzone", LogLevels.INFO)
-            custom_return_zone = self.arena.drop_zones[
-                2 if self.team == "y" else 5
-            ].zone
-            await self.smart_go_to(
-                Point(
-                    custom_return_zone.bounds[0],
-                    custom_return_zone.bounds[3 if self.team == "y" else 1],
-                )
-            )
-
         self.logger.log("Going to regular endzone if needed", LogLevels.INFO)
         await self.go_to_endzone()
 
@@ -282,11 +268,26 @@ class MainBrain(Brain):
         already_there, target = self.compute_return_target()
 
         if not already_there:
-            self.rolling_basis.stop_and_clear_queue()
-            await self.smart_go_to(
-                target,
-                **CONFIG.GO_TO_PROFILES["plant_approach"],
-            )
+            if self.arena.drop_zones[2 if self.team == "y" else 5].zone.contains(
+                target
+            ):
+                # Custom return to let PAMIs do their thing
+                self.logger.log("Going to custom endzone", LogLevels.INFO)
+                custom_return_zone = self.arena.drop_zones[
+                    2 if self.team == "y" else 5
+                ].zone
+                await self.smart_go_to(
+                    Point(
+                        custom_return_zone.bounds[0],
+                        custom_return_zone.bounds[3 if self.team == "y" else 1],
+                    )
+                )
+            else:  # Regular operation
+                self.rolling_basis.stop_and_clear_queue()
+                await self.smart_go_to(
+                    target,
+                    **CONFIG.GO_TO_PROFILES["plant_approach"],
+                )
 
     def show_team_led(self):
         self.get_team_from_switch()
@@ -337,7 +338,7 @@ class MainBrain(Brain):
             asyncio.create_task(self.deploy_god_hand())
             asyncio.create_task(self.open_god_hand())
             asyncio.create_task(self.actuators.elevator_bottom())
-            self.leds.set_score(35)
+            self.leds.set_score(self.score_estimate + 5)  # Pami
         except Exception:
             pass
         finally:
@@ -515,7 +516,7 @@ class MainBrain(Brain):
                 await self.go_and_drop_to_gardener(
                     self.arena.gardeners[objective.target_index]
                 )
-                self.score_estimate += 12
+                self.score_estimate += 8
 
             case _:
                 raise Exception("Unknown objective type")
@@ -550,7 +551,7 @@ class MainBrain(Brain):
                 elevator_after="bottom",
             ),
             Objective("pickup", 3 if in_yellow_team else 1, 8.0),
-            Objective("drop_to_zone", 4 if in_yellow_team else 1, 10.0),
+            Objective("drop_to_zone", 4 if in_yellow_team else 1, 3.0),
             # Objective("pickup", 2, 8.0),
             # Objective("drop_to_zone", 4 if in_yellow_team else 1, 10.0),
         ]
@@ -598,7 +599,7 @@ class MainBrain(Brain):
 
         if go_to_result == 0:
             # Great success!
-            self.score_estimate += 30
+            self.score_estimate += len(self.arena.solar_panels_y) * 5
         else:
             all_solar_panels_y = self.arena.solar_panels_y[:]
             current_y = (
