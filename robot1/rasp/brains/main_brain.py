@@ -572,7 +572,7 @@ class MainBrain(Brain):
                 CONFIG.START_INFO_BY_TEAM[self.team]["start_x"],
                 (
                     max(self.arena.solar_panels_y)
-                    + (1 if self.team == "y" else -1) * 10,
+                    + (1.0 if self.team == "y" else -1.0) * 10.0,
                 ),
             ),
             timeout=30.0,
