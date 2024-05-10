@@ -163,7 +163,7 @@ class Logger:
             if param != "self"
         ]
         # get keyword parmeters
-        params += [f"{key}={value}," for key, value in kwargs.items()]
+        params += [f"{key}={value}" for key, value in kwargs.items()]
         msg = f"{self.func.__name__}(" + ", ".join(params) + ")"
         self.log(
             msg,
