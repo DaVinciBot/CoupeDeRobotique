@@ -567,12 +567,9 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=False, timeout=30)
     async def solar_panels_stage(self) -> None:
         print(
-
-                    max(self.arena.solar_panels_y)
-                    + (1.0 if self.team == "y" else -1.0) * 10.0,
-
-            )
+            max(self.arena.solar_panels_y) + (1.0 if self.team == "y" else -1.0) * 10.0,
         )
+
         asyncio.create_task(self.control_solar_panels())
         go_to_result = await self.rolling_basis.go_to_and_wait(
             Point(
