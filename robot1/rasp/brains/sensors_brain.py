@@ -80,7 +80,7 @@ async def compute_ennemy_position(self):
             <= CONFIG.STOP_TRESHOLD
         ):
 
-            angle = self.get_ennemy_angle()
+            angle = abs(self.get_ennemy_angle())
             if angle > math.pi:  # Tmp, ugly
                 angle = (-angle) % math.tau
 
