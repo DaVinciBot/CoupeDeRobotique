@@ -346,7 +346,9 @@ class MainBrain(Brain):
             if plant_zone.intersects(self.rolling_basis.odometrie):
                 is_in_plant_zone = True
             # We have passthrough the plant zone
-            if is_in_plant_zone and not plant_zone.intersects(self.rolling_basis.odometrie):
+            if is_in_plant_zone and not plant_zone.intersects(
+                self.rolling_basis.odometrie
+            ):
                 await self.close_god_hand
                 break
             await asyncio.slee(0.1)
@@ -362,15 +364,17 @@ class MainBrain(Brain):
         pickup_target = self.arena.compute_go_to_destination(
             start_point=self.rolling_basis.odometrie,
             zone=target_pickup_zone.zone,
-            delta=-10
+            delta=-10,
         )
 
         # Passthrough the target plant zone and pickup plants
-        god_hand_closing_task = asyncio.create_task(self.smart_close_god_hand(target_pickup_zone.zone))
+        god_hand_closing_task = asyncio.create_task(
+            self.smart_close_god_hand(target_pickup_zone.zone)
+        )
         await self.smart_go_to(
             position=pickup_target,
             timeout=15,
-            **CONFIG.GO_TO_PROFILES["plant_approach"]
+            **CONFIG.GO_TO_PROFILES["plant_approach"],
         )
         god_hand_closing_task.cancel()
 
