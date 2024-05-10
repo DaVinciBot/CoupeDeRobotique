@@ -80,12 +80,12 @@ class MarsArena(Arena):
         ]
 
         self.pickup_zones: list[Plants_zone] = [
-            Plants_zone(Point(70, 100).buffer(25), 6),
-            Plants_zone(Point(130, 100).buffer(25), 6),
-            Plants_zone(Point(150, 150).buffer(25), 6),
-            Plants_zone(Point(130, 200).buffer(25), 6),
-            Plants_zone(Point(70, 200).buffer(25), 6),
-            Plants_zone(Point(50, 150).buffer(25), 6),
+            Plants_zone(Point(70, 100).buffer(12.5), 6),
+            Plants_zone(Point(130, 100).buffer(12.5), 6),
+            Plants_zone(Point(150, 150).buffer(12.5), 6),
+            Plants_zone(Point(130, 200).buffer(12.5), 6),
+            Plants_zone(Point(70, 200).buffer(12.5), 6),
+            Plants_zone(Point(50, 150).buffer(12.5), 6),
         ]
 
         self.gardeners: list[Plants_zone] = [
