@@ -570,7 +570,10 @@ class MainBrain(Brain):
         go_to_result = await self.rolling_basis.go_to_and_wait(
             Point(
                 CONFIG.START_INFO_BY_TEAM[self.team]["start_x"],
-                185 if self.team == "y" else 105,
+                (
+                    max(self.arena.solar_panels_y)
+                    + (1 if self.team == "y" else -1) * 10,
+                ),
             ),
             timeout=30.0,
             **CONFIG.GO_TO_PROFILES["slow_and_precise"],
