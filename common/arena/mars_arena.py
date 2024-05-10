@@ -51,7 +51,7 @@ class MarsArena(Arena):
 
         self.start_zone_id = start_zone_id
 
-        solar_panels_distances: list[float] = [27.5, 50, 72.5, 127.5, 150, 172.5]
+        solar_panels_distances: list[float] = [27.5, 50, 72.5, 127.5, 150]
         self.solar_panels_y: list[float] = (
             solar_panels_distances
             if self.start_zone_id % 2 == 0
