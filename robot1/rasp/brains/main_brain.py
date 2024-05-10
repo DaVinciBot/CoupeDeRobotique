@@ -245,7 +245,7 @@ class MainBrain(Brain):
         self.rolling_basis.stop_and_clear_queue()
         await self.rolling_basis.go_to_and_wait(
             Point(-15, 0),
-            timeout=5.0,
+            timeout=2.5,
             **CONFIG.GO_TO_PROFILES["slow_and_precise"],
             forward=False,
             relative=True,
@@ -260,7 +260,7 @@ class MainBrain(Brain):
                 ),
                 relative=True,
                 **CONFIG.GO_TO_PROFILES["plant_approach"],
-                timeout=3,
+                timeout=2,
             )
         ) == 1:
             await self.rolling_basis.go_to_and_wait(
@@ -270,7 +270,7 @@ class MainBrain(Brain):
                 ),
                 relative=True,
                 **CONFIG.GO_TO_PROFILES["plant_approach"],
-                timeout=2,
+                timeout=1.5,
             )
 
     @Brain.task(process=False, run_on_start=False)
