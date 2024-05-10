@@ -354,7 +354,8 @@ class MainBrain(Brain):
             asyncio.create_task(self.deploy_god_hand())
             asyncio.create_task(self.open_god_hand())
             asyncio.create_task(self.actuators.elevator_bottom())
-            self.leds.set_score(self.score_estimate + 5)  # Pami
+            self.score_estimate += 5  # Pami
+            self.leds.set_score(self.score_estimate)
         except Exception:
             pass
         finally:
@@ -615,6 +616,8 @@ class MainBrain(Brain):
             )  # Copied to avoid changing it between operations
             all_solar_panels_y.append(current_y)
             all_solar_panels_y.sort()
+            if self.team == "b":
+                all_solar_panels_y.reverse()
             self.score_estimate += all_solar_panels_y.index(current_y) * 5
 
     @Brain.task(process=False, run_on_start=False, timeout=30)
