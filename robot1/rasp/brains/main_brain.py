@@ -249,6 +249,7 @@ class MainBrain(Brain):
             **CONFIG.GO_TO_PROFILES["slow_and_precise"],
             forward=False,
             relative=True,
+            timeout=5,
         )
         distance = 5
         angle = (-1 if self.team == "y" else 1) * math.pi / 6
@@ -260,7 +261,7 @@ class MainBrain(Brain):
                 ),
                 relative=True,
                 **CONFIG.GO_TO_PROFILES["plant_approach"],
-                timeout=5,
+                timeout=3,
             )
         ) == 1:
             await self.rolling_basis.go_to_and_wait(
