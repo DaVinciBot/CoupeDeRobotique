@@ -481,7 +481,8 @@ class MainBrain(Brain):
                     self.arena.pickup_zones[objective.target_index]
                 )
 
-                asyncio.create_task(self.undeploy_god_hand())
+                if not (objective.elevator_after in ["top", "intermediate"]):
+                    asyncio.create_task(self.undeploy_god_hand())
 
             case "drop_to_zone":
                 self.logger.log(
