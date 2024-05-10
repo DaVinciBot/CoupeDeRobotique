@@ -27,19 +27,20 @@ class Objective:
     task: str  # objective type ("pickup","drop_to_zone","drop_to_gardener")
     target_index: int  # index of the target
     time_estimate: float = -1.0  # time estimate (won't try if it's too late)
-    raise_elevator_after: bool = (
-        False  # For pickups, whether to start raising the elevator after
-    )
+    elevator_after: str = ""
 
     def __str__(self):
-        return (
-            f"{self.task}, at {self.target_index}, estimated time: {self.time_estimate}"
-            + (
-                ""
-                if not self.raise_elevator_after
-                else ", then raising elevator for next objective"
-            )
-        )
+        r = f"{self.task}, at {self.target_index}, estimated time: {self.time_estimate}"
+        match self.elevator_after:
+            case "top":
+                r += ", then raising elevator for next objective"
+            case "bottom":
+                r += ", then lowering elevator for next objective"
+            case "intermediate":
+                r += ", then setting elevator to intermediate position"
+            case _:
+                r += ", then nothing"
+        return r
 
 
 class MainBrain(Brain):
@@ -375,6 +376,9 @@ class MainBrain(Brain):
         god_hand_closing_task = asyncio.create_task(
             self.smart_close_god_hand(target_pickup_zone.zone)
         )
+
+        asyncio.create_task(self.actuators.elevator_bottom())
+
         await self.smart_go_to(
             position=pickup_target,
             timeout=15,
@@ -453,8 +457,6 @@ class MainBrain(Brain):
 
         target_gardener.drop_plants(5)
 
-        asyncio.create_task(self.actuators.elevator_bottom())
-
     async def engage_objective(self, objective: Objective):
         match objective.task:
             case "pickup":
@@ -468,10 +470,7 @@ class MainBrain(Brain):
                     self.arena.pickup_zones[objective.target_index]
                 )
 
-                if objective.raise_elevator_after:
-                    asyncio.create_task(self.actuators.elevator_top())
-                else:
-                    asyncio.create_task(self.undeploy_god_hand())
+                asyncio.create_task(self.undeploy_god_hand())
 
             case "drop_to_zone":
                 self.logger.log(
@@ -500,6 +499,16 @@ class MainBrain(Brain):
             case _:
                 raise Exception("Unknown objective type")
 
+        match objective.elevator_after:
+            case "top":
+                asyncio.create_task(self.actuators.elevator_top())
+            case "bottom":
+                asyncio.create_task(self.actuators.elevator_bottom())
+            case "intermediate":
+                asyncio.create_task(self.actuators.elevator_intermediate())
+            case _:
+                asyncio.create_task(self.undeploy_god_hand())
+
     @Brain.task(process=False, run_on_start=False, timeout=50)
     async def plant_stage(self):
         start_stage_time = Utils.get_ts()
@@ -507,19 +516,18 @@ class MainBrain(Brain):
 
         await self.deploy_god_hand()
 
-        async def delayed_elevator(time_to_drop: float = 4):
-            await asyncio.sleep(time_to_drop)
-            await self.actuators.elevator_bottom()
-
-        asyncio.create_task(delayed_elevator())
-
         objectives: list[Objective] = [
             Objective("pickup", 0 if in_yellow_team else 4, 8.0),  # First zone
             Objective("drop_to_zone", 2 if in_yellow_team else 5, 10.0),  # First drop
             Objective(
-                "pickup", 1 if in_yellow_team else 3, 12.0, raise_elevator_after=True
+                "pickup", 1 if in_yellow_team else 3, 12.0, elevator_after="top"
             ),  # etc
-            Objective("drop_to_gardener", 2 if in_yellow_team else 5, 10.0),
+            Objective(
+                "drop_to_gardener",
+                2 if in_yellow_team else 5,
+                10.0,
+                elevator_after="bottom",
+            ),
             # Objective("pickup", 2, 8.0),
             # Objective("drop_to_zone", 4 if in_yellow_team else 1, 10.0),
         ]
