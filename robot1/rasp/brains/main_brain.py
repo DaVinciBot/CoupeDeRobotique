@@ -357,9 +357,8 @@ class MainBrain(Brain):
     @Logger
     async def go_and_pickup(
         self,
-        target_pickup_zone_id: int,
+        target_pickup_zone: Plants_zone,
     ) -> None:
-        target_pickup_zone = self.arena.pickup_zones[target_pickup_zone_id]
 
         asyncio.create_task(self.deploy_god_hand())
         asyncio.create_task(self.open_god_hand())
