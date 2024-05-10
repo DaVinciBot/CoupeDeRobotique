@@ -593,6 +593,9 @@ class MainBrain(Brain):
             **CONFIG.GO_TO_PROFILES["slow_and_precise"],
         )
 
+        if go_to_result in [0, 2]:
+            self.score_estimate += 1
+
         if go_to_result == 0:
             # Great success!
             self.score_estimate += len(self.arena.solar_panels_y) * 5
