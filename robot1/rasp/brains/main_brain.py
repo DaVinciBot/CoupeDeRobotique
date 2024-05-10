@@ -354,6 +354,15 @@ class MainBrain(Brain):
             asyncio.create_task(self.deploy_god_hand())
             asyncio.create_task(self.open_god_hand())
             asyncio.create_task(self.actuators.elevator_bottom())
+            if self.compute_return_target()[0] == True:
+                self.score_estimate += (
+                    10  # For going to a safe zone that isn't the starting one
+                )
+            elif self.arena.drop_zones[0 if self.team == "y" else 3].zone.contains(
+                self.rolling_basis.odometrie
+            ):
+                self.score_estimate += 5  # For going to a safe zone but the wrong one
+
             self.score_estimate += 5  # Pami
             self.leds.set_score(self.score_estimate)
         except Exception:
