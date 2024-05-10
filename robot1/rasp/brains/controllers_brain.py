@@ -294,7 +294,7 @@ async def avoid_obstacle(
                     timeout=timeout,
                     forward=not forward,
                     relative=True,
-                    **CONFIG.GO_TO_PROFILES["slow_and_precise"]
+                    **CONFIG.GO_TO_PROFILES["slow_and_precise"],
                     fails=fails + 1,
                 )
                 return await self.smart_go_to(

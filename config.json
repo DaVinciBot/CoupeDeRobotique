@@ -72,7 +72,7 @@
     "acs": {
       "stop_treshold": 50,
       "anticollision_mode": 2,
-      "anticollision_handle": 2,
+      "anticollision_handle": 3,
       "anticollision_wait_and_fail_delay": 5,
       "anticollision_wait_and_retry_delay": 2,
       "anticollision_wait_and_retry_max_tries": 2,
