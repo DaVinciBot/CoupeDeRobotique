@@ -247,6 +247,8 @@ class MainBrain(Brain):
             Point(-15, 0),
             timeout=5.0,
             **CONFIG.GO_TO_PROFILES["slow_and_precise"],
+            forward=False,
+            relative=True,
         )
         distance = 5
         angle = (-1 if self.team == "y" else 1) * math.pi / 6
