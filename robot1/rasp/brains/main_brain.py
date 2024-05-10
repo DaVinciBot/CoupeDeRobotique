@@ -206,8 +206,10 @@ class MainBrain(Brain):
         await asyncio.sleep(0.5)
 
         # Solar panels stage
+        solar_panel_control = asyncio.create_task(self.control_solar_panels())
         self.logger.log("Starting solar panels stage...", LogLevels.INFO, self.leds)
         await self.solar_panels_stage()
+        solar_panel_control.cancel()
         await self.undeploy_team_solar_panel()
 
         # Virage contre le mur
@@ -220,9 +222,7 @@ class MainBrain(Brain):
             self.leds,
         )
 
-        solar_panel_control = asyncio.create_task(self.control_solar_panels())
         await self.plant_stage()
-        solar_panel_control.cancel()
 
         self.logger.log("Going to regular endzone if needed", LogLevels.INFO)
         await self.go_to_endzone()
@@ -613,7 +613,7 @@ class MainBrain(Brain):
         self,
     ) -> None:
 
-        start_time = Utils.get_ts()
+        self.logger.log("Started controlling solar panels")
         remaining_solar_panels_y = self.arena.solar_panels_y[:]
 
         await self.deploy_team_solar_panel(small=True)
