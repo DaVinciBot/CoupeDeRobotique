@@ -382,7 +382,7 @@
       "min_angle": -0.785398,
       "max_angle": 3.926991,
       "min_distance_detection": 5.0,
-      "frontal_detection_angle": 2.617994,
+      "frontal_detection_angle": 1308997,
       "semi_circular_detection_angle": 3.141593
     }
   },
