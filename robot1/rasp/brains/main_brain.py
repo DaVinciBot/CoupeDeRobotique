@@ -532,7 +532,7 @@ class MainBrain(Brain):
             case _:
                 asyncio.create_task(self.undeploy_god_hand())
 
-    @Brain.task(process=False, run_on_start=False, timeout=50)
+    @Brain.task(process=False, run_on_start=False, timeout=60)
     async def plant_stage(self):
         start_stage_time = Utils.get_ts()
         in_yellow_team = self.team == "y"
@@ -564,7 +564,7 @@ class MainBrain(Brain):
 
             if (
                 Utils.time_since(start_stage_time) + current_objective.time_estimate
-                > 50
+                > 60
                 and current_objective.time_estimate >= 0
             ):
                 self.logger.log(
@@ -578,7 +578,7 @@ class MainBrain(Brain):
                 self.logger.log("Engaging objective", LogLevels.INFO)
                 await self.engage_objective(current_objective)
 
-    @Brain.task(process=False, run_on_start=False, timeout=30)
+    @Brain.task(process=False, run_on_start=False, timeout=20)
     async def solar_panels_stage(self) -> None:
 
         target_y = (
