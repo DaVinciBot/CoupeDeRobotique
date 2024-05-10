@@ -217,15 +217,19 @@ class MainBrain(Brain):
         self.logger.log("Starting plant stage...", LogLevels.INFO, self.leds)
         await self.plant_stage()
 
-        # Custom return to let PAMIs do their thing
-        self.logger.log("Going to custom endzone", LogLevels.INFO)
-        custom_return_zone = self.arena.drop_zones[2 if self.team == "y" else 5].zone
-        await self.smart_go_to(
-            Point(
-                custom_return_zone.bounds[0],
-                custom_return_zone.bounds[3 if self.team == "y" else 1],
+        already_safe, target = self.compute_return_target()
+        if not already_safe:
+            # Custom return to let PAMIs do their thing
+            self.logger.log("Going to custom endzone", LogLevels.INFO)
+            custom_return_zone = self.arena.drop_zones[
+                2 if self.team == "y" else 5
+            ].zone
+            await self.smart_go_to(
+                Point(
+                    custom_return_zone.bounds[0],
+                    custom_return_zone.bounds[3 if self.team == "y" else 1],
+                )
             )
-        )
 
         self.logger.log("Going to regular endzone if needed", LogLevels.INFO)
         await self.go_to_endzone()
@@ -397,10 +401,13 @@ class MainBrain(Brain):
             delta=20,
         )
 
-        await self.smart_go_to(
-            position=target,
-            timeout=15,
-            **CONFIG.GO_TO_PROFILES["plant_approach"],
+        r = (
+            await self.smart_go_to(
+                position=target,
+                timeout=15,
+                **CONFIG.GO_TO_PROFILES["plant_approach"],
+            )
+            == 0
         )
 
         # Drop plants
@@ -411,14 +418,15 @@ class MainBrain(Brain):
         # Account for removed plants
         target_drop_zone.drop_plants(5)
 
-        # Step back
-        await self.smart_go_to(
-            Point(-30, 0),
-            timeout=5,
-            forward=False,
-            **CONFIG.GO_TO_PROFILES["plant_pickup"],
-            relative=True,
-        )
+        if r == 0:
+            # Step back
+            await self.smart_go_to(
+                Point(-30, 0),
+                timeout=5,
+                forward=False,
+                **CONFIG.GO_TO_PROFILES["plant_pickup"],
+                relative=True,
+            )
 
     @Logger
     async def go_and_drop_to_gardener(self, target_gardener: Plants_zone) -> None:
@@ -453,20 +461,21 @@ class MainBrain(Brain):
                 await self.actuators.elevator_intermediate()
                 await self.open_god_hand()
 
-                # Step back
-                await self.smart_go_to(
-                    Point(-CONFIG.ARENA_CONFIG["robot_buffer"], 0),
-                    timeout=5,
-                    forward=False,
-                    relative=True,
-                    **CONFIG.GO_TO_PROFILES["plant_pickup"],
-                )
-
                 target_gardener.drop_plants(5)
+
             else:
                 await self.deploy_god_hand()
                 await self.actuators.elevator_bottom()
                 await self.open_god_hand()
+
+            # Step back
+            await self.smart_go_to(
+                Point(-CONFIG.ARENA_CONFIG["robot_buffer"], 0),
+                timeout=5,
+                forward=False,
+                relative=True,
+                **CONFIG.GO_TO_PROFILES["plant_pickup"],
+            )
 
     async def engage_objective(self, objective: Objective):
         match objective.task:
@@ -540,6 +549,8 @@ class MainBrain(Brain):
                 10.0,
                 elevator_after="bottom",
             ),
+            Objective("pickup", 3 if in_yellow_team else 1, 8.0),
+            Objective("drop_to_zone", 4 if in_yellow_team else 1, 10.0),
             # Objective("pickup", 2, 8.0),
             # Objective("drop_to_zone", 4 if in_yellow_team else 1, 10.0),
         ]
@@ -623,9 +634,9 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=not CONFIG.ZOMBIE_MODE, refresh_rate=2)
     async def update_return_eta(self):
-        already_there, target = self.compute_return_target()
+        already_safe, target = self.compute_return_target()
 
-        if already_there:
+        if already_safe:
             self.return_eta = 0
         else:
             delta = distance(
