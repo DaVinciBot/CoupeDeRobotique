@@ -350,10 +350,8 @@ class MainBrain(Brain):
             if is_in_plant_zone and not plant_zone.intersects(
                 self.rolling_basis.odometrie
             ):
-                print("close hand !")
                 await self.close_god_hand()
                 break
-            print("zone_state", is_in_plant_zone)
             await asyncio.sleep(0.1)
 
     @Logger
