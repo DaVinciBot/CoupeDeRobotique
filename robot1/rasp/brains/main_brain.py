@@ -490,7 +490,7 @@ class MainBrain(Brain):
             if await self.smart_go_to(
                 final_target,
                 **CONFIG.GO_TO_PROFILES["slow_and_precise"],
-                timeout=6,
+                timeout=4,
             ) in [0, 1]:
 
                 await self.deploy_god_hand()
@@ -590,7 +590,7 @@ class MainBrain(Brain):
             Objective(
                 "drop_to_gardener",
                 2 if in_yellow_team else 5,
-                10.0,
+                12.0,
                 elevator_after="bottom",
             ),
             Objective("pickup", 3 if in_yellow_team else 1, 8.0),
