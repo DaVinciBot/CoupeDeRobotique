@@ -614,8 +614,7 @@ class MainBrain(Brain):
         remaining_solar_panels_y = self.arena.solar_panels_y[:]
 
         await self.deploy_team_solar_panel(small=True)
-        finished: bool = False
-        while not finished and len(remaining_solar_panels_y) > 0:
+        while len(remaining_solar_panels_y) > 0:
             await asyncio.sleep(0.05)
             for i, y in enumerate(remaining_solar_panels_y):
                 if (
@@ -629,7 +628,6 @@ class MainBrain(Brain):
                     await self.deploy_team_solar_panel(
                         small=(len(remaining_solar_panels_y) > 3)
                     )
-                    finished = True
                     break
 
     @Brain.task(process=False, run_on_start=not CONFIG.ZOMBIE_MODE, refresh_rate=2)
