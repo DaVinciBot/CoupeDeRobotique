@@ -559,7 +559,8 @@ class MainBrain(Brain):
 
         for current_objective in objectives:
             self.logger.log(
-                f"Considering objective: {current_objective}", LogLevels.INFO
+                f"Considering objective: {current_objective}, time left: {Utils.time_since(start_stage_time) + current_objective.time_estimate}",
+                LogLevels.INFO,
             )
 
             if (
@@ -571,7 +572,6 @@ class MainBrain(Brain):
                     "Not enough time, gotta go fast; leaving plant_stage",
                     LogLevels.INFO,
                 )
-                # TODO consider what to do if still holding plants
                 break
 
             else:
@@ -589,7 +589,7 @@ class MainBrain(Brain):
 
         go_to_result = await self.rolling_basis.go_to_and_wait(
             Point(CONFIG.START_INFO_BY_TEAM[self.team]["start_x"], target_y),
-            timeout=30.0,
+            timeout=20.0,
             **CONFIG.GO_TO_PROFILES["slow_and_precise"],
         )
 
