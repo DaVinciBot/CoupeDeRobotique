@@ -358,12 +358,27 @@ class MainBrain(Brain):
                 self.score_estimate += (
                     10  # For going to a safe zone that isn't the starting one
                 )
-            elif self.arena.drop_zones[0 if self.team == "y" else 3].zone.contains(
-                self.rolling_basis.odometrie
+                self.logger.log(
+                    "Scored 10 for going to a safe zone that isn't the starting one",
+                    LogLevels.DEBUG,
+                )
+            elif (
+                self.arena.drop_zones[0 if self.team == "y" else 3].zone.contains(
+                    self.rolling_basis.odometrie
+                )
+                and self.score_estimate > 0
             ):
                 self.score_estimate += 5  # For going to a safe zone but the wrong one
-
+                self.logger.log(
+                    "Scored 5 for going to the starting zone (after leaving)",
+                    LogLevels.DEBUG,
+                )
             self.score_estimate += 5  # Pami
+            self.logger.log("Scored 5 from PAMI (hopefully)", LogLevels.DEBUG)
+
+            self.logger.log(
+                f"Displaying total score: {self.score_estimate}", LogLevels.DEBUG
+            )
             self.leds.set_score(self.score_estimate)
         except Exception:
             pass
@@ -525,6 +540,10 @@ class MainBrain(Brain):
                     self.arena.drop_zones[objective.target_index]
                 )
                 self.score_estimate += 3
+                self.logger.log(
+                    f"Scored 3 for dropping to drop_zone {objective.target_index}",
+                    LogLevels.DEBUG,
+                )
 
             case "drop_to_gardener":
                 self.logger.log(
@@ -537,6 +556,10 @@ class MainBrain(Brain):
                     self.arena.gardeners[objective.target_index]
                 )
                 self.score_estimate += 8
+                self.logger.log(
+                    f"Scored 8 for dropping to gardener {objective.target_index}",
+                    LogLevels.DEBUG,
+                )
 
             case _:
                 raise Exception("Unknown objective type")
@@ -614,20 +637,21 @@ class MainBrain(Brain):
 
         if go_to_result in [0, 2]:
             self.score_estimate += 1
+            self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
 
-        if go_to_result == 0:
-            # Great success!
-            self.score_estimate += len(self.arena.solar_panels_y) * 5
-        else:
-            all_solar_panels_y = self.arena.solar_panels_y[:]
-            current_y = (
-                self.rolling_basis.odometrie.y
-            )  # Copied to avoid changing it between operations
-            all_solar_panels_y.append(current_y)
-            all_solar_panels_y.sort()
-            if self.team == "b":
-                all_solar_panels_y.reverse()
-            self.score_estimate += all_solar_panels_y.index(current_y) * 5
+        all_solar_panels_y = self.arena.solar_panels_y[:]
+        current_y = (
+            self.rolling_basis.odometrie.y
+        )  # Copied to avoid changing it between operations
+        all_solar_panels_y.append(current_y)
+        all_solar_panels_y.sort()
+        if self.team == "b":
+            all_solar_panels_y.reverse()
+        self.score_estimate += all_solar_panels_y.index(current_y) * 5
+        self.logger.log(
+            f"Scored {all_solar_panels_y.index(current_y) * 5} for flipping solar panels",
+            LogLevels.DEBUG,
+        )
 
     @Brain.task(process=False, run_on_start=False, timeout=30)
     async def control_solar_panels(
