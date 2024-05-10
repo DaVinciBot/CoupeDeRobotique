@@ -456,7 +456,7 @@ class MainBrain(Brain):
             if await self.smart_go_to(
                 final_target,
                 **CONFIG.GO_TO_PROFILES["slow_and_precise"],
-                timeout=3,
+                timeout=6,
             ) in [0, 1]:
 
                 await self.deploy_god_hand()
@@ -610,7 +610,7 @@ class MainBrain(Brain):
         self,
     ) -> None:
 
-        self.logger.log("Started controlling solar panels")
+        self.logger.log("Started controlling solar panels", LogLevels.INFO)
         remaining_solar_panels_y = self.arena.solar_panels_y[:]
 
         await self.deploy_team_solar_panel(small=True)
