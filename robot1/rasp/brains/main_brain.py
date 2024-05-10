@@ -208,7 +208,7 @@ class MainBrain(Brain):
         # Solar panels stage
         self.logger.log("Starting solar panels stage...", LogLevels.INFO, self.leds)
         await self.solar_panels_stage()
-        asyncio.create_task(self.undeploy_team_solar_panel())
+        await self.undeploy_team_solar_panel()
 
         # Virage contre le mur
         await self.drift()
