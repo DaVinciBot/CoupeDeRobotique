@@ -296,6 +296,10 @@ async def handle_acs(
                     )
                     self.anticollision_mode = old_anticollision_mode
 
+                await asyncio.sleep(
+                    0.5
+                )  # Time to stabilise to make sure the estimation of CONFIG.ANTICOLLISION_WAIT_AND_AVOID_TIME_WITHOUT_ACS is ok
+
                 self.anticollision_mode = AntiCollisionMode.DISABLED
 
                 asyncio.create_task(reset_anticollision_handle())
