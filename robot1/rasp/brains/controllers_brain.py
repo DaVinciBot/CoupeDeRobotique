@@ -236,7 +236,7 @@ async def smart_go_to(
     return result
 
 
-async def avoid_obstacle(
+async def handle_acs(
     self,
     original_target: Point,
     *,  # force keyword arguments
@@ -291,7 +291,9 @@ async def avoid_obstacle(
                 old_anticollision_mode = self.anticollision_mode
 
                 async def reset_anticollision_handle():
-                    await asyncio.sleep(3)
+                    await asyncio.sleep(
+                        CONFIG.ANTICOLLISION_WAIT_AND_AVOID_TIME_WITHOUT_ACS
+                    )
                     self.anticollision_mode = old_anticollision_mode
 
                 self.anticollision_mode = AntiCollisionMode.DISABLED

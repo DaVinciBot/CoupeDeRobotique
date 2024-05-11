@@ -64,7 +64,7 @@ class MainBrain(Brain):
         undeploy_left_solar_panel,
         deploy_team_solar_panel,
         undeploy_team_solar_panel,
-        avoid_obstacle,
+        handle_acs,
     )
 
     # Sensors functions

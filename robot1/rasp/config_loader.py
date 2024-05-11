@@ -130,6 +130,9 @@ class CONFIG:
     ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES = ACS_CONFIG[
         "anticollision_wait_and_avoid_max_tries"
     ]
+    ANTICOLLISION_WAIT_AND_AVOID_TIME_WITHOUT_ACS = ACS_CONFIG[
+        "anticollision_wait_and_avoid_time_without_acs"
+    ]
 
     # arena
     ARENA_CONFIG = CONFIG_STORE[ARENA_CONFIG_KEY]
