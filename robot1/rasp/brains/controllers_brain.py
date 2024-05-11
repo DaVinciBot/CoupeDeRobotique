@@ -291,7 +291,7 @@ async def avoid_obstacle(
                 old_anticollision_mode = self.anticollision_mode
 
                 async def reset_anticollision_mode():
-                    await asyncio.sleep(2)
+                    await asyncio.sleep(3)
                     self.anticollision_mode = old_anticollision_mode
 
                 self.anticollision_handle = AntiCollisionHandle.NOTHING
