@@ -294,7 +294,7 @@ async def avoid_obstacle(
                     await asyncio.sleep(2)
                     self.anticollision_mode = old_anticollision_mode
 
-                self.anticollision_mode = AntiCollisionHandle.NOTHING
+                self.anticollision_handle = AntiCollisionHandle.NOTHING
                 asyncio.create_task(reset_anticollision_mode())
 
                 await self.rolling_basis.go_to_and_wait(
