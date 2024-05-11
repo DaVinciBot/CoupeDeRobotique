@@ -302,17 +302,22 @@ async def handle_acs(
 
                 self.anticollision_mode = AntiCollisionMode.DISABLED
 
-                asyncio.create_task(reset_anticollision_handle())
+                # In case of timeout
+                safety = asyncio.create_task(reset_anticollision_handle())
 
                 await self.rolling_basis.go_to_and_wait(
                     Point(-CONFIG.ANTICOLLISION_WAIT_AND_AVOID_DISTANCE, 0),
                     skip_and_clear_queue=skip_and_clear_queue,
                     tolerance=tolerance,
-                    timeout=timeout,
+                    timeout=min(timeout, 3),
                     forward=not forward,
                     relative=True,
                     **CONFIG.GO_TO_PROFILES["slow_and_precise"],
                 )
+                # Reset without waiting for the trigger
+                self.anticollision_mode = old_anticollision_mode
+                # Avoid the risk of triggering during another temporary disable
+                safety.cancel()
 
                 return await self.smart_go_to(
                     original_target,
