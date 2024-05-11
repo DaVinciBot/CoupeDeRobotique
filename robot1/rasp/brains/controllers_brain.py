@@ -214,7 +214,7 @@ async def smart_go_to(
     )
     if result == 2:
         # ACS handling strategy:
-        result = await self.avoid_obstacle(
+        result = await self.handle_acs(
             position,
             skip_and_clear_queue=skip_and_clear_queue,
             tolerance=tolerance,
