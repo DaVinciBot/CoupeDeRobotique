@@ -13,7 +13,7 @@ class AntiCollisionMode(Enum):
 
 
 class AntiCollisionHandle(Enum):
-    NOTHING = 0
+    DO_NOTHING = 0
     WAIT_AND_FAIL = 1
     WAIT_AND_RETRY = 2
     AVOID = 3

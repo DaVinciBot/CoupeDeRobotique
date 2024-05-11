@@ -257,7 +257,7 @@ async def avoid_obstacle(
     fails: int = 0,
 ) -> int:
     match self.anticollision_handle:
-        case AntiCollisionHandle.NOTHING:
+        case AntiCollisionHandle.DO_NOTHING:
             return 2
         case AntiCollisionHandle.WAIT_AND_FAIL:
             await asyncio.sleep(CONFIG.ANTICOLLISION_WAIT_AND_FAIL_DELAY)
@@ -288,13 +288,14 @@ async def avoid_obstacle(
         case AntiCollisionHandle.AVOID:
             if fails < CONFIG.ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES:
 
-                old_anticollision_handle = self.anticollision_handle
+                old_anticollision_mode = self.anticollision_mode
 
                 async def reset_anticollision_handle():
                     await asyncio.sleep(3)
-                    self.anticollision_handle = old_anticollision_handle
+                    self.anticollision_mode = old_anticollision_mode
 
-                self.anticollision_handle = AntiCollisionHandle.NOTHING
+                self.anticollision_mode = AntiCollisionMode.DISABLED
+
                 asyncio.create_task(reset_anticollision_handle())
 
                 await self.rolling_basis.go_to_and_wait(
@@ -306,6 +307,7 @@ async def avoid_obstacle(
                     relative=True,
                     **CONFIG.GO_TO_PROFILES["slow_and_precise"],
                 )
+
                 return await self.smart_go_to(
                     original_target,
                     skip_and_clear_queue=skip_and_clear_queue,
