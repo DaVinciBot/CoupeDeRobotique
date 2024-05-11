@@ -70,7 +70,7 @@
     "log_level": 0,
     "print_log": true,
     "acs": {
-      "stop_treshold": 50,
+      "stop_treshold": 70,
       "anticollision_mode": 2,
       "anticollision_handle": 3,
       "anticollision_wait_and_fail_delay": 5,
