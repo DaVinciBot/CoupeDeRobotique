@@ -287,6 +287,16 @@ async def avoid_obstacle(
                 return 2
         case AntiCollisionHandle.AVOID:
             if fails < CONFIG.ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES:
+
+                old_anticollision_mode = self.anticollision_mode
+
+                async def reset_anticollision_mode():
+                    await asyncio.sleep(2)
+                    self.anticollision_mode = old_anticollision_mode
+
+                self.anticollision_mode = AntiCollisionHandle.NOTHING
+                asyncio.create_task(reset_anticollision_mode())
+
                 await self.rolling_basis.go_to_and_wait(
                     Point(-CONFIG.ANTICOLLISION_WAIT_AND_AVOID_DISTANCE, 0),
                     skip_and_clear_queue=skip_and_clear_queue,
