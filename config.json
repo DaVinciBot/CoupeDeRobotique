@@ -76,8 +76,8 @@
       "anticollision_wait_and_fail_delay": 5,
       "anticollision_wait_and_retry_delay": 2,
       "anticollision_wait_and_retry_max_tries": 2,
-      "anticollision_wait_and_avoid_distance": 20,
-      "anticollision_wait_and_avoid_time_without_acs": 3,
+      "anticollision_wait_and_avoid_distance": 15,
+      "anticollision_wait_and_avoid_time_without_acs": 2,
       "anticollision_wait_and_avoid_max_tries": 1
     },
     "zombie_mode": false,
