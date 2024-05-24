@@ -1,0 +1,16 @@
+.cam{
+    grid-row: 1/3;
+    background: url("../assets/no_signal.png")  center;
+    background-size: cover;
+    animation: no_signal 10s linear infinite;
+}
+
+@keyframes no_signal {
+    0% {
+        background-position: 0%;
+    }
+
+    100% {
+        background-position: 605%;
+    }
+}

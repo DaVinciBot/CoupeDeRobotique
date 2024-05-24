@@ -17,7 +17,7 @@ from utils import Utils
 from GPIO import PIN
 
 # Import from local path
-from brains.acs import AntiCollisionMode, AntiCollisionHandle
+from utils import LidarMode, AntiCollisionHandle
 from controllers import RollingBasis, Actuators
 from sensors import Lidar
 
@@ -117,7 +117,7 @@ class MainBrain(Brain):
         leds: LEDStrip,
     ) -> None:
 
-        self.anticollision_mode: AntiCollisionMode = AntiCollisionMode(
+        self.anticollision_mode: LidarMode = LidarMode(
             CONFIG.ANTICOLLISION_MODE
         )
         self.anticollision_handle: AntiCollisionHandle = AntiCollisionHandle(
@@ -696,7 +696,9 @@ class MainBrain(Brain):
             # Objective("pickup", 2, 8.0),
             # Objective("drop_to_zone", 4 if in_yellow_team else 1, 10.0),
         ]
-
+        previous_anticollision_handle = self.anticollision_handle
+        if self.trigger_acs : self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
+        first = True
         for current_objective in objectives:
             self.logger.log(
                 f"Considering objective: {current_objective}, estimated finishing time: {Utils.get_ts()-self.start_time + current_objective.time_estimate}",
@@ -705,6 +707,8 @@ class MainBrain(Brain):
             if current_objective.evaluate(self.start_time):
                 self.logger.log("Engaging objective", LogLevels.INFO)
                 await self.engage_objective(current_objective)
+            if first:
+                self.anticollision_handle = previous_anticollision_handle
             else:
                 break
             
@@ -723,10 +727,14 @@ class MainBrain(Brain):
             **CONFIG.GO_TO_PROFILES["slow_and_precise"],
         )
 
-        if go_to_result in [0, 2]:
+        if go_to_result.value in [0, 3]:
             self.score_estimate += 1
             self.leds.set_score(self.score_estimate)
             self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
+            
+        self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
+        
+
 
     @Brain.task(process=False, run_on_start=False, timeout=30)
     async def control_solar_panels(

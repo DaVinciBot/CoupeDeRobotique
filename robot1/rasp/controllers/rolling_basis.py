@@ -4,7 +4,7 @@ from config_loader import CONFIG
 from teensy_comms import Teensy, calc_center
 from geometry import OrientedPoint, Point, distance
 from logger import Logger, LogLevels
-from utils import Utils
+from utils import Utils, GoToResult
 
 import struct
 import math
@@ -26,7 +26,6 @@ class Command(Enum):
     GET_ORIENTATION = b"\08"
     STOP = b"\x7E"  # 7E = 126
     INVALID = b"\xFF"
-
 
 @dataclass
 class Instruction:
@@ -308,7 +307,7 @@ class RollingBasis(Teensy):
         acceleration_distance: float = 0,
         deceleration_end_speed: int = 160,
         deceleration_distance: float = 0,
-    ) -> int:
+    ) -> GoToResult:
         """Waits to go over timeout or finish the queue (by finishing movement or being interrupted)
 
         Args:
@@ -375,20 +374,20 @@ class RollingBasis(Teensy):
                 LogLevels.WARNING,
             )
             self.stop_and_clear_queue()
-            return 1
+            return GoToResult.TIMEOUT
         elif distance(self.odometrie, target_to_compare) <= tolerance:
             self.logger.log(
                 f"Reached target in go_to_and_wait, at: {self.odometrie}",
                 LogLevels.INFO,
             )
-            return 0
+            return GoToResult.SUCCESS
         else:  # Should only mean ACS triggered or unplanned behaviour
             self.logger.log(
                 f"Didn't timeout in Go_To_And_Wait but did not arrive, at: {self.odometrie}, targeting : {target_to_compare}, {distance(self.odometrie, target_to_compare)} away",
                 LogLevels.WARNING,
             )
             # self.stop_and_clear_queue()
-            return 2
+            return GoToResult.STOPPED
 
     @Logger
     def get_orientation(
