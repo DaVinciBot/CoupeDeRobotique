@@ -397,6 +397,7 @@
   "arena": {
     "border_buffer": -10,
     "robot_buffer": 18,
-    "robot_buffer_with_god_hand_deployed": 25
+    "robot_buffer_with_god_hand_deployed": 25,
+    "limit_plant_pickup": 3
   }
 }

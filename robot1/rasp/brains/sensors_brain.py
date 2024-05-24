@@ -40,7 +40,6 @@ def get_ennemy_angle(self) -> float | None:
             - self.rolling_basis.odometrie.theta
         ) % math.tau
 
-
 @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
 async def compute_ennemy_position(self):
     polars: np.ndarray = self.lidar.scan_to_polars()
@@ -118,6 +117,13 @@ async def compute_ennemy_position(self):
         (CONFIG.LIDAR_MAX_ANGLE - CONFIG.LIDAR_MIN_ANGLE) / 2,
         -(CONFIG.LIDAR_MAX_ANGLE - CONFIG.LIDAR_MIN_ANGLE) / 2,
     )
+    
+    # mark the zone as visited if the ennemy is in it
+    for i in range(self.arena.pickup_zones):
+        if self.arena.pickup_zones[i].zone.contains(self.arena.ennemy_position):
+            self.arena.pickup_zones[i].visit()
+            self.logger.log(f"Ennemy visited pickup zone n°{i}", LogLevels.INFO)
+            break
 
 
 def pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:
