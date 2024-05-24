@@ -35,22 +35,6 @@ class Actuators(Teensy):
     #########################
     # User facing functions #
     #########################
-    async def elevator_top(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
-        await self.stepper_step(
-            CONFIG.ELEVATOR["top_steps"] - self.elevator_ticks, speed
-        )
-
-    async def elevator_bottom(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
-        await self.stepper_step(
-            CONFIG.ELEVATOR["bottom_steps"] - self.elevator_ticks, speed
-        )
-
-    async def elevator_intermediate(
-        self, speed: int = CONFIG.ELEVATOR["speed"]
-    ) -> None:
-        await self.stepper_step(
-            CONFIG.ELEVATOR["intermediate_steps"] - self.elevator_ticks, speed
-        )
 
     @Logger
     async def stepper_step(self, steps: int, speed: int) -> None:

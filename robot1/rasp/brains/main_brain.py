@@ -91,6 +91,9 @@ class MainBrain(Brain):
         deploy_team_solar_panel,
         undeploy_team_solar_panel,
         handle_acs,
+        elevator_bottom,
+        elevator_intermediate,
+        elevator_top
     )
 
     # Sensors functions
