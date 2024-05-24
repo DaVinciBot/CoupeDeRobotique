@@ -2,7 +2,7 @@ from config_loader import CONFIG
 from logger import Logger, LogLevels
 from arena import MarsArena
 from geometry import Point
-
+from controllers import Actuators
 import matplotlib.pyplot as plt
 from geometry import Point
 from random import randint
@@ -95,8 +95,14 @@ def test_compute_go_to():
     plt.title("Check Go_To auto_delta")
     plt.legend()
     plt.show()
+    
+def test_lcd():
+    logger = Logger()
+    actuators = Actuators(logger,ser=4325378)
+    actuators.lcd_print("Hello World")
 
 
 if __name__ == "__main__":
     # test_enable_go_to()
-    test_compute_go_to()
+    # test_compute_go_to()
+    test_lcd()

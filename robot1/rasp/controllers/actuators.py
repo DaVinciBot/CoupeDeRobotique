@@ -3,7 +3,7 @@ from logger import Logger, LogLevels
 
 # Import from common
 from teensy_comms import Teensy
-
+import asyncio
 import struct
 
 
@@ -23,11 +23,15 @@ class Actuators(Teensy):
         )
         # Admit that default elevator position is at the bottom
         self.elevator_ticks = 0
+        
+        self.is_lcd_declared = False
 
     class Command:  # values must correspond to the one defined on the teensy
         Update_servo = b"\x01"
         StepperStep = b"\x02"
         Update_servo_detach = b"\x03"
+        Lcd_int = b"\x04"
+        Lcd_print = b"\x05"
 
     def __str__(self) -> str:
         return self.__class__.__name__
@@ -127,3 +131,29 @@ class Actuators(Teensy):
                 f"You tried to write {angle}° on pin {pin}, whereas the angle must be between {min_angle} and {max_angle}°",
                 LogLevels.ERROR,
             )
+
+    @Logger
+    async def lcd_init(self, msg: str,adress : int, nb_col:int,nb_line : int) -> None:
+        msg_ = (
+            self.Command.Lcd_init
+            + struct.pack("<B", adress)
+            + struct.pack("<B", nb_col)
+            + struct.pack("<B", nb_line)
+        )
+        self.send_bytes(msg_)
+    
+    @Logger
+    async def lcd_print(self, msg: str) -> None:
+        """Display a message on the LCD screen.
+
+        Args:
+            msg (str): The message to display.
+        """
+        if not self.is_lcd_declared:
+            self.lcd_init()
+            await asyncio.sleep(CONFIG.MINIMUM_DELAY)
+        msg_ = (
+            self.Command.Lcd_print
+            + struct.pack("<s", msg)
+        )
+        self.send_bytes(msg_)

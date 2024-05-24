@@ -38,3 +38,17 @@ struct msg_Stepper_Go_To
     byte pin_step;   // pin to which the step pin is connected
     byte pin_driver; // pin to which the driver pin is connected
 };
+
+struct msg_Lcd_Init
+{
+    byte command = LCD_INIT;
+    byte adress;   // adress of the lcd
+    byte nb_col;   // number of columns
+    byte nb_line;  // number of lines
+};
+
+struct msg_Lcd_Print
+{
+    byte command = LCD_PRINT;
+    char text[]; // text to be displayed on the lcd   
+};
