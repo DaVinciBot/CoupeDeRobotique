@@ -125,13 +125,14 @@ class Arena:
 
         return not (
             self.zone_intersects(forbidden_zone_name, geometry_to_check)
-            or (
-                self.ennemy_position.buffer(self.robot_buffer).intersects(
-                    geometry_to_check
-                )
-                if self.ennemy_position is not None
-                else False
-            )
+            # Below is code that checked for intersection with a buffer around the ennemy position as well
+            # or (
+            #     self.ennemy_position.buffer(self.robot_buffer).intersects(
+            #         geometry_to_check
+            #     )
+            #     if self.ennemy_position is not None
+            #     else False
+            # )
         )
 
     def compute_go_to_destination(
