@@ -2,6 +2,7 @@
 #include <com.h>
 #include <message.h>
 #include <Bonezegei_A4988.h>
+#include <LiquidCrystal_I2C.h>
 
 extern void (*functions[256])(byte *msg, byte size);
 extern void handle_callback(Com *com);

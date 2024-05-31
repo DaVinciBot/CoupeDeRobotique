@@ -85,6 +85,8 @@ class Teensy:
         self._crc8 = crc8.crc8()
         self.last_message = None
         self.end_bytes = b"\xBA\xDD\x1C\xC5"
+        self.scl = 19
+        self.sda = 18
 
         for port in serial.tools.list_ports.comports():
             if (

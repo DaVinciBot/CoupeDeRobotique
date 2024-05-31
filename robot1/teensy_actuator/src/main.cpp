@@ -1,14 +1,13 @@
 #include <Arduino.h>
+#include <LiquidCrystal_I2C.h>
 #include <actions.h>
 #include <Servo.h>
 #include <Bonezegei_A4988.h>
-#include <LiquidCrystal_I2C.h>
 
 Com *com;
 Servo *servos[48] = {nullptr};                // higher than the maximum number of pin, track using pin
 Bonezegei_A4988 *steppers[48] = {nullptr};    // higher than the maximum number of pin, track using motor_pin_1
-LiquidCrystal_I2C lcd = *nullptr;      // higher than the maximum number of pin, track using pin
-
+LiquidCrystal_I2C *lcd = nullptr;      // higher than the maximum number of pin, track using pin
 void (*functions[256])(byte *msg, byte size); // a tab a pointer to void functions
 
 // Define a global array of Servo_Motor. Some name of variables are not allowed becaused they are used in Servo
@@ -81,7 +80,7 @@ void lcd_init(byte *msg, byte size)
 void call_lcd_print(byte *msg, byte size)
 {
   msg_Lcd_Print *lcd_print_msg = (msg_Lcd_Print *)msg;
-  lcd_print(lcd_print_msg->text);
+  lcd_print(lcd,lcd_print_msg->text);
 }
 
 void setup()
@@ -93,7 +92,7 @@ void setup()
   functions[STEPPER_STEP] = &call_stepper_step;
   functions[SERVO_GO_TO_DETACH] = &call_servo_go_to_detach;
   functions[LCD_INIT] = &lcd_init;
-  funcvtions[LCD_PRINT] = &call_lcd_print;
+  functions[LCD_PRINT] = &call_lcd_print;
   digitalWrite(15, HIGH); // Immediatly disable driver on the stepper, to prevent heating. Dirty solution.
   Serial.begin(115200);
 }

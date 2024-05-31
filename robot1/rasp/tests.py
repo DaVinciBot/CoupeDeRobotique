@@ -8,7 +8,6 @@ from geometry import Point
 from random import randint
 from matplotlib.patches import Polygon as PolygonPatch
 
-
 def test_enable_go_to():
     # Assuming CONFIG, Logger, MarsArena, and other necessary imports are present
 
@@ -98,11 +97,25 @@ def test_compute_go_to():
     
 def test_lcd():
     logger = Logger()
-    actuators = Actuators(logger,ser=4325378)
+    actuators = Actuators(logger,ser=14735440)
+    actuators.lcd_init()
     actuators.lcd_print("Hello World")
+
+def find_teensy_serial_numbers():
+
+    import serial.tools.list_ports
+
+    ports = serial.tools.list_ports.comports()
+    print(ports.__len__())
+    for port in ports:
+        print(f"Serial Number: {port.serial_number}")
+            
+
+
 
 
 if __name__ == "__main__":
     # test_enable_go_to()
     # test_compute_go_to()
     test_lcd()
+    #find_teensy_serial_numbers()

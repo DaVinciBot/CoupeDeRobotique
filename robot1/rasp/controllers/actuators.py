@@ -133,7 +133,7 @@ class Actuators(Teensy):
             )
 
     @Logger
-    async def lcd_init(self, msg: str,adress : int, nb_col:int,nb_line : int) -> None:
+    async def lcd_init(self,adress : 0x27, nb_col:int = 16,nb_line : int = 2) -> None:
         msg_ = (
             self.Command.Lcd_init
             + struct.pack("<B", adress)
