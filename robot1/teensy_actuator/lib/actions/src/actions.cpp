@@ -54,6 +54,6 @@ void stepper_step(Bonezegei_A4988 *stepper, int steps, bool forward, byte pin_dr
 
 void lcd_print(LiquidCrystal_I2C *lcd, char *text)
 {
-    lcd->setCursor(0, 0);
+    lcd->clear();
     lcd->print(text);
 }

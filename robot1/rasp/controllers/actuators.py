@@ -30,7 +30,7 @@ class Actuators(Teensy):
         Update_servo = b"\x01"
         StepperStep = b"\x02"
         Update_servo_detach = b"\x03"
-        Lcd_int = b"\x04"
+        Lcd_init = b"\x04"
         Lcd_print = b"\x05"
 
     def __str__(self) -> str:
@@ -133,7 +133,7 @@ class Actuators(Teensy):
             )
 
     @Logger
-    async def lcd_init(self,adress : 0x27, nb_col:int = 16,nb_line : int = 2) -> None:
+    async def lcd_init(self,adress = 0x27, nb_col:int = 16,nb_line : int = 2) -> None:
         msg_ = (
             self.Command.Lcd_init
             + struct.pack("<B", adress)
@@ -149,8 +149,9 @@ class Actuators(Teensy):
         Args:
             msg (str): The message to display.
         """
+        msg = msg.encode("ascii", errors="ignore")  # Ignorer les caractères non-ASCII
         if not self.is_lcd_declared:
-            self.lcd_init()
+            await self.lcd_init()
             await asyncio.sleep(CONFIG.MINIMUM_DELAY)
         msg_ = (
             self.Command.Lcd_print

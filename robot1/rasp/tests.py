@@ -7,10 +7,9 @@ import matplotlib.pyplot as plt
 from geometry import Point
 from random import randint
 from matplotlib.patches import Polygon as PolygonPatch
+import asyncio  # Importer asyncio pour gérer les coroutines
 
 def test_enable_go_to():
-    # Assuming CONFIG, Logger, MarsArena, and other necessary imports are present
-
     logger = Logger()
     arena = MarsArena(
         1,
@@ -19,7 +18,6 @@ def test_enable_go_to():
         robot_buffer=CONFIG.ARENA_CONFIG["robot_buffer"],
     )
 
-    # Display the required points in the graph
     x_start = []
     y_start = []
     x_stop = []
@@ -34,20 +32,16 @@ def test_enable_go_to():
             y_stop.append(stop.y)
             plt.plot([start.y, stop.y], [start.x, stop.x], color="black")
 
-    # Display forbidden zone polygon
     forbidden_zone = arena.zones["forbidden"]
     if forbidden_zone:
-        # Extract the coordinates of the exterior boundary
         xy = forbidden_zone.exterior.coords.xy
         xy = list(zip(xy[1], xy[0]))
         patch = PolygonPatch(xy, facecolor="red", edgecolor="red", alpha=0.5, zorder=2)
         plt.gca().add_patch(patch)
 
-    # Set plot limits
     plt.xlim(0, 300)
     plt.ylim(200, 0)
 
-    # Plot start and stop points
     plt.scatter(y_start, x_start, color="blue", label="Start")
     plt.scatter(y_stop, x_stop, color="red", label="Stop")
 
@@ -59,7 +53,6 @@ def test_enable_go_to():
 
 
 def test_compute_go_to():
-    # Display the required points in the graph
     x_start = []
     y_start = []
     x_stop = []
@@ -95,27 +88,27 @@ def test_compute_go_to():
     plt.legend()
     plt.show()
     
-def test_lcd():
+async def test_lcd():
     logger = Logger()
-    actuators = Actuators(logger,ser=14735440)
-    actuators.lcd_init()
-    actuators.lcd_print("Hello World")
+    actuators = Actuators(logger, ser=14735440)
+    await actuators.lcd_print("DVB")
+    await asyncio.sleep(4)
+    await actuators.lcd_print("A")
+    await asyncio.sleep(4)
+    await actuators.lcd_print("B")
 
 def find_teensy_serial_numbers():
-
     import serial.tools.list_ports
-
     ports = serial.tools.list_ports.comports()
     print(ports.__len__())
     for port in ports:
         print(f"Serial Number: {port.serial_number}")
-            
 
-
-
-
-if __name__ == "__main__":
+async def main():
     # test_enable_go_to()
     # test_compute_go_to()
-    test_lcd()
-    #find_teensy_serial_numbers()
+    await test_lcd()  # Utiliser await pour exécuter la coroutine
+    # find_teensy_serial_numbers()
+
+if __name__ == "__main__":
+    asyncio.run(main())
