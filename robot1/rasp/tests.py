@@ -47,7 +47,7 @@ def test_enable_go_to():
 
     plt.xlabel("Y")
     plt.ylabel("X")
-    plt.title("Disallowed Go-To")
+    plt.title("Forbidden Go-To")
     plt.legend()
     plt.show()
 
@@ -107,4 +107,5 @@ async def main():
     # find_teensy_serial_numbers()
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    #asyncio.run(main())
+    test_compute_go_to()
