@@ -155,6 +155,6 @@ class Actuators(Teensy):
             await asyncio.sleep(CONFIG.MINIMUM_DELAY)
         msg_ = (
             self.Command.Lcd_print
-            + struct.pack("<s", msg)
+            + struct.pack(f"<{len(msg)+1}s", msg + b"\0")
         )
         self.send_bytes(msg_)

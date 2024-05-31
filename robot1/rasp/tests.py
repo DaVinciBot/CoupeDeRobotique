@@ -91,11 +91,7 @@ def test_compute_go_to():
 async def test_lcd():
     logger = Logger()
     actuators = Actuators(logger, ser=14735440)
-    await actuators.lcd_print("DVB")
-    await asyncio.sleep(4)
-    await actuators.lcd_print("A")
-    await asyncio.sleep(4)
-    await actuators.lcd_print("B")
+    await actuators.lcd_print("dvbbb")
 
 def find_teensy_serial_numbers():
     import serial.tools.list_ports

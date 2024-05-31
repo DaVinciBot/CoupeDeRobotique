@@ -80,7 +80,7 @@ void lcd_init(byte *msg, byte size)
 void call_lcd_print(byte *msg, byte size)
 {
   msg_Lcd_Print *lcd_print_msg = (msg_Lcd_Print *)msg;
-  lcd_print(lcd,lcd_print_msg->text);
+  lcd_print(lcd,String(lcd_print_msg->text));
 }
 
 void setup()

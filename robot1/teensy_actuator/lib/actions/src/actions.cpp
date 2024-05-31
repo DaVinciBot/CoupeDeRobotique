@@ -52,7 +52,7 @@ void stepper_step(Bonezegei_A4988 *stepper, int steps, bool forward, byte pin_dr
     digitalWrite(pin_driver, HIGH);
 }
 
-void lcd_print(LiquidCrystal_I2C *lcd, char *text)
+void lcd_print(LiquidCrystal_I2C *lcd, String text)
 {
     lcd->clear();
     lcd->print(text);
