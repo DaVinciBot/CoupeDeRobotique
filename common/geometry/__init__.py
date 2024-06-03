@@ -12,7 +12,6 @@ from geometry.geometry import (
     prepare,
     distance,
     scale,
-    rad,
 )
 
 from shapely.ops import nearest_points
