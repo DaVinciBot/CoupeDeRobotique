@@ -300,6 +300,10 @@ class MainBrain(Brain):
     def show_team_led(self):
         self.get_team_from_switch()
         self.leds.set_team(self.team)
+        
+    def show_team_lcd(self):
+        self.get_team_from_switch()
+        self.actuators.lcd_print(f"Team : {self.team}")
 
     async def undeploy_all(self):
         asyncio.create_task(self.close_god_hand())
@@ -375,6 +379,7 @@ class MainBrain(Brain):
                 f"Displaying total score: {self.score_estimate}", LogLevels.DEBUG
             )
             self.leds.set_score(self.score_estimate)
+            self.actuators.lcd_print(f"Score: {self.score_estimate}")
         except Exception:
             pass
         finally:
