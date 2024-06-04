@@ -41,11 +41,11 @@ class Objective:
             case _:
                 r += ", then nothing"
         return r
-    
-    def enough_time(self,start_time)->bool:
-    
+
+    def enough_time(self, start_time) -> bool:
+
         if (
-            Utils.get_ts()+self.time_estimate-start_time>70
+            Utils.get_ts() + self.time_estimate - start_time > 70
             and self.time_estimate >= 0
         ):
             self.logger.log(
@@ -55,13 +55,21 @@ class Objective:
             return False
         return True
 
-    def is_intresting(self)->bool:
-        if(self.task=="pickup") and self.arena.pickup_zones[self.target_index].visited and self.arena.pickup_zones[self.target_index].nb_plant < CONFIG.ARENA_CONFIG["limit_plant_pickup"]:
-            self.logger.log(f"pickup zone {self.target_index} not interesting anymore", LogLevels.INFO)
+    def is_intresting(self) -> bool:
+        if (
+            (self.task == "pickup")
+            and self.arena.pickup_zones[self.target_index].visited
+            and self.arena.pickup_zones[self.target_index].nb_plant
+            < CONFIG.ARENA_CONFIG["limit_plant_pickup"]
+        ):
+            self.logger.log(
+                f"pickup zone {self.target_index} not interesting anymore",
+                LogLevels.INFO,
+            )
             return False
         return True
 
-    def evaluate(self,start_time)->bool:
+    def evaluate(self, start_time) -> bool:
         if not self.enough_time(start_time):
             return False
         if not self.is_intresting():
@@ -93,7 +101,7 @@ class MainBrain(Brain):
         handle_acs,
         elevator_bottom,
         elevator_intermediate,
-        elevator_top
+        elevator_top,
     )
 
     # Sensors functions
@@ -120,9 +128,7 @@ class MainBrain(Brain):
         leds: LEDStrip,
     ) -> None:
 
-        self.anticollision_mode: LidarMode = LidarMode(
-            CONFIG.ANTICOLLISION_MODE
-        )
+        self.anticollision_mode: LidarMode = LidarMode(CONFIG.ANTICOLLISION_MODE)
         self.anticollision_handle: AntiCollisionHandle = AntiCollisionHandle(
             CONFIG.ANTICOLLISION_HANDLE
         )
@@ -149,7 +155,7 @@ class MainBrain(Brain):
 
         self.score_estimate: int = 0
         self.leds.set_score(self.score_estimate)
-        
+
         self.start_time = -1
 
         # Init CONFIG
@@ -175,7 +181,7 @@ class MainBrain(Brain):
     async def wait_for_trigger(self):
         """
         Waits for a trigger signal from the jack.
-        
+
         This function continuously checks the state of the jack and waits until it is triggered.
         While waiting, it shows the team LED and sleeps for 0.1 seconds between each check.
         Once triggered, it sets the jack LED to True.
@@ -400,7 +406,7 @@ class MainBrain(Brain):
 
         Args:
             distance (float): The distance to travel in millimeters. Default is 50.0.
-            
+
         Note: useful to move plants' pot to not hinder the robot's movement
 
         Returns:
@@ -677,8 +683,6 @@ class MainBrain(Brain):
                 asyncio.create_task(self.elevator_intermediate())
             case _:
                 asyncio.create_task(self.undeploy_god_hand())
-                
-    
 
     @Brain.task(process=False, run_on_start=False, timeout=60)
     async def plant_stage(self):
@@ -704,7 +708,8 @@ class MainBrain(Brain):
             # Objective("drop_to_zone", 4 if in_yellow_team else 1, 10.0),
         ]
         previous_anticollision_handle = self.anticollision_handle
-        if self.trigger_acs : self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
+        if self.trigger_acs:
+            self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
         first = True
         for current_objective in objectives:
             self.logger.log(
@@ -718,7 +723,6 @@ class MainBrain(Brain):
                 self.anticollision_handle = previous_anticollision_handle
             else:
                 break
-            
 
     @Brain.task(process=False, run_on_start=False, timeout=21)
     async def solar_panels_stage(self) -> None:
@@ -738,10 +742,8 @@ class MainBrain(Brain):
             self.score_estimate += 1
             self.leds.set_score(self.score_estimate)
             self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
-            
-        self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
-        
 
+        self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
 
     @Brain.task(process=False, run_on_start=False, timeout=30)
     async def control_solar_panels(

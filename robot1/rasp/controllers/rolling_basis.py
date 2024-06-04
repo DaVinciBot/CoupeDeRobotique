@@ -27,6 +27,7 @@ class Command(Enum):
     STOP = b"\x7E"  # 7E = 126
     INVALID = b"\xFF"
 
+
 @dataclass
 class Instruction:
     cmd: Command

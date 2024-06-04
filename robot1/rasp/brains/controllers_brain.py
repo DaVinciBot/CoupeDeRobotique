@@ -17,6 +17,7 @@ from controllers import RollingBasis, Actuators
 
 from utils import GoToResult
 
+
 @Logger
 async def deploy_right_solar_panel(
     self, small: bool = False, override_angle: float | None = None
@@ -155,20 +156,19 @@ async def lower_elevator(self):
         driver_on=stepper["driver_on"],
         pin_driver=stepper["pin_driver"],
     )
-    
+
+
 async def elevator_top(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
-    await self.stepper_step(
-        CONFIG.ELEVATOR["top_steps"] - self.elevator_ticks, speed
-    )
+    await self.stepper_step(CONFIG.ELEVATOR["top_steps"] - self.elevator_ticks, speed)
+
 
 async def elevator_bottom(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
     await self.stepper_step(
         CONFIG.ELEVATOR["bottom_steps"] - self.elevator_ticks, speed
     )
 
-async def elevator_intermediate(
-    self, speed: int = CONFIG.ELEVATOR["speed"]
-) -> None:
+
+async def elevator_intermediate(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
     await self.stepper_step(
         CONFIG.ELEVATOR["intermediate_steps"] - self.elevator_ticks, speed
     )
@@ -312,7 +312,7 @@ async def handle_acs(
                 )
             else:
                 return GoToResult.STOPPED
-            
+
         case AntiCollisionHandle.AVOID:
             if fails < CONFIG.ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES:
 
@@ -342,7 +342,7 @@ async def handle_acs(
                     relative=True,
                     **CONFIG.GO_TO_PROFILES["slow_and_precise"],
                 )
-                
+
                 # Reset without waiting for the trigger
                 self.self.anticollision_handle = old_anticollision_handle
                 # Avoid the risk of triggering during another temporary disable
@@ -368,9 +368,11 @@ async def handle_acs(
                 )
             else:
                 return GoToResult.STOPPED
-            
+
         case _:
-            raise Exception(f"No AntiCollisionHandle{self.anticollision_handle.value} implementation")
+            raise Exception(
+                f"No AntiCollisionHandle{self.anticollision_handle.value} implementation"
+            )
 
 
 async def go_best_zone(self, plant_zones: list[Plants_zone]):

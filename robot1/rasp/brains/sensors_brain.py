@@ -40,6 +40,7 @@ def get_ennemy_angle(self) -> float | None:
             - self.rolling_basis.odometrie.theta
         ) % math.tau
 
+
 @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
 async def compute_ennemy_position(self):
     """
@@ -92,14 +93,16 @@ async def compute_ennemy_position(self):
                         abs(angle) < CONFIG.LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE
                     )
                 case _:
-                    raise Exception(f"Unimplemented AnticollisionMode{self.anticollision_mode}")
+                    raise Exception(
+                        f"Unimplemented AnticollisionMode{self.anticollision_mode}"
+                    )
 
     if trigger_acs:
         self.logger.log(
             "ACS triggered, performing emergency stop", LogLevels.WARNING, self.leds
         )
-        self.handle_acs() # Stop the robot. the go_to will abort and handle_acs triggered
-        
+        self.handle_acs()  # Stop the robot. the go_to will abort and handle_acs triggered
+
     else:
         pass
 
@@ -109,7 +112,7 @@ async def compute_ennemy_position(self):
         (CONFIG.LIDAR_MAX_ANGLE - CONFIG.LIDAR_MIN_ANGLE) / 2,
         -(CONFIG.LIDAR_MAX_ANGLE - CONFIG.LIDAR_MIN_ANGLE) / 2,
     )
-    
+
     for i in range(self.arena.pickup_zones):
         if self.arena.pickup_zones[i].zone.contains(self.arena.ennemy_position):
             self.arena.pickup_zones[i].visit()
