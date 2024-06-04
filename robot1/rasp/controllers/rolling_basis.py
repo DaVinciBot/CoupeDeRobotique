@@ -40,7 +40,7 @@ class Instruction:
 class RB_Queue:
 
     tracked_commands = (Command.GO_TO_POINT, Command.CURVE_GO_TO)
-    
+
     """
     Represents a queue of instructions for a rolling basis controller.
 
