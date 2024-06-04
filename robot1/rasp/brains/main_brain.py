@@ -465,7 +465,6 @@ class MainBrain(Brain):
     @Logger
     async def go_and_drop_to_gardener(self, target_gardener: Plants_zone) -> None:
         # WARNING: only fit for the top gardeners
-
         approach_target: Point = Point(
             200 - CONFIG.ARENA_CONFIG["robot_buffer_with_god_hand_deployed"],
             target_gardener.zone.centroid.y,

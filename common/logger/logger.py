@@ -1,22 +1,13 @@
 from utils.utils import Utils
-from logger.log_tools import LogLevels, STYLES, center_and_limit, style, strip_ANSI
+from logger.log_tools import (
+    LogLevels,
+    STYLES,
+    center_and_limit,
+    style,
+    strip_ANSI,
+)
 
 import os, types, functools
-from threading import Thread
-from dataclasses import dataclass
-
-
-@dataclass
-class COLORS:
-    NO_FORMAT = "\033[0m"
-    F_INVERT = "\033[7m"
-    ORANGE = "\033[38;5;208m"
-    C_GOLD1 = "\033[38;5;220m"
-    C_CHARTREUSE3 = "\033[38;5;76m"
-    C_RED1 = "\033[38;5;196m"
-    C_SILVER = "\033[38;5;7m"
-    CRITICAL = "\033[38;5;196m" + "\033[38;5;220m"
-    DATE = "\033[7m" + "\033[38;5;220m"
 
 
 class Logger:
@@ -76,7 +67,6 @@ class Logger:
         date_str: str,
         level: LogLevels,
         message: str,
-        styles: bool = True,
         identifier_override: str | None = None,
     ) -> str:
 
@@ -128,7 +118,6 @@ class Logger:
             date_str=date_str,
             level=level,
             message=str(message),
-            styles=False,
             identifier_override=identifier_override,
         )
 

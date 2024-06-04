@@ -36,14 +36,14 @@ Rolling_Basis::Rolling_Basis(unsigned short encoder_resolution, float center_dis
 
 // Methods
 // Inits function
-void Rolling_Basis::init_right_motor(byte enca, byte encb, byte pwm, byte in2, byte in1, float kp, float kd, float ki, float correction_factor = 1.0, byte threshold_pwm_value = 0)
+void Rolling_Basis::init_right_motor(byte in1, byte in2, byte pwm, byte enca, byte encb, float kp, float kd, float ki, float correction_factor = 1.0, byte threshold_pwm_value = 0)
 {
-    this->right_motor = new Motor(enca, encb, pwm, in2, in1, kp, kd, ki, correction_factor, threshold_pwm_value);
+    this->right_motor = new Motor(in1, in2, pwm, enca, encb, kp, kd, ki, correction_factor, threshold_pwm_value);
 }
 
-void Rolling_Basis::init_left_motor(byte enca, byte encb, byte pwm, byte in2, byte in1, float kp, float kd, float ki, float correction_factor = 1.0, byte threshold_pwm_value = 0)
+void Rolling_Basis::init_left_motor(byte in1, byte in2, byte pwm, byte enca, byte encb, float kp, float kd, float ki, float correction_factor = 1.0, byte threshold_pwm_value = 0)
 {
-    this->left_motor = new Motor(enca, encb, pwm, in2, in1, kp, kd, ki, correction_factor, threshold_pwm_value);
+    this->left_motor = new Motor(in1, in2, pwm, enca, encb, kp, kd, ki, correction_factor, threshold_pwm_value);
 }
 
 void Rolling_Basis::init_motors()

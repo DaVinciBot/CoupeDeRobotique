@@ -1,4 +1,4 @@
-from math import cos, sin
+from math import cos, sin, radians
 
 
 from geometry import (
@@ -15,7 +15,6 @@ from geometry import (
     distance,
     scale,
     OrientedPoint,
-    rad,
     nearest_points,
 )
 from logger import Logger, LogLevels
@@ -125,13 +124,14 @@ class Arena:
 
         return not (
             self.zone_intersects(forbidden_zone_name, geometry_to_check)
-            or (
-                self.ennemy_position.buffer(self.robot_buffer).intersects(
-                    geometry_to_check
-                )
-                if self.ennemy_position is not None
-                else False
-            )
+            # Below is code that checked for intersection with a buffer around the ennemy position as well
+            # or (
+            #     self.ennemy_position.buffer(self.robot_buffer).intersects(
+            #         geometry_to_check
+            #     )
+            #     if self.ennemy_position is not None
+            #     else False
+            # )
         )
 
     def compute_go_to_destination(
@@ -285,8 +285,10 @@ class Arena:
         distance: float, relative_angle: float, pos_robot: OrientedPoint
     ):
         return Point(
-            pos_robot.x + distance * cos(rad(pos_robot.theta - 45 + relative_angle)),
-            pos_robot.y + distance * sin(rad(pos_robot.theta - 45 + relative_angle)),
+            pos_robot.x
+            + distance * cos(radians(pos_robot.theta - 45 + relative_angle)),
+            pos_robot.y
+            + distance * sin(radians(pos_robot.theta - 45 + relative_angle)),
         )
 
     def remove_outside(self, points: MultiPoint):
