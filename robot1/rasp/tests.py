@@ -91,7 +91,7 @@ def test_compute_go_to():
 async def test_lcd():
     logger = Logger()
     actuators = Actuators(logger, ser=14735440)
-    await actuators.lcd_print("dvbbb")
+    await actuators.lcd_print("C'est des Barre mec test aajhvc;q kqscvqch qkhcvvc qkdjcvqkjdvckqjvc qkjdbvkqjbckjqd qkvbdqk")
 
 def find_teensy_serial_numbers():
     import serial.tools.list_ports
@@ -107,5 +107,4 @@ async def main():
     # find_teensy_serial_numbers()
 
 if __name__ == "__main__":
-    #asyncio.run(main())
-    test_compute_go_to()
+    asyncio.run(main())

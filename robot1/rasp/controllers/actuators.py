@@ -143,15 +143,21 @@ class Actuators(Teensy):
         self.send_bytes(msg_)
     
     @Logger
-    async def lcd_print(self, msg: str) -> None:
+    async def lcd_print(self, msg: str,nb_col:int = 16,nb_line : int = 2) -> None:
         """Display a message on the LCD screen.
 
         Args:
             msg (str): The message to display.
         """
         msg = msg.encode("ascii", errors="ignore")  # Ignorer les caractères non-ASCII
+        if len(msg) > nb_col*nb_line:
+            self.logger.log(
+                f"Message too long for the LCD screen, {len(msg)} characters, max is {nb_col*nb_line}. Truncated.",
+                LogLevels.WARNING,
+            )
+            msg = msg[:nb_col*nb_line]
         if not self.is_lcd_declared:
-            await self.lcd_init()
+            await self.lcd_init(nb_col=nb_col,nb_line=nb_line)
             await asyncio.sleep(CONFIG.MINIMUM_DELAY)
         msg_ = (
             self.Command.Lcd_print

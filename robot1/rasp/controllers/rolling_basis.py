@@ -40,6 +40,27 @@ class Instruction:
 class RB_Queue:
 
     tracked_commands = (Command.GO_TO_POINT, Command.CURVE_GO_TO)
+    
+    """
+    Represents a queue of instructions for a rolling basis controller.
+
+    Attributes:
+        tracked_commands (tuple): A tuple of tracked commands.
+        id_counter (int): Counter for generating unique IDs for tracked commands.
+        last_deleted_id (int): ID of the last deleted tracked command.
+        __queue (list[Instruction]): The underlying list to store the instructions.
+
+    Methods:
+        __init__(self, logger: Logger) -> None: Initializes a new instance of the RB_Queue class.
+        append(self, __object: Instruction) -> int: Appends an instruction to the queue.
+        pop(self, __index: int = -1) -> Instruction: Removes and returns an instruction from the queue.
+        clear(self) -> None: Clears the queue.
+        delete_up_to(self, __index: int) -> None: Deletes instructions up to the specified index.
+        insert(self, __index: int, __object: Instruction) -> None: Inserts an instruction at the specified index.
+        __getitem__(self, __index) -> Instruction: Returns the instruction at the specified index.
+        __len__(self) -> int: Returns the number of instructions in the queue.
+        __str__(self) -> str: Returns a string representation of the queue.
+    """
 
     def __init__(self, logger: Logger) -> None:
         self.id_counter = 0
