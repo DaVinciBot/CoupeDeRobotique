@@ -23,7 +23,7 @@ from utils import Utils
 
 # Import from local path
 from sensors import Lidar
-from brains.acs import AntiCollisionMode, AntiCollisionHandle
+from utils import LidarMode, AntiCollisionHandle
 
 
 def get_ennemy_angle(self) -> float | None:
@@ -40,36 +40,31 @@ def get_ennemy_angle(self) -> float | None:
             - self.rolling_basis.odometrie.theta
         ) % math.tau
 
-
 @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
 async def compute_ennemy_position(self):
+    """
+    Computes the position of the enemy based on lidar scans and updates the arena.
+
+    This function calculates the position of the enemy by processing the lidar scans.
+    It removes any obstacles that are outside the arena, and then determines the closest obstacle as the enemy position.
+    It uses led to display the direction of the enemy.
+    If the enemy position is within a pickup zone, it marks that zone as visited.
+
+    Args:
+        self: The instance of the class.
+
+    Returns:
+        None
+    """
     polars: np.ndarray = self.lidar.scan_to_polars()
-    # self.logger.log(f"Polars ({polars.shape}): {polars.tolist()}", LogLevels.INFO)
     obstacles: MultiPoint | Point = self.arena.remove_outside(
         self.pol_to_abs_cart(polars)
     )
 
-    # self.logger.log(f"obstacles: {obstacles}", LogLevels.DEBUG)
-
-    # For now, the closest will be the enemy position
     self.arena.ennemy_position = (
         None
         if is_empty(obstacles)
         else nearest_points(self.rolling_basis.odometrie, obstacles)[1]
-    )
-
-    # self.logger.log(f"Ennemy position: {self.arena.ennemy_position}", LogLevels.INFO)
-
-    self.logger.log(
-        (
-            f"Ennemy position computed: {Utils.geom_to_str(self.arena.ennemy_position) if self.arena.ennemy_position is not None else 'None'}"
-            + (
-                ""
-                if self.arena.ennemy_position is None
-                else f", at relative angle: {str(round(math.degrees(self.get_ennemy_angle())))} and distance: {round(distance(self.arena.ennemy_position,self.rolling_basis.odometrie))}"
-            )
-        ),
-        LogLevels.DEBUG,
     )
 
     trigger_acs = False
@@ -81,46 +76,57 @@ async def compute_ennemy_position(self):
         ):
 
             angle = self.get_ennemy_angle()
-            if angle > math.pi:  # Tmp, ugly
+            if angle > math.pi:
                 angle = (-angle) % math.tau
 
             match self.anticollision_mode:
 
-                case AntiCollisionMode.DISABLED:
-                    pass
-
-                case AntiCollisionMode.CIRCULAR:
+                case LidarMode.CIRCULAR:
                     trigger_acs = True
 
-                case AntiCollisionMode.FRONTAL:
+                case LidarMode.FRONTAL:
                     trigger_acs = abs(angle) < CONFIG.LIDAR_FRONTAL_DETECTION_ANGLE
 
-                case AntiCollisionMode.SEMI_CIRCULAR:
+                case LidarMode.SEMI_CIRCULAR:
                     trigger_acs = (
                         abs(angle) < CONFIG.LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE
                     )
                 case _:
-                    raise Exception(f"Unimplemented {self.anticollision_mode}")
+                    raise Exception(f"Unimplemented AnticollisionMode{self.anticollision_mode}")
 
     if trigger_acs:
         self.logger.log(
             "ACS triggered, performing emergency stop", LogLevels.WARNING, self.leds
         )
-        self.rolling_basis.stop_and_clear_queue()
+        self.handle_acs() # Stop the robot. the go_to will abort and handle_acs triggered
+        
     else:
-        # self.logger.log("ACS not triggered", LogLevels.DEBUG)
         pass
 
     self.leds.set_lidar_info(
         trigger_acs,
         self.get_ennemy_angle(),
-        # Config values are centered to the right of the Lidar, but we have since switched to being centered on the front so we just balance out the extremums
         (CONFIG.LIDAR_MAX_ANGLE - CONFIG.LIDAR_MIN_ANGLE) / 2,
         -(CONFIG.LIDAR_MAX_ANGLE - CONFIG.LIDAR_MIN_ANGLE) / 2,
     )
+    
+    for i in range(self.arena.pickup_zones):
+        if self.arena.pickup_zones[i].zone.contains(self.arena.ennemy_position):
+            self.arena.pickup_zones[i].visit()
+            self.logger.log(f"Ennemy visited pickup zone n°{i}", LogLevels.INFO)
+            break
 
 
 def pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:
+    """
+    Converts polar coordinates to absolute Cartesian coordinates.
+
+    Args:
+        polars (np.ndarray): Array of polar coordinates in the form of (angle, distance).
+
+    Returns:
+        MultiPoint: Array of absolute Cartesian coordinates.
+    """
     return MultiPoint(
         [
             (
