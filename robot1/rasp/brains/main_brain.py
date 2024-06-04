@@ -383,7 +383,7 @@ class MainBrain(Brain):
     def show_team_led(self):
         self.get_team_from_switch()
         self.leds.set_team(self.team)
-        
+
     def show_team_lcd(self):
         self.get_team_from_switch()
         self.actuators.lcd_print(f"Team : {self.team}")
