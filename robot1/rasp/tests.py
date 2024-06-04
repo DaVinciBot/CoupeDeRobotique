@@ -9,6 +9,7 @@ from random import randint
 from matplotlib.patches import Polygon as PolygonPatch
 import asyncio  # Importer asyncio pour gérer les coroutines
 
+
 def test_enable_go_to():
     logger = Logger()
     arena = MarsArena(
@@ -87,24 +88,31 @@ def test_compute_go_to():
     plt.title("Check Go_To auto_delta")
     plt.legend()
     plt.show()
-    
+
+
 async def test_lcd():
     logger = Logger()
     actuators = Actuators(logger, ser=14735440)
-    await actuators.lcd_print("C'est des Barre mec test aajhvc;q kqscvqch qkhcvvc qkdjcvqkjdvckqjvc qkjdbvkqjbckjqd qkvbdqk")
+    await actuators.lcd_print(
+        "C'est des Barre mec test aajhvc;q kqscvqch qkhcvvc qkdjcvqkjdvckqjvc qkjdbvkqjbckjqd qkvbdqk"
+    )
+
 
 def find_teensy_serial_numbers():
     import serial.tools.list_ports
+
     ports = serial.tools.list_ports.comports()
     print(ports.__len__())
     for port in ports:
         print(f"Serial Number: {port.serial_number}")
+
 
 async def main():
     # test_enable_go_to()
     # test_compute_go_to()
     await test_lcd()  # Utiliser await pour exécuter la coroutine
     # find_teensy_serial_numbers()
+
 
 if __name__ == "__main__":
     asyncio.run(main())

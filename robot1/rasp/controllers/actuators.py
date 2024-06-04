@@ -23,7 +23,7 @@ class Actuators(Teensy):
         )
         # Admit that default elevator position is at the bottom
         self.elevator_ticks = 0
-        
+
         self.is_lcd_declared = False
 
     class Command:  # values must correspond to the one defined on the teensy
@@ -133,7 +133,7 @@ class Actuators(Teensy):
             )
 
     @Logger
-    async def lcd_init(self,adress = 0x27, nb_col:int = 16,nb_line : int = 2) -> None:
+    async def lcd_init(self, adress=0x27, nb_col: int = 16, nb_line: int = 2) -> None:
         msg_ = (
             self.Command.Lcd_init
             + struct.pack("<B", adress)
@@ -141,26 +141,23 @@ class Actuators(Teensy):
             + struct.pack("<B", nb_line)
         )
         self.send_bytes(msg_)
-    
+
     @Logger
-    async def lcd_print(self, msg: str,nb_col:int = 16,nb_line : int = 2) -> None:
+    async def lcd_print(self, msg: str, nb_col: int = 16, nb_line: int = 2) -> None:
         """Display a message on the LCD screen.
 
         Args:
             msg (str): The message to display.
         """
         msg = msg.encode("ascii", errors="ignore")  # Ignorer les caractères non-ASCII
-        if len(msg) > nb_col*nb_line:
+        if len(msg) > nb_col * nb_line:
             self.logger.log(
                 f"Message too long for the LCD screen, {len(msg)} characters, max is {nb_col*nb_line}. Truncated.",
                 LogLevels.WARNING,
             )
-            msg = msg[:nb_col*nb_line]
+            msg = msg[: nb_col * nb_line]
         if not self.is_lcd_declared:
-            await self.lcd_init(nb_col=nb_col,nb_line=nb_line)
+            await self.lcd_init(nb_col=nb_col, nb_line=nb_line)
             await asyncio.sleep(CONFIG.MINIMUM_DELAY)
-        msg_ = (
-            self.Command.Lcd_print
-            + struct.pack(f"<{len(msg)+1}s", msg + b"\0")
-        )
+        msg_ = self.Command.Lcd_print + struct.pack(f"<{len(msg)+1}s", msg + b"\0")
         self.send_bytes(msg_)
