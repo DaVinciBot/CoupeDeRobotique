@@ -13,6 +13,12 @@ class Utils:
 
     @staticmethod
     def get_ts() -> float:
+        """
+        Get the current timestamp as a float.
+
+        Returns:
+            float: The current timestamp.
+        """
         return datetime.timestamp(datetime.now())
 
     @staticmethod

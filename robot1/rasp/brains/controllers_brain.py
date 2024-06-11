@@ -10,10 +10,12 @@ from brain import Brain
 from geometry import OrientedPoint, Point
 from arena import MarsArena, Plants_zone
 from logger import Logger, LogLevels
-from brains.acs import AntiCollisionMode, AntiCollisionHandle
+from utils import LidarMode, AntiCollisionHandle
 
 # Import from local path
 from controllers import RollingBasis, Actuators
+
+from utils import GoToResult
 
 
 @Logger
@@ -156,6 +158,22 @@ async def lower_elevator(self):
     )
 
 
+async def elevator_top(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
+    await self.stepper_step(CONFIG.ELEVATOR["top_steps"] - self.elevator_ticks, speed)
+
+
+async def elevator_bottom(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
+    await self.stepper_step(
+        CONFIG.ELEVATOR["bottom_steps"] - self.elevator_ticks, speed
+    )
+
+
+async def elevator_intermediate(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
+    await self.stepper_step(
+        CONFIG.ELEVATOR["intermediate_steps"] - self.elevator_ticks, speed
+    )
+
+
 async def god_hand_demo(self):
     while True:
         await self.vertical_god_hand()
@@ -193,7 +211,7 @@ async def smart_go_to(
     deceleration_end_speed: int = 160,
     deceleration_distance: float = 0,
     fails: int = 0,
-) -> int:
+) -> GoToResult:
 
     result: int = await self.rolling_basis.go_to_and_wait(
         position,
@@ -212,7 +230,7 @@ async def smart_go_to(
         deceleration_end_speed=deceleration_end_speed,
         deceleration_distance=deceleration_distance,
     )
-    if result == 2:
+    if result == GoToResult.STOPPED:
         # ACS handling strategy:
         result = await self.handle_acs(
             position,
@@ -256,12 +274,21 @@ async def handle_acs(
     deceleration_distance: float = 0,
     fails: int = 0,
 ) -> int:
+    if self.anticollision_mode != AntiCollisionHandle.DO_NOTHING:
+        self.logger.log(
+            f"ACS triggered, performing emergency stop", LogLevels.WARNING, self.leds
+        )
+        self.rolling_basis.stop_and_clear_queue()
+    else:
+        self.logger.log(
+            f"ACS triggered, no emergency stop", LogLevels.WARNING, self.leds
+        )
     match self.anticollision_handle:
         case AntiCollisionHandle.DO_NOTHING:
-            return 2
+            return GoToResult.STOPPED
         case AntiCollisionHandle.WAIT_AND_FAIL:
             await asyncio.sleep(CONFIG.ANTICOLLISION_WAIT_AND_FAIL_DELAY)
-            return 2
+            return GoToResult.STOPPED
         case AntiCollisionHandle.WAIT_AND_RETRY:
             if fails < CONFIG.ANTICOLLISION_WAIT_AND_RETRY_MAX_TRIES:
                 await asyncio.sleep(CONFIG.ANTICOLLISION_WAIT_AND_RETRY_DELAY)
@@ -284,23 +311,24 @@ async def handle_acs(
                     fails=fails + 1,
                 )
             else:
-                return 2
+                return GoToResult.STOPPED
+
         case AntiCollisionHandle.AVOID:
             if fails < CONFIG.ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES:
 
-                old_anticollision_mode = self.anticollision_mode
+                old_anticollision_handle = self.anticollision_handle
 
                 async def reset_anticollision_handle():
                     await asyncio.sleep(
                         CONFIG.ANTICOLLISION_WAIT_AND_AVOID_TIME_WITHOUT_ACS
                     )
-                    self.anticollision_mode = old_anticollision_mode
+                    self.anticollision_mode = old_anticollision_handle
 
                 await asyncio.sleep(
                     0.5
                 )  # Time to stabilise to make sure the estimation of CONFIG.ANTICOLLISION_WAIT_AND_AVOID_TIME_WITHOUT_ACS is ok
 
-                self.anticollision_mode = AntiCollisionMode.DISABLED
+                self.anticollision_handle = LidarMode.DISABLED
 
                 # In case of timeout
                 safety = asyncio.create_task(reset_anticollision_handle())
@@ -314,8 +342,9 @@ async def handle_acs(
                     relative=True,
                     **CONFIG.GO_TO_PROFILES["slow_and_precise"],
                 )
+
                 # Reset without waiting for the trigger
-                self.anticollision_mode = old_anticollision_mode
+                self.self.anticollision_handle = old_anticollision_handle
                 # Avoid the risk of triggering during another temporary disable
                 safety.cancel()
 
@@ -338,9 +367,12 @@ async def handle_acs(
                     fails=fails + 1,
                 )
             else:
-                return 2
+                return GoToResult.STOPPED
+
         case _:
-            raise Exception(f"No {self.anticollision_handle.value} implementation")
+            raise Exception(
+                f"No AntiCollisionHandle{self.anticollision_handle.value} implementation"
+            )
 
 
 async def go_best_zone(self, plant_zones: list[Plants_zone]):

@@ -51,3 +51,22 @@ void stepper_step(Bonezegei_A4988 *stepper, int steps, bool forward, byte pin_dr
 
     digitalWrite(pin_driver, HIGH);
 }
+
+void lcd_print(LiquidCrystal_I2C *lcd, String text)
+{
+    lcd->clear();
+    if(text.length() > 16)
+    {
+        String text1 = text.substring(0, 16); // (16 is the number of columns of the lcd screen
+        lcd->print(text1);
+        lcd->setCursor(0, 1);
+        String text2 = text.substring(16, text.length());
+        lcd->print(text2);
+    } // if the text is too long, it will be cut to fit the lcd screen
+    else
+    {
+        lcd->print(text);
+    }
+        
+    
+}

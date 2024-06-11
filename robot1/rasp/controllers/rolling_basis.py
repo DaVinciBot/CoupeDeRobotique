@@ -4,7 +4,7 @@ from config_loader import CONFIG
 from teensy_comms import Teensy, calc_center
 from geometry import OrientedPoint, Point, distance
 from logger import Logger, LogLevels
-from utils import Utils
+from utils import Utils, GoToResult
 
 import struct
 import math
@@ -40,6 +40,27 @@ class Instruction:
 class RB_Queue:
 
     tracked_commands = (Command.GO_TO_POINT, Command.CURVE_GO_TO)
+
+    """
+    Represents a queue of instructions for a rolling basis controller.
+
+    Attributes:
+        tracked_commands (tuple): A tuple of tracked commands.
+        id_counter (int): Counter for generating unique IDs for tracked commands.
+        last_deleted_id (int): ID of the last deleted tracked command.
+        __queue (list[Instruction]): The underlying list to store the instructions.
+
+    Methods:
+        __init__(self, logger: Logger) -> None: Initializes a new instance of the RB_Queue class.
+        append(self, __object: Instruction) -> int: Appends an instruction to the queue.
+        pop(self, __index: int = -1) -> Instruction: Removes and returns an instruction from the queue.
+        clear(self) -> None: Clears the queue.
+        delete_up_to(self, __index: int) -> None: Deletes instructions up to the specified index.
+        insert(self, __index: int, __object: Instruction) -> None: Inserts an instruction at the specified index.
+        __getitem__(self, __index) -> Instruction: Returns the instruction at the specified index.
+        __len__(self) -> int: Returns the number of instructions in the queue.
+        __str__(self) -> str: Returns a string representation of the queue.
+    """
 
     def __init__(self, logger: Logger) -> None:
         self.id_counter = 0
@@ -308,7 +329,7 @@ class RollingBasis(Teensy):
         acceleration_distance: float = 0,
         deceleration_end_speed: int = 160,
         deceleration_distance: float = 0,
-    ) -> int:
+    ) -> GoToResult:
         """Waits to go over timeout or finish the queue (by finishing movement or being interrupted)
 
         Args:
@@ -375,20 +396,20 @@ class RollingBasis(Teensy):
                 LogLevels.WARNING,
             )
             self.stop_and_clear_queue()
-            return 1
+            return GoToResult.TIMEOUT
         elif distance(self.odometrie, target_to_compare) <= tolerance:
             self.logger.log(
                 f"Reached target in go_to_and_wait, at: {self.odometrie}",
                 LogLevels.INFO,
             )
-            return 0
+            return GoToResult.SUCCESS
         else:  # Should only mean ACS triggered or unplanned behaviour
             self.logger.log(
                 f"Didn't timeout in Go_To_And_Wait but did not arrive, at: {self.odometrie}, targeting : {target_to_compare}, {distance(self.odometrie, target_to_compare)} away",
                 LogLevels.WARNING,
             )
             # self.stop_and_clear_queue()
-            return 2
+            return GoToResult.STOPPED
 
     @Logger
     def get_orientation(

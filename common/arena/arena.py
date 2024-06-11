@@ -1,4 +1,4 @@
-from math import cos, sin
+from math import cos, sin, radians
 
 
 from geometry import (
@@ -15,7 +15,6 @@ from geometry import (
     distance,
     scale,
     OrientedPoint,
-    rad,
     nearest_points,
 )
 from logger import Logger, LogLevels
@@ -286,8 +285,10 @@ class Arena:
         distance: float, relative_angle: float, pos_robot: OrientedPoint
     ):
         return Point(
-            pos_robot.x + distance * cos(rad(pos_robot.theta - 45 + relative_angle)),
-            pos_robot.y + distance * sin(rad(pos_robot.theta - 45 + relative_angle)),
+            pos_robot.x
+            + distance * cos(radians(pos_robot.theta - 45 + relative_angle)),
+            pos_robot.y
+            + distance * sin(radians(pos_robot.theta - 45 + relative_angle)),
         )
 
     def remove_outside(self, points: MultiPoint):

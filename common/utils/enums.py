@@ -1,7 +1,14 @@
 from enum import Enum
 
 
-class AntiCollisionMode(Enum):
+class GoToResult(Enum):
+    SUCCESS = 0
+    TIMEOUT = 1
+    STOPPED = 2
+    SKIPPED = 3
+
+
+class LidarMode(Enum):
     # No anti-collision not implemented
     DISABLED = 0
     # Stop when an obstacle is detected not implemented
@@ -17,3 +24,4 @@ class AntiCollisionHandle(Enum):
     WAIT_AND_FAIL = 1
     WAIT_AND_RETRY = 2
     AVOID = 3
+    STOP = 4

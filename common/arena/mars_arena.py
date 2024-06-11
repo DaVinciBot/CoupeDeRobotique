@@ -16,6 +16,7 @@ class Plants_zone:
     def __init__(self, zone, nb_plant: int = 0) -> None:
         self.zone: Polygon = zone
         self.nb_plant: int = nb_plant
+        self.visited = False
 
     def __str__(self) -> str:
         return f"zone : {self.zone.__str__()}, nb_plant {self.nb_plant}"
@@ -29,9 +30,12 @@ class Plants_zone:
     def drop_plants(self, nb):
         self.nb_plant += nb
 
+    def visit(self):
+        self.visited = True
+
 
 class MarsArena(Arena):
-    """Represent the arena of the CDR 2023-2024"""
+    """Represent the arena of the +CDR 2023-2024"""
 
     def __init__(
         self, start_zone_id: int, logger: Logger, *, border_buffer, robot_buffer
