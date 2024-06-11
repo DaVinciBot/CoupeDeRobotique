@@ -1,2 +1,2 @@
 from utils.utils import Utils
-from enums import *
+from utils.enums import GoToResult, LidarMode, AntiCollisionHandle
