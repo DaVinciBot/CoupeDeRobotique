@@ -159,17 +159,19 @@ async def lower_elevator(self):
 
 
 async def elevator_top(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
-    await self.stepper_step(CONFIG.ELEVATOR["top_steps"] - self.elevator_ticks, speed)
+    await self.actuators.stepper_step(
+        CONFIG.ELEVATOR["top_steps"] - self.elevator_ticks, speed
+    )
 
 
 async def elevator_bottom(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
-    await self.stepper_step(
+    await self.actuators.stepper_step(
         CONFIG.ELEVATOR["bottom_steps"] - self.elevator_ticks, speed
     )
 
 
 async def elevator_intermediate(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
-    await self.stepper_step(
+    await self.actuators.stepper_step(
         CONFIG.ELEVATOR["intermediate_steps"] - self.elevator_ticks, speed
     )
 
