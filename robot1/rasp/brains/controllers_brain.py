@@ -350,7 +350,7 @@ async def handle_acs(
                 )
 
                 # Reset without waiting for the trigger
-                self.self.anticollision_handle = old_anticollision_handle
+                self.anticollision_handle = old_anticollision_handle
                 # Avoid the risk of triggering during another temporary disable
                 safety.cancel()
 
