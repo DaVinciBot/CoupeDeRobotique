@@ -78,7 +78,7 @@
       "anticollision_wait_and_retry_max_tries": 2,
       "anticollision_wait_and_avoid_distance": 15,
       "anticollision_wait_and_avoid_time_without_acs": 1.5,
-      "anticollision_wait_and_avoid_max_tries": 1
+      "anticollision_wait_and_avoid_max_tries": 2
     },
     "zombie_mode": false,
     "jack": {
