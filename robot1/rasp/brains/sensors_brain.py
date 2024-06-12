@@ -113,7 +113,7 @@ async def compute_ennemy_position(self):
         -(CONFIG.LIDAR_MAX_ANGLE - CONFIG.LIDAR_MIN_ANGLE) / 2,
     )
 
-    for i in range(self.arena.pickup_zones):
+    for i in range(len(self.arena.pickup_zones)):
         if self.arena.pickup_zones[i].zone.contains(self.arena.ennemy_position):
             self.arena.pickup_zones[i].visit()
             self.logger.log(f"Ennemy visited pickup zone n°{i}", LogLevels.INFO)
