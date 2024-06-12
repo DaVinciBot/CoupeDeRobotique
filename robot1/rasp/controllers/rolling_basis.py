@@ -182,7 +182,6 @@ class RollingBasis(Teensy):
 
     def rcv_action_finish(self, cmd_finished: bytes):
         self.logger.log("Action finished : " + cmd_finished.hex(), LogLevels.INFO)
-        print(self.queue)
         if not self.queue or len(self.queue) == 0:
             self.logger.log(
                 "Received action_finish but no action in queue", LogLevels.WARNING

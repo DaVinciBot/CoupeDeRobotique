@@ -709,13 +709,9 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=False, timeout=21)
     async def solar_panels_stage(self) -> None:
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(0.1)
         self.rolling_basis.stop_and_clear_queue()
-        await asyncio.sleep(0.5)
-        await self.smart_go_to(
-            Point(20, 0), relative=True, **CONFIG.GO_TO_PROFILES["plant_approach"]
-        )
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(0.1)
         target_y = (
             (max(self.arena.solar_panels_y) + 7.0)
             if self.team == "y"
