@@ -729,8 +729,6 @@ class MainBrain(Brain):
             self.leds.set_score(self.score_estimate)
             self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
 
-        self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
-
     @Brain.task(process=False, run_on_start=False, timeout=30)
     async def control_solar_panels(
         self,
