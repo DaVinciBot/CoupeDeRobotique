@@ -131,6 +131,8 @@ class MainBrain(Brain):
         # Init the brain
         super().__init__(logger, self)
 
+        self.rolling_basis.stop_and_clear_queue()
+
         # A default, almost dummy starting situation
         self.team = CONFIG.DEFAULT_TEAM
         self.arena: MarsArena = self.generate_up_to_date_arena()
