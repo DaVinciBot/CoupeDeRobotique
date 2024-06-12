@@ -1,6 +1,6 @@
 # External imports
 import asyncio
-import time
+import math
 
 # Import from common
 from config_loader import CONFIG
@@ -215,7 +215,7 @@ async def smart_go_to(
     fails: int = 0,
 ) -> GoToResult:
 
-    result: int = await self.rolling_basis.go_to_and_wait(
+    result: GoToResult = await self.rolling_basis.go_to_and_wait(
         position,
         skip_and_clear_queue=skip_and_clear_queue,
         tolerance=tolerance,
@@ -233,14 +233,27 @@ async def smart_go_to(
         deceleration_distance=deceleration_distance,
     )
     if result == GoToResult.STOPPED:
-        # ACS handling strategy:
+        # ACS handling strategy (forced absolute so that we don't back up then try again the same relative that doesn't go where planned):
         result = await self.handle_acs(
-            position,
+            (
+                Point(position.x, position.y)
+                if not relative
+                else Point(
+                    math.cos(self.odometrie.theta) * position.x
+                    - math.sin(self.odometrie.theta) * position.y
+                    + self.position_offset.x
+                    + self.odometrie.x,
+                    math.sin(self.odometrie.theta) * position.x
+                    + math.cos(self.odometrie.theta) * position.y
+                    + self.position_offset.y
+                    + self.odometrie.y,
+                )
+            ),
             skip_and_clear_queue=skip_and_clear_queue,
             tolerance=tolerance,
             timeout=timeout,
             forward=forward,
-            relative=relative,
+            relative=False,
             max_speed=max_speed,
             next_position_delay=next_position_delay,
             action_error_auth=action_error_auth,
@@ -250,7 +263,7 @@ async def smart_go_to(
             acceleration_distance=acceleration_distance,
             deceleration_end_speed=deceleration_end_speed,
             deceleration_distance=deceleration_distance,
-            fails=0,
+            fails=fails,
         )
 
     return result
@@ -275,16 +288,7 @@ async def handle_acs(
     deceleration_end_speed: int = 160,
     deceleration_distance: float = 0,
     fails: int = 0,
-) -> int:
-    if self.anticollision_mode != AntiCollisionHandle.DO_NOTHING:
-        self.logger.log(
-            f"ACS triggered, performing emergency stop", LogLevels.WARNING, self.leds
-        )
-        self.rolling_basis.stop_and_clear_queue()
-    else:
-        self.logger.log(
-            f"ACS triggered, no emergency stop", LogLevels.WARNING, self.leds
-        )
+) -> GoToResult:
     match self.anticollision_handle:
         case AntiCollisionHandle.DO_NOTHING:
             return GoToResult.STOPPED
@@ -315,7 +319,7 @@ async def handle_acs(
             else:
                 return GoToResult.STOPPED
 
-        case AntiCollisionHandle.AVOID:
+        case AntiCollisionHandle.BACKUP_AND_RETRY:
             if fails < CONFIG.ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES:
 
                 old_anticollision_handle = self.anticollision_handle

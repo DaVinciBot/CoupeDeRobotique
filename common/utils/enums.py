@@ -23,5 +23,4 @@ class AntiCollisionHandle(Enum):
     DO_NOTHING = 0
     WAIT_AND_FAIL = 1
     WAIT_AND_RETRY = 2
-    AVOID = 3
-    STOP = 4
+    BACKUP_AND_RETRY = 3

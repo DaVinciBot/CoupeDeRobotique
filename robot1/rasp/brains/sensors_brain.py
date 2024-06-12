@@ -70,7 +70,10 @@ async def compute_ennemy_position(self):
 
     trigger_acs = False
 
-    if self.arena.ennemy_position is not None:
+    if (
+        self.arena.ennemy_position is not None
+        and self.anticollision_mode != LidarMode.DISABLED
+    ):
         if (
             distance(self.rolling_basis.odometrie, self.arena.ennemy_position)
             <= CONFIG.STOP_TRESHOLD
@@ -101,7 +104,7 @@ async def compute_ennemy_position(self):
         self.logger.log(
             "ACS triggered, performing emergency stop", LogLevels.WARNING, self.leds
         )
-        self.handle_acs()  # Stop the robot. the go_to will abort and handle_acs triggered
+        self.rolling_basis.stop_and_clear_queue()  # Stop ASAP and let the movement functions realize what happened and handle it (with handle_acs)
 
     else:
         pass
