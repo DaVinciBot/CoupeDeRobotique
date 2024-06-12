@@ -249,6 +249,7 @@ class MainBrain(Brain):
         await asyncio.sleep(0.5)
 
         # Solar panels stage
+        self.anticollision_handle = AntiCollisionHandle.WAIT_AND_FAIL
         solar_panel_control = asyncio.create_task(self.control_solar_panels())
         self.logger.log("Starting solar panels stage...", LogLevels.INFO, self.leds)
         await self.solar_panels_stage()
@@ -265,6 +266,7 @@ class MainBrain(Brain):
             self.leds,
         )
 
+        self.anticollision_handle = AntiCollisionHandle.BACKUP_AND_RETRY
         await self.plant_stage()
 
         self.logger.log("Going to regular endzone if needed", LogLevels.INFO)
