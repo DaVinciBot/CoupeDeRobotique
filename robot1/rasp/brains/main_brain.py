@@ -48,33 +48,19 @@ class Objective:
             Utils.get_ts() + self.time_estimate - start_time > 70
             and self.time_estimate >= 0
         ):
-            self.logger.log(
-                "Not enough time, gotta go fast; leaving plant_stage",
-                LogLevels.INFO,
-            )
             return False
         return True
 
-    def is_intresting(self) -> bool:
-        if (
+    def is_interesting(self, arena) -> bool:
+        return not (
             (self.task == "pickup")
-            and self.arena.pickup_zones[self.target_index].visited
-            and self.arena.pickup_zones[self.target_index].nb_plant
+            and arena.pickup_zones[self.target_index].visited
+            and arena.pickup_zones[self.target_index].nb_plant
             < CONFIG.ARENA_CONFIG["limit_plant_pickup"]
-        ):
-            self.logger.log(
-                f"pickup zone {self.target_index} not interesting anymore",
-                LogLevels.INFO,
-            )
-            return False
-        return True
+        )
 
-    def evaluate(self, start_time) -> bool:
-        if not self.enough_time(start_time):
-            return False
-        if not self.is_intresting():
-            return False
-        return True
+    def evaluate(self, start_time, arena) -> bool:
+        return self.enough_time(start_time) and self.is_interesting(arena)
 
 
 class MainBrain(Brain):
@@ -712,10 +698,11 @@ class MainBrain(Brain):
                 f"Considering objective: {current_objective}, estimated finishing time: {Utils.get_ts()-self.start_time + current_objective.time_estimate}",
                 LogLevels.INFO,
             )
-            if current_objective.evaluate(self.start_time):
+            if current_objective.evaluate(self.start_time, self.arena):
                 self.logger.log("Engaging objective", LogLevels.INFO)
                 await self.engage_objective(current_objective)
             else:
+                self.logger.log("Not engaging objective", LogLevels.INFO)
                 break
 
     @Brain.task(process=False, run_on_start=False, timeout=21)
