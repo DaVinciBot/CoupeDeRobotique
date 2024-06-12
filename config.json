@@ -102,7 +102,7 @@
       }
     },
     "team_switch": {
-      "pin": 16,
+      "pin": 20,
       "team_off": "b",
       "team_on": "y"
     },
