@@ -320,22 +320,21 @@ async def handle_acs(
         case AntiCollisionHandle.BACKUP_AND_RETRY:
             if fails < CONFIG.ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES:
 
-                old_anticollision_handle = self.anticollision_handle
+                old_anticollision_mode = self.anticollision_mode
 
-                async def reset_anticollision_handle():
+                async def reset_anticollision_mode():
                     await asyncio.sleep(
                         CONFIG.ANTICOLLISION_WAIT_AND_AVOID_TIME_WITHOUT_ACS
                     )
-                    self.anticollision_mode = old_anticollision_handle
+                    self.anticollision_mode = old_anticollision_mode
 
+                self.anticollision_mode = LidarMode.DISABLED
                 await asyncio.sleep(
-                    0.5
+                    0.25
                 )  # Time to stabilise to make sure the estimation of CONFIG.ANTICOLLISION_WAIT_AND_AVOID_TIME_WITHOUT_ACS is ok
 
-                self.anticollision_handle = LidarMode.DISABLED
-
                 # In case of timeout
-                safety = asyncio.create_task(reset_anticollision_handle())
+                safety = asyncio.create_task(reset_anticollision_mode())
 
                 await self.rolling_basis.go_to_and_wait(
                     Point(-CONFIG.ANTICOLLISION_WAIT_AND_AVOID_DISTANCE, 0),
@@ -348,7 +347,7 @@ async def handle_acs(
                 )
 
                 # Reset without waiting for the trigger
-                self.anticollision_handle = old_anticollision_handle
+                self.anticollision_mode = old_anticollision_mode
                 # Avoid the risk of triggering during another temporary disable
                 safety.cancel()
 
