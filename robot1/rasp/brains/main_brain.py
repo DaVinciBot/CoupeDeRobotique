@@ -826,7 +826,7 @@ class MainBrain(Brain):
             )
             # Modify target point x to be of the opposite side of plants (if we dropped ones)
             if target_point is not None:
-                target_point.x += 10
+                target_point = Point(target_point.x + 10, target_point.y)
             return already_there, target_point
 
     @Brain.task(process=False, run_on_start=False)
