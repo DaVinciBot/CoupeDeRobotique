@@ -241,7 +241,7 @@ class MainBrain(Brain):
         self.logger.log("Waiting for jack trigger...", LogLevels.INFO, self.leds)
 
         await self.wait_for_trigger()
-        # No matter what, kill rolling_basis ans everything else in 90s
+        # No matter what, kill rolling_basis and everything else in 90s
         asyncio.create_task(self.time_bomb(90))
 
         asyncio.create_task(self.setup_teams())
@@ -249,7 +249,8 @@ class MainBrain(Brain):
         await asyncio.sleep(0.5)
 
         # Solar panels stage
-        self.anticollision_handle = AntiCollisionHandle.WAIT_AND_FAIL
+        # During solar panel stage, if we see an enemy we stop and exit solar panel stage to do the plant stage
+        self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
         solar_panel_control = asyncio.create_task(self.control_solar_panels())
         self.logger.log("Starting solar panels stage...", LogLevels.INFO, self.leds)
         await self.solar_panels_stage()
@@ -257,6 +258,8 @@ class MainBrain(Brain):
         await self.undeploy_team_solar_panel()
 
         # Virage contre le mur
+        # Set the anti-collision handle mode to WAIT and RETRY to avoid backing up arena's border collision
+        self.anticollision_handle = AntiCollisionHandle.WAIT_AND_RETRY
         await self.drift()
 
         # Plant Stage
@@ -264,9 +267,10 @@ class MainBrain(Brain):
             "Starting plant stage and solar panels control...",
             LogLevels.INFO,
             self.leds,
+        )        # Reset the anti-collision handle mode to config value
+        self.anticollision_handle = AntiCollisionHandle(
+            CONFIG.ANTICOLLISION_HANDLE
         )
-
-        self.anticollision_handle = AntiCollisionHandle.BACKUP_AND_RETRY
         await self.plant_stage()
 
         self.logger.log("Going to regular endzone if needed", LogLevels.INFO)
