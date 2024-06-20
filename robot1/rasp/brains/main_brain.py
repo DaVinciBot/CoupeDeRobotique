@@ -329,7 +329,9 @@ class MainBrain(Brain):
                 timeout=2,
             )
         ) == 1:
-            self.logger.log("Drift rotation failed -> try to move forward.", LogLevels.INFO)
+            self.logger.log(
+                "Drift rotation failed -> try to move forward.", LogLevels.INFO
+            )
             await self.rolling_basis.go_to_and_wait(
                 Point(
                     10,
