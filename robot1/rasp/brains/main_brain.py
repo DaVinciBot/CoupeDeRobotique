@@ -499,7 +499,7 @@ class MainBrain(Brain):
             None
         """
         # To close hand earlier we re-define the plant zone smaller
-        plant_zone = plant_zone.buffer(-5)
+        plant_zone = plant_zone.buffer(-10)
 
         is_in_plant_zone = False
         while True:
