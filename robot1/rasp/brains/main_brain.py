@@ -507,6 +507,10 @@ class MainBrain(Brain):
 
             # We have passthrough the plant zone
             if is_in_plant_zone and not is_near_plant_zone:
+                self.logger.log(
+                    "Smart close god hand: passthrough the plant zone, closing god hand",
+                    LogLevels.INFO
+                )
                 await self.close_god_hand()
                 break
             await asyncio.sleep(0.1)
