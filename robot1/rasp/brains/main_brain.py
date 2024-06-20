@@ -488,6 +488,8 @@ class MainBrain(Brain):
         await asyncio.sleep(time_to_close)
         await self.close_god_hand()
 
+
+
     async def smart_close_god_hand(self, plant_zone: Polygon):
         """
         Closes the god hand when the robot is inside the specified plant zone.
@@ -498,19 +500,26 @@ class MainBrain(Brain):
         Returns:
             None
         """
-        # To close hand earlier we re-define the plant zone smaller
-        plant_zone = plant_zone.buffer(-10)
 
-        is_in_plant_zone = False
+        def _is_point_past_center(polygon, current_point, previous_point):
+            center = polygon.centroid
+
+            if previous_point is None:
+                return False
+
+            vector_prev = (previous_point.x - center.x, previous_point.y - center.y)
+            vector_curr = (current_point.x - center.x, current_point.y - center.y)
+
+            dot_product_prev = vector_prev[0] * vector_curr[0] + vector_prev[1] * vector_curr[1]
+            return dot_product_prev < 0
+
         while True:
-            if plant_zone.intersects(self.rolling_basis.odometrie):
-                is_in_plant_zone = True
-            # We have passthrough the plant zone
-            if is_in_plant_zone and not plant_zone.intersects(
-                self.rolling_basis.odometrie
-            ):
+            current_position = self.rolling_basis.odometrie
+            if _is_point_past_center(plant_zone, current_position, self.previous_position):
                 await self.close_god_hand()
                 break
+
+            self.previous_position = current_position
             await asyncio.sleep(0.1)
 
     @Logger
@@ -826,7 +835,7 @@ class MainBrain(Brain):
             )
             # Modify target point x to be of the opposite side of plants (if we dropped ones)
             if target_point is not None:
-                target_point = Point(target_point.x + 10, target_point.y)
+                target_point = Point(target_point.x + 20, target_point.y)
             return already_there, target_point
 
     @Brain.task(process=False, run_on_start=False)
