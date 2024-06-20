@@ -589,7 +589,10 @@ class MainBrain(Brain):
             )
             == 0
         ):
-            self.logger.log("Gardener approach success, get good orientation with the wall and go forward", LogLevels.INFO)
+            self.logger.log(
+                "Gardener approach success, get good orientation with the wall and go forward",
+                LogLevels.INFO,
+            )
             final_target: Point = Point(
                 200 - 10, self.rolling_basis.odometrie.y
             )  # To make sure to be orthogonal to the wall, use a relative y
