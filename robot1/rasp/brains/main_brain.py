@@ -488,8 +488,6 @@ class MainBrain(Brain):
         await asyncio.sleep(time_to_close)
         await self.close_god_hand()
 
-
-
     async def smart_close_god_hand(self, plant_zone: Polygon):
         """
         Closes the god hand when the robot is inside the specified plant zone.
@@ -510,12 +508,16 @@ class MainBrain(Brain):
             vector_prev = (previous_point.x - center.x, previous_point.y - center.y)
             vector_curr = (current_point.x - center.x, current_point.y - center.y)
 
-            dot_product_prev = vector_prev[0] * vector_curr[0] + vector_prev[1] * vector_curr[1]
+            dot_product_prev = (
+                vector_prev[0] * vector_curr[0] + vector_prev[1] * vector_curr[1]
+            )
             return dot_product_prev < 0
 
         while True:
             current_position = self.rolling_basis.odometrie
-            if _is_point_past_center(plant_zone, current_position, self.previous_position):
+            if _is_point_past_center(
+                plant_zone, current_position, self.previous_position
+            ):
                 await self.close_god_hand()
                 break
 
