@@ -512,20 +512,19 @@ class MainBrain(Brain):
         Returns:
             None
         """
-
+        previous_position = self.rolling_basis.odometrie
         while True:
-            current_position = self.rolling_basis.odometrie
-            print(f"Current position: {current_position}")
-            print(f"Previous position: {self.previous_position}")
+            print(f"Current position: {self.rolling_basis.odometrie}")
+            print(f"Previous position: {previous_position}")
 
             if self._is_point_past_center(
-                plant_zone, current_position, self.previous_position
+                plant_zone, self.rolling_basis.odometrie, previous_position
             ):
                 print("Point has passed the center of the plant zone.")
                 await self.close_god_hand()
                 break
 
-            self.previous_position = current_position
+            previous_position = self.rolling_basis.odometrie
             await asyncio.sleep(0.1)
 
     @Logger
