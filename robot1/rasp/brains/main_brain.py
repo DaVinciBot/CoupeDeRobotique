@@ -583,11 +583,12 @@ class MainBrain(Brain):
             target_gardener.zone.centroid.y,
         )
         self.logger.log("Start gardener approach", LogLevels.INFO)
+        result = await self.smart_go_to(
+            approach_target, **CONFIG.GO_TO_PROFILES["garden_approach"], timeout=10
+        )
+        self.logger.log(f"Start gardener approach result: {result}", LogLevels.INFO)
         if (
-            await self.smart_go_to(
-                approach_target, **CONFIG.GO_TO_PROFILES["garden_approach"], timeout=10
-            )
-            == 0
+            result == 0
         ):
             self.logger.log(
                 "Gardener approach success, get good orientation with the wall and go forward",
