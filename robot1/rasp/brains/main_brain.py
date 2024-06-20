@@ -582,14 +582,14 @@ class MainBrain(Brain):
             200 - CONFIG.ARENA_CONFIG["robot_buffer_with_god_hand_deployed"],
             target_gardener.zone.centroid.y,
         )
-
+        self.logger.log("Start gardener approach", LogLevels.INFO)
         if (
             await self.smart_go_to(
                 approach_target, **CONFIG.GO_TO_PROFILES["garden_approach"], timeout=10
             )
             == 0
         ):
-
+            self.logger.log("Gardener approach success, get good orientation with the wall and go forward", LogLevels.INFO)
             final_target: Point = Point(
                 200 - 10, self.rolling_basis.odometrie.y
             )  # To make sure to be orthogonal to the wall, use a relative y
@@ -599,7 +599,7 @@ class MainBrain(Brain):
                 **CONFIG.GO_TO_PROFILES["slow_and_precise"],
                 timeout=4,
             ) in [0, 1]:
-
+                self.logger.log("Gardener plant dropping", LogLevels.INFO)
                 await self.deploy_god_hand()
                 await self.elevator_intermediate()
                 await self.open_god_hand()
@@ -607,11 +607,13 @@ class MainBrain(Brain):
                 target_gardener.drop_plants(5)
 
             else:
+                self.logger.log("Gardener approach failed", LogLevels.INFO)
                 await self.deploy_god_hand()
                 await self.elevator_bottom()
                 await self.open_god_hand()
 
             # Step back
+            self.logger.log("Gardener backward", LogLevels.INFO)
             await self.smart_go_to(
                 Point(-CONFIG.ARENA_CONFIG["robot_buffer"], 0),
                 timeout=5,
