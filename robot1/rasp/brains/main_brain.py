@@ -45,18 +45,18 @@ class Objective:
     def enough_time(self, start_time) -> bool:
 
         if (
-            Utils.get_ts() + self.time_estimate - start_time > 70
-            and self.time_estimate >= 0
+                Utils.get_ts() + self.time_estimate - start_time > 70
+                and self.time_estimate >= 0
         ):
             return False
         return True
 
     def is_interesting(self, arena) -> bool:
         return not (
-            (self.task == "pickup")
-            and arena.pickup_zones[self.target_index].visited
-            and arena.pickup_zones[self.target_index].nb_plant
-            < CONFIG.ARENA_CONFIG["limit_plant_pickup"]
+                (self.task == "pickup")
+                and arena.pickup_zones[self.target_index].visited
+                and arena.pickup_zones[self.target_index].nb_plant
+                < CONFIG.ARENA_CONFIG["limit_plant_pickup"]
         )
 
     def evaluate(self, start_time, arena) -> bool:
@@ -101,17 +101,17 @@ class MainBrain(Brain):
     from brains.com_brain import zombie_mode
 
     def __init__(
-        self,
-        logger: Logger,
-        ws_cmd: WServerRouteManager,
-        ws_pami: WServerRouteManager,
-        actuators: Actuators,
-        rolling_basis: RollingBasis,
-        lidar: Lidar,
-        logger_arena: Logger,
-        jack: PIN,
-        team_switch: PIN,
-        leds: LEDStrip,
+            self,
+            logger: Logger,
+            ws_cmd: WServerRouteManager,
+            ws_pami: WServerRouteManager,
+            actuators: Actuators,
+            rolling_basis: RollingBasis,
+            lidar: Lidar,
+            logger_arena: Logger,
+            jack: PIN,
+            team_switch: PIN,
+            leds: LEDStrip,
     ) -> None:
 
         self.anticollision_mode: LidarMode = LidarMode(CONFIG.ANTICOLLISION_MODE)
@@ -319,15 +319,15 @@ class MainBrain(Brain):
         angle = (-1 if self.team == "y" else 1) * math.pi / 6
         self.logger.log("Drift rotation move.", LogLevels.INFO)
         if (
-            await self.rolling_basis.go_to_and_wait(
-                Point(
-                    distance * math.cos(angle),
-                    distance * math.sin(angle),
-                ),
-                relative=True,
-                **CONFIG.GO_TO_PROFILES["plant_approach"],
-                timeout=2,
-            )
+                await self.rolling_basis.go_to_and_wait(
+                    Point(
+                        distance * math.cos(angle),
+                        distance * math.sin(angle),
+                    ),
+                    relative=True,
+                    **CONFIG.GO_TO_PROFILES["plant_approach"],
+                    timeout=2,
+                )
         ) == GoToResult.TIMEOUT:
             self.logger.log(
                 "Drift rotation failed -> try to move forward.", LogLevels.INFO
@@ -363,7 +363,7 @@ class MainBrain(Brain):
 
         if not already_there:
             if self.arena.drop_zones[2 if self.team == "y" else 5].zone.contains(
-                target
+                    target
             ):
                 # Custom return to let PAMIs do their thing
                 self.logger.log("Going to custom endzone", LogLevels.INFO)
@@ -457,10 +457,10 @@ class MainBrain(Brain):
                     LogLevels.DEBUG,
                 )
             elif (
-                self.arena.drop_zones[0 if self.team == "y" else 3].zone.contains(
-                    self.rolling_basis.odometrie
-                )
-                and self.score_estimate > 0
+                    self.arena.drop_zones[0 if self.team == "y" else 3].zone.contains(
+                        self.rolling_basis.odometrie
+                    )
+                    and self.score_estimate > 0
             ):
                 self.score_estimate += 5  # For going to a safe zone but the wrong one
                 self.logger.log(
@@ -488,20 +488,6 @@ class MainBrain(Brain):
         await asyncio.sleep(time_to_close)
         await self.close_god_hand()
 
-    def _is_point_past_center(self, polygon, current_point, previous_point):
-        center = polygon.centroid
-
-        if previous_point is None:
-            return False
-
-        vector_prev = (previous_point.x - center.x, previous_point.y - center.y)
-        vector_curr = (current_point.x - center.x, current_point.y - center.y)
-
-        dot_product_prev = (
-            vector_prev[0] * vector_curr[0] + vector_prev[1] * vector_curr[1]
-        )
-        return dot_product_prev < 0
-
     async def smart_close_god_hand(self, plant_zone: Polygon):
         """
         Closes the god hand when the robot is inside the specified plant zone.
@@ -512,25 +498,23 @@ class MainBrain(Brain):
         Returns:
             None
         """
-        previous_position = self.rolling_basis.odometrie
+        is_in_plant_zone = False
         while True:
-            print(f"Current position: {self.rolling_basis.odometrie}")
-            print(f"Previous position: {previous_position}")
+            is_near_plant_zone = distance(plant_zone.centroid, self.rolling_basis.odometrie) < 10
 
-            if self._is_point_past_center(
-                plant_zone, self.rolling_basis.odometrie, previous_position
-            ):
-                print("Point has passed the center of the plant zone.")
+            if is_near_plant_zone:
+                is_in_plant_zone = True
+
+            # We have passthrough the plant zone
+            if is_in_plant_zone and not is_near_plant_zone:
                 await self.close_god_hand()
                 break
-
-            previous_position = self.rolling_basis.odometrie
             await asyncio.sleep(0.1)
 
     @Logger
     async def go_and_pickup(
-        self,
-        target_pickup_zone: Plants_zone,
+            self,
+            target_pickup_zone: Plants_zone,
     ) -> None:
 
         asyncio.create_task(self.deploy_god_hand())
@@ -614,9 +598,9 @@ class MainBrain(Brain):
             )  # To make sure to be orthogonal to the wall, use a relative y
 
             if await self.smart_go_to(
-                final_target,
-                **CONFIG.GO_TO_PROFILES["slow_and_precise"],
-                timeout=4,
+                    final_target,
+                    **CONFIG.GO_TO_PROFILES["slow_and_precise"],
+                    timeout=4,
             ) in [0, 1]:
                 self.logger.log("Gardener plant dropping", LogLevels.INFO)
                 await self.deploy_god_hand()
@@ -729,7 +713,7 @@ class MainBrain(Brain):
         ]
         for current_objective in objectives:
             self.logger.log(
-                f"Considering objective: {current_objective}, estimated finishing time: {Utils.get_ts()-self.start_time + current_objective.time_estimate}",
+                f"Considering objective: {current_objective}, estimated finishing time: {Utils.get_ts() - self.start_time + current_objective.time_estimate}",
                 LogLevels.INFO,
             )
             if current_objective.evaluate(self.start_time, self.arena):
@@ -763,7 +747,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=False, timeout=30)
     async def control_solar_panels(
-        self,
+            self,
     ) -> None:
 
         self.logger.log("Started controlling solar panels", LogLevels.INFO)
@@ -774,12 +758,11 @@ class MainBrain(Brain):
             await asyncio.sleep(0.05)
             for i, y in enumerate(remaining_solar_panels_y):
                 if (
-                    0
-                    < (1 if self.team == "y" else -1)
-                    * (self.rolling_basis.odometrie.y - y)
-                    < 15.0
+                        0
+                        < (1 if self.team == "y" else -1)
+                        * (self.rolling_basis.odometrie.y - y)
+                        < 15.0
                 ):
-
                     remaining_solar_panels_y.pop(i)
                     await self.deploy_team_solar_panel(
                         small=(len(remaining_solar_panels_y) > 3)
@@ -815,9 +798,9 @@ class MainBrain(Brain):
         picked_zone = (
             sorted_zones[0]
             if sorted_zones[0]
-            != self.arena.drop_zones[
-                CONFIG.START_INFO_BY_TEAM[self.team]["start_zone_id"]
-            ]
+               != self.arena.drop_zones[
+                   CONFIG.START_INFO_BY_TEAM[self.team]["start_zone_id"]
+               ]
             else sorted_zones[1]
         )
 
