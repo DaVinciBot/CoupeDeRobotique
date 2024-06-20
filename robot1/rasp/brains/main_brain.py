@@ -501,14 +501,17 @@ class MainBrain(Brain):
         is_in_plant_zone = False
         while True:
             is_near_plant_zone = (
-                distance(plant_zone.centroid, self.rolling_basis.odometrie) < 5
+                distance(plant_zone.centroid, self.rolling_basis.odometrie) < 10
+            )
+            is_far_plant_zone = (
+                    distance(plant_zone.centroid, self.rolling_basis.odometrie) > 2
             )
 
             if is_near_plant_zone:
                 is_in_plant_zone = True
 
             # We have passthrough the plant zone
-            if is_in_plant_zone and not is_near_plant_zone:
+            if is_in_plant_zone and is_far_plant_zone:
                 self.logger.log(
                     "Smart close god hand: passthrough the plant zone, closing god hand",
                     LogLevels.INFO,
