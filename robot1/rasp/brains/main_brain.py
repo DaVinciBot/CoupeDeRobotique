@@ -815,7 +815,9 @@ class MainBrain(Brain):
 
         # Compute the target point if not already there
         if already_there:
-            return already_there, Point(self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y)
+            return already_there, Point(
+                self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y
+            )
         else:
             target_point = self.arena.compute_go_to_destination(
                 self.rolling_basis.odometrie,
@@ -826,7 +828,6 @@ class MainBrain(Brain):
             if target_point is not None:
                 target_point.x += 10
             return already_there, target_point
-
 
     @Brain.task(process=False, run_on_start=False)
     async def kill_rolling_basis(self, timeout=-1):
