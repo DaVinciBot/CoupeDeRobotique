@@ -497,7 +497,9 @@ class MainBrain(Brain):
         vector_prev = (previous_point.x - center.x, previous_point.y - center.y)
         vector_curr = (current_point.x - center.x, current_point.y - center.y)
 
-        dot_product_prev = vector_prev[0] * vector_curr[0] + vector_prev[1] * vector_curr[1]
+        dot_product_prev = (
+            vector_prev[0] * vector_curr[0] + vector_prev[1] * vector_curr[1]
+        )
         return dot_product_prev < 0
 
     async def smart_close_god_hand(self, plant_zone: Polygon):
@@ -516,7 +518,9 @@ class MainBrain(Brain):
             print(f"Current position: {current_position}")
             print(f"Previous position: {self.previous_position}")
 
-            if self._is_point_past_center(plant_zone, current_position, self.previous_position):
+            if self._is_point_past_center(
+                plant_zone, current_position, self.previous_position
+            ):
                 print("Point has passed the center of the plant zone.")
                 await self.close_god_hand()
                 break
