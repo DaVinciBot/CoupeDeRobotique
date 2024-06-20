@@ -267,10 +267,8 @@ class MainBrain(Brain):
             "Starting plant stage and solar panels control...",
             LogLevels.INFO,
             self.leds,
-        )        # Reset the anti-collision handle mode to config value
-        self.anticollision_handle = AntiCollisionHandle(
-            CONFIG.ANTICOLLISION_HANDLE
-        )
+        )  # Reset the anti-collision handle mode to config value
+        self.anticollision_handle = AntiCollisionHandle(CONFIG.ANTICOLLISION_HANDLE)
         await self.plant_stage()
 
         self.logger.log("Going to regular endzone if needed", LogLevels.INFO)
@@ -329,7 +327,9 @@ class MainBrain(Brain):
                 timeout=2,
             )
         ) == 1:
-            self.logger.log("Drift rotation failed -> try to move forward.", LogLevels.INFO)
+            self.logger.log(
+                "Drift rotation failed -> try to move forward.", LogLevels.INFO
+            )
             await self.rolling_basis.go_to_and_wait(
                 Point(
                     10,
