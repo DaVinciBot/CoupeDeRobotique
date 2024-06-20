@@ -498,6 +498,9 @@ class MainBrain(Brain):
         Returns:
             None
         """
+        # To close hand earlier we re-define the plant zone smaller
+        plant_zone = plant_zone.buffer(-5)
+
         is_in_plant_zone = False
         while True:
             if plant_zone.intersects(self.rolling_basis.odometrie):
@@ -810,15 +813,20 @@ class MainBrain(Brain):
             .intersects(picked_zone.zone)
         )
 
-        return already_there, (
-            self.arena.compute_go_to_destination(
+        # Compute the target point if not already there
+        if already_there:
+            return already_there, Point(self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y)
+        else:
+            target_point = self.arena.compute_go_to_destination(
                 self.rolling_basis.odometrie,
                 picked_zone.zone,
                 20.0,
             )
-            if not already_there
-            else Point(self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y)
-        )
+            # Modify target point x to be of the opposite side of plants (if we dropped ones)
+            if target_point is not None:
+                target_point.x += 10
+            return already_there, target_point
+
 
     @Brain.task(process=False, run_on_start=False)
     async def kill_rolling_basis(self, timeout=-1):
