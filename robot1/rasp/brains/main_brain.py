@@ -504,7 +504,7 @@ class MainBrain(Brain):
                 distance(plant_zone.centroid, self.rolling_basis.odometrie) < 10
             )
             is_far_plant_zone = (
-                    distance(plant_zone.centroid, self.rolling_basis.odometrie) > 2
+                distance(plant_zone.centroid, self.rolling_basis.odometrie) > 2
             )
 
             if is_near_plant_zone:
