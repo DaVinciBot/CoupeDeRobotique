@@ -17,7 +17,7 @@ from utils import Utils
 from GPIO import PIN
 
 # Import from local path
-from utils import LidarMode, AntiCollisionHandle
+from utils import LidarMode, AntiCollisionHandle, GoToResult
 from controllers import RollingBasis, Actuators
 from sensors import Lidar
 
@@ -328,7 +328,7 @@ class MainBrain(Brain):
                 **CONFIG.GO_TO_PROFILES["plant_approach"],
                 timeout=2,
             )
-        ) == 1:
+        ) == GoToResult.TIMEOUT:
             self.logger.log(
                 "Drift rotation failed -> try to move forward.", LogLevels.INFO
             )
@@ -565,7 +565,7 @@ class MainBrain(Brain):
         # Account for removed plants
         target_drop_zone.drop_plants(5)
 
-        if r == 0:
+        if r == GoToResult.SUCCESS:
             # Step back
             await self.smart_go_to(
                 Point(-30, 0),
@@ -587,10 +587,12 @@ class MainBrain(Brain):
             approach_target, **CONFIG.GO_TO_PROFILES["garden_approach"], timeout=10
         )
         self.logger.log(f"Start gardener approach result: {result}", LogLevels.INFO)
-        if result == 0:
+        if (
+            result == GoToResult.SUCCESS
+        ):
             self.logger.log(
                 "Gardener approach success, get good orientation with the wall and go forward",
-                LogLevels.INFO,
+                LogLevels.INFO
             )
             final_target: Point = Point(
                 200 - 10, self.rolling_basis.odometrie.y
