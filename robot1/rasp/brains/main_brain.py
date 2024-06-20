@@ -258,8 +258,8 @@ class MainBrain(Brain):
         await self.undeploy_team_solar_panel()
 
         # Virage contre le mur
-        # Set the anti-collision handle mode to WAIT and RETRY to avoid backing up arena's border collision
-        self.anticollision_handle = AntiCollisionHandle.WAIT_AND_RETRY
+        # Set the anti-collision mode to disable to avoid stopping the robot by ACS triggered
+        self.anticollision_mode: LidarMode = LidarMode.DISABLED
         await self.drift()
 
         # Plant Stage
@@ -267,10 +267,10 @@ class MainBrain(Brain):
             "Starting plant stage and solar panels control...",
             LogLevels.INFO,
             self.leds,
-        )        # Reset the anti-collision handle mode to config value
-        self.anticollision_handle = AntiCollisionHandle(
-            CONFIG.ANTICOLLISION_HANDLE
         )
+        # Reset the anti-collision handle and mode to config value
+        self.anticollision_handle = AntiCollisionHandle(CONFIG.ANTICOLLISION_HANDLE)
+        self.anticollision_mode = LidarMode(CONFIG.ANTICOLLISION_MODE)
         await self.plant_stage()
 
         self.logger.log("Going to regular endzone if needed", LogLevels.INFO)
