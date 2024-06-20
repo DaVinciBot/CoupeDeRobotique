@@ -587,12 +587,10 @@ class MainBrain(Brain):
             approach_target, **CONFIG.GO_TO_PROFILES["garden_approach"], timeout=10
         )
         self.logger.log(f"Start gardener approach result: {result}", LogLevels.INFO)
-        if (
-            result == GoToResult.SUCCESS
-        ):
+        if result == GoToResult.SUCCESS:
             self.logger.log(
                 "Gardener approach success, get good orientation with the wall and go forward",
-                LogLevels.INFO
+                LogLevels.INFO,
             )
             final_target: Point = Point(
                 200 - 10, self.rolling_basis.odometrie.y
