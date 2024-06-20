@@ -587,9 +587,7 @@ class MainBrain(Brain):
             approach_target, **CONFIG.GO_TO_PROFILES["garden_approach"], timeout=10
         )
         self.logger.log(f"Start gardener approach result: {result}", LogLevels.INFO)
-        if (
-            result == 0
-        ):
+        if result == 0:
             self.logger.log(
                 "Gardener approach success, get good orientation with the wall and go forward",
                 LogLevels.INFO,
