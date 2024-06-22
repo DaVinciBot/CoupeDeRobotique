@@ -445,42 +445,49 @@ class MainBrain(Brain):
     async def endgame(self):
         # Keep kill_rolling_basis outside a try to be absolutely sure to get to it
         try:
-            # Open and deploy god hand, to macimize odds of being in home zone and to let go af any plant still held by accident
-            asyncio.create_task(self.deploy_god_hand())
-            asyncio.create_task(self.open_god_hand())
-            asyncio.create_task(self.elevator_bottom())
-            if self.compute_return_target()[0] == True:
-                self.score_estimate += (
-                    10  # For going to a safe zone that isn't the starting one
-                )
+            if self.rolling_basis != None:
+                # Open and deploy god hand, to macimize odds of being in home zone and to let go af any plant still held by accident
+                asyncio.create_task(self.deploy_god_hand())
+                asyncio.create_task(self.open_god_hand())
+                asyncio.create_task(self.elevator_bottom())
+                if self.compute_return_target()[0] == True:
+                    self.score_estimate += (
+                        10  # For going to a safe zone that isn't the starting one
+                    )
+                    self.leds.set_score(self.score_estimate)
+                    self.logger.log(
+                        "Scored 10 for going to a safe zone that isn't the starting one",
+                        LogLevels.DEBUG,
+                    )
+                elif (
+                    self.arena.drop_zones[0 if self.team == "y" else 3].zone.contains(
+                        self.rolling_basis.odometrie
+                    )
+                    and self.score_estimate > 0
+                ):
+                    self.score_estimate += (
+                        5  # For going to a safe zone but the wrong one
+                    )
+                    self.logger.log(
+                        "Scored 5 for going to the starting zone (after leaving)",
+                        LogLevels.DEBUG,
+                    )
+                    self.leds.set_score(self.score_estimate)
+                self.score_estimate += 5  # Pami
                 self.leds.set_score(self.score_estimate)
-                self.logger.log(
-                    "Scored 10 for going to a safe zone that isn't the starting one",
-                    LogLevels.DEBUG,
-                )
-            elif (
-                self.arena.drop_zones[0 if self.team == "y" else 3].zone.contains(
-                    self.rolling_basis.odometrie
-                )
-                and self.score_estimate > 0
-            ):
-                self.score_estimate += 5  # For going to a safe zone but the wrong one
-                self.logger.log(
-                    "Scored 5 for going to the starting zone (after leaving)",
-                    LogLevels.DEBUG,
-                )
-                self.leds.set_score(self.score_estimate)
-            self.score_estimate += 5  # Pami
-            self.leds.set_score(self.score_estimate)
-            self.logger.log("Scored 5 from PAMI (hopefully)", LogLevels.DEBUG)
+                self.logger.log("Scored 5 from PAMI (hopefully)", LogLevels.DEBUG)
 
-            self.logger.log(
-                f"Displaying total score: {self.score_estimate}", LogLevels.DEBUG
-            )
-            self.leds.set_score(self.score_estimate)
-            asyncio.create_task(
-                self.actuators.lcd_print(f"Score: {self.score_estimate}")
-            )
+                self.logger.log(
+                    f"Displaying total score: {self.score_estimate}", LogLevels.DEBUG
+                )
+                self.leds.set_score(self.score_estimate)
+                asyncio.create_task(
+                    self.actuators.lcd_print(f"Score: {self.score_estimate}")
+                )
+            else:
+                self.logger.log(
+                    "Called endgame but rolling basis is already None so skipping (to avoid doubel counting points)"
+                )
         except Exception:
             pass
         finally:
@@ -869,4 +876,4 @@ class MainBrain(Brain):
         self.rolling_basis.set_pids(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         await asyncio.sleep(0.5)
         self.rolling_basis.stop_and_clear_queue()
-        self.rolling_basis = RollingBasis(self.rolling_basis.logger, 0)
+        self.rolling_basis = None
