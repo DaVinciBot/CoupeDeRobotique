@@ -73,6 +73,7 @@ class MainBrain(Brain):
         deploy_god_hand,
         undeploy_god_hand,
         open_god_hand,
+        slow_open_god_hand,
         close_god_hand,
         go_best_zone,
         god_hand_demo,
