@@ -562,9 +562,9 @@ class RollingBasis(Teensy):
     def set_odo(self, new_odo: Point, *, skip_queue=False):
         msg = Command.SET_HOME.value + struct.pack(
             "<fff",
-            new_odo.x,
-            new_odo.y,
-            float(new_odo.theta) if isinstance(new_odo, OrientedPoint) else 0.0,
+            float(new_odo.x),
+            float(new_odo.y),
+            float(new_odo.theta if isinstance(new_odo, OrientedPoint) else 0.0),
         )
         if skip_queue:
             self.insert_in_queue(0, Instruction(Command.SET_HOME, msg), True)
