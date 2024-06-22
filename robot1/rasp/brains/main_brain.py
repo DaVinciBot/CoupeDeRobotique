@@ -611,7 +611,7 @@ class MainBrain(Brain):
                 self.logger.log("Gardener plant dropping", LogLevels.INFO)
                 await self.deploy_god_hand()
                 await self.elevator_intermediate()
-                await self.open_god_hand()
+                await self.slow_open_god_hand(10)
 
                 target_gardener.drop_plants(5)
 
@@ -619,7 +619,7 @@ class MainBrain(Brain):
                 self.logger.log("Gardener approach failed", LogLevels.INFO)
                 await self.deploy_god_hand()
                 await self.elevator_bottom()
-                await self.open_god_hand()
+                await self.slow_open_god_hand(10)
 
             # Step back
             self.logger.log("Gardener backward", LogLevels.INFO)
