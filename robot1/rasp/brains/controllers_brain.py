@@ -137,7 +137,6 @@ async def slow_open_god_hand(self, steps: int):
                 servo["pin"],
                 int(servo["close_angle"] + int(i * step_angles[servo["pin"]])),
             )
-            print(servo, int(servo["close_angle"] + int(i * step_angles[servo["pin"]])))
 
 
 @Logger
