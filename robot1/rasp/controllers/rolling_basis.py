@@ -33,8 +33,11 @@ class Instruction:
     cmd: Command
     msg: bytes  # msg is often the same as cmd, but can contain extra info
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"cmd:{self.cmd}, msg:{self.msg.hex()}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
 
 class RB_Queue:
