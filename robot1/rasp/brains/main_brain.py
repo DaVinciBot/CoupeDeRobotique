@@ -250,7 +250,7 @@ class MainBrain(Brain):
         # No matter what, kill rolling_basis ans everything else in 90s
         asyncio.create_task(self.time_bomb(90))
 
-        asyncio.create_task(self.setup_teams())
+        await self.setup_teams()
 
         await asyncio.sleep(0.5)
 
@@ -745,16 +745,39 @@ class MainBrain(Brain):
             else (min(self.arena.solar_panels_y) - 7.0)
         )
 
-        go_to_result = await self.smart_go_to(
-            Point(CONFIG.START_INFO_BY_TEAM[self.team]["start_x"], target_y),
-            timeout=20.0,
-            **CONFIG.GO_TO_PROFILES["slow_and_precise"],
-        )
+        async def move(self):
+            go_to_result = await self.smart_go_to(
+                Point(CONFIG.START_INFO_BY_TEAM[self.team]["start_x"], target_y),
+                timeout=15.0,
+                **CONFIG.GO_TO_PROFILES["slow_and_precise"],
+            )
+            if go_to_result.value in [0, 3]:
+                self.score_estimate += 1
+                self.leds.set_score(self.score_estimate)
+                self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
 
-        if go_to_result.value in [0, 3]:
-            self.score_estimate += 1
-            self.leds.set_score(self.score_estimate)
-            self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
+        move_task = asyncio.create_task(move(self))
+
+        self.logger.log("Trying move")
+        await asyncio.sleep(2)
+
+        if (
+            distance(
+                self.rolling_basis.odometrie,
+                Point(
+                    CONFIG.START_INFO_BY_TEAM[self.team]["start_x"],
+                    CONFIG.START_INFO_BY_TEAM[self.team]["start_y"],
+                ),
+            )
+            < 2
+        ):
+            self.logger.log("Failed original move, retrying")
+            move_task.cancel()
+            move_task = asyncio.create_task(move(self))
+        else:
+            self.logger.log("Success original move")
+
+        await move_task
 
     @Brain.task(process=False, run_on_start=False, timeout=30)
     async def control_solar_panels(
