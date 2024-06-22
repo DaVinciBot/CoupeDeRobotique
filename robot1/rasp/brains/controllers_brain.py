@@ -125,6 +125,19 @@ async def open_god_hand(self):
 
 
 @Logger
+async def slow_open_god_hand(self, steps: int):
+    for servo in CONFIG.FRONT_GOD_HAND["take_servo"]:
+        step_angle = (servo["open_angle"] - servo["close_angle"]) / steps
+    for i in range(steps):
+        for servo in CONFIG.FRONT_GOD_HAND["take_servo"]:
+            await asyncio.sleep(CONFIG.MINIMUM_DELAY)
+
+            await self.actuators.update_servo(
+                servo["pin"], servo["close_angle"] + i * step_angle
+            )
+
+
+@Logger
 async def close_god_hand(self):
     for servo in CONFIG.FRONT_GOD_HAND["take_servo"]:
         await asyncio.sleep(CONFIG.MINIMUM_DELAY)
@@ -173,6 +186,12 @@ async def elevator_bottom(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
 async def elevator_intermediate(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
     await self.actuators.stepper_step(
         CONFIG.ELEVATOR["intermediate_steps"] - self.actuators.elevator_ticks, speed
+    )
+
+
+async def elevator_in_gardener(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
+    await self.actuators.stepper_step(
+        CONFIG.ELEVATOR["in_gardener_steps"] - self.actuators.elevator_ticks, speed
     )
 
 
