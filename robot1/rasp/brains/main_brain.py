@@ -174,7 +174,7 @@ class MainBrain(Brain):
         """
         # Check jack state
         self.leds.set_jack(False)
-        while self.jack.digital_read():
+        while self.jack.safe_digital_read():
             self.get_team_from_switch()
             await asyncio.sleep(0.1)
         self.leds.set_jack(True)
