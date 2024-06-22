@@ -90,13 +90,13 @@
         "y": {
           "start_zone_id": 0,
           "start_x": 19.27,
-          "start_y": 12.75,
+          "start_y": 15.75,
           "start_theta": 1.5707963267948966
         },
         "b": {
           "start_zone_id": 3,
           "start_x": 19.27,
-          "start_y": 287.25,
+          "start_y": 284.25,
           "start_theta": -1.5707963267948966
         }
       }
@@ -382,7 +382,7 @@
         "bottom_steps": 0,
         "speed": 5000
       },
-      "minimum_delay": 0.02
+      "minimum_delay": 0.05
     },
     "lidar": {
       "distances_unit": "cm",
