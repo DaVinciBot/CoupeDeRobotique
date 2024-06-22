@@ -612,7 +612,7 @@ class MainBrain(Brain):
                 final_target,
                 **CONFIG.GO_TO_PROFILES["slow_and_precise"],
                 timeout=4,
-            ) in [0, 1]:
+            ) in [GoToResult.SUCCESS, GoToResult.TIMEOUT]:
                 self.logger.log("Gardener plant dropping", LogLevels.INFO)
                 await self.deploy_god_hand()
                 await self.elevator_intermediate()
@@ -751,10 +751,9 @@ class MainBrain(Brain):
                 timeout=15.0,
                 **CONFIG.GO_TO_PROFILES["slow_and_precise"],
             )
-            if go_to_result.value in [0, 3]:
-                self.score_estimate += 1
-                self.leds.set_score(self.score_estimate)
-                self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
+            self.score_estimate += 1
+            self.leds.set_score(self.score_estimate)
+            self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
 
         move_task = asyncio.create_task(move(self))
 
