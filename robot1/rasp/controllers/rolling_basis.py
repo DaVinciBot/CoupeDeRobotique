@@ -561,7 +561,7 @@ class RollingBasis(Teensy):
             "<fff",
             new_odo.x,
             new_odo.y,
-            new_odo.theta if isinstance(new_odo, OrientedPoint) else 0.0,
+            float(new_odo.theta) if isinstance(new_odo, OrientedPoint) else 0.0,
         )
         if skip_queue:
             self.insert_in_queue(0, Instruction(Command.SET_HOME, msg), True)
