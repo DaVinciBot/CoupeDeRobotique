@@ -174,7 +174,12 @@ class MainBrain(Brain):
         """
         # Check jack state
         self.leds.set_jack(False)
-        while self.jack.safe_digital_read():
+        false_jacks_in_a_row = 0
+        while false_jacks_in_a_row < 5:
+            if self.jack.safe_digital_read():
+                false_jacks_in_a_row = 0
+            else:
+                false_jacks_in_a_row += 1
             self.get_team_from_switch()
             await asyncio.sleep(0.1)
         self.leds.set_jack(True)
