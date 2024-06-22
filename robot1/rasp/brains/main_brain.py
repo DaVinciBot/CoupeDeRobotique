@@ -45,8 +45,8 @@ class Objective:
     def enough_time(self, start_time) -> bool:
 
         if (
-            Utils.get_ts() + self.time_estimate - start_time > 75
-            and self.time_estimate >= 0
+            Utils.get_ts() + self.time_estimate - start_time > 80
+            and self.time_estimate > 0
         ):
             return False
         return True
