@@ -126,7 +126,7 @@ async def open_god_hand(self):
 
 @Logger
 async def slow_open_god_hand(self, steps: int):
-    step_angles = []
+    step_angles = {}
     for servo in CONFIG.FRONT_GOD_HAND["take_servo"]:
         step_angles[servo["pin"]] = (servo["open_angle"] - servo["close_angle"]) / steps
     for i in range(1, steps + 1):
