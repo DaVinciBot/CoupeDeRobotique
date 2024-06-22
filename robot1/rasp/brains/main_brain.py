@@ -100,6 +100,7 @@ class MainBrain(Brain):
     # Com functions
     from brains.com_brain import zombie_mode
 
+    # Init the brain
     def __init__(
         self,
         logger: Logger,
@@ -113,7 +114,6 @@ class MainBrain(Brain):
         team_switch: PIN,
         leds: LEDStrip,
     ) -> None:
-
         self.anticollision_mode: LidarMode = LidarMode(CONFIG.ANTICOLLISION_MODE)
         self.anticollision_handle: AntiCollisionHandle = AntiCollisionHandle(
             CONFIG.ANTICOLLISION_HANDLE
@@ -144,7 +144,6 @@ class MainBrain(Brain):
 
         self.start_time = -1
 
-        # Init CONFIG
         self.logger.log(
             f"Mode: {'zombie' if CONFIG.ZOMBIE_MODE else 'game'}", LogLevels.INFO
         )
@@ -175,7 +174,7 @@ class MainBrain(Brain):
         # Check jack state
         self.leds.set_jack(False)
         while self.jack.digital_read():
-            self.show_team_led()
+            self.get_team_from_switch()
             await asyncio.sleep(0.1)
         self.leds.set_jack(True)
 
@@ -185,8 +184,6 @@ class MainBrain(Brain):
 
         start_zone_id = CONFIG.START_INFO_BY_TEAM[self.team]["start_zone_id"]
         self.logger.log(f"Team {self.team}", LogLevels.INFO)
-
-        self.leds.set_team(self.team)
 
         self.logger.log(f"Game start, zone chosen: {start_zone_id}", LogLevels.INFO)
 
@@ -213,7 +210,7 @@ class MainBrain(Brain):
             MarsArena: The generated MarsArena object.
         """
         self.get_team_from_switch()
-        self.leds.set_team(self.team)
+        assert isinstance(self.logger_arena, Logger)
         return MarsArena(
             CONFIG.START_INFO_BY_TEAM[self.team]["start_zone_id"],
             logger=self.logger_arena,
@@ -233,15 +230,18 @@ class MainBrain(Brain):
         else:
             self.team = CONFIG.TEAM_SWITCH_OFF
 
+        self.leds.set_team(self.team)
+
     @Brain.task(process=False, run_on_start=not CONFIG.ZOMBIE_MODE)
     async def game(self):
-        self.start_time = Utils.get_ts()
         await self.setup_actuators()
 
         self.logger.log("Waiting for jack trigger...", LogLevels.INFO, self.leds)
 
         await self.wait_for_trigger()
-        # No matter what, kill rolling_basis and everything else in 90s
+
+        self.start_time = Utils.get_ts()
+        # No matter what, kill rolling_basis ans everything else in 90s
         asyncio.create_task(self.time_bomb(90))
 
         asyncio.create_task(self.setup_teams())
@@ -382,10 +382,6 @@ class MainBrain(Brain):
                     target,
                     **CONFIG.GO_TO_PROFILES["plant_approach"],
                 )
-
-    def show_team_led(self):
-        self.get_team_from_switch()
-        self.leds.set_team(self.team)
 
     def show_team_lcd(self):
         self.get_team_from_switch()
@@ -722,7 +718,7 @@ class MainBrain(Brain):
         ]
         for current_objective in objectives:
             self.logger.log(
-                f"Considering objective: {current_objective}, estimated finishing time: {Utils.get_ts() - self.start_time + current_objective.time_estimate}",
+                f"Considering objective: {current_objective}, estimated finishing time: {Utils.get_ts()-self.start_time + current_objective.time_estimate}",
                 LogLevels.INFO,
             )
             if current_objective.evaluate(self.start_time, self.arena):
@@ -845,4 +841,4 @@ class MainBrain(Brain):
         self.rolling_basis.set_pids(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
         await asyncio.sleep(0.5)
         self.rolling_basis.stop_and_clear_queue()
-        self.rolling_basis = None
+        self.rolling_basis = RollingBasis(self.rolling_basis.logger, 0)
