@@ -89,11 +89,11 @@ async def compute_ennemy_position(self):
                     trigger_acs = True
 
                 case LidarMode.FRONTAL:
-                    trigger_acs = abs(angle) < CONFIG.LIDAR_FRONTAL_DETECTION_ANGLE
+                    trigger_acs = abs(angle) < CONFIG.LIDAR_FRONTAL_DETECTION_ANGLE / 2
 
                 case LidarMode.SEMI_CIRCULAR:
                     trigger_acs = (
-                        abs(angle) < CONFIG.LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE
+                        abs(angle) < CONFIG.LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE / 2
                     )
                 case _:
                     raise Exception(
