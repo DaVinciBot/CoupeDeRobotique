@@ -133,9 +133,9 @@ async def slow_open_god_hand(self, steps: int):
             await asyncio.sleep(CONFIG.MINIMUM_DELAY)
 
             await self.actuators.update_servo(
-                servo["pin"], int(servo["close_angle"] + i * step_angle)
+                servo["pin"], int(servo["close_angle"] + int(i * step_angle))
             )
-            print(servo, int(servo["close_angle"] + i * step_angle))
+            print(servo, int(servo["close_angle"] + int(i * step_angle)))
 
 
 @Logger
