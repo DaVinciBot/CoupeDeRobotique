@@ -40,6 +40,7 @@ def get_ennemy_angle(self) -> float | None:
             - self.rolling_basis.odometrie.theta
         ) % math.tau
 
+
 @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
 async def compute_ennemy_position(self):
     """
@@ -69,7 +70,10 @@ async def compute_ennemy_position(self):
 
     trigger_acs = False
 
-    if self.arena.ennemy_position is not None:
+    if (
+        self.arena.ennemy_position is not None
+        and self.anticollision_mode != LidarMode.DISABLED
+    ):
         if (
             distance(self.rolling_basis.odometrie, self.arena.ennemy_position)
             <= CONFIG.STOP_TRESHOLD
@@ -85,21 +89,23 @@ async def compute_ennemy_position(self):
                     trigger_acs = True
 
                 case LidarMode.FRONTAL:
-                    trigger_acs = abs(angle) < CONFIG.LIDAR_FRONTAL_DETECTION_ANGLE
+                    trigger_acs = abs(angle) < CONFIG.LIDAR_FRONTAL_DETECTION_ANGLE / 2
 
                 case LidarMode.SEMI_CIRCULAR:
                     trigger_acs = (
-                        abs(angle) < CONFIG.LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE
+                        abs(angle) < CONFIG.LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE / 2
                     )
                 case _:
-                    raise Exception(f"Unimplemented AnticollisionMode{self.anticollision_mode}")
+                    raise Exception(
+                        f"Unimplemented AnticollisionMode{self.anticollision_mode}"
+                    )
 
     if trigger_acs:
         self.logger.log(
             "ACS triggered, performing emergency stop", LogLevels.WARNING, self.leds
         )
-        self.handle_acs() # Stop the robot. the go_to will abort and handle_acs triggered
-        
+        self.rolling_basis.stop_and_clear_queue()  # Stop ASAP and let the movement functions realize what happened and handle it (with handle_acs)
+
     else:
         pass
 
@@ -109,12 +115,13 @@ async def compute_ennemy_position(self):
         (CONFIG.LIDAR_MAX_ANGLE - CONFIG.LIDAR_MIN_ANGLE) / 2,
         -(CONFIG.LIDAR_MAX_ANGLE - CONFIG.LIDAR_MIN_ANGLE) / 2,
     )
-    
-    for i in range(self.arena.pickup_zones):
-        if self.arena.pickup_zones[i].zone.contains(self.arena.ennemy_position):
-            self.arena.pickup_zones[i].visit()
-            self.logger.log(f"Ennemy visited pickup zone n°{i}", LogLevels.INFO)
-            break
+
+    if self.start_time != -1:
+        for i in range(len(self.arena.pickup_zones)):
+            if self.arena.pickup_zones[i].zone.contains(self.arena.ennemy_position):
+                self.arena.pickup_zones[i].visit()
+                self.logger.log(f"Ennemy visited pickup zone n°{i}", LogLevels.INFO)
+                break
 
 
 def pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:

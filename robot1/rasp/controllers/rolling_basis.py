@@ -27,13 +27,17 @@ class Command(Enum):
     STOP = b"\x7E"  # 7E = 126
     INVALID = b"\xFF"
 
+
 @dataclass
 class Instruction:
     cmd: Command
     msg: bytes  # msg is often the same as cmd, but can contain extra info
 
-    def __str__(self):
-        return f"cmd:{self.cmd}, msg:{self.msg}"
+    def __str__(self) -> str:
+        return f"cmd:{self.cmd}, msg:{self.msg.hex()}"
+
+    def __repr__(self) -> str:
+        return self.__str__()
 
 
 class RB_Queue:
@@ -558,9 +562,9 @@ class RollingBasis(Teensy):
     def set_odo(self, new_odo: Point, *, skip_queue=False):
         msg = Command.SET_HOME.value + struct.pack(
             "<fff",
-            new_odo.x,
-            new_odo.y,
-            new_odo.theta if isinstance(new_odo, OrientedPoint) else 0.0,
+            float(new_odo.x),
+            float(new_odo.y),
+            float(new_odo.theta if isinstance(new_odo, OrientedPoint) else 0.0),
         )
         if skip_queue:
             self.insert_in_queue(0, Instruction(Command.SET_HOME, msg), True)

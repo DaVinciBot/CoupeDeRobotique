@@ -1,6 +1,6 @@
 # External imports
 import asyncio
-import time
+import math
 
 # Import from common
 from config_loader import CONFIG
@@ -16,6 +16,7 @@ from utils import LidarMode, AntiCollisionHandle
 from controllers import RollingBasis, Actuators
 
 from utils import GoToResult
+
 
 @Logger
 async def deploy_right_solar_panel(
@@ -124,6 +125,21 @@ async def open_god_hand(self):
 
 
 @Logger
+async def slow_open_god_hand(self, steps: int):
+    step_angles = {}
+    for servo in CONFIG.FRONT_GOD_HAND["take_servo"]:
+        step_angles[servo["pin"]] = (servo["open_angle"] - servo["close_angle"]) / steps
+    for i in range(1, steps + 1):
+        for servo in CONFIG.FRONT_GOD_HAND["take_servo"]:
+            await asyncio.sleep(CONFIG.MINIMUM_DELAY)
+
+            await self.actuators.update_servo(
+                servo["pin"],
+                int(servo["close_angle"] + int(i * step_angles[servo["pin"]])),
+            )
+
+
+@Logger
 async def close_god_hand(self):
     for servo in CONFIG.FRONT_GOD_HAND["take_servo"]:
         await asyncio.sleep(CONFIG.MINIMUM_DELAY)
@@ -155,22 +171,29 @@ async def lower_elevator(self):
         driver_on=stepper["driver_on"],
         pin_driver=stepper["pin_driver"],
     )
-    
+
+
 async def elevator_top(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
-    await self.stepper_step(
-        CONFIG.ELEVATOR["top_steps"] - self.elevator_ticks, speed
+    await self.actuators.stepper_step(
+        CONFIG.ELEVATOR["top_steps"] - self.actuators.elevator_ticks, speed
     )
+
 
 async def elevator_bottom(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
-    await self.stepper_step(
-        CONFIG.ELEVATOR["bottom_steps"] - self.elevator_ticks, speed
+    await self.actuators.stepper_step(
+        CONFIG.ELEVATOR["bottom_steps"] - self.actuators.elevator_ticks, speed
     )
 
-async def elevator_intermediate(
-    self, speed: int = CONFIG.ELEVATOR["speed"]
-) -> None:
-    await self.stepper_step(
-        CONFIG.ELEVATOR["intermediate_steps"] - self.elevator_ticks, speed
+
+async def elevator_intermediate(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
+    await self.actuators.stepper_step(
+        CONFIG.ELEVATOR["intermediate_steps"] - self.actuators.elevator_ticks, speed
+    )
+
+
+async def elevator_in_gardener(self, speed: int = CONFIG.ELEVATOR["speed"]) -> None:
+    await self.actuators.stepper_step(
+        CONFIG.ELEVATOR["in_gardener_steps"] - self.actuators.elevator_ticks, speed
     )
 
 
@@ -183,6 +206,10 @@ async def god_hand_demo(self):
         await self.deploy_god_hand()
         await asyncio.sleep(1)
         await self.open_god_hand()
+        await asyncio.sleep(1)
+        await self.close_god_hand()
+        await asyncio.sleep(1)
+        await self.slow_open_god_hand(10)
         await asyncio.sleep(1)
         await self.close_god_hand()
         await asyncio.sleep(1)
@@ -213,7 +240,7 @@ async def smart_go_to(
     fails: int = 0,
 ) -> GoToResult:
 
-    result: int = await self.rolling_basis.go_to_and_wait(
+    result: GoToResult = await self.rolling_basis.go_to_and_wait(
         position,
         skip_and_clear_queue=skip_and_clear_queue,
         tolerance=tolerance,
@@ -231,14 +258,26 @@ async def smart_go_to(
         deceleration_distance=deceleration_distance,
     )
     if result == GoToResult.STOPPED:
-        # ACS handling strategy:
+        # ACS handling strategy (forced absolute so that we don't back up then try again the same relative that doesn't go where planned):
         result = await self.handle_acs(
-            position,
+            (
+                Point(position.x, position.y)
+                if not relative
+                else Point(
+                    math.cos(self.odometrie.theta) * position.x
+                    - math.sin(self.odometrie.theta) * position.y
+                    + self.position_offset.x
+                    + self.odometrie.x,
+                    math.sin(self.odometrie.theta) * position.x
+                    + math.cos(self.odometrie.theta) * position.y
+                    + self.position_offset.y
+                    + self.odometrie.y,
+                )
+            ),
             skip_and_clear_queue=skip_and_clear_queue,
             tolerance=tolerance,
             timeout=timeout,
             forward=forward,
-            relative=relative,
             max_speed=max_speed,
             next_position_delay=next_position_delay,
             action_error_auth=action_error_auth,
@@ -248,7 +287,7 @@ async def smart_go_to(
             acceleration_distance=acceleration_distance,
             deceleration_end_speed=deceleration_end_speed,
             deceleration_distance=deceleration_distance,
-            fails=0,
+            fails=fails,
         )
 
     return result
@@ -262,7 +301,6 @@ async def handle_acs(
     tolerance: float = 5,
     timeout: float = -1,  # in seconds
     forward: bool = True,
-    relative: bool = False,
     max_speed: int = 160,
     next_position_delay: int = 100,
     action_error_auth: int = 30,
@@ -273,16 +311,7 @@ async def handle_acs(
     deceleration_end_speed: int = 160,
     deceleration_distance: float = 0,
     fails: int = 0,
-) -> int:
-    if self.anticollision_mode != AntiCollisionHandle.DO_NOTHING:
-        self.logger.log(
-            f"ACS triggered, performing emergency stop", LogLevels.WARNING, self.leds
-        )
-        self.rolling_basis.stop_and_clear_queue()
-    else:
-        self.logger.log(
-            f"ACS triggered, no emergency stop", LogLevels.WARNING, self.leds
-        )
+) -> GoToResult:
     match self.anticollision_handle:
         case AntiCollisionHandle.DO_NOTHING:
             return GoToResult.STOPPED
@@ -298,7 +327,7 @@ async def handle_acs(
                     tolerance=tolerance,
                     timeout=timeout,
                     forward=forward,
-                    relative=relative,
+                    relative=False,
                     max_speed=max_speed,
                     next_position_delay=next_position_delay,
                     action_error_auth=action_error_auth,
@@ -312,26 +341,25 @@ async def handle_acs(
                 )
             else:
                 return GoToResult.STOPPED
-            
-        case AntiCollisionHandle.AVOID:
+
+        case AntiCollisionHandle.BACKUP_AND_RETRY:
             if fails < CONFIG.ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES:
 
-                old_anticollision_handle = self.anticollision_handle
+                old_anticollision_mode = self.anticollision_mode
 
-                async def reset_anticollision_handle():
+                async def reset_anticollision_mode():
                     await asyncio.sleep(
                         CONFIG.ANTICOLLISION_WAIT_AND_AVOID_TIME_WITHOUT_ACS
                     )
-                    self.anticollision_mode = old_anticollision_handle
+                    self.anticollision_mode = old_anticollision_mode
 
+                self.anticollision_mode = LidarMode.DISABLED
                 await asyncio.sleep(
-                    0.5
+                    0.25
                 )  # Time to stabilise to make sure the estimation of CONFIG.ANTICOLLISION_WAIT_AND_AVOID_TIME_WITHOUT_ACS is ok
 
-                self.anticollision_handle = LidarMode.DISABLED
-
                 # In case of timeout
-                safety = asyncio.create_task(reset_anticollision_handle())
+                safety = asyncio.create_task(reset_anticollision_mode())
 
                 await self.rolling_basis.go_to_and_wait(
                     Point(-CONFIG.ANTICOLLISION_WAIT_AND_AVOID_DISTANCE, 0),
@@ -342,9 +370,9 @@ async def handle_acs(
                     relative=True,
                     **CONFIG.GO_TO_PROFILES["slow_and_precise"],
                 )
-                
+
                 # Reset without waiting for the trigger
-                self.self.anticollision_handle = old_anticollision_handle
+                self.anticollision_mode = old_anticollision_mode
                 # Avoid the risk of triggering during another temporary disable
                 safety.cancel()
 
@@ -354,7 +382,7 @@ async def handle_acs(
                     tolerance=tolerance,
                     timeout=timeout,
                     forward=forward,
-                    relative=relative,
+                    relative=False,
                     max_speed=max_speed,
                     next_position_delay=next_position_delay,
                     action_error_auth=action_error_auth,
@@ -368,9 +396,11 @@ async def handle_acs(
                 )
             else:
                 return GoToResult.STOPPED
-            
+
         case _:
-            raise Exception(f"No AntiCollisionHandle{self.anticollision_handle.value} implementation")
+            raise Exception(
+                f"No AntiCollisionHandle{self.anticollision_handle.value} implementation"
+            )
 
 
 async def go_best_zone(self, plant_zones: list[Plants_zone]):

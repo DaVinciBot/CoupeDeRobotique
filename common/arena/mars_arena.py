@@ -29,7 +29,7 @@ class Plants_zone:
 
     def drop_plants(self, nb):
         self.nb_plant += nb
-        
+
     def visit(self):
         self.visited = True
 

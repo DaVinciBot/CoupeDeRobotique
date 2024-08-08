@@ -77,8 +77,8 @@
       "anticollision_wait_and_retry_delay": 2,
       "anticollision_wait_and_retry_max_tries": 2,
       "anticollision_wait_and_avoid_distance": 15,
-      "anticollision_wait_and_avoid_time_without_acs": 1.5,
-      "anticollision_wait_and_avoid_max_tries": 1
+      "anticollision_wait_and_avoid_time_without_acs": 2,
+      "anticollision_wait_and_avoid_max_tries": 2
     },
     "zombie_mode": false,
     "jack": {
@@ -90,19 +90,19 @@
         "y": {
           "start_zone_id": 0,
           "start_x": 19.27,
-          "start_y": 12.75,
+          "start_y": 15.75,
           "start_theta": 1.5707963267948966
         },
         "b": {
           "start_zone_id": 3,
           "start_x": 19.27,
-          "start_y": 287.25,
+          "start_y": 284.25,
           "start_theta": -1.5707963267948966
         }
       }
     },
     "team_switch": {
-      "pin": 16,
+      "pin": 20,
       "team_off": "b",
       "team_on": "y"
     },
@@ -382,7 +382,7 @@
         "bottom_steps": 0,
         "speed": 5000
       },
-      "minimum_delay": 0.02
+      "minimum_delay": 0.05
     },
     "lidar": {
       "distances_unit": "cm",
@@ -390,8 +390,8 @@
       "min_angle": -0.785398,
       "max_angle": 3.926991,
       "min_distance_detection": 5.0,
-      "frontal_detection_angle": 1.308997,
-      "semi_circular_detection_angle": 1.570796
+      "frontal_detection_angle": 1.570796,
+      "semi_circular_detection_angle": 3.141592
     }
   },
   "arena": {

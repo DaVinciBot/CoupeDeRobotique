@@ -17,7 +17,7 @@ from utils import Utils
 from GPIO import PIN
 
 # Import from local path
-from utils import LidarMode, AntiCollisionHandle
+from utils import LidarMode, AntiCollisionHandle, GoToResult
 from controllers import RollingBasis, Actuators
 from sensors import Lidar
 
@@ -41,32 +41,26 @@ class Objective:
             case _:
                 r += ", then nothing"
         return r
-    
-    def enough_time(self,start_time)->bool:
-    
+
+    def enough_time(self, start_time) -> bool:
+
         if (
-            Utils.get_ts()+self.time_estimate-start_time>70
-            and self.time_estimate >= 0
+            Utils.get_ts() + self.time_estimate - start_time > 80
+            and self.time_estimate > 0
         ):
-            self.logger.log(
-                "Not enough time, gotta go fast; leaving plant_stage",
-                LogLevels.INFO,
-            )
             return False
         return True
 
-    def is_intresting(self)->bool:
-        if(self.task=="pickup") and self.arena.pickup_zones[self.target_index].visited and self.arena.pickup_zones[self.target_index].nb_plant < CONFIG.ARENA_CONFIG["limit_plant_pickup"]:
-            self.logger.log(f"pickup zone {self.target_index} not interesting anymore", LogLevels.INFO)
-            return False
-        return True
+    def is_interesting(self, arena) -> bool:
+        return not (
+            (self.task == "pickup")
+            and arena.pickup_zones[self.target_index].visited
+            and arena.pickup_zones[self.target_index].nb_plant
+            < CONFIG.ARENA_CONFIG["limit_plant_pickup"]
+        )
 
-    def evaluate(self,start_time)->bool:
-        if not self.enough_time(start_time):
-            return False
-        if not self.is_intresting():
-            return False
-        return True
+    def evaluate(self, start_time, arena) -> bool:
+        return self.enough_time(start_time) and self.is_interesting(arena)
 
 
 class MainBrain(Brain):
@@ -79,6 +73,7 @@ class MainBrain(Brain):
         deploy_god_hand,
         undeploy_god_hand,
         open_god_hand,
+        slow_open_god_hand,
         close_god_hand,
         go_best_zone,
         god_hand_demo,
@@ -93,7 +88,7 @@ class MainBrain(Brain):
         handle_acs,
         elevator_bottom,
         elevator_intermediate,
-        elevator_top
+        elevator_top,
     )
 
     # Sensors functions
@@ -106,6 +101,7 @@ class MainBrain(Brain):
     # Com functions
     from brains.com_brain import zombie_mode
 
+    # Init the brain
     def __init__(
         self,
         logger: Logger,
@@ -119,10 +115,7 @@ class MainBrain(Brain):
         team_switch: PIN,
         leds: LEDStrip,
     ) -> None:
-
-        self.anticollision_mode: LidarMode = LidarMode(
-            CONFIG.ANTICOLLISION_MODE
-        )
+        self.anticollision_mode: LidarMode = LidarMode(CONFIG.ANTICOLLISION_MODE)
         self.anticollision_handle: AntiCollisionHandle = AntiCollisionHandle(
             CONFIG.ANTICOLLISION_HANDLE
         )
@@ -149,10 +142,9 @@ class MainBrain(Brain):
 
         self.score_estimate: int = 0
         self.leds.set_score(self.score_estimate)
-        
+
         self.start_time = -1
 
-        # Init CONFIG
         self.logger.log(
             f"Mode: {'zombie' if CONFIG.ZOMBIE_MODE else 'game'}", LogLevels.INFO
         )
@@ -175,15 +167,20 @@ class MainBrain(Brain):
     async def wait_for_trigger(self):
         """
         Waits for a trigger signal from the jack.
-        
+
         This function continuously checks the state of the jack and waits until it is triggered.
         While waiting, it shows the team LED and sleeps for 0.1 seconds between each check.
         Once triggered, it sets the jack LED to True.
         """
         # Check jack state
         self.leds.set_jack(False)
-        while self.jack.digital_read():
-            self.show_team_led()
+        false_jacks_in_a_row = 0
+        while false_jacks_in_a_row < 5:
+            if self.jack.safe_digital_read():
+                false_jacks_in_a_row = 0
+            else:
+                false_jacks_in_a_row += 1
+            self.get_team_from_switch()
             await asyncio.sleep(0.1)
         self.leds.set_jack(True)
 
@@ -201,8 +198,6 @@ class MainBrain(Brain):
 
         start_zone_id = CONFIG.START_INFO_BY_TEAM[self.team]["start_zone_id"]
         self.logger.log(f"Team {self.team}", LogLevels.INFO)
-
-        self.leds.set_team(self.team)
 
         self.logger.log(f"Game start, zone chosen: {start_zone_id}", LogLevels.INFO)
 
@@ -241,7 +236,7 @@ class MainBrain(Brain):
             MarsArena: The generated MarsArena object.
         """
         self.get_team_from_switch()
-        self.leds.set_team(self.team)
+        assert isinstance(self.logger_arena, Logger)
         return MarsArena(
             CONFIG.START_INFO_BY_TEAM[self.team]["start_zone_id"],
             logger=self.logger_arena,
@@ -260,6 +255,8 @@ class MainBrain(Brain):
             self.team = CONFIG.TEAM_SWITCH_ON
         else:
             self.team = CONFIG.TEAM_SWITCH_OFF
+
+        self.leds.set_team(self.team)
 
     @Brain.task(process=False, run_on_start=not CONFIG.ZOMBIE_MODE)
     async def game(self):
@@ -287,14 +284,18 @@ class MainBrain(Brain):
         self.logger.log("Waiting for jack trigger...", LogLevels.INFO, self.leds)
 
         await self.wait_for_trigger()
+
+        self.start_time = Utils.get_ts()
         # No matter what, kill rolling_basis ans everything else in 90s
         asyncio.create_task(self.time_bomb(90))
 
-        asyncio.create_task(self.setup_teams())
+        await self.setup_teams()
 
         await asyncio.sleep(0.5)
 
         # Solar panels stage
+        # During solar panel stage, if we see an enemy we stop and exit solar panel stage to do the plant stage
+        self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
         solar_panel_control = asyncio.create_task(self.control_solar_panels())
         self.logger.log("Starting solar panels stage...", LogLevels.INFO, self.leds)
         await self.solar_panels_stage()
@@ -302,6 +303,8 @@ class MainBrain(Brain):
         await self.undeploy_team_solar_panel()
 
         # Virage contre le mur
+        # Set the anti-collision mode to disable to avoid stopping the robot by ACS triggered
+        self.anticollision_mode: LidarMode = LidarMode.DISABLED
         await self.drift()
 
         # Plant Stage
@@ -310,7 +313,9 @@ class MainBrain(Brain):
             LogLevels.INFO,
             self.leds,
         )
-
+        # Reset the anti-collision handle and mode to config value
+        self.anticollision_handle = AntiCollisionHandle(CONFIG.ANTICOLLISION_HANDLE)
+        self.anticollision_mode = LidarMode(CONFIG.ANTICOLLISION_MODE)
         await self.plant_stage()
 
         self.logger.log("Going to regular endzone if needed", LogLevels.INFO)
@@ -347,6 +352,7 @@ class MainBrain(Brain):
             None
         """
         self.rolling_basis.stop_and_clear_queue()
+        self.logger.log("Drift backward move.", LogLevels.INFO)
         await self.rolling_basis.go_to_and_wait(
             Point(-15, 0),
             timeout=2.5,
@@ -356,6 +362,7 @@ class MainBrain(Brain):
         )
         distance = 5
         angle = (-1 if self.team == "y" else 1) * math.pi / 6
+        self.logger.log("Drift rotation move.", LogLevels.INFO)
         if (
             await self.rolling_basis.go_to_and_wait(
                 Point(
@@ -366,7 +373,10 @@ class MainBrain(Brain):
                 **CONFIG.GO_TO_PROFILES["plant_approach"],
                 timeout=2,
             )
-        ) == 1:
+        ) == GoToResult.TIMEOUT:
+            self.logger.log(
+                "Drift rotation failed -> try to move forward.", LogLevels.INFO
+            )
             await self.rolling_basis.go_to_and_wait(
                 Point(
                     10,
@@ -438,7 +448,7 @@ class MainBrain(Brain):
         - None
         """
         self.get_team_from_switch()
-        self.actuators.lcd_print(f"Team : {self.team}")
+        asyncio.create_task(self.actuators.lcd_print(f"Team : {self.team}"))
 
     async def undeploy_all(self):
         asyncio.create_task(self.close_god_hand())
@@ -452,7 +462,7 @@ class MainBrain(Brain):
 
         Args:
             distance (float): The distance to travel in millimeters. Default is 50.0.
-            
+
         Note: useful to move plants' pot to not hinder the robot's movement
 
         Returns:
@@ -492,40 +502,49 @@ class MainBrain(Brain):
     async def endgame(self):
         # Keep kill_rolling_basis outside a try to be absolutely sure to get to it
         try:
-            # Open and deploy god hand, to macimize odds of being in home zone and to let go af any plant still held by accident
-            asyncio.create_task(self.deploy_god_hand())
-            asyncio.create_task(self.open_god_hand())
-            asyncio.create_task(self.elevator_bottom())
-            if self.compute_return_target()[0] == True:
-                self.score_estimate += (
-                    10  # For going to a safe zone that isn't the starting one
-                )
+            if self.rolling_basis != None:
+                # Open and deploy god hand, to macimize odds of being in home zone and to let go af any plant still held by accident
+                asyncio.create_task(self.deploy_god_hand())
+                asyncio.create_task(self.open_god_hand())
+                asyncio.create_task(self.elevator_bottom())
+                if self.compute_return_target()[0] == True:
+                    self.score_estimate += (
+                        10  # For going to a safe zone that isn't the starting one
+                    )
+                    self.leds.set_score(self.score_estimate)
+                    self.logger.log(
+                        "Scored 10 for going to a safe zone that isn't the starting one",
+                        LogLevels.DEBUG,
+                    )
+                elif (
+                    self.arena.drop_zones[0 if self.team == "y" else 3].zone.contains(
+                        self.rolling_basis.odometrie
+                    )
+                    and self.score_estimate > 0
+                ):
+                    self.score_estimate += (
+                        5  # For going to a safe zone but the wrong one
+                    )
+                    self.logger.log(
+                        "Scored 5 for going to the starting zone (after leaving)",
+                        LogLevels.DEBUG,
+                    )
+                    self.leds.set_score(self.score_estimate)
+                self.score_estimate += 5  # Pami
                 self.leds.set_score(self.score_estimate)
-                self.logger.log(
-                    "Scored 10 for going to a safe zone that isn't the starting one",
-                    LogLevels.DEBUG,
-                )
-            elif (
-                self.arena.drop_zones[0 if self.team == "y" else 3].zone.contains(
-                    self.rolling_basis.odometrie
-                )
-                and self.score_estimate > 0
-            ):
-                self.score_estimate += 5  # For going to a safe zone but the wrong one
-                self.logger.log(
-                    "Scored 5 for going to the starting zone (after leaving)",
-                    LogLevels.DEBUG,
-                )
-                self.leds.set_score(self.score_estimate)
-            self.score_estimate += 5  # Pami
-            self.leds.set_score(self.score_estimate)
-            self.logger.log("Scored 5 from PAMI (hopefully)", LogLevels.DEBUG)
+                self.logger.log("Scored 5 from PAMI (hopefully)", LogLevels.DEBUG)
 
-            self.logger.log(
-                f"Displaying total score: {self.score_estimate}", LogLevels.DEBUG
-            )
-            self.leds.set_score(self.score_estimate)
-            self.actuators.lcd_print(f"Score: {self.score_estimate}")
+                self.logger.log(
+                    f"Displaying total score: {self.score_estimate}", LogLevels.DEBUG
+                )
+                self.leds.set_score(self.score_estimate)
+                asyncio.create_task(
+                    self.actuators.lcd_print(f"Score: {self.score_estimate}")
+                )
+            else:
+                self.logger.log(
+                    "Called endgame but rolling basis is already None so skipping (to avoid doubel counting points)"
+                )
         except Exception:
             pass
         finally:
@@ -547,12 +566,22 @@ class MainBrain(Brain):
         """
         is_in_plant_zone = False
         while True:
-            if plant_zone.intersects(self.rolling_basis.odometrie):
+            is_near_plant_zone = (
+                distance(plant_zone.centroid, self.rolling_basis.odometrie) < 10
+            )
+            is_far_plant_zone = (
+                distance(plant_zone.centroid, self.rolling_basis.odometrie) > 2
+            )
+
+            if is_near_plant_zone:
                 is_in_plant_zone = True
+
             # We have passthrough the plant zone
-            if is_in_plant_zone and not plant_zone.intersects(
-                self.rolling_basis.odometrie
-            ):
+            if is_in_plant_zone and is_far_plant_zone:
+                self.logger.log(
+                    "Smart close god hand: passthrough the plant zone, closing god hand",
+                    LogLevels.INFO,
+                )
                 await self.close_god_hand()
                 break
             await asyncio.sleep(0.1)
@@ -612,7 +641,7 @@ class MainBrain(Brain):
         # Account for removed plants
         target_drop_zone.drop_plants(5)
 
-        if r == 0:
+        if r == GoToResult.SUCCESS:
             # Step back
             await self.smart_go_to(
                 Point(-30, 0),
@@ -629,14 +658,16 @@ class MainBrain(Brain):
             200 - CONFIG.ARENA_CONFIG["robot_buffer_with_god_hand_deployed"],
             target_gardener.zone.centroid.y,
         )
-
-        if (
-            await self.smart_go_to(
-                approach_target, **CONFIG.GO_TO_PROFILES["garden_approach"], timeout=10
+        self.logger.log("Start gardener approach", LogLevels.INFO)
+        result = await self.smart_go_to(
+            approach_target, **CONFIG.GO_TO_PROFILES["garden_approach"], timeout=10
+        )
+        self.logger.log(f"Start gardener approach result: {result}", LogLevels.INFO)
+        if result == GoToResult.SUCCESS:
+            self.logger.log(
+                "Gardener approach success, get good orientation with the wall and go forward",
+                LogLevels.INFO,
             )
-            == 0
-        ):
-
             final_target: Point = Point(
                 200 - 10, self.rolling_basis.odometrie.y
             )  # To make sure to be orthogonal to the wall, use a relative y
@@ -645,20 +676,22 @@ class MainBrain(Brain):
                 final_target,
                 **CONFIG.GO_TO_PROFILES["slow_and_precise"],
                 timeout=4,
-            ) in [0, 1]:
-
+            ) in [GoToResult.SUCCESS, GoToResult.TIMEOUT]:
+                self.logger.log("Gardener plant dropping", LogLevels.INFO)
                 await self.deploy_god_hand()
                 await self.elevator_intermediate()
-                await self.open_god_hand()
+                await self.slow_open_god_hand(10)
 
                 target_gardener.drop_plants(5)
 
             else:
+                self.logger.log("Gardener approach failed", LogLevels.INFO)
                 await self.deploy_god_hand()
                 await self.elevator_bottom()
-                await self.open_god_hand()
+                await self.slow_open_god_hand(10)
 
             # Step back
+            self.logger.log("Gardener backward", LogLevels.INFO)
             await self.smart_go_to(
                 Point(-CONFIG.ARENA_CONFIG["robot_buffer"], 0),
                 timeout=5,
@@ -729,8 +762,6 @@ class MainBrain(Brain):
                 asyncio.create_task(self.elevator_intermediate())
             case _:
                 asyncio.create_task(self.undeploy_god_hand())
-                
-    
 
     @Brain.task(process=False, run_on_start=False, timeout=60)
     async def plant_stage(self):
@@ -755,45 +786,61 @@ class MainBrain(Brain):
             # Objective("pickup", 2, 8.0),
             # Objective("drop_to_zone", 4 if in_yellow_team else 1, 10.0),
         ]
-        previous_anticollision_handle = self.anticollision_handle
-        if self.trigger_acs : self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
-        first = True
         for current_objective in objectives:
             self.logger.log(
                 f"Considering objective: {current_objective}, estimated finishing time: {Utils.get_ts()-self.start_time + current_objective.time_estimate}",
                 LogLevels.INFO,
             )
-            if current_objective.evaluate(self.start_time):
+            if current_objective.evaluate(self.start_time, self.arena):
                 self.logger.log("Engaging objective", LogLevels.INFO)
                 await self.engage_objective(current_objective)
-            if first:
-                self.anticollision_handle = previous_anticollision_handle
             else:
+                self.logger.log("Not engaging objective", LogLevels.INFO)
                 break
-            
 
     @Brain.task(process=False, run_on_start=False, timeout=21)
     async def solar_panels_stage(self) -> None:
+        await asyncio.sleep(0.1)
+        self.rolling_basis.stop_and_clear_queue()
+        await asyncio.sleep(0.1)
         target_y = (
             (max(self.arena.solar_panels_y) + 7.0)
             if self.team == "y"
             else (min(self.arena.solar_panels_y) - 7.0)
         )
 
-        go_to_result = await self.smart_go_to(
-            Point(CONFIG.START_INFO_BY_TEAM[self.team]["start_x"], target_y),
-            timeout=20.0,
-            **CONFIG.GO_TO_PROFILES["slow_and_precise"],
-        )
-
-        if go_to_result.value in [0, 3]:
+        async def move(self):
+            go_to_result = await self.smart_go_to(
+                Point(CONFIG.START_INFO_BY_TEAM[self.team]["start_x"], target_y),
+                timeout=15.0,
+                **CONFIG.GO_TO_PROFILES["slow_and_precise"],
+            )
             self.score_estimate += 1
             self.leds.set_score(self.score_estimate)
             self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
-            
-        self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
-        
 
+        move_task = asyncio.create_task(move(self))
+
+        self.logger.log("Trying move")
+        await asyncio.sleep(2)
+
+        if (
+            distance(
+                self.rolling_basis.odometrie,
+                Point(
+                    CONFIG.START_INFO_BY_TEAM[self.team]["start_x"],
+                    CONFIG.START_INFO_BY_TEAM[self.team]["start_y"],
+                ),
+            )
+            < 2
+        ):
+            self.logger.log("Failed original move, retrying")
+            move_task.cancel()
+            move_task = asyncio.create_task(move(self))
+        else:
+            self.logger.log("Success original move")
+
+        await move_task
 
     @Brain.task(process=False, run_on_start=False, timeout=30)
     async def control_solar_panels(
@@ -813,7 +860,6 @@ class MainBrain(Brain):
                     * (self.rolling_basis.odometrie.y - y)
                     < 15.0
                 ):
-
                     remaining_solar_panels_y.pop(i)
                     await self.deploy_team_solar_panel(
                         small=(len(remaining_solar_panels_y) > 3)
@@ -861,15 +907,21 @@ class MainBrain(Brain):
             .intersects(picked_zone.zone)
         )
 
-        return already_there, (
-            self.arena.compute_go_to_destination(
+        # Compute the target point if not already there
+        if already_there:
+            return already_there, Point(
+                self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y
+            )
+        else:
+            target_point = self.arena.compute_go_to_destination(
                 self.rolling_basis.odometrie,
                 picked_zone.zone,
                 20.0,
             )
-            if not already_there
-            else Point(self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y)
-        )
+            # Modify target point x to be of the opposite side of plants (if we dropped ones)
+            if target_point is not None:
+                target_point = Point(target_point.x + 20, target_point.y)
+            return already_there, target_point
 
     @Brain.task(process=False, run_on_start=False)
     async def kill_rolling_basis(self, timeout=-1):
@@ -879,4 +931,6 @@ class MainBrain(Brain):
         self.logger.log("Killing rolling basis", LogLevels.WARNING)
         self.rolling_basis.stop_and_clear_queue()
         self.rolling_basis.set_pids(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        await asyncio.sleep(0.5)
+        self.rolling_basis.stop_and_clear_queue()
         self.rolling_basis = None
