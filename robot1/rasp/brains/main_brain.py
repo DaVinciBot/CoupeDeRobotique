@@ -189,6 +189,14 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=False)
     async def setup_teams(self):
+        """
+        Asynchronous task to set up teams.
+        This task retrieves the team information from the switch and performs the corresponding setup operations.
+        Parameters:
+            None
+        Returns:
+            None
+        """
         self.get_team_from_switch()
 
         start_zone_id = CONFIG.START_INFO_BY_TEAM[self.team]["start_zone_id"]
@@ -203,6 +211,18 @@ class MainBrain(Brain):
         self.reset_odo_to_start()
 
     def reset_odo_to_start(self) -> None:
+        """
+        Resets the odometry to the starting position.
+
+        This method sets the odometry of the robot to the predefined starting position
+        based on the team configuration.
+
+        Parameters:
+            None
+
+        Returns:
+            None
+        """
         self.rolling_basis.set_odo(
             OrientedPoint(
                 (
@@ -243,6 +263,24 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=not CONFIG.ZOMBIE_MODE)
     async def game(self):
+        """
+        Executes the main game logic.
+        This method performs the following steps:
+        1. Sets the start time.
+        2. Sets up the actuators.
+        3. Waits for the jack trigger.
+        4. Starts a time bomb task to kill rolling_basis and everything else in 90 seconds.
+        5. Sets up the teams.
+        6. Waits for 0.5 seconds.
+        7. Starts the solar panels stage and controls the solar panels.
+        8. Undeploys the team's solar panel.
+        9. Performs the drift maneuver.
+        10. Starts the plant stage.
+        11. Goes to the regular endzone if needed.
+        12. Performs the clean up.
+        13. Ends the game.
+        Note: This method is an asynchronous method.
+        """
         self.start_time = Utils.get_ts()
         await self.setup_actuators()
 
@@ -381,10 +419,24 @@ class MainBrain(Brain):
                 )
 
     def show_team_led(self):
+        """
+        Displays the team LED based on the team obtained from the switch.
+        """
         self.get_team_from_switch()
         self.leds.set_team(self.team)
 
     def show_team_lcd(self):
+        """
+        Displays the team name on the LCD screen.
+
+        This method retrieves the team name from the switch and prints it on the LCD screen using the `lcd_print` method of the `actuators` object.
+
+        Parameters:
+        - self: The current instance of the class.
+
+        Returns:
+        - None
+        """
         self.get_team_from_switch()
         self.actuators.lcd_print(f"Team : {self.team}")
 

@@ -118,6 +118,17 @@ class Actuators(Teensy):
 
     @Logger
     async def lcd_init(self, adress=0x27, nb_col: int = 16, nb_line: int = 2) -> None:
+        """
+        Initializes the LCD display.
+
+        Args:
+            adress (int, optional): The I2C address of the LCD display. Defaults to 0x27.
+            nb_col (int, optional): The number of columns in the LCD display. Defaults to 16.
+            nb_line (int, optional): The number of lines in the LCD display. Defaults to 2.
+
+        Returns:
+            None
+        """
         msg_ = (
             self.Command.Lcd_init
             + struct.pack("<B", adress)
@@ -127,7 +138,7 @@ class Actuators(Teensy):
         self.send_bytes(msg_)
 
     @Logger
-    async def lcd_print(self, msg: str, nb_col: int = 16, nb_line: int = 2) -> None:
+    async def lcd_print(self, msg: str, nb_col: int = 16, nb_line: int = 2, adress = 0x27) -> None:
         """Display a message on the LCD screen.
 
         Args:
@@ -141,7 +152,7 @@ class Actuators(Teensy):
             )
             msg = msg[: nb_col * nb_line]
         if not self.is_lcd_declared:
-            await self.lcd_init(nb_col=nb_col, nb_line=nb_line)
+            await self.lcd_init(nb_col=nb_col, nb_line=nb_line, adress = adress)
             await asyncio.sleep(CONFIG.MINIMUM_DELAY)
         msg_ = self.Command.Lcd_print + struct.pack(f"<{len(msg)+1}s", msg + b"\0")
         self.send_bytes(msg_)
