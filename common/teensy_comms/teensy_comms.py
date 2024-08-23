@@ -2,6 +2,7 @@ from typing import Any, Callable
 import serial, threading, time, crc8, serial.tools.list_ports
 from logger import Logger, LogLevels
 from teensy_comms.dummy_serial import DummySerial
+from GPIO.teensy_gpio_manager import TeensyGpioManager
 
 
 class TeensyException(Exception):
@@ -55,6 +56,7 @@ class Teensy:
         self.end_bytes = b"\xBA\xDD\x1C\xC5"
         self.scl = 19
         self.sda = 18
+        self.gpio_manager = TeensyGpioManager(41, logger)
 
         for port in serial.tools.list_ports.comports():
             if (
