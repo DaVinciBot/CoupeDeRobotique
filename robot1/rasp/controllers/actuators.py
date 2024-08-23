@@ -102,14 +102,24 @@ class Actuators(Teensy):
                     + struct.pack("<B", angle)
                     + struct.pack("<i", detach_delay)
                 )
+                self.send_bytes(msg)
             else:
-                msg = (
-                    self.Command.Update_servo
-                    + struct.pack("<B", pin)
-                    + struct.pack("<B", angle)
-                )
+                if self.gpio_manager.is_available_gpio(pin):
+                    self.gpio_manager.add_gpio(pin, self.gpio_manager.TypeActuator.SERVO)
+                    self.logger.log(f"Pin {pin} added as a servo pin", LogLevels.INFO)
+                elif not self.gpio_manager.is_valid_gpio(pin, self.gpio_manager.TypeActuator.SERVO):
+                    self.logger.log(
+                        f"Pin {pin} is not a valid servo pin because it is registered as a {str(self.gpio_manager.get_type_gpio())}", LogLevels.ERROR
+                    )
+                else:
+                    msg = (
+                        self.Command.Update_servo
+                        + struct.pack("<B", pin)
+                        + struct.pack("<B", angle)
+                    )
+                    self.send_bytes(msg)
             # https://docs.python.org/3/library/struct.html#format-characters
-            self.send_bytes(msg)
+            
         else:
             self.logger.log(
                 f"You tried to write {angle}° on pin {pin}, whereas the angle must be between {min_angle} and {max_angle}°",
