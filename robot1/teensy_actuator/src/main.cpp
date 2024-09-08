@@ -18,9 +18,9 @@ void call_servo_go_to(byte *msg, byte size)
   {
     Servo *servo = new Servo();
     servo->attach(servo_go_to_msg->pin);
-    servos[servo_go_to_msg->pin] = (void*)servo;
+    actuators[servo_go_to_msg->pin] = (void*)servo;
   }
-  servo_go_to((Servo*)servos[servo_go_to_msg->pin], servo_go_to_msg->angle);
+  servo_go_to((Servo*)actuators[servo_go_to_msg->pin], servo_go_to_msg->angle);
 }
 
 void call_servo_go_to_detach(byte *msg, byte size)
@@ -28,16 +28,15 @@ void call_servo_go_to_detach(byte *msg, byte size)
   msg_Servo_Go_To_Detach *servo_go_to_msg = (msg_Servo_Go_To_Detach *)msg;
   Servo *servo = new Servo();
   servo->attach(servo_go_to_msg->pin);
-  servos[servo_go_to_msg->pin] = servo;
-  servo_go_to(servos[servo_go_to_msg->pin], servo_go_to_msg->angle);
+  servo_go_to(servo, servo_go_to_msg->angle);
   delay(servo_go_to_msg->detach_delay);
-  servos[servo_go_to_msg->pin]->detach();
+  servo->detach();
 }
 
 void call_stepper_step(byte *msg, byte size)
 {
   msg_Stepper_Go_To *stepper_go_to_msg = (msg_Stepper_Go_To *)msg;
-  if (servos[stepper_go_to_msg->pin_dir] == nullptr)
+  if (actuators[stepper_go_to_msg->pin_dir] == nullptr)
   {
     Bonezegei_A4988 *stepper = new Bonezegei_A4988(
       stepper_go_to_msg->pin_dir,
