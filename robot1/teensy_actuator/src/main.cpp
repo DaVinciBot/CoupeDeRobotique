@@ -26,11 +26,15 @@ void call_servo_go_to(byte *msg, byte size)
 void call_servo_go_to_detach(byte *msg, byte size)
 {
   msg_Servo_Go_To_Detach *servo_go_to_msg = (msg_Servo_Go_To_Detach *)msg;
-  Servo *servo = new Servo();
-  servo->attach(servo_go_to_msg->pin);
-  servo_go_to(servo, servo_go_to_msg->angle);
+  if (actuators[servo_go_to_msg->pin]==nullptr)
+  {
+    Servo *servo = new Servo();
+    servo->attach(servo_go_to_msg->pin);
+    actuators[servo_go_to_msg->pin] = (void*)servo;
+  }
+  servo_go_to((Servo*)actuators[servo_go_to_msg->pin], servo_go_to_msg->angle);
   delay(servo_go_to_msg->detach_delay);
-  servo->detach();
+  ((Servo*)actuators[servo_go_to_msg->pin])->detach();
 }
 
 void call_stepper_step(byte *msg, byte size)
