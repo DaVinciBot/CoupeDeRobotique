@@ -1,0 +1,44 @@
+.dpad{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    height: min-content;
+    width: min-content;
+    margin: auto;
+}
+.dpad > div{
+    width: min-content;
+}
+.center{
+    width: 100% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.up div, .down div, .left div, .right div{
+    padding-top: 9px;
+    background-color: #dddbff;
+    color: #095af1;
+    cursor: pointer;
+}
+.up{
+    transform: translateY(30px);
+}
+.left{
+    transform: rotate(-90deg);
+}
+.right{
+    transform: rotate(90deg);
+}
+.down{
+    transform: rotate(180deg) translateY(30px);
+}
+div.square {
+    width: 50px;
+    height: 50px;
+}
+div.triangle {
+    width : 35.3px;
+    height: 35.3px;
+    transform: translateY(-17.5px) translateX(7.5px) rotate(45deg);
+}

@@ -1,0 +1,8 @@
+{
+    "name": "com",
+    "version": "1.0.0",
+    "description": "Library dedicated to the Raspi-Teensy communication.",
+    "keywords": "com",
+    "frameworks": "*",
+    "platforms": "*"
+  }
