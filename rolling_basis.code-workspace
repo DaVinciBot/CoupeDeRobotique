@@ -1,10 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "teensy"
+			"path": "robot1/rasp"
 		},
 		{
-			"path": "rasp"
+			"path": "robot1/teensy_moteur"
 		}
 	],
 	"settings": {
