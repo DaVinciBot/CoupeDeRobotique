@@ -1,29 +1,17 @@
 #include <motors_driver.h>
 #include <Arduino.h>
-#include <util/atomic.h>
 
-Motor::Motor(byte pin_forward, byte pin_backward, byte pin_pwm, byte pin_enca, byte pin_encb, float kp, float kd, float ki, float correction_factor = 1.0, byte threshold_pwm_value=0)
-{   
+Motor::Motor(byte pin_forward, byte pin_backward, byte pin_pwm, byte pin_enca, byte pin_encb, double wheel_unit_tick_cm, byte max_pwm){
     this->pin_forward = pin_forward;
     this->pin_backward = pin_backward;
+    
     this->pin_pwm = pin_pwm;   // PWM pin only !
     this->pin_enca = pin_enca; // AttachInterrupt pin only !
     this->pin_encb = pin_encb; // AttachInterrupt pin only !
 
-    this->kp = kp;
-    this->kd = kd;
-    this->ki = ki;
+    this->max_pwm = max_pwm;
 
-    this->correction_factor = correction_factor;
-    this->threshold_pwm_value = threshold_pwm_value;
-}
-
-double Motor::delta_time_calculator()
-{
-    long current_time = micros();
-    double delta_time = (current_time - this->prevT) / (1e6);
-    this->prevT = current_time;
-    return delta_time;
+    this->wheel_unit_tick_cm = wheel_unit_tick_cm;
 }
 
 void Motor::init(){
@@ -35,8 +23,11 @@ void Motor::init(){
     pinMode(this->pin_encb, INPUT);
 }
 
-void Motor::set_motor(int8_t dir, byte pwmVal)
+void Motor::set_motor(int pwmVal)
 {
+    int16_t dir = pwmVal > 0 ? 1 : -1;  
+    pwmVal = constrain(abs(pwmVal), 0, this->max_pwm);
+
     analogWrite(this->pin_pwm, pwmVal);
     if (dir == 1)
     {
@@ -55,41 +46,38 @@ void Motor::set_motor(int8_t dir, byte pwmVal)
     }
 }
 
-void Motor::handle(long target_pos, byte max_speed)
+
+double Motor::delta_time_calculator()
 {
-    long fix_ticks = this->ticks;
-    double delta_time = this->delta_time_calculator();
-
-    // Calculate error
-    int error = fix_ticks - target_pos;
-
-    // Calculate derivative
-    double dedt = (error - this->error_prev) / delta_time;
-
-    // Calculate integral
-    this->error_integral = this->error_integral + (error * delta_time);
-
-    // Control signal
-    float u = this->kp * error + this->kd * dedt + this->ki * this->error_integral;
-
-    // Motor power
-    float power = fabs(u * this->correction_factor);
-    if (power > max_speed * this->correction_factor)
-        power = max_speed;
-
-    // Increase power (to overcome friction)
-    power += this->threshold_pwm_value;
-    if(power > 255) power = 255;
-
-    // Motor direction
-    int8_t direction = 1;
-    if (u < 0)
-        direction = -1;
-
-    // Set the correct motor commande
-    set_motor(direction, power);
-
-    // Save error
-    this->error_prev = error;
+    long current_time = micros();
+    double delta_time = (current_time - this->prevT) / (1e6); // in seconds
+    this->prevT = current_time;
+    return delta_time;
 }
 
+void Motor::odometer_handle()
+{
+    long delta_ticks = this->ticks - this->last_ticks;
+    this->last_ticks = this->ticks;
+
+    double delta_time = this->delta_time_calculator();
+
+    this->distance += delta_ticks * this->wheel_unit_tick_cm;
+    this->speed = delta_ticks * this->wheel_unit_tick_cm / delta_time;
+} 
+
+// void Motor::speed_handle(float target_speed)
+// {
+//     long delta_ticks = this->ticks - this->last_ticks;
+//     this->last_ticks = this->ticks;
+
+//     double delta_time = this->delta_time_calculator();
+//     this->speed = delta_ticks * this->wheel_unit_tick_cm / delta_time;
+
+//     float u = this->pid.compute(this->speed, target_speed);
+
+//     Serial.println(String("Current speed: ") + String(this->speed) + String(" | Target speed: ") + String(target_speed) + String(" | PWM: ") + String(u));
+
+//     // Set the correct motor commande
+//     set_motor(u > 0 ? 1 : -1, fabs(u));
+// }
