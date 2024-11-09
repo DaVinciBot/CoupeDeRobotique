@@ -13,7 +13,7 @@ from logger import Logger, LogLevels
 from utils import LidarMode, AntiCollisionHandle
 
 # Import from local path
-from controllers import RollingBasis, Actuators
+#from controllers import RollingBasis, Actuators
 
 from utils import GoToResult
 

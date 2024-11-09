@@ -1,4 +1,5 @@
 from aiohttp import web
+import platform
 import asyncio
 import signal
 import time
@@ -18,11 +19,11 @@ class WServer:
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        host: str,
-        port: int,
-        ping_pong_clients_interval: int = None,
+            self,
+            logger: Logger,
+            host: str,
+            port: int,
+            ping_pong_clients_interval: int = None,
     ) -> None:
         self.__logger = logger
 
@@ -84,7 +85,7 @@ class WServer:
         self._app.router.add_get(route, route_manager.routine)
 
     def add_background_task(
-        self, task: callable, *args, name: str = "", **kwargs
+            self, task: callable, *args, name: str = "", **kwargs
     ) -> None:
         """
         Add a new background task to the server. It is useful to execute task in parallel with the server.
@@ -137,7 +138,7 @@ class WServer:
         self._app._loop.close()
 
     def add_background_task(
-        self, task: callable, *args, name: str = "", **kwargs
+            self, task: callable, *args, name: str = "", **kwargs
     ) -> None:
         """
         Add a new background task to the server. It is useful to execute task in parallel with the server.
@@ -172,7 +173,9 @@ class WServer:
             asyncio.create_task(self.stop_server())
             loop.close()
 
-        loop.add_signal_handler(signal.SIGINT, handle_exit)
+        # Only available on Unix
+        if platform.system() != "Windows":
+            loop.add_signal_handler(signal.SIGINT, handle_exit)
 
         try:
             self.__logger.log(
