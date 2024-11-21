@@ -42,13 +42,15 @@ Objective class :
 - prioritize : sorts the list of objectives by priority (points then time)
 - next_objective : return the next doable objective or None
 
+
+Notes réunion 21/11 :
 list de Task à la place de faire un dict
 
-Classe task parent :
+Classe Rask parent :
 - run (async to add a timeout)
 - interrupt
 
-Creer classes qui héritent de task:
+Creer classes qui héritent de tTask:
 - floor0
 - floor1
 - floor2
