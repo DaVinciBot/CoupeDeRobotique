@@ -56,8 +56,9 @@ if __name__ == "__main__":
     ws_server.add_route_handler(CONFIG.WS_ODOMETER_ROUTE, ws_odometer)
     ws_server.add_route_handler(CONFIG.WS_CAMERA_ROUTE, ws_camera)
 
+
     # Arena
-    arena = MarsArena(2, Logger(identifier="arena", print_log_level=LogLevels.INFO))
+    arena = MarsArena(2, Logger(identifier="arena", print_log_level=LogLevels.INFO), robot_buffer=-10, border_buffer=50)
 
     # Brain
     brain = MainBrain(

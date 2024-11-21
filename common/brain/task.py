@@ -1,6 +1,7 @@
 from logger import Logger, LogLevels
 
 from brain.task_wrappers import SynchronousWrapper, AsynchronousWrapper
+from brain.execution_states import ExecutionStates
 
 import functools
 from typing import TypeVar
@@ -11,14 +12,14 @@ TDictProxyAccessor = TypeVar("TDictProxyAccessor", bound="DictProxyAccessor")
 
 class Task:
     def __init__(
-        self,
-        function,
-        is_process,
-        run_on_start,
-        refresh_rate,
-        timeout,
-        define_loop_later,
-        start_loop_marker,
+            self,
+            function,
+            is_process,
+            run_on_start,
+            refresh_rate,
+            timeout,
+            define_loop_later,
+            start_loop_marker,
     ):
         self._function = function
         self._is_process = is_process
@@ -148,7 +149,7 @@ class Task:
         return wrapped_task
 
     def evaluate(
-        self, brain_executor: TBrain, shared_brain_executor: TDictProxyAccessor
+            self, brain_executor: TBrain, shared_brain_executor: TDictProxyAccessor
     ):
         if self.is_process:
             return self.__evaluate_process_task(shared_brain_executor)

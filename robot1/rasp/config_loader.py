@@ -20,6 +20,7 @@ class CONFIG:
     SPECIFIC_CONFIG_KEY = "rob"
     GENERAL_CONFIG_KEY = "general"
     ARENA_CONFIG_KEY = "arena"
+    SCORE_CONFIG_KEY = "score"
 
     # Directory path (dont't touch)
     ROOT_DIR = os.path.abspath(RELATIVE_ROOT_PATH)
@@ -136,3 +137,11 @@ class CONFIG:
 
     # arena
     ARENA_CONFIG = CONFIG_STORE[ARENA_CONFIG_KEY]
+
+    # score
+    SCORE_CONFIG = CONFIG_STORE[SCORE_CONFIG_KEY]
+    BUILD_FLOOR_0 = SCORE_CONFIG["floor0"]
+    BUILD_FLOOR_1 = SCORE_CONFIG["floor1"]
+    BUILD_FLOOR_2 = SCORE_CONFIG["floor2"]
+    DEPLOY_BANNER = SCORE_CONFIG["banner"]
+

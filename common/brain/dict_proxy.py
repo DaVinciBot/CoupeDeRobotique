@@ -1,6 +1,5 @@
 from multiprocessing import Manager
 
-from geometry import OrientedPoint, Point
 from logger import Logger
 
 
@@ -73,8 +72,6 @@ class DictProxyAccessor:
             set,
             dict,
             tuple,
-            OrientedPoint,
-            Point,
             type(None),
         )
 

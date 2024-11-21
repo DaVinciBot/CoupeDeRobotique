@@ -399,5 +399,12 @@
     "robot_buffer": 18,
     "robot_buffer_with_god_hand_deployed": 25,
     "limit_plant_pickup": 3
+  },
+
+  "score": {
+    "floor0" : 4,
+    "floor1" : 8,
+    "floor2" : 16,
+    "banner" : 20
   }
 }

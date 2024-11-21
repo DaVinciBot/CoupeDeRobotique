@@ -1,9 +1,12 @@
 from logger import LogLevels
-from utils import Utils
 
-from brain.dict_proxy import DictProxyAccessor
 from brain.execution_states import ExecutionStates
+from brain.dict_proxy import DictProxyAccessor
+from brain.task_output import TaskOutput
+
 from multiprocessing import Process
+
+from datetime import datetime
 
 import functools
 import inspect
@@ -31,7 +34,7 @@ class SynchronousWrapper:
     """
 
     @staticmethod
-    def safe_execute(self: DictProxyAccessor, func, error_sleep: float or int = 0.5):
+    def safe_execute(self: DictProxyAccessor, func, error_sleep: float or int = 0.5) -> TaskOutput:
         """
         It executes the function and logs the error if there is one
         :param self: the shared_self which has to be synchronized with the main process
@@ -40,14 +43,14 @@ class SynchronousWrapper:
         :return:
         """
         try:
-            return func(self)
+            return TaskOutput(result=func(self), execution_state=ExecutionStates.CORRECTLY)
         except Exception as error:
             self.logger.log(
                 f"[{func.__name__}] executor (Subprocess: sync function) -> error: {error}",
                 LogLevels.ERROR,
             )
             time.sleep(error_sleep)
-            return ExecutionStates.ERROR_OCCURRED
+            return TaskOutput(result=None, execution_state=ExecutionStates.ERROR_OCCURRED)
 
     @staticmethod
     def wrap_to_routine(self, task, refresh_rate):
@@ -68,7 +71,7 @@ class SynchronousWrapper:
             time.sleep(refresh_rate)
 
     @staticmethod
-    def wrap_to_one_shot(self, task):
+    def wrap_to_one_shot(self, task) -> TaskOutput:
         """
         It wraps the function into a one-shot task which is executed once
         * It logs the start of the task
@@ -89,7 +92,7 @@ class SynchronousWrapper:
         return output
 
     @staticmethod
-    async def wrap_timeout_task(self, task, timeout, task_name=None):
+    async def wrap_timeout_task(self, task, timeout, task_name=None) -> TaskOutput:
         if task_name is None:
             task_name = task.__name__
 
@@ -101,10 +104,10 @@ class SynchronousWrapper:
             process = Process(target=task)
             process.start()
 
-            run_start = Utils.get_ts()
+            run_start = datetime.timestamp(datetime.now())
 
             def run_duration():
-                return Utils.time_since(run_start)
+                return datetime.timestamp(datetime.now()) - run_start
 
             while process.is_alive() and run_duration() < timeout:
                 await asyncio.sleep(0.1)
@@ -118,7 +121,8 @@ class SynchronousWrapper:
                     f"ended before the timeout [{run_duration():.1f}s/{timeout:.1f}s]",
                     LogLevels.INFO,
                 )
-                return ExecutionStates.CORRECTLY
+                # Can't get subprocess return value
+                return TaskOutput(result=None, execution_state=ExecutionStates.CORRECTLY)
 
             else:
                 self.logger.log(
@@ -126,14 +130,14 @@ class SynchronousWrapper:
                     f"ended by reaching the timeout [{timeout}]",
                     LogLevels.INFO,
                 )
-                return ExecutionStates.TIMEOUT
+                return TaskOutput(result=None, execution_state=ExecutionStates.TIMEOUT)
         except Exception as error:
             self.logger.log(
                 f"[{task_name}] timed task (Subprocess: sync function) -> "
                 f"ended because an error occurred [{error}]",
                 LogLevels.INFO,
             )
-            return ExecutionStates.ERROR_OCCURRED
+            return TaskOutput(result=None, execution_state=ExecutionStates.ERROR_OCCURRED)
 
     """
         Specific to synchronous task (task executed as subprocess)
@@ -143,7 +147,7 @@ class SynchronousWrapper:
     async def wrap_to_dummy_async(task):
         process = Process(target=task)
         process.start()
-        # process.join()
+        return TaskOutput(result=None, execution_state=ExecutionStates.CORRECTLY)
 
     @staticmethod
     def wrap_routine_with_initialization(self, task, refresh_rate, start_loop_marker):
@@ -190,15 +194,15 @@ class SynchronousWrapper:
         local_vars = {}
         exec(init_code, task.__globals__, local_vars)
         init_func = local_vars[f"{original_signature}__init_func"]
-        var_initialized = SynchronousWrapper.wrap_to_one_shot(self, init_func)
+        var_initialized = SynchronousWrapper.wrap_to_one_shot(self, init_func).result
 
         # Prepare the loop function
         # Get all parameters of the loop function
         param_list = ", ".join(var_initialized.keys())
         # Create a new function with the loop part
         loop_code = (
-            f"def {original_signature}__loop_func({param_list}):\n    "
-            + "\n    ".join(loop_src.split("\n"))
+                f"def {original_signature}__loop_func({param_list}):\n    "
+                + "\n    ".join(loop_src.split("\n"))
         )
 
         # Compiling and executing the initialization part
@@ -223,14 +227,15 @@ class AsynchronousWrapper:
     @staticmethod
     async def safe_execute(self: TBrain, func, error_sleep: float or int = 0.5):
         try:
-            return await func(self)
+            return TaskOutput(result=await func(self), execution_state=ExecutionStates.CORRECTLY)
+
         except Exception as error:
             self.logger.log(
                 f"[{func.__name__}] executor (Main-process: async function) -> error: {error}",
                 LogLevels.ERROR,
             )
             await asyncio.sleep(max(error_sleep, 0.5))  # Avoid spamming the logs
-            return ExecutionStates.ERROR_OCCURRED
+            return TaskOutput(result=None, execution_state=ExecutionStates.ERROR_OCCURRED)
 
     @staticmethod
     async def wrap_to_routine(self: TBrain, task, refresh_rate: float or int):
@@ -266,33 +271,33 @@ class AsynchronousWrapper:
             LogLevels.INFO,
         )
         try:
-
             async def coroutine_executor():
                 await task
 
-            run_start = Utils.get_ts()
-            await asyncio.wait_for(coroutine_executor(), timeout=timeout)
+            run_start = datetime.timestamp(datetime.now())
+            output = await asyncio.wait_for(coroutine_executor(), timeout=timeout)
 
             self.logger.log(
                 f"[{task_name}] timed task (Main-process: async function) -> "
-                f"ended before the timeout [{(Utils.time_since(run_start)):.1f}s/{timeout:.1f}s]",
+                f"ended before the timeout [{(datetime.timestamp(datetime.now()) - run_start):.1f}s/{timeout:.1f}s]",
                 LogLevels.INFO,
             )
-            return ExecutionStates.CORRECTLY
+            return TaskOutput(result=output, execution_state=ExecutionStates.CORRECTLY)
+
         except asyncio.TimeoutError:
             self.logger.log(
                 f"[{task_name}] timed task (Main-process: async function) -> "
                 f"ended by reaching the timeout [{timeout}]",
                 LogLevels.INFO,
             )
-            return ExecutionStates.TIMEOUT
+            return TaskOutput(result=None, execution_state=ExecutionStates.TIMEOUT)
         except Exception as error:
             self.logger.log(
                 f"[{task_name}] timed task (Main-process: async function) -> "
                 f"ended because an error occurred [{error}]",
                 LogLevels.INFO,
             )
-            return ExecutionStates.ERROR_OCCURRED
+            return TaskOutput(result=None, execution_state=ExecutionStates.ERROR_OCCURRED)
 
 
 """
@@ -317,4 +322,4 @@ def remove_task_signature(src):
     if newline_after_signature_index == -1:
         raise ValueError("Unable to find the function body.")
 
-    return "\n" + src[newline_after_signature_index + 1 :]
+    return "\n" + src[newline_after_signature_index + 1:]

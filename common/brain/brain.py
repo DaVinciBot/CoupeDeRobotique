@@ -1,9 +1,8 @@
 from logger import Logger, LogLevels
-from utils import Utils
 
-from brain.task_wrappers import SynchronousWrapper, AsynchronousWrapper
+from brain.task import Task, SynchronousWrapper, AsynchronousWrapper
 from brain.dict_proxy import DictProxyAccessor
-from brain.task import Task
+
 
 from typing import TypeVar, Type, List, Callable, Coroutine
 from multiprocessing import Process
