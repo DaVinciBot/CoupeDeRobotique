@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <pid.h>
 #include <motors_driver.h>
-#include <structures.h>
+#include "structures.h"
 
 class Rolling_Basis {
 private:
@@ -29,6 +29,9 @@ public :
     float X = 0.0f;
     float Y = 0.0f;
     float THETA = 0.0f;
+
+    float linear_speed = 0.0f;
+    float angular_speed = 0.0f;
 
     // Rolling basis params
     unsigned short encoder_resolution;

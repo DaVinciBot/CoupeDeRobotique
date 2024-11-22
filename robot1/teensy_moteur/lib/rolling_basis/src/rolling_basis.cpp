@@ -89,6 +89,10 @@ void Rolling_Basis::handle(
     double Vm = (this->right_motor->speed + this->right_motor->speed) / 2; // Vitesse linéaire mesurée
     double Wm = (this->right_motor->speed - this->right_motor->speed) / this->center_distance; // Vitesse angulaire mesurée
 
+    // Save speeds as rolling basis properties
+    this->linear_speed  = (float)Vm;
+    this->angular_speed = (float)Wm;
+
     // Compute linear and angular speed error (difference between target and real)
     double Ev = target_linear_speed - Vm;
     double Ew = target_angular_speed - Wm;
@@ -119,6 +123,7 @@ void Rolling_Basis::handle(
     double right_speed = (2 * Vc + Wc * this->center_distance) / 2;
     double left_speed = (2 * Vc - Wc * this->center_distance) / 2;
 
+    // TODO: suppress this debug
     Serial.println(
         "Vc: " + String(Vc) + " Wc: " + String(Wc) + 
         " Target Y: " + String(target_position.x) + " Real X: " + String(this->X) + 

@@ -27,6 +27,13 @@
         "vector": "cpp",
         "algorithm": "cpp",
         "complex": "cpp",
-        "cstddef": "cpp"
+        "cstddef": "cpp",
+        "format": "cpp",
+        "initializer_list": "cpp",
+        "list": "cpp",
+        "utility": "cpp",
+        "xhash": "cpp",
+        "xstring": "cpp",
+        "xutility": "cpp"
     }
 }

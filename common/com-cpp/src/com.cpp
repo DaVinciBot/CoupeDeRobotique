@@ -44,7 +44,7 @@ byte Com::handle()
             byte crc_b = crc.digest(this->buffer, msg_size + 1);
             if (crc_b != this->buffer[msg_size + 1])
             {
-                byte invalid_crc_msg = 0x7F; // NACK
+                byte invalid_crc_msg = NACK; 
                 send_msg(&invalid_crc_msg, 1);
                 this->pointer = 0;
                 continue;
@@ -59,6 +59,49 @@ byte Com::handle()
     }
     return 0;
 }
+
+void Com::handle_callback(void (*functions[256])(byte *msg, byte size))
+{
+    // Récupération de la taille du message reçu
+    byte size = this->handle();
+    if (size > 0)
+    {
+        // Récupération directe du pointeur vers le buffer
+        const byte *msg = this->read_buffer(); 
+        if (msg == nullptr)
+        {
+            // Si le buffer est nul, on sort (protection)
+            return;
+        }
+
+        // Récupération de l'ID du message
+        byte msg_id = msg[0];
+
+        // Vérification si la fonction correspondant à l'ID existe
+        if (functions[msg_id] != nullptr) 
+        {
+            functions[msg_id](const_cast<byte *>(msg), size); // Appel de la fonction
+        }
+        else if (msg_id == NACK)
+        {
+            // Réenvoi du dernier message en cas de NACK
+            if (this->last_msg != nullptr)
+            {
+                this->send_msg((byte*)&this->last_msg->msg, this->last_msg->size, true);
+            }
+        }
+        else
+        {
+            // Gestion des messages inconnus
+            msg_unknown_msg_type error_message;
+            error_message.type_id = msg_id;
+
+            // Envoi d'une réponse indiquant un type de message inconnu
+            this->send_msg((byte *)&error_message, sizeof(msg_unknown_msg_type)); 
+        }
+    }
+}
+
 
 byte *Com::read_buffer()
 {
@@ -97,13 +140,12 @@ void Com::send_msg(byte *msg, byte size, bool is_nack = false)
     // free(crc_b);
 }
 /// @brief Envoi un message text pour le debug 
-/// @param text DOIT ETRE EN ASCII et MAX 253 charactères
-/// @example com->print("hehe ca marche grace a Thomas Ledos")
+/// DOIT ETRE EN ASCII et MAX 253 charactères
 void Com::print(char* text)
 {
     // use send_msg to send the text input 
     byte *msg = new byte[strlen(text)+2];
-    msg[0] = 0x82; // ID for STRING message
+    msg[0] = PRINT; 
     for (byte i = 0; i <= strlen(text); i++)
     {
         msg[i+1] = text[i];
