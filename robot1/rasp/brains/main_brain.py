@@ -59,13 +59,31 @@ class MainBrain(Brain):
             target_position = OrientedPoint((0.0, 0.0), 0.0)
         )
         
-        await asyncio.sleep(20)
+        await asyncio.sleep(1)
         self.logger.log("STOP !", LogLevels.DEBUG)
         
         self.rolling_basis.set_speed_and_position(
             target_linear_speed = 0.0,
             target_angular_speed = 0.0,
-            target_position = OrientedPoint((10.0, 0.0), 0.0)
+            target_position = OrientedPoint((0.0, 0.0), 0.0)
+        )
+        
+        await asyncio.sleep(1)
+        self.logger.log("GO BACK !", LogLevels.DEBUG)
+        
+        self.rolling_basis.set_speed_and_position(
+            target_linear_speed = -10.0,
+            target_angular_speed = 0.0,
+            target_position = OrientedPoint((0.0, 0.0), 0.0)
+        )
+        
+        await asyncio.sleep(1)
+        self.logger.log("STOP !", LogLevels.DEBUG)
+        
+        self.rolling_basis.set_speed_and_position(
+            target_linear_speed = 0.0,
+            target_angular_speed = 0.0,
+            target_position = OrientedPoint((0.0, 0.0), 0.0)
         )
         
     

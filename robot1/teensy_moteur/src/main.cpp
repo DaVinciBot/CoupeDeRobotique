@@ -10,10 +10,6 @@
 // Configuration file (contains all the constants and pinout), it is just a main.cpp header file
 #include <config.h>
 
-// tmp
-#include <speed_and_position_planner.h>
-// tmp
-
 // 1. Instanciate the Rolling Basis object
 // a. Define the PID controllers
 PID linear_speed_pid(KP_LINEAR_SPEED, KI_LINEAR_SPEED, KD_LINEAR_SPEED);
@@ -58,6 +54,7 @@ float target_angular_speed = 0.0f;
 // b. define the callback functions
 void set_speed_and_position(byte *msg, byte size)
 {
+  com->print("Set speed and position\n");
   msg_set_speed_and_position *target_speed_and_position = (msg_set_speed_and_position *)msg;
 
   // Update speeds
@@ -68,6 +65,8 @@ void set_speed_and_position(byte *msg, byte size)
   target_position.x = target_speed_and_position->target_position_x;
   target_position.y = target_speed_and_position->target_position_y;
   target_position.theta = target_speed_and_position->target_position_theta;
+
+  com->print("Set speed and position SUCCESS\n");
 }
 
 // c. assign the callback functions to the right message id
@@ -77,34 +76,12 @@ void initialize_callback_functions() {
   callback_functions[SET_SPEED_AND_POSITION] = &set_speed_and_position;
 }
 
-// Tmp
-SpeedPositionPlanner *path = new SpeedPositionPlanner(100, 250, 10, 10, 0.0f, 0.0f);
-long start_time = 0;
-
-bool millis_to_bool(int half_period_duration, float offset = 1.0f){
-  return millis() % (half_period_duration * 2) < half_period_duration * offset;
-}
-
-// Tmp
-
-
 // 4. Define the timer interrupt handle function (this function will be called every 10ms, and which manage the robot position and speed: asservissement)
 void handle()
 {
-  // rolling_basis_ptr->odometrie_handle();
-  // float elapsed_time = (millis() - start_time) / 1000.0;
-  // float planned_speed = path->planned_speed(elapsed_time);
-  // float planned_x = path->planned_position(elapsed_time);
-  // Point planned_point(planned_x, 0, 0);
-
-  // //Serial.println(String("Elapsed time: ") + String(elapsed_time) + String(" | Planned speed: ") + String(planned_speed) + String(" | Planned position: ") + String(planned_x));
-  
-  // rolling_basis_ptr->handle(planned_point, planned_speed, 0.0);
-
   rolling_basis_ptr->odometrie_handle();
   rolling_basis_ptr->handle(target_position, target_linear_speed, target_angular_speed);
 }
-
 
 
 void setup()
@@ -130,8 +107,6 @@ void setup()
 
   // Initializa callback functions
   initialize_callback_functions();
-
-  start_time = millis();
 }
 
 
@@ -139,7 +114,7 @@ uint_fast32_t counter = 0;
 void loop()
 {
   // Handle the communication 
-  com->handle();
+  com->handle_callback(callback_functions);
   
   // Send rolling basis state
   msg_update_rolling_basis rolling_basis_msg;
@@ -150,7 +125,7 @@ void loop()
     rolling_basis_msg.y = rolling_basis_ptr->Y;
     rolling_basis_msg.theta = rolling_basis_ptr->THETA;
     // Rolling Basis speeds
-    rolling_basis_msg.current_linear_speed = rolling_basis_ptr->linear_speed;
+    rolling_basis_msg.current_linear_speed = target_angular_speed;
     rolling_basis_msg.current_angular_speed = rolling_basis_ptr->angular_speed;
 
     com->send_msg((byte *)&rolling_basis_msg, sizeof(msg_update_rolling_basis));
