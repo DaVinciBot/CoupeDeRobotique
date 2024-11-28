@@ -16,15 +16,15 @@ from enum import Enum
 
 class Command(Enum):
     # rasp -> teensy : 0-127 (Convention)
-    SET_SPEED_AND_POSITION = b"\x00"  # 0
+    SET_SPEED_AND_POSITION = 0
     
     # two ways : 127 (Convention)
-    NACK = b"\x7F"  # 127
+    NACK = 127
     
     # teensy -> rasp : 128-255 (Convention)
-    PRINT = b"\x80"  # 128
-    UPDATE_ROLLING_BASIS = b"\x81"  # 129
-    UNKNOWN_MSG_TYPE = b"\xFF"  # 255
+    PRINT = 128
+    UPDATE_ROLLING_BASIS = 129
+    UNKNOWN_MSG_TYPE = 255
 
 
 class RollingBasis(Teensy):
@@ -54,15 +54,15 @@ class RollingBasis(Teensy):
         This is used to match a handling function to a message type.
         add_callback can also be used.
         """
-        self.messagetype = {
-            128: self.rcv_print, 
-            129: self.rcv_rolling_basis_state,  
-            255: self.rcv_unknown_msg,
-        }
+        # self.messagetype = {
+        #     128: self.rcv_print, 
+        #     129: self.rcv_rolling_basis_state,  
+        #     255: self.rcv_unknown_msg,
+        # }
         
-        # self.add_callback(self.rcv_print, Command.PRINT.value)
-        # self.add_callback(self.rcv_unknown_msg, Command.UNKNOWN_MSG_TYPE.value)
-        # self.add_callback(self.rcv_rolling_basis_state, Command.UPDATE_ROLLING_BASIS.value)
+        self.add_callback(self.rcv_print, Command.PRINT.value)
+        self.add_callback(self.rcv_unknown_msg, Command.UNKNOWN_MSG_TYPE.value)
+        self.add_callback(self.rcv_rolling_basis_state, Command.UPDATE_ROLLING_BASIS.value)
     
     #############################
     # Received message handling #
