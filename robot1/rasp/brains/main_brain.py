@@ -44,7 +44,7 @@ class MainBrain(Brain):
             LogLevels.DEBUG
         )
         
-    @Brain.task(process=False, run_on_start=True)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0)
     async def drive_rob(self):
         """
         Get the state of the rolling basis
@@ -59,7 +59,8 @@ class MainBrain(Brain):
             target_position = OrientedPoint((0.0, 0.0), 0.0)
         )
         
-        await asyncio.sleep(1)
+        await asyncio.sleep(20)
+        self.logger.log("STOP !", LogLevels.DEBUG)
         
         self.rolling_basis.set_speed_and_position(
             target_linear_speed = 0.0,
