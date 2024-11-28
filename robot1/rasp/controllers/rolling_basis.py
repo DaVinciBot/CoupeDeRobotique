@@ -99,6 +99,13 @@ class RollingBasis(Teensy):
         target_angular_speed: float,
         target_position: OrientedPoint
     ) -> None:
+        self.logger.log(
+            f"Setting speed and position to:\n"
+            f"Linear speed: {target_linear_speed}\n"
+            f"Angular speed: {target_angular_speed}\n"
+            f"Position: {target_position}",
+            LogLevels.DEBUG
+        )
         msg = (
             Command.SET_SPEED_AND_POSITION.value
             + struct.pack("<f", target_linear_speed)

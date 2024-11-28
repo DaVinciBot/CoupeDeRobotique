@@ -123,15 +123,6 @@ void Rolling_Basis::handle(
     double right_speed = (2 * Vc + Wc * this->center_distance) / 2;
     double left_speed = (2 * Vc - Wc * this->center_distance) / 2;
 
-    // TODO: suppress this debug
-    Serial.println(
-        "Vc: " + String(Vc) + " Wc: " + String(Wc) + 
-        " Target Y: " + String(target_position.x) + " Real X: " + String(this->X) + 
-        " Real Y: " + String(this->Y) + 
-        " Real Theta: " + String(this->THETA) + 
-        " Right: " + String(right_speed) + " Left: " + String(left_speed)
-        + "\n");
-
     /* Apply commands to motors */
     this->right_motor->set_motor(right_speed);
     this->left_motor->set_motor(left_speed);

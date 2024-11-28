@@ -157,12 +157,6 @@ void loop()
     counter = 0;
     
   }
-
-  
-  if (millis_to_bool(1000)) {
-    com->print("hello world");
-  }
-  
 }
 
 /*
