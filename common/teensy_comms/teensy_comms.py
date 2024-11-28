@@ -141,8 +141,6 @@ class Teensy:
         while self._teensy.out_waiting:
             pass
         
-        self.logger.log(f"Sent message : {msg.hex(sep=' ')}")
-
     def read_bytes(self) -> bytes:
         return self._teensy.read_until(self.end_bytes)
 
@@ -198,10 +196,8 @@ class Teensy:
                             )
                             self.last_message = None
                     else:
-                        self.logger.log(f"Received message : {msg.hex(sep=' ')}, EXECUTING", LogLevels.DEBUG)
-                        self.logger.log(f"messagetype: {self.messagetype}", LogLevels.DEBUG)
                         self.messagetype[msg[0]](msg[1:-1])
-                        self.logger.log(f"END OF EXECUTION", LogLevels.DEBUG)
+
                 except Exception as e:
                     self.logger.log(
                         "Received message handling crashed :\n" + str(e),
