@@ -54,9 +54,9 @@ class RollingBasis(Teensy):
         This is used to match a handling function to a message type.
         add_callback can also be used.
         """
-        self.add_callback(self, self.rcv_print, Command.PRINT.value)
-        self.add_callback(self, self.rcv_unknown_msg, Command.UNKNOWN_MSG_TYPE.value)
-        self.add_callback(self, self.rcv_rolling_basis_state, Command.UPDATE_ROLLING_BASIS.value)
+        self.add_callback(self.rcv_print, Command.PRINT.value)
+        self.add_callback(self.rcv_unknown_msg, Command.UNKNOWN_MSG_TYPE.value)
+        self.add_callback(self.rcv_rolling_basis_state, Command.UPDATE_ROLLING_BASIS.value)
     
     #############################
     # Received message handling #
