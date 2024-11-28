@@ -199,6 +199,7 @@ class Teensy:
                             self.last_message = None
                     else:
                         self.logger.log(f"Received message : {msg.hex(sep=' ')}, EXECUTING", LogLevels.DEBUG)
+                        self.logger.log(f"messagetype: {self.messagetype}", LogLevels.DEBUG)
                         self.messagetype[msg[0]](msg[1:-1])
                         self.logger.log(f"END OF EXECUTION", LogLevels.DEBUG)
                 except Exception as e:
