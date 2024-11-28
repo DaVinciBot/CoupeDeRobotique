@@ -43,9 +43,9 @@ class MainBrain(Brain):
             f"Linear Speed: {self.rolling_basis.linear_speed}\n"
             f"Angular Speed:{self.rolling_basis.angular_speed}"
         )
-        self.rolling_basis.set_speed_and_position(
-            target_linear_speed=0.1,
-            target_angular_speed=0.0,
-            target_position=OrientedPoint((0.0, 0.0), 0.0)
-        )
+        # self.rolling_basis.set_speed_and_position(
+        #     target_linear_speed=0.0,
+        #     target_angular_speed=0.0,
+        #     target_position=OrientedPoint((0.0, 0.0), 0.0)
+        # )
         

@@ -75,6 +75,8 @@ class RollingBasis(Teensy):
         - float current_linear_speed (4 bytes)
         - float current_angular_speed (4 bytes) 
         """
+        self.logger.log(f"Received rolling basis state: {msg}", LogLevels.DEBUG)
+        
         # Position / odometrie
         self.odometrie = OrientedPoint(
             (struct.unpack("<f", msg[0:4])[0], struct.unpack("<f", msg[4:8])[0]),
