@@ -103,6 +103,7 @@ void handle()
 
   rolling_basis_ptr->odometrie_handle();
   rolling_basis_ptr->handle(target_position, target_linear_speed, target_angular_speed);
+  com->print("hello world");
 }
 
 
@@ -155,6 +156,7 @@ void loop()
 
     com->send_msg((byte *)&rolling_basis_msg, sizeof(msg_update_rolling_basis));
     counter = 0;
+    
   }
 }
 
@@ -167,4 +169,3 @@ void loop()
  /_/  /_/ \___/
 
 */
-  
