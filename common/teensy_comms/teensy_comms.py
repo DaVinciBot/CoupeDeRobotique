@@ -140,6 +140,8 @@ class Teensy:
         self._teensy.write(msg + self.end_bytes)
         while self._teensy.out_waiting:
             pass
+        
+        self.logger.log(f"Sent message : {msg.hex(sep=' ')}")
 
     def read_bytes(self) -> bytes:
         return self._teensy.read_until(self.end_bytes)
@@ -205,8 +207,8 @@ class Teensy:
                     time.sleep(0.5)
 
             except Exception as e:
-                # self.logger.log(
-                #    f"Device connection seems to be closed, teensy crashed ? [{e}]",
-                #    LogLevels.CRITICAL,
-                # )
+                self.logger.log(
+                   f"Device connection seems to be closed, teensy crashed ? [{e}]",
+                   LogLevels.CRITICAL,
+                )
                 pass
