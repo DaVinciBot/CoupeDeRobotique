@@ -49,25 +49,15 @@ class RollingBasis(Teensy):
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
         self.linear_speed: float = 0.0
         self.angular_speed: float = 0.0
-
-
-    #####################
-    # Position handling #
-    #####################
-    def true_pos(self, position: OrientedPoint) -> OrientedPoint:
+        
         """
-        enables to correct the position using a fixed offset if required
-
-        :param position: _description_
-        :type position: OrientedPoint
-        :return: _description_
-        :rtype: OrientedPoint
+        This is used to match a handling function to a message type.
+        add_callback can also be used.
         """
-        return OrientedPoint(
-            (position.x + self.position_offset.x, position.y + self.position_offset.y),
-            position.theta + self.position_offset.theta,
-        )
-
+        self.add_callback(self, self.rcv_print, Command.PRINT.value)
+        self.add_callback(self, self.rcv_unknown_msg, Command.UNKNOWN_MSG_TYPE.value)
+        self.add_callback(self, self.rcv_rolling_basis_state, Command.UPDATE_ROLLING_BASIS.value)
+    
     #############################
     # Received message handling #
     #############################

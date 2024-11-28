@@ -39,8 +39,8 @@ class MainBrain(Brain):
         """
         print(
             f"Rolling basis state:\n"
-            f"{self.rolling_basis.odometrie}\n"
-            f"{self.rolling_basis.linear_speed}\n"
-            f"{self.rolling_basis.angular_speed}"
+            f"Odometrie: {self.rolling_basis.odometrie}\n"
+            f"Linear Speed: {self.rolling_basis.linear_speed}\n"
+            f"Angular Speed:{self.rolling_basis.angular_speed}"
         )
         
