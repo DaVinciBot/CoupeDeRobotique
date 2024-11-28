@@ -190,11 +190,11 @@ class Teensy:
                     continue
                 try:
                     if msg[0] == 127:
-                        self.logger.log("Received a NACK")
+                        self.logger.log("Received a NACK", LogLevels.WARNING)
                         if self.last_message != None:
                             self.send_bytes(self.last_message)
                             self.logger.log(
-                                f"Sending back action : {self.last_message[0]}"
+                                f"Sending back message : {self.last_message[0]}"
                             )
                             self.last_message = None
                     else:

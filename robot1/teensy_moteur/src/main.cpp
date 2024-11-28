@@ -103,14 +103,13 @@ void handle()
 
   rolling_basis_ptr->odometrie_handle();
   rolling_basis_ptr->handle(target_position, target_linear_speed, target_angular_speed);
-  com->print("hello world");
 }
 
 
 
 void setup()
 {
-  Serial.begin(BAUDRATE);
+  com = new Com(&Serial, BAUDRATE);
 
   // Change pwm frequency
   analogWriteFrequency(R_PWM, PWM_FREQUENCY);
@@ -141,7 +140,7 @@ void loop()
 {
   // Handle the communication 
   com->handle();
-
+  
   // Send rolling basis state
   msg_update_rolling_basis rolling_basis_msg;
   if (counter++ > 1024)
@@ -158,6 +157,12 @@ void loop()
     counter = 0;
     
   }
+
+  
+  if (millis_to_bool(1000)) {
+    com->print("hello world");
+  }
+  
 }
 
 /*
