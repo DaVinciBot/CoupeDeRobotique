@@ -32,7 +32,7 @@ class MainBrain(Brain):
         super().__init__(logger, self)
 
 
-    @Brain.task(process=False, interval=1)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     def rolling_basis_state(self):
         """
         Get the state of the rolling basis
