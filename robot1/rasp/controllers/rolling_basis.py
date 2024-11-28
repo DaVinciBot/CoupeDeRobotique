@@ -114,7 +114,7 @@ class RollingBasis(Teensy):
         )
         
         msg = (
-            Command.SET_SPEED_AND_POSITION.value
+            struct.pack("<c", Command.SET_SPEED_AND_POSITION.value)
             + struct.pack("<f", target_linear_speed)
             + struct.pack("<f", target_angular_speed)
             + struct.pack("<f", target_position.x)
@@ -122,6 +122,6 @@ class RollingBasis(Teensy):
             + struct.pack("<f", target_position.theta)
         )
         # https://docs.python.org/3/library/struct.html#format-characters
-        self.logger.log(f"Sending message {msg.hex()}", LogLevels.DEBUG)
+
         self.send_bytes(msg)
         
