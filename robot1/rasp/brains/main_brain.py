@@ -33,7 +33,7 @@ class MainBrain(Brain):
 
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
-    await def rolling_basis_state(self):
+    async def rolling_basis_state(self):
         """
         Get the state of the rolling basis
         """
