@@ -26,6 +26,9 @@ class Command(Enum):
     UPDATE_ROLLING_BASIS = 129
     UNKNOWN_MSG_TYPE = 255
 
+    # To use for message creation
+    def to_bytes(self):
+        return bytes([self.value])
 
 class RollingBasis(Teensy):
     ######################
@@ -114,7 +117,7 @@ class RollingBasis(Teensy):
         )
         
         msg = (
-            struct.pack("<c", Command.SET_SPEED_AND_POSITION.value)
+            Command.SET_SPEED_AND_POSITION.to_bytes()
             + struct.pack("<f", target_linear_speed)
             + struct.pack("<f", target_angular_speed)
             + struct.pack("<f", target_position.x)
