@@ -155,8 +155,6 @@ void loop()
 
     com->send_msg((byte *)&rolling_basis_msg, sizeof(msg_update_rolling_basis));
     counter = 0;
-
-    com->print("send rolling basis state");
   }
 }
 

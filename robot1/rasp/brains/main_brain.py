@@ -31,7 +31,6 @@ class MainBrain(Brain):
         self.rolling_basis: RollingBasis
         super().__init__(logger, self)
 
-
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def rolling_basis_state(self):
         """
