@@ -4,7 +4,7 @@ import random
 import time
 import math
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict
 
 # Import from common
 from config_loader import CONFIG
@@ -13,6 +13,7 @@ from brain import Brain
 from WS_comms import WSmsg, WSclientRouteManager, WServerRouteManager
 from geometry import OrientedPoint, Point, distance, Polygon
 from arena import MarsArena, Plants_zone
+
 from logger import Logger, LogLevels
 # from led_strip import LEDStrip
 from utils import Utils
@@ -22,7 +23,6 @@ from utils import Utils
 from utils import LidarMode, AntiCollisionHandle, GoToResult
 # from controllers import RollingBasis, Actuators
 from sensors import Lidar
-
 
 """
 
@@ -62,94 +62,14 @@ Creer classes qui héritent de tTask:
 
 
 @dataclass
+
 class Objective:
-    objectives: List[dict] = field(default_factory=list)
-
-    def __str__(self):
-        r = "\n"
-        for objective in self.objectives:
-            r += f"{objective['task']}, at {objective['target_index']}, estimated time: {objective['time_estimate']}"
-            match objective['elevator_after']:
-                case "top":
-                    r += ", then raising elevator for next objective"
-                case "bottom":
-                    r += ", then lowering elevator for next objective"
-                case "intermediate":
-                    r += ", then setting elevator to intermediate position"
-                case _:
-                    r += ", then nothing"
-
-            r += "\n"
-        return r
-
-    def add_objective(self, task: str, target_position: tuple[float, float], target_index: int,
-                      elevator_after: str = "") -> None:
-        # possibility to automatically compute target_index with target_position
-        # see if it's worth it depending on the ram and rom of the rasp
-        self.objectives.append(
-            {
-                "task": task,
-                "target_position": target_position,
-                "target_index": target_index,
-                "elevator_after": elevator_after,
-                "score": getattr(CONFIG, task.upper(), 0),
-                "time_estimate": random.randint(0, 30),  # to edit
-            }
-        )
-
-    @staticmethod
-    def calculate_time(time_estimate: float, target_position: tuple[float, float],
-                       current_position: tuple[float, float]) -> float:
-        # very simplified version to edit in the future
-        distance = ((target_position[0]**2 - current_position[0]**2)
-                    + (target_position[1]**2 - current_position[1]**2))**0.5
-
-        # speed in cm/s. hard coded value, to edit in the future
-        speed = 50
-
-        # not accurate at all, to edit in the future
-        margin_error = speed * 0.1
-
-        return distance/speed + time_estimate + margin_error
-
-    @staticmethod
-    def is_interesting(task: str, target_index: int, arena) -> bool:
-        return not ( False
-                # (task == "banner")
-                # or arena.pickup_zones[target_index].visited
-        )
-
-    def evaluate(self, start_time: float, arena: MarsArena) -> None:
-        for objective in self.objectives:
-            timing = self.calculate_time(time_estimate=objective["time_estimate"],
-                                         target_position=objective["target_position"],
-                                         current_position=(0, 0))
-
-            enough_time = timing + start_time < 30 and timing > 0
-
-            interesting = self.is_interesting(task=objective["task"], target_index=objective["target_index"],
-                                              arena=arena)
-
-            if not enough_time or not interesting:
-                self.objectives.remove(objective)
-
-    def prioritize(self) -> None:
-        # primitive sorting method to review later
-        self.objectives.sort(key=lambda objective: (-objective["score"], objective["time_estimate"]))
-
-    def next_objective(self) -> dict:
-        return self.objectives.pop(0) if self.objectives else None
-
-
-
-
-
-@dataclass
-class Objective2:
-    task: str  # objective type ("pickup","drop_to_zone","drop_to_gardener")
-    target_index: int  # index of the target
-    target_position: tuple[float, float]  # position of the target
-    time_estimate: float = -1.0  # time estimate (won't try if it's too late)
+    task: Brain.task(process=False, run_on_start=False)  # objective type ("deploy_banner","build_floor_0",
+    # "build_floor_1", "build_floor_2")
+    name: str
+    target_index: int = 0  # index of the target
+    target_position: tuple[float, float] = (random.randint(0, 100), random.randint(0, 100))  # position of the target
+    time_estimate: float = random.randint(0, 20)  # time estimate (won't try if it's too late)
     elevator_after: str = ""
 
     def __str__(self):
@@ -167,42 +87,29 @@ class Objective2:
 
     @property
     def score(self) -> int:
-        return getattr(CONFIG, self.task.upper(), 0)
-
-    def enough_time(self, start_time) -> bool:
-
-        if (
-                Utils.get_ts() + self.time_estimate - start_time > 80
-                and self.time_estimate > 0
-        ):
-            return False
-        return True
-
-    def is_interesting(self, arena) -> bool:
-        return not ( False
-            # (task == "banner")
-            # or arena.pickup_zones[target_index].visited
-        )
-
-    def evaluate(self, start_time, arena) -> bool:
-        return self.enough_time(start_time) and self.is_interesting(arena)
+        return getattr(CONFIG, self.name.upper(), 0)
 
 
 @dataclass
-class Objective2Manager:
-    objectives: List[Objective2] = field(default_factory=list)
+class ObjectiveSupervisor:
+    objectives: List[Objective] = field(default_factory=list)
+    summary: dict = field(default_factory=lambda: {i: {} for i in range(11)}) # we keep a history of all the tasks
+                                                                              # we launched and see which failed or not
+    current_task = None
+    task_finished = asyncio.Event()
 
-    def add_objective(self, objective: Objective2) -> None:
+    def add_objective(self, objective: Objective) -> None:
         # possibility to automatically compute target_index with target_position
         # see if it's worth it depending on the ram and rom of the rasp
         self.objectives.append(objective)
+        self.summary[objective.target_index][objective.name] = False
 
     @staticmethod
     def calculate_time(time_estimate: float, target_position: tuple[float, float],
                        current_position: tuple[float, float]) -> float:
         # very simplified version to edit in the future
-        distance = ((target_position[0]**2 - current_position[0]**2)
-                    + (target_position[1]**2 - current_position[1]**2))**0.5
+        distance = ((target_position[0] ** 2 - current_position[0] ** 2)
+                    + (target_position[1] ** 2 - current_position[1] ** 2)) ** 0.5
 
         # speed in cm/s. hard coded value, to edit in the future
         speed = 50
@@ -210,35 +117,96 @@ class Objective2Manager:
         # not accurate at all, to edit in the future
         margin_error = speed * 0.1
 
-        return distance/speed + time_estimate + margin_error
+        return distance / speed + time_estimate + margin_error
 
-    @staticmethod
-    def is_interesting(task: str, target_index: int, arena) -> bool:
-        return not ( False
-                # (task == "banner")
-                # or arena.pickup_zones[target_index].visited
-        )
+    # version très sale qui marche, à simplifier grandement
+    def is_interesting(self, task: str, target_index: int, arena) -> bool:
+        interesting: bool = False
+        if task == "deploy_banner":
+            if not self.summary[target_index][task]:
+                interesting = True
+
+        if task == "build_floor_0":
+            # if arena.pickup_zones[target_index].visited:
+            if not self.summary[target_index][task]:
+                interesting = True
+
+        if task == "build_floor_1":
+            # if arena.pickup_zones[target_index].visited:
+            if not self.summary[target_index][task]:
+                if "build_floor_0" in self.summary[target_index]:
+                    if self.summary[target_index]["build_floor_0"]:
+                        interesting = True
+
+        if task == "build_floor_2":
+            # if arena.pickup_zones[target_index].visited:
+            if not self.summary[target_index][task]:
+                if "build_floor_0" in self.summary[target_index]:
+                    if "build_floor_1" in self.summary[target_index]:
+                        if self.summary[target_index]["build_floor_0"]:
+                            if self.summary[target_index]["build_floor_1"]:
+                                interesting = True
+
+        if not interesting:
+            print(f"Objective {task} not interesting")
+
+        return interesting
 
     def evaluate(self, start_time: float, arena: MarsArena) -> None:
-        for objective in self.objectives:
-            timing = self.calculate_time(time_estimate=objective.time_estimate,
-                                         target_position=objective.target_position,
-                                         current_position=(0, 0))
+        objective = self.objectives[0]
 
-            enough_time = timing + start_time < 30 and timing > 0
+        timing = self.calculate_time(time_estimate=objective.time_estimate,
+                                     target_position=objective.target_position,
+                                     current_position=(0, 0))
 
-            interesting = self.is_interesting(task=objective.task, target_index=objective.target_index,
-                                              arena=arena)
+        enough_time = timing + start_time < 30 and timing > 0
 
-            if not enough_time or not interesting:
-                self.objectives.remove(objective)
+        interesting = self.is_interesting(task=objective.name, target_index=objective.target_index,
+                                          arena=arena)
+
+        if not enough_time or not interesting:
+            self.objectives.remove(objective)
 
     def prioritize(self) -> None:
-        # primitive sorting method to review later
-        self.objectives.sort(key=lambda objective: (-objective.score, objective.time_estimate))
+        def sort_key(objective):
+            # "banner" objective is always first
+            if objective.name == "deploy_banner":
+                return 0, 0
+            # Sort by time_estimate, then sort by floor number (avoid to do floor2 before floor0 4ex)
+            if objective.name.startswith("build_floor_"):
+                floor_number = int(objective.name.split("_")[-1])  # Extract the floor number
+                return 1, self.calculate_time(objective.time_estimate, objective.target_position,
+                                              current_position=(0, 0)), floor_number
+            # Default sorting for other objectives
+            return 1, self.calculate_time(objective.time_estimate, objective.target_position,
+                                          current_position=(0, 0)), float('inf')
 
-    def next_objective(self) -> Objective2:
-        return self.objectives.pop(0) if self.objectives else None
+        self.objectives.sort(key=sort_key)
+
+    async def engage_new_task(self) -> None:
+        if self.objectives:
+            objective = self.objectives[0]
+            print(f"Starting objective: {objective.name}")
+            self.current_task = asyncio.create_task(objective.task())
+            res = (await self.current_task).result
+            if res:
+                self.summary[objective.target_index][objective.name] = True
+                print(f"Objective complete: {objective.name}")
+                self.objectives.pop(0)
+                self.current_task = None
+                self.task_finished.set()
+                self.task_finished = asyncio.Event()
+        else:
+            print("No more objectives")
+
+    def cancel(self):
+        if self.current_task:
+            self.current_task.cancel()
+            self.current_task = None
+            self.task_finished.set()
+            self.task_finished = asyncio.Event()
+            print(f"Cancelling {self.objectives[0].name} objective")
+            self.objectives.pop(0)
 
 
 class MainBrain(Brain):
@@ -267,8 +235,6 @@ class MainBrain(Brain):
         # Init the brain
         super().__init__(logger, self)
 
-
-
         self.logger.log(
             f"Mode: {'zombie' if CONFIG.ZOMBIE_MODE else 'game'}", LogLevels.INFO
         )
@@ -276,70 +242,141 @@ class MainBrain(Brain):
     """
         Tasks
     """
-    """
-    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
+
+    """@Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def coucou(self):
         self.logger.log("Coucou Anne-Marie", LogLevels.INFO)
 
     @Brain.task(process=True, run_on_start=True, refresh_rate=1)
     def coucou(self):
         self.logger.log("Yo je suis dans un autre process carrément", LogLevels.INFO)
-
-    @Brain.task(process=False, run_on_start=False)
-    async def methode_one_shot(self):
-        self.logger.log("je tente un one shot", LogLevels.INFO)
-
-    # Method to calculate what is the best next task based on time and points
-    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
-    async def next_best_objective(self) -> str:
-        objectives: list[Objective2] = [
-            Objective2(task="build_floor_0", target_index=1, time_estimate=10, elevator_after="top"),
-            Objective2(task="build_floor_1", target_index=1, time_estimate=10, elevator_after="top"),
-            Objective2(task="build_floor_2", target_index=1, time_estimate=10, elevator_after="top"),
-            Objective2(task="deploy_banner", target_index=1, time_estimate=10, elevator_after="top")]
-
-        best_objective: str = None
-        max_value = 0
-        Arena: MarsArena
-
-        for objective in objectives:
-            if objective.score / await self.estimate_time(objective) > max_value and objective.evaluate(start_time=1,
-                                                                                                        arena=Arena):
-                best_objective = objective.task
-                max_value = objective.score/await self.estimate_time(objective)
-
-        return best_objective
-    
-    async def estimate_time(self, task: Objective2) -> float:
-        # calcul du temps que ça prend pour aller à la task
-        robot_speed = CONFIG.ROBOT_SPEED  # existe pas encore
-        # calcul distance
-        distance = task.target_index
-        time_to_go_to = distance / robot_speed
-        return time_to_go_to + task.time_estimate
     """
 
-    @Brain.task(process=True, run_on_start=True, refresh_rate=1, define_loop_later=True)
-    def test(self):
-        arena = None
+    # Method to calculate what is the best next task based on time and points
+    @Brain.task(process=False, run_on_start=False)
+    async def build_floor_0(self) -> bool:
+        try:
+            self.logger.log("Boom! Je récupère les cannettes.", LogLevels.INFO)
+            await asyncio.sleep(1)
+            self.logger.log("Je m'occuppe des planches.", LogLevels.INFO)
+            await asyncio.sleep(1)
+            self.logger.log("Et voilà étage 0 construit !", LogLevels.INFO)
+            await asyncio.sleep(1)
+            return True
+        except Exception as e:
+            self.logger.log(f"Erreur lors de la construction de l'étage 0: {e}", LogLevels.ERROR)
+            self.logger.log(f"Passage à la tache suivante", LogLevels.ERROR)
+            return False
 
-        big_guy = Objective()
+    @Brain.task(process=False, run_on_start=False)
+    async def build_floor_1(self) -> bool:
+        try:
+            self.logger.log("Boom! Je récupère les autres cannettes.", LogLevels.INFO)
+            await asyncio.sleep(1)
+            self.logger.log("Je m'occuppe de la planche.", LogLevels.INFO)
+            await asyncio.sleep(1)
+            self.logger.log("L'ascenceur monte et descend.", LogLevels.INFO)
+            await asyncio.sleep(1)
+            self.logger.log("Et voilà étage 1 construit !", LogLevels.INFO)
+            return True
+        except Exception as e:
+            self.logger.log(f"Erreur lors de la construction de l'étage 1: {e}", LogLevels.ERROR)
+            self.logger.log(f"Passage à la tache suivante", LogLevels.ERROR)
+            return False
 
-        big_guy.add_objective("deploy_banner", (100, 200), 5, "top")
-        big_guy.add_objective("build_floor_0", (0, 50), 2, "intermediate")
-        big_guy.add_objective("build_floor_1", (0, 50), 2, "top")
-        big_guy.add_objective("build_floor_2", (0, 50), 2, "bottom")
-        big_guy.add_objective("build_floor_0", (15, 0), 4, "intermediate")
-        big_guy.add_objective("build_floor_1", (15, 0), 4, "bottom")
-        big_guy.add_objective("build_floor_0", (200, 600), 11, "bottom")
-        self.start_time = time.time()
-        big_guy.prioritize()
+    @Brain.task(process=False, run_on_start=False)
+    async def build_floor_2(self) -> bool:
+        try:
+            self.logger.log("Boom! Je récupère des cannettes à un autre endroit carrément.", LogLevels.INFO)
+            await asyncio.sleep(1)
+            self.logger.log("Je m'occuppe d'une nouvelle planche encore.", LogLevels.INFO)
+            await asyncio.sleep(1)
+            self.logger.log("L'ascenceur monte et descend et remonte et redescend.", LogLevels.INFO)
+            await asyncio.sleep(1)
+            self.logger.log("Et voilà étage 2 construit !", LogLevels.INFO)
+            return True
+        except Exception as e:
+            self.logger.log(f"Erreur lors de la construction de l'étage 2: {e}", LogLevels.ERROR)
+            self.logger.log(f"Passage à la tache suivante", LogLevels.ERROR)
+            return False
 
-        # ---Loop--- #
-        self.logger.log(big_guy.__str__(), LogLevels.INFO)
-        self.logger.log(time.time() - self.start_time, LogLevels.INFO)
-        big_guy.evaluate(time.time() - self.start_time, arena)
-        # big_guy.next_objective()
+    @Brain.task(process=False, run_on_start=False)
+    async def deploy_banner(self) -> bool:
+        try:
+            self.logger.log("Déploiement en cours...", LogLevels.INFO)
+            await asyncio.sleep(1)
+            self.logger.log("Boom, +20 points", LogLevels.INFO)
+            await asyncio.sleep(1)
+            self.logger.log("Banière déployée !", LogLevels.INFO)
+            return True
+        except Exception as e:
+            self.logger.log(f"Erreur lors du déploiement: {e}", LogLevels.ERROR)
+            self.logger.log(f"Passage à la tache suivante", LogLevels.ERROR)
+            return False
+
+    @Brain.task(process=False, run_on_start=True)
+    async def launch(self):
+        objectives = [
+            Objective(task=self.build_floor_1, name="build_floor_1", target_index=0, target_position=(20, 20)),
+            Objective(task=self.build_floor_0, name="build_floor_0", target_index=0, target_position=(20, 20)),
+            Objective(task=self.build_floor_2, name="build_floor_2", target_index=0, target_position=(20, 20)),
+            Objective(task=self.build_floor_0, name="build_floor_1", target_index=1, target_position=(10, 15)),
+            Objective(task=self.build_floor_0, name="build_floor_0", target_index=2, target_position=(0, 0)),
+            Objective(task=self.deploy_banner, name="deploy_banner", target_index=4)
+        ]
+
+        obs = ObjectiveSupervisor()
+
+        for o in objectives:
+            obs.add_objective(o)
+
+        obs.prioritize()
+
+        for ob in obs.objectives:
+            print(ob.name, " index : ", ob.target_index, " position : ", ob.target_position)
+
+        # we engage an objective and cancel it 2 seconds later
+        obs.evaluate(self.start_time, arena=None)
+        asyncio.create_task(obs.engage_new_task())
+        await asyncio.sleep(1)
+        obs.cancel()
+
+
+
+        # engage all objectives in list objectives
+        for _ in range(len(obs.objectives)-1):
+            obs.evaluate(self.start_time, arena=None)
+            asyncio.create_task(obs.engage_new_task())
+            await obs.task_finished.wait()
+
+        # add new objective
+        obs.add_objective(
+            Objective(task=self.build_floor_0, name="build_floor_0", target_index=3, target_position=(10, 10)))
+        obs.evaluate(self.start_time, arena=None)
+        asyncio.create_task(obs.engage_new_task())
+        await obs.task_finished.wait()
+
+        # start building floor0 cancel it then try to build floor1 at same index
+        obs.add_objective(
+            Objective(task=self.build_floor_0, name="build_floor_0", target_index=5, target_position=(30, 30)))
+        obs.add_objective(
+            Objective(task=self.build_floor_0, name="build_floor_1", target_index=5, target_position=(30, 30)))
+
+        obs.evaluate(self.start_time, arena=None)
+
+        # cancel task
+        asyncio.create_task(obs.engage_new_task())
+        await asyncio.sleep(1)
+        obs.cancel()
+
+        obs.evaluate(self.start_time, arena=None)
+        asyncio.create_task(obs.engage_new_task())
+        await obs.task_finished.wait()
+
+        print(obs.summary)
+
+        # small problem can't await task_finished_wait if we wanna cancel
+
 
 
 
