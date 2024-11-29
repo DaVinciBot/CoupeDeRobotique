@@ -1,0 +1,8 @@
+{
+    "name": "pid",
+    "version": "1.0.0",
+    "description": "Library dedicated to PID control",
+    "keywords": "pid",
+    "frameworks": "*",
+    "platforms": "*"
+  }

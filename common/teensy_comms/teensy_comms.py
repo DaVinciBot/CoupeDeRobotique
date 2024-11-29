@@ -1,39 +1,7 @@
 from typing import Any, Callable
 import serial, threading, time, crc8, serial.tools.list_ports
 from logger import Logger, LogLevels
-from geometry import OrientedPoint
 from teensy_comms.dummy_serial import DummySerial
-
-
-# TODO: n'a pas trop ça place ici voir pour déplacer
-# Used for curve_go_to
-# DO NOT REMOVE
-def calc_tmp(a: OrientedPoint, b: OrientedPoint) -> float:
-    return (a.x**2 - b.x**2 + a.y**2 - b.y**2) / (2 * (a.y - b.y))
-
-
-def frac_tmp(a: OrientedPoint, b: OrientedPoint) -> float:
-    return (a.x - b.x) / (a.y - b.y)
-
-
-def calc_center(a: OrientedPoint, b: OrientedPoint, c: OrientedPoint) -> OrientedPoint:
-    """
-    Permet de calculer le centre d'un cercle passant par 3 points
-    https://cral-perso.univ-lyon1.fr/labo/fc/Ateliers_archives/ateliers_2005-06/cercle_3pts.pdf
-
-    Attention, pour qu'il n'y ai pas de division par 0, les deux premiers points doivent avoir des ordonnées différentes (a.y != b.y)
-    Même s'il a une permutation au cas où, il est préférable de que les ordonnées soient différentes
-    """
-    if a.y == b.y:
-        a, b = b, c
-    if a == b or a == c or b == c:  # not a circle
-        return a
-    x_c = (calc_tmp(c, b) - calc_tmp(b, a)) / (frac_tmp(b, a) - frac_tmp(c, b))
-    center = OrientedPoint(
-        (-x_c),
-        (frac_tmp(b, a) * x_c + calc_tmp(b, a)),
-    )
-    return center
 
 
 class TeensyException(Exception):
@@ -84,7 +52,7 @@ class Teensy:
         self.crc = crc
         self._crc8 = crc8.crc8()
         self.last_message = None
-        self.end_bytes = b"\xBA\xDD\x1C\xC5"
+        self.end_bytes = b"\xBA\xDD\x1C\xC5" 
         self.scl = 19
         self.sda = 18
 
@@ -172,7 +140,7 @@ class Teensy:
         self._teensy.write(msg + self.end_bytes)
         while self._teensy.out_waiting:
             pass
-
+        
     def read_bytes(self) -> bytes:
         return self._teensy.read_until(self.end_bytes)
 
@@ -220,15 +188,16 @@ class Teensy:
                     continue
                 try:
                     if msg[0] == 127:
-                        self.logger.log("Received a NACK")
+                        self.logger.log("Received a NACK", LogLevels.WARNING)
                         if self.last_message != None:
                             self.send_bytes(self.last_message)
                             self.logger.log(
-                                f"Sending back action : {self.last_message[0]}"
+                                f"Sending back message : {self.last_message[0]}"
                             )
                             self.last_message = None
                     else:
                         self.messagetype[msg[0]](msg[1:-1])
+
                 except Exception as e:
                     self.logger.log(
                         "Received message handling crashed :\n" + str(e),
