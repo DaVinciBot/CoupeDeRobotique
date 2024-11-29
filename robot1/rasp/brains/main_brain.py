@@ -86,6 +86,3 @@ class MainBrain(Brain):
             target_position = OrientedPoint((0.0, 0.0), 0.0)
         )
         
-    
-
-        
