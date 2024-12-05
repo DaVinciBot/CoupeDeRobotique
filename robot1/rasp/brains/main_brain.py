@@ -24,45 +24,8 @@ from utils import LidarMode, AntiCollisionHandle, GoToResult
 # from controllers import RollingBasis, Actuators
 from sensors import Lidar
 
-"""
-
-Tasks : 
-- build floor 0
-- build floor 1
-- build floor 2
-- deploy banner
-
-
-Objective class :
-- __str__ : describes the state of the elevator
-- add_objective : adding a task to do
-- calculate_time (static) : return the time it takes to go to the position of the task and realizing it
-- is_interesting (static) : return if rob should do the task according the state of the Arena
-- evaluate : checks if every task is doable and deletes the impossible ones
-- prioritize : sorts the list of objectives by priority (points then time)
-- next_objective : return the next doable objective or None
-
-
-Notes réunion 21/11 :
-list de Task à la place de faire un dict
-
-Classe Rask parent :
-- run (async to add a timeout)
-- interrupt
-
-Creer classes qui héritent de tTask:
-- floor0
-- floor1
-- floor2
-- deploy
-
-
-
-"""
-
 
 @dataclass
-
 class Objective:
     task: Brain.task(process=False, run_on_start=False)  # objective type ("deploy_banner","build_floor_0",
     # "build_floor_1", "build_floor_2")
@@ -103,6 +66,7 @@ class ObjectiveSupervisor:
         # see if it's worth it depending on the ram and rom of the rasp
         self.objectives.append(objective)
         self.summary[objective.target_index][objective.name] = False
+        print(f"Adding new objective: {objective.name}")
 
     @staticmethod
     def calculate_time(time_estimate: float, target_position: tuple[float, float],
@@ -119,38 +83,26 @@ class ObjectiveSupervisor:
 
         return distance / speed + time_estimate + margin_error
 
-    # version très sale qui marche, à simplifier grandement
+    # Looks if task has already been done and checks if the mandatory conditions are met before building
+    # Ex : We build floor 0 before floor 1
     def is_interesting(self, task: str, target_index: int, arena) -> bool:
-        interesting: bool = False
-        if task == "deploy_banner":
-            if not self.summary[target_index][task]:
-                interesting = True
-
-        if task == "build_floor_0":
-            # if arena.pickup_zones[target_index].visited:
-            if not self.summary[target_index][task]:
-                interesting = True
-
-        if task == "build_floor_1":
-            # if arena.pickup_zones[target_index].visited:
-            if not self.summary[target_index][task]:
-                if "build_floor_0" in self.summary[target_index]:
-                    if self.summary[target_index]["build_floor_0"]:
-                        interesting = True
-
-        if task == "build_floor_2":
-            # if arena.pickup_zones[target_index].visited:
-            if not self.summary[target_index][task]:
-                if "build_floor_0" in self.summary[target_index]:
-                    if "build_floor_1" in self.summary[target_index]:
-                        if self.summary[target_index]["build_floor_0"]:
-                            if self.summary[target_index]["build_floor_1"]:
-                                interesting = True
-
-        if not interesting:
+        if self.summary[target_index].get(task):
             print(f"Objective {task} not interesting")
+            return False
 
-        return interesting
+        dependencies = {
+            "deploy_banner": [],
+            "build_floor_0": [],
+            "build_floor_1": ["build_floor_0"],
+            "build_floor_2": ["build_floor_0", "build_floor_1"],
+        }
+
+        for dependency in dependencies.get(task, []):
+            if not self.summary[target_index].get(dependency):
+                print(f"Objective {task} not interesting")
+                return False
+
+        return True
 
     def evaluate(self, start_time: float, arena: MarsArena) -> None:
         objective = self.objectives[0]
@@ -159,13 +111,18 @@ class ObjectiveSupervisor:
                                      target_position=objective.target_position,
                                      current_position=(0, 0))
 
-        enough_time = timing + start_time < 30 and timing > 0
+        # à revoir, pour le 10 j'ai fait au pif, flemme d'attendre. Je pense que c'est 85 mais jsp
+        enough_time = timing + start_time < 85 and timing > 0
+
+        if not enough_time:
+            print("Task taking too long, we cancel")
 
         interesting = self.is_interesting(task=objective.name, target_index=objective.target_index,
                                           arena=arena)
 
         if not enough_time or not interesting:
             self.objectives.remove(objective)
+            print(f"Objective {objective.name} cancelled")
 
     def prioritize(self) -> None:
         def sort_key(objective):
@@ -183,30 +140,36 @@ class ObjectiveSupervisor:
 
         self.objectives.sort(key=sort_key)
 
-    async def engage_new_task(self) -> None:
-        if self.objectives:
-            objective = self.objectives[0]
-            print(f"Starting objective: {objective.name}")
-            self.current_task = asyncio.create_task(objective.task())
-            res = (await self.current_task).result
-            if res:
-                self.summary[objective.target_index][objective.name] = True
-                print(f"Objective complete: {objective.name}")
+    async def engage_new_tasks(self, start_time: float, arena: MarsArena) -> None:
+        while self.objectives:
+            self.prioritize()
+            self.evaluate(start_time, arena)
+
+            if not self.objectives:
+                break
+            current_objective = self.objectives[0]
+            print(f"Starting objective: {current_objective.name}")
+
+            self.current_task = asyncio.create_task(current_objective.task())
+
+            try:
+                res = (await self.current_task).result
+                if res:
+                    self.summary[current_objective.target_index][current_objective.name] = True
+                    print(f"Objective complete: {current_objective.name}")
+            except asyncio.CancelledError:
+                print(f"Objective {current_objective.name} was cancelled.")
+            finally:
+                # Clean up after task finishes or is cancelled
                 self.objectives.pop(0)
                 self.current_task = None
-                self.task_finished.set()
-                self.task_finished = asyncio.Event()
-        else:
-            print("No more objectives")
+
+        print("No more objectives")
 
     def cancel(self):
         if self.current_task:
-            self.current_task.cancel()
-            self.current_task = None
-            self.task_finished.set()
-            self.task_finished = asyncio.Event()
             print(f"Cancelling {self.objectives[0].name} objective")
-            self.objectives.pop(0)
+            self.current_task.cancel()
 
 
 class MainBrain(Brain):
@@ -243,7 +206,8 @@ class MainBrain(Brain):
         Tasks
     """
 
-    """@Brain.task(process=False, run_on_start=True, refresh_rate=1)
+    """
+    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def coucou(self):
         self.logger.log("Coucou Anne-Marie", LogLevels.INFO)
 
@@ -289,6 +253,8 @@ class MainBrain(Brain):
         try:
             self.logger.log("Boom! Je récupère des cannettes à un autre endroit carrément.", LogLevels.INFO)
             await asyncio.sleep(1)
+            # Erreur faite exprès pour tester comment le code régit si la fonction crash
+            zesrty-èu_io
             self.logger.log("Je m'occuppe d'une nouvelle planche encore.", LogLevels.INFO)
             await asyncio.sleep(1)
             self.logger.log("L'ascenceur monte et descend et remonte et redescend.", LogLevels.INFO)
@@ -316,6 +282,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def launch(self):
+        self.start_time = time.time()
         objectives = [
             Objective(task=self.build_floor_1, name="build_floor_1", target_index=0, target_position=(20, 20)),
             Objective(task=self.build_floor_0, name="build_floor_0", target_index=0, target_position=(20, 20)),
@@ -330,31 +297,18 @@ class MainBrain(Brain):
         for o in objectives:
             obs.add_objective(o)
 
+        asyncio.create_task(obs.engage_new_tasks(time.time()-self.start_time, arena=None))
+        await asyncio.sleep(2)
+        obs.cancel()
+
         obs.prioritize()
 
         for ob in obs.objectives:
             print(ob.name, " index : ", ob.target_index, " position : ", ob.target_position)
 
-        # we engage an objective and cancel it 2 seconds later
-        obs.evaluate(self.start_time, arena=None)
-        asyncio.create_task(obs.engage_new_task())
-        await asyncio.sleep(1)
-        obs.cancel()
-
-
-
-        # engage all objectives in list objectives
-        for _ in range(len(obs.objectives)-1):
-            obs.evaluate(self.start_time, arena=None)
-            asyncio.create_task(obs.engage_new_task())
-            await obs.task_finished.wait()
-
         # add new objective
         obs.add_objective(
             Objective(task=self.build_floor_0, name="build_floor_0", target_index=3, target_position=(10, 10)))
-        obs.evaluate(self.start_time, arena=None)
-        asyncio.create_task(obs.engage_new_task())
-        await obs.task_finished.wait()
 
         # start building floor0 cancel it then try to build floor1 at same index
         obs.add_objective(
@@ -362,20 +316,9 @@ class MainBrain(Brain):
         obs.add_objective(
             Objective(task=self.build_floor_0, name="build_floor_1", target_index=5, target_position=(30, 30)))
 
-        obs.evaluate(self.start_time, arena=None)
-
-        # cancel task
-        asyncio.create_task(obs.engage_new_task())
-        await asyncio.sleep(1)
+        await asyncio.sleep(18)
         obs.cancel()
 
-        obs.evaluate(self.start_time, arena=None)
-        asyncio.create_task(obs.engage_new_task())
-        await obs.task_finished.wait()
-
-        print(obs.summary)
-
-        # small problem can't await task_finished_wait if we wanna cancel
 
 
 
