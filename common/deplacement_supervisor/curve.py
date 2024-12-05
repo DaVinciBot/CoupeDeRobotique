@@ -1,5 +1,5 @@
 class Curve:
-	def __init__(self, Vd, Vm, Va, D, Dd, Da) -> None:
+	def __init__(self, Vd, Vm, Va, D, amax, dmax) -> None:
 		# We split the movement in 3 phases: departure, max speed, arrival
 
 		self.Vd = Vd
@@ -7,8 +7,8 @@ class Curve:
 		self.Va = Va
 
 		self.D = D
-		self.Dd = Dd
-		self.Da = Da
+		self.Dd = (Vm ** 2 - Vd ** 2) / (2 * amax)  # Departure distance
+		self.Da = (Vm ** 2 - Va ** 2) / (2 * dmax)  # Arrival distance
 		self.Dm = self.D - self.Dd - self.Da
 
 		self.Td = 2 * self.Dd / (self.Vd + self.Vm)  # total time of departure phase

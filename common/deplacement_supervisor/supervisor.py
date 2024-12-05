@@ -1,18 +1,15 @@
-from config_loader import CONFIG
-from geometry import OrientedPoint
+from ..geometry.geometry import OrientedPoint
 from curve import Curve
 from bisect import bisect_left
 
 class MovementSupervisor:
-    def __init__(self, profile_name: str, linear_speed: float, angular_speed: float):
+    def __init__(self, PROFILE: dict, linear_speed: float, angular_speed: float):
         """
-        Initializes the supervisor by loading the specified profile from config.json.
-    
-        :param profile_name: Name of the profile to use (high_speed, cruise_speed, low_speed).
+        Initializes the supervisor by loading the specified profile.
+        
+        :param PROFILE: Acceleration, deceleration, and speed profile as a dictionary.
         """
-        self.profile = CONFIG.SPEED_PROFILES[profile_name] # Load the speed profile from config.json. Ensure config.json is updated with the correct profiles.
-        if not self.profile:
-            raise ValueError(f"Profile '{profile_name}' not found in the configuration.")
+        self.profile = PROFILE
 
         self.trajectory = [] # Trajectory to follow in the form [((x, y), θ), ...]
         self.cumulative_distances = [] # Cumulative distance between trajectory points
