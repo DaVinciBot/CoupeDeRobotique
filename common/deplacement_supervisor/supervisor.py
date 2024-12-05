@@ -1,15 +1,15 @@
-from ..geometry.geometry import OrientedPoint
+from geometry import OrientedPoint
 from curve import Curve
 from bisect import bisect_left
 
 class MovementSupervisor:
-    def __init__(self, PROFILE: dict, linear_speed: float, angular_speed: float):
+    def __init__(self, profile: dict, linear_speed: float, angular_speed: float):
         """
         Initializes the supervisor by loading the specified profile.
-        
-        :param PROFILE: Acceleration, deceleration, and speed profile as a dictionary.
+
+        :param profile: Acceleration, deceleration, and speed profile as a dictionary.
         """
-        self.profile = PROFILE
+        self.profile = profile
 
         self.trajectory = [] # Trajectory to follow in the form [((x, y), θ), ...]
         self.cumulative_distances = [] # Cumulative distance between trajectory points
@@ -46,7 +46,7 @@ class MovementSupervisor:
         Computes the desired point and speeds in t seconds.
 
         :param t: Time in seconds for the future state calculation.
-        :return: Tuple (((x, y), θ), linear_speed_desired, angular_speed_desired)
+        :return: Tuple ((x, y), θ), linear_speed_desired, angular_speed_desired
         """
         self.current_time += t
         if self.current_time > self.total_duration:
@@ -72,18 +72,18 @@ class MovementSupervisor:
         Vd_lin = self.linear_speed
         Vm_lin = self.profile["max_linear_speed"]
         Va_lin = 0.0 # Assume the robot stops at the end of the movement
-        Dd_lin = total_linear_distance * 0.1 # Linear departure distance
-        Da_lin = total_linear_distance * 0.1 # Linear arrival distance
+        amax_lin = self.profile["max_linear_acceleration"]
+        dmax_lin = self.profile["max_linear_deceleration"]
         
         Vd_ang = self.angular_speed
         Vm_ang = self.profile["max_angular_speed"]
         Va_ang = 0.0 # Assume the robot stops at the end of the movement
-        Dd_ang = total_angular_distance * 0.1 # Angular departure distance
-        Da_ang = total_angular_distance * 0.1 # Angular arrival distance
+        amax_ang = self.profile["max_angular_acceleration"]
+        dmax_ang = self.profile["max_angular_deceleration"]
         
         # Create Curve objects for linear and angular movements
-        self.linear_curve = Curve(Vd_lin, Vm_lin, Va_lin, total_linear_distance, Dd_lin, Da_lin)
-        self.angular_curve = Curve(Vd_ang, Vm_ang, Va_ang, total_angular_distance, Dd_ang, Da_ang)
+        self.linear_curve = Curve(Vd_lin, Vm_lin, Va_lin, total_linear_distance, amax_lin, dmax_lin)
+        self.angular_curve = Curve(Vd_ang, Vm_ang, Va_ang, total_angular_distance, amax_ang, dmax_ang)
         self.total_duration = self.linear_curve.PlannedTotalTime()
     
     def _calculate_future_position(self, t):
