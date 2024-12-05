@@ -111,7 +111,7 @@ class ObjectiveSupervisor:
                                      target_position=objective.target_position,
                                      current_position=(0, 0))
 
-        # à revoir, pour le 10 j'ai fait au pif, flemme d'attendre. Je pense que c'est 85 mais jsp
+        # à revoir, pour le 85 j'ai fait au pif.
         enough_time = timing + start_time < 85 and timing > 0
 
         if not enough_time:
@@ -300,11 +300,6 @@ class MainBrain(Brain):
         asyncio.create_task(obs.engage_new_tasks(time.time()-self.start_time, arena=None))
         await asyncio.sleep(2)
         obs.cancel()
-
-        obs.prioritize()
-
-        for ob in obs.objectives:
-            print(ob.name, " index : ", ob.target_index, " position : ", ob.target_position)
 
         # add new objective
         obs.add_objective(
