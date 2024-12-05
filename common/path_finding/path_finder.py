@@ -46,11 +46,16 @@ class PathFinder:
         )
 
         if not self.path_found:
-            self.logger.log(f"No path found ! [start={self.current_position}, goal={self.goal}]", LogLevels.WARNING)
+            self.logger.log(f"No path found ! [start=({self.current_position.x}, {self.current_position.y}), goal=({self.goal.x}, {self.goal.y})]", LogLevels.WARNING)
+            return []
 
         return self.path_found
 
     def __path_to_oriented_path(self, path: list[GridNode]) -> list[OrientedPoint]:
+        if not path:
+            self.logger.log("Path to convert is empty !", LogLevels.DEBUG)
+            return []
+
         oriented_path: list[OrientedPoint] = []
 
         for i in range(len(path) - 1):
@@ -149,5 +154,92 @@ class PathFinder:
 
         # Show the plot
         plt.show()
+
+    def visualize_with_scores(self) -> None:
+        """
+        Visualise the grid with start, goal, obstacles, the path, and the scores of each cell.
+        """
+        # Assuming grid dimensions can be inferred from its node structure
+        rows, cols = self.grid.height, self.grid.width  # Adjust based on your Grid implementation
+
+        # Initialize the plot
+        fig, ax = plt.subplots(figsize=(15, 15))
+
+        # Compute maximum and minimum scores to normalize color intensity
+        max_score = float('-inf')
+        min_score = float('inf')
+
+        for y in range(rows):
+            for x in range(cols):
+                node = self.grid.node(x, y)
+                if node.walkable:
+                    max_score = max(max_score, node.f)
+                    min_score = min(min_score, node.f)
+
+        # Ensure there's a range to normalize
+        score_range = max_score - min_score if max_score > min_score else 1
+
+        # Draw each cell of the grid
+        for y in range(rows):
+            for x in range(cols):
+                node = self.grid.node(x, y)
+                if not node.walkable:
+                    # Draw obstacles in black
+                    ax.add_patch(plt.Rectangle((x, rows - y - 1), 1, 1, color="black"))
+                else:
+                    # Normalize the score for color intensity (between 0 and 1)
+                    normalized_score = (node.f - min_score) / score_range
+                    # Use a grayscale intensity for the score (1.0 = white, 0.0 = black)
+                    color_intensity = 1.0 - normalized_score
+                    ax.add_patch(
+                        plt.Rectangle((x, rows - y - 1), 1, 1,
+                                      color=(color_intensity, color_intensity, color_intensity))
+                    )
+                    # Optionally, add text with the exact score
+                    ax.text(x + 0.5, rows - y - 1 + 0.5, f"{node.f:.1f}",
+                            color="orange", ha="center", va="center", fontsize=10)
+
+        # Draw the start and goal points
+        start_x, start_y = self.current_position.x, rows - self.current_position.y - 1
+        goal_x, goal_y = self.goal.x, rows - self.goal.y - 1
+
+        ax.add_patch(plt.Rectangle((start_x, start_y), 1, 1, color="green", label="Start"))
+        ax.add_patch(plt.Rectangle((goal_x, goal_y), 1, 1, color="red", label="Goal"))
+
+        # Draw the path if it exists
+        if self.path_found:
+            for i in range(len(self.path_found) - 1):
+                current = self.path_found[i]
+                next_node = self.path_found[i + 1]
+
+                # Extract coordinates from GridNode
+                current_x, current_y = current.x, rows - current.y - 1
+                next_x, next_y = next_node.x, rows - next_node.y - 1
+
+                # Plot the path
+                ax.plot(
+                    [current_x + 0.5, next_x + 0.5],
+                    [current_y + 0.5, next_y + 0.5],
+                    color="blue",
+                    linewidth=2,
+                    label="Path" if i == 0 else None,
+                )
+
+        # Set grid lines
+        ax.set_xticks(range(cols))
+        ax.set_yticks(range(rows))
+        plt.xticks(rotation=90)
+        ax.grid(True)
+
+        # Set axis limits and labels
+        ax.set_xlim(0, cols)
+        ax.set_ylim(0, rows)
+        ax.set_aspect('equal')
+        ax.set_title("Pathfinding Visualization with Scores")
+        ax.legend(loc="upper right")
+
+        # Show the plot
+        plt.show()
+
 
 

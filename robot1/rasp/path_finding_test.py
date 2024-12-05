@@ -26,8 +26,8 @@ def generate_grid(width_cm, height_cm, chunk_size_cm, obstacle_ratio):
     grid = [[1 if random.random() > obstacle_ratio else 0 for _ in range(width)] for _ in range(height)]
     return grid
 
-chunk_size = 10
-grid = generate_grid(width_cm=300, height_cm=200, chunk_size_cm=chunk_size, obstacle_ratio=0.1)
+chunk_size = 2
+grid = generate_grid(width_cm=300, height_cm=200, chunk_size_cm=chunk_size, obstacle_ratio=0.3)
 start = (1, 1)
 goal = (13, 8)
 grid[start[1]][start[0]] = 1  # Assurez-vous que le point de départ est accessible
@@ -43,7 +43,7 @@ finder_logger = Logger(
 
 finder = PathFinder(
     logger=finder_logger,
-    start=OrientedPoint(10, 20, 0.0),
+    start=OrientedPoint(10.8, 20, 0.0),
     goal=OrientedPoint(200, 150, 0.0),
     grid=Grid(matrix=grid),
     chunk_size=chunk_size
@@ -53,3 +53,4 @@ path = finder.find_oriented_path()
 print(path)
 
 finder.visualize()
+finder.visualize_with_scores()
