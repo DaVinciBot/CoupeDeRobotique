@@ -1,5 +1,5 @@
 from typing import Any, Callable
-import serial, threading, time, crc8, serial.tools.list_ports
+import serial, threading, time, crc8
 from logger import Logger, LogLevels
 from geometry import OrientedPoint
 from teensy_comms.dummy_serial import DummySerial
