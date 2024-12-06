@@ -1,5 +1,5 @@
 class Curve:
-	def __init__(self, departure_speed: float, max_speed: float, arrival_speed: float, total_distance: float, acceleration_max: float, decceleration_max: float) -> None:
+	def __init__(self, departure_speed: float, max_speed: float, arrival_speed: float, total_distance: float, acceleration_max: float, deceleration_max: float) -> None:
 		# We split the movement in 3 phases: departure, max speed, arrival
 
 		self.departure_speed = departure_speed
@@ -8,7 +8,7 @@ class Curve:
 
 		self.total_distance = total_distance
 		self.departure_distance = (max_speed ** 2 - departure_speed ** 2) / (2 * acceleration_max)  # Departure total_distance
-		self.arrival_distance = (max_speed ** 2 - arrival_speed ** 2) / (2 * decceleration_max)  # Arrival total_distance
+		self.arrival_distance = (max_speed ** 2 - arrival_speed ** 2) / (2 * deceleration_max)  # Arrival total_distance
 		self.mid_distance = self.total_distance - self.departure_distance - self.arrival_distance
 
 		self.departure_time = 2 * self.departure_distance / (self.departure_speed + self.mid_speed)  # total time of departure phase
@@ -17,19 +17,23 @@ class Curve:
 
 		self.total_time = self.departure_time + self.mid_time + self.arrival_time
 
-		self.Cd = (self.mid_speed - self.departure_speed) / self.departure_time  # Departure phase slope
-		self.Ca = (self.arrival_speed - self.mid_speed) / self.arrival_time  # Arrival phase slope
+		self.Cd = acceleration_max  # Departure phase slope
+		self.Ca = deceleration_max  # Arrival phase slope
 
 	def V1(self,t):
 		return self.departure_speed + self.Cd * t  # Velocity on departure phase equation
 	def V2(self,t):
 		return self.mid_speed  # Velocity on max speed phase equation
 	def V3(self,t):
-		return self.arrival_speed + self.Ca * (t - self.total_time)  # Velocity on arrival phase equation
+		return self.arrival_speed + self.Ca * (t - self.departure_time - self.mid_time)  # Velocity on arrival phase equation
 
 	def PlannedVelocity(self, t):
-		if t<self.total_time:
-			return min(self.V1(t), self.V2(t), self.V3(t))
+		if t <= self.departure_time:
+			return self.V1(t)
+		elif t <= self.departure_time + self.mid_time:
+			return self.V2(t)
+		elif t <= self.total_time:
+			return self.V3(t)
 		else:
 			return self.arrival_speed
 
@@ -47,7 +51,7 @@ class Curve:
 		# Phase 3: Arrival
 		elif t <= self.total_time:
 			t_a = t - self.departure_time - self.mid_time
-			return self.departure_distance + self.mid_distance + self.mid_speed * t_a + 0.5 * self.Ca * t_a ** 2
+			return self.departure_distance + self.mid_distance + self.mid_speed * t_a + 0.5 * - self.Ca * t_a ** 2
 		# After planned time, position remains at final total_distance
-		else:  
+		else:
 			return self.total_distance

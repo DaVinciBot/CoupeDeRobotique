@@ -11,7 +11,7 @@ class MovementSupervisor:
         """
         self.profile = profile
 
-        self.trajectory = [] # Trajectory to follow in the form [((x, y), θ), ...]
+        self.trajectory = [] # Trajectory of OrientedPoint to follow
         self.cumulative_distances = [] # Cumulative distance between trajectory points
 
         self.linear_speed = linear_speed
@@ -26,14 +26,14 @@ class MovementSupervisor:
         """
         Sets the trajectory to follow.
 
-        :param trajectory: List of points in the form [((x, y), θ), ...].
+        :param trajectory: List of OrientedPoint objects representing the trajectory
         """
         self.trajectory = trajectory
         self.cumulative_distances = [0]
         total_distance = 0
         for i in range(1, len(self.trajectory)):
-            x1, y1 = self.trajectory[i - 1][0]
-            x2, y2 = self.trajectory[i][0]
+            x1, y1 = self.trajectory[i - 1].x, self.trajectory[i - 1].y
+            x2, y2 = self.trajectory[i].x, self.trajectory[i].y
             total_distance += ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
             self.cumulative_distances.append(total_distance)
         if self.trajectory:
@@ -46,12 +46,12 @@ class MovementSupervisor:
         Computes the desired point and speeds in t seconds.
 
         :param t: Time in seconds for the future state calculation.
-        :return: Tuple ((x, y), θ), linear_speed_desired, angular_speed_desired
+        :return: Oriented Point position_desired, linear_speed_desired, angular_speed_desired
         """
         self.current_time += t
         if self.current_time > self.total_duration:
             self.current_time = self.total_duration
-        future_position = self._calculate_future_position(self.current_time)
+        future_position: OrientedPoint = self._calculate_future_position(self.current_time)
         future_linear_speed, future_angular_speed = self._calculate_future_velocity(self.current_time)
         return future_position, future_linear_speed, future_angular_speed
 
@@ -66,7 +66,7 @@ class MovementSupervisor:
         if len(self.trajectory) < 2:
             total_angular_distance = 0
         else:
-            total_angular_distance = abs(self.trajectory[-1][1] - self.trajectory[0][1])
+            total_angular_distance = abs(self.trajectory[-1].theta - self.trajectory[0].theta)
 
         # Profile parameters
         Vd_lin = self.linear_speed
@@ -109,14 +109,16 @@ class MovementSupervisor:
         else:
             ratio = (s - s1) / (s2 - s1)
         
-        (x1, y1), theta1 = self.trajectory[i - 1]
-        (x2, y2), theta2 = self.trajectory[i]
+        x1, y1, theta1 = self.trajectory[i - 1].x, self.trajectory[i - 1].y, self.trajectory[i - 1].theta
+        x2, y2, theta2 = self.trajectory[i].x, self.trajectory[i].y, self.trajectory[i].theta
         
         x = x1 + ratio * (x2 - x1)
         y = y1 + ratio * (y2 - y1)
         theta = theta1 + ratio * (theta2 - theta1)
-        
-        return ((x, y), theta)
+
+        future_position = OrientedPoint(x, y, theta)
+
+        return future_position
 
     def _calculate_future_velocity(self, t):
         """
