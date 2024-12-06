@@ -94,7 +94,7 @@ class MovementSupervisor:
         if self.linear_curve is None:
             raise ValueError("Linear curve is not initialized.")
         s = self.linear_curve.PlannedPosition(t)
-        
+
         # Find the trajectory points between which the robot is located
         if not self.cumulative_distances:
             raise ValueError("Cumulative distances list is empty.")
@@ -112,9 +112,9 @@ class MovementSupervisor:
         x1, y1, theta1 = self.trajectory[i - 1].x, self.trajectory[i - 1].y, self.trajectory[i - 1].theta
         x2, y2, theta2 = self.trajectory[i].x, self.trajectory[i].y, self.trajectory[i].theta
         
-        x = x1 + ratio * (x2 - x1)
-        y = y1 + ratio * (y2 - y1)
-        theta = theta1 + ratio * (theta2 - theta1)
+        x = x2 + ratio * (x1 - x2)
+        y = y2 + ratio * (y1 - y2)
+        theta = theta2 + ratio * (theta1 - theta2)
 
         future_position = OrientedPoint(x, y, theta)
 
