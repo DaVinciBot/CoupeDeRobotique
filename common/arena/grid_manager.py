@@ -149,7 +149,7 @@ class GridManager:
         Given in real absolute coordinates
         """
         if not isinstance(forbidden_zones_to_remove, list):
-            forbidden_zones = [forbidden_zones_to_remove]
+            forbidden_zones_to_remove = [forbidden_zones_to_remove]
 
         # Exclude the forbidden zones to remove
         self.static_forbidden_zones = [
