@@ -44,17 +44,14 @@ if __name__ == "__main__":
         logger=logger_ws_server,
         host=CONFIG.WS_HOSTNAME,
         port=CONFIG.WS_PORT,
-        ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL
+        ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,
     )
-    
+
     # Robot
     rolling_basis = RollingBasis(logger=logger_rolling_basis)
 
     # Brain
-    brain = MainBrain(
-        logger=logger_brain,
-        rolling_basis=rolling_basis
-    )
+    brain = MainBrain(logger=logger_brain, rolling_basis=rolling_basis)
 
     """
         ###--- Run ---###

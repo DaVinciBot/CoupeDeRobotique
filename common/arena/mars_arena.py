@@ -13,6 +13,7 @@ from sys import maxsize
 
 from pathfinding.core.grid import Grid, GridNode
 
+
 class Plants_zone:
     def __init__(self, zone, nb_plant: int = 0) -> None:
         self.zone: Polygon = zone
@@ -240,7 +241,9 @@ class MarsArena(Arena):
         grid = [[1 for _ in range(width)] for _ in range(height)]
 
         # Forbidden area
-        forbidden_area = [plant_zone.zone for plant_zone in self.drop_zones] + [plant_zone.zone for plant_zone in self.pickup_zones]
+        forbidden_area = [plant_zone.zone for plant_zone in self.drop_zones] + [
+            plant_zone.zone for plant_zone in self.pickup_zones
+        ]
 
         # Iterate over each cell in the grid
         for row in range(height):

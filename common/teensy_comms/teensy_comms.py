@@ -52,7 +52,7 @@ class Teensy:
         self.crc = crc
         self._crc8 = crc8.crc8()
         self.last_message = None
-        self.end_bytes = b"\xBA\xDD\x1C\xC5" 
+        self.end_bytes = b"\xBA\xDD\x1C\xC5"
         self.scl = 19
         self.sda = 18
 
@@ -140,7 +140,7 @@ class Teensy:
         self._teensy.write(msg + self.end_bytes)
         while self._teensy.out_waiting:
             pass
-        
+
     def read_bytes(self) -> bytes:
         return self._teensy.read_until(self.end_bytes)
 

@@ -25,14 +25,21 @@ def ortools_pathfinding(grid, start, goal):
         for x in range(width):
             if grid[y][x] == 1:  # Cellule libre
                 node = node_id(x, y)
-                for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:  # Haut, Bas, Gauche, Droite
+                for dx, dy in [
+                    (-1, 0),
+                    (1, 0),
+                    (0, -1),
+                    (0, 1),
+                ]:  # Haut, Bas, Gauche, Droite
                     nx, ny = x + dx, y + dy
                     if 0 <= nx < width and 0 <= ny < height and grid[ny][nx] == 1:
                         neighbor = node_id(nx, ny)
                         distances[node][neighbor] = 1  # Coût unitaire pour avancer
 
     # Initialiser le solveur
-    manager = pywrapcp.RoutingIndexManager(num_nodes, 1, [node_id(*start)], [node_id(*goal)])
+    manager = pywrapcp.RoutingIndexManager(
+        num_nodes, 1, [node_id(*start)], [node_id(*goal)]
+    )
     routing = pywrapcp.RoutingModel(manager)
 
     # Fonction de coût (distance entre les nœuds)
@@ -47,7 +54,8 @@ def ortools_pathfinding(grid, start, goal):
     # Chercher la solution
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.first_solution_strategy = (
-        routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC)
+        routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
+    )
 
     solution = routing.SolveWithParameters(search_parameters)
     if not solution:

@@ -4,6 +4,7 @@ from geometry import OrientedPoint
 from deplacement_supervisor.curve import Curve
 from bisect import bisect_left
 
+
 class MovementSupervisor:
     def __init__(self, profile: dict, linear_speed: float, angular_speed: float):
         """
@@ -13,8 +14,8 @@ class MovementSupervisor:
         """
         self.profile = profile
 
-        self.trajectory = [] # Trajectory of OrientedPoint to follow
-        self.cumulative_distances = [] # Cumulative distance between trajectory points
+        self.trajectory = []  # Trajectory of OrientedPoint to follow
+        self.cumulative_distances = []  # Cumulative distance between trajectory points
 
         self.linear_speed = linear_speed
         self.angular_speed = angular_speed
@@ -59,8 +60,12 @@ class MovementSupervisor:
         self.current_time = t - self.start_time
         if self.current_time > self.total_duration:
             self.current_time = self.total_duration
-        future_position: OrientedPoint = self._calculate_future_position(self.current_time)
-        future_linear_speed, future_angular_speed = self._calculate_future_velocity(self.current_time, future_position.theta)
+        future_position: OrientedPoint = self._calculate_future_position(
+            self.current_time
+        )
+        future_linear_speed, future_angular_speed = self._calculate_future_velocity(
+            self.current_time, future_position.theta
+        )
         return future_position, future_linear_speed, future_angular_speed
 
     def _initialize_curves(self):
@@ -71,14 +76,16 @@ class MovementSupervisor:
 
         Vd_lin = self.linear_speed
         Vm_lin = self.profile["max_linear_speed"]
-        Va_lin = 0.0 # Assume the robot stops at the end
+        Va_lin = 0.0  # Assume the robot stops at the end
         amax_lin = self.profile["max_linear_acceleration"]
         dmax_lin = self.profile["max_linear_deceleration"]
-        
+
         # Create Curve objects for linear and angular movements
-        self.linear_curve = Curve(Vd_lin, Vm_lin, Va_lin, total_linear_distance, amax_lin, dmax_lin)
+        self.linear_curve = Curve(
+            Vd_lin, Vm_lin, Va_lin, total_linear_distance, amax_lin, dmax_lin
+        )
         self.total_duration = self.linear_curve.PlannedTotalTime()
-    
+
     def _calculate_future_position(self, t):
         """
         Calculates the future position of the robot at time t.
@@ -101,10 +108,18 @@ class MovementSupervisor:
             ratio = 0
         else:
             ratio = (s - s1) / (s2 - s1)
-        
-        x1, y1, theta1 = self.trajectory[i - 1].x, self.trajectory[i - 1].y, self.trajectory[i - 1].theta
-        x2, y2, theta2 = self.trajectory[i].x, self.trajectory[i].y, self.trajectory[i].theta
-        
+
+        x1, y1, theta1 = (
+            self.trajectory[i - 1].x,
+            self.trajectory[i - 1].y,
+            self.trajectory[i - 1].theta,
+        )
+        x2, y2, theta2 = (
+            self.trajectory[i].x,
+            self.trajectory[i].y,
+            self.trajectory[i].theta,
+        )
+
         x = x2 + ratio * (x1 - x2)
         y = y2 + ratio * (y1 - y2)
         theta = theta2 + ratio * (theta1 - theta2)
@@ -119,7 +134,11 @@ class MovementSupervisor:
         """
         v_linear = self.linear_curve.PlannedVelocity(t)
 
-        if self.last_theta is None or self.last_time_theta is None or t == self.last_time_theta:
+        if (
+            self.last_theta is None
+            or self.last_time_theta is None
+            or t == self.last_time_theta
+        ):
             v_angular = self.angular_speed
         else:
             dt = t - self.last_time_theta
@@ -133,7 +152,7 @@ class MovementSupervisor:
             v_angular = dtheta / dt
 
         if abs(v_angular) > self.profile["max_angular_speed"]:
-            v_angular = self.profile["max_angular_speed"]*(v_angular/abs(v_angular))
+            v_angular = self.profile["max_angular_speed"] * (v_angular / abs(v_angular))
 
         self.last_theta = theta
         self.last_time_theta = t

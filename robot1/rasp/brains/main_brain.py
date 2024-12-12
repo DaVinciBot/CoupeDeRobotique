@@ -18,24 +18,20 @@ from GPIO import PIN
 
 import time
 import numpy as np
+
 # Import from local path
 from controllers import RollingBasis
 
 
-from path_finding import (
-    PathFinder
-)
+from path_finding import PathFinder
 from arena import Arena2
 
 from deplacement_supervisor import MovementSupervisor
 
+
 class MainBrain(Brain):
 
-    def __init__(
-        self,
-        logger: Logger,
-        rolling_basis: RollingBasis
-    ) -> None:
+    def __init__(self, logger: Logger, rolling_basis: RollingBasis) -> None:
 
         self.rolling_basis: RollingBasis
 
@@ -46,13 +42,13 @@ class MainBrain(Brain):
             identifier="NewArena",
             decorator_level=LogLevels.INFO,
             print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG
+            file_log_level=LogLevels.DEBUG,
         )
         finder_logger = Logger(
             identifier="PathFinder",
             decorator_level=LogLevels.INFO,
             print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG
+            file_log_level=LogLevels.DEBUG,
         )
 
         chunk_size = 2
@@ -64,7 +60,7 @@ class MainBrain(Brain):
             border_buffer=0,
             obstacle_buffer=0,
             zones=[],
-            chunk_size=chunk_size
+            chunk_size=chunk_size,
         )
 
         arena_grid = arena.grid_manager.static_grid
@@ -74,7 +70,7 @@ class MainBrain(Brain):
             start=OrientedPoint(0, 0, 0.0),
             goal=OrientedPoint(200, 100, 0.0),
             grid=arena_grid,
-            chunk_size=chunk_size
+            chunk_size=chunk_size,
         )
 
         self.path = finder.find_oriented_path()
@@ -87,7 +83,7 @@ class MainBrain(Brain):
                     "max_linear_acceleration": 20.0,  # Max 0.5 cm/s^2
                     "max_angular_acceleration": 0.1,  # Max 1.0 rad/s^2
                     "max_linear_deceleration": 20.0,  # Max 0.5 cm/s^2
-                    "max_angular_deceleration": 0.1  # Max 1.0 rad/s^2
+                    "max_angular_deceleration": 0.1,  # Max 1.0 rad/s^2
                 }
             }
         }
@@ -102,9 +98,12 @@ class MainBrain(Brain):
                 trajectory.append(OrientedPoint(x, y, theta))  # ((x, y), orientation)
             return trajectory
 
-        #self.path = generate_test_trajectory()
-        self.supervisor = MovementSupervisor(profile=CONFIG["SPEED_PROFILES"]["test_speed"], linear_speed=0.0,
-                                        angular_speed=0.0)
+        # self.path = generate_test_trajectory()
+        self.supervisor = MovementSupervisor(
+            profile=CONFIG["SPEED_PROFILES"]["test_speed"],
+            linear_speed=0.0,
+            angular_speed=0.0,
+        )
 
         super().__init__(logger, self)
 
@@ -118,7 +117,7 @@ class MainBrain(Brain):
             f"Odometrie: {self.rolling_basis.odometrie}\n"
             f"Linear Speed: {self.rolling_basis.linear_speed}\n"
             f"Angular Speed:{self.rolling_basis.angular_speed}\n\n",
-            LogLevels.DEBUG
+            LogLevels.DEBUG,
         )
 
     @Brain.task(process=False, run_on_start=True)
@@ -127,19 +126,16 @@ class MainBrain(Brain):
         await asyncio.sleep(3)
         self.supervisor.set_trajectory(self.path)
         await self.drive_rob()
-        
+
     @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     async def drive_rob(self):
 
         state = self.supervisor.compute_future_state(time.time())
 
-        self.logger.log(
-            f"State: {state}\n",
-            LogLevels.DEBUG
-        )
+        self.logger.log(f"State: {state}\n", LogLevels.DEBUG)
 
         self.rolling_basis.set_speed_and_position(
             target_linear_speed=state[1],
             target_angular_speed=state[2],
-            target_position=OrientedPoint((state[0].x, state[0].y), 0.0)
+            target_position=OrientedPoint((state[0].x, state[0].y), 0.0),
         )

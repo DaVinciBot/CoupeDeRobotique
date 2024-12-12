@@ -1,6 +1,7 @@
 import heapq
 import numpy as np
 
+
 def heuristic(a, b):
     """
     Heuristique pour A* (distance de Manhattan).
@@ -9,6 +10,7 @@ def heuristic(a, b):
     :return: Distance heuristique entre a et b.
     """
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
 
 def get_neighbors(grid, node):
     """
@@ -21,7 +23,9 @@ def get_neighbors(grid, node):
     neighbors = []
     for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:  # Haut, Bas, Gauche, Droite
         nx, ny = x + dx, y + dy
-        if 0 <= ny < len(grid) and 0 <= nx < len(grid[0]) and grid[ny][nx] == 1:  # Vérifie si accessible
+        if (
+            0 <= ny < len(grid) and 0 <= nx < len(grid[0]) and grid[ny][nx] == 1
+        ):  # Vérifie si accessible
             neighbors.append((nx, ny))
     return neighbors
 
@@ -59,7 +63,9 @@ def a_star_pathfinding(grid, start, goal):
             return path
 
         for neighbor in get_neighbors(grid, current):
-            tentative_g_score = g_score[current] + 1  # Distance entre cellules adjacentes
+            tentative_g_score = (
+                g_score[current] + 1
+            )  # Distance entre cellules adjacentes
             print(f"Voisin : {neighbor}, g_score potentiel : {tentative_g_score}")
 
             if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
@@ -67,7 +73,9 @@ def a_star_pathfinding(grid, start, goal):
                 g_score[neighbor] = tentative_g_score
                 f_score[neighbor] = tentative_g_score + heuristic(neighbor, goal)
                 if neighbor not in [i[1] for i in open_set]:
-                    print(f"Ajout au open_set : {neighbor} avec f_score : {f_score[neighbor]}")
+                    print(
+                        f"Ajout au open_set : {neighbor} avec f_score : {f_score[neighbor]}"
+                    )
                     heapq.heappush(open_set, (f_score[neighbor], neighbor))
 
     print("Aucun chemin trouvé.")

@@ -18,10 +18,9 @@ from geometry import (
     create_straight_rectangle,
     prepare,
     distance,
-
     OrientedPoint,
     nearest_points,
-    box
+    box,
 )
 
 # Import from common
@@ -29,25 +28,33 @@ from WS_comms import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
 from logger import Logger, LogLevels
 from geometry import OrientedPoint
 from arena import MarsArena
-from arena import Arena2, BaseArenaZone, ZoneType, EnemyZone, StuffZone, ForbiddenZone, BlueReservedZone, YellowReservedZone, BorderZone
+from arena import (
+    Arena2,
+    BaseArenaZone,
+    ZoneType,
+    EnemyZone,
+    StuffZone,
+    ForbiddenZone,
+    BlueReservedZone,
+    YellowReservedZone,
+    BorderZone,
+)
 
 from pathfinding.core.grid import Grid, GridNode
 
-from path_finding import (
-    PathFinder
-)
+from path_finding import PathFinder
 
 arena_logger = Logger(
     identifier="NewArena",
     decorator_level=LogLevels.INFO,
     print_log_level=LogLevels.DEBUG,
-    file_log_level=LogLevels.DEBUG
+    file_log_level=LogLevels.DEBUG,
 )
 finder_logger = Logger(
     identifier="PathFinder",
     decorator_level=LogLevels.INFO,
     print_log_level=LogLevels.DEBUG,
-    file_log_level=LogLevels.DEBUG
+    file_log_level=LogLevels.DEBUG,
 )
 
 
@@ -67,7 +74,7 @@ arena = Arena2(
         ForbiddenZone(create_straight_rectangle(Point(77.5, 255), Point(122.5, 155))),
         ForbiddenZone(create_straight_rectangle(Point(155, 255), Point(200, 155))),
     ],
-    chunk_size=chunk_size
+    chunk_size=chunk_size,
 )
 
 arena_grid = arena.grid_manager.static_grid
@@ -78,7 +85,7 @@ finder = PathFinder(
     start=OrientedPoint(0, 0, 0.0),
     goal=OrientedPoint(50, 70, 0.0),
     grid=arena_grid,
-    chunk_size=chunk_size
+    chunk_size=chunk_size,
 )
 
 path = finder.find_oriented_path()

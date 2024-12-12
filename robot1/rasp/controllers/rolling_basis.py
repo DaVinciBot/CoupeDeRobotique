@@ -14,13 +14,14 @@ import time
 
 from enum import Enum
 
+
 class Command(Enum):
     # rasp -> teensy : 0-127 (Convention)
     SET_SPEED_AND_POSITION = 0
-    
+
     # two ways : 127 (Convention)
     NACK = 127
-    
+
     # teensy -> rasp : 128-255 (Convention)
     PRINT = 128
     UPDATE_ROLLING_BASIS = 129
@@ -29,6 +30,7 @@ class Command(Enum):
     # To use for message creation
     def to_bytes(self):
         return bytes([self.value])
+
 
 class RollingBasis(Teensy):
     ######################
@@ -47,26 +49,28 @@ class RollingBasis(Teensy):
         super().__init__(
             logger, ser=ser, vid=vid, pid=pid, baudrate=baudrate, crc=crc, dummy=dummy
         )
-        
+
         # States of the robot
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
         self.linear_speed: float = 0.0
         self.angular_speed: float = 0.0
-        
+
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
         """
         # self.messagetype = {
-        #     128: self.rcv_print, 
-        #     129: self.rcv_rolling_basis_state,  
+        #     128: self.rcv_print,
+        #     129: self.rcv_rolling_basis_state,
         #     255: self.rcv_unknown_msg,
         # }
-        
+
         self.add_callback(self.rcv_print, Command.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Command.UNKNOWN_MSG_TYPE.value)
-        self.add_callback(self.rcv_rolling_basis_state, Command.UPDATE_ROLLING_BASIS.value)
-    
+        self.add_callback(
+            self.rcv_rolling_basis_state, Command.UPDATE_ROLLING_BASIS.value
+        )
+
     #############################
     # Received message handling #
     #############################
@@ -82,7 +86,7 @@ class RollingBasis(Teensy):
         - float y (4 bytes)
         - float theta (4 bytes)
         - float current_linear_speed (4 bytes)
-        - float current_angular_speed (4 bytes) 
+        - float current_angular_speed (4 bytes)
         """
         # Position / odometrie
         self.odometrie = OrientedPoint(
@@ -97,7 +101,7 @@ class RollingBasis(Teensy):
         self.logger.log(
             f"Teensy does not know the command {msg.hex()}", LogLevels.WARNING
         )
-        
+
     ###################
     # Message to send #
     ###################
@@ -106,7 +110,7 @@ class RollingBasis(Teensy):
         self,
         target_linear_speed: float,
         target_angular_speed: float,
-        target_position: OrientedPoint
+        target_position: OrientedPoint,
     ) -> None:
         msg = (
             Command.SET_SPEED_AND_POSITION.to_bytes()
@@ -119,4 +123,3 @@ class RollingBasis(Teensy):
         # https://docs.python.org/3/library/struct.html#format-characters
 
         self.send_bytes(msg)
-        

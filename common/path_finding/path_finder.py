@@ -13,7 +13,14 @@ import numpy as np
 
 class PathFinder:
 
-    def __init__(self, logger: Logger, start: OrientedPoint, goal: OrientedPoint, grid: Grid, chunk_size: int) -> None:
+    def __init__(
+        self,
+        logger: Logger,
+        start: OrientedPoint,
+        goal: OrientedPoint,
+        grid: Grid,
+        chunk_size: int,
+    ) -> None:
         self.logger: Logger = logger
         self.chunk_size: int = chunk_size
 
@@ -33,20 +40,30 @@ class PathFinder:
 
     @staticmethod
     def __compute_orientation(current_point: GridNode, next_point: GridNode) -> float:
-        return math.atan2(next_point.y - current_point.y, next_point.x - current_point.x)
+        return math.atan2(
+            next_point.y - current_point.y, next_point.x - current_point.x
+        )
 
     def __get_grid_node_center(self, node: GridNode) -> tuple[int, int]:
-        return node.x * self.chunk_size + self.chunk_size // 2, node.y * self.chunk_size + self.chunk_size // 2
+        return (
+            node.x * self.chunk_size + self.chunk_size // 2,
+            node.y * self.chunk_size + self.chunk_size // 2,
+        )
 
     def __find_path(self) -> list[GridNode]:
         self.path_found, _ = self.finder.find_path(
-            self.grid.node(self.current_position.x, self.current_position.y),  # Start node
+            self.grid.node(
+                self.current_position.x, self.current_position.y
+            ),  # Start node
             self.grid.node(self.goal.x, self.goal.y),  # Goal node
-            self.grid
+            self.grid,
         )
 
         if not self.path_found:
-            self.logger.log(f"No path found ! [start=({self.current_position.x}, {self.current_position.y}), goal=({self.goal.x}, {self.goal.y})]", LogLevels.WARNING)
+            self.logger.log(
+                f"No path found ! [start=({self.current_position.x}, {self.current_position.y}), goal=({self.goal.x}, {self.goal.y})]",
+                LogLevels.WARNING,
+            )
             return []
 
         return self.path_found
@@ -66,15 +83,25 @@ class PathFinder:
             # Compute the orientation of the robot at each point
             current_orientation = self.__compute_orientation(current_node, next_node)
 
-            oriented_path.append(OrientedPoint(current_node.x, current_node.y, current_orientation))
+            oriented_path.append(
+                OrientedPoint(current_node.x, current_node.y, current_orientation)
+            )
 
         # Add the last point (use same orientation as the previous one)
-        oriented_path.append(OrientedPoint(*self.__get_grid_node_center(path[-1]), oriented_path[-1].theta))
+        oriented_path.append(
+            OrientedPoint(
+                *self.__get_grid_node_center(path[-1]), oriented_path[-1].theta
+            )
+        )
 
         return oriented_path
 
-    def __absolute_coords_to_grid_coords(self, point: OrientedPoint | Point) -> GridNode:
-        return GridNode(int(point.x // self.chunk_size), int(point.y // self.chunk_size))
+    def __absolute_coords_to_grid_coords(
+        self, point: OrientedPoint | Point
+    ) -> GridNode:
+        return GridNode(
+            int(point.x // self.chunk_size), int(point.y // self.chunk_size)
+        )
 
     def __grid_coords_to_absolute_coords(self, node: GridNode) -> Point:
         x, y = self.__get_grid_node_center(node)
@@ -101,7 +128,10 @@ class PathFinder:
         Visualise the grid with start, goal, obstacles, and the path.
         """
         # Assuming grid dimensions can be inferred from its node structure
-        rows, cols = self.grid.height, self.grid.width  # Adjust based on your Grid implementation
+        rows, cols = (
+            self.grid.height,
+            self.grid.width,
+        )  # Adjust based on your Grid implementation
 
         # Initialize the plot
         fig, ax = plt.subplots(figsize=(10, 10))
@@ -118,7 +148,9 @@ class PathFinder:
         start_x, start_y = self.current_position.x, rows - self.current_position.y - 1
         goal_x, goal_y = self.goal.x, rows - self.goal.y - 1
 
-        ax.add_patch(plt.Rectangle((start_x, start_y), 1, 1, color="green", label="Start"))
+        ax.add_patch(
+            plt.Rectangle((start_x, start_y), 1, 1, color="green", label="Start")
+        )
         ax.add_patch(plt.Rectangle((goal_x, goal_y), 1, 1, color="red", label="Goal"))
 
         # Draw the path if it exists
@@ -148,7 +180,7 @@ class PathFinder:
         # Set axis limits and labels
         ax.set_xlim(0, cols)
         ax.set_ylim(0, rows)
-        ax.set_aspect('equal')
+        ax.set_aspect("equal")
         ax.set_title("Pathfinding Visualization")
         ax.legend(loc="upper right")
 
@@ -160,14 +192,17 @@ class PathFinder:
         Visualise the grid with start, goal, obstacles, the path, and the scores of each cell.
         """
         # Assuming grid dimensions can be inferred from its node structure
-        rows, cols = self.grid.height, self.grid.width  # Adjust based on your Grid implementation
+        rows, cols = (
+            self.grid.height,
+            self.grid.width,
+        )  # Adjust based on your Grid implementation
 
         # Initialize the plot
         fig, ax = plt.subplots(figsize=(15, 15))
 
         # Compute maximum and minimum scores to normalize color intensity
-        max_score = float('-inf')
-        min_score = float('inf')
+        max_score = float("-inf")
+        min_score = float("inf")
 
         for y in range(rows):
             for x in range(cols):
@@ -192,18 +227,31 @@ class PathFinder:
                     # Use a grayscale intensity for the score (1.0 = white, 0.0 = black)
                     color_intensity = 1.0 - normalized_score
                     ax.add_patch(
-                        plt.Rectangle((x, rows - y - 1), 1, 1,
-                                      color=(color_intensity, color_intensity, color_intensity))
+                        plt.Rectangle(
+                            (x, rows - y - 1),
+                            1,
+                            1,
+                            color=(color_intensity, color_intensity, color_intensity),
+                        )
                     )
                     # Optionally, add text with the exact score
-                    ax.text(x + 0.5, rows - y - 1 + 0.5, f"{node.f:.1f}",
-                            color="orange", ha="center", va="center", fontsize=10)
+                    ax.text(
+                        x + 0.5,
+                        rows - y - 1 + 0.5,
+                        f"{node.f:.1f}",
+                        color="orange",
+                        ha="center",
+                        va="center",
+                        fontsize=10,
+                    )
 
         # Draw the start and goal points
         start_x, start_y = self.current_position.x, rows - self.current_position.y - 1
         goal_x, goal_y = self.goal.x, rows - self.goal.y - 1
 
-        ax.add_patch(plt.Rectangle((start_x, start_y), 1, 1, color="green", label="Start"))
+        ax.add_patch(
+            plt.Rectangle((start_x, start_y), 1, 1, color="green", label="Start")
+        )
         ax.add_patch(plt.Rectangle((goal_x, goal_y), 1, 1, color="red", label="Goal"))
 
         # Draw the path if it exists
@@ -234,12 +282,9 @@ class PathFinder:
         # Set axis limits and labels
         ax.set_xlim(0, cols)
         ax.set_ylim(0, rows)
-        ax.set_aspect('equal')
+        ax.set_aspect("equal")
         ax.set_title("Pathfinding Visualization with Scores")
         ax.legend(loc="upper right")
 
         # Show the plot
         plt.show()
-
-
-
