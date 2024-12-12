@@ -51,7 +51,7 @@ finder_logger = Logger(
 )
 
 
-chunk_size = 5
+chunk_size = 10
 
 arena = Arena2(
     logger=arena_logger,
