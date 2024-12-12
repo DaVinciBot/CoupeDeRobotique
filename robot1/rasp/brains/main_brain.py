@@ -17,7 +17,7 @@ from utils import Utils
 from GPIO import PIN
 
 import time
-
+import numpy as np
 # Import from local path
 from controllers import RollingBasis
 
@@ -72,7 +72,7 @@ class MainBrain(Brain):
         finder = PathFinder(
             logger=finder_logger,
             start=OrientedPoint(0, 0, 0.0),
-            goal=OrientedPoint(50, 0, 0.0),
+            goal=OrientedPoint(100, 0, 0.0),
             grid=arena_grid,
             chunk_size=chunk_size
         )
@@ -92,6 +92,17 @@ class MainBrain(Brain):
             }
         }
 
+        def generate_test_trajectory():
+            trajectory = []
+            radius = 75  # cm
+            num_points = 200
+            for theta in np.linspace(0, np.pi / 2, num_points):
+                x = radius * np.cos(theta)
+                y = radius * np.sin(theta)
+                trajectory.append(OrientedPoint(x, y, theta))  # ((x, y), orientation)
+            return trajectory
+
+        self.path = generate_test_trajectory()
         self.supervisor = MovementSupervisor(profile=CONFIG["SPEED_PROFILES"]["test_speed"], linear_speed=0.0,
                                         angular_speed=0.0)
 
@@ -119,7 +130,7 @@ class MainBrain(Brain):
         
     @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     async def drive_rob(self):
-        
+
         state = self.supervisor.compute_future_state(time.time())
 
         self.logger.log(
