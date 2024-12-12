@@ -108,8 +108,14 @@ class MainBrain(Brain):
             f"Angular Speed:{self.rolling_basis.angular_speed}\n\n",
             LogLevels.DEBUG
         )
+
+    @Brain.task(process=False, run_on_start=True)
+    async def run_rob(self):
+        self.logger.log("Running robot", LogLevels.INFO)
+        await asyncio.sleep(3)
+        await self.drive_rob()
         
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
+    @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     async def drive_rob(self):
         state = self.supervisor.compute_future_state()
 
