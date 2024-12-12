@@ -86,7 +86,7 @@ class MainBrain(Brain):
         finder = PathFinder(
             logger=finder_logger,
             start=OrientedPoint(0, 0, 0.0),
-            goal=OrientedPoint(50, 70, 0.0),
+            goal=OrientedPoint(50, 0, 0.0),
             grid=arena_grid,
             chunk_size=chunk_size
         )
