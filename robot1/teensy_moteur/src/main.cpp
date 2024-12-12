@@ -54,7 +54,6 @@ float target_angular_speed = 0.0f;
 // b. define the callback functions
 void set_speed_and_position(byte *msg, byte size)
 {
-  com->print("Set speed and position\n");
   msg_set_speed_and_position *target_speed_and_position = (msg_set_speed_and_position *)msg;
 
   // Update speeds
@@ -65,8 +64,6 @@ void set_speed_and_position(byte *msg, byte size)
   target_position.x = target_speed_and_position->target_position_x;
   target_position.y = target_speed_and_position->target_position_y;
   target_position.theta = target_speed_and_position->target_position_theta;
-
-  com->print("Set speed and position SUCCESS\n");
 }
 
 // c. assign the callback functions to the right message id

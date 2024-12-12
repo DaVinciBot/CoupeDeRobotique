@@ -36,26 +36,10 @@ class MainBrain(Brain):
     ) -> None:
 
         self.rolling_basis: RollingBasis
-        super().__init__(logger, self)
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
-    async def rolling_basis_state(self):
         """
-        Get the state of the rolling basis
-        """
-        self.logger.log(
-            f"Rolling basis state:\n"
-            f"Odometrie: {self.rolling_basis.odometrie}\n"
-            f"Linear Speed: {self.rolling_basis.linear_speed}\n"
-            f"Angular Speed:{self.rolling_basis.angular_speed}\n\n",
-            LogLevels.DEBUG
-        )
-        
-    @Brain.task(process=False, run_on_start=True)
-    async def drive_rob(self):
-        """
-        Get the state of the rolling basis
-        """
+                Get the state of the rolling basis
+                """
         arena_logger = Logger(
             identifier="NewArena",
             decorator_level=LogLevels.INFO,
@@ -106,14 +90,31 @@ class MainBrain(Brain):
             }
         }
 
-        supervisor = MovementSupervisor(profile=CONFIG["SPEED_PROFILES"]["test_speed"], linear_speed=0.0, angular_speed=0.0)
+        supervisor = MovementSupervisor(profile=CONFIG["SPEED_PROFILES"]["test_speed"], linear_speed=0.0,
+                                        angular_speed=0.0)
         supervisor.set_trajectory(path)
 
-        while True:
-            state = supervisor.compute_future_state()
+        super().__init__(logger, self)
 
-            self.rolling_basis.set_speed_and_position(
-                target_linear_speed=state[1],
-                target_angular_speed=state[2],
-                target_position=state[0]
-            )
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
+    async def rolling_basis_state(self):
+        """
+        Get the state of the rolling basis
+        """
+        self.logger.log(
+            f"Rolling basis state:\n"
+            f"Odometrie: {self.rolling_basis.odometrie}\n"
+            f"Linear Speed: {self.rolling_basis.linear_speed}\n"
+            f"Angular Speed:{self.rolling_basis.angular_speed}\n\n",
+            LogLevels.DEBUG
+        )
+        
+    @Brain.task(process=False, run_on_start=True, )
+    async def drive_rob(self):
+        state = self.supervisor.compute_future_state()
+
+        self.rolling_basis.set_speed_and_position(
+            target_linear_speed=state[1],
+            target_angular_speed=state[2],
+            target_position=state[0]
+        )
