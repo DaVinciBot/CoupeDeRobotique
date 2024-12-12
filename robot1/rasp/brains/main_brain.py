@@ -72,7 +72,7 @@ class MainBrain(Brain):
         finder = PathFinder(
             logger=finder_logger,
             start=OrientedPoint(0, 0, 0.0),
-            goal=OrientedPoint(100, 0, 0.0),
+            goal=OrientedPoint(100, 50, 0.0),
             grid=arena_grid,
             chunk_size=chunk_size
         )
@@ -102,7 +102,7 @@ class MainBrain(Brain):
                 trajectory.append(OrientedPoint(x, y, theta))  # ((x, y), orientation)
             return trajectory
 
-        self.path = generate_test_trajectory()
+        #self.path = generate_test_trajectory()
         self.supervisor = MovementSupervisor(profile=CONFIG["SPEED_PROFILES"]["test_speed"], linear_speed=0.0,
                                         angular_speed=0.0)
 
