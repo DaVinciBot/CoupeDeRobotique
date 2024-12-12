@@ -7,8 +7,6 @@ from pathfinding.core.grid import Grid, GridNode
 
 import matplotlib.pyplot as plt
 import math
-import time
-import numpy as np
 
 
 class PathFinder:

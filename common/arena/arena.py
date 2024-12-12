@@ -36,7 +36,7 @@ from shapely.geometry import Polygon
 from shapely.geometry.base import BaseGeometry
 
 
-class Arena2:
+class Arena:
     """
     All distances are in cm.
     """

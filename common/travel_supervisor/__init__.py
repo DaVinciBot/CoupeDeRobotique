@@ -1,1 +1,1 @@
-from travel_supervisor.deplacement_supervisor import MovementSupervisor
+from travel_supervisor.travel_supervisor import TravelSupervisor

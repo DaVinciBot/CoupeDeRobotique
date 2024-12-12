@@ -1,11 +1,12 @@
 import time
 import math
-from geometry import OrientedPoint
-from deplacement_supervisor.curve import Curve
 from bisect import bisect_left
 
+from geometry import OrientedPoint
+from travel_supervisor.curve import Curve
 
-class MovementSupervisor:
+
+class TravelSupervisor:
     def __init__(self, profile: dict, linear_speed: float, angular_speed: float):
         """
         Initializes the supervisor by loading the specified profile.
@@ -135,9 +136,9 @@ class MovementSupervisor:
         v_linear = self.linear_curve.PlannedVelocity(t)
 
         if (
-            self.last_theta is None
-            or self.last_time_theta is None
-            or t == self.last_time_theta
+                self.last_theta is None
+                or self.last_time_theta is None
+                or t == self.last_time_theta
         ):
             v_angular = self.angular_speed
         else:

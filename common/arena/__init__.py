@@ -1,6 +1,3 @@
-from arena.mars_arena import MarsArena
-from arena.mars_arena import Plants_zone
-
 from arena.arena_zone import (
     BaseArenaZone,
     ZoneType,
@@ -11,4 +8,4 @@ from arena.arena_zone import (
     YellowReservedZone,
     BorderZone,
 )
-from arena.arena2 import Arena2
+from arena.arena import Arena
