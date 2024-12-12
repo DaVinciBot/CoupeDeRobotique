@@ -16,6 +16,8 @@ from led_strip import LEDStrip
 from utils import Utils
 from GPIO import PIN
 
+import time
+
 # Import from local path
 from controllers import RollingBasis
 
@@ -118,7 +120,7 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     async def drive_rob(self):
         self.supervisor.set_trajectory(self.path)
-        state = self.supervisor.compute_future_state()
+        state = self.supervisor.compute_future_state(time.time())
 
         self.logger.log(
             f"State: {state}\n",
