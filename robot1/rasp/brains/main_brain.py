@@ -59,8 +59,8 @@ class MainBrain(Brain):
             logger=arena_logger,
             width=300,
             height=200,
-            border_buffer=2,
-            obstacle_buffer=5,
+            border_buffer=0,
+            obstacle_buffer=0,
             zones=[],
             chunk_size=chunk_size
         )
