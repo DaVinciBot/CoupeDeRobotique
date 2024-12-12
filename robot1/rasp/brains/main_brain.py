@@ -95,7 +95,6 @@ class MainBrain(Brain):
         self.supervisor = MovementSupervisor(profile=CONFIG["SPEED_PROFILES"]["test_speed"], linear_speed=0.0,
                                         angular_speed=0.0)
 
-
         super().__init__(logger, self)
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
@@ -115,11 +114,12 @@ class MainBrain(Brain):
     async def run_rob(self):
         self.logger.log("Running robot", LogLevels.INFO)
         await asyncio.sleep(3)
+        self.supervisor.set_trajectory(self.path)
         await self.drive_rob()
         
     @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     async def drive_rob(self):
-        self.supervisor.set_trajectory(self.path)
+        
         state = self.supervisor.compute_future_state(time.time())
 
         self.logger.log(
