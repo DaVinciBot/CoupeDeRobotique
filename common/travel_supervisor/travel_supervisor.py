@@ -136,9 +136,9 @@ class TravelSupervisor:
         v_linear = self.linear_curve.PlannedVelocity(t)
 
         if (
-                self.last_theta is None
-                or self.last_time_theta is None
-                or t == self.last_time_theta
+            self.last_theta is None
+            or self.last_time_theta is None
+            or t == self.last_time_theta
         ):
             v_angular = self.angular_speed
         else:

@@ -20,15 +20,15 @@ class Logger:
     """
 
     def __init__(
-            self,
-            func=None,
-            *,
-            identifier: str = "unknown",
-            decorator_level: LogLevels = LogLevels.DEBUG,
-            print_log_level: LogLevels = LogLevels.INFO,
-            file_log_level: LogLevels = LogLevels.DEBUG,
-            print_log: bool = True,
-            write_to_file: bool = True,
+        self,
+        func=None,
+        *,
+        identifier: str = "unknown",
+        decorator_level: LogLevels = LogLevels.DEBUG,
+        print_log_level: LogLevels = LogLevels.INFO,
+        file_log_level: LogLevels = LogLevels.DEBUG,
+        print_log: bool = True,
+        write_to_file: bool = True,
     ):
         """
         Logger init, ignore func and level param (for decorator)
@@ -66,45 +66,45 @@ class Logger:
             )
 
     def message_factory(
-            self,
-            date_str: str,
-            level: LogLevels,
-            message: str,
-            identifier_override: str | None = None,
+        self,
+        date_str: str,
+        level: LogLevels,
+        message: str,
+        identifier_override: str | None = None,
     ) -> str:
 
         return (
-                (style(date_str, STYLES.DATE))
-                + " -> ["
-                + (
-                    style(
-                        (
-                            center_and_limit(self.identifier, self.identifier_width)
-                            if identifier_override is None
-                            else center_and_limit(
-                                identifier_override, self.identifier_width
-                            )
-                        ),
-                        STYLES.IDENTIFIER,
-                    )
+            (style(date_str, STYLES.DATE))
+            + " -> ["
+            + (
+                style(
+                    (
+                        center_and_limit(self.identifier, self.identifier_width)
+                        if identifier_override is None
+                        else center_and_limit(
+                            identifier_override, self.identifier_width
+                        )
+                    ),
+                    STYLES.IDENTIFIER,
                 )
-                + "] "
-                + (
-                    style(
-                        level.name.center(self.log_level_width),
-                        STYLES.LogLevelsColorsDict[level],
-                    )
+            )
+            + "] "
+            + (
+                style(
+                    level.name.center(self.log_level_width),
+                    STYLES.LogLevelsColorsDict[level],
                 )
-                + " | "
-                + (style(message, STYLES.MESSAGE))
+            )
+            + " | "
+            + (style(message, STYLES.MESSAGE))
         )
 
     def log(
-            self,
-            message: str,
-            level: LogLevels = LogLevels.WARNING,
-            led_strip=None,
-            identifier_override: str | None = None,
+        self,
+        message: str,
+        level: LogLevels = LogLevels.WARNING,
+        led_strip=None,
+        identifier_override: str | None = None,
     ) -> None:
         """
         Log un message dans le fichier de log et dans la sortie standard
@@ -193,7 +193,9 @@ def time_tracker(get_logger: Optional[Callable] = None):
             # Obtain the logger dynamically
             logger = None
             if get_logger is not None:
-                instance = args[0]  # First argument of a bound method is the instance (self)
+                instance = args[
+                    0
+                ]  # First argument of a bound method is the instance (self)
                 logger = get_logger(instance)
             else:
                 raise ValueError("A logger must be specified via get_logger.")
