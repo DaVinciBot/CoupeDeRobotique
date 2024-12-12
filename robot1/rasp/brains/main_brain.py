@@ -25,7 +25,7 @@ from path_finding import (
 )
 from arena import Arena2
 
-from supervisor import MovementSupervisor
+from deplacement_supervisor import MovementSupervisor
 
 class MainBrain(Brain):
 
