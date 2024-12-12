@@ -80,9 +80,9 @@ class MainBrain(Brain):
         CONFIG = {
             "SPEED_PROFILES": {
                 "test_speed": {
-                    "max_linear_speed": 10.0,  # Max 10.0 cm/s
+                    "max_linear_speed": 100.0,  # Max 10.0 cm/s
                     "max_angular_speed": 3.0,  # Max 6.0 rad/s
-                    "max_linear_acceleration": 0.5,  # Max 0.5 cm/s^2
+                    "max_linear_acceleration": 1.0,  # Max 0.5 cm/s^2
                     "max_angular_acceleration": 0.1,  # Max 1.0 rad/s^2
                     "max_linear_deceleration": 0.4,  # Max 0.5 cm/s^2
                     "max_angular_deceleration": 0.1  # Max 1.0 rad/s^2
