@@ -75,7 +75,7 @@ class MainBrain(Brain):
             chunk_size=chunk_size
         )
 
-        path = finder.find_oriented_path()
+        self.path = finder.find_oriented_path()
 
         CONFIG = {
             "SPEED_PROFILES": {
@@ -90,9 +90,9 @@ class MainBrain(Brain):
             }
         }
 
-        supervisor = MovementSupervisor(profile=CONFIG["SPEED_PROFILES"]["test_speed"], linear_speed=0.0,
+        self.supervisor = MovementSupervisor(profile=CONFIG["SPEED_PROFILES"]["test_speed"], linear_speed=0.0,
                                         angular_speed=0.0)
-        supervisor.set_trajectory(path)
+
 
         super().__init__(logger, self)
 
@@ -117,6 +117,7 @@ class MainBrain(Brain):
         
     @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     async def drive_rob(self):
+        self.supervisor.set_trajectory(self.path)
         state = self.supervisor.compute_future_state()
 
         self.logger.log(
