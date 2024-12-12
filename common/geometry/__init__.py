@@ -1,18 +1,24 @@
 from geometry.geometry import (
+    create_straight_rectangle,
+    OrientedPoint,
+)
+
+from shapely import (
     Point,
-    Polygon,
     MultiPoint,
+    Polygon,
     MultiPolygon,
     LineString,
+    LinearRing,
     BufferCapStyle,
     BufferJoinStyle,
-    OrientedPoint,
-    create_straight_rectangle,
     Geometry,
+    geometry,
     prepare,
     distance,
-    scale,
 )
 
 from shapely.ops import nearest_points
 from shapely import is_empty
+
+from shapely.geometry import box

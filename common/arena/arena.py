@@ -13,7 +13,6 @@ from geometry import (
     create_straight_rectangle,
     prepare,
     distance,
-    scale,
     OrientedPoint,
     nearest_points,
 )
@@ -293,3 +292,11 @@ class Arena:
 
     def remove_outside(self, points: MultiPoint):
         return self.game_borders_buffered.intersection(points)
+    
+    
+    # TODO: Implement the path finding function wich use PathFinder class. Must use a buffer zone around obstacles to avoid collisions with the robot. This buffer zone should be the size of the robot (robot_buffer in config) + a safety margin to add in config (e.g safety_buffer_obstacles=4).
+    # if the goal intersect with a forbidden zone, the function should return None without running the path finding algorithm.
+    
+    # TODO: Develop logic of zone of interest through a new class inspired by Plants_zone. A zone of interest will be a class inerited by others and have a bool (visited_oppoant) to check wether or not it intersects with a previous opponant position and visited_self for us. It will be updated by the func compute_ennemy_position in sensor_brain and by the moves we did
+    
+    # TODO: improve the forbiden zone logic to make it easier to use and mark them as obstacles in the path finding algorithm
