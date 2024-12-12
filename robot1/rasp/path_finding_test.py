@@ -6,12 +6,30 @@ import time
 
 from matplotlib.animation import FuncAnimation
 from config_loader import CONFIG
+from geometry import (
+    Point,
+    MultiPoint,
+    Polygon,
+    MultiPolygon,
+    LineString,
+    BufferCapStyle,
+    BufferJoinStyle,
+    Geometry,
+    create_straight_rectangle,
+    prepare,
+    distance,
+
+    OrientedPoint,
+    nearest_points,
+    box
+)
 
 # Import from common
 from WS_comms import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
 from logger import Logger, LogLevels
 from geometry import OrientedPoint
 from arena import MarsArena
+from arena import Arena2, BaseArenaZone, ZoneType, EnemyZone, StuffZone, ForbiddenZone, BlueReservedZone, YellowReservedZone, BorderZone
 
 from pathfinding.core.grid import Grid, GridNode
 
@@ -19,21 +37,12 @@ from path_finding import (
     PathFinder
 )
 
-def generate_grid(width_cm, height_cm, chunk_size_cm, obstacle_ratio):
-    """Génère une grille avec obstacles aléatoires."""
-    width = width_cm // chunk_size_cm
-    height = height_cm // chunk_size_cm
-    grid = [[1 if random.random() > obstacle_ratio else 0 for _ in range(width)] for _ in range(height)]
-    return grid
-
-chunk_size = 2
-grid = generate_grid(width_cm=300, height_cm=200, chunk_size_cm=chunk_size, obstacle_ratio=0.3)
-start = (1, 1)
-goal = (13, 8)
-grid[start[1]][start[0]] = 1  # Assurez-vous que le point de départ est accessible
-grid[goal[1]][goal[0]] = 1  # Assurez-vous que le point d'arrivée est accessible
-
-
+arena_logger = Logger(
+    identifier="NewArena",
+    decorator_level=LogLevels.INFO,
+    print_log_level=LogLevels.DEBUG,
+    file_log_level=LogLevels.DEBUG
+)
 finder_logger = Logger(
     identifier="PathFinder",
     decorator_level=LogLevels.INFO,
@@ -41,11 +50,34 @@ finder_logger = Logger(
     file_log_level=LogLevels.DEBUG
 )
 
+
+chunk_size = 5
+
+arena = Arena2(
+    logger=arena_logger,
+    width=300,
+    height=200,
+    border_buffer=2,
+    obstacle_buffer=5,
+    zones=[
+        ForbiddenZone(create_straight_rectangle(Point(45, 0), Point(0, 45))),
+        ForbiddenZone(create_straight_rectangle(Point(77.5, 0), Point(122.5, 45))),
+        ForbiddenZone(create_straight_rectangle(Point(155, 0), Point(200, 45))),
+        ForbiddenZone(create_straight_rectangle(Point(45, 255), Point(0, 155))),
+        ForbiddenZone(create_straight_rectangle(Point(77.5, 255), Point(122.5, 155))),
+        ForbiddenZone(create_straight_rectangle(Point(155, 255), Point(200, 155))),
+    ],
+    chunk_size=chunk_size
+)
+
+arena_grid = arena.grid_manager.static_grid
+
+
 finder = PathFinder(
     logger=finder_logger,
-    start=OrientedPoint(10.8, 20, 0.0),
-    goal=OrientedPoint(200, 150, 0.0),
-    grid=Grid(matrix=grid),
+    start=OrientedPoint(10, 100, 0.0),
+    goal=OrientedPoint(250, 150, 0.0),
+    grid=arena_grid,
     chunk_size=chunk_size
 )
 

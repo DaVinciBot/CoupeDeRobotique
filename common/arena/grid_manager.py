@@ -10,7 +10,7 @@ from geometry import (
     create_straight_rectangle,
     prepare,
     distance,
-    scale,
+
     OrientedPoint,
     nearest_points,
 )
@@ -20,6 +20,7 @@ from pathfinding.core.grid import Grid, GridNode
 from logger import Logger, LogLevels
 import functools
 
+import matplotlib.pyplot as plt
 
 class GridManager:
     """
@@ -29,8 +30,7 @@ class GridManager:
     # 1 -> walkable, 0 -> obstacle
     """
 
-    def __init__(self, logger: Logger, chunk_size: int, width: int, height: int, border_buffer: float,
-                 robot_buffer: float) -> None:
+    def __init__(self, logger: Logger, chunk_size: int, width: int, height: int) -> None:
         self.logger: Logger = logger
 
         # Check if chunk_size is a multiple of width and height
@@ -49,9 +49,6 @@ class GridManager:
         self.grid_width: int = width // chunk_size  # Ensure that width and height are multiples of chunk_size
         self.grid_height: int = height // chunk_size
 
-        self.border_buffer: float = border_buffer
-        self.robot_buffer: float = robot_buffer
-
         # Forbidden zones
         self.static_forbidden_zones: list[Polygon] = []
         self.dynamic_forbidden_zones: list[Polygon] = []
@@ -64,6 +61,10 @@ class GridManager:
         if update_static_zones:
             for zone in self.static_forbidden_zones:
                 self.static_grid = self.__mark_zone_as_forbidden(
+                    grid=self.static_grid, polygon_to_mark=zone
+                )
+                # Also update the static_and_dynamic_grid
+                self.static_and_dynamic_grid = self.__mark_zone_as_forbidden(
                     grid=self.static_grid, polygon_to_mark=zone
                 )
 
@@ -104,7 +105,7 @@ class GridManager:
                 )
                 # If the cell intersects the polygon, mark it as forbidden
                 if polygon_to_mark.intersects(cell):
-                    grid.nodes[row][col] = 0
+                    grid.nodes[row][col].walkable = False
         return grid
 
     def __absolute_coords_to_grid_coords(self, point: OrientedPoint | Point) -> GridNode:
@@ -151,3 +152,37 @@ class GridManager:
 
     def static_and_dynamic_grid(self) -> Grid:
         return self.static_and_dynamic_grid
+
+    def visualize(self, only_static_grid: bool = False) -> None:
+        """
+        Visualise the grid
+        """
+        grid_to_visualize = self.static_grid if only_static_grid else self.static_and_dynamic_grid
+
+        # Assuming grid dimensions can be inferred from its node structure
+        rows, cols = grid_to_visualize.height, grid_to_visualize.width  # Adjust based on your Grid implementation
+
+        # Initialize the plot
+        fig, ax = plt.subplots(figsize=(10, 10))
+
+        # Draw each cell of the grid
+        for y in range(self.grid_height):
+            for x in range(self.grid_width):
+                if not grid_to_visualize.node(x, y).walkable:
+                    # Draw obstacles in black
+                    ax.add_patch(plt.Rectangle((x, rows - y - 1), 1, 1, color="black"))
+
+        # Set grid lines
+        ax.set_xticks(range(cols))
+        ax.set_yticks(range(rows))
+        ax.grid(True)
+
+        # Set axis limits and labels
+        ax.set_xlim(0, cols)
+        ax.set_ylim(0, rows)
+        ax.set_aspect('equal')
+        ax.set_title("Arena Grid Visualization")
+        ax.legend(loc="upper right")
+
+        # Show the plot
+        plt.show()

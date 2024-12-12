@@ -1,19 +1,11 @@
+from typing import Any, ClassVar, Dict, Tuple
+
 from shapely import (
     Point,
-    MultiPoint,
     Polygon,
-    MultiPolygon,
-    LineString,
-    LinearRing,
-    BufferCapStyle,
-    BufferJoinStyle,
-    Geometry,
-    geometry,
-    prepare,
-    distance,
 )
 
-from shapely.affinity import scale
+import shapely.geometry as geometry
 
 
 def create_straight_rectangle(p1: Point, p2: Point) -> Polygon:
@@ -22,15 +14,12 @@ def create_straight_rectangle(p1: Point, p2: Point) -> Polygon:
     )
 
 
-from typing import Any, ClassVar, Dict, Tuple
-
 ### Point inheritance: cf https://github.com/shapely/shapely/issues/1233
 # Very weird but works; if not possible for some reason, maybe just migrate to a composition of Point and float instead
 # cf Jupyter notebook in common/arena for different versions tested, this is a version that supports both tuple, theta and x, y, theta initialization and has explicit str conversions for less ide warnings (combination of OrientedPoint2 and 3 as I am writing this). It's the slowest, but not by much, and allows the fullest compatibility with Point and shapely as a whole.
 
 
 class OrientedPoint(Point):
-
     _id_to_attrs: ClassVar[Dict[str, Any]] = {}
 
     __slots__ = (
@@ -40,12 +29,12 @@ class OrientedPoint(Point):
     theta: float  # For documentation generation and static type checking
 
     def __init__(
-        self,
-        x_or_coords: float | Tuple[float, float],
-        y_or_theta: float | None = None,
-        theta: float = 0.0,
+            self,
+            x_or_coords: float | Tuple[float, float],
+            y_or_theta: float | None = None,
+            theta: float = 0.0,
     ) -> (
-        None
+            None
     ):  # if theta is not optional or if the structure of the arguments change (eg: self, x, y, theta) then MultiPoint becomes impossible with OrientedPoint
         self._id_to_attrs[str(id(self))] = dict(
             theta=(
@@ -56,11 +45,11 @@ class OrientedPoint(Point):
         )
 
     def __new__(
-        cls,
-        x_or_coords: float | Tuple[float, float],
-        y: float | None = None,
-        *args,
-        **kwargs,
+            cls,
+            x_or_coords: float | Tuple[float, float],
+            y: float | None = None,
+            *args,
+            **kwargs,
     ) -> "OrientedPoint":
         if isinstance(x_or_coords, Tuple):
             point = super().__new__(cls, x_or_coords)

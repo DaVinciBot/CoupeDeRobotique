@@ -11,6 +11,7 @@ from logger import Logger, LogLevels
 from shapely import distance
 from sys import maxsize
 
+from pathfinding.core.grid import Grid, GridNode
 
 class Plants_zone:
     def __init__(self, zone, nb_plant: int = 0) -> None:
@@ -227,3 +228,31 @@ class MarsArena(Arena):
         \tForbidden area : {self.zones["forbidden"]}
         \tHome : {self.zones["home"]}
         """
+
+    def to_grid(self, chunk_size_cm: int) -> Grid:
+        width_cm = 300
+        height_cm = 200
+
+        width = width_cm // chunk_size_cm
+        height = height_cm // chunk_size_cm
+
+        # ALl the grid is filled with 1 -> authorized area
+        grid = [[1 for _ in range(width)] for _ in range(height)]
+
+        # Forbidden area
+        forbidden_area = [plant_zone.zone for plant_zone in self.drop_zones] + [plant_zone.zone for plant_zone in self.pickup_zones]
+
+        # Iterate over each cell in the grid
+        for row in range(height):
+            for col in range(width):
+                # Compute the center point of the current cell
+                cell_center = Point(
+                    (col * chunk_size_cm + chunk_size_cm // 2),
+                    (row * chunk_size_cm + chunk_size_cm // 2),
+                )
+
+                # Check if the cell center is within the forbidden area
+                if any(area.contains(cell_center) for area in forbidden_area):
+                    grid[row][col] = 0
+
+        return Grid(matrix=grid)
