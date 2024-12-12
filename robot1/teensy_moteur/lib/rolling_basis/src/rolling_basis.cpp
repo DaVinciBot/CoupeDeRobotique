@@ -86,8 +86,8 @@ void Rolling_Basis::handle(
     ) {
     /* Speed part */
     // Compute real linear and angular speed
-    double Vm = (this->right_motor->speed + this->right_motor->speed) / 2; // Vitesse linéaire mesurée
-    double Wm = (this->right_motor->speed - this->right_motor->speed) / this->center_distance; // Vitesse angulaire mesurée
+    double Vm = (this->right_motor->speed + this->left_motor->speed) / 2; // Vitesse linéaire mesurée
+    double Wm = (this->right_motor->speed - this->left_motor->speed) / this->center_distance; // Vitesse angulaire mesurée
 
     // Save speeds as rolling basis properties
     this->linear_speed  = (float)Vm;
