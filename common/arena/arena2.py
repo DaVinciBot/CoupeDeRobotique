@@ -12,22 +12,23 @@ from geometry import (
     create_straight_rectangle,
     prepare,
     distance,
-
     OrientedPoint,
     nearest_points,
-    box
+    box,
 )
 from logger import Logger, LogLevels
 import numpy as np
 
 from arena.grid_manager import GridManager
 from arena.arena_zone import (
-    ZoneType, BaseArenaZone,
+    ZoneType,
+    BaseArenaZone,
     EnemyZone,
     StuffZone,
     ForbiddenZone,
-    BlueReservedZone, YellowReservedZone,
-    BorderZone
+    BlueReservedZone,
+    YellowReservedZone,
+    BorderZone,
 )
 
 import matplotlib.pyplot as plt
@@ -40,21 +41,22 @@ class Arena2:
     All distances are in cm.
     """
 
-    def __init__(self,
-                 logger: Logger,
-                 width: int,
-                 height: int,
-                 border_buffer: float,
-                 obstacle_buffer: float,
-                 zones: list[BaseArenaZone],
-                 chunk_size: int = 10,
-                 grid_manager_logger: Logger = Logger(
-                     identifier="GridManager",
-                     decorator_level=LogLevels.INFO,
-                     print_log_level=LogLevels.DEBUG,
-                     file_log_level=LogLevels.DEBUG
-                 )
-                 ) -> None:
+    def __init__(
+        self,
+        logger: Logger,
+        width: int,
+        height: int,
+        border_buffer: float,
+        obstacle_buffer: float,
+        zones: list[BaseArenaZone],
+        chunk_size: int = 10,
+        grid_manager_logger: Logger = Logger(
+            identifier="GridManager",
+            decorator_level=LogLevels.INFO,
+            print_log_level=LogLevels.DEBUG,
+            file_log_level=LogLevels.DEBUG,
+        ),
+    ) -> None:
         self.logger: Logger = logger
 
         self.width: int = width
@@ -85,7 +87,9 @@ class Arena2:
 
     def __add_buffer_to_zone(self, zone: Polygon, buffer: float) -> Polygon:
         # TODO: cap_style does not work as expected
-        return zone.buffer(buffer, cap_style=BufferCapStyle.square)  # square because of square chunk division
+        return zone.buffer(
+            buffer, cap_style=BufferCapStyle.square
+        )  # square because of square chunk division
 
     def __create_arena_border_zone(self) -> BorderZone:
         """
@@ -112,25 +116,36 @@ class Arena2:
 
         # Draw the arena
         arena_polygon = box(0, 0, self.width, self.height)
-        self.__plot_polygon(ax, arena_polygon, color='lightgrey', label='Arena')
+        self.__plot_polygon(ax, arena_polygon, color="lightgrey", label="Arena")
 
         for zone in self.zones:
             if show_buffer and zone.zone_type != ZoneType.BORDER_ZONE:
                 # Plot the full buffer zone in light red
-                buffer_polygon = self.__add_buffer_to_zone(zone.polygon, self.obstacle_buffer)
-                self.__plot_polygon(ax, buffer_polygon, color='lightcoral', label=f"{zone.zone_type.name} Buffer")
+                buffer_polygon = self.__add_buffer_to_zone(
+                    zone.polygon, self.obstacle_buffer
+                )
+                self.__plot_polygon(
+                    ax,
+                    buffer_polygon,
+                    color="lightcoral",
+                    label=f"{zone.zone_type.name} Buffer",
+                )
 
             # Plot the original zone in dark red
-            self.__plot_polygon(ax, zone.polygon, color='darkred', label=f"{zone.zone_type.name} Zone")
+            self.__plot_polygon(
+                ax, zone.polygon, color="darkred", label=f"{zone.zone_type.name} Zone"
+            )
 
         ax.set_xlim(0, self.width)
         ax.set_ylim(0, self.height)
-        ax.set_aspect('equal', adjustable='box')
+        ax.set_aspect("equal", adjustable="box")
         ax.set_title("Arena Visualization")
         ax.legend()
         plt.show()
 
-    def __plot_polygon(self, ax, polygon: Polygon, color: str, label: str = None) -> None:
+    def __plot_polygon(
+        self, ax, polygon: Polygon, color: str, label: str = None
+    ) -> None:
         """
         Helper method to plot a Polygon or MultiPolygon on the given axis.
         - Fill polygons without holes.
@@ -143,8 +158,8 @@ class Arena2:
         else:
             # Polygon with holes: draw only the outline
             x, y = polygon.exterior.xy
-            ax.plot(x, y, color=color, linestyle='--', label=label)  # Dashed outline
+            ax.plot(x, y, color=color, linestyle="--", label=label)  # Dashed outline
             # Draw outlines of interior holes
             for interior in polygon.interiors:
                 x, y = interior.xy
-                ax.plot(x, y, color=color, linestyle='--')  # Dashed lines for holes
+                ax.plot(x, y, color=color, linestyle="--")  # Dashed lines for holes

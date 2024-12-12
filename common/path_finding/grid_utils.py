@@ -51,7 +51,9 @@ def can_move(grid, current_position, new_position):
     :return: True si le déplacement est autorisé, False sinon.
     """
     x, y = new_position
-    if 0 <= y < len(grid) and 0 <= x < len(grid[0]):  # Vérifier que la position est dans la grille
+    if 0 <= y < len(grid) and 0 <= x < len(
+        grid[0]
+    ):  # Vérifier que la position est dans la grille
         return grid[y][x] == 1  # 1 = autorisé
     return False
 
@@ -91,7 +93,9 @@ def visualize_path(grid, path=None, start=None, goal=None, dynamic_obstacles=Non
     :param dynamic_obstacles: Liste de coordonnées [(x1, y1), ...] pour les obstacles ajoutés dynamiquement.
     """
     grid_with_path = np.array(grid)
-    grid_with_path = 1 - grid_with_path  # Inverser les valeurs pour afficher les obstacles en noir
+    grid_with_path = (
+        1 - grid_with_path
+    )  # Inverser les valeurs pour afficher les obstacles en noir
 
     # Marquer la trajectoire si un chemin est fourni
     if path:
@@ -100,8 +104,8 @@ def visualize_path(grid, path=None, start=None, goal=None, dynamic_obstacles=Non
 
     # Préparer l'affichage avec des couleurs spécifiques
     cmap = plt.cm.binary  # Colormap noir et blanc
-    cmap.set_over('blue')  # Couleur pour les chemins marqués (2)
-    cmap.set_under('red')  # Couleur pour les points de départ et arrivée
+    cmap.set_over("blue")  # Couleur pour les chemins marqués (2)
+    cmap.set_under("red")  # Couleur pour les points de départ et arrivée
 
     plt.figure(figsize=(10, 10))
     plt.imshow(grid_with_path, cmap=cmap, origin="upper", vmin=0, vmax=2)
@@ -113,9 +117,13 @@ def visualize_path(grid, path=None, start=None, goal=None, dynamic_obstacles=Non
 
     # Ajouter les points de départ et d'arrivée
     if start:
-        plt.scatter(start[0], start[1], color="green", label="Départ", s=100, edgecolor="black")
+        plt.scatter(
+            start[0], start[1], color="green", label="Départ", s=100, edgecolor="black"
+        )
     if goal:
-        plt.scatter(goal[0], goal[1], color="red", label="Arrivée", s=100, edgecolor="black")
+        plt.scatter(
+            goal[0], goal[1], color="red", label="Arrivée", s=100, edgecolor="black"
+        )
 
     # Ajouter les titres, labels et légendes
     plt.title("Grille avec Trajectoire et Obstacles Dynamiques")
@@ -126,7 +134,6 @@ def visualize_path(grid, path=None, start=None, goal=None, dynamic_obstacles=Non
     plt.show()
 
 
-
 def visualize_grid(grid, chunk_size_cm=10):
     """
     Visualise la grille avec des obstacles.
@@ -134,7 +141,9 @@ def visualize_grid(grid, chunk_size_cm=10):
     :param grid: Grille à visualiser (liste de listes contenant 0 et 1).
     :param chunk_size_cm: Taille d'un chunk en cm (optionnel, pour l'échelle).
     """
-    grid_array = np.array(grid)  # Convertir en numpy array pour faciliter la manipulation
+    grid_array = np.array(
+        grid
+    )  # Convertir en numpy array pour faciliter la manipulation
     grid_array = 1 - grid_array
     height, width = grid_array.shape
 
@@ -142,7 +151,12 @@ def visualize_grid(grid, chunk_size_cm=10):
     fig, ax = plt.subplots(figsize=(10, 10))
 
     # Afficher la grille avec une carte de couleurs
-    ax.imshow(grid_array, cmap="Greys", origin="upper", extent=[0, width * chunk_size_cm, 0, height * chunk_size_cm])
+    ax.imshow(
+        grid_array,
+        cmap="Greys",
+        origin="upper",
+        extent=[0, width * chunk_size_cm, 0, height * chunk_size_cm],
+    )
 
     # Ajouter une grille
     ax.set_xticks(np.arange(0, width * chunk_size_cm, chunk_size_cm))

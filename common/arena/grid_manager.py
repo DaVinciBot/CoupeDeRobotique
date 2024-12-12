@@ -10,7 +10,6 @@ from geometry import (
     create_straight_rectangle,
     prepare,
     distance,
-
     OrientedPoint,
     nearest_points,
 )
@@ -22,6 +21,7 @@ import functools
 
 import matplotlib.pyplot as plt
 
+
 class GridManager:
     """
     static grid -> attention aux zones de stuff qui change de status après avoir été utilisées
@@ -30,13 +30,18 @@ class GridManager:
     # 1 -> walkable, 0 -> obstacle
     """
 
-    def __init__(self, logger: Logger, chunk_size: int, width: int, height: int) -> None:
+    def __init__(
+        self, logger: Logger, chunk_size: int, width: int, height: int
+    ) -> None:
         self.logger: Logger = logger
 
         # Check if chunk_size is a multiple of width and height
         if width % chunk_size != 0 or height % chunk_size != 0:
-            self.logger.log(f"[GRID] width and height must be a multiple of chunk_size. "
-                            f"The chunk size will be round to the nearest multiple", LogLevels.ERROR)
+            self.logger.log(
+                f"[GRID] width and height must be a multiple of chunk_size. "
+                f"The chunk size will be round to the nearest multiple",
+                LogLevels.ERROR,
+            )
             # round chunk_size to the nearest multiple of with and height
             chunk_size = min(width, height, key=lambda x: abs(x - chunk_size))
 
@@ -46,7 +51,9 @@ class GridManager:
         self.absolute_width: int = width
         self.absolute_height: int = height
 
-        self.grid_width: int = width // chunk_size  # Ensure that width and height are multiples of chunk_size
+        self.grid_width: int = (
+            width // chunk_size
+        )  # Ensure that width and height are multiples of chunk_size
         self.grid_height: int = height // chunk_size
 
         # Forbidden zones
@@ -57,7 +64,9 @@ class GridManager:
         self.static_grid: Grid = self.__generate_base_grid()
         self.static_and_dynamic_grid: Grid = self.__generate_base_grid()
 
-    def __update_grid(self, *, update_static_zones=False, update_dynamic_zones=False) -> None:
+    def __update_grid(
+        self, *, update_static_zones=False, update_dynamic_zones=False
+    ) -> None:
         if update_static_zones:
             for zone in self.static_forbidden_zones:
                 self.static_grid = self.__mark_zone_as_forbidden(
@@ -76,12 +85,16 @@ class GridManager:
                 )
 
     def __generate_base_grid(self) -> Grid:
-        return Grid(matrix=[[1 for _ in range(self.grid_width)] for _ in range(self.grid_height)])
+        return Grid(
+            matrix=[
+                [1 for _ in range(self.grid_width)] for _ in range(self.grid_height)
+            ]
+        )
 
     def __get_grid_node_center(self, node: GridNode) -> tuple[float, float]:
         return (
             node.x * self.chunk_size + self.half_chunk_size,
-            node.y * self.chunk_size + self.half_chunk_size
+            node.y * self.chunk_size + self.half_chunk_size,
         )
 
     @functools.lru_cache  # Memoization dont recalculate the same grid
@@ -101,21 +114,25 @@ class GridManager:
                     col * self.chunk_size,
                     row * self.chunk_size,
                     (col + 1) * self.chunk_size,
-                    (row + 1) * self.chunk_size
+                    (row + 1) * self.chunk_size,
                 )
                 # If the cell intersects the polygon, mark it as forbidden
                 if polygon_to_mark.intersects(cell):
                     grid.nodes[row][col].walkable = False
         return grid
 
-    def __absolute_coords_to_grid_coords(self, point: OrientedPoint | Point) -> GridNode:
+    def __absolute_coords_to_grid_coords(
+        self, point: OrientedPoint | Point
+    ) -> GridNode:
         return GridNode(point.x / self.chunk_size, point.y / self.chunk_size)
 
     def __grid_coords_to_absolute_coords(self, node: GridNode) -> Point:
         x, y = self.__get_grid_node_center(node)
         return Point(x * self.chunk_size, y * self.chunk_size)
 
-    def add_forbidden_static_zone(self, forbidden_zones: Polygon | list[Polygon]) -> None:
+    def add_forbidden_static_zone(
+        self, forbidden_zones: Polygon | list[Polygon]
+    ) -> None:
         """
         Given in real absolute coordinates
         """
@@ -125,7 +142,9 @@ class GridManager:
         self.static_forbidden_zones.extend(forbidden_zones)
         self.__update_grid(update_static_zones=True, update_dynamic_zones=False)
 
-    def remove_forbidden_static_zone(self, forbidden_zones_to_remove: Polygon | list[Polygon]) -> None:
+    def remove_forbidden_static_zone(
+        self, forbidden_zones_to_remove: Polygon | list[Polygon]
+    ) -> None:
         """
         Given in real absolute coordinates
         """
@@ -133,8 +152,11 @@ class GridManager:
             forbidden_zones = [forbidden_zones_to_remove]
 
         # Exclude the forbidden zones to remove
-        self.static_forbidden_zones = [zone for zone in self.static_forbidden_zones if
-                                       zone not in forbidden_zones_to_remove]
+        self.static_forbidden_zones = [
+            zone
+            for zone in self.static_forbidden_zones
+            if zone not in forbidden_zones_to_remove
+        ]
         self.__update_grid(update_static_zones=True, update_dynamic_zones=False)
 
     def update_dynamic_forbidden_zones(self, forbidden_zones: list[Polygon]) -> None:
@@ -157,10 +179,15 @@ class GridManager:
         """
         Visualise the grid
         """
-        grid_to_visualize = self.static_grid if only_static_grid else self.static_and_dynamic_grid
+        grid_to_visualize = (
+            self.static_grid if only_static_grid else self.static_and_dynamic_grid
+        )
 
         # Assuming grid dimensions can be inferred from its node structure
-        rows, cols = grid_to_visualize.height, grid_to_visualize.width  # Adjust based on your Grid implementation
+        rows, cols = (
+            grid_to_visualize.height,
+            grid_to_visualize.width,
+        )  # Adjust based on your Grid implementation
 
         # Initialize the plot
         fig, ax = plt.subplots(figsize=(10, 10))
@@ -180,7 +207,7 @@ class GridManager:
         # Set axis limits and labels
         ax.set_xlim(0, cols)
         ax.set_ylim(0, rows)
-        ax.set_aspect('equal')
+        ax.set_aspect("equal")
         ax.set_title("Arena Grid Visualization")
         ax.legend(loc="upper right")
 

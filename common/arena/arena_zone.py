@@ -10,7 +10,6 @@ from geometry import (
     create_straight_rectangle,
     prepare,
     distance,
-
     OrientedPoint,
     nearest_points,
 )
