@@ -1,7 +1,7 @@
 import time
 import math
 from geometry import OrientedPoint
-from curve import Curve
+from deplacement_supervisor.curve import Curve
 from bisect import bisect_left
 
 class MovementSupervisor:
