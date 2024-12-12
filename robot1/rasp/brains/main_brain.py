@@ -128,5 +128,5 @@ class MainBrain(Brain):
         self.rolling_basis.set_speed_and_position(
             target_linear_speed=state[1],
             target_angular_speed=state[2],
-            target_position=state[0]
+            target_position=OrientedPoint((state[0].x, state[0].y), 0.0)
         )

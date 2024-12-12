@@ -3,8 +3,8 @@
  */
 
 // Default position
-#define START_X 1.0
-#define START_Y 0.0
+#define START_X 0.0
+#define START_Y 1.0
 #define START_THETA 0.0
 
 // Motor Left
