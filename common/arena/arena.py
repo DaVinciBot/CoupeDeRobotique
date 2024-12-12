@@ -1,6 +1,5 @@
 from math import cos, sin, radians
 
-
 from geometry import (
     Point,
     MultiPoint,
@@ -15,287 +14,152 @@ from geometry import (
     distance,
     OrientedPoint,
     nearest_points,
+    box,
 )
 from logger import Logger, LogLevels
 import numpy as np
 
+from arena.grid_manager import GridManager
+from arena.arena_zone import (
+    ZoneType,
+    BaseArenaZone,
+    EnemyZone,
+    StuffZone,
+    ForbiddenZone,
+    BlueReservedZone,
+    YellowReservedZone,
+    BorderZone,
+)
 
-class Arena:
-    """Represent an arena"""
+import matplotlib.pyplot as plt
+from shapely.geometry import Polygon
+from shapely.geometry.base import BaseGeometry
+
+
+class Arena2:
+    """
+    All distances are in cm.
+    """
 
     def __init__(
         self,
         logger: Logger,
-        safe_collision_distance: float = 30,
-        game_borders: Polygon = create_straight_rectangle(Point(0, 0), Point(200, 300)),
-        zones: dict[str, MultiPolygon] | None = None,
-        *,
-        border_buffer,
-        robot_buffer,
-    ):
+        width: int,
+        height: int,
+        border_buffer: float,
+        obstacle_buffer: float,
+        zones: list[BaseArenaZone],
+        chunk_size: int = 10,
+        grid_manager_logger: Logger = Logger(
+            identifier="GridManager",
+            decorator_level=LogLevels.INFO,
+            print_log_level=LogLevels.DEBUG,
+            file_log_level=LogLevels.DEBUG,
+        ),
+    ) -> None:
         self.logger: Logger = logger
-        self.game_borders: Polygon = game_borders
-        self.game_borders_buffered: Polygon = self.game_borders.buffer(border_buffer)
-        self.safe_collision_distance: float = safe_collision_distance
-        self.ennemy_position: Point | None = None
-        self.border_buffer = border_buffer
-        self.robot_buffer = robot_buffer
 
-        if zones is not None:
-            self.zones = zones
+        self.width: int = width
+        self.height: int = height
 
-        else:
-            self.zones = {}
+        self.border_buffer: float = border_buffer
+        self.obstacle_buffer: float = obstacle_buffer
 
-        self.prepare_zones()  # Not necessary but should optimize future intersection calulations etc.
+        # Add buffer to all zones
+        self.zones: list[BaseArenaZone] = []
+        for zone in zones:
+            zone.polygon = self.__add_buffer_to_zone(zone.polygon, self.obstacle_buffer)
+            self.zones.append(zone)
 
-    def prepare_zones(self):
-        """Prepare all values of self.zones, to optimize later calculations"""
-        prepare(self.game_borders)
-        prepare(self.game_borders_buffered)
-        for zone in self.zones.values():
-            prepare(zone)
+        # Add border zone
+        self.zones.append(self.__create_arena_border_zone())
 
-    def valide_position(self, pos: Point) -> bool:
-        pos = pos.buffer(self.robot_buffer)
-        return self.game_borders.buffer(-0.01).contains(pos)
-
-    def contains(self, element: Geometry, buffered_zone=False) -> bool:
-        """Check if a point is in the arena bounds
-
-        Args:
-            element (Geometry): The point to check. Points, Polygons etc. are all Geometries.
-
-        Returns:
-            bool: True if the element is entirely in the arena, False otherwise
-        """
-        if buffered_zone:
-            return self.game_borders_buffered.contains(element)
-        return self.game_borders.contains(element)
-
-    def zone_intersects(self, zone_name: str, element: Geometry) -> bool:
-
-        if zone_name not in self.zones:
-            raise ValueError("Tried to check intersection with unknown zone in arena")
-        if self.zones[zone_name] is None:
-            return False
-        return self.zones[zone_name].intersects(element)
-
-    def enable_go_to_point(
-        self,
-        start: Point,
-        target: Point,
-        forbidden_zone_name: str = "forbidden",
-    ) -> bool:
-        return self.enable_go_on_path(
-            LineString([start, target]), forbidden_zone_name=forbidden_zone_name
+        # Init grid manager
+        self.grid_manager: GridManager = GridManager(
+            grid_manager_logger, chunk_size, width, height
         )
 
-    def enable_go_on_path(
-        self,
-        path: LineString,
-        forbidden_zone_name: str = "forbidden",
-    ) -> bool:
-        """this function checks if a given line (or series of connected lines) move can be made into the arena. It
-        avoids collisions with the boarders and the forbidden area. takes into account the width and the length of
-        the robot
+        # Add all forbidden zones to the grid manager
+        for zone in zones:
+            # Only add any team forbidden zone and border zone to the grid manager
+            if zone.zone_type in [ZoneType.FORBIDDEN, ZoneType.BORDER_ZONE]:
+                self.grid_manager.add_forbidden_static_zone(zone.polygon)
 
-        Args:
-            path (LineString): Path to check
-            buffer_distance (float, optional): Max distance around the path to be checked (in all directions). Defaults to 0.
-            forbidden_zone_name (str): Name of the zone to check against (in addition to game borders). Defaults to "forbidden".
+    def __add_buffer_to_zone(self, zone: Polygon, buffer: float) -> Polygon:
+        # TODO: cap_style does not work as expected
+        return zone.buffer(
+            buffer, cap_style=BufferCapStyle.square
+        )  # square because of square chunk division
 
-        Raises:
-            Exception: _description_
-
-        Returns:
-            bool: Whether this path is theoretically allowed
+    def __create_arena_border_zone(self) -> BorderZone:
+        """
+        Create a border zone (contour) around the arena with a specific width.
+        This prevents the robot from getting too close to the edges.
         """
 
-        # define the area touched by the buffer, for example the sides of a robot moving
+        arena_polygon = box(0, 0, self.width, self.height)
 
-        geometry_to_check = (
-            path.buffer(self.robot_buffer) if self.robot_buffer > 0 else path
-        )
+        inner_polygon = self.__add_buffer_to_zone(arena_polygon, -self.border_buffer)
 
-        if not self.contains(geometry_to_check):
-            return False
+        self.__add_buffer_to_zone(inner_polygon, self.border_buffer)
+        border_zone_polygon = arena_polygon.difference(inner_polygon)
 
-        return not (
-            self.zone_intersects(forbidden_zone_name, geometry_to_check)
-            # Below is code that checked for intersection with a buffer around the ennemy position as well
-            # or (
-            #     self.ennemy_position.buffer(self.robot_buffer).intersects(
-            #         geometry_to_check
-            #     )
-            #     if self.ennemy_position is not None
-            #     else False
-            # )
-        )
+        return BorderZone(polygon=border_zone_polygon)
 
-    def compute_go_to_destination(
-        self,
-        start_point: Point,
-        zone: Polygon,
-        delta: float = 0,
-    ) -> Point | None:
-        """_summary_
+    """ Viz """
 
-        Args:
-            start_point (Point): _description_
-            zone (Polygon): _description_
-            delta (float, optional): _description_. Defaults to 0.
-            closer (bool, optional): _description_. Defaults to True.
-
-        Returns:
-            _type_: _description_
+    def visualize(self, show_buffer=True) -> None:
         """
-        borders = self.game_borders
-        center: Point = zone.centroid
-        if delta == 0:
-            self.logger.log(
-                f"delta == 0, returning as close as the centroid of zone as possible to avoid collision with the border",
-                LogLevels.DEBUG,
-            )
-            if self.valide_position(center):
-                return center
-            else:
-                projected_point = borders.exterior.interpolate(
-                    borders.exterior.project(center)
+        Visualize the arena, including its border and forbidden zones.
+        """
+        fig, ax = plt.subplots(figsize=(10, 10))
+
+        # Draw the arena
+        arena_polygon = box(0, 0, self.width, self.height)
+        self.__plot_polygon(ax, arena_polygon, color="lightgrey", label="Arena")
+
+        for zone in self.zones:
+            if show_buffer and zone.zone_type != ZoneType.BORDER_ZONE:
+                # Plot the full buffer zone in light red
+                buffer_polygon = self.__add_buffer_to_zone(
+                    zone.polygon, self.obstacle_buffer
                 )
-                x = center.x
-                y = center.y
-                if abs(y - projected_point.y) < 0.1:
-                    if projected_point.x - x < 0:
-                        x = x + (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
-                        )
-                    else:
-                        x = x - (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
-                        )
-                else:
-                    if projected_point.y - y > 0:
-                        y = y - (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
-                        )
-                    else:
-                        y = y + (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
-                        )
-                center = Point(x, y)
-                if not self.valide_position(center):
-                    projected_point = borders.exterior.interpolate(
-                        borders.exterior.project(center)
-                    )
-                    if abs(y - projected_point.y) < 0.1:
-                        if projected_point.x - x < 0:
-                            x = x + (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                        else:
-                            x = x - (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                    else:
-                        if projected_point.y - y > 0:
-                            y = y - (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                        else:
-                            y = y + (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                return Point(x, y)
+                self.__plot_polygon(
+                    ax,
+                    buffer_polygon,
+                    color="lightcoral",
+                    label=f"{zone.zone_type.name} Buffer",
+                )
 
-        if delta != 0:
-            abs_delta = abs(delta)
-            disc_delta = center.buffer(abs_delta)
+            # Plot the original zone in dark red
+            self.__plot_polygon(
+                ax, zone.polygon, color="darkred", label=f"{zone.zone_type.name} Zone"
+            )
 
-            if disc_delta.intersects(start_point):
-                self.logger.log(f"start_point is inside circle_delta", LogLevels.DEBUG)
-                return None
-            else:
-                # Get the boundary (circle) of the disc of radius delta around the center
-                circle_delta = disc_delta.boundary
+        ax.set_xlim(0, self.width)
+        ax.set_ylim(0, self.height)
+        ax.set_aspect("equal", adjustable="box")
+        ax.set_title("Arena Visualization")
+        ax.legend()
+        plt.show()
 
-                # Compute the line from start_point to the center of the zone, then scale it by more than 2 to make sure it intersect
-                # the circle twice (unless start_point is inside the circle_delta, or delta == 0, which have been checked)
-                line = scale(LineString([start_point, center]), xfact=3, yfact=3)
-
-                intersections = circle_delta.intersection(line)
-
-                # self.logger.log(
-                #     f"Computed intersections: {intersections}", LogLevels.DEBUG
-                # )
-
-                assert (
-                    isinstance(intersections, MultiPoint)
-                    and len(intersections.geoms) == 2
-                ), "Should get exactly 2 intersections"
-
-                # Return closest or furthest intersection
-                if delta > 0:
-                    return nearest_points(start_point, intersections)[1]
-
-                # No clean way in case 'further' point
-                else:
-                    if distance(start_point, intersections.geoms[0]) <= distance(
-                        start_point, intersections.geoms[1]
-                    ):
-                        return intersections.geoms[1]
-                    else:
-                        return intersections.geoms[0]
-
-    def check_collision_by_distances(
-        self, distances_to_check: list[float], pos_robot: OrientedPoint
-    ):
-        """Currently hard-coded for 90-180° with 3 distances/°
-
-        Args:
-            distances_to_check (list[float]): _description_
-            pos_robot (OrientedPoint): _description_
+    def __plot_polygon(
+        self, ax, polygon: Polygon, color: str, label: str = None
+    ) -> None:
         """
-
-        for i in range(len(distances_to_check)):
-
-            # Check if the point is close enough to be a risk, and far enough to remove lidar aberrations (might be done in lidar code as well)
-            if 5 < distances_to_check[i] < self.safe_collision_distance:
-                # Then check that it isn't outside the game zone (with a buffer)
-                if self.game_borders_buffered.intersects(
-                    self.translate_relative_polar(
-                        distances_to_check[i], i / 3, pos_robot
-                    )
-                ):
-                    return True
-
-        return False
-
-    @staticmethod
-    def translate_relative_polar(
-        distance: float, relative_angle: float, pos_robot: OrientedPoint
-    ):
-        return Point(
-            pos_robot.x
-            + distance * cos(radians(pos_robot.theta - 45 + relative_angle)),
-            pos_robot.y
-            + distance * sin(radians(pos_robot.theta - 45 + relative_angle)),
-        )
-
-    def remove_outside(self, points: MultiPoint):
-        return self.game_borders_buffered.intersection(points)
-
-    # TODO: Implement the path finding function wich use PathFinder class. Must use a buffer zone around obstacles to avoid collisions with the robot. This buffer zone should be the size of the robot (robot_buffer in config) + a safety margin to add in config (e.g safety_buffer_obstacles=4).
-    # if the goal intersect with a forbidden zone, the function should return None without running the path finding algorithm.
-
-    # TODO: Develop logic of zone of interest through a new class inspired by Plants_zone. A zone of interest will be a class inerited by others and have a bool (visited_oppoant) to check wether or not it intersects with a previous opponant position and visited_self for us. It will be updated by the func compute_ennemy_position in sensor_brain and by the moves we did
-
-    # TODO: improve the forbiden zone logic to make it easier to use and mark them as obstacles in the path finding algorithm
+        Helper method to plot a Polygon or MultiPolygon on the given axis.
+        - Fill polygons without holes.
+        - Only draw the outline (in dashed lines) for polygons with holes.
+        """
+        if len(polygon.interiors) == 0:
+            # No holes: fill the polygon
+            x, y = polygon.exterior.xy
+            ax.fill(x, y, alpha=0.5, fc=color, label=label)
+        else:
+            # Polygon with holes: draw only the outline
+            x, y = polygon.exterior.xy
+            ax.plot(x, y, color=color, linestyle="--", label=label)  # Dashed outline
+            # Draw outlines of interior holes
+            for interior in polygon.interiors:
+                x, y = interior.xy
+                ax.plot(x, y, color=color, linestyle="--")  # Dashed lines for holes
