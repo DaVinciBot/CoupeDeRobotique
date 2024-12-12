@@ -82,11 +82,11 @@ class MainBrain(Brain):
         CONFIG = {
             "SPEED_PROFILES": {
                 "test_speed": {
-                    "max_linear_speed": 50.0,  # Max 10.0 cm/s
+                    "max_linear_speed": 100.0,  # Max 10.0 cm/s
                     "max_angular_speed": 3.0,  # Max 6.0 rad/s
-                    "max_linear_acceleration": 10.0,  # Max 0.5 cm/s^2
+                    "max_linear_acceleration": 20.0,  # Max 0.5 cm/s^2
                     "max_angular_acceleration": 0.1,  # Max 1.0 rad/s^2
-                    "max_linear_deceleration": 10.0,  # Max 0.5 cm/s^2
+                    "max_linear_deceleration": 20.0,  # Max 0.5 cm/s^2
                     "max_angular_deceleration": 0.1  # Max 1.0 rad/s^2
                 }
             }
@@ -94,7 +94,7 @@ class MainBrain(Brain):
 
         def generate_test_trajectory():
             trajectory = []
-            radius = 75  # cm
+            radius = 200  # cm
             num_points = 200
             for theta in np.linspace(0, np.pi / 2, num_points):
                 x = radius * np.cos(theta)
