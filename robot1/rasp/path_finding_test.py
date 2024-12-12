@@ -75,8 +75,8 @@ arena_grid = arena.grid_manager.static_grid
 
 finder = PathFinder(
     logger=finder_logger,
-    start=OrientedPoint(10, 100, 0.0),
-    goal=OrientedPoint(250, 150, 0.0),
+    start=OrientedPoint(0, 0, 0.0),
+    goal=OrientedPoint(50, 70, 0.0),
     grid=arena_grid,
     chunk_size=chunk_size
 )

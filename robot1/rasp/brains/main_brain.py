@@ -85,8 +85,8 @@ class MainBrain(Brain):
 
         finder = PathFinder(
             logger=finder_logger,
-            start=OrientedPoint(10, 100, 0.0),
-            goal=OrientedPoint(250, 150, 0.0),
+            start=OrientedPoint(0, 0, 0.0),
+            goal=OrientedPoint(50, 70, 0.0),
             grid=arena_grid,
             chunk_size=chunk_size
         )
@@ -111,7 +111,7 @@ class MainBrain(Brain):
 
         while True:
             state = supervisor.compute_future_state()
-            
+
             self.rolling_basis.set_speed_and_position(
                 target_linear_speed=state[1],
                 target_angular_speed=state[2],
