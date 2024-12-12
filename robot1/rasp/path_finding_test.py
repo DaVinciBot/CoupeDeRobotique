@@ -6,6 +6,7 @@ import time
 
 from matplotlib.animation import FuncAnimation
 from config_loader import CONFIG
+
 from geometry import (
     Point,
     MultiPoint,
@@ -27,9 +28,9 @@ from geometry import (
 from WS_comms import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
 from logger import Logger, LogLevels
 from geometry import OrientedPoint
-from arena import MarsArena
+
 from arena import (
-    Arena2,
+    Arena,
     BaseArenaZone,
     ZoneType,
     EnemyZone,
@@ -60,7 +61,7 @@ finder_logger = Logger(
 
 chunk_size = 10
 
-arena = Arena2(
+arena = Arena(
     logger=arena_logger,
     width=300,
     height=200,

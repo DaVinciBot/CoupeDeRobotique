@@ -30,7 +30,7 @@ from WS_comms import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
 from logger import Logger, LogLevels
 from geometry import OrientedPoint
 from arena import (
-    Arena2,
+    Arena,
     BaseArenaZone,
     ZoneType,
     EnemyZone,
@@ -53,7 +53,7 @@ arena_logger = Logger(
     file_log_level=LogLevels.DEBUG,
 )
 
-arena = Arena2(
+arena = Arena(
     logger=arena_logger,
     width=300,
     height=200,
