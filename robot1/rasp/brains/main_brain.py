@@ -20,6 +20,13 @@ from GPIO import PIN
 from controllers import RollingBasis
 
 
+from path_finding import (
+    PathFinder
+)
+from arena import Arena2
+
+from supervisor import MovementSupervisor
+
 class MainBrain(Brain):
 
     def __init__(
@@ -44,45 +51,69 @@ class MainBrain(Brain):
             LogLevels.DEBUG
         )
         
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0)
+    @Brain.task(process=False, run_on_start=True)
     async def drive_rob(self):
         """
         Get the state of the rolling basis
         """
-        self.logger.log("Driving the robot...", LogLevels.DEBUG)
-        await asyncio.sleep(1)
-        self.logger.log("GO !", LogLevels.DEBUG)
-        
-        self.rolling_basis.set_speed_and_position(
-            target_linear_speed = 10.0,
-            target_angular_speed = 0.0,
-            target_position = OrientedPoint((0.0, 0.0), 0.0)
+        arena_logger = Logger(
+            identifier="NewArena",
+            decorator_level=LogLevels.INFO,
+            print_log_level=LogLevels.DEBUG,
+            file_log_level=LogLevels.DEBUG
         )
-        
-        await asyncio.sleep(1)
-        self.logger.log("STOP !", LogLevels.DEBUG)
-        
-        self.rolling_basis.set_speed_and_position(
-            target_linear_speed = 0.0,
-            target_angular_speed = 0.0,
-            target_position = OrientedPoint((0.0, 0.0), 0.0)
+        finder_logger = Logger(
+            identifier="PathFinder",
+            decorator_level=LogLevels.INFO,
+            print_log_level=LogLevels.DEBUG,
+            file_log_level=LogLevels.DEBUG
         )
-        
-        await asyncio.sleep(1)
-        self.logger.log("GO BACK !", LogLevels.DEBUG)
-        
-        self.rolling_basis.set_speed_and_position(
-            target_linear_speed = -10.0,
-            target_angular_speed = 0.0,
-            target_position = OrientedPoint((0.0, 0.0), 0.0)
+
+        chunk_size = 5
+
+        arena = Arena2(
+            logger=arena_logger,
+            width=300,
+            height=200,
+            border_buffer=2,
+            obstacle_buffer=5,
+            zones=[],
+            chunk_size=chunk_size
         )
-        
-        await asyncio.sleep(1)
-        self.logger.log("STOP !", LogLevels.DEBUG)
-        
-        self.rolling_basis.set_speed_and_position(
-            target_linear_speed = 0.0,
-            target_angular_speed = 0.0,
-            target_position = OrientedPoint((0.0, 0.0), 0.0)
+
+        arena_grid = arena.grid_manager.static_grid
+
+        finder = PathFinder(
+            logger=finder_logger,
+            start=OrientedPoint(10, 100, 0.0),
+            goal=OrientedPoint(250, 150, 0.0),
+            grid=arena_grid,
+            chunk_size=chunk_size
         )
-        
+
+        path = finder.find_oriented_path()
+
+        CONFIG = {
+            "SPEED_PROFILES": {
+                "test_speed": {
+                    "max_linear_speed": 10.0,  # Max 10.0 cm/s
+                    "max_angular_speed": 3.0,  # Max 6.0 rad/s
+                    "max_linear_acceleration": 0.5,  # Max 0.5 cm/s^2
+                    "max_angular_acceleration": 0.1,  # Max 1.0 rad/s^2
+                    "max_linear_deceleration": 0.4,  # Max 0.5 cm/s^2
+                    "max_angular_deceleration": 0.1  # Max 1.0 rad/s^2
+                }
+            }
+        }
+
+        supervisor = MovementSupervisor(profile=CONFIG["SPEED_PROFILES"]["test_speed"], linear_speed=0.0, angular_speed=0.0)
+        supervisor.set_trajectory(path)
+
+        while True:
+            state = supervisor.compute_future_state()
+            
+            self.rolling_basis.set_speed_and_position(
+                target_linear_speed=state[1],
+                target_angular_speed=state[2],
+                target_position=OrientedPoint(state[0])
+            )
