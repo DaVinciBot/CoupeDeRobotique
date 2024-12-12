@@ -109,7 +109,7 @@ class MainBrain(Brain):
             LogLevels.DEBUG
         )
         
-    @Brain.task(process=False, run_on_start=True, )
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
     async def drive_rob(self):
         state = self.supervisor.compute_future_state()
 
