@@ -53,7 +53,7 @@ class MainBrain(Brain):
             file_log_level=LogLevels.DEBUG
         )
 
-        chunk_size = 5
+        chunk_size = 2
 
         arena = Arena2(
             logger=arena_logger,
