@@ -1,9 +1,18 @@
+# ====== Imports ======
+# Standard library imports
 from math import cos, sin, radians
 
+# Third-party library imports
+import numpy as np
+import matplotlib.pyplot as plt
+from shapely.geometry import Polygon, box
+from shapely.geometry.base import BaseGeometry
+
+# Internal project imports
 from geometry import (
     Point,
     MultiPoint,
-    Polygon,
+    Polygon as GeometryPolygon,
     MultiPolygon,
     LineString,
     BufferCapStyle,
@@ -14,11 +23,8 @@ from geometry import (
     distance,
     OrientedPoint,
     nearest_points,
-    box,
 )
 from logger import Logger, LogLevels
-import numpy as np
-
 from arena.grid_manager import GridManager
 from arena.arena_zone import (
     ZoneType,
@@ -31,14 +37,20 @@ from arena.arena_zone import (
     BorderZone,
 )
 
-import matplotlib.pyplot as plt
-from shapely.geometry import Polygon
-from shapely.geometry.base import BaseGeometry
 
-
+# ====== Arena Class ======
 class Arena:
     """
-    All distances are in cm.
+    Represents the arena and its zones, including buffer zones and borders.
+
+    Attributes:
+        logger (Logger): Logger instance for logging information.
+        width (int): Width of the arena in centimeters.
+        height (int): Height of the arena in centimeters.
+        border_buffer (float): Buffer distance for the arena border.
+        obstacle_buffer (float): Buffer distance for obstacles.
+        zones (list[BaseArenaZone]): List of all zones in the arena.
+        grid_manager (GridManager): Grid manager instance for managing zones.
     """
 
     def __init__(
@@ -65,7 +77,7 @@ class Arena:
         self.border_buffer: float = border_buffer
         self.obstacle_buffer: float = obstacle_buffer
 
-        # Add buffer to all zones
+        # Initialize zones with added buffer
         self.zones: list[BaseArenaZone] = []
         for zone in zones:
             zone.polygon = self.__add_buffer_to_zone(zone.polygon, self.obstacle_buffer)
@@ -74,61 +86,78 @@ class Arena:
         # Add border zone
         self.zones.append(self.__create_arena_border_zone())
 
-        # Init grid manager
+        # Initialize grid manager
         self.grid_manager: GridManager = GridManager(
             grid_manager_logger, chunk_size, width, height
         )
 
-        # Add all forbidden zones to the grid manager
+        # Add forbidden and border zones to the grid manager
         for zone in zones:
-            # Only add any team forbidden zone and border zone to the grid manager
             if zone.zone_type in [ZoneType.FORBIDDEN, ZoneType.BORDER_ZONE]:
                 self.grid_manager.add_forbidden_static_zone(zone.polygon)
 
+    # ====== Private Methods ======
+
     def __add_buffer_to_zone(self, zone: Polygon, buffer: float) -> Polygon:
-        # TODO: cap_style does not work as expected
-        return zone.buffer(
-            buffer, cap_style=BufferCapStyle.square
-        )  # square because of square chunk division
+        """
+        Adds a buffer around a zone to account for obstacle or border spacing.
+        The buffer uses a square cap style to match the grid structure.
+        """
+        return zone.buffer(buffer, cap_style=BufferCapStyle.square)
 
     def __create_arena_border_zone(self) -> BorderZone:
         """
-        Create a border zone (contour) around the arena with a specific width.
-        This prevents the robot from getting too close to the edges.
+        Create a border zone around the arena with a specified buffer width.
+        Prevents the robot from approaching too close to the arena edges.
         """
-
         arena_polygon = box(0, 0, self.width, self.height)
-
         inner_polygon = self.__add_buffer_to_zone(arena_polygon, -self.border_buffer)
-
-        self.__add_buffer_to_zone(inner_polygon, self.border_buffer)
         border_zone_polygon = arena_polygon.difference(inner_polygon)
 
         return BorderZone(polygon=border_zone_polygon)
 
-    """ Viz """
-
-    def visualize(self, show_buffer=True) -> None:
+    def __plot_polygon(
+        self, ax, polygon: Polygon, color: str, label: str = None
+    ) -> None:
         """
-        Visualize the arena, including its border and forbidden zones.
+        Helper method to plot a polygon or multipolygon on a matplotlib axis.
+
+        - Fills polygons without holes.
+        - Draws only outlines (dashed) for polygons with holes.
+        """
+        if len(polygon.interiors) == 0:
+            x, y = polygon.exterior.xy
+            ax.fill(x, y, alpha=0.5, fc=color, label=label)
+        else:
+            x, y = polygon.exterior.xy
+            ax.plot(x, y, color=color, linestyle="--", label=label)
+            for interior in polygon.interiors:
+                x, y = interior.xy
+                ax.plot(x, y, color=color, linestyle="--")
+
+    # ====== Public Methods ======
+
+    def visualize(self, show_buffer: bool = True) -> None:
+        """
+        Visualize the arena, including its zones and optional buffer zones.
+
+        Args:
+            show_buffer (bool): If True, buffer zones are displayed.
         """
         fig, ax = plt.subplots(figsize=(10, 10))
 
-        # Draw the arena
+        # Draw the arena boundary
         arena_polygon = box(0, 0, self.width, self.height)
         self.__plot_polygon(ax, arena_polygon, color="lightgrey", label="Arena")
 
         for zone in self.zones:
             if show_buffer and zone.zone_type != ZoneType.BORDER_ZONE:
-                # Plot the full buffer zone in light red
+                # Plot buffer zone in light red
                 buffer_polygon = self.__add_buffer_to_zone(
                     zone.polygon, self.obstacle_buffer
                 )
                 self.__plot_polygon(
-                    ax,
-                    buffer_polygon,
-                    color="lightcoral",
-                    label=f"{zone.zone_type.name} Buffer",
+                    ax, buffer_polygon, color="lightcoral", label=f"{zone.zone_type.name} Buffer"
                 )
 
             # Plot the original zone in dark red
@@ -136,6 +165,7 @@ class Arena:
                 ax, zone.polygon, color="darkred", label=f"{zone.zone_type.name} Zone"
             )
 
+        # Configure plot appearance
         ax.set_xlim(0, self.width)
         ax.set_ylim(0, self.height)
         ax.set_aspect("equal", adjustable="box")
@@ -143,23 +173,8 @@ class Arena:
         ax.legend()
         plt.show()
 
-    def __plot_polygon(
-        self, ax, polygon: Polygon, color: str, label: str = None
-    ) -> None:
-        """
-        Helper method to plot a Polygon or MultiPolygon on the given axis.
-        - Fill polygons without holes.
-        - Only draw the outline (in dashed lines) for polygons with holes.
-        """
-        if len(polygon.interiors) == 0:
-            # No holes: fill the polygon
-            x, y = polygon.exterior.xy
-            ax.fill(x, y, alpha=0.5, fc=color, label=label)
-        else:
-            # Polygon with holes: draw only the outline
-            x, y = polygon.exterior.xy
-            ax.plot(x, y, color=color, linestyle="--", label=label)  # Dashed outline
-            # Draw outlines of interior holes
-            for interior in polygon.interiors:
-                x, y = interior.xy
-                ax.plot(x, y, color=color, linestyle="--")  # Dashed lines for holes
+
+# ====== Code Summary ======
+# The Arena class models a physical arena with zones, border buffers, and obstacles.
+# It initializes a list of zones with added buffers and includes a GridManager for managing grid-based zones.
+# Methods include creating border zones, adding buffers to zones, and visualizing the arena with optional buffer zones.
