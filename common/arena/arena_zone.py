@@ -23,6 +23,7 @@ from geometry import (
 # ====== Enums ======
 class ZoneType(Enum):
     """Enumeration for different types of zones in the arena."""
+
     YELLOW_RESERVED = auto()
     BLUE_RESERVED = auto()
     FORBIDDEN = auto()
@@ -87,6 +88,7 @@ class BorderZone(BaseArenaZone):
 
     def __init__(self, polygon: Polygon) -> None:
         super().__init__(polygon, ZoneType.BORDER_ZONE)
+
 
 # ====== Code Summary ======
 # The code defines a set of classes to manage different zones in an arena.

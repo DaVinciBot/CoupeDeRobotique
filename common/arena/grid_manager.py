@@ -33,7 +33,9 @@ class GridManager:
     Includes static and dynamic forbidden zones and grid visualization.
     """
 
-    def __init__(self, logger: Logger, chunk_size: int, width: int, height: int) -> None:
+    def __init__(
+        self, logger: Logger, chunk_size: int, width: int, height: int
+    ) -> None:
         """
         Initializes the grid manager.
 
@@ -73,7 +75,9 @@ class GridManager:
     def __generate_base_grid(self) -> Grid:
         """Generates a base grid with all cells walkable."""
         return Grid(
-            matrix=[[1 for _ in range(self.grid_width)] for _ in range(self.grid_height)]
+            matrix=[
+                [1 for _ in range(self.grid_width)] for _ in range(self.grid_height)
+            ]
         )
 
     def __get_grid_node_center(self, node: GridNode) -> tuple[float, float]:
@@ -108,7 +112,9 @@ class GridManager:
                     grid.nodes[row][col].walkable = False
         return grid
 
-    def __absolute_coords_to_grid_coords(self, point: OrientedPoint | Point) -> GridNode:
+    def __absolute_coords_to_grid_coords(
+        self, point: OrientedPoint | Point
+    ) -> GridNode:
         """Converts absolute coordinates to grid coordinates."""
         return GridNode(point.x / self.chunk_size, point.y / self.chunk_size)
 
@@ -117,7 +123,9 @@ class GridManager:
         x, y = self.__get_grid_node_center(node)
         return Point(x, y)
 
-    def __update_grid(self, *, update_static_zones=False, update_dynamic_zones=False) -> None:
+    def __update_grid(
+        self, *, update_static_zones=False, update_dynamic_zones=False
+    ) -> None:
         """
         Updates the grids for static and dynamic zones.
 
@@ -142,7 +150,9 @@ class GridManager:
 
     # ====== Public Methods ======
 
-    def add_forbidden_static_zone(self, forbidden_zones: Polygon | list[Polygon]) -> None:
+    def add_forbidden_static_zone(
+        self, forbidden_zones: Polygon | list[Polygon]
+    ) -> None:
         """
         Adds static forbidden zones to the grid.
 
@@ -155,7 +165,9 @@ class GridManager:
         self.static_forbidden_zones.extend(forbidden_zones)
         self.__update_grid(update_static_zones=True)
 
-    def remove_forbidden_static_zone(self, forbidden_zones_to_remove: Polygon | list[Polygon]) -> None:
+    def remove_forbidden_static_zone(
+        self, forbidden_zones_to_remove: Polygon | list[Polygon]
+    ) -> None:
         """
         Removes static forbidden zones from the grid.
 
@@ -200,7 +212,9 @@ class GridManager:
         Args:
             only_static_grid (bool): Whether to show only the static grid.
         """
-        grid_to_visualize = self.static_grid if only_static_grid else self.static_and_dynamic_grid
+        grid_to_visualize = (
+            self.static_grid if only_static_grid else self.static_and_dynamic_grid
+        )
         rows, cols = grid_to_visualize.height, grid_to_visualize.width
 
         fig, ax = plt.subplots(figsize=(10, 10))
@@ -217,6 +231,7 @@ class GridManager:
         ax.set_aspect("equal")
         ax.set_title("Arena Grid Visualization")
         plt.show()
+
 
 # ====== Code Summary ======
 # This implementation defines the GridManager class, which manages a grid for pathfinding and collision detection.

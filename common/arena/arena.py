@@ -157,7 +157,10 @@ class Arena:
                     zone.polygon, self.obstacle_buffer
                 )
                 self.__plot_polygon(
-                    ax, buffer_polygon, color="lightcoral", label=f"{zone.zone_type.name} Buffer"
+                    ax,
+                    buffer_polygon,
+                    color="lightcoral",
+                    label=f"{zone.zone_type.name} Buffer",
                 )
 
             # Plot the original zone in dark red

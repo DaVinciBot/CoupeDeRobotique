@@ -29,12 +29,12 @@ class PathFinder:
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            start: OrientedPoint,
-            goal: OrientedPoint,
-            grid: Grid,
-            chunk_size: int,
+        self,
+        logger: Logger,
+        start: OrientedPoint,
+        goal: OrientedPoint,
+        grid: Grid,
+        chunk_size: int,
     ) -> None:
         self.logger: Logger = logger
         self.chunk_size: int = chunk_size
@@ -111,7 +111,7 @@ class PathFinder:
         return oriented_path
 
     def __absolute_coords_to_grid_coords(
-            self, point: OrientedPoint | Point
+        self, point: OrientedPoint | Point
     ) -> GridNode:
         """Convert absolute coordinates to grid coordinates."""
         return GridNode(
@@ -252,6 +252,7 @@ class PathFinder:
         ax.set_title("Pathfinding Visualization with Scores")
         ax.legend(loc="upper right")
         plt.show()
+
 
 # ====== Code Summary ======
 # This implementation defines the PathFinder class, which leverages the A* algorithm for grid-based pathfinding.
