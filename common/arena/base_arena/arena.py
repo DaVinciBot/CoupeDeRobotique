@@ -22,7 +22,6 @@ from arena.base_arena.arena_zone import (
     # Enums
     ZoneType,
     ZoneAccessibility,
-
     # Zones
     BaseArenaZone,
     BorderZone,
@@ -47,20 +46,20 @@ class BaseArena:
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            width: int,
-            height: int,
-            border_buffer: float,
-            obstacle_buffer: float,
-            zones: list[BaseArenaZone],
-            chunk_size: int = 10,
-            grid_manager_logger: Logger = Logger(
-                identifier="GridManager",
-                decorator_level=LogLevels.INFO,
-                print_log_level=LogLevels.DEBUG,
-                file_log_level=LogLevels.DEBUG,
-            ),
+        self,
+        logger: Logger,
+        width: int,
+        height: int,
+        border_buffer: float,
+        obstacle_buffer: float,
+        zones: list[BaseArenaZone],
+        chunk_size: int = 10,
+        grid_manager_logger: Logger = Logger(
+            identifier="GridManager",
+            decorator_level=LogLevels.INFO,
+            print_log_level=LogLevels.DEBUG,
+            file_log_level=LogLevels.DEBUG,
+        ),
     ) -> None:
         self.logger: Logger = logger
 
@@ -98,7 +97,9 @@ class BaseArena:
         Adds a buffer around a zone to account for obstacle or border spacing.
         The buffer uses a square cap style to match the grid structure.
         """
-        return polygon.buffer(buffer, cap_style=BufferCapStyle.flat, join_style=BufferJoinStyle.mitre)
+        return polygon.buffer(
+            buffer, cap_style=BufferCapStyle.flat, join_style=BufferJoinStyle.mitre
+        )
 
     def __create_arena_border_zone(self) -> BorderZone:
         """
@@ -112,8 +113,15 @@ class BaseArena:
         return BorderZone(polygon=border_zone_polygon)
 
     @staticmethod
-    def __plot_polygon(ax, polygon: Polygon, color: str, label: str = None, alpha: float = 1.0,
-                       hatch: str = None, hatch_color: str = None) -> None:
+    def __plot_polygon(
+        ax,
+        polygon: Polygon,
+        color: str,
+        label: str = None,
+        alpha: float = 1.0,
+        hatch: str = None,
+        hatch_color: str = None,
+    ) -> None:
         """
         Helper method to plot a polygon or multipolygon on a matplotlib axis.
 
@@ -138,7 +146,15 @@ class BaseArena:
         if len(polygon.interiors) == 0:
             # Polygon without holes
             x, y = polygon.exterior.xy
-            ax.fill(x, y, alpha=alpha, fc=color, label=label, hatch=hatch, ec=hatch_color or color)
+            ax.fill(
+                x,
+                y,
+                alpha=alpha,
+                fc=color,
+                label=label,
+                hatch=hatch,
+                ec=hatch_color or color,
+            )
         else:
             # Polygon with holes: outline and interior lines
             x, y = polygon.exterior.xy
@@ -151,12 +167,7 @@ class BaseArena:
         """Plots zones and their buffers on the arena."""
         if show_buffer:
             # Plot buffer zone in transparent color
-            self.__plot_polygon(
-                ax,
-                zone.polygon,
-                color=zone.zone_color,
-                alpha=0.5
-            )
+            self.__plot_polygon(ax, zone.polygon, color=zone.zone_color, alpha=0.5)
 
         # Plot the original zone in full color and hatch if necessary
         if not zone.is_instance(BorderZone):
@@ -168,14 +179,14 @@ class BaseArena:
             elif not zone.is_accessible(team_color=self.team_color):
                 hatch_params = {"hatch": "/", "hatch_color": "black"}  # Hatch with black lines for forbidden zones
 
-            self.__plot_polygon(
-                ax,
-                self.__add_buffer_to_zone(zone.polygon, -self.obstacle_buffer),  # Remove buffer for original zone
-                color=zone.zone_color,
-                label=zone.zone_type.name,
-                alpha=0.8,
-                **hatch_params
-            )
+        self.__plot_polygon(
+            ax,
+            self.__add_buffer_to_zone(zone.polygon, -self.obstacle_buffer),  # Remove buffer for original zone
+            color=zone.zone_color,
+            label=zone.zone_type.name,
+            alpha=0.8,
+            **hatch_params
+        )
 
     # ====== Public Methods ======
     def set_team_color(self, team_color: str) -> None:
@@ -226,9 +237,9 @@ class BaseArena:
 
         ax.set_xlim(self.width, 0)  # Reverse x-axis
         ax.set_ylim(0, self.height)  # Keep y-axis normal
-        ax.spines['top'].set_visible(False)  # Hide top frame line
-        ax.spines['right'].set_visible(False)  # Hide right frame line
-        ax.spines['left'].set_position(('axes', 1))  # Move y-axis to the right
+        ax.spines["top"].set_visible(False)  # Hide top frame line
+        ax.spines["right"].set_visible(False)  # Hide right frame line
+        ax.spines["left"].set_position(("axes", 1))  # Move y-axis to the right
         ax.yaxis.tick_right()  # Move y-axis labels to the right
         ax.yaxis.set_label_position("right")
 
@@ -236,7 +247,7 @@ class BaseArena:
         ax.set_title("Arena Visualization")
 
         # Place legend on the left
-        plt.legend(loc='center right', bbox_to_anchor=(-0.1, 0.5))
+        plt.legend(loc="center right", bbox_to_anchor=(-0.1, 0.5))
 
         plt.tight_layout()
         plt.show()
