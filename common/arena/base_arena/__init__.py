@@ -5,7 +5,6 @@ from arena.base_arena.arena_zone import (
     # Enums
     ZoneType,
     ZoneAccessibility,
-
     # Zones
     BaseArenaZone,
     EnemyZone,

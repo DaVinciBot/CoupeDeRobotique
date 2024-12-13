@@ -18,6 +18,7 @@ from geometry import (
     BufferJoinStyle,
 )
 
+
 # ====== Enums ======
 class ZoneType(Enum):
     """Enumeration for different types of zones in the arena."""
@@ -68,7 +69,10 @@ class BaseArenaZone(ABC):
 
     def is_accessible(self, team_color=None) -> bool:
         """Determines if the zone is accessible for a given team color."""
-        return self.accessibility not in [ZoneAccessibility.FORBIDDEN, ZoneAccessibility.RESTRICTED]
+        return self.accessibility not in [
+            ZoneAccessibility.FORBIDDEN,
+            ZoneAccessibility.RESTRICTED,
+        ]
 
     def is_accessible_for_emergency(self, team_color=None) -> bool:
         """Determines if the zone is accessible in an emergency."""
@@ -80,10 +84,15 @@ class ForbiddenZone(BaseArenaZone):
     """Zone that is strictly forbidden."""
 
     def __init__(
-            self, polygon: Polygon, accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN
+        self,
+        polygon: Polygon,
+        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
     ) -> None:
         super().__init__(
-            polygon=polygon, zone_type=ZoneType.FORBIDDEN, accessibility=accessibility, zone_color="#2b2b2b"
+            polygon=polygon,
+            zone_type=ZoneType.FORBIDDEN,
+            accessibility=accessibility,
+            zone_color="#2b2b2b",
         )
 
 
@@ -156,7 +165,10 @@ class YellowReservedZone(BaseArenaZone):
 
     def is_accessible(self, team_color=None) -> bool:
         """Determines if the zone is accessible specifically for the yellow team."""
-        return super().is_accessible(team_color) and team_color.lower() in ["yellow", "y"]
+        return super().is_accessible(team_color) and team_color.lower() in [
+            "yellow",
+            "y",
+        ]
 
 
 class BorderZone(BaseArenaZone):

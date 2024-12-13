@@ -53,4 +53,3 @@ arena = ShowArena(
 
 arena.visualize()
 arena.grid_manager.visualize()
-
