@@ -21,6 +21,7 @@ from geometry import (
 # ====== Enums ======
 class ZoneType(Enum):
     """Enumeration for different types of zones in the arena."""
+
     YELLOW_RESERVED = auto()
     BLUE_RESERVED = auto()
     FORBIDDEN = auto()
@@ -31,6 +32,7 @@ class ZoneType(Enum):
 
 class ZoneAccessibility(Enum):
     """Enumeration for zone accessibility types in the arena."""
+
     FREE = auto()  # Free to navigate
     RESTRICTED = auto()  # Restricted access; emergencies only
     FORBIDDEN = auto()  # Forbidden access; cannot be entered
@@ -51,11 +53,11 @@ class BaseArenaZone(ABC):
     """
 
     def __init__(
-            self,
-            polygon: Polygon,
-            zone_type: ZoneType,
-            accessibility: ZoneAccessibility,
-            zone_color: str = "#f0aef2",
+        self,
+        polygon: Polygon,
+        zone_type: ZoneType,
+        accessibility: ZoneAccessibility,
+        zone_color: str = "#f0aef2",
     ) -> None:
         self.polygon: Polygon = polygon
         self.zone_type: ZoneType = zone_type
@@ -89,10 +91,15 @@ class EnemyZone(BaseArenaZone):
     """Zone designated for enemies, dynamically updated based on their position."""
 
     def __init__(
-            self, polygon: Polygon, accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN
+        self,
+        polygon: Polygon,
+        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
     ) -> None:
         super().__init__(
-            polygon=polygon, zone_type=ZoneType.ENEMY, accessibility=accessibility, zone_color="#EE950F"
+            polygon=polygon,
+            zone_type=ZoneType.ENEMY,
+            accessibility=accessibility,
+            zone_color="#EE950F",
         )
 
 
@@ -100,10 +107,15 @@ class StuffZone(BaseArenaZone):
     """Zone designated for storage or placement of items."""
 
     def __init__(
-            self, polygon: Polygon, accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED
+        self,
+        polygon: Polygon,
+        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
     ) -> None:
         super().__init__(
-            polygon=polygon, zone_type=ZoneType.STUFF_ZONE, accessibility=accessibility, zone_color="#0FEE9C"
+            polygon=polygon,
+            zone_type=ZoneType.STUFF_ZONE,
+            accessibility=accessibility,
+            zone_color="#0FEE9C",
         )
 
 
@@ -111,10 +123,15 @@ class BlueReservedZone(BaseArenaZone):
     """Zone reserved for operations of the blue team."""
 
     def __init__(
-            self, polygon: Polygon, accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED
+        self,
+        polygon: Polygon,
+        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
     ) -> None:
         super().__init__(
-            polygon=polygon, zone_type=ZoneType.BLUE_RESERVED, accessibility=accessibility, zone_color="#097D8D"
+            polygon=polygon,
+            zone_type=ZoneType.BLUE_RESERVED,
+            accessibility=accessibility,
+            zone_color="#097D8D",
         )
 
     def is_accessible(self, team_color=None) -> bool:
@@ -126,10 +143,15 @@ class YellowReservedZone(BaseArenaZone):
     """Zone reserved for operations of the yellow team."""
 
     def __init__(
-            self, polygon: Polygon, accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED
+        self,
+        polygon: Polygon,
+        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
     ) -> None:
         super().__init__(
-            polygon=polygon, zone_type=ZoneType.YELLOW_RESERVED, accessibility=accessibility, zone_color="#ECC92E"
+            polygon=polygon,
+            zone_type=ZoneType.YELLOW_RESERVED,
+            accessibility=accessibility,
+            zone_color="#ECC92E",
         )
 
     def is_accessible(self, team_color=None) -> bool:
@@ -141,8 +163,13 @@ class BorderZone(BaseArenaZone):
     """Zone representing the borders of the arena."""
 
     def __init__(
-            self, polygon: Polygon, accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN
+        self,
+        polygon: Polygon,
+        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
     ) -> None:
         super().__init__(
-            polygon=polygon, zone_type=ZoneType.BORDER_ZONE, accessibility=accessibility, zone_color="#EF0D0D"
+            polygon=polygon,
+            zone_type=ZoneType.BORDER_ZONE,
+            accessibility=accessibility,
+            zone_color="#EF0D0D",
         )
