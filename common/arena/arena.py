@@ -149,7 +149,8 @@ class Arena:
         # Draw the arena boundary
         arena_polygon = box(0, 0, self.width, self.height)
         self.__plot_polygon(ax, arena_polygon, color="lightgrey", label="Arena")
-
+        seen_zone_types = set()
+        first=True
         for zone in self.zones:
             if show_buffer and zone.zone_type != ZoneType.BORDER_ZONE:
                 # Plot buffer zone in light red
@@ -159,14 +160,20 @@ class Arena:
                 self.__plot_polygon(
                     ax,
                     buffer_polygon,
-                    color="lightcoral",
-                    label=f"{zone.zone_type.name} Buffer",
+                    color="#E89393",
+                    label=f"zone Buffer" if first else None,
                 )
+                
+                first=False
 
             # Plot the original zone in dark red
             self.__plot_polygon(
-                ax, zone.polygon, color="darkred", label=f"{zone.zone_type.name} Zone"
+                ax,
+                zone.polygon,
+                color=zone.zone_color,
+                label=f"{zone.zone_type.name} Zone" if zone.zone_type.name not in seen_zone_types else None,
             )
+            seen_zone_types.add(zone.zone_type.name)
 
         # Configure plot appearance
         ax.set_xlim(0, self.width)

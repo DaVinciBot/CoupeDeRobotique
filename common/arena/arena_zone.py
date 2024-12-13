@@ -42,9 +42,10 @@ class BaseArenaZone:
         zone_type (ZoneType): The type of the zone.
     """
 
-    def __init__(self, polygon: Polygon, zone_type: ZoneType) -> None:
+    def __init__(self, polygon: Polygon, zone_type: ZoneType,zone_color : str = "#742A2A") -> None:
         self.polygon: Polygon = polygon
         self.zone_type: ZoneType = zone_type
+        self.zone_color = zone_color
 
 
 # ====== Specific Zone Classes ======
@@ -52,42 +53,42 @@ class EnemyZone(BaseArenaZone):
     """Zone designated for enemies."""
 
     def __init__(self, polygon: Polygon) -> None:
-        super().__init__(polygon, ZoneType.ENEMY)
+        super().__init__(polygon, ZoneType.ENEMY,"#EE950F")
 
 
 class StuffZone(BaseArenaZone):
     """Zone designated for storage or stuff placement."""
 
     def __init__(self, polygon: Polygon) -> None:
-        super().__init__(polygon, ZoneType.STUFF_ZONE)
+        super().__init__(polygon, ZoneType.STUFF_ZONE,"#0FEE9C")
 
 
 class ForbiddenZone(BaseArenaZone):
     """Zone where access is restricted."""
 
     def __init__(self, polygon: Polygon) -> None:
-        super().__init__(polygon, ZoneType.FORBIDDEN)
+        super().__init__(polygon, ZoneType.FORBIDDEN,"#8D0909")
 
 
 class BlueReservedZone(BaseArenaZone):
     """Zone reserved for blue team operations."""
 
     def __init__(self, polygon: Polygon) -> None:
-        super().__init__(polygon, ZoneType.BLUE_RESERVED)
+        super().__init__(polygon, ZoneType.BLUE_RESERVED,"#097D8D")
 
 
 class YellowReservedZone(BaseArenaZone):
     """Zone reserved for yellow team operations."""
 
     def __init__(self, polygon: Polygon) -> None:
-        super().__init__(polygon, ZoneType.YELLOW_RESERVED)
+        super().__init__(polygon, ZoneType.YELLOW_RESERVED,"#ECC92E")
 
 
 class BorderZone(BaseArenaZone):
     """Zone representing the border of the arena."""
 
     def __init__(self, polygon: Polygon) -> None:
-        super().__init__(polygon, ZoneType.BORDER_ZONE)
+        super().__init__(polygon, ZoneType.BORDER_ZONE,"#EF0D0D")
 
 
 # ====== Code Summary ======
