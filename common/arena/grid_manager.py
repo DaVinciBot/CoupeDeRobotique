@@ -26,6 +26,8 @@ from geometry import (
 from logger import Logger, LogLevels
 
 
+# TODO - Handle Restricted Zones. Currently, only forbidden zones are handled. Restricted zones are zones where movement is restricted but not completely forbidden.
+# First consider Restricted as obstacles but if no path is found, consider them as free zones.
 # ====== GridManager Class ======
 class GridManager:
     """
@@ -201,7 +203,7 @@ class GridManager:
         """Returns the static grid."""
         return self.static_grid
 
-    def static_and_dynamic_grid(self) -> Grid:
+    def get_static_and_dynamic_grid(self) -> Grid:
         """Returns the combined static and dynamic grid."""
         return self.static_and_dynamic_grid
 
