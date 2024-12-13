@@ -34,7 +34,7 @@ from arena.arena_zone import (
     BlueReservedZone,
     YellowReservedZone,
     BorderZone,
-    ZoneNavigability
+    ZoneNavigability,
 )
 
 
@@ -150,7 +150,7 @@ class Arena:
         arena_polygon = box(0, 0, self.width, self.height)
         self.__plot_polygon(ax, arena_polygon, color="lightgrey", label="Arena")
         seen_zone_types = set()
-        first=True
+        first = True
         for zone in self.zones:
             if show_buffer and zone.zone_type != ZoneType.BORDER_ZONE:
                 buffer_polygon = self.__add_buffer_to_zone(
@@ -162,24 +162,31 @@ class Arena:
                     color="#E89393",
                     label=f"zone Buffer" if first else None,
                 )
-                
-                first=False
+
+                first = False
             self.__plot_polygon(
                 ax,
                 zone.polygon,
                 color=zone.zone_color,
-                label=f"{zone.zone_type.name} Zone" if zone.zone_type.name not in seen_zone_types else None,
+                label=(
+                    f"{zone.zone_type.name} Zone"
+                    if zone.zone_type.name not in seen_zone_types
+                    else None
+                ),
             )
             seen_zone_types.add(zone.zone_type.name)
-            
+
             if zone.navigability == ZoneNavigability.FORBIDDEN:
                 x, y = zone.polygon.exterior.xy
-                ax.fill(x, y, alpha=0.3, hatch='x',color = zone.zone_color,edgecolor='black')
-                
+                ax.fill(
+                    x, y, alpha=0.3, hatch="x", color=zone.zone_color, edgecolor="black"
+                )
+
             elif zone.navigability == ZoneNavigability.RESTRICTED:
                 x, y = zone.polygon.exterior.xy
-                ax.fill(x, y, alpha=0.3,hatch='/',color = zone.zone_color,edgecolor='black')
-            
+                ax.fill(
+                    x, y, alpha=0.3, hatch="/", color=zone.zone_color, edgecolor="black"
+                )
 
         # Configure plot appearance
         ax.set_xlim(0, self.width)

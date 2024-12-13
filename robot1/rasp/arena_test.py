@@ -38,7 +38,7 @@ from arena import (
     BlueReservedZone,
     YellowReservedZone,
     BorderZone,
-    ZoneNavigability
+    ZoneNavigability,
 )
 
 from pathfinding.core.grid import Grid, GridNode
@@ -60,13 +60,25 @@ arena = Arena(
     border_buffer=2,
     obstacle_buffer=5,
     zones=[
-        BaseArenaZone(create_straight_rectangle(Point(45, 0), Point(0, 45)),navigability=ZoneNavigability.FORBIDDEN),
-        BaseArenaZone(create_straight_rectangle(Point(77.5, 0), Point(122.5, 45)),navigability=ZoneNavigability.FORBIDDEN),
+        BaseArenaZone(
+            create_straight_rectangle(Point(45, 0), Point(0, 45)),
+            navigability=ZoneNavigability.FORBIDDEN,
+        ),
+        BaseArenaZone(
+            create_straight_rectangle(Point(77.5, 0), Point(122.5, 45)),
+            navigability=ZoneNavigability.FORBIDDEN,
+        ),
         BaseArenaZone(create_straight_rectangle(Point(155, 0), Point(200, 45))),
-        BaseArenaZone(create_straight_rectangle(Point(45, 255), Point(0, 155)),navigability=ZoneNavigability.RESTRICTED),
+        BaseArenaZone(
+            create_straight_rectangle(Point(45, 255), Point(0, 155)),
+            navigability=ZoneNavigability.RESTRICTED,
+        ),
         BaseArenaZone(create_straight_rectangle(Point(77.5, 255), Point(122.5, 155))),
         BaseArenaZone(create_straight_rectangle(Point(155, 255), Point(200, 155))),
-        StuffZone(create_straight_rectangle(Point(50, 50), Point(100, 100)),navigability=ZoneNavigability.FORBIDDEN),
+        StuffZone(
+            create_straight_rectangle(Point(50, 50), Point(100, 100)),
+            navigability=ZoneNavigability.FORBIDDEN,
+        ),
         YellowReservedZone(create_straight_rectangle(Point(150, 50), Point(200, 100))),
         BlueReservedZone(create_straight_rectangle(Point(50, 150), Point(100, 200))),
         EnemyZone(create_straight_rectangle(Point(100, 100), Point(150, 150))),

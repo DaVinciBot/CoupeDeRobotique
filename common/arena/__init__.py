@@ -6,6 +6,6 @@ from arena.arena_zone import (
     BlueReservedZone,
     YellowReservedZone,
     BorderZone,
-    ZoneNavigability
+    ZoneNavigability,
 )
 from arena.arena import Arena
