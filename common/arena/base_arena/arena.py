@@ -179,14 +179,14 @@ class BaseArena:
             elif not zone.is_accessible(team_color=self.team_color):
                 hatch_params = {"hatch": "/", "hatch_color": "black"}  # Hatch with black lines for forbidden zones
 
-        self.__plot_polygon(
-            ax,
-            self.__add_buffer_to_zone(zone.polygon, -self.obstacle_buffer),  # Remove buffer for original zone
-            color=zone.zone_color,
-            label=zone.zone_type.name,
-            alpha=0.8,
-            **hatch_params
-        )
+            self.__plot_polygon(
+                ax,
+                self.__add_buffer_to_zone(zone.polygon, -self.obstacle_buffer),  # Remove buffer for original zone
+                color=zone.zone_color,
+                label=zone.zone_type.name,
+                alpha=0.8,
+                **hatch_params
+            )
 
     # ====== Public Methods ======
     def set_team_color(self, team_color: str) -> None:

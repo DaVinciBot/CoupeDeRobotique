@@ -44,7 +44,7 @@ finder_logger = Logger(
 )
 
 arena_logger = Logger(
-    identifier="NewArena",
+    identifier="ShowArena",
     decorator_level=LogLevels.INFO,
     print_log_level=LogLevels.DEBUG,
     file_log_level=LogLevels.DEBUG,
