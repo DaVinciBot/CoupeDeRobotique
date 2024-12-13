@@ -12,9 +12,11 @@ from geometry import (
     BufferCapStyle,
     BufferJoinStyle,
     Polygon,
-    box
+    box,
+    Point,
+    OrientedPoint,
 )
-from logger import Logger, LogLevels
+from logger import Logger, LogLevels, time_tracker
 from arena.base_arena.grid_manager import GridManager
 from arena.base_arena.arena_zone import (
     # Enums
@@ -24,6 +26,8 @@ from arena.base_arena.arena_zone import (
     # Zones
     BaseArenaZone,
     BorderZone,
+    YellowReservedZone,
+    BlueReservedZone,
 )
 
 
@@ -81,8 +85,8 @@ class BaseArena:
         )
 
         # Add forbidden and border zones to the grid manager
-        for zone in zones:
-            if zone.accessibility == ZoneAccessibility.FORBIDDEN:
+        for zone in self.zones:
+            if not zone.is_accessible():
                 self.grid_manager.add_forbidden_static_zone(zone.polygon)
 
         self.team_color = None
@@ -145,7 +149,7 @@ class BaseArena:
 
     def __plot_zone(self, ax, zone: BaseArenaZone, show_buffer: bool):
         """Plots zones and their buffers on the arena."""
-        if show_buffer and zone != BorderZone:
+        if show_buffer:
             # Plot buffer zone in transparent color
             self.__plot_polygon(
                 ax,
@@ -155,26 +159,54 @@ class BaseArena:
             )
 
         # Plot the original zone in full color and hatch if necessary
-        hatch_params = {}
-        if not zone.is_accessible(team_color=self.team_color):
-            hatch_params = {"hatch": "/", "hatch_color": "black"}
-        if zone.is_accessible_for_emergency(team_color=self.team_color):
-            hatch_params = {"hatch": "\\", "hatch_color": "red"}
+        if not zone.is_instance(BorderZone):
+            hatch_params = {}
+            if zone.is_accessible(team_color=self.team_color):
+                pass  # No hatch
+            elif zone.is_accessible_for_emergency(team_color=self.team_color):
+                hatch_params = {"hatch": "\\", "hatch_color": "red"}  # Hatch with red lines for restricted zones
+            elif not zone.is_accessible(team_color=self.team_color):
+                hatch_params = {"hatch": "/", "hatch_color": "black"}  # Hatch with black lines for forbidden zones
 
-        self.__plot_polygon(
-            ax,
-            self.__add_buffer_to_zone(zone.polygon, -self.obstacle_buffer),  # Remove buffer for original zone
-            color=zone.zone_color,
-            label=zone.zone_type.name,
-            alpha=0.8,
-            **hatch_params
-        )
+            self.__plot_polygon(
+                ax,
+                self.__add_buffer_to_zone(zone.polygon, -self.obstacle_buffer),  # Remove buffer for original zone
+                color=zone.zone_color,
+                label=zone.zone_type.name,
+                alpha=0.8,
+                **hatch_params
+            )
 
     # ====== Public Methods ======
     def set_team_color(self, team_color: str) -> None:
         """Set the team color for determining zone accessibility."""
         self.team_color = team_color
 
+        # Remove all current team color zones from the grid manager
+        # TODO: retirer ça et juste laisser les update de zones mettre à jour leur état, la grille qui possède des pointeurs vers ces zones devrait être capable de mettre à jour son état elle meme
+        for zone in self.zones:
+            if (zone.is_instance(BlueReservedZone) and team_color.lower() in ["blue", "b"]) or (
+                    zone.is_instance(YellowReservedZone) and team_color.lower() in ["yellow", "y"]):
+                self.grid_manager.remove_forbidden_static_zone(
+                    zone.polygon
+                )
+
+        self.update([], [])
+        print()
+
+    @time_tracker(lambda self: self.logger)
+    def update(self, ally_positions: list[OrientedPoint | Point], enemy_positions: list[OrientedPoint | Point]) -> None:
+        """Update the zones based on the positions of allies and enemies."""
+        for i in range(len(ally_positions)):
+            ally_positions[i] = Point(ally_positions[i].x, ally_positions[i].y)
+        for i in range(len(enemy_positions)):
+            enemy_positions[i] = Point(enemy_positions[i].x, enemy_positions[i].y)
+
+        # TODO: mise à jour des zones en fonction des positions des alliés et ennemis, ça devrait se répercuter sur grid_manager
+        for zone in self.zones:
+            zone.update(self.team_color, ally_positions, enemy_positions)
+
+    @time_tracker(lambda self: self.logger)
     def visualize(self, show_buffer: bool = True) -> None:
         """
         Visualize the arena, including its zones, buffers, and accessibility grid.

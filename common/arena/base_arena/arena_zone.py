@@ -16,7 +16,9 @@ from geometry import (
     Polygon,
     BufferCapStyle,
     BufferJoinStyle,
+    Point,
 )
+
 
 # ====== Enums ======
 class ZoneType(Enum):
@@ -53,11 +55,11 @@ class BaseArenaZone(ABC):
     """
 
     def __init__(
-        self,
-        polygon: Polygon,
-        zone_type: ZoneType,
-        accessibility: ZoneAccessibility,
-        zone_color: str = "#f0aef2",
+            self,
+            polygon: Polygon,
+            zone_type: ZoneType,
+            accessibility: ZoneAccessibility,
+            zone_color: str = "#f0aef2",
     ) -> None:
         self.polygon: Polygon = polygon
         self.zone_type: ZoneType = zone_type
@@ -73,6 +75,27 @@ class BaseArenaZone(ABC):
     def is_accessible_for_emergency(self, team_color=None) -> bool:
         """Determines if the zone is accessible in an emergency."""
         return self.accessibility != ZoneAccessibility.FORBIDDEN
+
+    def __eq__(self, other):
+        return self.is_instance(other) and self.polygon == other.polygon
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def is_instance(self, other):
+        return isinstance(self, type(other)) or isinstance(other, type(self)) or isinstance(self, other)
+
+    def update(self, color_team: str, ally_positions: list[Point], enemy_positions: list[Point]) -> None:
+        """Update the zone based on the positions of allies and enemies."""
+
+        # Update visit counts
+        for position in enemy_positions:
+            if self.polygon.contains(position):
+                self.enemy_visits += 1
+
+        for position in ally_positions:
+            if self.polygon.contains(position):
+                self.self_visits += 1
 
 
 # ====== Specific Zone Classes ======
@@ -91,9 +114,9 @@ class EnemyZone(BaseArenaZone):
     """Zone designated for enemies, dynamically updated based on their position."""
 
     def __init__(
-        self,
-        polygon: Polygon,
-        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
+            self,
+            polygon: Polygon,
+            accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
     ) -> None:
         super().__init__(
             polygon=polygon,
@@ -107,9 +130,9 @@ class StuffZone(BaseArenaZone):
     """Zone designated for storage or placement of items."""
 
     def __init__(
-        self,
-        polygon: Polygon,
-        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
+            self,
+            polygon: Polygon,
+            accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
     ) -> None:
         super().__init__(
             polygon=polygon,
@@ -123,9 +146,9 @@ class BlueReservedZone(BaseArenaZone):
     """Zone reserved for operations of the blue team."""
 
     def __init__(
-        self,
-        polygon: Polygon,
-        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
+            self,
+            polygon: Polygon,
+            accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
     ) -> None:
         super().__init__(
             polygon=polygon,
@@ -136,16 +159,24 @@ class BlueReservedZone(BaseArenaZone):
 
     def is_accessible(self, team_color=None) -> bool:
         """Determines if the zone is accessible specifically for the blue team."""
-        return super().is_accessible(team_color) and team_color.lower() in ["blue", "b"]
+        return super().is_accessible(team_color) and (team_color is None or team_color.lower() in ["blue", "b"])
+
+    def update(self, team_color: str, ally_position: list[Point], enemy_position: list[Point]) -> None:
+        """Update the zone based on the positions of allies and enemies."""
+        super().update(team_color, ally_position, enemy_position)
+
+        # Update accessibility based on team color
+        if self.accessibility != ZoneAccessibility.FREE and (team_color is None or team_color.lower() in ["blue", "b"]):
+            self.accessibility = ZoneAccessibility.FREE
 
 
 class YellowReservedZone(BaseArenaZone):
     """Zone reserved for operations of the yellow team."""
 
     def __init__(
-        self,
-        polygon: Polygon,
-        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
+            self,
+            polygon: Polygon,
+            accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
     ) -> None:
         super().__init__(
             polygon=polygon,
@@ -156,16 +187,24 @@ class YellowReservedZone(BaseArenaZone):
 
     def is_accessible(self, team_color=None) -> bool:
         """Determines if the zone is accessible specifically for the yellow team."""
-        return super().is_accessible(team_color) and team_color.lower() in ["yellow", "y"]
+        return super().is_accessible(team_color) and (team_color is None or team_color.lower() in ["yellow", "y"])
+
+    def update(self, team_color: str, ally_position: list[Point], enemy_position: list[Point]) -> None:
+        """Update the zone based on the positions of allies and enemies."""
+        super().update(team_color, ally_position, enemy_position)
+
+        # Update accessibility based on team color
+        if self.accessibility != ZoneAccessibility.FREE and (team_color is None or team_color.lower() in ["yellow", "y"]):
+            self.accessibility = ZoneAccessibility.FREE
 
 
 class BorderZone(BaseArenaZone):
     """Zone representing the borders of the arena."""
 
     def __init__(
-        self,
-        polygon: Polygon,
-        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
+            self,
+            polygon: Polygon,
+            accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
     ) -> None:
         super().__init__(
             polygon=polygon,

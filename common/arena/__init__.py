@@ -1,5 +1,7 @@
 from arena.base_arena import BaseArena
 
+from arena.base_arena.grid_manager import GridManager
+
 from arena.base_arena import (
     # Enums
     ZoneType,
