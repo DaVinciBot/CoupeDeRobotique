@@ -2,9 +2,9 @@
 # The code defines a framework for managing zones in an arena. It includes:
 # - Enumerations for zone types (`ZoneType`) and their accessibility (`ZoneAccessibility`).
 # - A base class (`BaseArenaZone`) to represent a generic zone
-# with attributes for geometry, type, color, and visit counters.
+#   with attributes for geometry, type, color, and visit counters.
 # - Specialized classes derived from `BaseArenaZone` for specific zone types such as `EnemyZone`, `StuffZone`, etc.
-# Each class provides default settings and configurations relevant to its purpose.
+#   Each class provides default settings and configurations relevant to its purpose.
 
 # ====== Imports ======
 # Standard library imports
@@ -16,18 +16,7 @@ from geometry import (
     Polygon,
     BufferCapStyle,
     BufferJoinStyle,
-    Geometry,
-    create_straight_rectangle,
-    prepare,
-    distance,
-    Point,
-    MultiPoint,
-    LineString,
-    OrientedPoint,
-    nearest_points,
-    MultiPolygon,
 )
-
 
 # ====== Enums ======
 class ZoneType(Enum):
@@ -76,14 +65,26 @@ class BaseArenaZone(ABC):
         self.self_visits: int = 0
 
     def is_accessible(self, team_color=None) -> bool:
-        if self.accessibility == ZoneAccessibility.FORBIDDEN:
-            return False
+        """Determines if the zone is accessible for a given team color."""
+        return self.accessibility not in [ZoneAccessibility.FORBIDDEN, ZoneAccessibility.RESTRICTED]
 
-    def is_accessible_for_emergency(self) -> bool:
+    def is_accessible_for_emergency(self, team_color=None) -> bool:
+        """Determines if the zone is accessible in an emergency."""
         return self.accessibility != ZoneAccessibility.FORBIDDEN
 
 
 # ====== Specific Zone Classes ======
+class ForbiddenZone(BaseArenaZone):
+    """Zone that is strictly forbidden."""
+
+    def __init__(
+            self, polygon: Polygon, accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN
+    ) -> None:
+        super().__init__(
+            polygon=polygon, zone_type=ZoneType.FORBIDDEN, accessibility=accessibility, zone_color="#2b2b2b"
+        )
+
+
 class EnemyZone(BaseArenaZone):
     """Zone designated for enemies, dynamically updated based on their position."""
 
@@ -117,6 +118,7 @@ class BlueReservedZone(BaseArenaZone):
         )
 
     def is_accessible(self, team_color=None) -> bool:
+        """Determines if the zone is accessible specifically for the blue team."""
         return super().is_accessible(team_color) and team_color.lower() in ["blue", "b"]
 
 
@@ -131,6 +133,7 @@ class YellowReservedZone(BaseArenaZone):
         )
 
     def is_accessible(self, team_color=None) -> bool:
+        """Determines if the zone is accessible specifically for the yellow team."""
         return super().is_accessible(team_color) and team_color.lower() in ["yellow", "y"]
 
 

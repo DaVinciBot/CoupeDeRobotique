@@ -1,45 +1,34 @@
-# ====== Imports ======
-# Standard library imports
-from math import cos, sin, radians
+# ====== Code Summary ======
+# The BaseArena class models a physical arena with zones, border buffers, and obstacles.
+# It initializes a list of zones with added buffers and includes a GridManager for managing grid-based zones.
+# Methods include creating border zones, adding buffers to zones, and visualizing the arena with optional buffer zones.
 
+# ====== Imports ======
 # Third-party library imports
-import numpy as np
 import matplotlib.pyplot as plt
-from shapely.geometry import Polygon, box
-from shapely.geometry.base import BaseGeometry
 
 # Internal project imports
 from geometry import (
-    Point,
-    MultiPoint,
-    Polygon as GeometryPolygon,
-    MultiPolygon,
-    LineString,
     BufferCapStyle,
     BufferJoinStyle,
-    Geometry,
-    create_straight_rectangle,
-    prepare,
-    distance,
-    OrientedPoint,
-    nearest_points,
+    Polygon,
+    box
 )
 from logger import Logger, LogLevels
-from arena.grid_manager import GridManager
-from arena.arena_zone import (
+from arena.base_arena.grid_manager import GridManager
+from arena.base_arena.arena_zone import (
+    # Enums
     ZoneType,
-    BaseArenaZone,
-    EnemyZone,
-    StuffZone,
-    BlueReservedZone,
-    YellowReservedZone,
-    BorderZone,
     ZoneAccessibility,
+
+    # Zones
+    BaseArenaZone,
+    BorderZone,
 )
 
 
-# ====== Arena Class ======
-class Arena:
+# ====== BaseArena Class ======
+class BaseArena:
     """
     Represents the arena and its zones, including buffer zones and borders.
 
@@ -54,20 +43,20 @@ class Arena:
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        width: int,
-        height: int,
-        border_buffer: float,
-        obstacle_buffer: float,
-        zones: list[BaseArenaZone],
-        chunk_size: int = 10,
-        grid_manager_logger: Logger = Logger(
-            identifier="GridManager",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
-        ),
+            self,
+            logger: Logger,
+            width: int,
+            height: int,
+            border_buffer: float,
+            obstacle_buffer: float,
+            zones: list[BaseArenaZone],
+            chunk_size: int = 10,
+            grid_manager_logger: Logger = Logger(
+                identifier="GridManager",
+                decorator_level=LogLevels.INFO,
+                print_log_level=LogLevels.DEBUG,
+                file_log_level=LogLevels.DEBUG,
+            ),
     ) -> None:
         self.logger: Logger = logger
 
@@ -96,14 +85,16 @@ class Arena:
             if zone.accessibility == ZoneAccessibility.FORBIDDEN:
                 self.grid_manager.add_forbidden_static_zone(zone.polygon)
 
-    # ====== Private Methods ======
+        self.team_color = None
 
-    def __add_buffer_to_zone(self, zone: Polygon, buffer: float) -> Polygon:
+    # ====== Private Methods ======
+    @staticmethod
+    def __add_buffer_to_zone(polygon: Polygon, buffer: float) -> Polygon:
         """
         Adds a buffer around a zone to account for obstacle or border spacing.
         The buffer uses a square cap style to match the grid structure.
         """
-        return zone.buffer(buffer, cap_style=BufferCapStyle.square)
+        return polygon.buffer(buffer, cap_style=BufferCapStyle.flat, join_style=BufferJoinStyle.mitre)
 
     def __create_arena_border_zone(self) -> BorderZone:
         """
@@ -116,88 +107,104 @@ class Arena:
 
         return BorderZone(polygon=border_zone_polygon)
 
-    def __plot_polygon(
-        self, ax, polygon: Polygon, color: str, label: str = None
-    ) -> None:
+    @staticmethod
+    def __plot_polygon(ax, polygon: Polygon, color: str, label: str = None, alpha: float = 1.0,
+                       hatch: str = None, hatch_color: str = None) -> None:
         """
         Helper method to plot a polygon or multipolygon on a matplotlib axis.
 
-        - Fills polygons without holes.
+        - Fills polygons without holes, optionally with hatching.
         - Draws only outlines (dashed) for polygons with holes.
+        - Ensures that the same legend label is not added more than once.
+
+        Parameters:
+        - ax: matplotlib axis
+        - polygon: Polygon to plot (from shapely.geometry)
+        - color: Color of the polygon (fill or outline)
+        - label: Legend label (optional)
+        - alpha: Transparency of the fill or line (default=1.0)
+        - hatch: Hatching pattern (optional), e.g., '/' or '\\'. Set None for no hatching.
+        - hatch_color: Color of the hatching lines (optional, default same as outline color)
         """
+        # Avoid duplicate labels
+        existing_labels = ax.get_legend_handles_labels()[1]
+        if label is not None and label in existing_labels:
+            label = None
+
         if len(polygon.interiors) == 0:
+            # Polygon without holes
             x, y = polygon.exterior.xy
-            ax.fill(x, y, alpha=0.5, fc=color, label=label)
+            ax.fill(x, y, alpha=alpha, fc=color, label=label, hatch=hatch, ec=hatch_color or color)
         else:
+            # Polygon with holes: outline and interior lines
             x, y = polygon.exterior.xy
-            ax.plot(x, y, color=color, linestyle="--", label=label)
+            ax.plot(x, y, color=color, linestyle="--", label=label, alpha=alpha)
             for interior in polygon.interiors:
                 x, y = interior.xy
-                ax.plot(x, y, color=color, linestyle="--")
+                ax.plot(x, y, color=color, linestyle="--", alpha=alpha)
 
-    # ====== Public Methods ======
-
-    def visualize(self, show_buffer: bool = True) -> None:
-        """
-        Visualize the arena, including its zones and optional buffer zones.
-
-        Args:
-            show_buffer (bool): If True, buffer zones are displayed.
-        """
-        fig, ax = plt.subplots(figsize=(10, 10))
-
-        # Draw the arena boundary
-        arena_polygon = box(0, 0, self.width, self.height)
-        self.__plot_polygon(ax, arena_polygon, color="lightgrey", label="Arena")
-        seen_zone_types = set()
-        first = True
-        for zone in self.zones:
-            if show_buffer and zone.zone_type != ZoneType.BORDER_ZONE:
-                buffer_polygon = self.__add_buffer_to_zone(
-                    zone.polygon, self.obstacle_buffer
-                )
-                self.__plot_polygon(
-                    ax,
-                    buffer_polygon,
-                    color="#E89393",
-                    label=f"zone Buffer" if first else None,
-                )
-
-                first = False
+    def __plot_zone(self, ax, zone: BaseArenaZone, show_buffer: bool):
+        """Plots zones and their buffers on the arena."""
+        if show_buffer and zone != BorderZone:
+            # Plot buffer zone in transparent color
             self.__plot_polygon(
                 ax,
                 zone.polygon,
                 color=zone.zone_color,
-                label=(
-                    f"{zone.zone_type.name} Zone"
-                    if zone.zone_type.name not in seen_zone_types
-                    else None
-                ),
+                alpha=0.5
             )
-            seen_zone_types.add(zone.zone_type.name)
 
-            if zone.navigability == ZoneNavigability.FORBIDDEN:
-                x, y = zone.polygon.exterior.xy
-                ax.fill(
-                    x, y, alpha=0.3, hatch="x", color=zone.zone_color, edgecolor="black"
-                )
+        # Plot the original zone in full color and hatch if necessary
+        hatch_params = {}
+        if not zone.is_accessible(team_color=self.team_color):
+            hatch_params = {"hatch": "/", "hatch_color": "black"}
+        if zone.is_accessible_for_emergency(team_color=self.team_color):
+            hatch_params = {"hatch": "\\", "hatch_color": "red"}
 
-            elif zone.navigability == ZoneNavigability.RESTRICTED:
-                x, y = zone.polygon.exterior.xy
-                ax.fill(
-                    x, y, alpha=0.3, hatch="/", color=zone.zone_color, edgecolor="black"
-                )
+        self.__plot_polygon(
+            ax,
+            self.__add_buffer_to_zone(zone.polygon, -self.obstacle_buffer),  # Remove buffer for original zone
+            color=zone.zone_color,
+            label=zone.zone_type.name,
+            alpha=0.8,
+            **hatch_params
+        )
 
-        # Configure plot appearance
-        ax.set_xlim(0, self.width)
-        ax.set_ylim(0, self.height)
+    # ====== Public Methods ======
+    def set_team_color(self, team_color: str) -> None:
+        """Set the team color for determining zone accessibility."""
+        self.team_color = team_color
+
+    def visualize(self, show_buffer: bool = True) -> None:
+        """
+        Visualize the arena, including its zones, buffers, and accessibility grid.
+
+        Args:
+            show_buffer (bool): If True, buffer zones are displayed.
+        """
+        fig, ax = plt.subplots(figsize=(12, 6))
+
+        # Draw the arena boundary
+        arena_polygon = box(0, 0, self.width, self.height)
+        self.__plot_polygon(ax, arena_polygon, color="#f0f0f0", label="Arena")
+
+        # Plot zones and their buffers
+        for zone in self.zones:
+            self.__plot_zone(ax, zone, show_buffer)
+
+        ax.set_xlim(self.width, 0)  # Reverse x-axis
+        ax.set_ylim(0, self.height)  # Keep y-axis normal
+        ax.spines['top'].set_visible(False)  # Hide top frame line
+        ax.spines['right'].set_visible(False)  # Hide right frame line
+        ax.spines['left'].set_position(('axes', 1))  # Move y-axis to the right
+        ax.yaxis.tick_right()  # Move y-axis labels to the right
+        ax.yaxis.set_label_position("right")
+
         ax.set_aspect("equal", adjustable="box")
         ax.set_title("Arena Visualization")
-        ax.legend()
+
+        # Place legend on the left
+        plt.legend(loc='center right', bbox_to_anchor=(-0.1, 0.5))
+
+        plt.tight_layout()
         plt.show()
-
-
-# ====== Code Summary ======
-# The Arena class models a physical arena with zones, border buffers, and obstacles.
-# It initializes a list of zones with added buffers and includes a GridManager for managing grid-based zones.
-# Methods include creating border zones, adding buffers to zones, and visualizing the arena with optional buffer zones.

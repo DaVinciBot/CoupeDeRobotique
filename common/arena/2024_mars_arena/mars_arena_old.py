@@ -1,17 +1,16 @@
-from arena.arena import Arena
+from arena.base_arena.arena import Arena
 from geometry import (
     Point,
     Polygon,
     create_straight_rectangle,
-    MultiPolygon,
     OrientedPoint,
 )
-from logger import Logger, LogLevels
+from logger import Logger
 
 from shapely import distance
 from sys import maxsize
 
-from pathfinding.core.grid import Grid, GridNode
+from pathfinding.core.grid import Grid
 
 
 class Plants_zone:

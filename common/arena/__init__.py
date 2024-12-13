@@ -1,11 +1,18 @@
-from arena.arena_zone import (
-    BaseArenaZone,
+from arena.base_arena import BaseArena
+
+from arena.base_arena import (
+    # Enums
     ZoneType,
+    ZoneAccessibility,
+
+    # Zones
+    BaseArenaZone,
     EnemyZone,
     StuffZone,
     BlueReservedZone,
     YellowReservedZone,
     BorderZone,
-    ZoneNavigability,
+    ForbiddenZone,
 )
-from arena.arena import Arena
+
+from arena.show_arena import ShowArena
