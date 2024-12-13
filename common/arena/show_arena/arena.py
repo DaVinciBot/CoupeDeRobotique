@@ -68,12 +68,8 @@ class ShowArena(BaseArena):
             BlueReservedZone(
                 create_straight_rectangle(Point(60, 165), Point(105, 180))
             ),
-            BlueReservedZone(
-                create_straight_rectangle(Point(55, 0), Point(100, 15))
-            ),
-            BlueReservedZone(
-                create_straight_rectangle(Point(100, 0), Point(145, 45))
-            ),
+            BlueReservedZone(create_straight_rectangle(Point(55, 0), Point(100, 15))),
+            BlueReservedZone(create_straight_rectangle(Point(100, 0), Point(145, 45))),
             BlueReservedZone(
                 create_straight_rectangle(Point(300 - 45, 0), Point(300 - 0, 15))
             ),
@@ -92,10 +88,7 @@ class ShowArena(BaseArena):
             YellowReservedZone(
                 create_straight_rectangle(Point(300 - 145, 0), Point(300 - 100, 45))
             ),
-
-            ForbiddenZone(
-                create_straight_rectangle(Point(290, 190), Point(300, 200))
-            ),
+            ForbiddenZone(create_straight_rectangle(Point(290, 190), Point(300, 200))),
         ]
 
         super().__init__(

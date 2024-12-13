@@ -175,9 +175,15 @@ class BaseArena:
             if zone.is_accessible(team_color=self.team_color):
                 pass  # No hatch
             elif zone.is_accessible_for_emergency(team_color=self.team_color):
-                hatch_params = {"hatch": "\\", "hatch_color": "red"}  # Hatch with red lines for restricted zones
+                hatch_params = {
+                    "hatch": "\\",
+                    "hatch_color": "red",
+                }  # Hatch with red lines for restricted zones
             elif not zone.is_accessible(team_color=self.team_color):
-                hatch_params = {"hatch": "/", "hatch_color": "black"}  # Hatch with black lines for forbidden zones
+                hatch_params = {
+                    "hatch": "/",
+                    "hatch_color": "black",
+                }  # Hatch with black lines for forbidden zones
 
             self.__plot_polygon(
                 ax,
@@ -196,17 +202,24 @@ class BaseArena:
         # Remove all current team color zones from the grid manager
         # TODO: retirer ça et juste laisser les update de zones mettre à jour leur état, la grille qui possède des pointeurs vers ces zones devrait être capable de mettre à jour son état elle meme
         for zone in self.zones:
-            if (zone.is_instance(BlueReservedZone) and team_color.lower() in ["blue", "b"]) or (
-                    zone.is_instance(YellowReservedZone) and team_color.lower() in ["yellow", "y"]):
-                self.grid_manager.remove_forbidden_static_zone(
-                    zone.polygon
-                )
+            if (
+                zone.is_instance(BlueReservedZone)
+                and team_color.lower() in ["blue", "b"]
+            ) or (
+                zone.is_instance(YellowReservedZone)
+                and team_color.lower() in ["yellow", "y"]
+            ):
+                self.grid_manager.remove_forbidden_static_zone(zone.polygon)
 
         self.update([], [])
         print()
 
     @time_tracker(lambda self: self.logger)
-    def update(self, ally_positions: list[OrientedPoint | Point], enemy_positions: list[OrientedPoint | Point]) -> None:
+    def update(
+        self,
+        ally_positions: list[OrientedPoint | Point],
+        enemy_positions: list[OrientedPoint | Point],
+    ) -> None:
         """Update the zones based on the positions of allies and enemies."""
         for i in range(len(ally_positions)):
             ally_positions[i] = Point(ally_positions[i].x, ally_positions[i].y)
