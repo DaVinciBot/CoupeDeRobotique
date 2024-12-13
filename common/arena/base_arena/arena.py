@@ -187,7 +187,9 @@ class BaseArena:
 
             self.__plot_polygon(
                 ax,
-                self.__add_buffer_to_zone(zone.polygon, -self.obstacle_buffer),  # Remove buffer for original zone
+                self.__add_buffer_to_zone(
+                    zone.polygon, -self.obstacle_buffer
+                ),  # Remove buffer for original zone
                 color=zone.zone_color,
                 label=zone.zone_type.name,
                 alpha=0.8,
