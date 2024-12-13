@@ -201,7 +201,7 @@ class GridManager:
         """Returns the static grid."""
         return self.static_grid
 
-    def static_and_dynamic_grid(self) -> Grid:
+    def get_static_and_dynamic_grid(self) -> Grid:
         """Returns the combined static and dynamic grid."""
         return self.static_and_dynamic_grid
 
