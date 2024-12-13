@@ -25,7 +25,8 @@ from geometry import (
 )
 from logger import Logger, LogLevels
 
-
+# TODO - Handle Restricted Zones. Currently, only forbidden zones are handled. Restricted zones are zones where movement is restricted but not completely forbidden.
+# First consider Restricted as obstacles but if no path is found, consider them as free zones.
 # ====== GridManager Class ======
 class GridManager:
     """

@@ -31,10 +31,10 @@ from arena.arena_zone import (
     BaseArenaZone,
     EnemyZone,
     StuffZone,
-    ForbiddenZone,
     BlueReservedZone,
     YellowReservedZone,
     BorderZone,
+    ZoneNavigability
 )
 
 
@@ -93,7 +93,7 @@ class Arena:
 
         # Add forbidden and border zones to the grid manager
         for zone in zones:
-            if zone.zone_type in [ZoneType.FORBIDDEN, ZoneType.BORDER_ZONE]:
+            if zone.navigability == ZoneNavigability.FORBIDDEN:
                 self.grid_manager.add_forbidden_static_zone(zone.polygon)
 
     # ====== Private Methods ======
@@ -153,7 +153,6 @@ class Arena:
         first=True
         for zone in self.zones:
             if show_buffer and zone.zone_type != ZoneType.BORDER_ZONE:
-                # Plot buffer zone in light red
                 buffer_polygon = self.__add_buffer_to_zone(
                     zone.polygon, self.obstacle_buffer
                 )
@@ -165,8 +164,6 @@ class Arena:
                 )
                 
                 first=False
-
-            # Plot the original zone in dark red
             self.__plot_polygon(
                 ax,
                 zone.polygon,
@@ -174,6 +171,15 @@ class Arena:
                 label=f"{zone.zone_type.name} Zone" if zone.zone_type.name not in seen_zone_types else None,
             )
             seen_zone_types.add(zone.zone_type.name)
+            
+            if zone.navigability == ZoneNavigability.FORBIDDEN:
+                x, y = zone.polygon.exterior.xy
+                ax.fill(x, y, alpha=0.3, hatch='x',color = zone.zone_color,edgecolor='black')
+                
+            elif zone.navigability == ZoneNavigability.RESTRICTED:
+                x, y = zone.polygon.exterior.xy
+                ax.fill(x, y, alpha=0.3,hatch='/',color = zone.zone_color,edgecolor='black')
+            
 
         # Configure plot appearance
         ax.set_xlim(0, self.width)

@@ -3,9 +3,9 @@ from arena.arena_zone import (
     ZoneType,
     EnemyZone,
     StuffZone,
-    ForbiddenZone,
     BlueReservedZone,
     YellowReservedZone,
     BorderZone,
+    ZoneNavigability
 )
 from arena.arena import Arena
