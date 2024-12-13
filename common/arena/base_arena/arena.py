@@ -34,7 +34,7 @@ from arena.arena_zone import (
     BlueReservedZone,
     YellowReservedZone,
     BorderZone,
-    ZoneNavigability,
+    ZoneAccessibility,
 )
 
 
@@ -93,7 +93,7 @@ class Arena:
 
         # Add forbidden and border zones to the grid manager
         for zone in zones:
-            if zone.navigability == ZoneNavigability.FORBIDDEN:
+            if zone.accessibility == ZoneAccessibility.FORBIDDEN:
                 self.grid_manager.add_forbidden_static_zone(zone.polygon)
 
     # ====== Private Methods ======
