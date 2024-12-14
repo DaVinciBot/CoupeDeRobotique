@@ -54,7 +54,7 @@ arena = ShowArena(
     logger=arena_logger,
     border_buffer=2,
     obstacle_buffer=5,
-    chunk_size=2,
+    chunk_size=5,
 )
 
 

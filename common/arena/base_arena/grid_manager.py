@@ -151,7 +151,7 @@ class GridManager:
                 )
 
     # ====== Public Methods ======
-
+    @time_tracker(lambda self: self.logger)
     def add_forbidden_static_zone(
         self, forbidden_zones: Polygon | list[Polygon]
     ) -> None:
@@ -167,6 +167,7 @@ class GridManager:
         self.static_forbidden_zones.extend(forbidden_zones)
         self.__update_grid(update_static_zones=True)
 
+    @time_tracker(lambda self: self.logger)
     def remove_forbidden_static_zone(
         self, forbidden_zones_to_remove: Polygon | list[Polygon]
     ) -> None:
@@ -197,6 +198,7 @@ class GridManager:
 
         self.__update_grid(update_static_zones=True, clear_grid=True)
 
+    @time_tracker(lambda self: self.logger)
     def update_dynamic_forbidden_zones(self, forbidden_zones: list[Polygon]) -> None:
         """
         Updates dynamic forbidden zones in the grid.
@@ -234,7 +236,6 @@ class GridManager:
         """Returns the combined static and dynamic grid."""
         return self.static_and_dynamic_grid
 
-    @time_tracker(lambda self: self.logger)
     def visualize(self, only_static_grid: bool = False, path=None) -> None:
         """
         Visualizes the grid using matplotlib.

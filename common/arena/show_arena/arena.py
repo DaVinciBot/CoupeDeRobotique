@@ -43,53 +43,104 @@ class ShowArena(BaseArena):
         obstacle_buffer: float,
         chunk_size: int = 2,
     ) -> None:
-        zones: list[BaseArenaZone] = [
-            # Stuff zones first
-            StuffZone(create_straight_rectangle(Point(2.5, 20), Point(7.5, 60))),
-            StuffZone(create_straight_rectangle(Point(2.5, 115), Point(7.5, 155))),
-            StuffZone(create_straight_rectangle(Point(57.5, 20), Point(97.5, 30))),
-            StuffZone(create_straight_rectangle(Point(90, 90), Point(130, 100))),
-            StuffZone(
-                create_straight_rectangle(Point(300 - 7.5, 20), Point(300 - 2.5, 60))
-            ),
-            StuffZone(
-                create_straight_rectangle(Point(300 - 7.5, 115), Point(300 - 2.5, 155))
-            ),
-            StuffZone(
-                create_straight_rectangle(Point(300 - 97.5, 20), Point(300 - 57.5, 30))
-            ),
-            StuffZone(
-                create_straight_rectangle(Point(300 - 130, 90), Point(300 - 90, 100))
-            ),
-            # Reserved zones (yellow and blue)
-            YellowReservedZone(create_straight_rectangle(Point(0, 0), Point(45, 15))),
-            YellowReservedZone(create_straight_rectangle(Point(0, 65), Point(45, 110))),
-            BlueReservedZone(create_straight_rectangle(Point(15, 165), Point(60, 200))),
-            BlueReservedZone(
-                create_straight_rectangle(Point(60, 165), Point(105, 180))
-            ),
-            BlueReservedZone(create_straight_rectangle(Point(55, 0), Point(100, 15))),
-            BlueReservedZone(create_straight_rectangle(Point(100, 0), Point(145, 45))),
-            BlueReservedZone(
-                create_straight_rectangle(Point(300 - 45, 0), Point(300 - 0, 15))
-            ),
-            BlueReservedZone(
-                create_straight_rectangle(Point(300 - 45, 65), Point(300 - 0, 110))
-            ),
-            YellowReservedZone(
-                create_straight_rectangle(Point(300 - 60, 165), Point(300 - 15, 200))
-            ),
-            YellowReservedZone(
-                create_straight_rectangle(Point(300 - 105, 165), Point(300 - 60, 180))
-            ),
-            YellowReservedZone(
-                create_straight_rectangle(Point(300 - 100, 0), Point(300 - 55, 15))
-            ),
-            YellowReservedZone(
-                create_straight_rectangle(Point(300 - 145, 0), Point(300 - 100, 45))
-            ),
-            ForbiddenZone(create_straight_rectangle(Point(290, 190), Point(300, 200))),
+        stuff_zone_logger = Logger(
+            identifier="StuffZone",
+            decorator_level=LogLevels.INFO,
+            print_log_level=LogLevels.DEBUG,
+            file_log_level=LogLevels.DEBUG,
+        )
+
+        yellow_reserved_zone_logger = Logger(
+            identifier="YellowReservedZone",
+            decorator_level=LogLevels.INFO,
+            print_log_level=LogLevels.DEBUG,
+            file_log_level=LogLevels.DEBUG,
+        )
+
+        blue_reserved_zone_logger = Logger(
+            identifier="BlueReservedZone",
+            decorator_level=LogLevels.INFO,
+            print_log_level=LogLevels.DEBUG,
+            file_log_level=LogLevels.DEBUG,
+        )
+
+        forbidden_zone_logger = Logger(
+            identifier="ForbiddenZone",
+            decorator_level=LogLevels.INFO,
+            print_log_level=LogLevels.DEBUG,
+            file_log_level=LogLevels.DEBUG,
+        )
+
+        stuff_zones_points = [
+            ((2.5, 20), (7.5, 60)),
+            ((2.5, 115), (7.5, 155)),
+            ((57.5, 20), (97.5, 30)),
+            ((90, 90), (130, 100)),
+            ((300 - 7.5, 20), (300 - 2.5, 60)),
+            ((300 - 7.5, 115), (300 - 2.5, 155)),
+            ((300 - 97.5, 20), (300 - 57.5, 30)),
+            ((300 - 130, 90), (300 - 90, 100))
         ]
+
+        yellow_reserved_zones_points = [
+            ((0, 0), (45, 15)),
+            ((0, 65), (45, 110)),
+            ((300 - 60, 165), (300 - 15, 200)),
+            ((300 - 105, 165), (300 - 60, 180)),
+            ((300 - 100, 0), (300 - 55, 15)),
+            ((300 - 145, 0), (300 - 100, 45))
+        ]
+
+        blue_reserved_zones_points = [
+            ((15, 165), (60, 200)),
+            ((60, 165), (105, 180)),
+            ((55, 0), (100, 15)),
+            ((100, 0), (145, 45)),
+            ((300 - 45, 0), (300 - 0, 15)),
+            ((300 - 45, 65), (300 - 0, 110))
+        ]
+
+        forbidden_zones_points = [
+            ((290, 190), (300, 200))
+        ]
+
+        zones: list[BaseArenaZone] = []
+
+        for point in stuff_zones_points:
+            zones.append(
+                StuffZone(
+                    logger=stuff_zone_logger,
+                    buffer_size=obstacle_buffer,
+                    polygon=create_straight_rectangle(Point(*point[0]), Point(*point[1])),
+                )
+            )
+
+        for point in yellow_reserved_zones_points:
+            zones.append(
+                YellowReservedZone(
+                    logger=yellow_reserved_zone_logger,
+                    buffer_size=obstacle_buffer,
+                    polygon=create_straight_rectangle(Point(*point[0]), Point(*point[1])),
+                )
+            )
+
+        for point in blue_reserved_zones_points:
+            zones.append(
+                BlueReservedZone(
+                    logger=blue_reserved_zone_logger,
+                    buffer_size=obstacle_buffer,
+                    polygon=create_straight_rectangle(Point(*point[0]), Point(*point[1])),
+                )
+            )
+
+        for point in forbidden_zones_points:
+            zones.append(
+                ForbiddenZone(
+                    logger=forbidden_zone_logger,
+                    buffer_size=obstacle_buffer,
+                    polygon=create_straight_rectangle(Point(*point[0]), Point(*point[1])),
+                )
+            )
 
         super().__init__(
             logger,

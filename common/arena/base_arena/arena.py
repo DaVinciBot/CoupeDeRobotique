@@ -46,20 +46,20 @@ class BaseArena:
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        width: int,
-        height: int,
-        border_buffer: float,
-        obstacle_buffer: float,
-        zones: list[BaseArenaZone],
-        chunk_size: int = 10,
-        grid_manager_logger: Logger = Logger(
-            identifier="GridManager",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
-        ),
+            self,
+            logger: Logger,
+            width: int,
+            height: int,
+            border_buffer: float,
+            obstacle_buffer: float,
+            zones: list[BaseArenaZone],
+            chunk_size: int = 10,
+            grid_manager_logger: Logger = Logger(
+                identifier="GridManager",
+                decorator_level=LogLevels.INFO,
+                print_log_level=LogLevels.DEBUG,
+                file_log_level=LogLevels.DEBUG,
+            ),
     ) -> None:
         self.logger: Logger = logger
 
@@ -70,10 +70,7 @@ class BaseArena:
         self.obstacle_buffer: float = obstacle_buffer
 
         # Initialize zones with added buffer
-        self.zones: list[BaseArenaZone] = []
-        for zone in zones:
-            zone.polygon = self.__add_buffer_to_zone(zone.polygon, self.obstacle_buffer)
-            self.zones.append(zone)
+        self.zones: list[BaseArenaZone] = zones
 
         # Add border zone
         self.zones.append(self.__create_arena_border_zone())
@@ -83,10 +80,14 @@ class BaseArena:
             grid_manager_logger, chunk_size, width, height
         )
 
+        # Give to each zone the grid manager to do a callback when they update their state
+        for i in range(len(self.zones)):
+            self.zones[i].update_callback = lambda: self.grid_manager
+
         # Add forbidden and border zones to the grid manager
         for zone in self.zones:
             if not zone.is_accessible():
-                self.grid_manager.add_forbidden_static_zone(zone.polygon)
+                self.grid_manager.add_forbidden_static_zone(zone.buffered_polygon)
 
         self.team_color = None
 
@@ -107,20 +108,29 @@ class BaseArena:
         Prevents the robot from approaching too close to the arena edges.
         """
         arena_polygon = box(0, 0, self.width, self.height)
-        inner_polygon = self.__add_buffer_to_zone(arena_polygon, -self.border_buffer)
+        inner_polygon = BaseArenaZone.add_buffer_to_zone(arena_polygon, -self.border_buffer)
         border_zone_polygon = arena_polygon.difference(inner_polygon)
 
-        return BorderZone(polygon=border_zone_polygon)
+        return BorderZone(
+            logger=Logger(
+                identifier="BorderZone",
+                decorator_level=LogLevels.INFO,
+                print_log_level=LogLevels.DEBUG,
+                file_log_level=LogLevels.DEBUG,
+            ),
+            buffer_size=self.border_buffer,
+            buffered_polygon=border_zone_polygon,
+        )
 
     @staticmethod
     def __plot_polygon(
-        ax,
-        polygon: Polygon,
-        color: str,
-        label: str = None,
-        alpha: float = 1.0,
-        hatch: str = None,
-        hatch_color: str = None,
+            ax,
+            polygon: Polygon,
+            color: str,
+            label: str = None,
+            alpha: float = 1.0,
+            hatch: str = None,
+            hatch_color: str = None,
     ) -> None:
         """
         Helper method to plot a polygon or multipolygon on a matplotlib axis.
@@ -167,7 +177,7 @@ class BaseArena:
         """Plots zones and their buffers on the arena."""
         if show_buffer:
             # Plot buffer zone in transparent color
-            self.__plot_polygon(ax, zone.polygon, color=zone.zone_color, alpha=0.5)
+            self.__plot_polygon(ax, zone.buffered_polygon, color=zone.zone_color, alpha=0.5)
 
         # Plot the original zone in full color and hatch if necessary
         if not zone.is_instance(BorderZone):
@@ -187,9 +197,7 @@ class BaseArena:
 
             self.__plot_polygon(
                 ax,
-                self.__add_buffer_to_zone(
-                    zone.polygon, -self.obstacle_buffer
-                ),  # Remove buffer for original zone
+                zone.polygon,
                 color=zone.zone_color,
                 label=zone.zone_type.name,
                 alpha=0.8,
@@ -197,42 +205,30 @@ class BaseArena:
             )
 
     # ====== Public Methods ======
+    @time_tracker(lambda self: self.logger)
     def set_team_color(self, team_color: str) -> None:
         """Set the team color for determining zone accessibility."""
         self.team_color = team_color
-
-        # Remove all current team color zones from the grid manager
-        # TODO: retirer ça et juste laisser les update de zones mettre à jour leur état, la grille qui possède des pointeurs vers ces zones devrait être capable de mettre à jour son état elle meme
-        for zone in self.zones:
-            if (
-                zone.is_instance(BlueReservedZone)
-                and team_color.lower() in ["blue", "b"]
-            ) or (
-                zone.is_instance(YellowReservedZone)
-                and team_color.lower() in ["yellow", "y"]
-            ):
-                self.grid_manager.remove_forbidden_static_zone(zone.polygon)
-
-        self.update([], [])
+        self.update([], [], optimized_update=False)  # Force to update all zones
         print()
 
     @time_tracker(lambda self: self.logger)
     def update(
-        self,
-        ally_positions: list[OrientedPoint | Point],
-        enemy_positions: list[OrientedPoint | Point],
+            self,
+            ally_positions: list[OrientedPoint | Point],
+            enemy_positions: list[OrientedPoint | Point],
+            optimized_update: bool = True,
     ) -> None:
         """Update the zones based on the positions of allies and enemies."""
         for i in range(len(ally_positions)):
             ally_positions[i] = Point(ally_positions[i].x, ally_positions[i].y)
         for i in range(len(enemy_positions)):
             enemy_positions[i] = Point(enemy_positions[i].x, enemy_positions[i].y)
-
-        # TODO: mise à jour des zones en fonction des positions des alliés et ennemis, ça devrait se répercuter sur grid_manager
+        # TODO: Implement optimized update: only update zones that need to be updated (based on robot positions)
         for zone in self.zones:
             zone.update(self.team_color, ally_positions, enemy_positions)
 
-    @time_tracker(lambda self: self.logger)
+
     def visualize(self, show_buffer: bool = True) -> None:
         """
         Visualize the arena, including its zones, buffers, and accessibility grid.
