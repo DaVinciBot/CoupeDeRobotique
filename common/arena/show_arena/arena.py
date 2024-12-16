@@ -142,6 +142,14 @@ class ShowArena(BaseArena):
                 )
             )
 
+        # This is the scene for the rockstar
+        rockstar_stage = ForbiddenZone(logger=forbidden_zone_logger,
+                                       buffer_size=obstacle_buffer,
+                                       polygon=Polygon(((65, 200), (65, 180), (105, 180), (105, 155),
+                                                        (195, 155), (195, 180), (235, 180), (235, 200), (65, 200)))
+                                       )
+        zones.append(rockstar_stage)
+
         super().__init__(
             logger,
             width=300,

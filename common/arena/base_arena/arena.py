@@ -15,6 +15,9 @@ from geometry import (
     box,
     Point,
     OrientedPoint,
+    prepare,
+    Geometry,
+    create_straight_rectangle
 )
 from logger import Logger, LogLevels, time_tracker
 from arena.base_arena.grid_manager import GridManager
@@ -90,6 +93,11 @@ class BaseArena:
                 self.grid_manager.add_forbidden_static_zone(zone.buffered_polygon)
 
         self.team_color = None
+
+        # Add area for calculation
+        self.game_area: Polygon = create_straight_rectangle(Point(0, 0), Point(width, height))
+
+        self.prepare_zones()
 
     # ====== Private Methods ======
     @staticmethod
@@ -262,3 +270,40 @@ class BaseArena:
 
         plt.tight_layout()
         plt.show()
+
+    def prepare_zones(self):
+        """Prepare all values of self.zones, to optimize later calculations"""
+        prepare(self.game_area)
+        for zone in self.zones:
+            prepare(zone.polygon)
+
+    # We check if the robot (buffered) is within the limits of the buffered arena
+    def valid_position(self, pos: Point) -> bool:
+        pos = pos.buffer(self.obstacle_buffer)
+        return self.game_area.contains(pos)
+
+    # We put in a list all the zone of the specified type
+    def find_zone_accessibility(self, accessibility: str) -> list[BaseArenaZone]:
+        return [zone for zone in self.zones if zone.accessibility.name == accessibility.upper()]
+
+    # We check if an element intersects with at least one zone of the specified type
+    def zone_intersects(self, accessibility: str, element: Geometry) -> bool:
+        zones_to_check = self.find_zone_accessibility(accessibility)
+        if not zones_to_check:
+            raise ValueError(f"No zones has accessibility: '{accessibility}'.")
+
+        for zone in zones_to_check:
+            if zone and zone.polygon.intersects(element):
+                return True
+        return False
+
+    def contains(self, element: Geometry) -> bool:
+        """Check if a point is in the arena bounds
+
+        Args:
+            element (Geometry): The point to check. Points, Polygons etc. are all Geometries.
+
+        Returns:
+            bool: True if the element is entirely in the arena, False otherwise
+        """
+        return self.game_area.contains(element)
