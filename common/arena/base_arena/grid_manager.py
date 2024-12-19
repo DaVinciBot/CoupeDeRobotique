@@ -47,7 +47,7 @@ class GridManager:
     """
 
     def __init__(
-        self, logger: Logger, chunk_size: int, width: int, height: int
+            self, logger: Logger, chunk_size: int, width: int, height: int
     ) -> None:
         """
         Initializes the grid manager.
@@ -122,7 +122,7 @@ class GridManager:
         return grid
 
     def __update_grid(
-        self, *, update_static_zones=False, update_dynamic_zones=False, clear_grid=False
+            self, *, update_static_zones=False, update_dynamic_zones=False, clear_grid=False
     ) -> None:
         """
         Updates the grids for static and dynamic zones.
@@ -153,7 +153,7 @@ class GridManager:
     # ====== Public Methods ======
     @time_tracker(lambda self: self.logger)
     def add_forbidden_static_zone(
-        self, forbidden_zones: Polygon | list[Polygon]
+            self, forbidden_zones: Polygon | list[Polygon]
     ) -> None:
         """
         Adds static forbidden zones to the grid.
@@ -169,7 +169,7 @@ class GridManager:
 
     @time_tracker(lambda self: self.logger)
     def remove_forbidden_static_zone(
-        self, forbidden_zones_to_remove: Polygon | list[Polygon]
+            self, forbidden_zones_to_remove: Polygon | list[Polygon]
     ) -> None:
         """
         Removes static forbidden zones from the grid.
@@ -221,7 +221,7 @@ class GridManager:
 
     def absolute_coords_to_grid_coords(self, point: OrientedPoint | Point) -> GridNode:
         """Converts absolute coordinates to grid coordinates."""
-        return GridNode(point.x / self.chunk_size, point.y / self.chunk_size)
+        return GridNode(int(point.x / self.chunk_size), int(point.y / self.chunk_size))
 
     def grid_coords_to_absolute_coords(self, node: GridNode) -> Point:
         """Converts grid coordinates to absolute coordinates."""
@@ -257,19 +257,11 @@ class GridManager:
 
         if path and len(path) > 1:
             for i in range(len(path) - 1):
-                current = self.absolute_coords_to_grid_coords(path[i])
-                next_node = self.absolute_coords_to_grid_coords(path[i + 1])
                 # Draw a line connecting the current node to the next node
                 ax.plot(
-                    [
-                        current.x + self.half_chunk_size,
-                        next_node.x + self.half_chunk_size,
-                    ],
-                    [
-                        current.y + self.half_chunk_size,
-                        next_node.y + self.half_chunk_size,
-                    ],
-                    color="blue",
+                    [path[i].x / self.chunk_size, path[i + 1].x / self.chunk_size],
+                    [path[i].y / self.chunk_size, path[i + 1].y / self.chunk_size],
+                    color="green",
                     linewidth=2,
                 )
 

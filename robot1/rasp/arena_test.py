@@ -57,16 +57,17 @@ arena = ShowArena(
     chunk_size=5,
 )
 
-
+# arena.visualize()
 arena.set_team_color("yellow")
 
 path_finder = PathFinder(
-    finder_logger,
-    OrientedPoint((10, 10), theta=0),
-    OrientedPoint((150, 130), theta=0),
-    arena.grid_manager,
+    logger=finder_logger,
+    start=OrientedPoint((10, 10)),
+    goal=OrientedPoint((260, 180)),
+    grid_manager=arena.grid_manager,
+    path_resolution=1
 )
-path = path_finder.find_oriented_path()
+path = path_finder.find_oriented_path(smooth_path=True)
 
-arena.visualize()
+#arena.visualize()
 arena.grid_manager.visualize(path=path)

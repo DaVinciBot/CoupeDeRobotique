@@ -69,6 +69,20 @@ class BaseArena:
         self.width: int = width
         self.height: int = height
 
+        if border_buffer % chunk_size != 0:
+            self.logger.log(
+                "The border buffer is not a multiple of the chunk size -> "
+                "the not walkable area will not be aligned with the grid",
+                LogLevels.WARNING,
+            )
+
+        if obstacle_buffer % chunk_size != 0:
+            self.logger.log(
+                "The obstacle buffer is not a multiple of the chunk size -> "
+                "the not walkable area will not be aligned with the grid",
+                LogLevels.WARNING,
+            )
+
         self.border_buffer: float = border_buffer
         self.obstacle_buffer: float = obstacle_buffer
 
@@ -235,7 +249,6 @@ class BaseArena:
         # TODO: Implement optimized update: only update zones that need to be updated (based on robot positions)
         for zone in self.zones:
             zone.update(self.team_color, ally_positions, enemy_positions)
-
 
     def visualize(self, show_buffer: bool = True) -> None:
         """
