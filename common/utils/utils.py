@@ -8,7 +8,7 @@ class Utils:
         return datetime.now()
 
     @staticmethod
-    def get_str_date(format: str = "%H:%M:%S") -> str:
+    def get_str_date(format: str = "%H:%M:%S.%f") -> str:
         return datetime.now().strftime(format)
 
     @staticmethod

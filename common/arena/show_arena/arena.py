@@ -42,6 +42,7 @@ class ShowArena(BaseArena):
         border_buffer: float,
         obstacle_buffer: float,
         chunk_size: int = 2,
+        forbidden_cover_threshold: float = 0.5,
     ) -> None:
         stuff_zone_logger = Logger(
             identifier="StuffZone",
@@ -100,8 +101,10 @@ class ShowArena(BaseArena):
             ((300 - 45, 65), (300 - 0, 110))
         ]
 
+        # TODO: just for test purposes
         forbidden_zones_points = [
-            ((290, 190), (300, 200))
+            ((290, 190), (300, 200)),
+            ((150, 100), (151, 101)),
         ]
 
         zones: list[BaseArenaZone] = []
@@ -158,6 +161,7 @@ class ShowArena(BaseArena):
             obstacle_buffer=obstacle_buffer,
             zones=zones,
             chunk_size=chunk_size,
+            forbidden_cover_threshold=forbidden_cover_threshold,
         )
 
         self.logger.log("ShowArena initialized.", LogLevels.INFO)

@@ -4,6 +4,10 @@
 # Methods include creating border zones, adding buffers to zones, and visualizing the arena with optional buffer zones.
 
 # ====== Imports ======
+# Standard library imports
+from concurrent.futures import ThreadPoolExecutor
+from functools import partial
+
 # Third-party library imports
 import matplotlib.pyplot as plt
 
@@ -30,6 +34,7 @@ from arena.base_arena.arena_zone import (
     BorderZone,
     YellowReservedZone,
     BlueReservedZone,
+    EnemyZone,
 )
 
 
@@ -53,6 +58,7 @@ class BaseArena:
             logger: Logger,
             width: int,
             height: int,
+            forbidden_cover_threshold: float,
             border_buffer: float,
             obstacle_buffer: float,
             zones: list[BaseArenaZone],
@@ -94,7 +100,7 @@ class BaseArena:
 
         # Initialize grid manager
         self.grid_manager: GridManager = GridManager(
-            grid_manager_logger, chunk_size, width, height
+            grid_manager_logger, chunk_size, width, height, forbidden_cover_threshold
         )
 
         # Give to each zone the grid manager to do a callback when they update their state
@@ -114,15 +120,6 @@ class BaseArena:
         self.prepare_zones()
 
     # ====== Private Methods ======
-    @staticmethod
-    def __add_buffer_to_zone(polygon: Polygon, buffer: float) -> Polygon:
-        """
-        Adds a buffer around a zone to account for obstacle or border spacing.
-        The buffer uses a square cap style to match the grid structure.
-        """
-        return polygon.buffer(
-            buffer, cap_style=BufferCapStyle.flat, join_style=BufferJoinStyle.mitre
-        )
 
     def __create_arena_border_zone(self) -> BorderZone:
         """
@@ -195,11 +192,11 @@ class BaseArena:
                 x, y = interior.xy
                 ax.plot(x, y, color=color, linestyle="--", alpha=alpha)
 
-    def __plot_zone(self, ax, zone: BaseArenaZone, show_buffer: bool):
+    def __plot_zone(self, ax, zone: BaseArenaZone, show_buffer: bool, transparency_factor: float = 1.0) -> None:
         """Plots zones and their buffers on the arena."""
         if show_buffer:
             # Plot buffer zone in transparent color
-            self.__plot_polygon(ax, zone.buffered_polygon, color=zone.zone_color, alpha=0.5)
+            self.__plot_polygon(ax, zone.buffered_polygon, color=zone.zone_color, alpha=0.5 * transparency_factor)
 
         # Plot the original zone in full color and hatch if necessary
         if not zone.is_instance(BorderZone):
@@ -222,7 +219,7 @@ class BaseArena:
                 zone.polygon,
                 color=zone.zone_color,
                 label=zone.zone_type.name,
-                alpha=0.8,
+                alpha=0.8 * transparency_factor,
                 **hatch_params
             )
 
@@ -237,8 +234,9 @@ class BaseArena:
     @time_tracker(lambda self: self.logger)
     def update(
             self,
-            ally_positions: list[OrientedPoint | Point],
-            enemy_positions: list[OrientedPoint | Point],
+            ally_positions: list[OrientedPoint],
+            enemy_positions: list[OrientedPoint],
+            enemy_velocity: list[float] = 0.0,
             optimized_update: bool = True,
     ) -> None:
         """Update the zones based on the positions of allies and enemies."""
@@ -246,18 +244,76 @@ class BaseArena:
             ally_positions[i] = Point(ally_positions[i].x, ally_positions[i].y)
         for i in range(len(enemy_positions)):
             enemy_positions[i] = Point(enemy_positions[i].x, enemy_positions[i].y)
-        # TODO: Implement optimized update: only update zones that need to be updated (based on robot positions)
-        for zone in self.zones:
-            zone.update(self.team_color, ally_positions, enemy_positions)
 
-    def visualize(self, show_buffer: bool = True) -> None:
+        # Create Enemy zone based on position and velocity
+        enemy_zones = [
+            EnemyZone(
+                logger=self.logger,
+                polygon=create_straight_rectangle(
+                    Point(enemy_position.x - 5, enemy_position.y - 5),
+                    Point(enemy_position.x + 5, enemy_position.y + 5)
+                )
+            )
+            for enemy_position in enemy_positions
+        ]
+        # Remove previous enemy zones
+        self.zones = [zone for zone in self.zones if zone != EnemyZone]
+
+        self.zones.extend(enemy_zones)
+        self.grid_manager.update_dynamic_forbidden_zones([enemy_zone.polygon for enemy_zone in enemy_zones])
+
+        # Update zone
+        # optimized: Update only the zones that intersect with the points
+        all_points = ally_positions + enemy_positions
+        for zone in self.zones:
+            if not optimized_update or any(zone.polygon.contains(pt) for pt in all_points):
+                zone.update(
+                    self.team_color,
+                    ally_positions=ally_positions,
+                    enemy_positions=enemy_positions
+                )
+
+        # def _update_zone(_zone, _optimized_update, _all_points, _team_color, _ally_positions, _enemy_positions):
+        #     try:
+        #         if not _optimized_update or any(_zone.polygon.contains(pt) for pt in _all_points):
+        #             _zone.update(
+        #                 team_color=_team_color,
+        #                 ally_positions=_ally_positions,
+        #                 enemy_positions=_enemy_positions
+        #             )
+        #     except Exception as e:
+        #         print(e)
+        #
+        # prewrapped_update = partial(
+        #     _update_zone,
+        #     _optimized_update=optimized_update,
+        #     _all_points=ally_positions + enemy_positions,
+        #     _team_color=self.team_color,
+        #     _ally_positions=ally_positions,
+        #     _enemy_positions=enemy_positions
+        # )
+        #
+        # # Utilisation de ThreadPoolExecutor
+        # with ThreadPoolExecutor() as executor:
+        #     list(executor.map(prewrapped_update, self.zones))
+
+    def visualize(self, show_buffer: bool = True, show: bool = True, plot: tuple[plt.axes, plt.figure] = None,
+                  transparency_factor: float = 1.0
+                  ) -> tuple[plt.axes, plt.figure]:
+
         """
         Visualize the arena, including its zones, buffers, and accessibility grid.
 
         Args:
             show_buffer (bool): If True, buffer zones are displayed.
+            show (bool): If True, the plot is displayed.
+            plot (tuple[plt.axes, plt.figure]): Tuple containing axes and figure for plotting.
+            transparency_factor (float): Transparency factor zones (default=0.5).
         """
-        fig, ax = plt.subplots(figsize=(12, 6))
+        if plot:
+            ax, fig = plot
+        else:
+            fig, ax = plt.subplots(figsize=(12, 6))
 
         # Draw the arena boundary
         arena_polygon = box(0, 0, self.width, self.height)
@@ -265,7 +321,7 @@ class BaseArena:
 
         # Plot zones and their buffers
         for zone in self.zones:
-            self.__plot_zone(ax, zone, show_buffer)
+            self.__plot_zone(ax, zone, show_buffer, transparency_factor)
 
         ax.set_xlim(self.width, 0)  # Reverse x-axis
         ax.set_ylim(0, self.height)  # Keep y-axis normal
@@ -282,7 +338,9 @@ class BaseArena:
         plt.legend(loc="center right", bbox_to_anchor=(-0.1, 0.5))
 
         plt.tight_layout()
-        plt.show()
+        if show:
+            plt.show()
+        return ax, fig
 
     def prepare_zones(self):
         """Prepare all values of self.zones, to optimize later calculations"""

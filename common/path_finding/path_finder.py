@@ -44,6 +44,16 @@ class PathFinder:
             grid_manager: GridManager,
             path_resolution: float,
     ) -> None:
+        """
+        Initialize the PathFinder instance.
+
+        Args:
+            logger (Logger): Logger instance for logging information.
+            start (OrientedPoint): Starting position in absolute coordinates.
+            goal (OrientedPoint): Goal position in absolute coordinates.
+            grid_manager (GridManager): Manager for grid operations and transformations.
+            path_resolution (float): Resolution for path smoothing.
+        """
         self.logger: Logger = logger
         self.grid_manager: GridManager = grid_manager
 
@@ -51,11 +61,8 @@ class PathFinder:
         self.goal: GridNode = self.grid_manager.absolute_coords_to_grid_coords(goal)
 
         self.path_resolution: float = path_resolution
-
-        # Instantiate the A* path finder
         self.finder = AStarFinder(diagonal_movement=DiagonalMovement.always)
 
-        # Placeholder attributes for paths
         self.path_found: list[GridNode] = []
         self.oriented_path_found: list[OrientedPoint] = []
 
@@ -63,19 +70,32 @@ class PathFinder:
 
     @staticmethod
     def __compute_orientation(current_point: GridNode | Point, next_point: GridNode | Point) -> float:
-        """Compute the orientation (angle in radians) from the current point to the next."""
-        return math.atan2(
-            next_point.y - current_point.y, next_point.x - current_point.x
-        )
+        """
+        Compute the orientation (angle in radians) from the current point to the next.
 
-    def __find_path(self) -> list[GridNode]:
-        """Run the A* algorithm to find a path between current_position and goal."""
+        Args:
+            current_point (GridNode | Point): Current point coordinates.
+            next_point (GridNode | Point): Next point coordinates.
+
+        Returns:
+            float: Orientation angle in radians.
+        """
+        return math.atan2(next_point.y - current_point.y, next_point.x - current_point.x)
+
+    def __find_path(self, use_static_and_dynamic_grid: bool) -> list[GridNode]:
+        """
+        Run the A* algorithm to find a path between current_position and goal.
+
+        Returns:
+            list[GridNode]: List of nodes representing the found path.
+        """
+        grid = self.grid_manager.static_and_dynamic_grid \
+            if use_static_and_dynamic_grid else self.grid_manager.static_grid
+
         self.path_found, exploration_value = self.finder.find_path(
-            self.grid_manager.static_grid.node(
-                self.current_position.x, self.current_position.y
-            ),
-            self.grid_manager.static_grid.node(self.goal.x, self.goal.y),
-            self.grid_manager.static_grid,
+            start=grid.node(self.current_position.x, self.current_position.y),
+            end=grid.node(self.goal.x, self.goal.y),
+            graph=grid,
         )
 
         if not self.path_found:
@@ -89,19 +109,34 @@ class PathFinder:
         return self.path_found
 
     def __grid_path_to_absolute_path(self, grid_path: list[GridNode]) -> list[Point]:
-        """Convert a grid path to an absolute path."""
+        """
+        Convert a grid path to an absolute path.
+
+        Args:
+            grid_path (list[GridNode]): Path as a list of grid nodes.
+
+        Returns:
+            list[Point]: Path as a list of absolute points.
+        """
         if not grid_path:
             self.logger.log("[grid path to absolute path] Path to convert is empty!", LogLevels.DEBUG)
             return []
 
-        return [
-            Point(*self.grid_manager.get_grid_node_center(node)) for node in grid_path
-        ]
+        return [Point(*self.grid_manager.get_grid_node_center(node)) for node in grid_path]
 
     def __path_to_absolute_oriented_path(
             self, path: list[GridNode] | list[Point], is_grid_path: bool
     ) -> list[OrientedPoint]:
-        """Convert a path (grid or absolute) to an oriented path for the robot."""
+        """
+        Convert a path (grid or absolute) to an oriented path for the robot.
+
+        Args:
+            path (list[GridNode] | list[Point]): Input path.
+            is_grid_path (bool): Indicates if the path is in grid coordinates.
+
+        Returns:
+            list[OrientedPoint]: Path with orientation included.
+        """
         if not path:
             self.logger.log("[path to absolute oriented path] Path to convert is empty!", LogLevels.DEBUG)
             return []
@@ -109,18 +144,20 @@ class PathFinder:
         oriented_path: list[OrientedPoint] = []
 
         for i in range(len(path) - 1):
-            if is_grid_path:
-                current_point = GridNode(*self.grid_manager.get_grid_node_center(path[i]))
-                next_point = GridNode(*self.grid_manager.get_grid_node_center(path[i + 1]))
-            else:
-                current_point = path[i]
-                next_point = path[i + 1]
+            current_point = (
+                GridNode(*self.grid_manager.get_grid_node_center(path[i]))
+                if is_grid_path
+                else path[i]
+            )
+            next_point = (
+                GridNode(*self.grid_manager.get_grid_node_center(path[i + 1]))
+                if is_grid_path
+                else path[i + 1]
+            )
 
             current_orientation = self.__compute_orientation(current_point, next_point)
 
-            oriented_path.append(
-                OrientedPoint(current_point.x, current_point.y, current_orientation)
-            )
+            oriented_path.append(OrientedPoint(current_point.x, current_point.y, current_orientation))
 
         last_point = (
             GridNode(*self.grid_manager.get_grid_node_center(path[-1]))
@@ -128,78 +165,96 @@ class PathFinder:
             else path[-1]
         )
 
-        oriented_path.append(
-            OrientedPoint(last_point.x, last_point.y, oriented_path[-1].theta)
-        )
+        oriented_path.append(OrientedPoint(last_point.x, last_point.y, oriented_path[-1].theta))
 
         return oriented_path
 
+    @time_tracker(lambda self: self.logger)
     def __smooth_path(self, path: list[Point]) -> list[Point]:
-        """Smooth the path to ensure consistent spacing and reduce sharp turns."""
+        """
+        Smooth the path to ensure consistent spacing and reduce sharp turns.
+
+        Args:
+            path (list[Point]): Path as a list of absolute points.
+
+        Returns:
+            list[Point]: Smoothed path.
+        """
         if not path:
             self.logger.log("[smooth path] Path to convert is empty!", LogLevels.DEBUG)
             return []
 
-        # Convert path to NumPy array for efficient computation
         path_array = np.array([[point.x, point.y] for point in path])
-        smoothed_path = [path_array[0]]
 
-        # Smoothing loop
-        smoothed_points = (path_array[:-2] + path_array[1:-1] + path_array[2:]) / 3
-        smoothed_path.extend(smoothed_points)
-        smoothed_path.append(path_array[-1])
+        smoothed_path = np.empty_like(path_array)
+        smoothed_path[0] = path_array[0]
+        smoothed_path[1:-1] = (path_array[:-2] + path_array[1:-1] + path_array[2:]) / 3
+        smoothed_path[-1] = path_array[-1]
 
-        # Interpolate points to maintain uniform spacing
-        smoothed_path = np.array(smoothed_path)
         interpolated_path = [smoothed_path[0]]
-
         for i in range(1, len(smoothed_path)):
             start = interpolated_path[-1]
             end = smoothed_path[i]
 
             vector = end - start
             distance = np.linalg.norm(vector)
-
             if distance == 0:
                 continue
 
             direction = vector / distance
             num_new_points = int(distance // self.path_resolution)
+            new_points = [
+                start + j * self.path_resolution * direction
+                for j in range(1, num_new_points + 1)
+            ]
+            interpolated_path.extend(new_points)
+            interpolated_path.append(end)
 
-            for j in range(1, num_new_points + 1):
-                new_point = start + j * self.path_resolution * direction
-                interpolated_path.append(new_point)
-
-        # Ensure the last node is included
-        if np.linalg.norm(interpolated_path[-1] - smoothed_path[-1]) > 0:
-            interpolated_path.append(smoothed_path[-1])
-
-        # Convert back to GridNode objects
         return [Point(x, y) for x, y in interpolated_path]
 
     # ====== Public Methods ======
 
     def update_goal(self, new_goal: OrientedPoint) -> None:
-        """Update the goal position."""
+        """
+        Update the goal position.
+
+        Args:
+            new_goal (OrientedPoint): New goal position in absolute coordinates.
+        """
         self.goal = self.grid_manager.absolute_coords_to_grid_coords(new_goal)
 
     def update_current_position(self, new_position: OrientedPoint) -> None:
-        """Update the current position."""
+        """
+        Update the current position.
+
+        Args:
+            new_position (OrientedPoint): New current position in absolute coordinates.
+        """
         self.current_position = self.grid_manager.absolute_coords_to_grid_coords(new_position)
 
     @time_tracker(lambda self: self.logger)
-    def find_oriented_path(self, smooth_path: bool = False) -> list[OrientedPoint]:
-        """Find a path and convert it into an oriented path."""
-        self.__find_path()
+    def find_oriented_path(self, use_static_and_dynamic_grid: bool = False, smooth_path: bool = False) \
+            -> list[OrientedPoint]:
+        """
+        Find a path and convert it into an oriented path.
+
+        Args:
+            use_static_and_dynamic_grid (bool): Whether to use the static and dynamic grid for pathfinding
+                - Static grid: Contains only static obstacles.
+                - Dynamic grid: Contains both static and dynamic obstacles (Enemy for exemple).
+            smooth_path (bool): Whether to smooth the path before orientation.
+
+        Returns:
+            list[OrientedPoint]: Oriented path with angles included.
+        """
+        self.__find_path(use_static_and_dynamic_grid=use_static_and_dynamic_grid)
 
         if not smooth_path:
             return self.__path_to_absolute_oriented_path(self.path_found, is_grid_path=True)
 
         self.oriented_path_found = self.__path_to_absolute_oriented_path(
-            self.__smooth_path(
-                self.__grid_path_to_absolute_path(self.path_found)
-            ),
-            is_grid_path=False
+            self.__smooth_path(self.__grid_path_to_absolute_path(self.path_found)),
+            is_grid_path=False,
         )
 
         return self.oriented_path_found
