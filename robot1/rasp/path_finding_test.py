@@ -30,7 +30,7 @@ from logger import Logger, LogLevels
 from geometry import OrientedPoint
 
 from arena import (
-    Arena,
+    ShowArena,
     BaseArenaZone,
     ZoneType,
     EnemyZone,
@@ -61,7 +61,7 @@ finder_logger = Logger(
 
 chunk_size = 10
 
-arena = Arena(
+arena = ShowArena(
     logger=arena_logger,
     width=300,
     height=200,

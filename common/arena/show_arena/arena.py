@@ -80,7 +80,7 @@ class ShowArena(BaseArena):
             ((300 - 7.5, 20), (300 - 2.5, 60)),
             ((300 - 7.5, 115), (300 - 2.5, 155)),
             ((300 - 97.5, 20), (300 - 57.5, 30)),
-            ((300 - 130, 90), (300 - 90, 100))
+            ((300 - 130, 90), (300 - 90, 100)),
         ]
 
         yellow_reserved_zones_points = [
@@ -89,7 +89,7 @@ class ShowArena(BaseArena):
             ((300 - 60, 165), (300 - 15, 200)),
             ((300 - 105, 165), (300 - 60, 180)),
             ((300 - 100, 0), (300 - 55, 15)),
-            ((300 - 145, 0), (300 - 100, 45))
+            ((300 - 145, 0), (300 - 100, 45)),
         ]
 
         blue_reserved_zones_points = [
@@ -98,7 +98,7 @@ class ShowArena(BaseArena):
             ((55, 0), (100, 15)),
             ((100, 0), (145, 45)),
             ((300 - 45, 0), (300 - 0, 15)),
-            ((300 - 45, 65), (300 - 0, 110))
+            ((300 - 45, 65), (300 - 0, 110)),
         ]
 
         # TODO: just for test purposes
@@ -109,48 +109,68 @@ class ShowArena(BaseArena):
 
         zones: list[BaseArenaZone] = []
 
-        for point in stuff_zones_points:
+        for corner_point in stuff_zones_points:
             zones.append(
                 StuffZone(
                     logger=stuff_zone_logger,
                     buffer_size=obstacle_buffer,
-                    polygon=create_straight_rectangle(Point(*point[0]), Point(*point[1])),
+                    polygon=create_straight_rectangle(
+                        Point(*corner_point[0]), Point(*corner_point[1])
+                    ),
                 )
             )
 
-        for point in yellow_reserved_zones_points:
+        for corner_point in yellow_reserved_zones_points:
             zones.append(
                 YellowReservedZone(
                     logger=yellow_reserved_zone_logger,
                     buffer_size=obstacle_buffer,
-                    polygon=create_straight_rectangle(Point(*point[0]), Point(*point[1])),
+                    polygon=create_straight_rectangle(
+                        Point(*corner_point[0]), Point(*corner_point[1])
+                    ),
                 )
             )
 
-        for point in blue_reserved_zones_points:
+        for corner_point in blue_reserved_zones_points:
             zones.append(
                 BlueReservedZone(
                     logger=blue_reserved_zone_logger,
                     buffer_size=obstacle_buffer,
-                    polygon=create_straight_rectangle(Point(*point[0]), Point(*point[1])),
+                    polygon=create_straight_rectangle(
+                        Point(*corner_point[0]), Point(*corner_point[1])
+                    ),
                 )
             )
 
-        for point in forbidden_zones_points:
+        for corner_point in forbidden_zones_points:
             zones.append(
                 ForbiddenZone(
                     logger=forbidden_zone_logger,
                     buffer_size=obstacle_buffer,
-                    polygon=create_straight_rectangle(Point(*point[0]), Point(*point[1])),
+                    polygon=create_straight_rectangle(
+                        Point(*corner_point[0]), Point(*corner_point[1])
+                    ),
                 )
             )
 
         # This is the scene for the rockstar
-        rockstar_stage = ForbiddenZone(logger=forbidden_zone_logger,
-                                       buffer_size=obstacle_buffer,
-                                       polygon=Polygon(((65, 200), (65, 180), (105, 180), (105, 155),
-                                                        (195, 155), (195, 180), (235, 180), (235, 200), (65, 200)))
-                                       )
+        rockstar_stage = ForbiddenZone(
+            logger=forbidden_zone_logger,
+            buffer_size=obstacle_buffer,
+            polygon=Polygon(
+                (
+                    (65, 200),
+                    (65, 180),
+                    (105, 180),
+                    (105, 155),
+                    (195, 155),
+                    (195, 180),
+                    (235, 180),
+                    (235, 200),
+                    (65, 200),
+                )
+            ),
+        )
         zones.append(rockstar_stage)
 
         super().__init__(

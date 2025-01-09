@@ -61,7 +61,7 @@ arena = ShowArena(
     border_buffer=2,
     obstacle_buffer=1,
     chunk_size=5,
-    forbidden_cover_threshold=0.1
+    forbidden_cover_threshold=0.1,
 )
 
 start = OrientedPoint((10, 10))
@@ -70,11 +70,10 @@ goal = OrientedPoint((280, 120))
 enemy_start = OrientedPoint((230, 60))
 enemy_goal = OrientedPoint((70, 140))
 
-arena.visualize_grid_manager_and_arena()
-print()
-arena.visualize()
 
 arena.set_team_color("yellow")
+
+arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
 
 # Ally path
 ally_path_finder = PathFinder(
@@ -82,7 +81,7 @@ ally_path_finder = PathFinder(
     start=start,
     goal=goal,
     grid_manager=arena.grid_manager,
-    path_resolution=5
+    path_resolution=5,
 )
 ally_path = ally_path_finder.find_oriented_path(smooth_path=True)
 
@@ -92,7 +91,7 @@ enemy_path_finder = PathFinder(
     start=enemy_start,
     goal=enemy_goal,
     grid_manager=arena.grid_manager,
-    path_resolution=5
+    path_resolution=5,
 )
 enemy_path = enemy_path_finder.find_oriented_path(smooth_path=True)
 
@@ -103,16 +102,24 @@ arena.grid_manager.visualize(only_static_grid=True, path=[ally_path])
 import matplotlib.pyplot as plt
 
 while len(ally_path) > 3:
-    plt.close('all')
+    plt.close("all")
     plt.ion()
 
-    arena.update(ally_positions=[ally_path[1]], enemy_positions=[enemy_path[1]], optimized_update=True)
+    arena.update(
+        ally_positions=[ally_path[1]],
+        enemy_positions=[enemy_path[1]],
+        optimized_update=True,
+    )
 
-    arena.visualize()
+    arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
     arena.grid_manager.visualize(only_static_grid=False, path=[ally_path, enemy_path])
     plt.pause(2)
     ally_path_finder.update_current_position(ally_path[1])
     enemy_path_finder.update_current_position(enemy_path[1])
 
-    ally_path = ally_path_finder.find_oriented_path(smooth_path=True, use_static_and_dynamic_grid=True)
-    enemy_path = enemy_path_finder.find_oriented_path(smooth_path=True, use_static_and_dynamic_grid=False)
+    ally_path = ally_path_finder.find_oriented_path(
+        smooth_path=True, use_static_and_dynamic_grid=True
+    )
+    enemy_path = enemy_path_finder.find_oriented_path(
+        smooth_path=True, use_static_and_dynamic_grid=False
+    )
