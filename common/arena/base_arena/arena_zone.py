@@ -19,6 +19,8 @@ from geometry import (
     BufferCapStyle,
     BufferJoinStyle,
     Point,
+    OrientedPoint,
+    create_straight_rectangle
 )
 
 
@@ -31,6 +33,7 @@ class ZoneType(Enum):
     FORBIDDEN = auto()
     STUFF_ZONE = auto()
     ENEMY = auto()
+    ALLY = auto()
     BORDER_ZONE = auto()
 
 
@@ -60,15 +63,15 @@ class BaseArenaZone(ABC):
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        zone_type: ZoneType,
-        accessibility: ZoneAccessibility,
-        buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
-        zone_color: str = "#f0aef2",
+            self,
+            logger: Logger,
+            zone_type: ZoneType,
+            accessibility: ZoneAccessibility,
+            buffer_size: float = 0.0,
+            polygon: Polygon = None,
+            buffered_polygon: Polygon = None,
+            update_callback: callable = None,
+            zone_color: str = "#f0aef2",
     ) -> None:
         self.logger: Logger = logger
         self.zone_type: ZoneType = zone_type
@@ -127,13 +130,13 @@ class BaseArenaZone(ABC):
 
     def is_instance(self, other):
         return (
-            isinstance(self, type(other))
-            or isinstance(other, type(self))
-            or isinstance(self, other)
+                isinstance(self, type(other))
+                or isinstance(other, type(self))
+                or isinstance(self, other)
         )
 
     def update(
-        self, color_team: str, ally_positions: list[Point], enemy_positions: list[Point]
+            self, color_team: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
         """Update the zone based on the positions of allies and enemies."""
 
@@ -154,13 +157,13 @@ class ForbiddenZone(BaseArenaZone):
     """Zone that is strictly forbidden."""
 
     def __init__(
-        self,
-        logger: Logger,
-        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
-        buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
+            self,
+            logger: Logger,
+            accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
+            buffer_size: float = 0.0,
+            polygon: Polygon = None,
+            buffered_polygon: Polygon = None,
+            update_callback: callable = None,
     ) -> None:
         super().__init__(
             logger=logger,
@@ -178,23 +181,52 @@ class EnemyZone(BaseArenaZone):
     """Zone designated for enemies, dynamically updated based on their position."""
 
     def __init__(
-        self,
-        logger: Logger,
-        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
-        buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
+            self,
+            logger: Logger,
+            point: Point,
+            accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
+            robot_size: float = 10,
     ) -> None:
+        enemy_polygon = Point(point).buffer(robot_size)
+
+        self.point = point
         super().__init__(
             logger=logger,
-            zone_type=ZoneType.ENEMY,
+            zone_type=ZoneType.FORBIDDEN,
             accessibility=accessibility,
-            buffer_size=buffer_size,
-            polygon=polygon,
-            buffered_polygon=buffered_polygon,
-            update_callback=update_callback,
+            buffer_size=0.0,
+            polygon=enemy_polygon,
+            buffered_polygon=None,
+            update_callback=None,
             zone_color="#EE0505",
+        )
+
+
+class AllyZone(BaseArenaZone):
+    """Zone designated for ally, dynamically updated based on their position."""
+
+    def __init__(
+            self,
+            logger: Logger,
+            point: OrientedPoint,
+            accessibility: ZoneAccessibility = ZoneAccessibility.FREE,
+            robot_size: float = 2,  # Assume the robot is a square 2/2 = 1 side length
+    ) -> None:
+        position_based_polygon = create_straight_rectangle(
+            Point(point.x - robot_size, point.y - robot_size),
+            Point(point.x + robot_size, point.y + robot_size),
+        )
+
+        self.point = point
+        super().__init__(
+            logger=logger,
+            zone_type=ZoneType.ALLY,
+            accessibility=accessibility,
+            buffer_size=0.0,
+            polygon=position_based_polygon,
+            buffered_polygon=None,
+            update_callback=None,
+            zone_color="#8af542",
         )
 
 
@@ -202,13 +234,13 @@ class StuffZone(BaseArenaZone):
     """Zone designated for storage or placement of items."""
 
     def __init__(
-        self,
-        logger: Logger,
-        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
-        buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
+            self,
+            logger: Logger,
+            accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
+            buffer_size: float = 0.0,
+            polygon: Polygon = None,
+            buffered_polygon: Polygon = None,
+            update_callback: callable = None,
     ) -> None:
         super().__init__(
             logger=logger,
@@ -222,7 +254,7 @@ class StuffZone(BaseArenaZone):
         )
 
     def update(
-        self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
+            self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
         super().update(team_color, ally_positions, enemy_positions)
 
@@ -231,13 +263,13 @@ class BlueReservedZone(BaseArenaZone):
     """Zone reserved for operations of the blue team."""
 
     def __init__(
-        self,
-        logger: Logger,
-        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
-        buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
+            self,
+            logger: Logger,
+            accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
+            buffer_size: float = 0.0,
+            polygon: Polygon = None,
+            buffered_polygon: Polygon = None,
+            update_callback: callable = None,
     ) -> None:
         super().__init__(
             logger=logger,
@@ -253,18 +285,18 @@ class BlueReservedZone(BaseArenaZone):
     def is_accessible(self, team_color=None) -> bool:
         """Determines if the zone is accessible specifically for the blue team."""
         return super().is_accessible(team_color) and (
-            team_color is None or team_color.lower() in ["blue", "b"]
+                team_color is None or team_color.lower() in ["blue", "b"]
         )
 
     def update(
-        self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
+            self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
         """Update the zone based on the positions of allies and enemies."""
         super().update(team_color, ally_positions, enemy_positions)
 
         # Update accessibility based on team color
         if self.accessibility != ZoneAccessibility.FREE and (
-            team_color is None or team_color.lower() in ["blue", "b"]
+                team_color is None or team_color.lower() in ["blue", "b"]
         ):
             self.accessibility = ZoneAccessibility.FREE
 
@@ -279,13 +311,13 @@ class YellowReservedZone(BaseArenaZone):
     """Zone reserved for operations of the yellow team."""
 
     def __init__(
-        self,
-        logger: Logger,
-        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
-        buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
+            self,
+            logger: Logger,
+            accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
+            buffer_size: float = 0.0,
+            polygon: Polygon = None,
+            buffered_polygon: Polygon = None,
+            update_callback: callable = None,
     ) -> None:
         super().__init__(
             logger=logger,
@@ -306,14 +338,14 @@ class YellowReservedZone(BaseArenaZone):
         ]
 
     def update(
-        self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
+            self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
         """Update the zone based on the positions of allies and enemies."""
         super().update(team_color, ally_positions, enemy_positions)
 
         # Update accessibility based on team color
         if self.accessibility != ZoneAccessibility.FREE and (
-            team_color is None or team_color.lower() in ["yellow", "y"]
+                team_color is None or team_color.lower() in ["yellow", "y"]
         ):
             self.accessibility = ZoneAccessibility.FREE
             # Get grid manager from arena callback function
@@ -327,13 +359,13 @@ class BorderZone(BaseArenaZone):
     """Zone representing the borders of the arena."""
 
     def __init__(
-        self,
-        logger: Logger,
-        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
-        buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
+            self,
+            logger: Logger,
+            accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
+            buffer_size: float = 0.0,
+            polygon: Polygon = None,
+            buffered_polygon: Polygon = None,
+            update_callback: callable = None,
     ) -> None:
         super().__init__(
             logger=logger,

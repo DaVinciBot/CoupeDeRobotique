@@ -172,7 +172,8 @@ class WServer:
             asyncio.create_task(self.stop_server())
             loop.close()
 
-        loop.add_signal_handler(signal.SIGINT, handle_exit)
+        # TODO: check why this is not working, version problem ?
+        #loop.add_signal_handler(signal.SIGINT, handle_exit)
 
         try:
             self.__logger.log(

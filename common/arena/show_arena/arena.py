@@ -43,6 +43,7 @@ class ShowArena(BaseArena):
         obstacle_buffer: float,
         chunk_size: int = 2,
         forbidden_cover_threshold: float = 0.5,
+        grid_manager_logger: Logger = None,
     ) -> None:
         stuff_zone_logger = Logger(
             identifier="StuffZone",
@@ -173,16 +174,29 @@ class ShowArena(BaseArena):
         )
         zones.append(rockstar_stage)
 
-        super().__init__(
-            logger,
-            width=300,
-            height=200,
-            border_buffer=border_buffer,
-            obstacle_buffer=obstacle_buffer,
-            zones=zones,
-            chunk_size=chunk_size,
-            forbidden_cover_threshold=forbidden_cover_threshold,
-        )
+        if grid_manager_logger:
+            super().__init__(
+                logger,
+                width=300,
+                height=200,
+                border_buffer=border_buffer,
+                obstacle_buffer=obstacle_buffer,
+                zones=zones,
+                chunk_size=chunk_size,
+                forbidden_cover_threshold=forbidden_cover_threshold,
+                grid_manager_logger=grid_manager_logger,
+            )
+        else:
+            super().__init__(
+                logger,
+                width=300,
+                height=200,
+                border_buffer=border_buffer,
+                obstacle_buffer=obstacle_buffer,
+                zones=zones,
+                chunk_size=chunk_size,
+                forbidden_cover_threshold=forbidden_cover_threshold,
+            )
 
         self.logger.log("ShowArena initialized.", LogLevels.INFO)
         self.logger.log(f"Width: {self.width}, Height: {self.height}", LogLevels.DEBUG)

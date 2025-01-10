@@ -73,7 +73,8 @@ enemy_goal = OrientedPoint((70, 140))
 
 arena.set_team_color("yellow")
 
-arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
+#arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
+arena.visualize(display_default_destination_zone=False)
 
 # Ally path
 ally_path_finder = PathFinder(

@@ -40,6 +40,7 @@ from arena.base_arena.arena_zone import (
     YellowReservedZone,
     BlueReservedZone,
     EnemyZone,
+    AllyZone,
 )
 
 
@@ -59,21 +60,21 @@ class BaseArena:
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        width: int,
-        height: int,
-        forbidden_cover_threshold: float,
-        border_buffer: float,
-        obstacle_buffer: float,
-        zones: list[BaseArenaZone],
-        chunk_size: int = 10,
-        grid_manager_logger: Logger = Logger(
-            identifier="GridManager",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
-        ),
+            self,
+            logger: Logger,
+            width: int,
+            height: int,
+            forbidden_cover_threshold: float,
+            border_buffer: float,
+            obstacle_buffer: float,
+            zones: list[BaseArenaZone],
+            chunk_size: int = 10,
+            grid_manager_logger: Logger = Logger(
+                identifier="GridManager",
+                decorator_level=LogLevels.INFO,
+                print_log_level=LogLevels.DEBUG,
+                file_log_level=LogLevels.DEBUG,
+            ),
     ) -> None:
         self.logger: Logger = logger
 
@@ -127,6 +128,21 @@ class BaseArena:
 
         self.prepare_zones()
 
+        self.ally_logger = Logger(
+            identifier="AllyZone",
+            decorator_level=LogLevels.INFO,
+            print_log_level=LogLevels.DEBUG,
+            file_log_level=LogLevels.DEBUG,
+        )
+        self.enemy_logger = Logger(
+            identifier="EnemyZone",
+            decorator_level=LogLevels.INFO,
+            print_log_level=LogLevels.DEBUG,
+            file_log_level=LogLevels.DEBUG,
+        )
+        self.ally_zone: AllyZone = AllyZone(logger, OrientedPoint(0, 0, 0))
+        self.enemy_zone: EnemyZone = EnemyZone(logger, OrientedPoint(280, 180, 0))
+
     # ====== Private Methods ======
 
     def __create_arena_border_zone(self) -> BorderZone:
@@ -153,13 +169,13 @@ class BaseArena:
 
     @staticmethod
     def __plot_polygon(
-        ax,
-        polygon: Polygon,
-        color: str,
-        label: str = None,
-        alpha: float = 1.0,
-        hatch: str = None,
-        hatch_color: str = None,
+            ax,
+            polygon: Polygon,
+            color: str,
+            label: str = None,
+            alpha: float = 1.0,
+            hatch: str = None,
+            hatch_color: str = None,
     ) -> None:
         """
         Helper method to plot a polygon or multipolygon on a matplotlib axis.
@@ -203,11 +219,11 @@ class BaseArena:
                 ax.plot(x, y, color=color, linestyle="--", alpha=alpha)
 
     def __plot_zone(
-        self,
-        ax,
-        zone: BaseArenaZone,
-        show_buffer: bool,
-        transparency_factor: float = 1.0,
+            self,
+            ax,
+            zone: BaseArenaZone,
+            show_buffer: bool,
+            transparency_factor: float = 1.0,
     ) -> None:
         """Plots zones and their buffers on the arena."""
         if show_buffer:
@@ -249,53 +265,43 @@ class BaseArena:
     def set_team_color(self, team_color: str) -> None:
         """Set the team color for determining zone accessibility."""
         self.team_color = team_color
-        self.update([], [], optimized_update=False)  # Force to update all zones
-        print()
+        self.update(OrientedPoint(0, 0, 0), OrientedPoint(280, 180, 0),
+                    optimized_update=False)  # Force to update all zones
 
     @time_tracker(lambda self: self.logger)
     def update(
-        self,
-        ally_positions: list[OrientedPoint],
-        enemy_positions: list[OrientedPoint],
-        enemy_velocity: list[float] = 0.0,
-        optimized_update: bool = True,
+            self,
+            ally_position: OrientedPoint,
+            enemy_position: OrientedPoint,
+            enemy_velocity: float = 0.0,
+            optimized_update: bool = True,
     ) -> None:
-        """Update the zones based on the positions of allies and enemies."""
-        for i in range(len(ally_positions)):
-            ally_positions[i] = Point(ally_positions[i].x, ally_positions[i].y)
-        for i in range(len(enemy_positions)):
-            enemy_positions[i] = Point(enemy_positions[i].x, enemy_positions[i].y)
-
-        # Create Enemy zone based on position and velocity
-        enemy_zones = [
-            EnemyZone(
-                logger=self.logger,
-                polygon=create_straight_rectangle(
-                    Point(enemy_position.x - 5, enemy_position.y - 5),
-                    Point(enemy_position.x + 5, enemy_position.y + 5),
-                ),
-            )
-            for enemy_position in enemy_positions
-        ]
-        # Remove previous enemy zones
-        self.zones = [zone for zone in self.zones if zone != EnemyZone]
-
-        self.zones.extend(enemy_zones)
-        self.grid_manager.update_dynamic_forbidden_zones(
-            [enemy_zone.polygon for enemy_zone in enemy_zones]
+        # Create Enemy / Ally Zones based on Point and Velocity
+        self.ally_zone = AllyZone(
+            logger=self.ally_logger,
+            point=ally_position,
         )
+
+        self.enemy_zone = EnemyZone(
+            logger=self.enemy_logger,
+            point=enemy_position,
+            robot_size=10
+        )
+
+        # Update Grid Manager dynamic forbidden zones with enemy positions
+        self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon])
 
         # Update zone
         # optimized: Update only the zones that intersect with the points
-        all_points = ally_positions + enemy_positions
+        all_points = [ally_position, enemy_position]
         for zone in self.zones:
             if not optimized_update or any(
-                zone.polygon.contains(pt) for pt in all_points
+                    zone.polygon.contains(pt) for pt in all_points
             ):
                 zone.update(
                     self.team_color,
-                    ally_positions=ally_positions,
-                    enemy_positions=enemy_positions,
+                    ally_positions=[ally_position],
+                    enemy_positions=[enemy_position],
                 )
 
         # def _update_zone(_zone, _optimized_update, _all_points, _team_color, _ally_positions, _enemy_positions):
@@ -323,13 +329,14 @@ class BaseArena:
         #     list(executor.map(prewrapped_update, self.zones))
 
     def visualize(
-        self,
-        show_buffer: bool = True,
-        show: bool = True,
-        plot: tuple[plt.axes, plt.figure] = None,
-        transparency_factor: float = 1.0,
-        display_points: list[Point] = None,
-        display_default_destination_zone=True,
+            self,
+            show_buffer: bool = True,
+            show: bool = True,
+            plot: tuple[plt.axes, plt.figure] = None,
+            trajectory: list[OrientedPoint] = [],
+            transparency_factor: float = 1.0,
+            display_points: list[Point] = None,
+            display_default_destination_zone=False,
     ) -> tuple[plt.axes, plt.figure]:
         """
         Visualize the arena, including its zones, buffers, and accessibility grid.
@@ -338,6 +345,7 @@ class BaseArena:
             show_buffer (bool): If True, buffer zones are displayed.
             show (bool): If True, the plot is displayed.
             plot (tuple[plt.axes, plt.figure]): Tuple containing axes and figure for plotting.
+            trajectory (list[OrientedPoint]): List of points to display on the plot.
             transparency_factor (float): Transparency factor zones (default=0.5).
             display_points (list[Point]): List of points to display on the plot.
             display_default_destination_zone (bool): If True, the default destination point of each zone is displayed.
@@ -352,8 +360,23 @@ class BaseArena:
         self.__plot_polygon(ax, arena_polygon, color="#f0f0f0", label="Arena")
 
         # Plot zones and their buffers
+        # All zones
         for zone in self.zones:
             self.__plot_zone(ax, zone, show_buffer, transparency_factor)
+        # Enemy and Ally zones
+        self.__plot_zone(ax, self.ally_zone, show_buffer, transparency_factor)
+        self.__plot_zone(ax, self.enemy_zone, show_buffer, transparency_factor)
+
+        # Plot trajectory
+        for i in range(len(trajectory) - 1):
+            # Draw a line connecting the current node to the next node
+            ax.plot(
+                [trajectory[i].x, trajectory[i + 1].x],
+                [trajectory[i].y, trajectory[i + 1].y],
+                color="purple",
+                linewidth=1,
+                alpha=0.2,
+            )
 
         if display_points:
             if not isinstance(display_points, list):
@@ -432,6 +455,7 @@ class BaseArena:
         """
         return self.game_area.contains(element)
 
+    @staticmethod
     def nearest_points_between_geoms(g1, g2):
         """Returns the calculated nearest points in the input geometries
 
@@ -449,10 +473,10 @@ class BaseArena:
         return (p1, p2)
 
     def compute_go_to_destination(
-        self,
-        start_point: Point,
-        zone: Polygon,
-        delta: float = 0,
+            self,
+            start_point: Point,
+            zone: Polygon,
+            delta: float = 0,
     ) -> Point | None:
         """_summary_
 
@@ -483,20 +507,20 @@ class BaseArena:
                 if abs(y - projected_point.y) < 0.1:
                     if projected_point.x - x < 0:
                         x = x + (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
+                                self.robot_buffer - center.distance(projected_point) + 0.1
                         )
                     else:
                         x = x - (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
+                                self.robot_buffer - center.distance(projected_point) + 0.1
                         )
                 else:
                     if projected_point.y - y > 0:
                         y = y - (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
+                                self.robot_buffer - center.distance(projected_point) + 0.1
                         )
                     else:
                         y = y + (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
+                                self.robot_buffer - center.distance(projected_point) + 0.1
                         )
                 center = Point(x, y)
                 if not self.valid_position(center):
@@ -506,28 +530,28 @@ class BaseArena:
                     if abs(y - projected_point.y) < 0.1:
                         if projected_point.x - x < 0:
                             x = x + (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
+                                    self.robot_buffer
+                                    - center.distance(projected_point)
+                                    + 0.1
                             )
                         else:
                             x = x - (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
+                                    self.robot_buffer
+                                    - center.distance(projected_point)
+                                    + 0.1
                             )
                     else:
                         if projected_point.y - y > 0:
                             y = y - (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
+                                    self.robot_buffer
+                                    - center.distance(projected_point)
+                                    + 0.1
                             )
                         else:
                             y = y + (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
+                                    self.robot_buffer
+                                    - center.distance(projected_point)
+                                    + 0.1
                             )
                 return Point(x, y)
 
@@ -549,8 +573,8 @@ class BaseArena:
                 intersections = circle_delta.intersection(line)
 
                 assert (
-                    isinstance(intersections, MultiPoint)
-                    and len(intersections.geoms) == 2
+                        isinstance(intersections, MultiPoint)
+                        and len(intersections.geoms) == 2
                 ), "Should get exactly 2 intersections"
 
                 # Return closest or furthest intersection
@@ -562,7 +586,7 @@ class BaseArena:
                 # No clean way in case 'further' point
                 else:
                     if distance(start_point, intersections.geoms[0]) <= distance(
-                        start_point, intersections.geoms[1]
+                            start_point, intersections.geoms[1]
                     ):
                         return intersections.geoms[1]
                     else:
