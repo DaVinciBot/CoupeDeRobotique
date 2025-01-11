@@ -11,9 +11,11 @@ from bisect import bisect_left
 # ====== Third-Party Library Imports ======
 
 # ====== Internal Project Imports ======
+from logger import Logger, LogLevels
 from geometry import OrientedPoint
 from rolling_basis_handler.curve import Curve
-from rolling_basis_handler.trajectory_config import SpeedProfile
+from rolling_basis_handler.speed_profile import SpeedProfile
+from rolling_basis_handler.rolling_basis_command import RollingBasisCommand
 
 
 class RollingBasisHandler:
@@ -21,7 +23,14 @@ class RollingBasisHandler:
     Handles the motion control of a robot, including trajectory tracking and speed computation.
     """
 
-    def __init__(self, profile: SpeedProfile, trajectory: list[OrientedPoint]):
+    def __init__(
+            self,
+            logger: Logger,
+            profile: SpeedProfile,
+            initial_linear_speed: float,
+            initial_angular_speed: float,
+            trajectory: list[OrientedPoint]
+    ):
         """
         Initializes the RollingBasisHandler.
 
@@ -29,7 +38,12 @@ class RollingBasisHandler:
             profile (SpeedProfile): The speed profile for the robot's motion.
             trajectory (list[OrientedPoint]): The trajectory points to follow.
         """
+        self.logger: Logger = logger
         self.speed_profile: SpeedProfile = profile
+
+        # Initial linear and angular speeds
+        self.initial_linear_speed: float = initial_linear_speed
+        self.initial_angular_speed: float = initial_angular_speed
 
         # Trajectory points and related metadata
         self.trajectory: list[OrientedPoint] = []
@@ -41,7 +55,7 @@ class RollingBasisHandler:
         self.total_duration: float = 0.0  # Total duration of the trajectory
 
         # Variables for speed curves
-        self.linear_curve: Curve = None
+        self.linear_curve: Curve | None = None
 
         # Variables for angular speed
         self.last_theta = None  # Last recorded angular position
@@ -81,7 +95,7 @@ class RollingBasisHandler:
         total_linear_distance = self.cumulative_distances[-1]
 
         # Extract parameters from the speed profile
-        Vd_lin = self.speed_profile.linear_speed
+        Vd_lin = self.initial_linear_speed
         Vm_lin = self.speed_profile.max_linear_speed
         Va_lin = 0.0  # Assume the robot stops at the end of the trajectory
         amax_lin = self.speed_profile.max_linear_acceleration
@@ -152,11 +166,11 @@ class RollingBasisHandler:
 
         # Compute angular velocity based on changes in orientation
         if (
-            self.last_theta is None
-            or self.last_time_theta is None
-            or t == self.last_time_theta
+                self.last_theta is None
+                or self.last_time_theta is None
+                or t == self.last_time_theta
         ):
-            v_angular = 0.0
+            v_angular = self.initial_angular_speed
         else:
             dt = t - self.last_time_theta
             dtheta = theta - self.last_theta
@@ -172,7 +186,7 @@ class RollingBasisHandler:
         # Clamp angular velocity to the maximum allowed value
         if abs(v_angular) > self.speed_profile.max_angular_speed:
             v_angular = self.speed_profile.max_angular_speed * (
-                v_angular / abs(v_angular)
+                    v_angular / abs(v_angular)
             )
 
         # Update state for future computations
@@ -181,7 +195,7 @@ class RollingBasisHandler:
 
         return v_linear, v_angular
 
-    def get_position_speed(self, t: float = None) -> tuple[OrientedPoint, float, float]:
+    def get_position_speed(self, t: float = None) -> RollingBasisCommand:
         """
         Computes the robot's position and speeds at the specified time.
 
@@ -204,12 +218,10 @@ class RollingBasisHandler:
         linear_speed, angular_speed = self.__compute_velocity(
             self.current_time, position.theta
         )
-        return position, linear_speed, angular_speed
+        return RollingBasisCommand(
+            position=position,
+            linear_speed=linear_speed,
+            angular_speed=angular_speed
+        )
 
-    def emergency_stop(self):
-        """
-        Immediately stops the robot by resetting speeds.
-        """
-        self.current_time = 0.0
-        self.linear_curve = None  # Stop movement immediately
-        self.last_theta = None
+

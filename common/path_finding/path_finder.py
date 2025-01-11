@@ -57,6 +57,9 @@ class PathFinder:
         self.logger: Logger = logger
         self.grid_manager: GridManager = grid_manager
 
+        self.absolute_current_position: OrientedPoint = start
+        self.absolute_goal: OrientedPoint = goal
+
         self.current_position: GridNode = self.grid_manager.absolute_coords_to_grid_coords(start)
         self.goal: GridNode = self.grid_manager.absolute_coords_to_grid_coords(goal)
 
@@ -212,6 +215,64 @@ class PathFinder:
 
         return [Point(x, y) for x, y in interpolated_path]
 
+    def __remove_points_before_position(self, path: list[OrientedPoint], from_start_to_end: bool) \
+            -> list[OrientedPoint]:
+        """
+        Remove points from the path before the current position.
+
+        Args:
+            path (list[OrientedPoint]): Path to modify.
+            from_start_to_end (bool): Direction of the path.
+        Returns:
+            list[OrientedPoint]: Path with points removed.
+        """
+        diff = -1
+
+        if from_start_to_end:
+            i = 0
+            while diff < 0 and i < len(path) - 1:
+                diff = path[i + 1].distance(self.absolute_current_position) - path[i].distance(
+                    self.absolute_current_position)
+                i += 1
+
+            return path[i:]
+        else:
+            i = len(path) - 1
+            while diff < 0 and i > 0:
+                diff = path[i - 1].distance(self.absolute_current_position) - path[i].distance(
+                    self.absolute_current_position)
+                i -= 1
+
+            return path[:i]
+
+    def __add_absolute_start_and_goal_to_path(self, path: list[OrientedPoint]) -> list[OrientedPoint]:
+        """
+        Add the real robot position as start point and goal as end point (not approximated chunk points).
+
+        Args:
+            path (list[OrientedPoint]): Path to modify.
+        Returns:
+            list[OrientedPoint]: Path with start and goal points added.
+        """
+        return [
+            self.absolute_current_position,
+            *path,
+            self.absolute_goal
+        ]
+
+    def __add_path_extremities(self, path: list[OrientedPoint]) -> list[OrientedPoint]:
+        """
+        Add the real robot position as start point and goal as end point (not approximated chunk points).
+
+        Args:
+            path (list[OrientedPoint]): Path to modify.
+        Returns:
+            list[OrientedPoint]: Path with start and goal points added.
+        """
+        path = self.__remove_points_before_position(path=path, from_start_to_end=True)
+        #path = self.__remove_points_before_position(path=path, from_start_to_end=False)
+        return self.__add_absolute_start_and_goal_to_path(path=path)
+
     # ====== Public Methods ======
 
     def update_goal(self, new_goal: OrientedPoint) -> None:
@@ -221,7 +282,8 @@ class PathFinder:
         Args:
             new_goal (OrientedPoint): New goal position in absolute coordinates.
         """
-        self.goal = self.grid_manager.absolute_coords_to_grid_coords(new_goal)
+        self.absolute_goal: OrientedPoint = new_goal
+        self.goal: GridNode = self.grid_manager.absolute_coords_to_grid_coords(new_goal)
 
     def update_current_position(self, new_position: OrientedPoint) -> None:
         """
@@ -230,7 +292,8 @@ class PathFinder:
         Args:
             new_position (OrientedPoint): New current position in absolute coordinates.
         """
-        self.current_position = self.grid_manager.absolute_coords_to_grid_coords(new_position)
+        self.absolute_current_position: OrientedPoint = new_position
+        self.current_position: GridNode = self.grid_manager.absolute_coords_to_grid_coords(new_position)
 
     @time_tracker(lambda self: self.logger)
     def find_oriented_path(self, use_static_and_dynamic_grid: bool = False, smooth_path: bool = False) \
@@ -247,14 +310,28 @@ class PathFinder:
         Returns:
             list[OrientedPoint]: Oriented path with angles included.
         """
+        # self.__find_path(use_static_and_dynamic_grid=use_static_and_dynamic_grid)
+        #
+        # if not smooth_path:
+        #     return self.__path_to_absolute_oriented_path(self.path_found, is_grid_path=True)
+        #
+        # self.oriented_path_found = self.__path_to_absolute_oriented_path(
+        #     self.__smooth_path(self.__grid_path_to_absolute_path(self.path_found)),
+        #     is_grid_path=False,
+        # )
+        #
+        # return self.oriented_path_found
         self.__find_path(use_static_and_dynamic_grid=use_static_and_dynamic_grid)
 
+        # Add real robot position as start point and goal as end point (not approximated chunk points)
         if not smooth_path:
-            return self.__path_to_absolute_oriented_path(self.path_found, is_grid_path=True)
+            self.oriented_path_found = self.__path_to_absolute_oriented_path(self.path_found, is_grid_path=True)
+            self.oriented_path_found = self.__add_path_extremities(self.oriented_path_found)
+            return self.oriented_path_found
 
         self.oriented_path_found = self.__path_to_absolute_oriented_path(
             self.__smooth_path(self.__grid_path_to_absolute_path(self.path_found)),
             is_grid_path=False,
         )
-
+        self.oriented_path_found = self.__add_path_extremities(self.oriented_path_found)
         return self.oriented_path_found

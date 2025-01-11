@@ -5,14 +5,13 @@ import math
 # Import from common
 from WS_comms import WServer, WServerRouteManager, WSender, WSreceiver, WSmsg
 from logger import Logger, LogLevels
-from geometry import OrientedPoint
-from led_strip import LEDStrip
-from arena import MarsArena
-from GPIO import PIN
+from arena import ShowArena
+
 
 # Import from local path
 from brains import MainBrain
-from controllers import RollingBasis, Actuators
+from controllers import RollingBasis, RollingBasisDummy
+from movement_manager import MovementManager
 from sensors import Lidar
 
 if __name__ == "__main__":
@@ -20,20 +19,54 @@ if __name__ == "__main__":
     ###--- Initialization ---###
     """
     # Loggers
+    # System-Part loggers
     logger_ws_server = Logger(
-        identifier="ws_server",
+        identifier="WS_Server",
         decorator_level=LogLevels.INFO,
         print_log_level=LogLevels.DEBUG,
         file_log_level=LogLevels.DEBUG,
     )
     logger_brain = Logger(
-        identifier="brain",
+        identifier="Brain",
         decorator_level=LogLevels.INFO,
         print_log_level=LogLevels.DEBUG,
         file_log_level=LogLevels.DEBUG,
     )
+    # Controllers loggers
     logger_rolling_basis = Logger(
-        identifier="rolling_basis",
+        identifier="RollingBasis",
+        decorator_level=LogLevels.INFO,
+        print_log_level=LogLevels.DEBUG,
+        file_log_level=LogLevels.DEBUG,
+    )
+    # Environment loggers
+    logger_grid_manager = Logger(
+        identifier="GridManager",
+        decorator_level=LogLevels.INFO,
+        print_log_level=LogLevels.DEBUG,
+        file_log_level=LogLevels.DEBUG,
+    )
+    logger_show_arena = Logger(
+        identifier="ShowArena",
+        decorator_level=LogLevels.INFO,
+        print_log_level=LogLevels.DEBUG,
+        file_log_level=LogLevels.DEBUG,
+    )
+    # Movement loggers
+    logger_rolling_basis_handler = Logger(
+        identifier="RollingBasisHandler",
+        decorator_level=LogLevels.INFO,
+        print_log_level=LogLevels.DEBUG,
+        file_log_level=LogLevels.DEBUG,
+    )
+    logger_path_finder = Logger(
+        identifier="PathFinder",
+        decorator_level=LogLevels.INFO,
+        print_log_level=LogLevels.DEBUG,
+        file_log_level=LogLevels.DEBUG,
+    )
+    logger_movement_manager = Logger(
+        identifier="MovementManager",
         decorator_level=LogLevels.INFO,
         print_log_level=LogLevels.DEBUG,
         file_log_level=LogLevels.DEBUG,
@@ -44,14 +77,42 @@ if __name__ == "__main__":
         logger=logger_ws_server,
         host=CONFIG.WS_HOSTNAME,
         port=CONFIG.WS_PORT,
-        ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,
+        ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL, # TODO: je crois que ça marche pas cette feature
     )
 
-    # Robot
-    rolling_basis = RollingBasis(logger=logger_rolling_basis)
+    # Controllers
+    # Rolling Basis
+    # rolling_basis = RollingBasis(logger=logger_rolling_basis)
+    rolling_basis = RollingBasisDummy(logger=logger_rolling_basis)
+
+    # Environment
+    # Arena
+    arena = ShowArena(
+        logger=logger_show_arena,
+        border_buffer=2,
+        obstacle_buffer=1,
+        chunk_size=5,
+        forbidden_cover_threshold=0.1,
+        grid_manager_logger=logger_grid_manager,
+    )
+
+    # Movement
+    # Movement Manager
+    movement_manager = MovementManager(
+        logger=logger_movement_manager,
+        rolling_basis_handler_logger=logger_rolling_basis_handler,
+        path_finder_logger=logger_path_finder,
+        movement_resolution=1,
+        arena=arena,
+    )
 
     # Brain
-    brain = MainBrain(logger=logger_brain, rolling_basis=rolling_basis)
+    brain = MainBrain(
+        logger=logger_brain,
+        rolling_basis=rolling_basis,
+        arena=arena,
+        movement_manager=movement_manager,
+    )
 
     """
         ###--- Run ---###

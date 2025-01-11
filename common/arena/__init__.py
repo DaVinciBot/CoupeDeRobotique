@@ -9,6 +9,7 @@ from arena.base_arena import (
     # Zones
     BaseArenaZone,
     EnemyZone,
+    AllyZone,
     StuffZone,
     BlueReservedZone,
     YellowReservedZone,

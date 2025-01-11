@@ -16,14 +16,13 @@ def load_json_file(file_path):
 
 class CONFIG:
     # TO CONFIG !
-    RELATIVE_ROOT_PATH = os.path.join("..", "..")
     SPECIFIC_CONFIG_KEY = "rob"
     GENERAL_CONFIG_KEY = "general"
     ARENA_CONFIG_KEY = "arena"
 
     # Directory path (dont't touch)
-    ROOT_DIR = os.path.abspath(RELATIVE_ROOT_PATH)
-    BASE_DIR = pathlib.Path(__file__).resolve().parent
+    ROOT_DIR = pathlib.Path(__file__).resolve().parent.parent.parent
+
     COMMON_DIR = os.path.join(ROOT_DIR, "common")
     sys.path.append(
         COMMON_DIR

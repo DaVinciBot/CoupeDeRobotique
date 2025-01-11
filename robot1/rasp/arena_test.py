@@ -36,6 +36,8 @@ from geometry import (
 )
 from logger import Logger, LogLevels
 
+import asyncio
+
 ally_finder_logger = Logger(
     identifier="AllyPathFinder",
     decorator_level=LogLevels.INFO,
@@ -73,53 +75,66 @@ enemy_goal = OrientedPoint((70, 140))
 
 arena.set_team_color("yellow")
 
-arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
 
-# Ally path
-ally_path_finder = PathFinder(
-    logger=ally_finder_logger,
-    start=start,
-    goal=goal,
-    grid_manager=arena.grid_manager,
-    path_resolution=5,
-)
-ally_path = ally_path_finder.find_oriented_path(smooth_path=True)
+async def run_arena_test():
+    #arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
+    arena.visualize(display_default_destination_zone=False)
 
-# Enemy path
-enemy_path_finder = PathFinder(
-    logger=enemy_finder_logger,
-    start=enemy_start,
-    goal=enemy_goal,
-    grid_manager=arena.grid_manager,
-    path_resolution=5,
-)
-enemy_path = enemy_path_finder.find_oriented_path(smooth_path=True)
+    asyncio.create_task(arena.get_enemy_vector(1, 0))
 
-arena.update(ally_positions=[], enemy_positions=[], optimized_update=True)
-arena.grid_manager.visualize(only_static_grid=True, path=[ally_path])
+    await asyncio.sleep(1.1)
 
-# Visualize the path forwarding
-import matplotlib.pyplot as plt
+    arena.visualize(display_default_destination_zone=False)
 
-while len(ally_path) > 3:
-    plt.close("all")
-    plt.ion()
 
-    arena.update(
-        ally_positions=[ally_path[1]],
-        enemy_positions=[enemy_path[1]],
-        optimized_update=True,
+    # Ally path
+    ally_path_finder = PathFinder(
+        logger=ally_finder_logger,
+        start=start,
+        goal=goal,
+        grid_manager=arena.grid_manager,
+        path_resolution=5,
     )
+    ally_path = ally_path_finder.find_oriented_path(smooth_path=True)
 
-    arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
-    arena.grid_manager.visualize(only_static_grid=False, path=[ally_path, enemy_path])
-    plt.pause(2)
-    ally_path_finder.update_current_position(ally_path[1])
-    enemy_path_finder.update_current_position(enemy_path[1])
+    # Enemy path
+    enemy_path_finder = PathFinder(
+        logger=enemy_finder_logger,
+        start=enemy_start,
+        goal=enemy_goal,
+        grid_manager=arena.grid_manager,
+        path_resolution=5,
+    )
+    enemy_path = enemy_path_finder.find_oriented_path(smooth_path=True)
 
-    ally_path = ally_path_finder.find_oriented_path(
-        smooth_path=True, use_static_and_dynamic_grid=True
-    )
-    enemy_path = enemy_path_finder.find_oriented_path(
-        smooth_path=True, use_static_and_dynamic_grid=False
-    )
+    arena.update(ally_positions=[], enemy_positions=[], optimized_update=True)
+    arena.grid_manager.visualize(only_static_grid=True, path=[ally_path])
+
+    # Visualize the path forwarding
+    import matplotlib.pyplot as plt
+
+    while len(ally_path) > 3:
+        plt.close("all")
+        plt.ion()
+
+        arena.update(
+            ally_positions=[ally_path[1]],
+            enemy_positions=[enemy_path[1]],
+            optimized_update=True,
+        )
+
+        arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
+        arena.grid_manager.visualize(only_static_grid=False, path=[ally_path, enemy_path])
+        plt.pause(2)
+        ally_path_finder.update_current_position(ally_path[1])
+        enemy_path_finder.update_current_position(enemy_path[1])
+
+        ally_path = ally_path_finder.find_oriented_path(
+            smooth_path=True, use_static_and_dynamic_grid=True
+        )
+        enemy_path = enemy_path_finder.find_oriented_path(
+            smooth_path=True, use_static_and_dynamic_grid=False
+        )
+
+
+asyncio.run(run_arena_test())

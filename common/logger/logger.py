@@ -220,7 +220,7 @@ def time_tracker(get_logger: Optional[Callable] = None):
                 elapsed_time = time.perf_counter() - start_time
                 logger.log(
                     f"Function `{func.__name__}` executed in {elapsed_time:.6f} seconds.",
-                    level=LogLevels.INFO,
+                    level=LogLevels.DEBUG,
                 )
 
         return wrapper
