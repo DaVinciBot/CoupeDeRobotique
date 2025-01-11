@@ -125,6 +125,11 @@ class BaseArena:
             Point(0, 0), Point(width, height)
         )
 
+        # Add playing area for calculation
+        self.playing_area: Polygon = self.game_area.difference(
+            self.border_zone.buffered_polygon
+        ).buffer(-self.obstacle_buffer)
+
         self.prepare_zones()
 
     # ====== Private Methods ======
@@ -330,6 +335,7 @@ class BaseArena:
         transparency_factor: float = 1.0,
         display_points: list[Point] = None,
         display_default_destination_zone=True,
+        starting_point_to_display_default_destination_zone: Point = None,
     ) -> tuple[plt.axes, plt.figure]:
         """
         Visualize the arena, including its zones, buffers, and accessibility grid.
@@ -341,6 +347,7 @@ class BaseArena:
             transparency_factor (float): Transparency factor zones (default=0.5).
             display_points (list[Point]): List of points to display on the plot.
             display_default_destination_zone (bool): If True, the default destination point of each zone is displayed.
+            starting_point_to_display_default_destination_zone: The starting point to display the default destination zone.
         """
         if plot:
             ax, fig = plot
@@ -361,16 +368,24 @@ class BaseArena:
             for point in display_points:
                 ax.plot(point.x, point.y, "ro")
 
+        if not starting_point_to_display_default_destination_zone:
+            starting_point_to_display_default_destination_zone = Point(
+                self.width / 2, self.height / 2
+            )
+
         if display_default_destination_zone:
             for zone in self.zones:
+                if isinstance(zone, BorderZone):
+                    continue
                 destination_point = self.compute_go_to_destination(
-                    Point(self.width / 2, self.height / 2), zone.polygon
+                    starting_point_to_display_default_destination_zone, zone.polygon
                 )
-                ax.plot(
-                    destination_point.x,
-                    destination_point.y,
-                    "bo",
-                )
+                if destination_point:
+                    ax.plot(
+                        destination_point.x,
+                        destination_point.y,
+                        "bo",
+                    )
 
         ax.set_xlim(self.width, 0)  # Reverse x-axis
         ax.set_ylim(0, self.height)  # Keep y-axis normal
@@ -394,16 +409,35 @@ class BaseArena:
     def prepare_zones(self):
         """Prepare all values of self.zones, to optimize later calculations"""
         prepare(self.game_area)
+        prepare(self.playing_area)
         for zone in self.zones:
             prepare(zone.polygon)
 
-    # We check if the robot (buffered) is within the limits of the buffered arena
     def valid_position(self, pos: Point) -> bool:
-        pos = pos.buffer(self.obstacle_buffer)
-        return self.game_area.contains(pos)
+        """
+        Check if a given position is within the valid playing area.
 
-    # We put in a list all the zone of the specified type
+        Args:
+            pos (Point): The position to check.
+
+        Returns:
+            bool: True if the position is within the playing area, False otherwise.
+        """
+        return self.playing_area.contains(pos)
+
     def find_zone_accessibility(self, accessibility: str) -> list[BaseArenaZone]:
+        """
+        Find and return a list of zones with the specified accessibility.
+
+        Args:
+            accessibility (str): The accessibility level to filter zones by.
+                                 This should be a string representing the name
+                                 of the accessibility level (case insensitive).
+
+        Returns:
+            list[BaseArenaZone]: A list of BaseArenaZone objects that match the
+                                 specified accessibility level.
+        """
         return [
             zone
             for zone in self.zones
@@ -412,6 +446,16 @@ class BaseArena:
 
     # We check if an element intersects with at least one zone of the specified type
     def zone_intersects(self, accessibility: str, element: Geometry) -> bool:
+        """
+        Check if a given geometric element intersects with any zone that has the specified accessibility.
+        Args:
+            accessibility (str): The accessibility type to check for zones.
+            element (Geometry): The geometric element to check for intersection.
+        Returns:
+            bool: True if the element intersects with any zone that has the specified accessibility, False otherwise.
+        Raises:
+            ValueError: If no zones have the specified accessibility.
+        """
         zones_to_check = self.find_zone_accessibility(accessibility)
         if not zones_to_check:
             raise ValueError(f"No zones has accessibility: '{accessibility}'.")
@@ -451,119 +495,67 @@ class BaseArena:
     def compute_go_to_destination(
         self,
         start_point: Point,
-        zone: Polygon,
-        delta: float = 0,
+        destination: Polygon | Point,
     ) -> Point | None:
-        """_summary_
+        """Compute the destination point to go to inside the specified zone. Only works is the arena is rectangular.
 
         Args:
-            start_point (Point): _description_
-            zone (Polygon): _description_
-            delta (float, optional): _description_. Defaults to 0.
-            closer (bool, optional): _description_. Defaults to True.
+            start_point (Point): The starting point for the robot.
+            zone (Polygon): The zone where the robot should go.
+            delta (float): The distance from the border of the zone.
 
         Returns:
-            _type_: _description_
+            Point: The destination point to go to inside the zone.
         """
 
-        center: Point = zone.centroid
-        if delta == 0:
+        # TODO: Implement delta as in 2024 if necessary
+
+        if not self.valid_position(start_point):
             self.logger.log(
-                f"delta == 0, returning as close as the centroid of zone as possible to avoid collision with the border",
-                LogLevels.DEBUG,
+                f"The starting point {start_point} is outside the arena bounds.",
+                LogLevels.WARNING,
             )
-            if self.valid_position(center):
-                return center
-            else:
-                projected_point = self.border_zone.exterior.interpolate(
-                    self.border_zone.exterior.project(center)
+            return None
+
+        if isinstance(destination, Point):
+            if not self.valid_position(destination):
+                self.logger.log(
+                    f"The destination point {destination} is outside the arena's bounds.",
+                    LogLevels.WARNING,
                 )
-                x = center.x
-                y = center.y
-                if abs(y - projected_point.y) < 0.1:
-                    if projected_point.x - x < 0:
-                        x = x + (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
-                        )
-                    else:
-                        x = x - (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
-                        )
-                else:
-                    if projected_point.y - y > 0:
-                        y = y - (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
-                        )
-                    else:
-                        y = y + (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
-                        )
-                center = Point(x, y)
-                if not self.valid_position(center):
-                    projected_point = self.border_zone.exterior.interpolate(
-                        self.border_zone.exterior.project(center)
-                    )
-                    if abs(y - projected_point.y) < 0.1:
-                        if projected_point.x - x < 0:
-                            x = x + (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                        else:
-                            x = x - (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                    else:
-                        if projected_point.y - y > 0:
-                            y = y - (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                        else:
-                            y = y + (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                return Point(x, y)
-
-        if delta != 0:
-            abs_delta = abs(delta)
-            disc_delta = center.buffer(abs_delta)
-
-            if disc_delta.intersects(start_point):
-                self.logger.log(f"start_point is inside circle_delta", LogLevels.DEBUG)
                 return None
-            else:
-                # Get the boundary (circle) of the disc of radius delta around the center
-                circle_delta = disc_delta.boundary
+            return destination
 
-                # Compute the line from start_point to the center of the zone, then scale it by more than 2 to make sure it intersect
-                # the circle twice (unless start_point is inside the circle_delta, or delta == 0, which have been checked)
-                line = scale(LineString([start_point, center]), xfact=3, yfact=3)
+        if isinstance(destination, Polygon):
+            if not destination.centroid:
+                self.logger.log(
+                    f"The destination polygon {destination} has no centroid, couldn't establish a destination point.",
+                    LogLevels.WARNING,
+                )
+                return None
+            destination_point = destination.centroid
+            new_x = destination_point.x
+            new_y = destination_point.y
 
-                intersections = circle_delta.intersection(line)
+            if destination_point.x < self.border_buffer + self.obstacle_buffer:
+                new_x = self.border_buffer + self.obstacle_buffer
+            if (self.width - destination_point.x) < (
+                self.border_buffer + self.obstacle_buffer
+            ):
+                new_x = self.width - (self.border_buffer + self.obstacle_buffer)
+            if destination_point.y < self.border_buffer + self.obstacle_buffer:
+                new_y = self.border_buffer + self.obstacle_buffer
+            if (self.height - destination_point.y) < (
+                self.border_buffer + self.obstacle_buffer
+            ):
+                new_y = self.height - (self.border_buffer + self.obstacle_buffer)
 
-                assert (
-                    isinstance(intersections, MultiPoint)
-                    and len(intersections.geoms) == 2
-                ), "Should get exactly 2 intersections"
+            destination_point = Point(new_x, new_y)
 
-                # Return closest or furthest intersection
-                if delta > 0:
-                    return self.nearest_points_between_geoms(
-                        start_point, intersections
-                    )[1]
+            return destination_point
 
-                # No clean way in case 'further' point
-                else:
-                    if distance(start_point, intersections.geoms[0]) <= distance(
-                        start_point, intersections.geoms[1]
-                    ):
-                        return intersections.geoms[1]
-                    else:
-                        return intersections.geoms[0]
+        self.logger.log(
+            f"The destination {destination} is not a valid geometry.",
+            LogLevels.WARNING,
+        )
+        return None
