@@ -12,6 +12,11 @@ from functools import partial
 from matplotlib import scale
 import matplotlib.pyplot as plt
 import shapely
+import math
+import random
+import numpy as np
+import asyncio
+
 
 # Internal project imports
 from geometry import (
@@ -27,6 +32,8 @@ from geometry import (
     Geometry,
     create_straight_rectangle,
     distance,
+    is_empty,
+    nearest_points
 )
 from logger import Logger, LogLevels, time_tracker
 from arena.base_arena.grid_manager import GridManager
@@ -42,6 +49,13 @@ from arena.base_arena.arena_zone import (
     EnemyZone,
     AllyZone,
 )
+
+"""
+# Imports necessary to compute the enemy position
+from utils import LidarMode, AntiCollisionHandle
+from controllers import RollingBasis
+from sensors import Lidar
+"""
 
 
 # ====== BaseArena Class ======
@@ -75,6 +89,7 @@ class BaseArena:
                 print_log_level=LogLevels.DEBUG,
                 file_log_level=LogLevels.DEBUG,
             ),
+
     ) -> None:
         self.logger: Logger = logger
 
@@ -142,6 +157,14 @@ class BaseArena:
         )
         self.ally_zone: AllyZone = AllyZone(logger, OrientedPoint(0, 0, 0))
         self.enemy_zone: EnemyZone = EnemyZone(logger, OrientedPoint(280, 180, 0))
+
+        # To compute the enemy position
+        self.lidar = None
+        self.lidar_mode = None
+        self.anti_collision_mode = None
+        self.rolling_basis = None
+        self.enemy_position: Point | None =  None
+        self.enemy_vector: list[Point, Point] | None = None
 
     # ====== Private Methods ======
 
@@ -367,6 +390,17 @@ class BaseArena:
         self.__plot_zone(ax, self.ally_zone, show_buffer, transparency_factor)
         self.__plot_zone(ax, self.enemy_zone, show_buffer, transparency_factor)
 
+        # Plot enemy vector
+        if self.enemy_vector is not None:
+            pos1, pos2 = self.enemy_vector
+            plt.quiver(
+                pos1.x, pos1.y,
+                pos2.x - pos1.x, pos2.y - pos1.y,
+                angles='xy', scale_units='xy', scale=1, color='blue', label='Enemy Vector'
+            )
+
+            plt.plot(pos2.x, pos2.y, 'go', label='New Position')
+
         # Plot trajectory
         for i in range(len(trajectory) - 1):
             # Draw a line connecting the current node to the next node
@@ -454,6 +488,107 @@ class BaseArena:
             bool: True if the element is entirely in the arena, False otherwise
         """
         return self.game_area.contains(element)
+
+    def get_enemy_angle(self) -> float | None:
+        if self.enemy_position is None:
+            return None
+        else:
+            return (
+                    (
+                        math.atan2(
+                            self.enemy_position.y - self.rolling_basis.odometrie.y,
+                            self.enemy_position.x - self.rolling_basis.odometrie.x,
+                        )
+                    )
+                    - self.rolling_basis.odometrie.theta
+            ) % math.tau
+
+    def compute_enemy_position(self, start_time: int = -1) -> Point | MultiPoint | None:
+
+        """
+        Computes the position of the enemy based on lidar scans and updates the arena.
+
+        This function calculates the position of the enemy by processing the lidar scans.
+        It removes any obstacles that are outside the arena, and then determines the closest obstacle as the enemy
+        position.
+        If the enemy position is within a stuff zone, it marks that zone as FORBIDDEN.
+
+        Args:
+            self: The instance of the class.
+            start_time: An integer representing the time (in milliseconds or seconds) when the computation starts.
+                    It is used to determine the timing of the enemy's movement. A value of -1 indicates no specific
+                    start time.
+
+        Returns:
+            Point|MultiPoint|None
+        """
+
+        # temp code because I can't test with lidar, but it should work perfectly :
+
+        if any([self.lidar, self.rolling_basis, self.anti_collision_mode]):
+            polars: np.ndarray = self.lidar.scan_to_polars()
+            obstacles: MultiPoint | Point | None = None
+
+            for zone in self.zones:
+                if zone.zone_type == ZoneType.BORDER_ZONE:
+                    obstacles = zone.buffered_polygon.intersection(self.pol_to_abs_cart(polars))
+
+            self.enemy_position = (
+                None
+                if is_empty(obstacles)
+                else nearest_points(self.rolling_basis.odometrie, obstacles)[1]
+            )
+
+            if self.enemy_position:
+                self.enemy_zone.polygon = self.enemy_position.buffer(self.enemy_zone.robot_size)
+                self.enemy_zone.point = self.enemy_position
+
+                if start_time != -1:
+                    for zone in self.zones:
+                        if zone.zone_type == ZoneType.STUFF_ZONE:
+                            zone.accessibility = ZoneAccessibility.FORBIDDEN
+                            self.update([], self.enemy_position)
+                            break
+
+        # code temporaire just pour voir l'ennemi sur la visualisation
+        else:
+            self.enemy_position = Point(random.randint(0, 300), random.randint(0, 200))
+            self.enemy_zone.polygon = self.enemy_position.buffer(self.enemy_zone.robot_size)
+            self.enemy_zone.point = self.enemy_position
+
+        return self.enemy_position
+
+    def pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:
+        """
+        Converts polar coordinates to absolute Cartesian coordinates.
+
+        Args:
+            polars (np.ndarray): Array of polar coordinates in the form of (angle, distance).
+
+        Returns:
+            MultiPoint: Array of absolute Cartesian coordinates.
+        """
+        return MultiPoint(
+            [
+                (
+                    self.rolling_basis.odometrie.x
+                    + np.cos(self.rolling_basis.odometrie.theta + polars[i, 0])
+                    * polars[i, 1],
+                    self.rolling_basis.odometrie.y
+                    + np.sin(self.rolling_basis.odometrie.theta + polars[i, 0])
+                    * polars[i, 1],
+                )
+                for i in range(len(polars))
+            ]
+        )
+
+    # Creates a vector of the enemy within a chosen time interval
+    async def get_enemy_vector(self, time_interval: float = 0.1, start_time: int = -1) -> None:
+        enemy_position_1: Point | MultiPoint | None = self.enemy_zone.point
+        if enemy_position_1:
+            await asyncio.sleep(time_interval)
+            enemy_position_2: Point | MultiPoint | None = self.compute_enemy_position(start_time)
+            self.enemy_vector = [enemy_position_1, enemy_position_2]
 
     @staticmethod
     def nearest_points_between_geoms(g1, g2):

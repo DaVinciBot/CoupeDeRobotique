@@ -190,6 +190,7 @@ class EnemyZone(BaseArenaZone):
         enemy_polygon = Point(point).buffer(robot_size)
 
         self.point = point
+        self.robot_size = robot_size
         super().__init__(
             logger=logger,
             zone_type=ZoneType.FORBIDDEN,
@@ -241,7 +242,9 @@ class StuffZone(BaseArenaZone):
             polygon: Polygon = None,
             buffered_polygon: Polygon = None,
             update_callback: callable = None,
+            index: int = 0
     ) -> None:
+        self.index = index
         super().__init__(
             logger=logger,
             zone_type=ZoneType.STUFF_ZONE,
