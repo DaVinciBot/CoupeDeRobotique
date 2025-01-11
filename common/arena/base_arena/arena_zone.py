@@ -19,6 +19,8 @@ from geometry import (
     BufferCapStyle,
     BufferJoinStyle,
     Point,
+    OrientedPoint,
+    create_straight_rectangle
 )
 
 
@@ -31,7 +33,11 @@ class ZoneType(Enum):
     FORBIDDEN = auto()
     STUFF_ZONE = auto()
     ENEMY = auto()
+    ALLY = auto()
     BORDER_ZONE = auto()
+
+
+# TODO: why buffer size = 0.0?
 
 
 class ZoneAccessibility(Enum):
@@ -111,7 +117,13 @@ class BaseArenaZone(ABC):
         return self.accessibility != ZoneAccessibility.FORBIDDEN
 
     def __eq__(self, other):
-        return self.is_instance(other) and self.polygon == other.polygon
+        if not self.is_instance(other):
+            return False
+
+        if hasattr(other, "polygon"):
+            return self.polygon == other.polygon
+
+        return True
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -171,21 +183,50 @@ class EnemyZone(BaseArenaZone):
     def __init__(
             self,
             logger: Logger,
+            point: Point,
             accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
+            robot_size: float = 10,
     ) -> None:
+        enemy_polygon = Point(point).buffer(robot_size)
+
+        self.point = point
         super().__init__(
             logger=logger,
-            zone_type=ZoneType.ENEMY,
+            zone_type=ZoneType.FORBIDDEN,
             accessibility=accessibility,
-            buffer_size=buffer_size,
-            polygon=polygon,
-            buffered_polygon=buffered_polygon,
-            update_callback=update_callback,
-            zone_color="#EE950F",
+            buffer_size=0.0,
+            polygon=enemy_polygon,
+            buffered_polygon=None,
+            update_callback=None,
+            zone_color="#EE0505",
+        )
+
+
+class AllyZone(BaseArenaZone):
+    """Zone designated for ally, dynamically updated based on their position."""
+
+    def __init__(
+            self,
+            logger: Logger,
+            point: OrientedPoint,
+            accessibility: ZoneAccessibility = ZoneAccessibility.FREE,
+            robot_size: float = 2,  # Assume the robot is a square 2/2 = 1 side length
+    ) -> None:
+        position_based_polygon = create_straight_rectangle(
+            Point(point.x - robot_size, point.y - robot_size),
+            Point(point.x + robot_size, point.y + robot_size),
+        )
+
+        self.point = point
+        super().__init__(
+            logger=logger,
+            zone_type=ZoneType.ALLY,
+            accessibility=accessibility,
+            buffer_size=0.0,
+            polygon=position_based_polygon,
+            buffered_polygon=None,
+            update_callback=None,
+            zone_color="#8af542",
         )
 
 
@@ -211,6 +252,11 @@ class StuffZone(BaseArenaZone):
             update_callback=update_callback,
             zone_color="#0FEE9C",
         )
+
+    def update(
+            self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
+    ) -> None:
+        super().update(team_color, ally_positions, enemy_positions)
 
 
 class BlueReservedZone(BaseArenaZone):
@@ -243,10 +289,10 @@ class BlueReservedZone(BaseArenaZone):
         )
 
     def update(
-            self, team_color: str, ally_position: list[Point], enemy_position: list[Point]
+            self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
         """Update the zone based on the positions of allies and enemies."""
-        super().update(team_color, ally_position, enemy_position)
+        super().update(team_color, ally_positions, enemy_positions)
 
         # Update accessibility based on team color
         if self.accessibility != ZoneAccessibility.FREE and (
@@ -292,10 +338,10 @@ class YellowReservedZone(BaseArenaZone):
         ]
 
     def update(
-            self, team_color: str, ally_position: list[Point], enemy_position: list[Point]
+            self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
         """Update the zone based on the positions of allies and enemies."""
-        super().update(team_color, ally_position, enemy_position)
+        super().update(team_color, ally_positions, enemy_positions)
 
         # Update accessibility based on team color
         if self.accessibility != ZoneAccessibility.FREE and (
