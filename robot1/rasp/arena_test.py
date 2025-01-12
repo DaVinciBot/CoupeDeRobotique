@@ -77,7 +77,7 @@ arena.set_team_color("yellow")
 
 
 async def run_arena_test():
-    #arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
+    # arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
     arena.visualize(display_default_destination_zone=False)
 
     asyncio.create_task(arena.get_enemy_vector(1, 0))
@@ -85,7 +85,6 @@ async def run_arena_test():
     await asyncio.sleep(1.1)
 
     arena.visualize(display_default_destination_zone=False)
-
 
     # Ally path
     ally_path_finder = PathFinder(
@@ -124,7 +123,9 @@ async def run_arena_test():
         )
 
         arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
-        arena.grid_manager.visualize(only_static_grid=False, path=[ally_path, enemy_path])
+        arena.grid_manager.visualize(
+            only_static_grid=False, path=[ally_path, enemy_path]
+        )
         plt.pause(2)
         ally_path_finder.update_current_position(ally_path[1])
         enemy_path_finder.update_current_position(enemy_path[1])

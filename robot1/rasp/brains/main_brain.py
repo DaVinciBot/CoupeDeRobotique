@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import time
 import numpy as np
 import random
+
 # Import from local path
 from controllers import RollingBasis, RollingBasisDummy
 
@@ -30,13 +31,14 @@ from rolling_basis_handler import SpeedProfile
 class MainBrain(Brain):
 
     def __init__(
-            self, logger: Logger,
-            # Controllers
-            rolling_basis: RollingBasis | RollingBasisDummy,
-            # Environment
-            arena: ShowArena,
-            # Movement
-            movement_manager: MovementManager,
+        self,
+        logger: Logger,
+        # Controllers
+        rolling_basis: RollingBasis | RollingBasisDummy,
+        # Environment
+        arena: ShowArena,
+        # Movement
+        movement_manager: MovementManager,
     ) -> None:
         if isinstance(rolling_basis, RollingBasisDummy):
             logger.log("RollingBasisDummy is used", LogLevels.WARNING)
@@ -61,7 +63,7 @@ class MainBrain(Brain):
         self.enemy_point_generator = straight_line_generator(
             start_point=OrientedPoint(280, 180, 0),
             end_point=OrientedPoint(150, 100, 0),
-            step_size=5.0
+            step_size=5.0,
         )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
@@ -70,24 +72,29 @@ class MainBrain(Brain):
         if cmd is not None:
             self.rolling_basis.set_speed_and_position(*cmd.get_command())
             self.logger.log(
-                f"RollingBasisCommand: {cmd.get_command()}",
-                LogLevels.DEBUG
+                f"RollingBasisCommand: {cmd.get_command()}", LogLevels.DEBUG
             )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
     async def update_arena(self) -> None:
         self.arena.update(
             ally_position=self.rolling_basis.odometrie,
-            enemy_position=next(self.enemy_point_generator),  # TODO: use the lidar to get the enemy position
+            enemy_position=next(
+                self.enemy_point_generator
+            ),  # TODO: use the lidar to get the enemy position
             enemy_velocity=0.0,  # TODO: use the lidar to get the enemy velocity
-            optimized_update=True
+            optimized_update=True,
         )
         self.ax.clear()
         self.arena.visualize(
             display_default_destination_zone=False,
-            trajectory=self.movement_manager.path_finder.oriented_path_found,
+            trajectory=(
+                self.movement_manager.path_finder.oriented_path_found
+                if self.movement_manager.path_finder is not None
+                else []
+            ),
             plot=(self.ax, self.fig),
-            show=False
+            show=False,
         )
         plt.pause(0.01)
 
@@ -95,7 +102,8 @@ class MainBrain(Brain):
     async def initialize(self):
         self.arena.set_team_color("yellow")
         self.rolling_basis.odometrie = OrientedPoint(
-            24, 10, 0)  # Assume the robot is at position (24, 10) if begin the match in yellow zone
+            24, 10, 0
+        )  # Assume the robot is at position (24, 10) if begin the match in yellow zone
 
     @Brain.task(process=False, run_on_start=True)
     async def main(self):
@@ -107,7 +115,7 @@ class MainBrain(Brain):
             max_linear_acceleration=1.0,
             max_angular_acceleration=1.0,
             max_linear_deceleration=0.5,
-            max_angular_deceleration=1.0
+            max_angular_deceleration=1.0,
         )
         go_to_params = GoToParams(
             initial_linear_speed=self.rolling_basis.linear_speed,
@@ -127,10 +135,10 @@ class MainBrain(Brain):
 
 # Only for testing
 def random_point_generator(
-        start_point: OrientedPoint,
-        step_size: float = 10.0,
-        x_limits=(0, 300),
-        y_limits=(0, 200)
+    start_point: OrientedPoint,
+    step_size: float = 10.0,
+    x_limits=(0, 300),
+    y_limits=(0, 200),
 ):
     current_point = start_point
 
@@ -146,11 +154,13 @@ def random_point_generator(
         yield current_point
 
 
-def straight_line_generator(start_point: OrientedPoint, end_point: OrientedPoint, step_size: float):
+def straight_line_generator(
+    start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
+):
     # Calculer la direction du mouvement
     dx = end_point.x - start_point.x
     dy = end_point.y - start_point.y
-    d = math.sqrt(dx ** 2 + dy ** 2)
+    d = math.sqrt(dx**2 + dy**2)
 
     # Si la distance est nulle, retourner directement le point d'arrivée
     if d == 0:

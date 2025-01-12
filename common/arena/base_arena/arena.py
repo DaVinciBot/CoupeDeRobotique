@@ -159,7 +159,14 @@ class BaseArena:
             print_log_level=LogLevels.DEBUG,
             file_log_level=LogLevels.DEBUG,
         )
-        self.ally_zone: AllyZone = AllyZone(logger, OrientedPoint(0, 0, 0))
+        self.ally_zone: AllyZone = AllyZone(
+            logger,
+            OrientedPoint(  # default position
+                obstacle_buffer + border_buffer + 0.001,
+                obstacle_buffer + border_buffer + 0.001,
+                0,
+            ),
+        )
         self.enemy_zone: EnemyZone = EnemyZone(logger, OrientedPoint(280, 180, 0))
 
         # To compute the enemy position
@@ -293,7 +300,13 @@ class BaseArena:
         """Set the team color for determining zone accessibility."""
         self.team_color = team_color
         self.update(
-            OrientedPoint(0, 0, 0), OrientedPoint(280, 180, 0), optimized_update=False
+            OrientedPoint(
+                self.border_buffer + self.obstacle_buffer + 0.1,
+                self.border_buffer + self.obstacle_buffer + 0.1,
+                0,
+            ),
+            OrientedPoint(280, 180, 0),
+            optimized_update=False,
         )  # Force to update all zones
 
     @time_tracker(lambda self: self.logger)
@@ -484,7 +497,7 @@ class BaseArena:
         Returns:
             bool: True if the position is within the playing area, False otherwise.
         """
-        return self.playing_area.contains(pos)
+        return self.playing_area.contains(pos) or self.playing_area.touches(pos)
 
     def find_zone_accessibility(self, accessibility: str) -> list[BaseArenaZone]:
         """
@@ -570,7 +583,7 @@ class BaseArena:
             Point|MultiPoint|None
         """
 
-        # temp code because I can't test with lidar, but it should work perfectly :
+        # TODO temp code because I can't test with lidar, but it should work perfectly :
 
         if any([self.lidar, self.rolling_basis, self.anti_collision_mode]):
             polars: np.ndarray = self.lidar.scan_to_polars()
@@ -601,7 +614,7 @@ class BaseArena:
                             self.update([], self.enemy_position)
                             break
 
-        # code temporaire just pour voir l'ennemi sur la visualisation
+        # TODO : Transformer avec un flag on off code temporaire juste pour voir l'ennemi sur la visualisation
         else:
             self.enemy_position = Point(random.randint(0, 300), random.randint(0, 200))
             self.enemy_zone.polygon = self.enemy_position.buffer(
@@ -666,9 +679,9 @@ class BaseArena:
 
     def compute_go_to_destination(
         self,
-        start_point: Point,
-        destination: Polygon | Point,
-    ) -> Point | None:
+        start_point: Point | OrientedPoint,
+        destination: Polygon | Point | OrientedPoint,
+    ) -> OrientedPoint | None:
         """Compute the destination point to go to inside the specified zone. Only works is the arena is rectangular.
 
         Args:
@@ -688,15 +701,6 @@ class BaseArena:
                 LogLevels.WARNING,
             )
             return None
-
-        if isinstance(destination, Point):
-            if not self.valid_position(destination):
-                self.logger.log(
-                    f"The destination point {destination} is outside the arena's bounds.",
-                    LogLevels.WARNING,
-                )
-                return None
-            return destination
 
         if isinstance(destination, Polygon):
             if not destination.centroid:
@@ -725,6 +729,17 @@ class BaseArena:
             destination_point = Point(new_x, new_y)
 
             return destination_point
+
+        elif isinstance(destination, Point):
+            if not self.valid_position(destination):
+                self.logger.log(
+                    f"The destination point {destination} is outside the arena's bounds.",
+                    LogLevels.WARNING,
+                )
+                return None
+            elif isinstance(destination, OrientedPoint):
+                return destination
+            return OrientedPoint(destination.x, destination.y)
 
         self.logger.log(
             f"The destination {destination} is not a valid geometry.",

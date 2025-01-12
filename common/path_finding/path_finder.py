@@ -37,12 +37,12 @@ class PathFinder:
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            start: OrientedPoint,
-            goal: OrientedPoint,
-            grid_manager: GridManager,
-            path_resolution: float,
+        self,
+        logger: Logger,
+        start: OrientedPoint,
+        goal: OrientedPoint,
+        grid_manager: GridManager,
+        path_resolution: float,
     ) -> None:
         """
         Initialize the PathFinder instance.
@@ -60,7 +60,9 @@ class PathFinder:
         self.absolute_current_position: OrientedPoint = start
         self.absolute_goal: OrientedPoint = goal
 
-        self.current_position: GridNode = self.grid_manager.absolute_coords_to_grid_coords(start)
+        self.current_position: GridNode = (
+            self.grid_manager.absolute_coords_to_grid_coords(start)
+        )
         self.goal: GridNode = self.grid_manager.absolute_coords_to_grid_coords(goal)
 
         self.path_resolution: float = path_resolution
@@ -72,7 +74,9 @@ class PathFinder:
     # ====== Private Methods ======
 
     @staticmethod
-    def __compute_orientation(current_point: GridNode | Point, next_point: GridNode | Point) -> float:
+    def __compute_orientation(
+        current_point: GridNode | Point, next_point: GridNode | Point
+    ) -> float:
         """
         Compute the orientation (angle in radians) from the current point to the next.
 
@@ -83,7 +87,9 @@ class PathFinder:
         Returns:
             float: Orientation angle in radians.
         """
-        return math.atan2(next_point.y - current_point.y, next_point.x - current_point.x)
+        return math.atan2(
+            next_point.y - current_point.y, next_point.x - current_point.x
+        )
 
     def __find_path(self, use_static_and_dynamic_grid: bool) -> list[GridNode]:
         """
@@ -92,8 +98,11 @@ class PathFinder:
         Returns:
             list[GridNode]: List of nodes representing the found path.
         """
-        grid = self.grid_manager.static_and_dynamic_grid \
-            if use_static_and_dynamic_grid else self.grid_manager.static_grid
+        grid = (
+            self.grid_manager.static_and_dynamic_grid
+            if use_static_and_dynamic_grid
+            else self.grid_manager.static_grid
+        )
 
         self.path_found, exploration_value = self.finder.find_path(
             start=grid.node(self.current_position.x, self.current_position.y),
@@ -122,13 +131,18 @@ class PathFinder:
             list[Point]: Path as a list of absolute points.
         """
         if not grid_path:
-            self.logger.log("[grid path to absolute path] Path to convert is empty!", LogLevels.DEBUG)
+            self.logger.log(
+                "[grid path to absolute path] Path to convert is empty!",
+                LogLevels.DEBUG,
+            )
             return []
 
-        return [Point(*self.grid_manager.get_grid_node_center(node)) for node in grid_path]
+        return [
+            Point(*self.grid_manager.get_grid_node_center(node)) for node in grid_path
+        ]
 
     def __path_to_absolute_oriented_path(
-            self, path: list[GridNode] | list[Point], is_grid_path: bool
+        self, path: list[GridNode] | list[Point], is_grid_path: bool
     ) -> list[OrientedPoint]:
         """
         Convert a path (grid or absolute) to an oriented path for the robot.
@@ -141,7 +155,10 @@ class PathFinder:
             list[OrientedPoint]: Path with orientation included.
         """
         if not path:
-            self.logger.log("[path to absolute oriented path] Path to convert is empty!", LogLevels.DEBUG)
+            self.logger.log(
+                "[path to absolute oriented path] Path to convert is empty!",
+                LogLevels.DEBUG,
+            )
             return []
 
         oriented_path: list[OrientedPoint] = []
@@ -160,7 +177,9 @@ class PathFinder:
 
             current_orientation = self.__compute_orientation(current_point, next_point)
 
-            oriented_path.append(OrientedPoint(current_point.x, current_point.y, current_orientation))
+            oriented_path.append(
+                OrientedPoint(current_point.x, current_point.y, current_orientation)
+            )
 
         last_point = (
             GridNode(*self.grid_manager.get_grid_node_center(path[-1]))
@@ -168,7 +187,9 @@ class PathFinder:
             else path[-1]
         )
 
-        oriented_path.append(OrientedPoint(last_point.x, last_point.y, oriented_path[-1].theta))
+        oriented_path.append(
+            OrientedPoint(last_point.x, last_point.y, oriented_path[-1].theta)
+        )
 
         return oriented_path
 
@@ -215,8 +236,9 @@ class PathFinder:
 
         return [Point(x, y) for x, y in interpolated_path]
 
-    def __remove_points_before_position(self, path: list[OrientedPoint], from_start_to_end: bool) \
-            -> list[OrientedPoint]:
+    def __remove_points_before_position(
+        self, path: list[OrientedPoint], from_start_to_end: bool
+    ) -> list[OrientedPoint]:
         """
         Remove points from the path before the current position.
 
@@ -231,21 +253,25 @@ class PathFinder:
         if from_start_to_end:
             i = 0
             while diff < 0 and i < len(path) - 1:
-                diff = path[i + 1].distance(self.absolute_current_position) - path[i].distance(
-                    self.absolute_current_position)
+                diff = path[i + 1].distance(self.absolute_current_position) - path[
+                    i
+                ].distance(self.absolute_current_position)
                 i += 1
 
             return path[i:]
         else:
             i = len(path) - 1
             while diff < 0 and i > 0:
-                diff = path[i - 1].distance(self.absolute_current_position) - path[i].distance(
-                    self.absolute_current_position)
+                diff = path[i - 1].distance(self.absolute_current_position) - path[
+                    i
+                ].distance(self.absolute_current_position)
                 i -= 1
 
             return path[:i]
 
-    def __add_absolute_start_and_goal_to_path(self, path: list[OrientedPoint]) -> list[OrientedPoint]:
+    def __add_absolute_start_and_goal_to_path(
+        self, path: list[OrientedPoint]
+    ) -> list[OrientedPoint]:
         """
         Add the real robot position as start point and goal as end point (not approximated chunk points).
 
@@ -254,11 +280,7 @@ class PathFinder:
         Returns:
             list[OrientedPoint]: Path with start and goal points added.
         """
-        return [
-            self.absolute_current_position,
-            *path,
-            self.absolute_goal
-        ]
+        return [self.absolute_current_position, *path, self.absolute_goal]
 
     def __add_path_extremities(self, path: list[OrientedPoint]) -> list[OrientedPoint]:
         """
@@ -270,7 +292,7 @@ class PathFinder:
             list[OrientedPoint]: Path with start and goal points added.
         """
         path = self.__remove_points_before_position(path=path, from_start_to_end=True)
-        #path = self.__remove_points_before_position(path=path, from_start_to_end=False)
+        # path = self.__remove_points_before_position(path=path, from_start_to_end=False)
         return self.__add_absolute_start_and_goal_to_path(path=path)
 
     # ====== Public Methods ======
@@ -293,11 +315,14 @@ class PathFinder:
             new_position (OrientedPoint): New current position in absolute coordinates.
         """
         self.absolute_current_position: OrientedPoint = new_position
-        self.current_position: GridNode = self.grid_manager.absolute_coords_to_grid_coords(new_position)
+        self.current_position: GridNode = (
+            self.grid_manager.absolute_coords_to_grid_coords(new_position)
+        )
 
     @time_tracker(lambda self: self.logger)
-    def find_oriented_path(self, use_static_and_dynamic_grid: bool = False, smooth_path: bool = False) \
-            -> list[OrientedPoint]:
+    def find_oriented_path(
+        self, use_static_and_dynamic_grid: bool = False, smooth_path: bool = False
+    ) -> list[OrientedPoint]:
         """
         Find a path and convert it into an oriented path.
 
@@ -325,8 +350,12 @@ class PathFinder:
 
         # Add real robot position as start point and goal as end point (not approximated chunk points)
         if not smooth_path:
-            self.oriented_path_found = self.__path_to_absolute_oriented_path(self.path_found, is_grid_path=True)
-            self.oriented_path_found = self.__add_path_extremities(self.oriented_path_found)
+            self.oriented_path_found = self.__path_to_absolute_oriented_path(
+                self.path_found, is_grid_path=True
+            )
+            self.oriented_path_found = self.__add_path_extremities(
+                self.oriented_path_found
+            )
             return self.oriented_path_found
 
         self.oriented_path_found = self.__path_to_absolute_oriented_path(

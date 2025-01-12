@@ -4,17 +4,17 @@ from geometry import OrientedPoint
 
 class GoToParams:
     def __init__(
-            self,
-            initial_linear_speed: float,
-            initial_angular_speed: float,
-            speed_profile: SpeedProfile,
-            goal: OrientedPoint,
-            acs_distance: float,
-            path_finder_recompute_distance: float,
-            timeout: float = -1.0,
-            is_mandatory: bool = False,
-            smooth_trajectory: bool = True,
-            goal_tolerance: float = 0.1,
+        self,
+        initial_linear_speed: float,
+        initial_angular_speed: float,
+        speed_profile: SpeedProfile,
+        goal: OrientedPoint,
+        acs_distance: float,
+        path_finder_recompute_distance: float,
+        timeout: float = -1.0,
+        is_mandatory: bool = False,
+        smooth_trajectory: bool = True,
+        goal_tolerance: float = 0.1,
     ) -> None:
         self.initial_linear_speed: float = initial_linear_speed
         self.initial_angular_speed: float = initial_angular_speed
