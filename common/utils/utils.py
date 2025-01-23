@@ -8,8 +8,8 @@ class Utils:
         return datetime.now()
 
     @staticmethod
-    def get_str_date(format: str = "%H:%M:%S.%f") -> str:
-        return datetime.now().strftime(format)
+    def get_str_date(str_format: str = "%H:%M:%S.%f") -> str:
+        return datetime.now().strftime(str_format)
 
     @staticmethod
     def get_ts() -> float:
@@ -34,11 +34,11 @@ class Utils:
         else:
             try:
                 r = (
-                    "["
-                    + ", ".join(
-                        [Utils.geom_to_str(smaller_geom) for smaller_geom in geom.geoms]
-                    )
-                    + "]"
+                        "["
+                        + ", ".join(
+                    [Utils.geom_to_str(smaller_geom) for smaller_geom in geom.geoms]
+                )
+                        + "]"
                 )
             except:
                 r = str(geom)

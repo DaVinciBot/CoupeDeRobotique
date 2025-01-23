@@ -17,7 +17,6 @@ import random
 import numpy as np
 import asyncio
 
-
 # Internal project imports
 from geometry import (
     BufferCapStyle,
@@ -74,21 +73,21 @@ class BaseArena:
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        width: int,
-        height: int,
-        forbidden_cover_threshold: float,
-        border_buffer: float,
-        obstacle_buffer: float,
-        zones: list[BaseArenaZone],
-        chunk_size: int = 10,
-        grid_manager_logger: Logger = Logger(
-            identifier="GridManager",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
-        ),
+            self,
+            logger: Logger,
+            width: int,
+            height: int,
+            forbidden_cover_threshold: float,
+            border_buffer: float,
+            obstacle_buffer: float,
+            zones: list[BaseArenaZone],
+            chunk_size: int = 10,
+            grid_manager_logger: Logger = Logger(
+                identifier="GridManager",
+                decorator_level=LogLevels.INFO,
+                print_log_level=LogLevels.DEBUG,
+                file_log_level=LogLevels.DEBUG,
+            ),
     ) -> None:
         self.logger: Logger = logger
 
@@ -133,7 +132,7 @@ class BaseArena:
             if not zone.is_accessible():
                 self.grid_manager.add_forbidden_static_zone(zone.buffered_polygon)
 
-        self.team_color = None
+        self.team_color = ""
 
         # Add area for calculation
         self.game_area: Polygon = create_straight_rectangle(
@@ -144,8 +143,6 @@ class BaseArena:
         self.playing_area: Polygon = self.game_area.difference(
             self.border_zone.buffered_polygon
         ).buffer(-self.obstacle_buffer)
-
-        self.prepare_zones()
 
         self.ally_logger = Logger(
             identifier="AllyZone",
@@ -167,15 +164,12 @@ class BaseArena:
                 0,
             ),
         )
-        self.enemy_zone: EnemyZone = EnemyZone(logger, OrientedPoint(280, 180, 0))
+        self.enemy_zone: EnemyZone = EnemyZone(
+            logger,
+            OrientedPoint(280, 180, 0)
+        )
 
-        # To compute the enemy position
-        self.lidar = None
-        self.lidar_mode = None
-        self.anti_collision_mode = None
-        self.rolling_basis = None
-        self.enemy_position: Point | None = None
-        self.enemy_vector: list[Point, Point] | None = None
+        self.prepare_zones()
 
     # ====== Private Methods ======
 
@@ -201,98 +195,30 @@ class BaseArena:
             buffered_polygon=border_zone_polygon,
         )
 
-    @staticmethod
-    def __plot_polygon(
-        ax,
-        polygon: Polygon,
-        color: str,
-        label: str = None,
-        alpha: float = 1.0,
-        hatch: str = None,
-        hatch_color: str = None,
-    ) -> None:
+    # ====== Protected Methods ======
+    def _pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:
         """
-        Helper method to plot a polygon or multipolygon on a matplotlib axis.
+        Converts polar coordinates to absolute Cartesian coordinates.
 
-        - Fills polygons without holes, optionally with hatching.
-        - Draws only outlines (dashed) for polygons with holes.
-        - Ensures that the same legend label is not added more than once.
+        Args:
+            polars (np.ndarray): Array of polar coordinates in the form of (angle, distance).
 
-        Parameters:
-        - ax: matplotlib axis
-        - polygon: Polygon to plot (from shapely.geometry)
-        - color: Color of the polygon (fill or outline)
-        - label: Legend label (optional)
-        - alpha: Transparency of the fill or line (default=1.0)
-        - hatch: Hatching pattern (optional), e.g., '/' or '\\'. Set None for no hatching.
-        - hatch_color: Color of the hatching lines (optional, default same as outline color)
+        Returns:
+            MultiPoint: Array of absolute Cartesian coordinates.
         """
-        # Avoid duplicate labels
-        existing_labels = ax.get_legend_handles_labels()[1]
-        if label is not None and label in existing_labels:
-            label = None
-
-        if len(polygon.interiors) == 0:
-            # Polygon without holes
-            x, y = polygon.exterior.xy
-            ax.fill(
-                x,
-                y,
-                alpha=alpha,
-                fc=color,
-                label=label,
-                hatch=hatch,
-                ec=hatch_color or color,
-            )
-        else:
-            # Polygon with holes: outline and interior lines
-            x, y = polygon.exterior.xy
-            ax.plot(x, y, color=color, linestyle="--", label=label, alpha=alpha)
-            for interior in polygon.interiors:
-                x, y = interior.xy
-                ax.plot(x, y, color=color, linestyle="--", alpha=alpha)
-
-    def __plot_zone(
-        self,
-        ax,
-        zone: BaseArenaZone,
-        show_buffer: bool,
-        transparency_factor: float = 1.0,
-    ) -> None:
-        """Plots zones and their buffers on the arena."""
-        if show_buffer:
-            # Plot buffer zone in transparent color
-            self.__plot_polygon(
-                ax,
-                zone.buffered_polygon,
-                color=zone.zone_color,
-                alpha=0.5 * transparency_factor,
-            )
-
-        # Plot the original zone in full color and hatch if necessary
-        if not zone.is_instance(BorderZone):
-            hatch_params = {}
-            if zone.is_accessible(team_color=self.team_color):
-                pass  # No hatch
-            elif zone.is_accessible_for_emergency(team_color=self.team_color):
-                hatch_params = {
-                    "hatch": "\\",
-                    "hatch_color": "red",
-                }  # Hatch with red lines for restricted zones
-            elif not zone.is_accessible(team_color=self.team_color):
-                hatch_params = {
-                    "hatch": "/",
-                    "hatch_color": "black",
-                }  # Hatch with black lines for forbidden zones
-
-            self.__plot_polygon(
-                ax,
-                zone.polygon,
-                color=zone.zone_color,
-                label=zone.zone_type.name,
-                alpha=0.8 * transparency_factor,
-                **hatch_params,
-            )
+        return MultiPoint(
+            [
+                (
+                    self.ally_zone.point.x
+                    + np.cos(self.ally_zone.point.theta + polars[i, 0])
+                    * polars[i, 1],
+                    self.ally_zone.point.y
+                    + np.sin(self.ally_zone.point.theta + polars[i, 0])
+                    * polars[i, 1]
+                )
+                for i in range(len(polars))
+            ]
+        )
 
     # ====== Public Methods ======
     @time_tracker(lambda self: self.logger)
@@ -300,42 +226,42 @@ class BaseArena:
         """Set the team color for determining zone accessibility."""
         self.team_color = team_color
         self.update(
-            OrientedPoint(
-                self.border_buffer + self.obstacle_buffer + 0.1,
-                self.border_buffer + self.obstacle_buffer + 0.1,
-                0,
-            ),
-            OrientedPoint(280, 180, 0),
+            ally_position=self.ally_zone.point,
+            lidar_scan_polars=np.array([]),
             optimized_update=False,
         )  # Force to update all zones
 
     @time_tracker(lambda self: self.logger)
     def update(
-        self,
-        ally_position: OrientedPoint,
-        enemy_position: OrientedPoint,
-        enemy_velocity: float = 0.0,
-        optimized_update: bool = True,
+            self,
+            ally_position: OrientedPoint,
+            lidar_scan_polars: np.ndarray,
+            enemy_position: Point = None,  # TODO: juste for test
+            optimized_update: bool = True,
     ) -> None:
-        # Create Enemy / Ally Zones based on Point and Velocity
-        self.ally_zone = AllyZone(
-            logger=self.ally_logger,
-            point=ally_position,
-        )
+        if not enemy_position:
+            inside_arena_scanned_point: MultiPoint = self.remove_outside(
+                self._pol_to_abs_cart(lidar_scan_polars)
+            )
 
-        self.enemy_zone = EnemyZone(
-            logger=self.enemy_logger, point=enemy_position, robot_size=10
-        )
+            if inside_arena_scanned_point.is_empty:
+                enemy_position = self.enemy_zone.point
+            else:
+                # Compute enemy position based on lidar scans (polars points)
+                enemy_position = nearest_points(
+                    ally_position,
+                    inside_arena_scanned_point
+                )[1]
 
-        # Update Grid Manager dynamic forbidden zones with enemy positions
-        self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon])
+        # Update ally and enemy zones
+        self.ally_zone.update(self.team_color, [ally_position], [enemy_position])
+        self.enemy_zone.update(self.team_color, [ally_position], [enemy_position])
 
-        # Update zone
         # optimized: Update only the zones that intersect with the points
         all_points = [ally_position, enemy_position]
         for zone in self.zones:
             if not optimized_update or any(
-                zone.polygon.contains(pt) for pt in all_points
+                    zone.polygon.contains(pt) for pt in all_points
             ):
                 zone.update(
                     self.team_color,
@@ -343,142 +269,11 @@ class BaseArena:
                     enemy_positions=[enemy_position],
                 )
 
-        # def _update_zone(_zone, _optimized_update, _all_points, _team_color, _ally_positions, _enemy_positions):
-        #     try:
-        #         if not _optimized_update or any(_zone.polygon.contains(pt) for pt in _all_points):
-        #             _zone.update(
-        #                 team_color=_team_color,
-        #                 ally_positions=_ally_positions,
-        #                 enemy_positions=_enemy_positions
-        #             )
-        #     except Exception as e:
-        #         print(e)
-        #
-        # prewrapped_update = partial(
-        #     _update_zone,
-        #     _optimized_update=optimized_update,
-        #     _all_points=ally_positions + enemy_positions,
-        #     _team_color=self.team_color,
-        #     _ally_positions=ally_positions,
-        #     _enemy_positions=enemy_positions
-        # )
-        #
-        # # Utilisation de ThreadPoolExecutor
-        # with ThreadPoolExecutor() as executor:
-        #     list(executor.map(prewrapped_update, self.zones))
+        # Update Grid Manager dynamic forbidden zones with enemy positions
+        self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon])
 
-    def visualize(
-        self,
-        show_buffer: bool = True,
-        show: bool = True,
-        plot: tuple[plt.axes, plt.figure] = None,
-        trajectory: list[OrientedPoint] = [],
-        transparency_factor: float = 1.0,
-        display_points: list[Point] = None,
-        display_default_destination_zone=False,
-        starting_point_to_display_default_destination_zone: Point = None,
-    ) -> tuple[plt.axes, plt.figure]:
-        """
-        Visualize the arena, including its zones, buffers, and accessibility grid.
-
-        Args:
-            show_buffer (bool): If True, buffer zones are displayed.
-            show (bool): If True, the plot is displayed.
-            plot (tuple[plt.axes, plt.figure]): Tuple containing axes and figure for plotting.
-            trajectory (list[OrientedPoint]): List of points to display on the plot.
-            transparency_factor (float): Transparency factor zones (default=0.5).
-            display_points (list[Point]): List of points to display on the plot.
-            display_default_destination_zone (bool): If True, the default destination point of each zone is displayed.
-            starting_point_to_display_default_destination_zone: The starting point to display the default destination zone.
-        """
-        if plot:
-            ax, fig = plot
-        else:
-            fig, ax = plt.subplots(figsize=(12, 6))
-
-        # Draw the arena boundary
-        arena_polygon = box(0, 0, self.width, self.height)
-        self.__plot_polygon(ax, arena_polygon, color="#f0f0f0", label="Arena")
-
-        # Plot zones and their buffers
-        # All zones
-        for zone in self.zones:
-            self.__plot_zone(ax, zone, show_buffer, transparency_factor)
-        # Enemy and Ally zones
-        self.__plot_zone(ax, self.ally_zone, show_buffer, transparency_factor)
-        self.__plot_zone(ax, self.enemy_zone, show_buffer, transparency_factor)
-
-        # Plot enemy vector
-        if self.enemy_vector is not None:
-            pos1, pos2 = self.enemy_vector
-            plt.quiver(
-                pos1.x,
-                pos1.y,
-                pos2.x - pos1.x,
-                pos2.y - pos1.y,
-                angles="xy",
-                scale_units="xy",
-                scale=1,
-                color="blue",
-                label="Enemy Vector",
-            )
-
-            plt.plot(pos2.x, pos2.y, "go", label="New Position")
-
-        # Plot trajectory
-        for i in range(len(trajectory) - 1):
-            # Draw a line connecting the current node to the next node
-            ax.plot(
-                [trajectory[i].x, trajectory[i + 1].x],
-                [trajectory[i].y, trajectory[i + 1].y],
-                color="purple",
-                linewidth=1,
-                alpha=0.2,
-            )
-
-        if display_points:
-            if not isinstance(display_points, list):
-                display_points = [display_points]
-            for point in display_points:
-                ax.plot(point.x, point.y, "ro")
-
-        if not starting_point_to_display_default_destination_zone:
-            starting_point_to_display_default_destination_zone = Point(
-                self.width / 2, self.height / 2
-            )
-
-        if display_default_destination_zone:
-            for zone in self.zones:
-                if isinstance(zone, BorderZone):
-                    continue
-                destination_point = self.compute_go_to_destination(
-                    starting_point_to_display_default_destination_zone, zone.polygon
-                )
-                if destination_point:
-                    ax.plot(
-                        destination_point.x,
-                        destination_point.y,
-                        "bo",
-                    )
-
-        ax.set_xlim(self.width, 0)  # Reverse x-axis
-        ax.set_ylim(0, self.height)  # Keep y-axis normal
-        ax.spines["top"].set_visible(False)  # Hide top frame line
-        ax.spines["right"].set_visible(False)  # Hide right frame line
-        ax.spines["left"].set_position(("axes", 1))  # Move y-axis to the right
-        ax.yaxis.tick_right()  # Move y-axis labels to the right
-        ax.yaxis.set_label_position("right")
-
-        ax.set_aspect("equal", adjustable="box")
-        ax.set_title("Arena Visualization")
-
-        # Place legend on the left
-        plt.legend(loc="center right", bbox_to_anchor=(-0.1, 0.5))
-
-        plt.tight_layout()
-        if show:
-            plt.show()
-        return ax, fig
+    def remove_outside(self, points: MultiPoint) -> MultiPoint:
+        return self.playing_area.intersection(points)
 
     def prepare_zones(self):
         """Prepare all values of self.zones, to optimize later calculations"""
@@ -555,13 +350,13 @@ class BaseArena:
             return None
         else:
             return (
-                (
-                    math.atan2(
-                        self.enemy_position.y - self.rolling_basis.odometrie.y,
-                        self.enemy_position.x - self.rolling_basis.odometrie.x,
+                    (
+                        math.atan2(
+                            self.enemy_position.y - self.rolling_basis.odometrie.y,
+                            self.enemy_position.x - self.rolling_basis.odometrie.x,
+                        )
                     )
-                )
-                - self.rolling_basis.odometrie.theta
+                    - self.rolling_basis.odometrie.theta
             ) % math.tau
 
     def compute_enemy_position(self, start_time: int = -1) -> Point | MultiPoint | None:
@@ -624,33 +419,9 @@ class BaseArena:
 
         return self.enemy_position
 
-    def pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:
-        """
-        Converts polar coordinates to absolute Cartesian coordinates.
-
-        Args:
-            polars (np.ndarray): Array of polar coordinates in the form of (angle, distance).
-
-        Returns:
-            MultiPoint: Array of absolute Cartesian coordinates.
-        """
-        return MultiPoint(
-            [
-                (
-                    self.rolling_basis.odometrie.x
-                    + np.cos(self.rolling_basis.odometrie.theta + polars[i, 0])
-                    * polars[i, 1],
-                    self.rolling_basis.odometrie.y
-                    + np.sin(self.rolling_basis.odometrie.theta + polars[i, 0])
-                    * polars[i, 1],
-                )
-                for i in range(len(polars))
-            ]
-        )
-
     # Creates a vector of the enemy within a chosen time interval
     async def get_enemy_vector(
-        self, time_interval: float = 0.1, start_time: int = -1
+            self, time_interval: float = 0.1, start_time: int = -1
     ) -> None:
         enemy_position_1: Point | MultiPoint | None = self.enemy_zone.point
         if enemy_position_1:
@@ -678,9 +449,9 @@ class BaseArena:
         return (p1, p2)
 
     def compute_go_to_destination(
-        self,
-        start_point: Point | OrientedPoint,
-        destination: Polygon | Point | OrientedPoint,
+            self,
+            start_point: Point | OrientedPoint,
+            destination: Polygon | Point | OrientedPoint,
     ) -> OrientedPoint | None:
         """Compute the destination point to go to inside the specified zone. Only works is the arena is rectangular.
 
@@ -716,13 +487,13 @@ class BaseArena:
             if destination_point.x < self.border_buffer + self.obstacle_buffer:
                 new_x = self.border_buffer + self.obstacle_buffer
             if (self.width - destination_point.x) < (
-                self.border_buffer + self.obstacle_buffer
+                    self.border_buffer + self.obstacle_buffer
             ):
                 new_x = self.width - (self.border_buffer + self.obstacle_buffer)
             if destination_point.y < self.border_buffer + self.obstacle_buffer:
                 new_y = self.border_buffer + self.obstacle_buffer
             if (self.height - destination_point.y) < (
-                self.border_buffer + self.obstacle_buffer
+                    self.border_buffer + self.obstacle_buffer
             ):
                 new_y = self.height - (self.border_buffer + self.obstacle_buffer)
 
@@ -746,3 +517,198 @@ class BaseArena:
             LogLevels.WARNING,
         )
         return None
+
+    """
+        Visualisation part
+    """
+
+    # ====== Private Methods ======
+    @staticmethod
+    def __plot_polygon(
+            ax,
+            polygon: Polygon,
+            color: str,
+            label: str = None,
+            alpha: float = 1.0,
+            hatch: str = None,
+            hatch_color: str = None,
+    ) -> None:
+        """
+        Helper method to plot a polygon or multipolygon on a matplotlib axis.
+
+        - Fills polygons without holes, optionally with hatching.
+        - Draws only outlines (dashed) for polygons with holes.
+        - Ensures that the same legend label is not added more than once.
+
+        Parameters:
+        - ax: matplotlib axis
+        - polygon: Polygon to plot (from shapely.geometry)
+        - color: Color of the polygon (fill or outline)
+        - label: Legend label (optional)
+        - alpha: Transparency of the fill or line (default=1.0)
+        - hatch: Hatching pattern (optional), e.g., '/' or '\\'. Set None for no hatching.
+        - hatch_color: Color of the hatching lines (optional, default same as outline color)
+        """
+        # Avoid duplicate labels
+        existing_labels = ax.get_legend_handles_labels()[1]
+        if label is not None and label in existing_labels:
+            label = None
+
+        if len(polygon.interiors) == 0:
+            # Polygon without holes
+            x, y = polygon.exterior.xy
+            ax.fill(
+                x,
+                y,
+                alpha=alpha,
+                fc=color,
+                label=label,
+                hatch=hatch,
+                ec=hatch_color or color,
+            )
+        else:
+            # Polygon with holes: outline and interior lines
+            x, y = polygon.exterior.xy
+            ax.plot(x, y, color=color, linestyle="--", label=label, alpha=alpha)
+            for interior in polygon.interiors:
+                x, y = interior.xy
+                ax.plot(x, y, color=color, linestyle="--", alpha=alpha)
+
+    def __plot_zone(
+            self,
+            ax,
+            zone: BaseArenaZone,
+            show_buffer: bool,
+            transparency_factor: float = 1.0,
+    ) -> None:
+        """Plots zones and their buffers on the arena."""
+        if show_buffer:
+            # Plot buffer zone in transparent color
+            self.__plot_polygon(
+                ax,
+                zone.buffered_polygon,
+                color=zone.zone_color,
+                alpha=0.5 * transparency_factor,
+            )
+
+        # Plot the original zone in full color and hatch if necessary
+        if not zone.is_instance(BorderZone):
+            hatch_params = {}
+            if zone.is_accessible(team_color=self.team_color):
+                pass  # No hatch
+            elif zone.is_accessible_for_emergency(team_color=self.team_color):
+                hatch_params = {
+                    "hatch": "\\",
+                    "hatch_color": "red",
+                }  # Hatch with red lines for restricted zones
+            elif not zone.is_accessible(team_color=self.team_color):
+                hatch_params = {
+                    "hatch": "/",
+                    "hatch_color": "black",
+                }  # Hatch with black lines for forbidden zones
+
+            self.__plot_polygon(
+                ax,
+                zone.polygon,
+                color=zone.zone_color,
+                label=zone.zone_type.name,
+                alpha=0.8 * transparency_factor,
+                **hatch_params,
+            )
+
+    # ====== Public Methods ======
+    def visualize(
+            self,
+            show_buffer: bool = True,
+            show: bool = True,
+            plot: tuple[plt.axes, plt.figure] = None,
+            trajectory: list[OrientedPoint] = [],
+            transparency_factor: float = 1.0,
+            display_points: list[Point] = None,
+            display_default_destination_zone=False,
+            starting_point_to_display_default_destination_zone: Point = None,
+    ) -> tuple[plt.axes, plt.figure]:
+        """
+        Visualize the arena, including its zones, buffers, and accessibility grid.
+
+        Args:
+            show_buffer (bool): If True, buffer zones are displayed.
+            show (bool): If True, the plot is displayed.
+            plot (tuple[plt.axes, plt.figure]): Tuple containing axes and figure for plotting.
+            trajectory (list[OrientedPoint]): List of points to display on the plot.
+            transparency_factor (float): Transparency factor zones (default=0.5).
+            display_points (list[Point]): List of points to display on the plot.
+            display_default_destination_zone (bool): If True, the default destination point of each zone is displayed.
+            starting_point_to_display_default_destination_zone: The starting point to display the default destination zone.
+        """
+        if plot:
+            ax, fig = plot
+        else:
+            fig, ax = plt.subplots(figsize=(12, 6))
+
+        # Draw the arena boundary
+        arena_polygon = box(0, 0, self.width, self.height)
+        self.__plot_polygon(ax, arena_polygon, color="#f0f0f0", label="Arena")
+
+        # Plot zones and their buffers
+        # All zones
+        for zone in self.zones:
+            self.__plot_zone(ax, zone, show_buffer, transparency_factor)
+        # Enemy and Ally zones
+        self.__plot_zone(ax, self.ally_zone, show_buffer, transparency_factor)
+        self.__plot_zone(ax, self.enemy_zone, show_buffer, transparency_factor)
+
+        # Plot trajectory
+        for i in range(len(trajectory) - 1):
+            # Draw a line connecting the current node to the next node
+            ax.plot(
+                [trajectory[i].x, trajectory[i + 1].x],
+                [trajectory[i].y, trajectory[i + 1].y],
+                color="purple",
+                linewidth=1,
+                alpha=0.2,
+            )
+
+        if display_points:
+            if not isinstance(display_points, list):
+                display_points = [display_points]
+            for point in display_points:
+                ax.plot(point.x, point.y, "ro")
+
+        if not starting_point_to_display_default_destination_zone:
+            starting_point_to_display_default_destination_zone = Point(
+                self.width / 2, self.height / 2
+            )
+
+        if display_default_destination_zone:
+            for zone in self.zones:
+                if zone.is_instance(BorderZone):
+                    continue
+                destination_point = self.compute_go_to_destination(
+                    starting_point_to_display_default_destination_zone, zone.polygon
+                )
+                if destination_point:
+                    ax.plot(
+                        destination_point.x,
+                        destination_point.y,
+                        "bo",
+                    )
+
+        ax.set_xlim(self.width, 0)  # Reverse x-axis
+        ax.set_ylim(0, self.height)  # Keep y-axis normal
+        ax.spines["top"].set_visible(False)  # Hide top frame line
+        ax.spines["right"].set_visible(False)  # Hide right frame line
+        ax.spines["left"].set_position(("axes", 1))  # Move y-axis to the right
+        ax.yaxis.tick_right()  # Move y-axis labels to the right
+        ax.yaxis.set_label_position("right")
+
+        ax.set_aspect("equal", adjustable="box")
+        ax.set_title("Arena Visualization")
+
+        # Place legend on the left
+        plt.legend(loc="center right", bbox_to_anchor=(-0.1, 0.5))
+
+        plt.tight_layout()
+        if show:
+            plt.show()
+        return ax, fig

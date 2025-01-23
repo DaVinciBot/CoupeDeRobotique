@@ -102,11 +102,7 @@ class ShowArena(BaseArena):
             ((300 - 45, 65), (300 - 0, 110)),
         ]
 
-        # TODO: just for test purposes
-        forbidden_zones_points = [
-            ((290, 190), (300, 200)),
-            ((150, 100), (151, 101)),
-        ]
+        forbidden_zones_points = []
 
         zones: list[BaseArenaZone] = []
 

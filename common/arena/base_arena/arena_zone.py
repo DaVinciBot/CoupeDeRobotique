@@ -9,18 +9,22 @@
 # ====== Imports ======
 # Standard library imports
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from collections import deque
 from enum import Enum, auto
 
 # Internal project imports
 from logger import Logger, LogLevels
 from arena.base_arena import GridManager
+from utils import Utils
 from geometry import (
     Polygon,
     BufferCapStyle,
     BufferJoinStyle,
     Point,
     OrientedPoint,
-    create_straight_rectangle
+    LineString,
+    create_straight_rectangle,
 )
 
 
@@ -35,9 +39,6 @@ class ZoneType(Enum):
     ENEMY = auto()
     ALLY = auto()
     BORDER_ZONE = auto()
-
-
-# TODO: why buffer size = 0.0?
 
 
 class ZoneAccessibility(Enum):
@@ -93,7 +94,8 @@ class BaseArenaZone(ABC):
 
         self.zone_color: str = zone_color
         self.enemy_visits: int = 0
-        self.self_visits: int = 0
+        self.ally_visits: int = 0
+        self.last_update_time: float = 0.0
 
     @staticmethod
     def add_buffer_to_zone(polygon: Polygon, buffer: float) -> Polygon:
@@ -135,6 +137,16 @@ class BaseArenaZone(ABC):
                 or isinstance(self, other)
         )
 
+    def __str__(self) -> str:
+        return (
+            f"{self.zone_type}: {self.buffered_polygon.centroid} -> {self.accessibility}, "
+            f"ally visits: {self.ally_visits}, enemy visits: {self.enemy_visits}, "
+            f"last update: {self.last_update_time}"
+        )
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
     def update(
             self, color_team: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
@@ -148,8 +160,10 @@ class BaseArenaZone(ABC):
 
         for position in ally_positions:
             if self.polygon.contains(position):  # Don't consider the buffer
-                self.self_visits += 1
+                self.ally_visits += 1
                 self.logger.log(f"Ally visited {self.zone_type} zone", LogLevels.DEBUG)
+
+        self.last_update_time = Utils.get_ts()
 
 
 # ====== Specific Zone Classes ======
@@ -177,6 +191,28 @@ class ForbiddenZone(BaseArenaZone):
         )
 
 
+@dataclass
+class Record:
+    timestamp: float
+    position: Point
+
+
+@dataclass
+class SpeedVector:
+    speed: float
+    dx: float
+    dy: float
+    factor: float = 1.0
+
+    @property
+    def factored_dx(self):
+        return self.dx * self.factor
+
+    @property
+    def factored_dy(self):
+        return self.dy * self.factor
+
+
 class EnemyZone(BaseArenaZone):
     """Zone designated for enemies, dynamically updated based on their position."""
 
@@ -186,21 +222,144 @@ class EnemyZone(BaseArenaZone):
             point: Point,
             accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
             robot_size: float = 10,
+            positions_record_size: int = 3,
+            no_detection_timeout: float = 4.0,
+            positions_recorded: deque = None,
+            speed_vector: SpeedVector = SpeedVector(0.0, 0.0, 0.0),
+            vector_factor: float = 50.0,
+            # taille du vecteur de déplacement, on peur choisir à quelle point on donne de l'importance à la direction
     ) -> None:
-        enemy_polygon = Point(point).buffer(robot_size)
-
         self.point = point
         self.robot_size = robot_size
+        self.no_detection_timeout = no_detection_timeout
+
+        self.speed_vector: SpeedVector = speed_vector
+        self.speed_vector.factor = vector_factor
+
+        self.positions_record_size: int = positions_record_size
+        if positions_recorded is None:
+            self.__positions_recorded: deque = deque(maxlen=positions_record_size)
+        else:
+            self.__positions_recorded = positions_recorded
+
+        # Compute robot vector
+        vector_line = LineString(
+            [
+                self.point,
+                Point(
+                    self.point.x + self.speed_vector.factored_dx,
+                    self.point.y + self.speed_vector.factored_dy
+                )
+            ]
+        )
+        buffered_vector_line: Polygon = vector_line.buffer(self.robot_size)
+
         super().__init__(
             logger=logger,
             zone_type=ZoneType.FORBIDDEN,
             accessibility=accessibility,
             buffer_size=0.0,
-            polygon=enemy_polygon,
-            buffered_polygon=None,
+            buffered_polygon=buffered_vector_line,
             update_callback=None,
             zone_color="#EE0505",
         )
+
+    def _compute_enemy_speed_vector(self) -> SpeedVector:
+        """
+        Computes the speed (magnitude of velocity) and direction (unit vector)
+        of the enemy based on the recorded positions.
+
+        Returns:
+            speed: float
+                The speed magnitude (distance / time).
+            direction: tuple(float, float)
+                The unit vector (dx, dy) indicating the velocity direction.
+                (0.0, 0.0) if the speed is zero or if there is insufficient data.
+        """
+        self.logger.log("Starting computation of enemy speed vector.", LogLevels.DEBUG)
+
+        # At least two positions are required to calculate speed
+        if len(self.__positions_recorded) < 2:
+            self.logger.log("Not enough positions recorded to compute speed vector.", LogLevels.DEBUG)
+            return SpeedVector(0, 0, 0)
+
+        # First and last recorded positions
+        start_record = self.__positions_recorded[0]
+        end_record = self.__positions_recorded[-1]
+        self.logger.log(
+            f"Start position: {start_record.position}, End position: {end_record.position}.",
+            LogLevels.DEBUG
+        )
+
+        # Compute the time delta
+        timestamp_delta = end_record.timestamp - start_record.timestamp
+        self.logger.log(f"Time delta: {timestamp_delta} seconds.", LogLevels.DEBUG)
+
+        if timestamp_delta <= 0:
+            self.logger.log("Invalid or zero time delta. Aborting computation.", LogLevels.DEBUG)
+            return SpeedVector(0, 0, 0)
+
+        # Check for no_detection_timeout
+        if timestamp_delta > self.no_detection_timeout:
+            self.logger.log(
+                f"Time delta exceeds no_detection_timeout ({self.no_detection_timeout}s). Returning zero vector.",
+                LogLevels.DEBUG
+            )
+            return SpeedVector(0, 0, 0)
+
+        # Compute the displacement vector
+        dx = end_record.position.x - start_record.position.x
+        dy = end_record.position.y - start_record.position.y
+        self.logger.log(f"Displacement vector: dx={dx}, dy={dy}.", LogLevels.DEBUG)
+
+        # Compute the distance traveled
+        distance = start_record.position.distance(end_record.position)
+        self.logger.log(f"Distance traveled: {distance}.", LogLevels.DEBUG)
+
+        # Calculate the scalar speed
+        speed = distance / timestamp_delta
+        self.logger.log(f"Calculated speed: {speed}.", LogLevels.DEBUG)
+
+        if distance == 0.0:
+            self.logger.log("No displacement detected. Returning zero vector.", LogLevels.DEBUG)
+            return SpeedVector(0, 0, 0)
+
+        # Compute the direction (unit vector)
+        dir_x = dx / distance
+        dir_y = dy / distance
+        self.logger.log(f"Direction vector: dir_x={dir_x}, dir_y={dir_y}.", LogLevels.DEBUG)
+
+        self.logger.log("Speed vector computation completed successfully.", LogLevels.DEBUG)
+        return SpeedVector(speed, dir_x, dir_y)
+
+    def update(
+            self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
+    ) -> None:
+        super().update(team_color, ally_positions, enemy_positions)
+        self.__positions_recorded.append(Record(Utils.get_ts(), enemy_positions[0]))
+
+        self.speed_vector: SpeedVector = self._compute_enemy_speed_vector()
+
+        self.__init__(
+            logger=self.logger,
+            point=enemy_positions[0],  # Assume there is only 1 enemy
+            accessibility=self.accessibility,
+            robot_size=self.robot_size,
+            positions_record_size=self.positions_record_size,
+            no_detection_timeout=self.no_detection_timeout,
+            positions_recorded=self.__positions_recorded,
+            speed_vector=self.speed_vector,
+        )
+
+    def __str__(self):
+        return (
+                super().__str__() +
+                f" Speed: {self.speed_vector.speed}, "
+                f"Direction: ({self.speed_vector.dx}, {self.speed_vector.dy})"
+        )
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class AllyZone(BaseArenaZone):
@@ -218,7 +377,8 @@ class AllyZone(BaseArenaZone):
             Point(point.x + robot_size, point.y + robot_size),
         )
 
-        self.point = point
+        self.point: OrientedPoint = point
+        self.robot_size: float = robot_size
         super().__init__(
             logger=logger,
             zone_type=ZoneType.ALLY,
@@ -228,6 +388,17 @@ class AllyZone(BaseArenaZone):
             buffered_polygon=None,
             update_callback=None,
             zone_color="#8af542",
+        )
+
+    def update(
+            self, team_color: str, ally_positions: list[OrientedPoint | Point], enemy_positions: list[Point]
+    ) -> None:
+        super().update(team_color, ally_positions, enemy_positions)
+        self.__init__(
+            logger=self.logger,
+            point=ally_positions[0],  # Assume there is only 1 ally
+            accessibility=self.accessibility,
+            robot_size=self.robot_size,
         )
 
 

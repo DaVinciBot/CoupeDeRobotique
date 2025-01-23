@@ -8,7 +8,7 @@ import time
 from brain import Brain
 
 from WS_comms import WSmsg, WSclientRouteManager, WServerRouteManager
-from geometry import OrientedPoint, Point, distance, Polygon
+from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
 
 from logger import Logger, LogLevels
 import math
@@ -26,29 +26,37 @@ from arena import ShowArena
 from rolling_basis_handler import RollingBasisHandler, RollingBasisCommand
 from movement_manager import MovementManager, GoToParams
 from rolling_basis_handler import SpeedProfile
+from sensors import Lidar, LidarDummy
 
 
 class MainBrain(Brain):
-
     def __init__(
-        self,
-        logger: Logger,
-        # Controllers
-        rolling_basis: RollingBasis | RollingBasisDummy,
-        # Environment
-        arena: ShowArena,
-        # Movement
-        movement_manager: MovementManager,
+            self,
+            logger: Logger,
+            # Controllers
+            rolling_basis: RollingBasis | RollingBasisDummy,
+            # Sensors
+            lidar: Lidar | LidarDummy,
+            # Environment
+            arena: ShowArena,
+            # Movement
+            movement_manager: MovementManager,
+            # WS routes
+            ws_cmd: WSclientRouteManager,
     ) -> None:
         if isinstance(rolling_basis, RollingBasisDummy):
             logger.log("RollingBasisDummy is used", LogLevels.WARNING)
 
         # Controllers
         self.rolling_basis: RollingBasis = rolling_basis
+        # Sensors
+        self.lidar: Lidar = lidar
         # Environment
         self.arena: ShowArena = arena
         # Movement
         self.movement_manager: MovementManager = movement_manager
+        # WS routes
+        self.ws_cmd: WSclientRouteManager = ws_cmd
 
         super().__init__(logger, self)
 
@@ -63,8 +71,13 @@ class MainBrain(Brain):
         self.enemy_point_generator = straight_line_generator(
             start_point=OrientedPoint(280, 180, 0),
             end_point=OrientedPoint(150, 100, 0),
-            step_size=5.0,
+            step_size=3.0,
         )
+
+        # TMP for test purpose
+        self.lidar_scan_polars = self.lidar.scan_to_polars()
+
+    """ ### Routines ### """
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
     async def handle_rolling_basis_for_go_to(self) -> None:
@@ -77,14 +90,14 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
     async def update_arena(self) -> None:
+        self.lidar_scan_polars = self.lidar.scan_to_polars()
         self.arena.update(
             ally_position=self.rolling_basis.odometrie,
-            enemy_position=next(
-                self.enemy_point_generator
-            ),  # TODO: use the lidar to get the enemy position
-            enemy_velocity=0.0,  # TODO: use the lidar to get the enemy velocity
+            lidar_scan_polars=self.lidar_scan_polars,
+            enemy_position=next(self.enemy_point_generator),
             optimized_update=True,
         )
+
         self.ax.clear()
         self.arena.visualize(
             display_default_destination_zone=False,
@@ -93,10 +106,50 @@ class MainBrain(Brain):
                 if self.movement_manager.path_finder is not None
                 else []
             ),
+            # Display lidar scan point
+            # display_points=[
+            #     point for point in self.arena._pol_to_abs_cart(self.lidar_scan_polars).geoms
+            # ],
             plot=(self.ax, self.fig),
             show=False,
         )
         plt.pause(0.01)
+
+    @Brain.task(process=False, run_on_start=CONFIG.ZOMBIE_MODE, refresh_rate=0.5)
+    async def zombie_mode(self):
+        """
+        executes requests received by the server. Use Postman to send request to the server
+        Use eval and await eval to run the code you want. Code must be sent as a string
+        """
+        # Check cmd
+        cmd = await self.ws_cmd.receiver.get()
+
+        if cmd != WSmsg():
+            self.logger.log(
+                f"Zombie instruction {cmd.msg} received: {cmd.data}",
+                LogLevels.INFO,
+            )
+
+            if cmd.msg == "eval":
+                instructions = []
+                if isinstance(cmd.data, str):
+                    instructions.append(cmd.data)
+                elif isinstance(cmd.data, list):
+                    instructions = cmd.data
+
+                for instruction in instructions:
+                    if instruction.startswith("await "):
+                        await eval(instruction.removeprefix("await "))
+                    else:
+                        eval(instruction)
+
+            else:
+                self.logger.log(
+                    f"Command not implemented: {cmd.msg} / {cmd.data}",
+                    LogLevels.WARNING,
+                )
+
+    """ ### One-Shot Tasks ### """
 
     @Brain.task(process=False, run_on_start=False)
     async def initialize(self):
@@ -110,9 +163,9 @@ class MainBrain(Brain):
         await self.initialize()
 
         speed_profile: SpeedProfile = SpeedProfile(
-            max_linear_speed=15.0,
+            max_linear_speed=20.0,
             max_angular_speed=6.0,
-            max_linear_acceleration=1.0,
+            max_linear_acceleration=3.0,
             max_angular_acceleration=1.0,
             max_linear_deceleration=0.5,
             max_angular_deceleration=1.0,
@@ -135,10 +188,10 @@ class MainBrain(Brain):
 
 # Only for testing
 def random_point_generator(
-    start_point: OrientedPoint,
-    step_size: float = 10.0,
-    x_limits=(0, 300),
-    y_limits=(0, 200),
+        start_point: OrientedPoint,
+        step_size: float = 10.0,
+        x_limits=(0, 300),
+        y_limits=(0, 200),
 ):
     current_point = start_point
 
@@ -155,12 +208,12 @@ def random_point_generator(
 
 
 def straight_line_generator(
-    start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
+        start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
 ):
     # Calculer la direction du mouvement
     dx = end_point.x - start_point.x
     dy = end_point.y - start_point.y
-    d = math.sqrt(dx**2 + dy**2)
+    d = math.sqrt(dx ** 2 + dy ** 2)
 
     # Si la distance est nulle, retourner directement le point d'arrivée
     if d == 0:

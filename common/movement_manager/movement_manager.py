@@ -25,15 +25,15 @@ class MovementManager:
     """
 
     def __init__(
-        self,
-        # Loggers
-        logger: Logger,
-        rolling_basis_handler_logger: Logger,
-        path_finder_logger: Logger,
-        # Constants
-        movement_resolution: float,
-        # Context variables
-        arena: BaseArena,
+            self,
+            # Loggers
+            logger: Logger,
+            rolling_basis_handler_logger: Logger,
+            path_finder_logger: Logger,
+            # Constants
+            movement_resolution: float,
+            # Context variables
+            arena: BaseArena,
     ) -> None:
         """
         Initializes the MovementManager with loggers, parameters, and context variables.
@@ -67,7 +67,7 @@ class MovementManager:
 
     @staticmethod
     def __are_path_different(
-        path_a: list[OrientedPoint], path_b: list[OrientedPoint]
+            path_a: list[OrientedPoint], path_b: list[OrientedPoint]
     ) -> bool:
         min_length = min(len(path_a), len(path_b))
 
@@ -77,10 +77,10 @@ class MovementManager:
         return True
 
     def _find_path(
-        self,
-        smooth_trajectory: bool,
-        consider_dynamic_obstacles: bool | None = None,
-        update_position: bool = True,
+            self,
+            smooth_trajectory: bool,
+            consider_dynamic_obstacles: bool | None = None,
+            update_position: bool = True,
     ) -> None:
         # Compute path with dynamic grid (included enemy position) only if the enemy is close to aly position
         # Compute distance between ally and enemy
@@ -96,7 +96,7 @@ class MovementManager:
         # Take in consideration the dynamic grid only if the enemy is close to the ally
         if consider_dynamic_obstacles is None:
             use_static_and_dynamic_grid = (
-                distance < self.params.path_finder_recompute_distance
+                    distance < self.params.path_finder_recompute_distance
             )
         else:
             use_static_and_dynamic_grid = consider_dynamic_obstacles
@@ -139,8 +139,8 @@ class MovementManager:
 
     def go_to_is_arrived(self) -> bool:
         if (
-            self.arena.ally_zone.point.distance(self.params.goal)
-            < self.params.goal_tolerance
+                self.arena.ally_zone.point.distance(self.params.goal)
+                < self.params.goal_tolerance
         ):
             self.status = MovementStatus.SUCCESS
             self.logger.log("Go To is arrived", LogLevels.INFO)
@@ -158,21 +158,22 @@ class MovementManager:
         self.params: GoToParams = params
         self.status: MovementStatus = MovementStatus.PENDING
 
-        if not (
-            goal_point := self.arena.compute_go_to_destination(
-                start_point=self.arena.ally_zone.point, destination=params.goal
-            )
-        ):
-            self.logger.log("GoToParam goal ins't valid", LogLevels.ERROR)
-            self.status = MovementStatus.INVALID_COMMAND
-            self.params = None
-            return self.status
+        # TODO: ça ne marche pas GoToParam goal ins't valid est tjrs appelé
+        # if not (
+        #     goal_point := self.arena.compute_go_to_destination(
+        #         start_point=self.arena.ally_zone.point, destination=params.goal
+        #     )
+        # ):
+        #     self.logger.log("GoToParam goal ins't valid", LogLevels.ERROR)
+        #     self.status = MovementStatus.INVALID_COMMAND
+        #     self.params = None
+        #     return self.status
 
         # 1. Run a path-finding algorithm to find the path to the destination
         self.path_finder = PathFinder(
             logger=self.path_finder_logger,
             start=self.arena.ally_zone.point,
-            goal=goal_point,
+            goal=params.goal,
             grid_manager=self.arena.grid_manager,
             path_resolution=self.movement_resolution,
         )
@@ -224,8 +225,8 @@ class MovementManager:
 
             # Check if the path has changed if so update the rolling basis handler
             if self.__are_path_different(
-                self.rolling_basis_handler.trajectory,
-                self.path_finder.oriented_path_found,
+                    self.rolling_basis_handler.trajectory,
+                    self.path_finder.oriented_path_found,
             ):
                 self.logger.log(
                     "The path has changed, updating the rolling basis handler",

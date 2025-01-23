@@ -17,7 +17,7 @@ import numpy as np
 
 # Internal project imports
 from logger import Logger, LogLevels, time_tracker
-from geometry import OrientedPoint, Point
+from geometry import OrientedPoint, Point, MultiPoint, nearest_points
 from arena import GridManager
 
 
@@ -37,12 +37,12 @@ class PathFinder:
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        start: OrientedPoint,
-        goal: OrientedPoint,
-        grid_manager: GridManager,
-        path_resolution: float,
+            self,
+            logger: Logger,
+            start: OrientedPoint,
+            goal: OrientedPoint,
+            grid_manager: GridManager,
+            path_resolution: float,
     ) -> None:
         """
         Initialize the PathFinder instance.
@@ -75,7 +75,7 @@ class PathFinder:
 
     @staticmethod
     def __compute_orientation(
-        current_point: GridNode | Point, next_point: GridNode | Point
+            current_point: GridNode | Point, next_point: GridNode | Point
     ) -> float:
         """
         Compute the orientation (angle in radians) from the current point to the next.
@@ -142,7 +142,7 @@ class PathFinder:
         ]
 
     def __path_to_absolute_oriented_path(
-        self, path: list[GridNode] | list[Point], is_grid_path: bool
+            self, path: list[GridNode] | list[Point], is_grid_path: bool
     ) -> list[OrientedPoint]:
         """
         Convert a path (grid or absolute) to an oriented path for the robot.
@@ -237,7 +237,7 @@ class PathFinder:
         return [Point(x, y) for x, y in interpolated_path]
 
     def __remove_points_before_position(
-        self, path: list[OrientedPoint], from_start_to_end: bool
+            self, path: list[OrientedPoint], from_start_to_end: bool
     ) -> list[OrientedPoint]:
         """
         Remove points from the path before the current position.
@@ -270,7 +270,7 @@ class PathFinder:
             return path[:i]
 
     def __add_absolute_start_and_goal_to_path(
-        self, path: list[OrientedPoint]
+            self, path: list[OrientedPoint]
     ) -> list[OrientedPoint]:
         """
         Add the real robot position as start point and goal as end point (not approximated chunk points).
@@ -291,9 +291,49 @@ class PathFinder:
         Returns:
             list[OrientedPoint]: Path with start and goal points added.
         """
-        path = self.__remove_points_before_position(path=path, from_start_to_end=True)
-        # path = self.__remove_points_before_position(path=path, from_start_to_end=False)
-        return self.__add_absolute_start_and_goal_to_path(path=path)
+        # Convert path to MultiPoint to use Shapely functions
+        multi_point_path = MultiPoint(path)
+
+        # 1. Add start point to the path
+        # Get nearest path point of the start point
+        nearest_point = nearest_points(self.absolute_current_position, multi_point_path)[1]
+
+        # Get index of the nearest point in the path (list of oriented points)
+        nearest_point_index = 0
+        for i, point in enumerate(path):
+            if point.x == nearest_point.x and point.y == nearest_point.y:
+                nearest_point_index = i
+                break
+
+        # 2 cases: the nearest point is the first point of the point or not
+        if nearest_point_index == 0:  # Insert the start point at the beginning of the path
+            path = [self.absolute_current_position] + path
+        else:  # Insert the start point at the nearest point index
+            path = [self.absolute_current_position] + path[nearest_point_index:]
+
+        # 2. Add end point to the path
+        # Get nearest path point of the start point
+        nearest_point = nearest_points(self.absolute_goal, multi_point_path)[1]
+
+        # Get index of the nearest point in the path (list of oriented points)
+        nearest_point_index = 1
+        for i, point in enumerate(path[::-1]):
+            if point.x == nearest_point.x and point.y == nearest_point.y:
+                nearest_point_index += i
+                break
+
+        # 2 cases: the nearest point is the last point of the point or not
+        if nearest_point_index == -1:  # Insert the goal point at the end of the path
+            path = path + [self.absolute_goal]
+        else:  # Insert the goal point at the nearest point index
+            path = path[:-nearest_point_index] + [self.absolute_goal]
+
+        # 3. Improve path smoothness by removing point just after extremities
+        if len(path) > 5:
+            path.pop(-2)
+            path.pop(1)
+
+        return path
 
     # ====== Public Methods ======
 
@@ -321,7 +361,7 @@ class PathFinder:
 
     @time_tracker(lambda self: self.logger)
     def find_oriented_path(
-        self, use_static_and_dynamic_grid: bool = False, smooth_path: bool = False
+            self, use_static_and_dynamic_grid: bool = False, smooth_path: bool = False
     ) -> list[OrientedPoint]:
         """
         Find a path and convert it into an oriented path.
@@ -335,17 +375,6 @@ class PathFinder:
         Returns:
             list[OrientedPoint]: Oriented path with angles included.
         """
-        # self.__find_path(use_static_and_dynamic_grid=use_static_and_dynamic_grid)
-        #
-        # if not smooth_path:
-        #     return self.__path_to_absolute_oriented_path(self.path_found, is_grid_path=True)
-        #
-        # self.oriented_path_found = self.__path_to_absolute_oriented_path(
-        #     self.__smooth_path(self.__grid_path_to_absolute_path(self.path_found)),
-        #     is_grid_path=False,
-        # )
-        #
-        # return self.oriented_path_found
         self.__find_path(use_static_and_dynamic_grid=use_static_and_dynamic_grid)
 
         # Add real robot position as start point and goal as end point (not approximated chunk points)
