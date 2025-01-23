@@ -58,6 +58,16 @@ class MainBrain(Brain):
         # WS routes
         self.ws_cmd: WServerRouteManager = ws_cmd
 
+        # Speed profile
+        self.speed_profile: SpeedProfile = SpeedProfile(
+            max_linear_speed=20.0,
+            max_angular_speed=6.0,
+            max_linear_acceleration=3.0,
+            max_angular_acceleration=1.0,
+            max_linear_deceleration=0.5,
+            max_angular_deceleration=1.0,
+        )
+
         super().__init__(logger, self)
 
     """ ### Routines ### """
@@ -126,28 +136,28 @@ class MainBrain(Brain):
     # async def main(self):
     #     await self.initialize()
     #
-    #     speed_profile: SpeedProfile = SpeedProfile(
-    #         max_linear_speed=20.0,
-    #         max_angular_speed=6.0,
-    #         max_linear_acceleration=3.0,
-    #         max_angular_acceleration=1.0,
-    #         max_linear_deceleration=0.5,
-    #         max_angular_deceleration=1.0,
-    #     )
-    #     go_to_params = GoToParams(
-    #         initial_linear_speed=self.rolling_basis.linear_speed,
-    #         initial_angular_speed=self.rolling_basis.angular_speed,
-    #         speed_profile=speed_profile,
-    #         goal=OrientedPoint(250, 140),
-    #         acs_distance=10,
-    #         path_finder_recompute_distance=20,
-    #         timeout=-1.0,
-    #         is_mandatory=False,
-    #         smooth_trajectory=True,
-    #         goal_tolerance=0.1,
-    #     )
-    #
-    #     self.movement_manager.go_to(params=go_to_params)
+        # speed_profile: SpeedProfile = SpeedProfile(
+        #     max_linear_speed=20.0,
+        #     max_angular_speed=6.0,
+        #     max_linear_acceleration=3.0,
+        #     max_angular_acceleration=1.0,
+        #     max_linear_deceleration=0.5,
+        #     max_angular_deceleration=1.0,
+        # )
+        # go_to_params = GoToParams(
+        #     initial_linear_speed=self.rolling_basis.linear_speed,
+        #     initial_angular_speed=self.rolling_basis.angular_speed,
+        #     speed_profile=speed_profile,
+        #     goal=OrientedPoint(250, 140),
+        #     acs_distance=10,
+        #     path_finder_recompute_distance=20,
+        #     timeout=-1.0,
+        #     is_mandatory=False,
+        #     smooth_trajectory=True,
+        #     goal_tolerance=0.1,
+        # )
+        #
+        # self.movement_manager.go_to(params=go_to_params)
 
 
 # Only for testing
