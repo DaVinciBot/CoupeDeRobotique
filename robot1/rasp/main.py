@@ -93,13 +93,12 @@ if __name__ == "__main__":
 
     # Controllers
     # Rolling Basis
-    # rolling_basis = RollingBasis(logger=logger_rolling_basis)
-    rolling_basis = RollingBasisDummy(logger=logger_rolling_basis)
+    rolling_basis = RollingBasis(logger=logger_rolling_basis)
+    # rolling_basis = RollingBasisDummy(logger=logger_rolling_basis)
 
     # Sensors
     # Lidar
-    # lidar = Lidar(logger=logger_lidar)
-    lidar = LidarDummy(
+    lidar = Lidar(
         logger=logger_lidar,
         min_angle=CONFIG.LIDAR_MIN_ANGLE,
         max_angle=CONFIG.LIDAR_MAX_ANGLE,
@@ -107,6 +106,14 @@ if __name__ == "__main__":
         unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
         min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
     )
+    # lidar = LidarDummy(
+    #     logger=logger_lidar,
+    #     min_angle=CONFIG.LIDAR_MIN_ANGLE,
+    #     max_angle=CONFIG.LIDAR_MAX_ANGLE,
+    #     unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
+    #     unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
+    #     min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+    # )
 
     # Environment
     # Arena

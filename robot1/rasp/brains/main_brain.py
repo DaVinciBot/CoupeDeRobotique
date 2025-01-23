@@ -42,7 +42,7 @@ class MainBrain(Brain):
             # Movement
             movement_manager: MovementManager,
             # WS routes
-            ws_cmd: WSclientRouteManager,
+            ws_cmd: WServerRouteManager,
     ) -> None:
         if isinstance(rolling_basis, RollingBasisDummy):
             logger.log("RollingBasisDummy is used", LogLevels.WARNING)
@@ -60,23 +60,6 @@ class MainBrain(Brain):
 
         super().__init__(logger, self)
 
-        # Attributes for the visualization
-        self.fig, self.ax = plt.subplots()
-
-        # For testing
-        # self.enemy_point_generator = random_point_generator(
-        #     start_point=OrientedPoint(280, 180, 0),
-        #     step_size=30.0
-        # )
-        self.enemy_point_generator = straight_line_generator(
-            start_point=OrientedPoint(280, 180, 0),
-            end_point=OrientedPoint(150, 100, 0),
-            step_size=3.0,
-        )
-
-        # TMP for test purpose
-        self.lidar_scan_polars = self.lidar.scan_to_polars()
-
     """ ### Routines ### """
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
@@ -90,30 +73,11 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
     async def update_arena(self) -> None:
-        self.lidar_scan_polars = self.lidar.scan_to_polars()
         self.arena.update(
             ally_position=self.rolling_basis.odometrie,
-            lidar_scan_polars=self.lidar_scan_polars,
-            enemy_position=next(self.enemy_point_generator),
+            lidar_scan_polars=self.lidar.scan_to_polars(),
             optimized_update=True,
         )
-
-        self.ax.clear()
-        self.arena.visualize(
-            display_default_destination_zone=False,
-            trajectory=(
-                self.movement_manager.path_finder.oriented_path_found
-                if self.movement_manager.path_finder is not None
-                else []
-            ),
-            # Display lidar scan point
-            # display_points=[
-            #     point for point in self.arena._pol_to_abs_cart(self.lidar_scan_polars).geoms
-            # ],
-            plot=(self.ax, self.fig),
-            show=False,
-        )
-        plt.pause(0.01)
 
     @Brain.task(process=False, run_on_start=CONFIG.ZOMBIE_MODE, refresh_rate=0.5)
     async def zombie_mode(self):
@@ -151,39 +115,39 @@ class MainBrain(Brain):
 
     """ ### One-Shot Tasks ### """
 
-    @Brain.task(process=False, run_on_start=False)
+    @Brain.task(process=False, run_on_start=True)
     async def initialize(self):
         self.arena.set_team_color("yellow")
         self.rolling_basis.odometrie = OrientedPoint(
             24, 10, 0
         )  # Assume the robot is at position (24, 10) if begin the match in yellow zone
-
-    @Brain.task(process=False, run_on_start=True)
-    async def main(self):
-        await self.initialize()
-
-        speed_profile: SpeedProfile = SpeedProfile(
-            max_linear_speed=20.0,
-            max_angular_speed=6.0,
-            max_linear_acceleration=3.0,
-            max_angular_acceleration=1.0,
-            max_linear_deceleration=0.5,
-            max_angular_deceleration=1.0,
-        )
-        go_to_params = GoToParams(
-            initial_linear_speed=self.rolling_basis.linear_speed,
-            initial_angular_speed=self.rolling_basis.angular_speed,
-            speed_profile=speed_profile,
-            goal=OrientedPoint(250, 140),
-            acs_distance=10,
-            path_finder_recompute_distance=20,
-            timeout=-1.0,
-            is_mandatory=False,
-            smooth_trajectory=True,
-            goal_tolerance=0.1,
-        )
-
-        self.movement_manager.go_to(params=go_to_params)
+    #
+    # @Brain.task(process=False, run_on_start=True)
+    # async def main(self):
+    #     await self.initialize()
+    #
+    #     speed_profile: SpeedProfile = SpeedProfile(
+    #         max_linear_speed=20.0,
+    #         max_angular_speed=6.0,
+    #         max_linear_acceleration=3.0,
+    #         max_angular_acceleration=1.0,
+    #         max_linear_deceleration=0.5,
+    #         max_angular_deceleration=1.0,
+    #     )
+    #     go_to_params = GoToParams(
+    #         initial_linear_speed=self.rolling_basis.linear_speed,
+    #         initial_angular_speed=self.rolling_basis.angular_speed,
+    #         speed_profile=speed_profile,
+    #         goal=OrientedPoint(250, 140),
+    #         acs_distance=10,
+    #         path_finder_recompute_distance=20,
+    #         timeout=-1.0,
+    #         is_mandatory=False,
+    #         smooth_trajectory=True,
+    #         goal_tolerance=0.1,
+    #     )
+    #
+    #     self.movement_manager.go_to(params=go_to_params)
 
 
 # Only for testing
