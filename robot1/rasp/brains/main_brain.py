@@ -86,7 +86,7 @@ class MainBrain(Brain):
         Use eval and await eval to run the code you want. Code must be sent as a string
         """
         # Check cmd
-        cmd = await self.ws_cmd.receiver.get()
+        cmd = await self.ws_cmd.receiver.get(wait_msg=True)
 
         if cmd != WSmsg():
             self.logger.log(
