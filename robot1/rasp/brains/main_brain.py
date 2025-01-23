@@ -56,7 +56,7 @@ class MainBrain(Brain):
         # Movement
         self.movement_manager: MovementManager = movement_manager
         # WS routes
-        self.ws_cmd: WSclientRouteManager = ws_cmd
+        self.ws_cmd: WServerRouteManager = ws_cmd
 
         super().__init__(logger, self)
 
@@ -79,7 +79,7 @@ class MainBrain(Brain):
             optimized_update=True,
         )
 
-    @Brain.task(process=False, run_on_start=CONFIG.ZOMBIE_MODE, refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def zombie_mode(self):
         """
         executes requests received by the server. Use Postman to send request to the server
