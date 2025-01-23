@@ -48,29 +48,29 @@ class ShowArena(BaseArena):
         stuff_zone_logger = Logger(
             identifier="StuffZone",
             decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
+            print_log_level=LogLevels.INFO,
+            file_log_level=LogLevels.INFO,
         )
 
         yellow_reserved_zone_logger = Logger(
             identifier="YellowReservedZone",
             decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
+            print_log_level=LogLevels.INFO,
+            file_log_level=LogLevels.INFO,
         )
 
         blue_reserved_zone_logger = Logger(
             identifier="BlueReservedZone",
             decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
+            print_log_level=LogLevels.INFO,
+            file_log_level=LogLevels.INFO,
         )
 
         forbidden_zone_logger = Logger(
             identifier="ForbiddenZone",
             decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
+            print_log_level=LogLevels.INFO,
+            file_log_level=LogLevels.INFO,
         )
 
         stuff_zones_points = [
