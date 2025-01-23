@@ -147,17 +147,17 @@ class BaseArena:
         self.ally_logger = Logger(
             identifier="AllyZone",
             decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
+            print_log_level=LogLevels.INFO,
             file_log_level=LogLevels.DEBUG,
         )
         self.enemy_logger = Logger(
             identifier="EnemyZone",
             decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
+            print_log_level=LogLevels.INFO,
             file_log_level=LogLevels.DEBUG,
         )
         self.ally_zone: AllyZone = AllyZone(
-            logger,
+            self.ally_logger,
             OrientedPoint(  # default position
                 obstacle_buffer + border_buffer + 0.001,
                 obstacle_buffer + border_buffer + 0.001,
@@ -165,7 +165,7 @@ class BaseArena:
             ),
         )
         self.enemy_zone: EnemyZone = EnemyZone(
-            logger,
+            self.enemy_logger,
             OrientedPoint(280, 180, 0)
         )
 
