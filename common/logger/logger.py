@@ -1,4 +1,3 @@
-from utils.utils import Utils
 from logger.log_tools import (
     LogLevels,
     STYLES,
@@ -11,6 +10,7 @@ from typing import Callable, Optional
 import os, types, functools
 from functools import wraps
 import time
+from datetime import datetime
 
 
 class Logger:
@@ -20,15 +20,15 @@ class Logger:
     """
 
     def __init__(
-            self,
-            func=None,
-            *,
-            identifier: str = "unknown",
-            decorator_level: LogLevels = LogLevels.DEBUG,
-            print_log_level: LogLevels = LogLevels.INFO,
-            file_log_level: LogLevels = LogLevels.DEBUG,
-            print_log: bool = True,
-            write_to_file: bool = True,
+        self,
+        func=None,
+        *,
+        identifier: str = "unknown",
+        decorator_level: LogLevels = LogLevels.DEBUG,
+        print_log_level: LogLevels = LogLevels.INFO,
+        file_log_level: LogLevels = LogLevels.DEBUG,
+        print_log: bool = True,
+        write_to_file: bool = True,
     ):
         """
         Logger init, ignore func and level param (for decorator)
@@ -54,7 +54,7 @@ class Logger:
         self.write_to_file = write_to_file
 
         os.mkdir("logs") if not os.path.isdir("logs") else None
-        date = Utils.get_date()
+        date = datetime.now()
         self.log_file = f"{date.strftime('%Y-%m-%d')}.log"
 
         if func is None:
@@ -66,45 +66,45 @@ class Logger:
             )
 
     def message_factory(
-            self,
-            date_str: str,
-            level: LogLevels,
-            message: str,
-            identifier_override: str | None = None,
+        self,
+        date_str: str,
+        level: LogLevels,
+        message: str,
+        identifier_override: str | None = None,
     ) -> str:
 
         return (
-                (style(date_str, STYLES.DATE))
-                + " -> ["
-                + (
-                    style(
-                        (
-                            center_and_limit(self.identifier, self.identifier_width)
-                            if identifier_override is None
-                            else center_and_limit(
-                                identifier_override, self.identifier_width
-                            )
-                        ),
-                        STYLES.IDENTIFIER,
-                    )
+            (style(date_str, STYLES.DATE))
+            + " -> ["
+            + (
+                style(
+                    (
+                        center_and_limit(self.identifier, self.identifier_width)
+                        if identifier_override is None
+                        else center_and_limit(
+                            identifier_override, self.identifier_width
+                        )
+                    ),
+                    STYLES.IDENTIFIER,
                 )
-                + "] "
-                + (
-                    style(
-                        level.name.center(self.log_level_width),
-                        STYLES.LogLevelsColorsDict[level],
-                    )
+            )
+            + "] "
+            + (
+                style(
+                    level.name.center(self.log_level_width),
+                    STYLES.LogLevelsColorsDict[level],
                 )
-                + " | "
-                + (style(message, STYLES.MESSAGE))
+            )
+            + " | "
+            + (style(message, STYLES.MESSAGE))
         )
 
     def log(
-            self,
-            message: str,
-            level: LogLevels = LogLevels.WARNING,
-            led_strip=None,
-            identifier_override: str | None = None,
+        self,
+        message: str,
+        level: LogLevels = LogLevels.WARNING,
+        led_strip=None,
+        identifier_override: str | None = None,
     ) -> None:
         """
         Log un message dans le fichier de log et dans la sortie standard
@@ -114,7 +114,7 @@ class Logger:
         :type level: int, optional
         """
 
-        date_str = Utils.get_str_date()
+        date_str = datetime.now().strftime("%H:%M:%S.%f")
 
         # Evaluate the str(message) value manually to make sure no weird operators happen
         message_str = self.message_factory(
@@ -180,49 +180,5 @@ class DummyLogger(Logger):
             print_log_level=LogLevels.INFO,
             file_log_level=LogLevels.FATAL,
             print_log=True,
-            write_to_file=False
+            write_to_file=False,
         )
-
-
-def time_tracker(get_logger: Optional[Callable] = None):
-    """
-    Decorator to track the execution time of a function and log it using the provided logger.
-
-    Args:
-        get_logger (Callable, optional): A function that takes an instance and returns a logger.
-                                          Must be provided if decorating a method.
-
-    Raises:
-        ValueError: If get_logger is not provided.
-
-    Returns:
-        Callable: The decorated function with execution time tracking.
-    """
-
-    def decorator(func: Callable):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            # Obtain the logger dynamically
-            logger = None
-            if get_logger is not None:
-                instance = args[
-                    0
-                ]  # First argument of a bound method is the instance (self)
-                logger = get_logger(instance)
-            else:
-                raise ValueError("A logger must be specified via get_logger.")
-
-            # Measure the execution time
-            start_time = time.perf_counter()
-            try:
-                return func(*args, **kwargs)
-            finally:
-                elapsed_time = time.perf_counter() - start_time
-                logger.log(
-                    f"Function `{func.__name__}` executed in {elapsed_time:.6f} seconds.",
-                    level=LogLevels.DEBUG,
-                )
-
-        return wrapper
-
-    return decorator

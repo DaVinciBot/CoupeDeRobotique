@@ -53,7 +53,12 @@ class GridManager:
     """
 
     def __init__(
-            self, logger: Logger, chunk_size: int, width: int, height: int, forbidden_cover_threshold: float = 0.5
+        self,
+        logger: Logger,
+        chunk_size: int,
+        width: int,
+        height: int,
+        forbidden_cover_threshold: float = 0.5,
     ) -> None:
         """
         Initializes the grid manager.
@@ -105,9 +110,9 @@ class GridManager:
         grid = copy.deepcopy(grid)
         minx, miny, maxx, maxy = polygon_to_mark.bounds
 
-        min_col, max_col = int(
-            (self.absolute_width - maxx) // self.chunk_size
-        ), int((self.absolute_width - minx) // self.chunk_size)
+        min_col, max_col = int((self.absolute_width - maxx) // self.chunk_size), int(
+            (self.absolute_width - minx) // self.chunk_size
+        )
         min_row, max_row = int(miny // self.chunk_size), int(maxy // self.chunk_size)
 
         for row in range(max(min_row, 0), min(max_row + 1, self.grid_height)):
@@ -123,23 +128,28 @@ class GridManager:
                 if polygon_to_mark.intersects(cell):
                     if walkable:
                         if any(
-                                [
-                                    polygon.intersects(cell)
-                                    for polygon in self.static_forbidden_zones
-                                ]
+                            [
+                                polygon.intersects(cell)
+                                for polygon in self.static_forbidden_zones
+                            ]
                         ):
                             continue
 
                         grid.nodes[row][actual_col].walkable = walkable
 
-                    if not walkable and polygon_to_mark.intersection(
-                            cell).area / cell.area >= self.forbidden_cover_threshold:
+                    if (
+                        not walkable
+                        and polygon_to_mark.intersection(cell).area / cell.area
+                        >= self.forbidden_cover_threshold
+                    ):
                         grid.nodes[row][actual_col].walkable = walkable
 
         return grid
 
     @time_tracker(lambda self: self.logger)
-    def __optimized_mark_zone(self, grid: Grid, polygon_to_mark: Polygon, walkable: bool) -> Grid:
+    def __optimized_mark_zone(
+        self, grid: Grid, polygon_to_mark: Polygon, walkable: bool
+    ) -> Grid:
         """
         Marks cells in the grid as forbidden based on intersection with a polygon.
 
@@ -154,8 +164,13 @@ class GridManager:
         # Precompute polygon bounds and indices
         minx, miny, maxx, maxy = polygon_to_mark.bounds
 
-        min_col = max(0, int((self.grid_width * self.chunk_size - maxx) // self.chunk_size))
-        max_col = min(self.grid_width, int((self.grid_width * self.chunk_size - minx) // self.chunk_size) + 1)
+        min_col = max(
+            0, int((self.grid_width * self.chunk_size - maxx) // self.chunk_size)
+        )
+        max_col = min(
+            self.grid_width,
+            int((self.grid_width * self.chunk_size - minx) // self.chunk_size) + 1,
+        )
         min_row = max(0, int(miny // self.chunk_size))
         max_row = min(self.grid_height, int(maxy // self.chunk_size) + 1)
 
@@ -180,7 +195,9 @@ class GridManager:
                     if walkable and self.static_forbidden_zones:
                         overlapping_zones = static_zone_tree.query(cell)
                         # Cast the ndarray to a list of Polygons
-                        overlapping_polygons = [self.static_forbidden_zones[i] for i in overlapping_zones]
+                        overlapping_polygons = [
+                            self.static_forbidden_zones[i] for i in overlapping_zones
+                        ]
                         if any(zone.intersects(cell) for zone in overlapping_polygons):
                             continue
 
@@ -190,7 +207,7 @@ class GridManager:
         return grid
 
     def __update_grid(
-            self, *, update_static_zones=False, update_dynamic_zones=False, clear_grid=False
+        self, *, update_static_zones=False, update_dynamic_zones=False, clear_grid=False
     ) -> None:
         """
         Updates the grids for static and dynamic zones.
@@ -208,7 +225,7 @@ class GridManager:
                 self.static_grid = self.__mark_zone(
                     grid=self.static_grid,
                     polygon_to_mark=zone,
-                    walkable=zone not in self.static_forbidden_zones
+                    walkable=zone not in self.static_forbidden_zones,
                 )
 
         if update_dynamic_zones:
@@ -216,7 +233,7 @@ class GridManager:
                 self.static_and_dynamic_grid = self.__mark_zone(
                     grid=self.static_grid if i == 0 else self.static_and_dynamic_grid,
                     polygon_to_mark=self.not_updated_forbidden_zones[i],
-                    walkable=False  # Dynamic zone are always forbidden
+                    walkable=False,  # Dynamic zone are always forbidden
                 )
 
         self.not_updated_forbidden_zones: list[Polygon] = []
@@ -224,7 +241,7 @@ class GridManager:
     # ====== Public Methods ======
     @time_tracker(lambda self: self.logger)
     def add_forbidden_static_zone(
-            self, forbidden_zones: Polygon | list[Polygon]
+        self, forbidden_zones: Polygon | list[Polygon]
     ) -> None:
         """
         Adds static forbidden zones to the grid.
@@ -241,7 +258,7 @@ class GridManager:
 
     @time_tracker(lambda self: self.logger)
     def remove_forbidden_static_zone(
-            self, forbidden_zones_to_remove: Polygon | list[Polygon]
+        self, forbidden_zones_to_remove: Polygon | list[Polygon]
     ) -> None:
         """
         Removes static forbidden zones from the grid.
@@ -309,8 +326,13 @@ class GridManager:
         """Returns the combined static and dynamic grid."""
         return self.static_and_dynamic_grid
 
-    def visualize(self, only_static_grid: bool = False, path=None, show: bool = True,
-                  plot: tuple[plt.axes, plt.figure] = None) -> tuple[plt.axes, plt.figure]:
+    def visualize(
+        self,
+        only_static_grid: bool = False,
+        path=None,
+        show: bool = True,
+        plot: tuple[plt.axes, plt.figure] = None,
+    ) -> tuple[plt.axes, plt.figure]:
         """
         Visualizes the grid using matplotlib.
 
