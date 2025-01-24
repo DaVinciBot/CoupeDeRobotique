@@ -42,7 +42,7 @@ class MainBrain(Brain):
             # Movement
             movement_manager: MovementManager,
             # WS routes
-            ws_cmd: WSclientRouteManager,
+            ws_cmd: WServerRouteManager,
     ) -> None:
         if isinstance(rolling_basis, RollingBasisDummy):
             logger.log("RollingBasisDummy is used", LogLevels.WARNING)
@@ -56,7 +56,7 @@ class MainBrain(Brain):
         # Movement
         self.movement_manager: MovementManager = movement_manager
         # WS routes
-        self.ws_cmd: WSclientRouteManager = ws_cmd
+        self.ws_cmd: WServerRouteManager = ws_cmd
 
         super().__init__(logger, self)
 
@@ -69,8 +69,8 @@ class MainBrain(Brain):
         #     step_size=30.0
         # )
         self.enemy_point_generator = straight_line_generator(
-            start_point=OrientedPoint(280, 180, 0),
-            end_point=OrientedPoint(150, 100, 0),
+            start_point=OrientedPoint(280, 93, 0),
+            end_point=OrientedPoint(23, 135, 0),
             step_size=3.0,
         )
 
@@ -163,12 +163,12 @@ class MainBrain(Brain):
         await self.initialize()
 
         speed_profile: SpeedProfile = SpeedProfile(
-            max_linear_speed=20.0,
-            max_angular_speed=6.0,
-            max_linear_acceleration=3.0,
-            max_angular_acceleration=1.0,
-            max_linear_deceleration=0.5,
-            max_angular_deceleration=1.0,
+            max_linear_speed=20.0,  # cm/s
+            max_angular_speed=6.0,  # rad/s
+            max_linear_acceleration=3.0,  # cm/s^2
+            max_angular_acceleration=1.0,  # rad/s^2
+            max_linear_deceleration=0.5,  # cm/s^2
+            max_angular_deceleration=1.0,  # rad/s^2
         )
         go_to_params = GoToParams(
             initial_linear_speed=self.rolling_basis.linear_speed,
@@ -176,7 +176,7 @@ class MainBrain(Brain):
             speed_profile=speed_profile,
             goal=OrientedPoint(250, 140),
             acs_distance=10,
-            path_finder_recompute_distance=20,
+            path_finder_recompute_distance=80,
             timeout=-1.0,
             is_mandatory=False,
             smooth_trajectory=True,

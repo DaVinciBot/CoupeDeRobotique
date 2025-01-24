@@ -226,7 +226,7 @@ class EnemyZone(BaseArenaZone):
             no_detection_timeout: float = 4.0,
             positions_recorded: deque = None,
             speed_vector: SpeedVector = SpeedVector(0.0, 0.0, 0.0),
-            vector_factor: float = 50.0,
+            vector_factor: float = 25.0,
             # taille du vecteur de déplacement, on peur choisir à quelle point on donne de l'importance à la direction
     ) -> None:
         self.point = point
