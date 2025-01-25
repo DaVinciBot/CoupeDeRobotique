@@ -1,6 +1,7 @@
-from arena import BaseArena, ShowArena
+# ====== Imports ======
+# Internal project imports
+from arena import BaseArena
 from logger import Logger, LogLevels
-from arena import BaseArenaZone
 from geometry import OrientedPoint
 
 from path_finding import PathFinder
@@ -12,6 +13,7 @@ from movement_manager.movement_status import MovementStatus
 from rolling_basis_handler import RollingBasisCommand
 
 
+# ====== Class Part ======
 class MovementManager:
     """
     Manages the movement of a robot, including pathfinding, collision avoidance, and trajectory handling.
@@ -214,8 +216,8 @@ class MovementManager:
 
         # Re-Compute path if enemy is close
         if (
-            self.__get_ally_enemy_distance()
-            < self.params.path_finder_recompute_distance
+                self.__get_ally_enemy_distance()
+                < self.params.path_finder_recompute_distance
         ):
             self._find_path(
                 smooth_trajectory=self.params.smooth_trajectory,
