@@ -9,6 +9,7 @@
 /* Definition of message IDs */
 // rasp -> teensy : 0-127 (Convention)
 #define SET_SPEED_AND_POSITION 0
+#define SET_PID 1
 
 // two ways : 127 (Convention)
 #define NACK 127
@@ -17,7 +18,6 @@
 #define PRINT 128
 #define UPDATE_ROLLING_BASIS 129
 #define UNKNOWN_MSG_TYPE 255
-
 
 /* Definition of the messages content */
 // rasp -> teensy : 0-127
@@ -40,6 +40,15 @@ struct msg_update_rolling_basis
     float theta;
     float current_linear_speed;
     float current_angular_speed;
+};
+
+struct msg_set_linear_speed_pid
+{
+    byte command = SET_PID;
+    byte pid_type;
+    float kp;
+    float ki;
+    float kd;
 };
 
 struct msg_unknown_msg_type
