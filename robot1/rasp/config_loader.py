@@ -90,6 +90,10 @@ class CONFIG:
     GO_TO_PROFILES = ROLLING_BASIS_CONFIG["go_to_profiles"]
     SPEED_PROFILES = ROLLING_BASIS_CONFIG["go_to_profiles"]["speed"]
     PRECISION_PROFILES = ROLLING_BASIS_CONFIG["go_to_profiles"]["precision"]
+    LINEAR_SPEED_PID = ROLLING_BASIS_CONFIG["pids"]["linear_speed_pid"]
+    ANGULAR_SPEED_PID = ROLLING_BASIS_CONFIG["pids"]["angular_speed_pid"]
+    LINEAR_DISTANCE_PID = ROLLING_BASIS_CONFIG["pids"]["linear_distance_pid"]
+    ANGULAR_DISTANCE_PID = ROLLING_BASIS_CONFIG["pids"]["angular_distance_pid"]
 
     # Actuators
     ACTUATORS_CONFIG = SPECIFIC_CONFIG["actuators"]

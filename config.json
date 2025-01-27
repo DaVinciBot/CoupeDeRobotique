@@ -327,6 +327,32 @@
           "action_error_auth": 50,
           "traj_precision": 80
         }
+      },
+      "pids": {
+        "linear_speed_pid": {
+          "id":0,
+          "kp": 20,
+          "ki": 0,
+          "kd": 0
+        },
+        "angular_speed_pid": {
+          "id":1,
+          "kp": 50,
+          "ki": 0,
+          "kd": 0
+        },
+        "linear_distance_pid": {
+          "id":2,
+          "kp": 0,
+          "ki": 0,
+          "kd": 0
+        },
+        "angular_distance_pid": {
+          "id":3,
+          "kp": 0,
+          "ki": 0,
+          "kd": 0
+        }
       }
     },
     "actuators": {
