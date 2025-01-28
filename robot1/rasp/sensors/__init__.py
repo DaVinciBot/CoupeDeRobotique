@@ -1,1 +1,1 @@
-from sensors.lidar import Lidar
+from sensors.lidar import Lidar, LidarDummy

@@ -1,590 +1,333 @@
+# ====== Code Summary ======
+# This code defines a system for communication between a Raspberry Pi and a Teensy microcontroller.
+# It includes a `Command` enumeration for message types, and a `RollingBasis` class for managing
+# the state and behavior of a rolling robot basis. The `RollingBasis` class handles received messages
+# and sends commands, encapsulating robot state updates and messaging logic.
+
 from config_loader import CONFIG
 
-# Import from common
-from teensy_comms import Teensy, calc_center
-from geometry import OrientedPoint, Point, distance
-from logger import Logger, LogLevels
-from utils import Utils, GoToResult
-
-import struct
-import math
-import asyncio
+# ====== Standard Library Imports ======
 from enum import Enum
-from dataclasses import dataclass
-import time
+import struct
+from typing import Callable
+
+# ====== Internal Project Imports ======
+from teensy_comms import Teensy
+from geometry import OrientedPoint
+from logger import Logger, LogLevels
 
 
 class Command(Enum):
-    GO_TO_POINT = b"\x00"
-    CURVE_GO_TO = b"\x01"
-    KEEP_CURRENT_POSITION = b"\02"
-    DISABLE_PIDS = b"\03"
-    ENABLE_PIDS = b"\04"
-    RESET_POSITION = b"\05"
-    SET_PIDS = b"\06"
-    SET_HOME = b"\07"
-    GET_ORIENTATION = b"\08"
-    STOP = b"\x7E"  # 7E = 126
-    INVALID = b"\xFF"
-
-
-@dataclass
-class Instruction:
-    cmd: Command
-    msg: bytes  # msg is often the same as cmd, but can contain extra info
-
-    def __str__(self) -> str:
-        return f"cmd:{self.cmd}, msg:{self.msg.hex()}"
-
-    def __repr__(self) -> str:
-        return self.__str__()
-
-
-class RB_Queue:
-
-    tracked_commands = (Command.GO_TO_POINT, Command.CURVE_GO_TO)
-
     """
-    Represents a queue of instructions for a rolling basis controller.
-
-    Attributes:
-        tracked_commands (tuple): A tuple of tracked commands.
-        id_counter (int): Counter for generating unique IDs for tracked commands.
-        last_deleted_id (int): ID of the last deleted tracked command.
-        __queue (list[Instruction]): The underlying list to store the instructions.
-
-    Methods:
-        __init__(self, logger: Logger) -> None: Initializes a new instance of the RB_Queue class.
-        append(self, __object: Instruction) -> int: Appends an instruction to the queue.
-        pop(self, __index: int = -1) -> Instruction: Removes and returns an instruction from the queue.
-        clear(self) -> None: Clears the queue.
-        delete_up_to(self, __index: int) -> None: Deletes instructions up to the specified index.
-        insert(self, __index: int, __object: Instruction) -> None: Inserts an instruction at the specified index.
-        __getitem__(self, __index) -> Instruction: Returns the instruction at the specified index.
-        __len__(self) -> int: Returns the number of instructions in the queue.
-        __str__(self) -> str: Returns a string representation of the queue.
+       Defines the command protocol between the Raspberry Pi and the Teensy microcontroller.
     """
+    # rasp -> teensy : 0-127 (Convention)
+    SET_SPEED_AND_POSITION = 0
 
-    def __init__(self, logger: Logger) -> None:
-        self.id_counter = 0
-        self.last_deleted_id = -1
-        self.__queue: list[Instruction] = []
+    # two ways : 127 (Convention)
+    NACK = 127
 
-    @staticmethod
-    def __is_tracked_command(command: Command) -> bool:
-        return command in RB_Queue.tracked_commands
+    # teensy -> rasp : 128-255 (Convention)
+    PRINT = 128
+    UPDATE_ROLLING_BASIS = 129
+    UNKNOWN_MSG_TYPE = 255
 
-    def __is_tracked_command_at_index(self, __index: int) -> bool:
-        return RB_Queue.__is_tracked_command(self.__queue[__index].cmd)
+    # To use for message creation
+    def to_bytes(self) -> bytes:
+        """
+        Converts the command to its byte representation.
 
-    def append(self, __object: Instruction) -> int:
-        self.__queue.append(__object)
-        if RB_Queue.__is_tracked_command(__object.cmd):
-            self.id_counter += 1
-            return self.id_counter - 1
-        else:
-            return -1
-
-    def pop(self, __index: int = -1) -> Instruction:
-        if self.__is_tracked_command_at_index(__index):
-            self.last_deleted_id += 1
-        return self.__queue.pop(__index)
-
-    def clear(self) -> None:
-        # Count the number of tracked commands in the queue to add to last_deleted_id
-        self.last_deleted_id += len(
-            [i for i in self.__queue if RB_Queue.__is_tracked_command(i.cmd)]
-        )
-        self.__queue.clear()
-
-    def delete_up_to(self, __index: int) -> None:
-        for i in range(__index + 1):
-            if self.__is_tracked_command_at_index(0):
-                self.last_deleted_id += 1
-            del self.__queue[0]
-
-    def insert(self, __index: int, __object: Instruction) -> None:
-        """Cannot insert tracked elements to keep things simple"""
-        assert not RB_Queue.__is_tracked_command(
-            __object.cmd
-        ), "Tried to insert tracked command (should only be appended)"
-        self.__queue.insert(__index, __object)
-
-    def __getitem__(self, __index) -> Instruction:
-        return self.__queue[__index]
-
-    def __len__(self) -> int:
-        return len(self.__queue)
-
-    def __str__(self) -> str:
-        return str(self.__queue)
+        Returns:
+            bytes: Single-byte representation of the command.
+        """
+        return bytes([self.value])
 
 
 class RollingBasis(Teensy):
-    ######################
-    # Rolling basis init #
-    ######################
+    """
+    Represents the rolling basis of a robot, managing communication, state, and behavior.
+
+    Inherits from Teensy to handle low-level communication. This class adds logic specific
+    to the rolling basis of the robot.
+    """
+
     def __init__(
-        self,
-        logger: Logger,
-        ser: int = CONFIG.ROLLING_BASIS_TEENSY_SER,
-        crc: bool = CONFIG.TEENSY_CRC,
-        vid: int = CONFIG.TEENSY_VID,
-        pid: int = CONFIG.TEENSY_PID,
-        baudrate: int = CONFIG.TEENSY_BAUDRATE,
-        dummy: bool = CONFIG.TEENSY_DUMMY,
+            self,
+            logger: Logger,
+            ser: int = CONFIG.ROLLING_BASIS_TEENSY_SER,
+            crc: bool = CONFIG.TEENSY_CRC,
+            vid: int = CONFIG.TEENSY_VID,
+            pid: int = CONFIG.TEENSY_PID,
+            baudrate: int = CONFIG.TEENSY_BAUDRATE,
+            dummy: bool = CONFIG.TEENSY_DUMMY,
     ):
+        """
+        Initializes the RollingBasis instance.
+
+        Args:
+            logger (Logger): Logger instance for logging messages.
+            ser (int): Serial port identifier for Teensy communication.
+            crc (bool): Whether to use CRC for message validation.
+            vid (int): Vendor ID of the Teensy device.
+            pid (int): Product ID of the Teensy device.
+            baudrate (int): Communication baud rate.
+            dummy (bool): Whether to use dummy mode (for testing purposes).
+        """
         super().__init__(
             logger, ser=ser, vid=vid, pid=pid, baudrate=baudrate, crc=crc, dummy=dummy
         )
+
+        # States of the robot
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
-        self.position_offset = OrientedPoint((0.0, 0.0), 0.0)
+        self.linear_speed: float = 0.0
+        self.angular_speed: float = 0.0
+
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
         """
-        self.messagetype = {
-            128: self.rcv_odometrie,  # \x80
-            129: self.rcv_action_finish,  # \x81
-            130: self.rcv_print,  # \x82
-            255: self.rcv_unknown_msg,
-        }
+        # self.messagetype = {
+        #     128: self.rcv_print,
+        #     129: self.rcv_rolling_basis_state,
+        #     255: self.rcv_unknown_msg,
+        # }
 
-        self.queue = RB_Queue(self.logger)
-
-    #####################
-    # Position handling #
-    #####################
-    def true_pos(self, position: OrientedPoint) -> OrientedPoint:
-        """
-        enables to correct the position using a fixed offset if required
-
-        :param position: _description_
-        :type position: OrientedPoint
-        :return: _description_
-        :rtype: OrientedPoint
-        """
-        return OrientedPoint(
-            (position.x + self.position_offset.x, position.y + self.position_offset.y),
-            position.theta + self.position_offset.theta,
-        )
+        # Register message handlers for different command types
+        self.add_callback(self.rcv_print, Command.PRINT.value)
+        self.add_callback(self.rcv_unknown_msg, Command.UNKNOWN_MSG_TYPE.value)
+        self.add_callback(self.rcv_rolling_basis_state, Command.UPDATE_ROLLING_BASIS.value)
 
     #############################
     # Received message handling #
     #############################
     def rcv_print(self, msg: bytes):
+        """
+        Handles PRINT messages from the Teensy.
+
+        Args:
+            msg (bytes): The received message bytes.
+        """
         self.logger.log(
-            "Teensy says : " + msg.decode("ascii", errors="ignore"), LogLevels.INFO
+            "Teensy says: " + msg.decode("ascii", errors="ignore"), LogLevels.INFO
         )
 
-    def rcv_odometrie(self, msg: bytes):
+    def rcv_rolling_basis_state(self, msg: bytes):
+        """
+        Handles rolling basis state update messages from the Teensy.
+
+        The message contains:
+        - float x: X-coordinate of the position (4 bytes).
+        - float y: Y-coordinate of the position (4 bytes).
+        - float theta: Orientation (4 bytes).
+        - float current_linear_speed: Current linear speed (4 bytes).
+        - float current_angular_speed: Current angular speed (4 bytes).
+
+        Args:
+            msg (bytes): The received message bytes.
+        """
+        # Position / odometry
         self.odometrie = OrientedPoint(
             (struct.unpack("<f", msg[0:4])[0], struct.unpack("<f", msg[4:8])[0]),
             struct.unpack("<f", msg[8:12])[0],
         )
-
-    def rcv_action_finish(self, cmd_finished: bytes):
-        self.logger.log("Action finished : " + cmd_finished.hex(), LogLevels.INFO)
-        if not self.queue or len(self.queue) == 0:
-            self.logger.log(
-                "Received action_finish but no action in queue", LogLevels.WARNING
-            )
-            return
-        # remove actions up to the one that just finished
-        for i in range(len(self.queue)):
-            if self.queue[i].cmd.value == cmd_finished:
-                self.logger.log(
-                    f"Removing actions up to {i} from queue : "
-                    + str(self.queue[: i + 1]),
-                    LogLevels.INFO,
-                )
-                self.queue.delete_up_to(i)
-                break
-
-        if len(self.queue) == 0:
-            self.logger.log("Queue is empty, not sending anything", LogLevels.INFO)
-        else:
-            self.logger.log("Sending next action in queue")
-            self.send_bytes(self.queue[0].msg)
+        # Speeds
+        self.linear_speed = struct.unpack("<f", msg[12:16])[0]
+        self.angular_speed = struct.unpack("<f", msg[16:20])[0]
 
     def rcv_unknown_msg(self, msg: bytes):
+        """
+        Handles unknown messages from the Teensy.
+
+        Logs a warning indicating that the message type is not recognized.
+
+        Args:
+            msg (bytes): The received message bytes.
+        """
         self.logger.log(
             f"Teensy does not know the command {msg.hex()}", LogLevels.WARNING
         )
 
-    def append_to_queue(
-        self, instruction: Instruction, skip_and_clear_queue=False
-    ) -> int:
-
-        if skip_and_clear_queue:
-            self.queue.clear()
-
-        new_id = self.queue.append(instruction)
-
-        if len(self.queue) == 1:
-            self.send_bytes(self.queue[0].msg)
-
-        return new_id
-
-    def insert_in_queue(
-        self, index: int, instruction: Instruction, force_send: bool = False
-    ) -> None:
-        """Should only take non tracked instructions. To use carefully, adding an action in front of an unfinished one may trigger the unfinished one again afterwards."""
-        self.queue.insert(index, instruction)
-
-        if len(self.queue) == 1 or force_send:
-            self.send_bytes(self.queue[0].msg)
-
+    ###################
+    # Message to send #
+    ###################
     @Logger
-    def go_to(
-        self,
-        position: Point,
-        *,  # force keyword arguments
-        skip_and_clear_queue: bool = False,
-        forward: bool = True,
-        relative: bool = False,
-        max_speed: int = 160,
-        next_position_delay: int = 100,
-        action_error_auth: int = 30,
-        traj_precision: int = 30,
-        correction_trajectory_speed: int = 160,
-        acceleration_start_speed: int = 160,
-        acceleration_distance: float = 0,
-        deceleration_end_speed: int = 160,
-        deceleration_distance: float = 0,
-    ) -> int:
+    def set_speed_and_position(
+            self,
+            target_linear_speed: float,
+            target_angular_speed: float,
+            target_position: OrientedPoint,
+    ) -> None:
         """
-        Va à la position donnée en paramètre, return l'id dans la queue de l'action
+        Sends a command to set the target speed and position of the rolling basis.
 
-        :param position: la position en X et Y (et theta)
-        :type position: Point
-        :param forward: en avant (True) ou en arrière (False), defaults to True
-        :type direction: bool, optional
-        :param relative: en absolu (False) ou en relatif (True), defaults to False
-        :type direction: bool, optional
-        :param speed: Vitesse du déplacement, defaults to b'\x64'
-        :type speed: bytes, optional
-        :param next_position_delay: delay avant la prochaine position, defaults to 100
-        :type next_position_delay: int, optional
-        :param action_error_auth: l'erreur autorisé dans le déplacement, defaults to 20
-        :type action_error_auth: int, optional
-        :param traj_precision: la précision du déplacement, defaults to 50
-        :type traj_precision: int, optional
+        Args:
+            target_linear_speed (float): Target linear speed.
+            target_angular_speed (float): Target angular speed.
+            target_position (OrientedPoint): Target position and orientation.
+        """
+        msg = (
+                Command.SET_SPEED_AND_POSITION.to_bytes()
+                + struct.pack("<f", target_linear_speed)
+                + struct.pack("<f", target_angular_speed)
+                + struct.pack("<f", target_position.x)
+                + struct.pack("<f", target_position.y)
+                + struct.pack("<f", target_position.theta)
+        )
+        # Send the composed message to the Teensy
+        # https://docs.python.org/3/library/struct.html#format-characters
+        self.send_bytes(msg)
+
+
+class RollingBasisDummy:
+    """
+    A dummy version of the RollingBasis class.
+
+    This dummy class mimics the interface of the real RollingBasis class
+    but does not establish any actual hardware communication or process
+    real data. It is useful for testing and simulations, where you do not
+    have a Teensy device or hardware connected.
+    """
+
+    def __init__(
+            self,
+            logger,
+            ser: int = None,
+            crc: bool = False,
+            vid: int = None,
+            pid: int = None,
+            baudrate: int = None,
+            dummy: bool = True,
+    ):
+        """
+        Initializes the dummy RollingBasis instance.
+
+        Args:
+            logger: Logger instance for logging messages (dummy in this case).
+            ser (int): Serial port identifier (not used in the dummy class).
+            crc (bool): Whether to use CRC (not used in the dummy class).
+            vid (int): Vendor ID of the device (not used in the dummy class).
+            pid (int): Product ID of the device (not used in the dummy class).
+            baudrate (int): Communication baud rate (not used in the dummy class).
+            dummy (bool): Indicates that this is a dummy setup (always True here).
+        """
+        self.logger = logger
+        self.ser = ser
+        self.crc = crc
+        self.vid = vid
+        self.pid = pid
+        self.baudrate = baudrate
+        self.dummy = dummy
+
+        # States of the robot (dummy state)
+        self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
+        self.linear_speed: float = 0.0
+        self.angular_speed: float = 0.0
+
+        # Dictionary to store callbacks for different message types (optional).
+        # You can use add_callback to register your own handlers.
+        self.messagetype_callbacks = {}
+
+        # Register dummy handlers as an example
+        self.add_callback(self.rcv_print, Command.PRINT.value)
+        self.add_callback(self.rcv_unknown_msg, Command.UNKNOWN_MSG_TYPE.value)
+        self.add_callback(self.rcv_rolling_basis_state, Command.UPDATE_ROLLING_BASIS.value)
+
+    def add_callback(self, callback_func: Callable, cmd_type: int) -> None:
+        """
+        Registers a callback function for a given command type (dummy implementation).
+
+        Args:
+            callback_func (Callable): The function to call when `cmd_type` is received.
+            cmd_type (int): The command type for which the callback is registered.
+        """
+        self.messagetype_callbacks[cmd_type] = callback_func
+
+    #############################
+    # Received message handling #
+    #############################
+
+    def rcv_print(self, msg: bytes):
+        """
+        Dummy handler for PRINT messages.
+
+        Args:
+            msg (bytes): The received message bytes.
+        """
+        decoded_msg = msg.decode("ascii", errors="ignore")
+        self.logger.log(f"Dummy RollingBasis received a PRINT message: {decoded_msg}", LogLevels.INFO)
+
+    def rcv_rolling_basis_state(self, msg: bytes):
+        """
+        Dummy handler for rolling basis state update messages.
+
+        The expected structure in the real system would be:
+        - float x
+        - float y
+        - float theta
+        - float current_linear_speed
+        - float current_angular_speed
+
+        Args:
+            msg (bytes): The received message bytes.
+        """
+        # Since this is a dummy method, we'll just log the raw data
+        # rather than unpack and update real state.
+        raw_data_hex = msg.hex()
+        self.logger.log(f"Dummy RollingBasis received a state update: {raw_data_hex}", LogLevels.INFO)
+
+    def rcv_unknown_msg(self, msg: bytes):
+        """
+        Dummy handler for unknown messages.
+
+        Args:
+            msg (bytes): The received message bytes.
         """
         self.logger.log(
-            f"go_to {'relative' if relative else 'absolute'}: {position}",
-            LogLevels.DEBUG,
+            f"Dummy RollingBasis received an unknown message: {msg.hex()}",
+            LogLevels.WARNING
         )
-        pos = (
-            Point(
-                position.x + self.position_offset.x, position.y + self.position_offset.y
-            )
-            if not relative
-            else Point(
-                math.cos(self.odometrie.theta) * position.x
-                - math.sin(self.odometrie.theta) * position.y
-                + self.position_offset.x
-                + self.odometrie.x,
-                math.sin(self.odometrie.theta) * position.x
-                + math.cos(self.odometrie.theta) * position.y
-                + self.position_offset.y
-                + self.odometrie.y,
-            )
-        )
-        msg = (
-            Command.GO_TO_POINT.value
-            + struct.pack("<f", pos.x)
-            + struct.pack("<f", pos.y)
-            + struct.pack("<?", forward)
-            + struct.pack("<B", max_speed)
-            + struct.pack("<H", next_position_delay)
-            + struct.pack("<H", action_error_auth)
-            + struct.pack("<H", traj_precision)
-            + struct.pack("<B", correction_trajectory_speed)
-            + struct.pack("<B", acceleration_start_speed)
-            + struct.pack("<f", acceleration_distance)
-            + struct.pack("<B", deceleration_end_speed)
-            + struct.pack("<f", deceleration_distance)
-        )
-        # https://docs.python.org/3/library/struct.html#format-characters
 
-        return self.append_to_queue(
-            Instruction(Command.GO_TO_POINT, msg),
-            skip_and_clear_queue=skip_and_clear_queue,
-        )
+    ###################
+    # Message to send #
+    ###################
 
     @Logger
-    async def go_to_and_wait(
-        self,
-        position: Point,
-        *,  # force keyword arguments
-        skip_and_clear_queue: bool = False,
-        tolerance: float = 5,
-        timeout: float = -1,  # in seconds
-        forward: bool = True,
-        relative: bool = False,
-        max_speed: int = 160,
-        next_position_delay: int = 100,
-        action_error_auth: int = 30,
-        traj_precision: int = 30,
-        correction_trajectory_speed: int = 160,
-        acceleration_start_speed: int = 160,
-        acceleration_distance: float = 0,
-        deceleration_end_speed: int = 160,
-        deceleration_distance: float = 0,
-    ) -> GoToResult:
-        """Waits to go over timeout or finish the queue (by finishing movement or being interrupted)
+    def set_speed_and_position(
+            self,
+            target_linear_speed: float,
+            target_angular_speed: float,
+            target_position: OrientedPoint,
+    ) -> None:
+        """
+        Dummy method to set the target speed and position of the rolling basis.
+
+        In the real implementation, this would send a message to the Teensy
+        containing the desired linear speed, angular speed, and target position.
 
         Args:
-            position (Point): Target.
-            tolerance (float): Distance to be within to return a success if not timed out.
-            timeout (float): Max time to wait in s, -1 for no limit. Defaults to -1.
-            forward (bool, optional): _description_. Defaults to True.
-            max_speed (int, optional): _description_. Defaults to 150.
-            next_position_delay (int, optional): _description_. Defaults to 100.
-            action_error_auth (int, optional): _description_. Defaults to 50.
-            traj_precision (int, optional): _description_. Defaults to 50.
-            correction_trajectory_speed (int, optional): _description_. Defaults to 80.
-            acceleration_start_speed (int, optional): _description_. Defaults to 80.
-            acceleration_distance (float, optional): _description_. Defaults to 10.
-            deceleration_end_speed (int, optional): _description_. Defaults to 80.
-            deceleration_distance (float, optional): _description_. Defaults to 10.
-
-        Returns:
-            int: 0 if finished normally, 1 if timed out, 2 if finished without timeout but not at target position
+            target_linear_speed (float): Target linear speed.
+            target_angular_speed (float): Target angular speed.
+            target_position (OrientedPoint): Target position and orientation.
         """
-
-        target_to_compare = (
-            Point(
-                position.x + self.position_offset.x, position.y + self.position_offset.y
-            )
-            if not relative
-            else Point(
-                math.cos(self.odometrie.theta) * position.x
-                - math.sin(self.odometrie.theta) * position.y
-                + self.position_offset.x
-                + self.odometrie.x,
-                math.sin(self.odometrie.theta) * position.x
-                + math.cos(self.odometrie.theta) * position.y
-                + self.position_offset.y
-                + self.odometrie.y,
-            )
+        # This is where you'd normally pack data and send it over serial
+        # or another communication interface. We just log it here.
+        self.odometrie = target_position
+        self.linear_speed = target_linear_speed
+        self.angular_speed = target_angular_speed
+        self.logger.log(
+            f"[DUMMY] Setting speed to linear={target_linear_speed}, "
+            f"angular={target_angular_speed}, "
+            f"position=({target_position.x}, {target_position.y}, {target_position.theta})",
+            LogLevels.INFO
         )
 
-        start_time = Utils.get_ts()
-        queue_id = self.go_to(
-            position,
-            skip_and_clear_queue=skip_and_clear_queue,
-            forward=forward,
-            relative=relative,
-            max_speed=max_speed,
-            next_position_delay=next_position_delay,
-            action_error_auth=action_error_auth,
-            traj_precision=traj_precision,
-            correction_trajectory_speed=correction_trajectory_speed,
-            acceleration_start_speed=acceleration_start_speed,
-            acceleration_distance=acceleration_distance,
-            deceleration_end_speed=deceleration_end_speed,
-            deceleration_distance=deceleration_distance,
-        )
-
-        while (
-            timeout < 0 or Utils.time_since(start_time) < timeout
-        ) and self.queue.last_deleted_id < queue_id:
-            await asyncio.sleep(0.1)
-
-        if Utils.time_since(start_time) >= timeout and timeout >= 0:
-            self.logger.log(
-                f"Reached timeout in Go_To_And_Wait, clearing queue, at: {self.odometrie}, {distance(self.odometrie, target_to_compare)} away",
-                LogLevels.WARNING,
-            )
-            self.stop_and_clear_queue()
-            return GoToResult.TIMEOUT
-        elif distance(self.odometrie, target_to_compare) <= tolerance:
-            self.logger.log(
-                f"Reached target in go_to_and_wait, at: {self.odometrie}",
-                LogLevels.INFO,
-            )
-            return GoToResult.SUCCESS
-        else:  # Should only mean ACS triggered or unplanned behaviour
-            self.logger.log(
-                f"Didn't timeout in Go_To_And_Wait but did not arrive, at: {self.odometrie}, targeting : {target_to_compare}, {distance(self.odometrie, target_to_compare)} away",
-                LogLevels.WARNING,
-            )
-            # self.stop_and_clear_queue()
-            return GoToResult.STOPPED
-
-    @Logger
-    def get_orientation(
-        self,
-        position: Point,
-        *,  # force keyword arguments
-        forward: bool = True,
-        max_speed: int = 150,
-        next_position_delay: int = 100,
-        action_error_auth: int = 50,
-        traj_precision: int = 50,
-        correction_trajectory_speed: int = 80,
-        acceleration_start_speed: int = 80,
-        acceleration_distance: float = 10,
-        deceleration_end_speed: int = 80,
-        deceleration_distance: float = 10,
-    ) -> None:
-
-        pos = Point(
-            position.x + self.position_offset.x, position.y + self.position_offset.y
-        )
-        msg = (
-            Command.GET_ORIENTATION.value
-            + struct.pack("<ff", pos.x, pos.y)
-            + struct.pack("<?", forward)
-            + struct.pack("<B", max_speed)
-            + struct.pack(
-                "<HHH", next_position_delay, action_error_auth, traj_precision
-            )
-            + struct.pack("<BB", correction_trajectory_speed, acceleration_start_speed)
-            + struct.pack("<f", acceleration_distance)
-            + struct.pack("<B", deceleration_end_speed)
-            + struct.pack("<f", deceleration_distance)
-        )
-        # https://docs.python.org/3/library/struct.html#format-characters
-
-        self.append_to_queue(Instruction(Command.GET_ORIENTATION, msg))
-
-    @Logger
-    def curve_go_to(
-        self,
-        destination: OrientedPoint,
-        corde: float,
-        interval: int,
-        *,  # force keyword arguments
-        skip_queue=False,
-        direction: bool = False,
-        speed: int = 150,
-        next_position_delay: int = 100,
-        action_error_auth: int = 20,
-        traj_precision: int = 50,
-    ) -> None:
-        """Go to a point with a curve"""
-
-        middle_point = OrientedPoint(
-            (
-                (self.odometrie.x + destination.x) / 2,
-                (self.odometrie.y + destination.y) / 2,
-            )
-        )
-        # alpha est l'angle entre la droite (position, destination) et l'axe des ordonnées (y)
-        alpha = math.atan2(
-            destination.y - self.odometrie.y, destination.x - self.odometrie.x
-        )
-        # theta est l'angle entre la droite (position, destination) et l'axe des abscisses (x)
-        theta = math.pi / 2 - alpha
-
-        third_point = OrientedPoint(
-            (
-                middle_point.x + math.cos(theta) * corde,
-                middle_point.y + math.sin(theta) * corde,
-            )
-        )
-
-        center = calc_center(self.odometrie, third_point, destination)
-        destination = self.true_pos(destination)
-        center = self.true_pos(center)
-
-        curve_msg = (
-            Command.CURVE_GO_TO.value  # command
-            + struct.pack("<ff", destination.x, destination.y)  # target_point
-            + struct.pack("<ff", center.x, center.y)  # center_point
-            + struct.pack("<H", interval)  # interval (distance between two points)
-            + struct.pack("<?", direction)  # direction
-            + struct.pack("<H", speed)  # speed
-            + struct.pack("<H", next_position_delay)  # delay
-            + struct.pack("<H", action_error_auth)  # error_auth
-            + struct.pack("<H", traj_precision)  # precision
-        )
-        if skip_queue or len(self.queue) == 0:
-            self.logger.log("Skipping Queue ...")
-            self.queue.insert(0, Instruction(Command.CURVE_GO_TO, curve_msg))
-            self.logger.log(str(self.queue))
-            self.send_bytes(curve_msg)
-        else:
-            self.queue.append(Instruction(Command.CURVE_GO_TO, curve_msg))
-
-    # TODO: grosse redondance sur le skip queue, utile de mettre en place un decorateur pour faire ça automatiquement ?
-    @Logger
-    def keep_current_pos(self, skip_queue=False):
-        msg = Command.KEEP_CURRENT_POSITION.value
-        if skip_queue:
-            self.insert_in_queue(
-                0, Instruction(Command.KEEP_CURRENT_POSITION, msg), True
-            )
-        else:
-            self.append_to_queue(Instruction(Command.KEEP_CURRENT_POSITION, msg))
-
-    @Logger
-    def clear_queue(self):
-        self.queue.clear()
-
-    @Logger
-    def stop_and_clear_queue(self):
-        self.clear_queue()
-        self.keep_current_pos(True)
-
-    @Logger
-    def disable_pid(self, skip_queue=False):
-        msg = Command.DISABLE_PIDS.value
-        if skip_queue:
-            self.insert_in_queue(0, Instruction(Command.DISABLE_PIDS, msg), True)
-        else:
-            self.queue.append(Instruction(Command.DISABLE_PIDS, msg))
-
-    @Logger
-    def enable_pid(self, skip_queue=False):
-        msg = Command.ENABLE_PIDS.value
-        if skip_queue:
-            self.insert_in_queue(0, Instruction(Command.ENABLE_PIDS, msg), True)
-        else:
-            self.append_to_queue(Instruction(Command.ENABLE_PIDS, msg))
-
-    @Logger
-    def reset_odo(self, skip_queue=False):
-        """reset teensy's odo to (0,0,0)
+    def send_bytes(self, msg: bytes):
+        """
+        Dummy method to send bytes to the device.
+        In the real class, this would handle serial communication.
 
         Args:
-            skip_queue (bool, optional): wether to skip the queue or not. Defaults to False.
+            msg (bytes): The message to send.
         """
-        msg = Command.RESET_POSITION.value
-        if skip_queue:
-            self.insert_in_queue(0, Instruction(Command.RESET_POSITION, msg), True)
-        else:
-            self.append_to_queue(Instruction(Command.RESET_POSITION, msg))
-
-    def set_odo(self, new_odo: Point, *, skip_queue=False):
-        msg = Command.SET_HOME.value + struct.pack(
-            "<fff",
-            float(new_odo.x),
-            float(new_odo.y),
-            float(new_odo.theta if isinstance(new_odo, OrientedPoint) else 0.0),
-        )
-        if skip_queue:
-            self.insert_in_queue(0, Instruction(Command.SET_HOME, msg), True)
-        else:
-            self.append_to_queue(Instruction(Command.SET_HOME, msg))
-
-    def set_pids(
-        self,
-        l_Kp: float,
-        l_Ki: float,
-        l_Kd: float,
-        r_Kp: float,
-        r_Ki: float,
-        r_Kd: float,
-        skip_queue=False,
-    ):
-        msg = Command.SET_PIDS.value + struct.pack(
-            "<ffffff", l_Kp, l_Ki, l_Kd, r_Kp, r_Ki, r_Kd
-        )
-        if skip_queue:
-            self.queue.insert(0, Instruction(Command.SET_PIDS, msg))
-        else:
-            self.append_to_queue(Instruction(Command.SET_PIDS, msg))
+        # No real sending performed; simply log the attempt.
+        self.logger.log(f"[DUMMY] Sending bytes: {msg.hex()}", LogLevels.INFO)

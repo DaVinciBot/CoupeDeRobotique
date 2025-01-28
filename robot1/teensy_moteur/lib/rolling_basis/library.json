@@ -1,11 +1,8 @@
 {
     "name": "rolling_basis",
     "version": "1.0.0",
-    "description": "Library dedicated to the rooling basis",
-    "keywords": "motors_driver",
-    "dependencies": {
-        "paulstoffregen/Encoder": "^1.4.2"
-    },
+    "description": "Library dedicated to the rolling basis",
+    "keywords": "rolling_basis",
     "frameworks": "*",
     "platforms": "*"
   }

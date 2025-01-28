@@ -1,4 +1,12 @@
-from utils.utils import Utils
+# ====== Imports ======
+# Standard library imports
+import os
+import types
+import functools
+
+from datetime import datetime
+
+# Internal project imports
 from logger.log_tools import (
     LogLevels,
     STYLES,
@@ -7,9 +15,8 @@ from logger.log_tools import (
     strip_ANSI,
 )
 
-import os, types, functools
 
-
+# ====== Class Part ======
 class Logger:
     """
     Log dans un fichier (logs/YYYY-MM-DD.log) + sortie standard
@@ -17,15 +24,15 @@ class Logger:
     """
 
     def __init__(
-        self,
-        func=None,
-        *,
-        identifier: str = "unknown",
-        decorator_level: LogLevels = LogLevels.DEBUG,
-        print_log_level: LogLevels = LogLevels.INFO,
-        file_log_level: LogLevels = LogLevels.DEBUG,
-        print_log: bool = True,
-        write_to_file: bool = True,
+            self,
+            func=None,
+            *,
+            identifier: str = "unknown",
+            decorator_level: LogLevels = LogLevels.DEBUG,
+            print_log_level: LogLevels = LogLevels.INFO,
+            file_log_level: LogLevels = LogLevels.DEBUG,
+            print_log: bool = True,
+            write_to_file: bool = True,
     ):
         """
         Logger init, ignore func and level param (for decorator)
@@ -51,7 +58,7 @@ class Logger:
         self.write_to_file = write_to_file
 
         os.mkdir("logs") if not os.path.isdir("logs") else None
-        date = Utils.get_date()
+        date = datetime.now()
         self.log_file = f"{date.strftime('%Y-%m-%d')}.log"
 
         if func is None:
@@ -63,45 +70,45 @@ class Logger:
             )
 
     def message_factory(
-        self,
-        date_str: str,
-        level: LogLevels,
-        message: str,
-        identifier_override: str | None = None,
+            self,
+            date_str: str,
+            level: LogLevels,
+            message: str,
+            identifier_override: str | None = None,
     ) -> str:
 
         return (
-            (style(date_str, STYLES.DATE))
-            + " -> ["
-            + (
-                style(
-                    (
-                        center_and_limit(self.identifier, self.identifier_width)
-                        if identifier_override is None
-                        else center_and_limit(
-                            identifier_override, self.identifier_width
-                        )
-                    ),
-                    STYLES.IDENTIFIER,
+                (style(date_str, STYLES.DATE))
+                + " -> ["
+                + (
+                    style(
+                        (
+                            center_and_limit(self.identifier, self.identifier_width)
+                            if identifier_override is None
+                            else center_and_limit(
+                                identifier_override, self.identifier_width
+                            )
+                        ),
+                        STYLES.IDENTIFIER,
+                    )
                 )
-            )
-            + "] "
-            + (
-                style(
-                    level.name.center(self.log_level_width),
-                    STYLES.LogLevelsColorsDict[level],
+                + "] "
+                + (
+                    style(
+                        level.name.center(self.log_level_width),
+                        STYLES.LogLevelsColorsDict[level],
+                    )
                 )
-            )
-            + " | "
-            + (style(message, STYLES.MESSAGE))
+                + " | "
+                + (style(message, STYLES.MESSAGE))
         )
 
     def log(
-        self,
-        message: str,
-        level: LogLevels = LogLevels.WARNING,
-        led_strip=None,
-        identifier_override: str | None = None,
+            self,
+            message: str,
+            level: LogLevels = LogLevels.WARNING,
+            led_strip=None,
+            identifier_override: str | None = None,
     ) -> None:
         """
         Log un message dans le fichier de log et dans la sortie standard
@@ -111,7 +118,7 @@ class Logger:
         :type level: int, optional
         """
 
-        date_str = Utils.get_str_date()
+        date_str = datetime.now().strftime("%H:%M:%S.%f")
 
         # Evaluate the str(message) value manually to make sure no weird operators happen
         message_str = self.message_factory(
@@ -167,3 +174,15 @@ class Logger:
         if obj is None:
             return self
         return types.MethodType(self, obj)
+
+
+class DummyLogger(Logger):
+    def __init__(self, identifier="DummyLogger") -> None:
+        super().__init__(
+            identifier=identifier,
+            decorator_level=LogLevels.DEBUG,
+            print_log_level=LogLevels.INFO,
+            file_log_level=LogLevels.FATAL,
+            print_log=True,
+            write_to_file=False,
+        )

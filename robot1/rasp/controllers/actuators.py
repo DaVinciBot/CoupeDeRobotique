@@ -148,7 +148,9 @@ class Actuators(Teensy):
         self.send_bytes(msg_)
 
     @Logger
-    async def lcd_print(self, msg: str, nb_col: int = 16, nb_line: int = 2, adress = 0x27) -> None:
+    async def lcd_print(
+        self, msg: str, nb_col: int = 16, nb_line: int = 2, adress=0x27
+    ) -> None:
         """Display a message on the LCD screen.
 
         Args:
@@ -162,7 +164,7 @@ class Actuators(Teensy):
             )
             msg = msg[: nb_col * nb_line]
         if not self.is_lcd_declared:
-            await self.lcd_init(nb_col=nb_col, nb_line=nb_line, adress = adress)
+            await self.lcd_init(nb_col=nb_col, nb_line=nb_line, adress=adress)
             await asyncio.sleep(CONFIG.MINIMUM_DELAY)
         msg_ = self.Command.Lcd_print + struct.pack(f"<{len(msg)+1}s", msg + b"\0")
         self.send_bytes(msg_)

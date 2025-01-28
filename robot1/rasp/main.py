@@ -5,58 +5,76 @@ import math
 # Import from common
 from WS_comms import WServer, WServerRouteManager, WSender, WSreceiver, WSmsg
 from logger import Logger, LogLevels
-from geometry import OrientedPoint
-from led_strip import LEDStrip
-from arena import MarsArena
-from GPIO import PIN
+from arena import ShowArena
 
 # Import from local path
 from brains import MainBrain
-from controllers import RollingBasis, Actuators
-from sensors import Lidar
+from controllers import RollingBasis, RollingBasisDummy
+from movement_manager import MovementManager
+from sensors import LidarDummy, Lidar
 
 if __name__ == "__main__":
     """
     ###--- Initialization ---###
     """
-    # State strip leds
-    leds = LEDStrip(**CONFIG.LED_STRIP_CONFIG)
-
     # Loggers
+    # System-Part loggers
     logger_ws_server = Logger(
-        identifier="ws_server",
+        identifier="WS_Server",
         decorator_level=LogLevels.INFO,
         print_log_level=LogLevels.DEBUG,
         file_log_level=LogLevels.DEBUG,
     )
     logger_brain = Logger(
-        identifier="brain",
+        identifier="Brain",
         decorator_level=LogLevels.INFO,
         print_log_level=LogLevels.DEBUG,
         file_log_level=LogLevels.DEBUG,
     )
+    # Controllers loggers
     logger_rolling_basis = Logger(
-        identifier="rolling_basis",
+        identifier="RollingBasis",
         decorator_level=LogLevels.INFO,
         print_log_level=LogLevels.DEBUG,
         file_log_level=LogLevels.DEBUG,
     )
-    logger_actuators = Logger(
-        identifier="actuators",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
-    )
-    logger_arena = Logger(
-        identifier="arena",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
-    )
+    # Sensors loggers
     logger_lidar = Logger(
-        identifier="lidar",
+        identifier="LiDAR",
         decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.CRITICAL,
+        print_log_level=LogLevels.DEBUG,
+        file_log_level=LogLevels.DEBUG,
+    )
+    # Environment loggers
+    logger_grid_manager = Logger(
+        identifier="GridManager",
+        decorator_level=LogLevels.INFO,
+        print_log_level=LogLevels.INFO,
+        file_log_level=LogLevels.DEBUG,
+    )
+    logger_show_arena = Logger(
+        identifier="ShowArena",
+        decorator_level=LogLevels.INFO,
+        print_log_level=LogLevels.DEBUG,
+        file_log_level=LogLevels.DEBUG,
+    )
+    # Movement loggers
+    logger_rolling_basis_handler = Logger(
+        identifier="RollingBasisHandler",
+        decorator_level=LogLevels.INFO,
+        print_log_level=LogLevels.DEBUG,
+        file_log_level=LogLevels.DEBUG,
+    )
+    logger_path_finder = Logger(
+        identifier="PathFinder",
+        decorator_level=LogLevels.INFO,
+        print_log_level=LogLevels.DEBUG,
+        file_log_level=LogLevels.DEBUG,
+    )
+    logger_movement_manager = Logger(
+        identifier="MovementManager",
+        decorator_level=LogLevels.INFO,
+        print_log_level=LogLevels.DEBUG,
         file_log_level=LogLevels.DEBUG,
     )
 
@@ -65,25 +83,23 @@ if __name__ == "__main__":
         logger=logger_ws_server,
         host=CONFIG.WS_HOSTNAME,
         port=CONFIG.WS_PORT,
-        ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,
+        ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,  # TODO: je crois que ça marche pas cette feature
     )
-
     # Routes
     ws_cmd = WServerRouteManager(
         WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
     )
-    ws_pami = WServerRouteManager(
-        WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
-    )
-    ws_log = WServerRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
-
-    # Add routes
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
-    ws_server.add_route_handler(CONFIG.WS_PAMI_ROUTE, ws_pami)
-    ws_server.add_route_handler(CONFIG.WS_LOG_ROUTE, ws_log)
 
+    # Controllers
+    # Rolling Basis
+    # rolling_basis = RollingBasis(logger=logger_rolling_basis)
+    rolling_basis = RollingBasisDummy(logger=logger_rolling_basis)
+
+    # Sensors
     # Lidar
-    lidar = Lidar(
+    # lidar = Lidar(logger=logger_lidar)
+    lidar = LidarDummy(
         logger=logger_lidar,
         min_angle=CONFIG.LIDAR_MIN_ANGLE,
         max_angle=CONFIG.LIDAR_MAX_ANGLE,
@@ -92,35 +108,35 @@ if __name__ == "__main__":
         min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
     )
 
-    # Jack
-    jack_pin = PIN(CONFIG.JACK_PIN)
-    jack_pin.setup("input_pulldown", reverse_state=True)
+    # Environment
+    # Arena
+    arena = ShowArena(
+        logger=logger_show_arena,
+        border_buffer=2,
+        obstacle_buffer=1,
+        chunk_size=5,
+        forbidden_cover_threshold=0.1,
+        grid_manager_logger=logger_grid_manager,
+    )
 
-    # Team switch
-    team_switch = PIN(CONFIG.TEAM_SWITCH_PIN)
-    team_switch.setup("input_pulldown", reverse_state=True)
-
-    # Robot
-    rolling_basis = RollingBasis(logger=logger_rolling_basis)
-    rolling_basis.stop_and_clear_queue()
-    rolling_basis.set_pids(30.0, 0.0, 0.4, 30.0, 0.0, 0.4)
-
-    # Actuators
-    actuators = Actuators(logger=logger_actuators)
+    # Movement
+    # Movement Manager
+    movement_manager = MovementManager(
+        logger=logger_movement_manager,
+        rolling_basis_handler_logger=logger_rolling_basis_handler,
+        path_finder_logger=logger_path_finder,
+        movement_resolution=1,
+        arena=arena,
+    )
 
     # Brain
-    leds.set_is_ready()
     brain = MainBrain(
-        actuators=actuators,
         logger=logger_brain,
-        ws_cmd=ws_cmd,
-        ws_pami=ws_pami,
         rolling_basis=rolling_basis,
         lidar=lidar,
-        logger_arena=logger_arena,
-        jack=jack_pin,
-        team_switch=team_switch,
-        leds=leds,
+        arena=arena,
+        movement_manager=movement_manager,
+        ws_cmd=ws_cmd,
     )
 
     """

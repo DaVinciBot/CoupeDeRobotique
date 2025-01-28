@@ -1,936 +1,244 @@
+from config_loader import CONFIG
+
 # External imports
 import asyncio
 import time
-import math
-from dataclasses import dataclass
 
 # Import from common
-from config_loader import CONFIG
 from brain import Brain
 
 from WS_comms import WSmsg, WSclientRouteManager, WServerRouteManager
-from geometry import OrientedPoint, Point, distance, Polygon
-from arena import MarsArena, Plants_zone
+from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
+
 from logger import Logger, LogLevels
-from led_strip import LEDStrip
+import math
 from utils import Utils
-from GPIO import PIN
+import matplotlib.pyplot as plt
+import time
+import numpy as np
+import random
 
 # Import from local path
-from utils import LidarMode, AntiCollisionHandle, GoToResult
-from controllers import RollingBasis, Actuators
-from sensors import Lidar
+from controllers import RollingBasis, RollingBasisDummy
 
-
-@dataclass
-class Objective:
-    task: str  # objective type ("pickup","drop_to_zone","drop_to_gardener")
-    target_index: int  # index of the target
-    time_estimate: float = -1.0  # time estimate (won't try if it's too late)
-    elevator_after: str = ""
-
-    def __str__(self):
-        r = f"{self.task}, at {self.target_index}, estimated time: {self.time_estimate}"
-        match self.elevator_after:
-            case "top":
-                r += ", then raising elevator for next objective"
-            case "bottom":
-                r += ", then lowering elevator for next objective"
-            case "intermediate":
-                r += ", then setting elevator to intermediate position"
-            case _:
-                r += ", then nothing"
-        return r
-
-    def enough_time(self, start_time) -> bool:
-
-        if (
-            Utils.get_ts() + self.time_estimate - start_time > 80
-            and self.time_estimate > 0
-        ):
-            return False
-        return True
-
-    def is_interesting(self, arena) -> bool:
-        return not (
-            (self.task == "pickup")
-            and arena.pickup_zones[self.target_index].visited
-            and arena.pickup_zones[self.target_index].nb_plant
-            < CONFIG.ARENA_CONFIG["limit_plant_pickup"]
-        )
-
-    def evaluate(self, start_time, arena) -> bool:
-        return self.enough_time(start_time) and self.is_interesting(arena)
+from path_finding import PathFinder
+from arena import ShowArena
+from rolling_basis_handler import RollingBasisHandler, RollingBasisCommand
+from movement_manager import MovementManager, GoToParams
+from rolling_basis_handler import SpeedProfile
+from sensors import Lidar, LidarDummy
 
 
 class MainBrain(Brain):
-    """
-    This brain is the main controller of ROB (robot1).
-    """
-
-    # Controllers functions
-    from brains.controllers_brain import (
-        deploy_god_hand,
-        undeploy_god_hand,
-        open_god_hand,
-        slow_open_god_hand,
-        close_god_hand,
-        go_best_zone,
-        god_hand_demo,
-        smart_go_to,
-        vertical_god_hand,
-        deploy_right_solar_panel,
-        undeploy_right_solar_panel,
-        deploy_left_solar_panel,
-        undeploy_left_solar_panel,
-        deploy_team_solar_panel,
-        undeploy_team_solar_panel,
-        handle_acs,
-        elevator_bottom,
-        elevator_intermediate,
-        elevator_top,
-    )
-
-    # Sensors functions
-    from brains.sensors_brain import (
-        compute_ennemy_position,
-        pol_to_abs_cart,
-        get_ennemy_angle,
-    )
-
-    # Com functions
-    from brains.com_brain import zombie_mode
-
-    # Init the brain
     def __init__(
-        self,
-        logger: Logger,
-        ws_cmd: WServerRouteManager,
-        ws_pami: WServerRouteManager,
-        actuators: Actuators,
-        rolling_basis: RollingBasis,
-        lidar: Lidar,
-        logger_arena: Logger,
-        jack: PIN,
-        team_switch: PIN,
-        leds: LEDStrip,
+            self,
+            logger: Logger,
+            # Controllers
+            rolling_basis: RollingBasis | RollingBasisDummy,
+            # Sensors
+            lidar: Lidar | LidarDummy,
+            # Environment
+            arena: ShowArena,
+            # Movement
+            movement_manager: MovementManager,
+            # WS routes
+            ws_cmd: WServerRouteManager,
     ) -> None:
-        self.anticollision_mode: LidarMode = LidarMode(CONFIG.ANTICOLLISION_MODE)
-        self.anticollision_handle: AntiCollisionHandle = AntiCollisionHandle(
-            CONFIG.ANTICOLLISION_HANDLE
-        )
+        if isinstance(rolling_basis, RollingBasisDummy):
+            logger.log("RollingBasisDummy is used", LogLevels.WARNING)
 
-        # Save this for later use (when re-creating the arena)
-        self.logger_arena: Logger
+        # Controllers
+        self.rolling_basis: RollingBasis = rolling_basis
+        # Sensors
+        self.lidar: Lidar = lidar
+        # Environment
+        self.arena: ShowArena = arena
+        # Movement
+        self.movement_manager: MovementManager = movement_manager
+        # WS routes
+        self.ws_cmd: WServerRouteManager = ws_cmd
 
-        self.rolling_basis: RollingBasis
-        self.jack: PIN
-        self.leds: LEDStrip
-        self.team_switch: PIN
-        self.actuators: Actuators
-
-        # Init the brain
         super().__init__(logger, self)
 
-        # A default, almost dummy starting situation
-        self.team = CONFIG.DEFAULT_TEAM
-        self.arena: MarsArena = self.generate_up_to_date_arena()
-        self.reset_odo_to_start()
+        # Attributes for the visualization
+        self.fig, self.ax = plt.subplots()
 
-        # The regularly updated variable to estimate time left
-        self.return_eta: float = -1.0
-
-        self.score_estimate: int = 0
-        self.leds.set_score(self.score_estimate)
-
-        self.start_time = -1
-
-        self.logger.log(
-            f"Mode: {'zombie' if CONFIG.ZOMBIE_MODE else 'game'}", LogLevels.INFO
+        # For testing
+        # self.enemy_point_generator = random_point_generator(
+        #     start_point=OrientedPoint(280, 180, 0),
+        #     step_size=30.0
+        # )
+        self.enemy_point_generator = straight_line_generator(
+            start_point=OrientedPoint(280, 93, 0),
+            end_point=OrientedPoint(23, 135, 0),
+            step_size=3.0,
         )
 
-    """
-        Tasks
-    """
+        # TMP for test purpose
+        self.lidar_scan_polars = self.lidar.scan_to_polars()
 
-    @Brain.task(process=False, run_on_start=False)
-    async def setup_actuators(self):
-        await self.undeploy_god_hand()
-        await self.close_god_hand()
-        await self.undeploy_right_solar_panel()
-        await self.undeploy_left_solar_panel()
-        await self.elevator_intermediate()
-        await asyncio.sleep(3)
-        await self.vertical_god_hand()
+    """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=False)
-    async def wait_for_trigger(self):
-        """
-        Waits for a trigger signal from the jack.
-
-        This function continuously checks the state of the jack and waits until it is triggered.
-        While waiting, it shows the team LED and sleeps for 0.1 seconds between each check.
-        Once triggered, it sets the jack LED to True.
-        """
-        # Check jack state
-        self.leds.set_jack(False)
-        false_jacks_in_a_row = 0
-        while false_jacks_in_a_row < 5:
-            if self.jack.safe_digital_read():
-                false_jacks_in_a_row = 0
-            else:
-                false_jacks_in_a_row += 1
-            self.get_team_from_switch()
-            await asyncio.sleep(0.1)
-        self.leds.set_jack(True)
-
-    @Brain.task(process=False, run_on_start=False)
-    async def setup_teams(self):
-        """
-        Asynchronous task to set up teams.
-        This task retrieves the team information from the switch and performs the corresponding setup operations.
-        Parameters:
-            None
-        Returns:
-            None
-        """
-        self.get_team_from_switch()
-
-        start_zone_id = CONFIG.START_INFO_BY_TEAM[self.team]["start_zone_id"]
-        self.logger.log(f"Team {self.team}", LogLevels.INFO)
-
-        self.logger.log(f"Game start, zone chosen: {start_zone_id}", LogLevels.INFO)
-
-        # Arena
-        self.arena = self.generate_up_to_date_arena()
-        self.reset_odo_to_start()
-
-    def reset_odo_to_start(self) -> None:
-        """
-        Resets the odometry to the starting position.
-
-        This method sets the odometry of the robot to the predefined starting position
-        based on the team configuration.
-
-        Parameters:
-            None
-
-        Returns:
-            None
-        """
-        self.rolling_basis.set_odo(
-            OrientedPoint(
-                (
-                    CONFIG.START_INFO_BY_TEAM[self.team]["start_x"],
-                    CONFIG.START_INFO_BY_TEAM[self.team]["start_y"],
-                ),
-                CONFIG.START_INFO_BY_TEAM[self.team]["start_theta"],
-            )
-        )
-
-    def generate_up_to_date_arena(self) -> MarsArena:
-        """
-        Generates an up-to-date MarsArena object based on the current team.
-
-        Returns:
-            MarsArena: The generated MarsArena object.
-        """
-        self.get_team_from_switch()
-        assert isinstance(self.logger_arena, Logger)
-        return MarsArena(
-            CONFIG.START_INFO_BY_TEAM[self.team]["start_zone_id"],
-            logger=self.logger_arena,
-            border_buffer=CONFIG.ARENA_CONFIG["border_buffer"],
-            robot_buffer=CONFIG.ARENA_CONFIG["robot_buffer"],
-        )
-
-    def get_team_from_switch(self) -> None:
-        """
-        Reads the team switch and sets the team attribute accordingly.
-
-        If the team switch is in the ON position, the team attribute is set to CONFIG.TEAM_SWITCH_ON.
-        If the team switch is in the OFF position, the team attribute is set to CONFIG.TEAM_SWITCH_OFF.
-        """
-        if self.team_switch.digital_read():
-            self.team = CONFIG.TEAM_SWITCH_ON
-        else:
-            self.team = CONFIG.TEAM_SWITCH_OFF
-
-        self.leds.set_team(self.team)
-
-    @Brain.task(process=False, run_on_start=not CONFIG.ZOMBIE_MODE)
-    async def game(self):
-        """
-        Executes the main game logic.
-        This method performs the following steps:
-        1. Sets the start time.
-        2. Sets up the actuators.
-        3. Waits for the jack trigger.
-        4. Starts a time bomb task to kill rolling_basis and everything else in 90 seconds.
-        5. Sets up the teams.
-        6. Waits for 0.5 seconds.
-        7. Starts the solar panels stage and controls the solar panels.
-        8. Undeploys the team's solar panel.
-        9. Performs the drift maneuver.
-        10. Starts the plant stage.
-        11. Goes to the regular endzone if needed.
-        12. Performs the clean up.
-        13. Ends the game.
-        Note: This method is an asynchronous method.
-        """
-        self.start_time = Utils.get_ts()
-        await self.setup_actuators()
-
-        self.logger.log("Waiting for jack trigger...", LogLevels.INFO, self.leds)
-
-        await self.wait_for_trigger()
-
-        self.start_time = Utils.get_ts()
-        # No matter what, kill rolling_basis ans everything else in 90s
-        asyncio.create_task(self.time_bomb(90))
-
-        await self.setup_teams()
-
-        await asyncio.sleep(0.5)
-
-        # Solar panels stage
-        # During solar panel stage, if we see an enemy we stop and exit solar panel stage to do the plant stage
-        self.anticollision_handle = AntiCollisionHandle.DO_NOTHING
-        solar_panel_control = asyncio.create_task(self.control_solar_panels())
-        self.logger.log("Starting solar panels stage...", LogLevels.INFO, self.leds)
-        await self.solar_panels_stage()
-        solar_panel_control.cancel()
-        await self.undeploy_team_solar_panel()
-
-        # Virage contre le mur
-        # Set the anti-collision mode to disable to avoid stopping the robot by ACS triggered
-        self.anticollision_mode: LidarMode = LidarMode.DISABLED
-        await self.drift()
-
-        # Plant Stage
-        self.logger.log(
-            "Starting plant stage and solar panels control...",
-            LogLevels.INFO,
-            self.leds,
-        )
-        # Reset the anti-collision handle and mode to config value
-        self.anticollision_handle = AntiCollisionHandle(CONFIG.ANTICOLLISION_HANDLE)
-        self.anticollision_mode = LidarMode(CONFIG.ANTICOLLISION_MODE)
-        await self.plant_stage()
-
-        self.logger.log("Going to regular endzone if needed", LogLevels.INFO)
-        await self.go_to_endzone()
-
-        # Clean up
-        self.logger.log("Game over", LogLevels.INFO, self.leds)
-        await self.endgame()
-        exit()
-
-    async def time_bomb(self, time_until_forced_endgame):
-        """
-        Sleeps for the specified time and then triggers the endgame.
-
-        Args:
-            time_until_forced_endgame (float): The time in seconds until the endgame is triggered.
-
-        Returns:
-            None
-        """
-        await asyncio.sleep(time_until_forced_endgame)
-        self.logger.log("Bombing rolling basis", LogLevels.WARNING)
-        await self.endgame()
-
-    @Brain.task(process=False, run_on_start=False, timeout=10)
-    async def drift(self):
-        """
-        Drifts the robot by moving it to a specified point and then moving it relative to that point.
-
-        Args:
-            self: The instance of the class.
-
-        Returns:
-            None
-        """
-        self.rolling_basis.stop_and_clear_queue()
-        self.logger.log("Drift backward move.", LogLevels.INFO)
-        await self.rolling_basis.go_to_and_wait(
-            Point(-15, 0),
-            timeout=2.5,
-            **CONFIG.GO_TO_PROFILES["slow_and_precise"],
-            forward=False,
-            relative=True,
-        )
-        distance = 5
-        angle = (-1 if self.team == "y" else 1) * math.pi / 6
-        self.logger.log("Drift rotation move.", LogLevels.INFO)
-        if (
-            await self.rolling_basis.go_to_and_wait(
-                Point(
-                    distance * math.cos(angle),
-                    distance * math.sin(angle),
-                ),
-                relative=True,
-                **CONFIG.GO_TO_PROFILES["plant_approach"],
-                timeout=2,
-            )
-        ) == GoToResult.TIMEOUT:
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
+    async def handle_rolling_basis_for_go_to(self) -> None:
+        cmd: RollingBasisCommand = self.movement_manager.handle_go_to()
+        if cmd is not None:
+            self.rolling_basis.set_speed_and_position(*cmd.get_command())
             self.logger.log(
-                "Drift rotation failed -> try to move forward.", LogLevels.INFO
-            )
-            await self.rolling_basis.go_to_and_wait(
-                Point(
-                    10,
-                    0,
-                ),
-                relative=True,
-                **CONFIG.GO_TO_PROFILES["plant_approach"],
-                timeout=1.5,
+                f"RollingBasisCommand: {cmd.get_command()}", LogLevels.DEBUG
             )
 
-    @Brain.task(process=False, run_on_start=False)
-    async def go_to_endzone(self):
-        """
-        Go to the endzone.
-
-        This method calculates the target location and moves the robot to the endzone.
-        If the robot is already in the endzone, it does nothing.
-        If the robot is not in the endzone, it checks if the target location is within the custom return zone.
-        If it is, the robot moves to the custom return zone without blocking pami.
-        If it is not, the robot stops and clears the queue, then moves to the target location using the plant_approach profile.
-
-        Args:
-            self: The instance of the class.
-
-        Returns:
-            None
-        """
-        already_there, target = self.compute_return_target()
-
-        if not already_there:
-            if self.arena.drop_zones[2 if self.team == "y" else 5].zone.contains(
-                target
-            ):
-                # Custom return to let PAMIs do their thing
-                self.logger.log("Going to custom endzone", LogLevels.INFO)
-                custom_return_zone = self.arena.drop_zones[
-                    2 if self.team == "y" else 5
-                ].zone
-                await self.smart_go_to(
-                    Point(
-                        custom_return_zone.bounds[0],
-                        custom_return_zone.bounds[3 if self.team == "y" else 1],
-                    )
-                )
-            else:  # Regular operation
-                self.rolling_basis.stop_and_clear_queue()
-                await self.smart_go_to(
-                    target,
-                    **CONFIG.GO_TO_PROFILES["plant_approach"],
-                )
-
-    def show_team_led(self):
-        """
-        Displays the team LED based on the team obtained from the switch.
-        """
-        self.get_team_from_switch()
-        self.leds.set_team(self.team)
-
-    def show_team_lcd(self):
-        """
-        Displays the team name on the LCD screen.
-
-        This method retrieves the team name from the switch and prints it on the LCD screen using the `lcd_print` method of the `actuators` object.
-
-        Parameters:
-        - self: The current instance of the class.
-
-        Returns:
-        - None
-        """
-        self.get_team_from_switch()
-        asyncio.create_task(self.actuators.lcd_print(f"Team : {self.team}"))
-
-    async def undeploy_all(self):
-        asyncio.create_task(self.close_god_hand())
-        asyncio.create_task(self.vertical_god_hand())
-        asyncio.create_task(self.undeploy_left_solar_panel())
-        asyncio.create_task(self.undeploy_right_solar_panel())
-
-    async def back_and_forth(self, distance: float = 50.0):
-        """
-        Moves the robot back and forth in a straight line.
-
-        Args:
-            distance (float): The distance to travel in millimeters. Default is 50.0.
-
-        Note: useful to move plants' pot to not hinder the robot's movement
-
-        Returns:
-            None
-        """
-        await self.rolling_basis.go_to_and_wait(
-            Point(distance, 0.0),
-            forward=True,
-            max_speed=160,
-            next_position_delay=100,
-            action_error_auth=100,
-            traj_precision=50,
-            correction_trajectory_speed=0,
-            acceleration_start_speed=160,
-            acceleration_distance=0,
-            deceleration_end_speed=160,
-            deceleration_distance=0,
-            relative=True,
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
+    async def update_arena(self) -> None:
+        self.lidar_scan_polars = self.lidar.scan_to_polars()
+        self.arena.update(
+            ally_position=self.rolling_basis.odometrie,
+            lidar_scan_polars=self.lidar_scan_polars,
+            enemy_position=next(self.enemy_point_generator),
+            optimized_update=True,
         )
 
-        await asyncio.sleep(2)
-        await self.rolling_basis.go_to_and_wait(
-            Point(-distance, 0.0),
-            forward=True,
-            max_speed=160,
-            next_position_delay=100,
-            action_error_auth=100,
-            traj_precision=50,
-            correction_trajectory_speed=0,
-            acceleration_start_speed=160,
-            acceleration_distance=0,
-            deceleration_end_speed=160,
-            deceleration_distance=0,
-            relative=True,
-        )
-
-    async def endgame(self):
-        # Keep kill_rolling_basis outside a try to be absolutely sure to get to it
-        try:
-            if self.rolling_basis != None:
-                # Open and deploy god hand, to macimize odds of being in home zone and to let go af any plant still held by accident
-                asyncio.create_task(self.deploy_god_hand())
-                asyncio.create_task(self.open_god_hand())
-                asyncio.create_task(self.elevator_bottom())
-                if self.compute_return_target()[0] == True:
-                    self.score_estimate += (
-                        10  # For going to a safe zone that isn't the starting one
-                    )
-                    self.leds.set_score(self.score_estimate)
-                    self.logger.log(
-                        "Scored 10 for going to a safe zone that isn't the starting one",
-                        LogLevels.DEBUG,
-                    )
-                elif (
-                    self.arena.drop_zones[0 if self.team == "y" else 3].zone.contains(
-                        self.rolling_basis.odometrie
-                    )
-                    and self.score_estimate > 0
-                ):
-                    self.score_estimate += (
-                        5  # For going to a safe zone but the wrong one
-                    )
-                    self.logger.log(
-                        "Scored 5 for going to the starting zone (after leaving)",
-                        LogLevels.DEBUG,
-                    )
-                    self.leds.set_score(self.score_estimate)
-                self.score_estimate += 5  # Pami
-                self.leds.set_score(self.score_estimate)
-                self.logger.log("Scored 5 from PAMI (hopefully)", LogLevels.DEBUG)
-
-                self.logger.log(
-                    f"Displaying total score: {self.score_estimate}", LogLevels.DEBUG
-                )
-                self.leds.set_score(self.score_estimate)
-                asyncio.create_task(
-                    self.actuators.lcd_print(f"Score: {self.score_estimate}")
-                )
-            else:
-                self.logger.log(
-                    "Called endgame but rolling basis is already None so skipping (to avoid doubel counting points)"
-                )
-        except Exception:
-            pass
-        finally:
-            await self.kill_rolling_basis()
-
-    async def god_hand_timer(self, time_to_close: float):
-        await asyncio.sleep(time_to_close)
-        await self.close_god_hand()
-
-    async def smart_close_god_hand(self, plant_zone: Polygon):
-        """
-        Closes the god hand when the robot is inside the specified plant zone.
-
-        Args:
-            plant_zone (Polygon): The plant zone represented as a Polygon object.
-
-        Returns:
-            None
-        """
-        is_in_plant_zone = False
-        while True:
-            is_near_plant_zone = (
-                distance(plant_zone.centroid, self.rolling_basis.odometrie) < 10
-            )
-            is_far_plant_zone = (
-                distance(plant_zone.centroid, self.rolling_basis.odometrie) > 2
-            )
-
-            if is_near_plant_zone:
-                is_in_plant_zone = True
-
-            # We have passthrough the plant zone
-            if is_in_plant_zone and is_far_plant_zone:
-                self.logger.log(
-                    "Smart close god hand: passthrough the plant zone, closing god hand",
-                    LogLevels.INFO,
-                )
-                await self.close_god_hand()
-                break
-            await asyncio.sleep(0.1)
-
-    @Logger
-    async def go_and_pickup(
-        self,
-        target_pickup_zone: Plants_zone,
-    ) -> None:
-
-        asyncio.create_task(self.deploy_god_hand())
-        asyncio.create_task(self.open_god_hand())
-
-        pickup_target = self.arena.compute_go_to_destination(
-            start_point=self.rolling_basis.odometrie,
-            zone=target_pickup_zone.zone,
-            delta=-20,
-        )
-
-        # Passthrough the target plant zone and pickup plants
-        god_hand_closing_task = asyncio.create_task(
-            self.smart_close_god_hand(target_pickup_zone.zone)
-        )
-
-        asyncio.create_task(self.elevator_bottom())
-
-        await self.smart_go_to(
-            position=pickup_target,
-            timeout=15,
-            **CONFIG.GO_TO_PROFILES["plant_approach"],
-        )
-        god_hand_closing_task.cancel()
-
-        # Account for removed plants
-        target_pickup_zone.take_plants(5)
-
-    @Logger
-    async def go_and_drop_to_zone(self, target_drop_zone: Plants_zone) -> None:
-
-        target = self.arena.compute_go_to_destination(
-            start_point=self.rolling_basis.odometrie,
-            zone=target_drop_zone.zone,
-            delta=20,
-        )
-
-        r = await self.smart_go_to(
-            position=target,
-            timeout=15,
-            **CONFIG.GO_TO_PROFILES["plant_approach"],
-        )
-
-        # Drop plants
-        asyncio.create_task(self.deploy_god_hand())
-        await asyncio.sleep(0.1)
-        asyncio.create_task(self.open_god_hand())
-
-        # Account for removed plants
-        target_drop_zone.drop_plants(5)
-
-        if r == GoToResult.SUCCESS:
-            # Step back
-            await self.smart_go_to(
-                Point(-30, 0),
-                timeout=5,
-                forward=False,
-                **CONFIG.GO_TO_PROFILES["plant_pickup"],
-                relative=True,
-            )
-
-    @Logger
-    async def go_and_drop_to_gardener(self, target_gardener: Plants_zone) -> None:
-        # WARNING: only fit for the top gardeners
-        approach_target: Point = Point(
-            200 - CONFIG.ARENA_CONFIG["robot_buffer_with_god_hand_deployed"],
-            target_gardener.zone.centroid.y,
-        )
-        self.logger.log("Start gardener approach", LogLevels.INFO)
-        result = await self.smart_go_to(
-            approach_target, **CONFIG.GO_TO_PROFILES["garden_approach"], timeout=10
-        )
-        self.logger.log(f"Start gardener approach result: {result}", LogLevels.INFO)
-        if result == GoToResult.SUCCESS:
-            self.logger.log(
-                "Gardener approach success, get good orientation with the wall and go forward",
-                LogLevels.INFO,
-            )
-            final_target: Point = Point(
-                200 - 10, self.rolling_basis.odometrie.y
-            )  # To make sure to be orthogonal to the wall, use a relative y
-
-            if await self.smart_go_to(
-                final_target,
-                **CONFIG.GO_TO_PROFILES["slow_and_precise"],
-                timeout=4,
-            ) in [GoToResult.SUCCESS, GoToResult.TIMEOUT]:
-                self.logger.log("Gardener plant dropping", LogLevels.INFO)
-                await self.deploy_god_hand()
-                await self.elevator_intermediate()
-                await self.slow_open_god_hand(10)
-
-                target_gardener.drop_plants(5)
-
-            else:
-                self.logger.log("Gardener approach failed", LogLevels.INFO)
-                await self.deploy_god_hand()
-                await self.elevator_bottom()
-                await self.slow_open_god_hand(10)
-
-            # Step back
-            self.logger.log("Gardener backward", LogLevels.INFO)
-            await self.smart_go_to(
-                Point(-CONFIG.ARENA_CONFIG["robot_buffer"], 0),
-                timeout=5,
-                forward=False,
-                relative=True,
-                **CONFIG.GO_TO_PROFILES["plant_pickup"],
-            )
-
-    async def engage_objective(self, objective: Objective):
-        match objective.task:
-            case "pickup":
-                self.logger.log(
-                    f"Going to pickup zone {objective.target_index}",
-                    LogLevels.INFO,
-                    self.leds,
-                )
-
-                await self.go_and_pickup(
-                    self.arena.pickup_zones[objective.target_index]
-                )
-
-                if not (objective.elevator_after in ["top", "intermediate"]):
-                    asyncio.create_task(self.undeploy_god_hand())
-
-            case "drop_to_zone":
-                self.logger.log(
-                    f"Going to drop zone {objective.target_index}",
-                    LogLevels.INFO,
-                    self.leds,
-                )
-
-                await self.go_and_drop_to_zone(
-                    self.arena.drop_zones[objective.target_index]
-                )
-                self.score_estimate += 3
-                self.leds.set_score(self.score_estimate)
-                self.logger.log(
-                    f"Scored 3 for dropping to drop_zone {objective.target_index}",
-                    LogLevels.DEBUG,
-                )
-
-            case "drop_to_gardener":
-                self.logger.log(
-                    f"Going to gardener {objective.target_index}",
-                    LogLevels.INFO,
-                    self.leds,
-                )
-
-                await self.go_and_drop_to_gardener(
-                    self.arena.gardeners[objective.target_index]
-                )
-                self.score_estimate += 8
-                self.leds.set_score(self.score_estimate)
-                self.logger.log(
-                    f"Scored 8 for dropping to gardener {objective.target_index}",
-                    LogLevels.DEBUG,
-                )
-
-            case _:
-                raise Exception("Unknown objective type")
-
-        match objective.elevator_after:
-            case "top":
-                asyncio.create_task(self.elevator_top())
-            case "bottom":
-                asyncio.create_task(self.elevator_bottom())
-            case "intermediate":
-                asyncio.create_task(self.elevator_intermediate())
-            case _:
-                asyncio.create_task(self.undeploy_god_hand())
-
-    @Brain.task(process=False, run_on_start=False, timeout=60)
-    async def plant_stage(self):
-        in_yellow_team = self.team == "y"
-
-        await self.deploy_god_hand()
-
-        objectives: list[Objective] = [
-            Objective("pickup", 0 if in_yellow_team else 4, 8.0),  # First zone
-            Objective("drop_to_zone", 2 if in_yellow_team else 5, 10.0),  # First drop
-            Objective(
-                "pickup", 1 if in_yellow_team else 3, 12.0, elevator_after="top"
-            ),  # etc
-            Objective(
-                "drop_to_gardener",
-                2 if in_yellow_team else 5,
-                12.0,
-                elevator_after="bottom",
+        self.ax.clear()
+        self.arena.visualize(
+            display_default_destination_zone=False,
+            trajectory=(
+                self.movement_manager.path_finder.oriented_path_found
+                if self.movement_manager.path_finder is not None
+                else []
             ),
-            Objective("pickup", 3 if in_yellow_team else 1, 8.0),
-            Objective("drop_to_zone", 4 if in_yellow_team else 1, 3.0),
-            # Objective("pickup", 2, 8.0),
-            # Objective("drop_to_zone", 4 if in_yellow_team else 1, 10.0),
-        ]
-        for current_objective in objectives:
+            # Display lidar scan point
+            # display_points=[
+            #     point for point in self.arena._pol_to_abs_cart(self.lidar_scan_polars).geoms
+            # ],
+            plot=(self.ax, self.fig),
+            show=False,
+        )
+        plt.pause(0.01)
+
+    @Brain.task(process=False, run_on_start=CONFIG.ZOMBIE_MODE, refresh_rate=0.5)
+    async def zombie_mode(self):
+        """
+        executes requests received by the server. Use Postman to send request to the server
+        Use eval and await eval to run the code you want. Code must be sent as a string
+        """
+        # Check cmd
+        cmd = await self.ws_cmd.receiver.get()
+
+        if cmd != WSmsg():
             self.logger.log(
-                f"Considering objective: {current_objective}, estimated finishing time: {Utils.get_ts()-self.start_time + current_objective.time_estimate}",
+                f"Zombie instruction {cmd.msg} received: {cmd.data}",
                 LogLevels.INFO,
             )
-            if current_objective.evaluate(self.start_time, self.arena):
-                self.logger.log("Engaging objective", LogLevels.INFO)
-                await self.engage_objective(current_objective)
+
+            if cmd.msg == "eval":
+                instructions = []
+                if isinstance(cmd.data, str):
+                    instructions.append(cmd.data)
+                elif isinstance(cmd.data, list):
+                    instructions = cmd.data
+
+                for instruction in instructions:
+                    if instruction.startswith("await "):
+                        await eval(instruction.removeprefix("await "))
+                    else:
+                        eval(instruction)
+
             else:
-                self.logger.log("Not engaging objective", LogLevels.INFO)
-                break
+                self.logger.log(
+                    f"Command not implemented: {cmd.msg} / {cmd.data}",
+                    LogLevels.WARNING,
+                )
 
-    @Brain.task(process=False, run_on_start=False, timeout=21)
-    async def solar_panels_stage(self) -> None:
-        await asyncio.sleep(0.1)
-        self.rolling_basis.stop_and_clear_queue()
-        await asyncio.sleep(0.1)
-        target_y = (
-            (max(self.arena.solar_panels_y) + 7.0)
-            if self.team == "y"
-            else (min(self.arena.solar_panels_y) - 7.0)
-        )
-
-        async def move(self):
-            go_to_result = await self.smart_go_to(
-                Point(CONFIG.START_INFO_BY_TEAM[self.team]["start_x"], target_y),
-                timeout=15.0,
-                **CONFIG.GO_TO_PROFILES["slow_and_precise"],
-            )
-            self.score_estimate += 1
-            self.leds.set_score(self.score_estimate)
-            self.logger.log(f"Scored 1 for leaving starting zone", LogLevels.DEBUG)
-
-        move_task = asyncio.create_task(move(self))
-
-        self.logger.log("Trying move")
-        await asyncio.sleep(2)
-
-        if (
-            distance(
-                self.rolling_basis.odometrie,
-                Point(
-                    CONFIG.START_INFO_BY_TEAM[self.team]["start_x"],
-                    CONFIG.START_INFO_BY_TEAM[self.team]["start_y"],
-                ),
-            )
-            < 2
-        ):
-            self.logger.log("Failed original move, retrying")
-            move_task.cancel()
-            move_task = asyncio.create_task(move(self))
-        else:
-            self.logger.log("Success original move")
-
-        await move_task
-
-    @Brain.task(process=False, run_on_start=False, timeout=30)
-    async def control_solar_panels(
-        self,
-    ) -> None:
-
-        self.logger.log("Started controlling solar panels", LogLevels.INFO)
-        remaining_solar_panels_y = self.arena.solar_panels_y[:]
-
-        await self.deploy_team_solar_panel(small=True)
-        while len(remaining_solar_panels_y) > 0:
-            await asyncio.sleep(0.05)
-            for i, y in enumerate(remaining_solar_panels_y):
-                if (
-                    0
-                    < (1 if self.team == "y" else -1)
-                    * (self.rolling_basis.odometrie.y - y)
-                    < 15.0
-                ):
-                    remaining_solar_panels_y.pop(i)
-                    await self.deploy_team_solar_panel(
-                        small=(len(remaining_solar_panels_y) > 3)
-                    )
-                    self.score_estimate += 5
-                    self.leds.set_score(self.score_estimate)
-                    self.logger.log(
-                        f"New solar panel done, total score: {self.score_estimate}",
-                        LogLevels.DEBUG,
-                    )
-                    break
-
-    @Brain.task(process=False, run_on_start=not CONFIG.ZOMBIE_MODE, refresh_rate=2)
-    async def update_return_eta(self):
-        already_safe, target = self.compute_return_target()
-
-        if already_safe:
-            self.return_eta = 0
-        else:
-            delta = distance(
-                Point(self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y),
-                target,
-            )
-            self.return_eta = 5 + 0.05 * delta
-
-        self.logger.log(f"Estimated ETA: {self.return_eta}", LogLevels.DEBUG)
-
-    def compute_return_target(self) -> tuple[bool, Point]:
-        sorted_zones = self.arena.sort_drop_zone(
-            self.rolling_basis.odometrie, friendly_only=True, maxi_plants=20
-        )
-
-        picked_zone = (
-            sorted_zones[0]
-            if sorted_zones[0]
-            != self.arena.drop_zones[
-                CONFIG.START_INFO_BY_TEAM[self.team]["start_zone_id"]
-            ]
-            else sorted_zones[1]
-        )
-
-        already_there = (
-            Point(self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y)
-            .buffer(CONFIG.ARENA_CONFIG["robot_buffer"])
-            .intersects(picked_zone.zone)
-        )
-
-        # Compute the target point if not already there
-        if already_there:
-            return already_there, Point(
-                self.rolling_basis.odometrie.x, self.rolling_basis.odometrie.y
-            )
-        else:
-            target_point = self.arena.compute_go_to_destination(
-                self.rolling_basis.odometrie,
-                picked_zone.zone,
-                20.0,
-            )
-            # Modify target point x to be of the opposite side of plants (if we dropped ones)
-            if target_point is not None:
-                target_point = Point(target_point.x + 20, target_point.y)
-            return already_there, target_point
+    """ ### One-Shot Tasks ### """
 
     @Brain.task(process=False, run_on_start=False)
-    async def kill_rolling_basis(self, timeout=-1):
-        if timeout > 0:
-            await asyncio.sleep(timeout)
+    async def initialize(self):
+        self.arena.set_team_color("yellow")
+        self.rolling_basis.odometrie = OrientedPoint(
+            24, 10, 0
+        )  # Assume the robot is at position (24, 10) if begin the match in yellow zone
 
-        self.logger.log("Killing rolling basis", LogLevels.WARNING)
-        self.rolling_basis.stop_and_clear_queue()
-        self.rolling_basis.set_pids(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-        await asyncio.sleep(0.5)
-        self.rolling_basis.stop_and_clear_queue()
-        self.rolling_basis = None
+    @Brain.task(process=False, run_on_start=True)
+    async def main(self):
+        await self.initialize()
+
+        speed_profile: SpeedProfile = SpeedProfile(
+            max_linear_speed=20.0,  # cm/s
+            max_angular_speed=6.0,  # rad/s
+            max_linear_acceleration=3.0,  # cm/s^2
+            max_angular_acceleration=1.0,  # rad/s^2
+            max_linear_deceleration=0.5,  # cm/s^2
+            max_angular_deceleration=1.0,  # rad/s^2
+        )
+        go_to_params = GoToParams(
+            initial_linear_speed=self.rolling_basis.linear_speed,
+            initial_angular_speed=self.rolling_basis.angular_speed,
+            speed_profile=speed_profile,
+            goal=OrientedPoint(250, 140),
+            acs_distance=10,
+            path_finder_recompute_distance=80,
+            timeout=-1.0,
+            is_mandatory=False,
+            smooth_trajectory=True,
+            goal_tolerance=0.1,
+        )
+
+        self.movement_manager.go_to(params=go_to_params)
+
+
+# Only for testing
+def random_point_generator(
+        start_point: OrientedPoint,
+        step_size: float = 10.0,
+        x_limits=(0, 300),
+        y_limits=(0, 200),
+):
+    current_point = start_point
+
+    while True:
+        dx = random.uniform(-step_size, step_size)
+        dy = random.uniform(-step_size, step_size)
+
+        new_x = min(max(current_point.x + dx, x_limits[0]), x_limits[1])
+        new_y = min(max(current_point.y + dy, y_limits[0]), y_limits[1])
+
+        current_point = OrientedPoint(new_x, new_y, current_point.theta)
+
+        yield current_point
+
+
+def straight_line_generator(
+        start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
+):
+    # Calculer la direction du mouvement
+    dx = end_point.x - start_point.x
+    dy = end_point.y - start_point.y
+    d = math.sqrt(dx ** 2 + dy ** 2)
+
+    # Si la distance est nulle, retourner directement le point d'arrivée
+    if d == 0:
+        while True:
+            yield start_point
+
+    # Normaliser le vecteur de direction
+    direction_x = dx / d
+    direction_y = dy / d
+
+    # Générer les points sur la ligne droite
+    current_point = start_point
+    while d > step_size:
+        # Calculer le prochain point
+        new_x = current_point.x + direction_x * step_size
+        new_y = current_point.y + direction_y * step_size
+
+        # Créer un nouveau point avec la même orientation
+        current_point = OrientedPoint(new_x, new_y, current_point.theta)
+
+        # Réduire la distance restante
+        d -= step_size
+
+        yield current_point
+
+    # Une fois arrivé au point final, continuer à renvoyer ce point
+    while True:
+        yield end_point
