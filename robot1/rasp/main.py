@@ -12,6 +12,7 @@ from brains import MainBrain
 from controllers import RollingBasis, RollingBasisDummy
 from movement_manager import MovementManager
 from sensors import LidarDummy, Lidar
+from remote import PS5Remote
 
 if __name__ == "__main__":
     """
@@ -27,55 +28,31 @@ if __name__ == "__main__":
     )
     logger_brain = Logger(
         identifier="Brain",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
     )
     # Controllers loggers
     logger_rolling_basis = Logger(
         identifier="RollingBasis",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
     )
     # Sensors loggers
     logger_lidar = Logger(
         identifier="LiDAR",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
     )
     # Environment loggers
     logger_grid_manager = Logger(
         identifier="GridManager",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.INFO,
-        file_log_level=LogLevels.DEBUG,
     )
     logger_show_arena = Logger(
         identifier="ShowArena",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
     )
     # Movement loggers
     logger_rolling_basis_handler = Logger(
         identifier="RollingBasisHandler",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
     )
     logger_path_finder = Logger(
         identifier="PathFinder",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
     )
     logger_movement_manager = Logger(
         identifier="MovementManager",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
     )
 
     # Websocket server

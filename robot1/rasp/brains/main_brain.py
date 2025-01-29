@@ -27,6 +27,7 @@ from rolling_basis_handler import RollingBasisHandler, RollingBasisCommand
 from movement_manager import MovementManager, GoToParams
 from rolling_basis_handler import SpeedProfile
 from sensors import Lidar, LidarDummy
+from remote import PS5Remote
 
 
 class MainBrain(Brain):
