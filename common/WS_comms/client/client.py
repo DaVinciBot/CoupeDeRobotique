@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 
 from WS_comms.client.client_route import WSclientRouteManager
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 
 
 class WSclient:

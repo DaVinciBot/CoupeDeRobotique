@@ -37,7 +37,7 @@ from geometry import (
 # TODO: a explorer pour optimiser les recherches de zones interdites
 from shapely.strtree import STRtree
 
-from logger import Logger, LogLevels, time_tracker
+from old_logger import Logger, LogLevels, time_tracker
 
 
 # ====== GridManager Class ======

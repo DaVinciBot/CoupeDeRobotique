@@ -5,7 +5,7 @@ from geometry import (
     create_straight_rectangle,
     OrientedPoint,
 )
-from logger import Logger
+from old_logger import Logger
 
 from shapely import distance
 from sys import maxsize

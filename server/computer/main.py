@@ -2,7 +2,7 @@ from config_loader import CONFIG
 
 # Import from common
 from WS_comms import WServer, WServerRouteManager, WSender, WSreceiver, WSmsg
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 from arena import MarsArena
 
 # from video import spawn_video_server

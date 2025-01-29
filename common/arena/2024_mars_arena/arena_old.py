@@ -16,7 +16,7 @@ from geometry import (
     OrientedPoint,
     nearest_points,
 )
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 import numpy as np
 
 

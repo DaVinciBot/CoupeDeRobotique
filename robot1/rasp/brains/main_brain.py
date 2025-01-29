@@ -10,7 +10,7 @@ from brain import Brain
 from WS_comms import WSmsg, WSclientRouteManager, WServerRouteManager
 from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
 
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 import math
 from utils import Utils
 import matplotlib.pyplot as plt

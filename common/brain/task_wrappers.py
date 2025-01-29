@@ -11,7 +11,7 @@ import functools
 from typing import TypeVar, Callable, Any, Coroutine
 
 # ====== Internal Project Imports ======
-from logger import LogLevels
+from old_logger import LogLevels
 from brain.execution_states import ExecutionStates
 from brain.dict_proxy import DictProxyAccessor
 from brain.task_output import TaskOutput

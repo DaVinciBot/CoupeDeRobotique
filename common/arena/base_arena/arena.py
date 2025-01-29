@@ -32,7 +32,7 @@ from geometry import (
     is_empty,
     nearest_points,
 )
-from logger import Logger, LogLevels, time_tracker
+from old_logger import Logger, LogLevels, time_tracker
 from arena.base_arena.grid_manager import GridManager
 from arena.base_arena.arena_zone import (
     # Enums

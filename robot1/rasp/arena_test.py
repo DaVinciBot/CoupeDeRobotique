@@ -34,7 +34,7 @@ from geometry import (
     nearest_points,
     box,
 )
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 
 import asyncio
 

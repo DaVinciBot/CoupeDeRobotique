@@ -14,7 +14,7 @@ from collections import deque
 from enum import Enum, auto
 
 # Internal project imports
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 from arena.base_arena.grid_manager import GridManager
 from utils import Utils
 from geometry import (

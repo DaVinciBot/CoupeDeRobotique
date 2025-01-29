@@ -1,4 +1,3 @@
-from logger.logger import Logger, DummyLogger
-from logger.log_tools import LogLevels, STYLES, style, center_and_limit, strip_ANSI
-from logger.decorators import time_tracker
-from logger.log_analyser import LogAnalyser
+from logger.logger import Logger
+from logger.formatter import Formatter
+from logger.colors import ClassicColors

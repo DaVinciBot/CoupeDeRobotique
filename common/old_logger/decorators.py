@@ -2,8 +2,8 @@ from typing import Callable, Optional
 from functools import wraps
 import time
 
-from logger import LogLevels, Logger
-from logger.constants import TRACK_TIME_STR
+from old_logger import LogLevels, Logger
+from old_logger.constants import TRACK_TIME_STR
 
 
 def time_tracker(get_logger: Optional[Callable] | Logger = None):

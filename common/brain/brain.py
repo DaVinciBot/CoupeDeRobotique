@@ -5,7 +5,7 @@ from types import FrameType
 from typing import TypeVar, Any, Callable
 
 # ====== Internal Project Imports ======
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 
 from brain.task import Task, AsynchronousWrapper
 from brain.dict_proxy import DictProxyAccessor

@@ -1,5 +1,5 @@
 from config_loader import CONFIG
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 from arena import MarsArena
 from geometry import Point
 from controllers import Actuators

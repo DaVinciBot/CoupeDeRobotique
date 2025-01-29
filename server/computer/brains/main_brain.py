@@ -7,7 +7,7 @@ from brain import Brain
 
 from WS_comms import WSmsg, WServerRouteManager
 from geometry import OrientedPoint, Point
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 from arena import MarsArena
 
 # Import from local path
