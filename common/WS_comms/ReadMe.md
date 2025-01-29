@@ -4,8 +4,6 @@ Le module websocket a été développé de manière symétrique entre le côté 
 
 ## Fonctionnement générale
 
-![Untitled](Rapport%20Code%20-%202023%202024%207b70a5453ccd4895b621558a59961887/Untitled%206.png)
-
 Il existe deux objets principaux : Server et Client. Ils sont construits de manière identique. Chacun possède un gestionnaire de routes permettant de gérer l'envoi et la réception de données sur les routes associées. Les gestionnaires de routes utilisent à leur tour deux objets essentiels : le Sender et le Receiver. Ces objets facilitent la gestion de la réception des messages grâce à un système de files d'attente configurable, ainsi que l'envoi de messages.
 
 ## Initialisation
