@@ -31,18 +31,18 @@ from sensors import Lidar, LidarDummy
 
 class MainBrain(Brain):
     def __init__(
-            self,
-            logger: Logger,
-            # Controllers
-            rolling_basis: RollingBasis | RollingBasisDummy,
-            # Sensors
-            lidar: Lidar | LidarDummy,
-            # Environment
-            arena: ShowArena,
-            # Movement
-            movement_manager: MovementManager,
-            # WS routes
-            ws_cmd: WServerRouteManager,
+        self,
+        logger: Logger,
+        # Controllers
+        rolling_basis: RollingBasis | RollingBasisDummy,
+        # Sensors
+        lidar: Lidar | LidarDummy,
+        # Environment
+        arena: ShowArena,
+        # Movement
+        movement_manager: MovementManager,
+        # WS routes
+        ws_cmd: WServerRouteManager,
     ) -> None:
         if isinstance(rolling_basis, RollingBasisDummy):
             logger.log("RollingBasisDummy is used", LogLevels.WARNING)
@@ -79,7 +79,12 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
+    @Brain.task(
+        process=False,
+        run_on_start=True,
+        refresh_rate=0.1,
+        get_is_active_brain=lambda self: self.is_active,
+    )
     async def handle_rolling_basis_for_go_to(self) -> None:
         cmd: RollingBasisCommand = self.movement_manager.handle_go_to()
         if cmd is not None:
@@ -88,7 +93,12 @@ class MainBrain(Brain):
                 f"RollingBasisCommand: {cmd.get_command()}", LogLevels.DEBUG
             )
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
+    @Brain.task(
+        process=False,
+        run_on_start=True,
+        refresh_rate=0.2,
+        get_is_active_brain=lambda self: self.is_active,
+    )
     async def update_arena(self) -> None:
         self.lidar_scan_polars = self.lidar.scan_to_polars()
         self.arena.update(
@@ -115,7 +125,12 @@ class MainBrain(Brain):
         )
         plt.pause(0.01)
 
-    @Brain.task(process=False, run_on_start=CONFIG.ZOMBIE_MODE, refresh_rate=0.5)
+    @Brain.task(
+        process=False,
+        run_on_start=CONFIG.ZOMBIE_MODE,
+        refresh_rate=0.5,
+        get_is_active_brain=lambda self: self.is_active,
+    )
     async def zombie_mode(self):
         """
         executes requests received by the server. Use Postman to send request to the server
@@ -151,14 +166,22 @@ class MainBrain(Brain):
 
     """ ### One-Shot Tasks ### """
 
-    @Brain.task(process=False, run_on_start=False)
+    @Brain.task(
+        process=False,
+        run_on_start=False,
+        get_is_active_brain=lambda self: self.is_active,
+    )
     async def initialize(self):
         self.arena.set_team_color("yellow")
         self.rolling_basis.odometrie = OrientedPoint(
             24, 10, 0
         )  # Assume the robot is at position (24, 10) if begin the match in yellow zone
 
-    @Brain.task(process=False, run_on_start=True)
+    @Brain.task(
+        process=False,
+        run_on_start=True,
+        get_is_active_brain=lambda self: self.is_active,
+    )
     async def main(self):
         await self.initialize()
 
@@ -188,10 +211,10 @@ class MainBrain(Brain):
 
 # Only for testing
 def random_point_generator(
-        start_point: OrientedPoint,
-        step_size: float = 10.0,
-        x_limits=(0, 300),
-        y_limits=(0, 200),
+    start_point: OrientedPoint,
+    step_size: float = 10.0,
+    x_limits=(0, 300),
+    y_limits=(0, 200),
 ):
     current_point = start_point
 
@@ -208,12 +231,12 @@ def random_point_generator(
 
 
 def straight_line_generator(
-        start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
+    start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
 ):
     # Calculer la direction du mouvement
     dx = end_point.x - start_point.x
     dy = end_point.y - start_point.y
-    d = math.sqrt(dx ** 2 + dy ** 2)
+    d = math.sqrt(dx**2 + dy**2)
 
     # Si la distance est nulle, retourner directement le point d'arrivée
     if d == 0:
