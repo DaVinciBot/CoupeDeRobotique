@@ -15,7 +15,7 @@ from enum import Enum, auto
 
 # Internal project imports
 from logger import Logger, LogLevels
-from arena.base_arena import GridManager
+from arena.base_arena.grid_manager import GridManager
 from utils import Utils
 from geometry import (
     Polygon,
