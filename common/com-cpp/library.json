@@ -11,18 +11,6 @@
     "embedded"
   ],
   "license": "MIT",
-  "dependencies": {
-    "crc": {
-      "version": "^1.0.0",
-      "optional": false
-    }
-  },
   "frameworks": "*",
-  "platforms": "*",
-  "export": {
-    "include": [
-      "include/*.h",
-      "src/*.cpp"
-    ]
-  }
+  "platforms": "*"
 }
