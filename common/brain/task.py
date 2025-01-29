@@ -20,15 +20,14 @@ class Task:
     """
 
     def __init__(
-        self,
-        function: Callable[..., Any],
-        is_process: bool,
-        run_on_start: bool,
-        refresh_rate: Optional[float],
-        timeout: Optional[float],
-        define_loop_later: bool,
-        start_loop_marker: Optional[str],
-        get_is_active_brain: Callable,
+            self,
+            function: Callable[..., Any],
+            is_process: bool,
+            run_on_start: bool,
+            refresh_rate: Optional[float],
+            timeout: Optional[float],
+            define_loop_later: bool,
+            start_loop_marker: Optional[str],
     ) -> None:
         """
         Initializes a Task instance.
@@ -49,7 +48,6 @@ class Task:
         self._timeout: Optional[float] = timeout
         self._define_loop_later: bool = define_loop_later
         self._start_loop_marker: Optional[str] = start_loop_marker
-        self.get_is_active_brain: Callable = get_is_active_brain
 
     @property
     def is_process(self) -> bool:
@@ -91,9 +89,7 @@ class Task:
         """Indicates if the task should run at the start."""
         return self._run_on_start
 
-    def __evaluate_process_task(
-        self, brain_executor: TDictProxyAccessor
-    ) -> Coroutine[Any, Any, TaskOutput]:
+    def __evaluate_process_task(self, brain_executor: TDictProxyAccessor) -> Coroutine[Any, Any, TaskOutput]:
         """
         Evaluates a process-based task and returns the wrapped task.
         - Routine with initialisation (one-shoot then routine)
@@ -146,21 +142,16 @@ class Task:
 
         # Add a timeout -> we have to convert the synchronous function to async one !
         if self.is_timed:
-            async_wrapped_task: Coroutine[Any, Any, TaskOutput] = (
-                SynchronousWrapper.wrap_timeout_task(
-                    brain_executor, wrapped_task, self._timeout, self.name
-                )
+            async_wrapped_task: Coroutine[Any, Any, TaskOutput] = SynchronousWrapper.wrap_timeout_task(
+                brain_executor, wrapped_task, self._timeout, self.name
             )
         else:
-            async_wrapped_task: Coroutine[Any, Any, TaskOutput] = (
-                SynchronousWrapper.wrap_to_dummy_async(wrapped_task)
-            )
+            async_wrapped_task: Coroutine[Any, Any, TaskOutput] = SynchronousWrapper.wrap_to_dummy_async(wrapped_task)
 
         return async_wrapped_task
 
-    def __evaluate_classic_task(
-        self, brain_executor: TBrain
-    ) -> Coroutine[Any, Any, TaskOutput] | Coroutine[Any, Any, None]:
+    def __evaluate_classic_task(self, brain_executor: TBrain) \
+            -> Coroutine[Any, Any, TaskOutput] | Coroutine[Any, Any, None]:
         """
         Evaluates a classic asynchronous task and returns the wrapped task.
         - One-shot
@@ -174,15 +165,13 @@ class Task:
         """
         # One-shot
         if self.is_one_shot:
-            wrapped_task: Coroutine[Any, Any, TaskOutput] = (
-                AsynchronousWrapper.wrap_to_one_shot(brain_executor, self._function)
+            wrapped_task: Coroutine[Any, Any, TaskOutput] = AsynchronousWrapper.wrap_to_one_shot(
+                brain_executor, self._function
             )
         # Routine
         elif self.is_routine:
-            wrapped_task: Coroutine[Any, Any, None] = (
-                AsynchronousWrapper.wrap_to_routine(
-                    brain_executor, self._function, self._refresh_rate
-                )
+            wrapped_task: Coroutine[Any, Any, None] = AsynchronousWrapper.wrap_to_routine(
+                brain_executor, self._function, self._refresh_rate
             )
         # Unknown task type
         else:
@@ -196,16 +185,14 @@ class Task:
 
         # Add a timeout
         if self.is_timed:
-            wrapped_task: Coroutine[Any, Any, TaskOutput] = (
-                AsynchronousWrapper.wrap_timeout_task(
-                    brain_executor, wrapped_task, self._timeout, self.name
-                )
+            wrapped_task: Coroutine[Any, Any, TaskOutput] = AsynchronousWrapper.wrap_timeout_task(
+                brain_executor, wrapped_task, self._timeout, self.name
             )
 
         return wrapped_task
 
     def evaluate(
-        self, brain_executor: TBrain, shared_brain_executor: TDictProxyAccessor
+            self, brain_executor: TBrain, shared_brain_executor: TDictProxyAccessor
     ) -> Coroutine[Any, Any, TaskOutput] | Coroutine[Any, Any, None]:
         """
         Evaluates the task based on its type (process-based or classic) and returns the wrapped task.

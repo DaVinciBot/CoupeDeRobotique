@@ -37,9 +37,7 @@ class Brain:
         * Create a routine subprocess task by using the decorator @Brain.task(
         refresh_rate=<refresh rate you want>, process=True) (it will be executed periodically according to the refresh
         and in a subprocess)
-    - Activate the brain by calling the method brain.activate(), otherwise the brain's task of the instance wont be considered by the get_tasks() method.
     - Get the tasks by calling the method brain.get_tasks() and add them to the background tasks of the application
-
 
     -> Be careful by using subprocesses, the shared data between the main process and the subprocesses is limited,
     only serializable data can be shared. More over the data synchronization is not real-time, it is done by a routine.
@@ -62,8 +60,6 @@ class Brain:
         self.__shared_self: DictProxyAccessor = DictProxyAccessor(name=child.__str__())
         self.__processes: list = []
         self.__async_functions: list = []
-
-        self.is_active = False
 
         child.dynamic_init()
 
@@ -95,9 +91,9 @@ class Brain:
         for name, value in vars(self).items():
             # Get only public attributes
             if (
-                not name.startswith("__")
-                and not name.startswith("_")
-                and name != "self"
+                    not name.startswith("__")
+                    and not name.startswith("_")
+                    and name != "self"
             ):
                 # Try to serialize the attribute
                 if DictProxyAccessor.is_serialized(value):
@@ -128,18 +124,17 @@ class Brain:
 
     @classmethod
     def task(
-        cls: type[TBrain],
-        # Force to define parameter by using param=... synthax
-        *,
-        # Force user to define there params
-        process: bool,
-        run_on_start: bool,
-        # Params with default value
-        refresh_rate: float | int = -1,
-        timeout: int = -1,
-        define_loop_later: bool = False,
-        start_loop_marker="# ---Loop--- #",
-        get_is_active_brain: Callable,
+            cls: type[TBrain],
+            # Force to define parameter by using param=... synthax
+            *,
+            # Force user to define there params
+            process: bool,
+            run_on_start: bool,
+            # Params with default value
+            refresh_rate: float | int = -1,
+            timeout: int = -1,
+            define_loop_later: bool = False,
+            start_loop_marker="# ---Loop--- #",
     ) -> Callable:
         """
         Decorator to add a task function to the brain. There are 3 cases:
@@ -173,7 +168,6 @@ class Brain:
                     timeout,
                     define_loop_later,
                     start_loop_marker,
-                    get_is_active_brain,
                 )
             )
             return func
@@ -260,13 +254,8 @@ class Brain:
         """
         # Evaluate all tasks and add them to the list of async functions or processes
         if hasattr(self, "_tasks"):
-            i = 0
-            while i < len(self._tasks):
-                if self._tasks[i].get_is_active_brain(self):
-                    self.__evaluate_task(self._tasks[i])
-                    i += 1
-                else:
-                    self._tasks.pop(i)
+            for task in self._tasks:
+                self.__evaluate_task(task)
 
             # Add a one-shot task to start all processes and routine to synchronize self_shared and self
             if any(task.is_process for task in self._tasks):
@@ -291,9 +280,3 @@ class Brain:
             str: The class name.
         """
         return self.__class__.__name__
-
-    def activate(self) -> None:
-        """
-        Activate the brain.
-        """
-        self.is_active = True
