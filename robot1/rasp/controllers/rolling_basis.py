@@ -213,7 +213,7 @@ class RollingBasis(Teensy):
         self.linear_speed_kp = kp
         self.linear_speed_ki = ki
         self.linear_speed_kd = kd
-        self.__set_pid(CONFIG.LINEAR_SPEED_PID, kp, ki, kd)
+        self.__set_pid(CONFIG.LINEAR_SPEED_PID["id"], kp, ki, kd)
 
     def set_angular_speed_pid(self, kp: float, ki: float, kd: float) -> None:
         """
@@ -227,7 +227,7 @@ class RollingBasis(Teensy):
         self.angular_speed_kp = kp
         self.angular_speed_ki = ki
         self.angular_speed_kd = kd
-        self.__set_pid(CONFIG.ANGULAR_SPEED_PID, kp, ki, kd)
+        self.__set_pid(CONFIG.ANGULAR_SPEED_PID["id"], kp, ki, kd)
 
     def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None:
         """
@@ -241,7 +241,7 @@ class RollingBasis(Teensy):
         self.linear_position_kp = kp
         self.linear_position_ki = ki
         self.linear_position_kd = kd
-        self.__set_pid(CONFIG.LINEAR_DISTANCE_PID, kp, ki, kd)
+        self.__set_pid(CONFIG.LINEAR_DISTANCE_PID["id"], kp, ki, kd)
 
     def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None:
         """
@@ -255,7 +255,7 @@ class RollingBasis(Teensy):
         self.angular_position_kp = kp
         self.angular_position_ki = ki
         self.angular_position_kd = kd
-        self.__set_pid(CONFIG.ANGULAR_DISTANCE_PID, kp, ki, kd)
+        self.__set_pid(CONFIG.ANGULAR_DISTANCE_PID["id"], kp, ki, kd)
 
     def set_pids(
         self,
@@ -451,3 +451,95 @@ class RollingBasisDummy:
         """
         # No real sending performed; simply log the attempt.
         self.logger.log(f"[DUMMY] Sending bytes: {msg.hex()}", LogLevels.INFO)
+
+    @Logger
+    def __set_pid(self, pid_id: int, kp: float, ki: float, kd: float) -> None:
+        self.logger.log(f"fixed PID {pid_id} to : {kp}, {ki}, {kd}", LogLevels.INFO)
+
+    def set_linear_speed_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the linear speed control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.linear_speed_kp = kp
+        self.linear_speed_ki = ki
+        self.linear_speed_kd = kd
+        self.__set_pid(CONFIG.LINEAR_SPEED_PID["id"], kp, ki, kd)
+
+    def set_angular_speed_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the angular speed control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.angular_speed_kp = kp
+        self.angular_speed_ki = ki
+        self.angular_speed_kd = kd
+        self.__set_pid(CONFIG.ANGULAR_SPEED_PID["id"], kp, ki, kd)
+
+    def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the linear position control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.linear_position_kp = kp
+        self.linear_position_ki = ki
+        self.linear_position_kd = kd
+        self.__set_pid(CONFIG.LINEAR_DISTANCE_PID["id"], kp, ki, kd)
+
+    def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the angular position control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.angular_position_kp = kp
+        self.angular_position_ki = ki
+        self.angular_position_kd = kd
+        self.__set_pid(CONFIG.ANGULAR_DISTANCE_PID["id"], kp, ki, kd)
+
+    def set_pids(
+        self,
+        kp_linear_speed,
+        ki_linear_speed,
+        kd_linear_speed,
+        kp_angular_speed,
+        ki_angular_speed,
+        kd_angular_speed,
+        kp_linear_position,
+        ki_linear_position,
+        kd_linear_position,
+        kp_angular_position,
+        ki_angular_position,
+        kd_angular_position,
+    ):
+        self.set_linear_speed_pid(kp_linear_speed, ki_linear_speed, kd_linear_speed)
+        self.set_angular_speed_pid(kp_angular_speed, ki_angular_speed, kd_angular_speed)
+        self.set_linear_position_pid(
+            kp_linear_position, ki_linear_position, kd_linear_position
+        )
+        self.set_angular_position_pid(
+            kp_angular_position, ki_angular_position, kd_angular_position
+        )
+
+    def __init_set_pids(self):
+        self.set_pids(
+            **CONFIG.LINEAR_SPEED_PID,
+            **CONFIG.ANGULAR_SPEED_PID,
+            **CONFIG.LINEAR_DISTANCE_PID,
+            **CONFIG.ANGULAR_DISTANCE_PID,
+        )

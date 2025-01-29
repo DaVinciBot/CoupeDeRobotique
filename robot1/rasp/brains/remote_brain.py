@@ -54,7 +54,9 @@ class RemoteBrain(Brain):
         self.lidar: Lidar = lidar
         # Remote
         self.remote: PS5Remote = remote
+        logger.log("Waiting for remote connection", LogLevels.INFO)
         self.remote.connect()
+        logger.log("Remote connected", LogLevels.INFO)
 
         # WS routes
         self.ws_cmd: WServerRouteManager = ws_cmd
@@ -69,12 +71,22 @@ class RemoteBrain(Brain):
 
     """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
+    @Brain.task(
+        process=False,
+        run_on_start=True,
+        refresh_rate=0.1,
+        get_is_active_brain=lambda self: self.is_active,
+    )
     async def handle_ps5_remote(self):
         speed, angle = self.remote.get_control_values()
         self.rolling_basis.set_speed_and_position(speed, angle, OrientedPoint(0, 0, 0))
 
-    @Brain.task(process=False, run_on_start=CONFIG.ZOMBIE_MODE, refresh_rate=0.5)
+    @Brain.task(
+        process=False,
+        run_on_start=CONFIG.ZOMBIE_MODE,
+        refresh_rate=0.5,
+        get_is_active_brain=lambda self: self.is_active,
+    )
     async def zombie_mode(self):
         """
         executes requests received by the server. Use Postman to send request to the server
@@ -107,10 +119,5 @@ class RemoteBrain(Brain):
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
                     LogLevels.WARNING,
                 )
-
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
-    async def update_speed_angle(self):
-        speed, angle = self.remote.get_control_values()
-        self.rolling_basis.set_speed_and_position(speed, angle, Point(0, 0))
 
     """ ### One-Shot Tasks ### """
