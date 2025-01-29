@@ -42,7 +42,7 @@ struct msg_update_rolling_basis
     float current_angular_speed;
 };
 
-struct msg_set_linear_speed_pid
+struct msg_set_pid
 {
     byte command = SET_PID;
     byte pid_type;
