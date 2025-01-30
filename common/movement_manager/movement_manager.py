@@ -2,7 +2,7 @@
 # Internal project imports
 from arena import BaseArena
 from logger import Logger, LogLevels
-from geometry import OrientedPoint
+from geometry import OrientedPoint, Polygon
 
 from path_finding import PathFinder
 from rolling_basis_handler import RollingBasisHandler
@@ -65,7 +65,7 @@ class MovementManager:
         self.rolling_basis_handler: RollingBasisHandler | None = None
 
     def __get_ally_enemy_distance(self) -> float:
-        return self.arena.ally_zone.point.distance(self.arena.enemy_zone.point)
+        return self.arena.ally_zone.point.distance(self.arena.enemy_zone.buffered_polygon)
 
     @staticmethod
     def __are_path_different(
