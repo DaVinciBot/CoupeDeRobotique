@@ -15,12 +15,15 @@ logger = Logger(
     file_log_level=LogLevels.DEBUG,
     print_log=True,
     write_to_file=True,
-    colors=NeonColors
+    colors=ClassicColors,
+    files_monitoring=True,
+    display_monitoring=True,
+    max_log_file_size=1
 )
 
 
 @time_tracker(param_logger="Logger")
-def test(x=5):
+def test(x=5, y=1):
     for i in range(1000):
         logger.debug(f"msg DEBUG: {i}")
         logger.info(f"msg INFO: {i}")

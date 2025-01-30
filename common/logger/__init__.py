@@ -14,3 +14,6 @@ from logger.colors import (
 
 # ====== Decorator Imports ======
 from logger.decorators import time_tracker, log
+
+# ====== Logger Analyser ======
+# TODO: from logger.analyser import LogAnalyser (verifier compatibilité avant)

@@ -1,12 +1,13 @@
-# TODO: implémenter un cleaner de log qui supprime les logs de la qui date de plus de 7 jours par exmeple
-# TODO: faire aussi un cleaner de log du fichier du jour afin de ne pas avoir par exmpele plus de 1000000 de ligne
-# TODO: à l'improt du logger pourquoi pas affichier la taille qu'occupe klez fichiers de logs trouvé actuellemnt en ko
-
 # ====== Code Summary ======
 # This module enhances Python's built-in logging by adding a distinct 'FATAL' log level,
 # improving log formatting, and enabling color-coded log messages for better readability.
 # It provides a custom Logger class that supports console and file logging with adjustable
 # color settings, ensuring clear and structured log outputs.
+#
+# Additionally, the logger includes a monitoring system that automatically deletes
+# excessive logs to prevent overflow, displays the remaining disk space, and offers
+# various practical features for efficient log management.
+
 
 # ====== Imports ======
 # Standard library imports
@@ -20,8 +21,9 @@ from colorama import just_fix_windows_console
 
 # Internal project imports
 from logger.log_levels import LogLevels
-from logger.colors import BaseColors
+from logger.monitoring import DiskMonitor
 from logger.formatter import Formatter
+from logger.colors import BaseColors
 
 # ====== Initialize Console for Colors ======
 just_fix_windows_console()  # Enables colors in windows consoles (why not)
@@ -89,6 +91,14 @@ class Logger:
             filename_lineno_max_width: int = 15,
             placement_improvement: bool = True,
             path: str = "logs",
+            display_monitoring: bool = False,
+            files_monitoring: bool = True,
+            file_size_unit: str = "Go",
+            file_size_precision: int = 2,
+            disk_alert_threshold_percent: float = 0.8,
+            log_files_size_alert_threshold_percent: float = 0.5,
+            max_log_file_size: float = 1,
+            enable_monitoring_logs: bool = True,
     ):
         """
         Initializes a Logger instance.
@@ -106,13 +116,36 @@ class Logger:
             filename_lineno_max_width (int): Max width for filename + line number.
             placement_improvement (bool): Whether to adjust text alignment.
             path (str): Directory path for log files.
+            display_monitoring (bool): Whether to display disk usage monitoring.
+            files_monitoring (bool): Whether to display log files monitoring.
+            file_size_unit (str): Unit for file size display.
+            file_size_precision (int): Precision for file size display.
+            disk_alert_threshold_percent (float): Disk usage alert threshold.
+            log_files_size_alert_threshold_percent (float): Log files alert threshold.
+            max_log_file_size (float): Maximum log file size.
+            enable_monitoring_logs (bool): Whether to enable log monitoring.
         """
         logger_already_exists = identifier in logging.root.manager.loggerDict
+
         if logger_already_exists:
             self.logger = logging.getLogger(identifier)
         else:
             self.logger: logging.Logger = logging.getLogger(identifier)
             self.logger.setLevel(LogLevels.DEBUG)
+
+        # Display disk usage and log files monitoring
+        if display_monitoring or files_monitoring:
+            self.disk_monitor = DiskMonitor(
+                logger=self,
+                directory=path,
+                unit=file_size_unit,
+                size_precision=file_size_precision,
+                disk_threshold=disk_alert_threshold_percent,
+                log_threshold=log_files_size_alert_threshold_percent,
+                # duplicate logs monitoring
+                max_log_size=max_log_file_size if not logger_already_exists else None,
+                enable_monitoring_logs=enable_monitoring_logs if not logger_already_exists else False,
+            )
 
         # Log levels
         self.decorator_level: LogLevels = decorator_log_level
@@ -172,6 +205,12 @@ class Logger:
             LogLevels.INFO: self.logger.info,
             LogLevels.DEBUG: self.logger.debug,
         }
+
+        # Display information about disk usage and log files
+        if display_monitoring and not logger_already_exists:
+            self.disk_monitor.display_monitoring()
+        if files_monitoring and not logger_already_exists:
+            self.disk_monitor.clean_logs()
 
     # ====== Logging Methods ======
     def log(self, msg: str, level: LogLevels) -> None:
