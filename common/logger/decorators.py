@@ -5,60 +5,13 @@
 # Standard library imports
 from typing import Callable
 from functools import wraps
-import inspect
 import time
 
 # Internal project imports
 from logger.logger import Logger
 from logger.log_levels import LogLevels
-
-
+from logger.tools import get_function_metadata, get_logger_from_decorator_param
 # ====== Tools functions ======
-def get_function_metadata(func: Callable, args, kwargs) -> str:
-    """
-    Generate a concise string containing function/method metadata, including module, class (if applicable), 
-    function name, and parameter values.
-
-    Args:
-        func (Callable): The function being described.
-        args (tuple): Positional arguments passed to the function.
-        kwargs (dict): Keyword arguments passed to the function.
-
-    Returns:
-        str: A formatted string containing function metadata.
-    """
-    frame = inspect.currentframe().f_back.f_back
-    module_name = frame.f_globals["__name__"].split(".")[-1]  # Shortened module name
-    class_name = args[0].__class__.__name__ if args and hasattr(args[0], "__class__") else None
-
-    # Retrieve parameter names and values
-    bound_args = inspect.signature(func).bind(*args, **kwargs)
-    bound_args.apply_defaults()
-    params_info = ", ".join(f"{k}={v!r}" for k, v in bound_args.arguments.items())
-
-    return f"[{module_name}] {class_name + '.' if class_name else ''}{func.__name__}({params_info})"
-
-
-def get_logger_from_decorator_param(param_logger: Logger | str | Callable, args) -> Logger | None:
-    """
-    Retrieve a Logger instance from various possible inputs: an existing Logger, a string identifier, or 
-    a callable that returns a logger.
-
-    Args:
-        param_logger (Logger | str | Callable): The logger parameter passed to the decorator.
-        args (tuple): Positional arguments passed to the decorated function.
-
-    Returns:
-        Logger | None: A Logger instance if successfully resolved, otherwise None.
-    """
-    if isinstance(param_logger, Logger):
-        return param_logger
-    if isinstance(param_logger, str):
-        return Logger(identifier=param_logger)
-    if param_logger is not None:
-        instance = args[0]  # First argument of a bound method is typically `self`
-        return param_logger(instance)
-    return None
 
 
 # ====== Decorators ======
