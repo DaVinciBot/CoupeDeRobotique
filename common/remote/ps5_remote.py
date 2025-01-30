@@ -91,7 +91,9 @@ class PS5Remote:
         self.current_rotation_speed += (
             target_rotation_speed - self.current_rotation_speed
         ) * self.rotation_smoothing_factor
-        self.angle = (self.angle + self.current_rotation_speed) % 360
+        self.angle = (self.angle + math.radians(self.current_rotation_speed)) % (
+            2 * math.pi
+        )
 
     def update_linear_speed(self):
         if not self.connected:
@@ -115,14 +117,14 @@ class PS5Remote:
             brake, self.linear_speed_sensitivity
         )
 
-        # Calculate target speed based on throttle and brake
-        # Throttle increases speed positively, brake increases speed negatively
         if throttle > 0:
             self.target_linear_speed = throttle * self.max_linear_speed
         elif brake > 0:
-            self.target_linear_speed = -brake * self.max_linear_speed
+            if self.current_linear_speed > 0:
+                self.target_linear_speed = -brake * self.max_linear_speed
+            else:
+                self.target_linear_speed = -brake * self.max_linear_speed
         else:
-            # If no input, gradually return to zero (simulate friction)
             self.target_linear_speed = 0
 
         # Smooth transitions

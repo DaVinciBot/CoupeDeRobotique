@@ -37,12 +37,13 @@ class RemoteSimulator:
             self.remote.update()
 
             self.screen.fill(self.WHITE)
-            self.draw_arrow(self.screen, self.BLACK, self.arrow_pos, self.remote.angle)
+
+            arrow_angle = self.remote.angle * 180 / 3.141592653589793
+
+            self.draw_arrow(self.screen, self.BLACK, self.arrow_pos, arrow_angle)
 
             font = pygame.font.Font(None, 36)
-            angle_text = font.render(
-                f"Angle: {self.remote.angle:.1f}°", True, self.BLACK
-            )
+            angle_text = font.render(f"Angle: {arrow_angle:.1f}°", True, self.BLACK)
             x, y = self.remote.get_joystick_input()
             joystick_text = font.render(
                 f"Joystick: ({x:.2f}, {y:.2f})", True, self.BLACK
@@ -53,12 +54,12 @@ class RemoteSimulator:
                 self.BLACK,
             )
             rotation_speed_text = font.render(
-                f"Rotation Speed: {self.remote.current_linear_speed:.2f}",
+                f"Linear Speed: {self.remote.current_linear_speed:.2f}",
                 True,
                 self.BLACK,
             )
             linear_speed_text = font.render(
-                f"Linear Speed: {self.remote.current_rotation_speed:.2f}",
+                f"Rotation Speed: {self.remote.current_rotation_speed:.2f}",
                 True,
                 self.BLACK,
             )
