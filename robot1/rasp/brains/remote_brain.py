@@ -78,7 +78,7 @@ class RemoteBrain(Brain):
         get_is_active_brain=lambda self: self.is_active,
     )
     async def handle_ps5_remote(self):
-        speed, angle = self.remote.get_control_values()
+        speed, angle = self.remote.update_linear_speed()
         self.rolling_basis.set_speed_and_position(speed, angle, OrientedPoint(0, 0, 0))
 
     @Brain.task(
