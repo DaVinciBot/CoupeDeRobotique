@@ -4,7 +4,7 @@
 # Import from common
 from brain import Brain
 
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 from geometry import Point
 from WS_comms import WSmsg
 

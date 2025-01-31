@@ -1,6 +1,6 @@
 from typing import Any, Callable
 import serial, threading, time, crc8, serial.tools.list_ports
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 from teensy_comms.dummy_serial import DummySerial
 
 

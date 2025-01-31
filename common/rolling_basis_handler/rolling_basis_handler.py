@@ -11,7 +11,7 @@ from bisect import bisect_left
 # ====== Third-Party Library Imports ======
 
 # ====== Internal Project Imports ======
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 from geometry import OrientedPoint
 from rolling_basis_handler.curve import Curve
 from rolling_basis_handler.speed_profile import SpeedProfile

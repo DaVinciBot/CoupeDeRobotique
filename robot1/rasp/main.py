@@ -4,7 +4,7 @@ import math
 
 # Import from common
 from WS_comms import WServer, WServerRouteManager, WSender, WSreceiver, WSmsg
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 from arena import ShowArena
 
 # Import from local path

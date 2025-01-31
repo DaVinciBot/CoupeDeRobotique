@@ -26,7 +26,7 @@ from geometry import (
 
 # Import from common
 from WS_comms import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 from geometry import OrientedPoint
 
 from arena import (

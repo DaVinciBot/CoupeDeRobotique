@@ -3,7 +3,7 @@ from multiprocessing import Manager
 from typing import Any
 
 # ====== Internal Project Imports ======
-from logger import Logger
+from old_logger import Logger
 
 
 # ====== Class Part ======

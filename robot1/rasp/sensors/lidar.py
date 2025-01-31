@@ -1,5 +1,5 @@
 # Import from common
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 
 # External imports
 from typing import TypeVar

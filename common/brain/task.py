@@ -3,7 +3,7 @@ import functools
 from typing import TypeVar, Callable, Any, Optional, Coroutine
 
 # ====== Internal Project Imports ======
-from logger import LogLevels
+from old_logger import LogLevels
 from brain.task_wrappers import SynchronousWrapper, AsynchronousWrapper
 from brain.task_output import TaskOutput
 

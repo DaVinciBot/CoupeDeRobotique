@@ -261,7 +261,8 @@ Voici un exemple complet d'utilisation de votre module Brain avec une explicatio
 ```python
 import asyncio
 from brain import Brain
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
+
 
 class MainBrain(Brain):
     def __init__(self, logger: Logger, share_attr1: int, share_attr2: int) -> None:
@@ -369,7 +370,7 @@ Voici comment vous pouvez intégrer et démarrer votre Brain dans un script prin
 ```python
 import asyncio
 from mainbrain import MainBrain
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 
 if __name__ == "__main__":
     brain_logger = Logger(
@@ -386,10 +387,12 @@ if __name__ == "__main__":
         share_attr2=0
     )
 
+
     # Start tasks
     async def run_tasks():
         tasks = [task() for task in brain.get_tasks()]
         return await asyncio.gather(*tasks)
+
 
     asyncio.run(run_tasks())
 ```

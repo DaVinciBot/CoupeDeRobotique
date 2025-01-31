@@ -1,188 +1,247 @@
+# ====== Code Summary ======
+# This module enhances Python's built-in logging by adding a distinct 'FATAL' log level,
+# improving log formatting, and enabling color-coded log messages for better readability.
+# It provides a custom Logger class that supports console and file logging with adjustable
+# color settings, ensuring clear and structured log outputs.
+#
+# Additionally, the logger includes a monitoring system that automatically deletes
+# excessive logs to prevent overflow, displays the remaining disk space, and offers
+# various practical features for efficient log management.
+
+
 # ====== Imports ======
 # Standard library imports
+import datetime
+import logging
+import sys
 import os
-import types
-import functools
 
-from datetime import datetime
+# Third-party library imports
+from colorama import just_fix_windows_console
 
 # Internal project imports
-from logger.log_tools import (
-    LogLevels,
-    STYLES,
-    center_and_limit,
-    style,
-    strip_ANSI,
-)
+from logger.log_levels import LogLevels
+from logger.monitoring import DiskMonitor
+from logger.formatter import Formatter
+from logger.colors import BaseColors
+
+# ====== Initialize Console for Colors ======
+just_fix_windows_console()  # Enables colors in windows consoles (why not)
+
+# ====== Modification of Native Logging Behavior ======
+# Python's logging module treats 'CRITICAL' and 'FATAL' as synonyms.
+# To distinguish 'FATAL' as a unique severity level, we manually add it.
+logging.addLevelName(LogLevels.FATAL, "FATAL")
 
 
-# ====== Class Part ======
+# Define a method for the Logger class to log messages at 'FATAL' level.
+def class_fatal(self, msg, *args, **kwargs):
+    """
+    Log 'msg % args' with severity 'FATAL'.
+
+    To pass exception information, use the keyword argument exc_info with
+    a true value, e.g.
+
+    This allows using `logger.fatal()` as a distinct logging level.
+
+    logger.fatal("Houston, we have one %s", "major disaster", exc_info=True)
+
+    Args:
+        msg (str): The message to log.
+    """
+    if self.isEnabledFor(LogLevels.FATAL):
+        self._log(LogLevels.FATAL, msg, args, **kwargs)
+
+
+# Attach the new 'fatal' method to the logging.Logger class.
+logging.Logger.fatal = class_fatal
+
+
+# Define a global function to log fatal messages using the root logger.
+def fatal(msg, *args, **kwargs):
+    """
+    Log a message with severity 'CRITICAL' on the root logger. If the logger
+    has no handlers, call basicConfig() to add a console handler with a
+    pre-defined format.
+    """
+    if len(logging.root.handlers) == 0:
+        logging.basicConfig()
+    logging.root.critical(msg, *args, **kwargs)
+
+
+# ====== Logger Class ======
 class Logger:
     """
-    Log dans un fichier (logs/YYYY-MM-DD.log) + sortie standard
-    affiche dans le format HH:MM:SS | NIVEAU | message
+        Custom Logger class that extends Python's built-in logging functionality.
+        Supports console and file logging with customizable settings, including colored
+        output for improved readability in terminals.
     """
 
     def __init__(
             self,
-            func=None,
-            *,
             identifier: str = "unknown",
-            decorator_level: LogLevels = LogLevels.DEBUG,
-            print_log_level: LogLevels = LogLevels.INFO,
+            decorator_log_level: LogLevels = LogLevels.DEBUG,
+            print_log_level: LogLevels = LogLevels.DEBUG,
             file_log_level: LogLevels = LogLevels.DEBUG,
             print_log: bool = True,
             write_to_file: bool = True,
+            colors: type[BaseColors] = None,
+            identifier_max_width: int = 0,
+            level_max_width: int = 0,
+            filename_lineno_max_width: int = 15,
+            placement_improvement: bool = True,
+            path: str = "logs",
+            display_monitoring: bool = False,
+            files_monitoring: bool = True,
+            file_size_unit: str = "Go",
+            file_size_precision: int = 2,
+            disk_alert_threshold_percent: float = 0.8,
+            log_files_size_alert_threshold_percent: float = 0.5,
+            max_log_file_size: float = 1,
+            enable_monitoring_logs: bool = True,
     ):
         """
-        Logger init, ignore func and level param (for decorator)
+        Initializes a Logger instance.
+
+        Args:
+            identifier (str): Logger name.
+            decorator_log_level (LogLevels): Minimum level for decorator logs.
+            print_log_level (LogLevels): Minimum level for console logs.
+            file_log_level (LogLevels): Minimum level for file logs.
+            print_log (bool): Whether to log to console.
+            write_to_file (bool): Whether to log to a file.
+            colors (type[BaseColors]): Color settings for console output.
+            identifier_max_width (int): Max width for log source identifier.
+            level_max_width (int): Max width for log level label.
+            filename_lineno_max_width (int): Max width for filename + line number.
+            placement_improvement (bool): Whether to adjust text alignment.
+            path (str): Directory path for log files.
+            display_monitoring (bool): Whether to display disk usage monitoring.
+            files_monitoring (bool): Whether to display log files monitoring.
+            file_size_unit (str): Unit for file size display.
+            file_size_precision (int): Precision for file size display.
+            disk_alert_threshold_percent (float): Disk usage alert threshold.
+            log_files_size_alert_threshold_percent (float): Log files alert threshold.
+            max_log_file_size (float): Maximum log file size.
+            enable_monitoring_logs (bool): Whether to enable log monitoring.
         """
+        logger_already_exists = identifier in logging.root.manager.loggerDict
 
-        self.identifier = identifier  # Overriden if Decorator
+        if logger_already_exists:
+            self.logger = logging.getLogger(identifier)
+        else:
+            self.logger: logging.Logger = logging.getLogger(identifier)
+            self.logger.setLevel(LogLevels.DEBUG)
 
-        # Decorator only
-        if func is not None:
-            self.func = func
-            self.dec_level = decorator_level
-            functools.update_wrapper(self, self.func)
-            self.__code__ = self.func.__code__
-            self.identifier = self.func.__qualname__.split(".")[0]
-
-        # Normal init
-        # Init attributes
-        self.identifier_width = 12
-        self.log_level_width = max([len(loglvl.name) for loglvl in LogLevels]) + 2
-        self.print_log_level = print_log_level
-        self.file_log_level = file_log_level
-        self.print_log = print_log
-        self.write_to_file = write_to_file
-
-        os.mkdir("logs") if not os.path.isdir("logs") else None
-        date = datetime.now()
-        self.log_file = f"{date.strftime('%Y-%m-%d')}.log"
-
-        if func is None:
-            self.log(
-                f"Logger initialized, "
-                + f"print: {style(center_and_limit(self.print_log_level.name, self.log_level_width), STYLES.LogLevelsColorsDict[self.print_log_level]) if self.print_log else style(center_and_limit('NO', self.log_level_width), STYLES.RESET_ALL)}, "
-                + f"write to file: {style(center_and_limit(self.file_log_level.name, self.log_level_width), STYLES.LogLevelsColorsDict[self.file_log_level]) if self.log_file else style(center_and_limit('NO', self.log_level_width), STYLES.RESET_ALL)}",
-                level=LogLevels.INFO,
+        # Display disk usage and log files monitoring
+        if display_monitoring or files_monitoring:
+            self.disk_monitor = DiskMonitor(
+                logger=self,
+                directory=path,
+                unit=file_size_unit,
+                size_precision=file_size_precision,
+                disk_threshold=disk_alert_threshold_percent,
+                log_threshold=log_files_size_alert_threshold_percent,
+                # duplicate logs monitoring
+                max_log_size=max_log_file_size if not logger_already_exists else None,
+                enable_monitoring_logs=enable_monitoring_logs if not logger_already_exists else False,
             )
 
-    def message_factory(
-            self,
-            date_str: str,
-            level: LogLevels,
-            message: str,
-            identifier_override: str | None = None,
-    ) -> str:
+        # Log levels
+        self.decorator_level: LogLevels = decorator_log_level
+        self.print_log_level: LogLevels = print_log_level
+        self.file_log_level: LogLevels = file_log_level
 
-        return (
-                (style(date_str, STYLES.DATE))
-                + " -> ["
-                + (
-                    style(
-                        (
-                            center_and_limit(self.identifier, self.identifier_width)
-                            if identifier_override is None
-                            else center_and_limit(
-                                identifier_override, self.identifier_width
-                            )
-                        ),
-                        STYLES.IDENTIFIER,
-                    )
-                )
-                + "] "
-                + (
-                    style(
-                        level.name.center(self.log_level_width),
-                        STYLES.LogLevelsColorsDict[level],
-                    )
-                )
-                + " | "
-                + (style(message, STYLES.MESSAGE))
-        )
+        # Determine max widths for alignment
+        if identifier_max_width == 0:
+            identifier_max_width = len(identifier) + (2 if placement_improvement else 0)
+        if level_max_width == 0:
+            level_max_width = max(len(level.name) for level in LogLevels) + (2 if placement_improvement else 0)
 
-    def log(
-            self,
-            message: str,
-            level: LogLevels = LogLevels.WARNING,
-            led_strip=None,
-            identifier_override: str | None = None,
-    ) -> None:
-        """
-        Log un message dans le fichier de log et dans la sortie standard
-        :param message: message à logger
-        :type message: str
-        :param level: 0: INFO, 1: WARNING, 2: ERROR, 3: CRITICAL, defaults to 0
-        :type level: int, optional
-        """
+        # Define log file path
+        if write_to_file and not logger_already_exists:
+            if not os.path.isdir(path):
+                os.mkdir(path)
+            self.full_path = os.path.join(path, f"{datetime.datetime.now().strftime('%Y-%m-%d')}.log")
 
-        date_str = datetime.now().strftime("%H:%M:%S.%f")
+        # Console logging setup
+        if print_log and not logger_already_exists:
+            self.print_formatter: Formatter = Formatter(
+                identifier=identifier,
+                identifier_max_width=identifier_max_width,
+                filename_lineno_max_width=filename_lineno_max_width,
+                level_max_width=level_max_width,
+                colors=colors,
+            )
 
-        # Evaluate the str(message) value manually to make sure no weird operators happen
-        message_str = self.message_factory(
-            date_str=date_str,
-            level=level,
-            message=str(message),
-            identifier_override=identifier_override,
-        )
+            self.console_handler = logging.StreamHandler(stream=sys.stdout)
+            self.console_handler.setFormatter(self.print_formatter)
+            self.console_handler.setLevel(print_log_level)
 
-        if self.print_log and level >= self.print_log_level:
-            print(message_str)
+            self.logger.addHandler(self.console_handler)
 
-        if led_strip is not None:
-            led_strip.log(level)
+        # File logging setup
+        if write_to_file and not logger_already_exists:
+            self.file_formatter: Formatter = Formatter(
+                identifier=identifier,
+                identifier_max_width=identifier_max_width,
+                filename_lineno_max_width=filename_lineno_max_width,
+                level_max_width=level_max_width,
+                colors=None
+            )
 
-        if self.log_file and level >= self.file_log_level:
-            with open(f"logs/{self.log_file}", "a") as f:
-                f.write(
-                    strip_ANSI(
-                        message_str
-                    )  # Remove ANSI escape sequences from the string to save to file, or it will not display properly no most interfaces (could keep them if displayed through cat for example)
-                    + "\n"
-                )
-        # Sync logs to server (deprecated for now)
-        # try:
-        #     Thread(target=update_log_sync, args=(message,)).start()
-        # except:
-        #     pass
+            self.file_handler = logging.FileHandler(filename=self.full_path)
+            self.file_handler.setFormatter(self.file_formatter)
+            self.file_handler.setLevel(file_log_level)
 
-    def __call__(self, *args, **kwargs):
-        """
-        Décorateur, log l'appel de la fonction et ses paramètres
-        """
-        # get positional parameters
-        params = [
-            f"{param}={value}"
-            for param, value in zip(self.func.__code__.co_varnames, args)
-            if param != "self"
-        ]
-        # get keyword parmeters
-        params += [f"{key}={value}" for key, value in kwargs.items()]
-        msg = f"{self.func.__name__}(" + ", ".join(params) + ")"
-        self.log(
-            msg,
-            self.dec_level,
-        )
-        return self.func(*args, **kwargs)
+            self.logger.addHandler(self.file_handler)
 
-    def __get__(self, obj, objtype=None):
-        """
-        Permet de faire un décorateur applicable à des méthodes
-        """
-        if obj is None:
-            return self
-        return types.MethodType(self, obj)
+        # Map log levels to logger methods
+        self.log_level_to_logger_function = {
+            LogLevels.FATAL: self.logger.fatal,
+            LogLevels.CRITICAL: self.logger.critical,
+            LogLevels.ERROR: self.logger.error,
+            LogLevels.WARNING: self.logger.warning,
+            LogLevels.INFO: self.logger.info,
+            LogLevels.DEBUG: self.logger.debug,
+        }
 
+        # Display information about disk usage and log files
+        if display_monitoring and not logger_already_exists:
+            self.disk_monitor.display_monitoring()
+        if files_monitoring and not logger_already_exists:
+            self.disk_monitor.clean_logs()
 
-class DummyLogger(Logger):
-    def __init__(self, identifier="DummyLogger") -> None:
-        super().__init__(
-            identifier=identifier,
-            decorator_level=LogLevels.DEBUG,
-            print_log_level=LogLevels.INFO,
-            file_log_level=LogLevels.FATAL,
-            print_log=True,
-            write_to_file=False,
-        )
+    # ====== Logging Methods ======
+    def log(self, msg: str, level: LogLevels) -> None:
+        """ Logs a message at the specified log level. """
+        self.log_level_to_logger_function.get(
+            level,
+            lambda bind_msg, stack_level: self.logger.warning(
+                msg=f"Invalid log level [log message: {bind_msg}]", stacklevel=stack_level
+            ),
+        )(msg, stacklevel=2)
+
+    def fatal(self, msg: str) -> None:
+        """ Logs a fatal message. """
+        self.logger.fatal(msg, stacklevel=2)
+
+    def critical(self, msg: str) -> None:
+        """ Logs a critical message. """
+        self.logger.critical(msg, stacklevel=2)
+
+    def error(self, msg: str) -> None:
+        """ Logs an error message. """
+        self.logger.error(msg, stacklevel=2)
+
+    def warning(self, msg: str) -> None:
+        """ Logs a warning message. """
+        self.logger.warning(msg, stacklevel=2)
+
+    def info(self, msg: str) -> None:
+        """ Logs an informational message. """
+        self.logger.info(msg, stacklevel=2)
+
+    def debug(self, msg: str) -> None:
+        """ Logs a debug message. """
+        self.logger.debug(msg, stacklevel=2)

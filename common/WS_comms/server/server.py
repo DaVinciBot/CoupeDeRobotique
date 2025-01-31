@@ -4,7 +4,7 @@ import signal
 import time
 
 from WS_comms.server.server_route import WServerRouteManager
-from logger import Logger, LogLevels
+from old_logger import Logger, LogLevels
 
 
 class WServer:
