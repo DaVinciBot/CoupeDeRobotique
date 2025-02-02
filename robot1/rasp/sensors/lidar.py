@@ -1,5 +1,5 @@
 # Import from common
-from old_logger import Logger, LogLevels
+from logger import Logger
 
 # External imports
 from typing import TypeVar
@@ -77,27 +77,26 @@ class Lidar:
             import pysicktim as lidar
 
             if lidar is None:
-                self._logger.log(
-                    "[init_lidar] Lidar is not connected !", LogLevels.CRITICAL
+                self._logger.critical(
+                    "[init_lidar] Lidar is not connected !"
                 )
                 raise ConnectionError("Lidar is not connected !")
             else:
-                self._logger.log("[init_lidar] Lidar is connected !", LogLevels.INFO)
+                self._logger.info("[init_lidar] Lidar is connected !")
 
             # Test lidar connection by testing scan function
             lidar.scan()
             if lidar.scan.distances is None or lidar.scan.distances == []:
-                self._logger.log(
-                    "[init_lidar] Lidar doesn't work correctly", LogLevels.CRITICAL
+                self._logger.critical(
+                    "[init_lidar] Lidar doesn't work correctly"
                 )
                 raise ConnectionError("Lidar doesn't work correctly !")
 
             return lidar
 
         except Exception as error:
-            self._logger.log(
-                f"[init_lidar] Error while importing lidar [{error}]",
-                LogLevels.CRITICAL,
+            self._logger.critical(
+                f"[init_lidar] Error while importing lidar [{error}]"
             )
             raise ImportError(f"Error while importing lidar [{error}] !") from error
 
@@ -110,9 +109,8 @@ class Lidar:
         def init():
             while not self.__is_connected:
                 try:
-                    self._logger.log(
-                        "[init_lidar_in_thread] Try to initialize lidar ...",
-                        LogLevels.DEBUG,
+                    self._logger.debug(
+                        "[init_lidar_in_thread] Try to initialize lidar ..."
                     )
                     self.__lidar_obj = self.__init_lidar()
                     # Initialize the polars angles depends on the lidar number of measurements points
@@ -121,10 +119,9 @@ class Lidar:
                     )
                     self.__is_connected = True
                 except Exception as error:
-                    self._logger.log(
+                    self._logger.warning(
                         f"[init_lidar_in_thread] Error while initializing lidar [{error}] "
-                        f"retry in {self.__initialization_fail_refresh_rate}s ...",
-                        LogLevels.WARNING,
+                        f"retry in {self.__initialization_fail_refresh_rate}s ..."
                     )
                     time.sleep(self.__initialization_fail_refresh_rate)
 
@@ -151,7 +148,7 @@ class Lidar:
             centered_polars[i] = -((max_angle - min_angle) / 2) + i * angle_step
 
         if centered_polars.size == 0:
-            self._logger.log("Error while initializing polars", LogLevels.CRITICAL)
+            self._logger.critical("Error while initializing polars")
             raise ValueError("Error while initializing polars !")
 
         return centered_polars
@@ -167,8 +164,8 @@ class Lidar:
         if unit == "rad":
             return math.pi / 180
 
-        self._logger.log(
-            f"unit of angles not recognized [{unit}] !", LogLevels.CRITICAL
+        self._logger.critical(
+            f"unit of angles not recognized [{unit}] !"
         )
         raise ValueError(f"unit of angles not recognized [{unit}] !")
 
@@ -187,8 +184,8 @@ class Lidar:
         if unit == "inch":
             return 0.0254
 
-        self._logger.log(
-            f"unit of distances not recognized [{unit}] !", LogLevels.CRITICAL
+        self._logger.critical(
+            f"unit of distances not recognized [{unit}] !"
         )
         raise ValueError(f"unit of distances not recognized [{unit}] !")
 
@@ -201,9 +198,8 @@ class Lidar:
             self.__lidar_obj.scan()
         except Exception as error:
             # LiDAR seems to be disconnected
-            self._logger.log(
-                f"Error while scanning, LiDAR is disconnected ? [{error}]",
-                LogLevels.ERROR,
+            self._logger.error(
+                f"Error while scanning, LiDAR is disconnected ? [{error}]"
             )
             # Try to reconnect LiDAR if it was connected before
             if self.__is_connected:
@@ -297,7 +293,7 @@ class LidarDummy:
         self.__polars_angles = self.__init_polars_angle(min_angle, max_angle, num_points)
         self.__is_connected = True
 
-        self._logger.log("[LidarDummy] Initialized successfully.", LogLevels.INFO)
+        self._logger.info("[LidarDummy] Initialized successfully.")
 
     def __init_polars_angle(self, min_angle: float, max_angle: float, num_points: int) -> np.ndarray:
         """
@@ -325,8 +321,8 @@ class LidarDummy:
         if unit == "rad":
             return math.pi / 180
 
-        self._logger.log(
-            f"[LidarDummy] Unit of angles not recognized [{unit}]!", LogLevels.CRITICAL
+        self._logger.critical(
+            f"[LidarDummy] Unit of angles not recognized [{unit}]!"
         )
         raise ValueError(f"Unit of angles not recognized [{unit}]!")
 
@@ -346,8 +342,8 @@ class LidarDummy:
         if unit == "inch":
             return 0.0254
 
-        self._logger.log(
-            f"[LidarDummy] Unit of distances not recognized [{unit}]!", LogLevels.CRITICAL
+        self._logger.critical(
+            f"[LidarDummy] Unit of distances not recognized [{unit}]!"
         )
         raise ValueError(f"Unit of distances not recognized [{unit}]!")
 
@@ -378,7 +374,7 @@ class LidarDummy:
         distances += np.random.normal(0, 0.01, self.__num_points).astype(np.float32)
         distances = np.clip(distances, 0.1, 5.0)  # Ensure distances are within sensor range
 
-        self._logger.log("[LidarDummy] Simulated realistic distances generated.", LogLevels.DEBUG)
+        self._logger.debug("[LidarDummy] Simulated realistic distances generated.")
         return distances * self.__distance_unit
 
     def scan_to_polars(self) -> np.ndarray:
@@ -391,7 +387,7 @@ class LidarDummy:
         polars = np.column_stack((self.__polars_angles, distances))
         valid_polars = polars[polars[:, 1] > self._min_distance]
 
-        self._logger.log("[LidarDummy] Simulated polar coordinates generated.", LogLevels.DEBUG)
+        self._logger.debug("[LidarDummy] Simulated polar coordinates generated.")
         return valid_polars
 
     def is_connected(self) -> bool:

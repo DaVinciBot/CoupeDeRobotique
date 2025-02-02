@@ -3,7 +3,7 @@ from multiprocessing import Manager
 from typing import Any
 
 # ====== Internal Project Imports ======
-from old_logger import Logger
+from logger import Logger
 
 
 # ====== Class Part ======
@@ -134,7 +134,6 @@ class DictProxyAccessor:
         """
         # Tuple of all types that are considered serialized directly.
         serialized_types = (
-            Logger,
             int,
             float,
             str,

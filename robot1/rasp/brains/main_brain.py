@@ -10,7 +10,7 @@ from brain import Brain
 from WS_comms import WSmsg, WSclientRouteManager, WServerRouteManager
 from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
 
-from old_logger import Logger, LogLevels
+from logger import Logger
 import math
 from utils import Utils
 import matplotlib.pyplot as plt
@@ -45,7 +45,7 @@ class MainBrain(Brain):
             ws_cmd: WServerRouteManager,
     ) -> None:
         if isinstance(rolling_basis, RollingBasisDummy):
-            logger.log("RollingBasisDummy is used", LogLevels.WARNING)
+            logger.warning("RollingBasisDummy is used")
 
         # Controllers
         self.rolling_basis: RollingBasis = rolling_basis
@@ -84,9 +84,7 @@ class MainBrain(Brain):
         cmd: RollingBasisCommand = self.movement_manager.handle_go_to()
         if cmd is not None:
             self.rolling_basis.set_speed_and_position(*cmd.get_command())
-            self.logger.log(
-                f"RollingBasisCommand: {cmd.get_command()}", LogLevels.DEBUG
-            )
+            self.logger.debug(f"RollingBasisCommand: {cmd.get_command()}")
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
     async def update_arena(self) -> None:
@@ -125,9 +123,8 @@ class MainBrain(Brain):
         cmd = await self.ws_cmd.receiver.get()
 
         if cmd != WSmsg():
-            self.logger.log(
-                f"Zombie instruction {cmd.msg} received: {cmd.data}",
-                LogLevels.INFO,
+            self.logger.info(
+                f"Zombie instruction {cmd.msg} received: {cmd.data}"
             )
 
             if cmd.msg == "eval":
@@ -144,9 +141,8 @@ class MainBrain(Brain):
                         eval(instruction)
 
             else:
-                self.logger.log(
+                self.logger.warning(
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
-                    LogLevels.WARNING,
                 )
 
     """ ### One-Shot Tasks ### """

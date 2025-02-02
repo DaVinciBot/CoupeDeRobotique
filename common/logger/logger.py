@@ -11,10 +11,9 @@
 
 # ====== Imports ======
 # Standard library imports
-import datetime
+from typing import Optional
 import logging
 import sys
-import os
 
 # Third-party library imports
 from colorama import just_fix_windows_console
@@ -24,6 +23,8 @@ from logger.log_levels import LogLevels
 from logger.monitoring import DiskMonitor
 from logger.formatter import Formatter
 from logger.colors import BaseColors
+from logger.logger_configs import LoggerConfig
+from logger.logger_manager import LoggerManager
 
 # ====== Initialize Console for Colors ======
 just_fix_windows_console()  # Enables colors in windows consoles (why not)
@@ -35,7 +36,7 @@ logging.addLevelName(LogLevels.FATAL, "FATAL")
 
 
 # Define a method for the Logger class to log messages at 'FATAL' level.
-def class_fatal(self, msg, *args, **kwargs):
+def class_fatal(self: logging.Logger, msg: str, *args, **kwargs):
     """
     Log 'msg % args' with severity 'FATAL'.
 
@@ -47,6 +48,7 @@ def class_fatal(self, msg, *args, **kwargs):
     logger.fatal("Houston, we have one %s", "major disaster", exc_info=True)
 
     Args:
+        self (Logger): The logger instance.
         msg (str): The message to log.
     """
     if self.isEnabledFor(LogLevels.FATAL):
@@ -75,129 +77,54 @@ class Logger:
         Custom Logger class that extends Python's built-in logging functionality.
         Supports console and file logging with customizable settings, including colored
         output for improved readability in terminals.
-    """
-
-    def __init__(
-            self,
-            identifier: str = "unknown",
-            decorator_log_level: LogLevels = LogLevels.DEBUG,
-            print_log_level: LogLevels = LogLevels.DEBUG,
-            file_log_level: LogLevels = LogLevels.DEBUG,
-            print_log: bool = True,
-            write_to_file: bool = True,
-            colors: type[BaseColors] = None,
-            identifier_max_width: int = 0,
-            level_max_width: int = 0,
-            filename_lineno_max_width: int = 15,
-            placement_improvement: bool = True,
-            path: str = "logs",
-            display_monitoring: bool = False,
-            files_monitoring: bool = True,
-            file_size_unit: str = "Go",
-            file_size_precision: int = 2,
-            disk_alert_threshold_percent: float = 0.8,
-            log_files_size_alert_threshold_percent: float = 0.5,
-            max_log_file_size: float = 1,
-            enable_monitoring_logs: bool = True,
-    ):
         """
-        Initializes a Logger instance.
+
+    # ====== Initialization Methods ======
+
+    @staticmethod
+    def _initialize_config(kwargs) -> LoggerConfig:
+        """
+        Initializes logger configuration from provided keyword arguments.
+        If a LoggerConfig instance is provided, it is used directly; otherwise,
+        configuration is generated from given keyword arguments.
 
         Args:
-            identifier (str): Logger name.
-            decorator_log_level (LogLevels): Minimum level for decorator logs.
-            print_log_level (LogLevels): Minimum level for console logs.
-            file_log_level (LogLevels): Minimum level for file logs.
-            print_log (bool): Whether to log to console.
-            write_to_file (bool): Whether to log to a file.
-            colors (type[BaseColors]): Color settings for console output.
-            identifier_max_width (int): Max width for log source identifier.
-            level_max_width (int): Max width for log level label.
-            filename_lineno_max_width (int): Max width for filename + line number.
-            placement_improvement (bool): Whether to adjust text alignment.
-            path (str): Directory path for log files.
-            display_monitoring (bool): Whether to display disk usage monitoring.
-            files_monitoring (bool): Whether to display log files monitoring.
-            file_size_unit (str): Unit for file size display.
-            file_size_precision (int): Precision for file size display.
-            disk_alert_threshold_percent (float): Disk usage alert threshold.
-            log_files_size_alert_threshold_percent (float): Log files alert threshold.
-            max_log_file_size (float): Maximum log file size.
-            enable_monitoring_logs (bool): Whether to enable log monitoring.
+            kwargs (dict): Keyword arguments for configuring the logger.
+
+        Returns:
+            LoggerConfig: Configured logger instance.
         """
-        logger_already_exists = identifier in logging.root.manager.loggerDict
+        config = kwargs.get("config")
+        if isinstance(config, LoggerConfig):
+            return config
+        return LoggerConfig.from_kwargs(**kwargs)
 
-        if logger_already_exists:
-            self.logger = logging.getLogger(identifier)
-        else:
-            self.logger: logging.Logger = logging.getLogger(identifier)
-            self.logger.setLevel(LogLevels.DEBUG)
+    def __init__(self, **kwargs):
+        """
+        Initialize the logger with customizable parameters.
 
-        # Display disk usage and log files monitoring
-        if display_monitoring or files_monitoring:
-            self.disk_monitor = DiskMonitor(
-                logger=self,
-                directory=path,
-                unit=file_size_unit,
-                size_precision=file_size_precision,
-                disk_threshold=disk_alert_threshold_percent,
-                log_threshold=log_files_size_alert_threshold_percent,
-                # duplicate logs monitoring
-                max_log_size=max_log_file_size if not logger_already_exists else None,
-                enable_monitoring_logs=enable_monitoring_logs if not logger_already_exists else False,
-            )
+        Supports:
+        - Full dictionary configuration
+        - Partial updates of specific configurations
+        - Directly passing configuration objects (LogLevelsConfig, PlacementConfig, etc.)
+        """
 
-        # Log levels
-        self.decorator_level: LogLevels = decorator_log_level
-        self.print_log_level: LogLevels = print_log_level
-        self.file_log_level: LogLevels = file_log_level
+        self.config = self._initialize_config(kwargs)
 
-        # Determine max widths for alignment
-        if identifier_max_width == 0:
-            identifier_max_width = len(identifier) + (2 if placement_improvement else 0)
-        if level_max_width == 0:
-            level_max_width = max(len(level.name) for level in LogLevels) + (2 if placement_improvement else 0)
+        # Register the logger with the LoggerManager for centralized tracking
+        LoggerManager.register_logger(self)
 
-        # Define log file path
-        if write_to_file and not logger_already_exists:
-            if not os.path.isdir(path):
-                os.mkdir(path)
-            self.full_path = os.path.join(path, f"{datetime.datetime.now().strftime('%Y-%m-%d')}.log")
+        # Perform post-initialization setup
+        self.__post_init__()
 
-        # Console logging setup
-        if print_log and not logger_already_exists:
-            self.print_formatter: Formatter = Formatter(
-                identifier=identifier,
-                identifier_max_width=identifier_max_width,
-                filename_lineno_max_width=filename_lineno_max_width,
-                level_max_width=level_max_width,
-                colors=colors,
-            )
+    def _get_log_level_to_logger_function_map(self) -> dict[LogLevels, callable]:
+        """
+        Creates a mapping of log levels to the corresponding logging methods.
 
-            self.console_handler = logging.StreamHandler(stream=sys.stdout)
-            self.console_handler.setFormatter(self.print_formatter)
-            self.console_handler.setLevel(print_log_level)
-
-            self.logger.addHandler(self.console_handler)
-
-        # File logging setup
-        if write_to_file and not logger_already_exists:
-            self.file_formatter: Formatter = Formatter(
-                identifier=identifier,
-                identifier_max_width=identifier_max_width,
-                filename_lineno_max_width=filename_lineno_max_width,
-                level_max_width=level_max_width,
-                colors=None
-            )
-
-            self.file_handler = logging.FileHandler(filename=self.full_path)
-            self.file_handler.setFormatter(self.file_formatter)
-            self.file_handler.setLevel(file_log_level)
-
-            self.logger.addHandler(self.file_handler)
-
-        # Map log levels to logger methods
-        self.log_level_to_logger_function = {
+        Returns:
+            dict: A dictionary mapping LogLevels to logging methods.
+        """
+        return {
             LogLevels.FATAL: self.logger.fatal,
             LogLevels.CRITICAL: self.logger.critical,
             LogLevels.ERROR: self.logger.error,
@@ -206,25 +133,194 @@ class Logger:
             LogLevels.DEBUG: self.logger.debug,
         }
 
-        # Display information about disk usage and log files
-        if display_monitoring and not logger_already_exists:
+    def __post_init__(self):
+        """
+        Post-initialization setup for the logger instance.
+        - Checks if logger already exists to avoid duplicate handlers.
+        - Configures disk monitoring if enabled.
+        - Sets up logging handlers if necessary.
+        """
+        already_exists = self.config.identifier in logging.root.manager.loggerDict
+
+        self.logger = logging.getLogger(self.config.identifier)
+        self.logger.setLevel(LogLevels.DEBUG)  # Set the lowest level to capture all messages
+
+        if self.config.monitor_config.is_monitoring_enabled():
+            self.disk_monitor = DiskMonitor(
+                logger=self,
+                directory=self.config.path,
+                config=self.config.monitor_config
+            )
+
+        if not already_exists:
+            self._setup_handlers()
+
+        self.log_level_to_logger_function = self._get_log_level_to_logger_function_map()
+
+        if self.config.monitor_config.display_monitoring and not already_exists:
             self.disk_monitor.display_monitoring()
-        if files_monitoring and not logger_already_exists:
+        if self.config.monitor_config.files_monitoring and not already_exists:
             self.disk_monitor.clean_logs()
+
+    # ====== Handlers Methods ======
+    def _setup_handlers(self):
+        """Sets up logging handlers for console and file output."""
+        if self.config.log_levels_config.print_log:
+            self._set_handler(
+                logging.StreamHandler(stream=sys.stdout),
+                self.config.log_levels_config.print_log_level,
+                self.config.colors
+            )
+        if self.config.log_levels_config.write_to_file:
+            self._set_handler(
+                logging.FileHandler(self.config.full_path),
+                self.config.log_levels_config.file_log_level,
+                colors=None
+            )
+
+    def _set_handler(self, handler: logging.Handler, level: int, colors: Optional[type[BaseColors]]):
+        """
+        Configures a given handler with a formatter and logging level.
+
+        Args:
+            handler (logging.Handler): The logging handler to configure.
+            level (int): The logging level for this handler.
+            colors (Optional[type[BaseColors]]): Color settings for console output.
+        """
+        formatter = Formatter(
+            identifier=self.config.identifier,
+            identifier_max_width=self.config.placement_config.identifier_max_width,
+            filename_lineno_max_width=self.config.placement_config.filename_lineno_max_width,
+            level_max_width=self.config.placement_config.level_max_width,
+            colors=colors,
+        )
+        handler.setLevel(level)
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
+
+    # ====== Formatter Methods ======
+    def update_handler_formatter(
+            self,
+            handler_type: type[logging.FileHandler] | type[logging.StreamHandler],
+            identifier: Optional[str] = None,
+            identifier_max_width: Optional[int] = None,
+            filename_lineno_max_width: Optional[int] = None,
+            level_max_width: Optional[int] = None,
+            colors: Optional[type[BaseColors]] = None,
+            **kwargs
+    ):
+        """
+        Updates the formatter of a specified handler type dynamically.
+
+        Args:
+            handler_type (type[logging.FileHandler] | type[logging.StreamHandler]):
+                The logging handler type to update.
+            identifier (Optional[str]):
+                Identifier to be used in the formatter (default: existing identifier).
+            identifier_max_width (Optional[int]):
+                Maximum width for the identifier field (default: existing config value).
+            filename_lineno_max_width (Optional[int]):
+                Maximum width for filename and line number (default: existing config value).
+            level_max_width (Optional[int]):
+                Maximum width for the log level field (default: existing config value).
+            colors (Optional[type[BaseColors]]):
+                Color scheme to be used (default: existing config, ignored for file handlers).
+        """
+        self.config.identifier = identifier or self.config.identifier
+        self.config.placement_config.placement_improvement = (
+                identifier_max_width or self.config.placement_config.placement_improvement
+        )
+        self.config.placement_config.filename_lineno_max_width = (
+                filename_lineno_max_width or self.config.placement_config.filename_lineno_max_width
+        )
+        self.config.placement_config.level_max_width = (
+                level_max_width or self.config.placement_config.level_max_width
+        )
+
+        if hasattr(self, "logger"):
+            for handler in self.logger.handlers:
+                if isinstance(handler, handler_type):
+                    handler.setFormatter(Formatter(
+                        identifier=self.config.identifier,
+                        identifier_max_width=self.config.placement_config.placement_improvement,
+                        filename_lineno_max_width=self.config.placement_config.filename_lineno_max_width,
+                        level_max_width=self.config.placement_config.level_max_width,
+                        colors=(
+                            None if handler_type is logging.FileHandler else
+                            (self.config.colors if colors is None else colors)
+                        ),
+                    ))
+                    break  # Exit loop after updating the first matching handler
+
+    def update_print_handler_formatter(
+            self,
+            identifier: Optional[str] = None,
+            identifier_max_width: Optional[int] = None,
+            filename_lineno_max_width: Optional[int] = None,
+            level_max_width: Optional[int] = None,
+            colors: Optional[type[BaseColors]] = None,
+            **kwargs
+    ):
+        """
+        Updates the formatter of the StreamHandler (console logging).
+
+        Args:
+            identifier (Optional[str]): Identifier for formatting.
+            identifier_max_width (Optional[int]): Max width of the identifier field.
+            filename_lineno_max_width (Optional[int]): Max width for filename/line number.
+            level_max_width (Optional[int]): Max width of the log level field.
+            colors (Optional[type[BaseColors]]): Color scheme to be applied.
+        """
+        self.update_handler_formatter(
+            handler_type=logging.StreamHandler,
+            identifier=identifier,
+            identifier_max_width=identifier_max_width,
+            filename_lineno_max_width=filename_lineno_max_width,
+            level_max_width=level_max_width,
+            colors=colors,
+        )
+
+    def update_file_handler_formatter(
+            self,
+            identifier: Optional[str] = None,
+            identifier_max_width: Optional[int] = None,
+            filename_lineno_max_width: Optional[int] = None,
+            level_max_width: Optional[int] = None,
+            **kwargs
+    ):
+        """
+        Updates the formatter of the FileHandler (file logging).
+
+        Args:
+            identifier (Optional[str]): Identifier for formatting.
+            identifier_max_width (Optional[int]): Max width of the identifier field.
+            filename_lineno_max_width (Optional[int]): Max width for filename/line number.
+            level_max_width (Optional[int]): Max width of the log level field.
+        """
+        self.update_handler_formatter(
+            handler_type=logging.FileHandler,
+            identifier=identifier,
+            identifier_max_width=identifier_max_width,
+            filename_lineno_max_width=filename_lineno_max_width,
+            level_max_width=level_max_width,
+        )
 
     # ====== Logging Methods ======
     def log(self, msg: str, level: LogLevels) -> None:
         """ Logs a message at the specified log level. """
-        self.log_level_to_logger_function.get(
-            level,
-            lambda bind_msg, stack_level: self.logger.warning(
-                msg=f"Invalid log level [log message: {bind_msg}]", stacklevel=stack_level
-            ),
-        )(msg, stacklevel=2)
+        log_func = self.log_level_to_logger_function.get(level)
+        if log_func is None:
+            self.logger.warning(
+                f"Invalid log level [log message: {msg}]", stacklevel=2
+            )
+        else:
+            log_func(msg, stacklevel=2)
 
     def fatal(self, msg: str) -> None:
         """ Logs a fatal message. """
-        self.logger.fatal(msg, stacklevel=2)
+        # 3 because the logging library doesn't support the 'fatal' level natively, so I have added it manually
+        # (this added 1 to depth level)
+        self.logger.fatal(msg, stacklevel=3)
 
     def critical(self, msg: str) -> None:
         """ Logs a critical message. """

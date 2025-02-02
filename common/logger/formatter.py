@@ -6,8 +6,8 @@
 
 # ====== Imports ======
 # Standard library imports
-from datetime import datetime
 import logging
+import datetime
 
 # Internal project imports
 from logger.tools import center_and_limit
@@ -22,24 +22,24 @@ class TimeFormatter(logging.Formatter):
     Retains the '.' as a separator.
     """
 
-    def formatTime(self, record: logging.LogRecord, datefmt: str = None) -> str:
+    def formatTime(self, record: logging.LogRecord, date_format: str = None) -> str:
         """
         Formats the timestamp of a log record.
 
         Args:
             record (logging.LogRecord): The log record containing the timestamp.
-            datefmt (str, optional): The date format string. Defaults to None.
+            date_format (str, optional): The date format string. Defaults to None.
 
         Returns:
             str: Formatted timestamp.
         """
-        t = datetime.fromtimestamp(record.created)
+        t = datetime.datetime.fromtimestamp(record.created)
 
-        if datefmt and "%f" in datefmt:
+        if date_format and "%f" in date_format:
             # Convert microseconds to milliseconds (3 digits)
-            return t.strftime(datefmt).replace("%f", f"{record.msecs:03.0f}")
+            return t.strftime(date_format).replace("%f", f"{record.msecs:03.0f}")
 
-        return super().formatTime(record, datefmt)
+        return super().formatTime(record, date_format)
 
 
 class Formatter(TimeFormatter):
@@ -56,7 +56,7 @@ class Formatter(TimeFormatter):
             identifier_max_width: int,
             filename_lineno_max_width: int,
             level_max_width: int,
-            colors: BaseColors = None,
+            colors: type[BaseColors] = None,
     ):
         """
         Initializes the Formatter with specified settings.
@@ -115,7 +115,11 @@ class Formatter(TimeFormatter):
         return f"{self.colors.DATE}{date}{self.colors.RESET_ALL}" if self.colors else date
 
     def _get_identifier(self) -> str:
-        return f"{self.colors.IDENTIFIER}{self.truncated_identifier}{self.colors.RESET_ALL}" if self.colors else self.truncated_identifier
+        return (
+            f"{self.colors.IDENTIFIER}{self.truncated_identifier}{self.colors.RESET_ALL}"
+            if self.colors
+            else self.truncated_identifier
+        )
 
     def _get_filename(self) -> str:
         filename = "%(filename)s"
@@ -125,10 +129,12 @@ class Formatter(TimeFormatter):
         lineno = "%(lineno)s"
         return f"{self.colors.LINENO}{lineno}{self.colors.RESET_ALL}" if self.colors else lineno
 
-    def _get_loglevel(self) -> str:
+    @staticmethod
+    def _get_loglevel() -> str:
         return "%(custom_levelname)s"
 
-    def _get_message(self) -> str:
+    @staticmethod
+    def _get_message() -> str:
         return "%(message)s"
 
     def _get_dynamic_levelname(self, level: str) -> str:

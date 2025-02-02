@@ -13,15 +13,18 @@ from enum import Enum
 from typing import List
 from dataclasses import dataclass
 
+# Internal project imports
+from logger.logger_configs import MonitorConfig
+
 
 # ====== Enum for Storage Units ======
 class Unit(Enum):
     """
     Enum representing different storage units.
     """
-    GO = "Go"
-    MO = "Mo"
-    KO = "Ko"
+    Go = "Go"
+    Mo = "Mo"
+    Ko = "Ko"
 
     @property
     def factor(self) -> int:
@@ -40,7 +43,7 @@ class Unit(Enum):
             return cls(unit_str)
         except ValueError:
             print(f"Unit '{unit_str}' not supported. Defaulting to 'Go'.")
-            return cls.GO
+            return cls.Go
 
 
 # ====== Data Classes for Disk and Log Information ======
@@ -83,9 +86,7 @@ class DiskMonitor:
     """
 
     def __init__(
-            self, logger, directory: str, unit: str = "Go", size_precision: int = 2,
-            disk_threshold: float = 0.8, log_threshold: float = 0.5, max_log_size: float = None,
-            enable_monitoring_logs: bool = True
+            self, logger, directory: str, config: MonitorConfig
     ):
         """
         Initializes the DiskMonitor with monitoring parameters.
@@ -93,24 +94,20 @@ class DiskMonitor:
         Args:
             logger: Logger instance for logging information.
             directory (str): Directory to monitor.
-            unit (str): Storage unit (Go, Mo, Ko).
-            size_precision (int): Decimal precision for size values.
-            disk_threshold (float): Warning threshold for disk usage.
-            log_threshold (float): Warning threshold for log usage.
-            max_log_size (float, optional): Maximum allowed log size before cleanup (in specified unit).
-            enable_monitoring_logs (bool): Flag to enable/disable logging output.
+            config (MonitorConfig): Configuration settings for monitoring.
         """
         self.logger = logger
-        self.directory = directory
-        self.unit = Unit.from_string(unit)
-        self.size_precision = size_precision
-        self.disk_threshold = disk_threshold
-        self.log_threshold = log_threshold
-        self.max_log_size = max_log_size * self.unit.factor if max_log_size is not None else None
-        self.enable_monitoring_logs = enable_monitoring_logs
-
-        if unit not in [u.value for u in Unit]:
-            self.logger.warning(f"Unit '{unit}' not supported. Defaulting to 'Go'.")
+        self.directory: str = directory
+        self.unit: Unit = Unit.from_string(config.file_size_unit)
+        self.size_precision: int = config.file_size_precision
+        self.disk_threshold: float = config.disk_alert_threshold_percent
+        self.log_threshold: float = config.log_files_size_alert_threshold_percent
+        self.max_log_size: float = (
+            config.max_log_file_size * self.unit.factor
+            if config.max_log_file_size is not None
+            else None
+        )
+        self.enable_monitoring_logs: bool = config.files_monitoring
 
     def convert_unit(self, size: float) -> float:
         """
@@ -164,16 +161,16 @@ class DiskMonitor:
         )
 
     @staticmethod
-    def extract_date(filename: str):
+    def extract_date(filename: str) -> datetime.datetime | None:
         match = re.search(r"\d{8}", filename)
         if match:
             try:
-                return datetime.strptime(match.group(), "%Y-%m-%d")
+                return datetime.datetime.strptime(match.group(), "%Y-%m-%d")
             except ValueError:
                 return None
         return None
 
-    def clean_logs(self):
+    def clean_logs(self) -> None:
         if self.enable_monitoring_logs:
             self.logger.info("=== Logs Cleaning Info ===")
 
@@ -221,7 +218,7 @@ class DiskMonitor:
 
         self.logger.info("Log cleanup completed.")
 
-    def display_disk_usage(self):
+    def display_disk_usage(self) -> None:
         """
         Logs the current disk usage statistics.
         """
@@ -234,7 +231,7 @@ class DiskMonitor:
         if disk_usage.usage_ratio >= self.disk_threshold:
             self.logger.warning(f"Disk usage exceeded {self.disk_threshold * 100:.0f}%!")
 
-    def display_log_files(self):
+    def display_log_files(self) -> None:
         """
         Logs information about log files.
         """
@@ -247,7 +244,7 @@ class DiskMonitor:
         self.logger.info(f"Total log size: {log_summary.total_size} {self.unit.value}")
         self.logger.info(f"Log storage usage: {log_summary.usage_ratio * 100:.2f}%")
 
-    def display_monitoring(self):
+    def display_monitoring(self) -> None:
         """
         Logs disk and log file information.
         """

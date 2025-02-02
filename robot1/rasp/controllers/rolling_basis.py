@@ -14,7 +14,7 @@ from typing import Callable
 # ====== Internal Project Imports ======
 from teensy_comms import Teensy
 from geometry import OrientedPoint
-from old_logger import Logger, LogLevels
+from logger import Logger, log
 
 
 class Command(Enum):
@@ -107,8 +107,8 @@ class RollingBasis(Teensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.log(
-            "Teensy says: " + msg.decode("ascii", errors="ignore"), LogLevels.INFO
+        self.logger.info(
+            "Teensy says: " + msg.decode("ascii", errors="ignore")
         )
 
     def rcv_rolling_basis_state(self, msg: bytes):
@@ -143,14 +143,14 @@ class RollingBasis(Teensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.log(
-            f"Teensy does not know the command {msg.hex()}", LogLevels.WARNING
+        self.logger.warning(
+            f"Teensy does not know the command {msg.hex()}"
         )
 
     ###################
     # Message to send #
     ###################
-    @Logger
+    @log(param_logger="RollingBasis")
     def set_speed_and_position(
             self,
             target_linear_speed: float,
@@ -254,7 +254,7 @@ class RollingBasisDummy:
             msg (bytes): The received message bytes.
         """
         decoded_msg = msg.decode("ascii", errors="ignore")
-        self.logger.log(f"Dummy RollingBasis received a PRINT message: {decoded_msg}", LogLevels.INFO)
+        self.logger.info(f"Dummy RollingBasis received a PRINT message: {decoded_msg}")
 
     def rcv_rolling_basis_state(self, msg: bytes):
         """
@@ -273,7 +273,7 @@ class RollingBasisDummy:
         # Since this is a dummy method, we'll just log the raw data
         # rather than unpack and update real state.
         raw_data_hex = msg.hex()
-        self.logger.log(f"Dummy RollingBasis received a state update: {raw_data_hex}", LogLevels.INFO)
+        self.logger.info(f"Dummy RollingBasis received a state update: {raw_data_hex}")
 
     def rcv_unknown_msg(self, msg: bytes):
         """
@@ -282,16 +282,15 @@ class RollingBasisDummy:
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.log(
-            f"Dummy RollingBasis received an unknown message: {msg.hex()}",
-            LogLevels.WARNING
+        self.logger.warning(
+            f"Dummy RollingBasis received an unknown message: {msg.hex()}"
         )
 
     ###################
     # Message to send #
     ###################
 
-    @Logger
+    @log("RollingBasis")
     def set_speed_and_position(
             self,
             target_linear_speed: float,
@@ -314,11 +313,10 @@ class RollingBasisDummy:
         self.odometrie = target_position
         self.linear_speed = target_linear_speed
         self.angular_speed = target_angular_speed
-        self.logger.log(
+        self.logger.info(
             f"[DUMMY] Setting speed to linear={target_linear_speed}, "
             f"angular={target_angular_speed}, "
-            f"position=({target_position.x}, {target_position.y}, {target_position.theta})",
-            LogLevels.INFO
+            f"position=({target_position.x}, {target_position.y}, {target_position.theta})"
         )
 
     def send_bytes(self, msg: bytes):
@@ -330,4 +328,4 @@ class RollingBasisDummy:
             msg (bytes): The message to send.
         """
         # No real sending performed; simply log the attempt.
-        self.logger.log(f"[DUMMY] Sending bytes: {msg.hex()}", LogLevels.INFO)
+        self.logger.info(f"[DUMMY] Sending bytes: {msg.hex()}")

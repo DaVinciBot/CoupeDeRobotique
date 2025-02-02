@@ -32,7 +32,7 @@ from geometry import (
     is_empty,
     nearest_points,
 )
-from old_logger import Logger, LogLevels, time_tracker
+from logger import Logger, LogLevels, time_tracker, ClassicColors
 from arena.base_arena.grid_manager import GridManager
 from arena.base_arena.arena_zone import (
     # Enums
@@ -75,10 +75,8 @@ class BaseArena:
             chunk_size: int = 10,
             grid_manager_logger: Logger = Logger(
                 identifier="GridManager",
-                decorator_level=LogLevels.INFO,
-                print_log_level=LogLevels.DEBUG,
-                file_log_level=LogLevels.DEBUG,
-            ),
+                follow_logger_manager_rules=True,
+            )
     ) -> None:
         """
         Initializes the BaseArena instance with dimensions, zones, and configuration parameters.
@@ -100,17 +98,15 @@ class BaseArena:
         self.height: int = height
 
         if border_buffer % chunk_size != 0:
-            self.logger.log(
+            self.logger.warning(
                 "The border buffer is not a multiple of the chunk size -> "
-                "the not walkable area will not be aligned with the grid",
-                LogLevels.WARNING,
+                "the not walkable area will not be aligned with the grid"
             )
 
         if obstacle_buffer % chunk_size != 0:
-            self.logger.log(
+            self.logger.warning(
                 "The obstacle buffer is not a multiple of the chunk size -> "
-                "the not walkable area will not be aligned with the grid",
-                LogLevels.WARNING,
+                "the not walkable area will not be aligned with the grid"
             )
 
         self.border_buffer: float = border_buffer
@@ -151,16 +147,14 @@ class BaseArena:
 
         self.ally_logger = Logger(
             identifier="AllyZone",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
+            follow_logger_manager_rules=True,
         )
+
         self.enemy_logger = Logger(
             identifier="EnemyZone",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
+            follow_logger_manager_rules=True,
         )
+
         self.ally_zone: AllyZone = AllyZone(
             logger,
             OrientedPoint(  # default position
@@ -195,9 +189,7 @@ class BaseArena:
         return BorderZone(
             logger=Logger(
                 identifier="BorderZone",
-                decorator_level=LogLevels.INFO,
-                print_log_level=LogLevels.DEBUG,
-                file_log_level=LogLevels.DEBUG,
+                follow_logger_manager_rules=True,
             ),
             buffer_size=self.border_buffer,
             buffered_polygon=border_zone_polygon,

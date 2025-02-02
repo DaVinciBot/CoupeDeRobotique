@@ -1,76 +1,51 @@
+# ====== Imports ======
+# Internal project imports
+from logger import Logger
+
 from arena.base_arena.arena import BaseArena
-
-from old_logger import Logger, LogLevels
-from arena.base_arena.grid_manager import GridManager
-
 from arena.base_arena.arena_zone import (
-    # Enums
-    ZoneType,
-    ZoneAccessibility,
-    # Zones
     BaseArenaZone,
     ForbiddenZone,
-    EnemyZone,
     StuffZone,
     BlueReservedZone,
     YellowReservedZone,
-    BorderZone,
 )
 
 from geometry import (
     Point,
-    MultiPoint,
     Polygon,
-    MultiPolygon,
-    LineString,
-    BufferCapStyle,
-    BufferJoinStyle,
-    Geometry,
     create_straight_rectangle,
-    prepare,
-    distance,
-    OrientedPoint,
-    nearest_points,
-    box,
 )
 
 
 class ShowArena(BaseArena):
     def __init__(
-        self,
-        logger: Logger,
-        border_buffer: float,
-        obstacle_buffer: float,
-        chunk_size: int = 2,
-        forbidden_cover_threshold: float = 0.5,
-        grid_manager_logger: Logger = None,
+            self,
+            logger: Logger,
+            border_buffer: float,
+            obstacle_buffer: float,
+            chunk_size: int = 2,
+            forbidden_cover_threshold: float = 0.5,
+            grid_manager_logger: Logger = None,
     ) -> None:
         stuff_zone_logger = Logger(
             identifier="StuffZone",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
+            follow_logger_manager_rules=True,
         )
 
         yellow_reserved_zone_logger = Logger(
             identifier="YellowReservedZone",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
+            follow_logger_manager_rules=True,
         )
 
         blue_reserved_zone_logger = Logger(
             identifier="BlueReservedZone",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
+            follow_logger_manager_rules=True,
         )
 
         forbidden_zone_logger = Logger(
             identifier="ForbiddenZone",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.DEBUG,
-            file_log_level=LogLevels.DEBUG,
+            follow_logger_manager_rules=True,
         )
 
         stuff_zones_points = [
@@ -194,5 +169,5 @@ class ShowArena(BaseArena):
                 forbidden_cover_threshold=forbidden_cover_threshold,
             )
 
-        self.logger.log("ShowArena initialized.", LogLevels.INFO)
-        self.logger.log(f"Width: {self.width}, Height: {self.height}", LogLevels.DEBUG)
+        self.logger.info("ShowArena initialized.")
+        self.logger.debug(f"Width: {self.width}, Height: {self.height}")

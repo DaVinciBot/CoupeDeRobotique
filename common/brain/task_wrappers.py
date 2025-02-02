@@ -11,7 +11,6 @@ import functools
 from typing import TypeVar, Callable, Any, Coroutine
 
 # ====== Internal Project Imports ======
-from old_logger import LogLevels
 from brain.execution_states import ExecutionStates
 from brain.dict_proxy import DictProxyAccessor
 from brain.task_output import TaskOutput
@@ -53,9 +52,8 @@ class SynchronousWrapper:
         try:
             return TaskOutput(result=func(self), execution_state=ExecutionStates.CORRECTLY)
         except Exception as error:
-            self.logger.log(
-                f"[{func.__name__}] executor (Subprocess: sync function) -> error: {error}",
-                LogLevels.ERROR,
+            self.logger.error(
+                f"[{func.__name__}] executor (Subprocess: sync function) -> error: {error}"
             )
             time.sleep(error_sleep)
             return TaskOutput(result=None, execution_state=ExecutionStates.ERROR_OCCURRED)
@@ -70,9 +68,8 @@ class SynchronousWrapper:
             task (callable): Function to execute.
             refresh_rate (float): Time in seconds between executions.
         """
-        self.logger.log(
+        self.logger.info(
             f"[{task.__name__}] routine (Subprocess: sync function) -> started",
-            LogLevels.INFO,
         )
         while True:
             SynchronousWrapper.safe_execute(self, task, error_sleep=refresh_rate)
@@ -91,15 +88,13 @@ class SynchronousWrapper:
         Returns:
             TaskOutput: Contains the result and execution state.
         """
-        self.logger.log(
-            f"[{task.__name__}] one-shot (Subprocess: sync function) -> started",
-            LogLevels.INFO,
+        self.logger.info(
+            f"[{task.__name__}] one-shot (Subprocess: sync function) -> started"
         )
         output: TaskOutput = SynchronousWrapper.safe_execute(self, task)
-        self.logger.log(
+        self.logger.info(
             f"[{task.__name__}] one-shot (Subprocess: sync function) -> ended, "
-            f"output [{output}]",
-            LogLevels.INFO,
+            f"output [{output}]"
         )
         return output
 
@@ -122,9 +117,8 @@ class SynchronousWrapper:
         if task_name is None:
             task_name: str = task.__name__
 
-        self.logger.log(
-            f"[{task_name}] timed task (Subprocess: sync function) -> started",
-            LogLevels.INFO,
+        self.logger.info(
+            f"[{task_name}] timed task (Subprocess: sync function) -> started"
         )
         try:
             process: Process = Process(target=task)
@@ -148,26 +142,23 @@ class SynchronousWrapper:
             process.join()
 
             if run_duration() < timeout:
-                self.logger.log(
+                self.logger.info(
                     f"[{task_name}] timed task (Subprocess: sync function) -> "
-                    f"ended before the timeout [{run_duration():.1f}s/{timeout:.1f}s]",
-                    LogLevels.INFO,
+                    f"ended before the timeout [{run_duration():.1f}s/{timeout:.1f}s]"
                 )
                 # Can't get subprocess return value
                 return TaskOutput(result=None, execution_state=ExecutionStates.CORRECTLY)
 
             else:
-                self.logger.log(
+                self.logger.info(
                     f"[{task_name}] timed task (Subprocess: sync function) -> "
-                    f"ended by reaching the timeout [{timeout}]",
-                    LogLevels.INFO,
+                    f"ended by reaching the timeout [{timeout}]"
                 )
                 return TaskOutput(result=None, execution_state=ExecutionStates.TIMEOUT)
         except Exception as error:
-            self.logger.log(
+            self.logger.info(
                 f"[{task_name}] timed task (Subprocess: sync function) -> "
-                f"ended because an error occurred [{error}]",
-                LogLevels.INFO,
+                f"ended because an error occurred [{error}]"
             )
             return TaskOutput(result=None, execution_state=ExecutionStates.ERROR_OCCURRED)
 
@@ -287,9 +278,8 @@ class AsynchronousWrapper:
             return TaskOutput(result=await func(self), execution_state=ExecutionStates.CORRECTLY)
 
         except Exception as error:
-            self.logger.log(
-                f"[{func.__name__}] executor (Main-process: async function) -> error: {error}",
-                LogLevels.ERROR,
+            self.logger.info(
+                f"[{func.__name__}] executor (Main-process: async function) -> error: {error}"
             )
             await asyncio.sleep(max(error_sleep, 0.5))  # Avoid spamming the logs
             return TaskOutput(result=None, execution_state=ExecutionStates.ERROR_OCCURRED)
@@ -304,9 +294,8 @@ class AsynchronousWrapper:
           task (Callable): Async function to execute.
           refresh_rate (float | int): Time in seconds between executions.
         """
-        self.logger.log(
+        self.logger.info(
             f"[{task.__name__}] routine (Main-process: async function) -> started",
-            LogLevels.INFO,
         )
         while True:
             await AsynchronousWrapper.safe_execute(self, task, error_sleep=refresh_rate)
@@ -324,15 +313,13 @@ class AsynchronousWrapper:
         Returns:
             TaskOutput: Contains the result and execution state.
         """
-        self.logger.log(
-            f"[{task.__name__}] one-shot (Main-process: async function) -> started",
-            LogLevels.INFO,
+        self.logger.info(
+            f"[{task.__name__}] one-shot (Main-process: async function) -> started"
         )
         output: Coroutine[Any, Any, TaskOutput] = await AsynchronousWrapper.safe_execute(self, task)
-        self.logger.log(
+        self.logger.info(
             f"[{task.__name__}] one-shot (Main-process: async function) -> ended, "
-            f"output [{output}]",
-            LogLevels.INFO,
+            f"output [{output}]"
         )
         return output
 
@@ -356,9 +343,8 @@ class AsynchronousWrapper:
         if task_name is None:
             task_name: str = task.__name__
 
-        self.logger.log(
-            f"[{task_name}] timed task (Main-process: async function) -> started",
-            LogLevels.INFO,
+        self.logger.info(
+            f"[{task_name}] timed task (Main-process: async function) -> started"
         )
         try:
             async def coroutine_executor() -> Any:
@@ -369,25 +355,22 @@ class AsynchronousWrapper:
             run_start: float = datetime.timestamp(datetime.now())
             output: Any = await asyncio.wait_for(coroutine_executor(), timeout=timeout)
 
-            self.logger.log(
+            self.logger.info(
                 f"[{task_name}] timed task (Main-process: async function) -> "
-                f"ended before the timeout [{(datetime.timestamp(datetime.now()) - run_start):.1f}s/{timeout:.1f}s]",
-                LogLevels.INFO,
+                f"ended before the timeout [{(datetime.timestamp(datetime.now()) - run_start):.1f}s/{timeout:.1f}s]"
             )
             return TaskOutput(result=output, execution_state=ExecutionStates.CORRECTLY)
 
         except asyncio.TimeoutError:
-            self.logger.log(
+            self.logger.info(
                 f"[{task_name}] timed task (Main-process: async function) -> "
-                f"ended by reaching the timeout [{timeout}]",
-                LogLevels.INFO,
+                f"ended by reaching the timeout [{timeout}]"
             )
             return TaskOutput(result=None, execution_state=ExecutionStates.TIMEOUT)
         except Exception as error:
-            self.logger.log(
+            self.logger.info(
                 f"[{task_name}] timed task (Main-process: async function) -> "
-                f"ended because an error occurred [{error}]",
-                LogLevels.INFO,
+                f"ended because an error occurred [{error}]"
             )
             return TaskOutput(result=None, execution_state=ExecutionStates.ERROR_OCCURRED)
 

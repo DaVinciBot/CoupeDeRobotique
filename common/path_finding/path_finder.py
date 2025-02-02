@@ -16,7 +16,7 @@ from pathfinding.core.grid import GridNode
 import numpy as np
 
 # Internal project imports
-from old_logger import Logger, LogLevels, time_tracker
+from logger import Logger, time_tracker
 from geometry import OrientedPoint, Point, MultiPoint, nearest_points
 from arena import GridManager
 
@@ -111,10 +111,9 @@ class PathFinder:
         )
 
         if not self.path_found:
-            self.logger.log(
+            self.logger.warning(
                 f"No path found! [start=({self.current_position.x}, {self.current_position.y}), "
-                f"goal=({self.goal.x}, {self.goal.y})] exploration_value={exploration_value}",
-                LogLevels.WARNING,
+                f"goal=({self.goal.x}, {self.goal.y})] exploration_value={exploration_value}"
             )
             return []
 
@@ -131,9 +130,8 @@ class PathFinder:
             list[Point]: Path as a list of absolute points.
         """
         if not grid_path:
-            self.logger.log(
-                "[grid path to absolute path] Path to convert is empty!",
-                LogLevels.DEBUG,
+            self.logger.debug(
+                "[grid path to absolute path] Path to convert is empty!"
             )
             return []
 
@@ -155,9 +153,8 @@ class PathFinder:
             list[OrientedPoint]: Path with orientation included.
         """
         if not path:
-            self.logger.log(
-                "[path to absolute oriented path] Path to convert is empty!",
-                LogLevels.DEBUG,
+            self.logger.debug(
+                "[path to absolute oriented path] Path to convert is empty!"
             )
             return []
 
@@ -205,7 +202,7 @@ class PathFinder:
             list[Point]: Smoothed path.
         """
         if not path:
-            self.logger.log("[smooth path] Path to convert is empty!", LogLevels.DEBUG)
+            self.logger.debug("[smooth path] Path to convert is empty!")
             return []
 
         path_array = np.array([[point.x, point.y] for point in path])

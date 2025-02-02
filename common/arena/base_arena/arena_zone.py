@@ -14,7 +14,7 @@ from collections import deque
 from enum import Enum, auto
 
 # Internal project imports
-from old_logger import Logger, LogLevels
+from logger import Logger
 from arena.base_arena.grid_manager import GridManager
 from utils import Utils
 from geometry import (
@@ -153,7 +153,7 @@ class BaseArenaZone(ABC):
         self.accessibility: ZoneAccessibility = accessibility
 
         if polygon is None and buffered_polygon is None:
-            self.logger.log("No polygon provided for zone", LogLevels.ERROR)
+            self.logger.error("No polygon provided for zone")
 
         elif polygon is not None and buffered_polygon is None:
             buffered_polygon = self.add_buffer_to_zone(polygon, buffer_size)
@@ -265,12 +265,12 @@ class BaseArenaZone(ABC):
         for position in enemy_positions:
             if self.polygon.contains(position):  # Don't consider the buffer
                 self.enemy_visits += 1
-                self.logger.log(f"Enemy visited {self.zone_type} zone", LogLevels.DEBUG)
+                self.logger.debug(f"Enemy visited {self.zone_type} zone")
 
         for position in ally_positions:
             if self.polygon.contains(position):  # Don't consider the buffer
                 self.ally_visits += 1
-                self.logger.log(f"Ally visited {self.zone_type} zone", LogLevels.DEBUG)
+                self.logger.debug(f"Ally visited {self.zone_type} zone")
 
         self.last_update_time = Utils.get_ts()
 
@@ -408,54 +408,52 @@ class EnemyZone(BaseArenaZone):
         """
         # At least two positions are required to calculate speed
         if len(self.__positions_recorded) < 2:
-            self.logger.log("Not enough positions recorded to compute speed vector.", LogLevels.DEBUG)
+            self.logger.debug("Not enough positions recorded to compute speed vector.")
             return SpeedVector(0, 0, 0)
 
         # First and last recorded positions
         start_record = self.__positions_recorded[0]
         end_record = self.__positions_recorded[-1]
-        self.logger.log(
-            f"Start position: {start_record.position}, End position: {end_record.position}.",
-            LogLevels.DEBUG
+        self.logger.debug(
+            f"Start position: {start_record.position}, End position: {end_record.position}."
         )
 
         # Compute the time delta
         timestamp_delta = end_record.timestamp - start_record.timestamp
-        self.logger.log(f"Time delta: {timestamp_delta} seconds.", LogLevels.DEBUG)
+        self.logger.debug(f"Time delta: {timestamp_delta} seconds.")
 
         if timestamp_delta <= 0:
-            self.logger.log("Invalid or zero time delta. Aborting computation.", LogLevels.DEBUG)
+            self.logger.debug("Invalid or zero time delta. Aborting computation.")
             return SpeedVector(0, 0, 0)
 
         # Check for no_detection_timeout
         if timestamp_delta > self.no_detection_timeout:
-            self.logger.log(
-                f"Time delta exceeds no_detection_timeout ({self.no_detection_timeout}s). Returning zero vector.",
-                LogLevels.DEBUG
+            self.logger.debug(
+                f"Time delta exceeds no_detection_timeout ({self.no_detection_timeout}s). Returning zero vector."
             )
             return SpeedVector(0, 0, 0)
 
         # Compute the displacement vector
         dx = end_record.position.x - start_record.position.x
         dy = end_record.position.y - start_record.position.y
-        self.logger.log(f"Displacement vector: dx={dx}, dy={dy}.", LogLevels.DEBUG)
+        self.logger.debug(f"Displacement vector: dx={dx}, dy={dy}.")
 
         # Compute the distance traveled
         distance = start_record.position.distance(end_record.position)
-        self.logger.log(f"Distance traveled: {distance}.", LogLevels.DEBUG)
+        self.logger.debug(f"Distance traveled: {distance}.")
 
         # Calculate the scalar speed
         speed = distance / timestamp_delta
-        self.logger.log(f"Calculated speed: {speed}.", LogLevels.DEBUG)
+        self.logger.debug(f"Calculated speed: {speed}.")
 
         if distance == 0.0:
-            self.logger.log("No displacement detected. Returning zero vector.", LogLevels.DEBUG)
+            self.logger.debug("No displacement detected. Returning zero vector.")
             return SpeedVector(0, 0, 0)
 
         # Compute the direction (unit vector)
         dir_x = dx / distance
         dir_y = dy / distance
-        self.logger.log(f"Direction vector: dir_x={dir_x}, dir_y={dir_y}.", LogLevels.DEBUG)
+        self.logger.debug(f"Direction vector: dir_x={dir_x}, dir_y={dir_y}.")
 
         return SpeedVector(speed, dir_x, dir_y)
 
@@ -692,7 +690,7 @@ class BlueReservedZone(BaseArenaZone):
 
         Args:
             team_color (str): The color of the team.
-            ally_positions (list[Point]): List of ally positions.
+            ally_positions (list[Point]): List of alt positions.
             enemy_positions (list[Point]): List of enemy positions.
         """
         super().update(team_color, ally_positions, enemy_positions)
@@ -707,7 +705,7 @@ class BlueReservedZone(BaseArenaZone):
             grid_manager: GridManager = self.update_callback()
             grid_manager.remove_forbidden_static_zone(self.buffered_polygon)
 
-            self.logger.log(f"{self.zone_type} zone is now accessible", LogLevels.DEBUG)
+            self.logger.debug(f"{self.zone_type} zone is now accessible")
 
 
 class YellowReservedZone(BaseArenaZone):
@@ -791,7 +789,7 @@ class YellowReservedZone(BaseArenaZone):
             grid_manager: GridManager = self.update_callback()
             grid_manager.remove_forbidden_static_zone(self.buffered_polygon)
 
-            self.logger.log(f"{self.zone_type} zone is now accessible", LogLevels.DEBUG)
+            self.logger.debug(f"{self.zone_type} zone is now accessible")
 
 
 class BorderZone(BaseArenaZone):

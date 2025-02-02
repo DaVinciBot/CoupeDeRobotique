@@ -1,6 +1,6 @@
 from rpi_ws281x import PixelStrip, Color, RGBW
 from old_logger.log_tools import LogLevels
-from old_logger.logger import Logger
+from old.old_logger.logger import Logger
 import math
 
 LogColors = {

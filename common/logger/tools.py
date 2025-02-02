@@ -7,7 +7,7 @@
 # ====== Imports ======
 # Standard library imports
 from functools import lru_cache
-from typing import Callable, Union
+from typing import Callable, Union, Any
 import inspect
 
 # Used to avoid circular imports and keep type hints
@@ -38,15 +38,16 @@ def center_and_limit(text: str, width: int, trailing_dots: int = 2):
     )
 
 
-def get_function_metadata(func: Callable, args, kwargs) -> str:
+def get_function_metadata(func: Callable, args, kwargs, max_params_length: int = 15) -> str:
     """
     Generate a concise string containing function/method metadata, including module, class (if applicable),
-    function name, and parameter values.
+    function name, and parameter values. Optionally truncates long argument values.
 
     Args:
         func (Callable): The function being described.
         args (tuple): Positional arguments passed to the function.
         kwargs (dict): Keyword arguments passed to the function.
+        max_params_length (int, optional): Maximum length for each argument's string representation. Defaults to 50.
 
     Returns:
         str: A formatted string containing function metadata.
@@ -58,7 +59,17 @@ def get_function_metadata(func: Callable, args, kwargs) -> str:
     # Retrieve parameter names and values
     bound_args = inspect.signature(func).bind(*args, **kwargs)
     bound_args.apply_defaults()
-    params_info = ", ".join(f"{k}={v!r}" for k, v in bound_args.arguments.items())
+
+    def truncate(value: Any) -> str:
+        """Truncate string representation of a value if it exceeds max_length."""
+        value_str = repr(value)
+        return value_str if len(value_str) <= max_params_length else value_str[:max_params_length - 3] + '...'
+
+    # Don't truncate if max_params_length is negative
+    if max_params_length < 0:
+        params_info = ", ".join(f"{k}={v}" for k, v in bound_args.arguments.items())
+    else:
+        params_info = ", ".join(f"{k}={truncate(v)}" for k, v in bound_args.arguments.items())
 
     return f"[{module_name}] {class_name + '.' if class_name else ''}{func.__name__}({params_info})"
 
@@ -80,8 +91,26 @@ def get_logger_from_decorator_param(param_logger: Union["Logger", str, Callable]
     if isinstance(param_logger, Logger):
         return param_logger
     if isinstance(param_logger, str):
-        return Logger(identifier=param_logger)
+        return Logger(identifier=param_logger, follow_logger_manager_rules=True)
     if param_logger is not None:
         instance = args[0]  # First argument of a bound method is typically `self`
         return param_logger(instance)
     return None
+
+
+def unpack_dict(d: dict) -> dict:
+    """
+    Unpack all nested dictionaries into a single dictionary (non-recursive keys).
+    If duplicate keys exist, values will be overwritten.
+    """
+    flat_dict = {}
+
+    def recursive_unpack(sub_d):
+        for k, v in sub_d.items():
+            if isinstance(v, dict):
+                recursive_unpack(v)
+            else:
+                flat_dict[k] = v
+
+    recursive_unpack(d)
+    return flat_dict

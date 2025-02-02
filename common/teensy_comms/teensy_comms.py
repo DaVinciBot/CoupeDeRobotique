@@ -1,6 +1,6 @@
 from typing import Any, Callable
 import serial, threading, time, crc8, serial.tools.list_ports
-from old_logger import Logger, LogLevels
+from logger import Logger
 from teensy_comms.dummy_serial import DummySerial
 
 
@@ -67,10 +67,10 @@ class Teensy:
                 break
         if self._teensy is None:
             if dummy:
-                self.logger.log("Dummy mode", LogLevels.INFO)
+                self.logger.info("Dummy mode")
                 self._teensy = DummySerial()
             else:
-                self.logger.log("No Teensy found !", LogLevels.CRITICAL)
+                self.logger.critical("No Teensy found !")
                 raise TeensyException("No Device !")
         self.messagetype = {}
         if not dummy:
@@ -166,8 +166,8 @@ class Teensy:
                     self._crc8.reset()
                     self._crc8.update(msg)
                     if self._crc8.digest() != crc:
-                        self.logger.log(
-                            f"Invalid CRC8, sending NACK ... [{crc}]", LogLevels.WARNING
+                        self.logger.warning(
+                            f"Invalid CRC8, sending NACK ... [{crc}]"
                         )
                         self.send_bytes(b"\x7F")  # send NACK
                         self._crc8.reset()
@@ -180,18 +180,17 @@ class Teensy:
                 lenmsg = msg[-1]
 
                 if lenmsg > len(msg):
-                    self.logger.log(
+                    self.logger.warning(
                         "Received Teensy message that does not match declared length "
-                        + msg.hex(sep=" "),
-                        LogLevels.WARNING,
+                        + msg.hex(sep=" ")
                     )
                     continue
                 try:
                     if msg[0] == 127:
-                        self.logger.log("Received a NACK", LogLevels.WARNING)
+                        self.logger.warning("Received a NACK")
                         if self.last_message != None:
                             self.send_bytes(self.last_message)
-                            self.logger.log(
+                            self.logger.info(
                                 f"Sending back message : {self.last_message[0]}"
                             )
                             self.last_message = None
@@ -199,9 +198,8 @@ class Teensy:
                         self.messagetype[msg[0]](msg[1:-1])
 
                 except Exception as e:
-                    self.logger.log(
-                        "Received message handling crashed :\n" + str(e),
-                        LogLevels.ERROR,
+                    self.logger.error(
+                        "Received message handling crashed :\n" + str(e)
                     )
                     time.sleep(0.5)
 

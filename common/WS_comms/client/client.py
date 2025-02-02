@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 
 from WS_comms.client.client_route import WSclientRouteManager
-from old_logger import Logger, LogLevels
+from logger import Logger
 
 
 class WSclient:
@@ -31,39 +31,27 @@ class WSclient:
     async def __route_handler_routine(self, route, handler):
         """
         This function is a coroutine that connects to a websocket server and binds a handler to it.
-        It handle connection errors and try to reconnect to the server.
-        :param url:
+        It handles connection errors and try to reconnect to the server.
+        :param route:
         :param handler:
         :return:
         """
-        self.logger.log(
-            f"WSclient [{route}] started, route url: [{self.__get_url(route)}]",
-            LogLevels.INFO,
-        )
+        self.logger.info(f"WSclient [{route}] started, route url: [{self.__get_url(route)}]")
         while True:
             try:
-                self.logger.log(
-                    f"WSclient [{route}] try to connect server...",
-                    LogLevels.INFO,
-                )
+                self.logger.info(f"WSclient [{route}] try to connect server...")
                 async with aiohttp.ClientSession() as session:
                     async with session.ws_connect(
-                        f"{self.__get_url(route)}?sender={handler.sender.name}"
+                            f"{self.__get_url(route)}?sender={handler.sender.name}"
                     ) as ws:
-                        self.logger.log(
-                            f"WSclient [{route}] connected !",
-                            LogLevels.INFO,
-                        )
+                        self.logger.info(f"WSclient [{route}] connected !")
                         handler.set_ws(ws)
                         await handler.routine()
             except Exception as error:
-                self.logger.log(
-                    f"WSclient [{route}] error: ({error}), try to reconnect...",
-                    LogLevels.ERROR,
-                )
+                self.logger.error(f"WSclient [{route}] error: ({error}), try to reconnect...")
 
     def add_route_handler(
-        self, route: str, route_manager: WSclientRouteManager
+            self, route: str, route_manager: WSclientRouteManager
     ) -> None:
         """
         Add a new route to the client.

@@ -4,7 +4,7 @@ import signal
 import time
 
 from WS_comms.server.server_route import WServerRouteManager
-from old_logger import Logger, LogLevels
+from logger import Logger
 
 
 class WServer:
@@ -76,54 +76,21 @@ class WServer:
         :param route_manager:
         :return:
         """
-        self.__logger.log(
-            f"New route handler added [{route}], route url: [ws://{self.__host}:{self.__port}{route}]",
-            LogLevels.DEBUG,
-        )
+        self.__logger.debug(f"New route handler added [{route}], route url: [ws://{self.__host}:{self.__port}{route}]")
         self.__route_managers[route] = route_manager
         self._app.router.add_get(route, route_manager.routine)
-
-    def add_background_task(
-        self, task: callable, *args, name: str = "", **kwargs
-    ) -> None:
-        """
-        Add a new background task to the server. It is useful to execute task in parallel with the server.
-        * The task have to be a coroutine (async function).
-        * To create the task we add a key in the app dictionary with the name of the task.
-        * The task will be created when the server will start.
-        * Format: add_background_task(func, (optional) func_params, (optional) name)
-        :param task:
-        :param args:
-        :param name:
-        :param kwargs:
-        :return:
-        """
-        name = task.__name__ if name == "" else name
-
-        async def background_task(app):
-            task_instance = asyncio.create_task(task(*args, **kwargs))
-            app[name] = task_instance
-            self.__background_tasks.add(task_instance)
-
-        self.__logger.log(
-            f"New background task added [{name}]",
-            LogLevels.DEBUG,
-        )
-        self._app.on_startup.append(background_task)
 
     async def stop_server(self):
         """
         Stop the server and all the background tasks.
         :return:
         """
-        self.__logger.log("Received exit signal...", LogLevels.WARNING)
+        self.__logger.warning("Received exit signal...")
 
         # Close all the ws connections for all the routes
-        self.__logger.log("Closing all connections...", LogLevels.INFO)
+        self.__logger.info("Closing all connections...")
         for route, manager in self.__route_managers.items():
-            self.__logger.log(
-                f"Closing all connections for [{route}] route.", LogLevels.DEBUG
-            )
+            self.__logger.debug(f"Closing all connections for [{route}] route.")
             await manager.close_all_connections()
 
         # End all the background tasks
@@ -158,17 +125,14 @@ class WServer:
             app[name] = task_instance
             self.__background_tasks.add(task_instance)
 
-        self.__logger.log(
-            f"New background task added [{name}]",
-            LogLevels.DEBUG,
-        )
+        self.__logger.debug(f"New background task added [{name}]")
         self._app.on_startup.append(background_task)
 
     def run(self) -> None:
         loop = asyncio.get_event_loop()
 
         def handle_exit():
-            self.__logger.log("WServer stopped by user request.", LogLevels.INFO)
+            self.__logger.info("WServer stopped by user request.")
             asyncio.create_task(self.stop_server())
             loop.close()
 
@@ -176,10 +140,7 @@ class WServer:
         #loop.add_signal_handler(signal.SIGINT, handle_exit)
 
         try:
-            self.__logger.log(
-                f"WServer started, url: [ws://{self.__host}:{self.__port}]",
-                LogLevels.INFO,
-            )
+            self.__logger.info(f"WServer started, url: [ws://{self.__host}:{self.__port}]")
             # Ping pong mode does not work for now, if you want to use it,
             # you have to remove the non-unique client identifier or adapt
             # current function to handle multiple clients with the same name
@@ -194,9 +155,7 @@ class WServer:
             #     )
             web.run_app(self._app, host=self.__host, port=self.__port)
         except Exception as error:
-            self.__logger.log(
-                f"WServer error: ({error}), try to restart...", LogLevels.ERROR
-            )
+            self.__logger.error(f"WServer error: ({error}), try to restart...")
             time.sleep(5)
         finally:
             loop.close()
