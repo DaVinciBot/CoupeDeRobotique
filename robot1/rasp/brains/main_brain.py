@@ -157,9 +157,9 @@ class MainBrain(Brain):
         await self.initialize()
 
         speed_profile: SpeedProfile = SpeedProfile(
-            max_linear_speed=10.0,  # cm/s
-            max_angular_speed=6.0,  # rad/s
-            max_linear_acceleration=10.0,  # cm/s^2
+            max_linear_speed=5.0,  # cm/s
+            max_angular_speed=3.0,  # rad/s
+            max_linear_acceleration=5.0,  # cm/s^2
             max_angular_acceleration=3.0,  # rad/s^2
             max_linear_deceleration=10.0,  # cm/s^2
             max_angular_deceleration=3.0,  # rad/s^2
