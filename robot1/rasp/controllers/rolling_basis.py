@@ -14,7 +14,7 @@ from typing import Callable
 # ====== Internal Project Imports ======
 from teensy_comms import Teensy
 from geometry import OrientedPoint
-from logger import Logger, LogLevels
+from loggerplusplus import Logger, log
 
 
 class Command(Enum):
@@ -23,6 +23,9 @@ class Command(Enum):
     """
     # rasp -> teensy : 0-127 (Convention)
     SET_SPEED_AND_POSITION = 0
+    SET_PID = 1
+    SET_ODOMETRIE = 2
+    RESET_TEENSY = 3
 
     # two ways : 127 (Convention)
     NACK = 127
@@ -41,6 +44,13 @@ class Command(Enum):
             bytes: Single-byte representation of the command.
         """
         return bytes([self.value])
+
+
+class PID_ID(Enum):
+    linear_speed_pid_id = 0
+    angular_speed_pid_id = 1
+    linear_position_pid_id = 2
+    angular_position_pid_id = 3
 
 
 class RollingBasis(Teensy):
@@ -82,6 +92,23 @@ class RollingBasis(Teensy):
         self.linear_speed: float = 0.0
         self.angular_speed: float = 0.0
 
+        # PID values for speed and position control
+        self.linear_speed_kp = 0.0
+        self.linear_speed_ki = 0.0
+        self.linear_speed_kd = 0.0
+
+        self.angular_speed_kp = 0.0
+        self.angular_speed_ki = 0.0
+        self.angular_speed_kd = 0.0
+
+        self.linear_position_kp = 0.0
+        self.linear_position_ki = 0.0
+        self.linear_position_kd = 0.0
+
+        self.angular_position_kp = 0.0
+        self.angular_position_ki = 0.0
+        self.angular_position_kd = 0.0
+
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
@@ -97,6 +124,8 @@ class RollingBasis(Teensy):
         self.add_callback(self.rcv_unknown_msg, Command.UNKNOWN_MSG_TYPE.value)
         self.add_callback(self.rcv_rolling_basis_state, Command.UPDATE_ROLLING_BASIS.value)
 
+        self.__init_set_pids()
+
     #############################
     # Received message handling #
     #############################
@@ -107,8 +136,8 @@ class RollingBasis(Teensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.log(
-            "Teensy says: " + msg.decode("ascii", errors="ignore"), LogLevels.INFO
+        self.logger.info(
+            "Teensy says: " + msg.decode("ascii", errors="ignore")
         )
 
     def rcv_rolling_basis_state(self, msg: bytes):
@@ -143,14 +172,14 @@ class RollingBasis(Teensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.log(
-            f"Teensy does not know the command {msg.hex()}", LogLevels.WARNING
+        self.logger.warning(
+            f"Teensy does not know the command {msg.hex()}"
         )
 
     ###################
     # Message to send #
     ###################
-    @Logger
+    @log(param_logger="RollingBasis")
     def set_speed_and_position(
             self,
             target_linear_speed: float,
@@ -176,6 +205,129 @@ class RollingBasis(Teensy):
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
+
+    @log("RollingBasis")
+    def set_odometrie(self, odometrie: OrientedPoint) -> None:
+        """
+        Sends a command to set the odometrie of the rolling basis.
+
+        Args:
+            odometrie (OrientedPoint): The new odometrie values.
+        """
+        msg = (
+                Command.SET_ODOMETRIE.to_bytes()
+                + struct.pack("<f", odometrie.x)
+                + struct.pack("<f", odometrie.y)
+                + struct.pack("<f", odometrie.theta)
+        )
+        self.send_bytes(msg)
+
+    @log("RollingBasis")
+    def __set_pid(self, pid_id: int, kp: float, ki: float, kd: float) -> None:
+        """
+        Sends a command to set the PID values for the linear speed control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        msg = (
+                Command.SET_PID.to_bytes()
+                + pid_id.to_bytes()
+                + struct.pack("<f", kp)
+                + struct.pack("<f", ki)
+                + struct.pack("<f", kd)
+        )
+        self.send_bytes(msg)
+
+    def set_linear_speed_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the linear speed control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.linear_speed_kp = kp
+        self.linear_speed_ki = ki
+        self.linear_speed_kd = kd
+        self.__set_pid(PID_ID.linear_speed_pid_id.value, kp, ki, kd)
+
+    def set_angular_speed_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the angular speed control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.angular_speed_kp = kp
+        self.angular_speed_ki = ki
+        self.angular_speed_kd = kd
+        self.__set_pid(PID_ID.angular_speed_pid_id.value, kp, ki, kd)
+
+    def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the linear position control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.linear_position_kp = kp
+        self.linear_position_ki = ki
+        self.linear_position_kd = kd
+        self.__set_pid(PID_ID.linear_position_pid_id.value, kp, ki, kd)
+
+    def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the angular position control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.angular_position_kp = kp
+        self.angular_position_ki = ki
+        self.angular_position_kd = kd
+        self.__set_pid(PID_ID.linear_position_pid_id.value, kp, ki, kd)
+
+    def set_pids(
+            self,
+            kp_linear_speed,
+            ki_linear_speed,
+            kd_linear_speed,
+            kp_angular_speed,
+            ki_angular_speed,
+            kd_angular_speed,
+            kp_linear_position,
+            ki_linear_position,
+            kd_linear_position,
+            kp_angular_position,
+            ki_angular_position,
+            kd_angular_position,
+    ):
+        self.set_linear_speed_pid(kp_linear_speed, ki_linear_speed, kd_linear_speed)
+        self.set_angular_speed_pid(kp_angular_speed, ki_angular_speed, kd_angular_speed)
+        self.set_linear_position_pid(
+            kp_linear_position, ki_linear_position, kd_linear_position
+        )
+        self.set_angular_position_pid(
+            kp_angular_position, ki_angular_position, kd_angular_position
+        )
+
+    def __init_set_pids(self):
+        self.set_pids(
+            **CONFIG.LINEAR_SPEED_PID,
+            **CONFIG.ANGULAR_SPEED_PID,
+            **CONFIG.LINEAR_POSITION_PID,
+            **CONFIG.ANGULAR_POSITION_PID,
+        )
 
 
 class RollingBasisDummy:
@@ -223,9 +375,28 @@ class RollingBasisDummy:
         self.linear_speed: float = 0.0
         self.angular_speed: float = 0.0
 
+        # PID values for speed and position control
+        self.linear_speed_kp = 0.0
+        self.linear_speed_ki = 0.0
+        self.linear_speed_kd = 0.0
+
+        self.angular_speed_kp = 0.0
+        self.angular_speed_ki = 0.0
+        self.angular_speed_kd = 0.0
+
+        self.linear_position_kp = 0.0
+        self.linear_position_ki = 0.0
+        self.linear_position_kd = 0.0
+
+        self.angular_position_kp = 0.0
+        self.angular_position_ki = 0.0
+        self.angular_position_kd = 0.0
+
+
         # Dictionary to store callbacks for different message types (optional).
         # You can use add_callback to register your own handlers.
         self.messagetype_callbacks = {}
+
 
         # Register dummy handlers as an example
         self.add_callback(self.rcv_print, Command.PRINT.value)
@@ -254,7 +425,7 @@ class RollingBasisDummy:
             msg (bytes): The received message bytes.
         """
         decoded_msg = msg.decode("ascii", errors="ignore")
-        self.logger.log(f"Dummy RollingBasis received a PRINT message: {decoded_msg}", LogLevels.INFO)
+        self.logger.info(f"Dummy RollingBasis received a PRINT message: {decoded_msg}")
 
     def rcv_rolling_basis_state(self, msg: bytes):
         """
@@ -273,7 +444,7 @@ class RollingBasisDummy:
         # Since this is a dummy method, we'll just log the raw data
         # rather than unpack and update real state.
         raw_data_hex = msg.hex()
-        self.logger.log(f"Dummy RollingBasis received a state update: {raw_data_hex}", LogLevels.INFO)
+        self.logger.info(f"Dummy RollingBasis received a state update: {raw_data_hex}")
 
     def rcv_unknown_msg(self, msg: bytes):
         """
@@ -282,16 +453,15 @@ class RollingBasisDummy:
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.log(
-            f"Dummy RollingBasis received an unknown message: {msg.hex()}",
-            LogLevels.WARNING
+        self.logger.warning(
+            f"Dummy RollingBasis received an unknown message: {msg.hex()}"
         )
 
     ###################
     # Message to send #
     ###################
 
-    @Logger
+    @log("RollingBasis")
     def set_speed_and_position(
             self,
             target_linear_speed: float,
@@ -314,11 +484,151 @@ class RollingBasisDummy:
         self.odometrie = target_position
         self.linear_speed = target_linear_speed
         self.angular_speed = target_angular_speed
-        self.logger.log(
+        self.logger.info(
             f"[DUMMY] Setting speed to linear={target_linear_speed}, "
             f"angular={target_angular_speed}, "
-            f"position=({target_position.x}, {target_position.y}, {target_position.theta})",
-            LogLevels.INFO
+            f"position=({target_position.x}, {target_position.y}, {target_position.theta})"
+        )
+
+    @log("RollingBasis")
+    def set_odometrie(self, odometrie: OrientedPoint) -> None:
+        """
+        Sends a command to set the odometrie of the rolling basis.
+
+        Args:
+            odometrie (OrientedPoint): The new odometrie values.
+        """
+        self.odometrie = odometrie
+
+        self.logger.info(
+            f"[DUMMY] Setting odometrie={odometrie}, "
+        )
+
+    @log("RollingBasis")
+    def __set_pid(self, pid_id: int, kp: float, ki: float, kd: float) -> None:
+        """
+        Sends a command to set the PID values for the linear speed control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        if pid_id == PID_ID.linear_speed_pid_id.value:
+            self.linear_speed_kp = kp
+            self.linear_speed_ki = ki
+            self.linear_speed_kd = kd
+            self.logger.info(
+                f"[DUMMY] Setting Linear Speed PID=({kp},{ki},{kd}), "
+            )
+        elif pid_id == PID_ID.angular_speed_pid_id.value:
+            self.angular_speed_kp = kp
+            self.angular_speed_ki = ki
+            self.angular_speed_kd = kd
+            self.logger.info(
+                f"[DUMMY] Setting Angular Speed PID=({kp},{ki},{kd}), "
+            )
+        elif pid_id == PID_ID.linear_position_pid_id.value:
+            self.linear_position_kp = kp
+            self.linear_position_ki = ki
+            self.linear_position_kd = kd
+            self.logger.info(
+                f"[DUMMY] Setting Linear Position PID=({kp},{ki},{kd}), "
+            )
+        elif pid_id == PID_ID.angular_position_pid_id.value:
+            self.angular_position_kp = kp
+            self.angular_position_ki = ki
+            self.angular_position_kd = kd
+            self.logger.info(
+                f"[DUMMY] Setting Angular Position PID=({kp},{ki},{kd}), "
+            )
+
+    def set_linear_speed_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the linear speed control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.linear_speed_kp = kp
+        self.linear_speed_ki = ki
+        self.linear_speed_kd = kd
+        self.__set_pid(PID_ID.linear_speed_pid_id.value, kp, ki, kd)
+
+    def set_angular_speed_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the angular speed control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.angular_speed_kp = kp
+        self.angular_speed_ki = ki
+        self.angular_speed_kd = kd
+        self.__set_pid(PID_ID.angular_speed_pid_id.value, kp, ki, kd)
+
+    def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the linear position control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.linear_position_kp = kp
+        self.linear_position_ki = ki
+        self.linear_position_kd = kd
+        self.__set_pid(PID_ID.linear_position_pid_id.value, kp, ki, kd)
+
+    def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None:
+        """
+        Sets the PID values for the angular position control.
+
+        Args:
+            kp (float): Proportional gain.
+            ki (float): Integral gain.
+            kd (float): Derivative gain.
+        """
+        self.angular_position_kp = kp
+        self.angular_position_ki = ki
+        self.angular_position_kd = kd
+        self.__set_pid(PID_ID.linear_position_pid_id.value, kp, ki, kd)
+
+    def set_pids(
+            self,
+            kp_linear_speed,
+            ki_linear_speed,
+            kd_linear_speed,
+            kp_angular_speed,
+            ki_angular_speed,
+            kd_angular_speed,
+            kp_linear_position,
+            ki_linear_position,
+            kd_linear_position,
+            kp_angular_position,
+            ki_angular_position,
+            kd_angular_position,
+    ):
+        self.set_linear_speed_pid(kp_linear_speed, ki_linear_speed, kd_linear_speed)
+        self.set_angular_speed_pid(kp_angular_speed, ki_angular_speed, kd_angular_speed)
+        self.set_linear_position_pid(
+            kp_linear_position, ki_linear_position, kd_linear_position
+        )
+        self.set_angular_position_pid(
+            kp_angular_position, ki_angular_position, kd_angular_position
+        )
+
+    def __init_set_pids(self):
+        self.set_pids(
+            **CONFIG.LINEAR_SPEED_PID,
+            **CONFIG.ANGULAR_SPEED_PID,
+            **CONFIG.LINEAR_POSITION_PID,
+            **CONFIG.ANGULAR_POSITION_PID,
         )
 
     def send_bytes(self, msg: bytes):
@@ -330,4 +640,4 @@ class RollingBasisDummy:
             msg (bytes): The message to send.
         """
         # No real sending performed; simply log the attempt.
-        self.logger.log(f"[DUMMY] Sending bytes: {msg.hex()}", LogLevels.INFO)
+        self.logger.info(f"[DUMMY] Sending bytes: {msg.hex()}")

@@ -1,18 +1,45 @@
+# ====== Imports ======
+# Config
 from config_loader import CONFIG
 
-import math
+# Logger: LoggerManager + global configuration
+from loggerplusplus import LoggerManager, LogLevels, LoggerConfig, Logger, logger_colors
 
-# Import from common
-from WS_comms import WServer, WServerRouteManager, WSender, WSreceiver, WSmsg
-from logger import Logger, LogLevels
+LoggerManager.enable_files_logs_monitoring_only_for_one_logger = True
+# LoggerManager.enable_dynamic_config_update = False
+# LoggerManager.enable_unique_logger_identifier = False
+LoggerManager.global_config = LoggerConfig.from_kwargs(
+    colors=logger_colors.ClassicColors,
+    path="logs",
+    # LogLevels
+    decorator_log_level=LogLevels.DEBUG,
+    print_log_level=LogLevels.INFO,
+    file_log_level=LogLevels.DEBUG,
+    # Loggers Output
+    print_log=True,
+    write_to_file=True,
+    # Monitoring
+    display_monitoring=False,
+    files_monitoring=False,
+    file_size_unit="Go",
+    disk_alert_threshold_percent=0.8,
+    log_files_size_alert_threshold_percent=0.2,
+    max_log_file_size=1.0,
+    # Placement
+    identifier_max_width=15,
+    filename_lineno_max_width=15,
+)
+
+# Internal project imports
+from ws_comms import WServer, WServerRouteManager, WSender, WSreceiver
 from arena import ShowArena
-
-# Import from local path
+from geometry import OrientedPoint
 from brains import MainBrain
-from controllers import RollingBasis, RollingBasisDummy
+from controllers import RollingBasisDummy, RollingBasis
 from movement_manager import MovementManager
 from sensors import LidarDummy, Lidar
 
+# ====== Main ======
 if __name__ == "__main__":
     """
     ###--- Initialization ---###
@@ -21,61 +48,47 @@ if __name__ == "__main__":
     # System-Part loggers
     logger_ws_server = Logger(
         identifier="WS_Server",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
+        follow_logger_manager_rules=True,
     )
     logger_brain = Logger(
         identifier="Brain",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
+        # Only Brain manages monitoring
+        files_monitoring=True,
+        display_monitoring=True,
+        follow_logger_manager_rules=True,
     )
+
     # Controllers loggers
     logger_rolling_basis = Logger(
         identifier="RollingBasis",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
+        follow_logger_manager_rules=True,
     )
     # Sensors loggers
     logger_lidar = Logger(
         identifier="LiDAR",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
+        follow_logger_manager_rules=True,
     )
     # Environment loggers
     logger_grid_manager = Logger(
         identifier="GridManager",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.INFO,
-        file_log_level=LogLevels.DEBUG,
+        follow_logger_manager_rules=True,
     )
     logger_show_arena = Logger(
         identifier="ShowArena",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
+        follow_logger_manager_rules=True,
     )
     # Movement loggers
     logger_rolling_basis_handler = Logger(
         identifier="RollingBasisHandler",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
+        follow_logger_manager_rules=True,
     )
     logger_path_finder = Logger(
         identifier="PathFinder",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
+        follow_logger_manager_rules=True,
     )
     logger_movement_manager = Logger(
         identifier="MovementManager",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
+        follow_logger_manager_rules=True,
     )
 
     # Websocket server
@@ -95,6 +108,14 @@ if __name__ == "__main__":
     # Rolling Basis
     rolling_basis = RollingBasis(logger=logger_rolling_basis)
     # rolling_basis = RollingBasisDummy(logger=logger_rolling_basis)
+
+    rolling_basis.set_odometrie(OrientedPoint(20, 20, 0))
+    rolling_basis.set_pids(
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0,
+        0, 0, 0
+    )
 
     # Sensors
     # Lidar

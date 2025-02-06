@@ -4,7 +4,7 @@
 #include "structures.h"
 
 class Rolling_Basis {
-private:
+public :
     // PID controllers
     PID linear_speed_pid;
     PID angular_speed_pid;
@@ -12,7 +12,6 @@ private:
     PID linear_distance_pid;
     PID angular_distance_pid;
 
-public :
     // Rolling basis's params
     inline float radius() { return this->center_distance / 2.0; };
     inline float wheel_perimeter() { return this->wheel_diameter * PI; };

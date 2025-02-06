@@ -1,21 +1,19 @@
 # ====== Code Summary ======
 # The BaseArena class models a physical arena with zones, border buffers, and obstacles.
 # It initializes a list of zones with added buffers and includes a GridManager for managing grid-based zones.
-# Methods include creating border zones, adding buffers to zones, and visualizing the arena with optional buffer zones.
+# Methods include creating border zones, adding buffers to zones, handling zone accessibility, visualizing the arena,
+# and computing enemy or robot positions based on various inputs.
 
 # ====== Imports ======
 # Standard library imports
-from concurrent.futures import ThreadPoolExecutor
-from functools import partial
-
-# Third-party library imports
-from matplotlib import scale
-import matplotlib.pyplot as plt
-import shapely
-import math
-import random
 import numpy as np
 import asyncio
+import random
+import math
+
+# Third-party library imports
+import matplotlib.pyplot as plt
+import shapely
 
 # Internal project imports
 from geometry import (
@@ -34,7 +32,8 @@ from geometry import (
     is_empty,
     nearest_points,
 )
-from logger import Logger, LogLevels, time_tracker
+from loggerplusplus import Logger, LogLevels, time_tracker
+from loggerplusplus.colors import ClassicColors
 from arena.base_arena.grid_manager import GridManager
 from arena.base_arena.arena_zone import (
     # Enums
@@ -48,13 +47,6 @@ from arena.base_arena.arena_zone import (
     EnemyZone,
     AllyZone,
 )
-
-"""
-# Imports necessary to compute the enemy position
-from utils import LidarMode, AntiCollisionHandle
-from controllers import RollingBasis
-from sensors import Lidar
-"""
 
 
 # ====== BaseArena Class ======
@@ -84,28 +76,38 @@ class BaseArena:
             chunk_size: int = 10,
             grid_manager_logger: Logger = Logger(
                 identifier="GridManager",
-                decorator_level=LogLevels.INFO,
-                print_log_level=LogLevels.DEBUG,
-                file_log_level=LogLevels.DEBUG,
-            ),
+                follow_logger_manager_rules=True,
+            )
     ) -> None:
+        """
+        Initializes the BaseArena instance with dimensions, zones, and configuration parameters.
+
+        Args:
+            logger (Logger): Logger instance for general arena logging.
+            width (int): Width of the arena in centimeters.
+            height (int): Height of the arena in centimeters.
+            forbidden_cover_threshold (float): Threshold for forbidden cover in the grid.
+            border_buffer (float): Buffer distance for the arena border.
+            obstacle_buffer (float): Buffer distance for obstacles.
+            zones (list[BaseArenaZone]): List of pre-defined zones in the arena.
+            chunk_size (int): Size of chunks in the grid manager (default=10).
+            grid_manager_logger (Logger): Logger instance for grid manager logging.
+        """
         self.logger: Logger = logger
 
         self.width: int = width
         self.height: int = height
 
         if border_buffer % chunk_size != 0:
-            self.logger.log(
+            self.logger.warning(
                 "The border buffer is not a multiple of the chunk size -> "
-                "the not walkable area will not be aligned with the grid",
-                LogLevels.WARNING,
+                "the not walkable area will not be aligned with the grid"
             )
 
         if obstacle_buffer % chunk_size != 0:
-            self.logger.log(
+            self.logger.warning(
                 "The obstacle buffer is not a multiple of the chunk size -> "
-                "the not walkable area will not be aligned with the grid",
-                LogLevels.WARNING,
+                "the not walkable area will not be aligned with the grid"
             )
 
         self.border_buffer: float = border_buffer
@@ -146,16 +148,14 @@ class BaseArena:
 
         self.ally_logger = Logger(
             identifier="AllyZone",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.INFO,
-            file_log_level=LogLevels.DEBUG,
+            follow_logger_manager_rules=True,
         )
+
         self.enemy_logger = Logger(
             identifier="EnemyZone",
-            decorator_level=LogLevels.INFO,
-            print_log_level=LogLevels.INFO,
-            file_log_level=LogLevels.DEBUG,
+            follow_logger_manager_rules=True,
         )
+
         self.ally_zone: AllyZone = AllyZone(
             self.ally_logger,
             OrientedPoint(  # default position
@@ -177,6 +177,9 @@ class BaseArena:
         """
         Create a border zone around the arena with a specified buffer width.
         Prevents the robot from approaching too close to the arena edges.
+
+        Returns:
+            BorderZone: A zone representing the arena's border.
         """
         arena_polygon = box(0, 0, self.width, self.height)
         inner_polygon = BaseArenaZone.add_buffer_to_zone(
@@ -187,9 +190,7 @@ class BaseArena:
         return BorderZone(
             logger=Logger(
                 identifier="BorderZone",
-                decorator_level=LogLevels.INFO,
-                print_log_level=LogLevels.DEBUG,
-                file_log_level=LogLevels.DEBUG,
+                follow_logger_manager_rules=True,
             ),
             buffer_size=self.border_buffer,
             buffered_polygon=border_zone_polygon,
@@ -223,7 +224,12 @@ class BaseArena:
     # ====== Public Methods ======
     @time_tracker(lambda self: self.logger)
     def set_team_color(self, team_color: str) -> None:
-        """Set the team color for determining zone accessibility."""
+        """
+        Set the team color and trigger updates to zones.
+
+        Args:
+            team_color (str): The team's color.
+        """
         self.team_color = team_color
         self.update(
             ally_position=self.ally_zone.point,
@@ -239,6 +245,15 @@ class BaseArena:
             enemy_position: Point = None,  # TODO: juste for test
             optimized_update: bool = True,
     ) -> None:
+        """
+        Updates the state of the arena, zones, and grid based on ally and enemy positions.
+
+        Args:
+            ally_position (OrientedPoint): Current position of the ally robot.
+            lidar_scan_polars (np.ndarray): Lidar scan data in polar coordinates.
+            enemy_position (Point, optional): Pre-defined enemy position (default=None).
+            optimized_update (bool, optional): If True, only updates intersecting zones.
+        """
         if not enemy_position:
             inside_arena_scanned_point: MultiPoint = self.remove_outside(
                 self._pol_to_abs_cart(lidar_scan_polars)
@@ -272,8 +287,9 @@ class BaseArena:
         # Update Grid Manager dynamic forbidden zones with enemy positions
         self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon])
 
-    def remove_outside(self, points: MultiPoint) -> MultiPoint:
-        return self.playing_area.intersection(points)
+    """
+        Geometry helpers function part
+    """
 
     def prepare_zones(self):
         """Prepare all values of self.zones, to optimize later calculations"""
@@ -282,6 +298,10 @@ class BaseArena:
         for zone in self.zones:
             prepare(zone.polygon)
 
+    def remove_outside(self, points: MultiPoint) -> MultiPoint:
+        return self.playing_area.intersection(points)
+
+    # TODO: Check if this function is still needed, test them (last year code)
     def valid_position(self, pos: Point) -> bool:
         """
         Check if a given position is within the valid playing area.
@@ -418,18 +438,6 @@ class BaseArena:
             self.enemy_zone.point = self.enemy_position
 
         return self.enemy_position
-
-    # Creates a vector of the enemy within a chosen time interval
-    async def get_enemy_vector(
-            self, time_interval: float = 0.1, start_time: int = -1
-    ) -> None:
-        enemy_position_1: Point | MultiPoint | None = self.enemy_zone.point
-        if enemy_position_1:
-            await asyncio.sleep(time_interval)
-            enemy_position_2: Point | MultiPoint | None = self.compute_enemy_position(
-                start_time
-            )
-            self.enemy_vector = [enemy_position_1, enemy_position_2]
 
     @staticmethod
     def nearest_points_between_geoms(g1, g2):
@@ -622,6 +630,7 @@ class BaseArena:
             show_buffer: bool = True,
             show: bool = True,
             plot: tuple[plt.axes, plt.figure] = None,
+            theorical_ally_position: AllyZone = None,
             trajectory: list[OrientedPoint] = [],
             transparency_factor: float = 1.0,
             display_points: list[Point] = None,
@@ -657,6 +666,8 @@ class BaseArena:
         # Enemy and Ally zones
         self.__plot_zone(ax, self.ally_zone, show_buffer, transparency_factor)
         self.__plot_zone(ax, self.enemy_zone, show_buffer, transparency_factor)
+        if theorical_ally_position:
+            self.__plot_zone(ax, theorical_ally_position, show_buffer, transparency_factor)
 
         # Plot trajectory
         for i in range(len(trajectory) - 1):

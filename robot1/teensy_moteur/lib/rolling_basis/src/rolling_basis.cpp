@@ -164,4 +164,3 @@ void Rolling_Basis::handle(
 //     this->right_motor->set_motor(1, 0);
 //     this->left_motor->set_motor(1, 0);
 // }
-

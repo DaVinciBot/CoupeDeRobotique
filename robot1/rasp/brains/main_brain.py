@@ -5,12 +5,11 @@ import asyncio
 import time
 
 # Import from common
-from brain import Brain
-
-from WS_comms import WSmsg, WSclientRouteManager, WServerRouteManager
+from taskbrain import Brain
+from ws_comms import WSmsg, WSclientRouteManager, WServerRouteManager
 from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
 
-from logger import Logger, LogLevels
+from loggerplusplus import Logger
 import math
 from utils import Utils
 import matplotlib.pyplot as plt
@@ -27,6 +26,7 @@ from rolling_basis_handler import RollingBasisHandler, RollingBasisCommand
 from movement_manager import MovementManager, GoToParams
 from rolling_basis_handler import SpeedProfile
 from sensors import Lidar, LidarDummy
+from arena import AllyZone
 
 
 class MainBrain(Brain):
@@ -45,7 +45,9 @@ class MainBrain(Brain):
             ws_cmd: WServerRouteManager,
     ) -> None:
         if isinstance(rolling_basis, RollingBasisDummy):
-            logger.log("RollingBasisDummy is used", LogLevels.WARNING)
+            logger.warning("RollingBasisDummy is used")
+        if isinstance(rolling_basis, LidarDummy):
+            logger.warning("LidarDummy is used")
 
         # Controllers
         self.rolling_basis: RollingBasis = rolling_basis
@@ -58,38 +60,58 @@ class MainBrain(Brain):
         # WS routes
         self.ws_cmd: WServerRouteManager = ws_cmd
 
-        # Speed profile
-        self.speed_profile: SpeedProfile = SpeedProfile(
-            max_linear_speed=20.0,
-            max_angular_speed=6.0,
-            max_linear_acceleration=3.0,
-            max_angular_acceleration=1.0,
-            max_linear_deceleration=0.5,
-            max_angular_deceleration=1.0,
-        )
-
         super().__init__(logger, self)
+
+        # Attributes for the visualization
+        self.fig, self.ax = plt.subplots()
+
+        self.theorical_ally_position = AllyZone(
+            logger=Logger(identifier="th_ally"),
+            point=self.rolling_basis.odometrie,
+            robot_size=5
+        )
+        self.theorical_ally_position.zone_color = "#fcba03"
+
+        # TMP for test purpose
+        self.lidar_scan_polars = self.lidar.scan_to_polars()
 
     """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
+    @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     async def handle_rolling_basis_for_go_to(self) -> None:
         cmd: RollingBasisCommand = self.movement_manager.handle_go_to()
         if cmd is not None:
+            self.theorical_ally_position.point = cmd.position
             self.rolling_basis.set_speed_and_position(*cmd.get_command())
-            self.logger.log(
-                f"RollingBasisCommand: {cmd.get_command()}", LogLevels.DEBUG
-            )
+            self.logger.debug(f"RollingBasisCommand: {cmd.get_command()}")
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
     async def update_arena(self) -> None:
         self.arena.update(
             ally_position=self.rolling_basis.odometrie,
-            lidar_scan_polars=self.lidar.scan_to_polars(),
+            lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
             optimized_update=True,
         )
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
+        self.ax.clear()
+        self.arena.visualize(
+            display_default_destination_zone=False,
+            theorical_ally_position=self.theorical_ally_position,
+            trajectory=(
+                self.movement_manager.path_finder.oriented_path_found
+                if self.movement_manager.path_finder is not None
+                else []
+            ),
+            # Display lidar scan point
+            # display_points=[
+            #     point for point in self.arena._pol_to_abs_cart(self.lidar_scan_polars).geoms
+            # ],
+            plot=(self.ax, self.fig),
+            show=False,
+        )
+        plt.pause(0.01)
+
+    @Brain.task(process=False, run_on_start=False, refresh_rate=0.5)
     async def zombie_mode(self):
         """
         executes requests received by the server. Use Postman to send request to the server
@@ -99,9 +121,8 @@ class MainBrain(Brain):
         cmd = await self.ws_cmd.receiver.get(wait_msg=True)
 
         if cmd != WSmsg():
-            self.logger.log(
-                f"Zombie instruction {cmd.msg} received: {cmd.data}",
-                LogLevels.INFO,
+            self.logger.info(
+                f"Zombie instruction {cmd.msg} received: {cmd.data}"
             )
 
             if cmd.msg == "eval":
@@ -118,9 +139,8 @@ class MainBrain(Brain):
                         eval(instruction)
 
             else:
-                self.logger.log(
+                self.logger.warning(
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
-                    LogLevels.WARNING,
                 )
 
     """ ### One-Shot Tasks ### """
@@ -131,18 +151,18 @@ class MainBrain(Brain):
         self.rolling_basis.odometrie = OrientedPoint(
             24, 10, 0
         )  # Assume the robot is at position (24, 10) if begin the match in yellow zone
-    #
-    # @Brain.task(process=False, run_on_start=True)
-    # async def main(self):
-    #     await self.initialize()
-    #
+
+    @Brain.task(process=False, run_on_start=True)
+    async def main(self):
+        await self.initialize()
+
         # speed_profile: SpeedProfile = SpeedProfile(
-        #     max_linear_speed=20.0,
-        #     max_angular_speed=6.0,
-        #     max_linear_acceleration=3.0,
-        #     max_angular_acceleration=1.0,
-        #     max_linear_deceleration=0.5,
-        #     max_angular_deceleration=1.0,
+        #     max_linear_speed=20.0,  # cm/s
+        #     max_angular_speed=6.0,  # rad/s
+        #     max_linear_acceleration=3.0,  # cm/s^2
+        #     max_angular_acceleration=1.0,  # rad/s^2
+        #     max_linear_deceleration=0.5,  # cm/s^2
+        #     max_angular_deceleration=1.0,  # rad/s^2
         # )
         # go_to_params = GoToParams(
         #     initial_linear_speed=self.rolling_basis.linear_speed,
@@ -150,7 +170,7 @@ class MainBrain(Brain):
         #     speed_profile=speed_profile,
         #     goal=OrientedPoint(250, 140),
         #     acs_distance=10,
-        #     path_finder_recompute_distance=20,
+        #     path_finder_recompute_distance=80,
         #     timeout=-1.0,
         #     is_mandatory=False,
         #     smooth_trajectory=True,
