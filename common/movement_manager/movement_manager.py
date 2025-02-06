@@ -1,6 +1,7 @@
-from arena import BaseArena, ShowArena
-from logger import Logger, LogLevels
-from arena import BaseArenaZone
+# ====== Imports ======
+# Internal project imports
+from arena import BaseArena
+from loggerplusplus import Logger
 from geometry import OrientedPoint
 
 from path_finding import PathFinder
@@ -12,6 +13,7 @@ from movement_manager.movement_status import MovementStatus
 from rolling_basis_handler import RollingBasisCommand
 
 
+# ====== Class Part ======
 class MovementManager:
     """
     Manages the movement of a robot, including pathfinding, collision avoidance, and trajectory handling.
@@ -87,9 +89,8 @@ class MovementManager:
         distance = self.__get_ally_enemy_distance()
 
         if self.params is None:
-            self.logger.log(
-                "Find Path was called but no movement parameters found!",
-                LogLevels.WARNING,
+            self.logger.warning(
+                "Find Path was called but no movement parameters found!"
             )
             return
 
@@ -102,11 +103,10 @@ class MovementManager:
             use_static_and_dynamic_grid = consider_dynamic_obstacles
 
         if use_static_and_dynamic_grid:
-            self.logger.log(
-                "Using static and dynamic grid for path finding", LogLevels.INFO
-            )
+            self.logger.info(
+                "Using static and dynamic grid for path finding")
         else:
-            self.logger.log("Using only static grid for path finding", LogLevels.INFO)
+            self.logger.info("Using only static grid for path finding")
 
         if update_position:
             self.path_finder.update_current_position(self.arena.ally_zone.point)
@@ -118,8 +118,8 @@ class MovementManager:
 
     def _acs(self) -> RollingBasisCommand | None:
         if self.params is None:
-            self.logger.log(
-                "ACS was called but no movement parameters found!", LogLevels.WARNING
+            self.logger.warning(
+                "ACS was called but no movement parameters found!"
             )
             return
 
@@ -129,8 +129,8 @@ class MovementManager:
         if to_close:
             # Stop the robot
             self.status = MovementStatus.ACS
-            self.logger.log(
-                "ACS: Enemy is too close, stopping the robot", LogLevels.WARNING
+            self.logger.warning(
+                "ACS: Enemy is too close, stopping the robot"
             )
             return RollingBasisCommand(
                 position=self.arena.ally_zone.point, linear_speed=0.0, angular_speed=0.0
@@ -143,16 +143,15 @@ class MovementManager:
                 < self.params.goal_tolerance
         ):
             self.status = MovementStatus.SUCCESS
-            self.logger.log("Go To is arrived", LogLevels.INFO)
+            self.logger.info("Go To is arrived")
             return True
         return False
 
     def go_to(self, params: GoToParams) -> MovementStatus:
         # Warn if a movement is already in progress
         if not self.status.is_finished():
-            self.logger.log(
+            self.logger.warning(
                 "A movement is already in progress and a new one is requested.",
-                LogLevels.WARNING,
             )
 
         self.params: GoToParams = params
@@ -201,9 +200,8 @@ class MovementManager:
         Return order to send to rolling basis handler
         """
         if self.params is None:
-            self.logger.log(
-                "Handle Go To was called but no movement parameters found!",
-                LogLevels.WARNING,
+            self.logger.warning(
+                "Handle Go To was called but no movement parameters found!"
             )
             return
 
@@ -214,8 +212,8 @@ class MovementManager:
 
         # Re-Compute path if enemy is close
         if (
-            self.__get_ally_enemy_distance()
-            < self.params.path_finder_recompute_distance
+                self.__get_ally_enemy_distance()
+                < self.params.path_finder_recompute_distance
         ):
             self._find_path(
                 smooth_trajectory=self.params.smooth_trajectory,
@@ -228,9 +226,8 @@ class MovementManager:
                     self.rolling_basis_handler.trajectory,
                     self.path_finder.oriented_path_found,
             ):
-                self.logger.log(
-                    "The path has changed, updating the rolling basis handler",
-                    LogLevels.INFO,
+                self.logger.info(
+                    "The path has changed, updating the rolling basis handler"
                 )
                 # To get the current speed of the rolling basis and update the new path with a smooth transition
                 # We use rolling basis handler to get it
@@ -249,9 +246,8 @@ class MovementManager:
                     trajectory=self.path_finder.oriented_path_found[1:],
                 )
 
-                self.logger.log(
-                    f"first point: {self.rolling_basis_handler.trajectory[0]} | {self.path_finder.oriented_path_found[0]}",
-                    LogLevels.WARNING,
+                self.logger.warning(
+                    f"first point: {self.rolling_basis_handler.trajectory[0]} | {self.path_finder.oriented_path_found[0]}"
                 )
 
         # Update status

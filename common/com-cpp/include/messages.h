@@ -31,8 +31,7 @@ struct msg_set_speed_and_position
     float target_position_theta;
 };
 
-
-// teensy -> rasp : 128-255 
+// teensy -> rasp : 128-255
 struct msg_update_rolling_basis
 {
     byte command = UPDATE_ROLLING_BASIS;
@@ -42,6 +41,7 @@ struct msg_update_rolling_basis
     float current_linear_speed;
     float current_angular_speed;
 };
+
 struct msg_unknown_msg_type
 {
     byte command = UNKNOWN_MSG_TYPE;
