@@ -28,6 +28,7 @@ from rolling_basis_handler import SpeedProfile
 from sensors import Lidar, LidarDummy
 from arena import AllyZone
 
+
 class MainBrain(Brain):
     def __init__(
             self,
@@ -64,24 +65,12 @@ class MainBrain(Brain):
         # Attributes for the visualization
         self.fig, self.ax = plt.subplots()
 
-        # For testing
-        # self.enemy_point_generator = random_point_generator(
-        #     start_point=OrientedPoint(280, 180, 0),
-        #     step_size=30.0
-        # )
-        self.enemy_point_generator = straight_line_generator(
-            start_point=OrientedPoint(280, 93, 0),
-            end_point=OrientedPoint(23, 135, 0),
-            step_size=3.0,
-        )
-
         self.theorical_ally_position = AllyZone(
             logger=Logger(identifier="th_ally"),
             point=self.rolling_basis.odometrie,
             robot_size=5
         )
         self.theorical_ally_position.zone_color = "#fcba03"
-
 
         # TMP for test purpose
         self.lidar_scan_polars = self.lidar.scan_to_polars()
@@ -100,7 +89,7 @@ class MainBrain(Brain):
     async def update_arena(self) -> None:
         self.arena.update(
             ally_position=self.rolling_basis.odometrie,
-            lidar_scan_polars=self.lidar.scan_to_polars(),
+            lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
             optimized_update=True,
         )
 
