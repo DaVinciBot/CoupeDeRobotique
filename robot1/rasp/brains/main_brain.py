@@ -173,7 +173,7 @@ class MainBrain(Brain):
             path_finder_recompute_distance=80,
             timeout=-1.0,
             is_mandatory=False,
-            smooth_trajectory=True,
+            smooth_trajectory=False,
             goal_tolerance=0.1,
         )
 
