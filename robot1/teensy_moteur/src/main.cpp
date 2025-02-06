@@ -78,16 +78,16 @@ void set_pid(byte *msg, byte size)
   switch (pid_msg->pid_type)
   {
   case LINEAR_SPEED_PID_ID:
-    pid = &linear_speed_pid;
+    pid = &rolling_basis_ptr->linear_speed_pid;
     break;
   case ANGULAR_SPEED_PID_ID:
-    pid = &angular_speed_pid;
+    pid = &rolling_basis_ptr->angular_speed_pid;
     break;
   case LINEAR_POSITION_PID_ID:
-    pid = &linear_distance_pid;
+    pid = &rolling_basis_ptr->linear_distance_pid;
     break;
   case ANGULAR_POSITION_PID_ID:
-    pid = &angular_distance_pid;
+    pid = &rolling_basis_ptr->angular_distance_pid;
     break;
   default:
     is_valid_pid = false;
