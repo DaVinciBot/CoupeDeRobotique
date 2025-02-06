@@ -156,6 +156,8 @@ class MainBrain(Brain):
     async def main(self):
         await self.initialize()
 
+
+
 # Only for testing
 def random_point_generator(
         start_point: OrientedPoint,
