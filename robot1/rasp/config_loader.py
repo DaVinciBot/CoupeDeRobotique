@@ -91,6 +91,26 @@ class CONFIG:
     SPEED_PROFILES = ROLLING_BASIS_CONFIG["go_to_profiles"]["speed"]
     PRECISION_PROFILES = ROLLING_BASIS_CONFIG["go_to_profiles"]["precision"]
 
+    LINEAR_SPEED_PID = {
+        "kp_linear_speed": 30,
+        "ki_linear_speed": 0,
+        "kd_linear_speed": 0,
+    }
+    ANGULAR_SPEED_PID = {
+        "kp_angular_speed": 30,
+        "ki_angular_speed": 0,
+        "kd_angular_speed": 0,
+    }
+    LINEAR_POSITION_PID = {
+        "kp_linear_position": 0,
+        "ki_linear_position": 0,
+        "kd_linear_position": 0,
+    }
+    ANGULAR_POSITION_PID = {
+        "kp_angular_position": 0,
+        "ki_angular_position": 0,
+        "kd_angular_position": 0,
+    }
     # Actuators
     ACTUATORS_CONFIG = SPECIFIC_CONFIG["actuators"]
     ACTUATOR_TEENSY_SER = ACTUATORS_CONFIG["actuators_teensy_ser"]
@@ -135,3 +155,5 @@ class CONFIG:
 
     # arena
     ARENA_CONFIG = CONFIG_STORE[ARENA_CONFIG_KEY]
+
+
