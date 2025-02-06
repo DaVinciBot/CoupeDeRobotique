@@ -187,7 +187,6 @@ class PathFinder:
         oriented_path.append(
             OrientedPoint(last_point.x, last_point.y, oriented_path[-1].theta)
         )
-
         return oriented_path
 
     @time_tracker(lambda self: self.logger)
@@ -388,5 +387,6 @@ class PathFinder:
             self.__smooth_path(self.__grid_path_to_absolute_path(self.path_found)),
             is_grid_path=False,
         )
-        self.oriented_path_found = self.__add_path_extremities(self.oriented_path_found)
+        # TODO: a corriger
+        #self.oriented_path_found = self.__add_path_extremities(self.oriented_path_found)
         return self.oriented_path_found
