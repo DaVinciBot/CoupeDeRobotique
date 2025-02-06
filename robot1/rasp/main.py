@@ -14,7 +14,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
     path="logs",
     # LogLevels
     decorator_log_level=LogLevels.DEBUG,
-    print_log_level=LogLevels.DEBUG,
+    print_log_level=LogLevels.INFO,
     file_log_level=LogLevels.DEBUG,
     # Loggers Output
     print_log=True,
