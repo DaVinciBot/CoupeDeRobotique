@@ -1,6 +1,6 @@
 # ====== Imports ======
 # Internal project imports
-from logger import Logger
+from loggerplusplus import Logger
 
 from arena.base_arena.arena import BaseArena
 from arena.base_arena.arena_zone import (

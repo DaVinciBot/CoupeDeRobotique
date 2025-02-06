@@ -1,7 +1,7 @@
 # ====== Imports ======
 # Internal project imports
 from arena import BaseArena
-from logger import Logger
+from loggerplusplus import Logger
 from geometry import OrientedPoint
 
 from path_finding import PathFinder

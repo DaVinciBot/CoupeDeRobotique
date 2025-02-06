@@ -5,12 +5,11 @@ import asyncio
 import time
 
 # Import from common
-from brain import Brain
-
-from WS_comms import WSmsg, WSclientRouteManager, WServerRouteManager
+from taskbrain import Brain
+from ws_comms import WSmsg, WSclientRouteManager, WServerRouteManager
 from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
 
-from logger import Logger
+from loggerplusplus import Logger
 import math
 from utils import Utils
 import matplotlib.pyplot as plt
@@ -27,7 +26,7 @@ from rolling_basis_handler import RollingBasisHandler, RollingBasisCommand
 from movement_manager import MovementManager, GoToParams
 from rolling_basis_handler import SpeedProfile
 from sensors import Lidar, LidarDummy
-
+from arena import AllyZone
 
 class MainBrain(Brain):
     def __init__(
@@ -74,6 +73,14 @@ class MainBrain(Brain):
             step_size=3.0,
         )
 
+        self.theorical_ally_position = AllyZone(
+            logger=Logger(identifier="th_ally"),
+            point=self.rolling_basis.odometrie,
+            robot_size=5
+        )
+        self.theorical_ally_position.zone_color = "#fcba03"
+
+
         # TMP for test purpose
         self.lidar_scan_polars = self.lidar.scan_to_polars()
 
@@ -83,6 +90,7 @@ class MainBrain(Brain):
     async def handle_rolling_basis_for_go_to(self) -> None:
         cmd: RollingBasisCommand = self.movement_manager.handle_go_to()
         if cmd is not None:
+            self.theorical_ally_position.point = cmd.position
             self.rolling_basis.set_speed_and_position(*cmd.get_command())
             self.logger.debug(f"RollingBasisCommand: {cmd.get_command()}")
 
@@ -99,6 +107,7 @@ class MainBrain(Brain):
         self.ax.clear()
         self.arena.visualize(
             display_default_destination_zone=False,
+            theorical_ally_position=self.theorical_ally_position,
             trajectory=(
                 self.movement_manager.path_finder.oriented_path_found
                 if self.movement_manager.path_finder is not None

@@ -16,7 +16,7 @@ from pathfinding.core.grid import GridNode
 import numpy as np
 
 # Internal project imports
-from logger import Logger, time_tracker
+from loggerplusplus import Logger, time_tracker
 from geometry import OrientedPoint, Point, MultiPoint, nearest_points
 from arena import GridManager
 

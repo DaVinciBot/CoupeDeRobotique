@@ -32,7 +32,8 @@ from geometry import (
     is_empty,
     nearest_points,
 )
-from logger import Logger, LogLevels, time_tracker, ClassicColors
+from loggerplusplus import Logger, LogLevels, time_tracker
+from loggerplusplus.colors import ClassicColors
 from arena.base_arena.grid_manager import GridManager
 from arena.base_arena.arena_zone import (
     # Enums
@@ -629,6 +630,7 @@ class BaseArena:
             show_buffer: bool = True,
             show: bool = True,
             plot: tuple[plt.axes, plt.figure] = None,
+            theorical_ally_position: AllyZone = None,
             trajectory: list[OrientedPoint] = [],
             transparency_factor: float = 1.0,
             display_points: list[Point] = None,
@@ -664,6 +666,8 @@ class BaseArena:
         # Enemy and Ally zones
         self.__plot_zone(ax, self.ally_zone, show_buffer, transparency_factor)
         self.__plot_zone(ax, self.enemy_zone, show_buffer, transparency_factor)
+        if theorical_ally_position:
+            self.__plot_zone(ax, theorical_ally_position, show_buffer, transparency_factor)
 
         # Plot trajectory
         for i in range(len(trajectory) - 1):

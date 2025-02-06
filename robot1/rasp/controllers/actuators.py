@@ -1,5 +1,5 @@
 from config_loader import CONFIG
-from logger import Logger, log
+from loggerplusplus import Logger, log
 
 # Import from common
 from teensy_comms import Teensy

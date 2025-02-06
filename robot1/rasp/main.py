@@ -3,7 +3,8 @@
 from config_loader import CONFIG
 
 # Logger: LoggerManager + global configuration
-from logger import LoggerManager, LogLevels, LoggerConfig, Logger, logger_colors
+from loggerplusplus import LoggerManager, LogLevels, LoggerConfig, Logger, logger_colors
+
 
 LoggerManager.enable_files_logs_monitoring_only_for_one_logger = True
 # LoggerManager.enable_dynamic_config_update = False
@@ -31,7 +32,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 )
 
 # Internal project imports
-from WS_comms import WServer, WServerRouteManager, WSender, WSreceiver
+from ws_comms import WServer, WServerRouteManager, WSender, WSreceiver
 from arena import ShowArena
 from brains import MainBrain
 from controllers import RollingBasisDummy, RollingBasis

@@ -14,7 +14,7 @@ from typing import Callable
 # ====== Internal Project Imports ======
 from teensy_comms import Teensy
 from geometry import OrientedPoint
-from logger import Logger, log
+from loggerplusplus import Logger, log
 
 
 class Command(Enum):
