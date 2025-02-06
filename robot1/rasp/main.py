@@ -119,15 +119,7 @@ if __name__ == "__main__":
 
     # Sensors
     # Lidar
-    lidar = Lidar(
-        logger=logger_lidar,
-        min_angle=CONFIG.LIDAR_MIN_ANGLE,
-        max_angle=CONFIG.LIDAR_MAX_ANGLE,
-        unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
-        unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
-        min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
-    )
-    # lidar = LidarDummy(
+    # lidar = Lidar(
     #     logger=logger_lidar,
     #     min_angle=CONFIG.LIDAR_MIN_ANGLE,
     #     max_angle=CONFIG.LIDAR_MAX_ANGLE,
@@ -135,6 +127,14 @@ if __name__ == "__main__":
     #     unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
     #     min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
     # )
+    lidar = LidarDummy(
+        logger=logger_lidar,
+        min_angle=CONFIG.LIDAR_MIN_ANGLE,
+        max_angle=CONFIG.LIDAR_MAX_ANGLE,
+        unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
+        unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
+        min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+    )
 
     # Environment
     # Arena
