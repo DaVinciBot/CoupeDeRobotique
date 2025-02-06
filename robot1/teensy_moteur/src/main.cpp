@@ -101,6 +101,21 @@ void set_pid(byte *msg, byte size)
   }
 }
 
+void set_odometrie(byte *msg, byte size)
+{
+  msg_set_odometrie *odometrie = (msg_set_odometrie *)msg;
+
+  rolling_basis_ptr->X = odometrie->x;
+  rolling_basis_ptr->Y = odometrie->y;
+  rolling_basis_ptr->THETA = odometrie->theta;
+}
+
+void reset_teensy(byte *msg, byte size)
+{
+  // TODO: reset the teensy, à tester !
+  asm volatile("jmp 0"); // Reset the teensy
+}
+
 // c. assign the callback functions to the right message id
 void (*callback_functions[256])(byte *msg, byte size);
 
@@ -108,6 +123,8 @@ void initialize_callback_functions()
 {
   callback_functions[SET_SPEED_AND_POSITION] = &set_speed_and_position;
   callback_functions[SET_PID] = &set_pid;
+  callback_functions[SET_ODOMETRIE] = &set_odometrie;
+  callback_functions[RESET_TEENSY] = &reset_teensy;
 }
 
 // 4. Define the timer interrupt handle function (this function will be called every 10ms, and which manage the robot position and speed: asservissement)
