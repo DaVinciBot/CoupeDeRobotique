@@ -24,9 +24,6 @@ float PID::compute(float error)
     // Calculate derivative
     float dedt = (error - this->error_prev) / delta_time;
 
-    //if (delta_time < 0.001) delta_time = 0.001;  // Évite les valeurs trop petites de delta time comme ca ca deconne moins du moins jespere
-
-
     // Calculate integral
     this->error_integral = this->error_integral + (error * delta_time);
 
