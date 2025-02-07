@@ -114,7 +114,7 @@ void Rolling_Basis::handle(
     double angular_distance_correction = this->angular_distance_pid.compute(Etheta);
 
     // Je regarde si le cpp déconne niveau calcul ou pas (sinon c python)
-    float max_correction = 5.0f
+    double max_correction = 5.0f;
     linear_speed_correction = constrain(linear_speed_correction, -max_correction, max_correction);
     angular_speed_correction = constrain(angular_speed_correction, -max_correction, max_correction);
 
@@ -127,7 +127,7 @@ void Rolling_Basis::handle(
     double right_speed = (2 * Vc + Wc * this->center_distance) / 2;
     double left_speed = (2 * Vc - Wc * this->center_distance) / 2;
 
-    float max_motor_speed = 5.0f;  // On limite a la main la vitesse max pour voir encore qui deconne (moi je pense que c'est le calcul)
+    double max_motor_speed = 5.0f;  // On limite a la main la vitesse max pour voir encore qui deconne (moi je pense que c'est le calcul)
     right_speed = constrain(right_speed, -max_motor_speed, max_motor_speed);
     left_speed = constrain(left_speed, -max_motor_speed, max_motor_speed);
     
