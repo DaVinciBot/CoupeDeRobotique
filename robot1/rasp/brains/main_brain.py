@@ -168,7 +168,7 @@ class MainBrain(Brain):
             initial_linear_speed=self.rolling_basis.linear_speed,
             initial_angular_speed=self.rolling_basis.angular_speed,
             speed_profile=speed_profile,
-            goal=OrientedPoint(60, 80),
+            goal=OrientedPoint(250, 140),
             acs_distance=10,
             path_finder_recompute_distance=80,
             timeout=-1.0,
