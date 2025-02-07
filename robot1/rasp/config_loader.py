@@ -102,12 +102,12 @@ class CONFIG:
         "kd_angular_speed": 0,
     }
     LINEAR_POSITION_PID = {
-        "kp_linear_position": 1,
+        "kp_linear_position": 5,
         "ki_linear_position": 0,
         "kd_linear_position": 0,
     }
     ANGULAR_POSITION_PID = {
-        "kp_angular_position": 1,
+        "kp_angular_position": 5,
         "ki_angular_position": 0,
         "kd_angular_position": 0,
     }
