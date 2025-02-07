@@ -113,6 +113,10 @@ void Rolling_Basis::handle(
     double linear_distance_correction = this->linear_distance_pid.compute(Ed);
     double angular_distance_correction = this->angular_distance_pid.compute(Etheta);
 
+    // Je regarde si le cpp déconne niveau calcul ou pas (sinon c python)
+    float max_correction = 5.0f
+    linear_speed_correction = constrain(linear_speed_correction, -max_correction, max_correction);
+    angular_speed_correction = constrain(angular_speed_correction, -max_correction, max_correction);
 
     /* Combine both corrections */
     // Compute corrected linear and angular speed
@@ -123,9 +127,21 @@ void Rolling_Basis::handle(
     double right_speed = (2 * Vc + Wc * this->center_distance) / 2;
     double left_speed = (2 * Vc - Wc * this->center_distance) / 2;
 
+    float max_motor_speed = 5.0f;  // On limite a la main la vitesse max pour voir encore qui deconne (moi je pense que c'est le calcul)
+    right_speed = constrain(right_speed, -max_motor_speed, max_motor_speed);
+    left_speed = constrain(left_speed, -max_motor_speed, max_motor_speed);
+    
+    
     /* Apply commands to motors */
     this->right_motor->set_motor(right_speed);
     this->left_motor->set_motor(left_speed);
+
+    /// LE PRINT INTERDIT AHHHHH (test puis enlever)
+    /*Serial.print("Vc: "); Serial.print(Vc);
+    Serial.print(" | Wc: "); Serial.print(Wc);
+    Serial.print(" | Right Speed: "); Serial.print(right_speed);
+    Serial.print(" | Left Speed: "); Serial.println(left_speed);*/
+
 }
 
 // void Rolling_Basis::is_running_update(){
