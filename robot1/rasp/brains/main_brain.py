@@ -149,7 +149,7 @@ class MainBrain(Brain):
     async def initialize(self):
         self.arena.set_team_color("yellow")
         self.rolling_basis.odometrie = OrientedPoint(
-            20, 80, 0
+            20, 85, 0
         )  # Assume the robot is at position (24, 10) if begin the match in yellow zone
 
     @Brain.task(process=False, run_on_start=True)
