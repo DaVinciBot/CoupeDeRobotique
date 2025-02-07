@@ -98,7 +98,7 @@ class CONFIG:
     }
     ANGULAR_SPEED_PID = {
         "kp_angular_speed": 70,
-        "ki_angular_speed": 1,
+        "ki_angular_speed": 0.2,
         "kd_angular_speed": 0
     }
     LINEAR_POSITION_PID = {
