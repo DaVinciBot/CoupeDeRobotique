@@ -92,14 +92,14 @@ class CONFIG:
     PRECISION_PROFILES = ROLLING_BASIS_CONFIG["go_to_profiles"]["precision"]
 
     LINEAR_SPEED_PID = {
-        "kp_linear_speed": 5,
+        "kp_linear_speed": 10,
         "ki_linear_speed": 0,
-        "kd_linear_speed": 0,
+        "kd_linear_speed": 1,
     }
     ANGULAR_SPEED_PID = {
-        "kp_angular_speed": 60,
+        "kp_angular_speed": 70,
         "ki_angular_speed": 0,
-        "kd_angular_speed": 0,
+        "kd_angular_speed": 1,
     }
     LINEAR_POSITION_PID = {
         "kp_linear_position": 0,
