@@ -109,7 +109,7 @@ if __name__ == "__main__":
     rolling_basis = RollingBasis(logger=logger_rolling_basis)
     # rolling_basis = RollingBasisDummy(logger=logger_rolling_basis)
 
-    rolling_basis.set_odometrie(OrientedPoint(20, 80, 0))
+    rolling_basis.set_odometrie(OrientedPoint(20, 60, 0))
     # rolling_basis.set_pids(
     #     0, 0, 0,
     #     0, 0, 0,
