@@ -77,7 +77,7 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def handle_rolling_basis_for_go_to(self) -> None:
         cmd: RollingBasisCommand = self.movement_manager.handle_go_to()
         if cmd is not None:
