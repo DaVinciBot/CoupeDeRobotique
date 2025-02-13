@@ -1,3 +1,4 @@
+from math import pi
 from arena.base_arena.arena import BaseArena
 
 from logger import Logger, LogLevels
@@ -74,30 +75,30 @@ class ShowArena(BaseArena):
         )
 
         stuff_zones_points = [
-            ((2.5, 20), (12.5, 60), [OrientedPoint(12,5 + x, 40)]), #TODO: x = distance necessaire entre le robot et les conserves. Theta ??
-            ((2.5, 112.5), (12.5, 152.5), [OrientedPoint(12,5 + x, 132.5)]),
-            ((57.5, 20), (97.5, 30), [OrientedPoint(77.5, 30 + x)]),
-            ((62.5, 167.5), (102.5, 177.5), [OrientedPoint(82.5, 167.5 - x)]),
-            ((90, 90), (130, 100), [OrientedPoint(110, 90 - x), OrientedPoint(110, 100 + x)]),
-            ((300 - 12.5, 20), (300 - 2.5, 60), [OrientedPoint(300 - 12.5 - x, 40)]),
-            ((300 - 12.5, 112.5), (300 - 2.5, 152.5), [OrientedPoint(300 - 12.5 - x, 132.5)]),
-            ((300 - 97.5, 20), (300 - 57.5, 30), [OrientedPoint(300 - 77.5, 30 + x)]),
-            ((300 - 102.5, 167.5), (300 - 62.5, 177.5), [OrientedPoint(300 - 82.5, 167.5 - x)]),
-            ((300 - 130, 90), (300 - 90, 100), [OrientedPoint(300 - 110, 90 - x), OrientedPoint(300 - 110, 100 + x)]),
+            ((2.5, 20), (12.5, 60), [OrientedPoint(12,5 + x, 40, pi/2)]), #TODO: x = distance necessaire entre le robot et les conserves. Theta ??
+            ((2.5, 112.5), (12.5, 152.5), [OrientedPoint(12,5 + x, 132.5, pi/2)]),
+            ((57.5, 20), (97.5, 30), [OrientedPoint(77.5, 30 + x, 0)]),
+            ((62.5, 167.5), (102.5, 177.5), [OrientedPoint(82.5, 167.5 - x, pi)]),
+            ((90, 90), (130, 100), [OrientedPoint(110, 90 - x, pi), OrientedPoint(110, 100 + x, 0)]),
+            ((300 - 12.5, 20), (300 - 2.5, 60), [OrientedPoint(300 - 12.5 - x, 40, -pi/2)]), #TODO: -pi/2 ou 3pi/2 ?? et je me suis pas trompé sur l'angle initial ?
+            ((300 - 12.5, 112.5), (300 - 2.5, 152.5), [OrientedPoint(300 - 12.5 - x, 132.5, -pi/2)]),
+            ((300 - 97.5, 20), (300 - 57.5, 30), [OrientedPoint(300 - 77.5, 30 + x, 0)]),
+            ((300 - 102.5, 167.5), (300 - 62.5, 177.5), [OrientedPoint(300 - 82.5, 167.5 - x, pi)]),
+            ((300 - 130, 90), (300 - 90, 100), [OrientedPoint(300 - 110, 90 - x, pi), OrientedPoint(300 - 110, 100 + x, 0)]),
         ]
 
         yellow_reserved_zones_points = [
-            ((0, 0), (45, 15), [OrientedPoint(22.5, 15 + x)]), #TODO: x = distance necessaire entre le robot et les zones jaunes. Theta ??
-            ((0, 65), (45, 110), [OrientedPoint(22.5, 65 - x), OrientedPoint(22.5, 110 + x), OrientedPoint(45 + x, 87.5)]),
-            ((155,0), (200, 45), [OrientedPoint(177.5, 45 + x), OrientedPoint(200 + x, 22.5)]),
-            ((200, 0), (245, 15), [OrientedPoint(222.5, 15 + x)]),
+            ((0, 0), (45, 15), [OrientedPoint(22.5, 15 + x, 0)]), #TODO: x = distance necessaire entre le robot et les zones jaunes. Theta ??
+            ((0, 65), (45, 110), [OrientedPoint(22.5, 65 - x, pi), OrientedPoint(22.5, 110 + x, 0), OrientedPoint(45 + x, 87.5, pi/2)]),
+            ((155,0), (200, 45), [OrientedPoint(177.5, 45 + x, 0), OrientedPoint(200 + x, 22.5, pi/2)]),
+            ((200, 0), (245, 15), [OrientedPoint(222.5, 15 + x, 0)]),
         ]
 
         blue_reserved_zones_points = [
-            ((255, 0), (300, 15), [OrientedPoint(277.5, 15 + x)]),
-            ((255, 65), (300, 110), [OrientedPoint(277.5, 65 - x), OrientedPoint(277.5, 110 + x), OrientedPoint(255 - x, 87.5)]),
-            ((55, 0), (100, 15), [OrientedPoint(77.5, 15 + x)]),
-            ((100, 0), (145, 45), [OrientedPoint(122.5, 45 + x), OrientedPoint(100 - x, 22.5)]),
+            ((255, 0), (300, 15), [OrientedPoint(277.5, 15 + x, 0)]),
+            ((255, 65), (300, 110), [OrientedPoint(277.5, 65 - x, pi), OrientedPoint(277.5, 110 + x, 0), OrientedPoint(255 - x, 87.5, -pi/2)]),
+            ((55, 0), (100, 15), [OrientedPoint(77.5, 15 + x, 0)]),
+            ((100, 0), (145, 45), [OrientedPoint(122.5, 45 + x, 0), OrientedPoint(100 - x, 22.5, -pi/2)]),
         ]
         #TODO: backstage et pami sans zones ??
 
