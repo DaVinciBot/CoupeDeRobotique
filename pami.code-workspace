@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"path": "PAMI/"
+		},
+	],
+	"settings": {
+		"files.associations": {
+			"*.tcc": "cpp",
+			"exception": "cpp",
+			"iosfwd": "cpp",
+			"new": "cpp",
+			"ostream": "cpp",
+			"sstream": "cpp",
+			"streambuf": "cpp",
+			"array": "cpp",
+			"string_view": "cpp",
+			"initializer_list": "cpp",
+			"utility": "cpp"
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"platformio.platformio-ide",
+			"usernamehw.errorlens",
+			"ms-vscode.cpptools-themes",
+			"ms-vscode.cpptools",
+			"platformio.platformio-ide",
+			"jeff-hykin.better-cpp-syntax",
+			"eamodio.gitlens",
+			"github.copilot"
+		]
+	}
+}

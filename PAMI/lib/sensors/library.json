@@ -1,0 +1,8 @@
+{
+  "name": "sensors",
+  "version": "1.0.0",
+  "description": "Library dedicated to sensors communication, like IMU, LIDAR, etc.",
+  "keywords": "lidar, imu, sensors",
+  "frameworks": "*",
+  "platforms": "*"
+}
