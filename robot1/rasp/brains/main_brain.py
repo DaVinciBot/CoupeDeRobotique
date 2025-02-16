@@ -6,7 +6,7 @@ import time
 
 # Import from common
 from taskbrain import Brain
-from ws_comms import WSmsg, WSclientRouteManager, WServerRouteManager
+from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
 from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
 
 from loggerplusplus import Logger
@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import time
 import numpy as np
 import random
+import gc
 
 # Import from local path
 from controllers import RollingBasis, RollingBasisDummy
@@ -27,21 +28,27 @@ from movement_manager import MovementManager, GoToParams
 from rolling_basis_handler import SpeedProfile
 from sensors import Lidar, LidarDummy
 from arena import AllyZone
+from tasks import Task, TaskPlanner
+import json
+
 
 class MainBrain(Brain):
     def __init__(
-            self,
-            logger: Logger,
-            # Controllers
-            rolling_basis: RollingBasis | RollingBasisDummy,
-            # Sensors
-            lidar: Lidar | LidarDummy,
-            # Environment
-            arena: ShowArena,
-            # Movement
-            movement_manager: MovementManager,
-            # WS routes
-            ws_cmd: WServerRouteManager,
+        self,
+        logger: Logger,
+        # Controllers
+        rolling_basis: RollingBasis | RollingBasisDummy,
+        # Sensors
+        lidar: Lidar | LidarDummy,
+        # Environment
+        arena: ShowArena,
+        # Movement
+        movement_manager: MovementManager,
+        # WS routes
+        ws_cmd: WServerRouteManager,
+        game_duration_sec: int = 10000,
+        solve_planner_limit_sec: int = 10,
+        tasks: list[Task] = [],
     ) -> None:
         if isinstance(rolling_basis, RollingBasisDummy):
             logger.warning("RollingBasisDummy is used")
@@ -56,6 +63,11 @@ class MainBrain(Brain):
         self.movement_manager: MovementManager = movement_manager
         # WS routes
         self.ws_cmd: WServerRouteManager = ws_cmd
+
+        self.game_duration_sec = game_duration_sec
+        self.solve_planner_limit_sec = solve_planner_limit_sec
+        self.game_tasks = tasks
+        self.game_tasks_planification = None
 
         super().__init__(logger, self)
 
@@ -76,10 +88,9 @@ class MainBrain(Brain):
         self.theorical_ally_position = AllyZone(
             logger=Logger(identifier="th_ally"),
             point=self.rolling_basis.odometrie,
-            robot_size=5
+            robot_size=5,
         )
         self.theorical_ally_position.zone_color = "#fcba03"
-
 
         # TMP for test purpose
         self.lidar_scan_polars = self.lidar.scan_to_polars()
@@ -132,9 +143,7 @@ class MainBrain(Brain):
         cmd = await self.ws_cmd.receiver.get()
 
         if cmd != WSmsg():
-            self.logger.info(
-                f"Zombie instruction {cmd.msg} received: {cmd.data}"
-            )
+            self.logger.info(f"Zombie instruction {cmd.msg} received: {cmd.data}")
 
             if cmd.msg == "eval":
                 instructions = []
@@ -190,13 +199,80 @@ class MainBrain(Brain):
 
         self.movement_manager.go_to(params=go_to_params)
 
+    def get_game_tasks_planification(
+        self, solve_planner_limit_sec: int = -1, save_planification: bool = False
+    ):
+        scores = [task.score for task in self.game_tasks]
+        tasks_duration_sec = [task.execution_time for task in self.game_tasks]
+        # TODO: get the travel time matrix with time computed according to arena and robot speed (avg speed or profile)
+        travels_duration_matrix_sec = [
+            [0 if i == j else random.randint(1, 10) for j in range(len(scores) + 2)]
+            for i in range(len(scores) + 2)
+        ]
+        self.task_planner = TaskPlanner(
+            tasks_scores=scores,
+            tasks_duration_sec=tasks_duration_sec,
+            travels_duration_matrix_sec=travels_duration_matrix_sec,
+            max_time_sec=self.game_duration_sec,
+            solve_limit_sec=(
+                self.solve_planner_limit_sec
+                if solve_planner_limit_sec < 0
+                else solve_planner_limit_sec
+            ),
+        )
+        self.game_tasks_planification = self.task_planner.solve(
+            save_mode=save_planification
+        )
+
+    def load_preplanned_tasks(self, file_path: str = "solution.json"):
+        with open(file_path, "r") as f:
+            solution = json.load(f)
+        self.game_tasks_planification = solution
+
+    @staticmethod
+    def get_dummy_brain():
+
+        arena = ShowArena(
+            logger=Logger(identifier="Dummy Arena"),
+            border_buffer=2,
+            obstacle_buffer=1,
+            chunk_size=5,
+            forbidden_cover_threshold=0.1,
+            grid_manager_logger=Logger(identifier="Dummy Grid Manager"),
+        )
+        return MainBrain(
+            logger=Logger(identifier="Dummy Brain"),
+            rolling_basis=RollingBasisDummy(Logger(identifier="Dummy Rolling Basis")),
+            lidar=LidarDummy(
+                logger=Logger(identifier="Dummy Lidar"),
+                min_angle=CONFIG.LIDAR_MIN_ANGLE,
+                max_angle=CONFIG.LIDAR_MAX_ANGLE,
+                unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
+                unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
+                min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+            ),
+            arena=arena,
+            movement_manager=MovementManager(
+                logger=Logger(identifier="Dummy Movement Manager"),
+                rolling_basis_handler_logger=Logger(
+                    identifier="Dummy Rolling Basis Handler"
+                ),
+                path_finder_logger=Logger(identifier="Dummy Path Finder"),
+                movement_resolution=1,
+                arena=arena,
+            ),
+            ws_cmd=WServerRouteManager(
+                WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+            ),
+        )
+
 
 # Only for testing
 def random_point_generator(
-        start_point: OrientedPoint,
-        step_size: float = 10.0,
-        x_limits=(0, 300),
-        y_limits=(0, 200),
+    start_point: OrientedPoint,
+    step_size: float = 10.0,
+    x_limits=(0, 300),
+    y_limits=(0, 200),
 ):
     current_point = start_point
 
@@ -213,12 +289,12 @@ def random_point_generator(
 
 
 def straight_line_generator(
-        start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
+    start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
 ):
     # Calculer la direction du mouvement
     dx = end_point.x - start_point.x
     dy = end_point.y - start_point.y
-    d = math.sqrt(dx ** 2 + dy ** 2)
+    d = math.sqrt(dx**2 + dy**2)
 
     # Si la distance est nulle, retourner directement le point d'arrivée
     if d == 0:
