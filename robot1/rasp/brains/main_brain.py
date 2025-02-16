@@ -18,7 +18,7 @@ import numpy as np
 import random
 
 # Import from local path
-from controllers import RollingBasis, RollingBasisDummy
+from controllers import RollingBasis
 
 from path_finding import PathFinder
 from arena import ShowArena
@@ -103,14 +103,15 @@ class MainBrain(Brain):
             movement_resolution=1,
             arena=self.arena,
         )
-        rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasis(
             logger=Logger(
                 identifier="RollingBasis",
                 follow_logger_manager_rules=True,
-            )
+            ),
+            dummy=True
         )
 
-        if isinstance(rolling_basis, RollingBasisDummy):
+        if rolling_basis.dummy:
             rolling_basis.logger.warning("RollingBasisDummy is used")
 
         # --- MetaProg is insane (loop) --- #
