@@ -3,7 +3,7 @@
 from loggerplusplus import Logger
 
 from arena.base_arena.arena import BaseArena
-from arena.base_arena.arena_zone import (
+from arena.base_arena.arena_zones import (
     BaseArenaZone,
     ForbiddenZone,
     StuffZone,
@@ -171,3 +171,16 @@ class ShowArena(BaseArena):
 
         self.logger.info("ShowArena initialized.")
         self.logger.debug(f"Width: {self.width}, Height: {self.height}")
+
+    def __eq__(self, other):
+        if not isinstance(other, ShowArena):
+            return False
+
+        return (
+                self.ally_zone == other.ally_zone
+                and self.enemy_zone == other.enemy_zone
+                and self.grid_manager == other.grid_manager
+        )
+
+    def __ne__(self, other):
+        return not self.__eq__(other)

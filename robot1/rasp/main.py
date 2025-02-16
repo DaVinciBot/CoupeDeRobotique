@@ -13,7 +13,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
     path="logs",
     # LogLevels
     decorator_log_level=LogLevels.DEBUG,
-    print_log_level=LogLevels.INFO,
+    print_log_level=LogLevels.DEBUG,
     file_log_level=LogLevels.DEBUG,
     # Loggers Output
     print_log=True,
@@ -32,19 +32,22 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 
 # Internal project imports
 from ws_comms import WServer, WServerRouteManager, WSender, WSreceiver
-from arena import ShowArena
+from arena import ShowArena, AllyZone
 from geometry import OrientedPoint
 from brains import MainBrain
-from controllers import RollingBasisDummy, RollingBasis
+from taskbrain import DictProxyAccessor
+from controllers import RollingBasisDummy, RollingBasis, RollingBasisSimulationDummy
 from movement_manager import MovementManager
 from sensors import LidarDummy, Lidar
+from movement_manager import GoToParams
 
 # ====== Main ======
 if __name__ == "__main__":
     """
     ###--- Initialization ---###
     """
-    # Loggers
+
+    """ Loggers """
     # System-Part loggers
     logger_ws_server = Logger(
         identifier="WS_Server",
@@ -55,19 +58,20 @@ if __name__ == "__main__":
         # Only Brain manages monitoring
         files_monitoring=True,
         display_monitoring=True,
+        print_log_level=LogLevels.DEBUG,
         follow_logger_manager_rules=True,
     )
 
     # Controllers loggers
-    logger_rolling_basis = Logger(
-        identifier="RollingBasis",
-        follow_logger_manager_rules=True,
-    )
+    # See ./brains/controllers_brain.py for more details
+    # All rolling basis part is executed in another process so define inside this part
+
     # Sensors loggers
     logger_lidar = Logger(
         identifier="LiDAR",
         follow_logger_manager_rules=True,
     )
+
     # Environment loggers
     logger_grid_manager = Logger(
         identifier="GridManager",
@@ -77,26 +81,18 @@ if __name__ == "__main__":
         identifier="ShowArena",
         follow_logger_manager_rules=True,
     )
-    # Movement loggers
-    logger_rolling_basis_handler = Logger(
-        identifier="RollingBasisHandler",
-        follow_logger_manager_rules=True,
-    )
-    logger_path_finder = Logger(
-        identifier="PathFinder",
-        follow_logger_manager_rules=True,
-    )
-    logger_movement_manager = Logger(
-        identifier="MovementManager",
-        follow_logger_manager_rules=True,
-    )
 
+    # Movement loggers
+    # See ./brains/controllers_brain.py for more details
+    # All rolling basis part is executed in another process so define inside this part
+
+    """ Main object instances """
     # Websocket server
     ws_server = WServer(
         logger=logger_ws_server,
         host=CONFIG.WS_HOSTNAME,
         port=CONFIG.WS_PORT,
-        ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,  # TODO: je crois que ça marche pas cette feature
+        ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,  # TODO: To fix, this feature is not working
     )
     # Routes
     ws_cmd = WServerRouteManager(
@@ -106,10 +102,14 @@ if __name__ == "__main__":
 
     # Controllers
     # Rolling Basis
-    rolling_basis = RollingBasis(logger=logger_rolling_basis)
+    # See ./brains/controllers_brain.py for more details
+    # All rolling basis part is executed in another process so define inside this part
+
+    # rolling_basis = RollingBasis(logger=logger_rolling_basis)
+    # rolling_basis = RollingBasisSimulationDummy(logger=logger_rolling_basis, simulation_dt=0.01)
     # rolling_basis = RollingBasisDummy(logger=logger_rolling_basis)
 
-    rolling_basis.set_odometrie(OrientedPoint(20, 20, 0))
+    # rolling_basis.set_odometrie(OrientedPoint(20, 20, 0))
     # rolling_basis.set_pids(
     #     0, 0, 0,
     #     0, 0, 0,
@@ -148,22 +148,21 @@ if __name__ == "__main__":
     )
 
     # Movement
-    # Movement Manager
-    movement_manager = MovementManager(
-        logger=logger_movement_manager,
-        rolling_basis_handler_logger=logger_rolling_basis_handler,
-        path_finder_logger=logger_path_finder,
-        movement_resolution=1,
-        arena=arena,
-    )
+    # Movement manager
+    # See ./brains/controllers_brain.py for more details
+    # All rolling basis part is executed in another process so define inside this part
 
     # Brain
+    # Add all object type which need to be shared between processes in the DictProxyAccessor serializable types list
+    DictProxyAccessor.add_serializable_type(ShowArena, arena)
+    DictProxyAccessor.add_serializable_type(OrientedPoint)
+    DictProxyAccessor.add_serializable_type(GoToParams)
+    DictProxyAccessor.add_serializable_type(AllyZone)
+
     brain = MainBrain(
         logger=logger_brain,
-        rolling_basis=rolling_basis,
         lidar=lidar,
         arena=arena,
-        movement_manager=movement_manager,
         ws_cmd=ws_cmd,
     )
 

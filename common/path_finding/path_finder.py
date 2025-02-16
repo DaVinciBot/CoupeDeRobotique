@@ -378,9 +378,9 @@ class PathFinder:
             self.oriented_path_found = self.__path_to_absolute_oriented_path(
                 self.path_found, is_grid_path=True
             )
-            self.oriented_path_found = self.__add_path_extremities(
-                self.oriented_path_found
-            )
+            # self.oriented_path_found = self.__add_path_extremities(
+            #     self.oriented_path_found
+            # )
             return self.oriented_path_found
 
         self.oriented_path_found = self.__path_to_absolute_oriented_path(

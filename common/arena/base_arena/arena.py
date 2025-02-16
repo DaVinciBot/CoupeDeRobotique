@@ -10,6 +10,7 @@ import numpy as np
 import asyncio
 import random
 import math
+from abc import ABC, abstractmethod
 
 # Third-party library imports
 import matplotlib.pyplot as plt
@@ -35,7 +36,7 @@ from geometry import (
 from loggerplusplus import Logger, LogLevels, time_tracker
 from loggerplusplus.colors import ClassicColors
 from arena.base_arena.grid_manager import GridManager
-from arena.base_arena.arena_zone import (
+from arena.base_arena.arena_zones import (
     # Enums
     ZoneType,
     ZoneAccessibility,
@@ -50,7 +51,7 @@ from arena.base_arena.arena_zone import (
 
 
 # ====== BaseArena Class ======
-class BaseArena:
+class BaseArena(ABC):
     """
     Represents the arena and its zones, including buffer zones and borders.
 
@@ -127,7 +128,7 @@ class BaseArena:
 
         # Give to each zone the grid manager to do a callback when they update their state
         for i in range(len(self.zones)):
-            self.zones[i].update_callback = lambda: self.grid_manager
+            self.zones[i].update_callback = self._get_grid_manager
 
         # Add forbidden and border zones to the grid manager
         for zone in self.zones:
@@ -164,6 +165,7 @@ class BaseArena:
                 0,
             ),
         )
+
         self.enemy_zone: EnemyZone = EnemyZone(
             self.enemy_logger,
             OrientedPoint(280, 180, 0)
@@ -221,6 +223,13 @@ class BaseArena:
             ]
         )
 
+    # ====== Protected Methods ======
+    def _get_grid_manager(self) -> GridManager:
+        """
+        Use this methode instead lambda: self.grid_manager in the BaseArenaZone.update_callback
+        """
+        return self.grid_manager
+
     # ====== Public Methods ======
     @time_tracker(lambda self: self.logger)
     def set_team_color(self, team_color: str) -> None:
@@ -269,8 +278,8 @@ class BaseArena:
                 )[1]
 
         # Update ally and enemy zones
-        self.ally_zone.update(self.team_color, [ally_position], [enemy_position])
-        self.enemy_zone.update(self.team_color, [ally_position], [enemy_position])
+        self.ally_zone.update(self.team_color, ally_position, enemy_position)
+        self.enemy_zone.update(self.team_color, ally_position, enemy_position)
 
         # optimized: Update only the zones that intersect with the points
         all_points = [ally_position, enemy_position]
@@ -280,12 +289,20 @@ class BaseArena:
             ):
                 zone.update(
                     self.team_color,
-                    ally_positions=[ally_position],
-                    enemy_positions=[enemy_position],
+                    ally_position=ally_position,
+                    enemy_position=enemy_position,
                 )
 
         # Update Grid Manager dynamic forbidden zones with enemy positions
         self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon])
+
+    @abstractmethod
+    def __eq__(self, other):
+        pass
+
+    @abstractmethod
+    def __ne__(self, other):
+        pass
 
     """
         Geometry helpers function part
@@ -600,7 +617,7 @@ class BaseArena:
             )
 
         # Plot the original zone in full color and hatch if necessary
-        if not zone.is_instance(BorderZone):
+        if not isinstance(zone, BorderZone):
             hatch_params = {}
             if zone.is_accessible(team_color=self.team_color):
                 pass  # No hatch
@@ -693,7 +710,7 @@ class BaseArena:
 
         if display_default_destination_zone:
             for zone in self.zones:
-                if zone.is_instance(BorderZone):
+                if isinstance(zone, BorderZone):
                     continue
                 destination_point = self.compute_go_to_destination(
                     starting_point_to_display_default_destination_zone, zone.polygon
