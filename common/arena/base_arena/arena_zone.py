@@ -576,6 +576,7 @@ class StuffZone(BaseArenaZone):
         buffered_polygon (Polygon): Buffered polygon geometry.
         update_callback (callable): Function to be called on updates.
         index (int): Index identifier for the StuffZone.
+        goto_positions (list[OrientedPoint]): Position to go to.
     """
 
     def __init__(
@@ -586,7 +587,8 @@ class StuffZone(BaseArenaZone):
             polygon: Polygon = None,
             buffered_polygon: Polygon = None,
             update_callback: callable = None,
-            index: int = 0
+            index: int = 0,
+            goto_positions: list[OrientedPoint] = None
     ) -> None:
         """
         Initializes the StuffZone with geometry, buffer, and accessibility.
@@ -599,6 +601,7 @@ class StuffZone(BaseArenaZone):
             buffered_polygon (Polygon, optional): Buffered polygon geometry.
             update_callback (callable, optional): Function to be called on updates.
             index (int, optional): Index identifier for the StuffZone (defaults to 0).
+            goto_positions (list[OrientedPoint], optional): Position to go to.
         """
         self.index = index
         super().__init__(
@@ -609,6 +612,7 @@ class StuffZone(BaseArenaZone):
             polygon=polygon,
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
+            goto_positions=goto_positions,
             zone_color="#0FEE9C",
         )
 
@@ -637,6 +641,7 @@ class BlueReservedZone(BaseArenaZone):
         polygon (Polygon): Polygon representing the zone geometry.
         buffered_polygon (Polygon): Buffered polygon geometry.
         update_callback (callable): Function to be called on updates.
+        goto_positions (list[OrientedPoint]): Position to go to.
     """
 
     def __init__(
@@ -647,6 +652,7 @@ class BlueReservedZone(BaseArenaZone):
             polygon: Polygon = None,
             buffered_polygon: Polygon = None,
             update_callback: callable = None,
+            goto_positions: list[OrientedPoint] = None
     ) -> None:
         """
         Initializes the BlueReservedZone with geometry and accessibility.
@@ -658,6 +664,7 @@ class BlueReservedZone(BaseArenaZone):
             polygon (Polygon, optional): Polygon representing the zone geometry.
             buffered_polygon (Polygon, optional): Buffered polygon geometry.
             update_callback (callable, optional): Function to be called on updates.
+            goto_positions (list[OrientedPoint], optional): Position to go to.
         """
         super().__init__(
             logger=logger,
@@ -667,6 +674,7 @@ class BlueReservedZone(BaseArenaZone):
             polygon=polygon,
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
+            goto_positions=goto_positions,
             zone_color="#097D8D",
         )
 
@@ -721,6 +729,7 @@ class YellowReservedZone(BaseArenaZone):
         polygon (Polygon): Polygon representing the zone geometry.
         buffered_polygon (Polygon): Buffered polygon geometry.
         update_callback (callable): Function to be called on updates.
+        goto_positions (list[OrientedPoint]): Position to go to.
     """
 
     def __init__(
@@ -731,6 +740,7 @@ class YellowReservedZone(BaseArenaZone):
             polygon: Polygon = None,
             buffered_polygon: Polygon = None,
             update_callback: callable = None,
+            goto_positions: list[OrientedPoint] = None
     ) -> None:
         """
         Initializes the YellowReservedZone with geometry and accessibility.
@@ -742,6 +752,7 @@ class YellowReservedZone(BaseArenaZone):
             polygon (Polygon, optional): Polygon representing the zone geometry.
             buffered_polygon (Polygon, optional): Buffered polygon geometry.
             update_callback (callable, optional): Function to be called on updates.
+            goto_positions (list[OrientedPoint], optional): Position to go to.
         """
         super().__init__(
             logger=logger,
@@ -751,6 +762,7 @@ class YellowReservedZone(BaseArenaZone):
             polygon=polygon,
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
+            goto_positions=goto_positions,
             zone_color="#ECC92E",
         )
 

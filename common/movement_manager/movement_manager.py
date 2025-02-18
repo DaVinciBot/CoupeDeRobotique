@@ -1,6 +1,7 @@
 # ====== Imports ======
 # Internal project imports
 from arena import BaseArena
+from arena import BaseArenaZone
 from logger import Logger, LogLevels
 from geometry import OrientedPoint, Polygon
 
@@ -157,6 +158,23 @@ class MovementManager:
                 LogLevels.WARNING,
             )
 
+        if isinstance(params.goal, BaseArenaZone):
+            accessible_positions = [
+                pos for pos in params.goal.goto_positions
+                if params.goal.is_accessible(self.arena.team_color)
+            ]
+            if not accessible_positions:
+                self.logger.log("No accessible positions in zone", LogLevels.ERROR)
+                self.status = MovementStatus.NO_ACCESSIBLE
+                return self.status
+
+            ally_pos = self.arena.ally_zone.point
+            nearest_position = min(
+                accessible_positions,
+                key=lambda p: ally_pos.distance(p)
+            )
+            params.goal = nearest_position
+
         self.params: GoToParams = params
         self.status: MovementStatus = MovementStatus.PENDING
 
@@ -181,7 +199,8 @@ class MovementManager:
         )
         # Run pathfinder
         self._find_path(
-            smooth_trajectory=params.smooth_trajectory, update_position=False
+            smooth_trajectory=params.smooth_trajectory,
+            update_position=False
         )
 
         # 2. If the path is found, initialize the rolling basis handler
