@@ -104,7 +104,7 @@ class TaskPlanner:  # TODO: test solution saving and loading
             )
 
             if save_mode:
-                with open("solution.json", "w") as f:
+                with open("task_planner_solution.json", "w") as f:
                     json.dump(
                         {
                             "route": route,
