@@ -1,3 +1,5 @@
+import numpy as np
+
 from config_loader import CONFIG
 
 from pathfinding.core.grid import Grid, GridNode
@@ -34,7 +36,7 @@ from geometry import (
     nearest_points,
     box,
 )
-from old_logger import Logger, LogLevels
+from loggerplusplus import LoggerManager, LogLevels, LoggerConfig, Logger, logger_colors
 
 import asyncio
 
@@ -80,9 +82,7 @@ async def run_arena_test():
     # arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
     arena.visualize(display_default_destination_zone=False)
 
-    asyncio.create_task(arena.get_enemy_vector(1, 0))
-
-    await asyncio.sleep(1.1)
+    arena.update(start, np.ndarray([]), enemy_start)
 
     arena.visualize(display_default_destination_zone=False)
 
@@ -106,7 +106,7 @@ async def run_arena_test():
     )
     enemy_path = enemy_path_finder.find_oriented_path(smooth_path=True)
 
-    arena.update(ally_positions=[], enemy_positions=[], optimized_update=True)
+    arena.update(start, np.ndarray([]), enemy_start)
     arena.grid_manager.visualize(only_static_grid=True, path=[ally_path])
 
     # Visualize the path forwarding
@@ -117,8 +117,9 @@ async def run_arena_test():
         plt.ion()
 
         arena.update(
-            ally_positions=[ally_path[1]],
-            enemy_positions=[enemy_path[1]],
+            ally_position=ally_path[1],
+            lidar_scan_polars= np.ndarray([]),
+            enemy_position=enemy_path[1],
             optimized_update=True,
         )
 
