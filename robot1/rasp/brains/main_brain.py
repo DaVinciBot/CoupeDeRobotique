@@ -46,8 +46,8 @@ class MainBrain(Brain):
         movement_manager: MovementManager,
         # WS routes
         ws_cmd: WServerRouteManager,
-        game_duration_sec: int = 10000,
-        solve_planner_limit_sec: int = 10,
+        game_duration_sec: int = 90,
+        solve_planner_limit_sec: int = 1,
         tasks: list[Task] = [],
     ) -> None:
         if isinstance(rolling_basis, RollingBasisDummy):
@@ -230,7 +230,11 @@ class MainBrain(Brain):
         self.game_tasks_planification = solution
 
     @staticmethod
-    def get_dummy_brain():
+    def get_dummy_brain(
+        game_duration_sec: int = 90,
+        solve_planner_limit_sec: int = 1,
+        tasks: list[Task] = [],
+    ) -> "MainBrain":
 
         arena = ShowArena(
             logger=Logger(identifier="Dummy Arena"),
@@ -264,6 +268,9 @@ class MainBrain(Brain):
             ws_cmd=WServerRouteManager(
                 WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
             ),
+            game_duration_sec=game_duration_sec,
+            solve_planner_limit_sec=solve_planner_limit_sec,
+            tasks=tasks,
         )
 
 
