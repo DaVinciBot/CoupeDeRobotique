@@ -278,57 +278,75 @@ class PathFinder:
         """
         return [self.absolute_current_position, *path, self.absolute_goal]
 
-    def __add_path_extremities(self, path: list[OrientedPoint]) -> list[OrientedPoint]:
-        """
-        Add the real robot position as start point and goal as end point (not approximated chunk points).
+    def __add_path_extremities(self, path: list[Point]) -> list[Point | OrientedPoint]:
+        path = ([
+                Point(self.absolute_current_position.x, self.absolute_current_position.y)
+            ]
+            + path + [
+                Point(self.absolute_goal.x, self.absolute_goal.y)
+            ]
+        )
 
-        Args:
-            path (list[OrientedPoint]): Path to modify.
-        Returns:
-            list[OrientedPoint]: Path with start and goal points added.
-        """
-        # Convert path to MultiPoint to use Shapely functions
-        multi_point_path = MultiPoint(path)
+        if 6 > len(path) > 4:
+            path.pop(-2)
+            path.pop(-3)
+            path.pop(1)
+            path.pop(2)
 
-        # 1. Add start point to the path
-        # Get nearest path point of the start point
-        nearest_point = nearest_points(self.absolute_current_position, multi_point_path)[1]
-
-        # Get index of the nearest point in the path (list of oriented points)
-        nearest_point_index = 0
-        for i, point in enumerate(path):
-            if point.x == nearest_point.x and point.y == nearest_point.y:
-                nearest_point_index = i
-                break
-
-        # 2 cases: the nearest point is the first point of the point or not
-        if nearest_point_index == 0:  # Insert the start point at the beginning of the path
-            path = [self.absolute_current_position] + path
-        else:  # Insert the start point at the nearest point index
-            path = [self.absolute_current_position] + path[nearest_point_index:]
-
-        # 2. Add end point to the path
-        # Get nearest path point of the start point
-        nearest_point = nearest_points(self.absolute_goal, multi_point_path)[1]
-
-        # Get index of the nearest point in the path (list of oriented points)
-        nearest_point_index = 1
-        for i, point in enumerate(path[::-1]):
-            if point.x == nearest_point.x and point.y == nearest_point.y:
-                nearest_point_index += i
-                break
-
-        # 2 cases: the nearest point is the last point of the point or not
-        if nearest_point_index == -1:  # Insert the goal point at the end of the path
-            path = path + [self.absolute_goal]
-        else:  # Insert the goal point at the nearest point index
-            path = path[:-nearest_point_index] + [self.absolute_goal]
-
-        # 3. Improve path smoothness by removing point just after extremities
-        if len(path) > 5:
+        elif len(path) > 4:
             path.pop(-2)
             path.pop(1)
 
+        # """
+        # Add the real robot position as start point and goal as end point (not approximated chunk points).
+        #
+        # Args:
+        #     path (list[OrientedPoint]): Path to modify.
+        # Returns:
+        #     list[OrientedPoint]: Path with start and goal points added.
+        # """
+        # # Convert path to MultiPoint to use Shapely functions
+        # multi_point_path = MultiPoint(path)
+        #
+        # # 1. Add start point to the path
+        # # Get nearest path point of the start point
+        # nearest_point = nearest_points(self.absolute_current_position, multi_point_path)[1]
+        #
+        # # Get index of the nearest point in the path (list of oriented points)
+        # nearest_point_index = 0
+        # for i, point in enumerate(path):
+        #     if point.x == nearest_point.x and point.y == nearest_point.y:
+        #         nearest_point_index = i
+        #         break
+        #
+        # # 2 cases: the nearest point is the first point of the point or not
+        # if nearest_point_index == 0:  # Insert the start point at the beginning of the path
+        #     path = [self.absolute_current_position] + path
+        # else:  # Insert the start point at the nearest point index
+        #     path = [self.absolute_current_position] + path[nearest_point_index:]
+        #
+        # # 2. Add end point to the path
+        # # Get nearest path point of the start point
+        # nearest_point = nearest_points(self.absolute_goal, multi_point_path)[1]
+        #
+        # # Get index of the nearest point in the path (list of oriented points)
+        # nearest_point_index = 1
+        # for i, point in enumerate(path[::-1]):
+        #     if point.x == nearest_point.x and point.y == nearest_point.y:
+        #         nearest_point_index += i
+        #         break
+        #
+        # # 2 cases: the nearest point is the last point of the point or not
+        # if nearest_point_index == -1:  # Insert the goal point at the end of the path
+        #     path = path + [self.absolute_goal]
+        # else:  # Insert the goal point at the nearest point index
+        #     path = path[:-nearest_point_index] + [self.absolute_goal]
+        #
+        # # 3. Improve path smoothness by removing point just after extremities
+        # if len(path) > 5:
+        #     path.pop(-2)
+        #     path.pop(1)
+        #
         return path
 
     # ====== Public Methods ======
@@ -383,10 +401,23 @@ class PathFinder:
             # )
             return self.oriented_path_found
 
+        a = self.__grid_path_to_absolute_path(self.path_found)
+        b = self.__add_path_extremities(a)
+        c = self.__smooth_path(b)
+        d = self.__path_to_absolute_oriented_path(c, is_grid_path=False)
+
+        d[0] = self.absolute_current_position
+        d[-1] = self.absolute_goal
+
         self.oriented_path_found = self.__path_to_absolute_oriented_path(
-            self.__smooth_path(self.__grid_path_to_absolute_path(self.path_found)),
+            self.__smooth_path(
+                self.__add_path_extremities(
+                    self.__grid_path_to_absolute_path(self.path_found)
+                )
+            ),
             is_grid_path=False,
         )
         # TODO: a corriger
-        #self.oriented_path_found = self.__add_path_extremities(self.oriented_path_found)
+        # self.oriented_path_found = self.__add_path_extremities(self.oriented_path_found)
+        self.oriented_path_found = d
         return self.oriented_path_found
