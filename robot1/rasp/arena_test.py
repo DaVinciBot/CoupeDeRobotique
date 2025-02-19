@@ -104,8 +104,6 @@ async def run_arena_test():
     # arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
     arena.visualize(display_default_destination_zone=False)
     scans: np.ndarray = lidar.scan_to_polars()
-    scans_in_arena = arena.remove_outside(scans)
-    logger_lidar.logger.info(scans_in_arena)
 
     arena.update(start, scans)
 

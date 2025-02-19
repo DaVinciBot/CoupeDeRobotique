@@ -404,6 +404,8 @@ class BaseArena:
                 self._pol_to_abs_cart(lidar_scan_polars)
             )
 
+            self.logger.logger.info(obstacles)
+
             self.enemy_position = (
                 self.enemy_zone.point
                 if is_empty(obstacles)
