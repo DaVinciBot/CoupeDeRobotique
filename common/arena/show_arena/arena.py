@@ -75,8 +75,8 @@ class ShowArena(BaseArena):
         )
 
         stuff_zones_points = [
-            ((2.5, 20), (12.5, 60), [OrientedPoint(12,5 + x, 40, pi/2)]), #TODO: x = distance necessaire entre le robot et les conserves. Theta ??
-            ((2.5, 112.5), (12.5, 152.5), [OrientedPoint(12,5 + x, 132.5, pi/2)]),
+            ((2.5, 20), (12.5, 60), [OrientedPoint(12.5 + x, 40, pi/2)]), #TODO: x = distance necessaire entre le robot et les conserves. Theta ??
+            ((2.5, 112.5), (12.5, 152.5), [OrientedPoint(12.5 + x, 132.5, pi/2)]),
             ((57.5, 20), (97.5, 30), [OrientedPoint(77.5, 30 + x, 0)]),
             ((62.5, 167.5), (102.5, 177.5), [OrientedPoint(82.5, 167.5 - x, pi)]),
             ((90, 90), (130, 100), [OrientedPoint(110, 90 - x, pi), OrientedPoint(110, 100 + x, 0)]),
