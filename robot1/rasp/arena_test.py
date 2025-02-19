@@ -90,7 +90,7 @@ lidar = Lidar(
         min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
 )
 
-start = OrientedPoint((20, 87.5))
+start = OrientedPoint((20, 20))
 goal = OrientedPoint((280, 120))
 
 enemy_start = OrientedPoint((230, 60))
