@@ -380,9 +380,26 @@
         "top_steps": 400,
         "intermediate_steps": 283,
         "bottom_steps": 0,
+        "floor0_steps": 10,
+        "floor1_steps": 200,
+        "floor2_steps": 350,
         "speed": 5000
       },
-      "minimum_delay": 0.05
+      "minimum_delay": 0.05,
+      "magnet_arms": {
+        "left": {
+          "catch_angle": 135,
+          "release_angle": 20,
+          "pin": 33
+        },
+        "right": {
+          "catch_angle": 20,
+          "release_angle": 135,
+          "pin": 34
+        },
+        "magnetize_angle": 0,
+        "demagnetize_angle": 180
+      }
     },
     "lidar": {
       "distances_unit": "cm",

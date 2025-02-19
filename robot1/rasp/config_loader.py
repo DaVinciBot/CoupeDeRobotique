@@ -97,6 +97,11 @@ class CONFIG:
     FRONT_GOD_HAND = ACTUATORS_CONFIG["front_god_hand"]
     MINIMUM_DELAY = ACTUATORS_CONFIG["minimum_delay"]
     ELEVATOR = ACTUATORS_CONFIG["elevator"]
+    ELEVATOR_SPEED = ELEVATOR["speed"]
+    MAGNET_ARMS = ACTUATORS_CONFIG["magnet_arms"]
+    MAGNET_ARM_RIGHT = MAGNET_ARMS["right"]
+    MAGNET_ARM_LEFT = MAGNET_ARMS["left"]
+
     SOLAR_PANEL_RIGHT = ACTUATORS_CONFIG["solar_panel"]["right"]
     SOLAR_PANEL_LEFT = ACTUATORS_CONFIG["solar_panel"]["left"]
     SOLAR_PANEL_DETACH_DELAY = ACTUATORS_CONFIG["solar_panel"]["detach_delay"]
