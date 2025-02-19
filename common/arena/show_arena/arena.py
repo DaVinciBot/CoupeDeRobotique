@@ -74,39 +74,103 @@ class ShowArena(BaseArena):
             file_log_level=LogLevels.DEBUG,
         )
 
+        x = 2  # modifier car valuer non liée à la réalité (juste pour le test)
+
         stuff_zones_points = [
-            ((2.5, 20), (12.5, 60), [OrientedPoint(12.5 + x, 40, pi/2)]), #TODO: x = distance necessaire entre le robot et les conserves. Theta ??
-            ((2.5, 112.5), (12.5, 152.5), [OrientedPoint(12.5 + x, 132.5, pi/2)]),
+            (
+                (2.5, 20),
+                (12.5, 60),
+                [OrientedPoint(12.5 + x, 40, pi / 2)],
+            ),  # TODO: x = distance necessaire entre le robot et les conserves. Theta ??
+            ((2.5, 112.5), (12.5, 152.5), [OrientedPoint(12.5 + x, 132.5, pi / 2)]),
             ((57.5, 20), (97.5, 30), [OrientedPoint(77.5, 30 + x, 0)]),
             ((62.5, 167.5), (102.5, 177.5), [OrientedPoint(82.5, 167.5 - x, pi)]),
-            ((90, 90), (130, 100), [OrientedPoint(110, 90 - x, pi), OrientedPoint(110, 100 + x, 0)]),
-            ((300 - 12.5, 20), (300 - 2.5, 60), [OrientedPoint(300 - 12.5 - x, 40, -pi/2)]), #TODO: -pi/2 ou 3pi/2 ?? et je me suis pas trompé sur l'angle initial ?
-            ((300 - 12.5, 112.5), (300 - 2.5, 152.5), [OrientedPoint(300 - 12.5 - x, 132.5, -pi/2)]),
-            ((300 - 97.5, 20), (300 - 57.5, 30), [OrientedPoint(300 - 77.5, 30 + x, 0)]),
-            ((300 - 102.5, 167.5), (300 - 62.5, 177.5), [OrientedPoint(300 - 82.5, 167.5 - x, pi)]),
-            ((300 - 130, 90), (300 - 90, 100), [OrientedPoint(300 - 110, 90 - x, pi), OrientedPoint(300 - 110, 100 + x, 0)]),
+            (
+                (90, 90),
+                (130, 100),
+                [OrientedPoint(110, 90 - x, pi), OrientedPoint(110, 100 + x, 0)],
+            ),
+            (
+                (300 - 12.5, 20),
+                (300 - 2.5, 60),
+                [OrientedPoint(300 - 12.5 - x, 40, -pi / 2)],
+            ),  # TODO: -pi/2 ou 3pi/2 ?? et je me suis pas trompé sur l'angle initial ?
+            (
+                (300 - 12.5, 112.5),
+                (300 - 2.5, 152.5),
+                [OrientedPoint(300 - 12.5 - x, 132.5, -pi / 2)],
+            ),
+            (
+                (300 - 97.5, 20),
+                (300 - 57.5, 30),
+                [OrientedPoint(300 - 77.5, 30 + x, 0)],
+            ),
+            (
+                (300 - 102.5, 167.5),
+                (300 - 62.5, 177.5),
+                [OrientedPoint(300 - 82.5, 167.5 - x, pi)],
+            ),
+            (
+                (300 - 130, 90),
+                (300 - 90, 100),
+                [
+                    OrientedPoint(300 - 110, 90 - x, pi),
+                    OrientedPoint(300 - 110, 100 + x, 0),
+                ],
+            ),
         ]
 
         yellow_reserved_zones_points = [
-            ((0, 0), (45, 15), [OrientedPoint(22.5, 15 + x, 0)]), #TODO: x = distance necessaire entre le robot et les zones jaunes. Theta ??
-            ((0, 65), (45, 110), [OrientedPoint(22.5, 65 - x, pi), OrientedPoint(22.5, 110 + x, 0), OrientedPoint(45 + x, 87.5, pi/2)]),
-            ((155,0), (200, 45), [OrientedPoint(177.5, 45 + x, 0), OrientedPoint(200 + x, 22.5, pi/2)]),
+            (
+                (0, 0),
+                (45, 15),
+                [OrientedPoint(22.5, 15 + x, 0)],
+            ),  # TODO: x = distance necessaire entre le robot et les zones jaunes. Theta ??
+            (
+                (0, 65),
+                (45, 110),
+                [
+                    OrientedPoint(22.5, 65 - x, pi),
+                    OrientedPoint(22.5, 110 + x, 0),
+                    OrientedPoint(45 + x, 87.5, pi / 2),
+                ],
+            ),
+            (
+                (155, 0),
+                (200, 45),
+                [OrientedPoint(177.5, 45 + x, 0), OrientedPoint(200 + x, 22.5, pi / 2)],
+            ),
             ((200, 0), (245, 15), [OrientedPoint(222.5, 15 + x, 0)]),
         ]
 
         blue_reserved_zones_points = [
             ((255, 0), (300, 15), [OrientedPoint(277.5, 15 + x, 0)]),
-            ((255, 65), (300, 110), [OrientedPoint(277.5, 65 - x, pi), OrientedPoint(277.5, 110 + x, 0), OrientedPoint(255 - x, 87.5, -pi/2)]),
+            (
+                (255, 65),
+                (300, 110),
+                [
+                    OrientedPoint(277.5, 65 - x, pi),
+                    OrientedPoint(277.5, 110 + x, 0),
+                    OrientedPoint(255 - x, 87.5, -pi / 2),
+                ],
+            ),
             ((55, 0), (100, 15), [OrientedPoint(77.5, 15 + x, 0)]),
-            ((100, 0), (145, 45), [OrientedPoint(122.5, 45 + x, 0), OrientedPoint(100 - x, 22.5, -pi/2)]),
+            (
+                (100, 0),
+                (145, 45),
+                [
+                    OrientedPoint(122.5, 45 + x, 0),
+                    OrientedPoint(100 - x, 22.5, -pi / 2),
+                ],
+            ),
         ]
-        #TODO: backstage et pami sans zones ??
+        # TODO: backstage et pami sans zones ??
 
         forbidden_zones_points = []
 
         zones: list[BaseArenaZone] = []
 
-        for (corner_point1, corner_point2, goto_points) in stuff_zones_points:
+        for corner_point1, corner_point2, goto_points in stuff_zones_points:
             zones.append(
                 StuffZone(
                     logger=stuff_zone_logger,
@@ -118,7 +182,7 @@ class ShowArena(BaseArena):
                 )
             )
 
-        for (corner_point1, corner_point2, goto_points) in yellow_reserved_zones_points:
+        for corner_point1, corner_point2, goto_points in yellow_reserved_zones_points:
             zones.append(
                 YellowReservedZone(
                     logger=yellow_reserved_zone_logger,
@@ -130,7 +194,7 @@ class ShowArena(BaseArena):
                 )
             )
 
-        for (corner_point1, corner_point2, goto_points) in blue_reserved_zones_points:
+        for corner_point1, corner_point2, goto_points in blue_reserved_zones_points:
             zones.append(
                 BlueReservedZone(
                     logger=blue_reserved_zone_logger,
