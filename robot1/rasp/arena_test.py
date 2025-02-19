@@ -103,9 +103,9 @@ arena.set_team_color("yellow")
 async def run_arena_test():
     # arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
     arena.visualize(display_default_destination_zone=False)
-    scans: np.ndarray = lidar.scan_to_polars()
+    #scans: np.ndarray = lidar.scan_to_polars()
 
-    arena.update(start, scans)
+    arena.update(start, np.ndarray([]), enemy_start)
 
     arena.visualize(display_default_destination_zone=False)
 
