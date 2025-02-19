@@ -73,12 +73,13 @@ class ZoneAccessibility(Enum):
 @dataclass
 class Record:
     """
-   Represents a timestamped position record.
+    Represents a timestamped position record.
 
-   Attributes:
-       timestamp (float): Time of the record.
-       position (Point): The position recorded.
-   """
+    Attributes:
+        timestamp (float): Time of the record.
+        position (Point): The position recorded.
+    """
+
     timestamp: float
     position: Point
 
@@ -94,6 +95,7 @@ class SpeedVector:
         dy (float): Change in y-direction.
         factor (float): Scaling factor for direction components.
     """
+
     speed: float
     dx: float
     dy: float
@@ -125,15 +127,16 @@ class BaseArenaZone(ABC):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            zone_type: ZoneType,
-            accessibility: ZoneAccessibility,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
-            zone_color: str = "#f0aef2",
+        self,
+        logger: Logger,
+        zone_type: ZoneType,
+        accessibility: ZoneAccessibility,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: callable = None,
+        zone_color: str = "#f0aef2",
+        goto_positions: list[OrientedPoint] = None,
     ) -> None:
         """
         Initializes the BaseArenaZone with geometry, type, color, and accessibility.
@@ -167,6 +170,9 @@ class BaseArenaZone(ABC):
         self.update_callback = update_callback
 
         self.zone_color: str = zone_color
+
+        self.goto_positions: list[OrientedPoint] = goto_positions
+
         self.enemy_visits: int = 0
         self.ally_visits: int = 0
         self.last_update_time: float = 0.0
@@ -232,9 +238,9 @@ class BaseArenaZone(ABC):
     def is_instance(self, other) -> bool:
         """Checks if two objects are instances of the same class."""
         return (
-                isinstance(self, type(other))
-                or isinstance(other, type(self))
-                or isinstance(self, other)
+            isinstance(self, type(other))
+            or isinstance(other, type(self))
+            or isinstance(self, other)
         )
 
     def __str__(self) -> str:
@@ -250,7 +256,7 @@ class BaseArenaZone(ABC):
         return self.__str__()
 
     def update(
-            self, color_team: str, ally_positions: list[Point], enemy_positions: list[Point]
+        self, color_team: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
         """
         Update the zone based on the positions of allies and enemies.
@@ -290,13 +296,13 @@ class ForbiddenZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
+        self,
+        logger: Logger,
+        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: callable = None,
     ) -> None:
         """
         Initializes a ForbiddenZone with the specified parameters.
@@ -337,17 +343,17 @@ class EnemyZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            point: Point,
-            accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
-            robot_size: float = 10,
-            positions_record_size: int = 3,
-            no_detection_timeout: float = 4.0,
-            positions_recorded: deque = None,
-            speed_vector: SpeedVector = SpeedVector(0.0, 0.0, 0.0),
-            vector_factor: float = 25.0,
-            # taille du vecteur de déplacement, on peur choisir à quelle point on donne de l'importance à la direction
+        self,
+        logger: Logger,
+        point: Point,
+        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
+        robot_size: float = 10,
+        positions_record_size: int = 3,
+        no_detection_timeout: float = 4.0,
+        positions_recorded: deque = None,
+        speed_vector: SpeedVector = SpeedVector(0.0, 0.0, 0.0),
+        vector_factor: float = 25.0,
+        # taille du vecteur de déplacement, on peur choisir à quelle point on donne de l'importance à la direction
     ) -> None:
         """
         Initializes an EnemyZone with the specified parameters.
@@ -382,8 +388,8 @@ class EnemyZone(BaseArenaZone):
                 self.point,
                 Point(
                     self.point.x + self.speed_vector.factored_dx,
-                    self.point.y + self.speed_vector.factored_dy
-                )
+                    self.point.y + self.speed_vector.factored_dy,
+                ),
             ]
         )
         buffered_vector_line: Polygon = vector_line.buffer(self.robot_size)
@@ -408,7 +414,10 @@ class EnemyZone(BaseArenaZone):
         """
         # At least two positions are required to calculate speed
         if len(self.__positions_recorded) < 2:
-            self.logger.log("Not enough positions recorded to compute speed vector.", LogLevels.DEBUG)
+            self.logger.log(
+                "Not enough positions recorded to compute speed vector.",
+                LogLevels.DEBUG,
+            )
             return SpeedVector(0, 0, 0)
 
         # First and last recorded positions
@@ -416,7 +425,7 @@ class EnemyZone(BaseArenaZone):
         end_record = self.__positions_recorded[-1]
         self.logger.log(
             f"Start position: {start_record.position}, End position: {end_record.position}.",
-            LogLevels.DEBUG
+            LogLevels.DEBUG,
         )
 
         # Compute the time delta
@@ -424,14 +433,16 @@ class EnemyZone(BaseArenaZone):
         self.logger.log(f"Time delta: {timestamp_delta} seconds.", LogLevels.DEBUG)
 
         if timestamp_delta <= 0:
-            self.logger.log("Invalid or zero time delta. Aborting computation.", LogLevels.DEBUG)
+            self.logger.log(
+                "Invalid or zero time delta. Aborting computation.", LogLevels.DEBUG
+            )
             return SpeedVector(0, 0, 0)
 
         # Check for no_detection_timeout
         if timestamp_delta > self.no_detection_timeout:
             self.logger.log(
                 f"Time delta exceeds no_detection_timeout ({self.no_detection_timeout}s). Returning zero vector.",
-                LogLevels.DEBUG
+                LogLevels.DEBUG,
             )
             return SpeedVector(0, 0, 0)
 
@@ -449,18 +460,22 @@ class EnemyZone(BaseArenaZone):
         self.logger.log(f"Calculated speed: {speed}.", LogLevels.DEBUG)
 
         if distance == 0.0:
-            self.logger.log("No displacement detected. Returning zero vector.", LogLevels.DEBUG)
+            self.logger.log(
+                "No displacement detected. Returning zero vector.", LogLevels.DEBUG
+            )
             return SpeedVector(0, 0, 0)
 
         # Compute the direction (unit vector)
         dir_x = dx / distance
         dir_y = dy / distance
-        self.logger.log(f"Direction vector: dir_x={dir_x}, dir_y={dir_y}.", LogLevels.DEBUG)
+        self.logger.log(
+            f"Direction vector: dir_x={dir_x}, dir_y={dir_y}.", LogLevels.DEBUG
+        )
 
         return SpeedVector(speed, dir_x, dir_y)
 
     def update(
-            self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
+        self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
         """
         Updates the zone based on enemy positions and computes their speed vector.
@@ -489,9 +504,8 @@ class EnemyZone(BaseArenaZone):
     def __str__(self) -> str:
         """Provides a string representation of the zone and speed vector."""
         return (
-                super().__str__() +
-                f" Speed: {self.speed_vector.speed}, "
-                f"Direction: ({self.speed_vector.dx}, {self.speed_vector.dy})"
+            super().__str__() + f" Speed: {self.speed_vector.speed}, "
+            f"Direction: ({self.speed_vector.dx}, {self.speed_vector.dy})"
         )
 
     def __repr__(self) -> str:
@@ -511,11 +525,11 @@ class AllyZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            point: OrientedPoint,
-            accessibility: ZoneAccessibility = ZoneAccessibility.FREE,
-            robot_size: float = 2,  # Assume the robot is a square 2/2 = 1 side length
+        self,
+        logger: Logger,
+        point: OrientedPoint,
+        accessibility: ZoneAccessibility = ZoneAccessibility.FREE,
+        robot_size: float = 2,  # Assume the robot is a square 2/2 = 1 side length
     ) -> None:
         """
         Initializes the AllyZone with position, size, and accessibility.
@@ -545,7 +559,10 @@ class AllyZone(BaseArenaZone):
         )
 
     def update(
-            self, team_color: str, ally_positions: list[OrientedPoint | Point], enemy_positions: list[Point]
+        self,
+        team_color: str,
+        ally_positions: list[OrientedPoint | Point],
+        enemy_positions: list[Point],
     ) -> None:
         """
         Updates the AllyZone based on the positions of allies.
@@ -580,15 +597,15 @@ class StuffZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
-            index: int = 0,
-            goto_positions: list[OrientedPoint] = None
+        self,
+        logger: Logger,
+        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: callable = None,
+        index: int = 0,
+        goto_positions: list[OrientedPoint] = None,
     ) -> None:
         """
         Initializes the StuffZone with geometry, buffer, and accessibility.
@@ -617,7 +634,7 @@ class StuffZone(BaseArenaZone):
         )
 
     def update(
-            self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
+        self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
         """
         Updates the StuffZone based on the positions of allies and enemies.
@@ -645,14 +662,14 @@ class BlueReservedZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
-            goto_positions: list[OrientedPoint] = None
+        self,
+        logger: Logger,
+        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: callable = None,
+        goto_positions: list[OrientedPoint] = None,
     ) -> None:
         """
         Initializes the BlueReservedZone with geometry and accessibility.
@@ -689,11 +706,11 @@ class BlueReservedZone(BaseArenaZone):
             bool: True if accessible to the blue team, False otherwise.
         """
         return super().is_accessible(team_color) and (
-                team_color is None or team_color.lower() in ["blue", "b"]
+            team_color is None or team_color.lower() in ["blue", "b"]
         )
 
     def update(
-            self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
+        self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
         """
         Updates the BlueReservedZone based on the positions of allies and enemies.
@@ -707,7 +724,7 @@ class BlueReservedZone(BaseArenaZone):
 
         # Update accessibility based on team color
         if self.accessibility != ZoneAccessibility.FREE and (
-                team_color is None or team_color.lower() in ["blue", "b"]
+            team_color is None or team_color.lower() in ["blue", "b"]
         ):
             self.accessibility = ZoneAccessibility.FREE
 
@@ -733,14 +750,14 @@ class YellowReservedZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
-            goto_positions: list[OrientedPoint] = None
+        self,
+        logger: Logger,
+        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: callable = None,
+        goto_positions: list[OrientedPoint] = None,
     ) -> None:
         """
         Initializes the YellowReservedZone with geometry and accessibility.
@@ -782,7 +799,7 @@ class YellowReservedZone(BaseArenaZone):
         ]
 
     def update(
-            self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
+        self, team_color: str, ally_positions: list[Point], enemy_positions: list[Point]
     ) -> None:
         """
         Updates the YellowReservedZone based on the positions of allies and enemies.
@@ -796,7 +813,7 @@ class YellowReservedZone(BaseArenaZone):
 
         # Update accessibility based on team color
         if self.accessibility != ZoneAccessibility.FREE and (
-                team_color is None or team_color.lower() in ["yellow", "y"]
+            team_color is None or team_color.lower() in ["yellow", "y"]
         ):
             self.accessibility = ZoneAccessibility.FREE
             # Get grid manager from arena callback function
@@ -820,13 +837,13 @@ class BorderZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
+        self,
+        logger: Logger,
+        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: callable = None,
     ) -> None:
         """
         Initializes the BorderZone with geometry and accessibility.
