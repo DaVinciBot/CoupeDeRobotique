@@ -10,7 +10,7 @@
 from loggerplusplus import Logger
 
 # Internal project imports
-from geometry import Polygon
+from geometry import Polygon, Point, OrientedPoint
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
 from arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone import BaseColorReservedZone
 
@@ -29,6 +29,7 @@ class YellowReservedZone(BaseColorReservedZone):
             polygon: Polygon = None,
             buffered_polygon: Polygon = None,
             update_callback: callable = None,
+            go_to_positions: list[OrientedPoint | Point] = None
     ) -> None:
         """
         Initializes the YellowReservedZone with geometry and accessibility settings.
@@ -39,6 +40,7 @@ class YellowReservedZone(BaseColorReservedZone):
             polygon (Polygon, optional): Polygon representing the zone geometry.
             buffered_polygon (Polygon, optional): Buffered polygon geometry.
             update_callback (callable, optional): Function to be called on updates.
+            go_to_positions (list[OrientedPoint | Point], optional): List of go-to positions within
         """
 
         super().__init__(
@@ -51,4 +53,5 @@ class YellowReservedZone(BaseColorReservedZone):
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
             zone_color="#ECC92E",
+            go_to_positions=go_to_positions
         )

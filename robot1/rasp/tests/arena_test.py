@@ -85,12 +85,16 @@ arena = ShowArena(
     forbidden_cover_threshold=0.1,
 )
 
-start = OrientedPoint((10, 10))
-goal = OrientedPoint((280, 120))
+start = OrientedPoint((50, 50))
+goal = arena.zones[3].get_go_to_position(start, "yellow")
 
 enemy_start = OrientedPoint((230, 60))
 enemy_goal = OrientedPoint((70, 140))
 
+arena.update(
+    ally_position=start,
+    lidar_scan_polars=np.array([]),
+)
 arena.visualize()
 arena.grid_manager.visualize(only_static_grid=True)
 arena.set_team_color("yellow")

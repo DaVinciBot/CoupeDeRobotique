@@ -25,8 +25,6 @@ from geometry import (
 )
 
 # Import from common
-from WS_comms import WSclient, WSclientRouteManager, WSender, WSreceiver, WSmsg
-from old_logger import Logger, LogLevels
 from geometry import OrientedPoint
 
 from arena import (
@@ -40,57 +38,79 @@ from arena import (
     YellowReservedZone,
     BorderZone,
 )
-
+from movement_manager import MovementManager, GoToParams, MovementStatus
+from rolling_basis_handler import SpeedProfile
 from pathfinding.core.grid import Grid, GridNode
+from loggerplusplus import Logger
 
 from path_finding import PathFinder
 
+start = OrientedPoint(30, 30, 0.0)
+goal = OrientedPoint(250, 140, 0.0)
+
+ally_finder_logger = Logger(
+    identifier="AllyPathFinder",
+    follow_logger_manager_rules=True,
+)
+enemy_finder_logger = Logger(
+    identifier="EnemyPathFinder",
+    follow_logger_manager_rules=True,
+)
+
 arena_logger = Logger(
-    identifier="NewArena",
-    decorator_level=LogLevels.INFO,
-    print_log_level=LogLevels.DEBUG,
-    file_log_level=LogLevels.DEBUG,
+    identifier="ShowArena",
+    follow_logger_manager_rules=True,
 )
-finder_logger = Logger(
-    identifier="PathFinder",
-    decorator_level=LogLevels.INFO,
-    print_log_level=LogLevels.DEBUG,
-    file_log_level=LogLevels.DEBUG,
-)
-
-
-chunk_size = 10
 
 arena = ShowArena(
     logger=arena_logger,
-    width=300,
-    height=200,
     border_buffer=2,
-    obstacle_buffer=5,
-    zones=[
-        ForbiddenZone(create_straight_rectangle(Point(45, 0), Point(0, 45))),
-        ForbiddenZone(create_straight_rectangle(Point(77.5, 0), Point(122.5, 45))),
-        ForbiddenZone(create_straight_rectangle(Point(155, 0), Point(200, 45))),
-        ForbiddenZone(create_straight_rectangle(Point(45, 255), Point(0, 155))),
-        ForbiddenZone(create_straight_rectangle(Point(77.5, 255), Point(122.5, 155))),
-        ForbiddenZone(create_straight_rectangle(Point(155, 255), Point(200, 155))),
-    ],
-    chunk_size=chunk_size,
+    obstacle_buffer=1,
+    chunk_size=5,
+    forbidden_cover_threshold=0.1,
 )
 
 arena_grid = arena.grid_manager.static_grid
 
-
-finder = PathFinder(
-    logger=finder_logger,
-    start=OrientedPoint(0, 0, 0.0),
-    goal=OrientedPoint(50, 70, 0.0),
-    grid=arena_grid,
-    chunk_size=chunk_size,
+speed_profile: SpeedProfile = SpeedProfile(
+    max_linear_speed=5.0,  # cm/s
+    max_angular_speed=3.0,  # rad/s
+    max_linear_acceleration=5.0,  # cm/s^2
+    max_angular_acceleration=3.0,  # rad/s^2
+    max_linear_deceleration=10.0,  # cm/s^2
+    max_angular_deceleration=3.0,  # rad/s^2
+)
+go_to_params = GoToParams(
+    initial_linear_speed=0,
+    initial_angular_speed=0,
+    speed_profile=speed_profile,
+    goal=OrientedPoint(250, 140),
+    acs_distance=10,
+    path_finder_recompute_distance=80,
+    timeout=-1.0,
+    is_mandatory=False,
+    smooth_trajectory=False,
+    goal_tolerance=0.1,
 )
 
-path = finder.find_oriented_path()
-print(path)
+arena.set_team_color("yellow")
+arena.update(
+    ally_position=start,
+    lidar_scan_polars=np.array([]),
+)
 
-finder.visualize()
-finder.visualize_with_scores()
+for i in range(10):
+    path_finder = PathFinder(
+        logger=Logger(identifier="PathFinder"),
+        start=start,
+        goal=arena.zones[i].get_go_to_position(start, "yellow"),
+        grid_manager=arena.grid_manager,
+        path_resolution=1,
+    )
+
+    path_finder.find_oriented_path(
+        smooth_path=True,
+        use_static_and_dynamic_grid=True,
+    )
+
+    arena.visualize(trajectory=path_finder.oriented_path_found)

@@ -35,6 +35,7 @@ class BaseArenaZone(ABC):
         enemy_visits (int): Count of opponent visits.
         ally_visits (int): Count of self visits.
     """
+    zones_uid: list[int] = []
 
     def __init__(
             self,
@@ -46,6 +47,8 @@ class BaseArenaZone(ABC):
             buffered_polygon: Polygon = None,
             update_callback: callable = None,
             zone_color: str = "#9e9e9e",
+            go_to_positions: list[OrientedPoint | Point] = None,
+            uid: int = None,
     ) -> None:
         """
         Initializes the BaseArenaZone with geometry, type, color, and accessibility.
@@ -59,6 +62,7 @@ class BaseArenaZone(ABC):
             buffered_polygon (Polygon, optional): Buffered polygon geometry.
             update_callback (callable, optional): Function to be called on updates.
             zone_color (str): Color associated with the zone.
+            go_to_positions (list[OrientedPoint | Point], optional): List of go-to positions within the zone.
         """
         self.logger: Logger = logger
         self.zone_type: ZoneType = zone_type
@@ -76,11 +80,26 @@ class BaseArenaZone(ABC):
         self.buffered_polygon: Polygon = buffered_polygon
 
         self.update_callback = update_callback
+        self.go_to_positions = go_to_positions
 
         self.zone_color: str = zone_color
         self.enemy_visits: int = 0
         self.ally_visits: int = 0
         self.last_update_time: float = 0.0
+
+        self.uid = BaseArenaZone.get_new_uid(uid)
+
+    @classmethod
+    def get_new_uid(cls, input_uid: None | int) -> int:
+        if input_uid is not None:
+            cls.zones_uid.append(input_uid)
+            return input_uid
+
+        if cls.zones_uid:
+            cls.zones_uid.append(cls.zones_uid[-1] + 1)
+        else:
+            cls.zones_uid.append(0)
+        return cls.zones_uid[-1]
 
     @staticmethod
     def add_buffer_to_zone(polygon: Polygon, buffer: float) -> Polygon:
@@ -128,6 +147,35 @@ class BaseArenaZone(ABC):
         """
         return self.accessibility != ZoneAccessibility.FORBIDDEN
 
+    def get_go_to_position(self, ally_position: OrientedPoint, team_color: str | None) -> OrientedPoint | Point | None:
+        """
+        Determines the best go-to position for an ally in the given zone.
+
+        Args:
+            ally_position (OrientedPoint): The position of the ally.
+            team_color (str | None): The team color to check accessibility.
+
+        Returns:
+            OrientedPoint | Point | None: The best go-to position, or None if the zone is not accessible.
+        """
+        if not self.is_accessible(team_color):
+            self.logger.debug(f"GoTo position request: Zone {self.zone_type} is not accessible.")
+            return None
+
+        # If no specific go-to positions are defined, return the centroid of the zone
+        if not self.go_to_positions:
+            self.logger.debug(
+                f"GoTo position request: No defined go-to positions for zone {self.zone_type}, returning centroid [{self.polygon.centroid}]"
+            )
+            return self.polygon.centroid
+
+        # Find the nearest go-to position to the ally
+        nearest_position = min(self.go_to_positions, key=lambda p: ally_position.distance(p))
+        self.logger.debug(
+            f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]"
+        )
+        return nearest_position
+
     """ Update methods """
 
     def update(
@@ -154,6 +202,7 @@ class BaseArenaZone(ABC):
         self.last_update_time = Utils.get_ts()
 
     """ Built-in methods """
+
     def __instancecheck__(self, other) -> bool:
         """Checks if two objects are instances of the same class."""
         return (
@@ -181,7 +230,8 @@ class BaseArenaZone(ABC):
         return (
             f"{self.zone_type}: {self.buffered_polygon.centroid} -> {self.accessibility}, "
             f"ally visits: {self.ally_visits}, enemy visits: {self.enemy_visits}, "
-            f"last update: {self.last_update_time}"
+            f"last update: {self.last_update_time}, "
+            f"go-to positions: {self.go_to_positions}"
         )
 
     def __repr__(self) -> str:

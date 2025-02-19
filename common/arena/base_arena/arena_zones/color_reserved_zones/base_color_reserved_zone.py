@@ -36,6 +36,7 @@ class BaseColorReservedZone(BaseArenaZone):
             buffered_polygon: Polygon = None,
             update_callback: Callable[[], GridManager] = None,
             zone_color: str = "#9e9e9e",
+            go_to_positions: list[OrientedPoint | Point] = None
     ) -> None:
         """
         Initializes the ColorReservedZone.
@@ -50,6 +51,7 @@ class BaseColorReservedZone(BaseArenaZone):
             buffered_polygon (Polygon, optional): Buffered version of the polygon.
             update_callback (Callable, optional): Function to retrieve the GridManager instance.
             zone_color (str): Hex code representing the zone color.
+            go_to_positions (list[OrientedPoint | Point], optional): List of go-to positions within the zone.
         """
         self.color_values: list[str] = [color.lower(), color[0].lower()]
 
@@ -62,6 +64,7 @@ class BaseColorReservedZone(BaseArenaZone):
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
             zone_color=zone_color,
+            go_to_positions=go_to_positions
         )
 
     def _team_color_is_zone_color(self, team_color: str) -> bool:

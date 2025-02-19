@@ -42,7 +42,7 @@ class StuffZone(BaseArenaZone):
             polygon: Polygon = None,
             buffered_polygon: Polygon = None,
             update_callback: callable = None,
-            index: int = 0
+            go_to_positions: list[OrientedPoint | Point] = None,
     ) -> None:
         """
         Initializes the StuffZone with geometry, buffer, and accessibility.
@@ -53,9 +53,8 @@ class StuffZone(BaseArenaZone):
             polygon (Polygon, optional): Polygon representing the zone geometry.
             buffered_polygon (Polygon, optional): Buffered polygon geometry.
             update_callback (callable, optional): Function to be called on updates.
-            index (int, optional): Index identifier for the StuffZone (defaults to 0).
+            go_to_positions (list[OrientedPoint | Point], optional): List of go-to positions within the zone.
         """
-        self.index = index
         super().__init__(
             logger=logger,
             zone_type=ZoneType.STUFF_ZONE,
@@ -65,6 +64,7 @@ class StuffZone(BaseArenaZone):
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
             zone_color="#0FEE9C",
+            go_to_positions=go_to_positions,
         )
 
     def update(
@@ -87,3 +87,32 @@ class StuffZone(BaseArenaZone):
             grid_manager.remove_forbidden_static_zone(self.buffered_polygon)
 
             self.logger.debug(f"{self.zone_type} zone is now accessible")
+
+    def get_go_to_position(self, ally_position: OrientedPoint, team_color: str | None) -> OrientedPoint | Point | None:
+        """
+        Determines the best go-to position for an ally in the given zone.
+
+        Args:
+            ally_position (OrientedPoint): The position of the ally.
+            team_color (str | None): The team color to check accessibility.
+
+        Returns:
+            OrientedPoint | Point | None: The best go-to position, or None if the zone is not accessible.
+        """
+        # If no go-to positions are defined, return the centroid of the zone
+        if self.go_to_positions is None:
+            self.logger.debug(
+                f"GoTo position request: No go-to positions defined for zone {self.zone_type}, returning centroid [{self.polygon.centroid}]"
+            )
+            return self.polygon.centroid
+
+        # Find the nearest go-to position to the ally if positions are available
+        if self.go_to_positions:
+            nearest_position = min(self.go_to_positions, key=lambda p: ally_position.distance(p))
+            self.logger.debug(
+                f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]"
+            )
+            return nearest_position
+
+        self.logger.debug("GoTo position request: Unknown case encountered, returning None.")
+        return None

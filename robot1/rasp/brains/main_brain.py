@@ -18,7 +18,7 @@ import numpy as np
 import random
 
 # Import from local path
-from controllers import RollingBasis
+from controllers.rolling_basis import RollingBasisDummy, RollingBasis
 
 from path_finding import PathFinder
 from arena import ShowArena
@@ -103,15 +103,14 @@ class MainBrain(Brain):
             movement_resolution=1,
             arena=self.arena,
         )
-        rolling_basis = RollingBasis(
+        rolling_basis = RollingBasisDummy(
             logger=Logger(
                 identifier="RollingBasis",
                 follow_logger_manager_rules=True,
-            ),
-            dummy=True
+            )
         )
 
-        if rolling_basis.dummy:
+        if isinstance(rolling_basis, RollingBasisDummy):
             rolling_basis.logger.warning("RollingBasisDummy is used")
 
         # --- MetaProg is insane (loop) --- #
@@ -141,7 +140,7 @@ class MainBrain(Brain):
             )
 
             rolling_basis.set_speed_and_position(*cmd.get_command())
-
+            print("ROLLING BASIS Sub", self.rolling_basis_odometrie)
             self.rolling_basis_odometrie = rolling_basis.odometrie
             #self.add_attributes_to_synchronize("theorical_ally_position", "rolling_basis")
 
@@ -153,6 +152,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
     async def update_arena(self) -> None:
+        print("ROLLING BASIS", self.rolling_basis_odometrie)
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
             lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),

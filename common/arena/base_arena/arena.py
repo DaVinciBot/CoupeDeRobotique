@@ -632,6 +632,16 @@ class BaseArena(ABC):
                     "hatch_color": "black",
                 }  # Hatch with black lines for forbidden zones
 
+            # Plot zone uid
+            ax.text(
+                zone.polygon.centroid.x, zone.polygon.centroid.y,
+                zone.uid,
+                ha="center", va="center",
+                fontsize=12,
+                fontweight='bold',
+                color='purple'
+            )
+
             self.__plot_polygon(
                 ax,
                 zone.polygon,
@@ -680,6 +690,38 @@ class BaseArena(ABC):
         # All zones
         for zone in self.zones:
             self.__plot_zone(ax, zone, show_buffer, transparency_factor)
+
+            # Plot the go-to position
+            if zone.go_to_positions:
+                for go_to_position in zone.go_to_positions:
+                    ax.plot(go_to_position.x, go_to_position.y, "rx", markersize=5)
+
+                    # if isinstance(go_to_position, OrientedPoint):
+                    #     arrow_length = 5
+                    #     dx = arrow_length * np.cos(go_to_position.theta)
+                    #     dy = arrow_length * np.sin(go_to_position.theta)
+                    #     ax.arrow(
+                    #         go_to_position.x, go_to_position.y,
+                    #         dx, dy,
+                    #         head_width=4, head_length=3, fc='g', ec='g'
+                    #     )
+
+            # Plot the go-to position nearest point
+            nearest_point = zone.get_go_to_position(ally_position=self.ally_zone.point, team_color=self.team_color)
+            if nearest_point:
+                ax.plot(nearest_point.x, nearest_point.y, "go")
+                if isinstance(nearest_point, OrientedPoint):
+                    arrow_length = 5
+                    dx = arrow_length * np.cos(nearest_point.theta)
+                    dy = arrow_length * np.sin(nearest_point.theta)
+
+                    #
+                    ax.arrow(
+                        nearest_point.x, nearest_point.y,
+                        dx, dy,
+                        head_width=4, head_length=3, fc='g', ec='g'
+                    )
+
         # Enemy and Ally zones
         self.__plot_zone(ax, self.ally_zone, show_buffer, transparency_factor)
         self.__plot_zone(ax, self.enemy_zone, show_buffer, transparency_factor)
