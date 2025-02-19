@@ -129,7 +129,7 @@ async def run_arena_test():
     )
     enemy_path = enemy_path_finder.find_oriented_path(smooth_path=True)
 
-    arena.update(start, lidar.scan_to_polars(), enemy_start)
+    arena.update(start, lidar.scan_to_polars())
     arena.grid_manager.visualize(only_static_grid=True, path=[ally_path])
 
     # Visualize the path forwarding
