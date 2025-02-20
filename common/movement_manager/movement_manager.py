@@ -173,7 +173,7 @@ class MovementManager:
         self.path_finder = PathFinder(
             logger=self.path_finder_logger,
             start=self.arena.ally_zone.point,
-            goal=params.goal,
+            goal=goal,
             grid_manager=self.arena.grid_manager,
             path_resolution=self.movement_resolution,
         )
