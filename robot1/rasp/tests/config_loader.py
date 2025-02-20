@@ -21,7 +21,7 @@ class CONFIG:
     ARENA_CONFIG_KEY = "arena"
 
     # Directory path (dont't touch)
-    ROOT_DIR = pathlib.Path(__file__).resolve().parent.parent.parent
+    ROOT_DIR = pathlib.Path(__file__).resolve().parent.parent.parent.parent
 
     COMMON_DIR = os.path.join(ROOT_DIR, "common")
     sys.path.append(

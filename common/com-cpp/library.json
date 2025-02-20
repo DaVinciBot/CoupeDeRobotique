@@ -12,5 +12,11 @@
   ],
   "license": "MIT",
   "frameworks": "*",
-  "platforms": "*"
+  "platforms": "*",
+  "export": {
+    "include": [
+      "include/*.h",
+      "src/*.cpp"
+    ]
+  }
 }

@@ -55,6 +55,7 @@ class Teensy:
         self.end_bytes = b"\xBA\xDD\x1C\xC5"
         self.scl = 19
         self.sda = 18
+        self.dummy = dummy
 
         for port in serial.tools.list_ports.comports():
             if (

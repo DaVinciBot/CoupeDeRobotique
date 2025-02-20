@@ -1,6 +1,6 @@
 # ====== Imports ======
 # Internal project imports
-from arena import BaseArena
+from arena import BaseArena, BaseArenaZone
 from loggerplusplus import Logger
 from geometry import OrientedPoint
 
@@ -157,22 +157,23 @@ class MovementManager:
         self.params: GoToParams = params
         self.status: MovementStatus = MovementStatus.PENDING
 
-        # TODO: ça ne marche pas GoToParam goal ins't valid est tjrs appelé
-        # if not (
-        #     goal_point := self.arena.compute_go_to_destination(
-        #         start_point=self.arena.ally_zone.point, destination=params.goal
-        #     )
-        # ):
-        #     self.logger.log("GoToParam goal ins't valid", LogLevels.ERROR)
-        #     self.status = MovementStatus.INVALID_COMMAND
-        #     self.params = None
-        #     return self.status
+        goal = None
+        if isinstance(params.goal, OrientedPoint):
+            goal = params.goal
+        elif isinstance(params.goal, BaseArenaZone):
+            goal = params.goal.get_go_to_position(self.arena.ally_zone.point, self.arena.team_color)
+
+        if goal is None:
+            self.logger.error("Goal is None")
+            self.status = MovementStatus.NO_ACCESSIBLE
+            self.params = None
+            return self.status
 
         # 1. Run a path-finding algorithm to find the path to the destination
         self.path_finder = PathFinder(
             logger=self.path_finder_logger,
             start=self.arena.ally_zone.point,
-            goal=params.goal,
+            goal=goal,
             grid_manager=self.arena.grid_manager,
             path_resolution=self.movement_resolution,
         )
