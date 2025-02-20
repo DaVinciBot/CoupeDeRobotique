@@ -278,56 +278,46 @@ class PathFinder:
         """
         return [self.absolute_current_position, *path, self.absolute_goal]
 
-    def __add_path_extremities(self, path: list[OrientedPoint]) -> list[OrientedPoint]:
+    def __add_path_extremities_point(self, path: list[Point]) -> list[Point | OrientedPoint]:
         """
-        Add the real robot position as start point and goal as end point (not approximated chunk points).
+        Adjusts the path by keeping only significant extremity and intermediate points.
 
         Args:
-            path (list[OrientedPoint]): Path to modify.
+            path (list[Point]): A list of points representing the path.
+
         Returns:
-            list[OrientedPoint]: Path with start and goal points added.
+            list[Point | OrientedPoint]: A reduced list containing key waypoints.
         """
-        # Convert path to MultiPoint to use Shapely functions
-        multi_point_path = MultiPoint(path)
+        # If only 2 points in the path, conserve only the start and goal points
+        if len(path) <= 2:
+            return [self.absolute_current_position, self.absolute_goal]
 
-        # 1. Add start point to the path
-        # Get nearest path point of the start point
-        nearest_point = nearest_points(self.absolute_current_position, multi_point_path)[1]
+        # If 3 points, conserve only the start, goal, and the middle point
+        if len(path) == 3:
+            return [self.absolute_current_position, path[1], self.absolute_goal]
 
-        # Get index of the nearest point in the path (list of oriented points)
-        nearest_point_index = 0
-        for i, point in enumerate(path):
-            if point.x == nearest_point.x and point.y == nearest_point.y:
-                nearest_point_index = i
-                break
+        # If 4 points, conserve only the start, goal, and the 2 middle points
+        if len(path) == 4:
+            return [self.absolute_current_position, path[1], path[2], self.absolute_goal]
 
-        # 2 cases: the nearest point is the first point of the point or not
-        if nearest_point_index == 0:  # Insert the start point at the beginning of the path
-            path = [self.absolute_current_position] + path
-        else:  # Insert the start point at the nearest point index
-            path = [self.absolute_current_position] + path[nearest_point_index:]
+        # If more than 4 points, conserve start, goal, and remove the first and last two intermediate points
+        return [self.absolute_current_position, *path[2:-2], self.absolute_goal]
 
-        # 2. Add end point to the path
-        # Get nearest path point of the start point
-        nearest_point = nearest_points(self.absolute_goal, multi_point_path)[1]
+    def __set_path_extremities_correct_theta(self, path: list[OrientedPoint]) -> list[OrientedPoint]:
+        """
+        Ensures that the first and last points of the path match the absolute start and goal positions.
 
-        # Get index of the nearest point in the path (list of oriented points)
-        nearest_point_index = 1
-        for i, point in enumerate(path[::-1]):
-            if point.x == nearest_point.x and point.y == nearest_point.y:
-                nearest_point_index += i
-                break
+        Args:
+            path (list[OrientedPoint]): A list of oriented points representing the path.
 
-        # 2 cases: the nearest point is the last point of the point or not
-        if nearest_point_index == -1:  # Insert the goal point at the end of the path
-            path = path + [self.absolute_goal]
-        else:  # Insert the goal point at the nearest point index
-            path = path[:-nearest_point_index] + [self.absolute_goal]
+        Returns:
+            list[OrientedPoint]: The modified path with updated start and goal points.
+        """
+        if not path:
+            return []  # Return an empty list if the path is empty to prevent indexing errors.
 
-        # 3. Improve path smoothness by removing point just after extremities
-        if len(path) > 5:
-            path.pop(-2)
-            path.pop(1)
+        path[0] = self.absolute_current_position
+        path[-1] = self.absolute_goal
 
         return path
 
@@ -375,18 +365,37 @@ class PathFinder:
 
         # Add real robot position as start point and goal as end point (not approximated chunk points)
         if not smooth_path:
-            self.oriented_path_found = self.__path_to_absolute_oriented_path(
-                self.path_found, is_grid_path=True
+            self.oriented_path_found = (
+                # Add start and goal points to the path + remove some points to improve trajectory
+                self.__add_path_extremities_point(
+                    # grid node path to absolute oriented path (X, Y, THETA)
+                    self.__path_to_absolute_oriented_path(
+                        self.path_found, is_grid_path=True
+                    )
+                )
             )
-            # self.oriented_path_found = self.__add_path_extremities(
-            #     self.oriented_path_found
-            # )
+            # We don't need to call __set_path_extremities_correct_theta
+            # because we already have the start and goal points with correct theta
             return self.oriented_path_found
 
-        self.oriented_path_found = self.__path_to_absolute_oriented_path(
-            self.__smooth_path(self.__grid_path_to_absolute_path(self.path_found)),
-            is_grid_path=False,
+        self.oriented_path_found = (
+            # Set orientation of the first and last points to ensure correct angles of the robot at the end
+            self.__set_path_extremities_correct_theta(
+                # Convert point to oriented point (X, Y, THETA)
+                self.__path_to_absolute_oriented_path(
+                    # Smooth the path to ensure consistent spacing and reduce sharp turns
+                    self.__smooth_path(
+                        # Add start and goal points to the path + remove some points to improve trajectory
+                        self.__add_path_extremities_point(
+                            # grid node path to absolute path (X, Y)
+                            self.__grid_path_to_absolute_path(self.path_found)
+                        )
+                    ),
+                    is_grid_path=False,
+                )
+            )
         )
-        # TODO: a corriger
-        #self.oriented_path_found = self.__add_path_extremities(self.oriented_path_found)
+        # We need to call __set_path_extremities_correct_theta because
+        # the __smooth_path path function ignore the THETA value of path's points
+        # => we need to restore them at the end
         return self.oriented_path_found
