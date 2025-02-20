@@ -1,7 +1,7 @@
 #include <SPI.h>
 #include <RadioLib.h>
 
-
+// Updated GPIOs for Xiao ESP32-S3
 #define LORA_NSS    7  // Chip Select (CS)
 #define LORA_RST    8  // Reset
 #define LORA_BUSY   2  // Busy
@@ -10,7 +10,7 @@
 #define LORA_MISO   5  // MISO
 #define LORA_SCK    4  // SCK
 
-
+// Define the LoRa module
 SX1262 lora = new Module(LORA_NSS, LORA_DIO1, LORA_RST, LORA_BUSY);
 
 void setup() {
