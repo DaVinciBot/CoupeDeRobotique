@@ -18,6 +18,6 @@ PyYAML==6.0.1
 rpi-ws281x==5.0.0
 RPi.GPIO==0.7.1
 shapely==2.0.7
-taskbrain==0.1.2
+taskbrain==0.1.7
 wscomms==0.1.0
 yarl==1.18.3
