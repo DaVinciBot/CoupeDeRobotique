@@ -36,14 +36,10 @@ class MainBrain(Brain):
     def __init__(
         self,
         logger: Logger,
-        # Controllers
-        rolling_basis: RollingBasis | RollingBasisDummy,
         # Sensors
         lidar: Lidar | LidarDummy,
         # Environment
         arena: ShowArena,
-        # Movement
-        movement_manager: MovementManager,
         # WS routes
         ws_cmd: WServerRouteManager,
         game_duration_sec: int = 90,
