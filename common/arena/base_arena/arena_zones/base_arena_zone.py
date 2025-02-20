@@ -165,7 +165,8 @@ class BaseArenaZone(ABC):
         # If no specific go-to positions are defined, return the centroid of the zone
         if not self.go_to_positions:
             self.logger.debug(
-                f"GoTo position request: No defined go-to positions for zone {self.zone_type}, returning centroid [{self.polygon.centroid}]"
+                f"GoTo position request: No defined go-to positions for zone {self.zone_type}, "
+                f"returning centroid [{self.polygon.centroid}]"
             )
             return self.polygon.centroid
 
