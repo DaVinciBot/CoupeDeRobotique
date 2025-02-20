@@ -6,7 +6,7 @@ import time
 
 # Import from common
 from taskbrain import Brain
-from ws_comms import WSmsg, WSclientRouteManager, WServerRouteManager
+from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
 from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
 
 from loggerplusplus import Logger
@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import time
 import numpy as np
 import random
+import gc
 
 # Import from local path
 from controllers.rolling_basis import RollingBasisDummy, RollingBasis
@@ -27,6 +28,8 @@ from movement_manager import MovementManager, GoToParams, MovementStatus
 from rolling_basis_handler import SpeedProfile
 from sensors import Lidar, LidarDummy
 from arena import AllyZone
+from tasks import Task, TaskPlanner
+import json
 
 
 class MainBrain(Brain):
@@ -39,6 +42,9 @@ class MainBrain(Brain):
         arena: ShowArena,
         # WS routes
         ws_cmd: WServerRouteManager,
+        game_duration_sec: int = 90,
+        solve_planner_limit_sec: int = 1,
+        tasks: list[Task] = [],
     ) -> None:
         if isinstance(lidar, LidarDummy):
             logger.warning("LidarDummy is used")
@@ -49,6 +55,16 @@ class MainBrain(Brain):
         self.arena: ShowArena = arena
         # WS routes
         self.ws_cmd: WServerRouteManager = ws_cmd
+
+        self.game_duration_sec = game_duration_sec
+        self.solve_planner_limit_sec = solve_planner_limit_sec
+        self.game_tasks = tasks
+        self.game_tasks_planification = None
+
+        self.game_duration_sec = game_duration_sec
+        self.solve_planner_limit_sec = solve_planner_limit_sec
+        self.game_tasks = tasks
+        self.game_tasks_planification = None
 
         # Shared processes attributes
         self.rolling_basis_odometrie = OrientedPoint(0, 0, 0)
@@ -245,6 +261,154 @@ class MainBrain(Brain):
 
         self.go_to_params = go_to_params
         self.logger.info(f"Init done {self.rolling_basis_odometrie}")
+
+    def get_game_tasks_planification(
+        self, solve_planner_limit_sec: int = -1, save_planification: bool = False
+    ):
+        scores = [task.score for task in self.game_tasks]
+        tasks_duration_sec = [task.execution_time for task in self.game_tasks]
+        # TODO: get the travel time matrix with time computed according to arena and robot speed (avg speed or profile)
+        travels_duration_matrix_sec = [
+            [0 if i == j else random.randint(1, 10) for j in range(len(scores) + 2)]
+            for i in range(len(scores) + 2)
+        ]
+        self.task_planner = TaskPlanner(
+            tasks_scores=scores,
+            tasks_duration_sec=tasks_duration_sec,
+            travels_duration_matrix_sec=travels_duration_matrix_sec,
+            max_time_sec=self.game_duration_sec,
+            solve_limit_sec=(
+                self.solve_planner_limit_sec
+                if solve_planner_limit_sec < 0
+                else solve_planner_limit_sec
+            ),
+        )
+        self.game_tasks_planification = self.task_planner.solve(
+            save_mode=save_planification
+        )
+
+    def load_preplanned_tasks(self, file_path: str = "solution.json"):
+        with open(file_path, "r") as f:
+            solution = json.load(f)
+        self.game_tasks_planification = solution
+
+    @staticmethod
+    def get_dummy_brain(
+        game_duration_sec: int = 90,
+        solve_planner_limit_sec: int = 1,
+        tasks: list[Task] = [],
+    ) -> "MainBrain":
+
+        arena = ShowArena(
+            logger=Logger(identifier="Dummy Arena"),
+            border_buffer=2,
+            obstacle_buffer=1,
+            chunk_size=5,
+            forbidden_cover_threshold=0.1,
+            grid_manager_logger=Logger(identifier="Dummy Grid Manager"),
+        )
+        return MainBrain(
+            logger=Logger(identifier="Dummy Brain"),
+            rolling_basis=RollingBasisDummy(Logger(identifier="Dummy Rolling Basis")),
+            lidar=LidarDummy(
+                logger=Logger(identifier="Dummy Lidar"),
+                min_angle=CONFIG.LIDAR_MIN_ANGLE,
+                max_angle=CONFIG.LIDAR_MAX_ANGLE,
+                unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
+                unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
+                min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+            ),
+            arena=arena,
+            movement_manager=MovementManager(
+                logger=Logger(identifier="Dummy Movement Manager"),
+                rolling_basis_handler_logger=Logger(
+                    identifier="Dummy Rolling Basis Handler"
+                ),
+                path_finder_logger=Logger(identifier="Dummy Path Finder"),
+                movement_resolution=1,
+                arena=arena,
+            ),
+            ws_cmd=WServerRouteManager(
+                WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+            ),
+            game_duration_sec=game_duration_sec,
+            solve_planner_limit_sec=solve_planner_limit_sec,
+            tasks=tasks,
+        )
+
+    def get_game_tasks_planification(
+        self, solve_planner_limit_sec: int = -1, save_planification: bool = False
+    ):
+        scores = [task.score for task in self.game_tasks]
+        tasks_duration_sec = [task.execution_time for task in self.game_tasks]
+        # TODO: get the travel time matrix with time computed according to arena and robot speed (avg speed or profile)
+        travels_duration_matrix_sec = [
+            [0 if i == j else random.randint(1, 10) for j in range(len(scores) + 2)]
+            for i in range(len(scores) + 2)
+        ]
+        self.task_planner = TaskPlanner(
+            tasks_scores=scores,
+            tasks_duration_sec=tasks_duration_sec,
+            travels_duration_matrix_sec=travels_duration_matrix_sec,
+            max_time_sec=self.game_duration_sec,
+            solve_limit_sec=(
+                self.solve_planner_limit_sec
+                if solve_planner_limit_sec < 0
+                else solve_planner_limit_sec
+            ),
+        )
+        self.game_tasks_planification = self.task_planner.solve(
+            save_mode=save_planification
+        )
+
+    def load_preplanned_tasks(self, file_path: str = "solution.json"):
+        with open(file_path, "r") as f:
+            solution = json.load(f)
+        self.game_tasks_planification = solution
+
+    @staticmethod
+    def get_dummy_brain(
+        game_duration_sec: int = 90,
+        solve_planner_limit_sec: int = 1,
+        tasks: list[Task] = [],
+    ) -> "MainBrain":
+
+        arena = ShowArena(
+            logger=Logger(identifier="Dummy Arena"),
+            border_buffer=2,
+            obstacle_buffer=1,
+            chunk_size=5,
+            forbidden_cover_threshold=0.1,
+            grid_manager_logger=Logger(identifier="Dummy Grid Manager"),
+        )
+        return MainBrain(
+            logger=Logger(identifier="Dummy Brain"),
+            rolling_basis=RollingBasisDummy(Logger(identifier="Dummy Rolling Basis")),
+            lidar=LidarDummy(
+                logger=Logger(identifier="Dummy Lidar"),
+                min_angle=CONFIG.LIDAR_MIN_ANGLE,
+                max_angle=CONFIG.LIDAR_MAX_ANGLE,
+                unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
+                unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
+                min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+            ),
+            arena=arena,
+            movement_manager=MovementManager(
+                logger=Logger(identifier="Dummy Movement Manager"),
+                rolling_basis_handler_logger=Logger(
+                    identifier="Dummy Rolling Basis Handler"
+                ),
+                path_finder_logger=Logger(identifier="Dummy Path Finder"),
+                movement_resolution=1,
+                arena=arena,
+            ),
+            ws_cmd=WServerRouteManager(
+                WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+            ),
+            game_duration_sec=game_duration_sec,
+            solve_planner_limit_sec=solve_planner_limit_sec,
+            tasks=tasks,
+        )
 
 
 # Only for testing
