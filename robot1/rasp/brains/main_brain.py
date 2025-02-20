@@ -188,7 +188,7 @@ class MainBrain(Brain):
             goal_tolerance=0.1,
         )
 
-        self.movement_manager.go_to(params=go_to_params)
+        #self.movement_manager.go_to(params=go_to_params)
 
 
 # Only for testing

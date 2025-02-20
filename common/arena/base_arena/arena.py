@@ -255,19 +255,9 @@ class BaseArena:
             optimized_update (bool, optional): If True, only updates intersecting zones.
         """
         if not enemy_position:
-            inside_arena_scanned_point: MultiPoint = self.remove_outside(
-                self._pol_to_abs_cart(lidar_scan_polars)
-            )
-
-            if inside_arena_scanned_point.is_empty:
-                enemy_position = self.enemy_zone.point
-            else:
-                # Compute enemy position based on lidar scans (polars points)
-                enemy_position = nearest_points(
-                    ally_position,
-                    inside_arena_scanned_point
-                )[1]
-
+            enemy_position = self.compute_enemy_position(lidar_scan_polars,
+                                                         ally_position,
+                                                         numb_enemy=lidar_scan_polars.size > 0)
         # Update ally and enemy zones
         self.ally_zone.update(self.team_color, [ally_position], [enemy_position])
         self.enemy_zone.update(self.team_color, [ally_position], [enemy_position])
@@ -379,7 +369,13 @@ class BaseArena:
                     - self.rolling_basis.odometrie.theta
             ) % math.tau
 
-    def compute_enemy_position(self, start_time: int = -1) -> Point | MultiPoint | None:
+    def compute_enemy_position(
+            self,
+            lidar_scan_polars: np.ndarray,
+            ally_position: OrientedPoint,
+            start_time: int = -1,
+            numb_enemy: bool = False
+            ) -> Point | MultiPoint | None:
         """
         Computes the position of the enemy based on lidar scans and updates the arena.
 
@@ -390,6 +386,9 @@ class BaseArena:
 
         Args:
             self: The instance of the class.
+            lidar_scan_polars (np.ndarray): A array representing the detection of the lidar scans.
+            ally_position (OrientedPoint): The Oriented Point of the ally
+            numb_enemy (bool): flag to know if we are working in a match situation or not, as if the enemy is numb or not.
             start_time: An integer representing the time (in milliseconds or seconds) when the computation starts.
                     It is used to determine the timing of the enemy's movement. A value of -1 indicates no specific
                     start time.
@@ -400,20 +399,17 @@ class BaseArena:
 
         # TODO temp code because I can't test with lidar, but it should work perfectly :
 
-        if any([self.lidar, self.rolling_basis, self.anti_collision_mode]):
-            polars: np.ndarray = self.lidar.scan_to_polars()
-            obstacles: MultiPoint | Point | None = None
+        if not numb_enemy:
+            obstacles: MultiPoint  = self.remove_outside(
+                self._pol_to_abs_cart(lidar_scan_polars)
+            )
 
-            for zone in self.zones:
-                if zone.zone_type == ZoneType.BORDER_ZONE:
-                    obstacles = zone.buffered_polygon.intersection(
-                        self.pol_to_abs_cart(polars)
-                    )
+            self.logger.logger.info(f"L'obstacle est {obstacles}")
 
             self.enemy_position = (
-                None
+                self.enemy_zone.point
                 if is_empty(obstacles)
-                else nearest_points(self.rolling_basis.odometrie, obstacles)[1]
+                else nearest_points(ally_position, obstacles)[1]
             )
 
             if self.enemy_position:
@@ -426,7 +422,6 @@ class BaseArena:
                     for zone in self.zones:
                         if zone.zone_type == ZoneType.STUFF_ZONE:
                             zone.accessibility = ZoneAccessibility.FORBIDDEN
-                            self.update([], self.enemy_position)
                             break
 
         # TODO : Transformer avec un flag on off code temporaire juste pour voir l'ennemi sur la visualisation
@@ -439,22 +434,6 @@ class BaseArena:
 
         return self.enemy_position
 
-    @staticmethod
-    def nearest_points_between_geoms(g1, g2):
-        """Returns the calculated nearest points in the input geometries
-
-        The points are returned in the same order as the input geometries.
-        """
-        seq = shapely.shortest_line(g1, g2)
-        if seq is None:
-            if g1.is_empty:
-                raise ValueError("The first input geometry is empty")
-            else:
-                raise ValueError("The second input geometry is empty")
-
-        p1 = shapely.get_point(seq, 0)
-        p2 = shapely.get_point(seq, 1)
-        return (p1, p2)
 
     def compute_go_to_destination(
             self,
