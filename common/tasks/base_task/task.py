@@ -1,3 +1,8 @@
+from arena import BaseArena, BaseArenaZone
+from geometry import Point, OrientedPoint, Polygon
+from movement_manager import GoToParams
+
+
 class Task:
     _id_counter = 1
 
@@ -6,6 +11,8 @@ class Task:
     def __init__(
         self,
         action_func: Callable,
+        destination: Point | OrientedPoint | BaseArenaZone | Polygon,
+        go_to_params: GoToParams,  # TODO: transform to trajectory_params that don't include destination wich is computed dynamicaly
         start_func: Optional[Callable] = None,
         execution_time: Optional[float] = 0,
         name: Optional[str] = None,

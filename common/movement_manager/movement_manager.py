@@ -241,13 +241,16 @@ class MovementManager:
             destination = compute_go_to_destination_from_polygon(goal)
         return destination
 
-    def go_to(self, params: GoToParams) -> MovementStatus:
+    def go_to(
+        self, params: GoToParams, start: OrientedPoint | None = None
+    ) -> MovementStatus | None:
         # Warn if a movement is already in progress
         if not self.status.is_finished():
             self.logger.warning(
                 "A movement is already in progress and a new one is requested.",
             )
-
+        if start is None:
+            start = self.arena.ally_zone.point
         self.params: GoToParams = params
         self.status: MovementStatus = MovementStatus.PENDING
 
@@ -264,7 +267,7 @@ class MovementManager:
             movement_manager=self,
             arena=self.arena,
             path_finder_logger=self.path_finder_logger,
-            start=self.arena.ally_zone.point,
+            start=start,
             goal=goal,
             path_resolution=self.movement_resolution,
             smooth_trajectory=params.smooth_trajectory,
@@ -286,8 +289,6 @@ class MovementManager:
             profile=params.speed_profile,
             trajectory=self.path_finder.oriented_path_found,
         )
-        self.status = MovementStatus.RUNNING
-        return self.status
 
     @staticmethod
     def find_path_static(

@@ -91,6 +91,15 @@ class MainBrain(Brain):
             step_size=2.0,
         )
 
+        # Simulation loggers for task planning
+        self.movemement_manager_logger_simulation = Logger(
+            identifier="Simulation Movement Manager"
+        )
+        self.rolling_basis_handler_logger_simulation = Logger(
+            identifier="Simulation Rolling Basis Handler"
+        )
+        self.path_finder_logger_simulation = Logger(identifier="Simulation Path Finder")
+
     """
     ### Secondary Processes ###
     """
@@ -267,6 +276,22 @@ class MainBrain(Brain):
     ):
         scores = [task.score for task in self.game_tasks]
         tasks_duration_sec = [task.execution_time for task in self.game_tasks]
+
+        travels_duration_matrix_sec = [
+            [0 for _ in range(len(scores) + 2)] for _ in range(len(scores) + 2)
+        ]
+
+        for i in range(len(scores) + 2):
+            for j in range(i, len(scores) + 2):
+                travels_duration_matrix_sec[i][j] = MovementManager(
+                    movement_manager_logger_simulation=self.movemement_manager_logger_simulation,
+                    rolling_basis_handler_logger_simulation=self.rolling_basis_handler_logger_simulation,
+                    path_finder_logger_simulation=self.path_finder_logger_simulation,
+                    movement_resolution=1,
+                    arena=self.arena,
+                ).go_to()  # TODO: use Trajectory params to get the duration
+                travels_duration_matrix_sec[j][i] = travels_duration_matrix_sec[i][j]
+
         # TODO: get the travel time matrix with time computed according to arena and robot speed (avg speed or profile)
         travels_duration_matrix_sec = [
             [0 if i == j else random.randint(1, 10) for j in range(len(scores) + 2)]
