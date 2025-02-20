@@ -31,14 +31,14 @@ from arena import AllyZone
 
 class MainBrain(Brain):
     def __init__(
-            self,
-            logger: Logger,
-            # Sensors
-            lidar: Lidar | LidarDummy,
-            # Environment
-            arena: ShowArena,
-            # WS routes
-            ws_cmd: WServerRouteManager,
+        self,
+        logger: Logger,
+        # Sensors
+        lidar: Lidar | LidarDummy,
+        # Environment
+        arena: ShowArena,
+        # WS routes
+        ws_cmd: WServerRouteManager,
     ) -> None:
         if isinstance(lidar, LidarDummy):
             logger.warning("LidarDummy is used")
@@ -57,7 +57,7 @@ class MainBrain(Brain):
         self.theorical_ally_position: AllyZone = AllyZone(
             logger=Logger(identifier="th_ally"),
             point=self.rolling_basis_odometrie,
-            robot_size=5
+            robot_size=5,
         )
         super().__init__(logger, self)
 
@@ -82,8 +82,11 @@ class MainBrain(Brain):
     """ ### Routines ### """
 
     @Brain.task(
-        process=True, run_on_start=True, refresh_rate=0.1, define_loop_later=True,
-        start_loop_marker="# --- MetaProg is insane (loop) --- #"
+        process=True,
+        run_on_start=True,
+        refresh_rate=0.1,
+        define_loop_later=True,
+        start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def handle_movement_manager(self) -> None:
         # --- Initialization --- #
@@ -120,7 +123,9 @@ class MainBrain(Brain):
             rolling_basis.logger.info(f"New odo: {self.rolling_basis_odometrie}")
 
             rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-            rolling_basis.logger.info(f"RollingBasis odometrie updated: {self.rolling_basis_odometrie}")
+            rolling_basis.logger.info(
+                f"RollingBasis odometrie updated: {self.rolling_basis_odometrie}"
+            )
 
         # Force the sync of arena inside the movement_manager
         movement_manager.arena = self.arena
@@ -134,15 +139,13 @@ class MainBrain(Brain):
         cmd: RollingBasisCommand = movement_manager.handle_go_to()
         if cmd is not None:
             self.theorical_ally_position = AllyZone(
-                logger=Logger(identifier="th_ally"),
-                point=cmd.position,
-                robot_size=5
+                logger=Logger(identifier="th_ally"), point=cmd.position, robot_size=5
             )
 
             rolling_basis.set_speed_and_position(*cmd.get_command())
             print("ROLLING BASIS Sub", self.rolling_basis_odometrie)
             self.rolling_basis_odometrie = rolling_basis.odometrie
-            #self.add_attributes_to_synchronize("theorical_ally_position", "rolling_basis")
+            # self.add_attributes_to_synchronize("theorical_ally_position", "rolling_basis")
 
     """
     ### Main Process ###
@@ -188,9 +191,7 @@ class MainBrain(Brain):
         cmd = await self.ws_cmd.receiver.get(wait_msg=True)
 
         if cmd != WSmsg():
-            self.logger.info(
-                f"Zombie instruction {cmd.msg} received: {cmd.data}"
-            )
+            self.logger.info(f"Zombie instruction {cmd.msg} received: {cmd.data}")
 
             if cmd.msg == "eval":
                 instructions = []
@@ -248,10 +249,10 @@ class MainBrain(Brain):
 
 # Only for testing
 def random_point_generator(
-        start_point: OrientedPoint,
-        step_size: float = 10.0,
-        x_limits=(0, 300),
-        y_limits=(0, 200),
+    start_point: OrientedPoint,
+    step_size: float = 10.0,
+    x_limits=(0, 300),
+    y_limits=(0, 200),
 ):
     current_point = start_point
 
@@ -268,12 +269,12 @@ def random_point_generator(
 
 
 def straight_line_generator(
-        start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
+    start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
 ):
     # Calculer la direction du mouvement
     dx = end_point.x - start_point.x
     dy = end_point.y - start_point.y
-    d = math.sqrt(dx ** 2 + dy ** 2)
+    d = math.sqrt(dx**2 + dy**2)
 
     # Si la distance est nulle, retourner directement le point d'arrivée
     if d == 0:
