@@ -205,11 +205,13 @@ class MainBrain(Brain):
                     else:
                         if ".logger" in instruction:
                             execution = eval(instruction)
-                            await self.ws_cmd.sender.send(
-                                WSmsg(sender = "rasp",
-                                      msg = "Result of execution of instruction sent by sender",
-                                      data = execution)
-                            )
+                            message = WSmsg.from_json({
+                                "sender": CONFIG.WS_SENDER_NAME,
+                                "msg": "Execution of sender instruction",
+                                "data": execution
+                            }).prepare(False)
+                            await self.ws_cmd.sender.send(message)
+
                         else:
                             eval(instruction)
 
