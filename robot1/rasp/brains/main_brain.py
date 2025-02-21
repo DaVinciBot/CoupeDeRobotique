@@ -203,7 +203,16 @@ class MainBrain(Brain):
                     if instruction.startswith("await "):
                         await eval(instruction.removeprefix("await "))
                     else:
-                        eval(instruction)
+                        if ".logger" in instruction:
+                            execution = eval(instruction)
+                            await self.ws_cmd.sender.send(
+                                WSmsg(sender = "rasp",
+                                      msg = "Result of execution of instruction sent by sender",
+                                      data = execution)
+                            )
+                        else:
+                            eval(instruction)
+
 
             else:
                 self.logger.warning(
