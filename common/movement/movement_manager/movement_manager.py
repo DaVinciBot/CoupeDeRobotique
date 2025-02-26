@@ -79,11 +79,6 @@ class MovementManager:
         return
 
     def _go_to_is_arrived(self) -> bool:
-        self.logger.critical(
-            f"ally: {self.arena_ptr.ally_zone.point}, goal: {self.trajectory_computer.computed_goal}, "
-            f"distance: {self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.computed_goal)}, "
-            f"gt: {self.params.goal_tolerance}"
-        )
         if (
                 self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.computed_goal)
                 < self.params.goal_tolerance

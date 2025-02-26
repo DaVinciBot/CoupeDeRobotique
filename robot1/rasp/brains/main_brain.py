@@ -67,11 +67,6 @@ class MainBrain(Brain):
         self.game_tasks = tasks
         self.game_tasks_planification = None
 
-        self.game_duration_sec = game_duration_sec
-        self.solve_planner_limit_sec = solve_planner_limit_sec
-        self.game_tasks = tasks
-        self.game_tasks_planification = None
-
         # Shared processes attributes
         self.rolling_basis_odometrie = OrientedPoint(0, 0, 0)
 
@@ -252,14 +247,6 @@ class MainBrain(Brain):
     async def main(self):
         await self.initialize()
 
-        speed_profile: SpeedProfile = SpeedProfile(
-            max_linear_speed=5.0,  # cm/s
-            max_angular_speed=3.0,  # rad/s
-            max_linear_acceleration=5.0,  # cm/s^2
-            max_angular_acceleration=3.0,  # rad/s^2
-            max_linear_deceleration=10.0,  # cm/s^2
-            max_angular_deceleration=3.0,  # rad/s^2
-        )
         go_to_params = GoToParams(
             trajectory_params=TrajectoryParams(
                 speed_profile=SpeedProfile.from_dict(

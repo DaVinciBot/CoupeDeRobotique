@@ -67,19 +67,19 @@ class BaseArena(ABC):
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        width: int,
-        height: int,
-        forbidden_cover_threshold: float,
-        border_buffer: float,
-        obstacle_buffer: float,
-        zones: list[BaseArenaZone],
-        chunk_size: int = 10,
-        grid_manager_logger: Logger = Logger(
-            identifier="GridManager",
-            follow_logger_manager_rules=True,
-        ),
+            self,
+            logger: Logger,
+            width: int,
+            height: int,
+            forbidden_cover_threshold: float,
+            border_buffer: float,
+            obstacle_buffer: float,
+            zones: list[BaseArenaZone],
+            chunk_size: int = 10,
+            grid_manager_logger: Logger = Logger(
+                identifier="GridManager",
+                follow_logger_manager_rules=True,
+            ),
     ) -> None:
         """
         Initializes the BaseArena instance with dimensions, zones, and configuration parameters.
@@ -246,11 +246,11 @@ class BaseArena(ABC):
 
     @time_tracker(lambda self: self.logger)
     def update(
-        self,
-        ally_position: OrientedPoint,
-        lidar_scan_polars: np.ndarray,
-        enemy_position: Point = None,  # TODO: juste for test
-        optimized_update: bool = True,
+            self,
+            ally_position: OrientedPoint,
+            lidar_scan_polars: np.ndarray,
+            enemy_position: Point = None,  # TODO: juste for test
+            optimized_update: bool = True,
     ) -> None:
         """
         Updates the state of the arena, zones, and grid based on ally and enemy positions.
@@ -273,7 +273,7 @@ class BaseArena(ABC):
         all_points = [ally_position, enemy_position]
         for zone in self.zones:
             if not optimized_update or any(
-                zone.polygon.contains(pt) for pt in all_points
+                    zone.polygon.contains(pt) for pt in all_points
             ):
                 zone.update(
                     self.team_color,
@@ -375,21 +375,21 @@ class BaseArena(ABC):
             return None
         else:
             return (
-                (
-                    math.atan2(
-                        self.enemy_position.y - self.rolling_basis.odometrie.y,
-                        self.enemy_position.x - self.rolling_basis.odometrie.x,
+                    (
+                        math.atan2(
+                            self.enemy_position.y - self.rolling_basis.odometrie.y,
+                            self.enemy_position.x - self.rolling_basis.odometrie.x,
+                        )
                     )
-                )
-                - self.rolling_basis.odometrie.theta
+                    - self.rolling_basis.odometrie.theta
             ) % math.tau
 
     def compute_enemy_position(
-        self,
-        lidar_scan_polars: np.ndarray,
-        ally_position: OrientedPoint,
-        start_time: int = -1,
-        numb_enemy: bool = False,
+            self,
+            lidar_scan_polars: np.ndarray,
+            ally_position: OrientedPoint,
+            start_time: int = -1,
+            numb_enemy: bool = False,
     ) -> Point | MultiPoint | None:
         """
         Computes the position of the enemy based on lidar scans and updates the arena.
@@ -421,38 +421,29 @@ class BaseArena(ABC):
 
             self.logger.logger.info(f"L'obstacle est {obstacles}")
 
-            self.enemy_position = (
-                self.enemy_zone.point
-                if is_empty(obstacles)
-                else nearest_points(ally_position, obstacles)[1]
-            )
+            if not is_empty(obstacles):
+                nearest_obstacle = nearest_points(ally_position, obstacles)[1]
 
-            if self.enemy_position:
-                self.enemy_zone.polygon = self.enemy_position.buffer(
-                    self.enemy_zone.robot_size
+                self.enemy_zone.update(
+                    self.team_color,
+                    ally_position=ally_position,
+                    enemy_position=nearest_obstacle,
                 )
-                self.enemy_zone.point = self.enemy_position
-
-                if start_time != -1:
-                    for zone in self.zones:
-                        if zone.zone_type == ZoneType.STUFF_ZONE:
-                            zone.accessibility = ZoneAccessibility.FORBIDDEN
-                            break
 
         # TODO : Transformer avec un flag on off code temporaire juste pour voir l'ennemi sur la visualisation
         else:
-            self.enemy_position = Point(random.randint(0, 300), random.randint(0, 200))
-            self.enemy_zone.polygon = self.enemy_position.buffer(
-                self.enemy_zone.robot_size
+            self.enemy_zone.update(
+                self.team_color,
+                ally_position=ally_position,
+                enemy_position=Point(random.randint(0, 300), random.randint(0, 200))
             )
-            self.enemy_zone.point = self.enemy_position
 
-        return self.enemy_position
+        return self.enemy_zone.point
 
     def compute_go_to_destination(
-        self,
-        start_point: Point | OrientedPoint,
-        destination: Polygon | Point | OrientedPoint,
+            self,
+            start_point: Point | OrientedPoint,
+            destination: Polygon | Point | OrientedPoint,
     ) -> OrientedPoint | None:
         """Compute the destination point to go to inside the specified zone. Only works is the arena is rectangular.
 
@@ -491,13 +482,13 @@ class BaseArena(ABC):
             if destination_point.x < self.border_buffer + self.obstacle_buffer:
                 new_x = self.border_buffer + self.obstacle_buffer
             if (self.width - destination_point.x) < (
-                self.border_buffer + self.obstacle_buffer
+                    self.border_buffer + self.obstacle_buffer
             ):
                 new_x = self.width - (self.border_buffer + self.obstacle_buffer)
             if destination_point.y < self.border_buffer + self.obstacle_buffer:
                 new_y = self.border_buffer + self.obstacle_buffer
             if (self.height - destination_point.y) < (
-                self.border_buffer + self.obstacle_buffer
+                    self.border_buffer + self.obstacle_buffer
             ):
                 new_y = self.height - (self.border_buffer + self.obstacle_buffer)
 
@@ -529,13 +520,13 @@ class BaseArena(ABC):
     # ====== Private Methods ======
     @staticmethod
     def __plot_polygon(
-        ax,
-        polygon: Polygon,
-        color: str,
-        label: str = None,
-        alpha: float = 1.0,
-        hatch: str = None,
-        hatch_color: str = None,
+            ax,
+            polygon: Polygon,
+            color: str,
+            label: str = None,
+            alpha: float = 1.0,
+            hatch: str = None,
+            hatch_color: str = None,
     ) -> None:
         """
         Helper method to plot a polygon or multipolygon on a matplotlib axis.
@@ -579,11 +570,11 @@ class BaseArena(ABC):
                 ax.plot(x, y, color=color, linestyle="--", alpha=alpha)
 
     def __plot_zone(
-        self,
-        ax,
-        zone: BaseArenaZone,
-        show_buffer: bool,
-        transparency_factor: float = 1.0,
+            self,
+            ax,
+            zone: BaseArenaZone,
+            show_buffer: bool,
+            transparency_factor: float = 1.0,
     ) -> None:
         """Plots zones and their buffers on the arena."""
         if show_buffer:
@@ -634,16 +625,16 @@ class BaseArena(ABC):
 
     # ====== Public Methods ======
     def visualize(
-        self,
-        show_buffer: bool = True,
-        show: bool = True,
-        plot: tuple[plt.axes, plt.figure] = None,
-        theorical_ally_position: AllyZone = None,
-        trajectory: list[OrientedPoint] = [],
-        transparency_factor: float = 1.0,
-        display_points: list[Point] = None,
-        display_default_destination_zone=False,
-        starting_point_to_display_default_destination_zone: Point = None,
+            self,
+            show_buffer: bool = True,
+            show: bool = True,
+            plot: tuple[plt.axes, plt.figure] = None,
+            theorical_ally_position: AllyZone = None,
+            trajectory: list[OrientedPoint] = [],
+            transparency_factor: float = 1.0,
+            display_points: list[Point] = None,
+            display_default_destination_zone=False,
+            starting_point_to_display_default_destination_zone: Point = None,
     ) -> tuple[plt.axes, plt.figure]:
         """
         Visualize the arena, including its zones, buffers, and accessibility grid.
