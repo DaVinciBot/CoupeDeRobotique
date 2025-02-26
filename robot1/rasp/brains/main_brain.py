@@ -22,9 +22,9 @@ from controllers.rolling_basis import RollingBasisDummy, RollingBasis
 
 from path_finding import PathFinder
 from arena import ShowArena
-from rolling_basis_handler import RollingBasisHandler, RollingBasisCommand
-from movement_manager import MovementManager, GoToParams, MovementStatus
-from rolling_basis_handler import SpeedProfile
+from movement import MovementManager, GoToParams, TrajectoryParams, SpeedProfile, RollingBasisCommand
+
+
 from sensors import Lidar, LidarDummy
 from arena import AllyZone
 
@@ -88,20 +88,10 @@ class MainBrain(Brain):
     def handle_movement_manager(self) -> None:
         # --- Initialization --- #
         movement_manager = MovementManager(
-            logger=Logger(
-                identifier="MovementManager",
-                follow_logger_manager_rules=True,
-            ),
-            rolling_basis_handler_logger=Logger(
-                identifier="RollingBasisHandler",
-                follow_logger_manager_rules=True,
-            ),
-            path_finder_logger=Logger(
-                identifier="PathFinder",
-                follow_logger_manager_rules=True,
-            ),
-            movement_resolution=1,
-            arena=self.arena,
+            logger=Logger(identifier="MovementManager", follow_logger_manager_rules=True),
+            path_finder_logger=Logger(identifier="PathFinder", follow_logger_manager_rules=True),
+            trajectory_computer_logger=Logger(identifier="TrajectoryComputer", follow_logger_manager_rules=True),
+            arena_ptr=self.arena,
         )
         rolling_basis = RollingBasisDummy(
             logger=Logger(
@@ -123,11 +113,15 @@ class MainBrain(Brain):
             rolling_basis.logger.info(f"RollingBasis odometrie updated: {self.rolling_basis_odometrie}")
 
         # Force the sync of arena inside the movement_manager
-        movement_manager.arena = self.arena
+        movement_manager.arena_ptr = self.arena
 
         # Trigger movement manager to go to the new destination when the params change
         if self.go_to_params != movement_manager.params:
-            movement_manager.go_to(params=self.go_to_params)
+            movement_manager.compute_go_to(
+                current_linear_speed=rolling_basis.linear_speed,
+                current_angular_speed=rolling_basis.angular_speed,
+                params=self.go_to_params
+            )
             movement_manager.logger.info("New GoToParams received")
 
         # Handle the 'go to' command
@@ -143,6 +137,8 @@ class MainBrain(Brain):
             print("ROLLING BASIS Sub", self.rolling_basis_odometrie)
             self.rolling_basis_odometrie = rolling_basis.odometrie
             #self.add_attributes_to_synchronize("theorical_ally_position", "rolling_basis")
+
+        movement_manager.logger.critical(movement_manager.status.name)
 
     """
     ### Main Process ###
@@ -230,16 +226,18 @@ class MainBrain(Brain):
             max_angular_deceleration=3.0,  # rad/s^2
         )
         go_to_params = GoToParams(
-            initial_linear_speed=0,
-            initial_angular_speed=0,
-            speed_profile=speed_profile,
-            goal=OrientedPoint(250, 140),
-            acs_distance=10,
+            trajectory_params=TrajectoryParams(
+                speed_profile=SpeedProfile.from_dict(CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE),
+                goal=OrientedPoint(250, 140),
+                resolution=1,
+                smooth_trajectory=True,
+            ),
+            acs_distance=30,
             path_finder_recompute_distance=80,
             timeout=-1.0,
             is_mandatory=False,
-            smooth_trajectory=False,
             goal_tolerance=0.1,
+            distance_to_goal_to_dont_recompute_path=10
         )
 
         self.go_to_params = go_to_params
