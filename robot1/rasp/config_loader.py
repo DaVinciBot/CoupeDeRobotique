@@ -36,12 +36,7 @@ class CONFIG:
     GENERAL_TEENSY_CONFIG = GENERAL_CONFIG["teensy"]
 
     WS_PORT = int(GENERAL_WS_CONFIG["port"])
-    WS_LIDAR_ROUTE = GENERAL_WS_CONFIG["lidar_route"]
-    WS_LOG_ROUTE = GENERAL_WS_CONFIG["log_route"]
-    WS_CAMERA_ROUTE = GENERAL_WS_CONFIG["camera_route"]
-    WS_ODOMETER_ROUTE = GENERAL_WS_CONFIG["odometer_route"]
     WS_CMD_ROUTE = GENERAL_WS_CONFIG["cmd_route"]
-    WS_PAMI_ROUTE = GENERAL_WS_CONFIG["pami_route"]
 
     TEENSY_VID = GENERAL_TEENSY_CONFIG["vid"]
     TEENSY_PID = GENERAL_TEENSY_CONFIG["pid"]
@@ -66,40 +61,51 @@ class CONFIG:
     if "-g" in sys.argv or "--game" in sys.argv:
         ZOMBIE_MODE = False
 
-    # Jack
-    JACK_CONFIG = SPECIFIC_CONFIG["jack"]
-    JACK_PIN = JACK_CONFIG["pin"]
+    # Logs
+    LOG_CONFIG = SPECIFIC_CONFIG["log"]
+
+    LOGGER_MANAGER_CONFIG = LOG_CONFIG["logger_manager"]
+    LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER = LOGGER_MANAGER_CONFIG[
+        "enable_files_logs_monitoring_only_for_one_logger"
+    ]
+    LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE = LOGGER_MANAGER_CONFIG["enable_dynamic_config_update"]
+    LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER = LOGGER_MANAGER_CONFIG["enable_unique_logger_identifier"]
+
+    LOGGER_CONFIG = LOG_CONFIG["logger"]
+    LOGGER_COLORS = LOGGER_CONFIG["colors"]
+    LOGGER_PATH = LOGGER_CONFIG["path"]
+    LOGGER_DECORATOR_LOG_LEVEL = LOGGER_CONFIG["decorator_log_level"]
+    LOGGER_PRINT_LOG_LEVEL = LOGGER_CONFIG["print_log_level"]
+    LOGGER_FILE_LOG_LEVEL = LOGGER_CONFIG["file_log_level"]
+    LOGGER_PRINT_LOG = LOGGER_CONFIG["print_log"]
+    LOGGER_WRITE_TO_FILE = LOGGER_CONFIG["write_to_file"]
+    LOGGER_DISPLAY_MONITORING = LOGGER_CONFIG["display_monitoring"]
+    LOGGER_FILES_MONITORING = LOGGER_CONFIG["files_monitoring"]
+    LOGGER_FILE_SIZE_UNIT = LOGGER_CONFIG["file_size_unit"]
+    LOGGER_DISK_ALERT_THRESHOLD_PERCENT = LOGGER_CONFIG["disk_alert_threshold_percent"]
+    LOGGER_FILES_SIZE_ALERT_THRESHOLD_PERCENT = LOGGER_CONFIG["log_files_size_alert_threshold_percent"]
+    LOGGER_MAX_LOG_FILE_SIZE = LOGGER_CONFIG["max_log_file_size"]
+    LOGGER_IDENTIFIER_MAX_WIDTH = LOGGER_CONFIG["identifier_max_width"]
+    LOGGER_FILENAME_LINENO_MAX_WIDTH = LOGGER_CONFIG["filename_lineno_max_width"]
 
     # Team config
     TEAM_CONFIG = SPECIFIC_CONFIG["team_config"]
     DEFAULT_TEAM: str = TEAM_CONFIG["default_team"]
     START_INFO_BY_TEAM: dict[str, dict] = TEAM_CONFIG["start_info_by_team"]
 
-    # Team switch
-    TEAM_SWITCH_CONFIG = SPECIFIC_CONFIG["team_switch"]
-    TEAM_SWITCH_PIN = TEAM_SWITCH_CONFIG["pin"]
-    TEAM_SWITCH_OFF = TEAM_SWITCH_CONFIG["team_off"]
-    TEAM_SWITCH_ON = TEAM_SWITCH_CONFIG["team_on"]
-
-    # Led strip
-    LED_STRIP_CONFIG = SPECIFIC_CONFIG["strip_led"]
-
     # Rolling Basis
     ROLLING_BASIS_CONFIG = SPECIFIC_CONFIG["rolling_basis"]
     ROLLING_BASIS_TEENSY_SER = ROLLING_BASIS_CONFIG["rolling_basis_teensy_ser"]
-    GO_TO_PROFILES = ROLLING_BASIS_CONFIG["go_to_profiles"]
-    SPEED_PROFILES = ROLLING_BASIS_CONFIG["go_to_profiles"]["speed"]
-    PRECISION_PROFILES = ROLLING_BASIS_CONFIG["go_to_profiles"]["precision"]
+
+    ROLLING_BASIS_PIDS_CONFIG = ROLLING_BASIS_CONFIG["pids"]
+    ROLLING_BASIS_PIDS_LINEAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["linear_speed"]
+    ROLLING_BASIS_PIDS_ANGULAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["angular_speed"]
+    ROLLING_BASIS_PIDS_LINEAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["linear_position"]
+    ROLLING_BASIS_PIDS_ANGULAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["angular_position"]
 
     # Actuators
     ACTUATORS_CONFIG = SPECIFIC_CONFIG["actuators"]
     ACTUATOR_TEENSY_SER = ACTUATORS_CONFIG["actuators_teensy_ser"]
-    FRONT_GOD_HAND = ACTUATORS_CONFIG["front_god_hand"]
-    MINIMUM_DELAY = ACTUATORS_CONFIG["minimum_delay"]
-    ELEVATOR = ACTUATORS_CONFIG["elevator"]
-    SOLAR_PANEL_RIGHT = ACTUATORS_CONFIG["solar_panel"]["right"]
-    SOLAR_PANEL_LEFT = ACTUATORS_CONFIG["solar_panel"]["left"]
-    SOLAR_PANEL_DETACH_DELAY = ACTUATORS_CONFIG["solar_panel"]["detach_delay"]
 
     # Lidar
     LIDAR_CONFIG = SPECIFIC_CONFIG["lidar"]
@@ -111,27 +117,9 @@ class CONFIG:
     LIDAR_FRONTAL_DETECTION_ANGLE = LIDAR_CONFIG["frontal_detection_angle"]
     LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE = LIDAR_CONFIG["semi_circular_detection_angle"]
 
-    # ACS
-    ACS_CONFIG = SPECIFIC_CONFIG["acs"]
-    STOP_TRESHOLD = ACS_CONFIG["stop_treshold"]
-    ANTICOLLISION_MODE = ACS_CONFIG["anticollision_mode"]
-    ANTICOLLISION_HANDLE = ACS_CONFIG["anticollision_handle"]
-    ANTICOLLISION_WAIT_AND_FAIL_DELAY = ACS_CONFIG["anticollision_wait_and_fail_delay"]
-    ANTICOLLISION_WAIT_AND_RETRY_DELAY = ACS_CONFIG[
-        "anticollision_wait_and_retry_delay"
-    ]
-    ANTICOLLISION_WAIT_AND_RETRY_MAX_TRIES = ACS_CONFIG[
-        "anticollision_wait_and_retry_max_tries"
-    ]
-    ANTICOLLISION_WAIT_AND_AVOID_DISTANCE = ACS_CONFIG[
-        "anticollision_wait_and_avoid_distance"
-    ]
-    ANTICOLLISION_WAIT_AND_AVOID_MAX_TRIES = ACS_CONFIG[
-        "anticollision_wait_and_avoid_max_tries"
-    ]
-    ANTICOLLISION_WAIT_AND_AVOID_TIME_WITHOUT_ACS = ACS_CONFIG[
-        "anticollision_wait_and_avoid_time_without_acs"
-    ]
-
-    # arena
+    # Arena
     ARENA_CONFIG = CONFIG_STORE[ARENA_CONFIG_KEY]
+    ARENA_BORDER_BUFFER = ARENA_CONFIG["border_buffer"]
+    ARENA_OBSTACLE_BUFFER = ARENA_CONFIG["obstacle_buffer"]
+    ARENA_CHUNK_SIZE = ARENA_CONFIG["chunk_size"]
+    ARENA_FORBIDDEN_COVER_THRESHOLD = ARENA_CONFIG["forbidden_cover_threshold"]

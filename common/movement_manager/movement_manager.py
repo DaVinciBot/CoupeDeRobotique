@@ -1,8 +1,9 @@
 # ====== Imports ======
 # Internal project imports
-from arena import BaseArena
-from logger import Logger, LogLevels
-from geometry import OrientedPoint
+from arena import BaseArena, BaseArenaZone
+from loggerplusplus import Logger, LogLevels
+from geometry import OrientedPoint, Polygon, Point
+
 
 from path_finding import PathFinder
 from rolling_basis_handler import RollingBasisHandler
@@ -27,15 +28,15 @@ class MovementManager:
     """
 
     def __init__(
-            self,
-            # Loggers
-            logger: Logger,
-            rolling_basis_handler_logger: Logger,
-            path_finder_logger: Logger,
-            # Constants
-            movement_resolution: float,
-            # Context variables
-            arena: BaseArena,
+        self,
+        # Loggers
+        logger: Logger,
+        rolling_basis_handler_logger: Logger,
+        path_finder_logger: Logger,
+        # Constants
+        movement_resolution: float,
+        # Context variables
+        arena: BaseArena,
     ) -> None:
         """
         Initializes the MovementManager with loggers, parameters, and context variables.
@@ -69,7 +70,7 @@ class MovementManager:
 
     @staticmethod
     def __are_path_different(
-            path_a: list[OrientedPoint], path_b: list[OrientedPoint]
+        path_a: list[OrientedPoint], path_b: list[OrientedPoint]
     ) -> bool:
         min_length = min(len(path_a), len(path_b))
 
@@ -78,51 +79,73 @@ class MovementManager:
                 return True
         return True
 
-    def _find_path(
-            self,
-            smooth_trajectory: bool,
-            consider_dynamic_obstacles: bool | None = None,
-            update_position: bool = True,
-    ) -> None:
+    @staticmethod
+    def find_path_static(
+        movement_manager: "MovementManager",
+        arena: BaseArena,
+        path_finder_logger: Logger,
+        goal,
+        path_resolution,
+        smooth_trajectory: bool,
+        start : OrientedPoint = None,
+        consider_dynamic_obstacles: bool | None = None,
+        update_position: bool = True,
+    ) -> PathFinder:
         # Compute path with dynamic grid (included enemy position) only if the enemy is close to aly position
         # Compute distance between ally and enemy
-        distance = self.__get_ally_enemy_distance()
 
-        if self.params is None:
-            self.logger.log(
-                "Find Path was called but no movement parameters found!",
-                LogLevels.WARNING,
+        goal = MovementManager.get_go_to_destination_point(arena.ally_zone.centroid if not start else start, goal)
+
+        if not goal:
+            movement_manager.logger.error("Goal is None, returned None")
+            return None
+
+        distance = movement_manager.__get_ally_enemy_distance()
+
+        if movement_manager.params is None:
+            movement_manager.logger.warning(
+                "Find Path was called but no movement parameters found!"
             )
             return
+
+        path_finder = PathFinder(
+            logger=path_finder_logger,
+            start=arena.ally_zone.point,
+            goal=goal,
+            grid_manager=arena.grid_manager,
+            path_resolution=movement_manager.movement_resolution,
+        )
 
         # Take in consideration the dynamic grid only if the enemy is close to the ally
         if consider_dynamic_obstacles is None:
             use_static_and_dynamic_grid = (
-                    distance < self.params.path_finder_recompute_distance
+                distance < movement_manager.params.path_finder_recompute_distance
             )
         else:
             use_static_and_dynamic_grid = consider_dynamic_obstacles
 
         if use_static_and_dynamic_grid:
-            self.logger.log(
-                "Using static and dynamic grid for path finding", LogLevels.INFO
+            movement_manager.logger.info(
+                "Using static and dynamic grid for path finding"
             )
         else:
-            self.logger.log("Using only static grid for path finding", LogLevels.INFO)
+            movement_manager.logger.info("Using only static grid for path finding")
 
         if update_position:
-            self.path_finder.update_current_position(self.arena.ally_zone.point)
+            movement_manager.path_finder.update_current_position(
+                movement_manager.arena.ally_zone.point
+            )
 
-        self.path_finder.find_oriented_path(
+        path_finder.find_oriented_path(
             smooth_path=smooth_trajectory,
             use_static_and_dynamic_grid=use_static_and_dynamic_grid,
         )
 
+        return path_finder
+
     def _acs(self) -> RollingBasisCommand | None:
         if self.params is None:
-            self.logger.log(
-                "ACS was called but no movement parameters found!", LogLevels.WARNING
-            )
+            self.logger.warning("ACS was called but no movement parameters found!")
             return
 
         # Anti Collision System
@@ -131,9 +154,7 @@ class MovementManager:
         if to_close:
             # Stop the robot
             self.status = MovementStatus.ACS
-            self.logger.log(
-                "ACS: Enemy is too close, stopping the robot", LogLevels.WARNING
-            )
+            self.logger.warning("ACS: Enemy is too close, stopping the robot")
             return RollingBasisCommand(
                 position=self.arena.ally_zone.point, linear_speed=0.0, angular_speed=0.0
             )
@@ -141,55 +162,126 @@ class MovementManager:
 
     def go_to_is_arrived(self) -> bool:
         if (
-                self.arena.ally_zone.point.distance(self.params.goal)
-                < self.params.goal_tolerance
+            self.arena.ally_zone.point.distance(self.params.goal)
+            < self.params.goal_tolerance
         ):
             self.status = MovementStatus.SUCCESS
-            self.logger.log("Go To is arrived", LogLevels.INFO)
+            self.logger.info("Go To is arrived")
             return True
         return False
 
-    def go_to(self, params: GoToParams) -> MovementStatus:
+    @staticmethod
+    def get_go_to_destination_point(
+        arena: BaseArena, goal: Point | OrientedPoint | BaseArenaZone | Polygon
+    ) -> OrientedPoint:
+        """
+        Computes the destination point to navigate to within the arena based on the given goal.
+
+        Args:
+            arena (BaseArena): The arena in which the navigation is taking place.
+            goal (Point | OrientedPoint | BaseArenaZone | Polygon): The target destination which can be a Point,
+                OrientedPoint, BaseArenaZone, or Polygon.
+
+        Returns:
+            OrientedPoint: The computed destination point with adjusted coordinates to ensure it is within the arena
+            boundaries and not too close to the borders or obstacles. Returns None if the goal is invalid or cannot
+            be processed.
+        """
+
+        def compute_go_to_destination_from_polygon(pol: Polygon) -> OrientedPoint:
+            """
+            Computes a destination point from the centroid of a given polygon, ensuring the point
+            is within the arena boundaries and not too close to the borders or obstacles.
+            Args:
+                pol (Polygon): The polygon from which to compute the destination point.
+            Returns:
+                OrientedPoint: The computed destination point with adjusted coordinates to ensure
+                it is within the arena boundaries and not too close to the borders or obstacles.
+                Returns None if the polygon has no centroid.
+            """
+            if not pol.centroid:
+                arena.logger.log(
+                    f"The destination polygon {pol} has no centroid, couldn't establish a destination point.",
+                    LogLevels.WARNING,
+                )
+                return None
+            destination_point = pol.centroid
+            new_x = destination_point.x
+            new_y = destination_point.y
+
+            if destination_point.x < arena.border_buffer + arena.obstacle_buffer:
+                new_x = arena.border_buffer + arena.obstacle_buffer
+            if (arena.width - destination_point.x) < (
+                arena.border_buffer + arena.obstacle_buffer
+            ):
+                new_x = arena.width - (arena.border_buffer + arena.obstacle_buffer)
+            if destination_point.y < arena.border_buffer + arena.obstacle_buffer:
+                new_y = arena.border_buffer + arena.obstacle_buffer
+            if (arena.height - destination_point.y) < (
+                arena.border_buffer + arena.obstacle_buffer
+            ):
+                new_y = arena.height - (arena.border_buffer + arena.obstacle_buffer)
+
+            return OrientedPoint(new_x, new_y)
+
+        destination = None
+
+        if isinstance(goal, OrientedPoint):
+            destination = goal
+        elif isinstance(goal, Point):
+            destination = OrientedPoint.from_Point(goal)
+        elif isinstance(goal, BaseArenaZone):
+            if goal.go_to_positions is not None:
+                destination = goal.get_go_to_position(
+                    arena.ally_zone.point, arena.team_color
+                )
+            else:
+                destination = compute_go_to_destination_from_polygon(goal.polygon)
+        elif isinstance(goal, Polygon):
+            destination = compute_go_to_destination_from_polygon(goal)
+        return destination
+
+    def go_to(
+        self, params: GoToParams, start: OrientedPoint | None = None
+    ) -> MovementStatus | None:
         # Warn if a movement is already in progress
         if not self.status.is_finished():
-            self.logger.log(
+            self.logger.warning(
                 "A movement is already in progress and a new one is requested.",
-                LogLevels.WARNING,
             )
-
+        if start is None:
+            start = self.arena.ally_zone.point
         self.params: GoToParams = params
         self.status: MovementStatus = MovementStatus.PENDING
 
-        # TODO: ça ne marche pas GoToParam goal ins't valid est tjrs appelé
-        # if not (
-        #     goal_point := self.arena.compute_go_to_destination(
-        #         start_point=self.arena.ally_zone.point, destination=params.goal
-        #     )
-        # ):
-        #     self.logger.log("GoToParam goal ins't valid", LogLevels.ERROR)
-        #     self.status = MovementStatus.INVALID_COMMAND
-        #     self.params = None
-        #     return self.status
+        goal = self.get_go_to_destination_point(self.arena, params.goal)
 
-        # 1. Run a path-finding algorithm to find the path to the destination
-        self.path_finder = PathFinder(
-            logger=self.path_finder_logger,
-            start=self.arena.ally_zone.point,
-            goal=params.goal,
-            grid_manager=self.arena.grid_manager,
-            path_resolution=self.movement_resolution,
-        )
-        # Run pathfinder
-        self._find_path(
-            smooth_trajectory=params.smooth_trajectory, update_position=False
-        )
-
-        # 2. If the path is found, initialize the rolling basis handler
-        if not self.path_finder.oriented_path_found:
+        if goal is None:
+            self.logger.error("Goal is None")
             self.status = MovementStatus.NO_ACCESSIBLE
             self.params = None
             return self.status
 
+        # Création du PathFinder via la méthode statique avec les paramètres corrects
+        self.path_finder = MovementManager.find_path_static(
+            movement_manager=self,
+            arena=self.arena,
+            path_finder_logger=self.path_finder_logger,
+            start=start,
+            goal=goal,
+            path_resolution=self.movement_resolution,
+            smooth_trajectory=params.smooth_trajectory,
+            consider_dynamic_obstacles=None,
+            update_position=False,
+        )
+
+        # Vérification si le chemin a été trouvé
+        if not self.path_finder or not self.path_finder.oriented_path_found:
+            self.status = MovementStatus.NO_ACCESSIBLE
+            self.params = None
+            return self.status
+
+        # Initialisation du RollingBasisHandler avec le nouveau chemin
         self.rolling_basis_handler = RollingBasisHandler(
             logger=self.rolling_basis_handler_logger,
             initial_linear_speed=params.initial_linear_speed,
@@ -198,14 +290,69 @@ class MovementManager:
             trajectory=self.path_finder.oriented_path_found,
         )
 
+    @staticmethod
+    def find_path_static(
+        movement_manager: "MovementManager",
+        arena: BaseArena,
+        path_finder_logger: Logger,
+        start: OrientedPoint,
+        goal: OrientedPoint,
+        path_resolution: float,
+        smooth_trajectory: bool,
+        consider_dynamic_obstacles: bool | None = None,
+        update_position: bool = True,
+    ) -> PathFinder | None:
+        """
+        Finds a static path from the start point to the goal point within the given arena.
+        Args:
+            movement_manager (MovementManager): The movement manager instance.
+            arena (BaseArena): The arena in which the path is to be found.
+            path_finder_logger (Logger): Logger for the path finder.
+            start (OrientedPoint): The starting point of the path.
+            goal (OrientedPoint): The goal point of the path.
+            path_resolution (float): The resolution of the path.
+            smooth_trajectory (bool): Whether to smooth the trajectory.
+            consider_dynamic_obstacles (bool | None, optional): Whether to consider dynamic obstacles. Defaults to None.
+            update_position (bool, optional): Whether to update the position on the new path finder. Defaults to True.
+        Returns:
+            PathFinder | None: The path finder instance if a path is found, otherwise None.
+        """
+        # Création du PathFinder avec les paramètres corrects
+        path_finder = PathFinder(
+            logger=path_finder_logger,
+            start=start,
+            goal=goal,
+            grid_manager=arena.grid_manager,
+            path_resolution=path_resolution,
+        )
+
+        distance = movement_manager._MovementManager__get_ally_enemy_distance()
+
+        if consider_dynamic_obstacles is None:
+            use_static_and_dynamic_grid = (
+                distance < movement_manager.params.path_finder_recompute_distance
+            )
+        else:
+            use_static_and_dynamic_grid = consider_dynamic_obstacles
+
+        if update_position:
+            # Mise à jour de la position sur le nouveau path_finder
+            path_finder.update_current_position(arena.ally_zone.point)
+
+        path_finder.find_oriented_path(
+            smooth_path=smooth_trajectory,
+            use_static_and_dynamic_grid=use_static_and_dynamic_grid,
+        )
+
+        return path_finder
+
     def handle_go_to(self) -> RollingBasisCommand | None:
         """
         Return order to send to rolling basis handler
         """
         if self.params is None:
-            self.logger.log(
-                "Handle Go To was called but no movement parameters found!",
-                LogLevels.WARNING,
+            self.logger.warning(
+                "Handle Go To was called but no movement parameters found!"
             )
             return
 
@@ -216,10 +363,10 @@ class MovementManager:
 
         # Re-Compute path if enemy is close
         if (
-                self.__get_ally_enemy_distance()
-                < self.params.path_finder_recompute_distance
+            self.__get_ally_enemy_distance()
+            < self.params.path_finder_recompute_distance
         ):
-            self._find_path(
+            self.find_path_static(
                 smooth_trajectory=self.params.smooth_trajectory,
                 consider_dynamic_obstacles=True,
                 update_position=True,
@@ -227,12 +374,11 @@ class MovementManager:
 
             # Check if the path has changed if so update the rolling basis handler
             if self.__are_path_different(
-                    self.rolling_basis_handler.trajectory,
-                    self.path_finder.oriented_path_found,
+                self.rolling_basis_handler.trajectory,
+                self.path_finder.oriented_path_found,
             ):
-                self.logger.log(
-                    "The path has changed, updating the rolling basis handler",
-                    LogLevels.INFO,
+                self.logger.info(
+                    "The path has changed, updating the rolling basis handler"
                 )
                 # To get the current speed of the rolling basis and update the new path with a smooth transition
                 # We use rolling basis handler to get it
@@ -251,9 +397,8 @@ class MovementManager:
                     trajectory=self.path_finder.oriented_path_found[1:],
                 )
 
-                self.logger.log(
-                    f"first point: {self.rolling_basis_handler.trajectory[0]} | {self.path_finder.oriented_path_found[0]}",
-                    LogLevels.WARNING,
+                self.logger.warning(
+                    f"first point: {self.rolling_basis_handler.trajectory[0]} | {self.path_finder.oriented_path_found[0]}"
                 )
 
         # Update status

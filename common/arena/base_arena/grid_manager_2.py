@@ -8,7 +8,7 @@ from shapely.strtree import STRtree
 from pathfinding.core.grid import Grid, GridNode
 
 from geometry import Point, Polygon, OrientedPoint
-from logger import Logger, LogLevels, time_tracker
+from old_logger import Logger, LogLevels, time_tracker
 
 
 class GridManager:
