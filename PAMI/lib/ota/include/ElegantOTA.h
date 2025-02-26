@@ -10,7 +10,7 @@ _____ _                        _    ___ _____  _
 /**
  * 
  * @name ElegantOTA
- * @author Ayush Sharma (ayush@softt.io)
+ * @author Ayush Sharma (ayush@softt.io), edited by Urbskali
  * @brief 
  * @version 3.0.0
  * @date 2023-08-30
@@ -121,6 +121,7 @@ class ElegantOTAClass{
     bool _authenticate;
     String _username;
     String _password;
+    String _hid;
 
     bool _auto_reboot = true;
     bool _reboot = false;
