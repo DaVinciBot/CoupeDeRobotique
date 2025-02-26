@@ -10,10 +10,7 @@
 // Configuration file (contains all the constants and pinout), it is just a main.cpp header file
 #include <config.h>
 
-#define LINEAR_SPEED_PID_ID 0
-#define ANGULAR_SPEED_PID_ID 1
-#define LINEAR_POSITION_PID_ID 2
-#define ANGULAR_POSITION_PID_ID 3
+
 
 // 1. Instanciate the Rolling Basis object
 // a. Define the PID controllers
@@ -156,7 +153,7 @@ void setup()
   Timer1.initialize(ASSERVISSEMENT_FREQUENCY);
   Timer1.attachInterrupt(handle);
 
-  // Initializa callback functions
+  // Initialize callback functions
   initialize_callback_functions();
 }
 

@@ -1,8 +1,8 @@
-#!/usr/bin/env python3
-"""
-Module for handling communication with the Teensy microcontroller to control the robot's rolling basis.
-It manages state updates, PID configuration, and sends/receives commands between the Raspberry Pi and Teensy.
-"""
+# ====== Code Summary ======
+# The MovementManager class manages robot movement within an arena.
+# It computes and executes movement paths while considering obstacles and enemy positions.
+# The class utilizes a trajectory computer and logs movement actions.
+
 
 from config_loader import CONFIG
 
@@ -13,41 +13,9 @@ import struct
 from typing import Any, Dict
 
 # ====== Internal Project Imports ======
-from teensy_comms import Teensy
+from teensy_comms import Teensy, Messages
 from geometry import OrientedPoint
 from loggerplusplus import Logger, log
-
-
-class Command(Enum):
-    """
-    Enumeration for command types exchanged between the Raspberry Pi and Teensy.
-
-    Commands from Raspberry Pi to Teensy are in the range 0-127,
-    while those from Teensy to Raspberry Pi are in the range 128-255.
-    """
-    # rasp -> teensy : 0-127 (Convention)
-    SET_SPEED_AND_POSITION = 0
-    SET_PID = 1
-    SET_ODOMETRIE = 2
-    RESET_TEENSY = 3
-
-    # two ways : 127 (Convention)
-    NACK = 127
-
-    # teensy -> rasp : 128-255 (Convention)
-    PRINT = 128
-    UPDATE_ROLLING_BASIS = 129
-    UNKNOWN_MSG_TYPE = 255
-
-    # To use for message creation
-    def to_bytes(self) -> bytes:
-        """
-        Converts the command to its byte representation.
-
-        Returns:
-            bytes: Single-byte representation of the command.
-        """
-        return bytes([self.value])
 
 
 class PID_ID(Enum):
@@ -93,7 +61,7 @@ class RollingBasis(Teensy):
     Represents the rolling basis of the robot.
 
     Inherits from Teensy to manage low-level communications and adds logic specific to the robot's state,
-    PID configuration, and command messaging.
+    PID configuration, and message messaging.
     """
 
     def __init__(
@@ -142,9 +110,9 @@ class RollingBasis(Teensy):
         # }
 
         # Register message handlers
-        self.add_callback(self.rcv_print, Command.PRINT.value)
-        self.add_callback(self.rcv_unknown_msg, Command.UNKNOWN_MSG_TYPE.value)
-        self.add_callback(self.rcv_rolling_basis_state, Command.UPDATE_ROLLING_BASIS.value)
+        self.add_callback(self.rcv_print, Messages.PRINT.value)
+        self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
+        self.add_callback(self.rcv_rolling_basis_state, Messages.UPDATE_ROLLING_BASIS.value)
 
         # Initialize PID controllers from configuration
         self._initialize_pids()
@@ -160,7 +128,7 @@ class RollingBasis(Teensy):
             msg (bytes): The received message bytes.
         """
         self.logger.info(
-            "Teensy says: " + msg.decode("ascii", errors="ignore")
+            "Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore")
         )
 
     def rcv_rolling_basis_state(self, msg: bytes):
@@ -196,7 +164,7 @@ class RollingBasis(Teensy):
             msg (bytes): The received message bytes.
         """
         self.logger.warning(
-            f"Teensy does not know the command {msg.hex()}"
+            f"Teensy Motors does not know the message {msg.hex()}"
         )
 
     ####################################
@@ -210,7 +178,7 @@ class RollingBasis(Teensy):
             target_position: OrientedPoint,
     ) -> None:
         """
-        Sends a command to set the target speed and position of the rolling basis.
+        Sends a message to set the target speed and position of the rolling basis.
 
         Args:
             target_linear_speed (float): Target linear speed.
@@ -218,7 +186,7 @@ class RollingBasis(Teensy):
             target_position (OrientedPoint): Target position and orientation.
         """
         msg = (
-                Command.SET_SPEED_AND_POSITION.to_bytes()
+                Messages.SET_SPEED_AND_POSITION.to_bytes()
                 + struct.pack("<f", target_linear_speed)
                 + struct.pack("<f", target_angular_speed)
                 + struct.pack("<f", target_position.x)
@@ -232,13 +200,13 @@ class RollingBasis(Teensy):
     @log("RollingBasis")
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
         """
-        Sends a command to set the odometrie of the rolling basis.
+        Sends a message to set the odometrie of the rolling basis.
 
         Args:
             odometrie (OrientedPoint): The new odometrie values.
         """
         msg = (
-                Command.SET_ODOMETRIE.to_bytes()
+                Messages.SET_ODOMETRIE.to_bytes()
                 + struct.pack("<f", odometrie.x)
                 + struct.pack("<f", odometrie.y)
                 + struct.pack("<f", odometrie.theta)
@@ -254,7 +222,7 @@ class RollingBasis(Teensy):
             pid (PID): The PID controller parameters.
         """
         msg = (
-                Command.SET_PID.to_bytes()
+                Messages.SET_PID.to_bytes()
                 + pid_id.to_bytes()
                 + pid.to_bytes()
         )
@@ -401,7 +369,7 @@ class RollingBasisDummy:
     Represents the rolling basis of the robot.
 
     Inherits from Teensy to manage low-level communications and adds logic specific to the robot's state,
-    PID configuration, and command messaging.
+    PID configuration, and message messaging.
     """
 
     def __init__(
@@ -441,7 +409,7 @@ class RollingBasisDummy:
             target_position: OrientedPoint,
     ) -> None:
         """
-        Sends a command to set the target speed and position of the rolling basis.
+        Sends a message to set the target speed and position of the rolling basis.
 
         Args:
             target_linear_speed (float): Target linear speed.
@@ -460,7 +428,7 @@ class RollingBasisDummy:
     @log("RollingBasis")
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
         """
-        Sends a command to set the odometrie of the rolling basis.
+        Sends a message to set the odometrie of the rolling basis.
 
         Args:
             odometrie (OrientedPoint): The new odometrie values.

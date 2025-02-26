@@ -2,11 +2,11 @@ from config_loader import CONFIG
 from loggerplusplus import Logger, log, LogLevels
 
 # Import from common
-from teensy_comms import Teensy
+from teensy_comms import Teensy, Messages
 import asyncio
 import struct
-
-
+        
+        
 class ActuatorsController(Teensy):
     def __init__(
         self,
@@ -22,26 +22,68 @@ class ActuatorsController(Teensy):
             logger, ser=ser, vid=vid, pid=pid, baudrate=baudrate, crc=crc, dummy=dummy
         )
         # Admit that default elevator position is at the bottom
-        self.elevator_ticks = 0
-
-        self.is_lcd_declared = False
-
-    class Command:  # values must correspond to the one defined on the teensy
-        Update_servo = b"\x01"
-        StepperStep = b"\x02"
-        Update_servo_detach = b"\x03"
-        Lcd_init = b"\x04"
-        Lcd_print = b"\x05"
+        self.elevator_ticks: int = 0
+        self.switches_states: dict[int:bool] = {}
+        
+        """
+        This is used to match a handling function to a message type.
+        add_callback can also be used.
+        """
+        # Register message handlers
+        self.add_callback(self.rcv_print, Messages.PRINT.value)
+        self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
+        self.add_callback(self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value)
 
     def __str__(self) -> str:
         return self.__class__.__name__
 
-    #########################
-    # User facing functions #
-    #########################
+    ####################################
+    # Message Receiving Handlers       #
+    ####################################
+    def rcv_print(self, msg: bytes):
+        """
+        Handles PRINT messages from the Teensy.
+
+        Args:
+            msg (bytes): The received message bytes.
+        """
+        self.logger.info(
+            "Teensy Actuators says: " + msg.decode("ascii", errors="ignore")
+        )
+        
+    def rcv_unknown_msg(self, msg: bytes):
+        """
+        Handles unknown messages from the Teensy.
+
+        Logs a warning indicating that the message type is not recognized.
+
+        Args:
+            msg (bytes): The received message bytes.
+        """
+        self.logger.warning(
+            f"Teensy Actuators does not know the message {msg.hex()}"
+        )
+        
+    def rcv_switch_state_return(self, msg: bytes):
+        """
+        Handles SWITCH_STATE_RETURN messages from the Teensy.
+
+        Args:
+            msg (bytes): The received message bytes.
+        """
+        self.logger.info(f"Switch state: {msg.hex()}")
+        # Decode the message
+        pin: int = struct.unpack("<B", msg[0:1])[0]
+        state: bool = struct.unpack("<?", msg[1:2])[0]
+        # Save the switch state
+        self.switches_states[pin] = state
+
+    ####################################
+    # Message Sending Methods          #
+    ####################################
 
     @log("Actuators")
-    async def stepper_step(self, steps: int, speed: int) -> None:
+    def stepper_step(self, steps: int, speed: int) -> None:
         """
         Moves the stepper motor a specified number of steps. Note that the number of motor pin can change depending on the motor.
         2 or 5 pins are common.
@@ -63,19 +105,20 @@ class ActuatorsController(Teensy):
         pin_driver = 15
 
         msg = (
-            self.Command.StepperStep
+            Messages.STEPPER_STEP.to_bytes()
             + struct.pack("<i", abs(steps))
             + struct.pack("<?", (steps >= 0))
             + struct.pack("<i", speed)
             + struct.pack("<B", pin_dir)
             + struct.pack("<B", pin_step)
             + struct.pack("<B", pin_driver)
-            # https://docs.python.org/3/library/struct.html#format-characters
         )
+        # Send the composed message to the Teensy
+        # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
 
     @log("Actuators")
-    def update_servo(
+    def set_servo_angle(
         self,
         pin: int,
         angle: int,
@@ -98,7 +141,7 @@ class ActuatorsController(Teensy):
         if angle >= min_angle and angle <= max_angle:
             if detach:
                 msg = (
-                    self.Command.Update_servo_detach
+                    Messages.SET_SERVO_ANGLE_DETACH.to_bytes()
                     + struct.pack("<B", pin)
                     + struct.pack("<B", angle)
                     + struct.pack("<i", detach_delay)
@@ -109,66 +152,31 @@ class ActuatorsController(Teensy):
                     self.gpio_manager.add_gpio(
                         pin, self.gpio_manager.TypeActuator.SERVO
                     )
-                    self.logger.log(f"Pin {pin} added as a servo pin", LogLevels.INFO)
+                    self.logger.info(f"Pin {pin} added as a servo pin")
                 elif not self.gpio_manager.is_valid_gpio(
                     pin, self.gpio_manager.TypeActuator.SERVO
                 ):
-                    self.logger.log(
-                        f"Pin {pin} is not a valid servo pin because it is registered as a {str(self.gpio_manager.get_type_gpio(pin))}",
-                        LogLevels.ERROR,
+                    self.logger.error(
+                        f"Pin {pin} is not a valid servo pin because it is registered as a {str(self.gpio_manager.get_type_gpio(pin))}"
                     )
                     return
                 msg = (
-                    self.Command.Update_servo
+                    Messages.SET_SERVO_ANGLE.to_bytes()
                     + struct.pack("<B", pin)
                     + struct.pack("<B", angle)
                 )
+                # https://docs.python.org/3/library/struct.html#format-characters
                 self.send_bytes(msg)
-            # https://docs.python.org/3/library/struct.html#format-characters
-
+            
         else:
             self.logger.error(
                 f"You tried to write {angle}° on pin {pin}, whereas the angle must be between {min_angle} and {max_angle}°"
             )
 
     @log("Actuators")
-    async def lcd_init(self, adress=0x27, nb_col: int = 16, nb_line: int = 2) -> None:
-        """
-        Initializes the LCD display.
-
-        Args:
-            adress (int, optional): The I2C address of the LCD display. Defaults to 0x27.
-            nb_col (int, optional): The number of columns in the LCD display. Defaults to 16.
-            nb_line (int, optional): The number of lines in the LCD display. Defaults to 2.
-
-        Returns:
-            None
-        """
-        msg_ = (
-            self.Command.Lcd_init
-            + struct.pack("<B", adress)
-            + struct.pack("<B", nb_col)
-            + struct.pack("<B", nb_line)
+    def attach_switch(self, pin: int) -> None:
+        msg = (
+            Messages.ATTACH_SWITCH.to_bytes()
+            + struct.pack("<B", pin)
         )
-        self.send_bytes(msg_)
-
-    @log("Actuators")
-    async def lcd_print(
-        self, msg: str, nb_col: int = 16, nb_line: int = 2, adress=0x27
-    ) -> None:
-        """Display a message on the LCD screen.
-
-        Args:
-            msg (str): The message to display.
-        """
-        msg = msg.encode("ascii", errors="ignore")  # Ignorer les caractères non-ASCII
-        if len(msg) > nb_col * nb_line:
-            self.logger.warning(
-                f"Message too long for the LCD screen, {len(msg)} characters, max is {nb_col * nb_line}. Truncated.",
-            )
-            msg = msg[: nb_col * nb_line]
-        if not self.is_lcd_declared:
-            await self.lcd_init(nb_col=nb_col, nb_line=nb_line, adress=adress)
-            await asyncio.sleep(CONFIG.MINIMUM_DELAY)
-        msg_ = self.Command.Lcd_print + struct.pack(f"<{len(msg) + 1}s", msg + b"\0")
-        self.send_bytes(msg_)
+        self.send_bytes(msg)
