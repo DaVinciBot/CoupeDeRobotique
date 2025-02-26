@@ -84,17 +84,17 @@ class MovementManager:
         movement_manager: "MovementManager",
         arena: BaseArena,
         path_finder_logger: Logger,
-        start,
         goal,
         path_resolution,
         smooth_trajectory: bool,
+        start : OrientedPoint = None,
         consider_dynamic_obstacles: bool | None = None,
         update_position: bool = True,
     ) -> PathFinder:
         # Compute path with dynamic grid (included enemy position) only if the enemy is close to aly position
         # Compute distance between ally and enemy
 
-        goal = MovementManager.get_go_to_destination_point(arena, goal)
+        goal = MovementManager.get_go_to_destination_point(arena.ally_zone.centroid if not start else start, goal)
 
         if not goal:
             movement_manager.logger.error("Goal is None, returned None")
