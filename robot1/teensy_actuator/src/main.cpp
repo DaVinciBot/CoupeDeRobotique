@@ -37,7 +37,7 @@ void set_servo_angle(byte *msg, byte size)
 
 void set_servo_angle_detach(byte *msg, byte size)
 {
-  msg_set_servo_angle_detach *servo_angle_detach_msg = (set_servo_angle_detach *)msg;
+  msg_set_servo_angle_detach *servo_angle_detach_msg = (msg_set_servo_angle_detach *)msg;
   if (actuators[servo_angle_detach_msg->pin] == nullptr)
   {
     Servo *servo = new Servo();
@@ -72,9 +72,9 @@ void stepper_step(byte *msg, byte size)
   // Step the motor
   digitalWrite(stepper_step_msg->pin_driver, LOW);
   if (stepper_step_msg->dir)
-      stepper->step(1, steps);
+      stepper->step(1, stepper_step_msg->steps);
   else
-      stepper->step(0, steps);
+      stepper->step(0, stepper_step_msg->steps);
   digitalWrite(stepper_step_msg->pin_driver, HIGH);
 }
 
@@ -110,7 +110,7 @@ void setup()
   com = new Com(&Serial, BAUDRATE);
 
   // Initialize callback functions
-  initialize_callback_functions();
+  initilize_callback_functions();
   // digitalWrite(15, HIGH); // Immediatly disable driver on the stepper, to prevent heating. Dirty solution.
 }
 
