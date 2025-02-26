@@ -22,7 +22,6 @@ void Motor::init()
 void Motor::enableMotor(bool enable)
 {
     digitalWrite(_enablePin, enable ? LOW : HIGH);
-    // digitalWrite(_enablePin, enable ? HIGH : LOW); demander à l'elec le branchement
 }
 
 void Motor::setTargetSpeed(float stepsPerSec)
