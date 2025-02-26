@@ -22,7 +22,7 @@ import gc
 from controllers.rolling_basis import RollingBasisDummy, RollingBasis
 
 from path_finding import PathFinder
-from arena import ShowArena
+from arena import ShowArena, BaseArenaZone
 from rolling_basis_handler import RollingBasisHandler, RollingBasisCommand
 from movement_manager import MovementManager, GoToParams, MovementStatus
 from rolling_basis_handler import SpeedProfile
@@ -317,50 +317,6 @@ class MainBrain(Brain):
             solution = json.load(f)
         self.game_tasks_planification = solution
 
-    @staticmethod
-    def get_dummy_brain(
-        game_duration_sec: int = 90,
-        solve_planner_limit_sec: int = 1,
-        tasks: list[Task] = [],
-    ) -> "MainBrain":
-
-        arena = ShowArena(
-            logger=Logger(identifier="Dummy Arena"),
-            border_buffer=2,
-            obstacle_buffer=1,
-            chunk_size=5,
-            forbidden_cover_threshold=0.1,
-            grid_manager_logger=Logger(identifier="Dummy Grid Manager"),
-        )
-        return MainBrain(
-            logger=Logger(identifier="Dummy Brain"),
-            rolling_basis=RollingBasisDummy(Logger(identifier="Dummy Rolling Basis")),
-            lidar=LidarDummy(
-                logger=Logger(identifier="Dummy Lidar"),
-                min_angle=CONFIG.LIDAR_MIN_ANGLE,
-                max_angle=CONFIG.LIDAR_MAX_ANGLE,
-                unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
-                unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
-                min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
-            ),
-            arena=arena,
-            movement_manager=MovementManager(
-                logger=Logger(identifier="Dummy Movement Manager"),
-                rolling_basis_handler_logger=Logger(
-                    identifier="Dummy Rolling Basis Handler"
-                ),
-                path_finder_logger=Logger(identifier="Dummy Path Finder"),
-                movement_resolution=1,
-                arena=arena,
-            ),
-            ws_cmd=WServerRouteManager(
-                WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
-            ),
-            game_duration_sec=game_duration_sec,
-            solve_planner_limit_sec=solve_planner_limit_sec,
-            tasks=tasks,
-        )
-
     def get_game_tasks_planification(
         self, solve_planner_limit_sec: int = -1, save_planification: bool = False
     ):
@@ -408,7 +364,6 @@ class MainBrain(Brain):
         )
         return MainBrain(
             logger=Logger(identifier="Dummy Brain"),
-            rolling_basis=RollingBasisDummy(Logger(identifier="Dummy Rolling Basis")),
             lidar=LidarDummy(
                 logger=Logger(identifier="Dummy Lidar"),
                 min_angle=CONFIG.LIDAR_MIN_ANGLE,
@@ -418,15 +373,6 @@ class MainBrain(Brain):
                 min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
             ),
             arena=arena,
-            movement_manager=MovementManager(
-                logger=Logger(identifier="Dummy Movement Manager"),
-                rolling_basis_handler_logger=Logger(
-                    identifier="Dummy Rolling Basis Handler"
-                ),
-                path_finder_logger=Logger(identifier="Dummy Path Finder"),
-                movement_resolution=1,
-                arena=arena,
-            ),
             ws_cmd=WServerRouteManager(
                 WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
             ),
@@ -434,6 +380,42 @@ class MainBrain(Brain):
             solve_planner_limit_sec=solve_planner_limit_sec,
             tasks=tasks,
         )
+
+    def visualize_tasks_in_arena(self):
+        def _annotate_task_point(ax, task, pos: Point):
+            ax.annotate(
+                f"{task.name}\nS: {task.score}\nT: {task.execution_time}s",
+                (pos.x, pos.y),
+                xytext=(10, 10),
+                textcoords="offset points",
+            )
+
+        def _display_task_point(ax, task, pos: Point, annotate=False):
+            ax.plot(pos.x, pos.y, marker="o", markersize=5, color="red")
+            if annotate:
+                _annotate_task_point(ax, task, pos)
+
+        ax, self.fig = self.arena.visualize(show=False)
+        for task in self.game_tasks:
+            if isinstance(task.position, Point):
+                _display_task_point(ax, task, task.position, annotate=True)
+            if isinstance(task.position, BaseArenaZone):
+                if task.position.go_to_positions:
+                    i = 0
+                    _annotate_task_point(ax, task, task.position.go_to_positions[i])
+                    while i < len(task.position.go_to_positions):
+                        _display_task_point(ax, task, task.position.go_to_positions[i])
+                        i += 1
+                else:
+                    try:
+                        _display_task_point(
+                            ax, task, task.position.polygon.centroid, annotate=True
+                        )
+                    except:
+                        self.logger.warning(
+                            f"Task {task.id} has no go_to_positions or centroid"
+                        )
+        plt.show()
 
 
 # Only for testing

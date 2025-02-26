@@ -9,7 +9,7 @@ class TaskPlannerSolution:
 
     def __str__(self):
         return (
-            f"TaskPlannerSolution with score {self.score} and duration {self.duration}"
+            f"TaskPlannerSolution with score {self.score} and duration {self.duration}s"
         )
 
     @staticmethod
