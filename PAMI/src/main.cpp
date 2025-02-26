@@ -13,13 +13,14 @@ Motor leftMotor(LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN, 200);
 AsyncWebServer server(80);
 CustomOTA ota("DVB_CDR", "davincibot", &server);
 
-void setup() {
+void setup()
+{
     Serial.begin(115200);
 
     leftMotor.init();
 
     leftMotor.enableMotor(true);
-    leftMotor.setTargetSpeed(300);
+
     leftMotor.setAcceleration(100);
 
     Serial.println("Fin init");

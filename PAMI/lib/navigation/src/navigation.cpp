@@ -1,55 +1,47 @@
 #include "navigation.h"
+#include <math.h>
 
-Navigation::Navigation(Motor* leftMotor, Motor* rightMotor, float wheelDiameterMm, float wheelBaseMm) {
-    _leftMotor = leftMotor;
-    _rightMotor = rightMotor;
-    _wheelDiameterMm = wheelDiameterMm;
-    _wheelBaseMm = wheelBaseMm;
-    _moving = false;
-    _turning = false;
-    _leftSteps = 0;
-    _rightSteps = 0;
+Navigation::Navigation(Motor *leftMotor, Motor *rightMotor, float wheelDiameterMm, float wheelBaseMm)
+    : _leftMotor(leftMotor), _rightMotor(rightMotor),
+      _wheelDiameterMm(wheelDiameterMm), _wheelBaseMm(wheelBaseMm),
+      _linearSpeedMmS(0), _angularSpeedDegS(0)
+{
 }
 
-void Navigation::forward(float distanceMm) {
-    
-    _leftMotor->moveDistance(distanceMm, _wheelDiameterMm);
-    _rightMotor->moveDistance(distanceMm, _wheelDiameterMm);
+void Navigation::setLinearAngularSpeed(float linearMmS, float angularDegS)
+{
+    _linearSpeedMmS = linearMmS;
+    _angularSpeedDegS = angularDegS;
 
-    _turning = false;
-    _moving = true;
+    float angularRadS = _angularSpeedDegS * (M_PI / 180.0f);
+    float halfBase = _wheelBaseMm / 2.0f;
+
+    float leftVel = _linearSpeedMmS - (angularRadS * halfBase);
+    float rightVel = _linearSpeedMmS + (angularRadS * halfBase);
+
+    float circumference = M_PI * _wheelDiameterMm;
+    float leftStepsPerSec = (leftVel / circumference) * _leftMotor->getStepsPerRev();
+    float rightStepsPerSec = (rightVel / circumference) * _rightMotor->getStepsPerRev();
+
+    _leftMotor->setTargetSpeed(fabs(leftStepsPerSec));
+    _rightMotor->setTargetSpeed(fabs(rightStepsPerSec));
 }
 
-void Navigation::turn(float angleDeg) {
-    float arcLength = M_PI * _wheelBaseMm * fabs(angleDeg) / 360.0f;
-
-    bool turnLeft = (angleDeg > 0);
-
-    float leftDist =  turnLeft ? -arcLength : arcLength;
-    float rightDist = turnLeft ? arcLength : -arcLength;
-
-    _leftMotor->moveDistance(leftDist, _wheelDiameterMm);
-    _rightMotor->moveDistance(rightDist, _wheelDiameterMm);
-
-    _turning = true;
-    _moving = true;
-}
-
-void Navigation::update() {
-    if(!_moving) return;
-
+void Navigation::update()
+{
     _leftMotor->update();
     _rightMotor->update();
-
-    if(!_leftMotor->isMoving() && !_rightMotor->isMoving()) {
-        _moving = false;
-        _turning = false;
-    }
 }
 
-void Navigation::stop() {
+bool Navigation::isBusy() const
+{
+    return _leftMotor->isMoving() || _rightMotor->isMoving();
+}
+
+void Navigation::stop()
+{
+    _linearSpeedMmS = 0;
+    _angularSpeedDegS = 0;
     _leftMotor->setTargetSpeed(0);
     _rightMotor->setTargetSpeed(0);
-    _leftMotor->enableMotor(false);
-    _rightMotor->enableMotor(false);
 }
