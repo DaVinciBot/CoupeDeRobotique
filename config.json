@@ -83,6 +83,24 @@
           "ki": 0.0,
           "kd": 0.0
         }
+      },
+      "speed_profiles": {
+        "default": {
+          "max_linear_speed": 5.0,
+          "max_angular_speed": 3.0,
+          "max_linear_acceleration": 5.0,
+          "max_angular_acceleration": 3.0,
+          "max_linear_deceleration": 10.0,
+          "max_angular_deceleration": 3.0
+        },
+        "high": {
+          "max_linear_speed": 15.0,
+          "max_angular_speed": 3.0,
+          "max_linear_acceleration": 5.0,
+          "max_angular_acceleration": 3.0,
+          "max_linear_deceleration": 10.0,
+          "max_angular_deceleration": 3.0
+        }
       }
     },
     "actuators": {
