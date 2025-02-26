@@ -4,62 +4,39 @@ from arena import BaseArena, BaseArenaZone
 from loggerplusplus import Logger
 from geometry import OrientedPoint
 
-from path_finding import PathFinder
-from rolling_basis_handler import RollingBasisHandler
+from movement.params import GoToParams, TrajectoryParams, SpeedProfile, RollingBasisCommand
+from movement.movement_manager.movement_status import MovementStatus
 
-from movement_manager.movement_params import GoToParams
-from movement_manager.movement_status import MovementStatus
+from movement.trajectory_computer import TrajectoryComputer
 
-from rolling_basis_handler import RollingBasisCommand
-from movement.trajectory_computer import TrajectoryComputer, TrajectoryParams, SpeedProfile
 
 # ====== Class Part ======
 class MovementManager:
-    """
-    Manages the movement of a robot, including pathfinding, collision avoidance, and trajectory handling.
-
-    Attributes:
-        logger (Logger): Logger for movement manager events.
-        rolling_basis_handler_logger (Logger): Logger for rolling basis handler events.
-        path_finder_logger (Logger): Logger for pathfinding events.
-        movement_resolution (float): Resolution for pathfinding and movement.
-        arena (BaseArena): The arena where the robot operates.
-    """
-
     def __init__(
             self,
             # Loggers
             logger: Logger,
-            rolling_basis_handler_logger: Logger,
             path_finder_logger: Logger,
             trajectory_computer_logger: Logger,
-            # Context variables
+            # Context object
             arena_ptr: BaseArena,
     ) -> None:
-        """
-        Initializes the MovementManager with loggers, parameters, and context variables.
-
-        Args:
-            logger (Logger): Main logger.
-            rolling_basis_handler_logger (Logger): Logger for rolling basis handler.
-            path_finder_logger (Logger): Logger for pathfinding.
-            movement_resolution (float): Movement resolution for pathfinding.
-            arena (BaseArena): Arena in which the robot operates.
-        """
         # Loggers
         self.logger: Logger = logger
-        self.rolling_basis_handler_logger: Logger = rolling_basis_handler_logger
         self.path_finder_logger: Logger = path_finder_logger
         self.trajectory_computer_logger: Logger = trajectory_computer_logger
 
         # Context variables
         self.arena_ptr: BaseArena = arena_ptr
 
-        # Movement variables
+        # Movement status
         self.status: MovementStatus = MovementStatus.NOT_STARTED
+
+        # Attributes (use later)
         self.params: GoToParams | None = None
         self.trajectory_computer: TrajectoryComputer | None = None
 
+    # ====== Private Methods ======
     def __get_ally_enemy_distance(self) -> float:
         return self.arena_ptr.ally_zone.point.distance(self.arena_ptr.enemy_zone.point)
 
@@ -74,45 +51,13 @@ class MovementManager:
                 return True
         return True
 
-    def _find_path(
-            self,
-            smooth_trajectory: bool,
-            consider_dynamic_obstacles: bool | None = None,
-            update_position: bool = True,
-    ) -> None:
-        # Compute path with dynamic grid (included enemy position) only if the enemy is close to aly position
-        # Compute distance between ally and enemy
-        distance = self.__get_ally_enemy_distance()
-
-        if self.params is None:
-            self.logger.warning(
-                "Find Path was called but no movement parameters found!"
-            )
-            return
-
-        # Take in consideration the dynamic grid only if the enemy is close to the ally
-        if consider_dynamic_obstacles is None:
-            use_static_and_dynamic_grid = (
-                    distance < self.params.path_finder_recompute_distance
-            )
-        else:
-            use_static_and_dynamic_grid = consider_dynamic_obstacles
-
-        if use_static_and_dynamic_grid:
-            self.logger.info(
-                "Using static and dynamic grid for path finding")
-        else:
-            self.logger.info("Using only static grid for path finding")
-
-        if update_position:
-            self.path_finder.update_current_position(self.arena.ally_zone.point)
-
-        self.path_finder.find_oriented_path(
-            smooth_path=smooth_trajectory,
-            use_static_and_dynamic_grid=use_static_and_dynamic_grid,
-        )
-
+    # ====== Protected Methods ======
     def _acs(self) -> RollingBasisCommand | None:
+        """
+        Anti Collision System
+        Return None if no ACS is needed
+        Return RollingBasisCommand if ACS is needed (stop the robot)
+        """
         if self.params is None:
             self.logger.warning(
                 "ACS was called but no movement parameters found!"
@@ -120,22 +65,27 @@ class MovementManager:
             return
 
         # Anti Collision System
-        to_close = self.__get_ally_enemy_distance() < self.params.acs_distance
+        too_close = self.__get_ally_enemy_distance() < self.params.acs_distance
 
-        if to_close:
-            # Stop the robot
+        if too_close:
+            # Stop the robot (set speed to 0 !)
             self.status = MovementStatus.ACS
             self.logger.warning(
                 "ACS: Enemy is too close, stopping the robot"
             )
             return RollingBasisCommand(
-                position=self.arena.ally_zone.point, linear_speed=0.0, angular_speed=0.0
+                position=self.arena_ptr.ally_zone.point, linear_speed=0.0, angular_speed=0.0
             )
         return
 
-    def go_to_is_arrived(self) -> bool:
+    def _go_to_is_arrived(self) -> bool:
+        self.logger.critical(
+            f"ally: {self.arena_ptr.ally_zone.point}, goal: {self.trajectory_computer.computed_goal}, "
+            f"distance: {self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.computed_goal)}, "
+            f"gt: {self.params.goal_tolerance}"
+        )
         if (
-                self.arena.ally_zone.point.distance(self.params.goal)
+                self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.computed_goal)
                 < self.params.goal_tolerance
         ):
             self.status = MovementStatus.SUCCESS
@@ -143,7 +93,15 @@ class MovementManager:
             return True
         return False
 
-    def go_to(self, params: GoToParams) -> MovementStatus:
+    # ====== Public Methods ======
+    def compute_go_to(
+            self,
+            # Currents rolling basis state (the position/odometrie is already stored in the arena)
+            current_linear_speed: float,
+            current_angular_speed: float,
+            # Parameters of the go to
+            params: GoToParams,
+    ):
         # Warn if a movement is already in progress
         if not self.status.is_finished():
             self.logger.warning(
@@ -153,102 +111,96 @@ class MovementManager:
         self.params: GoToParams = params
         self.status: MovementStatus = MovementStatus.PENDING
 
-        goal = None
-        if isinstance(params.goal, OrientedPoint):
-            goal = params.goal
-        elif isinstance(params.goal, BaseArenaZone):
-            goal = params.goal.get_go_to_position(self.arena.ally_zone.point, self.arena.team_color)
+        # 1. Compute the trajectory
+        # 1.1 Create the trajectory computer
+        self.trajectory_computer: TrajectoryComputer = TrajectoryComputer(
+            logger=self.trajectory_computer_logger,
+            path_finder_logger=self.path_finder_logger,
+            arena_ptr=self.arena_ptr,
+            trajectory_params=params.trajectory_params
+        )
+        # 1.2 Compute the trajectory (without dynamic obstacles: ignore enemy position for first computation)
+        self.trajectory_computer.compute(
+            use_static_and_dynamic_grid=False,
+            current_linear_speed=current_linear_speed,
+            current_angular_speed=current_angular_speed,
+        )
 
-        if goal is None:
-            self.logger.error("Goal is None")
+        # 2. Check if the path is found
+        if not self.trajectory_computer.path_finder.oriented_path_found:
             self.status = MovementStatus.NO_ACCESSIBLE
             self.params = None
             return self.status
-
-        # 1. Run a path-finding algorithm to find the path to the destination
-        self.path_finder = PathFinder(
-            logger=self.path_finder_logger,
-            start=self.arena.ally_zone.point,
-            goal=goal,
-            grid_manager=self.arena.grid_manager,
-            path_resolution=self.movement_resolution,
-        )
-        # Run pathfinder
-        self._find_path(
-            smooth_trajectory=params.smooth_trajectory, update_position=False
-        )
-
-        # 2. If the path is found, initialize the rolling basis handler
-        if not self.path_finder.oriented_path_found:
-            self.status = MovementStatus.NO_ACCESSIBLE
-            self.params = None
-            return self.status
-
-        self.rolling_basis_handler = RollingBasisHandler(
-            logger=self.rolling_basis_handler_logger,
-            initial_linear_speed=params.initial_linear_speed,
-            initial_angular_speed=params.initial_angular_speed,
-            profile=params.speed_profile,
-            trajectory=self.path_finder.oriented_path_found,
-        )
 
     def handle_go_to(self) -> RollingBasisCommand | None:
-        """
-        Return order to send to rolling basis handler
-        """
+        # 1. Check if a movement is in progress and if the parameters are set
+        # 1.1 Check if a movement is in progress
+        if self.status.is_finished():
+            self.logger.warning(
+                "Handle Go To was called but no movement is in progress!"
+            )
+            return
+
+        # 1.2 Check if the movement parameters are set
         if self.params is None:
             self.logger.warning(
                 "Handle Go To was called but no movement parameters found!"
             )
             return
 
-        # Check enemy distance
+        # 2. Check if the enemy is too close
         acs = self._acs()
-        if acs:
+        if acs is not None:
             return acs
 
-        # Re-Compute path if enemy is close
+        # 3. Check if the path has to be recomputed
+        # -> if the enemy distance is under the recompute distance threshold
+        # AND the path is not near the end
+        enemy_distance = self.__get_ally_enemy_distance()
         if (
-                self.__get_ally_enemy_distance()
-                < self.params.path_finder_recompute_distance
+                self.params.distance_to_goal_to_dont_recompute_path
+                < enemy_distance <
+                self.params.path_finder_recompute_distance
         ):
-            self._find_path(
-                smooth_trajectory=self.params.smooth_trajectory,
-                consider_dynamic_obstacles=True,
-                update_position=True,
+            # 3.1 Save old path for comparison
+            current_used_path = self.trajectory_computer.path_finder.oriented_path_found
+
+            # 3.2 Recompute the path (use dynamic obstacles: consider enemy position)
+            self.trajectory_computer.compute_path(
+                use_static_and_dynamic_grid=True,
+                current_position=self.arena_ptr.ally_zone.point  # use real current aly robot position
             )
 
-            # Check if the path has changed if so update the rolling basis handler
+            # 3.3 Check if the path has changed
             if self.__are_path_different(
-                    self.rolling_basis_handler.trajectory,
-                    self.path_finder.oriented_path_found,
+                    current_used_path,
+                    self.trajectory_computer.path_finder.oriented_path_found,
             ):
                 self.logger.info(
                     "The path has changed, updating the rolling basis handler"
                 )
+                # 3.3.1 When the path has changed, update the trajectory according to the new path
+                # The path is already computed and updated in the trajectory computer.
+                # We only have to recompute the trajectory with the new path.
+                # To compute the new trajectory, we need to get the current speed of the rolling basis handler
+
+                # 3.3.1.1 Get the current speed of the rolling basis handler
                 # To get the current speed of the rolling basis and update the new path with a smooth transition
-                # We use rolling basis handler to get it
+                # We use the current TrajectoryComputer to get it
                 # (it is not the best way to do this, it could be better to get the last sent command instead)
                 position_speed: RollingBasisCommand = (
-                    self.rolling_basis_handler.get_position_speed()
+                    self.trajectory_computer.get_position_speed()
                 )
 
-                self.rolling_basis_handler = RollingBasisHandler(
-                    logger=self.rolling_basis_handler_logger,
+                # 3.3.1.2 Update the trajectory with the new path
+                self.trajectory_computer.compute_trajectory(
                     initial_linear_speed=position_speed.linear_speed,
-                    # TODO: je pense pas que le handler prenne en compte la initiale angular speed correctement
                     initial_angular_speed=position_speed.angular_speed,
-                    profile=self.params.speed_profile,
-                    # We remove the first point because it is the current position
-                    trajectory=self.path_finder.oriented_path_found[1:],
                 )
 
-                self.logger.warning(
-                    f"first point: {self.rolling_basis_handler.trajectory[0]} | {self.path_finder.oriented_path_found[0]}"
-                )
+        # 4. Check if the goal is reached
+        if self._go_to_is_arrived():
+            return
 
-        # Update status
-        self.go_to_is_arrived()
-
-        # Get command to send to the rolling basis from the rolling basis handler
-        return self.rolling_basis_handler.get_position_speed()
+        # 5. Get the next RollingBasisCommand
+        return self.trajectory_computer.get_position_speed()

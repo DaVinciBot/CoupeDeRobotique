@@ -6,9 +6,11 @@ from config_loader import CONFIG
 from loggerplusplus import LoggerManager, LogLevels, LoggerConfig, Logger, logger_colors
 
 LoggerManager.enable_files_logs_monitoring_only_for_one_logger = (
-    CONFIG.LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER)
+    CONFIG.LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER
+)
 LoggerManager.enable_dynamic_config_update = CONFIG.LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE
 LoggerManager.enable_unique_logger_identifier = CONFIG.LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER
+
 LoggerManager.global_config = LoggerConfig.from_kwargs(
     colors=getattr(logger_colors, CONFIG.LOGGER_COLORS),
     path=CONFIG.LOGGER_PATH,
@@ -38,9 +40,9 @@ from geometry import OrientedPoint
 from brains import MainBrain
 from taskbrain import DictProxyAccessor
 from controllers import RollingBasis
-from movement_manager import MovementManager
+from movement import MovementManager, GoToParams
 from sensors import LidarDummy, Lidar
-from movement_manager import GoToParams
+
 
 # ====== Main ======
 if __name__ == "__main__":

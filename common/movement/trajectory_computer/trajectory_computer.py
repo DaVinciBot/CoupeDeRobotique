@@ -1,5 +1,5 @@
 from geometry import OrientedPoint
-from movement.trajectory_computer.trajectory_params import TrajectoryParams
+from movement.params.trajectory_params import TrajectoryParams
 from arena import BaseArena, GridManager, BaseArenaZone
 from path_finding import PathFinder
 
@@ -9,7 +9,7 @@ from loggerplusplus import Logger
 from movement.trajectory_computer.curve import Curve
 import math
 from bisect import bisect_left
-from rolling_basis_handler.rolling_basis_command import RollingBasisCommand
+from movement.params import RollingBasisCommand
 
 
 class TrajectoryComputer:
@@ -30,6 +30,7 @@ class TrajectoryComputer:
         self.trajectory_params = trajectory_params
 
         self.path_finder: PathFinder | None = None
+        self.computed_goal: OrientedPoint | Point | None = None
 
         # Trajectory points and related metadata
         self.cumulative_distances = [0]  # Cumulative distance between trajectory points
@@ -47,31 +48,11 @@ class TrajectoryComputer:
 
         self.__initial_angular_speed: float = 0.0
 
-    def _get_goal(self) -> OrientedPoint | Point:
-        # Get goal with OrientedPoint format
+    """
+        Path part of the trajectory computer
+    """
 
-        # If goal is a BaseArenaZone
-        if isinstance(self.trajectory_params.goal, BaseArenaZone):
-            # Use zone method to get best goal point from zone
-            goal = self.trajectory_params.goal.get_go_to_position(
-                ally_position=self.arena_ptr.ally_zone.point, team_color=self.arena_ptr.team_color
-            )
-
-            # If goal is None => zone is not accessible
-            if goal is None:
-                self.logger.error("Goal is not accessible.")
-                return
-
-            # If goal is not an OrientedPoint ça veut dire que acune go to position n'est définie
-            # On calcule alors automatiquemnt ce point
-            if not isinstance(goal, OrientedPoint):
-                goal = self._compute_go_to_destination_from_zone()
-
-            # TODO: prendre en compte que quand on a que un point en goal, on ne peut pas avoir de theta,
-            #  il faut le cacluler automatiqument (le même que celui d'avant dans la trjectoire par exmepl) voir pour mettre ay niveay du pathfinder
-
-            return goal
-        return self.trajectory_params.goal
+    # ====== Private/Protected methods ====== #
 
     def _compute_go_to_destination_from_zone(self) -> Point:
         # Get goal zone centroid
@@ -95,6 +76,34 @@ class TrajectoryComputer:
 
         return Point(new_x, new_y)
 
+    def _get_goal(self) -> OrientedPoint | Point:
+        # Get goal with OrientedPoint format
+
+        # If goal is a BaseArenaZone
+        if isinstance(self.trajectory_params.goal, BaseArenaZone):
+            # Use zone method to get best goal point from zone
+            self.computed_goal = self.trajectory_params.goal.get_go_to_position(
+                ally_position=self.arena_ptr.ally_zone.point, team_color=self.arena_ptr.team_color
+            )
+
+            # If goal is None => zone is not accessible
+            if self.computed_goal is None:
+                self.logger.error("Goal is not accessible.")
+                return
+
+            # If goal is not an OrientedPoint ça veut dire que acune go to position n'est définie
+            # On calcule alors automatiquemnt ce point
+            if not isinstance(self.computed_goal, OrientedPoint):
+                self.computed_goal = self._compute_go_to_destination_from_zone()
+
+            # TODO: prendre en compte que quand on a que un point en goal, on ne peut pas avoir de theta,
+            #  il faut le cacluler automatiqument (le même que celui d'avant dans la trjectoire par exmepl) voir pour mettre ay niveay du pathfinder
+
+            return self.computed_goal
+
+        self.computed_goal = self.trajectory_params.goal
+        return self.computed_goal
+
     def _init_path_finder(self):
         self.path_finder = PathFinder(
             logger=self.path_finder_logger,
@@ -104,16 +113,7 @@ class TrajectoryComputer:
             path_resolution=self.trajectory_params.resolution,
         )
 
-    def compute(
-            self,
-            use_static_and_dynamic_grid: bool,
-            current_position: OrientedPoint = None,
-            current_linear_speed: float = None,
-            current_angular_speed: float = None,
-    ):
-        self.compute_path(use_static_and_dynamic_grid, current_position)
-        self.compute_trajectory(current_linear_speed, current_angular_speed)
-
+    # ====== Public methods ====== #
     def compute_path(
             self,
             use_static_and_dynamic_grid: bool,
@@ -136,59 +136,11 @@ class TrajectoryComputer:
 
         return self.path_finder.oriented_path_found
 
-    def __compute_cumulative_distance(self):
-        self.start_time = time.time()
+    """
+        Trajectory speeds part of the trajectory computer
+    """
 
-        # Compute cumulative distances between trajectory points
-        total_distance = 0
-        for i in range(1, len(self.path_finder.oriented_path_found)):
-            x1, y1 = self.path_finder.oriented_path_found[i - 1].x, self.path_finder.oriented_path_found[i - 1].y
-            x2, y2 = self.path_finder.oriented_path_found[i].x, self.path_finder.oriented_path_found[i].y
-            total_distance += math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-            self.cumulative_distances.append(total_distance)
-
-    def __init_curves(
-            self,
-            initial_linear_speed: float = None,
-            initial_angular_speed: float = None,
-    ) -> None:
-
-        self.__initial_angular_speed = initial_angular_speed
-
-        # Total distance covered by the trajectory
-        total_linear_distance = self.cumulative_distances[-1]
-
-        # Extract parameters from the speed profile
-        Vd_lin = initial_linear_speed if initial_linear_speed is not None else 0.0
-        Vm_lin = self.trajectory_params.speed_profile.max_linear_speed
-        Va_lin = 0.0  # Assume the robot stops at the end of the trajectory
-        amax_lin = self.trajectory_params.speed_profile.max_linear_acceleration
-        dmax_lin = self.trajectory_params.speed_profile.max_linear_deceleration
-
-        # Create a curve for linear motion
-        self.linear_curve = Curve(
-            Vd_lin, Vm_lin, Va_lin, total_linear_distance, amax_lin, dmax_lin
-        )
-
-        # Determine the total duration of the planned motion
-        self.total_duration = self.linear_curve.PlannedTotalTime()
-
-    def compute_trajectory(
-            self,
-            initial_linear_speed: float = None,
-            initial_angular_speed: float = None,
-    ):
-        if self.path_finder is None:
-            self.logger.error("PathFinder is not initialized.")
-            return
-
-        self.__compute_cumulative_distance()
-        self.__init_curves(initial_linear_speed, initial_angular_speed)
-
-        # Set initial conditions
-        self.start_time = time.time()
-        self.__last_theta = self.path_finder.oriented_path_found[0].theta
-
+    # ====== Private/Protected methods ====== #
     def __compute_position(self, t: float) -> OrientedPoint:
         """
         Calculates the robot's position at time t.
@@ -274,6 +226,74 @@ class TrajectoryComputer:
         self.__last_time_theta = t
 
         return v_linear, v_angular
+
+    def __compute_cumulative_distance(self):
+        self.start_time = time.time()
+
+        # Compute cumulative distances between trajectory points
+        total_distance = 0
+        for i in range(1, len(self.path_finder.oriented_path_found)):
+            x1, y1 = self.path_finder.oriented_path_found[i - 1].x, self.path_finder.oriented_path_found[i - 1].y
+            x2, y2 = self.path_finder.oriented_path_found[i].x, self.path_finder.oriented_path_found[i].y
+            total_distance += math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+            self.cumulative_distances.append(total_distance)
+
+    def __init_curves(
+            self,
+            initial_linear_speed: float = None,
+            initial_angular_speed: float = None,
+    ) -> None:
+
+        self.__initial_angular_speed = initial_angular_speed
+
+        # Total distance covered by the trajectory
+        total_linear_distance = self.cumulative_distances[-1]
+
+        # Extract parameters from the speed profile
+        Vd_lin = initial_linear_speed if initial_linear_speed is not None else 0.0
+        Vm_lin = self.trajectory_params.speed_profile.max_linear_speed
+        Va_lin = 0.0  # Assume the robot stops at the end of the trajectory
+        amax_lin = self.trajectory_params.speed_profile.max_linear_acceleration
+        dmax_lin = self.trajectory_params.speed_profile.max_linear_deceleration
+
+        # Create a curve for linear motion
+        self.linear_curve = Curve(
+            Vd_lin, Vm_lin, Va_lin, total_linear_distance, amax_lin, dmax_lin
+        )
+
+        # Determine the total duration of the planned motion
+        self.total_duration = self.linear_curve.PlannedTotalTime()
+
+    # ====== Public methods ====== #
+    def compute_trajectory(
+            self,
+            initial_linear_speed: float = None,
+            initial_angular_speed: float = None,
+    ):
+        if self.path_finder is None:
+            self.logger.error("PathFinder is not initialized.")
+            return
+
+        self.__compute_cumulative_distance()
+        self.__init_curves(initial_linear_speed, initial_angular_speed)
+
+        # Set initial conditions
+        self.start_time = time.time()
+        self.__last_theta = self.path_finder.oriented_path_found[0].theta
+
+    """
+       Global Usage of the TrajectoryComputer
+    """
+
+    def compute(
+            self,
+            use_static_and_dynamic_grid: bool,
+            current_position: OrientedPoint = None,
+            current_linear_speed: float = None,
+            current_angular_speed: float = None,
+    ):
+        self.compute_path(use_static_and_dynamic_grid, current_position)
+        self.compute_trajectory(current_linear_speed, current_angular_speed)
 
     def get_position_speed(self, t: float = None) -> RollingBasisCommand:
         """

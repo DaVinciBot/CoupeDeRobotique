@@ -1,3 +1,1 @@
-from movement.trajectory_computer.trajectory_params import TrajectoryParams
 from movement.trajectory_computer.trajectory_computer import TrajectoryComputer
-from movement.trajectory_computer.speed_profile import SpeedProfile
