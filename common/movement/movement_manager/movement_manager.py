@@ -1,3 +1,8 @@
+# ====== Code Summary ======
+# The MovementManager class manages robot movement within an arena.
+# It computes and executes movement paths while considering obstacles and enemy positions.
+# The class utilizes a trajectory computer and logs movement actions.
+
 # ====== Imports ======
 # Internal project imports
 from arena import BaseArena, BaseArenaZone
@@ -6,12 +11,16 @@ from geometry import OrientedPoint
 
 from movement.params import GoToParams, TrajectoryParams, SpeedProfile, RollingBasisCommand
 from movement.movement_manager.movement_status import MovementStatus
-
 from movement.trajectory_computer import TrajectoryComputer
 
 
 # ====== Class Part ======
 class MovementManager:
+    """
+    Manages robot movement within an arena, including trajectory computation,
+    movement execution, and obstacle handling.
+    """
+
     def __init__(
             self,
             # Loggers
@@ -21,6 +30,16 @@ class MovementManager:
             # Context object
             arena_ptr: BaseArena,
     ) -> None:
+        """
+        Initializes the MovementManager with logging and arena context.
+
+        Args:
+            logger (Logger): Logger for general movement logs.
+            path_finder_logger (Logger): Logger for path finding.
+            trajectory_computer_logger (Logger): Logger for trajectory computation.
+            arena_ptr (BaseArena): Reference to the arena instance.
+        """
+
         # Loggers
         self.logger: Logger = logger
         self.path_finder_logger: Logger = path_finder_logger
@@ -38,12 +57,28 @@ class MovementManager:
 
     # ====== Private Methods ======
     def __get_ally_enemy_distance(self) -> float:
+        """
+        Calculates the distance between the ally and enemy zones.
+
+        Returns:
+            float: Distance between the ally and enemy zones.
+        """
         return self.arena_ptr.ally_zone.point.distance(self.arena_ptr.enemy_zone.point)
 
     @staticmethod
     def __are_path_different(
             path_a: list[OrientedPoint], path_b: list[OrientedPoint]
     ) -> bool:
+        """
+        Compares two paths to determine if they are different.
+
+        Args:
+            path_a (list[OrientedPoint]): First path to compare.
+            path_b (list[OrientedPoint]): Second path to compare.
+
+        Returns:
+            bool: True if paths differ, otherwise False.
+        """
         min_length = min(len(path_a), len(path_b))
 
         for i in range(1, min_length + 1):
@@ -54,10 +89,11 @@ class MovementManager:
     # ====== Protected Methods ======
     def _acs(self) -> RollingBasisCommand | None:
         """
-        Anti Collision System
-        Return None if no ACS is needed
-        Return RollingBasisCommand if ACS is needed (stop the robot)
-        """
+       Anti-Collision System (ACS) that stops movement if an enemy is too close.
+
+       Returns:
+           RollingBasisCommand | None: Stop command if enemy is too close, else None.
+       """
         if self.params is None:
             self.logger.warning(
                 "ACS was called but no movement parameters found!"
@@ -79,6 +115,12 @@ class MovementManager:
         return
 
     def _go_to_is_arrived(self) -> bool:
+        """
+        Checks if the movement goal has been reached.
+
+        Returns:
+            bool: True if the goal is reached, else False.
+        """
         if (
                 self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.computed_goal)
                 < self.params.goal_tolerance
@@ -97,6 +139,18 @@ class MovementManager:
             # Parameters of the go to
             params: GoToParams,
     ):
+        """
+        Computes a trajectory and initiates movement towards the goal.
+
+        Args:
+            current_linear_speed (float): Current linear speed.
+            current_angular_speed (float): Current angular speed.
+            params (GoToParams): Movement parameters.
+
+        Returns:
+            MovementStatus: Current movement status.
+        """
+
         # Warn if a movement is already in progress
         if not self.status.is_finished():
             self.logger.warning(
@@ -128,6 +182,13 @@ class MovementManager:
             return self.status
 
     def handle_go_to(self) -> RollingBasisCommand | None:
+        """
+        Handles movement execution and dynamically adjusts the trajectory.
+
+        Returns:
+            RollingBasisCommand | None: Next movement command or None.
+        """
+
         # 1. Check if a movement is in progress and if the parameters are set
         # 1.1 Check if a movement is in progress
         if self.status.is_finished():
