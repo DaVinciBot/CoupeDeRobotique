@@ -1,18 +1,33 @@
-from geometry import OrientedPoint
-from movement.params.trajectory_params import TrajectoryParams
-from arena import BaseArena, GridManager, BaseArenaZone
-from path_finding import PathFinder
+# ====== Code Summary ======
+# The TrajectoryComputer class is responsible for computing a path and trajectory for a robot to follow within an arena.
+# It determines the goal position, initializes a pathfinder, and calculates speed curves for smooth navigation.
+# The class also provides methods to obtain position and velocity at any given time based on the computed trajectory.
 
-from geometry import Point, Polygon
+# ====== Standard Library Imports ======
 import time
-from loggerplusplus import Logger
-from movement.trajectory_computer.curve import Curve
 import math
 from bisect import bisect_left
+
+# ====== Third-Party Library Imports ======
+from loggerplusplus import Logger
+
+# ====== Internal Project Imports ======
+from arena import BaseArena, BaseArenaZone
+from geometry import OrientedPoint, Point
+from path_finding import PathFinder
+
+from movement.trajectory_computer.curve import Curve
+from movement.params.trajectory_params import TrajectoryParams
 from movement.params import RollingBasisCommand
 
 
+# ====== Class Part ====== #
 class TrajectoryComputer:
+    """
+    Computes the trajectory of a robot based on a given goal and movement parameters.
+    Handles pathfinding, trajectory generation, and velocity computation.
+    """
+
     def __init__(
             self,
             # Loggers:
@@ -23,6 +38,15 @@ class TrajectoryComputer:
             # Trajectory params
             trajectory_params: TrajectoryParams,
     ):
+        """
+        Initializes the trajectory computer.
+
+        Args:
+            logger (Logger): Logger instance for general logs.
+            path_finder_logger (Logger): Logger instance for pathfinder logs.
+            arena_ptr (BaseArena): Pointer to the arena instance.
+            trajectory_params (TrajectoryParams): Trajectory parameters.
+        """
         self.logger: Logger = logger
         self.path_finder_logger: Logger = path_finder_logger
 
@@ -55,10 +79,15 @@ class TrajectoryComputer:
     # ====== Private/Protected methods ====== #
 
     def _compute_go_to_destination_from_zone(self) -> Point:
+        """
+        Computes the best reachable point within a goal zone, considering arena borders.
+
+        Returns:
+            Point: The computed goal position.
+        """
         # Get goal zone centroid
         centroid = self.trajectory_params.goal.centroid
-        new_x = centroid.x
-        new_y = centroid.y
+        new_x, new_y = centroid.x, centroid.y
 
         # Check if the goal is too close to the border
         if centroid.x < self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer:
@@ -77,8 +106,12 @@ class TrajectoryComputer:
         return Point(new_x, new_y)
 
     def _get_goal(self) -> OrientedPoint | Point:
-        # Get goal with OrientedPoint format
+        """
+        Determines the goal position based on the trajectory parameters.
 
+        Returns:
+            OrientedPoint | Point: The computed goal position.
+        """
         # If goal is a BaseArenaZone
         if isinstance(self.trajectory_params.goal, BaseArenaZone):
             # Use zone method to get best goal point from zone
@@ -104,7 +137,8 @@ class TrajectoryComputer:
         self.computed_goal = self.trajectory_params.goal
         return self.computed_goal
 
-    def _init_path_finder(self):
+    def _init_path_finder(self) -> None:
+        """Initializes the pathfinder with the current goal and arena details."""
         self.path_finder = PathFinder(
             logger=self.path_finder_logger,
             start=self.arena_ptr.ally_zone.point,
@@ -119,7 +153,17 @@ class TrajectoryComputer:
             use_static_and_dynamic_grid: bool,
             current_position: OrientedPoint = None,
     ) -> list[OrientedPoint]:
-        # Initie pathfinder if not aready done
+        """
+        Computes a path from the current position to the goal.
+
+        Args:
+            use_static_and_dynamic_grid (bool): Whether to consider static and dynamic obstacles.
+            current_position (OrientedPoint, optional): Current position of the robot.
+
+        Returns:
+            list[OrientedPoint]: The computed path.
+        """
+        # Init pathfinder if not already done
         if self.path_finder is None:
             self._init_path_finder()
         else:
@@ -227,7 +271,8 @@ class TrajectoryComputer:
 
         return v_linear, v_angular
 
-    def __compute_cumulative_distance(self):
+    def __compute_cumulative_distance(self) -> None:
+        """Computes cumulative distances along the planned trajectory."""
         self.start_time = time.time()
 
         # Compute cumulative distances between trajectory points
@@ -243,7 +288,7 @@ class TrajectoryComputer:
             initial_linear_speed: float = None,
             initial_angular_speed: float = None,
     ) -> None:
-
+        """Initializes speed profiles for the trajectory."""
         self.__initial_angular_speed = initial_angular_speed
 
         # Total distance covered by the trajectory
@@ -270,6 +315,13 @@ class TrajectoryComputer:
             initial_linear_speed: float = None,
             initial_angular_speed: float = None,
     ):
+        """
+        Computes the trajectory based on the computed path and speed profiles.
+
+        Args:
+            initial_linear_speed (float, optional): Initial linear speed of the robot.
+            initial_angular_speed (float, optional): Initial angular speed of the robot.
+        """
         if self.path_finder is None:
             self.logger.error("PathFinder is not initialized.")
             return
@@ -292,6 +344,15 @@ class TrajectoryComputer:
             current_linear_speed: float = None,
             current_angular_speed: float = None,
     ):
+        """
+        Computes both the path and trajectory.
+
+        Args:
+            use_static_and_dynamic_grid (bool): Whether to consider static and dynamic obstacles.
+            current_position (OrientedPoint, optional): Current position of the robot.
+            current_linear_speed (float, optional): Current linear speed.
+            current_angular_speed (float, optional): Current angular speed.
+        """
         self.compute_path(use_static_and_dynamic_grid, current_position)
         self.compute_trajectory(current_linear_speed, current_angular_speed)
 
