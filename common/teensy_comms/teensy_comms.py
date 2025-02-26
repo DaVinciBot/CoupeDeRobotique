@@ -2,6 +2,7 @@ from typing import Any, Callable
 import serial, threading, time, crc8, serial.tools.list_ports
 from loggerplusplus import Logger
 from teensy_comms.dummy_serial import DummySerial
+from GPIO.teensy_gpio_manager import TeensyGpioManager
 
 
 class TeensyException(Exception):
@@ -56,6 +57,7 @@ class Teensy:
         self.scl = 19
         self.sda = 18
         self.dummy = dummy
+        self.gpio_manager = TeensyGpioManager(41, logger)
 
         for port in serial.tools.list_ports.comports():
             if (
@@ -167,9 +169,7 @@ class Teensy:
                     self._crc8.reset()
                     self._crc8.update(msg)
                     if self._crc8.digest() != crc:
-                        self.logger.warning(
-                            f"Invalid CRC8, sending NACK ... [{crc}]"
-                        )
+                        self.logger.warning(f"Invalid CRC8, sending NACK ... [{crc}]")
                         self.send_bytes(b"\x7F")  # send NACK
                         self._crc8.reset()
                         continue
@@ -199,9 +199,7 @@ class Teensy:
                         self.messagetype[msg[0]](msg[1:-1])
 
                 except Exception as e:
-                    self.logger.error(
-                        "Received message handling crashed :\n" + str(e)
-                    )
+                    self.logger.error("Received message handling crashed :\n" + str(e))
                     time.sleep(0.5)
 
             except Exception as e:

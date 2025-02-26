@@ -11,9 +11,9 @@ void handle_callback(Com *com)
     {
         byte *msg = com->read_buffer();
 
-        if (functions[msg[0]] != 0) // verifies if the id of the function received by com is defined
+        if (callback_functions[msg[0]] != 0) // verifies if the id of the function received by com is defined
         {
-            functions[msg[0]](msg, size); // call the function by it's id and with the parameters received by com
+            callback_functions[msg[0]](msg, size); // call the function by it's id and with the parameters received by com
         }
         else if (msg[0] == NACK)
         {
@@ -55,7 +55,7 @@ void stepper_step(Bonezegei_A4988 *stepper, int steps, bool forward, byte pin_dr
 void lcd_print(LiquidCrystal_I2C *lcd, String text)
 {
     lcd->clear();
-    if(text.length() > 16)
+    if (text.length() > 16)
     {
         String text1 = text.substring(0, 16); // (16 is the number of columns of the lcd screen
         lcd->print(text1);
@@ -67,6 +67,4 @@ void lcd_print(LiquidCrystal_I2C *lcd, String text)
     {
         lcd->print(text);
     }
-        
-    
 }

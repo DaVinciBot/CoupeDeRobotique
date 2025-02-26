@@ -47,6 +47,7 @@ from arena.base_arena.arena_zones import (
     BlueReservedZone,
     EnemyZone,
     AllyZone,
+    BaseArenaZone,
 )
 
 
@@ -66,19 +67,19 @@ class BaseArena(ABC):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            width: int,
-            height: int,
-            forbidden_cover_threshold: float,
-            border_buffer: float,
-            obstacle_buffer: float,
-            zones: list[BaseArenaZone],
-            chunk_size: int = 10,
-            grid_manager_logger: Logger = Logger(
-                identifier="GridManager",
-                follow_logger_manager_rules=True,
-            )
+        self,
+        logger: Logger,
+        width: int,
+        height: int,
+        forbidden_cover_threshold: float,
+        border_buffer: float,
+        obstacle_buffer: float,
+        zones: list[BaseArenaZone],
+        chunk_size: int = 10,
+        grid_manager_logger: Logger = Logger(
+            identifier="GridManager",
+            follow_logger_manager_rules=True,
+        ),
     ) -> None:
         """
         Initializes the BaseArena instance with dimensions, zones, and configuration parameters.
@@ -167,8 +168,7 @@ class BaseArena(ABC):
         )
 
         self.enemy_zone: EnemyZone = EnemyZone(
-            self.enemy_logger,
-            OrientedPoint(280, 180, 0)
+            self.enemy_logger, OrientedPoint(280, 180, 0)
         )
 
         self.prepare_zones()
@@ -213,11 +213,9 @@ class BaseArena(ABC):
             [
                 (
                     self.ally_zone.point.x
-                    + np.cos(self.ally_zone.point.theta + polars[i, 0])
-                    * polars[i, 1],
+                    + np.cos(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
                     self.ally_zone.point.y
-                    + np.sin(self.ally_zone.point.theta + polars[i, 0])
-                    * polars[i, 1]
+                    + np.sin(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
                 )
                 for i in range(len(polars))
             ]
@@ -248,11 +246,11 @@ class BaseArena(ABC):
 
     @time_tracker(lambda self: self.logger)
     def update(
-            self,
-            ally_position: OrientedPoint,
-            lidar_scan_polars: np.ndarray,
-            enemy_position: Point = None,  # TODO: juste for test
-            optimized_update: bool = True,
+        self,
+        ally_position: OrientedPoint,
+        lidar_scan_polars: np.ndarray,
+        enemy_position: Point = None,  # TODO: juste for test
+        optimized_update: bool = True,
     ) -> None:
         """
         Updates the state of the arena, zones, and grid based on ally and enemy positions.
@@ -264,9 +262,9 @@ class BaseArena(ABC):
             optimized_update (bool, optional): If True, only updates intersecting zones.
         """
         if not enemy_position:
-            enemy_position = self.compute_enemy_position(lidar_scan_polars,
-                                                         ally_position,
-                                                         numb_enemy=lidar_scan_polars.size > 0)
+            enemy_position = self.compute_enemy_position(
+                lidar_scan_polars, ally_position, numb_enemy=lidar_scan_polars.size > 0
+            )
         # Update ally and enemy zones
         self.ally_zone.update(self.team_color, ally_position, enemy_position)
         self.enemy_zone.update(self.team_color, ally_position, enemy_position)
@@ -275,7 +273,7 @@ class BaseArena(ABC):
         all_points = [ally_position, enemy_position]
         for zone in self.zones:
             if not optimized_update or any(
-                    zone.polygon.contains(pt) for pt in all_points
+                zone.polygon.contains(pt) for pt in all_points
             ):
                 zone.update(
                     self.team_color,
@@ -377,22 +375,22 @@ class BaseArena(ABC):
             return None
         else:
             return (
-                    (
-                        math.atan2(
-                            self.enemy_position.y - self.rolling_basis.odometrie.y,
-                            self.enemy_position.x - self.rolling_basis.odometrie.x,
-                        )
+                (
+                    math.atan2(
+                        self.enemy_position.y - self.rolling_basis.odometrie.y,
+                        self.enemy_position.x - self.rolling_basis.odometrie.x,
                     )
-                    - self.rolling_basis.odometrie.theta
+                )
+                - self.rolling_basis.odometrie.theta
             ) % math.tau
 
     def compute_enemy_position(
-            self,
-            lidar_scan_polars: np.ndarray,
-            ally_position: OrientedPoint,
-            start_time: int = -1,
-            numb_enemy: bool = False
-            ) -> Point | MultiPoint | None:
+        self,
+        lidar_scan_polars: np.ndarray,
+        ally_position: OrientedPoint,
+        start_time: int = -1,
+        numb_enemy: bool = False,
+    ) -> Point | MultiPoint | None:
         """
         Computes the position of the enemy based on lidar scans and updates the arena.
 
@@ -417,7 +415,7 @@ class BaseArena(ABC):
         # TODO temp code because I can't test with lidar, but it should work perfectly :
 
         if not numb_enemy:
-            obstacles: MultiPoint  = self.remove_outside(
+            obstacles: MultiPoint = self.remove_outside(
                 self._pol_to_abs_cart(lidar_scan_polars)
             )
 
@@ -451,11 +449,10 @@ class BaseArena(ABC):
 
         return self.enemy_position
 
-
     def compute_go_to_destination(
-            self,
-            start_point: Point | OrientedPoint,
-            destination: Polygon | Point | OrientedPoint,
+        self,
+        start_point: Point | OrientedPoint,
+        destination: Polygon | Point | OrientedPoint,
     ) -> OrientedPoint | None:
         """Compute the destination point to go to inside the specified zone. Only works is the arena is rectangular.
 
@@ -477,7 +474,10 @@ class BaseArena(ABC):
             )
             return None
 
-        if isinstance(destination, Polygon):
+        if isinstance(destination, BaseArenaZone):
+            destination = destination.polygon
+
+        elif isinstance(destination, Polygon):
             if not destination.centroid:
                 self.logger.log(
                     f"The destination polygon {destination} has no centroid, couldn't establish a destination point.",
@@ -491,13 +491,13 @@ class BaseArena(ABC):
             if destination_point.x < self.border_buffer + self.obstacle_buffer:
                 new_x = self.border_buffer + self.obstacle_buffer
             if (self.width - destination_point.x) < (
-                    self.border_buffer + self.obstacle_buffer
+                self.border_buffer + self.obstacle_buffer
             ):
                 new_x = self.width - (self.border_buffer + self.obstacle_buffer)
             if destination_point.y < self.border_buffer + self.obstacle_buffer:
                 new_y = self.border_buffer + self.obstacle_buffer
             if (self.height - destination_point.y) < (
-                    self.border_buffer + self.obstacle_buffer
+                self.border_buffer + self.obstacle_buffer
             ):
                 new_y = self.height - (self.border_buffer + self.obstacle_buffer)
 
@@ -529,13 +529,13 @@ class BaseArena(ABC):
     # ====== Private Methods ======
     @staticmethod
     def __plot_polygon(
-            ax,
-            polygon: Polygon,
-            color: str,
-            label: str = None,
-            alpha: float = 1.0,
-            hatch: str = None,
-            hatch_color: str = None,
+        ax,
+        polygon: Polygon,
+        color: str,
+        label: str = None,
+        alpha: float = 1.0,
+        hatch: str = None,
+        hatch_color: str = None,
     ) -> None:
         """
         Helper method to plot a polygon or multipolygon on a matplotlib axis.
@@ -579,11 +579,11 @@ class BaseArena(ABC):
                 ax.plot(x, y, color=color, linestyle="--", alpha=alpha)
 
     def __plot_zone(
-            self,
-            ax,
-            zone: BaseArenaZone,
-            show_buffer: bool,
-            transparency_factor: float = 1.0,
+        self,
+        ax,
+        zone: BaseArenaZone,
+        show_buffer: bool,
+        transparency_factor: float = 1.0,
     ) -> None:
         """Plots zones and their buffers on the arena."""
         if show_buffer:
@@ -613,12 +613,14 @@ class BaseArena(ABC):
 
             # Plot zone uid
             ax.text(
-                zone.polygon.centroid.x, zone.polygon.centroid.y,
+                zone.polygon.centroid.x,
+                zone.polygon.centroid.y,
                 zone.uid,
-                ha="center", va="center",
+                ha="center",
+                va="center",
                 fontsize=12,
-                fontweight='bold',
-                color='purple'
+                fontweight="bold",
+                color="purple",
             )
 
             self.__plot_polygon(
@@ -632,16 +634,16 @@ class BaseArena(ABC):
 
     # ====== Public Methods ======
     def visualize(
-            self,
-            show_buffer: bool = True,
-            show: bool = True,
-            plot: tuple[plt.axes, plt.figure] = None,
-            theorical_ally_position: AllyZone = None,
-            trajectory: list[OrientedPoint] = [],
-            transparency_factor: float = 1.0,
-            display_points: list[Point] = None,
-            display_default_destination_zone=False,
-            starting_point_to_display_default_destination_zone: Point = None,
+        self,
+        show_buffer: bool = True,
+        show: bool = True,
+        plot: tuple[plt.axes, plt.figure] = None,
+        theorical_ally_position: AllyZone = None,
+        trajectory: list[OrientedPoint] = [],
+        transparency_factor: float = 1.0,
+        display_points: list[Point] = None,
+        display_default_destination_zone=False,
+        starting_point_to_display_default_destination_zone: Point = None,
     ) -> tuple[plt.axes, plt.figure]:
         """
         Visualize the arena, including its zones, buffers, and accessibility grid.
@@ -686,7 +688,9 @@ class BaseArena(ABC):
                     #     )
 
             # Plot the go-to position nearest point
-            nearest_point = zone.get_go_to_position(ally_position=self.ally_zone.point, team_color=self.team_color)
+            nearest_point = zone.get_go_to_position(
+                ally_position=self.ally_zone.point, team_color=self.team_color
+            )
             if nearest_point:
                 ax.plot(nearest_point.x, nearest_point.y, "go")
                 if isinstance(nearest_point, OrientedPoint):
@@ -696,16 +700,23 @@ class BaseArena(ABC):
 
                     #
                     ax.arrow(
-                        nearest_point.x, nearest_point.y,
-                        dx, dy,
-                        head_width=4, head_length=3, fc='g', ec='g'
+                        nearest_point.x,
+                        nearest_point.y,
+                        dx,
+                        dy,
+                        head_width=4,
+                        head_length=3,
+                        fc="g",
+                        ec="g",
                     )
 
         # Enemy and Ally zones
         self.__plot_zone(ax, self.ally_zone, show_buffer, transparency_factor)
         self.__plot_zone(ax, self.enemy_zone, show_buffer, transparency_factor)
         if theorical_ally_position:
-            self.__plot_zone(ax, theorical_ally_position, show_buffer, transparency_factor)
+            self.__plot_zone(
+                ax, theorical_ally_position, show_buffer, transparency_factor
+            )
 
         # Plot trajectory
         for i in range(len(trajectory) - 1):

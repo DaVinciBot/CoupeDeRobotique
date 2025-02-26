@@ -6,7 +6,7 @@ import time
 
 # Import from common
 from taskbrain import Brain
-from ws_comms import WSmsg, WSclientRouteManager, WServerRouteManager
+from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
 from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
 
 from loggerplusplus import Logger
@@ -16,29 +16,41 @@ import matplotlib.pyplot as plt
 import time
 import numpy as np
 import random
+import gc
 
 # Import from local path
 from controllers.rolling_basis import RollingBasisDummy, RollingBasis
 
 from path_finding import PathFinder
 from arena import ShowArena
-from movement import MovementManager, GoToParams, TrajectoryParams, SpeedProfile, RollingBasisCommand
+from movement import (
+    MovementManager,
+    GoToParams,
+    TrajectoryParams,
+    SpeedProfile,
+    RollingBasisCommand,
+)
 
 
 from sensors import Lidar, LidarDummy
 from arena import AllyZone
+from tasks import Task, TaskPlanner
+import json
 
 
 class MainBrain(Brain):
     def __init__(
-            self,
-            logger: Logger,
-            # Sensors
-            lidar: Lidar | LidarDummy,
-            # Environment
-            arena: ShowArena,
-            # WS routes
-            ws_cmd: WServerRouteManager,
+        self,
+        logger: Logger,
+        # Sensors
+        lidar: Lidar | LidarDummy,
+        # Environment
+        arena: ShowArena,
+        # WS routes
+        ws_cmd: WServerRouteManager,
+        game_duration_sec: int = 90,
+        solve_planner_limit_sec: int = 1,
+        tasks: list[Task] = [],
     ) -> None:
         if isinstance(lidar, LidarDummy):
             logger.warning("LidarDummy is used")
@@ -50,6 +62,16 @@ class MainBrain(Brain):
         # WS routes
         self.ws_cmd: WServerRouteManager = ws_cmd
 
+        self.game_duration_sec = game_duration_sec
+        self.solve_planner_limit_sec = solve_planner_limit_sec
+        self.game_tasks = tasks
+        self.game_tasks_planification = None
+
+        self.game_duration_sec = game_duration_sec
+        self.solve_planner_limit_sec = solve_planner_limit_sec
+        self.game_tasks = tasks
+        self.game_tasks_planification = None
+
         # Shared processes attributes
         self.rolling_basis_odometrie = OrientedPoint(0, 0, 0)
 
@@ -57,7 +79,7 @@ class MainBrain(Brain):
         self.theorical_ally_position: AllyZone = AllyZone(
             logger=Logger(identifier="th_ally"),
             point=self.rolling_basis_odometrie,
-            robot_size=5
+            robot_size=5,
         )
         super().__init__(logger, self)
 
@@ -75,6 +97,15 @@ class MainBrain(Brain):
             step_size=2.0,
         )
 
+        # Simulation loggers for task planning
+        self.movemement_manager_logger_simulation = Logger(
+            identifier="Simulation Movement Manager"
+        )
+        self.rolling_basis_handler_logger_simulation = Logger(
+            identifier="Simulation Rolling Basis Handler"
+        )
+        self.path_finder_logger_simulation = Logger(identifier="Simulation Path Finder")
+
     """
     ### Secondary Processes ###
     """
@@ -82,15 +113,24 @@ class MainBrain(Brain):
     """ ### Routines ### """
 
     @Brain.task(
-        process=True, run_on_start=True, refresh_rate=0.1, define_loop_later=True,
-        start_loop_marker="# --- MetaProg is insane (loop) --- #"
+        process=True,
+        run_on_start=True,
+        refresh_rate=0.1,
+        define_loop_later=True,
+        start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def handle_movement_manager(self) -> None:
         # --- Initialization --- #
         movement_manager = MovementManager(
-            logger=Logger(identifier="MovementManager", follow_logger_manager_rules=True),
-            path_finder_logger=Logger(identifier="PathFinder", follow_logger_manager_rules=True),
-            trajectory_computer_logger=Logger(identifier="TrajectoryComputer", follow_logger_manager_rules=True),
+            logger=Logger(
+                identifier="MovementManager", follow_logger_manager_rules=True
+            ),
+            path_finder_logger=Logger(
+                identifier="PathFinder", follow_logger_manager_rules=True
+            ),
+            trajectory_computer_logger=Logger(
+                identifier="TrajectoryComputer", follow_logger_manager_rules=True
+            ),
             arena_ptr=self.arena,
         )
         rolling_basis = RollingBasisDummy(
@@ -110,7 +150,9 @@ class MainBrain(Brain):
             rolling_basis.logger.info(f"New odo: {self.rolling_basis_odometrie}")
 
             rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-            rolling_basis.logger.info(f"RollingBasis odometrie updated: {self.rolling_basis_odometrie}")
+            rolling_basis.logger.info(
+                f"RollingBasis odometrie updated: {self.rolling_basis_odometrie}"
+            )
 
         # Force the sync of arena inside the movement_manager
         movement_manager.arena_ptr = self.arena
@@ -120,7 +162,7 @@ class MainBrain(Brain):
             movement_manager.compute_go_to(
                 current_linear_speed=rolling_basis.linear_speed,
                 current_angular_speed=rolling_basis.angular_speed,
-                params=self.go_to_params
+                params=self.go_to_params,
             )
             movement_manager.logger.info("New GoToParams received")
 
@@ -128,17 +170,12 @@ class MainBrain(Brain):
         cmd: RollingBasisCommand = movement_manager.handle_go_to()
         if cmd is not None:
             self.theorical_ally_position = AllyZone(
-                logger=Logger(identifier="th_ally"),
-                point=cmd.position,
-                robot_size=5
+                logger=Logger(identifier="th_ally"), point=cmd.position, robot_size=5
             )
 
             rolling_basis.set_speed_and_position(*cmd.get_command())
             print("ROLLING BASIS Sub", self.rolling_basis_odometrie)
             self.rolling_basis_odometrie = rolling_basis.odometrie
-            #self.add_attributes_to_synchronize("theorical_ally_position", "rolling_basis")
-
-        movement_manager.logger.critical(movement_manager.status.name)
 
     """
     ### Main Process ###
@@ -184,9 +221,7 @@ class MainBrain(Brain):
         cmd = await self.ws_cmd.receiver.get(wait_msg=True)
 
         if cmd != WSmsg():
-            self.logger.info(
-                f"Zombie instruction {cmd.msg} received: {cmd.data}"
-            )
+            self.logger.info(f"Zombie instruction {cmd.msg} received: {cmd.data}")
 
             if cmd.msg == "eval":
                 instructions = []
@@ -227,7 +262,9 @@ class MainBrain(Brain):
         )
         go_to_params = GoToParams(
             trajectory_params=TrajectoryParams(
-                speed_profile=SpeedProfile.from_dict(CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE),
+                speed_profile=SpeedProfile.from_dict(
+                    CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE
+                ),
                 goal=OrientedPoint(250, 140),
                 resolution=1,
                 smooth_trajectory=True,
@@ -237,19 +274,165 @@ class MainBrain(Brain):
             timeout=-1.0,
             is_mandatory=False,
             goal_tolerance=0.1,
-            distance_to_goal_to_dont_recompute_path=10
+            distance_to_goal_to_dont_recompute_path=10,
         )
 
         self.go_to_params = go_to_params
         self.logger.info(f"Init done {self.rolling_basis_odometrie}")
 
+    def get_game_tasks_planification(
+        self, solve_planner_limit_sec: int = -1, save_planification: bool = False
+    ):
+        scores = [task.score for task in self.game_tasks]
+        tasks_duration_sec = [task.execution_time for task in self.game_tasks]
+
+        travels_duration_matrix_sec = [
+            [0 for _ in range(len(scores) + 2)] for _ in range(len(scores) + 2)
+        ]
+
+        for i in range(len(scores) + 2):
+            for j in range(i, len(scores) + 2):
+                travels_duration_matrix_sec[i][j] = MovementManager(
+                    movement_manager_logger_simulation=self.movemement_manager_logger_simulation,
+                    rolling_basis_handler_logger_simulation=self.rolling_basis_handler_logger_simulation,
+                    path_finder_logger_simulation=self.path_finder_logger_simulation,
+                    movement_resolution=1,
+                    arena=self.arena,
+                ).go_to()  # TODO: use Trajectory params to get the duration
+                travels_duration_matrix_sec[j][i] = travels_duration_matrix_sec[i][j]
+
+        # TODO: get the travel time matrix with time computed according to arena and robot speed (avg speed or profile)
+        travels_duration_matrix_sec = [
+            [0 if i == j else random.randint(1, 10) for j in range(len(scores) + 2)]
+            for i in range(len(scores) + 2)
+        ]
+        self.task_planner = TaskPlanner(
+            tasks_scores=scores,
+            tasks_duration_sec=tasks_duration_sec,
+            travels_duration_matrix_sec=travels_duration_matrix_sec,
+            max_time_sec=self.game_duration_sec,
+            solve_limit_sec=(
+                self.solve_planner_limit_sec
+                if solve_planner_limit_sec < 0
+                else solve_planner_limit_sec
+            ),
+        )
+        self.game_tasks_planification = self.task_planner.solve(
+            save_mode=save_planification
+        )
+
+    def load_preplanned_tasks(self, file_path: str = "solution.json"):
+        with open(file_path, "r") as f:
+            solution = json.load(f)
+        self.game_tasks_planification = solution
+
+    def get_game_tasks_planification(
+        self, solve_planner_limit_sec: int = -1, save_planification: bool = False
+    ):
+        scores = [task.score for task in self.game_tasks]
+        tasks_duration_sec = [task.execution_time for task in self.game_tasks]
+        # TODO: get the travel time matrix with time computed according to arena and robot speed (avg speed or profile)
+        travels_duration_matrix_sec = [
+            [0 if i == j else random.randint(1, 10) for j in range(len(scores) + 2)]
+            for i in range(len(scores) + 2)
+        ]
+        self.task_planner = TaskPlanner(
+            tasks_scores=scores,
+            tasks_duration_sec=tasks_duration_sec,
+            travels_duration_matrix_sec=travels_duration_matrix_sec,
+            max_time_sec=self.game_duration_sec,
+            solve_limit_sec=(
+                self.solve_planner_limit_sec
+                if solve_planner_limit_sec < 0
+                else solve_planner_limit_sec
+            ),
+        )
+        self.game_tasks_planification = self.task_planner.solve(
+            save_mode=save_planification
+        )
+
+    def load_preplanned_tasks(self, file_path: str = "solution.json"):
+        with open(file_path, "r") as f:
+            solution = json.load(f)
+        self.game_tasks_planification = solution
+
+    @staticmethod
+    def get_dummy_brain(
+        game_duration_sec: int = 90,
+        solve_planner_limit_sec: int = 1,
+        tasks: list[Task] = [],
+    ) -> "MainBrain":
+
+        arena = ShowArena(
+            logger=Logger(identifier="Dummy Arena"),
+            border_buffer=2,
+            obstacle_buffer=1,
+            chunk_size=5,
+            forbidden_cover_threshold=0.1,
+            grid_manager_logger=Logger(identifier="Dummy Grid Manager"),
+        )
+        return MainBrain(
+            logger=Logger(identifier="Dummy Brain"),
+            lidar=LidarDummy(
+                logger=Logger(identifier="Dummy Lidar"),
+                min_angle=CONFIG.LIDAR_MIN_ANGLE,
+                max_angle=CONFIG.LIDAR_MAX_ANGLE,
+                unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
+                unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
+                min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+            ),
+            arena=arena,
+            ws_cmd=WServerRouteManager(
+                WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+            ),
+            game_duration_sec=game_duration_sec,
+            solve_planner_limit_sec=solve_planner_limit_sec,
+            tasks=tasks,
+        )
+
+    def visualize_tasks_in_arena(self):
+        def _annotate_task_point(ax, task, pos: Point):
+            ax.annotate(
+                f"{task.name}\nS: {task.score}\nT: {task.execution_time}s",
+                (pos.x, pos.y),
+                xytext=(10, 10),
+                textcoords="offset points",
+            )
+
+        def _display_task_point(ax, task, pos: Point, annotate=False):
+            ax.plot(pos.x, pos.y, marker="o", markersize=5, color="red")
+            if annotate:
+                _annotate_task_point(ax, task, pos)
+
+        ax, self.fig = self.arena.visualize(show=False)
+        for task in self.game_tasks:
+            if isinstance(task.position, Point):
+                _display_task_point(ax, task, task.position, annotate=True)
+            if isinstance(task.position, BaseArenaZone):
+                if task.position.go_to_positions:
+                    i = 0
+                    _annotate_task_point(ax, task, task.position.go_to_positions[i])
+                    while i < len(task.position.go_to_positions):
+                        _display_task_point(ax, task, task.position.go_to_positions[i])
+                        i += 1
+                else:
+                    try:
+                        _display_task_point(
+                            ax, task, task.position.polygon.centroid, annotate=True
+                        )
+                    except:
+                        self.logger.warning(
+                            f"Task {task.id} has no go_to_positions or centroid"
+                        )
+        plt.show()
+
 
 # Only for testing
 def random_point_generator(
-        start_point: OrientedPoint,
-        step_size: float = 10.0,
-        x_limits=(0, 300),
-        y_limits=(0, 200),
+    start_point: OrientedPoint,
+    step_size: float = 10.0,
+    x_limits=(0, 300),
+    y_limits=(0, 200),
 ):
     current_point = start_point
 
@@ -266,12 +449,12 @@ def random_point_generator(
 
 
 def straight_line_generator(
-        start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
+    start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
 ):
     # Calculer la direction du mouvement
     dx = end_point.x - start_point.x
     dy = end_point.y - start_point.y
-    d = math.sqrt(dx ** 2 + dy ** 2)
+    d = math.sqrt(dx**2 + dy**2)
 
     # Si la distance est nulle, retourner directement le point d'arrivée
     if d == 0:
