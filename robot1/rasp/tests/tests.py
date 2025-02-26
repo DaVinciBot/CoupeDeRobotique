@@ -2,7 +2,7 @@ from config_loader import CONFIG
 from old_logger import Logger, LogLevels
 from arena import MarsArena
 from geometry import Point
-from controllers import Actuators
+from controllers import ActuatorsController
 import matplotlib.pyplot as plt
 from geometry import Point
 from random import randint
@@ -92,7 +92,7 @@ def test_compute_go_to():
 
 async def test_lcd():
     logger = Logger()
-    actuators = Actuators(logger, ser=14735440)
+    actuators = ActuatorsController(logger, ser=14735440)
     await actuators.lcd_print(
         "C'est des Barre mec test aajhvc;q kqscvqch qkhcvvc qkdjcvqkjdvckqjvc qkjdbvkqjbckjqd qkvbdqk"
     )

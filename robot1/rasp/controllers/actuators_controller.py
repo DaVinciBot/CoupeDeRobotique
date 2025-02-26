@@ -1,5 +1,5 @@
 from config_loader import CONFIG
-from loggerplusplus import Logger, log
+from loggerplusplus import Logger, log, LogLevels
 
 # Import from common
 from teensy_comms import Teensy
@@ -7,7 +7,7 @@ import asyncio
 import struct
 
 
-class Actuators(Teensy):
+class ActuatorsController(Teensy):
     def __init__(
         self,
         logger: Logger,
@@ -75,7 +75,7 @@ class Actuators(Teensy):
         self.send_bytes(msg)
 
     @log("Actuators")
-    async def update_servo(
+    def update_servo(
         self,
         pin: int,
         angle: int,
@@ -93,7 +93,7 @@ class Actuators(Teensy):
             min_angle (int, optional): The minimum angle allowed for the servo. Defaults to 0.
             max_angle (int, optional): The maximum angle allowed for the servo. Defaults to 180.
             detach (bool, optional): Whether to detach the servo after setting the angle. Defaults to False.
-            detach_delay (int, optional): The time in milliseconds to keep the servo detached. Defaults to 1000.
+            detach_delay (int, optional): The time in milliseconds to keep the servo detached. Defaults to 1000. Ignored if detach is False.
         """
         if angle >= min_angle and angle <= max_angle:
             if detach:
@@ -105,7 +105,7 @@ class Actuators(Teensy):
                 )
                 self.send_bytes(msg)
             else:
-                if self.gpio_manager.is_available_gpio(pin):
+                if not self.gpio_manager.is_declared_gpio(pin):
                     self.gpio_manager.add_gpio(
                         pin, self.gpio_manager.TypeActuator.SERVO
                     )
@@ -114,16 +114,16 @@ class Actuators(Teensy):
                     pin, self.gpio_manager.TypeActuator.SERVO
                 ):
                     self.logger.log(
-                        f"Pin {pin} is not a valid servo pin because it is registered as a {str(self.gpio_manager.get_type_gpio())}",
+                        f"Pin {pin} is not a valid servo pin because it is registered as a {str(self.gpio_manager.get_type_gpio(pin))}",
                         LogLevels.ERROR,
                     )
-                else:
-                    msg = (
-                        self.Command.Update_servo
-                        + struct.pack("<B", pin)
-                        + struct.pack("<B", angle)
-                    )
-                    self.send_bytes(msg)
+                    return
+                msg = (
+                    self.Command.Update_servo
+                    + struct.pack("<B", pin)
+                    + struct.pack("<B", angle)
+                )
+                self.send_bytes(msg)
             # https://docs.python.org/3/library/struct.html#format-characters
 
         else:
