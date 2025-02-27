@@ -65,10 +65,17 @@ class MovementManager:
         """
         return self.arena_ptr.ally_zone.point.distance(self.arena_ptr.enemy_zone.point)
 
+    def __get_ally_goal_distance(self) -> float:
+        """
+        Calculates the distance between the ally zone and the computed goal.
+
+        Returns:
+            float: Distance between the ally zone and the computed goal.
+        """
+        return self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.computed_goal)
+
     @staticmethod
-    def __are_path_different(
-            path_a: list[OrientedPoint], path_b: list[OrientedPoint]
-    ) -> bool:
+    def __are_path_different(path_a: list[OrientedPoint], path_b: list[OrientedPoint]) -> bool:
         """
         Compares two paths to determine if they are different.
 
@@ -79,12 +86,14 @@ class MovementManager:
         Returns:
             bool: True if paths differ, otherwise False.
         """
-        min_length = min(len(path_a), len(path_b))
+        if len(path_a) != len(path_b):
+            return True  # Paths of different lengths are always different.
 
-        for i in range(1, min_length + 1):
-            if path_a[-i] != path_b[-i]:
-                return True
-        return True
+        for a, b in zip(reversed(path_a), reversed(path_b)):
+            if a != b:
+                return True  # Found a difference, no need to check further.
+
+        return False  # Paths are identical.
 
     # ====== Protected Methods ======
     def _acs(self) -> RollingBasisCommand | None:
@@ -121,10 +130,7 @@ class MovementManager:
         Returns:
             bool: True if the goal is reached, else False.
         """
-        if (
-                self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.computed_goal)
-                < self.params.goal_tolerance
-        ):
+        if self.__get_ally_goal_distance() < self.params.goal_tolerance:
             self.status = MovementStatus.SUCCESS
             self.logger.info("Go To is arrived")
             return True
@@ -188,6 +194,9 @@ class MovementManager:
         Returns:
             RollingBasisCommand | None: Next movement command or None.
         """
+        # 0. Check if the goal is reached
+        if self._go_to_is_arrived():
+            return
 
         # 1. Check if a movement is in progress and if the parameters are set
         # 1.1 Check if a movement is in progress
@@ -211,12 +220,11 @@ class MovementManager:
 
         # 3. Check if the path has to be recomputed
         # -> if the enemy distance is under the recompute distance threshold
-        # AND the path is not near the end
-        enemy_distance = self.__get_ally_enemy_distance()
+        # AND the path is not near the end goal
         if (
-                self.params.distance_to_goal_to_dont_recompute_path
-                < enemy_distance <
-                self.params.path_finder_recompute_distance
+                self.__get_ally_goal_distance() > self.params.distance_to_goal_to_dont_recompute_path
+                and
+                self.__get_ally_enemy_distance() < self.params.path_finder_recompute_distance
         ):
             # 3.1 Save old path for comparison
             current_used_path = self.trajectory_computer.path_finder.oriented_path_found
@@ -254,9 +262,5 @@ class MovementManager:
                     initial_angular_speed=position_speed.angular_speed,
                 )
 
-        # 4. Check if the goal is reached
-        if self._go_to_is_arrived():
-            return
-
-        # 5. Get the next RollingBasisCommand
+        # 4. Get the next RollingBasisCommand
         return self.trajectory_computer.get_position_speed()
