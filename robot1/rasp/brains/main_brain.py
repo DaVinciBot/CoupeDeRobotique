@@ -1,28 +1,20 @@
 from config_loader import CONFIG
 
-# External imports
-import asyncio
-import time
-
-# Import from common
-from taskbrain import Brain
-from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
-from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
-
-from loggerplusplus import Logger
-import math
-from utils import Utils
+# ====== Standard Library Imports ======
 import matplotlib.pyplot as plt
-import time
 import numpy as np
 import random
-import gc
+import math
+import json
 
-# Import from local path
-from controllers.rolling_basis import RollingBasisDummy, RollingBasis
+# ====== Third-party library imports ======
+from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
+from loggerplusplus import Logger
+from taskbrain import Brain
 
-from path_finding import PathFinder
-from arena import ShowArena
+# ====== Local Library Imports ======
+from geometry import OrientedPoint, Point
+from arena import ShowArena, BaseArenaZone
 from movement import (
     MovementManager,
     GoToParams,
@@ -30,27 +22,28 @@ from movement import (
     SpeedProfile,
     RollingBasisCommand,
 )
-
-
-from sensors import Lidar, LidarDummy
 from arena import AllyZone
 from tasks import Task, TaskPlanner
-import json
+
+# ====== Internal Project Imports ======
+from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+from sensors import Lidar, LidarDummy
 
 
 class MainBrain(Brain):
     def __init__(
-        self,
-        logger: Logger,
-        # Sensors
-        lidar: Lidar | LidarDummy,
-        # Environment
-        arena: ShowArena,
-        # WS routes
-        ws_cmd: WServerRouteManager,
-        game_duration_sec: int = 90,
-        solve_planner_limit_sec: int = 1,
-        tasks: list[Task] = [],
+            self,
+            logger: Logger,
+            # Sensors
+            lidar: Lidar | LidarDummy,
+            # Environment
+            arena: ShowArena,
+            # WS routes
+            ws_cmd: WServerRouteManager,
+            # Game Planning parameters
+            game_duration_sec: int = 90,
+            solve_planner_limit_sec: int = 1,
+            tasks: list[Task] = [],
     ) -> None:
         if isinstance(lidar, LidarDummy):
             logger.warning("LidarDummy is used")
@@ -268,7 +261,7 @@ class MainBrain(Brain):
         self.logger.info(f"Init done {self.rolling_basis_odometrie}")
 
     def get_game_tasks_planification(
-        self, solve_planner_limit_sec: int = -1, save_planification: bool = False
+            self, solve_planner_limit_sec: int = -1, save_planification: bool = False
     ):
         scores = [task.score for task in self.game_tasks]
         tasks_duration_sec = [task.execution_time for task in self.game_tasks]
@@ -314,7 +307,7 @@ class MainBrain(Brain):
         self.game_tasks_planification = solution
 
     def get_game_tasks_planification(
-        self, solve_planner_limit_sec: int = -1, save_planification: bool = False
+            self, solve_planner_limit_sec: int = -1, save_planification: bool = False
     ):
         scores = [task.score for task in self.game_tasks]
         tasks_duration_sec = [task.execution_time for task in self.game_tasks]
@@ -345,9 +338,9 @@ class MainBrain(Brain):
 
     @staticmethod
     def get_dummy_brain(
-        game_duration_sec: int = 90,
-        solve_planner_limit_sec: int = 1,
-        tasks: list[Task] = [],
+            game_duration_sec: int = 90,
+            solve_planner_limit_sec: int = 1,
+            tasks: list[Task] = [],
     ) -> "MainBrain":
 
         arena = ShowArena(
@@ -416,10 +409,10 @@ class MainBrain(Brain):
 
 # Only for testing
 def random_point_generator(
-    start_point: OrientedPoint,
-    step_size: float = 10.0,
-    x_limits=(0, 300),
-    y_limits=(0, 200),
+        start_point: OrientedPoint,
+        step_size: float = 10.0,
+        x_limits=(0, 300),
+        y_limits=(0, 200),
 ):
     current_point = start_point
 
@@ -436,12 +429,12 @@ def random_point_generator(
 
 
 def straight_line_generator(
-    start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
+        start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
 ):
     # Calculer la direction du mouvement
     dx = end_point.x - start_point.x
     dy = end_point.y - start_point.y
-    d = math.sqrt(dx**2 + dy**2)
+    d = math.sqrt(dx ** 2 + dy ** 2)
 
     # Si la distance est nulle, retourner directement le point d'arrivée
     if d == 0:

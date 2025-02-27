@@ -33,16 +33,14 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
     filename_lineno_max_width=CONFIG.LOGGER_FILENAME_LINENO_MAX_WIDTH,
 )
 
-# Internal project imports
+# ====== Local Library Imports ======
 from ws_comms import WServer, WServerRouteManager, WSender, WSreceiver
 from arena import ShowArena, AllyZone
 from geometry import OrientedPoint
 from brains import MainBrain
 from taskbrain import DictProxyAccessor
-from controllers import RollingBasis
-from movement import MovementManager, GoToParams
+from movement import GoToParams
 from sensors import LidarDummy, Lidar
-
 
 # ====== Main ======
 if __name__ == "__main__":
@@ -108,29 +106,9 @@ if __name__ == "__main__":
     # See ./brains/controllers_brain.py for more details
     # All rolling basis part is executed in another process so define inside this part
 
-    # rolling_basis = RollingBasis(logger=logger_rolling_basis)
-    # rolling_basis = RollingBasisSimulationDummy(logger=logger_rolling_basis, simulation_dt=0.01)
-    # rolling_basis = RollingBasisDummy(logger=logger_rolling_basis)
-
-    # rolling_basis.set_odometrie(OrientedPoint(20, 20, 0))
-    # rolling_basis.set_pids(
-    #     0, 0, 0,
-    #     0, 0, 0,
-    #     0, 0, 0,
-    #     0, 0, 0
-    # )
-
     # Sensors
     # Lidar
-    # lidar = Lidar(
-    #     logger=logger_lidar,
-    #     min_angle=CONFIG.LIDAR_MIN_ANGLE,
-    #     max_angle=CONFIG.LIDAR_MAX_ANGLE,
-    #     unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
-    #     unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
-    #     min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
-    # )
-    lidar = LidarDummy(
+    lidar = LidarDummy(  # Lidar(
         logger=logger_lidar,
         min_angle=CONFIG.LIDAR_MIN_ANGLE,
         max_angle=CONFIG.LIDAR_MAX_ANGLE,
