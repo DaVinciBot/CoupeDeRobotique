@@ -104,13 +104,14 @@ class MainBrain(Brain):
             movement_manager.logger.info("New GoToParams received")
 
         # Handle the 'go to' command
-        cmd: RollingBasisCommand = movement_manager.handle_go_to()
-        if cmd is not None:
-            self.th_ally_zone = AllyZone(
-                logger=Logger(identifier="th_ally"), point=cmd.position, robot_size=5
-            )
-            rolling_basis.set_speed_and_position(*cmd.get_command())
-            self.rolling_basis_odometrie = rolling_basis.odometrie
+        if movement_manager.params is not None:
+            cmd: RollingBasisCommand = movement_manager.handle_go_to()
+            if cmd is not None:
+                self.th_ally_zone = AllyZone(
+                    logger=Logger(identifier="th_ally"), point=cmd.position, robot_size=5
+                )
+                rolling_basis.set_speed_and_position(*cmd.get_command())
+                self.rolling_basis_odometrie = rolling_basis.odometrie
 
     """
     ### Main Process ###
@@ -137,7 +138,7 @@ class MainBrain(Brain):
         )
         plt.pause(0.01)
 
-    @Brain.task(process=False, run_on_start=CONFIG.ZOMBIE_MODE, refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def zombie_mode(self):
         """
         executes requests received by the server. Use Postman to send request to the server
@@ -149,19 +150,24 @@ class MainBrain(Brain):
         if cmd != WSmsg():
             self.logger.info(f"Zombie instruction {cmd.msg} received: {cmd.data}")
 
-            if cmd.msg == "eval":
-                instructions = []
-                if isinstance(cmd.data, str):
-                    instructions.append(cmd.data)
-                elif isinstance(cmd.data, list):
-                    instructions = cmd.data
+            instructions = []
+            if isinstance(cmd.data, str):
+                instructions.append(cmd.data)
+            elif isinstance(cmd.data, list):
+                instructions = cmd.data
 
+            # Exec: for attribution cases (x = 1)
+            if cmd.msg == "exec":
+                for instruction in instructions:
+                    exec(instruction)
+
+            # Eval: for return cases (print(x))
+            elif cmd.msg == "eval":
                 for instruction in instructions:
                     if instruction.startswith("await "):
                         await eval(instruction.removeprefix("await "))
                     else:
                         eval(instruction)
-
             else:
                 self.logger.warning(
                     f"Command not implemented: {cmd.msg} / {cmd.data}",
@@ -199,4 +205,13 @@ self.go_to_params = GoToParams(
     distance_to_goal_to_dont_recompute_path=10,
 )
 ---
+
+Exemple in postman with zombie mode:
+url: ws://rob.local:8080/cmd?sender=postman_zombie
+message:
+{
+    "sender": "zombie_master",
+    "msg": "exec",
+    "data": "self.go_to_params = GoToParams(trajectory_params=TrajectoryParams(speed_profile=SpeedProfile.from_dict(CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE), goal=OrientedPoint(250, 140), resolution=1, smooth_trajectory=True), acs_distance=30, path_finder_recompute_distance=80, timeout=-1.0, is_mandatory=False, goal_tolerance=0.1, distance_to_goal_to_dont_recompute_path=10)"
+}
 """
