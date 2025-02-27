@@ -24,7 +24,7 @@ struct last_message
 class Com {
 private:
     byte* buffer = new byte[256]; ///< Internal buffer for storing received data
-    byte signature[4] = {0xBA, 0xDD, 0x1C, 0xC5}; ///< Signature used to validate messages
+    byte signature[4]; ///< Signature used to validate messages (default: END_BYTES_SIGNATURE) initialized in the constructor
     byte pointer = 0; ///< Pointer for tracking the buffer position
     Stream* stream; ///< Pointer to the serial stream (USB or Hardware)
 

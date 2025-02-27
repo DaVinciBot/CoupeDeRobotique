@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <com.h>
 #include <crc.h>
+#include <cstring>  // To use memcpy()
 
 /**
  * @brief Constructor for USB serial communication.
@@ -12,6 +13,8 @@
  */
 Com::Com(usb_serial_class *stream, uint32_t baudrate)
 {
+    memcpy(this->signature, END_BYTES_SIGNATURE, sizeof(this->signature));
+
     this->stream = stream;
     stream->begin(baudrate);
 

@@ -6,6 +6,12 @@
 
 #include <Arduino.h>
 
+// ====== USB Communication Signature ======
+// This signature must be exactly the same on both sides (Raspberry Pi and Teensy) to ensure valid communication.
+const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
+
+
+// ====== Message Types ======
 /* Definition of message IDs */
 // rasp -> teensy : 0-127 (Convention)
 
