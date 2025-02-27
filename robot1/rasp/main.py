@@ -40,7 +40,6 @@ from geometry import OrientedPoint
 from brains import MainBrain
 from taskbrain import DictProxyAccessor
 from movement import GoToParams
-from sensors import LidarDummy, Lidar
 
 # ====== Main ======
 if __name__ == "__main__":
@@ -66,12 +65,6 @@ if __name__ == "__main__":
     # Controllers loggers
     # See ./brains/controllers_brain.py for more details
     # All rolling basis part is executed in another process so define inside this part
-
-    # Sensors loggers
-    logger_lidar = Logger(
-        identifier="LiDAR",
-        follow_logger_manager_rules=True,
-    )
 
     # Environment loggers
     logger_grid_manager = Logger(
@@ -106,17 +99,6 @@ if __name__ == "__main__":
     # See ./brains/controllers_brain.py for more details
     # All rolling basis part is executed in another process so define inside this part
 
-    # Sensors
-    # Lidar
-    lidar = LidarDummy(  # Lidar(
-        logger=logger_lidar,
-        min_angle=CONFIG.LIDAR_MIN_ANGLE,
-        max_angle=CONFIG.LIDAR_MAX_ANGLE,
-        unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
-        unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
-        min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
-    )
-
     # Environment
     # Arena
     arena = ShowArena(
@@ -142,7 +124,6 @@ if __name__ == "__main__":
 
     brain = MainBrain(
         logger=logger_brain,
-        lidar=lidar,
         arena=arena,
         ws_cmd=ws_cmd,
     )
