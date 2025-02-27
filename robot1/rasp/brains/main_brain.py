@@ -47,7 +47,7 @@ class MainBrain(Brain):
 
         self.go_to_params: GoToParams | None = None
         self.th_ally_zone: AllyZone = AllyZone(
-            logger=Logger(identifier="th_ally"),
+            logger=Logger(identifier="th_ally", follow_logger_manager_rules=True),
             point=self.rolling_basis_odometrie,
             robot_size=5,
         )

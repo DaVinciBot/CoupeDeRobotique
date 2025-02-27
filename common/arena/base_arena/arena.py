@@ -419,8 +419,6 @@ class BaseArena(ABC):
                 self._pol_to_abs_cart(lidar_scan_polars)
             )
 
-            self.logger.logger.info(f"L'obstacle est {obstacles}")
-
             if not is_empty(obstacles):
                 nearest_obstacle = nearest_points(ally_position, obstacles)[1]
 
@@ -603,16 +601,17 @@ class BaseArena(ABC):
                 }  # Hatch with black lines for forbidden zones
 
             # Plot zone uid
-            ax.text(
-                zone.polygon.centroid.x,
-                zone.polygon.centroid.y,
-                zone.uid,
-                ha="center",
-                va="center",
-                fontsize=12,
-                fontweight="bold",
-                color="purple",
-            )
+            if not isinstance(zone, AllyZone):
+                ax.text(
+                    zone.polygon.centroid.x,
+                    zone.polygon.centroid.y,
+                    zone.uid,
+                    ha="center",
+                    va="center",
+                    fontsize=12,
+                    fontweight="bold",
+                    color="purple",
+                )
 
             self.__plot_polygon(
                 ax,
