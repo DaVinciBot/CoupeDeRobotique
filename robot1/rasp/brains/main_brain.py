@@ -22,13 +22,14 @@ import gc
 from controllers.rolling_basis import RollingBasisDummy, RollingBasis
 
 from path_finding import PathFinder
-from arena import ShowArena
+from arena import ShowArena, BaseArenaZone
 from movement import (
     MovementManager,
     GoToParams,
     TrajectoryParams,
     SpeedProfile,
     RollingBasisCommand,
+    TrajectoryComputer,
 )
 
 
@@ -64,7 +65,7 @@ class MainBrain(Brain):
 
         self.game_duration_sec = game_duration_sec
         self.solve_planner_limit_sec = solve_planner_limit_sec
-        self.game_tasks = tasks
+        self.game_tasks: list[Task] = tasks
         self.game_tasks_planification = None
 
         # Shared processes attributes
@@ -93,7 +94,7 @@ class MainBrain(Brain):
         )
 
         # Simulation loggers for task planning
-        self.movemement_manager_logger_simulation = Logger(
+        self.trajectory_computer_logger_simulation = Logger(
             identifier="Simulation Movement Manager"
         )
         self.rolling_basis_handler_logger_simulation = Logger(
@@ -267,32 +268,109 @@ class MainBrain(Brain):
         self.go_to_params = go_to_params
         self.logger.info(f"Init done {self.rolling_basis_odometrie}")
 
-    def get_game_tasks_planification(
+    def get_game_tasks_planification(  # MUST BE CALLED ONCE THE STARTING POINT IS KNOWN
         self, solve_planner_limit_sec: int = -1, save_planification: bool = False
     ):
         scores = [task.score for task in self.game_tasks]
         tasks_duration_sec = [task.execution_time for task in self.game_tasks]
 
-        travels_duration_matrix_sec = [
-            [0 for _ in range(len(scores) + 2)] for _ in range(len(scores) + 2)
-        ]
+        # Matrice de taille (N+2) x (N+2)
+        n = len(scores)
+        travels_duration_matrix_sec = [[0] * (n + 2) for _ in range(n + 2)]
 
-        for i in range(len(scores) + 2):
-            for j in range(i, len(scores) + 2):
-                travels_duration_matrix_sec[i][j] = MovementManager(
-                    movement_manager_logger_simulation=self.movemement_manager_logger_simulation,
-                    rolling_basis_handler_logger_simulation=self.rolling_basis_handler_logger_simulation,
-                    path_finder_logger_simulation=self.path_finder_logger_simulation,
-                    movement_resolution=1,
-                    arena=self.arena,
-                ).go_to()  # TODO: use Trajectory params to get the duration
-                travels_duration_matrix_sec[j][i] = travels_duration_matrix_sec[i][j]
+        # scores is from 0 to n-1 but as we had the start and end point, we need to shift by one in the matrix as 0 is origin.
+        # in the travels_duration_matrix we have from 0 to n with 0 is the origin and n is the end point
+        for i in range(n):
+            for j in range(n):
+                if i != j:
+                    trajectory_computer = TrajectoryComputer(
+                        logger=self.trajectory_computer_logger_simulation,
+                        path_finder_logger=self.path_finder_logger_simulation,
+                        arena_ptr=self.arena,
+                        trajectory_params=self.game_tasks[i].trajectory_params,
+                    )
+                    trajectory_computer.compute(
+                        current_position=self.game_tasks[j].trajectory_params.goal,
+                        use_static_and_dynamic_grid=False,
+                        current_angular_speed=0,
+                        current_linear_speed=0,
+                    )
+                    self.logger.fatal(
+                        f"Task {j} to Task {i} ({self.game_tasks[j].trajectory_params.goal.polygon.centroid if isinstance(self.game_tasks[j].trajectory_params.goal,BaseArenaZone) else self.game_tasks[j].trajectory_params.goal}->{self.game_tasks[i].trajectory_params.goal.polygon.centroid if isinstance(self.game_tasks[i].trajectory_params.goal,BaseArenaZone) else self.game_tasks[i].trajectory_params.goal}) duration: {trajectory_computer.total_duration}"
+                    )
+                    travels_duration_matrix_sec[i + 1][j + 1] = (
+                        int(  # the Solver requires int values
+                            trajectory_computer.total_duration
+                        )
+                        + 1  # safety margin as 4.3 should be 5 not 4
+                    )
+                    travels_duration_matrix_sec[j + 1][i + 1] = (
+                        travels_duration_matrix_sec[i + 1][j + 1]
+                    )
 
-        # TODO: get the travel time matrix with time computed according to arena and robot speed (avg speed or profile)
-        travels_duration_matrix_sec = [
-            [0 if i == j else random.randint(1, 10) for j in range(len(scores) + 2)]
-            for i in range(len(scores) + 2)
-        ]
+        # Ajouter les temps vers/depuis les points de départ/arrivée
+        for k in range(1, n):
+            # Start -> Tasks
+            trajectory_computer = TrajectoryComputer(
+                logger=self.trajectory_computer_logger_simulation,
+                path_finder_logger=self.path_finder_logger_simulation,
+                arena_ptr=self.arena,
+                trajectory_params=self.game_tasks[k].trajectory_params,
+            )
+            trajectory_computer.compute(
+                current_position=self.rolling_basis_odometrie,
+                use_static_and_dynamic_grid=False,
+                current_angular_speed=0,
+                current_linear_speed=0,
+            )
+            travels_duration_matrix_sec[0][k] = (
+                int(trajectory_computer.total_duration) + 1
+            )
+            travels_duration_matrix_sec[k][0] = travels_duration_matrix_sec[0][k]
+
+            # Tasks -> Arrival
+            trajectory_computer = TrajectoryComputer(
+                logger=self.trajectory_computer_logger_simulation,
+                path_finder_logger=self.path_finder_logger_simulation,
+                arena_ptr=self.arena,
+                trajectory_params=TrajectoryParams(
+                    speed_profile=SpeedProfile(
+                        **CONFIG.SPECIFIC_CONFIG["rolling_basis"]["speed_profiles"][
+                            "default"
+                        ]
+                    ),
+                    goal=OrientedPoint(random.randint(0, 300), random.randint(0, 200)),
+                    resolution=CONFIG.SPECIFIC_CONFIG["movement_manager"][
+                        "movement_resolution"
+                    ],
+                ),  # TODO: Change this to the end point (the one at the end of the game)
+            )
+            trajectory_computer.compute(
+                current_position=self.rolling_basis_odometrie,
+                use_static_and_dynamic_grid=False,
+                current_angular_speed=0,
+                current_linear_speed=0,
+            )
+            travels_duration_matrix_sec[k][n + 1] = (
+                int(trajectory_computer.total_duration) + 1
+            )
+            travels_duration_matrix_sec[n + 1][k] = travels_duration_matrix_sec[k][
+                n + 1
+            ]
+
+        for i in range(n + 2):
+            for j in range(n + 2):
+                print(travels_duration_matrix_sec[i][j], end=" ")
+
+            print()
+        print(
+            "i = ",
+            len(travels_duration_matrix_sec[0]),
+            "j = ",
+            len(travels_duration_matrix_sec[1]),
+        )
+        print("n = ", n)
+
         self.task_planner = TaskPlanner(
             tasks_scores=scores,
             tasks_duration_sec=tasks_duration_sec,
@@ -312,31 +390,6 @@ class MainBrain(Brain):
         with open(file_path, "r") as f:
             solution = json.load(f)
         self.game_tasks_planification = solution
-
-    def get_game_tasks_planification(
-        self, solve_planner_limit_sec: int = -1, save_planification: bool = False
-    ):
-        scores = [task.score for task in self.game_tasks]
-        tasks_duration_sec = [task.execution_time for task in self.game_tasks]
-        # TODO: get the travel time matrix with time computed according to arena and robot speed (avg speed or profile)
-        travels_duration_matrix_sec = [
-            [0 if i == j else random.randint(1, 10) for j in range(len(scores) + 2)]
-            for i in range(len(scores) + 2)
-        ]
-        self.task_planner = TaskPlanner(
-            tasks_scores=scores,
-            tasks_duration_sec=tasks_duration_sec,
-            travels_duration_matrix_sec=travels_duration_matrix_sec,
-            max_time_sec=self.game_duration_sec,
-            solve_limit_sec=(
-                self.solve_planner_limit_sec
-                if solve_planner_limit_sec < 0
-                else solve_planner_limit_sec
-            ),
-        )
-        self.game_tasks_planification = self.task_planner.solve(
-            save_mode=save_planification
-        )
 
     def load_preplanned_tasks(self, file_path: str = "solution.json"):
         with open(file_path, "r") as f:
