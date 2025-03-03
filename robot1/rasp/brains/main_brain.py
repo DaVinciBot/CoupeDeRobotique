@@ -188,7 +188,7 @@ class MainBrain(Brain):
         cmd = await self.ws_cmd.receiver.get(wait_msg=True)
 
         if cmd != WSmsg():
-            self.logger.info(
+            self.logger.error(
                 f"Zombie instruction {cmd.msg} received: {cmd.data}"
             )
 
