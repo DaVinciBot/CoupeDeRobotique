@@ -113,7 +113,14 @@ class TrajectoryComputer:
         Returns:
             OrientedPoint | Point: The computed goal position.
         """
-        # If goal is a BaseArenaZone
+        # If goal is defined as int, it's a zone ID
+        if isinstance(self.trajectory_params.goal, int):
+            if self.trajectory_params.goal > len(self.arena_ptr.zones):
+                self.logger.error("Invalid zone ID given in trajectory parameters.")
+                return
+            self.trajectory_params.goal = self.arena_ptr.zones[self.trajectory_params.goal]
+
+        # If goal is a BaseArenaZone, compute the best goal point
         if isinstance(self.trajectory_params.goal, BaseArenaZone):
             # Use zone method to get best goal point from zone
             self.computed_goal = self.trajectory_params.goal.get_go_to_position(
