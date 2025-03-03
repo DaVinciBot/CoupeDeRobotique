@@ -203,17 +203,13 @@ class MainBrain(Brain):
                     if instruction.startswith("await "):
                         await eval(instruction.removeprefix("await "))
                     else:
-                        if ".logger" in instruction:
-                            execution = eval(instruction)
-                            message = WSmsg.from_json({
-                                "sender": CONFIG.WS_SENDER_NAME,
-                                "msg": "Execution of sender instruction",
-                                "data": execution
-                            }).prepare(False)
-                            await self.ws_cmd.sender.send(message)
-
-                        else:
-                            eval(instruction)
+                        execution = eval(instruction)
+                        message = WSmsg.from_json({
+                            "sender": CONFIG.WS_SENDER_NAME,
+                            "msg": "Execution of sender instruction",
+                            "data": execution
+                        }).prepare(False)
+                        await self.ws_cmd.sender.send(message)
 
 
             else:
