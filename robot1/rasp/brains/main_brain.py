@@ -200,16 +200,18 @@ class MainBrain(Brain):
                     instructions = cmd.data
 
                 for instruction in instructions:
+                    self.logger.error(f"Zombie mode executing command")
                     if instruction.startswith("await "):
                         await eval(instruction.removeprefix("await "))
                     else:
+                        self.logger.error(f"Zombie WS response sent: {execution}")
                         execution = eval(instruction)
                         message = WSmsg.from_json({
                             "sender": CONFIG.WS_SENDER_NAME,
                             "msg": "Execution of sender instruction",
                             "data": execution
                         }).prepare(False)
-                        self.ws_cmd.sender.send(message)
+                        await self.ws_cmd.sender.send(message)
                         self.logger.error(f"Zombie WS response sent: {execution}")
 
             else:
