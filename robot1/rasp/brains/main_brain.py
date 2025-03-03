@@ -186,12 +186,6 @@ class MainBrain(Brain):
         """
         # Check cmd
         cmd = await self.ws_cmd.receiver.get(wait_msg=True)
-        message = WSmsg(
-                        sender = CONFIG.WS_SENDER_NAME,
-                        msg = "Execution of sender instruction",
-                        data = "Hello"
-                    )
-        await self.ws_cmd.sender.send(message)
 
         if cmd != WSmsg():
             self.logger.error(
@@ -209,11 +203,11 @@ class MainBrain(Brain):
                         await eval(instruction.removeprefix("await "))
                     else:
                         execution = eval(instruction)
-                        message = WSmsg(
-                            sender = CONFIG.WS_SENDER_NAME,
-                            msg = "Execution of sender instruction",
-                            data = str(execution)
-                        )
+                        message = WSmsg.from_json({
+                            "sender": CONFIG.WS_SENDER_NAME,
+                            "msg": "Execution of sender instruction",
+                            "data": str(execution)
+                        })
                         await self.ws_cmd.sender.send(message)
                         self.logger.error(f"Zombie WS response sent: {execution}")
 
