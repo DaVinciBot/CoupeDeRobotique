@@ -28,7 +28,7 @@
         "colors": "ClassicColors",
         "path": "logs",
         "decorator_log_level": "DEBUG",
-        "print_log_level": "DEBUG",
+        "print_log_level": "ERROR",
         "file_log_level": "DEBUG",
         "print_log": true,
         "write_to_file": true,
