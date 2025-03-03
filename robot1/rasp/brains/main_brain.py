@@ -210,7 +210,7 @@ class MainBrain(Brain):
                             "data": execution
                         }).prepare(False)
                         await self.ws_cmd.sender.send(message)
-
+                        self.logger.error(f"Zombie WS response sent: {execution}")
 
             else:
                 self.logger.warning(
