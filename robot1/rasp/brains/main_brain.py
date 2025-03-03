@@ -198,7 +198,7 @@ class MainBrain(Brain):
                     instructions.append(cmd.data)
                 elif isinstance(cmd.data, list):
                     instructions = cmd.data
-
+                self.logger.error(f"Zombie mode executing command {instructions}")
                 for instruction in instructions:
                     self.logger.error(f"Zombie mode executing command")
                     if instruction.startswith("await "):
