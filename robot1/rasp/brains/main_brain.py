@@ -204,11 +204,11 @@ class MainBrain(Brain):
                     else:
                         execution = eval(instruction)
                         self.logger.error(f"Zombie WS response sent: {execution}")
-                        message = WSmsg.from_json({
-                            "sender": CONFIG.WS_SENDER_NAME,
-                            "msg": "Execution of sender instruction",
-                            "data": execution
-                        }).prepare(False)
+                        message = WSmsg(
+                            sender = CONFIG.WS_SENDER_NAME,
+                            msg = "Execution of sender instruction",
+                            data = execution
+                        )
                         await self.ws_cmd.sender.send(message, wait_client=True)
                         self.logger.error(f"Zombie WS response sent: {execution}")
 
