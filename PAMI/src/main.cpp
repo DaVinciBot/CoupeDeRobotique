@@ -3,9 +3,9 @@
 #include "motors.h"
 #include "navigation.h"
 
-#define LEFT_STEP_PIN 3
-#define LEFT_DIR_PIN  2
-#define LEFT_EN_PIN   4
+#define LEFT_STEP_PIN 2
+#define LEFT_DIR_PIN  3
+#define LEFT_EN_PIN   1
 
 
 Motor leftMotor(LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN, 200);
