@@ -62,7 +62,7 @@ class AllyZone(BaseArenaZone):
             polygon=position_based_polygon,
             buffered_polygon=None,
             update_callback=None,
-            zone_color="#8af542",
+            zone_color="#2ea100",
         )
 
     def update(

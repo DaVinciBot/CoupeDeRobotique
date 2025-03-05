@@ -131,10 +131,15 @@ class MainBrain(Brain):
         # Visualize the arena
         self.ax.clear()
         self.arena.visualize(
-            display_default_destination_zone=False,
-            theorical_ally_position=self.th_ally_zone,
-            plot=(self.ax, self.fig),
+            # Visualization options
+            show_buffer=True,
+            display_zones_go_to_positions=True,
+            show_ally_direction=True,
+            # Plot options
             show=False,
+            plot=(self.ax, self.fig),
+            # Additional options
+            additional_zones=[self.th_ally_zone],
         )
         plt.pause(0.01)
 
