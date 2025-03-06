@@ -229,17 +229,50 @@ class BaseArena(ABC):
         Returns:
             MultiPoint: Array of absolute Cartesian coordinates.
         """
-        return MultiPoint(
-            [
-                (
-                    self.ally_zone.point.x
-                    + np.cos(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
-                    self.ally_zone.point.y
-                    + np.sin(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
-                )
-                for i in range(len(polars))
-            ]
-        )
+
+        print("=== DEBUG: Entrée dans _pol_to_abs_cart ===")
+
+        # Vérification de `polars`
+        print(f"Type de polars: {type(polars)}")
+        print(f"Shape de polars: {polars.shape if isinstance(polars, np.ndarray) else 'N/A'}")
+
+        assert isinstance(polars, np.ndarray), "polars doit être un np.ndarray"
+        assert polars.shape[1] == 2, f"polars doit avoir 2 colonnes, mais a {polars.shape[1]}"
+
+        # Vérification de `self.ally_zone.point`
+        print(f"self.ally_zone: {self.ally_zone}")
+        print(f"self.ally_zone.point: {self.ally_zone.point}")
+
+        assert hasattr(self.ally_zone, "point"), "self.ally_zone doit avoir un attribut 'point'"
+        assert hasattr(self.ally_zone.point, "x"), "self.ally_zone.point doit avoir un attribut 'x'"
+        assert hasattr(self.ally_zone.point, "y"), "self.ally_zone.point doit avoir un attribut 'y'"
+        assert hasattr(self.ally_zone.point, "theta"), "self.ally_zone.point doit avoir un attribut 'theta'"
+
+        print(f"x: {self.ally_zone.point.x}, y: {self.ally_zone.point.y}, theta: {self.ally_zone.point.theta}")
+
+        # Vérification de theta
+        if self.ally_zone.point.theta is None or math.isnan(self.ally_zone.point.theta):
+            raise ValueError("theta contient une valeur invalide (NaN ou None)")
+
+        # Conversion en coordonnées cartésiennes absolues
+        points = []
+        for i in range(len(polars)):
+            angle = float(polars[i, 0])
+            distance = float(polars[i, 1])
+
+            print(f"Point {i}: angle = {angle}, distance = {distance}")
+
+            x = self.ally_zone.point.x + np.cos(self.ally_zone.point.theta + angle) * distance
+            y = self.ally_zone.point.y + np.sin(self.ally_zone.point.theta + angle) * distance
+
+            print(f"Point {i} -> Coordonnées cartésiennes: x = {x}, y = {y}")
+
+            points.append((x, y))
+
+        result = MultiPoint(points)
+        print(f"=== DEBUG: Résultat MultiPoint: {result} ===")
+
+        return result
 
     # ====== Public Methods ======
     @time_tracker(lambda self: self.logger)
