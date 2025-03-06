@@ -118,10 +118,10 @@ if __name__ == "__main__":
     # Arena
     arena = ShowArena(
         logger=logger_show_arena,
-        border_buffer=2,
-        obstacle_buffer=1,
-        chunk_size=5,
-        forbidden_cover_threshold=0.1,
+        border_buffer=CONFIG.ARENA_BORDER_BUFFER,
+        obstacle_buffer=CONFIG.ARENA_OBSTACLE_BUFFER,
+        chunk_size=CONFIG.ARENA_CHUNK_SIZE,
+        forbidden_cover_threshold=CONFIG.ARENA_FORBIDDEN_COVER_THRESHOLD,
         grid_manager_logger=logger_grid_manager,
     )
 

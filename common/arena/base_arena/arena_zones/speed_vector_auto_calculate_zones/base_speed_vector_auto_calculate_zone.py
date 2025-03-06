@@ -11,11 +11,14 @@ from collections import deque
 # Third-party imports
 from loggerplusplus import Logger
 
-# Internal project imports
+# Local imports
 from utils import Utils
 from geometry import Point, OrientedPoint, LineString
+
+# Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility, SpeedVector, Record
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.team_color import TeamColor
 
 
 class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
@@ -111,13 +114,13 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
 
         return SpeedVector(speed, dx / distance, dy / distance)
 
-    def update(self, team_color: str, ally_position: Point | OrientedPoint,
+    def update(self, team_color: TeamColor, ally_position: Point | OrientedPoint,
                enemy_position: Point | OrientedPoint) -> None:
         """
         Updates the zone state based on detected enemy movement.
 
         Args:
-            team_color (str): Team color.
+            team_color (TeamColor, optional): The color of the team.
             ally_position (Point | OrientedPoint): Position of ally.
             enemy_position (Point | OrientedPoint): Position of enemy.
         """

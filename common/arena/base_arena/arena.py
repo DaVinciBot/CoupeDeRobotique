@@ -49,6 +49,7 @@ from arena.base_arena.arena_zones import (
     AllyZone,
     BaseArenaZone,
 )
+from arena.base_arena.team_color import TeamColor
 
 
 # ====== BaseArena Class ======
@@ -136,7 +137,7 @@ class BaseArena(ABC):
 
         # ====== Initialized derivative attributes ======
         # 1. Team color
-        self.team_color: str | None = None
+        self.team_color: TeamColor = TeamColor.UNDEFINED
 
         # 2. Additional zones: Border, Ally and Enemy
         # 2.1 Border zone
@@ -152,11 +153,15 @@ class BaseArena(ABC):
         self.ally_zone: AllyZone = AllyZone(
             logger=Logger(identifier="AllyZone", follow_logger_manager_rules=True),
             point=OrientedPoint(self.width / 2, self.height / 2, 0),
+            robot_size=1
+            # The robot is in reality assimilated to a point of null size,
+            # but for the visualisation we need to give it a size
         )
 
         self.enemy_zone: EnemyZone = EnemyZone(
             logger=Logger(identifier="EnemyZone", follow_logger_manager_rules=True),
             point=OrientedPoint(self.width / 2, self.height / 2, 0),
+            robot_size=30,
         )
 
         # 3. Bounding Area and Playable Area
@@ -238,19 +243,19 @@ class BaseArena(ABC):
 
     # ====== Public Methods ======
     @time_tracker(lambda self: self.logger)
-    def set_team_color(self, team_color: str) -> None:
+    def set_team_color(self, team_color: TeamColor) -> None:
         """
         Set the team color and trigger updates to zones.
 
         Args:
-            team_color (str): The team's color.
+            team_color (TeamColor): The team's color.
         """
-        if team_color.lower() not in ["yellow", "y", "blue", "b"]:
+        if team_color not in [TeamColor.YELLOW, TeamColor.BLUE]:
             self.logger.error(
                 f"Invalid team color: {team_color}. Must be 'yellow' or 'blue'."
             )
 
-        self.team_color = team_color.lower()
+        self.team_color: TeamColor = team_color
         self.update(
             ally_position=self.ally_zone.point,
             lidar_scan_polars=np.array([]),
@@ -656,22 +661,25 @@ class BaseArena(ABC):
         if plot:
             ax, fig = plot
         else:
-            fig, ax = plt.subplots(figsize=(12, 6))
+            fig, ax = plt.subplots(figsize=(20, 12))
 
         # 2. Draw the arena boundary
         self.__plot_polygon(ax, self.bounding_area, color="#f0f0f0", label="Arena")
 
         # 3. Plot zones and their buffers
-        # 3.1 All zones (stored in self.zones)
+        # 3.1 Border zone
+        self.__plot_zone(ax, self.border_zone, show_buffer, False, False, transparency_factor)
+
+        # 3.2 All zones (stored in self.zones)
         for zone in self.zones:
             self.__plot_zone(ax, zone, show_buffer, False, display_zones_go_to_positions, transparency_factor)
 
-        # 3.2 Additional zones (if provided)
+        # 3.3 Additional zones (if provided)
         if additional_zones:
             for zone in additional_zones:
                 self.__plot_zone(ax, zone, show_buffer, False, display_zones_go_to_positions, transparency_factor)
 
-        # 3.3 Ally and Enemy zones
+        # 3.4 Ally and Enemy zones
         self.__plot_zone(ax, self.enemy_zone, show_buffer, False, False, transparency_factor)
         self.__plot_zone(ax, self.ally_zone, show_buffer, show_ally_direction, False, transparency_factor)
 
@@ -687,6 +695,7 @@ class BaseArena(ABC):
                     alpha=0.2,
                 )
 
+        # 5. Set plot properties
         ax.set_xlim(self.width, 0)  # Reverse x-axis
         ax.set_ylim(0, self.height)  # Keep y-axis normal
         ax.spines["top"].set_visible(False)  # Hide top frame line
@@ -701,6 +710,7 @@ class BaseArena(ABC):
         # Place legend on the left
         plt.legend(loc="center right", bbox_to_anchor=(-0.1, 0.5))
 
+        # 6. Show or return the plot
         plt.tight_layout()
         if show:
             plt.show()

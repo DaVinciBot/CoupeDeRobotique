@@ -120,7 +120,7 @@
     }
   },
   "arena": {
-    "border_buffer": 3,
+    "border_buffer": 5,
     "obstacle_buffer": 10,
     "chunk_size": 5,
     "forbidden_cover_threshold": 0.1

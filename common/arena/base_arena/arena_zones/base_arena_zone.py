@@ -10,7 +10,7 @@ from abc import ABC
 # Third-party imports
 from loggerplusplus import Logger
 
-# Internal project imports
+# Local imports
 from utils import Utils
 from geometry import (
     Polygon,
@@ -19,7 +19,10 @@ from geometry import (
     Point,
     OrientedPoint
 )
+
+# Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
+from arena.base_arena.team_color import TeamColor
 
 
 # ====== Base Zone Class ======
@@ -120,12 +123,12 @@ class BaseArenaZone(ABC):
 
     """ Accessibility methods """
 
-    def is_accessible(self, team_color=None) -> bool:
+    def is_accessible(self, team_color: TeamColor = TeamColor.UNDEFINED) -> bool:
         """
         Determines if the zone is accessible for a given team color.
 
         Args:
-            team_color (str, optional): The color of the team.
+            team_color (TeamColor, optional): The color of the team.
 
         Returns:
             bool: True if accessible, False otherwise.
@@ -135,25 +138,25 @@ class BaseArenaZone(ABC):
             ZoneAccessibility.RESTRICTED,
         ]
 
-    def is_accessible_for_emergency(self, team_color=None) -> bool:
+    def is_accessible_for_emergency(self, team_color: TeamColor = TeamColor.UNDEFINED) -> bool:
         """
         Determines if the zone is accessible in an emergency.
 
         Args:
-            team_color (str, optional): The color of the team.
+            team_color (TeamColor, optional): The color of the team.
 
         Returns:
             bool: True if accessible in emergencies, False otherwise.
         """
         return self.accessibility != ZoneAccessibility.FORBIDDEN
 
-    def get_go_to_position(self, ally_position: OrientedPoint, team_color: str | None) -> OrientedPoint | Point | None:
+    def get_go_to_position(self, ally_position: OrientedPoint, team_color: TeamColor) -> OrientedPoint | Point | None:
         """
         Determines the best go-to position for an ally in the given zone.
 
         Args:
             ally_position (OrientedPoint): The position of the ally.
-            team_color (str | None): The team color to check accessibility.
+            team_color (TeamColor): The color of the team.
 
         Returns:
             OrientedPoint | Point | None: The best go-to position, or None if the zone is not accessible.
@@ -180,13 +183,13 @@ class BaseArenaZone(ABC):
     """ Update methods """
 
     def update(
-            self, team_color: str, ally_position: Point | OrientedPoint, enemy_position: Point | OrientedPoint
+            self, team_color: TeamColor, ally_position: Point | OrientedPoint, enemy_position: Point | OrientedPoint
     ) -> None:
         """
         Update the zone based on the positions of allies and enemies.
 
         Args:
-            team_color (str): Team color.
+            team_color (TeamColor): The color of the team.
             ally_position (Point | OrientedPoint): Position of ally.
             enemy_position (Point | OrientedPoint): Position of enemy.
         """

@@ -10,9 +10,10 @@
 # Third-party imports
 from loggerplusplus import Logger
 
-# Internal project imports
+# Local imports
 from geometry import Polygon
 
+# Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 

@@ -22,7 +22,7 @@ from movement import (
     SpeedProfile,
     RollingBasisCommand,
 )
-from arena import AllyZone
+from arena import AllyZone, TeamColor
 
 # ====== Internal Project Imports ======
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
@@ -46,12 +46,17 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = OrientedPoint(0, 0, 0)
 
         self.go_to_params: GoToParams | None = None
+
+        # For test purpose
         self.th_ally_zone: AllyZone = AllyZone(
             logger=Logger(identifier="th_ally", follow_logger_manager_rules=True),
             point=self.rolling_basis_odometrie,
             robot_size=5,
         )
-        self.th_ally_zone.zone_color = "#fcba03"
+        self.th_ally_zone.zone_color = "#82795f"
+
+        self.path: list[OrientedPoint] = []
+
         super().__init__(logger, self)
 
         # Attributes for the visualization
@@ -112,6 +117,7 @@ class MainBrain(Brain):
                 )
                 rolling_basis.set_speed_and_position(*cmd.get_command())
                 self.rolling_basis_odometrie = rolling_basis.odometrie
+                self.path = movement_manager.trajectory_computer.path_to_follow
 
     """
     ### Main Process ###
@@ -133,6 +139,7 @@ class MainBrain(Brain):
         self.arena.visualize(
             # Visualization options
             show_buffer=True,
+            trajectory=self.path,
             display_zones_go_to_positions=True,
             show_ally_direction=True,
             # Plot options
@@ -182,7 +189,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        self.arena.set_team_color("yellow")
+        self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
         self.rolling_basis_odometrie = OrientedPoint(20, 25, 0)
 
