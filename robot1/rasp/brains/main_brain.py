@@ -91,6 +91,7 @@ class MainBrain(Brain):
         rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
+        rolling_basis.reset()
 
         if isinstance(rolling_basis, RollingBasisDummy):
             rolling_basis.logger.warning("RollingBasisDummy is used")
