@@ -264,7 +264,7 @@ class BaseArena(ABC):
                 raise TypeError(f"Erreur: Point {i} contient un type invalide -> x={type(x)}, y={type(y)}")
 
         # Création de MultiPoint
-        result = MultiPoint(points)
+        result = MultiPoint([tuple(p) for p in points])
         print(f"=== DEBUG: MultiPoint créé avec succès === {result}")
 
         return result
