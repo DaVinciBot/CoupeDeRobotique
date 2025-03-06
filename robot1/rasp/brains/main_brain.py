@@ -135,13 +135,13 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=self.lidar.scan_to_polars(),
+            lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
             optimized_update=True,
         )
 
-        obstacles = self.arena.remove_outside(
-            self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
-        )
+        # obstacles = self.arena.remove_outside(
+        #     self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
+        # )
 
         # Visualize the arena
         self.ax.clear()
@@ -156,7 +156,7 @@ class MainBrain(Brain):
             plot=(self.ax, self.fig),
             # Additional options
             additional_zones=[self.th_ally_zone],
-            additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
+            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
         )
         plt.pause(0.01)
 
