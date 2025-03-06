@@ -28,6 +28,7 @@ from arena import AllyZone, TeamColor
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from sensors import Lidar
 
+
 class MainBrain(Brain):
     def __init__(
             self,
@@ -138,11 +139,10 @@ class MainBrain(Brain):
             optimized_update=True,
         )
 
-        self.logger.info(f"LIDAR: {
-            self.arena.compute_enemy_position(
-                self.lidar.scan_to_polars(),
-                ally_position=self.rolling_basis_odometrie,
-            )}")
+        obstacles = self.arena.remove_outside(
+            self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
+        )
+        obstacles_points = [Point(*obstacle) for obstacle in obstacles.geoms]
 
         # Visualize the arena
         self.ax.clear()
@@ -157,6 +157,7 @@ class MainBrain(Brain):
             plot=(self.ax, self.fig),
             # Additional options
             additional_zones=[self.th_ally_zone],
+            additional_points=obstacles_points
         )
         plt.pause(0.01)
 

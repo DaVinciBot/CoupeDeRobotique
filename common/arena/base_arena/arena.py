@@ -656,6 +656,7 @@ class BaseArena(ABC):
             plot: tuple[plt.axes, plt.figure] = None,
             # Additional options
             additional_zones: list[BaseArenaZone] | None = None,
+            additional_points: list[Point | OrientedPoint] | None = None,
     ) -> tuple[plt.axes, plt.figure]:
         # 1.Define the figure and axis
         if plot:
@@ -683,7 +684,16 @@ class BaseArena(ABC):
         self.__plot_zone(ax, self.enemy_zone, show_buffer, False, False, transparency_factor)
         self.__plot_zone(ax, self.ally_zone, show_buffer, show_ally_direction, False, transparency_factor)
 
-        # 4. Plot trajectory
+        # 4 Additional points (if provided)
+        for p in additional_points:
+            if isinstance(p, Point):
+                ax.plot(p.x, p.y, "ro")
+            elif isinstance(p, OrientedPoint):
+                self.__plot_oriented_arrow(ax, p, color="red", norm=5, head_width=4, head_length=3)
+            else:
+                self.logger.error(f"Invalid point type: {type(p)}")
+
+        # 5. Plot trajectory
         if trajectory:
             for i in range(len(trajectory) - 1):
                 # Draw a line connecting the current node to the next node
@@ -695,7 +705,7 @@ class BaseArena(ABC):
                     alpha=0.2,
                 )
 
-        # 5. Set plot properties
+        # 6. Set plot properties
         ax.set_xlim(self.width, 0)  # Reverse x-axis
         ax.set_ylim(0, self.height)  # Keep y-axis normal
         ax.spines["top"].set_visible(False)  # Hide top frame line
