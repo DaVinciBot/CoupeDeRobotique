@@ -133,19 +133,16 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
     async def update_arena(self) -> None:
         # Update the arena with the new position of the robot
-        print("A")
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
             lidar_scan_polars=np.array([]),
             optimized_update=True,
         )
-        print("B")
+
         obstacles = self.arena.remove_outside(
-            self.arena._pol_to_abs_cart(self.lidar.scan_to_polars()[:50])
+            self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
         )
-        print("C")
-        obstacles_points = [Point(*obstacle) for obstacle in obstacles.geoms]
-        print("D")
+
         # Visualize the arena
         self.ax.clear()
         self.arena.visualize(
@@ -159,7 +156,7 @@ class MainBrain(Brain):
             plot=(self.ax, self.fig),
             # Additional options
             additional_zones=[self.th_ally_zone],
-            additional_points=obstacles_points
+            additional_points=list(obstacles.geoms)
         )
         plt.pause(0.01)
 
