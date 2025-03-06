@@ -185,7 +185,6 @@ class MainBrain(Brain):
 
             # Eval: for return cases (print(x))
             elif cmd.msg == "eval":
-            if cmd.msg == "eval":
                 instructions = []
                 execution = "No instructions"
                 if isinstance(cmd.data, str):
@@ -203,7 +202,6 @@ class MainBrain(Brain):
                     "data": str(execution)
                 })
                 await self.ws_cmd.sender.send(message)
-                self.logger.error(f"Zombie WS response sent: {execution}")
 
             else:
                 self.logger.warning(
