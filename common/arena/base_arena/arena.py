@@ -220,19 +220,9 @@ class BaseArena(ABC):
         return self.grid_manager
 
     def _pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:
-        """
-        Converts polar coordinates to absolute Cartesian coordinates.
-
-        Args:
-            polars (np.ndarray): Array of polar coordinates in the form of (angle, distance).
-
-        Returns:
-            MultiPoint: Array of absolute Cartesian coordinates.
-        """
-
         print("=== DEBUG: Entrée dans _pol_to_abs_cart ===")
 
-        # Vérification de `polars`
+        # Vérification du type et de la forme de polars
         print(f"Type de polars: {type(polars)}")
         print(f"Shape de polars: {polars.shape if isinstance(polars, np.ndarray) else 'N/A'}")
 
@@ -240,9 +230,6 @@ class BaseArena(ABC):
         assert polars.shape[1] == 2, f"polars doit avoir 2 colonnes, mais a {polars.shape[1]}"
 
         # Vérification de `self.ally_zone.point`
-        print(f"self.ally_zone: {self.ally_zone}")
-        print(f"self.ally_zone.point: {self.ally_zone.point}")
-
         assert hasattr(self.ally_zone, "point"), "self.ally_zone doit avoir un attribut 'point'"
         assert hasattr(self.ally_zone.point, "x"), "self.ally_zone.point doit avoir un attribut 'x'"
         assert hasattr(self.ally_zone.point, "y"), "self.ally_zone.point doit avoir un attribut 'y'"
@@ -250,7 +237,6 @@ class BaseArena(ABC):
 
         print(f"x: {self.ally_zone.point.x}, y: {self.ally_zone.point.y}, theta: {self.ally_zone.point.theta}")
 
-        # Vérification de theta
         if self.ally_zone.point.theta is None or math.isnan(self.ally_zone.point.theta):
             raise ValueError("theta contient une valeur invalide (NaN ou None)")
 
@@ -262,19 +248,24 @@ class BaseArena(ABC):
 
             print(f"Point {i}: angle = {angle}, distance = {distance}")
 
-            x = self.ally_zone.point.x + np.cos(self.ally_zone.point.theta + angle) * distance
-            y = self.ally_zone.point.y + np.sin(self.ally_zone.point.theta + angle) * distance
+            x = float(self.ally_zone.point.x + np.cos(self.ally_zone.point.theta + angle) * distance)
+            y = float(self.ally_zone.point.y + np.sin(self.ally_zone.point.theta + angle) * distance)
 
             print(f"Point {i} -> Coordonnées cartésiennes: x = {x}, y = {y}")
 
             points.append((x, y))
-            
-        for i, (x, y) in enumerate(points):
-            if x is None or y is None or math.isnan(x) or math.isnan(y):
-                raise ValueError(f"Erreur: Le point {i} contient une valeur invalide -> x={x}, y={y}")
 
+        # Vérification du format final
+        print("=== DEBUG: Vérification des points ===")
+        for i, (x, y) in enumerate(points):
+            print(f"Point {i}: x={x} ({type(x)}), y={y} ({type(y)})")
+
+            if not isinstance(x, float) or not isinstance(y, float):
+                raise TypeError(f"Erreur: Point {i} contient un type invalide -> x={type(x)}, y={type(y)}")
+
+        # Création de MultiPoint
         result = MultiPoint(points)
-        print(f"=== DEBUG: Résultat MultiPoint: {result} ===")
+        print(f"=== DEBUG: MultiPoint créé avec succès === {result}")
 
         return result
 
