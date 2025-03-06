@@ -288,7 +288,7 @@ class BaseArena(ABC):
         else:
             # Use the provided enemy position -> testing or simulation
             enemy_position = __enemy_position
-
+        self.logger.info(f"Enemy position: {enemy_position}")
         # 2.Update ally and enemy zones (specific zone, there are not in self.zones)
         self.ally_zone.update(self.team_color, ally_position, enemy_position)
         self.enemy_zone.update(self.team_color, ally_position, enemy_position)
