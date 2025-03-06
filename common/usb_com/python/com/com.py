@@ -179,7 +179,7 @@ class Com:
                 self.logger.critical(
                     f"Device connection seems to be closed, teensy crashed ? [{e}]"
                 )
-                pass
+                time.sleep(0.5)  # Wait to avoid spamming the logs
 
     # ======= Public methods =======
     @staticmethod

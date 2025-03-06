@@ -11,7 +11,6 @@
 #include <config.h>
 
 
-
 // 1. Instanciate the Rolling Basis object
 // a. Define the PID controllers
 PID linear_speed_pid(KP_LINEAR_SPEED, KI_LINEAR_SPEED, KD_LINEAR_SPEED);
