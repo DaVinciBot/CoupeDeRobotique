@@ -283,7 +283,7 @@ class BaseArena(ABC):
         if not __enemy_position:
             # Compute enemy position based on lidar scans -> match situation
             enemy_position = self.compute_enemy_position(
-                lidar_scan_polars, ally_position, numb_enemy=lidar_scan_polars.size > 0
+                lidar_scan_polars, ally_position
             )
         else:
             # Use the provided enemy position -> testing or simulation

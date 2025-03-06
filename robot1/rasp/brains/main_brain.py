@@ -13,7 +13,7 @@ from loggerplusplus import Logger
 from taskbrain import Brain
 
 # ====== Local Library Imports ======
-from geometry import OrientedPoint, Point
+from geometry import OrientedPoint, Point, is_empty
 from arena import ShowArena, BaseArenaZone
 from movement import (
     MovementManager,
@@ -156,7 +156,7 @@ class MainBrain(Brain):
             plot=(self.ax, self.fig),
             # Additional options
             additional_zones=[self.th_ally_zone],
-            additional_points=list(obstacles.geoms)
+            additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
         )
         plt.pause(0.01)
 
