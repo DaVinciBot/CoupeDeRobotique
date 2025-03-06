@@ -142,6 +142,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             buffered_polygon=vector_line.buffer(self.vector_width),
             update_callback=self.update_callback,
             zone_color=self.zone_color,
+            uid=self.uid  # Avoid reassigning a new uid
         )
 
     def __str__(self) -> str:

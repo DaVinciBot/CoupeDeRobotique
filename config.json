@@ -111,7 +111,7 @@
       "angles_unit": "rad",
       "min_angle": -0.785398,
       "max_angle": 3.926991,
-      "min_distance_detection": 5.0,
+      "min_distance_detection": 10.0,
       "frontal_detection_angle": 1.570796,
       "semi_circular_detection_angle": 3.141592
     },
