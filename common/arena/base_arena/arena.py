@@ -666,13 +666,14 @@ class BaseArena(ABC):
         self.__plot_zone(ax, self.ally_zone, show_buffer, show_ally_direction, False, transparency_factor)
 
         # 4 Additional points (if provided)
-        for p in additional_points:
-            if isinstance(p, Point):
-                ax.plot(p.x, p.y, "ro")
-            elif isinstance(p, OrientedPoint):
-                self.__plot_oriented_arrow(ax, p, color="red", norm=5, head_width=4, head_length=3)
-            else:
-                self.logger.error(f"Invalid point type: {type(p)}")
+        if additional_points:
+            for p in additional_points:
+                if isinstance(p, Point):
+                    ax.plot(p.x, p.y, "ro")
+                elif isinstance(p, OrientedPoint):
+                    self.__plot_oriented_arrow(ax, p, color="red", norm=5, head_width=4, head_length=3)
+                else:
+                    self.logger.error(f"Invalid point type: {type(p)}")
 
         # 5. Plot trajectory
         if trajectory:
