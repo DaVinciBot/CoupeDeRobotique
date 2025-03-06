@@ -341,16 +341,8 @@ class BaseArena(ABC):
             self._pol_to_abs_cart(lidar_scan_polars)
         )
 
-        self.logger.logger.info(f"Enemy is {obstacles}")
-
         if not is_empty(obstacles):
-            nearest_obstacle = nearest_points(ally_position, obstacles)[1]
-
-            self.enemy_zone.update(
-                self.team_color,
-                ally_position=ally_position,
-                enemy_position=nearest_obstacle,
-            )
+            return nearest_points(ally_position, obstacles)[1]
 
         return self.enemy_zone.point
 
