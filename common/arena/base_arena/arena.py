@@ -268,6 +268,10 @@ class BaseArena(ABC):
             print(f"Point {i} -> Coordonnées cartésiennes: x = {x}, y = {y}")
 
             points.append((x, y))
+            
+        for i, (x, y) in enumerate(points):
+            if x is None or y is None or math.isnan(x) or math.isnan(y):
+                raise ValueError(f"Erreur: Le point {i} contient une valeur invalide -> x={x}, y={y}")
 
         result = MultiPoint(points)
         print(f"=== DEBUG: Résultat MultiPoint: {result} ===")
