@@ -202,6 +202,7 @@ class MainBrain(Brain):
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
         self.rolling_basis_odometrie = OrientedPoint(20, 25, 0)
+        self.arena.enemy_zone.update(self.arena.team_color, self.rolling_basis_odometrie, Point(290, 190))
 
 
 """
