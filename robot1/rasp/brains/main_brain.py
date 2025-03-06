@@ -138,7 +138,11 @@ class MainBrain(Brain):
             optimized_update=True,
         )
 
-        self.logger.info(f"LIDAR: {self.lidar.scan_to_polars()}")
+        self.logger.info(f"LIDAR: {
+            self.arena.compute_enemy_position(
+                self.lidar.scan_to_polars(),
+                ally_position=self.rolling_basis_odometrie,
+            )}")
 
         # Visualize the arena
         self.ax.clear()
