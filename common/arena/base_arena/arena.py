@@ -233,9 +233,9 @@ class BaseArena(ABC):
             [
                 (
                     self.ally_zone.point.x
-                    + np.cos(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
+                    + np.cos(self.ally_zone.point.theta - polars[i, 0]) * polars[i, 1],
                     self.ally_zone.point.y
-                    + np.sin(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
+                    + np.sin(self.ally_zone.point.theta - polars[i, 0]) * polars[i, 1],
                 )
                 for i in range(len(polars))
             ]
