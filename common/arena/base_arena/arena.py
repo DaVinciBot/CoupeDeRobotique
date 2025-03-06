@@ -282,9 +282,10 @@ class BaseArena(ABC):
         # 1.Compute enemy position if not directly provided in absolute cartesian coordinates
         if not __enemy_position:
             # Compute enemy position based on lidar scans -> match situation
-            enemy_position = self.compute_enemy_position(
-                lidar_scan_polars, ally_position, numb_enemy=lidar_scan_polars.size > 0
-            )
+            # enemy_position = self.compute_enemy_position(
+            #     lidar_scan_polars, ally_position, numb_enemy=lidar_scan_polars.size > 0
+            # )
+            enemy_position = Point(200, 150)
         else:
             # Use the provided enemy position -> testing or simulation
             enemy_position = __enemy_position
