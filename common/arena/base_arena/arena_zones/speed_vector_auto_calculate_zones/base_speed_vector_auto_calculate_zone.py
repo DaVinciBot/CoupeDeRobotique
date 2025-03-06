@@ -125,6 +125,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             enemy_position (Point | OrientedPoint): Position of enemy.
         """
         super().update(team_color, ally_position, enemy_position)
+        self.point = enemy_position
         self.__positions_recorded.append(Record(Utils.get_ts(), enemy_position))
         self.speed_vector = self._compute_enemy_speed_vector()
 
