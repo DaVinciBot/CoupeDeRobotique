@@ -282,10 +282,9 @@ class BaseArena(ABC):
         # 1.Compute enemy position if not directly provided in absolute cartesian coordinates
         if not __enemy_position:
             # Compute enemy position based on lidar scans -> match situation
-            # enemy_position = self.compute_enemy_position(
-            #     lidar_scan_polars, ally_position, numb_enemy=lidar_scan_polars.size > 0
-            # )
-            enemy_position = Point(200, 150)
+            enemy_position = self.compute_enemy_position(
+                lidar_scan_polars, ally_position, numb_enemy=lidar_scan_polars.size > 0
+            )
         else:
             # Use the provided enemy position -> testing or simulation
             enemy_position = __enemy_position
@@ -338,30 +337,19 @@ class BaseArena(ABC):
             Point|MultiPoint|None
         """
 
-        # TODO temp code because I can't test with lidar, but it should work perfectly :
+        obstacles: MultiPoint = self.remove_outside(
+            self._pol_to_abs_cart(lidar_scan_polars)
+        )
 
-        if not numb_enemy:
-            obstacles: MultiPoint = self.remove_outside(
-                self._pol_to_abs_cart(lidar_scan_polars)
-            )
+        self.logger.logger.info(f"Enemy is {obstacles}")
 
-            self.logger.logger.info(f"L'obstacle est {obstacles}")
+        if not is_empty(obstacles):
+            nearest_obstacle = nearest_points(ally_position, obstacles)[1]
 
-            if not is_empty(obstacles):
-                nearest_obstacle = nearest_points(ally_position, obstacles)[1]
-
-                self.enemy_zone.update(
-                    self.team_color,
-                    ally_position=ally_position,
-                    enemy_position=nearest_obstacle,
-                )
-
-        # TODO : Transformer avec un flag on off code temporaire juste pour voir l'ennemi sur la visualisation
-        else:
             self.enemy_zone.update(
                 self.team_color,
                 ally_position=ally_position,
-                enemy_position=Point(random.randint(0, 300), random.randint(0, 200))
+                enemy_position=nearest_obstacle,
             )
 
         return self.enemy_zone.point
