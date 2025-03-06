@@ -141,7 +141,7 @@ class MainBrain(Brain):
         )
         print("B")
         obstacles = self.arena.remove_outside(
-            self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
+            self.arena._pol_to_abs_cart(self.lidar.scan_to_polars()[:50])
         )
         print("C")
         obstacles_points = [Point(*obstacle) for obstacle in obstacles.geoms]
