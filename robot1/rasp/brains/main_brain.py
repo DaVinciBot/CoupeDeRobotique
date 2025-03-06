@@ -138,6 +138,8 @@ class MainBrain(Brain):
             optimized_update=True,
         )
 
+        self.logger.info(f"LIDAR: {self.lidar.scan_to_polars()}")
+
         # Visualize the arena
         self.ax.clear()
         self.arena.visualize(
