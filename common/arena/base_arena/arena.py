@@ -253,7 +253,7 @@ class BaseArena(ABC):
 
             print(f"Point {i} -> Coordonnées cartésiennes: x = {x}, y = {y}")
 
-            points.append((x, y))
+            points.append(tuple((x, y)))
 
         # Vérification du format final
         print("=== DEBUG: Vérification des points ===")
