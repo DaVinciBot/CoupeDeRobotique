@@ -292,6 +292,7 @@ class BaseArena(ABC):
         # 2.Update ally and enemy zones (specific zone, there are not in self.zones)
         self.ally_zone.update(self.team_color, ally_position, enemy_position)
         self.enemy_zone.update(self.team_color, ally_position, enemy_position)
+        self.logger.info(f"Ennemy zone: {self.enemy_zone}")
 
         # 3.Update all other zones
         # optimized: Update only the zones that intersect with the points
