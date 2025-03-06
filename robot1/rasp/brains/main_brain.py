@@ -88,7 +88,7 @@ class MainBrain(Brain):
             trajectory_computer_logger=Logger(identifier="TrajectoryComputer", follow_logger_manager_rules=True),
             arena_ptr=self.arena,
         )
-        rolling_basis = RollingBasis(
+        rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
 
