@@ -23,3 +23,6 @@ from arena.base_arena import (
     BorderZone,
     ForbiddenZone,
 )
+
+# ====== TeamColor Import ======
+from arena.base_arena.team_color import TeamColor

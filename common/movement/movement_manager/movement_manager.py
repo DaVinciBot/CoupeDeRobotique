@@ -4,11 +4,15 @@
 # The class utilizes a trajectory computer and logs movement actions.
 
 # ====== Imports ======
-# Internal project imports
+# Third party imports
+from pathfinding.core.grid import GridNode
+
+# Local imports
 from arena import BaseArena, BaseArenaZone
 from loggerplusplus import Logger
 from geometry import OrientedPoint
 
+# Internal project imports
 from movement.params import GoToParams, TrajectoryParams, SpeedProfile, RollingBasisCommand
 from movement.movement_manager.movement_status import MovementStatus
 from movement.trajectory_computer import TrajectoryComputer
@@ -75,13 +79,13 @@ class MovementManager:
         return self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.computed_goal)
 
     @staticmethod
-    def __are_path_different(path_a: list[OrientedPoint], path_b: list[OrientedPoint]) -> bool:
+    def __are_path_different(path_a: list[GridNode], path_b: list[GridNode]) -> bool:
         """
         Compares two paths to determine if they are different.
 
         Args:
-            path_a (list[OrientedPoint]): First path to compare.
-            path_b (list[OrientedPoint]): Second path to compare.
+            path_a (list[GridNode]): First path to compare.
+            path_b (list[GridNode]): Second path to compare.
 
         Returns:
             bool: True if paths differ, otherwise False.
@@ -227,7 +231,7 @@ class MovementManager:
                 self.__get_ally_enemy_distance() < self.params.path_finder_recompute_distance
         ):
             # 3.1 Save old path for comparison
-            current_used_path = self.trajectory_computer.path_finder.oriented_path_found
+            current_used_path = self.trajectory_computer.path_finder.path_found
 
             # 3.2 Recompute the path (use dynamic obstacles: consider enemy position)
             self.trajectory_computer.compute_path(
@@ -236,9 +240,11 @@ class MovementManager:
             )
 
             # 3.3 Check if the path has changed
+            # We compare only the raw path (not the oriented path, but the GridNode path)
+            # Because there less element top compare in this one => faster computation
             if self.__are_path_different(
                     current_used_path,
-                    self.trajectory_computer.path_finder.oriented_path_found,
+                    self.trajectory_computer.path_finder.path_found,
             ):
                 self.logger.info(
                     "The path has changed, updating the rolling basis handler"

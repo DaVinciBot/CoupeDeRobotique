@@ -40,7 +40,7 @@ from geometry import OrientedPoint
 from brains import MainBrain
 from taskbrain import DictProxyAccessor
 from movement import GoToParams
-from sensors import LidarDummy, Lidar
+from sensors import Lidar, LidarDummy
 
 # ====== Main ======
 if __name__ == "__main__":
@@ -54,6 +54,18 @@ if __name__ == "__main__":
         identifier="WS_Server",
         follow_logger_manager_rules=True,
     )
+    logger_ws_cmd_route_manager = Logger(
+        identifier="WS_cmd_RouteManager",
+        follow_logger_manager_rules=True,
+    )
+    logger_ws_cmd_sender = Logger(
+        identifier="WS_cmd_Sender",
+        follow_logger_manager_rules=True,
+    )
+    logger_ws_cmd_receiver = Logger(
+        identifier="WS_cmd_Receiver",
+        follow_logger_manager_rules=True,
+    )
     logger_brain = Logger(
         identifier="Brain",
         # Only Brain manages monitoring
@@ -62,16 +74,14 @@ if __name__ == "__main__":
         print_log_level=LogLevels.DEBUG,
         follow_logger_manager_rules=True,
     )
+    logger_lidar = Logger(
+        identifier="Lidar",
+        follow_logger_manager_rules=True,
+    )
 
     # Controllers loggers
     # See ./brains/controllers_brain.py for more details
     # All rolling basis part is executed in another process so define inside this part
-
-    # Sensors loggers
-    logger_lidar = Logger(
-        identifier="LiDAR",
-        follow_logger_manager_rules=True,
-    )
 
     # Environment loggers
     logger_grid_manager = Logger(
@@ -89,15 +99,18 @@ if __name__ == "__main__":
 
     """ Main object instances """
     # Websocket server
+    # Websocket server
     ws_server = WServer(
         logger=logger_ws_server,
         host=CONFIG.WS_HOSTNAME,
         port=CONFIG.WS_PORT,
-        ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,  # TODO: To fix, this feature is not working
+        # ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,  # TODO: To fix, this feature is not working
     )
     # Routes
     ws_cmd = WServerRouteManager(
-        WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+        logger=logger_ws_cmd_route_manager,
+        receiver=WSreceiver(logger=logger_ws_cmd_receiver, use_queue=True),
+        sender=WSender(logger=logger_ws_cmd_sender, name=CONFIG.WS_SENDER_NAME)
     )
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
 
@@ -108,7 +121,7 @@ if __name__ == "__main__":
 
     # Sensors
     # Lidar
-    lidar = LidarDummy(  # Lidar(
+    lidar = LidarDummy(
         logger=logger_lidar,
         min_angle=CONFIG.LIDAR_MIN_ANGLE,
         max_angle=CONFIG.LIDAR_MAX_ANGLE,
@@ -121,10 +134,10 @@ if __name__ == "__main__":
     # Arena
     arena = ShowArena(
         logger=logger_show_arena,
-        border_buffer=2,
-        obstacle_buffer=1,
-        chunk_size=5,
-        forbidden_cover_threshold=0.1,
+        border_buffer=CONFIG.ARENA_BORDER_BUFFER,
+        obstacle_buffer=CONFIG.ARENA_OBSTACLE_BUFFER,
+        chunk_size=CONFIG.ARENA_CHUNK_SIZE,
+        forbidden_cover_threshold=CONFIG.ARENA_FORBIDDEN_COVER_THRESHOLD,
         grid_manager_logger=logger_grid_manager,
     )
 

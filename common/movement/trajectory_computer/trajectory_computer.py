@@ -118,6 +118,7 @@ class TrajectoryComputer:
             if self.trajectory_params.goal > len(self.arena_ptr.zones):
                 self.logger.error("Invalid zone ID given in trajectory parameters.")
                 return
+            self.trajectory_params.goal = self.arena_ptr.zones[self.trajectory_params.goal]
 
         # If goal is a BaseArenaZone, compute the best goal point
         if isinstance(self.trajectory_params.goal, BaseArenaZone):

@@ -9,15 +9,18 @@
 # Third-party imports
 from loggerplusplus import Logger
 
-# Internal project imports
+# Local imports
 from geometry import (
     Point,
     Polygon,
     OrientedPoint,
 )
+
+# Internal project imports
 from arena.base_arena.grid_manager import GridManager
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.team_color import TeamColor
 
 
 # ====== Stuff Zone Part ======
@@ -68,13 +71,13 @@ class StuffZone(BaseArenaZone):
         )
 
     def update(
-            self, team_color: str, ally_position: Point | OrientedPoint, enemy_position: Point | OrientedPoint
+            self, team_color: TeamColor, ally_position: Point | OrientedPoint, enemy_position: Point | OrientedPoint
     ) -> None:
         """
         Updates the zone accessibility based on the positions of allies and enemies.
 
         Args:
-            team_color (str): Team color.
+            team_color (TeamColor): The color of the team.
             ally_position (Point | OrientedPoint): Position of an ally.
             enemy_position (Point | OrientedPoint): Position of an enemy.
         """
@@ -88,13 +91,13 @@ class StuffZone(BaseArenaZone):
 
             self.logger.debug(f"{self.zone_type} zone is now accessible")
 
-    def get_go_to_position(self, ally_position: OrientedPoint, team_color: str | None) -> OrientedPoint | Point | None:
+    def get_go_to_position(self, ally_position: OrientedPoint, team_color: TeamColor) -> OrientedPoint | Point | None:
         """
         Determines the best go-to position for an ally in the given zone.
 
         Args:
             ally_position (OrientedPoint): The position of the ally.
-            team_color (str | None): The team color to check accessibility.
+            team_color (TeamColor): The team color to check accessibility.
 
         Returns:
             OrientedPoint | Point | None: The best go-to position, or None if the zone is not accessible.
@@ -102,7 +105,8 @@ class StuffZone(BaseArenaZone):
         # If no go-to positions are defined, return the centroid of the zone
         if self.go_to_positions is None:
             self.logger.debug(
-                f"GoTo position request: No go-to positions defined for zone {self.zone_type}, returning centroid [{self.polygon.centroid}]"
+                f"GoTo position request: No go-to positions defined for zone {self.zone_type}, "
+                f"returning centroid [{self.polygon.centroid}]"
             )
             return self.polygon.centroid
 

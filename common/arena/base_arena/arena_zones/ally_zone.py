@@ -11,14 +11,16 @@
 # Third-party imports
 from loggerplusplus import Logger
 
-# Internal project imports
+# Local imports
 from geometry import (
     Point,
     OrientedPoint,
     create_straight_rectangle
 )
+# Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.team_color import TeamColor
 
 
 # ====== Ally Zone Class ======
@@ -62,17 +64,17 @@ class AllyZone(BaseArenaZone):
             polygon=position_based_polygon,
             buffered_polygon=None,
             update_callback=None,
-            zone_color="#8af542",
+            zone_color="#2ea100",
         )
 
     def update(
-            self, team_color: str, ally_position: Point | OrientedPoint, enemy_position: Point | OrientedPoint
+            self, team_color: TeamColor, ally_position: Point | OrientedPoint, enemy_position: Point | OrientedPoint
     ) -> None:
         """
         Update the zone based on the positions of allies and enemies.
 
         Args:
-            team_color (str): Team color.
+            team_color (TeamColor, optional): The color of the team.
             ally_position (Point | OrientedPoint): Position of ally.
             enemy_position (Point | OrientedPoint): Position of enemy.
         """
