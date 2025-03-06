@@ -79,8 +79,136 @@ void loop()
     delay(5000);
 }
 */
+#include <Arduino.h>
+#include <SPI.h>
+#include <BaseLoRa.h>
+#include <SX126x.h>
+
+SX126x LoRa;
+
+// Message to transmit
+char message[] = "HeLoRa World!";
+uint8_t nBytes = sizeof(message);
+uint8_t counter = 0;
+
+void setup() {
+  // Begin serial communication
+  Serial.begin(38400);
+
+  // Begin LoRa radio and set NSS, reset, busy, txen, and rxen pin with connected Arduino pins
+  Serial.println("Begin LoRa radio");
+  int8_t nssPin = 10, resetPin = 9, busyPin = 4, irqPin = -1, txenPin = 8, rxenPin = 7;
+  if (!LoRa.begin(nssPin, resetPin, busyPin, irqPin, txenPin, rxenPin)) {
+    Serial.println("Something wrong, can't begin LoRa radio");
+    while (1);
+  }
+
+  // Set frequency to 915 MHz (check if this matches your region's frequency range)
+  Serial.println("Set frequency to 915 MHz");
+  LoRa.setFrequency(915000000);
+
+  // Set TX power to +17 dBm (adjust if needed)
+  Serial.println("Set TX power to +17 dBm");
+  LoRa.setTxPower(17, SX126X_TX_POWER_SX1262);
+
+  // Configure modulation parameters (make sure both sender and receiver use same parameters)
+  Serial.println("Set modulation parameters:\n\tSpreading factor = 7\n\tBandwidth = 125 kHz\n\tCoding rate = 4/5");
+  uint8_t sf = 7;                                                     // LoRa spreading factor: 7
+  uint32_t bw = 125000;                                               // Bandwidth: 125 kHz
+  uint8_t cr = 5;                                                     // Coding rate: 4/5
+  LoRa.setLoRaModulation(sf, bw, cr);
+
+  // Configure packet parameters (ensure these match between sender and receiver)
+  Serial.println("Set packet parameters:\n\tExplicit header type\n\tPreamble length = 12\n\tPayload Length = 15\n\tCRC on");
+  uint8_t headerType = SX126X_HEADER_EXPLICIT;                        // Explicit header mode
+  uint16_t preambleLength = 12;                                       // Set preamble length to 12
+  uint8_t payloadLength = 15;                                         // Initialize payloadLength to 15
+  bool crcType = true;                                                // Set CRC enable
+  LoRa.setLoRaPacket(headerType, preambleLength, payloadLength, crcType);
+
+  // Set synchronize word for public network (0x3444)
+  Serial.println("Set synchronize word to 0x3444");
+  LoRa.setSyncWord(0x3444);
+
+  Serial.println("\n-- LORA TRANSMITTER / RECEIVER --\n");
+}
+
+void loop() {
+  // ---- TRANSMIT MODE ----
+  // Transmit message and counter
+  LoRa.beginPacket();
+  LoRa.write(message, nBytes);
+  LoRa.write(counter);
+  LoRa.endPacket();
+
+  // Print message and counter in serial
+  Serial.print("Transmitting: ");
+  Serial.print(message);
+  Serial.print("  ");
+  Serial.println(counter++);
+
+  // Wait for transmission to finish
+  LoRa.wait();
+
+  // Print transmit time
+  Serial.print("Transmit time: ");
+  Serial.print(LoRa.transmitTime());
+  Serial.println(" ms");
+  Serial.println();
+
+  // ---- RECEIVE MODE ----
+  // Request for receiving new LoRa packet
+  LoRa.request();
+  // Wait for incoming LoRa packet
+  LoRa.wait();
+
+  // Read received message and counter
+  const uint8_t msgLen = LoRa.available() - 1;  // Subtract 1 for the counter byte
+  if (msgLen > 0) {  // Ensure there is data to receive
+    char receivedMessage[msgLen + 1];  // Extra byte for null terminator
+    uint8_t receivedCounter;
+
+    // Read message
+    uint8_t i = 0;
+    while (LoRa.available() > 1) {  // Read all message bytes except the last counter byte
+      receivedMessage[i++] = LoRa.read();
+    }
+
+    // Null-terminate the string
+    receivedMessage[i] = '\0';
+
+    // Read the counter byte
+    receivedCounter = LoRa.read();
+
+    // Print received message and counter
+    Serial.print("Received: ");
+    Serial.print(receivedMessage);
+    Serial.print("  ");
+    Serial.println(receivedCounter);
+
+    // Print packet/signal status including RSSI and SNR
+    Serial.print("Packet status: RSSI = ");
+    Serial.print(LoRa.packetRssi());
+    Serial.print(" dBm | SNR = ");
+    Serial.print(LoRa.snr());
+    Serial.println(" dB");
+
+    // Show received status in case of CRC or header error
+    uint8_t status = LoRa.status();
+    if (status == SX126X_STATUS_CRC_ERR) {
+      Serial.println("CRC error");
+    } else if (status == SX126X_STATUS_HEADER_ERR) {
+      Serial.println("Packet header error");
+    }
+  }
+
+  // Delay before next transmission to avoid overloading the radio
+  delay(5000);
+}
+
 
 // ok ?
+/*
 #include <SX126x.h>
 
 SX126x LoRa;
@@ -198,7 +326,7 @@ void loop() {
   // Delay before next transmission to avoid overloading the radio
   delay(5000);
 }
-
+*/
 
 /*
 // MOI
