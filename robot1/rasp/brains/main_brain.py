@@ -26,17 +26,21 @@ from arena import AllyZone, TeamColor
 
 # ====== Internal Project Imports ======
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
-
+from sensors import Lidar
 
 class MainBrain(Brain):
     def __init__(
             self,
             logger: Logger,
+            # Sensor
+            lidar: Lidar,
             # Environment
             arena: ShowArena,
             # WS routes
             ws_cmd: WServerRouteManager
     ) -> None:
+        # Sensor
+        self.lidar: Lidar = lidar
         # Environment
         self.arena: ShowArena = arena
         # WS routes
@@ -130,7 +134,7 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=np.array([]),
+            lidar_scan_polars=self.lidar.scan_to_polars(),
             optimized_update=True,
         )
 
