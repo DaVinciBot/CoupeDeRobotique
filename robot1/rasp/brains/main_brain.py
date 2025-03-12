@@ -14,7 +14,7 @@ from taskbrain import Brain
 
 # ====== Local Library Imports ======
 from geometry import OrientedPoint, Point, is_empty
-from arena import ShowArena
+from arena import ShowArena, BaseArenaZone
 from movement import (
     MovementManager,
     GoToParams,
@@ -27,7 +27,7 @@ from arena import AllyZone, TeamColor
 
 # ====== Internal Project Imports ======
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
-from sensors import Lidar
+from sensors import Lidar, LidarDummy
 from tasks import Task, TaskPlanner
 
 
@@ -377,19 +377,28 @@ class MainBrain(Brain):
 
         ax, self.fig = self.arena.visualize(show=False)
         for task in self.game_tasks:
-            if isinstance(task.position, Point):
-                _display_task_point(ax, task, task.position, annotate=True)
-            if isinstance(task.position, BaseArenaZone):
-                if task.position.go_to_positions:
+            if isinstance(task.trajectory_params.goal, Point):
+                _display_task_point(
+                    ax, task, task.trajectory_params.goal, annotate=True
+                )
+            if isinstance(task.trajectory_params.goal, BaseArenaZone):
+                if task.trajectory_params.goal.go_to_positions:
                     i = 0
-                    _annotate_task_point(ax, task, task.position.go_to_positions[i])
-                    while i < len(task.position.go_to_positions):
-                        _display_task_point(ax, task, task.position.go_to_positions[i])
+                    _annotate_task_point(
+                        ax, task, task.trajectory_params.goal.go_to_positions[i]
+                    )
+                    while i < len(task.trajectory_params.goal.go_to_positions):
+                        _display_task_point(
+                            ax, task, task.trajectory_params.goal.go_to_positions[i]
+                        )
                         i += 1
                 else:
                     try:
                         _display_task_point(
-                            ax, task, task.position.polygon.centroid, annotate=True
+                            ax,
+                            task,
+                            task.trajectory_params.goal.polygon.centroid,
+                            annotate=True,
                         )
                     except:
                         self.logger.warning(
