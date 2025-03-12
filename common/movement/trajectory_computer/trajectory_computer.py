@@ -14,14 +14,14 @@ from movement.params import RollingBasisCommand
 
 class TrajectoryComputer:
     def __init__(
-            self,
-            # Loggers:
-            logger: Logger,
-            path_finder_logger: Logger,
-            # Arena (should be a pointer of the arena)
-            arena_ptr: BaseArena,
-            # Trajectory params
-            trajectory_params: TrajectoryParams,
+        self,
+        # Loggers:
+        logger: Logger,
+        path_finder_logger: Logger,
+        # Arena (should be a pointer of the arena)
+        arena_ptr: BaseArena,
+        # Trajectory params
+        trajectory_params: TrajectoryParams,
     ):
         self.logger: Logger = logger
         self.path_finder_logger: Logger = path_finder_logger
@@ -61,18 +61,36 @@ class TrajectoryComputer:
         new_y = centroid.y
 
         # Check if the goal is too close to the border
-        if centroid.x < self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer:
-            new_x = self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+        if (
+            centroid.x
+            < self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+        ):
+            new_x = (
+                self.arena_ptr.border_buffer
+                + self.trajectory_params.goal.obstacle_buffer
+            )
         if (self.arena_ptr.width - centroid.x) < (
-                self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+            self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
         ):
-            new_x = self.arena_ptr.width - (self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer)
-        if centroid.y < self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer:
-            new_y = self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+            new_x = self.arena_ptr.width - (
+                self.arena_ptr.border_buffer
+                + self.trajectory_params.goal.obstacle_buffer
+            )
+        if (
+            centroid.y
+            < self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+        ):
+            new_y = (
+                self.arena_ptr.border_buffer
+                + self.trajectory_params.goal.obstacle_buffer
+            )
         if (self.arena_ptr.height - centroid.y) < (
-                self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+            self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
         ):
-            new_y = self.arena_ptr.height - (self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer)
+            new_y = self.arena_ptr.height - (
+                self.arena_ptr.border_buffer
+                + self.trajectory_params.goal.obstacle_buffer
+            )
 
         return Point(new_x, new_y)
 
@@ -83,7 +101,8 @@ class TrajectoryComputer:
         if isinstance(self.trajectory_params.goal, BaseArenaZone):
             # Use zone method to get best goal point from zone
             self.computed_goal = self.trajectory_params.goal.get_go_to_position(
-                ally_position=self.arena_ptr.ally_zone.point, team_color=self.arena_ptr.team_color
+                ally_position=self.arena_ptr.ally_zone.point,
+                team_color=self.arena_ptr.team_color,
             )
 
             # If goal is None => zone is not accessible
@@ -115,9 +134,9 @@ class TrajectoryComputer:
 
     # ====== Public methods ====== #
     def compute_path(
-            self,
-            use_static_and_dynamic_grid: bool,
-            current_position: OrientedPoint = None,
+        self,
+        use_static_and_dynamic_grid: bool,
+        current_position: OrientedPoint = None,
     ) -> list[OrientedPoint]:
         # Initie pathfinder if not aready done
         if self.path_finder is None:
@@ -125,13 +144,15 @@ class TrajectoryComputer:
         else:
             # Update pathfinder with current position
             self.path_finder.update_current_position(
-                self.arena_ptr.ally_zone.point if current_position is None else current_position
+                self.arena_ptr.ally_zone.point
+                if current_position is None
+                else current_position
             )
 
         # Run pathfinder
         self.path_finder.find_oriented_path(
             use_static_and_dynamic_grid=use_static_and_dynamic_grid,
-            smooth_path=self.trajectory_params.smooth_trajectory
+            smooth_path=self.trajectory_params.smooth_trajectory,
         )
 
         return self.path_finder.oriented_path_found
@@ -198,9 +219,9 @@ class TrajectoryComputer:
 
         # Compute angular velocity based on changes in orientation
         if (
-                self.__last_theta is None
-                or self.__last_time_theta is None
-                or t == self.__last_time_theta
+            self.__last_theta is None
+            or self.__last_time_theta is None
+            or t == self.__last_time_theta
         ):
             v_angular = self.__initial_angular_speed
         else:
@@ -218,7 +239,7 @@ class TrajectoryComputer:
         # Clamp angular velocity to the maximum allowed value
         if abs(v_angular) > self.trajectory_params.speed_profile.max_angular_speed:
             v_angular = self.trajectory_params.speed_profile.max_angular_speed * (
-                    v_angular / abs(v_angular)
+                v_angular / abs(v_angular)
             )
 
         # Update state for future computations
@@ -233,15 +254,21 @@ class TrajectoryComputer:
         # Compute cumulative distances between trajectory points
         total_distance = 0
         for i in range(1, len(self.path_finder.oriented_path_found)):
-            x1, y1 = self.path_finder.oriented_path_found[i - 1].x, self.path_finder.oriented_path_found[i - 1].y
-            x2, y2 = self.path_finder.oriented_path_found[i].x, self.path_finder.oriented_path_found[i].y
+            x1, y1 = (
+                self.path_finder.oriented_path_found[i - 1].x,
+                self.path_finder.oriented_path_found[i - 1].y,
+            )
+            x2, y2 = (
+                self.path_finder.oriented_path_found[i].x,
+                self.path_finder.oriented_path_found[i].y,
+            )
             total_distance += math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
             self.cumulative_distances.append(total_distance)
 
     def __init_curves(
-            self,
-            initial_linear_speed: float = None,
-            initial_angular_speed: float = None,
+        self,
+        initial_linear_speed: float = None,
+        initial_angular_speed: float = None,
     ) -> None:
 
         self.__initial_angular_speed = initial_angular_speed
@@ -266,9 +293,9 @@ class TrajectoryComputer:
 
     # ====== Public methods ====== #
     def compute_trajectory(
-            self,
-            initial_linear_speed: float = None,
-            initial_angular_speed: float = None,
+        self,
+        initial_linear_speed: float = None,
+        initial_angular_speed: float = None,
     ):
         if self.path_finder is None:
             self.logger.error("PathFinder is not initialized.")
@@ -286,11 +313,11 @@ class TrajectoryComputer:
     """
 
     def compute(
-            self,
-            use_static_and_dynamic_grid: bool,
-            current_position: OrientedPoint = None,
-            current_linear_speed: float = None,
-            current_angular_speed: float = None,
+        self,
+        use_static_and_dynamic_grid: bool,
+        current_position: OrientedPoint = None,
+        current_linear_speed: float = None,
+        current_angular_speed: float = None,
     ):
         self.compute_path(use_static_and_dynamic_grid, current_position)
         self.compute_trajectory(current_linear_speed, current_angular_speed)
@@ -319,7 +346,5 @@ class TrajectoryComputer:
             current_time, position.theta
         )
         return RollingBasisCommand(
-            position=position,
-            linear_speed=linear_speed,
-            angular_speed=angular_speed
+            position=position, linear_speed=linear_speed, angular_speed=angular_speed
         )
