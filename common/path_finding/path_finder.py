@@ -371,7 +371,10 @@ class PathFinder:
         """
         self.__find_path(use_static_and_dynamic_grid=use_static_and_dynamic_grid)
 
-        # Add real robot position as start point and goal as end point (not approximated chunk points)
+        # If no path found, return an empty list
+        if not self.path_found:
+            return []
+            # Add real robot position as start point and goal as end point (not approximated chunk points)
         if not smooth_path:
             self.oriented_path_found = (
                 # Add start and goal points to the path + remove some points to improve trajectory
