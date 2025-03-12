@@ -1,28 +1,20 @@
 from config_loader import CONFIG
 
-# External imports
-import asyncio
-import time
-
-# Import from common
-from taskbrain import Brain
-from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
-from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
-
-from loggerplusplus import Logger
-import math
-from utils import Utils
+# ====== Standard Library Imports ======
 import matplotlib.pyplot as plt
-import time
 import numpy as np
 import random
-import gc
+import math
+import json
 
-# Import from local path
-from controllers.rolling_basis import RollingBasisDummy, RollingBasis
+# ====== Third-party library imports ======
+from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
+from loggerplusplus import Logger
+from taskbrain import Brain
 
-from path_finding import PathFinder
-from arena import ShowArena, BaseArenaZone
+# ====== Local Library Imports ======
+from geometry import OrientedPoint, Point, is_empty
+from arena import ShowArena
 from movement import (
     MovementManager,
     GoToParams,
@@ -31,20 +23,20 @@ from movement import (
     RollingBasisCommand,
     TrajectoryComputer,
 )
+from arena import AllyZone, TeamColor
 
-
-from sensors import Lidar, LidarDummy
-from arena import AllyZone
+# ====== Internal Project Imports ======
+from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+from sensors import Lidar
 from tasks import Task, TaskPlanner
-import json
 
 
 class MainBrain(Brain):
     def __init__(
         self,
         logger: Logger,
-        # Sensors
-        lidar: Lidar | LidarDummy,
+        # Sensor
+        lidar: Lidar,
         # Environment
         arena: ShowArena,
         # WS routes
@@ -53,10 +45,7 @@ class MainBrain(Brain):
         solve_planner_limit_sec: int = 1,
         tasks: list[Task] = [],
     ) -> None:
-        if isinstance(lidar, LidarDummy):
-            logger.warning("LidarDummy is used")
-
-        # Sensors
+        # Sensor
         self.lidar: Lidar = lidar
         # Environment
         self.arena: ShowArena = arena
@@ -72,29 +61,24 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = OrientedPoint(0, 0, 0)
 
         self.go_to_params: GoToParams | None = None
-        self.theorical_ally_position: AllyZone = AllyZone(
-            logger=Logger(identifier="th_ally"),
+
+        # For test purpose
+        self.th_ally_zone: AllyZone = AllyZone(
+            logger=Logger(identifier="th_ally", follow_logger_manager_rules=True),
             point=self.rolling_basis_odometrie,
             robot_size=5,
         )
+        self.th_ally_zone.zone_color = "#82795f"
+
+        self.path: list[OrientedPoint] = []
+
         super().__init__(logger, self)
 
         # Attributes for the visualization
         self.fig, self.ax = plt.subplots()
 
-        self.theorical_ally_position.zone_color = "#fcba03"
-
-        # TMP for test purpose
-        self.lidar_scan_polars = self.lidar.scan_to_polars()
-
-        self.enemy_generator = straight_line_generator(
-            start_point=OrientedPoint(280, 93, 0),
-            end_point=OrientedPoint(23, 135, 0),
-            step_size=2.0,
-        )
-
         # Simulation loggers for task planning
-        self.trajectory_computer_logger_simulation = Logger(
+        self.movemement_manager_logger_simulation = Logger(
             identifier="Simulation Movement Manager"
         )
         self.rolling_basis_handler_logger_simulation = Logger(
@@ -130,10 +114,7 @@ class MainBrain(Brain):
             arena_ptr=self.arena,
         )
         rolling_basis = RollingBasisDummy(
-            logger=Logger(
-                identifier="RollingBasis",
-                follow_logger_manager_rules=True,
-            )
+            logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
 
         if isinstance(rolling_basis, RollingBasisDummy):
@@ -143,12 +124,7 @@ class MainBrain(Brain):
 
         # Update rolling basis odometrie if main process has updated it
         if self.rolling_basis_odometrie != rolling_basis.odometrie:
-            rolling_basis.logger.info(f"New odo: {self.rolling_basis_odometrie}")
-
             rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-            rolling_basis.logger.info(
-                f"RollingBasis odometrie updated: {self.rolling_basis_odometrie}"
-            )
 
         # Force the sync of arena inside the movement_manager
         movement_manager.arena_ptr = self.arena
@@ -163,15 +139,17 @@ class MainBrain(Brain):
             movement_manager.logger.info("New GoToParams received")
 
         # Handle the 'go to' command
-        cmd: RollingBasisCommand = movement_manager.handle_go_to()
-        if cmd is not None:
-            self.theorical_ally_position = AllyZone(
-                logger=Logger(identifier="th_ally"), point=cmd.position, robot_size=5
-            )
-
-            rolling_basis.set_speed_and_position(*cmd.get_command())
-            print("ROLLING BASIS Sub", self.rolling_basis_odometrie)
-            self.rolling_basis_odometrie = rolling_basis.odometrie
+        if movement_manager.params is not None:
+            cmd: RollingBasisCommand = movement_manager.handle_go_to()
+            if cmd is not None:
+                self.th_ally_zone = AllyZone(
+                    logger=Logger(identifier="th_ally"),
+                    point=cmd.position,
+                    robot_size=5,
+                )
+                rolling_basis.set_speed_and_position(*cmd.get_command())
+                self.rolling_basis_odometrie = rolling_basis.odometrie
+                self.path = movement_manager.trajectory_computer.path_to_follow
 
     """
     ### Main Process ###
@@ -181,33 +159,35 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
     async def update_arena(self) -> None:
-        print("ROLLING BASIS", self.rolling_basis_odometrie)
+        # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
             lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
-            enemy_position=self.enemy_generator.__next__(),
             optimized_update=True,
         )
 
+        # obstacles = self.arena.remove_outside(
+        #     self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
+        # )
+
+        # Visualize the arena
         self.ax.clear()
         self.arena.visualize(
-            display_default_destination_zone=False,
-            theorical_ally_position=self.theorical_ally_position,
-            # trajectory=(
-            #     self.movement_manager.path_finder.oriented_path_found
-            #     if self.movement_manager.path_finder is not None
-            #     else []
-            # ),
-            # Display lidar scan point
-            # display_points=[
-            #     point for point in self.arena._pol_to_abs_cart(self.lidar_scan_polars).geoms
-            # ],
-            plot=(self.ax, self.fig),
+            # Visualization options
+            show_buffer=True,
+            trajectory=self.path,
+            display_zones_go_to_positions=True,
+            show_ally_direction=True,
+            # Plot options
             show=False,
+            plot=(self.ax, self.fig),
+            # Additional options
+            additional_zones=[self.th_ally_zone],
+            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
         )
         plt.pause(0.01)
 
-    @Brain.task(process=False, run_on_start=CONFIG.ZOMBIE_MODE, refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def zombie_mode(self):
         """
         executes requests received by the server. Use Postman to send request to the server
@@ -219,18 +199,38 @@ class MainBrain(Brain):
         if cmd != WSmsg():
             self.logger.info(f"Zombie instruction {cmd.msg} received: {cmd.data}")
 
-            if cmd.msg == "eval":
+            instructions = []
+            if isinstance(cmd.data, str):
+                instructions.append(cmd.data)
+            elif isinstance(cmd.data, list):
+                instructions = cmd.data
+
+            # Exec: for attribution cases (x = 1)
+            if cmd.msg == "exec":
+                for instruction in instructions:
+                    exec(instruction)
+
+            # Eval: for return cases (print(x))
+            elif cmd.msg == "eval":
                 instructions = []
+                execution = "No instructions"
                 if isinstance(cmd.data, str):
                     instructions.append(cmd.data)
                 elif isinstance(cmd.data, list):
                     instructions = cmd.data
-
                 for instruction in instructions:
                     if instruction.startswith("await "):
-                        await eval(instruction.removeprefix("await "))
+                        execution = await eval(instruction.removeprefix("await "))
                     else:
-                        eval(instruction)
+                        execution = eval(instruction)
+                message = WSmsg.from_json(
+                    {
+                        "sender": CONFIG.WS_SENDER_NAME,
+                        "msg": "Execution of sender instruction",
+                        "data": str(execution),
+                    }
+                )
+                await self.ws_cmd.sender.send(message)
 
             else:
                 self.logger.warning(
@@ -240,137 +240,43 @@ class MainBrain(Brain):
     """ ### One-Shot Tasks ### """
 
     @Brain.task(process=False, run_on_start=True)
-    async def initialize(self):
-        self.arena.set_team_color("yellow")
+    async def start(self):
+        self.arena.set_team_color(TeamColor.YELLOW)
+        # Start robot position
         self.rolling_basis_odometrie = OrientedPoint(20, 25, 0)
-
-    @Brain.task(process=False, run_on_start=True)
-    async def main(self):
-        await self.initialize()
-
-        go_to_params = GoToParams(
-            trajectory_params=TrajectoryParams(
-                speed_profile=SpeedProfile.from_dict(
-                    CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE
-                ),
-                goal=OrientedPoint(250, 140),
-                resolution=1,
-                smooth_trajectory=True,
-            ),
-            acs_distance=30,
-            path_finder_recompute_distance=80,
-            timeout=-1.0,
-            is_mandatory=False,
-            goal_tolerance=0.1,
-            distance_to_goal_to_dont_recompute_path=10,
+        self.arena.enemy_zone.update(
+            self.arena.team_color, self.rolling_basis_odometrie, Point(290, 190)
         )
 
         self.go_to_params = go_to_params
         self.logger.info(f"Init done {self.rolling_basis_odometrie}")
 
-    def get_game_tasks_planification(  # MUST BE CALLED ONCE THE STARTING POINT IS KNOWN
+    def get_game_tasks_planification(
         self, solve_planner_limit_sec: int = -1, save_planification: bool = False
     ):
         scores = [task.score for task in self.game_tasks]
         tasks_duration_sec = [task.execution_time for task in self.game_tasks]
 
-        # Matrice de taille (N+2) x (N+2)
-        n = len(scores)
-        travels_duration_matrix_sec = [[0] * (n + 2) for _ in range(n + 2)]
+        travels_duration_matrix_sec = [
+            [0 for _ in range(len(scores) + 2)] for _ in range(len(scores) + 2)
+        ]
 
-        # scores is from 0 to n-1 but as we had the start and end point, we need to shift by one in the matrix as 0 is origin.
-        # in the travels_duration_matrix we have from 0 to n with 0 is the origin and n is the end point
-        for i in range(n):
-            for j in range(n):
-                if i != j:
-                    trajectory_computer = TrajectoryComputer(
-                        logger=self.trajectory_computer_logger_simulation,
-                        path_finder_logger=self.path_finder_logger_simulation,
-                        arena_ptr=self.arena,
-                        trajectory_params=self.game_tasks[i].trajectory_params,
-                    )
-                    trajectory_computer.compute(
-                        current_position=self.game_tasks[j].trajectory_params.goal,
-                        use_static_and_dynamic_grid=False,
-                        current_angular_speed=0,
-                        current_linear_speed=0,
-                    )
-                    self.logger.fatal(
-                        f"Task {j} to Task {i} ({self.game_tasks[j].trajectory_params.goal.polygon.centroid if isinstance(self.game_tasks[j].trajectory_params.goal,BaseArenaZone) else self.game_tasks[j].trajectory_params.goal}->{self.game_tasks[i].trajectory_params.goal.polygon.centroid if isinstance(self.game_tasks[i].trajectory_params.goal,BaseArenaZone) else self.game_tasks[i].trajectory_params.goal}) duration: {trajectory_computer.total_duration}"
-                    )
-                    travels_duration_matrix_sec[i + 1][j + 1] = (
-                        int(  # the Solver requires int values
-                            trajectory_computer.total_duration
-                        )
-                        + 1  # safety margin as 4.3 should be 5 not 4
-                    )
-                    travels_duration_matrix_sec[j + 1][i + 1] = (
-                        travels_duration_matrix_sec[i + 1][j + 1]
-                    )
+        for i in range(len(scores) + 2):
+            for j in range(i, len(scores) + 2):
+                travels_duration_matrix_sec[i][j] = MovementManager(
+                    movement_manager_logger_simulation=self.movemement_manager_logger_simulation,
+                    rolling_basis_handler_logger_simulation=self.rolling_basis_handler_logger_simulation,
+                    path_finder_logger_simulation=self.path_finder_logger_simulation,
+                    movement_resolution=1,
+                    arena=self.arena,
+                ).go_to()  # TODO: use Trajectory params to get the duration
+                travels_duration_matrix_sec[j][i] = travels_duration_matrix_sec[i][j]
 
-        # Ajouter les temps vers/depuis les points de départ/arrivée
-        for k in range(1, n):
-            # Start -> Tasks
-            trajectory_computer = TrajectoryComputer(
-                logger=self.trajectory_computer_logger_simulation,
-                path_finder_logger=self.path_finder_logger_simulation,
-                arena_ptr=self.arena,
-                trajectory_params=self.game_tasks[k].trajectory_params,
-            )
-            trajectory_computer.compute(
-                current_position=self.rolling_basis_odometrie,
-                use_static_and_dynamic_grid=False,
-                current_angular_speed=0,
-                current_linear_speed=0,
-            )
-            travels_duration_matrix_sec[0][k] = (
-                int(trajectory_computer.total_duration) + 1
-            )
-            travels_duration_matrix_sec[k][0] = travels_duration_matrix_sec[0][k]
-
-            # Tasks -> Arrival
-            trajectory_computer = TrajectoryComputer(
-                logger=self.trajectory_computer_logger_simulation,
-                path_finder_logger=self.path_finder_logger_simulation,
-                arena_ptr=self.arena,
-                trajectory_params=TrajectoryParams(
-                    speed_profile=SpeedProfile(
-                        **CONFIG.SPECIFIC_CONFIG["rolling_basis"]["speed_profiles"][
-                            "default"
-                        ]
-                    ),
-                    goal=OrientedPoint(random.randint(0, 300), random.randint(0, 200)),
-                    resolution=CONFIG.SPECIFIC_CONFIG["movement_manager"][
-                        "movement_resolution"
-                    ],
-                ),  # TODO: Change this to the end point (the one at the end of the game)
-            )
-            trajectory_computer.compute(
-                current_position=self.rolling_basis_odometrie,
-                use_static_and_dynamic_grid=False,
-                current_angular_speed=0,
-                current_linear_speed=0,
-            )
-            travels_duration_matrix_sec[k][n + 1] = (
-                int(trajectory_computer.total_duration) + 1
-            )
-            travels_duration_matrix_sec[n + 1][k] = travels_duration_matrix_sec[k][
-                n + 1
-            ]
-
-        for i in range(n + 2):
-            for j in range(n + 2):
-                print(travels_duration_matrix_sec[i][j], end=" ")
-
-            print()
-        print(
-            "i = ",
-            len(travels_duration_matrix_sec[0]),
-            "j = ",
-            len(travels_duration_matrix_sec[1]),
-        )
-        print("n = ", n)
-
+        # TODO: get the travel time matrix with time computed according to arena and robot speed (avg speed or profile)
+        travels_duration_matrix_sec = [
+            [0 if i == j else random.randint(1, 10) for j in range(len(scores) + 2)]
+            for i in range(len(scores) + 2)
+        ]
         self.task_planner = TaskPlanner(
             tasks_scores=scores,
             tasks_duration_sec=tasks_duration_sec,
@@ -390,6 +296,31 @@ class MainBrain(Brain):
         with open(file_path, "r") as f:
             solution = json.load(f)
         self.game_tasks_planification = solution
+
+    def get_game_tasks_planification(
+        self, solve_planner_limit_sec: int = -1, save_planification: bool = False
+    ):
+        scores = [task.score for task in self.game_tasks]
+        tasks_duration_sec = [task.execution_time for task in self.game_tasks]
+        # TODO: get the travel time matrix with time computed according to arena and robot speed (avg speed or profile)
+        travels_duration_matrix_sec = [
+            [0 if i == j else random.randint(1, 10) for j in range(len(scores) + 2)]
+            for i in range(len(scores) + 2)
+        ]
+        self.task_planner = TaskPlanner(
+            tasks_scores=scores,
+            tasks_duration_sec=tasks_duration_sec,
+            travels_duration_matrix_sec=travels_duration_matrix_sec,
+            max_time_sec=self.game_duration_sec,
+            solve_limit_sec=(
+                self.solve_planner_limit_sec
+                if solve_planner_limit_sec < 0
+                else solve_planner_limit_sec
+            ),
+        )
+        self.game_tasks_planification = self.task_planner.solve(
+            save_mode=save_planification
+        )
 
     def load_preplanned_tasks(self, file_path: str = "solution.json"):
         with open(file_path, "r") as f:
@@ -431,7 +362,7 @@ class MainBrain(Brain):
         )
 
     def visualize_tasks_in_arena(self):
-        def _annotate_task_point(ax, task: Task, pos: Point):
+        def _annotate_task_point(ax, task, pos: Point):
             ax.annotate(
                 f"{task.name}\nS: {task.score}\nT: {task.execution_time}s",
                 (pos.x, pos.y),
@@ -446,28 +377,19 @@ class MainBrain(Brain):
 
         ax, self.fig = self.arena.visualize(show=False)
         for task in self.game_tasks:
-            if isinstance(task.trajectory_params.goal, Point):
-                _display_task_point(
-                    ax, task, task.trajectory_params.goal, annotate=True
-                )
-            if isinstance(task.trajectory_params.goal, BaseArenaZone):
-                if task.trajectory_params.goal.go_to_positions:
+            if isinstance(task.position, Point):
+                _display_task_point(ax, task, task.position, annotate=True)
+            if isinstance(task.position, BaseArenaZone):
+                if task.position.go_to_positions:
                     i = 0
-                    _annotate_task_point(
-                        ax, task, task.trajectory_params.goal.go_to_positions[i]
-                    )
-                    while i < len(task.trajectory_params.goal.go_to_positions):
-                        _display_task_point(
-                            ax, task, task.trajectory_params.goal.go_to_positions[i]
-                        )
+                    _annotate_task_point(ax, task, task.position.go_to_positions[i])
+                    while i < len(task.position.go_to_positions):
+                        _display_task_point(ax, task, task.position.go_to_positions[i])
                         i += 1
                 else:
                     try:
                         _display_task_point(
-                            ax,
-                            task,
-                            task.trajectory_params.goal.polygon.centroid,
-                            annotate=True,
+                            ax, task, task.position.polygon.centroid, annotate=True
                         )
                     except:
                         self.logger.warning(
@@ -532,3 +454,34 @@ def straight_line_generator(
     # Une fois arrivé au point final, continuer à renvoyer ce point
     while True:
         yield end_point
+
+
+"""
+This main brain is dedicated to test the robot movement WITHOUT Lidar.
+
+        go_to_params = GoToParams(
+            trajectory_params=TrajectoryParams(
+                speed_profile=SpeedProfile.from_dict(
+                    CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE
+                ),
+                goal=OrientedPoint(250, 140),
+                resolution=1,
+                smooth_trajectory=True,
+            ),
+            acs_distance=30,
+            path_finder_recompute_distance=80,
+            timeout=-1.0,
+            is_mandatory=False,
+            goal_tolerance=0.1,
+            distance_to_goal_to_dont_recompute_path=10,
+        )
+        
+Exemple in postman with zombie mode:
+url: ws://rob.local:8080/cmd?sender=postman_zombie
+message:
+{
+    "sender": "zombie_master",
+    "msg": "exec",
+    "data": "self.go_to_params = GoToParams(trajectory_params=TrajectoryParams(speed_profile=SpeedProfile.from_dict(CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE), goal=OrientedPoint(250, 140), resolution=1, smooth_trajectory=True), acs_distance=30, path_finder_recompute_distance=80, timeout=-1.0, is_mandatory=False, goal_tolerance=0.1, distance_to_goal_to_dont_recompute_path=10)"
+}
+"""

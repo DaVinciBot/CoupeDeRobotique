@@ -9,10 +9,13 @@
 # Third-party imports
 from loggerplusplus import Logger
 
-# Internal project imports
+# Local imports
 from geometry import Polygon, Point, OrientedPoint
+
+# Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
 from arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone import BaseColorReservedZone
+from arena.base_arena.team_color import TeamColor
 
 
 # ====== Yellow Reserved Zone Class ======
@@ -46,7 +49,7 @@ class YellowReservedZone(BaseColorReservedZone):
         super().__init__(
             logger=logger,
             zone_type=ZoneType.YELLOW_RESERVED,
-            color="yellow",
+            color=TeamColor.YELLOW,
             accessibility=ZoneAccessibility.RESTRICTED,
             buffer_size=buffer_size,
             polygon=polygon,

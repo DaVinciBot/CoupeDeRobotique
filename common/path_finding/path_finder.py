@@ -17,7 +17,7 @@ import numpy as np
 
 # Internal project imports
 from loggerplusplus import Logger, time_tracker
-from geometry import OrientedPoint, Point, MultiPoint, nearest_points
+from geometry import OrientedPoint, Point
 from arena import GridManager
 
 

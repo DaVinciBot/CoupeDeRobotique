@@ -7,7 +7,7 @@ class TrajectoryParams:
     def __init__(
         self,
         speed_profile: SpeedProfile,
-        goal: Point | OrientedPoint | BaseArenaZone,
+        goal: Point | OrientedPoint | BaseArenaZone | int,
         resolution: int,
         smooth_trajectory: bool = True,
     ) -> None:
