@@ -27,9 +27,9 @@
       "logger": {
         "colors": "ClassicColors",
         "path": "logs",
-        "decorator_log_level": "DEBUG",
-        "print_log_level": "INFO",
-        "file_log_level": "DEBUG",
+        "decorator_log_level": "WARNING",
+        "print_log_level": "WARNING",
+        "file_log_level": "WARNING",
         "print_log": true,
         "write_to_file": true,
         "display_monitoring": false,
