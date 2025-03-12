@@ -431,7 +431,7 @@ class MainBrain(Brain):
         )
 
     def visualize_tasks_in_arena(self):
-        def _annotate_task_point(ax, task, pos: Point):
+        def _annotate_task_point(ax, task: Task, pos: Point):
             ax.annotate(
                 f"{task.name}\nS: {task.score}\nT: {task.execution_time}s",
                 (pos.x, pos.y),
@@ -446,19 +446,28 @@ class MainBrain(Brain):
 
         ax, self.fig = self.arena.visualize(show=False)
         for task in self.game_tasks:
-            if isinstance(task.position, Point):
-                _display_task_point(ax, task, task.position, annotate=True)
-            if isinstance(task.position, BaseArenaZone):
-                if task.position.go_to_positions:
+            if isinstance(task.trajectory_params.goal, Point):
+                _display_task_point(
+                    ax, task, task.trajectory_params.goal, annotate=True
+                )
+            if isinstance(task.trajectory_params.goal, BaseArenaZone):
+                if task.trajectory_params.goal.go_to_positions:
                     i = 0
-                    _annotate_task_point(ax, task, task.position.go_to_positions[i])
-                    while i < len(task.position.go_to_positions):
-                        _display_task_point(ax, task, task.position.go_to_positions[i])
+                    _annotate_task_point(
+                        ax, task, task.trajectory_params.goal.go_to_positions[i]
+                    )
+                    while i < len(task.trajectory_params.goal.go_to_positions):
+                        _display_task_point(
+                            ax, task, task.trajectory_params.goal.go_to_positions[i]
+                        )
                         i += 1
                 else:
                     try:
                         _display_task_point(
-                            ax, task, task.position.polygon.centroid, annotate=True
+                            ax,
+                            task,
+                            task.trajectory_params.goal.polygon.centroid,
+                            annotate=True,
                         )
                     except:
                         self.logger.warning(
