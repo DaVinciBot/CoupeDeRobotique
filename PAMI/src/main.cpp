@@ -8,7 +8,7 @@
 #define LEFT_EN_PIN   1
 
 
-Motor leftMotor(LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN, 100);
+Motor leftMotor(LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN, 400);
 
 AsyncWebServer server(80);
 CustomOTA ota("DVB_CDR", "davincibot", &server);
@@ -22,16 +22,20 @@ void setup()
     leftMotor.enableMotor(true);
 
     leftMotor.setAcceleration(100);
+    
+    leftMotor.setTargetSpeed(400);
 
-    Serial.println("Fin init");
+    digitalWrite(LEFT_DIR_PIN, HIGH);
+
     ota.begin();
     server.begin();
 }
 
 void loop() {
     
-    leftMotor.setTargetSpeed(300);
-    leftMotor.update();
+    for (int i = 0; i < 800; i++) {
+        leftMotor.update();
+    }
 
     ota.loop();
 }

@@ -1,7 +1,8 @@
 #include "motors.h"
+#include <iostream>
 
 Motor::Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution)
-    : _stepPin(stepPin), _dirPin(dirPin), _enablePin(enablePin), _stepsPerRev(stepsPerRevolution)
+    : _stepPin(stepPin), _dirPin(dirPin), _enablePin(enablePin), _stepsPerRev(stepsPerRevolution/10)
 {
     _targetSpeedStepsPerSec = 0.0f;
     _currentSpeedStepsPerSec = 0.0f;
@@ -46,9 +47,13 @@ void Motor::_setDirection(bool clockwise)
 
 void Motor::_doOneStep()
 {
-    digitalWrite(_stepPin, HIGH);
-    delayMicroseconds(500);
-    digitalWrite(_stepPin, LOW);
+    for (int i = 0; i < 10; i++)
+    {
+        digitalWrite(_stepPin, HIGH);
+        delayMicroseconds(50);
+        digitalWrite(_stepPin, LOW);
+        delayMicroseconds(50);
+    }
 }
 
 void Motor::update()
@@ -96,7 +101,6 @@ void Motor::update()
         _lastStepTime = micros();
     }
 
-    // Stoppage si target = 0
     if (_targetSpeedStepsPerSec < 1.0f && _currentSpeedStepsPerSec < 1.0f)
     {
         _moving = false;
