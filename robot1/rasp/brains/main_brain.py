@@ -130,6 +130,7 @@ class MainBrain(Brain):
         if self.triggered_bau:
             rolling_basis.reset()
             self.triggered_bau = False
+            self.logger.warning("Triggered BAU, Teensy reseting")
 
     """
     ### Main Process ###
@@ -177,7 +178,7 @@ class MainBrain(Brain):
         cmd = await self.ws_cmd.receiver.get(wait_msg=True)
 
         if cmd != WSmsg():
-            self.logger.info(f"Zombie instruction {cmd.msg} received: {cmd.data}")
+            self.logger.warning(f"Zombie instruction {cmd.msg} received: {cmd.data}")
 
             instructions = []
             if isinstance(cmd.data, str):
@@ -189,6 +190,7 @@ class MainBrain(Brain):
             if cmd.msg == "exec":
                 for instruction in instructions:
                     exec(instruction)
+                self.logger.warning("Zombie instruction done")
 
             # Eval: for return cases (print(x))
             elif cmd.msg == "eval":
