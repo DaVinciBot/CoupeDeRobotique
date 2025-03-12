@@ -374,7 +374,8 @@ class PathFinder:
         # If no path found, return an empty list
         if not self.path_found:
             return []
-            # Add real robot position as start point and goal as end point (not approximated chunk points)
+
+        # Add real robot position as start point and goal as end point (not approximated chunk points)
         if not smooth_path:
             self.oriented_path_found = (
                 # Add start and goal points to the path + remove some points to improve trajectory
