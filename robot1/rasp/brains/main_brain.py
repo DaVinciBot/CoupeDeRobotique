@@ -51,6 +51,8 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = OrientedPoint(0, 0, 0)
 
         self.go_to_params: GoToParams | None = None
+        
+        self.triggered_bau: bool = False
 
         # For test purpose
         self.th_ally_zone: AllyZone = AllyZone(
@@ -123,6 +125,11 @@ class MainBrain(Brain):
                 rolling_basis.set_speed_and_position(*cmd.get_command())
                 self.rolling_basis_odometrie = rolling_basis.odometrie
                 self.path = movement_manager.trajectory_computer.path_to_follow
+        
+        #Handle BAU triggered
+        if self.triggered_bau:
+            rolling_basis.reset()
+            self.triggered_bau = False
 
     """
     ### Main Process ###

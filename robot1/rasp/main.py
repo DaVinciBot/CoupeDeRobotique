@@ -146,6 +146,10 @@ if __name__ == "__main__":
     # Movement manager
     # See ./brains/controllers_brain.py for more details
     # All rolling basis part is executed in another process so define inside this part
+    
+    #GPIO pins
+    #Pin reset Teensy
+    
 
     # Brain
     # Add all object type which need to be shared between processes in the DictProxyAccessor serializable types list
