@@ -47,7 +47,7 @@ void Motor::_setDirection(bool clockwise)
 void Motor::_doOneStep()
 {
     digitalWrite(_stepPin, HIGH);
-    delayMicroseconds(2);
+    delayMicroseconds(500);
     digitalWrite(_stepPin, LOW);
 }
 
