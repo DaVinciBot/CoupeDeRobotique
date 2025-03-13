@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <com.h>
 #include <crc.h>
-#include <cstring>  // To use memcpy()
+#include <cstring> // To use memcpy()
 
 /**
  * @brief Constructor for USB serial communication.
@@ -21,6 +21,8 @@ Com::Com(usb_serial_class *stream, uint32_t baudrate)
     // Initialize the buffer
     for (uint16_t k = 0; k < 256; k++)
         this->buffer[k] = 0;
+
+    this->print("teensy initialized");
 }
 
 /**

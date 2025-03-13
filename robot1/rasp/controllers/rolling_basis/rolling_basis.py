@@ -70,7 +70,7 @@ class RollingBasis(BaseComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.info(
+        self.logger.warning(
             "Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore")
         )
 
