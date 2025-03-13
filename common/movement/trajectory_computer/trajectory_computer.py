@@ -54,7 +54,6 @@ class TrajectoryComputer:
         self.trajectory_params = trajectory_params
 
         self.path_finder: PathFinder | None = None
-        self.computed_goal: OrientedPoint | Point | None = None
 
         # Trajectory points and related metadata
         self.cumulative_distances = [0]  # Cumulative distance between trajectory points
@@ -113,37 +112,48 @@ class TrajectoryComputer:
         Returns:
             OrientedPoint | Point: The computed goal position.
         """
-        # If goal is defined as int, it's a zone ID
+        # 1. If goal is defined as int, it's a zone ID
         if isinstance(self.trajectory_params.goal, int):
             if self.trajectory_params.goal > len(self.arena_ptr.zones):
                 self.logger.error("Invalid zone ID given in trajectory parameters.")
                 return
-            self.trajectory_params.goal = self.arena_ptr.zones[self.trajectory_params.goal]
+            self.trajectory_params.computed_goal = self.arena_ptr.zones[self.trajectory_params.goal]
 
-        # If goal is a BaseArenaZone, compute the best goal point
-        if isinstance(self.trajectory_params.goal, BaseArenaZone):
-            # Use zone method to get best goal point from zone
-            self.computed_goal = self.trajectory_params.goal.get_go_to_position(
-                ally_position=self.arena_ptr.ally_zone.point, team_color=self.arena_ptr.team_color
-            )
+        # 2. If goal is a BaseArenaZone -> compute the best goal point
+        # (We also consider the case where the goal is an ID of a zone
+        # because we transform in the part 1. the computed goal into the associated zone)
+        if (
+            isinstance(self.trajectory_params.goal, BaseArenaZone) or
+            isinstance(self.trajectory_params.goal, int)
+        ):
+            # Use zone method to get the best goal point from zone
+            if isinstance(self.trajectory_params.goal, int):
+                self.trajectory_params.computed_goal = self.trajectory_params.computed_goal.get_go_to_position(
+                    ally_position=self.arena_ptr.ally_zone.point, team_color=self.arena_ptr.team_color
+                )
+            # For the case where the goal is an ID of a zone, consider the zone in computed goal
+            else:
+                self.trajectory_params.computed_goal = self.trajectory_params.goal.get_go_to_position(
+                    ally_position=self.arena_ptr.ally_zone.point, team_color=self.arena_ptr.team_color
+                )
 
             # If goal is None => zone is not accessible
-            if self.computed_goal is None:
+            if self.trajectory_params.computed_goal is None:
                 self.logger.error("Goal is not accessible.")
                 return
 
             # If goal is not an OrientedPoint ça veut dire que acune go to position n'est définie
             # On calcule alors automatiquemnt ce point
-            if not isinstance(self.computed_goal, OrientedPoint):
-                self.computed_goal = self._compute_go_to_destination_from_zone()
+            if not isinstance(self.trajectory_params.computed_goal, OrientedPoint):
+                self.trajectory_params.computed_goal = self._compute_go_to_destination_from_zone()
 
             # TODO: prendre en compte que quand on a que un point en goal, on ne peut pas avoir de theta,
             #  il faut le cacluler automatiqument (le même que celui d'avant dans la trjectoire par exmepl) voir pour mettre ay niveay du pathfinder
 
-            return self.computed_goal
+            return self.trajectory_params.computed_goal
 
-        self.computed_goal = self.trajectory_params.goal
-        return self.computed_goal
+        self.trajectory_params.computed_goal = self.trajectory_params.goal
+        return self.trajectory_params.computed_goal
 
     def _init_path_finder(self) -> None:
         """Initializes the pathfinder with the current goal and arena details."""
@@ -229,9 +239,9 @@ class TrajectoryComputer:
         )
 
         # Compute interpolated position and orientation
-        x = x2 + ratio * (x1 - x2)
-        y = y2 + ratio * (y1 - y2)
-        theta = theta2 + ratio * (theta1 - theta2)
+        x = x1 + ratio * (x2 - x1)
+        y = y1 + ratio * (y2 - y1)
+        theta = theta1 + ratio * (theta2 - theta1)
 
         return OrientedPoint(x, y, theta)
 
@@ -370,6 +380,10 @@ class TrajectoryComputer:
             current_angular_speed (float, optional): Current angular speed.
         """
         self.compute_path(use_static_and_dynamic_grid, current_position)
+        # Verify if the path is not empty
+        if not self.path_finder.oriented_path_found:
+            self.logger.warning("No path found !")
+            return
         self.compute_trajectory(current_linear_speed, current_angular_speed)
 
     def get_position_speed(self, t: float = None) -> RollingBasisCommand:

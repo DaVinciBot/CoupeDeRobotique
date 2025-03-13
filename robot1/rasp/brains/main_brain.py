@@ -106,6 +106,8 @@ class MainBrain(Brain):
 
         # Trigger movement manager to go to the new destination when the params change
         if self.go_to_params != movement_manager.params:
+            print(self.go_to_params)
+            print(movement_manager.params)
             movement_manager.compute_go_to(
                 current_linear_speed=rolling_basis.linear_speed,
                 current_angular_speed=rolling_basis.angular_speed,
@@ -118,7 +120,9 @@ class MainBrain(Brain):
             cmd: RollingBasisCommand = movement_manager.handle_go_to()
             if cmd is not None:
                 self.th_ally_zone = AllyZone(
-                    logger=Logger(identifier="th_ally"), point=cmd.position, robot_size=5
+                    logger=Logger(identifier="th_ally", follow_logger_manager_rules=True),
+                    point=cmd.position,
+                    robot_size=5
                 )
                 rolling_basis.set_speed_and_position(*cmd.get_command())
                 self.rolling_basis_odometrie = rolling_basis.odometrie

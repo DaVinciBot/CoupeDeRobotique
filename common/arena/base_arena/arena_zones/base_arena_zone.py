@@ -210,14 +210,17 @@ class BaseArenaZone(ABC):
     def __instancecheck__(self, other) -> bool:
         """Checks if two objects are instances of the same class."""
         return (
-                isinstance(self, type(other))
-                or isinstance(other, type(self))
-                or isinstance(self, other)
+                type(self) == type(other)
+                and (
+                    isinstance(self, type(other))
+                    or isinstance(other, type(self))
+                    or isinstance(self, other)
+                )
         )
 
     def __eq__(self, other) -> bool:
         """Checks equality based on polygon geometry and accessibility."""
-        if not isinstance(self, other):
+        if not isinstance(self, type(other)):
             return False
         return (
                 self.polygon == getattr(other, "polygon", None) and

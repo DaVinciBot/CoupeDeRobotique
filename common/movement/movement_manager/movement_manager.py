@@ -76,7 +76,7 @@ class MovementManager:
         Returns:
             float: Distance between the ally zone and the computed goal.
         """
-        return self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.computed_goal)
+        return self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.trajectory_params.computed_goal)
 
     @staticmethod
     def __are_path_different(path_a: list[GridNode], path_b: list[GridNode]) -> bool:
@@ -188,7 +188,6 @@ class MovementManager:
         # 2. Check if the path is found
         if not self.trajectory_computer.path_finder.oriented_path_found:
             self.status = MovementStatus.NO_ACCESSIBLE
-            self.params = None
             return self.status
 
     def handle_go_to(self) -> RollingBasisCommand | None:
@@ -198,7 +197,14 @@ class MovementManager:
         Returns:
             RollingBasisCommand | None: Next movement command or None.
         """
-        # 0. Check if the goal is reached
+        # 0. Check if the goal is not possible or already reached
+        # 0.1 Check if the goal is not possible
+        if not self.status.is_possible():
+            self.logger.debug(
+                "Handle Go To was called but the goal is not possible."
+            )
+            return
+        # 0.2 Check if the goal is already reached
         if self._go_to_is_arrived():
             return
 

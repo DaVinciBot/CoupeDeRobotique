@@ -16,10 +16,14 @@ class TrajectoryParams:
         self.resolution: int = resolution
         self.smooth_trajectory: bool = smooth_trajectory
 
+        # Computed goal point, used to store the real point of the goal and not the zone ID for example
+        self.computed_goal: OrientedPoint | None = None
+
     def __str__(self):
         return (
             f"TrajectoryParams: speed_profile={self.speed_profile}, "
             f"goal={self.goal}, "
+            f"computed_goal={self.computed_goal}, "
             f"resolution={self.resolution}, "
             f"smooth_trajectory={self.smooth_trajectory}"
         )

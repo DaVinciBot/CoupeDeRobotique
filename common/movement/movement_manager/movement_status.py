@@ -23,3 +23,9 @@ class MovementStatus(Enum):
         Check if the movement status indicates that the movement is not finished.
         """
         return self not in {MovementStatus.PENDING, MovementStatus.NOT_STARTED}
+
+    def is_possible(self) -> bool:
+        """
+        Check if the movement status indicates that the movement is possible.
+        """
+        return self not in {MovementStatus.NO_ACCESSIBLE, MovementStatus.INVALID_COMMAND, MovementStatus.BLOCKED}
