@@ -37,12 +37,12 @@ class PathFinder:
     """
 
     def __init__(
-        self,
-        logger: Logger,
-        start: OrientedPoint,
-        goal: OrientedPoint,
-        grid_manager: GridManager,
-        path_resolution: float,
+            self,
+            logger: Logger,
+            start: OrientedPoint,
+            goal: OrientedPoint,
+            grid_manager: GridManager,
+            path_resolution: float,
     ) -> None:
         """
         Initialize the PathFinder instance.
@@ -75,7 +75,7 @@ class PathFinder:
 
     @staticmethod
     def __compute_orientation(
-        current_point: GridNode | Point, next_point: GridNode | Point
+            current_point: GridNode | Point, next_point: GridNode | Point
     ) -> float:
         """
         Compute the orientation (angle in radians) from the current point to the next.
@@ -116,6 +116,7 @@ class PathFinder:
                 f"goal=({self.goal.x}, {self.goal.y})] exploration_value={exploration_value}"
             )
             return []
+
         return self.path_found
 
     def __grid_path_to_absolute_path(self, grid_path: list[GridNode]) -> list[Point]:
@@ -129,7 +130,9 @@ class PathFinder:
             list[Point]: Path as a list of absolute points.
         """
         if not grid_path:
-            self.logger.debug("[grid path to absolute path] Path to convert is empty!")
+            self.logger.debug(
+                "[grid path to absolute path] Path to convert is empty!"
+            )
             return []
 
         return [
@@ -137,7 +140,7 @@ class PathFinder:
         ]
 
     def __path_to_absolute_oriented_path(
-        self, path: list[GridNode] | list[Point], is_grid_path: bool
+            self, path: list[GridNode] | list[Point], is_grid_path: bool
     ) -> list[OrientedPoint]:
         """
         Convert a path (grid or absolute) to an oriented path for the robot.
@@ -230,7 +233,7 @@ class PathFinder:
         return [Point(x, y) for x, y in interpolated_path]
 
     def __remove_points_before_position(
-        self, path: list[OrientedPoint], from_start_to_end: bool
+            self, path: list[OrientedPoint], from_start_to_end: bool
     ) -> list[OrientedPoint]:
         """
         Remove points from the path before the current position.
@@ -263,7 +266,7 @@ class PathFinder:
             return path[:i]
 
     def __add_absolute_start_and_goal_to_path(
-        self, path: list[OrientedPoint]
+            self, path: list[OrientedPoint]
     ) -> list[OrientedPoint]:
         """
         Add the real robot position as start point and goal as end point (not approximated chunk points).
@@ -275,9 +278,7 @@ class PathFinder:
         """
         return [self.absolute_current_position, *path, self.absolute_goal]
 
-    def __add_path_extremities_point(
-        self, path: list[Point]
-    ) -> list[Point | OrientedPoint]:
+    def __add_path_extremities_point(self, path: list[Point]) -> list[Point | OrientedPoint]:
         """
         Adjusts the path by keeping only significant extremity and intermediate points.
 
@@ -297,19 +298,12 @@ class PathFinder:
 
         # If 4 points, conserve only the start, goal, and the 2 middle points
         if len(path) == 4:
-            return [
-                self.absolute_current_position,
-                path[1],
-                path[2],
-                self.absolute_goal,
-            ]
+            return [self.absolute_current_position, path[1], path[2], self.absolute_goal]
 
         # If more than 4 points, conserve start, goal, and remove the first and last two intermediate points
         return [self.absolute_current_position, *path[2:-2], self.absolute_goal]
 
-    def __set_path_extremities_correct_theta(
-        self, path: list[OrientedPoint]
-    ) -> list[OrientedPoint]:
+    def __set_path_extremities_correct_theta(self, path: list[OrientedPoint]) -> list[OrientedPoint]:
         """
         Ensures that the first and last points of the path match the absolute start and goal positions.
 
@@ -320,9 +314,7 @@ class PathFinder:
             list[OrientedPoint]: The modified path with updated start and goal points.
         """
         if not path:
-            return (
-                []
-            )  # Return an empty list if the path is empty to prevent indexing errors.
+            return []  # Return an empty list if the path is empty to prevent indexing errors.
 
         path[0] = self.absolute_current_position
         path[-1] = self.absolute_goal
@@ -355,7 +347,7 @@ class PathFinder:
 
     @time_tracker(lambda self: self.logger)
     def find_oriented_path(
-        self, use_static_and_dynamic_grid: bool = False, smooth_path: bool = False
+            self, use_static_and_dynamic_grid: bool = False, smooth_path: bool = False
     ) -> list[OrientedPoint]:
         """
         Find a path and convert it into an oriented path.
@@ -374,7 +366,7 @@ class PathFinder:
         # If no path found, return an empty list
         if not self.path_found:
             return []
-
+        
         # Add real robot position as start point and goal as end point (not approximated chunk points)
         if not smooth_path:
             self.oriented_path_found = (
@@ -388,7 +380,6 @@ class PathFinder:
             )
             # We don't need to call __set_path_extremities_correct_theta
             # because we already have the start and goal points with correct theta
-
             return self.oriented_path_found
 
         self.oriented_path_found = (
