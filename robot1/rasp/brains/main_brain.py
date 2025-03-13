@@ -128,6 +128,8 @@ class MainBrain(Brain):
         
         #Handle BAU triggered
         if self.triggered_bau:
+            if rolling_basis._receiver_thread.is_alive():
+                rolling_basis._receiver_thread.join()
             rolling_basis.reset()
             self.triggered_bau = False
             self.logger.warning("Triggered BAU, Teensy reseting")
@@ -188,8 +190,16 @@ class MainBrain(Brain):
 
             # Exec: for attribution cases (x = 1)
             if cmd.msg == "exec":
+                variable = ""
                 for instruction in instructions:
                     exec(instruction)
+                    variable = instruction.split("=")[0].replace(" ", "")
+                    message = WSmsg.from_json({
+                        "sender": CONFIG.WS_SENDER_NAME,
+                        "msg": "Execution of sender instruction",
+                        "data": str(variable)
+                    })
+                    await self.ws_cmd.sender.send(message)
                 self.logger.warning("Zombie instruction done")
 
             # Eval: for return cases (print(x))
@@ -205,12 +215,12 @@ class MainBrain(Brain):
                         execution = await eval(instruction.removeprefix("await "))
                     else:
                         execution = eval(instruction)
-                message = WSmsg.from_json({
-                    "sender": CONFIG.WS_SENDER_NAME,
-                    "msg": "Execution of sender instruction",
-                    "data": str(execution)
-                })
-                await self.ws_cmd.sender.send(message)
+                    message = WSmsg.from_json({
+                        "sender": CONFIG.WS_SENDER_NAME,
+                        "msg": "Execution of sender instruction",
+                        "data": str(execution)
+                    })
+                    await self.ws_cmd.sender.send(message)
 
             else:
                 self.logger.warning(
