@@ -7,7 +7,7 @@
 //#include <BaseLoRa.h>
 //#include <SX126x.h>
 
-#include <Arduino.h>
+
 /*
   RadioLib SX126x Ping-Pong Example
 
@@ -929,6 +929,76 @@ void loop()
 }
 */
 
+
+/*
+#include <Arduino.h>
+#include <SPI.h>
+#include <BaseLoRa.h>
+#include <SX126x.h>
+
+SX126x LoRa;
+
+// Configuration des pins (à adapter selon votre montage)
+int8_t nssPin = 10, resetPin = 9, busyPin = 4, irqPin = -1, txenPin = 8, rxenPin = 7;
+
+void setup() {
+  // Démarrage de la communication série pour le debug
+  Serial.begin(38400);
+  while (!Serial);  // Attente de l'initialisation de la liaison série
+  
+  Serial.println("Initialisation du module LoRa");
+
+  // Initialisation du module LoRa
+  if (!LoRa.begin(nssPin, resetPin, busyPin, irqPin, txenPin, rxenPin)) {
+    Serial.println("Erreur : Impossible d'initialiser le module LoRa");
+    while (1);  // Blocage en cas d'erreur
+  }
+
+  // Configuration de la fréquence (868 MHz pour la France)
+  LoRa.setFrequency(868000000);
+
+  // Configuration de la puissance TX
+  LoRa.setTxPower(17, SX126X_TX_POWER_SX1262);
+
+  // Paramétrage de la modulation LoRa
+  // Spreading Factor = 7, bande passante = 125 kHz, coding rate = 4/5
+  LoRa.setLoRaModulation(7, 125000, 5);
+
+  // Paramétrage du paquet
+  // Ici, le payload est de 1 octet car nous n'attendons que la valeur 1
+  LoRa.setLoRaPacket(SX126X_HEADER_EXPLICIT, 12, 1, true);
+
+  // Configuration du mot de synchronisation (sync word)
+  LoRa.setSyncWord(0x3444);
+
+  Serial.println("Module LoRa initialisé. En attente du message 1...");
+}
+
+void loop() {
+  // Passage en mode réception
+  LoRa.request();
+  LoRa.wait();  // Attend qu'un paquet soit reçu
+
+  // Vérification si un paquet est disponible
+  if (LoRa.available() > 0) {
+    uint8_t data = LoRa.read();  // Lecture d'un octet
+    if (data == 1) {
+      Serial.println("Message 1 reçu.");
+    } else {
+      Serial.print("Message inconnu reçu (valeur: ");
+      Serial.print(data);
+      Serial.println(")");
+    }
+  } else {
+    Serial.println("Aucun paquet reçu.");
+  }
+
+  delay(1000);  // Pause avant la prochaine itération
+}
+
+*/
+/*
+
 #include <Arduino.h>
 #include <SPI.h>
 #include <BaseLoRa.h>
@@ -937,7 +1007,7 @@ void loop()
 SX126x LoRa;
 
 // Message à transmettre
-char message[] = "zzz"; // "ggg" correspond à 4 octets avec le '\0'
+char message[] = "ggg"; // "ggg" correspond à 4 octets avec le '\0'
 uint8_t counter = 0;
 
 void setup() {
@@ -953,8 +1023,8 @@ void setup() {
   }
   
   // Configuration de la fréquence à 915 MHz (à adapter selon la réglementation locale)
-  Serial.println("Set frequency to 915 MHz");
-  LoRa.setFrequency(915000000);
+  Serial.println("Set frequency to 868 MHz");
+  LoRa.setFrequency(868000000);
   
   // Configuration de la puissance TX à +17 dBm
   Serial.println("Set TX power to +17 dBm");
@@ -972,7 +1042,7 @@ void setup() {
   // message ("ggg" avec le '\0' = 4 octets) + compteur (1 octet) = 5 octets
   uint8_t headerType = SX126X_HEADER_EXPLICIT;  // Mode explicit
   uint16_t preambleLength = 12;                 // Longueur du préambule
-  uint8_t payloadLength = 5;                    // Ajusté à 5 octets
+  uint8_t payloadLength =5;                    // Ajusté à 5 octets
   bool crcType = true;                          // Activation du CRC
   Serial.println("Set packet parameters:\n\tExplicit header type\n\tPreamble length = 12\n\tPayload Length = 5\n\tCRC on");
   LoRa.setLoRaPacket(headerType, preambleLength, payloadLength, crcType);
@@ -1008,6 +1078,7 @@ void loop() {
   Serial.print("Transmit time: ");
   Serial.print(LoRa.transmitTime());
   Serial.println(" ms");
+  delay(5000);
   // ---- MODE RÉCEPTION ----
   // Demande de réception d'un nouveau paquet LoRa
   LoRa.request();
@@ -1051,9 +1122,155 @@ void loop() {
     Serial.println("No packet received");
   }
   // Délai avant la prochaine itération (ajustez si nécessaire)
-  delay(500);
+  delay(5000);
+  
+}
+*/
+#include <Arduino.h>
+#include <SPI.h>
+#include <BaseLoRa.h>
+#include <SX126x.h>
+
+SX126x LoRa;
+
+// Message à transmettre
+char message[] = "ggg"; // "ggg" correspond à 4 octets avec le '\0'
+uint8_t counter = 0;
+
+// Choix d'une broche pour DIO1 (IRQ) sur le Xiao ESP32-S3, ici GPIO6 (à adapter selon votre schéma)
+const int dio1Pin = 6;
+volatile bool dio1Interrupt = false;
+
+void IRAM_ATTR onDIO1Interrupt() {
+  dio1Interrupt = true;
 }
 
+void setup() {
+  // Démarrage de la communication série
+  Serial.begin(38400);
+  //while (!Serial); // Attente de l'initialisation du port série
+
+  Serial.println("Begin LoRa radio");
+  
+  // Définition des broches de contrôle pour le module LoRa
+  // Pour utiliser DIO1, nous lui assignons dio1Pin (ici GPIO6)
+  int8_t nssPin   = 10;
+  int8_t resetPin = 9;
+  int8_t busyPin  = 4;
+  int8_t irqPin   = dio1Pin;  // On utilise GPIO6 pour DIO1
+  int8_t txenPin  = 8;
+  int8_t rxenPin  = 7;
+  
+  // Initialisation du module LoRa
+  if (!LoRa.begin(nssPin, resetPin, busyPin, irqPin, txenPin, rxenPin)) {
+    Serial.println("Something wrong, can't begin LoRa radio");
+    while (1);
+  }
+  
+  // Attacher l'interruption sur dio1Pin, déclenchée sur front montant
+  pinMode(dio1Pin, INPUT);
+  attachInterrupt(dio1Pin, onDIO1Interrupt, RISING);
+  
+  // Configuration de la fréquence à 868 MHz (à adapter selon la réglementation locale)
+  Serial.println("Set frequency to 868 MHz");
+  LoRa.setFrequency(868000000);
+  
+  // Configuration de la puissance TX à +17 dBm
+  Serial.println("Set TX power to +17 dBm");
+  LoRa.setTxPower(17, SX126X_TX_POWER_SX1262);
+  
+  // Configuration des paramètres de modulation
+  Serial.println("Set modulation parameters:\n\tSpreading factor = 7\n\tBandwidth = 125 kHz\n\tCoding rate = 4/5");
+  uint8_t sf = 7;           // Facteur d'étalement
+  uint32_t bw = 125000;     // Bande passante de 125 kHz
+  uint8_t cr = 5;           // Coding rate 4/5
+  LoRa.setLoRaModulation(sf, bw, cr);
+  
+  // Configuration des paramètres de paquet
+  // Le payload doit correspondre exactement au nombre d'octets transmis :
+  // message ("ggg" avec le '\0' = 4 octets) + compteur (1 octet) = 5 octets
+  uint8_t headerType = SX126X_HEADER_EXPLICIT;  // Mode explicit
+  uint16_t preambleLength = 12;                 // Longueur du préambule
+  uint8_t payloadLength = 5;                    // Ajusté à 5 octets
+  bool crcType = true;                          // Activation du CRC
+  Serial.println("Set packet parameters:\n\tExplicit header type\n\tPreamble length = 12\n\tPayload Length = 5\n\tCRC on");
+  LoRa.setLoRaPacket(headerType, preambleLength, payloadLength, crcType);
+  
+  // Configuration du mot de synchronisation (sync word)
+  Serial.println("Set synchronize word to 0x3444");
+  LoRa.setSyncWord(0x3444);
+  
+  Serial.println("\n-- LORA TRANSMITTER / RECEIVER --\n");
+}
+
+void loop() {
+  // ---- MODE TRANSMISSION ----
+  LoRa.beginPacket();
+  // Envoi du message (4 octets : "ggg" avec le '\0') + compteur (1 octet)
+  LoRa.write(message, sizeof(message)); // sizeof(message) retourne 4
+  LoRa.write(counter);
+  LoRa.endPacket();
+  
+  Serial.println();
+  Serial.println();
+  Serial.print("Transmitting: ");
+  Serial.print(message);
+  Serial.print("  ");
+  Serial.println(counter++);
+  
+  // Attendre la fin de la transmission et afficher le temps d'émission
+  LoRa.wait();
+  Serial.print("Transmit time: ");
+  Serial.print(LoRa.transmitTime());
+  Serial.println(" ms");
+  
+  delay(5000);
+  
+  // ---- MODE RÉCEPTION ----
+  Serial.println("Requesting packet...");
+  LoRa.request();  // Passage en mode réception
+  LoRa.wait();     // Attente de la réception d'un paquet
+  
+  if (LoRa.available() > 0) {
+    String receivedMessage = "";
+    
+    // Lire tous les octets sauf le dernier (celui-ci contient le compteur)
+    while (LoRa.available() > 1) {
+      receivedMessage += (char)LoRa.read();
+    }
+    
+    // Lecture du dernier octet (compteur)
+    uint8_t receivedCounter = LoRa.read();
+    
+    Serial.print("Received: ");
+    Serial.print(receivedMessage);
+    Serial.print("  ");
+    Serial.println(receivedCounter);
+    
+    Serial.print("Packet status: RSSI = ");
+    Serial.print(LoRa.packetRssi());
+    Serial.print(" dBm | SNR = ");
+    Serial.print(LoRa.snr());
+    Serial.println(" dB");
+    
+    uint8_t status = LoRa.status();
+    if (status == SX126X_STATUS_CRC_ERR) {
+      Serial.println("CRC error");
+    } else if (status == SX126X_STATUS_HEADER_ERR) {
+      Serial.println("Packet header error");
+    }
+  } else {
+    Serial.println("No packet received");
+  }
+  
+  // Vérifier si une interruption a été déclenchée sur DIO1
+  if (dio1Interrupt) {
+    Serial.println("DIO1 interrupt triggered!");
+    dio1Interrupt = false;  // Réinitialiser le flag
+  }
+  
+  delay(5000);
+}
 
 
 /*
