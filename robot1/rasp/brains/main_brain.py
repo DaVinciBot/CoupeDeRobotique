@@ -278,8 +278,10 @@ class MainBrain(Brain):
         travels_duration_matrix_sec[0][-1] = float("inf")
         travels_duration_matrix_sec[-1][0] = travels_duration_matrix_sec[0][-1]
 
-        # handle separatly travel to origin and to destination as they are not tasks
         for i in range(1, len(scores)):
+
+            # handle separatly travel to origin and to destination as they are not tasks
+            # TODO: handle specific trajectory param to go to destination
             _ = TrajectoryComputer(
                 logger=self.movemement_manager_logger_simulation,
                 path_finder_logger=self.path_finder_logger_simulation,
@@ -303,7 +305,6 @@ class MainBrain(Brain):
             travels_duration_matrix_sec[-1][i] = _.total_duration
             travels_duration_matrix_sec[i][-1] = travels_duration_matrix_sec[-1][i]
 
-        for i in range(1, len(scores)):
             for j in range(1, i, len(scores) + 1):
                 _ = TrajectoryComputer(  # duration from Task[i] to Task[j]
                     logger=self.movemement_manager_logger_simulation,
@@ -316,7 +317,17 @@ class MainBrain(Brain):
                     use_dynamic_grid=False,
                 )
                 travels_duration_matrix_sec[i][j] = _.total_duration
-                travels_duration_matrix_sec[j][i] = travels_duration_matrix_sec[i][j]
+                _ = TrajectoryComputer(  # duration from Task[j] to Task[i]
+                    logger=self.movemement_manager_logger_simulation,
+                    path_finder_logger=self.path_finder_logger_simulation,
+                    arena_ptr=self.arena,
+                    trajectory_params=self.game_tasks[i].go_to_params.trajectory_params,
+                )
+                _.compute(
+                    current_position=self.game_tasks[j],
+                    use_dynamic_grid=False,
+                )
+                travels_duration_matrix_sec[j][i] = _.total_duration
 
         self.task_planner = TaskPlanner(
             tasks_scores=scores,
