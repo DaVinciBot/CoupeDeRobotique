@@ -71,7 +71,9 @@ class TaskPlanner:  # TODO: test solution saving and loading
         cost_callback_index = self.routing.RegisterTransitCallback(cost_callback)
         self.routing.SetArcCostEvaluatorOfAllVehicles(cost_callback_index)
 
-    def solve(self, time_limit_seconds=None, save_mode=False):
+    def solve(
+        self, time_limit_seconds=None, save_mode=False
+    ):  # TODO: fix issue : if not path is found from A->B travel time is 0 instead of inf
         search_parameters = pywrapcp.DefaultRoutingSearchParameters()
         search_parameters.first_solution_strategy = (
             routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC  # May need adjustment
@@ -113,171 +115,149 @@ class TaskPlanner:  # TODO: test solution saving and loading
                         },
                         f,
                     )
-            else:
-                return self.solution
+            return self.solution
         else:
             return {"message": "no solution found"}
 
-    def visualize_solution(self, display_all_edges=False, display_all_vertices=False):
-        plt.close("all")  # Fermer toutes les figures existantes
+    def visualize_solution(
+        self, display_all_edges=False, display_all_vertices=True
+    ):  # TODO: improve visualisation, put int 2f dor travel time
+        plt.close("all")
         num_nodes = len(self.travels_duration_matrix_sec)
 
-        # Création du graphe complet pour le layout
+        # Create directed graph with explicit nodes and valid edges
         G = nx.DiGraph()
-        for i in range(num_nodes):
-            for j in range(num_nodes):
-                if i != j and self.travels_duration_matrix_sec[i][j] > 0:
-                    G.add_edge(i, j, weight=self.travels_duration_matrix_sec[i][j])
+        G.add_nodes_from(range(num_nodes))
 
-        pos = nx.spring_layout(G, seed=42)  # Layout basé sur le graphe complet
+        # Add edges with validation
+        valid_edges = [
+            (i, j)
+            for i in range(num_nodes)
+            for j in range(num_nodes)
+            if i != j  # and self.travels_duration_matrix_sec[i][j] > 0
+        ]
+        G.add_edges_from(valid_edges)
 
-        plt.figure(figsize=(15, 5))
+        # Create layout with guaranteed spacing
+        pos = nx.spring_layout(G, seed=42, k=1.5)
+
+        plt.figure(figsize=(12, 8))
+        ax = plt.gca()
+
+        # Draw base nodes
+        base_node_color = "#e0e0e0" if display_all_vertices else "white"
+        nx.draw_networkx_nodes(
+            G,
+            pos,
+            node_size=1500,
+            node_color=base_node_color,
+            edgecolors="black",
+            ax=ax,
+        )
+
+        # Draw all edges if requested
+        if display_all_edges:
+            # Draw edges with curved arrows for bidirectional connections
+            for u, v in valid_edges:
+                connectionstyle = None
+                if G.has_edge(v, u):  # Bidirectional edge
+                    # Add curvature to separate directions
+                    connectionstyle = f"arc3,rad={0.3 if u < v else -0.3}"
+
+                plt.annotate(
+                    "",
+                    xy=pos[v],
+                    xytext=pos[u],
+                    arrowprops=dict(
+                        arrowstyle="->",
+                        color="#808080",
+                        lw=1,
+                        shrinkA=15,
+                        shrinkB=15,
+                        connectionstyle=connectionstyle,
+                    ),
+                )
+                # Add duration text offset from center
+                if display_all_edges:
+                    mid_point = [
+                        (pos[u][0] + pos[v][0]) / 2,
+                        (pos[u][1] + pos[v][1]) / 2,
+                    ]
+                    offset = (0, 0.1) if u < v else (0, -0.1)
+                    plt.text(
+                        mid_point[0] + offset[0],
+                        mid_point[1] + offset[1],
+                        f"{self.travels_duration_matrix_sec[u][v]:2f}s",
+                        color="#404040",
+                        fontsize=8,
+                        ha="center",
+                        va="center",
+                    )
+
+        # Draw solution path if available
         if self.solution:
-            # Extraction du chemin solution
             solution_nodes = self.solution.ordered_tasks
             solution_edges = list(zip(solution_nodes[:-1], solution_nodes[1:]))
 
-            # Définir les sommets à afficher
-            if display_all_vertices:
-                nodes_to_display = list(range(num_nodes))
-                node_colors = [
-                    "red" if n in solution_nodes else "lightgray"
-                    for n in nodes_to_display
-                ]
-                display_pos = pos
-            else:
-                nodes_to_display = solution_nodes
-                node_colors = ["red"] * len(nodes_to_display)
-                display_pos = {n: pos[n] for n in nodes_to_display}
-
-            # Préparation des labels pour les sommets à afficher
-            display_labels = {
-                n: (
-                    (
-                        "Start"
-                        if n == self.start_node
-                        else (
-                            "End"
-                            if n == self.end_node
-                            else f"{n}\nS: {self.tasks_scores[n-1]}\nD: {self.tasks_duration_sec[n-1]}s"
-                        )
-                    )
-                    if (
-                        n == self.start_node
-                        or n == self.end_node
-                        or (n > 0 and n < len(self.tasks_scores) + 1)
-                    )
-                    else f"{n}"
-                )
-                for n in nodes_to_display
-            }
-
-            # Dessin des nœuds et des labels
+            # Highlight solution nodes
             nx.draw_networkx_nodes(
                 G,
-                display_pos,
-                nodelist=nodes_to_display,
-                node_color=node_colors,
-                node_size=2000,
+                pos,
+                nodelist=solution_nodes,
+                node_color="#ff4444",
+                node_size=1500,
+                edgecolors="black",
+                ax=ax,
             )
-            nx.draw_networkx_labels(G, display_pos, labels=display_labels, font_size=10)
 
-            # Définir les arêtes à afficher
-            if display_all_edges:
-                # Afficher toutes les arêtes entre les sommets affichés
-                if display_all_vertices:
-                    all_edges = [
-                        (u, v)
-                        for u, v in G.edges()
-                        if u in nodes_to_display and v in nodes_to_display
-                    ]
-                    nx.draw_networkx_edges(
-                        G,
-                        display_pos,
-                        edgelist=all_edges,
-                        edge_color="lightgray",
-                        width=1,
-                        arrows=True,
-                    )
-                else:
-                    # Si on n'affiche que les sommets de la solution, on peut avoir des arêtes supplémentaires
-                    all_solution_edges = [
-                        (u, v)
-                        for u, v in G.edges()
-                        if u in solution_nodes and v in solution_nodes
-                    ]
-                    nx.draw_networkx_edges(
-                        G,
-                        display_pos,
-                        edgelist=all_solution_edges,
-                        edge_color="lightgray",
-                        width=1,
-                        arrows=True,
-                    )
+            # Draw solution edges with straight arrows
+            for u, v in solution_edges:
+                if (u, v) not in valid_edges:
+                    continue
 
-                # Surligner les arêtes de la solution
-                nx.draw_networkx_edges(
-                    G,
-                    display_pos,
-                    edgelist=solution_edges,
-                    edge_color="red",
-                    width=2,
-                    arrows=True,
+                plt.annotate(
+                    "",
+                    xy=pos[v],
+                    xytext=pos[u],
+                    arrowprops=dict(
+                        arrowstyle="->", color="#ff4444", lw=3, shrinkA=15, shrinkB=15
+                    ),
+                )
+                # Add duration label
+                mid_point = [(pos[u][0] + pos[v][0]) / 2, (pos[u][1] + pos[v][1]) / 2]
+                plt.text(
+                    mid_point[0],
+                    mid_point[1],
+                    f"{self.travels_duration_matrix_sec[u][v]:2f}s",
+                    color="#ff4444",
+                    backgroundcolor="white",
+                    ha="center",
+                    va="center",
+                )
+
+        # Node labels
+        labels = {}
+        for node in G.nodes():
+            if node == self.start_node:
+                labels[node] = "START"
+            elif node == self.end_node:
+                labels[node] = "END"
+            elif 1 <= node <= self.num_tasks:
+                labels[node] = (
+                    f"Task {node}\nScore: {self.tasks_scores[node-1]}\nDuration: {self.tasks_duration_sec[node-1]}s"
                 )
             else:
-                # Afficher uniquement les arêtes de la solution
-                nx.draw_networkx_edges(
-                    G,
-                    display_pos,
-                    edgelist=solution_edges,
-                    edge_color="red",
-                    width=2,
-                    arrows=True,
-                )
+                labels[node] = f"Node {node}"
 
-            # Ajout des temps de trajet pour les arêtes de la solution
-            edge_labels = {
-                (u, v): f"{self.travels_duration_matrix_sec[u][v]}s"
-                for u, v in solution_edges
-            }
-            nx.draw_networkx_edge_labels(
-                G, display_pos, edge_labels=edge_labels, font_color="red"
-            )
+        nx.draw_networkx_labels(G, pos, labels, ax=ax, font_size=9)
 
-            plt.title(
-                f"Optimal solution : {self.solution.score} points in {self.solution.duration}s"
-            )
-        else:
-            # Affichage normal si pas de solution
-            labels = {
-                i: (
-                    (
-                        "Start"
-                        if i == self.start_node
-                        else (
-                            "End"
-                            if i == self.end_node
-                            else f"{i}\nS: {self.tasks_scores[i-1]}\nD: {self.tasks_duration_sec[i-1]}s"
-                        )
-                    )
-                    if (
-                        i == self.start_node
-                        or i == self.end_node
-                        or (i > 0 and i < len(self.tasks_scores) + 1)
-                    )
-                    else f"{i}"
-                )
-                for i in range(num_nodes)
-            }
-            nx.draw(
-                G,
-                pos,
-                with_labels=True,
-                labels=labels,
-                node_color="lightblue",
-                node_size=2000,
-                font_size=10,
-                arrows=True,
-            )
+        plt.title(
+            f"Optimal Solution: {self.solution.score} points"
+            + (f" in {self.solution.duration}s" if self.solution else "")
+            + "\n(Red shows solution path)"
+            if self.solution
+            else ""
+        )
+        plt.axis("off")
         plt.tight_layout()
         plt.show()

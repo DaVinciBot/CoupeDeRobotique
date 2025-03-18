@@ -13,7 +13,12 @@ from loggerplusplus import Logger
 from geometry import OrientedPoint
 
 # Internal project imports
-from movement.params import GoToParams, TrajectoryParams, SpeedProfile, RollingBasisCommand
+from movement.params import (
+    GoToParams,
+    TrajectoryParams,
+    SpeedProfile,
+    RollingBasisCommand,
+)
 from movement.movement_manager.movement_status import MovementStatus
 from movement.trajectory_computer import TrajectoryComputer
 
@@ -26,13 +31,13 @@ class MovementManager:
     """
 
     def __init__(
-            self,
-            # Loggers
-            logger: Logger,
-            path_finder_logger: Logger,
-            trajectory_computer_logger: Logger,
-            # Context object
-            arena_ptr: BaseArena,
+        self,
+        # Loggers
+        logger: Logger,
+        path_finder_logger: Logger,
+        trajectory_computer_logger: Logger,
+        # Context object
+        arena_ptr: BaseArena,
     ) -> None:
         """
         Initializes the MovementManager with logging and arena context.
@@ -76,7 +81,9 @@ class MovementManager:
         Returns:
             float: Distance between the ally zone and the computed goal.
         """
-        return self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.trajectory_params.computed_goal)
+        return self.arena_ptr.ally_zone.point.distance(
+            self.trajectory_computer.trajectory_params.computed_goal
+        )
 
     @staticmethod
     def __are_path_different(path_a: list[GridNode], path_b: list[GridNode]) -> bool:
@@ -102,15 +109,13 @@ class MovementManager:
     # ====== Protected Methods ======
     def _acs(self) -> RollingBasisCommand | None:
         """
-       Anti-Collision System (ACS) that stops movement if an enemy is too close.
+        Anti-Collision System (ACS) that stops movement if an enemy is too close.
 
-       Returns:
-           RollingBasisCommand | None: Stop command if enemy is too close, else None.
-       """
+        Returns:
+            RollingBasisCommand | None: Stop command if enemy is too close, else None.
+        """
         if self.params is None:
-            self.logger.warning(
-                "ACS was called but no movement parameters found!"
-            )
+            self.logger.warning("ACS was called but no movement parameters found!")
             return
 
         # Anti Collision System
@@ -119,11 +124,11 @@ class MovementManager:
         if too_close:
             # Stop the robot (set speed to 0 !)
             self.status = MovementStatus.ACS
-            self.logger.warning(
-                "ACS: Enemy is too close, stopping the robot"
-            )
+            self.logger.warning("ACS: Enemy is too close, stopping the robot")
             return RollingBasisCommand(
-                position=self.arena_ptr.ally_zone.point, linear_speed=0.0, angular_speed=0.0
+                position=self.arena_ptr.ally_zone.point,
+                linear_speed=0.0,
+                angular_speed=0.0,
             )
         return
 
@@ -142,12 +147,12 @@ class MovementManager:
 
     # ====== Public Methods ======
     def compute_go_to(
-            self,
-            # Currents rolling basis state (the position/odometrie is already stored in the arena)
-            current_linear_speed: float,
-            current_angular_speed: float,
-            # Parameters of the go to
-            params: GoToParams,
+        self,
+        # Currents rolling basis state (the position/odometrie is already stored in the arena)
+        current_linear_speed: float,
+        current_angular_speed: float,
+        # Parameters of the go to
+        params: GoToParams,
     ):
         """
         Computes a trajectory and initiates movement towards the goal.
@@ -176,11 +181,11 @@ class MovementManager:
             logger=self.trajectory_computer_logger,
             path_finder_logger=self.path_finder_logger,
             arena_ptr=self.arena_ptr,
-            trajectory_params=params.trajectory_params
+            trajectory_params=params.trajectory_params,
         )
         # 1.2 Compute the trajectory (without dynamic obstacles: ignore enemy position for first computation)
         self.trajectory_computer.compute(
-            use_static_and_dynamic_grid=False,
+            use_dynamic_grid=False,
             current_linear_speed=current_linear_speed,
             current_angular_speed=current_angular_speed,
         )
@@ -200,9 +205,7 @@ class MovementManager:
         # 0. Check if the goal is not possible or already reached
         # 0.1 Check if the goal is not possible
         if not self.status.is_possible():
-            self.logger.debug(
-                "Handle Go To was called but the goal is not possible."
-            )
+            self.logger.debug("Handle Go To was called but the goal is not possible.")
             return
         # 0.2 Check if the goal is already reached
         if self._go_to_is_arrived():
@@ -232,9 +235,10 @@ class MovementManager:
         # -> if the enemy distance is under the recompute distance threshold
         # AND the path is not near the end goal
         if (
-                self.__get_ally_goal_distance() > self.params.distance_to_goal_to_dont_recompute_path
-                and
-                self.__get_ally_enemy_distance() < self.params.path_finder_recompute_distance
+            self.__get_ally_goal_distance()
+            > self.params.distance_to_goal_to_dont_recompute_path
+            and self.__get_ally_enemy_distance()
+            < self.params.path_finder_recompute_distance
         ):
             # 3.1 Save old path for comparison
             current_used_path = self.trajectory_computer.path_finder.path_found
@@ -242,15 +246,15 @@ class MovementManager:
             # 3.2 Recompute the path (use dynamic obstacles: consider enemy position)
             self.trajectory_computer.compute_path(
                 use_static_and_dynamic_grid=True,
-                current_position=self.arena_ptr.ally_zone.point  # use real current aly robot position
+                current_position=self.arena_ptr.ally_zone.point,  # use real current aly robot position
             )
 
             # 3.3 Check if the path has changed
             # We compare only the raw path (not the oriented path, but the GridNode path)
             # Because there less element top compare in this one => faster computation
             if self.__are_path_different(
-                    current_used_path,
-                    self.trajectory_computer.path_finder.path_found,
+                current_used_path,
+                self.trajectory_computer.path_finder.path_found,
             ):
                 self.logger.info(
                     "The path has changed, updating the rolling basis handler"

@@ -164,6 +164,8 @@ robot1/rasp/test_zones.py
 robot1/rasp/test.py
 robot1/rasp/test_stage.py
 server/server_venv/
+test[0-9]*.py
+task_planner_solution.json
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

@@ -11,7 +11,6 @@ class Task:
     def __init__(
         self,
         action_func: Callable,
-        position: Point | OrientedPoint | BaseArenaZone | Polygon,
         go_to_params: GoToParams = None,  # TODO: transform to trajectory_params that don't include destination wich is computed dynamicaly
         start_func: Optional[Callable] = None,
         execution_time: Optional[float] = 0,
@@ -21,7 +20,6 @@ class Task:
         self.id = Task._id_counter
         Task._id_counter += 1
         self.action_func = action_func
-        self.position = position
         self.go_to_params = go_to_params
         self.start_func = start_func
         self.execution_time = execution_time
