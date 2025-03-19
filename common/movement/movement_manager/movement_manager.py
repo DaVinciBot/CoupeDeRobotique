@@ -2,6 +2,7 @@
 # The MovementManager class manages robot movement within an arena.
 # It computes and executes movement paths while considering obstacles and enemy positions.
 # The class utilizes a trajectory computer and logs movement actions.
+import math
 
 # ====== Imports ======
 # Internal project imports
@@ -54,6 +55,10 @@ class MovementManager:
         # Attributes (use later)
         self.params: GoToParams | None = None
         self.trajectory_computer: TrajectoryComputer | None = None
+
+        # Reverse
+        self.reverse_threshold_angle: float = 0.5
+        self.reverse_threshold_distance: float = 10
 
     # ====== Private Methods ======
     def __get_ally_enemy_distance(self) -> float:
@@ -259,4 +264,57 @@ class MovementManager:
             return
 
         # 5. Get the next RollingBasisCommand
-        return self.trajectory_computer.get_position_speed()
+        command = self.trajectory_computer
+
+        # 5.1 Apply backward movement if necessary
+        if self.go_backwards(command):
+            command.get_position_speed().linear_speed = -abs(command.get_position_speed().linear_speed)
+            self.logger.info("Marche arrière activée!")  # temp to test IRL
+
+        # 5.2 Return the command
+        return command.get_position_speed()
+
+    # A certaines occasions il est nécessaire d'avoir un certain angle à implémenter après
+    # Version à retravailler
+    def go_backwards(self, command: TrajectoryComputer | None) -> bool:
+        """
+        si on est à 175 et 185 degré de notre objectif et à une distance de 5cm
+        marche arrière
+        """
+
+        trajectory_computed = command.computed_goal # je suis pas sûre que c'est lui que je dois prendre
+        ally_location = self.arena_ptr.ally_zone.point
+
+        if isinstance(trajectory_computed, OrientedPoint):
+            difference_angle = abs(
+                trajectory_computed.theta - ally_location.theta
+            )  # en radians
+
+        elif trajectory_computed is not None:
+            angle_to_goal = math.atan2(trajectory_computed.y - ally_location.y, trajectory_computed.x - ally_location.x)
+            difference_angle = abs(
+                angle_to_goal-ally_location.theta
+            )
+
+        else:
+            return False
+
+        # Normalisation de la différence d'angle jsp si c nécessaire
+        difference_angle = (difference_angle + math.pi) % (2 * math.pi) - math.pi
+
+        distance = math.sqrt(
+            (trajectory_computed.x - ally_location.x)**2 +
+            (trajectory_computed.y - ally_location.y)**2
+        )  # en cm
+
+        # On regarde si le but est derrière le robot
+        objective_behind_robot = (
+                math.radians(180 - self.reverse_threshold_angle) < abs(difference_angle) < math.radians(
+            180 + self.reverse_threshold_angle)
+        )
+
+        return difference_angle < self.reverse_threshold_angle \
+            and distance < self.reverse_threshold_distance \
+            and objective_behind_robot
+
+

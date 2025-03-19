@@ -577,7 +577,7 @@ class BaseArena(ABC):
             transparency_factor: float = 1.0,
     ) -> None:
         """Plots zones and their buffers on the arena."""
-        if show_buffer:
+        if show_buffer and not isinstance(zone, AllyZone):
             # Plot buffer zone in transparent color
             self.__plot_polygon(
                 ax,
@@ -585,6 +585,15 @@ class BaseArena(ABC):
                 color=zone.zone_color,
                 alpha=0.5 * transparency_factor,
             )
+
+        if isinstance(zone, AllyZone):
+            x, y, theta = zone.point.x, zone.point.y, zone.point.theta
+
+            # Calcul des composants de la flèche
+            dx = np.cos(theta)  # Longueur en X
+            dy = np.sin(theta) # Longueur en Y
+            # Tracé
+            plt.quiver(x, y, dx, dy, angles='xy', scale_units='xy', scale=None, color='r', width=0.02)
 
         # Plot the original zone in full color and hatch if necessary
         if not isinstance(zone, BorderZone):

@@ -5,9 +5,10 @@ from config_loader import CONFIG
 from pathfinding.core.grid import Grid, GridNode
 
 from path_finding import PathFinder
+import matplotlib.pyplot as plt
 
 from arena import (
-    ShowArena
+    ShowArena, AllyZone
 )
 
 from geometry import (
@@ -56,11 +57,11 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 
 ally_finder_logger = Logger(
     identifier="AllyPathFinder",
-    follow_logger_manager = True
+    follow_logger_manager=True
 )
 enemy_finder_logger = Logger(
     identifier="EnemyPathFinder",
-    dfollow_logger_manager = True
+    dfollow_logger_manager=True
 )
 
 arena_logger = Logger(
@@ -69,9 +70,14 @@ arena_logger = Logger(
 )
 
 logger_lidar = Logger(
-        identifier="LiDAR",
-        follow_logger_manager_rules=True,
-    )
+    identifier="LiDAR",
+    follow_logger_manager_rules=True,
+)
+
+logger_movement_manager = Logger(
+    identifier="MovementManager",
+    follow_logger_manager_rules=True,
+)
 
 arena = ShowArena(
     logger=arena_logger,
@@ -81,33 +87,32 @@ arena = ShowArena(
     forbidden_cover_threshold=0.1,
 )
 
-lidar = Lidar(
-        logger=logger_lidar,
-        min_angle=CONFIG.LIDAR_MIN_ANGLE,
-        max_angle=CONFIG.LIDAR_MAX_ANGLE,
-        unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
-        unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
-        min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+lidar = LidarDummy(
+    logger=logger_lidar,
+    min_angle=CONFIG.LIDAR_MIN_ANGLE,
+    max_angle=CONFIG.LIDAR_MAX_ANGLE,
+    unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
+    unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
+    min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
 )
 
-start = OrientedPoint((20, 20))
-goal = OrientedPoint((280, 120))
+start = OrientedPoint((200, 100))
+goal = OrientedPoint((20, 20))
 
 enemy_start = OrientedPoint((230, 60))
 enemy_goal = OrientedPoint((70, 140))
-
 
 arena.set_team_color("yellow")
 
 
 async def run_arena_test():
     # arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
-    arena.visualize(display_default_destination_zone=False)
-    #scans: np.ndarray = lidar.scan_to_polars()
+    #arena.visualize(display_default_destination_zone=False)
+    # scans: np.ndarray = lidar.scan_to_polars()
 
     arena.update(start, np.ndarray([]), enemy_start)
 
-    arena.visualize(display_default_destination_zone=False)
+    #arena.visualize(display_default_destination_zone=False)
 
     # Ally path
     ally_path_finder = PathFinder(
@@ -133,33 +138,38 @@ async def run_arena_test():
     arena.grid_manager.visualize(only_static_grid=True, path=[ally_path])
 
     # Visualize the path forwarding
-    #import matplotlib.pyplot as plt
 
-    #while len(ally_path) > 3:
-    #    plt.close("all")
-    #    plt.ion()
+    # Initialize figure and axis
+    fig, ax = plt.subplots()
+    plt.ion()  # Turn on interactive mode
 
-    #    arena.update(
-    #        ally_position=ally_path[1],
-    #        lidar_scan_polars= np.ndarray([]),
-    #        enemy_position=enemy_path[1],
-    #        optimized_update=True,
-    #    )
+    while len(ally_path) > 3:
+        # Update arena visualization
+        arena.update(
+            ally_position=ally_path[1],
+            lidar_scan_polars=np.ndarray([]),
+            enemy_position=enemy_path[1],
+            optimized_update=True,
+        )
 
-    #    arena.visualize(display_points=[Point(15, 15), Point(30, 30)])
-    #    arena.grid_manager.visualize(
-    #        only_static_grid=False, path=[ally_path, enemy_path]
-    #    )
-    #    plt.pause(2)
-    #    ally_path_finder.update_current_position(ally_path[1])
-    #    enemy_path_finder.update_current_position(enemy_path[1])
+        ax.clear()  # Clear the plot instead of closing it
 
-    #    ally_path = ally_path_finder.find_oriented_path(
-    #        smooth_path=True, use_static_and_dynamic_grid=True
-    #    )
-    #    enemy_path = enemy_path_finder.find_oriented_path(
-    #        smooth_path=True, use_static_and_dynamic_grid=False
-    #    )
+        arena.visualize(display_default_destination_zone=False, plot=(ax, fig))
+
+        # Ensure real-time update
+        plt.draw()
+        plt.pause(0.01)
+
+        # Update positions
+        ally_path_finder.update_current_position(ally_path[1])
+        enemy_path_finder.update_current_position(enemy_path[1])
+
+        ally_path = ally_path_finder.find_oriented_path(
+            smooth_path=True, use_static_and_dynamic_grid=True
+        )
+        enemy_path = enemy_path_finder.find_oriented_path(
+            smooth_path=True, use_static_and_dynamic_grid=False
+        )
 
 
 asyncio.run(run_arena_test())
