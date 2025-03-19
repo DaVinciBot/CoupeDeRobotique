@@ -272,8 +272,9 @@ class MovementManager:
         if self._go_to_is_arrived():
             return
 
-        # 5. Check timeout
-        if time.time() - self.movement_start_time > self.timeout_limit:
+        # 5. Check timeout, not sure it should be here at all, i don't know how many times this function is called
+        if self.movement_start_time != -1 and \
+                time.time() - self.movement_start_time > self.timeout_limit:
             self.logger.warning("Movement exceeded time limit, stopping the robot")
             self.status = MovementStatus.TIMEOUT
             self.movement_start_time = -1
