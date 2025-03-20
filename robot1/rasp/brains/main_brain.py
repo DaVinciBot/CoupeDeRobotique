@@ -128,7 +128,10 @@ class MainBrain(Brain):
         
         #Handle BAU triggered
         if self.triggered_bau:
-            rolling_basis.reset(rolling_basis.message_id_callback)
+            try :
+                rolling_basis.reset(rolling_basis.message_id_callback)
+            except:
+                print("Error reset Teensy")
             self.triggered_bau = False
             print("Triggered BAU, Teensy reseting")
 
