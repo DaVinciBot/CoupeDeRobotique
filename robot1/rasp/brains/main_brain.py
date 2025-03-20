@@ -130,7 +130,9 @@ class MainBrain(Brain):
         print(f"Subprocess triggered_bau state {self.triggered_bau}")
         if self.triggered_bau:
             try :
+                print("AAAAAA")
                 rolling_basis.reset(rolling_basis.message_id_callback)
+                print("BBBBBB")
             except:
                 print("Error reset Teensy")
             self.triggered_bau = False
