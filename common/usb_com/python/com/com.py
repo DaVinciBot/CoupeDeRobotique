@@ -114,11 +114,18 @@ class Com:
             return
 
         receiver = threading.Thread(
-            target=self.__receiver__, name="USBComReceiver"
+            target=self.__receiver__, name="USBComReceiver", daemon=True
         )
         receiver.start()
         return receiver
 
+    def _end_receiver(self) -> None:
+        """
+        Kill the receiver thread
+        """
+        if self._receiver_thread is not None and self._receiver_thread.is_alive():
+            self._receiver_thread.join()
+    
     def __receiver__(self) -> None:
         """
         This is started as a thread, handles the data according to the decided format :

@@ -4,6 +4,9 @@
 # It initializes communication settings, including serial number, VID, PID, baud rate,
 # and optional CRC and dummy packet support.
 
+# ====== Standard Library import ======
+from typing import Callable
+
 # ====== Third-Party Library Imports ======
 from loggerplusplus import Logger
 
@@ -51,10 +54,16 @@ class BaseComTeensy(Com):
         """
         super().__init__(logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy)
 
-    def reset(self) -> None:
+    def reset(self, message_id_callback: dict[int, Callable[[bytes], None]]) -> None:
         """
         Resets the Teensy device by sending a reset command.
+        Then kill the receiver thread of the Com and reinitialized the Com.
+        Reput the message callback in the new Com object
         """
         self.send_bytes(
             data=Messages.RESET_TEENSY.to_bytes()
         )
+        self._end_receiver()
+        super().__init__(self.logger, self.serial_number, self.vid, self.pid, 
+                         self.baudrate, self.enable_crc, self.enable_dummy)
+        self.message_id_callback = message_id_callback

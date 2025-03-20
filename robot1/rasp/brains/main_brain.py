@@ -128,9 +128,7 @@ class MainBrain(Brain):
         
         #Handle BAU triggered
         if self.triggered_bau:
-            if rolling_basis._receiver_thread.is_alive():
-                rolling_basis._receiver_thread.join()
-            rolling_basis.reset()
+            rolling_basis.reset(rolling_basis.message_id_callback)
             self.triggered_bau = False
             self.logger.warning("Triggered BAU, Teensy reseting")
 
