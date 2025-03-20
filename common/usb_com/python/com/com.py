@@ -125,6 +125,7 @@ class Com:
         """
         if self._receiver_thread is not None and self._receiver_thread.is_alive():
             self._receiver_thread.join()
+            self.logger.warning(f"Thread receiver status {self._receiver_thread.is_alive()}")
     
     def __receiver__(self) -> None:
         """
