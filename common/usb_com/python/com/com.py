@@ -66,6 +66,7 @@ class Com:
 
         self.last_message: bytes | None = None
         self.message_id_callback: dict[int, Callable[[bytes], None]] = {}
+        self.__stop_receiver: bool = False
 
         # Start the receiver thread (if not in dummy mode), it is responsible for handling the received data
         self._receiver_thread: threading.Thread | None = self._start_receiver()
@@ -124,6 +125,7 @@ class Com:
         Kill the receiver thread
         """
         if self._receiver_thread is not None and self._receiver_thread.is_alive():
+            self.__stop_receiver = True
             self._receiver_thread.join()
             self.logger.warning(f"Thread receiver status {self._receiver_thread.is_alive()}")
     
@@ -137,7 +139,7 @@ class Com:
         The size is in bytes.
         This function is responsible for calling the right callback function according to the message type.
         """
-        while True:
+        while not self.__stop_receiver:
             try:
                 msg = self.read_bytes()
 
