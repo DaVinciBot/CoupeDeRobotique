@@ -58,6 +58,7 @@ class TrajectoryComputer:
 
         # Trajectory points and related metadata
         self.cumulative_distances = [0]  # Cumulative distance between trajectory points
+        self.path_to_follow: list[OrientedPoint] = []  # Current path to follow
 
         # Timing variables
         self.start_time: float = 0.0  # Time when the trajectory started
@@ -112,7 +113,14 @@ class TrajectoryComputer:
         Returns:
             OrientedPoint | Point: The computed goal position.
         """
-        # If goal is a BaseArenaZone
+        # If goal is defined as int, it's a zone ID
+        if isinstance(self.trajectory_params.goal, int):
+            if self.trajectory_params.goal > len(self.arena_ptr.zones):
+                self.logger.error("Invalid zone ID given in trajectory parameters.")
+                return
+            self.trajectory_params.goal = self.arena_ptr.zones[self.trajectory_params.goal]
+
+        # If goal is a BaseArenaZone, compute the best goal point
         if isinstance(self.trajectory_params.goal, BaseArenaZone):
             # Use zone method to get best goal point from zone
             self.computed_goal = self.trajectory_params.goal.get_go_to_position(
@@ -200,7 +208,7 @@ class TrajectoryComputer:
 
         # Find the trajectory segment corresponding to the traveled distance
         i = bisect_left(self.cumulative_distances, s)
-        i = min(i, len(self.cumulative_distances) - 1)
+        i = min(i, len(self.path_to_follow) - 1)
 
         # Interpolate between the points surrounding the current position
         s1 = self.cumulative_distances[i - 1]
@@ -209,14 +217,15 @@ class TrajectoryComputer:
 
         # Extract positions and orientations of the surrounding points
         x1, y1, theta1 = (
-            self.path_finder.oriented_path_found[i - 1].x,
-            self.path_finder.oriented_path_found[i - 1].y,
-            self.path_finder.oriented_path_found[i - 1].theta,
+            self.path_to_follow[i - 1].x,
+            self.path_to_follow[i - 1].y,
+            self.path_to_follow[i - 1].theta,
         )
+
         x2, y2, theta2 = (
-            self.path_finder.oriented_path_found[i].x,
-            self.path_finder.oriented_path_found[i].y,
-            self.path_finder.oriented_path_found[i].theta,
+            self.path_to_follow[i].x,
+            self.path_to_follow[i].y,
+            self.path_to_follow[i].theta,
         )
 
         # Compute interpolated position and orientation
@@ -275,11 +284,14 @@ class TrajectoryComputer:
         """Computes cumulative distances along the planned trajectory."""
         self.start_time = time.time()
 
+        # Reset cumulative distances
+        self.cumulative_distances = [0]
+
         # Compute cumulative distances between trajectory points
         total_distance = 0
-        for i in range(1, len(self.path_finder.oriented_path_found)):
-            x1, y1 = self.path_finder.oriented_path_found[i - 1].x, self.path_finder.oriented_path_found[i - 1].y
-            x2, y2 = self.path_finder.oriented_path_found[i].x, self.path_finder.oriented_path_found[i].y
+        for i in range(1, len(self.path_to_follow)):
+            x1, y1 = self.path_to_follow[i - 1].x, self.path_to_follow[i - 1].y
+            x2, y2 = self.path_to_follow[i].x, self.path_to_follow[i].y
             total_distance += math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
             self.cumulative_distances.append(total_distance)
 
@@ -326,12 +338,16 @@ class TrajectoryComputer:
             self.logger.error("PathFinder is not initialized.")
             return
 
-        self.__compute_cumulative_distance()
-        self.__init_curves(initial_linear_speed, initial_angular_speed)
+        # Save the path to follow
+        self.path_to_follow = self.path_finder.oriented_path_found[:]  # Deep copy to avoid pointer issues
 
         # Set initial conditions
         self.start_time = time.time()
-        self.__last_theta = self.path_finder.oriented_path_found[0].theta
+        self.__last_theta = self.path_to_follow[0].theta
+
+        # Compute cumulative distances along the path
+        self.__compute_cumulative_distance()
+        self.__init_curves(initial_linear_speed, initial_angular_speed)
 
     """
        Global Usage of the TrajectoryComputer
@@ -366,6 +382,7 @@ class TrajectoryComputer:
         Returns:
             tuple[OrientedPoint, float, float]: Position, linear speed, and angular speed.
         """
+
         if t is None:
             t = time.time()
         current_time = t - self.start_time
@@ -376,9 +393,11 @@ class TrajectoryComputer:
 
         # Compute position and speeds
         position = self.__compute_position(current_time)
+
         linear_speed, angular_speed = self.__compute_velocity(
             current_time, position.theta
         )
+
         return RollingBasisCommand(
             position=position,
             linear_speed=linear_speed,

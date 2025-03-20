@@ -1,2 +1,2 @@
-from controllers.actuators_controller import ActuatorsController
-from controllers.rolling_basis import RollingBasis
+from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+from controllers.actuators import Actuators, ActuatorsDummy

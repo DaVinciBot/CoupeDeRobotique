@@ -6,11 +6,15 @@ import math
 import time
 
 # ====== Imports ======
-# Internal project imports
+# Third party imports
+from pathfinding.core.grid import GridNode
+
+# Local imports
 from arena import BaseArena, BaseArenaZone
 from loggerplusplus import Logger
 from geometry import OrientedPoint
 
+# Internal project imports
 from movement.params import GoToParams, TrajectoryParams, SpeedProfile, RollingBasisCommand
 from movement.movement_manager.movement_status import MovementStatus
 from movement.trajectory_computer import TrajectoryComputer
@@ -75,26 +79,35 @@ class MovementManager:
         """
         return self.arena_ptr.ally_zone.point.distance(self.arena_ptr.enemy_zone.point)
 
+    def __get_ally_goal_distance(self) -> float:
+        """
+        Calculates the distance between the ally zone and the computed goal.
+
+        Returns:
+            float: Distance between the ally zone and the computed goal.
+        """
+        return self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.computed_goal)
+
     @staticmethod
-    def __are_path_different(
-            path_a: list[OrientedPoint], path_b: list[OrientedPoint]
-    ) -> bool:
+    def __are_path_different(path_a: list[GridNode], path_b: list[GridNode]) -> bool:
         """
         Compares two paths to determine if they are different.
 
         Args:
-            path_a (list[OrientedPoint]): First path to compare.
-            path_b (list[OrientedPoint]): Second path to compare.
+            path_a (list[GridNode]): First path to compare.
+            path_b (list[GridNode]): Second path to compare.
 
         Returns:
             bool: True if paths differ, otherwise False.
         """
-        min_length = min(len(path_a), len(path_b))
+        if len(path_a) != len(path_b):
+            return True  # Paths of different lengths are always different.
 
-        for i in range(1, min_length + 1):
-            if path_a[-i] != path_b[-i]:
-                return True
-        return True
+        for a, b in zip(reversed(path_a), reversed(path_b)):
+            if a != b:
+                return True  # Found a difference, no need to check further.
+
+        return False  # Paths are identical.
 
     # ====== Protected Methods ======
     def _acs(self) -> RollingBasisCommand | None:
@@ -131,10 +144,7 @@ class MovementManager:
         Returns:
             bool: True if the goal is reached, else False.
         """
-        if (
-                self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.computed_goal)
-                < self.params.goal_tolerance
-        ):
+        if self.__get_ally_goal_distance() < self.params.goal_tolerance:
             self.status = MovementStatus.SUCCESS
             self.logger.info("Go To is arrived")
             return True
@@ -198,10 +208,10 @@ class MovementManager:
         Returns:
             RollingBasisCommand | None: Next movement command or None.
         """
+        # 0. Check if the goal is reached
+        if self._go_to_is_arrived():
+            return
 
-        # 0. Start timing movement
-        if self.movement_start_time == -1:
-            self.movement_start_time = time.time()
 
         # 1. Check if a movement is in progress and if the parameters are set
         # 1.1 Check if a movement is in progress
@@ -225,15 +235,14 @@ class MovementManager:
 
         # 3. Check if the path has to be recomputed
         # -> if the enemy distance is under the recompute distance threshold
-        # AND the path is not near the end
-        enemy_distance = self.__get_ally_enemy_distance()
+        # AND the path is not near the end goal
         if (
-                self.params.distance_to_goal_to_dont_recompute_path
-                < enemy_distance <
-                self.params.path_finder_recompute_distance
+                self.__get_ally_goal_distance() > self.params.distance_to_goal_to_dont_recompute_path
+                and
+                self.__get_ally_enemy_distance() < self.params.path_finder_recompute_distance
         ):
             # 3.1 Save old path for comparison
-            current_used_path = self.trajectory_computer.path_finder.oriented_path_found
+            current_used_path = self.trajectory_computer.path_finder.path_found
 
             # 3.2 Recompute the path (use dynamic obstacles: consider enemy position)
             self.trajectory_computer.compute_path(
@@ -242,9 +251,11 @@ class MovementManager:
             )
 
             # 3.3 Check if the path has changed
+            # We compare only the raw path (not the oriented path, but the GridNode path)
+            # Because there less element top compare in this one => faster computation
             if self.__are_path_different(
                     current_used_path,
-                    self.trajectory_computer.path_finder.oriented_path_found,
+                    self.trajectory_computer.path_finder.path_found,
             ):
                 self.logger.info(
                     "The path has changed, updating the rolling basis handler"
@@ -268,70 +279,5 @@ class MovementManager:
                     initial_angular_speed=position_speed.angular_speed,
                 )
 
-        # 4. Check if the goal is reached
-        if self._go_to_is_arrived():
-            return
-
-        # 5. Check timeout, not sure it should be here at all, i don't know how many times this function is called
-        if self.movement_start_time != -1 and \
-                time.time() - self.movement_start_time > self.timeout_limit:
-            self.logger.warning("Movement exceeded time limit, stopping the robot")
-            self.status = MovementStatus.TIMEOUT
-            self.movement_start_time = -1
-            return RollingBasisCommand(position=self.arena_ptr.ally_zone.point, linear_speed=0.0, angular_speed=0.0)
-
-        # 6. Get the next RollingBasisCommand
-        command = self.trajectory_computer
-
-        # 6.1 Apply backward movement if necessary
-        if self.go_backwards(command):
-            command.get_position_speed().linear_speed = -abs(command.get_position_speed().linear_speed)
-            self.logger.info("Marche arrière activée!")  # temp to test IRL
-
-        # 6.2 Return the command
-        return command.get_position_speed()
-
-    # A certaines occasions il est nécessaire d'avoir un certain angle à implémenter après
-    # Version à retravailler
-    def go_backwards(self, command: TrajectoryComputer | None) -> bool:
-        """
-        si on est à 175 et 185 degré de notre objectif et à une distance de 5cm
-        marche arrière
-        """
-
-        trajectory_computed = command.computed_goal # je suis pas sûre que c'est lui que je dois prendre
-        ally_location = self.arena_ptr.ally_zone.point
-
-        if isinstance(trajectory_computed, OrientedPoint):
-            difference_angle = abs(
-                trajectory_computed.theta - ally_location.theta
-            )  # en radians
-
-        elif trajectory_computed is not None:
-            angle_to_goal = math.atan2(trajectory_computed.y - ally_location.y, trajectory_computed.x - ally_location.x)
-            difference_angle = abs(
-                angle_to_goal-ally_location.theta
-            )
-
-        else:
-            return False
-
-        # Normalisation de la différence d'angle jsp si c nécessaire
-        # difference_angle = (difference_angle + math.pi) % (2 * math.pi) - math.pi
-
-        distance = math.sqrt(
-            (trajectory_computed.x - ally_location.x)**2 +
-            (trajectory_computed.y - ally_location.y)**2
-        )  # en cm
-
-        # On regarde si le but est derrière le robot
-        objective_behind_robot = (
-                math.radians(180 - self.reverse_threshold_angle) < abs(difference_angle) < math.radians(
-            180 + self.reverse_threshold_angle)
-        )
-
-        return difference_angle < self.reverse_threshold_angle \
-            and distance < self.reverse_threshold_distance \
-            and objective_behind_robot
-
-
+        # 4. Get the next RollingBasisCommand
+        return self.trajectory_computer.get_position_speed()
