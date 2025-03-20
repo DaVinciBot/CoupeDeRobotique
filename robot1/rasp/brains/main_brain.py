@@ -130,7 +130,7 @@ class MainBrain(Brain):
         if self.triggered_bau:
             rolling_basis.reset(rolling_basis.message_id_callback)
             self.triggered_bau = False
-            rolling_basis.logger.warning("Triggered BAU, Teensy reseting")
+            print("Triggered BAU, Teensy reseting")
 
     """
     ### Main Process ###
