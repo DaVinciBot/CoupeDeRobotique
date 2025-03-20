@@ -127,6 +127,7 @@ class MainBrain(Brain):
                 self.path = movement_manager.trajectory_computer.path_to_follow
         
         #Handle BAU triggered
+        print(f"Subprocess triggered_bau state {self.triggered_bau}")
         if self.triggered_bau:
             try :
                 rolling_basis.reset(rolling_basis.message_id_callback)
