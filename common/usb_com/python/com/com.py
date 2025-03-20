@@ -169,7 +169,7 @@ class Com:
                         self.logger.warning("Received a NACK")
                         if self.last_message is not None:
                             self.send_bytes(self.last_message)
-                            self.logger.info(
+                            self.logger.warning( #Change to info
                                 f"Sending back message : {self.last_message[0]}"
                             )
                             self.last_message = None
