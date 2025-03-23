@@ -186,7 +186,15 @@ class TrajectoryComputer:
             smooth_path=self.trajectory_params.smooth_trajectory
         )
 
-        return self.path_finder.oriented_path_found
+        # Ma merde pour marche arrière
+        oriented_path_found = self.path_finder.oriented_path_found
+
+        # Invert angles to go backwards
+        if self.trajectory_params.go_backwards:
+            for point in oriented_path_found:
+                OrientedPoint._id_to_attrs[str(id(point))]["theta"] += math.pi
+
+        return oriented_path_found
 
     """
         Trajectory speeds part of the trajectory computer
@@ -397,6 +405,13 @@ class TrajectoryComputer:
         linear_speed, angular_speed = self.__compute_velocity(
             current_time, position.theta
         )
+
+        linear_speed = -abs(linear_speed) if self.trajectory_params.go_backwards else abs(linear_speed)
+        angular_speed = -abs(angular_speed) if self.trajectory_params.go_backwards else abs(angular_speed)
+
+        # Test, to remove later
+        # self.logger.info(f"Vitesse linéaire envoyée à Rolling Basis: {linear_speed}")
+        # self.logger.info(f"Vitesse angulaire envoyée à Rolling Basis: {angular_speed}")
 
         return RollingBasisCommand(
             position=position,

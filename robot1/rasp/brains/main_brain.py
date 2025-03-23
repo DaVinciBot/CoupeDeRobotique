@@ -88,6 +88,7 @@ class MainBrain(Brain):
             trajectory_computer_logger=Logger(identifier="TrajectoryComputer", follow_logger_manager_rules=True),
             arena_ptr=self.arena,
         )
+
         rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
@@ -105,7 +106,9 @@ class MainBrain(Brain):
         movement_manager.arena_ptr = self.arena
 
         # Trigger movement manager to go to the new destination when the params change
-        if self.go_to_params != movement_manager.params:
+        if self.go_to_params != movement_manager.params and (
+                not self.go_to_params.trajectory_params.go_backwards if movement_manager.params else True
+        ):
             movement_manager.compute_go_to(
                 current_linear_speed=rolling_basis.linear_speed,
                 current_angular_speed=rolling_basis.angular_speed,
@@ -214,7 +217,7 @@ class MainBrain(Brain):
     async def start(self):
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        self.rolling_basis_odometrie = OrientedPoint(20, 25, 0)
+        self.rolling_basis_odometrie = OrientedPoint(50, 50, 0)
         self.arena.enemy_zone.update(self.arena.team_color, self.rolling_basis_odometrie, Point(290, 190))
 
 
@@ -244,6 +247,7 @@ self.go_to_params = GoToParams(
 
 Exemple in postman with zombie mode:
 url: ws://rob.local:8080/cmd?sender=postman_zombie
+url: ws://localhost:8080/cmd?sender=postman_zombie
 message:
 {
     "sender": "zombie_master",

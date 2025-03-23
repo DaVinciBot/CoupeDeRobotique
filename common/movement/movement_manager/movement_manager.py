@@ -180,6 +180,8 @@ class MovementManager:
         self.params: GoToParams = params
         self.status: MovementStatus = MovementStatus.PENDING
 
+
+
         # 1. Compute the trajectory
         # 1.1 Create the trajectory computer
         self.trajectory_computer: TrajectoryComputer = TrajectoryComputer(
