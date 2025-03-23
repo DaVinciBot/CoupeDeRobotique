@@ -61,13 +61,9 @@ class MovementManager:
         self.params: GoToParams | None = None
         self.trajectory_computer: TrajectoryComputer | None = None
 
-        # Reverse
-        self.reverse_threshold_angle: float = 5  # en degré
-        self.reverse_threshold_distance: float = 10
-
         # Timeout
-        self.movement_start_time: float = -1
-        self.timeout_limit: float = 15
+        self.movement_time: float = -1
+        self.timeout_limit: float = 60
 
     # ====== Private Methods ======
     def __get_ally_enemy_distance(self) -> float:
@@ -181,7 +177,6 @@ class MovementManager:
         self.status: MovementStatus = MovementStatus.PENDING
 
 
-
         # 1. Compute the trajectory
         # 1.1 Create the trajectory computer
         self.trajectory_computer: TrajectoryComputer = TrajectoryComputer(
@@ -283,3 +278,17 @@ class MovementManager:
 
         # 4. Get the next RollingBasisCommand
         return self.trajectory_computer.get_position_speed()
+
+    def timeout_movement(self, reset: bool = False) -> bool:
+        if self.movement_time == -1:
+            self.movement_time = time.time()
+
+        if reset:
+            self.movement_time = -1
+
+        if time.time() - self.movement_time > self.timeout_limit:
+            self.logger.warning("Movement timeout exceeded! Stopping travel.")
+            self.status = MovementStatus.TIMEOUT
+            return True
+
+        return False

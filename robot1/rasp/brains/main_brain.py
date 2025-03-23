@@ -73,6 +73,7 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
+
     @Brain.task(
         process=True,
         run_on_start=True,
@@ -81,6 +82,8 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def handle_movement_manager(self) -> None:
+        global started
+
         # --- Initialization --- #
         movement_manager = MovementManager(
             logger=Logger(identifier="MovementManager", follow_logger_manager_rules=True),
@@ -105,6 +108,8 @@ class MainBrain(Brain):
         # Force the sync of arena inside the movement_manager
         movement_manager.arena_ptr = self.arena
 
+
+
         # Trigger movement manager to go to the new destination when the params change
         if self.go_to_params != movement_manager.params and (
                 not self.go_to_params.trajectory_params.go_backwards if movement_manager.params else True
@@ -115,6 +120,21 @@ class MainBrain(Brain):
                 params=self.go_to_params,
             )
             movement_manager.logger.info("New GoToParams received")
+            movement_manager.timeout_movement()
+
+            if (self.go_to_params.trajectory_params.goal.x,
+                self.go_to_params.trajectory_params.goal.y) != \
+                (movement_manager.params.trajectory_params.goal.x,
+                    movement_manager.params.trajectory_params.goal.y):
+
+                movement_manager.timeout_movement(reset=True)
+                movement_manager.logger.info("Different goal, reset timeout")
+
+        # I should probably use something else : just put speed to 0 or ask the others, it's temporary
+        if movement_manager.timeout_movement():
+            movement_manager._acs()
+
+
 
         # Handle the 'go to' command
         if movement_manager.params is not None:
