@@ -10,7 +10,6 @@
 // Configuration file (contains all the constants and pinout), it is just a main.cpp header file
 #include <config.h>
 
-
 // 1. Instanciate the Rolling Basis object
 // a. Define the PID controllers
 PID linear_speed_pid(KP_LINEAR_SPEED, KI_LINEAR_SPEED, KD_LINEAR_SPEED);
@@ -109,7 +108,7 @@ void set_odometrie(byte *msg, byte size)
 void reset_teensy(byte *msg, byte size)
 {
   // TODO: reset the teensy, à tester !
-  void(*reboot) (void) = 0;
+  void (*reboot)(void) = 0;
   reboot();
 }
 
@@ -154,6 +153,9 @@ void setup()
 
   // Initialize callback functions
   initialize_callback_functions();
+  char msg[] = "Teensy initialized";
+  char *p = msg;
+  com->print(p);
 }
 
 uint_fast32_t counter = 0;

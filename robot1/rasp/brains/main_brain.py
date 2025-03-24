@@ -127,16 +127,13 @@ class MainBrain(Brain):
                 self.path = movement_manager.trajectory_computer.path_to_follow
         
         #Handle BAU triggered
-        print(f"Subprocess triggered_bau state {self.triggered_bau}")
         if self.triggered_bau:
             try :
-                print("AAAAAA")
                 rolling_basis.reset(rolling_basis.message_id_callback)
-                print("BBBBBB")
             except:
                 print("Error reset Teensy")
             self.triggered_bau = False
-            print("Triggered BAU, Teensy reseting")
+            rolling_basis.logger.info("Triggered BAU, Teensy reseting")
 
     """
     ### Main Process ###
