@@ -114,8 +114,8 @@ void reset_teensy(byte *msg, byte size)
 
 void init_message(byte *msg, byte size)
 {
-  char msg[] = "Teensy initialized";
-  char *p = msg;
+  char message[] = "Teensy initialized";
+  char *p = message;
   com->print(p);
 }
 
