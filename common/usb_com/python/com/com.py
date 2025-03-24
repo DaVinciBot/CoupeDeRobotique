@@ -180,7 +180,7 @@ class Com:
                             msg[0],
                             lambda x: self.logger.error(f"Unknown message type ! msg: {x}")
                         )(msg[1:-1])
-                        self.logger.info("Received a message : calling callback function")
+                        self.logger.info(f"Received a message : calling callback function {msg[0]}")
 
                 except Exception as e:
                     self.logger.error("Received message handling crashed :\n" + str(e))
