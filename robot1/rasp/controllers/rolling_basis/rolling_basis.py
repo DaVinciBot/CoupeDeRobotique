@@ -57,6 +57,9 @@ class RollingBasis(BaseComTeensy):
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
         self.add_callback(self.rcv_rolling_basis_state, Messages.UPDATE_ROLLING_BASIS.value)
 
+        # Send init_message to be sure teensy is connected
+        self.send_init_msg()
+        
         # Initialize PID controllers from configuration
         self._initialize_pids()
         
