@@ -96,7 +96,6 @@ class RollingBasis(BaseComTeensy):
         # Speeds
         self.linear_speed = struct.unpack("<f", msg[12:16])[0]
         self.angular_speed = struct.unpack("<f", msg[16:20])[0]
-        self.logger.info("Receive Rolling Basis State")
 
     def rcv_unknown_msg(self, msg: bytes):
         """
