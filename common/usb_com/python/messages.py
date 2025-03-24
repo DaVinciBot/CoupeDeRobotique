@@ -33,6 +33,9 @@ class Messages(Enum):
     SET_SERVO_ANGLE_DETACH = 5
     ATTACH_SWITCH = 6
 
+    # Init Message
+    INIT_MESSAGE = 125
+    
     # Common (Rolling Basis + Actuators)
     RESET_TEENSY = 126
 

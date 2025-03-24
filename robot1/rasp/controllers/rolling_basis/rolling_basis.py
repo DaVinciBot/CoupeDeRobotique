@@ -59,6 +59,8 @@ class RollingBasis(BaseComTeensy):
 
         # Initialize PID controllers from configuration
         self._initialize_pids()
+        
+        self.send_bytes()
 
     ####################################
     # Message Receiving Handlers       #
@@ -168,6 +170,15 @@ class RollingBasis(BaseComTeensy):
                 Messages.SET_PID.to_bytes()
                 + pid_id.to_bytes()
                 + pid.to_bytes()
+        )
+        self.send_bytes(msg)
+        
+    def send_init_msg(self) -> None:
+        """
+        Send a init message to be sure the Teensy is initialized
+        """
+        msg = (
+            Messages.INIT_MESSAGE.to_bytes()
         )
         self.send_bytes(msg)
 

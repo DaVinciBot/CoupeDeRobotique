@@ -112,6 +112,13 @@ void reset_teensy(byte *msg, byte size)
   reboot();
 }
 
+void init_message(byte *msg, byte size)
+{
+  char msg[] = "Teensy initialized";
+  char *p = msg;
+  com->print(p);
+}
+
 // c. assign the callback functions to the right message id
 void (*callback_functions[256])(byte *msg, byte size);
 
@@ -121,6 +128,7 @@ void initialize_callback_functions()
   callback_functions[SET_PID] = &set_pid;
   callback_functions[SET_ODOMETRIE] = &set_odometrie;
   callback_functions[RESET_TEENSY] = &reset_teensy;
+  callback_functions[INIT_TEENSY] = &init_message;
 }
 
 // 4. Define the timer interrupt handle function (this function will be called every 10ms, and which manage the robot position and speed: asservissement)
@@ -153,9 +161,6 @@ void setup()
 
   // Initialize callback functions
   initialize_callback_functions();
-  char msg[] = "Teensy initialized";
-  char *p = msg;
-  com->print(p);
 }
 
 uint_fast32_t counter = 0;

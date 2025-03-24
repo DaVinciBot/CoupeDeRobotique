@@ -21,8 +21,6 @@ Com::Com(usb_serial_class *stream, uint32_t baudrate)
     // Initialize the buffer
     for (uint16_t k = 0; k < 256; k++)
         this->buffer[k] = 0;
-
-    this->print("teensy initialized");
 }
 
 /**
