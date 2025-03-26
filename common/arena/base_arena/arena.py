@@ -678,7 +678,7 @@ class BaseArena(ABC):
         # 5. Plot trajectory
         if trajectory:
             for i in range(len(trajectory) - 1):
-                # Draw a line connecting the current node to the next node
+                # Draw a line connecting the current point to the next point
                 ax.plot(
                     [trajectory[i].x, trajectory[i + 1].x],
                     [trajectory[i].y, trajectory[i + 1].y],

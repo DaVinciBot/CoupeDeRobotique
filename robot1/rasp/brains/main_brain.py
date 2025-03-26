@@ -106,14 +106,14 @@ class MainBrain(Brain):
 
         # Trigger movement manager to go to the new destination when the params change
         if self.go_to_params != movement_manager.params:
-            print(self.go_to_params)
-            print(movement_manager.params)
             movement_manager.compute_go_to(
                 current_linear_speed=rolling_basis.linear_speed,
                 current_angular_speed=rolling_basis.angular_speed,
                 params=self.go_to_params,
             )
             movement_manager.logger.info("New GoToParams received")
+            self.arena = movement_manager.arena_ptr
+            self.add_attributes_to_synchronize("arena")
 
         # Handle the 'go to' command
         if movement_manager.params is not None:
@@ -162,6 +162,12 @@ class MainBrain(Brain):
             additional_zones=[self.th_ally_zone],
             # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
         )
+        # self.arena.grid_manager.visualize(
+        #     only_static_grid=True,
+        #     # Plot options
+        #     show=False,
+        #     plot=(self.ax, self.fig)
+        # )
         plt.pause(0.01)
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
