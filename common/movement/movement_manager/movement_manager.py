@@ -8,9 +8,9 @@
 from pathfinding.core.grid import GridNode
 
 # Local imports
-from arena import BaseArena, BaseArenaZone
+from arena import BaseArena, BaseArenaZone, ZoneAccessibility
 from loggerplusplus import Logger
-from geometry import OrientedPoint
+from geometry import OrientedPoint, Point
 
 # Internal project imports
 from movement.params import GoToParams, TrajectoryParams, SpeedProfile, RollingBasisCommand
@@ -58,6 +58,8 @@ class MovementManager:
         # Attributes (use later)
         self.params: GoToParams | None = None
         self.trajectory_computer: TrajectoryComputer | None = None
+
+        self._current_restricted_zones_removed: list[BaseArenaZone] = []
 
     # ====== Private Methods ======
     def __get_ally_enemy_distance(self) -> float:
@@ -140,6 +142,49 @@ class MovementManager:
             return True
         return False
 
+    def _get_goal_zone_intersection(self, goal: Point | OrientedPoint | BaseArenaZone | int) -> list[BaseArenaZone]:
+        # 1. Goal is zone ID
+        if isinstance(goal, int):
+            if goal > len(self.arena_ptr.zones):
+                self.logger.error("Invalid zone ID given in trajectory parameters.")
+                return []
+            return [self.arena_ptr.zones[goal]]
+
+        # 2. Goal is a BaseArenaZone
+        elif isinstance(goal, BaseArenaZone):
+            return [goal]
+
+        # 3. Goal is a Point or OrientedPoint
+        elif isinstance(goal, Point) or isinstance(goal, OrientedPoint):
+            intersection_zones: list[BaseArenaZone] = []
+
+            # Check if the goal is within zones boundaries
+            for zone in self.arena_ptr.zones:
+                if zone.polygon.contains(goal):
+                    intersection_zones.append(zone)
+
+            return intersection_zones
+
+        # 4. Invalid goal type
+        else:
+            self.logger.error(f"Invalid goal type given in _get_goal_accessibility: [{type(goal)}]")
+            return []
+
+    def _get_goal_accessibility_and_intersect_zones(self, goal: Point | OrientedPoint | BaseArenaZone | int) \
+            -> tuple[ZoneAccessibility, list[BaseArenaZone]]:
+        intersect_zones: list[BaseArenaZone] = self._get_goal_zone_intersection(goal)
+
+        goal_accessibility: ZoneAccessibility = ZoneAccessibility.FREE
+        for intersection_zone in intersect_zones:
+            if intersection_zone.accessibility == ZoneAccessibility.FORBIDDEN:
+                goal_accessibility = ZoneAccessibility.FORBIDDEN
+                break
+
+            if intersection_zone.accessibility == ZoneAccessibility.RESTRICTED:
+                goal_accessibility = ZoneAccessibility.RESTRICTED
+
+        return goal_accessibility, intersect_zones
+
     # ====== Public Methods ======
     def compute_go_to(
             self,
@@ -163,6 +208,13 @@ class MovementManager:
 
         # Warn if a movement is already in progress
         if not self.status.is_finished():
+            # Restore the removed restricted zones
+            if self._current_restricted_zones_removed:
+                self.arena_ptr.grid_manager.add_forbidden_static_zone(
+                    [zone.buffered_polygon for zone in self._current_restricted_zones_removed]
+                )
+                self._current_restricted_zones_removed = []
+
             self.logger.warning(
                 "A movement is already in progress and a new one is requested.",
             )
@@ -170,22 +222,47 @@ class MovementManager:
         self.params: GoToParams = params
         self.status: MovementStatus = MovementStatus.PENDING
 
-        # 1. Compute the trajectory
-        # 1.1 Create the trajectory computer
+        # 1. Verify the goal zone accessibility
+        # 1.1 Check if the goal zone is accessible
+        goal_accessibility, intersect_zones = self._get_goal_accessibility_and_intersect_zones(
+            params.trajectory_params.goal
+        )
+        if goal_accessibility == ZoneAccessibility.FORBIDDEN:
+            self.status = MovementStatus.NO_ACCESSIBLE
+            return self.status
+
+        # 1.2 Check if the goal zone is restricted
+        if goal_accessibility == ZoneAccessibility.RESTRICTED:
+            # 1.2.1 Remove the restricted zones from the grid
+            restricted_zones: list[BaseArenaZone] = []
+            for zone in intersect_zones:
+                if zone.accessibility == ZoneAccessibility.RESTRICTED:
+                    restricted_zones.append(zone)
+
+            # 1.2.2 Remove the restricted zones from the grid
+            self.arena_ptr.grid_manager.remove_forbidden_static_zone(
+                [zone.buffered_polygon for zone in restricted_zones]
+            )
+
+            # 1.2.3 Save the removed restricted zones
+            self._current_restricted_zones_removed: list[BaseArenaZone] = restricted_zones
+
+        # 2. Compute the trajectory
+        # 2.1 Create the trajectory computer
         self.trajectory_computer: TrajectoryComputer = TrajectoryComputer(
             logger=self.trajectory_computer_logger,
             path_finder_logger=self.path_finder_logger,
             arena_ptr=self.arena_ptr,
             trajectory_params=params.trajectory_params
         )
-        # 1.2 Compute the trajectory (without dynamic obstacles: ignore enemy position for first computation)
+        # 2.2 Compute the trajectory (without dynamic obstacles: ignore enemy position for first computation)
         self.trajectory_computer.compute(
             use_static_and_dynamic_grid=False,
             current_linear_speed=current_linear_speed,
             current_angular_speed=current_angular_speed,
         )
 
-        # 2. Check if the path is found
+        # 3. Check if the path is found
         if not self.trajectory_computer.path_finder.oriented_path_found:
             self.status = MovementStatus.NO_ACCESSIBLE
             return self.status

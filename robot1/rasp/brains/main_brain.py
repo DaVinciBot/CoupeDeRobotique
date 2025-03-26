@@ -64,9 +64,6 @@ class MainBrain(Brain):
 
         super().__init__(logger, self)
 
-        # Attributes for the visualization
-        self.fig, self.ax = plt.subplots()
-
     """
     ### Secondary Processes ###
     """
@@ -128,6 +125,47 @@ class MainBrain(Brain):
                 self.rolling_basis_odometrie = rolling_basis.odometrie
                 self.path = movement_manager.trajectory_computer.path_to_follow
 
+    @Brain.task(
+        process=True,
+        run_on_start=True,
+        refresh_rate=0.1,
+        define_loop_later=True,
+        start_loop_marker="# --- MetaProg is insane (loop) --- #",
+    )
+    def visualisation(self) -> None:
+        fig, (ax1, ax2) = plt.subplots(1, 2)
+
+        # --- MetaProg is insane (loop) --- #
+
+        # Visualize the arena
+        ax1.clear()
+        self.arena.visualize(
+            # Visualization options
+            show_buffer=True,
+            trajectory=self.path,
+            display_zones_go_to_positions=True,
+            show_ally_direction=True,
+            # Plot options
+            show=False,
+            plot=(ax1, fig),
+            # Additional options
+            additional_zones=[self.th_ally_zone],
+        )
+        ax1.set_title("Arena")
+
+        # Visualize the grid manager
+        ax2.clear()
+        self.arena.grid_manager.visualize(
+            only_static_grid=True,
+            # Plot options
+            show=False,
+            plot=(ax2, fig)
+        )
+        ax2.set_title("Grid Manager")
+
+        plt.tight_layout()
+        plt.pause(0.01)
+
     """
     ### Main Process ###
     """
@@ -142,33 +180,6 @@ class MainBrain(Brain):
             lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
             optimized_update=True,
         )
-
-        # obstacles = self.arena.remove_outside(
-        #     self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
-        # )
-
-        # Visualize the arena
-        self.ax.clear()
-        self.arena.visualize(
-            # Visualization options
-            show_buffer=True,
-            trajectory=self.path,
-            display_zones_go_to_positions=True,
-            show_ally_direction=True,
-            # Plot options
-            show=False,
-            plot=(self.ax, self.fig),
-            # Additional options
-            additional_zones=[self.th_ally_zone],
-            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
-        )
-        # self.arena.grid_manager.visualize(
-        #     only_static_grid=True,
-        #     # Plot options
-        #     show=False,
-        #     plot=(self.ax, self.fig)
-        # )
-        plt.pause(0.01)
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def zombie_mode(self):

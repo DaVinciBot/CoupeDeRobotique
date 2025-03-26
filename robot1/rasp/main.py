@@ -38,7 +38,7 @@ from ws_comms import WServer, WServerRouteManager, WSender, WSreceiver
 from arena import ShowArena, AllyZone
 from geometry import OrientedPoint
 from brains import MainBrain
-from taskbrain import DictProxyAccessor
+from taskbrain import DictProxyAccessor, Brain
 from movement import GoToParams
 from sensors import Lidar, LidarDummy
 
@@ -152,6 +152,7 @@ if __name__ == "__main__":
     DictProxyAccessor.add_serializable_type(OrientedPoint)
     DictProxyAccessor.add_serializable_type(GoToParams)
     DictProxyAccessor.add_serializable_type(AllyZone)
+
 
     brain = MainBrain(
         logger=logger_brain,

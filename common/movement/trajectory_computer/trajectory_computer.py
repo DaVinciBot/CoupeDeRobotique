@@ -12,7 +12,7 @@ from bisect import bisect_left
 from loggerplusplus import Logger
 
 # ====== Internal Project Imports ======
-from arena import BaseArena, BaseArenaZone
+from arena import BaseArena, BaseArenaZone, ZoneAccessibility
 from geometry import OrientedPoint, Point
 from path_finding import PathFinder
 
@@ -123,8 +123,8 @@ class TrajectoryComputer:
         # (We also consider the case where the goal is an ID of a zone
         # because we transform in the part 1. the computed goal into the associated zone)
         if (
-            isinstance(self.trajectory_params.goal, BaseArenaZone) or
-            isinstance(self.trajectory_params.goal, int)
+                isinstance(self.trajectory_params.goal, BaseArenaZone) or
+                isinstance(self.trajectory_params.goal, int)
         ):
             # Use zone method to get the best goal point from zone
             if isinstance(self.trajectory_params.goal, int):
@@ -155,6 +155,8 @@ class TrajectoryComputer:
         self.trajectory_params.computed_goal = self.trajectory_params.goal
         return self.trajectory_params.computed_goal
 
+
+
     def _init_path_finder(self) -> None:
         """Initializes the pathfinder with the current goal and arena details."""
         self.path_finder = PathFinder(
@@ -170,7 +172,7 @@ class TrajectoryComputer:
             self,
             use_static_and_dynamic_grid: bool,
             current_position: OrientedPoint = None,
-    ) -> list[OrientedPoint]:
+    ) -> list[OrientedPoint] | None:
         """
         Computes a path from the current position to the goal.
 
@@ -184,11 +186,11 @@ class TrajectoryComputer:
         # Init pathfinder if not already done
         if self.path_finder is None:
             self._init_path_finder()
-        else:
-            # Update pathfinder with current position
-            self.path_finder.update_current_position(
-                self.arena_ptr.ally_zone.point if current_position is None else current_position
-            )
+
+        # Update pathfinder with current position
+        self.path_finder.update_current_position(
+            self.arena_ptr.ally_zone.point if current_position is None else current_position
+        )
 
         # Run pathfinder
         self.path_finder.find_oriented_path(
