@@ -17,10 +17,10 @@ private:
 
     bool _moving;
     unsigned long _lastStepTime;
-    float _stepIntervalUs;
+    float _usDelayBetweenTenSteps;
 
     void _setDirection(bool clockwise);
-    void _doOneStep();
+    void _doTenSteps();
 
 public:
     Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution);

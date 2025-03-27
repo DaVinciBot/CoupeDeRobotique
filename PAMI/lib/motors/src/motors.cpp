@@ -1,15 +1,15 @@
 #include "motors.h"
-#include <iostream>
+#include <Arduino.h>
 
 Motor::Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution)
-    : _stepPin(stepPin), _dirPin(dirPin), _enablePin(enablePin), _stepsPerRev(stepsPerRevolution/10)
+    : _stepPin(stepPin), _dirPin(dirPin), _enablePin(enablePin), _stepsPerRev(stepsPerRevolution / 10)
 {
     _targetSpeedStepsPerSec = 0.0f;
     _currentSpeedStepsPerSec = 0.0f;
     _acceleration = 0.0f;
     _moving = false;
     _lastStepTime = 0;
-    _stepIntervalUs = 0.0f;
+    _usDelayBetweenTenSteps = 0.0f;
 }
 
 void Motor::init()
@@ -45,7 +45,7 @@ void Motor::_setDirection(bool clockwise)
     digitalWrite(_dirPin, clockwise ? HIGH : LOW);
 }
 
-void Motor::_doOneStep()
+void Motor::_doTenSteps()
 {
     for (int i = 0; i < 10; i++)
     {
@@ -85,19 +85,19 @@ void Motor::update()
 
     if (_currentSpeedStepsPerSec < 1.0f)
     {
-        _stepIntervalUs = 1e6;
+        _usDelayBetweenTenSteps = 1e6;
     }
     else
     {
-        _stepIntervalUs = 1e6 / _currentSpeedStepsPerSec;
+        _usDelayBetweenTenSteps = (10.0f * 1e6) / _currentSpeedStepsPerSec;
     }
 
     bool clockwise = (_currentSpeedStepsPerSec >= 0);
     _setDirection(clockwise);
 
-    if (dt >= _stepIntervalUs)
+    if (dt >= _usDelayBetweenTenSteps)
     {
-        _doOneStep();
+        _doTenSteps();
         _lastStepTime = micros();
     }
 
