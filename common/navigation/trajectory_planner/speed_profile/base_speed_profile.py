@@ -7,3 +7,10 @@ class BaseSpeedProfile(ABC):
 
     @abstractmethod
     def get_speed(self, time_elapsed: float | None = None, distance: float | None = None) -> float: ...
+
+    @abstractmethod
+    def get_distance(self, time_elapsed: float, distance: float | None = None) -> float: ...
+
+    @abstractmethod
+    def get_total_duration(self, distance: float) -> float: ...
+

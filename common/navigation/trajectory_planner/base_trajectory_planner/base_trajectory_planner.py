@@ -51,16 +51,17 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
         )
 
     # ====== Internal Utilities ======
-    def _ensure_planning_started(self, method: callable) -> callable:
+    @staticmethod
+    def _ensure_planning_started(method: callable) -> callable:
 
         @functools.wraps(method)
-        def wrapper(*args, **kwargs):
+        def wrapper(self, *args, **kwargs):
             # Start planning if not already started
             if not self.is_planning_started():
                 self.start_planning()
 
             # Execute the method
-            return method(*args, **kwargs)
+            return method(self, *args, **kwargs)
 
         return wrapper
 
@@ -86,4 +87,8 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
     @abstractmethod
     def get_plan(self, **kwargs) -> TrajectoryPlanCommand:
+        ...
+
+    @abstractmethod
+    def get_total_duration(self) -> float:
         ...

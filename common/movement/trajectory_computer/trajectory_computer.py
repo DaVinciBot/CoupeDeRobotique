@@ -156,7 +156,6 @@ class TrajectoryComputer:
         return self.trajectory_params.computed_goal
 
 
-
     def _init_path_finder(self) -> None:
         """Initializes the pathfinder with the current goal and arena details."""
         self.path_finder = PathFinder(

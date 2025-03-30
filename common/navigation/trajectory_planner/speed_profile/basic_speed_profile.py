@@ -9,3 +9,9 @@ class BasicSpeedProfile(BaseSpeedProfile):
 
     def get_speed(self, time_elapsed: float | None = None, distance: float | None = None) -> float:
         return self.max_speed
+
+    def get_distance(self, time_elapsed: float, distance: float | None = None) -> float:
+        return self.max_speed * time_elapsed
+
+    def get_total_duration(self, distance: float) -> float:
+        return distance / self.max_speed
