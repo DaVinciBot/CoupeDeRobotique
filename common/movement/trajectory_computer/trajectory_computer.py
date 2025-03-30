@@ -191,7 +191,7 @@ class TrajectoryComputer:
 
         # Invert angles to go backwards
         if self.trajectory_params.go_backwards:
-            for point in oriented_path_found:
+            for point in oriented_path_found[:-1]:
                 OrientedPoint._id_to_attrs[str(id(point))]["theta"] += math.pi
 
         return oriented_path_found
