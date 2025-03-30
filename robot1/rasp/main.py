@@ -168,4 +168,16 @@ if __name__ == "__main__":
     for routine in brain.get_tasks():
         ws_server.add_background_task(routine)
 
-    ws_server.run()
+    import cProfile
+
+    profiler = cProfile.Profile()
+    profiler.enable()
+
+    try:
+        ws_server.run()
+    except:
+        pass
+
+    profiler.disable()
+    profiler.print_stats()
+    profiler.dump_stats('profiling_output.prof')

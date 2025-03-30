@@ -268,7 +268,7 @@ class BaseArena(ABC):
             ally_position: OrientedPoint,
             lidar_scan_polars: np.ndarray,  # Polars coordinates issued from the lidar scan
             optimized_update: bool = True,
-            __enemy_position: Point | None = None,  # Only for testing and simulation purpose
+            _enemy_position: Point | None = None,  # Only for testing and simulation purpose
     ) -> None:
         """
         Updates the state of the arena, zones, and grid based on ally and enemy positions.
@@ -277,17 +277,17 @@ class BaseArena(ABC):
             ally_position (OrientedPoint): Current position of the ally robot.
             lidar_scan_polars (np.ndarray): Lidar scan data in polar coordinates.
             optimized_update (bool, optional): If True, only updates intersecting zones.
-            __enemy_position (Point, optional): Pre-defined enemy position (default=None).
+            _enemy_position (Point, optional): Pre-defined enemy position (default=None).
         """
         # 1.Compute enemy position if not directly provided in absolute cartesian coordinates
-        if not __enemy_position:
+        if not _enemy_position:
             # Compute enemy position based on lidar scans -> match situation
             enemy_position = self.compute_enemy_position(
                 lidar_scan_polars, ally_position
             )
         else:
             # Use the provided enemy position -> testing or simulation
-            enemy_position = __enemy_position
+            enemy_position = _enemy_position
 
         # 2.Update ally and enemy zones (specific zone, there are not in self.zones)
         self.ally_zone.update(self.team_color, ally_position, enemy_position)

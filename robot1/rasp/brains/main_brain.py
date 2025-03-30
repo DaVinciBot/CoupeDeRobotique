@@ -64,6 +64,8 @@ class MainBrain(Brain):
 
         super().__init__(logger, self)
 
+        self.position_generator = create_position_generator(10)
+
     """
     ### Secondary Processes ###
     """
@@ -179,6 +181,7 @@ class MainBrain(Brain):
             ally_position=self.rolling_basis_odometrie,
             lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
             optimized_update=True,
+            _enemy_position=self.position_generator(),
         )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
@@ -237,6 +240,48 @@ class MainBrain(Brain):
         # Start robot position
         self.rolling_basis_odometrie = OrientedPoint(20, 25, 0)
         self.arena.enemy_zone.update(self.arena.team_color, self.rolling_basis_odometrie, Point(290, 190))
+
+
+def create_position_generator(speed):
+    import time
+    # Initialisation de la position et du temps au premier appel
+    last_position = (150, 100)  # Position initiale
+    last_time = time.time()  # Temps du premier appel
+    angle = random.uniform(0, 2 * math.pi)  # Angle initial de direction (0 à 2π)
+
+    # Fonction interne qui génère la nouvelle position
+    def generate_new_position():
+        nonlocal last_position, last_time, angle  # Permet de modifier les variables de l'environnement extérieur
+
+        current_time = time.time()  # Temps actuel
+        delta_time = current_time - last_time  # Temps écoulé depuis le dernier appel
+
+        # Calcul de la distance parcourue en fonction du temps écoulé et de la vitesse
+        delta_distance = delta_time * speed
+
+        # Calcul du déplacement en x et y en fonction de l'angle
+        delta_x = delta_distance * math.cos(angle)
+        delta_y = delta_distance * math.sin(angle)
+
+        # Calcul de la nouvelle position
+        new_x = last_position[0] + delta_x
+        new_y = last_position[1] + delta_y
+
+        # Limiter les coordonnées dans le rectangle 300x200
+        new_x = max(0, min(new_x, 300))
+        new_y = max(0, min(new_y, 200))
+
+        # Changer de direction aléatoirement à chaque appel (pour simuler un mouvement naturel)
+        if random.random() < 0.1:  # 10% de chance de changer la direction
+            angle = random.uniform(0, 2 * math.pi)  # Nouvel angle de direction
+
+        # Mise à jour de la position et du temps
+        last_position = (new_x, new_y)
+        last_time = current_time
+
+        return Point(new_x, new_y)
+
+    return generate_new_position
 
 
 """

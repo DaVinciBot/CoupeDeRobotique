@@ -1,39 +1,32 @@
 <mxfile host="65bd71144e">
     <diagram id="ImzRumZDaW7k3aGPYQYd" name="Page-1">
-        <mxGraphModel dx="919" dy="537" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0" adaptiveColors="auto">
+        <mxGraphModel dx="813" dy="499" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0" adaptiveColors="auto">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="2" value="PathFinder" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="190" y="200" width="160" height="50" as="geometry"/>
+                    <mxGeometry x="400" y="300" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="11" style="edgeStyle=none;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="3" target="4">
-                    <mxGeometry relative="1" as="geometry">
-                        <Array as="points">
-                            <mxPoint x="440" y="120"/>
-                        </Array>
-                    </mxGeometry>
+                <mxCell id="3" value="Arena" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=light-dark(#000000,#FF0000);" parent="1" vertex="1">
+                    <mxGeometry x="480" y="160" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="Arena" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="320" y="120" width="80" height="40" as="geometry"/>
+                <mxCell id="4" value="Zones" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=light-dark(#000000,#FF0000);" parent="1" vertex="1">
+                    <mxGeometry x="480" y="80" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="10" style="edgeStyle=none;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.967;entryY=0.999;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="4" target="3">
-                    <mxGeometry relative="1" as="geometry">
-                        <mxPoint x="480" y="159.52000000000007" as="sourcePoint"/>
-                        <mxPoint x="400" y="159.52000000000007" as="targetPoint"/>
-                    </mxGeometry>
+                <mxCell id="5" value="GridManager" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="260" y="320" width="120" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="4" value="Zones" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="480" y="120" width="80" height="40" as="geometry"/>
+                <mxCell id="6" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="80" width="120" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="5" value="GridManager" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="440" y="250" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="6" value="MovementManager" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-                    <mxGeometry x="170" y="400" width="120" height="60" as="geometry"/>
-                </mxCell>
-                <mxCell id="7" value="MovementManager" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="7" value="MovementManager" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="380" y="410" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="RollingBasis" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=light-dark(#000000,#FF0000);" vertex="1" parent="1">
+                    <mxGeometry x="680" y="240" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="LiDAR" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=light-dark(#000000,#FF0000);" vertex="1" parent="1">
+                    <mxGeometry x="680" y="320" width="120" height="40" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
