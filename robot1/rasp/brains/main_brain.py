@@ -107,35 +107,19 @@ class MainBrain(Brain):
         # Force the sync of arena inside the movement_manager
         movement_manager.arena_ptr = self.arena
 
-
-        # temp solution if you go backwards
-
-
         # Trigger movement manager to go to the new destination when the params change
         if self.go_to_params != movement_manager.params:
-            movement_manager.logger.info(movement_manager.params.__str__())
-            movement_manager.logger.info(self.go_to_params.__str__())
+
             movement_manager.compute_go_to(
                 current_linear_speed=rolling_basis.linear_speed,
                 current_angular_speed=rolling_basis.angular_speed,
                 params=self.go_to_params,
             )
             movement_manager.logger.info("New GoToParams received")
-            #movement_manager.timeout_movement()
+            movement_manager.timeout_movement(reset=True)
 
-            if (self.go_to_params.trajectory_params.goal.x,
-                self.go_to_params.trajectory_params.goal.y) != \
-                (movement_manager.params.trajectory_params.goal.x,
-                    movement_manager.params.trajectory_params.goal.y):
-
-                """movement_manager.timeout_movement(reset=True)
-                movement_manager.logger.info("Different goal, reset timeout")"""
-
-        # I should probably use something else : just put speed to 0 or ask the others, it's temporary
-        """if movement_manager.timeout_movement():
-            movement_manager._acs()"""
-
-
+        if movement_manager.timeout_movement():
+            rolling_basis.set_speed_and_position(0, 0, self.rolling_basis_odometrie)
 
         # Handle the 'go to' command
         if movement_manager.params is not None:

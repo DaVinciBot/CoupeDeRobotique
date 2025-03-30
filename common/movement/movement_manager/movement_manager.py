@@ -63,7 +63,7 @@ class MovementManager:
 
         # Timeout
         self.movement_time: float = -1
-        self.timeout_limit: float = 60
+        self.timeout_limit: float = 5
 
     # ====== Private Methods ======
     def __get_ally_enemy_distance(self) -> float:
@@ -280,15 +280,18 @@ class MovementManager:
         return self.trajectory_computer.get_position_speed()
 
     def timeout_movement(self, reset: bool = False) -> bool:
-        if self.movement_time == -1:
-            self.movement_time = time.time()
+        if self.params is not None and self.params.timeout > 0:
 
-        if reset:
-            self.movement_time = -1
+            if reset:
+                self.movement_time = time.time()
+                self.status = MovementStatus.PENDING
 
-        if time.time() - self.movement_time > self.timeout_limit:
-            self.logger.warning("Movement timeout exceeded! Stopping travel.")
-            self.status = MovementStatus.TIMEOUT
-            return True
+            if self.movement_time == -1:
+                self.movement_time = time.time()
+
+            if time.time() - self.movement_time > self.params.timeout:
+                self.logger.warning("Movement timeout exceeded! Stopping travel.")
+                self.status = MovementStatus.TIMEOUT
+                return True
 
         return False
