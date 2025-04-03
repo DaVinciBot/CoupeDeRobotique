@@ -10,13 +10,13 @@ from geometry import OrientedPoint
 
 # Internal project imports
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
-from navigation.path_planner.dummy_path_planner.dummy_path_planner_params import DummyPathPlannerParams
+from navigation.path_planner.delta_path_planner.delta_path_planner_params import DeltaPathPlannerParams
 
 
-# ====== Dummy Path Planner Class ======
-class DummyPathPlanner(BasePathPlanner):
+# ====== Delta Path Planner Class ======
+class DeltaPathPlanner(BasePathPlanner):
 
-    def __init__(self, params: DummyPathPlannerParams, logger: Logger | None = None) -> None:
+    def __init__(self, params: DeltaPathPlannerParams, logger: Logger | None = None) -> None:
         super().__init__(params, logger)
 
     @staticmethod

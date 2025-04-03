@@ -6,12 +6,12 @@ from navigation.path_planner import (
 
     # Planners
     BasePathPlanner,
-    DummyPathPlanner,
+    DeltaPathPlanner,
     BasicPathPlanner,
 
     # Params
     BasePathPlannerParams,
-    DummyPathPlannerParams,
+    DeltaPathPlannerParams,
     BasicPathPlannerParams
 )
 
@@ -30,11 +30,12 @@ from navigation.trajectory_planner import (
 
     # Planners
     BaseTrajectoryPlanner,
-    DummyTrajectoryPlanner,
+    SequentialTrajectoryPlanner,
     BasicTrajectoryPlanner,
 
     # Params
     BaseTrajectoryPlannerParams,
-    DummyTrajectoryPlannerParams,
+    SequentialTrajectoryPlannerParams,
     BasicTrajectoryPlannerParams
 )
+

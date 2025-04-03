@@ -30,10 +30,12 @@ class RotationSegment(BaseSegment):
             self,
             start_position: OrientedPoint, end_position: OrientedPoint,
             duration: float,
-            rotation: float
+            rotation: float,
+            sign: int
     ):
         super().__init__(start_position, end_position, duration)
         self.rotation: float = rotation
+        self.sign: int = sign
 
 
 class StopSegment(BaseSegment):

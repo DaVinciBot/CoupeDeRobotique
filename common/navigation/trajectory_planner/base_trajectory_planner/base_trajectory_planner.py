@@ -67,17 +67,14 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
     # ====== Public Methods ======
     def start_planning(self) -> None:
-
         self._start_trajectory_timestamp = time.time()
 
     def stop_planning(self) -> None:
-
         self._start_trajectory_elapsed_time_checkpoint += (
                 time.time() - self._start_trajectory_timestamp
         )
 
     def is_planning_started(self) -> bool:
-
         return self._start_trajectory_timestamp > 0.0
 
     # ====== Abstract Methods ======

@@ -1,3 +1,0 @@
-from navigation.trajectory_planner.dummy_trajectory_planner.dummy_trajectory_planner import DummyTrajectoryPlanner
-from navigation.trajectory_planner.dummy_trajectory_planner.dummy_trajectory_planner_params import \
-    DummyTrajectoryPlannerParams

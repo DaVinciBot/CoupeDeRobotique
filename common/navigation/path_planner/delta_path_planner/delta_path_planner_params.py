@@ -5,6 +5,6 @@ from navigation.path_planner.base_path_planner.base_path_planner_params import B
 
 
 # ====== Dummy Path Planner Params Class ======
-class DummyPathPlannerParams(BasePathPlannerParams):
+class DeltaPathPlannerParams(BasePathPlannerParams):
     def __init__(self):
-        super().__init__(PathFindingStrategy.DUMMY)
+        super().__init__(PathFindingStrategy.DELTA)
