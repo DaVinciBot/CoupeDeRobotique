@@ -1,12 +1,30 @@
-from matplotlib import pyplot as plt
-from navigation.trajectory_planner import BaseTrajectoryPlanner
-from geometry import OrientedPoint
+# ====== Code Summary ======
+# This module provides a utility function to test a trajectory planner by simulating its execution
+# over time and visualizing the result. It compares the expected path with the executed positions
+# and plots various metrics such as linear speed, angular speed, and position evolution using matplotlib.
+
+# ====== Standard Library Imports ======
 import time
+
+# ====== Third-Party Library Imports ======
 import numpy as np
+from matplotlib import pyplot as plt
+
+# ====== Internal Project Imports ======
+from geometry import OrientedPoint
+from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import BaseTrajectoryPlanner
 
 
 def test_trajectory_planning(trajectory_planner: BaseTrajectoryPlanner, path: list[OrientedPoint],
                              time_step: float = 0.1):
+    """
+    Simulates and visualizes the performance of a trajectory planner.
+
+    Args:
+        trajectory_planner (BaseTrajectoryPlanner): The trajectory planner instance to test.
+        path (list[OrientedPoint]): List of waypoints to follow.
+        time_step (float): Sampling interval for simulation.
+    """
     print("Testing trajectory planner:", trajectory_planner)
     trajectory_planner.plan_trajectory(path)
     total_duration = trajectory_planner.get_total_duration()
@@ -24,18 +42,17 @@ def test_trajectory_planning(trajectory_planner: BaseTrajectoryPlanner, path: li
         positions.append(cmd.position)
         linear_speeds.append(cmd.linear_speed)
         angular_speeds.append(cmd.angular_speed)
-
         times.append(time.time() - start_time)
+
         time.sleep(time_step)
 
     x_positions = [pos.x for pos in positions]
     y_positions = [pos.y for pos in positions]
     theta_positions = [pos.theta for pos in positions]
 
-    # Création d'une figure avec plusieurs sous-graphiques
+    # Plotting evolution of angular and linear speeds
     fig, axs = plt.subplots(2, 2, figsize=(12, 8))
 
-    # Graphique des vitesses angulaires
     axs[0, 0].plot(angular_speeds, label="Vitesse angulaire")
     axs[0, 0].set_xlabel("Temps (itérations)")
     axs[0, 0].set_ylabel("Vitesse angulaire")
@@ -43,7 +60,6 @@ def test_trajectory_planning(trajectory_planner: BaseTrajectoryPlanner, path: li
     axs[0, 0].legend()
     axs[0, 0].grid(True)
 
-    # Graphique des vitesses linéaires
     axs[0, 1].plot(linear_speeds, label="Vitesse linéaire", color='r')
     axs[0, 1].set_xlabel("Temps (itérations)")
     axs[0, 1].set_ylabel("Vitesse linéaire")
@@ -51,13 +67,13 @@ def test_trajectory_planning(trajectory_planner: BaseTrajectoryPlanner, path: li
     axs[0, 1].legend()
     axs[0, 1].grid(True)
 
-    # Graphique des positions X-Y (Trajectoire) avec double axe Y
-    ax1 = axs[1, 0]  # Axe principal
-    ax2 = ax1.twinx()  # Deuxième axe Y
+    # Dual-axis plot for position and orientation
+    ax1 = axs[1, 0]
+    ax2 = ax1.twinx()
 
     ax1.plot(x_positions, color='b', label="X (Position)")
     ax1.plot(y_positions, color='r', label="Y (Position)")
-    ax1.set_ylabel("Position (cm)", color='b')
+    ax1.set_ylabel("Position", color='b')
     ax1.tick_params(axis='y', labelcolor='b')
 
     ax2.plot(theta_positions, label="Orientation (Theta)", color='m')
@@ -78,19 +94,17 @@ def test_trajectory_planning(trajectory_planner: BaseTrajectoryPlanner, path: li
     plt.tight_layout()
     plt.show()
 
+    # Visualizing the planned path and simulated trajectory
     plt.figure()
 
-    # Affichage de la première couche : les points du path (en bleu)
+    # Plot original path with orientation arrows
     for idx, point in enumerate(path):
-        # Affichage du point
         plt.plot(point.x, point.y, 'bo', label="Path" if idx == 0 else "")
-        # Calcul de l'orientation
         dx = np.cos(point.theta)
         dy = np.sin(point.theta)
-        # Affichage de la flèche indiquant l'orientation
         plt.arrow(point.x, point.y, dx, dy, head_width=0.1, head_length=0.1, fc='b', ec='b')
 
-    # Affichage de la deuxième couche : les points de la simulation (en rouge)
+    # Plot simulated trajectory with orientation arrows
     for idx, point in enumerate(positions[::2]):
         plt.plot(point.x, point.y, 'ro', label="Simulation" if idx == 0 else "")
         dx = np.cos(point.theta) * 0.5

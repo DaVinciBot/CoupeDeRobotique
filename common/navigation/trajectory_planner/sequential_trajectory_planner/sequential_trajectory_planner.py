@@ -1,31 +1,72 @@
+# ====== Code Summary ======
+# This module defines a SequentialTrajectoryPlanner that decomposes a given path of oriented waypoints
+# into a sequence of trajectory segments: rotations, straight-line motions, and stops. It uses a
+# SpeedProfiler to time and control each segment and constructs a full trajectory that a robot can
+# follow sequentially. The planner maps the trajectory to time and returns motion commands for execution.
+
+# ====== Standard Library Imports ======
 import math
-from math import sqrt, sin, cos, atan2
-from dataclasses import dataclass
+
+# ====== Third-party Library Imports ======
 from loggerplusplus import Logger
+
+# ====== Internal Project Imports ======
 from geometry import OrientedPoint
+
+# ====== Local Project Imports ======
+# Structures
 from navigation.trajectory_planner.structs import TrajectoryPlanCommand
-from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import BaseTrajectoryPlanner
+
+# Trajectory planner class & parameters
 from navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params import \
     SequentialTrajectoryPlannerParams
+from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import BaseTrajectoryPlanner
 
+# Speed profile
 from navigation.trajectory_planner.speed_profile import SpeedProfiler
+
+# Segments
 from navigation.trajectory_planner.sequential_trajectory_planner.segments import (
     BaseSegment, StraightSegment, RotationSegment, StopSegment, SegmentMapper
 )
 
 
+# ====== Sequential Trajectory Planner Class ======
 class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlannerParams]):
+    """
+    Planner that constructs a sequential series of trajectory segments (rotate, move straight, rotate, stop)
+    from a path of oriented points. Supports time-based segment retrieval to provide motion commands.
+    """
+
     def __init__(
             self,
             params: SequentialTrajectoryPlannerParams,
             speed_profiler: SpeedProfiler,
             logger: Logger | None = None
     ) -> None:
+        """
+        Initialize the sequential trajectory planner with required parameters.
+
+        Args:
+            params (SequentialTrajectoryPlannerParams): Planning parameters.
+            speed_profiler (SpeedProfiler): Speed profiler to control segment durations.
+            logger (Logger | None): Optional logger.
+        """
         super().__init__(params, speed_profiler, logger)
         self.segments_mapper: SegmentMapper | None = None
         self._last_call_time: float = 0.0
 
     def _compute_rotation_segment_to_be_front(self, start: OrientedPoint, target: OrientedPoint) -> RotationSegment:
+        """
+        Compute rotation needed to face the direction of the next waypoint.
+
+        Args:
+            start (OrientedPoint): Current pose.
+            target (OrientedPoint): Target waypoint.
+
+        Returns:
+            RotationSegment: Segment that rotates in place to face the target.
+        """
         # Compute delta-theta to rotate in front of the target
         d_theta = math.atan2(target.y - start.y, target.x - start.x) - start.theta
 
@@ -43,8 +84,18 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
             sign=1 if d_theta > 0 else -1
         )
 
-    def _compute_rotation_segment_to_get_same_orientation(self, start: OrientedPoint,
-                                                          target: OrientedPoint) -> RotationSegment:
+    def _compute_rotation_segment_to_get_same_orientation(self, start: OrientedPoint, target: OrientedPoint) \
+            -> RotationSegment:
+        """
+        Compute rotation needed to align final orientation with target.
+
+        Args:
+            start (OrientedPoint): Current pose after straight segment.
+            target (OrientedPoint): Target pose with desired final orientation.
+
+        Returns:
+            RotationSegment: Segment that aligns orientation with target.
+        """
         # Compute delta-theta to rotate in front of the target
         d_theta = target.theta - start.theta
 
@@ -63,6 +114,16 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
         )
 
     def _compute_straight_segment(self, start: OrientedPoint, target: OrientedPoint) -> StraightSegment:
+        """
+        Compute straight segment needed to reach the next waypoint.
+
+        Args:
+            start (OrientedPoint): Start pose after initial rotation.
+            target (OrientedPoint): Target waypoint.
+
+        Returns:
+            StraightSegment: Segment that moves in a straight line.
+        """
         # Compute delta-distance
         delta_distance = start.distance(target)  # Use shapely method for more performance
 
@@ -80,6 +141,12 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
         )
 
     def plan_trajectory(self, path: list[OrientedPoint], **kwargs) -> None:
+        """
+        Build trajectory plan from a list of waypoints.
+
+        Args:
+            path (list[OrientedPoint]): List of oriented points representing the path.
+        """
         # Initialize the segment mapper
         segments: list[BaseSegment] = []
         for i in range(len(path) - 1):
@@ -114,6 +181,12 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
 
     @BaseTrajectoryPlanner._ensure_planning_started
     def get_plan(self, **kwargs) -> TrajectoryPlanCommand:
+        """
+        Retrieve the current motion command based on elapsed time.
+
+        Returns:
+            TrajectoryPlanCommand: The motion command for the current time.
+        """
         # Get the current time elapsed
         time_elapsed = self._get_trajectory_time_elapsed()
 
@@ -179,4 +252,10 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
         return trajectory_plan_command
 
     def get_total_duration(self) -> float:
+        """
+        Get the total planned duration of the trajectory.
+
+        Returns:
+            float: Total duration of the full trajectory.
+        """
         return self.segments_mapper.cumulative_durations[-1]

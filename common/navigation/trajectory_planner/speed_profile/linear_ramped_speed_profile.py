@@ -16,6 +16,7 @@
 from navigation.trajectory_planner.speed_profile.base_speed_profile import BaseSpeedProfile
 
 
+# ====== Linear Ramped Speed Profile Class ======
 class LinearRampedSpeedProfile(BaseSpeedProfile):
     """
     Speed profile with linear acceleration and deceleration, optionally constrained by total distance.
@@ -24,9 +25,9 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
     within the specified distance.
 
     Attributes:
-        acceleration (float): Acceleration rate (m/s²).
-        max_speed (float): Maximum speed (m/s).
-        deceleration (float): Time duration (s) used to compute deceleration rate or deceleration phase.
+        acceleration (float): Acceleration rate.
+        max_speed (float): Maximum speed.
+        deceleration (float): Duration used to compute deceleration rate or deceleration phase.
     """
 
     def __init__(self, acceleration: float, max_speed: float, deceleration: float):
@@ -34,9 +35,9 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
         Initialize the LinearRampedSpeedProfile instance.
 
         Args:
-            acceleration (float): Acceleration rate in m/s².
-            max_speed (float): Maximum speed in m/s.
-            deceleration (float): Duration in seconds for deceleration phase.
+            acceleration (float): Acceleration rate.
+            max_speed (float): Maximum speed.
+            deceleration (float): Duration of the deceleration phase.
         """
         super().__init__(max_speed=max_speed)
         self.acceleration = acceleration
@@ -54,11 +55,11 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
         Compute the speed at a given time, with optional distance constraint for trapezoidal or triangular profiles.
 
         Args:
-            time_elapsed (float | None): Time elapsed since motion start in seconds.
-            distance (float | None): Total planned distance in meters (optional).
+            time_elapsed (float | None): Time since motion start.
+            distance (float | None): Total planned distance (optional).
 
         Returns:
-            float: Speed at the given time in meters per second.
+            float: Speed at the given time.
         """
         if time_elapsed is None or time_elapsed < 0:
             return 0.0
@@ -107,14 +108,14 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
 
     def get_distance(self, time_elapsed: float, distance: float | None = None) -> float:
         """
-        Compute the cumulative distance traveled from time 0 to t.
+        Compute the cumulative distance traveled from time 0 to the given time.
 
         Args:
-            time_elapsed (float): Time instant (s).
-            distance (float | None): Optional total planned distance in meters.
+            time_elapsed (float): Time instant.
+            distance (float | None): Optional total planned distance.
 
         Returns:
-            float: Cumulative distance traveled (m).
+            float: Cumulative distance traveled.
         """
         if time_elapsed <= 0:
             return 0.0
@@ -173,6 +174,15 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
                 return distance
 
     def get_total_duration(self, distance: float) -> float:
+        """
+        Compute total time to complete the given distance.
+
+        Args:
+            distance (float): Total distance to travel.
+
+        Returns:
+            float: Total time duration.
+        """
         # Trapezoidal profile: distance is sufficient to reach maximum speed
         if distance >= self._d_acc_full + self._d_decel_full:
             d_cruise = distance - (self._d_acc_full + self._d_decel_full)

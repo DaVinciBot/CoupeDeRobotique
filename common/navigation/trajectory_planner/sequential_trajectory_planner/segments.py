@@ -1,60 +1,86 @@
+# ====== Code Summary ======
+# This module defines trajectory segment classes and a segment manager called `SegmentMapper`.
+# Each segment type represents a specific motion: straight line, rotation, or stop.
+# The `SegmentMapper` allows efficient retrieval of the current segment and local time at any
+# point during trajectory execution using cumulative duration indexing and binary search.
+
+# ====== Standard Library Imports ======
 import bisect
+
+# ====== Internal Project Imports ======
 from geometry import OrientedPoint
 
 
 class BaseSegment:
-    def __init__(
-            self,
-            start_position: OrientedPoint, end_position: OrientedPoint,
-            duration: float
-    ):
+    """
+    Base class for all motion segments.
+
+    Attributes:
+        start_position (OrientedPoint): Start pose of the segment.
+        end_position (OrientedPoint): End pose of the segment.
+        duration (float): Duration of the segment.
+    """
+
+    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float):
         self.start_position: OrientedPoint = start_position
         self.end_position: OrientedPoint = end_position
         self.duration: float = duration
 
 
 class StraightSegment(BaseSegment):
+    """
+    Segment representing straight-line motion.
 
-    def __init__(
-            self,
-            start_position: OrientedPoint, end_position: OrientedPoint,
-            duration: float,
-            distance: float
-    ):
+    Attributes:
+        distance (float): Distance to be covered during the segment.
+    """
+
+    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float, distance: float):
         super().__init__(start_position, end_position, duration)
         self.distance: float = distance
 
 
 class RotationSegment(BaseSegment):
-    def __init__(
-            self,
-            start_position: OrientedPoint, end_position: OrientedPoint,
-            duration: float,
-            rotation: float,
-            sign: int
-    ):
+    """
+    Segment representing rotational motion in place.
+
+    Attributes:
+        rotation (float): Total angle to rotate.
+        sign (int): Direction of rotation (+1 for CCW, -1 for CW).
+    """
+
+    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float, rotation: float,
+                 sign: int):
         super().__init__(start_position, end_position, duration)
         self.rotation: float = rotation
         self.sign: int = sign
 
 
 class StopSegment(BaseSegment):
-    def __init__(
-            self,
-            start_position: OrientedPoint, end_position: OrientedPoint,
-            duration: float
-    ):
+    """
+    Segment representing a stop or pause in the trajectory.
+    """
+
+    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float):
         super().__init__(start_position, end_position, duration)
 
 
 class SegmentMapper:
+    """
+    Maps trajectory segments to elapsed time using cumulative durations.
+    Provides fast segment lookup using binary search.
+
+    Attributes:
+        segments (list[BaseSegment]): List of trajectory segments.
+        cumulative_durations (list[float]): Cumulative end times of each segment.
+    """
+
     def __init__(self, segments: list[BaseSegment]):
         """
-        Initializes the mapper with a list of segments, each having a 'duration' attribute.
-        Precomputes a cumulative duration list for fast lookup.
+        Initialize the mapper with a list of segments and compute cumulative durations.
 
         Args:
-            segments (list): List of segment objects, each with a 'duration' attribute.
+            segments (list[BaseSegment]): List of trajectory segments.
         """
         self.segments = segments
         self.cumulative_durations = []
@@ -65,35 +91,31 @@ class SegmentMapper:
 
     def get_segment_at_time(self, t: float):
         """
-        Given an overall time t, returns a tuple (segment, local_time) where:
-          - 'segment' is the segment active at time t,
-          - 'local_time' is the offset time within that segment.
-
-        This method uses binary search for an O(log n) lookup.
+        Given an overall time t, returns the active segment and local time within that segment.
 
         Args:
-            t (float): The overall time instant.
+            t (float): Overall elapsed time.
 
         Returns:
-            tuple: (segment, local_time) if found, otherwise (None, None) if t is negative or exceeds total duration.
+            tuple[BaseSegment | None, float | None]: (segment, local_time) or (None, None) if t is out of bounds.
         """
         if t < 0:
             return None, None
 
-        # Find the index using binary search in the cumulative durations list.
         index = bisect.bisect_right(self.cumulative_durations, t)
 
-        # If the time exceeds the total duration, return (None, None)
         if index == len(self.segments):
             return None, None
 
-        # Calculate the local time within the found segment.
         previous_cumulative = self.cumulative_durations[index - 1] if index > 0 else 0.0
         local_time = t - previous_cumulative
         return self.segments[index], local_time
 
-    def get_last_segment(self):
+    def get_last_segment(self) -> BaseSegment:
         """
-        Returns the last segment in the list.
+        Retrieve the last segment in the trajectory.
+
+        Returns:
+            BaseSegment: The last trajectory segment.
         """
         return self.segments[-1]
