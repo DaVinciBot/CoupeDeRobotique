@@ -226,8 +226,8 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
                 time_elapsed=local_time,
                 distance=segment.distance  # IMPORTANT: Use distance parameter to get the th distance
             )
-            th_x = segment.start_position.x + th_distance * cos(segment.start_position.theta)
-            th_y = segment.start_position.y + th_distance * sin(segment.start_position.theta)
+            th_x = segment.start_position.x + th_distance * math.cos(segment.start_position.theta)
+            th_y = segment.start_position.y + th_distance * math.sin(segment.start_position.theta)
 
             trajectory_plan_command: TrajectoryPlanCommand = TrajectoryPlanCommand(
                 position=OrientedPoint(
