@@ -162,10 +162,15 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
             segments.append(straight_segment)
 
             # 3. Compute the rotation segment (get orientation of the target point)
-            rotation_segment: RotationSegment = self._compute_rotation_segment_to_get_same_orientation(
-                straight_segment.end_position, target
-            )
-            segments.append(rotation_segment)
+            # Ensure to respect the orientation of intermediate points if required
+            # or if it's the last segment (i == len(path) - 2)
+            if self.params.respect_intermediate_orientation or i == len(path) - 2:
+                rotation_segment: RotationSegment = self._compute_rotation_segment_to_get_same_orientation(
+                    straight_segment.end_position, target
+                )
+                segments.append(rotation_segment)
+            else:
+                path[i + 1] = OrientedPoint(path[i + 1].x, path[i + 1].y, straight_segment.end_position.theta)
 
             # 4. Add a stop segment to mark a pause between segments
             if self.params.step_sleep_delay > 0:

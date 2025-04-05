@@ -1,5 +1,5 @@
 # Import utiles structures
-from navigation.trajectory_planner.structs import TrajectoryPlanCommand
+from navigation.trajectory_planner.structs import TrajectoryPlannerStrategy, TrajectoryPlanCommand
 
 # Import Speed Profile classes
 from navigation.trajectory_planner.speed_profile import (

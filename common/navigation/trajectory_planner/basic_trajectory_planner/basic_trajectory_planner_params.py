@@ -6,6 +6,7 @@
 # ====== Internal Project Imports ======
 from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params import \
     BaseTrajectoryPlannerParams
+from navigation.trajectory_planner.structs import TrajectoryPlannerStrategy
 
 
 class BasicTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
@@ -19,4 +20,4 @@ class BasicTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
         Initialize basic trajectory planner parameters.
         Currently, this class does not introduce new parameters.
         """
-        super().__init__()
+        super().__init__(trajectory_planner_strategy=TrajectoryPlannerStrategy.BASIC)

@@ -5,9 +5,15 @@
 
 # ====== Standard Library Imports ======
 from dataclasses import dataclass
+from enum import Enum, auto
 
 # ====== Internal Project Imports ======
 from geometry import OrientedPoint
+
+
+class TrajectoryPlannerStrategy(Enum):
+    BASIC = auto()
+    SEQUENTIAL = auto()
 
 
 @dataclass
