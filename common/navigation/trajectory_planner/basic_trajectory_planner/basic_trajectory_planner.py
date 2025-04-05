@@ -45,11 +45,11 @@ class BasicTrajectoryPlanner(BaseTrajectoryPlanner[BasicTrajectoryPlannerParams]
     ) -> None:
         super().__init__(params, speed_profiler, logger)
 
-    def plan_trajectory(self, path: list[OrientedPoint], **kwargs) -> None:
+    def plan_trajectory(self, path: list[OrientedPoint]) -> None:
         ...
 
     @BaseTrajectoryPlanner._ensure_planning_started
-    def get_plan(self, **kwargs) -> TrajectoryPlanCommand:
+    def get_plan(self) -> TrajectoryPlanCommand:
         ...
 
     def get_total_duration(self) -> float:

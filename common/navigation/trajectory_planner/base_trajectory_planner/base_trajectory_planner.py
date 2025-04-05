@@ -120,11 +120,11 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
     # ====== Abstract Methods ======
     @abstractmethod
-    def plan_trajectory(self, path: list[OrientedPoint], **kwargs) -> None:
+    def plan_trajectory(self, path: list[OrientedPoint]) -> None:
         ...
 
     @abstractmethod
-    def get_plan(self, **kwargs) -> TrajectoryPlanCommand:
+    def get_plan(self) -> TrajectoryPlanCommand:
         ...
 
     @abstractmethod

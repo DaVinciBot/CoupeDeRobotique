@@ -1,0 +1,31 @@
+from navigation.path_planner import BasePathPlannerParams
+from navigation.trajectory_planner import BaseTrajectoryPlannerParams
+from navigation.trajectory_planner.speed_profile import SpeedProfiler
+
+from navigation.avoidance.base_avoidance import BaseAvoidanceParams
+
+from geometry import OrientedPoint
+
+
+class NavigatorTaskParams:
+
+    def __init__(
+            self,
+            #
+            goal: OrientedPoint,
+            timeout: float,
+
+            # Parameters
+            path_planner_params: BasePathPlannerParams,
+            trajectory_planner_params: BaseTrajectoryPlannerParams,
+            speed_profiler: SpeedProfiler,
+            avoidance_params: BaseAvoidanceParams
+    ):
+        self.path_planner_params: BasePathPlannerParams = path_planner_params
+        self.trajectory_planner_params: BaseTrajectoryPlannerParams = trajectory_planner_params
+        self.speed_profiler: SpeedProfiler = speed_profiler
+        self.avoidance_params: BaseAvoidanceParams = avoidance_params
+
+        self.goal: OrientedPoint = goal
+        self.timeout: float = timeout
+

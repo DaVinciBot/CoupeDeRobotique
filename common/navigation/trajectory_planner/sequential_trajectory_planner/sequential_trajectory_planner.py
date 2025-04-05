@@ -140,7 +140,7 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
             distance=delta_distance,
         )
 
-    def plan_trajectory(self, path: list[OrientedPoint], **kwargs) -> None:
+    def plan_trajectory(self, path: list[OrientedPoint]) -> None:
         """
         Build trajectory plan from a list of waypoints.
 
@@ -185,7 +185,7 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
         self.segments_mapper = SegmentMapper(segments)
 
     @BaseTrajectoryPlanner._ensure_planning_started
-    def get_plan(self, **kwargs) -> TrajectoryPlanCommand:
+    def get_plan(self) -> TrajectoryPlanCommand:
         """
         Retrieve the current motion command based on elapsed time.
 

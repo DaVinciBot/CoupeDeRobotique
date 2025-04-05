@@ -15,10 +15,11 @@ from geometry import OrientedPoint
 
 # Internal project imports
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
-from navigation.path_planner.delta_path_planner.delta_path_planner_params import DeltaPathPlannerParams
+from navigation.path_planner.delta_path_planner.delta_path_planner_params import DeltaPathPlannerParams, \
+    DeltaPathPlannerPlanPathParams
 
 
-class DeltaPathPlanner(BasePathPlanner):
+class DeltaPathPlanner(BasePathPlanner[DeltaPathPlannerParams, DeltaPathPlannerPlanPathParams]):
     """
     Path planner that applies a relative displacement and rotation to the start position.
 
@@ -66,31 +67,30 @@ class DeltaPathPlanner(BasePathPlanner):
         """
         return (start.theta + rotation) % (2 * math.pi)
 
-    def plan_path(self, start: OrientedPoint, distance: float = 0.0, rotation: float = 0.0) -> list[OrientedPoint]:
+    @BasePathPlanner._store_plan_path_params
+    def plan_path(self, params: DeltaPathPlannerPlanPathParams) -> list[OrientedPoint]:
         """
         Generate a path from the start point using relative displacement and rotation.
 
         Args:
-            start (OrientedPoint): Starting pose.
-            distance (float): Distance to move forward.
-            rotation (float): Rotation to apply at the end.
+            params (DeltaPathPlannerPlanPathParams): Parameters including start point, distance, and rotation.
 
         Returns:
             list[OrientedPoint]: List containing the start and resulting goal pose.
         """
-        x, y, theta = start.x, start.y, start.theta
+        x, y, theta = params.start.x, params.start.y, params.start.theta
 
         # 1. Apply displacement
-        if distance != 0.0:
-            dx, dy = self._compute_displacement(start, distance)
+        if self.params.distance != 0.0:
+            dx, dy = self._compute_displacement(params.start, self.params.distance)
             x += dx
             y += dy
 
         # 2. Apply rotation
-        if rotation != 0.0:
-            theta = self._compute_rotation(start, rotation)
+        if self.params.rotation != 0.0:
+            theta = self._compute_rotation(params.start, self.params.rotation)
 
         return [
-            start,
+            params.start,
             OrientedPoint(x, y, theta)
         ]

@@ -7,6 +7,7 @@
 # Standard library imports
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
+import functools
 
 # Third-party imports
 from loggerplusplus import Logger
@@ -15,23 +16,37 @@ from loggerplusplus import Logger
 from geometry import OrientedPoint
 
 # Internal project imports
-from navigation.path_planner.base_path_planner.base_path_planner_params import BasePathPlannerParams
+from navigation.path_planner.base_path_planner.base_path_planner_params import BasePathPlannerParams, \
+    BasePathPlannerPlanPathParams
 
 # ====== Type Hint ======
 ParamsType = TypeVar("ParamsType", bound=BasePathPlannerParams)
+PlanPathParamsType = TypeVar("PlanPathParamsType", bound=BasePathPlannerPlanPathParams)
 
 
 # ====== Base Path Planner Class ======
-class BasePathPlanner(ABC, Generic[ParamsType]):
+class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
     def __init__(self, params: ParamsType, logger: Logger | None = None) -> None:
         if logger is None:
             logger = Logger(identifier=self.__class__.__name__, follow_logger_manager_rules=True)
 
         self.logger: Logger = logger
         self.params: ParamsType = params
+        self.last_plan_path_params: PlanPathParamsType | None = None
+
+    @staticmethod
+    def _store_plan_path_params(method: callable) -> callable:
+        @functools.wraps(method)
+        def wrapper(self: BasePathPlanner, plan_path_params: PlanPathParamsType, *args, **kwargs):
+            self.last_plan_path_params = plan_path_params
+
+            # Execute the method
+            return method(self, plan_path_params, *args, **kwargs)
+
+        return wrapper
 
     @abstractmethod
-    def plan_path(self, start: OrientedPoint, **kwargs) -> list[OrientedPoint]:
+    def plan_path(self, params: PlanPathParamsType) -> list[OrientedPoint]:
         """
         Abstract method to compute a path from start to goal.
 
@@ -39,8 +54,7 @@ class BasePathPlanner(ABC, Generic[ParamsType]):
         path planning algorithm.
 
         Args:
-            start (OrientedPoint): The starting position and orientation.
-            **kwargs: Additional arguments that specific planners may require.
+            params (PlanPathParamsType): Parameters for path planning, including start and goal points.
 
         Returns:
             list[OrientedPoint]: A list of waypoints representing the planned path.

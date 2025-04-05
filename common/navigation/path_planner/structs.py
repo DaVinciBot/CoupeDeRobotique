@@ -7,7 +7,7 @@
 from enum import Enum, auto
 
 
-class PathFindingStrategy(Enum):
+class PathPlanningStrategy(Enum):
     """
     Enumeration of available path finding strategies.
     """

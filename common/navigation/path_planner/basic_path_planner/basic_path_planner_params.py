@@ -4,8 +4,11 @@
 # the generated path should be FORWARD or BACKWARD, and sets the pathfinding strategy to BASIC.
 
 # ====== Internal Project Imports ======
-from navigation.path_planner.structs import PathFindingStrategy, Direction
-from navigation.path_planner.base_path_planner.base_path_planner_params import BasePathPlannerParams
+from navigation.path_planner.structs import PathPlanningStrategy, Direction
+from navigation.path_planner.base_path_planner.base_path_planner_params import BasePathPlannerParams, \
+    BasePathPlannerPlanPathParams
+
+from geometry import OrientedPoint
 
 
 class BasicPathPlannerParams(BasePathPlannerParams):
@@ -24,4 +27,11 @@ class BasicPathPlannerParams(BasePathPlannerParams):
             direction (Direction): Direction of motion (default is FORWARD).
         """
         self.direction: Direction = direction
-        super().__init__(PathFindingStrategy.BASIC)
+        super().__init__(PathPlanningStrategy.BASIC)
+
+
+class BasicPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
+
+    def __init__(self, start: OrientedPoint, goal: OrientedPoint):
+        self.goal: OrientedPoint = goal
+        super().__init__(start)

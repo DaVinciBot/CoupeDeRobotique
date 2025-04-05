@@ -11,9 +11,9 @@ class BaseTrajectoryPlannerParams:
     Can be extended by specific planner parameter classes to include additional settings.
     """
 
-    def __init__(self, trajectory_planner_strategy: TrajectoryPlannerStrategy) -> None:
+    def __init__(self, trajectory_planning_strategy: TrajectoryPlannerStrategy) -> None:
         """
         Initialize the base planner parameters.
         Currently, this base class has no attributes or logic.
         """
-        self.trajectory_planner_strategy: TrajectoryPlannerStrategy = trajectory_planner_strategy
+        self.trajectory_planning_strategy: TrajectoryPlannerStrategy = trajectory_planning_strategy

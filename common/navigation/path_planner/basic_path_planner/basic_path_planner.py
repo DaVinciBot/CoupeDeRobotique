@@ -16,10 +16,14 @@ from geometry import OrientedPoint
 # Internal project imports
 from navigation.path_planner.structs import Direction
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
-from navigation.path_planner.basic_path_planner.basic_path_planner_params import BasicPathPlannerParams
+from navigation.path_planner.basic_path_planner.basic_path_planner_params import (
+    BasicPathPlannerParams, BasicPathPlannerPlanPathParams
+)
 
 
-class BasicPathPlanner(BasePathPlanner[BasicPathPlannerParams]):
+class BasicPathPlanner(
+    BasePathPlanner[BasicPathPlannerParams, BasicPathPlannerPlanPathParams]
+):
     """
     A basic path planner that generates a direct path between start and goal points.
 
@@ -49,18 +53,21 @@ class BasicPathPlanner(BasePathPlanner[BasicPathPlannerParams]):
         """
         return OrientedPoint(goal.x, goal.y, goal.theta + math.pi)
 
-    def plan_path(self, start: OrientedPoint, goal: OrientedPoint) -> list[OrientedPoint]:
+    @BasePathPlanner._store_plan_path_params
+    def plan_path(self, params: BasicPathPlannerPlanPathParams) -> list[OrientedPoint]:
         """
         Plan a basic two-point path from start to goal.
 
         Args:
-            start (OrientedPoint): Starting pose.
-            goal (OrientedPoint): Target pose.
+            params (BasicPathPlannerPlanPathParams): Parameters including start and goal points.
 
         Returns:
             list[OrientedPoint]: List containing start and goal, possibly reversed for backward direction.
         """
         return [
-            start if self.params.direction == Direction.FORWARD else self._compute_backward_position(start),
-            goal if self.params.direction == Direction.FORWARD else self._compute_backward_position(goal)
+            params.start if self.params.direction == Direction.FORWARD
+            else self._compute_backward_position(params.start),
+
+            params.goal if self.params.direction == Direction.FORWARD
+            else self._compute_backward_position(params.goal)
         ]

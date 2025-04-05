@@ -3,7 +3,8 @@
 # related to path planning. It primarily stores the pathfinding strategy to be used by the planner.
 
 # ====== Internal Project Imports ======
-from navigation.path_planner.structs import PathFindingStrategy, Direction
+from navigation.path_planner.structs import PathPlanningStrategy, Direction
+from geometry import OrientedPoint
 
 
 class BasePathPlannerParams:
@@ -11,14 +12,20 @@ class BasePathPlannerParams:
     Base class for path planner parameter configurations.
 
     Attributes:
-        path_finding_strategy (PathFindingStrategy): The strategy used for generating paths.
+        path_finding_strategy (PathPlanningStrategy): The strategy used for generating paths.
     """
 
-    def __init__(self, path_finding_strategy: PathFindingStrategy):
+    def __init__(self, path_finding_strategy: PathPlanningStrategy):
         """
         Initialize the base path planner parameters.
 
         Args:
-            path_finding_strategy (PathFindingStrategy): Strategy for path finding.
+            path_finding_strategy (PathPlanningStrategy): Strategy for path finding.
         """
-        self.path_finding_strategy: PathFindingStrategy = path_finding_strategy
+        self.path_finding_strategy: PathPlanningStrategy = path_finding_strategy
+
+
+class BasePathPlannerPlanPathParams:
+
+    def __init__(self, start: OrientedPoint):
+        self.start: OrientedPoint = start

@@ -28,4 +28,4 @@ class SequentialTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
         """
         self.step_sleep_delay: float = step_sleep_delay
         self.respect_intermediate_orientation: bool = respect_intermediate_orientation
-        super().__init__(trajectory_planner_strategy=TrajectoryPlannerStrategy.SEQUENTIAL)
+        super().__init__(trajectory_planning_strategy=TrajectoryPlannerStrategy.SEQUENTIAL)
