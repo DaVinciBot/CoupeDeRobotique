@@ -11,6 +11,6 @@ from navigation.path_planner.delta_path_planner import (
 from navigation.path_planner.basic_path_planner import (
     BasicPathPlanner, BasicPathPlannerParams, BasicPathPlannerPlanPathParams
 )
-
-# TODO: to implement
-# from navigation.path_planner.astar_path_planner import AstarPathPlanner, AstarPathPlannerParams, AstarPathPlannerPlanPathParams
+from navigation.path_planner.astar_path_planner import (
+    AStarPathPlanner, AStarPathPlannerParams, AStarPathPlannerPlanPathParams
+)
