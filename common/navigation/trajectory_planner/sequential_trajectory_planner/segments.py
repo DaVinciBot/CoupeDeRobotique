@@ -21,7 +21,12 @@ class BaseSegment:
         duration (float): Duration of the segment.
     """
 
-    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float):
+    def __init__(
+        self,
+        start_position: OrientedPoint,
+        end_position: OrientedPoint,
+        duration: float,
+    ):
         self.start_position: OrientedPoint = start_position
         self.end_position: OrientedPoint = end_position
         self.duration: float = duration
@@ -35,7 +40,13 @@ class StraightSegment(BaseSegment):
         distance (float): Distance to be covered during the segment.
     """
 
-    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float, distance: float):
+    def __init__(
+        self,
+        start_position: OrientedPoint,
+        end_position: OrientedPoint,
+        duration: float,
+        distance: float,
+    ):
         super().__init__(start_position, end_position, duration)
         self.distance: float = distance
 
@@ -49,8 +60,14 @@ class RotationSegment(BaseSegment):
         sign (int): Direction of rotation (+1 for CCW, -1 for CW).
     """
 
-    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float, rotation: float,
-                 sign: int):
+    def __init__(
+        self,
+        start_position: OrientedPoint,
+        end_position: OrientedPoint,
+        duration: float,
+        rotation: float,
+        sign: int,
+    ):
         super().__init__(start_position, end_position, duration)
         self.rotation: float = rotation
         self.sign: int = sign
@@ -61,8 +78,41 @@ class StopSegment(BaseSegment):
     Segment representing a stop or pause in the trajectory.
     """
 
-    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float):
+    def __init__(
+        self,
+        start_position: OrientedPoint,
+        end_position: OrientedPoint,
+        duration: float,
+    ):
         super().__init__(start_position, end_position, duration)
+
+
+class CurveSegment(BaseSegment):
+    """
+    A segment representing a curved trajectory.
+
+    Inherits from BaseSegment, which provides:
+      - start_position (OrientedPoint)
+      - end_position   (OrientedPoint)
+      - duration       (float)
+      - distance       (float): total linear distance between start and end
+      - rotation       (float): total rotation needed (absolute value)
+      - sign           (float): +1 if rotation is CCW, -1 if CW
+    """
+
+    def __init__(
+        self,
+        start_position: OrientedPoint,
+        end_position: OrientedPoint,
+        duration: float,
+        distance: float,
+        rotation: float,
+        sign: float,
+    ):
+        super().__init__(start_position, end_position, duration)
+        self.distance = distance
+        self.rotation = rotation
+        self.sign = sign
 
 
 class SegmentMapper:

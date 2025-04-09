@@ -18,31 +18,40 @@ from geometry import OrientedPoint
 from navigation.trajectory_planner.structs import TrajectoryPlanCommand
 
 # Trajectory planner class & parameters
-from navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params import \
-    SequentialTrajectoryPlannerParams
-from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import BaseTrajectoryPlanner
+from navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params import (
+    SequentialTrajectoryPlannerParams,
+)
+from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import (
+    BaseTrajectoryPlanner,
+)
 
 # Speed profile
 from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
 # Segments
 from navigation.trajectory_planner.sequential_trajectory_planner.segments import (
-    BaseSegment, StraightSegment, RotationSegment, StopSegment, SegmentMapper
+    BaseSegment,
+    StraightSegment,
+    RotationSegment,
+    StopSegment,
+    SegmentMapper,
 )
 
 
 # ====== Sequential Trajectory Planner Class ======
-class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlannerParams]):
+class SequentialTrajectoryPlanner(
+    BaseTrajectoryPlanner[SequentialTrajectoryPlannerParams]
+):
     """
     Planner that constructs a sequential series of trajectory segments (rotate, move straight, rotate, stop)
     from a path of oriented points. Supports time-based segment retrieval to provide motion commands.
     """
 
     def __init__(
-            self,
-            params: SequentialTrajectoryPlannerParams,
-            speed_profiler: SpeedProfiler,
-            logger: Logger | None = None
+        self,
+        params: SequentialTrajectoryPlannerParams,
+        speed_profiler: SpeedProfiler,
+        logger: Logger | None = None,
     ) -> None:
         """
         Initialize the sequential trajectory planner with required parameters.
@@ -56,7 +65,9 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
         self.segments_mapper: SegmentMapper | None = None
         self._last_call_time: float = 0.0
 
-    def _compute_rotation_segment_to_be_front(self, start: OrientedPoint, target: OrientedPoint) -> RotationSegment:
+    def _compute_rotation_segment_to_be_front(
+        self, start: OrientedPoint, target: OrientedPoint
+    ) -> RotationSegment:
         """
         Compute rotation needed to face the direction of the next waypoint.
 
@@ -71,21 +82,21 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
         d_theta = math.atan2(target.y - start.y, target.x - start.x) - start.theta
 
         # Compute intermediate target position (start + rotation)
-        target = OrientedPoint(
-            start.x, start.y,
-            start.theta + d_theta
-        )
+        target = OrientedPoint(start.x, start.y, start.theta + d_theta)
 
         return RotationSegment(
             start_position=start,
             end_position=target,
-            duration=self.speed_profiler.angular_speed_profile.get_total_duration(abs(d_theta)),
+            duration=self.speed_profiler.angular_speed_profile.get_total_duration(
+                abs(d_theta)
+            ),
             rotation=abs(d_theta),
-            sign=1 if d_theta > 0 else -1
+            sign=1 if d_theta > 0 else -1,
         )
 
-    def _compute_rotation_segment_to_get_same_orientation(self, start: OrientedPoint, target: OrientedPoint) \
-            -> RotationSegment:
+    def _compute_rotation_segment_to_get_same_orientation(
+        self, start: OrientedPoint, target: OrientedPoint
+    ) -> RotationSegment:
         """
         Compute rotation needed to align final orientation with target.
 
@@ -100,20 +111,21 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
         d_theta = target.theta - start.theta
 
         # Compute intermediate target position (start + rotation)
-        target = OrientedPoint(
-            start.x, start.y,
-            target.theta
-        )
+        target = OrientedPoint(start.x, start.y, target.theta)
 
         return RotationSegment(
             start_position=start,
             end_position=target,
-            duration=self.speed_profiler.angular_speed_profile.get_total_duration(abs(d_theta)),
+            duration=self.speed_profiler.angular_speed_profile.get_total_duration(
+                abs(d_theta)
+            ),
             rotation=abs(d_theta),
-            sign=1 if d_theta > 0 else -1
+            sign=1 if d_theta > 0 else -1,
         )
 
-    def _compute_straight_segment(self, start: OrientedPoint, target: OrientedPoint) -> StraightSegment:
+    def _compute_straight_segment(
+        self, start: OrientedPoint, target: OrientedPoint
+    ) -> StraightSegment:
         """
         Compute straight segment needed to reach the next waypoint.
 
@@ -125,18 +137,19 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
             StraightSegment: Segment that moves in a straight line.
         """
         # Compute delta-distance
-        delta_distance = start.distance(target)  # Use shapely method for more performance
+        delta_distance = start.distance(
+            target
+        )  # Use shapely method for more performance
 
         # Compute intermediate target position (start + distance)
-        target = OrientedPoint(
-            target.x, target.y,
-            start.theta
-        )
+        target = OrientedPoint(target.x, target.y, start.theta)
 
         return StraightSegment(
             start_position=start,
             end_position=target,
-            duration=self.speed_profiler.linear_speed_profile.get_total_duration(delta_distance),
+            duration=self.speed_profiler.linear_speed_profile.get_total_duration(
+                delta_distance
+            ),
             distance=delta_distance,
         )
 
@@ -154,23 +167,31 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
             target = path[i + 1]
 
             # 1. Compute the rotation segment (get orientation in front of the target)
-            rotation_segment: RotationSegment = self._compute_rotation_segment_to_be_front(start, target)
+            rotation_segment: RotationSegment = (
+                self._compute_rotation_segment_to_be_front(start, target)
+            )
             segments.append(rotation_segment)
 
             # 2. Compute the straight segment (move to the target)
-            straight_segment: StraightSegment = self._compute_straight_segment(rotation_segment.end_position, target)
+            straight_segment: StraightSegment = self._compute_straight_segment(
+                rotation_segment.end_position, target
+            )
             segments.append(straight_segment)
 
             # 3. Compute the rotation segment (get orientation of the target point)
             # Ensure to respect the orientation of intermediate points if required
             # or if it's the last segment (i == len(path) - 2)
             if self.params.respect_intermediate_orientation or i == len(path) - 2:
-                rotation_segment: RotationSegment = self._compute_rotation_segment_to_get_same_orientation(
-                    straight_segment.end_position, target
+                rotation_segment: RotationSegment = (
+                    self._compute_rotation_segment_to_get_same_orientation(
+                        straight_segment.end_position, target
+                    )
                 )
                 segments.append(rotation_segment)
             else:
-                path[i + 1] = OrientedPoint(path[i + 1].x, path[i + 1].y, straight_segment.end_position.theta)
+                path[i + 1] = OrientedPoint(
+                    path[i + 1].x, path[i + 1].y, straight_segment.end_position.theta
+                )
 
             # 4. Add a stop segment to mark a pause between segments
             if self.params.step_sleep_delay > 0:
@@ -201,15 +222,17 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
         # If no segment is found -> plan is over -> stop the robot at the end path
         trajectory_plan_command: TrajectoryPlanCommand | None = None
         if segment is None:
-            trajectory_plan_command: TrajectoryPlanCommand = TrajectoryPlanCommand.create_stop_command(
-                current_position=self.segments_mapper.get_last_segment().end_position
+            trajectory_plan_command: TrajectoryPlanCommand = (
+                TrajectoryPlanCommand.create_stop_command(
+                    current_position=self.segments_mapper.get_last_segment().end_position
+                )
             )
 
         # If the segment is a rotation segment
         elif isinstance(segment, RotationSegment):
             th_rotation: float = self.speed_profiler.angular_speed_profile.get_distance(
                 time_elapsed=local_time,
-                distance=segment.rotation  # IMPORTANT: Use distance parameter to get the th rotation
+                distance=segment.rotation,  # IMPORTANT: Use distance parameter to get the th rotation
             )
 
             th_theta = segment.start_position.theta + th_rotation * segment.sign
@@ -221,7 +244,7 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
                 linear_speed=0.0,
                 angular_speed=self.speed_profiler.angular_speed_profile.get_speed(
                     time_elapsed=local_time,
-                    distance=segment.rotation  # IMPORTANT: Use distance parameter to get the th speed
+                    distance=segment.rotation,  # IMPORTANT: Use distance parameter to get the th speed
                 ),
             )
 
@@ -229,26 +252,30 @@ class SequentialTrajectoryPlanner(BaseTrajectoryPlanner[SequentialTrajectoryPlan
         elif isinstance(segment, StraightSegment):
             th_distance: float = self.speed_profiler.linear_speed_profile.get_distance(
                 time_elapsed=local_time,
-                distance=segment.distance  # IMPORTANT: Use distance parameter to get the th distance
+                distance=segment.distance,  # IMPORTANT: Use distance parameter to get the th distance
             )
-            th_x = segment.start_position.x + th_distance * math.cos(segment.start_position.theta)
-            th_y = segment.start_position.y + th_distance * math.sin(segment.start_position.theta)
+            th_x = segment.start_position.x + th_distance * math.cos(
+                segment.start_position.theta
+            )
+            th_y = segment.start_position.y + th_distance * math.sin(
+                segment.start_position.theta
+            )
 
             trajectory_plan_command: TrajectoryPlanCommand = TrajectoryPlanCommand(
-                position=OrientedPoint(
-                    th_x, th_y, segment.start_position.theta
-                ),
+                position=OrientedPoint(th_x, th_y, segment.start_position.theta),
                 linear_speed=self.speed_profiler.linear_speed_profile.get_speed(
                     time_elapsed=local_time,
-                    distance=segment.distance  # IMPORTANT: Use distance parameter to get the th speed
+                    distance=segment.distance,  # IMPORTANT: Use distance parameter to get the th speed
                 ),
-                angular_speed=0.0
+                angular_speed=0.0,
             )
 
         # If the segment is a stop segment
         elif isinstance(segment, StopSegment):
-            trajectory_plan_command: TrajectoryPlanCommand = TrajectoryPlanCommand.create_stop_command(
-                current_position=segment.start_position
+            trajectory_plan_command: TrajectoryPlanCommand = (
+                TrajectoryPlanCommand.create_stop_command(
+                    current_position=segment.start_position
+                )
             )
 
         # Save the last call time
