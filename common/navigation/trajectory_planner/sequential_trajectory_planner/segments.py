@@ -6,6 +6,7 @@
 
 # ====== Standard Library Imports ======
 import bisect
+from typing import List
 
 # ====== Internal Project Imports ======
 from geometry import OrientedPoint
@@ -87,17 +88,9 @@ class StopSegment(BaseSegment):
         super().__init__(start_position, end_position, duration)
 
 
-class CurveSegment(BaseSegment):
+class SmoothSegment(BaseSegment):
     """
     A segment representing a curved trajectory.
-
-    Inherits from BaseSegment, which provides:
-      - start_position (OrientedPoint)
-      - end_position   (OrientedPoint)
-      - duration       (float)
-      - distance       (float): total linear distance between start and end
-      - rotation       (float): total rotation needed (absolute value)
-      - sign           (float): +1 if rotation is CCW, -1 if CW
     """
 
     def __init__(
@@ -105,14 +98,22 @@ class CurveSegment(BaseSegment):
         start_position: OrientedPoint,
         end_position: OrientedPoint,
         duration: float,
-        distance: float,
-        rotation: float,
-        sign: float,
+        sampled_points: List[OrientedPoint],
+        total_distance: float,
     ):
+        """
+        Create a segment representing a curved trajectory.
+
+            Args:
+                start_position (OrientedPoint): Start pose of the segment.
+                end_position (OrientedPoint): End pose of the segment.
+                duration (float): Duration of the segment.
+                sampled_points (List[OrientedPoint]): List of points sampled along the trajectory.
+                total_distance (float): Total distance of the trajectory.
+        """
         super().__init__(start_position, end_position, duration)
-        self.distance = distance
-        self.rotation = rotation
-        self.sign = sign
+        self.sampled_points = sampled_points
+        self.total_distance = total_distance
 
 
 class SegmentMapper:
