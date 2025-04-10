@@ -12,11 +12,16 @@ from matplotlib import pyplot as plt
 
 # ====== Internal Project Imports ======
 from geometry import OrientedPoint
-from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import BaseTrajectoryPlanner
+from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import (
+    BaseTrajectoryPlanner,
+)
 
 
-def test_trajectory_planning(trajectory_planner: BaseTrajectoryPlanner, path: list[OrientedPoint],
-                             time_step: float = 0.1):
+def test_trajectory_planning(
+    trajectory_planner: BaseTrajectoryPlanner,
+    path: list[OrientedPoint],
+    time_step: float = 0.1,
+):
     """
     Simulates and visualizes the performance of a trajectory planner.
 
@@ -60,7 +65,7 @@ def test_trajectory_planning(trajectory_planner: BaseTrajectoryPlanner, path: li
     axs[0, 0].legend()
     axs[0, 0].grid(True)
 
-    axs[0, 1].plot(linear_speeds, label="Vitesse linéaire", color='r')
+    axs[0, 1].plot(linear_speeds, label="Vitesse linéaire", color="r")
     axs[0, 1].set_xlabel("Temps (itérations)")
     axs[0, 1].set_ylabel("Vitesse linéaire")
     axs[0, 1].set_title("Évolution de la vitesse linéaire")
@@ -71,20 +76,20 @@ def test_trajectory_planning(trajectory_planner: BaseTrajectoryPlanner, path: li
     ax1 = axs[1, 0]
     ax2 = ax1.twinx()
 
-    ax1.plot(x_positions, color='b', label="X (Position)")
-    ax1.plot(y_positions, color='r', label="Y (Position)")
-    ax1.set_ylabel("Position", color='b')
-    ax1.tick_params(axis='y', labelcolor='b')
+    ax1.plot(x_positions, color="b", label="X (Position)")
+    ax1.plot(y_positions, color="r", label="Y (Position)")
+    ax1.set_ylabel("Position", color="b")
+    ax1.tick_params(axis="y", labelcolor="b")
 
-    ax2.plot(theta_positions, label="Orientation (Theta)", color='m')
-    ax2.set_ylabel("Orientation (theta)", color='m')
-    ax2.tick_params(axis='y', labelcolor='m')
+    ax2.plot(theta_positions, label="Orientation (Theta)", color="m")
+    ax2.set_ylabel("Orientation (theta)", color="m")
+    ax2.tick_params(axis="y", labelcolor="m")
 
     ax1.set_xlabel("Temps (itérations)")
     ax1.set_title("Évolution de la position X et Y")
     ax1.grid(True)
 
-    axs[1, 1].plot(theta_positions, label="Orientation (Theta)", color='m')
+    axs[1, 1].plot(theta_positions, label="Orientation (Theta)", color="m")
     axs[1, 1].set_xlabel("Temps (itérations)")
     axs[1, 1].set_ylabel("Theta (orientation)")
     axs[1, 1].set_title("Évolution de l'orientation Theta")
@@ -99,22 +104,26 @@ def test_trajectory_planning(trajectory_planner: BaseTrajectoryPlanner, path: li
 
     # Plot original path with orientation arrows
     for idx, point in enumerate(path):
-        plt.plot(point.x, point.y, 'bo', label="Path" if idx == 0 else "")
+        plt.plot(point.x, point.y, "bo", label="Path" if idx == 0 else "")
         dx = np.cos(point.theta)
         dy = np.sin(point.theta)
-        plt.arrow(point.x, point.y, dx, dy, head_width=0.1, head_length=0.1, fc='b', ec='b')
+        plt.arrow(
+            point.x, point.y, dx, dy, head_width=0.1, head_length=0.1, fc="b", ec="b"
+        )
 
     # Plot simulated trajectory with orientation arrows
     for idx, point in enumerate(positions[::2]):
-        plt.plot(point.x, point.y, 'ro', label="Simulation" if idx == 0 else "")
+        plt.plot(point.x, point.y, "ro", label="Simulation" if idx == 0 else "")
         dx = np.cos(point.theta) * 0.5
         dy = np.sin(point.theta) * 0.5
-        plt.arrow(point.x, point.y, dx, dy, head_width=0.1, head_length=0.1, fc='r', ec='r')
+        plt.arrow(
+            point.x, point.y, dx, dy, head_width=0.1, head_length=0.1, fc="r", ec="r"
+        )
 
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.title('Path et Simulation de Trajectoire')
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.title("Path et Simulation de Trajectoire")
     plt.legend()
     plt.grid(True)
-    plt.axis('equal')
+    plt.axis("equal")
     plt.show()

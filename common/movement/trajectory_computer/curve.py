@@ -1,4 +1,8 @@
 class Curve:
+    """
+    Represents a trajectory curve with three phases: departure, max speed, and arrival.
+    """
+
     def __init__(
         self,
         departure_speed: float,
@@ -8,78 +12,129 @@ class Curve:
         acceleration_max: float,
         deceleration_max: float,
     ) -> None:
-        # We split the movement in 3 phases: departure, max speed, arrival
+        """
+        Initializes the Curve object with the given parameters.
 
-        self.Cd = acceleration_max  # Departure phase slope
-        self.Ca = deceleration_max  # Arrival phase slope
+        Args:
+            departure_speed (float): Initial speed at the start of the trajectory.
+            max_speed (float): Maximum speed during the trajectory.
+            arrival_speed (float): Final speed at the end of the trajectory.
+            total_distance (float): Total distance to be covered.
+            acceleration_max (float): Maximum acceleration during the departure phase.
+            deceleration_max (float): Maximum deceleration during the arrival phase.
+        """
+        self._acceleration_rate = acceleration_max
+        self._deceleration_rate = deceleration_max
 
-        self.departure_speed = departure_speed
-        self.mid_speed = max_speed
-        self.arrival_speed = arrival_speed
+        self._departure_speed = departure_speed
+        self._cruise_speed = max_speed
+        self._arrival_speed = arrival_speed
 
-        self.total_distance = total_distance
-        self.departure_distance = (max_speed**2 - departure_speed**2) / (
-            2 * acceleration_max
-        )  # Departure total_distance
-        self.arrival_distance = (max_speed**2 - arrival_speed**2) / (
-            2 * deceleration_max
-        )  # Arrival total_distance
-        self.mid_distance = (
-            self.total_distance - self.departure_distance - self.arrival_distance
+        self._total_distance = total_distance
+        self._distance_to_accelerate = (
+            self._cruise_speed**2 - departure_speed**2
+        ) / (2 * acceleration_max)
+        self._distance_to_decelerate = (
+            self._cruise_speed**2 - arrival_speed**2
+        ) / (2 * deceleration_max)
+        self._cruise_distance = (
+            self._total_distance
+            - self._distance_to_accelerate
+            - self._distance_to_decelerate
         )
 
-        self.departure_time = (
-            self.mid_speed - self.departure_speed
-        ) / self.Cd  # total time of departure phase
-        self.mid_time = self.mid_distance / self.mid_speed
-        self.arrival_time = (
-            self.mid_speed - self.arrival_speed
-        ) / self.Ca  # total time of arrival phase
+        self._time_to_accelerate = (
+            (self._cruise_speed - self._departure_speed) / self._acceleration_rate
+            if self._cruise_speed > self._departure_speed
+            else 0.0
+        )
+        self._cruise_time = self._cruise_distance / self._cruise_speed
+        self._time_to_decelerate = (
+            (self._cruise_speed - self._arrival_speed) / self._deceleration_rate
+            if self._cruise_speed > self._arrival_speed
+            else 0.0
+        )
+        self._total_time = (
+            self._time_to_accelerate + self._cruise_time + self._time_to_decelerate
+        )
 
-        self.total_time = self.departure_time + self.mid_time + self.arrival_time
+    def _compute_departure_speed_at_t(self, t) -> float:
+        """
+        Computes the speed during the departure phase at a given time.
 
-        # TODO: Si pas le temps de monter à Vmax, big bug, quoique peut-être réglé depuis Planned Velocity en min
+        Args:
+            t (float): Time elapsed since the start of the trajectory.
 
-    def V1(self, t):
-        return (
-            self.departure_speed + self.Cd * t
-        )  # Velocity on departure phase equation
+        Returns:
+            float: Speed at time t during the departure phase.
+        """
+        return self._departure_speed + self._acceleration_rate * t
 
-    def V2(self, t):
-        return self.mid_speed  # Velocity on max speed phase equation
+    def _compute_arrival_speed_at_t(self, t) -> float:
+        """
+        Computes the speed during the arrival phase at a given time.
 
-    def V3(self, t):
-        return self.arrival_speed - self.Ca * (
-            t - self.total_time
-        )  # Velocity on arrival phase equation
+        Args:
+            t (float): Time elapsed since the start of the trajectory.
 
-    def PlannedVelocity(self, t):
-        if t < self.total_time:
-            Vitesse = [self.V1(t), self.V2(t), self.V3(t)]
-            return min([i for i in Vitesse if i >= 0])
-        else:
-            return self.arrival_speed
+        Returns:
+            float: Speed at time t during the arrival phase.
+        """
+        return self._arrival_speed + self._deceleration_rate * (self._total_time - t)
 
-    def PlannedTotalTime(self):
-        return self.total_time
+    def get_speed(self, t) -> float:
+        """
+        Retrieves the current speed at a given time based on the trajectory plan.
 
-    def PlannedPosition(self, t):
-        # Phase 1: Departure
-        if t <= self.departure_time:
-            return self.departure_speed * t + 0.5 * self.Cd * t**2
-        # Phase 2: Max speed
-        elif t <= self.departure_time + self.mid_time:
-            t_m = t - self.departure_time
-            return self.departure_distance + self.mid_speed * t_m
-        # Phase 3: Arrival
-        elif t <= self.total_time:
-            t_a = t - self.departure_time - self.mid_time
+        Args:
+            t (float): Time elapsed since the start of the trajectory.
+
+        Returns:
+            float: Current speed at time t.
+        """
+        if t < self._total_time:
+            speeds = [
+                self._compute_departure_speed_at_t(t),
+                self._cruise_speed,
+                self._compute_arrival_speed_at_t(t),
+            ]
+            return min([i for i in speeds if i >= 0])
+
+        return self._arrival_speed
+
+    def get_distance(self, t) -> float:
+        """
+        Computes the current position at a given time based on the trajectory plan.
+
+        Args:
+            t (float): Time elapsed since the start of the trajectory.
+
+        Returns:
+            float: Current position at time t.
+        """
+        if t <= self._time_to_accelerate:
+            return self._departure_speed * t + 0.5 * self._acceleration_rate * t**2
+        if t <= self._time_to_accelerate + self._cruise_time:
+            dt = t - self._time_to_accelerate
+            return self._distance_to_accelerate + self._cruise_speed * dt
+        if t <= self._total_time:
+            t0 = self._time_to_accelerate + self._cruise_time
+            dt = t - t0
             return (
-                self.departure_distance
-                + self.mid_distance
-                + self.mid_speed * t_a
-                + 0.5 * -self.Ca * t_a**2
+                self._distance_to_accelerate
+                + self._cruise_distance
+                + self._arrival_speed * dt
+                + self._deceleration_rate
+                * (self._total_time * dt - ((t**2 - t0**2) / 2))
             )
-        # After planned time, position remains at final total_distance
-        else:
-            return self.total_distance
+
+        return self._total_distance
+
+    def get_total_duration(self) -> float:
+        """
+        Retrieves the total time required to complete the trajectory.
+
+        Returns:
+            float: Total time of the trajectory.
+        """
+        return self._total_time

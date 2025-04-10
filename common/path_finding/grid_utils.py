@@ -103,7 +103,7 @@ def visualize_path(grid, path=None, start=None, goal=None, dynamic_obstacles=Non
             grid_with_path[y][x] = 2  # Marquer la trajectoire avec un 2
 
     # Préparer l'affichage avec des couleurs spécifiques
-    cmap = plt.cm.binary  # Colormap noir et blanc
+    cmap = plt.get_cmap("binary")  # Colormap noir et blanc
     cmap.set_over("blue")  # Couleur pour les chemins marqués (2)
     cmap.set_under("red")  # Couleur pour les points de départ et arrivée
 
