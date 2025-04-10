@@ -82,37 +82,46 @@ class BasicTrajectoryPlanner(BaseTrajectoryPlanner[BasicTrajectoryPlannerParams]
         spline_x = CubicSpline(s_values, x_values)  # X(s)
         spline_y = CubicSpline(s_values, y_values)  # Y(s)
 
-        # 3) Let's define K sub-intervals in [0..S_total]
-        #    Example: K = self.params.nb_subsplines or similar
+        # 3) Define K sub-intervals in [0..S_total]
         k = self._determine_num_segments(path)
-        # We'll create breakpoints s0=0 < s1 < s2 ... < sK=S_total
         s_breaks = np.linspace(0, s_total, k + 1)  # shape (K+1,)
 
         segments = []
+        previous_speed = 0.0  # Initial speed for the first segment
+
         # For each sub-interval, we sample M_k points => sub_spline
         for i in range(k):
             s_start = s_breaks[i]
             s_end = s_breaks[i + 1]
-            sub_distance = s_end - s_start
 
             # Number of sample points for this sub-interval
-            # We could do self.params.spline_resolution // K or adapt by length
             num_samples = max(2, self.params.spline_resolution // k)
 
-            # sample [s_start..s_end]
+            # Sample [s_start..s_end]
             sampled_points = self._sample_spline_portion(
                 spline_x, spline_y, s_start, s_end, num_samples
             )
-            # partial distance => sub_distance
-            # but let's re-check actual sum of consecutive distances in the sample
             actual_sub_distance = self._compute_total_distance(sampled_points)
 
+            # Determine the speed profile for this segment
+            # The departure speed is the previous segment's arrival speed
+            departure_speed = previous_speed
+
+            # Check if this is the last segment
+            if i == k - 1:
+                # For the last segment, set arrival speed to 0.0 (stop)
+                arrival_speed = 0.0
+            else:
+                # Calculate the arrival speed intelligently based on constraints
+                arrival_speed = self._compute_arrival_speed(
+                    departure_speed, actual_sub_distance
+                )
+
             # Duration from the speed profile
-            # (assuming we start at speed=0 and end at speed=0 for each sub-interval)
             seg_duration = self.speed_profiler.linear_speed_profile.get_total_duration(
                 distance=actual_sub_distance,
-                departure_speed=0.0,
-                arrival_speed=0.0,
+                departure_speed=departure_speed,
+                arrival_speed=arrival_speed,
             )
 
             # Build a segment
@@ -124,6 +133,9 @@ class BasicTrajectoryPlanner(BaseTrajectoryPlanner[BasicTrajectoryPlannerParams]
                 total_distance=actual_sub_distance,
             )
             segments.append(seg)
+
+            # Update the previous speed for the next segment
+            previous_speed = arrival_speed
 
         self._segments_mapper = SegmentMapper(segments)
 
@@ -242,6 +254,33 @@ class BasicTrajectoryPlanner(BaseTrajectoryPlanner[BasicTrajectoryPlannerParams]
         for i in range(len(points) - 1):
             dist_acc += points[i].distance(points[i + 1])
         return dist_acc
+
+    def _compute_arrival_speed(self, departure_speed: float, distance: float) -> float:
+        """
+        Compute the arrival speed for a segment based on the departure speed,
+        distance, and constraints.
+
+        Args:
+            departure_speed (float): Speed at the start of the segment.
+            distance (float): Distance of the segment.
+
+        Returns:
+            float: Speed at the end of the segment.
+        """
+        return self.speed_profiler.linear_speed_profile.get_speed(
+            time_elapsed=500, distance=100, arrival_speed=1000
+        )
+        max_speed = self.speed_profiler.linear_speed_profile.max_speed
+
+        max_acceleration = self.params.max_acceleration
+
+        # Compute the maximum possible arrival speed based on acceleration
+        max_possible_speed = math.sqrt(
+            departure_speed**2 + 2 * max_acceleration * distance
+        )
+
+        # Limit the arrival speed to the maximum allowed speed
+        return min(max_speed, max_possible_speed)
 
     def _interpolate_pose(
         self, points: List[OrientedPoint], ratio: float
