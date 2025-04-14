@@ -189,6 +189,7 @@ void loop() {
   }
 }
 */
+/*
 #include <Arduino.h>
 #include "lora_com.h"
 
@@ -251,4 +252,65 @@ void loop() {
         }
     }
 }
+*/
+#include <Arduino.h>
+#include "lora_com.h"
 
+#define LORA_CS 41
+#define LORA_DIO1 39
+#define LORA_RESET 42
+#define LORA_BUSY 40
+#define NODE_ID 3 // Change this for each node
+
+LoRaCom loraCom(LORA_CS, LORA_DIO1, LORA_RESET, LORA_BUSY, NODE_ID);
+
+void testCallback(byte *msg, byte size) {
+    Serial.println(F("Test callback called"));
+    Serial.print(F("Message size: "));
+    Serial.println(size);
+    Serial.print(F("Message data: "));
+    for (byte i = 0; i < size; i++) {
+        Serial.print(msg[i], HEX);
+        Serial.print(" ");
+    }
+    Serial.println();
+}
+
+void setup() {
+    Serial.begin(115200);
+    delay(5000);
+    loraCom.initRadio();
+
+    // Initialize callback functions array
+    void (*callbacks[256])(byte *msg, byte size) = {0};
+    callbacks[0] = testCallback; // Set a test callback for message ID 0
+
+    // Call handle_callback to test
+    loraCom.handle_callback(callbacks);
+}
+
+void loop() {
+    if (loraCom.isOperationDone()) {
+        loraCom.resetOperationDone();
+        if (loraCom.isTransmitFlag()) {
+            if (loraCom.getTransmissionState() == RADIOLIB_ERR_NONE) {
+                Serial.println(F("transmission finished!"));
+            } else {
+                Serial.print(F("failed, code "));
+                Serial.println(loraCom.getTransmissionState());
+            }
+            loraCom.startReceive();
+            loraCom.resetTransmitFlag();
+        } else {
+            loraCom.receivePacket();
+            delay(5000);
+
+            // Resend stored messages to other nodes
+            for (int i = 0; i < NUM_NODES; i++) {
+                if (i != NODE_ID && loraCom.received_msgs[i].size > 0) {
+                    loraCom.send_msg(loraCom.received_msgs[i].msg, loraCom.received_msgs[i].size);
+                }
+            }
+        }
+    }
+}
