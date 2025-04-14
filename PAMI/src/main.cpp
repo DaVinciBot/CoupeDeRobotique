@@ -201,15 +201,35 @@ void loop() {
 
 LoRaCom loraCom(LORA_CS, LORA_DIO1, LORA_RESET, LORA_BUSY);
 
+void testCallback(byte *msg, byte size) {
+    Serial.println(F("Test callback called"));
+    Serial.print(F("Message size: "));
+    Serial.println(size);
+    Serial.print(F("Message data: "));
+    for (byte i = 0; i < size; i++) {
+        Serial.print(msg[i], HEX);
+        Serial.print(" ");
+    }
+    Serial.println();
+}
+
 void setup() {
     Serial.begin(115200);
     delay(5000);
     loraCom.initRadio();
+
     #if defined(INITIATING_NODE)
         loraCom.sendPacket("234576");
     #else
         loraCom.startReceive();
     #endif
+
+    // Initialize callback functions array
+    void (*callbacks[256])(byte *msg, byte size) = {0};
+    callbacks[0] = testCallback; // Set a test callback for message ID 0
+
+    // Call handle_callback to test
+    loraCom.handle_callback(callbacks);
 }
 
 void loop() {
@@ -227,7 +247,8 @@ void loop() {
         } else {
             loraCom.receivePacket();
             delay(5000);
-            loraCom.sendPacket("Re:Zero!");
+            loraCom.sendPacket("Re:Zero");
         }
     }
 }
+
