@@ -260,7 +260,7 @@ void loop() {
 #define LORA_DIO1 39
 #define LORA_RESET 42
 #define LORA_BUSY 40
-#define NODE_ID 3 // Change this for each node
+#define NODE_ID 1 // Change this for each node
 
 LoRaCom loraCom(LORA_CS, LORA_DIO1, LORA_RESET, LORA_BUSY, NODE_ID);
 

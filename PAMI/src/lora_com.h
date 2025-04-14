@@ -102,7 +102,7 @@ private:
 
 // Définition de NACK
 #define NACK 0xFF
-#define NUM_NODES 6
+#define NUM_NODES 2
 
 struct Message {
     byte msg[256]; // Adjust size as needed
