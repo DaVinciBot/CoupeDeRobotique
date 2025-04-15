@@ -245,6 +245,10 @@ LoRaCom::LoRaCom(int cs, int dio1, int reset, int busy)
     LoRaComInstance = this;
     // Initialize buffer and signature
     buffer = new byte[256]; // Adjust size as needed
+    if (buffer == nullptr) {
+        Serial.println(F("Error: Failed to allocate memory for buffer"));
+        while (true) { delay(10); } // Infinite loop to halt execution
+    }
     signature[0] = 0xDE; // Example signature, adjust as needed
     signature[1] = 0xAD;
     signature[2] = 0xBE;
@@ -371,6 +375,76 @@ byte LoRaCom::handle() {
         return 0;
     }
     Serial.println(F("Handle method called"));
+
+    // Check if data is available
+    if (this->stream->available()) {
+        Serial.println(F("Data available in stream"));
+    } else {
+        Serial.println(F("No data available in stream"));
+        return 0;
+    }
+
+    while (this->stream->available()) {
+        byte data = this->stream->read();
+        Serial.print(F("Read data: "));
+        Serial.println(data, HEX);
+        this->buffer[this->pointer++] = data;
+
+        // Wait until at least 6 bytes are received
+        if (this->pointer < 6) {
+            Serial.println(F("Waiting for more data..."));
+            continue;
+        }
+
+        // Check for signature validity
+        bool is_signature = true;
+        for (int i = 0; i < 4 && is_signature; i++) {
+            is_signature = this->buffer[pointer - 1 - i] == this->signature[3 - i];
+        }
+
+        if (!is_signature) {
+            Serial.println(F("Invalid signature"));
+            this->pointer = 0; // Reset pointer if signature is invalid
+            continue;
+        }
+
+        // Extract message size
+        byte msg_size = this->buffer[pointer - 6];
+        Serial.print(F("Message size extracted: "));
+        Serial.println(msg_size);
+
+        if (this->pointer >= msg_size + 6) {
+            CRC crc;
+            byte crc_b = crc.digest(this->buffer, msg_size + 1);
+
+            // Validate CRC
+            if (crc_b != this->buffer[msg_size + 1]) {
+                Serial.println(F("Invalid CRC"));
+                byte invalid_crc_msg = NACK;
+                send_msg(&invalid_crc_msg, 1);
+                this->pointer = 0;
+                continue;
+            }
+
+            // Reset the pointer and return the message size
+            this->pointer = 0;
+            Serial.println(F("Message received and validated"));
+            return msg_size;
+        } else {
+            Serial.println(F("Not enough data for a complete message"));
+            this->pointer = 0; // Reset pointer if not enough data
+        }
+    }
+    return 0;
+}
+
+/*good
+byte LoRaCom::handle() {
+    if (stream == nullptr) {
+        Serial.println(F("Error: Stream is not initialized"));
+        return 0;
+    }
+    Serial.println(F("Handle method called"));
     while (this->stream->available()) {
         byte data = this->stream->read();
         this->buffer[this->pointer++] = data;
@@ -415,7 +489,7 @@ byte LoRaCom::handle() {
     return 0;
 }
 
-/*
+
 byte LoRaCom::handle() {
     if (stream == nullptr) {
         Serial.println(F("Error: Stream is not initialized"));

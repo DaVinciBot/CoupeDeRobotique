@@ -317,6 +317,7 @@ void loop() {
     }
 }
 */
+/*GOOD
 #include <Arduino.h>
 #include "lora_com.h"
 
@@ -400,3 +401,88 @@ void loop() {
         }
     }
 }
+*/
+#include <Arduino.h>
+#include "lora_com.h"
+
+#define INITIATING_NODE   // so it sends the first transmission
+
+#define LORA_CS 41
+#define LORA_DIO1 39
+#define LORA_RESET 42
+#define LORA_BUSY 40
+
+LoRaCom loraCom(LORA_CS, LORA_DIO1, LORA_RESET, LORA_BUSY);
+
+void testCallback(byte *msg, byte size) {
+    Serial.println(F("Test callback called"));
+    Serial.print(F("Message size: "));
+    Serial.println(size);
+    Serial.print(F("Message data: "));
+    for (byte i = 0; i < size; i++) {
+        Serial.print(msg[i], HEX);
+        Serial.print(" ");
+    }
+    Serial.println();
+}
+
+void setup() {
+    Serial.begin(115200);
+    delay(5000);
+    loraCom.initRadio();
+
+    #if defined(INITIATING_NODE)
+        byte message[] = "234576";
+        byte size = sizeof(message) - 1; // Exclude the null terminator
+        Serial.print(F("Sending message: "));
+        Serial.println((char*)message);
+        Serial.print(F("Message size: "));
+        Serial.println(size);
+        loraCom.sendPacket((char*)message);
+    #else
+        loraCom.startReceive();
+    #endif
+
+    // Initialize callback functions array
+    void (*callbacks[256])(byte *msg, byte size) = {0};
+    callbacks[0] = testCallback; // Set a test callback for message ID 0
+
+    // Register the callbacks with the LoRaCom instance
+    loraCom.handle_callback(callbacks);
+    Serial.println(F("Callbacks registered"));
+}
+
+void loop() {
+    if (loraCom.isOperationDone()) {
+        Serial.println(F("Operation done"));
+        loraCom.resetOperationDone();
+        if (loraCom.isTransmitFlag()) {
+            if (loraCom.getTransmissionState() == RADIOLIB_ERR_NONE) {
+                Serial.println(F("transmission finished!"));
+            } else {
+                Serial.print(F("failed, code "));
+                Serial.println(loraCom.getTransmissionState());
+            }
+            loraCom.startReceive();
+            loraCom.resetTransmitFlag();
+        } else {
+            // Declare the callbacks array here
+            void (*callbacks[256])(byte *msg, byte size) = {0};
+            callbacks[0] = testCallback; // Set a test callback for message ID 0
+
+            // Handle received messages and invoke callbacks
+            Serial.println(F("Calling handle_callback"));
+            loraCom.handle_callback(callbacks);
+
+            delay(5000);
+            byte message[] = "Re:Zero";
+            byte size = sizeof(message) - 1; // Exclude the null terminator
+            Serial.print(F("Sending message: "));
+            Serial.println((char*)message);
+            Serial.print(F("Message size: "));
+            Serial.println(size);
+            loraCom.sendPacket((char*)message);
+        }
+    }
+}
+
