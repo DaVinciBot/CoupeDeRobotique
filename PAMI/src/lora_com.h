@@ -34,7 +34,7 @@ private:
 
 #endif // LORA_COM_H
 */
-/*
+//THE GOOD ONE
 #ifndef LORA_COM_H
 #define LORA_COM_H
 
@@ -92,7 +92,8 @@ private:
 };
 
 #endif // LORA_COM_H
-*/
+
+/*
 #ifndef LORA_COM_H
 #define LORA_COM_H
 
@@ -154,3 +155,4 @@ private:
 };
 
 #endif // LORA_COM_H
+*/

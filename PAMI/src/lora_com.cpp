@@ -233,10 +233,10 @@ void Com::handle_callback(void (*functions[256])(byte *msg, byte size))
     }
 }
 */
-/*
+//THE GOOD ONE
 #include "lora_com.h"
 #include <modules/SX126x/patches/SX126x_patch_scan.h>
-#include "crc.h"
+#include <crc.h>
 
 LoRaCom* LoRaComInstance;
 
@@ -365,7 +365,6 @@ int LoRaCom::getTransmissionState() {
 void LoRaCom::startReceive() {
     radio.startReceive();
 }
-
 byte LoRaCom::handle() {
     if (stream == nullptr) {
         Serial.println(F("Error: Stream is not initialized"));
@@ -415,6 +414,58 @@ byte LoRaCom::handle() {
     }
     return 0;
 }
+
+/*
+byte LoRaCom::handle() {
+    if (stream == nullptr) {
+        Serial.println(F("Error: Stream is not initialized"));
+        return 0;
+    }
+    Serial.println(F("Handle method called"));
+    while (this->stream->available()) {
+        byte data = this->stream->read();
+        this->buffer[this->pointer++] = data;
+
+        // Wait until at least 6 bytes are received
+        if (this->pointer < 6)
+            continue;
+
+        // Check for signature validity
+        bool is_signature = true;
+        for (int i = 0; i < 4 && is_signature; i++)
+            is_signature = this->buffer[pointer - 1 - i] == this->signature[3 - i];
+
+        if (!is_signature)
+            continue;
+
+        // Extract message size
+        byte msg_size = this->buffer[pointer - 6];
+        Serial.print(F("Message size extracted: "));
+        Serial.println(msg_size);
+
+        if (this->pointer >= msg_size + 6) {
+            CRC crc;
+            byte crc_b = crc.digest(this->buffer, msg_size + 1);
+
+            // Validate CRC
+            if (crc_b != this->buffer[msg_size + 1]) {
+                byte invalid_crc_msg = NACK;
+                send_msg(&invalid_crc_msg, 1);
+                this->pointer = 0;
+                continue;
+            }
+
+            // Reset the pointer and return the message size
+            this->pointer = 0;
+            Serial.println(F("Message received and validated"));
+            return msg_size;
+        } else {
+            this->pointer = 0;
+        }
+    }
+    return 0;
+}
+*/
 
 void LoRaCom::handle_callback(void (*functions[256])(byte *msg, byte size)) {
     Serial.println(F("Handle_callback method called"));
@@ -466,7 +517,8 @@ void LoRaCom::send_msg(byte *msg, byte size, bool is_retry) {
     }
     radio.startTransmit(msg, size);
 }
-*/
+
+/*
 #include "lora_com.h"
 #include <modules/SX126x/patches/SX126x_patch_scan.h>
 #include "crc.h"
@@ -705,3 +757,4 @@ void LoRaCom::send_msg(byte *msg, byte size, bool is_retry) {
     }
     radio.startTransmit(msg, size);
 }
+*/
