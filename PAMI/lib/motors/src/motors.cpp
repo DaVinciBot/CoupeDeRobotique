@@ -2,14 +2,14 @@
 #include <Arduino.h>
 
 Motor::Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution)
-    : _stepPin(stepPin), _dirPin(dirPin), _enablePin(enablePin), _stepsPerRev(stepsPerRevolution / 10)
+    : _stepPin(stepPin), _dirPin(dirPin), _enablePin(enablePin), _stepsPerRevolution(stepsPerRevolution / K)
 {
     _targetSpeedStepsPerSec = 0.0f;
     _currentSpeedStepsPerSec = 0.0f;
     _acceleration = 0.0f;
     _moving = false;
     _lastStepTime = 0;
-    _usDelayBetweenTenSteps = 0.0f;
+    _usDelayBetweenKSteps = 0.0f;
 }
 
 void Motor::init()
@@ -45,9 +45,9 @@ void Motor::_setDirection(bool clockwise)
     digitalWrite(_dirPin, clockwise ? HIGH : LOW);
 }
 
-void Motor::_doTenSteps()
+void Motor::_doKSteps()
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < K; i++)
     {
         digitalWrite(_stepPin, HIGH);
         delayMicroseconds(50);
@@ -63,18 +63,14 @@ void Motor::update()
 
     unsigned long now = micros();
     unsigned long dt = now - _lastStepTime;
-    float dtSec = dt / 1000000.0f;
+    float dtSec = dt / 1e6f;
     float speedDiff = _acceleration * dtSec;
 
     if (_currentSpeedStepsPerSec < _targetSpeedStepsPerSec)
     {
         _currentSpeedStepsPerSec += speedDiff;
-        if (_currentSpeedStepsPerSec > _targetSpeedStepsPerSec)
-        {
-            _currentSpeedStepsPerSec = _targetSpeedStepsPerSec;
-        }
     }
-    else if (_currentSpeedStepsPerSec > _targetSpeedStepsPerSec)
+    if (_currentSpeedStepsPerSec > _targetSpeedStepsPerSec)
     {
         _currentSpeedStepsPerSec -= speedDiff;
         if (_currentSpeedStepsPerSec < _targetSpeedStepsPerSec)
@@ -85,19 +81,19 @@ void Motor::update()
 
     if (_currentSpeedStepsPerSec < 1.0f)
     {
-        _usDelayBetweenTenSteps = 1e6;
+        _usDelayBetweenKSteps = 1e6f;
     }
     else
     {
-        _usDelayBetweenTenSteps = (10.0f * 1e6) / _currentSpeedStepsPerSec;
+        _usDelayBetweenKSteps = (K * 1e6f) / _currentSpeedStepsPerSec;
     }
 
     bool clockwise = (_currentSpeedStepsPerSec >= 0);
     _setDirection(clockwise);
 
-    if (dt >= _usDelayBetweenTenSteps)
+    if (dt >= _usDelayBetweenKSteps)
     {
-        _doTenSteps();
+        _doKSteps();
         _lastStepTime = micros();
     }
 

@@ -1,5 +1,6 @@
 #ifndef MOTORS_H
 #define MOTORS_H
+#define K 10.0
 
 #include <Arduino.h>
 
@@ -10,17 +11,17 @@ private:
     byte _dirPin;
     byte _enablePin;
 
-    unsigned int _stepsPerRev;
+    unsigned int _stepsPerRevolution;
     float _targetSpeedStepsPerSec;
     float _currentSpeedStepsPerSec;
     float _acceleration;
 
     bool _moving;
     unsigned long _lastStepTime;
-    float _usDelayBetweenTenSteps;
+    float _usDelayBetweenKSteps;
 
     void _setDirection(bool clockwise);
-    void _doTenSteps();
+    void _doKSteps();
 
 public:
     Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution);
@@ -33,7 +34,7 @@ public:
     void setAcceleration(float stepsPerSec2);
     void update();
 
-    unsigned int getStepsPerRev() const { return _stepsPerRev; }
+    unsigned int getStepsPerRev() const { return _stepsPerRevolution; }
     bool isMoving() const { return _moving; }
 };
 
