@@ -5,15 +5,6 @@
 
 class Navigation
 {
-private:
-    Motor *_leftMotor;
-    Motor *_rightMotor;
-    float _wheelDiameterMm;
-    float _wheelBaseMm;
-
-    float _linearSpeedMmS;
-    float _angularSpeedDegS;
-
 public:
     Navigation(Motor *leftMotor, Motor *rightMotor, float wheelDiameterMm, float wheelBaseMm);
     ~Navigation() = default;
@@ -22,6 +13,15 @@ public:
     void update();
     bool isBusy() const;
     void stop();
+
+private:
+    Motor *_leftMotor;
+    Motor *_rightMotor;
+    float _wheelDiameterMm;
+    float _wheelBaseMm;
+
+    float _linearSpeedMmS;
+    float _angularSpeedDegS;
 };
 
 #endif

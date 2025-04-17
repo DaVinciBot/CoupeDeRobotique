@@ -2,14 +2,16 @@
 #include <Arduino.h>
 
 Motor::Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution)
-    : _stepPin(stepPin), _dirPin(dirPin), _enablePin(enablePin), _stepsPerRevolution(stepsPerRevolution / K)
+    : _stepPin(stepPin), _dirPin(dirPin), _enablePin(enablePin),
+      _stepsPerRevolution(stepsPerRevolution / K),
+      _targetSpeedStepsPerSec(0.0f),
+      _currentSpeedStepsPerSec(0.0f),
+      _acceleration(0.0f),
+      _moving(false),
+      _lastStepTime(0),
+      _usDelayBetweenKSteps(0.0f),
+      _stepCount(0)
 {
-    _targetSpeedStepsPerSec = 0.0f;
-    _currentSpeedStepsPerSec = 0.0f;
-    _acceleration = 0.0f;
-    _moving = false;
-    _lastStepTime = 0;
-    _usDelayBetweenKSteps = 0.0f;
 }
 
 void Motor::init()
@@ -28,14 +30,13 @@ void Motor::enableMotor(bool enable)
 void Motor::setTargetSpeed(float stepsPerSec)
 {
     _targetSpeedStepsPerSec = stepsPerSec;
-    _moving = (_targetSpeedStepsPerSec != 0.0f);
+    _moving = (fabs(_targetSpeedStepsPerSec) >= 1.0f);
+    enableMotor(_moving);
 }
 
 void Motor::setAcceleration(float stepsPerSec2)
 {
-    if (stepsPerSec2 < 0)
-        stepsPerSec2 = 0;
-    _acceleration = stepsPerSec2;
+    _acceleration = max(0.0f, stepsPerSec2);
 }
 
 void Motor::_setDirection(bool clockwise)
@@ -45,12 +46,21 @@ void Motor::_setDirection(bool clockwise)
 
 void Motor::_doKSteps()
 {
-    for (int i = 0; i < K; i++)
+    for (int i = 0; i < K; ++i)
     {
         digitalWrite(_stepPin, HIGH);
         delayMicroseconds(50);
         digitalWrite(_stepPin, LOW);
         delayMicroseconds(50);
+    }
+
+    if (_currentSpeedStepsPerSec >= 0)
+    {
+        _stepCount++;
+    }
+    else
+    {
+        _stepCount--;
     }
 }
 
@@ -61,42 +71,63 @@ void Motor::update()
 
     unsigned long now = micros();
     unsigned long dt = now - _lastStepTime;
-    float dtSec = dt / 1e6f;
+    float dtSec = dt * 1e-6f;
     float speedDiff = _acceleration * dtSec;
 
-    if (_currentSpeedStepsPerSec < _targetSpeedStepsPerSec)
+    if (fabs(_currentSpeedStepsPerSec - _targetSpeedStepsPerSec) < speedDiff)
+    {
+        _currentSpeedStepsPerSec = _targetSpeedStepsPerSec;
+    }
+    else if (_currentSpeedStepsPerSec < _targetSpeedStepsPerSec)
     {
         _currentSpeedStepsPerSec += speedDiff;
     }
-    if (_currentSpeedStepsPerSec > _targetSpeedStepsPerSec)
+    else if (_currentSpeedStepsPerSec > _targetSpeedStepsPerSec)
     {
         _currentSpeedStepsPerSec -= speedDiff;
-        if (_currentSpeedStepsPerSec < _targetSpeedStepsPerSec)
-        {
-            _currentSpeedStepsPerSec = _targetSpeedStepsPerSec;
-        }
     }
 
-    if (_currentSpeedStepsPerSec < 1.0f)
+    if (fabs(_currentSpeedStepsPerSec) < 1.0f)
     {
         _usDelayBetweenKSteps = 1e6f;
     }
     else
     {
-        _usDelayBetweenKSteps = (K * 1e6f) / _currentSpeedStepsPerSec;
+        _usDelayBetweenKSteps = (K * 1e6f) / fabs(_currentSpeedStepsPerSec);
     }
 
-    bool clockwise = (_currentSpeedStepsPerSec >= 0);
+    bool clockwise = (_targetSpeedStepsPerSec >= 0);
     _setDirection(clockwise);
 
     if (dt >= _usDelayBetweenKSteps)
     {
         _doKSteps();
-        _lastStepTime = micros();
+        _lastStepTime = now;
     }
 
-    if (_targetSpeedStepsPerSec < 1.0f && _currentSpeedStepsPerSec < 1.0f)
+    if (fabs(_targetSpeedStepsPerSec) < 1.0f && fabs(_currentSpeedStepsPerSec) < 1.0f)
     {
         _moving = false;
+        enableMotor(false);
     }
+}
+
+bool Motor::isMoving() const
+{
+    return _moving;
+}
+
+unsigned int Motor::getStepsPerRev() const
+{
+    return _stepsPerRevolution;
+}
+
+long Motor::getStepCount() const
+{
+    return _stepCount;
+}
+
+void Motor::resetStepCount()
+{
+    _stepCount = 0;
 }
