@@ -27,10 +27,8 @@ void Motor::enableMotor(bool enable)
 
 void Motor::setTargetSpeed(float stepsPerSec)
 {
-    if (stepsPerSec < 0)
-        stepsPerSec = 0;
     _targetSpeedStepsPerSec = stepsPerSec;
-    _moving = (_targetSpeedStepsPerSec > 0);
+    _moving = (_targetSpeedStepsPerSec != 0.0f);
 }
 
 void Motor::setAcceleration(float stepsPerSec2)

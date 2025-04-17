@@ -23,8 +23,8 @@ void Navigation::setLinearAngularSpeed(float linearMmS, float angularDegS)
     float leftStepsPerSec = (leftVel / circumference) * _leftMotor->getStepsPerRev();
     float rightStepsPerSec = (rightVel / circumference) * _rightMotor->getStepsPerRev();
 
-    _leftMotor->setTargetSpeed(fabs(leftStepsPerSec));
-    _rightMotor->setTargetSpeed(fabs(rightStepsPerSec));
+    _leftMotor->setTargetSpeed(leftStepsPerSec);
+    _rightMotor->setTargetSpeed(rightStepsPerSec);
 }
 
 void Navigation::update()

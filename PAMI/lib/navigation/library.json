@@ -1,8 +1,8 @@
 {
   "name": "navigation",
   "version": "1.0.0",
-  "description": "Library dedicated to robot movement, and maybe pathfinding algorithms",
-  "keywords": "position, a*, pathfinding, dijkstra",
+  "description": "Library dedicated to robot movement",
+  "keywords": "motors_driver, navigation",
   "frameworks": "*",
   "platforms": "*"
 }
