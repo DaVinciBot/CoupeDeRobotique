@@ -1,39 +1,33 @@
 #ifndef ROLLING_BASIS_H
 #define ROLLING_BASIS_H
 
-#include "navigation.h"
+#include "motors.h"
 
-class Rolling_Basis
+class RollingBasis
 {
-private:
-    float _posX;
-    float _posY;
-    float _theta;
-
-    long _leftEncoderCount;
-    long _rightEncoderCount;
-
-    float _pidKp;
-    float _pidKi;
-    float _pidKd;
-    float _pidIntegral;
-    float _pidPrevError;
-
 public:
-    Rolling_Basis();
-    ~Rolling_Basis();
+    RollingBasis(Motor *leftMotor, Motor *rightMotor,
+                 float wheelDiameterMm, float wheelBaseMm);
 
-    void init();
+    void setLinearAngularSpeed(float linearMmS, float angularDegS);
     void update();
 
-    void resetOdometry();
-    void updateOdometry();
+    bool isMoving() const;
+    void stop();
 
-    void setPIDConstants(float Kp, float Ki, float Kd);
-    float computePID(float setpoint, float measured);
+    void getPose(float &x, float &y, float &theta) const;
+    void resetPose();
 
-    // TODO: déplacer les paramètres physiques de la rolling_basis ici et non dans navigation
-    // QUESTION: PID ici ?
+private:
+    Motor *_leftMotor;
+    Motor *_rightMotor;
+    float _wheelDiameterMm;
+    float _wheelBaseMm;
+
+    long _previousLeftStepCount;
+    long _lastRightStepCount;
+
+    float _x, _y, _theta;
 };
 
 #endif

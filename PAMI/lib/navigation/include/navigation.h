@@ -1,27 +1,21 @@
 #ifndef NAVIGATION_H
 #define NAVIGATION_H
 
-#include "motors.h"
+#include "rolling_basis.h"
 
 class Navigation
 {
 public:
-    Navigation(Motor *leftMotor, Motor *rightMotor, float wheelDiameterMm, float wheelBaseMm);
-    ~Navigation() = default;
+    Navigation(RollingBasis *basis);
 
     void setLinearAngularSpeed(float linearMmS, float angularDegS);
     void update();
     bool isBusy() const;
     void stop();
+    void getPose(float &x, float &y, float &theta) const;
 
 private:
-    Motor *_leftMotor;
-    Motor *_rightMotor;
-    float _wheelDiameterMm;
-    float _wheelBaseMm;
-
-    float _linearSpeedMmS;
-    float _angularSpeedDegS;
+    RollingBasis *_basis;
 };
 
 #endif
