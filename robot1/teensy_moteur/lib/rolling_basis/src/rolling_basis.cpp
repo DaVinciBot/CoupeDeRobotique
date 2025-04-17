@@ -17,25 +17,24 @@ Point Rolling_Basis::get_current_position()
 
 // Constructor
 Rolling_Basis::Rolling_Basis(
-        unsigned short encoder_resolution, float center_distance, float wheel_diameter, 
-        const PID& linear_speed_pid, const PID& angular_speed_pid, const PID& linear_distance_pid, const PID& angular_distance_pid
-    )
-    : encoder_resolution(encoder_resolution), 
-      center_distance(center_distance), 
-      wheel_diameter(wheel_diameter), 
-      linear_speed_pid(linear_speed_pid), 
-      angular_speed_pid(angular_speed_pid), 
-      linear_distance_pid(linear_distance_pid), 
+    unsigned short encoder_resolution, float center_distance, float wheel_diameter,
+    const PID &linear_speed_pid, const PID &angular_speed_pid, const PID &linear_distance_pid, const PID &angular_distance_pid)
+    : encoder_resolution(encoder_resolution),
+      center_distance(center_distance),
+      wheel_diameter(wheel_diameter),
+      linear_speed_pid(linear_speed_pid),
+      angular_speed_pid(angular_speed_pid),
+      linear_distance_pid(linear_distance_pid),
       angular_distance_pid(angular_distance_pid)
-{}
-
+{
+}
 
 // Methods
 // Inits function
 void Rolling_Basis::define_right_motor(byte enca, byte encb, byte pwm, byte in2, byte in1, byte max_pwm)
 {
     this->right_motor = new Motor(in1, in2, pwm, enca, encb, this->wheel_unit_tick_cm(), max_pwm);
-} 
+}
 void Rolling_Basis::define_left_motor(byte enca, byte encb, byte pwm, byte in2, byte in1, byte max_pwm)
 {
     this->left_motor = new Motor(in1, in2, pwm, enca, encb, this->wheel_unit_tick_cm(), max_pwm);
@@ -55,10 +54,11 @@ void Rolling_Basis::init_rolling_basis(float x, float y, float theta)
 }
 
 // Odometrie function
-void Rolling_Basis::odometrie_handle(){
+void Rolling_Basis::odometrie_handle()
+{
     /* Save last motors positions */
     double last_right_distance = this->right_motor->distance;
-    double last_left_distance  = this->left_motor->distance;
+    double last_left_distance = this->left_motor->distance;
 
     /* Update motors positions by calling odometer_handle */
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
@@ -69,28 +69,38 @@ void Rolling_Basis::odometrie_handle(){
 
     /* Compute motors deplacement */
     double right_move = this->right_motor->distance - last_right_distance;
-    double left_move  = this->left_motor->distance - last_left_distance;
+    double left_move = this->left_motor->distance - last_left_distance;
 
     /* Determine the position of the robot */
     float movement_difference = right_move - left_move;
-    float movement_sum = (right_move + left_move) / 2;
+    float movement_sum = (right_move + left_move) / 2.0f;
 
     this->THETA = this->THETA - (movement_difference / this->center_distance);
     this->X = this->X + (cos(this->THETA) * movement_sum);
     this->Y = this->Y + (sin(this->THETA) * movement_sum);
+
+    /*FIXME:
+    float dTheta = movement_difference / this->center_distance;
+    this->X = this->X + (cos(this->THETA + dTheta / 2.0f) * movement_sum);
+    this->Y = this->Y + (sin(this->THETA + dTheta / 2.0f) * movement_sum);
+    this->THETA = this->THETA + dTheta;
+    this->THETA = fmod(this->THETA, 2 * PI);
+
+    cf https://www.ucg.ac.me/skladiste/blog_13268/objava_56689/fajlovi/Introduction%20to%20Autonomous%20Mobile%20Robots%20book.pdf chapitre 5.2 page 187
+    */
 }
 
 void Rolling_Basis::handle(
-        Point target_position, 
-        float target_linear_speed, float target_angular_speed
-    ) {
+    Point target_position,
+    float target_linear_speed, float target_angular_speed)
+{
     /* Speed part */
     // Compute real linear and angular speed
-    double Vm = (this->right_motor->speed + this->left_motor->speed) / 2; // Vitesse linéaire mesurée
+    double Vm = (this->right_motor->speed + this->left_motor->speed) / 2;                     // Vitesse linéaire mesurée
     double Wm = (this->right_motor->speed - this->left_motor->speed) / this->center_distance; // Vitesse angulaire mesurée
 
     // Save speeds as rolling basis properties
-    this->linear_speed  = (float)Vm;
+    this->linear_speed = (float)Vm;
     this->angular_speed = (float)Wm;
 
     // Compute linear and angular speed error (difference between target and real)
@@ -100,7 +110,6 @@ void Rolling_Basis::handle(
     // Compute PID output based on errors
     double linear_speed_correction = this->linear_speed_pid.compute(Ev);
     double angular_speed_correction = this->angular_speed_pid.compute(Ew);
-
 
     /* Position part */
     // We already have the current robot's position with odometrie (X, Y, THETA)
@@ -113,13 +122,12 @@ void Rolling_Basis::handle(
     double linear_distance_correction = this->linear_distance_pid.compute(Ed);
     double angular_distance_correction = this->angular_distance_pid.compute(Etheta);
 
-
     /* Combine both corrections */
     // Compute corrected linear and angular speed
     double Vc = target_linear_speed + linear_speed_correction + linear_distance_correction;
     double Wc = target_angular_speed + angular_speed_correction + angular_distance_correction;
 
-    // Compute right and left motor speed 
+    // Compute right and left motor speed
     double right_speed = (2 * Vc + Wc * this->center_distance) / 2;
     double left_speed = (2 * Vc - Wc * this->center_distance) / 2;
 
@@ -137,7 +145,7 @@ void Rolling_Basis::handle(
 
 //         if((delta_left > 3) || (delta_right > 3))
 //             this->last_position_update = millis();
-        
+
 //         this->running_check_right = this->right_motor->ticks;
 //         this->running_check_left  = this->left_motor->ticks;
 
