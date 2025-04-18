@@ -45,7 +45,7 @@
         "TODO": {
             "foreground": "cyan"
         },
-        "FIX": {
+        "FIXME": {
             "iconColour": "yellow",
             "foreground": "orange"
         },
@@ -82,7 +82,7 @@
         "[x]"
     ],
     "todo-tree.general.tagGroups": {
-        "FIX": [
+        "FIXME": [
             "FIXME",
             "FIXIT",
             "FIX",
