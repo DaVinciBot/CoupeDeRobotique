@@ -1,24 +1,36 @@
 # ====== Code Summary ======
-# This module defines the NavigatorTask class, which integrates a path planner, trajectory planner,
-# and obstacle avoidance module based on provided configuration parameters. It supports strategy-based
-# instantiation of specific planner implementations such as Delta and Basic for path planning,
-# and Sequential for trajectory planning. Avoidance logic is instantiated as well but currently lacks
-# extended strategy support.
+# This module defines the NavigatorTask class, which orchestrates path planning, trajectory planning,
+# and obstacle avoidance for autonomous navigation. Based on provided configuration parameters,
+# it dynamically instantiates components like planners (Delta, Basic, Sequential) and the stop-and-wait
+# avoidance strategy. It manages the navigation lifecycle through methods for planning, timeout handling,
+# completion detection, and reactive avoidance execution.
 
 # ====== Standard Library Imports ======
-from typing import cast
 import time
+from typing import cast
 
 # ====== Third-Party Library Imports ======
 # (None present)
 
 # ====== Internal Project Imports ======
+from arena import AllyZone, EnemyZone
+from geometry import OrientedPoint
+
+from navigation.trajectory_planner import (
+    BaseTrajectoryPlanner,
+    TrajectoryPlanCommand,
+    TrajectoryPlannerFactory,
+    SequentialTrajectoryPlanner,
+    SequentialTrajectoryPlannerParams,
+    TrajectoryPlannerStrategy,
+)
+
 from navigation.path_planner import (
-    # Strategy
-    PathPlanningStrategy,
-    # Base class
     BasePathPlanner,
-    # Derivative classes
+    BasePathPlannerPlanPathParams,
+    PathPlannerFactory,
+    PathPlannerPathPlanParamsFactory,
+    PathPlanningStrategy,
     DeltaPathPlanner,
     DeltaPathPlannerParams,
     DeltaPathPlannerPlanPathParams,
@@ -26,54 +38,40 @@ from navigation.path_planner import (
     BasicPathPlannerParams,
     BasicPathPlannerPlanPathParams,
 )
-from navigation.trajectory_planner import (
-    # Strategy
-    TrajectoryPlannerStrategy,
-    # Base class
-    BaseTrajectoryPlanner,
-    # Derivative classes
-    SequentialTrajectoryPlanner,
-    SequentialTrajectoryPlannerParams,
-)
+
 from navigation.avoidance import (
     BaseAvoidance,
+    AvoidanceFactory,
     AvoidanceStrategy,
     StopAndWaitAvoidance,
     StopAndWaitAvoidanceParams,
 )
 
 from navigation.navigator.task import NavigatorTaskParams
-
-from arena import AllyZone, EnemyZone
-from navigation.trajectory_planner import TrajectoryPlanCommand
 from navigation.navigator.task.states import NavigatorTaskState
-
-from navigation.path_planner import BasePathPlannerPlanPathParams
-from geometry import OrientedPoint
-
-
-from navigation.path_planner import PathPlannerFactory
-from navigation.trajectory_planner import TrajectoryPlannerFactory
-from navigation.avoidance import AvoidanceFactory
 
 
 class NavigatorTask:
     """
-    Manages the navigation task by composing path planning, trajectory planning, and avoidance modules.
+    A task responsible for executing autonomous navigation including path planning,
+    trajectory generation, and obstacle avoidance.
 
     Attributes:
-        params (NavigatorTaskParams): Parameters for configuring navigation modules.
-        path_planner (BasePathPlanner): Instantiated path planner strategy.
-        trajectory_planner (BaseTrajectoryPlanner): Instantiated trajectory planner strategy.
-        avoidance (BaseAvoidance): Instantiated obstacle avoidance component.
+        params (NavigatorTaskParams): Configuration parameters for the task.
+        path_planner (BasePathPlanner): The path planner instance.
+        trajectory_planner (BaseTrajectoryPlanner): The trajectory planner instance.
+        avoidance (BaseAvoidance): The obstacle avoidance handler.
+        current_trajectory_command (TrajectoryPlanCommand | None): Currently active trajectory command.
+        state (NavigatorTaskState): Current state of the task.
+        _start_time (float): Internal timestamp when the task started.
     """
 
     def __init__(self, params: NavigatorTaskParams):
         """
-        Initialize the NavigatorTask with the provided parameters.
+        Initialize the NavigatorTask with the required parameters.
 
         Args:
-            params (NavigatorTaskParams): Configuration parameters for planners and avoidance.
+            params (NavigatorTaskParams): Task configuration including planners and goals.
         """
         self.params: NavigatorTaskParams = params
 
@@ -91,106 +89,121 @@ class NavigatorTask:
             params.avoidance_params,
         )
 
-        self.current_trajectory_plan_command: TrajectoryPlanCommand | None = None
+        self.current_trajectory_command: TrajectoryPlanCommand | None = None
         self.state: NavigatorTaskState = NavigatorTaskState.NOT_PLANNED
-
         self._start_time: float = 0.0
 
-    def _create_path_planner_path_plan_params(
-        self,
-        current_position: OrientedPoint,
-        goal: OrientedPoint,
-    ) -> BasePathPlannerPlanPathParams:
-        if (
-            self.params.path_planner_params.path_finding_strategy
-            == PathPlanningStrategy.DELTA
-        ):
-            return DeltaPathPlannerPlanPathParams(
-                start=current_position,
-            )
-        if (
-            self.params.path_planner_params.path_finding_strategy
-            == PathPlanningStrategy.BASIC
-        ):
-            return BasicPathPlannerPlanPathParams(
-                start=current_position,
-                goal=goal,
-            )
+    def _get_elapsed_time(self) -> float:
+        """
+        Get the elapsed time since the task started.
 
-    def plan_task(self, params: BasePathPlannerPlanPathParams) -> None:
+        Returns:
+            float: Time in seconds since the task was initiated.
+        """
+        if self._start_time is None:
+            return 0.0
+        return time.time() - self._start_time
+
+    def _plan_task(self, ally_zone: AllyZone) -> None:
+        """
+        Plan the path and trajectory based on the current position and task goal.
+
+        Args:
+            ally_zone (AllyZone): Current position of the ally used for planning.
+        """
+        # Start the timer
         self._start_time = time.time()
-        path: list[OrientedPoint] = self.path_planner.plan_path(params)
+
+        # Generate path planning parameters from current state
+        plan_path_params: BasePathPlannerPlanPathParams = (
+            PathPlannerPathPlanParamsFactory.instantiate(
+                strategy=self.params.path_planner_params.path_finding_strategy,
+                current_position=ally_zone.point,
+                goal=self.params.goal,
+            )
+        )
+
+        # Plan the path using the appropriate strategy
+        path: list[OrientedPoint] = self.path_planner.plan_path(plan_path_params)
+
+        # Generate a trajectory based on the path
         self.trajectory_planner.plan_trajectory(path)
 
-    def _is_timeout(self) -> bool:
+        # Mark task as in progress
+        self.state = NavigatorTaskState.IN_PROGRESS
+
+    def _has_timed_out(self) -> bool:
         """
-        Check if the task has timed out.
+        Check if the task has exceeded its time limit.
 
         Returns:
-            bool: True if the task has timed out, False otherwise.
+            bool: True if the timeout has been exceeded.
         """
-        return (
-            self.params.timeout is not None  # Timeout is set
-            and self._start_time != 0.0
-            and time.time() - self._start_time > self.params.timeout
-        )
+        # Timeout is not set
+        if self.params.timeout is None or self._start_time is None:
+            return False
+        # Timeout is set
+        return self._get_elapsed_time() > self.params.timeout
 
-    def _handle_timeout(self) -> None:
+    def _abort(self) -> TrajectoryPlanCommand:
         """
-        Handle the timeout condition by stopping the current task.
+        Abort the task and issue a stop command.
+
+        Returns:
+            TrajectoryPlanCommand: Command to halt navigation.
         """
         self.state = NavigatorTaskState.ABORT
-        self.current_trajectory_plan_command = (
-            TrajectoryPlanCommand.create_stop_command(
-                current_position=self.params.goal,
-            )
+        self.current_trajectory_command = TrajectoryPlanCommand.create_stop_command(
+            current_position=self.params.goal
         )
+        return self.current_trajectory_command
 
-    def _is_task_finished(self) -> bool:
+    def _is_finished(self) -> bool:
         """
-        Check if the task is finished.
+        Check if the trajectory has been completed.
 
         Returns:
-            bool: True if the task is finished, False otherwise.
+            bool: True if task duration has exceeded total planned trajectory duration.
         """
-        return (
-            self._start_time != 0.0
-            and self.state != NavigatorTaskState.FINISHED
-            and time.time() - self._start_time
-            > self.trajectory_planner.get_total_duration()
-        )
+        # If the task is not started or already finished, return False
+        if self._start_time is None or self.state == NavigatorTaskState.FINISHED:
+            return False
+        return self._get_elapsed_time() > self.trajectory_planner.get_total_duration()
 
     def handle(
         self, ally_zone: AllyZone, enemy_zone: EnemyZone
     ) -> TrajectoryPlanCommand:
-        # Planned task before handle it if it is not already planned
+        """
+        Manage the task lifecycle: planning, timeout checks, completion, and avoidance.
+
+        Args:
+            ally_zone (AllyZone): Current position of the ally.
+            enemy_zone (EnemyZone): Position of enemy (for avoidance).
+
+        Returns:
+            TrajectoryPlanCommand: The current or updated trajectory plan command.
+        """
+        # 1. Plan if not already done
         if self.state == NavigatorTaskState.NOT_PLANNED:
-            self.plan_task(
-                self._create_path_planner_path_plan_params(
-                    current_position=ally_zone.point, goal=self.params.goal
-                )
-            )
-            self.state = NavigatorTaskState.IN_PROGRESS
+            self._plan_task(ally_zone)
 
-        # Check if task timeout is reached
-        if self._is_timeout():
-            self._handle_timeout()
-            return self.current_trajectory_plan_command
+        # 2. Timeout check
+        if self._has_timed_out():
+            return self._abort()
 
-        # Check if the task is finished
-        if self._is_task_finished():
+        # 3. Completion check
+        if self._is_finished():
             self.state = NavigatorTaskState.FINISHED
 
-        # Check avoidance
-        self.avoidance.handle(
-            current_navigator_task=self, ally_zone=ally_zone, enemy_zone=enemy_zone
+        # 4. Obstacle avoidance
+        avoidance_cmd = self.avoidance.handle(
+            current_navigator_task=self,
+            ally_zone=ally_zone,
+            enemy_zone=enemy_zone,
         )
-
-        # No need to check original trajectory plan because we are avoiding enemy
         if self.state == NavigatorTaskState.AVOIDING:
-            return self.current_trajectory_plan_command
+            return avoidance_cmd
 
-        # Check for classic trajectory execution
-        self.current_trajectory_plan_command = self.trajectory_planner.get_plan()
-
-        return self.current_trajectory_plan_command
+        # 5. Continue with planned trajectory
+        self.current_trajectory_command = self.trajectory_planner.get_plan()
+        return self.current_trajectory_command

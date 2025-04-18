@@ -23,5 +23,6 @@ from navigation.path_planner.astar_path_planner import (
     AStarPathPlannerPlanPathParams,
 )
 
-# Import Path Planner Factory
+# Import Path Planner Factory & Path Planner Plan Path Params Factory
 from navigation.path_planner.path_planner_factory import PathPlannerFactory
+from navigation.path_planner.path_planner_path_plan_params_factory import PathPlannerPathPlanParamsFactory
