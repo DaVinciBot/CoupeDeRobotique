@@ -36,5 +36,56 @@
         "xstring": "cpp",
         "xutility": "cpp",
         "type_traits": "cpp"
+    },
+    "todo-tree.highlights.defaultHighlight": {
+        "gutterIcon": true,
+        "type": "text-and-comment"
+    },
+    "todo-tree.highlights.customHighlight": {
+        "TODO": {
+            "foreground": "cyan"
+        },
+        "FIXME": {
+            "iconColour": "yellow",
+            "foreground": "orange"
+        },
+        "BUG": {
+            "foreground": "red",
+            "background": "white",
+            "textDecoration": "underline"
+        },
+        "QUESTION": {
+            "icon": "question",
+            "iconColour": "purple",
+            "foreground": "purple"
+        },
+    },
+    "todo-tree.highlights.backgroundColourScheme": [
+        "red",
+        "orange",
+        "yellow",
+        "green",
+        "blue",
+        "indigo",
+        "violet",
+        "cyan"
+    ],
+    "todo-tree.general.tags": [
+        "BUG",
+        "HACK",
+        "FIXME",
+        "FIXIT",
+        "FIX",
+        "TODO",
+        "QUESTION",
+        "[ ]",
+        "[x]"
+    ],
+    "todo-tree.general.tagGroups": {
+        "FIXME": [
+            "FIXME",
+            "FIXIT",
+            "FIX",
+        ]
     }
 }
