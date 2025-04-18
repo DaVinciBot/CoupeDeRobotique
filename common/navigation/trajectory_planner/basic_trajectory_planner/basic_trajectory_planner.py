@@ -31,7 +31,7 @@ from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_plann
 from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
 # Segments
-from navigation.trajectory_planner.sequential_trajectory_planner.segments import (
+from navigation.trajectory_planner.common import (
     SegmentMapper,
     SmoothSegment,
 )
