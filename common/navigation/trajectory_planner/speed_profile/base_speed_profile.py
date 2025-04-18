@@ -23,10 +23,12 @@ class BaseSpeedProfile(ABC):
         Args:
             max_speed (float): The maximum speed for the profile.
         """
-        self.max_speed: float = max_speed
+        self._max_speed: float = max_speed
 
     @abstractmethod
-    def get_speed(self, time_elapsed: float | None = None, distance: float | None = None) -> float:
+    def get_speed(
+        self, time_elapsed: float | None = None, distance: float | None = None
+    ) -> float:
         """
         Get current speed based on elapsed time or distance.
 

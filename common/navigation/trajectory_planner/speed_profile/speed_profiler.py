@@ -8,7 +8,9 @@
 from dataclasses import dataclass
 
 # ====== Internal Project Imports ======
-from navigation.trajectory_planner.speed_profile.base_speed_profile import BaseSpeedProfile
+from navigation.trajectory_planner.speed_profile.base_speed_profile import (
+    BaseSpeedProfile,
+)
 
 
 @dataclass
@@ -20,5 +22,6 @@ class SpeedProfiler:
         linear_speed_profile (BaseSpeedProfile): Speed profile used for linear motion.
         angular_speed_profile (BaseSpeedProfile): Speed profile used for rotational motion.
     """
+
     linear_speed_profile: BaseSpeedProfile
     angular_speed_profile: BaseSpeedProfile

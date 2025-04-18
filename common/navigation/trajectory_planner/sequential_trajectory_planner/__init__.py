@@ -1,4 +1,6 @@
-from navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner import \
-    SequentialTrajectoryPlanner
-from navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params import \
-    SequentialTrajectoryPlannerParams
+from navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner import (
+    SequentialTrajectoryPlanner,
+)
+from navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params import (
+    SequentialTrajectoryPlannerParams,
+)

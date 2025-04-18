@@ -7,190 +7,249 @@
 # (no cruising) depending on the distance.
 
 # ====== Standard Library Imports ======
-# (None)
+from math import sqrt
 
 # ====== Third-Party Library Imports ======
 # (None)
 
 # ====== Internal Project Imports ======
-from navigation.trajectory_planner.speed_profile.base_speed_profile import BaseSpeedProfile
+from navigation.trajectory_planner.speed_profile.base_speed_profile import (
+    BaseSpeedProfile,
+)
 
 
 # ====== Linear Ramped Speed Profile Class ======
 class LinearRampedSpeedProfile(BaseSpeedProfile):
     """
-    Speed profile with linear acceleration and deceleration, optionally constrained by total distance.
+    Speed profile with linear acceleration and deceleration.
 
-    Supports both trapezoidal and triangular profiles depending on whether the maximum speed can be reached
-    within the specified distance.
-
-    Attributes:
-        acceleration (float): Acceleration rate.
-        max_speed (float): Maximum speed.
-        deceleration (float): Duration used to compute deceleration rate or deceleration phase.
+    Supports both trapezoidal and triangular profiles depending on whether the maximum speed
+    can be reached within the specified distance.
     """
 
     def __init__(self, acceleration: float, max_speed: float, deceleration: float):
         """
-        Initialize the LinearRampedSpeedProfile instance.
+        Initialize the LinearRampedSpeedProfile instance with constant acceleration and deceleration rates.
 
         Args:
-            acceleration (float): Acceleration rate.
-            max_speed (float): Maximum speed.
-            deceleration (float): Duration of the deceleration phase.
+            acceleration (float): Maximum acceleration rate for the departure phase.
+            max_speed (float): Maximum (cruise) speed achievable in the mid phase.
+            deceleration (float): Maximum deceleration rate for the arrival phase.
         """
         super().__init__(max_speed=max_speed)
-        self.acceleration = acceleration
-        self.deceleration = deceleration
+        self._acceleration_rate = acceleration
+        self._deceleration_rate = deceleration
 
-        # --- Precomputed attributes for efficiency ---
-        self._t_acc = max_speed / acceleration  # Time to reach max speed
-        self._decel_rate = max_speed / deceleration  # Deceleration rate
-        self._d_acc_full = 0.5 * max_speed ** 2 / acceleration  # Distance covered during full acceleration
-        self._d_decel_full = 0.5 * max_speed * deceleration  # Distance covered during full deceleration
-        self._v_peak_denom = (1 / (2 * acceleration)) + (deceleration / (2 * max_speed))  # Denominator for v_peak calc
-
-    def get_speed(self, time_elapsed: float | None = None, distance: float | None = None) -> float:
+    def _compute_profile_params(
+        self,
+        distance: float | None = None,
+        departure_speed: float = 0.0,
+        arrival_speed: float = 0.0,
+    ) -> dict:
         """
-        Compute the speed at a given time, with optional distance constraint for trapezoidal or triangular profiles.
+        Compute the times and distances for each phase of the motion profile (accelerate, cruise, decelerate).
+
+        The returned dictionary includes:
+            - t_to_accelerate (float): time to accelerate from departure_speed to max_speed.
+            - t_to_decelerate (float): time to decelerate from max_speed to arrival_speed.
+            - t_cruise (float): cruising duration (may be 0 if triangular).
+            - t_total (float): total time.
+            - d_to_accelerate (float): distance covered during acceleration.
+            - d_to_decelerate (float): distance covered during deceleration.
+            - d_cruise (float): distance covered during cruise phase.
+            - v_cruise (float): cruise speed.
 
         Args:
-            time_elapsed (float | None): Time since motion start.
-            distance (float | None): Total planned distance (optional).
+            distance (float | None, optional): Total planned distance to cover. Defaults to None.
+            departure_speed (float, optional): Speed at the start of the motion. Defaults to 0.0.
+            arrival_speed (float, optional): Speed at the end of the motion. Defaults to 0.0.
 
         Returns:
-            float: Speed at the given time.
+            dict: A dictionary of profile parameters.
+        """
+        d_to_accelerate = (self._max_speed**2 - departure_speed**2) / (
+            2 * self._acceleration_rate
+        )
+        d_to_decelerate = (self._max_speed**2 - arrival_speed**2) / (
+            2 * self._deceleration_rate
+        )
+
+        if distance is None:
+            distance = d_to_accelerate + d_to_decelerate
+
+        t_to_accelerate = (
+            (self._max_speed - departure_speed) / self._acceleration_rate
+            if self._max_speed > departure_speed
+            else 0.0
+        )
+        t_to_decelerate = (
+            (self._max_speed - arrival_speed) / self._deceleration_rate
+            if self._max_speed > arrival_speed
+            else 0.0
+        )
+
+        d_needed_for_full = d_to_accelerate + d_to_decelerate
+        if distance >= d_needed_for_full:
+            d_cruise = distance - d_needed_for_full
+            t_cruise = d_cruise / self._max_speed
+            v_cruise = self._max_speed
+        else:
+            v_peak = sqrt(
+                2 * distance * self._acceleration_rate * self._deceleration_rate
+                + self._acceleration_rate * (arrival_speed**2)
+                + self._deceleration_rate * (departure_speed**2)
+            ) / sqrt(self._acceleration_rate + self._deceleration_rate)
+
+            t_to_accelerate = (
+                (v_peak - departure_speed) / self._acceleration_rate
+                if v_peak > departure_speed
+                else 0.0
+            )
+            t_to_decelerate = (
+                (v_peak - arrival_speed) / self._deceleration_rate
+                if v_peak > arrival_speed
+                else 0.0
+            )
+
+            d_to_accelerate = (v_peak**2 - departure_speed**2) / (
+                2 * self._acceleration_rate
+            )
+            d_to_decelerate = (v_peak**2 - arrival_speed**2) / (
+                2 * self._deceleration_rate
+            )
+
+            d_cruise = 0.0
+            t_cruise = 0.0
+            v_cruise = v_peak
+
+        t_total = t_to_accelerate + t_cruise + t_to_decelerate
+
+        return {
+            "t_to_accelerate": t_to_accelerate,
+            "t_to_decelerate": t_to_decelerate,
+            "t_cruise": t_cruise,
+            "t_total": t_total,
+            "d_to_accelerate": d_to_accelerate,
+            "d_to_decelerate": d_to_decelerate,
+            "d_cruise": d_cruise,
+            "v_cruise": v_cruise,
+        }
+
+    def get_speed(
+        self,
+        time_elapsed: float | None = None,
+        distance: float | None = None,
+        departure_speed: float = 0.0,
+        arrival_speed: float = 0.0,
+    ) -> float:
+        """
+        Compute the speed at a given time.
+
+        Args:
+            time_elapsed (float | None, optional): Time since motion start. Defaults to None.
+            distance (float | None, optional): Total planned distance to cover. Defaults to None.
+            departure_speed (float, optional): Speed at the start of the motion. Defaults to 0.0.
+            arrival_speed (float, optional): Speed at the end of the motion. Defaults to 0.0.
+
+        Returns:
+            float: The current speed at 'time_elapsed'.
         """
         if time_elapsed is None or time_elapsed < 0:
-            return 0.0
+            return departure_speed
 
-        # --- Mode without distance constraint ---
-        if distance is None:
-            if time_elapsed < self._t_acc:
-                return self.acceleration * time_elapsed  # Still accelerating
+        params = self._compute_profile_params(distance, departure_speed, arrival_speed)
+        t_to_accelerate = params["t_to_accelerate"]
+        t_cruise = params["t_cruise"]
+        t_total = params["t_total"]
+        v_cruise = params["v_cruise"]
 
-            t_total = self._t_acc + self.deceleration
-            if time_elapsed < t_total:
-                return max(self.max_speed - self._decel_rate * (time_elapsed - self._t_acc), 0.0)  # Decelerating
+        if time_elapsed >= t_total:
+            return arrival_speed
 
-            return 0.0  # Motion complete
+        if time_elapsed < t_to_accelerate:
+            return departure_speed + self._acceleration_rate * time_elapsed
 
-        # --- Mode with distance constraint ---
-        if distance >= self._d_acc_full + self._d_decel_full:
-            # Trapezoidal profile: has cruising phase
-            d_cruise = distance - (self._d_acc_full + self._d_decel_full)
-            t_cruise = d_cruise / self.max_speed
-            t_total = self._t_acc + t_cruise + self.deceleration
+        if time_elapsed < t_to_accelerate + t_cruise:
+            return v_cruise
 
-            if time_elapsed < self._t_acc:
-                return self.acceleration * time_elapsed  # Accelerating
-            elif time_elapsed < self._t_acc + t_cruise:
-                return self.max_speed  # Cruising
-            elif time_elapsed < t_total:
-                return max(self.max_speed - self._decel_rate * (time_elapsed - self._t_acc - t_cruise),
-                           0.0)  # Decelerating
-            else:
-                return 0.0  # Motion complete
+        return max(
+            arrival_speed + self._deceleration_rate * (t_total - time_elapsed), 0.0
+        )
 
-        else:
-            # Triangular profile: distance too short to reach max speed
-            v_peak = (distance / self._v_peak_denom) ** 0.5
-            t_peak = v_peak / self.acceleration
-            t_decel = v_peak / self._decel_rate
-            t_total = t_peak + t_decel
-
-            if time_elapsed < t_peak:
-                return self.acceleration * time_elapsed  # Accelerating to peak
-            elif time_elapsed < t_total:
-                return max(v_peak - self._decel_rate * (time_elapsed - t_peak), 0.0)  # Decelerating from peak
-            else:
-                return 0.0  # Motion complete
-
-    def get_distance(self, time_elapsed: float, distance: float | None = None) -> float:
+    def get_distance(
+        self,
+        time_elapsed: float,
+        distance: float | None = None,
+        departure_speed: float = 0.0,
+        arrival_speed: float = 0.0,
+    ) -> float:
         """
-        Compute the cumulative distance traveled from time 0 to the given time.
+        Compute the traveled distance at a given time.
 
         Args:
-            time_elapsed (float): Time instant.
-            distance (float | None): Optional total planned distance.
+            time_elapsed (float): Time since motion started.
+            distance (float | None, optional): Total planned distance. Defaults to None.
+            departure_speed (float, optional): Initial speed at the start. Defaults to 0.0.
+            arrival_speed (float, optional): Final speed at the end. Defaults to 0.0.
 
         Returns:
-            float: Cumulative distance traveled.
+            float: Cumulative distance traveled from t=0 to t='time_elapsed'.
         """
         if time_elapsed <= 0:
             return 0.0
 
-        # --- Unconstrained profile (distance is None) ---
-        if distance is None:
-            T_total = self._t_acc + self.deceleration
-            if time_elapsed < self._t_acc:
-                # Accelerating phase: d = 0.5 * a * t^2
-                return 0.5 * self.acceleration * time_elapsed ** 2
-            elif time_elapsed < T_total:
-                # Decelerating phase: add full accel distance and integrate deceleration
-                dt = time_elapsed - self._t_acc
-                return self._d_acc_full + dt * self.max_speed - 0.5 * self._decel_rate * dt ** 2
-            else:
-                # Motion complete
-                return self._d_acc_full + self._d_decel_full
+        params = self._compute_profile_params(distance, departure_speed, arrival_speed)
+        t_to_accelerate = params["t_to_accelerate"]
+        t_cruise = params["t_cruise"]
+        t_total = params["t_total"]
+        d_to_accelerate = params["d_to_accelerate"]
+        d_to_decelerate = params["d_to_decelerate"]
+        d_cruise = params["d_cruise"]
+        v_cruise = params["v_cruise"]
 
-        # --- Constrained profile ---
-        # Check if we have a trapezoidal profile (enough distance to cruise)
-        if distance >= self._d_acc_full + self._d_decel_full:
-            T_acc = self._t_acc
-            d_acc = self._d_acc_full
-            d_decel = self._d_decel_full
-            t_cruise = (distance - (d_acc + d_decel)) / self.max_speed
-            T_total = T_acc + t_cruise + self.deceleration
+        if time_elapsed >= t_total:
+            return min(distance, d_to_accelerate + d_cruise + d_to_decelerate)
 
-            if time_elapsed < T_acc:
-                # Accelerating phase
-                return 0.5 * self.acceleration * time_elapsed ** 2
-            elif time_elapsed < T_acc + t_cruise:
-                # Cruising phase: full accel distance + constant speed segment
-                return d_acc + self.max_speed * (time_elapsed - T_acc)
-            elif time_elapsed < T_total:
-                # Decelerating phase
-                dt = time_elapsed - (T_acc + t_cruise)
-                return d_acc + self.max_speed * t_cruise + dt * self.max_speed - 0.5 * self._decel_rate * dt ** 2
-            else:
-                # Completed trajectory
-                return distance
-        else:
-            # Triangular profile: cannot reach max_speed; uses v_peak instead
-            v_peak = (distance / self._v_peak_denom) ** 0.5
-            T_peak = v_peak / self.acceleration
-            T_decel = v_peak / self._decel_rate
-            T_total = T_peak + T_decel
+        if time_elapsed < t_to_accelerate:
+            return (
+                departure_speed * time_elapsed
+                + 0.5 * self._acceleration_rate * time_elapsed**2
+            )
 
-            if time_elapsed < T_peak:
-                # Accelerating phase
-                return 0.5 * self.acceleration * time_elapsed ** 2
-            elif time_elapsed < T_total:
-                dt = time_elapsed - T_peak
-                d_acc_peak = 0.5 * self.acceleration * T_peak ** 2
-                return d_acc_peak + dt * v_peak - 0.5 * self._decel_rate * dt ** 2
-            else:
-                return distance
+        t2 = time_elapsed - t_to_accelerate
+        if t2 < t_cruise:
+            return d_to_accelerate + v_cruise * t2
 
-    def get_total_duration(self, distance: float) -> float:
+        t3 = t2 - t_cruise
+        return (
+            d_to_accelerate
+            + d_cruise
+            + arrival_speed * t3
+            + self._deceleration_rate
+            * (
+                t_total * t3
+                - ((time_elapsed**2 - (t_to_accelerate + t_cruise) ** 2) / 2)
+            )
+        )
+
+    def get_total_duration(
+        self,
+        distance: float | None = None,
+        departure_speed: float = 0.0,
+        arrival_speed: float = 0.0,
+    ) -> float:
         """
-        Compute total time to complete the given distance.
+        Compute the total time required to complete the motion over a given distance,
+        from 'departure_speed' to 'arrival_speed', respecting the maximum speed and
+        the acceleration/deceleration rates.
 
         Args:
-            distance (float): Total distance to travel.
+            distance (float | None, optional): Total planned distance to cover. Defaults to None.
+            departure_speed (float, optional): Speed at the start of the motion. Defaults to 0.0.
+            arrival_speed (float, optional): Speed at the end of the motion. Defaults to 0.0.
 
         Returns:
-            float: Total time duration.
+            float: Total time (seconds) to finish the trajectory. Returns 0.0 if distance <= 0.
         """
-        # Trapezoidal profile: distance is sufficient to reach maximum speed
-        if distance >= self._d_acc_full + self._d_decel_full:
-            d_cruise = distance - (self._d_acc_full + self._d_decel_full)
-            t_cruise = d_cruise / self.max_speed
-            return self._t_acc + t_cruise + self.deceleration
-        else:
-            # Triangular profile: distance is too short to reach maximum speed
-            v_peak = (distance / self._v_peak_denom) ** 0.5
-            t_peak = v_peak / self.acceleration
-            t_decel = v_peak / self._decel_rate
-            return t_peak + t_decel
+        params = self._compute_profile_params(distance, departure_speed, arrival_speed)
+        return params["t_total"]

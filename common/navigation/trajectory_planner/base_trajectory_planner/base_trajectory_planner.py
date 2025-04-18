@@ -35,7 +35,13 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
     Subclasses must implement specific planning logic and expose a method to retrieve
     the current trajectory command and total duration.
     """
-    def __init__(self, params: ParamsType, speed_profiler: SpeedProfiler, logger: Logger | None = None) -> None:
+
+    def __init__(
+        self,
+        params: ParamsType,
+        speed_profiler: SpeedProfiler,
+        logger: Logger | None = None,
+    ) -> None:
         """
         Initialize the base trajectory planner.
 
@@ -45,15 +51,21 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
             logger (Logger | None): Optional logger instance.
         """
         if logger is None:
-            logger = Logger(identifier=self.__class__.__name__, follow_logger_manager_rules=True)
+            logger = Logger(
+                identifier=self.__class__.__name__, follow_logger_manager_rules=True
+            )
 
         self.logger: Logger = logger
         self.params: ParamsType = params
         self.speed_profiler: SpeedProfiler = speed_profiler
 
         # Attributes dedicated to the trajectory planning process
-        self._start_trajectory_elapsed_time_checkpoint: float = 0.0  # Accumulated time from previous sessions
-        self._start_trajectory_timestamp: float = 0.0  # Time when current planning started
+        self._start_trajectory_elapsed_time_checkpoint: float = (
+            0.0  # Accumulated time from previous sessions
+        )
+        self._start_trajectory_timestamp: float = (
+            0.0  # Time when current planning started
+        )
 
     # ====== Chrono Helpers ======
     def _get_trajectory_time_elapsed(self) -> float:
@@ -67,8 +79,9 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
             return 0.0
 
         return (
-                time.time() - self._start_trajectory_timestamp
-                + self._start_trajectory_elapsed_time_checkpoint
+            time.time()
+            - self._start_trajectory_timestamp
+            + self._start_trajectory_elapsed_time_checkpoint
         )
 
     # ====== Internal Utilities ======
@@ -83,6 +96,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
         Returns:
             callable: Wrapped method.
         """
+
         @functools.wraps(method)
         def wrapper(self, *args, **kwargs):
             # Start planning if not already started
@@ -106,7 +120,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
         Stop the planning session and accumulate elapsed time.
         """
         self._start_trajectory_elapsed_time_checkpoint += (
-                time.time() - self._start_trajectory_timestamp
+            time.time() - self._start_trajectory_timestamp
         )
 
     def is_planning_started(self) -> bool:
@@ -120,13 +134,10 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
     # ====== Abstract Methods ======
     @abstractmethod
-    def plan_trajectory(self, path: list[OrientedPoint]) -> None:
-        ...
+    def plan_trajectory(self, path: list[OrientedPoint]) -> None: ...
 
     @abstractmethod
-    def get_plan(self) -> TrajectoryPlanCommand:
-        ...
+    def get_plan(self) -> TrajectoryPlanCommand: ...
 
     @abstractmethod
-    def get_total_duration(self) -> float:
-        ...
+    def get_total_duration(self) -> float: ...
