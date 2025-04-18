@@ -87,14 +87,17 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         ):
             # Obstacle is no longer detected, replan from current position
             last_params = task.path_planner.last_plan_path_params
-            last_params.start = position
+            last_params.start = position  # Update start position to current location
             new_path = task.path_planner.plan_path(last_params)
             task.trajectory_planner.plan_trajectory(new_path)
-
+            task.trajectory_planner.start_planning()  # Reset internal clock
+            print("Restat")
             self._reset_timer()
             self.state = AvoidanceState.IDLE
             task.state = NavigatorTaskState.IN_PROGRESS
-            return task.current_trajectory_command
+            return (
+                task.current_trajectory_command
+            )  # Not important, this will be ignored because the avoidance is over
 
         # 4. Continue with original trajectory
         # No changes, continue executing the existing trajectory command

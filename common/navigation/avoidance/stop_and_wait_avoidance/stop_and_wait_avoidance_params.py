@@ -7,5 +7,4 @@ class StopAndWaitAvoidanceParams(BaseAvoidanceParams):
 
     def __init__(self, acs_distance: float, timeout: float):
 
-        super().__init__(AvoidanceStrategy.STOP_AND_WAIT, acs_distance)
-        self.timeout: float = timeout
+        super().__init__(AvoidanceStrategy.STOP_AND_WAIT, acs_distance, timeout)

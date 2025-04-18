@@ -1,0 +1,155 @@
+# ====== Code Summary ======
+# This script defines a function to test and visualize the execution of a navigation system.
+# It repeatedly simulates the navigator handling the current task within a defined arena.
+# At each timestep, it logs the robot's position, speed, task states, and avoidance states.
+# After the task completes, it visualizes the collected data in several plots to aid in debugging
+# and performance analysis of the navigator's behavior.
+
+# ====== Standard Library Imports ======
+import time
+
+# ====== Third-Party Library Imports ======
+import numpy as np
+import matplotlib.pyplot as plt
+
+# ====== Internal Project Imports ======
+from geometry import Point
+from navigation.navigator import Navigator
+from arena import BaseArena
+
+
+def test_navigator_execution(
+    navigator: Navigator, arena: BaseArena, time_step: float = 0.1
+):
+    """
+    Simulate the navigator until its current task is finished, logging the navigation data
+    and plotting the key metrics over time.
+
+    Args:
+        navigator (Navigator): The navigator object controlling the robot's movement.
+        arena (BaseArena): The arena where navigation is simulated.
+        time_step (float, optional): The delay between iterations in seconds. Defaults to 0.1.
+
+    This function records at each timestep:
+        - Time elapsed
+        - X and Y positions
+        - Linear and angular speeds
+        - Trajectory planner's elapsed time (if task is active)
+        - Task state enumeration
+        - Avoidance state enumeration
+
+    It then visualizes this data using line plots and categorical state plots.
+    """
+    # 1) Prepare storage for logging metrics
+    times = []
+    x_positions = []
+    y_positions = []
+    linear_speeds = []
+    angular_speeds = []
+    traj_times = []
+    task_states = []
+    avoidance_states = []
+
+    start_t = time.time()
+
+    # 2) Loop until current task finishes
+    while navigator.current_task is not None:
+        cmd = navigator.handle(
+            ally_zone=arena.ally_zone,
+            enemy_zone=arena.enemy_zone,
+        )
+        arena.update(
+            ally_position=cmd.position,
+            lidar_scan_polars=np.array([]),  # Empty lidar scan for this test
+            optimized_update=False,
+            _enemy_position=Point(
+                arena.enemy_zone.point.x - 10, arena.enemy_zone.point.y
+            ),  # Enemy is positioned 10 units left
+        )
+
+        t = time.time() - start_t
+        times.append(t)
+        x_positions.append(cmd.position.x)
+        y_positions.append(cmd.position.y)
+        linear_speeds.append(cmd.linear_speed)
+        angular_speeds.append(cmd.angular_speed)
+
+        if navigator.current_task is not None:
+            traj_times.append(
+                navigator.current_task.trajectory_planner._get_trajectory_time_elapsed()
+            )
+            task_states.append(navigator.current_task.state.name)
+            avoidance_states.append(navigator.current_task.avoidance.state.name)
+        else:
+            traj_times.append(-1.0)
+            task_states.append("None")
+            avoidance_states.append("None")
+
+        # Debug print for each step
+        print(
+            f"[{t:.2f}s] x={cmd.position.x:.2f}, y={cmd.position.y:.2f}, "
+            f"v_lin={cmd.linear_speed:.2f}, v_ang={cmd.angular_speed:.2f}, "
+            f"traj_t={traj_times[-1]:.2f}, state={task_states[-1]}, "
+            f"avoid={avoidance_states[-1]}"
+        )
+
+        time.sleep(time_step)
+
+    # 3) Plot numeric time-series metrics
+    fig, axs = plt.subplots(4, 1, figsize=(10, 16), sharex=True)
+
+    # 3.1 Plot X and Y positions over time
+    axs[0].plot(times, x_positions, label="X pos")
+    axs[0].plot(times, y_positions, label="Y pos")
+    axs[0].set_ylabel("Position")
+    axs[0].set_title("X & Y over Time")
+    axs[0].legend()
+    axs[0].grid(True)
+
+    # 3.2 Plot linear speed over time
+    axs[1].plot(times, linear_speeds, label="Linear speed")
+    axs[1].set_ylabel("v_lin")
+    axs[1].set_title("Linear Speed")
+    axs[1].grid(True)
+
+    # 3.3 Plot angular speed over time
+    axs[2].plot(times, angular_speeds, label="Angular speed")
+    axs[2].set_ylabel("v_ang")
+    axs[2].set_title("Angular Speed")
+    axs[2].grid(True)
+
+    # 3.4 Plot trajectory planner time elapsed
+    axs[3].plot(times, traj_times, label="Planned traj time")
+    axs[3].set_xlabel("Time (s)")
+    axs[3].set_ylabel("t_traj")
+    axs[3].set_title("Trajectory Planner Time Elapsed")
+    axs[3].grid(True)
+
+    plt.tight_layout()
+    plt.show()
+
+    # 4) Plot enums (task/avoidance states) as categorical step plots
+    def plot_enum(times, values, title):
+        """
+        Plot categorical enum values as a step function over time.
+
+        Args:
+            times (list[float]): Time points.
+            values (list[str]): Enum value names at each time.
+            title (str): Plot title.
+        """
+        unique = list(dict.fromkeys(values))  # Preserve order
+        code = {v: i for i, v in enumerate(unique)}  # Map to integers
+        codes = [code[v] for v in values]
+
+        fig, ax = plt.subplots(figsize=(10, 3))
+        ax.step(times, codes, where="post")
+        ax.set_yticks(range(len(unique)))
+        ax.set_yticklabels(unique)
+        ax.set_xlabel("Time (s)")
+        ax.set_title(title)
+        ax.grid(True)
+        plt.show()
+
+    plot_enum(times, task_states, "Task State over Time")
+    plot_enum(times, avoidance_states, "Avoidance State over Time")
