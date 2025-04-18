@@ -1,9 +1,9 @@
 # ====== Code Summary ======
 # This script defines a function to test and visualize the execution of a navigation system.
-# It repeatedly simulates the navigator handling the current task within a defined arena.
-# At each timestep, it logs the robot's position, speed, task states, and avoidance states.
-# After the task completes, it visualizes the collected data in several plots to aid in debugging
-# and performance analysis of the navigator's behavior.
+# It simulates a navigator executing its task in an arena, logging the robot's trajectory,
+# speed, task states, avoidance states, and the distance to the enemy over time.
+# After the task is completed, the script generates multiple plots showing the robot’s
+# spatial path, temporal evolution of motion parameters, and categorical state changes.
 
 # ====== Standard Library Imports ======
 import time
@@ -37,8 +37,9 @@ def test_navigator_execution(
         - Trajectory planner's elapsed time (if task is active)
         - Task state enumeration
         - Avoidance state enumeration
+        - Distance to the enemy
 
-    It then visualizes this data using line plots and categorical state plots.
+    It then visualizes this data using line plots, a 2D trajectory plot, and categorical state plots.
     """
     # 1) Prepare storage for logging metrics
     times = []
@@ -49,6 +50,7 @@ def test_navigator_execution(
     traj_times = []
     task_states = []
     avoidance_states = []
+    distances_to_enemy = []
 
     start_t = time.time()
 
@@ -67,12 +69,16 @@ def test_navigator_execution(
             ),  # Enemy is positioned 10 units left
         )
 
+        # Update distance to enemy
+        distance = arena.ally_zone.point.distance(arena.enemy_zone.point)
+
         t = time.time() - start_t
         times.append(t)
         x_positions.append(cmd.position.x)
         y_positions.append(cmd.position.y)
         linear_speeds.append(cmd.linear_speed)
         angular_speeds.append(cmd.angular_speed)
+        distances_to_enemy.append(distance)
 
         if navigator.current_task is not None:
             traj_times.append(
@@ -90,13 +96,13 @@ def test_navigator_execution(
             f"[{t:.2f}s] x={cmd.position.x:.2f}, y={cmd.position.y:.2f}, "
             f"v_lin={cmd.linear_speed:.2f}, v_ang={cmd.angular_speed:.2f}, "
             f"traj_t={traj_times[-1]:.2f}, state={task_states[-1]}, "
-            f"avoid={avoidance_states[-1]}"
+            f"avoid={avoidance_states[-1]}, dist_enemy={distance:.2f}"
         )
 
         time.sleep(time_step)
 
     # 3) Plot numeric time-series metrics
-    fig, axs = plt.subplots(4, 1, figsize=(10, 16), sharex=True)
+    fig, axs = plt.subplots(5, 1, figsize=(10, 20), sharex=True)
 
     # 3.1 Plot X and Y positions over time
     axs[0].plot(times, x_positions, label="X pos")
@@ -120,15 +126,32 @@ def test_navigator_execution(
 
     # 3.4 Plot trajectory planner time elapsed
     axs[3].plot(times, traj_times, label="Planned traj time")
-    axs[3].set_xlabel("Time (s)")
     axs[3].set_ylabel("t_traj")
     axs[3].set_title("Trajectory Planner Time Elapsed")
     axs[3].grid(True)
 
+    # 3.5 Plot distance to enemy over time
+    axs[4].plot(times, distances_to_enemy, label="Distance to Enemy")
+    axs[4].set_xlabel("Time (s)")
+    axs[4].set_ylabel("Distance")
+    axs[4].set_title("Distance to Enemy over Time")
+    axs[4].grid(True)
+
     plt.tight_layout()
     plt.show()
 
-    # 4) Plot enums (task/avoidance states) as categorical step plots
+    # 4) Plot 2D spatial path (trajectory in space)
+    fig, ax = plt.subplots(figsize=(8, 8))
+    ax.plot(x_positions, y_positions, marker="o", markersize=3, label="Path")
+    ax.set_xlabel("X Position")
+    ax.set_ylabel("Y Position")
+    ax.set_title("2D Trajectory of Robot")
+    ax.grid(True)
+    ax.legend()
+    plt.axis("equal")
+    plt.show()
+
+    # 5) Plot enums (task/avoidance states) as categorical step plots
     def plot_enum(times, values, title):
         """
         Plot categorical enum values as a step function over time.
