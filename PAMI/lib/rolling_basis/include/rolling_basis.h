@@ -2,32 +2,66 @@
 #define ROLLING_BASIS_H
 
 #include "motors.h"
+#include "pid.h"
+#include <chrono>
 
 class RollingBasis
 {
 public:
     RollingBasis(Motor *leftMotor, Motor *rightMotor,
-                 float wheelDiameterMm, float wheelBaseMm);
+                 float wheelDiameterMm,
+                 float wheelBaseMm,
+                 const PID &linearSpeedPid,
+                 const PID &angularSpeedPid,
+                 const PID &linearDistancePid,
+                 const PID &angularDistancePid);
 
-    void setLinearAngularSpeed(float linearMmS, float angularDegS);
+    void setLinearAngularSpeed(float linearSpeedMmPerS, float angularSpeedRadPerS);
+
+    void setTargetPosition(Point targetPosition);
+
     void update();
 
     bool isMoving() const;
     void stop();
 
-    void getPose(float &x, float &y, float &theta) const;
+    Point getPose() const;
+    float getMeasuredLinearSpeedMmPerS() const;
+    float getMeasuredAngularSpeedRadPerS() const;
+
     void resetPose();
 
 private:
+    void _computeOdometry(float dt);
+    void _applyControl(float dt);
+
     Motor *_leftMotor;
     Motor *_rightMotor;
     float _wheelDiameterMm;
     float _wheelBaseMm;
 
     long _previousLeftStepCount;
-    long _lastRightStepCount;
+    long _previousRightStepCount;
 
-    float _x, _y, _theta;
+    float _x;     // mm
+    float _y;     // mm
+    float _theta; // rad
+
+    PID _linearSpeedPid;
+    PID _angularSpeedPid;
+    PID _linearDistancePid;
+    PID _angularDistancePid;
+
+    float _targetLinearSpeedMmPerS;
+    float _targetAngularSpeedRadPerS;
+    Point _targetPosition;
+
+    float _measuredLinearSpeedMmPerS;
+    float _measuredAngularSpeedRadPerS;
+
+    std::chrono::steady_clock::time_point _lastUpdateTime;
 };
 
 #endif
+
+// TODO: add POINT STRUCTURE

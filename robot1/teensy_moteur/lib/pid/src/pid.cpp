@@ -1,7 +1,6 @@
 #include <pid.h>
 #include <Arduino.h>
 
-
 PID::PID(float kp, float ki, float kd)
 {
     this->kp = kp;

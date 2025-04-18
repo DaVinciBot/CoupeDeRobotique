@@ -17,7 +17,8 @@
 			"string_view": "cpp",
 			"initializer_list": "cpp",
 			"utility": "cpp",
-			"cmath": "cpp"
+			"cmath": "cpp",
+			"limits": "cpp"
 		}
 	},
 	"extensions": {

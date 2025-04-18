@@ -2,43 +2,71 @@
 #include <math.h>
 
 RollingBasis::RollingBasis(Motor *leftMotor, Motor *rightMotor,
-                           float wheelDiameterMm, float wheelBaseMm)
+                           float wheelDiameterMm,
+                           float wheelBaseMm,
+                           const PID &linearSpeedPid,
+                           const PID &angularSpeedPid,
+                           const PID &linearDistancePid,
+                           const PID &angularDistancePid)
     : _leftMotor(leftMotor), _rightMotor(rightMotor),
       _wheelDiameterMm(wheelDiameterMm), _wheelBaseMm(wheelBaseMm),
-      _previousLeftStepCount(0), _lastRightStepCount(0),
-      _x(0), _y(0), _theta(0)
+      _previousLeftStepCount(0), _previousRightStepCount(0),
+      _x(0), _y(0), _theta(0),
+      _linearSpeedPid(linearSpeedPid),
+      _angularSpeedPid(angularSpeedPid),
+      _linearDistancePid(linearDistancePid),
+      _angularDistancePid(angularDistancePid),
+      _targetLinearSpeedMmPerS(0), _targetAngularSpeedRadPerS(0),
+      _targetPosition(Point(0, 0, 0)),
+      _measuredLinearSpeedMmPerS(0), _measuredAngularSpeedRadPerS(0),
+      _lastUpdateTime(std::chrono::steady_clock::now())
 {
     _leftMotor->resetStepCount();
     _rightMotor->resetStepCount();
 }
 
-void RollingBasis::setLinearAngularSpeed(float linearMmS, float angularDegS)
+void RollingBasis::setLinearAngularSpeed(float linearSpeed, float angularSpeed)
 {
-    float angularRadS = angularDegS * (M_PI / 180.0f);
-    float halfBase = _wheelBaseMm / 2.0f;
-    float leftVel = linearMmS - angularRadS * halfBase;
-    float rightVel = linearMmS + angularRadS * halfBase;
-    float circumference = M_PI * _wheelDiameterMm;
+    _targetLinearSpeedMmPerS = linearSpeed;
+    _targetAngularSpeedRadPerS = angularSpeed;
 
-    float leftStepsPerSec = (leftVel / circumference) * _leftMotor->getStepsPerRev();
-    float rightStepsPerSec = (rightVel / circumference) * _rightMotor->getStepsPerRev();
+    _linearSpeedPid.reset();
+    _angularSpeedPid.reset();
+}
 
-    _leftMotor->setTargetSpeed(leftStepsPerSec);
-    _rightMotor->setTargetSpeed(rightStepsPerSec);
+void RollingBasis::setTargetPosition(Point targetPosition)
+{
+    _targetPosition = targetPosition;
+
+    _linearDistancePid.reset();
+    _angularDistancePid.reset();
 }
 
 void RollingBasis::update()
 {
+    auto now = std::chrono::steady_clock::now();
+    float dt = std::chrono::duration<float>(now - _lastUpdateTime).count();
+    if (dt <= 0)
+        return;
+
+    _computeOdometry(dt);
+    _applyControl(dt);
+
     _leftMotor->update();
     _rightMotor->update();
 
+    _lastUpdateTime = now;
+}
+
+void RollingBasis::_computeOdometry(float dt)
+{
     long leftSteps = _leftMotor->getStepCount();
     long rightSteps = _rightMotor->getStepCount();
 
     long dL = leftSteps - _previousLeftStepCount;
-    long dR = rightSteps - _lastRightStepCount;
+    long dR = rightSteps - _previousRightStepCount;
     _previousLeftStepCount = leftSteps;
-    _lastRightStepCount = rightSteps;
+    _previousRightStepCount = rightSteps;
 
     float mmPerStep = (M_PI * _wheelDiameterMm) / _leftMotor->getStepsPerRev();
     float dLeft = dL * mmPerStep;
@@ -47,111 +75,86 @@ void RollingBasis::update()
     float dCenter = (dLeft + dRight) / 2.0f;
     float dTheta = (dRight - dLeft) / _wheelBaseMm;
 
-    float dx = dCenter * cos(_theta + dTheta / 2.0f);
-    float dy = dCenter * sin(_theta + dTheta / 2.0f);
-    _x += dx;
-    _y += dy;
-    _theta += dTheta;
+    _x += dCenter * cosf(_theta + dTheta / 2.0f);
+    _y += dCenter * sinf(_theta + dTheta / 2.0f);
+    _theta = fmodf(_theta + dTheta, 2 * M_PI);
+
+    _measuredLinearSpeedMmPerS = dCenter / dt;
+    _measuredAngularSpeedRadPerS = dTheta / dt;
 }
 
-bool RollingBasis::isMoving() const
+void RollingBasis::_applyControl(float dt)
 {
-    return _leftMotor->isMoving() || _rightMotor->isMoving();
+    _linearSpeedPid->setSampleTime(dt);
+    _angularSpeedPid->setSampleTime(dt);
+    _linearDistancePid.setSampleTime(dt);
+    _angularDistancePid.setSampleTime(dt);
+
+    // _linearSpeedPid.setOutputLimits(-_targetLinearSpeedMmPerS, _targetLinearSpeedMmPerS);
+    // _angularSpeedPid.setOutputLimits(-_targetAngularSpeedRadPerS, _targetAngularSpeedRadPerS);
+    // if (_useDistanceControl)
+    // {
+    //     _linearDistancePid.setOutputLimits(-_targetLinearDistance, _targetLinearDistance);
+    //     _angularDistancePid.setOutputLimits(-_targetAngularDistance, _targetAngularDistance);
+    // }
+
+    float linearSpeedError = _targetLinearSpeedMmPerS - _measuredLinearSpeedMmPerS;
+    float angularSpeedError = _targetAngularSpeedRadPerS - _measuredAngularSpeedRadPerS;
+    float linearDistanceError = sqrt(pow(target_position.x - _x, 2) + pow(target_position.y - _y, 2));
+    float angularDistanceError = target_position.theta - fmodf(_theta, 2 * M_PI);
+
+    float linearSpeedCorrection = _linearSpeedPid.compute(linearSpeedError);
+    float angularSpeedCorrection = _angularSpeedPid.compute(angularSpeedError);
+    float linearDistanceCorrection = _linearDistancePid.compute(linearDistanceError);
+    float angularDistanceCorrection = _angularDistancePid.compute(angularDistanceError);
+
+    float linearCmd = _targetLinearSpeedMmPerS + linearSpeedCorrection;
+    float angularCmd = _targetAngularSpeedRadPerS + angularSpeedCorrection;
+
+    float halfBase = _wheelBaseMm / 2.0f;
+    float leftSpeedMmPerSec = linearCmd - angularCmd * halfBase;
+    float rightSpeedMmPerSec = linearCmd + angularCmd * halfBase;
+
+    float circumference = M_PI * _wheelDiameterMm;
+    float leftSpeedStepsPerSec = (leftSpeedMmPerSec / circumference) * _leftMotor->getStepsPerRev();
+    float rightSpeedStepsPerSec = (rightSpeedMmPerSec / circumference) * _rightMotor->getStepsPerRev();
+
+    _leftMotor->setTargetSpeed(leftSpeedStepsPerSec);
+    _rightMotor->setTargetSpeed(rightSpeedStepsPerSec);
 }
+
+bool RollingBasis::isMoving() const { return _leftMotor->isMoving() || _rightMotor->isMoving(); }
 
 void RollingBasis::stop()
 {
+    _targetLinearSpeedMmPerS = 0;
+    _targetAngularSpeedRadPerS = 0;
+    _targetPosition = Point(0, 0, 0);
+
+    _linearSpeedPid.reset();
+    _angularSpeedPid.reset();
+    _linearDistancePid->reset();
+    _angularDistancePid->reset();
+
     _leftMotor->setTargetSpeed(0);
     _rightMotor->setTargetSpeed(0);
 }
 
-void RollingBasis::getPose(float &x, float &y, float &theta) const
+Point RollingBasis::getPose() const
 {
-    x = _x;
-    y = _y;
-    theta = _theta;
+    return Point(_x, _y, _theta);
 }
+float RollingBasis::getMeasuredLinearSpeedMmPerS() const { return _measuredLinearSpeedMmPerS; }
+float RollingBasis::getMeasuredAngularSpeedRadPerS() const { return _measuredAngularSpeedRadPerS; }
 
 void RollingBasis::resetPose()
 {
     _x = _y = _theta = 0;
+    _previousLeftStepCount = _previousRightStepCount = 0;
     _leftMotor->resetStepCount();
     _rightMotor->resetStepCount();
-    _previousLeftStepCount = _lastRightStepCount = 0;
+    _linearSpeedPid->reset();
+    _angularSpeedPid->reset();
+    _linearDistancePid->reset();
+    _angularDistancePid->reset();
 }
-
-// TODO: checker travail flo :
-
-/*
-Odometrie function
-void Rolling_Basis::odometrie_handle(){
-    // Save last motors positions
-double last_right_distance = this->right_motor->distance;
-double last_left_distance = this->left_motor->distance;
-
-// Update motors positions by calling odometer_handle
-ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-{
-    this->right_motor->odometer_handle();
-    this->left_motor->odometer_handle();
-}
-
-// Compute motors deplacement
-double right_move = this->right_motor->distance - last_right_distance;
-double left_move = this->left_motor->distance - last_left_distance;
-
-// Determine the position of the robot
-float movement_difference = right_move - left_move;
-float movement_sum = (right_move + left_move) / 2;
-
-this->THETA = this->THETA - (movement_difference / this->center_distance);
-this->X = this->X + (cos(this->THETA) * movement_sum);
-this->Y = this->Y + (sin(this->THETA) * movement_sum);
-}
-
-void Rolling_Basis::handle(
-    Point target_position,
-    float target_linear_speed, float target_angular_speed)
-{
-    // Speed part
-    // Compute real linear and angular speed
-    double Vm = (this->right_motor->speed + this->left_motor->speed) / 2;                     // Vitesse linéaire mesurée
-    double Wm = (this->right_motor->speed - this->left_motor->speed) / this->center_distance; // Vitesse angulaire mesurée
-
-    // Save speeds as rolling basis properties
-    this->linear_speed = (float)Vm;
-    this->angular_speed = (float)Wm;
-
-    // Compute linear and angular speed error (difference between target and real)
-    double Ev = target_linear_speed - Vm;
-    double Ew = target_angular_speed - Wm;
-
-    // Compute PID output based on errors
-    double linear_speed_correction = this->linear_speed_pid.compute(Ev);
-    double angular_speed_correction = this->angular_speed_pid.compute(Ew);
-
-    // Position part
-    // We already have the current robot's position with odometrie (X, Y, THETA)
-
-    // Compute distance and orientation error (difference between target and real)
-    double Ed = sqrt(pow(target_position.x - this->X, 2) + pow(target_position.y - this->Y, 2));
-    double Etheta = target_position.theta - fmod(this->THETA, PI); // fmod to keep the angle between -PI and PI, TODO: a tester !!
-
-    // Compute PID output based on errors
-    double linear_distance_correction = this->linear_distance_pid.compute(Ed);
-    double angular_distance_correction = this->angular_distance_pid.compute(Etheta);
-
-    // Combine both corrections
-    // Compute corrected linear and angular speed
-    double Vc = target_linear_speed + linear_speed_correction + linear_distance_correction;
-    double Wc = target_angular_speed + angular_speed_correction + angular_distance_correction;
-
-    // Compute right and left motor speed
-    double right_speed = (2 * Vc + Wc * this->center_distance) / 2;
-    double left_speed = (2 * Vc - Wc * this->center_distance) / 2;
-
-    // Apply commands to motors
-    this->right_motor->set_motor(right_speed);
-    this->left_motor->set_motor(left_speed);
-}
-*/

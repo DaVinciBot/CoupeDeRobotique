@@ -116,7 +116,7 @@ void Rolling_Basis::handle(
 
     // Compute distance and orientation error (difference between target and real)
     double Ed = sqrt(pow(target_position.x - this->X, 2) + pow(target_position.y - this->Y, 2));
-    double Etheta = target_position.theta - fmod(this->THETA, PI); // fmod to keep the angle between -PI and PI, TODO: a tester !!
+    double Etheta = target_position.theta - fmod(this->THETA, PI); // TODO: fmod to keep the angle between -PI and PI, a tester !!
 
     // Compute PID output based on errors
     double linear_distance_correction = this->linear_distance_pid.compute(Ed);
