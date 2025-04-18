@@ -6,6 +6,7 @@
 
 # ====== Standard Library Imports ======
 import bisect
+from typing import List
 
 # ====== Internal Project Imports ======
 from geometry import OrientedPoint
@@ -21,7 +22,12 @@ class BaseSegment:
         duration (float): Duration of the segment.
     """
 
-    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float):
+    def __init__(
+        self,
+        start_position: OrientedPoint,
+        end_position: OrientedPoint,
+        duration: float,
+    ):
         self.start_position: OrientedPoint = start_position
         self.end_position: OrientedPoint = end_position
         self.duration: float = duration
@@ -35,7 +41,13 @@ class StraightSegment(BaseSegment):
         distance (float): Distance to be covered during the segment.
     """
 
-    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float, distance: float):
+    def __init__(
+        self,
+        start_position: OrientedPoint,
+        end_position: OrientedPoint,
+        duration: float,
+        distance: float,
+    ):
         super().__init__(start_position, end_position, duration)
         self.distance: float = distance
 
@@ -49,8 +61,14 @@ class RotationSegment(BaseSegment):
         sign (int): Direction of rotation (+1 for CCW, -1 for CW).
     """
 
-    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float, rotation: float,
-                 sign: int):
+    def __init__(
+        self,
+        start_position: OrientedPoint,
+        end_position: OrientedPoint,
+        duration: float,
+        rotation: float,
+        sign: int,
+    ):
         super().__init__(start_position, end_position, duration)
         self.rotation: float = rotation
         self.sign: int = sign
@@ -61,8 +79,41 @@ class StopSegment(BaseSegment):
     Segment representing a stop or pause in the trajectory.
     """
 
-    def __init__(self, start_position: OrientedPoint, end_position: OrientedPoint, duration: float):
+    def __init__(
+        self,
+        start_position: OrientedPoint,
+        end_position: OrientedPoint,
+        duration: float,
+    ):
         super().__init__(start_position, end_position, duration)
+
+
+class SmoothSegment(BaseSegment):
+    """
+    A segment representing a curved trajectory.
+    """
+
+    def __init__(
+        self,
+        start_position: OrientedPoint,
+        end_position: OrientedPoint,
+        duration: float,
+        sampled_points: List[OrientedPoint],
+        total_distance: float,
+    ):
+        """
+        Create a segment representing a curved trajectory.
+
+            Args:
+                start_position (OrientedPoint): Start pose of the segment.
+                end_position (OrientedPoint): End pose of the segment.
+                duration (float): Duration of the segment.
+                sampled_points (List[OrientedPoint]): List of points sampled along the trajectory.
+                total_distance (float): Total distance of the trajectory.
+        """
+        super().__init__(start_position, end_position, duration)
+        self.sampled_points = sampled_points
+        self.total_distance = total_distance
 
 
 class SegmentMapper:

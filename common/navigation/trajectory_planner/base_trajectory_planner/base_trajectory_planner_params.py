@@ -16,4 +16,6 @@ class BaseTrajectoryPlannerParams:
         Initialize the base planner parameters.
         Currently, this base class has no attributes or logic.
         """
-        self.trajectory_planning_strategy: TrajectoryPlannerStrategy = trajectory_planning_strategy
+        self.trajectory_planning_strategy: TrajectoryPlannerStrategy = (
+            trajectory_planning_strategy
+        )

@@ -4,7 +4,9 @@
 # calculations based on a uniform speed.
 
 # ====== Internal Project Imports ======
-from navigation.trajectory_planner.speed_profile.base_speed_profile import BaseSpeedProfile
+from navigation.trajectory_planner.speed_profile.base_speed_profile import (
+    BaseSpeedProfile,
+)
 
 
 class BasicSpeedProfile(BaseSpeedProfile):
@@ -23,7 +25,9 @@ class BasicSpeedProfile(BaseSpeedProfile):
         """
         super().__init__(max_speed=speed)
 
-    def get_speed(self, time_elapsed: float | None = None, distance: float | None = None) -> float:
+    def get_speed(
+        self, time_elapsed: float | None = None, distance: float | None = None
+    ) -> float:
         """
         Get constant speed at any given time or distance.
 
@@ -34,7 +38,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
         Returns:
             float: Constant speed.
         """
-        return self.max_speed
+        return self._max_speed
 
     def get_distance(self, time_elapsed: float, distance: float | None = None) -> float:
         """
@@ -47,7 +51,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
         Returns:
             float: Distance = speed * time_elapsed
         """
-        return self.max_speed * time_elapsed
+        return self._max_speed * time_elapsed
 
     def get_total_duration(self, distance: float) -> float:
         """
@@ -59,4 +63,4 @@ class BasicSpeedProfile(BaseSpeedProfile):
         Returns:
             float: Duration = distance / speed
         """
-        return distance / self.max_speed
+        return distance / self._max_speed

@@ -26,12 +26,15 @@ class TrajectoryPlanCommand:
         linear_speed (float): Linear velocity component.
         angular_speed (float): Angular velocity component.
     """
+
     position: OrientedPoint
     linear_speed: float
     angular_speed: float
 
     @classmethod
-    def create_stop_command(cls, current_position: OrientedPoint) -> "TrajectoryPlanCommand":
+    def create_stop_command(
+        cls, current_position: OrientedPoint
+    ) -> "TrajectoryPlanCommand":
         """
         Create a stop command that holds the robot at the given position with zero speed.
 
