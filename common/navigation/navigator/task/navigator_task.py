@@ -8,6 +8,7 @@
 # ====== Standard Library Imports ======
 from typing import cast
 import time
+
 # ====== Third-Party Library Imports ======
 # (None present)
 
@@ -15,25 +16,31 @@ import time
 from navigation.path_planner import (
     # Strategy
     PathPlanningStrategy,
-
     # Base class
     BasePathPlanner,
-
     # Derivative classes
-    DeltaPathPlanner, DeltaPathPlannerParams, DeltaPathPlannerPlanPathParams,
-    BasicPathPlanner, BasicPathPlannerParams, BasicPathPlannerPlanPathParams
+    DeltaPathPlanner,
+    DeltaPathPlannerParams,
+    DeltaPathPlannerPlanPathParams,
+    BasicPathPlanner,
+    BasicPathPlannerParams,
+    BasicPathPlannerPlanPathParams,
 )
 from navigation.trajectory_planner import (
     # Strategy
     TrajectoryPlannerStrategy,
-
     # Base class
     BaseTrajectoryPlanner,
-
     # Derivative classes
-    SequentialTrajectoryPlanner, SequentialTrajectoryPlannerParams,
+    SequentialTrajectoryPlanner,
+    SequentialTrajectoryPlannerParams,
 )
-from navigation.avoidance import BaseAvoidance, AvoidanceStrategy, StopAndWaitAvoidance, StopAndWaitAvoidanceParams
+from navigation.avoidance import (
+    BaseAvoidance,
+    AvoidanceStrategy,
+    StopAndWaitAvoidance,
+    StopAndWaitAvoidanceParams,
+)
 
 from navigation.navigator.task import NavigatorTaskParams
 
@@ -67,7 +74,9 @@ class NavigatorTask:
 
         # Instantiate the components
         self.path_planner: BasePathPlanner = self._instantiate_path_planner()
-        self.trajectory_planner: BaseTrajectoryPlanner = self._instantiate_trajectory_planner()
+        self.trajectory_planner: BaseTrajectoryPlanner = (
+            self._instantiate_trajectory_planner()
+        )
         self.avoidance: BaseAvoidance = self._instantiate_avoidance()
 
         self.current_trajectory_plan_command: TrajectoryPlanCommand | None = None
@@ -83,13 +92,19 @@ class NavigatorTask:
             BasePathPlanner: The appropriate path planner instance.
         """
         # Delta strategy
-        if self.params.path_planner_params.path_finding_strategy == PathPlanningStrategy.DELTA:
+        if (
+            self.params.path_planner_params.path_finding_strategy
+            == PathPlanningStrategy.DELTA
+        ):
             return DeltaPathPlanner(
                 cast(DeltaPathPlannerParams, self.params.path_planner_params)
             )
 
         # Basic strategy
-        if self.params.path_planner_params.path_finding_strategy == PathPlanningStrategy.BASIC:
+        if (
+            self.params.path_planner_params.path_finding_strategy
+            == PathPlanningStrategy.BASIC
+        ):
             return BasicPathPlanner(
                 cast(BasicPathPlannerParams, self.params.path_planner_params)
             )
@@ -111,10 +126,16 @@ class NavigatorTask:
             BaseTrajectoryPlanner: The appropriate trajectory planner instance.
         """
         # Sequential strategy
-        if self.params.trajectory_planner_params.trajectory_planning_strategy == TrajectoryPlannerStrategy.SEQUENTIAL:
+        if (
+            self.params.trajectory_planner_params.trajectory_planning_strategy
+            == TrajectoryPlannerStrategy.SEQUENTIAL
+        ):
             return SequentialTrajectoryPlanner(
-                cast(SequentialTrajectoryPlannerParams, self.params.trajectory_planner_params),
-                self.params.speed_profiler
+                cast(
+                    SequentialTrajectoryPlannerParams,
+                    self.params.trajectory_planner_params,
+                ),
+                self.params.speed_profiler,
             )
 
         raise ValueError("Unsupported trajectory planning strategy provided.")
@@ -127,21 +148,30 @@ class NavigatorTask:
             BaseAvoidance: The avoidance instance.
         """
         # Stop and wait strategy
-        if self.params.avoidance_params.avoidance_strategy == AvoidanceStrategy.STOP_AND_WAIT:
+        if (
+            self.params.avoidance_params.avoidance_strategy
+            == AvoidanceStrategy.STOP_AND_WAIT
+        ):
             return StopAndWaitAvoidance(
                 cast(StopAndWaitAvoidanceParams, self.params.avoidance_params)
             )
 
     def _create_path_planner_path_plan_params(
-            self,
-            current_position: OrientedPoint,
-            goal: OrientedPoint,
+        self,
+        current_position: OrientedPoint,
+        goal: OrientedPoint,
     ) -> BasePathPlannerPlanPathParams:
-        if self.params.path_planner_params.path_finding_strategy == PathPlanningStrategy.DELTA:
+        if (
+            self.params.path_planner_params.path_finding_strategy
+            == PathPlanningStrategy.DELTA
+        ):
             return DeltaPathPlannerPlanPathParams(
                 start=current_position,
             )
-        if self.params.path_planner_params.path_finding_strategy == PathPlanningStrategy.BASIC:
+        if (
+            self.params.path_planner_params.path_finding_strategy
+            == PathPlanningStrategy.BASIC
+        ):
             return BasicPathPlannerPlanPathParams(
                 start=current_position,
                 goal=goal,
@@ -152,43 +182,70 @@ class NavigatorTask:
         path: list[OrientedPoint] = self.path_planner.plan_path(params)
         self.trajectory_planner.plan_trajectory(path)
 
-    def handle(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> TrajectoryPlanCommand:
+    def _is_timeout(self) -> bool:
+        """
+        Check if the task has timed out.
+
+        Returns:
+            bool: True if the task has timed out, False otherwise.
+        """
+        return (
+            self.params.timeout is not None  # Timeout is set
+            and self._start_time != 0.0
+            and time.time() - self._start_time > self.params.timeout
+        )
+
+    def _handle_timeout(self) -> None:
+        """
+        Handle the timeout condition by stopping the current task.
+        """
+        self.state = NavigatorTaskState.ABORT
+        self.current_trajectory_plan_command = (
+            TrajectoryPlanCommand.create_stop_command(
+                current_position=self.params.goal,
+            )
+        )
+
+    def _is_task_finished(self) -> bool:
+        """
+        Check if the task is finished.
+
+        Returns:
+            bool: True if the task is finished, False otherwise.
+        """
+        return (
+            self._start_time != 0.0
+            and self.state != NavigatorTaskState.FINISHED
+            and time.time() - self._start_time
+            > self.trajectory_planner.get_total_duration()
+        )
+
+    def handle(
+        self, ally_zone: AllyZone, enemy_zone: EnemyZone
+    ) -> TrajectoryPlanCommand:
         # Planned task before handle it if it is not already planned
         if self.state == NavigatorTaskState.NOT_PLANNED:
             self.plan_task(
                 self._create_path_planner_path_plan_params(
-                    current_position=ally_zone.point,
-                    goal=self.params.goal
+                    current_position=ally_zone.point, goal=self.params.goal
                 )
             )
             self.state = NavigatorTaskState.IN_PROGRESS
 
         # Check if task timeout is reached
-        if (
-                self.params.timeout is not None and  # Timeout is set
-                self._start_time != 0.0 and
-                time.time() - self._start_time > self.params.timeout
-        ):
-            self.state = NavigatorTaskState.ABORT
-            self.current_trajectory_plan_command = TrajectoryPlanCommand.create_stop_command(
-                current_position=ally_zone.point,
-            )
+        if self._is_timeout():
+            self._handle_timeout()
             return self.current_trajectory_plan_command
 
         # Check if the task is finished
-        if (
-                self._start_time != 0.0 and
-                self.state != NavigatorTaskState.FINISHED and
-                time.time() - self._start_time > self.trajectory_planner.get_total_duration()
-        ):
+        if self._is_task_finished():
             self.state = NavigatorTaskState.FINISHED
 
         # Check avoidance
         self.avoidance.handle(
-            current_navigator_task=self,
-            ally_zone=ally_zone,
-            enemy_zone=enemy_zone
+            current_navigator_task=self, ally_zone=ally_zone, enemy_zone=enemy_zone
         )
+
         # No need to check original trajectory plan because we are avoiding enemy
         if self.state == NavigatorTaskState.AVOIDING:
             return self.current_trajectory_plan_command

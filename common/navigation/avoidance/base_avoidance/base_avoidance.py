@@ -30,10 +30,8 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         self._original_task: 'NavigatorTask' = None
 
     def _acs(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
-        if ally_zone.point.distance(enemy_zone.point) <= self.params.acs_distance:
-            self.state = AvoidanceState.AVOIDING
-            return True
-        return False
+        return ally_zone.point.distance(enemy_zone.point) <= self.params.acs_distance
+
 
     def _store_original_task(self, current_navigator_task: 'NavigatorTask') -> None:
         if self._original_task is None and self.state == AvoidanceState.IDLE:
@@ -42,7 +40,6 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
 
     @staticmethod
     def _ensure_original_task_storage(method: callable) -> callable:
-
         @functools.wraps(method)
         def wrapper(self, current_navigator_task: 'NavigatorTask', *args, **kwargs):
             self._store_original_task(current_navigator_task)

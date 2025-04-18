@@ -1,4 +1,7 @@
-from navigation.navigator.signals import NavigatorSignalsDispatcher, NavigatorSignalsEnum
+from navigation.navigator.signals import (
+    NavigatorSignalsDispatcher,
+    NavigatorSignalsEnum,
+)
 from navigation.navigator.task import NavigatorTaskState
 from loggerplusplus import Logger
 from collections import deque
@@ -35,7 +38,9 @@ class Navigator:
             self.current_task = None
             return False
 
-    def add_navigation_task(self, navigator_task_params: NavigatorTaskParams, skip_queue: bool = False) -> None:
+    def add_navigation_task(
+        self, navigator_task_params: NavigatorTaskParams, skip_queue: bool = False
+    ) -> None:
         if skip_queue:
             self.abort(affect_all_tasks=False)
             self._fetch_next_task()
@@ -48,19 +53,25 @@ class Navigator:
             self._fetch_next_task()
             self.logger.info(f"Executing task: {self.current_task}")
 
-    def handle(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> TrajectoryPlanCommand:
+    def handle(
+        self, ally_zone: AllyZone, enemy_zone: EnemyZone
+    ) -> TrajectoryPlanCommand:
         # besoins: ally_position_zone, enemy_position_zone, grid, dynamic_grid (comment déclancher sa mis à jour que quand l'ennemi est proche)
 
         # No current task -> do nothing (current task can't be none if there are tasks in the queue)
         if self.current_task is None:
-            return TrajectoryPlanCommand.create_stop_command(current_position=ally_zone.point)
+            return TrajectoryPlanCommand.create_stop_command(
+                current_position=ally_zone.point
+            )
 
-        task_cmd: TrajectoryPlanCommand = self.current_task.handle(ally_zone, enemy_zone)
+        task_cmd: TrajectoryPlanCommand = self.current_task.handle(
+            ally_zone, enemy_zone
+        )
 
         # If avoidance is active => check avoidance state and return avoidance command
         if (
-                self.current_task.state == NavigatorTaskState.AVOIDING and
-                self.current_task.avoidance.state == AvoidanceState.ABORTED
+            self.current_task.state == NavigatorTaskState.AVOIDING
+            and self.current_task.avoidance.state == AvoidanceState.ABORTED
         ):
             self.abort()
             self._fetch_next_task()
