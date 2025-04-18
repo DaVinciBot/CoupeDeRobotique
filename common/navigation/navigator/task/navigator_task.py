@@ -7,10 +7,6 @@
 
 # ====== Standard Library Imports ======
 import time
-from typing import cast
-
-# ====== Third-Party Library Imports ======
-# (None present)
 
 # ====== Internal Project Imports ======
 from arena import AllyZone, EnemyZone
@@ -20,9 +16,6 @@ from navigation.trajectory_planner import (
     BaseTrajectoryPlanner,
     TrajectoryPlanCommand,
     TrajectoryPlannerFactory,
-    SequentialTrajectoryPlanner,
-    SequentialTrajectoryPlannerParams,
-    TrajectoryPlannerStrategy,
 )
 
 from navigation.path_planner import (
@@ -30,21 +23,11 @@ from navigation.path_planner import (
     BasePathPlannerPlanPathParams,
     PathPlannerFactory,
     PathPlannerPathPlanParamsFactory,
-    PathPlanningStrategy,
-    DeltaPathPlanner,
-    DeltaPathPlannerParams,
-    DeltaPathPlannerPlanPathParams,
-    BasicPathPlanner,
-    BasicPathPlannerParams,
-    BasicPathPlannerPlanPathParams,
 )
 
 from navigation.avoidance import (
     BaseAvoidance,
     AvoidanceFactory,
-    AvoidanceStrategy,
-    StopAndWaitAvoidance,
-    StopAndWaitAvoidanceParams,
 )
 
 from navigation.navigator.task import NavigatorTaskParams

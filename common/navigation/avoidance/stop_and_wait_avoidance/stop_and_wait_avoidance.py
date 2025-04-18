@@ -91,7 +91,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             new_path = task.path_planner.plan_path(last_params)
             task.trajectory_planner.plan_trajectory(new_path)
             task.trajectory_planner.start_planning()  # Reset internal clock
-            print("Restat")
+
             self._reset_timer()
             self.state = AvoidanceState.IDLE
             task.state = NavigatorTaskState.IN_PROGRESS
