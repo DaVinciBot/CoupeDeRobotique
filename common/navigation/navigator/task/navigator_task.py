@@ -52,6 +52,11 @@ from navigation.path_planner import BasePathPlannerPlanPathParams
 from geometry import OrientedPoint
 
 
+from navigation.path_planner import PathPlannerFactory
+from navigation.trajectory_planner import TrajectoryPlannerFactory
+from navigation.avoidance import AvoidanceFactory
+
+
 class NavigatorTask:
     """
     Manages the navigation task by composing path planning, trajectory planning, and avoidance modules.
@@ -73,88 +78,23 @@ class NavigatorTask:
         self.params: NavigatorTaskParams = params
 
         # Instantiate the components
-        self.path_planner: BasePathPlanner = self._instantiate_path_planner()
-        self.trajectory_planner: BaseTrajectoryPlanner = (
-            self._instantiate_trajectory_planner()
+        self.path_planner: BasePathPlanner = PathPlannerFactory.instantiate(
+            params.path_planner_params,
         )
-        self.avoidance: BaseAvoidance = self._instantiate_avoidance()
+        self.trajectory_planner: BaseTrajectoryPlanner = (
+            TrajectoryPlannerFactory.instantiate(
+                params.trajectory_planner_params,
+                params.speed_profiler,
+            )
+        )
+        self.avoidance: BaseAvoidance = AvoidanceFactory.instantiate(
+            params.avoidance_params,
+        )
 
         self.current_trajectory_plan_command: TrajectoryPlanCommand | None = None
         self.state: NavigatorTaskState = NavigatorTaskState.NOT_PLANNED
 
         self._start_time: float = 0.0
-
-    def _instantiate_path_planner(self) -> BasePathPlanner:
-        """
-        Instantiate the path planner based on the configured strategy.
-
-        Returns:
-            BasePathPlanner: The appropriate path planner instance.
-        """
-        # Delta strategy
-        if (
-            self.params.path_planner_params.path_finding_strategy
-            == PathPlanningStrategy.DELTA
-        ):
-            return DeltaPathPlanner(
-                cast(DeltaPathPlannerParams, self.params.path_planner_params)
-            )
-
-        # Basic strategy
-        if (
-            self.params.path_planner_params.path_finding_strategy
-            == PathPlanningStrategy.BASIC
-        ):
-            return BasicPathPlanner(
-                cast(BasicPathPlannerParams, self.params.path_planner_params)
-            )
-
-        # ASTAR strategy
-        # TODO: to implement
-        # if self.params.path_planner.path_finding_strategy == PathPlanningStrategy.ASTAR:
-        #     return AStarPathPlanner(
-        #         cast(AStarPathPlannerParams, self.params.path_planner)
-        #     )
-
-        raise ValueError("Unsupported path planning strategy provided.")
-
-    def _instantiate_trajectory_planner(self) -> BaseTrajectoryPlanner:
-        """
-        Instantiate the trajectory planner based on the configured strategy.
-
-        Returns:
-            BaseTrajectoryPlanner: The appropriate trajectory planner instance.
-        """
-        # Sequential strategy
-        if (
-            self.params.trajectory_planner_params.trajectory_planning_strategy
-            == TrajectoryPlannerStrategy.SEQUENTIAL
-        ):
-            return SequentialTrajectoryPlanner(
-                cast(
-                    SequentialTrajectoryPlannerParams,
-                    self.params.trajectory_planner_params,
-                ),
-                self.params.speed_profiler,
-            )
-
-        raise ValueError("Unsupported trajectory planning strategy provided.")
-
-    def _instantiate_avoidance(self) -> BaseAvoidance:
-        """
-        Instantiate the obstacle avoidance component.
-
-        Returns:
-            BaseAvoidance: The avoidance instance.
-        """
-        # Stop and wait strategy
-        if (
-            self.params.avoidance_params.avoidance_strategy
-            == AvoidanceStrategy.STOP_AND_WAIT
-        ):
-            return StopAndWaitAvoidance(
-                cast(StopAndWaitAvoidanceParams, self.params.avoidance_params)
-            )
 
     def _create_path_planner_path_plan_params(
         self,

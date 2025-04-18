@@ -10,22 +10,22 @@ from geometry import OrientedPoint
 class NavigatorTaskParams:
 
     def __init__(
-            self,
-            #
-            goal: OrientedPoint,
-            timeout: float,
-
-            # Parameters
-            path_planner_params: BasePathPlannerParams,
-            trajectory_planner_params: BaseTrajectoryPlannerParams,
-            speed_profiler: SpeedProfiler,
-            avoidance_params: BaseAvoidanceParams
+        self,
+        # Attributes
+        goal: OrientedPoint,
+        timeout: float,
+        # Parameters
+        path_planner_params: BasePathPlannerParams,
+        trajectory_planner_params: BaseTrajectoryPlannerParams,
+        speed_profiler: SpeedProfiler,
+        avoidance_params: BaseAvoidanceParams,
     ):
         self.path_planner_params: BasePathPlannerParams = path_planner_params
-        self.trajectory_planner_params: BaseTrajectoryPlannerParams = trajectory_planner_params
+        self.trajectory_planner_params: BaseTrajectoryPlannerParams = (
+            trajectory_planner_params
+        )
         self.speed_profiler: SpeedProfiler = speed_profiler
         self.avoidance_params: BaseAvoidanceParams = avoidance_params
 
         self.goal: OrientedPoint = goal
         self.timeout: float = timeout
-
