@@ -106,8 +106,8 @@ class MainBrain(Brain):
 
         # Trigger movement manager to go to the new destination when the params change
         if self.go_to_params != movement_manager.params:
-            print(self.go_to_params)
-            print(movement_manager.params)
+            rolling_basis.logger.info(self.go_to_params)
+            rolling_basis.logger.info(movement_manager.params)
             movement_manager.compute_go_to(
                 current_linear_speed=rolling_basis.linear_speed,
                 current_angular_speed=rolling_basis.angular_speed,
