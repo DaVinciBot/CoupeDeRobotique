@@ -1,6 +1,6 @@
 from enum import Enum, auto
 
-
+# TODO: garder que le state utile
 class NavigatorState(Enum):
     IDLE = auto()  # Aucun déplacement en cours
     PLANNING = auto()  # Génération du chemin + trajectoire
@@ -11,3 +11,4 @@ class NavigatorState(Enum):
     STOPPED = auto()  # Mouvement interrompu manuellement
     REPLANNING = auto()  # Recalcul du chemin/trajectoire
     ERROR = auto()  # Échec ou événement bloquant (obstacle, timeout...)
+

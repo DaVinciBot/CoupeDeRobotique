@@ -12,8 +12,8 @@ class NavigatorTaskParams:
     def __init__(
         self,
         # Attributes
-        goal: OrientedPoint,
-        timeout: float,
+        goal: OrientedPoint | None,
+        timeout: float | None,
         # Parameters
         path_planner_params: BasePathPlannerParams,
         trajectory_planner_params: BaseTrajectoryPlannerParams,
@@ -27,5 +27,5 @@ class NavigatorTaskParams:
         self.speed_profiler: SpeedProfiler = speed_profiler
         self.avoidance_params: BaseAvoidanceParams = avoidance_params
 
-        self.goal: OrientedPoint = goal
+        self.goal: OrientedPoint | None = goal
         self.timeout: float = timeout

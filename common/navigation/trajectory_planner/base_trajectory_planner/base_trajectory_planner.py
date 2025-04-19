@@ -50,12 +50,9 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
             speed_profiler (SpeedProfiler): Speed profile manager.
             logger (Logger | None): Optional logger instance.
         """
-        if logger is None:
-            logger = Logger(
-                identifier=self.__class__.__name__, follow_logger_manager_rules=True
-            )
-
-        self.logger: Logger = logger
+        self.logger: Logger = logger or Logger(
+            identifier=self.__class__.__name__, follow_logger_manager_rules=True
+        )
         self.params: ParamsType = params
         self.speed_profiler: SpeedProfiler = speed_profiler
 

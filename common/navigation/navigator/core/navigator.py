@@ -18,7 +18,7 @@ class Navigator:
 
     def __init__(self, logger: Logger | None = None) -> None:
         self.logger = logger or Logger(
-            identifier="Navigator",
+            identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )
         self._events_manager: NavigatorSignalsDispatcher = NavigatorSignalsDispatcher()

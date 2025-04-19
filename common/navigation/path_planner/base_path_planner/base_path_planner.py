@@ -16,8 +16,10 @@ from loggerplusplus import Logger
 from geometry import OrientedPoint
 
 # Internal project imports
-from navigation.path_planner.base_path_planner.base_path_planner_params import BasePathPlannerParams, \
-    BasePathPlannerPlanPathParams
+from navigation.path_planner.base_path_planner.base_path_planner_params import (
+    BasePathPlannerParams,
+    BasePathPlannerPlanPathParams,
+)
 
 # ====== Type Hint ======
 ParamsType = TypeVar("ParamsType", bound=BasePathPlannerParams)
@@ -27,17 +29,18 @@ PlanPathParamsType = TypeVar("PlanPathParamsType", bound=BasePathPlannerPlanPath
 # ====== Base Path Planner Class ======
 class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
     def __init__(self, params: ParamsType, logger: Logger | None = None) -> None:
-        if logger is None:
-            logger = Logger(identifier=self.__class__.__name__, follow_logger_manager_rules=True)
-
-        self.logger: Logger = logger
+        self.logger: Logger = logger or Logger(
+            identifier=self.__class__.__name__, follow_logger_manager_rules=True
+        )
         self.params: ParamsType = params
         self.last_plan_path_params: PlanPathParamsType | None = None
 
     @staticmethod
     def _store_plan_path_params(method: callable) -> callable:
         @functools.wraps(method)
-        def wrapper(self: BasePathPlanner, plan_path_params: PlanPathParamsType, *args, **kwargs):
+        def wrapper(
+            self: BasePathPlanner, plan_path_params: PlanPathParamsType, *args, **kwargs
+        ):
             self.last_plan_path_params = plan_path_params
 
             # Execute the method

@@ -307,7 +307,7 @@ class BaseArena(ABC):
                 )
 
         # 4.Update Grid Manager dynamic forbidden zones (only enemy zone)
-        self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon])
+        # self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon])
 
     def compute_enemy_position(
             self,
@@ -352,6 +352,34 @@ class BaseArena(ABC):
 
     def remove_outside(self, points: MultiPoint) -> MultiPoint:
         return self.playable_area.intersection(points)
+
+    def compute_goal_position(self, goal: int | BaseArenaZone | OrientedPoint | Point) -> OrientedPoint | Point:
+        # 1. If goal is defined as int, it's a zone ID
+        if isinstance(goal, int):
+            if goal > len(self.zones):
+                self.logger.error("Invalid zone ID given in trajectory parameters.")
+                return
+
+            return self.zones[goal].get_go_to_position(
+                ally_position=self.ally_zone.point, team_color=self.team_color
+            )
+
+        # 2. If goal is a BaseArenaZone -> compute the best goal point
+        if isinstance(goal, BaseArenaZone):
+            return goal.get_go_to_position(
+                ally_position=self.ally_zone.point, team_color=self.team_color
+            )
+
+        # 3. If goal is an OrientedPoint or Point, return it as is
+        if isinstance(goal, OrientedPoint) or isinstance(goal, Point):
+            return goal
+
+        # 4. If goal is not recognized, log an error
+        self.logger.error(
+            f"Invalid goal type: {type(goal)}. Expected int, BaseArenaZone, OrientedPoint, or Point."
+        )
+
+
 
     # TODO: Check if this function is still needed, test them (last year code)
     def valid_position(self, pos: Point) -> bool:

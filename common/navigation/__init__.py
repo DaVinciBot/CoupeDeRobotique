@@ -15,6 +15,9 @@ from navigation.path_planner import (
     BasePathPlannerPlanPathParams,
     DeltaPathPlannerPlanPathParams,
     BasicPathPlannerPlanPathParams,
+    # Factory
+    PathPlannerFactory,
+    PathPlannerPathPlanParamsFactory,
 )
 
 # Speed Profile
@@ -38,6 +41,8 @@ from navigation.trajectory_planner import (
     BaseTrajectoryPlannerParams,
     SequentialTrajectoryPlannerParams,
     BasicTrajectoryPlannerParams,
+    # Factory
+    TrajectoryPlannerFactory,
 )
 
 # Avoidance

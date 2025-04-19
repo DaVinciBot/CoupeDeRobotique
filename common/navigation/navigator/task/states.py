@@ -7,3 +7,10 @@ class NavigatorTaskState(Enum):
     AVOIDING = auto()
     ABORT = auto()
     FINISHED = auto()
+
+    def is_finished(self) -> bool:
+        return self in {
+            NavigatorTaskState.FINISHED,
+            NavigatorTaskState.ABORT
+        }
+

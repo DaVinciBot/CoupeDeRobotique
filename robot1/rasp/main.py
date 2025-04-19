@@ -2,36 +2,7 @@
 # Config
 from config_loader import CONFIG
 
-# Logger: LoggerManager + global configuration
-from loggerplusplus import LoggerManager, LogLevels, LoggerConfig, Logger, logger_colors
-
-LoggerManager.enable_files_logs_monitoring_only_for_one_logger = (
-    CONFIG.LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER
-)
-LoggerManager.enable_dynamic_config_update = CONFIG.LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE
-LoggerManager.enable_unique_logger_identifier = CONFIG.LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER
-
-LoggerManager.global_config = LoggerConfig.from_kwargs(
-    colors=getattr(logger_colors, CONFIG.LOGGER_COLORS),
-    path=CONFIG.LOGGER_PATH,
-    # LogLevels
-    decorator_log_level=getattr(LogLevels, CONFIG.LOGGER_DECORATOR_LOG_LEVEL),
-    print_log_level=getattr(LogLevels, CONFIG.LOGGER_PRINT_LOG_LEVEL),
-    file_log_level=getattr(LogLevels, CONFIG.LOGGER_FILE_LOG_LEVEL),
-    # Loggers Output
-    print_log=CONFIG.LOGGER_PRINT_LOG,
-    write_to_file=CONFIG.LOGGER_WRITE_TO_FILE,
-    # Monitoring
-    display_monitoring=CONFIG.LOGGER_DISPLAY_MONITORING,
-    files_monitoring=CONFIG.LOGGER_FILES_MONITORING,
-    file_size_unit=CONFIG.LOGGER_FILE_SIZE_UNIT,
-    disk_alert_threshold_percent=CONFIG.LOGGER_DISK_ALERT_THRESHOLD_PERCENT,
-    log_files_size_alert_threshold_percent=CONFIG.LOGGER_FILES_SIZE_ALERT_THRESHOLD_PERCENT,
-    max_log_file_size=CONFIG.LOGGER_MAX_LOG_FILE_SIZE,
-    # Placement
-    identifier_max_width=CONFIG.LOGGER_IDENTIFIER_MAX_WIDTH,
-    filename_lineno_max_width=CONFIG.LOGGER_FILENAME_LINENO_MAX_WIDTH,
-)
+from loggerplusplus import Logger, LogLevels
 
 # ====== Local Library Imports ======
 from ws_comms import WServer, WServerRouteManager, WSender, WSreceiver
@@ -39,7 +10,7 @@ from arena import ShowArena, AllyZone
 from geometry import OrientedPoint
 from brains import MainBrain
 from taskbrain import DictProxyAccessor, Brain
-from movement import GoToParams
+from navigation import NavigatorTaskParams
 from sensors import Lidar, LidarDummy
 
 # ====== Main ======
@@ -110,7 +81,7 @@ if __name__ == "__main__":
     ws_cmd = WServerRouteManager(
         logger=logger_ws_cmd_route_manager,
         receiver=WSreceiver(logger=logger_ws_cmd_receiver, use_queue=True),
-        sender=WSender(logger=logger_ws_cmd_sender, name=CONFIG.WS_SENDER_NAME)
+        sender=WSender(logger=logger_ws_cmd_sender, name=CONFIG.WS_SENDER_NAME),
     )
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
 
@@ -150,9 +121,8 @@ if __name__ == "__main__":
     # Add all object type which need to be shared between processes in the DictProxyAccessor serializable types list
     DictProxyAccessor.add_serializable_type(ShowArena, arena)
     DictProxyAccessor.add_serializable_type(OrientedPoint)
-    DictProxyAccessor.add_serializable_type(GoToParams)
+    DictProxyAccessor.add_serializable_type(NavigatorTaskParams)
     DictProxyAccessor.add_serializable_type(AllyZone)
-
 
     brain = MainBrain(
         logger=logger_brain,
@@ -168,16 +138,18 @@ if __name__ == "__main__":
     for routine in brain.get_tasks():
         ws_server.add_background_task(routine)
 
+    ws_server.run()
+
     import cProfile
 
-    profiler = cProfile.Profile()
-    profiler.enable()
-
-    try:
-        ws_server.run()
-    except:
-        pass
-
-    profiler.disable()
-    profiler.print_stats()
-    profiler.dump_stats('profiling_output.prof')
+    # profiler = cProfile.Profile()
+    # profiler.enable()
+    #
+    # try:
+    #     ws_server.run()
+    # except:
+    #     pass
+    #
+    # profiler.disable()
+    # profiler.print_stats()
+    # profiler.dump_stats("profiling_output.prof")
