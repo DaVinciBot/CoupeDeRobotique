@@ -26,25 +26,24 @@
 #define MAX_PWM 180
 
 // Encoder
-#define ENCODER_RESOLUTION 600
-#define CENTER_DISTANCE 33.57
-#define WHEEL_DIAMETER 6.1
-
+#define ENCODER_RESOLUTION 2048
+#define ENTRAXE 29.8
+#define WHEEL_DIAMETER 5.8
 
 // PIDs
-#define KP_LINEAR_SPEED 30//30
+#define KP_LINEAR_SPEED 30 // 30
 #define KI_LINEAR_SPEED 0
-#define KD_LINEAR_SPEED 0//0.005
+#define KD_LINEAR_SPEED 0 // 0.005
 
-#define KP_ANGULAR_SPEED 30//30
+#define KP_ANGULAR_SPEED 30 // 30
 #define KI_ANGULAR_SPEED 0
 #define KD_ANGULAR_SPEED 0
 
-#define KP_LINEAR_DISTANCE 0//20
+#define KP_LINEAR_DISTANCE 0 // 20
 #define KI_LINEAR_DISTANCE 0
 #define KD_LINEAR_DISTANCE 0
 
-#define KP_ANGULAR_DISTANCE 0//20
+#define KP_ANGULAR_DISTANCE 0 // 20
 #define KI_ANGULAR_DISTANCE 0
 #define KD_ANGULAR_DISTANCE 0
 
@@ -56,7 +55,7 @@
 // PWM frequency
 #define PWM_FREQUENCY 40000
 
-// Asservissement echantillonage fréquence 
+// Asservissement echantillonage fréquence
 #define ASSERVISSEMENT_FREQUENCY 10000
 
 // Com baudrate
