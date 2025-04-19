@@ -36,12 +36,6 @@ void PID::setTunings(float kp, float ki, float kd)
     _kd = kd;
 }
 
-void PID::setOutputLimits(float min, float max)
-{
-    _outputMin = min;
-    _outputMax = max;
-}
-
 void PID::setSampleTime(float dtSeconds)
 {
     _dtSeconds = dtSeconds;

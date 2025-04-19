@@ -74,20 +74,12 @@ void Rolling_Basis::odometrie_handle()
     /* Determine the position of the robot */
     float movement_difference = right_move - left_move;
     float movement_sum = (right_move + left_move) / 2.0f;
-
-    this->THETA = this->THETA - (movement_difference / this->center_distance);
-    this->X = this->X + (cos(this->THETA) * movement_sum);
-    this->Y = this->Y + (sin(this->THETA) * movement_sum);
-
-    /*FIXME:
     float dTheta = movement_difference / this->center_distance;
+
     this->X = this->X + (cos(this->THETA + dTheta / 2.0f) * movement_sum);
     this->Y = this->Y + (sin(this->THETA + dTheta / 2.0f) * movement_sum);
     this->THETA = this->THETA + dTheta;
-    this->THETA = fmod(this->THETA, 2 * PI);
-
-    cf https://www.ucg.ac.me/skladiste/blog_13268/objava_56689/fajlovi/Introduction%20to%20Autonomous%20Mobile%20Robots%20book.pdf chapitre 5.2 page 187
-    */
+    this->THETA = fmod(this->THETA, PI);
 }
 
 void Rolling_Basis::handle(

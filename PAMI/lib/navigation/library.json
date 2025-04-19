@@ -2,7 +2,7 @@
   "name": "navigation",
   "version": "1.0.0",
   "description": "Library dedicated to robot movement",
-  "keywords": "motors_driver, navigation",
+  "keywords": "navigation",
   "frameworks": "*",
   "platforms": "*"
 }

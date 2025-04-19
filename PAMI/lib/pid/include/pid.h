@@ -17,8 +17,6 @@ public:
 
     void setTunings(float kp, float ki, float kd);
 
-    void setOutputLimits(float min, float max);
-
     void setSampleTime(float dtSeconds);
 
 private:

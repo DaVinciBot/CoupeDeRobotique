@@ -18,7 +18,9 @@
 			"initializer_list": "cpp",
 			"utility": "cpp",
 			"cmath": "cpp",
-			"limits": "cpp"
+			"limits": "cpp",
+			"chrono": "cpp",
+			"algorithm": "cpp"
 		}
 	},
 	"extensions": {

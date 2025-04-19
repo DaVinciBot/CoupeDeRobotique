@@ -19,6 +19,7 @@ RollingBasis::RollingBasis(Motor *leftMotor, Motor *rightMotor,
       _targetLinearSpeedMmPerS(0), _targetAngularSpeedRadPerS(0),
       _targetPosition(Point(0, 0, 0)),
       _measuredLinearSpeedMmPerS(0), _measuredAngularSpeedRadPerS(0),
+      _measuredLinearDistanceMm(0), _measuredAngularDistanceRad(0),
       _lastUpdateTime(std::chrono::steady_clock::now())
 {
     _leftMotor->resetStepCount();
@@ -77,31 +78,25 @@ void RollingBasis::_computeOdometry(float dt)
 
     _x += dCenter * cosf(_theta + dTheta / 2.0f);
     _y += dCenter * sinf(_theta + dTheta / 2.0f);
-    _theta = fmodf(_theta + dTheta, 2 * M_PI);
+    _theta = fmodf(_theta + dTheta, M_PI);
 
+    _measuredLinearDistanceMm = dCenter;
+    _measuredAngularDistanceRad = dTheta;
     _measuredLinearSpeedMmPerS = dCenter / dt;
     _measuredAngularSpeedRadPerS = dTheta / dt;
 }
 
 void RollingBasis::_applyControl(float dt)
 {
-    _linearSpeedPid->setSampleTime(dt);
-    _angularSpeedPid->setSampleTime(dt);
+    _linearSpeedPid.setSampleTime(dt);
+    _angularSpeedPid.setSampleTime(dt);
     _linearDistancePid.setSampleTime(dt);
     _angularDistancePid.setSampleTime(dt);
 
-    // _linearSpeedPid.setOutputLimits(-_targetLinearSpeedMmPerS, _targetLinearSpeedMmPerS);
-    // _angularSpeedPid.setOutputLimits(-_targetAngularSpeedRadPerS, _targetAngularSpeedRadPerS);
-    // if (_useDistanceControl)
-    // {
-    //     _linearDistancePid.setOutputLimits(-_targetLinearDistance, _targetLinearDistance);
-    //     _angularDistancePid.setOutputLimits(-_targetAngularDistance, _targetAngularDistance);
-    // }
-
     float linearSpeedError = _targetLinearSpeedMmPerS - _measuredLinearSpeedMmPerS;
     float angularSpeedError = _targetAngularSpeedRadPerS - _measuredAngularSpeedRadPerS;
-    float linearDistanceError = sqrt(pow(target_position.x - _x, 2) + pow(target_position.y - _y, 2));
-    float angularDistanceError = target_position.theta - fmodf(_theta, 2 * M_PI);
+    float linearDistanceError = Point::distance(_targetPosition, Point(_x, _y, _theta));
+    float angularDistanceError = fmodf(_targetPosition.theta - _theta, M_PI) + Point::angle(Point(_x, _y, _theta), _targetPosition);
 
     float linearSpeedCorrection = _linearSpeedPid.compute(linearSpeedError);
     float angularSpeedCorrection = _angularSpeedPid.compute(angularSpeedError);
@@ -133,8 +128,8 @@ void RollingBasis::stop()
 
     _linearSpeedPid.reset();
     _angularSpeedPid.reset();
-    _linearDistancePid->reset();
-    _angularDistancePid->reset();
+    _linearDistancePid.reset();
+    _angularDistancePid.reset();
 
     _leftMotor->setTargetSpeed(0);
     _rightMotor->setTargetSpeed(0);
@@ -146,6 +141,8 @@ Point RollingBasis::getPose() const
 }
 float RollingBasis::getMeasuredLinearSpeedMmPerS() const { return _measuredLinearSpeedMmPerS; }
 float RollingBasis::getMeasuredAngularSpeedRadPerS() const { return _measuredAngularSpeedRadPerS; }
+float RollingBasis::getMeasuredLinearDistanceMm() const { return _measuredLinearDistanceMm; }
+float RollingBasis::getMeasuredAngularDistanceRad() const { return _measuredAngularDistanceRad; }
 
 void RollingBasis::resetPose()
 {
@@ -153,8 +150,8 @@ void RollingBasis::resetPose()
     _previousLeftStepCount = _previousRightStepCount = 0;
     _leftMotor->resetStepCount();
     _rightMotor->resetStepCount();
-    _linearSpeedPid->reset();
-    _angularSpeedPid->reset();
-    _linearDistancePid->reset();
-    _angularDistancePid->reset();
+    _linearSpeedPid.reset();
+    _angularSpeedPid.reset();
+    _linearDistancePid.reset();
+    _angularDistancePid.reset();
 }

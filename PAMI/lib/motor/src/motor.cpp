@@ -1,4 +1,4 @@
-#include "motors.h"
+#include "motor.h"
 #include <Arduino.h>
 
 Motor::Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution)

@@ -1,8 +1,9 @@
 #ifndef ROLLING_BASIS_H
 #define ROLLING_BASIS_H
 
-#include "motors.h"
+#include "motor.h"
 #include "pid.h"
+#include "structures.h"
 #include <chrono>
 
 class RollingBasis
@@ -28,6 +29,8 @@ public:
     Point getPose() const;
     float getMeasuredLinearSpeedMmPerS() const;
     float getMeasuredAngularSpeedRadPerS() const;
+    float getMeasuredLinearDistanceMm() const;
+    float getMeasuredAngularDistanceRad() const;
 
     void resetPose();
 
@@ -58,10 +61,10 @@ private:
 
     float _measuredLinearSpeedMmPerS;
     float _measuredAngularSpeedRadPerS;
+    float _measuredLinearDistanceMm;
+    float _measuredAngularDistanceRad;
 
     std::chrono::steady_clock::time_point _lastUpdateTime;
 };
 
 #endif
-
-// TODO: add POINT STRUCTURE

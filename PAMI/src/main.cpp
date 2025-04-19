@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include "OTA.h"
-#include "motors.h"
+#include "motor.h"
 #include "navigation.h"
+#include "rolling_basis.h"
 
 #define LEFT_STEP_PIN 2
-#define LEFT_DIR_PIN  3
-#define LEFT_EN_PIN   1
-
+#define LEFT_DIR_PIN 3
+#define LEFT_EN_PIN 1
 
 Motor leftMotor(LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN, 400);
 
@@ -22,7 +22,7 @@ void setup()
     leftMotor.enableMotor(true);
 
     leftMotor.setAcceleration(100);
-    
+
     leftMotor.setTargetSpeed(400);
 
     digitalWrite(LEFT_DIR_PIN, HIGH);
@@ -31,9 +31,11 @@ void setup()
     server.begin();
 }
 
-void loop() {
-    
-    for (int i = 0; i < 800; i++) {
+void loop()
+{
+
+    for (int i = 0; i < 800; i++)
+    {
         leftMotor.update();
     }
 

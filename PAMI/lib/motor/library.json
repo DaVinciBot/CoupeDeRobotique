@@ -1,5 +1,5 @@
 {
-  "name": "motors",
+  "name": "motor",
   "version": "1.0.0",
   "description": "Library dedicated to motor control",
   "keywords": "stepper, motor, control",
