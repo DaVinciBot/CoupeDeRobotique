@@ -61,7 +61,7 @@
       }
     },
     "rolling_basis": {
-      "rolling_basis_teensy_ser": 4325378,
+      "rolling_basis_teensy_ser": 12678590,
       "pids": {
         "linear_speed": {
           "kp": 10.0,
@@ -104,7 +104,7 @@
       }
     },
     "actuators": {
-      "actuators_teensy_ser": 12678600
+      "actuators_teensy_ser": 14735440
     },
     "lidar": {
       "distances_unit": "cm",
