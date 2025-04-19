@@ -1,15 +1,11 @@
 #ifndef PID_H
 #define PID_H
 
-#include <limits>
-
 class PID
 {
 public:
     PID(float kp, float ki, float kd,
-        float dtSeconds = 0.01f,
-        float outputMin = -std::numeric_limits<float>::infinity(),
-        float outpputMax = -std::numeric_limits<float>::infinity());
+        float dtSeconds = 0.01f);
 
     float compute(float error);
 

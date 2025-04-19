@@ -3,23 +3,25 @@
 
 #include "motor.h"
 #include "pid.h"
-#include "structures.h"
+#include "point.h"
 #include <chrono>
 
 class RollingBasis
 {
 public:
-    RollingBasis(Motor *leftMotor, Motor *rightMotor,
+    RollingBasis(Motor *leftMotor,
+                 Motor *rightMotor,
                  float wheelDiameterMm,
                  float wheelBaseMm,
                  const PID &linearSpeedPid,
                  const PID &angularSpeedPid,
                  const PID &linearDistancePid,
-                 const PID &angularDistancePid);
+                 const PID &angularDistancePid,
+                 const Point &initialPosition = {0, 0, 0});
 
-    void setLinearAngularSpeed(float linearSpeedMmPerS, float angularSpeedRadPerS);
-
-    void setTargetPosition(Point targetPosition);
+    void setCommand(float linearSpeedMmPerS,
+                    float angularSpeedRadPerS,
+                    const Point &targetPosition);
 
     void update();
 
@@ -27,44 +29,36 @@ public:
     void stop();
 
     Point getPose() const;
+    // QUESTION: ou : const Point &RollingBasis::getPose() const; ?
     float getMeasuredLinearSpeedMmPerS() const;
     float getMeasuredAngularSpeedRadPerS() const;
-    float getMeasuredLinearDistanceMm() const;
-    float getMeasuredAngularDistanceRad() const;
-
-    void resetPose();
 
 private:
-    void _computeOdometry(float dt);
-    void _applyControl(float dt);
+    void computeOdometry(float dt);
+    void applyControl(float dt);
+    float wrapToPi(float ang) const;
 
     Motor *_leftMotor;
     Motor *_rightMotor;
     float _wheelDiameterMm;
     float _wheelBaseMm;
 
-    long _previousLeftStepCount;
-    long _previousRightStepCount;
+    long _prevLeftSteps;
+    long _prevRightSteps;
 
-    float _x;     // mm
-    float _y;     // mm
-    float _theta; // rad
+    Point _currentPosition;
 
-    PID _linearSpeedPid;
-    PID _angularSpeedPid;
-    PID _linearDistancePid;
-    PID _angularDistancePid;
+    PID _linSpeedPid, _angSpeedPid;
+    PID _linDistPid, _angDistPid;
 
-    float _targetLinearSpeedMmPerS;
-    float _targetAngularSpeedRadPerS;
-    Point _targetPosition;
+    float _cmdLinSpeed;
+    float _cmdAngSpeed;
+    Point _cmdPosition;
 
-    float _measuredLinearSpeedMmPerS;
-    float _measuredAngularSpeedRadPerS;
-    float _measuredLinearDistanceMm;
-    float _measuredAngularDistanceRad;
+    float _measLinSpeed;
+    float _measAngSpeed;
 
-    std::chrono::steady_clock::time_point _lastUpdateTime;
+    std::chrono::steady_clock::time_point _lastTime;
 };
 
 #endif

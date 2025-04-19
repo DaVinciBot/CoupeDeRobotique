@@ -7,108 +7,106 @@ RollingBasis::RollingBasis(Motor *leftMotor, Motor *rightMotor,
                            const PID &linearSpeedPid,
                            const PID &angularSpeedPid,
                            const PID &linearDistancePid,
-                           const PID &angularDistancePid)
+                           const PID &angularDistancePid,
+                           const Point &initialPosition)
     : _leftMotor(leftMotor), _rightMotor(rightMotor),
       _wheelDiameterMm(wheelDiameterMm), _wheelBaseMm(wheelBaseMm),
-      _previousLeftStepCount(0), _previousRightStepCount(0),
-      _x(0), _y(0), _theta(0),
-      _linearSpeedPid(linearSpeedPid),
-      _angularSpeedPid(angularSpeedPid),
-      _linearDistancePid(linearDistancePid),
-      _angularDistancePid(angularDistancePid),
-      _targetLinearSpeedMmPerS(0), _targetAngularSpeedRadPerS(0),
-      _targetPosition(Point(0, 0, 0)),
-      _measuredLinearSpeedMmPerS(0), _measuredAngularSpeedRadPerS(0),
-      _measuredLinearDistanceMm(0), _measuredAngularDistanceRad(0),
-      _lastUpdateTime(std::chrono::steady_clock::now())
+      _prevLeftSteps(0),
+      _prevRightSteps(0),
+      _currentPosition(initialPosition),
+      _linSpeedPid(linearSpeedPid),
+      _angSpeedPid(angularSpeedPid),
+      _linDistPid(linearDistancePid),
+      _angDistPid(angularDistancePid),
+      _cmdLinSpeed(0), _cmdAngSpeed(0),
+      _cmdPosition{0, 0, 0},
+      _measLinSpeed(0), _measAngSpeed(0),
+      _lastTime(std::chrono::steady_clock::now())
 {
     _leftMotor->resetStepCount();
     _rightMotor->resetStepCount();
 }
 
-void RollingBasis::setLinearAngularSpeed(float linearSpeed, float angularSpeed)
+void RollingBasis::setCommand(float linearSpeedMmPerS,
+                              float angularSpeedRadPerS,
+                              const Point &targetPosition)
 {
-    _targetLinearSpeedMmPerS = linearSpeed;
-    _targetAngularSpeedRadPerS = angularSpeed;
+    _cmdLinSpeed = linearSpeedMmPerS;
+    _cmdAngSpeed = angularSpeedRadPerS;
+    _cmdPosition = targetPosition;
 
-    _linearSpeedPid.reset();
-    _angularSpeedPid.reset();
-}
-
-void RollingBasis::setTargetPosition(Point targetPosition)
-{
-    _targetPosition = targetPosition;
-
-    _linearDistancePid.reset();
-    _angularDistancePid.reset();
+    _linSpeedPid.reset();
+    _angSpeedPid.reset();
+    _linDistPid.reset();
+    _angDistPid.reset();
 }
 
 void RollingBasis::update()
 {
     auto now = std::chrono::steady_clock::now();
-    float dt = std::chrono::duration<float>(now - _lastUpdateTime).count();
+    float dt = std::chrono::duration<float>(now - _lastTime).count();
     if (dt <= 0)
         return;
 
-    _computeOdometry(dt);
-    _applyControl(dt);
+    computeOdometry(dt);
+    applyControl(dt);
 
     _leftMotor->update();
     _rightMotor->update();
-
-    _lastUpdateTime = now;
+    _lastTime = now;
 }
 
-void RollingBasis::_computeOdometry(float dt)
+void RollingBasis::computeOdometry(float dt)
 {
     long leftSteps = _leftMotor->getStepCount();
     long rightSteps = _rightMotor->getStepCount();
-
-    long dL = leftSteps - _previousLeftStepCount;
-    long dR = rightSteps - _previousRightStepCount;
-    _previousLeftStepCount = leftSteps;
-    _previousRightStepCount = rightSteps;
+    long dL = leftSteps - _prevLeftSteps;
+    long dR = rightSteps - _prevRightSteps;
+    _prevLeftSteps = leftSteps;
+    _prevRightSteps = rightSteps;
 
     float mmPerStep = (M_PI * _wheelDiameterMm) / _leftMotor->getStepsPerRev();
     float dLeft = dL * mmPerStep;
     float dRight = dR * mmPerStep;
 
-    float dCenter = (dLeft + dRight) / 2.0f;
+    float dCenter = 0.5f * (dLeft + dRight);
     float dTheta = (dRight - dLeft) / _wheelBaseMm;
 
-    _x += dCenter * cosf(_theta + dTheta / 2.0f);
-    _y += dCenter * sinf(_theta + dTheta / 2.0f);
-    _theta = fmodf(_theta + dTheta, M_PI);
+    _currentPosition.x += dCenter * cosf(_currentPosition.theta + dTheta / 2.0f);
+    _currentPosition.y += dCenter * sinf(_currentPosition.theta + dTheta / 2.0f);
+    _currentPosition.theta = wrapToPi(_currentPosition.theta + dTheta);
 
-    _measuredLinearDistanceMm = dCenter;
-    _measuredAngularDistanceRad = dTheta;
-    _measuredLinearSpeedMmPerS = dCenter / dt;
-    _measuredAngularSpeedRadPerS = dTheta / dt;
+    _measLinSpeed = dCenter / dt;
+    _measAngSpeed = dTheta / dt;
 }
 
-void RollingBasis::_applyControl(float dt)
+void RollingBasis::applyControl(float dt)
 {
-    _linearSpeedPid.setSampleTime(dt);
-    _angularSpeedPid.setSampleTime(dt);
-    _linearDistancePid.setSampleTime(dt);
-    _angularDistancePid.setSampleTime(dt);
+    _linSpeedPid.setSampleTime(dt);
+    _angSpeedPid.setSampleTime(dt);
+    _linDistPid.setSampleTime(dt);
+    _angDistPid.setSampleTime(dt);
 
-    float linearSpeedError = _targetLinearSpeedMmPerS - _measuredLinearSpeedMmPerS;
-    float angularSpeedError = _targetAngularSpeedRadPerS - _measuredAngularSpeedRadPerS;
-    float linearDistanceError = Point::distance(_targetPosition, Point(_x, _y, _theta));
-    float angularDistanceError = fmodf(_targetPosition.theta - _theta, M_PI) + Point::angle(Point(_x, _y, _theta), _targetPosition);
+    float distErr = Point::distance(_currentPosition, _cmdPosition);                            // mm
+    float be = wrapToPi(Point::angle(_currentPosition, _cmdPosition) - _currentPosition.theta); // rad
+    float oe = wrapToPi(_cmdPosition.theta - _currentPosition.theta);                           // rad
+    float bearErr = wrapToPi(be + oe);                                                          // rad
 
-    float linearSpeedCorrection = _linearSpeedPid.compute(linearSpeedError);
-    float angularSpeedCorrection = _angularSpeedPid.compute(angularSpeedError);
-    float linearDistanceCorrection = _linearDistancePid.compute(linearDistanceError);
-    float angularDistanceCorrection = _angularDistancePid.compute(angularDistanceError);
+    float corrLinD = _linDistPid.compute(distErr) / dt; // mm/s
+    float corrAngD = _angDistPid.compute(bearErr) / dt; // rad/s
 
-    float linearCmd = _targetLinearSpeedMmPerS + linearSpeedCorrection;
-    float angularCmd = _targetAngularSpeedRadPerS + angularSpeedCorrection;
+    float spdLinRef = _cmdLinSpeed + corrLinD;
+    float spdAngRef = _cmdAngSpeed + corrAngD;
 
-    float halfBase = _wheelBaseMm / 2.0f;
-    float leftSpeedMmPerSec = linearCmd - angularCmd * halfBase;
-    float rightSpeedMmPerSec = linearCmd + angularCmd * halfBase;
+    float corrLinS = _linSpeedPid.compute(spdLinRef - _measLinSpeed);
+    float corrAngS = _angSpeedPid.compute(spdAngRef - _measAngSpeed);
+
+    float cmdLin = spdLinRef + corrLinS;
+    float cmdAng = spdAngRef + corrAngS;
+
+    float halfBase = _wheelBaseMm * 0.5f;
+    float leftSpeedMmPerSec = cmdLin - cmdAng * halfBase;
+    float rightSpeedMmPerSec = cmdLin + cmdAng * halfBase;
 
     float circumference = M_PI * _wheelDiameterMm;
     float leftSpeedStepsPerSec = (leftSpeedMmPerSec / circumference) * _leftMotor->getStepsPerRev();
@@ -118,40 +116,42 @@ void RollingBasis::_applyControl(float dt)
     _rightMotor->setTargetSpeed(rightSpeedStepsPerSec);
 }
 
-bool RollingBasis::isMoving() const { return _leftMotor->isMoving() || _rightMotor->isMoving(); }
+float RollingBasis::wrapToPi(float ang) const
+{
+    while (ang > M_PI)
+        ang -= 2 * M_PI;
+    while (ang < -M_PI)
+        ang += 2 * M_PI;
+    return ang;
+}
+
+bool RollingBasis::isMoving() const
+{
+    return _leftMotor->isMoving() || _rightMotor->isMoving();
+}
 
 void RollingBasis::stop()
 {
-    _targetLinearSpeedMmPerS = 0;
-    _targetAngularSpeedRadPerS = 0;
-    _targetPosition = Point(0, 0, 0);
-
-    _linearSpeedPid.reset();
-    _angularSpeedPid.reset();
-    _linearDistancePid.reset();
-    _angularDistancePid.reset();
-
+    _cmdLinSpeed = _cmdAngSpeed = 0;
+    _cmdPosition = {0, 0, 0};
     _leftMotor->setTargetSpeed(0);
     _rightMotor->setTargetSpeed(0);
+    _linSpeedPid.reset();
+    _angSpeedPid.reset();
+    _linDistPid.reset();
+    _angDistPid.reset();
 }
 
 Point RollingBasis::getPose() const
 {
-    return Point(_x, _y, _theta);
+    return _currentPosition;
 }
-float RollingBasis::getMeasuredLinearSpeedMmPerS() const { return _measuredLinearSpeedMmPerS; }
-float RollingBasis::getMeasuredAngularSpeedRadPerS() const { return _measuredAngularSpeedRadPerS; }
-float RollingBasis::getMeasuredLinearDistanceMm() const { return _measuredLinearDistanceMm; }
-float RollingBasis::getMeasuredAngularDistanceRad() const { return _measuredAngularDistanceRad; }
 
-void RollingBasis::resetPose()
-{
-    _x = _y = _theta = 0;
-    _previousLeftStepCount = _previousRightStepCount = 0;
-    _leftMotor->resetStepCount();
-    _rightMotor->resetStepCount();
-    _linearSpeedPid.reset();
-    _angularSpeedPid.reset();
-    _linearDistancePid.reset();
-    _angularDistancePid.reset();
-}
+// QUESTION: ou :
+// const Point &RollingBasis::getPose() const
+// {
+//     return _currentPosition;
+// } ?
+
+float RollingBasis::getMeasuredLinearSpeedMmPerS() const { return _measLinSpeed; }
+float RollingBasis::getMeasuredAngularSpeedRadPerS() const { return _measAngSpeed; }
