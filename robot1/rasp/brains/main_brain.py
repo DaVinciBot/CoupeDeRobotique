@@ -31,14 +31,14 @@ from sensors import Lidar
 
 class MainBrain(Brain):
     def __init__(
-            self,
-            logger: Logger,
-            # Sensor
-            lidar: Lidar,
-            # Environment
-            arena: ShowArena,
-            # WS routes
-            ws_cmd: WServerRouteManager
+        self,
+        logger: Logger,
+        # Sensor
+        lidar: Lidar,
+        # Environment
+        arena: ShowArena,
+        # WS routes
+        ws_cmd: WServerRouteManager,
     ) -> None:
         # Sensor
         self.lidar: Lidar = lidar
@@ -83,9 +83,15 @@ class MainBrain(Brain):
     def handle_movement_manager(self) -> None:
         # --- Initialization --- #
         movement_manager = MovementManager(
-            logger=Logger(identifier="MovementManager", follow_logger_manager_rules=True),
-            path_finder_logger=Logger(identifier="PathFinder", follow_logger_manager_rules=True),
-            trajectory_computer_logger=Logger(identifier="TrajectoryComputer", follow_logger_manager_rules=True),
+            logger=Logger(
+                identifier="MovementManager", follow_logger_manager_rules=True
+            ),
+            path_finder_logger=Logger(
+                identifier="PathFinder", follow_logger_manager_rules=True
+            ),
+            trajectory_computer_logger=Logger(
+                identifier="TrajectoryComputer", follow_logger_manager_rules=True
+            ),
             arena_ptr=self.arena,
         )
         rolling_basis = RollingBasis(
@@ -120,15 +126,15 @@ class MainBrain(Brain):
             cmd: RollingBasisCommand = movement_manager.handle_go_to()
             if cmd is not None:
                 self.th_ally_zone = AllyZone(
-                    logger=Logger(identifier="th_ally", follow_logger_manager_rules=True),
+                    logger=Logger(
+                        identifier="th_ally", follow_logger_manager_rules=True
+                    ),
                     point=cmd.position,
-                    robot_size=5
+                    robot_size=5,
                 )
                 rolling_basis.set_speed_and_position(*cmd.get_command())
                 self.rolling_basis_odometrie = rolling_basis.odometrie
                 self.path = movement_manager.trajectory_computer.path_to_follow
-        rolling_basis.logger.info(self.go_to_params)
-
 
     """
     ### Main Process ###
@@ -202,11 +208,13 @@ class MainBrain(Brain):
                         execution = await eval(instruction.removeprefix("await "))
                     else:
                         execution = eval(instruction)
-                message = WSmsg.from_json({
-                    "sender": CONFIG.WS_SENDER_NAME,
-                    "msg": "Execution of sender instruction",
-                    "data": str(execution)
-                })
+                message = WSmsg.from_json(
+                    {
+                        "sender": CONFIG.WS_SENDER_NAME,
+                        "msg": "Execution of sender instruction",
+                        "data": str(execution),
+                    }
+                )
                 await self.ws_cmd.sender.send(message)
 
             else:
@@ -221,7 +229,25 @@ class MainBrain(Brain):
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
         self.rolling_basis_odometrie = OrientedPoint(20, 25, 0)
-        self.arena.enemy_zone.update(self.arena.team_color, self.rolling_basis_odometrie, Point(290, 190))
+        self.arena.enemy_zone.update(
+            self.arena.team_color, self.rolling_basis_odometrie, Point(290, 190)
+        )
+        self.go_to_params = GoToParams(
+            trajectory_params=TrajectoryParams(
+                speed_profile=SpeedProfile.from_dict(
+                    CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE
+                ),
+                goal=OrientedPoint(40, 25, 0),
+                resolution=1,
+                smooth_trajectory=True,
+            ),
+            acs_distance=120,
+            path_finder_recompute_distance=80,
+            timeout=-1.0,
+            is_mandatory=False,
+            goal_tolerance=0.1,
+            distance_to_goal_to_dont_recompute_path=10,
+        )
 
 
 """
