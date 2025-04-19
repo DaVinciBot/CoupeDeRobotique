@@ -110,7 +110,7 @@ if __name__ == "__main__":
     ws_cmd = WServerRouteManager(
         logger=logger_ws_cmd_route_manager,
         receiver=WSreceiver(use_queue=True),
-        sender=WSender(logger=logger_ws_cmd_sender, name=CONFIG.WS_SENDER_NAME)
+        sender=WSender( name=CONFIG.WS_SENDER_NAME)
     )
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
 
