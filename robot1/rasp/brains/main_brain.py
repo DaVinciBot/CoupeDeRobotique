@@ -127,6 +127,8 @@ class MainBrain(Brain):
                 rolling_basis.set_speed_and_position(*cmd.get_command())
                 self.rolling_basis_odometrie = rolling_basis.odometrie
                 self.path = movement_manager.trajectory_computer.path_to_follow
+        rolling_basis.logger.info(self.go_to_params)
+
 
     """
     ### Main Process ###

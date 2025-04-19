@@ -28,7 +28,7 @@
 // Encoder
 #define ENCODER_RESOLUTION 2048
 #define ENTRAXE 29.8
-#define WHEEL_DIAMETER 5.8
+#define WHEEL_DIAMETER 6
 
 // PIDs
 #define KP_LINEAR_SPEED 30 // 30
