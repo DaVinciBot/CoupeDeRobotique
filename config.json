@@ -61,7 +61,7 @@
       }
     },
     "rolling_basis": {
-      "rolling_basis_teensy_ser": 12675800,
+      "rolling_basis_teensy_ser": 4325378,
       "pids": {
         "linear_speed": {
           "kp": 10.0,
