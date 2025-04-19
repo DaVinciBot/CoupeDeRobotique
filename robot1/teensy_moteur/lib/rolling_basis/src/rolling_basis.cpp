@@ -75,8 +75,8 @@ void Rolling_Basis::odometrie_handle()
     float movement_difference = right_move - left_move;
     float movement_sum = (right_move + left_move) / 2;
 
-    dTetha = movement_difference / this->center_distance;
-    this->THETA = fmod(this->THETA + dThetha, PI);
+    float dTheta = movement_difference / this->center_distance;
+    this->THETA = fmod(this->THETA + dTheta, PI);
     this->X = this->X + (cos(this->THETA + dTheta / 2.0f) * movement_sum);
     this->Y = this->Y + (sin(this->THETA + dTheta / 2.0f) * movement_sum);
 }
