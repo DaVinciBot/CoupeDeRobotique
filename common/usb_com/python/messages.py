@@ -9,7 +9,7 @@ from enum import Enum
 
 # ====== USB Communication Signature ======
 # This signature must be exactly the same on both sides (Raspberry Pi and Teensy) to ensure valid communication.
-END_BYTES_SIGNATURE: bytes = b"\xBA\xDD\x1C\xC5"
+END_BYTES_SIGNATURE: bytes = b"\xba\xdd\x1c\xc5"
 
 
 # ====== Message Types ======
@@ -20,6 +20,7 @@ class Messages(Enum):
     Commands from Raspberry Pi to Teensy are in the range 0-127,
     while those from Teensy to Raspberry Pi are in the range 128-255.
     """
+
     # rasp -> teensy : 0-127 (Convention)
 
     # Rolling Basis

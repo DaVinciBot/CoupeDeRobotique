@@ -13,6 +13,7 @@ class ActuatorType(Enum):
         STEPPER: Represents a stepper motor.
         LCD: Represents an LCD-display.
     """
+
     UNKNOWN = auto()
     SERVO = auto()
     STEPPER = auto()

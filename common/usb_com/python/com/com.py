@@ -28,15 +28,16 @@ class Com:
     Handles USB communication with a Teensy microcontroller.
     Supports message transmission, CRC8 verification, and callback mechanisms.
     """
+
     def __init__(
-            self,
-            logger: Logger,
-            serial_number: int,
-            vid: int,
-            pid: int,
-            baudrate: int,
-            enable_crc: bool = True,
-            enable_dummy: bool = False
+        self,
+        logger: Logger,
+        serial_number: int,
+        vid: int,
+        pid: int,
+        baudrate: int,
+        enable_crc: bool = True,
+        enable_dummy: bool = False,
     ):
         """
         Initializes the USB communication instance.
@@ -83,10 +84,10 @@ class Com:
 
         for port in serial.tools.list_ports.comports():
             if (
-                    port.vid == self.vid
-                    and port.pid == self.pid
-                    and port.serial_number is not None
-                    and port.serial_number == str(self.serial_number)
+                port.vid == self.vid
+                and port.pid == self.pid
+                and port.serial_number is not None
+                and port.serial_number == str(self.serial_number)
             ):
                 device_found = serial.Serial(port.device, baudrate=self.baudrate)
                 break
@@ -113,9 +114,7 @@ class Com:
         if self.enable_dummy:
             return
 
-        receiver = threading.Thread(
-            target=self.__receiver__, name="USBComReceiver"
-        )
+        receiver = threading.Thread(target=self.__receiver__, name="USBComReceiver")
         receiver.start()
         return receiver
 
@@ -168,7 +167,9 @@ class Com:
                     else:
                         self.message_id_callback.get(
                             msg[0],
-                            lambda x: self.logger.error(f"Unknown message type ! msg: {x}")
+                            lambda x: self.logger.error(
+                                f"Unknown message type ! msg: {x}"
+                            ),
                         )(msg[1:-1])
 
                 except Exception as e:

@@ -15,8 +15,9 @@ from geometry import Point, OrientedPoint
 
 # Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
-from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone import \
-    BaseSpeedVectorAutoCalculateZone
+from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone import (
+    BaseSpeedVectorAutoCalculateZone,
+)
 
 
 # ====== Enemy Zone Class ======
@@ -27,13 +28,13 @@ class EnemyZone(BaseSpeedVectorAutoCalculateZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            point: Point | OrientedPoint,
-            robot_size: float = 10,
-            positions_record_size: int = 3,
-            no_detection_timeout: float = 4.0,
-            vector_factor: float = 25.0
+        self,
+        logger: Logger,
+        point: Point | OrientedPoint,
+        robot_size: float = 10,
+        positions_record_size: int = 3,
+        no_detection_timeout: float = 4.0,
+        vector_factor: float = 25.0,
     ) -> None:
         """
         Initializes an EnemyZone with given parameters.

@@ -28,7 +28,9 @@ def test_speed_profile(
         step_time (float, optional): Time interval for sampling the profile. Defaults to 0.1.
     """
     print("Testing profile:", profile)
-    total_duration = profile.get_total_duration(distance=distance, departure_speed=departure_speed, arrival_speed=arrival_speed)
+    total_duration = profile.get_total_duration(
+        distance=distance, departure_speed=departure_speed, arrival_speed=arrival_speed
+    )
 
     speeds = []
     distances = []
@@ -41,15 +43,17 @@ def test_speed_profile(
                 time_elapsed=current_time,
                 distance=distance,
                 departure_speed=departure_speed,
-                arrival_speed=arrival_speed
+                arrival_speed=arrival_speed,
             )
         )
-        speeds.append(profile.get_speed(
-            time_elapsed=current_time,
-            distance=distance,
-            departure_speed=departure_speed,
-            arrival_speed=arrival_speed
-        ))
+        speeds.append(
+            profile.get_speed(
+                time_elapsed=current_time,
+                distance=distance,
+                departure_speed=departure_speed,
+                arrival_speed=arrival_speed,
+            )
+        )
         times.append(current_time)
         current_time += step_time
 

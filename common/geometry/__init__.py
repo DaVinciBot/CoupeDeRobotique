@@ -1,5 +1,6 @@
 # No shapely native geometry
 from geometry.oriented_point import OrientedPoint
+
 # Geometry helpers
 from geometry.helpers import create_straight_rectangle
 
@@ -16,7 +17,7 @@ from shapely import (
     Geometry,
     prepare,
     distance,
-    is_empty
+    is_empty,
 )
 from shapely.geometry import box
 from shapely.ops import nearest_points

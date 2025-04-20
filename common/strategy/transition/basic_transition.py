@@ -11,7 +11,6 @@ if TYPE_CHECKING:
 
 
 class BasicTransition(BaseTransition):
-
     def can_transit(
         self, current: BaseTaskNode, target: BaseTaskNode, ctx: BaseGameContext
     ) -> bool:

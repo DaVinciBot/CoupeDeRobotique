@@ -5,4 +5,3 @@ from boombot_strategy.task.navigation_task import (
     GoToColorReservedZoneToFinishGame,
 )
 from boombot_strategy.task.navigation_task import BackwardToQuitConstruction
-

@@ -1,6 +1,12 @@
 from copy import deepcopy
 
-from strategy import BaseTaskNode, BaseTransition, GraphRunner, BasicTransition, ConditionalTransition
+from strategy import (
+    BaseTaskNode,
+    BaseTransition,
+    GraphRunner,
+    BasicTransition,
+    ConditionalTransition,
+)
 from arena import ZoneAccessibility
 from boombot_strategy.show_game_context import ShowGameContext
 import boombot_strategy.strategies.common.go_to_stuff_zone as go_to_stuff_zone
@@ -39,27 +45,31 @@ go_to_zone_11_to_construct.add_transition(
 quit_zone_11_after_construct.add_transition(
     ConditionalTransition(
         target=go_to_stuff_zone_2,
-        condition=lambda current, target, ctx: ctx.arena.zones[2].accessibility != ZoneAccessibility.FREE,
+        condition=lambda current, target, ctx: ctx.arena.zones[2].accessibility
+        != ZoneAccessibility.FREE,
     )
 )
 quit_zone_11_after_construct.add_transition(
     ConditionalTransition(
         target=go_to_stuff_zone_3,
-        condition=lambda current, target, ctx: ctx.arena.zones[3].accessibility != ZoneAccessibility.FREE,
+        condition=lambda current, target, ctx: ctx.arena.zones[3].accessibility
+        != ZoneAccessibility.FREE,
     )
 )
 
 quit_zone_10_after_construct.add_transition(
     ConditionalTransition(
         target=go_to_stuff_zone_3,
-        condition=lambda current, target, ctx: ctx.arena.zones[3].accessibility != ZoneAccessibility.FREE,
+        condition=lambda current, target, ctx: ctx.arena.zones[3].accessibility
+        != ZoneAccessibility.FREE,
     )
 )
 
 quit_zone_11_after_construct2.add_transition(
     ConditionalTransition(
         target=go_to_stuff_zone_2,
-        condition=lambda current, target, ctx: ctx.arena.zones[2].accessibility != ZoneAccessibility.FREE,
+        condition=lambda current, target, ctx: ctx.arena.zones[2].accessibility
+        != ZoneAccessibility.FREE,
     )
 )
 

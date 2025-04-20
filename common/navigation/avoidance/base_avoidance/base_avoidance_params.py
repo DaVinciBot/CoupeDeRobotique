@@ -2,7 +2,6 @@ from navigation.avoidance.structs import AvoidanceStrategy
 
 
 class BaseAvoidanceParams:
-
     def __init__(
         self,
         avoidance_strategy: AvoidanceStrategy,

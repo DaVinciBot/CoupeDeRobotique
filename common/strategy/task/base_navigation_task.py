@@ -20,7 +20,6 @@ from navigation import (
 
 
 class BaseNavigationTask(BaseTask):
-
     def __init__(
         self,
         goal: int | BaseArenaZone | OrientedPoint | Point | None,

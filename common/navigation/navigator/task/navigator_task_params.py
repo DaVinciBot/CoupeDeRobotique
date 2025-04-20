@@ -8,7 +8,6 @@ from geometry import OrientedPoint
 
 
 class NavigatorTaskParams:
-
     def __init__(
         self,
         # Attributes

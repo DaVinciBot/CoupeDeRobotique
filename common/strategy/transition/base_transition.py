@@ -13,7 +13,6 @@ if TYPE_CHECKING:
 
 
 class BaseTransition(ABC):
-
     def __init__(self, target: BaseTaskNode):
         self.target = target
 

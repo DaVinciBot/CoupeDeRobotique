@@ -80,8 +80,7 @@ class MainBrain(Brain):
         # --- MetaProg is insane (loop) --- #
         yellow_strategy.tick(
             ShowGameContext(
-                arena=self.arena,
-                rolling_basis=rolling_basis, actuators=actuators
+                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
             )
         )
 
@@ -144,7 +143,6 @@ class MainBrain(Brain):
             # _enemy_position=self.position_generator(),
         )
 
-
     """ ### One-Shot Tasks ### """
 
     @Brain.task(process=False, run_on_start=True)
@@ -156,6 +154,5 @@ class MainBrain(Brain):
             self.arena.team_color, start_position, Point(290, 190)
         )
         self.rolling_basis_odometrie = start_position
-
 
         await self.run_strategy()

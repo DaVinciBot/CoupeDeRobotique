@@ -17,7 +17,8 @@ from geometry import OrientedPoint
 from navigation.path_planner.structs import Direction
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
 from navigation.path_planner.basic_path_planner.basic_path_planner_params import (
-    BasicPathPlannerParams, BasicPathPlannerPlanPathParams
+    BasicPathPlannerParams,
+    BasicPathPlannerPlanPathParams,
 )
 
 
@@ -30,7 +31,9 @@ class BasicPathPlanner(
     If the direction is set to BACKWARD, the orientations are flipped by π radians.
     """
 
-    def __init__(self, params: BasicPathPlannerParams, logger: Logger | None = None) -> None:
+    def __init__(
+        self, params: BasicPathPlannerParams, logger: Logger | None = None
+    ) -> None:
         """
         Initialize the basic path planner.
 
@@ -65,9 +68,14 @@ class BasicPathPlanner(
             list[OrientedPoint]: List containing start and goal, possibly reversed for backward direction.
         """
         return [
-            params.start if self.params.direction == Direction.FORWARD
-            else self._compute_backward_position(params.start),
-
-            params.goal if self.params.direction == Direction.FORWARD
-            else self._compute_backward_position(params.goal)
+            (
+                params.start
+                if self.params.direction == Direction.FORWARD
+                else self._compute_backward_position(params.start)
+            ),
+            (
+                params.goal
+                if self.params.direction == Direction.FORWARD
+                else self._compute_backward_position(params.goal)
+            ),
         ]

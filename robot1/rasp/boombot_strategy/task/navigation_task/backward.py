@@ -17,5 +17,3 @@ class BackwardToQuitConstruction(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILER,  # Be fast to finish the game
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=50, timeout=10),
         )
-
-

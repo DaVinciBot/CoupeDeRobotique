@@ -48,9 +48,13 @@ class NavigatorSignalsDispatcher:
             __events__ = event_names
 
         self._signals = NavigatorEvents()
-        self.logger.debug(f"NavigatorSignalsDispatcher initialized with events: {event_names}")
+        self.logger.debug(
+            f"NavigatorSignalsDispatcher initialized with events: {event_names}"
+        )
 
-    def connect_signal(self, signal: NavigatorSignalsEnum, callback: Callable[..., Any]) -> None:
+    def connect_signal(
+        self, signal: NavigatorSignalsEnum, callback: Callable[..., Any]
+    ) -> None:
         """
         Connect a callback function to a signal.
 
@@ -69,7 +73,9 @@ class NavigatorSignalsDispatcher:
         except AttributeError:
             self.logger.warning(f"Attempted to connect to unknown signal: {signal}")
 
-    def disconnect_signal(self, signal: NavigatorSignalsEnum, callback: Callable[..., Any]) -> None:
+    def disconnect_signal(
+        self, signal: NavigatorSignalsEnum, callback: Callable[..., Any]
+    ) -> None:
         """
         Disconnect a callback function from a signal.
 
@@ -86,7 +92,9 @@ class NavigatorSignalsDispatcher:
             event -= callback
             self.logger.debug(f"Disconnected callback from signal: {signal.name}")
         except AttributeError:
-            self.logger.warning(f"Attempted to disconnect from unknown signal: {signal}")
+            self.logger.warning(
+                f"Attempted to disconnect from unknown signal: {signal}"
+            )
 
     def emit_signal(self, signal: NavigatorSignalsEnum, *args, **kwargs) -> None:
         """
@@ -101,7 +109,9 @@ class NavigatorSignalsDispatcher:
             None
         """
         try:
-            self.logger.debug(f"Emitting signal: {signal.name} with args: {args}, kwargs: {kwargs}")
+            self.logger.debug(
+                f"Emitting signal: {signal.name} with args: {args}, kwargs: {kwargs}"
+            )
             getattr(self._signals, signal.name)(*args, **kwargs)
         except AttributeError:
             self.logger.warning(f"Attempted to emit unknown signal: {signal}")

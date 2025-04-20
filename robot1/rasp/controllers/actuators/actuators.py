@@ -14,17 +14,19 @@ from usb_com.python import Messages
 # ====== Class Part ======
 class Actuators(GPIOComTeensy):
     def __init__(
-            self,
-            logger: Logger,
-            serial_number=CONFIG.ACTUATOR_TEENSY_SER,
-            vid=CONFIG.TEENSY_VID,
-            pid=CONFIG.TEENSY_PID,
-            baudrate=CONFIG.TEENSY_BAUDRATE,
-            enable_crc=CONFIG.TEENSY_CRC,
-            enable_dummy=CONFIG.TEENSY_DUMMY,
+        self,
+        logger: Logger,
+        serial_number=CONFIG.ACTUATOR_TEENSY_SER,
+        vid=CONFIG.TEENSY_VID,
+        pid=CONFIG.TEENSY_PID,
+        baudrate=CONFIG.TEENSY_BAUDRATE,
+        enable_crc=CONFIG.TEENSY_CRC,
+        enable_dummy=CONFIG.TEENSY_DUMMY,
     ):
         # Initialize the parent-GPIOComTeensy class
-        super().__init__(logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy)
+        super().__init__(
+            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy
+        )
 
         # Admit that default elevator position is at the bottom
         self.elevator_ticks: int = 0
@@ -37,7 +39,9 @@ class Actuators(GPIOComTeensy):
         # Register message handlers
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
-        self.add_callback(self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value)
+        self.add_callback(
+            self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value
+        )
 
     def __str__(self) -> str:
         return self.__class__.__name__
@@ -65,9 +69,7 @@ class Actuators(GPIOComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.warning(
-            f"Teensy Actuators does not know the message {msg.hex()}"
-        )
+        self.logger.warning(f"Teensy Actuators does not know the message {msg.hex()}")
 
     def rcv_switch_state_return(self, msg: bytes):
         """
@@ -110,13 +112,13 @@ class Actuators(GPIOComTeensy):
         pin_driver = 15
 
         msg = (
-                Messages.STEPPER_STEP.to_bytes()
-                + struct.pack("<i", abs(steps))
-                + struct.pack("<?", (steps >= 0))
-                + struct.pack("<i", speed)
-                + struct.pack("<B", pin_dir)
-                + struct.pack("<B", pin_step)
-                + struct.pack("<B", pin_driver)
+            Messages.STEPPER_STEP.to_bytes()
+            + struct.pack("<i", abs(steps))
+            + struct.pack("<?", (steps >= 0))
+            + struct.pack("<i", speed)
+            + struct.pack("<B", pin_dir)
+            + struct.pack("<B", pin_step)
+            + struct.pack("<B", pin_driver)
         )
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
@@ -124,15 +126,15 @@ class Actuators(GPIOComTeensy):
 
     @log("Actuators")
     def set_servo_angle(
-            self,
-            pin: int,
-            angle: int,
-            min_angle: int = 0,
-            max_angle: int = 180,
-            detach=False,
-            # If True, the servo will detach after setting the angle,
-            # DO NOT USE DETACH = TRUE AND DETACH = FALSE ON THE SAME SERVO
-            detach_delay=1000,
+        self,
+        pin: int,
+        angle: int,
+        min_angle: int = 0,
+        max_angle: int = 180,
+        detach=False,
+        # If True, the servo will detach after setting the angle,
+        # DO NOT USE DETACH = TRUE AND DETACH = FALSE ON THE SAME SERVO
+        detach_delay=1000,
     ) -> None:
         """Set the angle of the servo at the given pin.
 
@@ -148,30 +150,26 @@ class Actuators(GPIOComTeensy):
         if min_angle <= angle <= max_angle:
             if detach:
                 msg = (
-                        Messages.SET_SERVO_ANGLE_DETACH.to_bytes()
-                        + struct.pack("<B", pin)
-                        + struct.pack("<B", angle)
-                        + struct.pack("<i", detach_delay)
+                    Messages.SET_SERVO_ANGLE_DETACH.to_bytes()
+                    + struct.pack("<B", pin)
+                    + struct.pack("<B", angle)
+                    + struct.pack("<i", detach_delay)
                 )
                 self.send_bytes(msg)
             else:
                 if not self.gpio_manager.is_declared_gpio(pin):
-                    self.gpio_manager.add_gpio(
-                        pin, ActuatorType.SERVO
-                    )
+                    self.gpio_manager.add_gpio(pin, ActuatorType.SERVO)
                     self.logger.info(f"Pin {pin} added as a servo pin")
-                elif not self.gpio_manager.is_valid_gpio(
-                        pin, ActuatorType.SERVO
-                ):
+                elif not self.gpio_manager.is_valid_gpio(pin, ActuatorType.SERVO):
                     self.logger.error(
                         f"Pin {pin} is not a valid servo pin because it is registered as a "
                         f"{str(self.gpio_manager.get_type_gpio(pin))}"
                     )
                     return
                 msg = (
-                        Messages.SET_SERVO_ANGLE.to_bytes()
-                        + struct.pack("<B", pin)
-                        + struct.pack("<B", angle)
+                    Messages.SET_SERVO_ANGLE.to_bytes()
+                    + struct.pack("<B", pin)
+                    + struct.pack("<B", angle)
                 )
                 # https://docs.python.org/3/library/struct.html#format-characters
                 self.send_bytes(msg)
@@ -184,8 +182,5 @@ class Actuators(GPIOComTeensy):
 
     @log("Actuators")
     def attach_switch(self, pin: int) -> None:
-        msg = (
-                Messages.ATTACH_SWITCH.to_bytes()
-                + struct.pack("<B", pin)
-        )
+        msg = Messages.ATTACH_SWITCH.to_bytes() + struct.pack("<B", pin)
         self.send_bytes(msg)

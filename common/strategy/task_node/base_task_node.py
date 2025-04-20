@@ -5,7 +5,6 @@ from strategy.task import BaseTask, TaskStatus
 from strategy.base_game_context import BaseGameContext
 
 if TYPE_CHECKING:
-
     from strategy.transition import BaseTransition
 
 
@@ -47,9 +46,7 @@ class BaseTaskNode:
         """Hook appelé une seule fois la première fois qu’on entre ici."""
         pass
 
-    def on_exit(
-        self, next_node: Optional[BaseTaskNode], ctx: BaseGameContext
-    ) -> None:
+    def on_exit(self, next_node: Optional[BaseTaskNode], ctx: BaseGameContext) -> None:
         """Hook appelé une seule fois quand la tâche devient terminale."""
         pass
 

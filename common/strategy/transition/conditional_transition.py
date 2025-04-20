@@ -11,7 +11,6 @@ if TYPE_CHECKING:
 
 
 class ConditionalTransition(BaseTransition):
-
     def __init__(
         self,
         target: BaseTaskNode,
