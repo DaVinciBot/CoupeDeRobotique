@@ -8,14 +8,26 @@ class Navigation
 public:
     Navigation(RollingBasis *basis);
 
-    void setLinearAngularSpeed(float linearMmS, float angularDegS);
+    void setCommand(float linSpeedMmPerS,
+                    float angSpeedRadPerS,
+                    const Point &targetPos);
+
     void update();
-    bool isBusy() const;
+
+    bool isMoving() const;
+
     void stop();
-    void getPose(float &x, float &y, float &theta) const;
+
+    Point getPose() const;
+
+    float getMeasuredLinearSpeed() const;
+
+    float getMeasuredAngularSpeed() const;
 
 private:
     RollingBasis *_basis;
 };
 
 #endif
+
+// TODO: rajouter la couche supérieure de navigation

@@ -5,9 +5,13 @@ Navigation::Navigation(RollingBasis *basis)
 {
 }
 
-void Navigation::setLinearAngularSpeed(float linearMmS, float angularDegS)
+void Navigation::setCommand(float linSpeedMmPerS,
+                            float angSpeedRadPerS,
+                            const Point &targetPos)
 {
-    _basis->setLinearAngularSpeed(linearMmS, angularDegS);
+    _basis->setCommand(linSpeedMmPerS,
+                       angSpeedRadPerS,
+                       targetPos);
 }
 
 void Navigation::update()
@@ -15,7 +19,7 @@ void Navigation::update()
     _basis->update();
 }
 
-bool Navigation::isBusy() const
+bool Navigation::isMoving() const
 {
     return _basis->isMoving();
 }
@@ -25,7 +29,17 @@ void Navigation::stop()
     _basis->stop();
 }
 
-void Navigation::getPose(float &x, float &y, float &theta) const
+Point Navigation::getPose() const
 {
-    _basis->getPose(x, y, theta);
+    return _basis->getPose();
+}
+
+float Navigation::getMeasuredLinearSpeed() const
+{
+    return _basis->getMeasuredLinearSpeedMmPerS();
+}
+
+float Navigation::getMeasuredAngularSpeed() const
+{
+    return _basis->getMeasuredAngularSpeedRadPerS();
 }
