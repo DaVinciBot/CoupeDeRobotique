@@ -77,10 +77,7 @@ class BaseArena(ABC):
             obstacle_buffer: float,
             zones: list[BaseArenaZone],
             chunk_size: int = 10,
-            grid_manager_logger: Logger = Logger(
-                identifier="GridManager",
-                follow_logger_manager_rules=True,
-            ),
+            grid_manager_logger: Logger | None = None,
     ) -> None:
         """
         Initializes the BaseArena instance with dimensions, zones, and configuration parameters.
@@ -120,7 +117,14 @@ class BaseArena(ABC):
 
         # 4. Grid Manager
         self.grid_manager: GridManager = GridManager(
-            grid_manager_logger, chunk_size, width, height, forbidden_cover_threshold
+            logger=grid_manager_logger or Logger(
+                identifier="GridManager",
+                follow_logger_manager_rules=True,
+            ),
+            chunk_size=chunk_size,
+            width=width,
+            height=height,
+            forbidden_cover_threshold=forbidden_cover_threshold
         )
 
         # 5. Zones

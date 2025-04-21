@@ -9,7 +9,11 @@ from strategy.core import (
     BaseSubGraph,
 )
 
-from strategy.tools import visualize_task_graph_from_node
+from strategy.tools import (
+    visualize_task_graph_from_node,
+    visualize_task_graph,
+    visualize_entire_subgraph,
+)
 
 
 yellow_strategy = SubGraphBuilder()
@@ -22,7 +26,7 @@ yellow_strategy.add_subgraph(construct_zone_11)
 
 yellow_strategy.connect(
     from_name=pickup_zone_4.get_exits()[0].name,
-    transition=DirectTransition(construct_zone_11.get_entry())
+    transition=DirectTransition(construct_zone_11.get_entry()),
 )
 
 built_graph = yellow_strategy.build(
@@ -35,4 +39,3 @@ visualize_task_graph_from_node(
     subgraph=built_graph,
     title="Yellow Strategy",
 )
-

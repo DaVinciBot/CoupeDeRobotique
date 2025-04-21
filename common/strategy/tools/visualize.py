@@ -1,81 +1,67 @@
-def visualize_graph_mermaid(start_node):
-    """
-    Parcourt récursivement tous les BaseTaskNode à partir de start_node,
-    et génère un diagramme Mermaid (graph TD) listant :
-     - chaque nœud avec son nom et le nom de sa Task
-     - chaque transition (→)
-    """
-    # 1) Collecte de tous les nœuds
-    visited = set()
-    nodes = []
+# ====== Code Summary ======
+# This module provides utilities for visualizing task graphs using both Graphviz and NetworkX.
+# It includes functions to visualize individual task flows from a starting node or an entire subgraph.
+# Nodes are rendered with their names and associated task types, and transitions are labeled by class name.
+# Node statuses are visually encoded when using NetworkX visualizations.
 
-    def dfs(node):
-        if node in visited:
-            return
-        visited.add(node)
-        nodes.append(node)
-        for t in node.transitions:
-            dfs(t.target)
+# ====== Standard Library Imports ======
+from typing import Optional, Set
 
-    dfs(start_node)
-
-    # 2) Attribution d’un identifiant court à chaque nœud
-    mapping = {node: f"N{i}" for i, node in enumerate(nodes)}
-
-    # 3) Construction du texte Mermaid
-    lines = ["graph TD"]
-    for node, key in mapping.items():
-        # on affiche nom_du_nœud\nnom_de_la_classe_de_Task
-        label = f"{node.name}\\n{node.task.__class__.__name__}"
-        lines.append(f'    {key}["{label}"]')
-    for node in nodes:
-        for t in node.transitions:
-            lines.append(f"    {mapping[node]} --> {mapping[t.target]}")
-
-    return "\n".join(lines)
-
-
+# ====== Third-party Library Imports ======
+import networkx as nx
+import matplotlib.pyplot as plt
 from graphviz import Digraph
 
+# ====== Internal Project Imports ======
+from strategy.core.task_nodes.base_task_node import BaseTaskNode
+from strategy.core.tasks.status import TaskStatus
+from strategy.core.sub_graphs import BaseSubGraph
 
-def visualize_task_graph(start_node, filename="task_graph", view=False):
+
+def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=False):
     """
-    Parcourt récursivement ton graphe de TaskNode à partir de start_node
-    et génère un .png/.pdf (selon extension) avec Graphviz.
+    Recursively traverses a TaskNode graph and generates a Graphviz visual (.png).
 
-    - filename : nom du fichier sans extension
-    - view     : si True, ouvre automatiquement le rendu
+    Args:
+        start_node (BaseTaskNode): Entry point of the task graph.
+        filename (str): Output filename without extension.
+        view (bool): If True, automatically opens the generated image.
+
+    Returns:
+        Digraph: The generated Graphviz graph object.
     """
     dot = Digraph(comment="Strategy Graph", format="png")
     seen = set()
 
-    def dfs(node):
-        # identifie chaque node par son id Python pour éviter collision de noms
+    def get_task_class_name(task_list):
+        if isinstance(task_list, list):
+            return ", ".join([t.__class__.__name__ for t in task_list])
+        return task_list.__class__.__name__
+
+    def dfs(node: BaseTaskNode):
         nid = str(id(node))
         if nid in seen:
             return
         seen.add(nid)
 
-        # étiquette = nom du node + classe de la task
-        label = f"{node.name}\\n<{node.task.__class__.__name__}>"
+        task_name = get_task_class_name(node.tasks)
+        label = f"{node.name}\\n<{task_name}>"
+
         dot.node(
             nid, label=label, shape="box", style="rounded,filled", fillcolor="lightblue"
         )
 
         for t in node.transitions:
-            tgt_id = str(id(t.target))
-            # assure-toi que la cible est aussi ajoutée
-            dfs(t.target)
-            # crée l'arête
-            dot.edge(nid, tgt_id)
+            target = t.target
+            target_id = str(id(target))
+            dfs(target)
+            dot.edge(nid, target_id, label=t.__class__.__name__)
 
     dfs(start_node)
 
-    # génère le fichier (PNG par défaut)
     out_path = dot.render(filename, cleanup=True)
     print(f"Graph rendered to {out_path}")
     if view:
-        # tente d'ouvrir le PNG
         import webbrowser
 
         webbrowser.open(out_path)
@@ -83,18 +69,67 @@ def visualize_task_graph(start_node, filename="task_graph", view=False):
     return dot
 
 
-import networkx as nx
-import matplotlib.pyplot as plt
-from typing import Optional, Set
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
-from strategy.core.tasks.status import TaskStatus
-from strategy.core.sub_graphs import BaseSubGraph
+def visualize_entire_subgraph(
+    subgraph: BaseSubGraph, filename="full_graph", view=False
+):
+    """
+    Generates a full Graphviz visualization for a given subgraph.
+
+    Args:
+        subgraph (BaseSubGraph): Subgraph containing all task nodes.
+        filename (str): Output filename without extension.
+        view (bool): If True, automatically opens the generated image.
+
+    Returns:
+        Digraph: The generated Graphviz graph object.
+    """
+    dot = Digraph(comment="Full Strategy Graph", format="png")
+    seen = set()
+
+    def get_task_class_name(task_list):
+        if isinstance(task_list, list):
+            return ", ".join([t.__class__.__name__ for t in task_list])
+        return task_list.__class__.__name__
+
+    def add_node(node: BaseTaskNode):
+        nid = str(id(node))
+        if nid in seen:
+            return
+        seen.add(nid)
+
+        label = f"{node.name}\\n<{get_task_class_name(node.tasks)}>"
+        dot.node(
+            nid, label=label, shape="box", style="rounded,filled", fillcolor="lightblue"
+        )
+
+        for t in node.transitions:
+            target = t.target
+            dot.edge(nid, str(id(target)), label=t.__class__.__name__)
+            add_node(target)
+
+    for node in subgraph.get_all_nodes():
+        add_node(node)
+
+    out_path = dot.render(filename, cleanup=True)
+    print(f"Graph rendered to {out_path}")
+    if view:
+        import webbrowser
+
+        webbrowser.open(out_path)
+
+    return dot
 
 
-def visualize_task_graph_from_node(subgraph: BaseSubGraph, title: str = "Full Strategy Graph"):
-    import networkx as nx
-    import matplotlib.pyplot as plt
+def visualize_task_graph_from_node(
+    subgraph: BaseSubGraph, title: str = "Full Strategy Graph"
+):
+    """
+    Uses NetworkX and Matplotlib to visualize the task graph with color-coded node statuses.
 
+    Args:
+        subgraph (BaseSubGraph): Subgraph containing all task nodes.
+        title (str): Title for the Matplotlib plot.
+    """
     graph = nx.DiGraph()
 
     def get_status_color(status: TaskStatus) -> str:
@@ -103,7 +138,7 @@ def visualize_task_graph_from_node(subgraph: BaseSubGraph, title: str = "Full St
             TaskStatus.IN_PROGRESS: "#ffdd57",
             TaskStatus.DONE: "#6bcf63",
             TaskStatus.FAILED: "#ff6f69",
-            TaskStatus.TIMEOUT: "#8e44ad"
+            TaskStatus.TIMEOUT: "#8e44ad",
         }.get(status, "#d3d3d3")
 
     for node in subgraph.get_all_nodes():
@@ -119,12 +154,17 @@ def visualize_task_graph_from_node(subgraph: BaseSubGraph, title: str = "Full St
 
     plt.figure(figsize=(10, 7))
     nx.draw_networkx_nodes(graph, pos, node_color=node_colors, node_size=800)
-    nx.draw_networkx_labels(graph, pos, font_size=10, font_weight='bold')
-    nx.draw_networkx_edges(graph, pos, arrowstyle='-|>', arrowsize=20)
-    nx.draw_networkx_edge_labels(graph, pos, edge_labels=nx.get_edge_attributes(graph, 'label'), font_color='gray',
-                                 font_size=8)
+    nx.draw_networkx_labels(graph, pos, font_size=10, font_weight="bold")
+    nx.draw_networkx_edges(graph, pos, arrowstyle="-|>", arrowsize=20)
+    nx.draw_networkx_edge_labels(
+        graph,
+        pos,
+        edge_labels=nx.get_edge_attributes(graph, "label"),
+        font_color="gray",
+        font_size=8,
+    )
 
     plt.title(title)
-    plt.axis('off')
+    plt.axis("off")
     plt.tight_layout()
     plt.show()
