@@ -23,6 +23,9 @@ Rolling_Basis *rolling_basis_ptr = new Rolling_Basis(
     ENCODER_RESOLUTION, ENTRAXE, WHEEL_DIAMETER,
     linear_speed_pid, angular_speed_pid, linear_distance_pid, angular_distance_pid);
 
+// 2. Instanciate the Communication object
+Com *com;
+
 // c. Define the motors interrupt functions
 /******* Attach Interrupt *******/
 inline void left_motor_read_encoder()
@@ -31,6 +34,7 @@ inline void left_motor_read_encoder()
     rolling_basis_ptr->left_motor->ticks--;
   else
     rolling_basis_ptr->left_motor->ticks++;
+  com->print("working");
 }
 
 inline void right_motor_read_encoder()
@@ -39,10 +43,8 @@ inline void right_motor_read_encoder()
     rolling_basis_ptr->right_motor->ticks--;
   else
     rolling_basis_ptr->right_motor->ticks++;
+  com->print("working");
 }
-
-// 2. Instanciate the Communication object
-Com *com;
 
 // 3. Define all com callback functions
 // a. define globals variables to keep in memory callback functions updated

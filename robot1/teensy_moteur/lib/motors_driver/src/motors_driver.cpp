@@ -1,10 +1,11 @@
 #include <motors_driver.h>
 #include <Arduino.h>
 
-Motor::Motor(byte pin_forward, byte pin_backward, byte pin_pwm, byte pin_enca, byte pin_encb, double wheel_unit_tick_cm, byte max_pwm){
+Motor::Motor(byte pin_forward, byte pin_backward, byte pin_pwm, byte pin_enca, byte pin_encb, double wheel_unit_tick_cm, byte max_pwm)
+{
     this->pin_forward = pin_forward;
     this->pin_backward = pin_backward;
-    
+
     this->pin_pwm = pin_pwm;   // PWM pin only !
     this->pin_enca = pin_enca; // AttachInterrupt pin only !
     this->pin_encb = pin_encb; // AttachInterrupt pin only !
@@ -14,7 +15,8 @@ Motor::Motor(byte pin_forward, byte pin_backward, byte pin_pwm, byte pin_enca, b
     this->wheel_unit_tick_cm = wheel_unit_tick_cm;
 }
 
-void Motor::init(){
+void Motor::init()
+{
     pinMode(this->pin_forward, OUTPUT);
     pinMode(this->pin_backward, OUTPUT);
     pinMode(this->pin_pwm, OUTPUT);
@@ -25,7 +27,7 @@ void Motor::init(){
 
 void Motor::set_motor(int pwmVal)
 {
-    int16_t dir = pwmVal > 0 ? 1 : -1;  
+    int16_t dir = pwmVal > 0 ? 1 : -1;
     pwmVal = constrain(abs(pwmVal), 0, this->max_pwm);
 
     analogWrite(this->pin_pwm, pwmVal);
@@ -46,7 +48,6 @@ void Motor::set_motor(int pwmVal)
     }
 }
 
-
 double Motor::delta_time_calculator()
 {
     long current_time = micros();
@@ -64,7 +65,7 @@ void Motor::odometer_handle()
 
     this->distance += delta_ticks * this->wheel_unit_tick_cm;
     this->speed = delta_ticks * this->wheel_unit_tick_cm / delta_time;
-} 
+}
 
 // void Motor::speed_handle(float target_speed)
 // {

@@ -19,7 +19,10 @@
 			"array": "cpp",
 			"string_view": "cpp",
 			"initializer_list": "cpp",
-			"utility": "cpp"
+			"utility": "cpp",
+			"charconv": "cpp",
+			"xstring": "cpp",
+			"string": "cpp"
 		},
 		"[python]": {
 			"editor.defaultFormatter": "ms-python.black-formatter"

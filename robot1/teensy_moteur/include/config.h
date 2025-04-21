@@ -23,11 +23,11 @@
 
 // Creation Rolling Basis
 // Motor
-#define MAX_PWM 180
+#define MAX_PWM 230
 
 // Encoder
-#define ENCODER_RESOLUTION 2048
-#define ENTRAXE 29.8
+#define ENCODER_RESOLUTION 1024
+#define ENTRAXE 29.4
 #define WHEEL_DIAMETER 5.8
 
 // PIDs
