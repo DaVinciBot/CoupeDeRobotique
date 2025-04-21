@@ -77,7 +77,7 @@ class MainBrain(Brain):
         # --- Initialization --- #
         navigator = Navigator()
 
-        rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
@@ -126,9 +126,9 @@ class MainBrain(Brain):
         self.navigator_task = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=10),
+            path_planner_params=DeltaPathPlannerParams(distance=100),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+            speed_profiler=CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
         )
 

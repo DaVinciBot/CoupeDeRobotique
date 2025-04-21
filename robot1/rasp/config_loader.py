@@ -3,7 +3,6 @@ import json
 import sys
 import os
 
-from navigation import SpeedProfiler, BasicSpeedProfile, LinearRampedSpeedProfile
 
 def load_json_file(file_path):
     try:
@@ -29,6 +28,12 @@ class CONFIG:
         COMMON_DIR
     )  # Add common directory to the path (to be able to import common modules)
     CONFIG_STORE = load_json_file(os.path.join(ROOT_DIR, "config.json"))
+
+    from navigation import (
+        SpeedProfiler,
+        BasicSpeedProfile,
+        LinearRampedSpeedProfile,
+    )
 
     # CONSTANTS TO DEFINE !
     # General config
@@ -119,31 +124,53 @@ class CONFIG:
     ]
 
     ROLLING_BASIS_SPEED_PROFILES_CONFIG = ROLLING_BASIS_CONFIG["speed_profiles"]
-    ROLLING_BASIS_SPEED_PROFILES_LINEAR = ROLLING_BASIS_SPEED_PROFILES_CONFIG["linear_speed"]
-    ROLLING_BASIS_SPEED_PROFILES_ANGULAR = ROLLING_BASIS_SPEED_PROFILES_CONFIG["angular_speed"]
+    ROLLING_BASIS_SPEED_PROFILES_LINEAR = ROLLING_BASIS_SPEED_PROFILES_CONFIG[
+        "linear_speed"
+    ]
+    ROLLING_BASIS_SPEED_PROFILES_ANGULAR = ROLLING_BASIS_SPEED_PROFILES_CONFIG[
+        "angular_speed"
+    ]
 
     ROLLING_BASIS_SLOW_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
-        linear_speed_profile=LinearRampedSpeedProfile(**ROLLING_BASIS_SPEED_PROFILES_LINEAR["slow"]),
-        angular_speed_profile=BasicSpeedProfile(ROLLING_BASIS_SPEED_PROFILES_ANGULAR["slow"]["max_speed"]),
+        linear_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["slow"]
+        ),
+        angular_speed_profile=BasicSpeedProfile(
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["slow"]["max_speed"]
+        ),
     )
     ROLLING_BASIS_DEFAULT_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
-        linear_speed_profile=LinearRampedSpeedProfile(**ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]),
-        angular_speed_profile=LinearRampedSpeedProfile(**ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]),
+        linear_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]
+        ),
+        angular_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]
+        ),
     )
     ROLLING_BASIS_HIGH_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
-        linear_speed_profile=LinearRampedSpeedProfile(**ROLLING_BASIS_SPEED_PROFILES_LINEAR["high"]),
-        angular_speed_profile=LinearRampedSpeedProfile(**ROLLING_BASIS_SPEED_PROFILES_ANGULAR["high"]),
+        linear_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["high"]
+        ),
+        angular_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_ANGULAR["high"]
+        ),
     )
     ROLLING_BASIS_TO_PICKUP_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
-        linear_speed_profile=LinearRampedSpeedProfile(**ROLLING_BASIS_SPEED_PROFILES_LINEAR["to_pickup"]),
-        angular_speed_profile=LinearRampedSpeedProfile(**ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]),
+        linear_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["to_pickup"]
+        ),
+        angular_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]
+        ),
     )
     ROLLING_BASIS_TO_CONSTRUCT_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
-        linear_speed_profile=LinearRampedSpeedProfile(**ROLLING_BASIS_SPEED_PROFILES_LINEAR["to_construct"]),
-        angular_speed_profile=LinearRampedSpeedProfile(**ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]),
+        linear_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["to_construct"]
+        ),
+        angular_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]
+        ),
     )
-
-
 
     # Actuators
     ACTUATORS_CONFIG = SPECIFIC_CONFIG["actuators"]
