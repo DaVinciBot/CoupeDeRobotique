@@ -12,6 +12,10 @@ from navigation.avoidance.base_avoidance import (
     BaseAvoidance,
     BaseAvoidanceParams,
 )
+from navigation.avoidance.no_avoidance import (
+    NoAvoidance,
+    NoAvoidanceParams,
+)
 from navigation.avoidance.stop_and_wait_avoidance import (
     StopAndWaitAvoidance,
     StopAndWaitAvoidanceParams,
@@ -38,6 +42,9 @@ class AvoidanceFactory:
             ValueError: If the avoidance strategy is not supported.
         """
         strategy = params.avoidance_strategy
+
+        if strategy == AvoidanceStrategy.NO_AVOIDANCE:
+            return NoAvoidance(cast(NoAvoidanceParams, params))
 
         if strategy == AvoidanceStrategy.STOP_AND_WAIT:
             return StopAndWaitAvoidance(cast(StopAndWaitAvoidanceParams, params))

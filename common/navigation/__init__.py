@@ -52,9 +52,11 @@ from navigation.avoidance import (
     AvoidanceState,
     # Avoidance
     BaseAvoidance,
+    NoAvoidance,
     StopAndWaitAvoidance,
     # Params
     BaseAvoidanceParams,
+    NoAvoidanceParams,
     StopAndWaitAvoidanceParams,
 )
 

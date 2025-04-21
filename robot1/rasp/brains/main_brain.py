@@ -29,7 +29,7 @@ from controllers.actuators import Actuators, ActuatorsDummy
 from sensors import Lidar
 from navigation_tasks.tasks import yellow_start_tasks
 
-from boombot_strategy import ShowGameContext
+from boombot_strategy_old import ShowGameContext
 
 from navigation import (
     DeltaPathPlannerParams,
