@@ -38,6 +38,8 @@ from navigation import (
     StopAndWaitAvoidanceParams,
 )
 
+from usb_com.python.tools import get_all_serial_number
+
 
 class MainBrain(Brain):
     def __init__(
@@ -123,13 +125,30 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
         # Ici met le déplacement que tu veux
-        self.navigator_task = NavigatorTaskParams(
-            goal=None,
-            timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=100),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+        # self.navigator_task = NavigatorTaskParams(
+        #     goal=None,
+        #     timeout=None,
+        #     path_planner_params=DeltaPathPlannerParams(distance=100),
+        #     trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+        #     speed_profiler=CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILER,
+        #     avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+        # )
+        # get_all_serial_number()
+        godHand = Actuators(
+            logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
+        )
+        godHand.set_servo_angle(
+            pin=0, angle=90, min_angle=0, max_angle=180, detach=False, detach_delay=1000
+        )
+        godHand.set_servo_angle(
+            pin=1, angle=90, min_angle=0, max_angle=180, detach=False, detach_delay=1000
+        )
+        godHand.set_servo_angle(
+            pin=2, angle=90, min_angle=0, max_angle=180, detach=False, detach_delay=1000
+        )
+        godHand.set_servo_angle(
+            pin=3, angle=90, min_angle=0, max_angle=180, detach=False, detach_delay=1000
         )
 
+        godHand.logger.info("Servo angle set to 90 degrees")
         await self.run()
