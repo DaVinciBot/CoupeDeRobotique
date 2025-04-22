@@ -9,8 +9,6 @@ class GraphRunner:
     def __init__(
         self, start: BaseTaskNode, logger: Logger, parallel: bool = False
     ) -> None:
-        if logger is None:
-            raise ValueError("Logger is required for GraphRunner.")
         self.logger = logger
         self.parallel = parallel
         self.active: List[BaseTaskNode] = [start]

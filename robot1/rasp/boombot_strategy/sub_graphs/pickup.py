@@ -35,7 +35,7 @@ def get_pickup_sub_graph(zone_pickup_id: int) -> BaseSubGraph:
     # Add node for navigating to the specified pickup zone
     pickup_sub_graph.add_node(
         f"[Pickup] go to zone {zone_pickup_id}",
-        BaseTaskNode(f"[Pickup] go to zone {zone_pickup_id}", GoToStuffZoneToPickUp(0)),
+        BaseTaskNode(f"[Pickup] go to zone {zone_pickup_id}", GoToStuffZoneToPickUp(zone_pickup_id)),
     )
 
     # Add node for precise forward motion to perform pickup
