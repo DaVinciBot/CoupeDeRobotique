@@ -10,7 +10,6 @@
 // Configuration file (contains all the constants and pinout), it is just a main.cpp header file
 #include <config.h>
 
-
 // 1. Instanciate the Rolling Basis object
 // a. Define the PID controllers
 PID linear_speed_pid(KP_LINEAR_SPEED, KI_LINEAR_SPEED, KD_LINEAR_SPEED);
@@ -21,7 +20,7 @@ PID angular_distance_pid(KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DI
 
 // b. Instanciate the Rolling Basis object
 Rolling_Basis *rolling_basis_ptr = new Rolling_Basis(
-    ENCODER_RESOLUTION, CENTER_DISTANCE, WHEEL_DIAMETER,
+    ENCODER_RESOLUTION, ENTRAXE, WHEEL_DIAMETER,
     linear_speed_pid, angular_speed_pid, linear_distance_pid, angular_distance_pid);
 
 // c. Define the motors interrupt functions
@@ -109,7 +108,7 @@ void set_odometrie(byte *msg, byte size)
 void reset_teensy(byte *msg, byte size)
 {
   // TODO: reset the teensy, à tester !
-  void(*reboot) (void) = 0;
+  void (*reboot)(void) = 0;
   reboot();
 }
 

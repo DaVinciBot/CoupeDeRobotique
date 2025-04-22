@@ -1,4 +1,4 @@
-from strategy import BaseGameContext
+from strategy.core import BaseGameContext
 from arena import ShowArena
 from controllers import RollingBasis, Actuators
 

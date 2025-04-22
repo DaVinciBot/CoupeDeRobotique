@@ -1,14 +1,19 @@
 # ====== Code Summary ======
-# This module defines the abstract BaseAvoidance class, a foundational component for implementing
-# various avoidance strategies in a robotic navigation system. It handles core utilities such as
-# obstacle detection (ACS), timeout logic, task state tracking, and a structured way for child
-# classes to plug in specific avoidance behavior through the abstract `handle` method.
+# This module defines the abstract BaseAvoidance class, which serves as a foundational component for
+# implementing various obstacle avoidance strategies in a robotic navigation system. It provides utility
+# methods for Automatic Collision System (ACS) checks, task state handling, timeout control, and a
+# standardized interface for implementing strategy-specific logic via the abstract `handle` method.
 
 # ====== Standard Library Imports ======
+from __future__ import annotations
+from typing import TYPE_CHECKING
 import functools
 import time
 from abc import ABC, abstractmethod
 from typing import Generic, TypeVar
+
+# ====== Third-party Library Imports ======
+# (None)
 
 # ====== Internal Project Imports ======
 from loggerplusplus import Logger
@@ -19,6 +24,9 @@ from navigation.avoidance.base_avoidance.base_avoidance_params import (
 )
 from navigation.avoidance.base_avoidance.states import AvoidanceState
 from navigation.trajectory_planner import TrajectoryPlanCommand
+
+if TYPE_CHECKING:
+    from navigation.navigator.task.navigator_task import NavigatorTask
 
 ParamsType = TypeVar("ParamsType", bound=BaseAvoidanceParams)
 
@@ -56,7 +64,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         self.params: ParamsType = params
         self.state: AvoidanceState = AvoidanceState.IDLE
         self._avoiding_start_time: float | None = None  # Timer for avoidance timeout
-        self._original_task: "NavigatorTask" or None = (
+        self._original_task: NavigatorTask | None = (
             None  # Storage for original navigation task
         )
 
@@ -73,7 +81,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         """
         return ally_zone.point.distance(enemy_zone.point) <= self.params.acs_distance
 
-    def _store_original_task(self, current_navigator_task: "NavigatorTask") -> None:
+    def _store_original_task(self, current_navigator_task: NavigatorTask) -> None:
         """
         Store a deep copy of the original navigation task if not already stored.
 
@@ -98,7 +106,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         """
 
         @functools.wraps(method)
-        def wrapper(self, current_navigator_task: "NavigatorTask", *args, **kwargs):
+        def wrapper(self, current_navigator_task: NavigatorTask, *args, **kwargs):
             self._store_original_task(current_navigator_task)
             return method(self, current_navigator_task, *args, **kwargs)
 
@@ -128,7 +136,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         return (time.time() - self._avoiding_start_time) > self.params.timeout
 
     def _abort(
-        self, task: "NavigatorTask", position: OrientedPoint
+        self, task: NavigatorTask, position: OrientedPoint
     ) -> TrajectoryPlanCommand:
         """
         Abort the avoidance procedure and return a stop command.
@@ -152,7 +160,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
     @abstractmethod
     def handle(
         self,
-        current_navigator_task: "NavigatorTask",
+        current_navigator_task: NavigatorTask,
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:

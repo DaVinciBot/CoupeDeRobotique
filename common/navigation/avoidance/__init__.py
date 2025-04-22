@@ -4,6 +4,7 @@ from navigation.avoidance.base_avoidance import (
     BaseAvoidance,
     AvoidanceState,
 )
+from navigation.avoidance.no_avoidance import NoAvoidanceParams, NoAvoidance
 from navigation.avoidance.stop_and_wait_avoidance import (
     StopAndWaitAvoidance,
     StopAndWaitAvoidanceParams,

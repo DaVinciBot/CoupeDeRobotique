@@ -1,10 +1,12 @@
 # ====== Code Summary ======
-# This module defines a StopAndWaitAvoidance class, implementing a stop-and-wait strategy
-# for obstacle avoidance in a robotic navigation system.
-# The strategy halts movement upon obstacle detection (via ACS),
-# waits until the obstacle is cleared or a timeout occurs,
-# and then either replans the path or aborts the operation.
-# The system uses zones and trajectory commands to update navigation behavior.
+# This module defines the StopAndWaitAvoidance class, which implements a stop-and-wait strategy
+# for obstacle avoidance in a robotic navigation system. When an obstacle is detected using ACS,
+# the robot halts and waits for the obstacle to clear or a timeout to occur. Upon clearance,
+# it replans the path; if a timeout happens first, it aborts and issues a stop command.
+
+# ====== Standard Library Imports ======
+from __future__ import annotations
+from typing import TYPE_CHECKING
 
 # ====== Internal Project Imports ======
 from arena import AllyZone, EnemyZone
@@ -17,14 +19,17 @@ from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params
 )
 from navigation.trajectory_planner import TrajectoryPlanCommand
 
+if TYPE_CHECKING:
+    from navigation.navigator.task.navigator_task import NavigatorTask
+
 
 class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
     """
-    Implements a stop-and-wait obstacle avoidance strategy:
+    Implements a stop-and-wait obstacle avoidance strategy.
 
     When an obstacle is detected via ACS (Automatic Collision System), the robot stops.
-    If the obstacle is cleared, it replans a path starting from the current position.
-    If a timeout occurs before clearance, the system aborts avoidance with a stop command.
+    If the obstacle clears before a timeout, it replans a new trajectory from its current position.
+    If the obstacle remains and a timeout occurs, the system aborts the avoidance process.
 
     Attributes:
         params (StopAndWaitAvoidanceParams): Parameters for stop-and-wait strategy.
@@ -48,7 +53,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
     @BaseAvoidance._ensure_original_task_storage
     def handle(
         self,
-        task: "NavigatorTask",
+        task: NavigatorTask,
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
@@ -97,8 +102,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             task.state = NavigatorTaskState.IN_PROGRESS
             return (
                 task.current_trajectory_command
-            )  # Not important, this will be ignored because the avoidance is over
+            )  # Avoidance complete, continue as normal
 
         # 4. Continue with original trajectory
-        # No changes, continue executing the existing trajectory command
         return task.current_trajectory_command

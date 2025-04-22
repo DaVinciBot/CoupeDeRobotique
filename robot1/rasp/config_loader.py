@@ -3,8 +3,6 @@ import json
 import sys
 import os
 
-from navigation import SpeedProfiler, BasicSpeedProfile, LinearRampedSpeedProfile
-
 
 def load_json_file(file_path):
     try:
@@ -30,6 +28,12 @@ class CONFIG:
         COMMON_DIR
     )  # Add common directory to the path (to be able to import common modules)
     CONFIG_STORE = load_json_file(os.path.join(ROOT_DIR, "config.json"))
+
+    from navigation import (
+        SpeedProfiler,
+        BasicSpeedProfile,
+        LinearRampedSpeedProfile,
+    )
 
     # CONSTANTS TO DEFINE !
     # General config

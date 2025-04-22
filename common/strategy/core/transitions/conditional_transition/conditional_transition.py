@@ -1,0 +1,53 @@
+# ====== Code Summary ======
+# This module defines the `ConditionalTransition` class, which represents a transition between task nodes
+# that is governed by a specific condition. It extends `BaseTransition` and uses a `BaseTransitionCondition`
+# to evaluate whether the transition is allowed based on the current game context.
+
+
+# ====== Internal Project Imports ======
+from strategy.core.transitions.base_transition import BaseTransition
+from strategy.core.task_nodes.base_task_node import BaseTaskNode
+from strategy.core.base_game_context import BaseGameContext
+from strategy.core.transitions.conditional_transition.transitions_condition import (
+    BaseTransitionCondition,
+)
+
+
+class ConditionalTransition(BaseTransition):
+    """
+    A transition that occurs only if a specified condition is met.
+
+    This class allows for conditional logic in determining whether a transition from one task
+    node to another is valid, using an instance of `BaseTransitionCondition`.
+
+    Attributes:
+        condition (BaseTransitionCondition): The condition object used to validate the transition.
+    """
+
+    def __init__(
+        self,
+        target: BaseTaskNode,
+        condition: BaseTransitionCondition,
+    ):
+        """
+        Initialize a conditional transition.
+
+        Args:
+            target (BaseTaskNode): The target node to transition to.
+            condition (BaseTransitionCondition): The condition that must be met for the transition to occur.
+        """
+        super().__init__(target)
+        self.condition = condition
+
+    def can_transit(self, from_node: BaseTaskNode, ctx: BaseGameContext) -> bool:
+        """
+        Determine if the transition can occur based on the condition and game context.
+
+        Args:
+            from_node (BaseTaskNode): The node transitioning from.
+            ctx (BaseGameContext): The current game context providing necessary state for evaluation.
+
+        Returns:
+            bool: True if the condition is satisfied and transition can occur, False otherwise.
+        """
+        return self.condition.check(from_node, self.target, ctx)
