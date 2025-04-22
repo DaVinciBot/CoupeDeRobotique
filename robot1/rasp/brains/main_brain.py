@@ -1,11 +1,8 @@
 from config_loader import CONFIG
 
 # ====== Standard Library Imports ======
-import matplotlib.pyplot as plt
 import numpy as np
-import random
-import math
-import json
+import matplotlib.pyplot as plt
 
 # ====== Third-party library imports ======
 from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
@@ -15,28 +12,13 @@ from taskbrain import Brain
 # ====== Local Library Imports ======
 from geometry import OrientedPoint, Point, is_empty
 from arena import ShowArena, BaseArenaZone
-from navigation import (
-    Navigator,
-    NavigatorTaskParams,
-    TrajectoryPlanCommand,
-    PathPlannerPathPlanParamsFactory,
-)
+
 from arena import AllyZone, TeamColor
 
 # ====== Internal Project Imports ======
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from controllers.actuators import Actuators, ActuatorsDummy
 from sensors import Lidar
-from navigation_tasks.tasks import yellow_start_tasks
-
-from boombot_strategy_old import ShowGameContext
-
-from navigation import (
-    DeltaPathPlannerParams,
-    SequentialTrajectoryPlannerParams,
-    SpeedProfiler,
-    StopAndWaitAvoidanceParams,
-)
 
 
 class MainBrain(Brain):
@@ -56,7 +38,6 @@ class MainBrain(Brain):
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
-        self.navigator_task: NavigatorTaskParams | None = None
 
         super().__init__(logger, self)
 
@@ -69,30 +50,60 @@ class MainBrain(Brain):
     @Brain.task(
         process=True,
         run_on_start=False,
-        refresh_rate=0.1,
+        refresh_rate=0.00000000000000001,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def run(self) -> None:
         # --- Initialization --- #
-        navigator = Navigator()
+        from boombot_strategy import ShowGameContext, yellow_strategy_runner
 
-        rolling_basis = RollingBasis(
+        # Rolling basis & Actuators
+        rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        # --- MetaProg is insane (loop) --- #
-        if self.navigator_task is not None:
-            navigator.add_navigation_task(self.navigator_task)
-            self.navigator_task = None
-
-        cmd = navigator.handle(
-            ally_zone=self.arena.ally_zone,
-            enemy_zone=self.arena.enemy_zone,
+        actuators = ActuatorsDummy(
+            logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
-        rolling_basis.set_speed_and_position(*cmd.get_command())
+
+        # --- MetaProg is insane (loop) --- #
+        yellow_strategy_runner.handle(
+            ShowGameContext(
+                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+            )
+        )
         self.rolling_basis_odometrie = rolling_basis.odometrie
+
+    @Brain.task(
+        process=True,
+        run_on_start=True,
+        refresh_rate=0.1,
+        define_loop_later=True,
+        start_loop_marker="# --- MetaProg is insane (loop) --- #",
+    )
+    def visualize_arena(self) -> None:
+        # --- Initialization --- #
+        fig, ax = plt.subplots()
+
+        # --- MetaProg is insane (loop) --- #
+
+        ax.clear()
+        self.arena.visualize(
+            # Visualization options
+            show_buffer=True,
+            # trajectory=self.path,
+            display_zones_go_to_positions=True,
+            show_ally_direction=True,
+            # Plot options
+            show=False,
+            plot=(ax, fig),
+            # Additional options
+            # additional_zones=[self.th_ally_zone],
+            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
+        )
+        plt.pause(0.01)
 
     """
     ### Main Process ###
@@ -121,15 +132,5 @@ class MainBrain(Brain):
             self.arena.team_color, start_position, Point(290, 190)
         )
         self.rolling_basis_odometrie = start_position
-
-        # Ici met le déplacement que tu veux
-        self.navigator_task = NavigatorTaskParams(
-            goal=None,
-            timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=100),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        )
 
         await self.run()

@@ -7,6 +7,7 @@ from strategy.core import (
     BaseTaskNode,
     DirectTransition,
     BaseSubGraph,
+    GraphRunner
 )
 
 from strategy.tools import (
@@ -34,8 +35,14 @@ built_graph = yellow_strategy.build(
     exits=construct_zone_11.get_exits(),
 )
 
-
-visualize_task_graph_from_node(
-    subgraph=built_graph,
-    title="Yellow Strategy",
+from loggerplusplus import Logger
+yellow_strategy_runner = GraphRunner(
+    logger=Logger(identifier="YellowStrategyRunner", follow_logger_manager_rules=True),
+    start=built_graph.get_entry()
 )
+
+
+# visualize_task_graph_from_node(
+#     subgraph=built_graph,
+#     title="Yellow Strategy",
+# )

@@ -1,61 +1,41 @@
-# ====== Code Summary ======
-# This module defines the `GraphRunner` class, which controls the execution flow of a graph of task nodes.
-# It supports both parallel and sequential execution paths. Each node performs its task and may transition
-# to one or more subsequent nodes based on the game context and transition conditions.
-
-# ====== Standard Library Imports ======
 from typing import List, Dict, Optional
-
-
-# ====== Internal Project Imports ======
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.transitions.base_transition import BaseTransition
 from strategy.core.base_game_context import BaseGameContext
+from loggerplusplus import Logger
 
 
 class GraphRunner:
-    """
-    Executes a task graph, managing task node transitions and execution flow.
-
-    Attributes:
-        parallel (bool): Determines whether transitions are handled in parallel or sequentially.
-        active (List[BaseTaskNode]): List of currently active task nodes.
-        prev (Dict[BaseTaskNode, Optional[BaseTaskNode]]): Mapping of each node to its predecessor.
-    """
-
-    def __init__(self, start: BaseTaskNode, parallel: bool = False) -> None:
-        """
-        Initializes the GraphRunner with a starting task node.
-
-        Args:
-            start (BaseTaskNode): The entry point node in the task graph.
-            parallel (bool, optional): If True, all valid transitions are followed in parallel. Defaults to False.
-        """
+    def __init__(
+        self, start: BaseTaskNode, logger: Logger, parallel: bool = False
+    ) -> None:
+        if logger is None:
+            raise ValueError("Logger is required for GraphRunner.")
+        self.logger = logger
         self.parallel = parallel
         self.active: List[BaseTaskNode] = [start]
         self.prev: Dict[BaseTaskNode, Optional[BaseTaskNode]] = {start: None}
 
     def handle(self, ctx: BaseGameContext) -> None:
-        """
-        Executes the current active nodes and determines the next active nodes based on transition rules.
-
-        Args:
-            ctx (BaseGameContext): The current context used to evaluate task completion and transitions.
-        """
         next_active: List[BaseTaskNode] = []
 
         for node in self.active:
             prev_node = self.prev.get(node)
 
-            # 1. Execute the task
+            if not node._entered:
+                self.logger.info(
+                    f"==> Entering node: {node.name} [{node.tasks[0].__class__.__name__ if node.tasks else 'NoTask'}]"
+                )
+
             done = node.handle(ctx)
 
             if not done:
-                # If the task is not complete, keep it active
+                self.logger.debug(f"  ... still executing: {node.name}")
                 next_active.append(node)
                 continue
 
-            # 2. Retrieve valid transitions
+            self.logger.info(f"==> Finished node: {node.name}")
+
             valid: List[BaseTransition] = [
                 t
                 for t in node.transitions
@@ -63,19 +43,25 @@ class GraphRunner:
             ]
 
             if not valid:
-                # End of branch if no valid transitions are found
+                self.logger.info(
+                    f"    No valid transitions from {node.name}. End of branch."
+                )
                 continue
 
             if self.parallel:
-                # In parallel mode, follow all valid transitions
                 for t in valid:
+                    self.logger.info(
+                        f"    {node.name} -> {t.target.name} via {t.__class__.__name__}"
+                    )
                     next_active.append(t.target)
                     self.prev[t.target] = node
             else:
-                # In sequential mode, choose the transition with the highest target score
                 best = max(valid, key=lambda t: t.target.score(prev_node, ctx))
+                score_value = best.target.score(prev_node, ctx)
+                self.logger.info(
+                    f"    {node.name} -> {best.target.name} via {best.__class__.__name__} (score: {score_value:.2f})"
+                )
                 next_active.append(best.target)
                 self.prev[best.target] = node
 
-        # Update the list of currently active nodes
         self.active = next_active
