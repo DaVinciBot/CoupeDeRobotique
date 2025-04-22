@@ -64,9 +64,9 @@
       "rolling_basis_teensy_ser": 12678590,
       "pids": {
         "linear_speed": {
-          "kp": 10.0,
+          "kp": 99.0,
           "ki": 0.0,
-          "kd": 0.0
+          "kd": 2.0
         },
         "angular_speed": {
           "kp": 10.0,
