@@ -1,7 +1,8 @@
 // Externe libraries used: Arduino, TimerOne, ATOMIC
-#include <Arduino.h>          // Arduino framework
-#include <Servo.h>            // Servo object to control the servomotors
-#include <Bonezegei_A4988.h>  // Bonezegei_A4988 object to control the stepper motors
+#include <Arduino.h>
+#include <Servo.h>                   // Arduino framework
+#include <Adafruit_PWMServoDriver.h> // Servo object to control the servomotors
+#include <Bonezegei_A4988.h>         // Bonezegei_A4988 object to control the stepper motors
 
 // Custom libraries used: Com
 #include <com.h> // Communication object to manage the communication between the teensy and the Raspberry Pi
@@ -16,23 +17,24 @@ bool switch_pins[48] = {false};
 // 2. Instanciate the Communication object
 Com *com;
 
+Adafruit_PWMServoDriver controller = Adafruit_PWMServoDriver(0x40);
+
+#define SERVOMIN 500
+#define SERVOMAX 2500
+
+int angleToPulse(int angle)
+{
+  int pulse = map(angle, 0, 180, SERVOMIN, SERVOMAX);
+  return pulse;
+}
+
 // 3. Define all com callback functions
 // a. define the callback functions
 void set_servo_angle(byte *msg, byte size)
 {
   msg_set_servo_angle *servo_set_servo_angle_msg = (msg_set_servo_angle *)msg;
-  if (actuators[servo_set_servo_angle_msg->pin] == nullptr)
-  {
-    Servo *servo = new Servo();
-    servo->attach(servo_set_servo_angle_msg->pin);
-    actuators[servo_set_servo_angle_msg->pin] = (void *)servo;
-  }
-  Servo *servo = (Servo *)actuators[servo_set_servo_angle_msg->pin];
-  if (!servo->attached())
-  {
-    servo->attach(servo_set_servo_angle_msg->pin);
-  }
-  servo->write(servo_set_servo_angle_msg->angle);
+
+  controller.setPWM(servo_set_servo_angle_msg->pin, 0, angleToPulse(servo_set_servo_angle_msg->angle));
 }
 
 void set_servo_angle_detach(byte *msg, byte size)
@@ -60,8 +62,8 @@ void stepper_step(byte *msg, byte size)
   if (actuators[stepper_step_msg->pin_dir] == nullptr)
   {
     Bonezegei_A4988 *stepper = new Bonezegei_A4988(
-      stepper_step_msg->pin_dir,
-      stepper_step_msg->pin_step);
+        stepper_step_msg->pin_dir,
+        stepper_step_msg->pin_step);
     stepper->begin();
     actuators[stepper_step_msg->pin_dir] = (void *)stepper;
     pinMode(stepper_step_msg->pin_driver, OUTPUT);
@@ -72,9 +74,9 @@ void stepper_step(byte *msg, byte size)
   // Step the motor
   digitalWrite(stepper_step_msg->pin_driver, LOW);
   if (stepper_step_msg->dir)
-      stepper->step(1, stepper_step_msg->steps);
+    stepper->step(1, stepper_step_msg->steps);
   else
-      stepper->step(0, stepper_step_msg->steps);
+    stepper->step(0, stepper_step_msg->steps);
   digitalWrite(stepper_step_msg->pin_driver, HIGH);
 }
 
@@ -108,6 +110,8 @@ void initilize_callback_functions()
 void setup()
 {
   com = new Com(&Serial, BAUDRATE);
+  controller.begin();
+  controller.setPWMFreq(60);
 
   // Initialize callback functions
   initilize_callback_functions();
@@ -135,15 +139,3 @@ void loop()
     }
   }
 }
-
-/*
-
- This code was realized by Romain CUCHET
-__________                      .__         _________
-\______   \ ____   _____ _____  |__| ____   \_   ___ \
- |       _//  _ \ /     \\__  \ |  |/    \  /    \  \/   
- |    |   (  <_> )  Y Y  \/ __ \|  |   |  \ \     \____
- |____|_  /\____/|__|_|  (____  /__|___|  /  \______  /
-        \/             \/     \/        \/          \/
-
-*/
