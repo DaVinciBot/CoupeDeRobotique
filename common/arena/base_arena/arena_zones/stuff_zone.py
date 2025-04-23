@@ -87,9 +87,10 @@ class StuffZone(BaseArenaZone):
         super().update(team_color, ally_position, enemy_position)
 
         # Update accessibility to free if an ally or enemy is within the zone
-        if self.buffered_polygon.contains(
-            ally_position
-        ) or self.buffered_polygon.contains(enemy_position):
+        if (
+            self.buffered_polygon.contains(ally_position) or
+            self.buffered_polygon.contains(enemy_position)
+        ) and self.accessibility != ZoneAccessibility.FREE:
             self.accessibility = ZoneAccessibility.FREE
             grid_manager: GridManager = self.update_callback()
             grid_manager.remove_forbidden_static_zone(self.buffered_polygon)

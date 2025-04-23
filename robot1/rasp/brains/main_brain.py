@@ -79,7 +79,7 @@ class MainBrain(Brain):
     @Brain.task(
         process=True,
         run_on_start=True,
-        refresh_rate=0.1,
+        refresh_rate=0.01,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
@@ -111,7 +111,7 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def update_arena(self) -> None:
         # Update the arena with the new position of the robot
         self.arena.update(
