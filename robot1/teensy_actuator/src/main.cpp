@@ -19,8 +19,8 @@ Com *com;
 
 Adafruit_PWMServoDriver controller = Adafruit_PWMServoDriver(0x40);
 
-#define SERVOMIN 500
-#define SERVOMAX 2500
+#define SERVOMIN 125
+#define SERVOMAX 575
 
 int angleToPulse(int angle)
 {
@@ -28,13 +28,37 @@ int angleToPulse(int angle)
   return pulse;
 }
 
-// 3. Define all com callback functions
-// a. define the callback functions
 void set_servo_angle(byte *msg, byte size)
 {
-  msg_set_servo_angle *servo_set_servo_angle_msg = (msg_set_servo_angle *)msg;
+  msg_set_servo_angle *servo_set_angle_msg = (msg_set_servo_angle *)msg;
+  String output = "pin:" + String(servo_set_angle_msg->pin);
+  String output2 = "angle:" + String(angleToPulse(servo_set_angle_msg->angle));
+  com->print((char *)output.c_str());
+  com->print((char *)output2.c_str());
+  if (actuators[servo_set_angle_msg->pin] == nullptr)
+  {
+    Servo *servo = new Servo();
+    servo->attach(servo_set_angle_msg->pin);
+    actuators[servo_set_angle_msg->pin] = (void *)servo;
+  }
+  Servo *servo = (Servo *)actuators[servo_set_angle_msg->pin];
+  if (!servo->attached())
+  {
+    servo->attach(servo_set_angle_msg->pin);
+  }
+  servo->write(servo_set_angle_msg->angle);
+}
 
-  controller.setPWM(servo_set_servo_angle_msg->pin, 0, angleToPulse(servo_set_servo_angle_msg->angle));
+// 3. Define all com callback functions
+// a. define the callback functions
+void set_servo_angle_I2C(byte *msg, byte size)
+{
+  msg_set_servo_angle_I2C *servo_set_angle_msg = (msg_set_servo_angle_I2C *)msg;
+  String output = "pin:" + String(servo_set_angle_msg->pin);
+  String output2 = "angle:" + String(angleToPulse(servo_set_angle_msg->angle));
+  com->print((char *)output.c_str());
+  com->print((char *)output2.c_str());
+  controller.setPWM(servo_set_angle_msg->pin, 0, angleToPulse(servo_set_angle_msg->angle));
 }
 
 void set_servo_angle_detach(byte *msg, byte size)
@@ -101,10 +125,11 @@ void (*callback_functions[256])(byte *msg, byte size);
 
 void initilize_callback_functions()
 {
-  callback_functions[SET_SERVO_ANGLE] = &set_servo_angle;
+  callback_functions[SET_SERVO_ANGLE_I2C] = &set_servo_angle_I2C;
   callback_functions[STEPPER_STEP] = &stepper_step;
   callback_functions[SET_SERVO_ANGLE_DETACH] = &set_servo_angle_detach;
   callback_functions[ATTACH_SWITCH] = &attach_switch;
+  callback_functions[SET_SERVO_ANGLE] = &set_servo_angle;
 }
 
 void setup()
