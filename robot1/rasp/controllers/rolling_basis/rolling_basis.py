@@ -2,6 +2,9 @@ from config_loader import CONFIG
 
 # ====== Standard Library Imports ======
 import struct
+import numpy as np
+import time
+import matplotlib.pyplot as plt
 
 # ====== Third-party library imports ======
 from loggerplusplus import Logger, log
@@ -41,6 +44,10 @@ class RollingBasis(BaseComTeensy):
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
         self.linear_speed: float = 0.0
         self.angular_speed: float = 0.0
+        self._all_linear_speed: np.ndarray = np.array([], np.float64)
+        self._all_angular_speed: np.ndarray = np.array([], np.float64)
+        self._start_time: time = 0
+        self._time: np.ndarray = np.array([], np.float64)
 
         # PID controllers
         self.linear_speed_pid: PID = PID(0.0, 0.0, 0.0)
@@ -94,8 +101,10 @@ class RollingBasis(BaseComTeensy):
             struct.unpack("<f", msg[8:12])[0],
         )
         # Speeds
-        self.linear_speed = struct.unpack("<f", msg[12:16])[0]
+        self._linear_speed = struct.unpack("<f", msg[12:16])[0]
         self.angular_speed = struct.unpack("<f", msg[16:20])[0]
+        
+        self._add_state_to_array(self.linear_speed, self.angular_speed, self._get_elapsed_time())
 
     def rcv_unknown_msg(self, msg: bytes):
         """
@@ -155,6 +164,7 @@ class RollingBasis(BaseComTeensy):
                 + struct.pack("<f", odometrie.theta)
         )
         self.send_bytes(msg)
+        self._start_time = time.time()
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
         """
@@ -286,6 +296,37 @@ class RollingBasis(BaseComTeensy):
             )
         except Exception as e:
             self.logger.error(f"Failed to initialize PIDs: {e}")
+            
+    def _get_elapsed_time(self) -> float:
+        """
+        Get the elapsed time since the task started.
+
+        Returns:
+            float: Time in seconds since the task was initiated.
+        """
+        if self._start_time is None:
+            return 0.0
+        return time.time() - self._start_time
+    
+    def _add_state_to_array(self, linear_speed: float, angular_speed: float, time: float) -> None:
+        """Add odometrie state to array in order to plot the odometrie
+
+        Args:
+            linar_speed (float): real linear speed received from Teensy
+            angular_speed (float): real angular speed received from Teensy
+        """
+        
+        np.append(self._all_linear_speed, [linear_speed])
+        np.append(self._all_angular_speed, [angular_speed])
+        np.append(self._time, [time])
+        
+    @np.vectorize
+    def _target_speed(x):
+        return CONFIG.ROLLING_BASIS_SPEED_PROFILES_LINEAR["high"]["max_speed"]
+    
+    def plot_answer_pid(self):
+        plt.plot(self._time, self._target_speed(self._time))
+        plt.plot(self._time, self._all_linear_speed)
 
     ####################################
     # Equality Comparison              #

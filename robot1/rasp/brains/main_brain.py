@@ -40,6 +40,7 @@ from navigation import (
 
 from usb_com.python.tools import get_all_serial_number
 
+from navigation.navigator.task import NavigatorTaskState
 
 class MainBrain(Brain):
     def __init__(
@@ -71,7 +72,7 @@ class MainBrain(Brain):
     @Brain.task(
         process=True,
         run_on_start=False,
-        refresh_rate=0.1,
+        refresh_rate=0.000006,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
@@ -95,6 +96,9 @@ class MainBrain(Brain):
         )
         rolling_basis.set_speed_and_position(*cmd.get_command())
         self.rolling_basis_odometrie = rolling_basis.odometrie
+        
+        if navigator.current_task.state == NavigatorTaskState.FINISHED :
+            rolling_basis.plot_answer_pid()
 
     """
     ### Main Process ###
@@ -128,9 +132,9 @@ class MainBrain(Brain):
         self.navigator_task = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=100),
+            path_planner_params=DeltaPathPlannerParams(distance=50),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILER,
+            speed_profiler=CONFIG.ROLLING_BASIS_SPEED_PROFILER_PID,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
         )
         # get_all_serial_number()
