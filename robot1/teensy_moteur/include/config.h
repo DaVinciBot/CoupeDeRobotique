@@ -23,12 +23,12 @@
 
 // Creation Rolling Basis
 // Motor
-#define MAX_PWM 230
+#define MAX_PWM 200
 
 // Encoder
 #define ENCODER_RESOLUTION 1024
-#define ENTRAXE 29.4
-#define WHEEL_DIAMETER 5.8
+#define ENTRAXE 29.5
+#define WHEEL_DIAMETER 5.9
 
 // PIDs
 #define KP_LINEAR_SPEED 30 // 30

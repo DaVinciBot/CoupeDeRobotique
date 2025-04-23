@@ -172,7 +172,7 @@ void loop()
     rolling_basis_msg.y = rolling_basis_ptr->Y;
     rolling_basis_msg.theta = rolling_basis_ptr->THETA;
     // Rolling Basis speeds
-    rolling_basis_msg.current_linear_speed = target_angular_speed;
+    rolling_basis_msg.current_linear_speed = rolling_basis_ptr->linear_speed;
     rolling_basis_msg.current_angular_speed = rolling_basis_ptr->angular_speed;
 
     com->send_msg((byte *)&rolling_basis_msg, sizeof(msg_update_rolling_basis));
