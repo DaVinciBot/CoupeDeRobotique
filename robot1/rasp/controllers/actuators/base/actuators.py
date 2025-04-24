@@ -12,7 +12,9 @@ from usb_com.python import Messages
 
 
 # ====== Class Part ======
-class Actuators(GPIOComTeensy):
+class Actuators(
+    GPIOComTeensy
+):  # TODO : move to common and handle config properly, not the prority yet
     def __init__(
         self,
         logger: Logger,
