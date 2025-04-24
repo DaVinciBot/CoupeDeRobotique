@@ -57,7 +57,6 @@ class ActuatorsShow(Actuators):
                     self.servos[pin].deploy_angle,
                     max_angle=self.servos[pin].max_angle,
                 )
-                time.sleep(0.02)
 
     def fold(self, pins: int | list[int]):
         if isinstance(pins, int):
@@ -69,7 +68,6 @@ class ActuatorsShow(Actuators):
                     self.servos[pin].fold_angle,
                     max_angle=self.servos[pin].max_angle,
                 )
-                time.sleep(0.02)
 
     def deploy_all(self):
         for i in range(len(self.servos)):
