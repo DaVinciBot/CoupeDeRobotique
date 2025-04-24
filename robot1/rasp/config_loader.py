@@ -173,10 +173,10 @@ class CONFIG:
     )
     ROLLING_BASIS_SPEED_PROFILER_PID: SpeedProfiler = SpeedProfiler(
         linear_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_LINEAR["high"]["max_speed"]
+            ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]["max_speed"]
         ),
         angular_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["high"]["max_speed"]
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["max_speed"]
         ),
     )
 
