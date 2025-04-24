@@ -49,7 +49,6 @@ class ActuatorsShow(Actuators):
                     self.servos[pin].deploy_angle,
                     max_angle=self.servos[pin].max_angle,
                 )
-                time.sleep(0.02)
 
     def tide(self, pins: int | list[int]):
         if isinstance(pins, int):
@@ -63,7 +62,6 @@ class ActuatorsShow(Actuators):
                     self.servos[pin].tide_angle,
                     max_angle=self.servos[pin].max_angle,
                 )
-                time.sleep(0.02)
 
     def deploy_all(self):
         for i in range(len(self.servos)):

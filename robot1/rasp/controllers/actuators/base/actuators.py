@@ -10,6 +10,8 @@ from loggerplusplus import Logger, log
 from teensy import GPIOComTeensy, ActuatorType
 from usb_com.python import Messages
 
+import time
+
 
 # ====== Class Part ======
 class Actuators(
@@ -33,6 +35,7 @@ class Actuators(
         # Admit that default elevator position is at the bottom
         self.elevator_ticks: int = 0
         self.switches_states: dict[int:bool] = {}
+        self.t_set_servo_angle_i2c: int = 0
 
         """
         This is used to match a handling function to a message type.
@@ -170,6 +173,13 @@ class Actuators(
                         f"{str(self.gpio_manager.get_type_gpio(pin))}"
                     )
                     return
+                if (
+                    use_I2C
+                ):  # prevent I2C overload. Without during the test, servos where taking wrong angles when called too fast
+                    t = time.time()
+                    if t - self.t_set_servo_angle_i2c < 0.02:
+                        time.sleep(0.02 - (t - self.t_set_servo_angle_i2c))
+                        self.t_set_servo_angle_i2c = t
                 msg = (
                     (
                         Messages.SET_SERVO_ANGLE_I2C.to_bytes()
