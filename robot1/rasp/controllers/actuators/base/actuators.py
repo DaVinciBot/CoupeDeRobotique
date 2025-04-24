@@ -109,9 +109,9 @@ class Actuators(
 
         # WARNING: pin_driver is also defined in the C++ code,
         # because it needs to receive a HIGH from the beginning, or it will start heating up
-        pin_dir = 13
-        pin_step = 14
-        pin_driver = 15
+        pin_dir = 5
+        pin_step = 4
+        pin_driver = 3
 
         msg = (
             Messages.STEPPER_STEP.to_bytes()
