@@ -153,7 +153,8 @@ class Actuators(GPIOComTeensy):
                 msg = (
                     Messages.SET_SERVO_ANGLE_DETACH.to_bytes()
                     + struct.pack("<B", pin)
-                    + struct.pack("<B", angle)
+                    + struct.pack("<H", angle)
+                    + struct.pack("<H", max_angle)
                     + struct.pack("<i", detach_delay)
                 )
                 self.send_bytes(msg)
@@ -174,7 +175,8 @@ class Actuators(GPIOComTeensy):
                         else Messages.SET_SERVO_ANGLE.to_bytes()
                     )
                     + struct.pack("<B", pin)
-                    + struct.pack("<B", angle)
+                    + struct.pack("<H", angle)
+                    + struct.pack("<H", max_angle)
                 )
                 # https://docs.python.org/3/library/struct.html#format-characters
                 self.send_bytes(msg)

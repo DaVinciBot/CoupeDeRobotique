@@ -78,23 +78,26 @@ struct msg_set_odometrie
 struct msg_set_servo_angle
 {
     byte command = SET_SERVO_ANGLE;
-    byte pin;   // pin to which the servo is connected
-    byte angle; // angle to which the servo should be moved in degrees
+    byte pin;           // pin to which the servo is connected
+    uint16_t angle;     // angle to which the servo should be moved in degrees
+    uint16_t max_angle; // max angle reachable by the servo ex : 180, 270
 };
 
 struct msg_set_servo_angle_I2C
 {
     byte command = SET_SERVO_ANGLE_I2C;
-    byte pin;   // pin to which the servo is connected
-    byte angle; // angle to which the servo should be moved in degrees
+    byte pin;           // pin to which the servo is connected
+    uint16_t angle;     // angle to which the servo should be moved in degrees
+    uint16_t max_angle; // max angle reachable by the servo ex : 180, 270
 };
 
 struct msg_set_servo_angle_detach
 {
     byte command = SET_SERVO_ANGLE_DETACH;
-    byte pin;         // pin to which the servo is connected
-    byte angle;       // angle to which the servo should be moved in degrees
-    int detach_delay; // delay in milliseconds before detaching the servo
+    byte pin;           // pin to which the servo is connected
+    uint16_t angle;     // angle to which the servo should be moved in degrees
+    uint16_t max_angle; // max angle reachable by the servo ex : 180, 270
+    int detach_delay;   // delay in milliseconds before detaching the servo
 };
 
 struct msg_stepper_step
