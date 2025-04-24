@@ -137,6 +137,7 @@ void initilize_callback_functions()
 
 void setup()
 {
+  digitalWrite(3, HIGH); // Immediatly set enable pin at high to prevent heating. Dirty solution.
   com = new Com(&Serial, BAUDRATE);
   controller.begin();
   controller.setPWMFreq(60);
