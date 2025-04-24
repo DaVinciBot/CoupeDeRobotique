@@ -175,6 +175,9 @@ class CONFIG:
         linear_speed_profile=BasicSpeedProfile(
             ROLLING_BASIS_SPEED_PROFILES_LINEAR["high"]["max_speed"]
         ),
+        angular_speed_profile=BasicSpeedProfile(
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["high"]["max_speed"]
+        ),
     )
 
     # Actuators

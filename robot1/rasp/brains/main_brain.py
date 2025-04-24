@@ -42,6 +42,7 @@ from usb_com.python.tools import get_all_serial_number
 
 from navigation.navigator.task import NavigatorTaskState
 
+
 class MainBrain(Brain):
     def __init__(
         self,
@@ -84,11 +85,11 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-
+        __flag = False
         # --- MetaProg is insane (loop) --- #
         if self.navigator_task is not None:
-            navigator.add_navigation_task(self.navigator_task)
-            self.navigator_task = None
+                navigator.add_navigation_task(self.navigator_task)
+                self.navigator_task = None
 
         cmd = navigator.handle(
             ally_zone=self.arena.ally_zone,
@@ -96,9 +97,9 @@ class MainBrain(Brain):
         )
         rolling_basis.set_speed_and_position(*cmd.get_command())
         self.rolling_basis_odometrie = rolling_basis.odometrie
-        
-        if navigator.current_task.state == NavigatorTaskState.FINISHED :
-            rolling_basis.plot_answer_pid()
+        rolling_basis.plot_answer_pid(
+            True if navigator.current_task is None else False
+        )
 
     """
     ### Main Process ###
@@ -132,7 +133,7 @@ class MainBrain(Brain):
         self.navigator_task = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=50),
+            path_planner_params=DeltaPathPlannerParams(distance=20),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_SPEED_PROFILER_PID,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
