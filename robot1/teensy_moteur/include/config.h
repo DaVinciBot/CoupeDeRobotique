@@ -15,8 +15,8 @@
 #define L_IN1 4
 
 // Motor Right
-#define R_ENCA 14 // Va te faire foutre (Flo)
-#define R_ENCB 13 // Si rien ne marche change les pins
+#define R_ENCA 13 // Va te faire foutre (Flo)
+#define R_ENCB 14 // Si rien ne marche change les pins
 #define R_PWM 2
 #define R_IN2 1
 #define R_IN1 0

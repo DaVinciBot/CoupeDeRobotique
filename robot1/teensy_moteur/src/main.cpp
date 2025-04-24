@@ -34,7 +34,6 @@ inline void left_motor_read_encoder()
     rolling_basis_ptr->left_motor->ticks--;
   else
     rolling_basis_ptr->left_motor->ticks++;
-  com->print("working");
 }
 
 inline void right_motor_read_encoder()
@@ -43,7 +42,6 @@ inline void right_motor_read_encoder()
     rolling_basis_ptr->right_motor->ticks--;
   else
     rolling_basis_ptr->right_motor->ticks++;
-  com->print("working");
 }
 
 // 3. Define all com callback functions
@@ -164,9 +162,9 @@ void loop()
   com->handle_callback(callback_functions);
 
   // Send rolling basis state
-  msg_update_rolling_basis rolling_basis_msg;
-  if (counter++ > 1024)
+  if (counter++ > 16384) 
   {
+    msg_update_rolling_basis rolling_basis_msg;
     // Rolling Basis position
     rolling_basis_msg.x = rolling_basis_ptr->X;
     rolling_basis_msg.y = rolling_basis_ptr->Y;
@@ -176,6 +174,13 @@ void loop()
     rolling_basis_msg.current_angular_speed = rolling_basis_ptr->angular_speed;
 
     com->send_msg((byte *)&rolling_basis_msg, sizeof(msg_update_rolling_basis));
+    
+    // debug_message debug_message_object;
+    // debug_message_object.f1 = rolling_basis_ptr->X;
+    // debug_message_object.f2 = rolling_basis_ptr->Y;
+    // debug_message_object.i1 = 42;
+    // com->send_msg((byte *)&debug_message_object, sizeof(debug_message));
+  
     counter = 0;
   }
 }
