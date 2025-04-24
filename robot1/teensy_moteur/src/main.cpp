@@ -162,7 +162,7 @@ void loop()
   com->handle_callback(callback_functions);
 
   // Send rolling basis state
-  if (counter++ > 32768) // 32768 = 2^15
+  if (counter++ > 65536) // 65536 = 2^16
   {
     msg_update_rolling_basis rolling_basis_msg;
     // Rolling Basis position
