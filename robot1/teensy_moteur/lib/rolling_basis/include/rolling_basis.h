@@ -3,8 +3,9 @@
 #include <motors_driver.h>
 #include "structures.h"
 
-class Rolling_Basis {
-public :
+class Rolling_Basis
+{
+public:
     // PID controllers
     PID linear_speed_pid;
     PID angular_speed_pid;
@@ -36,26 +37,24 @@ public :
     unsigned short encoder_resolution;
     float center_distance;
     float wheel_diameter;
-    
+
     // Constructor
     Rolling_Basis(
-        unsigned short encoder_resolution, float center_distance, float wheel_diameter, 
-        const PID& linear_speed_pid, const PID& angular_speed_pid, const PID& linear_distance_pid, const PID& angular_distance_pid
-    );
+        unsigned short encoder_resolution, float center_distance, float wheel_diameter,
+        const PID &linear_speed_pid, const PID &angular_speed_pid, const PID &linear_distance_pid, const PID &angular_distance_pid);
     ~Rolling_Basis() = default;
 
     // Inits function
     void define_right_motor(byte enca, byte encb, byte pwm, byte in2, byte in1, byte max_pwm);
-    void define_left_motor( byte enca, byte encb, byte pwm, byte in2, byte in1, byte max_pwm);
+    void define_left_motor(byte enca, byte encb, byte pwm, byte in2, byte in1, byte max_pwm);
     void init_motors();
     void init_rolling_basis(float x, float y, float theta);
 
     // Odometrie function
     void odometrie_handle();
     void handle(
-        Point target_position, 
-        float target_linear_speed, float target_angular_speed
-    );
+        Point target_position,
+        float target_linear_speed, float target_angular_speed);
 
     // Motors action function
     // void keep_position(long current_right_ticks, long current_left_ticks);

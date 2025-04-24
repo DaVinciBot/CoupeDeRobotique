@@ -17,8 +17,10 @@
 			"string_view": "cpp",
 			"initializer_list": "cpp",
 			"utility": "cpp",
-			"bitset": "cpp",
-			"regex": "cpp"
+			"cmath": "cpp",
+			"limits": "cpp",
+			"chrono": "cpp",
+			"algorithm": "cpp"
 		}
 	},
 	"extensions": {

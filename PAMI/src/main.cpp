@@ -1,3 +1,14 @@
+#include <Arduino.h>
+#include "OTA.h"
+#include "motor.h"
+#include "navigation.h"
+#include "rolling_basis.h"
+
+#define LEFT_STEP_PIN 2
+#define LEFT_DIR_PIN 3
+#define LEFT_EN_PIN 1
+
+Motor leftMotor(LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN, 400);
 // #include "com.h"
 #include "config.h"
 
@@ -6,6 +17,19 @@ CustomOTA ota("DVB", "davincibot", &server);
 // Com *com = new Com(); // LoRa object
 int counter = 0;
 
+void setup()
+{
+    Serial.begin(115200);
+
+    leftMotor.init();
+
+    leftMotor.enableMotor(true);
+
+    leftMotor.setAcceleration(100);
+
+    leftMotor.setTargetSpeed(400);
+
+    digitalWrite(LEFT_DIR_PIN, HIGH);
 void print_debug(byte *msg, byte size)
 {
     Serial.print("Received message: ");
@@ -40,6 +64,14 @@ void setup()
 
 void loop()
 {
+
+    for (int i = 0; i < 800; i++)
+    {
+        leftMotor.update();
+    }
+
+    ota.loop();
+}
     // com->handle_callback(callback_functions);
     ota.loop(); // Handle OTA updates
 
