@@ -47,10 +47,10 @@ class RollingBasis(BaseComTeensy):
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
         self.linear_speed: float = 0.0
         self.angular_speed: float = 0.0
-        self._all_linear_speed: np.ndarray = np.array([], np.float64)
-        self._all_angular_speed: np.ndarray = np.array([], np.float64)
+        self._all_linear_speed: list[float] = []
+        self._all_angular_speed: list[float] = []
         self._start_time: time = 0
-        self._time: np.ndarray = np.array([], np.float64)
+        self._time: list[float] = []
 
         # PID controllers
         self.linear_speed_pid: PID = PID(0.0, 0.0, 0.0)
@@ -107,8 +107,10 @@ class RollingBasis(BaseComTeensy):
             struct.unpack("<f", msg[8:12])[0],
         )
         # Speeds
-        self._linear_speed = struct.unpack("<f", msg[12:16])[0]
+        self.linear_speed = struct.unpack("<f", msg[12:16])[0]
         self.angular_speed = struct.unpack("<f", msg[16:20])[0]
+        
+        #self.logger.info(f"Pos: {self.odometrie}, Linear speed: {self.linear_speed}, Angular speed: {self.angular_speed}")
 
         self._add_state_to_array(
             self.linear_speed, self.angular_speed, self._get_elapsed_time()
@@ -328,10 +330,11 @@ class RollingBasis(BaseComTeensy):
             angular_speed (float): real angular speed received from Teensy
         """
 
-        np.append(self._all_linear_speed, [linear_speed])
-        np.append(self._all_angular_speed, [angular_speed])
-        np.append(self._time, [time])
-        self.logger.info(self.linear_speed)
+        self._all_linear_speed.append(linear_speed)
+        self._all_angular_speed.append(angular_speed)
+        self._time.append(time)
+        # self.logger.info(self._all_linear_speed)
+        # self.logger.info(self.linear_speed)
 
     @np.vectorize(otypes=[float])
     def _target_speed(x):
@@ -339,9 +342,11 @@ class RollingBasis(BaseComTeensy):
 
     def plot_answer_pid(self, state):
         if state == self.flag:
-            plt.plot(self._time, self._target_speed(self._time))
-            plt.plot(self._time, self._all_linear_speed)
-            plt.savefig('pid_answer.png')
+            self.logger.info(self._target_speed(self._time))
+            self.logger.info(self._all_linear_speed)
+            plt.plot(np.array(self._time), self._target_speed(self._time))
+            plt.plot(np.array(self._time), np.array(self._all_linear_speed))
+            plt.savefig("pid_answer.png")
             self.flag = not self.flag
             self.logger.info("Plotting PID answer")
 
