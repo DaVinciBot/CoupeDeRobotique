@@ -36,14 +36,18 @@ class ActuatorsShow(Actuators):
             Servo(270, 180, 270),
             Servo(270, 0, 270),
         ]
+        
+    def _check_pin(self, pin) -> bool:
+        if pin >= len(self.servos) or pin < 0 or self.servos[pin] is None:
+            self.logger.warning(f"Pin {pin} is not a servo")
+            return False
+        return True    
 
     def deploy(self, pins: int | list[int]):
         if isinstance(pins, int):
             pins = [pins]
         for pin in pins:
-            if pin >= len(self.servos) or pin < 0 or self.servos[pin] is None:
-                print(f"Pin {pin} is not a servo")
-            else:
+            if self._check_pin(pin):
                 self.set_servo_angle(
                     pin,
                     self.servos[pin].deploy_angle,
@@ -55,9 +59,7 @@ class ActuatorsShow(Actuators):
         if isinstance(pins, int):
             pins = [pins]
         for pin in pins:
-            if pin >= len(self.servos) or pin < 0 or self.servos[pin] is None:
-                print(f"Pin {pin} is not a servo")
-            else:
+            if self._check_pin(pin):
                 self.set_servo_angle(
                     pin,
                     self.servos[pin].tide_angle,
@@ -71,4 +73,7 @@ class ActuatorsShow(Actuators):
 
     def tide_all(self):
         for i in range(len(self.servos)):
-            self.tide(i)
+            self.tide(i) 
+    
+    def pick_up(self):
+        pass
