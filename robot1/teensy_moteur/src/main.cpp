@@ -162,7 +162,7 @@ void loop()
   com->handle_callback(callback_functions);
 
   // Send rolling basis state
-  if (counter++ > 16384) 
+  if (counter++ > 16384) // 16384 = 2^14
   {
     msg_update_rolling_basis rolling_basis_msg;
     // Rolling Basis position
@@ -174,13 +174,13 @@ void loop()
     rolling_basis_msg.current_angular_speed = rolling_basis_ptr->angular_speed;
 
     com->send_msg((byte *)&rolling_basis_msg, sizeof(msg_update_rolling_basis));
-    
+
     // debug_message debug_message_object;
     // debug_message_object.f1 = rolling_basis_ptr->X;
     // debug_message_object.f2 = rolling_basis_ptr->Y;
     // debug_message_object.i1 = 42;
     // com->send_msg((byte *)&debug_message_object, sizeof(debug_message));
-  
+
     counter = 0;
   }
 }

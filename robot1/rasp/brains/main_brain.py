@@ -73,7 +73,7 @@ class MainBrain(Brain):
     @Brain.task(
         process=True,
         run_on_start=False,
-        refresh_rate=0.000006,
+        refresh_rate=0.000001,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
@@ -86,6 +86,7 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         # --- MetaProg is insane (loop) --- #
+        pass
         # if self.navigator_task is not None:
         #         navigator.add_navigation_task(self.navigator_task)
         #         self.navigator_task = None

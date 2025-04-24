@@ -110,7 +110,7 @@ class RollingBasis(BaseComTeensy):
         self.linear_speed = struct.unpack("<f", msg[12:16])[0]
         self.angular_speed = struct.unpack("<f", msg[16:20])[0]
         
-        #self.logger.info(f"Pos: {self.odometrie}, Linear speed: {self.linear_speed}, Angular speed: {self.angular_speed}")
+        self.logger.info(f"Pos: {self.odometrie}, Linear speed: {self.linear_speed}, Angular speed: {self.angular_speed}")
 
         self._add_state_to_array(
             self.linear_speed, self.angular_speed, self._get_elapsed_time()
