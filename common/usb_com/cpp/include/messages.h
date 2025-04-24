@@ -36,6 +36,7 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 // Rolling Basis
 #define UPDATE_ROLLING_BASIS 128
 
+
 // Actuators
 #define SWITCH_STATE_RETURN 129
 
