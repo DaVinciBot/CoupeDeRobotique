@@ -28,7 +28,7 @@
         "colors": "ClassicColors",
         "path": "logs",
         "decorator_log_level": "DEBUG",
-        "print_log_level": "DEBUG",
+        "print_log_level": "INFO",
         "file_log_level": "DEBUG",
         "print_log": true,
         "write_to_file": true,
@@ -69,7 +69,7 @@
           "kd": 0.0
         },
         "angular_speed": {
-          "kp": 70.0,
+          "kp": 30.0,
           "ki": 0.0,
           "kd": 0.0
         },
@@ -83,6 +83,24 @@
           "ki": 0.0,
           "kd": 0.0
         }
+      },
+      "speed_profiles": {
+        "default": {
+          "max_linear_speed": 5.0,
+          "max_angular_speed": 3.0,
+          "max_linear_acceleration": 5.0,
+          "max_angular_acceleration": 3.0,
+          "max_linear_deceleration": 10.0,
+          "max_angular_deceleration": 3.0
+        },
+        "high": {
+          "max_linear_speed": 20.0,
+          "max_angular_speed": 3.1415,
+          "max_linear_acceleration": 10.0,
+          "max_angular_acceleration": 3.1415,
+          "max_linear_deceleration": 15.0,
+          "max_angular_deceleration": 3.1415
+        }
       }
     },
     "actuators": {
@@ -93,7 +111,7 @@
       "angles_unit": "rad",
       "min_angle": -0.785398,
       "max_angle": 3.926991,
-      "min_distance_detection": 5.0,
+      "min_distance_detection": 10.0,
       "frontal_detection_angle": 1.570796,
       "semi_circular_detection_angle": 3.141592
     },
@@ -102,7 +120,7 @@
     }
   },
   "arena": {
-    "border_buffer": 3,
+    "border_buffer": 5,
     "obstacle_buffer": 10,
     "chunk_size": 5,
     "forbidden_cover_threshold": 0.1

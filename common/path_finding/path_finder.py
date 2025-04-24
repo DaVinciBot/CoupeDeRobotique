@@ -17,7 +17,7 @@ import numpy as np
 
 # Internal project imports
 from loggerplusplus import Logger, time_tracker
-from geometry import OrientedPoint, Point, MultiPoint, nearest_points
+from geometry import OrientedPoint, Point
 from arena import GridManager
 
 
@@ -112,8 +112,16 @@ class PathFinder:
 
         if not self.path_found:
             self.logger.warning(
-                f"No path found! [start=({self.current_position.x}, {self.current_position.y}), "
-                f"goal=({self.goal.x}, {self.goal.y})] exploration_value={exploration_value}"
+                f"No path found! "
+                f"Grid: ["
+                f"start=({self.current_position.x}, {self.current_position.y}), "
+                f"goal=({self.goal.x}, {self.goal.y})"
+                f"] "
+                f"Absolute: ["
+                f"start=({self.absolute_current_position.x}, {self.absolute_current_position.y}), "
+                f"goal=({self.absolute_goal.x}, {self.absolute_goal.y})"
+                f"] | "
+                f"exploration_value={exploration_value}"
             )
             return []
 
@@ -363,6 +371,10 @@ class PathFinder:
         """
         self.__find_path(use_static_and_dynamic_grid=use_static_and_dynamic_grid)
 
+        # If no path found, return an empty list
+        if not self.path_found:
+            return []
+        
         # Add real robot position as start point and goal as end point (not approximated chunk points)
         if not smooth_path:
             self.oriented_path_found = (

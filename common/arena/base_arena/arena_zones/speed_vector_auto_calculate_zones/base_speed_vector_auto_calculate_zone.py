@@ -11,11 +11,14 @@ from collections import deque
 # Third-party imports
 from loggerplusplus import Logger
 
-# Internal project imports
+# Local imports
 from utils import Utils
 from geometry import Point, OrientedPoint, LineString
+
+# Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility, SpeedVector, Record
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.team_color import TeamColor
 
 
 class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
@@ -68,10 +71,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             maxlen=positions_record_size) if positions_recorded is None else positions_recorded
 
         # Compute initial robot vector representation
-        vector_line = LineString([
-            self.point,
-            Point(self.point.x + self.speed_vector.factored_dx, self.point.y + self.speed_vector.factored_dy)
-        ])
+        vector_line = self._compute_vector_line()
 
         super().__init__(
             logger=logger,
@@ -82,6 +82,12 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             update_callback=update_callback,
             zone_color=zone_color,
         )
+
+    def _compute_vector_line(self) -> LineString:
+        return LineString([
+            self.point,
+            Point(self.point.x + self.speed_vector.factored_dx, self.point.y + self.speed_vector.factored_dy)
+        ])
 
     def _compute_enemy_speed_vector(self) -> SpeedVector:
         """
@@ -111,19 +117,33 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
 
         return SpeedVector(speed, dx / distance, dy / distance)
 
-    def update(self, team_color: str, ally_position: Point | OrientedPoint,
+    def update(self, team_color: TeamColor, ally_position: Point | OrientedPoint,
                enemy_position: Point | OrientedPoint) -> None:
         """
         Updates the zone state based on detected enemy movement.
 
         Args:
-            team_color (str): Team color.
+            team_color (TeamColor, optional): The color of the team.
             ally_position (Point | OrientedPoint): Position of ally.
             enemy_position (Point | OrientedPoint): Position of enemy.
         """
         super().update(team_color, ally_position, enemy_position)
+        self.point = enemy_position
         self.__positions_recorded.append(Record(Utils.get_ts(), enemy_position))
         self.speed_vector = self._compute_enemy_speed_vector()
+
+        vector_line = self._compute_vector_line()
+
+        super().__init__(
+            logger=self.logger,
+            zone_type=self.zone_type,
+            accessibility=self.accessibility,
+            buffer_size=self.buffer_size,
+            buffered_polygon=vector_line.buffer(self.vector_width),
+            update_callback=self.update_callback,
+            zone_color=self.zone_color,
+            uid=self.uid  # Avoid reassigning a new uid
+        )
 
     def __str__(self) -> str:
         """Returns a string representation of the zone and its speed vector."""

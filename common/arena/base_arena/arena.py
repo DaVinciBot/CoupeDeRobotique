@@ -47,7 +47,9 @@ from arena.base_arena.arena_zones import (
     BlueReservedZone,
     EnemyZone,
     AllyZone,
+    BaseArenaZone,
 )
+from arena.base_arena.team_color import TeamColor
 
 
 # ====== BaseArena Class ======
@@ -78,7 +80,7 @@ class BaseArena(ABC):
             grid_manager_logger: Logger = Logger(
                 identifier="GridManager",
                 follow_logger_manager_rules=True,
-            )
+            ),
     ) -> None:
         """
         Initializes the BaseArena instance with dimensions, zones, and configuration parameters.
@@ -94,8 +96,10 @@ class BaseArena(ABC):
             chunk_size (int): Size of chunks in the grid manager (default=10).
             grid_manager_logger (Logger): Logger instance for grid manager logging.
         """
+        # ====== Initialized constructor based attributes ======
+        # 1. Logger
         self.logger: Logger = logger
-
+        # 2. Dimensions
         self.width: int = width
         self.height: int = height
 
@@ -110,21 +114,17 @@ class BaseArena(ABC):
                 "The obstacle buffer is not a multiple of the chunk size -> "
                 "the not walkable area will not be aligned with the grid"
             )
-
+        # 3. Buffers
         self.border_buffer: float = border_buffer
         self.obstacle_buffer: float = obstacle_buffer
 
-        # Initialize zones with added buffer
-        self.zones: list[BaseArenaZone] = zones
-
-        # Add border zone
-        self.border_zone = self.__create_arena_border_zone()
-        self.zones.append(self.border_zone)
-
-        # Initialize grid manager
+        # 4. Grid Manager
         self.grid_manager: GridManager = GridManager(
             grid_manager_logger, chunk_size, width, height, forbidden_cover_threshold
         )
+
+        # 5. Zones
+        self.zones: list[BaseArenaZone] = zones
 
         # Give to each zone the grid manager to do a callback when they update their state
         for i in range(len(self.zones)):
@@ -135,46 +135,50 @@ class BaseArena(ABC):
             if not zone.is_accessible():
                 self.grid_manager.add_forbidden_static_zone(zone.buffered_polygon)
 
-        self.team_color = ""
+        # ====== Initialized derivative attributes ======
+        # 1. Team color
+        self.team_color: TeamColor = TeamColor.UNDEFINED
 
-        # Add area for calculation
-        self.game_area: Polygon = create_straight_rectangle(
-            Point(0, 0), Point(width, height)
-        )
+        # 2. Additional zones: Border, Ally and Enemy
+        # 2.1 Border zone
+        # We don't need to add the border zone to self.zones, it's not a zone that need to be updated -> 100% static
+        self.border_zone: BorderZone = self.__create_arena_border_zone()
+        self.grid_manager.add_forbidden_static_zone(self.border_zone.buffered_polygon)
 
-        # Add playing area for calculation
-        self.playing_area: Polygon = self.game_area.difference(
-            self.border_zone.buffered_polygon
-        ).buffer(-self.obstacle_buffer)
-
-        self.ally_logger = Logger(
-            identifier="AllyZone",
-            follow_logger_manager_rules=True,
-        )
-
-        self.enemy_logger = Logger(
-            identifier="EnemyZone",
-            follow_logger_manager_rules=True,
-        )
-
+        # 2.2 Ally and Enemy zones
+        # Don't need to add these zones to self.zones, they have their own update method
+        # Don't need to add these zones to the grid manager, they are not static zones -> 100% dynamic
+        # Don't add them now as dynamic forbidden zones because they are not updated yet
+        #   -> default position for now (wait BaseArena.update method for update)
         self.ally_zone: AllyZone = AllyZone(
-            self.ally_logger,
-            OrientedPoint(  # default position
-                obstacle_buffer + border_buffer + 0.001,
-                obstacle_buffer + border_buffer + 0.001,
-                0,
-            ),
+            logger=Logger(identifier="AllyZone", follow_logger_manager_rules=True),
+            point=OrientedPoint(self.width / 2, self.height / 2, 0),
+            robot_size=1
+            # The robot is in reality assimilated to a point of null size,
+            # but for the visualisation we need to give it a size
         )
 
         self.enemy_zone: EnemyZone = EnemyZone(
-            self.enemy_logger,
-            OrientedPoint(280, 180, 0)
+            logger=Logger(identifier="EnemyZone", follow_logger_manager_rules=True),
+            point=OrientedPoint(self.width / 2, self.height / 2, 0),
+            robot_size=30,
         )
 
-        self.prepare_zones()
+        # 3. Bounding Area and Playable Area
+        # 3.1 Bounding Area: The entire arena (including border buffer)
+        self.bounding_area: Polygon = create_straight_rectangle(
+            Point(0, 0), Point(width, height)
+        )
+
+        # 3.2 Playable Area: The real playable area (excluding border buffer)
+        self.playable_area: Polygon = self.bounding_area.difference(
+            self.border_zone.buffered_polygon
+        ).buffer(-self.obstacle_buffer)
+
+        # ====== Misc ======
+        self.__prepare_zones()
 
     # ====== Private Methods ======
-
     def __create_arena_border_zone(self) -> BorderZone:
         """
         Create a border zone around the arena with a specified buffer width.
@@ -198,7 +202,23 @@ class BaseArena(ABC):
             buffered_polygon=border_zone_polygon,
         )
 
+    def __prepare_zones(self):
+        """
+        Prepare all zones that could be used for calculations.
+        It will improve the computing performance.
+        """
+        prepare(self.bounding_area)
+        prepare(self.playable_area)
+        for zone in self.zones:
+            prepare(zone.polygon)
+
     # ====== Protected Methods ======
+    def _get_grid_manager(self) -> GridManager:
+        """
+        Use this methode instead lambda: self.grid_manager in the BaseArenaZone.update_callback
+        """
+        return self.grid_manager
+
     def _pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:
         """
         Converts polar coordinates to absolute Cartesian coordinates.
@@ -213,33 +233,29 @@ class BaseArena(ABC):
             [
                 (
                     self.ally_zone.point.x
-                    + np.cos(self.ally_zone.point.theta + polars[i, 0])
-                    * polars[i, 1],
+                    + np.cos(self.ally_zone.point.theta - polars[i, 0]) * polars[i, 1],
                     self.ally_zone.point.y
-                    + np.sin(self.ally_zone.point.theta + polars[i, 0])
-                    * polars[i, 1]
+                    + np.sin(self.ally_zone.point.theta - polars[i, 0]) * polars[i, 1],
                 )
                 for i in range(len(polars))
             ]
         )
 
-    # ====== Protected Methods ======
-    def _get_grid_manager(self) -> GridManager:
-        """
-        Use this methode instead lambda: self.grid_manager in the BaseArenaZone.update_callback
-        """
-        return self.grid_manager
-
     # ====== Public Methods ======
     @time_tracker(lambda self: self.logger)
-    def set_team_color(self, team_color: str) -> None:
+    def set_team_color(self, team_color: TeamColor) -> None:
         """
         Set the team color and trigger updates to zones.
 
         Args:
-            team_color (str): The team's color.
+            team_color (TeamColor): The team's color.
         """
-        self.team_color = team_color
+        if team_color not in [TeamColor.YELLOW, TeamColor.BLUE]:
+            self.logger.error(
+                f"Invalid team color: {team_color}. Must be 'yellow' or 'blue'."
+            )
+
+        self.team_color: TeamColor = team_color
         self.update(
             ally_position=self.ally_zone.point,
             lidar_scan_polars=np.array([]),
@@ -250,9 +266,9 @@ class BaseArena(ABC):
     def update(
             self,
             ally_position: OrientedPoint,
-            lidar_scan_polars: np.ndarray,
-            enemy_position: Point = None,  # TODO: juste for test
+            lidar_scan_polars: np.ndarray,  # Polars coordinates issued from the lidar scan
             optimized_update: bool = True,
+            __enemy_position: Point | None = None,  # Only for testing and simulation purpose
     ) -> None:
         """
         Updates the state of the arena, zones, and grid based on ally and enemy positions.
@@ -260,17 +276,24 @@ class BaseArena(ABC):
         Args:
             ally_position (OrientedPoint): Current position of the ally robot.
             lidar_scan_polars (np.ndarray): Lidar scan data in polar coordinates.
-            enemy_position (Point, optional): Pre-defined enemy position (default=None).
             optimized_update (bool, optional): If True, only updates intersecting zones.
+            __enemy_position (Point, optional): Pre-defined enemy position (default=None).
         """
-        if not enemy_position:
-            enemy_position = self.compute_enemy_position(lidar_scan_polars,
-                                                         ally_position,
-                                                         numb_enemy=lidar_scan_polars.size > 0)
-        # Update ally and enemy zones
+        # 1.Compute enemy position if not directly provided in absolute cartesian coordinates
+        if not __enemy_position:
+            # Compute enemy position based on lidar scans -> match situation
+            enemy_position = self.compute_enemy_position(
+                lidar_scan_polars, ally_position
+            )
+        else:
+            # Use the provided enemy position -> testing or simulation
+            enemy_position = __enemy_position
+
+        # 2.Update ally and enemy zones (specific zone, there are not in self.zones)
         self.ally_zone.update(self.team_color, ally_position, enemy_position)
         self.enemy_zone.update(self.team_color, ally_position, enemy_position)
 
+        # 3.Update all other zones
         # optimized: Update only the zones that intersect with the points
         all_points = [ally_position, enemy_position]
         for zone in self.zones:
@@ -283,30 +306,52 @@ class BaseArena(ABC):
                     enemy_position=enemy_position,
                 )
 
-        # Update Grid Manager dynamic forbidden zones with enemy positions
+        # 4.Update Grid Manager dynamic forbidden zones (only enemy zone)
         self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon])
 
-    @abstractmethod
-    def __eq__(self, other):
-        pass
+    def compute_enemy_position(
+            self,
+            lidar_scan_polars: np.ndarray,
+            ally_position: OrientedPoint,
+            start_time: int = -1,
+            numb_enemy: bool = False,
+    ) -> Point | MultiPoint | None:
+        """
+        Computes the position of the enemy based on lidar scans and updates the arena.
 
-    @abstractmethod
-    def __ne__(self, other):
-        pass
+        This function calculates the position of the enemy by processing the lidar scans.
+        It removes any obstacles that are outside the arena, and then determines the closest obstacle as the enemy
+        position.
+        If the enemy position is within a stuff zone, it marks that zone as FORBIDDEN.
+
+        Args:
+            self: The instance of the class.
+            lidar_scan_polars (np.ndarray): A array representing the detection of the lidar scans.
+            ally_position (OrientedPoint): The Oriented Point of the ally
+            numb_enemy (bool): flag to know if we are working in a match situation or not, as if the enemy is numb or not.
+            start_time: An integer representing the time (in milliseconds or seconds) when the computation starts.
+                    It is used to determine the timing of the enemy's movement. A value of -1 indicates no specific
+                    start time.
+
+        Returns:
+            Point|MultiPoint|None
+        """
+
+        obstacles: MultiPoint = self.remove_outside(
+            self._pol_to_abs_cart(lidar_scan_polars)
+        )
+
+        if not is_empty(obstacles):
+            return nearest_points(ally_position, obstacles)[1]
+
+        return self.enemy_zone.point
 
     """
         Geometry helpers function part
     """
 
-    def prepare_zones(self):
-        """Prepare all values of self.zones, to optimize later calculations"""
-        prepare(self.game_area)
-        prepare(self.playing_area)
-        for zone in self.zones:
-            prepare(zone.polygon)
-
     def remove_outside(self, points: MultiPoint) -> MultiPoint:
-        return self.playing_area.intersection(points)
+        return self.playable_area.intersection(points)
 
     # TODO: Check if this function is still needed, test them (last year code)
     def valid_position(self, pos: Point) -> bool:
@@ -319,7 +364,7 @@ class BaseArena(ABC):
         Returns:
             bool: True if the position is within the playing area, False otherwise.
         """
-        return self.playing_area.contains(pos) or self.playing_area.touches(pos)
+        return self.playable_area.contains(pos) or self.playable_area.touches(pos)
 
     def find_zone_accessibility(self, accessibility: str) -> list[BaseArenaZone]:
         """
@@ -370,163 +415,90 @@ class BaseArena(ABC):
         Returns:
             bool: True if the element is entirely in the arena, False otherwise
         """
-        return self.game_area.contains(element)
-
-    def get_enemy_angle(self) -> float | None:
-        if self.enemy_position is None:
-            return None
-        else:
-            return (
-                    (
-                        math.atan2(
-                            self.enemy_position.y - self.rolling_basis.odometrie.y,
-                            self.enemy_position.x - self.rolling_basis.odometrie.x,
-                        )
-                    )
-                    - self.rolling_basis.odometrie.theta
-            ) % math.tau
-
-    def compute_enemy_position(
-            self,
-            lidar_scan_polars: np.ndarray,
-            ally_position: OrientedPoint,
-            start_time: int = -1,
-            numb_enemy: bool = False
-            ) -> Point | MultiPoint | None:
-        """
-        Computes the position of the enemy based on lidar scans and updates the arena.
-
-        This function calculates the position of the enemy by processing the lidar scans.
-        It removes any obstacles that are outside the arena, and then determines the closest obstacle as the enemy
-        position.
-        If the enemy position is within a stuff zone, it marks that zone as FORBIDDEN.
-
-        Args:
-            self: The instance of the class.
-            lidar_scan_polars (np.ndarray): A array representing the detection of the lidar scans.
-            ally_position (OrientedPoint): The Oriented Point of the ally
-            numb_enemy (bool): flag to know if we are working in a match situation or not, as if the enemy is numb or not.
-            start_time: An integer representing the time (in milliseconds or seconds) when the computation starts.
-                    It is used to determine the timing of the enemy's movement. A value of -1 indicates no specific
-                    start time.
-
-        Returns:
-            Point|MultiPoint|None
-        """
-
-        # TODO temp code because I can't test with lidar, but it should work perfectly :
-
-        if not numb_enemy:
-            obstacles: MultiPoint  = self.remove_outside(
-                self._pol_to_abs_cart(lidar_scan_polars)
-            )
-
-            self.logger.logger.info(f"L'obstacle est {obstacles}")
-
-            self.enemy_position = (
-                self.enemy_zone.point
-                if is_empty(obstacles)
-                else nearest_points(ally_position, obstacles)[1]
-            )
-
-            if self.enemy_position:
-                self.enemy_zone.polygon = self.enemy_position.buffer(
-                    self.enemy_zone.robot_size
-                )
-                self.enemy_zone.point = self.enemy_position
-
-                if start_time != -1:
-                    for zone in self.zones:
-                        if zone.zone_type == ZoneType.STUFF_ZONE:
-                            zone.accessibility = ZoneAccessibility.FORBIDDEN
-                            break
-
-        # TODO : Transformer avec un flag on off code temporaire juste pour voir l'ennemi sur la visualisation
-        else:
-            self.enemy_position = Point(random.randint(0, 300), random.randint(0, 200))
-            self.enemy_zone.polygon = self.enemy_position.buffer(
-                self.enemy_zone.robot_size
-            )
-            self.enemy_zone.point = self.enemy_position
-
-        return self.enemy_position
-
-
-    def compute_go_to_destination(
-            self,
-            start_point: Point | OrientedPoint,
-            destination: Polygon | Point | OrientedPoint,
-    ) -> OrientedPoint | None:
-        """Compute the destination point to go to inside the specified zone. Only works is the arena is rectangular.
-
-        Args:
-            start_point (Point): The starting point for the robot.
-            zone (Polygon): The zone where the robot should go.
-            delta (float): The distance from the border of the zone.
-
-        Returns:
-            Point: The destination point to go to inside the zone.
-        """
-
-        # TODO: Implement delta as in 2024 if necessary
-
-        if not self.valid_position(start_point):
-            self.logger.log(
-                f"The starting point {start_point} is outside the arena bounds.",
-                LogLevels.WARNING,
-            )
-            return None
-
-        if isinstance(destination, Polygon):
-            if not destination.centroid:
-                self.logger.log(
-                    f"The destination polygon {destination} has no centroid, couldn't establish a destination point.",
-                    LogLevels.WARNING,
-                )
-                return None
-            destination_point = destination.centroid
-            new_x = destination_point.x
-            new_y = destination_point.y
-
-            if destination_point.x < self.border_buffer + self.obstacle_buffer:
-                new_x = self.border_buffer + self.obstacle_buffer
-            if (self.width - destination_point.x) < (
-                    self.border_buffer + self.obstacle_buffer
-            ):
-                new_x = self.width - (self.border_buffer + self.obstacle_buffer)
-            if destination_point.y < self.border_buffer + self.obstacle_buffer:
-                new_y = self.border_buffer + self.obstacle_buffer
-            if (self.height - destination_point.y) < (
-                    self.border_buffer + self.obstacle_buffer
-            ):
-                new_y = self.height - (self.border_buffer + self.obstacle_buffer)
-
-            destination_point = Point(new_x, new_y)
-
-            return destination_point
-
-        elif isinstance(destination, Point):
-            if not self.valid_position(destination):
-                self.logger.log(
-                    f"The destination point {destination} is outside the arena's bounds.",
-                    LogLevels.WARNING,
-                )
-                return None
-            elif isinstance(destination, OrientedPoint):
-                return destination
-            return OrientedPoint(destination.x, destination.y)
-
-        self.logger.log(
-            f"The destination {destination} is not a valid geometry.",
-            LogLevels.WARNING,
-        )
-        return None
+        return self.bounding_area.contains(element)
 
     """
         Visualisation part
     """
 
-    # ====== Private Methods ======
+    # ====== Private Methods: draw helpers ======
+    @staticmethod
+    def __plot_oriented_arrow(
+            ax,
+            point: OrientedPoint,
+            norm: float = 5.0,
+            color: str = "#000000",
+            head_width: float | None = None,
+            head_length: float | None = None,
+    ) -> None:
+        """
+        Draws an arrow from an oriented point with a given direction.
+
+
+        Args:
+            ax (plt.axes): Matplotlib axis to draw the arrow on.
+            point (OrientedPoint): Oriented point (x, y, theta) with position and angle.
+            norm (float): Length of the arrow (default=5.0).
+            color (str): Color of the arrow (default='000000').
+            head_width (float): Width of the arrow head (default=None -> norm * 0.2).
+            head_length (float): Length of the arrow head (default=None -> norm * 0.3).
+        """
+        if head_width is None:
+            head_width = norm * 0.2
+        if head_length is None:
+            head_length = norm * 0.3
+
+        # Compute the destination point based on the angle and norm
+        dx = norm * np.cos(point.theta)
+        dy = norm * np.sin(point.theta)
+
+        # Draw the arrow
+        ax.arrow(
+            point.x, point.y,
+            dx, dy,
+            head_width=head_width, head_length=head_length,
+            fc=color, ec=color,
+            linewidth=2
+        )
+
+    @staticmethod
+    def __plot_zone_uid(ax, zone: BaseArenaZone, color: str = "#000000", fontsize: int = 12) -> None:
+        """
+        Draws the zone UID at the center of the zone.
+
+        Args:
+            ax (plt.axes): Matplotlib axis to draw the UID on.
+            zone (BaseArenaZone): Zone to draw the UID for.
+            color (str): Color of the UID (default='#000000').
+            fontsize (int): Font size of the UID (default=12).
+        """
+        ax.text(
+            zone.polygon.centroid.x,
+            zone.polygon.centroid.y,
+            zone.uid,
+            ha="center",
+            va="center",
+            fontsize=fontsize,
+            color=color,
+        )
+
+    def __get_hatch_parameters(self, zone: BaseArenaZone) -> dict:
+        hatch_params = {}
+        if zone.is_accessible(team_color=self.team_color):
+            pass  # No hatch
+        elif zone.is_accessible_for_emergency(team_color=self.team_color):
+            hatch_params = {
+                "hatch": "\\",
+                "hatch_color": "red",
+            }  # Hatch with red lines for restricted zones
+        elif not zone.is_accessible(team_color=self.team_color):
+            hatch_params = {
+                "hatch": "/",
+                "hatch_color": "black",
+            }  # Hatch with black lines for forbidden zones
+
+        return hatch_params
+
     @staticmethod
     def __plot_polygon(
             ax,
@@ -583,6 +555,8 @@ class BaseArena(ABC):
             ax,
             zone: BaseArenaZone,
             show_buffer: bool,
+            show_ally_direction: bool,
+            display_zones_go_to_positions: bool,
             transparency_factor: float = 1.0,
     ) -> None:
         """Plots zones and their buffers on the arena."""
@@ -595,32 +569,23 @@ class BaseArena(ABC):
                 alpha=0.5 * transparency_factor,
             )
 
-        # Plot the original zone in full color and hatch if necessary
-        if not isinstance(zone, BorderZone):
-            hatch_params = {}
-            if zone.is_accessible(team_color=self.team_color):
-                pass  # No hatch
-            elif zone.is_accessible_for_emergency(team_color=self.team_color):
-                hatch_params = {
-                    "hatch": "\\",
-                    "hatch_color": "red",
-                }  # Hatch with red lines for restricted zones
-            elif not zone.is_accessible(team_color=self.team_color):
-                hatch_params = {
-                    "hatch": "/",
-                    "hatch_color": "black",
-                }  # Hatch with black lines for forbidden zones
-
-            # Plot zone uid
-            ax.text(
-                zone.polygon.centroid.x, zone.polygon.centroid.y,
-                zone.uid,
-                ha="center", va="center",
-                fontsize=12,
-                fontweight='bold',
-                color='purple'
+        if isinstance(zone, BorderZone):
+            self.__plot_polygon(
+                ax,
+                zone.polygon,
+                color=zone.zone_color,
+                alpha=0.5 * transparency_factor,
             )
+        else:
+            # 1. Define hatch parameters (depends on zone accessibility)
+            hatch_params = self.__get_hatch_parameters(zone)
 
+            # 2. Plot zone uid
+            # Don't plot uid for ally and enemy zones (they continuously increase at each update)
+            if not isinstance(zone, AllyZone) and not isinstance(zone, EnemyZone):
+                self.__plot_zone_uid(ax, zone)
+
+            # 3. Plot the zone polygon
             self.__plot_polygon(
                 ax,
                 zone.polygon,
@@ -630,119 +595,99 @@ class BaseArena(ABC):
                 **hatch_params,
             )
 
+            # 4. Plot go-to positions
+            if display_zones_go_to_positions and zone.go_to_positions:
+                # Get the go-to position nearest to the ally robot
+                nearest_point = zone.get_go_to_position(
+                    ally_position=self.ally_zone.point, team_color=self.team_color
+                )
+                for go_to_position in zone.go_to_positions:
+                    # Plot nearest go-to position as green arrow (if oriented point) or green dot (if point)
+                    if go_to_position == nearest_point:
+                        if isinstance(go_to_position, OrientedPoint):
+                            self.__plot_oriented_arrow(
+                                ax, go_to_position, color="green", norm=5, head_width=4, head_length=3
+                            )
+                        elif isinstance(go_to_position, Point):
+                            ax.plot(go_to_position.x, go_to_position.y, "go")
+                        else:
+                            self.logger.error(
+                                f"Invalid go-to position type: {type(go_to_position)}"
+                            )
+                    else:
+                        ax.plot(go_to_position.x, go_to_position.y, "rx", markersize=5)
+
+            # 5. Plot ally direction
+            if show_ally_direction and isinstance(zone, AllyZone):
+                self.__plot_oriented_arrow(
+                    ax, zone.point, color=zone.zone_color, norm=zone.robot_size + 10
+                )
+
     # ====== Public Methods ======
     def visualize(
             self,
+            # Visualization options
             show_buffer: bool = True,
+            trajectory: list[OrientedPoint] | None = None,
+            transparency_factor: float = 1.0,
+            display_zones_go_to_positions: bool = True,
+            show_ally_direction: bool = True,
+            # Plot options
             show: bool = True,
             plot: tuple[plt.axes, plt.figure] = None,
-            theorical_ally_position: AllyZone = None,
-            trajectory: list[OrientedPoint] = [],
-            transparency_factor: float = 1.0,
-            display_points: list[Point] = None,
-            display_default_destination_zone=False,
-            starting_point_to_display_default_destination_zone: Point = None,
+            # Additional options
+            additional_zones: list[BaseArenaZone] | None = None,
+            additional_points: list[Point | OrientedPoint] | None = None,
     ) -> tuple[plt.axes, plt.figure]:
-        """
-        Visualize the arena, including its zones, buffers, and accessibility grid.
-
-        Args:
-            show_buffer (bool): If True, buffer zones are displayed.
-            show (bool): If True, the plot is displayed.
-            plot (tuple[plt.axes, plt.figure]): Tuple containing axes and figure for plotting.
-            trajectory (list[OrientedPoint]): List of points to display on the plot.
-            transparency_factor (float): Transparency factor zones (default=0.5).
-            display_points (list[Point]): List of points to display on the plot.
-            display_default_destination_zone (bool): If True, the default destination point of each zone is displayed.
-            starting_point_to_display_default_destination_zone: The starting point to display the default destination zone.
-        """
+        # 1.Define the figure and axis
         if plot:
             ax, fig = plot
         else:
-            fig, ax = plt.subplots(figsize=(12, 6))
+            fig, ax = plt.subplots(figsize=(20, 12))
 
-        # Draw the arena boundary
-        arena_polygon = box(0, 0, self.width, self.height)
-        self.__plot_polygon(ax, arena_polygon, color="#f0f0f0", label="Arena")
+        # 2. Draw the arena boundary
+        self.__plot_polygon(ax, self.bounding_area, color="#f0f0f0", label="Arena")
 
-        # Plot zones and their buffers
-        # All zones
+        # 3. Plot zones and their buffers
+        # 3.1 Border zone
+        self.__plot_zone(ax, self.border_zone, show_buffer, False, False, transparency_factor)
+
+        # 3.2 All zones (stored in self.zones)
         for zone in self.zones:
-            self.__plot_zone(ax, zone, show_buffer, transparency_factor)
+            self.__plot_zone(ax, zone, show_buffer, False, display_zones_go_to_positions, transparency_factor)
 
-            # Plot the go-to position
-            if zone.go_to_positions:
-                for go_to_position in zone.go_to_positions:
-                    ax.plot(go_to_position.x, go_to_position.y, "rx", markersize=5)
+        # 3.3 Additional zones (if provided)
+        if additional_zones:
+            for zone in additional_zones:
+                self.__plot_zone(ax, zone, show_buffer, False, display_zones_go_to_positions, transparency_factor)
 
-                    # if isinstance(go_to_position, OrientedPoint):
-                    #     arrow_length = 5
-                    #     dx = arrow_length * np.cos(go_to_position.theta)
-                    #     dy = arrow_length * np.sin(go_to_position.theta)
-                    #     ax.arrow(
-                    #         go_to_position.x, go_to_position.y,
-                    #         dx, dy,
-                    #         head_width=4, head_length=3, fc='g', ec='g'
-                    #     )
+        # 3.4 Ally and Enemy zones
+        self.__plot_zone(ax, self.enemy_zone, show_buffer, False, False, transparency_factor)
+        self.__plot_zone(ax, self.ally_zone, show_buffer, show_ally_direction, False, transparency_factor)
 
-            # Plot the go-to position nearest point
-            nearest_point = zone.get_go_to_position(ally_position=self.ally_zone.point, team_color=self.team_color)
-            if nearest_point:
-                ax.plot(nearest_point.x, nearest_point.y, "go")
-                if isinstance(nearest_point, OrientedPoint):
-                    arrow_length = 5
-                    dx = arrow_length * np.cos(nearest_point.theta)
-                    dy = arrow_length * np.sin(nearest_point.theta)
+        # 4 Additional points (if provided)
+        if additional_points:
+            for p in additional_points:
+                if isinstance(p, Point):
+                    ax.plot(p.x, p.y, "ro")
+                elif isinstance(p, OrientedPoint):
+                    self.__plot_oriented_arrow(ax, p, color="red", norm=5, head_width=4, head_length=3)
+                else:
+                    self.logger.error(f"Invalid point type: {type(p)}")
 
-                    #
-                    ax.arrow(
-                        nearest_point.x, nearest_point.y,
-                        dx, dy,
-                        head_width=4, head_length=3, fc='g', ec='g'
-                    )
-
-        # Enemy and Ally zones
-        self.__plot_zone(ax, self.ally_zone, show_buffer, transparency_factor)
-        self.__plot_zone(ax, self.enemy_zone, show_buffer, transparency_factor)
-        if theorical_ally_position:
-            self.__plot_zone(ax, theorical_ally_position, show_buffer, transparency_factor)
-
-        # Plot trajectory
-        for i in range(len(trajectory) - 1):
-            # Draw a line connecting the current node to the next node
-            ax.plot(
-                [trajectory[i].x, trajectory[i + 1].x],
-                [trajectory[i].y, trajectory[i + 1].y],
-                color="purple",
-                linewidth=1,
-                alpha=0.2,
-            )
-
-        if display_points:
-            if not isinstance(display_points, list):
-                display_points = [display_points]
-            for point in display_points:
-                ax.plot(point.x, point.y, "ro")
-
-        if not starting_point_to_display_default_destination_zone:
-            starting_point_to_display_default_destination_zone = Point(
-                self.width / 2, self.height / 2
-            )
-
-        if display_default_destination_zone:
-            for zone in self.zones:
-                if isinstance(zone, BorderZone):
-                    continue
-                destination_point = self.compute_go_to_destination(
-                    starting_point_to_display_default_destination_zone, zone.polygon
+        # 5. Plot trajectory
+        if trajectory:
+            for i in range(len(trajectory) - 1):
+                # Draw a line connecting the current node to the next node
+                ax.plot(
+                    [trajectory[i].x, trajectory[i + 1].x],
+                    [trajectory[i].y, trajectory[i + 1].y],
+                    color="purple",
+                    linewidth=1,
+                    alpha=0.2,
                 )
-                if destination_point:
-                    ax.plot(
-                        destination_point.x,
-                        destination_point.y,
-                        "bo",
-                    )
 
+        # 6. Set plot properties
         ax.set_xlim(self.width, 0)  # Reverse x-axis
         ax.set_ylim(0, self.height)  # Keep y-axis normal
         ax.spines["top"].set_visible(False)  # Hide top frame line
@@ -757,7 +702,17 @@ class BaseArena(ABC):
         # Place legend on the left
         plt.legend(loc="center right", bbox_to_anchor=(-0.1, 0.5))
 
+        # 6. Show or return the plot
         plt.tight_layout()
         if show:
             plt.show()
         return ax, fig
+
+    # ====== Built-in Method ======
+    @abstractmethod
+    def __eq__(self, other):
+        pass
+
+    @abstractmethod
+    def __ne__(self, other):
+        pass
