@@ -57,7 +57,8 @@ if __name__ == "__main__":
     # Environment loggers
     logger_grid_manager = Logger(
         identifier="GridManager",
-        follow_logger_manager_rules=True,
+        print_log_level=LogLevels.INFO,
+        #follow_logger_manager_rules=True,
     )
     logger_show_arena = Logger(
         identifier="ShowArena",
