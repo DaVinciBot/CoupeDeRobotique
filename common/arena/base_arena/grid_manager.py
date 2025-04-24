@@ -239,6 +239,18 @@ class GridManager:
         self.not_updated_forbidden_zones: list[Polygon] = []
 
     # ====== Public Methods ======
+    def __eq__(self, other):
+        if not isinstance(other, GridManager):
+            return False
+        return (
+            self.static_forbidden_zones == other.static_forbidden_zones
+            and self.static_grid == other.static_grid
+            and self.static_and_dynamic_grid == other.static_and_dynamic_grid
+        )
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     @time_tracker(lambda self: self.logger)
     def add_forbidden_static_zone(
         self, forbidden_zones: Polygon | list[Polygon]

@@ -10,36 +10,36 @@
 // Configuration file (contains all the constants and pinout), it is just a main.cpp header file
 #include <config.h>
 
+
 // 1. Instanciate the Rolling Basis object
 // a. Define the PID controllers
 PID linear_speed_pid(KP_LINEAR_SPEED, KI_LINEAR_SPEED, KD_LINEAR_SPEED);
 PID angular_speed_pid(KP_ANGULAR_SPEED, KI_ANGULAR_SPEED, KD_ANGULAR_SPEED);
 
-PID linear_distance_pid(KP_LINEAR_DISTANCE, KI_LINEAR_DISTANCE, KD_LINEAR_DISTANCE);  
-PID angular_distance_pid(KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DISTANCE);  
+PID linear_distance_pid(KP_LINEAR_DISTANCE, KI_LINEAR_DISTANCE, KD_LINEAR_DISTANCE);
+PID angular_distance_pid(KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DISTANCE);
 
 // b. Instanciate the Rolling Basis object
 Rolling_Basis *rolling_basis_ptr = new Rolling_Basis(
-  ENCODER_RESOLUTION, CENTER_DISTANCE, WHEEL_DIAMETER,
-  linear_speed_pid, angular_speed_pid, linear_distance_pid, angular_distance_pid
-);
+    ENCODER_RESOLUTION, CENTER_DISTANCE, WHEEL_DIAMETER,
+    linear_speed_pid, angular_speed_pid, linear_distance_pid, angular_distance_pid);
 
 // c. Define the motors interrupt functions
 /******* Attach Interrupt *******/
 inline void left_motor_read_encoder()
 {
   if (digitalRead(L_ENCB))
-      rolling_basis_ptr->left_motor->ticks--;
+    rolling_basis_ptr->left_motor->ticks--;
   else
-      rolling_basis_ptr->left_motor->ticks++;
+    rolling_basis_ptr->left_motor->ticks++;
 }
 
 inline void right_motor_read_encoder()
 {
   if (digitalRead(R_ENCB))
-      rolling_basis_ptr->right_motor->ticks--;
+    rolling_basis_ptr->right_motor->ticks--;
   else
-      rolling_basis_ptr->right_motor->ticks++;
+    rolling_basis_ptr->right_motor->ticks++;
 }
 
 // 2. Instanciate the Communication object
@@ -48,7 +48,7 @@ Com *com;
 // 3. Define all com callback functions
 // a. define globals variables to keep in memory callback functions updated
 Point target_position(START_X, START_Y, START_THETA);
-float target_linear_speed  = 0.0f;
+float target_linear_speed = 0.0f;
 float target_angular_speed = 0.0f;
 
 // b. define the callback functions
@@ -66,11 +66,62 @@ void set_speed_and_position(byte *msg, byte size)
   target_position.theta = target_speed_and_position->target_position_theta;
 }
 
+void set_pid(byte *msg, byte size)
+{
+  msg_set_pid *pid_msg = (msg_set_pid *)msg;
+  PID *pid = nullptr;
+  bool is_valid_pid = true;
+  switch (pid_msg->pid_type)
+  {
+  case LINEAR_SPEED_PID_ID:
+    pid = &rolling_basis_ptr->linear_speed_pid;
+    break;
+  case ANGULAR_SPEED_PID_ID:
+    pid = &rolling_basis_ptr->angular_speed_pid;
+    break;
+  case LINEAR_POSITION_PID_ID:
+    pid = &rolling_basis_ptr->linear_distance_pid;
+    break;
+  case ANGULAR_POSITION_PID_ID:
+    pid = &rolling_basis_ptr->angular_distance_pid;
+    break;
+  default:
+    is_valid_pid = false;
+    break;
+  }
+  if (is_valid_pid)
+  {
+    pid->kp = pid_msg->kp;
+    pid->ki = pid_msg->ki;
+    pid->kd = pid_msg->kd;
+  }
+}
+
+void set_odometrie(byte *msg, byte size)
+{
+  msg_set_odometrie *odometrie = (msg_set_odometrie *)msg;
+
+  rolling_basis_ptr->X = odometrie->x;
+  rolling_basis_ptr->Y = odometrie->y;
+  rolling_basis_ptr->THETA = odometrie->theta;
+}
+
+void reset_teensy(byte *msg, byte size)
+{
+  // TODO: reset the teensy, à tester !
+  void(*reboot) (void) = 0;
+  reboot();
+}
+
 // c. assign the callback functions to the right message id
 void (*callback_functions[256])(byte *msg, byte size);
 
-void initialize_callback_functions() {
+void initialize_callback_functions()
+{
   callback_functions[SET_SPEED_AND_POSITION] = &set_speed_and_position;
+  callback_functions[SET_PID] = &set_pid;
+  callback_functions[SET_ODOMETRIE] = &set_odometrie;
+  callback_functions[RESET_TEENSY] = &reset_teensy;
 }
 
 // 4. Define the timer interrupt handle function (this function will be called every 10ms, and which manage the robot position and speed: asservissement)
@@ -79,7 +130,6 @@ void handle()
   rolling_basis_ptr->odometrie_handle();
   rolling_basis_ptr->handle(target_position, target_linear_speed, target_angular_speed);
 }
-
 
 void setup()
 {
@@ -91,7 +141,7 @@ void setup()
 
   // Init Rolling Basis
   rolling_basis_ptr->define_right_motor(R_ENCA, R_ENCB, R_PWM, R_IN2, R_IN1, MAX_PWM);
-  rolling_basis_ptr->define_left_motor( L_ENCA, L_ENCB, L_PWM, L_IN2, L_IN1, MAX_PWM);
+  rolling_basis_ptr->define_left_motor(L_ENCA, L_ENCB, L_PWM, L_IN2, L_IN1, MAX_PWM);
   rolling_basis_ptr->init_motors();
 
   rolling_basis_ptr->init_rolling_basis(START_X, START_Y, START_THETA);
@@ -102,17 +152,16 @@ void setup()
   Timer1.initialize(ASSERVISSEMENT_FREQUENCY);
   Timer1.attachInterrupt(handle);
 
-  // Initializa callback functions
+  // Initialize callback functions
   initialize_callback_functions();
 }
-
 
 uint_fast32_t counter = 0;
 void loop()
 {
-  // Handle the communication 
+  // Handle the communication
   com->handle_callback(callback_functions);
-  
+
   // Send rolling basis state
   msg_update_rolling_basis rolling_basis_msg;
   if (counter++ > 1024)

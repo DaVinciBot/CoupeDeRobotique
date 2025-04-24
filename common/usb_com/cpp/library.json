@@ -1,0 +1,22 @@
+{
+  "name": "intercom",
+  "version": "2.0.0",
+  "description": "A lightweight communication library for facilitating serial protocol interactions between Raspberry Pi and Teensy microcontrollers. It supports message handling, buffering, callbacks, and retransmission in case of errors (NACK).",
+  "keywords": [
+    "communication",
+    "serial",
+    "raspberry-pi",
+    "teensy",
+    "protocol",
+    "embedded"
+  ],
+  "license": "MIT",
+  "frameworks": "*",
+  "platforms": "*",
+  "export": {
+    "include": [
+      "include/*.h",
+      "src/*.cpp"
+    ]
+  }
+}
