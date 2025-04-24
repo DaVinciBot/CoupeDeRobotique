@@ -7,7 +7,7 @@ import time
 import matplotlib.pyplot as plt
 
 # ====== Third-party library imports ======
-from loggerplusplus import Logger, log
+from loggerplusplus import Logger, log, LogLevels
 
 # ====== Local Library Imports ======
 from geometry import OrientedPoint
@@ -71,7 +71,6 @@ class RollingBasis(BaseComTeensy):
 
         # Initialize PID controllers from configuration
         self._initialize_pids()
-        
 
     ####################################
     # Message Receiving Handlers       #
@@ -109,8 +108,8 @@ class RollingBasis(BaseComTeensy):
         # Speeds
         self.linear_speed = struct.unpack("<f", msg[12:16])[0]
         self.angular_speed = struct.unpack("<f", msg[16:20])[0]
-        
-        self.logger.info(f"Pos: {self.odometrie}, Linear speed: {self.linear_speed}, Angular speed: {self.angular_speed}")
+
+        # self.logger.info(f"Pos: {self.odometrie}, Linear speed: {self.linear_speed}, Angular speed: {self.angular_speed}")
 
         self._add_state_to_array(
             self.linear_speed, self.angular_speed, self._get_elapsed_time()
@@ -130,7 +129,7 @@ class RollingBasis(BaseComTeensy):
     ####################################
     # Message Sending Methods          #
     ####################################
-    @log(param_logger="RollingBasis")
+    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_speed_and_position(
         self,
         target_linear_speed: float,

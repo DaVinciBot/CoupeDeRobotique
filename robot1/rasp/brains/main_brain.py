@@ -86,17 +86,16 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         # --- MetaProg is insane (loop) --- #
-        pass
-        # if self.navigator_task is not None:
-        #         navigator.add_navigation_task(self.navigator_task)
-        #         self.navigator_task = None
+        if self.navigator_task is not None:
+            navigator.add_navigation_task(self.navigator_task)
+            self.navigator_task = None
 
-        # cmd = navigator.handle(
-        #     ally_zone=self.arena.ally_zone,
-        #     enemy_zone=self.arena.enemy_zone,
-        # )
-        # rolling_basis.set_speed_and_position(*cmd.get_command())
-        # self.rolling_basis_odometrie = rolling_basis.odometrie
+        cmd = navigator.handle(
+            ally_zone=self.arena.ally_zone,
+            enemy_zone=self.arena.enemy_zone,
+        )
+        rolling_basis.set_speed_and_position(*cmd.get_command())
+        self.rolling_basis_odometrie = rolling_basis.odometrie
         # rolling_basis.plot_answer_pid(
         #     True if navigator.current_task is None else False
         # )
@@ -133,7 +132,7 @@ class MainBrain(Brain):
         self.navigator_task = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=20),
+            path_planner_params=DeltaPathPlannerParams(distance=70),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_SPEED_PROFILER_PID,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
