@@ -193,6 +193,7 @@
       ],
       "elevator": {
         "top_steps": 400,
+        "folded_steps": 283,
         "bottom_steps": 0,
         "speed": 5000
       },

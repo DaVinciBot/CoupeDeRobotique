@@ -13,6 +13,7 @@ class Servo:
 @dataclass
 class Stepper:
     top_steps: int
+    folded_steps: int
     bottom_steps: int
     speed: int
 
@@ -73,15 +74,31 @@ class ActuatorsShow(Actuators):
         for i in range(len(self.servos)):
             self.deploy(i)
 
-    def tide_all(self):
+    def fold_all(self):
         for i in range(len(self.servos)):
-            self.tide(i) 
+            self.fold(i) 
+    
+    def init_actuator(self):
+        self.stepper_step(self.stepper.top_steps - self.elevator_ticks, self.stepper.speed)
+        self.fold_all()
+        self.stepper_step(self.stepper.folded_steps - self.elevator_ticks, self.stepper.speed)
+    
+    def ready_to_pickup(self):
+        self.stepper_step(self.stepper.top_steps - self.elevator_ticks, self.stepper.speed)
+        self.deploy(self.center)
+        self.stepper_step(self.stepper.bottom_steps - self.elevator_ticks, self.stepper.speed)
+        self.deploy(self.upper_arm + self.side_arms)   
     
     def pick_up(self):
-        self.stepper_step()
-        self.deploy(self.center + self.side_arms + self.upper_arm)
+        self.set_servo_angle(self.upper_arm, 90, max_angle = self.servos[self.upper_arm].max_angle)
         self.deploy(self.end_servos)
-        self.fold(self.center + self.side_arms)
         
     def build(self):
-        pass
+        self.fold(self.side_arms)
+        self.stepper_step(self.stepper.top_steps - self.elevator_ticks, self.stepper.speed)
+        self.deploy(self.side_arms)
+        self.fold(self.end_servos)
+        
+    def end_build(self):
+        self.fold(self.side_arms + self.center)
+        self.stepper_step(self.stepper.top_steps - self.elevator_ticks, self.stepper.speed)
