@@ -83,83 +83,74 @@ void Rolling_Basis::odometrie_handle()
 
 void Rolling_Basis::handle(
     Point target_position,
-    float target_linear_speed, float target_angular_speed)
+    float target_linear_speed, float target_angular_speed, Com* com
+)
 {
-    /* Speed part */
-    // Compute real linear and angular speed
-    float Vm = (this->right_motor->speed + this->left_motor->speed) / 2;                     // Vitesse linéaire mesurée
-    float Wm = (this->right_motor->speed - this->left_motor->speed) / this->center_distance; // Vitesse angulaire mesurée
+    double target_v_left = target_linear_speed - (this->center_distance / 2.0f) * target_angular_speed;
+    double target_v_right = target_linear_speed + (this->center_distance / 2.0f) * target_angular_speed;
 
-    // Save speeds as rolling basis properties
-    this->linear_speed = Vm;
-    this->angular_speed = Wm;
+    double ev_left = target_v_left - this->left_motor->speed;
+    double ev_right = target_v_right - this->right_motor->speed;
 
-    // Compute linear and angular speed error (difference between target and real)
-    float Ev = target_linear_speed - Vm;
-    float Ew = target_angular_speed - Wm;
+    float pid_right = this->linear_speed_pid.compute(ev_right);
+    float pid_left = this->angular_speed_pid.compute(ev_left);
 
-    // Compute PID output based on errors
-    float linear_speed_correction = this->linear_speed_pid.compute(Ev);
-    float angular_speed_correction = this->angular_speed_pid.compute(Ew);
+    // Print errors for debugging
+    // char buffer[100];
+    // sprintf(buffer, "ev_left=%.2f ev_right=%.2f pid_left=%.2f pid_right=%.2f", ev_left, ev_right, pid_left, pid_right);
+    // com->print(buffer);
 
-    /* Position part */
-    // We already have the current robot's position with odometrie (X, Y, THETA)
-
-    // Compute distance and orientation error (difference between target and real)
-    float Ed = sqrt(pow(target_position.x - this->X, 2) + pow(target_position.y - this->Y, 2));
-    float Etheta = target_position.theta - fmod(this->THETA, PI); // fmod to keep the angle between -PI and PI, TODO: a tester !!
-
-    // Compute PID output based on errors
-    float linear_distance_correction = this->linear_distance_pid.compute(Ed);
-    float angular_distance_correction = this->angular_distance_pid.compute(Etheta);
-
-    /* Combine both corrections */
-    // Compute corrected linear and angular speed
-    float Vc = target_linear_speed + linear_speed_correction + linear_distance_correction;
-    float Wc = target_angular_speed + angular_speed_correction + angular_distance_correction;
-
-    // Compute right and left motor speed
-    float right_speed = (2 * Vc + Wc * this->center_distance) / 2;
-    float left_speed = (2 * Vc - Wc * this->center_distance) / 2;
-
-    /* Apply commands to motors */
-    this->right_motor->set_motor(right_speed);
-    this->left_motor->set_motor(left_speed);
+    this->right_motor->set_motor(pid_right);
+    this->left_motor->set_motor(pid_left);
 }
 
-// void Rolling_Basis::is_running_update(){
-//     // Verify if the robot is running or no
-//     if ((millis() - this->last_running_check) > 10){
-//         this->last_running_check = millis();
-//         long delta_right = abs(this->running_check_right - this->right_motor->ticks);
-//         long delta_left = abs(this->running_check_left - this->left_motor->ticks);
 
-//         if((delta_left > 3) || (delta_right > 3))
-//             this->last_position_update = millis();
-
-//         this->running_check_right = this->right_motor->ticks;
-//         this->running_check_left  = this->left_motor->ticks;
-
-//         this->IS_RUNNING = ((millis() - this->last_position_update) < abs(this->inactive_delay));
-//     }
-// }
-
-// void Rolling_Basis::reset_position(){
-//     // Reset the position of the robot
-//     this->X = 0.0f;
-//     this->Y = 0.0f;
-//     this->THETA = 0.0f;
-//     this->IS_RUNNING = false;
-// }
-
-// // Motors action function
-// void Rolling_Basis::keep_position(long current_right_ticks, long current_left_ticks) {
-//     this->right_motor->handle(current_right_ticks, this->standby_pwm);
-//     this->left_motor->handle(current_left_ticks, this->standby_pwm);
-// }
-
-// void Rolling_Basis::shutdown_motor()
+// void Rolling_Basis::handle(
+//     Point target_position,
+//     float target_linear_speed, float target_angular_speed, Com* com
+// )
 // {
-//     this->right_motor->set_motor(1, 0);
-//     this->left_motor->set_motor(1, 0);
+//     /* Speed part */
+//     // Compute real linear and angular speed
+//     double Vm = (this->right_motor->speed + this->left_motor->speed) / 2;                     // Vitesse linéaire mesurée
+//     double Wm = (this->right_motor->speed - this->left_motor->speed) / this->center_distance; // Vitesse angulaire mesurée
+
+//     // Save speeds as rolling basis properties
+//     this->linear_speed = Vm;
+//     this->angular_speed = Wm;
+
+//     // Compute linear and angular speed error (difference between target and real)
+//     double Ev = target_linear_speed - Vm;
+//     double Ew = target_angular_speed - Wm;
+
+//     // Compute PID output based on errors
+//     double linear_speed_correction = this->linear_speed_pid.compute(Ev);
+//     double angular_speed_correction = this->angular_speed_pid.compute(Ew);
+
+//     /* Position part */
+//     // We already have the current robot's position with odometrie (X, Y, THETA)
+
+//     // Compute distance and orientation error (difference between target and real)
+//     double Ed = sqrt(pow(target_position.x - this->X, 2) + pow(target_position.y - this->Y, 2));
+//     double Etheta = target_position.theta - fmod(this->THETA, PI); // fmod to keep the angle between -PI and PI, TODO: a tester !!
+
+//     // Compute PID output based on errors
+//     double linear_distance_correction = this->linear_distance_pid.compute(Ed);
+//     double angular_distance_correction = this->angular_distance_pid.compute(Etheta);
+
+//     /* Combine both corrections */
+//     // Compute corrected linear and angular speed
+//     double Vc = target_linear_speed + linear_speed_correction + linear_distance_correction;
+//     double Wc = target_angular_speed + angular_speed_correction + angular_distance_correction;
+
+//     // double Vc = target_linear_speed + linear_speed_correction;
+//     // double Wc = target_angular_speed + angular_speed_correction;
+
+//     // Compute right and left motor speed
+//     double right_speed = (2 * Vc + Wc * this->center_distance) / 2;
+//     double left_speed = (2 * Vc - Wc * this->center_distance) / 2;
+
+//     /* Apply commands to motors */
+//     this->right_motor->set_motor(right_speed);
+//     this->left_motor->set_motor(left_speed);
 // }

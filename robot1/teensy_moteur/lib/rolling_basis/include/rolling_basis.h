@@ -3,6 +3,9 @@
 #include <motors_driver.h>
 #include "structures.h"
 
+#include <com.h>           // Communication object to manage the communication between the teensy and the Raspberry Pi
+
+
 class Rolling_Basis {
 public :
     // PID controllers
@@ -54,7 +57,7 @@ public :
     void odometrie_handle();
     void handle(
         Point target_position, 
-        float target_linear_speed, float target_angular_speed
+        float target_linear_speed, float target_angular_speed, Com* com
     );
 
     // Motors action function

@@ -15,8 +15,8 @@
 #define L_IN1 4
 
 // Motor Right
-#define R_ENCA 13 // Va te faire foutre (Flo)
-#define R_ENCB 14 // Si rien ne marche change les pins
+#define R_ENCA 14 // Va te faire foutre (Flo)
+#define R_ENCB 13 // Si rien ne marche change les pins
 #define R_PWM 2
 #define R_IN2 1
 #define R_IN1 0
@@ -31,19 +31,19 @@
 #define WHEEL_DIAMETER 5.9
 
 // PIDs
-#define KP_LINEAR_SPEED 30 // 30
+#define KP_LINEAR_SPEED 10 
 #define KI_LINEAR_SPEED 0
-#define KD_LINEAR_SPEED 0 // 0.005
+#define KD_LINEAR_SPEED 0 
 
-#define KP_ANGULAR_SPEED 30 // 30
+#define KP_ANGULAR_SPEED 10 
 #define KI_ANGULAR_SPEED 0
 #define KD_ANGULAR_SPEED 0
 
-#define KP_LINEAR_DISTANCE 0 // 20
+#define KP_LINEAR_DISTANCE 0 
 #define KI_LINEAR_DISTANCE 0
 #define KD_LINEAR_DISTANCE 0
 
-#define KP_ANGULAR_DISTANCE 0 // 20
+#define KP_ANGULAR_DISTANCE 0 
 #define KI_ANGULAR_DISTANCE 0
 #define KD_ANGULAR_DISTANCE 0
 
@@ -56,7 +56,7 @@
 #define PWM_FREQUENCY 40000
 
 // Asservissement echantillonage fréquence
-#define ASSERVISSEMENT_FREQUENCY 10000
+#define ASSERVISSEMENT_FREQUENCY 100000
 
 // Com baudrate
 #define BAUDRATE 115200

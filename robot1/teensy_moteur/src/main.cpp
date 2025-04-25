@@ -5,7 +5,6 @@
 
 // Custom libraries used: RollingBasis, Com
 #include <rolling_basis.h> // Rolling Basis object to manage the motors and robot position
-#include <com.h>           // Communication object to manage the communication between the teensy and the Raspberry Pi
 
 // Configuration file (contains all the constants and pinout), it is just a main.cpp header file
 #include <config.h>
@@ -127,7 +126,7 @@ void initialize_callback_functions()
 void handle()
 {
   rolling_basis_ptr->odometrie_handle();
-  rolling_basis_ptr->handle(target_position, target_linear_speed, target_angular_speed);
+  rolling_basis_ptr->handle(target_position, target_linear_speed, target_angular_speed, com);
 }
 
 void setup()

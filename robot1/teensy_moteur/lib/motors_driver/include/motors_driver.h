@@ -1,6 +1,5 @@
 #include <Arduino.h>
 
-
 // Motor class
 class Motor {
 
