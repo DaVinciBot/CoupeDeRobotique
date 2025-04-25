@@ -12,7 +12,6 @@ from arena.base_arena import (
     # Enums
     ZoneType,
     ZoneAccessibility,
-
     # Different Types of Zones
     BaseArenaZone,
     EnemyZone,

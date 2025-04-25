@@ -5,11 +5,11 @@ from arena import BaseArenaZone
 
 class TrajectoryParams:
     def __init__(
-            self,
-            speed_profile: SpeedProfile,
-            goal: Point | OrientedPoint | BaseArenaZone | int,
-            resolution: int,
-            smooth_trajectory: bool = True,
+        self,
+        speed_profile: SpeedProfile,
+        goal: Point | OrientedPoint | BaseArenaZone | int,
+        resolution: int,
+        smooth_trajectory: bool = True,
     ) -> None:
         self.speed_profile: SpeedProfile = speed_profile
         self.goal: OrientedPoint | BaseArenaZone = goal
@@ -32,10 +32,10 @@ class TrajectoryParams:
         if not isinstance(other, TrajectoryParams):
             return False
         return (
-                self.speed_profile == other.speed_profile
-                and self.goal == other.goal
-                and self.resolution == other.resolution
-                and self.smooth_trajectory == other.smooth_trajectory
+            self.speed_profile == other.speed_profile
+            and self.goal == other.goal
+            and self.resolution == other.resolution
+            and self.smooth_trajectory == other.smooth_trajectory
         )
 
     def __ne__(self, other):

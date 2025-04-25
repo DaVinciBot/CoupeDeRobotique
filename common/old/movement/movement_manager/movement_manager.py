@@ -13,7 +13,12 @@ from loggerplusplus import Logger
 from geometry import OrientedPoint, Point
 
 # Internal project imports
-from movement.params import GoToParams, TrajectoryParams, SpeedProfile, RollingBasisCommand
+from movement.params import (
+    GoToParams,
+    TrajectoryParams,
+    SpeedProfile,
+    RollingBasisCommand,
+)
 from movement.movement_manager.movement_status import MovementStatus
 from movement.trajectory_computer import TrajectoryComputer
 
@@ -26,13 +31,13 @@ class MovementManager:
     """
 
     def __init__(
-            self,
-            # Loggers
-            logger: Logger,
-            path_finder_logger: Logger,
-            trajectory_computer_logger: Logger,
-            # Context object
-            arena_ptr: BaseArena,
+        self,
+        # Loggers
+        logger: Logger,
+        path_finder_logger: Logger,
+        trajectory_computer_logger: Logger,
+        # Context object
+        arena_ptr: BaseArena,
     ) -> None:
         """
         Initializes the MovementManager with logging and arena context.
@@ -78,7 +83,9 @@ class MovementManager:
         Returns:
             float: Distance between the ally zone and the computed goal.
         """
-        return self.arena_ptr.ally_zone.point.distance(self.trajectory_computer.trajectory_params.computed_goal)
+        return self.arena_ptr.ally_zone.point.distance(
+            self.trajectory_computer.trajectory_params.computed_goal
+        )
 
     @staticmethod
     def __are_path_different(path_a: list[GridNode], path_b: list[GridNode]) -> bool:
@@ -104,15 +111,13 @@ class MovementManager:
     # ====== Protected Methods ======
     def _acs(self) -> RollingBasisCommand | None:
         """
-       Anti-Collision System (ACS) that stops movement if an enemy is too close.
+        Anti-Collision System (ACS) that stops movement if an enemy is too close.
 
-       Returns:
-           RollingBasisCommand | None: Stop command if enemy is too close, else None.
-       """
+        Returns:
+            RollingBasisCommand | None: Stop command if enemy is too close, else None.
+        """
         if self.params is None:
-            self.logger.warning(
-                "ACS was called but no movement parameters found!"
-            )
+            self.logger.warning("ACS was called but no movement parameters found!")
             return
 
         # Anti Collision System
@@ -121,11 +126,11 @@ class MovementManager:
         if too_close:
             # Stop the robot (set speed to 0 !)
             self.status = MovementStatus.ACS
-            self.logger.warning(
-                "ACS: Enemy is too close, stopping the robot"
-            )
+            self.logger.warning("ACS: Enemy is too close, stopping the robot")
             return RollingBasisCommand(
-                position=self.arena_ptr.ally_zone.point, linear_speed=0.0, angular_speed=0.0
+                position=self.arena_ptr.ally_zone.point,
+                linear_speed=0.0,
+                angular_speed=0.0,
             )
         return
 
@@ -142,7 +147,9 @@ class MovementManager:
             return True
         return False
 
-    def _get_goal_zone_intersection(self, goal: Point | OrientedPoint | BaseArenaZone | int) -> list[BaseArenaZone]:
+    def _get_goal_zone_intersection(
+        self, goal: Point | OrientedPoint | BaseArenaZone | int
+    ) -> list[BaseArenaZone]:
         # 1. Goal is zone ID
         if isinstance(goal, int):
             if goal > len(self.arena_ptr.zones):
@@ -167,11 +174,14 @@ class MovementManager:
 
         # 4. Invalid goal type
         else:
-            self.logger.error(f"Invalid goal type given in _get_goal_accessibility: [{type(goal)}]")
+            self.logger.error(
+                f"Invalid goal type given in _get_goal_accessibility: [{type(goal)}]"
+            )
             return []
 
-    def _get_goal_accessibility_and_intersect_zones(self, goal: Point | OrientedPoint | BaseArenaZone | int) \
-            -> tuple[ZoneAccessibility, list[BaseArenaZone]]:
+    def _get_goal_accessibility_and_intersect_zones(
+        self, goal: Point | OrientedPoint | BaseArenaZone | int
+    ) -> tuple[ZoneAccessibility, list[BaseArenaZone]]:
         intersect_zones: list[BaseArenaZone] = self._get_goal_zone_intersection(goal)
 
         goal_accessibility: ZoneAccessibility = ZoneAccessibility.FREE
@@ -187,12 +197,12 @@ class MovementManager:
 
     # ====== Public Methods ======
     def compute_go_to(
-            self,
-            # Currents rolling basis state (the position/odometrie is already stored in the arena)
-            current_linear_speed: float,
-            current_angular_speed: float,
-            # Parameters of the go to
-            params: GoToParams,
+        self,
+        # Currents rolling basis state (the position/odometrie is already stored in the arena)
+        current_linear_speed: float,
+        current_angular_speed: float,
+        # Parameters of the go to
+        params: GoToParams,
     ):
         """
         Computes a trajectory and initiates movement towards the goal.
@@ -211,7 +221,10 @@ class MovementManager:
             # Restore the removed restricted zones
             if self._current_restricted_zones_removed:
                 self.arena_ptr.grid_manager.add_forbidden_static_zone(
-                    [zone.buffered_polygon for zone in self._current_restricted_zones_removed]
+                    [
+                        zone.buffered_polygon
+                        for zone in self._current_restricted_zones_removed
+                    ]
                 )
                 self._current_restricted_zones_removed = []
 
@@ -224,8 +237,10 @@ class MovementManager:
 
         # 1. Verify the goal zone accessibility
         # 1.1 Check if the goal zone is accessible
-        goal_accessibility, intersect_zones = self._get_goal_accessibility_and_intersect_zones(
-            params.trajectory_params.goal
+        goal_accessibility, intersect_zones = (
+            self._get_goal_accessibility_and_intersect_zones(
+                params.trajectory_params.goal
+            )
         )
         if goal_accessibility == ZoneAccessibility.FORBIDDEN:
             self.status = MovementStatus.NO_ACCESSIBLE
@@ -245,7 +260,9 @@ class MovementManager:
             )
 
             # 1.2.3 Save the removed restricted zones
-            self._current_restricted_zones_removed: list[BaseArenaZone] = restricted_zones
+            self._current_restricted_zones_removed: list[BaseArenaZone] = (
+                restricted_zones
+            )
 
         # 2. Compute the trajectory
         # 2.1 Create the trajectory computer
@@ -253,7 +270,7 @@ class MovementManager:
             logger=self.trajectory_computer_logger,
             path_finder_logger=self.path_finder_logger,
             arena_ptr=self.arena_ptr,
-            trajectory_params=params.trajectory_params
+            trajectory_params=params.trajectory_params,
         )
         # 2.2 Compute the trajectory (without dynamic obstacles: ignore enemy position for first computation)
         self.trajectory_computer.compute(
@@ -277,9 +294,7 @@ class MovementManager:
         # 0. Check if the goal is not possible or already reached
         # 0.1 Check if the goal is not possible
         if not self.status.is_possible():
-            self.logger.debug(
-                "Handle Go To was called but the goal is not possible."
-            )
+            self.logger.debug("Handle Go To was called but the goal is not possible.")
             return
         # 0.2 Check if the goal is already reached
         if self._go_to_is_arrived():
@@ -309,9 +324,10 @@ class MovementManager:
         # -> if the enemy distance is under the recompute distance threshold
         # AND the path is not near the end goal
         if (
-                self.__get_ally_goal_distance() > self.params.distance_to_goal_to_dont_recompute_path
-                and
-                self.__get_ally_enemy_distance() < self.params.path_finder_recompute_distance
+            self.__get_ally_goal_distance()
+            > self.params.distance_to_goal_to_dont_recompute_path
+            and self.__get_ally_enemy_distance()
+            < self.params.path_finder_recompute_distance
         ):
             # 3.1 Save old path for comparison
             current_used_path = self.trajectory_computer.path_finder.path_found
@@ -319,15 +335,15 @@ class MovementManager:
             # 3.2 Recompute the path (use dynamic obstacles: consider enemy position)
             self.trajectory_computer.compute_path(
                 use_static_and_dynamic_grid=True,
-                current_position=self.arena_ptr.ally_zone.point  # use real current aly robot position
+                current_position=self.arena_ptr.ally_zone.point,  # use real current aly robot position
             )
 
             # 3.3 Check if the path has changed
             # We compare only the raw path (not the oriented path, but the GridNode path)
             # Because there less element top compare in this one => faster computation
             if self.__are_path_different(
-                    current_used_path,
-                    self.trajectory_computer.path_finder.path_found,
+                current_used_path,
+                self.trajectory_computer.path_finder.path_found,
             ):
                 self.logger.info(
                     "The path has changed, updating the rolling basis handler"

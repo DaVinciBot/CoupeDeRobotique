@@ -28,14 +28,14 @@ class BaseComTeensy(Com):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            serial_number: int,
-            vid: int,
-            pid: int,
-            baudrate: int,
-            enable_crc: bool = True,
-            enable_dummy: bool = False
+        self,
+        logger: Logger,
+        serial_number: int,
+        vid: int,
+        pid: int,
+        baudrate: int,
+        enable_crc: bool = True,
+        enable_dummy: bool = False,
     ):
         """
         Initializes the communication parameters for the Teensy device.
@@ -49,12 +49,12 @@ class BaseComTeensy(Com):
             enable_crc (bool, optional): Enables CRC error checking. Defaults to True.
             enable_dummy (bool, optional): Enables dummy packet handling. Defaults to False.
         """
-        super().__init__(logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy)
+        super().__init__(
+            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy
+        )
 
     def reset(self) -> None:
         """
         Resets the Teensy device by sending a reset command.
         """
-        self.send_bytes(
-            data=Messages.RESET_TEENSY.to_bytes()
-        )
+        self.send_bytes(data=Messages.RESET_TEENSY.to_bytes())

@@ -87,7 +87,9 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             return cmd
 
         # 3. Obstacle cleared: finish avoidance
-        if self.state == AvoidanceState.AVOIDING and not self._acs(ally_zone, enemy_zone):
+        if self.state == AvoidanceState.AVOIDING and not self._acs(
+            ally_zone, enemy_zone
+        ):
             # Obstacle is no longer detected, replan from current position
             last_params = task.path_planner.last_plan_path_params
             last_params.start = position  # Update start position to current location
@@ -98,7 +100,9 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self._reset_timer()
             self.state = AvoidanceState.IDLE
             task.state = NavigatorTaskState.IN_PROGRESS
-            return task.current_trajectory_command  # Avoidance complete, continue as normal
+            return (
+                task.current_trajectory_command
+            )  # Avoidance complete, continue as normal
 
         # 4. Continue with original trajectory
         return task.current_trajectory_command

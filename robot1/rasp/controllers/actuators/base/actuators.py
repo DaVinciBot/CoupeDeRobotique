@@ -28,9 +28,7 @@ class Actuators(
         enable_dummy=CONFIG.TEENSY_DUMMY,
     ):
         # Initialize the parent-GPIOComTeensy class
-        super().__init__(
-            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy
-        )
+        super().__init__(logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy)
 
         # Admit that default elevator position is at the bottom
         self.elevator_ticks: int = 0
@@ -44,9 +42,7 @@ class Actuators(
         # Register message handlers
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
-        self.add_callback(
-            self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value
-        )
+        self.add_callback(self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value)
 
     def __str__(self) -> str:
         return self.__class__.__name__
@@ -167,7 +163,9 @@ class Actuators(
                 if not self.gpio_manager.is_declared_gpio(pin):
                     self.gpio_manager.add_gpio(pin, ActuatorType.SERVO)
                     self.logger.info(f"Pin {pin} added as a servo pin")
-                elif not self.gpio_manager.is_valid_gpio(pin, ActuatorType.SERVO):
+                elif not self.gpio_manager.is_valid_gpio(
+                        pin, ActuatorType.SERVO
+                ):
                     self.logger.error(
                         f"Pin {pin} is not a valid servo pin because it is registered as a "
                         f"{str(self.gpio_manager.get_type_gpio(pin))}"

@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This code defines a builder class `SubGraphBuilder` used to construct and manipulate subgraphs composed of task nodes
-# and transitions. It allows the addition of individual nodes, connection of transitions, and integration of existing
-# subgraphs with optional name prefixing. The final subgraph can be constructed with specified entry and exit nodes.
-
+# TODO: NE FOCNTIONNE PAS !
 # ====== Standard Library Imports ======
 from typing import Dict, List, Union
 

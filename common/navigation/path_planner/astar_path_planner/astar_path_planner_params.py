@@ -2,8 +2,10 @@
 
 # ====== Internal Project Imports ======
 from navigation.path_planner.structs import PathPlanningStrategy, Direction
-from navigation.path_planner.base_path_planner.base_path_planner_params import BasePathPlannerParams, \
-    BasePathPlannerPlanPathParams
+from navigation.path_planner.base_path_planner.base_path_planner_params import (
+    BasePathPlannerParams,
+    BasePathPlannerPlanPathParams,
+)
 
 # Third-party imports
 from pathfinding.core.grid import Grid
@@ -31,14 +33,15 @@ class AStarPathPlannerParams(BasePathPlannerParams):
         oriented_path_found (list[OrientedPoint]): List of oriented points representing the path with orientation.
     """
 
-    def __init__(self,
-                 grid: Grid,
-                 path_resolution: float,
-                 chunk_size: int,
-                 start: OrientedPoint,
-                 goal: OrientedPoint,
-                 direction: Direction = Direction.FORWARD,
-                 ):
+    def __init__(
+        self,
+        grid: Grid,
+        path_resolution: float,
+        chunk_size: int,
+        start: OrientedPoint,
+        goal: OrientedPoint,
+        direction: Direction = Direction.FORWARD,
+    ):
         """
         Initialize parameters for the A* path planner.
 

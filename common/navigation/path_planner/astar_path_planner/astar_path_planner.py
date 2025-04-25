@@ -18,7 +18,8 @@ from navigation.path_planner.structs import Direction
 from pathfinding.core.grid import GridNode
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
 from navigation.path_planner.astar_path_planner.astar_path_planner_params import (
-    AStarPathPlannerParams, AStarPathPlannerPlanPathParams
+    AStarPathPlannerParams,
+    AStarPathPlannerPlanPathParams,
 )
 
 
@@ -30,7 +31,9 @@ class AStarPathPlanner(
     If the direction is set to BACKWARD, the orientations are flipped by π radians.
     """
 
-    def __init__(self, params: AStarPathPlannerParams, logger: Logger | None = None) -> None:
+    def __init__(
+        self, params: AStarPathPlannerParams, logger: Logger | None = None
+    ) -> None:
         """
         Initialize the A* path planner.
 
@@ -40,8 +43,12 @@ class AStarPathPlanner(
         """
         super().__init__(params, logger)
 
-        self.params.current_position = self.__absolute_coords_to_grid_coords(self.params.absolute_current_position)
-        self.params.goal = self.__absolute_coords_to_grid_coords(self.params.absolute_goal)
+        self.params.current_position = self.__absolute_coords_to_grid_coords(
+            self.params.absolute_current_position
+        )
+        self.params.goal = self.__absolute_coords_to_grid_coords(
+            self.params.absolute_goal
+        )
 
     # ====== Protected Methods ======
     @staticmethod
@@ -60,7 +67,7 @@ class AStarPathPlanner(
     # ====== Private Methods ======
     @staticmethod
     def __compute_orientation(
-            current_point: GridNode | Point, next_point: GridNode | Point
+        current_point: GridNode | Point, next_point: GridNode | Point
     ) -> float:
         """
         Compute the orientation (angle in radians) from the current point to the next.
@@ -86,7 +93,9 @@ class AStarPathPlanner(
         grid = self.params.grid
 
         self.params.path_found, exploration_value = self.params.finder.find_path(
-            start=grid.node(self.params.current_position.x, self.params.current_position.y),
+            start=grid.node(
+                self.params.current_position.x, self.params.current_position.y
+            ),
             end=grid.node(self.params.goal.x, self.params.goal.y),
             graph=grid,
         )
@@ -124,7 +133,7 @@ class AStarPathPlanner(
         )
 
     def __path_to_absolute_oriented_path(
-            self, path: list[GridNode] | list[Point], is_grid_path: bool
+        self, path: list[GridNode] | list[Point], is_grid_path: bool
     ) -> list[OrientedPoint]:
         """
         Convert a path (grid or absolute) to an oriented path for the robot.
@@ -173,7 +182,9 @@ class AStarPathPlanner(
         )
         return oriented_path
 
-    def __add_path_extremities_point(self, path: list[Point]) -> list[Point | OrientedPoint]:
+    def __add_path_extremities_point(
+        self, path: list[Point]
+    ) -> list[Point | OrientedPoint]:
         """
         Adjusts the path by keeping only significant extremity and intermediate points.
 
@@ -189,18 +200,35 @@ class AStarPathPlanner(
 
         # If 3 points, conserve only the start, goal, and the middle point
         if len(path) == 3:
-            return [self.params.absolute_current_position, path[1], self.params.absolute_goal]
+            return [
+                self.params.absolute_current_position,
+                path[1],
+                self.params.absolute_goal,
+            ]
 
         # If 4 points, conserve only the start, goal, and the 2 middle points
         if len(path) == 4:
-            return [self.params.absolute_current_position, path[1], path[2], self.params.absolute_goal]
+            return [
+                self.params.absolute_current_position,
+                path[1],
+                path[2],
+                self.params.absolute_goal,
+            ]
 
         # If more than 4 points, conserve start, goal, and remove the first and last two intermediate points
-        return [self.params.absolute_current_position, *path[2:-2], self.params.absolute_goal]
+        return [
+            self.params.absolute_current_position,
+            *path[2:-2],
+            self.params.absolute_goal,
+        ]
 
-    def __absolute_coords_to_grid_coords(self, point: OrientedPoint | Point) -> GridNode:
+    def __absolute_coords_to_grid_coords(
+        self, point: OrientedPoint | Point
+    ) -> GridNode:
         """Converts absolute coordinates to grid coordinates."""
-        return GridNode(int(point.x / self.params.chunk_size), int(point.y / self.params.chunk_size))
+        return GridNode(
+            int(point.x / self.params.chunk_size), int(point.y / self.params.chunk_size)
+        )
 
     # ====== Public Methods ======
 
@@ -222,8 +250,8 @@ class AStarPathPlanner(
             new_position (OrientedPoint): New current position in absolute coordinates.
         """
         self.params.absolute_current_position = new_position
-        self.params.current_position = (
-            self.__absolute_coords_to_grid_coords(new_position)
+        self.params.current_position = self.__absolute_coords_to_grid_coords(
+            new_position
         )
 
     @BasePathPlanner._store_plan_path_params
@@ -260,7 +288,8 @@ class AStarPathPlanner(
 
         if self.params.direction == Direction.BACKWARD:
             self.params.oriented_path_found = [
-                self._compute_backward_position(point) for point in self.params.oriented_path_found
+                self._compute_backward_position(point)
+                for point in self.params.oriented_path_found
             ]
         # We don't need to call __set_path_extremities_correct_theta
         # because we already have the start and goal points with correct theta

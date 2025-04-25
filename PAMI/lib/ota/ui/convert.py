@@ -16,7 +16,9 @@ with open(compressed_file, "rb") as f:
 
 # Création du tableau en C
 byte_array = ", ".join(f"{b}" for b in compressed_data)
-const_array = f"const uint8_t ELEGANT_HTML[{len(compressed_data)}] PROGMEM = {{ {byte_array} }};"
+const_array = (
+    f"const uint8_t ELEGANT_HTML[{len(compressed_data)}] PROGMEM = {{ {byte_array} }};"
+)
 
 # Sauvegarde dans un fichier
 with open(output_file, "w") as f:

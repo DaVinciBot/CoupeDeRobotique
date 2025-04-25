@@ -39,13 +39,13 @@ class StuffZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
-            go_to_positions: list[OrientedPoint | Point] = None,
+        self,
+        logger: Logger,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: callable = None,
+        go_to_positions: list[OrientedPoint | Point] = None,
     ) -> None:
         """
         Initializes the StuffZone with geometry, buffer, and accessibility.
@@ -71,7 +71,10 @@ class StuffZone(BaseArenaZone):
         )
 
     def update(
-            self, team_color: TeamColor, ally_position: Point | OrientedPoint, enemy_position: Point | OrientedPoint
+        self,
+        team_color: TeamColor,
+        ally_position: Point | OrientedPoint,
+        enemy_position: Point | OrientedPoint,
     ) -> None:
         """
         Updates the zone accessibility based on the positions of allies and enemies.
@@ -84,14 +87,19 @@ class StuffZone(BaseArenaZone):
         super().update(team_color, ally_position, enemy_position)
 
         # Update accessibility to free if an ally or enemy is within the zone
-        if self.buffered_polygon.contains(ally_position) or self.buffered_polygon.contains(enemy_position):
+        if (
+            self.buffered_polygon.contains(ally_position) or
+            self.buffered_polygon.contains(enemy_position)
+        ) and self.accessibility != ZoneAccessibility.FREE:
             self.accessibility = ZoneAccessibility.FREE
             grid_manager: GridManager = self.update_callback()
             grid_manager.remove_forbidden_static_zone(self.buffered_polygon)
 
             self.logger.debug(f"{self.zone_type} zone is now accessible")
 
-    def get_go_to_position(self, ally_position: OrientedPoint, team_color: TeamColor) -> OrientedPoint | Point | None:
+    def get_go_to_position(
+        self, ally_position: OrientedPoint, team_color: TeamColor
+    ) -> OrientedPoint | Point | None:
         """
         Determines the best go-to position for an ally in the given zone.
 
@@ -112,11 +120,15 @@ class StuffZone(BaseArenaZone):
 
         # Find the nearest go-to position to the ally if positions are available
         if self.go_to_positions:
-            nearest_position = min(self.go_to_positions, key=lambda p: ally_position.distance(p))
+            nearest_position = min(
+                self.go_to_positions, key=lambda p: ally_position.distance(p)
+            )
             self.logger.debug(
                 f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]"
             )
             return nearest_position
 
-        self.logger.debug("GoTo position request: Unknown case encountered, returning None.")
+        self.logger.debug(
+            "GoTo position request: Unknown case encountered, returning None."
+        )
         return None

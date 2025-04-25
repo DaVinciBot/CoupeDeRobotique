@@ -37,7 +37,7 @@ def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
         f"[Construct] go to zone {zone_construct_id}",
         BaseTaskNode(
             f"[Construct] go to zone {zone_construct_id}",
-            GoToColorReservedZoneToConstruct(0),
+            GoToColorReservedZoneToConstruct(zone_construct_id),
         ),
     )
 

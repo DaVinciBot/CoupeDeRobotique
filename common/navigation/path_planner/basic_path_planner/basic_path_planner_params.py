@@ -5,8 +5,10 @@
 
 # ====== Internal Project Imports ======
 from navigation.path_planner.structs import PathPlanningStrategy, Direction
-from navigation.path_planner.base_path_planner.base_path_planner_params import BasePathPlannerParams, \
-    BasePathPlannerPlanPathParams
+from navigation.path_planner.base_path_planner.base_path_planner_params import (
+    BasePathPlannerParams,
+    BasePathPlannerPlanPathParams,
+)
 
 from geometry import OrientedPoint
 
@@ -31,7 +33,6 @@ class BasicPathPlannerParams(BasePathPlannerParams):
 
 
 class BasicPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
-
     def __init__(self, start: OrientedPoint, goal: OrientedPoint):
         self.goal: OrientedPoint = goal
         super().__init__(start)

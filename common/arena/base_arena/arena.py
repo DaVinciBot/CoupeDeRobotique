@@ -68,19 +68,16 @@ class BaseArena(ABC):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            width: int,
-            height: int,
-            forbidden_cover_threshold: float,
-            border_buffer: float,
-            obstacle_buffer: float,
-            zones: list[BaseArenaZone],
-            chunk_size: int = 10,
-            grid_manager_logger: Logger = Logger(
-                identifier="GridManager",
-                follow_logger_manager_rules=True,
-            ),
+        self,
+        logger: Logger,
+        width: int,
+        height: int,
+        forbidden_cover_threshold: float,
+        border_buffer: float,
+        obstacle_buffer: float,
+        zones: list[BaseArenaZone],
+        chunk_size: int = 10,
+        grid_manager_logger: Logger | None = None,
     ) -> None:
         """
         Initializes the BaseArena instance with dimensions, zones, and configuration parameters.
@@ -120,7 +117,15 @@ class BaseArena(ABC):
 
         # 4. Grid Manager
         self.grid_manager: GridManager = GridManager(
-            grid_manager_logger, chunk_size, width, height, forbidden_cover_threshold
+            logger=grid_manager_logger
+            or Logger(
+                identifier="GridManager",
+                follow_logger_manager_rules=True,
+            ),
+            chunk_size=chunk_size,
+            width=width,
+            height=height,
+            forbidden_cover_threshold=forbidden_cover_threshold,
         )
 
         # 5. Zones
@@ -153,7 +158,7 @@ class BaseArena(ABC):
         self.ally_zone: AllyZone = AllyZone(
             logger=Logger(identifier="AllyZone", follow_logger_manager_rules=True),
             point=OrientedPoint(self.width / 2, self.height / 2, 0),
-            robot_size=1
+            robot_size=1,
             # The robot is in reality assimilated to a point of null size,
             # but for the visualisation we need to give it a size
         )
@@ -264,11 +269,11 @@ class BaseArena(ABC):
 
     @time_tracker(lambda self: self.logger)
     def update(
-            self,
-            ally_position: OrientedPoint,
-            lidar_scan_polars: np.ndarray,  # Polars coordinates issued from the lidar scan
-            optimized_update: bool = True,
-            _enemy_position: Point | None = None,  # Only for testing and simulation purpose
+        self,
+        ally_position: OrientedPoint,
+        lidar_scan_polars: np.ndarray,  # Polars coordinates issued from the lidar scan
+        optimized_update: bool = True,
+        _enemy_position: Point | None = None,  # Only for testing and simulation purpose
     ) -> None:
         """
         Updates the state of the arena, zones, and grid based on ally and enemy positions.
@@ -298,7 +303,7 @@ class BaseArena(ABC):
         all_points = [ally_position, enemy_position]
         for zone in self.zones:
             if not optimized_update or any(
-                    zone.polygon.contains(pt) for pt in all_points
+                zone.polygon.contains(pt) for pt in all_points
             ):
                 zone.update(
                     self.team_color,
@@ -310,11 +315,11 @@ class BaseArena(ABC):
         # self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon])
 
     def compute_enemy_position(
-            self,
-            lidar_scan_polars: np.ndarray,
-            ally_position: OrientedPoint,
-            start_time: int = -1,
-            numb_enemy: bool = False,
+        self,
+        lidar_scan_polars: np.ndarray,
+        ally_position: OrientedPoint,
+        start_time: int = -1,
+        numb_enemy: bool = False,
     ) -> Point | MultiPoint | None:
         """
         Computes the position of the enemy based on lidar scans and updates the arena.
@@ -353,7 +358,9 @@ class BaseArena(ABC):
     def remove_outside(self, points: MultiPoint) -> MultiPoint:
         return self.playable_area.intersection(points)
 
-    def compute_goal_position(self, goal: int | BaseArenaZone | OrientedPoint | Point) -> OrientedPoint | Point:
+    def compute_goal_position(
+        self, goal: int | BaseArenaZone | OrientedPoint | Point
+    ) -> OrientedPoint | Point:
         # 1. If goal is defined as int, it's a zone ID
         if isinstance(goal, int):
             if goal > len(self.zones):
@@ -378,8 +385,6 @@ class BaseArena(ABC):
         self.logger.error(
             f"Invalid goal type: {type(goal)}. Expected int, BaseArenaZone, OrientedPoint, or Point."
         )
-
-
 
     # TODO: Check if this function is still needed, test them (last year code)
     def valid_position(self, pos: Point) -> bool:
@@ -452,12 +457,12 @@ class BaseArena(ABC):
     # ====== Private Methods: draw helpers ======
     @staticmethod
     def __plot_oriented_arrow(
-            ax,
-            point: OrientedPoint,
-            norm: float = 5.0,
-            color: str = "#000000",
-            head_width: float | None = None,
-            head_length: float | None = None,
+        ax,
+        point: OrientedPoint,
+        norm: float = 5.0,
+        color: str = "#000000",
+        head_width: float | None = None,
+        head_length: float | None = None,
     ) -> None:
         """
         Draws an arrow from an oriented point with a given direction.
@@ -482,15 +487,21 @@ class BaseArena(ABC):
 
         # Draw the arrow
         ax.arrow(
-            point.x, point.y,
-            dx, dy,
-            head_width=head_width, head_length=head_length,
-            fc=color, ec=color,
-            linewidth=2
+            point.x,
+            point.y,
+            dx,
+            dy,
+            head_width=head_width,
+            head_length=head_length,
+            fc=color,
+            ec=color,
+            linewidth=2,
         )
 
     @staticmethod
-    def __plot_zone_uid(ax, zone: BaseArenaZone, color: str = "#000000", fontsize: int = 12) -> None:
+    def __plot_zone_uid(
+        ax, zone: BaseArenaZone, color: str = "#000000", fontsize: int = 12
+    ) -> None:
         """
         Draws the zone UID at the center of the zone.
 
@@ -529,13 +540,13 @@ class BaseArena(ABC):
 
     @staticmethod
     def __plot_polygon(
-            ax,
-            polygon: Polygon,
-            color: str,
-            label: str = None,
-            alpha: float = 1.0,
-            hatch: str = None,
-            hatch_color: str = None,
+        ax,
+        polygon: Polygon,
+        color: str,
+        label: str = None,
+        alpha: float = 1.0,
+        hatch: str = None,
+        hatch_color: str = None,
     ) -> None:
         """
         Helper method to plot a polygon or multipolygon on a matplotlib axis.
@@ -579,13 +590,13 @@ class BaseArena(ABC):
                 ax.plot(x, y, color=color, linestyle="--", alpha=alpha)
 
     def __plot_zone(
-            self,
-            ax,
-            zone: BaseArenaZone,
-            show_buffer: bool,
-            show_ally_direction: bool,
-            display_zones_go_to_positions: bool,
-            transparency_factor: float = 1.0,
+        self,
+        ax,
+        zone: BaseArenaZone,
+        show_buffer: bool,
+        show_ally_direction: bool,
+        display_zones_go_to_positions: bool,
+        transparency_factor: float = 1.0,
     ) -> None:
         """Plots zones and their buffers on the arena."""
         if show_buffer:
@@ -634,7 +645,12 @@ class BaseArena(ABC):
                     if go_to_position == nearest_point:
                         if isinstance(go_to_position, OrientedPoint):
                             self.__plot_oriented_arrow(
-                                ax, go_to_position, color="green", norm=5, head_width=4, head_length=3
+                                ax,
+                                go_to_position,
+                                color="green",
+                                norm=5,
+                                head_width=4,
+                                head_length=3,
                             )
                         elif isinstance(go_to_position, Point):
                             ax.plot(go_to_position.x, go_to_position.y, "go")
@@ -653,19 +669,19 @@ class BaseArena(ABC):
 
     # ====== Public Methods ======
     def visualize(
-            self,
-            # Visualization options
-            show_buffer: bool = True,
-            trajectory: list[OrientedPoint] | None = None,
-            transparency_factor: float = 1.0,
-            display_zones_go_to_positions: bool = True,
-            show_ally_direction: bool = True,
-            # Plot options
-            show: bool = True,
-            plot: tuple[plt.axes, plt.figure] = None,
-            # Additional options
-            additional_zones: list[BaseArenaZone] | None = None,
-            additional_points: list[Point | OrientedPoint] | None = None,
+        self,
+        # Visualization options
+        show_buffer: bool = True,
+        trajectory: list[OrientedPoint] | None = None,
+        transparency_factor: float = 1.0,
+        display_zones_go_to_positions: bool = True,
+        show_ally_direction: bool = True,
+        # Plot options
+        show: bool = True,
+        plot: tuple[plt.axes, plt.figure] = None,
+        # Additional options
+        additional_zones: list[BaseArenaZone] | None = None,
+        additional_points: list[Point | OrientedPoint] | None = None,
     ) -> tuple[plt.axes, plt.figure]:
         # 1.Define the figure and axis
         if plot:
@@ -678,20 +694,45 @@ class BaseArena(ABC):
 
         # 3. Plot zones and their buffers
         # 3.1 Border zone
-        self.__plot_zone(ax, self.border_zone, show_buffer, False, False, transparency_factor)
+        self.__plot_zone(
+            ax, self.border_zone, show_buffer, False, False, transparency_factor
+        )
 
         # 3.2 All zones (stored in self.zones)
         for zone in self.zones:
-            self.__plot_zone(ax, zone, show_buffer, False, display_zones_go_to_positions, transparency_factor)
+            self.__plot_zone(
+                ax,
+                zone,
+                show_buffer,
+                False,
+                display_zones_go_to_positions,
+                transparency_factor,
+            )
 
         # 3.3 Additional zones (if provided)
         if additional_zones:
             for zone in additional_zones:
-                self.__plot_zone(ax, zone, show_buffer, False, display_zones_go_to_positions, transparency_factor)
+                self.__plot_zone(
+                    ax,
+                    zone,
+                    show_buffer,
+                    False,
+                    display_zones_go_to_positions,
+                    transparency_factor,
+                )
 
         # 3.4 Ally and Enemy zones
-        self.__plot_zone(ax, self.enemy_zone, show_buffer, False, False, transparency_factor)
-        self.__plot_zone(ax, self.ally_zone, show_buffer, show_ally_direction, False, transparency_factor)
+        self.__plot_zone(
+            ax, self.enemy_zone, show_buffer, False, False, transparency_factor
+        )
+        self.__plot_zone(
+            ax,
+            self.ally_zone,
+            show_buffer,
+            show_ally_direction,
+            False,
+            transparency_factor,
+        )
 
         # 4 Additional points (if provided)
         if additional_points:
@@ -699,7 +740,9 @@ class BaseArena(ABC):
                 if isinstance(p, Point):
                     ax.plot(p.x, p.y, "ro")
                 elif isinstance(p, OrientedPoint):
-                    self.__plot_oriented_arrow(ax, p, color="red", norm=5, head_width=4, head_length=3)
+                    self.__plot_oriented_arrow(
+                        ax, p, color="red", norm=5, head_width=4, head_length=3
+                    )
                 else:
                     self.logger.error(f"Invalid point type: {type(p)}")
 

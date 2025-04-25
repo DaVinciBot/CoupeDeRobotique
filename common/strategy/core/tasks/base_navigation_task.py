@@ -20,7 +20,6 @@ from navigation import (
 
 
 class BaseNavigationTask(BaseTask):
-
     def __init__(
         self,
         goal: int | BaseArenaZone | OrientedPoint | Point | None,
@@ -45,7 +44,9 @@ class BaseNavigationTask(BaseTask):
 
         self.navigator_task: NavigatorTask = NavigatorTask(
             params=NavigatorTaskParams(
-                goal=ctx.arena.compute_goal_position(self.goal),
+                goal=(
+                    ctx.arena.compute_goal_position(self.goal) if self.goal else None
+                ),  # goal can be None when we use DeltaPathPlanner
                 timeout=self.timeout,
                 path_planner_params=self.path_planner_params,
                 trajectory_planner_params=self.trajectory_planner_params,

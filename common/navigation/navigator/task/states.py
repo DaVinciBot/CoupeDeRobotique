@@ -9,8 +9,4 @@ class NavigatorTaskState(Enum):
     FINISHED = auto()
 
     def is_finished(self) -> bool:
-        return self in {
-            NavigatorTaskState.FINISHED,
-            NavigatorTaskState.ABORT
-        }
-
+        return self in {NavigatorTaskState.FINISHED, NavigatorTaskState.ABORT}
