@@ -33,13 +33,13 @@ class ForbiddenZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
+        self,
+        logger: Logger,
+        accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: callable = None,
     ) -> None:
         """
         Initializes a ForbiddenZone with the specified parameters.

@@ -29,17 +29,17 @@ class BaseColorReservedZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            zone_type: ZoneType,
-            color: TeamColor,
-            accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: Callable[[], GridManager] = None,
-            zone_color: str = "#9e9e9e",
-            go_to_positions: list[OrientedPoint | Point] = None
+        self,
+        logger: Logger,
+        zone_type: ZoneType,
+        color: TeamColor,
+        accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: Callable[[], GridManager] = None,
+        zone_color: str = "#9e9e9e",
+        go_to_positions: list[OrientedPoint | Point] = None,
     ) -> None:
         """
         Initializes the ColorReservedZone.
@@ -67,7 +67,7 @@ class BaseColorReservedZone(BaseArenaZone):
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
             zone_color=zone_color,
-            go_to_positions=go_to_positions
+            go_to_positions=go_to_positions,
         )
 
     def is_accessible(self, team_color: TeamColor = TeamColor.UNDEFINED) -> bool:
@@ -83,8 +83,10 @@ class BaseColorReservedZone(BaseArenaZone):
         return super().is_accessible() and self.color == team_color
 
     def update(
-            self, team_color: TeamColor, ally_position: Union[Point, OrientedPoint],
-            enemy_position: Union[Point, OrientedPoint]
+        self,
+        team_color: TeamColor,
+        ally_position: Union[Point, OrientedPoint],
+        enemy_position: Union[Point, OrientedPoint],
     ) -> None:
         """
         Updates the zone state based on detected enemy movement and team color validation.

@@ -15,18 +15,24 @@ from geometry import OrientedPoint
 
 # Internal project imports
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
-from navigation.path_planner.delta_path_planner.delta_path_planner_params import DeltaPathPlannerParams, \
-    DeltaPathPlannerPlanPathParams
+from navigation.path_planner.delta_path_planner.delta_path_planner_params import (
+    DeltaPathPlannerParams,
+    DeltaPathPlannerPlanPathParams,
+)
 
 
-class DeltaPathPlanner(BasePathPlanner[DeltaPathPlannerParams, DeltaPathPlannerPlanPathParams]):
+class DeltaPathPlanner(
+    BasePathPlanner[DeltaPathPlannerParams, DeltaPathPlannerPlanPathParams]
+):
     """
     Path planner that applies a relative displacement and rotation to the start position.
 
     Generates a two-point path based on linear distance and rotational delta.
     """
 
-    def __init__(self, params: DeltaPathPlannerParams, logger: Logger | None = None) -> None:
+    def __init__(
+        self, params: DeltaPathPlannerParams, logger: Logger | None = None
+    ) -> None:
         """
         Initialize the delta path planner.
 
@@ -37,7 +43,9 @@ class DeltaPathPlanner(BasePathPlanner[DeltaPathPlannerParams, DeltaPathPlannerP
         super().__init__(params, logger)
 
     @staticmethod
-    def _compute_displacement(start: OrientedPoint, distance: float) -> tuple[float, float]:
+    def _compute_displacement(
+        start: OrientedPoint, distance: float
+    ) -> tuple[float, float]:
         """
         Compute the displacement vector from the start point.
 
@@ -50,7 +58,7 @@ class DeltaPathPlanner(BasePathPlanner[DeltaPathPlannerParams, DeltaPathPlannerP
         """
         return (
             distance * math.cos(start.theta),  # dx
-            distance * math.sin(start.theta)  # dy
+            distance * math.sin(start.theta),  # dy
         )
 
     @staticmethod
@@ -90,7 +98,4 @@ class DeltaPathPlanner(BasePathPlanner[DeltaPathPlannerParams, DeltaPathPlannerP
         if self.params.rotation != 0.0:
             theta = self._compute_rotation(params.start, self.params.rotation)
 
-        return [
-            params.start,
-            OrientedPoint(x, y, theta)
-        ]
+        return [params.start, OrientedPoint(x, y, theta)]

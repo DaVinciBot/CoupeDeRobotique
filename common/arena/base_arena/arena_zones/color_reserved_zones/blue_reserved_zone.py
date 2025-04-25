@@ -14,7 +14,9 @@ from geometry import Polygon, Point, OrientedPoint
 
 # Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
-from arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone import BaseColorReservedZone
+from arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone import (
+    BaseColorReservedZone,
+)
 from arena.base_arena.team_color import TeamColor
 
 
@@ -26,13 +28,13 @@ class BlueReservedZone(BaseColorReservedZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
-            go_to_positions: list[OrientedPoint | Point] = None
+        self,
+        logger: Logger,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: callable = None,
+        go_to_positions: list[OrientedPoint | Point] = None,
     ) -> None:
         """
         Initializes the BlueReservedZone with geometry and accessibility settings.
@@ -56,5 +58,5 @@ class BlueReservedZone(BaseColorReservedZone):
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
             zone_color="#097D8D",
-            go_to_positions=go_to_positions
+            go_to_positions=go_to_positions,
         )

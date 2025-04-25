@@ -16,7 +16,12 @@ from utils import Utils
 from geometry import Point, OrientedPoint, LineString
 
 # Internal project imports
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility, SpeedVector, Record
+from arena.base_arena.arena_zones.structs import (
+    ZoneType,
+    ZoneAccessibility,
+    SpeedVector,
+    Record,
+)
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 from arena.base_arena.team_color import TeamColor
 
@@ -28,20 +33,20 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            zone_type: ZoneType,
-            accessibility: ZoneAccessibility,
-            point: Point | OrientedPoint,
-            vector_width: float,
-            buffer_size: float = 0.0,
-            update_callback: callable = None,
-            zone_color: str = "#9e9e9e",
-            positions_record_size: int = 3,
-            no_detection_timeout: float = 4.0,
-            positions_recorded: deque = None,
-            speed_vector: SpeedVector = SpeedVector(0.0, 0.0, 0.0),
-            vector_factor: float = 25.0
+        self,
+        logger: Logger,
+        zone_type: ZoneType,
+        accessibility: ZoneAccessibility,
+        point: Point | OrientedPoint,
+        vector_width: float,
+        buffer_size: float = 0.0,
+        update_callback: callable = None,
+        zone_color: str = "#9e9e9e",
+        positions_record_size: int = 3,
+        no_detection_timeout: float = 4.0,
+        positions_recorded: deque = None,
+        speed_vector: SpeedVector = SpeedVector(0.0, 0.0, 0.0),
+        vector_factor: float = 25.0,
     ) -> None:
         """
         Initializes the speed vector auto-calculate zone.
@@ -67,8 +72,11 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         self.speed_vector = speed_vector
         self.speed_vector.factor = vector_factor
         self.positions_record_size = positions_record_size
-        self.__positions_recorded = deque(
-            maxlen=positions_record_size) if positions_recorded is None else positions_recorded
+        self.__positions_recorded = (
+            deque(maxlen=positions_record_size)
+            if positions_recorded is None
+            else positions_recorded
+        )
 
         # Compute initial robot vector representation
         vector_line = self._compute_vector_line()
@@ -84,10 +92,15 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         )
 
     def _compute_vector_line(self) -> LineString:
-        return LineString([
-            self.point,
-            Point(self.point.x + self.speed_vector.factored_dx, self.point.y + self.speed_vector.factored_dy)
-        ])
+        return LineString(
+            [
+                self.point,
+                Point(
+                    self.point.x + self.speed_vector.factored_dx,
+                    self.point.y + self.speed_vector.factored_dy,
+                ),
+            ]
+        )
 
     def _compute_enemy_speed_vector(self) -> SpeedVector:
         """
@@ -97,17 +110,25 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             SpeedVector: Computed speed vector with magnitude and direction.
         """
         if len(self.__positions_recorded) < 2:
-            self.logger.debug("Not enough positions recorded to compute speed vector. Returning zero vector.")
+            self.logger.debug(
+                "Not enough positions recorded to compute speed vector. Returning zero vector."
+            )
             return SpeedVector(0, 0, 0)
 
-        start_record, end_record = self.__positions_recorded[0], self.__positions_recorded[-1]
+        start_record, end_record = (
+            self.__positions_recorded[0],
+            self.__positions_recorded[-1],
+        )
         timestamp_delta = end_record.timestamp - start_record.timestamp
 
         if timestamp_delta <= 0 or timestamp_delta > self.no_detection_timeout:
             self.logger.debug("Invalid or outdated time delta. Returning zero vector.")
             return SpeedVector(0, 0, 0)
 
-        dx, dy = end_record.position.x - start_record.position.x, end_record.position.y - start_record.position.y
+        dx, dy = (
+            end_record.position.x - start_record.position.x,
+            end_record.position.y - start_record.position.y,
+        )
         distance = start_record.position.distance(end_record.position)
         speed = distance / timestamp_delta if distance != 0 else 0
 
@@ -117,8 +138,12 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
 
         return SpeedVector(speed, dx / distance, dy / distance)
 
-    def update(self, team_color: TeamColor, ally_position: Point | OrientedPoint,
-               enemy_position: Point | OrientedPoint) -> None:
+    def update(
+        self,
+        team_color: TeamColor,
+        ally_position: Point | OrientedPoint,
+        enemy_position: Point | OrientedPoint,
+    ) -> None:
         """
         Updates the zone state based on detected enemy movement.
 
@@ -142,13 +167,15 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             buffered_polygon=vector_line.buffer(self.vector_width),
             update_callback=self.update_callback,
             zone_color=self.zone_color,
-            uid=self.uid  # Avoid reassigning a new uid
+            uid=self.uid,  # Avoid reassigning a new uid
         )
 
     def __str__(self) -> str:
         """Returns a string representation of the zone and its speed vector."""
-        return (f"{super().__str__()} Speed: {self.speed_vector.speed}, "
-                f"Direction: ({self.speed_vector.dx}, {self.speed_vector.dy})")
+        return (
+            f"{super().__str__()} Speed: {self.speed_vector.speed}, "
+            f"Direction: ({self.speed_vector.dx}, {self.speed_vector.dy})"
+        )
 
     def __repr__(self) -> str:
         """Returns a detailed string representation of the zone state."""

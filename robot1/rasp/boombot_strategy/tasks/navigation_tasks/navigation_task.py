@@ -2,7 +2,7 @@ from navigation import (
     TrajectoryPlanCommand,
 )
 from strategy.core import BaseNavigationTask
-from boombot_strategy_old.show_game_context import ShowGameContext
+from boombot_strategy.show_game_context import ShowGameContext
 
 
 class NavigationTask(BaseNavigationTask):

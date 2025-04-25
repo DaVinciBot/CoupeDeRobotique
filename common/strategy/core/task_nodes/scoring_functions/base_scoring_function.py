@@ -9,7 +9,6 @@ from strategy.core.base_game_context import BaseGameContext
 
 
 if TYPE_CHECKING:
-
     from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
 

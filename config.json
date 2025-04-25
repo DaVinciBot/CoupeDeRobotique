@@ -132,7 +132,72 @@
       }
     },
     "actuators": {
-      "actuators_teensy_ser": 14735440
+      "actuators_teensy_ser": 14735440,
+      "servos_storage" : {
+        "center": [0, 2],
+        "side_arms": [4, 6],
+        "upper_arm": 8,
+        "end_servos": [1, 3, 5, 7, 9]
+      },
+      "servos_config": [
+        {
+          "fold_angle": 50,
+          "deploy_angle": 150,
+          "max_angle": 270
+        },
+        {
+          "fold_angle": 0,
+          "deploy_angle": 180,
+          "max_angle": 180
+        },
+        {
+          "fold_angle": 230,
+          "deploy_angle": 120,
+          "max_angle": 270
+        },
+        {
+          "fold_angle": 180,
+          "deploy_angle": 0,
+          "max_angle": 180
+        },
+        {
+          "fold_angle": 20,
+          "deploy_angle": 110,
+          "max_angle": 270
+        },
+        {
+          "fold_angle": 0,
+          "deploy_angle": 180,
+          "max_angle": 180
+        },
+        {
+          "fold_angle": 270,
+          "deploy_angle": 200,
+          "max_angle": 270
+        },
+        {
+          "fold_angle": 180,
+          "deploy_angle": 0,
+          "max_angle": 180
+        },
+        {
+          "fold_angle": 270,
+          "deploy_angle": 180,
+          "max_angle": 270
+        },
+        {
+          "fold_angle": 270,
+          "deploy_angle": 0,
+          "max_angle": 270
+        }
+      ],
+      "elevator": {
+        "top_steps": 400,
+        "folded_steps": 283,
+        "bottom_steps": 0,
+        "speed": 5000
+      },
+      "delay": 0.02
     },
     "lidar": {
       "distances_unit": "cm",

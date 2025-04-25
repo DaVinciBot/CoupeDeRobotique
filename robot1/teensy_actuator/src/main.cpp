@@ -18,13 +18,14 @@ bool switch_pins[48] = {false};
 Com *com;
 
 Adafruit_PWMServoDriver controller = Adafruit_PWMServoDriver(0x40);
-
+// PCA9685 as 12 bits = 4096 ticks per complete cycle of PWM. 0°~500 μs and max~2500 μs
+// generic, can be use but in reality depend of each servos, angles are not perfect as 180 not equal to 180 in real life but no time to fix
 #define SERVOMIN 125
 #define SERVOMAX 575
 
-int angleToPulse(int angle)
+int angleToPulse(int angle, int max_angle)
 {
-  int pulse = map(angle, 0, 180, SERVOMIN, SERVOMAX);
+  int pulse = map(angle, 0, max_angle, SERVOMIN, SERVOMAX);
   return pulse;
 }
 
@@ -32,7 +33,7 @@ void set_servo_angle(byte *msg, byte size)
 {
   msg_set_servo_angle *servo_set_angle_msg = (msg_set_servo_angle *)msg;
   String output = "pin:" + String(servo_set_angle_msg->pin);
-  String output2 = "angle:" + String(angleToPulse(servo_set_angle_msg->angle));
+  String output2 = "angle" + String(servo_set_angle_msg->angle);
   com->print((char *)output.c_str());
   com->print((char *)output2.c_str());
   if (actuators[servo_set_angle_msg->pin] == nullptr)
@@ -55,13 +56,15 @@ void set_servo_angle_I2C(byte *msg, byte size)
 {
   msg_set_servo_angle_I2C *servo_set_angle_msg = (msg_set_servo_angle_I2C *)msg;
   String output = "pin:" + String(servo_set_angle_msg->pin);
-  String output2 = "angle:" + String(angleToPulse(servo_set_angle_msg->angle));
+  String output2 = "angle pulse:" + String(angleToPulse(servo_set_angle_msg->angle, servo_set_angle_msg->max_angle));
   com->print((char *)output.c_str());
   com->print((char *)output2.c_str());
-  controller.setPWM(servo_set_angle_msg->pin, 0, angleToPulse(servo_set_angle_msg->angle));
+  String output3 = "angle:" + String(servo_set_angle_msg->angle);
+  com->print((char *)output3.c_str());
+  controller.setPWM(servo_set_angle_msg->pin, 0, angleToPulse(servo_set_angle_msg->angle, servo_set_angle_msg->max_angle));
 }
 
-void set_servo_angle_detach(byte *msg, byte size)
+void set_servo_angle_detach(byte *msg, byte size) // TODO: Implement functional detach with i2c
 {
   msg_set_servo_angle_detach *servo_angle_detach_msg = (msg_set_servo_angle_detach *)msg;
   if (actuators[servo_angle_detach_msg->pin] == nullptr)
@@ -134,6 +137,7 @@ void initilize_callback_functions()
 
 void setup()
 {
+  digitalWrite(3, HIGH); // Immediatly set enable pin at high to prevent heating. Dirty solution.
   com = new Com(&Serial, BAUDRATE);
   controller.begin();
   controller.setPWMFreq(60);

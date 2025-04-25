@@ -10,9 +10,13 @@ from loggerplusplus import Logger, log
 from teensy import GPIOComTeensy, ActuatorType
 from usb_com.python import Messages
 
+import time
+
 
 # ====== Class Part ======
-class Actuators(GPIOComTeensy):
+class Actuators(
+    GPIOComTeensy
+):  # TODO : move to common and handle config properly, not the prority yet
     def __init__(
         self,
         logger: Logger,
@@ -24,13 +28,12 @@ class Actuators(GPIOComTeensy):
         enable_dummy=CONFIG.TEENSY_DUMMY,
     ):
         # Initialize the parent-GPIOComTeensy class
-        super().__init__(
-            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy
-        )
+        super().__init__(logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy)
 
         # Admit that default elevator position is at the bottom
         self.elevator_ticks: int = 0
         self.switches_states: dict[int:bool] = {}
+        self.t_set_servo_angle_i2c: int = 0
 
         """
         This is used to match a handling function to a message type.
@@ -39,9 +42,7 @@ class Actuators(GPIOComTeensy):
         # Register message handlers
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
-        self.add_callback(
-            self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value
-        )
+        self.add_callback(self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value)
 
     def __str__(self) -> str:
         return self.__class__.__name__
@@ -107,9 +108,9 @@ class Actuators(GPIOComTeensy):
 
         # WARNING: pin_driver is also defined in the C++ code,
         # because it needs to receive a HIGH from the beginning, or it will start heating up
-        pin_dir = 13
-        pin_step = 14
-        pin_driver = 15
+        pin_dir = 5
+        pin_step = 4
+        pin_driver = 3
 
         msg = (
             Messages.STEPPER_STEP.to_bytes()
@@ -153,7 +154,8 @@ class Actuators(GPIOComTeensy):
                 msg = (
                     Messages.SET_SERVO_ANGLE_DETACH.to_bytes()
                     + struct.pack("<B", pin)
-                    + struct.pack("<B", angle)
+                    + struct.pack("<H", angle)
+                    + struct.pack("<H", max_angle)
                     + struct.pack("<i", detach_delay)
                 )
                 self.send_bytes(msg)
@@ -161,12 +163,21 @@ class Actuators(GPIOComTeensy):
                 if not self.gpio_manager.is_declared_gpio(pin):
                     self.gpio_manager.add_gpio(pin, ActuatorType.SERVO)
                     self.logger.info(f"Pin {pin} added as a servo pin")
-                elif not self.gpio_manager.is_valid_gpio(pin, ActuatorType.SERVO):
+                elif not self.gpio_manager.is_valid_gpio(
+                        pin, ActuatorType.SERVO
+                ):
                     self.logger.error(
                         f"Pin {pin} is not a valid servo pin because it is registered as a "
                         f"{str(self.gpio_manager.get_type_gpio(pin))}"
                     )
                     return
+                if (
+                    use_I2C
+                ):  # prevent I2C overload. Without during the test, servos where taking wrong angles when called too fast
+                    t = time.time()
+                    if t - self.t_set_servo_angle_i2c < 0.02:
+                        time.sleep(0.02 - (t - self.t_set_servo_angle_i2c))
+                        self.t_set_servo_angle_i2c = t
                 msg = (
                     (
                         Messages.SET_SERVO_ANGLE_I2C.to_bytes()
@@ -174,7 +185,8 @@ class Actuators(GPIOComTeensy):
                         else Messages.SET_SERVO_ANGLE.to_bytes()
                     )
                     + struct.pack("<B", pin)
-                    + struct.pack("<B", angle)
+                    + struct.pack("<H", angle)
+                    + struct.pack("<H", max_angle)
                 )
                 # https://docs.python.org/3/library/struct.html#format-characters
                 self.send_bytes(msg)

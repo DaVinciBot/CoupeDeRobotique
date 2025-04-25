@@ -19,12 +19,7 @@ from loggerplusplus import Logger, LogLevels, time_tracker
 from shapely.strtree import STRtree
 
 # Internal project imports
-from geometry import (
-    Point,
-    Polygon,
-    OrientedPoint,
-    box
-)
+from geometry import Point, Polygon, OrientedPoint, box
 
 
 # ====== GridManager Class ======
@@ -40,12 +35,12 @@ class GridManager:
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            chunk_size: int,
-            width: int,
-            height: int,
-            forbidden_cover_threshold: float = 0.5,
+        self,
+        logger: Logger,
+        chunk_size: int,
+        width: int,
+        height: int,
+        forbidden_cover_threshold: float = 0.5,
     ) -> None:
         """
         Initializes the grid manager.
@@ -97,8 +92,9 @@ class GridManager:
         grid = copy.deepcopy(grid)
         minx, miny, maxx, maxy = polygon_to_mark.bounds
 
-        min_col, max_col = int((self.absolute_width - maxx) // self.chunk_size), int(
-            (self.absolute_width - minx) // self.chunk_size
+        min_col, max_col = (
+            int((self.absolute_width - maxx) // self.chunk_size),
+            int((self.absolute_width - minx) // self.chunk_size),
         )
         min_row, max_row = int(miny // self.chunk_size), int(maxy // self.chunk_size)
 
@@ -115,19 +111,19 @@ class GridManager:
                 if polygon_to_mark.intersects(cell):
                     if walkable:
                         if any(
-                                [
-                                    polygon.intersects(cell)
-                                    for polygon in self.static_forbidden_zones
-                                ]
+                            [
+                                polygon.intersects(cell)
+                                for polygon in self.static_forbidden_zones
+                            ]
                         ):
                             continue
 
                         grid.nodes[row][actual_col].walkable = walkable
 
                     if (
-                            not walkable
-                            and polygon_to_mark.intersection(cell).area / cell.area
-                            >= self.forbidden_cover_threshold
+                        not walkable
+                        and polygon_to_mark.intersection(cell).area / cell.area
+                        >= self.forbidden_cover_threshold
                     ):
                         grid.nodes[row][actual_col].walkable = walkable
 
@@ -135,7 +131,7 @@ class GridManager:
 
     @time_tracker(lambda self: self.logger)
     def __optimized_mark_zone(
-            self, grid: Grid, polygon_to_mark: Polygon, walkable: bool
+        self, grid: Grid, polygon_to_mark: Polygon, walkable: bool
     ) -> Grid:
         """
         Marks cells in the grid as forbidden based on intersection with a polygon.
@@ -195,7 +191,7 @@ class GridManager:
 
     @time_tracker(lambda self: self.logger)
     def __update_grid(
-            self, *, update_static_zones=False, update_dynamic_zones=False, clear_grid=False
+        self, *, update_static_zones=False, update_dynamic_zones=False, clear_grid=False
     ) -> None:
         """
         Updates the grids for static and dynamic zones.
@@ -263,13 +259,20 @@ class GridManager:
 
         # Define a helper function to convert a grid to a NumPy array of booleans
         def grid_to_numpy(grid) -> np.ndarray:
-            return np.array([[1 if node.walkable else 0 for node in row] for row in grid.nodes], dtype=bool)
+            return np.array(
+                [[1 if node.walkable else 0 for node in row] for row in grid.nodes],
+                dtype=bool,
+            )
 
         # Compare the grids using np.array_equal for high performance.
-        if not np.array_equal(grid_to_numpy(self.static_grid), grid_to_numpy(other.static_grid)):
+        if not np.array_equal(
+            grid_to_numpy(self.static_grid), grid_to_numpy(other.static_grid)
+        ):
             return False
-        if not np.array_equal(grid_to_numpy(self.static_and_dynamic_grid),
-                              grid_to_numpy(other.static_and_dynamic_grid)):
+        if not np.array_equal(
+            grid_to_numpy(self.static_and_dynamic_grid),
+            grid_to_numpy(other.static_and_dynamic_grid),
+        ):
             return False
 
         return True
@@ -279,7 +282,7 @@ class GridManager:
 
     @time_tracker(lambda self: self.logger)
     def add_forbidden_static_zone(
-            self, forbidden_zones: Polygon | list[Polygon]
+        self, forbidden_zones: Polygon | list[Polygon]
     ) -> None:
         """
         Adds static forbidden zones to the grid.
@@ -296,7 +299,7 @@ class GridManager:
 
     @time_tracker(lambda self: self.logger)
     def remove_forbidden_static_zone(
-            self, forbidden_zones_to_remove: Polygon | list[Polygon]
+        self, forbidden_zones_to_remove: Polygon | list[Polygon]
     ) -> None:
         """
         Removes static forbidden zones from the grid.
@@ -365,11 +368,11 @@ class GridManager:
         return self.static_and_dynamic_grid
 
     def visualize(
-            self,
-            only_static_grid: bool = False,
-            path: list | None = None,
-            show: bool = True,
-            plot: tuple[plt.axes, plt.figure] = None,
+        self,
+        only_static_grid: bool = False,
+        path: list | None = None,
+        show: bool = True,
+        plot: tuple[plt.axes, plt.figure] = None,
     ) -> tuple[plt.axes, plt.figure]:
         """
         Visualizes the grid using matplotlib.

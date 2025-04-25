@@ -73,5 +73,5 @@ yellow_start_tasks = [
             ),
         ),
         avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=10),
-    )
+    ),
 ]
