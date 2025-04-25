@@ -177,8 +177,8 @@ class Actuators(
                     use_I2C
                 ):  # prevent I2C overload. Without during the test, servos where taking wrong angles when called too fast
                     t = time.time()
-                    if t - self.t_set_servo_angle_i2c < 0.02:
-                        time.sleep(0.02 - (t - self.t_set_servo_angle_i2c))
+                    if t - self.t_set_servo_angle_i2c < 0.03:
+                        time.sleep(0.03 - (t - self.t_set_servo_angle_i2c))
                         self.t_set_servo_angle_i2c = t
                 msg = (
                     (
