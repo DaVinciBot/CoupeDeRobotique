@@ -1,153 +1,211 @@
 from config_loader import CONFIG
 
-# External imports
-import asyncio
-import time
-
-# Import from common
-from taskbrain import Brain
-from ws_comms import WSmsg, WSclientRouteManager, WServerRouteManager
-from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
-
-from loggerplusplus import Logger
-import math
-from utils import Utils
+# ====== Standard Library Imports ======
 import matplotlib.pyplot as plt
-import time
 import numpy as np
 import random
+import math
+import json
 
-# Import from local path
-from controllers import RollingBasis, RollingBasisDummy
+# ====== Third-party library imports ======
+from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
+from loggerplusplus import Logger
+from taskbrain import Brain
 
-from path_finding import PathFinder
-from arena import ShowArena
-from rolling_basis_handler import RollingBasisHandler, RollingBasisCommand
-from movement_manager import MovementManager, GoToParams
-from rolling_basis_handler import SpeedProfile
-from sensors import Lidar, LidarDummy
-from arena import AllyZone
+# ====== Local Library Imports ======
+from geometry import OrientedPoint, Point, is_empty
+from arena import ShowArena, BaseArenaZone
+from movement import (
+    MovementManager,
+    GoToParams,
+    TrajectoryParams,
+    SpeedProfile,
+    RollingBasisCommand,
+)
+from arena import AllyZone, TeamColor
+
+# ====== Internal Project Imports ======
+from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+from sensors import Lidar
+
 
 class MainBrain(Brain):
     def __init__(
             self,
             logger: Logger,
-            # Controllers
-            rolling_basis: RollingBasis | RollingBasisDummy,
-            # Sensors
-            lidar: Lidar | LidarDummy,
+            # Sensor
+            lidar: Lidar,
             # Environment
             arena: ShowArena,
-            # Movement
-            movement_manager: MovementManager,
             # WS routes
-            ws_cmd: WServerRouteManager,
+            ws_cmd: WServerRouteManager
     ) -> None:
-        if isinstance(rolling_basis, RollingBasisDummy):
-            logger.warning("RollingBasisDummy is used")
-
-        # Controllers
-        self.rolling_basis: RollingBasis = rolling_basis
-        # Sensors
+        # Sensor
         self.lidar: Lidar = lidar
         # Environment
         self.arena: ShowArena = arena
-        # Movement
-        self.movement_manager: MovementManager = movement_manager
         # WS routes
         self.ws_cmd: WServerRouteManager = ws_cmd
+
+        # Shared processes attributes
+        self.rolling_basis_odometrie = OrientedPoint(0, 0, 0)
+
+        self.go_to_params: GoToParams | None = None
+
+        # For test purpose
+        self.th_ally_zone: AllyZone = AllyZone(
+            logger=Logger(identifier="th_ally", follow_logger_manager_rules=True),
+            point=self.rolling_basis_odometrie,
+            robot_size=5,
+        )
+        self.th_ally_zone.zone_color = "#82795f"
+
+        self.path: list[OrientedPoint] = []
 
         super().__init__(logger, self)
 
         # Attributes for the visualization
         self.fig, self.ax = plt.subplots()
 
-        # For testing
-        # self.enemy_point_generator = random_point_generator(
-        #     start_point=OrientedPoint(280, 180, 0),
-        #     step_size=30.0
-        # )
-        self.enemy_point_generator = straight_line_generator(
-            start_point=OrientedPoint(280, 93, 0),
-            end_point=OrientedPoint(23, 135, 0),
-            step_size=3.0,
-        )
-
-        self.theorical_ally_position = AllyZone(
-            logger=Logger(identifier="th_ally"),
-            point=self.rolling_basis.odometrie,
-            robot_size=5
-        )
-        self.theorical_ally_position.zone_color = "#fcba03"
-
-
-        # TMP for test purpose
-        self.lidar_scan_polars = self.lidar.scan_to_polars()
+    """
+    ### Secondary Processes ###
+    """
 
     """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
-    async def handle_rolling_basis_for_go_to(self) -> None:
-        cmd: RollingBasisCommand = self.movement_manager.handle_go_to()
-        if cmd is not None:
-            self.theorical_ally_position.point = cmd.position
-            self.rolling_basis.set_speed_and_position(*cmd.get_command())
-            self.logger.debug(f"RollingBasisCommand: {cmd.get_command()}")
+    @Brain.task(
+        process=True,
+        run_on_start=True,
+        refresh_rate=0.1,
+        define_loop_later=True,
+        start_loop_marker="# --- MetaProg is insane (loop) --- #",
+    )
+    def handle_movement_manager(self) -> None:
+        # --- Initialization --- #
+        movement_manager = MovementManager(
+            logger=Logger(identifier="MovementManager", follow_logger_manager_rules=True),
+            path_finder_logger=Logger(identifier="PathFinder", follow_logger_manager_rules=True),
+            trajectory_computer_logger=Logger(identifier="TrajectoryComputer", follow_logger_manager_rules=True),
+            arena_ptr=self.arena,
+        )
+        rolling_basis = RollingBasisDummy(
+            logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
+        )
+
+        if isinstance(rolling_basis, RollingBasisDummy):
+            rolling_basis.logger.warning("RollingBasisDummy is used")
+
+        # --- MetaProg is insane (loop) --- #
+
+        # Update rolling basis odometrie if main process has updated it
+        if self.rolling_basis_odometrie != rolling_basis.odometrie:
+            rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+
+        # Force the sync of arena inside the movement_manager
+        movement_manager.arena_ptr = self.arena
+
+        # Trigger movement manager to go to the new destination when the params change
+        if self.go_to_params != movement_manager.params:
+            print(self.go_to_params)
+            print(movement_manager.params)
+            movement_manager.compute_go_to(
+                current_linear_speed=rolling_basis.linear_speed,
+                current_angular_speed=rolling_basis.angular_speed,
+                params=self.go_to_params,
+            )
+            movement_manager.logger.info("New GoToParams received")
+
+        # Handle the 'go to' command
+        if movement_manager.params is not None:
+            cmd: RollingBasisCommand = movement_manager.handle_go_to()
+            if cmd is not None:
+                self.th_ally_zone = AllyZone(
+                    logger=Logger(identifier="th_ally", follow_logger_manager_rules=True),
+                    point=cmd.position,
+                    robot_size=5
+                )
+                rolling_basis.set_speed_and_position(*cmd.get_command())
+                self.rolling_basis_odometrie = rolling_basis.odometrie
+                self.path = movement_manager.trajectory_computer.path_to_follow
+
+    """
+    ### Main Process ###
+    """
+
+    """ ### Routines ### """
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
     async def update_arena(self) -> None:
-        self.lidar_scan_polars = self.lidar.scan_to_polars()
+        # Update the arena with the new position of the robot
         self.arena.update(
-            ally_position=self.rolling_basis.odometrie,
-            lidar_scan_polars=self.lidar_scan_polars,
-            enemy_position=next(self.enemy_point_generator),
+            ally_position=self.rolling_basis_odometrie,
+            lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
             optimized_update=True,
         )
 
+        # obstacles = self.arena.remove_outside(
+        #     self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
+        # )
+
+        # Visualize the arena
         self.ax.clear()
         self.arena.visualize(
-            display_default_destination_zone=False,
-            theorical_ally_position=self.theorical_ally_position,
-            trajectory=(
-                self.movement_manager.path_finder.oriented_path_found
-                if self.movement_manager.path_finder is not None
-                else []
-            ),
-            # Display lidar scan point
-            # display_points=[
-            #     point for point in self.arena._pol_to_abs_cart(self.lidar_scan_polars).geoms
-            # ],
-            plot=(self.ax, self.fig),
+            # Visualization options
+            show_buffer=True,
+            trajectory=self.path,
+            display_zones_go_to_positions=True,
+            show_ally_direction=True,
+            # Plot options
             show=False,
+            plot=(self.ax, self.fig),
+            # Additional options
+            additional_zones=[self.th_ally_zone],
+            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
         )
         plt.pause(0.01)
 
-    @Brain.task(process=False, run_on_start=CONFIG.ZOMBIE_MODE, refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def zombie_mode(self):
         """
         executes requests received by the server. Use Postman to send request to the server
         Use eval and await eval to run the code you want. Code must be sent as a string
         """
         # Check cmd
-        cmd = await self.ws_cmd.receiver.get()
+        cmd = await self.ws_cmd.receiver.get(wait_msg=True)
 
         if cmd != WSmsg():
-            self.logger.info(
-                f"Zombie instruction {cmd.msg} received: {cmd.data}"
-            )
+            self.logger.info(f"Zombie instruction {cmd.msg} received: {cmd.data}")
 
-            if cmd.msg == "eval":
+            instructions = []
+            if isinstance(cmd.data, str):
+                instructions.append(cmd.data)
+            elif isinstance(cmd.data, list):
+                instructions = cmd.data
+
+            # Exec: for attribution cases (x = 1)
+            if cmd.msg == "exec":
+                for instruction in instructions:
+                    exec(instruction)
+
+            # Eval: for return cases (print(x))
+            elif cmd.msg == "eval":
                 instructions = []
+                execution = "No instructions"
                 if isinstance(cmd.data, str):
                     instructions.append(cmd.data)
                 elif isinstance(cmd.data, list):
                     instructions = cmd.data
-
                 for instruction in instructions:
                     if instruction.startswith("await "):
-                        await eval(instruction.removeprefix("await "))
+                        execution = await eval(instruction.removeprefix("await "))
                     else:
-                        eval(instruction)
+                        execution = eval(instruction)
+                message = WSmsg.from_json({
+                    "sender": CONFIG.WS_SENDER_NAME,
+                    "msg": "Execution of sender instruction",
+                    "data": str(execution)
+                })
+                await self.ws_cmd.sender.send(message)
 
             else:
                 self.logger.warning(
@@ -156,94 +214,44 @@ class MainBrain(Brain):
 
     """ ### One-Shot Tasks ### """
 
-    @Brain.task(process=False, run_on_start=False)
-    async def initialize(self):
-        self.arena.set_team_color("yellow")
-        self.rolling_basis.odometrie = OrientedPoint(
-            24, 10, 0
-        )  # Assume the robot is at position (24, 10) if begin the match in yellow zone
-
     @Brain.task(process=False, run_on_start=True)
-    async def main(self):
-        await self.initialize()
-
-        speed_profile: SpeedProfile = SpeedProfile(
-            max_linear_speed=20.0,  # cm/s
-            max_angular_speed=6.0,  # rad/s
-            max_linear_acceleration=3.0,  # cm/s^2
-            max_angular_acceleration=1.0,  # rad/s^2
-            max_linear_deceleration=0.5,  # cm/s^2
-            max_angular_deceleration=1.0,  # rad/s^2
-        )
-        go_to_params = GoToParams(
-            initial_linear_speed=self.rolling_basis.linear_speed,
-            initial_angular_speed=self.rolling_basis.angular_speed,
-            speed_profile=speed_profile,
-            goal=OrientedPoint(250, 140),
-            acs_distance=10,
-            path_finder_recompute_distance=80,
-            timeout=-1.0,
-            is_mandatory=False,
-            smooth_trajectory=True,
-            goal_tolerance=0.1,
-        )
-
-        self.movement_manager.go_to(params=go_to_params)
+    async def start(self):
+        self.arena.set_team_color(TeamColor.YELLOW)
+        # Start robot position
+        self.rolling_basis_odometrie = OrientedPoint(20, 25, 0)
+        self.arena.enemy_zone.update(self.arena.team_color, self.rolling_basis_odometrie, Point(290, 190))
 
 
-# Only for testing
-def random_point_generator(
-        start_point: OrientedPoint,
-        step_size: float = 10.0,
-        x_limits=(0, 300),
-        y_limits=(0, 200),
-):
-    current_point = start_point
+"""
+This main brain is dedicated to test the robot movement WITHOUT Lidar.
 
-    while True:
-        dx = random.uniform(-step_size, step_size)
-        dy = random.uniform(-step_size, step_size)
+Use ZOMBIE_MODE to send instructions to the robot.
+Instruction example:
+---
+self.go_to_params = GoToParams(
+    trajectory_params=TrajectoryParams(
+        speed_profile=SpeedProfile.from_dict(
+            CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE
+        ),
+        goal=OrientedPoint(250, 140),
+        resolution=1,
+        smooth_trajectory=True,
+    ),
+    acs_distance=30,
+    path_finder_recompute_distance=80,
+    timeout=-1.0,
+    is_mandatory=False,
+    goal_tolerance=0.1,
+    distance_to_goal_to_dont_recompute_path=10,
+)
+---
 
-        new_x = min(max(current_point.x + dx, x_limits[0]), x_limits[1])
-        new_y = min(max(current_point.y + dy, y_limits[0]), y_limits[1])
-
-        current_point = OrientedPoint(new_x, new_y, current_point.theta)
-
-        yield current_point
-
-
-def straight_line_generator(
-        start_point: OrientedPoint, end_point: OrientedPoint, step_size: float
-):
-    # Calculer la direction du mouvement
-    dx = end_point.x - start_point.x
-    dy = end_point.y - start_point.y
-    d = math.sqrt(dx ** 2 + dy ** 2)
-
-    # Si la distance est nulle, retourner directement le point d'arrivée
-    if d == 0:
-        while True:
-            yield start_point
-
-    # Normaliser le vecteur de direction
-    direction_x = dx / d
-    direction_y = dy / d
-
-    # Générer les points sur la ligne droite
-    current_point = start_point
-    while d > step_size:
-        # Calculer le prochain point
-        new_x = current_point.x + direction_x * step_size
-        new_y = current_point.y + direction_y * step_size
-
-        # Créer un nouveau point avec la même orientation
-        current_point = OrientedPoint(new_x, new_y, current_point.theta)
-
-        # Réduire la distance restante
-        d -= step_size
-
-        yield current_point
-
-    # Une fois arrivé au point final, continuer à renvoyer ce point
-    while True:
-        yield end_point
+Exemple in postman with zombie mode:
+url: ws://rob.local:8080/cmd?sender=postman_zombie
+message:
+{
+    "sender": "zombie_master",
+    "msg": "exec",
+    "data": "self.go_to_params = GoToParams(trajectory_params=TrajectoryParams(speed_profile=SpeedProfile.from_dict(CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE), goal=OrientedPoint(250, 140), resolution=1, smooth_trajectory=True), acs_distance=30, path_finder_recompute_distance=80, timeout=-1.0, is_mandatory=False, goal_tolerance=0.1, distance_to_goal_to_dont_recompute_path=10)"
+}
+"""

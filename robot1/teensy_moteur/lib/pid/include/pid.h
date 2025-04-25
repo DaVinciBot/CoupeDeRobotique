@@ -1,7 +1,8 @@
 #include <Arduino.h>
 
 // Motor class
-class PID {
+class PID
+{
 private:
     float error_prev = 0.0f;
     float error_integral = 0.0f;
@@ -9,9 +10,9 @@ private:
 public:
     // PID constantes
     float kp;
-    float kd;
     float ki;
-    
+    float kd;
+
     // Delta Time saver
     long prevT = 0L;
     double delta_time_calculator();
