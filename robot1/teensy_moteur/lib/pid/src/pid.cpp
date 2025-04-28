@@ -1,7 +1,19 @@
+/**
+ * This is the implementation of the PID class.
+ * The PID class compute the error for the servo-control of the motors.
+ */
+
 #include <pid.h>
 #include <Arduino.h>
 
-
+/**
+ * @brief Constructor for the PID class
+ *
+ * Initializes the 3 PID constant
+ * @param kp Proportionnal constant
+ * @param ki Integral constant
+ * @param kd Derivative constant
+ */
 PID::PID(float kp, float ki, float kd)
 {
     this->kp = kp;
@@ -9,6 +21,11 @@ PID::PID(float kp, float ki, float kd)
     this->ki = ki;
 }
 
+/**
+ * @brief Compute the time elapsed since the last time this method has been called.A0
+ *
+ * @return Time elapsed
+ */
 double PID::delta_time_calculator()
 {
     long current_time = micros();
@@ -17,21 +34,27 @@ double PID::delta_time_calculator()
     return delta_time;
 }
 
+/**
+ * @brief Compute error.
+ *
+ * @param error Previous error computed
+ * @return New error
+ */
 float PID::compute(float error)
 {
-    double delta_time = this->delta_time_calculator();
+    // double delta_time = this->delta_time_calculator();
 
     // Calculate derivative
-    float dedt = (error - this->error_prev) / delta_time;
+    float derivative = error - this->error_prev;
 
     // Calculate integral
-    this->error_integral = this->error_integral + (error * delta_time);
+    this->error_integral += error;
 
     // Control signal
-    float u = this->kp * error + this->kd * dedt + this->ki * this->error_integral;
+    float new_error = this->kp * error + this->kd * derivative + this->ki * this->error_integral;
 
     // Save error
     this->error_prev = error;
 
-    return u;
+    return new_error;
 }

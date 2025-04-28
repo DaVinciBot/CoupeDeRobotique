@@ -22,7 +22,9 @@
 			"utility": "cpp",
 			"charconv": "cpp",
 			"xstring": "cpp",
-			"string": "cpp"
+			"string": "cpp",
+			"cmath": "cpp",
+			"xlocale": "cpp"
 		},
 		"[python]": {
 			"editor.defaultFormatter": "ms-python.black-formatter"

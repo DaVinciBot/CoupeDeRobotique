@@ -1,6 +1,15 @@
+/**
+ * This is the implementation of the Motor class.
+ * The Motor class control a Mmotor power and direction and handle odometry computation.
+ */
+
 #include <motors_driver.h>
 #include <Arduino.h>
 
+/**
+ * @brief Constructor of the Motor class
+ * Define the pins of the motor, the related encoder pins and the properties of the wheel attached to the motor
+ */
 Motor::Motor(byte pin_forward, byte pin_backward, byte pin_pwm, byte pin_enca, byte pin_encb, double wheel_unit_tick_cm, byte max_pwm)
 {
     this->pin_forward = pin_forward;
@@ -15,6 +24,9 @@ Motor::Motor(byte pin_forward, byte pin_backward, byte pin_pwm, byte pin_enca, b
     this->wheel_unit_tick_cm = wheel_unit_tick_cm;
 }
 
+/**
+ * @brief Initialize the mode of the pins define for the motor
+ */
 void Motor::init()
 {
     pinMode(this->pin_forward, OUTPUT);
@@ -25,6 +37,11 @@ void Motor::init()
     pinMode(this->pin_encb, INPUT);
 }
 
+/**
+ * @brief Set motor PWM and direction
+ *
+ * @param pwmVal Power value of the motor
+ */
 void Motor::set_motor(int pwmVal)
 {
     int16_t dir = pwmVal > 0 ? 1 : -1;
@@ -48,6 +65,12 @@ void Motor::set_motor(int pwmVal)
     }
 }
 
+/**
+ * @brief Compute the time elapsed since the last time this method has been called.
+ * USed to calculate the speed of the motor
+ *
+ * @return Time elapsed
+ */
 double Motor::delta_time_calculator()
 {
     long current_time = micros();
@@ -56,6 +79,10 @@ double Motor::delta_time_calculator()
     return delta_time;
 }
 
+/**
+ * @brief Compute odometry.
+ * Compute distance travelled by the encoders wheel and the speed of the encoders wheel.
+ */
 void Motor::odometer_handle()
 {
     long delta_ticks = this->ticks - this->last_ticks;

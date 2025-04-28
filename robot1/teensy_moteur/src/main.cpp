@@ -157,7 +157,7 @@ void setup()
 uint_fast32_t counter = 0;
 void loop()
 {
-  // Handle the communication 
+  // Handle the communication
   com->handle_callback(callback_functions);
 
   // Send rolling basis state
