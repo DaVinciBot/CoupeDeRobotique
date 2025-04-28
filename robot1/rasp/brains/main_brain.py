@@ -19,9 +19,10 @@ from arena import AllyZone, TeamColor
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from controllers.actuators import Actuators, ActuatorsDummy
 from sensors import Lidar
-from navigation_tasks.tasks import yellow_start_tasks
 
-from boombot_strategy_old import ShowGameContext
+# from navigation_tasks.tasks import yellow_start_tasks
+
+# from boombot_strategy import ShowGameContext
 
 from navigation import (
     Navigator,
@@ -54,6 +55,7 @@ class MainBrain(Brain):
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
+        self.navigator_task: NavigatorTaskParams = None
 
         super().__init__(logger, self)
 
@@ -73,10 +75,11 @@ class MainBrain(Brain):
     def run(self) -> None:
         # --- Initialization --- #
         from boombot_strategy import ShowGameContext, yellow_strategy_runner
+
         navigator = Navigator()
-        
+
         # Rolling basis & Actuators
-        rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
@@ -90,100 +93,12 @@ class MainBrain(Brain):
             enemy_zone=self.arena.enemy_zone,
         )
         rolling_basis.set_speed_and_position(*cmd.get_command())
-        yellow_strategy_runner.handle(
-            ShowGameContext(
-                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
-            )
-        )
+        # yellow_strategy_runner.handle(
+        #     ShowGameContext(
+        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+        #     )
+        # )
         self.rolling_basis_odometrie = rolling_basis.odometrie
-
-
-    @Brain.task(
-        process=True,
-        run_on_start=True,
-        refresh_rate=0.01,
-        define_loop_later=True,
-        start_loop_marker="# --- MetaProg is insane (loop) --- #",
-    )
-    def visualize_arena(self) -> None:
-        # --- Initialization --- #
-        fig, ax = plt.subplots()
-
-        # --- MetaProg is insane (loop) --- #
-
-        ax.clear()
-        self.arena.visualize(
-            # Visualization options
-            show_buffer=True,
-            # trajectory=self.path,
-            display_zones_go_to_positions=True,
-            show_ally_direction=True,
-            # Plot options
-            show=False,
-            plot=(ax, fig),
-            # Additional options
-            # additional_zones=[self.th_ally_zone],
-            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
-        )
-        plt.pause(0.01)
-
-    @Brain.task(
-        process=True,
-        run_on_start=True,
-        refresh_rate=0.01,
-        define_loop_later=True,
-        start_loop_marker="# --- MetaProg is insane (loop) --- #",
-    )
-    def visualize_arena(self) -> None:
-        # --- Initialization --- #
-        fig, ax = plt.subplots()
-
-        # --- MetaProg is insane (loop) --- #
-
-        ax.clear()
-        self.arena.visualize(
-            # Visualization options
-            show_buffer=True,
-            # trajectory=self.path,
-            display_zones_go_to_positions=True,
-            show_ally_direction=True,
-            # Plot options
-            show=False,
-            plot=(ax, fig),
-            # Additional options
-            # additional_zones=[self.th_ally_zone],
-            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
-        )
-        plt.pause(0.01)
-
-    @Brain.task(
-        process=True,
-        run_on_start=True,
-        refresh_rate=0.01,
-        define_loop_later=True,
-        start_loop_marker="# --- MetaProg is insane (loop) --- #",
-    )
-    def visualize_arena(self) -> None:
-        # --- Initialization --- #
-        fig, ax = plt.subplots()
-
-        # --- MetaProg is insane (loop) --- #
-
-        ax.clear()
-        self.arena.visualize(
-            # Visualization options
-            show_buffer=True,
-            # trajectory=self.path,
-            display_zones_go_to_positions=True,
-            show_ally_direction=True,
-            # Plot options
-            show=False,
-            plot=(ax, fig),
-            # Additional options
-            # additional_zones=[self.th_ally_zone],
-            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
-        )
-        plt.pause(0.01)
 
     @Brain.task(
         process=True,

@@ -14,9 +14,7 @@ from boombot_strategy.tasks.navigation_tasks.maneuver import (
     Backward,
 )
 
-from boombot_strategy.tasks.actuator_task.actuator_task import (
-    Build, EndBuild
-)
+from boombot_strategy.tasks.actuator_task.actuator_task import Build, EndBuild
 
 
 def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
@@ -51,7 +49,7 @@ def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
         BaseTaskNode(
             f"[Construct] placing item at zone {zone_construct_id}",
             Build(),
-        )
+        ),
     )
 
     # Add node for precise backward motion to perform construction
@@ -61,43 +59,13 @@ def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
             f"[Construct] backward maneuver at zone {zone_construct_id}", Backward(10)
         ),
     )
-    
+
     # Add node to actuators action to end construction maneuver
     construct_sub_graph.add_node(
         f"[Construct] end construction maneuver at zone {zone_construct_id}",
         BaseTaskNode(
             f"[Construct] end construction maneuver at zone {zone_construct_id}",
             EndBuild(),
-        ),
-    )
-
-    # Connect the navigation node to the construction maneuver node
-    construct_sub_graph.connect(
-        f"[Construct] go to zone {zone_construct_id}",
-        DirectTransition(
-            construct_sub_graph.nodes[
-                f"[Construct] place item at zone {zone_construct_id}"
-            ]
-        ),
-    )
-    
-    # Connect the construction node to the backward maneuver
-    construct_sub_graph.connect(
-        f"[Construct] place item at zone {zone_construct_id}",
-        DirectTransition(
-            construct_sub_graph.nodes[
-                f"[Construct] backward maneuver at zone {zone_construct_id}"
-            ]
-        ),
-    )
-    
-    # Connect the backward node to the end of construction maneuver
-    construct_sub_graph.connect(
-        f"[Construct] backward maneuver at zone {zone_construct_id}",
-        DirectTransition(
-            construct_sub_graph.nodes[
-                f"[Construct] end construction maneuver at zone {zone_construct_id}"
-            ]
         ),
     )
 
