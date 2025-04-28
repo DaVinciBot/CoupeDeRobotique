@@ -109,13 +109,12 @@ void Rolling_Basis::odometrie_handle()
     double left_move = this->left_motor->distance - last_left_distance;
 
     /* Determine the position of the robot */
-    float movement_difference = right_move - left_move;
-    float movement_sum = (right_move + left_move) / 2;
+    float delta_distance = (right_move + left_move) / 2.0f;
+    float delta_theta = (right_move - left_move) / this->center_distance;
 
-    float dTheta = movement_difference / this->center_distance;
-    this->THETA = fmod(this->THETA + dTheta, PI);
-    this->X = this->X + (cos(this->THETA + dTheta / 2.0f) * movement_sum);
-    this->Y = this->Y + (sin(this->THETA + dTheta / 2.0f) * movement_sum);
+    this->THETA = fmod(this->THETA + delta_theta, PI);
+    this->X = this->X + (sin(this->THETA) * delta_distance);
+    this->Y = this->Y + (cos(this->THETA) * delta_distance);
 }
 
 /**
