@@ -161,7 +161,7 @@ class MainBrain(Brain):
         self.navigator_task = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=70),
+            path_planner_params=DeltaPathPlannerParams(distance=30),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_SPEED_PROFILER_PID,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
@@ -176,7 +176,7 @@ class MainBrain(Brain):
         # godHand.set_servo_angle(
         #     pin=1, angle=90, min_angle=0, max_angle=180, detach=False, detach_delay=1000
         # )
-        # godHand.set_servo_angle(
+        # godHand.set_  servo_angle(
         #     pin=2, angle=90, min_angle=0, max_angle=180, detach=False, detach_delay=1000
         # )
         # godHand.set_servo_angle(
