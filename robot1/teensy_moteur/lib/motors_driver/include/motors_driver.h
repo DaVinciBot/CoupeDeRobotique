@@ -1,12 +1,12 @@
 /**
  * This is the Motor class header.
  * The Motor class control a Mmotor power and direction and handle odometry computation.
- */ /
+ */
 
 #include <Arduino.h>
 
-    // Motor class
-    class Motor
+// Motor class
+class Motor
 {
 
 private:

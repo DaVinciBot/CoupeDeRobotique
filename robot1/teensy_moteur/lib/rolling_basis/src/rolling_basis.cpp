@@ -140,4 +140,10 @@ void Rolling_Basis::handle(
 
     this->right_motor->set_motor(angular_distance_correction + linear_distance_correction);
     this->left_motor->set_motor(angular_distance_correction - linear_distance_correction);
+    double pwmRight = angular_distance_correction + linear_distance_correction;
+    double pwmLeft = angular_distance_correction - linear_distance_correction;
+    String angular = "Angular error : " + String(theta_error);
+    String linear = "Linear error: " + String(distance_error);
+    com->print((char *)angular.c_str());
+    com->print((char *)linear.c_str());
 }

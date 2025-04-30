@@ -46,7 +46,6 @@ void Motor::set_motor(int pwmVal)
 {
     int16_t dir = pwmVal > 0 ? 1 : -1;
     pwmVal = constrain(abs(pwmVal), 0, this->max_pwm);
-
     analogWrite(this->pin_pwm, pwmVal);
     if (dir == 1)
     {

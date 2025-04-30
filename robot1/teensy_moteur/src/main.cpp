@@ -33,6 +33,7 @@ inline void left_motor_read_encoder()
     rolling_basis_ptr->left_motor->ticks--;
   else
     rolling_basis_ptr->left_motor->ticks++;
+  com->print("working");
 }
 
 inline void right_motor_read_encoder()
@@ -41,6 +42,7 @@ inline void right_motor_read_encoder()
     rolling_basis_ptr->right_motor->ticks--;
   else
     rolling_basis_ptr->right_motor->ticks++;
+  com->print("working");
 }
 
 // 3. Define all com callback functions
