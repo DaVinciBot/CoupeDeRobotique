@@ -51,7 +51,7 @@ float PID::compute(float error)
     this->error_integral += error;
 
     // Control signal
-    float new_error = this->kp * error + this->kd * derivative + this->ki * this->error_integral;
+    float new_error = this->kp * error - this->kd * derivative + this->ki * this->error_integral;
 
     // Save error
     this->error_prev = error;
