@@ -82,29 +82,12 @@ double Motor::delta_time_calculator()
  * @brief Compute odometry.
  * Compute distance travelled by the encoders wheel and the speed of the encoders wheel.
  */
-void Motor::odometer_handle()
+void Motor::update_odometer()
 {
+    // Update Ticks
     long delta_ticks = this->ticks - this->last_ticks;
     this->last_ticks = this->ticks;
 
-    double delta_time = this->delta_time_calculator();
-
-    this->distance += delta_ticks * this->wheel_unit_tick_cm;
-    this->speed = delta_ticks * this->wheel_unit_tick_cm / delta_time;
+    // Compute new distance travelled
+    this->distance = delta_ticks * this->wheel_unit_tick_cm;
 }
-
-// void Motor::speed_handle(float target_speed)
-// {
-//     long delta_ticks = this->ticks - this->last_ticks;
-//     this->last_ticks = this->ticks;
-
-//     double delta_time = this->delta_time_calculator();
-//     this->speed = delta_ticks * this->wheel_unit_tick_cm / delta_time;
-
-//     float u = this->pid.compute(this->speed, target_speed);
-
-//     Serial.println(String("Current speed: ") + String(this->speed) + String(" | Target speed: ") + String(target_speed) + String(" | PWM: ") + String(u));
-
-//     // Set the correct motor commande
-//     set_motor(u > 0 ? 1 : -1, fabs(u));
-// }

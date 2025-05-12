@@ -93,25 +93,18 @@ void Rolling_Basis::init_rolling_basis(float x, float y, float theta)
  */
 void Rolling_Basis::odometrie_handle()
 {
-    /* Save last motors positions */
-    double last_right_distance = this->right_motor->distance;
-    double last_left_distance = this->left_motor->distance;
-
     /* Update motors positions by calling odometer_handle */
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
     {
-        this->right_motor->odometer_handle();
-        this->left_motor->odometer_handle();
+        this->right_motor->update_odometer();
+        this->left_motor->update_odometer();
     }
 
-    /* Compute motors deplacement */
-    double right_move = this->right_motor->distance - last_right_distance;
-    double left_move = this->left_motor->distance - last_left_distance;
+    /* Determine the delta of distance and rotation of the robot */
+    float delta_distance = (this->right_motor->distance + this->left_motor->distance) / 2.0f;
+    float delta_theta = (this->right_motor->distance - this->left_motor->distance) / this->center_distance;
 
-    /* Determine the position of the robot */
-    float delta_distance = (right_move + left_move) / 2.0f;
-    float delta_theta = (right_move - left_move) / this->center_distance;
-
+    // Determine the new cartesian position of the robot
     this->THETA = fmod(this->THETA + delta_theta, PI);
     this->X = this->X + (cosf(this->THETA) * delta_distance);
     this->Y = this->Y + (sinf(this->THETA) * delta_distance);
@@ -131,12 +124,27 @@ void Rolling_Basis::handle(
     // We already have the current robot's position with odometrie (X, Y, THETA)
 
     // Compute distance and orientation error (difference between target and real)
-    double distance_error = sqrt(pow(target_position.x - this->X, 2) + pow(target_position.y - this->Y, 2));
+    double xerr = target_position.x - this->X;
+    double yerr = target_position.y - this->Y;
+    double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2));
     double theta_error = target_position.theta - fmod(this->THETA, PI); // fmod to keep the angle between -PI and PI, TODO: a tester !!
+    double orientation_error = fmod(atan2(yerr, xerr) - theta_error, PI);
+
+    if (orientation_error > PI / 2 || orientation_error < -PI / 2)
+    {
+        distance_error = -distance_error;
+        orientation_error = fmod(PI + orientation_error, PI);
+    }
 
     // Compute PID output based on errors
     double linear_distance_correction = this->linear_distance_pid.compute(distance_error);
-    double angular_distance_correction = this->angular_distance_pid.compute(theta_error);
+    double angular_distance_correction = this->angular_distance_pid.compute(orientation_error);
+
+    // Compute PID with derived output control
+    double distance_output = sqrt(pow(this->X, 2) + pow(this->Y, 2));
+    double orientation_output = fmod(atan2(this->Y, this->Y) - this->THETA, PI);
+    linear_distance_correction = this->linear_distance_pid.compute_derived_output_control(distance_error, distance_output);
+    angular_distance_correction = this->angular_distance_pid.compute_derived_output_control(orientation_error, orientation_output);
 
     this->right_motor->set_motor(angular_distance_correction + linear_distance_correction);
     this->left_motor->set_motor(angular_distance_correction - linear_distance_correction);

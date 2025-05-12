@@ -6,8 +6,8 @@
 class PID
 {
 private:
-    float error_prev = 0.0f;     // Previous error saved for the next computation of the error
-    float error_integral = 0.0f; // Integral error that need to be updated each time the error is computed
+    double error_prev = 0.0;     // Previous error saved for the next computation of the error
+    double error_integral = 0.0; // Integral error that need to be updated each time the error is computed
 
 public:
     // PID constants
@@ -41,5 +41,7 @@ public:
      * @param error Previous error computed
      * @return New error
      */
-    float compute(float error);
+    double compute(double error);
+
+    double compute_derived_output_control(float error, float output);
 };

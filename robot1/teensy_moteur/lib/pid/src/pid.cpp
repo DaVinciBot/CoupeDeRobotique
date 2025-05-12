@@ -40,21 +40,31 @@ double PID::delta_time_calculator()
  * @param error Previous error computed
  * @return New error
  */
-float PID::compute(float error)
+double PID::compute(double error)
 {
     // double delta_time = this->delta_time_calculator();
 
     // Calculate derivative
-    float derivative = error - this->error_prev;
+    double derivative = error - this->error_prev;
 
     // Calculate integral
     this->error_integral += error;
 
     // Control signal
-    float new_error = this->kp * error - this->kd * derivative + this->ki * this->error_integral;
+    double new_error = this->kp * error + this->kd * derivative + this->ki * this->error_integral;
 
     // Save error
     this->error_prev = error;
 
+    return new_error;
+}
+
+double PID::compute_derived_output_control(float error, float output)
+{
+    this->error_integral += error;
+
+    double new_error = this->kp * error - this->kd * output + this->ki * this->error_integral;
+
+    this->error_prev = error;
     return new_error;
 }

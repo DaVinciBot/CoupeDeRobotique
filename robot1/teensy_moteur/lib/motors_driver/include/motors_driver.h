@@ -65,7 +65,5 @@ public:
      * @brief Compute odometry.
      * Compute distance travelled by the encoders wheel and the speed of the encoders wheel.
      */
-    void odometer_handle();
-    // void speed_handle(float target_speed);
-    // void handle(long target_pos, byte max_speed);
+    void update_odometer();
 };
