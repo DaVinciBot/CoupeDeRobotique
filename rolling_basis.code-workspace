@@ -24,7 +24,8 @@
 			"xstring": "cpp",
 			"string": "cpp",
 			"cmath": "cpp",
-			"xlocale": "cpp"
+			"xlocale": "cpp",
+			"random": "cpp"
 		},
 		"[python]": {
 			"editor.defaultFormatter": "ms-python.black-formatter"
