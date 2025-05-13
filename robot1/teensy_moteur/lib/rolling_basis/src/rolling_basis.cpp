@@ -102,7 +102,7 @@ void Rolling_Basis::odometrie_handle()
 
     /* Determine the delta of distance and rotation of the robot */
     float delta_distance = (this->right_motor->distance + this->left_motor->distance) / 2.0f;
-    float delta_theta = (this->right_motor->distance - this->left_motor->distance) / this->center_distance;
+    float delta_theta = (this->left_motor->distance - this->right_motor->distance) / this->center_distance;
 
     // Determine the new cartesian position of the robot
     this->THETA = fmod(this->THETA + delta_theta, PI);
@@ -136,15 +136,17 @@ void Rolling_Basis::handle(
         orientation_error = fmod(PI + orientation_error, PI);
     }
 
+    // Consigne vitesse
+
     // Compute PID output based on errors
     double linear_distance_correction = this->linear_distance_pid.compute(distance_error);
-    double angular_distance_correction = this->angular_distance_pid.compute(orientation_error);
+    double angular_distance_correction = this->angular_distance_pid.compute(orientation_error * 2.0);
 
     // Compute PID with derived output control
-    double distance_output = sqrt(pow(this->X, 2) + pow(this->Y, 2));
-    double orientation_output = fmod(atan2(this->Y, this->Y) - this->THETA, PI);
-    linear_distance_correction = this->linear_distance_pid.compute_derived_output_control(distance_error, distance_output);
-    angular_distance_correction = this->angular_distance_pid.compute_derived_output_control(orientation_error, orientation_output);
+    // double distance_output = sqrt(pow(this->X, 2) + pow(this->Y, 2));
+    // double orientation_output = fmod(atan2(this->Y, this->Y) - this->THETA, PI);
+    // linear_distance_correction = this->linear_distance_pid.compute_derived_output_control(distance_error, distance_output);
+    // angular_distance_correction = this->angular_distance_pid.compute_derived_output_control(orientation_error, orientation_output);
 
     this->right_motor->set_motor(angular_distance_correction + linear_distance_correction);
     this->left_motor->set_motor(angular_distance_correction - linear_distance_correction);
