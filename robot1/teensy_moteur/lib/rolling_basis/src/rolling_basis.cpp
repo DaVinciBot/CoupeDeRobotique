@@ -127,14 +127,15 @@ void Rolling_Basis::handle(
     double xerr = target_position.x - this->X;
     double yerr = target_position.y - this->Y;
     double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2));
-    double theta_error = target_position.theta - fmod(this->THETA, PI); // fmod to keep the angle between -PI and PI, TODO: a tester !!
-    double orientation_error = fmod(atan2(yerr, xerr) - theta_error, PI);
+    double theta_error_odometry = target_position.theta - fmod(this->THETA, PI); // fmod to keep the angle between -PI and PI, TODO: a tester !!
+    double orientation_error = fmod(atan2(yerr, xerr) - theta_error_odometry, PI);
+    double theta_error = 180 * orientation_error / PI;
 
     // Consigne vitesse
 
     // Compute PID output based on errors
     double linear_distance_correction = this->linear_distance_pid.compute(distance_error);
-    double angular_distance_correction = this->angular_distance_pid.compute(orientation_error * 2.0);
+    double angular_distance_correction = this->angular_distance_pid.compute(theta_error * 2.0);
 
     // Compute PID with derived output control
     // double distance_output = sqrt(pow(this->X, 2) + pow(this->Y, 2));
