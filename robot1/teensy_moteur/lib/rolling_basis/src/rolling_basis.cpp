@@ -134,11 +134,7 @@ void Rolling_Basis::handle(
     // Compute distance and orientation error (difference between target and real)
     double xerr = target_position.x - this->X;
     double yerr = target_position.y - this->Y;
-    // double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2));
-    double forward_err = xerr * cos(this->THETA) + yerr * sin(this->THETA);
-    double distance_error = (forward_err > 0.0) ? forward_err : -forward_err;
-
-    double theta_error_odometry = target_position.theta - this->THETA; // fmod to keep the angle between -PI and PI, TODO: a tester !!
+    double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2)); // fmod to keep the angle between -PI and PI, TODO: a tester !!
     // double orientation_error = fmod(atan2(yerr, xerr) + theta_error_odometry - this->THETA, 2 * PI);
     double orientation_error = theta_error_odometry;
 
