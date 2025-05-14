@@ -152,7 +152,7 @@ void Rolling_Basis::handle(
 
     // Compute PID output based on errors
     double linear_distance_correction = this->linear_distance_pid.compute(distance_error);
-    double angular_distance_correction = this->angular_distance_pid.compute(theta_error * 2.0);
+    double angular_distance_correction = this->angular_distance_pid.compute(theta_error);
 
     // Compute PID with derived output control
     // double distance_output = sqrt(pow(this->X, 2) + pow(this->Y, 2));
