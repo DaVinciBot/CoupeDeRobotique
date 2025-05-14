@@ -147,7 +147,7 @@ void Rolling_Basis::handle(
     this->left_motor->set_motor(angular_distance_correction + linear_distance_correction);
     double pwmRight = angular_distance_correction + linear_distance_correction;
     double pwmLeft = angular_distance_correction + linear_distance_correction;
-    String error = "Angular error : " + String(orientation_error) + "Linear error: " + String(distance_error);
+    String error = "Angular error : " + String(theta_error) + "Linear error: " + String(distance_error);
     String pwm = "PWM Right: " + String(pwmRight) + " PWM Left: " + String(pwmLeft);
     com->print((char *)pwm.c_str());
     com->print((char *)error.c_str());
