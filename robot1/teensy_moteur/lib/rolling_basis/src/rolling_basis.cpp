@@ -132,7 +132,8 @@ void Rolling_Basis::handle(
 
     if (orientation_error > PI / 2 || orientation_error < -PI / 2)
     {
-        distance_error = -distance_error;
+        com->print("Through backward")
+            distance_error = -distance_error;
         orientation_error = fmod(PI + orientation_error, PI);
     }
 
