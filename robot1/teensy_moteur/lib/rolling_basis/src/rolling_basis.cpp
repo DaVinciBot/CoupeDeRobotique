@@ -135,7 +135,7 @@ void Rolling_Basis::handle(
     double xerr = target_position.x - this->X;
     double yerr = target_position.y - this->Y;
     double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2));
-    double theta_error_odometry = target_position.theta - fmod(this->THETA, 2 * PI); // fmod to keep the angle between -PI and PI, TODO: a tester !!
+    double theta_error_odometry = target_position.theta - this->THETA; // fmod to keep the angle between -PI and PI, TODO: a tester !!
     double orientation_error = fmod(atan2(yerr, xerr) - theta_error_odometry, 2 * PI);
     if (orientation_error > PI)
     {
@@ -146,7 +146,7 @@ void Rolling_Basis::handle(
         orientation_error += 2 * PI;
     }
 
-    double theta_error = (180.0 * orientation_error / PI) * 2.0;
+    double theta_error = (180.0 * orientation_error / PI);
 
     // Consigne vitesse
 
