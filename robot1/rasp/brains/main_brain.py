@@ -83,7 +83,7 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(40, 25, 0)) # Point d'arrivée
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, 0)) # Point d'arrivée
         # --- MetaProg is insane (loop) --- #
         if self.navigator_task is not None:
             navigator.add_navigation_task(self.navigator_task)
