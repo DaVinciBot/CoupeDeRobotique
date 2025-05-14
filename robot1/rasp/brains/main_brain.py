@@ -83,7 +83,7 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(25, 25, 90)) # Point d'arrivée
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(30, 30, 0)) # Point d'arrivée
         # --- MetaProg is insane (loop) --- #
         if self.navigator_task is not None:
             navigator.add_navigation_task(self.navigator_task)
@@ -152,7 +152,7 @@ class MainBrain(Brain):
     async def start(self):
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        start_position = OrientedPoint(20, 25, 0)
+        start_position = OrientedPoint(25, 25, 0)
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )
