@@ -83,7 +83,7 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 50, 0)) # Point d'arrivée
+        #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 50, 0)) # Point d'arrivée
         # --- MetaProg is insane (loop) --- #
         if self.navigator_task is not None:
             navigator.add_navigation_task(self.navigator_task)
@@ -159,14 +159,14 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
         # Ici met le déplacement que tu veux
-        # self.navigator_task = NavigatorTaskParams(
-        #     goal=None,
-        #     timeout=None,
-        #     path_planner_params=DeltaPathPlannerParams(distance=30),
-        #     trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-        #     speed_profiler=CONFIG.ROLLING_BASIS_SPEED_PROFILER_PID,
-        #     avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        # )
+        self.navigator_task = NavigatorTaskParams(
+            goal=None,
+            timeout=None,
+            path_planner_params=DeltaPathPlannerParams(distance=30),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+            speed_profiler=CONFIG.ROLLING_BASIS_SPEED_PROFILER_PID,
+            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+        )
         # get_all_serial_number()
         # godHand = Actuators(
         #     logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
