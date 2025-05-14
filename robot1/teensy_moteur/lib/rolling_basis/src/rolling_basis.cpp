@@ -102,7 +102,7 @@ void Rolling_Basis::odometrie_handle()
 
     /* Determine the delta of distance and rotation of the robot */
     float delta_distance = (this->right_motor->distance + this->left_motor->distance) / 2.0f;
-    float delta_theta = (this->left_motor->distance - this->right_motor->distance) / this->center_distance;
+    float delta_theta = (this->right_motor->distance - this->left_motor->distance) / this->center_distance;
 
     // Determine the new cartesian position of the robot
     this->THETA = fmod(this->THETA + delta_theta, 2 * PI);
