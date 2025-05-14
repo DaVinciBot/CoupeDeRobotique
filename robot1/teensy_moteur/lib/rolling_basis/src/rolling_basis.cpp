@@ -130,13 +130,6 @@ void Rolling_Basis::handle(
     double theta_error = target_position.theta - fmod(this->THETA, PI); // fmod to keep the angle between -PI and PI, TODO: a tester !!
     double orientation_error = fmod(atan2(yerr, xerr) - theta_error, PI);
 
-    if (orientation_error > PI / 2 || orientation_error < -PI / 2)
-    {
-        com->print("Through backward");
-        distance_error = -distance_error;
-        orientation_error = fmod(PI + orientation_error, PI);
-    }
-
     // Consigne vitesse
 
     // Compute PID output based on errors
