@@ -64,6 +64,8 @@ void set_speed_and_position(byte *msg, byte size)
   target_position.x = target_speed_and_position->target_position_x;
   target_position.y = target_speed_and_position->target_position_y;
   target_position.theta = target_speed_and_position->target_position_theta;
+  String target_pos = "Target X : " + String(target_position.x) + " Target Y : " + String(target_position.y) + " Target Theta : " + String(target_position.theta);
+  com->print((char *)target_pos.c_str());
 }
 
 void set_pid(byte *msg, byte size)
@@ -104,6 +106,9 @@ void set_odometrie(byte *msg, byte size)
   rolling_basis_ptr->X = odometrie->x;
   rolling_basis_ptr->Y = odometrie->y;
   rolling_basis_ptr->THETA = odometrie->theta;
+
+  String position = "X : " + String(rolling_basis_ptr->X) + " Y : " + String(rolling_basis_ptr->Y) + " Theta : " + String(rolling_basis_ptr->THETA);
+  com->print((char *)position.c_str());
 }
 
 void reset_teensy(byte *msg, byte size)
