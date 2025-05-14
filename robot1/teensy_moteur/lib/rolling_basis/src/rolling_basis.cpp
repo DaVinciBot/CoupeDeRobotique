@@ -160,8 +160,8 @@ void Rolling_Basis::handle(
     // linear_distance_correction = this->linear_distance_pid.compute_derived_output_control(distance_error, distance_output);
     // angular_distance_correction = this->angular_distance_pid.compute_derived_output_control(orientation_error, orientation_output);
 
-    this->right_motor->set_motor(linear_distance_correction - angular_distance_correction);
-    this->left_motor->set_motor(angular_distance_correction + linear_distance_correction);
+    this->right_motor->set_motor(linear_distance_correction + angular_distance_correction);
+    this->left_motor->set_motor(linear_distance_correction - angular_distance_correction);
     double pwmRight = angular_distance_correction + linear_distance_correction;
     double pwmLeft = angular_distance_correction + linear_distance_correction;
     String error = "Angular error : " + String(theta_error) + "Linear error: " + String(distance_error);
