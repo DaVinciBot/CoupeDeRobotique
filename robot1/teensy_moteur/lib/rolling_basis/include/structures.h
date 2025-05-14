@@ -47,13 +47,13 @@ struct Ticks
 class Point
 {
 public:
-    float x = -1.0f;
-    float y = -1.0f;
-    float theta = -1.0f;
+    double x = -1.0f;
+    double y = -1.0f;
+    double theta = -1.0f;
 
-    Point() = default; 
+    Point() = default;
 
-    Point(float x, float y, float theta = 1234.1234f)
+    Point(double x, double y, double theta = 1234.1234)
     {
         this->x = x;
         this->y = y;

@@ -63,7 +63,7 @@ void set_speed_and_position(byte *msg, byte size)
   // Update position
   target_position.x = target_speed_and_position->target_position_x;
   target_position.y = target_speed_and_position->target_position_y;
-  target_position.theta = target_speed_and_position->target_position_theta;
+  target_position.theta = PI * target_speed_and_position->target_position_theta / 180.0;
   String target_pos = "Target X : " + String(target_position.x) + " Target Y : " + String(target_position.y) + " Target Theta : " + String(target_position.theta);
   com->print((char *)target_pos.c_str());
 }

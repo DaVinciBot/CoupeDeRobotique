@@ -138,7 +138,7 @@ void Rolling_Basis::handle(
         orientation_error += 2 * PI;
     }
 
-    double theta_error = 180 * orientation_error / PI;
+    double theta_error = 180.0 * orientation_error / PI;
 
     // Consigne vitesse
 
