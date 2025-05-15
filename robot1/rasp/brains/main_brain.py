@@ -225,4 +225,4 @@ class MainBrain(Brain):
         # )
 
         # godHand.logger.info("Servo angle set to 90 degrees")
-        await self.run()
+        self.run.start()
