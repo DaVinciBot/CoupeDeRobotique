@@ -115,18 +115,8 @@ class MainBrain(Brain):
         #time.sleep(500) A utiliser pour les matchs pour l'instant
 
 
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(20, 25, pi/2))
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(20, 25, 90))
     
-        #time.sleep(3)
-        #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90)) # Point d'arrivée
-        # time.sleep(3)
-        #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(60, 25, 0)) # Point d'arrivée
-        # time.sleep(3)
-        #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(80, 25, 0)) # Point d'arrivée
-        #time.sleep(2)
-        #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(110, 25, 0)) # Point d'arrivée
-
-
 
         #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
         # --- MetaProg is insane (loop) --- #
