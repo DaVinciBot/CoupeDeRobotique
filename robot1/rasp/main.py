@@ -1,13 +1,8 @@
-
-
 # ====== Imports ======
 # Config
 from config_loader import CONFIG
 
 from loggerplusplus import Logger, LogLevels
-
-# External library imports
-import asyncio
 
 # ====== Local Library Imports ======
 from ws_comms import WServer, WServerRouteManager, WSender, WSreceiver
@@ -20,8 +15,7 @@ from sensors import Lidar, LidarDummy
 from GPIO import PIN
 
 # ====== Main ======
-
-async def main():
+if __name__ == "__main__":
     """
     ###--- Initialization ---###
     """
@@ -121,8 +115,8 @@ async def main():
     )
 
     # Jack
-    jack = PIN(CONFIG.JACK_PIN)
-    jack.setup("input_pulldown", reverse_state=True)
+    #jack = PIN(CONFIG.JACK_PIN)
+    #jack.setup("input_pulldown", reverse_state=True)
     
     # Movement
     # Movement manager
@@ -141,14 +135,14 @@ async def main():
         lidar=lidar,
         arena=arena,
         ws_cmd=ws_cmd,
-        jack=jack,
+        jack=None,
     )
 
     """
         ###--- Run ---###
     """
 
-    await brain.wait_for_trigger()
+    brain.wait_for_trigger()
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
     for routine in brain.get_tasks():
         ws_server.add_background_task(routine)
@@ -168,6 +162,3 @@ async def main():
     # profiler.disable()
     # profiler.print_stats()
     # profiler.dump_stats("profiling_output.prof")
-
-if __name__ == "__main__":
-    asyncio.run(main())
