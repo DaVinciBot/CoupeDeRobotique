@@ -116,8 +116,8 @@ class MainBrain(Brain):
 
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, 0))
         time.sleep(3)
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, 90)) # Point d'arrivée
-        time.sleep(3)
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90)) # Point d'arrivée
+        # time.sleep(3)
         #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(60, 25, 0)) # Point d'arrivée
         # time.sleep(3)
         #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(80, 25, 0)) # Point d'arrivée
