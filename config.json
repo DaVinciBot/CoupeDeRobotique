@@ -210,6 +210,9 @@
     },
     "movement_manager": {
       "movement_resolution": 1
+    },
+    "jack":{
+      "pin": 23
     }
   },
   "arena": {

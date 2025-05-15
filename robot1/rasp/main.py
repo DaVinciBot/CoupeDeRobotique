@@ -12,6 +12,7 @@ from brains import MainBrain
 from taskbrain import DictProxyAccessor, Brain
 from navigation import NavigatorTaskParams
 from sensors import Lidar, LidarDummy
+from GPIO import PIN
 
 # ====== Main ======
 if __name__ == "__main__":
@@ -113,6 +114,10 @@ if __name__ == "__main__":
         grid_manager_logger=logger_grid_manager,
     )
 
+    # Jack
+    jack = PIN(CONFIG.JACK_PIN)
+    jack.setup("input_pulldown", reverse_state=True)
+    
     # Movement
     # Movement manager
     # See ./brains/controllers_brain.py for more details
@@ -130,6 +135,7 @@ if __name__ == "__main__":
         lidar=lidar,
         arena=arena,
         ws_cmd=ws_cmd,
+        jack=jack,
     )
 
     """
