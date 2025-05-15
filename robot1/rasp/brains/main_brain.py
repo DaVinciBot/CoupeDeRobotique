@@ -110,7 +110,10 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(20, 25, -45)) # Point d'arrivée
+        
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(30, 25, 0))
+        time.sleep(2)
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(30, 25, -45)) # Point d'arrivée
         time.sleep(2)
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -45)) # Point d'arrivée
         #time.sleep(3)
