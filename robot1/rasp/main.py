@@ -135,7 +135,7 @@ if __name__ == "__main__":
         lidar=lidar,
         arena=arena,
         ws_cmd=ws_cmd,
-        # jack=jack,
+        jack=None,
     )
 
     """
