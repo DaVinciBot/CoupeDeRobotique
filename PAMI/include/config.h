@@ -5,16 +5,16 @@
 
 
 // #------- MOTOR CONFIGURATION -------#
-#define LEFT_STEP_PIN 16
-#define LEFT_DIR_PIN 15
-#define LEFT_EN_PIN 17
+#define LEFT_DIR_PIN 3
+#define LEFT_STEP_PIN 46
+#define LEFT_EN_PIN 9
 
-#define RIGHT_STEP_PIN 24
-#define RIGHT_DIR_PIN 23
-#define RIGHT_EN_PIN 25
+#define RIGHT_DIR_PIN 21
+#define RIGHT_STEP_PIN 47
+#define RIGHT_EN_PIN 48
 
 // #------- LORA CONFIGURATION -------#
-#define SS 10 // NSS pin
+#define SS 8 // NSS pin
 #define RST 9 // RESET pin
 #define BUSY 8 // BUSY pin
 #define IRQ 7 // IRQ pin

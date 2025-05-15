@@ -3,13 +3,13 @@
 class Point
 {
 public:
-    float x = -1.0f;
-    float y = -1.0f;
-    float theta = -1.0f;
+    float x = 0.0f;
+    float y = 0.0f;
+    float theta = 0.0f;
 
     Point() = default;
 
-    Point(float x, float y, float theta = 1234.1234f)
+    Point(float x, float y, float theta = 0.0f)
     {
         this->x = x;
         this->y = y;

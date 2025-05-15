@@ -14,7 +14,7 @@ class Com
 public:
     Com();
     ~Com();
-    void begin(int8_t nss, int8_t reset, int8_t busy, int8_t irq = -1, int8_t txen = -1, int8_t rxen = -1);
+    void begin(int8_t nss, int8_t reset, int8_t busy, int8_t irq = 0, int8_t txen = 0, int8_t rxen = 0);
     void send_msg(byte *msg, byte size, bool is_nack = false);
     void print(char *text);
     void handle_callback(void (*functions[256])(byte *msg, byte size));

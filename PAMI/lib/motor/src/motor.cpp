@@ -1,17 +1,20 @@
 #include "motor.h"
-#include <Arduino.h>
 
 Motor::Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution)
-    : _stepPin(stepPin), _dirPin(dirPin), _enablePin(enablePin),
-      _stepsPerRevolution(stepsPerRevolution / K),
-      _targetSpeedStepsPerSec(0.0f),
-      _currentSpeedStepsPerSec(0.0f),
-      _acceleration(0.0f),
-      _moving(false),
-      _lastStepTime(0),
-      _usDelayBetweenKSteps(0.0f),
-      _stepCount(0)
 {
+    this->_stepPin = stepPin;
+    this->_dirPin = dirPin;
+    this->_enablePin = enablePin;
+
+    this->_stepsPerRevolution = stepsPerRevolution / K; // Divide by K to get the actual steps per revolution
+    this->_targetSpeedStepsPerSec = 0.0f;
+    this->_currentSpeedStepsPerSec = 0.0f;
+    this->_acceleration = 0.0f;
+    this->_moving = false;
+
+    this->_lastStepTime = 0;
+    this->_usDelayBetweenKSteps = 0.0f;
+    this->_stepCount = 0;
 }
 
 void Motor::init()
@@ -41,6 +44,8 @@ void Motor::setAcceleration(float stepsPerSec2)
 
 void Motor::_setDirection(bool clockwise)
 {
+    if (_dirPin == 0 || _dirPin == -1)
+        return; // No enable pin, do nothing
     digitalWrite(_dirPin, clockwise ? HIGH : LOW);
 }
 

@@ -40,29 +40,48 @@ void setup()
     // com->begin(SS, RST, BUSY, IRQ, TXEN, RXEN); // NSS, RESET, BUSY, IRQ, TXEN, RXEN pins
     leftMotor.init();
     leftMotor.enableMotor(true);
-    leftMotor.setAcceleration(100);
-    leftMotor.setTargetSpeed(400);
+    leftMotor.setAcceleration(100.0f);
 
     rightMotor.init();
     rightMotor.enableMotor(true);
-    rightMotor.setAcceleration(100);
-    rightMotor.setTargetSpeed(400);
+    rightMotor.setAcceleration(100.0f);
 
-    digitalWrite(LEFT_DIR_PIN, HIGH);
-    digitalWrite(RIGHT_DIR_PIN, HIGH);
+    Serial.println("Motors initialized");
 
 #if ENABLE_OTA
     ota.begin();
+    server.begin();
 #endif
 
     initialize_callback_functions();
 }
+int counter = 0;
+int current_speed = 0;
+bool decreasing = false;
 
 void loop()
 {
-    leftMotor.update();
     rightMotor.update();
+    leftMotor.update();
 
+    if (counter++ > 15024)
+    {        
+        counter = 0;
+        current_speed += decreasing ? -10 : 10;
+        if (current_speed >= 1000)
+        {
+            decreasing = true;
+        }
+        else if (current_speed <= 0)
+        {
+            decreasing = false;
+        }
+        leftMotor.setTargetSpeed(current_speed);
+        rightMotor.setTargetSpeed(current_speed);
+        Serial.print("Current speed: ");
+        Serial.println(current_speed);
+
+    }
 #if ENABLE_OTA
     ota.loop();
 #endif
