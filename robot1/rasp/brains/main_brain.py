@@ -109,7 +109,7 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(20, 25, 0)) # Point d'arrivée
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(20, 25, 90)) # Point d'arrivée
         
         #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
         # --- MetaProg is insane (loop) --- #
