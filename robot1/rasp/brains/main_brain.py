@@ -110,7 +110,10 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         
-        
+        #self.wait_for_trigger() A faire après avoir fix GPIO
+        #time.sleep(500) A utiliser pour les matchs pour l'instant
+
+
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(40, 25, 0))
         time.sleep(3)
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(40, 25, -90)) # Point d'arrivée
