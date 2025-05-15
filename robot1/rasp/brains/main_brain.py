@@ -3,6 +3,7 @@ from config_loader import CONFIG
 # ====== Standard Library Imports ======
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 # ====== Third-party library imports ======
 from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
@@ -110,7 +111,7 @@ class MainBrain(Brain):
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, 0)) # Point d'arrivée
-        await asyncio.sleep(0.1)
+        time.sleep(2)
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(20, 25, 90)) # Point d'arrivée
 
         #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
