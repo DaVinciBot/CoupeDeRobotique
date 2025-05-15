@@ -93,7 +93,7 @@ class MainBrain(Brain):
             ally_zone=self.arena.ally_zone,
             enemy_zone=self.arena.enemy_zone,
         )
-        #rolling_basis.set_speed_and_position(*cmd.get_command())
+        rolling_basis.set_speed_and_position(*cmd.get_command())
         # yellow_strategy_runner.handle(
         #     ShowGameContext(
         #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators

@@ -104,6 +104,8 @@ public:
         Point target_position,
         float target_linear_speed, float target_angular_speed, Com *com);
 
+    void pi_mod_signed(double theta);
+
     // Motors action function
     // void keep_position(long current_right_ticks, long current_left_ticks);
     // void shutdown_motor();
