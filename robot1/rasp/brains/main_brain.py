@@ -109,7 +109,7 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, 0)) # Point d'arrivée
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(20, 25, 0)) # Point d'arrivée
         
         #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
         # --- MetaProg is insane (loop) --- #
@@ -180,7 +180,7 @@ class MainBrain(Brain):
     async def start(self):
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        start_position = OrientedPoint(25, 25, 0)
+        start_position = OrientedPoint(20, 25, 0)
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )
