@@ -36,6 +36,10 @@ from navigation import (
 from usb_com.python.tools import get_all_serial_number
 
 from navigation.navigator.task import NavigatorTaskState
+
+from GPIO import PIN
+
+import asyncio
 class MainBrain(Brain):
     def __init__(
         self,
@@ -46,6 +50,8 @@ class MainBrain(Brain):
         arena: ShowArena,
         # WS routes
         ws_cmd: WServerRouteManager,
+        #Tirette
+        jack: PIN
     ) -> None:
         self.lidar: Lidar = lidar
         self.arena: ShowArena = arena
@@ -54,6 +60,8 @@ class MainBrain(Brain):
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
         self.navigator_task: NavigatorTaskParams = None
+        
+        self.jack = jack
 
         super().__init__(logger, self)
 
@@ -62,6 +70,25 @@ class MainBrain(Brain):
     """
 
     """ ### Routines ### """
+    
+    @Brain.task(process=True, run_on_start=False)
+    async def wait_for_trigger(self):
+        """
+        Waits for a trigger signal from the jack.
+
+        This function continuously checks the state of the jack and waits until it is triggered.
+        While waiting, it shows the team LED and sleeps for 0.1 seconds between each check.
+        Once triggered, it sets the jack LED to True.
+        """
+        # Check jack state
+        false_jacks_in_a_row = 0
+        while false_jacks_in_a_row < 5:
+            if self.jack.safe_digital_read():
+                false_jacks_in_a_row = 0
+            else:
+                false_jacks_in_a_row += 1
+            await asyncio.sleep(0.1)
+
 
     @Brain.task(
         process=True,
@@ -81,6 +108,7 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, 0)) # Point d'arrivée
         
         #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
