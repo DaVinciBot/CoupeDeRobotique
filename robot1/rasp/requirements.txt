@@ -20,6 +20,7 @@ pyusb==1.2.1
 PyYAML==6.0.1
 rpi-ws281x==5.0.0
 RPi.GPIO==0.7.1
+gpiozero==2.0.1
 scipy==1.15.2
 shapely==2.0.7
 taskbrain==0.1.7
