@@ -98,7 +98,7 @@ class MainBrain(Brain):
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
-    def run(self) -> None:
+    async def run(self) -> None:
         # --- Initialization --- #
         from boombot_strategy import ShowGameContext, yellow_strategy_runner
 
@@ -110,13 +110,13 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         
-        
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(35, 25, 0))
-        # time.sleep(2)
-        #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -45)) # Point d'arrivée
-        #time.sleep(2)
-        #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(80, 25, -45)) # Point d'arrivée
-        #time.sleep(3)
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(40, 25, 0))
+        await asyncio.sleep(2)
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(40, 25, -90)) # Point d'arrivée
+        await asyncio.sleep(2)
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(70, 25, -90)) # Point d'arrivée
+        await asyncio.sleep(2)
+
         #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(80, 25, 0)) # Point d'arrivée
         #time.sleep(2)
         #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(110, 25, 0)) # Point d'arrivée
