@@ -115,9 +115,7 @@ class MainBrain(Brain):
         #time.sleep(500) A utiliser pour les matchs pour l'instant
 
 
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(20, 25, 45))
-        time.sleep(0.5)
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(20, 25, 40))
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(120, 25, 0))
     
 
         #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
