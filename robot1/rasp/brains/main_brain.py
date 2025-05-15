@@ -72,8 +72,7 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
     
-    @Brain.task(process=True, run_on_start=False)
-    async def wait_for_trigger(self):
+    def wait_for_trigger(self):
         """
         Waits for a trigger signal from the jack.
 
@@ -88,7 +87,7 @@ class MainBrain(Brain):
                 false_jacks_in_a_row = 0
             else:
                 false_jacks_in_a_row += 1
-            await asyncio.sleep(0.1)
+            time.sleep(0.1)
 
 
     @Brain.task(
@@ -109,6 +108,9 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        
+        #self.wait_for_trigger() A faire après avoir fix GPIO
+        #time.sleep(500) A utiliser pour les matchs pour l'instant
 
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(40, 25, 0))
         time.sleep(3)
