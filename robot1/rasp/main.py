@@ -1,8 +1,13 @@
+
+
 # ====== Imports ======
 # Config
 from config_loader import CONFIG
 
 from loggerplusplus import Logger, LogLevels
+
+# External library imports
+import asyncio
 
 # ====== Local Library Imports ======
 from ws_comms import WServer, WServerRouteManager, WSender, WSreceiver
@@ -15,7 +20,8 @@ from sensors import Lidar, LidarDummy
 from GPIO import PIN
 
 # ====== Main ======
-if __name__ == "__main__":
+
+async def main():
     """
     ###--- Initialization ---###
     """
@@ -162,3 +168,6 @@ if __name__ == "__main__":
     # profiler.disable()
     # profiler.print_stats()
     # profiler.dump_stats("profiling_output.prof")
+
+if __name__ == "__main__":
+    asyncio.run(main())
