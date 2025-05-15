@@ -83,7 +83,7 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 50, 0)) # Point d'arrivée
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, 0)) # Point d'arrivée
         # --- MetaProg is insane (loop) --- #
         if self.navigator_task is not None:
             navigator.add_navigation_task(self.navigator_task)
@@ -93,7 +93,7 @@ class MainBrain(Brain):
             ally_zone=self.arena.ally_zone,
             enemy_zone=self.arena.enemy_zone,
         )
-        rolling_basis.set_speed_and_position(*cmd.get_command())
+        #rolling_basis.set_speed_and_position(*cmd.get_command())
         # yellow_strategy_runner.handle(
         #     ShowGameContext(
         #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
