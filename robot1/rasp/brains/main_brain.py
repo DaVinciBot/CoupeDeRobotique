@@ -36,8 +36,6 @@ from navigation import (
 from usb_com.python.tools import get_all_serial_number
 
 from navigation.navigator.task import NavigatorTaskState
-
-
 class MainBrain(Brain):
     def __init__(
         self,
@@ -84,7 +82,8 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, 0)) # Point d'arrivée
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
+        
+        #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
         # --- MetaProg is insane (loop) --- #
         if self.navigator_task is not None:
             navigator.add_navigation_task(self.navigator_task)
