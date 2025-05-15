@@ -115,8 +115,8 @@ if __name__ == "__main__":
     )
 
     # Jack
-    #jack = PIN(CONFIG.JACK_PIN)
-    #jack.setup("input_pulldown", reverse_state=True)
+    jack = PIN(CONFIG.JACK_PIN)
+    jack.setup("input_pulldown", reverse_state=True)
     
     # Movement
     # Movement manager
@@ -135,12 +135,14 @@ if __name__ == "__main__":
         lidar=lidar,
         arena=arena,
         ws_cmd=ws_cmd,
-        jack=None,
+        jack=jack,
     )
 
     """
         ###--- Run ---###
     """
+
+    await brain.wait_for_trigger()
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
     for routine in brain.get_tasks():
         ws_server.add_background_task(routine)
