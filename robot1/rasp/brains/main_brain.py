@@ -113,8 +113,6 @@ class MainBrain(Brain):
         
         #self.wait_for_trigger() A faire après avoir fix GPIO
         #time.sleep(500) A utiliser pour les matchs pour l'instant
-
-        time.sleep(10)
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(35, 25, 0))
         time.sleep(2)
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(35, 25, 90))
