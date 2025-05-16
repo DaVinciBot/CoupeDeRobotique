@@ -53,7 +53,7 @@ class MainBrain(Brain):
         # WS routes
         ws_cmd: WServerRouteManager,
         #Tirette
-        jack: PIN
+        jack: None
     ) -> None:
         self.lidar: Lidar = lidar
         self.arena: ShowArena = arena
