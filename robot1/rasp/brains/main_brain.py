@@ -39,7 +39,7 @@ from usb_com.python.tools import get_all_serial_number
 
 from navigation.navigator.task import NavigatorTaskState
 
-from GPIO import PIN
+# from GPIO import PIN
 
 import asyncio
 class MainBrain(Brain):
