@@ -117,10 +117,6 @@ class MainBrain(Brain):
         time.sleep(2)
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(35, 25, 90))
         time.sleep(2)
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, 0))
-        time.sleep(4)
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, 0))
-        
         
     
 
