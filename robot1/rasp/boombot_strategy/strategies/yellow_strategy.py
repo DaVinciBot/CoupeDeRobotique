@@ -20,7 +20,7 @@ from strategy.tools import (
 yellow_strategy = SubGraphBuilder()
 
 # Start by pickup zone 4, then construct to zone 11
-pickup_zone_4 = get_pickup_sub_graph(4)
+pickup_zone_4 = get_pickup_sub_graph(3)
 construct_zone_11 = get_construct_sub_graph(11)
 
 pickup_zone_4.get_exits()[0].add_transition(
