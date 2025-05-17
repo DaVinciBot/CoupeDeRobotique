@@ -114,12 +114,10 @@ class MainBrain(Brain):
         #self.wait_for_trigger() A faire après avoir fix GPIO
         #time.sleep(500) A utiliser pour les matchs pour l'instant
         
-        """rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(70, 25, 0))
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(70, 25, 0))
         time.sleep(4)
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(70, 25, -90))
-        time.sleep(5)
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(70, 55, -90))
-        time.sleep(5)"""
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
+
         
     
 
@@ -133,12 +131,12 @@ class MainBrain(Brain):
             ally_zone=self.arena.ally_zone,
             enemy_zone=self.arena.enemy_zone,
         )
-        rolling_basis.set_speed_and_position(*cmd.get_command())
-        yellow_strategy_runner.handle(
-             ShowGameContext(
-                 arena=self.arena, rolling_basis=rolling_basis, actuators=None
-             )
-         )
+        #rolling_basis.set_speed_and_position(*cmd.get_command())
+        # yellow_strategy_runner.handle(
+        #     ShowGameContext(
+        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+        #     )
+        # )
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
     @Brain.task(
