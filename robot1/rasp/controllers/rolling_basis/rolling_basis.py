@@ -103,12 +103,12 @@ class RollingBasis(BaseComTeensy):
         """
         # Position / odometrie
         self.odometrie = OrientedPoint(
-            (struct.unpack("<d", msg[0:4])[0], struct.unpack("<d", msg[4:8])[0]),
-            struct.unpack("<d", msg[8:12])[0],
+            (struct.unpack("<d", msg[0:8])[0], struct.unpack("<d", msg[8:16])[0]),
+            struct.unpack("<d", msg[16:24])[0],
         )
         # Speeds
-        self.linear_speed = struct.unpack("<d", msg[12:16])[0]
-        self.angular_speed = struct.unpack("<d", msg[16:20])[0]
+        self.linear_speed = struct.unpack("<d", msg[24:32])[0]
+        self.angular_speed = struct.unpack("<d", msg[32:40])[0]
 
         # self.logger.info(
         #    f"Pos: {self.odometrie}, Linear speed: {self.linear_speed}, Angular speed: {self.angular_speed}"
