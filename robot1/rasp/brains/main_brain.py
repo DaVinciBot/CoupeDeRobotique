@@ -98,24 +98,35 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        
+        for i in range(20, 51):
+            rolling_basis.set_speed_and_position(
+                target_linear_speed=0,
+                target_angular_speed=0,
+                target_position=OrientedPoint(i, 25, 0),
+            )
+            time.sleep(0.1)
+        
 
         # --- MetaProg is insane (loop) --- #
-        if self.navigator_task is not None:
-            navigator.add_navigation_task(self.navigator_task)
-            self.navigator_task = None
-
-        cmd = navigator.handle(
-            ally_zone=self.arena.ally_zone,
-            enemy_zone=self.arena.enemy_zone,
-        )
-        rolling_basis.set_speed_and_position(*cmd.get_command())
         
-        # yellow_strategy_runner.handle(
-        #     ShowGameContext(
-        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
-        #     )
+        # if self.navigator_task is not None:
+        #     navigator.add_navigation_task(self.navigator_task)
+        #     self.navigator_task = None
+
+        # cmd = navigator.handle(
+        #     ally_zone=self.arena.ally_zone,
+        #     enemy_zone=self.arena.enemy_zone,
         # )
-        self.rolling_basis_odometrie = rolling_basis.odometrie
+        # rolling_basis.set_speed_and_position(*cmd.get_command())
+        
+        # # yellow_strategy_runner.handle(
+        # #     ShowGameContext(
+        # #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+        # #     )
+        # # )
+        # self.rolling_basis_odometrie = rolling_basis.odometrie
+        pass
 
     # @Brain.task(
     #     process=True,
@@ -175,14 +186,14 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
 
-        self.navigator_task = NavigatorTaskParams(
-            goal=None,
-            timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        )
+        # self.navigator_task = NavigatorTaskParams(
+        #     goal=None,
+        #     timeout=None,
+        #     path_planner_params=DeltaPathPlannerParams(distance=30),
+        #     trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+        #     speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+        #     avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+        # )
         
         
         # get_all_serial_number()
