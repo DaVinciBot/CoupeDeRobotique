@@ -75,25 +75,10 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=False)
+    @Brain.task(process=False, run_on_start=False, refresh_rate=1)
     async def wait_for_trigger(self):
-        """
-        Waits for a trigger signal from the jack.
-
-        This function continuously checks the state of the jack and waits until it is triggered.
-        While waiting, it shows the team LED and sleeps for 0.1 seconds between each check.
-        Once triggered, it sets the jack LED to True.
-        """
-        # Check jack state
-        while True:
-            print(self.jack.digital_read())
-        false_jacks_in_a_row = 0
-        while false_jacks_in_a_row < 5:
-            if self.jack.safe_digital_read():
-                false_jacks_in_a_row = 0
-            else:
-                false_jacks_in_a_row += 1
-            # await asyncio.sleep(0.1)
+        self.logger.info(f"Jack state: {self.jack.digital_read()}")
+      
 
     @Brain.task(
         process=True,
