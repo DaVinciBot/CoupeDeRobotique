@@ -114,19 +114,17 @@ class MainBrain(Brain):
         #self.wait_for_trigger() A faire après avoir fix GPIO
         #time.sleep(500) A utiliser pour les matchs pour l'instant
         
-        for i in range(20, 51):
+        for i in range(20, 51, 0.5):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 0))
             time.sleep(0.1)
 
-        for i in range(0, 180):
+        for i in range(0, 3.14, 0.1):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -i))
             time.sleep(0.1)
 
-        for i in range(51, 21, -1):
-            rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 90))
+        for i in range(51, 21, -0.5):
+            rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 3.14))
             time.sleep(0.1)
-
-
 
 
         # --- MetaProg is insane (loop) --- #
@@ -206,14 +204,14 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
         # Ici met le déplacement que tu veux
-        self.navigator_task = NavigatorTaskParams(
-            goal=None,
-            timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=10),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_SPEED_PROFILER_PID,
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        )
+        # self.navigator_task = NavigatorTaskParams(
+        #     goal=None,
+        #     timeout=None,
+        #     path_planner_params=DeltaPathPlannerParams(distance=10),
+        #     trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+        #     speed_profiler=CONFIG.ROLLING_BASIS_SPEED_PROFILER_PID,
+        #     avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+        # )
         # get_all_serial_number()
         # godHand = Actuators(
         #     logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)

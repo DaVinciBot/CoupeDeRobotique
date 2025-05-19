@@ -50,11 +50,11 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 struct msg_set_speed_and_position
 {
     byte command = SET_SPEED_AND_POSITION;
-    float target_linear_speed;
-    float target_angular_speed;
-    float target_position_x;
-    float target_position_y;
-    float target_position_theta;
+    double target_linear_speed;
+    double target_angular_speed;
+    double target_position_x;
+    double target_position_y;
+    double target_position_theta;
 };
 
 struct msg_set_pid
@@ -69,9 +69,9 @@ struct msg_set_pid
 struct msg_set_odometrie
 {
     byte command = SET_ODOMETRIE;
-    float x;
-    float y;
-    float theta;
+    double x;
+    double y;
+    double theta;
 };
 
 // Actuators

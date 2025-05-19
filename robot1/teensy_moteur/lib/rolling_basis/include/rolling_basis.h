@@ -16,16 +16,13 @@ class Rolling_Basis
 {
 public:
     // PID controllers
-    PID linear_speed_pid;
-    PID angular_speed_pid;
-
     PID linear_distance_pid;
     PID angular_distance_pid;
 
     // Rolling basis's params
-    inline float radius() { return this->center_distance / 2.0; };
-    inline float wheel_perimeter() { return this->wheel_diameter * PI; };
-    inline float wheel_unit_tick_cm() { return this->wheel_perimeter() / this->encoder_resolution; };
+    inline double radius() { return this->center_distance / 2.0; };
+    inline double wheel_perimeter() { return this->wheel_diameter * PI; };
+    inline double wheel_unit_tick_cm() { return this->wheel_perimeter() / this->encoder_resolution; };
 
     // Properties
     /**
@@ -40,17 +37,14 @@ public:
     Motor *left_motor;
 
     // Odometrie
-    float X = 0.0f;
-    float Y = 0.0f;
-    float THETA = 0.0f;
-
-    float linear_speed = 0.0f;
-    float angular_speed = 0.0f;
+    double X = 0.0f;
+    double Y = 0.0f;
+    double THETA = 0.0f;
 
     // Rolling basis params
     unsigned short encoder_resolution;
-    float center_distance;
-    float wheel_diameter;
+    double center_distance;
+    double wheel_diameter;
 
     // Constructor
     /**
@@ -59,8 +53,9 @@ public:
      * Initializes the parameters of the Rolling Basis
      */
     Rolling_Basis(
-        unsigned short encoder_resolution, float center_distance, float wheel_diameter,
-        const PID &linear_speed_pid, const PID &angular_speed_pid, const PID &linear_distance_pid, const PID &angular_distance_pid);
+        unsigned short encoder_resolution, double center_distance, double wheel_diameter,
+        const PID &linear_distance_pid, const PID &angular_distance_pid
+    );
 
     /**
      * @brief Destructor of Rolling Basis class
@@ -83,7 +78,7 @@ public:
     /**
      * @brief Initialize Rolling Basis state with starting position
      */
-    void init_rolling_basis(float x, float y, float theta);
+    void init_rolling_basis(double x, double y, double theta);
 
     // Odometrie function
     /**
@@ -102,7 +97,7 @@ public:
      */
     void handle(
         Point target_position,
-        float target_linear_speed, float target_angular_speed, Com *com);
+        double target_linear_speed, double target_angular_speed, Com *com);
 
     void pi_mod_signed(double theta);
 

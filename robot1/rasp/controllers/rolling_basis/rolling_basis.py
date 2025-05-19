@@ -103,12 +103,12 @@ class RollingBasis(BaseComTeensy):
         """
         # Position / odometrie
         self.odometrie = OrientedPoint(
-            (struct.unpack("<f", msg[0:4])[0], struct.unpack("<f", msg[4:8])[0]),
-            struct.unpack("<f", msg[8:12])[0],
+            (struct.unpack("<d", msg[0:4])[0], struct.unpack("<d", msg[4:8])[0]),
+            struct.unpack("<d", msg[8:12])[0],
         )
         # Speeds
-        self.linear_speed = struct.unpack("<f", msg[12:16])[0]
-        self.angular_speed = struct.unpack("<f", msg[16:20])[0]
+        self.linear_speed = struct.unpack("<d", msg[12:16])[0]
+        self.angular_speed = struct.unpack("<d", msg[16:20])[0]
 
         # self.logger.info(
         #    f"Pos: {self.odometrie}, Linear speed: {self.linear_speed}, Angular speed: {self.angular_speed}"
@@ -149,11 +149,11 @@ class RollingBasis(BaseComTeensy):
         """
         msg = (
             Messages.SET_SPEED_AND_POSITION.to_bytes()
-            + struct.pack("<f", target_linear_speed)
-            + struct.pack("<f", target_angular_speed)
-            + struct.pack("<f", target_position.x)
-            + struct.pack("<f", target_position.y)
-            + struct.pack("<f", target_position.theta)
+            + struct.pack("<d", target_linear_speed)
+            + struct.pack("<d", target_angular_speed)
+            + struct.pack("<d", target_position.x)
+            + struct.pack("<d", target_position.y)
+            + struct.pack("<d", target_position.theta)
         )
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
@@ -169,9 +169,9 @@ class RollingBasis(BaseComTeensy):
         """
         msg = (
             Messages.SET_ODOMETRIE.to_bytes()
-            + struct.pack("<f", odometrie.x)
-            + struct.pack("<f", odometrie.y)
-            + struct.pack("<f", odometrie.theta)
+            + struct.pack("<d", odometrie.x)
+            + struct.pack("<d", odometrie.y)
+            + struct.pack("<d", odometrie.theta)
         )
         self.send_bytes(msg)
         self._start_time = time.time()

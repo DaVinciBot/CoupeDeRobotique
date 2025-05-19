@@ -65,24 +65,10 @@ void Motor::set_motor(int pwmVal)
 }
 
 /**
- * @brief Compute the time elapsed since the last time this method has been called.
- * USed to calculate the speed of the motor
- *
- * @return Time elapsed
- */
-double Motor::delta_time_calculator()
-{
-    long current_time = micros();
-    double delta_time = (current_time - this->prevT) / (1e6); // in seconds
-    this->prevT = current_time;
-    return delta_time;
-}
-
-/**
  * @brief Compute odometry.
  * Compute distance travelled by the encoders wheel and the speed of the encoders wheel.
  */
-void Motor::update_odometer()
+void Motor::handle_odometrie()
 {
     // Update Ticks
     long delta_ticks = this->ticks - this->last_ticks;

@@ -20,7 +20,7 @@ PID angular_distance_pid(KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DI
 // b. Instanciate the Rolling Basis object
 Rolling_Basis *rolling_basis_ptr = new Rolling_Basis(
     ENCODER_RESOLUTION, ENTRAXE, WHEEL_DIAMETER,
-    linear_speed_pid, angular_speed_pid, linear_distance_pid, angular_distance_pid);
+    linear_distance_pid, angular_distance_pid);
 
 // 2. Instanciate the Communication object
 Com *com;
@@ -75,12 +75,6 @@ void set_pid(byte *msg, byte size)
   bool is_valid_pid = true;
   switch (pid_msg->pid_type)
   {
-  case LINEAR_SPEED_PID_ID:
-    pid = &rolling_basis_ptr->linear_speed_pid;
-    break;
-  case ANGULAR_SPEED_PID_ID:
-    pid = &rolling_basis_ptr->angular_speed_pid;
-    break;
   case LINEAR_POSITION_PID_ID:
     pid = &rolling_basis_ptr->linear_distance_pid;
     break;
@@ -176,8 +170,8 @@ void loop()
     rolling_basis_msg.y = rolling_basis_ptr->Y;
     rolling_basis_msg.theta = rolling_basis_ptr->THETA;
     // Rolling Basis speeds
-    rolling_basis_msg.current_linear_speed = rolling_basis_ptr->linear_speed;
-    rolling_basis_msg.current_angular_speed = rolling_basis_ptr->angular_speed;
+    rolling_basis_msg.current_linear_speed = 0;
+    rolling_basis_msg.current_angular_speed = 0;
 
     com->send_msg((byte *)&rolling_basis_msg, sizeof(msg_update_rolling_basis));
 
