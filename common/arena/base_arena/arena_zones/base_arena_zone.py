@@ -12,13 +12,7 @@ from loggerplusplus import Logger
 
 # Local imports
 from utils import Utils
-from geometry import (
-    Polygon,
-    BufferCapStyle,
-    BufferJoinStyle,
-    Point,
-    OrientedPoint
-)
+from geometry import Polygon, BufferCapStyle, BufferJoinStyle, Point, OrientedPoint
 
 # Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
@@ -38,20 +32,21 @@ class BaseArenaZone(ABC):
         enemy_visits (int): Count of opponent visits.
         ally_visits (int): Count of self visits.
     """
+
     zones_uid: list[int] = []
 
     def __init__(
-            self,
-            logger: Logger,
-            zone_type: ZoneType,
-            accessibility: ZoneAccessibility,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
-            zone_color: str = "#9e9e9e",
-            go_to_positions: list[OrientedPoint | Point] = None,
-            uid: int = None,
+        self,
+        logger: Logger,
+        zone_type: ZoneType,
+        accessibility: ZoneAccessibility,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: callable = None,
+        zone_color: str = "#9e9e9e",
+        go_to_positions: list[OrientedPoint | Point] = None,
+        uid: int = None,
     ) -> None:
         """
         Initializes the BaseArenaZone with geometry, type, color, and accessibility.
@@ -138,7 +133,9 @@ class BaseArenaZone(ABC):
             ZoneAccessibility.RESTRICTED,
         ]
 
-    def is_accessible_for_emergency(self, team_color: TeamColor = TeamColor.UNDEFINED) -> bool:
+    def is_accessible_for_emergency(
+        self, team_color: TeamColor = TeamColor.UNDEFINED
+    ) -> bool:
         """
         Determines if the zone is accessible in an emergency.
 
@@ -150,7 +147,9 @@ class BaseArenaZone(ABC):
         """
         return self.accessibility != ZoneAccessibility.FORBIDDEN
 
-    def get_go_to_position(self, ally_position: OrientedPoint, team_color: TeamColor) -> OrientedPoint | Point | None:
+    def get_go_to_position(
+        self, ally_position: OrientedPoint, team_color: TeamColor
+    ) -> OrientedPoint | Point | None:
         """
         Determines the best go-to position for an ally in the given zone.
 
@@ -162,7 +161,9 @@ class BaseArenaZone(ABC):
             OrientedPoint | Point | None: The best go-to position, or None if the zone is not accessible.
         """
         if not self.is_accessible(team_color):
-            self.logger.debug(f"GoTo position request: Zone {self.zone_type} is not accessible.")
+            self.logger.debug(
+                f"GoTo position request: Zone {self.zone_type} is not accessible."
+            )
             return None
 
         # If no specific go-to positions are defined, return the centroid of the zone
@@ -174,7 +175,9 @@ class BaseArenaZone(ABC):
             return self.polygon.centroid
 
         # Find the nearest go-to position to the ally
-        nearest_position = min(self.go_to_positions, key=lambda p: ally_position.distance(p))
+        nearest_position = min(
+            self.go_to_positions, key=lambda p: ally_position.distance(p)
+        )
         self.logger.debug(
             f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]"
         )
@@ -183,7 +186,10 @@ class BaseArenaZone(ABC):
     """ Update methods """
 
     def update(
-            self, team_color: TeamColor, ally_position: Point | OrientedPoint, enemy_position: Point | OrientedPoint
+        self,
+        team_color: TeamColor,
+        ally_position: Point | OrientedPoint,
+        enemy_position: Point | OrientedPoint,
     ) -> None:
         """
         Update the zone based on the positions of allies and enemies.
@@ -209,13 +215,10 @@ class BaseArenaZone(ABC):
 
     def __instancecheck__(self, other) -> bool:
         """Checks if two objects are instances of the same class."""
-        return (
-                type(self) == type(other)
-                and (
-                    isinstance(self, type(other))
-                    or isinstance(other, type(self))
-                    or isinstance(self, other)
-                )
+        return type(self) == type(other) and (
+            isinstance(self, type(other))
+            or isinstance(other, type(self))
+            or isinstance(self, other)
         )
 
     def __eq__(self, other) -> bool:
@@ -223,9 +226,9 @@ class BaseArenaZone(ABC):
         if not isinstance(self, type(other)):
             return False
         return (
-                self.polygon == getattr(other, "polygon", None) and
-                self.buffered_polygon == getattr(other, "buffered_polygon", None) and
-                self.accessibility == getattr(other, "accessibility", None)
+            self.polygon == getattr(other, "polygon", None)
+            and self.buffered_polygon == getattr(other, "buffered_polygon", None)
+            and self.accessibility == getattr(other, "accessibility", None)
         )
 
     def __ne__(self, other) -> bool:

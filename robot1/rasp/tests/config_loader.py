@@ -65,11 +65,15 @@ class CONFIG:
     LOG_CONFIG = SPECIFIC_CONFIG["log"]
 
     LOGGER_MANAGER_CONFIG = LOG_CONFIG["logger_manager"]
-    LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER = LOGGER_MANAGER_CONFIG[
-        "enable_files_logs_monitoring_only_for_one_logger"
+    LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER = (
+        LOGGER_MANAGER_CONFIG["enable_files_logs_monitoring_only_for_one_logger"]
+    )
+    LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE = LOGGER_MANAGER_CONFIG[
+        "enable_dynamic_config_update"
     ]
-    LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE = LOGGER_MANAGER_CONFIG["enable_dynamic_config_update"]
-    LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER = LOGGER_MANAGER_CONFIG["enable_unique_logger_identifier"]
+    LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER = LOGGER_MANAGER_CONFIG[
+        "enable_unique_logger_identifier"
+    ]
 
     LOGGER_CONFIG = LOG_CONFIG["logger"]
     LOGGER_COLORS = LOGGER_CONFIG["colors"]
@@ -83,7 +87,9 @@ class CONFIG:
     LOGGER_FILES_MONITORING = LOGGER_CONFIG["files_monitoring"]
     LOGGER_FILE_SIZE_UNIT = LOGGER_CONFIG["file_size_unit"]
     LOGGER_DISK_ALERT_THRESHOLD_PERCENT = LOGGER_CONFIG["disk_alert_threshold_percent"]
-    LOGGER_FILES_SIZE_ALERT_THRESHOLD_PERCENT = LOGGER_CONFIG["log_files_size_alert_threshold_percent"]
+    LOGGER_FILES_SIZE_ALERT_THRESHOLD_PERCENT = LOGGER_CONFIG[
+        "log_files_size_alert_threshold_percent"
+    ]
     LOGGER_MAX_LOG_FILE_SIZE = LOGGER_CONFIG["max_log_file_size"]
     LOGGER_IDENTIFIER_MAX_WIDTH = LOGGER_CONFIG["identifier_max_width"]
     LOGGER_FILENAME_LINENO_MAX_WIDTH = LOGGER_CONFIG["filename_lineno_max_width"]
@@ -98,15 +104,26 @@ class CONFIG:
     ROLLING_BASIS_TEENSY_SER = ROLLING_BASIS_CONFIG["rolling_basis_teensy_ser"]
 
     ROLLING_BASIS_PIDS_CONFIG = ROLLING_BASIS_CONFIG["pids"]
-    ROLLING_BASIS_PIDS_LINEAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["linear_speed"]
-    ROLLING_BASIS_PIDS_ANGULAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["angular_speed"]
-    ROLLING_BASIS_PIDS_LINEAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["linear_position"]
-    ROLLING_BASIS_PIDS_ANGULAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["angular_position"]
+    ROLLING_BASIS_PIDS_LINEAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
+        "linear_speed"
+    ]
+    ROLLING_BASIS_PIDS_ANGULAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
+        "angular_speed"
+    ]
+    ROLLING_BASIS_PIDS_LINEAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
+        "linear_position"
+    ]
+    ROLLING_BASIS_PIDS_ANGULAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
+        "angular_position"
+    ]
 
     ROLLING_BASIS_SPEED_PROFILES_CONFIG = ROLLING_BASIS_CONFIG["speed_profiles"]
-    ROLLING_BASIS_DEFAULT_SPEED_PROFILE: dict[str:float] = ROLLING_BASIS_SPEED_PROFILES_CONFIG["default"]
-    ROLLING_BASIS_HIGH_SPEED_PROFILE: dict[str:float] = ROLLING_BASIS_SPEED_PROFILES_CONFIG["high"]
-
+    ROLLING_BASIS_DEFAULT_SPEED_PROFILE: dict[str:float] = (
+        ROLLING_BASIS_SPEED_PROFILES_CONFIG["default"]
+    )
+    ROLLING_BASIS_HIGH_SPEED_PROFILE: dict[str:float] = (
+        ROLLING_BASIS_SPEED_PROFILES_CONFIG["high"]
+    )
 
     # Actuators
     ACTUATORS_CONFIG = SPECIFIC_CONFIG["actuators"]

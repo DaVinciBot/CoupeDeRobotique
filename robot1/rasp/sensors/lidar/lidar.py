@@ -29,14 +29,14 @@ class Lidar:
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            min_angle: float,
-            max_angle: float,
-            unit_angle: str = "deg",
-            unit_distance: str = "cm",
-            min_distance: float = 5.0,
-            initialization_fail_refresh_rate: float = 0.5,
+        self,
+        logger: Logger,
+        min_angle: float,
+        max_angle: float,
+        unit_angle: str = "deg",
+        unit_distance: str = "cm",
+        min_distance: float = 5.0,
+        initialization_fail_refresh_rate: float = 0.5,
     ) -> None:
         """
         Initialize the lidar object and the polars angles.
@@ -79,9 +79,7 @@ class Lidar:
             import pysicktim as lidar
 
             if lidar is None:
-                self._logger.critical(
-                    "[init_lidar] Lidar is not connected !"
-                )
+                self._logger.critical("[init_lidar] Lidar is not connected !")
                 raise ConnectionError("Lidar is not connected !")
             else:
                 self._logger.info("[init_lidar] Lidar is connected !")
@@ -89,17 +87,13 @@ class Lidar:
             # Test lidar connection by testing scan function
             lidar.scan()
             if lidar.scan.distances is None or lidar.scan.distances == []:
-                self._logger.critical(
-                    "[init_lidar] Lidar doesn't work correctly"
-                )
+                self._logger.critical("[init_lidar] Lidar doesn't work correctly")
                 raise ConnectionError("Lidar doesn't work correctly !")
 
             return lidar
 
         except Exception as error:
-            self._logger.critical(
-                f"[init_lidar] Error while importing lidar [{error}]"
-            )
+            self._logger.critical(f"[init_lidar] Error while importing lidar [{error}]")
             raise ImportError(f"Error while importing lidar [{error}] !") from error
 
     def __threading_init_lidar(self):
@@ -166,9 +160,7 @@ class Lidar:
         if unit == "rad":
             return math.pi / 180
 
-        self._logger.critical(
-            f"unit of angles not recognized [{unit}] !"
-        )
+        self._logger.critical(f"unit of angles not recognized [{unit}] !")
         raise ValueError(f"unit of angles not recognized [{unit}] !")
 
     def __init_distances_unit(self, unit: str) -> float:
@@ -186,9 +178,7 @@ class Lidar:
         if unit == "inch":
             return 0.0254
 
-        self._logger.critical(
-            f"unit of distances not recognized [{unit}] !"
-        )
+        self._logger.critical(f"unit of distances not recognized [{unit}] !")
         raise ValueError(f"unit of distances not recognized [{unit}] !")
 
     def __scan(self):
@@ -227,8 +217,8 @@ class Lidar:
         :return: the distances array
         """
         return (
-                np.array(self.__lidar_obj.scan.distances, dtype=np.float32)
-                * self.__distance_unit
+            np.array(self.__lidar_obj.scan.distances, dtype=np.float32)
+            * self.__distance_unit
         )
 
     @property

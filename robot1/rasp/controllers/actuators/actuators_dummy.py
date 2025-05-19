@@ -10,13 +10,13 @@ from teensy import GPIOComTeensy, ActuatorType
 # ====== Class Part ======
 class ActuatorsDummy(GPIOComTeensy):
     def __init__(
-            self,
-            logger: Logger,
-            serial_number=CONFIG.ACTUATOR_TEENSY_SER,
-            vid=CONFIG.TEENSY_VID,
-            pid=CONFIG.TEENSY_PID,
-            baudrate=CONFIG.TEENSY_BAUDRATE,
-            enable_crc=CONFIG.TEENSY_CRC,
+        self,
+        logger: Logger,
+        serial_number=CONFIG.ACTUATOR_TEENSY_SER,
+        vid=CONFIG.TEENSY_VID,
+        pid=CONFIG.TEENSY_PID,
+        baudrate=CONFIG.TEENSY_BAUDRATE,
+        enable_crc=CONFIG.TEENSY_CRC,
     ):
         # Initialize the parent-GPIOComTeensy class
         super().__init__(logger, serial_number, vid, pid, baudrate, enable_crc, True)
@@ -50,13 +50,13 @@ class ActuatorsDummy(GPIOComTeensy):
 
     @log("DummyActuators")
     def set_servo_angle(
-            self,
-            pin: int,
-            angle: int,
-            min_angle: int = 0,
-            max_angle: int = 180,
-            detach=False,
-            detach_delay=1000,
+        self,
+        pin: int,
+        angle: int,
+        min_angle: int = 0,
+        max_angle: int = 180,
+        detach=False,
+        detach_delay=1000,
     ) -> None:
         """
         Logs the action of setting the angle of the servo at the given pin.
@@ -78,13 +78,9 @@ class ActuatorsDummy(GPIOComTeensy):
                 )
             else:
                 if not self.gpio_manager.is_declared_gpio(pin):
-                    self.gpio_manager.add_gpio(
-                        pin, ActuatorType.SERVO
-                    )
+                    self.gpio_manager.add_gpio(pin, ActuatorType.SERVO)
                     self.logger.info(f"Pin {pin} added as a servo pin")
-                elif not self.gpio_manager.is_valid_gpio(
-                        pin, ActuatorType.SERVO
-                ):
+                elif not self.gpio_manager.is_valid_gpio(pin, ActuatorType.SERVO):
                     self.logger.error(
                         f"Pin {pin} is not a valid servo pin because it is registered as a "
                         f"{str(self.gpio_manager.get_type_gpio(pin))}"
@@ -110,6 +106,4 @@ class ActuatorsDummy(GPIOComTeensy):
         Returns:
             None
         """
-        self.logger.info(
-            f"DummyActuators: Simulating attaching switch to pin {pin}"
-        )
+        self.logger.info(f"DummyActuators: Simulating attaching switch to pin {pin}")

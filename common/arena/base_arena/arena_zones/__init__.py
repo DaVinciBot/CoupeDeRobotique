@@ -18,12 +18,16 @@ from arena.base_arena.arena_zones.ally_zone import AllyZone
 # 1.Colored reserved zones
 # Base class
 from arena.base_arena.arena_zones.color_reserved_zones import BaseColorReservedZone
+
 # Derived classes
 from arena.base_arena.arena_zones.color_reserved_zones import BlueReservedZone
 from arena.base_arena.arena_zones.color_reserved_zones import YellowReservedZone
 
 # 2.Auto speed vector zones
 # Base class
-from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones import BaseSpeedVectorAutoCalculateZone
+from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones import (
+    BaseSpeedVectorAutoCalculateZone,
+)
+
 # Derived classes
 from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones import EnemyZone

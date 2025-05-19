@@ -26,6 +26,5 @@ class BasePathPlannerParams:
 
 
 class BasePathPlannerPlanPathParams:
-
     def __init__(self, start: OrientedPoint):
         self.start: OrientedPoint = start

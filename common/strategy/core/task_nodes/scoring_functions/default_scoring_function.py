@@ -9,7 +9,6 @@ from strategy.core.base_game_context import BaseGameContext
 
 
 if TYPE_CHECKING:
-
     from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
 from strategy.core.task_nodes.scoring_functions.base_scoring_function import (
@@ -18,7 +17,6 @@ from strategy.core.task_nodes.scoring_functions.base_scoring_function import (
 
 
 class DefaultScoringFunction(BaseScoringFunction):
-
     def compute(
         self, prev_node: BaseTaskNode, current_node: BaseTaskNode, ctx: BaseGameContext
     ) -> float:

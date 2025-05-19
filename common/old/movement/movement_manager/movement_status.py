@@ -6,6 +6,7 @@ class MovementStatus(Enum):
     Enum class for movement status.
     Represents various states related to movement outcomes.
     """
+
     SUCCESS = auto()  # Movement completed successfully
     CRASH = auto()  # Movement resulted in a crash
     NO_ACCESSIBLE = auto()  # Target area is not accessible
@@ -28,4 +29,8 @@ class MovementStatus(Enum):
         """
         Check if the movement status indicates that the movement is possible.
         """
-        return self not in {MovementStatus.NO_ACCESSIBLE, MovementStatus.INVALID_COMMAND, MovementStatus.BLOCKED}
+        return self not in {
+            MovementStatus.NO_ACCESSIBLE,
+            MovementStatus.INVALID_COMMAND,
+            MovementStatus.BLOCKED,
+        }

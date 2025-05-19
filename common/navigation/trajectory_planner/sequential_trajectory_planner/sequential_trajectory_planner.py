@@ -15,6 +15,7 @@ from geometry import OrientedPoint
 
 # ====== Local Project Imports ======
 # Structures
+from navigation.path_planner import Direction
 from navigation.trajectory_planner.structs import TrajectoryPlanCommand
 
 # Trajectory planner class & parameters
@@ -65,6 +66,10 @@ class SequentialTrajectoryPlanner(
         self.segments_mapper: SegmentMapper | None = None
         self._last_call_time: float = 0.0
 
+    @staticmethod
+    def _normalize_angle(angle: float):
+        return (angle + math.pi) % (2 * math.pi) - math.pi
+
     def _compute_rotation_segment_to_be_front(
         self, start: OrientedPoint, target: OrientedPoint
     ) -> RotationSegment:
@@ -79,7 +84,9 @@ class SequentialTrajectoryPlanner(
             RotationSegment: Segment that rotates in place to face the target.
         """
         # Compute delta-theta to rotate in front of the target
-        d_theta = math.atan2(target.y - start.y, target.x - start.x) - start.theta
+        d_theta = self._normalize_angle(
+            math.atan2(target.y - start.y, target.x - start.x) - start.theta
+        )
 
         # Compute intermediate target position (start + rotation)
         target = OrientedPoint(start.x, start.y, start.theta + d_theta)
@@ -108,7 +115,7 @@ class SequentialTrajectoryPlanner(
             RotationSegment: Segment that aligns orientation with target.
         """
         # Compute delta-theta to rotate in front of the target
-        d_theta = target.theta - start.theta
+        d_theta = self._normalize_angle(target.theta - start.theta)
 
         # Compute intermediate target position (start + rotation)
         target = OrientedPoint(start.x, start.y, target.theta)
@@ -277,6 +284,18 @@ class SequentialTrajectoryPlanner(
                     current_position=segment.start_position
                 )
             )
+
+        # Handle asked direction
+        if self.params.direction == Direction.BACKWARD:
+            # TODO: comment bien maitriser la marche arrière ?
+            trajectory_plan_command.position = OrientedPoint(
+                trajectory_plan_command.position.x,
+                trajectory_plan_command.position.y,
+                trajectory_plan_command.position.theta + math.pi,
+            )
+
+            trajectory_plan_command.linear_speed *= -1
+            trajectory_plan_command.angular_speed *= -1
 
         # Save the last call time
         self._last_call_time: float = time_elapsed

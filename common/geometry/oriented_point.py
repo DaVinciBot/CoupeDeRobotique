@@ -55,11 +55,11 @@ class OrientedPoint(Point):
         )
 
     def __new__(
-            cls,
-            x_or_coords: float | Tuple[float, float],
-            y: float | None = None,
-            *args,
-            **kwargs,
+        cls,
+        x_or_coords: float | Tuple[float, float],
+        y: float | None = None,
+        *args,
+        **kwargs,
     ) -> "OrientedPoint":
         if isinstance(x_or_coords, Tuple):
             point = super().__new__(cls, x_or_coords)
@@ -95,14 +95,18 @@ class OrientedPoint(Point):
 
     def __add__(self, other):
         if isinstance(other, OrientedPoint):
-            return OrientedPoint((self.x + other.x, self.y + other.y), self.theta + other.theta)
+            return OrientedPoint(
+                (self.x + other.x, self.y + other.y), self.theta + other.theta
+            )
         if isinstance(other, Point):
             return OrientedPoint((self.x + other.x, self.y + other.y), self.theta)
         return NotImplemented
 
     def __sub__(self, other):
         if isinstance(other, OrientedPoint):
-            return OrientedPoint((self.x - other.x, self.y - other.y), self.theta - other.theta)
+            return OrientedPoint(
+                (self.x - other.x, self.y - other.y), self.theta - other.theta
+            )
         if isinstance(other, Point):
             return OrientedPoint((self.x - other.x, self.y - other.y), self.theta)
 

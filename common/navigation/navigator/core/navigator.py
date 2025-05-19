@@ -15,7 +15,6 @@ from arena import AllyZone, EnemyZone
 
 
 class Navigator:
-
     def __init__(self, logger: Logger | None = None) -> None:
         self.logger = logger or Logger(
             identifier=self.__class__.__name__,

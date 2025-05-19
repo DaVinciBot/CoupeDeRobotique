@@ -29,14 +29,14 @@ class TrajectoryComputer:
     """
 
     def __init__(
-            self,
-            # Loggers:
-            logger: Logger,
-            path_finder_logger: Logger,
-            # Arena (should be a pointer of the arena)
-            arena_ptr: BaseArena,
-            # Trajectory params
-            trajectory_params: TrajectoryParams,
+        self,
+        # Loggers:
+        logger: Logger,
+        path_finder_logger: Logger,
+        # Arena (should be a pointer of the arena)
+        arena_ptr: BaseArena,
+        # Trajectory params
+        trajectory_params: TrajectoryParams,
     ):
         """
         Initializes the trajectory computer.
@@ -90,18 +90,36 @@ class TrajectoryComputer:
         new_x, new_y = centroid.x, centroid.y
 
         # Check if the goal is too close to the border
-        if centroid.x < self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer:
-            new_x = self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+        if (
+            centroid.x
+            < self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+        ):
+            new_x = (
+                self.arena_ptr.border_buffer
+                + self.trajectory_params.goal.obstacle_buffer
+            )
         if (self.arena_ptr.width - centroid.x) < (
-                self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+            self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
         ):
-            new_x = self.arena_ptr.width - (self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer)
-        if centroid.y < self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer:
-            new_y = self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+            new_x = self.arena_ptr.width - (
+                self.arena_ptr.border_buffer
+                + self.trajectory_params.goal.obstacle_buffer
+            )
+        if (
+            centroid.y
+            < self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+        ):
+            new_y = (
+                self.arena_ptr.border_buffer
+                + self.trajectory_params.goal.obstacle_buffer
+            )
         if (self.arena_ptr.height - centroid.y) < (
-                self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
+            self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer
         ):
-            new_y = self.arena_ptr.height - (self.arena_ptr.border_buffer + self.trajectory_params.goal.obstacle_buffer)
+            new_y = self.arena_ptr.height - (
+                self.arena_ptr.border_buffer
+                + self.trajectory_params.goal.obstacle_buffer
+            )
 
         return Point(new_x, new_y)
 
@@ -117,24 +135,31 @@ class TrajectoryComputer:
             if self.trajectory_params.goal > len(self.arena_ptr.zones):
                 self.logger.error("Invalid zone ID given in trajectory parameters.")
                 return
-            self.trajectory_params.computed_goal = self.arena_ptr.zones[self.trajectory_params.goal]
+            self.trajectory_params.computed_goal = self.arena_ptr.zones[
+                self.trajectory_params.goal
+            ]
 
         # 2. If goal is a BaseArenaZone -> compute the best goal point
         # (We also consider the case where the goal is an ID of a zone
         # because we transform in the part 1. the computed goal into the associated zone)
-        if (
-                isinstance(self.trajectory_params.goal, BaseArenaZone) or
-                isinstance(self.trajectory_params.goal, int)
+        if isinstance(self.trajectory_params.goal, BaseArenaZone) or isinstance(
+            self.trajectory_params.goal, int
         ):
             # Use zone method to get the best goal point from zone
             if isinstance(self.trajectory_params.goal, int):
-                self.trajectory_params.computed_goal = self.trajectory_params.computed_goal.get_go_to_position(
-                    ally_position=self.arena_ptr.ally_zone.point, team_color=self.arena_ptr.team_color
+                self.trajectory_params.computed_goal = (
+                    self.trajectory_params.computed_goal.get_go_to_position(
+                        ally_position=self.arena_ptr.ally_zone.point,
+                        team_color=self.arena_ptr.team_color,
+                    )
                 )
             # For the case where the goal is an ID of a zone, consider the zone in computed goal
             else:
-                self.trajectory_params.computed_goal = self.trajectory_params.goal.get_go_to_position(
-                    ally_position=self.arena_ptr.ally_zone.point, team_color=self.arena_ptr.team_color
+                self.trajectory_params.computed_goal = (
+                    self.trajectory_params.goal.get_go_to_position(
+                        ally_position=self.arena_ptr.ally_zone.point,
+                        team_color=self.arena_ptr.team_color,
+                    )
                 )
 
             # If goal is None => zone is not accessible
@@ -145,7 +170,9 @@ class TrajectoryComputer:
             # If goal is not an OrientedPoint ça veut dire que acune go to position n'est définie
             # On calcule alors automatiquemnt ce point
             if not isinstance(self.trajectory_params.computed_goal, OrientedPoint):
-                self.trajectory_params.computed_goal = self._compute_go_to_destination_from_zone()
+                self.trajectory_params.computed_goal = (
+                    self._compute_go_to_destination_from_zone()
+                )
 
             # TODO: prendre en compte que quand on a que un point en goal, on ne peut pas avoir de theta,
             #  il faut le cacluler automatiqument (le même que celui d'avant dans la trjectoire par exmepl) voir pour mettre ay niveay du pathfinder
@@ -154,7 +181,6 @@ class TrajectoryComputer:
 
         self.trajectory_params.computed_goal = self.trajectory_params.goal
         return self.trajectory_params.computed_goal
-
 
     def _init_path_finder(self) -> None:
         """Initializes the pathfinder with the current goal and arena details."""
@@ -168,9 +194,9 @@ class TrajectoryComputer:
 
     # ====== Public methods ====== #
     def compute_path(
-            self,
-            use_static_and_dynamic_grid: bool,
-            current_position: OrientedPoint = None,
+        self,
+        use_static_and_dynamic_grid: bool,
+        current_position: OrientedPoint = None,
     ) -> list[OrientedPoint] | None:
         """
         Computes a path from the current position to the goal.
@@ -188,13 +214,15 @@ class TrajectoryComputer:
 
         # Update pathfinder with current position
         self.path_finder.update_current_position(
-            self.arena_ptr.ally_zone.point if current_position is None else current_position
+            self.arena_ptr.ally_zone.point
+            if current_position is None
+            else current_position
         )
 
         # Run pathfinder
         self.path_finder.find_oriented_path(
             use_static_and_dynamic_grid=use_static_and_dynamic_grid,
-            smooth_path=self.trajectory_params.smooth_trajectory
+            smooth_path=self.trajectory_params.smooth_trajectory,
         )
 
         return self.path_finder.oriented_path_found
@@ -262,9 +290,9 @@ class TrajectoryComputer:
 
         # Compute angular velocity based on changes in orientation
         if (
-                self.__last_theta is None
-                or self.__last_time_theta is None
-                or t == self.__last_time_theta
+            self.__last_theta is None
+            or self.__last_time_theta is None
+            or t == self.__last_time_theta
         ):
             v_angular = self.__initial_angular_speed
         else:
@@ -282,7 +310,7 @@ class TrajectoryComputer:
         # Clamp angular velocity to the maximum allowed value
         if abs(v_angular) > self.trajectory_params.speed_profile.max_angular_speed:
             v_angular = self.trajectory_params.speed_profile.max_angular_speed * (
-                    v_angular / abs(v_angular)
+                v_angular / abs(v_angular)
             )
 
         # Update state for future computations
@@ -307,9 +335,9 @@ class TrajectoryComputer:
             self.cumulative_distances.append(total_distance)
 
     def __init_curves(
-            self,
-            initial_linear_speed: float = None,
-            initial_angular_speed: float = None,
+        self,
+        initial_linear_speed: float = None,
+        initial_angular_speed: float = None,
     ) -> None:
         """Initializes speed profiles for the trajectory."""
         self.__initial_angular_speed = initial_angular_speed
@@ -334,9 +362,9 @@ class TrajectoryComputer:
 
     # ====== Public methods ====== #
     def compute_trajectory(
-            self,
-            initial_linear_speed: float = None,
-            initial_angular_speed: float = None,
+        self,
+        initial_linear_speed: float = None,
+        initial_angular_speed: float = None,
     ):
         """
         Computes the trajectory based on the computed path and speed profiles.
@@ -350,7 +378,9 @@ class TrajectoryComputer:
             return
 
         # Save the path to follow
-        self.path_to_follow = self.path_finder.oriented_path_found[:]  # Deep copy to avoid pointer issues
+        self.path_to_follow = self.path_finder.oriented_path_found[
+            :
+        ]  # Deep copy to avoid pointer issues
 
         # Set initial conditions
         self.start_time = time.time()
@@ -365,11 +395,11 @@ class TrajectoryComputer:
     """
 
     def compute(
-            self,
-            use_static_and_dynamic_grid: bool,
-            current_position: OrientedPoint = None,
-            current_linear_speed: float = None,
-            current_angular_speed: float = None,
+        self,
+        use_static_and_dynamic_grid: bool,
+        current_position: OrientedPoint = None,
+        current_linear_speed: float = None,
+        current_angular_speed: float = None,
     ):
         """
         Computes both the path and trajectory.
@@ -414,7 +444,5 @@ class TrajectoryComputer:
         )
 
         return RollingBasisCommand(
-            position=position,
-            linear_speed=linear_speed,
-            angular_speed=angular_speed
+            position=position, linear_speed=linear_speed, angular_speed=angular_speed
         )

@@ -3,6 +3,7 @@
 # planner parameter configurations. The base implementation includes a no-op constructor.
 
 from navigation.trajectory_planner.structs import TrajectoryPlannerStrategy
+from navigation.path_planner import Direction
 
 
 class BaseTrajectoryPlannerParams:
@@ -11,7 +12,11 @@ class BaseTrajectoryPlannerParams:
     Can be extended by specific planner parameter classes to include additional settings.
     """
 
-    def __init__(self, trajectory_planning_strategy: TrajectoryPlannerStrategy) -> None:
+    def __init__(
+        self,
+        trajectory_planning_strategy: TrajectoryPlannerStrategy,
+        direction: Direction,
+    ) -> None:
         """
         Initialize the base planner parameters.
         Currently, this base class has no attributes or logic.
@@ -19,3 +24,4 @@ class BaseTrajectoryPlannerParams:
         self.trajectory_planning_strategy: TrajectoryPlannerStrategy = (
             trajectory_planning_strategy
         )
+        self.direction: Direction = direction

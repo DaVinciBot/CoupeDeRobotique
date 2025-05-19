@@ -42,3 +42,6 @@ from strategy.core.sub_graphs import (
 from strategy.core.builders import (
     SubGraphBuilder,
 )
+
+# --- GraphRunner ---
+from strategy.core.graph_runner import GraphRunner

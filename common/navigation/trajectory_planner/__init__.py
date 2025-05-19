@@ -27,4 +27,6 @@ from navigation.trajectory_planner.basic_trajectory_planner import (
 )
 
 # Import Trajectory Planner Factory
-from navigation.trajectory_planner.trajectory_planner_factory import TrajectoryPlannerFactory
+from navigation.trajectory_planner.trajectory_planner_factory import (
+    TrajectoryPlannerFactory,
+)
