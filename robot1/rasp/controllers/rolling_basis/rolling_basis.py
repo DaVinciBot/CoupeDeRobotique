@@ -132,7 +132,7 @@ class RollingBasis(BaseComTeensy):
     ####################################
     # Message Sending Methods          #
     ####################################
-    # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
+    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_speed_and_position(
         self,
         target_linear_speed: float,
