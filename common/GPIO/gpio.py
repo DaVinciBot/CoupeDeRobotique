@@ -1,5 +1,5 @@
 # import RPi.GPIO as GPIO
-from gpiozero import LED, Button
+from gpiozero import LED, InputDevice
 
 
 class PIN:
@@ -39,11 +39,11 @@ class PIN:
             self.device = LED(self.pin)
             self.device.off()
         elif mode == "input":
-            self.device = Button(self.pin)
+            self.device = InputDevice(self.pin)
         elif mode == "input_pullup":
-            self.device = Button(self.pin, pull_up=True)
+            self.device = InputDevice(self.pin, active_state=False, pull_up=True)
         elif mode == "input_pulldown":
-            self.device = Button(self.pin, pull_up=False)
+            self.device = InputDevice(self.pin, active_state=False, pull_up=False)
 
     def digital_write(self, state: bool):
         """
