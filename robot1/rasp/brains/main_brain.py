@@ -76,7 +76,7 @@ class MainBrain(Brain):
     """ ### Routines ### """
 
     @Brain.task(process=True, run_on_start=False)
-    async def wait_for_trigger(self):
+    def wait_for_trigger(self):
         """
         Waits for a trigger signal from the jack.
 
@@ -114,7 +114,7 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        self.wait_for_trigger()
+        await self.wait_for_trigger()
         # time.sleep(500) A utiliser pour les matchs pour l'instant
 
         for i in range(20, 51, 0.5):
