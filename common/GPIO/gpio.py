@@ -43,11 +43,15 @@ class PIN:
             self.device = InputDevice(self.pin, pin_factory=LGPIOFactory())
         elif mode == "input_pullup":
             self.device = InputDevice(
-                self.pin, active_state=False, pull_up=True, pin_factory=LGPIOFactory()
+                self.pin,
+                pull_up=True,
+                pin_factory=LGPIOFactory(),
             )
         elif mode == "input_pulldown":
             self.device = InputDevice(
-                self.pin, active_state=False, pull_up=False, pin_factory=LGPIOFactory()
+                self.pin,
+                pull_up=False,
+                pin_factory=LGPIOFactory(),
             )
 
     def digital_write(self, state: bool):
