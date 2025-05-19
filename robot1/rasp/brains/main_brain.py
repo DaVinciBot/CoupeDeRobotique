@@ -94,11 +94,11 @@ class MainBrain(Brain):
             enemy_zone=self.arena.enemy_zone,
         )
         rolling_basis.set_speed_and_position(*cmd.get_command())
-        yellow_strategy.yellow_strategy_runner.handle(
+        """yellow_strategy.yellow_strategy_runner.handle(
             ShowGameContext(
                 arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
             )
-        )
+        )"""
         self.rolling_basis_odometrie = rolling_basis.odometrie
         rolling_basis.plot_answer_pid(
             True if navigator.current_task is None else False
