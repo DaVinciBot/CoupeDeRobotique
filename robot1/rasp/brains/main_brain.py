@@ -126,7 +126,6 @@ class MainBrain(Brain):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 90))
             time.sleep(0.1)
 
-
         # --- MetaProg is insane (loop) --- #
         rolling_basis.logger.info(rolling_basis.odometrie)
         time.sleep(1)

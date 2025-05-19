@@ -117,8 +117,8 @@ if __name__ == "__main__":
 
     os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
     # Jack
-    #jack = PIN(CONFIG.JACK_PIN)
-    #jack.setup("input_pulldown", reverse_state=True)
+    jack = PIN(CONFIG.JACK_PIN)
+    jack.setup("input_pulldown", reverse_state=True)
     
     # Movement
     # Movement manager
@@ -137,7 +137,7 @@ if __name__ == "__main__":
         lidar=lidar,
         arena=arena,
         ws_cmd=ws_cmd,
-        jack=None,
+        jack=jack,
     )
 
     """
