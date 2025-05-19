@@ -99,18 +99,8 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        time.sleep(3)
-        
-        for i in range(20, 51, 1):
-            rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 0))
-            rolling_basis.logger.info(rolling_basis.odometrie)
-            time.sleep(0.1)
-
         # --- MetaProg is insane (loop) --- #
-        rolling_basis.logger.info(rolling_basis.odometrie)
-        time.sleep(0.5)
-
-        """if self.navigator_task is not None:
+        if self.navigator_task is not None:
             navigator.add_navigation_task(self.navigator_task)
             self.navigator_task = None
 
@@ -118,13 +108,13 @@ class MainBrain(Brain):
             ally_zone=self.arena.ally_zone,
             enemy_zone=self.arena.enemy_zone,
         )
-        #rolling_basis.set_speed_and_position(*cmd.get_command())
+        rolling_basis.set_speed_and_position(*cmd.get_command())
         # yellow_strategy_runner.handle(
         #     ShowGameContext(
         #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
         #     )
         # )
-        self.rolling_basis_odometrie = rolling_basis.odometrie"""
+        self.rolling_basis_odometrie = rolling_basis.odometrie
 
     # @Brain.task(
     #     process=True,
@@ -184,15 +174,16 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
 
-        # Ici met le déplacement que tu veux
-        # self.navigator_task = NavigatorTaskParams(
-        #     goal=None,
-        #     timeout=None,
-        #     path_planner_params=DeltaPathPlannerParams(distance=10),
-        #     trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-        #     speed_profiler=CONFIG.ROLLING_BASIS_SPEED_PROFILER_PID,
-        #     avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        # )
+        self.navigator_task = NavigatorTaskParams(
+            goal=None,
+            timeout=None,
+            path_planner_params=DeltaPathPlannerParams(distance=10),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+            speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
+            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+        )
+        
+        
         # get_all_serial_number()
         # godHand = Actuators(
         #     logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
