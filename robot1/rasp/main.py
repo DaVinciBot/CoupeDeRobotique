@@ -60,7 +60,7 @@ if __name__ == "__main__":
     logger_grid_manager = Logger(
         identifier="GridManager",
         print_log_level=LogLevels.INFO,
-        #follow_logger_manager_rules=True,
+        # follow_logger_manager_rules=True,
     )
     logger_show_arena = Logger(
         identifier="ShowArena",
@@ -118,8 +118,8 @@ if __name__ == "__main__":
     os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
     # Jack
     jack = PIN(CONFIG.JACK_PIN)
-    jack.setup("input_pulldown", reverse_state=True)
-    
+    jack.setup("input_pullup", reverse_state=True)
+
     # Movement
     # Movement manager
     # See ./brains/controllers_brain.py for more details
