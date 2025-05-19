@@ -137,7 +137,7 @@ void Rolling_Basis::handle(
     double xerr = target_position.x - this->X;
     double yerr = target_position.y - this->Y;
 
-    double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2)); // fmod to keep the angle between -PI and PI, TODO: a tester !!
+    double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2)); 
     double theta_error = target_position.theta - this->THETA;
     
     theta_error = normalizeAngle(theta_error);
@@ -154,8 +154,10 @@ void Rolling_Basis::handle(
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);
 
-    String error = "Angular error : " + String(theta_error) + "Linear error: " + String(distance_error);
+    String pid = "PID linear: " + String(linear_correction) + " PID angular: " + String(angular_correction);
+    String error = "Angular error : " + String(theta_error) + " Linear error: " + String(distance_error);
     String pwm = "PWM Right: " + String(right_pwm) + " PWM Left: " + String(left_pwm);
+    com->print((char *)pid.c_str());
     com->print((char *)pwm.c_str());
     com->print((char *)error.c_str());
 }
