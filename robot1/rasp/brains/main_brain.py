@@ -114,11 +114,9 @@ class MainBrain(Brain):
         #self.wait_for_trigger() A faire après avoir fix GPIO
         #time.sleep(500) A utiliser pour les matchs pour l'instant
         
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, 0))
-        time.sleep(4)
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
-        time.sleep(4)
-        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 55, -90))
+        for i in range(20, 51):
+            rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 0))
+            time.sleep(0.1)
 
         # --- MetaProg is insane (loop) --- #
         if self.navigator_task is not None:
@@ -195,7 +193,14 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
         # Ici met le déplacement que tu veux
-
+        self.navigator_task = NavigatorTaskParams(
+            goal=None,
+            timeout=None,
+            path_planner_params=DeltaPathPlannerParams(distance=10),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+            speed_profiler=CONFIG.ROLLING_BASIS_SPEED_PROFILER_PID,
+            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+        )
         # get_all_serial_number()
         # godHand = Actuators(
         #     logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
