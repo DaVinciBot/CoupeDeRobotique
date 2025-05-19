@@ -72,7 +72,8 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        from boombot_strategy import ShowGameContext, yellow_strategy_runner
+        from robot1.rasp.boombot_strategy.show_game_context import ShowGameContext
+        from robot1.rasp.boombot_strategy.strategies import yellow_strategy
         navigator = Navigator()
         
         # Rolling basis & Actuators
@@ -95,7 +96,7 @@ class MainBrain(Brain):
             enemy_zone=self.arena.enemy_zone,
         )
         rolling_basis.set_speed_and_position(*cmd.get_command())
-        yellow_strategy_runner.handle(
+        yellow_strategy.yellow_strategy_runner.handle(
             ShowGameContext(
                 arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
             )
