@@ -137,7 +137,13 @@ void Rolling_Basis::handle(
     double xerr = target_position.x - this->X;
     double yerr = target_position.y - this->Y;
 
-    double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2)); 
+    // double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2)); ! pb en cas d'overshoot !
+    double distance_error = xerr * cos(this->THETA) + yerr * sin(this->THETA);
+    double mag = sqrt(pow(xerr, 2) + pow(yerr, 2));
+    double sign = (distance_error >= 0.0) ? +1.0 : -1.0;
+    distance_error = mag * sign;
+
+
     double theta_error = target_position.theta - this->THETA;
     
     theta_error = normalizeAngle(theta_error);
