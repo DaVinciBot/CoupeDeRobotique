@@ -151,15 +151,15 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
-    # @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
-    # async def update_arena(self) -> None:
-    #     # Update the arena with the new position of the robot
-    #     self.arena.update(
-    #         ally_position=self.rolling_basis_odometrie,
-    #         lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
-    #         optimized_update=True,
-    #         # _enemy_position=self.position_generator(),
-    #     )
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
+    async def update_arena(self) -> None:
+        # Update the arena with the new position of the robot
+        self.arena.update(
+            ally_position=self.rolling_basis_odometrie,
+            lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
+            optimized_update=True,
+            # _enemy_position=self.position_generator(),
+        )
 
     """ ### One-Shot Tasks ### """
 
