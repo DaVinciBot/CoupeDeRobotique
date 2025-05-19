@@ -44,6 +44,7 @@ class PIN:
         elif mode == "input_pullup":
             self.device = InputDevice(
                 self.pin,
+                active_state=False,
                 pull_up=True,
                 pin_factory=LGPIOFactory(),
             )
