@@ -113,10 +113,10 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        
-        #self.wait_for_trigger() A faire après avoir fix GPIO
-        #time.sleep(500) A utiliser pour les matchs pour l'instant
-        
+
+        self.wait_for_trigger()
+        # time.sleep(500) A utiliser pour les matchs pour l'instant
+
         for i in range(20, 51, 0.5):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 0))
             time.sleep(0.1)
@@ -128,7 +128,6 @@ class MainBrain(Brain):
         for i in range(51, 21, -0.5):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 3.14))
             time.sleep(0.1)
-
 
         # --- MetaProg is insane (loop) --- #
         rolling_basis.logger.info(rolling_basis.odometrie)
