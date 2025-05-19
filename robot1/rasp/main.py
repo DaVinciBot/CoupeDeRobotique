@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
     ws_server.run()
 
-    import cProfile
+    #import cProfile
 
     # profiler = cProfile.Profile()
     # profiler.enable()

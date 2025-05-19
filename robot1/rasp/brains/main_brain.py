@@ -105,13 +105,13 @@ class MainBrain(Brain):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 0))
             time.sleep(0.1)
 
-        for i in range(0, 3.14, 1):
-            rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -i))
-            time.sleep(0.1)
+        # for i in range(0, 3.14, 1):
+        #     rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -i))
+        #     time.sleep(0.1)
 
-        for i in range(51, 21, -1):
-            rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 3.14))
-            time.sleep(0.1)
+        # for i in range(51, 21, -1):
+        #     rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 3.14))
+        #     time.sleep(0.1)
 
         # --- MetaProg is insane (loop) --- #
         rolling_basis.logger.info(rolling_basis.odometrie)
