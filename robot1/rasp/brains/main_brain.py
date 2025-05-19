@@ -55,7 +55,7 @@ class MainBrain(Brain):
         # WS routes
         ws_cmd: WServerRouteManager,
         # Tirette
-        jack: None,
+        jack: PIN = None,
     ) -> None:
         self.lidar: Lidar = lidar
         self.arena: ShowArena = arena
@@ -114,7 +114,6 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        
         # time.sleep(500) A utiliser pour les matchs pour l'instant
 
         for i in range(20, 51, 0.5):
@@ -205,7 +204,7 @@ class MainBrain(Brain):
             self.arena.team_color, start_position, Point(290, 190)
         )
         self.rolling_basis_odometrie = start_position
-        
+
         await self.wait_for_trigger()
 
         # Ici met le déplacement que tu veux
