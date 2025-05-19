@@ -75,8 +75,8 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
-    @Brain.task(process=True, run_on_start=False)
-    def wait_for_trigger(self):
+    @Brain.task(process=False, run_on_start=False)
+    async def wait_for_trigger(self):
         """
         Waits for a trigger signal from the jack.
 
