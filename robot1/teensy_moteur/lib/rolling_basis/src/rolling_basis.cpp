@@ -155,7 +155,7 @@ void Rolling_Basis::handle(
     this->left_motor->set_motor(left_pwm);
     
     static long print_count = 0;
-    if (print_count++ > 65536) // 65536 = 2^16
+    if (print_count++ > 10) 
     {
         String pid = "PID linear: " + String(linear_correction) + " PID angular: " + String(angular_correction);
         String error = "Angular error : " + String(theta_error) + " Linear error: " + String(distance_error);
@@ -163,5 +163,6 @@ void Rolling_Basis::handle(
         com->print((char *)pid.c_str());
         com->print((char *)pwm.c_str());
         com->print((char *)error.c_str());
+        print_count = 0;
     }
 }
