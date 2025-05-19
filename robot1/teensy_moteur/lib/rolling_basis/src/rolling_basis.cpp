@@ -136,6 +136,7 @@ void Rolling_Basis::handle(
     double yerr = target_position.y - this->Y;
     double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2)); // fmod to keep the angle between -PI and PI, TODO: a tester !!
     // double orientation_error = fmod(atan2(yerr, xerr) + theta_error_odometry - this->THETA, 2 * PI);
+    double theta_error_odometry = target_position.theta - this->THETA;
     double orientation_error = theta_error_odometry;
 
     if (orientation_error > PI)
