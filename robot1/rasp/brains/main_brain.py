@@ -83,7 +83,7 @@ class MainBrain(Brain):
     @Brain.task(
         process=True,
         run_on_start=False,
-        refresh_rate=0.000001,
+        refresh_rate=0.1,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
@@ -133,34 +133,34 @@ class MainBrain(Brain):
         # )
         self.rolling_basis_odometrie = rolling_basis.odometrie"""
 
-    @Brain.task(
-        process=True,
-        run_on_start=True,
-        refresh_rate=0.01,
-        define_loop_later=True,
-        start_loop_marker="# --- MetaProg is insane (loop) --- #",
-    )
-    def visualize_arena(self) -> None:
-        # --- Initialization --- #
-        fig, ax = plt.subplots()
+    # @Brain.task(
+    #     process=True,
+    #     run_on_start=True,
+    #     refresh_rate=0.01,
+    #     define_loop_later=True,
+    #     start_loop_marker="# --- MetaProg is insane (loop) --- #",
+    # )
+    # def visualize_arena(self) -> None:
+    #     # --- Initialization --- #
+    #     fig, ax = plt.subplots()
 
-        # --- MetaProg is insane (loop) --- #
+    #     # --- MetaProg is insane (loop) --- #
 
-        ax.clear()
-        self.arena.visualize(
-            # Visualization options
-            show_buffer=True,
-            # trajectory=self.path,
-            display_zones_go_to_positions=True,
-            show_ally_direction=True,
-            # Plot options
-            show=False,
-            plot=(ax, fig),
-            # Additional options
-            # additional_zones=[self.th_ally_zone],
-            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
-        )
-        plt.pause(0.01)
+    #     ax.clear()
+    #     self.arena.visualize(
+    #         # Visualization options
+    #         show_buffer=True,
+    #         # trajectory=self.path,
+    #         display_zones_go_to_positions=True,
+    #         show_ally_direction=True,
+    #         # Plot options
+    #         show=False,
+    #         plot=(ax, fig),
+    #         # Additional options
+    #         # additional_zones=[self.th_ally_zone],
+    #         # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
+    #     )
+    #     plt.pause(0.01)
 
     """
     ### Main Process ###
