@@ -129,11 +129,11 @@ struct msg_reset_teensy
 struct msg_update_rolling_basis
 {
     byte command = UPDATE_ROLLING_BASIS;
-    float x;
-    float y;
-    float theta;
-    float current_linear_speed;
-    float current_angular_speed;
+    double x;
+    double y;
+    double theta;
+    double current_linear_speed;
+    double current_angular_speed;
 };
 
 // Actuators
