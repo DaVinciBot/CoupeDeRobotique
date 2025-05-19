@@ -112,7 +112,7 @@ class Actuators(
 
         # WARNING: pin_driver is also defined in the C++ code,
         # because it needs to receive a HIGH from the beginning, or it will start heating up
-        pin_dir = 13
+        pin_dir = 12
         pin_step = 14
         pin_driver = 15
 
