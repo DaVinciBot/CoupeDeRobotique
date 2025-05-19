@@ -44,14 +44,12 @@ class PIN:
         elif mode == "input_pullup":
             self.device = InputDevice(
                 self.pin,
-                active_state=not self.reverse_state,
                 pull_up=True,
                 pin_factory=LGPIOFactory(),
             )
         elif mode == "input_pulldown":
             self.device = InputDevice(
                 self.pin,
-                active_state=not self.reverse_state,
                 pull_up=False,
                 pin_factory=LGPIOFactory(),
             )
