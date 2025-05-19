@@ -101,9 +101,9 @@ class MainBrain(Brain):
 
         # time.sleep(500) A utiliser pour les matchs pour l'instant
 
-        for i in range(20, 51, 1):
-            rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 0))
-            time.sleep(0.1)
+        # for i in range(20, 51, 1):
+        #     rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 0))
+        #     time.sleep(0.1)
 
         # for i in range(0, 3.14, 1):
         #     rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -i))
@@ -168,15 +168,15 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
-    async def update_arena(self) -> None:
-        # Update the arena with the new position of the robot
-        self.arena.update(
-            ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
-            optimized_update=True,
-            # _enemy_position=self.position_generator(),
-        )
+    # @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
+    # async def update_arena(self) -> None:
+    #     # Update the arena with the new position of the robot
+    #     self.arena.update(
+    #         ally_position=self.rolling_basis_odometrie,
+    #         lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
+    #         optimized_update=True,
+    #         # _enemy_position=self.position_generator(),
+    #     )
 
     """ ### One-Shot Tasks ### """
 
