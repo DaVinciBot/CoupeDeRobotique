@@ -1,5 +1,6 @@
 # import RPi.GPIO as GPIO
-from gpiozero import LED, Button
+from gpiozero import LED, InputDevice
+from gpiozero.pins.lgpio import LGPIOFactory
 
 
 class PIN:
@@ -36,14 +37,24 @@ class PIN:
         self.reverse_state = reverse_state
 
         if mode == "output":
-            self.device = LED(self.pin)
+            self.device = LED(self.pin, pin_factory=LGPIOFactory())
             self.device.off()
         elif mode == "input":
-            self.device = Button(self.pin)
+            self.device = InputDevice(self.pin, pin_factory=LGPIOFactory())
         elif mode == "input_pullup":
-            self.device = Button(self.pin, pull_up=True)
+            self.device = InputDevice(
+                self.pin,
+                active_state=not self.reverse_state,
+                pull_up=True,
+                pin_factory=LGPIOFactory(),
+            )
         elif mode == "input_pulldown":
-            self.device = Button(self.pin, pull_up=False)
+            self.device = InputDevice(
+                self.pin,
+                active_state=not self.reverse_state,
+                pull_up=False,
+                pin_factory=LGPIOFactory(),
+            )
 
     def digital_write(self, state: bool):
         """

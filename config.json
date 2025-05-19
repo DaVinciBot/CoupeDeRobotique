@@ -133,11 +133,23 @@
     },
     "actuators": {
       "actuators_teensy_ser": 14735440,
-      "servos_storage" : {
-        "center": [0, 2],
-        "side_arms": [4, 6],
+      "servos_storage": {
+        "center": [
+          0,
+          2
+        ],
+        "side_arms": [
+          4,
+          6
+        ],
         "upper_arm": 8,
-        "end_servos": [1, 3, 5, 7, 9]
+        "end_servos": [
+          1,
+          3,
+          5,
+          7,
+          9
+        ]
       },
       "servos_config": [
         {
@@ -211,8 +223,8 @@
     "movement_manager": {
       "movement_resolution": 1
     },
-    "jack":{
-      "pin": 23
+    "jack": {
+      "pin": 23.0
     }
   },
   "arena": {
