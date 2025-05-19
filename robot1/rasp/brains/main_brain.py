@@ -114,7 +114,7 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        self.wait_for_trigger()
+        #self.wait_for_trigger()
         # time.sleep(500) A utiliser pour les matchs pour l'instant
 
         for i in range(20, 51, 0.5):
