@@ -85,11 +85,11 @@ class MainBrain(Brain):
         )
 
         # --- MetaProg is insane (loop) --- #
-        """if self.navigator_task is not None:
+        if self.navigator_task is not None:
                 navigator.add_navigation_task(self.navigator_task)
                 self.navigator_task = None
 
-        cmd = navigator.handle(
+        """cmd = navigator.handle(
             ally_zone=self.arena.ally_zone,
             enemy_zone=self.arena.enemy_zone,
         )
