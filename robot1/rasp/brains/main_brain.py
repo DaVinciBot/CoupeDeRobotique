@@ -117,11 +117,9 @@ class MainBrain(Brain):
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(70, 25, 0))
         time.sleep(4)
         rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
+        time.sleep(4)
+        rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 55, -90))
 
-        
-    
-
-        #rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -90))
         # --- MetaProg is insane (loop) --- #
         if self.navigator_task is not None:
             navigator.add_navigation_task(self.navigator_task)

@@ -82,9 +82,10 @@ class RollingBasis(BaseComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.info(
-            "Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore")
-        )
+        # Temp to debug logs
+        decoded_msg = msg.decode("ascii", errors="ignore")
+        if "working" not in decoded_msg:
+            self.logger.info("Teensy Rolling Basis says: " + decoded_msg)
 
     def rcv_rolling_basis_state(self, msg: bytes):
         """
