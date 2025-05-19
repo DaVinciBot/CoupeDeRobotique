@@ -122,16 +122,15 @@ class MainBrain(Brain):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -i))
             time.sleep(0.1)
 
-        for i in range(51, 21, -1):
+        for i in range(50, 21, -1):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 90))
             time.sleep(0.1)
-
-
 
 
         # --- MetaProg is insane (loop) --- #
         rolling_basis.logger.info(rolling_basis.odometrie)
         time.sleep(1)
+        
         """if self.navigator_task is not None:
             navigator.add_navigation_task(self.navigator_task)
             self.navigator_task = None
