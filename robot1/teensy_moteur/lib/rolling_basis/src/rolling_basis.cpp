@@ -155,7 +155,7 @@ void Rolling_Basis::handle(
     this->left_motor->set_motor(left_pwm);
     
     static long print_count = 0;
-    if (print_count++ > 10) 
+    if (print_count++ > 5) 
     {
         String pid = "PID linear: " + String(linear_correction) + " PID angular: " + String(angular_correction);
         String error = "Angular error : " + String(theta_error) + " Linear error: " + String(distance_error);

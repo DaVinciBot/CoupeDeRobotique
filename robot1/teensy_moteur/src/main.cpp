@@ -66,7 +66,7 @@ void set_speed_and_position(byte *msg, byte size)
   target_position.theta = target_speed_and_position->target_position_theta;
 
   static long print_count_2 = 0;
-  if (print_count_2++ > 10) 
+  if (print_count_2++ > 2) 
   {
     String target_pos = "Target X : " + String(target_position.x) + " Target Y : " + String(target_position.y) + " Target Theta : " + String(target_position.theta);
     com->print((char *)target_pos.c_str());
