@@ -180,7 +180,7 @@ class MainBrain(Brain):
             timeout=None,
             path_planner_params=DeltaPathPlannerParams(distance=10),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
+            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
         )
         
