@@ -44,13 +44,13 @@ class PIN:
         elif mode == "input_pullup":
             self.device = Button(
                 self.pin,
-                active_state=True,
+                pull_up=True,
                 pin_factory=LGPIOFactory(),
             )
         elif mode == "input_pulldown":
             self.device = Button(
                 self.pin,
-                active_state=False,
+                pull_up=False,
                 pin_factory=LGPIOFactory(),
             )
 
