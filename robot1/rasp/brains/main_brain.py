@@ -93,7 +93,7 @@ class MainBrain(Brain):
                 false_jacks_in_a_row = 0
             else:
                 false_jacks_in_a_row += 1
-            await asyncio.sleep(0.1)
+            # await asyncio.sleep(0.1)
 
     @Brain.task(
         process=True,
