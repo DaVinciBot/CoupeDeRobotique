@@ -19,9 +19,7 @@ from arena import AllyZone, TeamColor
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from controllers.actuators import Actuators, ActuatorsDummy
 from sensors import Lidar
-from navigation_tasks.tasks import yellow_start_tasks
 
-from boombot_strategy_old import ShowGameContext
 
 from navigation import (
     Navigator,
