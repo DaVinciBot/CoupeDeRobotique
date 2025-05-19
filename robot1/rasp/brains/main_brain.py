@@ -42,6 +42,8 @@ from navigation.navigator.task import NavigatorTaskState
 from GPIO import PIN
 
 import asyncio
+
+
 class MainBrain(Brain):
     def __init__(
         self,
@@ -52,8 +54,8 @@ class MainBrain(Brain):
         arena: ShowArena,
         # WS routes
         ws_cmd: WServerRouteManager,
-        #Tirette
-        jack: None
+        # Tirette
+        jack: None,
     ) -> None:
         self.lidar: Lidar = lidar
         self.arena: ShowArena = arena
@@ -62,7 +64,7 @@ class MainBrain(Brain):
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
         self.navigator_task: NavigatorTaskParams = None
-        
+
         self.jack = jack
 
         super().__init__(logger, self)
@@ -72,7 +74,7 @@ class MainBrain(Brain):
     """
 
     """ ### Routines ### """
-    
+
     @Brain.task(process=True, run_on_start=False)
     async def wait_for_trigger(self):
         """
@@ -83,6 +85,8 @@ class MainBrain(Brain):
         Once triggered, it sets the jack LED to True.
         """
         # Check jack state
+        while True:
+            print(self.jack.digital_read())
         false_jacks_in_a_row = 0
         while false_jacks_in_a_row < 5:
             if self.jack.safe_digital_read():
@@ -90,7 +94,6 @@ class MainBrain(Brain):
             else:
                 false_jacks_in_a_row += 1
             await asyncio.sleep(0.1)
-
 
     @Brain.task(
         process=True,
@@ -110,10 +113,10 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        
-        #self.wait_for_trigger() A faire après avoir fix GPIO
-        #time.sleep(500) A utiliser pour les matchs pour l'instant
-        
+
+        # self.wait_for_trigger() A faire après avoir fix GPIO
+        # time.sleep(500) A utiliser pour les matchs pour l'instant
+
         for i in range(20, 51):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 0))
             time.sleep(0.1)
@@ -129,7 +132,7 @@ class MainBrain(Brain):
         # --- MetaProg is insane (loop) --- #
         rolling_basis.logger.info(rolling_basis.odometrie)
         time.sleep(1)
-        
+
         """if self.navigator_task is not None:
             navigator.add_navigation_task(self.navigator_task)
             self.navigator_task = None
