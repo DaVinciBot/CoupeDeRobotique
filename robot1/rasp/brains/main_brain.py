@@ -75,7 +75,7 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=False, refresh_rate=1)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def wait_for_trigger(self):
         self.logger.info(f"Jack state: {self.jack.digital_read()}")
       
@@ -190,7 +190,6 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = start_position
 
-        await self.wait_for_trigger()
 
         # Ici met le déplacement que tu veux
         # self.navigator_task = NavigatorTaskParams(
