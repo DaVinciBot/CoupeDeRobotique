@@ -101,15 +101,15 @@ class MainBrain(Brain):
 
         # time.sleep(500) A utiliser pour les matchs pour l'instant
 
-        for i in range(20, 51, 0.5):
+        for i in range(20, 51, 1):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 0))
             time.sleep(0.1)
 
-        for i in range(0, 3.14, 0.1):
+        for i in range(0, 3.14, 1):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(50, 25, -i))
             time.sleep(0.1)
 
-        for i in range(51, 21, -0.5):
+        for i in range(51, 21, -1):
             rolling_basis.set_speed_and_position(0.0, 0.0, OrientedPoint(i, 25, 3.14))
             time.sleep(0.1)
 
