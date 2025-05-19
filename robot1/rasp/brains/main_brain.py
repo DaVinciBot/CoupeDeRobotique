@@ -70,8 +70,8 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        from robot1.rasp.boombot_strategy.show_game_context import ShowGameContext
-        from robot1.rasp.boombot_strategy.strategies import yellow_strategy
+        #from robot1.rasp.boombot_strategy.show_game_context import ShowGameContext
+        #from robot1.rasp.boombot_strategy.strategies import yellow_strategy
         navigator = Navigator()
         
         # Rolling basis & Actuators
