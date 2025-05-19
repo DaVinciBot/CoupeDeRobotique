@@ -99,34 +99,34 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         
-        for i in range(200, 510, 1):
-            rolling_basis.set_speed_and_position(
-                target_linear_speed=0,
-                target_angular_speed=0,
-                target_position=OrientedPoint(i/10, 25, 0),
-            )
-            time.sleep(0.01)
+        # for i in range(200, 510, 1):
+        #     rolling_basis.set_speed_and_position(
+        #         target_linear_speed=0,
+        #         target_angular_speed=0,
+        #         target_position=OrientedPoint(i/10, 25, 0),
+        #     )
+        #     time.sleep(0.01)
         
 
         # --- MetaProg is insane (loop) --- #
         
-        # if self.navigator_task is not None:
-        #     navigator.add_navigation_task(self.navigator_task)
-        #     self.navigator_task = None
+        if self.navigator_task is not None:
+            navigator.add_navigation_task(self.navigator_task)
+            self.navigator_task = None
 
-        # cmd = navigator.handle(
-        #     ally_zone=self.arena.ally_zone,
-        #     enemy_zone=self.arena.enemy_zone,
-        # )
-        # rolling_basis.set_speed_and_position(*cmd.get_command())
+        cmd = navigator.handle(
+            ally_zone=self.arena.ally_zone,
+            enemy_zone=self.arena.enemy_zone,
+        )
+        rolling_basis.set_speed_and_position(*cmd.get_command())
         
-        # # yellow_strategy_runner.handle(
-        # #     ShowGameContext(
-        # #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
-        # #     )
-        # # )
-        # self.rolling_basis_odometrie = rolling_basis.odometrie
-        pass
+        # yellow_strategy_runner.handle(
+        #     ShowGameContext(
+        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+        #     )
+        # )
+        self.rolling_basis_odometrie = rolling_basis.odometrie
+        
 
     # @Brain.task(
     #     process=True,
