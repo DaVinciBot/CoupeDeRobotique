@@ -12,7 +12,7 @@ from brains import MainBrain
 from taskbrain import DictProxyAccessor, Brain
 from navigation import NavigatorTaskParams
 from sensors import Lidar, LidarDummy
-# from GPIO import PIN
+from GPIO import PIN
 
 # ====== Main ======
 if __name__ == "__main__":
@@ -115,8 +115,8 @@ if __name__ == "__main__":
     )
 
     # Jack
-    #jack = PIN(CONFIG.JACK_PIN)
-    #jack.setup("input_pulldown", reverse_state=True)
+    jack = PIN(CONFIG.JACK_PIN)
+    jack.setup("input_pulldown", reverse_state=True)
     
     # Movement
     # Movement manager
@@ -135,7 +135,7 @@ if __name__ == "__main__":
         lidar=lidar,
         arena=arena,
         ws_cmd=ws_cmd,
-        jack=None,
+        jack=jack,
     )
 
     """
