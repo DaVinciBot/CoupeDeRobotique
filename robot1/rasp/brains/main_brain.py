@@ -110,7 +110,7 @@ class MainBrain(Brain):
         task_1 = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi),
+            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=2*pi),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
