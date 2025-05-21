@@ -152,20 +152,20 @@ void Rolling_Basis::handle(
 
     // Compute PID output based on errors
     double linear_correction = this->linear_distance_pid.compute(distance_error);
-    double angular_correction = this->angular_distance_pid.compute(theta_error);
+    double angular_correction = this->angular_distance_pid.compute(theta_error*2.0);
     
     double right_pwm = linear_correction + angular_correction;
     double left_pwm = linear_correction - angular_correction;
 
-    const int MIN_PWM = 200;
+    // const int MIN_PWM = 200;
 
-    if (abs(distance_error) < 1.0 && abs(theta_error) > 0.1) {
-        if (abs(right_pwm) < MIN_PWM && right_pwm != 0)
-            right_pwm = (right_pwm > 0) ? MIN_PWM : -MIN_PWM;
+    // if (abs(distance_error) < 1.0 && abs(theta_error) > 0.1) {
+    //     if (abs(right_pwm) < MIN_PWM && right_pwm != 0)
+    //         right_pwm = (right_pwm > 0) ? MIN_PWM : -MIN_PWM;
 
-        if (abs(left_pwm) < MIN_PWM && left_pwm != 0)
-            left_pwm = (left_pwm > 0) ? MIN_PWM : -MIN_PWM;
-    }
+    //     if (abs(left_pwm) < MIN_PWM && left_pwm != 0)
+    //         left_pwm = (left_pwm > 0) ? MIN_PWM : -MIN_PWM;
+    // }
 
 
     this->right_motor->set_motor(right_pwm);
