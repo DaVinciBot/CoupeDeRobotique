@@ -157,6 +157,17 @@ void Rolling_Basis::handle(
     double right_pwm = linear_correction + angular_correction;
     double left_pwm = linear_correction - angular_correction;
 
+    const int MIN_PWM = 200;
+
+    if (abs(distance_error) < 1.0 && abs(theta_error) > 0.1) {
+        if (abs(right_pwm) < MIN_PWM && right_pwm != 0)
+            right_pwm = (right_pwm > 0) ? MIN_PWM : -MIN_PWM;
+
+        if (abs(left_pwm) < MIN_PWM && left_pwm != 0)
+            left_pwm = (left_pwm > 0) ? MIN_PWM : -MIN_PWM;
+    }
+
+
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);
     
