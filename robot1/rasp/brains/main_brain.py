@@ -78,7 +78,6 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def wait_for_trigger(self):
         self.logger.info(f"Jack state: {self.jack.digital_read()}")
-      
 
     @Brain.task(
         process=True,
@@ -98,7 +97,7 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        
+
         # for i in range(200, 510, 1):
         #     rolling_basis.set_speed_and_position(
         #         target_linear_speed=0,
@@ -110,39 +109,39 @@ class MainBrain(Brain):
         task_1 = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation= pi/2),
+            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi / 2),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
         )
-        
+
         task_2 = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation= pi/2),
+            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi / 2),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
         )
-        
+
         task_3 = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation= pi/2),
+            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi / 2),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
         )
-        
+
         task_4 = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation= pi/2),
+            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi / 2),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
         )
-        
+
         """task_turn = NavigatorTaskParams(
             goal=None,
             timeout=None,
@@ -152,7 +151,6 @@ class MainBrain(Brain):
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
         )"""
 
-
         """navigator.add_navigation_task(task_1)
         navigator.add_navigation_task(task_2)
         navigator.add_navigation_task(task_3)
@@ -160,7 +158,7 @@ class MainBrain(Brain):
         # navigator.add_navigation_task(task_turn)
 
         # --- MetaProg is insane (loop) --- #
-        
+
         """if self.navigator_task is not None:
             navigator.add_navigation_task(self.navigator_task)
             self.navigator_task = None"""
@@ -171,16 +169,13 @@ class MainBrain(Brain):
                 enemy_zone=self.arena.enemy_zone,
             )
             rolling_basis.set_speed_and_position(*cmd.get_command())
-            
-            
-        
+
         # yellow_strategy_runner.handle(
         #     ShowGameContext(
         #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
         #     )
         # )
         self.rolling_basis_odometrie = rolling_basis.odometrie
-        
 
     # @Brain.task(
     #     process=True,
@@ -240,27 +235,28 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
         # Launch robot in a zone
-        target_zone = self.arena.zones[0].get_go_to_position(start_position, self.arena.team_color)
+        target_zone = self.arena.zones[0].get_go_to_position(
+            start_position, self.arena.team_color
+        )
+
+        # self.navigator_task = NavigatorTaskParams(
+        #     goal=target_zone,
+        #     timeout=None,
+        #     path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi / 2),
+        #     trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+        #     speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+        #     avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+        # )
 
         self.navigator_task = NavigatorTaskParams(
-            goal=target_zone,
-            timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi/2),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        )   
-
-        """self.navigator_task = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi/2),
+            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi / 2),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        )"""
-        
-        
+        )
+
         # get_all_serial_number()
         # godHand = Actuators(
         #     logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)

@@ -152,7 +152,7 @@ void Rolling_Basis::handle(
 
     // Compute PID output based on errors
     double linear_correction = this->linear_distance_pid.compute(distance_error);
-    double angular_correction = this->angular_distance_pid.compute(theta_error*2.0);
+    double angular_correction = this->angular_distance_pid.compute(theta_error);
     
     double right_pwm = linear_correction + angular_correction;
     double left_pwm = linear_correction - angular_correction;
