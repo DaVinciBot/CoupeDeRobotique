@@ -239,7 +239,7 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = start_position
         
-        target_zone = self.arena.zones[0].get_go_to_position(self.arena.ally_position ,self.arena.team_color)
+        target_zone = self.arena.zones[0].get_go_to_position(self.arena.ally_zone ,self.arena.team_color)
 
         self.navigator_task = NavigatorTaskParams(
         goal=target_zone,  
