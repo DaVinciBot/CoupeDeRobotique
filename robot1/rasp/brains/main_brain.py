@@ -143,21 +143,21 @@ class MainBrain(Brain):
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
         )
         
-        task_turn = NavigatorTaskParams(
+        """task_turn = NavigatorTaskParams(
             goal=None,
             timeout=None,
             path_planner_params=DeltaPathPlannerParams(distance=0, rotation= pi/2),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        )
+        )"""
 
 
-        """navigator.add_navigation_task(task_1)
+        navigator.add_navigation_task(task_1)
         navigator.add_navigation_task(task_2)
         navigator.add_navigation_task(task_3)
-        navigator.add_navigation_task(task_4)"""
-        navigator.add_navigation_task(task_turn)
+        navigator.add_navigation_task(task_4)
+        # navigator.add_navigation_task(task_turn)
 
         # --- MetaProg is insane (loop) --- #
         
@@ -238,15 +238,31 @@ class MainBrain(Brain):
             self.arena.team_color, start_position, Point(290, 190)
         )
         self.rolling_basis_odometrie = start_position
+        
+        target_zone = self.arena.zones[0]
+        target_point = self.arena.compute_go_to_destination(
+        start_point=self.rolling_basis_odometrie,
+        zone=target_zone,
+        delta=20,  
+        )
 
         self.navigator_task = NavigatorTaskParams(
+        goal=target_point,  
+        timeout=None,
+        path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi/2),
+        trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+        speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+        avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+        )   
+
+        """self.navigator_task = NavigatorTaskParams(
             goal=None,
             timeout=None,
             path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi/2),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        )
+        )"""
         
         
         # get_all_serial_number()
