@@ -239,15 +239,10 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = start_position
         
-        target_zone = self.arena.zones[0]
-        target_point = self.arena.compute_go_to_destination(
-        start_point=self.rolling_basis_odometrie,
-        zone=target_zone,
-        delta=20,  
-        )
+        target_zone = self.arena.zones[0].get_go_to_position()
 
         self.navigator_task = NavigatorTaskParams(
-        goal=target_point,  
+        goal=target_zone,  
         timeout=None,
         path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi/2),
         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
