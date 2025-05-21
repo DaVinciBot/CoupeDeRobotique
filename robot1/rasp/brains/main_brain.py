@@ -159,9 +159,9 @@ class MainBrain(Brain):
 
         # --- MetaProg is insane (loop) --- #
 
-        """if self.navigator_task is not None:
+        if self.navigator_task is not None:
             navigator.add_navigation_task(self.navigator_task)
-            self.navigator_task = None"""
+            self.navigator_task = None
 
         if navigator.current_task is not None:
             cmd = navigator.handle(
