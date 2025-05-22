@@ -6,3 +6,5 @@ def get_all_serial_number():
     print(f"Number of ports: {len(ports)}")
     for port in ports:
         print(f"Serial Number: {port.serial_number}")
+
+get_all_serial_number()
