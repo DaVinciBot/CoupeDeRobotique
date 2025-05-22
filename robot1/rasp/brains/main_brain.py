@@ -198,6 +198,12 @@ class MainBrain(Brain):
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
+        
+    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
+    async def print_odo(self) -> None:
+        self.logger.info(
+            f"Rolling basis odometrie: {self.rolling_basis_odometrie}"
+        )
 
     """ ### One-Shot Tasks ### """
 
@@ -215,15 +221,6 @@ class MainBrain(Brain):
         target_zone = self.arena.zones[0].get_go_to_position(
             start_position, self.arena.team_color
         )
-
-        # self.navigator_task = NavigatorTaskParams(
-        #     goal=target_zone,
-        #     timeout=None,
-        #     path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi / 2),
-        #     trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-        #     speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-        #     avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        # )
 
         self.navigator_task = NavigatorTaskParams(
             goal=None,

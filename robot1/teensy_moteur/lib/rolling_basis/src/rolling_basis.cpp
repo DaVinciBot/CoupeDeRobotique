@@ -156,30 +156,7 @@ void Rolling_Basis::handle(
     
     double right_pwm = linear_correction + angular_correction;
     double left_pwm = linear_correction - angular_correction;
-
-    // const int MIN_PWM = 200;
-
-    // if (abs(distance_error) < 1.0 && abs(theta_error) > 0.1) {
-    //     if (abs(right_pwm) < MIN_PWM && right_pwm != 0)
-    //         right_pwm = (right_pwm > 0) ? MIN_PWM : -MIN_PWM;
-
-    //     if (abs(left_pwm) < MIN_PWM && left_pwm != 0)
-    //         left_pwm = (left_pwm > 0) ? MIN_PWM : -MIN_PWM;
-    // }
-
-
+    
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);
-    
-    static long print_count = 0;
-    if (print_count++ > 5) 
-    {
-        String pid = "PID linear: " + String(linear_correction) + " PID angular: " + String(angular_correction);
-        String error = "Angular error : " + String(theta_error) + " Linear error: " + String(distance_error);
-        String pwm = "PWM Right: " + String(right_pwm) + " PWM Left: " + String(left_pwm);
-        com->print((char *)pid.c_str());
-        com->print((char *)pwm.c_str());
-        com->print((char *)error.c_str());
-        print_count = 0;
-    }
 }
