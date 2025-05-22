@@ -33,6 +33,8 @@ from navigation import (
     SequentialTrajectoryPlannerParams,
     SpeedProfiler,
     StopAndWaitAvoidanceParams,
+    
+    BasicPathPlannerParams,
 )
 
 from usb_com.python.tools import get_all_serial_number
@@ -100,45 +102,16 @@ class MainBrain(Brain):
         
         navigator.add_navigation_task(
             NavigatorTaskParams(
-                goal=None,
+                goal=OrientedPoint(50, 60, 0),
                 timeout=None,
-                path_planner_params=DeltaPathPlannerParams(distance=30),
+                path_planner_params=BasicPathPlannerParams(),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
                 avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
             )
         )
-        navigator.add_navigation_task(
-            NavigatorTaskParams(
-                goal=None,
-                timeout=None,
-                path_planner_params=DeltaPathPlannerParams(rotation=pi / 2),
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-            )
-        )
-    
-        """task_turn = NavigatorTaskParams(
-            goal=None,
-            timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=0, rotation= pi/2),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        )"""
-
-        """navigator.add_navigation_task(task_1)
-        navigator.add_navigation_task(task_2)
-        navigator.add_navigation_task(task_3)
-        navigator.add_navigation_task(task_4)"""
-        # navigator.add_navigation_task(task_turn)
-
+        
         # --- MetaProg is insane (loop) --- #
-
-        # if self.navigator_task is not None:
-        #     navigator.add_navigation_task(self.navigator_task)
-        #     self.navigator_task = None
 
         if navigator.current_task is not None:
             cmd = navigator.handle(
