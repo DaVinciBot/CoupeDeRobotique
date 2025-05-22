@@ -20,7 +20,16 @@
 			"cmath": "cpp",
 			"limits": "cpp",
 			"chrono": "cpp",
-			"algorithm": "cpp"
+			"algorithm": "cpp",
+			"deque": "cpp",
+			"list": "cpp",
+			"string": "cpp",
+			"unordered_map": "cpp",
+			"unordered_set": "cpp",
+			"vector": "cpp",
+			"memory": "cpp",
+			"random": "cpp",
+			"regex": "cpp"
 		}
 	},
 	"extensions": {

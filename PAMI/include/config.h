@@ -14,12 +14,14 @@
 #define RIGHT_EN_PIN 48
 
 // #------- LORA CONFIGURATION -------#
-#define SS 8 // NSS pin
-#define RST 9 // RESET pin
-#define BUSY 8 // BUSY pin
-#define IRQ 7 // IRQ pin
-#define TXEN 6 // TXEN pin
-#define RXEN 5 // RXEN pin
+#define SS 10 // NSS pin
+#define RST 16 // RESET pin
+#define BUSY 15 // BUSY pin
+
+// ESP XIAO DEVKIT PINOUT
+// #define SS 4 // NSS pin
+// #define RST 3 // RESET pin
+// #define BUSY 2 // BUSY pin
 
 // #-------- DEV CONFIGURATION ---------#
 #define ENABLE_OTA false
