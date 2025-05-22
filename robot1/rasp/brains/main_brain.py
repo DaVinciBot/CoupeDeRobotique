@@ -97,44 +97,28 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-
-
-        task_1 = NavigatorTaskParams(
-            goal=None,
-            timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi / 2),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+        
+        navigator.add_navigation_task(
+            NavigatorTaskParams(
+                goal=None,
+                timeout=None,
+                path_planner_params=DeltaPathPlannerParams(distance=30),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+                avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+            )
         )
-
-        task_2 = NavigatorTaskParams(
-            goal=None,
-            timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi / 2),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+        navigator.add_navigation_task(
+            NavigatorTaskParams(
+                goal=None,
+                timeout=None,
+                path_planner_params=DeltaPathPlannerParams(rotation=pi / 2),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+                avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+            )
         )
-
-        task_3 = NavigatorTaskParams(
-            goal=None,
-            timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi / 2),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        )
-
-        task_4 = NavigatorTaskParams(
-            goal=None,
-            timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=pi / 2),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        )
-
+    
         """task_turn = NavigatorTaskParams(
             goal=None,
             timeout=None,
@@ -152,9 +136,9 @@ class MainBrain(Brain):
 
         # --- MetaProg is insane (loop) --- #
 
-        if self.navigator_task is not None:
-            navigator.add_navigation_task(self.navigator_task)
-            self.navigator_task = None
+        # if self.navigator_task is not None:
+        #     navigator.add_navigation_task(self.navigator_task)
+        #     self.navigator_task = None
 
         if navigator.current_task is not None:
             cmd = navigator.handle(
