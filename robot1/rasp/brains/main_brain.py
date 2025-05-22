@@ -80,9 +80,24 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         __flag = False
-        actuators = ActuatorsDummy(
+        
+        """actuators = ActuatorsDummy(
+            logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
+        )"""
+        
+        actuators = Actuators(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
+        
+        for pin, servo_cfg in enumerate(CONFIG.ACTUATOR_SERVOS_CONFIG):
+            actuators.set_servo_angle(
+                pin=pin,
+                angle=90,
+                min_angle=0,
+                max_angle=servo_cfg["max_angle"],
+                detach=False,
+                detach_delay=1000,
+            )
 
         # --- MetaProg is insane (loop) --- #
         if self.navigator_task is not None:
