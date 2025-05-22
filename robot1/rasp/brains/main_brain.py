@@ -98,13 +98,6 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        # for i in range(200, 510, 1):
-        #     rolling_basis.set_speed_and_position(
-        #         target_linear_speed=0,
-        #         target_angular_speed=0,
-        #         target_position=OrientedPoint(i/10, 25, 0),
-        #     )
-        #     time.sleep(0.01)
 
         task_1 = NavigatorTaskParams(
             goal=None,
@@ -251,7 +244,7 @@ class MainBrain(Brain):
         self.navigator_task = NavigatorTaskParams(
             goal=None,
             timeout=None,
-            path_planner_params=DeltaPathPlannerParams(distance=30, rotation=0),
+            path_planner_params=DeltaPathPlannerParams(distance=30),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
