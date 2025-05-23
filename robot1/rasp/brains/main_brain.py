@@ -102,7 +102,7 @@ class MainBrain(Brain):
         
         navigator.add_navigation_task(
             NavigatorTaskParams(
-                goal=OrientedPoint(50, 150, pi/2),
+                goal=OrientedPoint(40, 60, 0),
                 timeout=None,
                 path_planner_params=BasicPathPlannerParams(),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
@@ -172,7 +172,7 @@ class MainBrain(Brain):
             # _enemy_position=self.position_generator(),
         )
         
-    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def print_odo(self) -> None:
         self.logger.info(
             f"Rolling basis odometrie: {self.rolling_basis_odometrie}"
