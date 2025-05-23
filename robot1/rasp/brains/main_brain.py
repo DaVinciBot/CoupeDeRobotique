@@ -113,12 +113,12 @@ class MainBrain(Brain):
         
         # --- MetaProg is insane (loop) --- #
 
-        # if navigator.current_task is not None:
-        #     cmd = navigator.handle(
-        #         ally_zone=self.arena.ally_zone,
-        #         enemy_zone=self.arena.enemy_zone,
-        #     )
-        #     rolling_basis.set_speed_and_position(*cmd.get_command())
+        if navigator.current_task is not None:
+            cmd = navigator.handle(
+                ally_zone=self.arena.ally_zone,
+                enemy_zone=self.arena.enemy_zone,
+            )
+            rolling_basis.set_speed_and_position(*cmd.get_command())
 
         # yellow_strategy_runner.handle(
         #     ShowGameContext(
