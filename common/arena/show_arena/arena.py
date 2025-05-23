@@ -55,41 +55,37 @@ class ShowArena(BaseArena):
             (
                 (2.5, 20),
                 (12.5, 60),
-                [OrientedPoint(12.5 + distance_between_robot_and_work_zone, 40, pi)],
+                [
+                    OrientedPoint(
+                        12.5 + distance_between_robot_and_work_zone, 40, -pi / 2
+                    )
+                ],
             ),  # TODO: x = distance necessaire entre le robot et les conserves. Theta ??
             (
                 (2.5, 112.5),
                 (12.5, 152.5),
-                [OrientedPoint(12.5 + distance_between_robot_and_work_zone, 132.5, pi)],
+                [
+                    OrientedPoint(
+                        12.5 + distance_between_robot_and_work_zone, 132.5, -pi / 2
+                    )
+                ],
             ),
             (
                 (57.5, 20),
                 (97.5, 30),
-                [
-                    OrientedPoint(
-                        77.5, 30 + distance_between_robot_and_work_zone, -pi / 2
-                    )
-                ],
+                [OrientedPoint(77.5, 30 + distance_between_robot_and_work_zone, pi)],
             ),
             (
                 (62.5, 167.5),
                 (102.5, 177.5),
-                [
-                    OrientedPoint(
-                        82.5, 167.5 - distance_between_robot_and_work_zone, pi / 2
-                    )
-                ],
+                [OrientedPoint(82.5, 167.5 - distance_between_robot_and_work_zone, 0)],
             ),
             (
                 (90, 90),
                 (130, 100),
                 [
-                    OrientedPoint(
-                        110, 90 - distance_between_robot_and_work_zone, pi / 2
-                    ),
-                    OrientedPoint(
-                        110, 100 + distance_between_robot_and_work_zone, -pi / 2
-                    ),
+                    OrientedPoint(110, 90 - distance_between_robot_and_work_zone, 0),
+                    OrientedPoint(110, 100 + distance_between_robot_and_work_zone, pi),
                 ],
             ),
             (
@@ -97,16 +93,16 @@ class ShowArena(BaseArena):
                 (300 - 2.5, 60),
                 [
                     OrientedPoint(
-                        300 - 12.5 - distance_between_robot_and_work_zone, 40, 0
+                        300 - 12.5 - distance_between_robot_and_work_zone, 40, pi / 2
                     )
                 ],
-            ),  # TODO: -pi/2 ou 3pi/2 ?? et je me suis pas trompé sur l'angle initial ?
+            ),
             (
                 (300 - 12.5, 112.5),
                 (300 - 2.5, 152.5),
                 [
                     OrientedPoint(
-                        300 - 12.5 - distance_between_robot_and_work_zone, 132.5, 0
+                        300 - 12.5 - distance_between_robot_and_work_zone, 132.5, pi / 2
                     )
                 ],
             ),
@@ -115,7 +111,7 @@ class ShowArena(BaseArena):
                 (300 - 57.5, 30),
                 [
                     OrientedPoint(
-                        300 - 77.5, 30 + distance_between_robot_and_work_zone, -pi / 2
+                        300 - 77.5, 30 + distance_between_robot_and_work_zone, pi
                     )
                 ],
             ),
@@ -124,7 +120,7 @@ class ShowArena(BaseArena):
                 (300 - 62.5, 177.5),
                 [
                     OrientedPoint(
-                        300 - 82.5, 167.5 - distance_between_robot_and_work_zone, pi / 2
+                        300 - 82.5, 167.5 - distance_between_robot_and_work_zone, 0
                     )
                 ],
             ),
@@ -133,10 +129,10 @@ class ShowArena(BaseArena):
                 (300 - 90, 100),
                 [
                     OrientedPoint(
-                        300 - 110, 90 - distance_between_robot_and_work_zone, pi / 2
+                        300 - 110, 90 - distance_between_robot_and_work_zone, 0
                     ),
                     OrientedPoint(
-                        300 - 110, 100 + distance_between_robot_and_work_zone, -pi / 2
+                        300 - 110, 100 + distance_between_robot_and_work_zone, pi
                     ),
                 ],
             ),
@@ -146,43 +142,33 @@ class ShowArena(BaseArena):
             (
                 (0, 0),
                 (45, 15),
-                [
-                    OrientedPoint(
-                        22.5, 15 + distance_between_robot_and_work_zone, -pi / 2
-                    )
-                ],
-            ),  # TODO: x = distance necessaire entre le robot et les zones jaunes. Theta ??
+                [OrientedPoint(22.5, 15 + distance_between_robot_and_work_zone, pi)],
+            ),
             (
                 (0, 65),
                 (45, 110),
                 [
+                    OrientedPoint(22.5, 65 - distance_between_robot_and_work_zone, 0),
+                    OrientedPoint(22.5, 110 + distance_between_robot_and_work_zone, pi),
                     OrientedPoint(
-                        22.5, 65 - distance_between_robot_and_work_zone, pi / 2
+                        45 + distance_between_robot_and_work_zone, 87.5, -pi / 2
                     ),
-                    OrientedPoint(
-                        22.5, 110 + distance_between_robot_and_work_zone, -pi / 2
-                    ),
-                    OrientedPoint(45 + distance_between_robot_and_work_zone, 87.5, pi),
                 ],
             ),
             (
                 (155, 0),
                 (200, 45),
                 [
+                    OrientedPoint(177.5, 45 + distance_between_robot_and_work_zone, pi),
                     OrientedPoint(
-                        177.5, 45 + distance_between_robot_and_work_zone, -pi / 2
+                        200 + distance_between_robot_and_work_zone, 22.5, -pi / 2
                     ),
-                    OrientedPoint(200 + distance_between_robot_and_work_zone, 22.5, pi),
                 ],
             ),
             (
                 (200, 0),
                 (245, 15),
-                [
-                    OrientedPoint(
-                        222.5, 15 + distance_between_robot_and_work_zone, -pi / 2
-                    )
-                ],
+                [OrientedPoint(222.5, 15 + distance_between_robot_and_work_zone, pi)],
             ),
         ]
 
@@ -190,43 +176,35 @@ class ShowArena(BaseArena):
             (
                 (255, 0),
                 (300, 15),
-                [
-                    OrientedPoint(
-                        277.5, 15 + distance_between_robot_and_work_zone, -pi / 2
-                    )
-                ],
+                [OrientedPoint(277.5, 15 + distance_between_robot_and_work_zone, pi)],
             ),
             (
                 (255, 65),
                 (300, 110),
                 [
+                    OrientedPoint(277.5, 65 - distance_between_robot_and_work_zone, 0),
                     OrientedPoint(
-                        277.5, 65 - distance_between_robot_and_work_zone, pi / 2
+                        277.5, 110 + distance_between_robot_and_work_zone, pi
                     ),
                     OrientedPoint(
-                        277.5, 110 + distance_between_robot_and_work_zone, -pi / 2
+                        255 - distance_between_robot_and_work_zone, 87.5, pi / 2
                     ),
-                    OrientedPoint(255 - distance_between_robot_and_work_zone, 87.5, 0),
-                ],
-            ),
-            (
-                (55, 0),
-                (100, 15),
-                [
-                    OrientedPoint(
-                        77.5, 15 + distance_between_robot_and_work_zone, -pi / 2
-                    )
                 ],
             ),
             (
                 (100, 0),
                 (145, 45),
                 [
+                    OrientedPoint(122.5, 45 + distance_between_robot_and_work_zone, pi),
                     OrientedPoint(
-                        122.5, 45 + distance_between_robot_and_work_zone, -pi / 2
+                        100 - distance_between_robot_and_work_zone, 22.5, pi / 2
                     ),
-                    OrientedPoint(100 - distance_between_robot_and_work_zone, 22.5, 0),
                 ],
+            ),
+            (
+                (55, 0),
+                (100, 15),
+                [OrientedPoint(77.5, 15 + distance_between_robot_and_work_zone, pi)],
             ),
         ]
 
