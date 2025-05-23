@@ -159,8 +159,8 @@ void loop()
   {
     msg_update_rolling_basis rolling_basis_msg;
     // Rolling Basis position
-    rolling_basis_msg.x = rolling_basis_ptr->X;
-    rolling_basis_msg.y = rolling_basis_ptr->Y;
+    rolling_basis_msg.x = rolling_basis_ptr->Y;
+    rolling_basis_msg.y = rolling_basis_ptr->X;
     rolling_basis_msg.theta = rolling_basis_ptr->THETA;
     // Rolling Basis speeds
     rolling_basis_msg.current_linear_speed = 0;

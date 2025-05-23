@@ -4,7 +4,7 @@
 
 // Default position
 #define START_X 0.0
-#define START_Y 1.0
+#define START_Y 0.0
 #define START_THETA 0.0
 
 // Motor Left
@@ -23,7 +23,7 @@
 
 // Creation Rolling Basis
 // Motor
-#define MAX_PWM 200
+#define MAX_PWM 254
 
 // Encoder
 #define ENCODER_RESOLUTION 1024

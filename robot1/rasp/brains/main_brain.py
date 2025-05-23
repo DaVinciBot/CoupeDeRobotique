@@ -100,25 +100,25 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         
-        # navigator.add_navigation_task(
-        #     NavigatorTaskParams(
-        #         goal=OrientedPoint(50, 150, 0),
-        #         timeout=None,
-        #         path_planner_params=BasicPathPlannerParams(),
-        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-        #         speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-        #         avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        #     )
-        # )
+        navigator.add_navigation_task(
+            NavigatorTaskParams(
+                goal=OrientedPoint(50, 150, 0),
+                timeout=None,
+                path_planner_params=BasicPathPlannerParams(),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+                avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
+            )
+        )
         
         # --- MetaProg is insane (loop) --- #
 
-        # if navigator.current_task is not None:
-        #     cmd = navigator.handle(
-        #         ally_zone=self.arena.ally_zone,
-        #         enemy_zone=self.arena.enemy_zone,
-        #     )
-        #     rolling_basis.set_speed_and_position(*cmd.get_comùmand())
+        if navigator.current_task is not None:
+            cmd = navigator.handle(
+                ally_zone=self.arena.ally_zone,
+                enemy_zone=self.arena.enemy_zone,
+            )
+            rolling_basis.set_speed_and_position(*cmd.get_comùmand())
 
         # yellow_strategy_runner.handle(
         #     ShowGameContext(
