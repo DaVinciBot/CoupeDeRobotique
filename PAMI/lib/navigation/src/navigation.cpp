@@ -5,13 +5,9 @@ Navigation::Navigation(RollingBasis *basis)
 {
 }
 
-void Navigation::setCommand(float linSpeedMmPerS,
-                            float angSpeedRadPerS,
-                            const Point &targetPos)
+void Navigation::setCommand(const Point &targetPos)
 {
-    _basis->setCommand(linSpeedMmPerS,
-                       angSpeedRadPerS,
-                       targetPos);
+    _basis->setCommand(targetPos);
 }
 
 void Navigation::update()

@@ -27,12 +27,7 @@ RollingBasis::RollingBasis(Motor *leftMotor, Motor *rightMotor,
     _rightMotor->resetStepCount();
 }
 
-void RollingBasis::setCommand(float linearSpeedMmPerS,
-                              float angularSpeedRadPerS,
-                              const Point &targetPosition)
-{
-    _cmdLinSpeed = linearSpeedMmPerS;
-    _cmdAngSpeed = angularSpeedRadPerS;
+void RollingBasis::setCommand(const Point &targetPosition){
     _cmdPosition = targetPosition;
 
     _linSpeedPid.reset();
@@ -87,16 +82,14 @@ void RollingBasis::applyControl(float dt)
     _linDistPid.setSampleTime(dt);
     _angDistPid.setSampleTime(dt);
 
-    float distErr = Point::distance(_currentPosition, _cmdPosition);                            // mm
-    float be = wrapToPi(Point::angle(_currentPosition, _cmdPosition) - _currentPosition.theta); // rad
-    float oe = wrapToPi(_cmdPosition.theta - _currentPosition.theta);                           // rad
-    float bearErr = wrapToPi(be + oe);                                                          // rad
+    float distErr = Point::distance(_currentPosition, _cmdPosition);        // mm
+    float bearErr = wrapToPi(_cmdPosition.theta - _currentPosition.theta);  // rad
 
     float corrLinD = _linDistPid.compute(distErr) / dt; // mm/s
     float corrAngD = _angDistPid.compute(bearErr) / dt; // rad/s
 
-    float spdLinRef = _cmdLinSpeed + corrLinD;
-    float spdAngRef = _cmdAngSpeed + corrAngD;
+    float spdLinRef = corrLinD;
+    float spdAngRef = corrAngD;
 
     float corrLinS = _linSpeedPid.compute(spdLinRef - _measLinSpeed);
     float corrAngS = _angSpeedPid.compute(spdAngRef - _measAngSpeed);

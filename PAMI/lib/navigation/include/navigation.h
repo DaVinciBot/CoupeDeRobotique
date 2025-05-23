@@ -8,9 +8,7 @@ class Navigation
 public:
     Navigation(RollingBasis *basis);
 
-    void setCommand(float linSpeedMmPerS,
-                    float angSpeedRadPerS,
-                    const Point &targetPos);
+    void setCommand(const Point &targetPos);
 
     void update();
 

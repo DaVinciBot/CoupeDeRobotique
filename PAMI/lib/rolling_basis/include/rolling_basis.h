@@ -19,9 +19,7 @@ public:
                  const PID &angularDistancePid,
                  const Point &initialPosition = {0, 0, 0});
 
-    void setCommand(float linearSpeedMmPerS,
-                    float angularSpeedRadPerS,
-                    const Point &targetPosition);
+    void setCommand(const Point &targetPosition);
 
     void update();
 
