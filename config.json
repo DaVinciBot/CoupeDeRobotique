@@ -74,12 +74,12 @@
           "kd": 0.0
         },
         "linear_position": {
-          "kp": 0.0,
+          "kp": 100.0,
           "ki": 0.0,
           "kd": 0.0
         },
         "angular_position": {
-          "kp": 0.0,
+          "kp": 1000.0,
           "ki": 0.0,
           "kd": 0.0
         }
