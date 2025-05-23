@@ -118,7 +118,7 @@ if __name__ == "__main__":
     os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
     # Jack
     jack = PIN(CONFIG.JACK_PIN)
-    jack.setup("input", reverse_state=True)
+    jack.setup("input_pullup", reverse_state=True)
 
     # Movement
     # Movement manager
@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
     ws_server.run()
 
-    #import cProfile
+    # import cProfile
 
     # profiler = cProfile.Profile()
     # profiler.enable()

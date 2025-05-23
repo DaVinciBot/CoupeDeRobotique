@@ -60,7 +60,7 @@ class ShowArena(BaseArena):
                         12.5 + distance_between_robot_and_work_zone, 40, -pi / 2
                     )
                 ],
-            ),  # TODO: x = distance necessaire entre le robot et les conserves. Theta ??
+            ),
             (
                 (2.5, 112.5),
                 (12.5, 152.5),
