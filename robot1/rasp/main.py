@@ -2,6 +2,7 @@
 # Config
 from config_loader import CONFIG
 import os
+import subprocess
 
 from loggerplusplus import Logger, LogLevels
 
@@ -147,7 +148,20 @@ if __name__ == "__main__":
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
     for routine in brain.get_tasks():
         ws_server.add_background_task(routine)
-
+        
+    def force_kill_all_python():
+        """
+        Kill all running Python processes using pkill -9 python
+        """
+        try: 
+            # Use pkill to kill all Python processes
+            cmd = "pkill -9 python"
+            subprocess.run(cmd, shell=True, check=True)
+            print("All Python processes killed.")
+        except subprocess.CalledProcessError as e:
+            print(f"Command failed: {e}")
+    
+    ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
 
     # import cProfile
