@@ -115,8 +115,8 @@ void Rolling_Basis::odometrie_handle()
 
     // Determine the new cartesian position of the robot
     this->THETA = normalizeAngle(this->THETA + delta_theta);
-    this->X += (cosf(this->THETA) * delta_distance);
-    this->Y += (sinf(this->THETA) * delta_distance);
+    this->X += (sinf(this->THETA) * delta_distance);
+    this->Y += (cosf(this->THETA) * delta_distance);
 }
 
 
