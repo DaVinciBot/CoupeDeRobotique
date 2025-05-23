@@ -153,13 +153,9 @@ if __name__ == "__main__":
         """
         Kill all running Python processes using pkill -9 python
         """
-        try: 
-            # Use pkill to kill all Python processes
-            cmd = "pkill -9 python"
-            subprocess.run(cmd, shell=True, check=True)
-            print("All Python processes killed.")
-        except subprocess.CalledProcessError as e:
-            print(f"Command failed: {e}")
+        cmd = "pkill -9 python"
+        subprocess.run(cmd)
+        print("All Python processes killed.")
     
     ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
