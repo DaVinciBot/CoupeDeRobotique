@@ -5,14 +5,14 @@
 
 
 // #------- MOTOR CONFIGURATION -------#
-#define LEFT_STEP_PIN 16
-#define LEFT_DIR_PIN 15
-#define LEFT_EN_PIN 17
+#define LEFT_DIR_PIN 3
+#define LEFT_STEP_PIN 46
+#define LEFT_EN_PIN 9
 #define LEFT_STEPS_PER_REV 400
 
-#define RIGHT_STEP_PIN 24
-#define RIGHT_DIR_PIN 23
-#define RIGHT_EN_PIN 25
+#define RIGHT_DIR_PIN 21
+#define RIGHT_STEP_PIN 47
+#define RIGHT_EN_PIN 48
 #define RIGHT_STEPS_PER_REV 400
 
 // FIXME: bonnes valeurs
@@ -24,11 +24,13 @@
 
 // #------- LORA CONFIGURATION -------#
 #define SS 10 // NSS pin
-#define RST 9 // RESET pin
-#define BUSY 8 // BUSY pin
-#define IRQ 7 // IRQ pin
-#define TXEN 6 // TXEN pin
-#define RXEN 5 // RXEN pin
+#define RST 16 // RESET pin
+#define BUSY 15 // BUSY pin
+
+// ESP XIAO DEVKIT PINOUT
+// #define SS 4 // NSS pin
+// #define RST 3 // RESET pin
+// #define BUSY 2 // BUSY pin
 
 // #-------- DEV CONFIGURATION ---------#
 #define ENABLE_OTA false

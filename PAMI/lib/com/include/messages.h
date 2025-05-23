@@ -18,6 +18,7 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 #define SET_POSITION 0
 #define SET_PID 1
 #define SET_ODOMETRIE 2
+#define SET_SPEED 3
 
 // Actuators
 #define SET_SERVO_ANGLE 3
@@ -67,6 +68,11 @@ struct msg_set_odometrie
     float y;
     float theta;
 };
+struct msg_set_speed
+{
+    byte command = SET_SPEED;
+    float speed;
+};
 
 // Common (Rolling Basis + Actuators)
 struct msg_reset_pami
@@ -90,4 +96,10 @@ struct msg_unknown_msg_type
 {
     byte command = UNKNOWN_MSG_TYPE;
     byte type_id; // ID of the unknown message
+};
+
+struct msg_print
+{
+    byte command = PRINT;
+    char message[252];
 };

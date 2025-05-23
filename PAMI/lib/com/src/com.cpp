@@ -13,15 +13,14 @@ Com::~Com()
 {
 }
 
-void Com::begin(int8_t nss, int8_t reset, int8_t busy, int8_t irq, int8_t txen, int8_t rxen)
+bool Com::begin(int8_t nss, int8_t reset, int8_t busy)
 {
     // Begin LoRa radio and set NSS, reset, busy, txen, and rxen pin with connected Arduino pins
     Serial.println("Begin LoRa radio");
-    if (!LoRa.begin(nss, reset, busy, irq, txen, rxen))
+    if (!LoRa.begin(nss, reset, busy))
     {
         Serial.println("Something wrong, can't begin LoRa radio");
-        while (1)
-            ;
+        return false;
     }
 
     Serial.println("Set frequency to 915 MHz");
@@ -40,6 +39,7 @@ void Com::begin(int8_t nss, int8_t reset, int8_t busy, int8_t irq, int8_t txen, 
     LoRa.setSyncWord(syncWord);
 
     Serial.println("\n-- LORA TRANSMITTER / RECEIVER --\n");
+    return true;
 }
 
 byte Com::handle()
@@ -51,7 +51,7 @@ byte Com::handle()
 
         // Wait until at least 6 bytes are received
         if (this->pointer < 6)
-            continue;
+            break;
 
         // Check for signature validity
         bool is_signature = true;
@@ -59,7 +59,7 @@ byte Com::handle()
             is_signature = this->buffer[pointer - 1 - i] == this->signature[3 - i];
 
         if (!is_signature)
-            continue;
+            break;
 
         // Extract message size
         byte msg_size = this->buffer[pointer - 6];
@@ -75,7 +75,7 @@ byte Com::handle()
                 byte invalid_crc_msg = NACK;
                 send_msg(&invalid_crc_msg, 1);
                 this->pointer = 0;
-                continue;
+                break;
             }
 
             // Reset the pointer and return the message size
