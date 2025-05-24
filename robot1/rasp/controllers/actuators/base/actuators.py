@@ -112,14 +112,14 @@ class Actuators(
 
         # WARNING: pin_driver is also defined in the C++ code,
         # because it needs to receive a HIGH from the beginning, or it will start heating up
-        pin_dir = 12
+        pin_dir = 15
         pin_step = 14
-        pin_driver = 15
+        pin_driver = 13
 
         msg = (
             Messages.STEPPER_STEP.to_bytes()
             + struct.pack("<i", abs(steps))
-            + struct.pack("<?", (steps >= 0))
+            + struct.pack("<?", (steps <= 0))
             + struct.pack("<i", speed)
             + struct.pack("<B", pin_dir)
             + struct.pack("<B", pin_step)
