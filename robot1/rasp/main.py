@@ -119,7 +119,7 @@ if __name__ == "__main__":
     os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
     # Jack
     jack = PIN(CONFIG.JACK_PIN)
-    jack.setup("input_pullup", reverse_state=False)
+    jack.setup("input_pulldown", reverse_state=False)
 
     # Movement
     # Movement manager
