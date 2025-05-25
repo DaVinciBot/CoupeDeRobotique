@@ -22,8 +22,7 @@ from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from controllers.actuators import Actuators, ActuatorsDummy
 from sensors import Lidar
 
-from gpiozero import LED, Button
-from gpiozero.pins.lgpio import LGPIOFactory
+from GPIO import PIN
 
 # from navigation_tasks.tasks import yellow_start_tasks
 
@@ -72,8 +71,8 @@ class MainBrain(Brain):
 
         self.jack = jack
 
-        self.factory = LGPIOFactory()
-        self.button = Button(16, pull_up=True, pin_factory=self.factory)
+        self.test_pin = PIN(16)
+        self.test_pin.setup("input_pullup", reverse_state=True)
 
         super().__init__(logger, self)
 
@@ -86,7 +85,8 @@ class MainBrain(Brain):
     # Deactivate for now
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def wait_for_trigger(self):
-        self.logger.info(f"Jack state: {self.button.digital_read()}")
+        # self.logger.info(f"Jack state: {self.jack.digital_read()}")
+        self.logger.info(f"Test pin state: {self.test_pin.digital_read()}")
 
     @Brain.task(
         process=True,
