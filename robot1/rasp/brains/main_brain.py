@@ -102,7 +102,7 @@ class MainBrain(Brain):
         
         navigator.add_navigation_task(
             NavigatorTaskParams(
-                goal=OrientedPoint(100, 70, pi/2),
+                goal=OrientedPoint(100, 0, 0),
                 timeout=None,
                 path_planner_params=BasicPathPlannerParams(),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
