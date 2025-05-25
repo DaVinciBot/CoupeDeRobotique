@@ -1,9 +1,7 @@
 # import RPi.GPIO as GPIO
 from gpiozero import LED, Button
-from gpiozero.pins.pigpio  import PiGPIOFactory
+from gpiozero.pins.lgpio import LGPIOFactory
 
-
-PIGPIO_FACTORY = PiGPIOFactory()
 
 class PIN:
     """
@@ -39,21 +37,21 @@ class PIN:
         self.reverse_state = reverse_state
 
         if mode == "output":
-            self.device = LED(self.pin, pin_factory=PIGPIO_FACTORY)
+            self.device = LED(self.pin, pin_factory=LGPIOFactory())
             self.device.off()
         elif mode == "input":
-            self.device = Button(self.pin, pin_factory=PIGPIO_FACTORY)
+            self.device = Button(self.pin, pin_factory=LGPIOFactory())
         elif mode == "input_pullup":
             self.device = Button(
                 self.pin,
                 pull_up=True,
-                pin_factory=PIGPIO_FACTORY,
+                pin_factory=LGPIOFactory(),
             )
         elif mode == "input_pulldown":
             self.device = Button(
                 self.pin,
                 pull_up=False,
-                pin_factory=PIGPIO_FACTORY,
+                pin_factory=LGPIOFactory(),
             )
 
     def digital_write(self, state: bool):
