@@ -26,9 +26,6 @@ from sensors import Lidar
 
 # from boombot_strategy import ShowGameContext
 
-import lgpio
-
-
 from navigation import (
     Navigator,
     NavigatorTaskParams,
@@ -71,24 +68,8 @@ class MainBrain(Brain):
         self.navigator_task: NavigatorTaskParams = None
 
         self.jack = jack
-        
-        GPIOHANDLE_REQUEST_INPUT = 0x1
-        GPIOHANDLE_REQUEST_PULL_UP = 0x8
-
-        self.chip = lgpio.gpiochip_open(0)
-        self.pin = 26
-        flags = GPIOHANDLE_REQUEST_INPUT | GPIOHANDLE_REQUEST_PULL_UP
-
-        
-
 
         super().__init__(logger, self)
-        
-        try:
-            self.handle = lgpio.gpio_claim_input(self.chip, self.pin, flags)
-        except Exception as e:
-            self.logger.info(f"Failed to claim GPIO{self.pin}: {e}")
-            self.handle = None
 
     """
     ### Secondary Processes ###
@@ -98,12 +79,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def wait_for_trigger(self):
-        if self.handle is not None:
-            state = lgpio.gpio_read(self.handle)
-            self.logger.info(f"Jack GPIO{self.pin} state: {state}")
-        else:
-            self.logger.info("GPIO handle not initialized.")
-    
+        self.logger.info(f"Jack state: {self.jack.digital_read()}")
 
     @Brain.task(
         process=True,
