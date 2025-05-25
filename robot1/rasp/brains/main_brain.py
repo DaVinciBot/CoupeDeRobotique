@@ -72,7 +72,7 @@ class MainBrain(Brain):
 
         self.jack = jack
         
-        self.PINS_TO_TEST = [2, 3, 4, 17, 27, 22, 10, 9, 11, 5, 6, 13, 19, 26]
+        self.PINS_TO_TEST = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
         self.factory = LGPIOFactory()
 
         super().__init__(logger, self)
