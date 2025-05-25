@@ -71,22 +71,24 @@ class MainBrain(Brain):
         self.navigator_task: NavigatorTaskParams = None
 
         self.jack = jack
+        
+        self.PINS_TO_TEST = [2, 3, 4, 17, 27, 22, 10, 9, 11, 5, 6, 13, 19, 26]
+        self.factory = LGPIOFactory()
 
         super().__init__(logger, self)
 
     """
     ### Secondary Processes ###
     """
-    PINS_TO_TEST = [2, 3, 4, 17, 27, 22, 10, 9, 11, 5, 6, 13, 19, 26]
-    factory = LGPIOFactory()
+
     """ ### Routines ### """
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def wait_for_trigger(self):
         buttons = {}
-        for pin in PINS_TO_TEST:
+        for pin in self.PINS_TO_TEST:
             try:
-                buttons[pin] = Button(pin, pull_up=True, pin_factory=factory)
+                buttons[pin] = Button(pin, pull_up=True, pin_factory=self.factory)
             except Exception as e:
                 self.logger.warning(f"GPIO{pin} init failed: {e}")
 
