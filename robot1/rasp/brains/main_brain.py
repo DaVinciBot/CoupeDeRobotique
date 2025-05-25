@@ -77,7 +77,7 @@ class MainBrain(Brain):
 
         self.chip = lgpio.gpiochip_open(0)
         self.pin = 26
-        flags = lgpio.GPIOHANDLE_REQUEST_INPUT | lgpio.GPIOHANDLE_REQUEST_PULL_UP
+        flags = GPIOHANDLE_REQUEST_INPUT | GPIOHANDLE_REQUEST_PULL_UP
 
         try:
             self.handle = lgpio.gpio_claim_input(self.chip, self.pin, flags)
