@@ -224,7 +224,7 @@
       "movement_resolution": 1
     },
     "jack": {
-      "pin": 37.0
+      "pin": 26.0
     }
   },
   "arena": {
