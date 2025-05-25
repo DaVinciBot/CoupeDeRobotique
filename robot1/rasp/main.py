@@ -51,7 +51,6 @@ if __name__ == "__main__":
     logger_lidar = Logger(
         identifier="Lidar",
         follow_logger_manager_rules=True,
-        print_log_level=LogLevels.WARNING,
     )
 
     # Controllers loggers

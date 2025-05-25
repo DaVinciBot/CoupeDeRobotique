@@ -66,8 +66,6 @@ class Lidar:
         self.__polars_angles = None
         self.__threading_init_lidar()
 
-        self._logger.warning("Test warning Lidar")
-
     """
         Private methods
     """
