@@ -77,9 +77,14 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
+    # Deactivate for now
+    @Brain.task(process=False, run_on_start=False, refresh_rate=1)
     async def wait_for_trigger(self):
         self.logger.info(f"Jack state: {self.jack.digital_read()}")
+
+    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
+    async def lidar_data(self):
+        self.logger.info("Lidar distances detected : " + str(self.lidar.scan_to_distances()))
 
     @Brain.task(
         process=True,
