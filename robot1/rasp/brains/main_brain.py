@@ -101,7 +101,7 @@ class MainBrain(Brain):
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         
-        navigator.add_navigation_task(
+        """navigator.add_navigation_task(
             NavigatorTaskParams(
                 goal=OrientedPoint(100, 25, 0),
                 timeout=None,
@@ -110,7 +110,7 @@ class MainBrain(Brain):
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
                 avoidance_params=StopAndWaitAvoidanceParams(acs_distance=20, timeout=5),
             )
-        )
+        )"""
         
         # --- MetaProg is insane (loop) --- #
 
