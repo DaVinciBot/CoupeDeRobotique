@@ -88,7 +88,7 @@ class MainBrain(Brain):
         buttons = {}
         for pin in self.PINS_TO_TEST:
             try:
-                buttons[pin] = Button(pin, pull_up=True, pin_factory=self.factory)
+                buttons[pin] = Button(pin, pull_up=False, pin_factory=self.factory)
             except Exception as e:
                 self.logger.warning(f"GPIO{pin} init failed: {e}")
 
