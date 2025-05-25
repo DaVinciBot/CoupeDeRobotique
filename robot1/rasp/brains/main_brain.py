@@ -22,6 +22,9 @@ from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from controllers.actuators import Actuators, ActuatorsDummy
 from sensors import Lidar
 
+from gpiozero import LED, Button
+from gpiozero.pins.lgpio import LGPIOFactory
+
 # from navigation_tasks.tasks import yellow_start_tasks
 
 # from boombot_strategy import ShowGameContext
@@ -69,6 +72,9 @@ class MainBrain(Brain):
 
         self.jack = jack
 
+        self.factory = LGPIOFactory()
+        self.button = Button(16, pull_up=True, pin_factory=self.factory)
+
         super().__init__(logger, self)
 
     """
@@ -80,7 +86,7 @@ class MainBrain(Brain):
     # Deactivate for now
     @Brain.task(process=False, run_on_start=False, refresh_rate=1)
     async def wait_for_trigger(self):
-        self.logger.info(f"Jack state: {self.jack.digital_read()}")
+        self.logger.info(f"Jack state: {self.button.digital_read()}")
 
     @Brain.task(
         process=True,
