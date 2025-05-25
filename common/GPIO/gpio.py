@@ -47,7 +47,7 @@ class PIN:
             self.device = Button(
                 self.pin,
                 pull_up=True,
-                pin_factory=,
+                pin_factory=PIGPIO_FACTORY,
             )
         elif mode == "input_pulldown":
             self.device = Button(
