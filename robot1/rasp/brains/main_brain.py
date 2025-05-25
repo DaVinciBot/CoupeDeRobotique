@@ -90,7 +90,7 @@ class MainBrain(Brain):
             try:
                 buttons[pin] = Button(pin, pin_factory=self.factory)
             except Exception as e:
-                self.logger.warning(f"GPIO{pin} init failed: {e}")
+                self.logger.info(f"GPIO{pin} init failed: {e}")
 
         while True:
             states = {f"GPIO{pin}": btn.is_pressed for pin, btn in buttons.items()}
