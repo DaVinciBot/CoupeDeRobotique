@@ -79,7 +79,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def wait_for_trigger(self):
-        self.logger.info(f"Jack tiré ? : {self.jack.device.is_pressed}")
+        self.logger.info(f"Jack state: {self.jack.digital_read()}")
 
     @Brain.task(
         process=True,
