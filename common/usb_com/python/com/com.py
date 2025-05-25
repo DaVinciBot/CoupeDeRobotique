@@ -219,6 +219,8 @@ class Com:
             self._crc8.update(msg)
             msg += self._crc8.digest()
             self._crc8.reset()
+        
+        self.logger.info(f"Sending bytes: {msg.hex()}")
 
         self._device.write(msg + END_BYTES_SIGNATURE)
         while self._device.out_waiting:
