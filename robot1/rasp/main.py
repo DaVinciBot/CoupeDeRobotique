@@ -14,7 +14,7 @@ from brains import MainBrain
 from taskbrain import DictProxyAccessor, Brain
 from navigation import NavigatorTaskParams
 from sensors import Lidar, LidarDummy
-from GPIO.gpio import PIN
+from GPIO import PIN
 
 # ====== Main ======
 if __name__ == "__main__":

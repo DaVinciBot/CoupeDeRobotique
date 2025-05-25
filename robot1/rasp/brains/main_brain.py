@@ -22,6 +22,9 @@ from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from controllers.actuators import Actuators, ActuatorsDummy
 from sensors import Lidar
 
+from gpiozero import Button
+from gpiozero.pins.lgpio import LGPIOFactory
+
 # from navigation_tasks.tasks import yellow_start_tasks
 
 # from boombot_strategy import ShowGameContext
@@ -74,12 +77,23 @@ class MainBrain(Brain):
     """
     ### Secondary Processes ###
     """
-
+    PINS_TO_TEST = [2, 3, 4, 17, 27, 22, 10, 9, 11, 5, 6, 13, 19, 26]
+    factory = LGPIOFactory()
     """ ### Routines ### """
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def wait_for_trigger(self):
-        self.logger.info(f"Jack state: {self.jack.digital_read()}")
+        buttons = {}
+        for pin in PINS_TO_TEST:
+            try:
+                buttons[pin] = Button(pin, pull_up=True, pin_factory=factory)
+            except Exception as e:
+                self.logger.warning(f"GPIO{pin} init failed: {e}")
+
+        while True:
+            states = {f"GPIO{pin}": btn.is_pressed for pin, btn in buttons.items()}
+            self.logger.info(f"PINS states: {states}")
+            await asyncio.sleep(1)
 
     @Brain.task(
         process=True,
