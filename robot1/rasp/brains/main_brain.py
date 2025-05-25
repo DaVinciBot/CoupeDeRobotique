@@ -72,6 +72,8 @@ class MainBrain(Brain):
 
         self.jack = jack
         
+        GPIOHANDLE_REQUEST_INPUT = 0x1
+        GPIOHANDLE_REQUEST_PULL_UP = 0x8
 
         self.chip = lgpio.gpiochip_open(0)
         self.pin = 26
