@@ -43,8 +43,6 @@ from usb_com.python.tools import get_all_serial_number
 
 from navigation.navigator.task import NavigatorTaskState
 
-from GPIO import PIN
-
 import asyncio
 
 
@@ -71,9 +69,6 @@ class MainBrain(Brain):
 
         self.jack = jack
 
-        self.test_pin = PIN(16)
-        self.test_pin.setup("input_pullup", reverse_state=True)
-
         super().__init__(logger, self)
 
     """
@@ -85,8 +80,7 @@ class MainBrain(Brain):
     # Deactivate for now
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def wait_for_trigger(self):
-        # self.logger.info(f"Jack state: {self.jack.digital_read()}")
-        self.logger.info(f"Test pin state: {self.test_pin.digital_read()}")
+        self.logger.info(f"Jack state: {self.jack.digital_read()}")
 
     @Brain.task(
         process=True,
