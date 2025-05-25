@@ -84,7 +84,7 @@ class MainBrain(Brain):
     """ ### Routines ### """
 
     # Deactivate for now
-    @Brain.task(process=False, run_on_start=False, refresh_rate=1)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def wait_for_trigger(self):
         self.logger.info(f"Jack state: {self.button.digital_read()}")
 
