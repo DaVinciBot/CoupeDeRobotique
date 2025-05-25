@@ -79,14 +79,16 @@ class MainBrain(Brain):
         self.pin = 26
         flags = GPIOHANDLE_REQUEST_INPUT | GPIOHANDLE_REQUEST_PULL_UP
 
+        
+
+
+        super().__init__(logger, self)
+        
         try:
             self.handle = lgpio.gpio_claim_input(self.chip, self.pin, flags)
         except Exception as e:
             self.logger.info(f"Failed to claim GPIO{self.pin}: {e}")
             self.handle = None
-
-
-        super().__init__(logger, self)
 
     """
     ### Secondary Processes ###
