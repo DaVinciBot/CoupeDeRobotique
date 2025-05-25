@@ -42,7 +42,6 @@ from usb_com.python.tools import get_all_serial_number
 from navigation.navigator.task import NavigatorTaskState
 
 from GPIO import PIN
-import lgpio
 
 import asyncio
 
@@ -69,10 +68,6 @@ class MainBrain(Brain):
         self.navigator_task: NavigatorTaskParams = None
 
         self.jack = jack
-        
-        self.jack_pin = 26
-        self.chip = lgpio.gpiochip_open(0)
-        lgpio.gpio_claim_input(self.chip, self.jack_pin, lgpio.GP_PULL_UP)
 
         super().__init__(logger, self)
 
@@ -84,8 +79,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def wait_for_trigger(self):
-        level = lgpio.gpio_read(self.chip, self.jack_pin)
-        self.logger.info(f"Jack (GPIO{self.jack_pin}) state: {level}")
+        self.logger.info(f"Jack state: {self.jack.digital_read()}")
 
     @Brain.task(
         process=True,
