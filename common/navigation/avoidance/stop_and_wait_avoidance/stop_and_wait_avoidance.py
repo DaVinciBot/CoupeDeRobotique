@@ -49,9 +49,6 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             logger (Logger | None): Optional logging instance.
         """
         super().__init__(params, logger)
-        self.logger.info(
-            f"Initialized StopAndWaitAvoidance with params: {params}"
-        )
 
     @BaseAvoidance._ensure_original_task_storage
     def handle(
@@ -87,9 +84,6 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self.state = AvoidanceState.AVOIDING
             task.state = NavigatorTaskState.AVOIDING
             self._start_timer()
-            self.logger.info(
-                f"Obstacle detected at {position}. Starting avoidance procedure."
-            )
             return cmd
 
         # 3. Obstacle cleared: finish avoidance
