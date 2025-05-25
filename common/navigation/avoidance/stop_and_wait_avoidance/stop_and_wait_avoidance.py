@@ -49,6 +49,9 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             logger (Logger | None): Optional logging instance.
         """
         super().__init__(params, logger)
+        self.logger.info(
+            f"Initialized StopAndWaitAvoidance with params: {params}"
+        )
 
     @BaseAvoidance._ensure_original_task_storage
     def handle(
