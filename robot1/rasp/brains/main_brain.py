@@ -108,7 +108,7 @@ class MainBrain(Brain):
                 path_planner_params=BasicPathPlannerParams(),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=StopAndWaitAvoidanceParams(acs_distance=10, timeout=30),
+                avoidance_params=StopAndWaitAvoidanceParams(acs_distance=0, timeout=30),
             )
         )
         
