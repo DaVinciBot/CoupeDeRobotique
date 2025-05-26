@@ -116,7 +116,7 @@ void Rolling_Basis::odometrie_handle()
     // Determine the new cartesian position of the robot
     this->X += cosf(this->THETA) * delta_distance;
     this->Y -= sinf(this->THETA) * delta_distance;
-    this->THETA = normalizeAngle(this->THETA + delta_theta);
+    this->THETA = normalizeAngle(this->THETA - delta_theta);
 }
 
 /**
@@ -152,8 +152,8 @@ void Rolling_Basis::handle(
     double linear_correction = this->linear_distance_pid.compute(distance_error);
     double angular_correction = this->angular_distance_pid.compute(theta_error);
 
-    double right_pwm = linear_correction + angular_correction;
-    double left_pwm = linear_correction - angular_correction;
+    double right_pwm = linear_correction - angular_correction;
+    double left_pwm = linear_correction + angular_correction;
 
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);
