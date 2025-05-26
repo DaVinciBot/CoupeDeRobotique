@@ -98,13 +98,8 @@ class MainBrain(Brain):
         rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
-        
-        print("############## Starting Rolling Basis ##############")
-        print("1 - Starting position: ", rolling_basis.odometrie)
-        print("2 - Target position: ", self.rolling_basis_odometrie)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        print("3 - New position: ", rolling_basis.odometrie)
-    
+     
         navigator.add_navigation_task(
             NavigatorTaskParams(
                 goal=OrientedPoint(20, 40, 0),
@@ -123,7 +118,7 @@ class MainBrain(Brain):
                 ally_zone=self.arena.ally_zone,
                 enemy_zone=self.arena.enemy_zone,
             )
-            #rolling_basis.set_speed_and_position(*cmd.get_command())
+            rolling_basis.set_speed_and_position(*cmd.get_command())
         
   
         # yellow_strategy_runner.handle(
