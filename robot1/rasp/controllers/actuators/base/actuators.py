@@ -147,6 +147,7 @@ class Actuators(
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
+        # time.sleep(0.01)  # Wait for the Teensy to process the message
 
         if disable_driver:
             # Disable the driver after the movement
