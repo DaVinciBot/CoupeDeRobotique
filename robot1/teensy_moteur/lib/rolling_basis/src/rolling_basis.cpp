@@ -115,7 +115,7 @@ void Rolling_Basis::odometrie_handle()
 
     // Determine the new cartesian position of the robot
     this->X += cosf(this->THETA) * delta_distance;
-    this->Y += sinf(this->THETA) * delta_distance;
+    this->Y -= sinf(this->THETA) * delta_distance;
     this->THETA = normalizeAngle(this->THETA + delta_theta);
 }
 
@@ -137,7 +137,7 @@ void Rolling_Basis::handle(
     double yerr = target_position.y - this->Y;
 
     // double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2)); ! pb en cas d'overshoot !
-    double distance_error = xerr * sinf(this->THETA) + yerr * cosf(this->THETA);
+    double distance_error = xerr * cosf(this->THETA) - yerr * sinf(this->THETA);
     double mag = sqrt(pow(xerr, 2) + pow(yerr, 2));
     double sign = (distance_error >= 0.0) ? +1.0 : -1.0;
     distance_error = mag * sign;
