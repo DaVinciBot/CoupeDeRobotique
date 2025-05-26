@@ -40,14 +40,17 @@ def get_pickup_sub_graph(zone_pickup_id: int) -> BaseSubGraph:
     # Add node for navigating to the specified pickup zone
     pickup_sub_graph.add_node(
         f"[Pickup] go to zone {zone_pickup_id}",
-        BaseTaskNode(f"[Pickup] go to zone {zone_pickup_id}", GoToStuffZoneToPickUp(zone_pickup_id)),
+        BaseTaskNode(
+            f"[Pickup] go to zone {zone_pickup_id}",
+            GoToStuffZoneToPickUp(zone_pickup_id),
+        ),
     )
-    
+
     pickup_sub_graph.add_node(
         f"[Pickup] prepare pickup at zone {zone_pickup_id}",
-        BaseTaskNode(f"[Pickup] prepare pickup at zone {zone_pickup_id}", 
-                     ReadyToPickUp()
-                     ),
+        BaseTaskNode(
+            f"[Pickup] prepare pickup at zone {zone_pickup_id}", ReadyToPickUp()
+        ),
     )
 
     # Add node for precise forward motion to perform pickup
@@ -55,12 +58,10 @@ def get_pickup_sub_graph(zone_pickup_id: int) -> BaseSubGraph:
         f"[Pickup] go to take stuff {zone_pickup_id}",
         BaseTaskNode(f"[Pickup] go to take stuff {zone_pickup_id}", PreciseForward(10)),
     )
-    
+
     pickup_sub_graph.add_node(
         f"[Pickup] pickup stuff at zone {zone_pickup_id}",
-        BaseTaskNode(f"[Pickup] pickup stuff at zone {zone_pickup_id}", 
-                     PickUp()
-                     ),
+        BaseTaskNode(f"[Pickup] pickup stuff at zone {zone_pickup_id}", PickUp()),
     )
 
     # Connect the navigation node to the pickup maneuver node
@@ -70,14 +71,14 @@ def get_pickup_sub_graph(zone_pickup_id: int) -> BaseSubGraph:
             pickup_sub_graph.nodes[f"[Pickup] prepare pickup at zone {zone_pickup_id}"]
         ),
     )
-    
+
     pickup_sub_graph.connect(
         f"[Pickup] prepare pickup at zone {zone_pickup_id}",
         DirectTransition(
             pickup_sub_graph.nodes[f"[Pickup] go to take stuff {zone_pickup_id}"]
         ),
     )
-    
+
     pickup_sub_graph.connect(
         f"[Pickup] go to take stuff {zone_pickup_id}",
         DirectTransition(

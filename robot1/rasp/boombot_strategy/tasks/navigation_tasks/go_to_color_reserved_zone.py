@@ -5,7 +5,7 @@ from navigation import (
     StopAndWaitAvoidanceParams,
     BasicPathPlannerParams,
     SequentialTrajectoryPlannerParams,
-    Direction
+    Direction,
 )
 
 

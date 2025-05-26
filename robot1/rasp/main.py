@@ -148,7 +148,7 @@ if __name__ == "__main__":
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
     for routine in brain.get_tasks():
         ws_server.add_background_task(routine)
-        
+
     def force_kill_all_python():
         """
         Kill all running Python processes using pkill -9 python
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         cmd = "pkill -9 python"
         subprocess.run(cmd)
         print("All Python processes killed.")
-    
+
     ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
 
