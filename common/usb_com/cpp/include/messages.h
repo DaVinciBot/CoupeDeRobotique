@@ -104,12 +104,12 @@ struct msg_set_servo_angle_detach
 struct msg_stepper_step
 {
     byte command = STEPPER_STEP;
-    int steps;       // total number of steps this motor can take
-    bool dir;        // direction of the motor
-    int speed;       // speed
-    byte pin_dir;    // pin to which the direction pin is connected
-    byte pin_step;   // pin to which the step pin is connected
-    byte pin_driver; // pin to which the driver pin is connected
+    int steps;              // total number of steps this motor can take
+    bool dir;               // direction of the motor
+    int speed;              // speed
+    byte pin_dir;           // pin to which the direction pin is connected
+    byte pin_step;          // pin to which the step pin is connected
+    byte enable_pin_driver; // pin to which the driver pin is connected
 };
 
 struct msg_set_stepper_driver_activation_state

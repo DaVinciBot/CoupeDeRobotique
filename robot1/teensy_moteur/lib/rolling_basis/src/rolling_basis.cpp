@@ -9,17 +9,17 @@
 #include <Arduino.h>
 #include <util/atomic.h>
 
-
-double normalizeAngle(double theta) {
+double normalizeAngle(double theta)
+{
     // shift by +PI, take modulo 2*PI, remap to [0,2*PI)
     theta = fmodf(theta + PI, 2.0f * PI);
-    if (theta < 0.0f) {
+    if (theta < 0.0f)
+    {
         theta += 2.0f * PI;
     }
     // shift back to [-PI, +PI)
     return theta - PI;
 }
-
 
 // Properties
 /**
@@ -114,11 +114,10 @@ void Rolling_Basis::odometrie_handle()
     double delta_theta = (this->right_motor->distance - this->left_motor->distance) / this->center_distance;
 
     // Determine the new cartesian position of the robot
+    this->X += (sinf(this->THETA + delta_theta / 2.0f) * delta_distance);
+    this->Y += (cosf(this->THETA + delta_theta / 2.0f) * delta_distance);
     this->THETA = normalizeAngle(this->THETA + delta_theta);
-    this->X += (cosf(this->THETA) * delta_distance);
-    this->Y += (sinf(this->THETA) * delta_distance);
 }
-
 
 /**
  * @brief Handle the correction computation
@@ -138,14 +137,13 @@ void Rolling_Basis::handle(
     double yerr = target_position.y - this->Y;
 
     // double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2)); ! pb en cas d'overshoot !
-    double distance_error = xerr * cos(this->THETA) + yerr * sin(this->THETA);
+    double distance_error = xerr * sinf(this->THETA) + yerr * cosf(this->THETA);
     double mag = sqrt(pow(xerr, 2) + pow(yerr, 2));
     double sign = (distance_error >= 0.0) ? +1.0 : -1.0;
     distance_error = mag * sign;
 
-
     double theta_error = target_position.theta - this->THETA;
-    
+
     theta_error = normalizeAngle(theta_error);
 
     // Consigne vitesse
@@ -153,10 +151,10 @@ void Rolling_Basis::handle(
     // Compute PID output based on errors
     double linear_correction = this->linear_distance_pid.compute(distance_error);
     double angular_correction = this->angular_distance_pid.compute(theta_error);
-    
+
     double right_pwm = linear_correction + angular_correction;
     double left_pwm = linear_correction - angular_correction;
-    
+
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);
 }
