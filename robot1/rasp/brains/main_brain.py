@@ -35,7 +35,6 @@ from navigation import (
     SequentialTrajectoryPlannerParams,
     SpeedProfiler,
     StopAndWaitAvoidanceParams,
-    
     BasicPathPlannerParams,
 )
 
@@ -100,7 +99,7 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        
+
         navigator.add_navigation_task(
             NavigatorTaskParams(
                 goal=OrientedPoint(40, 25, 0),
@@ -111,7 +110,7 @@ class MainBrain(Brain):
                 avoidance_params=StopAndWaitAvoidanceParams(acs_distance=20, timeout=5),
             )
         )
-        
+
         # --- MetaProg is insane (loop) --- #
 
         if navigator.current_task is not None:
@@ -168,16 +167,14 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=self.lidar.scan_to_polars(), # np.array([]),
+            lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
-        
+
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def print_odo(self) -> None:
-        self.logger.info(
-            f"Rolling basis odometrie: {self.rolling_basis_odometrie}"
-        )
+        self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
 
     """ ### One-Shot Tasks ### """
 
