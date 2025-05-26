@@ -4,7 +4,7 @@ from navigation import (
     NoAvoidanceParams,
     DeltaPathPlannerParams,
     SequentialTrajectoryPlannerParams,
-    Direction
+    Direction,
 )
 
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
@@ -15,7 +15,9 @@ class Backward(NavigationTask):
         super().__init__(
             goal=None,
             path_planner_params=DeltaPathPlannerParams(distance=-distance),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(direction=Direction.BACKWARD),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(
+                direction=Direction.BACKWARD
+            ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
         )

@@ -8,21 +8,25 @@ class ReadyToPickUp(BaseTask):
         ctx.actuators.ready_to_pickup()
         return True
 
+
 class PickUp(BaseTask):
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.pick_up()
         return True
+
 
 class Build(BaseTask):
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.build()
         return True
 
+
 class EndBuild(BaseTask):
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.end_build()
         return True
-    
+
+
 class InitActuator(BaseTask):
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.init_actuator()

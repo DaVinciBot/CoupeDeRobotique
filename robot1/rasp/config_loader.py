@@ -205,7 +205,7 @@ class CONFIG:
     ARENA_OBSTACLE_BUFFER = ARENA_CONFIG["obstacle_buffer"]
     ARENA_CHUNK_SIZE = ARENA_CONFIG["chunk_size"]
     ARENA_FORBIDDEN_COVER_THRESHOLD = ARENA_CONFIG["forbidden_cover_threshold"]
-    
+
     # Jack
     JACK_PIN = SPECIFIC_CONFIG["jack"]["pin"]
 
