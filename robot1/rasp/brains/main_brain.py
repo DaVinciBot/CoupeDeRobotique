@@ -99,6 +99,7 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        time.sleep(1)  
      
         navigator.add_navigation_task(
             NavigatorTaskParams(
