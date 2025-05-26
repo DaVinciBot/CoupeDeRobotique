@@ -155,7 +155,7 @@
           "max_angle": 180
         },
         "4": {
-          "fold_angle": 20,
+          "fold_angle": 10,
           "deploy_angle": 110,
           "max_angle": 270
         },
@@ -177,13 +177,13 @@
         "8": {
           "fold_angle": 240,
           "deploy_angle": 140,
-          "docking":140,
+          "docking":130,
           "max_angle": 270
         },
         "9": {
           "fold_angle":130,
           "deploy_angle":90,
-          "maintain_plank":130,
+          "maintain_plank":140,
           "max_angle": 270
         }
         
