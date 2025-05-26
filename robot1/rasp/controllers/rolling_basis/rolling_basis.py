@@ -181,6 +181,9 @@ class RollingBasis(BaseComTeensy):
             + struct.pack("<d", odometrie.theta)
         )
         self.send_bytes(msg)
+        self.logger.info(
+            f"Setting odometrie to: {odometrie.x}, {odometrie.y}, {odometrie.theta}"
+        )
         self._start_time = time.time()
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
