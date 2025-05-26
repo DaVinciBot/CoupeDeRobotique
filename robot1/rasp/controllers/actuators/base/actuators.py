@@ -28,7 +28,9 @@ class Actuators(
         enable_dummy=CONFIG.TEENSY_DUMMY,
     ):
         # Initialize the parent-GPIOComTeensy class
-        super().__init__(logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy)
+        super().__init__(
+            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy
+        )
 
         # Admit that default elevator position is at the bottom
         self.elevator_ticks: int = 0
@@ -42,7 +44,9 @@ class Actuators(
         # Register message handlers
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
-        self.add_callback(self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value)
+        self.add_callback(
+            self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value
+        )
 
     def __str__(self) -> str:
         return self.__class__.__name__
@@ -108,14 +112,14 @@ class Actuators(
 
         # WARNING: pin_driver is also defined in the C++ code,
         # because it needs to receive a HIGH from the beginning, or it will start heating up
-        pin_dir = 5
-        pin_step = 4
-        pin_driver = 3
+        pin_dir = 15
+        pin_step = 14
+        pin_driver = 13
 
         msg = (
             Messages.STEPPER_STEP.to_bytes()
             + struct.pack("<i", abs(steps))
-            + struct.pack("<?", (steps >= 0))
+            + struct.pack("<?", (steps <= 0))
             + struct.pack("<i", speed)
             + struct.pack("<B", pin_dir)
             + struct.pack("<B", pin_step)
@@ -163,9 +167,7 @@ class Actuators(
                 if not self.gpio_manager.is_declared_gpio(pin):
                     self.gpio_manager.add_gpio(pin, ActuatorType.SERVO)
                     self.logger.info(f"Pin {pin} added as a servo pin")
-                elif not self.gpio_manager.is_valid_gpio(
-                        pin, ActuatorType.SERVO
-                ):
+                elif not self.gpio_manager.is_valid_gpio(pin, ActuatorType.SERVO):
                     self.logger.error(
                         f"Pin {pin} is not a valid servo pin because it is registered as a "
                         f"{str(self.gpio_manager.get_type_gpio(pin))}"
@@ -175,8 +177,8 @@ class Actuators(
                     use_I2C
                 ):  # prevent I2C overload. Without during the test, servos where taking wrong angles when called too fast
                     t = time.time()
-                    if t - self.t_set_servo_angle_i2c < 0.02:
-                        time.sleep(0.02 - (t - self.t_set_servo_angle_i2c))
+                    if t - self.t_set_servo_angle_i2c < 0.03:
+                        time.sleep(0.03 - (t - self.t_set_servo_angle_i2c))
                         self.t_set_servo_angle_i2c = t
                 msg = (
                     (

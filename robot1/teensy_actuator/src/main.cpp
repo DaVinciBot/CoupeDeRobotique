@@ -93,18 +93,24 @@ void stepper_step(byte *msg, byte size)
         stepper_step_msg->pin_step);
     stepper->begin();
     actuators[stepper_step_msg->pin_dir] = (void *)stepper;
-    pinMode(stepper_step_msg->pin_driver, OUTPUT);
+    pinMode(stepper_step_msg->enable_pin_driver, OUTPUT);
   }
+  String output1 = "pin dir:" + String(stepper_step_msg->pin_dir);
+  String output2 = "pin step:" + String(stepper_step_msg->pin_step);
+  String output3 = "speed:" + String(stepper_step_msg->speed);
+  com->print((char *)output1.c_str());
+  com->print((char *)output2.c_str());
+  com->print((char *)output3.c_str());
   Bonezegei_A4988 *stepper = (Bonezegei_A4988 *)actuators[stepper_step_msg->pin_dir];
   stepper->setSpeed(stepper_step_msg->speed);
 
   // Step the motor
-  digitalWrite(stepper_step_msg->pin_driver, LOW);
+  digitalWrite(stepper_step_msg->enable_pin_driver, LOW);
   if (stepper_step_msg->dir)
     stepper->step(1, stepper_step_msg->steps);
   else
     stepper->step(0, stepper_step_msg->steps);
-  digitalWrite(stepper_step_msg->pin_driver, HIGH);
+  digitalWrite(stepper_step_msg->enable_pin_driver, HIGH);
 }
 
 void attach_switch(byte *msg, byte size)
@@ -137,7 +143,7 @@ void initilize_callback_functions()
 
 void setup()
 {
-  digitalWrite(3, HIGH); // Immediatly set enable pin at high to prevent heating. Dirty solution.
+  digitalWrite(ENABLE_DRIVER_STEPPER_PIN, HIGH); // Immediatly set enable pin at high to prevent heating. Dirty solution.
   com = new Com(&Serial, BAUDRATE);
   controller.begin();
   controller.setPWMFreq(60);
