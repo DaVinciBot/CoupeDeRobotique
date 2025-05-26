@@ -102,7 +102,7 @@ class MainBrain(Brain):
 
         navigator.add_navigation_task(
             NavigatorTaskParams(
-                goal=OrientedPoint(40, 45, 0),
+                goal=OrientedPoint(40, 20, 0),
                 timeout=None,
                 path_planner_params=BasicPathPlannerParams(),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
@@ -182,7 +182,7 @@ class MainBrain(Brain):
     async def start(self):
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        start_position = OrientedPoint(20, 25, 0)
+        start_position = OrientedPoint(20, 20, 0)
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )
