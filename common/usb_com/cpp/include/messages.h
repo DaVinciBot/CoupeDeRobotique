@@ -114,6 +114,7 @@ struct msg_stepper_step
 
 struct msg_set_stepper_driver_activation_state
 {
+    byte command = SET_STEPPER_DRIVER_ACTIVATION_STATE;
     byte pin;                 // stepper driver's enable pin
     bool enable_driver_state; // active low so true means the driver is disabled
 };

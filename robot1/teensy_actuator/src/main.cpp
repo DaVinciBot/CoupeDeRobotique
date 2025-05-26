@@ -110,11 +110,16 @@ void stepper_step(byte *msg, byte size)
     stepper->step(1, stepper_step_msg->steps);
   else
     stepper->step(0, stepper_step_msg->steps);
+  // digitalWrite(stepper_step_msg->enable_pin_driver, HIGH); // TODO: Implement a way to disable the driver after the step is done, to prevent heating
 }
 
 void set_stepper_driver_activation_state(byte *msg, byte size)
 {
   msg_set_stepper_driver_activation_state *stepper_driver_activation_msg = (msg_set_stepper_driver_activation_state *)msg;
+  String output = "pin:" + String(stepper_driver_activation_msg->pin);
+  String output2 = "enable driver state:" + String(stepper_driver_activation_msg->enable_driver_state);
+  com->print((char *)output.c_str());
+  com->print((char *)output2.c_str());
   digitalWrite(stepper_driver_activation_msg->pin, stepper_driver_activation_msg->enable_driver_state);
 }
 

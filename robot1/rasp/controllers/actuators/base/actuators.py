@@ -153,6 +153,11 @@ class Actuators(
             self.set_stepper_driver_activation_state(
                 pin_enable=pin_enable_driver, enable_driver=False
             )
+        else:
+            # Enable the driver after the movement
+            self.set_stepper_driver_activation_state(
+                pin_enable=pin_enable_driver, enable_driver=True
+            )
 
     @log("Actuators")
     def set_servo_angle(
