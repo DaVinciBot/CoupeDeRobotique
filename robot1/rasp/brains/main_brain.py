@@ -102,12 +102,12 @@ class MainBrain(Brain):
 
         navigator.add_navigation_task(
             NavigatorTaskParams(
-                goal=None,
+                goal=OrientedPoint(40, 45, 0),
                 timeout=None,
-                path_planner_params=DeltaPathPlannerParams(distance=50, rotation=0),
+                path_planner_params=BasicPathPlannerParams(),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=StopAndWaitAvoidanceParams(acs_distance=0, timeout=5),
+                avoidance_params=StopAndWaitAvoidanceParams(acs_distance=100, timeout=30),
             )
         )
 
@@ -188,36 +188,4 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = start_position
 
-        # Launch robot in a zone
-        target_zone = self.arena.zones[0].get_go_to_position(
-            start_position, self.arena.team_color
-        )
-
-        """self.navigator_task = NavigatorTaskParams(
-            goal=None,
-            timeout=None,
-            path_planner_params=DeltaPathPlannerParams(rotation=pi/2),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=30),
-        )"""
-
-        # get_all_serial_number()
-        # godHand = Actuators(
-        #     logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
-        # )
-        # godHand.set_servo_angle(
-        #     pin=0, angle=90, min_angle=0, max_angle=180, detach=False, detach_delay=1000
-        # )
-        # godHand.set_servo_angle(
-        #     pin=1, angle=90, min_angle=0, max_angle=180, detach=False, detach_delay=1000
-        # )
-        # godHand.set_  servo_angle(
-        #     pin=2, angle=90, min_angle=0, max_angle=180, detach=False, detach_delay=1000
-        # )
-        # godHand.set_servo_angle(
-        #     pin=3, angle=90, min_angle=0, max_angle=180, detach=False, detach_delay=1000
-        # )
-
-        # godHand.logger.info("Servo angle set to 90 degrees")
-        #await self.run()
+        await self.run()
