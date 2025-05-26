@@ -92,12 +92,7 @@ void set_pid(byte *msg, byte size)
 void set_odometrie(byte *msg, byte size)
 {
   msg_set_odometrie *odometrie = (msg_set_odometrie *)msg;
-  com->print("Set odometrie: ")
-  com->print(odometrie->x);
-  com->print(", ");
-  com->print(odometrie->y);
-  com->print(", ");
-  com->print(odometrie->theta);
+
   rolling_basis_ptr->X = odometrie->x;
   rolling_basis_ptr->Y = odometrie->y;
   rolling_basis_ptr->THETA = odometrie->theta;
