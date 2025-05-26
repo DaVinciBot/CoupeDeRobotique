@@ -25,6 +25,7 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 #define SET_SERVO_ANGLE_DETACH 5
 #define ATTACH_SWITCH 6
 #define SET_SERVO_ANGLE 7
+#define SET_STEPPER_DRIVER_ACTIVATION_STATE 8
 
 // Common (Rolling Basis + Actuators)
 #define RESET_TEENSY 126
@@ -109,6 +110,12 @@ struct msg_stepper_step
     byte pin_dir;    // pin to which the direction pin is connected
     byte pin_step;   // pin to which the step pin is connected
     byte pin_driver; // pin to which the driver pin is connected
+};
+
+struct msg_set_stepper_driver_activation_state
+{
+    byte pin;                 // stepper driver's enable pin
+    bool enable_driver_state; // active low so true means the driver is disabled
 };
 
 struct msg_attach_switch

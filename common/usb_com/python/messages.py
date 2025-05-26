@@ -34,6 +34,7 @@ class Messages(Enum):
     SET_SERVO_ANGLE_DETACH = 5
     ATTACH_SWITCH = 6
     SET_SERVO_ANGLE = 7
+    SET_STEPPER_DRIVER_ACTIVATION_STATE = 8
 
     # Common (Rolling Basis + Actuators)
     RESET_TEENSY = 126

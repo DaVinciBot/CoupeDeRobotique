@@ -104,7 +104,12 @@ void stepper_step(byte *msg, byte size)
     stepper->step(1, stepper_step_msg->steps);
   else
     stepper->step(0, stepper_step_msg->steps);
-  digitalWrite(stepper_step_msg->pin_driver, HIGH);
+}
+
+void set_stepper_driver_activation_state(byte *msg, byte size)
+{
+  msg_set_stepper_driver_activation_state *stepper_driver_activation_msg = (msg_set_stepper_driver_activation_state *)msg;
+  digitalWrite(stepper_driver_activation_msg->pin, stepper_driver_activation_msg->enable_driver_state);
 }
 
 void attach_switch(byte *msg, byte size)
@@ -133,8 +138,8 @@ void initilize_callback_functions()
   callback_functions[SET_SERVO_ANGLE_DETACH] = &set_servo_angle_detach;
   callback_functions[ATTACH_SWITCH] = &attach_switch;
   callback_functions[SET_SERVO_ANGLE] = &set_servo_angle;
+  callback_functions[SET_STEPPER_DRIVER_ACTIVATION_STATE] = &set_stepper_driver_activation_state;
 }
-
 void setup()
 {
   digitalWrite(3, HIGH); // Immediatly set enable pin at high to prevent heating. Dirty solution.

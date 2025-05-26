@@ -28,7 +28,9 @@ class Actuators(
         enable_dummy=CONFIG.TEENSY_DUMMY,
     ):
         # Initialize the parent-GPIOComTeensy class
-        super().__init__(logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy)
+        super().__init__(
+            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy
+        )
 
         # Admit that default elevator position is at the bottom
         self.elevator_ticks: int = 0
@@ -42,7 +44,9 @@ class Actuators(
         # Register message handlers
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
-        self.add_callback(self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value)
+        self.add_callback(
+            self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value
+        )
 
     def __str__(self) -> str:
         return self.__class__.__name__
@@ -91,7 +95,25 @@ class Actuators(
     ####################################
 
     @log("Actuators")
-    def stepper_step(self, steps: int, speed: int) -> None:
+    def set_stepper_driver_activation_state(self, pin_enable: int, enable_driver: bool):
+        """
+        Sets the activation state of a stepper motor driver through its enable pin.
+
+        Args:
+            pin_enable (int): The pin number connected to the driver's enable input
+            enable_driver (bool): True to enable the driver, False to disable it.
+        Note: The enable pin is active LOW, meaning True will output LOW to enable the driver
+
+        """
+        msg = (
+            Messages.SET_STEPPER_DRIVER_ACTIVATION_STATE.to_bytes()
+            + struct.pack("<B", pin_enable)
+            + struct.pack("<?", not enable_driver)  # enable driver is active low
+        )
+        self.send_bytes(msg)
+
+    @log("Actuators")
+    def stepper_step(self, steps: int, speed: int, disable_driver: bool = True) -> None:
         """
         Moves the stepper motor a specified number of steps.
         Note that the number of motor pin can change depending on the motor.
@@ -99,6 +121,7 @@ class Actuators(
         Args:
             steps (int): The number of steps to move the motor.
             speed (int): The speed at which to move the motor.
+            disable_driver (bool): Whether to disable the driver after the movement.
 
         Returns:
             None
@@ -108,9 +131,9 @@ class Actuators(
 
         # WARNING: pin_driver is also defined in the C++ code,
         # because it needs to receive a HIGH from the beginning, or it will start heating up
-        pin_dir = 5
-        pin_step = 4
-        pin_driver = 3
+        pin_dir = 15
+        pin_step = 14
+        pin_enable_driver = 13
 
         msg = (
             Messages.STEPPER_STEP.to_bytes()
@@ -119,11 +142,17 @@ class Actuators(
             + struct.pack("<i", speed)
             + struct.pack("<B", pin_dir)
             + struct.pack("<B", pin_step)
-            + struct.pack("<B", pin_driver)
+            + struct.pack("<B", pin_enable_driver)
         )
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
+
+        if disable_driver:
+            # Disable the driver after the movement
+            self.set_stepper_driver_activation_state(
+                pin_enable=pin_enable_driver, enable_driver=False
+            )
 
     @log("Actuators")
     def set_servo_angle(
@@ -163,9 +192,7 @@ class Actuators(
                 if not self.gpio_manager.is_declared_gpio(pin):
                     self.gpio_manager.add_gpio(pin, ActuatorType.SERVO)
                     self.logger.info(f"Pin {pin} added as a servo pin")
-                elif not self.gpio_manager.is_valid_gpio(
-                        pin, ActuatorType.SERVO
-                ):
+                elif not self.gpio_manager.is_valid_gpio(pin, ActuatorType.SERVO):
                     self.logger.error(
                         f"Pin {pin} is not a valid servo pin because it is registered as a "
                         f"{str(self.gpio_manager.get_type_gpio(pin))}"
