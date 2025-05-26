@@ -83,7 +83,9 @@ class RollingBasis(BaseComTeensy):
             msg (bytes): The received message bytes.
         """
         # Temp to debug logs
-        self.logger.info("Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore"))
+        self.logger.info(
+            "Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore")
+        )
 
     def rcv_rolling_basis_state(self, msg: bytes):
         """
@@ -130,7 +132,7 @@ class RollingBasis(BaseComTeensy):
     ####################################
     # Message Sending Methods          #
     ####################################
-    #@log(param_logger="RollingBasis", log_level=LogLevels.INFO)
+    # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_speed_and_position(
         self,
         target_linear_speed: float,
@@ -153,12 +155,12 @@ class RollingBasis(BaseComTeensy):
             + struct.pack("<d", target_position.y)
             + struct.pack("<d", target_position.theta)
         )
-        
+
         self.logger.info(
-            f"Setting speed and position: Linear Speed: {target_linear_speed}, " +
-            f"Angular Speed: {target_angular_speed}, Position: {target_position}" +
-            f"Target Position: {target_position.x}, " +
-            f"{target_position.y}, {target_position.theta}"
+            f"Setting speed and position: Linear Speed: {target_linear_speed}, "
+            + f"Angular Speed: {target_angular_speed}, Position: {self.odometrie}, "
+            + f"Target Position: {target_position.x}, "
+            + f"{target_position.y}, {target_position.theta}"
         )
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
