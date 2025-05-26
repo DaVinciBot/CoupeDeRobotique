@@ -98,7 +98,11 @@ class MainBrain(Brain):
         rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
+        
+        self.logger.info(f"1 - Starting position: {rolling_basis.odometrie}")
+        self.logger.info(f"1bis: {self.rolling_basis_odometrie}")
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        self.logger.info(f"2 - New position: {rolling_basis.odometrie}")
 
         navigator.add_navigation_task(
             NavigatorTaskParams(
@@ -119,6 +123,8 @@ class MainBrain(Brain):
                 enemy_zone=self.arena.enemy_zone,
             )
             #rolling_basis.set_speed_and_position(*cmd.get_command())
+        
+        rolling_basis.set_speed_and_position(*cmd.get_command())
 
         # yellow_strategy_runner.handle(
         #     ShowGameContext(
@@ -186,6 +192,8 @@ class MainBrain(Brain):
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )
-        self.rolling_basis_odometrie = start_position
-
+        self.rolling_basis_odometrie = start_position*
+        
+        
+  
         await self.run()
