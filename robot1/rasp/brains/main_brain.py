@@ -192,7 +192,7 @@ class MainBrain(Brain):
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )
-        self.rolling_basis_odometrie = start_position*
+        self.rolling_basis_odometrie = start_position
         
         
   
