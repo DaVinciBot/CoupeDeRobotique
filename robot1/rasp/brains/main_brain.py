@@ -101,7 +101,7 @@ class MainBrain(Brain):
         
         self.logger.warning(f"1 - Starting position: {rolling_basis.odometrie}")
         self.logger.warning(f"1bis: {self.rolling_basis_odometrie}")
-        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        rolling_basis.set_odometrie(OrientedPoint(20, 20, 0))
         self.logger.warning(f"2 - New position: {rolling_basis.odometrie}")
 
         navigator.add_navigation_task(
