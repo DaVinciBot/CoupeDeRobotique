@@ -101,8 +101,9 @@ class MainBrain(Brain):
         
         print("############## Starting Rolling Basis ##############")
         print("1 - Starting position: ", rolling_basis.odometrie)
+        print("2 - Target position: ", OrientedPoint(20, 40, 0))
         rolling_basis.set_odometrie(OrientedPoint(20, 20, 0))
-        print("2 - New position: ", rolling_basis.odometrie)
+        print("3 - New position: ", rolling_basis.odometrie)
     
         navigator.add_navigation_task(
             NavigatorTaskParams(
