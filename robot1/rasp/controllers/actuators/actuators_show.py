@@ -282,6 +282,7 @@ class ActuatorsShow(Actuators):
         # Prep and go magnetized
         self.deploy_all_pickup()
         time.sleep(2)
+        self.deploy(8)
         self.go_to_bottom()
         time.sleep(5)
 
