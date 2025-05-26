@@ -84,7 +84,7 @@ class MainBrain(Brain):
     @Brain.task(
         process=True,
         run_on_start=False,
-        refresh_rate=0.000001,
+        refresh_rate=0.001,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
