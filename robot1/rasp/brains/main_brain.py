@@ -84,13 +84,13 @@ class MainBrain(Brain):
     @Brain.task(
         process=True,
         run_on_start=False,
-        refresh_rate=0.001,
+        refresh_rate=0.000001,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def run(self) -> None:
         # --- Initialization --- #
-        from boombot_strategy import ShowGameContext, yellow_strategy_runner
+        #from boombot_strategy import ShowGameContext, yellow_strategy_runner
 
         navigator = Navigator()
 
@@ -102,7 +102,7 @@ class MainBrain(Brain):
 
         navigator.add_navigation_task(
             NavigatorTaskParams(
-                goal=OrientedPoint(40, 20, 0),
+                goal=OrientedPoint(20, 40, 0),
                 timeout=None,
                 path_planner_params=BasicPathPlannerParams(),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
