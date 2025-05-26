@@ -193,7 +193,7 @@ class MainBrain(Brain):
             self.arena.team_color, start_position, Point(290, 190)
         )
         self.rolling_basis_odometrie = start_position
-        
+        await asyncio.sleep(1)
         
   
         await self.run()
