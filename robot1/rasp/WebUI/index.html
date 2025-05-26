@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./assets/style/roboto.css" />
+    <link rel="stylesheet" href="./assets/style/icons.css" />
+    <link rel="stylesheet" href="./assets/style/dpad.css" />
+    <link rel="stylesheet" href="./assets/style/inter.css" />
+    <link rel="stylesheet" href="./assets/style/bento.css" />
+    <link rel="stylesheet" href="./page/map.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="shortcut icon" href="./assets/fav.ico" type="image/x-icon" />
+    <title>CDR Dashboard</title>
+    <script src="utils.js"></script>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="menu sushi">
+        <a href="index.html" class="item_menu active"><i class="menu_icon icon"></i>Général</a>
+        <a href="./page/map.html" class="item_menu"><i class="map_icon icon"></i>Map</a>
+        <a href="./page/start.html" class="item_menu"><i class="save_icon icon"></i>Start</a>
+        <a href="./page/cam.html" class="item_menu"><i class="cam_icon icon"></i>Caméra</a>
+        <a href="./page/settings.html" class="item_menu"><i class="settings_icon icon"></i>Settings</a>
+    </div>
+    <div class="subgrid">
+
+        <div class="row">
+            <div class="subgrid">
+                <div class="sushi">
+                    <div class="pilule">Tirette</div>
+                    <div
+                        style="margin-top: 40px; background-color: limegreen; padding: 10px; border-radius: 20px; color: white; font-weight: bold; text-align: center;">
+                        Ready
+                    </div>
+                </div>
+                <div class="sushi">
+                    <div class="pilule">BAU</div>
+                    <div
+                        style="margin-top: 40px; background-color: limegreen; padding: 10px; border-radius: 20px; color: white; font-weight: bold; text-align: center;">
+                        ON
+                    </div>
+                </div>
+            </div>
+
+            <div class="sushi">
+                <div class="pilule">PAMI</div>
+                <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 10px;">
+                    <div
+                        style="background-color: limegreen; padding: 10px; border-radius: 20px; color: black; font-weight: bold;">
+                        Super star</div>
+                    <div
+                        style="background-color: limegreen; padding: 10px; border-radius: 20px; color: black; font-weight: bold;">
+                        Groupie_1</div>
+                    <div
+                        style="background-color: red; padding: 10px; border-radius: 20px; color: white; font-weight: bold;">
+                        Groupie_2</div>
+                    <div
+                        style="background-color: red; padding: 10px; border-radius: 20px; color: white; font-weight: bold;">
+                        Groupie_3</div>
+                </div>
+            </div>
+
+            <div class="sushi">
+                <div class="pilule">Team</div>
+                <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 10px;">
+                    <div
+                        style="background-color: #005DFF; padding: 10px; border-radius: 20px; color: white; font-weight: bold;">
+                        Bleu</div>
+                    <div
+                        style="background-color: #FFE600; padding: 10px; border-radius: 20px; color: black; font-weight: bold;">
+                        Jaune</div>
+                    <div
+                        style="background-color: lightgray; padding: 10px; border-radius: 20px; color: black; font-weight: bold;">
+                        Autre</div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="sushi">
+                <div class="pilule">Score</div>
+                <div class="make_center" style="margin-top: 40px; font-size: 100px; font-weight: bold; color: #010132;height: calc(100% - 40px);">
+                    000
+                </div>
+            </div>
+            <div class="sushi">
+                <div class="pilule">Timer</div>
+                <div class="make_center"
+                    style="margin-top: 40px; font-size: 100px; background: limegreen; border-radius: 30px; padding: 20px; color: #010132; font-weight: bold; height: calc(100% - 40px);">
+                    1:40
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sushi map" style="flex: 1;">
+        <div class="pilule">
+            <i class="icon map_icon"></i>
+            Starting Map
+        </div>
+
+    </div>
+
+
+    <script src="main.js"></script>
+</body>
+
+</html>
