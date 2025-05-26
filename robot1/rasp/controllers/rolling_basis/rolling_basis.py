@@ -180,7 +180,7 @@ class RollingBasis(BaseComTeensy):
             + struct.pack("<d", odometrie.y)
             + struct.pack("<d", odometrie.theta)
         )
-        self.send_bytes(msg)
+        self.send_bytes(msg) 
         self.logger.info(
             f"Setting odometrie to: {odometrie.x}, {odometrie.y}, {odometrie.theta}"
         )
