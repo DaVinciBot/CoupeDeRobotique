@@ -177,16 +177,15 @@
         "8": {
           "fold_angle": 240,
           "deploy_angle": 140,
-          "docking":130,
+          "docking": 130,
           "max_angle": 270
         },
         "9": {
-          "fold_angle":130,
-          "deploy_angle":90,
-          "maintain_plank":140,
+          "fold_angle": 130,
+          "deploy_angle": 90,
+          "maintain_plank": 140,
           "max_angle": 270
         }
-        
       },
       "elevator": {
         "top_steps": 700,
