@@ -83,7 +83,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         #     ally_zone=ally_zone, enemy_zone=enemy_zone
         # )
         # todo: to fix with new ACS detection profile
-        return True
+        return False
 
 
 

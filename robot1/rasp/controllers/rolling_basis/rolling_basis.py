@@ -156,7 +156,7 @@ class RollingBasis(BaseComTeensy):
             + struct.pack("<d", target_position.theta)
         )
 
-        self.logger.info(f"SET POSITION{target_position}")
+        self.logger.info(f"SET POSITION: {target_position}")
         
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
