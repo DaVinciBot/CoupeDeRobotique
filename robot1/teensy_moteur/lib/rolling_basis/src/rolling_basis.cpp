@@ -135,22 +135,17 @@ void Rolling_Basis::handle(
     // Compute distance and orientation error (difference between target and real)
     double xerr = target_position.x - this->X;
     double yerr = target_position.y - this->Y;
-
-    // double distance_error = sqrt(pow(xerr, 2) + pow(yerr, 2)); ! pb en cas d'overshoot !
+    
     double distance_error = xerr * cosf(this->THETA) + yerr * sinf(this->THETA);
     double mag = sqrt(pow(xerr, 2) + pow(yerr, 2));
-    double sign = (distance_error >= 0.0) ? +1.0 : -1.0;
+    double sign = (distance_error >= 0.0) ? +1.0 : -1.0; 
     distance_error = mag * sign;
 
     double theta_error = target_position.theta - this->THETA;
 
-    theta_error = normalizeAngle(theta_error);
-
-    String debug_msg = "Distance error: " + String(distance_error) + ", Theta error: " + String(theta_error);
-    com->print((char *)debug_msg.c_str());
+    theta_error = normalizeAngle(theta_error);  
 
     // Consigne vitesse
-
     // Compute PID output based on errors
     double linear_correction = this->linear_distance_pid.compute(distance_error);
     double angular_correction = this->angular_distance_pid.compute(theta_error);
