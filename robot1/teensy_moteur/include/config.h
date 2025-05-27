@@ -23,7 +23,7 @@
 
 // Creation Rolling Basis
 // Motor
-#define MAX_PWM 200
+#define MAX_PWM 220
 
 // Encoder
 #define ENCODER_RESOLUTION 1024
