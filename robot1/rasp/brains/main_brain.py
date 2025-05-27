@@ -179,7 +179,7 @@ class MainBrain(Brain):
         if navigator.current_task is not None:
             cmd = navigator.handle(
                 ally_zone=self.arena.ally_zone,
-                enemy_zone=self.arena.enemy_zone,
+                enemy_zone=self.arena.enemy_zone,   
             )
             rolling_basis.set_target_position(cmd.get_position_command())
 
