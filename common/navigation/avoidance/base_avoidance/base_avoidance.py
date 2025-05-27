@@ -24,6 +24,12 @@ from navigation.avoidance.base_avoidance.base_avoidance_params import (
 )
 from navigation.avoidance.base_avoidance.states import AvoidanceState
 from navigation.trajectory_planner import TrajectoryPlanCommand
+from navigation.avoidance.acs_detection_profiles import (
+    AcsDetectionProfileFactory,
+    BaseAcsDetectionProfile,
+    BaseAcsDetectionProfileParams,
+)
+
 
 if TYPE_CHECKING:
     from navigation.navigator.task.navigator_task import NavigatorTask
@@ -49,6 +55,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
     def __init__(
         self,
         params: ParamsType,
+        acs_detection_profile_params: BaseAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
         """
@@ -62,30 +69,16 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
             identifier=self.__class__.__name__, follow_logger_manager_rules=True
         )
         self.params: ParamsType = params
+
+        self.acs_detector: BaseAcsDetectionProfile = (
+            AcsDetectionProfileFactory.instantiate(params=acs_detection_profile_params)
+        )
+
         self.state: AvoidanceState = AvoidanceState.IDLE
         self._avoiding_start_time: float | None = None  # Timer for avoidance timeout
         self._original_task: NavigatorTask | None = (
             None  # Storage for original navigation task
         )
-
-    def _acs(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
-        """
-        Perform an Automatic Collision System (ACS) check.
-
-        Args:
-            ally_zone (AllyZone): Ally zone used for positional reference.
-            enemy_zone (EnemyZone): Enemy zone to check against.
-
-        Returns:
-            bool: True if the distance is less than or equal to the configured threshold.
-        """
-        # return self.params.acs_detection_profile.is_acs_triggered(
-        #     ally_zone=ally_zone, enemy_zone=enemy_zone
-        # )
-        # todo: to fix with new ACS detection profile
-        return False
-
-
 
     def _store_original_task(self, current_navigator_task: NavigatorTask) -> None:
         """

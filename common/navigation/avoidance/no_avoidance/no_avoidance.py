@@ -17,6 +17,10 @@ from navigation.trajectory_planner import TrajectoryPlanCommand
 if TYPE_CHECKING:
     from navigation.navigator.task.navigator_task import NavigatorTask
 
+from navigation.avoidance.acs_detection_profiles import (
+    BaseAcsDetectionProfileParams,
+)
+
 
 class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
     """
@@ -34,6 +38,7 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
     def __init__(
         self,
         params: NoAvoidanceParams,
+        acs_detection_profile_params: BaseAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
         """
@@ -43,7 +48,7 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
             params (NoAvoidanceParams): Configuration parameters.
             logger (Logger | None): Optional logging instance.
         """
-        super().__init__(params, logger)
+        super().__init__(params, acs_detection_profile_params, logger)
 
     @BaseAvoidance._ensure_original_task_storage
     def handle(

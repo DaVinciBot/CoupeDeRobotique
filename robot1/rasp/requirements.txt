@@ -24,6 +24,6 @@ gpiozero==2.0.1
 lgpio==0.2.2.0
 scipy==1.15.2
 shapely==2.0.7
-taskbrain==0.1.7
-wscomms==0.1.4
+taskbrain==0.1.8
+wscomms==0.1.6
 yarl==1.18.3

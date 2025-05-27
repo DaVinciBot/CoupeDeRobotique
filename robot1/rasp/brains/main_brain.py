@@ -36,6 +36,12 @@ from navigation import (
     SpeedProfiler,
     StopAndWaitAvoidanceParams,
     BasicPathPlannerParams,
+    NoAvoidanceParams,
+)
+
+from navigation.avoidance.acs_detection_profiles import (
+    RectangularProjectionAcsDetectionProfileParams,
+    NoAcsDetectionProfileParams,
 )
 
 from usb_com.python.tools import get_all_serial_number
@@ -105,7 +111,7 @@ class MainBrain(Brain):
         navigator = Navigator()
 
         # Rolling basis & Actuators
-        rolling_basis = RollingBasis(
+        rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(1)
@@ -126,19 +132,48 @@ class MainBrain(Brain):
         #         ),
         #     )
         # )
-        
+
+        # 1. pousse contre bordure pour deployer banderole
         navigator.add_navigation_task(
             NavigatorTaskParams(
-                goal=OrientedPoint(40, 40, 0),
+                goal=None,
                 timeout=None,
-                path_planner_params=BasicPathPlannerParams(), #DeltaPathPlannerParams(distance=20)
+                path_planner_params=DeltaPathPlannerParams(distance=5),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=StopAndWaitAvoidanceParams(
-                    acs_distance=100, timeout=30
+                speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
+                avoidance_params=NoAvoidanceParams(),
+                acs_detection_profile_params=NoAcsDetectionProfileParams()
+            )
+        )
+        # 2. recule avant de demintour pour ne pas shooter la banderole
+        navigator.add_navigation_task(
+            NavigatorTaskParams(
+                goal=None,
+                timeout=None,
+                path_planner_params=DeltaPathPlannerParams(distance=-10, rotation=pi),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
+                avoidance_params=NoAvoidanceParams(),
+                acs_detection_profile_params=NoAcsDetectionProfileParams()
+            )
+        )
+
+        # 3. go to zone 9 pour choper le matos
+        navigator.add_navigation_task(
+            NavigatorTaskParams(
+                goal=9,
+                timeout=None,
+                path_planner_params=BasicPathPlannerParams(),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                speed_profiler=CONFIG.ROLLING_BASIS_TO_PICKUP_SPEED_PROFILER,
+                avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
+                acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                    acs_distance=20, width_view=20
                 ),
             )
         )
+
+
 
         # --- MetaProg is insane (loop) --- #
 
@@ -158,7 +193,7 @@ class MainBrain(Brain):
 
     @Brain.task(
         process=True,
-        run_on_start=False,
+        run_on_start=True,
         refresh_rate=0.01,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
@@ -196,11 +231,11 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=np.array([]),# self.lidar.scan_to_polars(), 
+            lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
-        
+
         # self.lidar_points = list(
         #     self.arena.remove_outside(
         #         self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
@@ -215,11 +250,11 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        await self.wait_for_trigger()
+        # await self.wait_for_trigger()
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        start_position = OrientedPoint(13, 17, 0)
-        #start_position = OrientedPoint(0, 0, 0)
+        start_position = OrientedPoint(170, 17, -pi / 2)
+        # start_position = OrientedPoint(0, 0, 0)
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )

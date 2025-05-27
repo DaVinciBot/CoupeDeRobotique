@@ -3,6 +3,7 @@ from navigation.trajectory_planner import BaseTrajectoryPlannerParams
 from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
 from navigation.avoidance.base_avoidance import BaseAvoidanceParams
+from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
 
 from geometry import OrientedPoint
 
@@ -18,6 +19,7 @@ class NavigatorTaskParams:
         trajectory_planner_params: BaseTrajectoryPlannerParams,
         speed_profiler: SpeedProfiler,
         avoidance_params: BaseAvoidanceParams,
+        acs_detection_profile_params: BaseAcsDetectionProfileParams,
     ):
         self.path_planner_params: BasePathPlannerParams = path_planner_params
         self.trajectory_planner_params: BaseTrajectoryPlannerParams = (
@@ -25,6 +27,9 @@ class NavigatorTaskParams:
         )
         self.speed_profiler: SpeedProfiler = speed_profiler
         self.avoidance_params: BaseAvoidanceParams = avoidance_params
+        self.acs_detection_profile_params: BaseAcsDetectionProfileParams = (
+            acs_detection_profile_params
+        )
 
         self.goal: OrientedPoint | None = goal
         self.timeout: float = timeout

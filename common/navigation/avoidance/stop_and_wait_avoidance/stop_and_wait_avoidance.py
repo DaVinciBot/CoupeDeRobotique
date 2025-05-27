@@ -19,6 +19,10 @@ from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params
 )
 from navigation.trajectory_planner import TrajectoryPlanCommand
 
+from navigation.avoidance.acs_detection_profiles import (
+    BaseAcsDetectionProfileParams,
+)
+
 if TYPE_CHECKING:
     from navigation.navigator.task.navigator_task import NavigatorTask
 
@@ -39,6 +43,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
     def __init__(
         self,
         params: StopAndWaitAvoidanceParams,
+        acs_detection_profile_params: BaseAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
         """
@@ -48,7 +53,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             params (StopAndWaitAvoidanceParams): Configuration parameters.
             logger (Logger | None): Optional logging instance.
         """
-        super().__init__(params, logger)
+        super().__init__(params, acs_detection_profile_params, logger)
 
     @BaseAvoidance._ensure_original_task_storage
     def handle(
@@ -77,7 +82,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             return self._abort(task, position)
 
         # 2. Obstacle detected: begin avoidance
-        if self._acs(ally_zone, enemy_zone) and self.state == AvoidanceState.IDLE:
+        if self.acs_detector.is_acs_triggered(ally_zone, enemy_zone) and self.state == AvoidanceState.IDLE:
             # Stop the robot and initiate avoidance procedure
             cmd = TrajectoryPlanCommand.create_stop_command(current_position=position)
             task.current_trajectory_command = cmd
@@ -87,9 +92,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             return cmd
 
         # 3. Obstacle cleared: finish avoidance
-        if self.state == AvoidanceState.AVOIDING and not self._acs(
-            ally_zone, enemy_zone
-        ):
+        if self.state == AvoidanceState.AVOIDING and not self.acs_detector.is_acs_triggered(ally_zone, enemy_zone):
             # Obstacle is no longer detected, replan from current position
             last_params = task.path_planner.last_plan_path_params
             last_params.start = position  # Update start position to current location

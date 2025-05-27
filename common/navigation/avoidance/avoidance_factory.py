@@ -21,6 +21,8 @@ from navigation.avoidance.stop_and_wait_avoidance import (
     StopAndWaitAvoidanceParams,
 )
 
+from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
+
 
 class AvoidanceFactory:
     """
@@ -28,12 +30,16 @@ class AvoidanceFactory:
     """
 
     @staticmethod
-    def instantiate(params: BaseAvoidanceParams) -> BaseAvoidance:
+    def instantiate(
+        params: BaseAvoidanceParams,
+        acs_detection_profile_params: BaseAcsDetectionProfileParams,
+    ) -> BaseAvoidance:
         """
         Create an avoidance module based on the given parameters.
 
         Args:
             params (BaseAvoidanceParams): Parameters including the desired avoidance strategy.
+            acs_detection_profile_params (BaseAcsDetectionProfileParams): Parameters for ACS detection profile.
 
         Returns:
             BaseAvoidance: A specific implementation of an obstacle avoidance module.
@@ -44,9 +50,13 @@ class AvoidanceFactory:
         strategy = params.avoidance_strategy
 
         if strategy == AvoidanceStrategy.NO_AVOIDANCE:
-            return NoAvoidance(cast(NoAvoidanceParams, params))
+            return NoAvoidance(
+                cast(NoAvoidanceParams, params), acs_detection_profile_params
+            )
 
         if strategy == AvoidanceStrategy.STOP_AND_WAIT:
-            return StopAndWaitAvoidance(cast(StopAndWaitAvoidanceParams, params))
+            return StopAndWaitAvoidance(
+                cast(StopAndWaitAvoidanceParams, params), acs_detection_profile_params
+            )
 
         raise ValueError(f"Unsupported avoidance strategy: {strategy}")

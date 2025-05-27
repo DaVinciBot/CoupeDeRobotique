@@ -1,10 +1,8 @@
 from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
-from abc import ABC, abstractmethod
-
-from arena import AllyZone, EnemyZone
 
 
-class BaseAcsDetectionProfile(ABC):
+class BaseAcsDetectionProfileParams:
 
-    def __init__(self, acs_detection_profile: AcsDetectionProfile):
+    def __init__(self, acs_detection_profile: AcsDetectionProfile, acs_distance: float):
         self.acs_detection_profile: AcsDetectionProfile = acs_detection_profile
+        self.acs_distance: float = acs_distance

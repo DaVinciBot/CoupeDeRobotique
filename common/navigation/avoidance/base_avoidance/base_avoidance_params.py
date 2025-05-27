@@ -13,8 +13,6 @@
 # ====== Internal Project Imports ======
 from navigation.avoidance.structs import AvoidanceStrategy
 
-# from navigation.avoidance.acs_detection_profile import BaseAcsDetectionProfile
-
 
 class BaseAvoidanceParams:
     """
@@ -25,26 +23,17 @@ class BaseAvoidanceParams:
 
     Attributes:
         avoidance_strategy (AvoidanceStrategy): Enum indicating the avoidance strategy.
-        acs_distance (float): Distance threshold to trigger avoidance behavior.
-        timeout (float): Maximum time to attempt avoidance before aborting (default is 0.0).
     """
 
     def __init__(
         self,
         avoidance_strategy: AvoidanceStrategy,
-        # acs_detection_profile: BaseAcsDetectionProfile,
-        acs_distance: float,
-        timeout: float = 0.0,
     ):
         """
         Initialize the base avoidance parameters.
 
         Args:
             avoidance_strategy (AvoidanceStrategy): The selected avoidance strategy.
-            acs_distance (float): Distance threshold for activating avoidance.
-            timeout (float, optional): Timeout duration in seconds. Defaults to 0.0.
+
         """
         self.avoidance_strategy: AvoidanceStrategy = avoidance_strategy
-        # self.acs_detection_profile: BaseAcsDetectionProfile = acs_detection_profile
-        self.acs_distance: float = acs_distance
-        self.timeout: float = timeout

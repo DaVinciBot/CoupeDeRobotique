@@ -1,17 +1,18 @@
+from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
+    BaseAcsDetectionProfile,
+)
 
-
-from navigation.avoidance.base_avoidance import BaseAvoidance, BaseAvoidanceParams
-
-
-from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
-from abc import ABC, abstractmethod
-
+from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile_params import (
+    NoProjectionAcsDetectionProfileParams,
+)
 from arena import AllyZone, EnemyZone
-class NoProjectionAcsDetectionProfile(BaseAvoidance):
-    def __init__(self, acs_distance: float):
-        super().__init__(BaseAvoidanceParams(acs_distance=acs_distance))
-        self.acs_distance: float = acs_distance
 
-    @abstractmethod
+
+class NoProjectionAcsDetectionProfile(
+    BaseAcsDetectionProfile[NoProjectionAcsDetectionProfileParams]
+):
+    def __init__(self, params: NoProjectionAcsDetectionProfileParams):
+        super().__init__(params)
+
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
-        pass
+        return ally_zone.point.distance(enemy_zone.point) <= self.params.acs_distance

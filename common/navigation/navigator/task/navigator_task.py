@@ -70,6 +70,7 @@ class NavigatorTask:
         )
         self.avoidance: BaseAvoidance = AvoidanceFactory.instantiate(
             params.avoidance_params,
+            params.acs_detection_profile_params,
         )
 
         self.current_trajectory_command: TrajectoryPlanCommand | None = None
