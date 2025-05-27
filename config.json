@@ -74,14 +74,14 @@
           "kd": 0.0
         },
         "linear_position": {
-          "kp": 50.0,
-          "ki": 0.05,
-          "kd": 0.01
+          "kp": 5.0,
+          "ki": 0,
+          "kd": 0
         },
         "angular_position": {
-          "kp": 100.0,
-          "ki": 0.1,
-          "kd": 0.01
+          "kp": 10.0,
+          "ki": 0,
+          "kd": 0
         }
       },
       "speed_profiles": {
