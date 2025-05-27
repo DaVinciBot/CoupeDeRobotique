@@ -6,22 +6,16 @@
 #include <pid.h>
 #include <Arduino.h>
 
+
 PID::PID(double kp, double ki, double kd,
          double minOutput, double maxOutput,
          double deadband)
-    : _kp(kp)
-    , _ki(ki)
-    , _kd(kd)
-    , _minOutput(minOutput)
-    , _maxOutput(maxOutput)
-    , _deadband(fabs(deadband))
-    , _integral(0.0)
-    , _previousError(0.0)
-    , _dt(0.0)
-    , _lastTime(micros())
-    , _derivFiltered(0.0)
-{
-}
+  : _kp(kp), _ki(ki), _kd(kd),
+    _minOutput(minOutput), _maxOutput(maxOutput),
+    _deadband(fabs(deadband)),
+    _integral(0.0), _prevError(0.0),
+    _lastTime(micros())
+{}
 
 void PID::updateParameters(double kp, double ki, double kd) {
     setTunings(kp, ki, kd);
@@ -38,59 +32,50 @@ void PID::setOutputLimits(double minOutput, double maxOutput) {
     if (minOutput >= maxOutput) return;
     _minOutput = minOutput;
     _maxOutput = maxOutput;
+    // Clamp accumulated integral to new limits
+    if (_ki != 0.0) {
+        double iMin = _minOutput / _ki;
+        double iMax = _maxOutput / _ki;
+        _integral = constrain(_integral, iMin, iMax);
+    }
 }
 
 void PID::setDeadband(double deadband) {
     _deadband = fabs(deadband);
 }
 
-void PID::updateDeltaTime() {
-    unsigned long now = micros();
-    _dt = (now - _lastTime) * 1e-6;
-    _lastTime = now;
+void PID::reset() {
+    _integral = 0.0;
+    _prevError = 0.0;
+    _lastTime = micros();
 }
 
 double PID::compute(double error) {
-    updateDeltaTime();
+    unsigned long now = micros();
+    double dt = (now - _lastTime) * 1e-6;  // seconds
+    _lastTime = now;
+    if (dt <= 0.0) dt = 1e-6;
 
-    // Derivative with one-pole low-pass filter
-    double derivRaw = (_dt > 0.0) ? (error - _previousError) / _dt : 0.0;
-    const double alpha = 0.8; // filter coefficient
-    _derivFiltered = alpha * _derivFiltered + (1.0 - alpha) * derivRaw;
-
-    // Proportional term
-    double P = _kp * error;
-    // Integral term (will update after anti-windup check)
-    double I = _integral;
-    // Derivative term
-    double D = _kd * _derivFiltered;
-
-    // Raw PID output
-    double raw = P + I + D;
-
-    // Feed-forward friction compensation
-    double ff = 0.0;
-    if (raw > 0.0) ff = _deadband;
-    else if (raw < 0.0) ff = -_deadband;
-    double u_pre = raw + ff;
-
-    // Saturate
-    double u_sat = constrain(u_pre, _minOutput, _maxOutput);
-
-    // Anti-windup: integrate only if not saturated
-    if (u_sat > _minOutput && u_sat < _maxOutput) {
-        _integral += _ki * error * _dt;
-        _integral = constrain(_integral, _minOutput, _maxOutput);
+    // 1) Integral update + clamp (anti-windup)
+    _integral += error * dt;
+    if (_ki != 0.0) {
+        double iMin = _minOutput / _ki;
+        double iMax = _maxOutput / _ki;
+        _integral = constrain(_integral, iMin, iMax);
     }
 
-    // Save error
-    _previousError = error;
-    return u_sat;
-}
+    // 2) PID terms
+    double pTerm = _kp * error;
+    double iTerm = _ki * _integral;
+    double dTerm = _kd * (error - _prevError) / dt;
+    _prevError = error;
 
-void PID::reset() {
-    _integral = 0.0;
-    _previousError = 0.0;
-    _derivFiltered = 0.0;
-    _lastTime = micros();
+    double output = pTerm + iTerm + dTerm;
+
+    // 3) Deadband kick for static friction
+    if (output > 0.0)      output += _deadband;
+    else if (output < 0.0) output -= _deadband;
+
+    // 4) Final clamp
+    return constrain(output, _minOutput, _maxOutput);
 }
