@@ -218,7 +218,8 @@ class MainBrain(Brain):
         await self.wait_for_trigger()
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        start_position = OrientedPoint(13, 17, 0)
+        #start_position = OrientedPoint(13, 17, 0)
+        start_position = OrientedPoint(0, 0, 0)
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )
