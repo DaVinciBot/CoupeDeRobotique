@@ -150,26 +150,27 @@ class MainBrain(Brain):
         fig, ax = plt.subplots()
 
         # --- MetaProg is insane (loop) --- #
-        lidar_points = self.arena.remove_outside(
-            self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
-        )
-        
-        ax.clear()
-        self.arena.visualize(
-            # Visualization options
-            show_buffer=True,
-            # trajectory=self.path,
-            display_zones_go_to_positions=True,
-            show_ally_direction=True,
-            # Plot options
-            show=False,
-            plot=(ax, fig),
-            # Additional options
-            # additional_zones=[self.th_ally_zone],
-            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
-            additional_points=lidar_points,
-        )
-        plt.pause(0.01)
+        while True:
+            lidar_points = self.arena.remove_outside(
+                self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
+            )
+            
+            ax.clear()
+            self.arena.visualize(
+                # Visualization options
+                show_buffer=True,
+                # trajectory=self.path,
+                display_zones_go_to_positions=True,
+                show_ally_direction=True,
+                # Plot options
+                show=False,
+                plot=(ax, fig),
+                # Additional options
+                # additional_zones=[self.th_ally_zone],
+                # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
+                additional_points=lidar_points,
+            )
+            plt.pause(0.01)
 
     """
     ### Main Process ###
