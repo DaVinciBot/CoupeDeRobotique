@@ -118,7 +118,7 @@ class MainBrain(Brain):
         time.sleep(1)
         rolling_basis._initialize_pids()
         time.sleep(1)
-        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        #rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         time.sleep(1)
 
         # navigator.add_navigation_task(
