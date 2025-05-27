@@ -226,7 +226,10 @@ class RollingBasis(BaseComTeensy):
         Configure all PID controllers using dictionaries for each.
         """
         self.set_linear_position_pid(**linear_position_pid)
+        time.sleep(0.1)  # Ensure the Teensy has time to process the first PID
         self.set_angular_position_pid(**angular_position_pid)
+        time.sleep(0.1)  # Ensure the Teensy has time to process the second PID
+        
 
     def _initialize_pids(self) -> None:
         """
