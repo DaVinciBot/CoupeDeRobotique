@@ -147,17 +147,17 @@ class MainBrain(Brain):
             )
         )
         # 2. recule avant de demi tour pour ne pas shooter la banderole
-        navigator.add_navigation_task(
-            NavigatorTaskParams(
-                goal=None,
-                timeout=None,
-                path_planner_params=DeltaPathPlannerParams(distance=-10),
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(Direction.BACKWARD),
-                speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
-                avoidance_params=NoAvoidanceParams(),
-                acs_detection_profile_params=NoAcsDetectionProfileParams()
-            )
-        )
+        # navigator.add_navigation_task(
+        #     NavigatorTaskParams(
+        #         goal=None,
+        #         timeout=None,
+        #         path_planner_params=DeltaPathPlannerParams(distance=-10),
+        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(Direction.BACKWARD),
+        #         speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
+        #         avoidance_params=NoAvoidanceParams(),
+        #         acs_detection_profile_params=NoAcsDetectionProfileParams()
+        #     )
+        # )
 
         # 3. go to zone 9 pour choper le matos
         navigator.add_navigation_task(
@@ -194,7 +194,7 @@ class MainBrain(Brain):
 
     @Brain.task(
         process=True,
-        run_on_start=True,
+        run_on_start=False,
         refresh_rate=0.01,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
