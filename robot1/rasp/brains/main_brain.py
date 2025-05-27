@@ -77,9 +77,15 @@ class MainBrain(Brain):
     """ ### Routines ### """
 
     # Deactivate for now
-    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
+    @Brain.task(process=False, run_on_start=True)
     async def wait_for_trigger(self):
-        self.logger.info(f"Jack state: {self.jack.digital_read()}")
+        false_jacks_in_a_row = 0
+        while false_jacks_in_a_row < 5:
+            if self.jack.safe_digital_read():
+                false_jacks_in_a_row = 0
+            else:
+                false_jacks_in_a_row += 1
+            await asyncio.sleep(0.1)
 
     @Brain.task(
         process=True,
@@ -90,7 +96,7 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        #from boombot_strategy import ShowGameContext, yellow_strategy_runner
+        # from boombot_strategy import ShowGameContext, yellow_strategy_runner
 
         navigator = Navigator()
 
@@ -99,8 +105,8 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        time.sleep(1)  
-     
+        time.sleep(1)
+
         navigator.add_navigation_task(
             NavigatorTaskParams(
                 goal=OrientedPoint(20, 40, 0),
@@ -108,7 +114,9 @@ class MainBrain(Brain):
                 path_planner_params=BasicPathPlannerParams(),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=StopAndWaitAvoidanceParams(acs_distance=100, timeout=30),
+                avoidance_params=StopAndWaitAvoidanceParams(
+                    acs_distance=100, timeout=30
+                ),
             )
         )
 
@@ -120,8 +128,7 @@ class MainBrain(Brain):
                 enemy_zone=self.arena.enemy_zone,
             )
             rolling_basis.set_speed_and_position(*cmd.get_command())
-        
-  
+
         # yellow_strategy_runner.handle(
         #     ShowGameContext(
         #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
@@ -169,7 +176,7 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars= np.array([]), # self.lidar.scan_to_polars(),
+            lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
@@ -182,6 +189,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
+        await self.wait_for_trigger()
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
         start_position = OrientedPoint(20, 20, 0)
