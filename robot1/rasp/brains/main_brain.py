@@ -145,7 +145,7 @@ class MainBrain(Brain):
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
-    def visualize_arena(self) -> None:
+    async def visualize_arena(self) -> None:
         # --- Initialization --- #
         fig, ax = plt.subplots()
 
