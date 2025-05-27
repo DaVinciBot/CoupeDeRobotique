@@ -76,12 +76,12 @@
         "linear_position": {
           "kp": 50.0,
           "ki": 0.05,
-          "kd": 0.0
+          "kd": 0.01
         },
         "angular_position": {
           "kp": 100.0,
           "ki": 0.1,
-          "kd": 0.0
+          "kd": 0.01
         }
       },
       "speed_profiles": {
