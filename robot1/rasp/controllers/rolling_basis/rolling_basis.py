@@ -140,7 +140,7 @@ class RollingBasis(BaseComTeensy):
         # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
 
-    # @log("RollingBasis")
+    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
         """
         Sends a message to set the odometrie of the rolling basis.
@@ -156,6 +156,7 @@ class RollingBasis(BaseComTeensy):
         )
         self.send_bytes(msg)
 
+    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def _send_pid(self, pid_id: int, pid: PID) -> None:
         """
         Internal method to send PID configuration data to the Teensy.
