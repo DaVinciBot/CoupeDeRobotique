@@ -50,6 +50,16 @@ class ActuatorsShow(Actuators):
             for i, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items()
             if i < 8
         }
+        
+        # 0: Interior Right Arm
+        # 1 : Interior Right Magnet
+        # 2 : Interior Left Arm
+        # 3 : Interior Left Magnet
+        # 4 : Exterior Right Arm
+        # 5 : Exterior Right Magnet
+        # 6 : Exterior Left Arm
+        # 7 : Exterior Left Magnet
+         
 
         servo_arm = CONFIG.ACTUATOR_SERVOS_CONFIG[8]
         self.servos[8] = ServoArm(
@@ -67,6 +77,9 @@ class ActuatorsShow(Actuators):
             servo_plank["maintain_plank"],
         )
 
+        # 9 : Folded = Catch plank
+        
+        
         stepper_config = CONFIG.ACTUATOR_ELEVATOR_CONFIG
         print(stepper_config)
         self.stepper = Stepper(
@@ -279,23 +292,9 @@ class ActuatorsShow(Actuators):
         Builds the floors by deploying the servos and moving the elevator to the top position.
         This method is used to build the floors by deploying the servos and moving the elevator to the top position.
         """
-        # Prep and go magnetized
-        self.deploy_all_pickup()
-        time.sleep(2)
-        self.deploy(8)
-        self.go_to_bottom()
-        time.sleep(5)
-
-        # Catch and raise cans and plank
-        self.fold(4)
-        self.fold(6)
-        self.fold(9)
-        time.sleep(2)
-        self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
-        time.sleep(0.5)
+        
         self.go_to_top()
         time.sleep(2)
-
         # Set cans to correct position
         self.__align_dropping_cans()
         time.sleep(2)
@@ -319,21 +318,28 @@ class ActuatorsShow(Actuators):
     #         self.stepper.folded_steps - self.elevator_ticks, self.stepper.speed
     #     )
 
-    # def ready_to_pickup(self):
-    #     self.stepper_step(
-    #         self.stepper.top_steps - self.elevator_ticks, self.stepper.speed
-    #     )
-    #     self.deploy(self.center)
-    #     self.stepper_step(
-    #         self.stepper.bottom_steps - self.elevator_ticks, self.stepper.speed
-    #     )
-    #     self.deploy(self.upper_arm + self.side_arms)
+    def ready_to_pickup(self):
+        """
+        Preparation and magnetization of all servos.
+        """
+        # Prep and go magnetized
+        self.deploy_all_pickup() #Magnetize
+        time.sleep(2)
+        self.deploy(8)
+        self.go_to_bottom()
+        time.sleep(5)
 
-    # def pick_up(self):
-    #     self.set_servo_angle(
-    #         self.upper_arm, 90, max_angle=self.servos[self.upper_arm].max_angle
-    #     )
-    #     self.deploy(self.end_servos)
+    def pick_up(self):
+        """
+        Catch cans and plank
+        """
+        # Catch and raise cans and plank
+        self.fold(4)
+        self.fold(6)
+        self.fold(9)
+        time.sleep(2)
+        self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
+        time.sleep(0.5)
 
     # def build(self):
     #     self.fold(self.side_arms)

@@ -59,17 +59,22 @@ def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
             f"[Construct] backward maneuver at zone {zone_construct_id}", Backward(10)
         ),
     )
-
-    # Add node to actuators action to end construction maneuver
-    construct_sub_graph.add_node(
-        f"[Construct] end construction maneuver at zone {zone_construct_id}",
-        BaseTaskNode(
-            f"[Construct] end construction maneuver at zone {zone_construct_id}",
-            EndBuild(),
-        ),
+    
+    construct_sub_graph.connect(
+        f"[Construct] go to zone {zone_construct_id}",
+        DirectTransition(
+            construct_sub_graph.nodes(f"[Construct] placing item at zone {zone_construct_id}")
+        )
+    )
+    
+    construct_sub_graph.connect(
+        f"[Construct] placing item at zone {zone_construct_id}",
+        DirectTransition(
+            construct_sub_graph.nodes(f"[Construct] backward maneuver at zone {zone_construct_id}")
+        )
     )
 
     return construct_sub_graph.build(
         entry=f"[Construct] go to zone {zone_construct_id}",
-        exits=f"[Construct] end construction maneuver at zone {zone_construct_id}",
+        exits=f"[Construct] backward maneuver at zone {zone_construct_id}",
     )
