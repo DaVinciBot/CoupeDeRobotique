@@ -107,12 +107,14 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        # from boombot_strategy import ShowGameContext, yellow_strategy_runner
+        from boombot_strategy import ShowGameContext, yellow_strategy_runner
 
         navigator = Navigator()
+        
+        actuator = Actuators()
 
         # Rolling basis & Actuators
-        rolling_basis = RollingBasis(
+        rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(1)
@@ -185,16 +187,16 @@ class MainBrain(Brain):
             )
             rolling_basis.set_speed_and_position(*cmd.get_command())
 
-        # yellow_strategy_runner.handle(
-        #     ShowGameContext(
-        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
-        #     )
-        # )
+        yellow_strategy_runner.handle(
+            ShowGameContext(
+                arena=self.arena, rolling_basis=rolling_basis, actuators=actuator
+            )
+        )
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
     @Brain.task(
         process=True,
-        run_on_start=False,
+        run_on_start=True, #True to get visualization
         refresh_rate=0.01,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",

@@ -34,7 +34,7 @@ yellow_strategy_runner = GraphRunner(
 )
 
 
-# visualize_task_graph_from_node(
-#     subgraph=built_graph,
-#     title="Yellow Strategy",
-# )
+visualize_task_graph_from_node(
+    subgraph=pickup_zone_4,
+    title="Pickup Zone",
+)
