@@ -139,7 +139,7 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
     @Brain.task(
-        process=True,
+        process=False,
         run_on_start=True,
         refresh_rate=0.01,
         define_loop_later=True,
