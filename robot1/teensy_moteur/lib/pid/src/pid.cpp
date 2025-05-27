@@ -6,65 +6,58 @@
 #include <pid.h>
 #include <Arduino.h>
 
-/**
- * @brief Constructor for the PID class
- *
- * Initializes the 3 PID constant
- * @param kp Proportionnal constant
- * @param ki Integral constant
- * @param kd Derivative constant
- */
-PID::PID(float kp, float ki, float kd)
-{
-    this->kp = kp;
-    this->kd = kd;
-    this->ki = ki;
+PID::PID(double kp, double ki, double kd, double minOutput, double maxOutput)
+    : _kp(kp), _ki(ki), _kd(kd), _minOutput(minOutput), _maxOutput(maxOutput),
+      _integral(0.0), _previousError(0.0), _lastTime(micros()), _dt(0.0) {}
+
+void PID::setTunings(double kp, double ki, double kd) {
+    this->_kp = kp;
+    this->_ki = ki;
+    this->_kd = kd;
 }
 
-/**
- * @brief Compute the time elapsed since the last time this method has been called.A0
- *
- * @return Time elapsed
- */
-double PID::delta_time_calculator()
-{
-    long current_time = micros();
-    double delta_time = (current_time - this->prevT) / (1e6); // convert to in seconds
-    this->prevT = current_time;
-    return delta_time;
+void PID::setOutputLimits(double minOutput, double maxOutput) {
+    if (minOutput >= maxOutput) return;
+    this->_minOutput = minOutput;
+    this->_maxOutput = maxOutput;
+
+    if (this->_integral > this->_maxOutput) this->_integral = this->_maxOutput;
+    else if (this->_integral < this->_minOutput) this->_integral = this->_minOutput;
 }
 
-/**
- * @brief Compute error.
- *
- * @param error Previous error computed
- * @return New error
- */
-double PID::compute(double error)
-{
-    // double delta_time = this->delta_time_calculator();
-
-    // Calculate derivative
-    double derivative = error - this->error_prev;
-
-    // Calculate integral
-    this->error_integral += error;
-
-    // Control signal
-    double new_error = this->kp * error + this->kd * derivative + this->ki * this->error_integral;
-
-    // Save error
-    this->error_prev = error;
-
-    return new_error;
+void PID::updateDeltaTime() {
+    unsigned long now = micros();
+    this->_dt = (now - this->_lastTime) * 1e-6;
+    this->_lastTime = now;
 }
 
-double PID::compute_derived_output_control(float error, float output)
-{
-    this->error_integral += error;
+double PID::compute(double error) {
+    this->updateDeltaTime();
 
-    double new_error = this->kp * error - this->kd * output + this->ki * this->error_integral;
+    // Integral term with anti-windup
+    this->_integral += this->_ki * error * this->_dt;
+    if (this->_integral > this->_maxOutput) this->_integral = this->_maxOutput;
+    else if (this->_integral < this->_minOutput) this->_integral = this->_minOutput;
 
-    this->error_prev = error;
-    return new_error;
+    // Derivative term
+    double derivative = 0.0;
+    if (this->_dt > 0) {
+        derivative = (error - this->_previousError) / this->_dt;
+    }
+
+    // PID output before clamping
+    double output = this->_kp * error + this->_integral + this->_kd * derivative;
+
+    if (output > this->_maxOutput) output = this->_maxOutput;
+    else if (output < this->_minOutput) output = this->_minOutput;
+
+    this->_previousError = error;
+
+    return output;
+}
+
+void PID::reset() {
+    this->_integral = 0.0;
+    this->_previousError = 0.0;
+    this->_lastTime = micros();
 }
