@@ -85,7 +85,7 @@ void Rolling_Basis::init_motors()
 /**
  * @brief Initialize Rolling Basis state with starting position
  */
-void Rolling_Basis::    init_rolling_basis(double x, double y, double theta)
+void Rolling_Basis::init_rolling_basis(double x, double y, double theta)
 {
     this->X = x;
     this->Y = y;

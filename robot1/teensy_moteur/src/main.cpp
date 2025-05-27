@@ -48,12 +48,12 @@ Point target_position(START_X, START_Y, START_THETA);
 // b. define the callback functions
 void set_target_position(byte *msg, byte size)
 {
-  msg_set_target_position *target_speed_and_position = ( msg_set_target_position* )msg;
+  msg_set_target_position *target_position_msg = ( msg_set_target_position* )msg;
 
   // Update position
-  target_position.x = target_speed_and_position->target_position_x;
-  target_position.y = target_speed_and_position->target_position_y;
-  target_position.theta = target_speed_and_position->target_position_theta;
+  target_position.x = target_position_msg->target_position_x;
+  target_position.y = target_position_msg->target_position_y;
+  target_position.theta = target_position_msg->target_position_theta;
 }
 
 void set_pid(byte *msg, byte size)
@@ -86,6 +86,11 @@ void set_odometrie(byte *msg, byte size)
   rolling_basis_ptr->X = odometrie->x;
   rolling_basis_ptr->Y = odometrie->y;
   rolling_basis_ptr->THETA = odometrie->theta;
+  
+  // Update target position: avoid the usage of old stored target point
+  target_position.x = odometrie->x;
+  target_position.y = odometrie->y;
+  target_position.theta = odometrie->theta;
 }
 
 void reset_teensy(byte *msg, byte size)
@@ -152,7 +157,7 @@ void loop()
     rolling_basis_msg.x = rolling_basis_ptr->X;
     rolling_basis_msg.y = rolling_basis_ptr->Y;
     rolling_basis_msg.theta = rolling_basis_ptr->THETA;
-    
+
     com->send_msg((byte *)&rolling_basis_msg, sizeof(msg_update_rolling_basis));
     counter = 0;
   }
