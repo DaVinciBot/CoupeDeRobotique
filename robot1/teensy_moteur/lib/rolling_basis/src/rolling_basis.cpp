@@ -110,13 +110,13 @@ void Rolling_Basis::odometrie_handle()
     }
 
     /* Determine the delta of distance and rotation of the robot */
-    double delta_distance = (this->right_motor->distance + this->left_motor->distance) / 2.0f;
-    double delta_theta = (this->right_motor->distance - this->left_motor->distance) / this->center_distance;
+    double delta_distance = (this->left_motor->distance + this->right_motor->distance) / 2.0f;
+    double delta_theta = (this->left_motor->distance - this->right_motor->distance) / this->center_distance;
 
     // Determine the new cartesian position of the robot
-    this->X += cosf(this->THETA) * delta_distance;
-    this->Y -= sinf(this->THETA) * delta_distance;
-    this->THETA = normalizeAngle(this->THETA - delta_theta);
+    this->X += cosf(this->THETA + (delta_theta / 2.0f)) * delta_distance;
+    this->Y += sinf(this->THETA + (delta_theta / 2.0f)) * delta_distance;
+    this->THETA = normalizeAngle(this->THETA + delta_theta);
 }
 
 /**
