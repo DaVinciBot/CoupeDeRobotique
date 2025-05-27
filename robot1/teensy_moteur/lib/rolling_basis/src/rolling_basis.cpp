@@ -146,6 +146,9 @@ void Rolling_Basis::handle(
 
     theta_error = normalizeAngle(theta_error);
 
+    String debug_msg = "Distance error: " + String(distance_error) + ", Theta error: " + String(theta_error);
+    com->print((char *)debug_msg.c_str());
+
     // Consigne vitesse
 
     // Compute PID output based on errors
