@@ -108,6 +108,8 @@ class NavigatorTask:
 
         # Plan the path using the appropriate strategy
         path: list[OrientedPoint] = self.path_planner.plan_path(plan_path_params)
+        
+        print("############ PATH PLANNED:", path)
 
         # Generate a trajectory based on the path
         self.trajectory_planner.plan_trajectory(path)
