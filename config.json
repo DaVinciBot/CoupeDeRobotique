@@ -79,7 +79,7 @@
           "kd": 0
         },
         "angular_position": {
-          "kp": 2.0,
+          "kp": 10.0,
           "ki": 0,
           "kd": 0
         }
