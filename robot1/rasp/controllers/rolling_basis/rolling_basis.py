@@ -166,7 +166,7 @@ class RollingBasis(BaseComTeensy):
         # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
 
-    #@log("RollingBasis")
+    # @log("RollingBasis")
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
         """
         Sends a message to set the odometrie of the rolling basis.
@@ -180,7 +180,7 @@ class RollingBasis(BaseComTeensy):
             + struct.pack("<d", odometrie.y)
             + struct.pack("<d", odometrie.theta)
         )
-        self.send_bytes(msg) 
+        self.send_bytes(msg)
         self._start_time = time.time()
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:

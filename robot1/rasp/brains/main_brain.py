@@ -67,7 +67,7 @@ class MainBrain(Brain):
         self.navigator_task: NavigatorTaskParams = None
 
         self.jack = jack
-        
+
         self.lidar_points: list[Point] = []
 
         super().__init__(logger, self)
@@ -184,12 +184,12 @@ class MainBrain(Brain):
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
-        
-        self.lidar_points = list(self.arena.remove_outside(
-            self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
-        ).geoms)
-        
-        
+
+        self.lidar_points = list(
+            self.arena.remove_outside(
+                self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
+            ).geoms
+        )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def print_odo(self) -> None:
