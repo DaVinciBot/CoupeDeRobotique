@@ -129,9 +129,9 @@ class MainBrain(Brain):
         
         navigator.add_navigation_task(
             NavigatorTaskParams(
-                goal=None,
+                goal=OrientedPoint(20, 20, 0),
                 timeout=None,
-                path_planner_params=DeltaPathPlannerParams(distance=20),
+                path_planner_params=BasicPathPlannerParams(), #DeltaPathPlannerParams(distance=20)
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
                 avoidance_params=StopAndWaitAvoidanceParams(
@@ -218,8 +218,8 @@ class MainBrain(Brain):
         await self.wait_for_trigger()
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        #start_position = OrientedPoint(13, 17, 0)
-        start_position = OrientedPoint(0, 0, 0)
+        start_position = OrientedPoint(13, 17, 0)
+        #start_position = OrientedPoint(0, 0, 0)
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )
