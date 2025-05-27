@@ -112,7 +112,7 @@ class MainBrain(Brain):
         navigator = Navigator()
 
         # Rolling basis & Actuators
-        rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(1)
