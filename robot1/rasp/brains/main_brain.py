@@ -197,7 +197,7 @@ class MainBrain(Brain):
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
-
+        
         # self.lidar_points = list(
         #     self.arena.remove_outside(
         #         self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
