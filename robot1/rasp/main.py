@@ -116,7 +116,7 @@ if __name__ == "__main__":
         grid_manager_logger=logger_grid_manager,
     )
 
-    #os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
+    # os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
     # Jack
     jack = PIN(CONFIG.JACK_PIN)
     jack.setup("input_pullup", reverse_state=True)

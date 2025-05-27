@@ -79,7 +79,9 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         Returns:
             bool: True if the distance is less than or equal to the configured threshold.
         """
-        return ally_zone.point.distance(enemy_zone.point) <= self.params.acs_distance
+        return self.params.acs_detection_profile.is_acs_triggered(
+            ally_zone=ally_zone, enemy_zone=enemy_zone
+        )
 
     def _store_original_task(self, current_navigator_task: NavigatorTask) -> None:
         """
