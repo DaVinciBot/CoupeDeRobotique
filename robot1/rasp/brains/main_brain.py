@@ -68,6 +68,8 @@ class MainBrain(Brain):
 
         self.jack = jack
 
+        self.lidar_points: list[Point] = []
+
         super().__init__(logger, self)
 
     """
@@ -150,10 +152,6 @@ class MainBrain(Brain):
         fig, ax = plt.subplots()
 
         # --- MetaProg is insane (loop) --- #
-        lidar_points = self.remove_outside(
-            self._pol_to_abs_cart(self.lidar.scan_to_polars())
-        )
-
         ax.clear()
         self.arena.visualize(
             # Visualization options
@@ -167,7 +165,7 @@ class MainBrain(Brain):
             # Additional options
             # additional_zones=[self.th_ally_zone],
             # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
-            additional_points=lidar_points,
+            additional_points=self.lidar_points,
         )
         plt.pause(0.01)
 
@@ -185,6 +183,12 @@ class MainBrain(Brain):
             lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
+        )
+
+        self.lidar_points = list(
+            self.arena.remove_outside(
+                self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
+            ).geoms
         )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
