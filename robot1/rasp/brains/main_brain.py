@@ -150,8 +150,8 @@ class MainBrain(Brain):
         fig, ax = plt.subplots()
 
         # --- MetaProg is insane (loop) --- #
-        lidar_points = self.remove_outside(
-            self._pol_to_abs_cart(self.lidar.scan_to_polars())
+        lidar_points = self.arena.remove_outside(
+            self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
         )
         
         ax.clear()
