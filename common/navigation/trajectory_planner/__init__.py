@@ -3,6 +3,7 @@ from navigation.trajectory_planner.structs import (
     TrajectoryPlannerStrategy,
     TrajectoryPlanCommand,
 )
+from navigation.path_planner import Direction
 
 # Import Speed Profile classes
 from navigation.trajectory_planner.speed_profile import (
@@ -30,3 +31,4 @@ from navigation.trajectory_planner.basic_trajectory_planner import (
 from navigation.trajectory_planner.trajectory_planner_factory import (
     TrajectoryPlannerFactory,
 )
+

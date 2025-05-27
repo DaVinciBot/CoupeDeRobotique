@@ -44,6 +44,7 @@ from navigation.avoidance.acs_detection_profiles import (
     NoAcsDetectionProfileParams,
 )
 
+from navigation.trajectory_planner import Direction
 from usb_com.python.tools import get_all_serial_number
 
 from navigation.navigator.task import NavigatorTaskState
@@ -145,13 +146,13 @@ class MainBrain(Brain):
                 acs_detection_profile_params=NoAcsDetectionProfileParams()
             )
         )
-        # 2. recule avant de demintour pour ne pas shooter la banderole
+        # 2. recule avant de demi tour pour ne pas shooter la banderole
         navigator.add_navigation_task(
             NavigatorTaskParams(
                 goal=None,
                 timeout=None,
-                path_planner_params=DeltaPathPlannerParams(distance=-10, rotation=pi),
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                path_planner_params=DeltaPathPlannerParams(distance=-10),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(Direction.BACKWARD),
                 speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
                 avoidance_params=NoAvoidanceParams(),
                 acs_detection_profile_params=NoAcsDetectionProfileParams()
@@ -161,7 +162,7 @@ class MainBrain(Brain):
         # 3. go to zone 9 pour choper le matos
         navigator.add_navigation_task(
             NavigatorTaskParams(
-                goal=9,
+                goal=OrientedPoint(300 - 110, 75, pi / 2),
                 timeout=None,
                 path_planner_params=BasicPathPlannerParams(),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
