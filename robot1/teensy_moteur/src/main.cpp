@@ -155,7 +155,7 @@ void loop()
   com->handle_callback(callback_functions);
 
   // Send rolling basis state
-  if (counter++ > 4096) // 4096 = 2^12
+  if (counter++ % 4096) // 4096 = 2^12
   {
     msg_update_rolling_basis rolling_basis_msg;
     // Rolling Basis position
@@ -167,7 +167,16 @@ void loop()
     rolling_basis_msg.current_angular_speed = 0;
 
     com->send_msg((byte *)&rolling_basis_msg, sizeof(msg_update_rolling_basis));
-
+  }
+  if (counter > 4096*2)
+  {
+    String pids = "PIDs: " + String(rolling_basis_ptr->linear_distance_pid.kp) + ", " +
+                  String(rolling_basis_ptr->linear_distance_pid.ki) + ", " +
+                  String(rolling_basis_ptr->linear_distance_pid.kd) + " | " +
+                  String(rolling_basis_ptr->angular_distance_pid.kp) + ", " +
+                  String(rolling_basis_ptr->angular_distance_pid.ki) + ", " +
+                  String(rolling_basis_ptr->angular_distance_pid.kd);
+    com->print((char *)pids.c_str());
     counter = 0;
   }
 }
