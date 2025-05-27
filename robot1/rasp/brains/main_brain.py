@@ -116,8 +116,6 @@ class MainBrain(Brain):
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(1)
-        rolling_basis._initialize_pids()
-        time.sleep(1)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         time.sleep(1)
 
@@ -135,17 +133,17 @@ class MainBrain(Brain):
         # )
 
         # 1. pousse contre bordure pour deployer banderole
-        # navigator.add_navigation_task(
-        #     NavigatorTaskParams(
-        #         goal=None,
-        #         timeout=None,
-        #         path_planner_params=DeltaPathPlannerParams(distance=40),
-        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-        #         speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-        #         avoidance_params=NoAvoidanceParams(),
-        #         acs_detection_profile_params=NoAcsDetectionProfileParams()
-        #     )
-        # )
+        navigator.add_navigation_task(
+            NavigatorTaskParams(
+                goal=None,
+                timeout=None,
+                path_planner_params=DeltaPathPlannerParams(distance=40),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+                avoidance_params=NoAvoidanceParams(),
+                acs_detection_profile_params=NoAcsDetectionProfileParams()
+            )
+        )
         # 2. recule avant de demi tour pour ne pas shooter la banderole
         # navigator.add_navigation_task(
         #     NavigatorTaskParams(
@@ -183,7 +181,7 @@ class MainBrain(Brain):
                 ally_zone=self.arena.ally_zone,
                 enemy_zone=self.arena.enemy_zone,
             )
-            rolling_basis.set_speed_and_position(*cmd.get_command())
+            rolling_basis.set_target_position(*cmd.get_command())
 
         # yellow_strategy_runner.handle(
         #     ShowGameContext(
