@@ -153,7 +153,7 @@ class MainBrain(Brain):
         lidar_points = self.remove_outside(
             self._pol_to_abs_cart(self.lidar.scan_to_polars())
         )
-        
+
         ax.clear()
         self.arena.visualize(
             # Visualization options
