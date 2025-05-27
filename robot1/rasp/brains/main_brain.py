@@ -77,7 +77,7 @@ class MainBrain(Brain):
     """ ### Routines ### """
 
     # Deactivate for now
-    @Brain.task(process=False, run_on_start=True)
+    @Brain.task(process=False, run_on_start=False)
     async def wait_for_trigger(self):
         false_jacks_in_a_row = 0
         while false_jacks_in_a_row < 5:
