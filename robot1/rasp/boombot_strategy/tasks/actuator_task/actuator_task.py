@@ -17,17 +17,5 @@ class PickUp(BaseTask):
 
 class Build(BaseTask):
     def handle(self, ctx: ShowGameContext):
-        ctx.actuators.build()
-        return True
-
-
-class EndBuild(BaseTask):
-    def handle(self, ctx: ShowGameContext):
-        ctx.actuators.end_build()
-        return True
-
-
-class InitActuator(BaseTask):
-    def handle(self, ctx: ShowGameContext):
-        ctx.actuators.init_actuator()
+        ctx.actuators.build_floors()
         return True
