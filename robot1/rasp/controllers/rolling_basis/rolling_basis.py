@@ -157,6 +157,7 @@ class RollingBasis(BaseComTeensy):
         )
 
         self.logger.info(f"SET POSITION: {target_position}")
+        self.logger.info(f"CURRENT POSITION: {self.odometrie}")
         
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
