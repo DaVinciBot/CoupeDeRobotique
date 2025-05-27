@@ -152,8 +152,6 @@ class MainBrain(Brain):
         fig, ax = plt.subplots()
 
         # --- MetaProg is insane (loop) --- #
-
-
         ax.clear()
         self.arena.visualize(
             # Visualization options
@@ -187,9 +185,10 @@ class MainBrain(Brain):
             # _enemy_position=self.position_generator(),
         )
         
-        self.lidar_points = self.arena.remove_outside(
+        self.lidar_points = list(self.arena.remove_outside(
             self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
-        )
+        ).geoms)
+        
         
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
