@@ -142,8 +142,8 @@ class MainBrain(Brain):
         process=False,
         run_on_start=True,
         refresh_rate=0.01,
-        define_loop_later=True,
-        start_loop_marker="# --- MetaProg is insane (loop) --- #",
+        # define_loop_later=True,
+        # start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     async def visualize_arena(self) -> None:
         # --- Initialization --- #
