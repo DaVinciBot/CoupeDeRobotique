@@ -6,17 +6,21 @@
 #include <pid.h>
 #include <Arduino.h>
 
-
 PID::PID(double kp, double ki, double kd,
          double minOutput, double maxOutput,
          double deadband)
-    : _kp(kp), _ki(ki), _kd(kd),
-      _minOutput(minOutput), _maxOutput(maxOutput),
-      _deadband(fabs(deadband)),
-      _integral(0.0), _previousError(0.0),
-      _lastTime(micros()), _dt(0.0) {
-    // Calculate boost factor: maps raw in [0, deadband] to [0, maxOutput]
-    _boostFactor = (_deadband > 0) ? (_maxOutput / _deadband) : 1.0;
+    : _kp(kp)
+    , _ki(ki)
+    , _kd(kd)
+    , _minOutput(minOutput)
+    , _maxOutput(maxOutput)
+    , _deadband(fabs(deadband))
+    , _integral(0.0)
+    , _previousError(0.0)
+    , _dt(0.0)
+    , _lastTime(micros())
+    , _derivFiltered(0.0)
+{
 }
 
 void PID::updateParameters(double kp, double ki, double kd) {
@@ -25,68 +29,68 @@ void PID::updateParameters(double kp, double ki, double kd) {
 }
 
 void PID::setTunings(double kp, double ki, double kd) {
-    this->_kp = kp;
-    this->_ki = ki;
-    this->_kd = kd;
+    _kp = kp;
+    _ki = ki;
+    _kd = kd;
 }
 
 void PID::setOutputLimits(double minOutput, double maxOutput) {
     if (minOutput >= maxOutput) return;
-    this->_minOutput = minOutput;
-    this->_maxOutput = maxOutput;
-    _boostFactor = (_deadband > 0) ? (_maxOutput / _deadband) : 1.0;
-    if (this->_integral > this->_maxOutput) this->_integral = this->_maxOutput;
-    else if (this->_integral < this->_minOutput) this->_integral = this->_minOutput;
+    _minOutput = minOutput;
+    _maxOutput = maxOutput;
 }
 
 void PID::setDeadband(double deadband) {
-    this->_deadband = fabs(deadband);
-    _boostFactor = (_deadband > 0) ? (_maxOutput / _deadband) : 1.0;
+    _deadband = fabs(deadband);
 }
 
 void PID::updateDeltaTime() {
     unsigned long now = micros();
-    this->_dt = (now - this->_lastTime) * 1e-6;
-    this->_lastTime = now;
+    _dt = (now - _lastTime) * 1e-6;
+    _lastTime = now;
 }
-
-// Boost small raw values: linearly scale [0, deadband] -> [0, maxOutput], above deadband no boost
-
-double PID::applyDeadbandBoost(double raw) {
-    double sign = (raw >= 0) ? 1.0 : -1.0;
-    double absRaw = fabs(raw);
-    if (absRaw <= this->_deadband) {
-        return sign * absRaw * _boostFactor;
-    } else {
-        return raw;
-    }
-}
-
 
 double PID::compute(double error) {
     updateDeltaTime();
 
-    this->_integral += this->_ki * error * this->_dt;
-    if (this->_integral > this->_maxOutput) this->_integral = this->_maxOutput;
-    else if (this->_integral < this->_minOutput) this->_integral = this->_minOutput;
+    // Derivative with one-pole low-pass filter
+    double derivRaw = (_dt > 0.0) ? (error - _previousError) / _dt : 0.0;
+    const double alpha = 0.8; // filter coefficient
+    _derivFiltered = alpha * _derivFiltered + (1.0 - alpha) * derivRaw;
 
-    double derivative = 0.0;
-    if (this->_dt > 0) {
-        derivative = (error - this->_previousError) / this->_dt;
+    // Proportional term
+    double P = _kp * error;
+    // Integral term (will update after anti-windup check)
+    double I = _integral;
+    // Derivative term
+    double D = _kd * _derivFiltered;
+
+    // Raw PID output
+    double raw = P + I + D;
+
+    // Feed-forward friction compensation
+    double ff = 0.0;
+    if (raw > 0.0) ff = _deadband;
+    else if (raw < 0.0) ff = -_deadband;
+    double u_pre = raw + ff;
+
+    // Saturate
+    double u_sat = constrain(u_pre, _minOutput, _maxOutput);
+
+    // Anti-windup: integrate only if not saturated
+    if (u_sat > _minOutput && u_sat < _maxOutput) {
+        _integral += _ki * error * _dt;
+        _integral = constrain(_integral, _minOutput, _maxOutput);
     }
 
-    double raw = this->_kp * error + this->_integral + this->_kd * derivative;
-    double output = applyDeadbandBoost(raw);
-
-    if (output > this->_maxOutput) output = this->_maxOutput;
-    else if (output < this->_minOutput) output = this->_minOutput;
-
-    this->_previousError = error;
-    return output;
+    // Save error
+    _previousError = error;
+    return u_sat;
 }
 
 void PID::reset() {
-    this->_integral = 0.0;
-    this->_previousError = 0.0;
-    this->_lastTime = micros();
+    _integral = 0.0;
+    _previousError = 0.0;
+    _derivFiltered = 0.0;
+    _lastTime = micros();
 }
