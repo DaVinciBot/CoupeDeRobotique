@@ -139,7 +139,7 @@ class MainBrain(Brain):
             NavigatorTaskParams(
                 goal=None,
                 timeout=None,
-                path_planner_params=DeltaPathPlannerParams(distance=5),
+                path_planner_params=DeltaPathPlannerParams(distance=10),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                 speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
                 avoidance_params=NoAvoidanceParams(),
@@ -160,19 +160,19 @@ class MainBrain(Brain):
         # )
 
         # 3. go to zone 9 pour choper le matos
-        navigator.add_navigation_task(
-            NavigatorTaskParams(
-                goal=OrientedPoint(300 - 110, 75, pi / 2),
-                timeout=None,
-                path_planner_params=BasicPathPlannerParams(),
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-                speed_profiler=CONFIG.ROLLING_BASIS_TO_PICKUP_SPEED_PROFILER,
-                avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
-                acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                    acs_distance=20, width_view=20
-                ),
-            )
-        )
+        # navigator.add_navigation_task(
+        #     NavigatorTaskParams(
+        #         goal=OrientedPoint(300 - 110, 75, pi / 2),
+        #         timeout=None,
+        #         path_planner_params=BasicPathPlannerParams(),
+        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+        #         speed_profiler=CONFIG.ROLLING_BASIS_TO_PICKUP_SPEED_PROFILER,
+        #         avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
+        #         acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+        #             acs_distance=20, width_view=20
+        #         ),
+        #     )
+        # )
 
 
 
