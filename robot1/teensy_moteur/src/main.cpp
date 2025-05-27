@@ -16,8 +16,9 @@ PID angular_distance_pid(KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DI
 
 // b. Instanciate the Rolling Basis object
 Rolling_Basis *rolling_basis_ptr = new Rolling_Basis(
-    ENCODER_RESOLUTION, ENTRAXE, WHEEL_DIAMETER,
-    linear_distance_pid, angular_distance_pid);
+  ENCODER_RESOLUTION, ENTRAXE, WHEEL_DIAMETER,
+  linear_distance_pid, angular_distance_pid
+);
 
 // 2. Instanciate the Communication object
 Com *com;

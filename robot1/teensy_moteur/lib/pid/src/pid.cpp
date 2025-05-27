@@ -55,6 +55,9 @@ double PID::compute(double error) {
     double dt = (now - _lastTime) * 1e-6;  // seconds
     _lastTime = now;
     if (dt <= 0.0) dt = 1e-6;
+    // Prevent excessively small dt (spikes in derivative)
+    const double dtMin = 1e-3;
+    if (dt < dtMin) dt = dtMin;
 
     // 1) Integral update + clamp (anti-windup)
     _integral += error * dt;
