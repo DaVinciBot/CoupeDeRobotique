@@ -178,7 +178,7 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
+            lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
@@ -194,7 +194,7 @@ class MainBrain(Brain):
         await self.wait_for_trigger()
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        start_position = OrientedPoint(0, 0, 0)
+        start_position = OrientedPoint(13, 17, 0)
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )
