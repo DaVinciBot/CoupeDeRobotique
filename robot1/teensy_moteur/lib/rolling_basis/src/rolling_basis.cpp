@@ -153,12 +153,12 @@ void Rolling_Basis::handle(
     double right_pwm = linear_correction - angular_correction;
     double left_pwm = linear_correction + angular_correction;
 
-    static long ticks_counter = 0;
-    if (ticks_counter++ > 10) {
-        ticks_counter = 0;
-        String pwms = "PWMs: " + String(right_pwm) + ", " + String(left_pwm);
-        com->print((char *)pwms.c_str());
-    }
+    // static long ticks_counter = 0;
+    // if (ticks_counter++ > 10) {
+    //     ticks_counter = 0;
+    //     String pwms = "PWMs: " + String(right_pwm) + ", " + String(left_pwm);
+    //     com->print((char *)pwms.c_str());
+    // }
     
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);
