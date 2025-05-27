@@ -133,17 +133,17 @@ class MainBrain(Brain):
         # )
 
         # 1. pousse contre bordure pour deployer banderole
-        # navigator.add_navigation_task(
-        #     NavigatorTaskParams(
-        #         goal=None,
-        #         timeout=None,
-        #         path_planner_params=DeltaPathPlannerParams(distance=40),
-        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-        #         speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-        #         avoidance_params=NoAvoidanceParams(),
-        #         acs_detection_profile_params=NoAcsDetectionProfileParams()
-        #     )
-        # )
+        navigator.add_navigation_task(
+            NavigatorTaskParams(
+                goal=None,
+                timeout=None,
+                path_planner_params=DeltaPathPlannerParams(distance=40),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+                avoidance_params=NoAvoidanceParams(),
+                acs_detection_profile_params=NoAcsDetectionProfileParams()
+            )
+        )
         # 2. recule avant de demi tour pour ne pas shooter la banderole
         # navigator.add_navigation_task(
         #     NavigatorTaskParams(
