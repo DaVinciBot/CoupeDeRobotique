@@ -83,8 +83,10 @@ class MainBrain(Brain):
         while false_jacks_in_a_row < 5:
             if self.jack.safe_digital_read():
                 false_jacks_in_a_row = 0
+                self.logger.info(f"Jack state: {self.jack.digital_read()}")
             else:
                 false_jacks_in_a_row += 1
+                self.logger.info(f"Jack state: {self.jack.digital_read()}")
             await asyncio.sleep(0.1)
 
     @Brain.task(
