@@ -11,11 +11,8 @@
 
 // 1. Instanciate the Rolling Basis object
 // a. Define the PID controllers
-PID linear_speed_pid(KP_LINEAR_SPEED, KI_LINEAR_SPEED, KD_LINEAR_SPEED);
-PID angular_speed_pid(KP_ANGULAR_SPEED, KI_ANGULAR_SPEED, KD_ANGULAR_SPEED);
-
-PID linear_distance_pid(KP_LINEAR_DISTANCE, KI_LINEAR_DISTANCE, KD_LINEAR_DISTANCE);
-PID angular_distance_pid(KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DISTANCE);
+PID linear_distance_pid(KP_LINEAR_DISTANCE, KI_LINEAR_DISTANCE, KD_LINEAR_DISTANCE, -MAX_PWM, MAX_PWM, 75.0);
+PID angular_distance_pid(KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DISTANCE, -MAX_PWM, MAX_PWM, 75.0);
 
 // b. Instanciate the Rolling Basis object
 Rolling_Basis *rolling_basis_ptr = new Rolling_Basis(
@@ -83,7 +80,7 @@ void set_pid(byte *msg, byte size)
   }
   if (is_valid_pid)
   {
-    pid->setTunings(pid_msg->kp, pid_msg->ki, pid_msg->kd);
+    pid->updateParameters(pid_msg->kp, pid_msg->ki, pid_msg->kd);
   }
 }
 
