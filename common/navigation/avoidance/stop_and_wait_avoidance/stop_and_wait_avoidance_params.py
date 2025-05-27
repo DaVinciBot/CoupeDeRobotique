@@ -7,7 +7,7 @@
 # ====== Internal Project Imports ======
 from navigation.avoidance.structs import AvoidanceStrategy
 from navigation.avoidance.base_avoidance import BaseAvoidanceParams
-from navigation.avoidance.acs_detection_profile import BaseAcsDetectionProfile
+#from navigation.avoidance.acs_detection_profile import BaseAcsDetectionProfile
 
 
 class StopAndWaitAvoidanceParams(BaseAvoidanceParams):
@@ -24,7 +24,7 @@ class StopAndWaitAvoidanceParams(BaseAvoidanceParams):
 
     def __init__(
         self,
-        acs_detection_profile: BaseAcsDetectionProfile,
+        #acs_detection_profile: BaseAcsDetectionProfile,
         acs_distance: float,
         timeout: float,
     ):
@@ -37,7 +37,7 @@ class StopAndWaitAvoidanceParams(BaseAvoidanceParams):
         """
         super().__init__(
             AvoidanceStrategy.STOP_AND_WAIT,
-            acs_detection_profile,
+            #acs_detection_profile,
             acs_distance,
             timeout,
         )

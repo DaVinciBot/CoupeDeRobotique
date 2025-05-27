@@ -12,7 +12,8 @@
 
 # ====== Internal Project Imports ======
 from navigation.avoidance.structs import AvoidanceStrategy
-from navigation.avoidance.acs_detection_profile import BaseAcsDetectionProfile
+
+# from navigation.avoidance.acs_detection_profile import BaseAcsDetectionProfile
 
 
 class BaseAvoidanceParams:
@@ -31,7 +32,7 @@ class BaseAvoidanceParams:
     def __init__(
         self,
         avoidance_strategy: AvoidanceStrategy,
-        acs_detection_profile: BaseAcsDetectionProfile,
+        # acs_detection_profile: BaseAcsDetectionProfile,
         acs_distance: float,
         timeout: float = 0.0,
     ):
@@ -44,6 +45,6 @@ class BaseAvoidanceParams:
             timeout (float, optional): Timeout duration in seconds. Defaults to 0.0.
         """
         self.avoidance_strategy: AvoidanceStrategy = avoidance_strategy
-        self.acs_detection_profile: BaseAcsDetectionProfile = acs_detection_profile
+        # self.acs_detection_profile: BaseAcsDetectionProfile = acs_detection_profile
         self.acs_distance: float = acs_distance
         self.timeout: float = timeout
