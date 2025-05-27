@@ -108,6 +108,7 @@ class MainBrain(Brain):
         rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
+        time.sleep(1)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         time.sleep(1)
 
