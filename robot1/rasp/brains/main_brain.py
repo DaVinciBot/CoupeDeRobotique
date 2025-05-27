@@ -67,6 +67,8 @@ class MainBrain(Brain):
         self.navigator_task: NavigatorTaskParams = None
 
         self.jack = jack
+        
+        self.lidar_points: list[Point] = []
 
         super().__init__(logger, self)
 
@@ -139,38 +141,35 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
     @Brain.task(
-        process=False,
+        process=True,
         run_on_start=True,
         refresh_rate=0.01,
-        # define_loop_later=True,
-        # start_loop_marker="# --- MetaProg is insane (loop) --- #",
+        define_loop_later=True,
+        start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
-    async def visualize_arena(self) -> None:
+    def visualize_arena(self) -> None:
         # --- Initialization --- #
         fig, ax = plt.subplots()
 
         # --- MetaProg is insane (loop) --- #
-        while True:
-            lidar_points = self.arena.remove_outside(
-                self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
-            )
-            
-            ax.clear()
-            self.arena.visualize(
-                # Visualization options
-                show_buffer=True,
-                # trajectory=self.path,
-                display_zones_go_to_positions=True,
-                show_ally_direction=True,
-                # Plot options
-                show=False,
-                plot=(ax, fig),
-                # Additional options
-                # additional_zones=[self.th_ally_zone],
-                # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
-                additional_points=lidar_points,
-            )
-            plt.pause(0.01)
+
+
+        ax.clear()
+        self.arena.visualize(
+            # Visualization options
+            show_buffer=True,
+            # trajectory=self.path,
+            display_zones_go_to_positions=True,
+            show_ally_direction=True,
+            # Plot options
+            show=False,
+            plot=(ax, fig),
+            # Additional options
+            # additional_zones=[self.th_ally_zone],
+            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
+            additional_points=self.lidar_points,
+        )
+        plt.pause(0.01)
 
     """
     ### Main Process ###
@@ -187,6 +186,11 @@ class MainBrain(Brain):
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
+        
+        self.lidar_points = self.arena.remove_outside(
+            self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
+        )
+        
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def print_odo(self) -> None:
