@@ -153,6 +153,17 @@ void Rolling_Basis::handle(
     double right_pwm = linear_correction - angular_correction;
     double left_pwm = linear_correction + angular_correction;
 
+    static long t_counter = 0;
+    if (t_counter > 10) {
+        t_counter = 0;
+        
+        String debug_msg = "r: " + String(right_pwm) + " l: " + String(left_pwm);
+        com->print((char *)debug_msg.c_str());
+    }
+    else {
+        t_counter++;
+    }
+
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);
 }
