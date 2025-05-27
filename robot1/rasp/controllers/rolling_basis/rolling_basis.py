@@ -45,16 +45,8 @@ class RollingBasis(BaseComTeensy):
 
         # Robot state
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
-        self.linear_speed: float = 0.0
-        self.angular_speed: float = 0.0
-        self._all_linear_speed: list[float] = []
-        self._all_angular_speed: list[float] = []
-        self._start_time: time = 0
-        self._time: list[float] = []
 
         # PID controllers
-        self.linear_speed_pid: PID = PID(0.0, 0.0, 0.0)
-        self.angular_speed_pid: PID = PID(0.0, 0.0, 0.0)
         self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
 
@@ -106,17 +98,6 @@ class RollingBasis(BaseComTeensy):
             (struct.unpack("<d", msg[0:8])[0], struct.unpack("<d", msg[8:16])[0]),
             struct.unpack("<d", msg[16:24])[0],
         )
-        # Speeds
-        self.linear_speed = struct.unpack("<d", msg[24:32])[0]
-        self.angular_speed = struct.unpack("<d", msg[32:40])[0]
-
-        # self.logger.info(
-        #    f"Pos: {self.odometrie}, Linear speed: {self.linear_speed}, Angular speed: {self.angular_speed}"
-        # )
-
-        self._add_state_to_array(
-            self.linear_speed, self.angular_speed, self._get_elapsed_time()
-        )
 
     def rcv_unknown_msg(self, msg: bytes):
         """
@@ -133,10 +114,8 @@ class RollingBasis(BaseComTeensy):
     # Message Sending Methods          #
     ####################################
     # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
-    def set_speed_and_position(
+    def set_target_position(
         self,
-        target_linear_speed: float,
-        target_angular_speed: float,
         target_position: OrientedPoint,
     ) -> None:
         """
@@ -148,9 +127,7 @@ class RollingBasis(BaseComTeensy):
             target_position (OrientedPoint): Target position and orientation.
         """
         msg = (
-            Messages.SET_SPEED_AND_POSITION.to_bytes()
-            + struct.pack("<d", target_linear_speed)
-            + struct.pack("<d", target_angular_speed)
+            Messages.SET_TARGET_POSITION.to_bytes()
             + struct.pack("<d", target_position.x)
             + struct.pack("<d", target_position.y)
             + struct.pack("<d", target_position.theta)
@@ -158,7 +135,7 @@ class RollingBasis(BaseComTeensy):
 
         self.logger.info(f"SET POSITION: {target_position}")
         self.logger.info(f"CURRENT POSITION: {self.odometrie}")
-        
+
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
@@ -178,7 +155,6 @@ class RollingBasis(BaseComTeensy):
             + struct.pack("<d", odometrie.theta)
         )
         self.send_bytes(msg)
-        self._start_time = time.time()
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
         """
@@ -194,52 +170,6 @@ class RollingBasis(BaseComTeensy):
     ####################################
     # PID Configuration Methods        #
     ####################################
-    def set_linear_speed_pid(self, *args, **kwargs) -> None:
-        """
-        Configure the PID values for linear speed control.
-
-        Accepts either three positional arguments (kp, ki, kd),
-        a single dictionary, or keyword arguments.
-        """
-        try:
-            if len(args) == 3:
-                pid = PID(*args)
-            elif len(args) == 1 and isinstance(args[0], dict):
-                pid = PID.from_dict(args[0])
-            elif kwargs:
-                pid = PID.from_dict(kwargs)
-            else:
-                raise ValueError(
-                    "Invalid arguments for linear speed PID configuration."
-                )
-            self.linear_speed_pid = pid
-            self._send_pid(PID_ID.LINEAR_SPEED.value, pid)
-        except Exception as e:
-            self.logger.error(f"Failed to set linear speed PID: {e}")
-
-    def set_angular_speed_pid(self, *args, **kwargs) -> None:
-        """
-        Configure the PID values for angular speed control.
-
-        Accepts either three positional arguments (kp, ki, kd),
-        a single dictionary, or keyword arguments.
-        """
-        try:
-            if len(args) == 3:
-                pid = PID(*args)
-            elif len(args) == 1 and isinstance(args[0], dict):
-                pid = PID.from_dict(args[0])
-            elif kwargs:
-                pid = PID.from_dict(kwargs)
-            else:
-                raise ValueError(
-                    "Invalid arguments for angular speed PID configuration."
-                )
-            self.angular_speed_pid = pid
-            self._send_pid(PID_ID.ANGULAR_SPEED.value, pid)
-        except Exception as e:
-            self.logger.error(f"Failed to set angular speed PID: {e}")
-
     def set_linear_position_pid(self, *args, **kwargs) -> None:
         """
         Configure the PID values for linear position control.
@@ -288,16 +218,12 @@ class RollingBasis(BaseComTeensy):
 
     def set_pids(
         self,
-        linear_speed_pid: dict[str, float],
-        angular_speed_pid: dict[str, float],
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
     ) -> None:
         """
         Configure all PID controllers using dictionaries for each.
         """
-        self.set_linear_speed_pid(**linear_speed_pid)
-        self.set_angular_speed_pid(**angular_speed_pid)
         self.set_linear_position_pid(**linear_position_pid)
         self.set_angular_position_pid(**angular_position_pid)
 
@@ -307,54 +233,11 @@ class RollingBasis(BaseComTeensy):
         """
         try:
             self.set_pids(
-                linear_speed_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_SPEED,
-                angular_speed_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_SPEED,
                 linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
                 angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
             )
         except Exception as e:
             self.logger.error(f"Failed to initialize PIDs: {e}")
-
-    def _get_elapsed_time(self) -> float:
-        """
-        Get the elapsed time since the task started.
-
-        Returns:
-            float: Time in seconds since the task was initiated.
-        """
-        if self._start_time is None:
-            return 0.0
-        return time.time() - self._start_time
-
-    def _add_state_to_array(
-        self, linear_speed: float, angular_speed: float, time: float
-    ) -> None:
-        """Add odometrie state to array in order to plot the odometrie
-
-        Args:
-            linar_speed (float): real linear speed received from Teensy
-            angular_speed (float): real angular speed received from Teensy
-        """
-
-        self._all_linear_speed.append(linear_speed)
-        self._all_angular_speed.append(angular_speed)
-        self._time.append(time)
-        # self.logger.info(self._all_linear_speed)
-        # self.logger.info(self.linear_speed)
-
-    @np.vectorize(otypes=[float])
-    def _target_speed(x):
-        return CONFIG.ROLLING_BASIS_SPEED_PROFILES_LINEAR["high"]["max_speed"]
-
-    def plot_answer_pid(self, state):
-        if state == self.flag:
-            self.logger.info(self._target_speed(self._time))
-            self.logger.info(self._all_linear_speed)
-            plt.plot(np.array(self._time), self._target_speed(self._time))
-            plt.plot(np.array(self._time), np.array(self._all_linear_speed))
-            plt.savefig("pid_answer.png")
-            self.flag = not self.flag
-            self.logger.info("Plotting PID answer")
 
     ####################################
     # Equality Comparison              #
@@ -364,10 +247,6 @@ class RollingBasis(BaseComTeensy):
             return NotImplemented
         return (
             self.odometrie == other.odometrie
-            and self.linear_speed == other.linear_speed
-            and self.angular_speed == other.angular_speed
-            and self.linear_speed_pid == other.linear_speed_pid
-            and self.angular_speed_pid == other.angular_speed_pid
             and self.linear_position_pid == other.linear_position_pid
             and self.angular_position_pid == other.angular_position_pid
         )

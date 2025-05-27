@@ -44,17 +44,11 @@ inline void right_motor_read_encoder()
 // 3. Define all com callback functions
 // a. define globals variables to keep in memory callback functions updated
 Point target_position(START_X, START_Y, START_THETA);
-float target_linear_speed = 0.0f;
-float target_angular_speed = 0.0f;
 
 // b. define the callback functions
-void set_speed_and_position(byte *msg, byte size)
+void set_target_position(byte *msg, byte size)
 {
-  msg_set_speed_and_position *target_speed_and_position = (msg_set_speed_and_position *)msg;
-
-  // Update speeds
-  target_linear_speed = target_speed_and_position->target_linear_speed;
-  target_angular_speed = target_speed_and_position->target_angular_speed;
+  msg_set_target_position *target_speed_and_position = ( msg_set_target_position* )msg;
 
   // Update position
   target_position.x = target_speed_and_position->target_position_x;
@@ -106,7 +100,7 @@ void (*callback_functions[256])(byte *msg, byte size);
 
 void initialize_callback_functions()
 {
-  callback_functions[SET_SPEED_AND_POSITION] = &set_speed_and_position;
+  callback_functions[SET_TARGET_POSITION] = &set_target_position;
   callback_functions[SET_PID] = &set_pid;
   callback_functions[SET_ODOMETRIE] = &set_odometrie;
   callback_functions[RESET_TEENSY] = &reset_teensy;
@@ -116,7 +110,7 @@ void initialize_callback_functions()
 void handle()
 {
   rolling_basis_ptr->odometrie_handle();
-  rolling_basis_ptr->handle(target_position, target_linear_speed, target_angular_speed, com);
+  rolling_basis_ptr->handle(target_position, com);
 }
 
 void setup()
@@ -158,10 +152,7 @@ void loop()
     rolling_basis_msg.x = rolling_basis_ptr->X;
     rolling_basis_msg.y = rolling_basis_ptr->Y;
     rolling_basis_msg.theta = rolling_basis_ptr->THETA;
-    // Rolling Basis speeds
-    rolling_basis_msg.current_linear_speed = 0;
-    rolling_basis_msg.current_angular_speed = 0;
-
+    
     com->send_msg((byte *)&rolling_basis_msg, sizeof(msg_update_rolling_basis));
     counter = 0;
   }
