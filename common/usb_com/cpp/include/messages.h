@@ -15,7 +15,7 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 // rasp -> teensy : 0-127 (Convention)
 
 // Rolling Basis
-#define SET_SPEED_AND_POSITION 0
+#define SET_TARGET_POSITION 0
 #define SET_PID 1
 #define SET_ODOMETRIE 2
 
@@ -48,11 +48,9 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 // rasp -> teensy : 0-127
 
 // Rolling Basis
-struct msg_set_speed_and_position
+struct msg_set_target_position
 {
-    byte command = SET_SPEED_AND_POSITION;
-    double target_linear_speed;
-    double target_angular_speed;
+    byte command = SET_TARGET_POSITION;
     double target_position_x;
     double target_position_y;
     double target_position_theta;
@@ -140,8 +138,6 @@ struct msg_update_rolling_basis
     double x;
     double y;
     double theta;
-    double current_linear_speed;
-    double current_angular_speed;
 };
 
 // Actuators

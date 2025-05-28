@@ -33,6 +33,7 @@ class CONFIG:
         SpeedProfiler,
         BasicSpeedProfile,
         LinearRampedSpeedProfile,
+        BaseAcsDetectionProfileParams,
     )
 
     # CONSTANTS TO DEFINE !
@@ -110,12 +111,6 @@ class CONFIG:
     ROLLING_BASIS_TEENSY_SER = ROLLING_BASIS_CONFIG["rolling_basis_teensy_ser"]
 
     ROLLING_BASIS_PIDS_CONFIG = ROLLING_BASIS_CONFIG["pids"]
-    ROLLING_BASIS_PIDS_LINEAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
-        "linear_speed"
-    ]
-    ROLLING_BASIS_PIDS_ANGULAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
-        "angular_speed"
-    ]
     ROLLING_BASIS_PIDS_LINEAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
         "linear_position"
     ]
@@ -205,6 +200,41 @@ class CONFIG:
     ARENA_OBSTACLE_BUFFER = ARENA_CONFIG["obstacle_buffer"]
     ARENA_CHUNK_SIZE = ARENA_CONFIG["chunk_size"]
     ARENA_FORBIDDEN_COVER_THRESHOLD = ARENA_CONFIG["forbidden_cover_threshold"]
+
+    # Movement manager
+    MOVEMENT_MANAGER_CONFIG = SPECIFIC_CONFIG["movement_manager"]
+    MOVEMENT_MANAGER_MOVEMENT_RESOLUTION = MOVEMENT_MANAGER_CONFIG[
+        "movement_resolution"
+    ]
+
+    # ACS Detection Profiles
+    ACS_PROFILES_CONFIG = MOVEMENT_MANAGER_CONFIG["acs_profiles"]
+    ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME: (
+        BaseAcsDetectionProfileParams
+    ) = BaseAcsDetectionProfileParams.from_config(
+        **ACS_PROFILES_CONFIG["go_to_color_reserved_zone_to_finish_game"]
+    )
+    ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT: (
+        BaseAcsDetectionProfileParams
+    ) = BaseAcsDetectionProfileParams.from_config(
+        **ACS_PROFILES_CONFIG["go_to_color_reserved_zone_to_construct"]
+    )
+    ACS_PROFILE_GO_TO_STUFF_ZONE_TO_PICK_UP: BaseAcsDetectionProfileParams = (
+        BaseAcsDetectionProfileParams.from_config(
+            **ACS_PROFILES_CONFIG["go_to_stuff_zone_to_pick_up"]
+        )
+    )
+    ACS_PROFILE_BACKWARD: BaseAcsDetectionProfileParams = (
+        BaseAcsDetectionProfileParams.from_config(**ACS_PROFILES_CONFIG["backward"])
+    )
+    ACS_PROFILE_PRECISE_FORWARD: BaseAcsDetectionProfileParams = (
+        BaseAcsDetectionProfileParams.from_config(
+            **ACS_PROFILES_CONFIG["precise_forward"]
+        )
+    )
+    ACS_PROFILE_START_TASK: BaseAcsDetectionProfileParams = (
+        BaseAcsDetectionProfileParams.from_config(**ACS_PROFILES_CONFIG["start_task"])
+    )
 
     # Jack
     JACK_PIN = SPECIFIC_CONFIG["jack"]["pin"]

@@ -59,19 +59,23 @@ def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
             f"[Construct] backward maneuver at zone {zone_construct_id}", Backward(10)
         ),
     )
-    
+
     construct_sub_graph.connect(
         f"[Construct] go to zone {zone_construct_id}",
         DirectTransition(
-            construct_sub_graph.nodes(f"[Construct] placing item at zone {zone_construct_id}")
-        )
+            construct_sub_graph.nodes[
+                f"[Construct] placing item at zone {zone_construct_id}"
+            ]
+        ),
     )
-    
+
     construct_sub_graph.connect(
         f"[Construct] placing item at zone {zone_construct_id}",
         DirectTransition(
-            construct_sub_graph.nodes(f"[Construct] backward maneuver at zone {zone_construct_id}")
-        )
+            construct_sub_graph.nodes[
+                f"[Construct] backward maneuver at zone {zone_construct_id}"
+            ]
+        ),
     )
 
     return construct_sub_graph.build(

@@ -53,7 +53,7 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
     @BaseAvoidance._ensure_original_task_storage
     def handle(
         self,
-        task: NavigatorTask,
+        current_navigator_task: NavigatorTask,
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
@@ -71,4 +71,4 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
         Returns:
             TrajectoryPlanCommand: The current trajectory command without changes.
         """
-        return task.current_trajectory_command
+        return current_navigator_task.current_trajectory_command

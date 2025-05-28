@@ -65,69 +65,83 @@ class SequentialTrajectoryPlanner(
         super().__init__(params, speed_profiler, logger)
         self.segments_mapper: SegmentMapper | None = None
         self._last_call_time: float = 0.0
+        self._is_backward: bool = self.params.direction == Direction.BACKWARD
 
     @staticmethod
     def _normalize_angle(angle: float):
-        return (angle + math.pi) % (2 * math.pi) - math.pi
+        angle = (angle + math.pi) % (2 * math.pi)
+        if angle < 0:
+            angle += 2 * math.pi
+        return angle - math.pi
 
     def _compute_rotation_segment_to_be_front(
         self, start: OrientedPoint, target: OrientedPoint
     ) -> RotationSegment:
         """
-        Compute rotation needed to face the direction of the next waypoint.
+        Compute a rotation segment so that the robot’s driving direction
+        (front in forward mode, back in reverse mode) points toward the next waypoint.
 
         Args:
-            start (OrientedPoint): Current pose.
-            target (OrientedPoint): Target waypoint.
+            start (OrientedPoint): Current robot pose.
+            target (OrientedPoint): Next waypoint pose (x, y, theta).
 
         Returns:
-            RotationSegment: Segment that rotates in place to face the target.
+            RotationSegment: Segment rotating in place to face the waypoint.
         """
-        # Compute delta-theta to rotate in front of the target
-        d_theta = self._normalize_angle(
-            math.atan2(target.y - start.y, target.x - start.x) - start.theta
-        )
+        # Compute the absolute heading of the line from start to target
+        path_heading = math.atan2(target.y - start.y, target.x - start.x)
+        # If reversing, we want the rear to face the target: add π to the heading
+        desired_heading = path_heading + (math.pi if self._is_backward else 0)
 
-        # Compute intermediate target position (start + rotation)
-        target = OrientedPoint(start.x, start.y, start.theta + d_theta)
+        # Compute the minimal delta angle to rotate from current theta to desired_heading
+        delta_theta = self._normalize_angle(desired_heading - start.theta)
 
+        # Build the intermediate oriented point after rotation
+        intermediate_pose = OrientedPoint(start.x, start.y, start.theta + delta_theta)
+
+        # Create and return the rotation segment
         return RotationSegment(
             start_position=start,
-            end_position=target,
+            end_position=intermediate_pose,
             duration=self.speed_profiler.angular_speed_profile.get_total_duration(
-                abs(d_theta)
+                abs(delta_theta)
             ),
-            rotation=abs(d_theta),
-            sign=1 if d_theta > 0 else -1,
+            rotation=abs(delta_theta),
+            sign=1 if delta_theta > 0 else -1,
         )
 
     def _compute_rotation_segment_to_get_same_orientation(
         self, start: OrientedPoint, target: OrientedPoint
     ) -> RotationSegment:
         """
-        Compute rotation needed to align final orientation with target.
+        Compute a rotation segment so that the robot’s final orientation
+        (front in forward mode, back in reverse mode) matches the target.theta.
 
         Args:
-            start (OrientedPoint): Current pose after straight segment.
-            target (OrientedPoint): Target pose with desired final orientation.
+            start (OrientedPoint): Robot pose after moving straight to the waypoint.
+            target (OrientedPoint): Desired final waypoint pose (x, y, theta).
 
         Returns:
-            RotationSegment: Segment that aligns orientation with target.
+            RotationSegment: Segment rotating in place to align with target orientation.
         """
-        # Compute delta-theta to rotate in front of the target
-        d_theta = self._normalize_angle(target.theta - start.theta)
+        # Desired final heading: target.theta plus π if reversing
+        desired_theta = target.theta + (math.pi if self._is_backward else 0)
 
-        # Compute intermediate target position (start + rotation)
-        target = OrientedPoint(start.x, start.y, target.theta)
+        # Compute the minimal delta angle to rotate from current theta to desired_theta
+        delta_theta = self._normalize_angle(desired_theta - start.theta)
 
+        # Build the intermediate oriented point after rotation
+        intermediate_pose = OrientedPoint(start.x, start.y, desired_theta)
+
+        # Create and return the rotation segment
         return RotationSegment(
             start_position=start,
-            end_position=target,
+            end_position=intermediate_pose,
             duration=self.speed_profiler.angular_speed_profile.get_total_duration(
-                abs(d_theta)
+                abs(delta_theta)
             ),
-            rotation=abs(d_theta),
-            sign=1 if d_theta > 0 else -1,
+            rotation=abs(delta_theta),
+            sign=1 if delta_theta > 0 else -1,
         )
 
     def _compute_straight_segment(
@@ -259,20 +273,33 @@ class SequentialTrajectoryPlanner(
         elif isinstance(segment, StraightSegment):
             th_distance: float = self.speed_profiler.linear_speed_profile.get_distance(
                 time_elapsed=local_time,
-                distance=segment.distance,  # IMPORTANT: Use distance parameter to get the th distance
+                distance=abs(
+                    segment.distance
+                ),  # IMPORTANT: Use distance parameter to get the th distance
             )
-            th_x = segment.start_position.x + th_distance * math.cos(
-                segment.start_position.theta
-            )
-            th_y = segment.start_position.y + th_distance * math.sin(
-                segment.start_position.theta
-            )
+
+            if self._is_backward:
+                th_x = segment.start_position.x - th_distance * math.cos(
+                    segment.start_position.theta
+                )
+                th_y = segment.start_position.y - th_distance * math.sin(
+                    segment.start_position.theta
+                )
+            else:
+                th_x = segment.start_position.x + th_distance * math.cos(
+                    segment.start_position.theta
+                )
+                th_y = segment.start_position.y + th_distance * math.sin(
+                    segment.start_position.theta
+                )
 
             trajectory_plan_command: TrajectoryPlanCommand = TrajectoryPlanCommand(
                 position=OrientedPoint(th_x, th_y, segment.start_position.theta),
                 linear_speed=self.speed_profiler.linear_speed_profile.get_speed(
                     time_elapsed=local_time,
-                    distance=segment.distance,  # IMPORTANT: Use distance parameter to get the th speed
+                    distance=abs(
+                        segment.distance
+                    ),  # IMPORTANT: Use distance parameter to get the th speed
                 ),
                 angular_speed=0.0,
             )
@@ -284,18 +311,6 @@ class SequentialTrajectoryPlanner(
                     current_position=segment.start_position
                 )
             )
-
-        # Handle asked direction
-        if self.params.direction == Direction.BACKWARD:
-            # TODO: comment bien maitriser la marche arrière ?
-            trajectory_plan_command.position = OrientedPoint(
-                trajectory_plan_command.position.x,
-                trajectory_plan_command.position.y,
-                trajectory_plan_command.position.theta + math.pi,
-            )
-
-            trajectory_plan_command.linear_speed *= -1
-            trajectory_plan_command.angular_speed *= -1
 
         # Save the last call time
         self._last_call_time: float = time_elapsed

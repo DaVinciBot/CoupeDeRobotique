@@ -96,8 +96,8 @@ public:
      * Compute the PID and set the motors new command.
      */
     void handle(
-        Point target_position,
-        double target_linear_speed, double target_angular_speed, Com *com);
+        Point target_position, Com *com
+    );
 
     void pi_mod_signed(double theta);
 

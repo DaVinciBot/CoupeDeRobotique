@@ -1,6 +1,6 @@
 from arena import BaseArena, BaseArenaZone
 from geometry import Point, OrientedPoint, Polygon
-from movement import GoToParams
+from old.movement import GoToParams
 
 
 class Task:

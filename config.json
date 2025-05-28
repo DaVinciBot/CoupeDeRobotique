@@ -63,25 +63,15 @@
     "rolling_basis": {
       "rolling_basis_teensy_ser": 12678590,
       "pids": {
-        "linear_speed": {
-          "kp": 0.0,
-          "ki": 0.0,
-          "kd": 0.0
-        },
-        "angular_speed": {
-          "kp": 0.0,
-          "ki": 0.0,
-          "kd": 0.0
-        },
         "linear_position": {
-          "kp": 5.0,
+          "kp": 15.0,
           "ki": 0,
           "kd": 0
         },
         "angular_position": {
-          "kp": 10.0,
+          "kp": 150.0,
           "ki": 0,
-          "kd": 0
+          "kd": 7
         }
       },
       "speed_profiles": {
@@ -206,7 +196,33 @@
       "semi_circular_detection_angle": 3.141592
     },
     "movement_manager": {
-      "movement_resolution": 1
+      "movement_resolution": 1,
+      "acs_profiles": {
+        "go_to_color_reserved_zone_to_finish_game": {
+          "acs_detection_profile": "no_projection",
+          "acs_distance": 50
+        },
+        "go_to_color_reserved_zone_to_construct": {
+          "acs_detection_profile": "rectangular_projection",
+          "acs_distance": 50
+        },
+        "go_to_stuff_zone_to_pick_up": {
+          "acs_detection_profile": "rectangular_projection",
+          "acs_distance": 50
+        },
+        "backward": {
+          "acs_detection_profile": "no",
+          "acs_distance": 0
+        },
+        "precise_forward": {
+          "acs_detection_profile": "no",
+          "acs_distance": 0
+        },
+        "start_task": {
+          "acs_detection_profile": "no_projection",
+          "acs_distance": 70
+        }
+      }
     },
     "jack": {
       "pin": 26.0

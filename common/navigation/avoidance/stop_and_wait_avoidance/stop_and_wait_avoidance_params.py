@@ -25,10 +25,10 @@ class StopAndWaitAvoidanceParams(BaseAvoidanceParams):
         timeout: float,
     ):
         """
-        Initializes StopAndWaitAvoidanceParams with specific avoidance distance and timeout.
+        Initializes StopAndWaitAvoidanceParams with specific avoidance distance and timeout in seconds.
 
         Args:
-            timeout (float): Time to wait after stopping before checking again.
+            timeout (float): Time to wait after stopping before checking again in seconds.
         """
-        self.timeout: float = timeout
+        self.timeout: float = timeout * 1000.0
         super().__init__(AvoidanceStrategy.STOP_AND_WAIT)

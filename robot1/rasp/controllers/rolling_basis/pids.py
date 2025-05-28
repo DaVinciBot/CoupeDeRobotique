@@ -9,10 +9,8 @@ class PID_ID(Enum):
     Identifiers for the different PID controllers.
     """
 
-    LINEAR_SPEED = 0
-    ANGULAR_SPEED = 1
-    LINEAR_POSITION = 2
-    ANGULAR_POSITION = 3
+    LINEAR_POSITION = 0
+    ANGULAR_POSITION = 1
 
 
 @dataclass

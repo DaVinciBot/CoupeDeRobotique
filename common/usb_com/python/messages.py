@@ -24,7 +24,7 @@ class Messages(Enum):
     # rasp -> teensy : 0-127 (Convention)
 
     # Rolling Basis
-    SET_SPEED_AND_POSITION = 0
+    SET_TARGET_POSITION = 0
     SET_PID = 1
     SET_ODOMETRIE = 2
 

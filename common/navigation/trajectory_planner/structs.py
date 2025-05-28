@@ -50,7 +50,7 @@ class TrajectoryPlanCommand:
             angular_speed=0.0,
         )
 
-    def get_command(self) -> tuple[float, float, OrientedPoint]:
+    def get_full_command(self) -> tuple[float, float, OrientedPoint]:
         """
         Retrieve the command as a tuple for control interfaces.
 
@@ -58,3 +58,12 @@ class TrajectoryPlanCommand:
             tuple: (linear_speed, angular_speed, position)
         """
         return self.linear_speed, self.angular_speed, self.position
+
+    def get_position_command(self) -> OrientedPoint:
+        """
+        Retrieve the position command.
+
+        Returns:
+            OrientedPoint: The target position of the robot.
+        """
+        return self.position

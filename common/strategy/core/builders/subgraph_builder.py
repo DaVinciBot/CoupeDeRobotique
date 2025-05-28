@@ -1,67 +1,76 @@
-# TODO: NE FOCNTIONNE PAS !
-# ====== Standard Library Imports ======
+from __future__ import annotations
 from typing import Dict, List, Union
 
-# ====== Third-party Library Imports ======
-# (None)
+from loggerplusplus import Logger
 
-# ====== Internal Project Imports ======
-from strategy.core.task_nodes import BaseTaskNode
+from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.transitions import BaseTransition
 from strategy.core.sub_graphs import BaseSubGraph
 
 
 class SubGraphBuilder:
     """
-    A builder class for creating subgraphs composed of task nodes and transitions.
-    Allows for modular construction and merging of subgraphs.
+    Builder for BaseSubGraph: assemble nodes and transitions, merge subgraphs,
+    and produce a standalone subgraph ready for execution.
     """
 
-    def __init__(self):
-        """
-        Initialize the SubGraphBuilder with empty nodes and transition mappings.
-        """
-        self.nodes: Dict[str, BaseTaskNode] = {}
-        self.transition_map: List[tuple[str, BaseTransition]] = []
+    def __init__(self) -> None:
+        self.logger = Logger(
+            identifier="SubGraphBuilder", follow_logger_manager_rules=True
+        )
+        self._nodes: Dict[str, BaseTaskNode] = {}
+        self._transitions: List[tuple[str, BaseTransition]] = []
+        self.logger.info("Initialized SubGraphBuilder")
 
-    def _resolve_node(self, node: Union[str, BaseTaskNode]) -> BaseTaskNode:
+    def add_node(self, name: str, node: BaseTaskNode) -> SubGraphBuilder:
         """
-        Resolve a node from a string name or return the node directly.
-
-        Args:
-            node (Union[str, BaseTaskNode]): Node name or instance.
-
-        Returns:
-            BaseTaskNode: Resolved node instance.
+        Register a task node under a unique name.
+        Raises KeyError if name already exists.
         """
-        return self.nodes[node] if isinstance(node, str) else node
-
-    def add_node(self, name: str, node: BaseTaskNode) -> "SubGraphBuilder":
-        """
-        Add a node to the builder.
-
-        Args:
-            name (str): Name of the node.
-            node (BaseTaskNode): The task node to add.
-
-        Returns:
-            SubGraphBuilder: The builder instance for chaining.
-        """
-        self.nodes[name] = node
+        if name in self._nodes:
+            msg = f"Node name '{name}' already registered"
+            self.logger.error(msg)
+            raise KeyError(msg)
+        self._nodes[name] = node
+        self.logger.debug(f"Added node '{name}'")
         return self
 
-    def connect(self, from_name: str, transition: BaseTransition) -> "SubGraphBuilder":
+    def connect(self, from_name: str, transition: BaseTransition) -> SubGraphBuilder:
         """
-        Queue a transition to be added between nodes.
-
-        Args:
-            from_name (str): Name of the source node.
-            transition (BaseTransition): Transition to add from source.
-
-        Returns:
-            SubGraphBuilder: The builder instance for chaining.
+        Queue a transition from the node named 'from_name'.
         """
-        self.transition_map.append((from_name, transition))
+        if from_name not in self._nodes:
+            msg = f"Source node '{from_name}' not found for transition"
+            self.logger.error(msg)
+            raise KeyError(msg)
+        self._transitions.append((from_name, transition))
+        self.logger.debug(f"Queued transition on '{from_name}' -> {transition}")
+        return self
+
+    def add_subgraph(self, subgraph: BaseSubGraph, prefix: str = "") -> SubGraphBuilder:
+        """
+        Merge another subgraph: clones its nodes and transitions with optional name prefix.
+        """
+        mapping: Dict[BaseTaskNode, BaseTaskNode] = {}
+        for old in subgraph.get_all_nodes():
+            new_name = prefix + old.name
+            new_node = type(old)(
+                name=new_name,
+                tasks=old.tasks,
+                scoring_function=old.scoring_function,
+            )
+            self.add_node(new_name, new_node)
+            mapping[old] = new_node
+        for old in subgraph.get_all_nodes():
+            from_new = mapping[old]
+            for t in old.transitions:
+                if t.target not in mapping:
+                    continue
+                new_transition = type(t)(mapping[t.target])
+                from_new.add_transition(new_transition)
+                self.logger.debug(
+                    f"Recreated transition: '{from_new.name}' -> '{mapping[t.target].name}'"
+                )
         return self
 
     def build(
@@ -70,64 +79,41 @@ class SubGraphBuilder:
         exits: Union[str, BaseTaskNode, List[Union[str, BaseTaskNode]]],
     ) -> BaseSubGraph:
         """
-        Build and return a BaseSubGraph with the specified entry and exit nodes.
-
-        Args:
-            entry (Union[str, BaseTaskNode]): Entry node (name or instance).
-            exits (Union[str, BaseTaskNode, List[Union[str, BaseTaskNode]]]): Exit node(s) (names or instances).
-
-        Returns:
-            BaseSubGraph: The constructed subgraph.
+        Finalize builder into a BaseSubGraph. Resolves names to instances,
+        applies queued transitions, and validates entry/exits.
         """
-        # Apply queued transitions
-        for from_name, transition in self.transition_map:
-            self.nodes[from_name].add_transition(transition)
-
-        # Resolve entry node
-        entry_node = self._resolve_node(entry)
-
-        # Resolve exit node(s)
+        # Resolve entry
+        entry_node = self._resolve(entry)
+        # Resolve exits
         if isinstance(exits, list):
-            exit_nodes = [self._resolve_node(e) for e in exits]
+            exit_nodes = [self._resolve(e) for e in exits]
         else:
-            exit_nodes = [self._resolve_node(exits)]
-
+            exit_nodes = [self._resolve(exits)]
+        # Apply transitions
+        for from_name, transition in self._transitions:
+            node = self._nodes[from_name]
+            node.add_transition(transition)
+            self.logger.debug(f"Connected '{from_name}' -> '{transition.target.name}'")
+        # Validate
+        missing = [n for n in exit_nodes if n.name not in self._nodes]
+        if missing:
+            msg = f"Exit nodes not registered: {[n.name for n in missing]}"
+            self.logger.error(msg)
+            raise KeyError(msg)
+        self.logger.info(
+            f"Building subgraph entry='{entry_node.name}' exits={[n.name for n in exit_nodes]}"
+        )
         return BaseSubGraph(
             entry_node=entry_node,
             exit_nodes=exit_nodes,
-            all_nodes=list(self.nodes.values()),
+            all_nodes=list(self._nodes.values()),
         )
 
-    def add_subgraph(
-        self, subgraph: BaseSubGraph, prefix: str = ""
-    ) -> "SubGraphBuilder":
-        """
-        Merge another subgraph into this builder, optionally prefixing node names to avoid conflicts.
-
-        Returns:
-            SubGraphBuilder: The builder instance for chaining.
-        """
-        node_mapping: Dict[BaseTaskNode, BaseTaskNode] = {}
-
-        # Step 1: Clone nodes (shallow copy of tasks, new node instances)
-        for old_node in subgraph.get_all_nodes():
-            new_name = f"{prefix}{old_node.name}"
-
-            new_node = type(old_node)(  # Same class (BaseTaskNode or dérivé)
-                name=new_name,
-                task=old_node.tasks,  # Optionnel : deepcopy(old_node.task) si side effects
-                scoring_function=old_node.scoring_function,
-            )
-            self.nodes[new_name] = new_node
-            node_mapping[old_node] = new_node
-
-        # Step 2: Recreate transitions
-        for from_old in subgraph.get_all_nodes():
-            from_new = node_mapping[from_old]
-            for t in from_old.transitions:
-                to_old = t.target
-                to_new = node_mapping[to_old]
-                new_transition = type(t)(to_new)
-                from_new.add_transition(new_transition)
-
-        return self
+    def _resolve(self, item: Union[str, BaseTaskNode]) -> BaseTaskNode:
+        if isinstance(item, str):
+            if item not in self._nodes:
+                msg = f"Node '{item}' not found"
+                self.logger.error(msg)
+                raise KeyError(msg)
+            return self._nodes[item]
+        return item

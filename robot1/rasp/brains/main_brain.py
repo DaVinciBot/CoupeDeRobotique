@@ -71,11 +71,7 @@ class MainBrain(Brain):
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
-        self.navigator_task: NavigatorTaskParams = None
-
         self.jack = jack
-
-        self.lidar_points: list[Point] = []
 
         super().__init__(logger, self)
 
@@ -107,89 +103,22 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        from boombot_strategy import ShowGameContext, yellow_strategy_runner
-
-        navigator = Navigator()
-        
-        actuator = Actuators()
+        from boombot_strategy import ShowGameContext
+        from boombot_strategy.strategies.test import demo_runner
 
         # Rolling basis & Actuators
         rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(1)
-        rolling_basis._initialize_pids()
+        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         time.sleep(1)
-        #rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        time.sleep(1)
-
-        # navigator.add_navigation_task(
-        #     NavigatorTaskParams(
-        #         goal=OrientedPoint(40, 50, 0),
-        #         timeout=None,
-        #         path_planner_params=BasicPathPlannerParams(),
-        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-        #         speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-        #         avoidance_params=StopAndWaitAvoidanceParams(
-        #             acs_distance=100, timeout=30
-        #         ),
-        #     )
-        # )
-
-        # 1. pousse contre bordure pour deployer banderole
-        # navigator.add_navigation_task(
-        #     NavigatorTaskParams(
-        #         goal=None,
-        #         timeout=None,
-        #         path_planner_params=DeltaPathPlannerParams(distance=40),
-        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-        #         speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-        #         avoidance_params=NoAvoidanceParams(),
-        #         acs_detection_profile_params=NoAcsDetectionProfileParams()
-        #     )
-        # )
-        # 2. recule avant de demi tour pour ne pas shooter la banderole
-        # navigator.add_navigation_task(
-        #     NavigatorTaskParams(
-        #         goal=None,
-        #         timeout=None,
-        #         path_planner_params=DeltaPathPlannerParams(distance=-10),
-        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(Direction.BACKWARD),
-        #         speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
-        #         avoidance_params=NoAvoidanceParams(),
-        #         acs_detection_profile_params=NoAcsDetectionProfileParams()
-        #     )
-        # )
-
-        # 3. go to zone 9 pour choper le matos
-        # navigator.add_navigation_task(
-        #     NavigatorTaskParams(
-        #         goal=OrientedPoint(300 - 110, 75, pi / 2),
-        #         timeout=None,
-        #         path_planner_params=BasicPathPlannerParams(),
-        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-        #         speed_profiler=CONFIG.ROLLING_BASIS_TO_PICKUP_SPEED_PROFILER,
-        #         avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
-        #         acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-        #             acs_distance=20, width_view=20
-        #         ),
-        #     )
-        # )
-
-
 
         # --- MetaProg is insane (loop) --- #
-
-        if navigator.current_task is not None:
-            cmd = navigator.handle(
-                ally_zone=self.arena.ally_zone,
-                enemy_zone=self.arena.enemy_zone,
-            )
-            rolling_basis.set_speed_and_position(*cmd.get_command())
-
-        yellow_strategy_runner.handle(
+        demo_runner.handle(
             ShowGameContext(
-                arena=self.arena, rolling_basis=rolling_basis, actuators=actuator
+                arena=self.arena,
+                rolling_basis=rolling_basis,  # actuators=actuators
             )
         )
         self.rolling_basis_odometrie = rolling_basis.odometrie
@@ -219,7 +148,6 @@ class MainBrain(Brain):
             # Additional options
             # additional_zones=[self.th_ally_zone],
             # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
-            additional_points=self.lidar_points,
         )
         plt.pause(0.01)
 
@@ -239,29 +167,19 @@ class MainBrain(Brain):
             # _enemy_position=self.position_generator(),
         )
 
-        # self.lidar_points = list(
-        #     self.arena.remove_outside(
-        #         self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
-        #     ).geoms
-        # )
-
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
-    async def print_odo(self) -> None:
-        self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
-
     """ ### One-Shot Tasks ### """
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        # await self.wait_for_trigger()
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        start_position = OrientedPoint(0,0,0)
-        
+        start_position = OrientedPoint(100, 66, 0)
+
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )
         self.rolling_basis_odometrie = start_position
-        
+
         await asyncio.sleep(1)
+        #await self.wait_for_trigger()
         await self.run()

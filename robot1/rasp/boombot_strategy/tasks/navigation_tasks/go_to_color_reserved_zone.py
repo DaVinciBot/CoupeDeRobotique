@@ -16,7 +16,8 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
             path_planner_params=BasicPathPlannerParams(),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILER,  # Be fast to finish the game
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=50, timeout=10),
+            avoidance_params=StopAndWaitAvoidanceParams(timeout=10),
+            acs_detection_profile_params=CONFIG.ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME,
         )
 
 
@@ -27,5 +28,6 @@ class GoToColorReservedZoneToConstruct(NavigationTask):
             path_planner_params=BasicPathPlannerParams(),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_TO_CONSTRUCT_SPEED_PROFILER,  # Be careful to construct
-            avoidance_params=StopAndWaitAvoidanceParams(acs_distance=50, timeout=10),
+            avoidance_params=StopAndWaitAvoidanceParams(timeout=10),
+            acs_detection_profile_params=CONFIG.ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT,
         )

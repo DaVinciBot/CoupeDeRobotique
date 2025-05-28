@@ -127,7 +127,8 @@ void Rolling_Basis::odometrie_handle()
  */
 void Rolling_Basis::handle(
     Point target_position,
-    double target_linear_speed, double target_angular_speed, Com *com)
+    Com *com
+)
 {
     /* Position part */
     // We already have the current robot's position with odometrie (X, Y, THETA)
