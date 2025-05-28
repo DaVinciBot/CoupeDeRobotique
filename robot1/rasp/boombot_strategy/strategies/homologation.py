@@ -27,6 +27,7 @@ from navigation import (
 
 from navigation.avoidance.acs_detection_profiles import (
     NoProjectionAcsDetectionProfileParams,
+RectangularProjectionAcsDetectionProfileParams
 )
 
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
@@ -43,8 +44,8 @@ class GoStraight(NavigationTask):
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
-            acs_detection_profile_params=NoProjectionAcsDetectionProfileParams(
-                acs_distance=10
+            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                acs_distance=10, width_view=40
             ),
         )
 
@@ -59,8 +60,8 @@ class Rotate(NavigationTask):
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
-            acs_detection_profile_params=NoProjectionAcsDetectionProfileParams(
-                acs_distance=10
+            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                acs_distance=10, width_view=40
             ),
         )
 
