@@ -18,11 +18,17 @@ class BackAvoidanceParams(BaseAvoidanceParams):
 
     Attributes:
         timeout (float): Duration (in seconds) to wait after stopping before reassessment.
+        backward_distance (float): Distance to move backward when an obstacle is detected.
+        backward_speed (float): Speed at which to move backward when an obstacle is detected.
     """
+
+    # TODO: choose a better default value
 
     def __init__(
         self,
         timeout: float,
+        backward_distance: float = 0.0,
+        backward_speed: float = 0.0,
     ):
         """
         Initializes StopAndWaitAvoidanceParams with specific avoidance distance and timeout in seconds.
@@ -31,7 +37,6 @@ class BackAvoidanceParams(BaseAvoidanceParams):
             timeout (float): Time to wait after stopping before checking again in seconds.
         """
         self.timeout: float = timeout * 1000.0
-        self.backward_distance: float = 0.0
-        self.backward_speed: float = 0.0
-        # TODO: choose a better default value
+        self.backward_distance: float = backward_distance
+        self.backward_speed: float = backward_speed
         super().__init__(AvoidanceStrategy.BACK)

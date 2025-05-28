@@ -107,7 +107,36 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             self.logger.debug(f"Timer started at: {self._avoiding_start_time}")
             return cmd
 
-        # 3. Continue with current command
+        # 3. Obstacle cleared: finish avoidance
+        if (
+            self.state == AvoidanceState.AVOIDING
+            and not self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
+        ):
+            self.logger.info("Obstacle cleared. Replanning trajectory.")
+
+            # Obstacle is no longer detected, replan from current position
+            last_params = current_navigator_task.path_planner.last_plan_path_params
+            last_params.start = position  # Update start position to current location
+
+            self.logger.debug(f"Replanning from updated start: {position}")
+
+            new_path = current_navigator_task.path_planner.plan_path(last_params)
+            current_navigator_task.trajectory_planner.plan_trajectory(new_path)
+            current_navigator_task.trajectory_planner.start_planning()  # Reset internal clock
+
+            self.logger.debug("Trajectory planner reset internal clock.")
+            self._reset_timer()
+            self.logger.debug("Timer reset after avoidance completion.")
+
+            self.state = AvoidanceState.IDLE
+            current_navigator_task.state = NavigatorTaskState.IN_PROGRESS
+
+            self.logger.info("Avoidance complete. Resuming normal operation.")
+            return (
+                current_navigator_task.current_trajectory_command
+            )  # Avoidance complete, continue as normal
+
+        # 4. Continue with current command
         self.logger.debug(
             "No avoidance action required. Continuing original trajectory."
         )
