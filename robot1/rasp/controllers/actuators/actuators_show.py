@@ -416,7 +416,7 @@ class ActuatorsShow(Actuators):
         time.sleep(0.7)
         self.set_servo_angle(pin=4, angle=160, max_angle=270)
         self.set_servo_angle(pin=6, angle=90, max_angle=270)
-        time.sleep(0.7)
+        time.sleep(1)
         self.elevator_drop_top()
         time.sleep(0.2)
         self.deploy(9)
@@ -425,7 +425,7 @@ class ActuatorsShow(Actuators):
         time.sleep(0.2)
         self.fold(4)
         self.fold(6)
-        self.set_servo_angle(8, angle=135,max_angle=270)
+        self.set_servo_angle(8, angle=130,max_angle=270)
         time.sleep(0.01)
 
     # def build(self):
