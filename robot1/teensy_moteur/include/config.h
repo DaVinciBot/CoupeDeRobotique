@@ -46,7 +46,7 @@
 #define PWM_FREQUENCY 40000
 
 // Asservissement echantillonage fréquence
-#define ASSERVISSEMENT_FREQUENCY 100000
+#define ASSERVISSEMENT_FREQUENCY 10000
 
 // Com baudrate
 #define BAUDRATE 115200
