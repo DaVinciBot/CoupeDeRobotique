@@ -90,10 +90,10 @@ class MainBrain(Brain):
     def run(self) -> None:
         # --- Initialization --- #
         from boombot_strategy import ShowGameContext
-        from boombot_strategy.strategies.test import demo_runner
+        from boombot_strategy.strategies.homologation import homologation_runner
 
         # Rolling basis & Actuators
-        rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(1)
@@ -103,17 +103,12 @@ class MainBrain(Brain):
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
-        time.sleep(1)
-        actuators.deploy_all()
-        time.sleep(1)
-
         # --- MetaProg is insane (loop) --- #
-        # demo_runner.handle(
-        #     ShowGameContext(
-        #         arena=self.arena,
-        #         rolling_basis=rolling_basis,  # actuators=actuators
-        #     )
-        # )
+        homologation_runner.handle(
+            ShowGameContext(
+                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+            )
+        )
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
     @Brain.task(

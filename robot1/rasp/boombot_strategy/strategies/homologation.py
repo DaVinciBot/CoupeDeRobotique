@@ -67,31 +67,13 @@ class Rotate(NavigationTask):
 
 
 # ================ Create Logic Graph ================
-homologation_graph = SubGraphBuilder()
-
 # 1. Create nodes
-homologation_graph.add_node("Go forward", BaseTaskNode("Go forward", GoStraight(100)))
-homologation_graph.add_node("Return", BaseTaskNode("Return", Rotate(math.pi)))
-homologation_graph.add_node("Go home", BaseTaskNode("Go home", GoStraight(100)))
+go_straight_node = BaseTaskNode("GoStraight 230", GoStraight(distance=230))
+rotate_node = BaseTaskNode("Rotate 180", Rotate(theta=math.pi))
 
 
 # 2. Connect nodes
-homologation_graph.connect(
-    "Go forward", DirectTransition(homologation_graph.nodes["Return"])
-)
-homologation_graph.connect(
-    "Return", DirectTransition(homologation_graph.nodes["Go home"])
-)
+go_straight_node.add_transition(DirectTransition(rotate_node))
 
-# 3. Build the graph
-built_homologation_graph = homologation_graph.build(
-    entry="Go forward",
-    exits="Return",
-)
-
-# 4. Create Graph runner
-
-homologation_graph_runner = GraphRunner(
-    logger=Logger(identifier="HomologationRunner", follow_logger_manager_rules=True),
-    start=built_homologation_graph.get_entry(),
-)
+# 3. Create Graph runner
+homologation_runner = GraphRunner(start=go_straight_node, parallel=False)
