@@ -8,8 +8,8 @@ import time
 class Servo:
     deploy_angle: int
     fold_angle: int
-    special_angle: int = 0 # Angle for special movement such as docking
     max_angle: int
+    special_angle: int = 0 # Angle for special movement such as docking
 
 
 @dataclass
