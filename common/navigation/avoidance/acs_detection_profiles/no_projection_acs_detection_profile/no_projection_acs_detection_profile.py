@@ -6,13 +6,22 @@ from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_pro
     NoProjectionAcsDetectionProfileParams,
 )
 from arena import AllyZone, EnemyZone
+from loggerplusplus import Logger
 
 
 class NoProjectionAcsDetectionProfile(
     BaseAcsDetectionProfile[NoProjectionAcsDetectionProfileParams]
 ):
-    def __init__(self, params: NoProjectionAcsDetectionProfileParams):
-        super().__init__(params)
+    def __init__(
+        self,
+        params: NoProjectionAcsDetectionProfileParams,
+        logger: Logger | None = None,
+    ):
+        super().__init__(params, logger)
 
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
-        return ally_zone.point.distance(enemy_zone.point) <= self.params.acs_distance
+        distance = ally_zone.point.distance(enemy_zone.point)
+        if distance <= self.params.acs_distance:
+            self.logger.info(f"ACS triggered. Distance: {distance}")
+            return True
+        return False

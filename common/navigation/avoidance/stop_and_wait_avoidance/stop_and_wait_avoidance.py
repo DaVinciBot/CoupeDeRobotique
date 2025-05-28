@@ -90,8 +90,10 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
             and self.state == AvoidanceState.IDLE
         ):
-            self.logger.info(f"Obstacle detected. Stopping robot and initiating avoidance. "
-                             f"Distance: {ally_zone.point.distance(enemy_zone.point)}")
+            self.logger.info(
+                f"Obstacle detected. Stopping robot and initiating avoidance. "
+                f"Distance: {ally_zone.point.distance(enemy_zone.point)}"
+            )
 
             # Stop the robot and initiate avoidance procedure
             cmd = TrajectoryPlanCommand.create_stop_command(current_position=position)
