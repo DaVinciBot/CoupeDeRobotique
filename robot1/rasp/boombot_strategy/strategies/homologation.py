@@ -27,7 +27,7 @@ from navigation import (
 
 from navigation.avoidance.acs_detection_profiles import (
     NoProjectionAcsDetectionProfileParams,
-RectangularProjectionAcsDetectionProfileParams
+    RectangularProjectionAcsDetectionProfileParams,
 )
 
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
