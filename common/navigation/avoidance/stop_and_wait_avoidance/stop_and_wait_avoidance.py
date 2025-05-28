@@ -96,7 +96,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self.state = AvoidanceState.AVOIDING
             task.state = NavigatorTaskState.AVOIDING
             self._start_timer()
-            self.logger.debug(f"Timer started at: {self._timer_start}")
+            self.logger.debug(f"Timer started at: {self._avoiding_start_time}")
             return cmd
 
         # 3. Obstacle cleared: finish avoidance
