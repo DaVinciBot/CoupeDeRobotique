@@ -12,11 +12,21 @@ from navigation.avoidance.base_avoidance.states import AvoidanceState
 from navigation.avoidance.back_avoidance.back_avoidance_params import (
     BackAvoidanceParams,
 )
+from navigation.path_planner import DeltaPathPlannerParams
+from navigation.trajectory_planner import SequentialTrajectoryPlannerParams, Direction
+
+
 from navigation.trajectory_planner import TrajectoryPlanCommand
 from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
+from navigation.avoidance import NoAvoidanceParams
+from navigation.avoidance.acs_detection_profiles import NoAcsDetectionProfileParams
 
 if TYPE_CHECKING:
-    from navigation.navigator.task.navigator_task import NavigatorTask
+    from navigation.navigator.task.navigator_task import (
+        NavigatorTask,
+        NavigatorTaskState,
+    )
+    from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
 
 
 class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
@@ -49,6 +59,8 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
         """
         super().__init__(params, acs_detection_profile_params, logger)
 
+        self.backward_navigator_task: NavigatorTask | None = None
+
     @BaseAvoidance._ensure_original_task_storage
     def handle(
         self,
@@ -79,38 +91,64 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             self.logger.warning("Avoidance timed out. Aborting task.")
             return self._abort(current_navigator_task, position)
 
-        # 2. Obstacle detected: begin avoidance
+        # 2. Obstacle detected → init backward task
         if (
             self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
             and self.state == AvoidanceState.IDLE
         ):
             self.logger.info(
-                f"Obstacle detected. Stopping robot and initiating avoidance. "
+                f"Obstacle detected. starting backward avoidance. "
                 f"Distance: {ally_zone.point.distance(enemy_zone.point)}"
             )
 
-            th_distance: float = self.params.backward_distance
-
-            th_x = ally_zone.point.x - th_distance * math.cos(ally_zone.point.theta)
-            th_y = ally_zone.point.y - th_distance * math.sin(ally_zone.point.theta)
-
-            cmd = TrajectoryPlanCommand(
-                position=OrientedPoint(th_x, th_y, ally_zone.point.theta),
-                linear_speed=self.params.backward_speed,
-                angular_speed=0.0,
+            # Create backward navigator task
+            self.backward_navigator_task: NavigatorTask = NavigatorTask(
+                NavigatorTaskParams(
+                    goal=None,
+                    timeout=None,
+                    path_planner_params=DeltaPathPlannerParams(
+                        distance=self.params.backward_distance
+                    ),
+                    trajectory_planner_params=SequentialTrajectoryPlannerParams(
+                        direction=Direction.BACKWARD
+                    ),
+                    speed_profiler=self.params.backward_speed_profiler,
+                    avoidance_params=NoAvoidanceParams(),
+                    acs_detection_profile_params=NoAcsDetectionProfileParams(),
+                )
             )
 
-            current_navigator_task.current_trajectory_command = cmd
             self.state = AvoidanceState.AVOIDING
             current_navigator_task.state = NavigatorTaskState.AVOIDING
             self._start_timer()
             self.logger.debug(f"Timer started at: {self._avoiding_start_time}")
+
+            # Execute first backward command immediately
+            cmd = self.backward_navigator_task.handle(ally_zone, enemy_zone)
+            current_navigator_task.current_trajectory_command = cmd
             return cmd
 
-        # 3. Obstacle cleared: finish avoidance
+        # 3. While avoiding → keep executing backward
+        elif (
+            self.state == AvoidanceState.AVOIDING
+            and self.backward_navigator_task is not None
+        ):
+            self.logger.info("Executing backward avoidance maneuver.")
+            cmd: TrajectoryPlanCommand = self.backward_navigator_task.handle(
+                ally_zone, enemy_zone
+            )
+
+            # Clear the backward task if it has finished
+            if self.backward_navigator_task.state == NavigatorTaskState.FINISHED:
+                self.backward_navigator_task = None
+
+            current_navigator_task.current_trajectory_command = cmd
+            return cmd  # Return the command from the backward avoidance task
+
+        # 4. Finished backward, obstacle clear → replan
         if (
             self.state == AvoidanceState.AVOIDING
-            and not self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
+            and self.backward_navigator_task is None
         ):
             self.logger.info("Obstacle cleared. Replanning trajectory.")
 
@@ -125,6 +163,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             current_navigator_task.trajectory_planner.start_planning()  # Reset internal clock
 
             self.logger.debug("Trajectory planner reset internal clock.")
+            # reset timer just for logging/manure measurement
             self._reset_timer()
             self.logger.debug("Timer reset after avoidance completion.")
 
