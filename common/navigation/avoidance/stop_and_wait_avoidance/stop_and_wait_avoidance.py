@@ -58,7 +58,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
     @BaseAvoidance._ensure_original_task_storage
     def handle(
         self,
-        task: NavigatorTask,
+        current_navigator_task: NavigatorTask,
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
@@ -76,12 +76,14 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         from navigation.navigator.task.states import NavigatorTaskState
 
         position: OrientedPoint = ally_zone.point
-        self.logger.debug(f"Handling avoidance at position: {position}, current state: {self.state}")
+        self.logger.debug(
+            f"Handling avoidance at position: {position}, current state: {self.state}"
+        )
 
         # 1. Timeout check
         if self._has_timed_out():
             self.logger.warning("Avoidance timed out. Aborting task.")
-            return self._abort(task, position)
+            return self._abort(current_navigator_task, position)
 
         # 2. Obstacle detected: begin avoidance
         if (
@@ -93,9 +95,9 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
 
             # Stop the robot and initiate avoidance procedure
             cmd = TrajectoryPlanCommand.create_stop_command(current_position=position)
-            task.current_trajectory_command = cmd
+            current_navigator_task.current_trajectory_command = cmd
             self.state = AvoidanceState.AVOIDING
-            task.state = NavigatorTaskState.AVOIDING
+            current_navigator_task.state = NavigatorTaskState.AVOIDING
             self._start_timer()
             self.logger.debug(f"Timer started at: {self._avoiding_start_time}")
             return cmd
@@ -108,27 +110,29 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self.logger.info("Obstacle cleared. Replanning trajectory.")
 
             # Obstacle is no longer detected, replan from current position
-            last_params = task.path_planner.last_plan_path_params
+            last_params = current_navigator_task.path_planner.last_plan_path_params
             last_params.start = position  # Update start position to current location
 
             self.logger.debug(f"Replanning from updated start: {position}")
 
-            new_path = task.path_planner.plan_path(last_params)
-            task.trajectory_planner.plan_trajectory(new_path)
-            task.trajectory_planner.start_planning()  # Reset internal clock
+            new_path = current_navigator_task.path_planner.plan_path(last_params)
+            current_navigator_task.trajectory_planner.plan_trajectory(new_path)
+            current_navigator_task.trajectory_planner.start_planning()  # Reset internal clock
 
             self.logger.debug("Trajectory planner reset internal clock.")
             self._reset_timer()
             self.logger.debug("Timer reset after avoidance completion.")
 
             self.state = AvoidanceState.IDLE
-            task.state = NavigatorTaskState.IN_PROGRESS
+            current_navigator_task.state = NavigatorTaskState.IN_PROGRESS
 
             self.logger.info("Avoidance complete. Resuming normal operation.")
             return (
-                task.current_trajectory_command
+                current_navigator_task.current_trajectory_command
             )  # Avoidance complete, continue as normal
 
         # 4. Continue with original trajectory
-        self.logger.debug("No avoidance action required. Continuing original trajectory.")
-        return task.current_trajectory_command
+        self.logger.debug(
+            "No avoidance action required. Continuing original trajectory."
+        )
+        return current_navigator_task.current_trajectory_command

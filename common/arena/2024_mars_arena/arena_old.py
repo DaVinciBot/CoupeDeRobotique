@@ -18,6 +18,7 @@ from geometry import (
 )
 from old_logger import Logger, LogLevels
 import numpy as np
+from shapely.affinity import scale
 
 
 class Arena:
