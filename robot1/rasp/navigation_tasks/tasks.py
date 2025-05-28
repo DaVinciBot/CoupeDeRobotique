@@ -76,7 +76,7 @@ yellow_start_tasks = [
                 acceleration=1.0, max_speed=2.0, deceleration=0.5
             ),
         ),
-        avoidance_params=StopAndWaitAvoidanceParams(acs_distance=70, timeout=10),
+        avoidance_params=StopAndWaitAvoidanceParams(timeout=10),
         acs_detection_profile_params=CONFIG.ACS_PROFILE_START_TASK,
     ),
 ]
