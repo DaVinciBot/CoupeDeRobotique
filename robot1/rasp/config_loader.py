@@ -111,12 +111,6 @@ class CONFIG:
     ROLLING_BASIS_TEENSY_SER = ROLLING_BASIS_CONFIG["rolling_basis_teensy_ser"]
 
     ROLLING_BASIS_PIDS_CONFIG = ROLLING_BASIS_CONFIG["pids"]
-    ROLLING_BASIS_PIDS_LINEAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
-        "linear_speed"
-    ]
-    ROLLING_BASIS_PIDS_ANGULAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
-        "angular_speed"
-    ]
     ROLLING_BASIS_PIDS_LINEAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
         "linear_position"
     ]

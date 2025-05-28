@@ -50,27 +50,22 @@ class RollingBasisDummy(BaseComTeensy):
     # Message Sending Methods          #
     ####################################
     @log(param_logger="RollingBasis")
-    def set_speed_and_position(
-        self,
-        target_linear_speed: float,
-        target_angular_speed: float,
-        target_position: OrientedPoint,
+    def set_target_position(
+            self,
+            target_position: OrientedPoint,
     ) -> None:
         """
         Sends a message to set the target speed and position of the rolling basis.
 
         Args:
-            target_linear_speed (float): Target linear speed.
-            target_angular_speed (float): Target angular speed.
             target_position (OrientedPoint): Target position and orientation.
         """
-        self.linear_speed = target_linear_speed
-        self.angular_speed = target_angular_speed
+
         self.odometrie = target_position
 
         self.logger.debug(
             f"[DUMMY] Set speed and position: "
-            f"{target_linear_speed}, {target_angular_speed}, {target_position}"
+            f"{target_position}"
         )
 
     @log("RollingBasis")
@@ -97,52 +92,6 @@ class RollingBasisDummy(BaseComTeensy):
     ####################################
     # PID Configuration Methods        #
     ####################################
-    def set_linear_speed_pid(self, *args, **kwargs) -> None:
-        """
-        Configure the PID values for linear speed control.
-
-        Accepts either three positional arguments (kp, ki, kd),
-        a single dictionary, or keyword arguments.
-        """
-        try:
-            if len(args) == 3:
-                pid = PID(*args)
-            elif len(args) == 1 and isinstance(args[0], dict):
-                pid = PID.from_dict(args[0])
-            elif kwargs:
-                pid = PID.from_dict(kwargs)
-            else:
-                raise ValueError(
-                    "Invalid arguments for linear speed PID configuration."
-                )
-            self.linear_speed_pid = pid
-            self._send_pid(PID_ID.LINEAR_SPEED.value, pid)
-        except Exception as e:
-            self.logger.error(f"Failed to set linear speed PID: {e}")
-
-    def set_angular_speed_pid(self, *args, **kwargs) -> None:
-        """
-        Configure the PID values for angular speed control.
-
-        Accepts either three positional arguments (kp, ki, kd),
-        a single dictionary, or keyword arguments.
-        """
-        try:
-            if len(args) == 3:
-                pid = PID(*args)
-            elif len(args) == 1 and isinstance(args[0], dict):
-                pid = PID.from_dict(args[0])
-            elif kwargs:
-                pid = PID.from_dict(kwargs)
-            else:
-                raise ValueError(
-                    "Invalid arguments for angular speed PID configuration."
-                )
-            self.angular_speed_pid = pid
-            self._send_pid(PID_ID.ANGULAR_SPEED.value, pid)
-        except Exception as e:
-            self.logger.error(f"Failed to set angular speed PID: {e}")
-
     def set_linear_position_pid(self, *args, **kwargs) -> None:
         """
         Configure the PID values for linear position control.
@@ -191,16 +140,12 @@ class RollingBasisDummy(BaseComTeensy):
 
     def set_pids(
         self,
-        linear_speed_pid: dict[str, float],
-        angular_speed_pid: dict[str, float],
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
     ) -> None:
         """
         Configure all PID controllers using dictionaries for each.
         """
-        self.set_linear_speed_pid(**linear_speed_pid)
-        self.set_angular_speed_pid(**angular_speed_pid)
         self.set_linear_position_pid(**linear_position_pid)
         self.set_angular_position_pid(**angular_position_pid)
 
@@ -210,8 +155,6 @@ class RollingBasisDummy(BaseComTeensy):
         """
         try:
             self.set_pids(
-                linear_speed_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_SPEED,
-                angular_speed_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_SPEED,
                 linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
                 angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
             )
