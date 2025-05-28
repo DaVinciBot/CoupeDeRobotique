@@ -21,6 +21,11 @@ from navigation.avoidance.stop_and_wait_avoidance import (
     StopAndWaitAvoidanceParams,
 )
 
+from navigation.avoidance.back_avoidance import (
+    BackAvoidance,
+    BackAvoidanceParams,
+)
+
 from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
 
 
@@ -57,6 +62,12 @@ class AvoidanceFactory:
         if strategy == AvoidanceStrategy.STOP_AND_WAIT:
             return StopAndWaitAvoidance(
                 cast(StopAndWaitAvoidanceParams, params), acs_detection_profile_params
+            )
+
+        if strategy == AvoidanceStrategy.BACK:
+            return BackAvoidance(
+                cast(BackAvoidanceParams, params),
+                acs_detection_profile_params,
             )
 
         raise ValueError(f"Unsupported avoidance strategy: {strategy}")
