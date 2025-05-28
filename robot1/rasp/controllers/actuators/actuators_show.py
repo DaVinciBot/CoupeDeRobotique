@@ -254,12 +254,12 @@ class ActuatorsShow(Actuators):
         if self._check_pin(0) and self._check_pin(2):
             self.set_servo_angle(
                 0,
-                self.servos[0].docking,
+                self.servos[0].special_angle,
                 max_angle = self.servos[0].max_angle,
             )
             self.set_servo_angle(
                 2,
-                self.servos[2].docking,
+                self.servos[2].special_angle,
                 max_angle = self.servos[2].max_angle,
             )
 
