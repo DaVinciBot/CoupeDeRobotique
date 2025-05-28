@@ -8,7 +8,7 @@ from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileP
 from geometry import OrientedPoint
 
 
-class  NavigatorTaskParams:
+class NavigatorTaskParams:
     def __init__(
         self,
         # Attributes

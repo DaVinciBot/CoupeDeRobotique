@@ -140,7 +140,9 @@ class MainBrain(Brain):
                 path_planner_params=DeltaPathPlannerParams(
                     distance=-30,
                 ),
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(Direction.BACKWARD),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(
+                    Direction.BACKWARD
+                ),
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
                 avoidance_params=NoAvoidanceParams(),
                 acs_detection_profile_params=NoAcsDetectionProfileParams(),

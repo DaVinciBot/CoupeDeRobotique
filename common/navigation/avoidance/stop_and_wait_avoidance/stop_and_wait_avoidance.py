@@ -82,7 +82,10 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             return self._abort(task, position)
 
         # 2. Obstacle detected: begin avoidance
-        if self.acs_detector.is_acs_triggered(ally_zone, enemy_zone) and self.state == AvoidanceState.IDLE:
+        if (
+            self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
+            and self.state == AvoidanceState.IDLE
+        ):
             # Stop the robot and initiate avoidance procedure
             cmd = TrajectoryPlanCommand.create_stop_command(current_position=position)
             task.current_trajectory_command = cmd
@@ -92,7 +95,10 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             return cmd
 
         # 3. Obstacle cleared: finish avoidance
-        if self.state == AvoidanceState.AVOIDING and not self.acs_detector.is_acs_triggered(ally_zone, enemy_zone):
+        if (
+            self.state == AvoidanceState.AVOIDING
+            and not self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
+        ):
             # Obstacle is no longer detected, replan from current position
             last_params = task.path_planner.last_plan_path_params
             last_params.start = position  # Update start position to current location

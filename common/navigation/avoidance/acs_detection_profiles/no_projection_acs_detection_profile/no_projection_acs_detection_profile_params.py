@@ -6,9 +6,7 @@ from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils impo
 
 
 class NoProjectionAcsDetectionProfileParams(BaseAcsDetectionProfileParams):
-
     def __init__(self, acs_distance: float):
-
         super().__init__(
             acs_detection_profile=AcsDetectionProfile.NO_PROJECTION,
             acs_distance=acs_distance,

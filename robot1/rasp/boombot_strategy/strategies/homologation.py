@@ -22,9 +22,10 @@ from navigation import (
     DeltaPathPlannerParams,
     SequentialTrajectoryPlannerParams,
     Direction,
-    StopAndWaitAvoidanceParams
+    StopAndWaitAvoidanceParams,
 )
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+
 
 # ================ Create Task dedicated to homolagation ================
 class GoStraight(NavigationTask):
@@ -38,6 +39,8 @@ class GoStraight(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(),
         )
+
+
 class Rotate(NavigationTask):
     def __init__(self, theta: float):
         super().__init__(
@@ -49,33 +52,21 @@ class Rotate(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(),
         )
-      
-# ================ Create Logic Graph ================  
+
+
+# ================ Create Logic Graph ================
 homologation_graph = SubGraphBuilder()
 
 # 1. Create nodes
-homologation_graph.add_node(
-    "Go forward",
-    BaseTaskNode("Go forward", GoStraight(50))
-)
-homologation_graph.add_node(
-    "Return",
-    BaseTaskNode("Return", Rotate(math.pi))
-)
-homologation_graph.add_node(
-    "Go home",
-    BaseTaskNode("Go home", GoStraight(50))
-)
+homologation_graph.add_node("Go forward", BaseTaskNode("Go forward", GoStraight(50)))
+homologation_graph.add_node("Return", BaseTaskNode("Return", Rotate(math.pi)))
+homologation_graph.add_node("Go home", BaseTaskNode("Go home", GoStraight(50)))
 
 # 2. Connect nodes
-homologation_graph.connect(
-    "Go forward", DirectTransition("Return")
-)
-homologation_graph.connect(
-    "Return", DirectTransition("Go home")
-)
+homologation_graph.connect("Go forward", DirectTransition("Return"))
+homologation_graph.connect("Return", DirectTransition("Go home"))
 
-# 3. Build the graph 
+# 3. Build the graph
 built_homologation_graph = homologation_graph.build(
     entry="Go forward",
     exits="Return",

@@ -22,7 +22,4 @@ from shapely import (
 from shapely.geometry import box
 from shapely.ops import nearest_points
 from shapely import is_empty
-from shapely.affinity import (
-    rotate,
-    translate
-)
+from shapely.affinity import rotate, translate

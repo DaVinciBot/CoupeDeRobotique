@@ -58,7 +58,7 @@ class TrajectoryPlanCommand:
             tuple: (linear_speed, angular_speed, position)
         """
         return self.linear_speed, self.angular_speed, self.position
-    
+
     def get_position_command(self) -> OrientedPoint:
         """
         Retrieve the position command.
