@@ -35,6 +35,7 @@
         "xhash": "cpp",
         "xstring": "cpp",
         "xutility": "cpp",
+<<<<<<< HEAD
         "type_traits": "cpp"
     },
     "todo-tree.highlights.defaultHighlight": {
@@ -87,5 +88,9 @@
             "FIXIT",
             "FIX",
         ]
+=======
+        "type_traits": "cpp",
+        "cmath": "cpp"
+>>>>>>> dev-new_motor_control
     }
 }

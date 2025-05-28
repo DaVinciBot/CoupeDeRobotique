@@ -21,7 +21,9 @@ class GridManager:
     - Integrates spatial indexing for performance improvements.
     """
 
-    def __init__(self, logger: Logger, chunk_size: int, width: int, height: int) -> None:
+    def __init__(
+        self, logger: Logger, chunk_size: int, width: int, height: int
+    ) -> None:
         self.logger = logger
         self.chunk_size = chunk_size
         self.half_chunk_size = chunk_size / 2
@@ -71,8 +73,13 @@ class GridManager:
         for polygon in zones:
             minx, miny, maxx, maxy = polygon.bounds
 
-            min_col = max(0, int((self.grid_width * self.chunk_size - maxx) // self.chunk_size))
-            max_col = min(self.grid_width, int((self.grid_width * self.chunk_size - minx) // self.chunk_size) + 1)
+            min_col = max(
+                0, int((self.grid_width * self.chunk_size - maxx) // self.chunk_size)
+            )
+            max_col = min(
+                self.grid_width,
+                int((self.grid_width * self.chunk_size - minx) // self.chunk_size) + 1,
+            )
             min_row = max(0, int(miny // self.chunk_size))
             max_row = min(self.grid_height, int(maxy // self.chunk_size) + 1)
 
@@ -87,7 +94,10 @@ class GridManager:
                     )
 
                     if polygon.intersects(cell):
-                        if walkable and any(zone.intersects(cell) for zone in self.spatial_index.query(cell)):
+                        if walkable and any(
+                            zone.intersects(cell)
+                            for zone in self.spatial_index.query(cell)
+                        ):
                             continue
                         grid.nodes[row][actual_col].walkable = walkable
 
@@ -96,17 +106,23 @@ class GridManager:
     # ====== Public Methods ======
 
     @time_tracker(lambda self: self.logger)
-    def add_forbidden_static_zone(self, forbidden_zones: Polygon | list[Polygon]) -> None:
+    def add_forbidden_static_zone(
+        self, forbidden_zones: Polygon | list[Polygon]
+    ) -> None:
         """Adds static forbidden zones."""
         if not isinstance(forbidden_zones, list):
             forbidden_zones = [forbidden_zones]
 
         self.static_forbidden_zones.extend(forbidden_zones)
         self.__update_spatial_index()
-        self.static_grid = self.__mark_zone(self.static_grid, forbidden_zones, walkable=False)
+        self.static_grid = self.__mark_zone(
+            self.static_grid, forbidden_zones, walkable=False
+        )
 
     @time_tracker(lambda self: self.logger)
-    def remove_forbidden_static_zone(self, forbidden_zones: Polygon | list[Polygon]) -> None:
+    def remove_forbidden_static_zone(
+        self, forbidden_zones: Polygon | list[Polygon]
+    ) -> None:
         """Removes static forbidden zones."""
         if not isinstance(forbidden_zones, list):
             forbidden_zones = [forbidden_zones]
@@ -116,13 +132,17 @@ class GridManager:
         ]
         self.__update_spatial_index()
         self.static_grid = self.__generate_base_grid()
-        self.static_grid = self.__mark_zone(self.static_grid, self.static_forbidden_zones, walkable=False)
+        self.static_grid = self.__mark_zone(
+            self.static_grid, self.static_forbidden_zones, walkable=False
+        )
 
     @time_tracker(lambda self: self.logger)
     def update_dynamic_forbidden_zones(self, dynamic_zones: list[Polygon]) -> None:
         """Updates dynamic forbidden zones."""
         self.dynamic_forbidden_zones = dynamic_zones
-        self.dynamic_grid = self.__mark_zone(copy.deepcopy(self.static_grid), dynamic_zones, walkable=False)
+        self.dynamic_grid = self.__mark_zone(
+            copy.deepcopy(self.static_grid), dynamic_zones, walkable=False
+        )
 
     def get_grid_node_center(self, node: GridNode) -> tuple[float, float]:
         """Returns the center coordinates of a grid node."""

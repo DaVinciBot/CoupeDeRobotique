@@ -10,29 +10,28 @@
 // This signature must be exactly the same on both sides (Raspberry Pi and Teensy) to ensure valid communication.
 const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 
-
 // ====== Message Types ======
 /* Definition of message IDs */
 // rasp -> teensy : 0-127 (Convention)
 
 // Rolling Basis
-#define SET_SPEED_AND_POSITION 0
+#define SET_TARGET_POSITION 0
 #define SET_PID 1
 #define SET_ODOMETRIE 2
 
 // Actuators
-#define SET_SERVO_ANGLE 3
+#define SET_SERVO_ANGLE_I2C 3
 #define STEPPER_STEP 4
 #define SET_SERVO_ANGLE_DETACH 5
 #define ATTACH_SWITCH 6
+#define SET_SERVO_ANGLE 7
+#define SET_STEPPER_DRIVER_ACTIVATION_STATE 8
 
 // Common (Rolling Basis + Actuators)
 #define RESET_TEENSY 126
 
-
 // two ways : 127 (Convention)
 #define NACK 127
-
 
 // teensy -> rasp : 128-255 (Convention)
 // Rolling Basis
@@ -45,20 +44,16 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 #define PRINT 254
 #define UNKNOWN_MSG_TYPE 255
 
-
-
 /* Definition of the messages content */
 // rasp -> teensy : 0-127
 
-// Rolling Basis 
-struct msg_set_speed_and_position
+// Rolling Basis
+struct msg_set_target_position
 {
-    byte command = SET_SPEED_AND_POSITION;
-    float target_linear_speed;
-    float target_angular_speed;
-    float target_position_x;
-    float target_position_y;
-    float target_position_theta;
+    byte command = SET_TARGET_POSITION;
+    double target_position_x;
+    double target_position_y;
+    double target_position_theta;
 };
 
 struct msg_set_pid
@@ -70,42 +65,62 @@ struct msg_set_pid
     float kd;
 };
 
-struct msg_set_odometrie{
+struct msg_set_odometrie
+{
     byte command = SET_ODOMETRIE;
-    float x;
-    float y;
-    float theta;
+    double x;
+    double y;
+    double theta;
 };
 
 // Actuators
-struct msg_set_servo_angle{
+struct msg_set_servo_angle
+{
     byte command = SET_SERVO_ANGLE;
-    byte pin;   // pin to which the servo is connected
-    byte angle; // angle to which the servo should be moved in degrees
+    byte pin;           // pin to which the servo is connected
+    uint16_t angle;     // angle to which the servo should be moved in degrees
+    uint16_t max_angle; // max angle reachable by the servo ex : 180, 270
+};
+
+struct msg_set_servo_angle_I2C
+{
+    byte command = SET_SERVO_ANGLE_I2C;
+    byte pin;           // pin to which the servo is connected
+    uint16_t angle;     // angle to which the servo should be moved in degrees
+    uint16_t max_angle; // max angle reachable by the servo ex : 180, 270
 };
 
 struct msg_set_servo_angle_detach
 {
     byte command = SET_SERVO_ANGLE_DETACH;
-    byte pin;         // pin to which the servo is connected
-    byte angle;       // angle to which the servo should be moved in degrees
-    int detach_delay; // delay in milliseconds before detaching the servo
+    byte pin;           // pin to which the servo is connected
+    uint16_t angle;     // angle to which the servo should be moved in degrees
+    uint16_t max_angle; // max angle reachable by the servo ex : 180, 270
+    int detach_delay;   // delay in milliseconds before detaching the servo
 };
 
 struct msg_stepper_step
 {
     byte command = STEPPER_STEP;
-    int steps;       // total number of steps this motor can take
-    bool dir;        // direction of the motor
-    int speed;       // speed
-    byte pin_dir;    // pin to which the direction pin is connected
-    byte pin_step;   // pin to which the step pin is connected
-    byte pin_driver; // pin to which the driver pin is connected
+    int steps;              // total number of steps this motor can take
+    bool dir;               // direction of the motor
+    int speed;              // speed
+    byte pin_dir;           // pin to which the direction pin is connected
+    byte pin_step;          // pin to which the step pin is connected
+    byte enable_pin_driver; // pin to which the driver pin is connected
 };
 
-struct msg_attach_switch{
+struct msg_set_stepper_driver_activation_state
+{
+    byte command = SET_STEPPER_DRIVER_ACTIVATION_STATE;
+    byte pin;                 // stepper driver's enable pin
+    bool enable_driver_state; // active low so true means the driver is disabled
+};
+
+struct msg_attach_switch
+{
     byte command = ATTACH_SWITCH;
-    byte pin;   // pin to which the servo is connected
+    byte pin; // pin to which the servo is connected
 };
 
 // Common (Rolling Basis + Actuators)
@@ -114,18 +129,15 @@ struct msg_reset_teensy
     byte command = RESET_TEENSY;
 };
 
-
 // teensy -> rasp : 128-255
 
-// Rolling Basis 
+// Rolling Basis
 struct msg_update_rolling_basis
 {
     byte command = UPDATE_ROLLING_BASIS;
-    float x;
-    float y;
-    float theta;
-    float current_linear_speed;
-    float current_angular_speed;
+    double x;
+    double y;
+    double theta;
 };
 
 // Actuators

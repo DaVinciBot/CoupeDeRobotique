@@ -12,11 +12,8 @@
 from loggerplusplus import Logger
 
 # Local imports
-from geometry import (
-    Point,
-    OrientedPoint,
-    create_straight_rectangle
-)
+from geometry import Point, OrientedPoint, create_straight_rectangle
+
 # Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
@@ -36,10 +33,10 @@ class AllyZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            point: OrientedPoint,
-            robot_size: float = 2,  # Assume the robot is a square 2/2 = 1 side length
+        self,
+        logger: Logger,
+        point: OrientedPoint,
+        robot_size: float = 2,  # Assume the robot is a square 2/2 = 1 side length
     ) -> None:
         """
         Initializes the AllyZone with position, size, and accessibility.
@@ -68,7 +65,10 @@ class AllyZone(BaseArenaZone):
         )
 
     def update(
-            self, team_color: TeamColor, ally_position: Point | OrientedPoint, enemy_position: Point | OrientedPoint
+        self,
+        team_color: TeamColor,
+        ally_position: Point | OrientedPoint,
+        enemy_position: Point | OrientedPoint,
     ) -> None:
         """
         Update the zone based on the positions of allies and enemies.

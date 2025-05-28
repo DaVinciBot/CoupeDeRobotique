@@ -60,6 +60,7 @@ class Record:
         timestamp (float): Time of the record.
         position (Point): The position recorded.
     """
+
     timestamp: float
     position: Point
 
@@ -75,6 +76,7 @@ class SpeedVector:
         dy (float): Change in y-direction.
         factor (float): Scaling factor for direction components (defaults to 1.0).
     """
+
     speed: float
     dx: float
     dy: float

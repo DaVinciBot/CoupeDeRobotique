@@ -32,12 +32,12 @@ class BorderZone(BaseArenaZone):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            buffer_size: float = 0.0,
-            polygon: Polygon = None,
-            buffered_polygon: Polygon = None,
-            update_callback: callable = None,
+        self,
+        logger: Logger,
+        buffer_size: float = 0.0,
+        polygon: Polygon = None,
+        buffered_polygon: Polygon = None,
+        update_callback: callable = None,
     ) -> None:
         """
         Initializes the BorderZone with its geometry and accessibility settings.

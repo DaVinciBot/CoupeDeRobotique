@@ -3,6 +3,7 @@
 # It provides methods to write data to an output buffer, read data from an input buffer,
 # and manage both buffers for testing purposes.
 
+
 # ====== Class Part ======
 class DummySerial:
     """

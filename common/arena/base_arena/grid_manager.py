@@ -8,36 +8,18 @@
 
 # ====== Imports ======
 # Standard library imports
-import functools
+import numpy as np
 import copy
 
 # Third-party library imports
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
-from shapely.geometry import box
 from pathfinding.core.grid import Grid, GridNode
-
-# Internal project imports
-from geometry import (
-    Point,
-    MultiPoint,
-    Polygon,
-    MultiPolygon,
-    LineString,
-    BufferCapStyle,
-    BufferJoinStyle,
-    Geometry,
-    create_straight_rectangle,
-    prepare,
-    distance,
-    OrientedPoint,
-    nearest_points,
-)
-
-# TODO: a explorer pour optimiser les recherches de zones interdites
+from loggerplusplus import Logger, LogLevels, time_tracker
 from shapely.strtree import STRtree
 
-from loggerplusplus import Logger, LogLevels, time_tracker
+# Internal project imports
+from geometry import Point, Polygon, OrientedPoint, box
 
 
 # ====== GridManager Class ======
@@ -47,7 +29,7 @@ class GridManager:
     Includes static and dynamic forbidden zones and grid visualization.
 
     Notes:
-    - The grid uses a coordinate system where the origin is at the bottom-right corner.
+    - The grid uses a coordinate system where the origin is in the bottom-right corner.
     - X-axis increases towards the left, while Y-axis increases upwards.
     - This reference frame affects calculations and visualization; adjustments ensure alignment.
     """
@@ -110,8 +92,9 @@ class GridManager:
         grid = copy.deepcopy(grid)
         minx, miny, maxx, maxy = polygon_to_mark.bounds
 
-        min_col, max_col = int((self.absolute_width - maxx) // self.chunk_size), int(
-            (self.absolute_width - minx) // self.chunk_size
+        min_col, max_col = (
+            int((self.absolute_width - maxx) // self.chunk_size),
+            int((self.absolute_width - minx) // self.chunk_size),
         )
         min_row, max_row = int(miny // self.chunk_size), int(maxy // self.chunk_size)
 
@@ -206,6 +189,7 @@ class GridManager:
 
         return grid
 
+    @time_tracker(lambda self: self.logger)
     def __update_grid(
         self, *, update_static_zones=False, update_dynamic_zones=False, clear_grid=False
     ) -> None:
@@ -220,19 +204,33 @@ class GridManager:
             self.static_grid = self.__generate_base_grid()
             self.static_and_dynamic_grid = self.__generate_base_grid()
 
+        # 1. Update all not updated forbidden zones, based on the update flags
+        # 1.1 Update static zones
         if update_static_zones:
-            for zone in self.not_updated_forbidden_zones:
+            for zone_to_update in self.not_updated_forbidden_zones:
+                # 1.1.1 Update static grid
                 self.static_grid = self.__mark_zone(
                     grid=self.static_grid,
-                    polygon_to_mark=zone,
-                    walkable=zone not in self.static_forbidden_zones,
+                    polygon_to_mark=zone_to_update,
+                    walkable=zone_to_update not in self.static_forbidden_zones,
+                )
+                # 1.1.2 Also update the static_and_dynamic grid (only static part of the grid)
+                self.static_and_dynamic_grid = self.__mark_zone(
+                    grid=self.static_and_dynamic_grid,
+                    polygon_to_mark=zone_to_update,
+                    walkable=zone_to_update not in self.static_forbidden_zones,
                 )
 
+        # 1.2 Update dynamic zones
         if update_dynamic_zones:
-            for i in range(len(self.not_updated_forbidden_zones)):
+            # 1.2.1 Clear all dynamic zones (get deep copy of static grid)
+            self.static_and_dynamic_grid = copy.deepcopy(self.static_grid)
+
+            # 1.2.2 Then mark the new dynamic zone as forbidden
+            for zone_to_update in self.not_updated_forbidden_zones:
                 self.static_and_dynamic_grid = self.__mark_zone(
-                    grid=self.static_grid if i == 0 else self.static_and_dynamic_grid,
-                    polygon_to_mark=self.not_updated_forbidden_zones[i],
+                    grid=self.static_and_dynamic_grid,
+                    polygon_to_mark=zone_to_update,
                     walkable=False,  # Dynamic zone are always forbidden
                 )
 
@@ -242,11 +240,42 @@ class GridManager:
     def __eq__(self, other):
         if not isinstance(other, GridManager):
             return False
-        return (
-            self.static_forbidden_zones == other.static_forbidden_zones
-            and self.static_grid == other.static_grid
-            and self.static_and_dynamic_grid == other.static_and_dynamic_grid
-        )
+
+        # Compare simple attributes
+        if self.chunk_size != other.chunk_size:
+            return False
+        if self.absolute_width != other.absolute_width:
+            return False
+        if self.absolute_height != other.absolute_height:
+            return False
+        if self.grid_width != other.grid_width or self.grid_height != other.grid_height:
+            return False
+        if self.forbidden_cover_threshold != other.forbidden_cover_threshold:
+            return False
+        if self.static_forbidden_zones != other.static_forbidden_zones:
+            return False
+        if self.not_updated_forbidden_zones != other.not_updated_forbidden_zones:
+            return False
+
+        # Define a helper function to convert a grid to a NumPy array of booleans
+        def grid_to_numpy(grid) -> np.ndarray:
+            return np.array(
+                [[1 if node.walkable else 0 for node in row] for row in grid.nodes],
+                dtype=bool,
+            )
+
+        # Compare the grids using np.array_equal for high performance.
+        if not np.array_equal(
+            grid_to_numpy(self.static_grid), grid_to_numpy(other.static_grid)
+        ):
+            return False
+        if not np.array_equal(
+            grid_to_numpy(self.static_and_dynamic_grid),
+            grid_to_numpy(other.static_and_dynamic_grid),
+        ):
+            return False
+
+        return True
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -341,7 +370,7 @@ class GridManager:
     def visualize(
         self,
         only_static_grid: bool = False,
-        path=None,
+        path: list | None = None,
         show: bool = True,
         plot: tuple[plt.axes, plt.figure] = None,
     ) -> tuple[plt.axes, plt.figure]:
@@ -368,22 +397,16 @@ class GridManager:
                 if not grid_to_visualize.node(x, y).walkable:
                     ax.add_patch(plt.Rectangle((x, y), 1, 1, color="black"))
 
-        if not isinstance(path, list):
-            if path is None:
-                path = []
-            else:
-                path = [path]
-
-        for p in path:
-            if p and len(p) > 1:
-                for i in range(len(p) - 1):
-                    # Draw a line connecting the current node to the next node
-                    ax.plot(
-                        [p[i].x / self.chunk_size, p[i + 1].x / self.chunk_size],
-                        [p[i].y / self.chunk_size, p[i + 1].y / self.chunk_size],
-                        color="green",
-                        linewidth=2,
-                    )
+        if path:
+            for i in range(len(path) - 1):
+                # Draw a line connecting the current node to the next node
+                ax.plot(
+                    [path[i].x, path[i + 1].x],
+                    [path[i].y, path[i + 1].y],
+                    color="purple",
+                    linewidth=1,
+                    alpha=0.2,
+                )
 
         ax.set_xticks(range(self.grid_width))
         ax.set_yticks(range(self.grid_height))

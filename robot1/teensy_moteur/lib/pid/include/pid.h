@@ -1,25 +1,65 @@
+/**
+ * This is the PID class header
+ * The PID class compute the error for the servo-control of the motors.
+ */
 #include <Arduino.h>
 
-// Motor class
-class PID
-{
-private:
-    float error_prev = 0.0f;
-    float error_integral = 0.0f;
 
+/**
+ * @brief Simple PID controller with deadband compensation.
+ */
+class PID {
 public:
-    // PID constantes
-    float kp;
-    float ki;
-    float kd;
+    /**
+     * @param kp          Proportional gain
+     * @param ki          Integral gain
+     * @param kd          Derivative gain
+     * @param minOutput   Minimum output (default -255)
+     * @param maxOutput   Maximum output (default +255)
+     * @param deadband    Friction compensation threshold (default 0)
+     */
+    PID(double kp, double ki, double kd,
+        double minOutput = -255.0, double maxOutput = 255.0,
+        double deadband = 0.0);
 
-    // Delta Time saver
-    long prevT = 0L;
-    double delta_time_calculator();
+    /**
+     * @brief Update PID gains and reset internal state.
+     */
+    void updateParameters(double kp, double ki, double kd);
 
-    // Constructor
-    PID(float kp, float ki, float kd);
+    /**
+     * @brief Set PID gains (without resetting state).
+     */
+    void setTunings(double kp, double ki, double kd);
 
-    // Methods
-    float compute(float error);
+    /**
+     * @brief Set output limits.
+     */
+    void setOutputLimits(double minOutput, double maxOutput);
+
+    /**
+     * @brief Set deadband threshold for feedforward friction compensation.
+     */
+    void setDeadband(double deadband);
+
+    /**
+     * @brief Compute control signal from the error.
+     * @param error  Setpoint - measurement
+     * @return       PID output, clamped to [minOutput..maxOutput]
+     */
+    double compute(double error);
+
+    /**
+     * @brief Reset integral and derivative state.
+     */
+    void reset();
+
+private:
+    double _kp, _ki, _kd;
+    double _minOutput, _maxOutput;
+    double _deadband;
+
+    double _integral;
+    double _prevError;
+    unsigned long _lastTime;
 };

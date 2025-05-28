@@ -18,6 +18,7 @@ from geometry import (
 )
 from old_logger import Logger, LogLevels
 import numpy as np
+from shapely.affinity import scale
 
 
 class Arena:
@@ -74,7 +75,6 @@ class Arena:
         return self.game_borders.contains(element)
 
     def zone_intersects(self, zone_name: str, element: Geometry) -> bool:
-
         if zone_name not in self.zones:
             raise ValueError("Tried to check intersection with unknown zone in arena")
         if self.zones[zone_name] is None:
@@ -266,7 +266,6 @@ class Arena:
         """
 
         for i in range(len(distances_to_check)):
-
             # Check if the point is close enough to be a risk, and far enough to remove lidar aberrations (might be done in lidar code as well)
             if 5 < distances_to_check[i] < self.safe_collision_distance:
                 # Then check that it isn't outside the game zone (with a buffer)
@@ -292,4 +291,3 @@ class Arena:
 
     def remove_outside(self, points: MultiPoint):
         return self.game_borders_buffered.intersection(points)
-

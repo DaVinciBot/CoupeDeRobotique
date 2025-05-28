@@ -159,7 +159,7 @@ class TaskPlanner:  # TODO: test solution saving and loading
                         else (
                             "End"
                             if n == self.end_node
-                            else f"{n}\nS: {self.tasks_scores[n-1]}\nD: {self.tasks_duration_sec[n-1]}s"
+                            else f"{n}\nS: {self.tasks_scores[n - 1]}\nD: {self.tasks_duration_sec[n - 1]}s"
                         )
                     )
                     if (
@@ -257,7 +257,7 @@ class TaskPlanner:  # TODO: test solution saving and loading
                         else (
                             "End"
                             if i == self.end_node
-                            else f"{i}\nS: {self.tasks_scores[i-1]}\nD: {self.tasks_duration_sec[i-1]}s"
+                            else f"{i}\nS: {self.tasks_scores[i - 1]}\nD: {self.tasks_duration_sec[i - 1]}s"
                         )
                     )
                     if (

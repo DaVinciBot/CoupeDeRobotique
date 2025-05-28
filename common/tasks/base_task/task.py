@@ -1,6 +1,6 @@
 from arena import BaseArena, BaseArenaZone
 from geometry import Point, OrientedPoint, Polygon
-from movement import GoToParams
+from old.movement import GoToParams
 
 
 class Task:
@@ -36,7 +36,7 @@ class Task:
         self.action_func()
 
     def __str__(self):
-        return f"Task {self.id} {": " + self.name if self.name else ""}, execution_time: {self.execution_time}, score: {self.score}"
+        return f"Task {self.id} {': ' + self.name if self.name else ''}, execution_time: {self.execution_time}, score: {self.score}"
 
     @staticmethod
     def reset_id_counter():
