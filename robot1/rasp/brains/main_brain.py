@@ -1,3 +1,5 @@
+import random
+
 from config_loader import CONFIG
 
 # ====== Standard Library Imports ======
@@ -137,7 +139,6 @@ class MainBrain(Brain):
         )
 
         # --- MetaProg is insane (loop) --- #
-
         if navigator.current_task is not None:
             cmd = navigator.handle(
                 ally_zone=self.arena.ally_zone,
@@ -202,12 +203,13 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     async def update_ui(self) -> None:
-
         previous_state = self.ui_state.copy()
 
         # --- MetaProg is insane (loop) --- #
+        # To remove
+        self.ui_state["odometrie_state"] = OrientedPoint(random.randint(0, 10), random.randint(0, 10), theta=random.randint(0, 10) )
+
         current_state = self.ui_state.copy()
-        current_state["jack_state"] = not current_state["jack_state"]
         if current_state != previous_state:
             previous_state = current_state
             to_send = {
@@ -220,7 +222,6 @@ class MainBrain(Brain):
                 },
                 "pamis_state": current_state["pamis_state"],
             }
-            self.logger.debug("Sending data to UI:" + str(json.dumps(to_send, indent=2)))
             await self.ws_ui.sender.send(
                 WSmsg(sender="server", msg="update ui data", data=to_send)
             )
