@@ -137,6 +137,7 @@
         "0": {
           "fold_angle": 20,
           "deploy_angle": 110,
+          "docking": 90,
           "max_angle": 270
         },
         "1": {

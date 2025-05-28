@@ -19,3 +19,13 @@ class Build(BaseTask):
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.build_floors()
         return True
+    
+class HoldBanner(BaseTask):
+    def handle(self, ctx: ShowGameContext):
+        ctx.actuators.docking()
+        return True
+    
+class DeployBanner(BaseTask):
+    def handle(self, ctx: ShowGameContext):
+        ctx.actuators.deploy_banner()
+        return True

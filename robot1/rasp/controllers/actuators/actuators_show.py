@@ -8,6 +8,7 @@ import time
 class Servo:
     deploy_angle: int
     fold_angle: int
+    special_angle: int = 0 # Angle for special movement such as docking
     max_angle: int
 
 
@@ -45,7 +46,8 @@ class ActuatorsShow(Actuators):
         """
         super().__init__(*args, **kwargs)  # Call the parent constructor
         self.folded: bool = True  # Indicates if the actuators are folded
-        self.servos = {  # default servo with 2 position
+        self.servos : dict[int | CONFIG.ACTUATORS_CONFIG, 
+                           Servo | ServoArm | ServoPlank] = {  # default servo with 2 position
             i: Servo(cfg["deploy_angle"], cfg["fold_angle"], cfg["max_angle"])
             for i, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items()
             if i < 8
@@ -231,15 +233,23 @@ class ActuatorsShow(Actuators):
 
     def docking(self):
         """
-        Moves the servo arm to the docking position.
-        This method sets the servo arm to its docking position, which is used for docking purposes.
+        Moves the interior servos arms to the docking position.
+        This method sets the interior servo arms to its docking position, which is used for docking purposes.
         """
-        if 8 in self.servos:
+        if self._check_pin(0) and self._check_pin(2):
             self.set_servo_angle(
-                8,
-                self.servos[8].docking,
-                max_angle=self.servos[8].max_angle,
+                0,
+                self.servos[0].special_angle,
+                max_angle = self.servos[0].max_angle,
             )
+            self.set_servo_angle(
+                2,
+                self.servos[2].special_angle,
+                max_angle = self.servos[2].max_angle,
+            )
+    
+    def deploy_banner(self):
+        self.deploy([0, 2])
 
     def place_upper_cans(self):
         """
@@ -317,6 +327,7 @@ class ActuatorsShow(Actuators):
     #     self.stepper_step(
     #         self.stepper.folded_steps - self.elevator_ticks, self.stepper.speed
     #     )
+    
 
     def ready_to_pickup(self):
         """
