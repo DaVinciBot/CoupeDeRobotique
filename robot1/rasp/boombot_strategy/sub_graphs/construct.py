@@ -14,7 +14,7 @@ from boombot_strategy.tasks.navigation_tasks.maneuver import (
     Backward,
 )
 
-from boombot_strategy.tasks.actuator_task.actuator_task import Build, EndBuild
+from boombot_strategy.tasks.actuator_task.actuator_task import Build
 
 
 def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
