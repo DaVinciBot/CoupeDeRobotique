@@ -6,6 +6,7 @@ crc8==0.2.0
 events==0.5
 frozenlist==1.5.0
 future==1.0.0
+gpiozero==2.0.1
 graphviz==0.20.3
 idna==3.10
 iso8601==2.1.0
@@ -13,12 +14,12 @@ loggerplusplus==0.1.5
 multidict==6.1.0
 networkx==3.4.2
 numpy==2.2.2
+ortools==9.12.4544
 pathfinding==1.0.16
 pyserial==3.5
 pysicktim==0.0.9
 pyusb==1.2.1
 PyYAML==6.0.1
-gpiozero==2.0.1
 scipy==1.15.2
 shapely==2.0.7
 taskbrain==0.1.8
