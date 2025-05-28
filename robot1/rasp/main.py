@@ -43,8 +43,8 @@ if __name__ == "__main__":
     logger_brain = Logger(
         identifier="Brain",
         # Only Brain manages monitoring
-        files_monitoring=True,
-        display_monitoring=True,
+        files_monitoring=False,
+        display_monitoring=False,
         print_log_level=LogLevels.DEBUG,
         follow_logger_manager_rules=True,
     )

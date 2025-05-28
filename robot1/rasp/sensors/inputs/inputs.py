@@ -18,13 +18,12 @@ class Inputs:
 
     async def wait_for_jack_trigger(self, wait_time: float = 0.1):
         false_jacks_in_a_row = 0
+        self.logger.info(f"Wait jack trigger...")
         while false_jacks_in_a_row < 5:
             if self.jack.safe_digital_read():
                 false_jacks_in_a_row = 0
-                self.logger.info(f"Jack state: {self.jack.digital_read()}")
             else:
                 false_jacks_in_a_row += 1
-                self.logger.info(f"Jack state: {self.jack.digital_read()}")
+            self.logger.debug(f"Jack trigger signal seems to be detected: {false_jacks_in_a_row}.")
             await asyncio.sleep(wait_time)
-
-
+        self.logger.info(f"Jack trigger detected !")

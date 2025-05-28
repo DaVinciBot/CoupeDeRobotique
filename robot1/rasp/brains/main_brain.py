@@ -150,7 +150,7 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=self.lidar.scan_to_polars(), # np.array([]), 
+            lidar_scan_polars=self.lidar.scan_to_polars(), # np.array([]),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
