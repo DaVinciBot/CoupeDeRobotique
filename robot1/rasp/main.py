@@ -13,7 +13,7 @@ from geometry import OrientedPoint
 from brains import MainBrain
 from taskbrain import DictProxyAccessor, Brain
 from navigation import NavigatorTaskParams
-from sensors import Lidar, LidarDummy
+from sensors import Lidar, LidarDummy, Inputs
 from GPIO import PIN
 
 # ====== Main ======
@@ -116,10 +116,11 @@ if __name__ == "__main__":
         grid_manager_logger=logger_grid_manager,
     )
 
-    # os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
-    # Jack
-    jack = PIN(CONFIG.JACK_PIN)
-    jack.setup("input_pullup", reverse_state=True)
+    # Inputs: Jack and Bau
+    inputs = Inputs(
+        pin_jack=CONFIG.JACK_PIN,
+        pin_bau=16
+    )
 
     # Movement
     # Movement manager
@@ -138,7 +139,7 @@ if __name__ == "__main__":
         lidar=lidar,
         arena=arena,
         ws_cmd=ws_cmd,
-        jack=jack,
+        inputs=inputs,
     )
 
     """

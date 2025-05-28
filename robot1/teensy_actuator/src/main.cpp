@@ -155,13 +155,13 @@ void setup()
 {
   pinMode(ENABLE_DRIVER_STEPPER_PIN, OUTPUT);    // Set the enable pin for the stepper driver as output
   digitalWrite(ENABLE_DRIVER_STEPPER_PIN, HIGH); // Immediatly set enable pin at high to prevent heating. Dirty solution.
+  
   com = new Com(&Serial, BAUDRATE);
   controller.begin();
   controller.setPWMFreq(60);
 
   // Initialize callback functions
   initilize_callback_functions();
-  digitalWrite(15, HIGH); // Immediatly disable driver on the stepper, to prevent heating. Dirty solution.
 }
 
 void loop()

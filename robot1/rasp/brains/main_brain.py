@@ -20,9 +20,7 @@ from arena import AllyZone, TeamColor
 # ====== Internal Project Imports ======
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from controllers.actuators import ActuatorsShow, ActuatorsDummy
-from sensors import Lidar
-
-from GPIO import PIN
+from sensors import Lidar, Inputs
 
 # from navigation_tasks.tasks import yellow_start_tasks
 
@@ -62,37 +60,25 @@ class MainBrain(Brain):
         arena: ShowArena,
         # WS routes
         ws_cmd: WServerRouteManager,
-        # Tirette
-        jack: PIN = None,
+        # Inputs
+        inputs: Inputs,
     ) -> None:
         self.lidar: Lidar = lidar
         self.arena: ShowArena = arena
-        self.ws_cmd: WServerRouteManager = ws_cmd
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
-        self.jack = jack
 
         super().__init__(logger, self)
+
+        self.ws_cmd: WServerRouteManager = ws_cmd
+        self.inputs: Inputs = inputs
 
     """
     ### Secondary Processes ###
     """
 
     """ ### Routines ### """
-
-    # Deactivate for now
-    @Brain.task(process=False, run_on_start=False)
-    async def wait_for_trigger(self):
-        false_jacks_in_a_row = 0
-        while false_jacks_in_a_row < 5:
-            if self.jack.safe_digital_read():
-                false_jacks_in_a_row = 0
-                self.logger.info(f"Jack state: {self.jack.digital_read()}")
-            else:
-                false_jacks_in_a_row += 1
-                self.logger.info(f"Jack state: {self.jack.digital_read()}")
-            await asyncio.sleep(0.1)
 
     @Brain.task(
         process=True,
@@ -120,8 +106,6 @@ class MainBrain(Brain):
         time.sleep(1)
         actuators.deploy_all()
         time.sleep(1)
-        actuators.
-
 
         # --- MetaProg is insane (loop) --- #
         # demo_runner.handle(
@@ -190,5 +174,5 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
         await asyncio.sleep(1)
-        # await self.wait_for_trigger()
+        # await self.inputs.wait_for_jack_trigger()
         await self.run()
