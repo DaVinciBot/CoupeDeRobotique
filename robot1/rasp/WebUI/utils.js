@@ -1,9 +1,9 @@
 class WebSocketManager {
-    constructor() {
+    constructor(host="localhost", port="8080", user="ui") {
         this.websockets = {};
-        this.host = "localhost";
-        this.port = "8080";
-        this.user = "ui";
+        this.host = host;
+        this.port = port;
+        this.user = user;
     }
 
     #create_trame(msg, data) { 
@@ -37,16 +37,20 @@ class WebSocketManager {
 }
 
 // change background color of button during .05s when clicked
-function button_click_effect(button) {
+function button_click_effect(button, server) {
+    let originalColor = button.style.backgroundColor;
     button.style.backgroundColor = "#0232FF";
     setTimeout(() => {
-        button.style.backgroundColor = "#B3C2FF";
-    }, 50)
+        button.style.backgroundColor = originalColor;
+    }, 50);
+    if (button.id.includes("_team")) {
+        button.style.backgroundColor = "#FFFFFF";
+        let team = "other";
+        if (button.id === "blue_team") {
+            team = "blue";
+        } else if (button.id === "yellow_team") {
+            team = "yellow";
+        }
+        server.send("ui", "team change", { team: team });
+    }
 }
-
-let buttons = document.querySelectorAll(".button");
-buttons.forEach(button => {
-    button.addEventListener("click", () => {
-        button_click_effect(button);
-    })
-})

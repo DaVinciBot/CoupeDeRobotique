@@ -242,7 +242,7 @@ class MainBrain(Brain):
                 WSmsg(sender="server", msg="update ui data", data=to_send)
             )
 
-    @Brain.task(process=False, run_on_start=CONFIG.ZOMBIE_MODE, refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def receive_ui_data(self):
         """
         executes requests received by the server. Use Postman to send request to the server
@@ -264,7 +264,12 @@ class MainBrain(Brain):
                         await eval(instruction.removeprefix("await "))
                     else:
                         eval(instruction)
-
+            elif ui.msg == "team change":
+                if ui.data["team"] in ["yellow", "blue"]:
+                    self.arena.set_team_color(TeamColor[ui.data["team"].upper()])
+                    self.logger.info(f"Team color set to {ui.data['team']}")
+                else:
+                    self.logger.warning(f"Invalid team color: {ui.data}")
             else:
                 self.logger.warning(f"Command not implemented: {ui.msg} / {ui.data}")
 

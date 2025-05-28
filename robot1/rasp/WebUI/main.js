@@ -8,18 +8,27 @@ log.add_handler("ui", (event) => {
     if (data.msg === "update ui data") {
         // show_console_data(JSON.stringify(data.data), true);
 
-        let jack_state = document.getElementById("jack_state");
+        const jack_state = document.getElementById("jack_state");
         jack_state.style.backgroundColor = data.data["Tirette"] ? "limegreen" : "red";
         jack_state.innerText = data.data["Tirette"] ? "Ready" : "Not Ready";
 
-        let bau_state = document.getElementById("bau_state");
+        const bau_state = document.getElementById("bau_state");
         bau_state.style.backgroundColor = data.data["BAU"] ? "limegreen" : "red";
         bau_state.innerText = data.data["BAU"] ? "ON" : "ACTIVATED";
 
+        const pamis_states = document.getElementById('pami_states');
+        pamis_states.innerHTML = '';
         for (let pami in data.data["pamis_states"]) {
-            let element = document.getElementById(`${pami}_state`);
-            element.style.backgroundColor = data.data["pamis_states"][pami] ? "limegreen" : "red";
-        }
+            const card = document.createElement('div');
+            card.dataset.id = `${pami}_state`;
+            card.style.backgroundColor = data.data["pamis_states"][pami] ? "limegreen" : "red";
+            card.style.padding = "10px";
+            card.style.borderRadius = "20px";
+            card.style.color = "white";
+            card.style.fontWeight = "bold";
+            card.innerHTML = pami;
+            pamis_states.append(card);
+        };
     }
 });
 
