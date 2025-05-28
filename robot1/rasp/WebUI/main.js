@@ -9,8 +9,13 @@ log.add_handler("ui", (event) => {
         // show_console_data(JSON.stringify(data.data), true);
 
         const jack_state = document.getElementById("jack_state");
-        jack_state.style.backgroundColor = data.data["Tirette"] ? "limegreen" : "red";
-        jack_state.innerText = data.data["Tirette"] ? "Ready" : "Not Ready";
+        jack_state.style.backgroundColor = data.data["jack_state"] ? "limegreen" : "red";
+        if (data.data["jack_state"]) {
+            jack_state.innerText = "Ready"
+        } else if(jack_state.innerText == "Ready") {
+            jack_state.innerText = "Not Ready";
+            startTimer();
+        }
 
         const bau_state = document.getElementById("bau_state");
         bau_state.style.backgroundColor = data.data["BAU"] ? "limegreen" : "red";
@@ -31,6 +36,35 @@ log.add_handler("ui", (event) => {
         };
     }
 });
+
+let buttons = document.querySelectorAll(".button");
+buttons.forEach(button => {
+    button.addEventListener("click", () => {
+        button_click_effect(button, log);
+    })
+});
+
+function startTimer() {
+    const timer = document.getElementById("timer");
+    let countdown = new Date().getTime() + 1000 * 60 + 1000 * 40;
+    let x = setInterval(function() {
+        let now = new Date().getTime();
+        let distance = countdown - now;
+
+        let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        timer.innerHTML = minutes + ":" + seconds;
+
+        if (distance < 0) {
+            clearInterval(x);
+            timer.innerHTML = "FINISHED";
+        }
+        else if (distance < 1000 * 15) {
+            timer.style.backgroundColor = "orange";
+        }
+    }, 1000);
+}
 
 function show_console_data(data, add = false) {
     if (add) {
