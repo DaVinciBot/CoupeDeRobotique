@@ -161,7 +161,7 @@ void setup()
 
   // Initialize callback functions
   initilize_callback_functions();
-  // digitalWrite(15, HIGH); // Immediatly disable driver on the stepper, to prevent heating. Dirty solution.
+  digitalWrite(15, HIGH); // Immediatly disable driver on the stepper, to prevent heating. Dirty solution.
 }
 
 void loop()

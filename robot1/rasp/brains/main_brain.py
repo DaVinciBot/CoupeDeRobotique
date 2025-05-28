@@ -19,7 +19,7 @@ from arena import AllyZone, TeamColor
 
 # ====== Internal Project Imports ======
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
-from controllers.actuators import Actuators, ActuatorsDummy
+from controllers.actuators import ActuatorsShow, ActuatorsDummy
 from sensors import Lidar
 
 from GPIO import PIN
@@ -112,15 +112,24 @@ class MainBrain(Brain):
         )
         time.sleep(1)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+
+        actuators = ActuatorsShow(
+            logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
+        )
+
         time.sleep(1)
+        actuators.deploy_all()
+        time.sleep(1)
+        actuators.
+
 
         # --- MetaProg is insane (loop) --- #
-        demo_runner.handle(
-            ShowGameContext(
-                arena=self.arena,
-                rolling_basis=rolling_basis,  # actuators=actuators
-            )
-        )
+        # demo_runner.handle(
+        #     ShowGameContext(
+        #         arena=self.arena,
+        #         rolling_basis=rolling_basis,  # actuators=actuators
+        #     )
+        # )
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
     @Brain.task(
