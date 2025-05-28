@@ -127,7 +127,7 @@ class ActuatorsShow(Actuators):
         This method ensures that the elevator is in a safe position before deploying the servo arm.
         """
         steps_to_move = self.stepper.folded_steps - self.elevator_ticks + 20
-        self.stepper_step(steps_to_move, self.stepper.speed)
+        self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
 
     def __align_dropping_cans(self):
         """
