@@ -58,6 +58,7 @@ from navigation.avoidance import (
     BaseAvoidanceParams,
     NoAvoidanceParams,
     StopAndWaitAvoidanceParams,
+    BaseAcsDetectionProfileParams,
 )
 
 # Navigator

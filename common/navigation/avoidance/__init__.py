@@ -11,3 +11,8 @@ from navigation.avoidance.stop_and_wait_avoidance import (
 )
 
 from navigation.avoidance.avoidance_factory import AvoidanceFactory
+
+from navigation.avoidance.acs_detection_profiles import (
+    BaseAcsDetectionProfile,
+    BaseAcsDetectionProfileParams,
+)

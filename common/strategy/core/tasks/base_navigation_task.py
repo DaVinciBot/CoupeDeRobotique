@@ -17,6 +17,10 @@ from navigation import (
     BasePathPlannerParams,
     SpeedProfiler,
 )
+from navigation.avoidance.acs_detection_profiles import (
+    BaseAcsDetectionProfile,
+    BaseAcsDetectionProfileParams,
+)
 
 
 class BaseNavigationTask(BaseTask):
@@ -27,6 +31,7 @@ class BaseNavigationTask(BaseTask):
         trajectory_planner_params: BaseTrajectoryPlannerParams,
         speed_profiler: SpeedProfiler,
         avoidance_params: BaseAvoidanceParams,
+        acs_detection_profile_params: BaseAcsDetectionProfileParams,
         timeout: float | None = None,
     ):
         self.goal: int | BaseArenaZone | OrientedPoint | Point | None = goal
@@ -35,6 +40,7 @@ class BaseNavigationTask(BaseTask):
         self.trajectory_planner_params = trajectory_planner_params
         self.speed_profiler = speed_profiler
         self.avoidance_params = avoidance_params
+        self.acs_detection_profile_params = acs_detection_profile_params
 
         self._is_initialized: bool = False
         self.navigator_task: NavigatorTask | None = None
@@ -52,6 +58,7 @@ class BaseNavigationTask(BaseTask):
                 trajectory_planner_params=self.trajectory_planner_params,
                 speed_profiler=self.speed_profiler,
                 avoidance_params=self.avoidance_params,
+                acs_detection_profile_params=self.acs_detection_profile_params,
             )
         )
 
