@@ -125,7 +125,7 @@ class MainBrain(Brain):
 
     @Brain.task(
         process=True,
-        run_on_start=True, #True to get visualization
+        run_on_start=True,  # True to get visualization
         refresh_rate=0.01,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
@@ -181,5 +181,5 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
         await asyncio.sleep(1)
-        #await self.wait_for_trigger()
+        # await self.wait_for_trigger()
         await self.run()

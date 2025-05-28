@@ -14,6 +14,6 @@ class RectangularProjectionAcsDetectionProfileParams(BaseAcsDetectionProfilePara
         self.half_length_view: float = acs_distance / 2
 
         super().__init__(
-            acs_detection_profile=AcsDetectionProfile.NO_PROJECTION,
+            acs_detection_profile=AcsDetectionProfile.RECTANGULAR_PROJECTION,
             acs_distance=acs_distance,
         )

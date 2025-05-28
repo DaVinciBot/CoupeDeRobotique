@@ -262,7 +262,7 @@ class ActuatorsShow(Actuators):
                 self.servos[2].docking,
                 max_angle = self.servos[2].max_angle,
             )
-    
+
     def deploy_banner(self):
         self.deploy([0, 2])
 
@@ -342,7 +342,6 @@ class ActuatorsShow(Actuators):
     #     self.stepper_step(
     #         self.stepper.folded_steps - self.elevator_ticks, self.stepper.speed
     #     )
-    
 
     def ready_to_pickup(self):
         """

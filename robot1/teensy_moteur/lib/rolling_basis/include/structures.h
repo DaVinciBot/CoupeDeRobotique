@@ -38,4 +38,5 @@ public:
     {
         return atan2(p2.y - p1.y, p2.x - p1.x);
     }
+    //angle = 2*atan2(|| ||b||a - ||a||b ||, || ||b||a + ||a||b ||)
 };
