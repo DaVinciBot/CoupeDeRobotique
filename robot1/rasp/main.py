@@ -106,7 +106,7 @@ if __name__ == "__main__":
     ws_ui = WServerRouteManager(
         logger=logger_ws_ui_route_manager,
         receiver=WSreceiver(logger=logger_ws_ui_receiver, use_queue=True),
-        sender=WSender(logger=logger_ws_ui_sender, name=CONFIG.WS_UI_SENDER_NAME)
+        sender=WSender(logger=logger_ws_ui_sender, name=CONFIG.WS_UI_SENDER_NAME),
     )
     ws_server.add_route_handler(CONFIG.WS_UI_ROUTE, ws_ui)
 
@@ -137,10 +137,10 @@ if __name__ == "__main__":
         grid_manager_logger=logger_grid_manager,
     )
 
-    #os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
+    # os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
     # Jack
-    #jack = PIN(CONFIG.JACK_PIN)
-    #jack.setup("input_pullup", reverse_state=True)
+    # jack = PIN(CONFIG.JACK_PIN)
+    # jack.setup("input_pullup", reverse_state=True)
 
     # BAU à tester
     # bau = PIN(CONFIG.JACK_PIN)
@@ -165,7 +165,7 @@ if __name__ == "__main__":
         ws_cmd=ws_cmd,
         ws_ui=ws_ui,
         jack=None,
-        bau=None
+        bau=None,
     )
 
     """

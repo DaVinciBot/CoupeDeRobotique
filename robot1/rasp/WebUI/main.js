@@ -1,33 +1,25 @@
-let console_div = document.querySelector('.log')
+// let console_div = document.getElementById('log');
 
 let log = new WebSocketManager();
 log.add_ws("ui")
-log.add_handler((event) => {
+log.add_handler("ui", (event) => {
     // Parse the JSON message and display the console data
     let data = JSON.parse(event.data);
     if (data.msg === "update ui data") {
-        show_console_data(JSON.stringify(data.data), true);
+        // show_console_data(JSON.stringify(data.data), true);
 
-        let jack_state = document.getElementById("Tirette");
-        let bau_state = document.getElementById("BAU");
-
+        let jack_state = document.getElementById("jack_state");
         jack_state.style.backgroundColor = data.data["Tirette"] ? "limegreen" : "red";
-        bau_state.style.backgroundColor = data.data["BAU"] ? "limegreen" : "red";
+        jack_state.innerText = data.data["Tirette"] ? "Ready" : "Not Ready";
 
-        //TODO:PAMI
-        // for (let key in data.data) {
-        //     if (data.data.hasOwnProperty(key)) {
-        //         let element = document.getElementById(key);
-        //         if (element) {
-        //             // Si la valeur est un objet imbriqué, on l'affiche sous forme de chaîne JSON
-        //             if (typeof data.data[key] === 'object') {
-        //                 element.innerText = JSON.stringify(data.data[key]);
-        //             } else {
-        //                 element.innerText = data.data[key];
-        //             }
-        //         }
-        //     }
-        // }
+        let bau_state = document.getElementById("bau_state");
+        bau_state.style.backgroundColor = data.data["BAU"] ? "limegreen" : "red";
+        bau_state.innerText = data.data["BAU"] ? "ON" : "ACTIVATED";
+
+        for (let pami in data.data["pamis_states"]) {
+            let element = document.getElementById(`${pami}_state`);
+            element.style.backgroundColor = data.data["pamis_states"][pami] ? "limegreen" : "red";
+        }
     }
 });
 

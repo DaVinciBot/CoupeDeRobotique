@@ -9,6 +9,7 @@ import time
 from math import pi
 
 from debugpy.common import json
+
 # ====== Third-party library imports ======
 from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
 from loggerplusplus import Logger
@@ -60,7 +61,7 @@ class MainBrain(Brain):
         ws_ui: WServerRouteManager,
         # Tirette
         jack: PIN = None,
-        bau: PIN = None
+        bau: PIN = None,
     ) -> None:
         self.lidar: Lidar = lidar
         self.arena: ShowArena = arena
@@ -85,7 +86,7 @@ class MainBrain(Brain):
 
         self.jack = jack
         self.bau = bau
-        
+
         self.lidar_points: list[Point] = []
 
         super().__init__(logger, self)
@@ -121,7 +122,11 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        from boombot_strategy import ShowGameContext, yellow_strategy_runner, NavigationTask
+        from boombot_strategy import (
+            ShowGameContext,
+            yellow_strategy_runner,
+            NavigationTask,
+        )
 
         navigator = Navigator()
 
@@ -140,7 +145,7 @@ class MainBrain(Brain):
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
                 avoidance_params=StopAndWaitAvoidanceParams(
-                acs_distance=100, timeout=30
+                    acs_distance=100, timeout=30
                 ),
             )
         )
@@ -216,7 +221,9 @@ class MainBrain(Brain):
 
         # --- MetaProg is insane (loop) --- #
         # To remove
-        self.ui_state["odometrie_state"] = OrientedPoint(random.randint(0, 10), random.randint(0, 10), theta=random.randint(0, 10))
+        self.ui_state["odometrie_state"] = OrientedPoint(
+            random.randint(0, 10), random.randint(0, 10), theta=random.randint(0, 10)
+        )
 
         current_state = self.ui_state.copy()
         if current_state != previous_state:
@@ -259,9 +266,7 @@ class MainBrain(Brain):
                         eval(instruction)
 
             else:
-                self.logger.warning(
-                    f"Command not implemented: {ui.msg} / {ui.data}"
-                )
+                self.logger.warning(f"Command not implemented: {ui.msg} / {ui.data}")
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def update_arena(self) -> None:
