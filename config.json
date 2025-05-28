@@ -202,11 +202,11 @@
           "acs_distance": 50
         },
         "go_to_color_reserved_zone_to_construct": {
-          "acs_detection_profile": "no_projection",
+          "acs_detection_profile": "rectangular_projection",
           "acs_distance": 50
         },
         "go_to_stuff_zone_to_pick_up": {
-          "acs_detection_profile": "no_projection",
+          "acs_detection_profile": "rectangular_projection",
           "acs_distance": 50
         },
         "backward": {
@@ -216,6 +216,10 @@
         "precise_forward": {
           "acs_detection_profile": "no",
           "acs_distance": 0
+        },
+        "start_task": {
+          "acs_detection_profile": "no_projection",
+          "acs_distance": 70
         }
       }
     },

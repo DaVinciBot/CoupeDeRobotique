@@ -232,6 +232,9 @@ class CONFIG:
             **ACS_PROFILES_CONFIG["precise_forward"]
         )
     )
+    ACS_PROFILE_START_TASK: BaseAcsDetectionProfileParams = (
+        BaseAcsDetectionProfileParams.from_config(**ACS_PROFILES_CONFIG["start_task"])
+    )
 
     # Jack
     JACK_PIN = SPECIFIC_CONFIG["jack"]["pin"]
