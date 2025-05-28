@@ -177,10 +177,23 @@ class CONFIG:
             **ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]
         ),
     )
+    ROLLING_BASIS_SPEED_PROFILER_PID: SpeedProfiler = SpeedProfiler(
+        linear_speed_profile=BasicSpeedProfile(
+            ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]["max_speed"]
+        ),
+        angular_speed_profile=BasicSpeedProfile(
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["max_speed"]
+        ),
+    )
 
     # Actuators
     ACTUATORS_CONFIG = SPECIFIC_CONFIG["actuators"]
     ACTUATOR_TEENSY_SER = ACTUATORS_CONFIG["actuators_teensy_ser"]
+    ACTUATOR_SERVOS_CONFIG = ACTUATORS_CONFIG["servos_config"]
+    ACTUATOR_SERVOS_CONFIG = {int(k): v for k, v in ACTUATOR_SERVOS_CONFIG.items()}
+
+    ACTUATOR_ELEVATOR_CONFIG = ACTUATORS_CONFIG["elevator"]
+    ACTUATOR_DELAY = ACTUATORS_CONFIG["delay"]
 
     # Lidar
     LIDAR_CONFIG = SPECIFIC_CONFIG["lidar"]
@@ -198,6 +211,9 @@ class CONFIG:
     ARENA_OBSTACLE_BUFFER = ARENA_CONFIG["obstacle_buffer"]
     ARENA_CHUNK_SIZE = ARENA_CONFIG["chunk_size"]
     ARENA_FORBIDDEN_COVER_THRESHOLD = ARENA_CONFIG["forbidden_cover_threshold"]
+
+    # Jack
+    JACK_PIN = SPECIFIC_CONFIG["jack"]["pin"]
 
 
 # Logger: LoggerManager + global configuration

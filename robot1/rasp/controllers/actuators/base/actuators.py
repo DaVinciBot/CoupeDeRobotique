@@ -10,9 +10,13 @@ from loggerplusplus import Logger, log
 from teensy import GPIOComTeensy, ActuatorType
 from usb_com.python import Messages
 
+import time
+
 
 # ====== Class Part ======
-class Actuators(GPIOComTeensy):
+class Actuators(
+    GPIOComTeensy
+):  # TODO : move to common and handle config properly, not the prority yet
     def __init__(
         self,
         logger: Logger,
@@ -31,6 +35,7 @@ class Actuators(GPIOComTeensy):
         # Admit that default elevator position is at the bottom
         self.elevator_ticks: int = 0
         self.switches_states: dict[int:bool] = {}
+        self.t_set_servo_angle_i2c: int = 0
 
         """
         This is used to match a handling function to a message type.
@@ -90,7 +95,25 @@ class Actuators(GPIOComTeensy):
     ####################################
 
     @log("Actuators")
-    def stepper_step(self, steps: int, speed: int) -> None:
+    def set_stepper_driver_activation_state(self, pin_enable: int, enable_driver: bool):
+        """
+        Sets the activation state of a stepper motor driver through its enable pin.
+
+        Args:
+            pin_enable (int): The pin number connected to the driver's enable input
+            enable_driver (bool): True to enable the driver, False to disable it.
+        Note: The enable pin is active LOW, meaning True will output LOW to enable the driver
+
+        """
+        msg = (
+            Messages.SET_STEPPER_DRIVER_ACTIVATION_STATE.to_bytes()
+            + struct.pack("<B", pin_enable)
+            + struct.pack("<?", not enable_driver)  # enable driver is active low
+        )
+        self.send_bytes(msg)
+
+    @log("Actuators")
+    def stepper_step(self, steps: int, speed: int, disable_driver: bool = True) -> None:
         """
         Moves the stepper motor a specified number of steps.
         Note that the number of motor pin can change depending on the motor.
@@ -98,6 +121,7 @@ class Actuators(GPIOComTeensy):
         Args:
             steps (int): The number of steps to move the motor.
             speed (int): The speed at which to move the motor.
+            disable_driver (bool): Whether to disable the driver after the movement.
 
         Returns:
             None
@@ -107,22 +131,34 @@ class Actuators(GPIOComTeensy):
 
         # WARNING: pin_driver is also defined in the C++ code,
         # because it needs to receive a HIGH from the beginning, or it will start heating up
-        pin_dir = 13
+        pin_dir = 15
         pin_step = 14
-        pin_driver = 15
+        pin_enable_driver = 13
 
         msg = (
             Messages.STEPPER_STEP.to_bytes()
             + struct.pack("<i", abs(steps))
-            + struct.pack("<?", (steps >= 0))
+            + struct.pack("<?", (steps <= 0))
             + struct.pack("<i", speed)
             + struct.pack("<B", pin_dir)
             + struct.pack("<B", pin_step)
-            + struct.pack("<B", pin_driver)
+            + struct.pack("<B", pin_enable_driver)
         )
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
+        # time.sleep(0.01)  # Wait for the Teensy to process the message
+
+        if disable_driver:
+            # Disable the driver after the movement
+            self.set_stepper_driver_activation_state(
+                pin_enable=pin_enable_driver, enable_driver=False
+            )
+        else:
+            # Enable the driver after the movement
+            self.set_stepper_driver_activation_state(
+                pin_enable=pin_enable_driver, enable_driver=True
+            )
 
     @log("Actuators")
     def set_servo_angle(
@@ -135,6 +171,7 @@ class Actuators(GPIOComTeensy):
         # If True, the servo will detach after setting the angle,
         # DO NOT USE DETACH = TRUE AND DETACH = FALSE ON THE SAME SERVO
         detach_delay=1000,
+        use_I2C=True,
     ) -> None:
         """Set the angle of the servo at the given pin.
 
@@ -152,7 +189,8 @@ class Actuators(GPIOComTeensy):
                 msg = (
                     Messages.SET_SERVO_ANGLE_DETACH.to_bytes()
                     + struct.pack("<B", pin)
-                    + struct.pack("<B", angle)
+                    + struct.pack("<H", angle)
+                    + struct.pack("<H", max_angle)
                     + struct.pack("<i", detach_delay)
                 )
                 self.send_bytes(msg)
@@ -166,10 +204,22 @@ class Actuators(GPIOComTeensy):
                         f"{str(self.gpio_manager.get_type_gpio(pin))}"
                     )
                     return
+                if (
+                    use_I2C
+                ):  # prevent I2C overload. Without during the test, servos where taking wrong angles when called too fast
+                    t = time.time()
+                    if t - self.t_set_servo_angle_i2c < 0.03:
+                        time.sleep(0.03 - (t - self.t_set_servo_angle_i2c))
+                        self.t_set_servo_angle_i2c = t
                 msg = (
-                    Messages.SET_SERVO_ANGLE.to_bytes()
+                    (
+                        Messages.SET_SERVO_ANGLE_I2C.to_bytes()
+                        if use_I2C
+                        else Messages.SET_SERVO_ANGLE.to_bytes()
+                    )
                     + struct.pack("<B", pin)
-                    + struct.pack("<B", angle)
+                    + struct.pack("<H", angle)
+                    + struct.pack("<H", max_angle)
                 )
                 # https://docs.python.org/3/library/struct.html#format-characters
                 self.send_bytes(msg)

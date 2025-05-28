@@ -88,8 +88,8 @@ class StuffZone(BaseArenaZone):
 
         # Update accessibility to free if an ally or enemy is within the zone
         if (
-            self.buffered_polygon.contains(ally_position) or
-            self.buffered_polygon.contains(enemy_position)
+            self.buffered_polygon.contains(ally_position)
+            or self.buffered_polygon.contains(enemy_position)
         ) and self.accessibility != ZoneAccessibility.FREE:
             self.accessibility = ZoneAccessibility.FREE
             grid_manager: GridManager = self.update_callback()

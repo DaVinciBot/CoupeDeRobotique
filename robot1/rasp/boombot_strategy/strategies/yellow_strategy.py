@@ -7,7 +7,7 @@ from strategy.core import (
     BaseTaskNode,
     DirectTransition,
     BaseSubGraph,
-    GraphRunner
+    GraphRunner,
 )
 
 from strategy.tools import (
@@ -30,7 +30,7 @@ pickup_zone_4.get_exits()[0].add_transition(
 
 yellow_strategy_runner = GraphRunner(
     logger=Logger(identifier="YellowStrategyRunner", follow_logger_manager_rules=True),
-    start=pickup_zone_4.get_entry()
+    start=pickup_zone_4.get_entry(),
 )
 
 

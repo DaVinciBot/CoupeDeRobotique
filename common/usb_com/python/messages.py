@@ -29,10 +29,12 @@ class Messages(Enum):
     SET_ODOMETRIE = 2
 
     # Actuators
-    SET_SERVO_ANGLE = 3
+    SET_SERVO_ANGLE_I2C = 3
     STEPPER_STEP = 4
     SET_SERVO_ANGLE_DETACH = 5
     ATTACH_SWITCH = 6
+    SET_SERVO_ANGLE = 7
+    SET_STEPPER_DRIVER_ACTIVATION_STATE = 8
 
     # Common (Rolling Basis + Actuators)
     RESET_TEENSY = 126

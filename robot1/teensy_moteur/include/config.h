@@ -4,7 +4,7 @@
 
 // Default position
 #define START_X 0.0
-#define START_Y 1.0
+#define START_Y 0.0
 #define START_THETA 0.0
 
 // Motor Left
@@ -23,27 +23,27 @@
 
 // Creation Rolling Basis
 // Motor
-#define MAX_PWM 180
+#define MAX_PWM 200
 
 // Encoder
-#define ENCODER_RESOLUTION 2048
-#define ENTRAXE 29.8
-#define WHEEL_DIAMETER 5.8
+#define ENCODER_RESOLUTION 1024
+#define ENTRAXE 29.5
+#define WHEEL_DIAMETER 5.9
 
 // PIDs
-#define KP_LINEAR_SPEED 30 // 30
+#define KP_LINEAR_SPEED 0 
 #define KI_LINEAR_SPEED 0
-#define KD_LINEAR_SPEED 0 // 0.005
+#define KD_LINEAR_SPEED 0 
 
-#define KP_ANGULAR_SPEED 30 // 30
+#define KP_ANGULAR_SPEED 0 
 #define KI_ANGULAR_SPEED 0
 #define KD_ANGULAR_SPEED 0
 
-#define KP_LINEAR_DISTANCE 0 // 20
+#define KP_LINEAR_DISTANCE 50
 #define KI_LINEAR_DISTANCE 0
 #define KD_LINEAR_DISTANCE 0
 
-#define KP_ANGULAR_DISTANCE 0 // 20
+#define KP_ANGULAR_DISTANCE 100
 #define KI_ANGULAR_DISTANCE 0
 #define KD_ANGULAR_DISTANCE 0
 
@@ -56,7 +56,7 @@
 #define PWM_FREQUENCY 40000
 
 // Asservissement echantillonage fréquence
-#define ASSERVISSEMENT_FREQUENCY 10000
+#define ASSERVISSEMENT_FREQUENCY 100000
 
 // Com baudrate
 #define BAUDRATE 115200

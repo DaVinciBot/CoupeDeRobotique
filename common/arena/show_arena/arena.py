@@ -56,7 +56,7 @@ class ShowArena(BaseArena):
                 (2.5, 20),
                 (12.5, 60),
                 [OrientedPoint(12.5 + distance_between_robot_and_work_zone, 40, pi)],
-            ),  # TODO: x = distance necessaire entre le robot et les conserves. Theta ??
+            ),
             (
                 (2.5, 112.5),
                 (12.5, 152.5),
@@ -100,7 +100,7 @@ class ShowArena(BaseArena):
                         300 - 12.5 - distance_between_robot_and_work_zone, 40, 0
                     )
                 ],
-            ),  # TODO: -pi/2 ou 3pi/2 ?? et je me suis pas trompé sur l'angle initial ?
+            ),
             (
                 (300 - 12.5, 112.5),
                 (300 - 2.5, 152.5),
@@ -151,7 +151,7 @@ class ShowArena(BaseArena):
                         22.5, 15 + distance_between_robot_and_work_zone, -pi / 2
                     )
                 ],
-            ),  # TODO: x = distance necessaire entre le robot et les zones jaunes. Theta ??
+            ),
             (
                 (0, 65),
                 (45, 110),
@@ -210,15 +210,6 @@ class ShowArena(BaseArena):
                 ],
             ),
             (
-                (55, 0),
-                (100, 15),
-                [
-                    OrientedPoint(
-                        77.5, 15 + distance_between_robot_and_work_zone, -pi / 2
-                    )
-                ],
-            ),
-            (
                 (100, 0),
                 (145, 45),
                 [
@@ -226,6 +217,15 @@ class ShowArena(BaseArena):
                         122.5, 45 + distance_between_robot_and_work_zone, -pi / 2
                     ),
                     OrientedPoint(100 - distance_between_robot_and_work_zone, 22.5, 0),
+                ],
+            ),
+            (
+                (55, 0),
+                (100, 15),
+                [
+                    OrientedPoint(
+                        77.5, 15 + distance_between_robot_and_work_zone, -pi / 2
+                    )
                 ],
             ),
         ]

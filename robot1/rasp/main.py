@@ -1,6 +1,8 @@
 # ====== Imports ======
 # Config
 from config_loader import CONFIG
+import os
+import subprocess
 
 from loggerplusplus import Logger, LogLevels
 
@@ -12,6 +14,7 @@ from brains import MainBrain
 from taskbrain import DictProxyAccessor, Brain
 from navigation import NavigatorTaskParams
 from sensors import Lidar, LidarDummy
+from GPIO import PIN
 
 # ====== Main ======
 if __name__ == "__main__":
@@ -57,7 +60,8 @@ if __name__ == "__main__":
     # Environment loggers
     logger_grid_manager = Logger(
         identifier="GridManager",
-        follow_logger_manager_rules=True,
+        print_log_level=LogLevels.INFO,
+        # follow_logger_manager_rules=True,
     )
     logger_show_arena = Logger(
         identifier="ShowArena",
@@ -112,6 +116,11 @@ if __name__ == "__main__":
         grid_manager_logger=logger_grid_manager,
     )
 
+    #os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
+    # Jack
+    jack = PIN(CONFIG.JACK_PIN)
+    jack.setup("input_pullup", reverse_state=True)
+
     # Movement
     # Movement manager
     # See ./brains/controllers_brain.py for more details
@@ -129,18 +138,29 @@ if __name__ == "__main__":
         lidar=lidar,
         arena=arena,
         ws_cmd=ws_cmd,
+        jack=jack,
     )
 
     """
         ###--- Run ---###
     """
+
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
     for routine in brain.get_tasks():
         ws_server.add_background_task(routine)
 
+    def force_kill_all_python():
+        """
+        Kill all running Python processes using pkill -9 python
+        """
+        cmd = "pkill -9 python"
+        subprocess.run(cmd)
+        print("All Python processes killed.")
+
+    ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
 
-    import cProfile
+    # import cProfile
 
     # profiler = cProfile.Profile()
     # profiler.enable()

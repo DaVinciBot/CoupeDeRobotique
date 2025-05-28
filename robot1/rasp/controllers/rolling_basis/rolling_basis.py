@@ -2,9 +2,12 @@ from config_loader import CONFIG
 
 # ====== Standard Library Imports ======
 import struct
+import numpy as np
+import time
+import matplotlib.pyplot as plt
 
 # ====== Third-party library imports ======
-from loggerplusplus import Logger, log
+from loggerplusplus import Logger, log, LogLevels
 
 # ====== Local Library Imports ======
 from geometry import OrientedPoint
@@ -34,6 +37,7 @@ class RollingBasis(BaseComTeensy):
         enable_crc=CONFIG.TEENSY_CRC,
         enable_dummy=CONFIG.TEENSY_DUMMY,
     ):
+        self.flag = True
         # Initialize the parent-BaseComTeensy class
         super().__init__(
             logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy
@@ -43,6 +47,10 @@ class RollingBasis(BaseComTeensy):
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
         self.linear_speed: float = 0.0
         self.angular_speed: float = 0.0
+        self._all_linear_speed: list[float] = []
+        self._all_angular_speed: list[float] = []
+        self._start_time: time = 0
+        self._time: list[float] = []
 
         # PID controllers
         self.linear_speed_pid: PID = PID(0.0, 0.0, 0.0)
@@ -74,6 +82,7 @@ class RollingBasis(BaseComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
+        # Temp to debug logs
         self.logger.info(
             "Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore")
         )
@@ -94,12 +103,20 @@ class RollingBasis(BaseComTeensy):
         """
         # Position / odometrie
         self.odometrie = OrientedPoint(
-            (struct.unpack("<f", msg[0:4])[0], struct.unpack("<f", msg[4:8])[0]),
-            struct.unpack("<f", msg[8:12])[0],
+            (struct.unpack("<d", msg[0:8])[0], struct.unpack("<d", msg[8:16])[0]),
+            struct.unpack("<d", msg[16:24])[0],
         )
         # Speeds
-        self.linear_speed = struct.unpack("<f", msg[12:16])[0]
-        self.angular_speed = struct.unpack("<f", msg[16:20])[0]
+        self.linear_speed = struct.unpack("<d", msg[24:32])[0]
+        self.angular_speed = struct.unpack("<d", msg[32:40])[0]
+
+        # self.logger.info(
+        #    f"Pos: {self.odometrie}, Linear speed: {self.linear_speed}, Angular speed: {self.angular_speed}"
+        # )
+
+        self._add_state_to_array(
+            self.linear_speed, self.angular_speed, self._get_elapsed_time()
+        )
 
     def rcv_unknown_msg(self, msg: bytes):
         """
@@ -115,7 +132,7 @@ class RollingBasis(BaseComTeensy):
     ####################################
     # Message Sending Methods          #
     ####################################
-    @log(param_logger="RollingBasis")
+    # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_speed_and_position(
         self,
         target_linear_speed: float,
@@ -132,17 +149,24 @@ class RollingBasis(BaseComTeensy):
         """
         msg = (
             Messages.SET_SPEED_AND_POSITION.to_bytes()
-            + struct.pack("<f", target_linear_speed)
-            + struct.pack("<f", target_angular_speed)
-            + struct.pack("<f", target_position.x)
-            + struct.pack("<f", target_position.y)
-            + struct.pack("<f", target_position.theta)
+            + struct.pack("<d", target_linear_speed)
+            + struct.pack("<d", target_angular_speed)
+            + struct.pack("<d", target_position.x)
+            + struct.pack("<d", target_position.y)
+            + struct.pack("<d", target_position.theta)
+        )
+
+        self.logger.info(
+            f"Setting speed and position: Linear Speed: {target_linear_speed}, "
+            + f"Angular Speed: {target_angular_speed}, Position: {self.odometrie}, "
+            + f"Target Position: {target_position.x}, "
+            + f"{target_position.y}, {target_position.theta}"
         )
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
 
-    @log("RollingBasis")
+    #@log("RollingBasis")
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
         """
         Sends a message to set the odometrie of the rolling basis.
@@ -152,11 +176,12 @@ class RollingBasis(BaseComTeensy):
         """
         msg = (
             Messages.SET_ODOMETRIE.to_bytes()
-            + struct.pack("<f", odometrie.x)
-            + struct.pack("<f", odometrie.y)
-            + struct.pack("<f", odometrie.theta)
+            + struct.pack("<d", odometrie.x)
+            + struct.pack("<d", odometrie.y)
+            + struct.pack("<d", odometrie.theta)
         )
-        self.send_bytes(msg)
+        self.send_bytes(msg) 
+        self._start_time = time.time()
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
         """
@@ -292,6 +317,47 @@ class RollingBasis(BaseComTeensy):
             )
         except Exception as e:
             self.logger.error(f"Failed to initialize PIDs: {e}")
+
+    def _get_elapsed_time(self) -> float:
+        """
+        Get the elapsed time since the task started.
+
+        Returns:
+            float: Time in seconds since the task was initiated.
+        """
+        if self._start_time is None:
+            return 0.0
+        return time.time() - self._start_time
+
+    def _add_state_to_array(
+        self, linear_speed: float, angular_speed: float, time: float
+    ) -> None:
+        """Add odometrie state to array in order to plot the odometrie
+
+        Args:
+            linar_speed (float): real linear speed received from Teensy
+            angular_speed (float): real angular speed received from Teensy
+        """
+
+        self._all_linear_speed.append(linear_speed)
+        self._all_angular_speed.append(angular_speed)
+        self._time.append(time)
+        # self.logger.info(self._all_linear_speed)
+        # self.logger.info(self.linear_speed)
+
+    @np.vectorize(otypes=[float])
+    def _target_speed(x):
+        return CONFIG.ROLLING_BASIS_SPEED_PROFILES_LINEAR["high"]["max_speed"]
+
+    def plot_answer_pid(self, state):
+        if state == self.flag:
+            self.logger.info(self._target_speed(self._time))
+            self.logger.info(self._all_linear_speed)
+            plt.plot(np.array(self._time), self._target_speed(self._time))
+            plt.plot(np.array(self._time), np.array(self._all_linear_speed))
+            plt.savefig("pid_answer.png")
+            self.flag = not self.flag
+            self.logger.info("Plotting PID answer")
 
     ####################################
     # Equality Comparison              #

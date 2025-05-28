@@ -14,6 +14,8 @@ from boombot_strategy.tasks.navigation_tasks.maneuver import (
     Backward,
 )
 
+from boombot_strategy.tasks.actuator_task.actuator_task import Build, EndBuild
+
 
 def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
     """
@@ -42,26 +44,32 @@ def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
     )
 
     # Add node for actuators action of placing item
-
-    # Add node for precise backward motion to perform construction
     construct_sub_graph.add_node(
-        f"[Construct] place item at zone {zone_construct_id}",
+        f"[Construct] placing item at zone {zone_construct_id}",
         BaseTaskNode(
-            f"[Construct] place item at zone {zone_construct_id}", Backward(10)
+            f"[Construct] placing item at zone {zone_construct_id}",
+            Build(),
         ),
     )
 
-    # Connect the navigation node to the construction maneuver node
-    construct_sub_graph.connect(
-        f"[Construct] go to zone {zone_construct_id}",
-        DirectTransition(
-            construct_sub_graph.nodes[
-                f"[Construct] place item at zone {zone_construct_id}"
-            ]
+    # Add node for precise backward motion to perform construction
+    construct_sub_graph.add_node(
+        f"[Construct] backward maneuver at zone {zone_construct_id}",
+        BaseTaskNode(
+            f"[Construct] backward maneuver at zone {zone_construct_id}", Backward(10)
+        ),
+    )
+
+    # Add node to actuators action to end construction maneuver
+    construct_sub_graph.add_node(
+        f"[Construct] end construction maneuver at zone {zone_construct_id}",
+        BaseTaskNode(
+            f"[Construct] end construction maneuver at zone {zone_construct_id}",
+            EndBuild(),
         ),
     )
 
     return construct_sub_graph.build(
         entry=f"[Construct] go to zone {zone_construct_id}",
-        exits=f"[Construct] place item at zone {zone_construct_id}",
+        exits=f"[Construct] end construction maneuver at zone {zone_construct_id}",
     )
