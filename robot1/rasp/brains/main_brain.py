@@ -60,6 +60,7 @@ class MainBrain(Brain):
         ws_ui: WServerRouteManager,
         # Tirette
         jack: PIN = None,
+        bau: PIN = None
     ) -> None:
         self.lidar: Lidar = lidar
         self.arena: ShowArena = arena
@@ -72,12 +73,18 @@ class MainBrain(Brain):
 
         self.ui_state = {
             "jack_state": False,
-            "acs_state": False,
+            "bau_state": False,
             "odometrie_state": OrientedPoint(0, 0, 0),
-            "pamis_state": False,
+            "pamis_states": {
+                "superstar": False,
+                "groupie_1": False,
+                "groupie_2": False,
+                "groupie_3": False,
+            },
         }
 
         self.jack = jack
+        self.bau = bau
         
         self.lidar_points: list[Point] = []
 
@@ -133,7 +140,7 @@ class MainBrain(Brain):
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
                 avoidance_params=StopAndWaitAvoidanceParams(
-                    acs_distance=100, timeout=30
+                acs_distance=100, timeout=30
                 ),
             )
         )
@@ -154,9 +161,11 @@ class MainBrain(Brain):
 
         # if navigator.current_task.state == NavigatorTaskState.AVOIDING:
         #       self.ui_state["acs_state"] = True
-        if isinstance(yellow_strategy_runner.active[0].tasks[0], NavigationTask):
-            if yellow_strategy_runner.active[0].tasks[0].navigator_task.state == NavigatorTaskState.AVOIDING:
-                self.ui_state["acs_state"] = True
+        # if isinstance(yellow_strategy_runner.active[0].tasks[0], NavigationTask):
+        #     if yellow_strategy_runner.active[0].tasks[0].navigator_task.state == NavigatorTaskState.AVOIDING:
+        #         self.ui_state["acs_state"] = True
+
+        self.ui_state["bau_state"] = self.bau.digital_read()
 
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = rolling_basis.odometrie
@@ -214,13 +223,13 @@ class MainBrain(Brain):
             previous_state = current_state
             to_send = {
                 "jack_state": current_state["jack_state"],
-                "acs_state": current_state["acs_state"],
+                "bau_state": current_state["bau_state"],
                 "odometrie": {
                     "x": current_state["odometrie_state"].x,
                     "y": current_state["odometrie_state"].y,
                     "theta": current_state["odometrie_state"].theta,
                 },
-                "pamis_state": current_state["pamis_state"],
+                "pamis_states": current_state["pamis_states"],
             }
             await self.ws_ui.sender.send(
                 WSmsg(sender="server", msg="update ui data", data=to_send)

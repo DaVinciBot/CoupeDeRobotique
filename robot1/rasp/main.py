@@ -142,6 +142,10 @@ if __name__ == "__main__":
     #jack = PIN(CONFIG.JACK_PIN)
     #jack.setup("input_pullup", reverse_state=True)
 
+    # BAU à tester
+    # bau = PIN(CONFIG.JACK_PIN)
+    # bau.setup("input", reverse_state=False) # j'ai mis un mode au pif donc à revoir
+
     # Movement
     # Movement manager
     # See ./brains/controllers_brain.py for more details
@@ -161,6 +165,7 @@ if __name__ == "__main__":
         ws_cmd=ws_cmd,
         ws_ui=ws_ui,
         jack=None,
+        bau=None
     )
 
     """

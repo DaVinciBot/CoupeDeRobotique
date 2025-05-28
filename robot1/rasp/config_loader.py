@@ -215,6 +215,9 @@ class CONFIG:
     # Jack
     JACK_PIN = SPECIFIC_CONFIG["jack"]["pin"]
 
+    #BAU
+    BAU_PIN = SPECIFIC_CONFIG["bau"]["pin"]
+
 
 # Logger: LoggerManager + global configuration
 from loggerplusplus import LoggerManager, LogLevels, LoggerConfig, logger_colors
