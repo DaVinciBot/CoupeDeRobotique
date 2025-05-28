@@ -24,14 +24,14 @@ class GPIOComTeensy(Com):
     """
 
     def __init__(
-            self,
-            logger: Logger,
-            serial_number: int,
-            vid: int,
-            pid: int,
-            baudrate: int,
-            enable_crc: bool = True,
-            enable_dummy: bool = False
+        self,
+        logger: Logger,
+        serial_number: int,
+        vid: int,
+        pid: int,
+        baudrate: int,
+        enable_crc: bool = True,
+        enable_dummy: bool = False,
     ):
         """
         Initializes GPIO management for the Teensy microcontroller and its communication settings.
@@ -54,4 +54,6 @@ class GPIOComTeensy(Com):
         self.gpio_manager: GPIOManager = GPIOManager(logger=logger, nb_pin=41)
 
         # Initialize the parent-Com class
-        super().__init__(logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy)
+        super().__init__(
+            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy
+        )

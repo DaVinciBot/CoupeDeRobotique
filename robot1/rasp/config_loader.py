@@ -29,6 +29,12 @@ class CONFIG:
     )  # Add common directory to the path (to be able to import common modules)
     CONFIG_STORE = load_json_file(os.path.join(ROOT_DIR, "config.json"))
 
+    from navigation import (
+        SpeedProfiler,
+        BasicSpeedProfile,
+        LinearRampedSpeedProfile,
+    )
+
     # CONSTANTS TO DEFINE !
     # General config
     GENERAL_CONFIG = CONFIG_STORE[GENERAL_CONFIG_KEY]
@@ -65,11 +71,15 @@ class CONFIG:
     LOG_CONFIG = SPECIFIC_CONFIG["log"]
 
     LOGGER_MANAGER_CONFIG = LOG_CONFIG["logger_manager"]
-    LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER = LOGGER_MANAGER_CONFIG[
-        "enable_files_logs_monitoring_only_for_one_logger"
+    LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER = (
+        LOGGER_MANAGER_CONFIG["enable_files_logs_monitoring_only_for_one_logger"]
+    )
+    LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE = LOGGER_MANAGER_CONFIG[
+        "enable_dynamic_config_update"
     ]
-    LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE = LOGGER_MANAGER_CONFIG["enable_dynamic_config_update"]
-    LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER = LOGGER_MANAGER_CONFIG["enable_unique_logger_identifier"]
+    LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER = LOGGER_MANAGER_CONFIG[
+        "enable_unique_logger_identifier"
+    ]
 
     LOGGER_CONFIG = LOG_CONFIG["logger"]
     LOGGER_COLORS = LOGGER_CONFIG["colors"]
@@ -83,7 +93,9 @@ class CONFIG:
     LOGGER_FILES_MONITORING = LOGGER_CONFIG["files_monitoring"]
     LOGGER_FILE_SIZE_UNIT = LOGGER_CONFIG["file_size_unit"]
     LOGGER_DISK_ALERT_THRESHOLD_PERCENT = LOGGER_CONFIG["disk_alert_threshold_percent"]
-    LOGGER_FILES_SIZE_ALERT_THRESHOLD_PERCENT = LOGGER_CONFIG["log_files_size_alert_threshold_percent"]
+    LOGGER_FILES_SIZE_ALERT_THRESHOLD_PERCENT = LOGGER_CONFIG[
+        "log_files_size_alert_threshold_percent"
+    ]
     LOGGER_MAX_LOG_FILE_SIZE = LOGGER_CONFIG["max_log_file_size"]
     LOGGER_IDENTIFIER_MAX_WIDTH = LOGGER_CONFIG["identifier_max_width"]
     LOGGER_FILENAME_LINENO_MAX_WIDTH = LOGGER_CONFIG["filename_lineno_max_width"]
@@ -98,19 +110,84 @@ class CONFIG:
     ROLLING_BASIS_TEENSY_SER = ROLLING_BASIS_CONFIG["rolling_basis_teensy_ser"]
 
     ROLLING_BASIS_PIDS_CONFIG = ROLLING_BASIS_CONFIG["pids"]
-    ROLLING_BASIS_PIDS_LINEAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["linear_speed"]
-    ROLLING_BASIS_PIDS_ANGULAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["angular_speed"]
-    ROLLING_BASIS_PIDS_LINEAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["linear_position"]
-    ROLLING_BASIS_PIDS_ANGULAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG["angular_position"]
+    ROLLING_BASIS_PIDS_LINEAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
+        "linear_speed"
+    ]
+    ROLLING_BASIS_PIDS_ANGULAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
+        "angular_speed"
+    ]
+    ROLLING_BASIS_PIDS_LINEAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
+        "linear_position"
+    ]
+    ROLLING_BASIS_PIDS_ANGULAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
+        "angular_position"
+    ]
 
     ROLLING_BASIS_SPEED_PROFILES_CONFIG = ROLLING_BASIS_CONFIG["speed_profiles"]
-    ROLLING_BASIS_DEFAULT_SPEED_PROFILE: dict[str:float] = ROLLING_BASIS_SPEED_PROFILES_CONFIG["default"]
-    ROLLING_BASIS_HIGH_SPEED_PROFILE: dict[str:float] = ROLLING_BASIS_SPEED_PROFILES_CONFIG["high"]
+    ROLLING_BASIS_SPEED_PROFILES_LINEAR = ROLLING_BASIS_SPEED_PROFILES_CONFIG[
+        "linear_speed"
+    ]
+    ROLLING_BASIS_SPEED_PROFILES_ANGULAR = ROLLING_BASIS_SPEED_PROFILES_CONFIG[
+        "angular_speed"
+    ]
 
+    ROLLING_BASIS_SLOW_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
+        linear_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["slow"]
+        ),
+        angular_speed_profile=BasicSpeedProfile(
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["slow"]["max_speed"]
+        ),
+    )
+    ROLLING_BASIS_DEFAULT_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
+        linear_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]
+        ),
+        angular_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]
+        ),
+    )
+    ROLLING_BASIS_HIGH_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
+        linear_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["high"]
+        ),
+        angular_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_ANGULAR["high"]
+        ),
+    )
+    ROLLING_BASIS_TO_PICKUP_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
+        linear_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["to_pickup"]
+        ),
+        angular_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]
+        ),
+    )
+    ROLLING_BASIS_TO_CONSTRUCT_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
+        linear_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["to_construct"]
+        ),
+        angular_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]
+        ),
+    )
+    ROLLING_BASIS_SPEED_PROFILER_PID: SpeedProfiler = SpeedProfiler(
+        linear_speed_profile=BasicSpeedProfile(
+            ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]["max_speed"]
+        ),
+        angular_speed_profile=BasicSpeedProfile(
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["max_speed"]
+        ),
+    )
 
     # Actuators
     ACTUATORS_CONFIG = SPECIFIC_CONFIG["actuators"]
     ACTUATOR_TEENSY_SER = ACTUATORS_CONFIG["actuators_teensy_ser"]
+    ACTUATOR_SERVOS_CONFIG = ACTUATORS_CONFIG["servos_config"]
+    ACTUATOR_SERVOS_CONFIG = {int(k): v for k, v in ACTUATOR_SERVOS_CONFIG.items()}
+
+    ACTUATOR_ELEVATOR_CONFIG = ACTUATORS_CONFIG["elevator"]
+    ACTUATOR_DELAY = ACTUATORS_CONFIG["delay"]
 
     # Lidar
     LIDAR_CONFIG = SPECIFIC_CONFIG["lidar"]
@@ -128,3 +205,42 @@ class CONFIG:
     ARENA_OBSTACLE_BUFFER = ARENA_CONFIG["obstacle_buffer"]
     ARENA_CHUNK_SIZE = ARENA_CONFIG["chunk_size"]
     ARENA_FORBIDDEN_COVER_THRESHOLD = ARENA_CONFIG["forbidden_cover_threshold"]
+
+    # Jack
+    JACK_PIN = SPECIFIC_CONFIG["jack"]["pin"]
+
+
+# Logger: LoggerManager + global configuration
+from loggerplusplus import LoggerManager, LogLevels, LoggerConfig, logger_colors
+
+LoggerManager.enable_files_logs_monitoring_only_for_one_logger = (
+    CONFIG.LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER
+)
+LoggerManager.enable_dynamic_config_update = (
+    CONFIG.LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE
+)
+LoggerManager.enable_unique_logger_identifier = (
+    CONFIG.LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER
+)
+
+LoggerManager.global_config = LoggerConfig.from_kwargs(
+    colors=getattr(logger_colors, CONFIG.LOGGER_COLORS),
+    path=CONFIG.LOGGER_PATH,
+    # LogLevels
+    decorator_log_level=getattr(LogLevels, CONFIG.LOGGER_DECORATOR_LOG_LEVEL),
+    print_log_level=getattr(LogLevels, CONFIG.LOGGER_PRINT_LOG_LEVEL),
+    file_log_level=getattr(LogLevels, CONFIG.LOGGER_FILE_LOG_LEVEL),
+    # Loggers Output
+    print_log=CONFIG.LOGGER_PRINT_LOG,
+    write_to_file=CONFIG.LOGGER_WRITE_TO_FILE,
+    # Monitoring
+    display_monitoring=CONFIG.LOGGER_DISPLAY_MONITORING,
+    files_monitoring=CONFIG.LOGGER_FILES_MONITORING,
+    file_size_unit=CONFIG.LOGGER_FILE_SIZE_UNIT,
+    disk_alert_threshold_percent=CONFIG.LOGGER_DISK_ALERT_THRESHOLD_PERCENT,
+    log_files_size_alert_threshold_percent=CONFIG.LOGGER_FILES_SIZE_ALERT_THRESHOLD_PERCENT,
+    max_log_file_size=CONFIG.LOGGER_MAX_LOG_FILE_SIZE,
+    # Placement
+    identifier_max_width=CONFIG.LOGGER_IDENTIFIER_MAX_WIDTH,
+    filename_lineno_max_width=CONFIG.LOGGER_FILENAME_LINENO_MAX_WIDTH,
+)

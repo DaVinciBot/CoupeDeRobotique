@@ -61,50 +61,140 @@
       }
     },
     "rolling_basis": {
-      "rolling_basis_teensy_ser": 12675800,
+      "rolling_basis_teensy_ser": 12678590,
       "pids": {
         "linear_speed": {
-          "kp": 10.0,
+          "kp": 0.0,
           "ki": 0.0,
           "kd": 0.0
         },
         "angular_speed": {
-          "kp": 30.0,
+          "kp": 0.0,
           "ki": 0.0,
           "kd": 0.0
         },
         "linear_position": {
-          "kp": 0.0,
-          "ki": 0.0,
-          "kd": 0.0
+          "kp": 5.0,
+          "ki": 0,
+          "kd": 0
         },
         "angular_position": {
-          "kp": 0.0,
-          "ki": 0.0,
-          "kd": 0.0
+          "kp": 10.0,
+          "ki": 0,
+          "kd": 0
         }
       },
       "speed_profiles": {
-        "default": {
-          "max_linear_speed": 5.0,
-          "max_angular_speed": 3.0,
-          "max_linear_acceleration": 5.0,
-          "max_angular_acceleration": 3.0,
-          "max_linear_deceleration": 10.0,
-          "max_angular_deceleration": 3.0
+        "angular_speed": {
+          "slow": {
+            "acceleration": 1,
+            "deceleration": 1,
+            "max_speed": 1
+          },
+          "default": {
+            "acceleration": 3.1415,
+            "deceleration": 1,
+            "max_speed": 3.1415
+          },
+          "high": {
+            "acceleration": 3.1415,
+            "deceleration": 1,
+            "max_speed": 5
+          }
         },
-        "high": {
-          "max_linear_speed": 20.0,
-          "max_angular_speed": 3.1415,
-          "max_linear_acceleration": 10.0,
-          "max_angular_acceleration": 3.1415,
-          "max_linear_deceleration": 15.0,
-          "max_angular_deceleration": 3.1415
+        "linear_speed": {
+          "slow": {
+            "acceleration": 10,
+            "deceleration": 1,
+            "max_speed": 10
+          },
+          "default": {
+            "acceleration": 15,
+            "deceleration": 10,
+            "max_speed": 20
+          },
+          "high": {
+            "acceleration": 20,
+            "deceleration": 15,
+            "max_speed": 30
+          },
+          "to_pickup": {
+            "acceleration": 20,
+            "deceleration": 5,
+            "max_speed": 20
+          },
+          "to_construct": {
+            "acceleration": 10,
+            "deceleration": 5,
+            "max_speed": 20
+          }
         }
       }
     },
     "actuators": {
-      "actuators_teensy_ser": 12678600
+      "actuators_teensy_ser": 14735440,
+      "servos_config": {
+        "0": {
+          "fold_angle": 20,
+          "deploy_angle": 110,
+          "docking": 90,
+          "max_angle": 270
+        },
+        "1": {
+          "fold_angle": 0,
+          "deploy_angle": 180,
+          "max_angle": 180
+        },
+        "2": {
+          "fold_angle": 250,
+          "deploy_angle": 160,
+          "max_angle": 270
+        },
+        "3": {
+          "fold_angle": 180,
+          "deploy_angle": 0,
+          "max_angle": 180
+        },
+        "4": {
+          "fold_angle": 10,
+          "deploy_angle": 110,
+          "max_angle": 270
+        },
+        "5": {
+          "fold_angle": 0,
+          "deploy_angle": 180,
+          "max_angle": 180
+        },
+        "6": {
+          "fold_angle": 250,
+          "deploy_angle": 160,
+          "max_angle": 270
+        },
+        "7": {
+          "fold_angle": 180,
+          "deploy_angle": 0,
+          "max_angle": 180
+        },
+        "8": {
+          "fold_angle": 240,
+          "deploy_angle": 140,
+          "docking": 130,
+          "max_angle": 270
+        },
+        "9": {
+          "fold_angle": 130,
+          "deploy_angle": 90,
+          "maintain_plank": 140,
+          "max_angle": 270
+        }
+      },
+      "elevator": {
+        "top_steps": 700,
+        "folded_steps": 360,
+        "bottom_steps": 0,
+        "speed": 2000
+      },
+      "delay": 0.02
     },
     "lidar": {
       "distances_unit": "cm",
@@ -117,6 +207,9 @@
     },
     "movement_manager": {
       "movement_resolution": 1
+    },
+    "jack": {
+      "pin": 26.0
     }
   },
   "arena": {

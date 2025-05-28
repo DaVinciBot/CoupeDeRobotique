@@ -1,11 +1,10 @@
 from config_loader import CONFIG
 
 # ====== Standard Library Imports ======
-import matplotlib.pyplot as plt
 import numpy as np
-import random
-import math
-import json
+import matplotlib.pyplot as plt
+import time
+from math import pi
 
 # ====== Third-party library imports ======
 from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
@@ -15,57 +14,70 @@ from taskbrain import Brain
 # ====== Local Library Imports ======
 from geometry import OrientedPoint, Point, is_empty
 from arena import ShowArena, BaseArenaZone
-from movement import (
-    MovementManager,
-    GoToParams,
-    TrajectoryParams,
-    SpeedProfile,
-    RollingBasisCommand,
-)
+
 from arena import AllyZone, TeamColor
 
 # ====== Internal Project Imports ======
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+from controllers.actuators import Actuators, ActuatorsDummy
 from sensors import Lidar
+
+from GPIO import PIN
+
+# from navigation_tasks.tasks import yellow_start_tasks
+
+# from boombot_strategy import ShowGameContext
+
+from navigation import (
+    Navigator,
+    NavigatorTaskParams,
+    DeltaPathPlannerParams,
+    SequentialTrajectoryPlannerParams,
+    SpeedProfiler,
+    StopAndWaitAvoidanceParams,
+    BasicPathPlannerParams,
+    NoAvoidanceParams,
+)
+
+from navigation.avoidance.acs_detection_profiles import (
+    RectangularProjectionAcsDetectionProfileParams,
+    NoAcsDetectionProfileParams,
+)
+
+from navigation.trajectory_planner import Direction
+from usb_com.python.tools import get_all_serial_number
+
+from navigation.navigator.task import NavigatorTaskState
+
+import asyncio
 
 
 class MainBrain(Brain):
     def __init__(
-            self,
-            logger: Logger,
-            # Sensor
-            lidar: Lidar,
-            # Environment
-            arena: ShowArena,
-            # WS routes
-            ws_cmd: WServerRouteManager
-    ) -> None:
+        self,
+        logger: Logger,
         # Sensor
-        self.lidar: Lidar = lidar
+        lidar: Lidar,
         # Environment
-        self.arena: ShowArena = arena
+        arena: ShowArena,
         # WS routes
+        ws_cmd: WServerRouteManager,
+        # Tirette
+        jack: PIN = None,
+    ) -> None:
+        self.lidar: Lidar = lidar
+        self.arena: ShowArena = arena
         self.ws_cmd: WServerRouteManager = ws_cmd
 
-        # Shared processes attributes
-        self.rolling_basis_odometrie = OrientedPoint(0, 0, 0)
+        # Shared attributes
+        self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
+        self.navigator_task: NavigatorTaskParams = None
 
-        self.go_to_params: GoToParams | None = None
+        self.jack = jack
 
-        # For test purpose
-        self.th_ally_zone: AllyZone = AllyZone(
-            logger=Logger(identifier="th_ally", follow_logger_manager_rules=True),
-            point=self.rolling_basis_odometrie,
-            robot_size=5,
-        )
-        self.th_ally_zone.zone_color = "#82795f"
-
-        self.path: list[OrientedPoint] = []
+        self.lidar_points: list[Point] = []
 
         super().__init__(logger, self)
-
-        # Attributes for the visualization
-        self.fig, self.ax = plt.subplots()
 
     """
     ### Secondary Processes ###
@@ -73,60 +85,143 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
+    # Deactivate for now
+    @Brain.task(process=False, run_on_start=False)
+    async def wait_for_trigger(self):
+        false_jacks_in_a_row = 0
+        while false_jacks_in_a_row < 5:
+            if self.jack.safe_digital_read():
+                false_jacks_in_a_row = 0
+                self.logger.info(f"Jack state: {self.jack.digital_read()}")
+            else:
+                false_jacks_in_a_row += 1
+                self.logger.info(f"Jack state: {self.jack.digital_read()}")
+            await asyncio.sleep(0.1)
+
     @Brain.task(
         process=True,
-        run_on_start=True,
-        refresh_rate=0.1,
+        run_on_start=False,
+        refresh_rate=0.001,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
-    def handle_movement_manager(self) -> None:
+    def run(self) -> None:
         # --- Initialization --- #
-        movement_manager = MovementManager(
-            logger=Logger(identifier="MovementManager", follow_logger_manager_rules=True),
-            path_finder_logger=Logger(identifier="PathFinder", follow_logger_manager_rules=True),
-            trajectory_computer_logger=Logger(identifier="TrajectoryComputer", follow_logger_manager_rules=True),
-            arena_ptr=self.arena,
-        )
+        from boombot_strategy import ShowGameContext, yellow_strategy_runner
+
+        navigator = Navigator()
+        
+        actuator = Actuators()
+
+        # Rolling basis & Actuators
         rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
+        time.sleep(1)
+        rolling_basis._initialize_pids()
+        time.sleep(1)
+        #rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        time.sleep(1)
 
-        if isinstance(rolling_basis, RollingBasisDummy):
-            rolling_basis.logger.warning("RollingBasisDummy is used")
+        # navigator.add_navigation_task(
+        #     NavigatorTaskParams(
+        #         goal=OrientedPoint(40, 50, 0),
+        #         timeout=None,
+        #         path_planner_params=BasicPathPlannerParams(),
+        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+        #         speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+        #         avoidance_params=StopAndWaitAvoidanceParams(
+        #             acs_distance=100, timeout=30
+        #         ),
+        #     )
+        # )
+
+        # 1. pousse contre bordure pour deployer banderole
+        # navigator.add_navigation_task(
+        #     NavigatorTaskParams(
+        #         goal=None,
+        #         timeout=None,
+        #         path_planner_params=DeltaPathPlannerParams(distance=40),
+        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+        #         speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+        #         avoidance_params=NoAvoidanceParams(),
+        #         acs_detection_profile_params=NoAcsDetectionProfileParams()
+        #     )
+        # )
+        # 2. recule avant de demi tour pour ne pas shooter la banderole
+        # navigator.add_navigation_task(
+        #     NavigatorTaskParams(
+        #         goal=None,
+        #         timeout=None,
+        #         path_planner_params=DeltaPathPlannerParams(distance=-10),
+        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(Direction.BACKWARD),
+        #         speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
+        #         avoidance_params=NoAvoidanceParams(),
+        #         acs_detection_profile_params=NoAcsDetectionProfileParams()
+        #     )
+        # )
+
+        # 3. go to zone 9 pour choper le matos
+        # navigator.add_navigation_task(
+        #     NavigatorTaskParams(
+        #         goal=OrientedPoint(300 - 110, 75, pi / 2),
+        #         timeout=None,
+        #         path_planner_params=BasicPathPlannerParams(),
+        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+        #         speed_profiler=CONFIG.ROLLING_BASIS_TO_PICKUP_SPEED_PROFILER,
+        #         avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
+        #         acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+        #             acs_distance=20, width_view=20
+        #         ),
+        #     )
+        # )
+
+
 
         # --- MetaProg is insane (loop) --- #
 
-        # Update rolling basis odometrie if main process has updated it
-        if self.rolling_basis_odometrie != rolling_basis.odometrie:
-            rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-
-        # Force the sync of arena inside the movement_manager
-        movement_manager.arena_ptr = self.arena
-
-        # Trigger movement manager to go to the new destination when the params change
-        if self.go_to_params != movement_manager.params:
-            print(self.go_to_params)
-            print(movement_manager.params)
-            movement_manager.compute_go_to(
-                current_linear_speed=rolling_basis.linear_speed,
-                current_angular_speed=rolling_basis.angular_speed,
-                params=self.go_to_params,
+        if navigator.current_task is not None:
+            cmd = navigator.handle(
+                ally_zone=self.arena.ally_zone,
+                enemy_zone=self.arena.enemy_zone,
             )
-            movement_manager.logger.info("New GoToParams received")
+            rolling_basis.set_speed_and_position(*cmd.get_command())
 
-        # Handle the 'go to' command
-        if movement_manager.params is not None:
-            cmd: RollingBasisCommand = movement_manager.handle_go_to()
-            if cmd is not None:
-                self.th_ally_zone = AllyZone(
-                    logger=Logger(identifier="th_ally", follow_logger_manager_rules=True),
-                    point=cmd.position,
-                    robot_size=5
-                )
-                rolling_basis.set_speed_and_position(*cmd.get_command())
-                self.rolling_basis_odometrie = rolling_basis.odometrie
-                self.path = movement_manager.trajectory_computer.path_to_follow
+        yellow_strategy_runner.handle(
+            ShowGameContext(
+                arena=self.arena, rolling_basis=rolling_basis, actuators=actuator
+            )
+        )
+        self.rolling_basis_odometrie = rolling_basis.odometrie
+
+    @Brain.task(
+        process=True,
+        run_on_start=True, #True to get visualization
+        refresh_rate=0.01,
+        define_loop_later=True,
+        start_loop_marker="# --- MetaProg is insane (loop) --- #",
+    )
+    def visualize_arena(self) -> None:
+        # --- Initialization --- #
+        fig, ax = plt.subplots()
+
+        # --- MetaProg is insane (loop) --- #
+        ax.clear()
+        self.arena.visualize(
+            # Visualization options
+            show_buffer=True,
+            # trajectory=self.path,
+            display_zones_go_to_positions=True,
+            show_ally_direction=True,
+            # Plot options
+            show=False,
+            plot=(ax, fig),
+            # Additional options
+            # additional_zones=[self.th_ally_zone],
+            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
+            additional_points=self.lidar_points,
+        )
+        plt.pause(0.01)
 
     """
     ### Main Process ###
@@ -134,124 +229,39 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.2)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def update_arena(self) -> None:
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
             lidar_scan_polars=np.array([]),  # self.lidar.scan_to_polars(),
             optimized_update=True,
+            # _enemy_position=self.position_generator(),
         )
 
-        # obstacles = self.arena.remove_outside(
-        #     self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
+        # self.lidar_points = list(
+        #     self.arena.remove_outside(
+        #         self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
+        #     ).geoms
         # )
 
-        # Visualize the arena
-        self.ax.clear()
-        self.arena.visualize(
-            # Visualization options
-            show_buffer=True,
-            trajectory=self.path,
-            display_zones_go_to_positions=True,
-            show_ally_direction=True,
-            # Plot options
-            show=False,
-            plot=(self.ax, self.fig),
-            # Additional options
-            additional_zones=[self.th_ally_zone],
-            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
-        )
-        plt.pause(0.01)
-
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
-    async def zombie_mode(self):
-        """
-        executes requests received by the server. Use Postman to send request to the server
-        Use eval and await eval to run the code you want. Code must be sent as a string
-        """
-        # Check cmd
-        cmd = await self.ws_cmd.receiver.get(wait_msg=True)
-
-        if cmd != WSmsg():
-            self.logger.info(f"Zombie instruction {cmd.msg} received: {cmd.data}")
-
-            instructions = []
-            if isinstance(cmd.data, str):
-                instructions.append(cmd.data)
-            elif isinstance(cmd.data, list):
-                instructions = cmd.data
-
-            # Exec: for attribution cases (x = 1)
-            if cmd.msg == "exec":
-                for instruction in instructions:
-                    exec(instruction)
-
-            # Eval: for return cases (print(x))
-            elif cmd.msg == "eval":
-                instructions = []
-                execution = "No instructions"
-                if isinstance(cmd.data, str):
-                    instructions.append(cmd.data)
-                elif isinstance(cmd.data, list):
-                    instructions = cmd.data
-                for instruction in instructions:
-                    if instruction.startswith("await "):
-                        execution = await eval(instruction.removeprefix("await "))
-                    else:
-                        execution = eval(instruction)
-                message = WSmsg.from_json({
-                    "sender": CONFIG.WS_SENDER_NAME,
-                    "msg": "Execution of sender instruction",
-                    "data": str(execution)
-                })
-                await self.ws_cmd.sender.send(message)
-
-            else:
-                self.logger.warning(
-                    f"Command not implemented: {cmd.msg} / {cmd.data}",
-                )
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
+    async def print_odo(self) -> None:
+        self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
 
     """ ### One-Shot Tasks ### """
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
+        # await self.wait_for_trigger()
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        self.rolling_basis_odometrie = OrientedPoint(20, 25, 0)
-        self.arena.enemy_zone.update(self.arena.team_color, self.rolling_basis_odometrie, Point(290, 190))
-
-
-"""
-This main brain is dedicated to test the robot movement WITHOUT Lidar.
-
-Use ZOMBIE_MODE to send instructions to the robot.
-Instruction example:
----
-self.go_to_params = GoToParams(
-    trajectory_params=TrajectoryParams(
-        speed_profile=SpeedProfile.from_dict(
-            CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE
-        ),
-        goal=OrientedPoint(250, 140),
-        resolution=1,
-        smooth_trajectory=True,
-    ),
-    acs_distance=30,
-    path_finder_recompute_distance=80,
-    timeout=-1.0,
-    is_mandatory=False,
-    goal_tolerance=0.1,
-    distance_to_goal_to_dont_recompute_path=10,
-)
----
-
-Exemple in postman with zombie mode:
-url: ws://rob.local:8080/cmd?sender=postman_zombie
-message:
-{
-    "sender": "zombie_master",
-    "msg": "exec",
-    "data": "self.go_to_params = GoToParams(trajectory_params=TrajectoryParams(speed_profile=SpeedProfile.from_dict(CONFIG.ROLLING_BASIS_HIGH_SPEED_PROFILE), goal=OrientedPoint(250, 140), resolution=1, smooth_trajectory=True), acs_distance=30, path_finder_recompute_distance=80, timeout=-1.0, is_mandatory=False, goal_tolerance=0.1, distance_to_goal_to_dont_recompute_path=10)"
-}
-"""
+        start_position = OrientedPoint(0,0,0)
+        
+        self.arena.enemy_zone.update(
+            self.arena.team_color, start_position, Point(290, 190)
+        )
+        self.rolling_basis_odometrie = start_position
+        
+        await asyncio.sleep(1)
+        await self.run()

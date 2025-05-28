@@ -5,24 +5,23 @@
 
 // Custom libraries used: RollingBasis, Com
 #include <rolling_basis.h> // Rolling Basis object to manage the motors and robot position
-#include <com.h>           // Communication object to manage the communication between the teensy and the Raspberry Pi
 
 // Configuration file (contains all the constants and pinout), it is just a main.cpp header file
 #include <config.h>
 
-
 // 1. Instanciate the Rolling Basis object
 // a. Define the PID controllers
-PID linear_speed_pid(KP_LINEAR_SPEED, KI_LINEAR_SPEED, KD_LINEAR_SPEED);
-PID angular_speed_pid(KP_ANGULAR_SPEED, KI_ANGULAR_SPEED, KD_ANGULAR_SPEED);
-
-PID linear_distance_pid(KP_LINEAR_DISTANCE, KI_LINEAR_DISTANCE, KD_LINEAR_DISTANCE);
-PID angular_distance_pid(KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DISTANCE);
+PID linear_distance_pid(KP_LINEAR_DISTANCE, KI_LINEAR_DISTANCE, KD_LINEAR_DISTANCE, -250, 250, 70.0);
+PID angular_distance_pid(KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DISTANCE, -250, 250, 70.0);
 
 // b. Instanciate the Rolling Basis object
 Rolling_Basis *rolling_basis_ptr = new Rolling_Basis(
-    ENCODER_RESOLUTION, CENTER_DISTANCE, WHEEL_DIAMETER,
-    linear_speed_pid, angular_speed_pid, linear_distance_pid, angular_distance_pid);
+  ENCODER_RESOLUTION, ENTRAXE, WHEEL_DIAMETER,
+  linear_distance_pid, angular_distance_pid
+);
+
+// 2. Instanciate the Communication object
+Com *com;
 
 // c. Define the motors interrupt functions
 /******* Attach Interrupt *******/
@@ -41,9 +40,6 @@ inline void right_motor_read_encoder()
   else
     rolling_basis_ptr->right_motor->ticks++;
 }
-
-// 2. Instanciate the Communication object
-Com *com;
 
 // 3. Define all com callback functions
 // a. define globals variables to keep in memory callback functions updated
@@ -73,12 +69,6 @@ void set_pid(byte *msg, byte size)
   bool is_valid_pid = true;
   switch (pid_msg->pid_type)
   {
-  case LINEAR_SPEED_PID_ID:
-    pid = &rolling_basis_ptr->linear_speed_pid;
-    break;
-  case ANGULAR_SPEED_PID_ID:
-    pid = &rolling_basis_ptr->angular_speed_pid;
-    break;
   case LINEAR_POSITION_PID_ID:
     pid = &rolling_basis_ptr->linear_distance_pid;
     break;
@@ -91,9 +81,7 @@ void set_pid(byte *msg, byte size)
   }
   if (is_valid_pid)
   {
-    pid->kp = pid_msg->kp;
-    pid->ki = pid_msg->ki;
-    pid->kd = pid_msg->kd;
+    pid->updateParameters(pid_msg->kp, pid_msg->ki, pid_msg->kd);
   }
 }
 
@@ -109,7 +97,7 @@ void set_odometrie(byte *msg, byte size)
 void reset_teensy(byte *msg, byte size)
 {
   // TODO: reset the teensy, à tester !
-  void(*reboot) (void) = 0;
+  void (*reboot)(void) = 0;
   reboot();
 }
 
@@ -128,7 +116,7 @@ void initialize_callback_functions()
 void handle()
 {
   rolling_basis_ptr->odometrie_handle();
-  rolling_basis_ptr->handle(target_position, target_linear_speed, target_angular_speed);
+  rolling_basis_ptr->handle(target_position, target_linear_speed, target_angular_speed, com);
 }
 
 void setup()
@@ -163,16 +151,16 @@ void loop()
   com->handle_callback(callback_functions);
 
   // Send rolling basis state
-  msg_update_rolling_basis rolling_basis_msg;
-  if (counter++ > 1024)
+  if (counter++ > 4096) // 4096 = 2^12
   {
+    msg_update_rolling_basis rolling_basis_msg;
     // Rolling Basis position
     rolling_basis_msg.x = rolling_basis_ptr->X;
     rolling_basis_msg.y = rolling_basis_ptr->Y;
     rolling_basis_msg.theta = rolling_basis_ptr->THETA;
     // Rolling Basis speeds
-    rolling_basis_msg.current_linear_speed = target_angular_speed;
-    rolling_basis_msg.current_angular_speed = rolling_basis_ptr->angular_speed;
+    rolling_basis_msg.current_linear_speed = 0;
+    rolling_basis_msg.current_angular_speed = 0;
 
     com->send_msg((byte *)&rolling_basis_msg, sizeof(msg_update_rolling_basis));
     counter = 0;
