@@ -40,6 +40,20 @@ if __name__ == "__main__":
         identifier="WS_cmd_Receiver",
         follow_logger_manager_rules=True,
     )
+
+    logger_ws_ui_route_manager = Logger(
+        identifier="WS_UI_RouteManager",
+        follow_logger_manager_rules=True,
+    )
+    logger_ws_ui_sender = Logger(
+        identifier="WS_UI_Sender",
+        follow_logger_manager_rules=True,
+    )
+    logger_ws_ui_receiver = Logger(
+        identifier="WS_UI_Receiver",
+        follow_logger_manager_rules=True,
+    )
+
     logger_brain = Logger(
         identifier="Brain",
         # Only Brain manages monitoring
@@ -88,6 +102,13 @@ if __name__ == "__main__":
         sender=WSender(logger=logger_ws_cmd_sender, name=CONFIG.WS_SENDER_NAME),
     )
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
+
+    ws_ui = WServerRouteManager(
+        logger=logger_ws_ui_route_manager,
+        receiver=WSreceiver(logger=logger_ws_ui_receiver, use_queue=True),
+        sender=WSender(logger=logger_ws_ui_sender, name=CONFIG.WS_UI_SENDER_NAME)
+    )
+    ws_server.add_route_handler(CONFIG.WS_UI_ROUTE, ws_ui)
 
     # Controllers
     # Rolling Basis

@@ -14,7 +14,6 @@ from taskbrain import Brain
 # ====== Local Library Imports ======
 from geometry import OrientedPoint, Point, is_empty
 from arena import ShowArena, BaseArenaZone
-
 from arena import AllyZone, TeamColor
 
 # ====== Internal Project Imports ======
@@ -55,16 +54,25 @@ class MainBrain(Brain):
         arena: ShowArena,
         # WS routes
         ws_cmd: WServerRouteManager,
+        ws_ui: WServerRouteManager,
         # Tirette
         jack: PIN = None,
     ) -> None:
         self.lidar: Lidar = lidar
         self.arena: ShowArena = arena
         self.ws_cmd: WServerRouteManager = ws_cmd
+        self.ws_ui: WServerRouteManager = ws_ui
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
         self.navigator_task: NavigatorTaskParams = None
+
+        self.ui_state = {
+            "jack_state": False,
+            "acs_state": False,
+            "odometrie_state": OrientedPoint(0, 0, 0),
+            "pamis_state": False,
+        }
 
         self.jack = jack
         
@@ -85,7 +93,9 @@ class MainBrain(Brain):
         while false_jacks_in_a_row < 5:
             if self.jack.safe_digital_read():
                 false_jacks_in_a_row = 0
-                self.logger.info(f"Jack state: {self.jack.digital_read()}")
+                jack_state: bool = self.jack.digital_read()
+                self.ui_state["jack_state"] = jack_state
+                self.logger.info(f"Jack state: {jack_state}")
             else:
                 false_jacks_in_a_row += 1
                 self.logger.info(f"Jack state: {self.jack.digital_read()}")
@@ -100,7 +110,7 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        # from boombot_strategy import ShowGameContext, yellow_strategy_runner
+        from boombot_strategy import ShowGameContext, yellow_strategy_runner, NavigationTask
 
         navigator = Navigator()
 
@@ -138,7 +148,15 @@ class MainBrain(Brain):
         #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
         #     )
         # )
+
+        # if navigator.current_task.state == NavigatorTaskState.AVOIDING:
+        #       self.ui_state["acs_state"] = True
+        if isinstance(yellow_strategy_runner.active[0].tasks[0], NavigationTask):
+            if yellow_strategy_runner.active[0].tasks[0].navigator_task.state == NavigatorTaskState.AVOIDING :
+                self.ui_state["acs_state"] = True
+
         self.rolling_basis_odometrie = rolling_basis.odometrie
+        self.ui_state["odometrie_state"] = rolling_basis.odometrie
 
     @Brain.task(
         process=True,
@@ -177,6 +195,36 @@ class MainBrain(Brain):
 
     """ ### Routines ### """
 
+    @Brain.task(
+        process=False,
+        run_on_start=True,
+        refresh_rate=1,
+        define_loop_later=True,
+        start_loop_marker="# --- MetaProg is insane (loop) --- #",
+    )
+    async def update_ui(self):
+        previous_state = self.ui_state.copy()
+
+        # --- MetaProg is insane (loop) --- #
+        current_state = self.ui_state.copy()
+
+        if current_state != previous_state:
+            previous_state = current_state
+            to_send = {
+                "jack_state": current_state["jack_state"],
+                "acs_state": current_state["acs_state"],
+                "odometrie": {
+                    "x": current_state["odometrie_state"].x,
+                    "y": current_state["odometrie_state"].y,
+                    "theta": current_state["odometrie_state"].theta,
+                },
+                "pamis_state": current_state["pamis_state"],
+            }
+            await self.ws_ui.sender.send(
+                WSmsg(sender="server", msg="update ui data", data=to_send),
+                clients=self.ws_ui.get_client("ui")
+            )
+
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def update_arena(self) -> None:
         # Update the arena with the new position of the robot
@@ -186,11 +234,11 @@ class MainBrain(Brain):
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
-        
+
         self.lidar_points = self.arena.remove_outside(
             self.arena._pol_to_abs_cart(self.lidar.scan_to_polars())
         )
-        
+
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=1)
     async def print_odo(self) -> None:
