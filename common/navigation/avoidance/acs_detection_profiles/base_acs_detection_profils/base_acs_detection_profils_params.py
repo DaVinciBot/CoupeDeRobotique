@@ -13,8 +13,8 @@ class BaseAcsDetectionProfileParams:
         self.acs_distance: float = acs_distance
 
     @classmethod
-    def from_dict(cls, data: dict):
+    def from_config(cls, acs_detection_profile: str, acs_distance: float):
         return cls(
-            acs_detection_profile=AcsDetectionProfile(data["acs_detection_profile"]),
-            acs_distance=data["acs_distance"],
+            acs_detection_profile=AcsDetectionProfile[acs_detection_profile.upper()],
+            acs_distance=acs_distance,
         )

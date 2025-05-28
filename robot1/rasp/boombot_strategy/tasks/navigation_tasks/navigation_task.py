@@ -15,6 +15,6 @@ class NavigationTask(BaseNavigationTask):
             enemy_zone=ctx.arena.enemy_zone,
         )
 
-        ctx.rolling_basis.set_speed_and_position(*cmd.get_command())
+        ctx.rolling_basis.set_target_position(cmd.get_position_command())
 
         return self.navigator_task.state.is_finished()

@@ -22,9 +22,15 @@ from navigation import (
     DeltaPathPlannerParams,
     SequentialTrajectoryPlannerParams,
     Direction,
-    StopAndWaitAvoidanceParams
+    StopAndWaitAvoidanceParams,
 )
+
+from navigation.avoidance.acs_detection_profiles import (
+    NoProjectionAcsDetectionProfileParams,
+)
+
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+
 
 # ================ Create Task dedicated to homolagation ================
 class GoStraight(NavigationTask):
@@ -36,8 +42,13 @@ class GoStraight(NavigationTask):
                 direction=Direction.FORWARD
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(),
+            avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
+            acs_detection_profile_params=NoProjectionAcsDetectionProfileParams(
+                acs_distance=10
+            ),
         )
+
+
 class Rotate(NavigationTask):
     def __init__(self, theta: float):
         super().__init__(
@@ -47,35 +58,26 @@ class Rotate(NavigationTask):
                 direction=Direction.FORWARD
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(),
+            avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
+            acs_detection_profile_params=NoProjectionAcsDetectionProfileParams(
+                acs_distance=10
+            ),
         )
-      
-# ================ Create Logic Graph ================  
+
+
+# ================ Create Logic Graph ================
 homologation_graph = SubGraphBuilder()
 
 # 1. Create nodes
-homologation_graph.add_node(
-    "Go forward",
-    BaseTaskNode("Go forward", GoStraight(50))
-)
-homologation_graph.add_node(
-    "Return",
-    BaseTaskNode("Return", Rotate(math.pi))
-)
-homologation_graph.add_node(
-    "Go home",
-    BaseTaskNode("Go home", GoStraight(50))
-)
+homologation_graph.add_node("Go forward", BaseTaskNode("Go forward", GoStraight(50)))
+homologation_graph.add_node("Return", BaseTaskNode("Return", Rotate(math.pi)))
+homologation_graph.add_node("Go home", BaseTaskNode("Go home", GoStraight(50)))
 
 # 2. Connect nodes
-homologation_graph.connect(
-    "Go forward", DirectTransition("Return")
-)
-homologation_graph.connect(
-    "Return", DirectTransition("Go home")
-)
+homologation_graph.connect("Go forward", DirectTransition(homologation_graph.nodes["Return"]))
+homologation_graph.connect("Return", DirectTransition(homologation_graph.nodes["Go home"]))
 
-# 3. Build the graph 
+# 3. Build the graph
 built_homologation_graph = homologation_graph.build(
     entry="Go forward",
     exits="Return",
@@ -83,7 +85,7 @@ built_homologation_graph = homologation_graph.build(
 
 # 4. Create Graph runner
 
-yellow_strategy_runner = GraphRunner(
+homologation_graph_runner = GraphRunner(
     logger=Logger(identifier="HomologationRunner", follow_logger_manager_rules=True),
     start=built_homologation_graph.get_entry(),
 )

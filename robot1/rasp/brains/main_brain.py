@@ -107,12 +107,13 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        # from boombot_strategy import ShowGameContext, yellow_strategy_runner
+        from boombot_strategy import ShowGameContext
+        from boombot_strategy.strategies.homologation import homologation_graph_runner
 
-        navigator = Navigator()
+        #navigator = Navigator()
 
         # Rolling basis & Actuators
-        rolling_basis = RollingBasis(
+        rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(1)
@@ -133,19 +134,19 @@ class MainBrain(Brain):
         # )
 
         # 1. pousse contre bordure pour deployer banderole
-        navigator.add_navigation_task(
-            NavigatorTaskParams(
-                goal=None,
-                timeout=None,
-                path_planner_params=DeltaPathPlannerParams(
-                    distance=-30,
-                ),
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(Direction.BACKWARD),
-                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=NoAvoidanceParams(),
-                acs_detection_profile_params=NoAcsDetectionProfileParams(),
-            )
-        )
+        # navigator.add_navigation_task(
+        #     NavigatorTaskParams(
+        #         goal=None,
+        #         timeout=None,
+        #         path_planner_params=DeltaPathPlannerParams(
+        #             distance=-30,
+        #         ),
+        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(Direction.BACKWARD),
+        #         speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+        #         avoidance_params=NoAvoidanceParams(),
+        #         acs_detection_profile_params=NoAcsDetectionProfileParams(),
+        #     )
+        # )
         # 2. recule avant de demi tour pour ne pas shooter la banderole
         # navigator.add_navigation_task(
         #     NavigatorTaskParams(
@@ -175,23 +176,23 @@ class MainBrain(Brain):
         # )
 
         # --- MetaProg is insane (loop) --- #
-        if navigator.current_task is not None:
-            cmd = navigator.handle(
-                ally_zone=self.arena.ally_zone,
-                enemy_zone=self.arena.enemy_zone,
-            )
-            rolling_basis.set_target_position(cmd.get_position_command())
-
-        # yellow_strategy_runner.handle(
-        #     ShowGameContext(
-        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+        # if navigator.current_task is not None:
+        #     cmd = navigator.handle(
+        #         ally_zone=self.arena.ally_zone,
+        #         enemy_zone=self.arena.enemy_zone,
         #     )
-        # )
+        #     rolling_basis.set_target_position(cmd.get_position_command())
+
+        homologation_graph_runner.handle(
+            ShowGameContext(
+                arena=self.arena, rolling_basis=rolling_basis, #actuators=actuators
+            )
+        )
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
     @Brain.task(
         process=True,
-        run_on_start=False,
+        run_on_start=True,
         refresh_rate=0.01,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
@@ -251,7 +252,7 @@ class MainBrain(Brain):
         # await self.wait_for_trigger()
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        start_position = OrientedPoint(0, 0, 0)
+        start_position = OrientedPoint(100, 66, 0)
 
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
