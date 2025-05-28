@@ -36,11 +36,10 @@ from navigation.trajectory_planner import (
     # Planners
     BaseTrajectoryPlanner,
     SequentialTrajectoryPlanner,
-    BasicTrajectoryPlanner,
+
     # Params
     BaseTrajectoryPlannerParams,
     SequentialTrajectoryPlannerParams,
-    BasicTrajectoryPlannerParams,
     # Factory
     TrajectoryPlannerFactory,
 )
