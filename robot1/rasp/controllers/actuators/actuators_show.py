@@ -137,7 +137,11 @@ class ActuatorsShow(Actuators):
         self.set_servo_angle(pin=4, angle=160, max_angle=270)
         self.set_servo_angle(pin=6, angle=90, max_angle=270)
 
-    # Public methods
+    # Public methods    
+    
+    
+    
+    
     def deploy(self, pins: int | list[int]):
         """
         Deploys the specified servos to their deploy angle.
@@ -149,7 +153,6 @@ class ActuatorsShow(Actuators):
             pins = [pins]
         for pin in pins:
             if pin == 8:
-                self.__move_to_save_folded_position()
                 self.folded = False
             if self._check_pin(pin):
                 self.set_servo_angle(
@@ -195,10 +198,8 @@ class ActuatorsShow(Actuators):
         Deploys all servos and moves the elevator to a safe position for pickup.
         This method ensures that the elevator is in a safe position before deploying the servo arm.
         """
-        if 8 in self.servos:
-            self.__move_to_save_folded_position()
-            self.folded = False
-            self.docking()
+        self.folded = False
+        self.docking()
 
         for i in self.servos.keys():
             if i != 8:
@@ -291,7 +292,19 @@ class ActuatorsShow(Actuators):
             self.elevator_ticks = self.stepper.folded_steps
         steps_to_move = self.stepper.top_steps - self.elevator_ticks
         self.logger.info(f"Moving to top: {steps_to_move} steps")
-        self.stepper_step(steps_to_move, self.stepper.speed)
+        self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
+        self.logger.info(f"Steps current: {self.elevator_ticks}")
+        
+    def elevator_drop_top(self):
+        """
+        Moves the elevator to the top position.
+        If the elevator is folded, it will move to the folded position first.
+        """
+        if self.folded and self.elevator_ticks == 0:
+            self.elevator_ticks = self.stepper.folded_steps
+        steps_to_move = 600 - self.elevator_ticks
+        self.logger.info(f"Moving to top: {steps_to_move} steps")
+        self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
         self.logger.info(f"Steps current: {self.elevator_ticks}")
 
     def go_to_bottom(self):
@@ -308,7 +321,7 @@ class ActuatorsShow(Actuators):
         else:
             steps_to_move = self.stepper.bottom_steps - self.elevator_ticks
         self.logger.info(f"Moving to bottom: {steps_to_move} steps")
-        self.stepper_step(steps_to_move, self.stepper.speed)
+        self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=True)
         self.logger.info(f"Steps current: {self.elevator_ticks}")
 
     def build_floors(self):
@@ -349,10 +362,10 @@ class ActuatorsShow(Actuators):
         """
         # Prep and go magnetized
         self.deploy_all_pickup()  # Magnetize
-        time.sleep(2)
+        time.sleep(1)
         self.deploy(8)
         self.go_to_bottom()
-        time.sleep(5)
+        time.sleep(0.001)
 
     def pick_up(self):
         """
@@ -365,6 +378,55 @@ class ActuatorsShow(Actuators):
         time.sleep(2)
         self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
         time.sleep(0.5)
+        
+    
+
+    
+    def ready_to_approach_to_pickup(self):
+        self.set_stepper_driver_activation_state(13, enable_driver=False)
+        self.elevator_ticks = 0
+        time.sleep(0.5)
+        self.deploy_all_pickup()
+        self.set_servo_angle(8, angle=35,max_angle=270)
+        self.fold(9)
+        
+    def prepare_to_pickup(self):
+        self.set_servo_angle(8, angle=135,max_angle=270)
+        self.deploy(9)
+
+    def pickup(self):
+        def _pickup():
+            self.deploy(9)
+            self.deploy(8)
+            time.sleep(0.3)
+            self.fold(9)
+        
+        _pickup()
+        time.sleep(0.2)
+        _pickup()
+        
+        time.sleep(0.2)
+        self.set_servo_angle(8, angle=135,max_angle=270)
+
+    def build(self):
+        self.fold(4)
+        self.fold(6)
+        time.sleep(0.7)
+        self.go_to_top()
+        time.sleep(0.7)
+        self.set_servo_angle(pin=4, angle=160, max_angle=270)
+        self.set_servo_angle(pin=6, angle=90, max_angle=270)
+        time.sleep(0.7)
+        self.elevator_drop_top()
+        time.sleep(0.2)
+        self.deploy(9)
+        time.sleep(0.1)
+        self.demagnetize_all()
+        time.sleep(0.2)
+        self.fold(4)
+        self.fold(6)
+        self.set_servo_angle(8, angle=135,max_angle=270)
+        time.sleep(0.01)
 
     # def build(self):
     #     self.fold(self.side_arms)
