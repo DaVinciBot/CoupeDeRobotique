@@ -137,11 +137,13 @@ class MainBrain(Brain):
             NavigatorTaskParams(
                 goal=None,
                 timeout=None,
-                path_planner_params=DeltaPathPlannerParams(distance=40, rotation=pi/2),
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                path_planner_params=DeltaPathPlannerParams(
+                    distance=-30,
+                ),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(Direction.BACKWARD),
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
                 avoidance_params=NoAvoidanceParams(),
-                acs_detection_profile_params=NoAcsDetectionProfileParams()
+                acs_detection_profile_params=NoAcsDetectionProfileParams(),
             )
         )
         # 2. recule avant de demi tour pour ne pas shooter la banderole
@@ -172,13 +174,11 @@ class MainBrain(Brain):
         #     )
         # )
 
-
-
         # --- MetaProg is insane (loop) --- #
         if navigator.current_task is not None:
             cmd = navigator.handle(
                 ally_zone=self.arena.ally_zone,
-                enemy_zone=self.arena.enemy_zone,   
+                enemy_zone=self.arena.enemy_zone,
             )
             rolling_basis.set_target_position(cmd.get_position_command())
 
@@ -251,12 +251,12 @@ class MainBrain(Brain):
         # await self.wait_for_trigger()
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
-        start_position = OrientedPoint(0,0,0)
-        
+        start_position = OrientedPoint(0, 0, 0)
+
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )
         self.rolling_basis_odometrie = start_position
-        
+
         await asyncio.sleep(1)
         await self.run()
