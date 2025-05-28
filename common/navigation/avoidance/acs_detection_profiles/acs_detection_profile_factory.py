@@ -3,22 +3,22 @@ from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfi
 
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
     BaseAcsDetectionProfile,
-    BaseAcsDetectionProfileParams
+    BaseAcsDetectionProfileParams,
 )
 
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfile,
-    NoAcsDetectionProfileParams
+    NoAcsDetectionProfileParams,
 )
 
 from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile import (
     NoProjectionAcsDetectionProfile,
-    NoProjectionAcsDetectionProfileParams
+    NoProjectionAcsDetectionProfileParams,
 )
 
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (
     RectangularProjectionAcsDetectionProfile,
-    RectangularProjectionAcsDetectionProfileParams
+    RectangularProjectionAcsDetectionProfileParams,
 )
 
 
@@ -44,9 +44,7 @@ class AcsDetectionProfileFactory:
         profile = params.acs_detection_profile
 
         if profile == AcsDetectionProfile.NO:
-            return NoAcsDetectionProfile(
-                cast(NoAcsDetectionProfileParams, params)
-            )
+            return NoAcsDetectionProfile(cast(NoAcsDetectionProfileParams, params))
 
         if profile == AcsDetectionProfile.NO_PROJECTION:
             return NoProjectionAcsDetectionProfile(

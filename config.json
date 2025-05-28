@@ -195,7 +195,29 @@
       "semi_circular_detection_angle": 3.141592
     },
     "movement_manager": {
-      "movement_resolution": 1
+      "movement_resolution": 1,
+      "acs_profiles": {
+        "go_to_color_reserved_zone_to_finish_game": {
+          "acs_detection_profile": "no_projection",
+          "acs_distance": 50
+        },
+        "go_to_color_reserved_zone_to_construct": {
+          "acs_detection_profile": "no_projection",
+          "acs_distance": 50
+        },
+        "go_to_stuff_zone_to_pick_up": {
+          "acs_detection_profile": "no_projection",
+          "acs_distance": 50
+        },
+        "backward": {
+          "acs_detection_profile": "no",
+          "acs_distance": 0
+        },
+        "precise_forward": {
+          "acs_detection_profile": "no",
+          "acs_distance": 0
+        }
+      }
     },
     "jack": {
       "pin": 26.0

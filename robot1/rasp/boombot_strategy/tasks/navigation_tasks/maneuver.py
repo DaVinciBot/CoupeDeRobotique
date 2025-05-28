@@ -20,6 +20,7 @@ class Backward(NavigationTask):
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
+            acs_detection_profile_params=CONFIG.ACS_PROFILE_BACKWARD,
         )
 
 
@@ -31,4 +32,5 @@ class PreciseForward(NavigationTask):
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
+            acs_detection_profile_params=CONFIG.ACS_PROFILE_PRECISE_FORWARD,
         )
