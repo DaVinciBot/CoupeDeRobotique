@@ -156,7 +156,10 @@ class RollingBasis(BaseComTeensy):
         )
         self.send_bytes(msg)
 
-    @log(param_logger="RollingBasis", log_level=LogLevels.INFO, )
+    @log(
+        param_logger="RollingBasis",
+        log_level=LogLevels.INFO,
+    )
     def _send_pid(self, pid_id: int, pid: PID) -> None:
         """
         Internal method to send PID configuration data to the Teensy.
@@ -229,7 +232,6 @@ class RollingBasis(BaseComTeensy):
         time.sleep(0.1)  # Ensure the Teensy has time to process the first PID
         self.set_angular_position_pid(**angular_position_pid)
         time.sleep(0.1)  # Ensure the Teensy has time to process the second PID
-        
 
     def _initialize_pids(self) -> None:
         """

@@ -51,8 +51,8 @@ class RollingBasisDummy(BaseComTeensy):
     ####################################
     @log(param_logger="RollingBasis")
     def set_target_position(
-            self,
-            target_position: OrientedPoint,
+        self,
+        target_position: OrientedPoint,
     ) -> None:
         """
         Sends a message to set the target speed and position of the rolling basis.
@@ -63,10 +63,7 @@ class RollingBasisDummy(BaseComTeensy):
 
         self.odometrie = target_position
 
-        self.logger.debug(
-            f"[DUMMY] Set speed and position: "
-            f"{target_position}"
-        )
+        self.logger.debug(f"[DUMMY] Set speed and position: {target_position}")
 
     @log("RollingBasis")
     def set_odometrie(self, odometrie: OrientedPoint) -> None:

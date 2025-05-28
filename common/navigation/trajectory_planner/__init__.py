@@ -31,4 +31,3 @@ from navigation.trajectory_planner.basic_trajectory_planner import (
 from navigation.trajectory_planner.trajectory_planner_factory import (
     TrajectoryPlannerFactory,
 )
-

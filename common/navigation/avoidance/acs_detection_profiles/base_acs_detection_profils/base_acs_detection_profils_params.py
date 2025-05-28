@@ -2,7 +2,6 @@ from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfi
 
 
 class BaseAcsDetectionProfileParams:
-
     def __init__(self, acs_detection_profile: AcsDetectionProfile, acs_distance: float):
         if isinstance(acs_detection_profile, str):
             acs_detection_profile: AcsDetectionProfile = AcsDetectionProfile(

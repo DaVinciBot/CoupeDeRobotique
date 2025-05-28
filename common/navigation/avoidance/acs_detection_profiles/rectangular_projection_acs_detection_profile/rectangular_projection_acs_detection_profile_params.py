@@ -6,7 +6,6 @@ from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils impo
 
 
 class RectangularProjectionAcsDetectionProfileParams(BaseAcsDetectionProfileParams):
-
     def __init__(self, acs_distance: float, width_view: float):
         self.width_view: float = width_view
 

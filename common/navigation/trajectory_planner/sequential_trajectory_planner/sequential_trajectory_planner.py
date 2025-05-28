@@ -65,7 +65,7 @@ class SequentialTrajectoryPlanner(
         super().__init__(params, speed_profiler, logger)
         self.segments_mapper: SegmentMapper | None = None
         self._last_call_time: float = 0.0
-        self._is_backward: bool = (self.params.direction == Direction.BACKWARD)
+        self._is_backward: bool = self.params.direction == Direction.BACKWARD
 
     @staticmethod
     def _normalize_angle(angle: float):
@@ -75,7 +75,7 @@ class SequentialTrajectoryPlanner(
         return angle - math.pi
 
     def _compute_rotation_segment_to_be_front(
-            self, start: OrientedPoint, target: OrientedPoint
+        self, start: OrientedPoint, target: OrientedPoint
     ) -> RotationSegment:
         """
         Compute a rotation segment so that the robot’s driving direction
@@ -97,11 +97,7 @@ class SequentialTrajectoryPlanner(
         delta_theta = self._normalize_angle(desired_heading - start.theta)
 
         # Build the intermediate oriented point after rotation
-        intermediate_pose = OrientedPoint(
-            start.x,
-            start.y,
-            start.theta + delta_theta
-        )
+        intermediate_pose = OrientedPoint(start.x, start.y, start.theta + delta_theta)
 
         # Create and return the rotation segment
         return RotationSegment(
@@ -135,11 +131,7 @@ class SequentialTrajectoryPlanner(
         delta_theta = self._normalize_angle(desired_theta - start.theta)
 
         # Build the intermediate oriented point after rotation
-        intermediate_pose = OrientedPoint(
-            start.x,
-            start.y,
-            desired_theta
-        )
+        intermediate_pose = OrientedPoint(start.x, start.y, desired_theta)
 
         # Create and return the rotation segment
         return RotationSegment(
@@ -281,7 +273,9 @@ class SequentialTrajectoryPlanner(
         elif isinstance(segment, StraightSegment):
             th_distance: float = self.speed_profiler.linear_speed_profile.get_distance(
                 time_elapsed=local_time,
-                distance=abs(segment.distance),  # IMPORTANT: Use distance parameter to get the th distance
+                distance=abs(
+                    segment.distance
+                ),  # IMPORTANT: Use distance parameter to get the th distance
             )
 
             if self._is_backward:
@@ -303,7 +297,9 @@ class SequentialTrajectoryPlanner(
                 position=OrientedPoint(th_x, th_y, segment.start_position.theta),
                 linear_speed=self.speed_profiler.linear_speed_profile.get_speed(
                     time_elapsed=local_time,
-                    distance=abs(segment.distance),  # IMPORTANT: Use distance parameter to get the th speed
+                    distance=abs(
+                        segment.distance
+                    ),  # IMPORTANT: Use distance parameter to get the th speed
                 ),
                 angular_speed=0.0,
             )

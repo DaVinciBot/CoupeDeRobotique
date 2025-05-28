@@ -50,7 +50,7 @@ class ActuatorsShow(Actuators):
             for i, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items()
             if i < 8
         }
-        
+
         # 0: Interior Right Arm
         # 1 : Interior Right Magnet
         # 2 : Interior Left Arm
@@ -59,7 +59,6 @@ class ActuatorsShow(Actuators):
         # 5 : Exterior Right Magnet
         # 6 : Exterior Left Arm
         # 7 : Exterior Left Magnet
-         
 
         servo_arm = CONFIG.ACTUATOR_SERVOS_CONFIG[8]
         self.servos[8] = ServoArm(
@@ -78,8 +77,7 @@ class ActuatorsShow(Actuators):
         )
 
         # 9 : Folded = Catch plank
-        
-        
+
         stepper_config = CONFIG.ACTUATOR_ELEVATOR_CONFIG
         print(stepper_config)
         self.stepper = Stepper(
@@ -292,7 +290,7 @@ class ActuatorsShow(Actuators):
         Builds the floors by deploying the servos and moving the elevator to the top position.
         This method is used to build the floors by deploying the servos and moving the elevator to the top position.
         """
-        
+
         self.go_to_top()
         time.sleep(2)
         # Set cans to correct position
@@ -323,7 +321,7 @@ class ActuatorsShow(Actuators):
         Preparation and magnetization of all servos.
         """
         # Prep and go magnetized
-        self.deploy_all_pickup() #Magnetize
+        self.deploy_all_pickup()  # Magnetize
         time.sleep(2)
         self.deploy(8)
         self.go_to_bottom()
