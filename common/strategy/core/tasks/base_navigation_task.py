@@ -35,7 +35,7 @@ class BaseNavigationTask(BaseTask):
         timeout: float | None = None,
     ):
         self.goal: int | BaseArenaZone | OrientedPoint | Point | None = goal
-        self.timeout: float | None = timeout
+        self.timeout: float | None = timeout * 1000 if timeout is not None else None
         self.path_planner_params = path_planner_params
         self.trajectory_planner_params = trajectory_planner_params
         self.speed_profiler = speed_profiler
