@@ -241,9 +241,9 @@ class MainBrain(Brain):
         #     ).geoms
         # )
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
-    async def print_odo(self) -> None:
-        self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
+    # @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
+    # async def print_odo(self) -> None:
+    #     self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
 
     """ ### One-Shot Tasks ### """
 
