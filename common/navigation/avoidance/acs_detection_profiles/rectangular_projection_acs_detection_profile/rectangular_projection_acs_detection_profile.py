@@ -9,13 +9,18 @@ from arena import AllyZone, EnemyZone
 
 from geometry import Polygon, rotate, translate
 import math
+from loggerplusplus import Logger
 
 
 class RectangularProjectionAcsDetectionProfile(
     BaseAcsDetectionProfile[RectangularProjectionAcsDetectionProfileParams]
 ):
-    def __init__(self, params: RectangularProjectionAcsDetectionProfileParams):
-        super().__init__(params)
+    def __init__(
+        self,
+        params: RectangularProjectionAcsDetectionProfileParams,
+        logger: Logger | None = None,
+    ):
+        super().__init__(params, logger)
 
     def _create_rectangular_projection(self, ally_zone: AllyZone) -> Polygon:
         rectangle = Polygon(
@@ -39,5 +44,10 @@ class RectangularProjectionAcsDetectionProfile(
         return translate(rotated_rectangle, xoff=dx, yoff=dy)
 
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
-        rectangular_projection = self._create_rectangular_projection(ally_zone)
-        return rectangular_projection.contains(enemy_zone.point)
+        projection = self._create_rectangular_projection(ally_zone)
+        if projection.contains(enemy_zone.point):
+            self.logger.info(
+                f"ACS triggered. Distance: {ally_zone.point.distance(enemy_zone.point)}"
+            )
+            return True
+        return False

@@ -110,7 +110,7 @@ class MainBrain(Brain):
         from boombot_strategy import ShowGameContext
         from boombot_strategy.strategies.homologation import homologation_graph_runner
 
-        #navigator = Navigator()
+        # navigator = Navigator()
 
         # Rolling basis & Actuators
         rolling_basis = RollingBasis(
@@ -185,7 +185,8 @@ class MainBrain(Brain):
 
         homologation_graph_runner.handle(
             ShowGameContext(
-                arena=self.arena, rolling_basis=rolling_basis, #actuators=actuators
+                arena=self.arena,
+                rolling_basis=rolling_basis,  # actuators=actuators
             )
         )
         self.rolling_basis_odometrie = rolling_basis.odometrie
@@ -230,7 +231,7 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=self.lidar.scan_to_polars(),#np.array([]),
+            lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )

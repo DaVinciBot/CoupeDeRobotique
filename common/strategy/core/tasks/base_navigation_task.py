@@ -22,6 +22,8 @@ from navigation.avoidance.acs_detection_profiles import (
     BaseAcsDetectionProfileParams,
 )
 
+from loggerplusplus import Logger
+
 
 class BaseNavigationTask(BaseTask):
     def __init__(
@@ -33,7 +35,11 @@ class BaseNavigationTask(BaseTask):
         avoidance_params: BaseAvoidanceParams,
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
         timeout: float | None = None,
+        logger: Logger | None = None,
     ):
+        self.logger: Logger = logger or Logger(
+            identifier=self.__class__.__name__, follow_logger_manager_rules=True
+        )
         self.goal: int | BaseArenaZone | OrientedPoint | Point | None = goal
         self.timeout: float | None = timeout * 1000 if timeout is not None else None
         self.path_planner_params = path_planner_params
