@@ -16,7 +16,4 @@ class NavigationTask(BaseNavigationTask):
         )
 
         ctx.rolling_basis.set_target_position(cmd.get_position_command())
-        self.logger.info(
-            f"Navigation command: {cmd.get_position_command()}, is_finished: {self.navigator_task.state.is_finished()}"
-        )
         return self.navigator_task.state.is_finished()
