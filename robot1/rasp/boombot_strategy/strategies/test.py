@@ -1,97 +1,34 @@
-from boombot_strategy.show_game_context import ShowGameContext
-from loggerplusplus import Logger
-from boombot_strategy.sub_graphs import get_pickup_sub_graph, get_construct_sub_graph
+# External import
+from math import pi
 
 from config_loader import CONFIG
+
+# Common imports
 from strategy.core import (
-    SubGraphBuilder,
     BaseTaskNode,
+    SubGraphBuilder,
     DirectTransition,
-    BaseSubGraph,
+    ConditionalTransition,
     GraphRunner,
 )
 
-from strategy.tools import (
-    visualize_task_graph_from_node,
-    visualize_task_graph,
-    visualize_entire_subgraph,
-)
-import math
-from navigation import (
-    NoAvoidanceParams,
-    DeltaPathPlannerParams,
-    SequentialTrajectoryPlannerParams,
-    Direction,
-    StopAndWaitAvoidanceParams,
-)
-
-from navigation.avoidance.acs_detection_profiles import (
-    NoProjectionAcsDetectionProfileParams,
-RectangularProjectionAcsDetectionProfileParams
-)
-
-from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+from strategy.tools import visualize_task_graph
 
 
-# ================ Create Task dedicated to homolagation ================
-class GoStraight(NavigationTask):
-    def __init__(self, distance: float):
-        super().__init__(
-            goal=None,
-            path_planner_params=DeltaPathPlannerParams(distance=distance),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(
-                direction=Direction.FORWARD
-            ),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
-            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                acs_distance=40, width_view=40
-            ),
-        )
+# Local imports
+from boombot_strategy.show_game_context import ShowGameContext
+from boombot_strategy.tasks.navigation_tasks.utils import GoStraight, Rotate
 
+# Create nodes
+go_straight_node_40 = BaseTaskNode("GoStraight 40", GoStraight(distance=40))
+go_straight_node_50 = BaseTaskNode("GoStraight 50", GoStraight(distance=50))
+rotate_node_90 = BaseTaskNode("Rotate 90", Rotate(theta=pi / 2))
+rotate_node_180 = BaseTaskNode("Rotate 180", Rotate(theta=pi))
 
-class Rotate(NavigationTask):
-    def __init__(self, theta: float):
-        super().__init__(
-            goal=None,
-            path_planner_params=DeltaPathPlannerParams(rotation=theta),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(
-                direction=Direction.FORWARD
-            ),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-            avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
-            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                acs_distance=40, width_view=40
-            ),
-        )
+# Create transitions
+go_straight_node_40.add_transition(DirectTransition(rotate_node_90))
+rotate_node_90.add_transition(DirectTransition(go_straight_node_50))
+go_straight_node_50.add_transition(DirectTransition(rotate_node_180))
 
-
-# ================ Create Logic Graph ================
-homologation_graph = SubGraphBuilder()
-
-# 1. Create nodes
-homologation_graph.add_node("Go forward", BaseTaskNode("Go forward", GoStraight(100)))
-homologation_graph.add_node("Return", BaseTaskNode("Return", Rotate(math.pi)))
-homologation_graph.add_node("Go home", BaseTaskNode("Go home", GoStraight(100)))
-
-
-# 2. Connect nodes
-homologation_graph.connect(
-    "Go forward", DirectTransition(homologation_graph.nodes["Return"])
-)
-homologation_graph.connect(
-    "Return", DirectTransition(homologation_graph.nodes["Go home"])
-)
-
-# 3. Build the graph
-built_homologation_graph = homologation_graph.build(
-    entry="Go forward",
-    exits="Return",
-)
-
-# 4. Create Graph runner
-
-homologation_graph_runner = GraphRunner(
-    logger=Logger(identifier="HomologationRunner", follow_logger_manager_rules=True),
-    start=built_homologation_graph.get_entry(),
-)
+# Run graph
+demo_runner = GraphRunner(start=go_straight_node_40, parallel=False)

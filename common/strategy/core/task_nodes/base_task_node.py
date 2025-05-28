@@ -2,15 +2,10 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List, Optional, Union
 import time
 
-import traceback
-from enum import Enum, auto
 from loggerplusplus import Logger
 
 from strategy.core.tasks import BaseTask, TaskStatus
-from strategy.core.task_nodes.scoring_functions import (
-    BaseScoringFunction,
-    DefaultScoringFunction,
-)
+from strategy.core.task_nodes.scoring_functions import BaseScoringFunction, DefaultScoringFunction
 
 if TYPE_CHECKING:
     from strategy.core.transitions import BaseTransition
@@ -53,35 +48,42 @@ class BaseTaskNode:
         self._entered = False
         self._exited = False
 
-        self.logger.info(
-            f"Initialized TaskNode '{self.name}' with {len(self.tasks)} task(s)"
-        )
+        self.logger.info(f"Initialized TaskNode '{self.name}' with {len(self.tasks)} task(s)")
 
     def add_transition(self, transition: BaseTransition) -> None:
         """Add a transition to another task node."""
         self.transitions.append(transition)
         self.logger.debug(f"Added transition '{transition}' to node '{self.name}'")
 
-    def score(self, prev_node: BaseTaskNode, ctx: BaseGameContext) -> float:
-        """Compute and return a score for this node."""
+    def score(
+        self, prev_node: Optional[BaseTaskNode], ctx: BaseGameContext
+    ) -> float:
+        """Compute and return a score for this node against an optional previous node."""
         score_value = self.scoring_function.compute(
             prev_node=prev_node, current_node=self, ctx=ctx
         )
+        prev_name = prev_node.name if prev_node else "<None>"
         self.logger.debug(
-            f"Node '{self.name}' scored {score_value:.4f} against previous node '{prev_node.name}'"
+            f"Node '{self.name}' scored {score_value:.4f} against previous node '{prev_name}'"
         )
         return score_value
 
-    def on_enter(self, prev_node: Optional[BaseTaskNode], ctx: BaseGameContext) -> None:
+    def on_enter(
+        self, prev_node: Optional[BaseTaskNode], ctx: BaseGameContext
+    ) -> None:
         """Hook called when entering this node."""
+        prev_name = prev_node.name if prev_node else "<None>"
         self.logger.info(
-            f"Entering node '{self.name}' from '{prev_node.name if prev_node else None}'"
+            f"Entering node '{self.name}' from '{prev_name}'"
         )
 
-    def on_exit(self, next_node: Optional[BaseTaskNode], ctx: BaseGameContext) -> None:
+    def on_exit(
+        self, next_node: Optional[BaseTaskNode], ctx: BaseGameContext
+    ) -> None:
         """Hook called when exiting this node."""
+        next_name = next_node.name if next_node else "<None>"
         self.logger.info(
-            f"Exiting node '{self.name}' to '{next_node.name if next_node else None}'"
+            f"Exiting node '{self.name}' to '{next_name}'"
         )
 
     def execute(self, ctx: BaseGameContext) -> bool:
@@ -107,7 +109,9 @@ class BaseTaskNode:
             if self.task_done[idx]:
                 continue
 
-            self.logger.debug(f"Handling task {idx} of node '{self.name}'")
+            self.logger.debug(
+                f"Handling task {idx} of node '{self.name}'"
+            )
             try:
                 done = task.handle(ctx)
                 self.results[idx] = done
@@ -118,22 +122,25 @@ class BaseTaskNode:
                     )
                 else:
                     all_done = False
-                    self.logger.debug(f"Task {idx} in node '{self.name}' not done yet")
+                    self.logger.debug(
+                        f"Task {idx} in node '{self.name}' not done yet"
+                    )
 
             except TimeoutError as e:
                 self.exceptions[idx] = e
                 self.task_done[idx] = True
                 any_timeout = True
-                self.logger.warning(f"Task {idx} in node '{self.name}' timed out: {e}")
+                self.logger.warning(
+                    f"Task {idx} in node '{self.name}' timed out: {e}"
+                )
 
             except Exception as e:
                 self.exceptions[idx] = e
                 self.task_done[idx] = True
                 any_failed = True
                 self.logger.error(
-                    f"Task {idx} in node '{self.name}' "
-                    f"failed: {e}, "
-                    f"traceback: {traceback.format_exc()}",
+                    f"Task {idx} in node '{self.name}' failed: {e}'",
+                    exc_info=True,
                 )
 
         if all(self.task_done):
