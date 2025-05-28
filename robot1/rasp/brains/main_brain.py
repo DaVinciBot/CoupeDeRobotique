@@ -249,7 +249,6 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        await self.wait_for_trigger()
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
         start_position = OrientedPoint(100, 66, 0)
@@ -260,4 +259,5 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
         await asyncio.sleep(1)
+        await self.wait_for_trigger()
         await self.run()
