@@ -169,5 +169,5 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
         await asyncio.sleep(1)
-        # await self.inputs.wait_for_jack_trigger()
+        await self.inputs.wait_for_jack_trigger()
         await self.run()
