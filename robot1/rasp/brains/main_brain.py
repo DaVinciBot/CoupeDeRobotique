@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import time
 from math import pi
 
+from debugpy.common import json
 # ====== Third-party library imports ======
 from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
 from loggerplusplus import Logger
@@ -78,9 +79,6 @@ class MainBrain(Brain):
         
         self.lidar_points: list[Point] = []
 
-        # Temp attributes
-        self.counter = 0
-
         super().__init__(logger, self)
 
     """
@@ -92,6 +90,7 @@ class MainBrain(Brain):
     # Deactivate for now
     @Brain.task(process=False, run_on_start=False)
     async def wait_for_trigger(self):
+        x = 4
         """false_jacks_in_a_row = 0
         while false_jacks_in_a_row < 5:
             if self.jack.safe_digital_read():
@@ -103,10 +102,6 @@ class MainBrain(Brain):
                 false_jacks_in_a_row += 1
                 self.logger.info(f"Jack state: {self.jack.digital_read()})
             await asyncio.sleep(0.1)"""
-        self.counter += 1
-        if self.counter > 1000:
-            self.ui_state["jack_state"] = True
-        await asyncio.sleep(0.1)
 
     @Brain.task(
         process=True,
@@ -159,7 +154,7 @@ class MainBrain(Brain):
         # if navigator.current_task.state == NavigatorTaskState.AVOIDING:
         #       self.ui_state["acs_state"] = True
         if isinstance(yellow_strategy_runner.active[0].tasks[0], NavigationTask):
-            if yellow_strategy_runner.active[0].tasks[0].navigator_task.state == NavigatorTaskState.AVOIDING :
+            if yellow_strategy_runner.active[0].tasks[0].navigator_task.state == NavigatorTaskState.AVOIDING:
                 self.ui_state["acs_state"] = True
 
         self.rolling_basis_odometrie = rolling_basis.odometrie
@@ -167,7 +162,7 @@ class MainBrain(Brain):
 
     @Brain.task(
         process=True,
-        run_on_start=True,
+        run_on_start=False,
         refresh_rate=0.01,
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
@@ -207,11 +202,12 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     async def update_ui(self) -> None:
+
         previous_state = self.ui_state.copy()
 
         # --- MetaProg is insane (loop) --- #
         current_state = self.ui_state.copy()
-
+        current_state["jack_state"] = not current_state["jack_state"]
         if current_state != previous_state:
             previous_state = current_state
             to_send = {
@@ -224,9 +220,9 @@ class MainBrain(Brain):
                 },
                 "pamis_state": current_state["pamis_state"],
             }
+            self.logger.debug("Sending data to UI:" + str(json.dumps(to_send, indent=2)))
             await self.ws_ui.sender.send(
-                WSmsg(sender="server", msg="update ui data", data=to_send),
-                clients=self.ws_ui.get_client("ui")
+                WSmsg(sender="server", msg="update ui data", data=to_send)
             )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
