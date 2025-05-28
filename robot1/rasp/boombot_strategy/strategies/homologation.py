@@ -69,16 +69,18 @@ class Rotate(NavigationTask):
 homologation_graph = SubGraphBuilder()
 
 # 1. Create nodes
-homologation_graph.add_node("Go forward", BaseTaskNode("Go forward", GoStraight(50)))
+homologation_graph.add_node("Go forward", BaseTaskNode("Go forward", GoStraight(30)))
 homologation_graph.add_node("Return", BaseTaskNode("Return", Rotate(math.pi)))
-homologation_graph.add_node("Go home", BaseTaskNode("Go home", GoStraight(50)))
-homologation_graph.add_node("Go forward", BaseTaskNode("Go forward", GoStraight(50)))
-homologation_graph.add_node("Return", BaseTaskNode("Return", Rotate(math.pi)))
-homologation_graph.add_node("Go home", BaseTaskNode("Go home", GoStraight(50)))
+homologation_graph.add_node("Go home", BaseTaskNode("Go home", GoStraight(30)))
+
 
 # 2. Connect nodes
-homologation_graph.connect("Go forward", DirectTransition(homologation_graph.nodes["Return"]))
-homologation_graph.connect("Return", DirectTransition(homologation_graph.nodes["Go home"]))
+homologation_graph.connect(
+    "Go forward", DirectTransition(homologation_graph.nodes["Return"])
+)
+homologation_graph.connect(
+    "Return", DirectTransition(homologation_graph.nodes["Go home"])
+)
 
 # 3. Build the graph
 built_homologation_graph = homologation_graph.build(

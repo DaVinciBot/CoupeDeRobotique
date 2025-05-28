@@ -113,7 +113,7 @@ class MainBrain(Brain):
         #navigator = Navigator()
 
         # Rolling basis & Actuators
-        rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(1)
@@ -249,7 +249,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        # await self.wait_for_trigger()
+        await self.wait_for_trigger()
         self.arena.set_team_color(TeamColor.YELLOW)
         # Start robot position
         start_position = OrientedPoint(100, 66, 0)
