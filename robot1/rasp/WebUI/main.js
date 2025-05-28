@@ -1,7 +1,7 @@
 let console_div = document.querySelector('.log')
 
 let log = new WebSocketManager();
-log.add_ws("log")
+log.add_ws("ui")
 log.add_handler( (event) => {
     // parse JSON then display it
     let data = JSON.parse(event.data);

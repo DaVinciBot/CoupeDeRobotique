@@ -1,9 +1,9 @@
 class WebSocketManager {
     constructor() {
         this.websockets = {};
-        this.host = "rc.local";
+        this.host = "localhost";
         this.port = "8080";
-        this.user = "WebUI";
+        this.user = "ui";
     }
 
     #create_trame(msg, data) { 

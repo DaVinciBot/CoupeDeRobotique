@@ -207,7 +207,7 @@ class MainBrain(Brain):
 
         # --- MetaProg is insane (loop) --- #
         # To remove
-        self.ui_state["odometrie_state"] = OrientedPoint(random.randint(0, 10), random.randint(0, 10), theta=random.randint(0, 10) )
+        self.ui_state["odometrie_state"] = OrientedPoint(random.randint(0, 10), random.randint(0, 10), theta=random.randint(0, 10))
 
         current_state = self.ui_state.copy()
         if current_state != previous_state:
