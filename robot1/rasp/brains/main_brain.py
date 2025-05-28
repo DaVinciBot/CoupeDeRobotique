@@ -226,6 +226,34 @@ class MainBrain(Brain):
                 WSmsg(sender="server", msg="update ui data", data=to_send)
             )
 
+    @Brain.task(process=False, run_on_start=CONFIG.ZOMBIE_MODE, refresh_rate=0.5)
+    async def receive_ui_data(self):
+        """
+        executes requests received by the server. Use Postman to send request to the server
+        Use eval and await eval to run the code you want. Code must be sent as a string
+        """
+        ui = await self.ws_ui.receiver.get()
+
+        if ui != WSmsg():
+            self.logger.info(f"UI instruction {ui.msg} received: {ui.data}")
+            if ui.msg == "eval":
+                instructions = []
+                if isinstance(ui.data, str):
+                    instructions.append(ui.data)
+                elif isinstance(ui.data, list):
+                    instructions = ui.data
+
+                for instruction in instructions:
+                    if instruction.startswith("await "):
+                        await eval(instruction.removeprefix("await "))
+                    else:
+                        eval(instruction)
+
+            else:
+                self.logger.warning(
+                    f"Command not implemented: {ui.msg} / {ui.data}"
+                )
+
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def update_arena(self) -> None:
         # Update the arena with the new position of the robot
