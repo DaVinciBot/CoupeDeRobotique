@@ -9,8 +9,10 @@ class Servo:
     deploy_angle: int
     fold_angle: int
     max_angle: int
+    
+@dataclass
+class ServoDocking(Servo):
     special_angle: int = 0 # Angle for special movement such as docking
-
 
 @dataclass
 class ServoArm(Servo):
@@ -47,11 +49,26 @@ class ActuatorsShow(Actuators):
         super().__init__(*args, **kwargs)  # Call the parent constructor
         self.folded: bool = True  # Indicates if the actuators are folded
         self.servos : dict[int | CONFIG.ACTUATORS_CONFIG, 
-                           Servo | ServoArm | ServoPlank] = {  # default servo with 2 position
+                           Servo | ServoArm | ServoPlank | ServoDocking] = {  # default servo with 2 position
             i: Servo(cfg["deploy_angle"], cfg["fold_angle"], cfg["max_angle"])
             for i, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items()
             if i < 8
         }
+                           
+        # Modify servos 0 and 2:
+        self.servos[0] = ServoDocking(
+            self.servos[0].deploy_angle,
+            self.servos[0].fold_angle,
+            self.servos[0].max_angle,
+            CONFIG.ACTUATOR_SERVOS_CONFIG[0]["docking"]
+        )
+        
+        self.servos[2] = ServoDocking(
+            self.servos[2].deploy_angle,
+            self.servos[2].fold_angle,
+            self.servos[2].max_angle,
+            CONFIG.ACTUATOR_SERVOS_CONFIG[2]["docking"]
+        )
 
         # 0: Interior Right Arm
         # 1 : Interior Right Magnet
@@ -237,12 +254,12 @@ class ActuatorsShow(Actuators):
         if self._check_pin(0) and self._check_pin(2):
             self.set_servo_angle(
                 0,
-                self.servos[0].special_angle,
+                self.servos[0].docking,
                 max_angle = self.servos[0].max_angle,
             )
             self.set_servo_angle(
                 2,
-                self.servos[2].special_angle,
+                self.servos[2].docking,
                 max_angle = self.servos[2].max_angle,
             )
     
