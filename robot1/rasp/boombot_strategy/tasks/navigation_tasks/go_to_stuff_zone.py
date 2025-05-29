@@ -7,6 +7,10 @@ from navigation import (
     SequentialTrajectoryPlannerParams,
 )
 
+from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (
+    RectangularProjectionAcsDetectionProfileParams,
+)
+
 
 class GoToStuffZoneToPickUp(NavigationTask):
     def __init__(self, stuff_zone_id: int):
@@ -16,5 +20,7 @@ class GoToStuffZoneToPickUp(NavigationTask):
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_TO_PICKUP_SPEED_PROFILER,  # Use for pickup speed profiler
             avoidance_params=StopAndWaitAvoidanceParams(timeout=10),
-            acs_detection_profile_params=CONFIG.ACS_PROFILE_GO_TO_STUFF_ZONE_TO_PICK_UP,
+            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                acs_distance=50, width_view=40
+            ),
         )

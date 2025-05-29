@@ -14,7 +14,6 @@ class AngularRestrictProjectionAcsDetectionProfileParams(BaseAcsDetectionProfile
             angle_view (float): The angle view in radians for the ACS detection.
         """
         self.angle_view: float = angle_view
-
         self.half_angle_view: float = angle_view / 2
 
         super().__init__(

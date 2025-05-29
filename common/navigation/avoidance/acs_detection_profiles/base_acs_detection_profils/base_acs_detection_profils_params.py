@@ -3,12 +3,7 @@ from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfi
 
 class BaseAcsDetectionProfileParams:
     def __init__(self, acs_detection_profile: AcsDetectionProfile, acs_distance: float):
-        if isinstance(acs_detection_profile, str):
-            acs_detection_profile: AcsDetectionProfile = AcsDetectionProfile(
-                acs_detection_profile
-            )
-        else:
-            self.acs_detection_profile: AcsDetectionProfile = acs_detection_profile
+        self.acs_detection_profile: AcsDetectionProfile = acs_detection_profile
         self.acs_distance: float = acs_distance
 
     @classmethod
