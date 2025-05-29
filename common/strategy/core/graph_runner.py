@@ -72,6 +72,7 @@ class GraphRunner:
                 t
                 for t in node.transitions
                 if t.can_transit(from_node=prev_node, ctx=ctx)
+                and t.target not in self.prev.items()
             ]
             if not valid_transitions:
                 self.logger.info(

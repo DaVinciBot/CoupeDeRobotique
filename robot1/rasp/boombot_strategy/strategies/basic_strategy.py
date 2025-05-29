@@ -50,6 +50,22 @@ class BasicStrategy(BaseStrategy):
         self.first_construct_zone.get_exits()[0].add_transition(
             DirectTransition(self.second_pickup_zone.get_entry())
         )
+        self.first_construct_zone.get_exits()[0].add_transition(
+            DirectTransition(self.third_pickup_zone.get_entry())
+        )
+        self.first_construct_zone.get_exits()[0].add_transition(
+            DirectTransition(self.fourth_pickup_zone.get_entry())
+        )
+
+        self.second_construct_zone.get_exits()[0].add_transition(
+            DirectTransition(self.first_pickup_zone.get_entry())
+        )
+        self.second_construct_zone.get_exits()[0].add_transition(
+            DirectTransition(self.third_pickup_zone.get_entry())
+        )
+        self.second_construct_zone.get_exits()[0].add_transition(
+            DirectTransition(self.fourth_pickup_zone.get_entry())
+        )
 
         self.runner = GraphRunner(
             logger=Logger(
