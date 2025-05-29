@@ -175,16 +175,16 @@ class CONFIG:
         linear_speed_profile=LinearRampedSpeedProfile(
             **ROLLING_BASIS_SPEED_PROFILES_LINEAR["to_pickup"]
         ),
-        angular_speed_profile=LinearRampedSpeedProfile(
-            **ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]
+        angular_speed_profile=BasicSpeedProfile(
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"]
         ),
     )
     ROLLING_BASIS_TO_CONSTRUCT_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
         linear_speed_profile=LinearRampedSpeedProfile(
             **ROLLING_BASIS_SPEED_PROFILES_LINEAR["to_construct"]
         ),
-        angular_speed_profile=LinearRampedSpeedProfile(
-            **ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]
+        angular_speed_profile=BasicSpeedProfile(
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"]
         ),
     )
     ROLLING_BASIS_SPEED_PROFILER_PID: SpeedProfiler = SpeedProfiler(
@@ -192,7 +192,7 @@ class CONFIG:
             ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]["max_speed"]
         ),
         angular_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["max_speed"]
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"]
         ),
     )
 
