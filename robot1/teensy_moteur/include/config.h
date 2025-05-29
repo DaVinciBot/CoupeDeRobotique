@@ -23,7 +23,7 @@
 
 // Creation Rolling Basis
 // Motor
-#define MAX_PWM 220
+#define MAX_PWM 240
 
 // Encoder
 #define ENCODER_RESOLUTION 1024
@@ -46,7 +46,7 @@
 #define PWM_FREQUENCY 40000
 
 // Asservissement echantillonage fréquence
-#define ASSERVISSEMENT_FREQUENCY 10000
+#define ASSERVISSEMENT_FREQUENCY 5000
 
 // Com baudrate
 #define BAUDRATE 115200
