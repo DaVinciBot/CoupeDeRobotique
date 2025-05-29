@@ -110,23 +110,18 @@ class NavigatorTask:
                 self._stabilization_start_time = time.time()
                 self.state = NavigatorTaskState.STABILIZING
                 # keep last trajectory command
-                return self.current_trajectory_command
+                return self.trajectory_planner.get_plan()
+
             # No stabilization: finish immediately with stop
             self.state = NavigatorTaskState.FINISHED
-            self.current_trajectory_command = TrajectoryPlanCommand.create_stop_command(
-                current_position=ally_zone.point
-            )
             return self.current_trajectory_command
 
         # 4. Stabilization period: replay last trajectory command
         if self.state == NavigatorTaskState.STABILIZING:
             if self._get_stabilization_elapsed() < self.params.stabilization_delay:
-                return self.current_trajectory_command
+                return self.trajectory_planner.get_plan()
             # Timer expired: finish and send stop
             self.state = NavigatorTaskState.FINISHED
-            self.current_trajectory_command = TrajectoryPlanCommand.create_stop_command(
-                current_position=ally_zone.point
-            )
             return self.current_trajectory_command
 
         # 5. Obstacle avoidance
