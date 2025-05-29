@@ -114,7 +114,7 @@ class GraphRunner:
         step = 0
         while self.active and step < max_steps:
             self.logger.debug(
-                f"GraphRunner step {step+1}, active nodes: {[n.name for n in self.active]}"
+                f"GraphRunner step {step + 1}, active nodes: {[n.name for n in self.active]}"
             )
             self.handle(ctx)
             step += 1

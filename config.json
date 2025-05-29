@@ -2,7 +2,8 @@
   "general": {
     "ws": {
       "port": 8080,
-      "cmd_route": "/cmd"
+      "cmd_route": "/cmd",
+      "ui_route": "/ui"
     },
     "teensy": {
       "vid": 5824,
@@ -15,6 +16,11 @@
   "rob": {
     "ws": {
       "sender_name": "rob",
+      "hostname": "0.0.0.0",
+      "ping_pong_interval": 1
+    },
+    "ws_ui": {
+      "sender_name": "ui",
       "hostname": "0.0.0.0",
       "ping_pong_interval": 1
     },
@@ -245,6 +251,9 @@
     },
     "jack": {
       "pin": 26.0
+    },
+    "bau": {
+      "pin": 16.0
     }
   },
   "arena": {

@@ -24,6 +24,8 @@ class Inputs:
                 false_jacks_in_a_row = 0
             else:
                 false_jacks_in_a_row += 1
-            self.logger.debug(f"Jack trigger signal seems to be detected: {false_jacks_in_a_row}.")
+            self.logger.debug(
+                f"Jack trigger signal seems to be detected: {false_jacks_in_a_row}."
+            )
             await asyncio.sleep(wait_time)
         self.logger.info(f"Jack trigger detected !")
