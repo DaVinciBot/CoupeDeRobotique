@@ -34,7 +34,6 @@ class Navigator:
                 params=self._tasks_queue.popleft()
             )
             self.logger.info(f"Switched to new task: {self.current_task}")
-            time.sleep(1)
             return True
         else:
             self.current_task = None
