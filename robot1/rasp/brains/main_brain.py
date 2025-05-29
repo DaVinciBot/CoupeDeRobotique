@@ -85,13 +85,13 @@ class MainBrain(Brain):
     def run(self) -> None:
         # --- Initialization --- #
         # Rolling basis & Actuators
-        rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(0.01)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        actuators = ActuatorsShowDummy(
+        actuators = ActuatorsShow(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
