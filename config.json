@@ -102,7 +102,7 @@
           "default": {
             "acceleration": 10,
             "deceleration": 15,
-            "max_speed": 30
+            "max_speed": 50
           }
         }
       }
