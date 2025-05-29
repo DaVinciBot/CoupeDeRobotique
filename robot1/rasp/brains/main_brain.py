@@ -80,7 +80,7 @@ class MainBrain(Brain):
     def run(self) -> None:
         # --- Initialization --- #
         # Rolling basis & Actuators
-        rolling_basis = AsservissementRollingBasis(
+        rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(0.01)
@@ -106,9 +106,6 @@ class MainBrain(Brain):
                 enemy_zone=self.arena.enemy_zone,
             )
             rolling_basis.set_target_position(cmd.get_position_command())
-        else:
-            rolling_basis.plot_logs()
-            time.sleep(1000000000000)
 
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
