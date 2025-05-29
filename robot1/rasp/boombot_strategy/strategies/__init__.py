@@ -1,1 +1,2 @@
 from robot1.rasp.boombot_strategy.strategies.base_strategy import BaseStrategy
+from robot1.rasp.boombot_strategy.strategies.basic_strategy import BasicStrategy
