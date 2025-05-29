@@ -139,7 +139,7 @@ class MainBrain(Brain):
             NavigatorTaskParams(
                 goal=None,
                 timeout=None,
-                path_planner_params=DeltaPathPlannerParams(rotation=pi/2),
+                path_planner_params=DeltaPathPlannerParams(rotation=pi/2, distance=40),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
                 avoidance_params=StopAndWaitAvoidanceParams(1000),
@@ -149,20 +149,7 @@ class MainBrain(Brain):
             )
         )
 
-        navigator.add_navigation_task(
-            NavigatorTaskParams(
-                goal=None,
-                timeout=None,
-                path_planner_params=DeltaPathPlannerParams(rotation=-pi / 2),
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=StopAndWaitAvoidanceParams(1000),
-                acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                    acs_distance=40, width_view=10
-                )
-            )
-        )
-
+  
 
         # --- MetaProg is insane (loop) --- #
         # runner.handle(
