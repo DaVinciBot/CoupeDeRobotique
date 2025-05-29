@@ -76,13 +76,13 @@ class BasicStrategy(BaseStrategy):
             DirectTransition(second_build_zone.get_entry())
         )
         
-        # third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"], ctx)
-        # third_build_zone = get_construct_sub_graph(
-        #     self.zones["first_build_zone"], ctx
-        # )
-        # third_pickup_zone.get_exits()[0].add_transition(
-        #     DirectTransition(third_build_zone.get_entry())
-        # )
+        third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"], ctx)
+        third_build_zone = get_construct_sub_graph(
+            self.zones["first_build_zone"], ctx, 10
+        )
+        third_pickup_zone.get_exits()[0].add_transition(
+            DirectTransition(third_build_zone.get_entry())
+        )
         
         # fourth_pickup_zone = get_pickup_sub_graph(self.zones["fourth_pickup_zone"], ctx)
         # fourth_build_zone = get_construct_sub_graph(
@@ -101,11 +101,11 @@ class BasicStrategy(BaseStrategy):
             DirectTransition(second_pickup_zone.get_entry())
         )
         second_build_zone.get_exits()[0].add_transition(
+            DirectTransition(third_pickup_zone.get_entry())
+        )
+        third_build_zone.get_exits()[0].add_transition(
             DirectTransition(go_to_backstage)
         )
-        # third_build_zone.get_exits()[0].add_transition(
-        #     DirectTransition(go_to_backstage)
-        # )
 
         self.runner = GraphRunner(
             logger=Logger(
