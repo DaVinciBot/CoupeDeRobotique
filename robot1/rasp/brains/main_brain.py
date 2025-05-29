@@ -135,7 +135,7 @@ class MainBrain(Brain):
         runner = strat.get_graph_runner()
 
         navigator = Navigator()
-        for i in range(50):
+        for i in range(5):
             navigator.add_navigation_task(
                 NavigatorTaskParams(
                     goal=None,
@@ -296,18 +296,19 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
         # 1. Wait for the team color to be set
-        self.arena.set_team_color(TeamColor.YELLOW)
+        #self.arena.set_team_color(TeamColor.YELLOW)
         #await self.wait_for_team()
 
         # 2. Define the starting position based on the team color
-        start_position = OrientedPoint(0, 0, 0)
-        if self.arena.team_color == TeamColor.YELLOW:
-            self.logger.info("Starting as YELLOW team.")
-            start_position = OrientedPoint(177.5, 21, -pi / 2)
-        elif self.arena.team_color == TeamColor.BLUE:
-            self.logger.info("Starting as BLUE team.")
-            start_position = OrientedPoint(122.5, 21, -pi / 2)
+        # start_position = OrientedPoint(0, 0, 0)
+        # if self.arena.team_color == TeamColor.YELLOW:
+        #     self.logger.info("Starting as YELLOW team.")
+        #     start_position = OrientedPoint(177.5, 21, -pi / 2)
+        # elif self.arena.team_color == TeamColor.BLUE:
+        #     self.logger.info("Starting as BLUE team.")
+        #     start_position = OrientedPoint(122.5, 21, -pi / 2)
 
+        start_position = OrientedPoint(0, 0, 0)
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
