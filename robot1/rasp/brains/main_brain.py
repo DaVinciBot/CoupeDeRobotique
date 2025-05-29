@@ -140,6 +140,7 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = rolling_basis.odometrie
 
+
     @Brain.task(
         process=True,
         run_on_start=True,  # True to get visualization
@@ -257,7 +258,7 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
         # 1. Wait for the team color to be set
-        # self.arena.set_team_color(TeamColor.YELLOW)
+        self.arena.set_team_color(TeamColor.YELLOW)
         await self.wait_for_team()
 
         # 2. Define the starting position based on the team color

@@ -10,6 +10,11 @@ from navigation import (
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 
 
+from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
+    NoAcsDetectionProfileParams,
+)
+
+
 class Backward(NavigationTask):
     def __init__(self, distance: float):
         super().__init__(
@@ -20,7 +25,7 @@ class Backward(NavigationTask):
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
-            acs_detection_profile_params=CONFIG.ACS_PROFILE_BACKWARD,
+            acs_detection_profile_params=NoAcsDetectionProfileParams(),
         )
 
 
@@ -32,5 +37,5 @@ class PreciseForward(NavigationTask):
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
-            acs_detection_profile_params=CONFIG.ACS_PROFILE_PRECISE_FORWARD,
+            acs_detection_profile_params=NoAcsDetectionProfileParams(),
         )
