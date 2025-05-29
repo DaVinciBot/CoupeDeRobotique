@@ -1,6 +1,6 @@
 #ifndef MOTOR_H
 #define MOTOR_H
-#define K 10.0
+#define K 20.0
 
 #include <Arduino.h>
 

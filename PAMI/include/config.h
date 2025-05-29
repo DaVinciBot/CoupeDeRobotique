@@ -2,6 +2,7 @@
 #include "motor.h"
 #include "navigation.h"
 #include "rolling_basis.h"
+#include "lidar_pami.h"
 
 
 // #------- MOTOR CONFIGURATION -------#
@@ -15,17 +16,35 @@
 #define RIGHT_EN_PIN 48
 #define RIGHT_STEPS_PER_REV 400
 
-// FIXME: bonnes valeurs
-#define WHEEL_DIAMETER_MM 70
-#define WHEEL_BASE_MM 150
+#define WHEEL_DIAMETER_MM 60.0f
+#define WHEEL_BASE_MM 132.0f
 
-#define MAX_LINEAR_SPEED_MM_PER_S 100
+#define MAX_LINEAR_SPEED_MM_PER_S 10
 #define MAX_ANGULAR_SPEED_RAD_PER_S 1.0
+
+// #------- PID CONFIGURATION -------#
+#define LINEAR_SPEED_KP 0.0f
+#define LINEAR_SPEED_KI 0.0f
+#define LINEAR_SPEED_KD 0.0f
+
+#define ANGULAR_SPEED_KP 0.0f
+#define ANGULAR_SPEED_KI 0.0f
+#define ANGULAR_SPEED_KD 0.0f
+
+#define LINEAR_DISTANCE_KP 10.0f
+#define LINEAR_DISTANCE_KI 0.0f
+#define LINEAR_DISTANCE_KD 0.0f
+
+#define ANGULAR_DISTANCE_KP 10.0f
+#define ANGULAR_DISTANCE_KI 0.0f
+#define ANGULAR_DISTANCE_KD 0.0f
+
 
 // #------- LORA CONFIGURATION -------#
 #define SS 10 // NSS pin
 #define RST 16 // RESET pin
 #define BUSY 15 // BUSY pin
+// #define SX126X_SPI_FREQUENCY  1000000 // SPI frequency for SX126x
 
 // ESP XIAO DEVKIT PINOUT
 // #define SS 4 // NSS pin
@@ -34,4 +53,5 @@
 
 // #-------- DEV CONFIGURATION ---------#
 #define ENABLE_OTA false
+#define ENABLE_LORA false
 
