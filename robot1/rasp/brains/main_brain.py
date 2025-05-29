@@ -79,6 +79,7 @@ class MainBrain(Brain):
                 "groupie_2": False,
                 "groupie_3": False,
             },
+            "score": 0.0,
         }
 
         self.jack_triggered: bool = False
@@ -187,6 +188,7 @@ class MainBrain(Brain):
 
         # --- MetaProg is insane (loop) --- #
         current_state = self.ui_state.copy()
+        # current_state["score"] = self.ctx.score if self.ctx else 0
         if current_state != previous_state:
             previous_state = current_state
             to_send = {
@@ -198,6 +200,7 @@ class MainBrain(Brain):
                     "theta": current_state["odometrie_state"].theta,
                 },
                 "pamis_states": current_state["pamis_states"],
+                "score": current_state["score"],
             }
             await self.ws_ui.sender.send(
                 WSmsg(sender="server", msg="update ui data", data=to_send)
@@ -260,21 +263,22 @@ class MainBrain(Brain):
     async def scan_jack(self):
         await self.inputs.wait_for_jack_trigger()
         self.jack_triggered = True
+        self.ui_state["jack_state"] = False
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
         # 1. Wait for the team color to be set
-        self.arena.set_team_color(TeamColor.YELLOW)
+        self.arena.set_team_color(TeamColor.UNDEFINED)
         await self.wait_for_team()
 
         # 2. Define the starting position based on the team color
         start_position = OrientedPoint(0, 0, 0)
         if self.arena.team_color == TeamColor.YELLOW:
             self.logger.info("Starting as YELLOW team.")
-            start_position = OrientedPoint(100, 15, -pi / 2)
+            start_position = OrientedPoint(200, 15, -pi / 2)
         elif self.arena.team_color == TeamColor.BLUE:
             self.logger.info("Starting as BLUE team.")
-            start_position = OrientedPoint(200, 15, -pi / 2)
+            start_position = OrientedPoint(100, 15, -pi / 2)
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
