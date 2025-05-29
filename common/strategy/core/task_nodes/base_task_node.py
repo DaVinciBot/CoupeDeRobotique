@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import traceback
 from typing import TYPE_CHECKING, List, Optional, Union
 import time
 
@@ -128,8 +130,8 @@ class BaseTaskNode:
                 self.task_done[idx] = True
                 any_failed = True
                 self.logger.error(
-                    f"Task {idx} in node '{self.name}' failed: {e}'",
-                    exc_info=True,
+                    f"Task {idx} in node '{self.name}' failed: {e}', "
+                    f"traceback {traceback.format_exc()}",
                 )
 
         if all(self.task_done):

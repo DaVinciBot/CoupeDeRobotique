@@ -21,7 +21,7 @@ from arena import AllyZone, TeamColor
 
 # ====== Internal Project Imports ======
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
-from controllers.actuators import ActuatorsShow, ActuatorsDummy
+from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from sensors import Lidar, Inputs
 
 # from navigation_tasks.tasks import yellow_start_tasks
@@ -119,7 +119,7 @@ class MainBrain(Brain):
         time.sleep(1)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        actuators = ActuatorsDummy(
+        actuators = ActuatorsShowDummy(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
