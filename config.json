@@ -92,7 +92,7 @@
             "speed": 1
           },
           "default": {
-            "speed": 7.283
+            "speed": 6.283
           },
           "high": {
             "speed": 5
@@ -100,9 +100,9 @@
         },
         "linear_speed": {
           "default": {
-            "acceleration": 20,
-            "deceleration": 15,
-            "max_speed": 50
+            "acceleration": 30,
+            "deceleration": 20,
+            "max_speed": 60
           }
         }
       }
