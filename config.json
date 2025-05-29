@@ -2,7 +2,8 @@
   "general": {
     "ws": {
       "port": 8080,
-      "cmd_route": "/cmd"
+      "cmd_route": "/cmd",
+      "ui_route": "/ui"
     },
     "teensy": {
       "vid": 5824,
@@ -15,6 +16,11 @@
   "rob": {
     "ws": {
       "sender_name": "rob",
+      "hostname": "0.0.0.0",
+      "ping_pong_interval": 1
+    },
+    "ws_ui": {
+      "sender_name": "ui",
       "hostname": "0.0.0.0",
       "ping_pong_interval": 1
     },
@@ -45,18 +51,22 @@
     "zombie_mode": false,
     "team_config": {
       "default_team": "yellow",
-      "start_info_by_team": {
-        "yellow": {
-          "start_zone_id": 0,
-          "start_x": 19.27,
-          "start_y": 15.75,
-          "start_theta": 1.5707963267948966
-        },
+      "info_by_team": {
         "blue": {
-          "start_zone_id": 3,
-          "start_x": 19.27,
-          "start_y": 284.25,
-          "start_theta": -1.5707963267948966
+          "first_pickup_zone": 4,
+          "second_pickup_zone": 2,
+          "third_pickup_zone": 0,
+          "fourth_pickup_zone": 1,
+          "first_build_zone": 17,
+          "second_build_zone": 16
+        },
+        "yellow": {
+          "first_pickup_zone": 9,
+          "second_pickup_zone": 7,
+          "third_pickup_zone": 5,
+          "fourth_pickup_zone": 6,
+          "first_build_zone": 12,
+          "second_build_zone": 13
         }
       }
     },
@@ -119,6 +129,20 @@
             "max_speed": 20
           }
         }
+      }
+    },
+    "score": {
+      "boombot": {
+        "build_one_floor": 4,
+        "build_two_floors": 8,
+        "go_to_backstage": 10,
+        "banner": 20
+      },
+      "pamis": {
+        "occupied_zone": 5,
+        "superstar_on_stage": 5,
+        "partying": 10,
+        "free_stage_zone": 15
       }
     },
     "actuators": {
@@ -227,6 +251,9 @@
     },
     "jack": {
       "pin": 26.0
+    },
+    "bau": {
+      "pin": 16.0
     }
   },
   "arena": {

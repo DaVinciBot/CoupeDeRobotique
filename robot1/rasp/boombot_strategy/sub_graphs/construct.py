@@ -4,9 +4,14 @@ from strategy.core import (
     BaseTaskNode,
     DirectTransition,
     BaseSubGraph,
+    DefaultScoringFunction,
+    ConstantScoringFunction,
+    NavigationScoringFunction,
 )
 
 # ====== Internal Project Imports ======
+from config_loader import CONFIG
+from boombot_strategy import ShowGameContext
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToConstruct,
 )
@@ -17,7 +22,9 @@ from boombot_strategy.tasks.navigation_tasks.maneuver import (
 from boombot_strategy.tasks.actuator_task.actuator_task import Build
 
 
-def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
+def get_construct_sub_graph(
+    zone_construct_id: int, ctx: ShowGameContext
+) -> BaseSubGraph:
     """
     Create a subgraph for navigating to a zone and performing a construction maneuver.
 
@@ -38,8 +45,13 @@ def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
     construct_sub_graph.add_node(
         f"[Construct] go to zone {zone_construct_id}",
         BaseTaskNode(
-            f"[Construct] go to zone {zone_construct_id}",
-            GoToColorReservedZoneToConstruct(zone_construct_id),
+            name=f"[Construct] go to zone {zone_construct_id}",
+            tasks=GoToColorReservedZoneToConstruct(zone_construct_id),
+            scoring_function=NavigationScoringFunction(
+                ctx.arena.ally_zone.point.distance(
+                    ctx.arena.compute_goal_position(zone_construct_id)
+                )
+            ),
         ),
     )
 
@@ -47,8 +59,9 @@ def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
     construct_sub_graph.add_node(
         f"[Construct] placing item at zone {zone_construct_id}",
         BaseTaskNode(
-            f"[Construct] placing item at zone {zone_construct_id}",
-            Build(),
+            name=f"[Construct] placing item at zone {zone_construct_id}",
+            tasks=Build(),
+            scoring_function=ConstantScoringFunction(CONFIG.BUILD_TWO_FLOORS),
         ),
     )
 
@@ -56,7 +69,9 @@ def get_construct_sub_graph(zone_construct_id: int) -> BaseSubGraph:
     construct_sub_graph.add_node(
         f"[Construct] backward maneuver at zone {zone_construct_id}",
         BaseTaskNode(
-            f"[Construct] backward maneuver at zone {zone_construct_id}", Backward(10)
+            name=f"[Construct] backward maneuver at zone {zone_construct_id}",
+            tasks=Backward(10),
+            scoring_function=DefaultScoringFunction(),
         ),
     )
 

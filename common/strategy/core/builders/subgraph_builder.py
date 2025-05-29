@@ -18,7 +18,7 @@ class SubGraphBuilder:
         self.logger = Logger(
             identifier="SubGraphBuilder", follow_logger_manager_rules=True
         )
-        self._nodes: Dict[str, BaseTaskNode] = {}
+        self.nodes: Dict[str, BaseTaskNode] = {}
         self._transitions: List[tuple[str, BaseTransition]] = []
         self.logger.info("Initialized SubGraphBuilder")
 
@@ -27,11 +27,11 @@ class SubGraphBuilder:
         Register a task node under a unique name.
         Raises KeyError if name already exists.
         """
-        if name in self._nodes:
+        if name in self.nodes:
             msg = f"Node name '{name}' already registered"
             self.logger.error(msg)
             raise KeyError(msg)
-        self._nodes[name] = node
+        self.nodes[name] = node
         self.logger.debug(f"Added node '{name}'")
         return self
 
@@ -39,7 +39,7 @@ class SubGraphBuilder:
         """
         Queue a transition from the node named 'from_name'.
         """
-        if from_name not in self._nodes:
+        if from_name not in self.nodes:
             msg = f"Source node '{from_name}' not found for transition"
             self.logger.error(msg)
             raise KeyError(msg)
@@ -91,11 +91,11 @@ class SubGraphBuilder:
             exit_nodes = [self._resolve(exits)]
         # Apply transitions
         for from_name, transition in self._transitions:
-            node = self._nodes[from_name]
+            node = self.nodes[from_name]
             node.add_transition(transition)
             self.logger.debug(f"Connected '{from_name}' -> '{transition.target.name}'")
         # Validate
-        missing = [n for n in exit_nodes if n.name not in self._nodes]
+        missing = [n for n in exit_nodes if n.name not in self.nodes]
         if missing:
             msg = f"Exit nodes not registered: {[n.name for n in missing]}"
             self.logger.error(msg)
@@ -106,14 +106,14 @@ class SubGraphBuilder:
         return BaseSubGraph(
             entry_node=entry_node,
             exit_nodes=exit_nodes,
-            all_nodes=list(self._nodes.values()),
+            all_nodes=list(self.nodes.values()),
         )
 
     def _resolve(self, item: Union[str, BaseTaskNode]) -> BaseTaskNode:
         if isinstance(item, str):
-            if item not in self._nodes:
+            if item not in self.nodes:
                 msg = f"Node '{item}' not found"
                 self.logger.error(msg)
                 raise KeyError(msg)
-            return self._nodes[item]
+            return self.nodes[item]
         return item

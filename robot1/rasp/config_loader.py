@@ -44,6 +44,7 @@ class CONFIG:
 
     WS_PORT = int(GENERAL_WS_CONFIG["port"])
     WS_CMD_ROUTE = GENERAL_WS_CONFIG["cmd_route"]
+    WS_UI_ROUTE = GENERAL_WS_CONFIG["ui_route"]
 
     TEENSY_VID = GENERAL_TEENSY_CONFIG["vid"]
     TEENSY_PID = GENERAL_TEENSY_CONFIG["pid"]
@@ -56,10 +57,15 @@ class CONFIG:
 
     # Specific ws config
     SPECIFIC_WS_CONFIG = SPECIFIC_CONFIG["ws"]
+    SPECIFIC_WS_UI_CONFIG = SPECIFIC_CONFIG["ws_ui"]
 
     WS_SENDER_NAME = SPECIFIC_WS_CONFIG["sender_name"]
     WS_HOSTNAME = SPECIFIC_WS_CONFIG["hostname"]
     WS_PING_PONG_INTERVAL = int(SPECIFIC_WS_CONFIG["ping_pong_interval"])
+
+    WS_UI_SENDER_NAME = SPECIFIC_WS_UI_CONFIG["sender_name"]
+    WS_UI_HOSTNAME = SPECIFIC_WS_UI_CONFIG["hostname"]
+    WS_UI_PING_PONG_INTERVAL = int(SPECIFIC_WS_UI_CONFIG["ping_pong_interval"])
 
     # Zombie mode
     ZOMBIE_MODE = SPECIFIC_CONFIG["zombie_mode"]
@@ -253,6 +259,9 @@ class CONFIG:
 
     # Jack
     JACK_PIN = SPECIFIC_CONFIG["jack"]["pin"]
+
+    # BAU
+    BAU_PIN = SPECIFIC_CONFIG["bau"]["pin"]
 
 
 # Logger: LoggerManager + global configuration

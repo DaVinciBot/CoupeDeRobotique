@@ -41,8 +41,7 @@ class TimeoutTaskNode(BaseTaskNode):
         Override in subclasses for custom behavior.
         """
         self.logger.warning(
-            f"Timeout reached for node '{self.name}' after "
-            f"{self.timeout_seconds:.2f}s"
+            f"Timeout reached for node '{self.name}' after {self.timeout_seconds:.2f}s"
         )
 
     def execute(self, ctx: BaseGameContext) -> bool:
