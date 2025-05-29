@@ -142,14 +142,12 @@ class MainBrain(Brain):
                 path_planner_params=DeltaPathPlannerParams(rotation=pi/2, distance=40),
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                 speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=StopAndWaitAvoidanceParams(1000),
-                acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                    acs_distance=40, width_view=10
-                )
+                avoidance_params=NoAvoidanceParams(),
+                acs_detection_profile_params=NoAcsDetectionProfileParams()
             )
         )
 
-  
+
 
         # --- MetaProg is insane (loop) --- #
         # runner.handle(
