@@ -3,7 +3,10 @@
 Motor *leftMotor = new Motor(LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN, LEFT_STEPS_PER_REV, K);
 Motor *rightMotor = new Motor(RIGHT_STEP_PIN, RIGHT_DIR_PIN, RIGHT_EN_PIN, RIGHT_STEPS_PER_REV, K);
 
-// RollingBasis *rollingBasis = new RollingBasis(leftMotor, rightMotor, WHEEL_DIAMETER_MM, WHEEL_BASE_MM, Point{0, 0, 0}); // RollingBasis object
+PID linearDistancePid(LINEAR_DISTANCE_KP, LINEAR_DISTANCE_KI, LINEAR_DISTANCE_KD, 0.01f);
+PID angularDistancePid(ANGULAR_DISTANCE_KP, ANGULAR_DISTANCE_KI, ANGULAR_DISTANCE_KD, 0.01f);
+
+RollingBasis *rollingBasis = new RollingBasis(leftMotor, rightMotor, WHEEL_DIAMETER_MM, WHEEL_BASE_MM, linearDistancePid, angularDistancePid, Point{0, 0, 0});
 
 lidar_pami *lidar = new lidar_pami(Serial0); // LIDAR object
 
@@ -30,16 +33,18 @@ void setup()
     Serial.begin(115200);
     Serial.println("\n-- PAMI test --\n");
 
-    leftMotor->init();
-    rightMotor->init();
-    leftMotor->enableMotor(true);
-    rightMotor->enableMotor(true);
-    leftMotor->setAcceleration(100.0f); // Set target speed for left motor
-    rightMotor->setAcceleration(100.0f); // Set target speed for left motor
-    Serial.println("Motors initialized");
+    // leftMotor->init();
+    // rightMotor->init();
+    // leftMotor->enableMotor(true);
+    // rightMotor->enableMotor(true);
+    // leftMotor->setAcceleration(100.0f);  // Set target speed for left motor
+    // rightMotor->setAcceleration(100.0f); // Set target speed for left motor
+    // Serial.println("Motors initialized");
 
-    leftMotor->setTargetSpeed(1000.0f); // Set target speed for left motor
-    rightMotor->setTargetSpeed(-1000.0f); // Set target speed for left motor
+    // leftMotor->setTargetSpeed(1000.0f);   // Set target speed for left motor
+    // rightMotor->setTargetSpeed(-1000.0f); // Set target speed for left motor
+
+    rollingBasis->setCommand(Point{0, 100, 0}); // Set target position for rolling basis
 
     lidar->begin(lidar_pami::DEFAULT_BAUD); // Initialize LIDAR
     Serial.println("LIDAR initialized");
@@ -88,10 +93,11 @@ void loop()
 {
     for (size_t i = 0; i < 100; i++)
     {
-        leftMotor->update(); // Update left motor
-        rightMotor->update(); // Update right motor
+        // leftMotor->update();  // Update left motor
+        // rightMotor->update(); // Update right motor
+        rollingBasis->update(); // Update rolling basis
     }
-    
+
 #if ENABLE_OTA
     ota.loop();
 #endif

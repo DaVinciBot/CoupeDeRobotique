@@ -13,8 +13,6 @@ public:
                  Motor *rightMotor,
                  float wheelDiameterMm,
                  float wheelBaseMm,
-                 const PID &linearSpeedPid,
-                 const PID &angularSpeedPid,
                  const PID &linearDistancePid,
                  const PID &angularDistancePid,
                  const Point &initialPosition = {0, 0, 0});
@@ -32,9 +30,9 @@ public:
     float getMeasuredAngularSpeedRadPerS() const;
 
 private:
-    void computeOdometry(float dt);
-    void applyControl(float dt);
-    float wrapToPi(float ang) const;
+    void _computeOdometry(float dt);
+    void _applyControl(float dt);
+    float _wrapToPi(float ang) const;
 
     Motor *_leftMotor;
     Motor *_rightMotor;
@@ -46,7 +44,6 @@ private:
 
     Point _currentPosition;
 
-    PID _linSpeedPid, _angSpeedPid;
     PID _linDistPid, _angDistPid;
 
     float _cmdLinSpeed;
@@ -57,6 +54,7 @@ private:
     float _measAngSpeed;
 
     std::chrono::steady_clock::time_point _lastTime;
+    bool _moving;
 };
 
 #endif

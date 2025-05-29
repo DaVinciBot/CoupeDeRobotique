@@ -1,11 +1,14 @@
 #include "rolling_basis.h"
 #include <math.h>
 
+#define POSITION_TOLERANCE_MM 1.0f    // 1 mm
+#define ANGLE_TOLERANCE_RAD 0.01f    // env. 0.57°
+#define MAX_LINEAR_SPEED_MM_PER_S 100.0f
+#define MAX_ANGULAR_SPEED_RAD_PER_S 10.0f
+
 RollingBasis::RollingBasis(Motor *leftMotor, Motor *rightMotor,
                            float wheelDiameterMm,
                            float wheelBaseMm,
-                           const PID &linearSpeedPid,
-                           const PID &angularSpeedPid,
                            const PID &linearDistancePid,
                            const PID &angularDistancePid,
                            const Point &initialPosition)
@@ -14,47 +17,75 @@ RollingBasis::RollingBasis(Motor *leftMotor, Motor *rightMotor,
       _prevLeftSteps(0),
       _prevRightSteps(0),
       _currentPosition(initialPosition),
-      _linSpeedPid(linearSpeedPid),
-      _angSpeedPid(angularSpeedPid),
       _linDistPid(linearDistancePid),
       _angDistPid(angularDistancePid),
       _cmdLinSpeed(0), _cmdAngSpeed(0),
       _cmdPosition{0, 0, 0},
       _measLinSpeed(0), _measAngSpeed(0),
-      _lastTime(std::chrono::steady_clock::now())
+      _lastTime(std::chrono::steady_clock::now()),
+      _moving(false)
 {
+    _leftMotor->init();
+    _rightMotor->init();
     _leftMotor->resetStepCount();
     _rightMotor->resetStepCount();
+    _leftMotor->setAcceleration(100.0f);
+    _rightMotor->setAcceleration(100.0f);
 }
 
 void RollingBasis::setCommand(const Point &targetPosition){
     _cmdPosition = targetPosition;
 
-    _linSpeedPid.reset();
-    _angSpeedPid.reset();
     _linDistPid.reset();
     _angDistPid.reset();
+    _moving = true;
+    
+    Serial.print("[Command] New target set: x=");
+    Serial.print(_cmdPosition.x);
+    Serial.print(" y=");
+    Serial.print(_cmdPosition.y);
+    Serial.print(" theta=");
+    Serial.println(_cmdPosition.theta);
 }
 
 void RollingBasis::update()
 {
+    if (!_moving) {
+        _cmdPosition = _currentPosition;
+        return;
+    }
+    
     auto now = std::chrono::steady_clock::now();
     float dt = std::chrono::duration<float>(now - _lastTime).count();
     if (dt <= 0)
         return;
 
-    computeOdometry(dt);
-    applyControl(dt);
+    _computeOdometry(dt);
+    
+    float distErr = Point::distance(_currentPosition, _cmdPosition);
+    float bearErr = _wrapToPi(_cmdPosition.theta - _currentPosition.theta);
+    
+    // Serial.print("[Update] Error: dist=");
+    // Serial.print(distErr);
+    // Serial.print(" bear=");
+    // Serial.println(bearErr);
+
+    if (distErr < POSITION_TOLERANCE_MM && std::fabs(bearErr) < ANGLE_TOLERANCE_RAD) {
+        stop();
+        return;
+    }
+    
+    _applyControl(dt);
 
     _leftMotor->update();
     _rightMotor->update();
     _lastTime = now;
 }
 
-void RollingBasis::computeOdometry(float dt)
+void RollingBasis::_computeOdometry(float dt)
 {
     long leftSteps = _leftMotor->getStepCount();
-    long rightSteps = _rightMotor->getStepCount();
+    long rightSteps = -_rightMotor->getStepCount();
     long dL = leftSteps - _prevLeftSteps;
     long dR = rightSteps - _prevRightSteps;
     _prevLeftSteps = leftSteps;
@@ -69,33 +100,64 @@ void RollingBasis::computeOdometry(float dt)
 
     _currentPosition.x += dCenter * cosf(_currentPosition.theta + dTheta / 2.0f);
     _currentPosition.y += dCenter * sinf(_currentPosition.theta + dTheta / 2.0f);
-    _currentPosition.theta = wrapToPi(_currentPosition.theta + dTheta);
+    _currentPosition.theta = _wrapToPi(_currentPosition.theta + dTheta);
 
     _measLinSpeed = dCenter / dt;
     _measAngSpeed = dTheta / dt;
+    
+    // Serial.print("[Odometry] dLeft=");
+    // Serial.print(dLeft);
+    // Serial.print(" dRight=");
+    // Serial.print(dRight);
+    // Serial.print(" dTheta=");
+    // Serial.println(dTheta);
+    Serial.print("[Odometry] New pose: x=");
+    Serial.print(_currentPosition.x);
+    Serial.print(" y=");
+    Serial.print(_currentPosition.y);
+    Serial.print(" theta=");
+    Serial.println(_currentPosition.theta);
+    Serial.print("[Odometry] Speeds: lin=");
+    Serial.print(_measLinSpeed);
+    Serial.print(" mm/s, ang=");
+    Serial.print(_measAngSpeed);
+    Serial.println(" rad/s");
 }
 
-void RollingBasis::applyControl(float dt)
+void RollingBasis::_applyControl(float dt)
 {
-    _linSpeedPid.setSampleTime(dt);
-    _angSpeedPid.setSampleTime(dt);
     _linDistPid.setSampleTime(dt);
     _angDistPid.setSampleTime(dt);
 
-    float distErr = Point::distance(_currentPosition, _cmdPosition);        // mm
-    float bearErr = wrapToPi(_cmdPosition.theta - _currentPosition.theta);  // rad
+    float xerr = _cmdPosition.x - _currentPosition.x; // mm
+    float yerr = _cmdPosition.y - _currentPosition.y; // mm
 
-    float corrLinD = _linDistPid.compute(distErr) / dt; // mm/s
-    float corrAngD = _angDistPid.compute(bearErr) / dt; // rad/s
+    float distErr = xerr * cosf(_currentPosition.theta) + yerr * sinf(_currentPosition.theta); // mm
+    double mag = sqrt(pow(xerr, 2) + pow(yerr, 2));
+    double sign = (distErr >= 0.0) ? +1.0 : -1.0;
+    distErr = mag * sign;
 
-    float spdLinRef = corrLinD;
-    float spdAngRef = corrAngD;
+    float bearErr = _wrapToPi(Point::angle(_cmdPosition, _currentPosition) - _currentPosition.theta);  // rad
 
-    float corrLinS = _linSpeedPid.compute(spdLinRef - _measLinSpeed);
-    float corrAngS = _angSpeedPid.compute(spdAngRef - _measAngSpeed);
+    Serial.print("[Control] distErr=");
+    Serial.print(distErr);
+    Serial.print(" bearErr=");
+    Serial.println(bearErr);
+    
+    float corrLinD = _linDistPid.compute(distErr); // mm/s
+    float corrAngD = _angDistPid.compute(bearErr); // rad/s
 
-    float cmdLin = spdLinRef + corrLinS;
-    float cmdAng = spdAngRef + corrAngS;
+    float spdLinRef = fmaxf(fminf(corrLinD, MAX_LINEAR_SPEED_MM_PER_S), -MAX_LINEAR_SPEED_MM_PER_S);
+    float spdAngRef = fmaxf(fminf(corrAngD, MAX_ANGULAR_SPEED_RAD_PER_S), -MAX_ANGULAR_SPEED_RAD_PER_S);
+    
+    float cmdLin = spdLinRef;
+    float cmdAng = spdAngRef;
+
+    Serial.print("[Control] cmdLin=");
+    Serial.print(cmdLin);
+    Serial.print(" mm/s, cmdAng=");
+    Serial.print(cmdAng);
+    Serial.println(" rad/s");
 
     float halfBase = _wheelBaseMm * 0.5f;
     float leftSpeedMmPerSec = cmdLin - cmdAng * halfBase;
@@ -105,17 +167,23 @@ void RollingBasis::applyControl(float dt)
     float leftSpeedStepsPerSec = (leftSpeedMmPerSec / circumference) * _leftMotor->getStepsPerRev();
     float rightSpeedStepsPerSec = (rightSpeedMmPerSec / circumference) * _rightMotor->getStepsPerRev();
 
+    Serial.print("[Control] leftSpeedStepsPerSec=");
+    Serial.print(leftSpeedStepsPerSec);
+    Serial.print(" rightSpeedStepsPerSec=");
+    Serial.println(rightSpeedStepsPerSec);
+
     _leftMotor->setTargetSpeed(leftSpeedStepsPerSec);
-    _rightMotor->setTargetSpeed(rightSpeedStepsPerSec);
+    _rightMotor->setTargetSpeed(-rightSpeedStepsPerSec);
 }
 
-float RollingBasis::wrapToPi(float ang) const
+float RollingBasis::_wrapToPi(float ang) const
 {
-    while (ang > M_PI)
-        ang -= 2 * M_PI;
-    while (ang < -M_PI)
-        ang += 2 * M_PI;
-    return ang;
+    ang = fmodf(ang + PI, 2.0f * PI);
+    if (ang < 0.0f)
+    {
+        ang += 2.0f * PI;
+    }
+    return ang - PI;
 }
 
 bool RollingBasis::isMoving() const
@@ -126,13 +194,13 @@ bool RollingBasis::isMoving() const
 void RollingBasis::stop()
 {
     _cmdLinSpeed = _cmdAngSpeed = 0;
-    _cmdPosition = {0, 0, 0};
+    _cmdPosition = _currentPosition;
     _leftMotor->setTargetSpeed(0);
     _rightMotor->setTargetSpeed(0);
-    _linSpeedPid.reset();
-    _angSpeedPid.reset();
     _linDistPid.reset();
     _angDistPid.reset();
+    _moving = false;
+    Serial.println("RollingBasis stopped.");
 }
 
 Point RollingBasis::getPose() const

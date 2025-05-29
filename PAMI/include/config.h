@@ -25,20 +25,12 @@
 #define K 8.0f
 
 // #------- PID CONFIGURATION -------#
-#define LINEAR_SPEED_KP 0.0f
-#define LINEAR_SPEED_KI 0.0f
-#define LINEAR_SPEED_KD 0.0f
-
-#define ANGULAR_SPEED_KP 0.0f
-#define ANGULAR_SPEED_KI 0.0f
-#define ANGULAR_SPEED_KD 0.0f
-
 #define LINEAR_DISTANCE_KP 10.0f
 #define LINEAR_DISTANCE_KI 0.0f
 #define LINEAR_DISTANCE_KD 0.0f
 
 #define ANGULAR_DISTANCE_KP 10.0f
-#define ANGULAR_DISTANCE_KI 0.0f
+#define ANGULAR_DISTANCE_KI 100.0f
 #define ANGULAR_DISTANCE_KD 0.0f
 
 
