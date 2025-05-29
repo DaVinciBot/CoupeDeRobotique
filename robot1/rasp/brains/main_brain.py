@@ -20,7 +20,7 @@ from arena import ShowArena, BaseArenaZone
 from arena import AllyZone, TeamColor
 
 # ====== Internal Project Imports ======
-from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+from controllers.rolling_basis import RollingBasis, RollingBasisDummy, AsservissementRollingBasis
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from sensors import Lidar, Inputs
 
@@ -79,11 +79,8 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        # from boombot_strategy import ShowGameContext
-        # from boombot_strategy.strategies.basic_strategy import BasicStrategy
-
         # Rolling basis & Actuators
-        rolling_basis = RollingBasis(
+        rolling_basis = AsservissementRollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(0.01)
@@ -109,6 +106,9 @@ class MainBrain(Brain):
                 enemy_zone=self.arena.enemy_zone,
             )
             rolling_basis.set_target_position(cmd.get_position_command())
+        else:
+            rolling_basis.plot_logs()
+            time.sleep(1000000000000)
 
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
