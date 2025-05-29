@@ -30,7 +30,7 @@ class ShowArena(BaseArena):
         chunk_size: int = 2,
         forbidden_cover_threshold: float = 0.5,
         distance_between_robot_and_pickup_zone: float = 25,
-        distance_between_robot_and_big_construct_zone: float = 5,
+        distance_between_robot_and_big_construct_zone: float = 0,
         distance_between_robot_and_small_construct_zone: float = 22,
         grid_manager_logger: Logger = None,
     ) -> None:

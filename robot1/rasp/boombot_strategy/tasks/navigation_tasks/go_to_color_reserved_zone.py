@@ -6,10 +6,12 @@ from navigation import (
     BasicPathPlannerParams,
     SequentialTrajectoryPlannerParams,
     Direction,
+    TrajectoryPlanCommand
 )
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (
     RectangularProjectionAcsDetectionProfileParams,
 )
+import time
 
 
 class GoToColorReservedZoneToFinishGame(NavigationTask):
@@ -38,3 +40,19 @@ class GoToColorReservedZoneToConstruct(NavigationTask):
                 acs_distance=50, width_view=40
             ),
         )
+        
+    def handle(self, ctx):
+        if not self._is_initialized:
+            self._initialize(ctx)
+
+        cmd: TrajectoryPlanCommand = self.navigator_task.handle(
+            ally_zone=ctx.arena.ally_zone,
+            enemy_zone=ctx.arena.enemy_zone,
+        )
+
+        ctx.rolling_basis.set_target_position(cmd.get_position_command())
+        if not self.navigator_task.state.is_finished():
+            return False
+        else:
+            time.sleep(1)
+            return True

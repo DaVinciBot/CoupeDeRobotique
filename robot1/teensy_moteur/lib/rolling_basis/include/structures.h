@@ -11,14 +11,15 @@ public:
 
     Point(double x, double y, double theta = 1234.1234)
         : x(x), y(y), theta(theta)
-    {}
+    {
+    }
 
     Point &operator=(const Point &other)
     {
         if (this != &other)
         {
-            x     = other.x;
-            y     = other.y;
+            x = other.x;
+            y = other.y;
             theta = other.theta;
         }
         return *this;
@@ -26,9 +27,7 @@ public:
 
     bool operator==(const Point &other) const
     {
-        return x == other.x
-            && y == other.y
-            && theta == other.theta;
+        return x == other.x && y == other.y && theta == other.theta;
     }
 
     static double distance(const Point &p1, const Point &p2)
@@ -40,10 +39,11 @@ public:
     // angle = 2 * atan2(‖u/‖u‖ − v/‖v‖‖, ‖u/‖u‖ + v/‖v‖‖)
     static double angle(const Point &p1, const Point &p2)
     {
-        // return atan2(p2.y - p1.y, p2.x - p1.x);
+        return atan2(p2.y - p1.y, p2.x - p1.x);
         double norm_u = std::hypot(p1.x, p1.y);
         double norm_v = std::hypot(p2.x, p2.y);
-        if (norm_u == 0.0 || norm_v == 0.0) {
+        if (norm_u == 0.0 || norm_v == 0.0)
+        {
             return 0.0;
         }
 
@@ -58,8 +58,7 @@ public:
         double sy = uy + vy;
 
         return 2.0 * std::atan2(
-            std::hypot(dx, dy),
-            std::hypot(sx, sy)
-        );
+                         std::hypot(dx, dy),
+                         std::hypot(sx, sy));
     }
 };

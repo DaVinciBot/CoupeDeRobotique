@@ -127,8 +127,7 @@ void Rolling_Basis::odometrie_handle()
  */
 void Rolling_Basis::handle(
     Point target_position,
-    Com *com
-)
+    Com *com)
 {
     /* Position part */
     // We already have the current robot's position with odometrie (X, Y, THETA)
@@ -136,18 +135,19 @@ void Rolling_Basis::handle(
     // Compute distance and orientation error (difference between target and real)
     double xerr = target_position.x - this->X;
     double yerr = target_position.y - this->Y;
-    
+
     double distance_error = xerr * cosf(this->THETA) + yerr * sinf(this->THETA);
     double mag = sqrt(pow(xerr, 2) + pow(yerr, 2));
-    double sign = (distance_error >= 0.0) ? +1.0 : -1.0; 
+    double sign = (distance_error >= 0.0) ? +1.0 : -1.0;
     distance_error = mag * sign;
 
-    double theta_error = target_position.theta - this->THETA + Point::angle(
+    double theta_error = target_position.theta - this->THETA;
+    /*+ Point::angle(
         Point(this->X, this->Y, this->THETA),
         target_position
-    ) - this->THETA;
+    ) - this->THETA;*/
 
-    theta_error = normalizeAngle(theta_error);  
+    theta_error = normalizeAngle(theta_error);
 
     // Consigne vitesse
     // Compute PID output based on errors
@@ -163,7 +163,7 @@ void Rolling_Basis::handle(
     //     String pwms = "PWMs: " + String(right_pwm) + ", " + String(left_pwm);
     //     com->print((char *)pwms.c_str());
     // }
-    
+
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);
 }
