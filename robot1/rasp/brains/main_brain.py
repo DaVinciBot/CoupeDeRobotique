@@ -112,7 +112,7 @@ class MainBrain(Brain):
         rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
-        time.sleep(1)
+        time.sleep(0.01)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
         actuators = ActuatorsShowDummy(
@@ -127,9 +127,8 @@ class MainBrain(Brain):
 
         runner = strat.get_graph_runner()
 
-        from strategy.tools import visualize_task_graph
-
-        visualize_task_graph(runner.active[0])
+        # from strategy.tools import visualize_task_graph
+        # visualize_task_graph(runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
         runner.handle(
