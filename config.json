@@ -82,7 +82,7 @@
         },
         "angular_position": {
           "kp": 150.0,
-          "ki": 0,
+          "ki": 10,
           "kd": 0
         }
       },
