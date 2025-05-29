@@ -81,9 +81,9 @@
           "kd": 0
         },
         "angular_position": {
-          "kp": 10.0,
+          "kp": 100.0,
           "ki": 0,
-          "kd": 10
+          "kd": 0
         }
       },
       "speed_profiles": {
