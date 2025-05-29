@@ -50,7 +50,7 @@ class BasicStrategy(BaseStrategy):
 
         first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"], ctx)
         first_build_zone = get_construct_sub_graph(
-            self.zones["first_build_zone"], ctx, 16.5
+            self.zones["first_build_zone"], ctx, 5.5
         )
 
         backward_to_extract_from_deploy_brand.add_transition(
@@ -71,7 +71,7 @@ class BasicStrategy(BaseStrategy):
 
         third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"], ctx)
         third_build_zone = get_construct_sub_graph(
-            self.zones["first_build_zone"], ctx, 7
+            self.zones["first_build_zone"], ctx, -1
         )
         third_pickup_zone.get_exits()[0].add_transition(
             DirectTransition(third_build_zone.get_entry())
