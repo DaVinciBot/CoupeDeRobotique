@@ -7,7 +7,7 @@ from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
 )
 
 from boombot_strategy.tasks.navigation_tasks.maneuver import PreciseForward, Backward
-from boombot_strategy.tasks.actuator_task.actuator_task import BlockBanner
+from boombot_strategy.tasks.actuator_task.actuator_task import BlockBanner, ReadyToApproachToPickUp
 from strategy.core import (
     SubGraphBuilder,
     BaseTaskNode,
@@ -32,6 +32,11 @@ class BasicStrategy(BaseStrategy):
             tasks=BlockBanner(),
         )
 
+        r = BaseTaskNode(
+            name="rrrrrr",
+            tasks=ReadyToApproachToPickUp(),
+        )
+
         precise_forward_to_deploy_brand = BaseTaskNode(
             name="Precise forward to deploy brand",
             tasks=PreciseForward(7),
@@ -42,7 +47,9 @@ class BasicStrategy(BaseStrategy):
             tasks=Backward(15),
         )
 
-        block_banner.add_transition(DirectTransition(precise_forward_to_deploy_brand))
+        block_banner.add_transition(DirectTransition(r))
+
+        r.add_transition(DirectTransition(precise_forward_to_deploy_brand))
 
         precise_forward_to_deploy_brand.add_transition(
             DirectTransition(backward_to_extract_from_deploy_brand)
