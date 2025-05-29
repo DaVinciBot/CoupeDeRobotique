@@ -81,7 +81,7 @@ class MainBrain(Brain):
             },
         }
 
-        self.lidar_points: list[Point] = []
+        self.jack_triggered: bool = False
 
         super().__init__(logger, self)
 
@@ -119,6 +119,12 @@ class MainBrain(Brain):
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
+        # Init position
+        actuators.start_position()
+
+        while not self.jack_triggered:
+            time.sleep(0.1)
+
         strat = BasicStrategy(
             ShowGameContext(
                 arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
@@ -126,9 +132,6 @@ class MainBrain(Brain):
         )
 
         runner = strat.get_graph_runner()
-
-        # from strategy.tools import visualize_task_graph
-        # visualize_task_graph(runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
         runner.handle(
@@ -254,6 +257,11 @@ class MainBrain(Brain):
         )
 
     @Brain.task(process=False, run_on_start=True)
+    async def scan_jack(self):
+        await self.inputs.wait_for_jack_trigger()
+        self.jack_triggered = True
+
+    @Brain.task(process=False, run_on_start=True)
     async def start(self):
         # 1. Wait for the team color to be set
         self.arena.set_team_color(TeamColor.YELLOW)
@@ -279,6 +287,5 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = start_position
 
-        await self.inputs.wait_for_jack_trigger()
         self.ui_state["jack_state"] = False
         await self.run()
