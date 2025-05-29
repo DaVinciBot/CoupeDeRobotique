@@ -137,7 +137,7 @@ class MainBrain(Brain):
         navigator = Navigator()
         navigator.add_navigation_task(
             NavigatorTaskParams(
-                goal=9,
+                goal=self.arena.compute_goal_position(9),
                 timeout=None,
                 path_planner_params=BasicPathPlannerParams(), # DeltaPathPlannerParams(distance=40, rotation=pi)
                 trajectory_planner_params=SequentialTrajectoryPlannerParams(),
