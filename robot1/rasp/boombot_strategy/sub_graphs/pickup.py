@@ -74,7 +74,7 @@ def get_pickup_sub_graph(zone_pickup_id: int, ctx: ShowGameContext) -> BaseSubGr
         f"[Pickup] go to take stuff {zone_pickup_id}",
         BaseTaskNode(
             name=f"[Pickup] go to take stuff {zone_pickup_id}",
-            tasks=PreciseForward(15),
+            tasks=PreciseForward(16),
             scoring_function=DefaultScoringFunction(),
         ),
     )
