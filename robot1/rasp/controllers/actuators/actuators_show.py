@@ -436,6 +436,9 @@ class ActuatorsShow(Actuators):
         self.fold(6)
 
     def block_banner(self):
+        self.set_stepper_driver_activation_state(13, enable_driver=False)
+        self.elevator_ticks = 0
+        self.set_servo_angle(8, angle=35, max_angle=270)
         # self.set_servo_angle(0, angle=105, max_angle=270)
         # self.set_servo_angle(2, angle=167, max_angle=270)
         self.set_servo_angle(0, angle=100, max_angle=270)
