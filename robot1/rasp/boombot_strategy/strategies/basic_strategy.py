@@ -23,7 +23,9 @@ class BasicStrategy(BaseStrategy):
         super().__init__(ctx)
 
         first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"], ctx)
-        first_build_zone = get_construct_sub_graph(self.zones["first_build_zone"], ctx)
+        first_build_zone = get_construct_sub_graph(
+            self.zones["first_build_zone"], ctx, 7
+        )
         first_pickup_zone.get_exits()[0].add_transition(
             DirectTransition(first_build_zone.get_entry())
         )
@@ -37,13 +39,17 @@ class BasicStrategy(BaseStrategy):
         )
 
         third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"], ctx)
-        third_build_zone = get_construct_sub_graph(self.zones["first_build_zone"], ctx)
+        third_build_zone = get_construct_sub_graph(
+            self.zones["first_build_zone"], ctx, 2.5
+        )
         third_pickup_zone.get_exits()[0].add_transition(
             DirectTransition(third_build_zone.get_entry())
         )
 
         fourth_pickup_zone = get_pickup_sub_graph(self.zones["fourth_pickup_zone"], ctx)
-        fourth_build_zone = get_construct_sub_graph(self.zones["first_build_zone"], ctx)
+        fourth_build_zone = get_construct_sub_graph(
+            self.zones["first_build_zone"], ctx, -2.5
+        )
         fourth_pickup_zone.get_exits()[0].add_transition(
             DirectTransition(fourth_build_zone.get_entry())
         )

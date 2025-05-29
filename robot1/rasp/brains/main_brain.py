@@ -129,7 +129,7 @@ class MainBrain(Brain):
 
         from strategy.tools import visualize_task_graph
 
-        visualize_task_graph(runner.active[0])
+        # visualize_task_graph(runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
         runner.handle(
@@ -139,7 +139,6 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = rolling_basis.odometrie
-
 
     @Brain.task(
         process=True,

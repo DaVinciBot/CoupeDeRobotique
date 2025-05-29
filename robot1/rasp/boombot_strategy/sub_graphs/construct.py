@@ -15,15 +15,13 @@ from boombot_strategy import ShowGameContext
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToConstruct,
 )
-from boombot_strategy.tasks.navigation_tasks.maneuver import (
-    Backward,
-)
+from boombot_strategy.tasks.navigation_tasks.maneuver import Backward, PreciseForward
 
 from boombot_strategy.tasks.actuator_task.actuator_task import Build
 
 
 def get_construct_sub_graph(
-    zone_construct_id: int, ctx: ShowGameContext
+    zone_construct_id: int, ctx: ShowGameContext, supplementary_distance=0.0
 ) -> BaseSubGraph:
     """
     Create a subgraph for navigating to a zone and performing a construction maneuver.
@@ -51,6 +49,16 @@ def get_construct_sub_graph(
         ),
     )
 
+    # Add node for preparing the construction at the specified zone
+    construct_sub_graph.add_node(
+        f"[Construct] prepare construction at zone {zone_construct_id}",
+        BaseTaskNode(
+            name=f"[Construct] prepare construction at zone {zone_construct_id}",
+            tasks=PreciseForward(supplementary_distance),
+            scoring_function=DefaultScoringFunction(),
+        ),
+    )
+
     # Add node for actuators action of placing item
     construct_sub_graph.add_node(
         f"[Construct] placing item at zone {zone_construct_id}",
@@ -73,6 +81,15 @@ def get_construct_sub_graph(
 
     construct_sub_graph.connect(
         f"[Construct] go to zone {zone_construct_id}",
+        DirectTransition(
+            construct_sub_graph.nodes[
+                f"[Construct] prepare construction at zone {zone_construct_id}"
+            ]
+        ),
+    )
+
+    construct_sub_graph.connect(
+        f"[Construct] prepare construction at zone {zone_construct_id}",
         DirectTransition(
             construct_sub_graph.nodes[
                 f"[Construct] placing item at zone {zone_construct_id}"
