@@ -213,10 +213,10 @@ class ShowArena(BaseArena):
                 (100, 0),
                 (145, 45),
                 [
-                    # OrientedPoint(
-                    #     122.5, 45 + distance_between_robot_and_work_zone, -pi / 2
-                    # ),
-                    OrientedPoint(100 - distance_between_robot_and_work_zone, 22.5, 0),
+                    OrientedPoint(
+                        122.5, 45 + distance_between_robot_and_work_zone, -pi / 2
+                    ),
+                    # OrientedPoint(100 - distance_between_robot_and_work_zone, 22.5, 0),
                 ],
             ),
             (
