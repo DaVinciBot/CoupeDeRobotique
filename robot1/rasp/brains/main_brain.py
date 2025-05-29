@@ -135,20 +135,33 @@ class MainBrain(Brain):
         #runner = strat.get_graph_runner()
 
         navigator = Navigator()
-        for i in range(5):
-            navigator.add_navigation_task(
-                NavigatorTaskParams(
-                    goal=None,
-                    timeout=None,
-                    path_planner_params=DeltaPathPlannerParams(distance=50, rotation=pi),
-                    trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-                    speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                    avoidance_params=StopAndWaitAvoidanceParams(1000),
-                    acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                        acs_distance=40, width_view=10
-                    )
+        navigator.add_navigation_task(
+            NavigatorTaskParams(
+                goal=None,
+                timeout=None,
+                path_planner_params=DeltaPathPlannerParams(rotation=pi/2),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+                avoidance_params=StopAndWaitAvoidanceParams(1000),
+                acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                    acs_distance=40, width_view=10
                 )
             )
+        )
+
+        navigator.add_navigation_task(
+            NavigatorTaskParams(
+                goal=None,
+                timeout=None,
+                path_planner_params=DeltaPathPlannerParams(rotation=-pi / 2),
+                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+                avoidance_params=StopAndWaitAvoidanceParams(1000),
+                acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                    acs_distance=40, width_view=10
+                )
+            )
+        )
 
 
         # --- MetaProg is insane (loop) --- #
