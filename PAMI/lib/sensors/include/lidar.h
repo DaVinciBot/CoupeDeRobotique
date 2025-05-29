@@ -1,34 +1,46 @@
-#pragma once
+#ifndef lidar_scanner_h
+#define lidar_scanner_h
+
 #include <Arduino.h>
 
-class Gs2Lidar {
+class lidar_pami {
 public:
-    Gs2Lidar(HardwareSerial& port,uint8_t rx,uint8_t tx,
-             uint16_t obstacle_mm = 116,      // seuil obstacle
-             uint16_t cliff_mm    = 130);     // seuil vide
+    static constexpr uint32_t DEFAULT_BAUD = 921600;
 
-    void   begin();
-    void   task();
+    /**
+     * @param serialPort  Reference to the UART used by the LIDAR (default Serial1)
+     * @param rxPin       UART RX pin (default 44)
+     * @param txPin       UART TX pin (default 43)
+     * @param debug       If true, prints debug messages on Serial
+     */
+    lidar_pami(HardwareSerial &serialPort = Serial1,
+                 int8_t rxPin = 44,
+                 int8_t txPin = 43,
+                 bool debug = false);
 
-    bool   obstacleDetected() const;          // dist < obstacle_mm
-    bool   cliffDetected()    const;          // dist > cliff_mm
-    void   setCliffThreshold(uint16_t mm) { _cliffTh = mm; }
+    
+    void begin(uint32_t baud = DEFAULT_BAUD);
+
+    
+    bool obstacleAhead(uint16_t distanceMin = 100);
 
 private:
-    static constexpr uint16_t PACKET_SIZE = 322;
-    static constexpr uint8_t  ENV_SIZE    = 2;
-    static constexpr uint16_t POINT_COUNT = 160;
-    static constexpr uint8_t  FRONT_START = 40;
-    static constexpr uint8_t  FRONT_END   = 120;
-    static constexpr uint8_t  FRONT_MIDDLE   = 80;
+    static const uint16_t PACKET_SIZE  = 331;
+    static const uint8_t  FRAME_HEADER = 0xA5;
+    static const uint8_t  HEADER_LEN   = 8;
+    static const uint8_t  ENV_LEN      = 2;
+    static const uint16_t POINT_COUNT  = 160;
 
-    void processPacket(const uint8_t* p);
+    HardwareSerial &_serial;
+    int8_t _rxPin;
+    int8_t _txPin;
+    bool   _debug;
 
-    HardwareSerial& _serial;
-    uint8_t  _rxPin, _txPin;
-    uint16_t _obsTh, _cliffTh;
-    uint8_t  _buf[PACKET_SIZE];
-    uint16_t _idx = 0;
-    bool     _obstacle = false;
-    bool     _cliff    = false;
+    uint8_t  _buffer[PACKET_SIZE];
+    uint16_t _bufferIndex = 0;
+
+    void   sendScanCommand();
+    bool   readFrame();
 };
+
+#endif // LIDAR_SCANNER_H
