@@ -29,7 +29,7 @@ class ShowArena(BaseArena):
         obstacle_buffer: float,
         chunk_size: int = 2,
         forbidden_cover_threshold: float = 0.5,
-        distance_between_robot_and_work_zone: float = 15.5,
+        distance_between_robot_and_work_zone: float = 17.5,
         grid_manager_logger: Logger = None,
     ) -> None:
         stuff_zone_logger = Logger(
