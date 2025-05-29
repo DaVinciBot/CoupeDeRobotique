@@ -107,6 +107,7 @@ class AsservissementRollingBasis(BaseComTeensy):
     def plot_logs(self) -> None:
         """
         Plot target vs actual odometry for X, Y, and Theta using stored logs.
+        Ensures all series have the same length before plotting.
         """
         logs = self.get_logs()
         if not logs:
@@ -115,15 +116,21 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         # Normalize time
         t0 = logs[0]['time']
-        times = [(e['time'] - t0) for e in logs]
+        # Determine number of entries
+        n = len(logs)
 
-        # Extract data series
-        target_x = [e['target_x'] for e in logs]
-        actual_x = [e['actual_x'] for e in logs]
-        target_y = [e['target_y'] for e in logs]
-        actual_y = [e['actual_y'] for e in logs]
-        target_th = [e['target_theta'] for e in logs]
-        actual_th = [e['actual_theta'] for e in logs]
+        # Build each series by index to guarantee equal length
+        times = [(logs[i]['time'] - t0) for i in range(n)]
+        target_x = [logs[i]['target_x'] for i in range(n)]
+        actual_x = [logs[i]['actual_x'] for i in range(n)]
+        target_y = [logs[i]['target_y'] for i in range(n)]
+        actual_y = [logs[i]['actual_y'] for i in range(n)]
+        target_th = [logs[i]['target_theta'] for i in range(n)]
+        actual_th = [logs[i]['actual_theta'] for i in range(n)]
+
+        # Optional sanity check
+        assert all(len(lst) == n for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)), \
+            f"Inconsistent log lengths: {[len(lst) for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)]}"
 
         # Plot
         fig, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
