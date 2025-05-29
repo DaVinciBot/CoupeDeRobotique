@@ -7,6 +7,7 @@ from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
 )
 
 from boombot_strategy.tasks.navigation_tasks.maneuver import PreciseForward, Backward
+from boombot_strategy.tasks.actuator_task.actuator_task import BlockBanner
 from strategy.core import (
     SubGraphBuilder,
     BaseTaskNode,
@@ -26,6 +27,11 @@ class BasicStrategy(BaseStrategy):
     def __init__(self, ctx: ShowGameContext):
         super().__init__(ctx)
 
+        block_banner = BaseTaskNode(
+            name="Block Banner",
+            tasks=BlockBanner(),
+        )
+
         precise_forward_to_deploy_brand = BaseTaskNode(
             name="Precise forward to deploy brand",
             tasks=PreciseForward(5),
@@ -34,6 +40,10 @@ class BasicStrategy(BaseStrategy):
         backward_to_extract_from_deploy_brand = BaseTaskNode(
             name="Precise forward to deploy brand",
             tasks=Backward(15),
+        )
+
+        block_banner.add_transition(
+            DirectTransition(precise_forward_to_deploy_brand)
         )
 
         precise_forward_to_deploy_brand.add_transition(
@@ -96,5 +106,5 @@ class BasicStrategy(BaseStrategy):
             logger=Logger(
                 identifier="BasicStrategyRunner", follow_logger_manager_rules=True
             ),
-            start=precise_forward_to_deploy_brand,
+            start=block_banner,
         )

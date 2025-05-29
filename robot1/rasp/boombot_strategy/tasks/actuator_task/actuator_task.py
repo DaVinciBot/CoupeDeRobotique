@@ -28,3 +28,9 @@ class Build(BaseTask):
         ctx.actuators.build()
         ctx.score += CONFIG.BUILD_TWO_FLOORS
         return True
+
+
+class BlockBanner(BaseTask):
+    def handle(self, ctx: ShowGameContext):
+        ctx.actuators.block_banner()
+        return True
