@@ -194,7 +194,7 @@
         },
         "8": {
           "fold_angle": 240,
-          "deploy_angle": 140,
+          "deploy_angle": 150,
           "docking": 130,
           "max_angle": 270
         },
