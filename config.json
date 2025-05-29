@@ -45,20 +45,23 @@
     "zombie_mode": false,
     "team_config": {
       "default_team": "yellow",
-      "start_info_by_team": {
-        "yellow": {
-          "start_zone_id": 0,
-          "start_x": 19.27,
-          "start_y": 15.75,
-          "start_theta": 1.5707963267948966
+      "info_by_team": {
+        "blue":{
+          "first_pickup_zone": 4,
+          "second_pickup_zone": 2,
+          "third_pickup_zone": 0,
+          "fourth_pickup_zone": 1,
+          "first_build_zone": 17,
+          "second_build_zone": 16
         },
-        "blue": {
-          "start_zone_id": 3,
-          "start_x": 19.27,
-          "start_y": 284.25,
-          "start_theta": -1.5707963267948966
+        "yellow": {
+          "first_pickup_zone": 9,
+          "second_pickup_zone": 7,
+          "third_pickup_zone": 5,
+          "fourth_pickup_zone": 6,
+          "first_build_zone": 12,
+          "second_build_zone": 13
         }
-      }
     },
     "rolling_basis": {
       "rolling_basis_teensy_ser": 12678590,
@@ -119,6 +122,20 @@
             "max_speed": 20
           }
         }
+      }
+    },
+    "score": {
+      "boombot":{
+        "build_one_floor": 4,
+        "build_two_floors": 8,
+        "go_to_backstage": 10,
+        "banner": 20
+        },
+      "pamis": {
+        "occupied_zone": 5,
+        "superstar_on_stage": 5,
+        "partying": 10,
+        "free_stage_zone": 15
       }
     },
     "actuators": {

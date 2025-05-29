@@ -104,7 +104,22 @@ class CONFIG:
     # Team config
     TEAM_CONFIG = SPECIFIC_CONFIG["team_config"]
     DEFAULT_TEAM: str = TEAM_CONFIG["default_team"]
-    START_INFO_BY_TEAM: dict[str, dict] = TEAM_CONFIG["start_info_by_team"]
+    INFO_BY_TEAM: dict[str, dict] = TEAM_CONFIG["info_by_team"]
+
+    # Scoring System
+    SCORE_CONFIG = SPECIFIC_CONFIG["score"]
+
+    # Boombot
+    BUILD_ONE_FLOOR = SCORE_CONFIG["boombot"]["build_one_floor"]
+    BUILD_TWO_FLOORS = SCORE_CONFIG["boombot"]["build_two_floors"]
+    GO_TO_BACKSTAGE = SCORE_CONFIG["boombot"]["go_to_backstage"]
+    BANNER = SCORE_CONFIG["boombot"]["banner"]
+
+    # PAMIs
+    OCCUPIED_ZONE = SCORE_CONFIG["pamis"]["occupied_zone"]
+    SUPERSTAR_ON_STAGE = SCORE_CONFIG["pamis"]["superstar_on_stage"]
+    PARTYING = SCORE_CONFIG["pamis"]["partying"]
+    FREE_STAGE_ZONE = SCORE_CONFIG["pamis"]["free_stage_zone"]
 
     # Rolling Basis
     ROLLING_BASIS_CONFIG = SPECIFIC_CONFIG["rolling_basis"]

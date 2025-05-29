@@ -97,7 +97,7 @@ class CONFIG:
     # Team config
     TEAM_CONFIG = SPECIFIC_CONFIG["team_config"]
     DEFAULT_TEAM: str = TEAM_CONFIG["default_team"]
-    START_INFO_BY_TEAM: dict[str, dict] = TEAM_CONFIG["start_info_by_team"]
+    INFO_BY_TEAM: dict[str, dict] = TEAM_CONFIG["info_by_team"]
 
     # Rolling Basis
     ROLLING_BASIS_CONFIG = SPECIFIC_CONFIG["rolling_basis"]
