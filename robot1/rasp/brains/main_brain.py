@@ -147,6 +147,8 @@ class MainBrain(Brain):
             )
         )
 
+        print("##################", navigator.current_task.params.goal)
+
 
 
         # --- MetaProg is insane (loop) --- #
