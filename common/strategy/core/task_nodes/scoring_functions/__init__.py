@@ -8,3 +8,7 @@ from strategy.core.task_nodes.scoring_functions.constant_scoring_function import
 from strategy.core.task_nodes.scoring_functions.default_scoring_function import (
     DefaultScoringFunction,
 )
+
+from strategy.core.task_nodes.scoring_functions.navigation_scoring_function import (
+    NavigationScoringFunction,
+)

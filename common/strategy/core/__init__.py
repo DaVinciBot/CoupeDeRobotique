@@ -18,6 +18,7 @@ from strategy.core.task_nodes import (
     BaseScoringFunction,
     DefaultScoringFunction,
     ConstantScoringFunction,
+    NavigationScoringFunction,
     # TaskNodes
     BaseTaskNode,
     TimeoutTaskNode,
