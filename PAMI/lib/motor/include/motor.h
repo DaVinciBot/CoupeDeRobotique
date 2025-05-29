@@ -1,13 +1,12 @@
 #ifndef MOTOR_H
 #define MOTOR_H
-#define K 20.0
 
 #include <Arduino.h>
 
 class Motor
 {
 public:
-    Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution);
+    Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution, float k);
     ~Motor() = default;
 
     void init();
@@ -27,6 +26,7 @@ private:
     byte _stepPin;
     byte _dirPin;
     byte _enablePin;
+    float _factorK;
 
     unsigned int _stepsPerRevolution;
     float _targetSpeedStepsPerSec;

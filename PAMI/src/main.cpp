@@ -1,7 +1,7 @@
 #include "config.h"
 
-Motor *leftMotor = new Motor(LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN, LEFT_STEPS_PER_REV);
-Motor *rightMotor = new Motor(RIGHT_STEP_PIN, RIGHT_DIR_PIN, RIGHT_EN_PIN, RIGHT_STEPS_PER_REV);
+Motor *leftMotor = new Motor(LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN, LEFT_STEPS_PER_REV, K);
+Motor *rightMotor = new Motor(RIGHT_STEP_PIN, RIGHT_DIR_PIN, RIGHT_EN_PIN, RIGHT_STEPS_PER_REV, K);
 
 // RollingBasis *rollingBasis = new RollingBasis(leftMotor, rightMotor, WHEEL_DIAMETER_MM, WHEEL_BASE_MM, Point{0, 0, 0}); // RollingBasis object
 
@@ -38,8 +38,8 @@ void setup()
     rightMotor->setAcceleration(100.0f); // Set target speed for left motor
     Serial.println("Motors initialized");
 
-    leftMotor->setTargetSpeed(100.0f); // Set target speed for left motor
-    rightMotor->setTargetSpeed(100.0f); // Set target speed for left motor
+    leftMotor->setTargetSpeed(1000.0f); // Set target speed for left motor
+    rightMotor->setTargetSpeed(-1000.0f); // Set target speed for left motor
 
     lidar->begin(lidar_pami::DEFAULT_BAUD); // Initialize LIDAR
     Serial.println("LIDAR initialized");
@@ -86,8 +86,12 @@ bool decreasing = false;
 
 void loop()
 {
-    leftMotor->update(); // Update left motor
-    rightMotor->update(); // Update right motor
+    for (size_t i = 0; i < 100; i++)
+    {
+        leftMotor->update(); // Update left motor
+        rightMotor->update(); // Update right motor
+    }
+    
 #if ENABLE_OTA
     ota.loop();
 #endif

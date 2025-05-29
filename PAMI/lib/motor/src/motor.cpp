@@ -1,12 +1,13 @@
 #include "motor.h"
 
-Motor::Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution)
+Motor::Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution, float k)
 {
     this->_stepPin = stepPin;
     this->_dirPin = dirPin;
     this->_enablePin = enablePin;
+    this->_factorK = k;
 
-    this->_stepsPerRevolution = stepsPerRevolution / K; // Divide by K to get the actual steps per revolution
+    this->_stepsPerRevolution = stepsPerRevolution / k; // Divide by k to get the actual steps per revolution
     this->_targetSpeedStepsPerSec = 0.0f;
     this->_currentSpeedStepsPerSec = 0.0f;
     this->_acceleration = 0.0f;
@@ -51,12 +52,12 @@ void Motor::_setDirection(bool clockwise)
 
 void Motor::_doKSteps()
 {
-    for (int i = 0; i < K; ++i)
+    for (int i = 0; i < _factorK; ++i)
     {
         digitalWrite(_stepPin, HIGH);
-        delayMicroseconds(50);
+        delayMicroseconds(500);
         digitalWrite(_stepPin, LOW);
-        delayMicroseconds(50);
+        delayMicroseconds(500);
     }
 
     if (_currentSpeedStepsPerSec >= 0)
@@ -98,10 +99,10 @@ void Motor::update()
     }
     else
     {
-        _usDelayBetweenKSteps = (K * 1e6f) / fabs(_currentSpeedStepsPerSec);
+        _usDelayBetweenKSteps = (_factorK * 1e6f) / fabs(_currentSpeedStepsPerSec);
     }
 
-    bool clockwise = (_targetSpeedStepsPerSec >= 0);
+    bool clockwise = (_currentSpeedStepsPerSec >= 0);
     _setDirection(clockwise);
 
     if (dt >= _usDelayBetweenKSteps)

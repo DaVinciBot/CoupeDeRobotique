@@ -22,6 +22,8 @@
 #define MAX_LINEAR_SPEED_MM_PER_S 10
 #define MAX_ANGULAR_SPEED_RAD_PER_S 1.0
 
+#define K 8.0f
+
 // #------- PID CONFIGURATION -------#
 #define LINEAR_SPEED_KP 0.0f
 #define LINEAR_SPEED_KI 0.0f
