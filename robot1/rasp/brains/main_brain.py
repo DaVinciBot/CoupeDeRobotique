@@ -296,7 +296,7 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
         # 1. Wait for the team color to be set
-        self.arena.set_team_color(TeamColor.BLUE)
+        self.arena.set_team_color(TeamColor.YELLOW)
         #await self.wait_for_team()
 
         # 2. Define the starting position based on the team color
