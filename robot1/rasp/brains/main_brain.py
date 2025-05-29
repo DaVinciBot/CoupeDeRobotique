@@ -135,7 +135,7 @@ class MainBrain(Brain):
         runner = strat.get_graph_runner()
 
         navigator = Navigator()
-        for i in [13, 12, 14, 7, 9, 8, 6, 15, 5]:
+        for i in [15,12, 14, 7, 9]:
             navigator.add_navigation_task(
                 NavigatorTaskParams(
                     goal=OrientedPoint(self.arena.zones[i].polygon.centroid.x, self.arena.zones[i].polygon.centroid.y, 0),
