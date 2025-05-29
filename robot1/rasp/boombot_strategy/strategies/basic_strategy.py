@@ -34,7 +34,7 @@ class BasicStrategy(BaseStrategy):
 
         precise_forward_to_deploy_brand = BaseTaskNode(
             name="Precise forward to deploy brand",
-            tasks=PreciseForward(5),
+            tasks=PreciseForward(7),
         )
 
         backward_to_extract_from_deploy_brand = BaseTaskNode(
@@ -50,7 +50,7 @@ class BasicStrategy(BaseStrategy):
 
         first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"], ctx)
         first_build_zone = get_construct_sub_graph(
-            self.zones["first_build_zone"], ctx, 5.5
+            self.zones["first_build_zone"], ctx, 6
         )
 
         backward_to_extract_from_deploy_brand.add_transition(
@@ -71,7 +71,7 @@ class BasicStrategy(BaseStrategy):
 
         third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"], ctx)
         third_build_zone = get_construct_sub_graph(
-            self.zones["first_build_zone"], ctx, -1
+            self.zones["first_build_zone"], ctx, 0
         )
         third_pickup_zone.get_exits()[0].add_transition(
             DirectTransition(third_build_zone.get_entry())
