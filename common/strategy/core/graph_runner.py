@@ -52,7 +52,7 @@ class GraphRunner:
             prev_node = self.prev.get(node)
 
             # Log entry if first time
-            if not node._entered:
+            if not node.entered:
                 task_name = node.tasks[0].__class__.__name__ if node.tasks else "NoTask"
                 self.logger.info(f"==> Entering node: {node.name} [{task_name}]")
 

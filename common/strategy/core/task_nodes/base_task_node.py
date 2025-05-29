@@ -48,7 +48,7 @@ class BaseTaskNode:
         self.start_time: Optional[float] = None
         self.end_time: Optional[float] = None
 
-        self._entered = False
+        self.entered = False
         self._exited = False
 
         self.logger.info(
@@ -153,9 +153,9 @@ class BaseTaskNode:
         """
         Enter the node (once), execute tasks, and exit when done.
         """
-        if not self._entered:
+        if not self.entered:
             self.on_enter(None, ctx)
-            self._entered = True
+            self.entered = True
 
         done = self.execute(ctx)
 

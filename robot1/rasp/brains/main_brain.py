@@ -119,7 +119,7 @@ class MainBrain(Brain):
         time.sleep(1)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        actuators = ActuatorsShow(
+        actuators = ActuatorsDummy(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
@@ -129,8 +129,10 @@ class MainBrain(Brain):
             )
         )
 
+        runner = strat.get_graph_runner()
+
         # --- MetaProg is insane (loop) --- #
-        strat.get_graph_runner().handle(
+        runner.handle(
             ShowGameContext(
                 arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
             )
@@ -240,7 +242,8 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
+            lidar_scan_polars=np.array([]),
+            # lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
@@ -263,5 +266,5 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
         await asyncio.sleep(1)
-        await self.inputs.wait_for_jack_trigger()
+        # await self.inputs.wait_for_jack_trigger()
         await self.run()
