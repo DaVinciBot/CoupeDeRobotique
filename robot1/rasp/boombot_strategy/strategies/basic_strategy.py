@@ -34,7 +34,7 @@ class BasicStrategy(BaseStrategy):
 
         precise_forward_to_deploy_brand = BaseTaskNode(
             name="Precise forward to deploy brand",
-            tasks=PreciseForward(5),
+            tasks=PreciseForward(7),
         )
 
         backward_to_extract_from_deploy_brand = BaseTaskNode(
