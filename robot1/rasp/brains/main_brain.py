@@ -121,7 +121,7 @@ class MainBrain(Brain):
         )
 
         # Init position
-        actuators.start_position()
+        actuators.block_banner()
 
         while not self.jack_triggered:
             time.sleep(0.1)
