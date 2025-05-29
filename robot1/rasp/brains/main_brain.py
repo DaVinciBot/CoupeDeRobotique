@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import time
 from math import pi
 
-from debugpy.common import json
 
 # ====== Third-party library imports ======
 from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
@@ -93,6 +92,7 @@ class MainBrain(Brain):
         self.ws_cmd: WServerRouteManager = ws_cmd
         self.ws_ui: WServerRouteManager = ws_ui
         self.inputs: Inputs = inputs
+        self.score: int
 
     """
     ### Secondary Processes ###
