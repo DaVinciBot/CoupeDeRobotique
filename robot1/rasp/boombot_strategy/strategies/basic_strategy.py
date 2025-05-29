@@ -3,6 +3,7 @@ from boombot_strategy import ShowGameContext
 from boombot_strategy.sub_graphs import get_pickup_sub_graph, get_construct_sub_graph
 from boombot_strategy.strategies import BaseStrategy
 
+from boombot_strategy.tasks.navigation_tasks.maneuver import PreciseForward, Backward
 from strategy.core import (
     SubGraphBuilder,
     BaseTaskNode,
@@ -22,10 +23,29 @@ class BasicStrategy(BaseStrategy):
     def __init__(self, ctx: ShowGameContext):
         super().__init__(ctx)
 
+        precise_forward_to_deploy_brand = BaseTaskNode(
+            name="Precise forward to deploy brand",
+            tasks=PreciseForward(5),
+        )
+
+        backward_to_extract_from_deploy_brand = BaseTaskNode(
+            name="Precise forward to deploy brand",
+            tasks=Backward(15),
+        )
+
+        precise_forward_to_deploy_brand.add_transition(
+            DirectTransition(backward_to_extract_from_deploy_brand)
+        )
+
         first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"], ctx)
         first_build_zone = get_construct_sub_graph(
             self.zones["first_build_zone"], ctx, 7
         )
+
+        precise_forward_to_deploy_brand.add_transition(
+            DirectTransition(first_pickup_zone.get_entry())
+        )
+
         first_pickup_zone.get_exits()[0].add_transition(
             DirectTransition(first_build_zone.get_entry())
         )
@@ -68,5 +88,5 @@ class BasicStrategy(BaseStrategy):
             logger=Logger(
                 identifier="BasicStrategyRunner", follow_logger_manager_rules=True
             ),
-            start=first_pickup_zone.get_entry(),
+            start=precise_forward_to_deploy_brand,
         )
