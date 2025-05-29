@@ -95,7 +95,7 @@
           },
           "default": {
             "acceleration": 3.1415,
-            "deceleration": 2,
+            "deceleration": 1,
             "max_speed": 3.1415
           },
           "high": {
@@ -113,7 +113,7 @@
           "default": {
             "acceleration": 15,
             "deceleration": 15,
-            "max_speed": 20
+            "max_speed": 30
           },
           "high": {
             "acceleration": 20,
