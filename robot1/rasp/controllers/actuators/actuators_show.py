@@ -428,6 +428,7 @@ class ActuatorsShow(Actuators):
     def start_position(self):
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
+        self.set_servo_angle(8, angle=35, max_angle=270)
         time.sleep(0.5)
         self.deploy(0)
         self.deploy(2)
