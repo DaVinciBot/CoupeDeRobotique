@@ -47,11 +47,7 @@ def get_construct_sub_graph(
         BaseTaskNode(
             name=f"[Construct] go to zone {zone_construct_id}",
             tasks=GoToColorReservedZoneToConstruct(zone_construct_id),
-            scoring_function=NavigationScoringFunction(
-                ctx.arena.ally_zone.point.distance(
-                    ctx.arena.compute_goal_position(zone_construct_id)
-                )
-            ),
+            scoring_function=NavigationScoringFunction(zone_construct_id),
         ),
     )
 

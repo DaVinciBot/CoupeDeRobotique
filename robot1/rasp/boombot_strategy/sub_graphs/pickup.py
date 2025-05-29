@@ -48,11 +48,7 @@ def get_pickup_sub_graph(zone_pickup_id: int, ctx: ShowGameContext) -> BaseSubGr
         BaseTaskNode(
             name=f"[Pickup] go to zone {zone_pickup_id}",
             tasks=GoToStuffZoneToPickUp(zone_pickup_id),
-            scoring_function=NavigationScoringFunction(
-                ctx.arena.ally_zone.point.distance(
-                    ctx.arena.compute_goal_position(zone_pickup_id)
-                )
-            ),
+            scoring_function=NavigationScoringFunction(zone_pickup_id),
         ),
     )
 
@@ -71,11 +67,7 @@ def get_pickup_sub_graph(zone_pickup_id: int, ctx: ShowGameContext) -> BaseSubGr
         BaseTaskNode(
             name=f"[Pickup] go to take stuff {zone_pickup_id}",
             tasks=PreciseForward(10),
-            scoring_function=NavigationScoringFunction(
-                ctx.arena.ally_zone.point.distance(
-                    ctx.arena.compute_goal_position(zone_pickup_id)
-                )
-            ),
+            scoring_function=NavigationScoringFunction(zone_pickup_id),
         ),
     )
 
