@@ -135,12 +135,12 @@ class MainBrain(Brain):
         runner = strat.get_graph_runner()
 
         navigator = Navigator()
-        for i in [15, 12, 9, 15, 12, 9]:
+        for i in range(50):
             navigator.add_navigation_task(
                 NavigatorTaskParams(
-                    goal=OrientedPoint(self.arena.zones[i].polygon.centroid.x, self.arena.zones[i].polygon.centroid.y, 0),
+                    goal=None,
                     timeout=None,
-                    path_planner_params=BasicPathPlannerParams(),
+                    path_planner_params=DeltaPathPlannerParams(distance=50, rotation=pi),
                     trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                     speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
                     avoidance_params=StopAndWaitAvoidanceParams(1000),
