@@ -90,7 +90,7 @@ class MainBrain(Brain):
     def run(self) -> None:
         # --- Initialization --- #
         from boombot_strategy import ShowGameContext
-        from boombot_strategy.strategies.homologation import homologation_runner
+        from boombot_strategy.strategies.basic_strategy import BasicStrategy
 
         # Rolling basis & Actuators
         rolling_basis = RollingBasis(
@@ -103,8 +103,14 @@ class MainBrain(Brain):
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
+        strat = BasicStrategy(
+            ShowGameContext(
+                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+            )
+        )
+
         # --- MetaProg is insane (loop) --- #
-        homologation_runner.handle(
+        strat.get_graph_runner().handle(
             ShowGameContext(
                 arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
             )
@@ -150,7 +156,7 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=self.lidar.scan_to_polars(), # np.array([]),
+            lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )

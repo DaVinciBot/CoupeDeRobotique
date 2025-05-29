@@ -8,6 +8,7 @@ from strategy.core import (
     DirectTransition,
     BaseSubGraph,
     GraphRunner,
+    BaseGameContext,
 )
 
 from strategy.tools import (
@@ -18,8 +19,8 @@ from strategy.tools import (
 
 
 class BaseStrategy(ABC):
-    def __init__(self, color: str):
-        self.zones = CONFIG.INFO_BY_TEAM[color]
+    def __init__(self, ctx: BaseGameContext):
+        self.zones = CONFIG.INFO_BY_TEAM[ctx.arena.team_color]
         self.strategy = SubGraphBuilder()
         self.runner: GraphRunner | None = None
         self.logger = Logger(

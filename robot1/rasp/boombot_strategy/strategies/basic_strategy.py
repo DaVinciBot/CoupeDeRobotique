@@ -1,4 +1,5 @@
 from loggerplusplus import Logger
+from boombot_strategy import ShowGameContext
 from boombot_strategy.sub_graphs import get_pickup_sub_graph, get_construct_sub_graph
 from boombot_strategy.strategies import BaseStrategy
 
@@ -18,58 +19,58 @@ from strategy.tools import (
 
 
 class BasicStrategy(BaseStrategy):
-    def __init__(self, color: str):
-        super().__init__(color)
+    def __init__(self, ctx: ShowGameContext):
+        super().__init__(ctx)
 
-        self.first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"])
-        self.first_construct_zone = get_construct_sub_graph(
+        first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"])
+        first_construct_zone = get_construct_sub_graph(
             self.zones["first_construct_zone"]
         )
-        self.first_pickup_zone.get_exits()[0].add_transition(
-            DirectTransition(self.first_construct_zone.get_entry())
+        first_pickup_zone.get_exits()[0].add_transition(
+            DirectTransition(first_construct_zone.get_entry())
         )
 
-        self.second_pickup_zone = get_pickup_sub_graph(self.zones["second_pickup_zone"])
-        self.second_construct_zone = get_construct_sub_graph(
+        second_pickup_zone = get_pickup_sub_graph(self.zones["second_pickup_zone"])
+        second_construct_zone = get_construct_sub_graph(
             self.zones["second_construct_zone"]
         )
-        self.second_pickup_zone.get_exits()[0].add_transition(
-            DirectTransition(self.second_construct_zone.get_entry())
+        second_pickup_zone.get_exits()[0].add_transition(
+            DirectTransition(second_construct_zone.get_entry())
         )
 
-        self.third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"])
-        self.third_pickup_zone.get_exits()[0].add_transition(
-            DirectTransition(self.first_construct_zone.get_entry())
+        third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"])
+        third_pickup_zone.get_exits()[0].add_transition(
+            DirectTransition(first_construct_zone.get_entry())
         )
 
-        self.fourth_pickup_zone = get_pickup_sub_graph(self.zones["fourth_pickup_zone"])
-        self.fourth_pickup_zone.get_exits()[0].add_transition(
-            DirectTransition(self.first_construct_zone.get_entry())
+        fourth_pickup_zone = get_pickup_sub_graph(self.zones["fourth_pickup_zone"])
+        fourth_pickup_zone.get_exits()[0].add_transition(
+            DirectTransition(first_construct_zone.get_entry())
         )
 
-        self.first_construct_zone.get_exits()[0].add_transition(
-            DirectTransition(self.second_pickup_zone.get_entry())
+        first_construct_zone.get_exits()[0].add_transition(
+            DirectTransition(second_pickup_zone.get_entry())
         )
-        self.first_construct_zone.get_exits()[0].add_transition(
-            DirectTransition(self.third_pickup_zone.get_entry())
+        first_construct_zone.get_exits()[0].add_transition(
+            DirectTransition(third_pickup_zone.get_entry())
         )
-        self.first_construct_zone.get_exits()[0].add_transition(
-            DirectTransition(self.fourth_pickup_zone.get_entry())
+        first_construct_zone.get_exits()[0].add_transition(
+            DirectTransition(fourth_pickup_zone.get_entry())
         )
 
-        self.second_construct_zone.get_exits()[0].add_transition(
-            DirectTransition(self.first_pickup_zone.get_entry())
+        second_construct_zone.get_exits()[0].add_transition(
+            DirectTransition(first_pickup_zone.get_entry())
         )
-        self.second_construct_zone.get_exits()[0].add_transition(
-            DirectTransition(self.third_pickup_zone.get_entry())
+        second_construct_zone.get_exits()[0].add_transition(
+            DirectTransition(third_pickup_zone.get_entry())
         )
-        self.second_construct_zone.get_exits()[0].add_transition(
-            DirectTransition(self.fourth_pickup_zone.get_entry())
+        second_construct_zone.get_exits()[0].add_transition(
+            DirectTransition(fourth_pickup_zone.get_entry())
         )
 
         self.runner = GraphRunner(
             logger=Logger(
                 identifier="BasicStrategyRunner", follow_logger_manager_rules=True
             ),
-            start=self.first_pickup_zone.get_entry(),
+            start=first_pickup_zone.get_entry(),
         )
