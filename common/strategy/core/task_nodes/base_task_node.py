@@ -85,7 +85,7 @@ class BaseTaskNode:
 
     def execute(self, ctx: BaseGameContext) -> bool:
         """
-        Execute all tasks in parallel. Return True only when all tasks are done.
+        Execute tasks sequentially. Return True only when all tasks are done.
         """
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:
             self.logger.debug(
@@ -102,10 +102,10 @@ class BaseTaskNode:
         any_failed = False
         any_timeout = False
 
+        # Sequential execution: handle only the first incomplete task per cycle
         for idx, task in enumerate(self.tasks):
             if self.task_done[idx]:
                 continue
-
             self.logger.debug(f"Handling task {idx} of node '{self.name}'")
             try:
                 done = task.handle(ctx)
@@ -118,21 +118,20 @@ class BaseTaskNode:
                 else:
                     all_done = False
                     self.logger.debug(f"Task {idx} in node '{self.name}' not done yet")
-
             except TimeoutError as e:
                 self.exceptions[idx] = e
                 self.task_done[idx] = True
                 any_timeout = True
                 self.logger.warning(f"Task {idx} in node '{self.name}' timed out: {e}")
-
             except Exception as e:
                 self.exceptions[idx] = e
                 self.task_done[idx] = True
                 any_failed = True
                 self.logger.error(
                     f"Task {idx} in node '{self.name}' failed: {e}', "
-                    f"traceback {traceback.format_exc()}",
+                    f"traceback {traceback.format_exc()}"
                 )
+            break
 
         if all(self.task_done):
             self.end_time = time.time()
