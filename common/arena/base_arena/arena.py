@@ -166,7 +166,7 @@ class BaseArena(ABC):
         self.enemy_zone: EnemyZone = EnemyZone(
             logger=Logger(identifier="EnemyZone", follow_logger_manager_rules=True),
             point=OrientedPoint(self.width / 2, self.height / 2, 0),
-            robot_size=30,
+            robot_size=15,
         )
 
         # 3. Bounding Area and Playable Area
