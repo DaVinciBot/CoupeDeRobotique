@@ -260,7 +260,7 @@ class CONFIG:
     # Jack
     JACK_PIN = SPECIFIC_CONFIG["jack"]["pin"]
 
-    #BAU
+    # BAU
     BAU_PIN = SPECIFIC_CONFIG["bau"]["pin"]
 
 

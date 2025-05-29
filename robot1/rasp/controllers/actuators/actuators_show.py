@@ -9,10 +9,12 @@ class Servo:
     deploy_angle: int
     fold_angle: int
     max_angle: int
-    
+
+
 @dataclass
 class ServoDocking(Servo):
-    special_angle: int = 0 # Angle for special movement such as docking
+    special_angle: int = 0  # Angle for special movement such as docking
+
 
 @dataclass
 class ServoArm(Servo):
@@ -48,26 +50,27 @@ class ActuatorsShow(Actuators):
         """
         super().__init__(*args, **kwargs)  # Call the parent constructor
         self.folded: bool = True  # Indicates if the actuators are folded
-        self.servos : dict[int | CONFIG.ACTUATORS_CONFIG, 
-                           Servo | ServoArm | ServoPlank | ServoDocking] = {  # default servo with 2 position
+        self.servos: dict[
+            int | CONFIG.ACTUATORS_CONFIG, Servo | ServoArm | ServoPlank | ServoDocking
+        ] = {  # default servo with 2 position
             i: Servo(cfg["deploy_angle"], cfg["fold_angle"], cfg["max_angle"])
             for i, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items()
             if i < 8
         }
-                           
+
         # Modify servos 0 and 2:
         self.servos[0] = ServoDocking(
             self.servos[0].deploy_angle,
             self.servos[0].fold_angle,
             self.servos[0].max_angle,
-            CONFIG.ACTUATOR_SERVOS_CONFIG[0]["docking"]
+            CONFIG.ACTUATOR_SERVOS_CONFIG[0]["docking"],
         )
-        
+
         self.servos[2] = ServoDocking(
             self.servos[2].deploy_angle,
             self.servos[2].fold_angle,
             self.servos[2].max_angle,
-            CONFIG.ACTUATOR_SERVOS_CONFIG[2]["docking"]
+            CONFIG.ACTUATOR_SERVOS_CONFIG[2]["docking"],
         )
 
         # 0: Interior Right Arm
@@ -137,11 +140,8 @@ class ActuatorsShow(Actuators):
         self.set_servo_angle(pin=4, angle=160, max_angle=270)
         self.set_servo_angle(pin=6, angle=90, max_angle=270)
 
-    # Public methods    
-    
-    
-    
-    
+    # Public methods
+
     def deploy(self, pins: int | list[int]):
         """
         Deploys the specified servos to their deploy angle.
@@ -256,12 +256,12 @@ class ActuatorsShow(Actuators):
             self.set_servo_angle(
                 0,
                 self.servos[0].special_angle,
-                max_angle = self.servos[0].max_angle,
+                max_angle=self.servos[0].max_angle,
             )
             self.set_servo_angle(
                 2,
                 self.servos[2].special_angle,
-                max_angle = self.servos[2].max_angle,
+                max_angle=self.servos[2].max_angle,
             )
 
     def deploy_banner(self):
@@ -294,7 +294,7 @@ class ActuatorsShow(Actuators):
         self.logger.info(f"Moving to top: {steps_to_move} steps")
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
         self.logger.info(f"Steps current: {self.elevator_ticks}")
-        
+
     def elevator_drop_top(self):
         """
         Moves the elevator to the top position.
@@ -378,20 +378,17 @@ class ActuatorsShow(Actuators):
         time.sleep(2)
         self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
         time.sleep(0.5)
-        
-    
 
-    
     def ready_to_approach_to_pickup(self):
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
         time.sleep(0.5)
         self.deploy_all_pickup()
-        self.set_servo_angle(8, angle=35,max_angle=270)
+        self.set_servo_angle(8, angle=35, max_angle=270)
         self.fold(9)
-        
+
     def prepare_to_pickup(self):
-        self.set_servo_angle(8, angle=135,max_angle=270)
+        self.set_servo_angle(8, angle=135, max_angle=270)
         self.deploy(9)
 
     def pickup(self):
@@ -400,13 +397,13 @@ class ActuatorsShow(Actuators):
             self.deploy(8)
             time.sleep(0.3)
             self.fold(9)
-        
+
         _pickup()
         time.sleep(0.2)
         _pickup()
-        
+
         time.sleep(0.2)
-        self.set_servo_angle(8, angle=135,max_angle=270)
+        self.set_servo_angle(8, angle=135, max_angle=270)
 
     def build(self):
         self.fold(4)
@@ -425,9 +422,9 @@ class ActuatorsShow(Actuators):
         time.sleep(0.2)
         self.fold(4)
         self.fold(6)
-        self.set_servo_angle(8, angle=130,max_angle=270)
+        self.set_servo_angle(8, angle=130, max_angle=270)
         time.sleep(0.01)
-        
+
     def start_position(self):
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
@@ -436,7 +433,7 @@ class ActuatorsShow(Actuators):
         self.deploy(2)
         self.fold(4)
         self.fold(6)
-        
+
     def block_banner(self):
         # self.set_servo_angle(0, angle=105, max_angle=270)
         # self.set_servo_angle(2, angle=167, max_angle=270)
@@ -444,7 +441,6 @@ class ActuatorsShow(Actuators):
         self.set_servo_angle(2, angle=171, max_angle=270)
         self.set_servo_angle(4, angle=150, max_angle=270)
         self.set_servo_angle(6, angle=115, max_angle=270)
-        
 
     # def build(self):
     #     self.fold(self.side_arms)
