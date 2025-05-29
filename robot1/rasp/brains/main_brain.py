@@ -188,6 +188,7 @@ class MainBrain(Brain):
 
         # --- MetaProg is insane (loop) --- #
         current_state = self.ui_state.copy()
+        current_state["jack_state"] = not self.jack_triggered
         # current_state["score"] = self.ctx.score if self.ctx else 0
         if current_state != previous_state:
             previous_state = current_state
@@ -263,7 +264,6 @@ class MainBrain(Brain):
     async def scan_jack(self):
         await self.inputs.wait_for_jack_trigger()
         self.jack_triggered = True
-        self.ui_state["jack_state"] = False
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
