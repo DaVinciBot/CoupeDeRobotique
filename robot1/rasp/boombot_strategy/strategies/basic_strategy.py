@@ -32,14 +32,14 @@ class BasicStrategy(BaseStrategy):
             tasks=BlockBanner(),
         )
 
-        r = BaseTaskNode(
-            name="rrrrrr",
-            tasks=ReadyToApproachToPickUp(),
-        )
-
         precise_forward_to_deploy_brand = BaseTaskNode(
             name="Precise forward to deploy brand",
-            tasks=PreciseForward(10),
+            tasks=PreciseForward(7),
+        )
+
+        ready_to_approach = BaseTaskNode(
+            name="Ready to Approach",
+            tasks=ReadyToApproachToPickUp(),
         )
 
         backward_to_extract_from_deploy_brand = BaseTaskNode(
@@ -47,12 +47,10 @@ class BasicStrategy(BaseStrategy):
             tasks=Backward(15),
         )
 
-        block_banner.add_transition(DirectTransition(r))
+        first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"], ctx)
 
-        r.add_transition(DirectTransition(precise_forward_to_deploy_brand))
-
-        precise_forward_to_deploy_brand.add_transition(
-            DirectTransition(backward_to_extract_from_deploy_brand)
+        first_build_zone = get_construct_sub_graph(
+            self.zones["first_build_zone"], ctx, 10
         )
 
         go_to_backstage = BaseTaskNode(
@@ -60,10 +58,15 @@ class BasicStrategy(BaseStrategy):
             tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
         )
 
-        backward_to_extract_from_deploy_brand.add_transition(
-            DirectTransition(go_to_backstage)
-        )
+        block_banner.add_transition(DirectTransition(precise_forward_to_deploy_brand))
+        precise_forward_to_deploy_brand.add_transition(DirectTransition(ready_to_approach))
+        ready_to_approach.add_transition(DirectTransition(backward_to_extract_from_deploy_brand))
+        backward_to_extract_from_deploy_brand.add_transition(DirectTransition(first_pickup_zone.get_entry()))
+        first_pickup_zone.get_exits()[0].add_transition(DirectTransition(first_build_zone.get_entry()))
+        first_build_zone.get_exits()[0].add_transition(DirectTransition(go_to_backstage))
 
+
+        
         # first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"], ctx)
         # first_build_zone = get_construct_sub_graph(
         #     self.zones["first_build_zone"], ctx, 6
