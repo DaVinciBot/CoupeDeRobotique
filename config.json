@@ -99,30 +99,10 @@
           }
         },
         "linear_speed": {
-          "slow": {
-            "acceleration": 10,
-            "deceleration": 1,
-            "max_speed": 10
-          },
           "default": {
-            "acceleration": 15,
-            "deceleration": 15,
-            "max_speed": 30
-          },
-          "high": {
-            "acceleration": 20,
-            "deceleration": 15,
-            "max_speed": 30
-          },
-          "to_pickup": {
-            "acceleration": 20,
-            "deceleration": 5,
-            "max_speed": 20
-          },
-          "to_construct": {
             "acceleration": 10,
-            "deceleration": 5,
-            "max_speed": 20
+            "deceleration": 15,
+            "max_speed": 30
           }
         }
       }
