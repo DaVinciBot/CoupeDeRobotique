@@ -42,28 +42,28 @@ class BasicStrategy(BaseStrategy):
             tasks=ReadyToApproachToPickUp(),
         )
 
-        backward_to_extract_from_deploy_brand = BaseTaskNode(
-            name="Backward to extract from deploy brand",
-            tasks=Backward(15),
-        )
+        # backward_to_extract_from_deploy_brand = BaseTaskNode(
+        #     name="Backward to extract from deploy brand",
+        #     tasks=Backward(15),
+        # )
 
-        first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"], ctx)
+        # first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"], ctx)
 
-        first_build_zone = get_construct_sub_graph(
-            self.zones["first_build_zone"], ctx, 10
-        )
+        # first_build_zone = get_construct_sub_graph(
+        #     self.zones["first_build_zone"], ctx, 10
+        # )
 
-        go_to_backstage = BaseTaskNode(
-            name="Go to backstage",
-            tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
-        )
+        # go_to_backstage = BaseTaskNode(
+        #     name="Go to backstage",
+        #     tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
+        # )
 
-        block_banner.add_transition(DirectTransition(precise_forward_to_deploy_brand))
-        precise_forward_to_deploy_brand.add_transition(DirectTransition(ready_to_approach))
-        ready_to_approach.add_transition(DirectTransition(backward_to_extract_from_deploy_brand))
-        backward_to_extract_from_deploy_brand.add_transition(DirectTransition(first_pickup_zone.get_entry()))
-        first_pickup_zone.get_exits()[0].add_transition(DirectTransition(first_build_zone.get_entry()))
-        first_build_zone.get_exits()[0].add_transition(DirectTransition(go_to_backstage))
+        block_banner.add_transition(DirectTransition(ready_to_approach))
+        ready_to_approach.add_transition(DirectTransition(precise_forward_to_deploy_brand))
+        #precise_forward_to_deploy_brand.add_transition(DirectTransition(backward_to_extract_from_deploy_brand))
+        #backward_to_extract_from_deploy_brand.add_transition(DirectTransition(go_))
+        # first_pickup_zone.get_exits()[0].add_transition(DirectTransition(first_build_zone.get_entry()))
+        # first_build_zone.get_exits()[0].add_transition(DirectTransition(go_to_backstage))
 
 
 
