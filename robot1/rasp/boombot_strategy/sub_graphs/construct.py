@@ -21,7 +21,7 @@ from boombot_strategy.tasks.actuator_task.actuator_task import Build
 
 
 def get_construct_sub_graph(
-    zone_construct_id: int, ctx: ShowGameContext, supplementary_distance=0.0
+    zone_construct_id: int, ctx: ShowGameContext
 ) -> BaseSubGraph:
     """
     Create a subgraph for navigating to a zone and performing a construction maneuver.
@@ -54,7 +54,7 @@ def get_construct_sub_graph(
         f"[Construct] prepare construction at zone {zone_construct_id}",
         BaseTaskNode(
             name=f"[Construct] prepare construction at zone {zone_construct_id}",
-            tasks=PreciseForward(18 + supplementary_distance),
+            tasks=PreciseForward(18),
             scoring_function=DefaultScoringFunction(),
         ),
     )
@@ -74,7 +74,7 @@ def get_construct_sub_graph(
         f"[Construct] backward maneuver at zone {zone_construct_id}",
         BaseTaskNode(
             name=f"[Construct] backward maneuver at zone {zone_construct_id}",
-            tasks=Backward(16 + supplementary_distance / 2),
+            tasks=Backward(16),
             scoring_function=DefaultScoringFunction(),
         ),
     )
