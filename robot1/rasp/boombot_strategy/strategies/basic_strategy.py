@@ -2,6 +2,9 @@ from loggerplusplus import Logger
 from boombot_strategy import ShowGameContext
 from boombot_strategy.sub_graphs import get_pickup_sub_graph, get_construct_sub_graph
 from boombot_strategy.strategies import BaseStrategy
+from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
+    GoToColorReservedZoneToFinishGame,
+)
 
 from boombot_strategy.tasks.navigation_tasks.maneuver import PreciseForward, Backward
 from strategy.core import (
@@ -39,7 +42,7 @@ class BasicStrategy(BaseStrategy):
 
         first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"], ctx)
         first_build_zone = get_construct_sub_graph(
-            self.zones["first_build_zone"], ctx, 7
+            self.zones["first_build_zone"], ctx, 2.5
         )
 
         precise_forward_to_deploy_brand.add_transition(
@@ -60,18 +63,23 @@ class BasicStrategy(BaseStrategy):
 
         third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"], ctx)
         third_build_zone = get_construct_sub_graph(
-            self.zones["first_build_zone"], ctx, 2.5
+            self.zones["first_build_zone"], ctx, -2.5
         )
         third_pickup_zone.get_exits()[0].add_transition(
             DirectTransition(third_build_zone.get_entry())
         )
 
-        fourth_pickup_zone = get_pickup_sub_graph(self.zones["fourth_pickup_zone"], ctx)
-        fourth_build_zone = get_construct_sub_graph(
-            self.zones["first_build_zone"], ctx, -2.5
-        )
-        fourth_pickup_zone.get_exits()[0].add_transition(
-            DirectTransition(fourth_build_zone.get_entry())
+        # fourth_pickup_zone = get_pickup_sub_graph(self.zones["fourth_pickup_zone"], ctx)
+        # fourth_build_zone = get_construct_sub_graph(
+        #     self.zones["first_build_zone"], ctx, -2.5
+        # )
+        # fourth_pickup_zone.get_exits()[0].add_transition(
+        #     DirectTransition(fourth_build_zone.get_entry())
+        # )
+
+        go_to_backstage = BaseTaskNode(
+            name="Go to backstage",
+            tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
         )
 
         first_build_zone.get_exits()[0].add_transition(
@@ -81,7 +89,7 @@ class BasicStrategy(BaseStrategy):
             DirectTransition(third_pickup_zone.get_entry())
         )
         third_build_zone.get_exits()[0].add_transition(
-            DirectTransition(fourth_pickup_zone.get_entry())
+            DirectTransition(go_to_backstage)
         )
 
         self.runner = GraphRunner(

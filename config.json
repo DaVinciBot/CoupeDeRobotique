@@ -58,7 +58,8 @@
           "third_pickup_zone": 0,
           "fourth_pickup_zone": 1,
           "first_build_zone": 17,
-          "second_build_zone": 16
+          "second_build_zone": 16,
+          "backstage_zone": 19
         },
         "yellow": {
           "first_pickup_zone": 9,
@@ -66,7 +67,8 @@
           "third_pickup_zone": 5,
           "fourth_pickup_zone": 6,
           "first_build_zone": 12,
-          "second_build_zone": 13
+          "second_build_zone": 13,
+          "backstage_zone": 20
         }
       }
     },
