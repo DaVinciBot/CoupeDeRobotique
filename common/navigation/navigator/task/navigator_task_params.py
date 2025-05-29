@@ -14,6 +14,7 @@ class NavigatorTaskParams:
         # Attributes
         goal: OrientedPoint | None,
         timeout: float | None,
+        stabilization_delay: float,
         # Parameters
         path_planner_params: BasePathPlannerParams,
         trajectory_planner_params: BaseTrajectoryPlannerParams,
@@ -33,3 +34,4 @@ class NavigatorTaskParams:
 
         self.goal: OrientedPoint | None = goal
         self.timeout: float = timeout
+        self.stabilization_delay: float = stabilization_delay

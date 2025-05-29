@@ -6,6 +6,7 @@ class NavigatorTaskState(Enum):
     IN_PROGRESS = auto()
     AVOIDING = auto()
     ABORT = auto()
+    STABILIZING = auto()
     FINISHED = auto()
 
     def is_finished(self) -> bool:

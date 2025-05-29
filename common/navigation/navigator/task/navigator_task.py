@@ -30,14 +30,14 @@ from navigation.avoidance import (
     AvoidanceFactory,
 )
 
-from navigation.navigator.task import NavigatorTaskParams
+from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
 from navigation.navigator.task.states import NavigatorTaskState
 
 
 class NavigatorTask:
     """
     A task responsible for executing autonomous navigation including path planning,
-    trajectory generation, and obstacle avoidance.
+    trajectory generation, obstacle avoidance, and stabilization delay between tasks.
 
     Attributes:
         params (NavigatorTaskParams): Configuration parameters for the task.
@@ -47,6 +47,7 @@ class NavigatorTask:
         current_trajectory_command (TrajectoryPlanCommand | None): Currently active trajectory command.
         state (NavigatorTaskState): Current state of the task.
         _start_time (float): Internal timestamp when the task started.
+        _stabilization_start_time (float | None): Timestamp when stabilization delay started.
     """
 
     def __init__(self, params: NavigatorTaskParams):
@@ -54,7 +55,7 @@ class NavigatorTask:
         Initialize the NavigatorTask with the required parameters.
 
         Args:
-            params (NavigatorTaskParams): Task configuration including planners and goals.
+            params (NavigatorTaskParams): Task configuration including planners, goals, and stabilization delay.
         """
         self.params: NavigatorTaskParams = params
 
@@ -75,7 +76,8 @@ class NavigatorTask:
 
         self.current_trajectory_command: TrajectoryPlanCommand | None = None
         self.state: NavigatorTaskState = NavigatorTaskState.NOT_PLANNED
-        self._start_time: float = 0.0
+        self._start_time: float | None = None
+        self._stabilization_start_time: float | None = None
 
     def _get_elapsed_time(self) -> float:
         """
@@ -88,6 +90,17 @@ class NavigatorTask:
             return 0.0
         return time.time() - self._start_time
 
+    def _get_stabilization_elapsed(self) -> float:
+        """
+        Get the elapsed time since stabilization started.
+
+        Returns:
+            float: Time in seconds since stabilization began.
+        """
+        if self._stabilization_start_time is None:
+            return 0.0
+        return time.time() - self._stabilization_start_time
+
     def _plan_task(self, ally_zone: AllyZone) -> None:
         """
         Plan the path and trajectory based on the current position and task goal.
@@ -95,7 +108,7 @@ class NavigatorTask:
         Args:
             ally_zone (AllyZone): Current position of the ally used for planning.
         """
-        # Start the timer
+        # Reset start timer
         self._start_time = time.time()
 
         # Generate path planning parameters from current state
@@ -107,10 +120,8 @@ class NavigatorTask:
             )
         )
 
-        # Plan the path using the appropriate strategy
+        # Plan the path and trajectory
         path: list[OrientedPoint] = self.path_planner.plan_path(plan_path_params)
-
-        # Generate a trajectory based on the path
         self.trajectory_planner.plan_trajectory(path)
 
         # Mark task as in progress
@@ -123,10 +134,8 @@ class NavigatorTask:
         Returns:
             bool: True if the timeout has been exceeded.
         """
-        # Timeout is not set
         if self.params.timeout is None or self._start_time is None:
             return False
-        # Timeout is set
         return self._get_elapsed_time() > self.params.timeout
 
     def _abort(self) -> TrajectoryPlanCommand:
@@ -147,9 +156,8 @@ class NavigatorTask:
         Check if the trajectory has been completed.
 
         Returns:
-            bool: True if task duration has exceeded total planned trajectory duration.
+            bool: True if task duration exceeded total planned trajectory duration.
         """
-        # If the task is not started or already finished, return False
         if self._start_time is None or self.state == NavigatorTaskState.FINISHED:
             return False
         return self._get_elapsed_time() > self.trajectory_planner.get_total_duration()
@@ -158,7 +166,7 @@ class NavigatorTask:
         self, ally_zone: AllyZone, enemy_zone: EnemyZone
     ) -> TrajectoryPlanCommand:
         """
-        Manage the task lifecycle: planning, timeout checks, completion, and avoidance.
+        Manage the task lifecycle: planning, timeout checks, completion, stabilization delay, and avoidance.
 
         Args:
             ally_zone (AllyZone): Current position of the ally.
@@ -178,8 +186,39 @@ class NavigatorTask:
         # 3. Completion check
         if self._is_finished():
             self.state = NavigatorTaskState.FINISHED
+            # Start stabilization delay if configured
+            if getattr(self.params, "stabilization_delay", 0) > 0:
+                self._stabilization_start_time = time.time()
+                self.state = NavigatorTaskState.STABILIZING
+                # Issue stop command while stabilizing
+                self.current_trajectory_command = (
+                    TrajectoryPlanCommand.create_stop_command(
+                        current_position=ally_zone.point
+                    )
+                )
+                return self.current_trajectory_command
+            # No stabilization needed, finish with stop
+            return TrajectoryPlanCommand.create_stop_command(
+                current_position=ally_zone.point
+            )
 
-        # 4. Obstacle avoidance
+        # 4. Stabilization delay handling
+        if self.state == NavigatorTaskState.STABILIZING:
+            if self._get_stabilization_elapsed() < self.params.stabilization_delay:
+                # Continue issuing stop commands until stabilization complete
+                return TrajectoryPlanCommand.create_stop_command(
+                    current_position=ally_zone.point
+                )
+            # Stabilization complete, reset for next task
+            self.state = NavigatorTaskState.NOT_PLANNED
+            self._start_time = None
+            self._stabilization_start_time = None
+            # Next call will plan a new task
+            return TrajectoryPlanCommand.create_stop_command(
+                current_position=ally_zone.point
+            )
+
+        # 5. Obstacle avoidance
         avoidance_cmd = self.avoidance.handle(
             current_navigator_task=self,
             ally_zone=ally_zone,
@@ -188,6 +227,6 @@ class NavigatorTask:
         if self.state == NavigatorTaskState.AVOIDING:
             return avoidance_cmd
 
-        # 5. Continue with planned trajectory
+        # 6. Continue with planned trajectory
         self.current_trajectory_command = self.trajectory_planner.get_plan()
         return self.current_trajectory_command

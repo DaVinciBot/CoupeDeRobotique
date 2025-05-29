@@ -1,18 +1,21 @@
-# ====== Internal Project Imports ======
 from config_loader import CONFIG
-from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+
 from navigation import (
-    DeltaPathPlannerParams,
     NoAvoidanceParams,
+    DeltaPathPlannerParams,
     SequentialTrajectoryPlannerParams,
     Direction,
 )
+
+from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+
+
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
 )
 
 
-class RelativeBackward(NavigationTask):
+class Backward(NavigationTask):
     def __init__(self, distance: float):
         super().__init__(
             goal=None,
@@ -23,11 +26,10 @@ class RelativeBackward(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
-            stabilization_delay=0.1,  # Delay to stabilize after moving backward
         )
 
 
-class RelativeForward(NavigationTask):
+class PreciseForward(NavigationTask):
     def __init__(self, distance: float):
         super().__init__(
             goal=None,
@@ -36,5 +38,4 @@ class RelativeForward(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
-            stabilization_delay=0.1,  # Delay to stabilize after moving forward
         )

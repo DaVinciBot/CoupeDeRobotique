@@ -34,13 +34,14 @@ class BaseNavigationTask(BaseTask):
         speed_profiler: SpeedProfiler,
         avoidance_params: BaseAvoidanceParams,
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
+        stabilization_delay: float, # In seconds
         timeout: float | None = None,
         logger: Logger | None = None,
     ):
-        self.logger: Logger = logger or Logger(
-            identifier=self.__class__.__name__, follow_logger_manager_rules=True
-        )
+        super().__init__(logger=logger)
+
         self.goal: int | BaseArenaZone | OrientedPoint | Point | None = goal
+        self.stabilization_delay: float = stabilization_delay * 1000  # Convert to milliseconds
         self.timeout: float | None = timeout * 1000 if timeout is not None else None
         self.path_planner_params = path_planner_params
         self.trajectory_planner_params = trajectory_planner_params
@@ -65,6 +66,7 @@ class BaseNavigationTask(BaseTask):
                 speed_profiler=self.speed_profiler,
                 avoidance_params=self.avoidance_params,
                 acs_detection_profile_params=self.acs_detection_profile_params,
+                stabilization_delay=self.stabilization_delay
             )
         )
 
