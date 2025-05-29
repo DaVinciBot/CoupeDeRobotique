@@ -23,48 +23,44 @@ class BasicStrategy(BaseStrategy):
         super().__init__(ctx)
 
         first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"])
-        first_construct_zone = get_construct_sub_graph(
-            self.zones["first_construct_zone"]
-        )
+        first_build_zone = get_construct_sub_graph(self.zones["first_build_zone"])
         first_pickup_zone.get_exits()[0].add_transition(
-            DirectTransition(first_construct_zone.get_entry())
+            DirectTransition(first_build_zone.get_entry())
         )
 
         second_pickup_zone = get_pickup_sub_graph(self.zones["second_pickup_zone"])
-        second_construct_zone = get_construct_sub_graph(
-            self.zones["second_construct_zone"]
-        )
+        second_build_zone = get_construct_sub_graph(self.zones["second_build_zone"])
         second_pickup_zone.get_exits()[0].add_transition(
-            DirectTransition(second_construct_zone.get_entry())
+            DirectTransition(second_build_zone.get_entry())
         )
 
         third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"])
         third_pickup_zone.get_exits()[0].add_transition(
-            DirectTransition(first_construct_zone.get_entry())
+            DirectTransition(first_build_zone.get_entry())
         )
 
         fourth_pickup_zone = get_pickup_sub_graph(self.zones["fourth_pickup_zone"])
         fourth_pickup_zone.get_exits()[0].add_transition(
-            DirectTransition(first_construct_zone.get_entry())
+            DirectTransition(first_build_zone.get_entry())
         )
 
-        first_construct_zone.get_exits()[0].add_transition(
+        first_build_zone.get_exits()[0].add_transition(
             DirectTransition(second_pickup_zone.get_entry())
         )
-        first_construct_zone.get_exits()[0].add_transition(
+        first_build_zone.get_exits()[0].add_transition(
             DirectTransition(third_pickup_zone.get_entry())
         )
-        first_construct_zone.get_exits()[0].add_transition(
+        first_build_zone.get_exits()[0].add_transition(
             DirectTransition(fourth_pickup_zone.get_entry())
         )
 
-        second_construct_zone.get_exits()[0].add_transition(
+        second_build_zone.get_exits()[0].add_transition(
             DirectTransition(first_pickup_zone.get_entry())
         )
-        second_construct_zone.get_exits()[0].add_transition(
+        second_build_zone.get_exits()[0].add_transition(
             DirectTransition(third_pickup_zone.get_entry())
         )
-        second_construct_zone.get_exits()[0].add_transition(
+        second_build_zone.get_exits()[0].add_transition(
             DirectTransition(fourth_pickup_zone.get_entry())
         )
 
