@@ -165,7 +165,7 @@ if __name__ == "__main__":
 
     brain = MainBrain(
         logger=logger_brain,
-        lidar=lidardummy,
+        lidar=lidar,
         arena=arena,
         ws_cmd=ws_cmd,
         ws_ui=ws_ui,
