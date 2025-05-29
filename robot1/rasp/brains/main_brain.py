@@ -134,35 +134,32 @@ class MainBrain(Brain):
 
         runner = strat.get_graph_runner()
 
-        navigator = Navigator()
-        navigator.add_navigation_task(
-            NavigatorTaskParams(
-                goal=self.arena.compute_goal_position(9),
-                timeout=None,
-                path_planner_params=BasicPathPlannerParams(), # DeltaPathPlannerParams(distance=40, rotation=pi)
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=NoAvoidanceParams(),
-                acs_detection_profile_params=NoAcsDetectionProfileParams()
-            )
-        )
-
-        print("##################", navigator.current_task.params.goal)
-
+        # navigator = Navigator()
+        # navigator.add_navigation_task(
+        #     NavigatorTaskParams(
+        #         goal=self.arena.compute_goal_position(9),
+        #         timeout=None,
+        #         path_planner_params=BasicPathPlannerParams(), # DeltaPathPlannerParams(distance=40, rotation=pi)
+        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+        #         speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+        #         avoidance_params=NoAvoidanceParams(),
+        #         acs_detection_profile_params=NoAcsDetectionProfileParams()
+        #     )
+        # )
 
 
         # --- MetaProg is insane (loop) --- #
-        # runner.handle(
-        #     ShowGameContext(
-        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
-        #     )
-        # )
-        if navigator.current_task is not None:
-            cmd = navigator.handle(
-                ally_zone=self.arena.ally_zone,
-                enemy_zone=self.arena.enemy_zone,
+        runner.handle(
+            ShowGameContext(
+                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
             )
-            rolling_basis.set_target_position(cmd.get_position_command())
+        )
+        # if navigator.current_task is not None:
+        #     cmd = navigator.handle(
+        #         ally_zone=self.arena.ally_zone,
+        #         enemy_zone=self.arena.enemy_zone,
+        #     )
+        #     rolling_basis.set_target_position(cmd.get_position_command())
 
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = rolling_basis.odometrie
