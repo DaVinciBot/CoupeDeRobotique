@@ -1,3 +1,4 @@
+from robot1.rasp.config_loader import CONFIG
 from controllers.actuators import ActuatorsShow
 from strategy.core import BaseTask
 from boombot_strategy.show_game_context import ShowGameContext
@@ -21,6 +22,7 @@ class PickUp(BaseTask):
 class Build(BaseTask):
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.build_floors()
+        ctx.score += CONFIG.BUILD_TWO_FLOORS
         self.logger.info("Build action executed")
         return True
 
@@ -34,4 +36,5 @@ class HoldBanner(BaseTask):
 class DeployBanner(BaseTask):
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.deploy_banner()
+        ctx.score += CONFIG.BANNER
         return True

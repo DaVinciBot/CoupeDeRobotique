@@ -73,6 +73,7 @@ class MainBrain(Brain):
 
         self.ws_cmd: WServerRouteManager = ws_cmd
         self.inputs: Inputs = inputs
+        self.score: int
 
     """
     ### Secondary Processes ###
