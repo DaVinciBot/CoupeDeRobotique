@@ -106,33 +106,33 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        # from boombot_strategy import ShowGameContext
-        # from boombot_strategy.strategies.basic_strategy import BasicStrategy
+        from boombot_strategy import ShowGameContext
+        from boombot_strategy.strategies.basic_strategy import BasicStrategy
 
         # Rolling basis & Actuators
-        rolling_basis = RollingBasis(
+        rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(0.01)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        # actuators = ActuatorsShow(
-        #     logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
-        # )
-        #
-        # # Init position
-        # actuators.block_banner()
+        actuators = ActuatorsShowDummy(
+            logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
+        )
+        
+        # Init position
+        actuators.block_banner()
 
-        # while not self.jack_triggered:
-        #     time.sleep(0.1)
-        #
-        # strat = BasicStrategy(
-        #     ShowGameContext(
-        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
-        #     )
-        # )
+        while not self.jack_triggered:
+            time.sleep(0.1)
+        
+        strat = BasicStrategy(
+            ShowGameContext(
+                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+            )
+        )
 
-        #runner = strat.get_graph_runner()
+        runner = strat.get_graph_runner()
 
         navigator = Navigator()
         navigator.add_navigation_task(
@@ -150,11 +150,11 @@ class MainBrain(Brain):
 
 
         # --- MetaProg is insane (loop) --- #
-        # runner.handle(
-        #     ShowGameContext(
-        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
-        #     )
-        # )
+        runner.handle(
+            ShowGameContext(
+                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+            )
+        )
         if navigator.current_task is not None:
             cmd = navigator.handle(
                 ally_zone=self.arena.ally_zone,
@@ -265,8 +265,8 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            # lidar_scan_polars=np.array([]),
-            lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
+            lidar_scan_polars=np.array([]),
+            #lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
@@ -288,25 +288,24 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def scan_jack(self):
-        await self.inputs.wait_for_jack_trigger()
+        #await self.inputs.wait_for_jack_trigger()
         self.jack_triggered = True
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
         # 1. Wait for the team color to be set
-        #self.arena.set_team_color(TeamColor.YELLOW)
-        #await self.wait_for_team()
+        self.arena.set_team_color(TeamColor.YELLOW)
+        await self.wait_for_team()
 
         # 2. Define the starting position based on the team color
-        # start_position = OrientedPoint(0, 0, 0)
-        # if self.arena.team_color == TeamColor.YELLOW:
-        #     self.logger.info("Starting as YELLOW team.")
-        #     start_position = OrientedPoint(177.5, 21, -pi / 2)
-        # elif self.arena.team_color == TeamColor.BLUE:
-        #     self.logger.info("Starting as BLUE team.")
-        #     start_position = OrientedPoint(122.5, 21, -pi / 2)
-
         start_position = OrientedPoint(0, 0, 0)
+        if self.arena.team_color == TeamColor.YELLOW:
+            self.logger.info("Starting as YELLOW team.")
+            start_position = OrientedPoint(177.5, 21, -pi / 2)
+        elif self.arena.team_color == TeamColor.BLUE:
+            self.logger.info("Starting as BLUE team.")
+            start_position = OrientedPoint(122.5, 21, -pi / 2)
+
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
