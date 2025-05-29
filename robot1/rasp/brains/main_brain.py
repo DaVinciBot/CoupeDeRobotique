@@ -134,18 +134,21 @@ class MainBrain(Brain):
 
         runner = strat.get_graph_runner()
 
-        # navigator = Navigator()
-        # navigator.add_navigation_task(
-        #     NavigatorTaskParams(
-        #         goal=self.arena.compute_goal_position(9),
-        #         timeout=None,
-        #         path_planner_params=BasicPathPlannerParams(), # DeltaPathPlannerParams(distance=40, rotation=pi)
-        #         trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-        #         speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-        #         avoidance_params=NoAvoidanceParams(),
-        #         acs_detection_profile_params=NoAcsDetectionProfileParams()
-        #     )
-        # )
+        navigator = Navigator()
+        for i in range(0, 10):
+            navigator.add_navigation_task(
+                NavigatorTaskParams(
+                    goal=self.arena.zones[i].polygon.centroid,
+                    timeout=None,
+                    path_planner_params=DeltaPathPlannerParams(),
+                    trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+                    speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+                    avoidance_params=StopAndWaitAvoidanceParams(1000),
+                    acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                        acs_distance=40, width_view=10
+                    )
+                )
+            )
 
 
         # --- MetaProg is insane (loop) --- #
