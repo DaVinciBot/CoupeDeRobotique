@@ -1,2 +1,0 @@
-from boombot_strategy.strategies.base_strategy import BaseStrategy
-from boombot_strategy.strategies.basic_strategy import BasicStrategy
