@@ -100,7 +100,7 @@
         },
         "linear_speed": {
           "default": {
-            "acceleration": 10,
+            "acceleration": 20,
             "deceleration": 15,
             "max_speed": 50
           }
