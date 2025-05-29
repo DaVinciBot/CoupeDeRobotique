@@ -81,27 +81,21 @@
           "kd": 0
         },
         "angular_position": {
-          "kp": 250.0,
+          "kp": 200.0,
           "ki": 0,
-          "kd": 0
+          "kd": 10
         }
       },
       "speed_profiles": {
         "angular_speed": {
           "slow": {
-            "acceleration": 1,
-            "deceleration": 1,
-            "max_speed": 1
+            "speed": 1
           },
           "default": {
-            "acceleration": 3.1415,
-            "deceleration": 1,
-            "max_speed": 3.1415
+            "speed": 3.1415
           },
           "high": {
-            "acceleration": 3.1415,
-            "deceleration": 1,
-            "max_speed": 5
+            "speed": 5
           }
         },
         "linear_speed": {
