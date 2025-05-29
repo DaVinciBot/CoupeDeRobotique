@@ -86,6 +86,7 @@ class MainBrain(Brain):
         # --- Initialization --- #
         # Rolling basis & Actuators
         rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(0.01)
@@ -169,8 +170,13 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        self.arena.set_team_color(TeamColor.BLUE)
-        start_position = OrientedPoint(122.5, 21, -pi/2)
+        start_position = OrientedPoint(0, 0, 0)
+        if self.arena.team_color == TeamColor.YELLOW:
+            self.logger.info("Starting as YELLOW team.")
+            start_position = OrientedPoint(177.5, 21, -pi / 2)
+        elif self.arena.team_color == TeamColor.BLUE:
+            self.logger.info("Starting as BLUE team.")
+            start_position = OrientedPoint(122.5, 21, -pi / 2)
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
