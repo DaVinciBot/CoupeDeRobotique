@@ -127,10 +127,10 @@ class MainBrain(Brain):
 
         runner = strat.get_graph_runner()
 
-        from strategy.tools import visualize_task_graph
-        visualize_task_graph(
-            runner.active[0]
-        )
+        # from strategy.tools import visualize_task_graph
+        # visualize_task_graph(
+        #     runner.active[0]
+        # )
 
         # --- MetaProg is insane (loop) --- #
         runner.handle(
