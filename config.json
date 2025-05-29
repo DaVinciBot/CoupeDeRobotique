@@ -77,7 +77,7 @@
       "pids": {
         "linear_position": {
           "kp": 50,
-          "ki": 0,
+          "ki": 20,
           "kd": 0
         },
         "angular_position": {
