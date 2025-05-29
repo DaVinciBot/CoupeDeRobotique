@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import time
 from math import pi
 
-from debugpy.common import json
 
 # ====== Third-party library imports ======
 from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
