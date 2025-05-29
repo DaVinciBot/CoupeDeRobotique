@@ -135,12 +135,12 @@ class MainBrain(Brain):
         runner = strat.get_graph_runner()
 
         navigator = Navigator()
-        for i in range(0, 10):
+        for i in [13, 12, 14, 7, 9, 8, 6, 15, 5]:
             navigator.add_navigation_task(
                 NavigatorTaskParams(
                     goal=self.arena.zones[i].polygon.centroid,
                     timeout=None,
-                    path_planner_params=DeltaPathPlannerParams(),
+                    path_planner_params=BasicPathPlannerParams(),
                     trajectory_planner_params=SequentialTrajectoryPlannerParams(),
                     speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
                     avoidance_params=StopAndWaitAvoidanceParams(1000),
@@ -152,17 +152,17 @@ class MainBrain(Brain):
 
 
         # --- MetaProg is insane (loop) --- #
-        runner.handle(
-            ShowGameContext(
-                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
-            )
-        )
-        # if navigator.current_task is not None:
-        #     cmd = navigator.handle(
-        #         ally_zone=self.arena.ally_zone,
-        #         enemy_zone=self.arena.enemy_zone,
+        # runner.handle(
+        #     ShowGameContext(
+        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
         #     )
-        #     rolling_basis.set_target_position(cmd.get_position_command())
+        # )
+        if navigator.current_task is not None:
+            cmd = navigator.handle(
+                ally_zone=self.arena.ally_zone,
+                enemy_zone=self.arena.enemy_zone,
+            )
+            rolling_basis.set_target_position(cmd.get_position_command())
 
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = rolling_basis.odometrie
