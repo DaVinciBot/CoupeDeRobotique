@@ -99,13 +99,6 @@ def get_pickup_sub_graph(zone_pickup_id: int, ctx: ShowGameContext) -> BaseSubGr
     pickup_sub_graph.connect(
         f"[Pickup] go to zone {zone_pickup_id}",
         DirectTransition(
-            pickup_sub_graph.nodes[f"[Pickup] go to take stuff {zone_pickup_id}"]
-        ),
-    )
-
-    pickup_sub_graph.connect(
-        f"[Pickup] go to take stuff {zone_pickup_id}",
-        DirectTransition(
             pickup_sub_graph.nodes[f"[Pickup] prepare to pickup {zone_pickup_id}"]
         ),
     )
