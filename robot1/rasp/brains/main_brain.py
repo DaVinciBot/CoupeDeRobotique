@@ -70,8 +70,8 @@ class MainBrain(Brain):
         self.navigator_task: NavigatorTaskParams = None
 
         self.ui_state = {
-            "jack_state": False,
-            "bau_state": False,
+            "jack_state": True,
+            "bau_state": True,
             "odometrie_state": OrientedPoint(0, 0, 0),
             "pamis_states": {
                 "superstar": False,
@@ -281,4 +281,5 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
 
         await self.inputs.wait_for_jack_trigger()
+        self.ui_state["jack_state"] = False
         await self.run()
