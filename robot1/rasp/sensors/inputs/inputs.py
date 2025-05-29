@@ -16,7 +16,7 @@ class Inputs:
         self.bau: PIN = PIN(pin_bau)
         self.bau.setup("input_pullup", reverse_state=False)
 
-    async def wait_for_jack_trigger(self, wait_time: float = 0.1):
+    async def wait_for_jack_trigger(self, wait_time: float = 0.001):
         false_jacks_in_a_row = 0
         self.logger.info(f"Wait jack trigger...")
         while false_jacks_in_a_row < 5:

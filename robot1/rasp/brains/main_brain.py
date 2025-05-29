@@ -24,10 +24,6 @@ from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from sensors import Lidar, Inputs
 
-# from navigation_tasks.tasks import yellow_start_tasks
-
-# from boombot_strategy import ShowGameContext
-
 from navigation import (
     Navigator,
     NavigatorTaskParams,
@@ -130,6 +126,11 @@ class MainBrain(Brain):
         )
 
         runner = strat.get_graph_runner()
+
+        from strategy.tools import visualize_task_graph
+        visualize_task_graph(
+            runner.active[0]
+        )
 
         # --- MetaProg is insane (loop) --- #
         runner.handle(
