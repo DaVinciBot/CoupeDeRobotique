@@ -92,7 +92,7 @@
             "speed": 1
           },
           "default": {
-            "speed": 3.1415
+            "speed": 6.283
           },
           "high": {
             "speed": 5
