@@ -301,6 +301,24 @@ class ShowArena(BaseArena):
         )
         zones.append(rockstar_stage)
 
+        zones.append(
+            BlueReservedZone(
+                logger=blue_reserved_zone_logger,
+                buffer_size=obstacle_buffer,
+                polygon=create_straight_rectangle(Point((15, 155)), Point((60, 200))),
+                go_to_positions=Point(37.5, 177.5),
+            )
+        )
+
+        zones.append(
+            YellowReservedZone(
+                logger=yellow_reserved_zone_logger,
+                buffer_size=obstacle_buffer,
+                polygon=create_straight_rectangle(Point((285, 155)), Point((240, 200))),
+                go_to_positions=Point(262.5, 177.5),
+            )
+        )
+
         if grid_manager_logger:
             super().__init__(
                 logger,

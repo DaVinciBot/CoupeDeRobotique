@@ -22,8 +22,8 @@ from boombot_strategy.tasks.navigation_tasks.maneuver import (
 from boombot_strategy.tasks.actuator_task.actuator_task import (
     ReadyToApproachToPickUp,
     PrepareToPickUp,
-PickUp,
-Build
+    PickUp,
+    Build,
 )
 
 
