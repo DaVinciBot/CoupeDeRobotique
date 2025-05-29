@@ -45,23 +45,20 @@
     "zombie_mode": false,
     "team_config": {
       "default_team": "yellow",
-      "info_by_team": {
-        "blue":{
-          "first_pickup_zone": 4,
-          "second_pickup_zone": 2,
-          "third_pickup_zone": 0,
-          "fourth_pickup_zone": 1,
-          "first_build_zone": 17,
-          "second_build_zone": 16
-        },
+      "start_info_by_team": {
         "yellow": {
-          "first_pickup_zone": 9,
-          "second_pickup_zone": 7,
-          "third_pickup_zone": 5,
-          "fourth_pickup_zone": 6,
-          "first_build_zone": 12,
-          "second_build_zone": 13
+          "start_zone_id": 0,
+          "start_x": 19.27,
+          "start_y": 15.75,
+          "start_theta": 1.5707963267948966
+        },
+        "blue": {
+          "start_zone_id": 3,
+          "start_x": 19.27,
+          "start_y": 284.25,
+          "start_theta": -1.5707963267948966
         }
+      }
     },
     "rolling_basis": {
       "rolling_basis_teensy_ser": 12678590,
@@ -72,9 +69,9 @@
           "kd": 0
         },
         "angular_position": {
-          "kp": 150.0,
+          "kp": 200.0,
           "ki": 0,
-          "kd": 7
+          "kd": 10
         }
       },
       "speed_profiles": {
@@ -86,7 +83,7 @@
           },
           "default": {
             "acceleration": 3.1415,
-            "deceleration": 1,
+            "deceleration": 2,
             "max_speed": 3.1415
           },
           "high": {
@@ -103,7 +100,7 @@
           },
           "default": {
             "acceleration": 15,
-            "deceleration": 10,
+            "deceleration": 15,
             "max_speed": 20
           },
           "high": {
@@ -122,20 +119,6 @@
             "max_speed": 20
           }
         }
-      }
-    },
-    "score": {
-      "boombot":{
-        "build_one_floor": 4,
-        "build_two_floors": 8,
-        "go_to_backstage": 10,
-        "banner": 20
-        },
-      "pamis": {
-        "occupied_zone": 5,
-        "superstar_on_stage": 5,
-        "partying": 10,
-        "free_stage_zone": 15
       }
     },
     "actuators": {
@@ -165,7 +148,7 @@
         },
         "4": {
           "fold_angle": 10,
-          "deploy_angle": 107,
+          "deploy_angle": 110,
           "max_angle": 270
         },
         "5": {
@@ -174,8 +157,8 @@
           "max_angle": 180
         },
         "6": {
-          "fold_angle": 247,
-          "deploy_angle": 155,
+          "fold_angle": 250,
+          "deploy_angle": 160,
           "max_angle": 270
         },
         "7": {
@@ -185,7 +168,7 @@
         },
         "8": {
           "fold_angle": 240,
-          "deploy_angle": 145,
+          "deploy_angle": 140,
           "docking": 130,
           "max_angle": 270
         },
@@ -197,10 +180,10 @@
         }
       },
       "elevator": {
-        "top_steps": 720,
+        "top_steps": 700,
         "folded_steps": 360,
         "bottom_steps": 0,
-        "speed": 1500
+        "speed": 2000
       },
       "delay": 0.02
     },
