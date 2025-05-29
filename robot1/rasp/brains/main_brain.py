@@ -109,13 +109,13 @@ class MainBrain(Brain):
         from boombot_strategy.strategies.basic_strategy import BasicStrategy
 
         # Rolling basis & Actuators
-        rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(1)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        actuators = ActuatorsShowDummy(
+        actuators = ActuatorsShow(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
@@ -237,8 +237,8 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=np.array([]),
-            # lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
+            # lidar_scan_polars=np.array([]),
+            lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
@@ -280,5 +280,5 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = start_position
 
-        # await self.inputs.wait_for_jack_trigger()
+        await self.inputs.wait_for_jack_trigger()
         await self.run()
