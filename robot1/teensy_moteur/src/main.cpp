@@ -19,7 +19,7 @@ PID linear_distance_pid(
 PID angular_distance_pid(
   KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DISTANCE, 
   -200, 200, 
-  10.0
+  2.0
 );
 
 // b. Instanciate the Rolling Basis object
