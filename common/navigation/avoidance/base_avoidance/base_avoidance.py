@@ -70,8 +70,8 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         )
         self.params: ParamsType = params
 
-        self.acs_detector = (
-            AcsDetectionProfileFactory.instantiate(params=acs_detection_profile_params)
+        self.acs_detector = AcsDetectionProfileFactory.instantiate(
+            params=acs_detection_profile_params
         )
 
         self.state: AvoidanceState = AvoidanceState.IDLE

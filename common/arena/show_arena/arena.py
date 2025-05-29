@@ -61,7 +61,11 @@ class ShowArena(BaseArena):
             (
                 (2.5, 112.5),
                 (12.5, 152.5),
-                [OrientedPoint(12.5 + distance_between_robot_and_pickup_zone, 132.5, pi)],
+                [
+                    OrientedPoint(
+                        12.5 + distance_between_robot_and_pickup_zone, 132.5, pi
+                    )
+                ],
             ),
             (
                 (57.5, 20),
@@ -125,7 +129,9 @@ class ShowArena(BaseArena):
                 (300 - 62.5, 177.5),
                 [
                     OrientedPoint(
-                        300 - 82.5, 167.5 - distance_between_robot_and_pickup_zone, pi / 2
+                        300 - 82.5,
+                        167.5 - distance_between_robot_and_pickup_zone,
+                        pi / 2,
                     )
                 ],
             ),
@@ -163,7 +169,9 @@ class ShowArena(BaseArena):
                     OrientedPoint(
                         22.5, 110 + distance_between_robot_and_construct_zone, -pi / 2
                     ),
-                    OrientedPoint(45 + distance_between_robot_and_construct_zone, 87.5, pi),
+                    OrientedPoint(
+                        45 + distance_between_robot_and_construct_zone, 87.5, pi
+                    ),
                 ],
             ),
             (
@@ -207,7 +215,9 @@ class ShowArena(BaseArena):
                     OrientedPoint(
                         277.5, 110 + distance_between_robot_and_construct_zone, -pi / 2
                     ),
-                    OrientedPoint(255 - distance_between_robot_and_construct_zone, 87.5, 0),
+                    OrientedPoint(
+                        255 - distance_between_robot_and_construct_zone, 87.5, 0
+                    ),
                 ],
             ),
             (

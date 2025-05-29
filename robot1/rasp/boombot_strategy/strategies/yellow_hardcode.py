@@ -43,6 +43,4 @@ from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTa
 go_zone_9_to_pickup = BaseTaskNode("go_zone_9_to_pickup", GoToStuffZoneToPickUp(9))
 
 
-
-
 yellow_hardcode_strategy = GraphRunner(start=go_zone_9_to_pickup, parallel=False)
