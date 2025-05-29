@@ -79,9 +79,9 @@
           "kd": 0
         },
         "angular_position": {
-          "kp": 150.0,
+          "kp": 200.0,
           "ki": 0,
-          "kd": 7
+          "kd": 10
         }
       },
       "speed_profiles": {
@@ -93,7 +93,7 @@
           },
           "default": {
             "acceleration": 3.1415,
-            "deceleration": 1,
+            "deceleration": 2,
             "max_speed": 3.1415
           },
           "high": {
@@ -110,7 +110,7 @@
           },
           "default": {
             "acceleration": 15,
-            "deceleration": 10,
+            "deceleration": 15,
             "max_speed": 20
           },
           "high": {
@@ -172,7 +172,7 @@
         },
         "4": {
           "fold_angle": 10,
-          "deploy_angle": 107,
+          "deploy_angle": 110,
           "max_angle": 270
         },
         "5": {
@@ -181,8 +181,8 @@
           "max_angle": 180
         },
         "6": {
-          "fold_angle": 247,
-          "deploy_angle": 155,
+          "fold_angle": 250,
+          "deploy_angle": 160,
           "max_angle": 270
         },
         "7": {
@@ -192,7 +192,7 @@
         },
         "8": {
           "fold_angle": 240,
-          "deploy_angle": 145,
+          "deploy_angle": 140,
           "docking": 130,
           "max_angle": 270
         },
@@ -204,10 +204,10 @@
         }
       },
       "elevator": {
-        "top_steps": 720,
+        "top_steps": 700,
         "folded_steps": 360,
         "bottom_steps": 0,
-        "speed": 1500
+        "speed": 2000
       },
       "delay": 0.02
     },

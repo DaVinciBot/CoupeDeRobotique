@@ -1,1 +1,1 @@
-from robot1.rasp.boombot_strategy.show_game_context import ShowGameContext
+from boombot_strategy.show_game_context import ShowGameContext
