@@ -142,7 +142,10 @@ void Rolling_Basis::handle(
     double sign = (distance_error >= 0.0) ? +1.0 : -1.0; 
     distance_error = mag * sign;
 
-    double theta_error = target_position.theta - this->THETA;
+    double theta_error = target_position.theta - this->THETA + Point::angle(
+        Point(this->X, this->Y, this->THETA),
+        target_position
+    ) - this->THETA;
 
     theta_error = normalizeAngle(theta_error);  
 
