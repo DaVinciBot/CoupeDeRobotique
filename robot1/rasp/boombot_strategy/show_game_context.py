@@ -9,7 +9,9 @@ class ShowGameContext(BaseGameContext):
         arena: ShowArena,
         rolling_basis: RollingBasis,
         actuators: ActuatorsShow = None,
+        score: int = 0
     ) -> None:
         super().__init__(arena)
         self.rolling_basis: RollingBasis = rolling_basis
         self.actuators: ActuatorsShow = actuators
+        self.score = score
