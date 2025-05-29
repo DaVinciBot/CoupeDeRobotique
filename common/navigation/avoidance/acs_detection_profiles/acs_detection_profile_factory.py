@@ -60,6 +60,7 @@ class AcsDetectionProfileFactory:
             return RectangularProjectionAcsDetectionProfile(
                 cast(RectangularProjectionAcsDetectionProfileParams, params)
             )
+
         if profile == AcsDetectionProfile.ANGULAR_RESTRICT_PROJECTION:
             return AngularRestrictProjectionAcsDetectionProfile(
                 cast(AngularRestrictProjectionAcsDetectionProfileParams, params)

@@ -70,7 +70,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         )
         self.params: ParamsType = params
 
-        self.acs_detector: BaseAcsDetectionProfile = (
+        self.acs_detector = (
             AcsDetectionProfileFactory.instantiate(params=acs_detection_profile_params)
         )
 
