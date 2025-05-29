@@ -38,13 +38,11 @@ class BasicStrategy(BaseStrategy):
         )
 
         backward_to_extract_from_deploy_brand = BaseTaskNode(
-            name="Precise forward to deploy brand",
+            name="Backward to extract from deploy brand",
             tasks=Backward(15),
         )
 
-        block_banner.add_transition(
-            DirectTransition(precise_forward_to_deploy_brand)
-        )
+        block_banner.add_transition(DirectTransition(precise_forward_to_deploy_brand))
 
         precise_forward_to_deploy_brand.add_transition(
             DirectTransition(backward_to_extract_from_deploy_brand)
@@ -55,7 +53,7 @@ class BasicStrategy(BaseStrategy):
             self.zones["first_build_zone"], ctx, 2.5
         )
 
-        precise_forward_to_deploy_brand.add_transition(
+        backward_to_extract_from_deploy_brand.add_transition(
             DirectTransition(first_pickup_zone.get_entry())
         )
 
