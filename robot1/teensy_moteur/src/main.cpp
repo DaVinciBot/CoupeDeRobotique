@@ -13,8 +13,8 @@
 // a. Define the PID controllers
 PID linear_distance_pid(
   KP_LINEAR_DISTANCE, KI_LINEAR_DISTANCE, KD_LINEAR_DISTANCE,
-  -250, 250, 
-  30.0
+  -240, 240, 
+  5.0
 );
 PID angular_distance_pid(
   KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DISTANCE, 
