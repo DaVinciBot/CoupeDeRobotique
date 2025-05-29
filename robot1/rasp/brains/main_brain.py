@@ -138,7 +138,7 @@ class MainBrain(Brain):
         for i in [13, 12, 14, 7, 9, 8, 6, 15, 5]:
             navigator.add_navigation_task(
                 NavigatorTaskParams(
-                    goal=self.arena.zones[i].polygon.centroid,
+                    goal=OrientedPoint(self.arena.zones[i].polygon.centroid.x, self.arena.zones[i].polygon.centroid.y, 0),
                     timeout=None,
                     path_planner_params=BasicPathPlannerParams(),
                     trajectory_planner_params=SequentialTrajectoryPlannerParams(),
