@@ -1,8 +1,12 @@
 {
-  "name": "sensors",
+  "name": "LidarScanner",
   "version": "1.0.0",
-  "description": "Library dedicated to sensors communication, like IMU, LIDAR, etc.",
-  "keywords": "lidar, imu, sensors",
-  "frameworks": "*",
+  "description": "Arduino library for parsing serial LIDAR frames and detecting obstacles.",
+  "keywords": ["lidar", "sensor", "serial"],
+  "authors": [
+    { "name": "Yliux", "maintainer": true }
+  ],
+  "license": "MIT",
+  "frameworks": "arduino",
   "platforms": "*"
 }
