@@ -22,7 +22,7 @@ log.add_handler("ui", (event) => {
         bau_state.innerText = data.data["BAU"] ? "ON" : "ACTIVATED";
 
         const score = document.getElementById("score");
-        score.innerText = data.data["score"] ? data.data["score"] : "000";
+        // score.innerText = data.data["score"] ? data.data["score"] : "000";
 
         const pamis_states = document.getElementById('pami_states');
         pamis_states.innerHTML = '';
