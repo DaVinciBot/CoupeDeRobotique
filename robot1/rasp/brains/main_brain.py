@@ -110,13 +110,13 @@ class MainBrain(Brain):
         from boombot_strategy.strategies.basic_strategy import BasicStrategy
 
         # Rolling basis & Actuators
-        rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(0.01)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        actuators = ActuatorsShowDummy(
+        actuators = ActuatorsShow(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
@@ -262,13 +262,13 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def scan_jack(self):
-        #await self.inputs.wait_for_jack_trigger()
+        await self.inputs.wait_for_jack_trigger()
         self.jack_triggered = True
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
         # 1. Wait for the team color to be set
-        self.arena.set_team_color(TeamColor.BLUE)
+        self.arena.set_team_color(TeamColor.UNDEFINED)
         await self.wait_for_team()
 
         # 2. Define the starting position based on the team color
