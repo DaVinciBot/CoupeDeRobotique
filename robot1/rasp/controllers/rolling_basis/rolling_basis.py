@@ -132,6 +132,7 @@ class RollingBasis(BaseComTeensy):
             + struct.pack("<d", target_position.y)
             + struct.pack("<d", target_position.theta)
         )
+        self.logger.info(f"SET: {target_position.x}, {target_position.y}, {target_position.theta}")
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
@@ -150,6 +151,7 @@ class RollingBasis(BaseComTeensy):
             + struct.pack("<d", odometrie.y)
             + struct.pack("<d", odometrie.theta)
         )
+
         self.send_bytes(msg)
 
     @log(
