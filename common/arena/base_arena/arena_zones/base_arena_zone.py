@@ -149,7 +149,7 @@ class BaseArenaZone(ABC):
 
     def get_go_to_position(
         self, ally_position: OrientedPoint, team_color: TeamColor
-    ) -> OrientedPoint | Point | None:
+    ) -> OrientedPoint | None:
         """
         Determines the best go-to position for an ally in the given zone.
 
@@ -158,7 +158,7 @@ class BaseArenaZone(ABC):
             team_color (TeamColor): The color of the team.
 
         Returns:
-            OrientedPoint | Point | None: The best go-to position, or None if the zone is not accessible.
+            OrientedPoint | None: The best go-to position, or None if the zone is not accessible.
         """
         if not self.is_accessible(team_color):
             self.logger.debug(

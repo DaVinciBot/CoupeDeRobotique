@@ -54,7 +54,7 @@ def get_construct_sub_graph(
         f"[Construct] prepare construction at zone {zone_construct_id}",
         BaseTaskNode(
             name=f"[Construct] prepare construction at zone {zone_construct_id}",
-            tasks=PreciseForward(17 + supplementary_distance),
+            tasks=PreciseForward(18 + supplementary_distance),
             scoring_function=DefaultScoringFunction(),
         ),
     )
