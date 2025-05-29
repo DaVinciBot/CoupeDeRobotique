@@ -106,8 +106,8 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        from boombot_strategy import ShowGameContext
-        from boombot_strategy.strategies.basic_strategy import BasicStrategy
+        # from boombot_strategy import ShowGameContext
+        # from boombot_strategy.strategies.basic_strategy import BasicStrategy
 
         # Rolling basis & Actuators
         rolling_basis = RollingBasis(
@@ -116,23 +116,23 @@ class MainBrain(Brain):
         time.sleep(0.01)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        actuators = ActuatorsShow(
-            logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
-        )
+        # actuators = ActuatorsShow(
+        #     logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
+        # )
+        #
+        # # Init position
+        # actuators.block_banner()
 
-        # Init position
-        actuators.block_banner()
+        # while not self.jack_triggered:
+        #     time.sleep(0.1)
+        #
+        # strat = BasicStrategy(
+        #     ShowGameContext(
+        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+        #     )
+        # )
 
-        while not self.jack_triggered:
-            time.sleep(0.1)
-
-        strat = BasicStrategy(
-            ShowGameContext(
-                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
-            )
-        )
-
-        runner = strat.get_graph_runner()
+        #runner = strat.get_graph_runner()
 
         navigator = Navigator()
         for i in range(5):
