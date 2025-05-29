@@ -114,7 +114,7 @@ class NavigatorTask:
 
             # No stabilization: finish immediately with stop
             self.state = NavigatorTaskState.FINISHED
-            return self.current_trajectory_command
+            return self.trajectory_planner.get_plan()
 
         # 4. Stabilization period: replay last trajectory command
         if self.state == NavigatorTaskState.STABILIZING:
