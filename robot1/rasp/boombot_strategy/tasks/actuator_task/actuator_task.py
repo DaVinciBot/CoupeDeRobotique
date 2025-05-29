@@ -1,4 +1,4 @@
-from robot1.rasp.config_loader import CONFIG
+from config_loader import CONFIG
 from controllers.actuators import ActuatorsShow
 from strategy.core import BaseTask
 from boombot_strategy.show_game_context import ShowGameContext
