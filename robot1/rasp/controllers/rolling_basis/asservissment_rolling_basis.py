@@ -196,6 +196,20 @@ class AsservissementRollingBasis(BaseComTeensy):
     ####################################
     # PID Configuration Methods        #
     ####################################
+    @log(
+        param_logger="RollingBasis",
+        log_level=LogLevels.INFO,
+    )
+    def _send_pid(self, pid_id: int, pid: PID) -> None:
+        """
+        Internal method to send PID configuration data to the Teensy.
+
+        Args:
+            pid_id (int): The identifier for the PID controller.
+            pid (PID): The PID controller parameters.
+        """
+        msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
+        self.send_bytes(msg)
     def set_linear_position_pid(self, *args, **kwargs) -> None:
         """
         Configure the PID values for linear position control.
