@@ -290,6 +290,4 @@ class MainBrain(Brain):
             optimized_update=False,
         )
         self.rolling_basis_odometrie = start_position
-
-        self.ui_state["jack_state"] = False
         await self.run()
