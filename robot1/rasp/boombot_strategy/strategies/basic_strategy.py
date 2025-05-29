@@ -69,13 +69,13 @@ class BasicStrategy(BaseStrategy):
             DirectTransition(first_build_zone.get_entry())
         )
 
-        # second_pickup_zone = get_pickup_sub_graph(self.zones["second_pickup_zone"], ctx)
-        # second_build_zone = get_construct_sub_graph(
-        #     self.zones["second_build_zone"], ctx
-        # )
-        # second_pickup_zone.get_exits()[0].add_transition(
-        #     DirectTransition(second_build_zone.get_entry())
-        # )
+        second_pickup_zone = get_pickup_sub_graph(self.zones["second_pickup_zone"], ctx)
+        second_build_zone = get_construct_sub_graph(
+            self.zones["second_build_zone"], ctx
+        )
+        second_pickup_zone.get_exits()[0].add_transition(
+            DirectTransition(second_build_zone.get_entry())
+        )
 
         # third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"], ctx)
         # third_build_zone = get_construct_sub_graph(
@@ -99,11 +99,11 @@ class BasicStrategy(BaseStrategy):
         )
 
         first_build_zone.get_exits()[0].add_transition(
+            DirectTransition(second_pickup_zone.get_entry())
+        )
+        second_build_zone.get_exits()[0].add_transition(
             DirectTransition(go_to_backstage)
         )
-        # second_build_zone.get_exits()[0].add_transition(
-        #     DirectTransition(third_pickup_zone.get_entry())
-        # )
         # third_build_zone.get_exits()[0].add_transition(
         #     DirectTransition(go_to_backstage)
         # )

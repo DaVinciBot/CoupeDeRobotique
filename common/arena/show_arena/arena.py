@@ -29,8 +29,9 @@ class ShowArena(BaseArena):
         obstacle_buffer: float,
         chunk_size: int = 2,
         forbidden_cover_threshold: float = 0.5,
-        distance_between_robot_and_pickup_zone: float = 20,
-        distance_between_robot_and_construct_zone: float = 20,
+        distance_between_robot_and_pickup_zone: float = 25,
+        distance_between_robot_and_big_construct_zone: float = 5,
+        distance_between_robot_and_small_construct_zone: float = 22,
         grid_manager_logger: Logger = None,
     ) -> None:
         stuff_zone_logger = Logger(
@@ -155,7 +156,9 @@ class ShowArena(BaseArena):
                 (45, 15),
                 [
                     OrientedPoint(
-                        22.5, 15 + distance_between_robot_and_construct_zone, -pi / 2
+                        22.5,
+                        15 + distance_between_robot_and_small_construct_zone,
+                        -pi / 2,
                     )
                 ],
             ),
@@ -164,13 +167,15 @@ class ShowArena(BaseArena):
                 (45, 110),
                 [
                     OrientedPoint(
-                        22.5, 65 - distance_between_robot_and_construct_zone, pi / 2
+                        22.5, 65 - distance_between_robot_and_big_construct_zone, pi / 2
                     ),
                     OrientedPoint(
-                        22.5, 110 + distance_between_robot_and_construct_zone, -pi / 2
+                        22.5,
+                        110 + distance_between_robot_and_big_construct_zone,
+                        -pi / 2,
                     ),
                     OrientedPoint(
-                        45 + distance_between_robot_and_construct_zone, 87.5, pi
+                        45 + distance_between_robot_and_big_construct_zone, 87.5, pi
                     ),
                 ],
             ),
@@ -179,7 +184,9 @@ class ShowArena(BaseArena):
                 (200, 45),
                 [
                     OrientedPoint(
-                        177.5, 45 + distance_between_robot_and_construct_zone, -pi / 2
+                        177.5,
+                        45 + distance_between_robot_and_big_construct_zone,
+                        -pi / 2,
                     ),
                     # OrientedPoint(200 + distance_between_robot_and_work_zone, 22.5, pi),
                 ],
@@ -189,7 +196,9 @@ class ShowArena(BaseArena):
                 (245, 15),
                 [
                     OrientedPoint(
-                        222.5, 15 + distance_between_robot_and_construct_zone, -pi / 2
+                        222.5,
+                        15 + distance_between_robot_and_small_construct_zone,
+                        -pi / 2,
                     )
                 ],
             ),
@@ -201,7 +210,9 @@ class ShowArena(BaseArena):
                 (300, 15),
                 [
                     OrientedPoint(
-                        277.5, 15 + distance_between_robot_and_construct_zone, -pi / 2
+                        277.5,
+                        15 + distance_between_robot_and_small_construct_zone,
+                        -pi / 2,
                     )
                 ],
             ),
@@ -210,13 +221,17 @@ class ShowArena(BaseArena):
                 (300, 110),
                 [
                     OrientedPoint(
-                        277.5, 65 - distance_between_robot_and_construct_zone, pi / 2
+                        277.5,
+                        65 - distance_between_robot_and_big_construct_zone,
+                        pi / 2,
                     ),
                     OrientedPoint(
-                        277.5, 110 + distance_between_robot_and_construct_zone, -pi / 2
+                        277.5,
+                        110 + distance_between_robot_and_big_construct_zone,
+                        -pi / 2,
                     ),
                     OrientedPoint(
-                        255 - distance_between_robot_and_construct_zone, 87.5, 0
+                        255 - distance_between_robot_and_big_construct_zone, 87.5, 0
                     ),
                 ],
             ),
@@ -225,7 +240,9 @@ class ShowArena(BaseArena):
                 (145, 45),
                 [
                     OrientedPoint(
-                        122.5, 45 + distance_between_robot_and_construct_zone, -pi / 2
+                        122.5,
+                        45 + distance_between_robot_and_big_construct_zone,
+                        -pi / 2,
                     ),
                     # OrientedPoint(100 - distance_between_robot_and_work_zone, 22.5, 0),
                 ],
@@ -235,7 +252,9 @@ class ShowArena(BaseArena):
                 (100, 15),
                 [
                     OrientedPoint(
-                        77.5, 15 + distance_between_robot_and_construct_zone, -pi / 2
+                        77.5,
+                        15 + distance_between_robot_and_small_construct_zone,
+                        -pi / 2,
                     )
                 ],
             ),
