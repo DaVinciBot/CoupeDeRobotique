@@ -444,7 +444,6 @@ class ActuatorsShow(Actuators):
         self.set_servo_angle(0, angle=100, max_angle=270)
         self.set_servo_angle(2, angle=171, max_angle=270)
 
-
     # def build(self):
     #     self.fold(self.side_arms)
     #     self.stepper_step(

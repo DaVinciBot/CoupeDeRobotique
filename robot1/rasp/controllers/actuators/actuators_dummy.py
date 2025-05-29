@@ -35,7 +35,9 @@ class ActuatorsShowDummy(ActuatorsShow):
         return self.__class__.__name__
 
     @log("DummyActuatorsShow")
-    def stepper_step(self, steps: int, speed: int, disable_driver: bool = False) -> None:
+    def stepper_step(
+        self, steps: int, speed: int, disable_driver: bool = False
+    ) -> None:
         """
         Simulate moving the stepper motor by updating elevator_ticks
         and logging the action.
@@ -64,7 +66,7 @@ class ActuatorsShowDummy(ActuatorsShow):
 
         # Retrieve minimum angle from config if available
         servo = self.servos.get(pin)
-        min_angle = getattr(servo, 'fold_angle', 0)
+        min_angle = getattr(servo, "fold_angle", 0)
 
         if min_angle <= angle <= max_angle:
             if detach:
