@@ -158,7 +158,7 @@ class NavigatorTask:
         Returns:
             bool: True if task duration exceeded total planned trajectory duration.
         """
-        if self._start_time is None or self.state == NavigatorTaskState.FINISHED:
+        if self._start_time is None or self.state != NavigatorTaskState.FINISHED:
             return False
         return self._get_elapsed_time() > self.trajectory_planner.get_total_duration()
 
@@ -187,7 +187,7 @@ class NavigatorTask:
         if self._is_finished():
             self.state = NavigatorTaskState.FINISHED
             # Start stabilization delay if configured
-            if getattr(self.params, "stabilization_delay", 0) > 0:
+            if self.params.stabilization_delay > 0:
                 self._stabilization_start_time = time.time()
                 self.state = NavigatorTaskState.STABILIZING
                 # Issue stop command while stabilizing
@@ -209,11 +209,8 @@ class NavigatorTask:
                 return TrajectoryPlanCommand.create_stop_command(
                     current_position=ally_zone.point
                 )
-            # Stabilization complete, reset for next task
-            self.state = NavigatorTaskState.NOT_PLANNED
-            self._start_time = None
-            self._stabilization_start_time = None
-            # Next call will plan a new task
+            # Stabilization complete, mark task as finished
+            self.state = NavigatorTaskState.FINISHED
             return TrajectoryPlanCommand.create_stop_command(
                 current_position=ally_zone.point
             )

@@ -20,7 +20,11 @@ from arena import ShowArena, BaseArenaZone
 from arena import AllyZone, TeamColor
 
 # ====== Internal Project Imports ======
-from controllers.rolling_basis import RollingBasis, RollingBasisDummy, AsservissementRollingBasis
+from controllers.rolling_basis import (
+    RollingBasis,
+    RollingBasisDummy,
+    AsservissementRollingBasis,
+)
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from sensors import Lidar, Inputs
 
@@ -62,6 +66,7 @@ class MainBrain(Brain):
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
+        self.score: int = 0
         super().__init__(logger, self)
 
     """
@@ -80,44 +85,35 @@ class MainBrain(Brain):
     def run(self) -> None:
         # --- Initialization --- #
         # Rolling basis & Actuators
-        rolling_basis = RollingBasis(
+        rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(0.01)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        navigator = Navigator()
-        navigator.add_navigation_task(
-            NavigatorTaskParams(
-                goal=None,
-                timeout=None,
-                path_planner_params=DeltaPathPlannerParams(rotation=pi, distance=20),
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=NoAvoidanceParams(),
-                acs_detection_profile_params=NoAcsDetectionProfileParams(),
-            )
+        actuators = ActuatorsShowDummy(
+            logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
-        navigator.add_navigation_task(
-            NavigatorTaskParams(
-                goal=None,
-                timeout=None,
-                path_planner_params=DeltaPathPlannerParams(rotation=pi, distance=20),
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=NoAvoidanceParams(),
-                acs_detection_profile_params=NoAcsDetectionProfileParams(),
+
+        # Strategy
+        from boombot_strategy import ShowGameContext
+        from boombot_strategy.strategies import BasicStrategy
+
+        strategy = BasicStrategy(
+            ShowGameContext(
+                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
             )
         )
 
         # --- MetaProg is insane (loop) --- #
-        if navigator.current_task is not None:
-            cmd = navigator.handle(
-                ally_zone=self.arena.ally_zone,
-                enemy_zone=self.arena.enemy_zone,
-            )
-            rolling_basis.set_target_position(cmd.get_position_command())
+        context = ShowGameContext(
+            arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+        )
 
+        strategy.runner.handle(context)
+
+        # Update the rolling basis odometrie from the context
+        self.score = context.score
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
     @Brain.task(
@@ -165,7 +161,7 @@ class MainBrain(Brain):
             # _enemy_position=self.position_generator(),
         )
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
+    @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     async def print_odo(self) -> None:
         self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
 
@@ -173,7 +169,9 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        start_position = OrientedPoint(0, 0, 0)
+        self.arena.set_team_color(TeamColor.BLUE)
+        start_position = OrientedPoint(122.5, 21, -pi/2)
+
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(300, 200)

@@ -15,33 +15,14 @@ from boombot_strategy import ShowGameContext
 from boombot_strategy.tasks.navigation_tasks.go_to_stuff_zone import (
     GoToStuffZoneToPickUp,
 )
-from boombot_strategy.tasks.navigation_tasks.maneuver import (
-    PreciseForward,
-)
-
-from boombot_strategy.tasks.actuator_task.actuator_task import (
+from boombot_strategy.tasks.actuator_task import (
     ReadyToApproachToPickUp,
     PrepareToPickUp,
     PickUp,
-    Build,
 )
 
 
-def get_pickup_sub_graph(zone_pickup_id: int, ctx: ShowGameContext) -> BaseSubGraph:
-    """
-    Create a subgraph for navigating to a zone and performing a pickup maneuver.
-
-    This function builds a task graph consisting of:
-    1. A node to navigate to a specific zone.
-    2. A node to execute a forward maneuver to pick up items.
-    The nodes are connected with a direct transition.
-
-    Args:
-        zone_pickup_id (int): The identifier for the pickup zone.
-
-    Returns:
-        BaseSubGraph: A compiled subgraph with defined entry and exit points.
-    """
+def get_pickup_sub_graph(zone_pickup_id: int) -> BaseSubGraph:
     pickup_sub_graph = SubGraphBuilder()
 
     # Add node for navigating to the specified pickup zone

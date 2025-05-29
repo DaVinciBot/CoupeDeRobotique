@@ -117,7 +117,7 @@ if __name__ == "__main__":
 
     # Sensors
     # Lidar
-    lidar = Lidar(
+    lidar = LidarDummy(
         logger=logger_lidar,
         min_angle=CONFIG.LIDAR_MIN_ANGLE,
         max_angle=CONFIG.LIDAR_MAX_ANGLE,
