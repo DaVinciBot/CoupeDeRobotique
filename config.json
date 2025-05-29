@@ -165,7 +165,7 @@
         },
         "4": {
           "fold_angle": 10,
-          "deploy_angle": 110,
+          "deploy_angle": 107,
           "max_angle": 270
         },
         "5": {
@@ -174,8 +174,8 @@
           "max_angle": 180
         },
         "6": {
-          "fold_angle": 250,
-          "deploy_angle": 160,
+          "fold_angle": 247,
+          "deploy_angle": 155,
           "max_angle": 270
         },
         "7": {
@@ -185,7 +185,7 @@
         },
         "8": {
           "fold_angle": 240,
-          "deploy_angle": 140,
+          "deploy_angle": 145,
           "docking": 130,
           "max_angle": 270
         },
@@ -197,10 +197,10 @@
         }
       },
       "elevator": {
-        "top_steps": 700,
+        "top_steps": 720,
         "folded_steps": 360,
         "bottom_steps": 0,
-        "speed": 2000
+        "speed": 1500
       },
       "delay": 0.02
     },
