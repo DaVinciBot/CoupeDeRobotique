@@ -70,8 +70,8 @@ class MainBrain(Brain):
         self.navigator_task: NavigatorTaskParams = None
 
         self.ui_state = {
-            "jack_state": False,
-            "bau_state": False,
+            "jack_state": True,
+            "bau_state": True,
             "odometrie_state": OrientedPoint(0, 0, 0),
             "pamis_states": {
                 "superstar": False,
@@ -109,13 +109,13 @@ class MainBrain(Brain):
         from boombot_strategy.strategies.basic_strategy import BasicStrategy
 
         # Rolling basis & Actuators
-        rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(0.01)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        actuators = ActuatorsShowDummy(
+        actuators = ActuatorsShow(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
@@ -138,7 +138,6 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = rolling_basis.odometrie
-
 
     @Brain.task(
         process=True,
@@ -237,8 +236,8 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=np.array([]),
-            # lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
+            # lidar_scan_polars=np.array([]),
+            lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
@@ -264,10 +263,10 @@ class MainBrain(Brain):
         start_position = OrientedPoint(0, 0, 0)
         if self.arena.team_color == TeamColor.YELLOW:
             self.logger.info("Starting as YELLOW team.")
-            start_position = OrientedPoint(180, 15, -pi / 2)
+            start_position = OrientedPoint(200, 15, -pi / 2)
         elif self.arena.team_color == TeamColor.BLUE:
             self.logger.info("Starting as BLUE team.")
-            start_position = OrientedPoint(120, 15, -pi / 2)
+            start_position = OrientedPoint(100, 15, -pi / 2)
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
@@ -280,5 +279,6 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = start_position
 
-        # await self.inputs.wait_for_jack_trigger()
+        await self.inputs.wait_for_jack_trigger()
+        self.ui_state["jack_state"] = False
         await self.run()
