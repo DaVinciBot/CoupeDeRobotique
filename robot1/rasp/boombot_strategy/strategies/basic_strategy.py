@@ -71,7 +71,7 @@ class BasicStrategy(BaseStrategy):
 
         third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"], ctx)
         third_build_zone = get_construct_sub_graph(
-            self.zones["first_build_zone"], ctx, 3
+            self.zones["first_build_zone"], ctx, 7
         )
         third_pickup_zone.get_exits()[0].add_transition(
             DirectTransition(third_build_zone.get_entry())
