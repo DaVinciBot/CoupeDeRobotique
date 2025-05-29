@@ -1,21 +1,18 @@
-/**
- * This is the implementation of the PID class.
- * The PID class compute the error for the servo-control of the motors.
- */
-
-#include <pid.h>
-#include <Arduino.h>
-
+#include "PID.h"
 
 PID::PID(double kp, double ki, double kd,
          double minOutput, double maxOutput,
-         double deadband)
+         double deadband,
+         double dtMin,
+         double dtMax)
   : _kp(kp), _ki(ki), _kd(kd),
     _minOutput(minOutput), _maxOutput(maxOutput),
     _deadband(fabs(deadband)),
     _integral(0.0), _prevError(0.0),
-    _lastTime(micros())
-{}
+    _lastTime(micros()),
+    _dtMin(dtMin), _dtMax(dtMax)
+{
+}
 
 void PID::updateParameters(double kp, double ki, double kd) {
     setTunings(kp, ki, kd);
@@ -32,7 +29,7 @@ void PID::setOutputLimits(double minOutput, double maxOutput) {
     if (minOutput >= maxOutput) return;
     _minOutput = minOutput;
     _maxOutput = maxOutput;
-    // Clamp accumulated integral to new limits
+    // Clamp integral term to new limits (anti-windup)
     if (_ki != 0.0) {
         double iMin = _minOutput / _ki;
         double iMax = _maxOutput / _ki;
@@ -52,14 +49,14 @@ void PID::reset() {
 
 double PID::compute(double error) {
     unsigned long now = micros();
-    double dt = (now - _lastTime) * 1e-6;  // seconds
+    double dt = (now - _lastTime) * 1e-6;  // convert µs to s
     _lastTime = now;
-    if (dt <= 0.0) dt = 1e-6;
-    // Prevent excessively small dt (spikes in derivative)
-    const double dtMin = 1e-3;
-    if (dt < dtMin) dt = dtMin;
+    // Guard against too small or too large dt
+    if (dt <= 0.0) dt = _dtMin;
+    if (dt < _dtMin) dt = _dtMin;
+    else if (dt > _dtMax) dt = _dtMax;
 
-    // 1) Integral update + clamp (anti-windup)
+    // Integral update + clamp
     _integral += error * dt;
     if (_ki != 0.0) {
         double iMin = _minOutput / _ki;
@@ -67,18 +64,33 @@ double PID::compute(double error) {
         _integral = constrain(_integral, iMin, iMax);
     }
 
-    // 2) PID terms
+    // PID terms
     double pTerm = _kp * error;
     double iTerm = _ki * _integral;
     double dTerm = _kd * (error - _prevError) / dt;
     _prevError = error;
 
-    double output = pTerm + iTerm + dTerm;
+    // Combine
+    double rawOutput = pTerm + iTerm + dTerm;
 
-    // 3) Deadband kick for static friction
-    if (output > 0.0)      output += _deadband;
-    else if (output < 0.0) output -= _deadband;
+    // Apply smooth deadband
+    double output = applyDeadband(rawOutput);
 
-    // 4) Final clamp
+    // Final clamp to output limits
     return constrain(output, _minOutput, _maxOutput);
+}
+
+/**
+ * @brief Smoothly remove the deadband around zero by linear mapping.
+ * @param value  Raw controller output
+ * @return Output with deadband removed
+ */
+double PID::applyDeadband(double value) {
+    double mag = fabs(value);
+    if (mag <= _deadband) {
+        return 0.0;
+    }
+    double sign = (value > 0.0) ? 1.0 : -1.0;
+    // Shift the magnitude down by deadband
+    return sign * (mag - _deadband);
 }

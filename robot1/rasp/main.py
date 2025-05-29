@@ -167,9 +167,6 @@ if __name__ == "__main__":
         logger=logger_brain,
         lidar=lidar,
         arena=arena,
-        ws_cmd=ws_cmd,
-        ws_ui=ws_ui,
-        inputs=inputs,
     )
 
     """
@@ -190,17 +187,3 @@ if __name__ == "__main__":
 
     ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
-
-    # import cProfile
-
-    # profiler = cProfile.Profile()
-    # profiler.enable()
-    #
-    # try:
-    #     ws_server.run()
-    # except:
-    #     pass
-    #
-    # profiler.disable()
-    # profiler.print_stats()
-    # profiler.dump_stats("profiling_output.prof")
