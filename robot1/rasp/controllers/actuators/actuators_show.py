@@ -427,6 +427,24 @@ class ActuatorsShow(Actuators):
         self.fold(6)
         self.set_servo_angle(8, angle=130,max_angle=270)
         time.sleep(0.01)
+        
+    def start_position(self):
+        self.set_stepper_driver_activation_state(13, enable_driver=False)
+        self.elevator_ticks = 0
+        time.sleep(0.5)
+        self.deploy(0)
+        self.deploy(2)
+        self.fold(4)
+        self.fold(6)
+        
+    def block_banner(self):
+        # self.set_servo_angle(0, angle=105, max_angle=270)
+        # self.set_servo_angle(2, angle=167, max_angle=270)
+        self.set_servo_angle(0, angle=100, max_angle=270)
+        self.set_servo_angle(2, angle=171, max_angle=270)
+        self.set_servo_angle(4, angle=150, max_angle=270)
+        self.set_servo_angle(6, angle=115, max_angle=270)
+        
 
     # def build(self):
     #     self.fold(self.side_arms)
