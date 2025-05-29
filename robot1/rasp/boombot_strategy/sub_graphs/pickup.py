@@ -20,8 +20,10 @@ from boombot_strategy.tasks.navigation_tasks.maneuver import (
 )
 
 from boombot_strategy.tasks.actuator_task.actuator_task import (
-    PickUp,
-    ReadyToPickUp,
+    ReadyToApproachToPickUp,
+    PrepareToPickUp,
+PickUp,
+Build
 )
 
 
@@ -44,30 +46,36 @@ def get_pickup_sub_graph(zone_pickup_id: int, ctx: ShowGameContext) -> BaseSubGr
 
     # Add node for navigating to the specified pickup zone
     pickup_sub_graph.add_node(
+        f"[Pickup] ready to approach to pickup {zone_pickup_id}",
+        BaseTaskNode(
+            name=f"[Pickup] ready to approach to pickup {zone_pickup_id}",
+            tasks=ReadyToApproachToPickUp(),
+            scoring_function=NavigationScoringFunction(zone_pickup_id),
+        ),
+    )
+    pickup_sub_graph.add_node(
         f"[Pickup] go to zone {zone_pickup_id}",
         BaseTaskNode(
             name=f"[Pickup] go to zone {zone_pickup_id}",
             tasks=GoToStuffZoneToPickUp(zone_pickup_id),
-            scoring_function=NavigationScoringFunction(zone_pickup_id),
-        ),
-    )
-
-    pickup_sub_graph.add_node(
-        f"[Pickup] prepare pickup at zone {zone_pickup_id}",
-        BaseTaskNode(
-            name=f"[Pickup] prepare pickup at zone {zone_pickup_id}",
-            tasks=ReadyToPickUp(),
             scoring_function=DefaultScoringFunction(),
         ),
     )
 
-    # Add node for precise forward motion to perform pickup
+    pickup_sub_graph.add_node(
+        f"[Pickup] prepare to pickup {zone_pickup_id}",
+        BaseTaskNode(
+            name=f"[Pickup] prepare to pickup {zone_pickup_id}",
+            tasks=PrepareToPickUp(),
+            scoring_function=DefaultScoringFunction(),
+        ),
+    )
     pickup_sub_graph.add_node(
         f"[Pickup] go to take stuff {zone_pickup_id}",
         BaseTaskNode(
             name=f"[Pickup] go to take stuff {zone_pickup_id}",
             tasks=PreciseForward(10),
-            scoring_function=NavigationScoringFunction(zone_pickup_id),
+            scoring_function=DefaultScoringFunction(),
         ),
     )
 
@@ -82,14 +90,28 @@ def get_pickup_sub_graph(zone_pickup_id: int, ctx: ShowGameContext) -> BaseSubGr
 
     # Connect the navigation node to the pickup maneuver node
     pickup_sub_graph.connect(
-        f"[Pickup] go to zone {zone_pickup_id}",
+        f"[Pickup] ready to approach to pickup {zone_pickup_id}",
         DirectTransition(
-            pickup_sub_graph.nodes[f"[Pickup] prepare pickup at zone {zone_pickup_id}"]
+            pickup_sub_graph.nodes[f"[Pickup] go to zone {zone_pickup_id}"]
         ),
     )
 
     pickup_sub_graph.connect(
-        f"[Pickup] prepare pickup at zone {zone_pickup_id}",
+        f"[Pickup] go to zone {zone_pickup_id}",
+        DirectTransition(
+            pickup_sub_graph.nodes[f"[Pickup] go to take stuff {zone_pickup_id}"]
+        ),
+    )
+
+    pickup_sub_graph.connect(
+        f"[Pickup] go to take stuff {zone_pickup_id}",
+        DirectTransition(
+            pickup_sub_graph.nodes[f"[Pickup] prepare to pickup {zone_pickup_id}"]
+        ),
+    )
+
+    pickup_sub_graph.connect(
+        f"[Pickup] prepare to pickup {zone_pickup_id}",
         DirectTransition(
             pickup_sub_graph.nodes[f"[Pickup] go to take stuff {zone_pickup_id}"]
         ),
@@ -103,6 +125,6 @@ def get_pickup_sub_graph(zone_pickup_id: int, ctx: ShowGameContext) -> BaseSubGr
     )
 
     return pickup_sub_graph.build(
-        entry=f"[Pickup] go to zone {zone_pickup_id}",
+        entry=f"[Pickup] ready to approach to pickup {zone_pickup_id}",
         exits=f"[Pickup] pickup stuff at zone {zone_pickup_id}",
     )

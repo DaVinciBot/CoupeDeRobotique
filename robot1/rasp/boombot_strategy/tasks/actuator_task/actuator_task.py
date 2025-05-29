@@ -5,36 +5,26 @@ from boombot_strategy.show_game_context import ShowGameContext
 from loggerplusplus import Logger
 
 
-class ReadyToPickUp(BaseTask):
+class ReadyToApproachToPickUp(BaseTask):
     def handle(self, ctx: ShowGameContext):
-        ctx.actuators.ready_to_pickup()
-        self.logger.info("Ready to pick up action executed")
+        ctx.actuators.ready_to_approach_to_pickup()
+        return True
+
+
+class PrepareToPickUp(BaseTask):
+    def handle(self, ctx: ShowGameContext):
+        ctx.actuators.prepare_to_pickup()
         return True
 
 
 class PickUp(BaseTask):
     def handle(self, ctx: ShowGameContext):
-        ctx.actuators.pick_up()
-        self.logger.info("Pick up action executed")
+        ctx.actuators.pickup()
         return True
 
 
 class Build(BaseTask):
     def handle(self, ctx: ShowGameContext):
-        ctx.actuators.build_floors()
+        ctx.actuators.build()
         ctx.score += CONFIG.BUILD_TWO_FLOORS
-        self.logger.info("Build action executed")
-        return True
-
-
-class HoldBanner(BaseTask):
-    def handle(self, ctx: ShowGameContext):
-        ctx.actuators.docking()
-        return True
-
-
-class DeployBanner(BaseTask):
-    def handle(self, ctx: ShowGameContext):
-        ctx.actuators.deploy_banner()
-        ctx.score += CONFIG.BANNER
         return True
