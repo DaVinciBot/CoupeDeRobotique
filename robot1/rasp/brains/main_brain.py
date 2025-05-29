@@ -127,10 +127,9 @@ class MainBrain(Brain):
 
         runner = strat.get_graph_runner()
 
-        # from strategy.tools import visualize_task_graph
-        # visualize_task_graph(
-        #     runner.active[0]
-        # )
+        from strategy.tools import visualize_task_graph
+
+        visualize_task_graph(runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
         runner.handle(
@@ -244,23 +243,40 @@ class MainBrain(Brain):
             # _enemy_position=self.position_generator(),
         )
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=1)
-    async def print_odo(self) -> None:
-        self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
-
     """ ### One-Shot Tasks ### """
+
+    @Brain.task(process=False, run_on_start=False, refresh_rate=0.01)
+    async def wait_for_team(self):
+        if self.arena.team_color != TeamColor.UNDEFINED:
+            self.logger.info(
+                f"Team color is set to {self.arena.team_color.name.lower()}. Starting the brain."
+            )
+            return
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        self.arena.set_team_color(TeamColor.YELLOW)
-        # Start robot position
-        start_position = OrientedPoint(100, 66, 0)
+        # 1. Wait for the team color to be set
+        await self.wait_for_team()
 
+        # 2. Define the starting position based on the team color
+        start_position = OrientedPoint(0, 0, 0)
+        if self.arena.team_color == TeamColor.YELLOW:
+            self.logger.info("Starting as YELLOW team.")
+            start_position = OrientedPoint(180, 15, -pi / 2)
+        elif self.arena.team_color == TeamColor.BLUE:
+            self.logger.info("Starting as BLUE team.")
+            start_position = OrientedPoint(120, 15, -pi / 2)
+
+        # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
             self.arena.team_color, start_position, Point(290, 190)
         )
+        self.arena.update(
+            ally_position=start_position,
+            lidar_scan_polars=np.array([]),
+            optimized_update=False,
+        )
         self.rolling_basis_odometrie = start_position
 
-        await asyncio.sleep(1)
         # await self.inputs.wait_for_jack_trigger()
         await self.run()
