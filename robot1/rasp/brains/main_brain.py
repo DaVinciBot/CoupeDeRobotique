@@ -264,10 +264,10 @@ class MainBrain(Brain):
         start_position = OrientedPoint(0, 0, 0)
         if self.arena.team_color == TeamColor.YELLOW:
             self.logger.info("Starting as YELLOW team.")
-            start_position = OrientedPoint(180, 15, -pi / 2)
+            start_position = OrientedPoint(200, 15, -pi / 2)
         elif self.arena.team_color == TeamColor.BLUE:
             self.logger.info("Starting as BLUE team.")
-            start_position = OrientedPoint(120, 15, -pi / 2)
+            start_position = OrientedPoint(100, 15, -pi / 2)
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
