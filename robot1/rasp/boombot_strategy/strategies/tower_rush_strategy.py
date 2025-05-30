@@ -55,13 +55,13 @@ class TowerRushStrategy(BaseStrategy):
 
         # Step 3: Navigate to the first construction zone
         first_construct_subgraph = get_construct_subgraph(
-            self.zones["first_build_zone"], back_offset=5
+            self.zones["first_build_zone"], back_offset=13
         )
 
         # Step 4:
         second_pickup_subgraph = get_push_one_floor_to_wall_subgraph(
             zone_id=self.zones["second_pickup_zone"],
-            push_distance=20,
+            push_distance=40,
             new_theta=-math.pi,
         )
 

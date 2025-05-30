@@ -22,7 +22,7 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
                 acs_distance=50, width_view=40
             ),
-            stabilization_delay=2,
+            stabilization_delay=0.5,
         )
 
 
@@ -37,5 +37,5 @@ class GoToColorReservedZoneToConstruct(NavigationTask):
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
                 acs_distance=55, width_view=40
             ),
-            stabilization_delay=2,  # Delay to stabilize before construction
+            stabilization_delay=1,  # Delay to stabilize before construction
         )
