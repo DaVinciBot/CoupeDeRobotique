@@ -21,7 +21,7 @@ class SetOdometrie(BaseTask):
         theta (float | None): Optional orientation (in radians).
     """
 
-    def __init__(self, x: float | None, y: float | None, theta: float | None):
+    def __init__(self, x: float | None = None, y: float | None = None, theta: float | None = None):
         """
         Initialize the SetOdometrie task with optional position values.
 

@@ -5,6 +5,8 @@
 # and a final backward motion to safely disengage. All steps are connected via direct transitions
 # and returned as a `BaseSubGraph` for strategic execution.
 
+import math
+
 # ====== Local Project Imports ======
 from strategy.core import (
     SubGraphBuilder,
@@ -15,11 +17,11 @@ from strategy.core import (
 
 # ====== Internal Project Imports ======
 from config_loader import CONFIG
-from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward
+from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward, SetOdometrie
 from boombot_strategy.tasks.actuator_task import (
     BlockBanner,
     ReadyToApproachToPickUp,
-    DeplacementPosition,
+    DeplacementPosition
 )
 
 
@@ -52,6 +54,18 @@ def get_banner_deployment_subgraph() -> BaseSubGraph:
         BaseTaskNode(
             name=node_forward_to_deploy_banner,
             tasks=RelativeForward(7),
+        ),
+    )
+
+    # Node: Set new odometrie
+    node_reset_odo = ""
+    subgraph.add_node(
+        node_reset_odo,
+        BaseTaskNode(
+            name=node_reset_odo,
+            tasks=SetOdometrie(
+                theta=-math.pi/2
+            ),
         ),
     )
 
