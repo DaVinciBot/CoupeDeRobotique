@@ -74,7 +74,7 @@ class RollingBasisDummy(BaseComTeensy):
             odometrie (OrientedPoint): The new odometrie values.
         """
         self.odometrie = odometrie
-        self.logger.debug(f"[DUMMY] Set odometrie: {odometrie}")
+        self.logger.info(f"[DUMMY] Set odometrie: {odometrie}")
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
         """
