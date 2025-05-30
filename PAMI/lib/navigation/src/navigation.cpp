@@ -45,9 +45,10 @@ void Navigation::update()
     if (_lastSendMs == 0 || now - _lastSendMs >= _sendIntervalMs) {
         if (_wpIndex + 1 < _waypoints.size()) {
             _basis->setCommand(_waypoints[++_wpIndex]);
-        } else {
-            stop(); // fin de la séquence
         }
+        // else {
+        //     stop(); // fin de la séquence
+        // }
         _lastSendMs = now;
         Serial.print("[Navigation] Sending command to basis: ");
         Serial.print(_waypoints[_wpIndex].x);

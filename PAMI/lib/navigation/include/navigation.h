@@ -36,7 +36,7 @@ private:
     // nouveaux champs pour découper le trajet
     std::vector<Point> _waypoints;
     size_t _wpIndex;
-    static constexpr size_t DEFAULT_SEGMENTS = 2;
+    static constexpr size_t DEFAULT_SEGMENTS = 1;
 };
 
 #endif

@@ -33,14 +33,14 @@ void Motor::setTargetSpeed(float stepsPerSec)
     {
         stepsPerSec = -stepsPerSec;
     }
-    _targetSpeedStepsPerSec = stepsPerSec;
+    _targetSpeedStepsPerSec = stepsPerSec*1000.0f;
     _moving = (fabs(_targetSpeedStepsPerSec) >= 1.0f);
     enableMotor(_moving);
 }
 
 void Motor::setAcceleration(float stepsPerSec2)
 {
-    _acceleration = max(0.0f, stepsPerSec2);
+    _acceleration = max(0.0f, stepsPerSec2*100.0f);
 }
 
 void Motor::_setDirection(bool clockwise)

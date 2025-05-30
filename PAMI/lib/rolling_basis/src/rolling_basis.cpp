@@ -3,8 +3,6 @@
 
 #define POSITION_TOLERANCE_MM 1.0f    // 1 mm
 #define ANGLE_TOLERANCE_RAD 0.01f    // env. 0.57°
-#define MAX_LINEAR_SPEED_MM_PER_S 15.0f
-#define MAX_ANGULAR_SPEED_RAD_PER_S 0.5f
 
 RollingBasis::RollingBasis(Motor *leftMotor, Motor *rightMotor,
                            float wheelDiameterMm,
@@ -13,8 +11,8 @@ RollingBasis::RollingBasis(Motor *leftMotor, Motor *rightMotor,
     : _leftMotor(leftMotor), _rightMotor(rightMotor),
       _wheelDiameterMm(wheelDiameterMm), _wheelBaseMm(wheelBaseMm),
       _currentPose(initialPosition),
-      _linearSpeed(50.0f),
-      _angularSpeed(1.0f),
+      _linearSpeed(20.0f),
+      _angularSpeed(0.1f),
       _phase(Phase::Idle),
       _rotateDuration(0.0f),
       _forwardDuration(0.0f),
@@ -28,6 +26,7 @@ RollingBasis::RollingBasis(Motor *leftMotor, Motor *rightMotor,
     _leftMotor->setAcceleration(100.0f);
     _rightMotor->setAcceleration(100.0f);
 }
+// TODO: refactor this constructor pour pouvoir paramétrer la vitesse angulaire et linéaire
 
 void RollingBasis::setCommand(const Point &target){
     float dx = target.x - _currentPose.x;
@@ -232,7 +231,7 @@ void RollingBasis::_sendWheelSpeeds(float v, float w) {
     float circumference = M_PI * _wheelDiameterMm;
     float leftSteps  = leftMm  / circumference * _leftMotor->getStepsPerRev();
     float rightSteps = rightMm / circumference * _rightMotor->getStepsPerRev();
-    _leftMotor->setTargetSpeed(leftSteps);
+    _leftMotor->setTargetSpeed(leftSteps*8);
     _rightMotor->setTargetSpeed(rightSteps);
 }
 
