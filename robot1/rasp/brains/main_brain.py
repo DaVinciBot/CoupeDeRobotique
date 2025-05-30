@@ -120,6 +120,12 @@ class MainBrain(Brain):
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
+        # # Init position
+        actuators.block_banner()
+
+        while not self.jack_triggered:
+            time.sleep(0.1)
+
         # Strategy
         from boombot_strategy import ShowGameContext
         from boombot_strategy.strategies import BasicStrategy
