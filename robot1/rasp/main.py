@@ -157,6 +157,9 @@ if __name__ == "__main__":
         logger=logger_brain,
         lidar=lidar,
         arena=arena,
+        ws_cmd=ws_cmd,
+        ws_ui=ws_ui,
+        inputs=inputs,
     )
 
     """
