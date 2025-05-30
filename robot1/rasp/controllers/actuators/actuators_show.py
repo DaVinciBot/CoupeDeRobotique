@@ -398,12 +398,12 @@ class ActuatorsShow(Actuators):
             time.sleep(0.3)
             self.fold(9)
 
+        self.set_servo_angle(8, angle=135, max_angle=270)
+        time.sleep(0.2)
         _pickup()
         time.sleep(0.2)
         _pickup()
 
-        time.sleep(0.2)
-        self.set_servo_angle(8, angle=135, max_angle=270)
 
     def build(self):
         self.fold(4)
