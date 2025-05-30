@@ -66,7 +66,7 @@ class BaseNavigationTask(BaseTask):
                 speed_profiler=self.speed_profiler,
                 avoidance_params=self.avoidance_params,
                 acs_detection_profile_params=self.acs_detection_profile_params,
-                stabilization_delay=self.stabilization_delay
+                stabilization_delay=self.stabilization_delay,
             )
         )
 

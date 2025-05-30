@@ -22,7 +22,7 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
                 acs_distance=50, width_view=40
             ),
-            stabilization_delay=2
+            stabilization_delay=2,
         )
 
 

@@ -132,7 +132,7 @@ class RollingBasis(BaseComTeensy):
             + struct.pack("<d", target_position.y)
             + struct.pack("<d", target_position.theta)
         )
-        
+
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)

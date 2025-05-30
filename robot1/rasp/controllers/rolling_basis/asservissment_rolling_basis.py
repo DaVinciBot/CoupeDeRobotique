@@ -16,6 +16,7 @@ from teensy import BaseComTeensy
 from controllers.rolling_basis.pids import PID, PID_ID
 import matplotlib.pyplot as plt
 
+
 class AsservissementRollingBasis(BaseComTeensy):
     """
     Represents the rolling basis of the robot.
@@ -111,44 +112,56 @@ class AsservissementRollingBasis(BaseComTeensy):
         """
         logs = self.get_logs()
         if not logs:
-            self.logger.warning("No logs to plot. Ensure that set_target_position() has been called.")
+            self.logger.warning(
+                "No logs to plot. Ensure that set_target_position() has been called."
+            )
             return
 
         # Normalize time
-        t0 = logs[0]['time']
+        t0 = logs[0]["time"]
         # Determine number of entries
         n = len(logs)
 
         # Build each series by index to guarantee equal length
-        times = [(logs[i]['time'] - t0) for i in range(n)]
-        target_x = [logs[i]['target_x'] for i in range(n)]
-        actual_x = [logs[i]['actual_x'] for i in range(n)]
-        target_y = [logs[i]['target_y'] for i in range(n)]
-        actual_y = [logs[i]['actual_y'] for i in range(n)]
-        target_th = [logs[i]['target_theta'] for i in range(n)]
-        actual_th = [logs[i]['actual_theta'] for i in range(n)]
+        times = [(logs[i]["time"] - t0) for i in range(n)]
+        target_x = [logs[i]["target_x"] for i in range(n)]
+        actual_x = [logs[i]["actual_x"] for i in range(n)]
+        target_y = [logs[i]["target_y"] for i in range(n)]
+        actual_y = [logs[i]["actual_y"] for i in range(n)]
+        target_th = [logs[i]["target_theta"] for i in range(n)]
+        actual_th = [logs[i]["actual_theta"] for i in range(n)]
 
         # Optional sanity check
-        assert all(len(lst) == n for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)), \
-            f"Inconsistent log lengths: {[len(lst) for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)]}"
+        assert all(
+            len(lst) == n
+            for lst in (
+                times,
+                target_x,
+                actual_x,
+                target_y,
+                actual_y,
+                target_th,
+                actual_th,
+            )
+        ), f"Inconsistent log lengths: {[len(lst) for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)]}"
 
         # Plot
         fig, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
 
-        axs[0].plot(times, target_x, label='Consigne X')
-        axs[0].plot(times, actual_x, label='Réel X')
-        axs[0].set_ylabel('X (cm)')
+        axs[0].plot(times, target_x, label="Consigne X")
+        axs[0].plot(times, actual_x, label="Réel X")
+        axs[0].set_ylabel("X (cm)")
         axs[0].legend()
 
-        axs[1].plot(times, target_y, label='Consigne Y')
-        axs[1].plot(times, actual_y, label='Réel Y')
-        axs[1].set_ylabel('Y (cm)')
+        axs[1].plot(times, target_y, label="Consigne Y")
+        axs[1].plot(times, actual_y, label="Réel Y")
+        axs[1].set_ylabel("Y (cm)")
         axs[1].legend()
 
-        axs[2].plot(times, target_th, label='Consigne θ')
-        axs[2].plot(times, actual_th, label='Réel θ')
-        axs[2].set_ylabel('θ (rad)')
-        axs[2].set_xlabel('Temps (s)')
+        axs[2].plot(times, target_th, label="Consigne θ")
+        axs[2].plot(times, actual_th, label="Réel θ")
+        axs[2].set_ylabel("θ (rad)")
+        axs[2].set_xlabel("Temps (s)")
         axs[2].legend()
 
         plt.tight_layout()
@@ -217,6 +230,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         """
         msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
         self.send_bytes(msg)
+
     def set_linear_position_pid(self, *args, **kwargs) -> None:
         """
         Configure the PID values for linear position control.

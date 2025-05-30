@@ -12,5 +12,5 @@ from boombot_strategy.tasks.navigation_tasks.go_to_stuff_zone import (
 from boombot_strategy.tasks.navigation_tasks.maneuver import (
     RelativeForward,
     RelativeBackward,
-    GoCentroidOfZone
+    GoCentroidOfZone,
 )
