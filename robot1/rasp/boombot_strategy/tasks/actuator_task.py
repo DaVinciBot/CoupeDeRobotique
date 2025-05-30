@@ -37,3 +37,9 @@ class BlockBanner(BaseTask):
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.block_banner()
         return True
+
+
+class DeplacementPosition(BaseTask):
+    def handle(self, ctx: ShowGameContext):
+        ctx.actuators.deplacement_position()
+        return True

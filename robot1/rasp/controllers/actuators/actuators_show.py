@@ -444,6 +444,19 @@ class ActuatorsShow(Actuators):
         self.set_servo_angle(0, angle=100, max_angle=270)
         self.set_servo_angle(2, angle=171, max_angle=270)
 
+    def deplacement_position(self):
+        self.set_stepper_driver_activation_state(13, enable_driver=False)
+        self.elevator_ticks = 0
+        time.sleep(0.5)
+        self.demagnetize_all()
+        self.fold(4)
+        self.fold(6)
+        self.deploy(2)
+        self.deploy(0)
+        self.set_servo_angle(8, angle=35, max_angle=270)
+        self.fold(9)
+
+
     # def build(self):
     #     self.fold(self.side_arms)
     #     self.stepper_step(
