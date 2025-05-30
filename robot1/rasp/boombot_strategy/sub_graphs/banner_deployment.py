@@ -60,14 +60,7 @@ def get_banner_deployment_subgraph() -> BaseSubGraph:
         BaseTaskNode(name=node_advance, tasks=RelativeForward(7)),
     )
 
-    # 3) Release banner mechanism
-    node_release = "[Banner][Deploy] ReleaseMechanism"
-    builder.add_node(
-        node_release,
-        BaseTaskNode(name=node_release, tasks=ReadyToApproachToPickUp()),
-    )
-
-    # 4) Reset odometry orientation
+    # 3) Reset odometry orientation
     node_reset = "[Banner][Deploy] ResetOdometry"
     builder.add_node(
         node_reset,
@@ -75,6 +68,13 @@ def get_banner_deployment_subgraph() -> BaseSubGraph:
             name=node_reset,
             tasks=SetOdometrie(theta=-math.pi / 2),
         ),
+    )
+
+    # 4) Release banner mechanism
+    node_release = "[Banner][Deploy] ReleaseMechanism"
+    builder.add_node(
+        node_release,
+        BaseTaskNode(name=node_release, tasks=ReadyToApproachToPickUp()),
     )
 
     # 5) Retract after deployment
@@ -93,9 +93,9 @@ def get_banner_deployment_subgraph() -> BaseSubGraph:
 
     # Define task transitions in order
     builder.connect(node_lock, DirectTransition(builder.nodes[node_advance]))
-    builder.connect(node_advance, DirectTransition(builder.nodes[node_release]))
-    builder.connect(node_release, DirectTransition(builder.nodes[node_reset]))
-    builder.connect(node_reset, DirectTransition(builder.nodes[node_retract]))
+    builder.connect(node_advance, DirectTransition(builder.nodes[node_reset]))
+    builder.connect(node_reset, DirectTransition(builder.nodes[node_release]))
+    builder.connect(node_release, DirectTransition(builder.nodes[node_retract]))
     builder.connect(node_retract, DirectTransition(builder.nodes[node_post]))
 
     # Build and return the subgraph
