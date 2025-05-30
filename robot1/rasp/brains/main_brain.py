@@ -111,27 +111,27 @@ class MainBrain(Brain):
     def run(self) -> None:
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
-        rolling_basis = RollingBasis(
+        rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        actuators = ActuatorsShow(
+        actuators = ActuatorsShowDummy(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
-        while not self.jack_plugged:  # wait until cable is plugged
-            time.sleep(0.1)
-        actuators.block_banner()  # engage the banner blocker
-        while not self.jack_triggered:  # wait for the trigger event
-            time.sleep(0.1)
+        # while not self.jack_plugged:  # wait until cable is plugged
+        #     time.sleep(0.1)
+        # actuators.block_banner()  # engage the banner blocker
+        # while not self.jack_triggered:  # wait for the trigger event
+        #     time.sleep(0.1)
 
         # --- 3) Build the strategy --- #
         from boombot_strategy import ShowGameContext
-        from boombot_strategy.strategies import BasicStrategy
+        from boombot_strategy.strategies import BasicStrategy, TowerRushStrategy
 
-        strategy = BasicStrategy(
+        strategy = TowerRushStrategy(
             ShowGameContext(
                 arena=self.arena,
                 rolling_basis=rolling_basis,
@@ -139,6 +139,9 @@ class MainBrain(Brain):
                 score=self.score,
             )
         )
+
+        # from strategy.tools import visualize_task_graph
+        # visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
         context = ShowGameContext(
@@ -152,6 +155,7 @@ class MainBrain(Brain):
 
         # Update the rolling basis odometrie from the context
         self.score = context.score
+        self.ui_state["score"] = self.score
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = rolling_basis.odometrie
 
@@ -201,7 +205,6 @@ class MainBrain(Brain):
         # --- MetaProg is insane (loop) --- #
         current_state = self.ui_state.copy()
         current_state["jack_state"] = not self.jack_triggered
-        current_state["score"] = self.score
         if current_state != previous_state:
             previous_state = current_state
             to_send = {
@@ -289,7 +292,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        # self.arena.set_team_color(TeamColor.YELLOW)
+        self.arena.set_team_color(TeamColor.YELLOW)
         await self.wait_for_team()
 
         start_position = OrientedPoint(0, 0, 0)

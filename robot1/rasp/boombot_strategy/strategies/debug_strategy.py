@@ -55,12 +55,18 @@ class DebugStrategy(BaseStrategy):
         )
 
         # Connect the subgraphs in execution order
-        deploy_banner_subgraph.get_exits()[0].add_transition(
-            DirectTransition(first_pickup_subgraph.get_entry())
+        self._auto_build_transitions(
+            deploy_banner_subgraph,
+            first_pickup_subgraph,
+            go_to_backstage,
         )
-        first_pickup_subgraph.get_exits()[0].add_transition(
-            DirectTransition(go_to_backstage)
-        )
+
+        # deploy_banner_subgraph.get_exits()[0].add_transition(
+        #     DirectTransition(first_pickup_subgraph.get_entry())
+        # )
+        # first_pickup_subgraph.get_exits()[0].add_transition(
+        #     DirectTransition(go_to_backstage)
+        # )
 
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
