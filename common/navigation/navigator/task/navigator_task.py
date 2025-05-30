@@ -122,7 +122,7 @@ class NavigatorTask:
                 return self.trajectory_planner.get_plan()
             # Timer expired: finish and send stop
             self.state = NavigatorTaskState.FINISHED
-            return self.current_trajectory_command
+            return self.trajectory_planner.get_plan()
 
         # 5. Obstacle avoidance
         avoidance_cmd = self.avoidance.handle(
