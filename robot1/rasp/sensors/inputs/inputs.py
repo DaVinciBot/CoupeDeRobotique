@@ -32,7 +32,7 @@ class Inputs:
 
     async def wait_for_jack_plugged(self, wait_time: float = 0.001):
         true_jacks_in_a_row = 0
-        self.logger.info("Waiting for jack to be plugged in…")
+        self.logger.info("Waiting for jack to be plugged in...")
         while true_jacks_in_a_row < 5:
             if self.jack.safe_digital_read():
                 true_jacks_in_a_row += 1

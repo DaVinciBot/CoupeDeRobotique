@@ -62,8 +62,8 @@ class RollingBasis(BaseComTeensy):
         )
 
         # Initialize PID controllers from configuration
-        self._initialize_pids()
-        time.sleep(0.01) # Avoid overload
+        # self.initialize_pids()
+        time.sleep(0.01)  # Avoid overload
 
     ####################################
     # Message Receiving Handlers       #
@@ -232,7 +232,7 @@ class RollingBasis(BaseComTeensy):
         self.set_angular_position_pid(**angular_position_pid)
         time.sleep(0.1)  # Ensure the Teensy has time to process the second PID
 
-    def _initialize_pids(self) -> None:
+    def initialize_pids(self) -> None:
         """
         Initialize PID controllers from the configuration.
         """
