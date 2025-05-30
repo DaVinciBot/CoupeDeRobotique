@@ -380,6 +380,7 @@ class ActuatorsShow(Actuators):
         time.sleep(0.5)
 
     def ready_to_approach_to_pickup(self):
+        self.magnetize_all()
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
         time.sleep(0.5)
@@ -388,6 +389,7 @@ class ActuatorsShow(Actuators):
         self.fold(9)
 
     def prepare_to_pickup(self):
+        self.magnetize_all()
         self.set_servo_angle(8, angle=135, max_angle=270)
         self.deploy(9)
 
