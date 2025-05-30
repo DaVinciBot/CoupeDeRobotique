@@ -29,7 +29,9 @@
 			"vector": "cpp",
 			"memory": "cpp",
 			"random": "cpp",
-			"regex": "cpp"
+			"regex": "cpp",
+			"bitset": "cpp",
+			"optional": "cpp"
 		}
 	},
 	"extensions": {

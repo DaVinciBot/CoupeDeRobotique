@@ -1,13 +1,11 @@
 #include "config.h"
 
-Motor *leftMotor = new Motor(LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN, LEFT_STEPS_PER_REV, K);
+Motor *leftMotor = new Motor(LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN, LEFT_STEPS_PER_REV, K, true);
 Motor *rightMotor = new Motor(RIGHT_STEP_PIN, RIGHT_DIR_PIN, RIGHT_EN_PIN, RIGHT_STEPS_PER_REV, K);
 
-PID linearDistancePid(LINEAR_DISTANCE_KP, LINEAR_DISTANCE_KI, LINEAR_DISTANCE_KD, 0.01f);
-PID angularDistancePid(ANGULAR_DISTANCE_KP, ANGULAR_DISTANCE_KI, ANGULAR_DISTANCE_KD, 0.01f);
+RollingBasis *rollingBasis = new RollingBasis(leftMotor, rightMotor, WHEEL_DIAMETER_MM, WHEEL_BASE_MM, Point{0, 0, 0});
 
-RollingBasis *rollingBasis = new RollingBasis(leftMotor, rightMotor, WHEEL_DIAMETER_MM, WHEEL_BASE_MM, linearDistancePid, angularDistancePid, Point{0, 0, 0});
-Navigation *navigation = new Navigation(rollingBasis);
+Navigation *navigation = new Navigation(rollingBasis, 15000); // Navigation object with 100ms interval and 15s timeout
 
 lidar_pami *lidar = new lidar_pami(Serial0); // LIDAR object
 

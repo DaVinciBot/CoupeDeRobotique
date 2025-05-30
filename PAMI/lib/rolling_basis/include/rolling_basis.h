@@ -9,15 +9,14 @@
 class RollingBasis
 {
 public:
+    enum class Phase { Idle, Rotating, Forwarding, Done };
     RollingBasis(Motor *leftMotor,
                  Motor *rightMotor,
                  float wheelDiameterMm,
                  float wheelBaseMm,
-                 const PID &linearDistancePid,
-                 const PID &angularDistancePid,
                  const Point &initialPosition = {0, 0, 0});
 
-    void setCommand(const Point &targetPosition);
+    void setCommand(const Point &target);
 
     void update();
 
@@ -25,36 +24,45 @@ public:
     void stop();
 
     Point getPose() const;
-    // QUESTION: ou : const Point &RollingBasis::getPose() const; ?
-    float getMeasuredLinearSpeedMmPerS() const;
-    float getMeasuredAngularSpeedRadPerS() const;
+    float getLinearSpeedMmPerS() const;
+    float getAngularSpeedRadPerS() const;
 
 private:
-    void _computeOdometry(float dt);
-    void _applyControl(float dt);
+    // void _computeOdometry(float dt);
+    // void _applyControl(float dt);
     float _wrapToPi(float ang) const;
+    void _sendWheelSpeeds(float v, float w);
 
     Motor *_leftMotor;
     Motor *_rightMotor;
     float _wheelDiameterMm;
     float _wheelBaseMm;
 
-    long _prevLeftSteps;
-    long _prevRightSteps;
+    // long _prevLeftSteps;
+    // long _prevRightSteps;
 
-    Point _currentPosition;
+    Point _currentPose;
+    float _linearSpeed;
+    float _angularSpeed;
+    Phase _phase;
 
-    PID _linDistPid, _angDistPid;
+    // computed plan
+    float _rotateDuration;
+    float _forwardDuration;
+    float _rotateDirection;
+    std::chrono::steady_clock::time_point _startTime;
 
-    float _cmdLinSpeed;
-    float _cmdAngSpeed;
-    Point _cmdPosition;
+    // PID _linDistPid, _angDistPid;
 
-    float _measLinSpeed;
-    float _measAngSpeed;
+    // float _cmdLinSpeed;
+    // float _cmdAngSpeed;
+    // Point _cmdPosition;
 
-    std::chrono::steady_clock::time_point _lastTime;
-    bool _moving;
+    // float _measLinSpeed;
+    // float _measAngSpeed;
+
+    // std::chrono::steady_clock::time_point _lastTime;
+    // bool _moving;
 };
 
 #endif
