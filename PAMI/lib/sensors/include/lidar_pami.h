@@ -22,6 +22,7 @@ public:
     void begin(uint32_t baud = DEFAULT_BAUD);
 
     bool obstacleAhead(uint16_t distanceMin = 100);
+    bool isTiretteOn(uint16_t threshold = 5);
 
 private:
     static const uint16_t PACKET_SIZE = 331;

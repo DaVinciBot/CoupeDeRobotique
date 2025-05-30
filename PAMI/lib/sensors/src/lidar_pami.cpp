@@ -90,3 +90,29 @@ bool lidar_pami::obstacleAhead(uint16_t distanceMin)
 
     return mean < distanceMin;
 }
+
+bool lidar_pami::isTiretteOn(uint16_t threshold)
+{
+    if (!readFrame())
+        return false; // no complete frame yet
+
+    float mean = 0.0f;
+    uint16_t validCount = 0;
+
+    for (uint16_t i = 0; i < POINT_COUNT; ++i)
+    {
+        uint16_t idx = HEADER_LEN + ENV_LEN + i * 2;
+        uint16_t distance = ((uint16_t)_buffer[idx + 1] << 8) | _buffer[idx];
+        distance &= 0x01FF; // keep 9 LSBs
+        mean += distance;
+    }
+    mean /= POINT_COUNT;
+
+    if (_debug)
+    {
+        Serial.print(F("Mean distance: "));
+        Serial.println(mean);
+    }
+
+    return mean < threshold;
+}
