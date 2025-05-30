@@ -155,6 +155,14 @@ class CONFIG:
             ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"]
         ),
     )
+    ROLLING_BASIS_SLOW_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
+        linear_speed_profile=LinearRampedSpeedProfile(
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["slow"]
+        ),
+        angular_speed_profile=BasicSpeedProfile(
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"]
+        ),
+    )
     ROLLING_BASIS_SPEED_PROFILER_PID: SpeedProfiler = SpeedProfiler(
         linear_speed_profile=BasicSpeedProfile(
             ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]["max_speed"]
