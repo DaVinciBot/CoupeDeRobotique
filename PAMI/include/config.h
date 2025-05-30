@@ -4,6 +4,8 @@
 #include "rolling_basis.h"
 #include "lidar_pami.h"
 
+// #------- GENERAL CONFIGURATION -------#
+#define ACS_TRESHOLD 40 // Threshold for ACS activation in mm
 
 // #------- MOTOR CONFIGURATION -------#
 #define LEFT_DIR_PIN 3
@@ -33,17 +35,13 @@
 #define ANGULAR_DISTANCE_KI 10000.0f
 #define ANGULAR_DISTANCE_KD 0.0f
 
+// #------- SERVO CONFIGURATION -------#
+#define SERVO_PIN 42 // Servo pin
 
 // #------- LORA CONFIGURATION -------#
 #define SS 10 // NSS pin
 #define RST 16 // RESET pin
 #define BUSY 15 // BUSY pin
-// #define SX126X_SPI_FREQUENCY  1000000 // SPI frequency for SX126x
-
-// ESP XIAO DEVKIT PINOUT
-// #define SS 4 // NSS pin
-// #define RST 3 // RESET pin
-// #define BUSY 2 // BUSY pin
 
 // #-------- DEV CONFIGURATION ---------#
 #define ENABLE_OTA false
