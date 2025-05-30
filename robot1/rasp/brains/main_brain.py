@@ -155,6 +155,7 @@ class MainBrain(Brain):
 
         # Update the rolling basis odometrie from the context
         self.score = context.score
+        self.ui_state["score"] = self.score
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = rolling_basis.odometrie
 
@@ -204,7 +205,6 @@ class MainBrain(Brain):
         # --- MetaProg is insane (loop) --- #
         current_state = self.ui_state.copy()
         current_state["jack_state"] = not self.jack_triggered
-        current_state["score"] = self.score
         if current_state != previous_state:
             previous_state = current_state
             to_send = {
