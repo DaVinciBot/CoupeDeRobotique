@@ -372,6 +372,15 @@ class ActuatorsShow(Actuators):
         self.fold(6)
         #self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
         time.sleep(0.5)
+        
+    def deplacement_object(self):
+        """
+        Catch cans and plank
+        """
+        # Catch and raise cans and plank
+        self.pickup_planck()
+        self.fold(9)
+        time.sleep(0.1)
 
     def ready_to_approach_to_pickup(self):
         self.magnetize_all()
