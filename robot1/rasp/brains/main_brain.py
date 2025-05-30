@@ -128,9 +128,13 @@ class MainBrain(Brain):
 
         # Strategy
         from boombot_strategy import ShowGameContext
-        from boombot_strategy.strategies import BasicStrategy, DebugStrategy
+        from boombot_strategy.strategies import (
+            BasicStrategy,
+            DebugStrategy,
+            OnlyBannerStrategy,
+        )
 
-        strategy = DebugStrategy(
+        strategy = OnlyBannerStrategy(
             ShowGameContext(
                 arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
             )
@@ -248,7 +252,7 @@ class MainBrain(Brain):
         # Update the arena with the new position of the robot
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            #lidar_scan_polars=np.array([]),
+            # lidar_scan_polars=np.array([]),
             lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
@@ -277,7 +281,7 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
         self.arena.set_team_color(TeamColor.BLUE)
-        #await self.wait_for_team()
+        # await self.wait_for_team()
 
         start_position = OrientedPoint(0, 0, 0)
         if self.arena.team_color == TeamColor.YELLOW:
