@@ -21,7 +21,7 @@ class PrepareToPickUp(BaseTask):
 class PickUp(BaseTask):
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.pickup()
-        time.sleep(2)
+        time.sleep(1)
         return True
 
 
@@ -29,7 +29,7 @@ class Build(BaseTask):
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.build()
         ctx.score += CONFIG.BUILD_TWO_FLOORS
-        time.sleep(2)
+        time.sleep(1)
         return True
 
 

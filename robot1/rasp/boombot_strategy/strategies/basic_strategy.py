@@ -46,19 +46,19 @@ class BasicStrategy(BaseStrategy):
         deploy_banner_subgraph = get_banner_deployment_subgraph()
 
         # Step 2: Navigate to the first pickup zone
-        first_pickup_subgraph = get_pickup_subgraph(self.zones["first_pickup_zone"])
+        first_pickup_subgraph = get_pickup_subgraph(self.zones["first_pickup_zone"], forward_distance=20)
 
         # Step 3: Navigate to the first construction zone
         first_construct_subgraph = get_construct_subgraph(
-            self.zones["first_build_zone"], back_offset=15
+            self.zones["first_build_zone"], back_offset=5
         )
 
         # Step 4: Navigate to the second pickup zone
-        second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
+        second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"], forward_distance = 10)
 
         # Step 5: Navigate to the second construction zone
         second_construct_subgraph = get_construct_subgraph(
-            self.zones["second_build_zone"], back_offset=0
+            self.zones["second_build_zone"], back_offset=15
         )
 
         # Step 6: Move to the backstage zone to finish the game

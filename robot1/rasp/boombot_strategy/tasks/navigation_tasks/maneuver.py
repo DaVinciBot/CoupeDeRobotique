@@ -23,7 +23,7 @@ class RelativeBackward(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
-            stabilization_delay=3,  # Delay to stabilize after moving backward
+            stabilization_delay=1,  # Delay to stabilize after moving backward
         )
 
 
@@ -36,5 +36,5 @@ class RelativeForward(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
-            stabilization_delay=3,  # Delay to stabilize after moving forward
+            stabilization_delay=1,  # Delay to stabilize after moving forward
         )

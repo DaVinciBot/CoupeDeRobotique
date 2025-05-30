@@ -280,8 +280,8 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        self.arena.set_team_color(TeamColor.BLUE)
-        # await self.wait_for_team()
+        #self.arena.set_team_color(TeamColor.BLUE)
+        await self.wait_for_team()
 
         start_position = OrientedPoint(0, 0, 0)
         if self.arena.team_color == TeamColor.YELLOW:

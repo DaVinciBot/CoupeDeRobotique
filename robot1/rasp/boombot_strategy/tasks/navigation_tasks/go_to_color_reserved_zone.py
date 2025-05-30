@@ -35,7 +35,7 @@ class GoToColorReservedZoneToConstruct(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                acs_distance=40, width_view=40
+                acs_distance=55, width_view=40
             ),
-            stabilization_delay=5,  # Delay to stabilize before construction
+            stabilization_delay=2,  # Delay to stabilize before construction
         )

@@ -154,7 +154,8 @@ class LidarDummy:
         valid_polars = polars[polars[:, 1] > self._min_distance]
 
         self._logger.debug("[LidarDummy] Simulated polar coordinates generated.")
-        return valid_polars
+        #return valid_polars
+        return np.array([])
 
     def is_connected(self) -> bool:
         """

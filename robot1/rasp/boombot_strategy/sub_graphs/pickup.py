@@ -30,7 +30,7 @@ from boombot_strategy.tasks.actuator_task import (
 )
 
 
-def get_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
+def get_pickup_subgraph(pickup_zone_id: int, forward_distance: int) -> BaseSubGraph:
     """
     Build a subgraph that defines the sequence of tasks for picking up an object at a specified zone.
 
@@ -81,7 +81,7 @@ def get_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
         node_forward,
         BaseTaskNode(
             name=node_forward,
-            tasks=RelativeForward(10)
+            tasks=RelativeForward(forward_distance)
         ),
     )
 
