@@ -9,8 +9,12 @@ from boombot_strategy.tasks.navigation_tasks.go_to_stuff_zone import (
     GoToStuffZoneToPickUp,
 )
 
+from boombot_strategy.tasks.navigation_tasks.odometrie import (
+    SetOdometrie,
+)
+
 from boombot_strategy.tasks.navigation_tasks.maneuver import (
     RelativeForward,
     RelativeBackward,
-    GoCentroidOfZone
+    GoCentroidOfZone,
 )

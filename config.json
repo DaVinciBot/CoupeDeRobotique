@@ -103,6 +103,11 @@
             "acceleration": 30,
             "deceleration": 20,
             "max_speed": 40
+          },
+          "slow": {
+            "acceleration": 15,
+            "deceleration": 15,
+            "max_speed": 20
           }
         }
       }

@@ -25,7 +25,7 @@ from boombot_strategy.tasks.navigation_tasks import (
     RelativeForward,
     GoToStuffZoneToPickUp,
     GoCentroidOfZone,
-    RelativeBackward
+    RelativeBackward,
 )
 from boombot_strategy.tasks.actuator_task import (
     ReadyToApproachToPickUp,
