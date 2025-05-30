@@ -87,6 +87,7 @@ class MainBrain(Brain):
         }
 
         self.jack_triggered: bool = False
+        self.jack_plugged: bool = False
         super().__init__(logger, self)
 
         self.ws_cmd: WServerRouteManager = ws_cmd
@@ -109,46 +110,49 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         # --- Initialization --- #
-        # Rolling basis & Actuators
+        # --- 1) Initialize subsystems --- #
         rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
-        time.sleep(0.01)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
         actuators = ActuatorsShow(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
-        # # Init position
-        actuators.block_banner()
-
-        while not self.jack_triggered:
+        # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
+        while not self.jack_plugged:  # wait until cable is plugged
+            time.sleep(0.1)
+        actuators.block_banner()  # engage the banner blocker
+        while not self.jack_triggered:  # wait for the trigger event
             time.sleep(0.1)
 
-        # Strategy
+        # --- 3) Build the strategy --- #
         from boombot_strategy import ShowGameContext
-        from boombot_strategy.strategies import (
-            BasicStrategy,
-            DebugStrategy,
-            OnlyBannerStrategy,
-        )
+        from boombot_strategy.strategies import BasicStrategy
 
         strategy = BasicStrategy(
             ShowGameContext(
-                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+                arena=self.arena,
+                rolling_basis=rolling_basis,
+                actuators=actuators,
+                score=self.score,
             )
         )
 
         # --- MetaProg is insane (loop) --- #
         context = ShowGameContext(
-            arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+            arena=self.arena,
+            rolling_basis=rolling_basis,
+            actuators=actuators,
+            score=self.score,
         )
 
         strategy.runner.handle(context)
 
         # Update the rolling basis odometrie from the context
         self.score = context.score
+        self.ui_state["score"] = self.score
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = rolling_basis.odometrie
 
@@ -198,7 +202,6 @@ class MainBrain(Brain):
         # --- MetaProg is insane (loop) --- #
         current_state = self.ui_state.copy()
         current_state["jack_state"] = not self.jack_triggered
-        # current_state["score"] = self.ctx.score if self.ctx else 0
         if current_state != previous_state:
             previous_state = current_state
             to_send = {
@@ -274,9 +277,15 @@ class MainBrain(Brain):
         )
 
     @Brain.task(process=False, run_on_start=True)
-    async def scan_jack(self):
+    async def wait_jack_trigger(self):
         await self.inputs.wait_for_jack_trigger()
         self.jack_triggered = True
+        self.jack_plugged = False
+
+    @Brain.task(process=False, run_on_start=True)
+    async def wait_jack_plug(self):
+        await self.inputs.wait_for_jack_plugged()
+        self.jack_plugged = True
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):

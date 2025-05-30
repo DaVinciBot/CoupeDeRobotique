@@ -1,3 +1,10 @@
+# ====== Code Summary ======
+# This module defines three specialized navigation tasks:
+# - `RelativeBackward`: Moves the robot a specified distance backward.
+# - `RelativeForward`: Moves the robot a specified distance forward.
+# - `GoCentroidOfZone`: Navigates the robot to the centroid of a specified arena zone,
+#   initializing a navigator task with customized planning and avoidance parameters.
+
 # ====== Internal Project Imports ======
 from config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
@@ -7,31 +14,28 @@ from navigation import (
     SequentialTrajectoryPlannerParams,
     Direction,
     BasicPathPlannerParams,
+    StopAndWaitAvoidanceParams,
+    NavigatorTaskParams,
+    NavigatorTask,
 )
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
 )
-
-from navigation import (
-    StopAndWaitAvoidanceParams,
-    BasicPathPlannerParams,
-    SequentialTrajectoryPlannerParams,
-)
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (
     RectangularProjectionAcsDetectionProfileParams,
 )
-
 from strategy.core import BaseGameContext
-
-from navigation import (
-    NavigatorTaskParams,
-    NavigatorTask,
-)
-
 from geometry import OrientedPoint, Point
 
 
 class RelativeBackward(NavigationTask):
+    """
+    Navigation task to move the robot a specified distance backward.
+
+    Args:
+        distance (float): The distance to move backward in millimeters.
+    """
+
     def __init__(self, distance: float):
         super().__init__(
             goal=None,
@@ -47,6 +51,13 @@ class RelativeBackward(NavigationTask):
 
 
 class RelativeForward(NavigationTask):
+    """
+    Navigation task to move the robot a specified distance forward.
+
+    Args:
+        distance (float): The distance to move forward in millimeters.
+    """
+
     def __init__(self, distance: float):
         super().__init__(
             goal=None,
@@ -60,6 +71,13 @@ class RelativeForward(NavigationTask):
 
 
 class GoCentroidOfZone(NavigationTask):
+    """
+    Navigation task to go to the centroid of a given zone.
+
+    Args:
+        zone_id (int): The ID of the target zone.
+    """
+
     def __init__(self, zone_id: int):
         super().__init__(
             goal=zone_id,
@@ -76,14 +94,22 @@ class GoCentroidOfZone(NavigationTask):
         self.zone_id: int = zone_id
 
     def _initialize(self, ctx: BaseGameContext) -> None:
+        """
+        Initialize the task by computing the target position based on the zone's centroid.
+
+        Args:
+            ctx (BaseGameContext): The game context providing arena information.
+        """
         self._is_initialized = True
 
+        # Compute the goal position with orientation
         go_to_position: OrientedPoint = ctx.arena.compute_goal_position(self.zone_id)
         centroid: Point = ctx.arena.zones[self.zone_id].polygon.centroid
         centroid_with_theta: OrientedPoint = OrientedPoint(
             centroid.x, centroid.y, go_to_position.theta
         )
 
+        # Create a NavigatorTask using the calculated goal
         self.navigator_task: NavigatorTask = NavigatorTask(
             params=NavigatorTaskParams(
                 goal=centroid_with_theta,

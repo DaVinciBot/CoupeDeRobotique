@@ -16,7 +16,11 @@ from strategy.core import (
 # ====== Internal Project Imports ======
 from config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward
-from boombot_strategy.tasks.actuator_task import BlockBanner, ReadyToApproachToPickUp, DeplacementPosition
+from boombot_strategy.tasks.actuator_task import (
+    BlockBanner,
+    ReadyToApproachToPickUp,
+    DeplacementPosition,
+)
 
 
 def get_banner_deployment_subgraph() -> BaseSubGraph:

@@ -19,7 +19,7 @@ from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToConstruct,
 )
 from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward
-from boombot_strategy.tasks.actuator_task import Build
+from boombot_strategy.tasks.actuator_task import Build, Deposit
 
 
 def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
@@ -67,6 +67,55 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
 
     # Node: Perform backward maneuver after placement
     node_back = f"[Construct] Backward from zone {zone_id}"
+    subgraph.add_node(
+        node_back,
+        BaseTaskNode(name=node_back, tasks=RelativeBackward(20)),
+    )
+
+    # Transitions between nodes
+    subgraph.connect(node_navigate, DirectTransition(subgraph.nodes[node_prepare]))
+    subgraph.connect(node_prepare, DirectTransition(subgraph.nodes[node_place]))
+    subgraph.connect(node_place, DirectTransition(subgraph.nodes[node_back]))
+
+    # Return compiled subgraph with defined entry and exit
+    return subgraph.build(
+        entry=node_navigate,
+        exits=node_back,
+    )
+
+
+def get_construct_one_floor_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
+    subgraph = SubGraphBuilder()
+
+    # Node: Navigate to construction zone
+    node_navigate = f"[Construct_One_Floor] Navigate to zone {zone_id}"
+    subgraph.add_node(
+        node_navigate,
+        BaseTaskNode(
+            name=node_navigate,
+            tasks=GoToColorReservedZoneToConstruct(zone_id),
+        ),
+    )
+
+    # Node: Move forward to prepare for placement
+    node_prepare = f"[Construct_One_Floor] Position at zone {zone_id}"
+    subgraph.add_node(
+        node_prepare,
+        BaseTaskNode(
+            name=node_prepare,
+            tasks=RelativeForward(18 - back_offset),
+        ),
+    )
+
+    # Node: Place item with actuators
+    node_place = f"[Construct_One_Floor] Place item at zone {zone_id}"
+    subgraph.add_node(
+        node_place,
+        BaseTaskNode(name=node_place, tasks=Deposit()),
+    )
+
+    # Node: Perform backward maneuver after placement
+    node_back = f"[Construct_One_Floor] Backward from zone {zone_id}"
     subgraph.add_node(
         node_back,
         BaseTaskNode(name=node_back, tasks=RelativeBackward(20)),
