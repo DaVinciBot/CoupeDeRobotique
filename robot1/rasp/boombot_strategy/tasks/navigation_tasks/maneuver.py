@@ -61,7 +61,7 @@ class RelativeForward(NavigationTask):
 class GoCentroidOfZone(NavigationTask):
     def __init__(self, zone_id: int):
         super().__init__(
-            goal=None,
+            goal=zone_id,
             path_planner_params=BasicPathPlannerParams(),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,  # Use for pickup speed profiler
@@ -77,7 +77,7 @@ class GoCentroidOfZone(NavigationTask):
     def _initialize(self, ctx: BaseGameContext) -> None:
         self._is_initialized = True
 
-        go_to_position: OrientedPoint = ctx.arena.compute_goal_position(self.goal)
+        go_to_position: OrientedPoint = ctx.arena.compute_goal_position(self.zone_id)
         centroid: Point = ctx.arena.zones[self.zone_id].polygon.centroid
         centroid_with_theta: OrientedPoint = OrientedPoint(
             centroid.x, centroid.y,

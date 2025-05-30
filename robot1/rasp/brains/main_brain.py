@@ -110,21 +110,21 @@ class MainBrain(Brain):
     def run(self) -> None:
         # --- Initialization --- #
         # Rolling basis & Actuators
-        rolling_basis = RollingBasis(
+        rolling_basis = RollingBasisDummy(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         time.sleep(0.01)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        actuators = ActuatorsShow(
+        actuators = ActuatorsShowDummy(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
         # # Init position
         actuators.block_banner()
 
-        while not self.jack_triggered:
-            time.sleep(0.1)
+        # while not self.jack_triggered:
+        #     time.sleep(0.1)
 
         # Strategy
         from boombot_strategy import ShowGameContext
