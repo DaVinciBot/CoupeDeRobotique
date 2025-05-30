@@ -1,21 +1,17 @@
 #include "motor.h"
 
-Motor::Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution, float k)
+Motor::Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution, float k, bool invertDirection):
+    _stepPin(stepPin), _dirPin(dirPin), _enablePin(enablePin), _factorK(k), _invertDirection(invertDirection)
 {
-    this->_stepPin = stepPin;
-    this->_dirPin = dirPin;
-    this->_enablePin = enablePin;
-    this->_factorK = k;
+    _stepsPerRevolution = stepsPerRevolution / k; // Divide by k to get the actual steps per revolution
+    _targetSpeedStepsPerSec = 0.0f;
+    _currentSpeedStepsPerSec = 0.0f;
+    _acceleration = 0.0f;
+    _moving = false;
 
-    this->_stepsPerRevolution = stepsPerRevolution / k; // Divide by k to get the actual steps per revolution
-    this->_targetSpeedStepsPerSec = 0.0f;
-    this->_currentSpeedStepsPerSec = 0.0f;
-    this->_acceleration = 0.0f;
-    this->_moving = false;
-
-    this->_lastStepTime = 0;
-    this->_usDelayBetweenKSteps = 0.0f;
-    this->_stepCount = 0;
+    _lastStepTime = 0;
+    _usDelayBetweenKSteps = 0.0f;
+    _stepCount = 0;
 }
 
 void Motor::init()
@@ -33,6 +29,10 @@ void Motor::enableMotor(bool enable)
 
 void Motor::setTargetSpeed(float stepsPerSec)
 {
+    if (_invertDirection)
+    {
+        stepsPerSec = -stepsPerSec;
+    }
     _targetSpeedStepsPerSec = stepsPerSec;
     _moving = (fabs(_targetSpeedStepsPerSec) >= 1.0f);
     enableMotor(_moving);
@@ -60,7 +60,8 @@ void Motor::_doKSteps()
         delayMicroseconds(500);
     }
 
-    if (_currentSpeedStepsPerSec >= 0)
+    if (_currentSpeedStepsPerSec >= 0 && !_invertDirection ||
+        _currentSpeedStepsPerSec < 0 && _invertDirection)
     {
         _stepCount++;
     }

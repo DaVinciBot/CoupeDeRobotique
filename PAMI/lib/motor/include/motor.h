@@ -6,7 +6,7 @@
 class Motor
 {
 public:
-    Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution, float k);
+    Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution, float k, bool invertDirection=false);
     ~Motor() = default;
 
     void init();
@@ -27,6 +27,7 @@ private:
     byte _dirPin;
     byte _enablePin;
     float _factorK;
+    bool _invertDirection;
 
     unsigned int _stepsPerRevolution;
     float _targetSpeedStepsPerSec;

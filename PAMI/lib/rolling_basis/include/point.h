@@ -36,29 +36,8 @@ public:
     {
         return sqrtf(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2));
     }
-    // angle = 2 * atan2(‖u/‖u‖ − v/‖v‖‖, ‖u/‖u‖ + v/‖v‖‖)
     static double angle(const Point &p1, const Point &p2)
     {
-        // return atan2(p2.y - p1.y, p2.x - p1.x);
-        double norm_u = std::hypot(p1.x, p1.y);
-        double norm_v = std::hypot(p2.x, p2.y);
-        if (norm_u == 0.0 || norm_v == 0.0) {
-            return 0.0;
-        }
-
-        double ux = p1.x / norm_u;
-        double uy = p1.y / norm_u;
-        double vx = p2.x / norm_v;
-        double vy = p2.y / norm_v;
-
-        double dx = ux - vx;
-        double dy = uy - vy;
-        double sx = ux + vx;
-        double sy = uy + vy;
-
-        return 2.0 * std::atan2(
-            std::hypot(dx, dy),
-            std::hypot(sx, sy)
-        );
+        return atan2f(p2.y - p1.y, p2.x - p1.x);
     }
 };
