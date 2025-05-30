@@ -134,7 +134,7 @@ class MainBrain(Brain):
             OnlyBannerStrategy,
         )
 
-        strategy = OnlyBannerStrategy(
+        strategy = BasicStrategy(
             ShowGameContext(
                 arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
             )
