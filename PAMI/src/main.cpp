@@ -26,45 +26,49 @@ hw_timer_t *lidarTimer = NULL;
 TaskHandle_t MovementTask = NULL; // Task handle for movement updates
 TaskHandle_t LidarTask = NULL;    // Task handle for movement updates
 
-int d_zero, d_on = 0;
+bool tirette, t_one, t_two = true;
 
 // Array to store points to navigate to
 Point strat[] = {
-    {0, 100, 0},
-    {100, 100, 0},
-    {100, 0, 0},
-    {0, 0, 0}};
+    {200, 0, 0}};
 int currentIndex = 0; // Current index in the strats array
 bool ACS = false;
 bool oldACS = false;
 
+bool canStartTimer = true;
+long startTimer = 276447230;
 bool canStart = false; // Flag to indicate if navigation can start
+
+long dt = 0;
+long lastTimerrrr = 0;
 
 void navigationUpdate()
 {
-    navigation->update(); // Update rolling basis
-    if (ACS)
+    // navigation->update(); // Update rolling basis
+    leftMotor->update();
+    rightMotor->update();
+    if (ACS  )
     {
-        if (oldACS != ACS)
+        if (oldACS)
+            return;
+        Serial.println("ACS activated, stopping rolling basis.");
+        oldACS = ACS;   // Update oldACS to current ACS state
+        currentIndex--; // Decrement index if ACS is true
+        if (currentIndex < 0)
         {
-            Serial.println("ACS activated, stopping rolling basis.");
-            oldACS = ACS;   // Update oldACS to current ACS state
-            currentIndex--; // Decrement index if ACS is true
-            if (currentIndex < 0)
-            {
-                currentIndex = 0; // Prevent index from going negative
-            }
+            currentIndex = 0; // Prevent index from going negative
         }
         navigation->stop(); // Stop rolling basis if ACS is true
     }
-    else if (!navigation->isMoving())
+    else
     {
-        if (currentIndex < sizeof(strat) / sizeof(strat[0]))
+        oldACS = ACS; // Update oldACS to current ACS state
+        if (dt < 20000)
         {
-            navigation->setCommand(strat[currentIndex]);
-            Serial.print("Setting command to: ");
-            Serial.println(strat[currentIndex].x);
-            currentIndex++;
+            leftMotor->setTargetSpeed(4000.0f*3);
+            rightMotor->setTargetSpeed(4000.0f);
+            dt += millis() - lastTimerrrr;
+            lastTimerrrr = millis();
         }
         else
         {
@@ -98,16 +102,27 @@ void setup()
     lidar->onReceive([]()
                      {
         if (!canStart){
-            if (!lidar->isTiretteOn()) // Check if tirette is on
+            t_two = t_one;
+            t_one = tirette; // Update tirette state
+            tirette = lidar->isTiretteOn(); // Check if tirette is on
+            if (!(tirette || t_one || t_two)) // Check if tirette is on
             {
-                canStart = true; // Set canStart to true if tirette is on
+                // canStartTimer = true; // Set canStart to true if tirette is on
+                canStart = true;
                 Serial.println("Tirette activated, starting navigation.");
             }
+            Serial.println("Waiting for tirette activation...");
         } else {
             lidarUpdate(); // Call lidar update function when data is received
         } });
     Serial.println("LIDAR initialized");
-    delay(100); // Wait for LIDAR to stabilize
+    leftMotor->init();
+    rightMotor->init();
+    leftMotor->enableMotor(true);
+    rightMotor->enableMotor(true);
+    leftMotor->setAcceleration(200.0f*3);
+    rightMotor->setAcceleration(200.0f);
+
 #if ENABLE_OTA
     Serial.println("OTA enabled");
     ota.begin();
@@ -146,9 +161,9 @@ void loop()
     if (millis() - lastTime > 2 && canStart) // Check if 2ms have passed since the last navigation update
     {
         navigationUpdate(); // Call navigation update function
+        lastTime = millis();
     }
     lidar->loop();
-    lastTime = millis();
 #if ENABLE_OTA
     ota.loop();
 #endif

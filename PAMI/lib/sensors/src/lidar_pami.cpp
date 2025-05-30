@@ -95,11 +95,11 @@ bool lidar_pami::isTiretteOn(uint16_t threshold)
         uint16_t idx = HEADER_LEN + ENV_LEN + i * 2;
         uint16_t distance = ((uint16_t)_buffer[idx + 1] << 8) | _buffer[idx];
         distance &= 0x01FF; // keep 9 LSBs
-        mean += distance;
+        mean += distance > 300 ? 0 : distance; // ignore points > 300mm
     }
     mean /= POINT_COUNT;
 
-    if (_debug || true)
+    if (_debug)
     {
         Serial.print(F("Mean distance: "));
         Serial.println(mean);

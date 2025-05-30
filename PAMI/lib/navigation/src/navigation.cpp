@@ -43,6 +43,10 @@ void Navigation::update()
 
     // resend every interval
     if (_lastSendMs == 0 || now - _lastSendMs >= _sendIntervalMs) {
+        if (_wpIndex >= _waypoints.size()) {
+            Serial.println("[Navigation] No more waypoints to send.");
+            return; // no more waypoints to send
+        }
         if (_wpIndex + 1 < _waypoints.size()) {
             _basis->setCommand(_waypoints[++_wpIndex]);
         }
