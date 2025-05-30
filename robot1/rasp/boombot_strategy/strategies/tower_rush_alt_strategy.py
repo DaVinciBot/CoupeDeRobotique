@@ -19,7 +19,7 @@ from boombot_strategy.sub_graphs import (
     get_construct_subgraph,
     get_pickup_subgraph,
     get_banner_deployment_subgraph,
-    get_construct_one_floor_subgraph
+    get_construct_one_floor_subgraph,
 )
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
@@ -78,26 +78,15 @@ class TowerRushAltStrategy(BaseStrategy):
         )
 
         # Connect the subgraphs in execution order
-        deploy_banner_subgraph.get_exits()[0].add_transition(
-            DirectTransition(first_pickup_subgraph.get_entry())
-        )
-        first_pickup_subgraph.get_exits()[0].add_transition(
-            DirectTransition(first_construct_subgraph.get_entry())
-        )
-        first_construct_subgraph.get_exits()[0].add_transition(
-            DirectTransition(second_pickup_subgraph.get_entry())
-        )
-        second_pickup_subgraph.get_exits()[0].add_transition(
-            DirectTransition(second_construct_subgraph.get_entry())
-        )
-        second_construct_subgraph.get_exits()[0].add_transition(
-            DirectTransition(third_pickup_subgraph.get_entry())
-        )
-        third_pickup_subgraph.get_exits()[0].add_transition(
-            DirectTransition(third_construct_subgraph.get_entry())
-        )
-        third_construct_subgraph.get_exits()[0].add_transition(
-            DirectTransition(go_to_backstage)
+        self._auto_build_transitions(
+            deploy_banner_subgraph,
+            first_pickup_subgraph,
+            first_construct_subgraph,
+            second_pickup_subgraph,
+            second_construct_subgraph,
+            third_pickup_subgraph,
+            third_construct_subgraph,
+            go_to_backstage,
         )
 
         # Create the graph runner starting from the first subgraph
