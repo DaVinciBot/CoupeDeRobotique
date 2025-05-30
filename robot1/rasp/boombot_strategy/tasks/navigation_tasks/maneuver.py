@@ -30,6 +30,7 @@ from navigation import (
 
 from geometry import OrientedPoint, Point
 
+
 class RelativeBackward(NavigationTask):
     def __init__(self, distance: float):
         super().__init__(
@@ -51,7 +52,7 @@ class RelativeForward(NavigationTask):
             goal=None,
             path_planner_params=DeltaPathPlannerParams(distance=distance),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+            speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
             stabilization_delay=1,  # Delay to stabilize after moving forward
@@ -64,7 +65,7 @@ class GoCentroidOfZone(NavigationTask):
             goal=zone_id,
             path_planner_params=BasicPathPlannerParams(),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,  # Use for pickup speed profiler
+            speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
                 acs_distance=55, width_view=40
@@ -80,8 +81,7 @@ class GoCentroidOfZone(NavigationTask):
         go_to_position: OrientedPoint = ctx.arena.compute_goal_position(self.zone_id)
         centroid: Point = ctx.arena.zones[self.zone_id].polygon.centroid
         centroid_with_theta: OrientedPoint = OrientedPoint(
-            centroid.x, centroid.y,
-            go_to_position.theta
+            centroid.x, centroid.y, go_to_position.theta
         )
 
         self.navigator_task: NavigatorTask = NavigatorTask(
