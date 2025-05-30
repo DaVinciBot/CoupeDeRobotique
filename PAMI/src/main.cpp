@@ -25,6 +25,11 @@ bool isInit = false;
 hw_timer_t *MovementTimer = NULL;
 hw_timer_t *lidarTimer = NULL;
 
+TaskHandle_t MovementTask = NULL; // Task handle for movement updates
+TaskHandle_t LidarTask = NULL;    // Task handle for movement updates
+
+int d_zero, d_on = 0;
+
 // Array to store points to navigate to
 Point strat[] = {
     {0, 100, 0},
@@ -34,6 +39,8 @@ Point strat[] = {
 int currentIndex = 0; // Current index in the strats array
 bool ACS = false;
 bool oldACS = false;
+
+bool canStart = false; // Flag to indicate if navigation can start
 
 void navigationUpdate()
 {
@@ -75,7 +82,6 @@ void lidarUpdate()
     if (lidar->obstacleAhead(ACS_TRESHOLD)) // Check if an obstacle is ahead
     {
         ACS = true; // Activate ACS if an obstacle is detected
-        Serial.println("Obstacle detected, activating ACS.");
     }
     else
     {
@@ -85,19 +91,25 @@ void lidarUpdate()
 
 void setup()
 {
+    setCpuFrequencyMhz(240);
+
     Serial.begin(115200);
     Serial.println("\n-- PAMI test --\n");
 
     lidar->begin(lidar_pami::DEFAULT_BAUD); // Initialize LIDAR
+    lidar->onReceive([]()
+                     {
+        if (!canStart){
+            if (!lidar->isTiretteOn()) // Check if tirette is on
+            {
+                canStart = true; // Set canStart to true if tirette is on
+                Serial.println("Tirette activated, starting navigation.");
+            }
+        } else {
+            lidarUpdate(); // Call lidar update function when data is received
+        } });
     Serial.println("LIDAR initialized");
     delay(100); // Wait for LIDAR to stabilize
-
-    // Check if LIDAR is ready
-    while (!lidar->isTiretteOn())
-    {
-        Serial.println("Waiting for LIDAR to be ready...");
-        delay(100);
-    }
 #if ENABLE_OTA
     Serial.println("OTA enabled");
     ota.begin();
@@ -117,21 +129,28 @@ void setup()
 #else
     Serial.println("LoRa not enabled");
 #endif
-    MovementTimer = timerBegin(0, 8000, true);                    // Create a timer with 8000 prescaler (80MHz / 8000 = 10kHz)
-    timerAttachInterrupt(MovementTimer, &navigationUpdate, true); // Attach the interrupt function
-    timerAlarmWrite(MovementTimer, 50, true);                     // Count to 100 in order to trigger the interrupt. (10kHz / 50 = 200Hz)
-    timerAlarmEnable(MovementTimer);                              // Enable the timer interrupt
+    // MovementTimer = timerBegin(0, 24000, true);                   // Create a timer with 8000 prescaler (80MHz / 8000 = 10kHz)
+    // timerAttachInterrupt(MovementTimer, &navigationUpdate, true); // Attach the interrupt function
+    // timerAlarmWrite(MovementTimer, 50, true);                     // Count to 100 in order to trigger the interrupt. (10kHz / 50 = 200Hz)
+    // timerAlarmEnable(MovementTimer);                              // Enable the timer interrupt
 
     // create a second timer for lidar update
-    lidarTimer = timerBegin(1, 8000, true);               // Create a second timer with 8000 prescaler
-    timerAttachInterrupt(lidarTimer, &lidarUpdate, true); // Attach the interrupt function for lidar
-    timerAlarmWrite(lidarTimer, 1000, true);              // Count to 1000 in order to trigger the interrupt. (10kHz / 1000 = 10Hz)
-    timerAlarmEnable(lidarTimer);                         // Enable the lidar timer interrupt
-    Serial.println("Setup complete, starting navigation...");
+    // lidarTimer = timerBegin(1, 24000, true);               // Create a second timer with 8000 prescaler
+    // timerAttachInterrupt(lidarTimer, &lidarUpdate, true); // Attach the interrupt function for lidar
+    // timerAlarmWrite(lidarTimer, 1000, true);              // Count to 1000 in order to trigger the interrupt. (10kHz / 1000 = 10Hz)
+    // timerAlarmEnable(lidarTimer);                         // Enable the lidar timer interrupt
+    // Serial.println("Setup complete, starting navigation...");
 }
 
+long lastTime = 0; // Variable to store the last time the loop was executed
 void loop()
 {
+    if (millis() - lastTime > 2 && canStart) // Check if 2ms have passed since the last navigation update
+    {
+        navigationUpdate(); // Call navigation update function
+    }
+    lidar->loop();
+    lastTime = millis();
 #if ENABLE_OTA
     ota.loop();
 #endif

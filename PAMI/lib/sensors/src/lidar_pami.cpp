@@ -57,8 +57,6 @@ bool lidar_pami::readFrame()
 
 bool lidar_pami::obstacleAhead(uint16_t distanceMin)
 {
-    if (!readFrame())
-        return false; // no complete frame yet
 
     float mean = 0.0f;
     uint16_t validCount = 0;
@@ -79,8 +77,6 @@ bool lidar_pami::obstacleAhead(uint16_t distanceMin)
     if (validCount == 0)
         return false; // no valid points
     mean /= validCount;
-    Serial.print(F("Mean distance: "));
-    Serial.println(mean);
 
     if (_debug)
     {
@@ -93,12 +89,7 @@ bool lidar_pami::obstacleAhead(uint16_t distanceMin)
 
 bool lidar_pami::isTiretteOn(uint16_t threshold)
 {
-    if (!readFrame())
-        return false; // no complete frame yet
-
     float mean = 0.0f;
-    uint16_t validCount = 0;
-
     for (uint16_t i = 0; i < POINT_COUNT; ++i)
     {
         uint16_t idx = HEADER_LEN + ENV_LEN + i * 2;
@@ -108,11 +99,38 @@ bool lidar_pami::isTiretteOn(uint16_t threshold)
     }
     mean /= POINT_COUNT;
 
-    if (_debug)
+    if (_debug || true)
     {
         Serial.print(F("Mean distance: "));
         Serial.println(mean);
     }
 
     return mean < threshold;
+}
+
+void lidar_pami::loop()
+{
+    if (_serial.available())
+    {
+        if (readFrame())
+        {
+            if (_onReceiveCallback != nullptr)
+            {
+                _onReceiveCallback(); // call the user-defined callback
+            }
+            _onReceiveCallback();
+            if (_debug)
+            {
+                Serial.println(F("lidar_pami: frame read"));
+            }
+        }
+    }
+}
+void lidar_pami::onReceive(void (*callback)())
+{
+    _onReceiveCallback = callback;
+    if (_debug)
+    {
+        Serial.println(F("lidar_pami: onReceive callback set"));
+    }
 }

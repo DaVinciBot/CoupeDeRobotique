@@ -23,6 +23,8 @@ public:
 
     bool obstacleAhead(uint16_t distanceMin = 100);
     bool isTiretteOn(uint16_t threshold = 5);
+    void loop();
+    void onReceive(void (*callback)());
 
 private:
     static const uint16_t PACKET_SIZE = 331;
@@ -39,8 +41,10 @@ private:
     uint8_t _buffer[PACKET_SIZE];
     uint16_t _bufferIndex = 0;
 
-    void sendScanCommand();
+    void (*_onReceiveCallback)() = nullptr;
+
     bool readFrame();
+    void sendScanCommand();
 };
 
 #endif // LIDAR_SCANNER_H
