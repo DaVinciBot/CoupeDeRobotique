@@ -128,9 +128,9 @@ class MainBrain(Brain):
 
         # Strategy
         from boombot_strategy import ShowGameContext
-        from boombot_strategy.strategies import BasicStrategy
+        from boombot_strategy.strategies import BasicStrategy, DebugStrategy
 
-        strategy = BasicStrategy(
+        strategy = DebugStrategy(
             ShowGameContext(
                 arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
             )

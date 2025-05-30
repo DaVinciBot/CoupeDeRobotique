@@ -1,1 +1,2 @@
 from boombot_strategy.strategies.basic_strategy import BasicStrategy
+from boombot_strategy.strategies.debug_strategy import DebugStrategy
