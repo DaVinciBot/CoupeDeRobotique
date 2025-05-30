@@ -22,7 +22,7 @@ from boombot_strategy.sub_graphs import (
     get_pickup_subgraph,
     get_banner_deployment_subgraph,
     get_construct_one_floor_subgraph,
-    get_push_one_floor_to_wall_subgraph
+    get_push_one_floor_to_wall_subgraph,
 )
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
@@ -62,7 +62,7 @@ class TowerRushStrategy(BaseStrategy):
         second_pickup_subgraph = get_push_one_floor_to_wall_subgraph(
             zone_id=self.zones["second_pickup_zone"],
             push_distance=20,
-            new_theta=-math.pi
+            new_theta=-math.pi,
         )
 
         # Step 6: Move to the backstage zone to finish the game
@@ -79,12 +79,11 @@ class TowerRushStrategy(BaseStrategy):
             DirectTransition(first_construct_subgraph.get_entry())
         )
         first_construct_subgraph.get_exits()[0].add_transition(
-             DirectTransition(second_pickup_subgraph.get_entry())
+            DirectTransition(second_pickup_subgraph.get_entry())
         )
         second_pickup_subgraph.get_exits()[0].add_transition(
-             DirectTransition(go_to_backstage)
+            DirectTransition(go_to_backstage)
         )
-
 
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(

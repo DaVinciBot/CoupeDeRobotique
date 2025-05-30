@@ -1,124 +1,105 @@
 # ====== Code Summary ======
-# This module defines a function `get_banner_deployement_subgraph` that constructs a task subgraph
-# for deploying a banner using a sequence of actuator and movement tasks.
-# The sequence includes blocking the banner, moving forward to deploy, unblocking for extraction,
-# and a final backward motion to safely disengage. All steps are connected via direct transitions
-# and returned as a `BaseSubGraph` for strategic execution.
+# This module defines a function `get_banner_deployment_subgraph` that builds a subgraph
+# for deploying a banner in a robotics context. The process involves locking the mechanism,
+# moving to the deployment point, releasing the mechanism, resetting orientation, retracting,
+# and finally positioning the robot for subsequent actions.
 
+# ====== Standard Library Imports ======
 import math
 
-# ====== Local Project Imports ======
+# ====== Third-party Library Imports ======
+
+# ====== Internal Project Imports ======
+from config_loader import CONFIG
 from strategy.core import (
     SubGraphBuilder,
     BaseTaskNode,
     DirectTransition,
     BaseSubGraph,
 )
-
-# ====== Internal Project Imports ======
-from config_loader import CONFIG
-from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward, SetOdometrie
+from boombot_strategy.tasks.navigation_tasks import (
+    RelativeForward,
+    RelativeBackward,
+    SetOdometrie,
+)
 from boombot_strategy.tasks.actuator_task import (
     BlockBanner,
-    ReadyToApproachToPickUp,
-    DeplacementPosition
+    ReadyToApproachToPickUp,  # used here to release the banner lock
+    DeplacementPosition,
 )
 
 
 def get_banner_deployment_subgraph() -> BaseSubGraph:
     """
-    Build a subgraph that defines the sequence of tasks for deploying a banner.
+    Construct a subgraph for executing the banner deployment sequence.
 
-    The subgraph includes blocking the banner mechanism, moving forward to deploy it,
-    unblocking for further tasks, and a backward maneuver to extract safely.
+    The steps include:
+      1. Locking the banner mechanism to prepare for deployment.
+      2. Moving forward to the deployment point.
+      3. Releasing the mechanism to deploy the banner.
+      4. Resetting the robot's orientation using odometry.
+      5. Retracting slightly after deployment.
+      6. Moving to a specific post-deployment position.
 
     Returns:
-        BaseSubGraph: A compiled subgraph representing the banner deployment operation.
+        BaseSubGraph: A structured subgraph representing the deployment sequence.
     """
-    subgraph = SubGraphBuilder()
+    builder = SubGraphBuilder()
 
-    # Node: Block the banner to prepare for deployment
-    node_block_banner = "[Banner Deployment] Block banner"
-    subgraph.add_node(
-        node_block_banner,
+    # 1) Lock banner mechanism
+    node_lock = "[Banner][Deploy] LockMechanism"
+    builder.add_node(
+        node_lock,
+        BaseTaskNode(name=node_lock, tasks=BlockBanner()),
+    )
+
+    # 2) Advance to deploy position
+    node_advance = "[Banner][Deploy] AdvanceToDeployPoint"
+    builder.add_node(
+        node_advance,
+        BaseTaskNode(name=node_advance, tasks=RelativeForward(7)),
+    )
+
+    # 3) Release banner mechanism
+    node_release = "[Banner][Deploy] ReleaseMechanism"
+    builder.add_node(
+        node_release,
+        BaseTaskNode(name=node_release, tasks=ReadyToApproachToPickUp()),
+    )
+
+    # 4) Reset odometry orientation
+    node_reset = "[Banner][Deploy] ResetOdometry"
+    builder.add_node(
+        node_reset,
         BaseTaskNode(
-            name=node_block_banner,
-            tasks=BlockBanner(),
+            name=node_reset,
+            tasks=SetOdometrie(theta=-math.pi / 2),
         ),
     )
 
-    # Node: Move forward to reach banner deployment position
-    node_forward_to_deploy_banner = "[Banner Deployment] Move forward to deploy banner"
-    subgraph.add_node(
-        node_forward_to_deploy_banner,
-        BaseTaskNode(
-            name=node_forward_to_deploy_banner,
-            tasks=RelativeForward(7),
-        ),
+    # 5) Retract after deployment
+    node_retract = "[Banner][Deploy] RetractAfterDeploy"
+    builder.add_node(
+        node_retract,
+        BaseTaskNode(name=node_retract, tasks=RelativeBackward(20)),
     )
 
-    # Node: Set new odometrie
-    node_reset_odo = ""
-    subgraph.add_node(
-        node_reset_odo,
-        BaseTaskNode(
-            name=node_reset_odo,
-            tasks=SetOdometrie(
-                theta=-math.pi/2
-            ),
-        ),
+    # 6) Move to post-deployment position
+    node_post = "[Banner][Deploy] MoveToPostDeployPosition"
+    builder.add_node(
+        node_post,
+        BaseTaskNode(name=node_post, tasks=DeplacementPosition()),
     )
 
-    # Node: Unblock banner (releasing mechanism or resetting state)
-    node_unblock_banner = "[Banner Deployment] Unblock banner"
-    subgraph.add_node(
-        node_unblock_banner,
-        BaseTaskNode(
-            name=node_unblock_banner,
-            tasks=ReadyToApproachToPickUp(),
-        ),
-    )
+    # Define task transitions in order
+    builder.connect(node_lock, DirectTransition(builder.nodes[node_advance]))
+    builder.connect(node_advance, DirectTransition(builder.nodes[node_release]))
+    builder.connect(node_release, DirectTransition(builder.nodes[node_reset]))
+    builder.connect(node_reset, DirectTransition(builder.nodes[node_retract]))
+    builder.connect(node_retract, DirectTransition(builder.nodes[node_post]))
 
-    # Node: Move backward to disengage after deployment
-    node_backward_to_extract = "[Banner Deployment] Move backward to extract"
-    subgraph.add_node(
-        node_backward_to_extract,
-        BaseTaskNode(
-            name=node_backward_to_extract,
-            tasks=RelativeBackward(20),
-        ),
-    )
-
-    # Node: Deplacement position
-    node_deplacement_position = "[Banner Deployment] Deplacement position"
-    subgraph.add_node(
-        node_deplacement_position,
-        BaseTaskNode(
-            name=node_deplacement_position,
-            tasks=DeplacementPosition(),
-        ),
-    )
-
-    # Transitions between nodes to form a linear task flow
-    subgraph.connect(
-        node_block_banner,
-        DirectTransition(subgraph.nodes[node_forward_to_deploy_banner]),
-    )
-    subgraph.connect(
-        node_forward_to_deploy_banner,
-        DirectTransition(subgraph.nodes[node_unblock_banner]),
-    )
-    subgraph.connect(
-        node_unblock_banner,
-        DirectTransition(subgraph.nodes[node_backward_to_extract]),
-    )
-    subgraph.connect(
-        node_backward_to_extract,
-        DirectTransition(subgraph.nodes[node_deplacement_position]),
-    )
-
-    # Return the completed subgraph with specified entry and exit nodes
-    return subgraph.build(
-        entry=node_block_banner,
-        exits=node_deplacement_position,
+    # Build and return the subgraph
+    return builder.build(
+        entry=node_lock,
+        exits=node_post,
     )
