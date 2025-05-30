@@ -74,7 +74,7 @@ def get_banner_deployment_subgraph() -> BaseSubGraph:
     node_release = "[Banner][Deploy] ReleaseMechanism"
     builder.add_node(
         node_release,
-        BaseTaskNode(name=node_release, tasks=ReadyToApproachToPickUp()),
+        BaseTaskNode(name=node_release, tasks=DeplacementPosition()),
     )
 
     # 5) Retract after deployment
@@ -84,22 +84,14 @@ def get_banner_deployment_subgraph() -> BaseSubGraph:
         BaseTaskNode(name=node_retract, tasks=RelativeBackward(20)),
     )
 
-    # 6) Move to post-deployment position
-    node_post = "[Banner][Deploy] MoveToPostDeployPosition"
-    builder.add_node(
-        node_post,
-        BaseTaskNode(name=node_post, tasks=DeplacementPosition()),
-    )
-
     # Define task transitions in order
     builder.connect(node_lock, DirectTransition(builder.nodes[node_advance]))
     builder.connect(node_advance, DirectTransition(builder.nodes[node_reset]))
     builder.connect(node_reset, DirectTransition(builder.nodes[node_release]))
     builder.connect(node_release, DirectTransition(builder.nodes[node_retract]))
-    builder.connect(node_retract, DirectTransition(builder.nodes[node_post]))
 
     # Build and return the subgraph
     return builder.build(
         entry=node_lock,
-        exits=node_post,
+        exits=node_retract,
     )

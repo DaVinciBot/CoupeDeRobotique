@@ -282,6 +282,8 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def wait_jack_trigger(self):
+        while not self.jack_plugged:
+            await asyncio.sleep(0.1)
         await self.inputs.wait_for_jack_trigger()
         self.jack_triggered = True
         self.jack_plugged = False
