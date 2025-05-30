@@ -20,7 +20,7 @@ from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToConstruct,
 )
 from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward
-from boombot_strategy.tasks.actuator_task import Build, Deposit
+from boombot_strategy.tasks.actuator_task import Build, Deposit, PickUp
 
 
 def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
@@ -48,7 +48,16 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
             tasks=GoToColorReservedZoneToConstruct(zone_id),
         ),
     )
-
+    
+    node_pickup = f"[Construct] Pickup at zone {zone_id}"
+    subgraph.add_node(
+        node_pickup,
+        BaseTaskNode(
+            name=node_pickup,
+            tasks=PickUp(),
+        ),
+    )
+    
     # Node: Move forward to prepare for placement
     node_prepare = f"[Construct] Position at zone {zone_id}"
     subgraph.add_node(
@@ -74,7 +83,8 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
     )
 
     # Transitions between nodes
-    subgraph.connect(node_navigate, DirectTransition(subgraph.nodes[node_prepare]))
+    subgraph.connect(node_navigate, DirectTransition(subgraph.nodes[node_pickup]))
+    subgraph.connect(node_pickup, DirectTransition(subgraph.nodes[node_prepare]))
     subgraph.connect(node_prepare, DirectTransition(subgraph.nodes[node_place]))
     subgraph.connect(node_place, DirectTransition(subgraph.nodes[node_back]))
 

@@ -136,3 +136,21 @@ class DeplacementPosition(BaseTask):
         """
         ctx.actuators.deplacement_position()
         return True
+    
+class DeplacementObject(BaseTask):
+    """
+    Task to adjust the actuator to a predefined displacement position.
+    """
+
+    def handle(self, ctx: ShowGameContext) -> bool:
+        """
+        Execute the actuator command to move to a displacement position.
+
+        Args:
+            ctx (ShowGameContext): The current game context.
+
+        Returns:
+            bool: Always returns True after executing the action.
+        """
+        ctx.actuators.deplacement_object()
+        return True

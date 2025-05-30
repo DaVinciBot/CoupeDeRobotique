@@ -31,6 +31,7 @@ from boombot_strategy.tasks.actuator_task import (
     ReadyToApproachToPickUp,
     PrepareToPickUp,
     PickUp,
+    DeplacementObject
 )
 
 
@@ -81,7 +82,7 @@ def get_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
     node_pickup = f"[Pickup] Pick up item at zone {pickup_zone_id}"
     subgraph.add_node(
         node_pickup,
-        BaseTaskNode(name=node_pickup, tasks=PickUp()),
+        BaseTaskNode(name=node_pickup, tasks=DeplacementObject()),
     )
 
     # Node: extract from pickup zone
