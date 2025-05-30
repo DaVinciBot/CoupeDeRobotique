@@ -114,6 +114,8 @@ class MainBrain(Brain):
         rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
+        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        rolling_basis.initialize_pids()
 
         actuators = ActuatorsShow(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
@@ -295,7 +297,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        self.arena.set_team_color(TeamColor.YELLOW)
+        #self.arena.set_team_color(TeamColor.YELLOW)
         await self.wait_for_team()
 
         start_position = OrientedPoint(0, 0, 0)

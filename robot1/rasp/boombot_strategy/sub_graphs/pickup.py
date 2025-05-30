@@ -31,6 +31,7 @@ from boombot_strategy.tasks.actuator_task import (
     ReadyToApproachToPickUp,
     PrepareToPickUp,
     PickUp,
+    De
 )
 
 
