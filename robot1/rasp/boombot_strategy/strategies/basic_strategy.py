@@ -53,13 +53,13 @@ class BasicStrategy(BaseStrategy):
             self.zones["first_build_zone"], back_offset=5
         )
 
-        # Step 4: Navigate to the second pickup zone
-        second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
-
-        # Step 5: Navigate to the second construction zone
-        second_construct_subgraph = get_construct_subgraph(
-            self.zones["second_build_zone"], back_offset=15
-        )
+        # # Step 4: Navigate to the second pickup zone
+        # second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
+        #
+        # # Step 5: Navigate to the second construction zone
+        # second_construct_subgraph = get_construct_subgraph(
+        #     self.zones["second_build_zone"], back_offset=15
+        # )
 
         # Step 6: Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
@@ -74,13 +74,18 @@ class BasicStrategy(BaseStrategy):
         first_pickup_subgraph.get_exits()[0].add_transition(
             DirectTransition(first_construct_subgraph.get_entry())
         )
+
+        # first_construct_subgraph.get_exits()[0].add_transition(
+        #     DirectTransition(second_pickup_subgraph.get_entry())
+        # )
+        # second_pickup_subgraph.get_exits()[0].add_transition(
+        #     DirectTransition(second_construct_subgraph.get_entry())
+        # )
+        # second_construct_subgraph.get_exits()[0].add_transition(
+        #     DirectTransition(go_to_backstage)
+        # )
+
         first_construct_subgraph.get_exits()[0].add_transition(
-            DirectTransition(second_pickup_subgraph.get_entry())
-        )
-        second_pickup_subgraph.get_exits()[0].add_transition(
-            DirectTransition(second_construct_subgraph.get_entry())
-        )
-        second_construct_subgraph.get_exits()[0].add_transition(
             DirectTransition(go_to_backstage)
         )
 
