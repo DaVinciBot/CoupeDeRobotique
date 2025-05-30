@@ -123,8 +123,8 @@ class MainBrain(Brain):
         # # Init position
         actuators.block_banner()
 
-        # while not self.jack_triggered:
-        #     time.sleep(0.1)
+        while not self.jack_triggered:
+            time.sleep(0.1)
 
         # Strategy
         from boombot_strategy import ShowGameContext
