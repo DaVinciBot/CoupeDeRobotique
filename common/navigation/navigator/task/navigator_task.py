@@ -97,7 +97,7 @@ class NavigatorTask:
         # 1. Initial planning
         if self.state == NavigatorTaskState.NOT_PLANNED:
             self._plan_task(ally_zone)
-            return self.current_trajectory_command
+            return self.trajectory_planner.get_plan()
 
         # 2. Timeout check
         if self._has_timed_out():
