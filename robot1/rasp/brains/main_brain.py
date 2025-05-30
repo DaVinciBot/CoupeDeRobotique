@@ -140,6 +140,9 @@ class MainBrain(Brain):
             )
         )
 
+        # from strategy.tools import visualize_task_graph
+        # visualize_task_graph(strategy.runner.active[0])
+
         # --- MetaProg is insane (loop) --- #
         context = ShowGameContext(
             arena=self.arena,

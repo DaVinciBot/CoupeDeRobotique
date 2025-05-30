@@ -61,13 +61,6 @@ class DebugStrategy(BaseStrategy):
             go_to_backstage,
         )
 
-        # deploy_banner_subgraph.get_exits()[0].add_transition(
-        #     DirectTransition(first_pickup_subgraph.get_entry())
-        # )
-        # first_pickup_subgraph.get_exits()[0].add_transition(
-        #     DirectTransition(go_to_backstage)
-        # )
-
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
             logger=Logger(

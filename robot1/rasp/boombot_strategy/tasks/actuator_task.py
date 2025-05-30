@@ -92,6 +92,7 @@ class Build(BaseTask):
         return True
 
 class Deposit(BaseTask):
+
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.demagnetize_all()
         ctx.score += CONFIG.BUILD_ONE_FLOOR

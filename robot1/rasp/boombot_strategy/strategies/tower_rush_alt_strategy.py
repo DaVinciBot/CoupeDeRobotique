@@ -4,8 +4,6 @@
 # constructing structures, and finally moving to a backstage zone to complete the game.
 # It uses task subgraphs and direct transitions to sequence actions through a `GraphRunner`.
 
-import math
-
 # ====== Local Project Imports ======
 from loggerplusplus import Logger
 from strategy.core import (
@@ -21,15 +19,14 @@ from boombot_strategy.sub_graphs import (
     get_construct_subgraph,
     get_pickup_subgraph,
     get_banner_deployment_subgraph,
-    get_construct_one_floor_subgraph,
-    get_push_one_floor_to_wall_subgraph,
+    get_construct_one_floor_subgraph
 )
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
 
 
-class TowerRushStrategy(BaseStrategy):
+class TowerRushAltStrategy(BaseStrategy):
     """
     Defines the tower rush game strategy by sequencing multiple subgraphs:
     - Deploy banner
@@ -55,29 +52,52 @@ class TowerRushStrategy(BaseStrategy):
 
         # Step 3: Navigate to the first construction zone
         first_construct_subgraph = get_construct_subgraph(
-            self.zones["first_build_zone"], back_offset=13
+            self.zones["first_build_zone"], back_offset=5
         )
 
-        # Step 4:
-        second_pickup_subgraph = get_push_one_floor_to_wall_subgraph(
-            zone_id=self.zones["second_pickup_zone"],
-            push_distance=40,
-            new_theta=-math.pi,
+        # Step 4: Navigate to the second pickup zone
+        second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
+
+        # Step 5: Navigate to the second construction zone
+        second_construct_subgraph = get_construct_one_floor_subgraph(
+            self.zones["second_build_zone"], back_offset=15
         )
 
-        # Step 6: Move to the backstage zone to finish the game
+        # Step 6: Navigate to the second pickup zone
+        third_pickup_subgraph = get_pickup_subgraph(self.zones["third_pickup_zone"])
+
+        # Step 7: Navigate to the second construction zone
+        third_construct_subgraph = get_construct_one_floor_subgraph(
+            self.zones["first_build_zone"], back_offset=18
+        )
+
+        # Step 8 Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
             name="[End] Go to backstage",
             tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
         )
 
         # Connect the subgraphs in execution order
-        self._auto_build_transitions(
-            deploy_banner_subgraph,
-            first_pickup_subgraph,
-            first_construct_subgraph,
-            second_pickup_subgraph,
-            go_to_backstage,
+        deploy_banner_subgraph.get_exits()[0].add_transition(
+            DirectTransition(first_pickup_subgraph.get_entry())
+        )
+        first_pickup_subgraph.get_exits()[0].add_transition(
+            DirectTransition(first_construct_subgraph.get_entry())
+        )
+        first_construct_subgraph.get_exits()[0].add_transition(
+            DirectTransition(second_pickup_subgraph.get_entry())
+        )
+        second_pickup_subgraph.get_exits()[0].add_transition(
+            DirectTransition(second_construct_subgraph.get_entry())
+        )
+        second_construct_subgraph.get_exits()[0].add_transition(
+            DirectTransition(third_pickup_subgraph.get_entry())
+        )
+        third_pickup_subgraph.get_exits()[0].add_transition(
+            DirectTransition(third_construct_subgraph.get_entry())
+        )
+        third_construct_subgraph.get_exits()[0].add_transition(
+            DirectTransition(go_to_backstage)
         )
 
         # Create the graph runner starting from the first subgraph

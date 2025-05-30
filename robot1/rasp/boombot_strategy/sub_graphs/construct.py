@@ -4,6 +4,7 @@
 # navigation to the construction zone, a preparatory forward movement, actuator-based
 # item placement, and a final backward maneuver. Tasks are connected via direct transitions
 # and returned as a `BaseSubGraph` for integration into a larger strategy graph.
+import time
 
 # ====== Local Project Imports ======
 from strategy.core import (
@@ -96,7 +97,7 @@ def get_construct_one_floor_subgraph(zone_id: int, back_offset: int = 0) -> Base
             tasks=GoToColorReservedZoneToConstruct(zone_id),
         ),
     )
-
+    time.sleep(10)
     # Node: Move forward to prepare for placement
     node_prepare = f"[Construct_One_Floor] Position at zone {zone_id}"
     subgraph.add_node(

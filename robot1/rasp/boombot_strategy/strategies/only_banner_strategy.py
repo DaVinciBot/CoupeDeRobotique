@@ -53,9 +53,6 @@ class OnlyBannerStrategy(BaseStrategy):
 
         # Connect the subgraphs in execution order
         self._auto_build_transitions(deploy_banner_subgraph, go_to_backstage)
-        # deploy_banner_subgraph.get_exits()[0].add_transition(
-        #     DirectTransition(go_to_backstage)
-        # )
 
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
