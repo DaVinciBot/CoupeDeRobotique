@@ -20,8 +20,8 @@ from boombot_strategy.tasks.navigation_tasks import (
     SetOdometrie,
 )
 from boombot_strategy.tasks.actuator_task import (
+    DeplacementPosition,
     ReadyToApproachToPickUp,
-    PrepareToPickUp,
 )
 
 
@@ -57,10 +57,10 @@ def get_push_one_floor_to_wall_subgraph(
     builder = SubGraphBuilder()
 
     # 1) Ready to approach the zone
-    node_ready = f"[Push][Zone{zone_id}] ReadyToApproach"
+    node_ready = f"[Push][Zone{zone_id}] DeplacementPosition"
     builder.add_node(
         node_ready,
-        BaseTaskNode(name=node_ready, tasks=ReadyToApproachToPickUp()),
+        BaseTaskNode(name=node_ready, tasks=DeplacementPosition()),
     )
 
     # 2) Navigate to the target zone
@@ -74,7 +74,7 @@ def get_push_one_floor_to_wall_subgraph(
     node_prepare = f"[Push][Zone{zone_id}] PrepareForPush"
     builder.add_node(
         node_prepare,
-        BaseTaskNode(name=node_prepare, tasks=PrepareToPickUp()),
+        BaseTaskNode(name=node_prepare, tasks=ReadyToApproachToPickUp()),
     )
 
     # 4) Execute forward push
