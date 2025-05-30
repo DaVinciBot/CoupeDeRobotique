@@ -63,6 +63,7 @@ class RollingBasis(BaseComTeensy):
 
         # Initialize PID controllers from configuration
         self._initialize_pids()
+        time.sleep(0.01) # Avoid overload
 
     ####################################
     # Message Receiving Handlers       #

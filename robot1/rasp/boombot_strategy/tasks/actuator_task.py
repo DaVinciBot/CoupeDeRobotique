@@ -92,6 +92,14 @@ class Build(BaseTask):
         return True
 
 
+class Deposit(BaseTask):
+    def handle(self, ctx: ShowGameContext):
+        ctx.actuators.demagnetize_all()
+        ctx.score += CONFIG.BUILD_ONE_FLOOR
+        time.sleep(1)
+        return True
+
+
 class BlockBanner(BaseTask):
     """
     Task to activate the banner-blocking actuator.
