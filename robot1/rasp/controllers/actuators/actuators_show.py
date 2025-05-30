@@ -13,7 +13,7 @@ class Servo:
 
 @dataclass
 class ServoDocking(Servo):
-    special_angle: int = 0  # Angle for special movement such as docking
+    docking: int = 0  # Angle for special movement such as docking
 
 
 @dataclass
@@ -199,7 +199,7 @@ class ActuatorsShow(Actuators):
         This method ensures that the elevator is in a safe position before deploying the servo arm.
         """
         self.folded = False
-        self.docking()
+        self.docking([0, 2])
 
         for i in self.servos.keys():
             if i != 8:
@@ -247,22 +247,20 @@ class ActuatorsShow(Actuators):
                     max_angle=self.servos[pin].max_angle,
                 )
 
-    def docking(self):
+    def docking(self, pins: int | list[int]):
         """
         Moves the interior servos arms to the docking position.
         This method sets the interior servo arms to its docking position, which is used for docking purposes.
         """
-        if self._check_pin(0) and self._check_pin(2):
-            self.set_servo_angle(
-                0,
-                self.servos[0].special_angle,
-                max_angle=self.servos[0].max_angle,
-            )
-            self.set_servo_angle(
-                2,
-                self.servos[2].special_angle,
-                max_angle=self.servos[2].max_angle,
-            )
+        if isinstance(pins, int):
+            pins = [pins]
+        for pin in pins:
+            if self._check_pin(pin):
+                self.set_servo_angle(
+                    pin,
+                    self.servos[pin].docking,
+                    max_angle=self.servos[pin].max_angle,
+                )
 
     def deploy_banner(self):
         self.deploy([0, 2])
@@ -372,11 +370,13 @@ class ActuatorsShow(Actuators):
         Catch cans and plank
         """
         # Catch and raise cans and plank
-        self.fold(4)
-        self.fold(6)
         self.fold(9)
         time.sleep(2)
-        self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
+        self.docking(8)
+        time.sleep(2)
+        self.fold(4)
+        self.fold(6)
+        #self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
         time.sleep(0.5)
 
     def ready_to_approach_to_pickup(self):
@@ -385,8 +385,9 @@ class ActuatorsShow(Actuators):
         self.elevator_ticks = 0
         time.sleep(0.5)
         self.deploy_all_pickup()
-        self.set_servo_angle(8, angle=35, max_angle=270)
-        self.fold(9)
+        #self.set_servo_angle(8, angle=35, max_angle=270)
+        self.set_servo_angle(8, angle=self.servos[8].docking, max_angle = 270)
+        self.deploy(9)
 
     def prepare_to_pickup(self):
         self.magnetize_all()
