@@ -111,21 +111,21 @@ class MainBrain(Brain):
     def run(self) -> None:
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
-        rolling_basis = RollingBasisDummy(
+        rolling_basis = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
 
-        actuators = ActuatorsShowDummy(
+        actuators = ActuatorsShow(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
         )
 
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
-        # while not self.jack_plugged:  # wait until cable is plugged
-        #     time.sleep(0.1)
-        # actuators.block_banner()  # engage the banner blocker
-        # while not self.jack_triggered:  # wait for the trigger event
-        #     time.sleep(0.1)
+        while not self.jack_plugged:  # wait until cable is plugged
+            time.sleep(0.1)
+        actuators.block_banner()  # engage the banner blocker
+        while not self.jack_triggered:  # wait for the trigger event
+            time.sleep(0.1)
 
         # --- 3) Build the strategy --- #
         from boombot_strategy import ShowGameContext
