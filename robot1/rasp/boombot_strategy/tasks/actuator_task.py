@@ -46,7 +46,7 @@ class PrepareToPickUp(BaseTask):
         Returns:
             bool: Always returns True after executing the action and delay.
         """
-        ctx.actuators.prepare_to_pickup()
+        ctx.actuators.ready_to_pickup()
         time.sleep(1)
         return True
 
@@ -66,7 +66,7 @@ class PickUp(BaseTask):
         Returns:
             bool: Always returns True after executing the action and delay.
         """
-        ctx.actuators.pickup()
+        ctx.actuators.pick_up()
         time.sleep(1)
         return True
 
@@ -86,11 +86,10 @@ class Build(BaseTask):
         Returns:
             bool: Always returns True after executing the action and delay.
         """
-        ctx.actuators.build()
+        ctx.actuators.build_floors()
         ctx.score += CONFIG.BUILD_TWO_FLOORS
         time.sleep(1)
         return True
-
 
 class Deposit(BaseTask):
 

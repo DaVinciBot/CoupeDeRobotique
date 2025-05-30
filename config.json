@@ -185,9 +185,9 @@
         }
       },
       "elevator": {
-        "top_steps": 700,
+        "top_steps": 725,
         "folded_steps": 360,
-        "bottom_steps": 0,
+        "bottom_steps": 50,
         "speed": 2000
       },
       "delay": 0.02
