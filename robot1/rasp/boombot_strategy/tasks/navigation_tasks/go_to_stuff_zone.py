@@ -45,5 +45,5 @@ class GoToStuffZoneToPickUp(NavigationTask):
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
                 acs_distance=40, width_view=40
             ),
-            stabilization_delay=4,
+            stabilization_delay=5,
         )
