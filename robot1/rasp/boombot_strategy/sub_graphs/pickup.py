@@ -19,9 +19,12 @@ from strategy.core import (
 )
 
 # ====== Internal Project Imports ======
+from boombot_strategy.show_game_context import ShowGameContext
+
 from boombot_strategy.tasks.navigation_tasks import (
     RelativeForward,
     GoToStuffZoneToPickUp,
+    GoCentroidOfZone,
 )
 from boombot_strategy.tasks.actuator_task import (
     ReadyToApproachToPickUp,
@@ -30,7 +33,7 @@ from boombot_strategy.tasks.actuator_task import (
 )
 
 
-def get_pickup_subgraph(pickup_zone_id: int, forward_distance: int) -> BaseSubGraph:
+def get_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
     """
     Build a subgraph that defines the sequence of tasks for picking up an object at a specified zone.
 
@@ -49,50 +52,35 @@ def get_pickup_subgraph(pickup_zone_id: int, forward_distance: int) -> BaseSubGr
     node_ready = f"[Pickup] Ready to approach zone {pickup_zone_id}"
     subgraph.add_node(
         node_ready,
-        BaseTaskNode(
-            name=node_ready,
-            tasks=ReadyToApproachToPickUp()
-        ),
+        BaseTaskNode(name=node_ready, tasks=ReadyToApproachToPickUp()),
     )
 
     # Node: Navigate to the pickup zone
     node_navigate = f"[Pickup] Navigate to zone {pickup_zone_id}"
     subgraph.add_node(
         node_navigate,
-        BaseTaskNode(
-            name=node_navigate,
-            tasks=GoToStuffZoneToPickUp(pickup_zone_id)
-        ),
+        BaseTaskNode(name=node_navigate, tasks=GoToStuffZoneToPickUp(pickup_zone_id)),
     )
 
     # Node: Prepare to pick up the item
     node_prepare = f"[Pickup] Prepare to pick up at zone {pickup_zone_id}"
     subgraph.add_node(
         node_prepare,
-        BaseTaskNode(
-            name=node_prepare,
-            tasks=PrepareToPickUp()
-        ),
+        BaseTaskNode(name=node_prepare, tasks=PrepareToPickUp()),
     )
 
     # Node: Move forward to the pickup point
     node_forward = f"[Pickup] Advance to pickup point at zone {pickup_zone_id}"
     subgraph.add_node(
         node_forward,
-        BaseTaskNode(
-            name=node_forward,
-            tasks=RelativeForward(forward_distance)
-        ),
+        BaseTaskNode(name=node_forward, tasks=GoCentroidOfZone(pickup_zone_id)),
     )
 
     # Node: Execute the pickup
     node_pickup = f"[Pickup] Pick up item at zone {pickup_zone_id}"
     subgraph.add_node(
         node_pickup,
-        BaseTaskNode(
-            name=node_pickup,
-            tasks=PickUp()
-        ),
+        BaseTaskNode(name=node_pickup, tasks=PickUp()),
     )
 
     # Define transitions between nodes
