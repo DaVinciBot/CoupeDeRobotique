@@ -153,7 +153,7 @@
         },
         "4": {
           "fold_angle": 10,
-          "deploy_angle": 110,
+          "deploy_angle": 100,
           "max_angle": 270
         },
         "5": {
@@ -163,7 +163,7 @@
         },
         "6": {
           "fold_angle": 250,
-          "deploy_angle": 160,
+          "deploy_angle": 155,
           "max_angle": 270
         },
         "7": {
