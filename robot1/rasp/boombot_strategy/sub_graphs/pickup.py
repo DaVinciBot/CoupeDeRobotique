@@ -25,6 +25,7 @@ from boombot_strategy.tasks.navigation_tasks import (
     RelativeForward,
     GoToStuffZoneToPickUp,
     GoCentroidOfZone,
+    RelativeBackward
 )
 from boombot_strategy.tasks.actuator_task import (
     ReadyToApproachToPickUp,
@@ -83,14 +84,22 @@ def get_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
         BaseTaskNode(name=node_pickup, tasks=PickUp()),
     )
 
+    # Node: extract from pickup zone
+    node_extract = f"[Pickup] Extract from zone {pickup_zone_id}"
+    subgraph.add_node(
+        node_extract,
+        BaseTaskNode(name=node_extract, tasks=RelativeBackward(20)),
+    )
+
     # Define transitions between nodes
     subgraph.connect(node_ready, DirectTransition(subgraph.nodes[node_navigate]))
     subgraph.connect(node_navigate, DirectTransition(subgraph.nodes[node_prepare]))
     subgraph.connect(node_prepare, DirectTransition(subgraph.nodes[node_forward]))
     subgraph.connect(node_forward, DirectTransition(subgraph.nodes[node_pickup]))
+    subgraph.connect(node_pickup, DirectTransition(subgraph.nodes[node_extract]))
 
     # Return the finalized subgraph with defined entry and exit nodes
     return subgraph.build(
         entry=node_ready,
-        exits=node_pickup,
+        exits=node_extract,
     )
