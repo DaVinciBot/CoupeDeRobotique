@@ -16,7 +16,7 @@ from strategy.core import (
 # ====== Internal Project Imports ======
 from config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward
-from boombot_strategy.tasks.actuator_task import BlockBanner, ReadyToApproachToPickUp
+from boombot_strategy.tasks.actuator_task import BlockBanner, ReadyToApproachToPickUp, DeplacementPosition
 
 
 def get_banner_deployment_subgraph() -> BaseSubGraph:
@@ -71,6 +71,16 @@ def get_banner_deployment_subgraph() -> BaseSubGraph:
         ),
     )
 
+    # Node: Deplacement position
+    node_deplacement_position = "[Banner Deployment] Deplacement position"
+    subgraph.add_node(
+        node_deplacement_position,
+        BaseTaskNode(
+            name=node_deplacement_position,
+            tasks=DeplacementPosition(),
+        ),
+    )
+
     # Transitions between nodes to form a linear task flow
     subgraph.connect(
         node_block_banner,
@@ -84,9 +94,13 @@ def get_banner_deployment_subgraph() -> BaseSubGraph:
         node_unblock_banner,
         DirectTransition(subgraph.nodes[node_backward_to_extract]),
     )
+    subgraph.connect(
+        node_backward_to_extract,
+        DirectTransition(subgraph.nodes[node_deplacement_position]),
+    )
 
     # Return the completed subgraph with specified entry and exit nodes
     return subgraph.build(
         entry=node_block_banner,
-        exits=node_backward_to_extract,
+        exits=node_deplacement_position,
     )
