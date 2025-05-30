@@ -136,13 +136,19 @@ class MainBrain(Brain):
 
         strategy = BasicStrategy(
             ShowGameContext(
-                arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+                arena=self.arena,
+                rolling_basis=rolling_basis,
+                actuators=actuators,
+                score=self.score,
             )
         )
 
         # --- MetaProg is insane (loop) --- #
         context = ShowGameContext(
-            arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
+            arena=self.arena,
+            rolling_basis=rolling_basis,
+            actuators=actuators,
+            score=self.score,
         )
 
         strategy.runner.handle(context)
@@ -198,7 +204,7 @@ class MainBrain(Brain):
         # --- MetaProg is insane (loop) --- #
         current_state = self.ui_state.copy()
         current_state["jack_state"] = not self.jack_triggered
-        # current_state["score"] = self.ctx.score if self.ctx else 0
+        current_state["score"] = self.score
         if current_state != previous_state:
             previous_state = current_state
             to_send = {
