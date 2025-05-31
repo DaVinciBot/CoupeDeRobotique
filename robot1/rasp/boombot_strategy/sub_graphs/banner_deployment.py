@@ -86,9 +86,9 @@ def get_banner_deployment_subgraph() -> BaseSubGraph:
 
     # Define task transitions in order
     builder.connect(node_lock, DirectTransition(builder.nodes[node_advance]))
-    builder.connect(node_advance, DirectTransition(builder.nodes[node_reset]))
-    builder.connect(node_reset, DirectTransition(builder.nodes[node_release]))
-    builder.connect(node_release, DirectTransition(builder.nodes[node_retract]))
+    builder.connect(node_advance, DirectTransition(builder.nodes[node_release]))
+    builder.connect(node_release, DirectTransition(builder.nodes[node_reset]))
+    builder.connect(node_reset, DirectTransition(builder.nodes[node_retract]))
 
     # Build and return the subgraph
     return builder.build(
