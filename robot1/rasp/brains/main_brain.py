@@ -132,9 +132,9 @@ class MainBrain(Brain):
 
         # --- 3) Build the strategy --- #
         from boombot_strategy import ShowGameContext
-        from boombot_strategy.strategies import BasicStrategy, TowerRushStrategy
+        from boombot_strategy.strategies import BasicStrategy, TowerRushStrategy, OnlyBannerStrategy
 
-        strategy = TowerRushStrategy(
+        strategy = OnlyBannerStrategy(
             ShowGameContext(
                 arena=self.arena,
                 rolling_basis=rolling_basis,
