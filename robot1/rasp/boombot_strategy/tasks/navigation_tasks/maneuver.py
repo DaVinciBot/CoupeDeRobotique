@@ -42,7 +42,7 @@ class RelativeBackward(NavigationTask):
             path_planner_params=DeltaPathPlannerParams(distance=-distance),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(
                 direction=Direction.BACKWARD,
-                respect_goal_orientation=False
+                respect_goal_orientation=True
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
