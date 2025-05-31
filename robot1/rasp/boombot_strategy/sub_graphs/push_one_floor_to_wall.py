@@ -22,7 +22,7 @@ from boombot_strategy.tasks.navigation_tasks import (
 from boombot_strategy.tasks.actuator_task import (
     DeplacementPosition,
     ReadyToApproachToPickUp,
-Build
+Build, DeplacementObject
 )
 
 
@@ -85,6 +85,12 @@ def get_push_one_floor_to_wall_subgraph(
         BaseTaskNode(name=node_push, tasks=RelativeForward(push_distance)),
     )
 
+    node_deplacment = f"[Pickup] Pnode_deplacment"
+    builder.add_node(
+        node_deplacment,
+        BaseTaskNode(name=node_deplacment, tasks=DeplacementObject()),
+    )
+
     # 5) Optional odometry reset
     if odometrie_to_reset:
         node_reset = f"[Push][Zone{zone_id}] ResetOdometry"
@@ -124,9 +130,11 @@ def get_push_one_floor_to_wall_subgraph(
 
     if odometrie_to_reset:
         builder.connect(node_push, DirectTransition(builder.nodes[node_reset]))
-        builder.connect(node_reset, DirectTransition(builder.nodes[node_build]))
+        builder.connect(node_reset, DirectTransition(builder.nodes[node_deplacment]))
+        builder.connect(node_deplacment, DirectTransition(builder.nodes[node_build]))
     else:
-        builder.connect(node_push, DirectTransition(builder.nodes[node_build]))
+        builder.connect(node_push, DirectTransition(builder.nodes[node_deplacment]))
+        builder.connect(node_deplacment, DirectTransition(builder.nodes[node_build]))
 
     builder.connect(node_build, DirectTransition(builder.nodes[node_retract]))
     builder.connect(node_retract, DirectTransition(builder.nodes[node_position_after_push]))
