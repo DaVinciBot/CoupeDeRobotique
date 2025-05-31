@@ -39,7 +39,9 @@ class GoToStuffZoneToPickUp(NavigationTask):
         super().__init__(
             goal=stuff_zone_id,
             path_planner_params=BasicPathPlannerParams(),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(
+                step_sleep_delay=1
+            ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,  # Use for pickup speed profiler
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
