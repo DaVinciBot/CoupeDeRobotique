@@ -310,7 +310,7 @@ class MainBrain(Brain):
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
-            self.arena.team_color, start_position, Point(300, 200)
+            self.arena.team_color, start_position, Point(150, 200)
         )
         self.arena.update(
             ally_position=start_position,
