@@ -110,6 +110,13 @@ def get_push_one_floor_to_wall_subgraph(
         BaseTaskNode(name=node_retract, tasks=RelativeBackward(50)),
     )
 
+    # 7) Retract after push
+    node_position_after_push = f"[Push][Zone{zone_id}] deplacement positiopn after push"
+    builder.add_node(
+        node_position_after_push,
+        BaseTaskNode(name=node_position_after_push, tasks=DeplacementPosition()),
+    )
+
     # Define transitions between tasks
     builder.connect(node_ready, DirectTransition(builder.nodes[node_navigate]))
     builder.connect(node_navigate, DirectTransition(builder.nodes[node_prepare]))
@@ -122,9 +129,10 @@ def get_push_one_floor_to_wall_subgraph(
         builder.connect(node_push, DirectTransition(builder.nodes[node_build]))
 
     builder.connect(node_build, DirectTransition(builder.nodes[node_retract]))
+    builder.connect(node_retract, DirectTransition(builder.nodes[node_position_after_push]))
 
     # Build and return the final subgraph
     return builder.build(
         entry=node_ready,
-        exits=node_retract,
+        exits=node_position_after_push,
     )
