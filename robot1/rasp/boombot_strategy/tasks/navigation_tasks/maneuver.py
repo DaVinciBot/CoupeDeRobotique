@@ -47,7 +47,7 @@ class RelativeBackward(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
-            stabilization_delay=3,  # Delay to stabilize after moving backward
+            stabilization_delay=1,  # Delay to stabilize after moving backward
             timeout=20
         )
 
@@ -84,7 +84,9 @@ class GoCentroidOfZone(NavigationTask):
         super().__init__(
             goal=zone_id,
             path_planner_params=BasicPathPlannerParams(),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(
+                step_sleep_delay=2
+            ),
             speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
