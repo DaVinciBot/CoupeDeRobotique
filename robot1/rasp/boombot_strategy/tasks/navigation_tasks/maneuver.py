@@ -48,6 +48,7 @@ class RelativeBackward(NavigationTask):
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
             stabilization_delay=3,  # Delay to stabilize after moving backward
+            timeout=20
         )
 
 
