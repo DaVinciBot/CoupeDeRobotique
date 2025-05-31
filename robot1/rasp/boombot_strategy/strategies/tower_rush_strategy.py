@@ -61,8 +61,8 @@ class TowerRushStrategy(BaseStrategy):
         # Step 4:
         second_pickup_subgraph = get_push_one_floor_to_wall_subgraph(
             zone_id=self.zones["second_pickup_zone"],
-            push_distance=40,
-            new_theta=-math.pi,
+            push_distance=30,
+
         )
 
         # Step 6: Move to the backstage zone to finish the game
