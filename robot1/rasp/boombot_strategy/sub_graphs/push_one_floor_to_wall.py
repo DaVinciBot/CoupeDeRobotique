@@ -22,6 +22,7 @@ from boombot_strategy.tasks.navigation_tasks import (
 from boombot_strategy.tasks.actuator_task import (
     DeplacementPosition,
     ReadyToApproachToPickUp,
+Build
 )
 
 
@@ -95,6 +96,13 @@ def get_push_one_floor_to_wall_subgraph(
             ),
         )
 
+    # 5) Build
+    node_build = f"[Push][Zone{zone_id}] Build mm"
+    builder.add_node(
+        node_build,
+        BaseTaskNode(name=node_build, tasks=Build()),
+    )
+
     # 6) Retract after push
     node_retract = f"[Push][Zone{zone_id}] RetractAfterPush"
     builder.add_node(
@@ -109,9 +117,11 @@ def get_push_one_floor_to_wall_subgraph(
 
     if odometrie_to_reset:
         builder.connect(node_push, DirectTransition(builder.nodes[node_reset]))
-        builder.connect(node_reset, DirectTransition(builder.nodes[node_retract]))
+        builder.connect(node_reset, DirectTransition(builder.nodes[node_build]))
     else:
-        builder.connect(node_push, DirectTransition(builder.nodes[node_retract]))
+        builder.connect(node_push, DirectTransition(builder.nodes[node_build]))
+
+    builder.connect(node_build, DirectTransition(builder.nodes[node_retract]))
 
     # Build and return the final subgraph
     return builder.build(
