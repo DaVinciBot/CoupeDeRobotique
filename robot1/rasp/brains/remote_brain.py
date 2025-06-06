@@ -21,8 +21,6 @@ import random
 # Import from local path
 from controllers import RollingBasis, RollingBasisDummy
 
-from path_finding import PathFinder
-from arena import ShowArena
 from controllers.rolling_basis import (
     RollingBasis,
     RollingBasisDummy
