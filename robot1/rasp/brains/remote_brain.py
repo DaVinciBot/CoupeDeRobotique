@@ -74,7 +74,6 @@ class RemoteBrain(Brain):
         process=False,
         run_on_start=True,
         refresh_rate=0.1,
-        get_is_active_brain=lambda self: self.is_active,
     )
     async def handle_ps5_remote(self):
         self.remote.update()
@@ -88,7 +87,6 @@ class RemoteBrain(Brain):
         process=False,
         run_on_start=CONFIG.ZOMBIE_MODE,
         refresh_rate=0.5,
-        get_is_active_brain=lambda self: self.is_active,
     )
     async def zombie_mode(self):
         """
