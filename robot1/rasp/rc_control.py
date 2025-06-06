@@ -88,7 +88,7 @@ if __name__ == "__main" :
         ),
     )
 
-for routine in brain.get_tasks():
-    ws_server.add_background_task(routine)
+    for routine in brain.get_tasks():
+        ws_server.add_background_task(routine)
 
-ws_server.run()
+    ws_server.run()
