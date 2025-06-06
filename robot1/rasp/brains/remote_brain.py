@@ -5,7 +5,7 @@ import asyncio
 import time
 
 # Import from common
-from brains import Brain
+from brains.main_brain import Brain
 
 from ws_comms import WSmsg, WSclientRouteManager, WServerRouteManager
 from geometry import OrientedPoint, Point, distance, Polygon, MultiPoint
