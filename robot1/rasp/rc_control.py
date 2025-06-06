@@ -74,18 +74,9 @@ if __name__ == "__main" :
     brain = RemoteBrain(
         logger=logger_brain,
         rolling_basis=RollingBasis(),
-        lidar=Lidar(
-            logger=Logger(identifier="Lidar"),
-            min_angle=CONFIG.LIDAR_MIN_ANGLE,
-            max_angle=CONFIG.LIDAR_MAX_ANGLE,
-            unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
-            unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
-            min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
-        ),
+        lidar=lidar,
         remote=PS5Remote(),
-        ws_cmd=WServerRouteManager(
-            WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
-        ),
+        ws_cmd=ws_cmd,
     )
 
     for routine in brain.get_tasks():
