@@ -6,15 +6,15 @@
  */
 
 #include <Arduino.h>
-#include <pid.h>
 #include <motors_driver.h>
+#include <pid.h>
 #include "structures.h"
 
-#include <com.h> // Communication object to manage the communication between the teensy and the Raspberry Pi
 
-class Rolling_Basis
-{
-public:
+#include <com.h>  // Communication object to manage the communication between the teensy and the Raspberry Pi
+
+class Rolling_Basis {
+   public:
     // PID controllers
     PID linear_distance_pid;
     PID angular_distance_pid;
@@ -22,7 +22,9 @@ public:
     // Rolling basis's params
     inline double radius() { return this->center_distance / 2.0; };
     inline double wheel_perimeter() { return this->wheel_diameter * PI; };
-    inline double wheel_unit_tick_cm() { return this->wheel_perimeter() / this->encoder_resolution; };
+    inline double wheel_unit_tick_cm() {
+        return this->wheel_perimeter() / this->encoder_resolution;
+    };
 
     // Properties
     /**
@@ -33,8 +35,8 @@ public:
     Point get_current_position();
 
     // Rolling basis's motors
-    Motor *right_motor;
-    Motor *left_motor;
+    Motor* right_motor;
+    Motor* left_motor;
 
     // Odometrie
     double X = 0.0f;
@@ -52,10 +54,11 @@ public:
      *
      * Initializes the parameters of the Rolling Basis
      */
-    Rolling_Basis(
-        unsigned short encoder_resolution, double center_distance, double wheel_diameter,
-        const PID &linear_distance_pid, const PID &angular_distance_pid
-    );
+    Rolling_Basis(unsigned short encoder_resolution,
+                  double center_distance,
+                  double wheel_diameter,
+                  const PID& linear_distance_pid,
+                  const PID& angular_distance_pid);
 
     /**
      * @brief Destructor of Rolling Basis class
@@ -64,13 +67,25 @@ public:
 
     // Inits function
     /**
-     * @brief Define right motor with pins, related encoders pin and properties of the wheel attached to the motor.
+     * @brief Define right motor with pins, related encoders pin and properties
+     * of the wheel attached to the motor.
      */
-    void define_right_motor(byte enca, byte encb, byte pwm, byte in2, byte in1, byte max_pwm);
+    void define_right_motor(byte enca,
+                            byte encb,
+                            byte pwm,
+                            byte in2,
+                            byte in1,
+                            byte max_pwm);
     /**
-     * @brief Define left motor with pins, related encoders pin and properties of the wheel attached to the motor.
+     * @brief Define left motor with pins, related encoders pin and properties
+     * of the wheel attached to the motor.
      */
-    void define_left_motor(byte enca, byte encb, byte pwm, byte in2, byte in1, byte max_pwm);
+    void define_left_motor(byte enca,
+                           byte encb,
+                           byte pwm,
+                           byte in2,
+                           byte in1,
+                           byte max_pwm);
     /**
      * @brief Initialize both motors
      */
@@ -95,9 +110,7 @@ public:
      * Compute the distance and orientation error in terms of position.A0
      * Compute the PID and set the motors new command.
      */
-    void handle(
-        Point target_position, Com *com
-    );
+    void handle(Point target_position, Com* com);
 
     void pi_mod_signed(double theta);
 

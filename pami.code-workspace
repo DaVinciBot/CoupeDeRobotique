@@ -16,7 +16,22 @@
 			"array": "cpp",
 			"string_view": "cpp",
 			"initializer_list": "cpp",
-			"utility": "cpp"
+			"utility": "cpp",
+			"cmath": "cpp",
+			"limits": "cpp",
+			"chrono": "cpp",
+			"algorithm": "cpp",
+			"deque": "cpp",
+			"list": "cpp",
+			"string": "cpp",
+			"unordered_map": "cpp",
+			"unordered_set": "cpp",
+			"vector": "cpp",
+			"memory": "cpp",
+			"random": "cpp",
+			"regex": "cpp",
+			"bitset": "cpp",
+			"optional": "cpp"
 		}
 	},
 	"extensions": {
