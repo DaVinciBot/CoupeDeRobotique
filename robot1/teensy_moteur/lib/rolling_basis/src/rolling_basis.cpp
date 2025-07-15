@@ -9,7 +9,6 @@
 #include <rolling_basis.h>
 #include <util/atomic.h>
 
-
 double normalizeAngle(double theta) {
     // shift by +PI, take modulo 2*PI, remap to [0,2*PI)
     theta = fmodf(theta + PI, 2.0f * PI);

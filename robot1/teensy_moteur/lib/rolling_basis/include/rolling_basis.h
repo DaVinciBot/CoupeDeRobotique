@@ -10,7 +10,6 @@
 #include <pid.h>
 #include "structures.h"
 
-
 #include <com.h>  // Communication object to manage the communication between the teensy and the Raspberry Pi
 
 class Rolling_Basis {
