@@ -12,21 +12,18 @@
 // 1. Instanciate the Rolling Basis object
 // a. Define the PID controllers
 PID linear_distance_pid(
-  KP_LINEAR_DISTANCE, KI_LINEAR_DISTANCE, KD_LINEAR_DISTANCE,
-  -240, 240, 
-  5.0
-);
+    KP_LINEAR_DISTANCE, KI_LINEAR_DISTANCE, KD_LINEAR_DISTANCE,
+    -240, 240,
+    5.0);
 PID angular_distance_pid(
-  KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DISTANCE, 
-  -200, 200, 
-  2.0
-);
+    KP_ANGULAR_DISTANCE, KI_ANGULAR_DISTANCE, KD_ANGULAR_DISTANCE,
+    -200, 200,
+    2.0);
 
 // b. Instanciate the Rolling Basis object
 Rolling_Basis *rolling_basis_ptr = new Rolling_Basis(
-  ENCODER_RESOLUTION, ENTRAXE, WHEEL_DIAMETER,
-  linear_distance_pid, angular_distance_pid
-);
+    ENCODER_RESOLUTION, ENTRAXE, WHEEL_DIAMETER,
+    linear_distance_pid, angular_distance_pid);
 
 // 2. Instanciate the Communication object
 Com *com;
@@ -56,7 +53,7 @@ Point target_position(START_X, START_Y, START_THETA);
 // b. define the callback functions
 void set_target_position(byte *msg, byte size)
 {
-  msg_set_target_position *target_position_msg = ( msg_set_target_position* )msg;
+  msg_set_target_position *target_position_msg = (msg_set_target_position *)msg;
 
   // Update position
   target_position.x = target_position_msg->target_position_x;
@@ -94,7 +91,7 @@ void set_odometrie(byte *msg, byte size)
   rolling_basis_ptr->X = odometrie->x;
   rolling_basis_ptr->Y = odometrie->y;
   rolling_basis_ptr->THETA = odometrie->theta;
-  
+
   // Update target position: avoid the usage of old stored target point
   target_position.x = odometrie->x;
   target_position.y = odometrie->y;
