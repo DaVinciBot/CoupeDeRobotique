@@ -4,28 +4,25 @@
 # constructing structures, and finally moving to a backstage zone to complete the game.
 # It uses task subgraphs and direct transitions to sequence actions through a `GraphRunner`.
 
-import math
-
-# ====== Local Project Imports ======
-from loggerplusplus import Logger
-from strategy.core import (
-    BaseTaskNode,
-    DirectTransition,
-    GraphRunner,
-)
 
 # ====== Internal Project Imports ======
 from boombot_strategy import ShowGameContext
 from boombot_strategy.strategies.base_strategy import BaseStrategy
 from boombot_strategy.sub_graphs import (
+    get_banner_deployment_subgraph,
     get_construct_subgraph,
     get_pickup_subgraph,
-    get_banner_deployment_subgraph,
-    get_construct_one_floor_subgraph,
     get_push_one_floor_to_wall_subgraph,
 )
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
+)
+
+# ====== Local Project Imports ======
+from loggerplusplus import Logger
+from strategy.core import (
+    BaseTaskNode,
+    GraphRunner,
 )
 
 
@@ -61,8 +58,7 @@ class TowerRushStrategy(BaseStrategy):
         # Step 4:
         second_pickup_subgraph = get_push_one_floor_to_wall_subgraph(
             zone_id=self.zones["second_pickup_zone"],
-            push_distance=25,
-
+            push_distance=30,
         )
 
         # Step 6: Move to the backstage zone to finish the game

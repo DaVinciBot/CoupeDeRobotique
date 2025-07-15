@@ -132,9 +132,9 @@ class MainBrain(Brain):
 
         # --- 3) Build the strategy --- #
         from boombot_strategy import ShowGameContext
-        from boombot_strategy.strategies import BasicStrategy, TowerRushStrategy
+        from boombot_strategy.strategies import BasicStrategy, TowerRushStrategy, OnlyBannerStrategy
 
-        strategy = TowerRushStrategy(
+        strategy = OnlyBannerStrategy(
             ShowGameContext(
                 arena=self.arena,
                 rolling_basis=rolling_basis,
@@ -310,7 +310,7 @@ class MainBrain(Brain):
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
-            self.arena.team_color, start_position, Point(300, 200)
+            self.arena.team_color, start_position, Point(150, 200)
         )
         self.arena.update(
             ally_position=start_position,
