@@ -20,8 +20,7 @@ from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 
 # ====== Forbidden Zone Class ======
 class ForbiddenZone(BaseArenaZone):
-    """
-    Zone that is strictly forbidden.
+    """Zone that is strictly forbidden.
 
     Attributes:
         logger (Logger): Logger instance for logging messages.
@@ -41,8 +40,7 @@ class ForbiddenZone(BaseArenaZone):
         buffered_polygon: Polygon = None,
         update_callback: callable = None,
     ) -> None:
-        """
-        Initializes a ForbiddenZone with the specified parameters.
+        """Initializes a ForbiddenZone with the specified parameters.
 
         Args:
             logger (Logger): Logger instance for logging messages.

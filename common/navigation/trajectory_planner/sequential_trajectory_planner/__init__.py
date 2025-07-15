@@ -4,3 +4,8 @@ from navigation.trajectory_planner.sequential_trajectory_planner.sequential_traj
 from navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params import (
     SequentialTrajectoryPlannerParams,
 )
+
+__all__ = [
+    "SequentialTrajectoryPlanner",
+    "SequentialTrajectoryPlannerParams",
+]

@@ -49,11 +49,6 @@ class BaseStrategy(ABC):
         if not elements:
             self.logger.error("No elements provided for building the strategy.")
             return False
-        if not all(isinstance(el, (BaseTaskNode, BaseSubGraph)) for el in elements):
-            self.logger.error(
-                "All elements must be of type BaseTaskNode or BaseSubGraph."
-            )
-            return False
 
         # Resolve entry and exit points for each element
         entry_points = [self._resolve_for_entry(el) for el in elements]

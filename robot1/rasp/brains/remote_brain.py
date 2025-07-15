@@ -21,10 +21,7 @@ import random
 # Import from local path
 from controllers import RollingBasis, RollingBasisDummy
 
-from controllers.rolling_basis import (
-    RollingBasis,
-    RollingBasisDummy
-)
+from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from sensors import Lidar, LidarDummy
 from remote.remote import PS5Remote
 

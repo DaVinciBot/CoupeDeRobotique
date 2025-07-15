@@ -370,9 +370,9 @@ class ActuatorsShow(Actuators):
         time.sleep(1)
         self.fold(4)
         self.fold(6)
-        #self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
+        # self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
         time.sleep(0.5)
-        
+
     def deplacement_object(self):
         """
         Catch cans and plank
@@ -388,8 +388,8 @@ class ActuatorsShow(Actuators):
         self.elevator_ticks = 0
         time.sleep(0.5)
         self.deploy_all_pickup()
-        #self.set_servo_angle(8, angle=35, max_angle=270)
-        self.set_servo_angle(8, angle=self.servos[8].docking, max_angle = 270)
+        # self.set_servo_angle(8, angle=35, max_angle=270)
+        self.set_servo_angle(8, angle=self.servos[8].docking, max_angle=270)
         self.deploy(9)
 
     def pickup_planck(self):
@@ -398,6 +398,7 @@ class ActuatorsShow(Actuators):
             self.deploy(8)
             time.sleep(0.3)
             self.fold(9)
+
         _pickup()
         time.sleep(0.2)
         _pickup()

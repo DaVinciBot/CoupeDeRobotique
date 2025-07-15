@@ -21,8 +21,7 @@ from arena.base_arena.team_color import TeamColor
 
 # ====== Base Zone Class ======
 class BaseArenaZone(ABC):
-    """
-    Represents a zone within an arena with attributes for geometry, type, color, and navigability.
+    """Represents a zone within an arena with attributes for geometry, type, color, and navigability.
 
     Attributes:
         polygon (Polygon): The geometric shape of the zone.
@@ -48,8 +47,7 @@ class BaseArenaZone(ABC):
         go_to_positions: list[OrientedPoint | Point] = None,
         uid: int = None,
     ) -> None:
-        """
-        Initializes the BaseArenaZone with geometry, type, color, and accessibility.
+        """Initializes the BaseArenaZone with geometry, type, color, and accessibility.
 
         Args:
             logger (Logger): Logger instance for logging messages.
@@ -101,8 +99,7 @@ class BaseArenaZone(ABC):
 
     @staticmethod
     def add_buffer_to_zone(polygon: Polygon, buffer: float) -> Polygon:
-        """
-        Adds a buffer around a zone to account for obstacle or border spacing.
+        """Adds a buffer around a zone to account for obstacle or border spacing.
         The buffer uses a square cap style to match the grid structure.
 
         Args:
@@ -113,14 +110,15 @@ class BaseArenaZone(ABC):
             Polygon: The buffered polygon.
         """
         return polygon.buffer(
-            buffer, cap_style=BufferCapStyle.flat, join_style=BufferJoinStyle.mitre
+            buffer,
+            cap_style=BufferCapStyle.flat,
+            join_style=BufferJoinStyle.mitre,
         )
 
     """ Accessibility methods """
 
     def is_accessible(self, team_color: TeamColor = TeamColor.UNDEFINED) -> bool:
-        """
-        Determines if the zone is accessible for a given team color.
+        """Determines if the zone is accessible for a given team color.
 
         Args:
             team_color (TeamColor, optional): The color of the team.
@@ -134,10 +132,10 @@ class BaseArenaZone(ABC):
         ]
 
     def is_accessible_for_emergency(
-        self, team_color: TeamColor = TeamColor.UNDEFINED
+        self,
+        team_color: TeamColor = TeamColor.UNDEFINED,
     ) -> bool:
-        """
-        Determines if the zone is accessible in an emergency.
+        """Determines if the zone is accessible in an emergency.
 
         Args:
             team_color (TeamColor, optional): The color of the team.
@@ -148,10 +146,11 @@ class BaseArenaZone(ABC):
         return self.accessibility != ZoneAccessibility.FORBIDDEN
 
     def get_go_to_position(
-        self, ally_position: OrientedPoint, team_color: TeamColor
+        self,
+        ally_position: OrientedPoint,
+        team_color: TeamColor,
     ) -> OrientedPoint | None:
-        """
-        Determines the best go-to position for an ally in the given zone.
+        """Determines the best go-to position for an ally in the given zone.
 
         Args:
             ally_position (OrientedPoint): The position of the ally.
@@ -162,7 +161,7 @@ class BaseArenaZone(ABC):
         """
         if not self.is_accessible(team_color):
             self.logger.debug(
-                f"GoTo position request: Zone {self.zone_type} is not accessible."
+                f"GoTo position request: Zone {self.zone_type} is not accessible.",
             )
             return None
 
@@ -170,16 +169,17 @@ class BaseArenaZone(ABC):
         if not self.go_to_positions:
             self.logger.debug(
                 f"GoTo position request: No defined go-to positions for zone {self.zone_type}, "
-                f"returning centroid [{self.polygon.centroid}]"
+                f"returning centroid [{self.polygon.centroid}]",
             )
             return self.polygon.centroid
 
         # Find the nearest go-to position to the ally
         nearest_position = min(
-            self.go_to_positions, key=lambda p: ally_position.distance(p)
+            self.go_to_positions,
+            key=lambda p: ally_position.distance(p),
         )
         self.logger.debug(
-            f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]"
+            f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]",
         )
         return nearest_position
 
@@ -191,15 +191,13 @@ class BaseArenaZone(ABC):
         ally_position: Point | OrientedPoint,
         enemy_position: Point | OrientedPoint,
     ) -> None:
-        """
-        Update the zone based on the positions of allies and enemies.
+        """Update the zone based on the positions of allies and enemies.
 
         Args:
             team_color (TeamColor): The color of the team.
             ally_position (Point | OrientedPoint): Position of ally.
             enemy_position (Point | OrientedPoint): Position of enemy.
         """
-
         # Update visit counts
         # if self.polygon.contains(enemy_position):  # Don't consider the buffer
         #     self.enemy_visits += 1

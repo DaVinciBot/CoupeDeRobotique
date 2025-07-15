@@ -11,19 +11,19 @@
 # Third-party imports
 from loggerplusplus import Logger
 
-# Local imports
-from geometry import Point, OrientedPoint, create_straight_rectangle
+from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 
 # Internal project imports
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
-from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 from arena.base_arena.team_color import TeamColor
+
+# Local imports
+from geometry import OrientedPoint, Point, create_straight_rectangle
 
 
 # ====== Ally Zone Class ======
 class AllyZone(BaseArenaZone):
-    """
-    Zone designated for allies, dynamically updated based on their position.
+    """Zone designated for allies, dynamically updated based on their position.
 
     Attributes:
         logger (Logger): Logger instance for logging messages.
@@ -38,8 +38,7 @@ class AllyZone(BaseArenaZone):
         point: OrientedPoint,
         robot_size: float = 2,  # Assume the robot is a square 2/2 = 1 side length
     ) -> None:
-        """
-        Initializes the AllyZone with position, size, and accessibility.
+        """Initializes the AllyZone with position, size, and accessibility.
 
         Args:
             logger (Logger): Logger instance for logging messages.
@@ -70,8 +69,7 @@ class AllyZone(BaseArenaZone):
         ally_position: Point | OrientedPoint,
         enemy_position: Point | OrientedPoint,
     ) -> None:
-        """
-        Update the zone based on the positions of allies and enemies.
+        """Update the zone based on the positions of allies and enemies.
 
         Args:
             team_color (TeamColor, optional): The color of the team.

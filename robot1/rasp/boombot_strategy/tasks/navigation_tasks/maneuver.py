@@ -41,14 +41,13 @@ class RelativeBackward(NavigationTask):
             goal=None,
             path_planner_params=DeltaPathPlannerParams(distance=-distance),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(
-                direction=Direction.BACKWARD,
-                respect_goal_orientation=False
+                direction=Direction.BACKWARD, respect_goal_orientation=False
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
             stabilization_delay=1,  # Delay to stabilize after moving backward
-            timeout=20
+            timeout=20,
         )
 
 

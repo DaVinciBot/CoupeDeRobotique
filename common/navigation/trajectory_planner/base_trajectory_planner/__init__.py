@@ -4,3 +4,8 @@ from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_plann
 from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params import (
     BaseTrajectoryPlannerParams,
 )
+
+__all__ = [
+    "BaseTrajectoryPlanner",
+    "BaseTrajectoryPlannerParams",
+]

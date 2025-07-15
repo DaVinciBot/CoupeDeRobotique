@@ -8,24 +8,23 @@
 
 # ====== Imports ======
 # Standard library imports
-import numpy as np
 import copy
 
 # Third-party library imports
 import matplotlib.pyplot as plt
+import numpy as np
+from loggerplusplus import Logger, LogLevels, time_tracker
 from matplotlib.ticker import MaxNLocator
 from pathfinding.core.grid import Grid, GridNode
-from loggerplusplus import Logger, LogLevels, time_tracker
 from shapely.strtree import STRtree
 
 # Internal project imports
-from geometry import Point, Polygon, OrientedPoint, box
+from geometry import OrientedPoint, Point, Polygon, box
 
 
 # ====== GridManager Class ======
 class GridManager:
-    """
-    Manages a grid for pathfinding and collision detection.
+    """Manages a grid for pathfinding and collision detection.
     Includes static and dynamic forbidden zones and grid visualization.
 
     Notes:
@@ -42,8 +41,7 @@ class GridManager:
         height: int,
         forbidden_cover_threshold: float = 0.5,
     ) -> None:
-        """
-        Initializes the grid manager.
+        """Initializes the grid manager.
 
         Args:
             logger (Logger): Logger instance for logging errors and information.
@@ -57,8 +55,8 @@ class GridManager:
         # Validate chunk size
         if width % chunk_size != 0 or height % chunk_size != 0:
             self.logger.log(
-                f"[GRID] width and height must be multiples of chunk_size. "
-                f"Chunk size will be adjusted to the nearest multiple.",
+                "[GRID] width and height must be multiples of chunk_size. "
+                "Chunk size will be adjusted to the nearest multiple.",
                 LogLevels.ERROR,
             )
             chunk_size = min(width, height, key=lambda x: abs(x - chunk_size))
@@ -84,7 +82,7 @@ class GridManager:
         return Grid(
             matrix=[
                 [1 for _ in range(self.grid_width)] for _ in range(self.grid_height)
-            ]
+            ],
         )
 
     @time_tracker(lambda self: self.logger)
@@ -114,7 +112,7 @@ class GridManager:
                             [
                                 polygon.intersects(cell)
                                 for polygon in self.static_forbidden_zones
-                            ]
+                            ],
                         ):
                             continue
 
@@ -131,10 +129,12 @@ class GridManager:
 
     @time_tracker(lambda self: self.logger)
     def __optimized_mark_zone(
-        self, grid: Grid, polygon_to_mark: Polygon, walkable: bool
+        self,
+        grid: Grid,
+        polygon_to_mark: Polygon,
+        walkable: bool,
     ) -> Grid:
-        """
-        Marks cells in the grid as forbidden based on intersection with a polygon.
+        """Marks cells in the grid as forbidden based on intersection with a polygon.
 
         Args:
             grid (Grid): The grid to modify.
@@ -148,7 +148,8 @@ class GridManager:
         minx, miny, maxx, maxy = polygon_to_mark.bounds
 
         min_col = max(
-            0, int((self.grid_width * self.chunk_size - maxx) // self.chunk_size)
+            0,
+            int((self.grid_width * self.chunk_size - maxx) // self.chunk_size),
         )
         max_col = min(
             self.grid_width,
@@ -191,10 +192,13 @@ class GridManager:
 
     @time_tracker(lambda self: self.logger)
     def __update_grid(
-        self, *, update_static_zones=False, update_dynamic_zones=False, clear_grid=False
+        self,
+        *,
+        update_static_zones=False,
+        update_dynamic_zones=False,
+        clear_grid=False,
     ) -> None:
-        """
-        Updates the grids for static and dynamic zones.
+        """Updates the grids for static and dynamic zones.
 
         Args:
             update_static_zones (bool): Whether to update static zones.
@@ -266,7 +270,8 @@ class GridManager:
 
         # Compare the grids using np.array_equal for high performance.
         if not np.array_equal(
-            grid_to_numpy(self.static_grid), grid_to_numpy(other.static_grid)
+            grid_to_numpy(self.static_grid),
+            grid_to_numpy(other.static_grid),
         ):
             return False
         if not np.array_equal(
@@ -282,10 +287,10 @@ class GridManager:
 
     @time_tracker(lambda self: self.logger)
     def add_forbidden_static_zone(
-        self, forbidden_zones: Polygon | list[Polygon]
+        self,
+        forbidden_zones: Polygon | list[Polygon],
     ) -> None:
-        """
-        Adds static forbidden zones to the grid.
+        """Adds static forbidden zones to the grid.
 
         Args:
             forbidden_zones (Polygon | list[Polygon]): Zones to mark as static forbidden areas.
@@ -299,10 +304,10 @@ class GridManager:
 
     @time_tracker(lambda self: self.logger)
     def remove_forbidden_static_zone(
-        self, forbidden_zones_to_remove: Polygon | list[Polygon]
+        self,
+        forbidden_zones_to_remove: Polygon | list[Polygon],
     ) -> None:
-        """
-        Removes static forbidden zones from the grid.
+        """Removes static forbidden zones from the grid.
 
         Args:
             forbidden_zones_to_remove (Polygon | list[Polygon]): Zones to remove from static forbidden areas.
@@ -318,7 +323,7 @@ class GridManager:
         ]
 
         removed_zones = set(original_static_forbidden_zones) - set(
-            self.static_forbidden_zones
+            self.static_forbidden_zones,
         )
         if not removed_zones:
             self.logger.log(
@@ -331,8 +336,7 @@ class GridManager:
 
     @time_tracker(lambda self: self.logger)
     def update_dynamic_forbidden_zones(self, forbidden_zones: list[Polygon]) -> None:
-        """
-        Updates dynamic forbidden zones in the grid.
+        """Updates dynamic forbidden zones in the grid.
 
         Args:
             forbidden_zones (list[Polygon]): Dynamic zones to add or update.
@@ -374,8 +378,7 @@ class GridManager:
         show: bool = True,
         plot: tuple[plt.axes, plt.figure] = None,
     ) -> tuple[plt.axes, plt.figure]:
-        """
-        Visualizes the grid using matplotlib.
+        """Visualizes the grid using matplotlib.
 
         Args:
             only_static_grid (bool): Whether to show only the static grid.

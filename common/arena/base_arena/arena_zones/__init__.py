@@ -31,3 +31,19 @@ from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones import (
 
 # Derived classes
 from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones import EnemyZone
+
+
+__all__ = [
+    "AllyZone",
+    "BaseArenaZone",
+    "BaseColorReservedZone",
+    "BaseSpeedVectorAutoCalculateZone",
+    "BlueReservedZone",
+    "BorderZone",
+    "EnemyZone",
+    "ForbiddenZone",
+    "StuffZone",
+    "YellowReservedZone",
+    "ZoneAccessibility",
+    "ZoneType",
+]

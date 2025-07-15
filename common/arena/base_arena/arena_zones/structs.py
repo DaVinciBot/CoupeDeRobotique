@@ -13,8 +13,7 @@ from geometry import Point
 
 # ====== Enums ======
 class ZoneType(Enum):
-    """
-    Enumeration for different types of zones in the arena.
+    """Enumeration for different types of zones in the arena.
 
     Attributes:
         - YELLOW_RESERVED: Reserved for the yellow team.
@@ -36,8 +35,7 @@ class ZoneType(Enum):
 
 
 class ZoneAccessibility(Enum):
-    """
-    Enumeration for zone accessibility types in the arena.
+    """Enumeration for zone accessibility types in the arena.
 
     Attributes:
         - FREE: Free to navigate.
@@ -53,8 +51,7 @@ class ZoneAccessibility(Enum):
 # ====== Data Classes ======
 @dataclass
 class Record:
-    """
-    Represents a timestamped position record.
+    """Represents a timestamped position record.
 
     Attributes:
         timestamp (float): Time of the record.
@@ -67,8 +64,7 @@ class Record:
 
 @dataclass
 class SpeedVector:
-    """
-    Represents a speed vector with direction and magnitude.
+    """Represents a speed vector with direction and magnitude.
 
     Attributes:
         speed (float): Magnitude of the speed.

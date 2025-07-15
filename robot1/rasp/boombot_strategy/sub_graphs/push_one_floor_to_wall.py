@@ -22,7 +22,8 @@ from boombot_strategy.tasks.navigation_tasks import (
 from boombot_strategy.tasks.actuator_task import (
     DeplacementPosition,
     ReadyToApproachToPickUp,
-Build, DeplacementObject
+    Build,
+    DeplacementObject,
 )
 
 
@@ -137,7 +138,9 @@ def get_push_one_floor_to_wall_subgraph(
         builder.connect(node_deplacment, DirectTransition(builder.nodes[node_build]))
 
     builder.connect(node_build, DirectTransition(builder.nodes[node_retract]))
-    builder.connect(node_retract, DirectTransition(builder.nodes[node_position_after_push]))
+    builder.connect(
+        node_retract, DirectTransition(builder.nodes[node_position_after_push])
+    )
 
     # Build and return the final subgraph
     return builder.build(

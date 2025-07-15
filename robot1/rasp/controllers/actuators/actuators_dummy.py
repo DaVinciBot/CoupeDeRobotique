@@ -67,7 +67,9 @@ class ActuatorsShowDummy(ActuatorsShow):
         # Retrieve minimum angle from config if available
         servo = self.servos.get(pin)
         # Default min_angle from deploy and fold
-        min_angle = min(getattr(servo, "deploy_angle", 0), getattr(servo, "fold_angle", 0))
+        min_angle = min(
+            getattr(servo, "deploy_angle", 0), getattr(servo, "fold_angle", 0)
+        )
 
         # Pin-specific exceptions
         pin_exceptions = {

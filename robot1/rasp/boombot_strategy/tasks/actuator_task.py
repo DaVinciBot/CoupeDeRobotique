@@ -91,8 +91,8 @@ class Build(BaseTask):
         time.sleep(1)
         return True
 
-class Deposit(BaseTask):
 
+class Deposit(BaseTask):
     def handle(self, ctx: ShowGameContext):
         ctx.actuators.demagnetize_all()
         ctx.score += CONFIG.BUILD_ONE_FLOOR
@@ -136,7 +136,8 @@ class DeplacementPosition(BaseTask):
         """
         ctx.actuators.deplacement_position()
         return True
-    
+
+
 class DeplacementObject(BaseTask):
     """
     Task to adjust the actuator to a predefined displacement position.

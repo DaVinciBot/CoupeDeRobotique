@@ -132,7 +132,11 @@ class MainBrain(Brain):
 
         # --- 3) Build the strategy --- #
         from boombot_strategy import ShowGameContext
-        from boombot_strategy.strategies import BasicStrategy, TowerRushStrategy, OnlyBannerStrategy
+        from boombot_strategy.strategies import (
+            BasicStrategy,
+            TowerRushStrategy,
+            OnlyBannerStrategy,
+        )
 
         strategy = OnlyBannerStrategy(
             ShowGameContext(
@@ -297,7 +301,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True)
     async def start(self):
-        #self.arena.set_team_color(TeamColor.YELLOW)
+        # self.arena.set_team_color(TeamColor.YELLOW)
         await self.wait_for_team()
 
         start_position = OrientedPoint(0, 0, 0)

@@ -19,7 +19,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           black: true
-          auto_fix: true  
+          auto_fix: true
           commit_message: "chore: apply linting fixes"
           git_name: "DaVinci Bot"
           git_email: "davincibot@devinci.fr"

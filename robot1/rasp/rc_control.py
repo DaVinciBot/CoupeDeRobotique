@@ -74,8 +74,8 @@ inputs = Inputs(pin_jack=CONFIG.JACK_PIN, pin_bau=CONFIG.BAU_PIN)
 brain = RemoteBrain(
     logger=logger_brain,
     rolling_basis=RollingBasis(
-            logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
-        ),
+        logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
+    ),
     lidar=lidar,
     remote=PS5Remote(),
     ws_cmd=ws_cmd,

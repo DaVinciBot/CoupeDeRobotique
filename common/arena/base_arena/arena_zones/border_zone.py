@@ -9,18 +9,18 @@
 # Third-party imports
 from loggerplusplus import Logger
 
-# Local imports
-from geometry import Polygon
+from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 
 # Internal project imports
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
-from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
+
+# Local imports
+from geometry import Polygon
 
 
 # ====== Border Zone Class ======
 class BorderZone(BaseArenaZone):
-    """
-    Represents the border zone of the arena, which is typically inaccessible.
+    """Represents the border zone of the arena, which is typically inaccessible.
     This class defines the zone's geometry and ensures it remains restricted.
 
     Attributes:
@@ -39,8 +39,7 @@ class BorderZone(BaseArenaZone):
         buffered_polygon: Polygon = None,
         update_callback: callable = None,
     ) -> None:
-        """
-        Initializes the BorderZone with its geometry and accessibility settings.
+        """Initializes the BorderZone with its geometry and accessibility settings.
 
         Args:
             logger (Logger): Logger instance for logging messages.

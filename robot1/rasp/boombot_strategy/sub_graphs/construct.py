@@ -48,7 +48,7 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
             tasks=GoToColorReservedZoneToConstruct(zone_id),
         ),
     )
-    
+
     node_pickup = f"[Construct] Pickup at zone {zone_id}"
     subgraph.add_node(
         node_pickup,
@@ -57,7 +57,7 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
             tasks=PickUp(),
         ),
     )
-    
+
     # Node: Move forward to prepare for placement
     node_prepare = f"[Construct] Position at zone {zone_id}"
     subgraph.add_node(
@@ -95,7 +95,9 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
     )
 
 
-def get_construct_one_floor_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
+def get_construct_one_floor_subgraph(
+    zone_id: int, back_offset: int = 0
+) -> BaseSubGraph:
     subgraph = SubGraphBuilder()
 
     # Node: Navigate to construction zone
