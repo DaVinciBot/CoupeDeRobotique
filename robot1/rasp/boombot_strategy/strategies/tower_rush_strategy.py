@@ -1,8 +1,10 @@
 # ====== Code Summary ======
-# This module defines the `BasicStrategy` class, which extends `BaseStrategy` and orchestrates
+# This module defines the `TowerRushStrategy` class, which extends `TowerRushStrategy` and orchestrates
 # the full game flow for a robot. The strategy consists of deploying a banner, picking up items,
 # constructing structures, and finally moving to a backstage zone to complete the game.
 # It uses task subgraphs and direct transitions to sequence actions through a `GraphRunner`.
+
+import math
 
 # ====== Local Project Imports ======
 from loggerplusplus import Logger
@@ -19,17 +21,20 @@ from boombot_strategy.sub_graphs import (
     get_construct_subgraph,
     get_pickup_subgraph,
     get_banner_deployment_subgraph,
+    get_construct_one_floor_subgraph,
+    get_push_one_floor_to_wall_subgraph,
 )
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
 
 
-class BasicStrategy(BaseStrategy):
+class TowerRushStrategy(BaseStrategy):
     """
-    Defines a basic game strategy by sequencing multiple subgraphs:
+    Defines the tower rush game strategy by sequencing multiple subgraphs:
     - Deploy banner
-    - Perform two pickup and construction cycles
+    - Perform one pickup and construction cycle
+    - Perform one pickup-to-placement cycle
     - Navigate to backstage zone to finish the game
     """
 
@@ -50,16 +55,15 @@ class BasicStrategy(BaseStrategy):
 
         # Step 3: Navigate to the first construction zone
         first_construct_subgraph = get_construct_subgraph(
-            self.zones["first_build_zone"], back_offset=5
+            self.zones["first_build_zone"], back_offset=13
         )
 
-        # # Step 4: Navigate to the second pickup zone
-        # second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
-        #
-        # # Step 5: Navigate to the second construction zone
-        # second_construct_subgraph = get_construct_subgraph(
-        #     self.zones["second_build_zone"], back_offset=15
-        # )
+        # Step 4:
+        second_pickup_subgraph = get_push_one_floor_to_wall_subgraph(
+            zone_id=self.zones["second_pickup_zone"],
+            push_distance=25,
+
+        )
 
         # Step 6: Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
@@ -72,15 +76,14 @@ class BasicStrategy(BaseStrategy):
             deploy_banner_subgraph,
             first_pickup_subgraph,
             first_construct_subgraph,
-            # second_pickup_subgraph,
-            # second_construct_subgraph,
+            second_pickup_subgraph,
             go_to_backstage,
         )
 
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
             logger=Logger(
-                identifier="BasicStrategyRunner",
+                identifier="TowerRushStrategyRunner",
                 follow_logger_manager_rules=True,
             ),
             start=deploy_banner_subgraph.get_entry(),

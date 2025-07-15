@@ -181,40 +181,42 @@ class SequentialTrajectoryPlanner(
         Args:
             path (list[OrientedPoint]): List of oriented points representing the path.
         """
-        # Initialize the segment mapper
+        # Initialize the segment list
         segments: list[BaseSegment] = []
+        # Iterate over each pair of consecutive waypoints
         for i in range(len(path) - 1):
             start = path[i]
             target = path[i + 1]
 
-            # 1. Compute the rotation segment (get orientation in front of the target)
-            rotation_segment: RotationSegment = (
-                self._compute_rotation_segment_to_be_front(start, target)
-            )
+            # 1. Compute rotation to face the next waypoint
+            rotation_segment = self._compute_rotation_segment_to_be_front(start, target)
             segments.append(rotation_segment)
 
-            # 2. Compute the straight segment (move to the target)
-            straight_segment: StraightSegment = self._compute_straight_segment(
+            # 2. Compute straight-line segment to reach the waypoint
+            straight_segment = self._compute_straight_segment(
                 rotation_segment.end_position, target
             )
             segments.append(straight_segment)
 
-            # 3. Compute the rotation segment (get orientation of the target point)
-            # Ensure to respect the orientation of intermediate points if required
-            # or if it's the last segment (i == len(path) - 2)
-            if self.params.respect_intermediate_orientation or i == len(path) - 2:
-                rotation_segment: RotationSegment = (
+            # 3. Compute rotation to align with waypoint orientation
+            # Apply for intermediate points if respect_intermediate_orientation=True,
+            # or for the final goal if respect_goal_orientation=True
+            if self.params.respect_intermediate_orientation or (
+                self.params.respect_goal_orientation and i == len(path) - 2
+            ):
+                rotation_segment = (
                     self._compute_rotation_segment_to_get_same_orientation(
                         straight_segment.end_position, target
                     )
                 )
                 segments.append(rotation_segment)
             else:
+                # Override intermediate waypoint orientation to current heading to skip rotation
                 path[i + 1] = OrientedPoint(
                     path[i + 1].x, path[i + 1].y, straight_segment.end_position.theta
                 )
 
-            # 4. Add a stop segment to mark a pause between segments
+            # 4. Add a stop segment if a pause is configured
             if self.params.step_sleep_delay > 0:
                 segments.append(
                     StopSegment(
@@ -224,6 +226,7 @@ class SequentialTrajectoryPlanner(
                     )
                 )
 
+        # Store the mapped segments for execution
         self.segments_mapper = SegmentMapper(segments)
 
     @BaseTrajectoryPlanner._ensure_planning_started

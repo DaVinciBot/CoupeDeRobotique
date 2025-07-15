@@ -126,16 +126,6 @@ if __name__ == "__main__":
         min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
     )
 
-    # lidardummy = LidarDummy(
-    #     logger=logger_lidar,
-    #     min_angle=CONFIG.LIDAR_MIN_ANGLE,
-    #     max_angle=CONFIG.LIDAR_MAX_ANGLE,
-    #     unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
-    #     unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
-    #     min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
-    #     num_points=1
-    # )
-
     # Environment
     # Arena
     arena = ShowArena(
@@ -190,17 +180,3 @@ if __name__ == "__main__":
 
     ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
-
-    # import cProfile
-
-    # profiler = cProfile.Profile()
-    # profiler.enable()
-    #
-    # try:
-    #     ws_server.run()
-    # except:
-    #     pass
-    #
-    # profiler.disable()
-    # profiler.print_stats()
-    # profiler.dump_stats("profiling_output.prof")

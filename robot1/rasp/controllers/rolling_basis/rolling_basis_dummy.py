@@ -44,7 +44,7 @@ class RollingBasisDummy(BaseComTeensy):
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
 
         # Initialize PID controllers from configuration
-        self._initialize_pids()
+        # self._initialize_pids()
 
     ####################################
     # Message Sending Methods          #
@@ -74,7 +74,7 @@ class RollingBasisDummy(BaseComTeensy):
             odometrie (OrientedPoint): The new odometrie values.
         """
         self.odometrie = odometrie
-        self.logger.debug(f"[DUMMY] Set odometrie: {odometrie}")
+        self.logger.info(f"[DUMMY] Set odometrie: {odometrie}")
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
         """
@@ -146,7 +146,7 @@ class RollingBasisDummy(BaseComTeensy):
         self.set_linear_position_pid(**linear_position_pid)
         self.set_angular_position_pid(**angular_position_pid)
 
-    def _initialize_pids(self) -> None:
+    def initialize_pids(self) -> None:
         """
         Initialize PID controllers from the configuration.
         """

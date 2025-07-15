@@ -31,23 +31,10 @@ from boombot_strategy.tasks.actuator_task import (
     ReadyToApproachToPickUp,
     PrepareToPickUp,
     PickUp,
-    DeplacementObject
 )
 
 
-def get_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
-    """
-    Build a subgraph that defines the sequence of tasks for picking up an object at a specified zone.
-
-    The subgraph includes navigation to the zone, preparation steps, and execution of the pickup operation.
-    Nodes are connected linearly using direct transitions to ensure an ordered task flow.
-
-    Args:
-        pickup_zone_id (int): Identifier for the pickup zone.
-
-    Returns:
-        BaseSubGraph: A subgraph representing the complete pickup operation.
-    """
+def get_wall_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
     subgraph = SubGraphBuilder()
 
     # Node: Ready to approach the pickup zone
@@ -82,7 +69,7 @@ def get_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
     node_pickup = f"[Pickup] Pick up item at zone {pickup_zone_id}"
     subgraph.add_node(
         node_pickup,
-        BaseTaskNode(name=node_pickup, tasks=DeplacementObject()),
+        BaseTaskNode(name=node_pickup, tasks=PickUp()),
     )
 
     # Node: extract from pickup zone

@@ -29,3 +29,15 @@ class Inputs:
             )
             await asyncio.sleep(wait_time)
         self.logger.info(f"Jack trigger detected !")
+
+    async def wait_for_jack_plugged(self, wait_time: float = 0.001):
+        true_jacks_in_a_row = 0
+        self.logger.info("Waiting for jack to be plugged in...")
+        while true_jacks_in_a_row < 5:
+            if self.jack.safe_digital_read():
+                true_jacks_in_a_row += 1
+            else:
+                true_jacks_in_a_row = 0
+            self.logger.debug(f"Jack plug presence count: {true_jacks_in_a_row}")
+            await asyncio.sleep(wait_time)
+        self.logger.info("Jack plugged in!")

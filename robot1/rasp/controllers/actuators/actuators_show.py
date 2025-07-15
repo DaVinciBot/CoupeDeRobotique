@@ -13,7 +13,7 @@ class Servo:
 
 @dataclass
 class ServoDocking(Servo):
-    special_angle: int = 0  # Angle for special movement such as docking
+    docking: int = 0  # Angle for special movement such as docking
 
 
 @dataclass
@@ -199,7 +199,7 @@ class ActuatorsShow(Actuators):
         This method ensures that the elevator is in a safe position before deploying the servo arm.
         """
         self.folded = False
-        self.docking()
+        self.docking([0, 2])
 
         for i in self.servos.keys():
             if i != 8:
@@ -247,22 +247,20 @@ class ActuatorsShow(Actuators):
                     max_angle=self.servos[pin].max_angle,
                 )
 
-    def docking(self):
+    def docking(self, pins: int | list[int]):
         """
         Moves the interior servos arms to the docking position.
         This method sets the interior servo arms to its docking position, which is used for docking purposes.
         """
-        if self._check_pin(0) and self._check_pin(2):
-            self.set_servo_angle(
-                0,
-                self.servos[0].special_angle,
-                max_angle=self.servos[0].max_angle,
-            )
-            self.set_servo_angle(
-                2,
-                self.servos[2].special_angle,
-                max_angle=self.servos[2].max_angle,
-            )
+        if isinstance(pins, int):
+            pins = [pins]
+        for pin in pins:
+            if self._check_pin(pin):
+                self.set_servo_angle(
+                    pin,
+                    self.servos[pin].docking,
+                    max_angle=self.servos[pin].max_angle,
+                )
 
     def deploy_banner(self):
         self.deploy([0, 2])
@@ -312,14 +310,7 @@ class ActuatorsShow(Actuators):
         Moves the elevator to the bottom position.
         If the elevator is folded, it will move to the folded position first.
         """
-        if self.folded:
-            steps_to_move = (
-                self.stepper.bottom_steps
-                + self.stepper.folded_steps
-                - self.elevator_ticks
-            )
-        else:
-            steps_to_move = self.stepper.bottom_steps - self.elevator_ticks
+        steps_to_move = self.stepper.bottom_steps - self.elevator_ticks
         self.logger.info(f"Moving to bottom: {steps_to_move} steps")
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=True)
         self.logger.info(f"Steps current: {self.elevator_ticks}")
@@ -338,6 +329,7 @@ class ActuatorsShow(Actuators):
         time.sleep(2)
 
         # Demagnetize and release plank
+        self.deploy(8)
         self.demagnetize_all()
         self.deploy(9)
 
@@ -346,6 +338,7 @@ class ActuatorsShow(Actuators):
         # Retrieve actuators
         self.fold(4)
         self.fold(6)
+        self.docking(8)
 
     # def init_actuator(self):
     #     self.stepper_step(
@@ -364,66 +357,70 @@ class ActuatorsShow(Actuators):
         self.deploy_all_pickup()  # Magnetize
         time.sleep(1)
         self.deploy(8)
-        self.go_to_bottom()
-        time.sleep(0.001)
 
     def pick_up(self):
         """
         Catch cans and plank
         """
         # Catch and raise cans and plank
+        self.pickup_planck()
+        self.fold(9)
+        time.sleep(0.1)
+        self.docking(8)
+        time.sleep(1)
         self.fold(4)
         self.fold(6)
-        self.fold(9)
-        time.sleep(2)
-        self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
+        #self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
         time.sleep(0.5)
+        
+    def deplacement_object(self):
+        """
+        Catch cans and plank
+        """
+        # Catch and raise cans and plank
+        self.pickup_planck()
+        self.fold(9)
+        time.sleep(0.1)
 
     def ready_to_approach_to_pickup(self):
+        self.magnetize_all()
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
         time.sleep(0.5)
         self.deploy_all_pickup()
-        self.set_servo_angle(8, angle=35, max_angle=270)
-        self.fold(9)
-
-    def prepare_to_pickup(self):
-        self.set_servo_angle(8, angle=135, max_angle=270)
+        #self.set_servo_angle(8, angle=35, max_angle=270)
+        self.set_servo_angle(8, angle=self.servos[8].docking, max_angle = 270)
         self.deploy(9)
 
-    def pickup(self):
+    def pickup_planck(self):
         def _pickup():
             self.deploy(9)
             self.deploy(8)
             time.sleep(0.3)
             self.fold(9)
-
         _pickup()
         time.sleep(0.2)
         _pickup()
-
-        time.sleep(0.2)
-        self.set_servo_angle(8, angle=135, max_angle=270)
 
     def build(self):
         self.fold(4)
         self.fold(6)
-        time.sleep(0.7)
+        time.sleep(1.5)
         self.go_to_top()
-        time.sleep(0.7)
+        time.sleep(1.5)
         self.set_servo_angle(pin=4, angle=160, max_angle=270)
         self.set_servo_angle(pin=6, angle=90, max_angle=270)
-        time.sleep(1)
+        time.sleep(2)
         self.elevator_drop_top()
-        time.sleep(0.2)
+        time.sleep(1)
         self.deploy(9)
-        time.sleep(0.1)
+        time.sleep(1)
         self.demagnetize_all()
-        time.sleep(0.2)
+        time.sleep(1)
         self.fold(4)
         self.fold(6)
         self.set_servo_angle(8, angle=130, max_angle=270)
-        time.sleep(0.01)
+        time.sleep(0.1)
 
     def start_position(self):
         self.set_stepper_driver_activation_state(13, enable_driver=False)
@@ -443,6 +440,18 @@ class ActuatorsShow(Actuators):
         # self.set_servo_angle(2, angle=167, max_angle=270)
         self.set_servo_angle(0, angle=100, max_angle=270)
         self.set_servo_angle(2, angle=171, max_angle=270)
+
+    def deplacement_position(self):
+        time.sleep(0.5)
+        self.demagnetize_all()
+        self.fold(4)
+        self.fold(6)
+        self.deploy(2)
+        self.deploy(0)
+        self.go_to_bottom()
+        time.sleep(2)
+        self.set_servo_angle(8, angle=35, max_angle=270)
+        self.fold(9)
 
     # def build(self):
     #     self.fold(self.side_arms)

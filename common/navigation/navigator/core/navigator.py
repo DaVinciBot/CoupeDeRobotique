@@ -1,3 +1,5 @@
+import time
+
 from navigation.navigator.signals import (
     NavigatorSignalsDispatcher,
     NavigatorSignalsEnum,
