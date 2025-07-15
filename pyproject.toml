@@ -1,0 +1,79 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools", "wheel"]
+
+[tool.isort]
+force_grid_wrap = 0
+include_trailing_comma = true
+known_first_party = [
+    "common",
+    "arena",
+    "geometry",
+    "GPIO",
+    "led_strip",
+    "navigation",
+    "avoidance",
+    "debug_functions",
+    "navigator",
+    "path_planner",
+    "trajectory_planner",
+    "remote",
+    "strategy",
+    "teensy",
+    "usb_com",
+    "utils",
+    "video",
+    "robot1",
+    "rasp",
+    "boombot_strategy",
+    "strategies",
+    "sub_graphs",
+    "tasks",
+    "brains",
+    "controllers",
+    "sensors",
+]
+line_length = 88
+multi_line_output = 3
+profile = "black"
+use_parentheses = true
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_unused_configs = true
+show_error_codes = true
+pretty = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+check_untyped_defs = true
+no_implicit_optional = true
+
+[tool.ruff]
+fix = true
+indent-width = 4
+line-length = 88
+preview = true
+show-fixes = true
+target-version = "py313"
+unsafe-fixes = false
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "CPY001", # missing-copyright-notice
+    "FIX002", # line-contains-todo
+    "FIX004", # line-contains-hack
+    "G004",   # logging-f-string
+    "TD001",  # Invalid TODO tag
+    "TD002",  # missing-todo-author
+    "TD003",  # missing-todo-link
+]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
