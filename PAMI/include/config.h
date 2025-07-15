@@ -1,11 +1,12 @@
 #include <Arduino.h>
+#include "lidar_pami.h"
 #include "motor.h"
 #include "navigation.h"
 #include "rolling_basis.h"
-#include "lidar_pami.h"
+
 
 // #------- GENERAL CONFIGURATION -------#
-#define ACS_TRESHOLD 40 // Threshold for ACS activation in mm
+#define ACS_TRESHOLD 40  // Threshold for ACS activation in mm
 
 // #------- MOTOR CONFIGURATION -------#
 #define LEFT_DIR_PIN 3
@@ -36,14 +37,13 @@
 #define ANGULAR_DISTANCE_KD 0.0f
 
 // #------- SERVO CONFIGURATION -------#
-#define SERVO_PIN 42 // Servo pin
+#define SERVO_PIN 42  // Servo pin
 
 // #------- LORA CONFIGURATION -------#
-#define SS 10 // NSS pin
-#define RST 16 // RESET pin
-#define BUSY 15 // BUSY pin
+#define SS 10    // NSS pin
+#define RST 16   // RESET pin
+#define BUSY 15  // BUSY pin
 
 // #-------- DEV CONFIGURATION ---------#
 #define ENABLE_OTA false
 #define ENABLE_LORA false
-

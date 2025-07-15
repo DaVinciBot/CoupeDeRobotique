@@ -3,10 +3,14 @@
 
 #include <Arduino.h>
 
-class Motor
-{
-public:
-    Motor(byte stepPin, byte dirPin, byte enablePin, unsigned int stepsPerRevolution, float k, bool invertDirection=false);
+class Motor {
+   public:
+    Motor(byte stepPin,
+          byte dirPin,
+          byte enablePin,
+          unsigned int stepsPerRevolution,
+          float k,
+          bool invertDirection = false);
     ~Motor() = default;
 
     void init();
@@ -22,7 +26,7 @@ public:
     long getStepCount() const;
     void resetStepCount();
 
-private:
+   private:
     byte _stepPin;
     byte _dirPin;
     byte _enablePin;

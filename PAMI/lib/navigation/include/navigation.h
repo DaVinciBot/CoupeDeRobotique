@@ -4,14 +4,12 @@
 #include <vector>
 #include "rolling_basis.h"
 
-class Navigation
-{
-public:
+class Navigation {
+   public:
     // timeoutMs: maximum run time before forced stop
-    Navigation(RollingBasis *basis,
-               uint32_t timeoutMs);
+    Navigation(RollingBasis* basis, uint32_t timeoutMs);
 
-    void setCommand(const Point &targetPos);
+    void setCommand(const Point& targetPos);
 
     void update();
 
@@ -25,8 +23,8 @@ public:
 
     float getMeasuredAngularSpeed() const;
 
-private:
-    RollingBasis *_basis;
+   private:
+    RollingBasis* _basis;
     uint32_t _sendIntervalMs;
     uint32_t _timeoutMs;
     uint32_t _lastSendMs;

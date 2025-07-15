@@ -1,7 +1,6 @@
 #include <com.h>
 
-Com::Com()
-{
+Com::Com() {
     memcpy(this->signature, END_BYTES_SIGNATURE, sizeof(this->signature));
 
     // Initialize the buffer
@@ -9,16 +8,13 @@ Com::Com()
         this->buffer[k] = 0;
 }
 
-Com::~Com()
-{
-}
+Com::~Com() {}
 
-bool Com::begin(int8_t nss, int8_t reset, int8_t busy)
-{
-    // Begin LoRa radio and set NSS, reset, busy, txen, and rxen pin with connected Arduino pins
+bool Com::begin(int8_t nss, int8_t reset, int8_t busy) {
+    // Begin LoRa radio and set NSS, reset, busy, txen, and rxen pin with
+    // connected Arduino pins
     Serial.println("Begin LoRa radio");
-    if (!LoRa.begin(nss, reset, busy))
-    {
+    if (!LoRa.begin(nss, reset, busy)) {
         Serial.println("Something wrong, can't begin LoRa radio");
         return false;
     }
@@ -42,10 +38,8 @@ bool Com::begin(int8_t nss, int8_t reset, int8_t busy)
     return true;
 }
 
-byte Com::handle()
-{
-    while (LoRa.available())
-    {
+byte Com::handle() {
+    while (LoRa.available()) {
         byte data = LoRa.read();
         this->buffer[this->pointer++] = data;
 
@@ -56,7 +50,8 @@ byte Com::handle()
         // Check for signature validity
         bool is_signature = true;
         for (int i = 0; i < 4 && is_signature; i++)
-            is_signature = this->buffer[pointer - 1 - i] == this->signature[3 - i];
+            is_signature =
+                this->buffer[pointer - 1 - i] == this->signature[3 - i];
 
         if (!is_signature)
             break;
@@ -64,14 +59,12 @@ byte Com::handle()
         // Extract message size
         byte msg_size = this->buffer[pointer - 6];
 
-        if (this->pointer >= msg_size + 6)
-        {
+        if (this->pointer >= msg_size + 6) {
             CRC crc;
             byte crc_b = crc.digest(this->buffer, msg_size + 1);
 
             // Validate CRC
-            if (crc_b != this->buffer[msg_size + 1])
-            {
+            if (crc_b != this->buffer[msg_size + 1]) {
                 byte invalid_crc_msg = NACK;
                 send_msg(&invalid_crc_msg, 1);
                 this->pointer = 0;
@@ -81,25 +74,20 @@ byte Com::handle()
             // Reset the pointer and return the message size
             this->pointer = 0;
             return msg_size;
-        }
-        else
-        {
+        } else {
             this->pointer = 0;
         }
     }
     return 0;
 }
 
-void Com::handle_callback(void (*functions[256])(byte *msg, byte size))
-{
+void Com::handle_callback(void (*functions[256])(byte* msg, byte size)) {
     // Retrieve the size of the received message
     byte size = this->handle();
-    if (size > 0)
-    {
+    if (size > 0) {
         // Directly access the buffer pointer
-        const byte *msg = this->read_buffer();
-        if (msg == nullptr)
-        {
+        const byte* msg = this->read_buffer();
+        if (msg == nullptr) {
             // Exit if the buffer is null (protection)
             return;
         }
@@ -108,26 +96,22 @@ void Com::handle_callback(void (*functions[256])(byte *msg, byte size))
         byte msg_id = msg[0];
 
         // Check if the function corresponding to the ID exists
-        if (functions[msg_id] != nullptr)
-        {
-            functions[msg_id](const_cast<byte *>(msg), size); // Call the function
-        }
-        else if (msg_id == NACK)
-        {
+        if (functions[msg_id] != nullptr) {
+            functions[msg_id](const_cast<byte*>(msg),
+                              size);  // Call the function
+        } else if (msg_id == NACK) {
             // Resend the last message in case of NACK
-            if (this->last_msg != nullptr)
-            {
-                this->send_msg((byte *)&this->last_msg->msg, this->last_msg->size, true);
+            if (this->last_msg != nullptr) {
+                this->send_msg((byte*)&this->last_msg->msg,
+                               this->last_msg->size, true);
             }
-        }
-        else
-        {
+        } else {
             // Handle unknown message types
             msg_unknown_msg_type error_message;
             error_message.type_id = msg_id;
 
             // Send a response indicating an unknown message type
-            this->send_msg((byte *)&error_message, sizeof(msg_unknown_msg_type));
+            this->send_msg((byte*)&error_message, sizeof(msg_unknown_msg_type));
         }
     }
 }
@@ -137,13 +121,11 @@ void Com::handle_callback(void (*functions[256])(byte *msg, byte size))
  *
  * @return Pointer to the internal buffer.
  */
-byte *Com::read_buffer()
-{
+byte* Com::read_buffer() {
     return this->buffer;
 }
 
-void Com::send_msg(byte *msg, byte size, bool is_nack)
-{
+void Com::send_msg(byte* msg, byte size, bool is_nack) {
     if (!is_nack)
         free(this->last_msg);
 
@@ -153,9 +135,8 @@ void Com::send_msg(byte *msg, byte size, bool is_nack)
     CRC crc;
 
     // Prepare the full message with size and CRC
-    byte *full_msg = new byte[size + 1];
-    for (byte i = 0; i < size; i++)
-    {
+    byte* full_msg = new byte[size + 1];
+    for (byte i = 0; i < size; i++) {
         full_msg[i] = msg[i];
         if (!is_nack)
             last_msg->msg[i] = msg[i];
@@ -174,16 +155,14 @@ void Com::send_msg(byte *msg, byte size, bool is_nack)
     LoRa.wait();
 
     free(full_msg);
-    LoRa.request(); // Request for receiving new LoRa packet
+    LoRa.request();  // Request for receiving new LoRa packet
 }
 
-void Com::print(char *text)
-{
+void Com::print(char* text) {
     // Use send_msg to send the text input
-    byte *msg = new byte[strlen(text) + 2];
+    byte* msg = new byte[strlen(text) + 2];
     msg[0] = PRINT;
-    for (byte i = 0; i <= strlen(text); i++)
-    {
+    for (byte i = 0; i <= strlen(text); i++) {
         msg[i + 1] = text[i];
     }
     this->send_msg(msg, strlen(text) + 3);

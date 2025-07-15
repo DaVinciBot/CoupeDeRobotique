@@ -6,32 +6,30 @@
 #elif defined(ESP32)
 #include <WiFi.h>
 #endif
-#include "ElegantOTA.h"
-#include <ESPAsyncWebServer.h>
 #include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include "ElegantOTA.h"
 
-class CustomOTA
-{
-public:
-  void begin();
+class CustomOTA {
+   public:
+    void begin();
 
-  void addKnownNetwork(const char *ssid, const char *password);
-  void loop();
+    void addKnownNetwork(const char* ssid, const char* password);
+    void loop();
 
-  CustomOTA(const char *ssid, const char *password, AsyncWebServer *server);
-  // CustomOTA(const char *ssid, const char *password);
-  // CustomOTA();
+    CustomOTA(const char* ssid, const char* password, AsyncWebServer* server);
+    // CustomOTA(const char *ssid, const char *password);
+    // CustomOTA();
 
-private:
-  ElegantOTAClass ElegantOTA;
-  const char *ssid;
-  const char *password;
-  AsyncWebServer *server;
-  int _nb_try_wifi = 0;
-
+   private:
+    ElegantOTAClass ElegantOTA;
+    const char* ssid;
+    const char* password;
+    AsyncWebServer* server;
+    int _nb_try_wifi = 0;
 };
 
-  void onOTAEnd(bool success);
-  void onOTAProgress(size_t current, size_t final);
-  void onOTAStart();
+void onOTAEnd(bool success);
+void onOTAProgress(size_t current, size_t final);
+void onOTAStart();
 #endif

@@ -1,11 +1,9 @@
 #ifndef PID_H
 #define PID_H
 
-class PID
-{
-public:
-    PID(float kp, float ki, float kd,
-        float dtSeconds = 0.01f);
+class PID {
+   public:
+    PID(float kp, float ki, float kd, float dtSeconds = 0.01f);
 
     float compute(float error);
 
@@ -15,7 +13,7 @@ public:
 
     void setSampleTime(float dtSeconds);
 
-private:
+   private:
     float _kp, _ki, _kd;
     float _dtSeconds;
     float _integral;

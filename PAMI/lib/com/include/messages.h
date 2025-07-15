@@ -7,7 +7,8 @@
 #include <Arduino.h>
 
 // ====== INTERCOM Communication Signature ======
-// This signature must be exactly the same on ALL sides (Raspberry Pi and PAMI) to ensure valid communication.
+// This signature must be exactly the same on ALL sides (Raspberry Pi and PAMI)
+// to ensure valid communication.
 const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 
 // ====== Message Types ======
@@ -44,16 +45,14 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 // rasp -> teensy : 0-127
 
 // Rolling Basis
-struct msg_set_position
-{
+struct msg_set_position {
     byte command = SET_POSITION;
     float target_position_x;
     float target_position_y;
     float target_position_theta;
 };
 
-struct msg_set_pid
-{
+struct msg_set_pid {
     byte command = SET_PID;
     byte pid_type;
     float kp;
@@ -61,30 +60,26 @@ struct msg_set_pid
     float kd;
 };
 
-struct msg_set_odometrie
-{
+struct msg_set_odometrie {
     byte command = SET_ODOMETRIE;
     float x;
     float y;
     float theta;
 };
-struct msg_set_speed
-{
+struct msg_set_speed {
     byte command = SET_SPEED;
     float speed;
 };
 
 // Common (Rolling Basis + Actuators)
-struct msg_reset_pami
-{
+struct msg_reset_pami {
     byte command = RESET_PAMI;
 };
 
 // teensy -> rasp : 128-255
 
 // Rolling Basis
-struct msg_update_pami
-{
+struct msg_update_pami {
     byte command = UPDATE_PAMI;
     float x;
     float y;
@@ -92,14 +87,12 @@ struct msg_update_pami
 };
 
 // Common (Rolling Basis + Actuators)
-struct msg_unknown_msg_type
-{
+struct msg_unknown_msg_type {
     byte command = UNKNOWN_MSG_TYPE;
-    byte type_id; // ID of the unknown message
+    byte type_id;  // ID of the unknown message
 };
 
-struct msg_print
-{
+struct msg_print {
     byte command = PRINT;
     char message[252];
 };
