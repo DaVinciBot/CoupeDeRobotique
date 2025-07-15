@@ -5,7 +5,7 @@ from loggerplusplus import Logger, LogLevels
 
 
 class PS5Remote:
-    def __init__(self, logger: Logger |None = None) -> None:
+    def __init__(self, logger: Logger | None = None) -> None:
         """Initialize the connection with the PS5 controller"""
         self.dualsense = pydualsense()
 
