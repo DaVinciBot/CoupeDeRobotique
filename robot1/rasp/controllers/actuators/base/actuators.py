@@ -93,7 +93,9 @@ class Actuators(
     ####################################
 
     @log("Actuators")
-    def set_stepper_driver_activation_state(self, pin_enable: int, enable_driver: bool) -> None:
+    def set_stepper_driver_activation_state(
+        self, pin_enable: int, enable_driver: bool
+    ) -> None:
         """Sets the activation state of a stepper motor driver through its enable pin.
 
         Args:
