@@ -14,12 +14,12 @@ class Actuators(
     def __init__(
         self,
         logger: Logger,
-        serial_number=CONFIG.ACTUATOR_TEENSY_SER,
-        vid=CONFIG.TEENSY_VID,
-        pid=CONFIG.TEENSY_PID,
-        baudrate=CONFIG.TEENSY_BAUDRATE,
-        enable_crc=CONFIG.TEENSY_CRC,
-        enable_dummy=CONFIG.TEENSY_DUMMY,
+        serial_number: int = CONFIG.ACTUATOR_TEENSY_SER,
+        vid: int = CONFIG.TEENSY_VID,
+        pid: int = CONFIG.TEENSY_PID,
+        baudrate: int = CONFIG.TEENSY_BAUDRATE,
+        enable_crc: bool = CONFIG.TEENSY_CRC,
+        enable_dummy: bool = CONFIG.TEENSY_DUMMY,
     ) -> None:
         # Initialize the parent-GPIOComTeensy class
         super().__init__(
@@ -93,7 +93,9 @@ class Actuators(
     ####################################
 
     @log("Actuators")
-    def set_stepper_driver_activation_state(self, pin_enable: int, enable_driver: bool) -> None:
+    def set_stepper_driver_activation_state(
+        self, pin_enable: int, enable_driver: bool
+    ) -> None:
         """Sets the activation state of a stepper motor driver through its enable pin.
 
         Args:

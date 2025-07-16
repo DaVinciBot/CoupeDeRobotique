@@ -137,7 +137,12 @@ class RollingBasisDummy(BaseComTeensy):
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
     ) -> None:
-        """Configure all PID controllers using dictionaries for each."""
+        """Configure all PID controllers using dictionaries for each.
+
+        Args:
+            linear_position_pid (dict[str, float]): PID configuration for linear position.
+            angular_position_pid (dict[str, float]): PID configuration for angular position.
+        """
         self.set_linear_position_pid(**linear_position_pid)
         self.set_angular_position_pid(**angular_position_pid)
 

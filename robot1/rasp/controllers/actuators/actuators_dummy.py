@@ -12,11 +12,11 @@ class ActuatorsShowDummy(ActuatorsShow):
     def __init__(
         self,
         logger: Logger,
-        serial_number=CONFIG.ACTUATOR_TEENSY_SER,
-        vid=CONFIG.TEENSY_VID,
-        pid=CONFIG.TEENSY_PID,
-        baudrate=CONFIG.TEENSY_BAUDRATE,
-        enable_crc=CONFIG.TEENSY_CRC,
+        serial_number: int = CONFIG.ACTUATOR_TEENSY_SER,
+        vid: int = CONFIG.TEENSY_VID,
+        pid: int = CONFIG.TEENSY_PID,
+        baudrate: int = CONFIG.TEENSY_BAUDRATE,
+        enable_crc: bool = CONFIG.TEENSY_CRC,
     ) -> None:
         # Initialize parent with a dummy flag to bypass hardware
         super().__init__(

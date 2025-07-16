@@ -111,7 +111,7 @@ class ActuatorsShow(Actuators):
         )
 
     # Protected methods
-    def _check_pin(self, pin) -> bool:
+    def _check_pin(self, pin: int) -> bool:
         """Checks if the specified pin is a valid servo pin.
 
         Args:

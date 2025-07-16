@@ -6,10 +6,23 @@ from shapely import Geometry, Point
 class Utils:
     @staticmethod
     def get_date() -> datetime:
+        """Get the current date and time.
+
+        Returns:
+            datetime: The current date and time.
+        """
         return datetime.now()
 
     @staticmethod
     def get_str_date(str_format: str = "%H:%M:%S.%f") -> str:
+        """Get the current date as a formatted string.
+
+        Args:
+            str_format (str, optional): The format string to use. Defaults to "%H:%M:%S.%f".
+
+        Returns:
+            str: The formatted date string.
+        """
         return datetime.now().strftime(str_format)
 
     @staticmethod
@@ -23,10 +36,26 @@ class Utils:
 
     @staticmethod
     def time_since(ts: float) -> float:
+        """Calculate the time elapsed since a given timestamp.
+
+        Args:
+            ts (float): The timestamp to compare against.
+
+        Returns:
+            float: The time elapsed since the given timestamp.
+        """
         return Utils.get_ts() - ts
 
     @staticmethod
-    def geom_to_str(geom: Geometry):
+    def geom_to_str(geom: Geometry) -> str:
+        """Convert a Geometry object to a string representation.
+
+        Args:
+            geom (Geometry): The geometry object to convert.
+
+        Returns:
+            str: The string representation of the geometry.
+        """
         r = ""
         if isinstance(geom, Point):
             r = str((round(geom.x), round(geom.y)))

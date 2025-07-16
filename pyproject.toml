@@ -113,3 +113,4 @@ convention = "google"
 style = 'google'
 allow-init-docstring = true
 skip-checking-short-docstrings = false
+check-style-mismatch = true

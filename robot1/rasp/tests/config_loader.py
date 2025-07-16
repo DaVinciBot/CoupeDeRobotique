@@ -4,11 +4,11 @@ import pathlib
 import sys
 
 
-def load_json_file(file_path: str) -> dict:
+def load_json_file(file_path: pathlib.Path) -> dict:
     """Load a JSON file and return its content.
 
     Args:
-        file_path (str): The path to the JSON file.
+        file_path (pathlib.Path): The path to the JSON file.
 
     Returns:
         dict: The content of the JSON file as a dictionary.
@@ -83,19 +83,17 @@ class CONFIG:
 
         TEAM_CONFIG (dict): Team configuration settings.
         DEFAULT_TEAM (str): Default team color.
-        INFO_BY_TEAM (dict): Information by team.
+        INFO_BY_TEAM (dict[str, dict]): Information by team.
 
         ROLLING_BASIS_CONFIG (dict): Rolling basis configuration settings.
         ROLLING_BASIS_TEENSY_SER (int): Serial number for the rolling basis Teensy.
         ROLLING_BASIS_PIDS_CONFIG (dict): PID configuration for the rolling basis.
-        ROLLING_BASIS_PIDS_LINEAR_SPEED (dict): PID settings for linear speed
-        ROLLING_BASIS_PIDS_ANGULAR_SPEED (dict): PID settings for angular speed.
-        ROLLING_BASIS_PIDS_LINEAR_POSITION (dict): PID settings for linear position
-        ROLLING_BASIS_PIDS_ANGULAR_POSITION (dict): PID settings for angular position.
+        ROLLING_BASIS_PIDS_LINEAR_POSITION (dict[str, float]): PID settings for linear position
+        ROLLING_BASIS_PIDS_ANGULAR_POSITION (dict[str, float]): PID settings for angular position.
 
         ROLLING_BASIS_SPEED_PROFILES_CONFIG (dict): Speed profiles configuration for the rolling basis.
-        ROLLING_BASIS_DEFAULT_SPEED_PROFILE (dict): Default speed profile settings.
-        ROLLING_BASIS_HIGH_SPEED_PROFILE (dict): High speed profile settings.
+        ROLLING_BASIS_DEFAULT_SPEED_PROFILE (dict[str, float]): Default speed profile settings.
+        ROLLING_BASIS_HIGH_SPEED_PROFILE (dict[str, float]): High speed profile settings.
 
         ACTUATORS_CONFIG (dict): Actuators configuration settings.
         ACTUATOR_TEENSY_SER (int): Serial number for the actuators Teensy
@@ -208,25 +206,19 @@ class CONFIG:
     ROLLING_BASIS_CONFIG: dict = SPECIFIC_CONFIG["rolling_basis"]
     ROLLING_BASIS_TEENSY_SER: int = ROLLING_BASIS_CONFIG["rolling_basis_teensy_ser"]
 
-    ROLLING_BASIS_PIDS_CONFIG = ROLLING_BASIS_CONFIG["pids"]
-    ROLLING_BASIS_PIDS_LINEAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
-        "linear_speed"
-    ]
-    ROLLING_BASIS_PIDS_ANGULAR_SPEED: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
-        "angular_speed"
-    ]
-    ROLLING_BASIS_PIDS_LINEAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
+    ROLLING_BASIS_PIDS_CONFIG: dict = ROLLING_BASIS_CONFIG["pids"]
+    ROLLING_BASIS_PIDS_LINEAR_POSITION: dict[str, float] = ROLLING_BASIS_PIDS_CONFIG[
         "linear_position"
     ]
-    ROLLING_BASIS_PIDS_ANGULAR_POSITION: dict[str:float] = ROLLING_BASIS_PIDS_CONFIG[
+    ROLLING_BASIS_PIDS_ANGULAR_POSITION: dict[str, float] = ROLLING_BASIS_PIDS_CONFIG[
         "angular_position"
     ]
 
     ROLLING_BASIS_SPEED_PROFILES_CONFIG: dict = ROLLING_BASIS_CONFIG["speed_profiles"]
-    ROLLING_BASIS_DEFAULT_SPEED_PROFILE: dict[str:float] = (
+    ROLLING_BASIS_DEFAULT_SPEED_PROFILE: dict[str, float] = (
         ROLLING_BASIS_SPEED_PROFILES_CONFIG["default"]
     )
-    ROLLING_BASIS_HIGH_SPEED_PROFILE: dict[str:float] = (
+    ROLLING_BASIS_HIGH_SPEED_PROFILE: dict[str, float] = (
         ROLLING_BASIS_SPEED_PROFILES_CONFIG["high"]
     )
 

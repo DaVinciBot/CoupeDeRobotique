@@ -7,8 +7,10 @@
 import math
 
 from boombot_strategy.tasks.actuator_task import (
-    BlockBanner,
     DeplacementPosition,  # used here to release the banner lock
+)
+from boombot_strategy.tasks.actuator_task import (
+    BlockBanner,
 )
 from boombot_strategy.tasks.navigation_tasks import (
     RelativeBackward,
