@@ -1,11 +1,10 @@
+from arena import AllyZone, EnemyZone
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
     BaseAcsDetectionProfile,
 )
-
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile_params import (
     NoAcsDetectionProfileParams,
 )
-from arena import AllyZone, EnemyZone
 
 
 class NoAcsDetectionProfile(BaseAcsDetectionProfile[NoAcsDetectionProfileParams]):

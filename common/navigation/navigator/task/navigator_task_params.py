@@ -1,11 +1,9 @@
+from geometry import OrientedPoint
+from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
+from navigation.avoidance.base_avoidance import BaseAvoidanceParams
 from navigation.path_planner import BasePathPlannerParams
 from navigation.trajectory_planner import BaseTrajectoryPlannerParams
 from navigation.trajectory_planner.speed_profile import SpeedProfiler
-
-from navigation.avoidance.base_avoidance import BaseAvoidanceParams
-from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
-
-from geometry import OrientedPoint
 
 
 class NavigatorTaskParams:

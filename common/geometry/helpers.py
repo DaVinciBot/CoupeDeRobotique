@@ -1,4 +1,4 @@
-# ====== Internal Project Imports ======
+
 from shapely import (
     Point,
     Polygon,

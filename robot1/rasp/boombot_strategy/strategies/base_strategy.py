@@ -1,17 +1,16 @@
+from abc import ABC
+
 from config_loader import CONFIG
-from abc import ABC, abstractmethod
 from loggerplusplus import Logger
-from typing import Union
 
 from strategy.core import (
-    SubGraphBuilder,
+    BaseGameContext,
+    BaseSubGraph,
     BaseTaskNode,
     DirectTransition,
-    BaseSubGraph,
     GraphRunner,
-    BaseGameContext,
+    SubGraphBuilder,
 )
-
 from strategy.tools import (
     visualize_task_graph,
 )
@@ -23,7 +22,7 @@ class BaseStrategy(ABC):
         self.strategy = SubGraphBuilder()
         self.runner: GraphRunner | None = None
         self.logger = Logger(
-            identifier=self.__class__.__name__, follow_logger_manager_rules=True
+            identifier=self.__class__.__name__, follow_logger_manager_rules=True,
         )
 
     def visualize_strategy(self) -> None:
@@ -33,10 +32,9 @@ class BaseStrategy(ABC):
         return self.runner
 
     def _auto_build_transitions(
-        self, *elements: Union[BaseTaskNode, BaseSubGraph]
+        self, *elements: BaseTaskNode | BaseSubGraph,
     ) -> bool:
-        """
-        Build a subgraph using the provided TaskNodes or SubGraphs.
+        """Build a subgraph using the provided TaskNodes or SubGraphs.
 
         Accepts any number of arguments of type BaseTaskNode or BaseSubGraph.
 
@@ -56,16 +54,15 @@ class BaseStrategy(ABC):
         for i in range(len(entry_points) - 1):
             # Create a direct transition from the exit of the current element to the entry of the next
             self.logger.debug(
-                f"Creating transition from {exit_points[i].name} to {entry_points[i + 1].name}"
+                f"Creating transition from {exit_points[i].name} to {entry_points[i + 1].name}",
             )
             exit_points[i].add_transition(DirectTransition(entry_points[i + 1]))
         return True
 
     def _resolve_for_entry(
-        self, element: Union[BaseTaskNode, BaseSubGraph]
+        self, element: BaseTaskNode | BaseSubGraph,
     ) -> BaseTaskNode:
-        """
-        Resolve a TaskNode or SubGraph to its entry point.
+        """Resolve a TaskNode or SubGraph to its entry point.
 
         Args:
             element (Union[BaseTaskNode, BaseSubGraph]): The element to resolve.
@@ -78,10 +75,9 @@ class BaseStrategy(ABC):
         return element
 
     def _resolve_for_exits(
-        self, element: Union[BaseTaskNode, BaseSubGraph]
+        self, element: BaseTaskNode | BaseSubGraph,
     ) -> BaseTaskNode:
-        """
-        Resolve a TaskNode or SubGraph to its exit points.
+        """Resolve a TaskNode or SubGraph to its exit points.
 
         Args:
             element (Union[BaseTaskNode, BaseSubGraph]): The element to resolve.

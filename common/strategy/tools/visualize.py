@@ -4,23 +4,18 @@
 # Nodes are rendered with their names and associated task types, and transitions are labeled by class name.
 # Node statuses are visually encoded when using NetworkX visualizations.
 
-# ====== Standard Library Imports ======
-from typing import Optional, Set
 
-# ====== Third-party Library Imports ======
-import networkx as nx
 import matplotlib.pyplot as plt
+import networkx as nx
 from graphviz import Digraph
 
-# ====== Internal Project Imports ======
+from strategy.core.sub_graphs import BaseSubGraph
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.tasks.status import TaskStatus
-from strategy.core.sub_graphs import BaseSubGraph
 
 
 def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=False):
-    """
-    Recursively traverses a TaskNode graph and generates a Graphviz visual (.png).
+    """Recursively traverses a TaskNode graph and generates a Graphviz visual (.png).
 
     Args:
         start_node (BaseTaskNode): Entry point of the task graph.
@@ -48,7 +43,7 @@ def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=F
         label = f"{node.name}\\n<{task_name}>"
 
         dot.node(
-            nid, label=label, shape="box", style="rounded,filled", fillcolor="lightblue"
+            nid, label=label, shape="box", style="rounded,filled", fillcolor="lightblue",
         )
 
         for t in node.transitions:
@@ -70,10 +65,9 @@ def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=F
 
 
 def visualize_entire_subgraph(
-    subgraph: BaseSubGraph, filename="full_graph", view=False
+    subgraph: BaseSubGraph, filename="full_graph", view=False,
 ):
-    """
-    Generates a full Graphviz visualization for a given subgraph.
+    """Generates a full Graphviz visualization for a given subgraph.
 
     Args:
         subgraph (BaseSubGraph): Subgraph containing all task nodes.
@@ -99,7 +93,7 @@ def visualize_entire_subgraph(
 
         label = f"{node.name}\\n<{get_task_class_name(node.tasks)}>"
         dot.node(
-            nid, label=label, shape="box", style="rounded,filled", fillcolor="lightblue"
+            nid, label=label, shape="box", style="rounded,filled", fillcolor="lightblue",
         )
 
         for t in node.transitions:
@@ -121,10 +115,9 @@ def visualize_entire_subgraph(
 
 
 def visualize_task_graph_from_node(
-    subgraph: BaseSubGraph, title: str = "Full Strategy Graph"
+    subgraph: BaseSubGraph, title: str = "Full Strategy Graph",
 ):
-    """
-    Uses NetworkX and Matplotlib to visualize the task graph with color-coded node statuses.
+    """Uses NetworkX and Matplotlib to visualize the task graph with color-coded node statuses.
 
     Args:
         subgraph (BaseSubGraph): Subgraph containing all task nodes.

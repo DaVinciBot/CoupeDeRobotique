@@ -4,20 +4,17 @@
 # using a user-provided function. The function determines if a transition between task nodes is allowed,
 # based on the current game context.
 
-# ====== Standard Library Imports ======
-from typing import Callable
+from collections.abc import Callable
 
-# ====== Internal Project Imports ======
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.base_game_context import BaseGameContext
+from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition import (
     BaseTransitionCondition,
 )
 
 
 class FromFunctionTransitionCondition(BaseTransitionCondition):
-    """
-    A transition condition that delegates its logic to a user-provided function.
+    """A transition condition that delegates its logic to a user-provided function.
 
     This class enables flexible, reusable logic for determining transitions between task nodes
     by passing a function during instantiation. The function is expected to return a boolean
@@ -29,10 +26,9 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
     """
 
     def __init__(
-        self, func: Callable[[BaseTaskNode, BaseTaskNode, BaseGameContext], bool]
+        self, func: Callable[[BaseTaskNode, BaseTaskNode, BaseGameContext], bool],
     ):
-        """
-        Initialize the transition condition with a custom function.
+        """Initialize the transition condition with a custom function.
 
         Args:
             func (Callable): A function that defines the logic for transition validation.
@@ -40,10 +36,9 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
         self.func = func
 
     def check(
-        self, from_node: BaseTaskNode, next_node: BaseTaskNode, ctx: BaseGameContext
+        self, from_node: BaseTaskNode, next_node: BaseTaskNode, ctx: BaseGameContext,
     ) -> bool:
-        """
-        Check whether the transition is valid using the provided function.
+        """Check whether the transition is valid using the provided function.
 
         Args:
             from_node (BaseTaskNode): The current task node.

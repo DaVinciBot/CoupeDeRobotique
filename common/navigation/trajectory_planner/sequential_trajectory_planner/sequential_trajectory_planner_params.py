@@ -3,17 +3,15 @@
 # SequentialTrajectoryPlanner. It extends the base parameter class and introduces a configurable
 # sleep delay between each trajectory step.
 
-# ====== Internal Project Imports ======
+from navigation.path_planner import Direction
 from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params import (
     BaseTrajectoryPlannerParams,
 )
 from navigation.trajectory_planner.structs import TrajectoryPlannerStrategy
-from navigation.path_planner import Direction
 
 
 class SequentialTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
-    """
-    Parameter class for SequentialTrajectoryPlanner.
+    """Parameter class for SequentialTrajectoryPlanner.
 
     Attributes:
         step_sleep_delay (float): Optional delay (in seconds) to pause between trajectory steps.
@@ -26,8 +24,7 @@ class SequentialTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
         respect_intermediate_orientation: bool = False,
         respect_goal_orientation: bool = True,
     ) -> None:
-        """
-        Initialize parameters for sequential trajectory planning.
+        """Initialize parameters for sequential trajectory planning.
 
         Args:
             step_sleep_delay (float): Time delay between each segment in the trajectory.

@@ -1,14 +1,9 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
-
 
 from typing import TYPE_CHECKING
 
-
-from strategy.core.base_game_context import BaseGameContext
-
-
 if TYPE_CHECKING:
+    from strategy.core.base_game_context import BaseGameContext
     from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
 from strategy.core.task_nodes.scoring_functions.base_scoring_function import (
@@ -21,6 +16,6 @@ class ConstantScoringFunction(BaseScoringFunction):
         self.score: float = score
 
     def compute(
-        self, prev_node: BaseTaskNode, current_node: BaseTaskNode, ctx: BaseGameContext
+        self, prev_node: BaseTaskNode, current_node: BaseTaskNode, ctx: BaseGameContext,
     ) -> float:
         return self.score

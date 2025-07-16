@@ -4,42 +4,36 @@
 # methods for Automatic Collision System (ACS) checks, task state handling, timeout control, and a
 # standardized interface for implementing strategy-specific logic via the abstract `handle` method.
 
-# ====== Standard Library Imports ======
+
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
 import functools
 import time
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar
 
-# ====== Third-party Library Imports ======
-# (None)
-
-# ====== Internal Project Imports ======
 from loggerplusplus import Logger
-from arena import AllyZone, EnemyZone
-from geometry import OrientedPoint
+
+from navigation.avoidance.acs_detection_profiles import (
+    AcsDetectionProfileFactory,
+    BaseAcsDetectionProfileParams,
+)
 from navigation.avoidance.base_avoidance.base_avoidance_params import (
     BaseAvoidanceParams,
 )
 from navigation.avoidance.base_avoidance.states import AvoidanceState
 from navigation.trajectory_planner import TrajectoryPlanCommand
-from navigation.avoidance.acs_detection_profiles import (
-    AcsDetectionProfileFactory,
-    BaseAcsDetectionProfile,
-    BaseAcsDetectionProfileParams,
-)
-
 
 if TYPE_CHECKING:
+    from arena import AllyZone, EnemyZone
+    from geometry import OrientedPoint
     from navigation.navigator.task.navigator_task import NavigatorTask
 
 ParamsType = TypeVar("ParamsType", bound=BaseAvoidanceParams)
 
 
 class BaseAvoidance(ABC, Generic[ParamsType]):
-    """
-    Abstract base class that provides shared utilities for avoidance strategies in navigation.
+    """Abstract base class that provides shared utilities for avoidance strategies in navigation.
 
     This class encapsulates ACS-based obstacle detection, timeout-based abort handling,
     and a standardized interface for strategy-specific logic.
@@ -58,20 +52,19 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
-        """
-        Initialize the base avoidance class.
+        """Initialize the base avoidance class.
 
         Args:
             params (ParamsType): Parameters for the avoidance strategy.
             logger (Logger | None): Optional logger instance.
         """
         self.logger: Logger = logger or Logger(
-            identifier=self.__class__.__name__, follow_logger_manager_rules=True
+            identifier=self.__class__.__name__, follow_logger_manager_rules=True,
         )
         self.params: ParamsType = params
 
         self.acs_detector = AcsDetectionProfileFactory.instantiate(
-            params=acs_detection_profile_params
+            params=acs_detection_profile_params,
         )
 
         self.state: AvoidanceState = AvoidanceState.IDLE
@@ -81,8 +74,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         )
 
     def _store_original_task(self, current_navigator_task: NavigatorTask) -> None:
-        """
-        Store a deep copy of the original navigation task if not already stored.
+        """Store a deep copy of the original navigation task if not already stored.
 
         Args:
             current_navigator_task (NavigatorTask): The current navigation task.
@@ -94,8 +86,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
 
     @staticmethod
     def _ensure_original_task_storage(method: callable) -> callable:
-        """
-        Decorator to ensure original task is stored before handling logic is applied.
+        """Decorator to ensure original task is stored before handling logic is applied.
 
         Args:
             method (callable): The method to wrap.
@@ -112,20 +103,17 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         return wrapper
 
     def _start_timer(self) -> None:
-        """
-        Begin the avoidance timeout countdown.
+        """Begin the avoidance timeout countdown.
         """
         self._avoiding_start_time = time.time()
 
     def _reset_timer(self) -> None:
-        """
-        Clear the avoidance timer.
+        """Clear the avoidance timer.
         """
         self._avoiding_start_time = None
 
     def _has_timed_out(self) -> bool:
-        """
-        Determine whether the avoidance process has timed out.
+        """Determine whether the avoidance process has timed out.
 
         Returns:
             bool: True if the elapsed time exceeds the timeout threshold.
@@ -135,10 +123,9 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         return (time.time() - self._avoiding_start_time) > self.params.timeout
 
     def _abort(
-        self, task: NavigatorTask, position: OrientedPoint
+        self, task: NavigatorTask, position: OrientedPoint,
     ) -> TrajectoryPlanCommand:
-        """
-        Abort the avoidance procedure and return a stop command.
+        """Abort the avoidance procedure and return a stop command.
 
         Args:
             task (NavigatorTask): The task being executed.
@@ -163,8 +150,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
-        """
-        Abstract method for avoidance logic to be implemented by concrete subclasses.
+        """Abstract method for avoidance logic to be implemented by concrete subclasses.
 
         Args:
             current_navigator_task (NavigatorTask): Current task in progress.

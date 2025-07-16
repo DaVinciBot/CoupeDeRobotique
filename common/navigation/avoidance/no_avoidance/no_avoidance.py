@@ -3,28 +3,26 @@
 # used when no obstacle avoidance is required. It inherits from BaseAvoidance and simply
 # returns the current trajectory command without performing any additional checks or logic.
 
-# ====== Standard Library Imports ======
+
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-# ====== Internal Project Imports ======
-from arena import AllyZone, EnemyZone
-from loggerplusplus import Logger
 from navigation.avoidance.base_avoidance import BaseAvoidance
 from navigation.avoidance.no_avoidance.no_avoidance_params import NoAvoidanceParams
-from navigation.trajectory_planner import TrajectoryPlanCommand
 
 if TYPE_CHECKING:
-    from navigation.navigator.task.navigator_task import NavigatorTask
+    from loggerplusplus import Logger
 
-from navigation.avoidance.acs_detection_profiles import (
-    BaseAcsDetectionProfileParams,
-)
+    from arena import AllyZone, EnemyZone
+    from navigation.avoidance.acs_detection_profiles import (
+        BaseAcsDetectionProfileParams,
+    )
+    from navigation.navigator.task.navigator_task import NavigatorTask
 
 
 class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
-    """
-    Implementation of a no-op avoidance strategy.
+    """Implementation of a no-op avoidance strategy.
 
     This class represents a scenario where the navigation system proceeds with its task
     without performing any obstacle avoidance. It directly returns the current trajectory
@@ -41,8 +39,7 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
-        """
-        Initialize the NoAvoidance strategy with the given parameters and optional logger.
+        """Initialize the NoAvoidance strategy with the given parameters and optional logger.
 
         Args:
             params (NoAvoidanceParams): Configuration parameters.
@@ -57,8 +54,7 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
-        """
-        Handle method for no avoidance logic.
+        """Handle method for no avoidance logic.
 
         Since this strategy does not perform any avoidance, it simply returns the current
         trajectory command as-is.

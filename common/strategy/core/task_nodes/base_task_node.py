@@ -1,60 +1,58 @@
 from __future__ import annotations
 
-import traceback
-from typing import TYPE_CHECKING, List, Optional, Union
 import time
+import traceback
+from typing import TYPE_CHECKING
 
 from loggerplusplus import Logger
 
-from strategy.core.tasks import BaseTask, TaskStatus
 from strategy.core.task_nodes.scoring_functions import (
     BaseScoringFunction,
     DefaultScoringFunction,
 )
+from strategy.core.tasks import BaseTask, TaskStatus
 
 if TYPE_CHECKING:
-    from strategy.core.transitions import BaseTransition
     from strategy.core.base_game_context import BaseGameContext
+    from strategy.core.transitions import BaseTransition
 
 
 class BaseTaskNode:
-    """
-    A node that manages one or more tasks with transitions and scoring.
+    """A node that manages one or more tasks with transitions and scoring.
     """
 
     def __init__(
         self,
         name: str,
-        tasks: Union[BaseTask, List[BaseTask]],
+        tasks: BaseTask | list[BaseTask],
         scoring_function: BaseScoringFunction = DefaultScoringFunction(),
     ) -> None:
-        """
-        Initialize the task node.
+        """Initialize the task node.
         """
         self.name: str = name
-        self.tasks: List[BaseTask] = (
+        self.tasks: list[BaseTask] = (
             [tasks] if isinstance(tasks, BaseTask) else tasks  # type: ignore
         )
         self.scoring_function: BaseScoringFunction = scoring_function
         self.logger = Logger(identifier=name, follow_logger_manager_rules=True)
 
         # Transitions to other nodes
-        self.transitions: List[BaseTransition] = []
+        self.transitions: list[BaseTransition] = []
 
         # Internal state
         self.status: TaskStatus = TaskStatus.PENDING
-        self.exceptions: List[Optional[Exception]] = [None] * len(self.tasks)
-        self.results: List[Optional[bool]] = [None] * len(self.tasks)
-        self.task_done: List[bool] = [False] * len(self.tasks)
+        self.exceptions: list[Exception | None] = [None] * len(self.tasks)
+        self.results: list[bool | None] = [None] * len(self.tasks)
+        self.task_done: list[bool] = [False] * len(self.tasks)
 
-        self.start_time: Optional[float] = None
-        self.end_time: Optional[float] = None
+        self.start_time: float | None = None
+        self.end_time: float | None = None
 
         self.entered = False
         self._exited = False
 
         self.logger.info(
-            f"Initialized TaskNode '{self.name}' with {len(self.tasks)} task(s)"
+            f"Initialized TaskNode '{self.name}' with {len(self.tasks)} task(s)",
         )
 
     def add_transition(self, transition: BaseTransition) -> None:
@@ -62,34 +60,33 @@ class BaseTaskNode:
         self.transitions.append(transition)
         self.logger.debug(f"Added transition '{transition}' to node '{self.name}'")
 
-    def score(self, prev_node: Optional[BaseTaskNode], ctx: BaseGameContext) -> float:
+    def score(self, prev_node: BaseTaskNode | None, ctx: BaseGameContext) -> float:
         """Compute and return a score for this node against an optional previous node."""
         score_value = self.scoring_function.compute(
-            prev_node=prev_node, current_node=self, ctx=ctx
+            prev_node=prev_node, current_node=self, ctx=ctx,
         )
         prev_name = prev_node.name if prev_node else "<None>"
         self.logger.debug(
-            f"Node '{self.name}' scored {score_value:.4f} against previous node '{prev_name}'"
+            f"Node '{self.name}' scored {score_value:.4f} against previous node '{prev_name}'",
         )
         return score_value
 
-    def on_enter(self, prev_node: Optional[BaseTaskNode], ctx: BaseGameContext) -> None:
+    def on_enter(self, prev_node: BaseTaskNode | None, ctx: BaseGameContext) -> None:
         """Hook called when entering this node."""
         prev_name = prev_node.name if prev_node else "<None>"
         self.logger.info(f"Entering node '{self.name}' from '{prev_name}'")
 
-    def on_exit(self, next_node: Optional[BaseTaskNode], ctx: BaseGameContext) -> None:
+    def on_exit(self, next_node: BaseTaskNode | None, ctx: BaseGameContext) -> None:
         """Hook called when exiting this node."""
         next_name = next_node.name if next_node else "<None>"
         self.logger.info(f"Exiting node '{self.name}' to '{next_name}'")
 
     def execute(self, ctx: BaseGameContext) -> bool:
-        """
-        Execute tasks sequentially. Return True only when all tasks are done.
+        """Execute tasks sequentially. Return True only when all tasks are done.
         """
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:
             self.logger.debug(
-                f"Node '{self.name}' already completed with status {self.status.name}"
+                f"Node '{self.name}' already completed with status {self.status.name}",
             )
             return True
 
@@ -113,7 +110,7 @@ class BaseTaskNode:
                 if done:
                     self.task_done[idx] = True
                     self.logger.info(
-                        f"Task {idx} in node '{self.name}' completed successfully"
+                        f"Task {idx} in node '{self.name}' completed successfully",
                     )
                 else:
                     all_done = False
@@ -129,7 +126,7 @@ class BaseTaskNode:
                 any_failed = True
                 self.logger.error(
                     f"Task {idx} in node '{self.name}' failed: {e}', "
-                    f"traceback {traceback.format_exc()}"
+                    f"traceback {traceback.format_exc()}",
                 )
             break
 
@@ -144,15 +141,14 @@ class BaseTaskNode:
 
             elapsed = self.end_time - self.start_time
             self.logger.info(
-                f"Finished node '{self.name}' with status {self.status.name} in {elapsed:.2f}s"
+                f"Finished node '{self.name}' with status {self.status.name} in {elapsed:.2f}s",
             )
             return True
 
         return False
 
     def handle(self, ctx: BaseGameContext) -> bool:
-        """
-        Enter the node (once), execute tasks, and exit when done.
+        """Enter the node (once), execute tasks, and exit when done.
         """
         if not self.entered:
             self.on_enter(None, ctx)

@@ -4,22 +4,19 @@
 # calculations based on a uniform speed. Additional parameters such as departure and arrival speeds are accepted
 # for interface compatibility but not used in calculations due to the constant-speed assumption.
 
-# ====== Internal Project Imports ======
 from navigation.trajectory_planner.speed_profile.base_speed_profile import (
     BaseSpeedProfile,
 )
 
 
 class BasicSpeedProfile(BaseSpeedProfile):
-    """
-    Basic speed profile implementation using constant speed.
+    """Basic speed profile implementation using constant speed.
 
     All motion calculations assume uniform velocity with no acceleration or deceleration.
     """
 
     def __init__(self, speed: float):
-        """
-        Initialize the basic speed profile.
+        """Initialize the basic speed profile.
 
         Args:
             speed (float): Constant speed value used for calculations.
@@ -33,8 +30,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
         departure_speed: float = 0.0,
         arrival_speed: float = 0.0,
     ) -> float:
-        """
-        Get constant speed at any given time or distance.
+        """Get constant speed at any given time or distance.
 
         Args:
             time_elapsed (float | None): Not used.
@@ -54,8 +50,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
         departure_speed: float = 0.0,
         arrival_speed: float = 0.0,
     ) -> float:
-        """
-        Compute distance traveled given elapsed time.
+        """Compute distance traveled given elapsed time.
 
         Args:
             time_elapsed (float): Elapsed time in seconds.
@@ -74,8 +69,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
         departure_speed: float = 0.0,
         arrival_speed: float = 0.0,
     ) -> float:
-        """
-        Compute total time required to cover a distance at constant speed.
+        """Compute total time required to cover a distance at constant speed.
 
         Args:
             distance (float): Distance to travel.

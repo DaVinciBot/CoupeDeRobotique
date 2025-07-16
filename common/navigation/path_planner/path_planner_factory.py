@@ -4,26 +4,21 @@
 # It supports instantiation of `DeltaPathPlanner` and `BasicPathPlanner` using
 # strongly-typed parameters for safe casting.
 
-# ====== Standard Library Imports ======
 from typing import cast
 
-# ====== Internal Project Imports ======
-# Import utiles structures
-from navigation.path_planner.structs import PathPlanningStrategy
-
-# Import Path Planner classes (and their parameters)
 from navigation.path_planner.base_path_planner import (
     BasePathPlanner,
     BasePathPlannerParams,
-)
-from navigation.path_planner.delta_path_planner import (
-    DeltaPathPlanner,
-    DeltaPathPlannerParams,
 )
 from navigation.path_planner.basic_path_planner import (
     BasicPathPlanner,
     BasicPathPlannerParams,
 )
+from navigation.path_planner.delta_path_planner import (
+    DeltaPathPlanner,
+    DeltaPathPlannerParams,
+)
+from navigation.path_planner.structs import PathPlanningStrategy
 
 # TODO: implement AStarPathPlanner and add it to the factory
 # from navigation.path_planner.astar_path_planner import (
@@ -32,14 +27,12 @@ from navigation.path_planner.basic_path_planner import (
 
 
 class PathPlannerFactory:
-    """
-    Factory class to instantiate the appropriate path planner based on the provided parameters.
+    """Factory class to instantiate the appropriate path planner based on the provided parameters.
     """
 
     @staticmethod
     def instantiate(params: BasePathPlannerParams) -> BasePathPlanner:
-        """
-        Create a path planner based on the given parameters.
+        """Create a path planner based on the given parameters.
 
         This method inspects the `path_finding_strategy` attribute of the provided
         parameter object and returns an instance of the appropriate path planner class.
@@ -60,11 +53,11 @@ class PathPlannerFactory:
 
         if strategy == PathPlanningStrategy.DELTA:
             # Cast params to DeltaPathPlannerParams before instantiation
-            return DeltaPathPlanner(cast(DeltaPathPlannerParams, params))
+            return DeltaPathPlanner(cast("DeltaPathPlannerParams", params))
 
         if strategy == PathPlanningStrategy.BASIC:
             # Cast params to BasicPathPlannerParams before instantiation
-            return BasicPathPlanner(cast(BasicPathPlannerParams, params))
+            return BasicPathPlanner(cast("BasicPathPlannerParams", params))
 
         # Raise an error if the strategy is not recognized
         raise ValueError(f"Unsupported path planning strategy: {strategy}")

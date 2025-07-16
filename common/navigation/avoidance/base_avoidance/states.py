@@ -2,8 +2,7 @@ from enum import Enum, auto
 
 
 class AvoidanceState(Enum):
-    """
-    Enum representing the state of the avoidance process.
+    """Enum representing the state of the avoidance process.
     """
 
     IDLE = auto()  # No avoidance in progress

@@ -1,4 +1,4 @@
-from typing import List, Union
+
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
 
@@ -6,8 +6,8 @@ class BaseSubGraph:
     def __init__(
         self,
         entry_node: BaseTaskNode,
-        exit_nodes: Union[BaseTaskNode, List[BaseTaskNode]],
-        all_nodes: List[BaseTaskNode],
+        exit_nodes: BaseTaskNode | list[BaseTaskNode],
+        all_nodes: list[BaseTaskNode],
     ):
         self.entry_node = entry_node
         self.exit_nodes = (
@@ -18,8 +18,8 @@ class BaseSubGraph:
     def get_entry(self) -> BaseTaskNode:
         return self.entry_node
 
-    def get_exits(self) -> List[BaseTaskNode]:
+    def get_exits(self) -> list[BaseTaskNode]:
         return self.exit_nodes
 
-    def get_all_nodes(self) -> List[BaseTaskNode]:
+    def get_all_nodes(self) -> list[BaseTaskNode]:
         return self.all_nodes

@@ -1,16 +1,15 @@
 from __future__ import annotations
-from typing import List, Dict, Optional
+
+from typing import TYPE_CHECKING
 
 from loggerplusplus import Logger
 
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
-from strategy.core.transitions.base_transition import BaseTransition
-from strategy.core.base_game_context import BaseGameContext
-
+if TYPE_CHECKING:
+    from strategy.core.base_game_context import BaseGameContext
+    from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
 class GraphRunner:
-    """
-    Executes a directed graph of task nodes with optional parallelism.
+    """Executes a directed graph of task nodes with optional parallelism.
 
     Attributes:
         logger: Logger instance for reporting execution progress.
@@ -23,31 +22,30 @@ class GraphRunner:
     def __init__(
         self,
         start: BaseTaskNode,
-        logger: Optional[Logger] = None,
+        logger: Logger | None = None,
         parallel: bool = False,
     ) -> None:
         self.logger = logger or Logger(
-            identifier="GraphRunner", follow_logger_manager_rules=True
+            identifier="GraphRunner", follow_logger_manager_rules=True,
         )
         self.parallel = parallel
-        self.active: List[BaseTaskNode] = [start]
-        self.prev: Dict[BaseTaskNode, Optional[BaseTaskNode]] = {start: None}
+        self.active: list[BaseTaskNode] = [start]
+        self.prev: dict[BaseTaskNode, BaseTaskNode | None] = {start: None}
         self.logger.info(
-            f"GraphRunner initialized with start node '{start.name}', parallel={self.parallel}"
+            f"GraphRunner initialized with start node '{start.name}', parallel={self.parallel}",
         )
 
     def handle(self, ctx: BaseGameContext) -> None:
-        """
-        Advance execution one step: process all active nodes, handle transitions,
+        """Advance execution one step: process all active nodes, handle transitions,
         and update the set of active nodes.
         """
         if not self.active:
             self.logger.warning(
-                "No active nodes to execute; graph execution complete or not started."
+                "No active nodes to execute; graph execution complete or not started.",
             )
             return
 
-        next_active: List[BaseTaskNode] = []
+        next_active: list[BaseTaskNode] = []
         for node in self.active:
             prev_node = self.prev.get(node)
 
@@ -64,7 +62,7 @@ class GraphRunner:
 
             # Node completed
             self.logger.info(
-                f"<== Finished node: {node.name} with status {node.status.name}"
+                f"<== Finished node: {node.name} with status {node.status.name}",
             )
 
             # Gather valid transitions
@@ -76,7 +74,7 @@ class GraphRunner:
             ]
             if not valid_transitions:
                 self.logger.info(
-                    f"    No valid transitions from '{node.name}'; branch ends here."
+                    f"    No valid transitions from '{node.name}'; branch ends here.",
                 )
                 continue
 
@@ -84,19 +82,19 @@ class GraphRunner:
                 for transition in valid_transitions:
                     target = transition.target
                     self.logger.info(
-                        f"    Transition: '{node.name}' -> '{target.name}' via {transition.__class__.__name__}"
+                        f"    Transition: '{node.name}' -> '{target.name}' via {transition.__class__.__name__}",
                     )
                     next_active.append(target)
                     self.prev[target] = node
             else:
                 # Choose the transition leading to the highest-scoring node
                 best = max(
-                    valid_transitions, key=lambda t: t.target.score(prev_node, ctx)
+                    valid_transitions, key=lambda t: t.target.score(prev_node, ctx),
                 )
                 score_val = best.target.score(prev_node, ctx)
                 target = best.target
                 self.logger.info(
-                    f"    Chosen transition: '{node.name}' -> '{target.name}' via {best.__class__.__name__} (score={score_val:.2f})"
+                    f"    Chosen transition: '{node.name}' -> '{target.name}' via {best.__class__.__name__} (score={score_val:.2f})",
                 )
                 next_active.append(target)
                 self.prev[target] = node
@@ -104,8 +102,7 @@ class GraphRunner:
         self.active = next_active
 
     def run(self, ctx: BaseGameContext, max_steps: int = 1000) -> None:
-        """
-        Run through the graph until completion or until max_steps iterations.
+        """Run through the graph until completion or until max_steps iterations.
 
         Args:
             ctx: Game context passed to task nodes.
@@ -114,13 +111,13 @@ class GraphRunner:
         step = 0
         while self.active and step < max_steps:
             self.logger.debug(
-                f"GraphRunner step {step + 1}, active nodes: {[n.name for n in self.active]}"
+                f"GraphRunner step {step + 1}, active nodes: {[n.name for n in self.active]}",
             )
             self.handle(ctx)
             step += 1
         if self.active:
             self.logger.warning(
-                f"GraphRunner reached max_steps ({max_steps}) with active nodes remaining: {[n.name for n in self.active]}"
+                f"GraphRunner reached max_steps ({max_steps}) with active nodes remaining: {[n.name for n in self.active]}",
             )
         else:
             self.logger.info("GraphRunner completed all nodes.")

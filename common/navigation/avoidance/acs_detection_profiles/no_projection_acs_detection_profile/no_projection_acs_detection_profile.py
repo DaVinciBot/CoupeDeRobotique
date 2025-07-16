@@ -1,16 +1,16 @@
+from loggerplusplus import Logger
+
+from arena import AllyZone, EnemyZone
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
     BaseAcsDetectionProfile,
 )
-
 from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile_params import (
     NoProjectionAcsDetectionProfileParams,
 )
-from arena import AllyZone, EnemyZone
-from loggerplusplus import Logger
 
 
 class NoProjectionAcsDetectionProfile(
-    BaseAcsDetectionProfile[NoProjectionAcsDetectionProfileParams]
+    BaseAcsDetectionProfile[NoProjectionAcsDetectionProfileParams],
 ):
     def __init__(
         self,

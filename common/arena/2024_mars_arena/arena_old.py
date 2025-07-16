@@ -1,24 +1,21 @@
-from math import cos, sin, radians
+from math import cos, radians, sin
 
+from old_logger import Logger, LogLevels
+from shapely.affinity import scale
 
 from geometry import (
-    Point,
-    MultiPoint,
-    Polygon,
-    MultiPolygon,
-    LineString,
-    BufferCapStyle,
-    BufferJoinStyle,
     Geometry,
-    create_straight_rectangle,
-    prepare,
-    distance,
+    LineString,
+    MultiPoint,
+    MultiPolygon,
     OrientedPoint,
+    Point,
+    Polygon,
+    create_straight_rectangle,
+    distance,
     nearest_points,
+    prepare,
 )
-from old_logger import Logger, LogLevels
-import numpy as np
-from shapely.affinity import scale
 
 
 class Arena:
@@ -88,7 +85,7 @@ class Arena:
         forbidden_zone_name: str = "forbidden",
     ) -> bool:
         return self.enable_go_on_path(
-            LineString([start, target]), forbidden_zone_name=forbidden_zone_name
+            LineString([start, target]), forbidden_zone_name=forbidden_zone_name,
         )
 
     def enable_go_on_path(
@@ -96,7 +93,7 @@ class Arena:
         path: LineString,
         forbidden_zone_name: str = "forbidden",
     ) -> bool:
-        """this function checks if a given line (or series of connected lines) move can be made into the arena. It
+        """This function checks if a given line (or series of connected lines) move can be made into the arena. It
         avoids collisions with the boarders and the forbidden area. takes into account the width and the length of
         the robot
 
@@ -111,7 +108,6 @@ class Arena:
         Returns:
             bool: Whether this path is theoretically allowed
         """
-
         # define the area touched by the buffer, for example the sides of a robot moving
 
         geometry_to_check = (
@@ -154,109 +150,103 @@ class Arena:
         center: Point = zone.centroid
         if delta == 0:
             self.logger.log(
-                f"delta == 0, returning as close as the centroid of zone as possible to avoid collision with the border",
+                "delta == 0, returning as close as the centroid of zone as possible to avoid collision with the border",
                 LogLevels.DEBUG,
             )
             if self.valide_position(center):
                 return center
-            else:
-                projected_point = borders.exterior.interpolate(
-                    borders.exterior.project(center)
+            projected_point = borders.exterior.interpolate(
+                borders.exterior.project(center),
+            )
+            x = center.x
+            y = center.y
+            if abs(y - projected_point.y) < 0.1:
+                if projected_point.x - x < 0:
+                    x = x + (
+                        self.robot_buffer - center.distance(projected_point) + 0.1
+                    )
+                else:
+                    x = x - (
+                        self.robot_buffer - center.distance(projected_point) + 0.1
+                    )
+            elif projected_point.y - y > 0:
+                y = y - (
+                    self.robot_buffer - center.distance(projected_point) + 0.1
                 )
-                x = center.x
-                y = center.y
+            else:
+                y = y + (
+                    self.robot_buffer - center.distance(projected_point) + 0.1
+                )
+            center = Point(x, y)
+            if not self.valide_position(center):
+                projected_point = borders.exterior.interpolate(
+                    borders.exterior.project(center),
+                )
                 if abs(y - projected_point.y) < 0.1:
                     if projected_point.x - x < 0:
                         x = x + (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
+                            self.robot_buffer
+                            - center.distance(projected_point)
+                            + 0.1
                         )
                     else:
                         x = x - (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
+                            self.robot_buffer
+                            - center.distance(projected_point)
+                            + 0.1
                         )
-                else:
-                    if projected_point.y - y > 0:
-                        y = y - (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
-                        )
-                    else:
-                        y = y + (
-                            self.robot_buffer - center.distance(projected_point) + 0.1
-                        )
-                center = Point(x, y)
-                if not self.valide_position(center):
-                    projected_point = borders.exterior.interpolate(
-                        borders.exterior.project(center)
+                elif projected_point.y - y > 0:
+                    y = y - (
+                        self.robot_buffer
+                        - center.distance(projected_point)
+                        + 0.1
                     )
-                    if abs(y - projected_point.y) < 0.1:
-                        if projected_point.x - x < 0:
-                            x = x + (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                        else:
-                            x = x - (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                    else:
-                        if projected_point.y - y > 0:
-                            y = y - (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                        else:
-                            y = y + (
-                                self.robot_buffer
-                                - center.distance(projected_point)
-                                + 0.1
-                            )
-                return Point(x, y)
+                else:
+                    y = y + (
+                        self.robot_buffer
+                        - center.distance(projected_point)
+                        + 0.1
+                    )
+            return Point(x, y)
 
         if delta != 0:
             abs_delta = abs(delta)
             disc_delta = center.buffer(abs_delta)
 
             if disc_delta.intersects(start_point):
-                self.logger.log(f"start_point is inside circle_delta", LogLevels.DEBUG)
+                self.logger.log("start_point is inside circle_delta", LogLevels.DEBUG)
                 return None
-            else:
-                # Get the boundary (circle) of the disc of radius delta around the center
-                circle_delta = disc_delta.boundary
+            # Get the boundary (circle) of the disc of radius delta around the center
+            circle_delta = disc_delta.boundary
 
-                # Compute the line from start_point to the center of the zone, then scale it by more than 2 to make sure it intersect
-                # the circle twice (unless start_point is inside the circle_delta, or delta == 0, which have been checked)
-                line = scale(LineString([start_point, center]), xfact=3, yfact=3)
+            # Compute the line from start_point to the center of the zone, then scale it by more than 2 to make sure it intersect
+            # the circle twice (unless start_point is inside the circle_delta, or delta == 0, which have been checked)
+            line = scale(LineString([start_point, center]), xfact=3, yfact=3)
 
-                intersections = circle_delta.intersection(line)
+            intersections = circle_delta.intersection(line)
 
-                # self.logger.log(
-                #     f"Computed intersections: {intersections}", LogLevels.DEBUG
-                # )
+            # self.logger.log(
+            #     f"Computed intersections: {intersections}", LogLevels.DEBUG
+            # )
 
-                assert (
-                    isinstance(intersections, MultiPoint)
-                    and len(intersections.geoms) == 2
-                ), "Should get exactly 2 intersections"
+            assert (
+                isinstance(intersections, MultiPoint)
+                and len(intersections.geoms) == 2
+            ), "Should get exactly 2 intersections"
 
-                # Return closest or furthest intersection
-                if delta > 0:
-                    return nearest_points(start_point, intersections)[1]
+            # Return closest or furthest intersection
+            if delta > 0:
+                return nearest_points(start_point, intersections)[1]
 
-                # No clean way in case 'further' point
-                else:
-                    if distance(start_point, intersections.geoms[0]) <= distance(
-                        start_point, intersections.geoms[1]
-                    ):
-                        return intersections.geoms[1]
-                    else:
-                        return intersections.geoms[0]
+            # No clean way in case 'further' point
+            if distance(start_point, intersections.geoms[0]) <= distance(
+                start_point, intersections.geoms[1],
+            ):
+                return intersections.geoms[1]
+            return intersections.geoms[0]
 
     def check_collision_by_distances(
-        self, distances_to_check: list[float], pos_robot: OrientedPoint
+        self, distances_to_check: list[float], pos_robot: OrientedPoint,
     ):
         """Currently hard-coded for 90-180° with 3 distances/°
 
@@ -264,15 +254,14 @@ class Arena:
             distances_to_check (list[float]): _description_
             pos_robot (OrientedPoint): _description_
         """
-
         for i in range(len(distances_to_check)):
             # Check if the point is close enough to be a risk, and far enough to remove lidar aberrations (might be done in lidar code as well)
             if 5 < distances_to_check[i] < self.safe_collision_distance:
                 # Then check that it isn't outside the game zone (with a buffer)
                 if self.game_borders_buffered.intersects(
                     self.translate_relative_polar(
-                        distances_to_check[i], i / 3, pos_robot
-                    )
+                        distances_to_check[i], i / 3, pos_robot,
+                    ),
                 ):
                     return True
 
@@ -280,7 +269,7 @@ class Arena:
 
     @staticmethod
     def translate_relative_polar(
-        distance: float, relative_angle: float, pos_robot: OrientedPoint
+        distance: float, relative_angle: float, pos_robot: OrientedPoint,
     ):
         return Point(
             pos_robot.x

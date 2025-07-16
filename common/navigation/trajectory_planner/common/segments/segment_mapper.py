@@ -3,16 +3,13 @@
 # and computes the local time within that segment. It uses cumulative durations and binary search for efficient lookup.
 # The class supports retrieving a segment by time and accessing the last segment.
 
-# ====== Standard Library Imports ======
 import bisect
 
-# ====== Internal Project Imports ======
 from navigation.trajectory_planner.common.segments.base_segment import BaseSegment
 
 
 class SegmentMapper:
-    """
-    Maps trajectory segments to elapsed time using cumulative durations.
+    """Maps trajectory segments to elapsed time using cumulative durations.
     Provides fast segment lookup using binary search.
 
     Attributes:
@@ -21,8 +18,7 @@ class SegmentMapper:
     """
 
     def __init__(self, segments: list[BaseSegment]):
-        """
-        Initialize the SegmentMapper with a list of segments and compute cumulative durations.
+        """Initialize the SegmentMapper with a list of segments and compute cumulative durations.
 
         Args:
             segments (list[BaseSegment]): List of trajectory segments to be managed.
@@ -37,8 +33,7 @@ class SegmentMapper:
             self.cumulative_durations.append(cumulative)
 
     def _get_previous_cumulative(self, index: int) -> float:
-        """
-        Helper method to get the previous cumulative duration.
+        """Helper method to get the previous cumulative duration.
 
         Args:
             index (int): Index of the current segment.
@@ -49,8 +44,7 @@ class SegmentMapper:
         return self.cumulative_durations[index - 1] if index > 0 else 0.0
 
     def get_segment_at_time(self, t: float) -> tuple[BaseSegment | None, float | None]:
-        """
-        Given an overall time t, returns the active segment and local time within that segment.
+        """Given an overall time t, returns the active segment and local time within that segment.
 
         Args:
             t (float): Overall elapsed time.
@@ -74,8 +68,7 @@ class SegmentMapper:
         return self.segments[index], local_time
 
     def get_last_segment(self) -> BaseSegment:
-        """
-        Retrieve the last segment in the trajectory.
+        """Retrieve the last segment in the trajectory.
 
         Returns:
             BaseSegment: The last trajectory segment in the list.

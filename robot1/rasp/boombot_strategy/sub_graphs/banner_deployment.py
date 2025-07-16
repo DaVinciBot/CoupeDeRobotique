@@ -4,34 +4,27 @@
 # moving to the deployment point, releasing the mechanism, resetting orientation, retracting,
 # and finally positioning the robot for subsequent actions.
 
-# ====== Standard Library Imports ======
 import math
 
-# ====== Third-party Library Imports ======
-
-# ====== Internal Project Imports ======
-from config_loader import CONFIG
-from strategy.core import (
-    SubGraphBuilder,
-    BaseTaskNode,
-    DirectTransition,
-    BaseSubGraph,
-)
-from boombot_strategy.tasks.navigation_tasks import (
-    RelativeForward,
-    RelativeBackward,
-    SetOdometrie,
-)
 from boombot_strategy.tasks.actuator_task import (
     BlockBanner,
-    ReadyToApproachToPickUp,  # used here to release the banner lock
-    DeplacementPosition,
+    DeplacementPosition,  # used here to release the banner lock
+)
+from boombot_strategy.tasks.navigation_tasks import (
+    RelativeBackward,
+    RelativeForward,
+    SetOdometrie,
+)
+from strategy.core import (
+    BaseSubGraph,
+    BaseTaskNode,
+    DirectTransition,
+    SubGraphBuilder,
 )
 
 
 def get_banner_deployment_subgraph() -> BaseSubGraph:
-    """
-    Construct a subgraph for executing the banner deployment sequence.
+    """Construct a subgraph for executing the banner deployment sequence.
 
     The steps include:
       1. Locking the banner mechanism to prepare for deployment.

@@ -1,24 +1,17 @@
-# ====== Code Summary ======
+from pathfinding.core.diagonal_movement import DiagonalMovement
+from pathfinding.core.grid import Grid, GridNode
+from pathfinding.finder.a_star import AStarFinder
 
-# ====== Internal Project Imports ======
-from navigation.path_planner.structs import PathPlanningStrategy, Direction
+from geometry import OrientedPoint
 from navigation.path_planner.base_path_planner.base_path_planner_params import (
     BasePathPlannerParams,
     BasePathPlannerPlanPathParams,
 )
-
-# Third-party imports
-from pathfinding.core.grid import Grid
-from pathfinding.core.grid import GridNode
-from pathfinding.core.diagonal_movement import DiagonalMovement
-from pathfinding.finder.a_star import AStarFinder
-
-from geometry import OrientedPoint
+from navigation.path_planner.structs import Direction, PathPlanningStrategy
 
 
 class AStarPathPlannerParams(BasePathPlannerParams):
-    """
-    Parameter class for the A* path planner.
+    """Parameter class for the A* path planner.
 
     Attributes:
         direction (Direction): Indicates whether the path should be planned FORWARD or BACKWARD.
@@ -42,8 +35,7 @@ class AStarPathPlannerParams(BasePathPlannerParams):
         goal: OrientedPoint,
         direction: Direction = Direction.FORWARD,
     ):
-        """
-        Initialize parameters for the A* path planner.
+        """Initialize parameters for the A* path planner.
 
         Args:
             direction (Direction): Indicates whether the path should be planned FORWARD or BACKWARD.
@@ -80,8 +72,7 @@ class AStarPathPlannerParams(BasePathPlannerParams):
 
 
 class AStarPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
-    """
-    Parameters for planning a path using the A* algorithm.
+    """Parameters for planning a path using the A* algorithm.
 
     Attributes:
         start (OrientedPoint): Starting point of the path.

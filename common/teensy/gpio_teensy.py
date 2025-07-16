@@ -3,19 +3,14 @@
 # GPIO management functionality specifically for the Teensy microcontroller. It initializes
 # I2C pins and integrates a GPIO manager to handle up to 41 GPIO pins.
 
-# ====== Third-Party Library Imports ======
 from loggerplusplus import Logger
 
-# ====== Local Library Imports ======
-from usb_com.python import Com
-
-# ====== Internal Imports ======
 from teensy.tools import GPIOManager
+from usb_com.python import Com
 
 
 class GPIOComTeensy(Com):
-    """
-    Extends the Com class to provide GPIO management for a Teensy microcontroller.
+    """Extends the Com class to provide GPIO management for a Teensy microcontroller.
 
     Attributes:
         scl (int): I2C clock pin (SCL) assigned to pin 19.
@@ -33,8 +28,7 @@ class GPIOComTeensy(Com):
         enable_crc: bool = True,
         enable_dummy: bool = False,
     ):
-        """
-        Initializes GPIO management for the Teensy microcontroller and its communication settings.
+        """Initializes GPIO management for the Teensy microcontroller and its communication settings.
 
         Args:
             logger (Logger): Logger instance for debugging and event tracking.
@@ -55,5 +49,5 @@ class GPIOComTeensy(Com):
 
         # Initialize the parent-Com class
         super().__init__(
-            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy
+            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy,
         )

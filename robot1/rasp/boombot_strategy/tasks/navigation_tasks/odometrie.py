@@ -3,15 +3,13 @@
 # based on optionally provided coordinates (x, y, theta). If any coordinate is not
 # provided, it defaults to the current position from the game context.
 
-# ====== Internal Project Imports ======
-from strategy.core.tasks.base_task import BaseTask
 from boombot_strategy.show_game_context import ShowGameContext
 from geometry import OrientedPoint
+from strategy.core.tasks.base_task import BaseTask
 
 
 class SetOdometrie(BaseTask):
-    """
-    Task to set or update the robot's odometry position based on the given
+    """Task to set or update the robot's odometry position based on the given
     coordinates (x, y, theta). If any of the coordinates are not provided,
     the current value from the ally zone will be used instead.
 
@@ -22,10 +20,9 @@ class SetOdometrie(BaseTask):
     """
 
     def __init__(
-        self, x: float | None = None, y: float | None = None, theta: float | None = None
+        self, x: float | None = None, y: float | None = None, theta: float | None = None,
     ):
-        """
-        Initialize the SetOdometrie task with optional position values.
+        """Initialize the SetOdometrie task with optional position values.
 
         Args:
             x (float | None): Optional X coordinate.
@@ -39,8 +36,7 @@ class SetOdometrie(BaseTask):
         super().__init__()
 
     def handle(self, ctx: ShowGameContext) -> bool:
-        """
-        Handle the execution of the odometry setting task.
+        """Handle the execution of the odometry setting task.
 
         Args:
             ctx (ShowGameContext): Context containing game state and arena info.

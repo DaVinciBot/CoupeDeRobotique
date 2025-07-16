@@ -4,19 +4,17 @@
 # It supports both the Delta and Basic strategies, returning instances of their corresponding
 # parameter classes using the current and goal positions.
 
-# ====== Internal Project Imports ======
-from navigation.path_planner import (
-    PathPlanningStrategy,
-    BasePathPlannerPlanPathParams,
-    DeltaPathPlannerPlanPathParams,
-    BasicPathPlannerPlanPathParams,
-)
 from geometry import OrientedPoint
+from navigation.path_planner import (
+    BasePathPlannerPlanPathParams,
+    BasicPathPlannerPlanPathParams,
+    DeltaPathPlannerPlanPathParams,
+    PathPlanningStrategy,
+)
 
 
 class PathPlannerPathPlanParamsFactory:
-    """
-    Factory class for creating parameter objects used by different path planning strategies.
+    """Factory class for creating parameter objects used by different path planning strategies.
 
     This class abstracts the creation logic for strategy-specific plan path parameter objects,
     ensuring the correct parameters are instantiated based on the given path planning strategy.
@@ -28,8 +26,7 @@ class PathPlannerPathPlanParamsFactory:
         current_position: OrientedPoint,
         goal: OrientedPoint,
     ) -> BasePathPlannerPlanPathParams:
-        """
-        Generate the appropriate plan path parameter object based on the path planning strategy.
+        """Generate the appropriate plan path parameter object based on the path planning strategy.
 
         Args:
             strategy (PathPlanningStrategy): Enum representing the chosen strategy (DELTA or BASIC).
@@ -42,7 +39,6 @@ class PathPlannerPathPlanParamsFactory:
         Raises:
             ValueError: If an unsupported strategy is provided.
         """
-
         if strategy == PathPlanningStrategy.DELTA:
             # Create plan path params specific to Delta strategy
             return DeltaPathPlannerPlanPathParams(

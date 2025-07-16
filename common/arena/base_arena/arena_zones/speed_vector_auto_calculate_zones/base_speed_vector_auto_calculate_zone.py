@@ -4,31 +4,25 @@
 # and updates the zone accordingly. The class utilizes the deque data structure for efficient position recording and
 # leverages geometric operations to maintain a buffered polygon representing the speed vector.
 
-# ====== Imports ======
-# Standard library imports
+
 from collections import deque
 
-# Third-party imports
 from loggerplusplus import Logger
 
-# Local imports
-from utils import Utils
-from geometry import Point, OrientedPoint, LineString
-
-# Internal project imports
-from arena.base_arena.arena_zones.structs import (
-    ZoneType,
-    ZoneAccessibility,
-    SpeedVector,
-    Record,
-)
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.arena_zones.structs import (
+    Record,
+    SpeedVector,
+    ZoneAccessibility,
+    ZoneType,
+)
 from arena.base_arena.team_color import TeamColor
+from geometry import LineString, OrientedPoint, Point
+from utils import Utils
 
 
 class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
-    """
-    Represents a special zone in the arena that automatically calculates and updates speed vectors
+    """Represents a special zone in the arena that automatically calculates and updates speed vectors
     based on recorded enemy movements.
     """
 
@@ -48,8 +42,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         speed_vector: SpeedVector = SpeedVector(0.0, 0.0, 0.0),
         vector_factor: float = 25.0,
     ) -> None:
-        """
-        Initializes the speed vector auto-calculate zone.
+        """Initializes the speed vector auto-calculate zone.
 
         Args:
             logger (Logger): Logger instance for debugging.
@@ -99,19 +92,18 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
                     self.point.x + self.speed_vector.factored_dx,
                     self.point.y + self.speed_vector.factored_dy,
                 ),
-            ]
+            ],
         )
 
     def _compute_enemy_speed_vector(self) -> SpeedVector:
-        """
-        Computes the speed vector based on recorded enemy positions.
+        """Computes the speed vector based on recorded enemy positions.
 
         Returns:
             SpeedVector: Computed speed vector with magnitude and direction.
         """
         if len(self.__positions_recorded) < 2:
             self.logger.debug(
-                "Not enough positions recorded to compute speed vector. Returning zero vector."
+                "Not enough positions recorded to compute speed vector. Returning zero vector.",
             )
             return SpeedVector(0, 0, 0)
 
@@ -144,8 +136,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         ally_position: Point | OrientedPoint,
         enemy_position: Point | OrientedPoint,
     ) -> None:
-        """
-        Updates the zone state based on detected enemy movement.
+        """Updates the zone state based on detected enemy movement.
 
         Args:
             team_color (TeamColor, optional): The color of the team.

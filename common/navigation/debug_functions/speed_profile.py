@@ -3,10 +3,8 @@
 # It plots both speed and distance with respect to time using matplotlib, allowing developers
 # to inspect the profile shape and dynamics (e.g., acceleration, cruising, deceleration).
 
-# ====== Third-Party Library Imports ======
 from matplotlib import pyplot as plt
 
-# ====== Internal Project Imports ======
 from navigation.trajectory_planner.speed_profile.base_speed_profile import (
     BaseSpeedProfile,
 )
@@ -19,8 +17,7 @@ def test_speed_profile(
     departure_speed: float = 0.0,
     arrival_speed: float = 0.0,
 ):
-    """
-    Plot the speed and distance over time for a given speed profile.
+    """Plot the speed and distance over time for a given speed profile.
 
     Args:
         profile (BaseSpeedProfile): The speed profile to test.
@@ -29,7 +26,7 @@ def test_speed_profile(
     """
     print("Testing profile:", profile)
     total_duration = profile.get_total_duration(
-        distance=distance, departure_speed=departure_speed, arrival_speed=arrival_speed
+        distance=distance, departure_speed=departure_speed, arrival_speed=arrival_speed,
     )
 
     speeds = []
@@ -44,7 +41,7 @@ def test_speed_profile(
                 distance=distance,
                 departure_speed=departure_speed,
                 arrival_speed=arrival_speed,
-            )
+            ),
         )
         speeds.append(
             profile.get_speed(
@@ -52,7 +49,7 @@ def test_speed_profile(
                 distance=distance,
                 departure_speed=departure_speed,
                 arrival_speed=arrival_speed,
-            )
+            ),
         )
         times.append(current_time)
         current_time += step_time

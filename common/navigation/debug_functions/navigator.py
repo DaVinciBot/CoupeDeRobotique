@@ -5,24 +5,20 @@
 # After the task is completed, the script generates multiple plots showing the robot’s
 # spatial path, temporal evolution of motion parameters, and categorical state changes.
 
-# ====== Standard Library Imports ======
 import time
 
-# ====== Third-Party Library Imports ======
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
-# ====== Internal Project Imports ======
+from arena import BaseArena
 from geometry import Point
 from navigation.navigator import Navigator
-from arena import BaseArena
 
 
 def test_navigator_execution(
-    navigator: Navigator, arena: BaseArena, time_step: float = 0.1
+    navigator: Navigator, arena: BaseArena, time_step: float = 0.1,
 ):
-    """
-    Simulate the navigator until its current task is finished, logging the navigation data
+    """Simulate the navigator until its current task is finished, logging the navigation data
     and plotting the key metrics over time.
 
     Args:
@@ -65,7 +61,7 @@ def test_navigator_execution(
             lidar_scan_polars=np.array([]),  # Empty lidar scan for this test
             optimized_update=False,
             _enemy_position=Point(
-                arena.enemy_zone.point.x - 10, arena.enemy_zone.point.y
+                arena.enemy_zone.point.x - 10, arena.enemy_zone.point.y,
             ),  # Enemy is positioned 10 units left
         )
 
@@ -82,7 +78,7 @@ def test_navigator_execution(
 
         if navigator.current_task is not None:
             traj_times.append(
-                navigator.current_task.trajectory_planner._get_trajectory_time_elapsed()
+                navigator.current_task.trajectory_planner._get_trajectory_time_elapsed(),
             )
             task_states.append(navigator.current_task.state.name)
             avoidance_states.append(navigator.current_task.avoidance.state.name)
@@ -96,7 +92,7 @@ def test_navigator_execution(
             f"[{t:.2f}s] x={cmd.position.x:.2f}, y={cmd.position.y:.2f}, "
             f"v_lin={cmd.linear_speed:.2f}, v_ang={cmd.angular_speed:.2f}, "
             f"traj_t={traj_times[-1]:.2f}, state={task_states[-1]}, "
-            f"avoid={avoidance_states[-1]}, dist_enemy={distance:.2f}"
+            f"avoid={avoidance_states[-1]}, dist_enemy={distance:.2f}",
         )
 
         time.sleep(time_step)
@@ -153,8 +149,7 @@ def test_navigator_execution(
 
     # 5) Plot enums (task/avoidance states) as categorical step plots
     def plot_enum(times, values, title):
-        """
-        Plot categorical enum values as a step function over time.
+        """Plot categorical enum values as a step function over time.
 
         Args:
             times (list[float]): Time points.

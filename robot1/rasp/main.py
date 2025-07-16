@@ -1,20 +1,15 @@
-# ====== Imports ======
-# Config
-from config_loader import CONFIG
-import os
 import subprocess
 
+from config_loader import CONFIG
 from loggerplusplus import Logger, LogLevels
+from taskbrain import DictProxyAccessor
+from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 
-# ====== Local Library Imports ======
-from ws_comms import WServer, WServerRouteManager, WSender, WSreceiver
-from arena import ShowArena, AllyZone
-from geometry import OrientedPoint
+from arena import AllyZone, ShowArena
 from brains import MainBrain
-from taskbrain import DictProxyAccessor, Brain
+from geometry import OrientedPoint
 from navigation import NavigatorTaskParams
-from sensors import Lidar, LidarDummy, Inputs
-from GPIO import PIN
+from sensors import Inputs, Lidar
 
 # ====== Main ======
 if __name__ == "__main__":
@@ -171,11 +166,10 @@ if __name__ == "__main__":
         ws_server.add_background_task(routine)
 
     def force_kill_all_python():
-        """
-        Kill all running Python processes using pkill -9 python
+        """Kill all running Python processes using pkill -9 python
         """
         cmd = "pkill -9 python"
-        subprocess.run(cmd)
+        subprocess.run(cmd, check=False)
         print("All Python processes killed.")
 
     ws_server.add_shutdown_task(force_kill_all_python)

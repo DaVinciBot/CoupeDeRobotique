@@ -1,21 +1,15 @@
-from config_loader import CONFIG
-
-# ====== Standard Library Imports ======
 import struct
-
-# ====== Third-party library imports ======
-from loggerplusplus import Logger, log
-
-# ====== Local Library Imports ======
-from teensy import GPIOComTeensy, ActuatorType
-from usb_com.python import Messages
-
 import time
 
+from config_loader import CONFIG
+from loggerplusplus import Logger, log
 
-# ====== Class Part ======
+from teensy import ActuatorType, GPIOComTeensy
+from usb_com.python import Messages
+
+
 class Actuators(
-    GPIOComTeensy
+    GPIOComTeensy,
 ):  # TODO : move to common and handle config properly, not the prority yet
     def __init__(
         self,
@@ -29,7 +23,7 @@ class Actuators(
     ):
         # Initialize the parent-GPIOComTeensy class
         super().__init__(
-            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy
+            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy,
         )
 
         # Admit that default elevator position is at the bottom
@@ -45,7 +39,7 @@ class Actuators(
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
         self.add_callback(
-            self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value
+            self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value,
         )
 
     def __str__(self) -> str:
@@ -55,19 +49,17 @@ class Actuators(
     # Message Receiving Handlers       #
     ####################################
     def rcv_print(self, msg: bytes):
-        """
-        Handles PRINT messages from the Teensy.
+        """Handles PRINT messages from the Teensy.
 
         Args:
             msg (bytes): The received message bytes.
         """
         self.logger.info(
-            "Teensy Actuators says: " + msg.decode("ascii", errors="ignore")
+            "Teensy Actuators says: " + msg.decode("ascii", errors="ignore"),
         )
 
     def rcv_unknown_msg(self, msg: bytes):
-        """
-        Handles unknown messages from the Teensy.
+        """Handles unknown messages from the Teensy.
 
         Logs a warning indicating that the message type is not recognized.
 
@@ -77,8 +69,7 @@ class Actuators(
         self.logger.warning(f"Teensy Actuators does not know the message {msg.hex()}")
 
     def rcv_switch_state_return(self, msg: bytes):
-        """
-        Handles SWITCH_STATE_RETURN messages from the Teensy.
+        """Handles SWITCH_STATE_RETURN messages from the Teensy.
 
         Args:
             msg (bytes): The received message bytes.
@@ -96,8 +87,7 @@ class Actuators(
 
     @log("Actuators")
     def set_stepper_driver_activation_state(self, pin_enable: int, enable_driver: bool):
-        """
-        Sets the activation state of a stepper motor driver through its enable pin.
+        """Sets the activation state of a stepper motor driver through its enable pin.
 
         Args:
             pin_enable (int): The pin number connected to the driver's enable input
@@ -114,8 +104,7 @@ class Actuators(
 
     @log("Actuators")
     def stepper_step(self, steps: int, speed: int, disable_driver: bool = True) -> None:
-        """
-        Moves the stepper motor a specified number of steps.
+        """Moves the stepper motor a specified number of steps.
         Note that the number of motor pin can change depending on the motor.
 
         Args:
@@ -152,12 +141,12 @@ class Actuators(
         if disable_driver:
             # Disable the driver after the movement
             self.set_stepper_driver_activation_state(
-                pin_enable=pin_enable_driver, enable_driver=False
+                pin_enable=pin_enable_driver, enable_driver=False,
             )
         else:
             # Enable the driver after the movement
             self.set_stepper_driver_activation_state(
-                pin_enable=pin_enable_driver, enable_driver=True
+                pin_enable=pin_enable_driver, enable_driver=True,
             )
 
     @log("Actuators")
@@ -201,7 +190,7 @@ class Actuators(
                 elif not self.gpio_manager.is_valid_gpio(pin, ActuatorType.SERVO):
                     self.logger.error(
                         f"Pin {pin} is not a valid servo pin because it is registered as a "
-                        f"{str(self.gpio_manager.get_type_gpio(pin))}"
+                        f"{self.gpio_manager.get_type_gpio(pin)!s}",
                     )
                     return
                 if (
@@ -227,7 +216,7 @@ class Actuators(
         else:
             self.logger.error(
                 f"You tried to write {angle}° on pin {pin}, whereas the angle "
-                f"must be between {min_angle} and {max_angle}°"
+                f"must be between {min_angle} and {max_angle}°",
             )
 
     @log("Actuators")

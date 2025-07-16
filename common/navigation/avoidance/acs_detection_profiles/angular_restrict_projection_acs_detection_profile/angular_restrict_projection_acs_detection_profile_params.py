@@ -1,8 +1,7 @@
-from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
-
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
     BaseAcsDetectionProfileParams,
 )
+from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
 
 
 class AngularRestrictProjectionAcsDetectionProfileParams(BaseAcsDetectionProfileParams):

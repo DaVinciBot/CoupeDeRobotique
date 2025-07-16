@@ -1,37 +1,37 @@
-# ====== Standard Library Imports ======
 from __future__ import annotations
-from typing import TYPE_CHECKING
-import math
 
-# ====== Internal Project Imports ======
-from arena import AllyZone, EnemyZone
-from geometry import OrientedPoint
-from loggerplusplus import Logger
-from navigation.avoidance.base_avoidance import BaseAvoidance
-from navigation.avoidance.base_avoidance.states import AvoidanceState
+from typing import TYPE_CHECKING
+
+from navigation.avoidance import NoAvoidanceParams
+from navigation.avoidance.acs_detection_profiles import (
+    BaseAcsDetectionProfileParams,
+    NoAcsDetectionProfileParams,
+)
 from navigation.avoidance.back_avoidance.back_avoidance_params import (
     BackAvoidanceParams,
 )
+from navigation.avoidance.base_avoidance import BaseAvoidance
+from navigation.avoidance.base_avoidance.states import AvoidanceState
+from navigation.navigator.task.navigator_task import (
+    NavigatorTask,
+)
+from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
 from navigation.path_planner import DeltaPathPlannerParams
-from navigation.trajectory_planner import SequentialTrajectoryPlannerParams, Direction
-
-
-from navigation.trajectory_planner import TrajectoryPlanCommand
-from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
-from navigation.avoidance import NoAvoidanceParams
-from navigation.avoidance.acs_detection_profiles import NoAcsDetectionProfileParams
+from navigation.trajectory_planner import (
+    Direction,
+    SequentialTrajectoryPlannerParams,
+    TrajectoryPlanCommand,
+)
 
 if TYPE_CHECKING:
-    from navigation.navigator.task.navigator_task import (
-        NavigatorTask,
-        NavigatorTaskState,
-    )
-    from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
+    from loggerplusplus import Logger
+
+    from arena import AllyZone, EnemyZone
+    from geometry import OrientedPoint
 
 
 class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
-    """
-    Implements a back obstacle avoidance strategy.
+    """Implements a back obstacle avoidance strategy.
 
     When an obstacle is detected via ACS, the robot reverses by a configured distance.
     If the obstacle clears during the reverse phase before a timeout, it replans a new trajectory.
@@ -49,8 +49,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
-        """
-        Initialize the BackAndForwardAvoidance with parameters and optional logger.
+        """Initialize the BackAndForwardAvoidance with parameters and optional logger.
 
         Args:
             params (BackAndForwardAvoidanceParams): Configuration parameters.
@@ -68,8 +67,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
-        """
-        Main handler to process avoidance logic based on current zones and navigation state.
+        """Main handler to process avoidance logic based on current zones and navigation state.
 
         Args:
             current_navigator_task (NavigatorTask): The current navigation task instance.
@@ -83,7 +81,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
 
         position: OrientedPoint = ally_zone.point
         self.logger.debug(
-            f"Handling avoidance at position: {position}, current state: {self.state}"
+            f"Handling avoidance at position: {position}, current state: {self.state}",
         )
 
         # 1. Timeout check
@@ -98,7 +96,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
         ):
             self.logger.info(
                 f"Obstacle detected. starting backward avoidance. "
-                f"Distance: {ally_zone.point.distance(enemy_zone.point)}"
+                f"Distance: {ally_zone.point.distance(enemy_zone.point)}",
             )
 
             # Create backward navigator task
@@ -107,15 +105,15 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
                     goal=None,
                     timeout=None,
                     path_planner_params=DeltaPathPlannerParams(
-                        distance=self.params.backward_distance
+                        distance=self.params.backward_distance,
                     ),
                     trajectory_planner_params=SequentialTrajectoryPlannerParams(
-                        direction=Direction.BACKWARD
+                        direction=Direction.BACKWARD,
                     ),
                     speed_profiler=self.params.backward_speed_profiler,
                     avoidance_params=NoAvoidanceParams(),
                     acs_detection_profile_params=NoAcsDetectionProfileParams(),
-                )
+                ),
             )
 
             self.state = AvoidanceState.AVOIDING
@@ -129,13 +127,13 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             return cmd
 
         # 3. While avoiding → keep executing backward
-        elif (
+        if (
             self.state == AvoidanceState.AVOIDING
             and self.backward_navigator_task is not None
         ):
             self.logger.info("Executing backward avoidance maneuver.")
             cmd: TrajectoryPlanCommand = self.backward_navigator_task.handle(
-                ally_zone, enemy_zone
+                ally_zone, enemy_zone,
             )
 
             # Clear the backward task if it has finished
@@ -177,6 +175,6 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
 
         # 4. Continue with current command
         self.logger.debug(
-            "No avoidance action required. Continuing original trajectory."
+            "No avoidance action required. Continuing original trajectory.",
         )
         return current_navigator_task.current_trajectory_command

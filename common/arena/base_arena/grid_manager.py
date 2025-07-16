@@ -6,11 +6,9 @@
 # visualizing grids.
 # The visualization method uses matplotlib for clear grid rendering, showing obstacles and walkable areas effectively.
 
-# ====== Imports ======
-# Standard library imports
+
 import copy
 
-# Third-party library imports
 import matplotlib.pyplot as plt
 import numpy as np
 from loggerplusplus import Logger, LogLevels, time_tracker
@@ -18,11 +16,9 @@ from matplotlib.ticker import MaxNLocator
 from pathfinding.core.grid import Grid, GridNode
 from shapely.strtree import STRtree
 
-# Internal project imports
 from geometry import OrientedPoint, Point, Polygon, box
 
 
-# ====== GridManager Class ======
 class GridManager:
     """Manages a grid for pathfinding and collision detection.
     Includes static and dynamic forbidden zones and grid visualization.

@@ -1,6 +1,7 @@
-from io import StringIO
-import cv2, time
-from http.server import HTTPServer, BaseHTTPRequestHandler
+import time
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+import cv2
 
 img_path = "test.jpg"
 
@@ -20,14 +21,14 @@ class MJPEGHandler(BaseHTTPRequestHandler):
             <img src="http://localhost:8001/cam.mjpg" />
             </body>
             </html>
-            """
+            """,
         )
 
     def do_GET(self):
         if self.path.endswith(".mjpg"):
             self.send_response(200)
             self.send_header(
-                "Content-type", "multipart/x-mixed-replace; boundary=--jpgboundary"
+                "Content-type", "multipart/x-mixed-replace; boundary=--jpgboundary",
             )
             self.end_headers()
             while True:

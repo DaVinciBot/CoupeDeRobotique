@@ -6,26 +6,21 @@
 # and returned as a `BaseSubGraph` for integration into a larger strategy graph.
 import time
 
-# ====== Local Project Imports ======
-from strategy.core import (
-    SubGraphBuilder,
-    BaseTaskNode,
-    DirectTransition,
-    BaseSubGraph,
-)
-
-# ====== Internal Project Imports ======
-from config_loader import CONFIG
+from boombot_strategy.tasks.actuator_task import Build, Deposit, PickUp
+from boombot_strategy.tasks.navigation_tasks import RelativeBackward, RelativeForward
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToConstruct,
 )
-from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward
-from boombot_strategy.tasks.actuator_task import Build, Deposit, PickUp
+from strategy.core import (
+    BaseSubGraph,
+    BaseTaskNode,
+    DirectTransition,
+    SubGraphBuilder,
+)
 
 
 def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
-    """
-    Construct a subgraph for a robot to perform a construction task at a specified zone.
+    """Construct a subgraph for a robot to perform a construction task at a specified zone.
 
     The subgraph includes navigation to the zone, positioning forward, item placement using actuators,
     and a backward maneuver for precise alignment or disengagement.
@@ -96,7 +91,7 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
 
 
 def get_construct_one_floor_subgraph(
-    zone_id: int, back_offset: int = 0
+    zone_id: int, back_offset: int = 0,
 ) -> BaseSubGraph:
     subgraph = SubGraphBuilder()
 

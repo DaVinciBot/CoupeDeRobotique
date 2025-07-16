@@ -3,39 +3,31 @@
 # from start to goal. If the direction is set to BACKWARD, the planner adjusts the orientation of the
 # start and goal points by π radians to reflect the reverse motion requirement.
 
-# ====== Imports ======
-# Standard library imports
 import math
 
-# Third-party imports
 from loggerplusplus import Logger
 
-# Local imports
 from geometry import OrientedPoint
-
-# Internal project imports
-from navigation.path_planner.structs import Direction
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
 from navigation.path_planner.basic_path_planner.basic_path_planner_params import (
     BasicPathPlannerParams,
     BasicPathPlannerPlanPathParams,
 )
+from navigation.path_planner.structs import Direction
 
 
 class BasicPathPlanner(
-    BasePathPlanner[BasicPathPlannerParams, BasicPathPlannerPlanPathParams]
+    BasePathPlanner[BasicPathPlannerParams, BasicPathPlannerPlanPathParams],
 ):
-    """
-    A basic path planner that generates a direct path between start and goal points.
+    """A basic path planner that generates a direct path between start and goal points.
 
     If the direction is set to BACKWARD, the orientations are flipped by π radians.
     """
 
     def __init__(
-        self, params: BasicPathPlannerParams, logger: Logger | None = None
+        self, params: BasicPathPlannerParams, logger: Logger | None = None,
     ) -> None:
-        """
-        Initialize the basic path planner.
+        """Initialize the basic path planner.
 
         Args:
             params (BasicPathPlannerParams): Parameters including motion direction.
@@ -45,8 +37,7 @@ class BasicPathPlanner(
 
     @staticmethod
     def _compute_backward_position(goal: OrientedPoint) -> OrientedPoint:
-        """
-        Compute the backward-facing pose by flipping orientation by π.
+        """Compute the backward-facing pose by flipping orientation by π.
 
         Args:
             goal (OrientedPoint): Original pose.
@@ -58,8 +49,7 @@ class BasicPathPlanner(
 
     @BasePathPlanner._store_plan_path_params
     def plan_path(self, params: BasicPathPlannerPlanPathParams) -> list[OrientedPoint]:
-        """
-        Plan a basic two-point path from start to goal.
+        """Plan a basic two-point path from start to goal.
 
         Args:
             params (BasicPathPlannerPlanPathParams): Parameters including start and goal points.

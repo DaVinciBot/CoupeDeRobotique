@@ -3,27 +3,18 @@
 # EnemyZone represents a restricted area in an arena where an enemy's movement is tracked,
 # and a speed vector is automatically calculated based on recorded positions.
 
-# ====== Imports ======
-# Standard library imports
-# ...
 
-# Third-party imports
 from loggerplusplus import Logger
 
-# Local imports
-from geometry import Point, OrientedPoint
-
-# Internal project imports
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
 from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone import (
     BaseSpeedVectorAutoCalculateZone,
 )
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
+from geometry import OrientedPoint, Point
 
 
-# ====== Enemy Zone Class ======
 class EnemyZone(BaseSpeedVectorAutoCalculateZone):
-    """
-    Represents an enemy zone in the arena where enemy movements are tracked.
+    """Represents an enemy zone in the arena where enemy movements are tracked.
     The zone calculates and updates a speed vector based on detected enemy positions.
     """
 
@@ -36,8 +27,7 @@ class EnemyZone(BaseSpeedVectorAutoCalculateZone):
         no_detection_timeout: float = 4.0,
         vector_factor: float = 25.0,
     ) -> None:
-        """
-        Initializes an EnemyZone with given parameters.
+        """Initializes an EnemyZone with given parameters.
 
         Args:
             logger (Logger): Logger instance for debugging.

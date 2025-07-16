@@ -3,22 +3,13 @@
 # The class extends BaseArenaZone and ensures that access remains forbidden unless explicitly modified.
 
 
-# ====== Imports ======
-# Standard library imports
-# ...
-
-# Third-party imports
 from loggerplusplus import Logger
 
-# Local imports
+from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 from geometry import Polygon
 
-# Internal project imports
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
-from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 
-
-# ====== Forbidden Zone Class ======
 class ForbiddenZone(BaseArenaZone):
     """Zone that is strictly forbidden.
 

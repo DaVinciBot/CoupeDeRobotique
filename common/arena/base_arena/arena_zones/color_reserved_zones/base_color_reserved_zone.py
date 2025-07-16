@@ -4,27 +4,20 @@
 # extends BaseArenaZone and dynamically updates zone accessibility based on detected enemy
 # movement and team color conditions.
 
-# ====== Imports ======
-# Standard library imports
-from typing import Callable, Union
 
-# Third-party imports
+from collections.abc import Callable
+
 from loggerplusplus import Logger
 
-# Local imports
-from geometry import Point, Polygon, OrientedPoint
-
-# Internal project imports
-from arena.base_arena.grid_manager import GridManager
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
+from arena.base_arena.grid_manager import GridManager
 from arena.base_arena.team_color import TeamColor
+from geometry import OrientedPoint, Point, Polygon
 
 
-# ====== Base Color Reserved Zone Class ======
 class BaseColorReservedZone(BaseArenaZone):
-    """
-    Represents a zone restricted to a specific team color.
+    """Represents a zone restricted to a specific team color.
     The zone becomes accessible if the team's color matches the predefined color values.
     """
 
@@ -41,8 +34,7 @@ class BaseColorReservedZone(BaseArenaZone):
         zone_color: str = "#9e9e9e",
         go_to_positions: list[OrientedPoint | Point] = None,
     ) -> None:
-        """
-        Initializes the ColorReservedZone.
+        """Initializes the ColorReservedZone.
 
         Args:
             logger (Logger): Logger instance for debugging and tracking.
@@ -71,8 +63,7 @@ class BaseColorReservedZone(BaseArenaZone):
         )
 
     def is_accessible(self, team_color: TeamColor = TeamColor.UNDEFINED) -> bool:
-        """
-        Determines if the zone is accessible based on the team color.
+        """Determines if the zone is accessible based on the team color.
 
         Args:
             team_color (TeamColor, optional): The color assigned to the team.
@@ -85,11 +76,10 @@ class BaseColorReservedZone(BaseArenaZone):
     def update(
         self,
         team_color: TeamColor,
-        ally_position: Union[Point, OrientedPoint],
-        enemy_position: Union[Point, OrientedPoint],
+        ally_position: Point | OrientedPoint,
+        enemy_position: Point | OrientedPoint,
     ) -> None:
-        """
-        Updates the zone state based on detected enemy movement and team color validation.
+        """Updates the zone state based on detected enemy movement and team color validation.
 
         Args:
             team_color (TeamColor): The color assigned to the team.

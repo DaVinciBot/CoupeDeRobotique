@@ -4,16 +4,12 @@
 # Methods include creating border zones, adding buffers to zones, handling zone accessibility, visualizing the arena,
 # and computing enemy or robot positions based on various inputs.
 
-# ====== Imports ======
-# Standard library imports
 from abc import ABC, abstractmethod
 
-# Third-party library imports
 import matplotlib.pyplot as plt
 import numpy as np
 from loggerplusplus import Logger, time_tracker
 
-# Internal project imports
 from arena.base_arena.arena_zones import (
     AllyZone,
     BaseArenaZone,
@@ -36,7 +32,6 @@ from geometry import (
 )
 
 
-# ====== BaseArena Class ======
 class BaseArena(ABC):
     """Represents the arena and its zones, including buffer zones and borders.
 

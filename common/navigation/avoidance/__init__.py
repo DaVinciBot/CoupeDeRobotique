@@ -17,8 +17,8 @@ from navigation.avoidance.structs import AvoidanceStrategy
 
 __all__ = [
     "AvoidanceFactory",
-    "AvoidanceStrategy",
     "AvoidanceState",
+    "AvoidanceStrategy",
     "BaseAcsDetectionProfile",
     "BaseAcsDetectionProfileParams",
     "BaseAvoidance",

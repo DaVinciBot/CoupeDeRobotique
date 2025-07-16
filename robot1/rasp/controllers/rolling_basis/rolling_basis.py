@@ -1,27 +1,17 @@
-from config_loader import CONFIG
-
-# ====== Standard Library Imports ======
 import struct
-import numpy as np
 import time
-import matplotlib.pyplot as plt
 
-# ====== Third-party library imports ======
-from loggerplusplus import Logger, log, LogLevels
+from config_loader import CONFIG
+from loggerplusplus import Logger, LogLevels, log
 
-# ====== Local Library Imports ======
-from geometry import OrientedPoint
-from usb_com.python import Messages
-from teensy import BaseComTeensy
-
-# ====== Internal Project Imports ======
 from controllers.rolling_basis.pids import PID, PID_ID
+from geometry import OrientedPoint
+from teensy import BaseComTeensy
+from usb_com.python import Messages
 
 
-# ====== Class Part ======
 class RollingBasis(BaseComTeensy):
-    """
-    Represents the rolling basis of the robot.
+    """Represents the rolling basis of the robot.
 
     Inherits from Teensy to manage low-level communications and adds logic specific to the robot's state,
     PID configuration, and message messaging.
@@ -40,7 +30,7 @@ class RollingBasis(BaseComTeensy):
         self.flag = True
         # Initialize the parent-BaseComTeensy class
         super().__init__(
-            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy
+            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy,
         )
 
         # Robot state
@@ -58,7 +48,7 @@ class RollingBasis(BaseComTeensy):
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
         self.add_callback(
-            self.rcv_rolling_basis_state, Messages.UPDATE_ROLLING_BASIS.value
+            self.rcv_rolling_basis_state, Messages.UPDATE_ROLLING_BASIS.value,
         )
 
         # Initialize PID controllers from configuration
@@ -69,20 +59,18 @@ class RollingBasis(BaseComTeensy):
     # Message Receiving Handlers       #
     ####################################
     def rcv_print(self, msg: bytes):
-        """
-        Handles PRINT messages from the Teensy.
+        """Handles PRINT messages from the Teensy.
 
         Args:
             msg (bytes): The received message bytes.
         """
         # Temp to debug logs
         self.logger.info(
-            "Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore")
+            "Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore"),
         )
 
     def rcv_rolling_basis_state(self, msg: bytes):
-        """
-        Handles rolling basis state update messages from the Teensy.
+        """Handles rolling basis state update messages from the Teensy.
 
         The message contains:
         - float x: X-coordinate of the position (4 bytes).
@@ -101,8 +89,7 @@ class RollingBasis(BaseComTeensy):
         )
 
     def rcv_unknown_msg(self, msg: bytes):
-        """
-        Handles unknown messages from the Teensy.
+        """Handles unknown messages from the Teensy.
 
         Logs a warning indicating that the message type is not recognized.
 
@@ -119,8 +106,7 @@ class RollingBasis(BaseComTeensy):
         self,
         target_position: OrientedPoint,
     ) -> None:
-        """
-        Sends a message to set the target speed and position of the rolling basis.
+        """Sends a message to set the target speed and position of the rolling basis.
 
         Args:
             target_linear_speed (float): Target linear speed.
@@ -140,8 +126,7 @@ class RollingBasis(BaseComTeensy):
 
     @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
-        """
-        Sends a message to set the odometrie of the rolling basis.
+        """Sends a message to set the odometrie of the rolling basis.
 
         Args:
             odometrie (OrientedPoint): The new odometrie values.
@@ -160,8 +145,7 @@ class RollingBasis(BaseComTeensy):
         log_level=LogLevels.INFO,
     )
     def _send_pid(self, pid_id: int, pid: PID) -> None:
-        """
-        Internal method to send PID configuration data to the Teensy.
+        """Internal method to send PID configuration data to the Teensy.
 
         Args:
             pid_id (int): The identifier for the PID controller.
@@ -174,8 +158,7 @@ class RollingBasis(BaseComTeensy):
     # PID Configuration Methods        #
     ####################################
     def set_linear_position_pid(self, *args, **kwargs) -> None:
-        """
-        Configure the PID values for linear position control.
+        """Configure the PID values for linear position control.
 
         Accepts either three positional arguments (kp, ki, kd),
         a single dictionary, or keyword arguments.
@@ -189,7 +172,7 @@ class RollingBasis(BaseComTeensy):
                 pid = PID.from_dict(kwargs)
             else:
                 raise ValueError(
-                    "Invalid arguments for linear position PID configuration."
+                    "Invalid arguments for linear position PID configuration.",
                 )
             self.linear_position_pid = pid
             self._send_pid(PID_ID.LINEAR_POSITION.value, pid)
@@ -197,8 +180,7 @@ class RollingBasis(BaseComTeensy):
             self.logger.error(f"Failed to set linear position PID: {e}")
 
     def set_angular_position_pid(self, *args, **kwargs) -> None:
-        """
-        Configure the PID values for angular position control.
+        """Configure the PID values for angular position control.
 
         Accepts either three positional arguments (kp, ki, kd),
         a single dictionary, or keyword arguments.
@@ -212,7 +194,7 @@ class RollingBasis(BaseComTeensy):
                 pid = PID.from_dict(kwargs)
             else:
                 raise ValueError(
-                    "Invalid arguments for angular position PID configuration."
+                    "Invalid arguments for angular position PID configuration.",
                 )
             self.angular_position_pid = pid
             self._send_pid(PID_ID.ANGULAR_POSITION.value, pid)
@@ -224,8 +206,7 @@ class RollingBasis(BaseComTeensy):
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
     ) -> None:
-        """
-        Configure all PID controllers using dictionaries for each.
+        """Configure all PID controllers using dictionaries for each.
         """
         self.set_linear_position_pid(**linear_position_pid)
         time.sleep(0.1)  # Ensure the Teensy has time to process the first PID
@@ -233,8 +214,7 @@ class RollingBasis(BaseComTeensy):
         time.sleep(0.1)  # Ensure the Teensy has time to process the second PID
 
     def initialize_pids(self) -> None:
-        """
-        Initialize PID controllers from the configuration.
+        """Initialize PID controllers from the configuration.
         """
         try:
             self.set_pids(

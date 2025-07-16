@@ -3,16 +3,12 @@
 # used to represent in-place rotational motion.
 # It includes metadata such as total rotation angle and rotation direction (sign), in addition to standard segment data.
 
-# ====== Local Project Imports ======
 from geometry import OrientedPoint
-
-# ====== Internal Project Imports ======
 from navigation.trajectory_planner.common.segments.base_segment import BaseSegment
 
 
 class RotationSegment(BaseSegment):
-    """
-    Segment representing rotational motion in place.
+    """Segment representing rotational motion in place.
 
     Attributes:
         rotation (float): Total angle of rotation in radians or degrees (based on convention).
@@ -27,8 +23,7 @@ class RotationSegment(BaseSegment):
         rotation: float,
         sign: int,
     ):
-        """
-        Initialize a rotation segment with its start and end pose, duration, rotation angle, and direction.
+        """Initialize a rotation segment with its start and end pose, duration, rotation angle, and direction.
 
         Args:
             start_position (OrientedPoint): Pose at the beginning of the rotation.

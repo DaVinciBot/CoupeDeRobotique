@@ -1,30 +1,28 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, List, Optional, Union
+
 import time
+from typing import TYPE_CHECKING
 
-from loggerplusplus import Logger
-
-from strategy.core.tasks import BaseTask, TaskStatus
+from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.task_nodes.scoring_functions import (
     BaseScoringFunction,
     DefaultScoringFunction,
 )
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
+from strategy.core.tasks import BaseTask, TaskStatus
 
 if TYPE_CHECKING:
     from strategy.core.base_game_context import BaseGameContext
 
 
 class TimeoutTaskNode(BaseTaskNode):
-    """
-    A task node with a hard timeout: if tasks do not complete within the given duration,
+    """A task node with a hard timeout: if tasks do not complete within the given duration,
     the node triggers a timeout and stops execution.
     """
 
     def __init__(
         self,
         name: str,
-        tasks: Union[BaseTask, List[BaseTask]],
+        tasks: BaseTask | list[BaseTask],
         timeout_seconds: float,
         scoring_function: BaseScoringFunction = DefaultScoringFunction(),
     ) -> None:
@@ -32,27 +30,25 @@ class TimeoutTaskNode(BaseTaskNode):
         self.timeout_seconds: float = timeout_seconds
         self._timeout_triggered: bool = False
         self.logger.info(
-            f"Initialized TimeoutTaskNode '{self.name}' with timeout set to {self.timeout_seconds}s"
+            f"Initialized TimeoutTaskNode '{self.name}' with timeout set to {self.timeout_seconds}s",
         )
 
     def on_timeout(self, ctx: BaseGameContext) -> None:
-        """
-        Hook called once when the timeout is reached.
+        """Hook called once when the timeout is reached.
         Override in subclasses for custom behavior.
         """
         self.logger.warning(
-            f"Timeout reached for node '{self.name}' after {self.timeout_seconds:.2f}s"
+            f"Timeout reached for node '{self.name}' after {self.timeout_seconds:.2f}s",
         )
 
     def execute(self, ctx: BaseGameContext) -> bool:
-        """
-        Execute tasks, but enforce a maximum duration. If elapsed time
+        """Execute tasks, but enforce a maximum duration. If elapsed time
         exceeds timeout_seconds, trigger timeout and exit.
         """
         # If already completed, no-op
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:
             self.logger.debug(
-                f"TimeoutTaskNode '{self.name}' already completed with status {self.status.name}"
+                f"TimeoutTaskNode '{self.name}' already completed with status {self.status.name}",
             )
             return True
 
@@ -63,12 +59,12 @@ class TimeoutTaskNode(BaseTaskNode):
             self.start_time = now
             self.status = TaskStatus.IN_PROGRESS
             self.logger.info(
-                f"Started TimeoutTaskNode '{self.name}'; will timeout after {self.timeout_seconds:.2f}s"
+                f"Started TimeoutTaskNode '{self.name}'; will timeout after {self.timeout_seconds:.2f}s",
             )
 
         elapsed = now - self.start_time
         self.logger.debug(
-            f"Node '{self.name}' elapsed time: {elapsed:.2f}s of {self.timeout_seconds:.2f}s"
+            f"Node '{self.name}' elapsed time: {elapsed:.2f}s of {self.timeout_seconds:.2f}s",
         )
 
         # Check for timeout

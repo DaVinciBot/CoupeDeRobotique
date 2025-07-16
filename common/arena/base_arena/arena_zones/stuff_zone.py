@@ -2,31 +2,26 @@
 # This module defines the StuffZone class, a zone designated for storage or item placement.
 # It extends BaseArenaZone and updates its accessibility based on the presence of allies or enemies.
 
-# ====== Imports ======
-# Standard library imports
-# ...
 
-# Third-party imports
+from typing import TYPE_CHECKING
+
 from loggerplusplus import Logger
 
-# Local imports
+from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
+from arena.base_arena.team_color import TeamColor
 from geometry import (
+    OrientedPoint,
     Point,
     Polygon,
-    OrientedPoint,
 )
 
-# Internal project imports
-from arena.base_arena.grid_manager import GridManager
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
-from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
-from arena.base_arena.team_color import TeamColor
+if TYPE_CHECKING:
+    from arena.base_arena.grid_manager import GridManager
 
 
-# ====== Stuff Zone Part ======
 class StuffZone(BaseArenaZone):
-    """
-    Zone designated for storage or placement of items.
+    """Zone designated for storage or placement of items.
 
     Attributes:
         logger (Logger): Logger instance for logging messages.
@@ -47,8 +42,7 @@ class StuffZone(BaseArenaZone):
         update_callback: callable = None,
         go_to_positions: list[OrientedPoint | Point] = None,
     ) -> None:
-        """
-        Initializes the StuffZone with geometry, buffer, and accessibility.
+        """Initializes the StuffZone with geometry, buffer, and accessibility.
 
         Args:
             logger (Logger): Logger instance for logging messages.
@@ -76,8 +70,7 @@ class StuffZone(BaseArenaZone):
         ally_position: Point | OrientedPoint,
         enemy_position: Point | OrientedPoint,
     ) -> None:
-        """
-        Updates the zone accessibility based on the positions of allies and enemies.
+        """Updates the zone accessibility based on the positions of allies and enemies.
 
         Args:
             team_color (TeamColor): The color of the team.
@@ -98,10 +91,9 @@ class StuffZone(BaseArenaZone):
             self.logger.debug(f"{self.zone_type} zone is now accessible")
 
     def get_go_to_position(
-        self, ally_position: OrientedPoint, team_color: TeamColor
+        self, ally_position: OrientedPoint, team_color: TeamColor,
     ) -> OrientedPoint | Point | None:
-        """
-        Determines the best go-to position for an ally in the given zone.
+        """Determines the best go-to position for an ally in the given zone.
 
         Args:
             ally_position (OrientedPoint): The position of the ally.
@@ -114,21 +106,21 @@ class StuffZone(BaseArenaZone):
         if self.go_to_positions is None:
             self.logger.debug(
                 f"GoTo position request: No go-to positions defined for zone {self.zone_type}, "
-                f"returning centroid [{self.polygon.centroid}]"
+                f"returning centroid [{self.polygon.centroid}]",
             )
             return self.polygon.centroid
 
         # Find the nearest go-to position to the ally if positions are available
         if self.go_to_positions:
             nearest_position = min(
-                self.go_to_positions, key=lambda p: ally_position.distance(p)
+                self.go_to_positions, key=lambda p: ally_position.distance(p),
             )
             self.logger.debug(
-                f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]"
+                f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]",
             )
             return nearest_position
 
         self.logger.debug(
-            "GoTo position request: Unknown case encountered, returning None."
+            "GoTo position request: Unknown case encountered, returning None.",
         )
         return None

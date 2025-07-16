@@ -4,33 +4,21 @@
 # The subgraph sequentially manages navigation, preparation, approach, and the actual pickup,
 # using named task nodes and transitions to ensure reliable task execution.
 
-# ====== Standard Library Imports ======
-# (No standard library imports used)
-
-# ====== Local Project Imports ======
-from config_loader import CONFIG
-from strategy.core import (
-    SubGraphBuilder,
-    BaseTaskNode,
-    DirectTransition,
-    BaseSubGraph,
-    DefaultScoringFunction,
-    NavigationScoringFunction,
+from boombot_strategy.tasks.actuator_task import (
+    PickUp,
+    PrepareToPickUp,
+    ReadyToApproachToPickUp,
 )
-
-# ====== Internal Project Imports ======
-from boombot_strategy.show_game_context import ShowGameContext
-
 from boombot_strategy.tasks.navigation_tasks import (
-    RelativeForward,
-    GoToStuffZoneToPickUp,
     GoCentroidOfZone,
+    GoToStuffZoneToPickUp,
     RelativeBackward,
 )
-from boombot_strategy.tasks.actuator_task import (
-    ReadyToApproachToPickUp,
-    PrepareToPickUp,
-    PickUp,
+from strategy.core import (
+    BaseSubGraph,
+    BaseTaskNode,
+    DirectTransition,
+    SubGraphBuilder,
 )
 
 

@@ -2,12 +2,10 @@
 # This module defines enumerations and data classes for managing zones and movement within an arena.
 # It includes zone types, accessibility levels, and structures for tracking positions and speed vectors.
 
-# ====== Imports ======
-# Standard library imports
+
 from dataclasses import dataclass
 from enum import Enum, auto
 
-# Internal project imports
 from geometry import Point
 
 

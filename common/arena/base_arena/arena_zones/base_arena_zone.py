@@ -3,23 +3,17 @@
 # It includes attributes for zone geometry, type, accessibility, and visit tracking.
 # Additionally, it provides methods for checking accessibility, updating zone status, and handling built-in comparisons.
 
-# ====== Imports ======
-# Standard library imports
+
 from abc import ABC
 
-# Third-party imports
 from loggerplusplus import Logger
 
-# Local imports
-from utils import Utils
-from geometry import Polygon, BufferCapStyle, BufferJoinStyle, Point, OrientedPoint
-
-# Internal project imports
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 from arena.base_arena.team_color import TeamColor
+from geometry import BufferCapStyle, BufferJoinStyle, OrientedPoint, Point, Polygon
+from utils import Utils
 
 
-# ====== Base Zone Class ======
 class BaseArenaZone(ABC):
     """Represents a zone within an arena with attributes for geometry, type, color, and navigability.
 

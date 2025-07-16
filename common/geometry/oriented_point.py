@@ -1,15 +1,9 @@
-# ====== Standard Library Imports ======
-from typing import Any, ClassVar, Dict, Tuple
 
-# ====== Third-Party Imports ======
-from shapely import Point
+"""Handles inheritance for the Point class.
 
-"""
-Handles inheritance for the Point class.
-
-This implementation addresses challenges related to inheriting from the `Point` class 
-(see [Shapely Issue #1233](https://github.com/shapely/shapely/issues/1233)). While the approach 
-might seem unconventional, it works effectively. If for any reason this method becomes unfeasible, 
+This implementation addresses challenges related to inheriting from the `Point` class
+(see [Shapely Issue #1233](https://github.com/shapely/shapely/issues/1233)). While the approach
+might seem unconventional, it works effectively. If for any reason this method becomes unfeasible,
 a potential alternative would be to use a composition of a `Point` object and a `float` for additional properties.
 
 Key Features:
@@ -19,7 +13,7 @@ Key Features:
 - Includes explicit `str` conversions to reduce IDE warnings and improve code clarity.
 
 Testing and Implementation Notes:
-- Different versions of this implementation have been tested, with details available 
+- Different versions of this implementation have been tested, with details available
   in the Jupyter notebook located in the `common/arena` directory.
 - The current implementation combines the functionality of `OrientedPoint2` and `OrientedPoint3`.
 
@@ -29,8 +23,13 @@ Final Version:
 """
 
 
+from typing import Any, ClassVar
+
+from shapely import Point
+
+
 class OrientedPoint(Point):
-    _id_to_attrs: ClassVar[Dict[str, Any]] = {}
+    _id_to_attrs: ClassVar[dict[str, Any]] = {}
 
     __slots__ = (
         Point.__slots__
@@ -40,7 +39,7 @@ class OrientedPoint(Point):
 
     def __init__(
         self,
-        x_or_coords: float | Tuple[float, float],
+        x_or_coords: float | tuple[float, float],
         y_or_theta: float | None = None,
         theta: float = 0.0,
     ) -> (
@@ -49,19 +48,19 @@ class OrientedPoint(Point):
         self._id_to_attrs[str(id(self))] = dict(
             theta=(
                 theta
-                if not isinstance(x_or_coords, Tuple)
+                if not isinstance(x_or_coords, tuple)
                 else (0.0 if y_or_theta is None else y_or_theta)
-            )
+            ),
         )
 
     def __new__(
         cls,
-        x_or_coords: float | Tuple[float, float],
+        x_or_coords: float | tuple[float, float],
         y: float | None = None,
         *args,
         **kwargs,
     ) -> "OrientedPoint":
-        if isinstance(x_or_coords, Tuple):
+        if isinstance(x_or_coords, tuple):
             point = super().__new__(cls, x_or_coords)
         else:
             point = super().__new__(cls, x_or_coords, y)
@@ -88,7 +87,7 @@ class OrientedPoint(Point):
     def __format__(self, format_spec: str) -> str:
         return str(self)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, OrientedPoint):
             return False
         return self.x == other.x and self.y == other.y and self.theta == other.theta
@@ -96,7 +95,7 @@ class OrientedPoint(Point):
     def __add__(self, other):
         if isinstance(other, OrientedPoint):
             return OrientedPoint(
-                (self.x + other.x, self.y + other.y), self.theta + other.theta
+                (self.x + other.x, self.y + other.y), self.theta + other.theta,
             )
         if isinstance(other, Point):
             return OrientedPoint((self.x + other.x, self.y + other.y), self.theta)
@@ -105,7 +104,7 @@ class OrientedPoint(Point):
     def __sub__(self, other):
         if isinstance(other, OrientedPoint):
             return OrientedPoint(
-                (self.x - other.x, self.y - other.y), self.theta - other.theta
+                (self.x - other.x, self.y - other.y), self.theta - other.theta,
             )
         if isinstance(other, Point):
             return OrientedPoint((self.x - other.x, self.y - other.y), self.theta)
@@ -133,8 +132,7 @@ class OrientedPoint(Point):
     # ----------------------------------------------------------------------
 
     def __reduce__(self):
-        """
-        Customize pickling to ensure that the deserialized object is of type OrientedPoint
+        """Customize pickling to ensure that the deserialized object is of type OrientedPoint
         and that the extra attribute 'theta' is restored.
         """
         # Retrieve the point's coordinates (assuming a single point, so take the first coordinate tuple)
@@ -146,8 +144,7 @@ class OrientedPoint(Point):
         return (self.__class__, ((coords, theta)), {"theta": theta})
 
     def __setstate__(self, state):
-        """
-        Restore the extra state for the OrientedPoint during unpickling.
+        """Restore the extra state for the OrientedPoint during unpickling.
         """
         # Reinitialize the extra attribute in the class-level mapping
         OrientedPoint._id_to_attrs[str(id(self))] = {"theta": state.get("theta", 0.0)}

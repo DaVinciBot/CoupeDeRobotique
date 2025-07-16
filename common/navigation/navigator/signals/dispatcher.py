@@ -4,20 +4,17 @@
 # based on NavigatorSignalsEnum, and provides methods to connect, disconnect, and emit signals.
 # Integrated logging helps track and debug signal activity.
 
-# ====== Standard Library Imports ======
-from typing import Callable, Any
+from collections.abc import Callable
+from typing import Any
 
-# ====== Third-party Library Imports ======
 from events import Events
 from loggerplusplus import Logger
 
-# ====== Internal Project Imports ======
 from navigation.navigator.signals.signals_enum import NavigatorSignalsEnum
 
 
 class NavigatorSignalsDispatcher:
-    """
-    Production-grade dispatcher for navigator signals using the Events library.
+    """Production-grade dispatcher for navigator signals using the Events library.
 
     This class dynamically creates event handlers for all defined signals in
     NavigatorSignalsEnum. It allows the connection, disconnection, and emission
@@ -26,8 +23,7 @@ class NavigatorSignalsDispatcher:
     """
 
     def __init__(self, logger: Logger | None = None) -> None:
-        """
-        Initialize the NavigatorSignalsDispatcher.
+        """Initialize the NavigatorSignalsDispatcher.
 
         Args:
             logger (Logger | None): Optional custom logger instance. If not provided,
@@ -49,14 +45,13 @@ class NavigatorSignalsDispatcher:
 
         self._signals = NavigatorEvents()
         self.logger.debug(
-            f"NavigatorSignalsDispatcher initialized with events: {event_names}"
+            f"NavigatorSignalsDispatcher initialized with events: {event_names}",
         )
 
     def connect_signal(
-        self, signal: NavigatorSignalsEnum, callback: Callable[..., Any]
+        self, signal: NavigatorSignalsEnum, callback: Callable[..., Any],
     ) -> None:
-        """
-        Connect a callback function to a signal.
+        """Connect a callback function to a signal.
 
         Args:
             signal (NavigatorSignalsEnum): The signal to connect to.
@@ -74,10 +69,9 @@ class NavigatorSignalsDispatcher:
             self.logger.warning(f"Attempted to connect to unknown signal: {signal}")
 
     def disconnect_signal(
-        self, signal: NavigatorSignalsEnum, callback: Callable[..., Any]
+        self, signal: NavigatorSignalsEnum, callback: Callable[..., Any],
     ) -> None:
-        """
-        Disconnect a callback function from a signal.
+        """Disconnect a callback function from a signal.
 
         Args:
             signal (NavigatorSignalsEnum): The signal to disconnect from.
@@ -93,12 +87,11 @@ class NavigatorSignalsDispatcher:
             self.logger.debug(f"Disconnected callback from signal: {signal.name}")
         except AttributeError:
             self.logger.warning(
-                f"Attempted to disconnect from unknown signal: {signal}"
+                f"Attempted to disconnect from unknown signal: {signal}",
             )
 
     def emit_signal(self, signal: NavigatorSignalsEnum, *args, **kwargs) -> None:
-        """
-        Emit a signal and trigger all connected callbacks.
+        """Emit a signal and trigger all connected callbacks.
 
         Args:
             signal (NavigatorSignalsEnum): The signal to emit.
@@ -110,7 +103,7 @@ class NavigatorSignalsDispatcher:
         """
         try:
             self.logger.debug(
-                f"Emitting signal: {signal.name} with args: {args}, kwargs: {kwargs}"
+                f"Emitting signal: {signal.name} with args: {args}, kwargs: {kwargs}",
             )
             getattr(self._signals, signal.name)(*args, **kwargs)
         except AttributeError:

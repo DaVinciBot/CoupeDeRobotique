@@ -5,25 +5,23 @@
 # optionally resetting odometry, and retracting afterward. The sequence is constructed
 # using task nodes and transitions within a subgraph builder.
 
-# ====== Internal Project Imports ======
-from config_loader import CONFIG
-from strategy.core import (
-    SubGraphBuilder,
-    BaseTaskNode,
-    DirectTransition,
-    BaseSubGraph,
+from boombot_strategy.tasks.actuator_task import (
+    Build,
+    DeplacementObject,
+    DeplacementPosition,
+    ReadyToApproachToPickUp,
 )
 from boombot_strategy.tasks.navigation_tasks import (
     GoToStuffZoneToPickUp,
-    RelativeForward,
     RelativeBackward,
+    RelativeForward,
     SetOdometrie,
 )
-from boombot_strategy.tasks.actuator_task import (
-    DeplacementPosition,
-    ReadyToApproachToPickUp,
-    Build,
-    DeplacementObject,
+from strategy.core import (
+    BaseSubGraph,
+    BaseTaskNode,
+    DirectTransition,
+    SubGraphBuilder,
 )
 
 
@@ -34,8 +32,7 @@ def get_push_one_floor_to_wall_subgraph(
     new_y: float | None = None,
     new_theta: float | None = None,
 ) -> BaseSubGraph:
-    """
-    Construct a subgraph for pushing one floor to a wall in a specific zone.
+    """Construct a subgraph for pushing one floor to a wall in a specific zone.
 
     The task sequence includes:
       1. Getting ready to approach the target zone
@@ -86,7 +83,7 @@ def get_push_one_floor_to_wall_subgraph(
         BaseTaskNode(name=node_push, tasks=RelativeForward(push_distance)),
     )
 
-    node_deplacment = f"[Pickup] Pnode_deplacment"
+    node_deplacment = "[Pickup] Pnode_deplacment"
     builder.add_node(
         node_deplacment,
         BaseTaskNode(name=node_deplacment, tasks=DeplacementObject()),
@@ -139,7 +136,7 @@ def get_push_one_floor_to_wall_subgraph(
 
     builder.connect(node_build, DirectTransition(builder.nodes[node_retract]))
     builder.connect(
-        node_retract, DirectTransition(builder.nodes[node_position_after_push])
+        node_retract, DirectTransition(builder.nodes[node_position_after_push]),
     )
 
     # Build and return the final subgraph

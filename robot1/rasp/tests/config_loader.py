@@ -1,7 +1,7 @@
-import pathlib
 import json
-import sys
 import os
+import pathlib
+import sys
 
 
 def load_json_file(file_path):
@@ -25,7 +25,7 @@ class CONFIG:
 
     COMMON_DIR = os.path.join(ROOT_DIR, "common")
     sys.path.append(
-        COMMON_DIR
+        COMMON_DIR,
     )  # Add common directory to the path (to be able to import common modules)
     CONFIG_STORE = load_json_file(os.path.join(ROOT_DIR, "config.json"))
 

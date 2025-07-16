@@ -4,18 +4,16 @@
 # to evaluate whether the transition is allowed based on the current game context.
 
 
-# ====== Internal Project Imports ======
-from strategy.core.transitions.base_transition import BaseTransition
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.base_game_context import BaseGameContext
+from strategy.core.task_nodes.base_task_node import BaseTaskNode
+from strategy.core.transitions.base_transition import BaseTransition
 from strategy.core.transitions.conditional_transition.transitions_condition import (
     BaseTransitionCondition,
 )
 
 
 class ConditionalTransition(BaseTransition):
-    """
-    A transition that occurs only if a specified condition is met.
+    """A transition that occurs only if a specified condition is met.
 
     This class allows for conditional logic in determining whether a transition from one task
     node to another is valid, using an instance of `BaseTransitionCondition`.
@@ -29,8 +27,7 @@ class ConditionalTransition(BaseTransition):
         target: BaseTaskNode,
         condition: BaseTransitionCondition,
     ):
-        """
-        Initialize a conditional transition.
+        """Initialize a conditional transition.
 
         Args:
             target (BaseTaskNode): The target node to transition to.
@@ -40,8 +37,7 @@ class ConditionalTransition(BaseTransition):
         self.condition = condition
 
     def can_transit(self, from_node: BaseTaskNode, ctx: BaseGameContext) -> bool:
-        """
-        Determine if the transition can occur based on the condition and game context.
+        """Determine if the transition can occur based on the condition and game context.
 
         Args:
             from_node (BaseTaskNode): The node transitioning from.

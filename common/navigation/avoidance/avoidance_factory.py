@@ -3,11 +3,14 @@
 # obstacle avoidance modules based on the specified strategy in the provided parameters.
 # It currently supports instantiation of `StopAndWaitAvoidance`.
 
-# ====== Standard Library Imports ======
+
 from typing import cast
 
-# ====== Internal Project Imports ======
-from navigation.avoidance.structs import AvoidanceStrategy
+from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
+from navigation.avoidance.back_avoidance import (
+    BackAvoidance,
+    BackAvoidanceParams,
+)
 from navigation.avoidance.base_avoidance import (
     BaseAvoidance,
     BaseAvoidanceParams,
@@ -20,18 +23,11 @@ from navigation.avoidance.stop_and_wait_avoidance import (
     StopAndWaitAvoidance,
     StopAndWaitAvoidanceParams,
 )
-
-from navigation.avoidance.back_avoidance import (
-    BackAvoidance,
-    BackAvoidanceParams,
-)
-
-from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
+from navigation.avoidance.structs import AvoidanceStrategy
 
 
 class AvoidanceFactory:
-    """
-    Factory class to instantiate the appropriate obstacle avoidance component based on strategy.
+    """Factory class to instantiate the appropriate obstacle avoidance component based on strategy.
     """
 
     @staticmethod
@@ -39,8 +35,7 @@ class AvoidanceFactory:
         params: BaseAvoidanceParams,
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
     ) -> BaseAvoidance:
-        """
-        Create an avoidance module based on the given parameters.
+        """Create an avoidance module based on the given parameters.
 
         Args:
             params (BaseAvoidanceParams): Parameters including the desired avoidance strategy.
@@ -56,17 +51,17 @@ class AvoidanceFactory:
 
         if strategy == AvoidanceStrategy.NO_AVOIDANCE:
             return NoAvoidance(
-                cast(NoAvoidanceParams, params), acs_detection_profile_params
+                cast("NoAvoidanceParams", params), acs_detection_profile_params,
             )
 
         if strategy == AvoidanceStrategy.STOP_AND_WAIT:
             return StopAndWaitAvoidance(
-                cast(StopAndWaitAvoidanceParams, params), acs_detection_profile_params
+                cast("StopAndWaitAvoidanceParams", params), acs_detection_profile_params,
             )
 
         if strategy == AvoidanceStrategy.BACK:
             return BackAvoidance(
-                cast(BackAvoidanceParams, params),
+                cast("BackAvoidanceParams", params),
                 acs_detection_profile_params,
             )
 

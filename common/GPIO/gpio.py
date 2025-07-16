@@ -1,10 +1,11 @@
+
+
 from gpiozero import LED, Button
 from gpiozero.pins.lgpio import LGPIOFactory
 
 
 class PIN:
-    """
-    Represents a GPIO pin.
+    """Represents a GPIO pin.
 
     Args:
         pin (int): The pin number.
@@ -23,8 +24,7 @@ class PIN:
         self.device = None
 
     def setup(self, mode, reverse_state=False):
-        """
-        Set up the pin.
+        """Set up the pin.
 
         Args:
             mode (str): The pin mode (input/output).
@@ -54,8 +54,7 @@ class PIN:
             )
 
     def digital_write(self, state: bool):
-        """
-        Write a digital state to the pin.
+        """Write a digital state to the pin.
 
         Args:
             state (bool): The state to write (True/False).
@@ -64,8 +63,7 @@ class PIN:
         self.device.value = self.__correct_state(state)
 
     def digital_read(self) -> bool:
-        """
-        Read the digital state of the pin.
+        """Read the digital state of the pin.
 
         Returns:
             bool: The digital state of the pin (True/False).
@@ -78,8 +76,7 @@ class PIN:
         )
 
     def safe_digital_read(self, n=5) -> bool:
-        """
-        Read multiple time the digital state of the pin.
+        """Read multiple time the digital state of the pin.
 
         Returns:
             bool: The digital state of the pin (True/False).
@@ -88,8 +85,7 @@ class PIN:
         return sum([self.digital_read() for _ in range(n)]) / n >= 0.5
 
     def __correct_state(self, state: bool) -> bool:
-        """
-        Correct the state of the pin based on the reverse_state attribute.
+        """Correct the state of the pin based on the reverse_state attribute.
 
         Args:
             state (bool): The state to correct.

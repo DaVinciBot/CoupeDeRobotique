@@ -1,16 +1,16 @@
+from sys import maxsize
+
+from old_logger import Logger
+from pathfinding.core.grid import Grid
+from shapely import distance
+
 from arena.base_arena.arena import Arena
 from geometry import (
+    OrientedPoint,
     Point,
     Polygon,
     create_straight_rectangle,
-    OrientedPoint,
 )
-from old_logger import Logger
-
-from shapely import distance
-from sys import maxsize
-
-from pathfinding.core.grid import Grid
 
 
 class Plants_zone:
@@ -39,10 +39,9 @@ class MarsArena(Arena):
     """Represent the arena of the +CDR 2023-2024"""
 
     def __init__(
-        self, start_zone_id: int, logger: Logger, *, border_buffer, robot_buffer
+        self, start_zone_id: int, logger: Logger, *, border_buffer, robot_buffer,
     ):
-        """
-        Generate the arena of the CDR 2023-2024
+        """Generate the arena of the CDR 2023-2024
 
         :param start_zone: The start zone of the robot, must be between 1 and 6
         :type start_zone: int
@@ -65,22 +64,22 @@ class MarsArena(Arena):
 
         self.drop_zones: list[Plants_zone] = [
             Plants_zone(
-                create_straight_rectangle(Point(45, 0), Point(0, 45))
+                create_straight_rectangle(Point(45, 0), Point(0, 45)),
             ),  # 0 - Blue (Possible forbidden area)
             Plants_zone(
-                create_straight_rectangle(Point(77.5, 0), Point(122.5, 45))
+                create_straight_rectangle(Point(77.5, 0), Point(122.5, 45)),
             ),  # 1 - Yellow
             Plants_zone(
-                create_straight_rectangle(Point(155, 0), Point(200, 45))
+                create_straight_rectangle(Point(155, 0), Point(200, 45)),
             ),  # 2 - Blue
             Plants_zone(
-                create_straight_rectangle(Point(0, 255), Point(45, 300))
+                create_straight_rectangle(Point(0, 255), Point(45, 300)),
             ),  # 3 - Yellow (Possible forbidden area)
             Plants_zone(
-                create_straight_rectangle(Point(122.5, 255), Point(77.5, 300))
+                create_straight_rectangle(Point(122.5, 255), Point(77.5, 300)),
             ),  # 4 - Blue
             Plants_zone(
-                create_straight_rectangle(Point(200, 255), Point(155, 300))
+                create_straight_rectangle(Point(200, 255), Point(155, 300)),
             ),  # 5 - Yellow
         ]
 
@@ -101,7 +100,7 @@ class MarsArena(Arena):
             ),  # 0 - Blue
             (
                 Plants_zone(
-                    create_straight_rectangle(Point(122.5, -15), Point(155, -3))
+                    create_straight_rectangle(Point(122.5, -15), Point(155, -3)),
                 )
             ),  # 1 - Yellow
             (
@@ -112,12 +111,12 @@ class MarsArena(Arena):
             ),  # 3 - Yellow
             (
                 Plants_zone(
-                    create_straight_rectangle(Point(122.5, 315), Point(155, 303))
+                    create_straight_rectangle(Point(122.5, 315), Point(155, 303)),
                 )
             ),  # 4 - Blue
             (
                 Plants_zone(
-                    create_straight_rectangle(Point(203, 240), Point(215, 207.5))
+                    create_straight_rectangle(Point(203, 240), Point(215, 207.5)),
                 )
             ),  # 5 - Blue
         ]
@@ -165,7 +164,7 @@ class MarsArena(Arena):
         return zones
 
     def sort_gardener(
-        self, actual_position: OrientedPoint, friendly_only=True, maxi=6, reverse=False
+        self, actual_position: OrientedPoint, friendly_only=True, maxi=6, reverse=False,
     ):
         zones_to_sort = (
             [

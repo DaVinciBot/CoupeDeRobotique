@@ -3,11 +3,9 @@
 # for a robot's motion. It includes the robot's target position, linear speed, and angular speed.
 # It also provides utility methods to create a stop command and retrieve the command as a tuple.
 
-# ====== Standard Library Imports ======
 from dataclasses import dataclass
 from enum import Enum, auto
 
-# ====== Internal Project Imports ======
 from geometry import OrientedPoint
 
 
@@ -18,8 +16,7 @@ class TrajectoryPlannerStrategy(Enum):
 
 @dataclass
 class TrajectoryPlanCommand:
-    """
-    Represents a motion command in the trajectory plan.
+    """Represents a motion command in the trajectory plan.
 
     Attributes:
         position (OrientedPoint): Target pose of the robot.
@@ -33,10 +30,9 @@ class TrajectoryPlanCommand:
 
     @classmethod
     def create_stop_command(
-        cls, current_position: OrientedPoint
+        cls, current_position: OrientedPoint,
     ) -> "TrajectoryPlanCommand":
-        """
-        Create a stop command that holds the robot at the given position with zero speed.
+        """Create a stop command that holds the robot at the given position with zero speed.
 
         Args:
             current_position (OrientedPoint): Current pose to hold.
@@ -51,8 +47,7 @@ class TrajectoryPlanCommand:
         )
 
     def get_full_command(self) -> tuple[float, float, OrientedPoint]:
-        """
-        Retrieve the command as a tuple for control interfaces.
+        """Retrieve the command as a tuple for control interfaces.
 
         Returns:
             tuple: (linear_speed, angular_speed, position)
@@ -60,8 +55,7 @@ class TrajectoryPlanCommand:
         return self.linear_speed, self.angular_speed, self.position
 
     def get_position_command(self) -> OrientedPoint:
-        """
-        Retrieve the position command.
+        """Retrieve the position command.
 
         Returns:
             OrientedPoint: The target position of the robot.

@@ -4,18 +4,14 @@
 # Commands are categorized based on direction (Raspberry Pi -> Teensy: 0-127, Teensy -> Raspberry Pi: 128-255).
 # The module also includes a signature constant used for USB communication integrity.
 
-# ====== Standard Library Imports ======
 from enum import Enum
 
-# ====== USB Communication Signature ======
 # This signature must be exactly the same on both sides (Raspberry Pi and Teensy) to ensure valid communication.
 END_BYTES_SIGNATURE: bytes = b"\xba\xdd\x1c\xc5"
 
 
-# ====== Message Types ======
 class Messages(Enum):
-    """
-    Enumeration for command types exchanged between the Raspberry Pi and Teensy.
+    """Enumeration for command types exchanged between the Raspberry Pi and Teensy.
 
     Commands from Raspberry Pi to Teensy are in the range 0-127,
     while those from Teensy to Raspberry Pi are in the range 128-255.
@@ -55,8 +51,7 @@ class Messages(Enum):
 
     # To use for message creation
     def to_bytes(self) -> bytes:
-        """
-        Converts the command to its byte representation.
+        """Converts the command to its byte representation.
 
         Returns:
             bytes: Single-byte representation of the command.

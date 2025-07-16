@@ -11,8 +11,7 @@ class DummyDevice:
 
 
 class PIN:
-    """
-    Dummy version of a GPIO pin for simulation/testing.
+    """Dummy version of a GPIO pin for simulation/testing.
 
     Args:
         pin (int): The pin number.
@@ -42,8 +41,7 @@ class PIN:
     def digital_read(self) -> bool:
         if self.mode == "output":
             return self.__correct_state(self.device.value)
-        else:
-            return self.__correct_state(self.device.is_pressed)
+        return self.__correct_state(self.device.is_pressed)
 
     def safe_digital_read(self, n=5) -> bool:
         return sum([self.digital_read() for _ in range(n)]) / n >= 0.5

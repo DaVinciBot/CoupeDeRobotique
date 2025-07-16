@@ -3,14 +3,11 @@
 # over time and visualizing the result. It compares the expected path with the executed positions
 # and plots various metrics such as linear speed, angular speed, and position evolution using matplotlib.
 
-# ====== Standard Library Imports ======
 import time
 
-# ====== Third-Party Library Imports ======
 import numpy as np
 from matplotlib import pyplot as plt
 
-# ====== Internal Project Imports ======
 from geometry import OrientedPoint
 from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import (
     BaseTrajectoryPlanner,
@@ -22,8 +19,7 @@ def test_trajectory_planning(
     path: list[OrientedPoint],
     time_step: float = 0.1,
 ):
-    """
-    Simulates and visualizes the performance of a trajectory planner.
+    """Simulates and visualizes the performance of a trajectory planner.
 
     Args:
         trajectory_planner (BaseTrajectoryPlanner): The trajectory planner instance to test.
@@ -108,7 +104,7 @@ def test_trajectory_planning(
         dx = np.cos(point.theta)
         dy = np.sin(point.theta)
         plt.arrow(
-            point.x, point.y, dx, dy, head_width=0.1, head_length=0.1, fc="b", ec="b"
+            point.x, point.y, dx, dy, head_width=0.1, head_length=0.1, fc="b", ec="b",
         )
 
     # Plot simulated trajectory with orientation arrows
@@ -117,7 +113,7 @@ def test_trajectory_planning(
         dx = np.cos(point.theta) * 0.5
         dy = np.sin(point.theta) * 0.5
         plt.arrow(
-            point.x, point.y, dx, dy, head_width=0.1, head_length=0.1, fc="r", ec="r"
+            point.x, point.y, dx, dy, head_width=0.1, head_length=0.1, fc="r", ec="r",
         )
 
     plt.xlabel("x")

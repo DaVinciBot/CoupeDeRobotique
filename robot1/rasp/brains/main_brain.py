@@ -1,55 +1,20 @@
-import random
-
-from config_loader import CONFIG
-
-# ====== Standard Library Imports ======
-import numpy as np
-import matplotlib.pyplot as plt
+import asyncio
 import time
 from math import pi
 
-
-# ====== Third-party library imports ======
-from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
+import matplotlib.pyplot as plt
+import numpy as np
 from loggerplusplus import Logger
 from taskbrain import Brain
+from ws_comms import WServerRouteManager, WSmsg
 
-# ====== Local Library Imports ======
-from geometry import OrientedPoint, Point, is_empty
-from arena import ShowArena, BaseArenaZone
-from arena import AllyZone, TeamColor
-
-# ====== Internal Project Imports ======
+from arena import ShowArena, TeamColor
+from controllers.actuators import ActuatorsShow
 from controllers.rolling_basis import (
     RollingBasis,
-    RollingBasisDummy,
-    AsservissementRollingBasis,
 )
-from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
-from sensors import Lidar, Inputs
-
-from navigation import (
-    Navigator,
-    NavigatorTaskParams,
-    DeltaPathPlannerParams,
-    SequentialTrajectoryPlannerParams,
-    SpeedProfiler,
-    StopAndWaitAvoidanceParams,
-    BasicPathPlannerParams,
-    NoAvoidanceParams,
-)
-
-from navigation.avoidance.acs_detection_profiles import (
-    RectangularProjectionAcsDetectionProfileParams,
-    NoAcsDetectionProfileParams,
-)
-
-from navigation.trajectory_planner import Direction
-from usb_com.python.tools import get_all_serial_number
-
-from navigation.navigator.task import NavigatorTaskState
-
-import asyncio
+from geometry import OrientedPoint, Point
+from sensors import Inputs, Lidar
 
 
 class MainBrain(Brain):
@@ -112,13 +77,13 @@ class MainBrain(Brain):
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
         rolling_basis = RollingBasis(
-            logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
+            logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True),
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
 
         actuators = ActuatorsShow(
-            logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
+            logger=Logger(identifier="Actuators", follow_logger_manager_rules=True),
         )
         actuators.deplacement_position()
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
@@ -133,8 +98,6 @@ class MainBrain(Brain):
         # --- 3) Build the strategy --- #
         from boombot_strategy import ShowGameContext
         from boombot_strategy.strategies import (
-            BasicStrategy,
-            TowerRushStrategy,
             OnlyBannerStrategy,
         )
 
@@ -144,7 +107,7 @@ class MainBrain(Brain):
                 rolling_basis=rolling_basis,
                 actuators=actuators,
                 score=self.score,
-            )
+            ),
         )
 
         # from strategy.tools import visualize_task_graph
@@ -226,13 +189,12 @@ class MainBrain(Brain):
                 "score": current_state["score"],
             }
             await self.ws_ui.sender.send(
-                WSmsg(sender="server", msg="update ui data", data=to_send)
+                WSmsg(sender="server", msg="update ui data", data=to_send),
             )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def receive_ui_data(self):
-        """
-        executes requests received by the server. Use Postman to send request to the server
+        """Executes requests received by the server. Use Postman to send request to the server
         Use eval and await eval to run the code you want. Code must be sent as a string
         """
         ui = await self.ws_ui.receiver.get()
@@ -283,7 +245,7 @@ class MainBrain(Brain):
             await asyncio.sleep(0.1)
 
         self.logger.info(
-            f"Team color is set to {self.arena.team_color.name.lower()}. Starting the brain."
+            f"Team color is set to {self.arena.team_color.name.lower()}. Starting the brain.",
         )
 
     @Brain.task(process=False, run_on_start=True)
@@ -314,7 +276,7 @@ class MainBrain(Brain):
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
-            self.arena.team_color, start_position, Point(150, 200)
+            self.arena.team_color, start_position, Point(150, 200),
         )
         self.arena.update(
             ally_position=start_position,

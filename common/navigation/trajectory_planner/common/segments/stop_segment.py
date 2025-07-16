@@ -2,16 +2,12 @@
 # This module defines the StopSegment class, a subclass of BaseSegment, representing a stationary segment in a trajectory.
 # It captures a period of pause or no movement between two poses over a specific duration.
 
-# ====== Local Project Imports ======
 from geometry import OrientedPoint
-
-# ====== Internal Project Imports ======
 from navigation.trajectory_planner.common.segments.base_segment import BaseSegment
 
 
 class StopSegment(BaseSegment):
-    """
-    Segment representing a stop or pause in the trajectory.
+    """Segment representing a stop or pause in the trajectory.
 
     Inherits from:
         BaseSegment: The base class representing general trajectory segment attributes.
@@ -25,8 +21,7 @@ class StopSegment(BaseSegment):
         end_position: OrientedPoint,
         duration: float,
     ):
-        """
-        Initialize a stationary segment with given start and end positions and duration.
+        """Initialize a stationary segment with given start and end positions and duration.
 
         Args:
             start_position (OrientedPoint): Start pose of the stationary segment.

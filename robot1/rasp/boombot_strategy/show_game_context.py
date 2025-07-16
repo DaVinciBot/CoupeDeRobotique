@@ -1,6 +1,6 @@
-from strategy.core import BaseGameContext
 from arena import ShowArena
-from controllers import RollingBasis, ActuatorsShow
+from controllers import ActuatorsShow, RollingBasis
+from strategy.core import BaseGameContext
 
 
 class ShowGameContext(BaseGameContext):

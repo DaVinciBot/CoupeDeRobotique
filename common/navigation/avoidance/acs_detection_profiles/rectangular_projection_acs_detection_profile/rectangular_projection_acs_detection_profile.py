@@ -1,19 +1,19 @@
+import math
+
+from loggerplusplus import Logger
+
+from arena import AllyZone, EnemyZone
+from geometry import Polygon, rotate, translate
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
     BaseAcsDetectionProfile,
 )
-
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile_params import (
     RectangularProjectionAcsDetectionProfileParams,
 )
-from arena import AllyZone, EnemyZone
-
-from geometry import Polygon, rotate, translate
-import math
-from loggerplusplus import Logger
 
 
 class RectangularProjectionAcsDetectionProfile(
-    BaseAcsDetectionProfile[RectangularProjectionAcsDetectionProfileParams]
+    BaseAcsDetectionProfile[RectangularProjectionAcsDetectionProfileParams],
 ):
     def __init__(
         self,
@@ -29,17 +29,17 @@ class RectangularProjectionAcsDetectionProfile(
                 (+self.params.half_length_view, -self.params.half_width_view),
                 (+self.params.half_length_view, +self.params.half_width_view),
                 (-self.params.half_length_view, +self.params.half_width_view),
-            ]
+            ],
         )
         rotated_rectangle = rotate(
-            rectangle, ally_zone.point.theta, origin=(0, 0), use_radians=True
+            rectangle, ally_zone.point.theta, origin=(0, 0), use_radians=True,
         )
 
         dx = ally_zone.point.x + self.params.half_length_view * math.cos(
-            ally_zone.point.theta
+            ally_zone.point.theta,
         )
         dy = ally_zone.point.y + self.params.half_length_view * math.sin(
-            ally_zone.point.theta
+            ally_zone.point.theta,
         )
         return translate(rotated_rectangle, xoff=dx, yoff=dy)
 
@@ -47,7 +47,7 @@ class RectangularProjectionAcsDetectionProfile(
         projection = self._create_rectangular_projection(ally_zone)
         if projection.contains(enemy_zone.point):
             self.logger.info(
-                f"ACS triggered. Distance: {ally_zone.point.distance(enemy_zone.point)}"
+                f"ACS triggered. Distance: {ally_zone.point.distance(enemy_zone.point)}",
             )
             return True
         return False

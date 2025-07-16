@@ -3,13 +3,11 @@
 # `PathFindingStrategy` specifies the algorithmic strategy for generating paths.
 # `Direction` indicates the intended direction of movement (FORWARD or BACKWARD).
 
-# ====== Standard Library Imports ======
 from enum import Enum, auto
 
 
 class PathPlanningStrategy(Enum):
-    """
-    Enumeration of available path finding strategies.
+    """Enumeration of available path finding strategies.
     """
 
     A_STAR = auto()  # Use A* algorithm
@@ -20,8 +18,7 @@ class PathPlanningStrategy(Enum):
 
 
 class Direction(Enum):
-    """
-    Enumeration of motion directions for path planners.
+    """Enumeration of motion directions for path planners.
     """
 
     FORWARD = auto()

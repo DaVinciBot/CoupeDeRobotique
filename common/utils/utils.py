@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+
 from shapely import Geometry, Point
 
 
@@ -13,8 +14,7 @@ class Utils:
 
     @staticmethod
     def get_ts() -> float:
-        """
-        Get the current timestamp as a float.
+        """Get the current timestamp as a float.
 
         Returns:
             float: The current timestamp.
@@ -36,7 +36,7 @@ class Utils:
                 r = (
                     "["
                     + ", ".join(
-                        [Utils.geom_to_str(smaller_geom) for smaller_geom in geom.geoms]
+                        [Utils.geom_to_str(smaller_geom) for smaller_geom in geom.geoms],
                     )
                     + "]"
                 )

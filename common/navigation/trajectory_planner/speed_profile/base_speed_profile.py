@@ -4,21 +4,18 @@
 # It specifies the interface for calculating speed, distance
 # traveled, and total duration based on motion parameters.
 
-# ====== Standard Library Imports ======
 from abc import ABC, abstractmethod
 
 
 class BaseSpeedProfile(ABC):
-    """
-    Abstract base class for speed profile models.
+    """Abstract base class for speed profile models.
 
     Defines an interface for retrieving dynamic motion properties such as speed,
     distance traveled, and time duration, based on elapsed time and path distance.
     """
 
     def __init__(self, max_speed: float):
-        """
-        Initialize the base speed profile with a maximum speed.
+        """Initialize the base speed profile with a maximum speed.
 
         Args:
             max_speed (float): The maximum speed for the profile.
@@ -33,8 +30,7 @@ class BaseSpeedProfile(ABC):
         departure_speed: float = 0.0,
         arrival_speed: float = 0.0,
     ) -> float:
-        """
-        Get current speed based on elapsed time or distance.
+        """Get current speed based on elapsed time or distance.
 
         Implementations should use the provided motion parameters
         to calculate the current speed at a given point in the trajectory.
@@ -58,8 +54,7 @@ class BaseSpeedProfile(ABC):
         departure_speed: float = 0.0,
         arrival_speed: float = 0.0,
     ) -> float:
-        """
-        Get distance traveled given elapsed time.
+        """Get distance traveled given elapsed time.
 
         This method computes how far the object has traveled over time
         using motion dynamics defined by the specific speed profile.
@@ -77,10 +72,9 @@ class BaseSpeedProfile(ABC):
 
     @abstractmethod
     def get_total_duration(
-        self, distance: float, departure_speed: float = 0.0, arrival_speed: float = 0.0
+        self, distance: float, departure_speed: float = 0.0, arrival_speed: float = 0.0,
     ) -> float:
-        """
-        Get total duration required to travel a given distance.
+        """Get total duration required to travel a given distance.
 
         This method estimates how long it will take to complete the
         entire trajectory based on the profile's speed characteristics.

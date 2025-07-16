@@ -2,23 +2,14 @@
 # This module defines the BorderZone class, representing the outer boundaries of the arena.
 # It extends BaseArenaZone and is characterized by its restricted accessibility.
 
-# ====== Imports ======
-# Standard library imports
-# ...
 
-# Third-party imports
 from loggerplusplus import Logger
 
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
-
-# Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
-
-# Local imports
 from geometry import Polygon
 
 
-# ====== Border Zone Class ======
 class BorderZone(BaseArenaZone):
     """Represents the border zone of the arena, which is typically inaccessible.
     This class defines the zone's geometry and ensures it remains restricted.

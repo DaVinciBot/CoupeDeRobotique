@@ -4,40 +4,26 @@
 # The subgraph sequentially manages navigation, preparation, approach, and the actual pickup,
 # using named task nodes and transitions to ensure reliable task execution.
 
-# ====== Standard Library Imports ======
-# (No standard library imports used)
-
-# ====== Local Project Imports ======
-from config_loader import CONFIG
-from strategy.core import (
-    SubGraphBuilder,
-    BaseTaskNode,
-    DirectTransition,
-    BaseSubGraph,
-    DefaultScoringFunction,
-    NavigationScoringFunction,
+from boombot_strategy.tasks.actuator_task import (
+    DeplacementObject,
+    PrepareToPickUp,
+    ReadyToApproachToPickUp,
 )
-
-# ====== Internal Project Imports ======
-from boombot_strategy.show_game_context import ShowGameContext
-
 from boombot_strategy.tasks.navigation_tasks import (
-    RelativeForward,
-    GoToStuffZoneToPickUp,
     GoCentroidOfZone,
+    GoToStuffZoneToPickUp,
     RelativeBackward,
 )
-from boombot_strategy.tasks.actuator_task import (
-    ReadyToApproachToPickUp,
-    PrepareToPickUp,
-    PickUp,
-    DeplacementObject,
+from strategy.core import (
+    BaseSubGraph,
+    BaseTaskNode,
+    DirectTransition,
+    SubGraphBuilder,
 )
 
 
 def get_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
-    """
-    Build a subgraph that defines the sequence of tasks for picking up an object at a specified zone.
+    """Build a subgraph that defines the sequence of tasks for picking up an object at a specified zone.
 
     The subgraph includes navigation to the zone, preparation steps, and execution of the pickup operation.
     Nodes are connected linearly using direct transitions to ensure an ordered task flow.

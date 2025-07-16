@@ -1,7 +1,7 @@
-import pathlib
 import json
-import sys
 import os
+import pathlib
+import sys
 
 
 def load_json_file(file_path):
@@ -25,15 +25,15 @@ class CONFIG:
 
     COMMON_DIR = os.path.join(ROOT_DIR, "common")
     sys.path.append(
-        COMMON_DIR
+        COMMON_DIR,
     )  # Add common directory to the path (to be able to import common modules)
     CONFIG_STORE = load_json_file(os.path.join(ROOT_DIR, "config.json"))
 
     from navigation import (
-        SpeedProfiler,
+        BaseAcsDetectionProfileParams,
         BasicSpeedProfile,
         LinearRampedSpeedProfile,
-        BaseAcsDetectionProfileParams,
+        SpeedProfiler,
     )
 
     # CONSTANTS TO DEFINE !
@@ -149,26 +149,26 @@ class CONFIG:
 
     ROLLING_BASIS_DEFAULT_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
         linear_speed_profile=LinearRampedSpeedProfile(
-            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"],
         ),
         angular_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"]
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"],
         ),
     )
     ROLLING_BASIS_SLOW_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
         linear_speed_profile=LinearRampedSpeedProfile(
-            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["slow"]
+            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["slow"],
         ),
         angular_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"]
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"],
         ),
     )
     ROLLING_BASIS_SPEED_PROFILER_PID: SpeedProfiler = SpeedProfiler(
         linear_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]["max_speed"]
+            ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]["max_speed"],
         ),
         angular_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"]
+            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"],
         ),
     )
 
@@ -209,16 +209,16 @@ class CONFIG:
     ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME: (
         BaseAcsDetectionProfileParams
     ) = BaseAcsDetectionProfileParams.from_config(
-        **ACS_PROFILES_CONFIG["go_to_color_reserved_zone_to_finish_game"]
+        **ACS_PROFILES_CONFIG["go_to_color_reserved_zone_to_finish_game"],
     )
     ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT: (
         BaseAcsDetectionProfileParams
     ) = BaseAcsDetectionProfileParams.from_config(
-        **ACS_PROFILES_CONFIG["go_to_color_reserved_zone_to_construct"]
+        **ACS_PROFILES_CONFIG["go_to_color_reserved_zone_to_construct"],
     )
     ACS_PROFILE_GO_TO_STUFF_ZONE_TO_PICK_UP: BaseAcsDetectionProfileParams = (
         BaseAcsDetectionProfileParams.from_config(
-            **ACS_PROFILES_CONFIG["go_to_stuff_zone_to_pick_up"]
+            **ACS_PROFILES_CONFIG["go_to_stuff_zone_to_pick_up"],
         )
     )
     ACS_PROFILE_BACKWARD: BaseAcsDetectionProfileParams = (
@@ -226,7 +226,7 @@ class CONFIG:
     )
     ACS_PROFILE_PRECISE_FORWARD: BaseAcsDetectionProfileParams = (
         BaseAcsDetectionProfileParams.from_config(
-            **ACS_PROFILES_CONFIG["precise_forward"]
+            **ACS_PROFILES_CONFIG["precise_forward"],
         )
     )
     ACS_PROFILE_START_TASK: BaseAcsDetectionProfileParams = (
@@ -241,7 +241,7 @@ class CONFIG:
 
 
 # Logger: LoggerManager + global configuration
-from loggerplusplus import LoggerManager, LogLevels, LoggerConfig, logger_colors
+from loggerplusplus import LoggerConfig, LoggerManager, LogLevels, logger_colors
 
 LoggerManager.enable_files_logs_monitoring_only_for_one_logger = (
     CONFIG.LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER

@@ -1,21 +1,20 @@
-# ====== Imports ======
-# Standard library imports
+
+
 from math import pi
+
 from loggerplusplus import Logger
 
-# Internal project imports
 from arena.base_arena.arena import BaseArena
 from arena.base_arena.arena_zones import (
     BaseArenaZone,
+    BlueReservedZone,
     ForbiddenZone,
     StuffZone,
-    BlueReservedZone,
     YellowReservedZone,
 )
-
 from geometry import (
-    Point,
     OrientedPoint,
+    Point,
     Polygon,
     create_straight_rectangle,
 )
@@ -64,8 +63,8 @@ class ShowArena(BaseArena):
                 (12.5, 152.5),
                 [
                     OrientedPoint(
-                        12.5 + distance_between_robot_and_pickup_zone, 132.5, pi
-                    )
+                        12.5 + distance_between_robot_and_pickup_zone, 132.5, pi,
+                    ),
                 ],
             ),
             (
@@ -73,8 +72,8 @@ class ShowArena(BaseArena):
                 (97.5, 30),
                 [
                     OrientedPoint(
-                        77.5, 30 + distance_between_robot_and_pickup_zone, -pi / 2
-                    )
+                        77.5, 30 + distance_between_robot_and_pickup_zone, -pi / 2,
+                    ),
                 ],
             ),
             (
@@ -82,8 +81,8 @@ class ShowArena(BaseArena):
                 (102.5, 177.5),
                 [
                     OrientedPoint(
-                        82.5, 167.5 - distance_between_robot_and_pickup_zone, pi / 2
-                    )
+                        82.5, 167.5 - distance_between_robot_and_pickup_zone, pi / 2,
+                    ),
                 ],
             ),
             (
@@ -91,10 +90,10 @@ class ShowArena(BaseArena):
                 (130, 100),
                 [
                     OrientedPoint(
-                        110, 90 - distance_between_robot_and_pickup_zone, pi / 2
+                        110, 90 - distance_between_robot_and_pickup_zone, pi / 2,
                     ),
                     OrientedPoint(
-                        110, 100 + distance_between_robot_and_pickup_zone, -pi / 2
+                        110, 100 + distance_between_robot_and_pickup_zone, -pi / 2,
                     ),
                 ],
             ),
@@ -103,8 +102,8 @@ class ShowArena(BaseArena):
                 (300 - 2.5, 60),
                 [
                     OrientedPoint(
-                        300 - 12.5 - distance_between_robot_and_pickup_zone, 40, 0
-                    )
+                        300 - 12.5 - distance_between_robot_and_pickup_zone, 40, 0,
+                    ),
                 ],
             ),
             (
@@ -112,8 +111,8 @@ class ShowArena(BaseArena):
                 (300 - 2.5, 152.5),
                 [
                     OrientedPoint(
-                        300 - 12.5 - distance_between_robot_and_pickup_zone, 132.5, 0
-                    )
+                        300 - 12.5 - distance_between_robot_and_pickup_zone, 132.5, 0,
+                    ),
                 ],
             ),
             (
@@ -121,8 +120,8 @@ class ShowArena(BaseArena):
                 (300 - 57.5, 30),
                 [
                     OrientedPoint(
-                        300 - 77.5, 30 + distance_between_robot_and_pickup_zone, -pi / 2
-                    )
+                        300 - 77.5, 30 + distance_between_robot_and_pickup_zone, -pi / 2,
+                    ),
                 ],
             ),
             (
@@ -133,7 +132,7 @@ class ShowArena(BaseArena):
                         300 - 82.5,
                         167.5 - distance_between_robot_and_pickup_zone,
                         pi / 2,
-                    )
+                    ),
                 ],
             ),
             (
@@ -141,10 +140,10 @@ class ShowArena(BaseArena):
                 (300 - 90, 100),
                 [
                     OrientedPoint(
-                        300 - 110, 90 - distance_between_robot_and_pickup_zone, pi / 2
+                        300 - 110, 90 - distance_between_robot_and_pickup_zone, pi / 2,
                     ),
                     OrientedPoint(
-                        300 - 110, 100 + distance_between_robot_and_pickup_zone, -pi / 2
+                        300 - 110, 100 + distance_between_robot_and_pickup_zone, -pi / 2,
                     ),
                 ],
             ),
@@ -159,7 +158,7 @@ class ShowArena(BaseArena):
                         22.5,
                         15 + distance_between_robot_and_small_construct_zone,
                         -pi / 2,
-                    )
+                    ),
                 ],
             ),
             (
@@ -167,7 +166,7 @@ class ShowArena(BaseArena):
                 (45, 110),
                 [
                     OrientedPoint(
-                        22.5, 65 - distance_between_robot_and_big_construct_zone, pi / 2
+                        22.5, 65 - distance_between_robot_and_big_construct_zone, pi / 2,
                     ),
                     OrientedPoint(
                         22.5,
@@ -175,7 +174,7 @@ class ShowArena(BaseArena):
                         -pi / 2,
                     ),
                     OrientedPoint(
-                        45 + distance_between_robot_and_big_construct_zone, 87.5, pi
+                        45 + distance_between_robot_and_big_construct_zone, 87.5, pi,
                     ),
                 ],
             ),
@@ -199,7 +198,7 @@ class ShowArena(BaseArena):
                         222.5,
                         15 + distance_between_robot_and_small_construct_zone,
                         -pi / 2,
-                    )
+                    ),
                 ],
             ),
         ]
@@ -213,7 +212,7 @@ class ShowArena(BaseArena):
                         277.5,
                         15 + distance_between_robot_and_small_construct_zone,
                         -pi / 2,
-                    )
+                    ),
                 ],
             ),
             (
@@ -231,7 +230,7 @@ class ShowArena(BaseArena):
                         -pi / 2,
                     ),
                     OrientedPoint(
-                        255 - distance_between_robot_and_big_construct_zone, 87.5, 0
+                        255 - distance_between_robot_and_big_construct_zone, 87.5, 0,
                     ),
                 ],
             ),
@@ -255,7 +254,7 @@ class ShowArena(BaseArena):
                         77.5,
                         15 + distance_between_robot_and_small_construct_zone,
                         -pi / 2,
-                    )
+                    ),
                 ],
             ),
         ]
@@ -270,10 +269,10 @@ class ShowArena(BaseArena):
                     logger=stuff_zone_logger,
                     buffer_size=obstacle_buffer,
                     polygon=create_straight_rectangle(
-                        Point(*corner_point[0]), Point(*corner_point[1])
+                        Point(*corner_point[0]), Point(*corner_point[1]),
                     ),
                     go_to_positions=corner_point[2] if len(corner_point) > 2 else None,
-                )
+                ),
             )
 
         for corner_point in yellow_reserved_zones_points:
@@ -282,10 +281,10 @@ class ShowArena(BaseArena):
                     logger=yellow_reserved_zone_logger,
                     buffer_size=obstacle_buffer,
                     polygon=create_straight_rectangle(
-                        Point(*corner_point[0]), Point(*corner_point[1])
+                        Point(*corner_point[0]), Point(*corner_point[1]),
                     ),
                     go_to_positions=corner_point[2] if len(corner_point) > 2 else None,
-                )
+                ),
             )
 
         for corner_point in blue_reserved_zones_points:
@@ -294,10 +293,10 @@ class ShowArena(BaseArena):
                     logger=blue_reserved_zone_logger,
                     buffer_size=obstacle_buffer,
                     polygon=create_straight_rectangle(
-                        Point(*corner_point[0]), Point(*corner_point[1])
+                        Point(*corner_point[0]), Point(*corner_point[1]),
                     ),
                     go_to_positions=corner_point[2] if len(corner_point) > 2 else None,
-                )
+                ),
             )
 
         for corner_point in forbidden_zones_points:
@@ -306,9 +305,9 @@ class ShowArena(BaseArena):
                     logger=forbidden_zone_logger,
                     buffer_size=obstacle_buffer,
                     polygon=create_straight_rectangle(
-                        Point(*corner_point[0]), Point(*corner_point[1])
+                        Point(*corner_point[0]), Point(*corner_point[1]),
                     ),
-                )
+                ),
             )
 
         # This is the scene for the rockstar
@@ -326,7 +325,7 @@ class ShowArena(BaseArena):
                     (235, 180),
                     (235, 200),
                     (65, 200),
-                )
+                ),
             ),
         )
         zones.append(rockstar_stage)
@@ -337,7 +336,7 @@ class ShowArena(BaseArena):
                 buffer_size=obstacle_buffer,
                 polygon=create_straight_rectangle(Point((15, 155)), Point((60, 200))),
                 go_to_positions=[OrientedPoint(37.5, 150.5, pi / 2)],
-            )
+            ),
         )
 
         zones.append(
@@ -346,7 +345,7 @@ class ShowArena(BaseArena):
                 buffer_size=obstacle_buffer,
                 polygon=create_straight_rectangle(Point((285, 155)), Point((240, 200))),
                 go_to_positions=[OrientedPoint(262.5, 150.5, pi / 2)],
-            )
+            ),
         )
 
         if grid_manager_logger:

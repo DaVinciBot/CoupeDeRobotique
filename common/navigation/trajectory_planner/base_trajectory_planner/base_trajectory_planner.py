@@ -3,33 +3,25 @@
 # in navigation systems. It provides lifecycle control (start/stop), time tracking utilities, and enforces
 # implementation of a planning method in subclasses. The class is generic and supports parameterization and logging.
 
-# ====== Standard Library Imports ======
-from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
 import functools
 import time
+from abc import ABC, abstractmethod
+from typing import Generic, TypeVar
 
-# ====== Third-Party Imports ======
 from loggerplusplus import Logger
 
-# ====== Internal Project Imports ======
 from geometry import OrientedPoint
-
-# ====== Local Project Imports ======
-from navigation.trajectory_planner.structs import TrajectoryPlanCommand
 from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params import (
     BaseTrajectoryPlannerParams,
 )
 from navigation.trajectory_planner.speed_profile import SpeedProfiler
+from navigation.trajectory_planner.structs import TrajectoryPlanCommand
 
-# ====== Type Hint ======
 ParamsType = TypeVar("ParamsType", bound=BaseTrajectoryPlannerParams)
 
 
-# ====== Base Trajectory Planner Class ======
 class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
-    """
-    Abstract base class for all trajectory planners.
+    """Abstract base class for all trajectory planners.
 
     Provides lifecycle control (start/stop), time-tracking utilities, and logging support.
     Subclasses must implement specific planning logic and expose a method to retrieve
@@ -42,8 +34,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
         speed_profiler: SpeedProfiler,
         logger: Logger | None = None,
     ) -> None:
-        """
-        Initialize the base trajectory planner.
+        """Initialize the base trajectory planner.
 
         Args:
             params (ParamsType): Planner configuration parameters.
@@ -51,7 +42,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
             logger (Logger | None): Optional logger instance.
         """
         self.logger: Logger = logger or Logger(
-            identifier=self.__class__.__name__, follow_logger_manager_rules=True
+            identifier=self.__class__.__name__, follow_logger_manager_rules=True,
         )
         self.params: ParamsType = params
         self.speed_profiler: SpeedProfiler = speed_profiler
@@ -66,8 +57,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
     # ====== Chrono Helpers ======
     def _get_trajectory_time_elapsed(self) -> float:
-        """
-        Compute the total elapsed time since the start of the planning session.
+        """Compute the total elapsed time since the start of the planning session.
 
         Returns:
             float: Elapsed time in seconds.
@@ -84,8 +74,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
     # ====== Internal Utilities ======
     @staticmethod
     def _ensure_planning_started(method: callable) -> callable:
-        """
-        Decorator to ensure that planning has started before executing a method.
+        """Decorator to ensure that planning has started before executing a method.
 
         Args:
             method (callable): The method to wrap.
@@ -107,22 +96,19 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
     # ====== Public Methods ======
     def start_planning(self) -> None:
-        """
-        Start the trajectory planning session.
+        """Start the trajectory planning session.
         """
         self._start_trajectory_timestamp = time.time()
 
     def stop_planning(self) -> None:
-        """
-        Stop the planning session and accumulate elapsed time.
+        """Stop the planning session and accumulate elapsed time.
         """
         self._start_trajectory_elapsed_time_checkpoint += (
             time.time() - self._start_trajectory_timestamp
         )
 
     def is_planning_started(self) -> bool:
-        """
-        Check if planning has been started.
+        """Check if planning has been started.
 
         Returns:
             bool: True if planning is active, False otherwise.

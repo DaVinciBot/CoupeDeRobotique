@@ -1,82 +1,50 @@
-# Path
+from navigation.avoidance import (
+    AvoidanceState,
+    AvoidanceStrategy,
+    BaseAcsDetectionProfileParams,
+    BaseAvoidance,
+    BaseAvoidanceParams,
+    NoAvoidance,
+    NoAvoidanceParams,
+    StopAndWaitAvoidance,
+    StopAndWaitAvoidanceParams,
+)
+from navigation.navigator import (
+    Navigator,
+    NavigatorSignalsEnum,
+    NavigatorState,
+    NavigatorTask,
+    NavigatorTaskParams,
+    NavigatorTaskState,
+)
 from navigation.path_planner import (
-    # Structs
-    PathPlanningStrategy,
-    Direction,
-    # Planners
     BasePathPlanner,
-    DeltaPathPlanner,
-    BasicPathPlanner,
-    # Params
     BasePathPlannerParams,
-    DeltaPathPlannerParams,
-    BasicPathPlannerParams,
-    # Plan Path Params
     BasePathPlannerPlanPathParams,
-    DeltaPathPlannerPlanPathParams,
+    BasicPathPlanner,
+    BasicPathPlannerParams,
     BasicPathPlannerPlanPathParams,
-    # Factory
+    DeltaPathPlanner,
+    DeltaPathPlannerParams,
+    DeltaPathPlannerPlanPathParams,
+    Direction,
     PathPlannerFactory,
     PathPlannerPathPlanParamsFactory,
+    PathPlanningStrategy,
 )
-
-# Speed Profile
 from navigation.trajectory_planner import (
     BaseSpeedProfile,
+    BaseTrajectoryPlanner,
+    BaseTrajectoryPlannerParams,
     BasicSpeedProfile,
     LinearRampedSpeedProfile,
-    SpeedProfiler,
-)
-
-# Trajectory
-from navigation.trajectory_planner import (
-    # Structs
-    TrajectoryPlannerStrategy,
-    TrajectoryPlanCommand,
-    # Planners
-    BaseTrajectoryPlanner,
     SequentialTrajectoryPlanner,
-    # Params
-    BaseTrajectoryPlannerParams,
     SequentialTrajectoryPlannerParams,
-    # Factory
+    SpeedProfiler,
+    TrajectoryPlanCommand,
     TrajectoryPlannerFactory,
+    TrajectoryPlannerStrategy,
 )
-
-# Avoidance
-from navigation.avoidance import (
-    # Structs
-    AvoidanceStrategy,
-    AvoidanceState,
-    # Avoidance
-    BaseAvoidance,
-    NoAvoidance,
-    StopAndWaitAvoidance,
-    # Params
-    BaseAvoidanceParams,
-    NoAvoidanceParams,
-    StopAndWaitAvoidanceParams,
-    BaseAcsDetectionProfileParams,
-)
-
-# Navigator
-from navigation.navigator import (
-    ## NavigatorTask
-    # Structs
-    NavigatorTaskState,
-    # NavigatorTask
-    NavigatorTask,
-    # Params
-    NavigatorTaskParams,
-    ## Signals
-    NavigatorSignalsEnum,
-    ## Navigator
-    # Structs
-    NavigatorState,
-    # Navigator
-    Navigator,
-)
-
 
 __all__ = [
     "AvoidanceState",

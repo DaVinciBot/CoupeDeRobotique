@@ -6,31 +6,33 @@
 # completion detection, and reactive avoidance execution.
 
 import time
-from arena import AllyZone, EnemyZone
-from geometry import OrientedPoint
+from typing import TYPE_CHECKING
 
-from navigation.trajectory_planner import (
-    BaseTrajectoryPlanner,
-    TrajectoryPlanCommand,
-    TrajectoryPlannerFactory,
+from arena import AllyZone, EnemyZone
+from navigation.avoidance import (
+    AvoidanceFactory,
+    BaseAvoidance,
 )
+from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
+from navigation.navigator.task.states import NavigatorTaskState
 from navigation.path_planner import (
     BasePathPlanner,
     BasePathPlannerPlanPathParams,
     PathPlannerFactory,
     PathPlannerPathPlanParamsFactory,
 )
-from navigation.avoidance import (
-    BaseAvoidance,
-    AvoidanceFactory,
+from navigation.trajectory_planner import (
+    BaseTrajectoryPlanner,
+    TrajectoryPlanCommand,
+    TrajectoryPlannerFactory,
 )
-from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
-from navigation.navigator.task.states import NavigatorTaskState
+
+if TYPE_CHECKING:
+    from geometry import OrientedPoint
 
 
 class NavigatorTask:
-    """
-    A task responsible for executing autonomous navigation including path planning,
+    """A task responsible for executing autonomous navigation including path planning,
     trajectory generation, obstacle avoidance, and a stabilization timer after reaching the goal.
     """
 
@@ -88,7 +90,7 @@ class NavigatorTask:
     def _abort(self) -> TrajectoryPlanCommand:
         self.state = NavigatorTaskState.ABORT
         self.current_trajectory_command = TrajectoryPlanCommand.create_stop_command(
-            current_position=self.params.goal
+            current_position=self.params.goal,
         )
         return self.current_trajectory_command
 
@@ -98,7 +100,7 @@ class NavigatorTask:
         return self._get_elapsed_time() > self.trajectory_planner.get_total_duration()
 
     def handle(
-        self, ally_zone: AllyZone, enemy_zone: EnemyZone
+        self, ally_zone: AllyZone, enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
         # 1. Initial planning
         if self.state == NavigatorTaskState.NOT_PLANNED:
@@ -132,7 +134,7 @@ class NavigatorTask:
 
         # 5. Obstacle avoidance
         avoidance_cmd = self.avoidance.handle(
-            current_navigator_task=self, ally_zone=ally_zone, enemy_zone=enemy_zone
+            current_navigator_task=self, ally_zone=ally_zone, enemy_zone=enemy_zone,
         )
         if self.state == NavigatorTaskState.AVOIDING:
             return avoidance_cmd

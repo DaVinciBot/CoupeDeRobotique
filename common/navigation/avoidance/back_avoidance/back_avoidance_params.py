@@ -4,15 +4,13 @@
 # and the duration to wait before re-evaluating the path.
 
 
-# ====== Internal Project Imports ======
-from navigation.avoidance.structs import AvoidanceStrategy
 from navigation.avoidance.base_avoidance import BaseAvoidanceParams
+from navigation.avoidance.structs import AvoidanceStrategy
 from navigation.trajectory_planner import SpeedProfiler
 
 
 class BackAvoidanceParams(BaseAvoidanceParams):
-    """
-    Configuration class for the 'BACK_AND_FORWARD' obstacle avoidance strategy.
+    """Configuration class for the 'BACK_AND_FORWARD' obstacle avoidance strategy.
 
     This strategy stops the system when an obstacle is detected within a specified distance
     and waits for a defined timeout period before taking further action.
@@ -29,8 +27,7 @@ class BackAvoidanceParams(BaseAvoidanceParams):
         backward_distance: float,
         backward_speed_profiler: SpeedProfiler,
     ):
-        """
-        Initializes StopAndWaitAvoidanceParams with specific avoidance distance and timeout in seconds.
+        """Initializes StopAndWaitAvoidanceParams with specific avoidance distance and timeout in seconds.
 
         Args:
             timeout (float): Time to wait after stopping before checking again in seconds.

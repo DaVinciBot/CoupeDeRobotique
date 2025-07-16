@@ -4,8 +4,8 @@
 # constructing structures, and finally moving to a backstage zone to complete the game.
 # It uses task subgraphs and direct transitions to sequence actions through a `GraphRunner`.
 
+from loggerplusplus import Logger
 
-# ====== Internal Project Imports ======
 from boombot_strategy import ShowGameContext
 from boombot_strategy.strategies.base_strategy import BaseStrategy
 from boombot_strategy.sub_graphs import (
@@ -17,9 +17,6 @@ from boombot_strategy.sub_graphs import (
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
-
-# ====== Local Project Imports ======
-from loggerplusplus import Logger
 from strategy.core import (
     BaseTaskNode,
     GraphRunner,
@@ -27,8 +24,7 @@ from strategy.core import (
 
 
 class TowerRushStrategy(BaseStrategy):
-    """
-    Defines the tower rush game strategy by sequencing multiple subgraphs:
+    """Defines the tower rush game strategy by sequencing multiple subgraphs:
     - Deploy banner
     - Perform one pickup and construction cycle
     - Perform one pickup-to-placement cycle
@@ -36,8 +32,7 @@ class TowerRushStrategy(BaseStrategy):
     """
 
     def __init__(self, ctx: ShowGameContext):
-        """
-        Initialize the strategy with the required task flow using subgraphs and direct transitions.
+        """Initialize the strategy with the required task flow using subgraphs and direct transitions.
 
         Args:
             ctx (ShowGameContext): Game context containing game-specific configurations and zones.
@@ -52,7 +47,7 @@ class TowerRushStrategy(BaseStrategy):
 
         # Step 3: Navigate to the first construction zone
         first_construct_subgraph = get_construct_subgraph(
-            self.zones["first_build_zone"], back_offset=13
+            self.zones["first_build_zone"], back_offset=13,
         )
 
         # Step 4:

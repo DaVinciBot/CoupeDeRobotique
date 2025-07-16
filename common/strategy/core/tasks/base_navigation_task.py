@@ -1,28 +1,22 @@
-from navigation import (
-    NavigatorTaskParams,
-    NavigatorTask,
-    TrajectoryPlanCommand,
-    NavigatorState,
-)
-from strategy.core.tasks.base_task import BaseTask
-from strategy.core.base_game_context import BaseGameContext
 from abc import abstractmethod
+
+from loggerplusplus import Logger
 
 from arena import BaseArenaZone
 from geometry import OrientedPoint, Point
-
 from navigation import (
     BaseAvoidanceParams,
-    BaseTrajectoryPlannerParams,
     BasePathPlannerParams,
+    BaseTrajectoryPlannerParams,
+    NavigatorTask,
+    NavigatorTaskParams,
     SpeedProfiler,
 )
 from navigation.avoidance.acs_detection_profiles import (
-    BaseAcsDetectionProfile,
     BaseAcsDetectionProfileParams,
 )
-
-from loggerplusplus import Logger
+from strategy.core.base_game_context import BaseGameContext
+from strategy.core.tasks.base_task import BaseTask
 
 
 class BaseNavigationTask(BaseTask):
@@ -67,7 +61,7 @@ class BaseNavigationTask(BaseTask):
                 avoidance_params=self.avoidance_params,
                 acs_detection_profile_params=self.acs_detection_profile_params,
                 stabilization_delay=self.stabilization_delay,
-            )
+            ),
         )
 
     @abstractmethod

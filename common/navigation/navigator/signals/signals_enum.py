@@ -4,13 +4,11 @@
 # aspects such as path and trajectory planning, motion control, obstacle detection,
 # goal management, and system status updates.
 
-# ====== Standard Library Imports ======
 from enum import Enum, auto
 
 
 class NavigatorSignalsEnum(Enum):
-    """
-    Enumeration of all events used in the navigation system.
+    """Enumeration of all events used in the navigation system.
 
     These events represent key actions or statuses relevant to path planning,
     trajectory execution, obstacle handling, goal processing, and system diagnostics.

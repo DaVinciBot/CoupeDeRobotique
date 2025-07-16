@@ -2,13 +2,11 @@
 # This module defines the BaseSegment class, which acts as an abstract base for various types of trajectory segments.
 # It encapsulates core attributes such as start and end poses, and duration, which are common to all segment types.
 
-# ====== Local Project Imports ======
 from geometry import OrientedPoint
 
 
 class BaseSegment:
-    """
-    Base class for all motion segments.
+    """Base class for all motion segments.
 
     Attributes:
         start_position (OrientedPoint): Start pose of the segment.
@@ -22,8 +20,7 @@ class BaseSegment:
         end_position: OrientedPoint,
         duration: float,
     ):
-        """
-        Initialize the base segment with essential trajectory information.
+        """Initialize the base segment with essential trajectory information.
 
         Args:
             start_position (OrientedPoint): Starting pose of the motion segment.

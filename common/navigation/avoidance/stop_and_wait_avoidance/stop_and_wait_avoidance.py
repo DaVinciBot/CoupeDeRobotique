@@ -4,14 +4,11 @@
 # the robot halts and waits for the obstacle to clear or a timeout to occur. Upon clearance,
 # it replans the path; if a timeout happens first, it aborts and issues a stop command.
 
-# ====== Standard Library Imports ======
+
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-# ====== Internal Project Imports ======
-from arena import AllyZone, EnemyZone
-from geometry import OrientedPoint
-from loggerplusplus import Logger
 from navigation.avoidance.base_avoidance import BaseAvoidance
 from navigation.avoidance.base_avoidance.states import AvoidanceState
 from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params import (
@@ -19,17 +16,19 @@ from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params
 )
 from navigation.trajectory_planner import TrajectoryPlanCommand
 
-from navigation.avoidance.acs_detection_profiles import (
-    BaseAcsDetectionProfileParams,
-)
-
 if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
+    from arena import AllyZone, EnemyZone
+    from geometry import OrientedPoint
+    from navigation.avoidance.acs_detection_profiles import (
+        BaseAcsDetectionProfileParams,
+    )
     from navigation.navigator.task.navigator_task import NavigatorTask
 
 
 class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
-    """
-    Implements a stop-and-wait obstacle avoidance strategy.
+    """Implements a stop-and-wait obstacle avoidance strategy.
 
     When an obstacle is detected via ACS (Automatic Collision System), the robot stops.
     If the obstacle clears before a timeout, it replans a new trajectory from its current position.
@@ -46,8 +45,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
-        """
-        Initialize the StopAndWaitAvoidance with parameters and optional logger.
+        """Initialize the StopAndWaitAvoidance with parameters and optional logger.
 
         Args:
             params (StopAndWaitAvoidanceParams): Configuration parameters.
@@ -62,8 +60,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
-        """
-        Main handler to process avoidance logic based on current zones and navigation state.
+        """Main handler to process avoidance logic based on current zones and navigation state.
 
         Args:
             task (NavigatorTask): The current navigation task instance.
@@ -77,7 +74,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
 
         position: OrientedPoint = ally_zone.point
         self.logger.debug(
-            f"Handling avoidance at position: {position}, current state: {self.state}"
+            f"Handling avoidance at position: {position}, current state: {self.state}",
         )
 
         # 1. Timeout check
@@ -92,7 +89,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         ):
             self.logger.info(
                 f"Obstacle detected. Stopping robot and initiating avoidance. "
-                f"Distance: {ally_zone.point.distance(enemy_zone.point)}"
+                f"Distance: {ally_zone.point.distance(enemy_zone.point)}",
             )
 
             # Stop the robot and initiate avoidance procedure
@@ -135,6 +132,6 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
 
         # 4. Continue with original trajectory
         self.logger.debug(
-            "No avoidance action required. Continuing original trajectory."
+            "No avoidance action required. Continuing original trajectory.",
         )
         return current_navigator_task.current_trajectory_command

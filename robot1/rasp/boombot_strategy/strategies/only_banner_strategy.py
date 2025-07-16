@@ -4,38 +4,31 @@
 # constructing structures, and finally moving to a backstage zone to complete the game.
 # It uses task subgraphs and direct transitions to sequence actions through a `GraphRunner`.
 
-# ====== Local Project Imports ======
 from loggerplusplus import Logger
-from strategy.core import (
-    BaseTaskNode,
-    DirectTransition,
-    GraphRunner,
-)
 
-# ====== Internal Project Imports ======
 from boombot_strategy import ShowGameContext
 from boombot_strategy.strategies.base_strategy import BaseStrategy
 from boombot_strategy.sub_graphs import (
-    get_construct_subgraph,
-    get_pickup_subgraph,
     get_banner_deployment_subgraph,
 )
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
+from strategy.core import (
+    BaseTaskNode,
+    GraphRunner,
+)
 
 
 class OnlyBannerStrategy(BaseStrategy):
-    """
-    Defines a basic game strategy by sequencing multiple subgraphs:
+    """Defines a basic game strategy by sequencing multiple subgraphs:
     - Deploy banner
     - Perform two pickup and construction cycles
     - Navigate to backstage zone to finish the game
     """
 
     def __init__(self, ctx: ShowGameContext):
-        """
-        Initialize the strategy with the required task flow using subgraphs and direct transitions.
+        """Initialize the strategy with the required task flow using subgraphs and direct transitions.
 
         Args:
             ctx (ShowGameContext): Game context containing game-specific configurations and zones.

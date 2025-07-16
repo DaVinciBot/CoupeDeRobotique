@@ -1,20 +1,13 @@
 from config_loader import CONFIG
-
-# ====== Third-party library imports ======
 from loggerplusplus import Logger, log
 
-# ====== Local Library Imports ======
-from teensy import BaseComTeensy
-from geometry import OrientedPoint
-
-# ====== Internal Project Imports ======
 from controllers.rolling_basis.pids import PID, PID_ID
+from geometry import OrientedPoint
+from teensy import BaseComTeensy
 
 
-# ====== Class Part ======
 class RollingBasisDummy(BaseComTeensy):
-    """
-    Represents the rolling basis of the robot.
+    """Represents the rolling basis of the robot.
 
     Inherits from Teensy to manage low-level communications and adds logic specific to the robot's state,
     PID configuration, and message messaging.
@@ -54,21 +47,18 @@ class RollingBasisDummy(BaseComTeensy):
         self,
         target_position: OrientedPoint,
     ) -> None:
-        """
-        Sends a message to set the target speed and position of the rolling basis.
+        """Sends a message to set the target speed and position of the rolling basis.
 
         Args:
             target_position (OrientedPoint): Target position and orientation.
         """
-
         self.odometrie = target_position
 
         self.logger.debug(f"[DUMMY] Set speed and position: {target_position}")
 
     @log("RollingBasis")
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
-        """
-        Sends a message to set the odometrie of the rolling basis.
+        """Sends a message to set the odometrie of the rolling basis.
 
         Args:
             odometrie (OrientedPoint): The new odometrie values.
@@ -77,8 +67,7 @@ class RollingBasisDummy(BaseComTeensy):
         self.logger.info(f"[DUMMY] Set odometrie: {odometrie}")
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
-        """
-        Internal method to send PID configuration data to the Teensy.
+        """Internal method to send PID configuration data to the Teensy.
 
         Args:
             pid_id (int): The identifier for the PID controller.
@@ -90,8 +79,7 @@ class RollingBasisDummy(BaseComTeensy):
     # PID Configuration Methods        #
     ####################################
     def set_linear_position_pid(self, *args, **kwargs) -> None:
-        """
-        Configure the PID values for linear position control.
+        """Configure the PID values for linear position control.
 
         Accepts either three positional arguments (kp, ki, kd),
         a single dictionary, or keyword arguments.
@@ -105,7 +93,7 @@ class RollingBasisDummy(BaseComTeensy):
                 pid = PID.from_dict(kwargs)
             else:
                 raise ValueError(
-                    "Invalid arguments for linear position PID configuration."
+                    "Invalid arguments for linear position PID configuration.",
                 )
             self.linear_position_pid = pid
             self._send_pid(PID_ID.LINEAR_POSITION.value, pid)
@@ -113,8 +101,7 @@ class RollingBasisDummy(BaseComTeensy):
             self.logger.error(f"Failed to set linear position PID: {e}")
 
     def set_angular_position_pid(self, *args, **kwargs) -> None:
-        """
-        Configure the PID values for angular position control.
+        """Configure the PID values for angular position control.
 
         Accepts either three positional arguments (kp, ki, kd),
         a single dictionary, or keyword arguments.
@@ -128,7 +115,7 @@ class RollingBasisDummy(BaseComTeensy):
                 pid = PID.from_dict(kwargs)
             else:
                 raise ValueError(
-                    "Invalid arguments for angular position PID configuration."
+                    "Invalid arguments for angular position PID configuration.",
                 )
             self.angular_position_pid = pid
             self._send_pid(PID_ID.ANGULAR_POSITION.value, pid)
@@ -140,15 +127,13 @@ class RollingBasisDummy(BaseComTeensy):
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
     ) -> None:
-        """
-        Configure all PID controllers using dictionaries for each.
+        """Configure all PID controllers using dictionaries for each.
         """
         self.set_linear_position_pid(**linear_position_pid)
         self.set_angular_position_pid(**angular_position_pid)
 
     def initialize_pids(self) -> None:
-        """
-        Initialize PID controllers from the configuration.
+        """Initialize PID controllers from the configuration.
         """
         try:
             self.set_pids(

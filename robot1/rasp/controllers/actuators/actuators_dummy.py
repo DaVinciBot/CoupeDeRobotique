@@ -1,11 +1,11 @@
 from config_loader import CONFIG
-from controllers.actuators.actuators_show import ActuatorsShow
 from loggerplusplus import Logger, log
+
+from controllers.actuators.actuators_show import ActuatorsShow
 
 
 class ActuatorsShowDummy(ActuatorsShow):
-    """
-    Dummy version of ActuatorsShow that simulates all actuator and stepper actions via logging,
+    """Dummy version of ActuatorsShow that simulates all actuator and stepper actions via logging,
     without any real hardware interaction.
     """
 
@@ -36,16 +36,15 @@ class ActuatorsShowDummy(ActuatorsShow):
 
     @log("DummyActuatorsShow")
     def stepper_step(
-        self, steps: int, speed: int, disable_driver: bool = False
+        self, steps: int, speed: int, disable_driver: bool = False,
     ) -> None:
-        """
-        Simulate moving the stepper motor by updating elevator_ticks
+        """Simulate moving the stepper motor by updating elevator_ticks
         and logging the action.
         """
         self.elevator_ticks += steps
         self.logger.info(
             f"DummyActuatorsShow: Simulating stepper move: steps={steps},"
-            f" speed={speed}, disable_driver={disable_driver}"
+            f" speed={speed}, disable_driver={disable_driver}",
         )
 
     @log("DummyActuatorsShow")
@@ -57,8 +56,7 @@ class ActuatorsShowDummy(ActuatorsShow):
         detach: bool = False,
         detach_delay: int = 1000,
     ) -> None:
-        """
-        Simulate setting the servo angle by logging the parameters.
+        """Simulate setting the servo angle by logging the parameters.
         """
         # Check if pin is valid; if not, log and return
         if not self._check_pin(pin):
@@ -68,7 +66,7 @@ class ActuatorsShowDummy(ActuatorsShow):
         servo = self.servos.get(pin)
         # Default min_angle from deploy and fold
         min_angle = min(
-            getattr(servo, "deploy_angle", 0), getattr(servo, "fold_angle", 0)
+            getattr(servo, "deploy_angle", 0), getattr(servo, "fold_angle", 0),
         )
 
         # Pin-specific exceptions
@@ -83,13 +81,13 @@ class ActuatorsShowDummy(ActuatorsShow):
             if detach:
                 self.logger.info(
                     f"DummyActuatorsShow: Simulating set_servo_angle with detach:"
-                    f" pin={pin}, angle={angle}, detach_delay={detach_delay}ms"
+                    f" pin={pin}, angle={angle}, detach_delay={detach_delay}ms",
                 )
             else:
                 self.logger.info(
-                    f"DummyActuatorsShow: Simulating set_servo_angle: pin={pin}, angle={angle}"
+                    f"DummyActuatorsShow: Simulating set_servo_angle: pin={pin}, angle={angle}",
                 )
         else:
             self.logger.error(
-                f"DummyActuatorsShow: Angle {angle}° out of range [{min_angle},{max_angle}] for pin {pin}"
+                f"DummyActuatorsShow: Angle {angle}° out of range [{min_angle},{max_angle}] for pin {pin}",
             )

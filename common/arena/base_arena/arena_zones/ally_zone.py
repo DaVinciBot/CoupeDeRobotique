@@ -4,24 +4,15 @@
 # Additionally, it provides methods for checking accessibility, updating zone status, and handling built-in comparisons.
 # The AllyZone class extends BaseArenaZone to represent zones dynamically assigned to allies based on their position.
 
-# ====== Imports ======
-# Standard library imports
-# ...
 
-# Third-party imports
 from loggerplusplus import Logger
 
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
-
-# Internal project imports
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 from arena.base_arena.team_color import TeamColor
-
-# Local imports
 from geometry import OrientedPoint, Point, create_straight_rectangle
 
 
-# ====== Ally Zone Class ======
 class AllyZone(BaseArenaZone):
     """Zone designated for allies, dynamically updated based on their position.
 

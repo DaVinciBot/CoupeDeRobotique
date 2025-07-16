@@ -1,18 +1,18 @@
+from math import atan2
+
+from loggerplusplus import Logger
+
+from arena import AllyZone, EnemyZone
+from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile_params import (
+    AngularRestrictProjectionAcsDetectionProfileParams,
+)
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
     BaseAcsDetectionProfile,
 )
 
-from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile_params import (
-    AngularRestrictProjectionAcsDetectionProfileParams,
-)
-from arena import AllyZone, EnemyZone
-
-from math import atan2
-from loggerplusplus import Logger
-
 
 class AngularRestrictProjectionAcsDetectionProfile(
-    BaseAcsDetectionProfile[AngularRestrictProjectionAcsDetectionProfileParams]
+    BaseAcsDetectionProfile[AngularRestrictProjectionAcsDetectionProfileParams],
 ):
     def __init__(
         self,
@@ -31,7 +31,7 @@ class AngularRestrictProjectionAcsDetectionProfile(
         )
         if abs(angle) <= self.params.half_angle_view:
             self.logger.info(
-                f"ACS triggered. Distance: {ally_zone.point.distance(enemy_zone.point)}"
+                f"ACS triggered. Distance: {ally_zone.point.distance(enemy_zone.point)}",
             )
             return True
         return False

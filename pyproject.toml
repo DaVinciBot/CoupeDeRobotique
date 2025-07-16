@@ -59,6 +59,7 @@ preview = true
 show-fixes = true
 target-version = "py313"
 unsafe-fixes = false
+exclude = ["*.ipynb"]
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -70,6 +71,36 @@ ignore = [
     "TD001",  # Invalid TODO tag
     "TD002",  # missing-todo-author
     "TD003",  # missing-todo-link
+]
+
+[tool.ruff.lint.isort]
+known-first-party = [
+    "common",
+    "arena",
+    "geometry",
+    "GPIO",
+    "led_strip",
+    "navigation",
+    "avoidance",
+    "debug_functions",
+    "navigator",
+    "path_planner",
+    "trajectory_planner",
+    "remote",
+    "strategy",
+    "teensy",
+    "usb_com",
+    "utils",
+    "video",
+    "robot1",
+    "rasp",
+    "boombot_strategy",
+    "strategies",
+    "sub_graphs",
+    "tasks",
+    "brains",
+    "controllers",
+    "sensors",
 ]
 
 [tool.ruff.format]

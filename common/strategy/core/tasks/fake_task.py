@@ -1,5 +1,5 @@
-from strategy.core.tasks.base_task import BaseTask
 from strategy.core.base_game_context import BaseGameContext
+from strategy.core.tasks.base_task import BaseTask
 
 
 class FakeTask(BaseTask):

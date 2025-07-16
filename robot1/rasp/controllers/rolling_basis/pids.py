@@ -1,12 +1,10 @@
-# ====== Standard Library Imports ======
-from enum import Enum
-from dataclasses import dataclass
 import struct
+from dataclasses import dataclass
+from enum import Enum
 
 
 class PID_ID(Enum):
-    """
-    Identifiers for the different PID controllers.
+    """Identifiers for the different PID controllers.
     """
 
     LINEAR_POSITION = 0
@@ -15,8 +13,7 @@ class PID_ID(Enum):
 
 @dataclass
 class PID:
-    """
-    Data class representing PID controller parameters.
+    """Data class representing PID controller parameters.
     """
 
     kp: float
@@ -24,8 +21,7 @@ class PID:
     kd: float
 
     def to_bytes(self) -> bytes:
-        """
-        Serialize the PID parameters into bytes.
+        """Serialize the PID parameters into bytes.
         """
         return struct.pack("<fff", self.kp, self.ki, self.kd)
 

@@ -1,11 +1,8 @@
-# ====== Standard Library Imports ======
 from enum import Enum, auto
 
 
-# ====== Class Part ======
 class ActuatorType(Enum):
-    """
-    Enum representing different types of actuators.
+    """Enum representing different types of actuators.
 
     Attributes:
         UNKNOWN: Default undefined actuator type.

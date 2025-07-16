@@ -3,17 +3,16 @@
 # `BaseTransitionCondition`. It determines whether a transition between task nodes is allowed based
 # on the accessibility of a specific zone within the arena. The condition can be reversed if needed.
 
-# ====== Internal Project Imports ======
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
+
 from strategy.core.base_game_context import BaseGameContext
+from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition import (
     BaseTransitionCondition,
 )
 
 
 class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
-    """
-    A transition condition that checks the accessibility of a specific zone in the arena.
+    """A transition condition that checks the accessibility of a specific zone in the arena.
 
     This condition is fulfilled if the designated zone is accessible to the current team.
     An optional reverse flag allows inverting the condition to check for inaccessibility.
@@ -24,8 +23,7 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
     """
 
     def __init__(self, zone_id: int, reverse: bool = False):
-        """
-        Initialize the condition with a specific zone ID and optional reversal.
+        """Initialize the condition with a specific zone ID and optional reversal.
 
         Args:
             zone_id (int): The identifier of the zone whose accessibility will be checked.
@@ -35,10 +33,9 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
         self.reverse = reverse
 
     def check(
-        self, from_node: BaseTaskNode, next_node: BaseTaskNode, ctx: BaseGameContext
+        self, from_node: BaseTaskNode, next_node: BaseTaskNode, ctx: BaseGameContext,
     ) -> bool:
-        """
-        Determine if the transition is allowed based on zone accessibility.
+        """Determine if the transition is allowed based on zone accessibility.
 
         Args:
             from_node (BaseTaskNode): The current task node.
@@ -49,7 +46,7 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
             bool: True if the condition is met (zone is accessible or not based on `reverse`), False otherwise.
         """
         accessibility: bool = ctx.arena.zones[self.zone_id].is_accessible(
-            team_color=ctx.arena.team_color
+            team_color=ctx.arena.team_color,
         )
 
         # If reverse is True, invert the accessibility condition

@@ -3,17 +3,13 @@
 # It keeps track of declared GPIOs and their associated actuator types, ensuring proper validation
 # and management of pin assignments.
 
-# ====== Third-Party Library Imports ======
 from loggerplusplus import Logger
 
-# ====== Internal Imports ======
 from teensy.tools.gpio_manager.actuators_type import ActuatorType
 
 
-# ====== Class Part ======
 class GPIOManager:
-    """
-    Manages GPIO pins and their associated actuator types.
+    """Manages GPIO pins and their associated actuator types.
 
     Attributes:
         logger (Logger): Logger instance for logging messages.
@@ -22,8 +18,7 @@ class GPIOManager:
     """
 
     def __init__(self, logger: Logger, nb_pin: int):
-        """
-        Initializes the GPIOManager with a logger and the number of available pins.
+        """Initializes the GPIOManager with a logger and the number of available pins.
 
         Args:
             logger (Logger): Logger instance for logging events.
@@ -34,8 +29,7 @@ class GPIOManager:
         self.gpios: dict[int, ActuatorType] = {}
 
     def __str__(self) -> str:
-        """
-        Returns a string representation of the GPIO manager, showing the mapped GPIOs.
+        """Returns a string representation of the GPIO manager, showing the mapped GPIOs.
 
         Returns:
             str: String representation of the GPIO manager.
@@ -43,8 +37,7 @@ class GPIOManager:
         return f"GPIOManager: {self.gpios}"
 
     def is_declared_gpio(self, pin: int) -> bool:
-        """
-        Check if a GPIO pin is already declared.
+        """Check if a GPIO pin is already declared.
 
         Args:
             pin (int): The GPIO pin-number to check.
@@ -55,10 +48,9 @@ class GPIOManager:
         return pin in self.gpios
 
     def is_valid_gpio(
-        self, pin: int, type_actuator: ActuatorType = ActuatorType.UNKNOWN
+        self, pin: int, type_actuator: ActuatorType = ActuatorType.UNKNOWN,
     ) -> bool:
-        """
-        Check if a GPIO pin is valid by ensuring it is declared and matches the expected actuator type.
+        """Check if a GPIO pin is valid by ensuring it is declared and matches the expected actuator type.
 
         Args:
             pin (int): The GPIO pin-number to validate.
@@ -70,10 +62,9 @@ class GPIOManager:
         return pin in self.gpios and self.gpios[pin] == type_actuator
 
     def add_gpio(
-        self, pin: int, type_actuator: ActuatorType = ActuatorType.UNKNOWN
+        self, pin: int, type_actuator: ActuatorType = ActuatorType.UNKNOWN,
     ) -> bool:
-        """
-        Add a new GPIO pin with a specified actuator type if it is valid.
+        """Add a new GPIO pin with a specified actuator type if it is valid.
 
         Args:
             pin (int): The GPIO pin-number to add.
@@ -92,8 +83,7 @@ class GPIOManager:
         return True
 
     def get_type_gpio(self, pin: int) -> ActuatorType | None:
-        """
-        Retrieve the actuator type associated with a GPIO pin.
+        """Retrieve the actuator type associated with a GPIO pin.
 
         Args:
             pin (int): The GPIO pin-number to query.

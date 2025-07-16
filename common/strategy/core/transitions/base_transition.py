@@ -3,17 +3,15 @@
 # between task nodes in a strategy-based application. Subclasses must implement the `can_transit` method
 # to determine if a transition should occur based on the current game context.
 
-# ====== Standard Library Imports ======
+
 from abc import ABC, abstractmethod
 
-# ====== Internal Project Imports ======
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.base_game_context import BaseGameContext
+from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
 
 class BaseTransition(ABC):
-    """
-    Abstract base class for representing a transition between task nodes.
+    """Abstract base class for representing a transition between task nodes.
 
     This class defines a common interface for all transition types. Subclasses must implement
     the `can_transit` method, which determines whether a transition is allowed based on the
@@ -24,8 +22,7 @@ class BaseTransition(ABC):
     """
 
     def __init__(self, target: BaseTaskNode):
-        """
-        Initialize the transition with a target node.
+        """Initialize the transition with a target node.
 
         Args:
             target (BaseTaskNode): The destination node of the transition.
@@ -34,8 +31,7 @@ class BaseTransition(ABC):
 
     @abstractmethod
     def can_transit(self, from_node: BaseTaskNode, ctx: BaseGameContext) -> bool:
-        """
-        Determine whether the transition should occur.
+        """Determine whether the transition should occur.
 
         Args:
             from_node (BaseTaskNode): The current task node attempting to transition.
