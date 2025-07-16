@@ -24,7 +24,9 @@ class DeltaPathPlanner(
     """
 
     def __init__(
-        self, params: DeltaPathPlannerParams, logger: Logger | None = None,
+        self,
+        params: DeltaPathPlannerParams,
+        logger: Logger | None = None,
     ) -> None:
         """Initialize the delta path planner.
 
@@ -36,7 +38,8 @@ class DeltaPathPlanner(
 
     @staticmethod
     def _compute_displacement(
-        start: OrientedPoint, distance: float,
+        start: OrientedPoint,
+        distance: float,
     ) -> tuple[float, float]:
         """Compute the displacement vector from the start point.
 

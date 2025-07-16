@@ -24,8 +24,7 @@ from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfi
 
 
 class AcsDetectionProfileFactory:
-    """Factory class to instantiate the appropriate obstacle avoidance component based on strategy.
-    """
+    """Factory class to instantiate the appropriate obstacle avoidance component based on strategy."""
 
     @staticmethod
     def instantiate(params: BaseAcsDetectionProfileParams) -> BaseAcsDetectionProfile:

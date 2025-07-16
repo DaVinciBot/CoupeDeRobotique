@@ -26,7 +26,8 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
     """
 
     def __init__(
-        self, func: Callable[[BaseTaskNode, BaseTaskNode, BaseGameContext], bool],
+        self,
+        func: Callable[[BaseTaskNode, BaseTaskNode, BaseGameContext], bool],
     ):
         """Initialize the transition condition with a custom function.
 
@@ -36,7 +37,10 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
         self.func = func
 
     def check(
-        self, from_node: BaseTaskNode, next_node: BaseTaskNode, ctx: BaseGameContext,
+        self,
+        from_node: BaseTaskNode,
+        next_node: BaseTaskNode,
+        ctx: BaseGameContext,
     ) -> bool:
         """Check whether the transition is valid using the provided function.
 

@@ -28,7 +28,8 @@ class MJPEGHandler(BaseHTTPRequestHandler):
         if self.path.endswith(".mjpg"):
             self.send_response(200)
             self.send_header(
-                "Content-type", "multipart/x-mixed-replace; boundary=--jpgboundary",
+                "Content-type",
+                "multipart/x-mixed-replace; boundary=--jpgboundary",
             )
             self.end_headers()
             while True:

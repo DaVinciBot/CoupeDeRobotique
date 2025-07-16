@@ -23,7 +23,13 @@ class Actuators(
     ):
         # Initialize the parent-GPIOComTeensy class
         super().__init__(
-            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy,
+            logger,
+            serial_number,
+            vid,
+            pid,
+            baudrate,
+            enable_crc,
+            enable_dummy,
         )
 
         # Admit that default elevator position is at the bottom
@@ -39,7 +45,8 @@ class Actuators(
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
         self.add_callback(
-            self.rcv_switch_state_return, Messages.SWITCH_STATE_RETURN.value,
+            self.rcv_switch_state_return,
+            Messages.SWITCH_STATE_RETURN.value,
         )
 
     def __str__(self) -> str:
@@ -141,12 +148,14 @@ class Actuators(
         if disable_driver:
             # Disable the driver after the movement
             self.set_stepper_driver_activation_state(
-                pin_enable=pin_enable_driver, enable_driver=False,
+                pin_enable=pin_enable_driver,
+                enable_driver=False,
             )
         else:
             # Enable the driver after the movement
             self.set_stepper_driver_activation_state(
-                pin_enable=pin_enable_driver, enable_driver=True,
+                pin_enable=pin_enable_driver,
+                enable_driver=True,
             )
 
     @log("Actuators")

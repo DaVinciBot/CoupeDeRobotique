@@ -59,7 +59,8 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
             logger (Logger | None): Optional logger instance.
         """
         self.logger: Logger = logger or Logger(
-            identifier=self.__class__.__name__, follow_logger_manager_rules=True,
+            identifier=self.__class__.__name__,
+            follow_logger_manager_rules=True,
         )
         self.params: ParamsType = params
 
@@ -103,13 +104,11 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         return wrapper
 
     def _start_timer(self) -> None:
-        """Begin the avoidance timeout countdown.
-        """
+        """Begin the avoidance timeout countdown."""
         self._avoiding_start_time = time.time()
 
     def _reset_timer(self) -> None:
-        """Clear the avoidance timer.
-        """
+        """Clear the avoidance timer."""
         self._avoiding_start_time = None
 
     def _has_timed_out(self) -> bool:
@@ -123,7 +122,9 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         return (time.time() - self._avoiding_start_time) > self.params.timeout
 
     def _abort(
-        self, task: NavigatorTask, position: OrientedPoint,
+        self,
+        task: NavigatorTask,
+        position: OrientedPoint,
     ) -> TrajectoryPlanCommand:
         """Abort the avoidance procedure and return a stop command.
 

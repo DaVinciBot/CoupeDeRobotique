@@ -22,7 +22,8 @@ PlanPathParamsType = TypeVar("PlanPathParamsType", bound=BasePathPlannerPlanPath
 class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
     def __init__(self, params: ParamsType, logger: Logger | None = None) -> None:
         self.logger: Logger = logger or Logger(
-            identifier=self.__class__.__name__, follow_logger_manager_rules=True,
+            identifier=self.__class__.__name__,
+            follow_logger_manager_rules=True,
         )
         self.params: ParamsType = params
         self.last_plan_path_params: PlanPathParamsType | None = None
@@ -31,7 +32,10 @@ class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
     def _store_plan_path_params(method: callable) -> callable:
         @functools.wraps(method)
         def wrapper(
-            self: BasePathPlanner, plan_path_params: PlanPathParamsType, *args, **kwargs,
+            self: BasePathPlanner,
+            plan_path_params: PlanPathParamsType,
+            *args,
+            **kwargs,
         ):
             self.last_plan_path_params = plan_path_params
 

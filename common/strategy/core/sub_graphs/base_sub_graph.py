@@ -1,4 +1,3 @@
-
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
 

@@ -136,7 +136,8 @@ def get_push_one_floor_to_wall_subgraph(
 
     builder.connect(node_build, DirectTransition(builder.nodes[node_retract]))
     builder.connect(
-        node_retract, DirectTransition(builder.nodes[node_position_after_push]),
+        node_retract,
+        DirectTransition(builder.nodes[node_position_after_push]),
     )
 
     # Build and return the final subgraph

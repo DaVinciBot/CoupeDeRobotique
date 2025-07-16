@@ -60,7 +60,9 @@ class SequentialTrajectoryPlanner(
         return angle - math.pi
 
     def _compute_rotation_segment_to_be_front(
-        self, start: OrientedPoint, target: OrientedPoint,
+        self,
+        start: OrientedPoint,
+        target: OrientedPoint,
     ) -> RotationSegment:
         """Compute a rotation segment so that the robot’s driving direction
         (front in forward mode, back in reverse mode) points toward the next waypoint.
@@ -95,7 +97,9 @@ class SequentialTrajectoryPlanner(
         )
 
     def _compute_rotation_segment_to_get_same_orientation(
-        self, start: OrientedPoint, target: OrientedPoint,
+        self,
+        start: OrientedPoint,
+        target: OrientedPoint,
     ) -> RotationSegment:
         """Compute a rotation segment so that the robot’s final orientation
         (front in forward mode, back in reverse mode) matches the target.theta.
@@ -128,7 +132,9 @@ class SequentialTrajectoryPlanner(
         )
 
     def _compute_straight_segment(
-        self, start: OrientedPoint, target: OrientedPoint,
+        self,
+        start: OrientedPoint,
+        target: OrientedPoint,
     ) -> StraightSegment:
         """Compute straight segment needed to reach the next waypoint.
 
@@ -175,7 +181,8 @@ class SequentialTrajectoryPlanner(
 
             # 2. Compute straight-line segment to reach the waypoint
             straight_segment = self._compute_straight_segment(
-                rotation_segment.end_position, target,
+                rotation_segment.end_position,
+                target,
             )
             segments.append(straight_segment)
 
@@ -187,14 +194,17 @@ class SequentialTrajectoryPlanner(
             ):
                 rotation_segment = (
                     self._compute_rotation_segment_to_get_same_orientation(
-                        straight_segment.end_position, target,
+                        straight_segment.end_position,
+                        target,
                     )
                 )
                 segments.append(rotation_segment)
             else:
                 # Override intermediate waypoint orientation to current heading to skip rotation
                 path[i + 1] = OrientedPoint(
-                    path[i + 1].x, path[i + 1].y, straight_segment.end_position.theta,
+                    path[i + 1].x,
+                    path[i + 1].y,
+                    straight_segment.end_position.theta,
                 )
 
             # 4. Add a stop segment if a pause is configured
@@ -243,7 +253,9 @@ class SequentialTrajectoryPlanner(
 
             trajectory_plan_command: TrajectoryPlanCommand = TrajectoryPlanCommand(
                 position=OrientedPoint(
-                    segment.start_position.x, segment.start_position.y, th_theta,
+                    segment.start_position.x,
+                    segment.start_position.y,
+                    th_theta,
                 ),
                 linear_speed=0.0,
                 angular_speed=self.speed_profiler.angular_speed_profile.get_speed(

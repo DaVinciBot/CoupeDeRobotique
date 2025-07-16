@@ -46,10 +46,15 @@ class BaseComTeensy(Com):
             enable_dummy (bool, optional): Enables dummy packet handling. Defaults to False.
         """
         super().__init__(
-            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy,
+            logger,
+            serial_number,
+            vid,
+            pid,
+            baudrate,
+            enable_crc,
+            enable_dummy,
         )
 
     def reset(self) -> None:
-        """Resets the Teensy device by sending a reset command.
-        """
+        """Resets the Teensy device by sending a reset command."""
         self.send_bytes(data=Messages.RESET_TEENSY.to_bytes())

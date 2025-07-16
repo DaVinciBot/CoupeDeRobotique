@@ -12,8 +12,7 @@ class DummySerial:
     """
 
     def __init__(self):
-        """Initializes the DummySerial object with empty input and output buffers.
-        """
+        """Initializes the DummySerial object with empty input and output buffers."""
         self.output_buffer = b""  # Stores data written to the serial port
         self.input_buffer = b""  # Stores incoming data for reading
         self.out_waiting = False  # Indicates if data is waiting to be sent
@@ -30,8 +29,7 @@ class DummySerial:
         self.out_waiting = False
 
     def reset_output_buffer(self):
-        """Clears the output buffer.
-        """
+        """Clears the output buffer."""
         self.output_buffer = b""
 
     def read_until(self, signature: bytes) -> bytes:
@@ -54,6 +52,5 @@ class DummySerial:
         self.input_buffer += data
 
     def reset_input_buffer(self):
-        """Clears the input buffer.
-        """
+        """Clears the input buffer."""
         self.input_buffer = b""

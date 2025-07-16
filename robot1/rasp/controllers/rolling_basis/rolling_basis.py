@@ -30,7 +30,13 @@ class RollingBasis(BaseComTeensy):
         self.flag = True
         # Initialize the parent-BaseComTeensy class
         super().__init__(
-            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy,
+            logger,
+            serial_number,
+            vid,
+            pid,
+            baudrate,
+            enable_crc,
+            enable_dummy,
         )
 
         # Robot state
@@ -48,7 +54,8 @@ class RollingBasis(BaseComTeensy):
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
         self.add_callback(
-            self.rcv_rolling_basis_state, Messages.UPDATE_ROLLING_BASIS.value,
+            self.rcv_rolling_basis_state,
+            Messages.UPDATE_ROLLING_BASIS.value,
         )
 
         # Initialize PID controllers from configuration
@@ -206,16 +213,14 @@ class RollingBasis(BaseComTeensy):
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
     ) -> None:
-        """Configure all PID controllers using dictionaries for each.
-        """
+        """Configure all PID controllers using dictionaries for each."""
         self.set_linear_position_pid(**linear_position_pid)
         time.sleep(0.1)  # Ensure the Teensy has time to process the first PID
         self.set_angular_position_pid(**angular_position_pid)
         time.sleep(0.1)  # Ensure the Teensy has time to process the second PID
 
     def initialize_pids(self) -> None:
-        """Initialize PID controllers from the configuration.
-        """
+        """Initialize PID controllers from the configuration."""
         try:
             self.set_pids(
                 linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,

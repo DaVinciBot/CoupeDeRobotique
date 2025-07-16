@@ -49,7 +49,9 @@ class NavigatorSignalsDispatcher:
         )
 
     def connect_signal(
-        self, signal: NavigatorSignalsEnum, callback: Callable[..., Any],
+        self,
+        signal: NavigatorSignalsEnum,
+        callback: Callable[..., Any],
     ) -> None:
         """Connect a callback function to a signal.
 
@@ -69,7 +71,9 @@ class NavigatorSignalsDispatcher:
             self.logger.warning(f"Attempted to connect to unknown signal: {signal}")
 
     def disconnect_signal(
-        self, signal: NavigatorSignalsEnum, callback: Callable[..., Any],
+        self,
+        signal: NavigatorSignalsEnum,
+        callback: Callable[..., Any],
     ) -> None:
         """Disconnect a callback function from a signal.
 

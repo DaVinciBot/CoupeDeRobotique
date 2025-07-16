@@ -49,5 +49,11 @@ class GPIOComTeensy(Com):
 
         # Initialize the parent-Com class
         super().__init__(
-            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy,
+            logger,
+            serial_number,
+            vid,
+            pid,
+            baudrate,
+            enable_crc,
+            enable_dummy,
         )

@@ -102,7 +102,8 @@ class Lidar:
                     self.__lidar_obj = self.__init_lidar()
                     # Initialize the polars angles depends on the lidar number of measurements points
                     self.__polars_angles = self.__init_polars_angle(
-                        self.__min_angle, self.__max_angle,
+                        self.__min_angle,
+                        self.__max_angle,
                     )
                     self.__is_connected = True
                 except Exception as error:

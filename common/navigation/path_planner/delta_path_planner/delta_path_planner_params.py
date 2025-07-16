@@ -17,8 +17,7 @@ class DeltaPathPlannerParams(BasePathPlannerParams):
     """
 
     def __init__(self, distance: float = 0.0, rotation: float = 0.0):
-        """Initialize delta-based path planner parameters with DELTA strategy.
-        """
+        """Initialize delta-based path planner parameters with DELTA strategy."""
         self.distance: float = distance
         self.rotation: float = rotation
         super().__init__(PathPlanningStrategy.DELTA)

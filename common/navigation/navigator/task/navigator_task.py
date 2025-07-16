@@ -100,7 +100,9 @@ class NavigatorTask:
         return self._get_elapsed_time() > self.trajectory_planner.get_total_duration()
 
     def handle(
-        self, ally_zone: AllyZone, enemy_zone: EnemyZone,
+        self,
+        ally_zone: AllyZone,
+        enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
         # 1. Initial planning
         if self.state == NavigatorTaskState.NOT_PLANNED:
@@ -134,7 +136,9 @@ class NavigatorTask:
 
         # 5. Obstacle avoidance
         avoidance_cmd = self.avoidance.handle(
-            current_navigator_task=self, ally_zone=ally_zone, enemy_zone=enemy_zone,
+            current_navigator_task=self,
+            ally_zone=ally_zone,
+            enemy_zone=enemy_zone,
         )
         if self.state == NavigatorTaskState.AVOIDING:
             return avoidance_cmd

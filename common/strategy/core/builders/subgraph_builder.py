@@ -18,7 +18,8 @@ class SubGraphBuilder:
 
     def __init__(self) -> None:
         self.logger = Logger(
-            identifier="SubGraphBuilder", follow_logger_manager_rules=True,
+            identifier="SubGraphBuilder",
+            follow_logger_manager_rules=True,
         )
         self.nodes: dict[str, BaseTaskNode] = {}
         self._transitions: list[tuple[str, BaseTransition]] = []
@@ -37,8 +38,7 @@ class SubGraphBuilder:
         return self
 
     def connect(self, from_name: str, transition: BaseTransition) -> SubGraphBuilder:
-        """Queue a transition from the node named 'from_name'.
-        """
+        """Queue a transition from the node named 'from_name'."""
         if from_name not in self.nodes:
             msg = f"Source node '{from_name}' not found for transition"
             self.logger.error(msg)
@@ -48,8 +48,7 @@ class SubGraphBuilder:
         return self
 
     def add_subgraph(self, subgraph: BaseSubGraph, prefix: str = "") -> SubGraphBuilder:
-        """Merge another subgraph: clones its nodes and transitions with optional name prefix.
-        """
+        """Merge another subgraph: clones its nodes and transitions with optional name prefix."""
         mapping: dict[BaseTaskNode, BaseTaskNode] = {}
         for old in subgraph.get_all_nodes():
             new_name = prefix + old.name

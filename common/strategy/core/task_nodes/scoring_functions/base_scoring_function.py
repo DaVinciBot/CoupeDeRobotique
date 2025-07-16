@@ -11,5 +11,8 @@ if TYPE_CHECKING:
 class BaseScoringFunction(ABC):
     @abstractmethod
     def compute(
-        self, prev_node: BaseTaskNode, current_node: BaseTaskNode, ctx: BaseGameContext,
+        self,
+        prev_node: BaseTaskNode,
+        current_node: BaseTaskNode,
+        ctx: BaseGameContext,
     ) -> float: ...

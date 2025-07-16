@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from strategy.core.base_game_context import BaseGameContext
     from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
+
 class GraphRunner:
     """Executes a directed graph of task nodes with optional parallelism.
 
@@ -26,7 +27,8 @@ class GraphRunner:
         parallel: bool = False,
     ) -> None:
         self.logger = logger or Logger(
-            identifier="GraphRunner", follow_logger_manager_rules=True,
+            identifier="GraphRunner",
+            follow_logger_manager_rules=True,
         )
         self.parallel = parallel
         self.active: list[BaseTaskNode] = [start]
@@ -89,7 +91,8 @@ class GraphRunner:
             else:
                 # Choose the transition leading to the highest-scoring node
                 best = max(
-                    valid_transitions, key=lambda t: t.target.score(prev_node, ctx),
+                    valid_transitions,
+                    key=lambda t: t.target.score(prev_node, ctx),
                 )
                 score_val = best.target.score(prev_node, ctx)
                 target = best.target

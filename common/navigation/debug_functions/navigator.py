@@ -16,7 +16,9 @@ from navigation.navigator import Navigator
 
 
 def test_navigator_execution(
-    navigator: Navigator, arena: BaseArena, time_step: float = 0.1,
+    navigator: Navigator,
+    arena: BaseArena,
+    time_step: float = 0.1,
 ):
     """Simulate the navigator until its current task is finished, logging the navigation data
     and plotting the key metrics over time.
@@ -61,7 +63,8 @@ def test_navigator_execution(
             lidar_scan_polars=np.array([]),  # Empty lidar scan for this test
             optimized_update=False,
             _enemy_position=Point(
-                arena.enemy_zone.point.x - 10, arena.enemy_zone.point.y,
+                arena.enemy_zone.point.x - 10,
+                arena.enemy_zone.point.y,
             ),  # Enemy is positioned 10 units left
         )
 

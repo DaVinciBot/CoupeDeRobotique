@@ -15,7 +15,8 @@ class BaseAcsDetectionProfile(ABC, Generic[ParamsType]):
     def __init__(self, params: ParamsType, logger: Logger | None = None) -> None:
         self.params: ParamsType = params
         self.logger: Logger = logger or Logger(
-            identifier=self.__class__.__name__, follow_logger_manager_rules=True,
+            identifier=self.__class__.__name__,
+            follow_logger_manager_rules=True,
         )
 
     @abstractmethod

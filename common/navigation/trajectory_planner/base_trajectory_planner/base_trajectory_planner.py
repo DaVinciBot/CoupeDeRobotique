@@ -42,7 +42,8 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
             logger (Logger | None): Optional logger instance.
         """
         self.logger: Logger = logger or Logger(
-            identifier=self.__class__.__name__, follow_logger_manager_rules=True,
+            identifier=self.__class__.__name__,
+            follow_logger_manager_rules=True,
         )
         self.params: ParamsType = params
         self.speed_profiler: SpeedProfiler = speed_profiler
@@ -96,13 +97,11 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
     # ====== Public Methods ======
     def start_planning(self) -> None:
-        """Start the trajectory planning session.
-        """
+        """Start the trajectory planning session."""
         self._start_trajectory_timestamp = time.time()
 
     def stop_planning(self) -> None:
-        """Stop the planning session and accumulate elapsed time.
-        """
+        """Stop the planning session and accumulate elapsed time."""
         self._start_trajectory_elapsed_time_checkpoint += (
             time.time() - self._start_trajectory_timestamp
         )

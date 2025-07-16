@@ -1,4 +1,3 @@
-
 """Handles inheritance for the Point class.
 
 This implementation addresses challenges related to inheriting from the `Point` class
@@ -21,7 +20,6 @@ Final Version:
 - While this is the slowest of the tested implementations, the performance difference is minimal.
 - It offers the broadest compatibility with the `Point` class and the broader Shapely ecosystem.
 """
-
 
 from typing import Any, ClassVar
 
@@ -95,7 +93,8 @@ class OrientedPoint(Point):
     def __add__(self, other):
         if isinstance(other, OrientedPoint):
             return OrientedPoint(
-                (self.x + other.x, self.y + other.y), self.theta + other.theta,
+                (self.x + other.x, self.y + other.y),
+                self.theta + other.theta,
             )
         if isinstance(other, Point):
             return OrientedPoint((self.x + other.x, self.y + other.y), self.theta)
@@ -104,7 +103,8 @@ class OrientedPoint(Point):
     def __sub__(self, other):
         if isinstance(other, OrientedPoint):
             return OrientedPoint(
-                (self.x - other.x, self.y - other.y), self.theta - other.theta,
+                (self.x - other.x, self.y - other.y),
+                self.theta - other.theta,
             )
         if isinstance(other, Point):
             return OrientedPoint((self.x - other.x, self.y - other.y), self.theta)
@@ -144,7 +144,6 @@ class OrientedPoint(Point):
         return (self.__class__, ((coords, theta)), {"theta": theta})
 
     def __setstate__(self, state):
-        """Restore the extra state for the OrientedPoint during unpickling.
-        """
+        """Restore the extra state for the OrientedPoint during unpickling."""
         # Reinitialize the extra attribute in the class-level mapping
         OrientedPoint._id_to_attrs[str(id(self))] = {"theta": state.get("theta", 0.0)}

@@ -42,7 +42,8 @@ class GoToStuffZoneToPickUp(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,  # Use for pickup speed profiler
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                acs_distance=55, width_view=40,
+                acs_distance=55,
+                width_view=40,
             ),
             stabilization_delay=2,
         )

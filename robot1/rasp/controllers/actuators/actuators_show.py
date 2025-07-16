@@ -51,7 +51,8 @@ class ActuatorsShow(Actuators):
         super().__init__(*args, **kwargs)  # Call the parent constructor
         self.folded: bool = True  # Indicates if the actuators are folded
         self.servos: dict[
-            int | CONFIG.ACTUATORS_CONFIG, Servo | ServoArm | ServoPlank | ServoDocking,
+            int | CONFIG.ACTUATORS_CONFIG,
+            Servo | ServoArm | ServoPlank | ServoDocking,
         ] = {  # default servo with 2 position
             i: Servo(cfg["deploy_angle"], cfg["fold_angle"], cfg["max_angle"])
             for i, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items()
@@ -336,16 +337,14 @@ class ActuatorsShow(Actuators):
     #     )
 
     def ready_to_pickup(self):
-        """Preparation and magnetization of all servos.
-        """
+        """Preparation and magnetization of all servos."""
         # Prep and go magnetized
         self.deploy_all_pickup()  # Magnetize
         time.sleep(1)
         self.deploy(8)
 
     def pick_up(self):
-        """Catch cans and plank
-        """
+        """Catch cans and plank"""
         # Catch and raise cans and plank
         self.pickup_planck()
         self.fold(9)
@@ -358,8 +357,7 @@ class ActuatorsShow(Actuators):
         time.sleep(0.5)
 
     def deplacement_object(self):
-        """Catch cans and plank
-        """
+        """Catch cans and plank"""
         # Catch and raise cans and plank
         self.pickup_planck()
         self.fold(9)

@@ -18,8 +18,7 @@ if TYPE_CHECKING:
 
 
 class BaseTaskNode:
-    """A node that manages one or more tasks with transitions and scoring.
-    """
+    """A node that manages one or more tasks with transitions and scoring."""
 
     def __init__(
         self,
@@ -27,8 +26,7 @@ class BaseTaskNode:
         tasks: BaseTask | list[BaseTask],
         scoring_function: BaseScoringFunction = DefaultScoringFunction(),
     ) -> None:
-        """Initialize the task node.
-        """
+        """Initialize the task node."""
         self.name: str = name
         self.tasks: list[BaseTask] = (
             [tasks] if isinstance(tasks, BaseTask) else tasks  # type: ignore
@@ -63,7 +61,9 @@ class BaseTaskNode:
     def score(self, prev_node: BaseTaskNode | None, ctx: BaseGameContext) -> float:
         """Compute and return a score for this node against an optional previous node."""
         score_value = self.scoring_function.compute(
-            prev_node=prev_node, current_node=self, ctx=ctx,
+            prev_node=prev_node,
+            current_node=self,
+            ctx=ctx,
         )
         prev_name = prev_node.name if prev_node else "<None>"
         self.logger.debug(
@@ -82,8 +82,7 @@ class BaseTaskNode:
         self.logger.info(f"Exiting node '{self.name}' to '{next_name}'")
 
     def execute(self, ctx: BaseGameContext) -> bool:
-        """Execute tasks sequentially. Return True only when all tasks are done.
-        """
+        """Execute tasks sequentially. Return True only when all tasks are done."""
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:
             self.logger.debug(
                 f"Node '{self.name}' already completed with status {self.status.name}",
@@ -148,8 +147,7 @@ class BaseTaskNode:
         return False
 
     def handle(self, ctx: BaseGameContext) -> bool:
-        """Enter the node (once), execute tasks, and exit when done.
-        """
+        """Enter the node (once), execute tasks, and exit when done."""
         if not self.entered:
             self.on_enter(None, ctx)
             self.entered = True

@@ -36,7 +36,13 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         # Initialize parent
         super().__init__(
-            logger, serial_number, vid, pid, baudrate, enable_crc, enable_dummy,
+            logger,
+            serial_number,
+            vid,
+            pid,
+            baudrate,
+            enable_crc,
+            enable_dummy,
         )
 
         # PID controllers
@@ -47,7 +53,8 @@ class AsservissementRollingBasis(BaseComTeensy):
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
         self.add_callback(
-            self.rcv_rolling_basis_state, Messages.UPDATE_ROLLING_BASIS.value,
+            self.rcv_rolling_basis_state,
+            Messages.UPDATE_ROLLING_BASIS.value,
         )
 
         self._initialize_pids()
@@ -79,8 +86,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         self,
         target_position: OrientedPoint,
     ) -> None:
-        """Sends a message to set the target position of the rolling basis and logs the previous state.
-        """
+        """Sends a message to set the target position of the rolling basis and logs the previous state."""
         # Store for logging
         self._last_target = target_position
 
@@ -162,8 +168,7 @@ class AsservissementRollingBasis(BaseComTeensy):
     # Logging Methods                  #
     ####################################
     def _log_entry(self) -> None:
-        """Internal: record timestamp, last target, and latest odometry.
-        """
+        """Internal: record timestamp, last target, and latest odometry."""
         entry = {
             "time": time.time(),
             "target_x": self._last_target.x,
@@ -267,16 +272,14 @@ class AsservissementRollingBasis(BaseComTeensy):
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
     ) -> None:
-        """Configure all PID controllers using dictionaries for each.
-        """
+        """Configure all PID controllers using dictionaries for each."""
         self.set_linear_position_pid(**linear_position_pid)
         time.sleep(0.1)  # Ensure the Teensy has time to process the first PID
         self.set_angular_position_pid(**angular_position_pid)
         time.sleep(0.1)  # Ensure the Teensy has time to process the second PID
 
     def _initialize_pids(self) -> None:
-        """Initialize PID controllers from the configuration.
-        """
+        """Initialize PID controllers from the configuration."""
         try:
             self.set_pids(
                 linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,

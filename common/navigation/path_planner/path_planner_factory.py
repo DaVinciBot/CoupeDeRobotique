@@ -27,8 +27,7 @@ from navigation.path_planner.structs import PathPlanningStrategy
 
 
 class PathPlannerFactory:
-    """Factory class to instantiate the appropriate path planner based on the provided parameters.
-    """
+    """Factory class to instantiate the appropriate path planner based on the provided parameters."""
 
     @staticmethod
     def instantiate(params: BasePathPlannerParams) -> BasePathPlanner:

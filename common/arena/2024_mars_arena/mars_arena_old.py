@@ -39,7 +39,12 @@ class MarsArena(Arena):
     """Represent the arena of the +CDR 2023-2024"""
 
     def __init__(
-        self, start_zone_id: int, logger: Logger, *, border_buffer, robot_buffer,
+        self,
+        start_zone_id: int,
+        logger: Logger,
+        *,
+        border_buffer,
+        robot_buffer,
     ):
         """Generate the arena of the CDR 2023-2024
 
@@ -164,7 +169,11 @@ class MarsArena(Arena):
         return zones
 
     def sort_gardener(
-        self, actual_position: OrientedPoint, friendly_only=True, maxi=6, reverse=False,
+        self,
+        actual_position: OrientedPoint,
+        friendly_only=True,
+        maxi=6,
+        reverse=False,
     ):
         zones_to_sort = (
             [

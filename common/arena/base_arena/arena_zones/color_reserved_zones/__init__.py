@@ -1,4 +1,3 @@
-
 from arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone import (
     BaseColorReservedZone,
 )

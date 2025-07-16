@@ -20,7 +20,10 @@ class SetOdometrie(BaseTask):
     """
 
     def __init__(
-        self, x: float | None = None, y: float | None = None, theta: float | None = None,
+        self,
+        x: float | None = None,
+        y: float | None = None,
+        theta: float | None = None,
     ):
         """Initialize the SetOdometrie task with optional position values.
 

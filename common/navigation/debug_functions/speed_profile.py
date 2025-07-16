@@ -26,7 +26,9 @@ def test_speed_profile(
     """
     print("Testing profile:", profile)
     total_duration = profile.get_total_duration(
-        distance=distance, departure_speed=departure_speed, arrival_speed=arrival_speed,
+        distance=distance,
+        departure_speed=departure_speed,
+        arrival_speed=arrival_speed,
     )
 
     speeds = []

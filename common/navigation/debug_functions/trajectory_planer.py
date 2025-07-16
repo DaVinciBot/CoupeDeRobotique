@@ -104,7 +104,14 @@ def test_trajectory_planning(
         dx = np.cos(point.theta)
         dy = np.sin(point.theta)
         plt.arrow(
-            point.x, point.y, dx, dy, head_width=0.1, head_length=0.1, fc="b", ec="b",
+            point.x,
+            point.y,
+            dx,
+            dy,
+            head_width=0.1,
+            head_length=0.1,
+            fc="b",
+            ec="b",
         )
 
     # Plot simulated trajectory with orientation arrows
@@ -113,7 +120,14 @@ def test_trajectory_planning(
         dx = np.cos(point.theta) * 0.5
         dy = np.sin(point.theta) * 0.5
         plt.arrow(
-            point.x, point.y, dx, dy, head_width=0.1, head_length=0.1, fc="r", ec="r",
+            point.x,
+            point.y,
+            dx,
+            dy,
+            head_width=0.1,
+            head_length=0.1,
+            fc="r",
+            ec="r",
         )
 
     plt.xlabel("x")

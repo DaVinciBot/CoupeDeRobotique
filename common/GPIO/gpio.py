@@ -1,5 +1,3 @@
-
-
 from gpiozero import LED, Button
 from gpiozero.pins.lgpio import LGPIOFactory
 

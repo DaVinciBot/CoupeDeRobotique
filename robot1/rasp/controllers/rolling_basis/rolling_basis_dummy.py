@@ -127,14 +127,12 @@ class RollingBasisDummy(BaseComTeensy):
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
     ) -> None:
-        """Configure all PID controllers using dictionaries for each.
-        """
+        """Configure all PID controllers using dictionaries for each."""
         self.set_linear_position_pid(**linear_position_pid)
         self.set_angular_position_pid(**angular_position_pid)
 
     def initialize_pids(self) -> None:
-        """Initialize PID controllers from the configuration.
-        """
+        """Initialize PID controllers from the configuration."""
         try:
             self.set_pids(
                 linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,

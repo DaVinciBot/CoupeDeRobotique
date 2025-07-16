@@ -38,7 +38,9 @@ class Navigator:
         return False
 
     def add_navigation_task(
-        self, navigator_task_params: NavigatorTaskParams, skip_queue: bool = False,
+        self,
+        navigator_task_params: NavigatorTaskParams,
+        skip_queue: bool = False,
     ) -> None:
         if skip_queue:
             self.abort(affect_all_tasks=False)
@@ -53,7 +55,9 @@ class Navigator:
             self.logger.info(f"Executing task: {self.current_task}")
 
     def handle(
-        self, ally_zone: AllyZone, enemy_zone: EnemyZone,
+        self,
+        ally_zone: AllyZone,
+        enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
         # besoins: ally_position_zone, enemy_position_zone, grid, dynamic_grid (comment déclancher sa mis à jour que quand l'ennemi est proche)
 
@@ -64,7 +68,8 @@ class Navigator:
             )
 
         task_cmd: TrajectoryPlanCommand = self.current_task.handle(
-            ally_zone, enemy_zone,
+            ally_zone,
+            enemy_zone,
         )
 
         # If avoidance is active => check avoidance state and return avoidance command

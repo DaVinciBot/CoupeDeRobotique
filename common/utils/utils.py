@@ -36,7 +36,10 @@ class Utils:
                 r = (
                     "["
                     + ", ".join(
-                        [Utils.geom_to_str(smaller_geom) for smaller_geom in geom.geoms],
+                        [
+                            Utils.geom_to_str(smaller_geom)
+                            for smaller_geom in geom.geoms
+                        ],
                     )
                     + "]"
                 )

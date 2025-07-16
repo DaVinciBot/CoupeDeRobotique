@@ -27,8 +27,7 @@ from navigation.avoidance.structs import AvoidanceStrategy
 
 
 class AvoidanceFactory:
-    """Factory class to instantiate the appropriate obstacle avoidance component based on strategy.
-    """
+    """Factory class to instantiate the appropriate obstacle avoidance component based on strategy."""
 
     @staticmethod
     def instantiate(
@@ -51,12 +50,14 @@ class AvoidanceFactory:
 
         if strategy == AvoidanceStrategy.NO_AVOIDANCE:
             return NoAvoidance(
-                cast("NoAvoidanceParams", params), acs_detection_profile_params,
+                cast("NoAvoidanceParams", params),
+                acs_detection_profile_params,
             )
 
         if strategy == AvoidanceStrategy.STOP_AND_WAIT:
             return StopAndWaitAvoidance(
-                cast("StopAndWaitAvoidanceParams", params), acs_detection_profile_params,
+                cast("StopAndWaitAvoidanceParams", params),
+                acs_detection_profile_params,
             )
 
         if strategy == AvoidanceStrategy.BACK:

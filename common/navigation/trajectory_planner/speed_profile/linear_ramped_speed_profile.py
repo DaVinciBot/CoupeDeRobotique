@@ -68,7 +68,11 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
         return sqrt(v_peak_sq)
 
     def get_speed(
-        self, time_elapsed=None, distance=None, departure_speed=0.0, arrival_speed=0.0,
+        self,
+        time_elapsed=None,
+        distance=None,
+        departure_speed=0.0,
+        arrival_speed=0.0,
     ) -> float:
         """Returns the speed at a given time and distance using either trapezoidal or triangular profile.
 
@@ -85,7 +89,8 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             return departure_speed
 
         t_acc, t_dec, d_acc, d_dec = self._compute_trapezoidal_params(
-            departure_speed, arrival_speed,
+            departure_speed,
+            arrival_speed,
         )
 
         if distance is None:
@@ -119,7 +124,9 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             return arrival_speed
         # Triangular profile (no cruising)
         v_peak = self._compute_triangular_peak_speed(
-            distance, departure_speed, arrival_speed,
+            distance,
+            departure_speed,
+            arrival_speed,
         )
         t_peak = (v_peak - departure_speed) / self.acceleration
         t_decel = (v_peak - arrival_speed) / self.deceleration
@@ -129,12 +136,17 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             return departure_speed + self.acceleration * time_elapsed
         if time_elapsed < t_total:
             return max(
-                v_peak - self.deceleration * (time_elapsed - t_peak), arrival_speed,
+                v_peak - self.deceleration * (time_elapsed - t_peak),
+                arrival_speed,
             )
         return arrival_speed
 
     def get_distance(
-        self, time_elapsed, distance=None, departure_speed=0.0, arrival_speed=0.0,
+        self,
+        time_elapsed,
+        distance=None,
+        departure_speed=0.0,
+        arrival_speed=0.0,
     ) -> float:
         """Calculates distance traveled at a given time.
 
@@ -151,7 +163,8 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             return 0.0
 
         t_acc, t_dec, d_acc, d_dec = self._compute_trapezoidal_params(
-            departure_speed, arrival_speed,
+            departure_speed,
+            arrival_speed,
         )
 
         if distance is None:
@@ -197,7 +210,9 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             return distance
         # Triangular profile
         v_peak = self._compute_triangular_peak_speed(
-            distance, departure_speed, arrival_speed,
+            distance,
+            departure_speed,
+            arrival_speed,
         )
         t_peak = (v_peak - departure_speed) / self.acceleration
         t_decel = (v_peak - arrival_speed) / self.deceleration
@@ -220,7 +235,10 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
         return distance
 
     def get_total_duration(
-        self, distance, departure_speed=0.0, arrival_speed=0.0,
+        self,
+        distance,
+        departure_speed=0.0,
+        arrival_speed=0.0,
     ) -> float:
         """Calculates the total time required to travel the given distance.
 
@@ -233,7 +251,8 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             float: Total duration of the motion profile.
         """
         t_acc, t_dec, d_acc, d_dec = self._compute_trapezoidal_params(
-            departure_speed, arrival_speed,
+            departure_speed,
+            arrival_speed,
         )
 
         if distance >= d_acc + d_dec:
@@ -241,7 +260,9 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             t_cruise = d_cruise / self._max_speed
             return t_acc + t_cruise + t_dec
         v_peak = self._compute_triangular_peak_speed(
-            distance, departure_speed, arrival_speed,
+            distance,
+            departure_speed,
+            arrival_speed,
         )
         t_peak = (v_peak - departure_speed) / self.acceleration
         t_decel = (v_peak - arrival_speed) / self.deceleration

@@ -85,7 +85,8 @@ class Arena:
         forbidden_zone_name: str = "forbidden",
     ) -> bool:
         return self.enable_go_on_path(
-            LineString([start, target]), forbidden_zone_name=forbidden_zone_name,
+            LineString([start, target]),
+            forbidden_zone_name=forbidden_zone_name,
         )
 
     def enable_go_on_path(
@@ -162,21 +163,13 @@ class Arena:
             y = center.y
             if abs(y - projected_point.y) < 0.1:
                 if projected_point.x - x < 0:
-                    x = x + (
-                        self.robot_buffer - center.distance(projected_point) + 0.1
-                    )
+                    x = x + (self.robot_buffer - center.distance(projected_point) + 0.1)
                 else:
-                    x = x - (
-                        self.robot_buffer - center.distance(projected_point) + 0.1
-                    )
+                    x = x - (self.robot_buffer - center.distance(projected_point) + 0.1)
             elif projected_point.y - y > 0:
-                y = y - (
-                    self.robot_buffer - center.distance(projected_point) + 0.1
-                )
+                y = y - (self.robot_buffer - center.distance(projected_point) + 0.1)
             else:
-                y = y + (
-                    self.robot_buffer - center.distance(projected_point) + 0.1
-                )
+                y = y + (self.robot_buffer - center.distance(projected_point) + 0.1)
             center = Point(x, y)
             if not self.valide_position(center):
                 projected_point = borders.exterior.interpolate(
@@ -185,28 +178,16 @@ class Arena:
                 if abs(y - projected_point.y) < 0.1:
                     if projected_point.x - x < 0:
                         x = x + (
-                            self.robot_buffer
-                            - center.distance(projected_point)
-                            + 0.1
+                            self.robot_buffer - center.distance(projected_point) + 0.1
                         )
                     else:
                         x = x - (
-                            self.robot_buffer
-                            - center.distance(projected_point)
-                            + 0.1
+                            self.robot_buffer - center.distance(projected_point) + 0.1
                         )
                 elif projected_point.y - y > 0:
-                    y = y - (
-                        self.robot_buffer
-                        - center.distance(projected_point)
-                        + 0.1
-                    )
+                    y = y - (self.robot_buffer - center.distance(projected_point) + 0.1)
                 else:
-                    y = y + (
-                        self.robot_buffer
-                        - center.distance(projected_point)
-                        + 0.1
-                    )
+                    y = y + (self.robot_buffer - center.distance(projected_point) + 0.1)
             return Point(x, y)
 
         if delta != 0:
@@ -230,8 +211,7 @@ class Arena:
             # )
 
             assert (
-                isinstance(intersections, MultiPoint)
-                and len(intersections.geoms) == 2
+                isinstance(intersections, MultiPoint) and len(intersections.geoms) == 2
             ), "Should get exactly 2 intersections"
 
             # Return closest or furthest intersection
@@ -240,13 +220,16 @@ class Arena:
 
             # No clean way in case 'further' point
             if distance(start_point, intersections.geoms[0]) <= distance(
-                start_point, intersections.geoms[1],
+                start_point,
+                intersections.geoms[1],
             ):
                 return intersections.geoms[1]
             return intersections.geoms[0]
 
     def check_collision_by_distances(
-        self, distances_to_check: list[float], pos_robot: OrientedPoint,
+        self,
+        distances_to_check: list[float],
+        pos_robot: OrientedPoint,
     ):
         """Currently hard-coded for 90-180° with 3 distances/°
 
@@ -260,7 +243,9 @@ class Arena:
                 # Then check that it isn't outside the game zone (with a buffer)
                 if self.game_borders_buffered.intersects(
                     self.translate_relative_polar(
-                        distances_to_check[i], i / 3, pos_robot,
+                        distances_to_check[i],
+                        i / 3,
+                        pos_robot,
                     ),
                 ):
                     return True
@@ -269,7 +254,9 @@ class Arena:
 
     @staticmethod
     def translate_relative_polar(
-        distance: float, relative_angle: float, pos_robot: OrientedPoint,
+        distance: float,
+        relative_angle: float,
+        pos_robot: OrientedPoint,
     ):
         return Point(
             pos_robot.x

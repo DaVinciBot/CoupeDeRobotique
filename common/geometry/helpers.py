@@ -1,4 +1,3 @@
-
 from shapely import (
     Point,
     Polygon,

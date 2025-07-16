@@ -22,7 +22,8 @@ class BaseStrategy(ABC):
         self.strategy = SubGraphBuilder()
         self.runner: GraphRunner | None = None
         self.logger = Logger(
-            identifier=self.__class__.__name__, follow_logger_manager_rules=True,
+            identifier=self.__class__.__name__,
+            follow_logger_manager_rules=True,
         )
 
     def visualize_strategy(self) -> None:
@@ -32,7 +33,8 @@ class BaseStrategy(ABC):
         return self.runner
 
     def _auto_build_transitions(
-        self, *elements: BaseTaskNode | BaseSubGraph,
+        self,
+        *elements: BaseTaskNode | BaseSubGraph,
     ) -> bool:
         """Build a subgraph using the provided TaskNodes or SubGraphs.
 
@@ -60,7 +62,8 @@ class BaseStrategy(ABC):
         return True
 
     def _resolve_for_entry(
-        self, element: BaseTaskNode | BaseSubGraph,
+        self,
+        element: BaseTaskNode | BaseSubGraph,
     ) -> BaseTaskNode:
         """Resolve a TaskNode or SubGraph to its entry point.
 
@@ -75,7 +78,8 @@ class BaseStrategy(ABC):
         return element
 
     def _resolve_for_exits(
-        self, element: BaseTaskNode | BaseSubGraph,
+        self,
+        element: BaseTaskNode | BaseSubGraph,
     ) -> BaseTaskNode:
         """Resolve a TaskNode or SubGraph to its exit points.
 

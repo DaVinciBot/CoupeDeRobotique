@@ -7,8 +7,7 @@ from enum import Enum, auto
 
 
 class PathPlanningStrategy(Enum):
-    """Enumeration of available path finding strategies.
-    """
+    """Enumeration of available path finding strategies."""
 
     A_STAR = auto()  # Use A* algorithm
     BASIC = (
@@ -18,8 +17,7 @@ class PathPlanningStrategy(Enum):
 
 
 class Direction(Enum):
-    """Enumeration of motion directions for path planners.
-    """
+    """Enumeration of motion directions for path planners."""
 
     FORWARD = auto()
     BACKWARD = auto()

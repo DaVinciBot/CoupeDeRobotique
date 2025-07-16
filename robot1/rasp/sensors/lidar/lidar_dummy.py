@@ -38,14 +38,19 @@ class LidarDummy:
         self.__num_points = num_points
 
         self.__polars_angles = self.__init_polars_angle(
-            min_angle, max_angle, num_points,
+            min_angle,
+            max_angle,
+            num_points,
         )
         self.__is_connected = True
 
         self._logger.info("[LidarDummy] Initialized successfully.")
 
     def __init_polars_angle(
-        self, min_angle: float, max_angle: float, num_points: int,
+        self,
+        min_angle: float,
+        max_angle: float,
+        num_points: int,
     ) -> np.ndarray:
         """Initialize the polar angles array for the dummy lidar.
 
@@ -56,7 +61,8 @@ class LidarDummy:
         """
         angle_step = abs(max_angle - min_angle) / num_points
         return np.array(
-            [min_angle + i * angle_step for i in range(num_points)], dtype=np.float32,
+            [min_angle + i * angle_step for i in range(num_points)],
+            dtype=np.float32,
         )
 
     def __init_angles_unit(self, unit: str) -> float:
@@ -100,20 +106,25 @@ class LidarDummy:
         """
         # Initialize an array of distances
         distances = np.full(
-            self.__num_points, 5.0, dtype=np.float32,
+            self.__num_points,
+            5.0,
+            dtype=np.float32,
         )  # Default max range
 
         # Simulate obstacles as clusters of points
         num_obstacles = np.random.randint(3, 8)  # Number of obstacles
         for _ in range(num_obstacles):
             center_angle = np.random.uniform(
-                0, self.__num_points,
+                0,
+                self.__num_points,
             )  # Random angle for obstacle
             obstacle_width = np.random.randint(
-                5, 20,
+                5,
+                20,
             )  # Width of obstacle in lidar points
             obstacle_distance = np.random.uniform(
-                0.5, 4.0,
+                0.5,
+                4.0,
             )  # Random distance for the obstacle
 
             # Assign distances to points within the obstacle
@@ -128,7 +139,9 @@ class LidarDummy:
         # Add noise for realism
         distances += np.random.normal(0, 0.01, self.__num_points).astype(np.float32)
         distances = np.clip(
-            distances, 0.1, 5.0,
+            distances,
+            0.1,
+            5.0,
         )  # Ensure distances are within sensor range
 
         self._logger.debug("[LidarDummy] Simulated realistic distances generated.")

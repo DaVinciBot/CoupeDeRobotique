@@ -36,7 +36,10 @@ class ActuatorsShowDummy(ActuatorsShow):
 
     @log("DummyActuatorsShow")
     def stepper_step(
-        self, steps: int, speed: int, disable_driver: bool = False,
+        self,
+        steps: int,
+        speed: int,
+        disable_driver: bool = False,
     ) -> None:
         """Simulate moving the stepper motor by updating elevator_ticks
         and logging the action.
@@ -56,8 +59,7 @@ class ActuatorsShowDummy(ActuatorsShow):
         detach: bool = False,
         detach_delay: int = 1000,
     ) -> None:
-        """Simulate setting the servo angle by logging the parameters.
-        """
+        """Simulate setting the servo angle by logging the parameters."""
         # Check if pin is valid; if not, log and return
         if not self._check_pin(pin):
             return
@@ -66,7 +68,8 @@ class ActuatorsShowDummy(ActuatorsShow):
         servo = self.servos.get(pin)
         # Default min_angle from deploy and fold
         min_angle = min(
-            getattr(servo, "deploy_angle", 0), getattr(servo, "fold_angle", 0),
+            getattr(servo, "deploy_angle", 0),
+            getattr(servo, "fold_angle", 0),
         )
 
         # Pin-specific exceptions

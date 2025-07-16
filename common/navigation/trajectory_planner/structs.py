@@ -30,7 +30,8 @@ class TrajectoryPlanCommand:
 
     @classmethod
     def create_stop_command(
-        cls, current_position: OrientedPoint,
+        cls,
+        current_position: OrientedPoint,
     ) -> "TrajectoryPlanCommand":
         """Create a stop command that holds the robot at the given position with zero speed.
 

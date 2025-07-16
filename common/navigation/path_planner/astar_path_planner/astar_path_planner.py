@@ -25,7 +25,9 @@ class AStarPathPlanner(
     """
 
     def __init__(
-        self, params: AStarPathPlannerParams, logger: Logger | None = None,
+        self,
+        params: AStarPathPlannerParams,
+        logger: Logger | None = None,
     ) -> None:
         """Initialize the A* path planner.
 
@@ -58,7 +60,8 @@ class AStarPathPlanner(
     # ====== Private Methods ======
     @staticmethod
     def __compute_orientation(
-        current_point: GridNode | Point, next_point: GridNode | Point,
+        current_point: GridNode | Point,
+        next_point: GridNode | Point,
     ) -> float:
         """Compute the orientation (angle in radians) from the current point to the next.
 
@@ -70,7 +73,8 @@ class AStarPathPlanner(
             float: Orientation angle in radians.
         """
         return math.atan2(
-            next_point.y - current_point.y, next_point.x - current_point.x,
+            next_point.y - current_point.y,
+            next_point.x - current_point.x,
         )
 
     def __find_path(self) -> list[GridNode]:
@@ -83,7 +87,8 @@ class AStarPathPlanner(
 
         self.params.path_found, exploration_value = self.params.finder.find_path(
             start=grid.node(
-                self.params.current_position.x, self.params.current_position.y,
+                self.params.current_position.x,
+                self.params.current_position.y,
             ),
             end=grid.node(self.params.goal.x, self.params.goal.y),
             graph=grid,
@@ -121,7 +126,9 @@ class AStarPathPlanner(
         )
 
     def __path_to_absolute_oriented_path(
-        self, path: list[GridNode] | list[Point], is_grid_path: bool,
+        self,
+        path: list[GridNode] | list[Point],
+        is_grid_path: bool,
     ) -> list[OrientedPoint]:
         """Convert a path (grid or absolute) to an oriented path for the robot.
 
@@ -170,7 +177,8 @@ class AStarPathPlanner(
         return oriented_path
 
     def __add_path_extremities_point(
-        self, path: list[Point],
+        self,
+        path: list[Point],
     ) -> list[Point | OrientedPoint]:
         """Adjusts the path by keeping only significant extremity and intermediate points.
 
@@ -209,11 +217,13 @@ class AStarPathPlanner(
         ]
 
     def __absolute_coords_to_grid_coords(
-        self, point: OrientedPoint | Point,
+        self,
+        point: OrientedPoint | Point,
     ) -> GridNode:
         """Converts absolute coordinates to grid coordinates."""
         return GridNode(
-            int(point.x / self.params.chunk_size), int(point.y / self.params.chunk_size),
+            int(point.x / self.params.chunk_size),
+            int(point.y / self.params.chunk_size),
         )
 
     # ====== Public Methods ======
@@ -264,7 +274,8 @@ class AStarPathPlanner(
             self.__add_path_extremities_point(
                 # grid node path to absolute oriented path (X, Y, THETA)
                 self.__path_to_absolute_oriented_path(
-                    self.params.path_found, is_grid_path=True,
+                    self.params.path_found,
+                    is_grid_path=True,
                 ),
             )
         )

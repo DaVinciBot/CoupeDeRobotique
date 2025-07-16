@@ -16,6 +16,5 @@ class NoAvoidanceParams(BaseAvoidanceParams):
     """
 
     def __init__(self):
-        """Initializes NoAvoidanceParams with 'NO_AVOIDANCE' strategy.
-        """
+        """Initializes NoAvoidanceParams with 'NO_AVOIDANCE' strategy."""
         super().__init__(AvoidanceStrategy.NO_AVOIDANCE)

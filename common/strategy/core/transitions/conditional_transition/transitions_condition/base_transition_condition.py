@@ -19,7 +19,10 @@ class BaseTransitionCondition(ABC):
 
     @abstractmethod
     def check(
-        self, from_node: BaseTaskNode, next_node: BaseTaskNode, ctx: BaseGameContext,
+        self,
+        from_node: BaseTaskNode,
+        next_node: BaseTaskNode,
+        ctx: BaseGameContext,
     ) -> bool:
         """Evaluate whether the transition from `from_node` to `next_node` is allowed
         given the current game context.

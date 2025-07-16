@@ -16,7 +16,10 @@ class NavigationScoringFunction(BaseScoringFunction):
         self.goal = goal
 
     def compute(
-        self, prev_node: BaseTaskNode, current_node: BaseTaskNode, ctx: BaseGameContext,
+        self,
+        prev_node: BaseTaskNode,
+        current_node: BaseTaskNode,
+        ctx: BaseGameContext,
     ) -> float:
         distance = ctx.arena.ally_zone.point.distance(
             ctx.arena.compute_goal_position(self.goal),

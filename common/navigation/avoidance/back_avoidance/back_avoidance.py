@@ -133,7 +133,8 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
         ):
             self.logger.info("Executing backward avoidance maneuver.")
             cmd: TrajectoryPlanCommand = self.backward_navigator_task.handle(
-                ally_zone, enemy_zone,
+                ally_zone,
+                enemy_zone,
             )
 
             # Clear the backward task if it has finished

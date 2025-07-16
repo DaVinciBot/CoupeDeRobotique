@@ -91,7 +91,8 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
 
 
 def get_construct_one_floor_subgraph(
-    zone_id: int, back_offset: int = 0,
+    zone_id: int,
+    back_offset: int = 0,
 ) -> BaseSubGraph:
     subgraph = SubGraphBuilder()
 

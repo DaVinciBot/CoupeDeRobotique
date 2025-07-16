@@ -13,6 +13,9 @@ from strategy.core.task_nodes.scoring_functions.base_scoring_function import (
 
 class DefaultScoringFunction(BaseScoringFunction):
     def compute(
-        self, prev_node: BaseTaskNode, current_node: BaseTaskNode, ctx: BaseGameContext,
+        self,
+        prev_node: BaseTaskNode,
+        current_node: BaseTaskNode,
+        ctx: BaseGameContext,
     ) -> float:
         return 0.0

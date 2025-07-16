@@ -43,7 +43,11 @@ def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=F
         label = f"{node.name}\\n<{task_name}>"
 
         dot.node(
-            nid, label=label, shape="box", style="rounded,filled", fillcolor="lightblue",
+            nid,
+            label=label,
+            shape="box",
+            style="rounded,filled",
+            fillcolor="lightblue",
         )
 
         for t in node.transitions:
@@ -65,7 +69,9 @@ def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=F
 
 
 def visualize_entire_subgraph(
-    subgraph: BaseSubGraph, filename="full_graph", view=False,
+    subgraph: BaseSubGraph,
+    filename="full_graph",
+    view=False,
 ):
     """Generates a full Graphviz visualization for a given subgraph.
 
@@ -93,7 +99,11 @@ def visualize_entire_subgraph(
 
         label = f"{node.name}\\n<{get_task_class_name(node.tasks)}>"
         dot.node(
-            nid, label=label, shape="box", style="rounded,filled", fillcolor="lightblue",
+            nid,
+            label=label,
+            shape="box",
+            style="rounded,filled",
+            fillcolor="lightblue",
         )
 
         for t in node.transitions:
@@ -115,7 +125,8 @@ def visualize_entire_subgraph(
 
 
 def visualize_task_graph_from_node(
-    subgraph: BaseSubGraph, title: str = "Full Strategy Graph",
+    subgraph: BaseSubGraph,
+    title: str = "Full Strategy Graph",
 ):
     """Uses NetworkX and Matplotlib to visualize the task graph with color-coded node statuses.
 

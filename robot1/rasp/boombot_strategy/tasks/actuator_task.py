@@ -12,8 +12,7 @@ from strategy.core import BaseTask
 
 
 class ReadyToApproachToPickUp(BaseTask):
-    """Task to activate the actuator's approach mechanism in preparation for picking up an object.
-    """
+    """Task to activate the actuator's approach mechanism in preparation for picking up an object."""
 
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to get ready to approach and pick up an object.
@@ -29,8 +28,7 @@ class ReadyToApproachToPickUp(BaseTask):
 
 
 class PrepareToPickUp(BaseTask):
-    """Task to prepare the actuator for picking up an object.
-    """
+    """Task to prepare the actuator for picking up an object."""
 
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to prepare for a pickup, then wait briefly.
@@ -47,8 +45,7 @@ class PrepareToPickUp(BaseTask):
 
 
 class PickUp(BaseTask):
-    """Task to perform the pickup action using the actuator.
-    """
+    """Task to perform the pickup action using the actuator."""
 
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to pick up an object, then wait briefly.
@@ -65,8 +62,7 @@ class PickUp(BaseTask):
 
 
 class Build(BaseTask):
-    """Task to execute a build operation and update the game score accordingly.
-    """
+    """Task to execute a build operation and update the game score accordingly."""
 
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator build command and increment the score.
@@ -92,8 +88,7 @@ class Deposit(BaseTask):
 
 
 class BlockBanner(BaseTask):
-    """Task to activate the banner-blocking actuator.
-    """
+    """Task to activate the banner-blocking actuator."""
 
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to block the banner.
@@ -109,8 +104,7 @@ class BlockBanner(BaseTask):
 
 
 class DeplacementPosition(BaseTask):
-    """Task to adjust the actuator to a predefined displacement position.
-    """
+    """Task to adjust the actuator to a predefined displacement position."""
 
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to move to a displacement position.
@@ -126,8 +120,7 @@ class DeplacementPosition(BaseTask):
 
 
 class DeplacementObject(BaseTask):
-    """Task to adjust the actuator to a predefined displacement position.
-    """
+    """Task to adjust the actuator to a predefined displacement position."""
 
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to move to a displacement position.

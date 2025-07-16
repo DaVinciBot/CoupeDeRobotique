@@ -91,7 +91,9 @@ class StuffZone(BaseArenaZone):
             self.logger.debug(f"{self.zone_type} zone is now accessible")
 
     def get_go_to_position(
-        self, ally_position: OrientedPoint, team_color: TeamColor,
+        self,
+        ally_position: OrientedPoint,
+        team_color: TeamColor,
     ) -> OrientedPoint | Point | None:
         """Determines the best go-to position for an ally in the given zone.
 
@@ -113,7 +115,8 @@ class StuffZone(BaseArenaZone):
         # Find the nearest go-to position to the ally if positions are available
         if self.go_to_positions:
             nearest_position = min(
-                self.go_to_positions, key=lambda p: ally_position.distance(p),
+                self.go_to_positions,
+                key=lambda p: ally_position.distance(p),
             )
             self.logger.debug(
                 f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]",

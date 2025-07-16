@@ -32,7 +32,10 @@ class RectangularProjectionAcsDetectionProfile(
             ],
         )
         rotated_rectangle = rotate(
-            rectangle, ally_zone.point.theta, origin=(0, 0), use_radians=True,
+            rectangle,
+            ally_zone.point.theta,
+            origin=(0, 0),
+            use_radians=True,
         )
 
         dx = ally_zone.point.x + self.params.half_length_view * math.cos(

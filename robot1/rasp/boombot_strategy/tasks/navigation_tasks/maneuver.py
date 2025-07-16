@@ -40,7 +40,8 @@ class RelativeBackward(NavigationTask):
             goal=None,
             path_planner_params=DeltaPathPlannerParams(distance=-distance),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(
-                direction=Direction.BACKWARD, respect_goal_orientation=False,
+                direction=Direction.BACKWARD,
+                respect_goal_orientation=False,
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
@@ -86,7 +87,8 @@ class GoCentroidOfZone(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                acs_distance=55, width_view=40,
+                acs_distance=55,
+                width_view=40,
             ),
             stabilization_delay=0.5,
         )
@@ -105,7 +107,9 @@ class GoCentroidOfZone(NavigationTask):
         go_to_position: OrientedPoint = ctx.arena.compute_goal_position(self.zone_id)
         centroid: Point = ctx.arena.zones[self.zone_id].polygon.centroid
         centroid_with_theta: OrientedPoint = OrientedPoint(
-            centroid.x, centroid.y, go_to_position.theta,
+            centroid.x,
+            centroid.y,
+            go_to_position.theta,
         )
 
         # Create a NavigatorTask using the calculated goal

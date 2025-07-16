@@ -8,7 +8,8 @@ from GPIO import PIN
 class Inputs:
     def __init__(self, pin_jack: int, pin_bau: int, logger: Logger | None = None):
         self.logger = logger or Logger(
-            identifier="Inputs", follow_logger_manager_rules=True,
+            identifier="Inputs",
+            follow_logger_manager_rules=True,
         )
 
         self.jack: PIN = PIN(pin_jack)

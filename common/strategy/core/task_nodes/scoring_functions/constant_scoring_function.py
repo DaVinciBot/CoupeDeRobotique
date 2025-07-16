@@ -16,6 +16,9 @@ class ConstantScoringFunction(BaseScoringFunction):
         self.score: float = score
 
     def compute(
-        self, prev_node: BaseTaskNode, current_node: BaseTaskNode, ctx: BaseGameContext,
+        self,
+        prev_node: BaseTaskNode,
+        current_node: BaseTaskNode,
+        ctx: BaseGameContext,
     ) -> float:
         return self.score

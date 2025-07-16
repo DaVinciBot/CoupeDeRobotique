@@ -17,12 +17,12 @@ from navigation.trajectory_planner.structs import TrajectoryPlannerStrategy
 
 
 class TrajectoryPlannerFactory:
-    """Factory class to instantiate the appropriate trajectory planner based on the provided parameters.
-    """
+    """Factory class to instantiate the appropriate trajectory planner based on the provided parameters."""
 
     @staticmethod
     def instantiate(
-        params: BaseTrajectoryPlannerParams, speed_profiler,
+        params: BaseTrajectoryPlannerParams,
+        speed_profiler,
     ) -> BaseTrajectoryPlanner:
         """Create a trajectory planner based on the given parameters.
 
@@ -45,7 +45,8 @@ class TrajectoryPlannerFactory:
 
         if strategy == TrajectoryPlannerStrategy.SEQUENTIAL:
             return SequentialTrajectoryPlanner(
-                cast("SequentialTrajectoryPlannerParams", params), speed_profiler,
+                cast("SequentialTrajectoryPlannerParams", params),
+                speed_profiler,
             )
 
         raise ValueError(f"Unsupported trajectory planning strategy: {strategy}")

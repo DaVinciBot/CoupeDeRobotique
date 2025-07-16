@@ -25,7 +25,9 @@ class BasicPathPlanner(
     """
 
     def __init__(
-        self, params: BasicPathPlannerParams, logger: Logger | None = None,
+        self,
+        params: BasicPathPlannerParams,
+        logger: Logger | None = None,
     ) -> None:
         """Initialize the basic path planner.
 

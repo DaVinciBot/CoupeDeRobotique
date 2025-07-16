@@ -72,7 +72,10 @@ class BaseSpeedProfile(ABC):
 
     @abstractmethod
     def get_total_duration(
-        self, distance: float, departure_speed: float = 0.0, arrival_speed: float = 0.0,
+        self,
+        distance: float,
+        departure_speed: float = 0.0,
+        arrival_speed: float = 0.0,
     ) -> float:
         """Get total duration required to travel a given distance.
 

@@ -47,7 +47,8 @@ class TowerRushStrategy(BaseStrategy):
 
         # Step 3: Navigate to the first construction zone
         first_construct_subgraph = get_construct_subgraph(
-            self.zones["first_build_zone"], back_offset=13,
+            self.zones["first_build_zone"],
+            back_offset=13,
         )
 
         # Step 4:
