@@ -34,7 +34,7 @@ class AStarPathPlannerParams(BasePathPlannerParams):
         start: OrientedPoint,
         goal: OrientedPoint,
         direction: Direction = Direction.FORWARD,
-    ):
+    ) -> None:
         """Initialize parameters for the A* path planner.
 
         Args:
@@ -79,6 +79,6 @@ class AStarPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
         goal (OrientedPoint): Goal point of the path.
     """
 
-    def __init__(self, start: OrientedPoint, goal: OrientedPoint):
+    def __init__(self, start: OrientedPoint, goal: OrientedPoint) -> None:
         self.goal: OrientedPoint = goal
         super().__init__(start)

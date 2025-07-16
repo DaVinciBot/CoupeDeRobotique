@@ -15,19 +15,18 @@ class PIN:
         device : The GPIO device associated with the pin.
     """
 
-    def __init__(self, pin):
+    def __init__(self, pin) -> None:
         self.pin = pin
         self.mode = None
         self.reverse_state = False
         self.device = None
 
-    def setup(self, mode, reverse_state=False):
+    def setup(self, mode: str, reverse_state: bool = False) -> None:
         """Set up the pin.
 
         Args:
             mode (str): The pin mode (input/output).
             reverse_state (bool, optional): Whether to reverse the state of the pin. Defaults to False.
-
         """
         mode = mode.lower()
         self.mode = mode
@@ -51,7 +50,7 @@ class PIN:
                 pin_factory=LGPIOFactory(),
             )
 
-    def digital_write(self, state: bool):
+    def digital_write(self, state: bool) -> None:
         """Write a digital state to the pin.
 
         Args:

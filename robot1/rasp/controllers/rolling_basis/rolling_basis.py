@@ -20,13 +20,24 @@ class RollingBasis(BaseComTeensy):
     def __init__(
         self,
         logger: Logger,
-        serial_number=CONFIG.ROLLING_BASIS_TEENSY_SER,
-        vid=CONFIG.TEENSY_VID,
-        pid=CONFIG.TEENSY_PID,
-        baudrate=CONFIG.TEENSY_BAUDRATE,
-        enable_crc=CONFIG.TEENSY_CRC,
-        enable_dummy=CONFIG.TEENSY_DUMMY,
-    ):
+        serial_number: int = CONFIG.ROLLING_BASIS_TEENSY_SER,
+        vid: int = CONFIG.TEENSY_VID,
+        pid: int = CONFIG.TEENSY_PID,
+        baudrate: int = CONFIG.TEENSY_BAUDRATE,
+        enable_crc: bool = CONFIG.TEENSY_CRC,
+        enable_dummy: bool = CONFIG.TEENSY_DUMMY,
+    ) -> None:
+        """Initializes the RollingBasis class.
+
+        Args:
+            logger (Logger): The logger instance for logging.
+            serial_number (int, optional): The serial number of the Teensy. Defaults to CONFIG.ROLLING_BASIS_TEENSY_SER.
+            vid (int, optional): The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
+            pid (int, optional): The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
+            baudrate (int, optional): The baud rate for serial communication. Defaults to CONFIG.TEENSY_BAUDRATE.
+            enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
+            enable_dummy (bool, optional): Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+        """
         self.flag = True
         # Initialize the parent-BaseComTeensy class
         super().__init__(
@@ -65,7 +76,7 @@ class RollingBasis(BaseComTeensy):
     ####################################
     # Message Receiving Handlers       #
     ####################################
-    def rcv_print(self, msg: bytes):
+    def rcv_print(self, msg: bytes) -> None:
         """Handles PRINT messages from the Teensy.
 
         Args:
@@ -76,7 +87,7 @@ class RollingBasis(BaseComTeensy):
             "Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore"),
         )
 
-    def rcv_rolling_basis_state(self, msg: bytes):
+    def rcv_rolling_basis_state(self, msg: bytes) -> None:
         """Handles rolling basis state update messages from the Teensy.
 
         The message contains:
@@ -95,7 +106,7 @@ class RollingBasis(BaseComTeensy):
             struct.unpack("<d", msg[16:24])[0],
         )
 
-    def rcv_unknown_msg(self, msg: bytes):
+    def rcv_unknown_msg(self, msg: bytes) -> None:
         """Handles unknown messages from the Teensy.
 
         Logs a warning indicating that the message type is not recognized.
@@ -164,7 +175,7 @@ class RollingBasis(BaseComTeensy):
     ####################################
     # PID Configuration Methods        #
     ####################################
-    def set_linear_position_pid(self, *args, **kwargs) -> None:
+    def set_linear_position_pid(self, *args: object, **kwargs: dict) -> None:
         """Configure the PID values for linear position control.
 
         Accepts either three positional arguments (kp, ki, kd),
@@ -186,7 +197,7 @@ class RollingBasis(BaseComTeensy):
         except Exception as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
-    def set_angular_position_pid(self, *args, **kwargs) -> None:
+    def set_angular_position_pid(self, *args: object, **kwargs: dict) -> None:
         """Configure the PID values for angular position control.
 
         Accepts either three positional arguments (kp, ki, kd),
@@ -233,6 +244,14 @@ class RollingBasis(BaseComTeensy):
     # Equality Comparison              #
     ####################################
     def __eq__(self, other: object) -> bool:
+        """Check equality between two RollingBasis instances.
+
+        Args:
+            other (object): The other object to compare against.
+
+        Returns:
+            bool: True if the objects are equal, False otherwise.
+        """
         if not isinstance(other, RollingBasis):
             return NotImplemented
         return (
@@ -242,4 +261,12 @@ class RollingBasis(BaseComTeensy):
         )
 
     def __ne__(self, other: object) -> bool:
+        """Check inequality between two RollingBasis instances.
+
+        Args:
+            other (object): The other object to compare against.
+
+        Returns:
+            bool: True if the objects are not equal, False otherwise.
+        """
         return not self.__eq__(other)

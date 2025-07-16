@@ -22,7 +22,7 @@ class RotationSegment(BaseSegment):
         duration: float,
         rotation: float,
         sign: int,
-    ):
+    ) -> None:
         """Initialize a rotation segment with its start and end pose, duration, rotation angle, and direction.
 
         Args:

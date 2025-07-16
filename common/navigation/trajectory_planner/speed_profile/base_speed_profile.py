@@ -14,7 +14,7 @@ class BaseSpeedProfile(ABC):
     distance traveled, and time duration, based on elapsed time and path distance.
     """
 
-    def __init__(self, max_speed: float):
+    def __init__(self, max_speed: float) -> None:
         """Initialize the base speed profile with a maximum speed.
 
         Args:

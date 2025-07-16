@@ -12,7 +12,7 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
 
 
 class GoToColorReservedZoneToFinishGame(NavigationTask):
-    def __init__(self, color_reserved_zone_id: int):
+    def __init__(self, color_reserved_zone_id: int) -> None:
         super().__init__(
             goal=color_reserved_zone_id,
             path_planner_params=BasicPathPlannerParams(),
@@ -28,7 +28,7 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
 
 
 class GoToColorReservedZoneToConstruct(NavigationTask):
-    def __init__(self, color_reserved_zone_id: int):
+    def __init__(self, color_reserved_zone_id: int) -> None:
         super().__init__(
             goal=color_reserved_zone_id,
             path_planner_params=BasicPathPlannerParams(),

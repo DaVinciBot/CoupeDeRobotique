@@ -7,7 +7,7 @@ class BaseSubGraph:
         entry_node: BaseTaskNode,
         exit_nodes: BaseTaskNode | list[BaseTaskNode],
         all_nodes: list[BaseTaskNode],
-    ):
+    ) -> None:
         self.entry_node = entry_node
         self.exit_nodes = (
             [exit_nodes] if isinstance(exit_nodes, BaseTaskNode) else exit_nodes

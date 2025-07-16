@@ -17,7 +17,7 @@ class SegmentMapper:
         cumulative_durations (list[float]): Cumulative end times of each segment.
     """
 
-    def __init__(self, segments: list[BaseSegment]):
+    def __init__(self, segments: list[BaseSegment]) -> None:
         """Initialize the SegmentMapper with a list of segments and compute cumulative durations.
 
         Args:

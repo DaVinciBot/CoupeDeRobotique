@@ -27,7 +27,7 @@ class Navigator:
         self._tasks_queue: deque[NavigatorTaskParams] = deque()
         self.current_task: NavigatorTask | None = None
 
-    def _fetch_next_task(self):
+    def _fetch_next_task(self) -> bool:
         if self._tasks_queue:
             self.current_task: NavigatorTask = NavigatorTask(
                 params=self._tasks_queue.popleft(),
@@ -88,7 +88,7 @@ class Navigator:
 
         return task_cmd
 
-    def abort(self, affect_all_tasks: bool = False):
+    def abort(self, affect_all_tasks: bool = False) -> None:
         """Abort the current task and all tasks in the queue.
 
         Args:

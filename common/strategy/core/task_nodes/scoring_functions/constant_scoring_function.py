@@ -12,7 +12,7 @@ from strategy.core.task_nodes.scoring_functions.base_scoring_function import (
 
 
 class ConstantScoringFunction(BaseScoringFunction):
-    def __init__(self, score: float):
+    def __init__(self, score: float) -> None:
         self.score: float = score
 
     def compute(

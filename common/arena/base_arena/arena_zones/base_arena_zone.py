@@ -240,6 +240,6 @@ class BaseArenaZone(ABC):
         """Provides the official string representation of the zone."""
         return self.__str__()
 
-    def __format__(self, format_spec):
+    def __format__(self, format_spec) -> str:
         """Formats the zone as a string."""
         return self.__str__()

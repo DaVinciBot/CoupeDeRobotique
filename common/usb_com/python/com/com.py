@@ -33,7 +33,7 @@ class Com:
         baudrate: int,
         enable_crc: bool = True,
         enable_dummy: bool = False,
-    ):
+    ) -> None:
         """Initializes the USB communication instance.
 
         Args:
@@ -190,7 +190,7 @@ class Com:
 
         return wrapper
 
-    def send_bytes(self, data: bytes):
+    def send_bytes(self, data: bytes) -> None:
         """Sends bytes over the serial connection.
 
         Args:
@@ -218,7 +218,7 @@ class Com:
         """
         return self._device.read_until(END_BYTES_SIGNATURE)
 
-    def add_callback(self, func: Callable[[bytes], None], iid: int):
+    def add_callback(self, func: Callable[[bytes], None], iid: int) -> None:
         """Registers a callback for a specific message ID.
 
         Args:

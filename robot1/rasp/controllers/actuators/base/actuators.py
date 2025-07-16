@@ -20,7 +20,7 @@ class Actuators(
         baudrate=CONFIG.TEENSY_BAUDRATE,
         enable_crc=CONFIG.TEENSY_CRC,
         enable_dummy=CONFIG.TEENSY_DUMMY,
-    ):
+    ) -> None:
         # Initialize the parent-GPIOComTeensy class
         super().__init__(
             logger,
@@ -55,7 +55,7 @@ class Actuators(
     ####################################
     # Message Receiving Handlers       #
     ####################################
-    def rcv_print(self, msg: bytes):
+    def rcv_print(self, msg: bytes) -> None:
         """Handles PRINT messages from the Teensy.
 
         Args:
@@ -65,7 +65,7 @@ class Actuators(
             "Teensy Actuators says: " + msg.decode("ascii", errors="ignore"),
         )
 
-    def rcv_unknown_msg(self, msg: bytes):
+    def rcv_unknown_msg(self, msg: bytes) -> None:
         """Handles unknown messages from the Teensy.
 
         Logs a warning indicating that the message type is not recognized.
@@ -75,7 +75,7 @@ class Actuators(
         """
         self.logger.warning(f"Teensy Actuators does not know the message {msg.hex()}")
 
-    def rcv_switch_state_return(self, msg: bytes):
+    def rcv_switch_state_return(self, msg: bytes) -> None:
         """Handles SWITCH_STATE_RETURN messages from the Teensy.
 
         Args:
@@ -93,7 +93,7 @@ class Actuators(
     ####################################
 
     @log("Actuators")
-    def set_stepper_driver_activation_state(self, pin_enable: int, enable_driver: bool):
+    def set_stepper_driver_activation_state(self, pin_enable: int, enable_driver: bool) -> None:
         """Sets the activation state of a stepper motor driver through its enable pin.
 
         Args:
@@ -165,11 +165,11 @@ class Actuators(
         angle: int,
         min_angle: int = 0,
         max_angle: int = 180,
-        detach=False,
+        detach: bool = False,
         # If True, the servo will detach after setting the angle,
         # DO NOT USE DETACH = TRUE AND DETACH = FALSE ON THE SAME SERVO
-        detach_delay=1000,
-        use_I2C=True,
+        detach_delay: int = 1000,
+        use_I2C: bool = True,
     ) -> None:
         """Set the angle of the servo at the given pin.
 
@@ -181,6 +181,7 @@ class Actuators(
             detach (bool, optional): Whether to detach the servo after setting the angle. Defaults to False.
             detach_delay (int, optional): The time in milliseconds to keep the servo detached. Defaults to 1000.
              Ignored if detach is False.
+            use_I2C (bool, optional): Whether to use I2C communication for the servo. Defaults to True.
         """
         if min_angle <= angle <= max_angle:
             if detach:

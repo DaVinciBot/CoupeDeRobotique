@@ -56,7 +56,7 @@ class GridManager:
             ],
         )
 
-    def __update_spatial_index(self):
+    def __update_spatial_index(self) -> None:
         """Updates the spatial index for static forbidden zones."""
         self.spatial_index = STRtree(self.static_forbidden_zones)
 

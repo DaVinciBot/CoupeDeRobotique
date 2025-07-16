@@ -17,7 +17,7 @@ class ActuatorsShowDummy(ActuatorsShow):
         pid=CONFIG.TEENSY_PID,
         baudrate=CONFIG.TEENSY_BAUDRATE,
         enable_crc=CONFIG.TEENSY_CRC,
-    ):
+    ) -> None:
         # Initialize parent with a dummy flag to bypass hardware
         super().__init__(
             logger,

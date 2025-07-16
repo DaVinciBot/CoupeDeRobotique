@@ -21,7 +21,7 @@ class SmoothSegment(BaseSegment):
         duration: float,
         sampled_points: list[OrientedPoint],
         total_distance: float,
-    ):
+    ) -> None:
         """Initialize a curved trajectory segment with its start and end poses, duration,
         sampled path points, and the total distance.
 

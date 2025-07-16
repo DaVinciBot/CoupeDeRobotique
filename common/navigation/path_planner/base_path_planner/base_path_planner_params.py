@@ -13,7 +13,7 @@ class BasePathPlannerParams:
         path_finding_strategy (PathPlanningStrategy): The strategy used for generating paths.
     """
 
-    def __init__(self, path_finding_strategy: PathPlanningStrategy):
+    def __init__(self, path_finding_strategy: PathPlanningStrategy) -> None:
         """Initialize the base path planner parameters.
 
         Args:
@@ -23,5 +23,5 @@ class BasePathPlannerParams:
 
 
 class BasePathPlannerPlanPathParams:
-    def __init__(self, start: OrientedPoint):
+    def __init__(self, start: OrientedPoint) -> None:
         self.start: OrientedPoint = start

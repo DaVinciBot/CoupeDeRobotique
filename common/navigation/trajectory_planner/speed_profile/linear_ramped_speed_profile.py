@@ -18,7 +18,7 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
     depending on available distance and speed constraints.
     """
 
-    def __init__(self, acceleration: float, max_speed: float, deceleration: float):
+    def __init__(self, acceleration: float, max_speed: float, deceleration: float) -> None:
         """Initializes the profile with acceleration, max speed, and deceleration.
 
         Args:

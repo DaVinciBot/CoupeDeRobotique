@@ -19,7 +19,7 @@ class RectangularProjectionAcsDetectionProfile(
         self,
         params: RectangularProjectionAcsDetectionProfileParams,
         logger: Logger | None = None,
-    ):
+    ) -> None:
         super().__init__(params, logger)
 
     def _create_rectangular_projection(self, ally_zone: AllyZone) -> Polygon:

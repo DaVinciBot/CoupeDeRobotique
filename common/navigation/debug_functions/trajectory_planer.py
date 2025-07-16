@@ -18,7 +18,7 @@ def test_trajectory_planning(
     trajectory_planner: BaseTrajectoryPlanner,
     path: list[OrientedPoint],
     time_step: float = 0.1,
-):
+) -> None:
     """Simulates and visualizes the performance of a trajectory planner.
 
     Args:

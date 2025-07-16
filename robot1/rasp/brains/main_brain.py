@@ -18,6 +18,12 @@ from sensors import Inputs, Lidar
 
 
 class MainBrain(Brain):
+    """Main brain for the robot.
+
+    Args:
+        Brain (Brain): Base class for all brains.
+    """
+
     def __init__(
         self,
         logger: Logger,
@@ -31,6 +37,16 @@ class MainBrain(Brain):
         # Inputs
         inputs: Inputs,
     ) -> None:
+        """Initializes the MainBrain with the necessary components.
+
+        Args:
+            logger (Logger): Logger instance for logging messages.
+            lidar (Lidar): Lidar instance for distance measurements.
+            arena (ShowArena): Arena instance for representing the game arena.
+            ws_cmd (WServerRouteManager): WebSocket command route manager.
+            ws_ui (WServerRouteManager): WebSocket UI route manager.
+            inputs (Inputs): Inputs instance for handling sensor data.
+        """
         self.lidar: Lidar = lidar
         self.arena: ShowArena = arena
 
@@ -38,7 +54,7 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
         self.score: int = 0
 
-        self.ui_state = {
+        self.ui_state: dict[str, bool | OrientedPoint | dict[str, bool] | float] = {
             "jack_state": True,
             "bau_state": True,
             "odometrie_state": OrientedPoint(0, 0, 0),
@@ -74,6 +90,7 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def run(self) -> None:
+        """Runs the main control loop for the robot."""
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
         rolling_basis = RollingBasis(
@@ -137,6 +154,7 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def visualize_arena(self) -> None:
+        """Visualizes the arena."""
         # --- Initialization --- #
         fig, ax = plt.subplots()
 
@@ -170,6 +188,7 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     async def update_ui(self) -> None:
+        """Updates the UI with the current state."""
         previous_state = self.ui_state.copy()
 
         # --- MetaProg is insane (loop) --- #
@@ -193,8 +212,10 @@ class MainBrain(Brain):
             )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
-    async def receive_ui_data(self):
-        """Executes requests received by the server. Use Postman to send request to the server
+    async def receive_ui_data(self) -> None:
+        """Executes requests received by the server.
+
+        Use Postman to send request to the server
         Use eval and await eval to run the code you want. Code must be sent as a string
         """
         ui = await self.ws_ui.receiver.get()
@@ -224,7 +245,7 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def update_arena(self) -> None:
-        # Update the arena with the new position of the robot
+        """Updates the arena with the current position of the robot."""
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
             # lidar_scan_polars=np.array([]),
@@ -240,7 +261,8 @@ class MainBrain(Brain):
     """ ### One-Shot Tasks ### """
 
     @Brain.task(process=False, run_on_start=False)
-    async def wait_for_team(self):
+    async def wait_for_team(self) -> None:
+        """Waits for the team color to be set before starting the brain."""
         while self.arena.team_color == TeamColor.UNDEFINED:
             await asyncio.sleep(0.1)
 
@@ -249,7 +271,8 @@ class MainBrain(Brain):
         )
 
     @Brain.task(process=False, run_on_start=True)
-    async def wait_jack_trigger(self):
+    async def wait_jack_trigger(self) -> None:
+        """Wait for the jack to be triggered."""
         while not self.jack_plugged:
             await asyncio.sleep(0.1)
         await self.inputs.wait_for_jack_trigger()
@@ -257,12 +280,14 @@ class MainBrain(Brain):
         self.jack_plugged = False
 
     @Brain.task(process=False, run_on_start=True)
-    async def wait_jack_plug(self):
+    async def wait_jack_plug(self) -> None:
+        """Wait for the jack to be plugged."""
         await self.inputs.wait_for_jack_plugged()
         self.jack_plugged = True
 
     @Brain.task(process=False, run_on_start=True)
-    async def start(self):
+    async def start(self) -> None:
+        """Starts the main brain process."""
         # self.arena.set_team_color(TeamColor.YELLOW)
         await self.wait_for_team()
 

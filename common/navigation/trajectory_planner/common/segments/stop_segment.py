@@ -20,7 +20,7 @@ class StopSegment(BaseSegment):
         start_position: OrientedPoint,
         end_position: OrientedPoint,
         duration: float,
-    ):
+    ) -> None:
         """Initialize a stationary segment with given start and end positions and duration.
 
         Args:

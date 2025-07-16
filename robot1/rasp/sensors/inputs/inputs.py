@@ -6,7 +6,16 @@ from GPIO import PIN
 
 
 class Inputs:
-    def __init__(self, pin_jack: int, pin_bau: int, logger: Logger | None = None):
+    """Handles input from various sensors."""
+
+    def __init__(self, pin_jack: int, pin_bau: int, logger: Logger | None = None) -> None:
+        """Initialize the Inputs class.
+
+        Args:
+            pin_jack (int): GPIO pin number for the jack input.
+            pin_bau (int): GPIO pin number for the BAU input.
+            logger (Logger | None, optional): Logger instance for logging. Defaults to None.
+        """
         self.logger = logger or Logger(
             identifier="Inputs",
             follow_logger_manager_rules=True,
@@ -18,7 +27,12 @@ class Inputs:
         self.bau: PIN = PIN(pin_bau)
         self.bau.setup("input_pullup", reverse_state=False)
 
-    async def wait_for_jack_trigger(self, wait_time: float = 0.001):
+    async def wait_for_jack_trigger(self, wait_time: float = 0.001) -> None:
+        """Wait for the jack trigger to be activated.
+
+        Args:
+            wait_time (float, optional): Time to wait between checks. Defaults to 0.001.
+        """
         false_jacks_in_a_row = 0
         self.logger.info("Wait jack trigger...")
         while false_jacks_in_a_row < 5:
@@ -32,7 +46,12 @@ class Inputs:
             await asyncio.sleep(wait_time)
         self.logger.info("Jack trigger detected !")
 
-    async def wait_for_jack_plugged(self, wait_time: float = 0.001):
+    async def wait_for_jack_plugged(self, wait_time: float = 0.001) -> None:
+        """Wait for the jack to be plugged in.
+
+        Args:
+            wait_time (float, optional): Time to wait between checks. Defaults to 0.001.
+        """
         true_jacks_in_a_row = 0
         self.logger.info("Waiting for jack to be plugged in...")
         while true_jacks_in_a_row < 5:

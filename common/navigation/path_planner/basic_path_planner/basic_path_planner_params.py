@@ -18,7 +18,7 @@ class BasicPathPlannerParams(BasePathPlannerParams):
         direction (Direction): Indicates whether the path should be planned FORWARD or BACKWARD.
     """
 
-    def __init__(self, direction: Direction = Direction.FORWARD):
+    def __init__(self, direction: Direction = Direction.FORWARD) -> None:
         """Initialize parameters for the basic path planner.
 
         Args:
@@ -29,6 +29,6 @@ class BasicPathPlannerParams(BasePathPlannerParams):
 
 
 class BasicPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
-    def __init__(self, start: OrientedPoint, goal: OrientedPoint):
+    def __init__(self, start: OrientedPoint, goal: OrientedPoint) -> None:
         self.goal: OrientedPoint = goal
         super().__init__(start)

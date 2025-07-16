@@ -17,7 +17,7 @@ from strategy.tools import (
 
 
 class BaseStrategy(ABC):
-    def __init__(self, ctx: BaseGameContext):
+    def __init__(self, ctx: BaseGameContext) -> None:
         self.zones = CONFIG.INFO_BY_TEAM[ctx.arena.team_color.value]
         self.strategy = SubGraphBuilder()
         self.runner: GraphRunner | None = None

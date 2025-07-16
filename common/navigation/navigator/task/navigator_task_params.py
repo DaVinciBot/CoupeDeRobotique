@@ -19,7 +19,7 @@ class NavigatorTaskParams:
         speed_profiler: SpeedProfiler,
         avoidance_params: BaseAvoidanceParams,
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
-    ):
+    ) -> None:
         self.path_planner_params: BasePathPlannerParams = path_planner_params
         self.trajectory_planner_params: BaseTrajectoryPlannerParams = (
             trajectory_planner_params

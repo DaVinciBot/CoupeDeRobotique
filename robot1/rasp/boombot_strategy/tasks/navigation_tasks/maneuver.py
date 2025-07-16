@@ -35,7 +35,7 @@ class RelativeBackward(NavigationTask):
         distance (float): The distance to move backward in millimeters.
     """
 
-    def __init__(self, distance: float):
+    def __init__(self, distance: float) -> None:
         super().__init__(
             goal=None,
             path_planner_params=DeltaPathPlannerParams(distance=-distance),
@@ -58,7 +58,7 @@ class RelativeForward(NavigationTask):
         distance (float): The distance to move forward in millimeters.
     """
 
-    def __init__(self, distance: float):
+    def __init__(self, distance: float) -> None:
         super().__init__(
             goal=None,
             path_planner_params=DeltaPathPlannerParams(distance=distance),
@@ -77,7 +77,7 @@ class GoCentroidOfZone(NavigationTask):
         zone_id (int): The ID of the target zone.
     """
 
-    def __init__(self, zone_id: int):
+    def __init__(self, zone_id: int) -> None:
         super().__init__(
             goal=zone_id,
             path_planner_params=BasicPathPlannerParams(),

@@ -6,6 +6,7 @@ from loggerplusplus import Logger
 
 class LidarDummy:
     """A dummy Lidar class for testing purposes.
+
     Simulates the behavior of a real lidar sensor.
     """
 
@@ -21,13 +22,14 @@ class LidarDummy:
     ) -> None:
         """Initialize the dummy lidar object.
 
-        :param logger: logger to log the lidar's events
-        :param min_angle: the minimum angle of the lidar (max angle at left)
-        :param max_angle: the maximum angle of the lidar (min angle at right)
-        :param unit_angle: the unit of the angles (default: "deg")
-        :param unit_distance: the unit of the distances (default: "cm")
-        :param min_distance: the minimum distance to consider a distance as valid (default: 5.0 cm)
-        :param num_points: number of points to simulate in a scan
+        Args:
+            logger (Logger): Logger instance for logging events.
+            min_angle (float): Minimum angle of the lidar (max angle at left).
+            max_angle (float): Maximum angle of the lidar (min angle at right).
+            unit_angle (str, optional): Unit of the angles. Defaults to "deg".
+            unit_distance (str, optional): Unit of the distances. Defaults to "cm".
+            min_distance (float, optional): Minimum distance to consider a distance as valid. Defaults to 5.0.
+            num_points (int, optional): Number of points to simulate in a scan. Defaults to 360.
         """
         self._logger = logger
         self.__min_angle = min_angle
@@ -54,10 +56,13 @@ class LidarDummy:
     ) -> np.ndarray:
         """Initialize the polar angles array for the dummy lidar.
 
-        :param min_angle: the minimum angle of the lidar (max angle at left)
-        :param max_angle: the maximum angle of the lidar (min angle at right)
-        :param num_points: the number of points in a scan
-        :return: numpy array of angles
+        Args:
+            min_angle (float): Minimum angle of the lidar (max angle at left).
+            max_angle (float): Maximum angle of the lidar (min angle at right).
+            num_points (int): Number of points to simulate in a scan.
+
+        Returns:
+            np.ndarray: Array of angles.
         """
         angle_step = abs(max_angle - min_angle) / num_points
         return np.array(
@@ -68,8 +73,14 @@ class LidarDummy:
     def __init_angles_unit(self, unit: str) -> float:
         """Initialize the unit of the angles.
 
-        :param unit: the unit of the angles
-        :return: conversion factor
+        Args:
+            unit (str): The unit of the angles.
+
+        Returns:
+            float: conversion factor for the angles
+
+        Raises:
+            ValueError: If the unit is not recognized.
         """
         if unit == "deg":
             return 1
@@ -82,8 +93,14 @@ class LidarDummy:
     def __init_distances_unit(self, unit: str) -> float:
         """Initialize the unit of the distances.
 
-        :param unit: the unit of the distances
-        :return: conversion factor
+        Args:
+            unit (str): The unit of the distances.
+
+        Returns:
+            float: conversion factor for the distances
+
+        Raises:
+            ValueError: If the unit is not recognized.
         """
         if unit == "mm":
             return 1000
@@ -102,7 +119,8 @@ class LidarDummy:
     def scan_to_distances(self) -> np.ndarray:
         """Simulate a lidar scan and return fake distance data.
 
-        :return: numpy array of distances
+        Returns:
+            np.ndarray: numpy array of distances
         """
         # Initialize an array of distances
         distances = np.full(
@@ -150,7 +168,8 @@ class LidarDummy:
     def scan_to_polars(self) -> np.ndarray:
         """Simulate a lidar scan and return fake polar coordinates.
 
-        :return: numpy array of [angle, distance] pairs
+        Returns:
+            np.ndarray: numpy array of [angle, distance] pairs
         """
         distances = self.scan_to_distances()
         polars = np.column_stack((self.__polars_angles, distances))
@@ -163,7 +182,8 @@ class LidarDummy:
     def is_connected(self) -> bool:
         """Check if the dummy lidar is connected.
 
-        :return: connection status
+        Returns:
+            bool: connection status
         """
         return self.__is_connected
 
@@ -171,7 +191,8 @@ class LidarDummy:
     def distances(self) -> np.ndarray:
         """Get the last simulated distances.
 
-        :return: numpy array of distances
+        Returns:
+            np.ndarray: numpy array of distances
         """
         return self.scan_to_distances()
 
@@ -179,6 +200,7 @@ class LidarDummy:
     def polars(self) -> np.ndarray:
         """Get the last simulated polar coordinates.
 
-        :return: numpy array of [angle, distance] pairs
+        Returns:
+            np.ndarray: numpy array of [angle, distance] pairs
         """
         return self.scan_to_polars()

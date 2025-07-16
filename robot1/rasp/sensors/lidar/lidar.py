@@ -11,6 +11,7 @@ TLidar = TypeVar("TLidar", bound="pysicktim")
 
 class Lidar:
     """This class is a wrapper for the lidar sensor.
+
     * The angles are in degrees (considering the sense in the trigonometric way).
             -> 0° is the front of the robot
             -> 90° is the left of the robot
@@ -34,17 +35,19 @@ class Lidar:
         initialization_fail_refresh_rate: float = 0.5,
     ) -> None:
         """Initialize the lidar object and the polars angles.
+
         It also tests the lidar connection.
 
         WARNING: The min & max angle have to be given in the trigonometric way and in degrees !
 
-        :param logger: logger to log the lidar's events
-        :param min_angle: the minimum angle of the lidar (max angle at left)
-        :param max_angle: the maximum angle of the lidar (min angle at right)
-        :param unit_angle: the unit of the angles (default: "deg")
-        :param unit_distance: the unit of the distances (default: "cm")
-        :param min_distance: the minimum distance to consider a distance as valid (default: 5.0 cm)
-        :return:
+        Args:
+            logger (Logger): Logger instance for logging events.
+            min_angle (float): Minimum angle of the lidar (max angle at left).
+            max_angle (float): Maximum angle of the lidar (min angle at right).
+            unit_angle (str, optional): Unit of the angles. Defaults to "deg".
+            unit_distance (str, optional): Unit of the distances. Defaults to "cm".
+            min_distance (float, optional): Minimum distance to consider a distance as valid. Defaults to 5.0.
+            initialization_fail_refresh_rate (float, optional): Refresh rate for initialization failures. Defaults to 0.5.
         """
         self._logger = logger
         self.__min_angle = min_angle
@@ -66,7 +69,13 @@ class Lidar:
 
     def __init_lidar(self) -> TLidar:
         """Initialize the lidar object and test the connection.
-        :return: the lidar object
+
+        Returns:
+            TLidar: the lidar object
+
+        Raises:
+            ConnectionError: If the lidar is not connected or does not work correctly.
+            ImportError: If the lidar module cannot be imported.
         """
         try:
             import pysicktim as lidar
@@ -88,12 +97,10 @@ class Lidar:
             self._logger.critical(f"[init_lidar] Error while importing lidar [{error}]")
             raise ImportError(f"Error while importing lidar [{error}] !") from error
 
-    def __threading_init_lidar(self):
-        """Initialize the lidar in a thread. It will retry to initialize the lidar until is connected.
-        :return:
-        """
+    def __threading_init_lidar(self) -> None:
+        """Initialize the lidar in a thread. It will retry to initialize the lidar until is connected."""
 
-        def init():
+        def init() -> None:
             while not self.__is_connected:
                 try:
                     self._logger.debug(
@@ -117,10 +124,17 @@ class Lidar:
         thread.start()
 
     def __init_polars_angle(self, min_angle: float, max_angle: float) -> np.ndarray:
-        """Initialize the polars angles array
-        :param min_angle: the minimum angle of the lidar (max angle at left)
-        :param max_angle: the maximum angle of the lidar (min angle at right)
-        :return:
+        """Initialize the polar angles array.
+
+        Args:
+            min_angle (float): Minimum angle of the lidar (max angle at left).
+            max_angle (float): Maximum angle of the lidar (min angle at right).
+
+        Returns:
+            np.ndarray: numpy array of angles centered around 0°.
+
+        Raises:
+            ValueError: If the polars array cannot be initialized.
         """
         n = len(self.distances)  # Number of distances
         if n == 0:
@@ -141,9 +155,16 @@ class Lidar:
         return centered_polars
 
     def __init_angles_unit(self, unit: str) -> float:
-        """Initialize the unit of the angles
-        :param unit_angle: the unit of the angles
-        :return:
+        """Initialize the unit of the angles.
+
+        Args:
+            unit (str): The unit of the angles.
+
+        Returns:
+            float: conversion factor for the angles
+
+        Raises:
+            ValueError: If the unit is not recognized.
         """
         if unit == "deg":
             return 1
@@ -154,9 +175,16 @@ class Lidar:
         raise ValueError(f"unit of angles not recognized [{unit}] !")
 
     def __init_distances_unit(self, unit: str) -> float:
-        """Initialize the unit of the distances
-        :param unit_distance: the unit of the distances
-        :return:
+        """Initialize the unit of the distances.
+
+        Args:
+            unit (str): The unit of the distances.
+
+        Returns:
+            float: conversion factor for the distances
+
+        Raises:
+            ValueError: If the unit is not recognized.
         """
         if unit == "mm":
             return 1000
@@ -170,9 +198,13 @@ class Lidar:
         self._logger.critical(f"unit of distances not recognized [{unit}] !")
         raise ValueError(f"unit of distances not recognized [{unit}] !")
 
-    def __scan(self):
-        """Scan the environment with the lidar and store the distances.
-        in the lidar object. If the scan fails, it will try to reconnect the lidar.
+    def __scan(self) -> None:
+        """Scan the environment with the lidar and store the distances in the lidar object.
+
+        If the scan fails, it will try to reconnect the lidar.
+
+        Raises:
+            Exception: If the lidar is disconnected or if the scan fails.
         """
         try:
             self.__lidar_obj.scan()
@@ -192,7 +224,15 @@ class Lidar:
         Public methods and properties
     """
 
-    def is_connected(self, force_check=False):
+    def is_connected(self, force_check: bool = False) -> bool:
+        """Check if the lidar is connected.
+
+        Args:
+            force_check (bool, optional): Force a check of the connection status. Defaults to False.
+
+        Returns:
+            bool: True if the lidar is connected, False otherwise.
+        """
         if force_check:
             self.__scan()
         return self.__is_connected
@@ -200,8 +240,11 @@ class Lidar:
     @property
     def distances(self) -> np.ndarray:
         """Get the distances from the last scan.
+
         It automatically converts the distances to the right unit.
-        :return: the distances array
+
+        Returns:
+            np.ndarray: the distances array
         """
         return (
             np.array(self.__lidar_obj.scan.distances, dtype=np.float32)
@@ -211,21 +254,28 @@ class Lidar:
     @property
     def polars(self) -> np.ndarray:
         """Get the polars array.
+
         It automatically converts the angles to the right unit.
-        :return: the polars array
+
+        Returns:
+            np.ndarray: the polars array
         """
         return np.column_stack((self.__polars_angles, self.distances))
 
     def scan_to_distances(self) -> np.ndarray:
         """Scan the environment with the lidar and return the distances.
-        :return: the distances array
+
+        Returns:
+            np.ndarray: the distances array
         """
         self.__scan()
         return self.distances
 
     def scan_to_polars(self) -> np.ndarray:
         """Scan the environment with the lidar and return the polars array.
-        :return: the polars array
+
+        Returns:
+            np.ndarray: the polars array
         """
         self.__scan()
         return self.polars[self.polars[:, 1] > self._min_distance]

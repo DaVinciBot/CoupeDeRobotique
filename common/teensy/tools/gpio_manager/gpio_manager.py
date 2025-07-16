@@ -17,7 +17,7 @@ class GPIOManager:
         gpios (dict[int, ActuatorType]): Dictionary mapping pin-numbers to actuator types.
     """
 
-    def __init__(self, logger: Logger, nb_pin: int):
+    def __init__(self, logger: Logger, nb_pin: int) -> None:
         """Initializes the GPIOManager with a logger and the number of available pins.
 
         Args:

@@ -33,7 +33,7 @@ class BaseComTeensy(Com):
         baudrate: int,
         enable_crc: bool = True,
         enable_dummy: bool = False,
-    ):
+    ) -> None:
         """Initializes the communication parameters for the Teensy device.
 
         Args:

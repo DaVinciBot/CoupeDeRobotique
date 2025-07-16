@@ -25,13 +25,13 @@ class Plants_zone:
     def __repr__(self) -> str:
         return self.__str__()
 
-    def take_plants(self, nb):
+    def take_plants(self, nb) -> None:
         self.nb_plant -= nb
 
-    def drop_plants(self, nb):
+    def drop_plants(self, nb) -> None:
         self.nb_plant += nb
 
-    def visit(self):
+    def visit(self) -> None:
         self.visited = True
 
 
@@ -45,7 +45,7 @@ class MarsArena(Arena):
         *,
         border_buffer,
         robot_buffer,
-    ):
+    ) -> None:
         """Generate the arena of the CDR 2023-2024
 
         :param start_zone: The start zone of the robot, must be between 1 and 6
@@ -141,7 +141,7 @@ class MarsArena(Arena):
         )
 
     @property
-    def team(self):
+    def team(self) -> str:
         return "y" if self.start_zone_id % 2 == 0 else "b"
 
     def sort_plant_zones(

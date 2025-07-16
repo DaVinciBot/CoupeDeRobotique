@@ -5,7 +5,7 @@ from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfi
 
 
 class RectangularProjectionAcsDetectionProfileParams(BaseAcsDetectionProfileParams):
-    def __init__(self, acs_distance: float, width_view: float):
+    def __init__(self, acs_distance: float, width_view: float) -> None:
         self.width_view: float = width_view
 
         # Compute half dimensions for rectangle projection

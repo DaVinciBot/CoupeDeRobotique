@@ -22,7 +22,7 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
         reverse (bool): If True, the condition is fulfilled when the zone is NOT accessible.
     """
 
-    def __init__(self, zone_id: int, reverse: bool = False):
+    def __init__(self, zone_id: int, reverse: bool = False) -> None:
         """Initialize the condition with a specific zone ID and optional reversal.
 
         Args:

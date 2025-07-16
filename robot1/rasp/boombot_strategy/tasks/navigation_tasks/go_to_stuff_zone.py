@@ -27,7 +27,7 @@ class GoToStuffZoneToPickUp(NavigationTask):
     to avoid collisions and applies a stabilization delay for system readiness before performing tasks.
     """
 
-    def __init__(self, stuff_zone_id: int):
+    def __init__(self, stuff_zone_id: int) -> None:
         """Initialize the GoToStuffZoneToPickUp task with parameters for navigation and avoidance.
 
         Args:

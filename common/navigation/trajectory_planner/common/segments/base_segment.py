@@ -19,7 +19,7 @@ class BaseSegment:
         start_position: OrientedPoint,
         end_position: OrientedPoint,
         duration: float,
-    ):
+    ) -> None:
         """Initialize the base segment with essential trajectory information.
 
         Args:

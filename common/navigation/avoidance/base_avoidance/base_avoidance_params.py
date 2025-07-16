@@ -21,7 +21,7 @@ class BaseAvoidanceParams:
     def __init__(
         self,
         avoidance_strategy: AvoidanceStrategy,
-    ):
+    ) -> None:
         """Initialize the base avoidance parameters.
 
         Args:

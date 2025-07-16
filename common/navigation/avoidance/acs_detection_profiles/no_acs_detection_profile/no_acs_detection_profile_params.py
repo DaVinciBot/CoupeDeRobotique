@@ -5,7 +5,7 @@ from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfi
 
 
 class NoAcsDetectionProfileParams(BaseAcsDetectionProfileParams):
-    def __init__(self, acs_distance: float = 0.0):
+    def __init__(self, acs_distance: float = 0.0) -> None:
         super().__init__(
             acs_detection_profile=AcsDetectionProfile.NO,
             acs_distance=acs_distance,

@@ -16,7 +16,7 @@ def test_speed_profile(
     step_time: float = 0.1,
     departure_speed: float = 0.0,
     arrival_speed: float = 0.0,
-):
+) -> None:
     """Plot the speed and distance over time for a given speed profile.
 
     Args:

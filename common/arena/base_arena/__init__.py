@@ -1,6 +1,5 @@
 from arena.base_arena.arena import BaseArena
 from arena.base_arena.arena_zones import (
-    # Different Types of Zones
     AllyZone,
     BaseArenaZone,
     BlueReservedZone,
@@ -9,7 +8,6 @@ from arena.base_arena.arena_zones import (
     ForbiddenZone,
     StuffZone,
     YellowReservedZone,
-    # Structures and Enums
     ZoneAccessibility,
     ZoneType,
 )

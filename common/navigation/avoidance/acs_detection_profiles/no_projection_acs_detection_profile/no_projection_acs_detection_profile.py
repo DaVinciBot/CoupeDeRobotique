@@ -16,7 +16,7 @@ class NoProjectionAcsDetectionProfile(
         self,
         params: NoProjectionAcsDetectionProfileParams,
         logger: Logger | None = None,
-    ):
+    ) -> None:
         super().__init__(params, logger)
 
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:

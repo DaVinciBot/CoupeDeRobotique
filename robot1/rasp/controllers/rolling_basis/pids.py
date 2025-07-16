@@ -24,12 +24,36 @@ class PID:
 
     @classmethod
     def from_dict(cls, pid_dict: dict[str, any]) -> "PID":
+        """Initialize a PID instance from a dictionary.
+
+        Args:
+            pid_dict (dict[str, any]): A dictionary containing PID parameters.
+
+        Returns:
+            PID: An instance of the PID class.
+        """
         return cls(**pid_dict)
 
     @classmethod
     def from_tuple(cls, pid_tuple: tuple) -> "PID":
+        """Initialize a PID instance from a tuple.
+
+        Args:
+            pid_tuple (tuple): A tuple containing PID parameters (kp, ki, kd).
+
+        Returns:
+            PID: An instance of the PID class.
+        """
         return cls(*pid_tuple)
 
     @classmethod
     def from_list(cls, pid_list: list) -> "PID":
+        """Initialize a PID instance from a list.
+
+        Args:
+            pid_list (list): A list containing PID parameters (kp, ki, kd).
+
+        Returns:
+            PID: An instance of the PID class.
+        """
         return cls(*pid_list)

@@ -11,13 +11,13 @@ class DummySerial:
     allowing data to be written and read in a controlled manner.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes the DummySerial object with empty input and output buffers."""
         self.output_buffer = b""  # Stores data written to the serial port
         self.input_buffer = b""  # Stores incoming data for reading
         self.out_waiting = False  # Indicates if data is waiting to be sent
 
-    def write(self, data: bytes):
+    def write(self, data: bytes) -> None:
         """Simulates writing data to the serial port.
 
         Args:
@@ -28,7 +28,7 @@ class DummySerial:
         # Simulated delay can be added based on baud rate if necessary
         self.out_waiting = False
 
-    def reset_output_buffer(self):
+    def reset_output_buffer(self) -> None:
         """Clears the output buffer."""
         self.output_buffer = b""
 
@@ -43,7 +43,7 @@ class DummySerial:
         """
         return self.input_buffer.split(signature)[0]
 
-    def dummy_add_input(self, data: bytes):
+    def dummy_add_input(self, data: bytes) -> None:
         """Simulates incoming data by adding it to the input buffer.
 
         Args:
@@ -51,6 +51,6 @@ class DummySerial:
         """
         self.input_buffer += data
 
-    def reset_input_buffer(self):
+    def reset_input_buffer(self) -> None:
         """Clears the input buffer."""
         self.input_buffer = b""

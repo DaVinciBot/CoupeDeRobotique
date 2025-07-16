@@ -9,7 +9,7 @@ img_path = "test.jpg"
 class MJPEGHandler(BaseHTTPRequestHandler):
     current_img = None
 
-    def send_index(self):
+    def send_index(self) -> None:
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -24,7 +24,7 @@ class MJPEGHandler(BaseHTTPRequestHandler):
             """,
         )
 
-    def do_GET(self):
+    def do_GET(self) -> None:
         if self.path.endswith(".mjpg"):
             self.send_response(200)
             self.send_header(
@@ -58,7 +58,7 @@ class MJPEGHandler(BaseHTTPRequestHandler):
 # I want to pass an object to the handler, but I can't figure out how to do it
 
 
-def start_video_server():
+def start_video_server() -> None:
     print("Starting video server")
     MJPEGHandler.current_img = None
     httpd = HTTPServer(("0.0.0.0", 8001), MJPEGHandler)
@@ -71,7 +71,7 @@ def start_video_server():
         print("Server stopped")
 
 
-def spawn_video_server():
+def spawn_video_server() -> None:
     import threading
 
     t = threading.Thread(target=start_video_server)

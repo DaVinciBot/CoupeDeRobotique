@@ -178,6 +178,6 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             f"Positions Recorded Size: {self.positions_record_size}"
         )
 
-    def __format__(self, format_spec):
+    def __format__(self, format_spec) -> str:
         """Formats the string representation of the zone."""
         return self.__str__()

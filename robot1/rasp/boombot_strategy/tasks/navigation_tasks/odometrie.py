@@ -24,7 +24,7 @@ class SetOdometrie(BaseTask):
         x: float | None = None,
         y: float | None = None,
         theta: float | None = None,
-    ):
+    ) -> None:
         """Initialize the SetOdometrie task with optional position values.
 
         Args:

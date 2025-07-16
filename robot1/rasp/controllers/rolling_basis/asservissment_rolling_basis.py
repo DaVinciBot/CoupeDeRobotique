@@ -21,13 +21,24 @@ class AsservissementRollingBasis(BaseComTeensy):
     def __init__(
         self,
         logger: Logger,
-        serial_number=CONFIG.ROLLING_BASIS_TEENSY_SER,
-        vid=CONFIG.TEENSY_VID,
-        pid=CONFIG.TEENSY_PID,
-        baudrate=CONFIG.TEENSY_BAUDRATE,
-        enable_crc=CONFIG.TEENSY_CRC,
-        enable_dummy=CONFIG.TEENSY_DUMMY,
-    ):
+        serial_number: int = CONFIG.ROLLING_BASIS_TEENSY_SER,
+        vid: int = CONFIG.TEENSY_VID,
+        pid: int = CONFIG.TEENSY_PID,
+        baudrate: int = CONFIG.TEENSY_BAUDRATE,
+        enable_crc: bool = CONFIG.TEENSY_CRC,
+        enable_dummy: bool = CONFIG.TEENSY_DUMMY,
+    ) -> None:
+        """Initializes the AsservissementRollingBasis class.
+
+        Args:
+            logger (Logger): The logger instance for logging.
+            serial_number (int, optional): The serial number of the Teensy. Defaults to CONFIG.ROLLING_BASIS_TEENSY_SER.
+            vid (int, optional): The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
+            pid (int, optional): The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
+            baudrate (int, optional): The baud rate for serial communication. Defaults to CONFIG.TEENSY_BAUDRATE.
+            enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
+            enable_dummy (bool, optional): Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+        """
         # Initialize state and log storage
         self.logger = logger
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
@@ -62,12 +73,29 @@ class AsservissementRollingBasis(BaseComTeensy):
     ####################################
     # Message Receiving Handlers       #
     ####################################
-    def rcv_print(self, msg: bytes):
+    def rcv_print(self, msg: bytes) -> None:
+        """Handles PRINT messages from the Teensy.
+
+        Args:
+            msg (bytes): The received message bytes.
+        """
         self.logger.info(
             "Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore"),
         )
 
-    def rcv_rolling_basis_state(self, msg: bytes):
+    def rcv_rolling_basis_state(self, msg: bytes) -> None:
+        """Handles rolling basis state update messages from the Teensy.
+
+        The message contains:
+        - float x: X-coordinate of the position (4 bytes).
+        - float y: Y-coordinate of the position (4 bytes).
+        - float theta: Orientation (4 bytes).
+        - float current_linear_speed: Current linear speed (4 bytes).
+        - float current_angular_speed: Current angular speed (4 bytes).
+
+        Args:
+            msg (bytes): The received message bytes.
+        """
         # Unpack new odometry
         self.odometrie = OrientedPoint(
             (struct.unpack("<d", msg[0:8])[0], struct.unpack("<d", msg[8:16])[0]),
@@ -76,7 +104,12 @@ class AsservissementRollingBasis(BaseComTeensy):
         # After receiving actual state, log entry
         self._log_entry()
 
-    def rcv_unknown_msg(self, msg: bytes):
+    def rcv_unknown_msg(self, msg: bytes) -> None:
+        """Handles unknown messages from the Teensy.
+
+        Args:
+            msg (bytes): The received message bytes.
+        """
         self.logger.warning(f"Teensy Motors does not know the message {msg.hex()}")
 
     ####################################
@@ -86,7 +119,13 @@ class AsservissementRollingBasis(BaseComTeensy):
         self,
         target_position: OrientedPoint,
     ) -> None:
-        """Sends a message to set the target position of the rolling basis and logs the previous state."""
+        """Sends a message to set the target speed and position of the rolling basis.
+
+        Args:
+            target_linear_speed (float): Target linear speed.
+            target_angular_speed (float): Target angular speed.
+            target_position (OrientedPoint): Target position and orientation.
+        """
         # Store for logging
         self._last_target = target_position
 
@@ -223,7 +262,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
         self.send_bytes(msg)
 
-    def set_linear_position_pid(self, *args, **kwargs) -> None:
+    def set_linear_position_pid(self, *args: object, **kwargs: dict) -> None:
         """Configure the PID values for linear position control.
 
         Accepts either three positional arguments (kp, ki, kd),
@@ -245,7 +284,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         except Exception as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
-    def set_angular_position_pid(self, *args, **kwargs) -> None:
+    def set_angular_position_pid(self, *args: object, **kwargs: dict) -> None:
         """Configure the PID values for angular position control.
 
         Accepts either three positional arguments (kp, ki, kd),

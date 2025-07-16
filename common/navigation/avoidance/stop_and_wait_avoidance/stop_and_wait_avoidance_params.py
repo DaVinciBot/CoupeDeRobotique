@@ -21,7 +21,7 @@ class StopAndWaitAvoidanceParams(BaseAvoidanceParams):
     def __init__(
         self,
         timeout: float,
-    ):
+    ) -> None:
         """Initializes StopAndWaitAvoidanceParams with specific avoidance distance and timeout in seconds.
 
         Args:

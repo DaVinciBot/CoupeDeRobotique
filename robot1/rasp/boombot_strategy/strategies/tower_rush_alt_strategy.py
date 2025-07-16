@@ -31,7 +31,7 @@ class TowerRushAltStrategy(BaseStrategy):
     - Navigate to backstage zone to finish the game
     """
 
-    def __init__(self, ctx: ShowGameContext):
+    def __init__(self, ctx: ShowGameContext) -> None:
         """Initialize the strategy with the required task flow using subgraphs and direct transitions.
 
         Args:

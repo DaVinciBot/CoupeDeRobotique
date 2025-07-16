@@ -26,7 +26,7 @@ class ConditionalTransition(BaseTransition):
         self,
         target: BaseTaskNode,
         condition: BaseTransitionCondition,
-    ):
+    ) -> None:
         """Initialize a conditional transition.
 
         Args:

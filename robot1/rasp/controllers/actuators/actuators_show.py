@@ -41,7 +41,7 @@ class ActuatorsShow(Actuators):
     It inherits from the Actuators class and overrides its methods to provide functionality for the show mode.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         """Initializes the ActuatorsShow class.
 
         Args:
@@ -126,14 +126,14 @@ class ActuatorsShow(Actuators):
         return True
 
     # Private methods
-    def __move_to_save_folded_position(self):
+    def __move_to_save_folded_position(self) -> None:
         """Moves the elevator to a safe folded position before deploying the servo arm.
         This method ensures that the elevator is in a safe position before deploying the servo arm.
         """
         steps_to_move = self.stepper.folded_steps - self.elevator_ticks + 20
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
 
-    def __align_dropping_cans(self):
+    def __align_dropping_cans(self) -> None:
         """Aligns the dropping cans by setting the servos to specific angles.
         This method sets the angles of the servos to predefined values for the dropping cans.
         """
@@ -142,7 +142,7 @@ class ActuatorsShow(Actuators):
 
     # Public methods
 
-    def deploy(self, pins: int | list[int]):
+    def deploy(self, pins: int | list[int]) -> None:
         """Deploys the specified servos to their deploy angle.
         This method sets the specified servos to their deploy angle, effectively deploying the servo arm.
 
@@ -161,7 +161,7 @@ class ActuatorsShow(Actuators):
                     max_angle=self.servos[pin].max_angle,
                 )
 
-    def fold(self, pins: int | list[int]):
+    def fold(self, pins: int | list[int]) -> None:
         """Folds the specified servos to their fold angle.
         This method sets the specified servos to their fold angle, effectively folding the servo arm.
 
@@ -181,7 +181,7 @@ class ActuatorsShow(Actuators):
                     max_angle=self.servos[pin].max_angle,
                 )
 
-    def deploy_all(self):
+    def deploy_all(self) -> None:
         """Deploys all servos to their deploy angle.
         This method sets all servos to their deploy angle, effectively deploying the servo arm.
         """
@@ -192,7 +192,7 @@ class ActuatorsShow(Actuators):
             if i != 8:
                 self.deploy(i)
 
-    def deploy_all_pickup(self):
+    def deploy_all_pickup(self) -> None:
         """Deploys all servos and moves the elevator to a safe position for pickup.
         This method ensures that the elevator is in a safe position before deploying the servo arm.
         """
@@ -203,7 +203,7 @@ class ActuatorsShow(Actuators):
             if i != 8:
                 self.deploy(i)
 
-    def fold_all(self):
+    def fold_all(self) -> None:
         """Folds all servos to their fold angle.
         This method sets all servos to their fold angle, effectively folding the servo arm.
         """
@@ -214,7 +214,7 @@ class ActuatorsShow(Actuators):
         if 8 in self.servos:
             self.fold(8)
 
-    def demagnetize_all(self):
+    def demagnetize_all(self) -> None:
         """Demagnetizes the servos by setting them to their fold angle.
         This is useful for ensuring that the servos are not holding any position
         when they are not in use.
@@ -228,7 +228,7 @@ class ActuatorsShow(Actuators):
                     max_angle=self.servos[pin].max_angle,
                 )
 
-    def magnetize_all(self):
+    def magnetize_all(self) -> None:
         """Magnetizes the servos by setting them to their deploy angle.
         This is useful for ensuring that the servos are holding their position
         when they are in use.
@@ -242,7 +242,7 @@ class ActuatorsShow(Actuators):
                     max_angle=self.servos[pin].max_angle,
                 )
 
-    def docking(self, pins: int | list[int]):
+    def docking(self, pins: int | list[int]) -> None:
         """Moves the interior servos arms to the docking position.
         This method sets the interior servo arms to its docking position, which is used for docking purposes.
         """
@@ -256,24 +256,24 @@ class ActuatorsShow(Actuators):
                     max_angle=self.servos[pin].max_angle,
                 )
 
-    def deploy_banner(self):
+    def deploy_banner(self) -> None:
         self.deploy([0, 2])
 
-    def place_upper_cans(self):
+    def place_upper_cans(self) -> None:
         """Places the upper cans by setting the servos to specific angles.
         This method sets the angles of the servos to predefined values for the upper cans.
         """
         self.set_servo_angle(pin=4, angle=160, max_angle=270)
         self.set_servo_angle(pin=6, angle=90, max_angle=270)
 
-    def raise_plank(self):
+    def raise_plank(self) -> None:
         """Raises the plank by moving the elevator to the top position.
         This method is used to raise the plank to its top position.
         """
         steps_to_move = self.stepper.top_steps
         self.stepper_step(steps_to_move, self.stepper.speed)
 
-    def go_to_top(self):
+    def go_to_top(self) -> None:
         """Moves the elevator to the top position.
         If the elevator is folded, it will move to the folded position first.
         """
@@ -284,7 +284,7 @@ class ActuatorsShow(Actuators):
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
         self.logger.info(f"Steps current: {self.elevator_ticks}")
 
-    def elevator_drop_top(self):
+    def elevator_drop_top(self) -> None:
         """Moves the elevator to the top position.
         If the elevator is folded, it will move to the folded position first.
         """
@@ -295,7 +295,7 @@ class ActuatorsShow(Actuators):
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
         self.logger.info(f"Steps current: {self.elevator_ticks}")
 
-    def go_to_bottom(self):
+    def go_to_bottom(self) -> None:
         """Moves the elevator to the bottom position.
         If the elevator is folded, it will move to the folded position first.
         """
@@ -304,7 +304,7 @@ class ActuatorsShow(Actuators):
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=True)
         self.logger.info(f"Steps current: {self.elevator_ticks}")
 
-    def build_floors(self):
+    def build_floors(self) -> None:
         # Ask if I should use time.sleep or asyncio.sleep and thus making this method async
         """Builds the floors by deploying the servos and moving the elevator to the top position.
         This method is used to build the floors by deploying the servos and moving the elevator to the top position.
@@ -336,14 +336,14 @@ class ActuatorsShow(Actuators):
     #         self.stepper.folded_steps - self.elevator_ticks, self.stepper.speed
     #     )
 
-    def ready_to_pickup(self):
+    def ready_to_pickup(self) -> None:
         """Preparation and magnetization of all servos."""
         # Prep and go magnetized
         self.deploy_all_pickup()  # Magnetize
         time.sleep(1)
         self.deploy(8)
 
-    def pick_up(self):
+    def pick_up(self) -> None:
         """Catch cans and plank"""
         # Catch and raise cans and plank
         self.pickup_planck()
@@ -356,14 +356,14 @@ class ActuatorsShow(Actuators):
         # self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
         time.sleep(0.5)
 
-    def deplacement_object(self):
+    def deplacement_object(self) -> None:
         """Catch cans and plank"""
         # Catch and raise cans and plank
         self.pickup_planck()
         self.fold(9)
         time.sleep(0.1)
 
-    def ready_to_approach_to_pickup(self):
+    def ready_to_approach_to_pickup(self) -> None:
         self.magnetize_all()
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
@@ -373,8 +373,8 @@ class ActuatorsShow(Actuators):
         self.set_servo_angle(8, angle=self.servos[8].docking, max_angle=270)
         self.deploy(9)
 
-    def pickup_planck(self):
-        def _pickup():
+    def pickup_planck(self) -> None:
+        def _pickup() -> None:
             self.deploy(9)
             self.deploy(8)
             time.sleep(0.3)
@@ -384,7 +384,7 @@ class ActuatorsShow(Actuators):
         time.sleep(0.2)
         _pickup()
 
-    def build(self):
+    def build(self) -> None:
         self.fold(4)
         self.fold(6)
         time.sleep(1.5)
@@ -404,7 +404,7 @@ class ActuatorsShow(Actuators):
         self.set_servo_angle(8, angle=130, max_angle=270)
         time.sleep(0.1)
 
-    def start_position(self):
+    def start_position(self) -> None:
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
         self.set_servo_angle(8, angle=35, max_angle=270)
@@ -414,7 +414,7 @@ class ActuatorsShow(Actuators):
         self.fold(4)
         self.fold(6)
 
-    def block_banner(self):
+    def block_banner(self) -> None:
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
         self.set_servo_angle(8, angle=35, max_angle=270)
@@ -423,7 +423,7 @@ class ActuatorsShow(Actuators):
         self.set_servo_angle(0, angle=100, max_angle=270)
         self.set_servo_angle(2, angle=171, max_angle=270)
 
-    def deplacement_position(self):
+    def deplacement_position(self) -> None:
         time.sleep(0.5)
         self.demagnetize_all()
         self.fold(4)

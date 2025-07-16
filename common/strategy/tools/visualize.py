@@ -33,7 +33,7 @@ def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=F
             return ", ".join([t.__class__.__name__ for t in task_list])
         return task_list.__class__.__name__
 
-    def dfs(node: BaseTaskNode):
+    def dfs(node: BaseTaskNode) -> None:
         nid = str(id(node))
         if nid in seen:
             return
@@ -91,7 +91,7 @@ def visualize_entire_subgraph(
             return ", ".join([t.__class__.__name__ for t in task_list])
         return task_list.__class__.__name__
 
-    def add_node(node: BaseTaskNode):
+    def add_node(node: BaseTaskNode) -> None:
         nid = str(id(node))
         if nid in seen:
             return
@@ -127,7 +127,7 @@ def visualize_entire_subgraph(
 def visualize_task_graph_from_node(
     subgraph: BaseSubGraph,
     title: str = "Full Strategy Graph",
-):
+) -> None:
     """Uses NetworkX and Matplotlib to visualize the task graph with color-coded node statuses.
 
     Args:

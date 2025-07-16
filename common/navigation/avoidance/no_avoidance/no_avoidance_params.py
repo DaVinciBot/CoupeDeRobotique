@@ -15,6 +15,6 @@ class NoAvoidanceParams(BaseAvoidanceParams):
     distance-based avoidance behavior by setting the avoidance distance to zero.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initializes NoAvoidanceParams with 'NO_AVOIDANCE' strategy."""
         super().__init__(AvoidanceStrategy.NO_AVOIDANCE)

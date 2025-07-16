@@ -1,8 +1,6 @@
 from strategy.core.transitions.base_transition import BaseTransition
 from strategy.core.transitions.conditional_transition import (
-    # Condition Function
     BaseTransitionCondition,
-    # Transition
     ConditionalTransition,
     FromFunctionTransitionCondition,
     ZoneAccessibilityTransitionCondition,

@@ -19,7 +19,7 @@ class StraightSegment(BaseSegment):
         end_position: OrientedPoint,
         duration: float,
         distance: float,
-    ):
+    ) -> None:
         """Initialize a straight-line motion segment.
 
         Args:

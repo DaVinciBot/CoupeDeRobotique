@@ -27,7 +27,7 @@ class GPIOComTeensy(Com):
         baudrate: int,
         enable_crc: bool = True,
         enable_dummy: bool = False,
-    ):
+    ) -> None:
         """Initializes GPIO management for the Teensy microcontroller and its communication settings.
 
         Args:

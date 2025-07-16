@@ -15,7 +15,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
     All motion calculations assume uniform velocity with no acceleration or deceleration.
     """
 
-    def __init__(self, speed: float):
+    def __init__(self, speed: float) -> None:
         """Initialize the basic speed profile.
 
         Args:

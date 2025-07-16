@@ -185,7 +185,7 @@ class BaseArena(ABC):
             buffered_polygon=border_zone_polygon,
         )
 
-    def __prepare_zones(self):
+    def __prepare_zones(self) -> None:
         """Prepare all zones that could be used for calculations.
         It will improve the computing performance.
         """

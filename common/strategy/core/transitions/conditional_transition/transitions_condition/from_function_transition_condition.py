@@ -28,7 +28,7 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
     def __init__(
         self,
         func: Callable[[BaseTaskNode, BaseTaskNode, BaseGameContext], bool],
-    ):
+    ) -> None:
         """Initialize the transition condition with a custom function.
 
         Args:

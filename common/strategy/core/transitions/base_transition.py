@@ -21,7 +21,7 @@ class BaseTransition(ABC):
         target (BaseTaskNode): The task node that this transition leads to.
     """
 
-    def __init__(self, target: BaseTaskNode):
+    def __init__(self, target: BaseTaskNode) -> None:
         """Initialize the transition with a target node.
 
         Args:

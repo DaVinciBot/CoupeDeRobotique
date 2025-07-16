@@ -80,7 +80,7 @@ class Build(BaseTask):
 
 
 class Deposit(BaseTask):
-    def handle(self, ctx: ShowGameContext):
+    def handle(self, ctx: ShowGameContext) -> bool:
         ctx.actuators.demagnetize_all()
         ctx.score += CONFIG.BUILD_ONE_FLOOR
         time.sleep(1)

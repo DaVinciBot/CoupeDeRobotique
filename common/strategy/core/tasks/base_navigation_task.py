@@ -31,7 +31,7 @@ class BaseNavigationTask(BaseTask):
         stabilization_delay: float,
         timeout: float | None = None,
         logger: Logger | None = None,
-    ):
+    ) -> None:
         super().__init__(logger=logger)
 
         self.goal: int | BaseArenaZone | OrientedPoint | Point | None = goal

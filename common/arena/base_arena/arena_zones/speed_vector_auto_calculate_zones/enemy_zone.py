@@ -31,7 +31,7 @@ class EnemyZone(BaseSpeedVectorAutoCalculateZone):
 
         Args:
             logger (Logger): Logger instance for debugging.
-            point (Point): The central point of the enemy zone.
+            point (Point | OrientedPoint): The central point of the enemy zone.
             robot_size (float, optional): The assumed size of the robot. Defaults to 10.
             positions_record_size (int, optional): Maximum number of recorded positions. Defaults to 3.
             no_detection_timeout (float, optional): Timeout for detecting no movement. Defaults to 4.0.

@@ -36,7 +36,7 @@ class NavigatorTask:
     trajectory generation, obstacle avoidance, and a stabilization timer after reaching the goal.
     """
 
-    def __init__(self, params: NavigatorTaskParams):
+    def __init__(self, params: NavigatorTaskParams) -> None:
         self.params = params
         self.path_planner: BasePathPlanner = PathPlannerFactory.instantiate(
             params.path_planner_params,

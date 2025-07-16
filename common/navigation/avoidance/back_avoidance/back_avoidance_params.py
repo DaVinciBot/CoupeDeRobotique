@@ -26,7 +26,7 @@ class BackAvoidanceParams(BaseAvoidanceParams):
         timeout: float,
         backward_distance: float,
         backward_speed_profiler: SpeedProfiler,
-    ):
+    ) -> None:
         """Initializes StopAndWaitAvoidanceParams with specific avoidance distance and timeout in seconds.
 
         Args:

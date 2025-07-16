@@ -108,3 +108,8 @@ quote-style = "double"
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.pydoclint]
+style = 'google'
+allow-init-docstring = true
+skip-checking-short-docstrings = false

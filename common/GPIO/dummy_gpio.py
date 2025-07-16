@@ -1,12 +1,12 @@
 class DummyDevice:
-    def __init__(self):
+    def __init__(self) -> None:
         self.value = False
         self.is_pressed = False
 
-    def on(self):
+    def on(self) -> None:
         self.value = True
 
-    def off(self):
+    def off(self) -> None:
         self.value = False
 
 
@@ -23,18 +23,18 @@ class PIN:
         device : Simulated GPIO device.
     """
 
-    def __init__(self, pin):
+    def __init__(self, pin) -> None:
         self.pin = pin
         self.mode = None
         self.reverse_state = False
         self.device = None
 
-    def setup(self, mode, reverse_state=False):
+    def setup(self, mode, reverse_state=False) -> None:
         self.mode = mode.lower()
         self.reverse_state = reverse_state
         self.device = DummyDevice()
 
-    def digital_write(self, state: bool):
+    def digital_write(self, state: bool) -> None:
         corrected = self.__correct_state(state)
         self.device.value = corrected
 

@@ -30,7 +30,7 @@ class Arena:
         *,
         border_buffer,
         robot_buffer,
-    ):
+    ) -> None:
         self.logger: Logger = logger
         self.game_borders: Polygon = game_borders
         self.game_borders_buffered: Polygon = self.game_borders.buffer(border_buffer)
@@ -47,7 +47,7 @@ class Arena:
 
         self.prepare_zones()  # Not necessary but should optimize future intersection calulations etc.
 
-    def prepare_zones(self):
+    def prepare_zones(self) -> None:
         """Prepare all values of self.zones, to optimize later calculations"""
         prepare(self.game_borders)
         prepare(self.game_borders_buffered)
@@ -230,7 +230,7 @@ class Arena:
         self,
         distances_to_check: list[float],
         pos_robot: OrientedPoint,
-    ):
+    ) -> bool:
         """Currently hard-coded for 90-180° with 3 distances/°
 
         Args:

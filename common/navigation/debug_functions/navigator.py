@@ -19,7 +19,7 @@ def test_navigator_execution(
     navigator: Navigator,
     arena: BaseArena,
     time_step: float = 0.1,
-):
+) -> None:
     """Simulate the navigator until its current task is finished, logging the navigation data
     and plotting the key metrics over time.
 
@@ -151,7 +151,7 @@ def test_navigator_execution(
     plt.show()
 
     # 5) Plot enums (task/avoidance states) as categorical step plots
-    def plot_enum(times, values, title):
+    def plot_enum(times, values, title) -> None:
         """Plot categorical enum values as a step function over time.
 
         Args:

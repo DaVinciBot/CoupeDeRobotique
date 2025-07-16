@@ -12,7 +12,7 @@ from strategy.core.task_nodes.scoring_functions.base_scoring_function import (
 
 
 class NavigationScoringFunction(BaseScoringFunction):
-    def __init__(self, goal: int):
+    def __init__(self, goal: int) -> None:
         self.goal = goal
 
     def compute(
