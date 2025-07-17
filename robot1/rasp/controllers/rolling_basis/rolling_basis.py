@@ -1,6 +1,8 @@
 import struct
 import time
 
+from typing import Any
+
 from config_loader import CONFIG
 from loggerplusplus import Logger, LogLevels, log
 
@@ -124,12 +126,10 @@ class RollingBasis(BaseComTeensy):
         self,
         target_position: OrientedPoint,
     ) -> None:
-        """Sends a message to set the target speed and position of the rolling basis.
+        """Send a command to set the target position of the rolling basis.
 
         Args:
-            target_linear_speed (float): Target linear speed.
-            target_angular_speed (float): Target angular speed.
-            target_position (OrientedPoint): Target position and orientation.
+            target_position (OrientedPoint): Desired position and orientation.
         """
         msg = (
             Messages.SET_TARGET_POSITION.to_bytes()
@@ -175,11 +175,12 @@ class RollingBasis(BaseComTeensy):
     ####################################
     # PID Configuration Methods        #
     ####################################
-    def set_linear_position_pid(self, *args, **kwargs) -> None:
+    def set_linear_position_pid(self, *args: Any, **kwargs: Any) -> None:
         """Configure the PID values for linear position control.
 
-        Accepts either three positional arguments (kp, ki, kd),
-        a single dictionary, or keyword arguments.
+        Args:
+            *args (Any): Either ``(kp, ki, kd)`` or a single dictionary.
+            **kwargs (Any): Keyword arguments mapping PID fields to values.
 
         Raises:
             ValueError: If the arguments do not match expected formats.
@@ -200,11 +201,15 @@ class RollingBasis(BaseComTeensy):
         except Exception as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
-    def set_angular_position_pid(self, *args, **kwargs) -> None:
+    def set_angular_position_pid(self, *args: Any, **kwargs: Any) -> None:
         """Configure the PID values for angular position control.
 
-        Accepts either three positional arguments (kp, ki, kd),
-        a single dictionary, or keyword arguments.
+        Args:
+            *args (Any): Either ``(kp, ki, kd)`` or a single dictionary.
+            **kwargs (Any): Keyword arguments mapping PID fields to values.
+
+        Raises:
+            ValueError: If the arguments do not match expected formats.
         """
         try:
             if len(args) == 3:

@@ -18,11 +18,7 @@ from sensors import Inputs, Lidar
 
 
 class MainBrain(Brain):
-    """Main brain for the robot.
-
-    Args:
-        Brain (Brain): Base class for all brains.
-    """
+    """Main brain for the robot."""
 
     def __init__(
         self,

@@ -9,14 +9,10 @@ from strategy.core.tasks.base_task import BaseTask
 
 
 class SetOdometrie(BaseTask):
-    """Task to set or update the robot's odometry position based on the given
-    coordinates (x, y, theta). If any of the coordinates are not provided,
-    the current value from the ally zone will be used instead.
+    """Task to update the robot's odometry position.
 
-    Attributes:
-        x (float | None): Optional X coordinate.
-        y (float | None): Optional Y coordinate.
-        theta (float | None): Optional orientation (in radians).
+    The task uses the provided ``x``, ``y`` and ``theta`` values if given;
+    otherwise it falls back to the current values from the ally zone.
     """
 
     def __init__(

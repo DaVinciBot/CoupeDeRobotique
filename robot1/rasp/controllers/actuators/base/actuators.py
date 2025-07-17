@@ -122,7 +122,7 @@ class Actuators(
             disable_driver (bool): Whether to disable the driver after the movement.
 
         Returns:
-            None
+            None: This method does not return anything.
         """
         # Update elevator theorical steps
         self.elevator_ticks += steps

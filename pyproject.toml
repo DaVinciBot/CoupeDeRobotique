@@ -114,3 +114,6 @@ style = 'google'
 allow-init-docstring = true
 skip-checking-short-docstrings = false
 check-style-mismatch = true
+baseline = "pydoclint-baseline.txt"
+generate-baseline = true
+show-filenames-in-every-violation-message = true

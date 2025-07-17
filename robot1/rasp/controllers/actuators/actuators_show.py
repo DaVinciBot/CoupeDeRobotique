@@ -1,5 +1,6 @@
 import time
 from dataclasses import dataclass
+from typing import Any
 
 from config_loader import CONFIG
 
@@ -41,12 +42,12 @@ class ActuatorsShow(Actuators):
     It inherits from the Actuators class and overrides its methods to provide functionality for the show mode.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
-        """Initializes the ActuatorsShow class.
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """Initialize the ``ActuatorsShow`` class.
 
         Args:
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
+            *args (Any): Positional arguments forwarded to :class:`Actuators`.
+            **kwargs (Any): Keyword arguments forwarded to :class:`Actuators`.
         """
         super().__init__(*args, **kwargs)  # Call the parent constructor
         self.folded: bool = True  # Indicates if the actuators are folded
@@ -243,8 +244,10 @@ class ActuatorsShow(Actuators):
                 )
 
     def docking(self, pins: int | list[int]) -> None:
-        """Moves the interior servos arms to the docking position.
-        This method sets the interior servo arms to its docking position, which is used for docking purposes.
+        """Move the interior servo arms to the docking position.
+
+        Args:
+            pins (int | list[int]): Pin or list of pins to move.
         """
         if isinstance(pins, int):
             pins = [pins]

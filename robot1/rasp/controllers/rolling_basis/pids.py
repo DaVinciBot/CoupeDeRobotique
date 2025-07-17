@@ -4,22 +4,37 @@ from enum import Enum
 
 
 class PID_ID(Enum):
-    """Identifiers for the different PID controllers."""
+    """Identifiers for the different PID controllers.
 
-    LINEAR_POSITION = 0
-    ANGULAR_POSITION = 1
+    Attributes:
+        LINEAR_POSITION (int): Identifier for linear position PID control.
+        ANGULAR_POSITION (int): Identifier for angular position PID control.
+    """
+
+    LINEAR_POSITION: int = 0
+    ANGULAR_POSITION: int = 1
 
 
 @dataclass
 class PID:
-    """Data class representing PID controller parameters."""
+    """Data class representing PID controller parameters.
+
+    Attributes:
+        kp (float): Proportional coefficient.
+        ki (float): Integral coefficient.
+        kd (float): Derivative coefficient.
+    """
 
     kp: float
     ki: float
     kd: float
 
     def to_bytes(self) -> bytes:
-        """Serialize the PID parameters into bytes."""
+        """Serialize the PID parameters into bytes.
+
+        Returns:
+            bytes: The serialized PID coefficients.
+        """
         return struct.pack("<fff", self.kp, self.ki, self.kd)
 
     @classmethod

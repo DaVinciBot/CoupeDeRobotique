@@ -26,7 +26,13 @@ class BaseTaskNode:
         tasks: BaseTask | list[BaseTask],
         scoring_function: BaseScoringFunction = DefaultScoringFunction(),
     ) -> None:
-        """Initialize the task node."""
+        """Initialize the task node.
+
+        Args:
+            name (str): The node name.
+            tasks (BaseTask | list[BaseTask]): Single task or list of tasks to execute.
+            scoring_function (BaseScoringFunction): Scoring function used when evaluating transitions.
+        """
         self.name: str = name
         self.tasks: list[BaseTask] = (
             [tasks] if isinstance(tasks, BaseTask) else tasks  # type: ignore
@@ -54,12 +60,24 @@ class BaseTaskNode:
         )
 
     def add_transition(self, transition: BaseTransition) -> None:
-        """Add a transition to another task node."""
+        """Add a transition to another task node.
+
+        Args:
+            transition (BaseTransition): Transition leading out of this node.
+        """
         self.transitions.append(transition)
         self.logger.debug(f"Added transition '{transition}' to node '{self.name}'")
 
     def score(self, prev_node: BaseTaskNode | None, ctx: BaseGameContext) -> float:
-        """Compute and return a score for this node against an optional previous node."""
+        """Compute a score for this node.
+
+        Args:
+            prev_node (BaseTaskNode | None): The previously executed node, if any.
+            ctx (BaseGameContext): The current game context.
+
+        Returns:
+            float: The computed score value.
+        """
         score_value = self.scoring_function.compute(
             prev_node=prev_node,
             current_node=self,
@@ -72,17 +90,34 @@ class BaseTaskNode:
         return score_value
 
     def on_enter(self, prev_node: BaseTaskNode | None, ctx: BaseGameContext) -> None:
-        """Hook called when entering this node."""
+        """Hook called when entering this node.
+
+        Args:
+            prev_node (BaseTaskNode | None): The node we are coming from.
+            ctx (BaseGameContext): The current game context.
+        """
         prev_name = prev_node.name if prev_node else "<None>"
         self.logger.info(f"Entering node '{self.name}' from '{prev_name}'")
 
     def on_exit(self, next_node: BaseTaskNode | None, ctx: BaseGameContext) -> None:
-        """Hook called when exiting this node."""
+        """Hook called when exiting this node.
+
+        Args:
+            next_node (BaseTaskNode | None): The node that will be executed next.
+            ctx (BaseGameContext): The current game context.
+        """
         next_name = next_node.name if next_node else "<None>"
         self.logger.info(f"Exiting node '{self.name}' to '{next_name}'")
 
     def execute(self, ctx: BaseGameContext) -> bool:
-        """Execute tasks sequentially. Return True only when all tasks are done."""
+        """Execute tasks sequentially.
+
+        Args:
+            ctx (BaseGameContext): The current game context.
+
+        Returns:
+            bool: ``True`` when all tasks are completed, ``False`` otherwise.
+        """
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:
             self.logger.debug(
                 f"Node '{self.name}' already completed with status {self.status.name}",
@@ -147,7 +182,14 @@ class BaseTaskNode:
         return False
 
     def handle(self, ctx: BaseGameContext) -> bool:
-        """Enter the node (once), execute tasks, and exit when done."""
+        """Enter the node, execute tasks, and exit when finished.
+
+        Args:
+            ctx (BaseGameContext): The current game context.
+
+        Returns:
+            bool: ``True`` when all tasks are completed, ``False`` otherwise.
+        """
         if not self.entered:
             self.on_enter(None, ctx)
             self.entered = True

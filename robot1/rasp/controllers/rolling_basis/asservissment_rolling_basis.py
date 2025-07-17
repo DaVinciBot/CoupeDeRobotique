@@ -4,6 +4,7 @@ import time
 import matplotlib.pyplot as plt
 from config_loader import CONFIG
 from loggerplusplus import Logger, LogLevels, log
+from typing import Any
 
 from controllers.rolling_basis.pids import PID, PID_ID
 from geometry import OrientedPoint
@@ -119,12 +120,10 @@ class AsservissementRollingBasis(BaseComTeensy):
         self,
         target_position: OrientedPoint,
     ) -> None:
-        """Sends a message to set the target speed and position of the rolling basis.
+        """Send a command to set the target position of the rolling basis.
 
         Args:
-            target_linear_speed (float): Target linear speed.
-            target_angular_speed (float): Target angular speed.
-            target_position (OrientedPoint): Target position and orientation.
+            target_position (OrientedPoint): Desired position and orientation.
         """
         # Store for logging
         self._last_target = target_position
@@ -220,9 +219,13 @@ class AsservissementRollingBasis(BaseComTeensy):
         self._logs.append(entry)
 
     def get_logs(self) -> list[dict]:
-        """Returns the recorded log entries.
-        Each entry is a dict with keys: time, target_x, target_y, target_theta,
-        actual_x, actual_y, actual_theta.
+        """Return the recorded log entries.
+
+        Each entry is a dictionary with keys ``time``, ``target_x``, ``target_y``,
+        ``target_theta``, ``actual_x``, ``actual_y`` and ``actual_theta``.
+
+        Returns:
+            list[dict]: The stored log entries.
         """
         return self._logs
 
@@ -262,11 +265,15 @@ class AsservissementRollingBasis(BaseComTeensy):
         msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
         self.send_bytes(msg)
 
-    def set_linear_position_pid(self, *args, **kwargs) -> None:
+    def set_linear_position_pid(self, *args: Any, **kwargs: Any) -> None:
         """Configure the PID values for linear position control.
 
-        Accepts either three positional arguments (kp, ki, kd),
-        a single dictionary, or keyword arguments.
+        Args:
+            *args (Any): Either ``(kp, ki, kd)`` or a single dictionary.
+            **kwargs (Any): Keyword arguments mapping PID fields to values.
+
+        Raises:
+            ValueError: If the arguments do not match expected formats.
         """
         try:
             if len(args) == 3:
@@ -284,11 +291,15 @@ class AsservissementRollingBasis(BaseComTeensy):
         except Exception as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
-    def set_angular_position_pid(self, *args, **kwargs) -> None:
+    def set_angular_position_pid(self, *args: Any, **kwargs: Any) -> None:
         """Configure the PID values for angular position control.
 
-        Accepts either three positional arguments (kp, ki, kd),
-        a single dictionary, or keyword arguments.
+        Args:
+            *args (Any): Either ``(kp, ki, kd)`` or a single dictionary.
+            **kwargs (Any): Keyword arguments mapping PID fields to values.
+
+        Raises:
+            ValueError: If the arguments do not match expected formats.
         """
         try:
             if len(args) == 3:
@@ -311,7 +322,12 @@ class AsservissementRollingBasis(BaseComTeensy):
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
     ) -> None:
-        """Configure all PID controllers using dictionaries for each."""
+        """Configure all PID controllers.
+
+        Args:
+            linear_position_pid (dict[str, float]): PID values for linear position control.
+            angular_position_pid (dict[str, float]): PID values for angular position control.
+        """
         self.set_linear_position_pid(**linear_position_pid)
         time.sleep(0.1)  # Ensure the Teensy has time to process the first PID
         self.set_angular_position_pid(**angular_position_pid)

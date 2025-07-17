@@ -18,6 +18,16 @@ class ActuatorsShowDummy(ActuatorsShow):
         baudrate: int = CONFIG.TEENSY_BAUDRATE,
         enable_crc: bool = CONFIG.TEENSY_CRC,
     ) -> None:
+        """Initialize the dummy actuators wrapper.
+
+        Args:
+            logger (Logger): Logger used for output.
+            serial_number (int): Teensy serial number.
+            vid (int): USB vendor ID.
+            pid (int): USB product ID.
+            baudrate (int): Serial communication baud rate.
+            enable_crc (bool): Whether CRC is enabled.
+        """
         # Initialize parent with a dummy flag to bypass hardware
         super().__init__(
             logger,
@@ -41,8 +51,12 @@ class ActuatorsShowDummy(ActuatorsShow):
         speed: int,
         disable_driver: bool = False,
     ) -> None:
-        """Simulate moving the stepper motor by updating elevator_ticks
-        and logging the action.
+        """Simulate moving the stepper motor.
+
+        Args:
+            steps (int): Number of steps to move.
+            speed (int): Speed of the movement.
+            disable_driver (bool): Whether to disable the driver afterwards.
         """
         self.elevator_ticks += steps
         self.logger.info(
@@ -59,7 +73,15 @@ class ActuatorsShowDummy(ActuatorsShow):
         detach: bool = False,
         detach_delay: int = 1000,
     ) -> None:
-        """Simulate setting the servo angle by logging the parameters."""
+        """Simulate setting the servo angle.
+
+        Args:
+            pin (int): Servo pin number.
+            angle (int): Desired angle in degrees.
+            max_angle (int): Maximum allowed angle.
+            detach (bool): Detach the servo after moving if ``True``.
+            detach_delay (int): Delay before detaching in milliseconds.
+        """
         # Check if pin is valid; if not, log and return
         if not self._check_pin(pin):
             return

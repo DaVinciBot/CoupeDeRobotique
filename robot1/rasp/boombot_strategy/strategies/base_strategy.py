@@ -41,7 +41,7 @@ class BaseStrategy(ABC):
         Accepts any number of arguments of type BaseTaskNode or BaseSubGraph.
 
         Args:
-            *elements (Union[BaseTaskNode, BaseSubGraph]): A variable number of nodes or subgraphs.
+            *elements (BaseTaskNode | BaseSubGraph): A variable number of nodes or subgraphs.
 
         Returns:
             bool: The result of the build process.
@@ -68,7 +68,7 @@ class BaseStrategy(ABC):
         """Resolve a TaskNode or SubGraph to its entry point.
 
         Args:
-            element (Union[BaseTaskNode, BaseSubGraph]): The element to resolve.
+            element (BaseTaskNode | BaseSubGraph): The element to resolve.
 
         Returns:
             BaseTaskNode: The entry point of the resolved element.
@@ -84,7 +84,7 @@ class BaseStrategy(ABC):
         """Resolve a TaskNode or SubGraph to its exit points.
 
         Args:
-            element (Union[BaseTaskNode, BaseSubGraph]): The element to resolve.
+            element (BaseTaskNode | BaseSubGraph): The element to resolve.
 
         Returns:
             BaseTaskNode: The exit point of the resolved element.

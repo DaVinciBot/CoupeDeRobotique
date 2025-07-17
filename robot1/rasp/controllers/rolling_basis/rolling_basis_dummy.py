@@ -1,3 +1,5 @@
+from typing import Any
+
 from config_loader import CONFIG
 from loggerplusplus import Logger, log
 
@@ -88,11 +90,15 @@ class RollingBasisDummy(BaseComTeensy):
     ####################################
     # PID Configuration Methods        #
     ####################################
-    def set_linear_position_pid(self, *args, **kwargs) -> None:
+    def set_linear_position_pid(self, *args: Any, **kwargs: Any) -> None:
         """Configure the PID values for linear position control.
 
-        Accepts either three positional arguments (kp, ki, kd),
-        a single dictionary, or keyword arguments.
+        Args:
+            *args (Any): Either ``(kp, ki, kd)`` or a single dictionary.
+            **kwargs (Any): Keyword arguments mapping PID fields to values.
+
+        Raises:
+            ValueError: If the arguments do not match expected formats.
         """
         try:
             if len(args) == 3:
@@ -110,11 +116,15 @@ class RollingBasisDummy(BaseComTeensy):
         except Exception as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
-    def set_angular_position_pid(self, *args, **kwargs) -> None:
+    def set_angular_position_pid(self, *args: Any, **kwargs: Any) -> None:
         """Configure the PID values for angular position control.
 
-        Accepts either three positional arguments (kp, ki, kd),
-        a single dictionary, or keyword arguments.
+        Args:
+            *args (Any): Either ``(kp, ki, kd)`` or a single dictionary.
+            **kwargs (Any): Keyword arguments mapping PID fields to values.
+
+        Raises:
+            ValueError: If the arguments do not match expected formats.
         """
         try:
             if len(args) == 3:
