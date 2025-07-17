@@ -10,7 +10,7 @@ lint:
 	@echo "▶ Linting avec Ruff..."
 	-ruff check . --fix
 	@echo "▶ Linting avec pydoclint..."
-	pydoclint --style=google --allow-init-docstring=True .
+	pydoclint .
 
 typecheck:
 	@echo "▶ Analyse statique avec mypy..."

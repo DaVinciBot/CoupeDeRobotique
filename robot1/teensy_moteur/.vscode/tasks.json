@@ -26,7 +26,6 @@
             "problemMatcher": [
                 "$platformio"
             ],
-            
             "label": "PlatformIO: Build"
         },
         {

@@ -51,6 +51,7 @@ class CONFIG:
 
         SPECIFIC_CONFIG (dict): Specific configuration settings for the robot.
         SPECIFIC_WS_CONFIG (dict): Specific WebSocket configuration settings.
+        SPECIFIC_WS_UI_CONFIG (dict): Specific WebSocket UI configuration settings.
 
         WS_SENDER_NAME (str): WebSocket sender name.
         WS_HOSTNAME (str): WebSocket hostname.
@@ -193,6 +194,7 @@ class CONFIG:
 
     # Specific ws config
     SPECIFIC_WS_CONFIG: dict = SPECIFIC_CONFIG["ws"]
+    SPECIFIC_WS_UI_CONFIG: dict = SPECIFIC_CONFIG["ws_ui"]
 
     WS_SENDER_NAME: str = SPECIFIC_WS_CONFIG["sender_name"]
     WS_HOSTNAME: str = SPECIFIC_WS_CONFIG["hostname"]

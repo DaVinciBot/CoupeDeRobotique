@@ -19,6 +19,7 @@ if TYPE_CHECKING:
         BaseAcsDetectionProfileParams,
     )
     from navigation.navigator.task.navigator_task import NavigatorTask
+    from navigation.trajectory_planner import TrajectoryPlanCommand
 
 
 class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):

@@ -88,7 +88,7 @@ class RollingBasisDummy(BaseComTeensy):
     ####################################
     # PID Configuration Methods        #
     ####################################
-    def set_linear_position_pid(self, *args: object, **kwargs: dict) -> None:
+    def set_linear_position_pid(self, *args, **kwargs) -> None:
         """Configure the PID values for linear position control.
 
         Accepts either three positional arguments (kp, ki, kd),
@@ -110,7 +110,7 @@ class RollingBasisDummy(BaseComTeensy):
         except Exception as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
-    def set_angular_position_pid(self, *args: object, **kwargs: dict) -> None:
+    def set_angular_position_pid(self, *args, **kwargs) -> None:
         """Configure the PID values for angular position control.
 
         Accepts either three positional arguments (kp, ki, kd),
