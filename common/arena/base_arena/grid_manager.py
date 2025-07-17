@@ -44,6 +44,8 @@ class GridManager:
             chunk_size (int): Size of each grid chunk.
             width (int): Total width of the grid in absolute units.
             height (int): Total height of the grid in absolute units.
+            forbidden_cover_threshold (float, optional): Minimum coverage ratio
+                for a cell to be marked as forbidden.
         """
         self.logger: Logger = logger
         self.forbidden_cover_threshold: float = forbidden_cover_threshold
@@ -74,7 +76,11 @@ class GridManager:
     # ====== Private Methods ======
 
     def __generate_base_grid(self) -> Grid:
-        """Generates a base grid with all cells walkable."""
+        """Generate a base grid with all cells walkable.
+
+        Returns:
+            Grid: Newly created walkable grid.
+        """
         return Grid(
             matrix=[
                 [1 for _ in range(self.grid_width)] for _ in range(self.grid_height)
@@ -190,15 +196,16 @@ class GridManager:
     def __update_grid(
         self,
         *,
-        update_static_zones=False,
-        update_dynamic_zones=False,
-        clear_grid=False,
+        update_static_zones: bool = False,
+        update_dynamic_zones: bool = False,
+        clear_grid: bool = False,
     ) -> None:
         """Updates the grids for static and dynamic zones.
 
         Args:
             update_static_zones (bool): Whether to update static zones.
             update_dynamic_zones (bool): Whether to update dynamic zones.
+            clear_grid (bool): If ``True``, regenerate empty grids before updating.
         """
         if clear_grid:
             self.static_grid = self.__generate_base_grid()
@@ -344,27 +351,56 @@ class GridManager:
         self.__update_grid(update_dynamic_zones=True)
 
     def get_grid_node_center(self, node: GridNode) -> tuple[float, float]:
-        """Calculates the absolute center coordinates of a grid node."""
+        """Calculate the absolute center coordinates of a grid node.
+
+        Args:
+            node (GridNode): Node within the grid.
+
+        Returns:
+            tuple[float, float]: ``(x, y)`` coordinates of the node center.
+        """
         return (
             node.x * self.chunk_size + self.half_chunk_size,
             node.y * self.chunk_size + self.half_chunk_size,
         )
 
     def absolute_coords_to_grid_coords(self, point: OrientedPoint | Point) -> GridNode:
-        """Converts absolute coordinates to grid coordinates."""
+        """Convert absolute coordinates to grid coordinates.
+
+        Args:
+            point (OrientedPoint | Point): Absolute point to convert.
+
+        Returns:
+            GridNode: Corresponding node in the grid.
+        """
         return GridNode(int(point.x / self.chunk_size), int(point.y / self.chunk_size))
 
     def grid_coords_to_absolute_coords(self, node: GridNode) -> Point:
-        """Converts grid coordinates to absolute coordinates."""
+        """Convert grid coordinates to absolute coordinates.
+
+        Args:
+            node (GridNode): Grid node to convert.
+
+        Returns:
+            Point: Absolute center point of the node.
+        """
         x, y = self.get_grid_node_center(node)
         return Point(x, y)
 
     def get_static_grid(self) -> Grid:
-        """Returns the static grid."""
+        """Return the static grid used for pathfinding.
+
+        Returns:
+            Grid: Grid containing only static obstacles.
+        """
         return self.static_grid
 
     def get_static_and_dynamic_grid(self) -> Grid:
-        """Returns the combined static and dynamic grid."""
+        """Return the grid with both static and dynamic obstacles.
+
+        Returns:
+            Grid: Combined grid.
+        """
         return self.static_and_dynamic_grid
 
     def visualize(
@@ -372,15 +408,18 @@ class GridManager:
         only_static_grid: bool = False,
         path: list | None = None,
         show: bool = True,
-        plot: tuple[plt.axes, plt.figure] = None,
+        plot: tuple[plt.axes, plt.figure] | None = None,
     ) -> tuple[plt.axes, plt.figure]:
-        """Visualizes the grid using matplotlib.
+        """Visualize the grid using matplotlib.
 
         Args:
-            only_static_grid (bool): Whether to show only the static grid.
-            path (list): List of coordinates representing a path (optional).
-            show (bool): Whether to display the plot.
-            plot (tuple[plt.axes, plt.figure]): Existing plot to use for visualization.
+            only_static_grid (bool, optional): Whether to show only the static grid. Defaults to False.
+            path (list | None, optional): Path to draw on the grid, if provided. Defaults to None.
+            show (bool, optional): Whether to display the plot. Defaults to True.
+            plot (tuple[plt.axes, plt.figure] | None, optional): Existing plot to reuse. Defaults to None.
+
+        Returns:
+            tuple[plt.axes, plt.figure]: Axis and figure of the plot.
         """
         grid_to_visualize = (
             self.static_grid if only_static_grid else self.static_and_dynamic_grid

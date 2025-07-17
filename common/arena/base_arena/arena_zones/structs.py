@@ -14,13 +14,13 @@ class ZoneType(Enum):
     """Enumeration for different types of zones in the arena.
 
     Attributes:
-        - YELLOW_RESERVED: Reserved for the yellow team.
-        - BLUE_RESERVED: Reserved for the blue team.
-        - FORBIDDEN: Zone that cannot be accessed.
-        - STUFF_ZONE: Designated for storage or items.
-        - ENEMY: Zone associated with enemy activity.
-        - ALLY: Zone associated with ally activity.
-        - BORDER_ZONE: Represents arena borders.
+        YELLOW_RESERVED: Reserved for the yellow team.
+        BLUE_RESERVED: Reserved for the blue team.
+        FORBIDDEN: Zone that cannot be accessed.
+        STUFF_ZONE: Designated for storage or items.
+        ENEMY: Zone associated with enemy activity.
+        ALLY: Zone associated with ally activity.
+        BORDER_ZONE: Represents arena borders.
     """
 
     YELLOW_RESERVED = auto()
@@ -36,9 +36,9 @@ class ZoneAccessibility(Enum):
     """Enumeration for zone accessibility types in the arena.
 
     Attributes:
-        - FREE: Free to navigate.
-        - RESTRICTED: Restricted access, typically for controlled areas.
-        - FORBIDDEN: Completely inaccessible.
+        FREE: Free to navigate.
+        RESTRICTED: Restricted access.
+        FORBIDDEN: Completely inaccessible.
     """
 
     FREE = auto()

@@ -16,7 +16,6 @@ common/arena/base_arena/arena.py
     DOC102: Method `BaseArena.compute_enemy_position`: Docstring contains more arguments than in function signature.
     DOC110: Method `BaseArena.compute_enemy_position`: The option `--arg-type-hints-in-docstring` is `True` but not all args in the docstring arg list have type hints
     DOC103: Method `BaseArena.compute_enemy_position`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the docstring but not in the function signature: [self: ].
-    DOC203: Method `BaseArena.compute_enemy_position` return type(s) in docstring not consistent with the return annotation. Return annotation types: ['Point | MultiPoint | None']; docstring return section types: ['']
     DOC107: Method `BaseArena.__plot_oriented_arrow`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC105: Method `BaseArena.__plot_oriented_arrow`: Argument names match, but type hints in these args do not match: ax, head_width, head_length
     DOC107: Method `BaseArena.__plot_zone_uid`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
@@ -30,115 +29,8 @@ common/arena/base_arena/arena.py
     DOC107: Method `BaseArena.__plot_zone`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC103: Method `BaseArena.__plot_zone`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [ax: , display_zones_go_to_positions: bool, show_ally_direction: bool, show_buffer: bool, transparency_factor: float, zone: BaseArenaZone].
 --------------------
-common/arena/base_arena/arena_zones/ally_zone.py
-    DOC602: Class `AllyZone`: Class docstring contains more class attributes than in actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `AllyZone`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the docstring but not in the actual class attributes: [accessibility: ZoneAccessibility, logger: Logger, point: OrientedPoint, robot_size: float]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC101: Method `AllyZone.__eq__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `AllyZone.__eq__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `AllyZone.__eq__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `AllyZone.__eq__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [other: ].
-    DOC201: Method `AllyZone.__eq__` does not have a return section in docstring
-    DOC203: Method `AllyZone.__eq__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC101: Method `AllyZone.__ne__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `AllyZone.__ne__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `AllyZone.__ne__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `AllyZone.__ne__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [other: ].
-    DOC201: Method `AllyZone.__ne__` does not have a return section in docstring
-    DOC203: Method `AllyZone.__ne__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
---------------------
-common/arena/base_arena/arena_zones/base_arena_zone.py
-    DOC602: Class `BaseArenaZone`: Class docstring contains more class attributes than in actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `BaseArenaZone`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [zones_uid: list[int]]. Arguments in the docstring but not in the actual class attributes: [accessibility: ZoneAccessibility, ally_visits: int, enemy_visits: int, polygon: Polygon, zone_color: str, zone_type: ZoneType]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC101: Method `BaseArenaZone.__init__`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `BaseArenaZone.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [uid: int].
-    DOC101: Method `BaseArenaZone.__instancecheck__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `BaseArenaZone.__instancecheck__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `BaseArenaZone.__instancecheck__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `BaseArenaZone.__instancecheck__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [other: ].
-    DOC201: Method `BaseArenaZone.__instancecheck__` does not have a return section in docstring
-    DOC203: Method `BaseArenaZone.__instancecheck__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC101: Method `BaseArenaZone.__eq__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `BaseArenaZone.__eq__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `BaseArenaZone.__eq__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `BaseArenaZone.__eq__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [other: ].
-    DOC201: Method `BaseArenaZone.__eq__` does not have a return section in docstring
-    DOC203: Method `BaseArenaZone.__eq__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC101: Method `BaseArenaZone.__ne__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `BaseArenaZone.__ne__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `BaseArenaZone.__ne__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `BaseArenaZone.__ne__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [other: ].
-    DOC201: Method `BaseArenaZone.__ne__` does not have a return section in docstring
-    DOC203: Method `BaseArenaZone.__ne__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC201: Method `BaseArenaZone.__str__` does not have a return section in docstring
-    DOC203: Method `BaseArenaZone.__str__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC201: Method `BaseArenaZone.__repr__` does not have a return section in docstring
-    DOC203: Method `BaseArenaZone.__repr__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC101: Method `BaseArenaZone.__format__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `BaseArenaZone.__format__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `BaseArenaZone.__format__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `BaseArenaZone.__format__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [format_spec: ].
-    DOC201: Method `BaseArenaZone.__format__` does not have a return section in docstring
-    DOC203: Method `BaseArenaZone.__format__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
---------------------
-common/arena/base_arena/arena_zones/border_zone.py
-    DOC602: Class `BorderZone`: Class docstring contains more class attributes than in actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `BorderZone`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the docstring but not in the actual class attributes: [buffer_size: float, buffered_polygon: Polygon, logger: Logger, polygon: Polygon, update_callback: callable]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
---------------------
 common/arena/base_arena/arena_zones/color_reserved_zones/base_color_reserved_zone.py
     DOC105: Method `BaseColorReservedZone.__init__`: Argument names match, but type hints in these args do not match: update_callback
---------------------
-common/arena/base_arena/arena_zones/forbidden_zone.py
-    DOC602: Class `ForbiddenZone`: Class docstring contains more class attributes than in actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `ForbiddenZone`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the docstring but not in the actual class attributes: [accessibility: ZoneAccessibility, buffer_size: float, buffered_polygon: Polygon, logger: Logger, polygon: Polygon, update_callback: callable]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
---------------------
-common/arena/base_arena/arena_zones/speed_vector_auto_calculate_zones/base_speed_vector_auto_calculate_zone.py
-    DOC201: Method `BaseSpeedVectorAutoCalculateZone.__str__` does not have a return section in docstring
-    DOC203: Method `BaseSpeedVectorAutoCalculateZone.__str__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC201: Method `BaseSpeedVectorAutoCalculateZone.__repr__` does not have a return section in docstring
-    DOC203: Method `BaseSpeedVectorAutoCalculateZone.__repr__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC101: Method `BaseSpeedVectorAutoCalculateZone.__format__`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `BaseSpeedVectorAutoCalculateZone.__format__`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `BaseSpeedVectorAutoCalculateZone.__format__`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `BaseSpeedVectorAutoCalculateZone.__format__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [format_spec: ].
-    DOC201: Method `BaseSpeedVectorAutoCalculateZone.__format__` does not have a return section in docstring
-    DOC203: Method `BaseSpeedVectorAutoCalculateZone.__format__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
---------------------
-common/arena/base_arena/arena_zones/structs.py
-    DOC603: Class `ZoneType`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [ALLY: , BLUE_RESERVED: , BORDER_ZONE: , ENEMY: , FORBIDDEN: , STUFF_ZONE: , YELLOW_RESERVED: ]. Arguments in the docstring but not in the actual class attributes: [- ALLY: , - BLUE_RESERVED: , - BORDER_ZONE: , - ENEMY: , - FORBIDDEN: , - STUFF_ZONE: , - YELLOW_RESERVED: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `ZoneAccessibility`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [FORBIDDEN: , FREE: , RESTRICTED: ]. Arguments in the docstring but not in the actual class attributes: [- FORBIDDEN: , - FREE: , - RESTRICTED: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
---------------------
-common/arena/base_arena/arena_zones/stuff_zone.py
-    DOC602: Class `StuffZone`: Class docstring contains more class attributes than in actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `StuffZone`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the docstring but not in the actual class attributes: [accessibility: ZoneAccessibility, buffer_size: float, buffered_polygon: Polygon, index: int, logger: Logger, polygon: Polygon, update_callback: callable]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
---------------------
-common/arena/base_arena/grid_manager.py
-    DOC101: Method `GridManager.__init__`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `GridManager.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [forbidden_cover_threshold: float].
-    DOC201: Method `GridManager.__generate_base_grid` does not have a return section in docstring
-    DOC203: Method `GridManager.__generate_base_grid` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC101: Method `GridManager.__update_grid`: Docstring contains fewer arguments than in function signature.
-    DOC106: Method `GridManager.__update_grid`: The option `--arg-type-hints-in-signature` is `True` but there are no argument type hints in the signature
-    DOC107: Method `GridManager.__update_grid`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
-    DOC103: Method `GridManager.__update_grid`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [clear_grid: ].
-    DOC101: Method `GridManager.get_grid_node_center`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `GridManager.get_grid_node_center`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [node: GridNode].
-    DOC201: Method `GridManager.get_grid_node_center` does not have a return section in docstring
-    DOC203: Method `GridManager.get_grid_node_center` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC101: Method `GridManager.absolute_coords_to_grid_coords`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `GridManager.absolute_coords_to_grid_coords`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [point: OrientedPoint | Point].
-    DOC201: Method `GridManager.absolute_coords_to_grid_coords` does not have a return section in docstring
-    DOC203: Method `GridManager.absolute_coords_to_grid_coords` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC101: Method `GridManager.grid_coords_to_absolute_coords`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `GridManager.grid_coords_to_absolute_coords`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [node: GridNode].
-    DOC201: Method `GridManager.grid_coords_to_absolute_coords` does not have a return section in docstring
-    DOC203: Method `GridManager.grid_coords_to_absolute_coords` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC201: Method `GridManager.get_static_grid` does not have a return section in docstring
-    DOC203: Method `GridManager.get_static_grid` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC201: Method `GridManager.get_static_and_dynamic_grid` does not have a return section in docstring
-    DOC203: Method `GridManager.get_static_and_dynamic_grid` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC105: Method `GridManager.visualize`: Argument names match, but type hints in these args do not match: path
-    DOC201: Method `GridManager.visualize` does not have a return section in docstring
-    DOC203: Method `GridManager.visualize` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
 --------------------
 common/arena/base_arena/grid_manager_2.py
     DOC101: Method `GridManager.__init__`: Docstring contains fewer arguments than in function signature.
@@ -366,51 +258,6 @@ common/navigation/trajectory_planner/structs.py
 common/navigation/trajectory_planner/trajectory_planner_factory.py
     DOC107: Method `TrajectoryPlannerFactory.instantiate`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC110: Method `TrajectoryPlannerFactory.instantiate`: The option `--arg-type-hints-in-docstring` is `True` but not all args in the docstring arg list have type hints
---------------------
-common/strategy/core/builders/subgraph_builder.py
-    DOC101: Method `SubGraphBuilder.add_node`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `SubGraphBuilder.add_node`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [name: str, node: BaseTaskNode].
-    DOC201: Method `SubGraphBuilder.add_node` does not have a return section in docstring
-    DOC203: Method `SubGraphBuilder.add_node` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC501: Method `SubGraphBuilder.add_node` has raise statements, but the docstring does not have a "Raises" section
-    DOC503: Method `SubGraphBuilder.add_node` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['KeyError'].
-    DOC101: Method `SubGraphBuilder.connect`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `SubGraphBuilder.connect`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [from_name: str, transition: BaseTransition].
-    DOC201: Method `SubGraphBuilder.connect` does not have a return section in docstring
-    DOC203: Method `SubGraphBuilder.connect` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC501: Method `SubGraphBuilder.connect` has raise statements, but the docstring does not have a "Raises" section
-    DOC503: Method `SubGraphBuilder.connect` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['KeyError'].
-    DOC101: Method `SubGraphBuilder.add_subgraph`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `SubGraphBuilder.add_subgraph`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [prefix: str, subgraph: BaseSubGraph].
-    DOC201: Method `SubGraphBuilder.add_subgraph` does not have a return section in docstring
-    DOC203: Method `SubGraphBuilder.add_subgraph` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC101: Method `SubGraphBuilder.build`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `SubGraphBuilder.build`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [entry: str | BaseTaskNode, exits: str | BaseTaskNode | list[str | BaseTaskNode]].
-    DOC201: Method `SubGraphBuilder.build` does not have a return section in docstring
-    DOC203: Method `SubGraphBuilder.build` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
-    DOC501: Method `SubGraphBuilder.build` has raise statements, but the docstring does not have a "Raises" section
-    DOC503: Method `SubGraphBuilder.build` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['KeyError'].
---------------------
-common/strategy/core/graph_runner.py
-    DOC602: Class `GraphRunner`: Class docstring contains more class attributes than in actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `GraphRunner`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the docstring but not in the actual class attributes: [active: , logger: , parallel: , prev: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC101: Method `GraphRunner.__init__`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `GraphRunner.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [logger: Logger | None, parallel: bool, start: BaseTaskNode].
-    DOC101: Method `GraphRunner.handle`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `GraphRunner.handle`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [ctx: BaseGameContext].
-    DOC109: Method `GraphRunner.run`: The option `--arg-type-hints-in-docstring` is `True` but there are no type hints in the docstring arg list
-    DOC110: Method `GraphRunner.run`: The option `--arg-type-hints-in-docstring` is `True` but not all args in the docstring arg list have type hints
-    DOC105: Method `GraphRunner.run`: Argument names match, but type hints in these args do not match: ctx, max_steps
---------------------
-common/strategy/core/task_nodes/timeout_task_node.py
-    DOC101: Method `TimeoutTaskNode.__init__`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `TimeoutTaskNode.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [name: str, scoring_function: BaseScoringFunction, tasks: BaseTask | list[BaseTask], timeout_seconds: float].
-    DOC101: Method `TimeoutTaskNode.on_timeout`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `TimeoutTaskNode.on_timeout`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [ctx: BaseGameContext].
-    DOC101: Method `TimeoutTaskNode.execute`: Docstring contains fewer arguments than in function signature.
-    DOC103: Method `TimeoutTaskNode.execute`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [ctx: BaseGameContext].
-    DOC201: Method `TimeoutTaskNode.execute` does not have a return section in docstring
-    DOC203: Method `TimeoutTaskNode.execute` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
 --------------------
 common/strategy/core/tasks/base_task.py
     DOC101: Method `BaseTask.__init__`: Docstring contains fewer arguments than in function signature.

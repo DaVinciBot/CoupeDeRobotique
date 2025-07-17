@@ -14,14 +14,7 @@ from geometry import OrientedPoint, Point, create_straight_rectangle
 
 
 class AllyZone(BaseArenaZone):
-    """Zone designated for allies, dynamically updated based on their position.
-
-    Attributes:
-        logger (Logger): Logger instance for logging messages.
-        point (OrientedPoint): Position and orientation of the ally.
-        accessibility (ZoneAccessibility): Accessibility type of the zone (defaults to free).
-        robot_size (float): Size of the robot.
-    """
+    """Zone designated for allies, dynamically updated based on their position."""
 
     def __init__(
         self,
@@ -74,12 +67,27 @@ class AllyZone(BaseArenaZone):
             robot_size=self.robot_size,
         )
 
-    def __eq__(self, other) -> bool:
-        """Checks equality based on oriented point geometry."""
+    def __eq__(self, other: object) -> bool:
+        """Return ``True`` if zones represent the same oriented point.
+
+        Args:
+            other (object): Object to compare against.
+
+        Returns:
+            bool: ``True`` if ``other`` is an :class:`AllyZone` with the same
+            point.
+        """
         if not isinstance(other, AllyZone):
             return False
         return self.point == other.point
 
-    def __ne__(self, other) -> bool:
-        """Checks inequality based on oriented point geometry."""
+    def __ne__(self, other: object) -> bool:
+        """Return ``True`` if zones do not represent the same oriented point.
+
+        Args:
+            other (object): Object to compare against.
+
+        Returns:
+            bool: ``True`` if ``other`` is not an equal :class:`AllyZone`.
+        """
         return not self.__eq__(other)

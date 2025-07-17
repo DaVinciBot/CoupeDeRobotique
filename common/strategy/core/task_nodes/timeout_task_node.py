@@ -26,6 +26,15 @@ class TimeoutTaskNode(BaseTaskNode):
         timeout_seconds: float,
         scoring_function: BaseScoringFunction = DefaultScoringFunction(),
     ) -> None:
+        """Initialize the timeout node.
+
+        Args:
+            name (str): Node name.
+            tasks (BaseTask | list[BaseTask]): Task or tasks to execute.
+            timeout_seconds (float): Duration in seconds before timeout occurs.
+            scoring_function (BaseScoringFunction): Scoring strategy used when
+                evaluating transitions.
+        """
         super().__init__(name, tasks, scoring_function)
         self.timeout_seconds: float = timeout_seconds
         self._timeout_triggered: bool = False
@@ -35,15 +44,26 @@ class TimeoutTaskNode(BaseTaskNode):
 
     def on_timeout(self, ctx: BaseGameContext) -> None:
         """Hook called once when the timeout is reached.
-        Override in subclasses for custom behavior.
+
+        Args:
+            ctx (BaseGameContext): Current game context.
+
+        This method can be overridden in subclasses to implement custom
+        behaviour when the timeout triggers.
         """
         self.logger.warning(
             f"Timeout reached for node '{self.name}' after {self.timeout_seconds:.2f}s",
         )
 
     def execute(self, ctx: BaseGameContext) -> bool:
-        """Execute tasks, but enforce a maximum duration. If elapsed time
-        exceeds timeout_seconds, trigger timeout and exit.
+        """Execute tasks but enforce a maximum duration.
+
+        Args:
+            ctx (BaseGameContext): Game context used for task execution.
+
+        Returns:
+            bool: ``True`` if all tasks completed or a timeout occurred,
+            ``False`` otherwise.
         """
         # If already completed, no-op
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:

@@ -15,15 +15,10 @@ from utils import Utils
 
 
 class BaseArenaZone(ABC):
-    """Represents a zone within an arena with attributes for geometry, type, color, and navigability.
+    """Represents a zone within an arena with geometry, type, and accessibility.
 
     Attributes:
-        polygon (Polygon): The geometric shape of the zone.
-        zone_type (ZoneType): The type/category of the zone.
-        accessibility (ZoneAccessibility): The navigability of the zone.
-        zone_color (str): The color representation of the zone.
-        enemy_visits (int): Count of opponent visits.
-        ally_visits (int): Count of self visits.
+        zones_uid (list[int]): Sequence of used identifiers for zones.
     """
 
     zones_uid: list[int] = []
@@ -53,6 +48,7 @@ class BaseArenaZone(ABC):
             update_callback (callable, optional): Function to be called on updates.
             zone_color (str): Color associated with the zone.
             go_to_positions (list[OrientedPoint | Point], optional): List of go-to positions within the zone.
+            uid (int, optional): Unique identifier for the zone instance.
         """
         self.logger: Logger = logger
         self.zone_type: ZoneType = zone_type
@@ -205,16 +201,30 @@ class BaseArenaZone(ABC):
 
     """ Built-in methods """
 
-    def __instancecheck__(self, other) -> bool:
-        """Checks if two objects are instances of the same class."""
+    def __instancecheck__(self, other: object) -> bool:
+        """Return ``True`` if ``other`` is an instance of the same class.
+
+        Args:
+            other (object): Object to compare against.
+
+        Returns:
+            bool: ``True`` if ``other`` shares this class type.
+        """
         return type(self) == type(other) and (
             isinstance(self, type(other))
             or isinstance(other, type(self))
             or isinstance(self, other)
         )
 
-    def __eq__(self, other) -> bool:
-        """Checks equality based on polygon geometry and accessibility."""
+    def __eq__(self, other: object) -> bool:
+        """Return ``True`` if ``other`` has the same geometry and accessibility.
+
+        Args:
+            other (object): Object to compare against.
+
+        Returns:
+            bool: ``True`` if polygons and accessibility match.
+        """
         if not isinstance(self, type(other)):
             return False
         return (
@@ -223,12 +233,23 @@ class BaseArenaZone(ABC):
             and self.accessibility == getattr(other, "accessibility", None)
         )
 
-    def __ne__(self, other) -> bool:
-        """Checks inequality based on polygon geometry and accessibility."""
+    def __ne__(self, other: object) -> bool:
+        """Return ``True`` if ``other`` differs in geometry or accessibility.
+
+        Args:
+            other (object): Object to compare against.
+
+        Returns:
+            bool: ``True`` if zones are not equal.
+        """
         return not self.__eq__(other)
 
     def __str__(self) -> str:
-        """Provides a string representation of the zone."""
+        """Return a concise string representation of the zone.
+
+        Returns:
+            str: Human-readable information about the zone.
+        """
         return (
             f"{self.zone_type}: {self.buffered_polygon.centroid} -> {self.accessibility}, "
             f"ally visits: {self.ally_visits}, enemy visits: {self.enemy_visits}, "
@@ -237,9 +258,20 @@ class BaseArenaZone(ABC):
         )
 
     def __repr__(self) -> str:
-        """Provides the official string representation of the zone."""
+        """Return the official string representation of the zone.
+
+        Returns:
+            str: Formal representation of the zone.
+        """
         return self.__str__()
 
-    def __format__(self, format_spec) -> str:
-        """Formats the zone as a string."""
+    def __format__(self, format_spec: str) -> str:
+        """Format the zone as a string.
+
+        Args:
+            format_spec (str): Formatting specification.
+
+        Returns:
+            str: Formatted representation.
+        """
         return self.__str__()

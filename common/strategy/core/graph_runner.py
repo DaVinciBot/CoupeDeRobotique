@@ -10,15 +10,7 @@ if TYPE_CHECKING:
 
 
 class GraphRunner:
-    """Executes a directed graph of task nodes with optional parallelism.
-
-    Attributes:
-        logger: Logger instance for reporting execution progress.
-        parallel: If True, all valid transitions are followed in parallel;
-                  otherwise, the single best-scoring transition is chosen.
-        active: Currently executing nodes.
-        prev: Mapping of each active node to its predecessor node.
-    """
+    """Execute a graph of task nodes."""
 
     def __init__(
         self,
@@ -26,6 +18,15 @@ class GraphRunner:
         logger: Logger | None = None,
         parallel: bool = False,
     ) -> None:
+        """Create a new :class:`GraphRunner`.
+
+        Args:
+            start (BaseTaskNode): The entry node for the graph.
+            logger (Logger | None): Optional logger instance. If ``None`` a
+                default one is created.
+            parallel (bool): Execute all valid transitions in parallel when
+                ``True``.
+        """
         self.logger = logger or Logger(
             identifier="GraphRunner",
             follow_logger_manager_rules=True,
@@ -38,8 +39,10 @@ class GraphRunner:
         )
 
     def handle(self, ctx: BaseGameContext) -> None:
-        """Advance execution one step: process all active nodes, handle transitions,
-        and update the set of active nodes.
+        """Advance the graph execution by one step.
+
+        Args:
+            ctx (BaseGameContext): Context passed to each node.
         """
         if not self.active:
             self.logger.warning(
@@ -105,11 +108,11 @@ class GraphRunner:
         self.active = next_active
 
     def run(self, ctx: BaseGameContext, max_steps: int = 1000) -> None:
-        """Run through the graph until completion or until max_steps iterations.
+        """Run the graph until completion or until ``max_steps`` iterations.
 
         Args:
-            ctx: Game context passed to task nodes.
-            max_steps: Safety limit to prevent infinite loops.
+            ctx (BaseGameContext): Game context passed to task nodes.
+            max_steps (int): Safety limit to prevent infinite loops.
         """
         step = 0
         while self.active and step < max_steps:

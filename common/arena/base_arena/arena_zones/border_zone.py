@@ -11,16 +11,7 @@ from geometry import Polygon
 
 
 class BorderZone(BaseArenaZone):
-    """Represents the border zone of the arena, which is typically inaccessible.
-    This class defines the zone's geometry and ensures it remains restricted.
-
-    Attributes:
-        logger (Logger): Logger instance for logging messages.
-        buffer_size (float): Buffer size for geometric adjustments.
-        polygon (Polygon): Polygon representing the zone geometry.
-        buffered_polygon (Polygon): Buffered polygon geometry.
-        update_callback (callable): Function to be called on updates.
-    """
+    """Represents the border zone of the arena, which is typically inaccessible."""
 
     def __init__(
         self,

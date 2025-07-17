@@ -162,14 +162,22 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         )
 
     def __str__(self) -> str:
-        """Returns a string representation of the zone and its speed vector."""
+        """Return a human-readable description of the zone.
+
+        Returns:
+            str: Text describing the zone and its speed vector.
+        """
         return (
             f"{super().__str__()} Speed: {self.speed_vector.speed}, "
             f"Direction: ({self.speed_vector.dx}, {self.speed_vector.dy})"
         )
 
     def __repr__(self) -> str:
-        """Returns a detailed string representation of the zone state."""
+        """Return an unambiguous representation of the zone state.
+
+        Returns:
+            str: Detailed state string including speed vector information.
+        """
         return (
             f"{super().__repr__()} Speed: {self.speed_vector.speed}, "
             f"Direction: ({self.speed_vector.dx}, {self.speed_vector.dy}) "
@@ -178,6 +186,13 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             f"Positions Recorded Size: {self.positions_record_size}"
         )
 
-    def __format__(self, format_spec) -> str:
-        """Formats the string representation of the zone."""
+    def __format__(self, format_spec: str) -> str:
+        """Format the string representation of the zone.
+
+        Args:
+            format_spec (str): Format specification passed to :func:`format`.
+
+        Returns:
+            str: Formatted representation.
+        """
         return self.__str__()

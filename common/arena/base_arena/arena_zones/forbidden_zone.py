@@ -11,16 +11,7 @@ from geometry import Polygon
 
 
 class ForbiddenZone(BaseArenaZone):
-    """Zone that is strictly forbidden.
-
-    Attributes:
-        logger (Logger): Logger instance for logging messages.
-        accessibility (ZoneAccessibility): Accessibility type of the zone (defaults to forbidden).
-        buffer_size (float): Buffer size for geometric adjustments.
-        polygon (Polygon): Polygon representing the zone geometry.
-        buffered_polygon (Polygon): Buffered polygon geometry.
-        update_callback (callable): Function to be called on updates.
-    """
+    """Zone that is strictly forbidden."""
 
     def __init__(
         self,

@@ -26,8 +26,17 @@ class SubGraphBuilder:
         self.logger.info("Initialized SubGraphBuilder")
 
     def add_node(self, name: str, node: BaseTaskNode) -> SubGraphBuilder:
-        """Register a task node under a unique name.
-        Raises KeyError if name already exists.
+        """Register a task node.
+
+        Args:
+            name (str): Name for the node; must be unique.
+            node (BaseTaskNode): Node instance to register.
+
+        Returns:
+            SubGraphBuilder: ``self`` to allow call chaining.
+
+        Raises:
+            KeyError: If ``name`` already exists in the builder.
         """
         if name in self.nodes:
             msg = f"Node name '{name}' already registered"
@@ -38,7 +47,18 @@ class SubGraphBuilder:
         return self
 
     def connect(self, from_name: str, transition: BaseTransition) -> SubGraphBuilder:
-        """Queue a transition from the node named 'from_name'."""
+        """Queue a transition from an existing node.
+
+        Args:
+            from_name (str): Name of the source node.
+            transition (BaseTransition): Transition to append.
+
+        Returns:
+            SubGraphBuilder: ``self`` for chaining.
+
+        Raises:
+            KeyError: If ``from_name`` is not registered.
+        """
         if from_name not in self.nodes:
             msg = f"Source node '{from_name}' not found for transition"
             self.logger.error(msg)
@@ -48,7 +68,15 @@ class SubGraphBuilder:
         return self
 
     def add_subgraph(self, subgraph: BaseSubGraph, prefix: str = "") -> SubGraphBuilder:
-        """Merge another subgraph: clones its nodes and transitions with optional name prefix."""
+        """Merge another subgraph into this builder.
+
+        Args:
+            subgraph (BaseSubGraph): The subgraph to merge.
+            prefix (str): Optional prefix for new node names.
+
+        Returns:
+            SubGraphBuilder: ``self`` for chaining.
+        """
         mapping: dict[BaseTaskNode, BaseTaskNode] = {}
         for old in subgraph.get_all_nodes():
             new_name = prefix + old.name
@@ -76,8 +104,18 @@ class SubGraphBuilder:
         entry: str | BaseTaskNode,
         exits: str | BaseTaskNode | list[str | BaseTaskNode],
     ) -> BaseSubGraph:
-        """Finalize builder into a BaseSubGraph. Resolves names to instances,
-        applies queued transitions, and validates entry/exits.
+        """Finalize construction and return a :class:`BaseSubGraph`.
+
+        Args:
+            entry (str | BaseTaskNode): Entry node or its name.
+            exits (str | BaseTaskNode | list[str | BaseTaskNode]): One or more
+                exit nodes or their names.
+
+        Returns:
+            BaseSubGraph: The assembled subgraph ready for execution.
+
+        Raises:
+            KeyError: If ``entry`` or any ``exits`` are not registered.
         """
         # Resolve entry
         entry_node = self._resolve(entry)

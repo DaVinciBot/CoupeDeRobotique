@@ -21,17 +21,7 @@ if TYPE_CHECKING:
 
 
 class StuffZone(BaseArenaZone):
-    """Zone designated for storage or placement of items.
-
-    Attributes:
-        logger (Logger): Logger instance for logging messages.
-        accessibility (ZoneAccessibility): Accessibility type of the zone (defaults to restricted).
-        buffer_size (float): Buffer size for geometric adjustments.
-        polygon (Polygon): Polygon representing the zone geometry.
-        buffered_polygon (Polygon): Buffered polygon geometry.
-        update_callback (callable): Function to be called on updates.
-        index (int): Index identifier for the StuffZone.
-    """
+    """Zone designated for storage or placement of items."""
 
     def __init__(
         self,
