@@ -67,8 +67,8 @@ class BaseArena(ABC):
             border_buffer (float): Buffer distance for the arena border.
             obstacle_buffer (float): Buffer distance for obstacles.
             zones (list[BaseArenaZone]): List of pre-defined zones in the arena.
-            chunk_size (int): Size of chunks in the grid manager (default=10).
-            grid_manager_logger (Logger): Logger instance for grid manager logging.
+            chunk_size (int, optional): Size of chunks in the grid manager. Defaults to 10.
+            grid_manager_logger (Logger, optional): Logger instance for grid manager logging. Defaults to None.
         """
         # ====== Initialized constructor based attributes ======
         # 1. Logger
@@ -305,13 +305,13 @@ class BaseArena(ABC):
             self: The instance of the class.
             lidar_scan_polars (np.ndarray): A array representing the detection of the lidar scans.
             ally_position (OrientedPoint): The Oriented Point of the ally
-            numb_enemy (bool): flag to know if we are working in a match situation or not, as if the enemy is numb or not.
-            start_time: An integer representing the time (in milliseconds or seconds) when the computation starts.
+            start_time (int): An integer representing the time (in milliseconds or seconds) when the computation starts.
                     It is used to determine the timing of the enemy's movement. A value of -1 indicates no specific
                     start time.
+            numb_enemy (bool): flag to know if we are working in a match situation or not, as if the enemy is numb or not.
 
         Returns:
-            Point|MultiPoint|None
+            Point | MultiPoint | None: The computed enemy position or None if not found.
         """
         obstacles: MultiPoint = self.remove_outside(
             self._pol_to_abs_cart(lidar_scan_polars),

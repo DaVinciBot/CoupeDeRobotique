@@ -28,9 +28,19 @@ class Arena:
         game_borders: Polygon = create_straight_rectangle(Point(0, 0), Point(200, 300)),
         zones: dict[str, MultiPolygon] | None = None,
         *,
-        border_buffer,
-        robot_buffer,
+        border_buffer: float,
+        robot_buffer: float,
     ) -> None:
+        """Initialize an arena.
+
+        Args:
+            logger (Logger): Logger to use.
+            safe_collision_distance (float, optional): Safety distance for collision detection. Defaults to 30.
+            game_borders (Polygon, optional): Game field borders. Defaults to a 200x300 rectangle.
+            zones (dict[str, MultiPolygon] | None, optional): Dictionary of arena zones. Defaults to None.
+            border_buffer (float): Buffer around the borders.
+            robot_buffer (float): Buffer around the robot.
+        """
         self.logger: Logger = logger
         self.game_borders: Polygon = game_borders
         self.game_borders_buffered: Polygon = self.game_borders.buffer(border_buffer)
@@ -58,14 +68,15 @@ class Arena:
         pos = pos.buffer(self.robot_buffer)
         return self.game_borders.buffer(-0.01).contains(pos)
 
-    def contains(self, element: Geometry, buffered_zone=False) -> bool:
-        """Check if a point is in the arena bounds
+    def contains(self, element: Geometry, buffered_zone: bool = False) -> bool:
+        """Check if an element is within the arena bounds.
 
         Args:
-            element (Geometry): The point to check. Points, Polygons etc. are all Geometries.
+            element (Geometry): The element to check (Point, Polygon, etc.).
+            buffered_zone (bool, optional): If True, use the buffered border. Defaults to False.
 
         Returns:
-            bool: True if the element is entirely in the arena, False otherwise
+            bool: True if the element is entirely within the arena, False otherwise.
         """
         if buffered_zone:
             return self.game_borders_buffered.contains(element)
@@ -94,20 +105,14 @@ class Arena:
         path: LineString,
         forbidden_zone_name: str = "forbidden",
     ) -> bool:
-        """This function checks if a given line (or series of connected lines) move can be made into the arena. It
-        avoids collisions with the boarders and the forbidden area. takes into account the width and the length of
-        the robot
+        """Check if a given path can be taken in the arena without collision.
 
         Args:
-            path (LineString): Path to check
-            buffer_distance (float, optional): Max distance around the path to be checked (in all directions). Defaults to 0.
-            forbidden_zone_name (str): Name of the zone to check against (in addition to game borders). Defaults to "forbidden".
-
-        Raises:
-            Exception: _description_
+            path (LineString): Path to check.
+            forbidden_zone_name (str, optional): Name of the forbidden zone to check against (in addition to game borders). Defaults to "forbidden".
 
         Returns:
-            bool: Whether this path is theoretically allowed
+            bool: True if the path is allowed, False otherwise.
         """
         # define the area touched by the buffer, for example the sides of a robot moving
 
@@ -136,16 +141,15 @@ class Arena:
         zone: Polygon,
         delta: float = 0,
     ) -> Point | None:
-        """_summary_
+        """Compute a destination point within a zone, considering an optional delta.
 
         Args:
-            start_point (Point): _description_
-            zone (Polygon): _description_
-            delta (float, optional): _description_. Defaults to 0.
-            closer (bool, optional): _description_. Defaults to True.
+            start_point (Point): Starting point.
+            zone (Polygon): Target zone.
+            delta (float, optional): Distance around the center of the zone. Defaults to 0.
 
         Returns:
-            _type_: _description_
+            Point | None: The computed point, or None if not reachable.
         """
         borders = self.game_borders
         center: Point = zone.centroid
@@ -231,11 +235,14 @@ class Arena:
         distances_to_check: list[float],
         pos_robot: OrientedPoint,
     ) -> bool:
-        """Currently hard-coded for 90-180° with 3 distances/°
+        """Check for collision from a list of distances (e.g., LIDAR).
 
         Args:
-            distances_to_check (list[float]): _description_
-            pos_robot (OrientedPoint): _description_
+            distances_to_check (list[float]): List of distances to check.
+            pos_robot (OrientedPoint): Robot position and orientation.
+
+        Returns:
+            bool: True if a collision is detected, False otherwise.
         """
         for i in range(len(distances_to_check)):
             # Check if the point is close enough to be a risk, and far enough to remove lidar aberrations (might be done in lidar code as well)
