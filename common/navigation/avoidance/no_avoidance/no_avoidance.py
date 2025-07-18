@@ -44,7 +44,7 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
 
         Args:
             params (NoAvoidanceParams): Configuration parameters.
-            logger (Logger | None): Optional logging instance.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
         """
         super().__init__(params, acs_detection_profile_params, logger)
 

@@ -9,13 +9,10 @@ from navigation.avoidance.structs import AvoidanceStrategy
 
 
 class BaseAvoidanceParams:
-    """Base class for defining common parameters used in avoidance strategies.
+    """Base class for common parameters used in avoidance strategies.
 
     This class serves as a container for configuration values such as the avoidance
     strategy type, the ACS detection distance, and a timeout duration.
-
-    Attributes:
-        avoidance_strategy (AvoidanceStrategy): Enum indicating the avoidance strategy.
     """
 
     def __init__(

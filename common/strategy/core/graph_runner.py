@@ -22,10 +22,9 @@ class GraphRunner:
 
         Args:
             start (BaseTaskNode): The entry node for the graph.
-            logger (Logger | None): Optional logger instance. If ``None`` a
-                default one is created.
-            parallel (bool): Execute all valid transitions in parallel when
-                ``True``.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            parallel (bool, optional): Execute all valid transitions in parallel when
+                ``True``. Defaults to ``False``.
         """
         self.logger = logger or Logger(
             identifier="GraphRunner",

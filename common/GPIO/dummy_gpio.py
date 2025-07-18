@@ -11,19 +11,14 @@ class DummyDevice:
 
 
 class PIN:
-    """Dummy version of a GPIO pin for simulation/testing.
+    """Dummy version of a GPIO pin for simulation or testing."""
 
-    Args:
-        pin (int): The pin number.
+    def __init__(self, pin: int) -> None:
+        """Initialize the dummy GPIO pin.
 
-    Attributes:
-        pin (int): The pin number.
-        mode (str): The pin mode (input/output).
-        reverse_state (bool): Whether to reverse the state of the pin.
-        device : Simulated GPIO device.
-    """
-
-    def __init__(self, pin) -> None:
+        Args:
+            pin (int): Identifier of the pin.
+        """
         self.pin = pin
         self.mode = None
         self.reverse_state = False

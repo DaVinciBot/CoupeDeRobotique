@@ -26,9 +26,7 @@ class NavigatorSignalsDispatcher:
         """Initialize the NavigatorSignalsDispatcher.
 
         Args:
-            logger (Logger | None): Optional custom logger instance. If not provided,
-                                    a default logger with identifier "NavigatorSignalsDispatcher"
-                                    will be created.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
 
         Dynamically creates an Events subclass with all signal names for internal use.
         """

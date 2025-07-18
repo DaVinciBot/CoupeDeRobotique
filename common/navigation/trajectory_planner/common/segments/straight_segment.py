@@ -7,11 +7,7 @@ from navigation.trajectory_planner.common.segments.base_segment import BaseSegme
 
 
 class StraightSegment(BaseSegment):
-    """Segment representing straight-line motion.
-
-    Attributes:
-        distance (float): Distance to be covered during the segment.
-    """
+    """Segment representing straight-line motion."""
 
     def __init__(
         self,

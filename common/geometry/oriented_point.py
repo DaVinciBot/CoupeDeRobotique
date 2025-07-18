@@ -131,9 +131,12 @@ class OrientedPoint(Point):
     # serialization logic (such as Shapely's geometry objects).
     # ----------------------------------------------------------------------
 
-    def __reduce__(self):
-        """Customize pickling to ensure that the deserialized object is of type OrientedPoint
-        and that the extra attribute 'theta' is restored.
+    def __reduce__(self) -> tuple[type["OrientedPoint"], tuple[tuple[float, float], float], dict[str, float]]:
+        """Customize pickling for :class:`OrientedPoint`.
+
+        Returns:
+            tuple[type["OrientedPoint"], tuple[tuple[float, float], float], dict[str, float]]:
+                A tuple describing how to reconstruct the object.
         """
         # Retrieve the point's coordinates (assuming a single point, so take the first coordinate tuple)
         coords = tuple(self.coords)[0]
@@ -143,7 +146,11 @@ class OrientedPoint(Point):
         # When unpickled, the constructor is called with (coords, theta)
         return (self.__class__, ((coords, theta)), {"theta": theta})
 
-    def __setstate__(self, state):
-        """Restore the extra state for the OrientedPoint during unpickling."""
+    def __setstate__(self, state: dict) -> None:
+        """Restore the extra state for the :class:`OrientedPoint` during unpickling.
+
+        Args:
+            state (dict): State dictionary created by :py:meth:`__reduce__`.
+        """
         # Reinitialize the extra attribute in the class-level mapping
         OrientedPoint._id_to_attrs[str(id(self))] = {"theta": state.get("theta", 0.0)}

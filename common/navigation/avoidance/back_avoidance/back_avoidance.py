@@ -31,16 +31,12 @@ if TYPE_CHECKING:
 
 
 class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
-    """Implements a back obstacle avoidance strategy.
+    """Implement a simple backward obstacle avoidance strategy.
 
-    When an obstacle is detected via ACS, the robot reverses by a configured distance.
-    If the obstacle clears during the reverse phase before a timeout, it replans a new trajectory.
-    If the timeout expires at any phase, the avoidance aborts.
-
-    Attributes:
-        params (BackAvoidanceParams): Parameters for the strategy.
-        acs_detection_profile_params (BaseAcsDetectionProfileParams): Parameters for ACS detection profile.
-        logger (Logger | None): Optional logger.
+    When an obstacle is detected via ACS the robot moves backward for a configured
+    distance. If the obstacle disappears before the timeout expires, a new path
+    is planned from the current position. When the timeout is reached, the
+    avoidance is aborted.
     """
 
     def __init__(
@@ -49,12 +45,12 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
-        """Initialize the BackAndForwardAvoidance with parameters and optional logger.
+        """Initialize the avoidance with parameters and optional logger.
 
         Args:
-            params (BackAndForwardAvoidanceParams): Configuration parameters.
+            params (BackAvoidanceParams): Configuration parameters.
             acs_detection_profile_params (BaseAcsDetectionProfileParams): Parameters for ACS detection profile.
-            logger (Logger | None): Optional logging instance.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
         """
         super().__init__(params, acs_detection_profile_params, logger)
 

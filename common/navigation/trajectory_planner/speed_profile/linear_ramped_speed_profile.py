@@ -32,7 +32,9 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
         self.acceleration = acceleration
         self.deceleration = deceleration
 
-    def _compute_trapezoidal_params(self, departure_speed, arrival_speed):
+    def _compute_trapezoidal_params(
+        self, departure_speed: float, arrival_speed: float
+    ) -> tuple[float, float, float, float]:
         """Computes parameters used in trapezoidal motion profile.
 
         Args:
@@ -40,8 +42,9 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             arrival_speed (float): Speed at the end of the motion.
 
         Returns:
-            tuple: Time to accelerate, time to decelerate, distance during acceleration
-            and distance during deceleration.
+            tuple[float, float, float, float]: Time to accelerate, time to
+                decelerate, distance during acceleration and distance during
+                deceleration.
         """
         t_acc = (self._max_speed - departure_speed) / self.acceleration
         t_dec = (self._max_speed - arrival_speed) / self.deceleration
@@ -49,14 +52,15 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
         d_dec = (self._max_speed**2 - arrival_speed**2) / (2 * self.deceleration)
         return t_acc, t_dec, d_acc, d_dec
 
-    def _compute_triangular_peak_speed(self, distance, departure_speed, arrival_speed):
+    def _compute_triangular_peak_speed(
+        self, distance: float, departure_speed: float, arrival_speed: float
+    ) -> float:
         """Calculates peak speed for triangular profile when cruising is not possible.
 
         Args:
             distance (float): Total distance to travel.
             departure_speed (float): Speed at the start.
             arrival_speed (float): Speed at the end.
-            decel_rate (float): Computed deceleration rate.
 
         Returns:
             float: Computed peak speed.
@@ -71,18 +75,18 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
 
     def get_speed(
         self,
-        time_elapsed=None,
-        distance=None,
-        departure_speed=0.0,
-        arrival_speed=0.0,
+        time_elapsed: float | None = None,
+        distance: float | None = None,
+        departure_speed: float = 0.0,
+        arrival_speed: float = 0.0,
     ) -> float:
         """Returns the speed at a given time and distance using either trapezoidal or triangular profile.
 
         Args:
-            time_elapsed (float, optional): Time since motion started.
-            distance (float, optional): Total distance to travel.
-            departure_speed (float): Speed at the beginning.
-            arrival_speed (float): Speed at the end.
+            time_elapsed (float | None, optional): Time since motion started. Defaults to None.
+            distance (float | None, optional): Total distance to travel. Defaults to None.
+            departure_speed (float, optional): Speed at the beginning. Defaults to 0.0.
+            arrival_speed (float, optional): Speed at the end. Defaults to 0.0.
 
         Returns:
             float: Current speed at the specified time.
@@ -145,18 +149,18 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
 
     def get_distance(
         self,
-        time_elapsed,
-        distance=None,
-        departure_speed=0.0,
-        arrival_speed=0.0,
+        time_elapsed: float,
+        distance: float | None = None,
+        departure_speed: float = 0.0,
+        arrival_speed: float = 0.0,
     ) -> float:
         """Calculates distance traveled at a given time.
 
         Args:
             time_elapsed (float): Elapsed time since start.
-            distance (float, optional): Total planned distance.
-            departure_speed (float): Speed at start.
-            arrival_speed (float): Speed at end.
+            distance (float | None, optional): Total planned distance. Defaults to None.
+            departure_speed (float, optional): Speed at start. Defaults to 0.0.
+            arrival_speed (float, optional): Speed at end. Defaults to 0.0.
 
         Returns:
             float: Distance covered up to the specified time.
@@ -238,16 +242,16 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
 
     def get_total_duration(
         self,
-        distance,
-        departure_speed=0.0,
-        arrival_speed=0.0,
+        distance: float,
+        departure_speed: float = 0.0,
+        arrival_speed: float = 0.0,
     ) -> float:
         """Calculates the total time required to travel the given distance.
 
         Args:
             distance (float): Total distance to be covered.
-            departure_speed (float): Speed at start.
-            arrival_speed (float): Speed at end.
+            departure_speed (float, optional): Speed at start. Defaults to 0.0.
+            arrival_speed (float, optional): Speed at end. Defaults to 0.0.
 
         Returns:
             float: Total duration of the motion profile.

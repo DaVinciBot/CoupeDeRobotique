@@ -45,9 +45,9 @@ def get_push_one_floor_to_wall_subgraph(
     Args:
         zone_id (int): The ID of the target zone.
         push_distance (int): The distance to push forward in millimeters.
-        new_x (float | None): Optional new X-coordinate for odometry reset.
-        new_y (float | None): Optional new Y-coordinate for odometry reset.
-        new_theta (float | None): Optional new orientation (theta) for odometry reset.
+        new_x (float | None, optional): New X-coordinate for odometry reset. Defaults to None.
+        new_y (float | None, optional): New Y-coordinate for odometry reset. Defaults to None.
+        new_theta (float | None, optional): New orientation (theta) for odometry reset. Defaults to None.
 
     Returns:
         BaseSubGraph: The constructed subgraph representing the task sequence.

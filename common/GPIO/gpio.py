@@ -7,15 +7,9 @@ class PIN:
 
     Args:
         pin (int): The pin number.
-
-    Attributes:
-        pin (int): The pin number.
-        mode (str): The pin mode (input/output).
-        reverse_state (bool): Whether to reverse the state of the pin.
-        device : The GPIO device associated with the pin.
     """
 
-    def __init__(self, pin) -> None:
+    def __init__(self, pin: int) -> None:
         self.pin = pin
         self.mode = None
         self.reverse_state = False
@@ -72,11 +66,14 @@ class PIN:
             else self.__correct_state(self.device.is_pressed)
         )
 
-    def safe_digital_read(self, n=5) -> bool:
-        """Read multiple time the digital state of the pin.
+    def safe_digital_read(self, n: int = 5) -> bool:
+        """Read multiple times the digital state of the pin and take a majority vote.
+
+        Args:
+            n (int, optional): Number of samples to read. Defaults to 5.
 
         Returns:
-            bool: The digital state of the pin (True/False).
+            bool: The averaged digital state. True if the majority of samples are True, otherwise False.
 
         """
         return sum([self.digital_read() for _ in range(n)]) / n >= 0.5

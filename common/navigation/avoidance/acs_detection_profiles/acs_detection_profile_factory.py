@@ -28,13 +28,13 @@ class AcsDetectionProfileFactory:
 
     @staticmethod
     def instantiate(params: BaseAcsDetectionProfileParams) -> BaseAcsDetectionProfile:
-        """Create an avoidance module based on the given parameters.
+        """Create an ACS detection profile instance based on strategy parameters.
 
         Args:
-            params (BaseAvoidanceParams): Parameters including the desired avoidance strategy.
+            params (BaseAcsDetectionProfileParams): Parameters describing the desired profile.
 
         Returns:
-            BaseAvoidance: A specific implementation of an obstacle avoidance module.
+            BaseAcsDetectionProfile: The instantiated detection profile.
 
         Raises:
             ValueError: If the avoidance strategy is not supported.

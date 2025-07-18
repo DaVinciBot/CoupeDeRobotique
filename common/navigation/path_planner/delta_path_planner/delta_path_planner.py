@@ -32,7 +32,7 @@ class DeltaPathPlanner(
 
         Args:
             params (DeltaPathPlannerParams): Parameters for delta-based path planning.
-            logger (Logger | None): Optional logger.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
         """
         super().__init__(params, logger)
 

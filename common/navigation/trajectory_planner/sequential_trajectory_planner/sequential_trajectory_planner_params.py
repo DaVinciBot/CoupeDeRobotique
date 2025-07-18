@@ -11,11 +11,7 @@ from navigation.trajectory_planner.structs import TrajectoryPlannerStrategy
 
 
 class SequentialTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
-    """Parameter class for SequentialTrajectoryPlanner.
-
-    Attributes:
-        step_sleep_delay (float): Optional delay (in seconds) to pause between trajectory steps.
-    """
+    """Parameter class for SequentialTrajectoryPlanner."""
 
     def __init__(
         self,
@@ -27,10 +23,14 @@ class SequentialTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
         """Initialize parameters for sequential trajectory planning.
 
         Args:
-            step_sleep_delay (float): Time delay between each segment in the trajectory.
-            respect_intermediate_orientation (bool): If True, the trajectory planner will
-            respect the intermediate orientation of the robot when planning the trajectory.
-            respect_goal_orientation (bool): If True, the trajectory planner will respect the orientation of the goal point (last one)
+            direction (Direction, optional): Direction in which to generate the trajectory.
+                Defaults to Direction.FORWARD.
+            step_sleep_delay (float, optional): Time delay between each segment in the trajectory.
+                Defaults to 0.0.
+            respect_intermediate_orientation (bool, optional): Whether intermediate poses
+                should preserve their orientation when planning the trajectory.
+            respect_goal_orientation (bool, optional): Whether the final pose orientation
+                should be preserved. Defaults to True.
         """
         self.step_sleep_delay: float = step_sleep_delay
         self.respect_intermediate_orientation: bool = respect_intermediate_orientation

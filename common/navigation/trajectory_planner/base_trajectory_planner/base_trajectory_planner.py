@@ -39,7 +39,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
         Args:
             params (ParamsType): Planner configuration parameters.
             speed_profiler (SpeedProfiler): Speed profile manager.
-            logger (Logger | None): Optional logger instance.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
         """
         self.logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,

@@ -40,13 +40,14 @@ class BaseColorReservedZone(BaseArenaZone):
             logger (Logger): Logger instance for debugging and tracking.
             zone_type (ZoneType): Type of the zone.
             color (TeamColor): Primary color determining access.
-            accessibility (ZoneAccessibility): Initial accessibility state of the zone.
-            buffer_size (float): Size of the buffer for zone expansion.
-            polygon (Polygon, optional): The base polygon defining the zone's shape.
-            buffered_polygon (Polygon, optional): Buffered version of the polygon.
-            update_callback (Callable, optional): Function to retrieve the GridManager instance.
-            zone_color (str): Hex code representing the zone color.
-            go_to_positions (list[OrientedPoint | Point], optional): List of go-to positions within the zone.
+            accessibility (ZoneAccessibility, optional): Initial accessibility state of the zone. Defaults to ZoneAccessibility.RESTRICTED.
+            buffer_size (float, optional): Size of the buffer for zone expansion. Defaults to 0.0.
+            polygon (Polygon, optional): The base polygon defining the zone's shape. Defaults to None.
+            buffered_polygon (Polygon, optional): Buffered version of the polygon. Defaults to None.
+            update_callback (Callable[[], GridManager], optional):
+                Function returning the grid manager instance. Defaults to None.
+            zone_color (str, optional): Hex code representing the zone color. Defaults to "#9e9e9e".
+            go_to_positions (list[OrientedPoint | Point], optional): List of go-to positions within the zone. Defaults to None.
         """
         self.color: TeamColor = color
 
@@ -66,7 +67,7 @@ class BaseColorReservedZone(BaseArenaZone):
         """Determines if the zone is accessible based on the team color.
 
         Args:
-            team_color (TeamColor, optional): The color assigned to the team.
+            team_color (TeamColor, optional): The color assigned to the team. Defaults to TeamColor.UNDEFINED.
 
         Returns:
             bool: True if the zone is accessible, False otherwise.

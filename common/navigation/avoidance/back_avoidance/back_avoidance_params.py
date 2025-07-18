@@ -10,15 +10,10 @@ from navigation.trajectory_planner import SpeedProfiler
 
 
 class BackAvoidanceParams(BaseAvoidanceParams):
-    """Configuration class for the 'BACK_AND_FORWARD' obstacle avoidance strategy.
+    """Configuration for a backward avoidance strategy.
 
     This strategy stops the system when an obstacle is detected within a specified distance
     and waits for a defined timeout period before taking further action.
-
-    Attributes:
-        timeout (float): Duration (in seconds) to wait after stopping before reassessment.
-        backward_distance (float): Distance to move backward when an obstacle is detected.
-        backward_speed_profiler (SpeedProfiler): Speed profiler for backward movement.
     """
 
     def __init__(
@@ -27,10 +22,12 @@ class BackAvoidanceParams(BaseAvoidanceParams):
         backward_distance: float,
         backward_speed_profiler: SpeedProfiler,
     ) -> None:
-        """Initializes StopAndWaitAvoidanceParams with specific avoidance distance and timeout in seconds.
+        """Initialize parameters for backward avoidance.
 
         Args:
             timeout (float): Time to wait after stopping before checking again in seconds.
+            backward_distance (float): Distance to reverse when avoidance is triggered.
+            backward_speed_profiler (SpeedProfiler): Profiler for the backward motion.
         """
         self.timeout: float = timeout * 1000.0
         self.backward_distance: float = backward_distance

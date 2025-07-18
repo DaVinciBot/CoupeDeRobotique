@@ -24,9 +24,9 @@ class SetOdometrie(BaseTask):
         """Initialize the SetOdometrie task with optional position values.
 
         Args:
-            x (float | None): Optional X coordinate.
-            y (float | None): Optional Y coordinate.
-            theta (float | None): Optional orientation in radians.
+            x (float | None, optional): X coordinate. Defaults to None.
+            y (float | None, optional): Y coordinate. Defaults to None.
+            theta (float | None, optional): Orientation in radians. Defaults to None.
         """
         self.x: float | None = x
         self.y: float | None = y

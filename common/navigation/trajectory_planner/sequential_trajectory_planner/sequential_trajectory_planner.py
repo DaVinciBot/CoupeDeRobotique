@@ -45,7 +45,7 @@ class SequentialTrajectoryPlanner(
         Args:
             params (SequentialTrajectoryPlannerParams): Planning parameters.
             speed_profiler (SpeedProfiler): Speed profiler to control segment durations.
-            logger (Logger | None): Optional logger.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
         """
         super().__init__(params, speed_profiler, logger)
         self.segments_mapper: SegmentMapper | None = None

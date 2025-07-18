@@ -72,7 +72,7 @@ class SubGraphBuilder:
 
         Args:
             subgraph (BaseSubGraph): The subgraph to merge.
-            prefix (str): Optional prefix for new node names.
+            prefix (str, optional): Prefix for new node names. Defaults to "".
 
         Returns:
             SubGraphBuilder: ``self`` for chaining.

@@ -36,7 +36,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
 
     Attributes:
         params (StopAndWaitAvoidanceParams): Parameters for stop-and-wait strategy.
-        logger (Logger | None): Optional logger for debug output.
+        logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
     """
 
     def __init__(
@@ -49,7 +49,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
 
         Args:
             params (StopAndWaitAvoidanceParams): Configuration parameters.
-            logger (Logger | None): Optional logging instance.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
         """
         super().__init__(params, acs_detection_profile_params, logger)
 

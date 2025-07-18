@@ -2,7 +2,13 @@ from enum import Enum
 
 
 class TeamColor(Enum):
-    """Enum representing the team color."""
+    """Enumerate the available team colors.
+
+    Attributes:
+        YELLOW: Yellow team.
+        BLUE: Blue team.
+        UNDEFINED: Team color not set.
+    """
 
     YELLOW = "yellow"
     BLUE = "blue"

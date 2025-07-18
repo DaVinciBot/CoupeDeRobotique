@@ -33,17 +33,7 @@ from geometry import (
 
 
 class BaseArena(ABC):
-    """Represents the arena and its zones, including buffer zones and borders.
-
-    Attributes:
-        logger (Logger): Logger instance for logging information.
-        width (int): Width of the arena in centimeters.
-        height (int): Height of the arena in centimeters.
-        border_buffer (float): Buffer distance for the arena border.
-        obstacle_buffer (float): Buffer distance for obstacles.
-        zones (list[BaseArenaZone]): List of all zones in the arena.
-        grid_manager (GridManager): Grid manager instance for managing zones.
-    """
+    """Represents the arena and its zones, including buffer areas."""
 
     def __init__(
         self,
@@ -68,7 +58,7 @@ class BaseArena(ABC):
             obstacle_buffer (float): Buffer distance for obstacles.
             zones (list[BaseArenaZone]): List of pre-defined zones in the arena.
             chunk_size (int, optional): Size of chunks in the grid manager. Defaults to 10.
-            grid_manager_logger (Logger, optional): Logger instance for grid manager logging. Defaults to None.
+            grid_manager_logger (Logger | None, optional): Logger instance for grid manager logging. Defaults to None.
         """
         # ====== Initialized constructor based attributes ======
         # 1. Logger
@@ -196,7 +186,12 @@ class BaseArena(ABC):
 
     # ====== Protected Methods ======
     def _get_grid_manager(self) -> GridManager:
-        """Use this methode instead lambda: self.grid_manager in the BaseArenaZone.update_callback"""
+        """Return the grid manager instance for zone callbacks.
+
+        Returns:
+            GridManager: The current grid manager.
+        """
+
         return self.grid_manager
 
     def _pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:
@@ -253,8 +248,8 @@ class BaseArena(ABC):
         Args:
             ally_position (OrientedPoint): Current position of the ally robot.
             lidar_scan_polars (np.ndarray): Lidar scan data in polar coordinates.
-            optimized_update (bool, optional): If True, only updates intersecting zones.
-            _enemy_position (Point, optional): Pre-defined enemy position (default=None).
+            optimized_update (bool, optional): If True, only updates intersecting zones. Defaults to True.
+            _enemy_position (Point | None, optional): Pre-defined enemy position. Defaults to None.
         """
         # 1.Compute enemy position if not directly provided in absolute cartesian coordinates
         if not _enemy_position:
@@ -302,13 +297,10 @@ class BaseArena(ABC):
         If the enemy position is within a stuff zone, it marks that zone as FORBIDDEN.
 
         Args:
-            self: The instance of the class.
-            lidar_scan_polars (np.ndarray): A array representing the detection of the lidar scans.
-            ally_position (OrientedPoint): The Oriented Point of the ally
-            start_time (int): An integer representing the time (in milliseconds or seconds) when the computation starts.
-                    It is used to determine the timing of the enemy's movement. A value of -1 indicates no specific
-                    start time.
-            numb_enemy (bool): flag to know if we are working in a match situation or not, as if the enemy is numb or not.
+            lidar_scan_polars (np.ndarray): Detection points from the LIDAR scan.
+            ally_position (OrientedPoint): Current ally position.
+            start_time (int, optional): Starting timestamp for the computation. Defaults to -1 for no specific start time.
+            numb_enemy (bool, optional): Whether the enemy is inactive. Defaults to False.
 
         Returns:
             Point | MultiPoint | None: The computed enemy position or None if not found.
@@ -432,7 +424,7 @@ class BaseArena(ABC):
     # ====== Private Methods: draw helpers ======
     @staticmethod
     def __plot_oriented_arrow(
-        ax,
+        ax: plt.Axes,
         point: OrientedPoint,
         norm: float = 5.0,
         color: str = "#000000",
@@ -442,12 +434,12 @@ class BaseArena(ABC):
         """Draws an arrow from an oriented point with a given direction.
 
         Args:
-            ax (plt.axes): Matplotlib axis to draw the arrow on.
+            ax (plt.Axes): Matplotlib axis to draw the arrow on.
             point (OrientedPoint): Oriented point (x, y, theta) with position and angle.
-            norm (float): Length of the arrow (default=5.0).
-            color (str): Color of the arrow (default='000000').
-            head_width (float): Width of the arrow head (default=None -> norm * 0.2).
-            head_length (float): Length of the arrow head (default=None -> norm * 0.3).
+            norm (float): Length of the arrow. Defaults to 5.0.
+            color (str): Color of the arrow. Defaults to '#000000'.
+            head_width (float | None): Width of the arrow head. Defaults to None -> norm * 0.2.
+            head_length (float | None): Length of the arrow head. Defaults to None -> norm * 0.3.
         """
         if head_width is None:
             head_width = norm * 0.2
@@ -473,7 +465,7 @@ class BaseArena(ABC):
 
     @staticmethod
     def __plot_zone_uid(
-        ax,
+        ax: plt.Axes,
         zone: BaseArenaZone,
         color: str = "#000000",
         fontsize: int = 12,
@@ -481,10 +473,10 @@ class BaseArena(ABC):
         """Draws the zone UID at the center of the zone.
 
         Args:
-            ax (plt.axes): Matplotlib axis to draw the UID on.
+            ax (plt.Axes): Matplotlib axis to draw the UID on.
             zone (BaseArenaZone): Zone to draw the UID for.
-            color (str): Color of the UID (default='#000000').
-            fontsize (int): Font size of the UID (default=12).
+            color (str, optional): Color of the UID. Defaults to '#000000'.
+            fontsize (int, optional): Font size of the UID. Defaults to 12.
         """
         ax.text(
             zone.polygon.centroid.x,
@@ -515,7 +507,7 @@ class BaseArena(ABC):
 
     @staticmethod
     def __plot_polygon(
-        ax,
+        ax: plt.Axes,
         polygon: Polygon,
         color: str,
         label: str = None,
@@ -523,20 +515,20 @@ class BaseArena(ABC):
         hatch: str = None,
         hatch_color: str = None,
     ) -> None:
-        """Helper method to plot a polygon or multipolygon on a matplotlib axis.
+        """Plot a polygon or multipolygon on a matplotlib axis.
 
         - Fills polygons without holes, optionally with hatching.
         - Draws only outlines (dashed) for polygons with holes.
         - Ensures that the same legend label is not added more than once.
 
-        Parameters:
-        - ax: matplotlib axis
-        - polygon: Polygon to plot (from shapely.geometry)
-        - color: Color of the polygon (fill or outline)
-        - label: Legend label (optional)
-        - alpha: Transparency of the fill or line (default=1.0)
-        - hatch: Hatching pattern (optional), e.g., '/' or '\\'. Set None for no hatching.
-        - hatch_color: Color of the hatching lines (optional, default same as outline color)
+        Args:
+            ax (plt.Axes): Axis on which to draw.
+            polygon (Polygon): Polygon to plot.
+            color (str): Fill color of the polygon.
+            label (str, optional): Legend label. Defaults to None.
+            alpha (float): Transparency factor. Defaults to 1.0.
+            hatch (str, optional): Matplotlib hatching pattern, e.g., '/' or '\\'. Defaults to None for no hatching.
+            hatch_color (str, optional): Color of the hatching lines. Defaults to None.
         """
         # Avoid duplicate labels
         existing_labels = ax.get_legend_handles_labels()[1]
@@ -565,14 +557,23 @@ class BaseArena(ABC):
 
     def __plot_zone(
         self,
-        ax,
+        ax: plt.Axes,
         zone: BaseArenaZone,
         show_buffer: bool,
         show_ally_direction: bool,
         display_zones_go_to_positions: bool,
         transparency_factor: float = 1.0,
     ) -> None:
-        """Plots zones and their buffers on the arena."""
+        """Plot a zone and its buffer on the arena.
+
+        Args:
+            ax (plt.Axes): Axis on which to draw.
+            zone (BaseArenaZone): Zone to display.
+            show_buffer (bool): Whether to plot the buffered polygon.
+            show_ally_direction (bool): Draw an arrow for the ally direction.
+            display_zones_go_to_positions (bool): Draw go-to positions if any.
+            transparency_factor (float, optional): Alpha value multiplier. Defaults to 1.0.
+        """
         if show_buffer:
             # Plot buffer zone in transparent color
             self.__plot_polygon(

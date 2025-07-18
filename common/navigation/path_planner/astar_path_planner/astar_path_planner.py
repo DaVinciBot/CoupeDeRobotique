@@ -33,7 +33,7 @@ class AStarPathPlanner(
 
         Args:
             params (AStarPathPlannerParams): Parameters including motion direction.
-            logger (Logger | None): Optional logger.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
         """
         super().__init__(params, logger)
 

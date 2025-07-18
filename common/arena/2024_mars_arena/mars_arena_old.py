@@ -43,14 +43,19 @@ class MarsArena(Arena):
         start_zone_id: int,
         logger: Logger,
         *,
-        border_buffer,
-        robot_buffer,
+        border_buffer: float,
+        robot_buffer: float,
     ) -> None:
-        """Generate the arena of the CDR 2023-2024
+        """Generate the arena of the CDR 2023-2024.
 
-        :param start_zone: The start zone of the robot, must be between 1 and 6
-        :type start_zone: int
-        :raises ValueError: If start_zone is not between 0 and 5
+        Args:
+            start_zone_id (int): Starting zone ID for the robot.
+            logger (Logger): Logger instance for debugging information.
+            border_buffer (float): Safety buffer around the arena borders.
+            robot_buffer (float): Safety buffer around moving robots.
+
+        Raises:
+            ValueError: If ``start_zone_id`` is not between ``0`` and ``5``.
         """
         if not (0 <= start_zone_id <= 5):
             raise ValueError("start_zone must be between 0 and 5")

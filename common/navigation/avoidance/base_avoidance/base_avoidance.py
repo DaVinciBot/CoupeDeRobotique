@@ -33,17 +33,10 @@ ParamsType = TypeVar("ParamsType", bound=BaseAvoidanceParams)
 
 
 class BaseAvoidance(ABC, Generic[ParamsType]):
-    """Abstract base class that provides shared utilities for avoidance strategies in navigation.
+    """Abstract base class providing shared utilities for avoidance strategies.
 
     This class encapsulates ACS-based obstacle detection, timeout-based abort handling,
     and a standardized interface for strategy-specific logic.
-
-    Attributes:
-        params (ParamsType): Configuration parameters specific to the strategy.
-        logger (Logger): Logger instance for internal logging.
-        state (AvoidanceState): Current avoidance state.
-        _avoiding_start_time (float | None): Timer start time for avoidance timeout.
-        _original_task (NavigatorTask | None): Deep copy of the original task before avoidance began.
     """
 
     def __init__(
@@ -56,7 +49,9 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
 
         Args:
             params (ParamsType): Parameters for the avoidance strategy.
-            logger (Logger | None): Optional logger instance.
+            acs_detection_profile_params (BaseAcsDetectionProfileParams):
+                Parameters for the ACS detection profile.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
         """
         self.logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
