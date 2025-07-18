@@ -13,6 +13,7 @@ from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlanner,
     SequentialTrajectoryPlannerParams,
 )
+from navigation.trajectory_planner.speed_profile.speed_profiler import SpeedProfiler
 from navigation.trajectory_planner.structs import TrajectoryPlannerStrategy
 
 
@@ -22,7 +23,7 @@ class TrajectoryPlannerFactory:
     @staticmethod
     def instantiate(
         params: BaseTrajectoryPlannerParams,
-        speed_profiler,
+        speed_profiler: SpeedProfiler,
     ) -> BaseTrajectoryPlanner:
         """Create a trajectory planner based on the given parameters.
 
@@ -33,7 +34,7 @@ class TrajectoryPlannerFactory:
 
         Args:
             params (BaseTrajectoryPlannerParams): Contains configuration including strategy type.
-            speed_profiler: An object used to compute velocity profiles during trajectory planning.
+            speed_profiler (SpeedProfiler): An object used to compute velocity profiles during trajectory planning.
 
         Returns:
             BaseTrajectoryPlanner: A specific implementation of the trajectory planner.

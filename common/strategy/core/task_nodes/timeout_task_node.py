@@ -24,7 +24,7 @@ class TimeoutTaskNode(BaseTaskNode):
         name: str,
         tasks: BaseTask | list[BaseTask],
         timeout_seconds: float,
-        scoring_function: BaseScoringFunction = DefaultScoringFunction(),
+        scoring_function: BaseScoringFunction | None = None,
     ) -> None:
         """Initialize the timeout node.
 
@@ -32,8 +32,7 @@ class TimeoutTaskNode(BaseTaskNode):
             name (str): Node name.
             tasks (BaseTask | list[BaseTask]): Task or tasks to execute.
             timeout_seconds (float): Duration in seconds before timeout occurs.
-            scoring_function (BaseScoringFunction): Scoring strategy used when
-                evaluating transitions.
+            scoring_function (BaseScoringFunction | None, optional): Scoring strategy used when evaluating transitions. Defaults to None.
         """
         super().__init__(name, tasks, scoring_function)
         self.timeout_seconds: float = timeout_seconds

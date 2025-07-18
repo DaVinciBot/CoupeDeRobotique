@@ -23,6 +23,14 @@ from strategy.core import (
 
 
 def get_wall_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
+    """Build a subgraph for a robot to execute a pickup operation at a designated pickup zone.
+
+    Args:
+        pickup_zone_id (int): The ID of the target pickup zone.
+
+    Returns:
+        BaseSubGraph: The subgraph for the robot to execute a pickup operation at a designated pickup zone.
+    """
     subgraph = SubGraphBuilder()
 
     # Node: Ready to approach the pickup zone

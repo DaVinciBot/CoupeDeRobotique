@@ -19,10 +19,6 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
     This class enables flexible, reusable logic for determining transitions between task nodes
     by passing a function during instantiation. The function is expected to return a boolean
     indicating whether the transition should be allowed.
-
-    Attributes:
-        func (Callable): A callable that takes `from_node`, `next_node`, and `ctx` as input
-                         and returns a boolean indicating whether the transition is valid.
     """
 
     def __init__(

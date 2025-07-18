@@ -24,20 +24,20 @@ class BaseTaskNode:
         self,
         name: str,
         tasks: BaseTask | list[BaseTask],
-        scoring_function: BaseScoringFunction = DefaultScoringFunction(),
+        scoring_function: BaseScoringFunction | None = None,
     ) -> None:
         """Initialize the task node.
 
         Args:
             name (str): The node name.
             tasks (BaseTask | list[BaseTask]): Single task or list of tasks to execute.
-            scoring_function (BaseScoringFunction): Scoring function used when evaluating transitions.
+            scoring_function (BaseScoringFunction | None, optional): Scoring function used when evaluating transitions. Defaults to None.
         """
         self.name: str = name
         self.tasks: list[BaseTask] = (
             [tasks] if isinstance(tasks, BaseTask) else tasks  # type: ignore
         )
-        self.scoring_function: BaseScoringFunction = scoring_function
+        self.scoring_function = scoring_function or DefaultScoringFunction()
         self.logger = Logger(identifier=name, follow_logger_manager_rules=True)
 
         # Transitions to other nodes

@@ -33,10 +33,10 @@ class BasicSpeedProfile(BaseSpeedProfile):
         """Get constant speed at any given time or distance.
 
         Args:
-            time_elapsed (float | None): Not used.
-            distance (float | None): Not used.
-            departure_speed (float): Accepted for compatibility; not used.
-            arrival_speed (float): Accepted for compatibility; not used.
+            time_elapsed (float | None, optional): Not used. Defaults to None.
+            distance (float | None, optional): Not used. Defaults to None.
+            departure_speed (float, optional): Accepted for compatibility; not used. Defaults to 0.0.
+            arrival_speed (float, optional): Accepted for compatibility; not used. Defaults to 0.0.
 
         Returns:
             float: Constant speed.
@@ -54,9 +54,9 @@ class BasicSpeedProfile(BaseSpeedProfile):
 
         Args:
             time_elapsed (float): Elapsed time in seconds.
-            distance (float | None): Not used.
-            departure_speed (float): Accepted for compatibility; not used.
-            arrival_speed (float): Accepted for compatibility; not used.
+            distance (float | None, optional): Not used. Defaults to None.
+            departure_speed (float, optional): Accepted for compatibility; not used. Defaults to 0.0.
+            arrival_speed (float, optional): Accepted for compatibility; not used. Defaults to 0.0.
 
         Returns:
             float: Distance = speed * time_elapsed
@@ -73,8 +73,8 @@ class BasicSpeedProfile(BaseSpeedProfile):
 
         Args:
             distance (float): Distance to travel.
-            departure_speed (float): Accepted for compatibility; not used.
-            arrival_speed (float): Accepted for compatibility; not used.
+            departure_speed (float, optional): Accepted for compatibility; not used. Defaults to 0.0.
+            arrival_speed (float, optional): Accepted for compatibility; not used. Defaults to 0.0.
 
         Returns:
             float: Duration = distance / speed

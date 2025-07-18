@@ -5,8 +5,10 @@ from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfi
 
 
 class AngularRestrictProjectionAcsDetectionProfileParams(BaseAcsDetectionProfileParams):
+    """Parameters for the angular restrict projection ACS detection profile."""
+
     def __init__(self, acs_distance: float, angle_view: float) -> None:
-        """Parameters for the Restrict Projection ACS Detection Profile.
+        """Initializes the AngularRestrictProjectionAcsDetectionProfileParams.
 
         Args:
             acs_distance (float): The distance in centimeters for the ACS detection.

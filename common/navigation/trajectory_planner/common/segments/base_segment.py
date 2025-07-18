@@ -6,13 +6,7 @@ from geometry import OrientedPoint
 
 
 class BaseSegment:
-    """Base class for all motion segments.
-
-    Attributes:
-        start_position (OrientedPoint): Start pose of the segment.
-        end_position (OrientedPoint): End pose of the segment.
-        duration (float): Duration of the segment in seconds.
-    """
+    """Base class for all motion segments."""
 
     def __init__(
         self,

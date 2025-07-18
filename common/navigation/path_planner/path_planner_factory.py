@@ -30,7 +30,9 @@ class PathPlannerFactory:
     """Factory class to instantiate the appropriate path planner based on the provided parameters."""
 
     @staticmethod
-    def instantiate(params: BasePathPlannerParams) -> BasePathPlanner:
+    def instantiate(
+        params: BasePathPlannerParams,
+    ) -> BasePathPlanner:
         """Create a path planner based on the given parameters.
 
         This method inspects the `path_finding_strategy` attribute of the provided

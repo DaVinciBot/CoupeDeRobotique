@@ -12,6 +12,24 @@ class NavigatorSignalsEnum(Enum):
 
     These events represent key actions or statuses relevant to path planning,
     trajectory execution, obstacle handling, goal processing, and system diagnostics.
+
+    Attributes:
+        PLAN_PATH: Initiate path planning.
+        PATH_PLANNED: Path planning completed successfully.
+        PLAN_TRAJECTORY: Initiate trajectory planning.
+        TRAJECTORY_PLANNED: Trajectory planning completed successfully.
+        REPLAN_PATH: Replan the path due to changes or obstacles.
+        START_MOTION: Start motion along the planned trajectory.
+        PAUSE_MOTION: Pause the current motion.
+        RESUME_MOTION: Resume the paused motion.
+        STOP_MOTION: Stop the current motion immediately.
+        ERROR_MOTION: An error occurred during motion execution.
+        ACS: Anti-collision system triggered.
+        OBSTACLE_DETECTED: An obstacle has been detected.
+        GOAL_REACHED: The target goal has been reached.
+        GOAL_NOT_REACHABLE: The target goal is determined to be unreachable.
+        NAVIGATOR_ERROR: A system error has occurred.
+        NAVIGATOR_READY: The navigator is ready for operation.
     """
 
     # ===== Path and Trajectory Planning =====

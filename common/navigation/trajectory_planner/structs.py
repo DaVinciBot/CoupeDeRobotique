@@ -10,6 +10,13 @@ from geometry import OrientedPoint
 
 
 class TrajectoryPlannerStrategy(Enum):
+    """Enumeration of available trajectory planner strategies.
+
+    Attributes:
+        BASIC: Use basic trajectory planner.
+        SEQUENTIAL: Use sequential trajectory planner.
+    """
+
     BASIC = auto()
     SEQUENTIAL = auto()
 

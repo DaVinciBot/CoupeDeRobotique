@@ -128,7 +128,7 @@ class BaseArenaZone(ABC):
         """Determines if the zone is accessible in an emergency.
 
         Args:
-            team_color (TeamColor, optional): The color of the team.
+            team_color (TeamColor, optional): The color of the team. Defaults to TeamColor.UNDEFINED.
 
         Returns:
             bool: True if accessible in emergencies, False otherwise.

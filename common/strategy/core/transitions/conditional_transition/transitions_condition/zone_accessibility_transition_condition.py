@@ -16,10 +16,6 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
 
     This condition is fulfilled if the designated zone is accessible to the current team.
     An optional reverse flag allows inverting the condition to check for inaccessibility.
-
-    Attributes:
-        zone_id (int): The ID of the zone to check.
-        reverse (bool): If True, the condition is fulfilled when the zone is NOT accessible.
     """
 
     def __init__(self, zone_id: int, reverse: bool = False) -> None:

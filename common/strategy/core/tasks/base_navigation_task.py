@@ -32,6 +32,19 @@ class BaseNavigationTask(BaseTask):
         timeout: float | None = None,
         logger: Logger | None = None,
     ) -> None:
+        """Initializes the BaseNavigationTask with navigation and planning parameters.
+
+        Args:
+            goal (int | BaseArenaZone | OrientedPoint | Point | None): The navigation goal.
+            path_planner_params (BasePathPlannerParams): Parameters for the path planner.
+            trajectory_planner_params (BaseTrajectoryPlannerParams): Parameters for the trajectory planner.
+            speed_profiler (SpeedProfiler): Speed profile manager.
+            avoidance_params (BaseAvoidanceParams): Parameters for obstacle avoidance.
+            acs_detection_profile_params (BaseAcsDetectionProfileParams): Parameters for ACS detection profile.
+            stabilization_delay (float): Delay for stabilization after reaching the goal.
+            timeout (float | None, optional): Timeout for the navigation task. Defaults to None.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+        """
         super().__init__(logger=logger)
 
         self.goal: int | BaseArenaZone | OrientedPoint | Point | None = goal

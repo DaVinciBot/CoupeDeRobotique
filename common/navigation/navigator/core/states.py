@@ -1,8 +1,17 @@
 from enum import Enum, auto
 
 
-# TODO: garder que le state utile
 class NavigatorState(Enum):
+    """Navigator state.
+
+    Attributes:
+        IDLE: No movement in progress.
+        PLANNING: Path generation and trajectory planning.
+        READY: Ready to move (trajectory ready but not started).
+        MOVING: Execution of the movement in progress.
+        PAUSED: Movement temporarily interrupted.
+    """
+
     IDLE = auto()  # Aucun déplacement en cours
     PLANNING = auto()  # Génération du chemin + trajectoire
     READY = auto()  # Prêt à bouger (trajectoire prête mais pas lancée)

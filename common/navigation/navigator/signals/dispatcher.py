@@ -25,10 +25,10 @@ class NavigatorSignalsDispatcher:
     def __init__(self, logger: Logger | None = None) -> None:
         """Initialize the NavigatorSignalsDispatcher.
 
+        Dynamically creates an Events subclass with all signal names for internal use.
+
         Args:
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
-
-        Dynamically creates an Events subclass with all signal names for internal use.
         """
         self.logger = logger or Logger(
             identifier="NavigatorSignalsDispatcher",
@@ -92,7 +92,12 @@ class NavigatorSignalsDispatcher:
                 f"Attempted to disconnect from unknown signal: {signal}",
             )
 
-    def emit_signal(self, signal: NavigatorSignalsEnum, *args, **kwargs) -> None:
+    def emit_signal(
+        self,
+        signal: NavigatorSignalsEnum,
+        *args,
+        **kwargs,
+    ) -> None:
         """Emit a signal and trigger all connected callbacks.
 
         Args:

@@ -16,9 +16,6 @@ class BaseTransition(ABC):
     This class defines a common interface for all transition types. Subclasses must implement
     the `can_transit` method, which determines whether a transition is allowed based on the
     originating node and the game context.
-
-    Attributes:
-        target (BaseTaskNode): The task node that this transition leads to.
     """
 
     def __init__(self, target: BaseTaskNode) -> None:

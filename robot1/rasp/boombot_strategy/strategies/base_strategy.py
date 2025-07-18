@@ -17,7 +17,17 @@ from strategy.tools import (
 
 
 class BaseStrategy(ABC):
+    """Base class for all strategies.
+
+    This class provides a base implementation for all strategies.
+    """
+
     def __init__(self, ctx: BaseGameContext) -> None:
+        """Initialize the BaseStrategy.
+
+        Args:
+            ctx (BaseGameContext): The game context.
+        """
         self.zones = CONFIG.INFO_BY_TEAM[ctx.arena.team_color.value]
         self.strategy = SubGraphBuilder()
         self.runner: GraphRunner | None = None
@@ -27,9 +37,18 @@ class BaseStrategy(ABC):
         )
 
     def visualize_strategy(self) -> None:
+        """Visualize the strategy.
+
+        This method visualizes the strategy using the visualize_task_graph function.
+        """
         visualize_task_graph(start_node=self.runner.active[0])
 
     def get_graph_runner(self) -> GraphRunner:
+        """Get the graph runner.
+
+        Returns:
+            GraphRunner: The graph runner.
+        """
         return self.runner
 
     def _auto_build_transitions(
@@ -44,7 +63,7 @@ class BaseStrategy(ABC):
             *elements (BaseTaskNode | BaseSubGraph): A variable number of nodes or subgraphs.
 
         Returns:
-            bool: The result of the build process.
+            bool: True if the transitions were built successfully, False otherwise.
         """
         if not elements:
             self.logger.error("No elements provided for building the strategy.")

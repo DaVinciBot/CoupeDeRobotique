@@ -14,14 +14,28 @@ from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils impo
 class AngularRestrictProjectionAcsDetectionProfile(
     BaseAcsDetectionProfile[AngularRestrictProjectionAcsDetectionProfileParams],
 ):
+    """Angular restrict projection ACS detection profile."""
+
     def __init__(
-        self,
-        params: AngularRestrictProjectionAcsDetectionProfileParams,
-        logger: Logger | None = None,
+        self, params: AngularRestrictProjectionAcsDetectionProfileParams
     ) -> None:
-        super().__init__(params, logger)
+        """Initializes the AngularRestrictProjectionAcsDetectionProfile.
+
+        Args:
+            params (AngularRestrictProjectionAcsDetectionProfileParams): Parameters for the angular restrict projection ACS detection profile.
+        """
+        super().__init__(params)
 
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
+        """Check if the ACS is triggered.
+
+        Args:
+            ally_zone (AllyZone): The ally zone.
+            enemy_zone (EnemyZone): The enemy zone.
+
+        Returns:
+            bool: True if the ACS is triggered, False otherwise.
+        """
         angle = (
             atan2(
                 enemy_zone.point.y - ally_zone.point.y,

@@ -8,12 +8,7 @@ from navigation.trajectory_planner.common.segments.base_segment import BaseSegme
 
 
 class RotationSegment(BaseSegment):
-    """Segment representing rotational motion in place.
-
-    Attributes:
-        rotation (float): Total angle of rotation in radians or degrees (based on convention).
-        sign (int): Direction of rotation (+1 for counter-clockwise, -1 for clockwise).
-    """
+    """Segment representing rotational motion in place."""
 
     def __init__(
         self,

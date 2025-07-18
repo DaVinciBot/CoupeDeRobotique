@@ -111,7 +111,7 @@ class GraphRunner:
 
         Args:
             ctx (BaseGameContext): Game context passed to task nodes.
-            max_steps (int): Safety limit to prevent infinite loops.
+            max_steps (int, optional): Safety limit to prevent infinite loops. Defaults to 1000.
         """
         step = 0
         while self.active and step < max_steps:

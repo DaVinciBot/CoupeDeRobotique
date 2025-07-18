@@ -17,9 +17,6 @@ class ConditionalTransition(BaseTransition):
 
     This class allows for conditional logic in determining whether a transition from one task
     node to another is valid, using an instance of `BaseTransitionCondition`.
-
-    Attributes:
-        condition (BaseTransitionCondition): The condition object used to validate the transition.
     """
 
     def __init__(

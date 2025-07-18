@@ -11,20 +11,7 @@ from navigation.path_planner.structs import Direction, PathPlanningStrategy
 
 
 class AStarPathPlannerParams(BasePathPlannerParams):
-    """Parameter class for the A* path planner.
-
-    Attributes:
-        direction (Direction): Indicates whether the path should be planned FORWARD or BACKWARD.
-        grid (Grid): Current grid for pathfinding.
-        path_resolution (float): Resolution for path smoothing.
-        absolute_current_position (OrientedPoint): Absolute position of the robot in the grid.
-        absolute_goal (OrientedPoint): Absolute goal position in the grid.
-        current_position (GridNode): Current position of the robot in grid coordinates.
-        goal (GridNode): Goal position in grid coordinates.
-        finder (AStarFinder): Instance of the A* pathfinding algorithm.
-        path_found (list[GridNode]): List of grid nodes representing the found path.
-        oriented_path_found (list[OrientedPoint]): List of oriented points representing the path with orientation.
-    """
+    """Parameter class for the A* path planner."""
 
     def __init__(
         self,
@@ -38,9 +25,12 @@ class AStarPathPlannerParams(BasePathPlannerParams):
         """Initialize parameters for the A* path planner.
 
         Args:
-            direction (Direction): Indicates whether the path should be planned FORWARD or BACKWARD.
             grid (Grid): Current the grid for pathfinding.
             path_resolution (float): Resolution for path smoothing.
+            chunk_size (int): Size of each grid chunk.
+            start (OrientedPoint): Starting point of the path.
+            goal (OrientedPoint): Goal point of the path.
+            direction (Direction, optional): Indicates whether the path should be planned FORWARD or BACKWARD. Defaults to Direction.FORWARD.
         """
         # Direction parameter
         self.direction: Direction = direction
@@ -72,12 +62,7 @@ class AStarPathPlannerParams(BasePathPlannerParams):
 
 
 class AStarPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
-    """Parameters for planning a path using the A* algorithm.
-
-    Attributes:
-        start (OrientedPoint): Starting point of the path.
-        goal (OrientedPoint): Goal point of the path.
-    """
+    """Parameters for planning a path using the A* algorithm."""
 
     def __init__(self, start: OrientedPoint, goal: OrientedPoint) -> None:
         self.goal: OrientedPoint = goal

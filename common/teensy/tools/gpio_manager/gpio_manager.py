@@ -9,13 +9,7 @@ from teensy.tools.gpio_manager.actuators_type import ActuatorType
 
 
 class GPIOManager:
-    """Manages GPIO pins and their associated actuator types.
-
-    Attributes:
-        logger (Logger): Logger instance for logging messages.
-        nb_pin (int): Maximum number of GPIO pins available.
-        gpios (dict[int, ActuatorType]): Dictionary mapping pin-numbers to actuator types.
-    """
+    """Manages GPIO pins and their associated actuator types."""
 
     def __init__(self, logger: Logger, nb_pin: int) -> None:
         """Initializes the GPIOManager with a logger and the number of available pins.

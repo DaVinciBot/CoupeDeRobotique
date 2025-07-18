@@ -7,17 +7,28 @@ from enum import Enum, auto
 
 
 class PathPlanningStrategy(Enum):
-    """Enumeration of available path finding strategies."""
+    """Enumeration of available path finding strategies.
 
-    A_STAR = auto()  # Use A* algorithm
+    Attributes:
+        A_STAR: Use A* algorithm.
+        BASIC: Use basic path finding algorithm: rotate face to target, move straight forward.
+        DELTA: Do step replacement, no path finding -> rotate or move straight.
+    """
+
+    A_STAR = auto()  # Use A* algorithm.
     BASIC = (
         auto()
-    )  # Use basic path finding algorithm: rotate face to target, move straight forward
-    DELTA = auto()  # Do step replacement, no path finding -> rotate or move straight
+    )  # Use basic path finding algorithm: rotate face to target, move straight forward.
+    DELTA = auto()  # Do step replacement, no path finding -> rotate or move straight.
 
 
 class Direction(Enum):
-    """Enumeration of motion directions for path planners."""
+    """Enumeration of motion directions for path planners.
+
+    Attributes:
+        FORWARD: Move forward.
+        BACKWARD: Move backward.
+    """
 
     FORWARD = auto()
     BACKWARD = auto()

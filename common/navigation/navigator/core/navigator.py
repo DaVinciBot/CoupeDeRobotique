@@ -16,7 +16,14 @@ from navigation.trajectory_planner import TrajectoryPlanCommand
 
 
 class Navigator:
+    """Navigator class."""
+
     def __init__(self, logger: Logger | None = None) -> None:
+        """Initialize the Navigator.
+
+        Args:
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+        """
         self.logger = logger or Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
@@ -28,6 +35,11 @@ class Navigator:
         self.current_task: NavigatorTask | None = None
 
     def _fetch_next_task(self) -> bool:
+        """Fetch the next task from the queue.
+
+        Returns:
+            bool: True if a new task was fetched, False if the queue is empty.
+        """
         if self._tasks_queue:
             self.current_task: NavigatorTask = NavigatorTask(
                 params=self._tasks_queue.popleft(),
@@ -42,6 +54,12 @@ class Navigator:
         navigator_task_params: NavigatorTaskParams,
         skip_queue: bool = False,
     ) -> None:
+        """Add a navigation task to the queue.
+
+        Args:
+            navigator_task_params (NavigatorTaskParams): The parameters for the navigation task.
+            skip_queue (bool, optional): If True, skip the queue and execute the task immediately. Defaults to False.
+        """
         if skip_queue:
             self.abort(affect_all_tasks=False)
             self._fetch_next_task()
@@ -59,6 +77,15 @@ class Navigator:
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
+        """Handle the navigation task.
+
+        Args:
+            ally_zone (AllyZone): The ally zone.
+            enemy_zone (EnemyZone): The enemy zone.
+
+        Returns:
+            TrajectoryPlanCommand: The trajectory plan command.
+        """
         # besoins: ally_position_zone, enemy_position_zone, grid, dynamic_grid (comment déclancher sa mis à jour que quand l'ennemi est proche)
 
         # No current task -> do nothing (current task can't be none if there are tasks in the queue)
@@ -92,10 +119,7 @@ class Navigator:
         """Abort the current task and all tasks in the queue.
 
         Args:
-            affect_all_tasks (bool): If True, all tasks in the queue will be aborted.
-
-        Returns:
-            None
+            affect_all_tasks (bool, optional): If True, all tasks in the queue will be aborted. Defaults to False.
         """
         if affect_all_tasks:
             self._tasks_queue.clear()

@@ -10,13 +10,7 @@ from usb_com.python import Com
 
 
 class GPIOComTeensy(Com):
-    """Extends the Com class to provide GPIO management for a Teensy microcontroller.
-
-    Attributes:
-        scl (int): I2C clock pin (SCL) assigned to pin 19.
-        sda (int): I2C data pin (SDA) assigned to pin 18.
-        gpio_manager (GPIOManager): Manages GPIO pin allocation (up to 41 pins).
-    """
+    """Extends the Com class to provide GPIO management for a Teensy microcontroller."""
 
     def __init__(
         self,

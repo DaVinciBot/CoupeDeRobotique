@@ -11,16 +11,21 @@ from graphviz import Digraph
 
 from strategy.core.sub_graphs import BaseSubGraph
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
+from strategy.core.tasks.base_task import BaseTask
 from strategy.core.tasks.status import TaskStatus
 
 
-def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=False):
+def visualize_task_graph(
+    start_node: BaseTaskNode,
+    filename: str = "task_graph",
+    view: bool = False,
+) -> Digraph:
     """Recursively traverses a TaskNode graph and generates a Graphviz visual (.png).
 
     Args:
         start_node (BaseTaskNode): Entry point of the task graph.
-        filename (str): Output filename without extension.
-        view (bool): If True, automatically opens the generated image.
+        filename (str, optional): Output filename without extension. Defaults to "task_graph".
+        view (bool, optional): If True, automatically opens the generated image. Defaults to False.
 
     Returns:
         Digraph: The generated Graphviz graph object.
@@ -28,7 +33,15 @@ def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=F
     dot = Digraph(comment="Strategy Graph", format="png")
     seen = set()
 
-    def get_task_class_name(task_list):
+    def get_task_class_name(task_list: list[BaseTask] | BaseTask) -> str:
+        """Get the class name of a task or a list of tasks.
+
+        Args:
+            task_list (list[BaseTask] | BaseTask): The task or list of tasks.
+
+        Returns:
+            str: The class name of the task or list of tasks.
+        """
         if isinstance(task_list, list):
             return ", ".join([t.__class__.__name__ for t in task_list])
         return task_list.__class__.__name__
@@ -70,15 +83,15 @@ def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=F
 
 def visualize_entire_subgraph(
     subgraph: BaseSubGraph,
-    filename="full_graph",
-    view=False,
-):
+    filename: str = "full_graph",
+    view: bool = False,
+) -> Digraph:
     """Generates a full Graphviz visualization for a given subgraph.
 
     Args:
         subgraph (BaseSubGraph): Subgraph containing all task nodes.
-        filename (str): Output filename without extension.
-        view (bool): If True, automatically opens the generated image.
+        filename (str, optional): Output filename without extension. Defaults to "full_graph".
+        view (bool, optional): If True, automatically opens the generated image. Defaults to False.
 
     Returns:
         Digraph: The generated Graphviz graph object.
@@ -86,7 +99,15 @@ def visualize_entire_subgraph(
     dot = Digraph(comment="Full Strategy Graph", format="png")
     seen = set()
 
-    def get_task_class_name(task_list):
+    def get_task_class_name(task_list: list[BaseTask] | BaseTask) -> str:
+        """Get the class name of a task or a list of tasks.
+
+        Args:
+            task_list (list[BaseTask] | BaseTask): The task or list of tasks.
+
+        Returns:
+            str: The class name of the task or list of tasks.
+        """
         if isinstance(task_list, list):
             return ", ".join([t.__class__.__name__ for t in task_list])
         return task_list.__class__.__name__

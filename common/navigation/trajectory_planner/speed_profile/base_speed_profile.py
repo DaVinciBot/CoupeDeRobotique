@@ -36,10 +36,10 @@ class BaseSpeedProfile(ABC):
         to calculate the current speed at a given point in the trajectory.
 
         Args:
-            time_elapsed (float | None): Time since motion started (in seconds).
-            distance (float | None): Total path distance (in meters or appropriate unit).
-            departure_speed (float): Speed at the start of motion.
-            arrival_speed (float): Speed at the end of motion.
+            time_elapsed (float | None, optional): Time since motion started (in seconds). Defaults to None.
+            distance (float | None, optional): Total path distance (in meters or appropriate unit). Defaults to None.
+            departure_speed (float, optional): Speed at the start of motion. Defaults to 0.0.
+            arrival_speed (float, optional): Speed at the end of motion. Defaults to 0.0.
 
         Returns:
             float: Speed at the current time/distance.
@@ -61,9 +61,9 @@ class BaseSpeedProfile(ABC):
 
         Args:
             time_elapsed (float): Elapsed time in seconds.
-            distance (float | None): Total path distance (optional).
-            departure_speed (float): Speed at the beginning of motion.
-            arrival_speed (float): Speed at the end of motion.
+            distance (float | None, optional): Total path distance (optional). Defaults to None.
+            departure_speed (float, optional): Speed at the beginning of motion. Defaults to 0.0.
+            arrival_speed (float, optional): Speed at the end of motion. Defaults to 0.0.
 
         Returns:
             float: Distance traveled so far.
@@ -84,8 +84,8 @@ class BaseSpeedProfile(ABC):
 
         Args:
             distance (float): Distance to travel.
-            departure_speed (float): Speed at the beginning of motion.
-            arrival_speed (float): Speed at the end of motion.
+            departure_speed (float, optional): Speed at the beginning of motion. Defaults to 0.0.
+            arrival_speed (float, optional): Speed at the end of motion. Defaults to 0.0.
 
         Returns:
             float: Time needed to complete the distance.

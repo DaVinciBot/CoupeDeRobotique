@@ -7,11 +7,7 @@ from navigation.path_planner.structs import PathPlanningStrategy
 
 
 class BasePathPlannerParams:
-    """Base class for path planner parameter configurations.
-
-    Attributes:
-        path_finding_strategy (PathPlanningStrategy): The strategy used for generating paths.
-    """
+    """Base class for path planner parameter configurations."""
 
     def __init__(self, path_finding_strategy: PathPlanningStrategy) -> None:
         """Initialize the base path planner parameters.

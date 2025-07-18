@@ -7,12 +7,7 @@ from navigation.trajectory_planner.common.segments.base_segment import BaseSegme
 
 
 class SmoothSegment(BaseSegment):
-    """A segment representing a curved trajectory.
-
-    Attributes:
-        sampled_points (list[OrientedPoint]): List of points sampled along the curved path.
-        total_distance (float): Total distance covered by the trajectory.
-    """
+    """A segment representing a curved trajectory."""
 
     def __init__(
         self,

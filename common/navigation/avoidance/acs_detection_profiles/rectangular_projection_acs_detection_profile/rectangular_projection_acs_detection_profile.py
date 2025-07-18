@@ -15,11 +15,19 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
 class RectangularProjectionAcsDetectionProfile(
     BaseAcsDetectionProfile[RectangularProjectionAcsDetectionProfileParams],
 ):
+    """Rectangular projection ACS detection profile."""
+
     def __init__(
         self,
         params: RectangularProjectionAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
+        """Initializes the RectangularProjectionAcsDetectionProfile.
+
+        Args:
+            params (RectangularProjectionAcsDetectionProfileParams): Parameters for the rectangular projection ACS detection profile.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+        """
         super().__init__(params, logger)
 
     def _create_rectangular_projection(self, ally_zone: AllyZone) -> Polygon:

@@ -23,6 +23,8 @@ def test_speed_profile(
         profile (BaseSpeedProfile): The speed profile to test.
         distance (float | None, optional): Target distance to simulate. Defaults to None.
         step_time (float, optional): Time interval for sampling the profile. Defaults to 0.1.
+        departure_speed (float, optional): Initial speed at departure. Defaults to 0.0.
+        arrival_speed (float, optional): Final speed at arrival. Defaults to 0.0.
     """
     print("Testing profile:", profile)
     total_duration = profile.get_total_duration(

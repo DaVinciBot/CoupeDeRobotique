@@ -20,7 +20,15 @@ PlanPathParamsType = TypeVar("PlanPathParamsType", bound=BasePathPlannerPlanPath
 
 
 class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
+    """Base class for all path planners."""
+
     def __init__(self, params: ParamsType, logger: Logger | None = None) -> None:
+        """Initialize the BasePathPlanner.
+
+        Args:
+            params (ParamsType): The parameters for the path planner.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+        """
         self.logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,

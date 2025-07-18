@@ -10,7 +10,13 @@ from usb_com.python import Messages
 
 class Actuators(
     GPIOComTeensy,
-):  # TODO : move to common and handle config properly, not the prority yet
+):
+    """Base class for actuators.
+
+    This class is used to manage the actuators of the robot.
+    """
+
+    # TODO : move to common and handle config properly, not the prority yet
     def __init__(
         self,
         logger: Logger,
@@ -21,6 +27,17 @@ class Actuators(
         enable_crc: bool = CONFIG.TEENSY_CRC,
         enable_dummy: bool = CONFIG.TEENSY_DUMMY,
     ) -> None:
+        """Initialize the Actuators class.
+
+        Args:
+            logger (Logger): The logger instance for logging.
+            serial_number (int, optional): The serial number of the Teensy. Defaults to CONFIG.ACTUATOR_TEENSY_SER.
+            vid (int, optional): The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
+            pid (int, optional): The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
+            baudrate (int, optional): The baud rate for serial communication. Defaults to CONFIG.TEENSY_BAUDRATE.
+            enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
+            enable_dummy (bool, optional): Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+        """
         # Initialize the parent-GPIOComTeensy class
         super().__init__(
             logger,
@@ -34,8 +51,8 @@ class Actuators(
 
         # Admit that default elevator position is at the bottom
         self.elevator_ticks: int = 0
-        self.switches_states: dict[int:bool] = {}
-        self.t_set_servo_angle_i2c: int = 0
+        self.switches_states: dict[int, bool] = {}
+        self.t_set_servo_angle_i2c: float = 0.0
 
         """
         This is used to match a handling function to a message type.
@@ -94,15 +111,17 @@ class Actuators(
 
     @log("Actuators")
     def set_stepper_driver_activation_state(
-        self, pin_enable: int, enable_driver: bool
+        self,
+        pin_enable: int,
+        enable_driver: bool,
     ) -> None:
         """Sets the activation state of a stepper motor driver through its enable pin.
+
+        Note: The enable pin is active LOW, meaning True will output LOW to enable the driver
 
         Args:
             pin_enable (int): The pin number connected to the driver's enable input
             enable_driver (bool): True to enable the driver, False to disable it.
-        Note: The enable pin is active LOW, meaning True will output LOW to enable the driver
-
         """
         msg = (
             Messages.SET_STEPPER_DRIVER_ACTIVATION_STATE.to_bytes()
@@ -119,7 +138,7 @@ class Actuators(
         Args:
             steps (int): The number of steps to move the motor.
             speed (int): The speed at which to move the motor.
-            disable_driver (bool): Whether to disable the driver after the movement.
+            disable_driver (bool, optional): Whether to disable the driver after the movement. Defaults to True.
 
         Returns:
             None: This method does not return anything.

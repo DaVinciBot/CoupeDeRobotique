@@ -20,17 +20,17 @@ class PIN:
             pin (int): Identifier of the pin.
         """
         self.pin = pin
-        self.mode = None
-        self.reverse_state = False
-        self.device = None
+        self.mode: str | None = None
+        self.reverse_state: bool = False
+        self.device: DummyDevice | None = None
 
-    def setup(self, mode, reverse_state=False) -> None:
+    def setup(self, mode: str, reverse_state: bool = False) -> None:
         self.mode = mode.lower()
         self.reverse_state = reverse_state
         self.device = DummyDevice()
 
     def digital_write(self, state: bool) -> None:
-        corrected = self.__correct_state(state)
+        corrected: bool = self.__correct_state(state)
         self.device.value = corrected
 
     def digital_read(self) -> bool:
@@ -38,7 +38,15 @@ class PIN:
             return self.__correct_state(self.device.value)
         return self.__correct_state(self.device.is_pressed)
 
-    def safe_digital_read(self, n=5) -> bool:
+    def safe_digital_read(self, n: int = 5) -> bool:
+        """Read the digital value multiple times and return the majority value.
+
+        Args:
+            n (int, optional): Number of reads to perform. Defaults to 5.
+
+        Returns:
+            bool: The majority value read from the pin.
+        """
         return sum([self.digital_read() for _ in range(n)]) / n >= 0.5
 
     def __correct_state(self, state: bool) -> bool:

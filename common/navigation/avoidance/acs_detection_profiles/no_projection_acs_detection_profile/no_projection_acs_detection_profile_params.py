@@ -5,7 +5,14 @@ from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfi
 
 
 class NoProjectionAcsDetectionProfileParams(BaseAcsDetectionProfileParams):
+    """Parameters for the no projection ACS detection profile."""
+
     def __init__(self, acs_distance: float) -> None:
+        """Initializes the NoProjectionAcsDetectionProfileParams.
+
+        Args:
+            acs_distance (float): Distance to the obstacle.
+        """
         super().__init__(
             acs_detection_profile=AcsDetectionProfile.NO_PROJECTION,
             acs_distance=acs_distance,

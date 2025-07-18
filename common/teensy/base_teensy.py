@@ -12,17 +12,7 @@ from usb_com.python.messages import Messages
 
 
 class BaseComTeensy(Com):
-    """Extends the `Com` class to provide specialized communication handling for a Teensy microcontroller.
-
-    Attributes:
-        logger (Logger): Logger instance for logging communication events.
-        serial_number (int): Unique serial number of the USB device.
-        vid (int): Vendor ID of the USB device.
-        pid (int): Product ID of the USB device.
-        baudrate (int): Communication baud rate.
-        enable_crc (bool): Flag to enable CRC error checking (default: True).
-        enable_dummy (bool): Flag to enable dummy packets (default: False).
-    """
+    """Extends the `Com` class to provide specialized communication handling for a Teensy microcontroller."""
 
     def __init__(
         self,

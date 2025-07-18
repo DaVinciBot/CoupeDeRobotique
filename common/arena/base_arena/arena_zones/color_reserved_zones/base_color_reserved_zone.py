@@ -28,11 +28,11 @@ class BaseColorReservedZone(BaseArenaZone):
         color: TeamColor,
         accessibility: ZoneAccessibility = ZoneAccessibility.RESTRICTED,
         buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: Callable[[], GridManager] = None,
+        polygon: Polygon | None = None,
+        buffered_polygon: Polygon | None = None,
+        update_callback: Callable[[], GridManager] | None = None,
         zone_color: str = "#9e9e9e",
-        go_to_positions: list[OrientedPoint | Point] = None,
+        go_to_positions: list[OrientedPoint | Point] | None = None,
     ) -> None:
         """Initializes the ColorReservedZone.
 
@@ -42,12 +42,12 @@ class BaseColorReservedZone(BaseArenaZone):
             color (TeamColor): Primary color determining access.
             accessibility (ZoneAccessibility, optional): Initial accessibility state of the zone. Defaults to ZoneAccessibility.RESTRICTED.
             buffer_size (float, optional): Size of the buffer for zone expansion. Defaults to 0.0.
-            polygon (Polygon, optional): The base polygon defining the zone's shape. Defaults to None.
-            buffered_polygon (Polygon, optional): Buffered version of the polygon. Defaults to None.
-            update_callback (Callable[[], GridManager], optional):
+            polygon (Polygon | None, optional): The base polygon defining the zone's shape. Defaults to None.
+            buffered_polygon (Polygon | None, optional): Buffered version of the polygon. Defaults to None.
+            update_callback (Callable[[], GridManager] | None, optional):
                 Function returning the grid manager instance. Defaults to None.
             zone_color (str, optional): Hex code representing the zone color. Defaults to "#9e9e9e".
-            go_to_positions (list[OrientedPoint | Point], optional): List of go-to positions within the zone. Defaults to None.
+            go_to_positions (list[OrientedPoint | Point] | None, optional): List of go-to positions within the zone. Defaults to None.
         """
         self.color: TeamColor = color
 

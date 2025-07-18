@@ -10,11 +10,8 @@ from navigation.trajectory_planner.common.segments.base_segment import BaseSegme
 
 class SegmentMapper:
     """Maps trajectory segments to elapsed time using cumulative durations.
-    Provides fast segment lookup using binary search.
 
-    Attributes:
-        segments (list[BaseSegment]): List of trajectory segments.
-        cumulative_durations (list[float]): Cumulative end times of each segment.
+    Provides fast segment lookup using binary search.
     """
 
     def __init__(self, segments: list[BaseSegment]) -> None:

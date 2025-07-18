@@ -12,11 +12,19 @@ from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_pro
 class NoProjectionAcsDetectionProfile(
     BaseAcsDetectionProfile[NoProjectionAcsDetectionProfileParams],
 ):
+    """No projection ACS detection profile."""
+
     def __init__(
         self,
         params: NoProjectionAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
+        """Initializes the NoProjectionAcsDetectionProfile.
+
+        Args:
+            params (NoProjectionAcsDetectionProfileParams): Parameters for the no projection ACS detection profile.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+        """
         super().__init__(params, logger)
 
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:

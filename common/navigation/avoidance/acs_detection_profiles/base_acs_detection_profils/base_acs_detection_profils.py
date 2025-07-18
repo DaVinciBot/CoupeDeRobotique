@@ -12,7 +12,15 @@ ParamsType = TypeVar("ParamsType", bound=BaseAcsDetectionProfileParams)
 
 
 class BaseAcsDetectionProfile(ABC, Generic[ParamsType]):
+    """Base class for ACS detection profiles."""
+
     def __init__(self, params: ParamsType, logger: Logger | None = None) -> None:
+        """Initializes the BaseAcsDetectionProfile.
+
+        Args:
+            params (ParamsType): Parameters for the ACS detection profile.
+            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+        """
         self.params: ParamsType = params
         self.logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,

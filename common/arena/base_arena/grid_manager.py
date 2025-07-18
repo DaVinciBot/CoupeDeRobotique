@@ -203,9 +203,9 @@ class GridManager:
         """Updates the grids for static and dynamic zones.
 
         Args:
-            update_static_zones (bool): Whether to update static zones.
-            update_dynamic_zones (bool): Whether to update dynamic zones.
-            clear_grid (bool): If ``True``, regenerate empty grids before updating.
+            update_static_zones (bool, optional): Whether to update static zones. Defaults to False.
+            update_dynamic_zones (bool, optional): Whether to update dynamic zones. Defaults to False.
+            clear_grid (bool, optional): If ``True``, regenerate empty grids before updating. Defaults to False.
         """
         if clear_grid:
             self.static_grid = self.__generate_base_grid()

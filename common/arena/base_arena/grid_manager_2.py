@@ -233,12 +233,14 @@ class GridManager:
         return self.dynamic_grid
 
     def visualize(
-        self, only_static_grid: bool = False, path: list[GridNode] | None = None
+        self,
+        only_static_grid: bool = False,
+        path: list[GridNode] | None = None,
     ) -> None:
         """Visualize the grid using matplotlib.
 
         Args:
-            only_static_grid (bool): If ``True`` show only static zones.
+            only_static_grid (bool, optional): If ``True`` show only static zones. Defaults to False.
             path (list[GridNode] | None, optional): Path to draw over the grid. Defaults to None.
         """
         grid_to_visualize = self.static_grid if only_static_grid else self.dynamic_grid

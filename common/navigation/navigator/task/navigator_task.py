@@ -37,6 +37,11 @@ class NavigatorTask:
     """
 
     def __init__(self, params: NavigatorTaskParams) -> None:
+        """Initialize the NavigatorTask.
+
+        Args:
+            params (NavigatorTaskParams): The parameters for the navigation task.
+        """
         self.params = params
         self.path_planner: BasePathPlanner = PathPlannerFactory.instantiate(
             params.path_planner_params,
