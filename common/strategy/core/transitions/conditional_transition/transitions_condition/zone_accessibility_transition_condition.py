@@ -23,7 +23,7 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
 
         Args:
             zone_id (int): The identifier of the zone whose accessibility will be checked.
-            reverse (bool, optional): Whether to reverse the condition logic. Defaults to False.
+            reverse (bool, optional): Whether to reverse the condition logic. Defaults to `False`.
         """
         self.zone_id = zone_id
         self.reverse = reverse
@@ -42,7 +42,7 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
             ctx (BaseGameContext): The game context, including arena and team information.
 
         Returns:
-            bool: True if the condition is met (zone is accessible or not based on `reverse`), False otherwise.
+            bool: `True` if the condition is met (zone is accessible or not based on `reverse`), `False` otherwise.
         """
         accessibility: bool = ctx.arena.zones[self.zone_id].is_accessible(
             team_color=ctx.arena.team_color,

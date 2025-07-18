@@ -24,7 +24,7 @@ class GraphRunner:
             start (BaseTaskNode): The entry node for the graph.
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
             parallel (bool, optional): Execute all valid transitions in parallel when
-                ``True``. Defaults to ``False``.
+                `True`. Defaults to `False`.
         """
         self.logger = logger or Logger(
             identifier="GraphRunner",
@@ -107,7 +107,7 @@ class GraphRunner:
         self.active = next_active
 
     def run(self, ctx: BaseGameContext, max_steps: int = 1000) -> None:
-        """Run the graph until completion or until ``max_steps`` iterations.
+        """Run the graph until completion or until `max_steps` iterations.
 
         Args:
             ctx (BaseGameContext): Game context passed to task nodes.

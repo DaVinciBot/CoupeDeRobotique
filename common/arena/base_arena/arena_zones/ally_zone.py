@@ -68,13 +68,13 @@ class AllyZone(BaseArenaZone):
         )
 
     def __eq__(self, other: object) -> bool:
-        """Return ``True`` if zones represent the same oriented point.
+        """Return `True` if zones represent the same oriented point.
 
         Args:
             other (object): Object to compare against.
 
         Returns:
-            bool: ``True`` if ``other`` is an :class:`AllyZone` with the same
+            bool: `True` if `other` is an :class:`AllyZone` with the same
             point.
         """
         if not isinstance(other, AllyZone):
@@ -82,12 +82,12 @@ class AllyZone(BaseArenaZone):
         return self.point == other.point
 
     def __ne__(self, other: object) -> bool:
-        """Return ``True`` if zones do not represent the same oriented point.
+        """Return `True` if zones do not represent the same oriented point.
 
         Args:
             other (object): Object to compare against.
 
         Returns:
-            bool: ``True`` if ``other`` is not an equal :class:`AllyZone`.
+            bool: `True` if `other` is not an equal :class:`AllyZone`.
         """
         return not self.__eq__(other)

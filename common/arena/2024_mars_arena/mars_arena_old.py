@@ -55,7 +55,7 @@ class MarsArena(Arena):
             robot_buffer (float): Safety buffer around moving robots.
 
         Raises:
-            ValueError: If ``start_zone_id`` is not between ``0`` and ``5``.
+            ValueError: If `start_zone_id` is not between `0` and `5`.
         """
         if not (0 <= start_zone_id <= 5):
             raise ValueError("start_zone must be between 0 and 5")

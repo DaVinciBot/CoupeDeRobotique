@@ -240,7 +240,7 @@ class GridManager:
         """Visualize the grid using matplotlib.
 
         Args:
-            only_static_grid (bool, optional): If ``True`` show only static zones. Defaults to False.
+            only_static_grid (bool, optional): If `True` show only static zones. Defaults to `False`.
             path (list[GridNode] | None, optional): Path to draw over the grid. Defaults to None.
         """
         grid_to_visualize = self.static_grid if only_static_grid else self.dynamic_grid

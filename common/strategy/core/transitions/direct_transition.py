@@ -13,7 +13,7 @@ class DirectTransition(BaseTransition):
     """A transition that is always allowed, regardless of context or state.
 
     This class implements the simplest form of a transition between task nodes by always
-    returning True from its `can_transit` method.
+    returning `True` from its `can_transit` method.
 
     This is useful for default or unconditional transitions.
     """
@@ -26,6 +26,6 @@ class DirectTransition(BaseTransition):
             ctx (BaseGameContext): The game context (unused).
 
         Returns:
-            bool: Always returns True.
+            bool: Always returns `True`.
         """
         return True

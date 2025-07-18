@@ -114,7 +114,7 @@ class BaseArenaZone(ABC):
             team_color (TeamColor, optional): The color of the team.
 
         Returns:
-            bool: True if accessible, False otherwise.
+            bool: `True` if accessible, `False` otherwise.
         """
         return self.accessibility not in [
             ZoneAccessibility.FORBIDDEN,
@@ -131,7 +131,7 @@ class BaseArenaZone(ABC):
             team_color (TeamColor, optional): The color of the team. Defaults to TeamColor.UNDEFINED.
 
         Returns:
-            bool: True if accessible in emergencies, False otherwise.
+            bool: `True` if accessible in emergencies, `False` otherwise.
         """
         return self.accessibility != ZoneAccessibility.FORBIDDEN
 
@@ -202,13 +202,13 @@ class BaseArenaZone(ABC):
     """ Built-in methods """
 
     def __instancecheck__(self, other: object) -> bool:
-        """Return ``True`` if ``other`` is an instance of the same class.
+        """Return `True` if `other` is an instance of the same class.
 
         Args:
             other (object): Object to compare against.
 
         Returns:
-            bool: ``True`` if ``other`` shares this class type.
+            bool: `True` if `other` shares this class type.
         """
         return type(self) == type(other) and (
             isinstance(self, type(other))
@@ -217,13 +217,13 @@ class BaseArenaZone(ABC):
         )
 
     def __eq__(self, other: object) -> bool:
-        """Return ``True`` if ``other`` has the same geometry and accessibility.
+        """Return `True` if `other` has the same geometry and accessibility.
 
         Args:
             other (object): Object to compare against.
 
         Returns:
-            bool: ``True`` if polygons and accessibility match.
+            bool: `True` if polygons and accessibility match.
         """
         if not isinstance(self, type(other)):
             return False
@@ -234,13 +234,13 @@ class BaseArenaZone(ABC):
         )
 
     def __ne__(self, other: object) -> bool:
-        """Return ``True`` if ``other`` differs in geometry or accessibility.
+        """Return `True` if `other` differs in geometry or accessibility.
 
         Args:
             other (object): Object to compare against.
 
         Returns:
-            bool: ``True`` if zones are not equal.
+            bool: `True` if zones are not equal.
         """
         return not self.__eq__(other)
 

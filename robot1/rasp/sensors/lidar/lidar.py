@@ -228,10 +228,10 @@ class Lidar:
         """Check if the lidar is connected.
 
         Args:
-            force_check (bool, optional): Force a check of the connection status. Defaults to False.
+            force_check (bool, optional): Force a check of the connection status. Defaults to `False`.
 
         Returns:
-            bool: True if the lidar is connected, False otherwise.
+            bool: `True` if the lidar is connected, `False` otherwise.
         """
         if force_check:
             self.__scan()

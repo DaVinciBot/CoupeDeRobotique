@@ -10,6 +10,10 @@ class NavigatorState(Enum):
         READY: Ready to move (trajectory ready but not started).
         MOVING: Execution of the movement in progress.
         PAUSED: Movement temporarily interrupted.
+        FINISHED: Goal reached.
+        STOPPED: Movement manually interrupted.
+        REPLANNING: Recalculating path/trajectory.
+        ERROR: Failure or blocking event (obstacle, timeout, etc.).
     """
 
     IDLE = auto()  # Aucun déplacement en cours

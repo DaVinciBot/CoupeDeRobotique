@@ -28,7 +28,7 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
         """Initialize the transition condition with a custom function.
 
         Args:
-            func (Callable): A function that defines the logic for transition validation.
+            func (Callable[[BaseTaskNode, BaseTaskNode, BaseGameContext], bool]): A function that defines the logic for transition validation.
         """
         self.func = func
 
@@ -46,6 +46,6 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
             ctx (BaseGameContext): The current game context.
 
         Returns:
-            bool: True if the transition is allowed according to the provided function, False otherwise.
+            bool: `True` if the transition is allowed according to the provided function, `False` otherwise.
         """
         return self.func(from_node, next_node, ctx)

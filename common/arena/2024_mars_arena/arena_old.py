@@ -73,10 +73,10 @@ class Arena:
 
         Args:
             element (Geometry): The element to check (Point, Polygon, etc.).
-            buffered_zone (bool, optional): If True, use the buffered border. Defaults to False.
+            buffered_zone (bool, optional): If `True`, use the buffered border. Defaults to `False`.
 
         Returns:
-            bool: True if the element is entirely within the arena, False otherwise.
+            bool: `True` if the element is entirely within the arena, `False` otherwise.
         """
         if buffered_zone:
             return self.game_borders_buffered.contains(element)
@@ -112,7 +112,7 @@ class Arena:
             forbidden_zone_name (str, optional): Name of the forbidden zone to check against (in addition to game borders). Defaults to "forbidden".
 
         Returns:
-            bool: True if the path is allowed, False otherwise.
+            bool: `True` if the path is allowed, `False` otherwise.
         """
         # define the area touched by the buffer, for example the sides of a robot moving
 
@@ -242,7 +242,7 @@ class Arena:
             pos_robot (OrientedPoint): Robot position and orientation.
 
         Returns:
-            bool: True if a collision is detected, False otherwise.
+            bool: `True` if a collision is detected, `False` otherwise.
         """
         for i in range(len(distances_to_check)):
             # Check if the point is close enough to be a risk, and far enough to remove lidar aberrations (might be done in lidar code as well)

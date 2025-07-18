@@ -94,7 +94,7 @@ class RollingBasisDummy(BaseComTeensy):
         """Configure the PID values for linear position control.
 
         Args:
-            *args (Any): Either ``(kp, ki, kd)`` or a single dictionary.
+            *args (Any): Either `(kp, ki, kd)` or a single dictionary.
             **kwargs (Any): Keyword arguments mapping PID fields to values.
 
         Raises:
@@ -120,7 +120,7 @@ class RollingBasisDummy(BaseComTeensy):
         """Configure the PID values for angular position control.
 
         Args:
-            *args (Any): Either ``(kp, ki, kd)`` or a single dictionary.
+            *args (Any): Either `(kp, ki, kd)` or a single dictionary.
             **kwargs (Any): Keyword arguments mapping PID fields to values.
 
         Raises:
@@ -176,7 +176,7 @@ class RollingBasisDummy(BaseComTeensy):
             other (object): The other object to compare against.
 
         Returns:
-            bool: True if the objects are equal, False otherwise.
+            bool: `True` if the objects are equal, `False` otherwise.
         """
         if not isinstance(other, RollingBasisDummy):
             return NotImplemented
@@ -197,6 +197,6 @@ class RollingBasisDummy(BaseComTeensy):
             other (object): The other object to compare against.
 
         Returns:
-            bool: True if the objects are not equal, False otherwise.
+            bool: `True` if the objects are not equal, `False` otherwise.
         """
         return not self.__eq__(other)

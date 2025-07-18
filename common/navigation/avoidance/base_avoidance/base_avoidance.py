@@ -110,7 +110,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         """Determine whether the avoidance process has timed out.
 
         Returns:
-            bool: True if the elapsed time exceeds the timeout threshold.
+            bool: `True` if the elapsed time exceeds the timeout threshold.
         """
         if self._avoiding_start_time is None or self.params.timeout is None:
             return False

@@ -34,7 +34,7 @@ class AngularRestrictProjectionAcsDetectionProfile(
             enemy_zone (EnemyZone): The enemy zone.
 
         Returns:
-            bool: True if the ACS is triggered, False otherwise.
+            bool: `True` if the ACS is triggered, `False` otherwise.
         """
         angle = (
             atan2(

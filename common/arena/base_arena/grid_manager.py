@@ -203,9 +203,9 @@ class GridManager:
         """Updates the grids for static and dynamic zones.
 
         Args:
-            update_static_zones (bool, optional): Whether to update static zones. Defaults to False.
-            update_dynamic_zones (bool, optional): Whether to update dynamic zones. Defaults to False.
-            clear_grid (bool, optional): If ``True``, regenerate empty grids before updating. Defaults to False.
+            update_static_zones (bool, optional): Whether to update static zones. Defaults to `False`.
+            update_dynamic_zones (bool, optional): Whether to update dynamic zones. Defaults to `False`.
+            clear_grid (bool, optional): If `True`, regenerate empty grids before updating. Defaults to `False`.
         """
         if clear_grid:
             self.static_grid = self.__generate_base_grid()
@@ -357,7 +357,7 @@ class GridManager:
             node (GridNode): Node within the grid.
 
         Returns:
-            tuple[float, float]: ``(x, y)`` coordinates of the node center.
+            tuple[float, float]: `(x, y)` coordinates of the node center.
         """
         return (
             node.x * self.chunk_size + self.half_chunk_size,
@@ -413,9 +413,9 @@ class GridManager:
         """Visualize the grid using matplotlib.
 
         Args:
-            only_static_grid (bool, optional): Whether to show only the static grid. Defaults to False.
+            only_static_grid (bool, optional): Whether to show only the static grid. Defaults to `False`.
             path (list | None, optional): Path to draw on the grid, if provided. Defaults to None.
-            show (bool, optional): Whether to display the plot. Defaults to True.
+            show (bool, optional): Whether to display the plot. Defaults to `True`.
             plot (tuple[plt.axes, plt.figure] | None, optional): Existing plot to reuse. Defaults to None.
 
         Returns:

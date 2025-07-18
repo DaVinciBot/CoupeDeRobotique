@@ -33,10 +33,10 @@ class SubGraphBuilder:
             node (BaseTaskNode): Node instance to register.
 
         Returns:
-            SubGraphBuilder: ``self`` to allow call chaining.
+            SubGraphBuilder: `self` to allow call chaining.
 
         Raises:
-            KeyError: If ``name`` already exists in the builder.
+            KeyError: If `name` already exists in the builder.
         """
         if name in self.nodes:
             msg = f"Node name '{name}' already registered"
@@ -54,10 +54,10 @@ class SubGraphBuilder:
             transition (BaseTransition): Transition to append.
 
         Returns:
-            SubGraphBuilder: ``self`` for chaining.
+            SubGraphBuilder: `self` for chaining.
 
         Raises:
-            KeyError: If ``from_name`` is not registered.
+            KeyError: If `from_name` is not registered.
         """
         if from_name not in self.nodes:
             msg = f"Source node '{from_name}' not found for transition"
@@ -75,7 +75,7 @@ class SubGraphBuilder:
             prefix (str, optional): Prefix for new node names. Defaults to "".
 
         Returns:
-            SubGraphBuilder: ``self`` for chaining.
+            SubGraphBuilder: `self` for chaining.
         """
         mapping: dict[BaseTaskNode, BaseTaskNode] = {}
         for old in subgraph.get_all_nodes():
@@ -115,7 +115,7 @@ class SubGraphBuilder:
             BaseSubGraph: The assembled subgraph ready for execution.
 
         Raises:
-            KeyError: If ``entry`` or any ``exits`` are not registered.
+            KeyError: If `entry` or any `exits` are not registered.
         """
         # Resolve entry
         entry_node = self._resolve(entry)

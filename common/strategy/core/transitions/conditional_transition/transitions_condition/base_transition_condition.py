@@ -33,6 +33,6 @@ class BaseTransitionCondition(ABC):
             ctx (BaseGameContext): The context of the game which may contain state, resources, or conditions.
 
         Returns:
-            bool: True if the transition is allowed, False otherwise.
+            bool: `True` if the transition is allowed, `False` otherwise.
         """
         ...

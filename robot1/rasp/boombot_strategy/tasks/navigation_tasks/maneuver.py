@@ -29,11 +29,7 @@ from strategy.core import BaseGameContext
 
 
 class RelativeBackward(NavigationTask):
-    """Navigation task to move the robot a specified distance backward.
-
-    Args:
-        distance (float): The distance to move backward in millimeters.
-    """
+    """Navigation task to move the robot a specified distance backward."""
 
     def __init__(self, distance: float) -> None:
         """Initialize the RelativeBackward task.
@@ -57,11 +53,7 @@ class RelativeBackward(NavigationTask):
 
 
 class RelativeForward(NavigationTask):
-    """Navigation task to move the robot a specified distance forward.
-
-    Args:
-        distance (float): The distance to move forward in millimeters.
-    """
+    """Navigation task to move the robot a specified distance forward."""
 
     def __init__(self, distance: float) -> None:
         """Initialize the RelativeForward task.
@@ -81,11 +73,7 @@ class RelativeForward(NavigationTask):
 
 
 class GoCentroidOfZone(NavigationTask):
-    """Navigation task to go to the centroid of a given zone.
-
-    Args:
-        zone_id (int): The ID of the target zone.
-    """
+    """Navigation task to go to the centroid of a given zone."""
 
     def __init__(self, zone_id: int) -> None:
         """Initialize the GoCentroidOfZone task.

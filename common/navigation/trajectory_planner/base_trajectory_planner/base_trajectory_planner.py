@@ -110,7 +110,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
         """Check if planning has been started.
 
         Returns:
-            bool: True if planning is active, False otherwise.
+            bool: `True` if planning is active, `False` otherwise.
         """
         return self._start_trajectory_timestamp > 0.0
 

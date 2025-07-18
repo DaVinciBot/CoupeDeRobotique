@@ -38,7 +38,7 @@ class Navigator:
         """Fetch the next task from the queue.
 
         Returns:
-            bool: True if a new task was fetched, False if the queue is empty.
+            bool: `True` if a new task was fetched, `False` if the queue is empty.
         """
         if self._tasks_queue:
             self.current_task: NavigatorTask = NavigatorTask(
@@ -58,7 +58,7 @@ class Navigator:
 
         Args:
             navigator_task_params (NavigatorTaskParams): The parameters for the navigation task.
-            skip_queue (bool, optional): If True, skip the queue and execute the task immediately. Defaults to False.
+            skip_queue (bool, optional): If `True`, skip the queue and execute the task immediately. Defaults to `False`.
         """
         if skip_queue:
             self.abort(affect_all_tasks=False)
@@ -119,7 +119,7 @@ class Navigator:
         """Abort the current task and all tasks in the queue.
 
         Args:
-            affect_all_tasks (bool, optional): If True, all tasks in the queue will be aborted. Defaults to False.
+            affect_all_tasks (bool, optional): If `True`, all tasks in the queue will be aborted. Defaults to `False`.
         """
         if affect_all_tasks:
             self._tasks_queue.clear()

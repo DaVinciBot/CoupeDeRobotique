@@ -61,8 +61,8 @@ class TimeoutTaskNode(BaseTaskNode):
             ctx (BaseGameContext): Game context used for task execution.
 
         Returns:
-            bool: ``True`` if all tasks completed or a timeout occurred,
-            ``False`` otherwise.
+            bool: `True` if all tasks completed or a timeout occurred,
+            `False` otherwise.
         """
         # If already completed, no-op
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:

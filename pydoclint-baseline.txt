@@ -3,18 +3,10 @@ common/navigation/debug_functions/navigator.py
     DOC107: Function `plot_enum`: The option `--arg-type-hints-in-signature` is `True` but not all args in the signature have type hints
     DOC105: Function `plot_enum`: Argument names match, but type hints in these args do not match: times, values, title
 --------------------
-common/navigation/navigator/core/states.py
-    DOC601: Class `NavigatorState`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
-    DOC603: Class `NavigatorState`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [ERROR: , FINISHED: , REPLANNING: , STOPPED: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
---------------------
 common/navigation/navigator/signals/dispatcher.py
     DOC203: Method `NavigatorSignalsDispatcher.connect_signal` return type(s) in docstring not consistent with the return annotation. Return annotation types: ['None']; docstring return section types: ['']
     DOC203: Method `NavigatorSignalsDispatcher.disconnect_signal` return type(s) in docstring not consistent with the return annotation. Return annotation types: ['None']; docstring return section types: ['']
     DOC203: Method `NavigatorSignalsDispatcher.emit_signal` return type(s) in docstring not consistent with the return annotation. Return annotation types: ['None']; docstring return section types: ['']
---------------------
-common/navigation/navigator/task/states.py
-    DOC201: Method `NavigatorTaskState.is_finished` does not have a return section in docstring
-    DOC203: Method `NavigatorTaskState.is_finished` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
 --------------------
 common/navigation/path_planner/astar_path_planner/astar_path_planner.py
     DOC203: Method `AStarPathPlanner.__get_grid_node_center` return type(s) in docstring not consistent with the return annotation. Return annotation types: ['tuple[float, float]']; docstring return section types: ['Point']
@@ -34,9 +26,6 @@ common/strategy/core/tasks/base_task.py
     DOC101: Method `BaseTask.__init__`: Docstring contains fewer arguments than in function signature.
     DOC103: Method `BaseTask.__init__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [logger: Logger | None].
 --------------------
-common/strategy/core/transitions/conditional_transition/transitions_condition/from_function_transition_condition.py
-    DOC105: Method `FromFunctionTransitionCondition.__init__`: Argument names match, but type hints in these args do not match: func
---------------------
 common/usb_com/python/com/com.py
     DOC501: Method `Com._get_serial` has raise statements, but the docstring does not have a "Raises" section
     DOC503: Method `Com._get_serial` exceptions in the "Raises" section in the docstring do not match those in the function body. Raised exceptions in the docstring: []. Raised exceptions in the body: ['ComException'].
@@ -44,11 +33,6 @@ common/usb_com/python/com/com.py
     DOC103: Method `Com.check_dummy`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [func: Callable[..., Any]].
     DOC201: Method `Com.check_dummy` does not have a return section in docstring
     DOC203: Method `Com.check_dummy` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
---------------------
-robot1/rasp/boombot_strategy/tasks/navigation_tasks/maneuver.py
-    DOC304: Class `RelativeBackward`: Class docstring has an argument/parameter section; please put it in the __init__() docstring
-    DOC304: Class `RelativeForward`: Class docstring has an argument/parameter section; please put it in the __init__() docstring
-    DOC304: Class `GoCentroidOfZone`: Class docstring has an argument/parameter section; please put it in the __init__() docstring
 --------------------
 robot1/rasp/config_loader.py
     DOC601: Class `CONFIG`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)

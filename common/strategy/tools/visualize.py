@@ -25,7 +25,7 @@ def visualize_task_graph(
     Args:
         start_node (BaseTaskNode): Entry point of the task graph.
         filename (str, optional): Output filename without extension. Defaults to "task_graph".
-        view (bool, optional): If True, automatically opens the generated image. Defaults to False.
+        view (bool, optional): If `True`, automatically opens the generated image. Defaults to `False`.
 
     Returns:
         Digraph: The generated Graphviz graph object.
@@ -91,7 +91,7 @@ def visualize_entire_subgraph(
     Args:
         subgraph (BaseSubGraph): Subgraph containing all task nodes.
         filename (str, optional): Output filename without extension. Defaults to "full_graph".
-        view (bool, optional): If True, automatically opens the generated image. Defaults to False.
+        view (bool, optional): If `True`, automatically opens the generated image. Defaults to `False`.
 
     Returns:
         Digraph: The generated Graphviz graph object.

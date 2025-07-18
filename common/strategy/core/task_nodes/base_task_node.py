@@ -116,7 +116,7 @@ class BaseTaskNode:
             ctx (BaseGameContext): The current game context.
 
         Returns:
-            bool: ``True`` when all tasks are completed, ``False`` otherwise.
+            bool: `True` when all tasks are completed, `False` otherwise.
         """
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:
             self.logger.debug(
@@ -188,7 +188,7 @@ class BaseTaskNode:
             ctx (BaseGameContext): The current game context.
 
         Returns:
-            bool: ``True`` when all tasks are completed, ``False`` otherwise.
+            bool: `True` when all tasks are completed, `False` otherwise.
         """
         if not self.entered:
             self.on_enter(None, ctx)

@@ -21,5 +21,9 @@ class NavigatorTaskState(Enum):
     FINISHED = auto()  # The task is finished.
 
     def is_finished(self) -> bool:
-        """Check if the task is finished."""
+        """Check if the task is finished.
+
+        Returns:
+            bool: True if the task is finished, False otherwise.
+        """
         return self in {NavigatorTaskState.FINISHED, NavigatorTaskState.ABORT}

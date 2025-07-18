@@ -20,7 +20,7 @@ class PIN:
 
         Args:
             mode (str): The pin mode (input/output).
-            reverse_state (bool, optional): Whether to reverse the state of the pin. Defaults to False.
+            reverse_state (bool, optional): Whether to reverse the state of the pin. Defaults to `False`.
         """
         mode = mode.lower()
         self.mode = mode
@@ -48,8 +48,7 @@ class PIN:
         """Write a digital state to the pin.
 
         Args:
-            state (bool): The state to write (True/False).
-
+            state (bool): The state to write (`True`/`False`).
         """
         self.device.value = self.__correct_state(state)
 
@@ -57,7 +56,7 @@ class PIN:
         """Read the digital state of the pin.
 
         Returns:
-            bool: The digital state of the pin (True/False).
+            bool: The digital state of the pin (`True`/`False`).
 
         """
         return (
@@ -73,7 +72,7 @@ class PIN:
             n (int, optional): Number of samples to read. Defaults to 5.
 
         Returns:
-            bool: The averaged digital state. True if the majority of samples are True, otherwise False.
+            bool: The averaged digital state. `True` if the majority of samples are `True`, otherwise `False`.
 
         """
         return sum([self.digital_read() for _ in range(n)]) / n >= 0.5

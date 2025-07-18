@@ -63,7 +63,7 @@ class BaseStrategy(ABC):
             *elements (BaseTaskNode | BaseSubGraph): A variable number of nodes or subgraphs.
 
         Returns:
-            bool: True if the transitions were built successfully, False otherwise.
+            bool: `True` if the transitions were built successfully, `False` otherwise.
         """
         if not elements:
             self.logger.error("No elements provided for building the strategy.")

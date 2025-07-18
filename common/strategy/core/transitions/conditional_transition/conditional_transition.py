@@ -41,6 +41,6 @@ class ConditionalTransition(BaseTransition):
             ctx (BaseGameContext): The current game context providing necessary state for evaluation.
 
         Returns:
-            bool: True if the condition is satisfied and transition can occur, False otherwise.
+            bool: `True` if the condition is satisfied and transition can occur, `False` otherwise.
         """
         return self.condition.check(from_node, self.target, ctx)

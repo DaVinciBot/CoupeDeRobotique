@@ -35,6 +35,6 @@ class BaseTransition(ABC):
             ctx (BaseGameContext): The current game context, which may include relevant state or conditions.
 
         Returns:
-            bool: True if the transition should occur, False otherwise.
+            bool: `True` if the transition should occur, `False` otherwise.
         """
         ...

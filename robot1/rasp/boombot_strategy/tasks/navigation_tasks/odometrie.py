@@ -11,7 +11,7 @@ from strategy.core.tasks.base_task import BaseTask
 class SetOdometrie(BaseTask):
     """Task to update the robot's odometry position.
 
-    The task uses the provided ``x``, ``y`` and ``theta`` values if given;
+    The task uses the provided `x`, `y` and `theta` values if given;
     otherwise it falls back to the current values from the ally zone.
     """
 
@@ -41,7 +41,7 @@ class SetOdometrie(BaseTask):
             ctx (ShowGameContext): Context containing game state and arena info.
 
         Returns:
-            bool: Always returns True after setting the new odometry.
+            bool: Always returns `True` after setting the new odometry.
         """
         # Get the current position from the ally zone
         current_position: OrientedPoint = ctx.arena.ally_zone.point
