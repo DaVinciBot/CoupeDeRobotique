@@ -18,19 +18,19 @@ class ForbiddenZone(BaseArenaZone):
         logger: Logger,
         accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
         buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
+        polygon: Polygon | None = None,
+        buffered_polygon: Polygon | None = None,
+        update_callback: callable | None = None,
     ) -> None:
         """Initializes a ForbiddenZone with the specified parameters.
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            accessibility (ZoneAccessibility): Accessibility of the zone.
-            buffer_size (float): Buffer size for geometric adjustments.
-            polygon (Polygon): Polygon representing the zone geometry.
-            buffered_polygon (Polygon): Buffered polygon geometry.
-            update_callback (callable): Function to be called on updates.
+            accessibility (ZoneAccessibility, optional): Accessibility of the zone. Defaults to ZoneAccessibility.FORBIDDEN.
+            buffer_size (float, optional): Buffer size for geometric adjustments. Defaults to 0.0.
+            polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
+            buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
+            update_callback (callable | None, optional): Function to be called on updates. Defaults to None.
         """
         super().__init__(
             logger=logger,

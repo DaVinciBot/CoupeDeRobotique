@@ -27,7 +27,7 @@ class AllyZone(BaseArenaZone):
         Args:
             logger (Logger): Logger instance for logging messages.
             point (OrientedPoint): Position and orientation of the ally.
-            robot_size (float, optional): Size of the robot (defaults to 2).
+            robot_size (float, optional): Size of the robot. Defaults to 2.
         """
         position_based_polygon = create_straight_rectangle(
             Point(point.x - robot_size, point.y - robot_size),

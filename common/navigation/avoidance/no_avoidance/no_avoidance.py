@@ -25,13 +25,8 @@ if TYPE_CHECKING:
 class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
     """Implementation of a no-op avoidance strategy.
 
-    This class represents a scenario where the navigation system proceeds with its task
-    without performing any obstacle avoidance. It directly returns the current trajectory
-    command without any modifications.
-
-    Attributes:
-        params (NoAvoidanceParams): Configuration parameters specific to the no avoidance strategy.
-        logger (Logger): Logger instance for tracking internal operations.
+    The navigation system proceeds with its task without applying any obstacle
+    avoidance logic and simply returns the current trajectory command unchanged.
     """
 
     def __init__(
@@ -40,10 +35,12 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
-        """Initialize the NoAvoidance strategy with the given parameters and optional logger.
+        """Initialize the no-avoidance strategy.
 
         Args:
             params (NoAvoidanceParams): Configuration parameters.
+            acs_detection_profile_params (BaseAcsDetectionProfileParams):
+                Parameters for the ACS detection profile.
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
         """
         super().__init__(params, acs_detection_profile_params, logger)
@@ -61,7 +58,7 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
         trajectory command as-is.
 
         Args:
-            task (NavigatorTask): Current navigation task.
+            current_navigator_task (NavigatorTask): The current navigation task.
             ally_zone (AllyZone): Ally zone data.
             enemy_zone (EnemyZone): Enemy zone data.
 

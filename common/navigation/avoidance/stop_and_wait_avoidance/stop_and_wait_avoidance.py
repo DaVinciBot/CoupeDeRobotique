@@ -30,13 +30,9 @@ if TYPE_CHECKING:
 class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
     """Implements a stop-and-wait obstacle avoidance strategy.
 
-    When an obstacle is detected via ACS (Automatic Collision System), the robot stops.
-    If the obstacle clears before a timeout, it replans a new trajectory from its current position.
-    If the obstacle remains and a timeout occurs, the system aborts the avoidance process.
-
-    Attributes:
-        params (StopAndWaitAvoidanceParams): Parameters for stop-and-wait strategy.
-        logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+    When an obstacle is detected the robot stops. If the obstacle clears before
+    a timeout, it replans a trajectory from its current position. Otherwise the
+    avoidance procedure is aborted.
     """
 
     def __init__(
@@ -45,10 +41,12 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
-        """Initialize the StopAndWaitAvoidance with parameters and optional logger.
+        """Initialize the stop-and-wait strategy.
 
         Args:
             params (StopAndWaitAvoidanceParams): Configuration parameters.
+            acs_detection_profile_params (BaseAcsDetectionProfileParams):
+                Parameters for the ACS detection profile.
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
         """
         super().__init__(params, acs_detection_profile_params, logger)
@@ -60,10 +58,10 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
-        """Main handler to process avoidance logic based on current zones and navigation state.
+        """Handle the stop-and-wait avoidance logic.
 
         Args:
-            task (NavigatorTask): The current navigation task instance.
+            current_navigator_task (NavigatorTask): The current navigation task instance.
             ally_zone (AllyZone): Ally zone providing positional data.
             enemy_zone (EnemyZone): Enemy zone used for obstacle detection.
 

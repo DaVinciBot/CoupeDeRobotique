@@ -45,7 +45,7 @@ class GridManager:
             width (int): Total width of the grid in absolute units.
             height (int): Total height of the grid in absolute units.
             forbidden_cover_threshold (float, optional): Minimum coverage ratio
-                for a cell to be marked as forbidden.
+                for a cell to be marked as forbidden. Defaults to 0.5.
         """
         self.logger: Logger = logger
         self.forbidden_cover_threshold: float = forbidden_cover_threshold

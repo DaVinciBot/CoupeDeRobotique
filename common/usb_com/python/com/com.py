@@ -8,6 +8,7 @@ import threading
 import time
 from collections.abc import Callable
 from functools import wraps
+from typing import Any
 
 import crc8
 import serial
@@ -42,8 +43,8 @@ class Com:
             vid (int): Vendor ID of the USB device.
             pid (int): Product ID of the USB device.
             baudrate (int): Baud rate for serial communication.
-            enable_crc (bool): Enables CRC8 checksum verification (default: True).
-            enable_dummy (bool): Enables dummy mode for testing (default: False).
+            enable_crc (bool, optional): Enables CRC8 checksum verification. Defaults to True.
+            enable_dummy (bool, optional): Enables dummy mode for testing. Defaults to False.
         """
         # Initialize init variables
         self.logger: Logger = logger
@@ -55,7 +56,7 @@ class Com:
         self.enable_dummy: bool = enable_dummy
 
         # Initialize usb com variables
-        self._device: serial.Serial = self._get_serial()
+        self._device: serial.Serial | DummySerial = self._get_serial()
         self._crc8: crc8.crc8 = crc8.crc8()
 
         self.last_message: bytes | None = None
@@ -172,13 +173,13 @@ class Com:
 
     # ======= Public methods =======
     @staticmethod
-    def check_dummy(func):
+    def check_dummy(func: Callable[..., Any]) -> Callable[..., Any]:
         """Decorator to check if self.enable_dummy is enabled before executing a function.
         If self.enable_dummy is disabled, the function execution is canceled.
         """
 
         @wraps(func)
-        def wrapper(self, *args, **kwargs):
+        def wrapper(self: "Com", *args: Any, **kwargs: Any):
             # Check if the self.enable_dummy attribute is disabled (False)
             if self.enable_dummy:
                 # Print a message indicating that execution is canceled

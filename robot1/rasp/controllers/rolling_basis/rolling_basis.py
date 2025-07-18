@@ -1,6 +1,5 @@
 import struct
 import time
-
 from typing import Any
 
 from config_loader import CONFIG

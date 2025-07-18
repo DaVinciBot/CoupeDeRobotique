@@ -28,7 +28,7 @@ class SequentialTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
             step_sleep_delay (float, optional): Time delay between each segment in the trajectory.
                 Defaults to 0.0.
             respect_intermediate_orientation (bool, optional): Whether intermediate poses
-                should preserve their orientation when planning the trajectory.
+                should preserve their orientation when planning the trajectory. Defaults to False.
             respect_goal_orientation (bool, optional): Whether the final pose orientation
                 should be preserved. Defaults to True.
         """

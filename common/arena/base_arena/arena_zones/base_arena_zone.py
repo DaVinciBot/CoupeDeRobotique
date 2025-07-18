@@ -29,12 +29,12 @@ class BaseArenaZone(ABC):
         zone_type: ZoneType,
         accessibility: ZoneAccessibility,
         buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
+        polygon: Polygon | None = None,
+        buffered_polygon: Polygon | None = None,
+        update_callback: callable | None = None,
         zone_color: str = "#9e9e9e",
-        go_to_positions: list[OrientedPoint | Point] = None,
-        uid: int = None,
+        go_to_positions: list[OrientedPoint | Point] | None = None,
+        uid: int | None = None,
     ) -> None:
         """Initializes the BaseArenaZone with geometry, type, color, and accessibility.
 
@@ -42,13 +42,13 @@ class BaseArenaZone(ABC):
             logger (Logger): Logger instance for logging messages.
             zone_type (ZoneType): The type/category of the zone.
             accessibility (ZoneAccessibility): Accessibility of the zone.
-            buffer_size (float): Buffer size for geometric adjustments.
-            polygon (Polygon, optional): Polygon representing the zone geometry.
-            buffered_polygon (Polygon, optional): Buffered polygon geometry.
-            update_callback (callable, optional): Function to be called on updates.
-            zone_color (str): Color associated with the zone.
-            go_to_positions (list[OrientedPoint | Point], optional): List of go-to positions within the zone.
-            uid (int, optional): Unique identifier for the zone instance.
+            buffer_size (float, optional): Buffer size for geometric adjustments. Defaults to 0.0.
+            polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
+            buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
+            update_callback (callable | None, optional): Function to be called on updates. Defaults to None.
+            zone_color (str, optional): Color associated with the zone. Defaults to "#9e9e9e".
+            go_to_positions (list[OrientedPoint | Point] | None, optional): List of go-to positions within the zone. Defaults to None.
+            uid (int | None, optional): Unique identifier for the zone instance. Defaults to None.
         """
         self.logger: Logger = logger
         self.zone_type: ZoneType = zone_type

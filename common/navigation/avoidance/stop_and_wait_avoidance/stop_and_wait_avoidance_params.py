@@ -9,13 +9,10 @@ from navigation.avoidance.structs import AvoidanceStrategy
 
 
 class StopAndWaitAvoidanceParams(BaseAvoidanceParams):
-    """Configuration class for the 'STOP_AND_WAIT' obstacle avoidance strategy.
+    """Parameters for the ``STOP_AND_WAIT`` avoidance strategy.
 
-    This strategy stops the system when an obstacle is detected within a specified distance
-    and waits for a defined timeout period before taking further action.
-
-    Attributes:
-        timeout (float): Duration (in seconds) to wait after stopping before reassessment.
+    This strategy stops the system when an obstacle is detected and waits for a
+    defined timeout period before reassessing the situation.
     """
 
     def __init__(

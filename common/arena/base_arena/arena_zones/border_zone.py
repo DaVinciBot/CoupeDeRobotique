@@ -17,18 +17,18 @@ class BorderZone(BaseArenaZone):
         self,
         logger: Logger,
         buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
+        polygon: Polygon | None = None,
+        buffered_polygon: Polygon | None = None,
+        update_callback: callable | None = None,
     ) -> None:
         """Initializes the BorderZone with its geometry and accessibility settings.
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            buffer_size (float, optional): Buffer size for geometric adjustments (defaults to 0.0).
-            polygon (Polygon, optional): Polygon representing the zone geometry.
-            buffered_polygon (Polygon, optional): Buffered polygon geometry.
-            update_callback (callable, optional): Function to be called on updates.
+            buffer_size (float, optional): Buffer size for geometric adjustments. Defaults to 0.0.
+            polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
+            buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
+            update_callback (callable | None, optional): Function to be called on updates. Defaults to None.
         """
         super().__init__(
             logger=logger,
