@@ -131,7 +131,11 @@ class OrientedPoint(Point):
     # serialization logic (such as Shapely's geometry objects).
     # ----------------------------------------------------------------------
 
-    def __reduce__(self) -> tuple[type["OrientedPoint"], tuple[tuple[float, float], float], dict[str, float]]:
+    def __reduce__(
+        self,
+    ) -> tuple[
+        type["OrientedPoint"], tuple[tuple[float, float], float], dict[str, float]
+    ]:
         """Customize pickling for :class:`OrientedPoint`.
 
         Returns:

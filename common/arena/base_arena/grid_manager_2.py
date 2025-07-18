@@ -232,7 +232,9 @@ class GridManager:
         """
         return self.dynamic_grid
 
-    def visualize(self, only_static_grid: bool = False, path: list[GridNode] | None = None) -> None:
+    def visualize(
+        self, only_static_grid: bool = False, path: list[GridNode] | None = None
+    ) -> None:
         """Visualize the grid using matplotlib.
 
         Args:
