@@ -264,7 +264,7 @@ class Arena:
         distance: float,
         relative_angle: float,
         pos_robot: OrientedPoint,
-    ):
+    ) -> Point:
         return Point(
             pos_robot.x
             + distance * cos(radians(pos_robot.theta - 45 + relative_angle)),
@@ -272,5 +272,5 @@ class Arena:
             + distance * sin(radians(pos_robot.theta - 45 + relative_angle)),
         )
 
-    def remove_outside(self, points: MultiPoint):
+    def remove_outside(self, points: MultiPoint) -> Geometry:
         return self.game_borders_buffered.intersection(points)

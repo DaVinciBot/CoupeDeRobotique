@@ -118,7 +118,7 @@ class AStarPathPlanner(
             node (GridNode): The grid node.
 
         Returns:
-            Point: Center of the grid node.
+            tuple[float, float]: Center of the grid node in absolute coordinates.
         """
         return (
             node.x * self.params.chunk_size + self.params.half_chunk_size,
@@ -220,7 +220,14 @@ class AStarPathPlanner(
         self,
         point: OrientedPoint | Point,
     ) -> GridNode:
-        """Converts absolute coordinates to grid coordinates."""
+        """Convert absolute coordinates to grid coordinates.
+
+        Args:
+            point (OrientedPoint | Point): Point in absolute coordinates.
+
+        Returns:
+            GridNode: Coordinates of the point within the grid.
+        """
         return GridNode(
             int(point.x / self.params.chunk_size),
             int(point.y / self.params.chunk_size),

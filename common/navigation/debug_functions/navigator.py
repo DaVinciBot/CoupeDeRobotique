@@ -151,7 +151,11 @@ def test_navigator_execution(
     plt.show()
 
     # 5) Plot enums (task/avoidance states) as categorical step plots
-    def plot_enum(times, values, title) -> None:
+    def plot_enum(
+        times: list[float],
+        values: list[str],
+        title: str,
+    ) -> None:
         """Plot categorical enum values as a step function over time.
 
         Args:

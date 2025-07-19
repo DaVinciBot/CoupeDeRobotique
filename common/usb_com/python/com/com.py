@@ -67,10 +67,13 @@ class Com:
 
     # ======= Private methods =======
     def _get_serial(self) -> serial.Serial | DummySerial:
-        """Detects and initializes the serial device or dummy mode.
+        """Detect and initialize the serial device or dummy mode.
 
         Returns:
             serial.Serial | DummySerial: Initialized serial connection or dummy instance.
+
+        Raises:
+            ComException: If no device is found and dummy mode is disabled.
         """
         device_found: serial.Serial | DummySerial | None = None
 
@@ -174,8 +177,13 @@ class Com:
     # ======= Public methods =======
     @staticmethod
     def check_dummy(func: Callable[..., Any]) -> Callable[..., Any]:
-        """Decorator to check if self.enable_dummy is enabled before executing a function.
-        If self.enable_dummy is disabled, the function execution is canceled.
+        """Decorator to cancel execution when in dummy mode.
+
+        Args:
+            func (Callable[..., Any]): Function to wrap.
+
+        Returns:
+            Callable[..., Any]: Wrapped function that returns ``None`` if dummy mode is enabled.
         """
 
         @wraps(func)

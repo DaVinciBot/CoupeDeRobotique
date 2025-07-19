@@ -1,0 +1,99 @@
+common\arena\2024_mars_arena\mars_arena_old.py:
+   28:27 ANN001 Missing type annotation for function argument `nb`
+   31:27 ANN001 Missing type annotation for function argument `nb`
+  152:9  ANN201 Missing return type annotation for public function `sort_plant_zones`
+  156:9  ANN001 Missing type annotation for function argument `mini_plants`
+  157:9  ANN001 Missing type annotation for function argument `maxi_plants`
+  158:9  ANN001 Missing type annotation for function argument `reverse`
+  176:9  ANN201 Missing return type annotation for public function `sort_gardener`
+  179:9  ANN001 Missing type annotation for function argument `friendly_only`
+  180:9  ANN001 Missing type annotation for function argument `maxi`
+  181:9  ANN001 Missing type annotation for function argument `reverse`
+  199:9  ANN201 Missing return type annotation for public function `sort_drop_zone`
+  202:9  ANN001 Missing type annotation for function argument `friendly_only`
+  203:9  ANN001 Missing type annotation for function argument `maxi_plants`
+  204:9  ANN001 Missing type annotation for function argument `reverse`
+  222:9  ANN201 Missing return type annotation for public function `sort_pickup_zone`
+  225:9  ANN001 Missing type annotation for function argument `mini_plants`
+  226:9  ANN001 Missing type annotation for function argument `reverse`
+
+common\arena\base_arena\arena.py:
+  778:9  ANN204 Missing return type annotation for special method `__eq__`
+  778:22 ANN001 Missing type annotation for function argument `other`
+  782:9  ANN204 Missing return type annotation for special method `__ne__`
+  782:22 ANN001 Missing type annotation for function argument `other`
+
+common\arena\base_arena\grid_manager.py:
+  247:9  ANN204 Missing return type annotation for special method `__eq__`
+  247:22 ANN001 Missing type annotation for function argument `other`
+  268:27 ANN001 Missing type annotation for function argument `grid`
+  288:9  ANN204 Missing return type annotation for special method `__ne__`
+  288:22 ANN001 Missing type annotation for function argument `other`
+
+common\arena\show_arena\arena.py:
+  406:9  ANN204 Missing return type annotation for special method `__eq__`
+  406:22 ANN001 Missing type annotation for function argument `other`
+  416:9  ANN204 Missing return type annotation for special method `__ne__`
+  416:22 ANN001 Missing type annotation for function argument `other`
+
+common\geometry\oriented_point.py:
+   58:9  ANN002 Missing type annotation for `*args`
+   59:9  ANN003 Missing type annotation for `**kwargs`
+   73:41 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `__getattr__`
+   93:9  ANN204 Missing return type annotation for special method `__add__`
+   93:23 ANN001 Missing type annotation for function argument `other`
+  103:9  ANN204 Missing return type annotation for special method `__sub__`
+  103:23 ANN001 Missing type annotation for function argument `other`
+
+common\navigation\avoidance\base_avoidance\base_avoidance.py:
+  95:13 ANN202 Missing return type annotation for private function `wrapper`
+  95:21 ANN001 Missing type annotation for function argument `self`
+  95:66 ANN002 Missing type annotation for `*args`
+  95:73 ANN003 Missing type annotation for `**kwargs`
+
+common\navigation\navigator\signals\dispatcher.py:
+  92:9 ANN002 Missing type annotation for `*args`
+  93:9 ANN003 Missing type annotation for `**kwargs`
+
+common\navigation\path_planner\base_path_planner\base_path_planner.py:
+  42:13 ANN202 Missing return type annotation for private function `wrapper`
+  45:13 ANN002 Missing type annotation for `*args`
+  46:13 ANN003 Missing type annotation for `**kwargs`
+
+common\navigation\trajectory_planner\base_trajectory_planner\base_trajectory_planner.py:
+  88:13 ANN202 Missing return type annotation for private function `wrapper`
+  88:21 ANN001 Missing type annotation for function argument `self`
+  88:27 ANN002 Missing type annotation for `*args`
+  88:34 ANN003 Missing type annotation for `**kwargs`
+
+common\navigation\trajectory_planner\sequential_trajectory_planner\sequential_trajectory_planner.py:
+  56:9 ANN205 Missing return type annotation for staticmethod `_normalize_angle`
+
+common\usb_com\python\com\com.py:
+  190:13 ANN202 Missing return type annotation for private function `wrapper`
+  190:41 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `*args`
+  190:56 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `**kwargs`
+
+robot1\rasp\controllers\actuators\actuators_show.py:
+  45:31 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `*args`
+  45:46 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `**kwargs`
+
+robot1\rasp\controllers\rolling_basis\asservissment_rolling_basis.py:
+  268:46 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `*args`
+  268:61 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `**kwargs`
+  294:47 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `*args`
+  294:62 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `**kwargs`
+
+robot1\rasp\controllers\rolling_basis\rolling_basis.py:
+  177:46 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `*args`
+  177:61 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `**kwargs`
+  203:47 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `*args`
+  203:62 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `**kwargs`
+
+robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
+   93:46 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `*args`
+   93:61 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `**kwargs`
+  119:47 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `*args`
+  119:62 ANN401 Dynamically typed expressions (typing.Any) are disallowed in `**kwargs`
+
+Found 68 errors.

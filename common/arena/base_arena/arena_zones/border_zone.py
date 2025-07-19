@@ -2,6 +2,7 @@
 # This module defines the BorderZone class, representing the outer boundaries of the arena.
 # It extends BaseArenaZone and is characterized by its restricted accessibility.
 
+from typing import Callable
 
 from loggerplusplus import Logger
 
@@ -19,7 +20,7 @@ class BorderZone(BaseArenaZone):
         buffer_size: float = 0.0,
         polygon: Polygon | None = None,
         buffered_polygon: Polygon | None = None,
-        update_callback: callable | None = None,
+        update_callback: Callable | None = None,
     ) -> None:
         """Initializes the BorderZone with its geometry and accessibility settings.
 
@@ -28,7 +29,7 @@ class BorderZone(BaseArenaZone):
             buffer_size (float, optional): Buffer size for geometric adjustments. Defaults to 0.0.
             polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
             buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
-            update_callback (callable | None, optional): Function to be called on updates. Defaults to None.
+            update_callback (Callable | None, optional): Function to be called on updates. Defaults to None.
         """
         super().__init__(
             logger=logger,

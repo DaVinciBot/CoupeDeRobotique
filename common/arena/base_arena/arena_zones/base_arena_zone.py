@@ -5,6 +5,7 @@
 
 
 from abc import ABC
+from typing import Callable
 
 from loggerplusplus import Logger
 
@@ -31,7 +32,7 @@ class BaseArenaZone(ABC):
         buffer_size: float = 0.0,
         polygon: Polygon | None = None,
         buffered_polygon: Polygon | None = None,
-        update_callback: callable | None = None,
+        update_callback: Callable | None = None,
         zone_color: str = "#9e9e9e",
         go_to_positions: list[OrientedPoint | Point] | None = None,
         uid: int | None = None,
@@ -45,7 +46,7 @@ class BaseArenaZone(ABC):
             buffer_size (float, optional): Buffer size for geometric adjustments. Defaults to 0.0.
             polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
             buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
-            update_callback (callable | None, optional): Function to be called on updates. Defaults to None.
+            update_callback (Callable | None, optional): Function to be called on updates. Defaults to None.
             zone_color (str, optional): Color associated with the zone. Defaults to "#9e9e9e".
             go_to_positions (list[OrientedPoint | Point] | None, optional): List of go-to positions within the zone. Defaults to None.
             uid (int | None, optional): Unique identifier for the zone instance. Defaults to None.

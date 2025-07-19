@@ -8,7 +8,7 @@ format:
 
 lint:
 	@echo "▶ Linting avec Ruff..."
-	-ruff check . --fix
+	-ruff check . --fix --output-format=grouped > ruff-baseline.txt
 	@echo "▶ Linting avec pydoclint..."
 	pydoclint .
 

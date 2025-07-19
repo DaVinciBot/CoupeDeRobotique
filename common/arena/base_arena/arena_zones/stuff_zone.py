@@ -2,8 +2,7 @@
 # This module defines the StuffZone class, a zone designated for storage or item placement.
 # It extends BaseArenaZone and updates its accessibility based on the presence of allies or enemies.
 
-
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from loggerplusplus import Logger
 
@@ -29,7 +28,7 @@ class StuffZone(BaseArenaZone):
         buffer_size: float = 0.0,
         polygon: Polygon | None = None,
         buffered_polygon: Polygon | None = None,
-        update_callback: callable | None = None,
+        update_callback: Callable | None = None,
         go_to_positions: list[OrientedPoint | Point] | None = None,
     ) -> None:
         """Initializes the StuffZone with geometry, buffer, and accessibility.
@@ -39,7 +38,7 @@ class StuffZone(BaseArenaZone):
             buffer_size (float, optional): Buffer size for geometric adjustments. Defaults to 0.0.
             polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
             buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
-            update_callback (callable | None, optional): Function to be called on updates. Defaults to None.
+            update_callback (Callable | None, optional): Function to be called on updates. Defaults to None.
             go_to_positions (list[OrientedPoint | Point] | None, optional): List of go-to positions within the zone. Defaults to None.
         """
         super().__init__(

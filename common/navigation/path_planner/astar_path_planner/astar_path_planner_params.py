@@ -65,5 +65,11 @@ class AStarPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
     """Parameters for planning a path using the A* algorithm."""
 
     def __init__(self, start: OrientedPoint, goal: OrientedPoint) -> None:
+        """Initialize plan parameters.
+
+        Args:
+            start (OrientedPoint): Starting point of the path.
+            goal (OrientedPoint): Goal point of the path.
+        """
         self.goal: OrientedPoint = goal
         super().__init__(start)

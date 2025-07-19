@@ -1,8 +1,8 @@
+from navigation.avoidance.avoidance_factory import AvoidanceFactory  # noqa: I001
 from navigation.avoidance.acs_detection_profiles import (
     BaseAcsDetectionProfile,
     BaseAcsDetectionProfileParams,
 )
-from navigation.avoidance.avoidance_factory import AvoidanceFactory
 from navigation.avoidance.base_avoidance import (
     AvoidanceState,
     BaseAvoidance,

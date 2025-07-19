@@ -56,9 +56,6 @@ class NavigatorSignalsDispatcher:
         Args:
             signal (NavigatorSignalsEnum): The signal to connect to.
             callback (Callable[..., Any]): The callback function to attach to the signal.
-
-        Returns:
-            None
         """
         try:
             # Connect callback to signal
@@ -78,9 +75,6 @@ class NavigatorSignalsDispatcher:
         Args:
             signal (NavigatorSignalsEnum): The signal to disconnect from.
             callback (Callable[..., Any]): The callback function to remove.
-
-        Returns:
-            None
         """
         try:
             # Disconnect callback from signal
@@ -104,9 +98,6 @@ class NavigatorSignalsDispatcher:
             signal (NavigatorSignalsEnum): The signal to emit.
             *args: Positional arguments to pass to callbacks.
             **kwargs: Keyword arguments to pass to callbacks.
-
-        Returns:
-            None
         """
         try:
             self.logger.debug(

@@ -9,10 +9,6 @@ import time
 from typing import TYPE_CHECKING
 
 from arena import AllyZone, EnemyZone
-from navigation.avoidance import (
-    AvoidanceFactory,
-    BaseAvoidance,
-)
 from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
 from navigation.navigator.task.states import NavigatorTaskState
 from navigation.path_planner import (
@@ -42,6 +38,8 @@ class NavigatorTask:
         Args:
             params (NavigatorTaskParams): The parameters for the navigation task.
         """
+        from navigation.avoidance import AvoidanceFactory, BaseAvoidance
+
         self.params = params
         self.path_planner: BasePathPlanner = PathPlannerFactory.instantiate(
             params.path_planner_params,

@@ -14,7 +14,7 @@ from geometry import (
 
 
 class Plants_zone:
-    def __init__(self, zone, nb_plant: int = 0) -> None:
+    def __init__(self, zone: Polygon, nb_plant: int = 0) -> None:
         self.zone: Polygon = zone
         self.nb_plant: int = nb_plant
         self.visited = False

@@ -1,3 +1,7 @@
+from navigation.path_planner.structs import (  # noqa: I001
+    Direction,
+    PathPlanningStrategy,
+)
 from navigation.path_planner.astar_path_planner import (
     AStarPathPlanner,
     AStarPathPlannerParams,
@@ -22,7 +26,6 @@ from navigation.path_planner.path_planner_factory import PathPlannerFactory
 from navigation.path_planner.path_planner_path_plan_params_factory import (
     PathPlannerPathPlanParamsFactory,
 )
-from navigation.path_planner.structs import Direction, PathPlanningStrategy
 
 __all__ = [
     "AStarPathPlanner",

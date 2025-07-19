@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from navigation.avoidance import NoAvoidanceParams
 from navigation.avoidance.acs_detection_profiles import (
     BaseAcsDetectionProfileParams,
     NoAcsDetectionProfileParams,
@@ -12,9 +11,8 @@ from navigation.avoidance.back_avoidance.back_avoidance_params import (
 )
 from navigation.avoidance.base_avoidance import BaseAvoidance
 from navigation.avoidance.base_avoidance.states import AvoidanceState
-from navigation.navigator.task.navigator_task import (
-    NavigatorTask,
-)
+from navigation.avoidance.no_avoidance import NoAvoidanceParams
+from navigation.navigator.task.navigator_task import NavigatorTask
 from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
 from navigation.path_planner import DeltaPathPlannerParams
 from navigation.trajectory_planner import (

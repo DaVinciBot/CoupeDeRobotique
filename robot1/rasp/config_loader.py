@@ -1,27 +1,27 @@
 import json
-import os
 import pathlib
 import sys
+from typing import Any
+
+from loggerplusplus import (  # type: ignore
+    LoggerConfig,
+    LoggerManager,
+    LogLevels,
+    logger_colors,
+)
 
 
-def load_json_file(file_path: pathlib.Path) -> dict:
+def load_json_file(file_path: pathlib.Path) -> dict[str, Any]:
     """Load a JSON file and return its content.
 
     Args:
         file_path (pathlib.Path): The path to the JSON file.
 
     Returns:
-        dict: The content of the JSON file as a dictionary.
-
-    Raises:
-        Exception: If the file cannot be read or parsed.
+        dict[str, Any]: The content of the JSON file as a dictionary.
     """
-    try:
-        with open(file_path) as config:
-            file_json = json.load(config)
-    except Exception:
-        raise
-
+    with open(file_path, encoding="utf-8") as config:
+        file_json: dict[str, Any] = json.load(config)
     return file_json
 
 
@@ -31,27 +31,29 @@ class CONFIG:
     Attributes:
         ROOT_DIR (pathlib.Path): The root directory of the project.
         COMMON_DIR (pathlib.Path): The path to the common directory.
-        CONFIG_STORE (dict): The loaded configuration from config.json.
+        CONFIG_STORE (dict[str, Any]): The loaded configuration from config.json.
 
         GENERAL_CONFIG_KEY (str): Key for general configuration in the config file.
         SPECIFIC_CONFIG_KEY (str): Key for specific configuration in the config file.
         ARENA_CONFIG_KEY (str): Key for arena configuration in the config file.
 
-        GENERAL_CONFIG (dict): General configuration settings.
-        GENERAL_WS_CONFIG (dict): WebSocket configuration settings.
-        GENERAL_TEENSY_CONFIG (dict): Teensy configuration settings.
+        GENERAL_CONFIG (dict[str, Any]): General configuration settings.
+        GENERAL_WS_CONFIG (dict[str, Any]): WebSocket configuration settings.
+        GENERAL_TEENSY_CONFIG (dict[str, Any]): Teensy configuration settings.
 
         WS_PORT (int): WebSocket port.
         WS_CMD_ROUTE (str): WebSocket command route.
+        WS_UI_ROUTE (str): WebSocket UI route.
+
         TEENSY_VID (int): Teensy USB vendor ID.
         TEENSY_PID (int): Teensy USB product ID.
         TEENSY_BAUDRATE (int): Baud rate for Teensy communication.
         TEENSY_CRC (bool): Whether to enable CRC for Teensy communication.
         TEENSY_DUMMY (bool): Whether to enable dummy mode for Teensy communication.
 
-        SPECIFIC_CONFIG (dict): Specific configuration settings for the robot.
-        SPECIFIC_WS_CONFIG (dict): Specific WebSocket configuration settings.
-        SPECIFIC_WS_UI_CONFIG (dict): Specific WebSocket UI configuration settings.
+        SPECIFIC_CONFIG (dict[str, Any]): Specific configuration settings for the robot.
+        SPECIFIC_WS_CONFIG (dict[str, Any]): Specific WebSocket configuration settings.
+        SPECIFIC_WS_UI_CONFIG (dict[str, Any]): Specific WebSocket UI configuration settings.
 
         WS_SENDER_NAME (str): WebSocket sender name.
         WS_HOSTNAME (str): WebSocket hostname.
@@ -63,13 +65,13 @@ class CONFIG:
 
         ZOMBIE_MODE (bool): Whether the robot is in zombie mode.
 
-        LOG_CONFIG (dict): Logging configuration settings.
-        LOGGER_MANAGER_CONFIG (dict): Logger manager configuration settings.
+        LOG_CONFIG (dict[str, Any]): Logging configuration settings.
+        LOGGER_MANAGER_CONFIG (dict[str, Any]): Logger manager configuration settings.
         LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER (bool): Whether to enable file logs monitoring for one logger only.
         LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE (bool): Whether to enable dynamic config update for the logger
         LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER (bool): Whether to enable unique logger identifier.
 
-        LOGGER_CONFIG (dict): Logger configuration settings.
+        LOGGER_CONFIG (dict[str, Any]): Logger configuration settings.
         LOGGER_COLORS (str): Logger colors configuration.
         LOGGER_PATH (str): Path for logger files.
         LOGGER_DECORATOR_LOG_LEVEL (str): Log level for decorator logs.
@@ -86,11 +88,11 @@ class CONFIG:
         LOGGER_IDENTIFIER_MAX_WIDTH (float): Maximum width for logger identifier.
         LOGGER_FILENAME_LINENO_MAX_WIDTH (float): Maximum width for filename and line number in logs.
 
-        TEAM_CONFIG (dict): Team configuration settings.
+        TEAM_CONFIG (dict[str, Any]): Team configuration settings.
         DEFAULT_TEAM (str): Default team color.
-        INFO_BY_TEAM (dict[str, dict]): Information by team.
+        INFO_BY_TEAM (dict[str, Any]): Information by team.
 
-        SCORE_CONFIG (dict): Scoring system configuration settings.
+        SCORE_CONFIG (dict[str, Any]): Scoring system configuration settings.
 
         BUILD_ONE_FLOOR (int): Score for building one floor.
         BUILD_TWO_FLOORS (int): Score for building two floors.
@@ -102,27 +104,28 @@ class CONFIG:
         PARTYING (int): Score for partying.
         FREE_STAGE_ZONE (int): Score for being in a free stage zone.
 
-        ROLLING_BASIS_CONFIG (dict): Rolling basis configuration settings.
+        ROLLING_BASIS_CONFIG (dict[str, Any]): Rolling basis configuration settings.
         ROLLING_BASIS_TEENSY_SER (int): Serial number for the rolling basis Teensy.
-        ROLLING_BASIS_PIDS_CONFIG (dict): PID configuration for the rolling basis.
+
+        ROLLING_BASIS_PIDS_CONFIG (dict[str, Any]): PID configuration for the rolling basis.
         ROLLING_BASIS_PIDS_LINEAR_POSITION (dict[str, float]): PID settings for linear position
         ROLLING_BASIS_PIDS_ANGULAR_POSITION (dict[str, float]): PID settings for angular position.
 
-        ROLLING_BASIS_SPEED_PROFILES_CONFIG (dict): Speed profiles configuration for the rolling basis.
-        ROLLING_BASIS_SPEED_PROFILES_LINEAR (dict[str, int]): Linear speed profiles.
-        ROLLING_BASIS_SPEED_PROFILES_ANGULAR (dict[str, int]): Angular speed profiles.
+        ROLLING_BASIS_SPEED_PROFILES_CONFIG (dict[str, Any]): Speed profiles configuration for the rolling basis.
+        ROLLING_BASIS_SPEED_PROFILES_LINEAR (dict[str, Any]): Linear speed profiles.
+        ROLLING_BASIS_SPEED_PROFILES_ANGULAR (dict[str, Any]): Angular speed profiles.
 
         ROLLING_BASIS_DEFAULT_SPEED_PROFILER (SpeedProfiler): Default speed profiler
         ROLLING_BASIS_SLOW_SPEED_PROFILER (SpeedProfiler): Slow speed profiler
         ROLLING_BASIS_SPEED_PROFILER_PID (SpeedProfiler): Speed profiler for PID control
 
-        ACTUATORS_CONFIG (dict): Actuators configuration settings.
+        ACTUATORS_CONFIG (dict[str, Any]): Actuators configuration settings.
         ACTUATOR_TEENSY_SER (int): Serial number for the actuators Teensy
-        ACTUATOR_SERVOS_CONFIG (dict): Servos configuration for the actuators
-        ACTUATOR_ELEVATOR_CONFIG (dict): Elevator configuration for the actuators
+        ACTUATOR_SERVOS_CONFIG (dict[int, Any]): Servos configuration for the actuators
+        ACTUATOR_ELEVATOR_CONFIG (dict[str, Any]): Elevator configuration for the actuators
         ACTUATOR_DELAY (float): Delay for the actuators
 
-        LIDAR_CONFIG (dict): Lidar configuration settings.
+        LIDAR_CONFIG (dict[str, Any]): Lidar configuration settings.
         LIDAR_ANGLES_UNIT (str): Unit for lidar angles.
         LIDAR_DISTANCES_UNIT (str): Unit for lidar distances.
         LIDAR_MIN_ANGLE (float): Minimum angle for lidar detection.
@@ -131,16 +134,16 @@ class CONFIG:
         LIDAR_FRONTAL_DETECTION_ANGLE (float): Frontal detection angle for lidar
         LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE (float): Semi-circular detection angle for lidar.
 
-        ARENA_CONFIG (dict): Arena configuration settings.
+        ARENA_CONFIG (dict[str, Any]): Arena configuration settings.
         ARENA_BORDER_BUFFER (float): Buffer size for arena borders.
         ARENA_OBSTACLE_BUFFER (float): Buffer size for arena obstacles.
         ARENA_CHUNK_SIZE (float): Size of the arena chunks.
         ARENA_FORBIDDEN_COVER_THRESHOLD (float): Threshold for forbidden cover in the arena.
 
-        MOVEMENT_MANAGER_CONFIG (dict): Movement manager configuration settings.
+        MOVEMENT_MANAGER_CONFIG (dict[str, Any]): Movement manager configuration settings.
         MOVEMENT_MANAGER_MOVEMENT_RESOLUTION (float): Movement resolution for the movement manager.
 
-        ACS_PROFILES_CONFIG (dict): ACS profiles configuration for the movement manager.
+        ACS_PROFILES_CONFIG (dict[str, Any]): ACS profiles configuration for the movement manager.
         ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME (BaseAcsDetectionProfileParams): ACS profile for going to color reserved zone to finish game.
         ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT (BaseAcsDetectionProfileParams): ACS profile for going to color reserved zone to construct.
         ACS_PROFILE_GO_TO_STUFF_ZONE_TO_PICK_UP (BaseAcsDetectionProfileParams): ACS profile for going to stuff zone to pick up.
@@ -153,16 +156,14 @@ class CONFIG:
     """
 
     # Directory path (dont't touch)
-    ROOT_DIR: pathlib.Path = (
-        pathlib.Path(__file__).resolve().parent.parent.parent.parent
-    )
+    ROOT_DIR: pathlib.Path = pathlib.Path(__file__).resolve().parent.parent.parent
 
-    COMMON_DIR: pathlib.Path = os.path.join(ROOT_DIR, "common")
+    COMMON_DIR: pathlib.Path = ROOT_DIR / "common"
     sys.path.append(
-        COMMON_DIR,
+        str(COMMON_DIR),
     )  # Add common directory to the path (to be able to import common modules)
-    CONFIG_STORE: dict = load_json_file(os.path.join(ROOT_DIR, "config.json"))
-    from navigation import (
+    CONFIG_STORE: dict[str, Any] = load_json_file(ROOT_DIR / "config.json")
+    from navigation import (  # pylint: disable=C0415
         BaseAcsDetectionProfileParams,
         BasicSpeedProfile,
         LinearRampedSpeedProfile,
@@ -176,12 +177,13 @@ class CONFIG:
 
     # CONSTANTS TO DEFINE !
     # General config
-    GENERAL_CONFIG: dict = CONFIG_STORE[GENERAL_CONFIG_KEY]
-    GENERAL_WS_CONFIG: dict = GENERAL_CONFIG["ws"]
-    GENERAL_TEENSY_CONFIG: dict = GENERAL_CONFIG["teensy"]
+    GENERAL_CONFIG: dict[str, Any] = CONFIG_STORE[GENERAL_CONFIG_KEY]
+    GENERAL_WS_CONFIG: dict[str, Any] = GENERAL_CONFIG["ws"]
+    GENERAL_TEENSY_CONFIG: dict[str, Any] = GENERAL_CONFIG["teensy"]
 
     WS_PORT: int = int(GENERAL_WS_CONFIG["port"])
     WS_CMD_ROUTE: str = GENERAL_WS_CONFIG["cmd_route"]
+    WS_UI_ROUTE: str = GENERAL_WS_CONFIG["ui_route"]
 
     TEENSY_VID: int = GENERAL_TEENSY_CONFIG["vid"]
     TEENSY_PID: int = GENERAL_TEENSY_CONFIG["pid"]
@@ -190,11 +192,11 @@ class CONFIG:
     TEENSY_DUMMY: bool = GENERAL_TEENSY_CONFIG["dummy"]
 
     # Specific config
-    SPECIFIC_CONFIG: dict = CONFIG_STORE[SPECIFIC_CONFIG_KEY]
+    SPECIFIC_CONFIG: dict[str, Any] = CONFIG_STORE[SPECIFIC_CONFIG_KEY]
 
     # Specific ws config
-    SPECIFIC_WS_CONFIG: dict = SPECIFIC_CONFIG["ws"]
-    SPECIFIC_WS_UI_CONFIG: dict = SPECIFIC_CONFIG["ws_ui"]
+    SPECIFIC_WS_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["ws"]
+    SPECIFIC_WS_UI_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["ws_ui"]
 
     WS_SENDER_NAME: str = SPECIFIC_WS_CONFIG["sender_name"]
     WS_HOSTNAME: str = SPECIFIC_WS_CONFIG["hostname"]
@@ -205,16 +207,20 @@ class CONFIG:
     WS_UI_PING_PONG_INTERVAL: int = int(SPECIFIC_WS_UI_CONFIG["ping_pong_interval"])
 
     # Zombie mode
-    ZOMBIE_MODE: bool = SPECIFIC_CONFIG["zombie_mode"]
-    if "-z" in sys.argv or "--zombie" in sys.argv:
-        ZOMBIE_MODE = True
-    if "-g" in sys.argv or "--game" in sys.argv:
-        ZOMBIE_MODE = False
+    ZOMBIE_MODE: bool = (
+        True
+        if any(flag in sys.argv for flag in ("-z", "--zombie"))
+        else (
+            False
+            if any(flag in sys.argv for flag in ("-g", "--game"))
+            else SPECIFIC_CONFIG["zombie_mode"]
+        )
+    )
 
     # Logs
-    LOG_CONFIG: dict = SPECIFIC_CONFIG["log"]
+    LOG_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["log"]
 
-    LOGGER_MANAGER_CONFIG: dict = LOG_CONFIG["logger_manager"]
+    LOGGER_MANAGER_CONFIG: dict[str, Any] = LOG_CONFIG["logger_manager"]
     LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER: bool = (
         LOGGER_MANAGER_CONFIG["enable_files_logs_monitoring_only_for_one_logger"]
     )
@@ -225,7 +231,7 @@ class CONFIG:
         "enable_unique_logger_identifier"
     ]
 
-    LOGGER_CONFIG: dict = LOG_CONFIG["logger"]
+    LOGGER_CONFIG: dict[str, Any] = LOG_CONFIG["logger"]
     LOGGER_COLORS: str = LOGGER_CONFIG["colors"]
     LOGGER_PATH: str = LOGGER_CONFIG["path"]
     LOGGER_DECORATOR_LOG_LEVEL: str = LOGGER_CONFIG["decorator_log_level"]
@@ -247,12 +253,12 @@ class CONFIG:
     LOGGER_FILENAME_LINENO_MAX_WIDTH: float = LOGGER_CONFIG["filename_lineno_max_width"]
 
     # Team config
-    TEAM_CONFIG: dict = SPECIFIC_CONFIG["team_config"]
+    TEAM_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["team_config"]
     DEFAULT_TEAM: str = TEAM_CONFIG["default_team"]
-    INFO_BY_TEAM: dict[str, dict] = TEAM_CONFIG["info_by_team"]
+    INFO_BY_TEAM: dict[str, Any] = TEAM_CONFIG["info_by_team"]
 
     # Scoring System
-    SCORE_CONFIG: dict = SPECIFIC_CONFIG["score"]
+    SCORE_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["score"]
 
     # Boombot
     BUILD_ONE_FLOOR: int = SCORE_CONFIG["boombot"]["build_one_floor"]
@@ -267,10 +273,10 @@ class CONFIG:
     FREE_STAGE_ZONE: int = SCORE_CONFIG["pamis"]["free_stage_zone"]
 
     # Rolling Basis
-    ROLLING_BASIS_CONFIG: dict = SPECIFIC_CONFIG["rolling_basis"]
+    ROLLING_BASIS_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["rolling_basis"]
     ROLLING_BASIS_TEENSY_SER: int = ROLLING_BASIS_CONFIG["rolling_basis_teensy_ser"]
 
-    ROLLING_BASIS_PIDS_CONFIG: dict = ROLLING_BASIS_CONFIG["pids"]
+    ROLLING_BASIS_PIDS_CONFIG: dict[str, Any] = ROLLING_BASIS_CONFIG["pids"]
     ROLLING_BASIS_PIDS_LINEAR_POSITION: dict[str, float] = ROLLING_BASIS_PIDS_CONFIG[
         "linear_position"
     ]
@@ -278,11 +284,13 @@ class CONFIG:
         "angular_position"
     ]
 
-    ROLLING_BASIS_SPEED_PROFILES_CONFIG: dict = ROLLING_BASIS_CONFIG["speed_profiles"]
-    ROLLING_BASIS_SPEED_PROFILES_LINEAR: dict[str, int] = (
+    ROLLING_BASIS_SPEED_PROFILES_CONFIG: dict[str, Any] = ROLLING_BASIS_CONFIG[
+        "speed_profiles"
+    ]
+    ROLLING_BASIS_SPEED_PROFILES_LINEAR: dict[str, Any] = (
         ROLLING_BASIS_SPEED_PROFILES_CONFIG["linear_speed"]
     )
-    ROLLING_BASIS_SPEED_PROFILES_ANGULAR: dict[str, int] = (
+    ROLLING_BASIS_SPEED_PROFILES_ANGULAR: dict[str, Any] = (
         ROLLING_BASIS_SPEED_PROFILES_CONFIG["angular_speed"]
     )
 
@@ -312,15 +320,16 @@ class CONFIG:
     )
 
     # Actuators
-    ACTUATORS_CONFIG: dict = SPECIFIC_CONFIG["actuators"]
+    ACTUATORS_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["actuators"]
     ACTUATOR_TEENSY_SER: int = ACTUATORS_CONFIG["actuators_teensy_ser"]
-    ACTUATOR_SERVOS_CONFIG: dict = ACTUATORS_CONFIG["servos_config"]
-    ACTUATOR_SERVOS_CONFIG = {int(k): v for k, v in ACTUATOR_SERVOS_CONFIG.items()}
-
-    ACTUATOR_ELEVATOR_CONFIG: dict = ACTUATORS_CONFIG["elevator"]
+    ACTUATOR_SERVOS_CONFIG: dict[int, Any] = {
+        int(k): v for k, v in ACTUATORS_CONFIG["servos_config"].items()
+    }
+    ACTUATOR_ELEVATOR_CONFIG: dict[str, Any] = ACTUATORS_CONFIG["elevator"]
     ACTUATOR_DELAY: float = ACTUATORS_CONFIG["delay"]
+
     # Lidar
-    LIDAR_CONFIG: dict = SPECIFIC_CONFIG["lidar"]
+    LIDAR_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["lidar"]
     LIDAR_ANGLES_UNIT: str = LIDAR_CONFIG["angles_unit"]
     LIDAR_DISTANCES_UNIT: str = LIDAR_CONFIG["distances_unit"]
     LIDAR_MIN_ANGLE: float = LIDAR_CONFIG["min_angle"]
@@ -332,20 +341,20 @@ class CONFIG:
     ]
 
     # Arena
-    ARENA_CONFIG: dict = CONFIG_STORE[ARENA_CONFIG_KEY]
+    ARENA_CONFIG: dict[str, Any] = CONFIG_STORE[ARENA_CONFIG_KEY]
     ARENA_BORDER_BUFFER: float = ARENA_CONFIG["border_buffer"]
     ARENA_OBSTACLE_BUFFER: float = ARENA_CONFIG["obstacle_buffer"]
     ARENA_CHUNK_SIZE: float = ARENA_CONFIG["chunk_size"]
     ARENA_FORBIDDEN_COVER_THRESHOLD: float = ARENA_CONFIG["forbidden_cover_threshold"]
 
     # Movement manager
-    MOVEMENT_MANAGER_CONFIG: dict = SPECIFIC_CONFIG["movement_manager"]
+    MOVEMENT_MANAGER_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["movement_manager"]
     MOVEMENT_MANAGER_MOVEMENT_RESOLUTION: float = MOVEMENT_MANAGER_CONFIG[
         "movement_resolution"
     ]
 
     # ACS Detection Profiles
-    ACS_PROFILES_CONFIG: dict = MOVEMENT_MANAGER_CONFIG["acs_profiles"]
+    ACS_PROFILES_CONFIG: dict[str, Any] = MOVEMENT_MANAGER_CONFIG["acs_profiles"]
     ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME: (
         BaseAcsDetectionProfileParams
     ) = BaseAcsDetectionProfileParams.from_config(
@@ -381,7 +390,6 @@ class CONFIG:
 
 
 # Logger: LoggerManager + global configuration
-from loggerplusplus import LoggerConfig, LoggerManager, LogLevels, logger_colors
 
 LoggerManager.enable_files_logs_monitoring_only_for_one_logger = (
     CONFIG.LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER
@@ -393,7 +401,7 @@ LoggerManager.enable_unique_logger_identifier = (
     CONFIG.LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER
 )
 
-LoggerManager.global_config = LoggerConfig.from_kwargs(
+LoggerManager.global_config = LoggerConfig.from_kwargs(  # type: ignore
     colors=getattr(logger_colors, CONFIG.LOGGER_COLORS),
     path=CONFIG.LOGGER_PATH,
     # LogLevels

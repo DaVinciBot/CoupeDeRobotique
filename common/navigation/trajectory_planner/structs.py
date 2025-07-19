@@ -58,7 +58,9 @@ class TrajectoryPlanCommand:
         """Retrieve the command as a tuple for control interfaces.
 
         Returns:
-            tuple: (linear_speed, angular_speed, position)
+            tuple[float, float, OrientedPoint]:
+                Tuple containing `linear_speed`, `angular_speed` and
+                `position`.
         """
         return self.linear_speed, self.angular_speed, self.position
 

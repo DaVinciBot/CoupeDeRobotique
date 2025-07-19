@@ -2,6 +2,7 @@
 # This module defines the ForbiddenZone class, which represents a strictly restricted zone within an arena.
 # The class extends BaseArenaZone and ensures that access remains forbidden unless explicitly modified.
 
+from typing import Callable
 
 from loggerplusplus import Logger
 
@@ -20,7 +21,7 @@ class ForbiddenZone(BaseArenaZone):
         buffer_size: float = 0.0,
         polygon: Polygon | None = None,
         buffered_polygon: Polygon | None = None,
-        update_callback: callable | None = None,
+        update_callback: Callable | None = None,
     ) -> None:
         """Initializes a ForbiddenZone with the specified parameters.
 
@@ -30,7 +31,7 @@ class ForbiddenZone(BaseArenaZone):
             buffer_size (float, optional): Buffer size for geometric adjustments. Defaults to 0.0.
             polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
             buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
-            update_callback (callable | None, optional): Function to be called on updates. Defaults to None.
+            update_callback (Callable | None, optional): Function to be called on updates. Defaults to None.
         """
         super().__init__(
             logger=logger,
