@@ -6,7 +6,10 @@ import matplotlib.pyplot as plt
 from config_loader import CONFIG
 from loggerplusplus import Logger, LogLevels, log
 
-from controllers.rolling_basis.pids import PID, PID_ID
+from controllers.rolling_basis.pids import (
+    PID,
+    PidID,
+)
 from geometry import OrientedPoint
 from teensy import BaseComTeensy
 from usb_com.python import Messages
@@ -44,7 +47,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         self.logger = logger
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
         self._last_target: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
-        self._logs: list[dict] = []  # store dicts of time, target, actual
+        self._logs: list[dict[str, Any]] = []  # store dicts of time, target, actual
 
         # Initialize parent
         super().__init__(
@@ -181,7 +184,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         ), f"Inconsistent log lengths: {[len(lst) for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)]}"
 
         # Plot
-        fig, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
+        _, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)  # type: ignore
 
         axs[0].plot(times, target_x, label="Consigne X")
         axs[0].plot(times, actual_x, label="Réel X")
@@ -218,14 +221,14 @@ class AsservissementRollingBasis(BaseComTeensy):
         }
         self._logs.append(entry)
 
-    def get_logs(self) -> list[dict]:
+    def get_logs(self) -> list[dict[str, Any]]:
         """Return the recorded log entries.
 
         Each entry is a dictionary with keys `time`, `target_x`, `target_y`,
         `target_theta`, `actual_x`, `actual_y` and `actual_theta`.
 
         Returns:
-            list[dict]: The stored log entries.
+            list[dict[str, Any]]: The stored log entries.
         """
         return self._logs
 
@@ -265,18 +268,20 @@ class AsservissementRollingBasis(BaseComTeensy):
         msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
         self.send_bytes(msg)
 
-    def set_linear_position_pid(self, *args: Any, **kwargs: Any) -> None:
+    def set_linear_position_pid(
+        self, *args: float | dict[str, float], **kwargs: float
+    ) -> None:
         """Configure the PID values for linear position control.
 
         Args:
-            *args (Any): Either `(kp, ki, kd)` or a single dictionary.
-            **kwargs (Any): Keyword arguments mapping PID fields to values.
+            *args (float | dict[str, float]): Either `(kp, ki, kd)` or a single dictionary.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
             ValueError: If the arguments do not match expected formats.
         """
         try:
-            if len(args) == 3:
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
                 pid = PID(*args)
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -287,22 +292,24 @@ class AsservissementRollingBasis(BaseComTeensy):
                     "Invalid arguments for linear position PID configuration.",
                 )
             self.linear_position_pid = pid
-            self._send_pid(PID_ID.LINEAR_POSITION.value, pid)
+            self._send_pid(PidID.LINEAR_POSITION.value, pid)
         except Exception as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
-    def set_angular_position_pid(self, *args: Any, **kwargs: Any) -> None:
+    def set_angular_position_pid(
+        self, *args: float | dict[str, float], **kwargs: float
+    ) -> None:
         """Configure the PID values for angular position control.
 
         Args:
-            *args (Any): Either `(kp, ki, kd)` or a single dictionary.
-            **kwargs (Any): Keyword arguments mapping PID fields to values.
+            *args (float | dict[str, float]): Either `(kp, ki, kd)` or a single dictionary.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
             ValueError: If the arguments do not match expected formats.
         """
         try:
-            if len(args) == 3:
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
                 pid = PID(*args)
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -313,7 +320,7 @@ class AsservissementRollingBasis(BaseComTeensy):
                     "Invalid arguments for angular position PID configuration.",
                 )
             self.angular_position_pid = pid
-            self._send_pid(PID_ID.ANGULAR_POSITION.value, pid)
+            self._send_pid(PidID.ANGULAR_POSITION.value, pid)
         except Exception as e:
             self.logger.error(f"Failed to set angular position PID: {e}")
 

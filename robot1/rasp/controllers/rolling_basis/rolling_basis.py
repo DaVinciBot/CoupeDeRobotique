@@ -5,7 +5,7 @@ from typing import Any
 from config_loader import CONFIG
 from loggerplusplus import Logger, LogLevels, log
 
-from controllers.rolling_basis.pids import PID, PID_ID
+from controllers.rolling_basis.pids import PID, PidID
 from geometry import OrientedPoint
 from teensy import BaseComTeensy
 from usb_com.python import Messages
@@ -196,7 +196,7 @@ class RollingBasis(BaseComTeensy):
                     "Invalid arguments for linear position PID configuration.",
                 )
             self.linear_position_pid = pid
-            self._send_pid(PID_ID.LINEAR_POSITION.value, pid)
+            self._send_pid(PidID.LINEAR_POSITION.value, pid)
         except Exception as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
@@ -222,7 +222,7 @@ class RollingBasis(BaseComTeensy):
                     "Invalid arguments for angular position PID configuration.",
                 )
             self.angular_position_pid = pid
-            self._send_pid(PID_ID.ANGULAR_POSITION.value, pid)
+            self._send_pid(PidID.ANGULAR_POSITION.value, pid)
         except Exception as e:
             self.logger.error(f"Failed to set angular position PID: {e}")
 

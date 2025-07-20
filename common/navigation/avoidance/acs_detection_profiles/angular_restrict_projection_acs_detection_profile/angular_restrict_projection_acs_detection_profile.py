@@ -15,7 +15,8 @@ class AngularRestrictProjectionAcsDetectionProfile(
     """Angular restrict projection ACS detection profile."""
 
     def __init__(
-        self, params: AngularRestrictProjectionAcsDetectionProfileParams
+        self,
+        params: AngularRestrictProjectionAcsDetectionProfileParams,
     ) -> None:
         """Initializes the AngularRestrictProjectionAcsDetectionProfile.
 

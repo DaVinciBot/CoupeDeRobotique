@@ -11,7 +11,7 @@ END_BYTES_SIGNATURE: bytes = b"\xba\xdd\x1c\xc5"
 
 
 class Messages(Enum):
-    """Enumeration for command types exchanged between the Raspberry Pi and Teensy.
+    r"""Enumeration for command types exchanged between the Raspberry Pi and Teensy.
 
     Commands from Raspberry Pi to Teensy are in the range `0`-`127` while
     those from Teensy to Raspberry Pi are in `128`-`255`.

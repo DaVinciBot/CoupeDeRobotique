@@ -20,13 +20,7 @@ def test_navigator_execution(
     arena: BaseArena,
     time_step: float = 0.1,
 ) -> None:
-    """Simulate the navigator until its current task is finished, logging the navigation data
-    and plotting the key metrics over time.
-
-    Args:
-        navigator (Navigator): The navigator object controlling the robot's movement.
-        arena (BaseArena): The arena where navigation is simulated.
-        time_step (float, optional): The delay between iterations in seconds. Defaults to 0.1.
+    """Simulate the navigator until its current task is finished, logging the navigation data and plotting the key metrics over time.
 
     This function records at each timestep:
         - Time elapsed
@@ -38,17 +32,22 @@ def test_navigator_execution(
         - Distance to the enemy
 
     It then visualizes this data using line plots, a 2D trajectory plot, and categorical state plots.
+
+    Args:
+        navigator (Navigator): The navigator object controlling the robot's movement.
+        arena (BaseArena): The arena where navigation is simulated.
+        time_step (float, optional): The delay between iterations in seconds. Defaults to 0.1.
     """
     # 1) Prepare storage for logging metrics
-    times = []
-    x_positions = []
-    y_positions = []
-    linear_speeds = []
-    angular_speeds = []
-    traj_times = []
-    task_states = []
-    avoidance_states = []
-    distances_to_enemy = []
+    times: list[float] = []
+    x_positions: list[float] = []
+    y_positions: list[float] = []
+    linear_speeds: list[float] = []
+    angular_speeds: list[float] = []
+    traj_times: list[float] = []
+    task_states: list[str] = []
+    avoidance_states: list[str] = []
+    distances_to_enemy: list[float] = []
 
     start_t = time.time()
 
@@ -101,7 +100,7 @@ def test_navigator_execution(
         time.sleep(time_step)
 
     # 3) Plot numeric time-series metrics
-    fig, axs = plt.subplots(5, 1, figsize=(10, 20), sharex=True)
+    _, axs = plt.subplots(5, 1, figsize=(10, 20), sharex=True)
 
     # 3.1 Plot X and Y positions over time
     axs[0].plot(times, x_positions, label="X pos")
@@ -167,13 +166,13 @@ def test_navigator_execution(
         code = {v: i for i, v in enumerate(unique)}  # Map to integers
         codes = [code[v] for v in values]
 
-        fig, ax = plt.subplots(figsize=(10, 3))
+        _, ax = plt.subplots(figsize=(10, 3))
         ax.step(times, codes, where="post")
         ax.set_yticks(range(len(unique)))
         ax.set_yticklabels(unique)
         ax.set_xlabel("Time (s)")
         ax.set_title(title)
-        ax.grid(True)
+        ax.grid(visible=True)
         plt.show()
 
     plot_enum(times, task_states, "Task State over Time")

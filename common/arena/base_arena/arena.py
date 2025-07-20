@@ -5,6 +5,7 @@
 # and computing enemy or robot positions based on various inputs.
 
 from abc import ABC, abstractmethod
+from typing import cast
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -164,7 +165,7 @@ class BaseArena(ABC):
             arena_polygon,
             -self.border_buffer,
         )
-        border_zone_polygon = arena_polygon.difference(inner_polygon)
+        border_zone_polygon = cast("Polygon", arena_polygon.difference(inner_polygon))
 
         return BorderZone(
             logger=Logger(
@@ -191,7 +192,6 @@ class BaseArena(ABC):
         Returns:
             GridManager: The current grid manager.
         """
-
         return self.grid_manager
 
     def _pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:

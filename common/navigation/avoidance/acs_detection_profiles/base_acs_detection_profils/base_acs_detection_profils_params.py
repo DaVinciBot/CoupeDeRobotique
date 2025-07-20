@@ -5,7 +5,9 @@ class BaseAcsDetectionProfileParams:
     """Base class for ACS detection profile parameters."""
 
     def __init__(
-        self, acs_detection_profile: AcsDetectionProfile, acs_distance: float
+        self,
+        acs_detection_profile: AcsDetectionProfile,
+        acs_distance: float,
     ) -> None:
         """Initializes the BaseAcsDetectionProfileParams.
 
@@ -18,7 +20,9 @@ class BaseAcsDetectionProfileParams:
 
     @classmethod
     def from_config(
-        cls, acs_detection_profile: str, acs_distance: float
+        cls,
+        acs_detection_profile: str,
+        acs_distance: float,
     ) -> "BaseAcsDetectionProfileParams":
         """Create a :class:`BaseAcsDetectionProfileParams` instance from a configuration string.
 

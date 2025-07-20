@@ -2,13 +2,13 @@
 
 format:
 	@echo "▶ Formatage avec Ruff, puis Black et isort..."
+	isort .
 	ruff format
 	black .
-	isort .
 
 lint:
 	@echo "▶ Linting avec Ruff..."
-	-ruff check . --fix --output-format=grouped > ruff-baseline.txt
+	-ruff check . --fix > ruff-baseline.txt
 	@echo "▶ Linting avec pydoclint..."
 	pydoclint .
 

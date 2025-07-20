@@ -33,9 +33,9 @@ def test_speed_profile(
         arrival_speed=arrival_speed,
     )
 
-    speeds = []
-    distances = []
-    times = []
+    speeds: list[float] = []
+    distances: list[float] = []
+    times: list[float] = []
 
     current_time = 0.0
     while current_time < total_duration:
@@ -74,5 +74,5 @@ def test_speed_profile(
 
     plt.title("Vitesse et distance en fonction du temps")
     fig.tight_layout()
-    plt.grid(True)
+    plt.grid(visible=True)
     plt.show()

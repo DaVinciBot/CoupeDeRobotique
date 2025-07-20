@@ -2,7 +2,7 @@
 # This module defines the BlueReservedZone class, a specialized zone restricted to the blue team.
 # It inherits from BaseColorReservedZone and manages accessibility based on predefined conditions.
 
-from typing import Callable
+from collections.abc import Callable
 
 from loggerplusplus import Logger
 

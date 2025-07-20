@@ -9,7 +9,10 @@ class Inputs:
     """Handles input from various sensors."""
 
     def __init__(
-        self, pin_jack: int, pin_bau: int, logger: Logger | None = None
+        self,
+        pin_jack: int,
+        pin_bau: int,
+        logger: Logger | None = None,
     ) -> None:
         """Initialize the Inputs class.
 

@@ -134,7 +134,9 @@ class OrientedPoint(Point):
     def __reduce__(
         self,
     ) -> tuple[
-        type["OrientedPoint"], tuple[tuple[float, float], float], dict[str, float]
+        type["OrientedPoint"],
+        tuple[tuple[float, float], float],
+        dict[str, float],
     ]:
         """Customize pickling for :class:`OrientedPoint`.
 

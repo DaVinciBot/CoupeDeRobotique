@@ -2,7 +2,7 @@
 # This module defines the ForbiddenZone class, which represents a strictly restricted zone within an arena.
 # The class extends BaseArenaZone and ensures that access remains forbidden unless explicitly modified.
 
-from typing import Callable
+from collections.abc import Callable
 
 from loggerplusplus import Logger
 

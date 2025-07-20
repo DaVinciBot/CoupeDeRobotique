@@ -2,7 +2,8 @@
 # This module defines the StuffZone class, a zone designated for storage or item placement.
 # It extends BaseArenaZone and updates its accessibility based on the presence of allies or enemies.
 
-from typing import TYPE_CHECKING, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from loggerplusplus import Logger
 

@@ -1,8 +1,13 @@
 {
     "recommendations": [
+        "charliermarsh.ruff",
         "donjayamanne.python-extension-pack",
+        "gruntfuggly.todo-tree",
         "ms-python.black-formatter",
+        "ms-python.mypy-type-checker",
+        "ms-python.pylint",
+        "ms-python.vscode-pylance",
         "platformio.platformio-ide",
-        "gruntfuggly.todo-tree"
+        "usernamehw.errorlens"
     ]
 }

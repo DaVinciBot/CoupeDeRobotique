@@ -2,7 +2,7 @@
 # This module defines the BorderZone class, representing the outer boundaries of the arena.
 # It extends BaseArenaZone and is characterized by its restricted accessibility.
 
-from typing import Callable
+from collections.abc import Callable
 
 from loggerplusplus import Logger
 

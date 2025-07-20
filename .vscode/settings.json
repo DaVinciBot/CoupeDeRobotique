@@ -2,21 +2,35 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
-    "python.formatting.provider": "black",
-    "python.analysis.extraPaths": [
-        "./common"
-    ],
     "cmake.configureOnOpen": false,
+    "editor.codeActionsOnSave": {
+        "source.convertImportFormat": "explicit",
+        "source.organizeImports": "explicit",
+        "source.sort.json": "explicit",
+        "source.unusedImports": "explicit"
+    },
+    "errorLens.enabledDiagnosticLevels": [
+        "error",
+        "warning",
+        "info",
+        "hint"
+    ],
     "files.associations": {
-        "*.rs": "rust",
         "__availability": "cpp",
         "__config": "cpp",
+        "*.rs": "rust",
+        "algorithm": "cpp",
         "atomic": "cpp",
         "chrono": "cpp",
         "compare": "cpp",
+        "complex": "cpp",
+        "cstddef": "cpp",
         "exception": "cpp",
         "filesystem": "cpp",
+        "format": "cpp",
         "fstream": "cpp",
+        "initializer_list": "cpp",
+        "list": "cpp",
         "new": "cpp",
         "random": "cpp",
         "sstream": "cpp",
@@ -24,52 +38,28 @@
         "string": "cpp",
         "string_view": "cpp",
         "system_error": "cpp",
-        "vector": "cpp",
-        "algorithm": "cpp",
-        "complex": "cpp",
-        "cstddef": "cpp",
-        "format": "cpp",
-        "initializer_list": "cpp",
-        "list": "cpp",
+        "type_traits": "cpp",
         "utility": "cpp",
+        "vector": "cpp",
         "xhash": "cpp",
         "xstring": "cpp",
-        "xutility": "cpp",
-        "type_traits": "cpp"
+        "xutility": "cpp"
     },
-    "todo-tree.highlights.defaultHighlight": {
-        "gutterIcon": true,
-        "type": "text-and-comment"
-    },
-    "todo-tree.highlights.customHighlight": {
-        "TODO": {
-            "foreground": "cyan"
-        },
-        "FIXME": {
-            "iconColour": "yellow",
-            "foreground": "orange"
-        },
-        "BUG": {
-            "foreground": "red",
-            "background": "white",
-            "textDecoration": "underline"
-        },
-        "QUESTION": {
-            "icon": "question",
-            "iconColour": "purple",
-            "foreground": "purple"
-        },
-    },
-    "todo-tree.highlights.backgroundColourScheme": [
-        "red",
-        "orange",
-        "yellow",
-        "green",
-        "blue",
-        "indigo",
-        "violet",
-        "cyan"
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.autoSearchPaths": true,
+    "python.analysis.diagnosticMode": "workspace",
+    "python.analysis.extraPaths": [
+        "./common"
     ],
+    "python.analysis.typeCheckingMode": "standard",
+    "python.analysis.useLibraryCodeForTypes": true,
+    "todo-tree.general.tagGroups": {
+        "FIXME": [
+            "FIXME",
+            "FIXIT",
+            "FIX"
+        ]
+    },
     "todo-tree.general.tags": [
         "BUG",
         "HACK",
@@ -81,11 +71,37 @@
         "[ ]",
         "[x]"
     ],
-    "todo-tree.general.tagGroups": {
-        "FIXME": [
-            "FIXME",
-            "FIXIT",
-            "FIX",
-        ]
+    "todo-tree.highlights.backgroundColourScheme": [
+        "red",
+        "orange",
+        "yellow",
+        "green",
+        "blue",
+        "indigo",
+        "violet",
+        "cyan"
+    ],
+    "todo-tree.highlights.customHighlight": {
+        "BUG": {
+            "background": "white",
+            "foreground": "red",
+            "textDecoration": "underline"
+        },
+        "FIXME": {
+            "foreground": "orange",
+            "iconColour": "yellow"
+        },
+        "QUESTION": {
+            "foreground": "purple",
+            "icon": "question",
+            "iconColour": "purple"
+        },
+        "TODO": {
+            "foreground": "cyan"
+        }
+    },
+    "todo-tree.highlights.defaultHighlight": {
+        "gutterIcon": true,
+        "type": "text-and-comment"
     }
 }

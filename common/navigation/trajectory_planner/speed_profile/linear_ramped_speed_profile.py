@@ -19,7 +19,10 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
     """
 
     def __init__(
-        self, acceleration: float, max_speed: float, deceleration: float
+        self,
+        acceleration: float,
+        max_speed: float,
+        deceleration: float,
     ) -> None:
         """Initializes the profile with acceleration, max speed, and deceleration.
 
@@ -33,7 +36,9 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
         self.deceleration = deceleration
 
     def _compute_trapezoidal_params(
-        self, departure_speed: float, arrival_speed: float
+        self,
+        departure_speed: float,
+        arrival_speed: float,
     ) -> tuple[float, float, float, float]:
         """Computes parameters used in trapezoidal motion profile.
 
@@ -53,7 +58,10 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
         return t_acc, t_dec, d_acc, d_dec
 
     def _compute_triangular_peak_speed(
-        self, distance: float, departure_speed: float, arrival_speed: float
+        self,
+        distance: float,
+        departure_speed: float,
+        arrival_speed: float,
     ) -> float:
         """Calculates peak speed for triangular profile when cruising is not possible.
 
