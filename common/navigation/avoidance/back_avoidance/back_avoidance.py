@@ -54,7 +54,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
 
         self.backward_navigator_task: NavigatorTask | None = None
 
-    @BaseAvoidance._ensure_original_task_storage
+    @BaseAvoidance.ensure_original_task_storage
     def handle(
         self,
         current_navigator_task: NavigatorTask,

@@ -21,7 +21,7 @@ Final Version:
 - It offers the broadest compatibility with the `Point` class and the broader Shapely ecosystem.
 """
 
-from typing import Any, ClassVar
+from typing import Any, ClassVar, cast, override
 
 from shapely import Point
 
@@ -43,25 +43,28 @@ class OrientedPoint(Point):
     ) -> (
         None
     ):  # if theta is not optional or if the structure of the arguments change (eg: self, x, y, theta) then MultiPoint becomes impossible with OrientedPoint
-        self._id_to_attrs[str(id(self))] = dict(
-            theta=(
+        self._id_to_attrs[str(id(self))] = {
+            "theta": (
                 theta
                 if not isinstance(x_or_coords, tuple)
                 else (0.0 if y_or_theta is None else y_or_theta)
             ),
-        )
+        }
 
     def __new__(
         cls,
         x_or_coords: float | tuple[float, float],
         y: float | None = None,
-        *args,
-        **kwargs,
+        *_args: float,
     ) -> "OrientedPoint":
         if isinstance(x_or_coords, tuple):
             point = super().__new__(cls, x_or_coords)
-        else:
+        elif y is not None:
             point = super().__new__(cls, x_or_coords, y)
+        else:
+            raise ValueError(
+                "OrientedPoint must be initialized with either a tuple (x, y) or separate x and y values.",
+            )
 
         point.__class__ = cls  # Force the new instance to be an OrientedPoint
         return point
@@ -70,27 +73,31 @@ class OrientedPoint(Point):
         # Clean up the extra attribute when the instance is deleted.
         del self._id_to_attrs[str(id(self))]
 
-    def __getattr__(self, name: str) -> Any:
+    def __getattr__(self, name: str) -> float:
         try:
-            return OrientedPoint._id_to_attrs[str(id(self))][name]
+            return float(OrientedPoint._id_to_attrs[str(id(self))][name])
         except KeyError as e:
             raise AttributeError(f"Attribute '{name}' not found, error: {e}") from None
 
+    @override
     def __str__(self) -> str:
         return f"{self.wkt}, theta: {self.theta}"
 
+    @override
     def __repr__(self) -> str:
         return f"{self.wkt}, theta: {self.theta}"
 
+    @override
     def __format__(self, format_spec: str) -> str:
         return str(self)
 
+    @override
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, OrientedPoint):
             return False
         return self.x == other.x and self.y == other.y and self.theta == other.theta
 
-    def __add__(self, other):
+    def __add__(self, other: object) -> "OrientedPoint":
         if isinstance(other, OrientedPoint):
             return OrientedPoint(
                 (self.x + other.x, self.y + other.y),
@@ -100,7 +107,8 @@ class OrientedPoint(Point):
             return OrientedPoint((self.x + other.x, self.y + other.y), self.theta)
         return NotImplemented
 
-    def __sub__(self, other):
+    @override
+    def __sub__(self, other: object) -> "OrientedPoint":  # type: ignore[override]
         if isinstance(other, OrientedPoint):
             return OrientedPoint(
                 (self.x - other.x, self.y - other.y),
@@ -145,18 +153,18 @@ class OrientedPoint(Point):
                 A tuple describing how to reconstruct the object.
         """
         # Retrieve the point's coordinates (assuming a single point, so take the first coordinate tuple)
-        coords = tuple(self.coords)[0]
+        coords = cast("tuple[float, float]", tuple(self.coords)[0])
         # Retrieve theta from the extra attributes storage
         theta = self.theta
         # Return a tuple (constructor, arguments, state)
         # When unpickled, the constructor is called with (coords, theta)
         return (self.__class__, ((coords, theta)), {"theta": theta})
 
-    def __setstate__(self, state: dict) -> None:
+    def __setstate__(self, state: dict[str, float]) -> None:
         """Restore the extra state for the :class:`OrientedPoint` during unpickling.
 
         Args:
-            state (dict): State dictionary created by :py:meth:`__reduce__`.
+            state (dict[str, float]): State dictionary created by :py:meth:`__reduce__`.
         """
         # Reinitialize the extra attribute in the class-level mapping
         OrientedPoint._id_to_attrs[str(id(self))] = {"theta": state.get("theta", 0.0)}

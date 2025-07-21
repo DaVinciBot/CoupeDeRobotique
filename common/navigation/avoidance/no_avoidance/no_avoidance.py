@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from navigation.avoidance.base_avoidance import BaseAvoidance
 from navigation.avoidance.no_avoidance.no_avoidance_params import NoAvoidanceParams
@@ -45,8 +45,8 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
         """
         super().__init__(params, acs_detection_profile_params, logger)
 
-    @BaseAvoidance._ensure_original_task_storage
-    def handle(
+    @BaseAvoidance.ensure_original_task_storage
+    def handle(  # noqa: PLR6301
         self,
         current_navigator_task: NavigatorTask,
         ally_zone: AllyZone,
@@ -65,4 +65,7 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
         Returns:
             TrajectoryPlanCommand: The current trajectory command without changes.
         """
-        return current_navigator_task.current_trajectory_command
+        return cast(
+            "TrajectoryPlanCommand",
+            current_navigator_task.current_trajectory_command,
+        )

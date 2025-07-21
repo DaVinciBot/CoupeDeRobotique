@@ -34,9 +34,7 @@ class BaseTaskNode:
             scoring_function (BaseScoringFunction | None, optional): Scoring function used when evaluating transitions. Defaults to None.
         """
         self.name: str = name
-        self.tasks: list[BaseTask] = (
-            [tasks] if isinstance(tasks, BaseTask) else tasks  # type: ignore
-        )
+        self.tasks: list[BaseTask] = [tasks] if isinstance(tasks, BaseTask) else tasks
         self.scoring_function = scoring_function or DefaultScoringFunction()
         self.logger = Logger(identifier=name, follow_logger_manager_rules=True)
 

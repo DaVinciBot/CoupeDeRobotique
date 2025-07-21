@@ -18,11 +18,13 @@ class BaseAvoidanceParams:
     def __init__(
         self,
         avoidance_strategy: AvoidanceStrategy,
+        timeout: float | None = None,
     ) -> None:
         """Initialize the base avoidance parameters.
 
         Args:
             avoidance_strategy (AvoidanceStrategy): The selected avoidance strategy.
-
+            timeout (float | None, optional): Optional timeout for the avoidance procedure.
         """
         self.avoidance_strategy: AvoidanceStrategy = avoidance_strategy
+        self.timeout: float | None = timeout

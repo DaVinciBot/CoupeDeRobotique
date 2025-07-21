@@ -10,6 +10,7 @@ from __future__ import annotations
 import functools
 import time
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from typing import TYPE_CHECKING, Generic, TypeVar
 
 from loggerplusplus import Logger
@@ -81,18 +82,25 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
             self._original_task = copy.deepcopy(current_navigator_task)
 
     @staticmethod
-    def _ensure_original_task_storage(method: callable) -> callable:
+    def ensure_original_task_storage(
+        method: Callable[..., TrajectoryPlanCommand],
+    ) -> Callable[..., TrajectoryPlanCommand]:
         """Decorator to ensure original task is stored before handling logic is applied.
 
         Args:
-            method (callable): The method to wrap.
+            method (Callable[..., TrajectoryPlanCommand]): The method to wrap.
 
         Returns:
-            callable: Wrapped method that stores the original task first.
+            Callable[..., TrajectoryPlanCommand]: Wrapped method that stores the original task first.
         """
 
         @functools.wraps(method)
-        def wrapper(self, current_navigator_task: NavigatorTask, *args, **kwargs):
+        def wrapper(
+            self: BaseAvoidance[ParamsType],
+            current_navigator_task: NavigatorTask,
+            *args: object,
+            **kwargs: object,
+        ) -> TrajectoryPlanCommand:
             self._store_original_task(current_navigator_task)
             return method(self, current_navigator_task, *args, **kwargs)
 
@@ -156,4 +164,3 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         Returns:
             TrajectoryPlanCommand: The appropriate trajectory command to execute.
         """
-        ...

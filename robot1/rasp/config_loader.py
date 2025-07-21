@@ -3,7 +3,7 @@ import pathlib
 import sys
 from typing import Any
 
-from loggerplusplus import (  # type: ignore
+from loggerplusplus import (
     LoggerConfig,
     LoggerManager,
     LogLevels,
@@ -137,7 +137,7 @@ class CONFIG:
         ARENA_CONFIG (dict[str, Any]): Arena configuration settings.
         ARENA_BORDER_BUFFER (float): Buffer size for arena borders.
         ARENA_OBSTACLE_BUFFER (float): Buffer size for arena obstacles.
-        ARENA_CHUNK_SIZE (float): Size of the arena chunks.
+        ARENA_CHUNK_SIZE (int): Size of the arena chunks.
         ARENA_FORBIDDEN_COVER_THRESHOLD (float): Threshold for forbidden cover in the arena.
 
         MOVEMENT_MANAGER_CONFIG (dict[str, Any]): Movement manager configuration settings.
@@ -344,7 +344,7 @@ class CONFIG:
     ARENA_CONFIG: dict[str, Any] = CONFIG_STORE[ARENA_CONFIG_KEY]
     ARENA_BORDER_BUFFER: float = ARENA_CONFIG["border_buffer"]
     ARENA_OBSTACLE_BUFFER: float = ARENA_CONFIG["obstacle_buffer"]
-    ARENA_CHUNK_SIZE: float = ARENA_CONFIG["chunk_size"]
+    ARENA_CHUNK_SIZE: int = int(ARENA_CONFIG["chunk_size"])
     ARENA_FORBIDDEN_COVER_THRESHOLD: float = ARENA_CONFIG["forbidden_cover_threshold"]
 
     # Movement manager
@@ -401,7 +401,7 @@ LoggerManager.enable_unique_logger_identifier = (
     CONFIG.LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER
 )
 
-LoggerManager.global_config = LoggerConfig.from_kwargs(  # type: ignore
+LoggerManager.global_config = LoggerConfig.from_kwargs(
     colors=getattr(logger_colors, CONFIG.LOGGER_COLORS),
     path=CONFIG.LOGGER_PATH,
     # LogLevels

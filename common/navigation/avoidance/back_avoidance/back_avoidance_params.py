@@ -29,7 +29,6 @@ class BackAvoidanceParams(BaseAvoidanceParams):
             backward_distance (float): Distance to reverse when avoidance is triggered.
             backward_speed_profiler (SpeedProfiler): Profiler for the backward motion.
         """
-        self.timeout: float = timeout * 1000.0
         self.backward_distance: float = backward_distance
         self.backward_speed_profiler: SpeedProfiler = backward_speed_profiler
-        super().__init__(AvoidanceStrategy.BACK)
+        super().__init__(AvoidanceStrategy.BACK, timeout * 1000.0)

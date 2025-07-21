@@ -24,5 +24,4 @@ class StopAndWaitAvoidanceParams(BaseAvoidanceParams):
         Args:
             timeout (float): Time to wait after stopping before checking again in seconds.
         """
-        self.timeout: float = timeout * 1000.0
-        super().__init__(AvoidanceStrategy.STOP_AND_WAIT)
+        super().__init__(AvoidanceStrategy.STOP_AND_WAIT, timeout * 1000.0)

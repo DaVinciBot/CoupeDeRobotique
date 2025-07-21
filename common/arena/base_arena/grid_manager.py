@@ -8,6 +8,7 @@
 
 
 import copy
+from typing import Any, override
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -130,7 +131,7 @@ class GridManager:
         return grid
 
     @time_tracker(lambda self: self.logger)
-    def __optimized_mark_zone(
+    def __optimized_mark_zone(  # QUESTION: Useless ?
         self,
         grid: Grid,
         polygon_to_mark: Polygon,
@@ -244,7 +245,8 @@ class GridManager:
         self.not_updated_forbidden_zones: list[Polygon] = []
 
     # ====== Public Methods ======
-    def __eq__(self, other):
+    @override
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, GridManager):
             return False
 
@@ -265,7 +267,7 @@ class GridManager:
             return False
 
         # Define a helper function to convert a grid to a NumPy array of booleans
-        def grid_to_numpy(grid) -> np.ndarray:
+        def grid_to_numpy(grid: Grid) -> np.ndarray[Any, np.dtype[np.bool_]]:
             return np.array(
                 [[1 if node.walkable else 0 for node in row] for row in grid.nodes],
                 dtype=bool,
@@ -285,7 +287,8 @@ class GridManager:
 
         return True
 
-    def __ne__(self, other):
+    @override
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
     @time_tracker(lambda self: self.logger)
@@ -408,18 +411,18 @@ class GridManager:
         only_static_grid: bool = False,
         path: list | None = None,
         show: bool = True,
-        plot: tuple[plt.axes, plt.figure] | None = None,
-    ) -> tuple[plt.axes, plt.figure]:
+        plot: tuple[plt.Axes, plt.Figure] | None = None,
+    ) -> tuple[plt.Axes, plt.Figure]:
         """Visualize the grid using matplotlib.
 
         Args:
             only_static_grid (bool, optional): Whether to show only the static grid. Defaults to `False`.
             path (list | None, optional): Path to draw on the grid, if provided. Defaults to None.
             show (bool, optional): Whether to display the plot. Defaults to `True`.
-            plot (tuple[plt.axes, plt.figure] | None, optional): Existing plot to reuse. Defaults to None.
+            plot (tuple[plt.Axes, plt.Figure] | None, optional): Existing plot to reuse. Defaults to None.
 
         Returns:
-            tuple[plt.axes, plt.figure]: Axis and figure of the plot.
+            tuple[plt.Axes, plt.Figure]: Axis and figure of the plot.
         """
         grid_to_visualize = (
             self.static_grid if only_static_grid else self.static_and_dynamic_grid

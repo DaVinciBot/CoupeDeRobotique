@@ -6,72 +6,121 @@ requires = ["setuptools", "wheel"]
 force_grid_wrap = 0
 include_trailing_comma = true
 known_first_party = [
-    "common",
-    "arena",
-    "geometry",
     "GPIO",
+    "arena",
+    "avoidance",
+    "boombot_strategy",
+    "brains",
+    "common",
+    "controllers",
+    "debug_functions",
+    "geometry",
     "led_strip",
     "navigation",
-    "avoidance",
-    "debug_functions",
     "navigator",
     "path_planner",
-    "trajectory_planner",
+    "rasp",
     "remote",
+    "robot1",
+    "sensors",
+    "strategies",
     "strategy",
+    "sub_graphs",
+    "tasks",
     "teensy",
+    "trajectory_planner",
     "usb_com",
     "utils",
     "video",
-    "robot1",
-    "rasp",
-    "boombot_strategy",
-    "strategies",
-    "sub_graphs",
-    "tasks",
-    "brains",
-    "controllers",
-    "sensors",
 ]
 line_length = 88
 multi_line_output = 3
 profile = "black"
-use_parentheses = true
 skip_glob = [
     "**/common/navigation/avoidance/__init__.py",
     "**/common/navigation/path_planner/__init__.py",
     "**/robot1/rasp/controllers/actuators/__init__.py",
 ]
+use_parentheses = true
 
 [tool.mypy]
-plugins = "mypy-type-checker"
-python_version = "3.13"
-strict = true
-warn_unused_configs = true
-show_error_codes = true
-pretty = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-warn_unused_ignores = false
-warn_redundant_casts = true
 check_untyped_defs = true
-no_implicit_optional = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
 ignore_missing_imports = true
+no_implicit_optional = true
+plugins = "mypy-type-checker"
+pretty = true
+python_version = "3.13"
+show_error_codes = true
+strict = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_unused_ignores = false
+
+[tool.pydoclint]
+allow-init-docstring = true
+baseline = "pydoclint-baseline.txt"
+check-style-mismatch = true
+generate-baseline = true
+show-filenames-in-every-violation-message = true
+skip-checking-short-docstrings = false
+style = 'google'
 
 [tool.pylint.main]
 enable = "all"
-disable = ["E0401"]
+disable = [
+    "E0401", # import-error
+    "R0902", # too-many-instance-attributes
+    "R0903", # too-few-public-methods
+    "W0212", # protected-access -> Best management with ruff
+    "W1113", # keyword-arg-before-vararg -> Best management with ruff
+]
 
 [tool.ruff]
+exclude = ["*.ipynb"]
 fix = true
 indent-width = 4
 line-length = 88
+output-format = "grouped"
 preview = true
 show-fixes = true
 target-version = "py313"
 unsafe-fixes = false
-exclude = ["*.ipynb"]
-output-format = "grouped"
+
+[tool.ruff.format]
+docstring-code-format = true
+quote-style = "double"
+
+[tool.ruff.lint.isort]
+known-first-party = [
+    "GPIO",
+    "arena",
+    "avoidance",
+    "boombot_strategy",
+    "brains",
+    "common",
+    "controllers",
+    "debug_functions",
+    "geometry",
+    "led_strip",
+    "navigation",
+    "navigator",
+    "path_planner",
+    "rasp",
+    "remote",
+    "robot1",
+    "sensors",
+    "strategies",
+    "strategy",
+    "sub_graphs",
+    "tasks",
+    "teensy",
+    "trajectory_planner",
+    "usb_com",
+    "utils",
+    "video",
+]
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -85,49 +134,6 @@ ignore = [
     "TD003",  # missing-todo-link
 ]
 
-[tool.ruff.lint.isort]
-known-first-party = [
-    "common",
-    "arena",
-    "geometry",
-    "GPIO",
-    "led_strip",
-    "navigation",
-    "avoidance",
-    "debug_functions",
-    "navigator",
-    "path_planner",
-    "trajectory_planner",
-    "remote",
-    "strategy",
-    "teensy",
-    "usb_com",
-    "utils",
-    "video",
-    "robot1",
-    "rasp",
-    "boombot_strategy",
-    "strategies",
-    "sub_graphs",
-    "tasks",
-    "brains",
-    "controllers",
-    "sensors",
-]
-
-[tool.ruff.format]
-quote-style = "double"
-docstring-code-format = true
-
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
-
-[tool.pydoclint]
-style = 'google'
-allow-init-docstring = true
-skip-checking-short-docstrings = false
-check-style-mismatch = true
-baseline = "pydoclint-baseline.txt"
-generate-baseline = true
-show-filenames-in-every-violation-message = true

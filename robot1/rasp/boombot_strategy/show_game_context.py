@@ -1,5 +1,10 @@
 from arena import ShowArena
-from controllers import ActuatorsShow, RollingBasis
+from controllers import (
+    ActuatorsShow,
+    ActuatorsShowDummy,
+    RollingBasis,
+    RollingBasisDummy,
+)
 from strategy.core import BaseGameContext
 
 
@@ -12,8 +17,8 @@ class ShowGameContext(BaseGameContext):
     def __init__(
         self,
         arena: ShowArena,
-        rolling_basis: RollingBasis,
-        actuators: ActuatorsShow,
+        rolling_basis: RollingBasis | RollingBasisDummy,
+        actuators: ActuatorsShow | ActuatorsShowDummy,
         score: int = 0,
     ) -> None:
         """Initialize the ShowGameContext.
@@ -25,6 +30,6 @@ class ShowGameContext(BaseGameContext):
             score (int, optional): The score of the robot. Defaults to 0.
         """
         super().__init__(arena)
-        self.rolling_basis: RollingBasis = rolling_basis
-        self.actuators: ActuatorsShow = actuators
+        self.rolling_basis: RollingBasis | RollingBasisDummy = rolling_basis
+        self.actuators: ActuatorsShow | ActuatorsShowDummy = actuators
         self.score = score

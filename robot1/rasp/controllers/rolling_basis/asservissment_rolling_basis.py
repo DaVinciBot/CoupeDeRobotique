@@ -184,7 +184,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         ), f"Inconsistent log lengths: {[len(lst) for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)]}"
 
         # Plot
-        _, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)  # type: ignore
+        _, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
 
         axs[0].plot(times, target_x, label="Consigne X")
         axs[0].plot(times, actual_x, label="Réel X")
@@ -269,7 +269,9 @@ class AsservissementRollingBasis(BaseComTeensy):
         self.send_bytes(msg)
 
     def set_linear_position_pid(
-        self, *args: float | dict[str, float], **kwargs: float
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
     ) -> None:
         """Configure the PID values for linear position control.
 
@@ -282,7 +284,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         """
         try:
             if len(args) == 3 and all(isinstance(arg, float) for arg in args):
-                pid = PID(*args)
+                pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
             elif kwargs:
@@ -297,7 +299,9 @@ class AsservissementRollingBasis(BaseComTeensy):
             self.logger.error(f"Failed to set linear position PID: {e}")
 
     def set_angular_position_pid(
-        self, *args: float | dict[str, float], **kwargs: float
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
     ) -> None:
         """Configure the PID values for angular position control.
 
@@ -310,7 +314,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         """
         try:
             if len(args) == 3 and all(isinstance(arg, float) for arg in args):
-                pid = PID(*args)
+                pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
             elif kwargs:

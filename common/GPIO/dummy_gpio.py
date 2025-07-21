@@ -9,6 +9,9 @@ class DummyDevice:
     def off(self) -> None:
         self.value = False
 
+    def toggle_input(self) -> None:
+        self.is_pressed = not self.is_pressed
+
 
 class PIN:
     """Dummy version of a GPIO pin for simulation or testing."""
@@ -23,6 +26,7 @@ class PIN:
         self.mode: str | None = None
         self.reverse_state: bool = False
         self.device: DummyDevice | None = None
+        self.count: int = 0
 
     def setup(self, mode: str, reverse_state: bool = False) -> None:
         self.mode = mode.lower()
@@ -47,6 +51,10 @@ class PIN:
         Returns:
             bool: The majority value read from the pin.
         """
+        self.count += 1
+        if self.count > 1500:
+            self.count = 1000
+            self.device.toggle_input()
         return sum([self.digital_read() for _ in range(n)]) / n >= 0.5
 
     def __correct_state(self, state: bool) -> bool:

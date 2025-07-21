@@ -57,7 +57,7 @@ class ActuatorsShow(Actuators):
         ] = {  # default servo with 2 position
             i: Servo(cfg["deploy_angle"], cfg["fold_angle"], cfg["max_angle"])
             for i, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items()
-            if i < 8
+            if i <= 9
         }
 
         # Modify servos 0 and 2:

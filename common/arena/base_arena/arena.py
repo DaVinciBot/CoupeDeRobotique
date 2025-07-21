@@ -5,7 +5,7 @@
 # and computing enemy or robot positions based on various inputs.
 
 from abc import ABC, abstractmethod
-from typing import cast
+from typing import cast, override
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -268,7 +268,7 @@ class BaseArena(ABC):
 
         # 3.Update all other zones
         # optimized: Update only the zones that intersect with the points
-        all_points = [ally_position, enemy_position]
+        all_points: list[OrientedPoint | Point] = [ally_position, enemy_position]
         for zone in self.zones:
             if not optimized_update or any(
                 zone.polygon.contains(pt) for pt in all_points
@@ -286,9 +286,9 @@ class BaseArena(ABC):
         self,
         lidar_scan_polars: np.ndarray,
         ally_position: OrientedPoint,
-        start_time: int = -1,
-        numb_enemy: bool = False,
-    ) -> Point | MultiPoint | None:
+        _start_time: int = -1,
+        _numb_enemy: bool = False,
+    ) -> Point | OrientedPoint:
         """Computes the position of the enemy based on lidar scans and updates the arena.
 
         This function calculates the position of the enemy by processing the lidar scans.
@@ -299,11 +299,11 @@ class BaseArena(ABC):
         Args:
             lidar_scan_polars (np.ndarray): Detection points from the LIDAR scan.
             ally_position (OrientedPoint): Current ally position.
-            start_time (int, optional): Starting timestamp for the computation. Defaults to -1 for no specific start time.
-            numb_enemy (bool, optional): Whether the enemy is inactive. Defaults to `False`.
+            _start_time (int, optional): Starting timestamp for the computation. Defaults to -1 for no specific start time.
+            _numb_enemy (bool, optional): Whether the enemy is inactive. Defaults to `False`.
 
         Returns:
-            Point | MultiPoint | None: The computed enemy position or None if not found.
+            Point | OrientedPoint: The computed enemy position.
         """
         obstacles: MultiPoint = self.remove_outside(
             self._pol_to_abs_cart(lidar_scan_polars),
@@ -319,7 +319,15 @@ class BaseArena(ABC):
     """
 
     def remove_outside(self, points: MultiPoint) -> MultiPoint:
-        return self.playable_area.intersection(points)
+        """Remove points that are outside the playable area of the arena.
+
+        Args:
+            points (MultiPoint): Points to check against the playable area.
+
+        Returns:
+            MultiPoint: The points that are within the playable area.
+        """
+        return cast("MultiPoint", self.playable_area.intersection(points))
 
     def compute_goal_position(
         self,
@@ -481,14 +489,14 @@ class BaseArena(ABC):
         ax.text(
             zone.polygon.centroid.x,
             zone.polygon.centroid.y,
-            zone.uid,
+            str(zone.uid),
             ha="center",
             va="center",
             fontsize=fontsize,
             color=color,
         )
 
-    def __get_hatch_parameters(self, zone: BaseArenaZone) -> dict:
+    def __get_hatch_parameters(self, zone: BaseArenaZone) -> dict[str, str]:
         hatch_params = {}
         if zone.is_accessible(team_color=self.team_color):
             pass  # No hatch
@@ -510,10 +518,10 @@ class BaseArena(ABC):
         ax: plt.Axes,
         polygon: Polygon,
         color: str,
-        label: str = None,
+        label: str | None = None,
         alpha: float = 1.0,
-        hatch: str = None,
-        hatch_color: str = None,
+        hatch: str | None = None,
+        hatch_color: str | None = None,
     ) -> None:
         """Plot a polygon or multipolygon on a matplotlib axis.
 
@@ -525,10 +533,10 @@ class BaseArena(ABC):
             ax (plt.Axes): Axis on which to draw.
             polygon (Polygon): Polygon to plot.
             color (str): Fill color of the polygon.
-            label (str, optional): Legend label. Defaults to None.
-            alpha (float): Transparency factor. Defaults to 1.0.
-            hatch (str, optional): Matplotlib hatching pattern, e.g., '/' or '\\'. Defaults to None for no hatching.
-            hatch_color (str, optional): Color of the hatching lines. Defaults to None.
+            label (str | None, optional): Legend label. Defaults to None.
+            alpha (float, optional): Transparency factor. Defaults to 1.0.
+            hatch (str | None, optional): Matplotlib hatching pattern, e.g., '/' or '\\'. Defaults to None for no hatching.
+            hatch_color (str | None, optional): Color of the hatching lines. Defaults to None.
         """
         # Avoid duplicate labels
         existing_labels = ax.get_legend_handles_labels()[1]
@@ -657,11 +665,11 @@ class BaseArena(ABC):
         show_ally_direction: bool = True,
         # Plot options
         show: bool = True,
-        plot: tuple[plt.axes, plt.figure] = None,
+        plot: tuple[plt.Axes, plt.Figure] | None = None,
         # Additional options
         additional_zones: list[BaseArenaZone] | None = None,
         additional_points: list[Point | OrientedPoint] | None = None,
-    ) -> tuple[plt.axes, plt.figure]:
+    ) -> tuple[plt.Axes, plt.Figure]:
         # 1.Define the figure and axis
         if plot:
             ax, fig = plot
@@ -764,7 +772,7 @@ class BaseArena(ABC):
         ax.set_aspect("equal", adjustable="box")
         ax.set_title("Arena Visualization")
 
-        # Place legend on the left
+        # Place legend on the right
         plt.legend(loc="center right", bbox_to_anchor=(-0.1, 0.5))
 
         # 6. Show or return the plot
@@ -774,10 +782,12 @@ class BaseArena(ABC):
         return ax, fig
 
     # ====== Built-in Method ======
+    @override
     @abstractmethod
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         pass
 
+    @override
     @abstractmethod
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         pass

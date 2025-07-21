@@ -403,7 +403,7 @@ class ShowArena(BaseArena):
         self.logger.info("ShowArena initialized.")
         self.logger.debug(f"Width: {self.width}, Height: {self.height}")
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if not isinstance(other, ShowArena):
             return False
 
@@ -413,5 +413,5 @@ class ShowArena(BaseArena):
             and self.grid_manager == other.grid_manager
         )
 
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

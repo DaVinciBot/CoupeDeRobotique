@@ -51,7 +51,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         """
         super().__init__(params, acs_detection_profile_params, logger)
 
-    @BaseAvoidance._ensure_original_task_storage
+    @BaseAvoidance.ensure_original_task_storage
     def handle(
         self,
         current_navigator_task: NavigatorTask,

@@ -1,6 +1,7 @@
 import asyncio
 import time
 from math import pi
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,12 +10,16 @@ from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
 from arena import ShowArena, TeamColor
-from controllers.actuators import ActuatorsShow
+from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import (
     RollingBasis,
+    RollingBasisDummy,
 )
-from geometry import OrientedPoint, Point
-from sensors import Inputs, Lidar
+from geometry import OrientedPoint
+from sensors import Inputs, Lidar, LidarDummy
+
+# TODO: automatiser tous les dummys grâce aux fichiers __init__.py comme le PIN
+# TODO: automatiser tous les dummys comme les actuators, com, etc. Avec le config_loader
 
 
 class MainBrain(Brain):
@@ -24,7 +29,7 @@ class MainBrain(Brain):
         self,
         logger: Logger,
         # Sensor
-        lidar: Lidar,
+        lidar: Lidar | LidarDummy,
         # Environment
         arena: ShowArena,
         # WS routes
@@ -43,14 +48,14 @@ class MainBrain(Brain):
             ws_ui (WServerRouteManager): WebSocket UI route manager.
             inputs (Inputs): Inputs instance for handling sensor data.
         """
-        self.lidar: Lidar = lidar
+        self.lidar: Lidar | LidarDummy = lidar
         self.arena: ShowArena = arena
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
         self.score: int = 0
 
-        self.ui_state: dict[str, bool | OrientedPoint | dict[str, bool] | float] = {
+        self.ui_state: dict[str, Any] = {
             "jack_state": True,
             "bau_state": True,
             "odometrie_state": OrientedPoint(0, 0, 0),
@@ -288,18 +293,22 @@ class MainBrain(Brain):
         await self.wait_for_team()
 
         start_position = OrientedPoint(0, 0, 0)
+        enemy_position = OrientedPoint(150, 200, -pi / 2)
         if self.arena.team_color == TeamColor.YELLOW:
             self.logger.info("Starting as YELLOW team.")
             start_position = OrientedPoint(177.5, 21, -pi / 2)
+            enemy_position = OrientedPoint(122.5, 21, -pi / 2)
         elif self.arena.team_color == TeamColor.BLUE:
             self.logger.info("Starting as BLUE team.")
             start_position = OrientedPoint(122.5, 21, -pi / 2)
+            enemy_position = OrientedPoint(177.5, 21, -pi / 2)
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
-            self.arena.team_color,
-            start_position,
-            Point(150, 200),
+            self.arena.team_color, start_position, enemy_position
+        )
+        self.arena.ally_zone.update(
+            self.arena.team_color, start_position, enemy_position
         )
         self.arena.update(
             ally_position=start_position,
