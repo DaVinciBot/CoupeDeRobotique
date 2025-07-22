@@ -62,12 +62,13 @@
     },
     "todo-tree.general.tags": [
         "BUG",
-        "HACK",
-        "FIXME",
-        "FIXIT",
         "FIX",
-        "TODO",
+        "FIXIT",
+        "FIXME",
+        "HACK",
         "QUESTION",
+        "TODO",
+        "UNUSED",
         "[ ]",
         "[x]"
     ],
@@ -98,7 +99,12 @@
         },
         "TODO": {
             "foreground": "cyan"
-        }
+        },
+        "UNUSED": {
+            "foreground": "grey",
+            "icon": "eye-closed",
+            "iconColour": "grey"
+        },
     },
     "todo-tree.highlights.defaultHighlight": {
         "gutterIcon": true,

@@ -3,9 +3,9 @@ import time
 from typing import Any
 
 import matplotlib.pyplot as plt
-from config_loader import CONFIG
 from loggerplusplus import Logger, LogLevels, log
 
+from _config_loader import CONFIG
 from controllers.rolling_basis.pids import (
     PID,
     PidID,

@@ -5,8 +5,7 @@
 
 import time
 
-from config_loader import CONFIG
-
+from _config_loader import CONFIG
 from boombot_strategy.show_game_context import ShowGameContext
 from strategy.core import BaseTask
 

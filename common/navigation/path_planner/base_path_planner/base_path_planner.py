@@ -5,7 +5,8 @@
 
 import functools
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
+from collections.abc import Callable
+from typing import Generic, TypeVar, override
 
 from loggerplusplus import Logger
 
@@ -37,18 +38,18 @@ class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
         self.last_plan_path_params: PlanPathParamsType | None = None
 
     @staticmethod
-    def _store_plan_path_params(method: callable) -> callable:
+    def store_plan_path_params(
+        method: Callable[..., list[OrientedPoint]],
+    ) -> Callable[..., list[OrientedPoint]]:
         @functools.wraps(method)
         def wrapper(
-            self: BasePathPlanner,
+            self: BasePathPlanner[ParamsType, PlanPathParamsType],
             plan_path_params: PlanPathParamsType,
-            *args,
-            **kwargs,
-        ):
+        ) -> list[OrientedPoint]:
             self.last_plan_path_params = plan_path_params
 
             # Execute the method
-            return method(self, plan_path_params, *args, **kwargs)
+            return method(self, plan_path_params)
 
         return wrapper
 
@@ -65,8 +66,8 @@ class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
         Returns:
             list[OrientedPoint]: A list of waypoints representing the planned path.
         """
-        ...
 
+    @override
     def __str__(self) -> str:
         """Returns a human-readable string representation of the path planner.
 
@@ -75,6 +76,7 @@ class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
         """
         return f"{self.__class__.__name__}({self.params})"
 
+    @override
     def __repr__(self) -> str:
         """Returns an official string representation of the path planner.
 

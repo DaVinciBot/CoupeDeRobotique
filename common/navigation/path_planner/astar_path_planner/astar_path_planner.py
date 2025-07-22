@@ -255,7 +255,7 @@ class AStarPathPlanner(
             new_position,
         )
 
-    @BasePathPlanner._store_plan_path_params
+    @BasePathPlanner.store_plan_path_params
     @time_tracker(lambda self: self.logger)
     def plan_path(self, params: AStarPathPlannerPlanPathParams) -> list[OrientedPoint]:
         """Plan a list of Oriented points path from start to goal.

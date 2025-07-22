@@ -4,6 +4,8 @@
 # calculations based on a uniform speed. Additional parameters such as departure and arrival speeds are accepted
 # for interface compatibility but not used in calculations due to the constant-speed assumption.
 
+from typing import override
+
 from navigation.trajectory_planner.speed_profile.base_speed_profile import (
     BaseSpeedProfile,
 )
@@ -23,6 +25,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
         """
         super().__init__(max_speed=speed)
 
+    @override
     def get_speed(
         self,
         time_elapsed: float | None = None,
@@ -41,11 +44,15 @@ class BasicSpeedProfile(BaseSpeedProfile):
         Returns:
             float: Constant speed.
         """
+        if time_elapsed is None or time_elapsed <= 0:
+            return 0.0
+
         return self._max_speed
 
+    @override
     def get_distance(
         self,
-        time_elapsed: float,
+        time_elapsed: float | None = None,
         distance: float | None = None,
         departure_speed: float = 0.0,
         arrival_speed: float = 0.0,
@@ -53,7 +60,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
         """Compute distance traveled given elapsed time.
 
         Args:
-            time_elapsed (float): Elapsed time in seconds.
+            time_elapsed (float | None): Elapsed time in seconds. Defaults to None.
             distance (float | None, optional): Not used. Defaults to None.
             departure_speed (float, optional): Accepted for compatibility; not used. Defaults to 0.0.
             arrival_speed (float, optional): Accepted for compatibility; not used. Defaults to 0.0.
@@ -61,8 +68,12 @@ class BasicSpeedProfile(BaseSpeedProfile):
         Returns:
             float: Distance = speed * time_elapsed
         """
+        if time_elapsed is None or time_elapsed <= 0:
+            return 0.0
+
         return self._max_speed * time_elapsed
 
+    @override
     def get_total_duration(
         self,
         distance: float,

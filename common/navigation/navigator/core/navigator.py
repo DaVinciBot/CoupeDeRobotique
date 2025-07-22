@@ -28,7 +28,9 @@ class Navigator:
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )
-        self._events_manager: NavigatorSignalsDispatcher = NavigatorSignalsDispatcher()
+        self._events_manager: NavigatorSignalsDispatcher = (
+            NavigatorSignalsDispatcher()
+        )  # UNUSED
 
         # Only for task params (instantiate the task when needed)
         self._tasks_queue: deque[NavigatorTaskParams] = deque()
@@ -41,7 +43,7 @@ class Navigator:
             bool: `True` if a new task was fetched, `False` if the queue is empty.
         """
         if self._tasks_queue:
-            self.current_task: NavigatorTask = NavigatorTask(
+            self.current_task = NavigatorTask(
                 params=self._tasks_queue.popleft(),
             )
             self.logger.info(f"Switched to new task: {self.current_task}")

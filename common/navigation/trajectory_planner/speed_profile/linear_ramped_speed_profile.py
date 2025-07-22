@@ -7,6 +7,7 @@
 
 
 from math import sqrt
+from typing import override
 
 from navigation.trajectory_planner.speed_profile.base_speed_profile import (
     BaseSpeedProfile,
@@ -155,9 +156,10 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             )
         return arrival_speed
 
+    @override
     def get_distance(
         self,
-        time_elapsed: float,
+        time_elapsed: float | None = None,
         distance: float | None = None,
         departure_speed: float = 0.0,
         arrival_speed: float = 0.0,
@@ -165,7 +167,7 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
         """Calculates distance traveled at a given time.
 
         Args:
-            time_elapsed (float): Elapsed time since start.
+            time_elapsed (float | None): Elapsed time since start. Defaults to None.
             distance (float | None, optional): Total planned distance. Defaults to None.
             departure_speed (float, optional): Speed at start. Defaults to 0.0.
             arrival_speed (float, optional): Speed at end. Defaults to 0.0.
@@ -173,7 +175,7 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
         Returns:
             float: Distance covered up to the specified time.
         """
-        if time_elapsed <= 0:
+        if time_elapsed is None or time_elapsed <= 0:
             return 0.0
 
         t_acc, t_dec, d_acc, d_dec = self._compute_trapezoidal_params(

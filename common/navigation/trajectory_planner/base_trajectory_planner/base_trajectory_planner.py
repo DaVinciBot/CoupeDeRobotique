@@ -6,6 +6,7 @@
 import functools
 import time
 from abc import ABC, abstractmethod
+from collections.abc import Callable
 from typing import Generic, TypeVar
 
 from loggerplusplus import Logger
@@ -74,24 +75,26 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
     # ====== Internal Utilities ======
     @staticmethod
-    def _ensure_planning_started(method: callable) -> callable:
+    def ensure_planning_started(
+        method: Callable[..., TrajectoryPlanCommand],
+    ) -> Callable[..., TrajectoryPlanCommand]:
         """Decorator to ensure that planning has started before executing a method.
 
         Args:
-            method (callable): The method to wrap.
+            method (Callable[..., TrajectoryPlanCommand]): The method to wrap.
 
         Returns:
-            callable: Wrapped method.
+            Callable[..., TrajectoryPlanCommand]: Wrapped method.
         """
 
         @functools.wraps(method)
-        def wrapper(self, *args, **kwargs):
+        def wrapper(self: BaseTrajectoryPlanner[ParamsType]) -> TrajectoryPlanCommand:
             # Start planning if not already started
             if not self.is_planning_started():
                 self.start_planning()
 
             # Execute the method
-            return method(self, *args, **kwargs)
+            return method(self)
 
         return wrapper
 

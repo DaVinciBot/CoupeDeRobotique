@@ -1,6 +1,6 @@
-from config_loader import CONFIG
 from loggerplusplus import Logger, log
 
+from _config_loader import CONFIG
 from controllers.actuators.actuators_show import ActuatorsShow
 
 

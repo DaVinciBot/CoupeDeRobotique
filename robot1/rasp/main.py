@@ -1,10 +1,10 @@
 import subprocess
 
-from config_loader import CONFIG
 from loggerplusplus import Logger, LogLevels
 from taskbrain import DictProxyAccessor
 from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 
+from _config_loader import CONFIG
 from arena import AllyZone, ShowArena
 from brains import MainBrain
 from geometry import OrientedPoint

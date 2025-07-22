@@ -1,9 +1,9 @@
 import time
 from dataclasses import dataclass
-from typing import Any
 
-from config_loader import CONFIG
+from loggerplusplus import Logger
 
+from _config_loader import CONFIG
 from controllers.actuators import Actuators
 
 
@@ -42,22 +42,44 @@ class ActuatorsShow(Actuators):
     It inherits from the Actuators class and overrides its methods to provide functionality for the show mode.
     """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        logger: Logger,
+        serial_number: int = CONFIG.ACTUATOR_TEENSY_SER,
+        vid: int = CONFIG.TEENSY_VID,
+        pid: int = CONFIG.TEENSY_PID,
+        baudrate: int = CONFIG.TEENSY_BAUDRATE,
+        enable_crc: bool = CONFIG.TEENSY_CRC,
+        enable_dummy: bool = CONFIG.TEENSY_DUMMY,
+    ) -> None:
         """Initialize the `ActuatorsShow` class.
 
         Args:
-            *args (Any): Positional arguments forwarded to :class:`Actuators`.
-            **kwargs (Any): Keyword arguments forwarded to :class:`Actuators`.
+            logger (Logger): The logger instance for logging.
+            serial_number (int, optional): The serial number of the Teensy. Defaults to CONFIG.ACTUATOR_TEENSY_SER.
+            vid (int, optional): The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
+            pid (int, optional): The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
+            baudrate (int, optional): The baud rate for serial communication. Defaults to CONFIG.TEENSY_BAUDRATE.
+            enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
+            enable_dummy (bool, optional): Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
         """
-        super().__init__(*args, **kwargs)  # Call the parent constructor
+        super().__init__(
+            logger=logger,
+            serial_number=serial_number,
+            vid=vid,
+            pid=pid,
+            baudrate=baudrate,
+            enable_crc=enable_crc,
+            enable_dummy=enable_dummy,
+        )  # Call the parent constructor
         self.folded: bool = True  # Indicates if the actuators are folded
         self.servos: dict[
-            int | CONFIG.ACTUATORS_CONFIG,
+            int,
             Servo | ServoArm | ServoPlank | ServoDocking,
         ] = {  # default servo with 2 position
             i: Servo(cfg["deploy_angle"], cfg["fold_angle"], cfg["max_angle"])
             for i, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items()
-            if i <= 9
+            if i < 8
         }
 
         # Modify servos 0 and 2:
@@ -253,11 +275,17 @@ class ActuatorsShow(Actuators):
             pins = [pins]
         for pin in pins:
             if self._check_pin(pin):
-                self.set_servo_angle(
-                    pin,
-                    self.servos[pin].docking,
-                    max_angle=self.servos[pin].max_angle,
-                )
+                servo = self.servos[pin]
+                if not isinstance(servo, (ServoDocking, ServoArm)):
+                    self.logger.warning(
+                        f"Pin {pin} is not a ServoDocking or ServoArm, cannot perform docking.",
+                    )
+                else:
+                    self.set_servo_angle(
+                        pin,
+                        servo.docking,
+                        max_angle=servo.max_angle,
+                    )
 
     def deploy_banner(self) -> None:
         self.deploy([0, 2])
@@ -373,7 +401,7 @@ class ActuatorsShow(Actuators):
         time.sleep(0.5)
         self.deploy_all_pickup()
         # self.set_servo_angle(8, angle=35, max_angle=270)
-        self.set_servo_angle(8, angle=self.servos[8].docking, max_angle=270)
+        self.set_servo_angle(8, angle=self.servos[8].docking, max_angle=270)  # type: ignore[reportAttributeAccessIssue]
         self.deploy(9)
 
     def pickup_planck(self) -> None:

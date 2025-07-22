@@ -68,7 +68,7 @@ class DeltaPathPlanner(
         """
         return (start.theta + rotation) % (2 * math.pi)
 
-    @BasePathPlanner._store_plan_path_params
+    @BasePathPlanner.store_plan_path_params
     def plan_path(self, params: DeltaPathPlannerPlanPathParams) -> list[OrientedPoint]:
         """Generate a path from the start point using relative displacement and rotation.
 

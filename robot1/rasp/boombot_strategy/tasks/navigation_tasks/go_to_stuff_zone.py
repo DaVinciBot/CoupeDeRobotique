@@ -6,8 +6,7 @@
 # and ACS detection settings
 # necessary for safe and efficient navigation in a robotics environment.
 
-from config_loader import CONFIG
-
+from _config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from navigation import (
     BasicPathPlannerParams,

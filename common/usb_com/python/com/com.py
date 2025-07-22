@@ -176,7 +176,7 @@ class Com:
 
     # ======= Public methods =======
     @staticmethod
-    def check_dummy(func: Callable[..., Any]) -> Callable[..., Any]:
+    def check_dummy(func: Callable[..., Any]) -> Callable[..., Any]:  # UNUSED
         """Decorator to cancel execution when in dummy mode.
 
         Args:
@@ -187,7 +187,11 @@ class Com:
         """
 
         @wraps(func)
-        def wrapper(self: "Com", *args: Any, **kwargs: Any):
+        def wrapper(  # UNUSED
+            self: "Com",
+            *args: Any,  # noqa: ANN401
+            **kwargs: Any,  # noqa: ANN401
+        ) -> Any:  # noqa: ANN401
             # Check if the self.enable_dummy attribute is disabled (False)
             if self.enable_dummy:
                 # Print a message indicating that execution is canceled

@@ -49,7 +49,7 @@ class BaseSpeedProfile(ABC):
     @abstractmethod
     def get_distance(
         self,
-        time_elapsed: float,
+        time_elapsed: float | None = None,
         distance: float | None = None,
         departure_speed: float = 0.0,
         arrival_speed: float = 0.0,
@@ -60,7 +60,7 @@ class BaseSpeedProfile(ABC):
         using motion dynamics defined by the specific speed profile.
 
         Args:
-            time_elapsed (float): Elapsed time in seconds.
+            time_elapsed (float | None): Elapsed time in seconds. Defaults to None.
             distance (float | None, optional): Total path distance (optional). Defaults to None.
             departure_speed (float, optional): Speed at the beginning of motion. Defaults to 0.0.
             arrival_speed (float, optional): Speed at the end of motion. Defaults to 0.0.
@@ -68,7 +68,6 @@ class BaseSpeedProfile(ABC):
         Returns:
             float: Distance traveled so far.
         """
-        ...
 
     @abstractmethod
     def get_total_duration(

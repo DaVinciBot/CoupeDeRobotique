@@ -13,7 +13,7 @@ from loggerplusplus import Logger
 from navigation.navigator.signals.signals_enum import NavigatorSignalsEnum
 
 
-class NavigatorSignalsDispatcher:
+class NavigatorSignalsDispatcher:  # UNUSED
     """Production-grade dispatcher for navigator signals using the Events library.
 
     This class dynamically creates event handlers for all defined signals in
@@ -86,18 +86,18 @@ class NavigatorSignalsDispatcher:
                 f"Attempted to disconnect from unknown signal: {signal}",
             )
 
-    def emit_signal(
+    def emit_signal(  # UNUSED
         self,
         signal: NavigatorSignalsEnum,
-        *args,
-        **kwargs,
+        *args: Any,  # noqa: ANN401
+        **kwargs: Any,  # noqa: ANN401
     ) -> None:
         """Emit a signal and trigger all connected callbacks.
 
         Args:
             signal (NavigatorSignalsEnum): The signal to emit.
-            *args: Positional arguments to pass to callbacks.
-            **kwargs: Keyword arguments to pass to callbacks.
+            *args(Any): Positional arguments to pass to callbacks.
+            **kwargs(Any): Keyword arguments to pass to callbacks.
         """
         try:
             self.logger.debug(
