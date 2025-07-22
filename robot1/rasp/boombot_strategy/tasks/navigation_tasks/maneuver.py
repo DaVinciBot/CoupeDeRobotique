@@ -5,8 +5,7 @@
 # - `GoCentroidOfZone`: Navigates the robot to the centroid of a specified arena zone,
 #   initializing a navigator task with customized planning and avoidance parameters.
 
-from config_loader import CONFIG
-
+from _config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from geometry import OrientedPoint, Point
 from navigation import (

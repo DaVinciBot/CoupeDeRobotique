@@ -49,7 +49,7 @@ class BasicPathPlanner(
         """
         return OrientedPoint(goal.x, goal.y, goal.theta + math.pi)
 
-    @BasePathPlanner._store_plan_path_params
+    @BasePathPlanner.store_plan_path_params
     def plan_path(self, params: BasicPathPlannerPlanPathParams) -> list[OrientedPoint]:
         """Plan a basic two-point path from start to goal.
 

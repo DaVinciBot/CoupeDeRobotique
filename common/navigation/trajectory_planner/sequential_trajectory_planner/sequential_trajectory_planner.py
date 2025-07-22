@@ -5,6 +5,7 @@
 # follow sequentially. The planner maps the trajectory to time and returns motion commands for execution.
 
 import math
+from typing import override
 
 from loggerplusplus import Logger
 
@@ -53,7 +54,7 @@ class SequentialTrajectoryPlanner(
         self._is_backward: bool = self.params.direction == Direction.BACKWARD
 
     @staticmethod
-    def _normalize_angle(angle: float):
+    def _normalize_angle(angle: float) -> float:
         angle = (angle + math.pi) % (2 * math.pi)
         if angle < 0:
             angle += 2 * math.pi
@@ -162,6 +163,7 @@ class SequentialTrajectoryPlanner(
             distance=delta_distance,
         )
 
+    @override
     def plan_trajectory(self, path: list[OrientedPoint]) -> None:
         """Build trajectory plan from a list of waypoints.
 
@@ -220,26 +222,29 @@ class SequentialTrajectoryPlanner(
         # Store the mapped segments for execution
         self.segments_mapper = SegmentMapper(segments)
 
-    @BaseTrajectoryPlanner._ensure_planning_started
+    @BaseTrajectoryPlanner.ensure_planning_started
     def get_plan(self) -> TrajectoryPlanCommand:
         """Retrieve the current motion command based on elapsed time.
 
         Returns:
             TrajectoryPlanCommand: The motion command for the current time.
+
+        Raises:
+            RuntimeError: If the trajectory has not been planned yet.
+            TypeError: If the segment type is unsupported.
         """
         # Get the current time elapsed
         time_elapsed = self._get_trajectory_time_elapsed()
 
         # Get the active segment
+        if self.segments_mapper is None:
+            raise RuntimeError("Trajectory has not been planned yet.")
         segment, local_time = self.segments_mapper.get_segment_at_time(time_elapsed)
 
         # If no segment is found -> plan is over -> stop the robot at the end path
-        trajectory_plan_command: TrajectoryPlanCommand | None = None
         if segment is None:
-            trajectory_plan_command: TrajectoryPlanCommand = (
-                TrajectoryPlanCommand.create_stop_command(
-                    current_position=self.segments_mapper.get_last_segment().end_position,
-                )
+            trajectory_plan_command = TrajectoryPlanCommand.create_stop_command(
+                current_position=self.segments_mapper.get_last_segment().end_position,
             )
 
         # If the segment is a rotation segment
@@ -251,7 +256,7 @@ class SequentialTrajectoryPlanner(
 
             th_theta = segment.start_position.theta + th_rotation * segment.sign
 
-            trajectory_plan_command: TrajectoryPlanCommand = TrajectoryPlanCommand(
+            trajectory_plan_command = TrajectoryPlanCommand(
                 position=OrientedPoint(
                     segment.start_position.x,
                     segment.start_position.y,
@@ -288,7 +293,7 @@ class SequentialTrajectoryPlanner(
                     segment.start_position.theta,
                 )
 
-            trajectory_plan_command: TrajectoryPlanCommand = TrajectoryPlanCommand(
+            trajectory_plan_command = TrajectoryPlanCommand(
                 position=OrientedPoint(th_x, th_y, segment.start_position.theta),
                 linear_speed=self.speed_profiler.linear_speed_profile.get_speed(
                     time_elapsed=local_time,
@@ -301,10 +306,14 @@ class SequentialTrajectoryPlanner(
 
         # If the segment is a stop segment
         elif isinstance(segment, StopSegment):
-            trajectory_plan_command: TrajectoryPlanCommand = (
-                TrajectoryPlanCommand.create_stop_command(
-                    current_position=segment.start_position,
-                )
+            trajectory_plan_command = TrajectoryPlanCommand.create_stop_command(
+                current_position=segment.start_position,
+            )
+
+        else:
+            raise TypeError(
+                f"Unsupported segment type: {type(segment)}. "
+                "Expected RotationSegment, StraightSegment, or StopSegment.",
             )
 
         # Save the last call time
@@ -312,10 +321,16 @@ class SequentialTrajectoryPlanner(
 
         return trajectory_plan_command
 
+    @override
     def get_total_duration(self) -> float:
         """Get the total planned duration of the trajectory.
 
         Returns:
             float: Total duration of the full trajectory.
+
+        Raises:
+            RuntimeError: If the trajectory has not been planned yet.
         """
+        if self.segments_mapper is None:
+            raise RuntimeError("Trajectory has not been planned yet.")
         return self.segments_mapper.cumulative_durations[-1]

@@ -25,8 +25,8 @@ class ShowGameContext(BaseGameContext):
 
         Args:
             arena (ShowArena): The arena of the game.
-            rolling_basis (RollingBasis): The rolling basis of the robot.
-            actuators (ActuatorsShow): The actuators of the robot.
+            rolling_basis (RollingBasis | RollingBasisDummy): The rolling basis of the robot.
+            actuators (ActuatorsShow | ActuatorsShowDummy): The actuators of the robot.
             score (int, optional): The score of the robot. Defaults to 0.
         """
         super().__init__(arena)

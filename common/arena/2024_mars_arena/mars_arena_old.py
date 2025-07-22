@@ -25,10 +25,10 @@ class Plants_zone:
     def __repr__(self) -> str:
         return self.__str__()
 
-    def take_plants(self, nb) -> None:
+    def take_plants(self, nb: int) -> None:
         self.nb_plant -= nb
 
-    def drop_plants(self, nb) -> None:
+    def drop_plants(self, nb: int) -> None:
         self.nb_plant += nb
 
     def visit(self) -> None:
@@ -153,10 +153,10 @@ class MarsArena(Arena):
         self,
         zones_to_sort: list[Plants_zone],
         actual_position: OrientedPoint,
-        mini_plants=-1,
-        maxi_plants=maxsize,
-        reverse=False,
-    ):
+        mini_plants: int = -1,
+        maxi_plants: int = maxsize,
+        reverse: bool = False,
+    ) -> list[Plants_zone]:
         zones: list[Plants_zone] = []
 
         zones = [
@@ -176,10 +176,10 @@ class MarsArena(Arena):
     def sort_gardener(
         self,
         actual_position: OrientedPoint,
-        friendly_only=True,
-        maxi=6,
-        reverse=False,
-    ):
+        friendly_only: bool = True,
+        maxi: int = 6,
+        reverse: bool = False,
+    ) -> list[Plants_zone]:
         zones_to_sort = (
             [
                 self.gardeners[i]
@@ -199,10 +199,10 @@ class MarsArena(Arena):
     def sort_drop_zone(
         self,
         actual_position: OrientedPoint,
-        friendly_only=True,
-        maxi_plants=6,
-        reverse=False,
-    ):
+        friendly_only: bool = True,
+        maxi_plants: int = 6,
+        reverse: bool = False,
+    ) -> list[Plants_zone]:
         zones_to_sort = (
             [
                 self.drop_zones[i]
@@ -222,9 +222,9 @@ class MarsArena(Arena):
     def sort_pickup_zone(
         self,
         actual_position: OrientedPoint,
-        mini_plants=2,
-        reverse=False,
-    ):
+        mini_plants: int = 2,
+        reverse: bool = False,
+    ) -> list[Plants_zone]:
         return self.sort_plant_zones(
             actual_position=actual_position,
             zones_to_sort=self.pickup_zones,

@@ -1,9 +1,9 @@
 import struct
 import time
 
-from config_loader import CONFIG
 from loggerplusplus import Logger, log
 
+from _config_loader import CONFIG
 from teensy import ActuatorType, GPIOComTeensy
 from usb_com.python import Messages
 

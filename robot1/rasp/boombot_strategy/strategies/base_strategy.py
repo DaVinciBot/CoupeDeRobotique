@@ -1,8 +1,8 @@
 from abc import ABC
 
-from config_loader import CONFIG
 from loggerplusplus import Logger
 
+from _config_loader import CONFIG
 from strategy.core import (
     BaseGameContext,
     BaseSubGraph,

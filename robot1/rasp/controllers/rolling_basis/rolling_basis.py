@@ -1,10 +1,9 @@
 import struct
 import time
-from typing import Any
 
-from config_loader import CONFIG
 from loggerplusplus import Logger, LogLevels, log
 
+from _config_loader import CONFIG
 from controllers.rolling_basis.pids import PID, PidID
 from geometry import OrientedPoint
 from teensy import BaseComTeensy
@@ -174,19 +173,23 @@ class RollingBasis(BaseComTeensy):
     ####################################
     # PID Configuration Methods        #
     ####################################
-    def set_linear_position_pid(self, *args: Any, **kwargs: Any) -> None:
+    def set_linear_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
         """Configure the PID values for linear position control.
 
         Args:
-            *args (Any): Either `(kp, ki, kd)` or a single dictionary.
-            **kwargs (Any): Keyword arguments mapping PID fields to values.
+            *args (float | dict[str, float]): Either `(kp, ki, kd)` or a single dictionary.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
             ValueError: If the arguments do not match expected formats.
         """
         try:
-            if len(args) == 3:
-                pid = PID(*args)
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+                pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
             elif kwargs:
@@ -200,19 +203,23 @@ class RollingBasis(BaseComTeensy):
         except Exception as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
-    def set_angular_position_pid(self, *args: Any, **kwargs: Any) -> None:
+    def set_angular_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
         """Configure the PID values for angular position control.
 
         Args:
-            *args (Any): Either `(kp, ki, kd)` or a single dictionary.
-            **kwargs (Any): Keyword arguments mapping PID fields to values.
+            *args (float | dict[str, float]): Either `(kp, ki, kd)` or a single dictionary.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
             ValueError: If the arguments do not match expected formats.
         """
         try:
-            if len(args) == 3:
-                pid = PID(*args)
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+                pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
             elif kwargs:

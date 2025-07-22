@@ -1,6 +1,0 @@
-robot1/rasp/boombot_strategy/show_game_context.py
-    DOC105: Method `ShowGameContext.__init__`: Argument names match, but type hints in these args do not match: rolling_basis, actuators
---------------------
-robot1/rasp/brains/main_brain.py
-    DOC105: Method `MainBrain.__init__`: Argument names match, but type hints in these args do not match: lidar
---------------------

@@ -21,7 +21,7 @@ class SegmentMapper:
             segments (list[BaseSegment]): List of trajectory segments to be managed.
         """
         self.segments = segments
-        self.cumulative_durations = []
+        self.cumulative_durations: list[float] = []
         cumulative = 0.0
 
         # Compute the cumulative end times for each segment
