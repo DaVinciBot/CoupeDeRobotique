@@ -204,7 +204,9 @@ class RollingBasis(BaseComTeensy):
             self.logger.error(f"Failed to set linear position PID: {e}")
 
     def set_angular_position_pid(
-        self, *args: float | dict[str, float], **kwargs: float,
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
     ) -> None:
         """Configure the PID values for angular position control.
 
