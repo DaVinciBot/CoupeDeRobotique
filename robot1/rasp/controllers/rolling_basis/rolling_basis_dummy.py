@@ -1,3 +1,5 @@
+from typing import overload
+
 from loggerplusplus import Logger, log
 
 from _config_loader import CONFIG
@@ -33,7 +35,15 @@ class RollingBasisDummy(BaseComTeensy):
             enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
         """
         # Initialize the parent-BaseComTeensy class
-        super().__init__(logger, serial_number, vid, pid, baudrate, enable_crc, True)
+        super().__init__(
+            logger,
+            serial_number,
+            vid,
+            pid,
+            baudrate,
+            enable_crc,
+            enable_dummy=True,
+        )
 
         # Robot state
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
@@ -88,6 +98,13 @@ class RollingBasisDummy(BaseComTeensy):
     ####################################
     # PID Configuration Methods        #
     ####################################
+    @overload
+    def set_linear_position_pid(self, *args: float) -> None: ...
+    @overload
+    def set_linear_position_pid(self, pid_values: dict[str, float]) -> None: ...
+    @overload
+    def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
     def set_linear_position_pid(
         self,
         *args: float | dict[str, float],
@@ -95,12 +112,17 @@ class RollingBasisDummy(BaseComTeensy):
     ) -> None:
         """Configure the PID values for linear position control.
 
+        Overloads:
+            - set_linear_position_pid(float, float, float) → None
+            - set_linear_position_pid(dict[str, float]) → None
+            - set_linear_position_pid(kp=float, ki=float, kd=float) → None
+
         Args:
-            *args (float | dict[str, float]): Either `(kp, ki, kd)` or a single dictionary.
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
-            ValueError: If the arguments do not match expected formats.
+            ValueError: If the arguments do not match any expected format.
         """
         try:
             if len(args) == 3 and all(isinstance(arg, float) for arg in args):
@@ -118,6 +140,13 @@ class RollingBasisDummy(BaseComTeensy):
         except Exception as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
+    @overload
+    def set_angular_position_pid(self, *args: float) -> None: ...
+    @overload
+    def set_angular_position_pid(self, pid_values: dict[str, float]) -> None: ...
+    @overload
+    def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
     def set_angular_position_pid(
         self,
         *args: float | dict[str, float],
@@ -125,12 +154,17 @@ class RollingBasisDummy(BaseComTeensy):
     ) -> None:
         """Configure the PID values for angular position control.
 
+        Overloads:
+            - set_angular_position_pid(float, float, float) → None
+            - set_angular_position_pid(dict[str, float]) → None
+            - set_angular_position_pid(kp=float, ki=float, kd=float) → None
+
         Args:
-            *args (float | dict[str, float]): Either `(kp, ki, kd)` or a single dictionary.
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
-            ValueError: If the arguments do not match expected formats.
+            ValueError: If the arguments do not match any expected format.
         """
         try:
             if len(args) == 3 and all(isinstance(arg, float) for arg in args):

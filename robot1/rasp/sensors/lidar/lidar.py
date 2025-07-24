@@ -1,10 +1,14 @@
 import math
 import threading
 import time
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 import numpy as np
 from loggerplusplus import Logger
+from numpy.typing import NDArray
+
+if TYPE_CHECKING:
+    import pysicktim
 
 TLidar = TypeVar("TLidar", bound="pysicktim")
 
@@ -59,7 +63,7 @@ class Lidar:
         self.__initialization_fail_refresh_rate = initialization_fail_refresh_rate
 
         self.__is_connected = False
-        self.__lidar_obj = None
+        self.__lidar_obj: TLidar | None = None
         self.__polars_angles = None
         self.__threading_init_lidar()
 
@@ -238,13 +242,13 @@ class Lidar:
         return self.__is_connected
 
     @property
-    def distances(self) -> np.ndarray:
+    def distances(self) -> NDArray[np.float32]:
         """Get the distances from the last scan.
 
         It automatically converts the distances to the right unit.
 
         Returns:
-            np.ndarray: the distances array
+            NDArray[np.float32]: the distances array
         """
         return (
             np.array(self.__lidar_obj.scan.distances, dtype=np.float32)
@@ -252,30 +256,30 @@ class Lidar:
         )
 
     @property
-    def polars(self) -> np.ndarray:
+    def polars(self) -> NDArray[np.float32]:
         """Get the polars array.
 
         It automatically converts the angles to the right unit.
 
         Returns:
-            np.ndarray: the polars array
+            NDArray[np.float32]: the polars array
         """
         return np.column_stack((self.__polars_angles, self.distances))
 
-    def scan_to_distances(self) -> np.ndarray:
+    def scan_to_distances(self) -> NDArray[np.float32]:
         """Scan the environment with the lidar and return the distances.
 
         Returns:
-            np.ndarray: the distances array
+            NDArray[np.float32]: the distances array
         """
         self.__scan()
         return self.distances
 
-    def scan_to_polars(self) -> np.ndarray:
+    def scan_to_polars(self) -> NDArray[np.float32]:
         """Scan the environment with the lidar and return the polars array.
 
         Returns:
-            np.ndarray: the polars array
+            NDArray[np.float32]: the polars array
         """
         self.__scan()
         return self.polars[self.polars[:, 1] > self._min_distance]

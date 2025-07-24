@@ -1,15 +1,21 @@
 class DummyDevice:
+    """Dummy version of a GPIO device for simulation or testing."""
+
     def __init__(self) -> None:
+        """Initialize the dummy GPIO device."""
         self.value = False
         self.is_pressed = False
 
     def on(self) -> None:
+        """Set the device state to on (True)."""
         self.value = True
 
     def off(self) -> None:
+        """Set the device state to off (False)."""
         self.value = False
 
     def toggle_input(self) -> None:
+        """Toggle the input state of the device."""
         self.is_pressed = not self.is_pressed
 
 
@@ -29,6 +35,12 @@ class PIN:
         self.count: int = 0
 
     def setup(self, mode: str, reverse_state: bool = False) -> None:
+        """Set up the pin with a mode and optional reverse state.
+
+        Args:
+            mode (str): Mode of the pin, e.g., 'input' or 'output'.
+            reverse_state (bool, optional): If True, reverses the state of the pin. Defaults to False.
+        """
         self.mode = mode.lower()
         self.reverse_state = reverse_state
         self.device = DummyDevice()

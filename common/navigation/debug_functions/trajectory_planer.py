@@ -52,21 +52,21 @@ def test_trajectory_planning(
     theta_positions = [pos.theta for pos in positions]
 
     # Plotting evolution of angular and linear speeds
-    fig, axs = plt.subplots(2, 2, figsize=(12, 8))
+    _, axs = plt.subplots(2, 2, figsize=(12, 8))
 
     axs[0, 0].plot(angular_speeds, label="Vitesse angulaire")
     axs[0, 0].set_xlabel("Temps (itérations)")
     axs[0, 0].set_ylabel("Vitesse angulaire")
     axs[0, 0].set_title("Évolution de la vitesse angulaire")
     axs[0, 0].legend()
-    axs[0, 0].grid(True)
+    axs[0, 0].grid(visible=True)
 
     axs[0, 1].plot(linear_speeds, label="Vitesse linéaire", color="r")
     axs[0, 1].set_xlabel("Temps (itérations)")
     axs[0, 1].set_ylabel("Vitesse linéaire")
     axs[0, 1].set_title("Évolution de la vitesse linéaire")
     axs[0, 1].legend()
-    axs[0, 1].grid(True)
+    axs[0, 1].grid(visible=True)
 
     # Dual-axis plot for position and orientation
     ax1 = axs[1, 0]
@@ -83,14 +83,14 @@ def test_trajectory_planning(
 
     ax1.set_xlabel("Temps (itérations)")
     ax1.set_title("Évolution de la position X et Y")
-    ax1.grid(True)
+    ax1.grid(visible=True)
 
     axs[1, 1].plot(theta_positions, label="Orientation (Theta)", color="m")
     axs[1, 1].set_xlabel("Temps (itérations)")
     axs[1, 1].set_ylabel("Theta (orientation)")
     axs[1, 1].set_title("Évolution de l'orientation Theta")
     axs[1, 1].legend()
-    axs[1, 1].grid(True)
+    axs[1, 1].grid(visible=True)
 
     plt.tight_layout()
     plt.show()
@@ -134,6 +134,6 @@ def test_trajectory_planning(
     plt.ylabel("y")
     plt.title("Path et Simulation de Trajectoire")
     plt.legend()
-    plt.grid(True)
+    plt.grid(visible=True)
     plt.axis("equal")
     plt.show()

@@ -127,15 +127,19 @@ known-first-party = [
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-    "CPY001", # missing-copyright-notice
-    "FIX002", # line-contains-todo
-    "FIX004", # line-contains-hack
-    "G004",   # logging-f-string
-    "TD001",  # invalid-todo-tag
-    "TD002",  # missing-todo-author
-    "TD003",  # missing-todo-link
+    "CPY001",  # missing-copyright-notice
+    "D103",    # missing-module-docstring
+    "FBT001",  # boolean-type-hint-positional-argument
+    "FBT002",  # boolean-default-value-positional-argument
+    "FIX002",  # line-contains-todo
+    "FIX004",  # line-contains-hack
+    "G004",    # logging-f-string
+    "PLR0917", # too-many-positional-arguments
+    "PLR0913", # too-many-arguments
+    "TD001",   # invalid-todo-tag
+    "TD002",   # missing-todo-author
+    "TD003",   # missing-todo-link
 ]
-
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

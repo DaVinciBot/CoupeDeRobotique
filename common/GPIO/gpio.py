@@ -19,7 +19,7 @@ class PIN:
         """Set up the pin.
 
         Args:
-            mode (str): The pin mode (input/output).
+            mode (str): The pin mode (output/input/input_pullup/input_pulldown).
             reverse_state (bool, optional): Whether to reverse the state of the pin. Defaults to `False`.
         """
         mode = mode.lower()

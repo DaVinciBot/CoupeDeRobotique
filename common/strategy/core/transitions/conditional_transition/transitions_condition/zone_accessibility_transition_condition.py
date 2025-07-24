@@ -4,11 +4,17 @@
 # on the accessibility of a specific zone within the arena. The condition can be reversed if needed.
 
 
+from typing import TYPE_CHECKING
+
 from strategy.core.base_game_context import BaseGameContext
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
+from strategy.core.tasks import BaseNavigationTask
 from strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition import (
     BaseTransitionCondition,
 )
+
+if TYPE_CHECKING:
+    from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 
 
 class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
@@ -18,14 +24,12 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
     An optional reverse flag allows inverting the condition to check for inaccessibility.
     """
 
-    def __init__(self, zone_id: int, reverse: bool = False) -> None:
-        """Initialize the condition with a specific zone ID and optional reversal.
+    def __init__(self, reverse: bool = False) -> None:
+        """Initialize the condition with optional reversal.
 
         Args:
-            zone_id (int): The identifier of the zone whose accessibility will be checked.
             reverse (bool, optional): Whether to reverse the condition logic. Defaults to `False`.
         """
-        self.zone_id = zone_id
         self.reverse = reverse
 
     def check(
@@ -44,11 +48,21 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
         Returns:
             bool: `True` if the condition is met (zone is accessible or not based on `reverse`), `False` otherwise.
         """
-        accessibility: bool = ctx.arena.zones[self.zone_id].is_accessible(
-            team_color=ctx.arena.team_color,
+        navigation_tasks: list[BaseNavigationTask] = [
+            task for task in next_node.tasks if isinstance(task, BaseNavigationTask)
+        ]
+        if not navigation_tasks:
+            return not self.reverse
+
+        goals: list[BaseArenaZone] = [
+            zone
+            for task in navigation_tasks
+            if task.goal is not None
+            for zone in [ctx.arena.get_zone_by_location(task.goal)]
+            if zone is not None
+        ]
+        accessibility: bool = all(
+            zone.is_accessible(team_color=ctx.arena.team_color) for zone in goals
         )
 
-        # If reverse is True, invert the accessibility condition
-        if self.reverse:
-            return not accessibility
-        return accessibility
+        return self.reverse ^ accessibility

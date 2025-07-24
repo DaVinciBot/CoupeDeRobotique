@@ -130,17 +130,17 @@ class LidarDummy:
         )  # Default max range
 
         # Simulate obstacles as clusters of points
-        num_obstacles = np.random.randint(3, 8)  # Number of obstacles
+        num_obstacles = np.random.default_rng().integers(3, 8)  # Number of obstacles
         for _ in range(num_obstacles):
-            center_angle = np.random.uniform(
+            center_angle = np.random.default_rng().uniform(
                 0,
                 self.__num_points,
             )  # Random angle for obstacle
-            obstacle_width = np.random.randint(
+            obstacle_width = np.random.default_rng().integers(
                 5,
                 20,
             )  # Width of obstacle in lidar points
-            obstacle_distance = np.random.uniform(
+            obstacle_distance = np.random.default_rng().uniform(
                 0.5,
                 4.0,
             )  # Random distance for the obstacle
@@ -148,14 +148,22 @@ class LidarDummy:
             # Assign distances to points within the obstacle
             start_idx = int(max(0, center_angle - obstacle_width // 2))
             end_idx = int(min(self.__num_points, center_angle + obstacle_width // 2))
-            distances[start_idx:end_idx] = np.random.uniform(
-                obstacle_distance - 0.1,
-                obstacle_distance + 0.1,
-                size=(end_idx - start_idx),
-            ).astype(np.float32)
+            distances[start_idx:end_idx] = (
+                np.random.default_rng()
+                .uniform(
+                    obstacle_distance - 0.1,
+                    obstacle_distance + 0.1,
+                    size=(end_idx - start_idx),
+                )
+                .astype(np.float32)
+            )
 
         # Add noise for realism
-        distances += np.random.normal(0, 0.01, self.__num_points).astype(np.float32)
+        distances += (
+            np.random.default_rng()
+            .normal(0, 0.01, self.__num_points)
+            .astype(np.float32)
+        )
         distances = np.clip(
             distances,
             0.1,

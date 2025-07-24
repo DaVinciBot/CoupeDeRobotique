@@ -462,7 +462,7 @@ class GridManager:
         ax.set_aspect("equal", adjustable="box")
         ax.set_title("Arena Grid Visualization")
 
-        ax.grid(True)
+        ax.grid(visible=True)
         plt.tight_layout()
         if show:
             plt.show()

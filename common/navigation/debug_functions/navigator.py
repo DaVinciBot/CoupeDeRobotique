@@ -108,43 +108,43 @@ def test_navigator_execution(
     axs[0].set_ylabel("Position")
     axs[0].set_title("X & Y over Time")
     axs[0].legend()
-    axs[0].grid(True)
+    axs[0].grid(visible=True)
 
     # 3.2 Plot linear speed over time
     axs[1].plot(times, linear_speeds, label="Linear speed")
     axs[1].set_ylabel("v_lin")
     axs[1].set_title("Linear Speed")
-    axs[1].grid(True)
+    axs[1].grid(visible=True)
 
     # 3.3 Plot angular speed over time
     axs[2].plot(times, angular_speeds, label="Angular speed")
     axs[2].set_ylabel("v_ang")
     axs[2].set_title("Angular Speed")
-    axs[2].grid(True)
+    axs[2].grid(visible=True)
 
     # 3.4 Plot trajectory planner time elapsed
     axs[3].plot(times, traj_times, label="Planned traj time")
     axs[3].set_ylabel("t_traj")
     axs[3].set_title("Trajectory Planner Time Elapsed")
-    axs[3].grid(True)
+    axs[3].grid(visible=True)
 
     # 3.5 Plot distance to enemy over time
     axs[4].plot(times, distances_to_enemy, label="Distance to Enemy")
     axs[4].set_xlabel("Time (s)")
     axs[4].set_ylabel("Distance")
     axs[4].set_title("Distance to Enemy over Time")
-    axs[4].grid(True)
+    axs[4].grid(visible=True)
 
     plt.tight_layout()
     plt.show()
 
     # 4) Plot 2D spatial path (trajectory in space)
-    fig, ax = plt.subplots(figsize=(8, 8))
+    _, ax = plt.subplots(figsize=(8, 8))
     ax.plot(x_positions, y_positions, marker="o", markersize=3, label="Path")
     ax.set_xlabel("X Position")
     ax.set_ylabel("Y Position")
     ax.set_title("2D Trajectory of Robot")
-    ax.grid(True)
+    ax.grid(visible=True)
     ax.legend()
     plt.axis("equal")
     plt.show()

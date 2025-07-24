@@ -19,33 +19,20 @@ common\GPIO\__init__.py:
 
 common\GPIO\dummy_gpio.py:
    1:1  D100 Missing docstring in public module
-   1:7  D101 Missing docstring in public class
-   2:9  D107 Missing docstring in `__init__`
-   6:9  D102 Missing docstring in public method
-   9:9  D102 Missing docstring in public method
-  12:9  D102 Missing docstring in public method
-  31:9  D102 Missing docstring in public method
-  31:32 FBT001 Boolean-typed positional argument in function definition
-  31:32 FBT002 Boolean default positional argument in function definition
-  36:9  D102 Missing docstring in public method
-  36:29 FBT001 Boolean-typed positional argument in function definition
-  40:9  D102 Missing docstring in public method
-  55:25 PLR2004 Magic value used in comparison, consider replacing `1500` with a constant variable
-  58:20 C419 Unnecessary list comprehension
-  58:68 PLR2004 Magic value used in comparison, consider replacing `0.5` with a constant variable
-  60:31 FBT001 Boolean-typed positional argument in function definition
+  42:89 E501 Line too long (102 > 88)
+  48:9  D102 Missing docstring in public method
+  52:9  D102 Missing docstring in public method
+  67:25 PLR2004 Magic value used in comparison, consider replacing `1500` with a constant variable
+  70:20 C419 Unnecessary list comprehension
+  70:68 PLR2004 Magic value used in comparison, consider replacing `0.5` with a constant variable
 
 common\GPIO\gpio.py:
    1:1  D100 Missing docstring in public module
   12:9  D107 Missing docstring in `__init__`
-  18:32 FBT001 Boolean-typed positional argument in function definition
-  18:32 FBT002 Boolean default positional argument in function definition
   23:89 E501 Line too long (105 > 88)
-  47:29 FBT001 Boolean-typed positional argument in function definition
   75:89 E501 Line too long (110 > 88)
   78:20 C419 Unnecessary list comprehension
   78:68 PLR2004 Magic value used in comparison, consider replacing `0.5` with a constant variable
-  80:31 FBT001 Boolean-typed positional argument in function definition
 
 common\arena\2024_mars_arena\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -53,7 +40,6 @@ common\arena\2024_mars_arena\__init__.py:
 common\arena\2024_mars_arena\arena_old.py:
     1:1  D100 Missing docstring in public module
    22:5  D415 First line should end with a period, question mark, or exclamation point
-   24:9  PLR0913 Too many arguments in function definition (6 > 5)
    28:33 B008 Do not perform function call `create_straight_rectangle` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
    28:59 B008 Do not perform function call `Point` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
    28:72 B008 Do not perform function call `Point` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
@@ -63,8 +49,6 @@ common\arena\2024_mars_arena\arena_old.py:
    58:89 E501 Line too long (102 > 88)
    61:9  D415 First line should end with a period, question mark, or exclamation point
    67:9  D102 Missing docstring in public method
-   71:43 FBT001 Boolean-typed positional argument in function definition
-   71:43 FBT002 Boolean default positional argument in function definition
    76:89 E501 Line too long (100 > 88)
    85:9  D102 Missing docstring in public method
    87:19 TRY003 Avoid specifying long messages outside the exception class
@@ -119,22 +103,10 @@ common\arena\2024_mars_arena\mars_arena_old.py:
   149:9  D102 Missing docstring in public method
   152:9  D102 Missing docstring in public method
   152:9  PLR6301 Method `sort_plant_zones` could be a function, class method, or static method
-  158:9  FBT001 Boolean-typed positional argument in function definition
-  158:9  FBT002 Boolean default positional argument in function definition
   174:16 RET504 Unnecessary assignment to `zones` before `return` statement
   176:9  D102 Missing docstring in public method
-  179:9  FBT001 Boolean-typed positional argument in function definition
-  179:9  FBT002 Boolean default positional argument in function definition
-  181:9  FBT001 Boolean-typed positional argument in function definition
-  181:9  FBT002 Boolean default positional argument in function definition
   199:9  D102 Missing docstring in public method
-  202:9  FBT001 Boolean-typed positional argument in function definition
-  202:9  FBT002 Boolean default positional argument in function definition
-  204:9  FBT001 Boolean-typed positional argument in function definition
-  204:9  FBT002 Boolean default positional argument in function definition
   222:9  D102 Missing docstring in public method
-  226:9  FBT001 Boolean-typed positional argument in function definition
-  226:9  FBT002 Boolean default positional argument in function definition
   235:9  D105 Missing docstring in magic method
   238:9  D102 Missing docstring in public method
   245:9  D102 Missing docstring in public method
@@ -150,8 +122,6 @@ common\arena\base_arena\arena.py:
     3:89 E501 Line too long (109 > 88)
     4:89 E501 Line too long (117 > 88)
    36:7  PLW1641 Object does not implement `__hash__` method
-   39:9  PLR0913 Too many arguments in function definition (9 > 5)
-   39:9  PLR0917 Too many positional arguments (9/5)
    51:89 E501 Line too long (99 > 88)
    57:89 E501 Line too long (89 > 88)
    61:89 E501 Line too long (91 > 88)
@@ -162,16 +132,11 @@ common\arena\base_arena\arena.py:
   157:9  D205 1 blank line required between summary line and description
   180:9  D205 1 blank line required between summary line and description
   201:89 E501 Line too long (93 > 88)
-  226:30 PLR6201 Use a set literal when testing for membership
-  243:9  FBT001 Boolean-typed positional argument in function definition
-  243:9  FBT002 Boolean default positional argument in function definition
   246:89 E501 Line too long (93 > 88)
   251:89 E501 Line too long (110 > 88)
   252:89 E501 Line too long (99 > 88)
   254:89 E501 Line too long (93 > 88)
   283:9  ERA001 Found commented-out code
-  290:9  FBT001 Boolean-typed positional argument in function definition
-  290:9  FBT002 Boolean default positional argument in function definition
   292:89 E501 Line too long (89 > 88)
   294:89 E501 Line too long (89 > 88)
   295:89 E501 Line too long (114 > 88)
@@ -180,50 +145,26 @@ common\arena\base_arena\arena.py:
   332:9  D102 Missing docstring in public method
   355:12 SIM101 Multiple `isinstance` calls for `goal`, merge into a single call
   360:89 E501 Line too long (102 > 88)
-  396:89 E501 Line too long (108 > 88)
-  403:89 E501 Line too long (121 > 88)
-  410:19 TRY003 Avoid specifying long messages outside the exception class
-  410:30 EM102 Exception must not use an f-string literal, assign to variable first
-  412:9  SIM110 Use `return any(zone and zone.polygon.intersects(element) for zone in zones_to_check)` instead of `for` loop
-  418:9  D415 First line should end with a period, question mark, or exclamation point
-  421:89 E501 Line too long (93 > 88)
-  434:9  PLR0913 Too many arguments in function definition (6 > 5)
-  434:9  PLR0917 Too many positional arguments (6/5)
-  449:89 E501 Line too long (95 > 88)
-  450:89 E501 Line too long (97 > 88)
-  517:9  PLR0913 Too many arguments in function definition (7 > 5)
-  517:9  PLR0917 Too many positional arguments (7/5)
-  526:9  D301 Use `r"""` if any backslashes in a docstring
-  538:89 E501 Line too long (123 > 88)
-  539:89 E501 Line too long (94 > 88)
-  566:9  PLR0913 Too many arguments in function definition (6 > 5)
-  566:9  PLR0917 Too many positional arguments (6/5)
-  570:9  FBT001 Boolean-typed positional argument in function definition
-  571:9  FBT001 Boolean-typed positional argument in function definition
-  572:9  FBT001 Boolean-typed positional argument in function definition
-  583:89 E501 Line too long (91 > 88)
-  606:89 E501 Line too long (97 > 88)
-  628:89 E501 Line too long (108 > 88)
-  658:9  C901 `visualize` is too complex (12 > 10)
-  658:9  PLR0913 Too many arguments in function definition (9 > 5)
-  658:9  PLR0917 Too many positional arguments (9/5)
-  658:9  PLR0912 Too many branches (13 > 12)
-  658:9  D102 Missing docstring in public method
-  661:9  FBT001 Boolean-typed positional argument in function definition
-  661:9  FBT002 Boolean default positional argument in function definition
-  664:9  FBT001 Boolean-typed positional argument in function definition
-  664:9  FBT002 Boolean default positional argument in function definition
-  665:9  FBT001 Boolean-typed positional argument in function definition
-  665:9  FBT002 Boolean default positional argument in function definition
-  667:9  FBT001 Boolean-typed positional argument in function definition
-  667:9  FBT002 Boolean default positional argument in function definition
-  688:13 FBT003 Boolean positional value in function call
-  689:13 FBT003 Boolean positional value in function call
-  699:17 FBT003 Boolean positional value in function call
-  711:21 FBT003 Boolean positional value in function call
-  721:13 FBT003 Boolean positional value in function call
-  722:13 FBT003 Boolean positional value in function call
-  730:13 FBT003 Boolean positional value in function call
+  383:89 E501 Line too long (90 > 88)
+  386:89 E501 Line too long (89 > 88)
+  420:89 E501 Line too long (108 > 88)
+  427:89 E501 Line too long (121 > 88)
+  434:19 TRY003 Avoid specifying long messages outside the exception class
+  434:30 EM102 Exception must not use an f-string literal, assign to variable first
+  436:9  SIM110 Use `return any(zone and zone.polygon.intersects(element) for zone in zones_to_check)` instead of `for` loop
+  442:9  D415 First line should end with a period, question mark, or exclamation point
+  445:89 E501 Line too long (93 > 88)
+  473:89 E501 Line too long (95 > 88)
+  474:89 E501 Line too long (97 > 88)
+  550:9  D301 Use `r"""` if any backslashes in a docstring
+  562:89 E501 Line too long (123 > 88)
+  563:89 E501 Line too long (94 > 88)
+  607:89 E501 Line too long (91 > 88)
+  630:89 E501 Line too long (97 > 88)
+  652:89 E501 Line too long (108 > 88)
+  682:9  C901 `visualize` is too complex (12 > 10)
+  682:9  PLR0912 Too many branches (13 > 12)
+  682:9  D102 Missing docstring in public method
 
 common\arena\base_arena\arena_zones\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -242,8 +183,6 @@ common\arena\base_arena\arena_zones\base_arena_zone.py:
    18:7  PLW1641 Object does not implement `__hash__` method
    18:7  B024 `BaseArenaZone` is an abstract base class, but it has no abstract methods or properties
    25:28 RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
-   27:9  PLR0913 Too many arguments in function definition (10 > 5)
-   27:9  PLR0917 Too many positional arguments (10/5)
    46:89 E501 Line too long (98 > 88)
    47:89 E501 Line too long (105 > 88)
    48:89 E501 Line too long (101 > 88)
@@ -288,8 +227,6 @@ common\arena\base_arena\arena_zones\color_reserved_zones\base_color_reserved_zon
    3:89 E501 Line too long (91 > 88)
    4:89 E501 Line too long (90 > 88)
   20:5  D205 1 blank line required between summary line and description
-  24:9  PLR0913 Too many arguments in function definition (10 > 5)
-  24:9  PLR0917 Too many positional arguments (10/5)
   43:89 E501 Line too long (139 > 88)
   44:89 E501 Line too long (98 > 88)
   45:89 E501 Line too long (109 > 88)
@@ -305,8 +242,6 @@ common\arena\base_arena\arena_zones\color_reserved_zones\blue_reserved_zone.py:
    3:89 E501 Line too long (98 > 88)
   18:5  D205 1 blank line required between summary line and description
   19:89 E501 Line too long (94 > 88)
-  22:9  PLR0913 Too many arguments in function definition (6 > 5)
-  22:9  PLR0917 Too many positional arguments (6/5)
   35:89 E501 Line too long (99 > 88)
   36:89 E501 Line too long (105 > 88)
   37:89 E501 Line too long (101 > 88)
@@ -319,8 +254,6 @@ common\arena\base_arena\arena_zones\color_reserved_zones\yellow_reserved_zone.py
    3:89 E501 Line too long (98 > 88)
   18:5  D205 1 blank line required between summary line and description
   19:89 E501 Line too long (94 > 88)
-  22:9  PLR0913 Too many arguments in function definition (6 > 5)
-  22:9  PLR0917 Too many positional arguments (6/5)
   35:89 E501 Line too long (99 > 88)
   36:89 E501 Line too long (105 > 88)
   37:89 E501 Line too long (101 > 88)
@@ -331,8 +264,6 @@ common\arena\base_arena\arena_zones\forbidden_zone.py:
    1:1  D100 Missing docstring in public module
    2:89 E501 Line too long (107 > 88)
    3:89 E501 Line too long (103 > 88)
-  17:9  PLR0913 Too many arguments in function definition (6 > 5)
-  17:9  PLR0917 Too many positional arguments (6/5)
   30:89 E501 Line too long (124 > 88)
   31:89 E501 Line too long (98 > 88)
   32:89 E501 Line too long (105 > 88)
@@ -351,8 +282,6 @@ common\arena\base_arena\arena_zones\speed_vector_auto_calculate_zones\base_speed
     5:89 E501 Line too long (94 > 88)
    25:5  D205 1 blank line required between summary line and description
    25:89 E501 Line too long (101 > 88)
-   29:9  PLR0913 Too many arguments in function definition (13 > 5)
-   29:9  PLR0917 Too many positional arguments (13/5)
    37:26 RUF013 PEP 484 prohibits implicit `Optional`
    41:29 RUF013 PEP 484 prohibits implicit `Optional`
    42:37 B008 Do not perform function call `SpeedVector` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
@@ -374,8 +303,6 @@ common\arena\base_arena\arena_zones\speed_vector_auto_calculate_zones\enemy_zone
    3:89 E501 Line too long (90 > 88)
    9:89 E501 Line too long (114 > 88)
   17:5  D205 1 blank line required between summary line and description
-  21:9  PLR0913 Too many arguments in function definition (6 > 5)
-  21:9  PLR0917 Too many positional arguments (6/5)
   36:89 E501 Line too long (103 > 88)
   37:89 E501 Line too long (103 > 88)
   38:89 E501 Line too long (105 > 88)
@@ -389,8 +316,6 @@ common\arena\base_arena\arena_zones\stuff_zone.py:
     1:1  D100 Missing docstring in public module
     2:89 E501 Line too long (91 > 88)
     3:89 E501 Line too long (100 > 88)
-   26:9  PLR0913 Too many arguments in function definition (6 > 5)
-   26:9  PLR0917 Too many positional arguments (6/5)
    39:89 E501 Line too long (98 > 88)
    40:89 E501 Line too long (105 > 88)
    41:89 E501 Line too long (101 > 88)
@@ -412,9 +337,7 @@ common\arena\base_arena\grid_manager.py:
    23:7  PLW1641 Object does not implement `__hash__` method
    24:5  D205 1 blank line required between summary line and description
    30:89 E501 Line too long (96 > 88)
-   92:65 FBT001 Boolean-typed positional argument in function definition
   115:29 C419 Unnecessary list comprehension
-  138:9  FBT001 Boolean-typed positional argument in function definition
   207:89 E501 Line too long (102 > 88)
   208:89 E501 Line too long (104 > 88)
   209:89 E501 Line too long (112 > 88)
@@ -424,25 +347,16 @@ common\arena\base_arena\grid_manager.py:
   282:9  SIM103 Return the negated condition directly
   302:89 E501 Line too long (95 > 88)
   319:89 E501 Line too long (109 > 88)
-  411:9  FBT001 Boolean-typed positional argument in function definition
-  411:9  FBT002 Boolean default positional argument in function definition
-  413:9  FBT001 Boolean-typed positional argument in function definition
-  413:9  FBT002 Boolean default positional argument in function definition
   419:89 E501 Line too long (105 > 88)
   420:89 E501 Line too long (98 > 88)
   422:89 E501 Line too long (106 > 88)
-  465:17 FBT003 Boolean positional value in function call
 
 common\arena\base_arena\grid_manager_2.py:
     1:1  D100 Missing docstring in public module
    44:89 E501 Line too long (97 > 88)
-   73:61 FBT001 Boolean-typed positional argument in function definition
-  237:9  FBT001 Boolean-typed positional argument in function definition
-  237:9  FBT002 Boolean default positional argument in function definition
   243:89 E501 Line too long (101 > 88)
   244:89 E501 Line too long (97 > 88)
   248:9  RUF059 Unpacked variable `fig` is never used
-  270:17 FBT003 Boolean positional value in function call
 
 common\arena\base_arena\team_color.py:
   1:1 D100 Missing docstring in public module
@@ -454,8 +368,6 @@ common\arena\show_arena\arena.py:
     1:1  D100 Missing docstring in public module
    21:7  PLW1641 Object does not implement `__hash__` method
    21:7  D101 Missing docstring in public class
-   22:9  PLR0913 Too many arguments in function definition (9 > 5)
-   22:9  PLR0917 Too many positional arguments (9/5)
    22:9  D107 Missing docstring in `__init__`
   212:21 ERA001 Found commented-out code
   212:89 E501 Line too long (90 > 88)
@@ -666,12 +578,8 @@ common\navigation\avoidance\acs_detection_profiles\no_acs_detection_profile\__in
 
 common\navigation\avoidance\acs_detection_profiles\no_acs_detection_profile\no_acs_detection_profile.py:
    1:1  D100 Missing docstring in public module
-   5:89 E501 Line too long (114 > 88)
-  17:89 E501 Line too long (94 > 88)
-  21:9  D102 Missing docstring in public method
-  21:9  PLR6301 Method `is_acs_triggered` could be a function, class method, or static method
-  21:32 ARG002 Unused method argument: `ally_zone`
-  21:53 ARG002 Unused method argument: `enemy_zone`
+   7:89 E501 Line too long (114 > 88)
+  19:89 E501 Line too long (94 > 88)
 
 common\navigation\avoidance\acs_detection_profiles\no_acs_detection_profile\no_acs_detection_profile_params.py:
   1:1 D100 Missing docstring in public module
@@ -814,25 +722,18 @@ common\navigation\debug_functions\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\debug_functions\navigator.py:
-    1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (92 > 88)
-    3:89 E501 Line too long (90 > 88)
-    5:85 RUF003 Comment contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
-   18:5  PLR0915 Too many statements (82 > 50)
-   18:5  PLR0914 Too many local variables (17/15)
-   21:24 PT028 Test function parameter `time_step` has default argument
-   23:89 E501 Line too long (133 > 88)
-   34:89 E501 Line too long (101 > 88)
-   39:89 E501 Line too long (94 > 88)
-   83:17 SLF001 Private member accessed: `_get_trajectory_time_elapsed`
-   93:9  T201 `print` found
-  111:17 FBT003 Boolean positional value in function call
-  117:17 FBT003 Boolean positional value in function call
-  123:17 FBT003 Boolean positional value in function call
-  129:17 FBT003 Boolean positional value in function call
-  136:17 FBT003 Boolean positional value in function call
-  142:5  RUF059 Unpacked variable `fig` is never used
-  147:13 FBT003 Boolean positional value in function call
+   1:1  D100 Missing docstring in public module
+   2:89 E501 Line too long (92 > 88)
+   3:89 E501 Line too long (90 > 88)
+   5:85 RUF003 Comment contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
+  18:5  PLR0915 Too many statements (82 > 50)
+  18:5  PLR0914 Too many local variables (16/15)
+  21:24 PT028 Test function parameter `time_step` has default argument
+  23:89 E501 Line too long (133 > 88)
+  34:89 E501 Line too long (101 > 88)
+  39:89 E501 Line too long (94 > 88)
+  83:17 SLF001 Private member accessed: `_get_trajectory_time_elapsed`
+  93:9  T201 `print` found
 
 common\navigation\debug_functions\speed_profile.py:
    1:1  D100 Missing docstring in public module
@@ -847,22 +748,16 @@ common\navigation\debug_functions\speed_profile.py:
   29:5  T201 `print` found
 
 common\navigation\debug_functions\trajectory_planer.py:
-    1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (98 > 88)
-    3:89 E501 Line too long (97 > 88)
-    4:89 E501 Line too long (105 > 88)
-   12:89 E501 Line too long (91 > 88)
-   17:5  PLR0915 Too many statements (69 > 50)
-   17:5  PLR0914 Too many local variables (16/15)
-   20:24 PT028 Test function parameter `time_step` has default argument
-   25:89 E501 Line too long (92 > 88)
-   29:5  T201 `print` found
-   55:5  RUF059 Unpacked variable `fig` is never used
-   62:20 FBT003 Boolean positional value in function call
-   69:20 FBT003 Boolean positional value in function call
-   86:14 FBT003 Boolean positional value in function call
-   93:20 FBT003 Boolean positional value in function call
-  137:14 FBT003 Boolean positional value in function call
+   1:1  D100 Missing docstring in public module
+   2:89 E501 Line too long (98 > 88)
+   3:89 E501 Line too long (97 > 88)
+   4:89 E501 Line too long (105 > 88)
+  12:89 E501 Line too long (91 > 88)
+  17:5  PLR0915 Too many statements (69 > 50)
+  17:5  PLR0914 Too many local variables (16/15)
+  20:24 PT028 Test function parameter `time_step` has default argument
+  25:89 E501 Line too long (92 > 88)
+  29:5  T201 `print` found
 
 common\navigation\navigator\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -873,14 +768,10 @@ common\navigation\navigator\core\__init__.py:
 common\navigation\navigator\core\navigator.py:
     1:1  D100 Missing docstring in public module
    25:89 E501 Line too long (94 > 88)
-   57:9  FBT001 Boolean-typed positional argument in function definition
-   57:9  FBT002 Boolean default positional argument in function definition
    62:89 E501 Line too long (96 > 88)
    63:89 E501 Line too long (121 > 88)
    91:89 E501 Line too long (143 > 88)
    93:89 E501 Line too long (100 > 88)
-  120:21 FBT001 Boolean-typed positional argument in function definition
-  120:21 FBT002 Boolean default positional argument in function definition
   124:89 E501 Line too long (118 > 88)
 
 common\navigation\navigator\core\states.py:
@@ -916,8 +807,6 @@ common\navigation\navigator\task\navigator_task.py:
 
 common\navigation\navigator\task\navigator_task_params.py:
    1:1  D100 Missing docstring in public module
-  12:9  PLR0913 Too many arguments in function definition (8 > 5)
-  12:9  PLR0917 Too many positional arguments (8/5)
   31:89 E501 Line too long (93 > 88)
   32:89 E501 Line too long (111 > 88)
   35:89 E501 Line too long (119 > 88)
@@ -941,7 +830,6 @@ common\navigation\path_planner\astar_path_planner\astar_path_planner.py:
    66:89 E501 Line too long (89 > 88)
   101:89 E501 Line too long (95 > 88)
   105:89 E501 Line too long (113 > 88)
-  131:9  FBT001 Boolean-typed positional argument in function definition
   183:89 E501 Line too long (90 > 88)
   192:25 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
   196:25 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
@@ -955,8 +843,6 @@ common\navigation\path_planner\astar_path_planner\astar_path_planner.py:
 
 common\navigation\path_planner\astar_path_planner\astar_path_planner_params.py:
    1:1  D100 Missing docstring in public module
-  16:9  PLR0913 Too many arguments in function definition (6 > 5)
-  16:9  PLR0917 Too many positional arguments (6/5)
   33:89 E501 Line too long (141 > 88)
 
 common\navigation\path_planner\base_path_planner\__init__.py:
@@ -1154,10 +1040,6 @@ common\navigation\trajectory_planner\sequential_trajectory_planner\sequential_tr
    1:1  D100 Missing docstring in public module
    3:89 E501 Line too long (96 > 88)
    7:89 E501 Line too long (98 > 88)
-  20:9  FBT001 Boolean-typed positional argument in function definition
-  20:9  FBT002 Boolean default positional argument in function definition
-  21:9  FBT001 Boolean-typed positional argument in function definition
-  21:9  FBT002 Boolean default positional argument in function definition
   26:89 E501 Line too long (91 > 88)
   28:89 E501 Line too long (98 > 88)
   30:89 E501 Line too long (89 > 88)
@@ -1259,15 +1141,13 @@ common\strategy\core\builders\subgraph_builder.py:
 
 common\strategy\core\graph_runner.py:
     1:1  D100 Missing docstring in public module
-   19:9  FBT001 Boolean-typed positional argument in function definition
-   19:9  FBT002 Boolean default positional argument in function definition
    25:89 E501 Line too long (94 > 88)
    37:89 E501 Line too long (96 > 88)
-   89:89 E501 Line too long (112 > 88)
-  102:89 E501 Line too long (133 > 88)
-  114:89 E501 Line too long (96 > 88)
-  119:89 E501 Line too long (94 > 88)
-  125:89 E501 Line too long (124 > 88)
+   94:89 E501 Line too long (112 > 88)
+  107:89 E501 Line too long (133 > 88)
+  119:89 E501 Line too long (96 > 88)
+  124:89 E501 Line too long (94 > 88)
+  130:89 E501 Line too long (124 > 88)
 
 common\strategy\core\sub_graphs\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1346,8 +1226,6 @@ common\strategy\core\tasks\__init__.py:
 common\strategy\core\tasks\base_navigation_task.py:
    1:1  D100 Missing docstring in public module
   22:7  D101 Missing docstring in public class
-  23:9  PLR0913 Too many arguments in function definition (9 > 5)
-  23:9  PLR0917 Too many positional arguments (9/5)
   38:89 E501 Line too long (91 > 88)
   39:89 E501 Line too long (89 > 88)
   40:89 E501 Line too long (107 > 88)
@@ -1428,18 +1306,14 @@ common\strategy\core\transitions\conditional_transition\transitions_condition\zo
    2:89 E501 Line too long (97 > 88)
    3:89 E501 Line too long (99 > 88)
    4:89 E501 Line too long (100 > 88)
-   9:89 E501 Line too long (110 > 88)
-  15:89 E501 Line too long (92 > 88)
-  17:89 E501 Line too long (89 > 88)
-  18:89 E501 Line too long (89 > 88)
-  21:38 FBT001 Boolean-typed positional argument in function definition
-  21:38 FBT002 Boolean default positional argument in function definition
-  25:89 E501 Line too long (90 > 88)
-  26:89 E501 Line too long (98 > 88)
-  33:9  ARG002 Unused method argument: `from_node`
-  34:9  ARG002 Unused method argument: `next_node`
-  42:89 E501 Line too long (90 > 88)
-  45:89 E501 Line too long (115 > 88)
+  12:89 E501 Line too long (110 > 88)
+  21:89 E501 Line too long (92 > 88)
+  23:89 E501 Line too long (89 > 88)
+  24:89 E501 Line too long (89 > 88)
+  31:89 E501 Line too long (98 > 88)
+  37:9  ARG002 Unused method argument: `from_node`
+  46:89 E501 Line too long (90 > 88)
+  49:89 E501 Line too long (115 > 88)
 
 common\strategy\core\transitions\direct_transition.py:
    1:1  D100 Missing docstring in public module
@@ -1457,14 +1331,10 @@ common\strategy\tools\visualize.py:
     2:89 E501 Line too long (94 > 88)
     3:89 E501 Line too long (102 > 88)
     4:89 E501 Line too long (107 > 88)
-   21:5  FBT001 Boolean-typed positional argument in function definition
-   21:5  FBT002 Boolean default positional argument in function definition
    27:89 E501 Line too long (94 > 88)
    28:89 E501 Line too long (103 > 88)
    75:5  T201 `print` found
    77:9  PLC0415 `import` should be at the top-level of a file
-   87:5  FBT001 Boolean-typed positional argument in function definition
-   87:5  FBT002 Boolean default positional argument in function definition
    93:89 E501 Line too long (94 > 88)
    94:89 E501 Line too long (103 > 88)
   139:5  T201 `print` found
@@ -1477,23 +1347,11 @@ common\teensy\__init__.py:
 common\teensy\base_teensy.py:
    1:1  D100 Missing docstring in public module
   15:89 E501 Line too long (109 > 88)
-  17:9  PLR0913 Too many arguments in function definition (7 > 5)
-  17:9  PLR0917 Too many positional arguments (7/5)
-  24:9  FBT001 Boolean-typed positional argument in function definition
-  24:9  FBT002 Boolean default positional argument in function definition
-  25:9  FBT001 Boolean-typed positional argument in function definition
-  25:9  FBT002 Boolean default positional argument in function definition
   36:89 E501 Line too long (94 > 88)
 
 common\teensy\gpio_teensy.py:
    1:1  D100 Missing docstring in public module
    3:89 E501 Line too long (91 > 88)
-  15:9  PLR0913 Too many arguments in function definition (7 > 5)
-  15:9  PLR0917 Too many positional arguments (7/5)
-  22:9  FBT001 Boolean-typed positional argument in function definition
-  22:9  FBT002 Boolean default positional argument in function definition
-  23:9  FBT001 Boolean-typed positional argument in function definition
-  23:9  FBT002 Boolean default positional argument in function definition
   25:89 E501 Line too long (101 > 88)
   33:89 E501 Line too long (93 > 88)
   34:89 E501 Line too long (95 > 88)
@@ -1527,12 +1385,6 @@ common\usb_com\python\com\__init__.py:
 common\usb_com\python\com\com.py:
     1:1  D100 Missing docstring in public module
    24:5  D205 1 blank line required between summary line and description
-   28:9  PLR0913 Too many arguments in function definition (7 > 5)
-   28:9  PLR0917 Too many positional arguments (7/5)
-   35:9  FBT001 Boolean-typed positional argument in function definition
-   35:9  FBT002 Boolean default positional argument in function definition
-   36:9  FBT001 Boolean-typed positional argument in function definition
-   36:9  FBT002 Boolean default positional argument in function definition
    46:89 E501 Line too long (96 > 88)
    47:89 E501 Line too long (95 > 88)
    65:89 E501 Line too long (108 > 88)
@@ -1816,8 +1668,6 @@ robot1\rasp\brains\__init__.py:
 
 robot1\rasp\brains\main_brain.py:
     1:1  D100 Missing docstring in public module
-   27:9  PLR0913 Too many arguments in function definition (6 > 5)
-   27:9  PLR0917 Too many positional arguments (6/5)
   116:9  PLC0415 `import` should be at the top-level of a file
   117:9  PLC0415 `import` should be at the top-level of a file
   128:9  ERA001 Found commented-out code
@@ -1848,15 +1698,7 @@ robot1\rasp\controllers\actuators\actuators_dummy.py:
     3:28 PLC2701 Private name import `_config_loader`
     8:5  D205 1 blank line required between summary line and description
     8:89 E501 Line too long (98 > 88)
-   12:9  PLR0913 Too many arguments in function definition (6 > 5)
-   12:9  PLR0917 Too many positional arguments (6/5)
-   19:9  FBT001 Boolean-typed positional argument in function definition
-   39:13 FBT003 Boolean positional value in function call
    44:9  D105 Missing docstring in magic method
-   52:9  FBT001 Boolean-typed positional argument in function definition
-   52:9  FBT002 Boolean default positional argument in function definition
-   73:9  FBT001 Boolean-typed positional argument in function definition
-   73:9  FBT002 Boolean default positional argument in function definition
   113:89 E501 Line too long (96 > 88)
   117:89 E501 Line too long (107 > 88)
 
@@ -1872,10 +1714,6 @@ robot1\rasp\controllers\actuators\actuators_show.py:
    41:5  D205 1 blank line required between summary line and description
    41:89 E501 Line too long (106 > 88)
    42:89 E501 Line too long (110 > 88)
-   45:9  PLR0913 Too many arguments in function definition (7 > 5)
-   45:9  PLR0917 Too many positional arguments (7/5)
-   52:9  FBT001 Boolean-typed positional argument in function definition
-   53:9  FBT001 Boolean-typed positional argument in function definition
    59:89 E501 Line too long (115 > 88)
    60:89 E501 Line too long (92 > 88)
    61:89 E501 Line too long (93 > 88)
@@ -1948,10 +1786,6 @@ robot1\rasp\controllers\actuators\base\actuators.py:
     1:1  INP001 File `robot1\rasp\controllers\actuators\base\actuators.py` is part of an implicit namespace package. Add an `__init__.py`.
     1:1  D100 Missing docstring in public module
     6:28 PLC2701 Private name import `_config_loader`
-   20:9  PLR0913 Too many arguments in function definition (7 > 5)
-   20:9  PLR0917 Too many positional arguments (7/5)
-   27:9  FBT001 Boolean-typed positional argument in function definition
-   28:9  FBT001 Boolean-typed positional argument in function definition
    34:89 E501 Line too long (115 > 88)
    35:89 E501 Line too long (92 > 88)
    36:89 E501 Line too long (93 > 88)
@@ -1960,21 +1794,12 @@ robot1\rasp\controllers\actuators\base\actuators.py:
    39:89 E501 Line too long (105 > 88)
    69:9  D105 Missing docstring in magic method
    82:13 G003 Logging statement uses `+`
-  116:9  FBT001 Boolean-typed positional argument in function definition
   120:89 E501 Line too long (93 > 88)
-  134:52 FBT001 Boolean-typed positional argument in function definition
-  134:52 FBT002 Boolean default positional argument in function definition
   135:9  D205 1 blank line required between summary line and description
   135:9  DOC202 Docstring should not have a returns section because the function doesn't return anything
   141:89 E501 Line too long (114 > 88)
   150:89 E501 Line too long (92 > 88)
   167:9  ERA001 Found commented-out code
-  183:9  PLR0913 Too many arguments in function definition (7 > 5)
-  183:9  PLR0917 Too many positional arguments (7/5)
-  189:9  FBT001 Boolean-typed positional argument in function definition
-  189:9  FBT002 Boolean default positional argument in function definition
-  193:9  FBT001 Boolean-typed positional argument in function definition
-  193:9  FBT002 Boolean default positional argument in function definition
   193:9  N803 Argument name `use_I2C` should be lowercase
   200:89 E501 Line too long (94 > 88)
   201:89 E501 Line too long (96 > 88)
@@ -1995,10 +1820,6 @@ robot1\rasp\controllers\rolling_basis\asservissment_rolling_basis.py:
    18:7  PLW1641 Object does not implement `__hash__` method
    21:89 E501 Line too long (105 > 88)
    22:89 E501 Line too long (104 > 88)
-   25:9  PLR0913 Too many arguments in function definition (7 > 5)
-   25:9  PLR0917 Too many positional arguments (7/5)
-   32:9  FBT001 Boolean-typed positional argument in function definition
-   33:9  FBT001 Boolean-typed positional argument in function definition
    39:89 E501 Line too long (120 > 88)
    40:89 E501 Line too long (92 > 88)
    41:89 E501 Line too long (93 > 88)
@@ -2009,26 +1830,26 @@ robot1\rasp\controllers\rolling_basis\asservissment_rolling_basis.py:
   148:9  D205 1 blank line required between summary line and description
   173:9  S101 Use of `assert` detected
   184:89 E501 Line too long (133 > 88)
-  279:89 E501 Line too long (91 > 88)
-  286:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  293:17 TRY301 Abstract `raise` to an inner function
-  293:23 TRY003 Avoid specifying long messages outside the exception class
-  294:21 EM101 Exception must not use a string literal, assign to variable first
-  298:16 BLE001 Do not catch blind exception: `Exception`
-  299:13 TRY400 Use `logging.exception` instead of `logging.error`
-  309:89 E501 Line too long (91 > 88)
-  316:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  323:17 TRY301 Abstract `raise` to an inner function
-  323:23 TRY003 Avoid specifying long messages outside the exception class
-  324:21 EM101 Exception must not use a string literal, assign to variable first
-  328:16 BLE001 Do not catch blind exception: `Exception`
-  329:13 TRY400 Use `logging.exception` instead of `logging.error`
-  339:89 E501 Line too long (91 > 88)
-  340:89 E501 Line too long (93 > 88)
-  354:16 BLE001 Do not catch blind exception: `Exception`
-  355:13 TRY400 Use `logging.exception` instead of `logging.error`
-  360:9  D105 Missing docstring in magic method
-  369:9  D105 Missing docstring in magic method
+  291:89 E501 Line too long (129 > 88)
+  298:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  305:17 TRY301 Abstract `raise` to an inner function
+  305:23 TRY003 Avoid specifying long messages outside the exception class
+  306:21 EM101 Exception must not use a string literal, assign to variable first
+  310:16 BLE001 Do not catch blind exception: `Exception`
+  311:13 TRY400 Use `logging.exception` instead of `logging.error`
+  333:89 E501 Line too long (129 > 88)
+  340:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  347:17 TRY301 Abstract `raise` to an inner function
+  347:23 TRY003 Avoid specifying long messages outside the exception class
+  348:21 EM101 Exception must not use a string literal, assign to variable first
+  352:16 BLE001 Do not catch blind exception: `Exception`
+  353:13 TRY400 Use `logging.exception` instead of `logging.error`
+  363:89 E501 Line too long (91 > 88)
+  364:89 E501 Line too long (93 > 88)
+  378:16 BLE001 Do not catch blind exception: `Exception`
+  379:13 TRY400 Use `logging.exception` instead of `logging.error`
+  384:9  D105 Missing docstring in magic method
+  393:9  D105 Missing docstring in magic method
 
 robot1\rasp\controllers\rolling_basis\pids.py:
    1:1  D100 Missing docstring in public module
@@ -2036,73 +1857,65 @@ robot1\rasp\controllers\rolling_basis\pids.py:
 
 robot1\rasp\controllers\rolling_basis\rolling_basis.py:
     1:1  D100 Missing docstring in public module
-    6:28 PLC2701 Private name import `_config_loader`
-   13:7  PLW1641 Object does not implement `__hash__` method
-   16:89 E501 Line too long (105 > 88)
-   20:9  PLR0913 Too many arguments in function definition (7 > 5)
-   20:9  PLR0917 Too many positional arguments (7/5)
-   27:9  FBT001 Boolean-typed positional argument in function definition
-   28:9  FBT001 Boolean-typed positional argument in function definition
-   34:89 E501 Line too long (120 > 88)
-   35:89 E501 Line too long (92 > 88)
-   36:89 E501 Line too long (93 > 88)
-   37:89 E501 Line too long (113 > 88)
-   38:89 E501 Line too long (101 > 88)
-   39:89 E501 Line too long (105 > 88)
-   73:9  ERA001 Found commented-out code
-   87:13 G003 Logging statement uses `+`
-  184:89 E501 Line too long (91 > 88)
-  191:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  198:17 TRY301 Abstract `raise` to an inner function
-  198:23 TRY003 Avoid specifying long messages outside the exception class
-  199:21 EM101 Exception must not use a string literal, assign to variable first
-  203:16 BLE001 Do not catch blind exception: `Exception`
-  204:13 TRY400 Use `logging.exception` instead of `logging.error`
-  212:89 E501 Line too long (91 > 88)
-  219:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  226:17 TRY301 Abstract `raise` to an inner function
-  226:23 TRY003 Avoid specifying long messages outside the exception class
-  227:21 EM101 Exception must not use a string literal, assign to variable first
-  231:16 BLE001 Do not catch blind exception: `Exception`
-  232:13 TRY400 Use `logging.exception` instead of `logging.error`
-  242:89 E501 Line too long (90 > 88)
-  243:89 E501 Line too long (92 > 88)
-  257:16 BLE001 Do not catch blind exception: `Exception`
-  258:13 TRY400 Use `logging.exception` instead of `logging.error`
+    7:28 PLC2701 Private name import `_config_loader`
+   14:7  PLW1641 Object does not implement `__hash__` method
+   17:89 E501 Line too long (105 > 88)
+   35:89 E501 Line too long (120 > 88)
+   36:89 E501 Line too long (92 > 88)
+   37:89 E501 Line too long (93 > 88)
+   38:89 E501 Line too long (113 > 88)
+   39:89 E501 Line too long (101 > 88)
+   40:89 E501 Line too long (105 > 88)
+   74:9  ERA001 Found commented-out code
+   88:13 G003 Logging statement uses `+`
+  197:89 E501 Line too long (129 > 88)
+  204:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  211:17 TRY301 Abstract `raise` to an inner function
+  211:23 TRY003 Avoid specifying long messages outside the exception class
+  212:21 EM101 Exception must not use a string literal, assign to variable first
+  216:16 BLE001 Do not catch blind exception: `Exception`
+  217:13 TRY400 Use `logging.exception` instead of `logging.error`
+  239:89 E501 Line too long (129 > 88)
+  246:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  253:17 TRY301 Abstract `raise` to an inner function
+  253:23 TRY003 Avoid specifying long messages outside the exception class
+  254:21 EM101 Exception must not use a string literal, assign to variable first
+  258:16 BLE001 Do not catch blind exception: `Exception`
+  259:13 TRY400 Use `logging.exception` instead of `logging.error`
+  269:89 E501 Line too long (90 > 88)
+  270:89 E501 Line too long (92 > 88)
+  284:16 BLE001 Do not catch blind exception: `Exception`
+  285:13 TRY400 Use `logging.exception` instead of `logging.error`
 
 robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
     1:1  D100 Missing docstring in public module
-    3:28 PLC2701 Private name import `_config_loader`
-    9:7  PLW1641 Object does not implement `__hash__` method
-   12:89 E501 Line too long (105 > 88)
-   16:9  PLR0913 Too many arguments in function definition (6 > 5)
-   16:9  PLR0917 Too many positional arguments (6/5)
-   23:9  FBT001 Boolean-typed positional argument in function definition
-   29:89 E501 Line too long (120 > 88)
-   30:89 E501 Line too long (92 > 88)
-   31:89 E501 Line too long (93 > 88)
-   32:89 E501 Line too long (113 > 88)
-   33:89 E501 Line too long (101 > 88)
-   36:81 FBT003 Boolean positional value in function call
-   50:9  ERA001 Found commented-out code
-   99:89 E501 Line too long (91 > 88)
-  106:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  113:17 TRY301 Abstract `raise` to an inner function
-  113:23 TRY003 Avoid specifying long messages outside the exception class
-  114:21 EM101 Exception must not use a string literal, assign to variable first
-  118:16 BLE001 Do not catch blind exception: `Exception`
-  119:13 TRY400 Use `logging.exception` instead of `logging.error`
-  127:89 E501 Line too long (91 > 88)
-  134:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  141:17 TRY301 Abstract `raise` to an inner function
-  141:23 TRY003 Avoid specifying long messages outside the exception class
-  142:21 EM101 Exception must not use a string literal, assign to variable first
-  146:16 BLE001 Do not catch blind exception: `Exception`
-  147:13 TRY400 Use `logging.exception` instead of `logging.error`
-  157:89 E501 Line too long (90 > 88)
-  158:89 E501 Line too long (92 > 88)
-  170:16 BLE001 Do not catch blind exception: `Exception`
-  171:13 TRY400 Use `logging.exception` instead of `logging.error`
+    5:28 PLC2701 Private name import `_config_loader`
+   11:7  PLW1641 Object does not implement `__hash__` method
+   14:89 E501 Line too long (105 > 88)
+   31:89 E501 Line too long (120 > 88)
+   32:89 E501 Line too long (92 > 88)
+   33:89 E501 Line too long (93 > 88)
+   34:89 E501 Line too long (113 > 88)
+   35:89 E501 Line too long (101 > 88)
+   60:9  ERA001 Found commented-out code
+  121:89 E501 Line too long (129 > 88)
+  128:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  135:17 TRY301 Abstract `raise` to an inner function
+  135:23 TRY003 Avoid specifying long messages outside the exception class
+  136:21 EM101 Exception must not use a string literal, assign to variable first
+  140:16 BLE001 Do not catch blind exception: `Exception`
+  141:13 TRY400 Use `logging.exception` instead of `logging.error`
+  163:89 E501 Line too long (129 > 88)
+  170:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  177:17 TRY301 Abstract `raise` to an inner function
+  177:23 TRY003 Avoid specifying long messages outside the exception class
+  178:21 EM101 Exception must not use a string literal, assign to variable first
+  182:16 BLE001 Do not catch blind exception: `Exception`
+  183:13 TRY400 Use `logging.exception` instead of `logging.error`
+  193:89 E501 Line too long (90 > 88)
+  194:89 E501 Line too long (92 > 88)
+  206:16 BLE001 Do not catch blind exception: `Exception`
+  207:13 TRY400 Use `logging.exception` instead of `logging.error`
 
 robot1\rasp\main.py:
     1:1  D100 Missing docstring in public module
@@ -2132,49 +1945,42 @@ robot1\rasp\sensors\lidar\__init__.py:
 
 robot1\rasp\sensors\lidar\lidar.py:
     1:1  D100 Missing docstring in public module
-    9:35 F821 Undefined name `pysicktim`
-   20:89 E501 Line too long (113 > 88)
-   27:9  PLR0913 Too many arguments in function definition (7 > 5)
-   27:9  PLR0917 Too many positional arguments (7/5)
-   41:89 E501 Line too long (95 > 88)
-   49:89 E501 Line too long (110 > 88)
-   50:89 E501 Line too long (122 > 88)
-   81:13 PLC0415 `import` should be at the top-level of a file
-   85:17 TRY301 Abstract `raise` to an inner function
-   85:23 TRY003 Avoid specifying long messages outside the exception class
-   85:39 EM101 Exception must not use a string literal, assign to variable first
-   92:17 TRY301 Abstract `raise` to an inner function
-   92:23 TRY003 Avoid specifying long messages outside the exception class
-   92:39 EM101 Exception must not use a string literal, assign to variable first
-   94:13 TRY300 Consider moving this statement to an `else` block
-   98:19 TRY003 Avoid specifying long messages outside the exception class
-   98:31 EM102 Exception must not use an f-string literal, assign to variable first
-  101:89 E501 Line too long (105 > 88)
-  110:89 E501 Line too long (101 > 88)
-  116:24 BLE001 Do not catch blind exception: `Exception`
-  118:89 E501 Line too long (91 > 88)
-  146:89 E501 Line too long (116 > 88)
-  153:19 TRY003 Avoid specifying long messages outside the exception class
-  153:30 EM101 Exception must not use a string literal, assign to variable first
-  175:15 TRY003 Avoid specifying long messages outside the exception class
-  175:26 EM102 Exception must not use an f-string literal, assign to variable first
-  199:15 TRY003 Avoid specifying long messages outside the exception class
-  199:26 EM102 Exception must not use an f-string literal, assign to variable first
-  202:89 E501 Line too long (91 > 88)
-  211:16 BLE001 Do not catch blind exception: `Exception`
-  213:13 TRY400 Use `logging.exception` instead of `logging.error`
-  221:13 B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
-  221:19 TRY002 Create your own exception
-  221:19 TRY003 Avoid specifying long messages outside the exception class
-  221:29 EM102 Exception must not use an f-string literal, assign to variable first
-  227:28 FBT001 Boolean-typed positional argument in function definition
-  227:28 FBT002 Boolean default positional argument in function definition
-  231:89 E501 Line too long (102 > 88)
+   24:89 E501 Line too long (113 > 88)
+   45:89 E501 Line too long (95 > 88)
+   53:89 E501 Line too long (110 > 88)
+   54:89 E501 Line too long (122 > 88)
+   85:13 PLC0415 `import` should be at the top-level of a file
+   89:17 TRY301 Abstract `raise` to an inner function
+   89:23 TRY003 Avoid specifying long messages outside the exception class
+   89:39 EM101 Exception must not use a string literal, assign to variable first
+   96:17 TRY301 Abstract `raise` to an inner function
+   96:23 TRY003 Avoid specifying long messages outside the exception class
+   96:39 EM101 Exception must not use a string literal, assign to variable first
+   98:13 TRY300 Consider moving this statement to an `else` block
+  102:19 TRY003 Avoid specifying long messages outside the exception class
+  102:31 EM102 Exception must not use an f-string literal, assign to variable first
+  105:89 E501 Line too long (105 > 88)
+  114:89 E501 Line too long (101 > 88)
+  120:24 BLE001 Do not catch blind exception: `Exception`
+  122:89 E501 Line too long (91 > 88)
+  150:89 E501 Line too long (116 > 88)
+  157:19 TRY003 Avoid specifying long messages outside the exception class
+  157:30 EM101 Exception must not use a string literal, assign to variable first
+  179:15 TRY003 Avoid specifying long messages outside the exception class
+  179:26 EM102 Exception must not use an f-string literal, assign to variable first
+  203:15 TRY003 Avoid specifying long messages outside the exception class
+  203:26 EM102 Exception must not use an f-string literal, assign to variable first
+  206:89 E501 Line too long (91 > 88)
+  215:16 BLE001 Do not catch blind exception: `Exception`
+  217:13 TRY400 Use `logging.exception` instead of `logging.error`
+  225:13 B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  225:19 TRY002 Create your own exception
+  225:19 TRY003 Avoid specifying long messages outside the exception class
+  225:29 EM102 Exception must not use an f-string literal, assign to variable first
+  235:89 E501 Line too long (102 > 88)
 
 robot1\rasp\sensors\lidar\lidar_dummy.py:
     1:1  D100 Missing docstring in public module
-   13:9  PLR0913 Too many arguments in function definition (7 > 5)
-   13:9  PLR0917 Too many positional arguments (7/5)
    31:89 E501 Line too long (110 > 88)
    32:89 E501 Line too long (96 > 88)
    51:9  PLR6301 Method `__init_polars_angle` could be a function, class method, or static method
@@ -2182,14 +1988,8 @@ robot1\rasp\sensors\lidar\lidar_dummy.py:
    91:26 EM102 Exception must not use an f-string literal, assign to variable first
   117:15 TRY003 Avoid specifying long messages outside the exception class
   117:26 EM102 Exception must not use an f-string literal, assign to variable first
-  133:25 NPY002 Replace legacy `np.random.randint` call with `np.random.Generator`
-  135:28 NPY002 Replace legacy `np.random.uniform` call with `np.random.Generator`
-  139:30 NPY002 Replace legacy `np.random.randint` call with `np.random.Generator`
-  143:33 NPY002 Replace legacy `np.random.uniform` call with `np.random.Generator`
-  151:44 NPY002 Replace legacy `np.random.uniform` call with `np.random.Generator`
-  158:22 NPY002 Replace legacy `np.random.normal` call with `np.random.Generator`
-  176:9  F841 Local variable `valid_polars` is assigned to but never used
-  179:9  ERA001 Found commented-out code
+  184:9  F841 Local variable `valid_polars` is assigned to but never used
+  187:9  ERA001 Found commented-out code
 
 robot1\rasp\tests\config_loader.py:
     1:1  INP001 File `robot1\rasp\tests\config_loader.py` is part of an implicit namespace package. Add an `__init__.py`.
@@ -2213,17 +2013,4 @@ robot1\rasp\tests\config_loader.py:
   122:32 PTH118 `os.path.join()` should be replaced by `Path` with `/` operator
   126:41 PTH118 `os.path.join()` should be replaced by `Path` with `/` operator
 
-
-Fixed 6 errors:
-- common\navigation\path_planner\base_path_planner\base_path_planner.py:
-    1 × UP035 (deprecated-import)
-    1 × I001 (unsorted-imports)
-- common\navigation\trajectory_planner\base_trajectory_planner\base_trajectory_planner.py:
-    1 × UP035 (deprecated-import)
-    1 × I001 (unsorted-imports)
-- robot1\rasp\controllers\rolling_basis\rolling_basis.py:
-    1 × COM812 (missing-trailing-comma)
-- robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
-    1 × COM812 (missing-trailing-comma)
-
-Found 1783 errors (6 fixed, 1777 remaining).
+Found 1577 errors.

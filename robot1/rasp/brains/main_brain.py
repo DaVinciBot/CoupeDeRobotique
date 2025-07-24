@@ -42,7 +42,7 @@ class MainBrain(Brain):
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            lidar (Lidar): Lidar instance for distance measurements.
+            lidar (Lidar | LidarDummy): Lidar instance for distance measurements.
             arena (ShowArena): Arena instance for representing the game arena.
             ws_cmd (WServerRouteManager): WebSocket command route manager.
             ws_ui (WServerRouteManager): WebSocket UI route manager.
@@ -305,10 +305,14 @@ class MainBrain(Brain):
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
-            self.arena.team_color, start_position, enemy_position
+            self.arena.team_color,
+            start_position,
+            enemy_position,
         )
         self.arena.ally_zone.update(
-            self.arena.team_color, start_position, enemy_position
+            self.arena.team_color,
+            start_position,
+            enemy_position,
         )
         self.arena.update(
             ally_position=start_position,

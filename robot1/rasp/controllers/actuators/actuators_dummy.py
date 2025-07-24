@@ -36,7 +36,7 @@ class ActuatorsShowDummy(ActuatorsShow):
             pid,
             baudrate,
             enable_crc,
-            True,  # dummy hardware flag
+            enable_dummy=True,  # dummy hardware flag
         )
         # Default elevator position at bottom
         self.elevator_ticks: int = 0

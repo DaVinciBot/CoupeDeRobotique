@@ -98,11 +98,11 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         def wrapper(
             self: BaseAvoidance[ParamsType],
             current_navigator_task: NavigatorTask,
-            *args: object,
-            **kwargs: object,
+            ally_zone: AllyZone,
+            enemy_zone: EnemyZone,
         ) -> TrajectoryPlanCommand:
             self._store_original_task(current_navigator_task)
-            return method(self, current_navigator_task, *args, **kwargs)
+            return method(self, current_navigator_task, ally_zone, enemy_zone)
 
         return wrapper
 

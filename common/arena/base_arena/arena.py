@@ -223,7 +223,7 @@ class BaseArena(ABC):
         Args:
             team_color (TeamColor): The team's color.
         """
-        if team_color not in [TeamColor.YELLOW, TeamColor.BLUE]:
+        if team_color not in {TeamColor.YELLOW, TeamColor.BLUE}:
             self.logger.error(
                 f"Invalid team color: {team_color}. Must be 'yellow' or 'blue'.",
             )
@@ -372,6 +372,30 @@ class BaseArena(ABC):
             bool: `True` if the position is within the playing area, `False` otherwise.
         """
         return self.playable_area.contains(pos) or self.playable_area.touches(pos)
+
+    def get_zone_by_location(
+        self,
+        location: int | BaseArenaZone | Point | OrientedPoint,
+    ) -> BaseArenaZone | None:
+        """Find the zone that contains a given location.
+
+        Args:
+            location (int | BaseArenaZone | Point | OrientedPoint): The location to check.
+
+        Returns:
+            BaseArenaZone | None: The zone containing the location, or None if not found.
+        """
+        if isinstance(location, int):
+            if location >= len(self.zones):
+                self.logger.error("Invalid zone ID given in trajectory parameters.")
+                return None
+            return self.zones[location]
+        if isinstance(location, BaseArenaZone):
+            return location
+        for zone in self.zones:
+            if zone.polygon.contains(location):
+                return zone
+        return None
 
     def find_zone_accessibility(self, accessibility: str) -> list[BaseArenaZone]:
         """Find and return a list of zones with the specified accessibility.
@@ -685,9 +709,9 @@ class BaseArena(ABC):
             ax,
             self.border_zone,
             show_buffer,
-            False,
-            False,
-            transparency_factor,
+            show_ally_direction=False,
+            display_zones_go_to_positions=False,
+            transparency_factor=transparency_factor,
         )
 
         # 3.2 All zones (stored in self.zones)
@@ -696,9 +720,9 @@ class BaseArena(ABC):
                 ax,
                 zone,
                 show_buffer,
-                False,
-                display_zones_go_to_positions,
-                transparency_factor,
+                show_ally_direction=False,
+                display_zones_go_to_positions=display_zones_go_to_positions,
+                transparency_factor=transparency_factor,
             )
 
         # 3.3 Additional zones (if provided)
@@ -708,9 +732,9 @@ class BaseArena(ABC):
                     ax,
                     zone,
                     show_buffer,
-                    False,
-                    display_zones_go_to_positions,
-                    transparency_factor,
+                    show_ally_direction=False,
+                    display_zones_go_to_positions=display_zones_go_to_positions,
+                    transparency_factor=transparency_factor,
                 )
 
         # 3.4 Ally and Enemy zones
@@ -718,17 +742,17 @@ class BaseArena(ABC):
             ax,
             self.enemy_zone,
             show_buffer,
-            False,
-            False,
-            transparency_factor,
+            show_ally_direction=False,
+            display_zones_go_to_positions=False,
+            transparency_factor=transparency_factor,
         )
         self.__plot_zone(
             ax,
             self.ally_zone,
             show_buffer,
             show_ally_direction,
-            False,
-            transparency_factor,
+            display_zones_go_to_positions=False,
+            transparency_factor=transparency_factor,
         )
 
         # 4 Additional points (if provided)

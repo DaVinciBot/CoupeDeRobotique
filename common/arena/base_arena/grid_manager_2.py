@@ -267,5 +267,5 @@ class GridManager:
         ax.set_xlim(0, self.grid_width)
         ax.set_ylim(0, self.grid_height)
 
-        ax.grid(True)
+        ax.grid(visible=True)
         plt.show()

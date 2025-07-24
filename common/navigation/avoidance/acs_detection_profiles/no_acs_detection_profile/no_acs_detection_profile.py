@@ -1,3 +1,5 @@
+from typing import override
+
 from arena import AllyZone, EnemyZone
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
     BaseAcsDetectionProfile,
@@ -18,5 +20,6 @@ class NoAcsDetectionProfile(BaseAcsDetectionProfile[NoAcsDetectionProfileParams]
         """
         super().__init__(params)
 
+    @override
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
         return False
