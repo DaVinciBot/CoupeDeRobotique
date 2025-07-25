@@ -355,7 +355,9 @@ class ActuatorsShow(Actuators):
 
     def build_floors(
         self,
-    ) -> None:  # Ask if I should use time.sleep or asyncio.sleep and thus making this method async
+    ) -> (
+        None
+    ):  # Ask if I should use time.sleep or asyncio.sleep and thus making this method async
         """Builds the floors by deploying the servos and moving the elevator to the top position.
         This method is used to build the floors by deploying the servos and moving the elevator to the top position.
 
