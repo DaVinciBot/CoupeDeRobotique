@@ -1,36 +1,12 @@
 PAMI\lib\ota\ui\convert.py:
-   1:1 INP001 File `PAMI\lib\ota\ui\convert.py` is part of an implicit namespace package. Add an `__init__.py`.
-   1:1 D100 Missing docstring in public module
-  10:6 PTH123 `open()` should be replaced by `Path.open()`
-  14:6 PTH123 `open()` should be replaced by `Path.open()`
-  14:6 FURB101 `open` and `read` should be replaced by `Path(compressed_file).read_bytes()`
-  24:6 PLW1514 `open` in text mode without explicit `encoding` argument
-  24:6 PTH123 `open()` should be replaced by `Path.open()`
-  24:6 FURB103 `open` and `write` should be replaced by `Path(output_file).write_text(const_array)`
-  28:1 PTH107 `os.remove()` should be replaced by `Path.unlink()`
-  31:1 T201 `print` found
+  1:1 INP001 File `PAMI\lib\ota\ui\convert.py` is part of an implicit namespace package. Add an `__init__.py`.
 
 common\GPIO\__init__.py:
-  1:1  N999 Invalid module name: 'GPIO'
-  1:1  D104 Missing docstring in public package
-  4:5  T201 `print` found
-  5:89 E501 Line too long (93 > 88)
-  7:5  T201 `print` found
-
-common\GPIO\dummy_gpio.py:
-   1:1  D100 Missing docstring in public module
-  42:89 E501 Line too long (102 > 88)
-  48:9  D102 Missing docstring in public method
-  52:9  D102 Missing docstring in public method
-  67:25 PLR2004 Magic value used in comparison, consider replacing `1500` with a constant variable
-  70:20 C419 Unnecessary list comprehension
-  70:68 PLR2004 Magic value used in comparison, consider replacing `0.5` with a constant variable
+  1:1 N999 Invalid module name: 'GPIO'
 
 common\GPIO\gpio.py:
    1:1  D100 Missing docstring in public module
   12:9  D107 Missing docstring in `__init__`
-  23:89 E501 Line too long (105 > 88)
-  75:89 E501 Line too long (110 > 88)
   78:20 C419 Unnecessary list comprehension
   78:68 PLR2004 Magic value used in comparison, consider replacing `0.5` with a constant variable
 
@@ -43,26 +19,15 @@ common\arena\2024_mars_arena\arena_old.py:
    28:33 B008 Do not perform function call `create_straight_rectangle` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
    28:59 B008 Do not perform function call `Point` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
    28:72 B008 Do not perform function call `Point` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
-   38:89 E501 Line too long (111 > 88)
-   39:89 E501 Line too long (98 > 88)
-   40:89 E501 Line too long (106 > 88)
-   58:89 E501 Line too long (102 > 88)
    61:9  D415 First line should end with a period, question mark, or exclamation point
    67:9  D102 Missing docstring in public method
-   76:89 E501 Line too long (100 > 88)
    85:9  D102 Missing docstring in public method
    87:19 TRY003 Avoid specifying long messages outside the exception class
    87:30 EM101 Exception must not use a string literal, assign to variable first
    92:9  D102 Missing docstring in public method
-  112:89 E501 Line too long (148 > 88)
-  128:89 E501 Line too long (106 > 88)
-  132:13 ERA001 Found commented-out code
-  135:13 ERA001 Found commented-out code
   138:5  RET503 Missing explicit `return` at the end of function able to return non-`None` value
   138:9  C901 `compute_go_to_destination` is too complex (14 > 10)
   138:9  PLR0912 Too many branches (17 > 12)
-  149:89 E501 Line too long (91 > 88)
-  158:89 E501 Line too long (120 > 88)
   168:45 PLR2004 Magic value used in comparison, consider replacing `0.1` with a constant variable
   170:21 PLR6104 Use `+=` to perform an augmented assignment directly
   172:21 PLR6104 Use `-=` to perform an augmented assignment directly
@@ -73,14 +38,9 @@ common\arena\2024_mars_arena\arena_old.py:
   188:25 PLR6104 Use `-=` to perform an augmented assignment directly
   192:21 PLR6104 Use `-=` to perform an augmented assignment directly
   194:21 PLR6104 Use `+=` to perform an augmented assignment directly
-  207:89 E501 Line too long (129 > 88)
-  208:89 E501 Line too long (118 > 88)
-  214:13 ERA001 Found commented-out code
-  215:13 ERA001 Found commented-out code
   217:13 S101 Use of `assert` detected
   217:13 PT018 Assertion should be broken down into multiple parts
   218:87 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  248:89 E501 Line too long (143 > 88)
   249:13 SIM102 Use a single `if` statement instead of nested `if` statements
   249:16 PLR2004 Magic value used in comparison, consider replacing `5` with a constant variable
   263:9  D102 Missing docstring in public method
@@ -119,49 +79,16 @@ common\arena\base_arena\__init__.py:
 
 common\arena\base_arena\arena.py:
     1:1  D100 Missing docstring in public module
-    3:89 E501 Line too long (109 > 88)
-    4:89 E501 Line too long (117 > 88)
    36:7  PLW1641 Object does not implement `__hash__` method
-   51:89 E501 Line too long (99 > 88)
-   57:89 E501 Line too long (89 > 88)
-   61:89 E501 Line too long (91 > 88)
-   62:89 E501 Line too long (118 > 88)
-  102:89 E501 Line too long (90 > 88)
-  117:89 E501 Line too long (116 > 88)
-  123:89 E501 Line too long (102 > 88)
   157:9  D205 1 blank line required between summary line and description
   180:9  D205 1 blank line required between summary line and description
-  201:89 E501 Line too long (93 > 88)
-  246:89 E501 Line too long (93 > 88)
-  251:89 E501 Line too long (110 > 88)
-  252:89 E501 Line too long (99 > 88)
-  254:89 E501 Line too long (93 > 88)
-  283:9  ERA001 Found commented-out code
-  292:89 E501 Line too long (89 > 88)
-  294:89 E501 Line too long (89 > 88)
-  295:89 E501 Line too long (114 > 88)
-  302:89 E501 Line too long (123 > 88)
-  303:89 E501 Line too long (93 > 88)
   332:9  D102 Missing docstring in public method
   355:12 SIM101 Multiple `isinstance` calls for `goal`, merge into a single call
-  360:89 E501 Line too long (102 > 88)
-  383:89 E501 Line too long (90 > 88)
-  386:89 E501 Line too long (89 > 88)
-  420:89 E501 Line too long (108 > 88)
-  427:89 E501 Line too long (121 > 88)
   434:19 TRY003 Avoid specifying long messages outside the exception class
   434:30 EM102 Exception must not use an f-string literal, assign to variable first
   436:9  SIM110 Use `return any(zone and zone.polygon.intersects(element) for zone in zones_to_check)` instead of `for` loop
   442:9  D415 First line should end with a period, question mark, or exclamation point
-  445:89 E501 Line too long (93 > 88)
-  473:89 E501 Line too long (95 > 88)
-  474:89 E501 Line too long (97 > 88)
   550:9  D301 Use `r"""` if any backslashes in a docstring
-  562:89 E501 Line too long (123 > 88)
-  563:89 E501 Line too long (94 > 88)
-  607:89 E501 Line too long (91 > 88)
-  630:89 E501 Line too long (97 > 88)
-  652:89 E501 Line too long (108 > 88)
   682:9  C901 `visualize` is too complex (12 > 10)
   682:9  PLR0912 Too many branches (13 > 12)
   682:9  D102 Missing docstring in public method
@@ -170,193 +97,82 @@ common\arena\base_arena\arena_zones\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\arena\base_arena\arena_zones\ally_zone.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (112 > 88)
-   4:89 E501 Line too long (120 > 88)
-   5:89 E501 Line too long (117 > 88)
-  16:7  PLW1641 Object does not implement `__hash__` method
+   1:1 D100 Missing docstring in public module
+  16:7 PLW1641 Object does not implement `__hash__` method
 
 common\arena\base_arena\arena_zones\base_arena_zone.py:
     1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (112 > 88)
-    4:89 E501 Line too long (120 > 88)
    18:7  PLW1641 Object does not implement `__hash__` method
    18:7  B024 `BaseArenaZone` is an abstract base class, but it has no abstract methods or properties
    25:28 RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
-   46:89 E501 Line too long (98 > 88)
-   47:89 E501 Line too long (105 > 88)
-   48:89 E501 Line too long (101 > 88)
-   49:89 E501 Line too long (108 > 88)
-   50:89 E501 Line too long (94 > 88)
-   51:89 E501 Line too long (134 > 88)
-   52:89 E501 Line too long (98 > 88)
    80:9  D102 Missing docstring in public method
    80:37 RUF036 `None` not at the end of the type annotation.
    93:9  D205 1 blank line required between summary line and description
   111:29 ARG002 Unused method argument: `team_color`
   120:42 PLR6201 Use a set literal when testing for membership
   127:9  ARG002 Unused method argument: `team_color`
-  132:89 E501 Line too long (101 > 88)
-  151:89 E501 Line too long (97 > 88)
-  162:89 E501 Line too long (96 > 88)
   170:17 PLW0108 Lambda may be unnecessary; consider inlining inner function
-  173:89 E501 Line too long (111 > 88)
   181:9  ARG002 Unused method argument: `team_color`
   182:9  ARG002 Unused method argument: `ally_position`
   183:9  ARG002 Unused method argument: `enemy_position`
-  194:9  ERA001 Found commented-out code
-  195:9  ERA001 Found commented-out code
-  198:9  ERA001 Found commented-out code
-  199:9  ERA001 Found commented-out code
   214:16 E721 Use `is` and `is not` for type comparisons, or `isinstance()` for isinstance checks
-  255:89 E501 Line too long (91 > 88)
 
 common\arena\base_arena\arena_zones\border_zone.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (91 > 88)
-  29:89 E501 Line too long (98 > 88)
-  30:89 E501 Line too long (105 > 88)
-  31:89 E501 Line too long (101 > 88)
-  32:89 E501 Line too long (108 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\arena\base_arena\arena_zones\color_reserved_zones\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\arena\base_arena\arena_zones\color_reserved_zones\base_color_reserved_zone.py:
-   1:1  D100 Missing docstring in public module
-   3:89 E501 Line too long (91 > 88)
-   4:89 E501 Line too long (90 > 88)
-  20:5  D205 1 blank line required between summary line and description
-  43:89 E501 Line too long (139 > 88)
-  44:89 E501 Line too long (98 > 88)
-  45:89 E501 Line too long (109 > 88)
-  46:89 E501 Line too long (107 > 88)
-  49:89 E501 Line too long (100 > 88)
-  50:89 E501 Line too long (134 > 88)
-  70:89 E501 Line too long (110 > 88)
-  83:89 E501 Line too long (93 > 88)
+   1:1 D100 Missing docstring in public module
+  20:5 D205 1 blank line required between summary line and description
 
 common\arena\base_arena\arena_zones\color_reserved_zones\blue_reserved_zone.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (97 > 88)
-   3:89 E501 Line too long (98 > 88)
-  18:5  D205 1 blank line required between summary line and description
-  19:89 E501 Line too long (94 > 88)
-  35:89 E501 Line too long (99 > 88)
-  36:89 E501 Line too long (105 > 88)
-  37:89 E501 Line too long (101 > 88)
-  38:89 E501 Line too long (108 > 88)
-  39:89 E501 Line too long (134 > 88)
+   1:1 D100 Missing docstring in public module
+  18:5 D205 1 blank line required between summary line and description
 
 common\arena\base_arena\arena_zones\color_reserved_zones\yellow_reserved_zone.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (101 > 88)
-   3:89 E501 Line too long (98 > 88)
-  18:5  D205 1 blank line required between summary line and description
-  19:89 E501 Line too long (94 > 88)
-  35:89 E501 Line too long (99 > 88)
-  36:89 E501 Line too long (105 > 88)
-  37:89 E501 Line too long (101 > 88)
-  38:89 E501 Line too long (108 > 88)
-  39:89 E501 Line too long (134 > 88)
+   1:1 D100 Missing docstring in public module
+  18:5 D205 1 blank line required between summary line and description
 
 common\arena\base_arena\arena_zones\forbidden_zone.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (107 > 88)
-   3:89 E501 Line too long (103 > 88)
-  30:89 E501 Line too long (124 > 88)
-  31:89 E501 Line too long (98 > 88)
-  32:89 E501 Line too long (105 > 88)
-  33:89 E501 Line too long (101 > 88)
-  34:89 E501 Line too long (108 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\arena\base_arena\arena_zones\speed_vector_auto_calculate_zones\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (114 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\arena\base_arena\arena_zones\speed_vector_auto_calculate_zones\base_speed_vector_auto_calculate_zone.py:
     1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (112 > 88)
-    3:89 E501 Line too long (117 > 88)
-    4:89 E501 Line too long (116 > 88)
-    5:89 E501 Line too long (94 > 88)
    25:5  D205 1 blank line required between summary line and description
-   25:89 E501 Line too long (101 > 88)
    37:26 RUF013 PEP 484 prohibits implicit `Optional`
    41:29 RUF013 PEP 484 prohibits implicit `Optional`
    42:37 B008 Do not perform function call `SpeedVector` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
-   54:89 E501 Line too long (103 > 88)
-   55:89 E501 Line too long (96 > 88)
-   56:89 E501 Line too long (101 > 88)
-   57:89 E501 Line too long (109 > 88)
-   58:89 E501 Line too long (101 > 88)
-   59:89 E501 Line too long (111 > 88)
-   60:89 E501 Line too long (99 > 88)
   104:45 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  106:89 E501 Line too long (96 > 88)
-  184:89 E501 Line too long (113 > 88)
-  185:89 E501 Line too long (101 > 88)
 
 common\arena\base_arena\arena_zones\speed_vector_auto_calculate_zones\enemy_zone.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (90 > 88)
-   3:89 E501 Line too long (90 > 88)
-   9:89 E501 Line too long (114 > 88)
-  17:5  D205 1 blank line required between summary line and description
-  36:89 E501 Line too long (103 > 88)
-  37:89 E501 Line too long (103 > 88)
-  38:89 E501 Line too long (105 > 88)
+   1:1 D100 Missing docstring in public module
+  17:5 D205 1 blank line required between summary line and description
 
 common\arena\base_arena\arena_zones\structs.py:
-  1:1  D100 Missing docstring in public module
-  2:89 E501 Line too long (100 > 88)
-  3:89 E501 Line too long (104 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\arena\base_arena\arena_zones\stuff_zone.py:
     1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (91 > 88)
-    3:89 E501 Line too long (100 > 88)
-   39:89 E501 Line too long (98 > 88)
-   40:89 E501 Line too long (105 > 88)
-   41:89 E501 Line too long (101 > 88)
-   42:89 E501 Line too long (108 > 88)
-   43:89 E501 Line too long (134 > 88)
    86:9  ARG002 Unused method argument: `team_color`
-   95:89 E501 Line too long (105 > 88)
-  100:89 E501 Line too long (96 > 88)
   109:21 PLW0108 Lambda may be unnecessary; consider inlining inner function
-  112:89 E501 Line too long (115 > 88)
 
 common\arena\base_arena\grid_manager.py:
     1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (114 > 88)
-    3:89 E501 Line too long (102 > 88)
-    4:89 E501 Line too long (118 > 88)
-    5:89 E501 Line too long (118 > 88)
-    7:89 E501 Line too long (118 > 88)
    23:7  PLW1641 Object does not implement `__hash__` method
    24:5  D205 1 blank line required between summary line and description
-   30:89 E501 Line too long (96 > 88)
   115:29 C419 Unnecessary list comprehension
-  207:89 E501 Line too long (102 > 88)
-  208:89 E501 Line too long (104 > 88)
-  209:89 E501 Line too long (112 > 88)
-  225:89 E501 Line too long (94 > 88)
   249:9  C901 `__eq__` is too complex (12 > 10)
   249:9  PLR0911 Too many return statements (11 > 6)
   282:9  SIM103 Return the negated condition directly
-  302:89 E501 Line too long (95 > 88)
-  319:89 E501 Line too long (109 > 88)
-  419:89 E501 Line too long (105 > 88)
-  420:89 E501 Line too long (98 > 88)
-  422:89 E501 Line too long (106 > 88)
 
 common\arena\base_arena\grid_manager_2.py:
-    1:1  D100 Missing docstring in public module
-   44:89 E501 Line too long (97 > 88)
-  243:89 E501 Line too long (101 > 88)
-  244:89 E501 Line too long (97 > 88)
-  248:9  RUF059 Unpacked variable `fig` is never used
+    1:1 D100 Missing docstring in public module
+  248:9 RUF059 Unpacked variable `fig` is never used
 
 common\arena\base_arena\team_color.py:
   1:1 D100 Missing docstring in public module
@@ -369,10 +185,6 @@ common\arena\show_arena\arena.py:
    21:7  PLW1641 Object does not implement `__hash__` method
    21:7  D101 Missing docstring in public class
    22:9  D107 Missing docstring in `__init__`
-  212:21 ERA001 Found commented-out code
-  212:89 E501 Line too long (90 > 88)
-  270:21 ERA001 Found commented-out code
-  270:89 E501 Line too long (89 > 88)
   291:13 PERF401 Use a list comprehension to create a transformed list
   299:76 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
   304:13 PERF401 Use `list.extend` to create a transformed list
@@ -391,20 +203,12 @@ common\geometry\helpers.py:
   1:1 D100 Missing docstring in public module
 
 common\geometry\oriented_point.py:
-    4:89 E501 Line too long (95 > 88)
-    5:89 E501 Line too long (98 > 88)
-    6:89 E501 Line too long (114 > 88)
-   17:89 E501 Line too long (97 > 88)
-   20:89 E501 Line too long (97 > 88)
-   21:89 E501 Line too long (96 > 88)
    29:7  PLW1641 Object does not implement `__hash__` method
    29:7  D101 Missing docstring in public class
    38:9  D107 Missing docstring in `__init__`
-   45:89 E501 Line too long (156 > 88)
    54:9  D102 Missing docstring in public method
    65:19 TRY003 Avoid specifying long messages outside the exception class
    66:17 EM101 Exception must not use a string literal, assign to variable first
-   66:89 E501 Line too long (107 > 88)
    72:9  D105 Missing docstring in magic method
    76:9  D105 Missing docstring in magic method
    80:19 TRY003 Avoid specifying long messages outside the exception class
@@ -412,112 +216,13 @@ common\geometry\oriented_point.py:
   100:9  D105 Missing docstring in magic method
   123:9  N802 Function name `from_Point` should be lowercase
   123:9  D102 Missing docstring in public method
-  130:89 E501 Line too long (90 > 88)
-  132:89 E501 Line too long (94 > 88)
-  138:89 E501 Line too long (94 > 88)
-  152:89 E501 Line too long (94 > 88)
-  155:89 E501 Line too long (104 > 88)
   156:46 RUF015 Prefer `next(iter(self.coords))` over single element slice
 
 common\led_strip\__init__.py:
-  1:1 ERA001 Found commented-out code
   1:1 D104 Missing docstring in public package
 
 common\led_strip\led_strip.py:
-    1:1  ERA001 Found commented-out code
-    1:1  D100 Missing docstring in public module
-    2:1  ERA001 Found commented-out code
-    3:1  ERA001 Found commented-out code
-    4:1  ERA001 Found commented-out code
-    6:1  ERA001 Found commented-out code
-   13:1  ERA001 Found commented-out code
-   17:1  ERA001 Found commented-out code
-   18:1  ERA001 Found commented-out code
-   19:1  ERA001 Found commented-out code
-   20:1  ERA001 Found commented-out code
-   21:1  ERA001 Found commented-out code
-   22:1  ERA001 Found commented-out code
-   23:1  ERA001 Found commented-out code
-   24:1  ERA001 Found commented-out code
-   25:1  ERA001 Found commented-out code
-   26:1  ERA001 Found commented-out code
-   27:1  ERA001 Found commented-out code
-   28:1  ERA001 Found commented-out code
-   34:1  ERA001 Found commented-out code
-   35:1  ERA001 Found commented-out code
-   36:1  ERA001 Found commented-out code
-   37:1  ERA001 Found commented-out code
-   39:1  ERA001 Found commented-out code
-   40:1  ERA001 Found commented-out code
-   41:1  ERA001 Found commented-out code
-   42:1  ERA001 Found commented-out code
-   44:1  ERA001 Found commented-out code
-   46:1  ERA001 Found commented-out code
-   47:1  ERA001 Found commented-out code
-   48:1  ERA001 Found commented-out code
-   49:1  ERA001 Found commented-out code
-   55:1  ERA001 Found commented-out code
-   58:1  ERA001 Found commented-out code
-   60:1  ERA001 Found commented-out code
-   62:1  ERA001 Found commented-out code
-   67:1  ERA001 Found commented-out code
-   70:1  ERA001 Found commented-out code
-   71:1  ERA001 Found commented-out code
-   75:1  ERA001 Found commented-out code
-   76:1  ERA001 Found commented-out code
-   79:1  ERA001 Found commented-out code
-   80:1  ERA001 Found commented-out code
-   83:1  ERA001 Found commented-out code
-   88:1  ERA001 Found commented-out code
-   91:1  ERA001 Found commented-out code
-   92:1  ERA001 Found commented-out code
-   97:1  ERA001 Found commented-out code
-  100:1  ERA001 Found commented-out code
-  104:1  ERA001 Found commented-out code
-  105:1  ERA001 Found commented-out code
-  107:1  ERA001 Found commented-out code
-  108:1  ERA001 Found commented-out code
-  109:1  ERA001 Found commented-out code
-  110:1  ERA001 Found commented-out code
-  116:1  ERA001 Found commented-out code
-  118:1  ERA001 Found commented-out code
-  126:1  ERA001 Found commented-out code
-  128:1  ERA001 Found commented-out code
-  131:1  ERA001 Found commented-out code
-  132:1  ERA001 Found commented-out code
-  133:1  ERA001 Found commented-out code
-  139:1  ERA001 Found commented-out code
-  142:1  ERA001 Found commented-out code
-  145:1  ERA001 Found commented-out code
-  146:1  ERA001 Found commented-out code
-  146:89 E501 Line too long (90 > 88)
-  150:1  ERA001 Found commented-out code
-  151:1  ERA001 Found commented-out code
-  152:1  ERA001 Found commented-out code
-  153:1  ERA001 Found commented-out code
-  166:1  ERA001 Found commented-out code
-  167:1  ERA001 Found commented-out code
-  168:1  ERA001 Found commented-out code
-  169:1  ERA001 Found commented-out code
-  170:1  ERA001 Found commented-out code
-  171:1  ERA001 Found commented-out code
-  172:1  ERA001 Found commented-out code
-  173:1  ERA001 Found commented-out code
-  175:1  ERA001 Found commented-out code
-  176:1  ERA001 Found commented-out code
-  179:1  ERA001 Found commented-out code
-  183:1  ERA001 Found commented-out code
-  184:1  ERA001 Found commented-out code
-  185:1  ERA001 Found commented-out code
-  186:1  ERA001 Found commented-out code
-  191:1  ERA001 Found commented-out code
-  192:1  ERA001 Found commented-out code
-  193:1  ERA001 Found commented-out code
-  194:1  ERA001 Found commented-out code
-  196:1  ERA001 Found commented-out code
-  197:1  ERA001 Found commented-out code
-  199:1  ERA001 Found commented-out code
-  200:1  ERA001 Found commented-out code
+  1:1 D100 Missing docstring in public module
 
 common\navigation\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -526,91 +231,58 @@ common\navigation\avoidance\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\acs_detection_profiles\__init__.py:
-   1:1  D104 Missing docstring in public package
-  12:89 E501 Line too long (93 > 88)
-  16:89 E501 Line too long (102 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\acs_detection_profiles\acs_detection_profile_factory.py:
    1:1  D100 Missing docstring in public module
-   3:89 E501 Line too long (107 > 88)
-  15:89 E501 Line too long (93 > 88)
-  19:89 E501 Line too long (102 > 88)
-  27:89 E501 Line too long (102 > 88)
-  34:89 E501 Line too long (94 > 88)
   62:15 TRY003 Avoid specifying long messages outside the exception class
   62:26 EM102 Exception must not use an f-string literal, assign to variable first
 
 common\navigation\avoidance\acs_detection_profiles\angular_restrict_projection_acs_detection_profile\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (157 > 88)
-  4:89 E501 Line too long (164 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\acs_detection_profiles\angular_restrict_projection_acs_detection_profile\angular_restrict_projection_acs_detection_profile.py:
-   1:1  D100 Missing docstring in public module
-   4:89 E501 Line too long (164 > 88)
-  24:89 E501 Line too long (142 > 88)
-  47:89 E501 Line too long (89 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\avoidance\acs_detection_profiles\angular_restrict_projection_acs_detection_profile\angular_restrict_projection_acs_detection_profile_params.py:
   1:1 D100 Missing docstring in public module
 
 common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profils\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (111 > 88)
-  4:89 E501 Line too long (118 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profils\base_acs_detection_profils.py:
    1:1  D100 Missing docstring in public module
-   7:89 E501 Line too long (118 > 88)
   14:36 UP046 Generic class `BaseAcsDetectionProfile` uses `Generic` subclass instead of type parameters
-  22:89 E501 Line too long (94 > 88)
   31:9  D102 Missing docstring in public method
 
 common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profils\base_acs_detection_profils_params.py:
-   1:1  D100 Missing docstring in public module
-  15:89 E501 Line too long (91 > 88)
-  27:89 E501 Line too long (96 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\avoidance\acs_detection_profiles\no_acs_detection_profile\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (107 > 88)
-  4:89 E501 Line too long (114 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\acs_detection_profiles\no_acs_detection_profile\no_acs_detection_profile.py:
-   1:1  D100 Missing docstring in public module
-   7:89 E501 Line too long (114 > 88)
-  19:89 E501 Line too long (94 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\avoidance\acs_detection_profiles\no_acs_detection_profile\no_acs_detection_profile_params.py:
   1:1 D100 Missing docstring in public module
 
 common\navigation\avoidance\acs_detection_profiles\no_projection_acs_detection_profile\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (129 > 88)
-  4:89 E501 Line too long (136 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\acs_detection_profiles\no_projection_acs_detection_profile\no_projection_acs_detection_profile.py:
-   1:1  D100 Missing docstring in public module
-   7:89 E501 Line too long (136 > 88)
-  25:89 E501 Line too long (115 > 88)
-  26:89 E501 Line too long (94 > 88)
-  30:9  D102 Missing docstring in public method
+   1:1 D100 Missing docstring in public module
+  30:9 D102 Missing docstring in public method
 
 common\navigation\avoidance\acs_detection_profiles\no_projection_acs_detection_profile\no_projection_acs_detection_profile_params.py:
   1:1 D100 Missing docstring in public module
 
 common\navigation\avoidance\acs_detection_profiles\rectangular_projection_acs_detection_profile\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (147 > 88)
-  4:89 E501 Line too long (154 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\acs_detection_profiles\rectangular_projection_acs_detection_profile\rectangular_projection_acs_detection_profile.py:
-   1:1  D100 Missing docstring in public module
-  10:89 E501 Line too long (154 > 88)
-  28:89 E501 Line too long (133 > 88)
-  29:89 E501 Line too long (94 > 88)
-  57:9  D102 Missing docstring in public method
-  61:89 E501 Line too long (89 > 88)
+   1:1 D100 Missing docstring in public module
+  57:9 D102 Missing docstring in public method
 
 common\navigation\avoidance\acs_detection_profiles\rectangular_projection_acs_detection_profile\rectangular_projection_acs_detection_profile_params.py:
   1:1 D100 Missing docstring in public module
@@ -621,10 +293,6 @@ common\navigation\avoidance\acs_detection_profiles\struct.py:
 
 common\navigation\avoidance\avoidance_factory.py:
    1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (92 > 88)
-  30:89 E501 Line too long (102 > 88)
-  40:89 E501 Line too long (94 > 88)
-  41:89 E501 Line too long (111 > 88)
   69:15 TRY003 Avoid specifying long messages outside the exception class
   69:26 EM102 Exception must not use an f-string literal, assign to variable first
 
@@ -632,44 +300,24 @@ common\navigation\avoidance\back_avoidance\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\back_avoidance\back_avoidance.py:
-    1:1  D100 Missing docstring in public module
-   50:89 E501 Line too long (111 > 88)
-   51:89 E501 Line too long (94 > 88)
-   64:89 E501 Line too long (95 > 88)
-   67:89 E501 Line too long (89 > 88)
-   72:89 E501 Line too long (91 > 88)
-   74:9  PLC0415 `import` should be at the top-level of a file
-  156:89 E501 Line too long (94 > 88)
+   1:1 D100 Missing docstring in public module
+  74:9 PLC0415 `import` should be at the top-level of a file
 
 common\navigation\avoidance\back_avoidance\back_avoidance_params.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (107 > 88)
-   3:89 E501 Line too long (106 > 88)
-  15:89 E501 Line too long (91 > 88)
-  28:89 E501 Line too long (90 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\avoidance\base_avoidance\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\base_avoidance\base_avoidance.py:
     1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (100 > 88)
-    3:89 E501 Line too long (104 > 88)
-    4:89 E501 Line too long (98 > 88)
-    5:89 E501 Line too long (99 > 88)
    13:29 TC003 Move standard library import `collections.abc.Callable` into a type-checking block
    36:26 UP046 Generic class `BaseAvoidance` uses `Generic` subclass instead of type parameters
-   55:89 E501 Line too long (94 > 88)
    80:13 PLC0415 `import` should be at the top-level of a file
-   94:89 E501 Line too long (101 > 88)
   141:9  PLC0415 `import` should be at the top-level of a file
 
 common\navigation\avoidance\base_avoidance\base_avoidance_params.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (92 > 88)
-   3:89 E501 Line too long (92 > 88)
-   4:89 E501 Line too long (92 > 88)
-  27:89 E501 Line too long (91 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\avoidance\base_avoidance\states.py:
   1:1 D100 Missing docstring in public module
@@ -678,41 +326,22 @@ common\navigation\avoidance\no_avoidance\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\no_avoidance\no_avoidance.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (92 > 88)
-   4:89 E501 Line too long (91 > 88)
-  44:89 E501 Line too long (94 > 88)
-  52:9  ARG002 Unused method argument: `ally_zone`
-  53:9  ARG002 Unused method argument: `enemy_zone`
-  57:89 E501 Line too long (89 > 88)
+   1:1 D100 Missing docstring in public module
+  52:9 ARG002 Unused method argument: `ally_zone`
+  53:9 ARG002 Unused method argument: `enemy_zone`
 
 common\navigation\avoidance\no_avoidance\no_avoidance_params.py:
-  1:1  D100 Missing docstring in public module
-  2:89 E501 Line too long (104 > 88)
-  3:89 E501 Line too long (97 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\avoidance\stop_and_wait_avoidance\__init__.py:
-  1:1  D104 Missing docstring in public package
-  4:89 E501 Line too long (89 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\stop_and_wait_avoidance\stop_and_wait_avoidance.py:
-    1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (95 > 88)
-    3:89 E501 Line too long (96 > 88)
-    4:89 E501 Line too long (92 > 88)
-   14:89 E501 Line too long (89 > 88)
-   50:89 E501 Line too long (94 > 88)
-   64:89 E501 Line too long (89 > 88)
-   69:89 E501 Line too long (91 > 88)
-   71:9  PLC0415 `import` should be at the top-level of a file
-  117:89 E501 Line too long (94 > 88)
+   1:1 D100 Missing docstring in public module
+  71:9 PLC0415 `import` should be at the top-level of a file
 
 common\navigation\avoidance\stop_and_wait_avoidance\stop_and_wait_avoidance_params.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (101 > 88)
-   3:89 E501 Line too long (106 > 88)
-  22:89 E501 Line too long (106 > 88)
-  25:89 E501 Line too long (90 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\avoidance\structs.py:
   1:1 D100 Missing docstring in public module
@@ -723,40 +352,26 @@ common\navigation\debug_functions\__init__.py:
 
 common\navigation\debug_functions\navigator.py:
    1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (92 > 88)
-   3:89 E501 Line too long (90 > 88)
    5:85 RUF003 Comment contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
   18:5  PLR0915 Too many statements (82 > 50)
   18:5  PLR0914 Too many local variables (16/15)
   21:24 PT028 Test function parameter `time_step` has default argument
-  23:89 E501 Line too long (133 > 88)
-  34:89 E501 Line too long (101 > 88)
-  39:89 E501 Line too long (94 > 88)
   83:17 SLF001 Private member accessed: `_get_trajectory_time_elapsed`
   93:9  T201 `print` found
 
 common\navigation\debug_functions\speed_profile.py:
    1:1  D100 Missing docstring in public module
-   3:89 E501 Line too long (93 > 88)
-   4:89 E501 Line too long (89 > 88)
   15:30 PT028 Test function parameter `distance` has default argument
   16:24 PT028 Test function parameter `step_time` has default argument
   17:30 PT028 Test function parameter `departure_speed` has default argument
   18:28 PT028 Test function parameter `arrival_speed` has default argument
-  24:89 E501 Line too long (89 > 88)
-  25:89 E501 Line too long (93 > 88)
   29:5  T201 `print` found
 
 common\navigation\debug_functions\trajectory_planer.py:
    1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (98 > 88)
-   3:89 E501 Line too long (97 > 88)
-   4:89 E501 Line too long (105 > 88)
-  12:89 E501 Line too long (91 > 88)
   17:5  PLR0915 Too many statements (69 > 50)
   17:5  PLR0914 Too many local variables (16/15)
   20:24 PT028 Test function parameter `time_step` has default argument
-  25:89 E501 Line too long (92 > 88)
   29:5  T201 `print` found
 
 common\navigation\navigator\__init__.py:
@@ -766,13 +381,7 @@ common\navigation\navigator\core\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\navigator\core\navigator.py:
-    1:1  D100 Missing docstring in public module
-   25:89 E501 Line too long (94 > 88)
-   62:89 E501 Line too long (96 > 88)
-   63:89 E501 Line too long (121 > 88)
-   91:89 E501 Line too long (143 > 88)
-   93:89 E501 Line too long (100 > 88)
-  124:89 E501 Line too long (118 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\navigator\core\states.py:
   1:1 D100 Missing docstring in public module
@@ -781,11 +390,7 @@ common\navigation\navigator\signals\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\navigator\signals\dispatcher.py:
-   1:1  D100 Missing docstring in public module
-   3:89 E501 Line too long (90 > 88)
-   4:89 E501 Line too long (95 > 88)
-  31:89 E501 Line too long (94 > 88)
-  58:89 E501 Line too long (89 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\navigator\signals\signals_enum.py:
   1:1 D100 Missing docstring in public module
@@ -794,22 +399,14 @@ common\navigation\navigator\task\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\navigator\task\navigator_task.py:
-    1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (101 > 88)
-    3:89 E501 Line too long (95 > 88)
-    4:89 E501 Line too long (103 > 88)
-    5:89 E501 Line too long (105 > 88)
-   31:5  D205 1 blank line required between summary line and description
-   32:89 E501 Line too long (97 > 88)
-   41:9  PLC0415 `import` should be at the top-level of a file
-  105:9  PLR0911 Too many return statements (8 > 6)
-  105:9  D102 Missing docstring in public method
+    1:1 D100 Missing docstring in public module
+   31:5 D205 1 blank line required between summary line and description
+   41:9 PLC0415 `import` should be at the top-level of a file
+  105:9 PLR0911 Too many return statements (8 > 6)
+  105:9 D102 Missing docstring in public method
 
 common\navigation\navigator\task\navigator_task_params.py:
-   1:1  D100 Missing docstring in public module
-  31:89 E501 Line too long (93 > 88)
-  32:89 E501 Line too long (111 > 88)
-  35:89 E501 Line too long (119 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\navigator\task\states.py:
   1:1 D100 Missing docstring in public module
@@ -822,142 +419,75 @@ common\navigation\path_planner\astar_path_planner\__init__.py:
 
 common\navigation\path_planner\astar_path_planner\astar_path_planner.py:
     1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (99 > 88)
-    3:89 E501 Line too long (97 > 88)
    23:5  D205 1 blank line required between summary line and description
-   23:89 E501 Line too long (101 > 88)
-   36:89 E501 Line too long (94 > 88)
-   66:89 E501 Line too long (89 > 88)
-  101:89 E501 Line too long (95 > 88)
-  105:89 E501 Line too long (113 > 88)
-  183:89 E501 Line too long (90 > 88)
   192:25 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
   196:25 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
   204:25 PLR2004 Magic value used in comparison, consider replacing `4` with a constant variable
-  212:89 E501 Line too long (108 > 88)
   260:25 ARG002 Unused method argument: `params`
-  264:89 E501 Line too long (96 > 88)
-  267:89 E501 Line too long (90 > 88)
-  277:89 E501 Line too long (102 > 88)
-  280:89 E501 Line too long (94 > 88)
 
 common\navigation\path_planner\astar_path_planner\astar_path_planner_params.py:
-   1:1  D100 Missing docstring in public module
-  33:89 E501 Line too long (141 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\path_planner\base_path_planner\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\path_planner\base_path_planner\base_path_planner.py:
    1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (91 > 88)
-   3:89 E501 Line too long (90 > 88)
-   4:89 E501 Line too long (101 > 88)
   23:28 UP046 Generic class `BasePathPlanner` uses `Generic` subclass instead of type parameters
-  31:89 E501 Line too long (94 > 88)
   41:9  D102 Missing docstring in public method
-  64:89 E501 Line too long (103 > 88)
 
 common\navigation\path_planner\base_path_planner\base_path_planner_params.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (96 > 88)
-   3:89 E501 Line too long (99 > 88)
-  21:1  B903 Class could be dataclass or namedtuple
-  21:7  D101 Missing docstring in public class
-  22:9  D107 Missing docstring in `__init__`
+   1:1 D100 Missing docstring in public module
+  21:1 B903 Class could be dataclass or namedtuple
+  21:7 D101 Missing docstring in public class
+  22:9 D107 Missing docstring in `__init__`
 
 common\navigation\path_planner\basic_path_planner\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\path_planner\basic_path_planner\basic_path_planner.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (103 > 88)
-   3:89 E501 Line too long (101 > 88)
-  36:89 E501 Line too long (94 > 88)
-  57:89 E501 Line too long (96 > 88)
-  60:89 E501 Line too long (106 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\path_planner\basic_path_planner\basic_path_planner_params.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (104 > 88)
-   3:89 E501 Line too long (104 > 88)
-   4:89 E501 Line too long (95 > 88)
-  21:89 E501 Line too long (96 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\path_planner\delta_path_planner\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\path_planner\delta_path_planner\delta_path_planner.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (101 > 88)
-   3:89 E501 Line too long (99 > 88)
-  21:89 E501 Line too long (92 > 88)
-  35:89 E501 Line too long (94 > 88)
-  73:89 E501 Line too long (89 > 88)
-  76:89 E501 Line too long (110 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\path_planner\delta_path_planner\delta_path_planner_params.py:
-  1:1  D100 Missing docstring in public module
-  2:89 E501 Line too long (97 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\path_planner\path_planner_factory.py:
    1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (94 > 88)
-  26:1  ERA001 Found commented-out code
-  30:89 E501 Line too long (101 > 88)
-  44:89 E501 Line too long (102 > 88)
-  45:89 E501 Line too long (89 > 88)
-  48:89 E501 Line too long (115 > 88)
   64:15 TRY003 Avoid specifying long messages outside the exception class
   64:26 EM102 Exception must not use an f-string literal, assign to variable first
 
 common\navigation\path_planner\path_planner_path_plan_params_factory.py:
    1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (99 > 88)
-   3:89 E501 Line too long (95 > 88)
-   4:89 E501 Line too long (93 > 88)
-  17:89 E501 Line too long (95 > 88)
-  19:89 E501 Line too long (94 > 88)
-  20:89 E501 Line too long (95 > 88)
-  29:89 E501 Line too long (99 > 88)
-  32:89 E501 Line too long (100 > 88)
-  33:89 E501 Line too long (97 > 88)
-  37:89 E501 Line too long (101 > 88)
   56:15 TRY003 Avoid specifying long messages outside the exception class
   56:26 EM102 Exception must not use an f-string literal, assign to variable first
 
 common\navigation\path_planner\structs.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (100 > 88)
-  14:89 E501 Line too long (94 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\trajectory_planner\base_trajectory_planner\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (91 > 88)
-  4:89 E501 Line too long (98 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\navigation\trajectory_planner\base_trajectory_planner\base_trajectory_planner.py:
     1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (107 > 88)
-    3:89 E501 Line too long (106 > 88)
-    4:89 E501 Line too long (116 > 88)
-   15:89 E501 Line too long (98 > 88)
    24:34 UP046 Generic class `BaseTrajectoryPlanner` uses `Generic` subclass instead of type parameters
-   27:89 E501 Line too long (90 > 88)
-   43:89 E501 Line too long (94 > 88)
   122:9  D102 Missing docstring in public method
   125:9  D102 Missing docstring in public method
   128:9  D102 Missing docstring in public method
 
 common\navigation\trajectory_planner\base_trajectory_planner\base_trajectory_planner_params.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (96 > 88)
-   3:89 E501 Line too long (89 > 88)
-  12:89 E501 Line too long (89 > 88)
-  23:89 E501 Line too long (116 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\common\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -966,157 +496,72 @@ common\navigation\trajectory_planner\common\segments\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\trajectory_planner\common\segments\base_segment.py:
-  1:1  D100 Missing docstring in public module
-  2:89 E501 Line too long (117 > 88)
-  3:89 E501 Line too long (115 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\common\segments\rotation_segment.py:
-   1:1  D100 Missing docstring in public module
-   4:89 E501 Line too long (120 > 88)
-  21:89 E501 Line too long (110 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\common\segments\segment_mapper.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (117 > 88)
-   3:89 E501 Line too long (119 > 88)
-  18:89 E501 Line too long (97 > 88)
-  44:89 E501 Line too long (98 > 88)
-  50:89 E501 Line too long (111 > 88)
-  51:89 E501 Line too long (101 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\common\segments\smooth_segment.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (115 > 88)
-   3:89 E501 Line too long (118 > 88)
-  20:9  D205 1 blank line required between summary line and description
-  20:89 E501 Line too long (89 > 88)
-  27:89 E501 Line too long (121 > 88)
+   1:1 D100 Missing docstring in public module
+  20:9 D205 1 blank line required between summary line and description
 
 common\navigation\trajectory_planner\common\segments\stop_segment.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (122 > 88)
-   3:89 E501 Line too long (90 > 88)
-  24:89 E501 Line too long (91 > 88)
-  28:89 E501 Line too long (105 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\common\segments\straight_segment.py:
-  1:1  D100 Missing docstring in public module
-  2:89 E501 Line too long (110 > 88)
-  3:89 E501 Line too long (109 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\sequential_trajectory_planner\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (103 > 88)
-  4:89 E501 Line too long (110 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\navigation\trajectory_planner\sequential_trajectory_planner\sequential_trajectory_planner.py:
     1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (102 > 88)
-    3:89 E501 Line too long (96 > 88)
-    4:89 E501 Line too long (98 > 88)
-    5:89 E501 Line too long (105 > 88)
-   14:89 E501 Line too long (91 > 88)
-   24:89 E501 Line too long (110 > 88)
    34:5  D205 1 blank line required between summary line and description
-   34:89 E501 Line too long (111 > 88)
-   35:89 E501 Line too long (101 > 88)
-   49:89 E501 Line too long (94 > 88)
    68:9  D205 1 blank line required between summary line and description
    68:56 RUF002 Docstring contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
-   83:89 E501 Line too long (89 > 88)
   105:9  D205 1 blank line required between summary line and description
   105:56 RUF002 Docstring contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
-  205:89 E501 Line too long (96 > 88)
   241:19 TRY003 Avoid specifying long messages outside the exception class
   241:32 EM101 Exception must not use a string literal, assign to variable first
-  254:89 E501 Line too long (102 > 88)
-  268:89 E501 Line too long (103 > 88)
   314:19 TRY003 Avoid specifying long messages outside the exception class
   315:17 EM102 Exception must not use an f-string literal, assign to variable first
   335:19 TRY003 Avoid specifying long messages outside the exception class
   335:32 EM101 Exception must not use a string literal, assign to variable first
 
 common\navigation\trajectory_planner\sequential_trajectory_planner\sequential_trajectory_planner_params.py:
-   1:1  D100 Missing docstring in public module
-   3:89 E501 Line too long (96 > 88)
-   7:89 E501 Line too long (98 > 88)
-  26:89 E501 Line too long (91 > 88)
-  28:89 E501 Line too long (98 > 88)
-  30:89 E501 Line too long (89 > 88)
-  31:89 E501 Line too long (100 > 88)
-  32:89 E501 Line too long (89 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\speed_profile\__init__.py:
-   1:1  D104 Missing docstring in public package
-  12:1  ERA001 Found commented-out code
-  12:89 E501 Line too long (112 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\navigation\trajectory_planner\speed_profile\base_speed_profile.py:
-   1:1  D100 Missing docstring in public module
-  39:89 E501 Line too long (108 > 88)
-  40:89 E501 Line too long (117 > 88)
-  41:89 E501 Line too long (93 > 88)
-  42:89 E501 Line too long (89 > 88)
-  64:89 E501 Line too long (96 > 88)
-  65:89 E501 Line too long (97 > 88)
-  66:89 E501 Line too long (89 > 88)
-  86:89 E501 Line too long (97 > 88)
-  87:89 E501 Line too long (89 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\speed_profile\basic_speed_profile.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (101 > 88)
-   3:89 E501 Line too long (110 > 88)
-   4:89 E501 Line too long (112 > 88)
-   5:89 E501 Line too long (96 > 88)
-  17:89 E501 Line too long (89 > 88)
-  41:89 E501 Line too long (101 > 88)
-  42:89 E501 Line too long (99 > 88)
-  65:89 E501 Line too long (101 > 88)
-  66:89 E501 Line too long (99 > 88)
-  87:89 E501 Line too long (101 > 88)
-  88:89 E501 Line too long (99 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\speed_profile\linear_ramped_speed_profile.py:
-    1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (92 > 88)
-    3:89 E501 Line too long (90 > 88)
-    5:89 E501 Line too long (91 > 88)
-    6:89 E501 Line too long (91 > 88)
-   18:5  D205 1 blank line required between summary line and description
-   18:89 E501 Line too long (102 > 88)
-   31:89 E501 Line too long (90 > 88)
-   33:89 E501 Line too long (90 > 88)
-   85:9  C901 `get_speed` is too complex (11 > 10)
-   85:9  PLR0911 Too many return statements (11 > 6)
-   92:89 E501 Line too long (105 > 88)
-   95:89 E501 Line too long (95 > 88)
-   96:89 E501 Line too long (90 > 88)
-  160:9  C901 `get_distance` is too complex (11 > 10)
-  160:9  PLR0911 Too many return statements (11 > 6)
+    1:1 D100 Missing docstring in public module
+   18:5 D205 1 blank line required between summary line and description
+   85:9 C901 `get_speed` is too complex (11 > 10)
+   85:9 PLR0911 Too many return statements (11 > 6)
+  160:9 C901 `get_distance` is too complex (11 > 10)
+  160:9 PLR0911 Too many return statements (11 > 6)
 
 common\navigation\trajectory_planner\speed_profile\sigmoid_ramped_speed_profile.py:
   1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\speed_profile\speed_profiler.py:
-   1:1  D100 Missing docstring in public module
-  21:89 E501 Line too long (91 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\structs.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (96 > 88)
-   3:89 E501 Line too long (97 > 88)
-   4:89 E501 Line too long (96 > 88)
-  43:89 E501 Line too long (92 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\navigation\trajectory_planner\trajectory_planner_factory.py:
    1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (100 > 88)
-  21:89 E501 Line too long (107 > 88)
-  30:89 E501 Line too long (89 > 88)
-  31:89 E501 Line too long (93 > 88)
-  36:89 E501 Line too long (97 > 88)
-  37:89 E501 Line too long (115 > 88)
   53:15 TRY003 Avoid specifying long messages outside the exception class
   53:26 EM102 Exception must not use an f-string literal, assign to variable first
 
@@ -1133,21 +578,12 @@ common\strategy\core\builders\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\strategy\core\builders\subgraph_builder.py:
-    1:1  D100 Missing docstring in public module
-   15:5  D205 1 blank line required between summary line and description
-   19:9  D107 Missing docstring in `__init__`
-   98:89 E501 Line too long (93 > 88)
-  139:89 E501 Line too long (96 > 88)
+   1:1 D100 Missing docstring in public module
+  15:5 D205 1 blank line required between summary line and description
+  19:9 D107 Missing docstring in `__init__`
 
 common\strategy\core\graph_runner.py:
-    1:1  D100 Missing docstring in public module
-   25:89 E501 Line too long (94 > 88)
-   37:89 E501 Line too long (96 > 88)
-   94:89 E501 Line too long (112 > 88)
-  107:89 E501 Line too long (133 > 88)
-  119:89 E501 Line too long (96 > 88)
-  124:89 E501 Line too long (94 > 88)
-  130:89 E501 Line too long (124 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\strategy\core\sub_graphs\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1165,15 +601,12 @@ common\strategy\core\task_nodes\__init__.py:
 
 common\strategy\core\task_nodes\base_task_node.py:
     1:1  D100 Missing docstring in public module
-   34:89 E501 Line too long (137 > 88)
-   86:89 E501 Line too long (95 > 88)
    90:56 ARG002 Unused method argument: `ctx`
   100:55 ARG002 Unused method argument: `ctx`
   110:9  C901 `execute` is too complex (11 > 10)
   148:21 F841 Local variable `all_done` is assigned to but never used
   155:20 BLE001 Do not catch blind exception: `Exception`
   159:17 TRY400 Use `logging.exception` instead of `logging.error`
-  176:89 E501 Line too long (96 > 88)
 
 common\strategy\core\task_nodes\scoring_functions\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1212,28 +645,15 @@ common\strategy\core\task_nodes\scoring_functions\navigation_scoring_function.py
 common\strategy\core\task_nodes\timeout_task_node.py:
    1:1  D100 Missing docstring in public module
   17:5  D205 1 blank line required between summary line and description
-  17:89 E501 Line too long (91 > 88)
-  34:89 E501 Line too long (137 > 88)
-  40:89 E501 Line too long (101 > 88)
   43:26 ARG002 Unused method argument: `ctx`
-  69:89 E501 Line too long (98 > 88)
-  80:89 E501 Line too long (105 > 88)
-  85:89 E501 Line too long (94 > 88)
 
 common\strategy\core\tasks\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\strategy\core\tasks\base_navigation_task.py:
-   1:1  D100 Missing docstring in public module
-  22:7  D101 Missing docstring in public class
-  38:89 E501 Line too long (91 > 88)
-  39:89 E501 Line too long (89 > 88)
-  40:89 E501 Line too long (107 > 88)
-  43:89 E501 Line too long (111 > 88)
-  44:89 E501 Line too long (89 > 88)
-  45:89 E501 Line too long (96 > 88)
-  46:89 E501 Line too long (94 > 88)
-  81:9  D102 Missing docstring in public method
+   1:1 D100 Missing docstring in public module
+  22:7 D101 Missing docstring in public class
+  81:9 D102 Missing docstring in public method
 
 common\strategy\core\tasks\base_task.py:
    1:1 D100 Missing docstring in public module
@@ -1255,70 +675,30 @@ common\strategy\core\transitions\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\strategy\core\transitions\base_transition.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (101 > 88)
-   3:89 E501 Line too long (104 > 88)
-  16:89 E501 Line too long (93 > 88)
-  17:89 E501 Line too long (91 > 88)
-  35:89 E501 Line too long (108 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\strategy\core\transitions\conditional_transition\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\strategy\core\transitions\conditional_transition\conditional_transition.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (105 > 88)
-   3:89 E501 Line too long (108 > 88)
-  18:89 E501 Line too long (93 > 88)
-  31:89 E501 Line too long (108 > 88)
-  37:89 E501 Line too long (89 > 88)
-  41:89 E501 Line too long (101 > 88)
-  44:89 E501 Line too long (99 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\strategy\core\transitions\conditional_transition\transitions_condition\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (110 > 88)
-  4:89 E501 Line too long (119 > 88)
-  7:89 E501 Line too long (124 > 88)
+  1:1 D104 Missing docstring in public package
 
 common\strategy\core\transitions\conditional_transition\transitions_condition\base_transition_condition.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (106 > 88)
-   3:89 E501 Line too long (103 > 88)
-   4:89 E501 Line too long (99 > 88)
-  16:89 E501 Line too long (89 > 88)
-  27:9  D205 1 blank line required between summary line and description
-  33:89 E501 Line too long (109 > 88)
+   1:1 D100 Missing docstring in public module
+  27:9 D205 1 blank line required between summary line and description
 
 common\strategy\core\transitions\conditional_transition\transitions_condition\from_function_transition_condition.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (93 > 88)
-   3:89 E501 Line too long (96 > 88)
-   4:89 E501 Line too long (104 > 88)
-  11:89 E501 Line too long (110 > 88)
-  19:89 E501 Line too long (94 > 88)
-  20:89 E501 Line too long (92 > 88)
-  31:89 E501 Line too long (142 > 88)
-  49:89 E501 Line too long (108 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\strategy\core\transitions\conditional_transition\transitions_condition\zone_accessibility_transition_condition.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (97 > 88)
-   3:89 E501 Line too long (99 > 88)
-   4:89 E501 Line too long (100 > 88)
-  12:89 E501 Line too long (110 > 88)
-  21:89 E501 Line too long (92 > 88)
-  23:89 E501 Line too long (89 > 88)
-  24:89 E501 Line too long (89 > 88)
-  31:89 E501 Line too long (98 > 88)
-  37:9  ARG002 Unused method argument: `from_node`
-  46:89 E501 Line too long (90 > 88)
-  49:89 E501 Line too long (115 > 88)
+   1:1 D100 Missing docstring in public module
+  37:9 ARG002 Unused method argument: `from_node`
 
 common\strategy\core\transitions\direct_transition.py:
    1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (106 > 88)
-   3:89 E501 Line too long (107 > 88)
   21:9  PLR6301 Method `can_transit` could be a function, class method, or static method
   21:27 ARG002 Unused method argument: `from_node`
   21:52 ARG002 Unused method argument: `ctx`
@@ -1327,34 +707,20 @@ common\strategy\tools\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\strategy\tools\visualize.py:
-    1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (94 > 88)
-    3:89 E501 Line too long (102 > 88)
-    4:89 E501 Line too long (107 > 88)
-   27:89 E501 Line too long (94 > 88)
-   28:89 E501 Line too long (103 > 88)
-   75:5  T201 `print` found
-   77:9  PLC0415 `import` should be at the top-level of a file
-   93:89 E501 Line too long (94 > 88)
-   94:89 E501 Line too long (103 > 88)
-  139:5  T201 `print` found
-  141:9  PLC0415 `import` should be at the top-level of a file
-  152:89 E501 Line too long (95 > 88)
+    1:1 D100 Missing docstring in public module
+   75:5 T201 `print` found
+   77:9 PLC0415 `import` should be at the top-level of a file
+  139:5 T201 `print` found
+  141:9 PLC0415 `import` should be at the top-level of a file
 
 common\teensy\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\teensy\base_teensy.py:
-   1:1  D100 Missing docstring in public module
-  15:89 E501 Line too long (109 > 88)
-  36:89 E501 Line too long (94 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\teensy\gpio_teensy.py:
-   1:1  D100 Missing docstring in public module
-   3:89 E501 Line too long (91 > 88)
-  25:89 E501 Line too long (101 > 88)
-  33:89 E501 Line too long (93 > 88)
-  34:89 E501 Line too long (95 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\teensy\tools\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1366,15 +732,7 @@ common\teensy\tools\gpio_manager\actuators_type.py:
   1:1 D100 Missing docstring in public module
 
 common\teensy\tools\gpio_manager\gpio_manager.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (96 > 88)
-   3:89 E501 Line too long (98 > 88)
-  26:89 E501 Line too long (89 > 88)
-  49:89 E501 Line too long (106 > 88)
-  53:89 E501 Line too long (113 > 88)
-  56:89 E501 Line too long (106 > 88)
-  69:89 E501 Line too long (97 > 88)
-  90:89 E501 Line too long (90 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\usb_com\python\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1385,23 +743,16 @@ common\usb_com\python\com\__init__.py:
 common\usb_com\python\com\com.py:
     1:1  D100 Missing docstring in public module
    24:5  D205 1 blank line required between summary line and description
-   46:89 E501 Line too long (96 > 88)
-   47:89 E501 Line too long (95 > 88)
-   65:89 E501 Line too long (108 > 88)
-   73:89 E501 Line too long (89 > 88)
    96:23 TRY003 Avoid specifying long messages outside the exception class
    96:36 EM101 Exception must not use a string literal, assign to variable first
   114:9  PLW3201 Dunder method `__receiver__` has no special meaning in Python 3
   115:9  D415 First line should end with a period, question mark, or exclamation point
-  115:89 E501 Line too long (90 > 88)
-  121:89 E501 Line too long (107 > 88)
   146:25 G003 Logging statement uses `+`
   151:34 PLR2004 Magic value used in comparison, consider replacing `127` with a constant variable
   167:24 BLE001 Do not catch blind exception: `Exception`
   168:21 TRY400 Use `logging.exception` instead of `logging.error`
   168:39 G003 Logging statement uses `+`
   171:20 BLE001 Do not catch blind exception: `Exception`
-  186:89 E501 Line too long (96 > 88)
   198:17 T201 `print` found
 
 common\usb_com\python\com\dummy.py:
@@ -1412,9 +763,7 @@ common\usb_com\python\com\exceptions.py:
   1:7 N818 Exception name `ComException` should be named with an Error suffix
 
 common\usb_com\python\messages.py:
-  1:1  D100 Missing docstring in public module
-  4:89 E501 Line too long (111 > 88)
-  9:89 E501 Line too long (112 > 88)
+  1:1 D100 Missing docstring in public module
 
 common\usb_com\python\tools\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1431,7 +780,6 @@ common\utils\utils.py:
    1:1  D100 Missing docstring in public module
    6:7  D101 Missing docstring in public class
   14:16 DTZ005 `datetime.datetime.now()` called without a `tz` argument
-  21:89 E501 Line too long (92 > 88)
   26:16 DTZ005 `datetime.datetime.now()` called without a `tz` argument
   35:35 DTZ005 `datetime.datetime.now()` called without a `tz` argument
   75:13 E722 Do not use bare `except`
@@ -1456,6 +804,12 @@ common\video\server.py:
   80:12 BLE001 Do not catch blind exception: `Exception`
   81:9  T201 `print` found
 
+docs\source\conf.py:
+   1:1 INP001 File `docs\source\conf.py` is part of an implicit namespace package. Add an `__init__.py`.
+   1:1 D100 Missing docstring in public module
+  10:5 PTH100 `os.path.abspath()` should be replaced by `Path.resolve()`
+  17:1 A001 Variable `copyright` is shadowing a Python builtin
+
 robot1\__init__.py:
   1:1 D104 Missing docstring in public package
 
@@ -1464,28 +818,6 @@ robot1\rasp\__init__.py:
 
 robot1\rasp\_config_loader.py:
    23:10 PTH123 `open()` should be replaced by `Path.open()`
-   56:89 E501 Line too long (93 > 88)
-   70:89 E501 Line too long (139 > 88)
-   71:89 E501 Line too long (114 > 88)
-   72:89 E501 Line too long (106 > 88)
-   86:89 E501 Line too long (101 > 88)
-   89:89 E501 Line too long (101 > 88)
-  110:89 E501 Line too long (92 > 88)
-  111:89 E501 Line too long (95 > 88)
-  112:89 E501 Line too long (98 > 88)
-  114:89 E501 Line too long (113 > 88)
-  125:89 E501 Line too long (91 > 88)
-  135:89 E501 Line too long (93 > 88)
-  141:89 E501 Line too long (92 > 88)
-  143:89 E501 Line too long (90 > 88)
-  144:89 E501 Line too long (99 > 88)
-  146:89 E501 Line too long (98 > 88)
-  147:89 E501 Line too long (154 > 88)
-  148:89 E501 Line too long (150 > 88)
-  149:89 E501 Line too long (128 > 88)
-  150:89 E501 Line too long (96 > 88)
-  151:89 E501 Line too long (110 > 88)
-  152:89 E501 Line too long (96 > 88)
   166:5  PLC0415 `import` should be at the top-level of a file
   325:46 RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
 
@@ -1493,8 +825,7 @@ robot1\rasp\boombot_strategy\__init__.py:
   1:1 D104 Missing docstring in public package
 
 robot1\rasp\boombot_strategy\show_game_context.py:
-   1:1  D100 Missing docstring in public module
-  28:89 E501 Line too long (93 > 88)
+  1:1 D100 Missing docstring in public module
 
 robot1\rasp\boombot_strategy\strategies\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1503,118 +834,58 @@ robot1\rasp\boombot_strategy\strategies\base_strategy.py:
    1:1  D100 Missing docstring in public module
    5:28 PLC2701 Private name import `_config_loader`
   19:7  B024 `BaseStrategy` is an abstract base class, but it has no abstract methods or properties
-  63:89 E501 Line too long (93 > 88)
-  76:89 E501 Line too long (102 > 88)
-  78:89 E501 Line too long (96 > 88)
   83:9  PLR6301 Method `_resolve_for_entry` could be a function, class method, or static method
   99:9  PLR6301 Method `_resolve_for_exits` could be a function, class method, or static method
 
 robot1\rasp\boombot_strategy\strategies\basic_strategy.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (94 > 88)
-   3:89 E501 Line too long (96 > 88)
-   5:89 E501 Line too long (92 > 88)
-  26:5  D205 1 blank line required between summary line and description
-  26:5  D415 First line should end with a period, question mark, or exclamation point
-  33:89 E501 Line too long (102 > 88)
-  36:89 E501 Line too long (98 > 88)
-  53:9  ERA001 Found commented-out code
-  56:9  ERA001 Found commented-out code
-  57:9  ERA001 Found commented-out code
-  58:9  ERA001 Found commented-out code
+   1:1 D100 Missing docstring in public module
+  26:5 D205 1 blank line required between summary line and description
+  26:5 D415 First line should end with a period, question mark, or exclamation point
 
 robot1\rasp\boombot_strategy\strategies\debug_strategy.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (94 > 88)
-   3:89 E501 Line too long (96 > 88)
-   5:89 E501 Line too long (92 > 88)
-  25:5  D205 1 blank line required between summary line and description
-  25:5  D415 First line should end with a period, question mark, or exclamation point
-  32:89 E501 Line too long (102 > 88)
-  35:89 E501 Line too long (98 > 88)
+   1:1 D100 Missing docstring in public module
+  25:5 D205 1 blank line required between summary line and description
+  25:5 D415 First line should end with a period, question mark, or exclamation point
 
 robot1\rasp\boombot_strategy\strategies\only_banner_strategy.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (94 > 88)
-   3:89 E501 Line too long (96 > 88)
-   5:89 E501 Line too long (92 > 88)
-  24:5  D205 1 blank line required between summary line and description
-  24:5  D415 First line should end with a period, question mark, or exclamation point
-  31:89 E501 Line too long (102 > 88)
-  34:89 E501 Line too long (98 > 88)
+   1:1 D100 Missing docstring in public module
+  24:5 D205 1 blank line required between summary line and description
+  24:5 D415 First line should end with a period, question mark, or exclamation point
 
 robot1\rasp\boombot_strategy\strategies\tower_rush_alt_strategy.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (103 > 88)
-   3:89 E501 Line too long (96 > 88)
-   5:89 E501 Line too long (92 > 88)
-  27:5  D205 1 blank line required between summary line and description
-  27:5  D415 First line should end with a period, question mark, or exclamation point
-  35:89 E501 Line too long (102 > 88)
-  38:89 E501 Line too long (98 > 88)
+   1:1 D100 Missing docstring in public module
+  27:5 D205 1 blank line required between summary line and description
+  27:5 D415 First line should end with a period, question mark, or exclamation point
 
 robot1\rasp\boombot_strategy\strategies\tower_rush_strategy.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (103 > 88)
-   3:89 E501 Line too long (96 > 88)
-   5:89 E501 Line too long (92 > 88)
-  27:5  D205 1 blank line required between summary line and description
-  27:5  D415 First line should end with a period, question mark, or exclamation point
-  35:89 E501 Line too long (102 > 88)
-  38:89 E501 Line too long (98 > 88)
+   1:1 D100 Missing docstring in public module
+  27:5 D205 1 blank line required between summary line and description
+  27:5 D415 First line should end with a period, question mark, or exclamation point
 
 robot1\rasp\boombot_strategy\sub_graphs\__init__.py:
   1:1 D104 Missing docstring in public package
 
 robot1\rasp\boombot_strategy\sub_graphs\banner_deployment.py:
-  1:1  D100 Missing docstring in public module
-  3:89 E501 Line too long (91 > 88)
-  4:89 E501 Line too long (93 > 88)
+  1:1 D100 Missing docstring in public module
 
 robot1\rasp\boombot_strategy\sub_graphs\construct.py:
-    1:1  D100 Missing docstring in public module
-    5:89 E501 Line too long (91 > 88)
-   23:89 E501 Line too long (91 > 88)
-   25:89 E501 Line too long (102 > 88)
-   30:89 E501 Line too long (124 > 88)
-   33:89 E501 Line too long (98 > 88)
-   97:89 E501 Line too long (91 > 88)
-   99:89 E501 Line too long (102 > 88)
-  104:89 E501 Line too long (124 > 88)
-  107:89 E501 Line too long (98 > 88)
+  1:1 D100 Missing docstring in public module
 
 robot1\rasp\boombot_strategy\sub_graphs\pickup.py:
-   1:1  D100 Missing docstring in public module
-   4:89 E501 Line too long (93 > 88)
-  26:89 E501 Line too long (104 > 88)
-  28:89 E501 Line too long (107 > 88)
-  29:89 E501 Line too long (89 > 88)
+  1:1 D100 Missing docstring in public module
 
 robot1\rasp\boombot_strategy\sub_graphs\push_one_floor_to_wall.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (98 > 88)
-   3:89 E501 Line too long (91 > 88)
-   4:89 E501 Line too long (89 > 88)
-  48:89 E501 Line too long (94 > 88)
-  49:89 E501 Line too long (94 > 88)
-  50:89 E501 Line too long (105 > 88)
+  1:1 D100 Missing docstring in public module
 
 robot1\rasp\boombot_strategy\sub_graphs\wall_pickup.py:
-   1:1  D100 Missing docstring in public module
-   4:89 E501 Line too long (93 > 88)
-  26:89 E501 Line too long (94 > 88)
-  32:89 E501 Line too long (107 > 88)
+  1:1 D100 Missing docstring in public module
 
 robot1\rasp\boombot_strategy\tasks\__init__.py:
   1:1 D104 Missing docstring in public package
 
 robot1\rasp\boombot_strategy\tasks\actuator_task.py:
     1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (93 > 88)
-    3:89 E501 Line too long (93 > 88)
-    4:89 E501 Line too long (92 > 88)
     8:28 PLC2701 Private name import `_config_loader`
-   14:89 E501 Line too long (101 > 88)
    16:9  PLR6301 Method `handle` could be a function, class method, or static method
    32:9  PLR6301 Method `handle` could be a function, class method, or static method
    49:9  PLR6301 Method `handle` could be a function, class method, or static method
@@ -1632,27 +903,14 @@ robot1\rasp\boombot_strategy\tasks\navigation_tasks\__init__.py:
 robot1\rasp\boombot_strategy\tasks\navigation_tasks\go_to_color_reserved_zone.py:
   1:1  D100 Missing docstring in public module
   1:28 PLC2701 Private name import `_config_loader`
-  8:89 E501 Line too long (102 > 88)
 
 robot1\rasp\boombot_strategy\tasks\navigation_tasks\go_to_stuff_zone.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (98 > 88)
-   3:89 E501 Line too long (94 > 88)
-   5:89 E501 Line too long (97 > 88)
-   9:28 PLC2701 Private name import `_config_loader`
-  16:89 E501 Line too long (102 > 88)
-  22:89 E501 Line too long (92 > 88)
-  24:89 E501 Line too long (104 > 88)
-  25:89 E501 Line too long (105 > 88)
-  26:89 E501 Line too long (103 > 88)
-  30:89 E501 Line too long (98 > 88)
-  41:89 E501 Line too long (104 > 88)
+  1:1  D100 Missing docstring in public module
+  9:28 PLC2701 Private name import `_config_loader`
 
 robot1\rasp\boombot_strategy\tasks\navigation_tasks\maneuver.py:
-    1:1  D100 Missing docstring in public module
-    8:28 PLC2701 Private name import `_config_loader`
-   24:89 E501 Line too long (102 > 88)
-  101:89 E501 Line too long (93 > 88)
+  1:1  D100 Missing docstring in public module
+  8:28 PLC2701 Private name import `_config_loader`
 
 robot1\rasp\boombot_strategy\tasks\navigation_tasks\navigation_task.py:
   1:1 D100 Missing docstring in public module
@@ -1670,22 +928,11 @@ robot1\rasp\brains\main_brain.py:
     1:1  D100 Missing docstring in public module
   116:9  PLC0415 `import` should be at the top-level of a file
   117:9  PLC0415 `import` should be at the top-level of a file
-  128:9  ERA001 Found commented-out code
-  129:9  ERA001 Found commented-out code
-  164:13 ERA001 Found commented-out code
-  171:13 ERA001 Found commented-out code
-  172:13 ERA001 Found commented-out code
-  172:89 E501 Line too long (91 > 88)
   232:31 S307 Use of possibly insecure function; consider using `ast.literal_eval`
   234:25 S307 Use of possibly insecure function; consider using `ast.literal_eval`
   236:39 PLR6201 Use a set literal when testing for membership
-  249:13 ERA001 Found commented-out code
-  252:13 ERA001 Found commented-out code
-  257:5  ERA001 Found commented-out code
   264:9  ASYNC110 Use `anyio.Event` instead of awaiting `anyio.sleep` in a `while` loop
-  268:89 E501 Line too long (94 > 88)
   274:9  ASYNC110 Use `anyio.Event` instead of awaiting `anyio.sleep` in a `while` loop
-  290:9  ERA001 Found commented-out code
 
 robot1\rasp\controllers\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1694,13 +941,10 @@ robot1\rasp\controllers\actuators\__init__.py:
   1:1 D104 Missing docstring in public package
 
 robot1\rasp\controllers\actuators\actuators_dummy.py:
-    1:1  D100 Missing docstring in public module
-    3:28 PLC2701 Private name import `_config_loader`
-    8:5  D205 1 blank line required between summary line and description
-    8:89 E501 Line too long (98 > 88)
-   44:9  D105 Missing docstring in magic method
-  113:89 E501 Line too long (96 > 88)
-  117:89 E501 Line too long (107 > 88)
+   1:1  D100 Missing docstring in public module
+   3:28 PLC2701 Private name import `_config_loader`
+   8:5  D205 1 blank line required between summary line and description
+  44:9  D105 Missing docstring in magic method
 
 robot1\rasp\controllers\actuators\actuators_show.py:
     1:1  D100 Missing docstring in public module
@@ -1712,102 +956,52 @@ robot1\rasp\controllers\actuators\actuators_show.py:
    33:7  D101 Missing docstring in public class
    40:1  PLR0904 Too many public methods (25 > 20)
    41:5  D205 1 blank line required between summary line and description
-   41:89 E501 Line too long (106 > 88)
-   42:89 E501 Line too long (110 > 88)
-   59:89 E501 Line too long (115 > 88)
-   60:89 E501 Line too long (92 > 88)
-   61:89 E501 Line too long (93 > 88)
-   62:89 E501 Line too long (113 > 88)
-   63:89 E501 Line too long (101 > 88)
-   64:89 E501 Line too long (105 > 88)
    82:20 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
   128:9  T201 `print` found
   153:9  D205 1 blank line required between summary line and description
-  154:89 E501 Line too long (99 > 88)
   160:9  D205 1 blank line required between summary line and description
-  161:89 E501 Line too long (93 > 88)
   169:9  D205 1 blank line required between summary line and description
-  170:89 E501 Line too long (105 > 88)
   178:23 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
   188:9  D205 1 blank line required between summary line and description
-  189:89 E501 Line too long (101 > 88)
   198:27 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
   208:9  D205 1 blank line required between summary line and description
-  209:89 E501 Line too long (95 > 88)
   211:12 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
   214:13 SIM118 Use `key in dict` instead of `key in dict.keys()`
   215:21 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
   219:9  D205 1 blank line required between summary line and description
-  220:89 E501 Line too long (99 > 88)
   225:13 SIM118 Use `key in dict` instead of `key in dict.keys()`
   226:21 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
   230:9  D205 1 blank line required between summary line and description
-  231:89 E501 Line too long (91 > 88)
   233:13 SIM118 Use `key in dict` instead of `key in dict.keys()`
   234:21 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
   237:12 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
   241:9  D205 1 blank line required between summary line and description
   255:9  D205 1 blank line required between summary line and description
-  281:89 E501 Line too long (96 > 88)
   290:9  D102 Missing docstring in public method
   294:9  D205 1 blank line required between summary line and description
-  295:89 E501 Line too long (90 > 88)
   301:9  D205 1 blank line required between summary line and description
   308:9  D205 1 blank line required between summary line and description
   319:9  D205 1 blank line required between summary line and description
   330:9  D205 1 blank line required between summary line and description
-  339:89 E501 Line too long (91 > 88)
   340:9  D205 1 blank line required between summary line and description
-  340:89 E501 Line too long (97 > 88)
-  341:89 E501 Line too long (116 > 88)
-  364:5  ERA001 Found commented-out code
-  365:5  ERA001 Found commented-out code
-  368:5  ERA001 Found commented-out code
   378:9  D415 First line should end with a period, question mark, or exclamation point
-  387:9  ERA001 Found commented-out code
   391:9  D415 First line should end with a period, question mark, or exclamation point
   397:9  D102 Missing docstring in public method
-  403:9  ERA001 Found commented-out code
   407:9  D102 Missing docstring in public method
   418:9  D102 Missing docstring in public method
   438:9  D102 Missing docstring in public method
   448:9  D102 Missing docstring in public method
-  452:9  ERA001 Found commented-out code
-  453:9  ERA001 Found commented-out code
   457:9  D102 Missing docstring in public method
-  470:5  ERA001 Found commented-out code
-  473:5  ERA001 Found commented-out code
-  474:5  ERA001 Found commented-out code
-  475:5  ERA001 Found commented-out code
-  478:5  ERA001 Found commented-out code
-  481:5  ERA001 Found commented-out code
 
 robot1\rasp\controllers\actuators\base\actuators.py:
     1:1  INP001 File `robot1\rasp\controllers\actuators\base\actuators.py` is part of an implicit namespace package. Add an `__init__.py`.
     1:1  D100 Missing docstring in public module
     6:28 PLC2701 Private name import `_config_loader`
-   34:89 E501 Line too long (115 > 88)
-   35:89 E501 Line too long (92 > 88)
-   36:89 E501 Line too long (93 > 88)
-   37:89 E501 Line too long (113 > 88)
-   38:89 E501 Line too long (101 > 88)
-   39:89 E501 Line too long (105 > 88)
    69:9  D105 Missing docstring in magic method
    82:13 G003 Logging statement uses `+`
-  120:89 E501 Line too long (93 > 88)
   135:9  D205 1 blank line required between summary line and description
   135:9  DOC202 Docstring should not have a returns section because the function doesn't return anything
-  141:89 E501 Line too long (114 > 88)
-  150:89 E501 Line too long (92 > 88)
-  167:9  ERA001 Found commented-out code
   193:9  N803 Argument name `use_I2C` should be lowercase
-  200:89 E501 Line too long (94 > 88)
-  201:89 E501 Line too long (96 > 88)
-  202:89 E501 Line too long (110 > 88)
-  203:89 E501 Line too long (112 > 88)
-  205:89 E501 Line too long (105 > 88)
-  223:89 E501 Line too long (92 > 88)
-  229:89 E501 Line too long (122 > 88)
   231:57 PLR2004 Magic value used in comparison, consider replacing `0.03` with a constant variable
   254:9  D102 Missing docstring in public method
 
@@ -1818,72 +1012,46 @@ robot1\rasp\controllers\rolling_basis\asservissment_rolling_basis.py:
     1:1  D100 Missing docstring in public module
     8:28 PLC2701 Private name import `_config_loader`
    18:7  PLW1641 Object does not implement `__hash__` method
-   21:89 E501 Line too long (105 > 88)
-   22:89 E501 Line too long (104 > 88)
-   39:89 E501 Line too long (120 > 88)
-   40:89 E501 Line too long (92 > 88)
-   41:89 E501 Line too long (93 > 88)
-   42:89 E501 Line too long (113 > 88)
-   43:89 E501 Line too long (101 > 88)
-   44:89 E501 Line too long (105 > 88)
    87:13 G003 Logging statement uses `+`
   148:9  D205 1 blank line required between summary line and description
   173:9  S101 Use of `assert` detected
-  184:89 E501 Line too long (133 > 88)
-  291:89 E501 Line too long (129 > 88)
   298:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
   305:17 TRY301 Abstract `raise` to an inner function
   305:23 TRY003 Avoid specifying long messages outside the exception class
   306:21 EM101 Exception must not use a string literal, assign to variable first
   310:16 BLE001 Do not catch blind exception: `Exception`
   311:13 TRY400 Use `logging.exception` instead of `logging.error`
-  333:89 E501 Line too long (129 > 88)
   340:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
   347:17 TRY301 Abstract `raise` to an inner function
   347:23 TRY003 Avoid specifying long messages outside the exception class
   348:21 EM101 Exception must not use a string literal, assign to variable first
   352:16 BLE001 Do not catch blind exception: `Exception`
   353:13 TRY400 Use `logging.exception` instead of `logging.error`
-  363:89 E501 Line too long (91 > 88)
-  364:89 E501 Line too long (93 > 88)
   378:16 BLE001 Do not catch blind exception: `Exception`
   379:13 TRY400 Use `logging.exception` instead of `logging.error`
   384:9  D105 Missing docstring in magic method
   393:9  D105 Missing docstring in magic method
 
 robot1\rasp\controllers\rolling_basis\pids.py:
-   1:1  D100 Missing docstring in public module
-  57:89 E501 Line too long (99 > 88)
+  1:1 D100 Missing docstring in public module
 
 robot1\rasp\controllers\rolling_basis\rolling_basis.py:
     1:1  D100 Missing docstring in public module
     7:28 PLC2701 Private name import `_config_loader`
    14:7  PLW1641 Object does not implement `__hash__` method
-   17:89 E501 Line too long (105 > 88)
-   35:89 E501 Line too long (120 > 88)
-   36:89 E501 Line too long (92 > 88)
-   37:89 E501 Line too long (93 > 88)
-   38:89 E501 Line too long (113 > 88)
-   39:89 E501 Line too long (101 > 88)
-   40:89 E501 Line too long (105 > 88)
-   74:9  ERA001 Found commented-out code
    88:13 G003 Logging statement uses `+`
-  197:89 E501 Line too long (129 > 88)
   204:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
   211:17 TRY301 Abstract `raise` to an inner function
   211:23 TRY003 Avoid specifying long messages outside the exception class
   212:21 EM101 Exception must not use a string literal, assign to variable first
   216:16 BLE001 Do not catch blind exception: `Exception`
   217:13 TRY400 Use `logging.exception` instead of `logging.error`
-  239:89 E501 Line too long (129 > 88)
   246:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
   253:17 TRY301 Abstract `raise` to an inner function
   253:23 TRY003 Avoid specifying long messages outside the exception class
   254:21 EM101 Exception must not use a string literal, assign to variable first
   258:16 BLE001 Do not catch blind exception: `Exception`
   259:13 TRY400 Use `logging.exception` instead of `logging.error`
-  269:89 E501 Line too long (90 > 88)
-  270:89 E501 Line too long (92 > 88)
   284:16 BLE001 Do not catch blind exception: `Exception`
   285:13 TRY400 Use `logging.exception` instead of `logging.error`
 
@@ -1891,29 +1059,18 @@ robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
     1:1  D100 Missing docstring in public module
     5:28 PLC2701 Private name import `_config_loader`
    11:7  PLW1641 Object does not implement `__hash__` method
-   14:89 E501 Line too long (105 > 88)
-   31:89 E501 Line too long (120 > 88)
-   32:89 E501 Line too long (92 > 88)
-   33:89 E501 Line too long (93 > 88)
-   34:89 E501 Line too long (113 > 88)
-   35:89 E501 Line too long (101 > 88)
-   60:9  ERA001 Found commented-out code
-  121:89 E501 Line too long (129 > 88)
   128:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
   135:17 TRY301 Abstract `raise` to an inner function
   135:23 TRY003 Avoid specifying long messages outside the exception class
   136:21 EM101 Exception must not use a string literal, assign to variable first
   140:16 BLE001 Do not catch blind exception: `Exception`
   141:13 TRY400 Use `logging.exception` instead of `logging.error`
-  163:89 E501 Line too long (129 > 88)
   170:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
   177:17 TRY301 Abstract `raise` to an inner function
   177:23 TRY003 Avoid specifying long messages outside the exception class
   178:21 EM101 Exception must not use a string literal, assign to variable first
   182:16 BLE001 Do not catch blind exception: `Exception`
   183:13 TRY400 Use `logging.exception` instead of `logging.error`
-  193:89 E501 Line too long (90 > 88)
-  194:89 E501 Line too long (92 > 88)
   206:16 BLE001 Do not catch blind exception: `Exception`
   207:13 TRY400 Use `logging.exception` instead of `logging.error`
 
@@ -1921,10 +1078,6 @@ robot1\rasp\main.py:
     1:1  D100 Missing docstring in public module
     1:8  S404 `subprocess` module is possibly insecure
     7:28 PLC2701 Private name import `_config_loader`
-   91:9  ERA001 Found commented-out code
-   91:89 E501 Line too long (111 > 88)
-  135:5  ERA001 Found commented-out code
-  145:89 E501 Line too long (116 > 88)
   171:9  S603 `subprocess` call: check for execution of untrusted input
   172:9  T201 `print` found
 
@@ -1936,7 +1089,6 @@ robot1\rasp\sensors\inputs\__init__.py:
 
 robot1\rasp\sensors\inputs\inputs.py:
    1:1  D100 Missing docstring in public module
-  22:89 E501 Line too long (92 > 88)
   43:38 PLR2004 Magic value used in comparison, consider replacing `5` with a constant variable
   62:37 PLR2004 Magic value used in comparison, consider replacing `5` with a constant variable
 
@@ -1945,10 +1097,6 @@ robot1\rasp\sensors\lidar\__init__.py:
 
 robot1\rasp\sensors\lidar\lidar.py:
     1:1  D100 Missing docstring in public module
-   24:89 E501 Line too long (113 > 88)
-   45:89 E501 Line too long (95 > 88)
-   53:89 E501 Line too long (110 > 88)
-   54:89 E501 Line too long (122 > 88)
    85:13 PLC0415 `import` should be at the top-level of a file
    89:17 TRY301 Abstract `raise` to an inner function
    89:23 TRY003 Avoid specifying long messages outside the exception class
@@ -1959,37 +1107,28 @@ robot1\rasp\sensors\lidar\lidar.py:
    98:13 TRY300 Consider moving this statement to an `else` block
   102:19 TRY003 Avoid specifying long messages outside the exception class
   102:31 EM102 Exception must not use an f-string literal, assign to variable first
-  105:89 E501 Line too long (105 > 88)
-  114:89 E501 Line too long (101 > 88)
   120:24 BLE001 Do not catch blind exception: `Exception`
-  122:89 E501 Line too long (91 > 88)
-  150:89 E501 Line too long (116 > 88)
   157:19 TRY003 Avoid specifying long messages outside the exception class
   157:30 EM101 Exception must not use a string literal, assign to variable first
   179:15 TRY003 Avoid specifying long messages outside the exception class
   179:26 EM102 Exception must not use an f-string literal, assign to variable first
   203:15 TRY003 Avoid specifying long messages outside the exception class
   203:26 EM102 Exception must not use an f-string literal, assign to variable first
-  206:89 E501 Line too long (91 > 88)
   215:16 BLE001 Do not catch blind exception: `Exception`
   217:13 TRY400 Use `logging.exception` instead of `logging.error`
   225:13 B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
   225:19 TRY002 Create your own exception
   225:19 TRY003 Avoid specifying long messages outside the exception class
   225:29 EM102 Exception must not use an f-string literal, assign to variable first
-  235:89 E501 Line too long (102 > 88)
 
 robot1\rasp\sensors\lidar\lidar_dummy.py:
     1:1  D100 Missing docstring in public module
-   31:89 E501 Line too long (110 > 88)
-   32:89 E501 Line too long (96 > 88)
    51:9  PLR6301 Method `__init_polars_angle` could be a function, class method, or static method
    91:15 TRY003 Avoid specifying long messages outside the exception class
    91:26 EM102 Exception must not use an f-string literal, assign to variable first
   117:15 TRY003 Avoid specifying long messages outside the exception class
   117:26 EM102 Exception must not use an f-string literal, assign to variable first
   184:9  F841 Local variable `valid_polars` is assigned to but never used
-  187:9  ERA001 Found commented-out code
 
 robot1\rasp\tests\config_loader.py:
     1:1  INP001 File `robot1\rasp\tests\config_loader.py` is part of an implicit namespace package. Add an `__init__.py`.
@@ -1998,19 +1137,7 @@ robot1\rasp\tests\config_loader.py:
    20:14 PLW1514 `open` in text mode without explicit `encoding` argument
    20:14 PTH123 `open()` should be replaced by `Path.open()`
    22:5  TRY203 Remove exception handler; error is immediately re-raised
-   63:89 E501 Line too long (139 > 88)
-   64:89 E501 Line too long (114 > 88)
-   65:89 E501 Line too long (106 > 88)
-   79:89 E501 Line too long (101 > 88)
-   82:89 E501 Line too long (101 > 88)
-   91:89 E501 Line too long (95 > 88)
-   92:89 E501 Line too long (98 > 88)
-   94:89 E501 Line too long (103 > 88)
-   95:89 E501 Line too long (95 > 88)
-   96:89 E501 Line too long (89 > 88)
-  108:89 E501 Line too long (93 > 88)
-  114:89 E501 Line too long (92 > 88)
   122:32 PTH118 `os.path.join()` should be replaced by `Path` with `/` operator
   126:41 PTH118 `os.path.join()` should be replaced by `Path` with `/` operator
 
-Found 1577 errors.
+Found 704 errors.

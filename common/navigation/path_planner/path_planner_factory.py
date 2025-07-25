@@ -1,7 +1,7 @@
 # ====== Code Summary ======
-# This module defines a factory class `PathPlannerFactory` that creates instances of different
+# This module defines a factory class ``PathPlannerFactory`` that creates instances of different
 # path planner classes based on a specified strategy in the provided parameters.
-# It supports instantiation of `DeltaPathPlanner` and `BasicPathPlanner` using
+# It supports instantiation of ``DeltaPathPlanner`` and ``BasicPathPlanner`` using
 # strongly-typed parameters for safe casting.
 
 from typing import cast
@@ -35,7 +35,7 @@ class PathPlannerFactory:
     ) -> BasePathPlanner:
         """Create a path planner based on the given parameters.
 
-        This method inspects the `path_finding_strategy` attribute of the provided
+        This method inspects the ``path_finding_strategy`` attribute of the provided
         parameter object and returns an instance of the appropriate path planner class.
         It safely casts the parameter to the expected subclass before passing it
         to the respective path planner constructor.
@@ -48,7 +48,7 @@ class PathPlannerFactory:
             BasePathPlanner: A specific implementation of the path planner, instantiated with the given parameters.
 
         Raises:
-            ValueError: If the strategy specified in `params` is not supported.
+            ValueError: If the strategy specified in ``params`` is not supported.
         """
         strategy = params.path_finding_strategy
 

@@ -1,7 +1,7 @@
 # ====== Code Summary ======
-# This module defines two enumerations used in path planning: `PathFindingStrategy` and `Direction`.
-# `PathFindingStrategy` specifies the algorithmic strategy for generating paths.
-# `Direction` indicates the intended direction of movement (FORWARD or BACKWARD).
+# This module defines two enumerations used in path planning: ``PathFindingStrategy`` and ``Direction``.
+# ``PathFindingStrategy`` specifies the algorithmic strategy for generating paths.
+# ``Direction`` indicates the intended direction of movement (FORWARD or BACKWARD).
 
 from enum import Enum, auto
 

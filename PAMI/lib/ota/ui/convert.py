@@ -1,18 +1,25 @@
-import gzip
-import os
+"""Convert HTML file to gzipped C array format."""
 
-# Noms des fichiers
-input_file = "ui.html"  # Remplacez par votre fichier HTML
-compressed_file = "tmp_ui.gz"  # Fichier compressé
-output_file = "html_as_const.txt"  # Tableau C
+import gzip
+from pathlib import Path
+
+from loggerplusplus import Logger
+
+logger = Logger(
+    identifier=__name__,
+    follow_logger_manager_rules=True,
+)
+
+INPUT_FILE = Path("ui.html")
+COMPRESSED_FILE = Path("tmp_ui.gz")  # Fichier compressé
+OUTPUT_FILE = Path("html_as_const.txt")  # Tableau C
 
 # Étape 1 : Compression gzip
-with open(input_file, "rb") as f_in, gzip.open(compressed_file, "wb") as f_out:
+with INPUT_FILE.open("rb") as f_in, gzip.open(COMPRESSED_FILE, "wb") as f_out:
     f_out.writelines(f_in)
 
 # Étape 2 : Lecture du fichier gzip et conversion en tableau C
-with open(compressed_file, "rb") as f:
-    compressed_data = f.read()
+compressed_data = COMPRESSED_FILE.read_bytes()
 
 # Création du tableau en C
 byte_array = ", ".join(f"{b}" for b in compressed_data)
@@ -21,11 +28,9 @@ const_array = (
 )
 
 # Sauvegarde dans un fichier
-with open(output_file, "w") as f:
-    f.write(const_array)
+OUTPUT_FILE.write_text(const_array, encoding="utf-8")
 
 # Étape 3 : Nettoyage
-os.remove(compressed_file)
+COMPRESSED_FILE.unlink()
 
-
-print(f"Conversion terminée. Tableau sauvegardé dans {output_file}")
+logger.info(f"Conversion terminée. Tableau sauvegardé dans {OUTPUT_FILE}.")

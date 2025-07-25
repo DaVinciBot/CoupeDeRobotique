@@ -1,6 +1,6 @@
 # ====== Code Summary ======
-# This module defines the `ConditionalTransition` class, which represents a transition between task nodes
-# that is governed by a specific condition. It extends `BaseTransition` and uses a `BaseTransitionCondition`
+# This module defines the ``ConditionalTransition`` class, which represents a transition between task nodes
+# that is governed by a specific condition. It extends ``BaseTransition`` and uses a ``BaseTransitionCondition``
 # to evaluate whether the transition is allowed based on the current game context.
 
 
@@ -16,7 +16,7 @@ class ConditionalTransition(BaseTransition):
     """A transition that occurs only if a specified condition is met.
 
     This class allows for conditional logic in determining whether a transition from one task
-    node to another is valid, using an instance of `BaseTransitionCondition`.
+    node to another is valid, using an instance of ``BaseTransitionCondition``.
     """
 
     def __init__(
@@ -41,6 +41,6 @@ class ConditionalTransition(BaseTransition):
             ctx (BaseGameContext): The current game context providing necessary state for evaluation.
 
         Returns:
-            bool: `True` if the condition is satisfied and transition can occur, `False` otherwise.
+            bool: ``True`` if the condition is satisfied and transition can occur, ``False`` otherwise.
         """
         return self.condition.check(from_node, self.target, ctx)

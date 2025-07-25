@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module defines `BasicSpeedProfile`, a concrete implementation of the `BaseSpeedProfile` class.
+# This module defines ``BasicSpeedProfile``, a concrete implementation of the ``BaseSpeedProfile`` class.
 # It provides constant-speed motion behavior by returning fixed values for speed, distance, and total duration
 # calculations based on a uniform speed. Additional parameters such as departure and arrival speeds are accepted
 # for interface compatibility but not used in calculations due to the constant-speed assumption.

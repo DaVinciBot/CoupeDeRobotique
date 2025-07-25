@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module provides a test utility to visualize a given `BaseSpeedProfile` over time.
+# This module provides a test utility to visualize a given ``BaseSpeedProfile`` over time.
 # It plots both speed and distance with respect to time using matplotlib, allowing developers
 # to inspect the profile shape and dynamics (e.g., acceleration, cruising, deceleration).
 

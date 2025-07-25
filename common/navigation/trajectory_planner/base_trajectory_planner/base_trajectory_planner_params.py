@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module defines a base class `BaseTrajectoryPlannerParams` intended to serve as a base for
+# This module defines a base class ``BaseTrajectoryPlannerParams`` intended to serve as a base for
 # planner parameter configurations. The base implementation includes a no-op constructor.
 
 from navigation.path_planner import Direction

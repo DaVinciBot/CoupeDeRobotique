@@ -1,7 +1,7 @@
 # ====== Code Summary ======
-# This code defines an abstract base class `BasePathPlanner` for use in navigation systems.
+# This code defines an abstract base class ``BasePathPlanner`` for use in navigation systems.
 # It establishes a common interface for all path planners, requiring implementation of the
-# `plan_path` method. It also provides a basic string representation of any planner that inherits it.
+# ``plan_path`` method. It also provides a basic string representation of any planner that inherits it.
 
 import functools
 from abc import ABC, abstractmethod

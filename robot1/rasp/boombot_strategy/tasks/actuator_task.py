@@ -36,7 +36,7 @@ class PrepareToPickUp(BaseTask):
             ctx (ShowGameContext): The current game context.
 
         Returns:
-            bool: Always returns `True` after executing the action and delay.
+            bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.ready_to_pickup()
         time.sleep(1)
@@ -53,7 +53,7 @@ class PickUp(BaseTask):
             ctx (ShowGameContext): The current game context.
 
         Returns:
-            bool: Always returns `True` after executing the action and delay.
+            bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.pick_up()
         time.sleep(1)
@@ -70,7 +70,7 @@ class Build(BaseTask):
             ctx (ShowGameContext): The current game context.
 
         Returns:
-            bool: Always returns `True` after executing the action and delay.
+            bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.build_floors()
         ctx.score += CONFIG.BUILD_TWO_FLOORS
@@ -96,7 +96,7 @@ class BlockBanner(BaseTask):
             ctx (ShowGameContext): The current game context.
 
         Returns:
-            bool: Always returns `True` after executing the action.
+            bool: Always returns ``True`` after executing the action.
         """
         ctx.actuators.block_banner()
         return True
@@ -112,7 +112,7 @@ class DeplacementPosition(BaseTask):
             ctx (ShowGameContext): The current game context.
 
         Returns:
-            bool: Always returns `True` after executing the action.
+            bool: Always returns ``True`` after executing the action.
         """
         ctx.actuators.deplacement_position()
         return True
@@ -128,7 +128,7 @@ class DeplacementObject(BaseTask):
             ctx (ShowGameContext): The current game context.
 
         Returns:
-            bool: Always returns `True` after executing the action.
+            bool: Always returns ``True`` after executing the action.
         """
         ctx.actuators.deplacement_object()
         return True

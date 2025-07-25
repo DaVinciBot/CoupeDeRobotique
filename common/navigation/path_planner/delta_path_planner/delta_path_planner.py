@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module defines the `DeltaPathPlanner`, a path planner that creates a path by applying a linear
+# This module defines the ``DeltaPathPlanner``, a path planner that creates a path by applying a linear
 # displacement and/or angular rotation relative to the starting point. It is useful for incremental
 # motion planning in local navigation scenarios.
 

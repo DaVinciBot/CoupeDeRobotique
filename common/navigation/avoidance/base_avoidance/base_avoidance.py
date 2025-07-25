@@ -2,7 +2,7 @@
 # This module defines the abstract BaseAvoidance class, which serves as a foundational component for
 # implementing various obstacle avoidance strategies in a robotic navigation system. It provides utility
 # methods for Automatic Collision System (ACS) checks, task state handling, timeout control, and a
-# standardized interface for implementing strategy-specific logic via the abstract `handle` method.
+# standardized interface for implementing strategy-specific logic via the abstract ``handle`` method.
 
 
 from __future__ import annotations
@@ -118,7 +118,7 @@ class BaseAvoidance(ABC, Generic[ParamsType]):
         """Determine whether the avoidance process has timed out.
 
         Returns:
-            bool: `True` if the elapsed time exceeds the timeout threshold.
+            bool: ``True`` if the elapsed time exceeds the timeout threshold.
         """
         if self._avoiding_start_time is None or self.params.timeout is None:
             return False

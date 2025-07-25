@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module implements `AStarPathPlanner`, which returns a list of oriented points forming a path
+# This module implements ``AStarPathPlanner``, which returns a list of oriented points forming a path
 # from start to goal. If the direction is set to BACKWARD, the planner adjusts the orientation of
 # all points in the list by π radians to reflect the reverse motion requirement.
 

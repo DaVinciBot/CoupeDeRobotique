@@ -190,7 +190,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         """Format the string representation of the zone.
 
         Args:
-            format_spec (str): Format specification passed to :func:`format`.
+            format_spec (str): Format specification passed to :func:``format``.
 
         Returns:
             str: Formatted representation.

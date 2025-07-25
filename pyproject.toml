@@ -129,8 +129,10 @@ select = ["ALL"]
 ignore = [
     "CPY001",  # missing-copyright-notice
     "D103",    # missing-module-docstring
-    "FBT001",  # boolean-type-hint-positional-argument
-    "FBT002",  # boolean-default-value-positional-argument
+    "E501",    # line-too-long -> temporaire le temps de faire le reste
+    "ERA001",  # commented-out-code -> temporaire
+    "FBT001",  # boolean-type-hint-positional-argument -> temporaire
+    "FBT002",  # boolean-default-value-positional-argument -> temporaire
     "FIX002",  # line-contains-todo
     "FIX004",  # line-contains-hack
     "G004",    # logging-f-string

@@ -1,7 +1,7 @@
 # ====== Code Summary ======
-# This module defines the `SpeedProfiler` data class, which groups together
+# This module defines the ``SpeedProfiler`` data class, which groups together
 # linear and angular speed profiles used for motion planning. Each profile is
-# an implementation of the `BaseSpeedProfile` interface, allowing flexible configuration
+# an implementation of the ``BaseSpeedProfile`` interface, allowing flexible configuration
 # of movement characteristics.
 
 

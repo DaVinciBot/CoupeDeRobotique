@@ -1,7 +1,7 @@
 # ====== Code Summary ======
-# This module defines a factory class `TrajectoryPlannerFactory` that creates instances of different
+# This module defines a factory class ``TrajectoryPlannerFactory`` that creates instances of different
 # trajectory planner classes based on a specified strategy in the provided parameters.
-# It currently supports the instantiation of `SequentialTrajectoryPlanner`.
+# It currently supports the instantiation of ``SequentialTrajectoryPlanner``.
 
 from typing import cast
 
@@ -27,7 +27,7 @@ class TrajectoryPlannerFactory:
     ) -> BaseTrajectoryPlanner:
         """Create a trajectory planner based on the given parameters.
 
-        This method inspects the `trajectory_planning_strategy` attribute of the provided
+        This method inspects the ``trajectory_planning_strategy`` attribute of the provided
         parameter object and returns an instance of the appropriate trajectory planner class.
         It safely casts the parameter to the expected subclass before passing it
         to the respective trajectory planner constructor.
@@ -40,7 +40,7 @@ class TrajectoryPlannerFactory:
             BaseTrajectoryPlanner: A specific implementation of the trajectory planner.
 
         Raises:
-            ValueError: If the strategy specified in `params` is not supported.
+            ValueError: If the strategy specified in ``params`` is not supported.
         """
         strategy = params.trajectory_planning_strategy
 

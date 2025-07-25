@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This code defines a function `get_pickup_subgraph` that builds a structured task graph
+# This code defines a function ``get_pickup_subgraph`` that builds a structured task graph
 # for a robot to execute a pickup operation at a designated pickup zone.
 # The subgraph sequentially manages navigation, preparation, approach, and the actual pickup,
 # using named task nodes and transitions to ensure reliable task execution.

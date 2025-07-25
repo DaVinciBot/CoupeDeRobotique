@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module defines the `BaseComTeensy` class, which extends `Com` to provide
+# This module defines the ``BaseComTeensy`` class, which extends ``Com`` to provide
 # communication functionality with a Teensy microcontroller over USB.
 # It initializes communication settings, including serial number, VID, PID, baud rate,
 # and optional CRC and dummy packet support.
@@ -12,7 +12,7 @@ from usb_com.python.messages import Messages
 
 
 class BaseComTeensy(Com):
-    """Extends the `Com` class to provide specialized communication handling for a Teensy microcontroller."""
+    """Extends the ``Com`` class to provide specialized communication handling for a Teensy microcontroller."""
 
     def __init__(
         self,
@@ -32,8 +32,8 @@ class BaseComTeensy(Com):
             vid (int): Vendor ID of the device.
             pid (int): Product ID of the device.
             baudrate (int): Baud rate for communication.
-            enable_crc (bool, optional): Enables CRC error checking. Defaults to `True`.
-            enable_dummy (bool, optional): Enables dummy packet handling. Defaults to `False`.
+            enable_crc (bool, optional): Enables CRC error checking. Defaults to ``True``.
+            enable_dummy (bool, optional): Enables dummy packet handling. Defaults to ``False``.
         """
         super().__init__(
             logger,

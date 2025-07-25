@@ -1,6 +1,6 @@
 # ====== Code Summary ======
-# This module defines the abstract base class `BaseTransition`, which represents a generic transition
-# between task nodes in a strategy-based application. Subclasses must implement the `can_transit` method
+# This module defines the abstract base class ``BaseTransition``, which represents a generic transition
+# between task nodes in a strategy-based application. Subclasses must implement the ``can_transit`` method
 # to determine if a transition should occur based on the current game context.
 
 
@@ -14,7 +14,7 @@ class BaseTransition(ABC):
     """Abstract base class for representing a transition between task nodes.
 
     This class defines a common interface for all transition types. Subclasses must implement
-    the `can_transit` method, which determines whether a transition is allowed based on the
+    the ``can_transit`` method, which determines whether a transition is allowed based on the
     originating node and the game context.
     """
 
@@ -35,6 +35,6 @@ class BaseTransition(ABC):
             ctx (BaseGameContext): The current game context, which may include relevant state or conditions.
 
         Returns:
-            bool: `True` if the transition should occur, `False` otherwise.
+            bool: ``True`` if the transition should occur, ``False`` otherwise.
         """
         ...

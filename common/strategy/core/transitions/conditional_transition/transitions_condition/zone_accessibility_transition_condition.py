@@ -1,6 +1,6 @@
 # ====== Code Summary ======
-# This module implements the `ZoneAccessibilityTransitionCondition` class, a concrete subclass of
-# `BaseTransitionCondition`. It determines whether a transition between task nodes is allowed based
+# This module implements the ``ZoneAccessibilityTransitionCondition`` class, a concrete subclass of
+# ``BaseTransitionCondition``. It determines whether a transition between task nodes is allowed based
 # on the accessibility of a specific zone within the arena. The condition can be reversed if needed.
 
 
@@ -28,7 +28,7 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
         """Initialize the condition with optional reversal.
 
         Args:
-            reverse (bool, optional): Whether to reverse the condition logic. Defaults to `False`.
+            reverse (bool, optional): Whether to reverse the condition logic. Defaults to ``False``.
         """
         self.reverse = reverse
 
@@ -46,7 +46,7 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
             ctx (BaseGameContext): The game context, including arena and team information.
 
         Returns:
-            bool: `True` if the condition is met (zone is accessible or not based on `reverse`), `False` otherwise.
+            bool: ``True`` if the condition is met (zone is accessible or not based on ``reverse``), ``False`` otherwise.
         """
         navigation_tasks: list[BaseNavigationTask] = [
             task for task in next_node.tasks if isinstance(task, BaseNavigationTask)

@@ -7,7 +7,7 @@ from strategy.core.base_game_context import BaseGameContext
 
 class BaseTask(ABC):
     """A minimal atomic task to be executed within the strategy graph.
-    Must return `True` when the task is complete.
+    Must return ``True`` when the task is complete.
     """
 
     def __init__(self, logger: Logger | None = None) -> None:

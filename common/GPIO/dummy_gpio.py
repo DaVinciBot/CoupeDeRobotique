@@ -1,3 +1,8 @@
+"""Dummy GPIO implementation used when real hardware is unavailable."""
+
+MAJORITY_RATIO = 0.5
+
+
 class DummyDevice:
     """Dummy version of a GPIO device for simulation or testing."""
 
@@ -39,17 +44,28 @@ class PIN:
 
         Args:
             mode (str): Mode of the pin, e.g., 'input' or 'output'.
-            reverse_state (bool, optional): If True, reverses the state of the pin. Defaults to False.
+            reverse_state (bool, optional): If True, reverses the state of the pin.
+                Defaults to False.
         """
         self.mode = mode.lower()
         self.reverse_state = reverse_state
         self.device = DummyDevice()
 
     def digital_write(self, state: bool) -> None:
+        """Set the pin output state.
+
+        Args:
+            state (bool): Desired state of the pin (True for high, False for low).
+        """
         corrected: bool = self.__correct_state(state)
         self.device.value = corrected
 
     def digital_read(self) -> bool:
+        """Read the current value of the pin.
+
+        Returns:
+            bool: Current state of the pin.
+        """
         if self.mode == "output":
             return self.__correct_state(self.device.value)
         return self.__correct_state(self.device.is_pressed)
@@ -67,7 +83,15 @@ class PIN:
         if self.count > 1500:
             self.count = 1000
             self.device.toggle_input()
-        return sum([self.digital_read() for _ in range(n)]) / n >= 0.5
+        return sum(self.digital_read() for _ in range(n)) / n >= MAJORITY_RATIO
 
     def __correct_state(self, state: bool) -> bool:
+        """Return the state adjusted for ``reverse_state``.
+
+        Args:
+            state (bool): The state to be corrected.
+
+        Returns:
+            bool: Corrected state based on the reverse_state setting.
+        """
         return not state if self.reverse_state else state

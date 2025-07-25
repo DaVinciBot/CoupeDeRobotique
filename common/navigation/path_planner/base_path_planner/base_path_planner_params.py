@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module defines `BasePathPlannerParams`, a base class for holding configuration parameters
+# This module defines ``BasePathPlannerParams``, a base class for holding configuration parameters
 # related to path planning. It primarily stores the pathfinding strategy to be used by the planner.
 
 from geometry import OrientedPoint

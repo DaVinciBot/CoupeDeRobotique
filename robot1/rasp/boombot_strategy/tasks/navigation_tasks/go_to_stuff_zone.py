@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This code defines a navigation task class `GoToStuffZoneToPickUp` that extends `NavigationTask`.
+# This code defines a navigation task class ``GoToStuffZoneToPickUp`` that extends ``NavigationTask``.
 # The class is designed to direct a robot to a designated "stuff zone" where it is intended to
 # perform a pickup operation.
 # It configures specific path planning, trajectory planning, avoidance behavior, speed profiling,

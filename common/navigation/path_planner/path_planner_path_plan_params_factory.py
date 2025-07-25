@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module defines a factory class `PathPlannerPathPlanParamsFactory` responsible for generating
+# This module defines a factory class ``PathPlannerPathPlanParamsFactory`` responsible for generating
 # the appropriate path planning parameter objects based on the provided path planning strategy.
 # It supports both the Delta and Basic strategies, returning instances of their corresponding
 # parameter classes using the current and goal positions.

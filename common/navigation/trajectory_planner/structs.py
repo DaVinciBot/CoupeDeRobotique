@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module defines the `TrajectoryPlanCommand` dataclass, which encapsulates a single command
+# This module defines the ``TrajectoryPlanCommand`` dataclass, which encapsulates a single command
 # for a robot's motion. It includes the robot's target position, linear speed, and angular speed.
 # It also provides utility methods to create a stop command and retrieve the command as a tuple.
 
@@ -59,8 +59,8 @@ class TrajectoryPlanCommand:
 
         Returns:
             tuple[float, float, OrientedPoint]:
-                Tuple containing `linear_speed`, `angular_speed` and
-                `position`.
+                Tuple containing ``linear_speed``, ``angular_speed`` and
+                ``position``.
         """
         return self.linear_speed, self.angular_speed, self.position
 

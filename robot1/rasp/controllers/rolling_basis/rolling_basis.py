@@ -294,7 +294,7 @@ class RollingBasis(BaseComTeensy):
             other (object): The other object to compare against.
 
         Returns:
-            bool: `True` if the objects are equal, `False` otherwise.
+            bool: ``True`` if the objects are equal, ``False`` otherwise.
         """
         if not isinstance(other, RollingBasis):
             return NotImplemented
@@ -311,6 +311,6 @@ class RollingBasis(BaseComTeensy):
             other (object): The other object to compare against.
 
         Returns:
-            bool: `True` if the objects are not equal, `False` otherwise.
+            bool: ``True`` if the objects are not equal, ``False`` otherwise.
         """
         return not self.__eq__(other)

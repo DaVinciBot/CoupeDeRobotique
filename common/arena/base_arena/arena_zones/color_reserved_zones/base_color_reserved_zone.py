@@ -70,7 +70,7 @@ class BaseColorReservedZone(BaseArenaZone):
             team_color (TeamColor, optional): The color assigned to the team. Defaults to TeamColor.UNDEFINED.
 
         Returns:
-            bool: `True` if the zone is accessible, `False` otherwise.
+            bool: ``True`` if the zone is accessible, ``False`` otherwise.
         """
         return super().is_accessible() and self.color == team_color
 

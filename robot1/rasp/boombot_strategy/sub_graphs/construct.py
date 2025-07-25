@@ -1,9 +1,9 @@
 # ====== Code Summary ======
-# This module defines a function `get_construct_subgraph` that builds a task subgraph
+# This module defines a function ``get_construct_subgraph`` that builds a task subgraph
 # for performing a construction sequence in a specified zone. The sequence includes
 # navigation to the construction zone, a preparatory forward movement, actuator-based
 # item placement, and a final backward maneuver. Tasks are connected via direct transitions
-# and returned as a `BaseSubGraph` for integration into a larger strategy graph.
+# and returned as a ``BaseSubGraph`` for integration into a larger strategy graph.
 import time
 
 from boombot_strategy.tasks.actuator_task import Build, Deposit, PickUp

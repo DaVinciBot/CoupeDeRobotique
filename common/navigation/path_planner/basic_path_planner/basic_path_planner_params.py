@@ -1,6 +1,6 @@
 # ====== Code Summary ======
-# This module defines the `BasicPathPlannerParams` class, a parameter configuration specifically for the
-# `BasicPathPlanner`. It extends the base class to include a direction attribute that determines whether
+# This module defines the ``BasicPathPlannerParams`` class, a parameter configuration specifically for the
+# ``BasicPathPlanner``. It extends the base class to include a direction attribute that determines whether
 # the generated path should be FORWARD or BACKWARD, and sets the pathfinding strategy to BASIC.
 
 from geometry import OrientedPoint

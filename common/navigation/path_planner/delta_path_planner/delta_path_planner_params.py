@@ -1,6 +1,6 @@
 # ====== Code Summary ======
-# This module defines `DeltaPathPlannerParams`, a configuration class for the `DeltaPathPlanner`.
-# It inherits from `BasePathPlannerParams` and initializes its strategy as DELTA.
+# This module defines ``DeltaPathPlannerParams``, a configuration class for the ``DeltaPathPlanner``.
+# It inherits from ``BasePathPlannerParams`` and initializes its strategy as DELTA.
 
 from geometry import OrientedPoint
 from navigation.path_planner.base_path_planner.base_path_planner_params import (

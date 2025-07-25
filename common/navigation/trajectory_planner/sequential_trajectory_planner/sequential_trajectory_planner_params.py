@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module defines `SequentialTrajectoryPlannerParams`, a configuration class for the
+# This module defines ``SequentialTrajectoryPlannerParams``, a configuration class for the
 # SequentialTrajectoryPlanner. It extends the base parameter class and introduces a configurable
 # sleep delay between each trajectory step.
 
@@ -28,9 +28,9 @@ class SequentialTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
             step_sleep_delay (float, optional): Time delay between each segment in the trajectory.
                 Defaults to 0.0.
             respect_intermediate_orientation (bool, optional): Whether intermediate poses
-                should preserve their orientation when planning the trajectory. Defaults to `False`.
+                should preserve their orientation when planning the trajectory. Defaults to ``False``.
             respect_goal_orientation (bool, optional): Whether the final pose orientation
-                should be preserved. Defaults to `True`.
+                should be preserved. Defaults to ``True``.
         """
         self.step_sleep_delay: float = step_sleep_delay
         self.respect_intermediate_orientation: bool = respect_intermediate_orientation

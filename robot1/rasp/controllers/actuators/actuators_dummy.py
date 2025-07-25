@@ -79,7 +79,7 @@ class ActuatorsShowDummy(ActuatorsShow):
             pin (int): Servo pin number.
             angle (int): Desired angle in degrees.
             max_angle (int): Maximum allowed angle.
-            detach (bool): Detach the servo after moving if `True`.
+            detach (bool): Detach the servo after moving if ``True``.
             detach_delay (int): Delay before detaching in milliseconds.
         """
         # Check if pin is valid; if not, log and return

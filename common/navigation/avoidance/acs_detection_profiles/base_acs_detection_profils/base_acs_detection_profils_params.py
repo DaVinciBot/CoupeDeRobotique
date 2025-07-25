@@ -24,7 +24,7 @@ class BaseAcsDetectionProfileParams:
         acs_detection_profile: str,
         acs_distance: float,
     ) -> "BaseAcsDetectionProfileParams":
-        """Create a :class:`BaseAcsDetectionProfileParams` instance from a configuration string.
+        """Create a :class:``BaseAcsDetectionProfileParams`` instance from a configuration string.
 
         Args:
             acs_detection_profile (str): The name of the ACS detection profile.

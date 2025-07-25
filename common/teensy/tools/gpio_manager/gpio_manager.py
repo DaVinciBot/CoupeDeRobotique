@@ -37,7 +37,7 @@ class GPIOManager:
             pin (int): The GPIO pin-number to check.
 
         Returns:
-            bool: `True` if the pin is declared (currently in use), `False` otherwise.
+            bool: ``True`` if the pin is declared (currently in use), ``False`` otherwise.
         """
         return pin in self.gpios
 
@@ -53,7 +53,7 @@ class GPIOManager:
             type_actuator (ActuatorType, optional): The expected actuator type. Defaults to ActuatorType.UNKNOWN.
 
         Returns:
-            bool: `True` if the pin is declared and matches the expected actuator type, `False` otherwise.
+            bool: ``True`` if the pin is declared and matches the expected actuator type, ``False`` otherwise.
         """
         return pin in self.gpios and self.gpios[pin] == type_actuator
 
@@ -70,7 +70,7 @@ class GPIOManager:
                 Defaults to ActuatorType.UNKNOWN.
 
         Returns:
-            bool: `True` if the pin was successfully added, `False` otherwise.
+            bool: ``True`` if the pin was successfully added, ``False`` otherwise.
         """
         if self.is_declared_gpio(pin) or pin < 0 or pin > self.nb_pin:
             self.logger.warning(f"Failed to add pin {pin}: Invalid or already declared")

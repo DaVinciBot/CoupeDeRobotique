@@ -224,8 +224,8 @@ class AsservissementRollingBasis(BaseComTeensy):
     def get_logs(self) -> list[dict[str, Any]]:
         """Return the recorded log entries.
 
-        Each entry is a dictionary with keys `time`, `target_x`, `target_y`,
-        `target_theta`, `actual_x`, `actual_y` and `actual_theta`.
+        Each entry is a dictionary with keys ``time``, ``target_x``, ``target_y``,
+        ``target_theta``, ``actual_x``, ``actual_y`` and ``actual_theta``.
 
         Returns:
             list[dict[str, Any]]: The stored log entries.

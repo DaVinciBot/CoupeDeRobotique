@@ -248,7 +248,7 @@ class BaseArena(ABC):
         Args:
             ally_position (OrientedPoint): Current position of the ally robot.
             lidar_scan_polars (np.ndarray): Lidar scan data in polar coordinates.
-            optimized_update (bool, optional): If `True`, only updates intersecting zones. Defaults to `True`.
+            optimized_update (bool, optional): If ``True``, only updates intersecting zones. Defaults to ``True``.
             _enemy_position (Point | None, optional): Pre-defined enemy position. Defaults to None.
         """
         # 1.Compute enemy position if not directly provided in absolute cartesian coordinates
@@ -300,7 +300,7 @@ class BaseArena(ABC):
             lidar_scan_polars (np.ndarray): Detection points from the LIDAR scan.
             ally_position (OrientedPoint): Current ally position.
             _start_time (int, optional): Starting timestamp for the computation. Defaults to -1 for no specific start time.
-            _numb_enemy (bool, optional): Whether the enemy is inactive. Defaults to `False`.
+            _numb_enemy (bool, optional): Whether the enemy is inactive. Defaults to ``False``.
 
         Returns:
             Point | OrientedPoint: The computed enemy position.
@@ -369,7 +369,7 @@ class BaseArena(ABC):
             pos (Point): The position to check.
 
         Returns:
-            bool: `True` if the position is within the playing area, `False` otherwise.
+            bool: ``True`` if the position is within the playing area, ``False`` otherwise.
         """
         return self.playable_area.contains(pos) or self.playable_area.touches(pos)
 
@@ -424,7 +424,7 @@ class BaseArena(ABC):
             element (Geometry): The geometric element to check for intersection.
 
         Returns:
-            bool: `True` if the element intersects with any zone that has the specified accessibility, `False` otherwise.
+            bool: ``True`` if the element intersects with any zone that has the specified accessibility, ``False`` otherwise.
 
         Raises:
             ValueError: If no zones have the specified accessibility.
@@ -445,7 +445,7 @@ class BaseArena(ABC):
             element (Geometry): The point to check. Points, Polygons etc. are all Geometries.
 
         Returns:
-            bool: `True` if the element is entirely in the arena, `False` otherwise
+            bool: ``True`` if the element is entirely in the arena, ``False`` otherwise
         """
         return self.bounding_area.contains(element)
 

@@ -1,7 +1,7 @@
 # ====== Code Summary ======
-# This module defines a factory class `AvoidanceFactory` that creates instances of different
+# This module defines a factory class ``AvoidanceFactory`` that creates instances of different
 # obstacle avoidance modules based on the specified strategy in the provided parameters.
-# It currently supports instantiation of `StopAndWaitAvoidance`.
+# It currently supports instantiation of ``StopAndWaitAvoidance``.
 
 
 from typing import cast

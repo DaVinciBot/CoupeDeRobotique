@@ -1,6 +1,6 @@
 # ====== Code Summary ======
-# This module implements the `FromFunctionTransitionCondition` class, which inherits from the
-# `BaseTransitionCondition` abstract base class. It allows defining custom transition conditions
+# This module implements the ``FromFunctionTransitionCondition`` class, which inherits from the
+# ``BaseTransitionCondition`` abstract base class. It allows defining custom transition conditions
 # using a user-provided function. The function determines if a transition between task nodes is allowed,
 # based on the current game context.
 
@@ -46,6 +46,6 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
             ctx (BaseGameContext): The current game context.
 
         Returns:
-            bool: `True` if the transition is allowed according to the provided function, `False` otherwise.
+            bool: ``True`` if the transition is allowed according to the provided function, ``False`` otherwise.
         """
         return self.func(from_node, next_node, ctx)

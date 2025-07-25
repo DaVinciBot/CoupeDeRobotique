@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module implements `BasicPathPlanner`, a simple path planner that returns a direct two-point path
+# This module implements ``BasicPathPlanner``, a simple path planner that returns a direct two-point path
 # from start to goal. If the direction is set to BACKWARD, the planner adjusts the orientation of the
 # start and goal points by π radians to reflect the reverse motion requirement.
 

@@ -1,8 +1,8 @@
 # ====== Code Summary ======
-# This module defines the `BasicStrategy` class, which extends `BaseStrategy` and orchestrates
+# This module defines the ``BasicStrategy`` class, which extends ``BaseStrategy`` and orchestrates
 # the full game flow for a robot. The strategy consists of deploying a banner, picking up items,
 # constructing structures, and finally moving to a backstage zone to complete the game.
-# It uses task subgraphs and direct transitions to sequence actions through a `GraphRunner`.
+# It uses task subgraphs and direct transitions to sequence actions through a ``GraphRunner``.
 
 from loggerplusplus import Logger
 

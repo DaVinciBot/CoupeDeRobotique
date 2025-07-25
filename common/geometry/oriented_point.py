@@ -1,24 +1,24 @@
 """Handles inheritance for the Point class.
 
-This implementation addresses challenges related to inheriting from the `Point` class
+This implementation addresses challenges related to inheriting from the ``Point`` class
 (see [Shapely Issue #1233](https://github.com/shapely/shapely/issues/1233)). While the approach
 might seem unconventional, it works effectively. If for any reason this method becomes unfeasible,
-a potential alternative would be to use a composition of a `Point` object and a `float` for additional properties.
+a potential alternative would be to use a composition of a ``Point`` object and a ``float`` for additional properties.
 
 Key Features:
 - Supports multiple initialization methods:
-  - Using a tuple `(x, y, theta)`.
-  - Using explicit values for `x`, `y`, and `theta`.
-- Includes explicit `str` conversions to reduce IDE warnings and improve code clarity.
+  - Using a tuple ``(x, y, theta)``.
+  - Using explicit values for ``x``, ``y``, and ``theta``.
+- Includes explicit ``str`` conversions to reduce IDE warnings and improve code clarity.
 
 Testing and Implementation Notes:
 - Different versions of this implementation have been tested, with details available
-  in the Jupyter notebook located in the `common/arena` directory.
-- The current implementation combines the functionality of `OrientedPoint2` and `OrientedPoint3`.
+  in the Jupyter notebook located in the ``common/arena`` directory.
+- The current implementation combines the functionality of ``OrientedPoint2`` and ``OrientedPoint3``.
 
 Final Version:
 - While this is the slowest of the tested implementations, the performance difference is minimal.
-- It offers the broadest compatibility with the `Point` class and the broader Shapely ecosystem.
+- It offers the broadest compatibility with the ``Point`` class and the broader Shapely ecosystem.
 """
 
 from typing import Any, ClassVar, cast, override
@@ -146,7 +146,7 @@ class OrientedPoint(Point):
         tuple[tuple[float, float], float],
         dict[str, float],
     ]:
-        """Customize pickling for :class:`OrientedPoint`.
+        """Customize pickling for :class:``OrientedPoint``.
 
         Returns:
             tuple[type["OrientedPoint"], tuple[tuple[float, float], float], dict[str, float]]:
@@ -161,10 +161,10 @@ class OrientedPoint(Point):
         return (self.__class__, ((coords, theta)), {"theta": theta})
 
     def __setstate__(self, state: dict[str, float]) -> None:
-        """Restore the extra state for the :class:`OrientedPoint` during unpickling.
+        """Restore the extra state for the :class:``OrientedPoint`` during unpickling.
 
         Args:
-            state (dict[str, float]): State dictionary created by :py:meth:`__reduce__`.
+            state (dict[str, float]): State dictionary created by :py:meth:``__reduce__``.
         """
         # Reinitialize the extra attribute in the class-level mapping
         OrientedPoint._id_to_attrs[str(id(self))] = {"theta": state.get("theta", 0.0)}

@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module defines `BaseSpeedProfile`, an abstract base class
+# This module defines ``BaseSpeedProfile``, an abstract base class
 # for speed profile strategies used in trajectory planning.
 # It specifies the interface for calculating speed, distance
 # traveled, and total duration based on motion parameters.

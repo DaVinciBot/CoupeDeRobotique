@@ -1,5 +1,5 @@
 # ====== Code Summary ======
-# This module defines an abstract base class `BaseTrajectoryPlanner` designed to manage trajectory planning
+# This module defines an abstract base class ``BaseTrajectoryPlanner`` designed to manage trajectory planning
 # in navigation systems. It provides lifecycle control (start/stop), time tracking utilities, and enforces
 # implementation of a planning method in subclasses. The class is generic and supports parameterization and logging.
 
@@ -113,7 +113,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
         """Check if planning has been started.
 
         Returns:
-            bool: `True` if planning is active, `False` otherwise.
+            bool: ``True`` if planning is active, ``False`` otherwise.
         """
         return self._start_trajectory_timestamp > 0.0
 

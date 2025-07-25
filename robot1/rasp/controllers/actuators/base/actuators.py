@@ -121,7 +121,7 @@ class Actuators(
 
         Args:
             pin_enable (int): The pin number connected to the driver's enable input
-            enable_driver (bool): `True` to enable the driver, `False` to disable it.
+            enable_driver (bool): ``True`` to enable the driver, ``False`` to disable it.
         """
         msg = (
             Messages.SET_STEPPER_DRIVER_ACTIVATION_STATE.to_bytes()
@@ -138,7 +138,7 @@ class Actuators(
         Args:
             steps (int): The number of steps to move the motor.
             speed (int): The speed at which to move the motor.
-            disable_driver (bool, optional): Whether to disable the driver after the movement. Defaults to `True`.
+            disable_driver (bool, optional): Whether to disable the driver after the movement. Defaults to ``True``.
 
         Returns:
             None: This method does not return anything.
@@ -199,10 +199,10 @@ class Actuators(
             angle (int): The angle to set for the servo.
             min_angle (int, optional): The minimum angle allowed for the servo. Defaults to 0.
             max_angle (int, optional): The maximum angle allowed for the servo. Defaults to 180.
-            detach (bool, optional): Whether to detach the servo after setting the angle. Defaults to `False`.
+            detach (bool, optional): Whether to detach the servo after setting the angle. Defaults to ``False``.
             detach_delay (int, optional): The time in milliseconds to keep the servo detached. Defaults to 1000.
-             Ignored if detach is `False`.
-            use_I2C (bool, optional): Whether to use I2C communication for the servo. Defaults to `True`.
+             Ignored if detach is ``False``.
+            use_I2C (bool, optional): Whether to use I2C communication for the servo. Defaults to ``True``.
         """
         if min_angle <= angle <= max_angle:
             if detach:

@@ -13,14 +13,14 @@ END_BYTES_SIGNATURE: bytes = b"\xba\xdd\x1c\xc5"
 class Messages(Enum):
     r"""Enumeration for command types exchanged between the Raspberry Pi and Teensy.
 
-    Commands from Raspberry Pi to Teensy are in the range `0`-`127` while
-    those from Teensy to Raspberry Pi are in `128`-`255`.
+    Commands from Raspberry Pi to Teensy are in the range ``0``-``127`` while
+    those from Teensy to Raspberry Pi are in ``128``-``255``.
 
     Attributes:
         SET_TARGET_POSITION: Command to set the rolling basis target position.
         SET_PID: Update PID coefficients for the rolling basis.
         SET_ODOMETRIE: Reset the odometry.
-        SET_SERVO_ANGLE_I2C: Set a servo angle over I\ :sub:`2`\ C.
+        SET_SERVO_ANGLE_I2C: Set a servo angle over I\ :sub:``2``\ C.
         STEPPER_STEP: Move a stepper motor.
         SET_SERVO_ANGLE_DETACH: Move a servo then detach it.
         ATTACH_SWITCH: Attach a switch on the actuators board.

@@ -52,7 +52,7 @@ class ActuatorsShow(Actuators):
         enable_crc: bool = CONFIG.TEENSY_CRC,
         enable_dummy: bool = CONFIG.TEENSY_DUMMY,
     ) -> None:
-        """Initialize the `ActuatorsShow` class.
+        """Initialize the ``ActuatorsShow`` class.
 
         Args:
             logger (Logger): The logger instance for logging.
@@ -141,7 +141,7 @@ class ActuatorsShow(Actuators):
             pin (int): The pin number to check.
 
         Returns:
-            bool: `True` if the pin is a valid servo pin, `False` otherwise.
+            bool: ``True`` if the pin is a valid servo pin, ``False`` otherwise.
         """
         if pin not in self.servos or self.servos[pin] is None:
             self.logger.warning(f"Pin {pin} is not a servo")
