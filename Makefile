@@ -1,4 +1,9 @@
-.PHONY: format lint typecheck check all
+.PHONY: format lint typecheck docs check all
+
+SPHINXOPTS    ?=
+SPHINXBUILD   ?= sphinx-build
+SOURCEDIR     = docs/source
+BUILDDIR      = docs/build
 
 format:
 	@echo "▶ Formatage avec Ruff, puis Black et isort..."
@@ -18,4 +23,8 @@ typecheck:
 
 check: lint format typecheck
 
-all: check
+docs:
+	@echo "▶ Generation de la documentation..."
+	$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+all: check docs
