@@ -13,6 +13,7 @@ class RollingBasisDummy(BaseComTeensy):
 
     Inherits from Teensy to manage low-level communications and adds logic specific to the robot's state,
     PID configuration, and message messaging.
+
     """
 
     def __init__(
@@ -33,6 +34,7 @@ class RollingBasisDummy(BaseComTeensy):
             pid (int, optional): The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
             baudrate (int, optional): The baud rate for serial communication. Defaults to CONFIG.TEENSY_BAUDRATE.
             enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
+
         """
         # Initialize the parent-BaseComTeensy class
         super().__init__(
@@ -71,6 +73,7 @@ class RollingBasisDummy(BaseComTeensy):
 
         Args:
             target_position (OrientedPoint): Target position and orientation.
+
         """
         self.odometrie = target_position
 
@@ -82,6 +85,7 @@ class RollingBasisDummy(BaseComTeensy):
 
         Args:
             odometrie (OrientedPoint): The new odometrie values.
+
         """
         self.odometrie = odometrie
         self.logger.info(f"[DUMMY] Set odometrie: {odometrie}")
@@ -92,6 +96,7 @@ class RollingBasisDummy(BaseComTeensy):
         Args:
             pid_id (int): The identifier for the PID controller.
             pid (PID): The PID controller parameters.
+
         """
         self.logger.debug(f"[DUMMY] Set PID: {pid_id}, {pid}")
 
@@ -123,6 +128,7 @@ class RollingBasisDummy(BaseComTeensy):
 
         Raises:
             ValueError: If the arguments do not match any expected format.
+
         """
         try:
             if len(args) == 3 and all(isinstance(arg, float) for arg in args):
@@ -165,6 +171,7 @@ class RollingBasisDummy(BaseComTeensy):
 
         Raises:
             ValueError: If the arguments do not match any expected format.
+
         """
         try:
             if len(args) == 3 and all(isinstance(arg, float) for arg in args):
@@ -192,6 +199,7 @@ class RollingBasisDummy(BaseComTeensy):
         Args:
             linear_position_pid (dict[str, float]): PID configuration for linear position.
             angular_position_pid (dict[str, float]): PID configuration for angular position.
+
         """
         self.set_linear_position_pid(**linear_position_pid)
         self.set_angular_position_pid(**angular_position_pid)
@@ -217,6 +225,7 @@ class RollingBasisDummy(BaseComTeensy):
 
         Returns:
             bool: ``True`` if the objects are equal, ``False`` otherwise.
+
         """
         if not isinstance(other, RollingBasisDummy):
             return NotImplemented
@@ -238,5 +247,6 @@ class RollingBasisDummy(BaseComTeensy):
 
         Returns:
             bool: ``True`` if the objects are not equal, ``False`` otherwise.
+
         """
         return not self.__eq__(other)

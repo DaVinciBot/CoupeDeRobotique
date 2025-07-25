@@ -20,6 +20,7 @@ class Inputs:
             pin_jack (int): GPIO pin number for the jack input.
             pin_bau (int): GPIO pin number for the BAU input.
             logger (Logger | None, optional): Logger instance for logging. Defaults to None.
+
         """
         self.logger = logger or Logger(
             identifier="Inputs",
@@ -37,6 +38,7 @@ class Inputs:
 
         Args:
             wait_time (float, optional): Time to wait between checks. Defaults to 0.001.
+
         """
         false_jacks_in_a_row = 0
         self.logger.info("Wait jack trigger...")
@@ -56,6 +58,7 @@ class Inputs:
 
         Args:
             wait_time (float, optional): Time to wait between checks. Defaults to 0.001.
+
         """
         true_jacks_in_a_row = 0
         self.logger.info("Waiting for jack to be plugged in...")

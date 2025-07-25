@@ -12,6 +12,7 @@ class ShowGameContext(BaseGameContext):
     """Context class for the show game.
 
     This class is used to store the context of the show game.
+
     """
 
     def __init__(
@@ -28,6 +29,7 @@ class ShowGameContext(BaseGameContext):
             rolling_basis (RollingBasis | RollingBasisDummy): The rolling basis of the robot.
             actuators (ActuatorsShow | ActuatorsShowDummy): The actuators of the robot.
             score (int, optional): The score of the robot. Defaults to 0.
+
         """
         super().__init__(arena)
         self.rolling_basis: RollingBasis | RollingBasisDummy = rolling_basis

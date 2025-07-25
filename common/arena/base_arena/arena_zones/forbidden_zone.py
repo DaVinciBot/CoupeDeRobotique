@@ -32,6 +32,7 @@ class ForbiddenZone(BaseArenaZone):
             polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
             buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
             update_callback (Callable | None, optional): Function to be called on updates. Defaults to None.
+
         """
         super().__init__(
             logger=logger,

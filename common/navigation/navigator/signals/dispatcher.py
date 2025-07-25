@@ -20,6 +20,7 @@ class NavigatorSignalsDispatcher:  # UNUSED
     NavigatorSignalsEnum. It allows the connection, disconnection, and emission
     of these signals with optional arguments. Logging is used extensively for
     debugging and traceability.
+
     """
 
     def __init__(self, logger: Logger | None = None) -> None:
@@ -29,6 +30,7 @@ class NavigatorSignalsDispatcher:  # UNUSED
 
         Args:
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+
         """
         self.logger = logger or Logger(
             identifier="NavigatorSignalsDispatcher",
@@ -56,6 +58,7 @@ class NavigatorSignalsDispatcher:  # UNUSED
         Args:
             signal (NavigatorSignalsEnum): The signal to connect to.
             callback (Callable[..., Any]): The callback function to attach to the signal.
+
         """
         try:
             # Connect callback to signal
@@ -75,6 +78,7 @@ class NavigatorSignalsDispatcher:  # UNUSED
         Args:
             signal (NavigatorSignalsEnum): The signal to disconnect from.
             callback (Callable[..., Any]): The callback function to remove.
+
         """
         try:
             # Disconnect callback from signal
@@ -98,6 +102,7 @@ class NavigatorSignalsDispatcher:  # UNUSED
             signal (NavigatorSignalsEnum): The signal to emit.
             *args(Any): Positional arguments to pass to callbacks.
             **kwargs(Any): Keyword arguments to pass to callbacks.
+
         """
         try:
             self.logger.debug(

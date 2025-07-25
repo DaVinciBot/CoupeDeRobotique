@@ -20,6 +20,7 @@ class BaseArenaZone(ABC):
 
     Attributes:
         zones_uid (list[int]): Sequence of used identifiers for zones.
+
     """
 
     zones_uid: list[int] = []
@@ -50,6 +51,7 @@ class BaseArenaZone(ABC):
             zone_color (str, optional): Color associated with the zone. Defaults to "#9e9e9e".
             go_to_positions (list[OrientedPoint | Point] | None, optional): List of go-to positions within the zone. Defaults to None.
             uid (int | None, optional): Unique identifier for the zone instance. Defaults to None.
+
         """
         self.logger: Logger = logger
         self.zone_type: ZoneType = zone_type
@@ -99,6 +101,7 @@ class BaseArenaZone(ABC):
 
         Returns:
             Polygon: The buffered polygon.
+
         """
         return polygon.buffer(
             buffer,
@@ -116,6 +119,7 @@ class BaseArenaZone(ABC):
 
         Returns:
             bool: ``True`` if accessible, ``False`` otherwise.
+
         """
         return self.accessibility not in [
             ZoneAccessibility.FORBIDDEN,
@@ -133,6 +137,7 @@ class BaseArenaZone(ABC):
 
         Returns:
             bool: ``True`` if accessible in emergencies, ``False`` otherwise.
+
         """
         return self.accessibility != ZoneAccessibility.FORBIDDEN
 
@@ -149,6 +154,7 @@ class BaseArenaZone(ABC):
 
         Returns:
             OrientedPoint | None: The best go-to position, or None if the zone is not accessible.
+
         """
         if not self.is_accessible(team_color):
             self.logger.debug(
@@ -188,6 +194,7 @@ class BaseArenaZone(ABC):
             team_color (TeamColor): The color of the team.
             ally_position (Point | OrientedPoint): Position of ally.
             enemy_position (Point | OrientedPoint): Position of enemy.
+
         """
         # Update visit counts
         # if self.polygon.contains(enemy_position):  # Don't consider the buffer
@@ -210,6 +217,7 @@ class BaseArenaZone(ABC):
 
         Returns:
             bool: ``True`` if ``other`` shares this class type.
+
         """
         return type(self) == type(other) and (
             isinstance(self, type(other))
@@ -225,6 +233,7 @@ class BaseArenaZone(ABC):
 
         Returns:
             bool: ``True`` if polygons and accessibility match.
+
         """
         if not isinstance(self, type(other)):
             return False
@@ -242,6 +251,7 @@ class BaseArenaZone(ABC):
 
         Returns:
             bool: ``True`` if zones are not equal.
+
         """
         return not self.__eq__(other)
 
@@ -250,6 +260,7 @@ class BaseArenaZone(ABC):
 
         Returns:
             str: Human-readable information about the zone.
+
         """
         return (
             f"{self.zone_type}: {self.buffered_polygon.centroid} -> {self.accessibility}, "
@@ -263,6 +274,7 @@ class BaseArenaZone(ABC):
 
         Returns:
             str: Formal representation of the zone.
+
         """
         return self.__str__()
 
@@ -274,5 +286,6 @@ class BaseArenaZone(ABC):
 
         Returns:
             str: Formatted representation.
+
         """
         return self.__str__()

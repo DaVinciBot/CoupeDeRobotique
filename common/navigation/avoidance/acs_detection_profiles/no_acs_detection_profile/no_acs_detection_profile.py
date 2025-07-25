@@ -17,6 +17,7 @@ class NoAcsDetectionProfile(BaseAcsDetectionProfile[NoAcsDetectionProfileParams]
 
         Args:
             params (NoAcsDetectionProfileParams): Parameters for the no ACS detection profile.
+
         """
         super().__init__(params)
 

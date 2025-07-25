@@ -1,15 +1,21 @@
+"""GPIO wrapper built upon gpiozero."""
+
 from gpiozero import LED, Button
 from gpiozero.pins.lgpio import LGPIOFactory
 
+MAJORITY_RATIO = 0.5
+
 
 class PIN:
-    """Represents a GPIO pin.
-
-    Args:
-        pin (int): The pin number.
-    """
+    """Represent a GPIO pin."""
 
     def __init__(self, pin: int) -> None:
+        """Initialize the pin.
+
+        Args:
+            pin (int): The pin number.
+
+        """
         self.pin = pin
         self.mode = None
         self.reverse_state = False
@@ -21,6 +27,7 @@ class PIN:
         Args:
             mode (str): The pin mode (output/input/input_pullup/input_pulldown).
             reverse_state (bool, optional): Whether to reverse the state of the pin. Defaults to ``False``.
+
         """
         mode = mode.lower()
         self.mode = mode
@@ -49,6 +56,7 @@ class PIN:
 
         Args:
             state (bool): The state to write (``True``/``False``).
+
         """
         self.device.value = self.__correct_state(state)
 
@@ -75,7 +83,7 @@ class PIN:
             bool: The averaged digital state. ``True`` if the majority of samples are ``True``, otherwise ``False``.
 
         """
-        return sum([self.digital_read() for _ in range(n)]) / n >= 0.5
+        return sum(self.digital_read() for _ in range(n)) / n >= MAJORITY_RATIO
 
     def __correct_state(self, state: bool) -> bool:
         """Correct the state of the pin based on the reverse_state attribute.

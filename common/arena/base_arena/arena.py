@@ -60,6 +60,7 @@ class BaseArena(ABC):
             zones (list[BaseArenaZone]): List of pre-defined zones in the arena.
             chunk_size (int, optional): Size of chunks in the grid manager. Defaults to 10.
             grid_manager_logger (Logger | None, optional): Logger instance for grid manager logging. Defaults to None.
+
         """
         # ====== Initialized constructor based attributes ======
         # 1. Logger
@@ -159,6 +160,7 @@ class BaseArena(ABC):
 
         Returns:
             BorderZone: A zone representing the arena's border.
+
         """
         arena_polygon = box(0, 0, self.width, self.height)
         inner_polygon = BaseArenaZone.add_buffer_to_zone(
@@ -179,6 +181,7 @@ class BaseArena(ABC):
     def __prepare_zones(self) -> None:
         """Prepare all zones that could be used for calculations.
         It will improve the computing performance.
+
         """
         prepare(self.bounding_area)
         prepare(self.playable_area)
@@ -191,6 +194,7 @@ class BaseArena(ABC):
 
         Returns:
             GridManager: The current grid manager.
+
         """
         return self.grid_manager
 
@@ -202,6 +206,7 @@ class BaseArena(ABC):
 
         Returns:
             MultiPoint: Array of absolute Cartesian coordinates.
+
         """
         return MultiPoint(
             [
@@ -222,6 +227,7 @@ class BaseArena(ABC):
 
         Args:
             team_color (TeamColor): The team's color.
+
         """
         if team_color not in {TeamColor.YELLOW, TeamColor.BLUE}:
             self.logger.error(
@@ -250,6 +256,7 @@ class BaseArena(ABC):
             lidar_scan_polars (np.ndarray): Lidar scan data in polar coordinates.
             optimized_update (bool, optional): If ``True``, only updates intersecting zones. Defaults to ``True``.
             _enemy_position (Point | None, optional): Pre-defined enemy position. Defaults to None.
+
         """
         # 1.Compute enemy position if not directly provided in absolute cartesian coordinates
         if not _enemy_position:
@@ -304,6 +311,7 @@ class BaseArena(ABC):
 
         Returns:
             Point | OrientedPoint: The computed enemy position.
+
         """
         obstacles: MultiPoint = self.remove_outside(
             self._pol_to_abs_cart(lidar_scan_polars),
@@ -314,9 +322,7 @@ class BaseArena(ABC):
 
         return self.enemy_zone.point
 
-    """
-        Geometry helpers function part
-    """
+    # ====== Geometry helpers function part ======
 
     def remove_outside(self, points: MultiPoint) -> MultiPoint:
         """Remove points that are outside the playable area of the arena.
@@ -326,6 +332,7 @@ class BaseArena(ABC):
 
         Returns:
             MultiPoint: The points that are within the playable area.
+
         """
         return cast("MultiPoint", self.playable_area.intersection(points))
 
@@ -370,6 +377,7 @@ class BaseArena(ABC):
 
         Returns:
             bool: ``True`` if the position is within the playing area, ``False`` otherwise.
+
         """
         return self.playable_area.contains(pos) or self.playable_area.touches(pos)
 
@@ -384,6 +392,7 @@ class BaseArena(ABC):
 
         Returns:
             BaseArenaZone | None: The zone containing the location, or None if not found.
+
         """
         if isinstance(location, int):
             if location >= len(self.zones):
@@ -408,6 +417,7 @@ class BaseArena(ABC):
         Returns:
             list[BaseArenaZone]: A list of BaseArenaZone objects that match the
                                  specified accessibility level.
+
         """
         return [
             zone
@@ -428,6 +438,7 @@ class BaseArena(ABC):
 
         Raises:
             ValueError: If no zones have the specified accessibility.
+
         """
         zones_to_check = self.find_zone_accessibility(accessibility)
         if not zones_to_check:
@@ -446,12 +457,11 @@ class BaseArena(ABC):
 
         Returns:
             bool: ``True`` if the element is entirely in the arena, ``False`` otherwise
+
         """
         return self.bounding_area.contains(element)
 
-    """
-        Visualisation part
-    """
+    # ====== Visualisation part ======
 
     # ====== Private Methods: draw helpers ======
     @staticmethod
@@ -472,6 +482,7 @@ class BaseArena(ABC):
             color (str): Color of the arrow. Defaults to '#000000'.
             head_width (float | None): Width of the arrow head. Defaults to None -> norm * 0.2.
             head_length (float | None): Length of the arrow head. Defaults to None -> norm * 0.3.
+
         """
         if head_width is None:
             head_width = norm * 0.2
@@ -509,6 +520,7 @@ class BaseArena(ABC):
             zone (BaseArenaZone): Zone to draw the UID for.
             color (str, optional): Color of the UID. Defaults to '#000000'.
             fontsize (int, optional): Font size of the UID. Defaults to 12.
+
         """
         ax.text(
             zone.polygon.centroid.x,
@@ -561,6 +573,7 @@ class BaseArena(ABC):
             alpha (float, optional): Transparency factor. Defaults to 1.0.
             hatch (str | None, optional): Matplotlib hatching pattern, e.g., '/' or '\\'. Defaults to None for no hatching.
             hatch_color (str | None, optional): Color of the hatching lines. Defaults to None.
+
         """
         # Avoid duplicate labels
         existing_labels = ax.get_legend_handles_labels()[1]
@@ -605,6 +618,7 @@ class BaseArena(ABC):
             show_ally_direction (bool): Draw an arrow for the ally direction.
             display_zones_go_to_positions (bool): Draw go-to positions if any.
             transparency_factor (float, optional): Alpha value multiplier. Defaults to 1.0.
+
         """
         if show_buffer:
             # Plot buffer zone in transparent color

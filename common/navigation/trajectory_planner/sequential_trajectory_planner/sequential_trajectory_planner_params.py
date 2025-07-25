@@ -31,6 +31,7 @@ class SequentialTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
                 should preserve their orientation when planning the trajectory. Defaults to ``False``.
             respect_goal_orientation (bool, optional): Whether the final pose orientation
                 should be preserved. Defaults to ``True``.
+
         """
         self.step_sleep_delay: float = step_sleep_delay
         self.respect_intermediate_orientation: bool = respect_intermediate_orientation

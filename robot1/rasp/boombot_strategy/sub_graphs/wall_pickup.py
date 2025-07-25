@@ -30,6 +30,7 @@ def get_wall_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
 
     Returns:
         BaseSubGraph: The subgraph for the robot to execute a pickup operation at a designated pickup zone.
+
     """
     subgraph = SubGraphBuilder()
 

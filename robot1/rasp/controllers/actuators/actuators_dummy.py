@@ -7,6 +7,7 @@ from controllers.actuators.actuators_show import ActuatorsShow
 class ActuatorsShowDummy(ActuatorsShow):
     """Dummy version of ActuatorsShow that simulates all actuator and stepper actions via logging,
     without any real hardware interaction.
+
     """
 
     def __init__(
@@ -27,6 +28,7 @@ class ActuatorsShowDummy(ActuatorsShow):
             pid (int): USB product ID.
             baudrate (int): Serial communication baud rate.
             enable_crc (bool): Whether CRC is enabled.
+
         """
         # Initialize parent with a dummy flag to bypass hardware
         super().__init__(
@@ -57,6 +59,7 @@ class ActuatorsShowDummy(ActuatorsShow):
             steps (int): Number of steps to move.
             speed (int): Speed of the movement.
             disable_driver (bool): Whether to disable the driver afterwards.
+
         """
         self.elevator_ticks += steps
         self.logger.info(
@@ -81,6 +84,7 @@ class ActuatorsShowDummy(ActuatorsShow):
             max_angle (int): Maximum allowed angle.
             detach (bool): Detach the servo after moving if ``True``.
             detach_delay (int): Delay before detaching in milliseconds.
+
         """
         # Check if pin is valid; if not, log and return
         if not self._check_pin(pin):

@@ -14,6 +14,7 @@ class BackAvoidanceParams(BaseAvoidanceParams):
 
     This strategy stops the system when an obstacle is detected within a specified distance
     and waits for a defined timeout period before taking further action.
+
     """
 
     def __init__(
@@ -28,6 +29,7 @@ class BackAvoidanceParams(BaseAvoidanceParams):
             timeout (float): Time to wait after stopping before checking again in seconds.
             backward_distance (float): Distance to reverse when avoidance is triggered.
             backward_speed_profiler (SpeedProfiler): Profiler for the backward motion.
+
         """
         self.backward_distance: float = backward_distance
         self.backward_speed_profiler: SpeedProfiler = backward_speed_profiler

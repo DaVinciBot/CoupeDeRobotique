@@ -37,6 +37,7 @@ def test_navigator_execution(
         navigator (Navigator): The navigator object controlling the robot's movement.
         arena (BaseArena): The arena where navigation is simulated.
         time_step (float, optional): The delay between iterations in seconds. Defaults to 0.1.
+
     """
     # 1) Prepare storage for logging metrics
     times: list[float] = []
@@ -161,6 +162,7 @@ def test_navigator_execution(
             times (list[float]): Time points.
             values (list[str]): Enum value names at each time.
             title (str): Plot title.
+
         """
         unique = list(dict.fromkeys(values))  # Preserve order
         code = {v: i for i, v in enumerate(unique)}  # Map to integers

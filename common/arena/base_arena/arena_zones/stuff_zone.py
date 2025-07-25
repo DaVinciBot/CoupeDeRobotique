@@ -41,6 +41,7 @@ class StuffZone(BaseArenaZone):
             buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
             update_callback (Callable | None, optional): Function to be called on updates. Defaults to None.
             go_to_positions (list[OrientedPoint | Point] | None, optional): List of go-to positions within the zone. Defaults to None.
+
         """
         super().__init__(
             logger=logger,
@@ -66,6 +67,7 @@ class StuffZone(BaseArenaZone):
             team_color (TeamColor): The color of the team.
             ally_position (Point | OrientedPoint): Position of an ally.
             enemy_position (Point | OrientedPoint): Position of an enemy.
+
         """
         super().update(team_color, ally_position, enemy_position)
 
@@ -93,6 +95,7 @@ class StuffZone(BaseArenaZone):
 
         Returns:
             OrientedPoint | Point | None: The best go-to position, or None if the zone is not accessible.
+
         """
         # If no go-to positions are defined, return the centroid of the zone
         if self.go_to_positions is None:

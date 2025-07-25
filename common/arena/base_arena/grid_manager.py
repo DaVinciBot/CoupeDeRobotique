@@ -28,6 +28,7 @@ class GridManager:
     - The grid uses a coordinate system where the origin is in the bottom-right corner.
     - X-axis increases towards the left, while Y-axis increases upwards.
     - This reference frame affects calculations and visualization; adjustments ensure alignment.
+
     """
 
     def __init__(
@@ -47,6 +48,7 @@ class GridManager:
             height (int): Total height of the grid in absolute units.
             forbidden_cover_threshold (float, optional): Minimum coverage ratio
                 for a cell to be marked as forbidden. Defaults to 0.5.
+
         """
         self.logger: Logger = logger
         self.forbidden_cover_threshold: float = forbidden_cover_threshold
@@ -81,6 +83,7 @@ class GridManager:
 
         Returns:
             Grid: Newly created walkable grid.
+
         """
         return Grid(
             matrix=[
@@ -146,6 +149,7 @@ class GridManager:
 
         Returns:
             Grid: Updated grid with forbidden zones marked.
+
         """
         # Precompute polygon bounds and indices
         minx, miny, maxx, maxy = polygon_to_mark.bounds
@@ -207,6 +211,7 @@ class GridManager:
             update_static_zones (bool, optional): Whether to update static zones. Defaults to ``False``.
             update_dynamic_zones (bool, optional): Whether to update dynamic zones. Defaults to ``False``.
             clear_grid (bool, optional): If ``True``, regenerate empty grids before updating. Defaults to ``False``.
+
         """
         if clear_grid:
             self.static_grid = self.__generate_base_grid()
@@ -300,6 +305,7 @@ class GridManager:
 
         Args:
             forbidden_zones (Polygon | list[Polygon]): Zones to mark as static forbidden areas.
+
         """
         if not isinstance(forbidden_zones, list):
             forbidden_zones = [forbidden_zones]
@@ -317,6 +323,7 @@ class GridManager:
 
         Args:
             forbidden_zones_to_remove (Polygon | list[Polygon]): Zones to remove from static forbidden areas.
+
         """
         if not isinstance(forbidden_zones_to_remove, list):
             forbidden_zones_to_remove = [forbidden_zones_to_remove]
@@ -346,6 +353,7 @@ class GridManager:
 
         Args:
             forbidden_zones (list[Polygon]): Dynamic zones to add or update.
+
         """
         if not isinstance(forbidden_zones, list):
             forbidden_zones = [forbidden_zones]
@@ -361,6 +369,7 @@ class GridManager:
 
         Returns:
             tuple[float, float]: ``(x, y)`` coordinates of the node center.
+
         """
         return (
             node.x * self.chunk_size + self.half_chunk_size,
@@ -375,6 +384,7 @@ class GridManager:
 
         Returns:
             GridNode: Corresponding node in the grid.
+
         """
         return GridNode(int(point.x / self.chunk_size), int(point.y / self.chunk_size))
 
@@ -386,6 +396,7 @@ class GridManager:
 
         Returns:
             Point: Absolute center point of the node.
+
         """
         x, y = self.get_grid_node_center(node)
         return Point(x, y)
@@ -395,6 +406,7 @@ class GridManager:
 
         Returns:
             Grid: Grid containing only static obstacles.
+
         """
         return self.static_grid
 
@@ -403,6 +415,7 @@ class GridManager:
 
         Returns:
             Grid: Combined grid.
+
         """
         return self.static_and_dynamic_grid
 
@@ -423,6 +436,7 @@ class GridManager:
 
         Returns:
             tuple[plt.Axes, plt.Figure]: Axis and figure of the plot.
+
         """
         grid_to_visualize = (
             self.static_grid if only_static_grid else self.static_and_dynamic_grid

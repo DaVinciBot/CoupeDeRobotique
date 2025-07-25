@@ -45,6 +45,7 @@ class AvoidanceFactory:
 
         Raises:
             ValueError: If the avoidance strategy is not supported.
+
         """
         strategy = params.avoidance_strategy
 

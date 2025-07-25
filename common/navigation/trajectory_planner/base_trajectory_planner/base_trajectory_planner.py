@@ -27,6 +27,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
     Provides lifecycle control (start/stop), time-tracking utilities, and logging support.
     Subclasses must implement specific planning logic and expose a method to retrieve
     the current trajectory command and total duration.
+
     """
 
     def __init__(
@@ -41,6 +42,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
             params (ParamsType): Planner configuration parameters.
             speed_profiler (SpeedProfiler): Speed profile manager.
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+
         """
         self.logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
@@ -63,6 +65,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
         Returns:
             float: Elapsed time in seconds.
+
         """
         if not self.is_planning_started():  # If planning has not started, return 0.0
             return 0.0
@@ -85,6 +88,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
         Returns:
             Callable[..., TrajectoryPlanCommand]: Wrapped method.
+
         """
 
         @functools.wraps(method)
@@ -114,6 +118,7 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
         Returns:
             bool: ``True`` if planning is active, ``False`` otherwise.
+
         """
         return self._start_trajectory_timestamp > 0.0
 

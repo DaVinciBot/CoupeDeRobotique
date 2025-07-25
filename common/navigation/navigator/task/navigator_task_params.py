@@ -33,6 +33,7 @@ class NavigatorTaskParams:
             speed_profiler (SpeedProfiler): The speed profiler.
             avoidance_params (BaseAvoidanceParams): The parameters for the avoidance.
             acs_detection_profile_params (BaseAcsDetectionProfileParams): The parameters for the ACS detection profile.
+
         """
         self.path_planner_params: BasePathPlannerParams = path_planner_params
         self.trajectory_planner_params: BaseTrajectoryPlannerParams = (

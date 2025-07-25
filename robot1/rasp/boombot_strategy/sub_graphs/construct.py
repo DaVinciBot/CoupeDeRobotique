@@ -31,6 +31,7 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
 
     Returns:
         BaseSubGraph: A compiled subgraph that defines the sequence of construction-related tasks.
+
     """
     subgraph = SubGraphBuilder()
 
@@ -105,6 +106,7 @@ def get_construct_one_floor_subgraph(
 
     Returns:
         BaseSubGraph: A compiled subgraph that defines the sequence of construction-related tasks.
+
     """
     subgraph = SubGraphBuilder()
 

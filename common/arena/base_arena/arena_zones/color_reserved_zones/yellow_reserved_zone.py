@@ -17,6 +17,7 @@ from geometry import OrientedPoint, Point, Polygon
 class YellowReservedZone(BaseColorReservedZone):
     """A reserved zone specifically for the yellow team.
     This class ensures that only blue team members have access based on predefined conditions.
+
     """
 
     def __init__(
@@ -37,6 +38,7 @@ class YellowReservedZone(BaseColorReservedZone):
             buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
             update_callback (Callable | None, optional): Function to be called on updates. Defaults to None.
             go_to_positions (list[OrientedPoint | Point] | None, optional): List of go-to positions within the zone. Defaults to None.
+
         """
         super().__init__(
             logger=logger,

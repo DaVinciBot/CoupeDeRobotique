@@ -10,6 +10,7 @@ class BaseTrajectoryPlannerParams:
     """Base class for trajectory planner parameter configurations.
 
     Can be extended by specific planner parameter classes to include additional settings.
+
     """
 
     def __init__(
@@ -22,6 +23,7 @@ class BaseTrajectoryPlannerParams:
         Args:
             trajectory_planning_strategy (TrajectoryPlannerStrategy): The strategy used for generating trajectories.
             direction (Direction): The direction of the trajectory.
+
         """
         self.trajectory_planning_strategy: TrajectoryPlannerStrategy = (
             trajectory_planning_strategy

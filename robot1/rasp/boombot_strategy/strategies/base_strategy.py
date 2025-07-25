@@ -20,6 +20,7 @@ class BaseStrategy(ABC):
     """Base class for all strategies.
 
     This class provides a base implementation for all strategies.
+
     """
 
     def __init__(self, ctx: BaseGameContext) -> None:
@@ -27,6 +28,7 @@ class BaseStrategy(ABC):
 
         Args:
             ctx (BaseGameContext): The game context.
+
         """
         self.zones = CONFIG.INFO_BY_TEAM[ctx.arena.team_color.value]
         self.strategy = SubGraphBuilder()
@@ -48,6 +50,7 @@ class BaseStrategy(ABC):
 
         Returns:
             GraphRunner: The graph runner.
+
         """
         return self.runner
 
@@ -64,6 +67,7 @@ class BaseStrategy(ABC):
 
         Returns:
             bool: ``True`` if the transitions were built successfully, ``False`` otherwise.
+
         """
         if not elements:
             self.logger.error("No elements provided for building the strategy.")
@@ -91,6 +95,7 @@ class BaseStrategy(ABC):
 
         Returns:
             BaseTaskNode: The entry point of the resolved element.
+
         """
         if isinstance(element, BaseSubGraph):
             return element.get_entry()
@@ -107,6 +112,7 @@ class BaseStrategy(ABC):
 
         Returns:
             BaseTaskNode: The exit point of the resolved element.
+
         """
         if isinstance(element, BaseSubGraph):
             return element.get_exits()[0]

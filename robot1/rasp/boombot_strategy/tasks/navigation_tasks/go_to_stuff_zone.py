@@ -24,6 +24,7 @@ class GoToStuffZoneToPickUp(NavigationTask):
     This class configures the required navigation parameters such as path planning, trajectory planning,
     speed profiling, and avoidance strategies. It utilizes a rectangular projection ACS detection profile
     to avoid collisions and applies a stabilization delay for system readiness before performing tasks.
+
     """
 
     def __init__(self, stuff_zone_id: int) -> None:
@@ -31,6 +32,7 @@ class GoToStuffZoneToPickUp(NavigationTask):
 
         Args:
             stuff_zone_id (int): Identifier for the target stuff zone location.
+
         """
         super().__init__(
             goal=stuff_zone_id,

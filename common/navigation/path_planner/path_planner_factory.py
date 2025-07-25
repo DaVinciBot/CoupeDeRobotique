@@ -49,6 +49,7 @@ class PathPlannerFactory:
 
         Raises:
             ValueError: If the strategy specified in ``params`` is not supported.
+
         """
         strategy = params.path_finding_strategy
 

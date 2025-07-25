@@ -8,6 +8,7 @@ class AvoidanceState(Enum):
         IDLE: No avoidance is in progress.
         AVOIDING: The system is actively performing an avoidance maneuver.
         ABORTED: The avoidance was aborted (e.g. due to timeout).
+
     """
 
     IDLE = auto()  # No avoidance in progress

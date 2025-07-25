@@ -22,6 +22,7 @@ class AngularRestrictProjectionAcsDetectionProfile(
 
         Args:
             params (AngularRestrictProjectionAcsDetectionProfileParams): Parameters for the angular restrict projection ACS detection profile.
+
         """
         super().__init__(params)
 
@@ -34,6 +35,7 @@ class AngularRestrictProjectionAcsDetectionProfile(
 
         Returns:
             bool: ``True`` if the ACS is triggered, ``False`` otherwise.
+
         """
         angle = (
             atan2(

@@ -26,6 +26,7 @@ class Lidar:
     * The angle and distance are stored in a numpy array (type float32).
 
     -> The default lidar distance unit is m.
+
     """
 
     def __init__(
@@ -52,6 +53,7 @@ class Lidar:
             unit_distance (str, optional): Unit of the distances. Defaults to "cm".
             min_distance (float, optional): Minimum distance to consider a distance as valid. Defaults to 5.0.
             initialization_fail_refresh_rate (float, optional): Refresh rate for initialization failures. Defaults to 0.5.
+
         """
         self._logger = logger
         self.__min_angle = min_angle
@@ -67,9 +69,7 @@ class Lidar:
         self.__polars_angles = None
         self.__threading_init_lidar()
 
-    """
-        Private methods
-    """
+    # ====== Private methods ======
 
     def __init_lidar(self) -> TLidar:
         """Initialize the lidar object and test the connection.
@@ -80,6 +80,7 @@ class Lidar:
         Raises:
             ConnectionError: If the lidar is not connected or does not work correctly.
             ImportError: If the lidar module cannot be imported.
+
         """
         try:
             import pysicktim as lidar
@@ -139,6 +140,7 @@ class Lidar:
 
         Raises:
             ValueError: If the polars array cannot be initialized.
+
         """
         n = len(self.distances)  # Number of distances
         if n == 0:
@@ -169,6 +171,7 @@ class Lidar:
 
         Raises:
             ValueError: If the unit is not recognized.
+
         """
         if unit == "deg":
             return 1
@@ -189,6 +192,7 @@ class Lidar:
 
         Raises:
             ValueError: If the unit is not recognized.
+
         """
         if unit == "mm":
             return 1000
@@ -209,6 +213,7 @@ class Lidar:
 
         Raises:
             Exception: If the lidar is disconnected or if the scan fails.
+
         """
         try:
             self.__lidar_obj.scan()
@@ -224,9 +229,7 @@ class Lidar:
 
             raise Exception(f"Error while scanning, LiDAR is disconnected ? [{error}]")
 
-    """
-        Public methods and properties
-    """
+    # ====== Public methods and properties ======
 
     def is_connected(self, force_check: bool = False) -> bool:
         """Check if the lidar is connected.
@@ -236,6 +239,7 @@ class Lidar:
 
         Returns:
             bool: ``True`` if the lidar is connected, ``False`` otherwise.
+
         """
         if force_check:
             self.__scan()
@@ -249,6 +253,7 @@ class Lidar:
 
         Returns:
             NDArray[np.float32]: the distances array
+
         """
         return (
             np.array(self.__lidar_obj.scan.distances, dtype=np.float32)
@@ -263,6 +268,7 @@ class Lidar:
 
         Returns:
             NDArray[np.float32]: the polars array
+
         """
         return np.column_stack((self.__polars_angles, self.distances))
 
@@ -271,6 +277,7 @@ class Lidar:
 
         Returns:
             NDArray[np.float32]: the distances array
+
         """
         self.__scan()
         return self.distances
@@ -280,6 +287,7 @@ class Lidar:
 
         Returns:
             NDArray[np.float32]: the polars array
+
         """
         self.__scan()
         return self.polars[self.polars[:, 1] > self._min_distance]

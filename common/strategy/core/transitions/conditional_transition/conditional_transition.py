@@ -17,6 +17,7 @@ class ConditionalTransition(BaseTransition):
 
     This class allows for conditional logic in determining whether a transition from one task
     node to another is valid, using an instance of ``BaseTransitionCondition``.
+
     """
 
     def __init__(
@@ -29,6 +30,7 @@ class ConditionalTransition(BaseTransition):
         Args:
             target (BaseTaskNode): The target node to transition to.
             condition (BaseTransitionCondition): The condition that must be met for the transition to occur.
+
         """
         super().__init__(target)
         self.condition = condition
@@ -42,5 +44,6 @@ class ConditionalTransition(BaseTransition):
 
         Returns:
             bool: ``True`` if the condition is satisfied and transition can occur, ``False`` otherwise.
+
         """
         return self.condition.check(from_node, self.target, ctx)

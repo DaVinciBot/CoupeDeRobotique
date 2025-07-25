@@ -38,6 +38,7 @@ class AcsDetectionProfileFactory:
 
         Raises:
             ValueError: If the avoidance strategy is not supported.
+
         """
         profile = params.acs_detection_profile
 

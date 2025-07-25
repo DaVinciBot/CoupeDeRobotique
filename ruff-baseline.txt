@@ -4,12 +4,6 @@ PAMI\lib\ota\ui\convert.py:
 common\GPIO\__init__.py:
   1:1 N999 Invalid module name: 'GPIO'
 
-common\GPIO\gpio.py:
-   1:1  D100 Missing docstring in public module
-  12:9  D107 Missing docstring in `__init__`
-  78:20 C419 Unnecessary list comprehension
-  78:68 PLR2004 Magic value used in comparison, consider replacing `0.5` with a constant variable
-
 common\arena\2024_mars_arena\__init__.py:
   1:1 D104 Missing docstring in public package
 
@@ -19,32 +13,32 @@ common\arena\2024_mars_arena\arena_old.py:
    28:33 B008 Do not perform function call `create_straight_rectangle` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
    28:59 B008 Do not perform function call `Point` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
    28:72 B008 Do not perform function call `Point` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
-   61:9  D415 First line should end with a period, question mark, or exclamation point
-   67:9  D102 Missing docstring in public method
-   85:9  D102 Missing docstring in public method
-   87:19 TRY003 Avoid specifying long messages outside the exception class
-   87:30 EM101 Exception must not use a string literal, assign to variable first
-   92:9  D102 Missing docstring in public method
-  138:5  RET503 Missing explicit `return` at the end of function able to return non-`None` value
-  138:9  C901 `compute_go_to_destination` is too complex (14 > 10)
-  138:9  PLR0912 Too many branches (17 > 12)
-  168:45 PLR2004 Magic value used in comparison, consider replacing `0.1` with a constant variable
-  170:21 PLR6104 Use `+=` to perform an augmented assignment directly
-  172:21 PLR6104 Use `-=` to perform an augmented assignment directly
-  174:17 PLR6104 Use `-=` to perform an augmented assignment directly
-  176:17 PLR6104 Use `+=` to perform an augmented assignment directly
-  182:49 PLR2004 Magic value used in comparison, consider replacing `0.1` with a constant variable
-  184:25 PLR6104 Use `+=` to perform an augmented assignment directly
-  188:25 PLR6104 Use `-=` to perform an augmented assignment directly
-  192:21 PLR6104 Use `-=` to perform an augmented assignment directly
-  194:21 PLR6104 Use `+=` to perform an augmented assignment directly
-  217:13 S101 Use of `assert` detected
-  217:13 PT018 Assertion should be broken down into multiple parts
-  218:87 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  249:13 SIM102 Use a single `if` statement instead of nested `if` statements
-  249:16 PLR2004 Magic value used in comparison, consider replacing `5` with a constant variable
-  263:9  D102 Missing docstring in public method
-  275:9  D102 Missing docstring in public method
+   62:9  D415 First line should end with a period, question mark, or exclamation point
+   68:9  D102 Missing docstring in public method
+   87:9  D102 Missing docstring in public method
+   89:19 TRY003 Avoid specifying long messages outside the exception class
+   89:30 EM101 Exception must not use a string literal, assign to variable first
+   94:9  D102 Missing docstring in public method
+  141:5  RET503 Missing explicit `return` at the end of function able to return non-`None` value
+  141:9  C901 `compute_go_to_destination` is too complex (14 > 10)
+  141:9  PLR0912 Too many branches (17 > 12)
+  172:45 PLR2004 Magic value used in comparison, consider replacing `0.1` with a constant variable
+  174:21 PLR6104 Use `+=` to perform an augmented assignment directly
+  176:21 PLR6104 Use `-=` to perform an augmented assignment directly
+  178:17 PLR6104 Use `-=` to perform an augmented assignment directly
+  180:17 PLR6104 Use `+=` to perform an augmented assignment directly
+  186:49 PLR2004 Magic value used in comparison, consider replacing `0.1` with a constant variable
+  188:25 PLR6104 Use `+=` to perform an augmented assignment directly
+  192:25 PLR6104 Use `-=` to perform an augmented assignment directly
+  196:21 PLR6104 Use `-=` to perform an augmented assignment directly
+  198:21 PLR6104 Use `+=` to perform an augmented assignment directly
+  221:13 S101 Use of `assert` detected
+  221:13 PT018 Assertion should be broken down into multiple parts
+  222:87 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+  254:13 SIM102 Use a single `if` statement instead of nested `if` statements
+  254:16 PLR2004 Magic value used in comparison, consider replacing `5` with a constant variable
+  268:9  D102 Missing docstring in public method
+  280:9  D102 Missing docstring in public method
 
 common\arena\2024_mars_arena\mars_arena_old.py:
     1:1  D100 Missing docstring in public module
@@ -57,22 +51,19 @@ common\arena\2024_mars_arena\mars_arena_old.py:
    31:9  D102 Missing docstring in public method
    34:9  D102 Missing docstring in public method
    39:5  D415 First line should end with a period, question mark, or exclamation point
-   60:39 PLR2004 Magic value used in comparison, consider replacing `5` with a constant variable
-   61:19 TRY003 Avoid specifying long messages outside the exception class
-   61:30 EM101 Exception must not use a string literal, assign to variable first
-  149:9  D102 Missing docstring in public method
-  152:9  D102 Missing docstring in public method
-  152:9  PLR6301 Method `sort_plant_zones` could be a function, class method, or static method
-  174:16 RET504 Unnecessary assignment to `zones` before `return` statement
-  176:9  D102 Missing docstring in public method
-  199:9  D102 Missing docstring in public method
-  222:9  D102 Missing docstring in public method
-  235:9  D105 Missing docstring in magic method
-  238:9  D102 Missing docstring in public method
-  245:9  D102 Missing docstring in public method
-
-common\arena\__init__.py:
-  1:1 D104 Missing docstring in public package
+   61:39 PLR2004 Magic value used in comparison, consider replacing `5` with a constant variable
+   62:19 TRY003 Avoid specifying long messages outside the exception class
+   62:30 EM101 Exception must not use a string literal, assign to variable first
+  150:9  D102 Missing docstring in public method
+  153:9  D102 Missing docstring in public method
+  153:9  PLR6301 Method `sort_plant_zones` could be a function, class method, or static method
+  175:16 RET504 Unnecessary assignment to `zones` before `return` statement
+  177:9  D102 Missing docstring in public method
+  200:9  D102 Missing docstring in public method
+  223:9  D102 Missing docstring in public method
+  236:9  D105 Missing docstring in magic method
+  239:9  D102 Missing docstring in public method
+  246:9  D102 Missing docstring in public method
 
 common\arena\base_arena\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -80,18 +71,18 @@ common\arena\base_arena\__init__.py:
 common\arena\base_arena\arena.py:
     1:1  D100 Missing docstring in public module
    36:7  PLW1641 Object does not implement `__hash__` method
-  157:9  D205 1 blank line required between summary line and description
-  180:9  D205 1 blank line required between summary line and description
-  332:9  D102 Missing docstring in public method
-  355:12 SIM101 Multiple `isinstance` calls for `goal`, merge into a single call
-  434:19 TRY003 Avoid specifying long messages outside the exception class
-  434:30 EM102 Exception must not use an f-string literal, assign to variable first
-  436:9  SIM110 Use `return any(zone and zone.polygon.intersects(element) for zone in zones_to_check)` instead of `for` loop
-  442:9  D415 First line should end with a period, question mark, or exclamation point
-  550:9  D301 Use `r"""` if any backslashes in a docstring
-  682:9  C901 `visualize` is too complex (12 > 10)
-  682:9  PLR0912 Too many branches (13 > 12)
-  682:9  D102 Missing docstring in public method
+  158:9  D205 1 blank line required between summary line and description
+  182:9  D205 1 blank line required between summary line and description
+  339:9  D102 Missing docstring in public method
+  362:12 SIM101 Multiple `isinstance` calls for `goal`, merge into a single call
+  445:19 TRY003 Avoid specifying long messages outside the exception class
+  445:30 EM102 Exception must not use an f-string literal, assign to variable first
+  447:9  SIM110 Use `return any(zone and zone.polygon.intersects(element) for zone in zones_to_check)` instead of `for` loop
+  453:9  D415 First line should end with a period, question mark, or exclamation point
+  562:9  D301 Use `r"""` if any backslashes in a docstring
+  696:9  C901 `visualize` is too complex (12 > 10)
+  696:9  PLR0912 Too many branches (13 > 12)
+  696:9  D102 Missing docstring in public method
 
 common\arena\base_arena\arena_zones\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -104,18 +95,18 @@ common\arena\base_arena\arena_zones\base_arena_zone.py:
     1:1  D100 Missing docstring in public module
    18:7  PLW1641 Object does not implement `__hash__` method
    18:7  B024 `BaseArenaZone` is an abstract base class, but it has no abstract methods or properties
-   25:28 RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
-   80:9  D102 Missing docstring in public method
-   80:37 RUF036 `None` not at the end of the type annotation.
-   93:9  D205 1 blank line required between summary line and description
-  111:29 ARG002 Unused method argument: `team_color`
-  120:42 PLR6201 Use a set literal when testing for membership
-  127:9  ARG002 Unused method argument: `team_color`
-  170:17 PLW0108 Lambda may be unnecessary; consider inlining inner function
-  181:9  ARG002 Unused method argument: `team_color`
-  182:9  ARG002 Unused method argument: `ally_position`
-  183:9  ARG002 Unused method argument: `enemy_position`
-  214:16 E721 Use `is` and `is not` for type comparisons, or `isinstance()` for isinstance checks
+   26:28 RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
+   82:9  D102 Missing docstring in public method
+   82:37 RUF036 `None` not at the end of the type annotation.
+   95:9  D205 1 blank line required between summary line and description
+  114:29 ARG002 Unused method argument: `team_color`
+  124:42 PLR6201 Use a set literal when testing for membership
+  131:9  ARG002 Unused method argument: `team_color`
+  176:17 PLW0108 Lambda may be unnecessary; consider inlining inner function
+  187:9  ARG002 Unused method argument: `team_color`
+  188:9  ARG002 Unused method argument: `ally_position`
+  189:9  ARG002 Unused method argument: `enemy_position`
+  222:16 E721 Use `is` and `is not` for type comparisons, or `isinstance()` for isinstance checks
 
 common\arena\base_arena\arena_zones\border_zone.py:
   1:1 D100 Missing docstring in public module
@@ -144,10 +135,10 @@ common\arena\base_arena\arena_zones\speed_vector_auto_calculate_zones\__init__.p
 common\arena\base_arena\arena_zones\speed_vector_auto_calculate_zones\base_speed_vector_auto_calculate_zone.py:
     1:1  D100 Missing docstring in public module
    25:5  D205 1 blank line required between summary line and description
-   37:26 RUF013 PEP 484 prohibits implicit `Optional`
-   41:29 RUF013 PEP 484 prohibits implicit `Optional`
-   42:37 B008 Do not perform function call `SpeedVector` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
-  104:45 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+   38:26 RUF013 PEP 484 prohibits implicit `Optional`
+   42:29 RUF013 PEP 484 prohibits implicit `Optional`
+   43:37 B008 Do not perform function call `SpeedVector` in argument defaults; instead, perform the call within the function, or read the default from a module-level singleton variable
+  107:45 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
 
 common\arena\base_arena\arena_zones\speed_vector_auto_calculate_zones\enemy_zone.py:
    1:1 D100 Missing docstring in public module
@@ -158,21 +149,21 @@ common\arena\base_arena\arena_zones\structs.py:
 
 common\arena\base_arena\arena_zones\stuff_zone.py:
     1:1  D100 Missing docstring in public module
-   86:9  ARG002 Unused method argument: `team_color`
-  109:21 PLW0108 Lambda may be unnecessary; consider inlining inner function
+   88:9  ARG002 Unused method argument: `team_color`
+  112:21 PLW0108 Lambda may be unnecessary; consider inlining inner function
 
 common\arena\base_arena\grid_manager.py:
     1:1  D100 Missing docstring in public module
    23:7  PLW1641 Object does not implement `__hash__` method
    24:5  D205 1 blank line required between summary line and description
-  115:29 C419 Unnecessary list comprehension
-  249:9  C901 `__eq__` is too complex (12 > 10)
-  249:9  PLR0911 Too many return statements (11 > 6)
-  282:9  SIM103 Return the negated condition directly
+  118:29 C419 Unnecessary list comprehension
+  254:9  C901 `__eq__` is too complex (12 > 10)
+  254:9  PLR0911 Too many return statements (11 > 6)
+  287:9  SIM103 Return the negated condition directly
 
 common\arena\base_arena\grid_manager_2.py:
     1:1 D100 Missing docstring in public module
-  248:9 RUF059 Unpacked variable `fig` is never used
+  261:9 RUF059 Unpacked variable `fig` is never used
 
 common\arena\base_arena\team_color.py:
   1:1 D100 Missing docstring in public module
@@ -216,7 +207,7 @@ common\geometry\oriented_point.py:
   100:9  D105 Missing docstring in magic method
   123:9  N802 Function name `from_Point` should be lowercase
   123:9  D102 Missing docstring in public method
-  156:46 RUF015 Prefer `next(iter(self.coords))` over single element slice
+  157:46 RUF015 Prefer `next(iter(self.coords))` over single element slice
 
 common\led_strip\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -235,8 +226,8 @@ common\navigation\avoidance\acs_detection_profiles\__init__.py:
 
 common\navigation\avoidance\acs_detection_profiles\acs_detection_profile_factory.py:
    1:1  D100 Missing docstring in public module
-  62:15 TRY003 Avoid specifying long messages outside the exception class
-  62:26 EM102 Exception must not use an f-string literal, assign to variable first
+  63:15 TRY003 Avoid specifying long messages outside the exception class
+  63:26 EM102 Exception must not use an f-string literal, assign to variable first
 
 common\navigation\avoidance\acs_detection_profiles\angular_restrict_projection_acs_detection_profile\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -253,7 +244,7 @@ common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profils\__
 common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profils\base_acs_detection_profils.py:
    1:1  D100 Missing docstring in public module
   14:36 UP046 Generic class `BaseAcsDetectionProfile` uses `Generic` subclass instead of type parameters
-  31:9  D102 Missing docstring in public method
+  32:9  D102 Missing docstring in public method
 
 common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profils\base_acs_detection_profils_params.py:
   1:1 D100 Missing docstring in public module
@@ -272,7 +263,7 @@ common\navigation\avoidance\acs_detection_profiles\no_projection_acs_detection_p
 
 common\navigation\avoidance\acs_detection_profiles\no_projection_acs_detection_profile\no_projection_acs_detection_profile.py:
    1:1 D100 Missing docstring in public module
-  30:9 D102 Missing docstring in public method
+  31:9 D102 Missing docstring in public method
 
 common\navigation\avoidance\acs_detection_profiles\no_projection_acs_detection_profile\no_projection_acs_detection_profile_params.py:
   1:1 D100 Missing docstring in public module
@@ -282,7 +273,7 @@ common\navigation\avoidance\acs_detection_profiles\rectangular_projection_acs_de
 
 common\navigation\avoidance\acs_detection_profiles\rectangular_projection_acs_detection_profile\rectangular_projection_acs_detection_profile.py:
    1:1 D100 Missing docstring in public module
-  57:9 D102 Missing docstring in public method
+  58:9 D102 Missing docstring in public method
 
 common\navigation\avoidance\acs_detection_profiles\rectangular_projection_acs_detection_profile\rectangular_projection_acs_detection_profile_params.py:
   1:1 D100 Missing docstring in public module
@@ -293,15 +284,15 @@ common\navigation\avoidance\acs_detection_profiles\struct.py:
 
 common\navigation\avoidance\avoidance_factory.py:
    1:1  D100 Missing docstring in public module
-  69:15 TRY003 Avoid specifying long messages outside the exception class
-  69:26 EM102 Exception must not use an f-string literal, assign to variable first
+  70:15 TRY003 Avoid specifying long messages outside the exception class
+  70:26 EM102 Exception must not use an f-string literal, assign to variable first
 
 common\navigation\avoidance\back_avoidance\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\navigation\avoidance\back_avoidance\back_avoidance.py:
    1:1 D100 Missing docstring in public module
-  74:9 PLC0415 `import` should be at the top-level of a file
+  77:9 PLC0415 `import` should be at the top-level of a file
 
 common\navigation\avoidance\back_avoidance\back_avoidance_params.py:
   1:1 D100 Missing docstring in public module
@@ -313,8 +304,8 @@ common\navigation\avoidance\base_avoidance\base_avoidance.py:
     1:1  D100 Missing docstring in public module
    13:29 TC003 Move standard library import `collections.abc.Callable` into a type-checking block
    36:26 UP046 Generic class `BaseAvoidance` uses `Generic` subclass instead of type parameters
-   80:13 PLC0415 `import` should be at the top-level of a file
-  141:9  PLC0415 `import` should be at the top-level of a file
+   83:13 PLC0415 `import` should be at the top-level of a file
+  147:9  PLC0415 `import` should be at the top-level of a file
 
 common\navigation\avoidance\base_avoidance\base_avoidance_params.py:
   1:1 D100 Missing docstring in public module
@@ -327,8 +318,8 @@ common\navigation\avoidance\no_avoidance\__init__.py:
 
 common\navigation\avoidance\no_avoidance\no_avoidance.py:
    1:1 D100 Missing docstring in public module
-  52:9 ARG002 Unused method argument: `ally_zone`
-  53:9 ARG002 Unused method argument: `enemy_zone`
+  54:9 ARG002 Unused method argument: `ally_zone`
+  55:9 ARG002 Unused method argument: `enemy_zone`
 
 common\navigation\avoidance\no_avoidance\no_avoidance_params.py:
   1:1 D100 Missing docstring in public module
@@ -338,7 +329,7 @@ common\navigation\avoidance\stop_and_wait_avoidance\__init__.py:
 
 common\navigation\avoidance\stop_and_wait_avoidance\stop_and_wait_avoidance.py:
    1:1 D100 Missing docstring in public module
-  71:9 PLC0415 `import` should be at the top-level of a file
+  74:9 PLC0415 `import` should be at the top-level of a file
 
 common\navigation\avoidance\stop_and_wait_avoidance\stop_and_wait_avoidance_params.py:
   1:1 D100 Missing docstring in public module
@@ -356,8 +347,8 @@ common\navigation\debug_functions\navigator.py:
   18:5  PLR0915 Too many statements (82 > 50)
   18:5  PLR0914 Too many local variables (16/15)
   21:24 PT028 Test function parameter `time_step` has default argument
-  83:17 SLF001 Private member accessed: `_get_trajectory_time_elapsed`
-  93:9  T201 `print` found
+  84:17 SLF001 Private member accessed: `_get_trajectory_time_elapsed`
+  94:9  T201 `print` found
 
 common\navigation\debug_functions\speed_profile.py:
    1:1  D100 Missing docstring in public module
@@ -365,14 +356,14 @@ common\navigation\debug_functions\speed_profile.py:
   16:24 PT028 Test function parameter `step_time` has default argument
   17:30 PT028 Test function parameter `departure_speed` has default argument
   18:28 PT028 Test function parameter `arrival_speed` has default argument
-  29:5  T201 `print` found
+  30:5  T201 `print` found
 
 common\navigation\debug_functions\trajectory_planer.py:
    1:1  D100 Missing docstring in public module
   17:5  PLR0915 Too many statements (69 > 50)
   17:5  PLR0914 Too many local variables (16/15)
   20:24 PT028 Test function parameter `time_step` has default argument
-  29:5  T201 `print` found
+  30:5  T201 `print` found
 
 common\navigation\navigator\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -401,9 +392,9 @@ common\navigation\navigator\task\__init__.py:
 common\navigation\navigator\task\navigator_task.py:
     1:1 D100 Missing docstring in public module
    31:5 D205 1 blank line required between summary line and description
-   41:9 PLC0415 `import` should be at the top-level of a file
-  105:9 PLR0911 Too many return statements (8 > 6)
-  105:9 D102 Missing docstring in public method
+   43:9 PLC0415 `import` should be at the top-level of a file
+  107:9 PLR0911 Too many return statements (8 > 6)
+  107:9 D102 Missing docstring in public method
 
 common\navigation\navigator\task\navigator_task_params.py:
   1:1 D100 Missing docstring in public module
@@ -420,10 +411,10 @@ common\navigation\path_planner\astar_path_planner\__init__.py:
 common\navigation\path_planner\astar_path_planner\astar_path_planner.py:
     1:1  D100 Missing docstring in public module
    23:5  D205 1 blank line required between summary line and description
-  192:25 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  196:25 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  204:25 PLR2004 Magic value used in comparison, consider replacing `4` with a constant variable
-  260:25 ARG002 Unused method argument: `params`
+  200:25 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+  204:25 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  212:25 PLR2004 Magic value used in comparison, consider replacing `4` with a constant variable
+  271:25 ARG002 Unused method argument: `params`
 
 common\navigation\path_planner\astar_path_planner\astar_path_planner_params.py:
   1:1 D100 Missing docstring in public module
@@ -434,13 +425,13 @@ common\navigation\path_planner\base_path_planner\__init__.py:
 common\navigation\path_planner\base_path_planner\base_path_planner.py:
    1:1  D100 Missing docstring in public module
   23:28 UP046 Generic class `BasePathPlanner` uses `Generic` subclass instead of type parameters
-  41:9  D102 Missing docstring in public method
+  42:9  D102 Missing docstring in public method
 
 common\navigation\path_planner\base_path_planner\base_path_planner_params.py:
    1:1 D100 Missing docstring in public module
-  21:1 B903 Class could be dataclass or namedtuple
-  21:7 D101 Missing docstring in public class
-  22:9 D107 Missing docstring in `__init__`
+  22:1 B903 Class could be dataclass or namedtuple
+  22:7 D101 Missing docstring in public class
+  23:9 D107 Missing docstring in `__init__`
 
 common\navigation\path_planner\basic_path_planner\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -462,13 +453,13 @@ common\navigation\path_planner\delta_path_planner\delta_path_planner_params.py:
 
 common\navigation\path_planner\path_planner_factory.py:
    1:1  D100 Missing docstring in public module
-  64:15 TRY003 Avoid specifying long messages outside the exception class
-  64:26 EM102 Exception must not use an f-string literal, assign to variable first
+  65:15 TRY003 Avoid specifying long messages outside the exception class
+  65:26 EM102 Exception must not use an f-string literal, assign to variable first
 
 common\navigation\path_planner\path_planner_path_plan_params_factory.py:
    1:1  D100 Missing docstring in public module
-  56:15 TRY003 Avoid specifying long messages outside the exception class
-  56:26 EM102 Exception must not use an f-string literal, assign to variable first
+  58:15 TRY003 Avoid specifying long messages outside the exception class
+  58:26 EM102 Exception must not use an f-string literal, assign to variable first
 
 common\navigation\path_planner\structs.py:
   1:1 D100 Missing docstring in public module
@@ -482,9 +473,9 @@ common\navigation\trajectory_planner\base_trajectory_planner\__init__.py:
 common\navigation\trajectory_planner\base_trajectory_planner\base_trajectory_planner.py:
     1:1  D100 Missing docstring in public module
    24:34 UP046 Generic class `BaseTrajectoryPlanner` uses `Generic` subclass instead of type parameters
-  122:9  D102 Missing docstring in public method
-  125:9  D102 Missing docstring in public method
-  128:9  D102 Missing docstring in public method
+  127:9  D102 Missing docstring in public method
+  130:9  D102 Missing docstring in public method
+  133:9  D102 Missing docstring in public method
 
 common\navigation\trajectory_planner\base_trajectory_planner\base_trajectory_planner_params.py:
   1:1 D100 Missing docstring in public module
@@ -520,16 +511,16 @@ common\navigation\trajectory_planner\sequential_trajectory_planner\__init__.py:
 common\navigation\trajectory_planner\sequential_trajectory_planner\sequential_trajectory_planner.py:
     1:1  D100 Missing docstring in public module
    34:5  D205 1 blank line required between summary line and description
-   68:9  D205 1 blank line required between summary line and description
-   68:56 RUF002 Docstring contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
-  105:9  D205 1 blank line required between summary line and description
-  105:56 RUF002 Docstring contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
-  241:19 TRY003 Avoid specifying long messages outside the exception class
-  241:32 EM101 Exception must not use a string literal, assign to variable first
-  314:19 TRY003 Avoid specifying long messages outside the exception class
-  315:17 EM102 Exception must not use an f-string literal, assign to variable first
-  335:19 TRY003 Avoid specifying long messages outside the exception class
-  335:32 EM101 Exception must not use a string literal, assign to variable first
+   70:9  D205 1 blank line required between summary line and description
+   70:56 RUF002 Docstring contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
+  108:9  D205 1 blank line required between summary line and description
+  108:56 RUF002 Docstring contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
+  248:19 TRY003 Avoid specifying long messages outside the exception class
+  248:32 EM101 Exception must not use a string literal, assign to variable first
+  321:19 TRY003 Avoid specifying long messages outside the exception class
+  322:17 EM102 Exception must not use an f-string literal, assign to variable first
+  343:19 TRY003 Avoid specifying long messages outside the exception class
+  343:32 EM101 Exception must not use a string literal, assign to variable first
 
 common\navigation\trajectory_planner\sequential_trajectory_planner\sequential_trajectory_planner_params.py:
   1:1 D100 Missing docstring in public module
@@ -546,10 +537,10 @@ common\navigation\trajectory_planner\speed_profile\basic_speed_profile.py:
 common\navigation\trajectory_planner\speed_profile\linear_ramped_speed_profile.py:
     1:1 D100 Missing docstring in public module
    18:5 D205 1 blank line required between summary line and description
-   85:9 C901 `get_speed` is too complex (11 > 10)
-   85:9 PLR0911 Too many return statements (11 > 6)
-  160:9 C901 `get_distance` is too complex (11 > 10)
-  160:9 PLR0911 Too many return statements (11 > 6)
+   89:9 C901 `get_speed` is too complex (11 > 10)
+   89:9 PLR0911 Too many return statements (11 > 6)
+  165:9 C901 `get_distance` is too complex (11 > 10)
+  165:9 PLR0911 Too many return statements (11 > 6)
 
 common\navigation\trajectory_planner\speed_profile\sigmoid_ramped_speed_profile.py:
   1:1 D100 Missing docstring in public module
@@ -562,8 +553,8 @@ common\navigation\trajectory_planner\structs.py:
 
 common\navigation\trajectory_planner\trajectory_planner_factory.py:
    1:1  D100 Missing docstring in public module
-  53:15 TRY003 Avoid specifying long messages outside the exception class
-  53:26 EM102 Exception must not use an f-string literal, assign to variable first
+  54:15 TRY003 Avoid specifying long messages outside the exception class
+  54:26 EM102 Exception must not use an f-string literal, assign to variable first
 
 common\strategy\core\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -580,7 +571,7 @@ common\strategy\core\builders\__init__.py:
 common\strategy\core\builders\subgraph_builder.py:
    1:1 D100 Missing docstring in public module
   15:5 D205 1 blank line required between summary line and description
-  19:9 D107 Missing docstring in `__init__`
+  20:9 D107 Missing docstring in `__init__`
 
 common\strategy\core\graph_runner.py:
   1:1 D100 Missing docstring in public module
@@ -601,12 +592,12 @@ common\strategy\core\task_nodes\__init__.py:
 
 common\strategy\core\task_nodes\base_task_node.py:
     1:1  D100 Missing docstring in public module
-   90:56 ARG002 Unused method argument: `ctx`
-  100:55 ARG002 Unused method argument: `ctx`
-  110:9  C901 `execute` is too complex (11 > 10)
-  148:21 F841 Local variable `all_done` is assigned to but never used
-  155:20 BLE001 Do not catch blind exception: `Exception`
-  159:17 TRY400 Use `logging.exception` instead of `logging.error`
+   93:56 ARG002 Unused method argument: `ctx`
+  104:55 ARG002 Unused method argument: `ctx`
+  115:9  C901 `execute` is too complex (11 > 10)
+  154:21 F841 Local variable `all_done` is assigned to but never used
+  161:20 BLE001 Do not catch blind exception: `Exception`
+  165:17 TRY400 Use `logging.exception` instead of `logging.error`
 
 common\strategy\core\task_nodes\scoring_functions\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -645,7 +636,7 @@ common\strategy\core\task_nodes\scoring_functions\navigation_scoring_function.py
 common\strategy\core\task_nodes\timeout_task_node.py:
    1:1  D100 Missing docstring in public module
   17:5  D205 1 blank line required between summary line and description
-  43:26 ARG002 Unused method argument: `ctx`
+  45:26 ARG002 Unused method argument: `ctx`
 
 common\strategy\core\tasks\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -653,12 +644,12 @@ common\strategy\core\tasks\__init__.py:
 common\strategy\core\tasks\base_navigation_task.py:
    1:1 D100 Missing docstring in public module
   22:7 D101 Missing docstring in public class
-  81:9 D102 Missing docstring in public method
+  82:9 D102 Missing docstring in public method
 
 common\strategy\core\tasks\base_task.py:
    1:1 D100 Missing docstring in public module
    9:5 D205 1 blank line required between summary line and description
-  25:9 D102 Missing docstring in public method
+  27:9 D102 Missing docstring in public method
 
 common\strategy\core\tasks\fake_task.py:
   1:1  D100 Missing docstring in public module
@@ -688,30 +679,30 @@ common\strategy\core\transitions\conditional_transition\transitions_condition\__
 
 common\strategy\core\transitions\conditional_transition\transitions_condition\base_transition_condition.py:
    1:1 D100 Missing docstring in public module
-  27:9 D205 1 blank line required between summary line and description
+  28:9 D205 1 blank line required between summary line and description
 
 common\strategy\core\transitions\conditional_transition\transitions_condition\from_function_transition_condition.py:
   1:1 D100 Missing docstring in public module
 
 common\strategy\core\transitions\conditional_transition\transitions_condition\zone_accessibility_transition_condition.py:
    1:1 D100 Missing docstring in public module
-  37:9 ARG002 Unused method argument: `from_node`
+  39:9 ARG002 Unused method argument: `from_node`
 
 common\strategy\core\transitions\direct_transition.py:
    1:1  D100 Missing docstring in public module
-  21:9  PLR6301 Method `can_transit` could be a function, class method, or static method
-  21:27 ARG002 Unused method argument: `from_node`
-  21:52 ARG002 Unused method argument: `ctx`
+  22:9  PLR6301 Method `can_transit` could be a function, class method, or static method
+  22:27 ARG002 Unused method argument: `from_node`
+  22:52 ARG002 Unused method argument: `ctx`
 
 common\strategy\tools\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\strategy\tools\visualize.py:
     1:1 D100 Missing docstring in public module
-   75:5 T201 `print` found
-   77:9 PLC0415 `import` should be at the top-level of a file
-  139:5 T201 `print` found
-  141:9 PLC0415 `import` should be at the top-level of a file
+   77:5 T201 `print` found
+   79:9 PLC0415 `import` should be at the top-level of a file
+  143:5 T201 `print` found
+  145:9 PLC0415 `import` should be at the top-level of a file
 
 common\teensy\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -743,17 +734,17 @@ common\usb_com\python\com\__init__.py:
 common\usb_com\python\com\com.py:
     1:1  D100 Missing docstring in public module
    24:5  D205 1 blank line required between summary line and description
-   96:23 TRY003 Avoid specifying long messages outside the exception class
-   96:36 EM101 Exception must not use a string literal, assign to variable first
-  114:9  PLW3201 Dunder method `__receiver__` has no special meaning in Python 3
-  115:9  D415 First line should end with a period, question mark, or exclamation point
-  146:25 G003 Logging statement uses `+`
-  151:34 PLR2004 Magic value used in comparison, consider replacing `127` with a constant variable
-  167:24 BLE001 Do not catch blind exception: `Exception`
-  168:21 TRY400 Use `logging.exception` instead of `logging.error`
-  168:39 G003 Logging statement uses `+`
-  171:20 BLE001 Do not catch blind exception: `Exception`
-  198:17 T201 `print` found
+   99:23 TRY003 Avoid specifying long messages outside the exception class
+   99:36 EM101 Exception must not use a string literal, assign to variable first
+  118:9  PLW3201 Dunder method `__receiver__` has no special meaning in Python 3
+  119:9  D415 First line should end with a period, question mark, or exclamation point
+  151:25 G003 Logging statement uses `+`
+  156:34 PLR2004 Magic value used in comparison, consider replacing `127` with a constant variable
+  172:24 BLE001 Do not catch blind exception: `Exception`
+  173:21 TRY400 Use `logging.exception` instead of `logging.error`
+  173:39 G003 Logging statement uses `+`
+  176:20 BLE001 Do not catch blind exception: `Exception`
+  204:17 T201 `print` found
 
 common\usb_com\python\com\dummy.py:
   1:1 D100 Missing docstring in public module
@@ -779,10 +770,10 @@ common\utils\__init__.py:
 common\utils\utils.py:
    1:1  D100 Missing docstring in public module
    6:7  D101 Missing docstring in public class
-  14:16 DTZ005 `datetime.datetime.now()` called without a `tz` argument
-  26:16 DTZ005 `datetime.datetime.now()` called without a `tz` argument
-  35:35 DTZ005 `datetime.datetime.now()` called without a `tz` argument
-  75:13 E722 Do not use bare `except`
+  15:16 DTZ005 `datetime.datetime.now()` called without a `tz` argument
+  28:16 DTZ005 `datetime.datetime.now()` called without a `tz` argument
+  38:35 DTZ005 `datetime.datetime.now()` called without a `tz` argument
+  80:13 E722 Do not use bare `except`
 
 common\video\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -817,9 +808,9 @@ robot1\rasp\__init__.py:
   1:1 D104 Missing docstring in public package
 
 robot1\rasp\_config_loader.py:
-   23:10 PTH123 `open()` should be replaced by `Path.open()`
-  166:5  PLC0415 `import` should be at the top-level of a file
-  325:46 RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
+   24:10 PTH123 `open()` should be replaced by `Path.open()`
+  168:5  PLC0415 `import` should be at the top-level of a file
+  327:46 RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
 
 robot1\rasp\boombot_strategy\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -831,11 +822,11 @@ robot1\rasp\boombot_strategy\strategies\__init__.py:
   1:1 D104 Missing docstring in public package
 
 robot1\rasp\boombot_strategy\strategies\base_strategy.py:
-   1:1  D100 Missing docstring in public module
-   5:28 PLC2701 Private name import `_config_loader`
-  19:7  B024 `BaseStrategy` is an abstract base class, but it has no abstract methods or properties
-  83:9  PLR6301 Method `_resolve_for_entry` could be a function, class method, or static method
-  99:9  PLR6301 Method `_resolve_for_exits` could be a function, class method, or static method
+    1:1  D100 Missing docstring in public module
+    5:28 PLC2701 Private name import `_config_loader`
+   19:7  B024 `BaseStrategy` is an abstract base class, but it has no abstract methods or properties
+   87:9  PLR6301 Method `_resolve_for_entry` could be a function, class method, or static method
+  104:9  PLR6301 Method `_resolve_for_exits` could be a function, class method, or static method
 
 robot1\rasp\boombot_strategy\strategies\basic_strategy.py:
    1:1 D100 Missing docstring in public module
@@ -885,17 +876,16 @@ robot1\rasp\boombot_strategy\tasks\__init__.py:
 
 robot1\rasp\boombot_strategy\tasks\actuator_task.py:
     1:1  D100 Missing docstring in public module
-    8:28 PLC2701 Private name import `_config_loader`
-   16:9  PLR6301 Method `handle` could be a function, class method, or static method
-   32:9  PLR6301 Method `handle` could be a function, class method, or static method
-   49:9  PLR6301 Method `handle` could be a function, class method, or static method
-   66:9  PLR6301 Method `handle` could be a function, class method, or static method
-   81:7  D101 Missing docstring in public class
-   82:9  D102 Missing docstring in public method
-   82:9  PLR6301 Method `handle` could be a function, class method, or static method
-   92:9  PLR6301 Method `handle` could be a function, class method, or static method
-  108:9  PLR6301 Method `handle` could be a function, class method, or static method
-  124:9  PLR6301 Method `handle` could be a function, class method, or static method
+    9:28 PLC2701 Private name import `_config_loader`
+   17:9  PLR6301 Method `handle` could be a function, class method, or static method
+   34:9  PLR6301 Method `handle` could be a function, class method, or static method
+   52:9  PLR6301 Method `handle` could be a function, class method, or static method
+   87:7  D101 Missing docstring in public class
+   88:9  D102 Missing docstring in public method
+   88:9  PLR6301 Method `handle` could be a function, class method, or static method
+   98:9  PLR6301 Method `handle` could be a function, class method, or static method
+  115:9  PLR6301 Method `handle` could be a function, class method, or static method
+  132:9  PLR6301 Method `handle` could be a function, class method, or static method
 
 robot1\rasp\boombot_strategy\tasks\navigation_tasks\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -926,8 +916,8 @@ robot1\rasp\brains\__init__.py:
 
 robot1\rasp\brains\main_brain.py:
     1:1  D100 Missing docstring in public module
-  116:9  PLC0415 `import` should be at the top-level of a file
   117:9  PLC0415 `import` should be at the top-level of a file
+  118:9  PLC0415 `import` should be at the top-level of a file
   232:31 S307 Use of possibly insecure function; consider using `ast.literal_eval`
   234:25 S307 Use of possibly insecure function; consider using `ast.literal_eval`
   236:39 PLR6201 Use a set literal when testing for membership
@@ -944,7 +934,7 @@ robot1\rasp\controllers\actuators\actuators_dummy.py:
    1:1  D100 Missing docstring in public module
    3:28 PLC2701 Private name import `_config_loader`
    8:5  D205 1 blank line required between summary line and description
-  44:9  D105 Missing docstring in magic method
+  46:9  D105 Missing docstring in magic method
 
 robot1\rasp\controllers\actuators\actuators_show.py:
     1:1  D100 Missing docstring in public module
@@ -956,54 +946,54 @@ robot1\rasp\controllers\actuators\actuators_show.py:
    33:7  D101 Missing docstring in public class
    40:1  PLR0904 Too many public methods (25 > 20)
    41:5  D205 1 blank line required between summary line and description
-   82:20 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
-  128:9  T201 `print` found
-  153:9  D205 1 blank line required between summary line and description
-  160:9  D205 1 blank line required between summary line and description
-  169:9  D205 1 blank line required between summary line and description
-  178:23 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
-  188:9  D205 1 blank line required between summary line and description
-  198:27 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
-  208:9  D205 1 blank line required between summary line and description
-  211:12 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
-  214:13 SIM118 Use `key in dict` instead of `key in dict.keys()`
-  215:21 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
-  219:9  D205 1 blank line required between summary line and description
-  225:13 SIM118 Use `key in dict` instead of `key in dict.keys()`
-  226:21 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
-  230:9  D205 1 blank line required between summary line and description
-  233:13 SIM118 Use `key in dict` instead of `key in dict.keys()`
-  234:21 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
-  237:12 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
-  241:9  D205 1 blank line required between summary line and description
-  255:9  D205 1 blank line required between summary line and description
-  290:9  D102 Missing docstring in public method
-  294:9  D205 1 blank line required between summary line and description
-  301:9  D205 1 blank line required between summary line and description
-  308:9  D205 1 blank line required between summary line and description
-  319:9  D205 1 blank line required between summary line and description
-  330:9  D205 1 blank line required between summary line and description
-  340:9  D205 1 blank line required between summary line and description
-  378:9  D415 First line should end with a period, question mark, or exclamation point
-  391:9  D415 First line should end with a period, question mark, or exclamation point
-  397:9  D102 Missing docstring in public method
-  407:9  D102 Missing docstring in public method
-  418:9  D102 Missing docstring in public method
+   84:20 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
+  130:9  T201 `print` found
+  156:9  D205 1 blank line required between summary line and description
+  164:9  D205 1 blank line required between summary line and description
+  174:9  D205 1 blank line required between summary line and description
+  184:23 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
+  194:9  D205 1 blank line required between summary line and description
+  205:27 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
+  215:9  D205 1 blank line required between summary line and description
+  219:12 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
+  222:13 SIM118 Use `key in dict` instead of `key in dict.keys()`
+  223:21 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
+  227:9  D205 1 blank line required between summary line and description
+  234:13 SIM118 Use `key in dict` instead of `key in dict.keys()`
+  235:21 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
+  239:9  D205 1 blank line required between summary line and description
+  243:13 SIM118 Use `key in dict` instead of `key in dict.keys()`
+  244:21 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
+  247:12 PLR2004 Magic value used in comparison, consider replacing `8` with a constant variable
+  251:9  D205 1 blank line required between summary line and description
+  266:9  D205 1 blank line required between summary line and description
+  303:9  D102 Missing docstring in public method
+  307:9  D205 1 blank line required between summary line and description
+  315:9  D205 1 blank line required between summary line and description
+  323:9  D205 1 blank line required between summary line and description
+  335:9  D205 1 blank line required between summary line and description
+  347:9  D205 1 blank line required between summary line and description
+  359:9  D205 1 blank line required between summary line and description
+  398:9  D415 First line should end with a period, question mark, or exclamation point
+  411:9  D415 First line should end with a period, question mark, or exclamation point
+  417:9  D102 Missing docstring in public method
+  427:9  D102 Missing docstring in public method
   438:9  D102 Missing docstring in public method
-  448:9  D102 Missing docstring in public method
-  457:9  D102 Missing docstring in public method
+  458:9  D102 Missing docstring in public method
+  468:9  D102 Missing docstring in public method
+  477:9  D102 Missing docstring in public method
 
 robot1\rasp\controllers\actuators\base\actuators.py:
     1:1  INP001 File `robot1\rasp\controllers\actuators\base\actuators.py` is part of an implicit namespace package. Add an `__init__.py`.
     1:1  D100 Missing docstring in public module
     6:28 PLC2701 Private name import `_config_loader`
-   69:9  D105 Missing docstring in magic method
-   82:13 G003 Logging statement uses `+`
+   67:9  D105 Missing docstring in magic method
+   81:13 G003 Logging statement uses `+`
   135:9  D205 1 blank line required between summary line and description
   135:9  DOC202 Docstring should not have a returns section because the function doesn't return anything
-  193:9  N803 Argument name `use_I2C` should be lowercase
-  231:57 PLR2004 Magic value used in comparison, consider replacing `0.03` with a constant variable
-  254:9  D102 Missing docstring in public method
+  194:9  N803 Argument name `use_I2C` should be lowercase
+  233:57 PLR2004 Magic value used in comparison, consider replacing `0.03` with a constant variable
+  256:9  D102 Missing docstring in public method
 
 robot1\rasp\controllers\rolling_basis\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1012,25 +1002,25 @@ robot1\rasp\controllers\rolling_basis\asservissment_rolling_basis.py:
     1:1  D100 Missing docstring in public module
     8:28 PLC2701 Private name import `_config_loader`
    18:7  PLW1641 Object does not implement `__hash__` method
-   87:13 G003 Logging statement uses `+`
-  148:9  D205 1 blank line required between summary line and description
-  173:9  S101 Use of `assert` detected
-  298:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  305:17 TRY301 Abstract `raise` to an inner function
-  305:23 TRY003 Avoid specifying long messages outside the exception class
-  306:21 EM101 Exception must not use a string literal, assign to variable first
-  310:16 BLE001 Do not catch blind exception: `Exception`
-  311:13 TRY400 Use `logging.exception` instead of `logging.error`
-  340:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  347:17 TRY301 Abstract `raise` to an inner function
-  347:23 TRY003 Avoid specifying long messages outside the exception class
-  348:21 EM101 Exception must not use a string literal, assign to variable first
-  352:16 BLE001 Do not catch blind exception: `Exception`
-  353:13 TRY400 Use `logging.exception` instead of `logging.error`
-  378:16 BLE001 Do not catch blind exception: `Exception`
-  379:13 TRY400 Use `logging.exception` instead of `logging.error`
-  384:9  D105 Missing docstring in magic method
-  393:9  D105 Missing docstring in magic method
+   90:13 G003 Logging statement uses `+`
+  154:9  D205 1 blank line required between summary line and description
+  180:9  S101 Use of `assert` detected
+  309:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  316:17 TRY301 Abstract `raise` to an inner function
+  316:23 TRY003 Avoid specifying long messages outside the exception class
+  317:21 EM101 Exception must not use a string literal, assign to variable first
+  321:16 BLE001 Do not catch blind exception: `Exception`
+  322:13 TRY400 Use `logging.exception` instead of `logging.error`
+  352:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  359:17 TRY301 Abstract `raise` to an inner function
+  359:23 TRY003 Avoid specifying long messages outside the exception class
+  360:21 EM101 Exception must not use a string literal, assign to variable first
+  364:16 BLE001 Do not catch blind exception: `Exception`
+  365:13 TRY400 Use `logging.exception` instead of `logging.error`
+  391:16 BLE001 Do not catch blind exception: `Exception`
+  392:13 TRY400 Use `logging.exception` instead of `logging.error`
+  397:9  D105 Missing docstring in magic method
+  406:9  D105 Missing docstring in magic method
 
 robot1\rasp\controllers\rolling_basis\pids.py:
   1:1 D100 Missing docstring in public module
@@ -1039,47 +1029,47 @@ robot1\rasp\controllers\rolling_basis\rolling_basis.py:
     1:1  D100 Missing docstring in public module
     7:28 PLC2701 Private name import `_config_loader`
    14:7  PLW1641 Object does not implement `__hash__` method
-   88:13 G003 Logging statement uses `+`
-  204:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  211:17 TRY301 Abstract `raise` to an inner function
-  211:23 TRY003 Avoid specifying long messages outside the exception class
-  212:21 EM101 Exception must not use a string literal, assign to variable first
-  216:16 BLE001 Do not catch blind exception: `Exception`
-  217:13 TRY400 Use `logging.exception` instead of `logging.error`
-  246:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  253:17 TRY301 Abstract `raise` to an inner function
-  253:23 TRY003 Avoid specifying long messages outside the exception class
-  254:21 EM101 Exception must not use a string literal, assign to variable first
-  258:16 BLE001 Do not catch blind exception: `Exception`
-  259:13 TRY400 Use `logging.exception` instead of `logging.error`
-  284:16 BLE001 Do not catch blind exception: `Exception`
-  285:13 TRY400 Use `logging.exception` instead of `logging.error`
+   92:13 G003 Logging statement uses `+`
+  214:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  221:17 TRY301 Abstract `raise` to an inner function
+  221:23 TRY003 Avoid specifying long messages outside the exception class
+  222:21 EM101 Exception must not use a string literal, assign to variable first
+  226:16 BLE001 Do not catch blind exception: `Exception`
+  227:13 TRY400 Use `logging.exception` instead of `logging.error`
+  257:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  264:17 TRY301 Abstract `raise` to an inner function
+  264:23 TRY003 Avoid specifying long messages outside the exception class
+  265:21 EM101 Exception must not use a string literal, assign to variable first
+  269:16 BLE001 Do not catch blind exception: `Exception`
+  270:13 TRY400 Use `logging.exception` instead of `logging.error`
+  296:16 BLE001 Do not catch blind exception: `Exception`
+  297:13 TRY400 Use `logging.exception` instead of `logging.error`
 
 robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
     1:1  D100 Missing docstring in public module
     5:28 PLC2701 Private name import `_config_loader`
    11:7  PLW1641 Object does not implement `__hash__` method
-  128:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  135:17 TRY301 Abstract `raise` to an inner function
-  135:23 TRY003 Avoid specifying long messages outside the exception class
-  136:21 EM101 Exception must not use a string literal, assign to variable first
-  140:16 BLE001 Do not catch blind exception: `Exception`
-  141:13 TRY400 Use `logging.exception` instead of `logging.error`
-  170:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  177:17 TRY301 Abstract `raise` to an inner function
-  177:23 TRY003 Avoid specifying long messages outside the exception class
-  178:21 EM101 Exception must not use a string literal, assign to variable first
-  182:16 BLE001 Do not catch blind exception: `Exception`
-  183:13 TRY400 Use `logging.exception` instead of `logging.error`
-  206:16 BLE001 Do not catch blind exception: `Exception`
-  207:13 TRY400 Use `logging.exception` instead of `logging.error`
+  134:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  141:17 TRY301 Abstract `raise` to an inner function
+  141:23 TRY003 Avoid specifying long messages outside the exception class
+  142:21 EM101 Exception must not use a string literal, assign to variable first
+  146:16 BLE001 Do not catch blind exception: `Exception`
+  147:13 TRY400 Use `logging.exception` instead of `logging.error`
+  177:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  184:17 TRY301 Abstract `raise` to an inner function
+  184:23 TRY003 Avoid specifying long messages outside the exception class
+  185:21 EM101 Exception must not use a string literal, assign to variable first
+  189:16 BLE001 Do not catch blind exception: `Exception`
+  190:13 TRY400 Use `logging.exception` instead of `logging.error`
+  214:16 BLE001 Do not catch blind exception: `Exception`
+  215:13 TRY400 Use `logging.exception` instead of `logging.error`
 
 robot1\rasp\main.py:
     1:1  D100 Missing docstring in public module
     1:8  S404 `subprocess` module is possibly insecure
     7:28 PLC2701 Private name import `_config_loader`
-  171:9  S603 `subprocess` call: check for execution of untrusted input
-  172:9  T201 `print` found
+  167:9  S603 `subprocess` call: check for execution of untrusted input
+  168:9  T201 `print` found
 
 robot1\rasp\sensors\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1089,55 +1079,55 @@ robot1\rasp\sensors\inputs\__init__.py:
 
 robot1\rasp\sensors\inputs\inputs.py:
    1:1  D100 Missing docstring in public module
-  43:38 PLR2004 Magic value used in comparison, consider replacing `5` with a constant variable
-  62:37 PLR2004 Magic value used in comparison, consider replacing `5` with a constant variable
+  45:38 PLR2004 Magic value used in comparison, consider replacing `5` with a constant variable
+  65:37 PLR2004 Magic value used in comparison, consider replacing `5` with a constant variable
 
 robot1\rasp\sensors\lidar\__init__.py:
   1:1 D104 Missing docstring in public package
 
 robot1\rasp\sensors\lidar\lidar.py:
     1:1  D100 Missing docstring in public module
-   85:13 PLC0415 `import` should be at the top-level of a file
-   89:17 TRY301 Abstract `raise` to an inner function
-   89:23 TRY003 Avoid specifying long messages outside the exception class
-   89:39 EM101 Exception must not use a string literal, assign to variable first
-   96:17 TRY301 Abstract `raise` to an inner function
-   96:23 TRY003 Avoid specifying long messages outside the exception class
-   96:39 EM101 Exception must not use a string literal, assign to variable first
-   98:13 TRY300 Consider moving this statement to an `else` block
-  102:19 TRY003 Avoid specifying long messages outside the exception class
-  102:31 EM102 Exception must not use an f-string literal, assign to variable first
-  120:24 BLE001 Do not catch blind exception: `Exception`
-  157:19 TRY003 Avoid specifying long messages outside the exception class
-  157:30 EM101 Exception must not use a string literal, assign to variable first
-  179:15 TRY003 Avoid specifying long messages outside the exception class
-  179:26 EM102 Exception must not use an f-string literal, assign to variable first
-  203:15 TRY003 Avoid specifying long messages outside the exception class
-  203:26 EM102 Exception must not use an f-string literal, assign to variable first
-  215:16 BLE001 Do not catch blind exception: `Exception`
-  217:13 TRY400 Use `logging.exception` instead of `logging.error`
-  225:13 B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
-  225:19 TRY002 Create your own exception
-  225:19 TRY003 Avoid specifying long messages outside the exception class
-  225:29 EM102 Exception must not use an f-string literal, assign to variable first
+   86:13 PLC0415 `import` should be at the top-level of a file
+   90:17 TRY301 Abstract `raise` to an inner function
+   90:23 TRY003 Avoid specifying long messages outside the exception class
+   90:39 EM101 Exception must not use a string literal, assign to variable first
+   97:17 TRY301 Abstract `raise` to an inner function
+   97:23 TRY003 Avoid specifying long messages outside the exception class
+   97:39 EM101 Exception must not use a string literal, assign to variable first
+   99:13 TRY300 Consider moving this statement to an `else` block
+  103:19 TRY003 Avoid specifying long messages outside the exception class
+  103:31 EM102 Exception must not use an f-string literal, assign to variable first
+  121:24 BLE001 Do not catch blind exception: `Exception`
+  159:19 TRY003 Avoid specifying long messages outside the exception class
+  159:30 EM101 Exception must not use a string literal, assign to variable first
+  182:15 TRY003 Avoid specifying long messages outside the exception class
+  182:26 EM102 Exception must not use an f-string literal, assign to variable first
+  207:15 TRY003 Avoid specifying long messages outside the exception class
+  207:26 EM102 Exception must not use an f-string literal, assign to variable first
+  220:16 BLE001 Do not catch blind exception: `Exception`
+  222:13 TRY400 Use `logging.exception` instead of `logging.error`
+  230:13 B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  230:19 TRY002 Create your own exception
+  230:19 TRY003 Avoid specifying long messages outside the exception class
+  230:29 EM102 Exception must not use an f-string literal, assign to variable first
 
 robot1\rasp\sensors\lidar\lidar_dummy.py:
     1:1  D100 Missing docstring in public module
-   51:9  PLR6301 Method `__init_polars_angle` could be a function, class method, or static method
-   91:15 TRY003 Avoid specifying long messages outside the exception class
-   91:26 EM102 Exception must not use an f-string literal, assign to variable first
-  117:15 TRY003 Avoid specifying long messages outside the exception class
-  117:26 EM102 Exception must not use an f-string literal, assign to variable first
-  184:9  F841 Local variable `valid_polars` is assigned to but never used
+   53:9  PLR6301 Method `__init_polars_angle` could be a function, class method, or static method
+   95:15 TRY003 Avoid specifying long messages outside the exception class
+   95:26 EM102 Exception must not use an f-string literal, assign to variable first
+  122:15 TRY003 Avoid specifying long messages outside the exception class
+  122:26 EM102 Exception must not use an f-string literal, assign to variable first
+  191:9  F841 Local variable `valid_polars` is assigned to but never used
 
 robot1\rasp\tests\config_loader.py:
     1:1  INP001 File `robot1\rasp\tests\config_loader.py` is part of an implicit namespace package. Add an `__init__.py`.
     1:1  D100 Missing docstring in public module
     8:5  DOC502 Raised exception is not explicitly raised: `Exception`
-   20:14 PLW1514 `open` in text mode without explicit `encoding` argument
-   20:14 PTH123 `open()` should be replaced by `Path.open()`
-   22:5  TRY203 Remove exception handler; error is immediately re-raised
-  122:32 PTH118 `os.path.join()` should be replaced by `Path` with `/` operator
-  126:41 PTH118 `os.path.join()` should be replaced by `Path` with `/` operator
+   21:14 PLW1514 `open` in text mode without explicit `encoding` argument
+   21:14 PTH123 `open()` should be replaced by `Path.open()`
+   23:5  TRY203 Remove exception handler; error is immediately re-raised
+  124:32 PTH118 `os.path.join()` should be replaced by `Path` with `/` operator
+  128:41 PTH118 `os.path.join()` should be replaced by `Path` with `/` operator
 
-Found 704 errors.
+Found 698 errors.

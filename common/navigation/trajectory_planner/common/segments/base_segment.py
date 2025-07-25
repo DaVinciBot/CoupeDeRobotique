@@ -20,6 +20,7 @@ class BaseSegment:
             start_position (OrientedPoint): Starting pose of the motion segment.
             end_position (OrientedPoint): Ending pose of the motion segment.
             duration (float): Duration of the segment's movement or action.
+
         """
         self.start_position: OrientedPoint = (
             start_position  # Pose at the beginning of the segment

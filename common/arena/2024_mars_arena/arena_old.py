@@ -40,6 +40,7 @@ class Arena:
             zones (dict[str, MultiPolygon] | None, optional): Dictionary of arena zones. Defaults to None.
             border_buffer (float): Buffer around the borders.
             robot_buffer (float): Buffer around the robot.
+
         """
         self.logger: Logger = logger
         self.game_borders: Polygon = game_borders
@@ -77,6 +78,7 @@ class Arena:
 
         Returns:
             bool: ``True`` if the element is entirely within the arena, ``False`` otherwise.
+
         """
         if buffered_zone:
             return self.game_borders_buffered.contains(element)
@@ -113,6 +115,7 @@ class Arena:
 
         Returns:
             bool: ``True`` if the path is allowed, ``False`` otherwise.
+
         """
         # define the area touched by the buffer, for example the sides of a robot moving
 
@@ -150,6 +153,7 @@ class Arena:
 
         Returns:
             Point | None: The computed point, or None if not reachable.
+
         """
         borders = self.game_borders
         center: Point = zone.centroid
@@ -243,6 +247,7 @@ class Arena:
 
         Returns:
             bool: ``True`` if a collision is detected, ``False`` otherwise.
+
         """
         for i in range(len(distances_to_check)):
             # Check if the point is close enough to be a risk, and far enough to remove lidar aberrations (might be done in lidar code as well)

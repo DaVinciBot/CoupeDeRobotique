@@ -16,6 +16,7 @@ from geometry import OrientedPoint, Point
 class EnemyZone(BaseSpeedVectorAutoCalculateZone):
     """Represents an enemy zone in the arena where enemy movements are tracked.
     The zone calculates and updates a speed vector based on detected enemy positions.
+
     """
 
     def __init__(
@@ -36,6 +37,7 @@ class EnemyZone(BaseSpeedVectorAutoCalculateZone):
             positions_record_size (int, optional): Maximum number of recorded positions. Defaults to 3.
             no_detection_timeout (float, optional): Timeout for detecting no movement. Defaults to 4.0.
             vector_factor (float, optional): Scaling factor for speed vector influence. Defaults to 25.0.
+
         """
         super().__init__(
             logger=logger,

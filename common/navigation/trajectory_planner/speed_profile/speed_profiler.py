@@ -19,6 +19,7 @@ class SpeedProfiler:
     Attributes:
         linear_speed_profile (BaseSpeedProfile): Speed profile used for linear motion.
         angular_speed_profile (BaseSpeedProfile): Speed profile used for rotational motion.
+
     """
 
     linear_speed_profile: BaseSpeedProfile

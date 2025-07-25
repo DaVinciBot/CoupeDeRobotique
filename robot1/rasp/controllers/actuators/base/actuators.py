@@ -14,6 +14,7 @@ class Actuators(
     """Base class for actuators.
 
     This class is used to manage the actuators of the robot.
+
     """
 
     # TODO : move to common and handle config properly, not the prority yet
@@ -37,6 +38,7 @@ class Actuators(
             baudrate (int, optional): The baud rate for serial communication. Defaults to CONFIG.TEENSY_BAUDRATE.
             enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
             enable_dummy (bool, optional): Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+
         """
         # Initialize the parent-GPIOComTeensy class
         super().__init__(
@@ -54,10 +56,6 @@ class Actuators(
         self.switches_states: dict[int, bool] = {}
         self.t_set_servo_angle_i2c: float = 0.0
 
-        """
-        This is used to match a handling function to a message type.
-        add_callback can also be used.
-        """
         # Register message handlers
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
@@ -77,6 +75,7 @@ class Actuators(
 
         Args:
             msg (bytes): The received message bytes.
+
         """
         self.logger.info(
             "Teensy Actuators says: " + msg.decode("ascii", errors="ignore"),
@@ -89,6 +88,7 @@ class Actuators(
 
         Args:
             msg (bytes): The received message bytes.
+
         """
         self.logger.warning(f"Teensy Actuators does not know the message {msg.hex()}")
 
@@ -97,6 +97,7 @@ class Actuators(
 
         Args:
             msg (bytes): The received message bytes.
+
         """
         self.logger.info(f"Switch state: {msg.hex()}")
         # Decode the message
@@ -105,9 +106,7 @@ class Actuators(
         # Save the switch state
         self.switches_states[pin] = state
 
-    ####################################
-    # Message Sending Methods          #
-    ####################################
+    # ====== Message Sending Methods ======
 
     @log("Actuators")
     def set_stepper_driver_activation_state(
@@ -122,6 +121,7 @@ class Actuators(
         Args:
             pin_enable (int): The pin number connected to the driver's enable input
             enable_driver (bool): ``True`` to enable the driver, ``False`` to disable it.
+
         """
         msg = (
             Messages.SET_STEPPER_DRIVER_ACTIVATION_STATE.to_bytes()
@@ -142,6 +142,7 @@ class Actuators(
 
         Returns:
             None: This method does not return anything.
+
         """
         # Update elevator theorical steps
         self.elevator_ticks += steps
@@ -203,6 +204,7 @@ class Actuators(
             detach_delay (int, optional): The time in milliseconds to keep the servo detached. Defaults to 1000.
              Ignored if detach is ``False``.
             use_I2C (bool, optional): Whether to use I2C communication for the servo. Defaults to ``True``.
+
         """
         if min_angle <= angle <= max_angle:
             if detach:

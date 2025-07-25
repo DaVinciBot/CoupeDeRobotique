@@ -151,6 +151,7 @@ class OrientedPoint(Point):
         Returns:
             tuple[type["OrientedPoint"], tuple[tuple[float, float], float], dict[str, float]]:
                 A tuple describing how to reconstruct the object.
+
         """
         # Retrieve the point's coordinates (assuming a single point, so take the first coordinate tuple)
         coords = cast("tuple[float, float]", tuple(self.coords)[0])
@@ -165,6 +166,7 @@ class OrientedPoint(Point):
 
         Args:
             state (dict[str, float]): State dictionary created by :py:meth:``__reduce__``.
+
         """
         # Reinitialize the extra attribute in the class-level mapping
         OrientedPoint._id_to_attrs[str(id(self))] = {"theta": state.get("theta", 0.0)}

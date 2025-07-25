@@ -29,6 +29,7 @@ class TowerRushStrategy(BaseStrategy):
     - Perform one pickup and construction cycle
     - Perform one pickup-to-placement cycle
     - Navigate to backstage zone to finish the game
+
     """
 
     def __init__(self, ctx: ShowGameContext) -> None:
@@ -36,6 +37,7 @@ class TowerRushStrategy(BaseStrategy):
 
         Args:
             ctx (ShowGameContext): Game context containing game-specific configurations and zones.
+
         """
         super().__init__(ctx)
 

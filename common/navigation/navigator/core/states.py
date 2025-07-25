@@ -14,6 +14,7 @@ class NavigatorState(Enum):
         STOPPED: Movement manually interrupted.
         REPLANNING: Recalculating path/trajectory.
         ERROR: Failure or blocking event (obstacle, timeout, etc.).
+
     """
 
     IDLE = auto()  # Aucun déplacement en cours

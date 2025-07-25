@@ -15,6 +15,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
     """Basic speed profile implementation using constant speed.
 
     All motion calculations assume uniform velocity with no acceleration or deceleration.
+
     """
 
     def __init__(self, speed: float) -> None:
@@ -22,6 +23,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
 
         Args:
             speed (float): Constant speed value used for calculations.
+
         """
         super().__init__(max_speed=speed)
 
@@ -43,6 +45,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
 
         Returns:
             float: Constant speed.
+
         """
         if time_elapsed is None or time_elapsed <= 0:
             return 0.0
@@ -67,6 +70,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
 
         Returns:
             float: Distance = speed * time_elapsed
+
         """
         if time_elapsed is None or time_elapsed <= 0:
             return 0.0
@@ -89,5 +93,6 @@ class BasicSpeedProfile(BaseSpeedProfile):
 
         Returns:
             float: Duration = distance / speed
+
         """
         return distance / self._max_speed

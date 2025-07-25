@@ -28,6 +28,7 @@ class AllyZone(BaseArenaZone):
             logger (Logger): Logger instance for logging messages.
             point (OrientedPoint): Position and orientation of the ally.
             robot_size (float, optional): Size of the robot. Defaults to 2.
+
         """
         position_based_polygon = create_straight_rectangle(
             Point(point.x - robot_size, point.y - robot_size),
@@ -59,6 +60,7 @@ class AllyZone(BaseArenaZone):
             team_color (TeamColor, optional): The color of the team.
             ally_position (Point | OrientedPoint): Position of ally.
             enemy_position (Point | OrientedPoint): Position of enemy.
+
         """
         super().update(team_color, ally_position, enemy_position)
         self.__init__(
@@ -76,6 +78,7 @@ class AllyZone(BaseArenaZone):
         Returns:
             bool: ``True`` if ``other`` is an :class:``AllyZone`` with the same
             point.
+
         """
         if not isinstance(other, AllyZone):
             return False
@@ -89,5 +92,6 @@ class AllyZone(BaseArenaZone):
 
         Returns:
             bool: ``True`` if ``other`` is not an equal :class:``AllyZone``.
+
         """
         return not self.__eq__(other)

@@ -15,6 +15,7 @@ class TrajectoryPlannerStrategy(Enum):
     Attributes:
         BASIC: Use basic trajectory planner.
         SEQUENTIAL: Use sequential trajectory planner.
+
     """
 
     BASIC = auto()
@@ -29,6 +30,7 @@ class TrajectoryPlanCommand:
         position (OrientedPoint): Target pose of the robot.
         linear_speed (float): Linear velocity component.
         angular_speed (float): Angular velocity component.
+
     """
 
     position: OrientedPoint
@@ -47,6 +49,7 @@ class TrajectoryPlanCommand:
 
         Returns:
             TrajectoryPlanCommand: Stop command.
+
         """
         return cls(
             position=current_position,
@@ -61,6 +64,7 @@ class TrajectoryPlanCommand:
             tuple[float, float, OrientedPoint]:
                 Tuple containing ``linear_speed``, ``angular_speed`` and
                 ``position``.
+
         """
         return self.linear_speed, self.angular_speed, self.position
 
@@ -69,5 +73,6 @@ class TrajectoryPlanCommand:
 
         Returns:
             OrientedPoint: The target position of the robot.
+
         """
         return self.position

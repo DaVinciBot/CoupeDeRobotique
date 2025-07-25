@@ -44,6 +44,7 @@ class BaseNavigationTask(BaseTask):
             stabilization_delay (float): Delay for stabilization after reaching the goal.
             timeout (float | None, optional): Timeout for the navigation task. Defaults to None.
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+
         """
         super().__init__(logger=logger)
 

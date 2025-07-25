@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 class NavigatorTask:
     """A task responsible for executing autonomous navigation including path planning,
     trajectory generation, obstacle avoidance, and a stabilization timer after reaching the goal.
+
     """
 
     def __init__(self, params: NavigatorTaskParams) -> None:
@@ -37,6 +38,7 @@ class NavigatorTask:
 
         Args:
             params (NavigatorTaskParams): The parameters for the navigation task.
+
         """
         from navigation.avoidance import AvoidanceFactory, BaseAvoidance
 

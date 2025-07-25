@@ -12,6 +12,7 @@ class NoAcsDetectionProfileParams(BaseAcsDetectionProfileParams):
 
         Args:
             acs_distance (float, optional): Distance to the obstacle. Defaults to 0.0.
+
         """
         super().__init__(
             acs_detection_profile=AcsDetectionProfile.NO,

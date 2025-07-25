@@ -40,6 +40,7 @@ class Stepper:
 class ActuatorsShow(Actuators):
     """ActuatorsShow is a subclass of Actuators that provides a specific implementation for the show mode.
     It inherits from the Actuators class and overrides its methods to provide functionality for the show mode.
+
     """
 
     def __init__(
@@ -62,6 +63,7 @@ class ActuatorsShow(Actuators):
             baudrate (int, optional): The baud rate for serial communication. Defaults to CONFIG.TEENSY_BAUDRATE.
             enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
             enable_dummy (bool, optional): Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+
         """
         super().__init__(
             logger=logger,
@@ -142,6 +144,7 @@ class ActuatorsShow(Actuators):
 
         Returns:
             bool: ``True`` if the pin is a valid servo pin, ``False`` otherwise.
+
         """
         if pin not in self.servos or self.servos[pin] is None:
             self.logger.warning(f"Pin {pin} is not a servo")
@@ -152,6 +155,7 @@ class ActuatorsShow(Actuators):
     def __move_to_save_folded_position(self) -> None:
         """Moves the elevator to a safe folded position before deploying the servo arm.
         This method ensures that the elevator is in a safe position before deploying the servo arm.
+
         """
         steps_to_move = self.stepper.folded_steps - self.elevator_ticks + 20
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
@@ -159,6 +163,7 @@ class ActuatorsShow(Actuators):
     def __align_dropping_cans(self) -> None:
         """Aligns the dropping cans by setting the servos to specific angles.
         This method sets the angles of the servos to predefined values for the dropping cans.
+
         """
         self.set_servo_angle(pin=4, angle=160, max_angle=270)
         self.set_servo_angle(pin=6, angle=90, max_angle=270)
@@ -171,6 +176,7 @@ class ActuatorsShow(Actuators):
 
         Args:
             pins (int | list[int]): The pin number or a list of pin numbers to deploy.
+
         """
         if isinstance(pins, int):
             pins = [pins]
@@ -190,6 +196,7 @@ class ActuatorsShow(Actuators):
 
         Args:
             pins (int | list[int]): The pin number or a list of pin numbers to fold.
+
         """
         if isinstance(pins, int):
             pins = [pins]
@@ -207,6 +214,7 @@ class ActuatorsShow(Actuators):
     def deploy_all(self) -> None:
         """Deploys all servos to their deploy angle.
         This method sets all servos to their deploy angle, effectively deploying the servo arm.
+
         """
         if 8 in self.servos:
             self.deploy(8)
@@ -218,6 +226,7 @@ class ActuatorsShow(Actuators):
     def deploy_all_pickup(self) -> None:
         """Deploys all servos and moves the elevator to a safe position for pickup.
         This method ensures that the elevator is in a safe position before deploying the servo arm.
+
         """
         self.folded = False
         self.docking([0, 2])
@@ -229,6 +238,7 @@ class ActuatorsShow(Actuators):
     def fold_all(self) -> None:
         """Folds all servos to their fold angle.
         This method sets all servos to their fold angle, effectively folding the servo arm.
+
         """
         for i in self.servos.keys():
             if i != 8:
@@ -241,6 +251,7 @@ class ActuatorsShow(Actuators):
         """Demagnetizes the servos by setting them to their fold angle.
         This is useful for ensuring that the servos are not holding any position
         when they are not in use.
+
         """
         pins = [1, 3, 5, 7]
         for pin in pins:
@@ -255,6 +266,7 @@ class ActuatorsShow(Actuators):
         """Magnetizes the servos by setting them to their deploy angle.
         This is useful for ensuring that the servos are holding their position
         when they are in use.
+
         """
         pins = [1, 3, 5, 7]
         for pin in pins:
@@ -270,6 +282,7 @@ class ActuatorsShow(Actuators):
 
         Args:
             pins (int | list[int]): Pin or list of pins to move.
+
         """
         if isinstance(pins, int):
             pins = [pins]
@@ -293,6 +306,7 @@ class ActuatorsShow(Actuators):
     def place_upper_cans(self) -> None:
         """Places the upper cans by setting the servos to specific angles.
         This method sets the angles of the servos to predefined values for the upper cans.
+
         """
         self.set_servo_angle(pin=4, angle=160, max_angle=270)
         self.set_servo_angle(pin=6, angle=90, max_angle=270)
@@ -300,6 +314,7 @@ class ActuatorsShow(Actuators):
     def raise_plank(self) -> None:
         """Raises the plank by moving the elevator to the top position.
         This method is used to raise the plank to its top position.
+
         """
         steps_to_move = self.stepper.top_steps
         self.stepper_step(steps_to_move, self.stepper.speed)
@@ -307,6 +322,7 @@ class ActuatorsShow(Actuators):
     def go_to_top(self) -> None:
         """Moves the elevator to the top position.
         If the elevator is folded, it will move to the folded position first.
+
         """
         if self.folded and self.elevator_ticks == 0:
             self.elevator_ticks = self.stepper.folded_steps
@@ -318,6 +334,7 @@ class ActuatorsShow(Actuators):
     def elevator_drop_top(self) -> None:
         """Moves the elevator to the top position.
         If the elevator is folded, it will move to the folded position first.
+
         """
         if self.folded and self.elevator_ticks == 0:
             self.elevator_ticks = self.stepper.folded_steps
@@ -329,16 +346,19 @@ class ActuatorsShow(Actuators):
     def go_to_bottom(self) -> None:
         """Moves the elevator to the bottom position.
         If the elevator is folded, it will move to the folded position first.
+
         """
         steps_to_move = self.stepper.bottom_steps - self.elevator_ticks
         self.logger.info(f"Moving to bottom: {steps_to_move} steps")
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=True)
         self.logger.info(f"Steps current: {self.elevator_ticks}")
 
-    def build_floors(self) -> None:
-        # Ask if I should use time.sleep or asyncio.sleep and thus making this method async
+    def build_floors(
+        self,
+    ) -> None:  # Ask if I should use time.sleep or asyncio.sleep and thus making this method async
         """Builds the floors by deploying the servos and moving the elevator to the top position.
         This method is used to build the floors by deploying the servos and moving the elevator to the top position.
+
         """
         self.go_to_top()
         time.sleep(2)

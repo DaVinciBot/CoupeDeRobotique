@@ -21,6 +21,7 @@ class DeltaPathPlanner(
     """Path planner that applies a relative displacement and rotation to the start position.
 
     Generates a two-point path based on linear distance and rotational delta.
+
     """
 
     def __init__(
@@ -33,6 +34,7 @@ class DeltaPathPlanner(
         Args:
             params (DeltaPathPlannerParams): Parameters for delta-based path planning.
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+
         """
         super().__init__(params, logger)
 
@@ -48,7 +50,8 @@ class DeltaPathPlanner(
             distance (float): Distance to move forward.
 
         Returns:
-            tuple[float, float]: (dx, dy) displacement.
+            tuple[float, float]: Displacement vector (dx, dy) based on the start orientation.
+
         """
         return (
             distance * math.cos(start.theta),  # dx
@@ -65,6 +68,7 @@ class DeltaPathPlanner(
 
         Returns:
             float: Final orientation angle.
+
         """
         return (start.theta + rotation) % (2 * math.pi)
 
@@ -77,6 +81,7 @@ class DeltaPathPlanner(
 
         Returns:
             list[OrientedPoint]: List containing the start and resulting goal pose.
+
         """
         x, y, theta = params.start.x, params.start.y, params.start.theta
 

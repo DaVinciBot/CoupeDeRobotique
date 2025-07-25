@@ -18,6 +18,7 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
 
         Args:
             color_reserved_zone_id (int): The ID of the target color reserved zone.
+
         """
         super().__init__(
             goal=color_reserved_zone_id,
@@ -41,6 +42,7 @@ class GoToColorReservedZoneToConstruct(NavigationTask):
 
         Args:
             color_reserved_zone_id (int): The ID of the target color reserved zone.
+
         """
         super().__init__(
             goal=color_reserved_zone_id,

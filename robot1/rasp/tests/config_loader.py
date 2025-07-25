@@ -15,6 +15,7 @@ def load_json_file(file_path: pathlib.Path) -> dict:
 
     Raises:
         Exception: If the file cannot be read or parsed.
+
     """
     try:
         with open(file_path) as config:
@@ -112,6 +113,7 @@ class CONFIG:
         ARENA_OBSTACLE_BUFFER (float): Buffer size for arena obstacles.
         ARENA_CHUNK_SIZE (float): Size of the arena chunks.
         ARENA_FORBIDDEN_COVER_THRESHOLD (float): Threshold for forbidden cover in the arena.
+
     """
 
     # Directory path (dont't touch)

@@ -25,6 +25,7 @@ class GraphRunner:
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
             parallel (bool, optional): Execute all valid transitions in parallel when
                 ``True``. Defaults to ``False``.
+
         """
         self.logger = logger or Logger(
             identifier="GraphRunner",
@@ -42,6 +43,7 @@ class GraphRunner:
 
         Args:
             ctx (BaseGameContext): Context passed to each node.
+
         """
         if not self.active:
             self.logger.warning(
@@ -112,6 +114,7 @@ class GraphRunner:
         Args:
             ctx (BaseGameContext): Game context passed to task nodes.
             max_steps (int, optional): Safety limit to prevent infinite loops. Defaults to 1000.
+
         """
         step = 0
         while self.active and step < max_steps:

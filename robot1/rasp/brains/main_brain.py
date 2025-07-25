@@ -47,6 +47,7 @@ class MainBrain(Brain):
             ws_cmd (WServerRouteManager): WebSocket command route manager.
             ws_ui (WServerRouteManager): WebSocket UI route manager.
             inputs (Inputs): Inputs instance for handling sensor data.
+
         """
         self.lidar: Lidar | LidarDummy = lidar
         self.arena: ShowArena = arena
@@ -176,11 +177,9 @@ class MainBrain(Brain):
         )
         plt.pause(0.01)
 
-    """
-    ### Main Process ###
-    """
+    # ====== Main Process ======
 
-    """ ### Routines ### """
+    # ====== Routines ======
 
     @Brain.task(
         process=False,
@@ -218,6 +217,7 @@ class MainBrain(Brain):
 
         Use Postman to send request to the server
         Use eval and await eval to run the code you want. Code must be sent as a string
+
         """
         ui = await self.ws_ui.receiver.get()
 
@@ -259,7 +259,7 @@ class MainBrain(Brain):
     # async def print_odo(self) -> None:
     #     self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
 
-    """ ### One-Shot Tasks ### """
+    # ====== One-Shot Tasks ======
 
     @Brain.task(process=False, run_on_start=False)
     async def wait_for_team(self) -> None:

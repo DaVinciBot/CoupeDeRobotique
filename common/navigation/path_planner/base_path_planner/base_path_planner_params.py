@@ -14,6 +14,7 @@ class BasePathPlannerParams:
 
         Args:
             path_finding_strategy (PathPlanningStrategy): Strategy for path finding.
+
         """
         self.path_finding_strategy: PathPlanningStrategy = path_finding_strategy
 

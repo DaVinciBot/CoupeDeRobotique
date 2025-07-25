@@ -29,6 +29,7 @@ class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
         Args:
             params (ParamsType): The parameters for the path planner.
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+
         """
         self.logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
@@ -65,6 +66,7 @@ class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
 
         Returns:
             list[OrientedPoint]: A list of waypoints representing the planned path.
+
         """
 
     @override
@@ -73,6 +75,7 @@ class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
 
         Returns:
             str: String representation with class name and parameters.
+
         """
         return f"{self.__class__.__name__}({self.params})"
 
@@ -82,5 +85,6 @@ class BasePathPlanner(ABC, Generic[ParamsType, PlanPathParamsType]):
 
         Returns:
             str: The same as __str__ for consistency in debugging and logging.
+
         """
         return self.__str__()

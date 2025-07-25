@@ -33,6 +33,7 @@ class BasicPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
         Args:
             start (OrientedPoint): Starting point of the path.
             goal (OrientedPoint): Goal point of the path.
+
         """
         self.goal: OrientedPoint = goal
         super().__init__(start)

@@ -24,6 +24,7 @@ class NoProjectionAcsDetectionProfile(
         Args:
             params (NoProjectionAcsDetectionProfileParams): Parameters for the no projection ACS detection profile.
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+
         """
         super().__init__(params, logger)
 

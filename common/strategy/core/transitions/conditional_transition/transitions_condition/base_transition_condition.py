@@ -15,6 +15,7 @@ class BaseTransitionCondition(ABC):
 
     Any subclass must implement the ``check`` method, which determines whether a transition
     from one task node to another is permitted based on the provided game context.
+
     """
 
     @abstractmethod
@@ -34,5 +35,5 @@ class BaseTransitionCondition(ABC):
 
         Returns:
             bool: ``True`` if the transition is allowed, ``False`` otherwise.
+
         """
-        ...

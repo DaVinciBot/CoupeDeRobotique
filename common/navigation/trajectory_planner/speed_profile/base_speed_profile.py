@@ -12,6 +12,7 @@ class BaseSpeedProfile(ABC):
 
     Defines an interface for retrieving dynamic motion properties such as speed,
     distance traveled, and time duration, based on elapsed time and path distance.
+
     """
 
     def __init__(self, max_speed: float) -> None:
@@ -19,6 +20,7 @@ class BaseSpeedProfile(ABC):
 
         Args:
             max_speed (float): The maximum speed for the profile.
+
         """
         self._max_speed: float = max_speed
 
@@ -43,8 +45,8 @@ class BaseSpeedProfile(ABC):
 
         Returns:
             float: Speed at the current time/distance.
+
         """
-        ...
 
     @abstractmethod
     def get_distance(
@@ -67,6 +69,7 @@ class BaseSpeedProfile(ABC):
 
         Returns:
             float: Distance traveled so far.
+
         """
 
     @abstractmethod
@@ -88,5 +91,5 @@ class BaseSpeedProfile(ABC):
 
         Returns:
             float: Time needed to complete the distance.
+
         """
-        ...

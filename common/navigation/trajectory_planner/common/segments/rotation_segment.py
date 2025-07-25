@@ -26,6 +26,7 @@ class RotationSegment(BaseSegment):
             duration (float): Duration of the rotation movement.
             rotation (float): Total angle rotated during this segment.
             sign (int): Direction of rotation (+1 for CCW, -1 for CW).
+
         """
         super().__init__(start_position, end_position, duration)
         self.rotation: float = rotation  # Total angle of rotation

@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 class SubGraphBuilder:
     """Builder for BaseSubGraph: assemble nodes and transitions, merge subgraphs,
     and produce a standalone subgraph ready for execution.
+
     """
 
     def __init__(self) -> None:
@@ -37,6 +38,7 @@ class SubGraphBuilder:
 
         Raises:
             KeyError: If ``name`` already exists in the builder.
+
         """
         if name in self.nodes:
             msg = f"Node name '{name}' already registered"
@@ -58,6 +60,7 @@ class SubGraphBuilder:
 
         Raises:
             KeyError: If ``from_name`` is not registered.
+
         """
         if from_name not in self.nodes:
             msg = f"Source node '{from_name}' not found for transition"
@@ -76,6 +79,7 @@ class SubGraphBuilder:
 
         Returns:
             SubGraphBuilder: ``self`` for chaining.
+
         """
         mapping: dict[BaseTaskNode, BaseTaskNode] = {}
         for old in subgraph.get_all_nodes():
@@ -116,6 +120,7 @@ class SubGraphBuilder:
 
         Raises:
             KeyError: If ``entry`` or any ``exits`` are not registered.
+
         """
         # Resolve entry
         entry_node = self._resolve(entry)

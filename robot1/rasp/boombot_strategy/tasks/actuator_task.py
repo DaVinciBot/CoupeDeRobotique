@@ -4,6 +4,7 @@
 # the actuator subsystem through the provided game context and optionally updates the score.
 
 import time
+from typing import override
 
 from _config_loader import CONFIG
 from boombot_strategy.show_game_context import ShowGameContext
@@ -21,6 +22,7 @@ class ReadyToApproachToPickUp(BaseTask):
 
         Returns:
             bool: Always returns True after executing the action.
+
         """
         ctx.actuators.ready_to_approach_to_pickup()
         return True
@@ -37,6 +39,7 @@ class PrepareToPickUp(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action and delay.
+
         """
         ctx.actuators.ready_to_pickup()
         time.sleep(1)
@@ -54,6 +57,7 @@ class PickUp(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action and delay.
+
         """
         ctx.actuators.pick_up()
         time.sleep(1)
@@ -63,6 +67,7 @@ class PickUp(BaseTask):
 class Build(BaseTask):
     """Task to execute a build operation and update the game score accordingly."""
 
+    @override
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator build command and increment the score.
 
@@ -71,6 +76,7 @@ class Build(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action and delay.
+
         """
         ctx.actuators.build_floors()
         ctx.score += CONFIG.BUILD_TWO_FLOORS
@@ -97,6 +103,7 @@ class BlockBanner(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action.
+
         """
         ctx.actuators.block_banner()
         return True
@@ -113,6 +120,7 @@ class DeplacementPosition(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action.
+
         """
         ctx.actuators.deplacement_position()
         return True
@@ -129,6 +137,7 @@ class DeplacementObject(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action.
+
         """
         ctx.actuators.deplacement_object()
         return True

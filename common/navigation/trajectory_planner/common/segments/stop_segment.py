@@ -13,6 +13,7 @@ class StopSegment(BaseSegment):
         BaseSegment: The base class representing general trajectory segment attributes.
 
     Typically used when the robot or agent is stationary for a defined period of time.
+
     """
 
     def __init__(
@@ -27,5 +28,6 @@ class StopSegment(BaseSegment):
             start_position (OrientedPoint): Start pose of the stationary segment.
             end_position (OrientedPoint): End pose of the stationary segment (may be identical to start).
             duration (float): Duration of the stop or pause.
+
         """
         super().__init__(start_position, end_position, duration)

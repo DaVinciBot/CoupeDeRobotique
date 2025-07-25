@@ -14,6 +14,7 @@ class BaseAcsDetectionProfileParams:
         Args:
             acs_detection_profile (AcsDetectionProfile): The type of ACS detection profile.
             acs_distance (float): The distance to the obstacle.
+
         """
         self.acs_detection_profile: AcsDetectionProfile = acs_detection_profile
         self.acs_distance: float = acs_distance
@@ -32,6 +33,7 @@ class BaseAcsDetectionProfileParams:
 
         Returns:
             BaseAcsDetectionProfileParams: The created instance.
+
         """
         return cls(
             acs_detection_profile=AcsDetectionProfile[acs_detection_profile.upper()],

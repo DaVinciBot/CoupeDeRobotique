@@ -32,6 +32,7 @@ class BaseTaskNode:
             name (str): The node name.
             tasks (BaseTask | list[BaseTask]): Single task or list of tasks to execute.
             scoring_function (BaseScoringFunction | None, optional): Scoring function used when evaluating transitions. Defaults to None.
+
         """
         self.name: str = name
         self.tasks: list[BaseTask] = [tasks] if isinstance(tasks, BaseTask) else tasks
@@ -62,6 +63,7 @@ class BaseTaskNode:
 
         Args:
             transition (BaseTransition): Transition leading out of this node.
+
         """
         self.transitions.append(transition)
         self.logger.debug(f"Added transition '{transition}' to node '{self.name}'")
@@ -75,6 +77,7 @@ class BaseTaskNode:
 
         Returns:
             float: The computed score value.
+
         """
         score_value = self.scoring_function.compute(
             prev_node=prev_node,
@@ -93,6 +96,7 @@ class BaseTaskNode:
         Args:
             prev_node (BaseTaskNode | None): The node we are coming from.
             ctx (BaseGameContext): The current game context.
+
         """
         prev_name = prev_node.name if prev_node else "<None>"
         self.logger.info(f"Entering node '{self.name}' from '{prev_name}'")
@@ -103,6 +107,7 @@ class BaseTaskNode:
         Args:
             next_node (BaseTaskNode | None): The node that will be executed next.
             ctx (BaseGameContext): The current game context.
+
         """
         next_name = next_node.name if next_node else "<None>"
         self.logger.info(f"Exiting node '{self.name}' to '{next_name}'")
@@ -115,6 +120,7 @@ class BaseTaskNode:
 
         Returns:
             bool: ``True`` when all tasks are completed, ``False`` otherwise.
+
         """
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:
             self.logger.debug(
@@ -187,6 +193,7 @@ class BaseTaskNode:
 
         Returns:
             bool: ``True`` when all tasks are completed, ``False`` otherwise.
+
         """
         if not self.entered:
             self.on_enter(None, ctx)

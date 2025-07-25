@@ -25,6 +25,7 @@ class OnlyBannerStrategy(BaseStrategy):
     - Deploy banner
     - Perform two pickup and construction cycles
     - Navigate to backstage zone to finish the game
+
     """
 
     def __init__(self, ctx: ShowGameContext) -> None:
@@ -32,6 +33,7 @@ class OnlyBannerStrategy(BaseStrategy):
 
         Args:
             ctx (ShowGameContext): Game context containing game-specific configurations and zones.
+
         """
         super().__init__(ctx)
 

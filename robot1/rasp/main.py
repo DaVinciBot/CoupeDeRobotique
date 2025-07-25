@@ -13,11 +13,9 @@ from sensors import Inputs, Lidar
 
 # ====== Main ======
 if __name__ == "__main__":
-    """
-    ###--- Initialization ---###
-    """
+    # ====== Initialization ======
 
-    """ Loggers """
+    # Loggers
     # System-Part loggers
     logger_ws_server = Logger(
         identifier="WS_Server",
@@ -157,9 +155,7 @@ if __name__ == "__main__":
         inputs=inputs,
     )
 
-    """
-        ###--- Run ---###
-    """
+    # ====== Run ======
 
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
     for routine in brain.get_tasks():

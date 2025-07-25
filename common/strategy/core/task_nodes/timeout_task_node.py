@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 class TimeoutTaskNode(BaseTaskNode):
     """A task node with a hard timeout: if tasks do not complete within the given duration,
     the node triggers a timeout and stops execution.
+
     """
 
     def __init__(
@@ -32,6 +33,7 @@ class TimeoutTaskNode(BaseTaskNode):
             tasks (BaseTask | list[BaseTask]): Task or tasks to execute.
             timeout_seconds (float): Duration in seconds before timeout occurs.
             scoring_function (BaseScoringFunction | None, optional): Scoring strategy used when evaluating transitions. Defaults to None.
+
         """
         super().__init__(name, tasks, scoring_function)
         self.timeout_seconds: float = timeout_seconds
@@ -48,6 +50,7 @@ class TimeoutTaskNode(BaseTaskNode):
 
         This method can be overridden in subclasses to implement custom
         behaviour when the timeout triggers.
+
         """
         self.logger.warning(
             f"Timeout reached for node '{self.name}' after {self.timeout_seconds:.2f}s",
@@ -62,6 +65,7 @@ class TimeoutTaskNode(BaseTaskNode):
         Returns:
             bool: ``True`` if all tasks completed or a timeout occurred,
             ``False`` otherwise.
+
         """
         # If already completed, no-op
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:

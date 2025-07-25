@@ -27,6 +27,7 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
 
     The navigation system proceeds with its task without applying any obstacle
     avoidance logic and simply returns the current trajectory command unchanged.
+
     """
 
     def __init__(
@@ -42,6 +43,7 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
             acs_detection_profile_params (BaseAcsDetectionProfileParams):
                 Parameters for the ACS detection profile.
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+
         """
         super().__init__(params, acs_detection_profile_params, logger)
 
@@ -64,6 +66,7 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
 
         Returns:
             TrajectoryPlanCommand: The current trajectory command without changes.
+
         """
         return cast(
             "TrajectoryPlanCommand",

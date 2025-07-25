@@ -16,6 +16,7 @@ class DirectTransition(BaseTransition):
     returning ``True`` from its ``can_transit`` method.
 
     This is useful for default or unconditional transitions.
+
     """
 
     def can_transit(self, from_node: BaseTaskNode, ctx: BaseGameContext) -> bool:
@@ -27,5 +28,6 @@ class DirectTransition(BaseTransition):
 
         Returns:
             bool: Always returns ``True``.
+
         """
         return True

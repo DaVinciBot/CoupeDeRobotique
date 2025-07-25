@@ -13,6 +13,7 @@ class SetOdometrie(BaseTask):
 
     The task uses the provided ``x``, ``y`` and ``theta`` values if given;
     otherwise it falls back to the current values from the ally zone.
+
     """
 
     def __init__(
@@ -27,6 +28,7 @@ class SetOdometrie(BaseTask):
             x (float | None, optional): X coordinate. Defaults to None.
             y (float | None, optional): Y coordinate. Defaults to None.
             theta (float | None, optional): Orientation in radians. Defaults to None.
+
         """
         self.x: float | None = x
         self.y: float | None = y
@@ -42,6 +44,7 @@ class SetOdometrie(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after setting the new odometry.
+
         """
         # Get the current position from the ally zone
         current_position: OrientedPoint = ctx.arena.ally_zone.point

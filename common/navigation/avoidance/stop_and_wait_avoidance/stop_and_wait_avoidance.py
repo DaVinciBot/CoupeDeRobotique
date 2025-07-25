@@ -33,6 +33,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
     When an obstacle is detected the robot stops. If the obstacle clears before
     a timeout, it replans a trajectory from its current position. Otherwise the
     avoidance procedure is aborted.
+
     """
 
     def __init__(
@@ -48,6 +49,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             acs_detection_profile_params (BaseAcsDetectionProfileParams):
                 Parameters for the ACS detection profile.
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+
         """
         super().__init__(params, acs_detection_profile_params, logger)
 
@@ -67,6 +69,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
 
         Returns:
             TrajectoryPlanCommand: The trajectory command after processing avoidance logic.
+
         """
         from navigation.navigator.task.states import NavigatorTaskState
 

@@ -32,6 +32,7 @@ class GPIOComTeensy(Com):
             baudrate (int): Baud rate for serial communication.
             enable_crc (bool, optional): Enables cyclic redundancy check. Defaults to ``True``.
             enable_dummy (bool, optional): Enables dummy mode for testing. Defaults to ``False``.
+
         """
         # Initialize variables dedicated to Teensy's GPIO management
         # I2C pins

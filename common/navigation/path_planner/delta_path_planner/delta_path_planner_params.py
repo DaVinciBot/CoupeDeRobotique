@@ -14,6 +14,7 @@ class DeltaPathPlannerParams(BasePathPlannerParams):
     """Parameter class for DeltaPathPlanner.
 
     Initializes the path finding strategy as DELTA.
+
     """
 
     def __init__(self, distance: float = 0.0, rotation: float = 0.0) -> None:
@@ -22,6 +23,7 @@ class DeltaPathPlannerParams(BasePathPlannerParams):
         Args:
             distance (float, optional): Distance to travel. Defaults to 0.0.
             rotation (float, optional): Rotation to apply. Defaults to 0.0.
+
         """
         self.distance: float = distance
         self.rotation: float = rotation
@@ -36,5 +38,6 @@ class DeltaPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
 
         Args:
             start (OrientedPoint): Starting point of the path.
+
         """
         super().__init__(start)

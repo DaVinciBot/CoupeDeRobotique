@@ -9,6 +9,7 @@ class DummySerial:
 
     This class simulates a serial port by maintaining input and output buffers,
     allowing data to be written and read in a controlled manner.
+
     """
 
     def __init__(self) -> None:
@@ -22,6 +23,7 @@ class DummySerial:
 
         Args:
             data (bytes): The data to be written to the output buffer.
+
         """
         self.out_waiting = True
         self.output_buffer += data
@@ -40,6 +42,7 @@ class DummySerial:
 
         Returns:
             bytes: Data read up to the given signature.
+
         """
         return self.input_buffer.split(signature)[0]
 
@@ -48,6 +51,7 @@ class DummySerial:
 
         Args:
             data (bytes): The data to add to the input buffer.
+
         """
         self.input_buffer += data
 

@@ -1,3 +1,5 @@
+"""Expose the base arena abstractions and helpers."""
+
 from arena.base_arena import (
     AllyZone,
     BaseArena,

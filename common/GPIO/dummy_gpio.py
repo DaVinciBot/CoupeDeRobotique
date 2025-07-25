@@ -32,6 +32,7 @@ class PIN:
 
         Args:
             pin (int): Identifier of the pin.
+
         """
         self.pin = pin
         self.mode: str | None = None
@@ -46,6 +47,7 @@ class PIN:
             mode (str): Mode of the pin, e.g., 'input' or 'output'.
             reverse_state (bool, optional): If True, reverses the state of the pin.
                 Defaults to False.
+
         """
         self.mode = mode.lower()
         self.reverse_state = reverse_state
@@ -56,6 +58,7 @@ class PIN:
 
         Args:
             state (bool): Desired state of the pin (True for high, False for low).
+
         """
         corrected: bool = self.__correct_state(state)
         self.device.value = corrected
@@ -65,6 +68,7 @@ class PIN:
 
         Returns:
             bool: Current state of the pin.
+
         """
         if self.mode == "output":
             return self.__correct_state(self.device.value)
@@ -78,6 +82,7 @@ class PIN:
 
         Returns:
             bool: The majority value read from the pin.
+
         """
         self.count += 1
         if self.count > 1500:
@@ -93,5 +98,6 @@ class PIN:
 
         Returns:
             bool: Corrected state based on the reverse_state setting.
+
         """
         return not state if self.reverse_state else state

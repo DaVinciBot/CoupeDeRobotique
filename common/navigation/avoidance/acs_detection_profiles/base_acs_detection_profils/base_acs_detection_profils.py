@@ -20,6 +20,7 @@ class BaseAcsDetectionProfile(ABC, Generic[ParamsType]):
         Args:
             params (ParamsType): Parameters for the ACS detection profile.
             logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+
         """
         self.params: ParamsType = params
         self.logger: Logger = logger or Logger(
