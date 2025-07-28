@@ -1,7 +1,4 @@
-from shapely import (
-    Point,
-    Polygon,
-)
+from shapely import Point, Polygon
 from shapely.geometry import box
 
 

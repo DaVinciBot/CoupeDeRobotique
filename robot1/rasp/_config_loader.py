@@ -3,12 +3,7 @@ import pathlib
 import sys
 from typing import Any
 
-from loggerplusplus import (
-    LoggerConfig,
-    LoggerManager,
-    LogLevels,
-    logger_colors,
-)
+from loggerplusplus import LoggerConfig, LoggerManager, LogLevels, logger_colors
 
 
 def load_json_file(file_path: pathlib.Path) -> dict[str, Any]:

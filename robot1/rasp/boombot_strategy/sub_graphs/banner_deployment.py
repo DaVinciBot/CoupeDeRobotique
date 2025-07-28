@@ -6,21 +6,13 @@
 
 import math
 
-from boombot_strategy.tasks.actuator_task import (
-    BlockBanner,
-    DeplacementPosition,
-)
+from boombot_strategy.tasks.actuator_task import BlockBanner, DeplacementPosition
 from boombot_strategy.tasks.navigation_tasks import (
     RelativeBackward,
     RelativeForward,
     SetOdometrie,
 )
-from strategy.core import (
-    BaseSubGraph,
-    BaseTaskNode,
-    DirectTransition,
-    SubGraphBuilder,
-)
+from strategy.core import BaseSubGraph, BaseTaskNode, DirectTransition, SubGraphBuilder
 
 
 def get_banner_deployment_subgraph() -> BaseSubGraph:

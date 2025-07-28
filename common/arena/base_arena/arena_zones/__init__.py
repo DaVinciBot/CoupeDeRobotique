@@ -11,10 +11,7 @@ from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones import (
     BaseSpeedVectorAutoCalculateZone,
     EnemyZone,
 )
-from arena.base_arena.arena_zones.structs import (
-    ZoneAccessibility,
-    ZoneType,
-)
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 from arena.base_arena.arena_zones.stuff_zone import StuffZone
 
 __all__ = [

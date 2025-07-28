@@ -1,0 +1,2161 @@
+************* Module common.arena.2024_mars_arena.arena_old
+38:0: C0301: Line too long (111/100) (line-too-long)
+40:0: C0301: Line too long (106/100) (line-too-long)
+59:0: C0301: Line too long (102/100) (line-too-long)
+77:0: C0301: Line too long (104/100) (line-too-long)
+114:0: C0301: Line too long (148/100) (line-too-long)
+131:0: C0301: Line too long (106/100) (line-too-long)
+162:0: C0301: Line too long (120/100) (line-too-long)
+211:0: C0301: Line too long (129/100) (line-too-long)
+212:0: C0301: Line too long (118/100) (line-too-long)
+253:0: C0301: Line too long (143/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+24:4: R0913: Too many arguments (7/5) (too-many-arguments)
+68:4: C0116: Missing function or method docstring (missing-function-docstring)
+87:4: C0116: Missing function or method docstring (missing-function-docstring)
+94:4: C0116: Missing function or method docstring (missing-function-docstring)
+160:11: C1805: "delta == 0" can be simplified to "not delta", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+201:11: C1805: "delta != 0" can be simplified to "delta", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+141:4: R0912: Too many branches (17/12) (too-many-branches)
+141:4: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+252:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+268:4: C0116: Missing function or method docstring (missing-function-docstring)
+269:8: W0621: Redefining name 'distance' from outer scope (line 6) (redefined-outer-name)
+280:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.arena.2024_mars_arena.mars_arena_old
+56:0: C0325: Unnecessary parens after 'not' keyword (superfluous-parens)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+11:0: C0115: Missing class docstring (missing-class-docstring)
+11:0: C0103: Class name "Plants_zone" doesn't conform to PascalCase naming style (invalid-name)
+23:4: C0116: Missing function or method docstring (missing-function-docstring)
+26:4: C0116: Missing function or method docstring (missing-function-docstring)
+29:4: C0116: Missing function or method docstring (missing-function-docstring)
+67:15: C1805: "self.start_zone_id % 2 == 0" can be simplified to "not self.start_zone_id % 2", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+129:11: C1805: "self.start_zone_id % 2 == 0" can be simplified to "not self.start_zone_id % 2", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+145:4: C0116: Missing function or method docstring (missing-function-docstring)
+146:22: C1805: "self.start_zone_id % 2 == 0" can be simplified to "not self.start_zone_id % 2", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+148:4: C0116: Missing function or method docstring (missing-function-docstring)
+148:4: R0913: Too many arguments (6/5) (too-many-arguments)
+148:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+172:4: C0116: Missing function or method docstring (missing-function-docstring)
+195:4: C0116: Missing function or method docstring (missing-function-docstring)
+218:4: C0116: Missing function or method docstring (missing-function-docstring)
+234:4: C0116: Missing function or method docstring (missing-function-docstring)
+241:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.arena.2024_mars_arena
+1:0: C0103: Module name "2024_mars_arena" doesn't conform to snake_case naming style (invalid-name)
+************* Module common.arena.base_arena.arena
+3:0: C0301: Line too long (109/100) (line-too-long)
+4:0: C0301: Line too long (117/100) (line-too-long)
+58:0: C0301: Line too long (118/100) (line-too-long)
+114:0: C0301: Line too long (116/100) (line-too-long)
+120:0: C0301: Line too long (102/100) (line-too-long)
+253:0: C0301: Line too long (114/100) (line-too-long)
+298:0: C0301: Line too long (114/100) (line-too-long)
+305:0: C0301: Line too long (123/100) (line-too-long)
+363:0: C0301: Line too long (102/100) (line-too-long)
+426:0: C0301: Line too long (108/100) (line-too-long)
+433:0: C0301: Line too long (125/100) (line-too-long)
+570:0: C0301: Line too long (123/100) (line-too-long)
+662:0: C0301: Line too long (108/100) (line-too-long)
+367:5: W0511: TODO: Check if this function is still needed, test them (last year code) (fixme)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+35:4: R0913: Too many arguments (10/5) (too-many-arguments)
+35:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+68:11: C1805: "border_buffer % chunk_size != 0" can be simplified to "border_buffer % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+74:11: C1805: "obstacle_buffer % chunk_size != 0" can be simplified to "obstacle_buffer % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+100:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+335:4: C0116: Missing function or method docstring (missing-function-docstring)
+358:11: R1701: Consider merging these isinstance calls to isinstance(goal, (OrientedPoint, Point)) (consider-merging-isinstance)
+464:4: R0913: Too many arguments (6/5) (too-many-arguments)
+464:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+549:4: R0913: Too many arguments (7/5) (too-many-arguments)
+549:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+579:11: C1805: "len(polygon.interiors) == 0" can be simplified to "not len(polygon.interiors)", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+599:4: R0913: Too many arguments (7/5) (too-many-arguments)
+599:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+692:4: C0116: Missing function or method docstring (missing-function-docstring)
+692:4: R0913: Too many arguments (10/5) (too-many-arguments)
+692:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+692:4: R0912: Too many branches (13/12) (too-many-branches)
+************* Module common.arena.base_arena.grid_manager
+2:0: C0301: Line too long (114/100) (line-too-long)
+3:0: C0301: Line too long (102/100) (line-too-long)
+4:0: C0301: Line too long (118/100) (line-too-long)
+5:0: C0301: Line too long (118/100) (line-too-long)
+7:0: C0301: Line too long (118/100) (line-too-long)
+211:0: C0301: Line too long (104/100) (line-too-long)
+212:0: C0301: Line too long (106/100) (line-too-long)
+213:0: C0301: Line too long (116/100) (line-too-long)
+325:0: C0301: Line too long (109/100) (line-too-long)
+432:0: C0301: Line too long (107/100) (line-too-long)
+435:0: C0301: Line too long (106/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+34:4: R0913: Too many arguments (6/5) (too-many-arguments)
+34:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+57:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+57:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+95:4: R0914: Too many local variables (16/15) (too-many-locals)
+117:27: R1729: Use a generator instead 'any(polygon.intersects(cell) for polygon in self.static_forbidden_zones)' (use-a-generator)
+137:4: R0914: Too many local variables (19/15) (too-many-locals)
+254:4: R0911: Too many return statements (11/6) (too-many-return-statements)
+137:4: W0238: Unused private member `GridManager.__optimized_mark_zone(self, grid: Grid, polygon_to_mark: Polygon, walkable: bool)` (unused-private-member)
+************* Module common.arena.base_arena.grid_manager_2
+255:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+44:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+44:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+76:4: R0914: Too many local variables (17/15) (too-many-locals)
+261:8: W0612: Unused variable 'fig' (unused-variable)
+************* Module common.arena.base_arena.team_color
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.arena.base_arena
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.arena.base_arena.arena_zones.ally_zone
+2:0: C0301: Line too long (112/100) (line-too-long)
+4:0: C0301: Line too long (120/100) (line-too-long)
+5:0: C0301: Line too long (117/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+66:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
+************* Module common.arena.base_arena.arena_zones.base_arena_zone
+2:0: C0301: Line too long (112/100) (line-too-long)
+4:0: C0301: Line too long (120/100) (line-too-long)
+48:0: C0301: Line too long (105/100) (line-too-long)
+49:0: C0301: Line too long (101/100) (line-too-long)
+50:0: C0301: Line too long (108/100) (line-too-long)
+52:0: C0301: Line too long (134/100) (line-too-long)
+136:0: C0301: Line too long (101/100) (line-too-long)
+179:0: C0301: Line too long (111/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+28:4: R0913: Too many arguments (11/5) (too-many-arguments)
+28:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
+82:4: C0116: Missing function or method docstring (missing-function-docstring)
+112:4: W0105: String statement has no effect (pointless-string-statement)
+114:28: W0613: Unused argument 'team_color' (unused-argument)
+131:8: W0613: Unused argument 'team_color' (unused-argument)
+176:16: W0108: Lambda may not be necessary (unnecessary-lambda)
+183:4: W0105: String statement has no effect (pointless-string-statement)
+187:8: W0613: Unused argument 'team_color' (unused-argument)
+188:8: W0613: Unused argument 'ally_position' (unused-argument)
+189:8: W0613: Unused argument 'enemy_position' (unused-argument)
+210:4: W0105: String statement has no effect (pointless-string-statement)
+223:12: R1701: Consider merging these isinstance calls to isinstance(self, (other, type(other))) (consider-merging-isinstance)
+************* Module common.arena.base_arena.arena_zones.border_zone
+30:0: C0301: Line too long (105/100) (line-too-long)
+31:0: C0301: Line too long (101/100) (line-too-long)
+32:0: C0301: Line too long (108/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+17:4: R0913: Too many arguments (6/5) (too-many-arguments)
+17:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.forbidden_zone
+2:0: C0301: Line too long (107/100) (line-too-long)
+3:0: C0301: Line too long (103/100) (line-too-long)
+30:0: C0301: Line too long (124/100) (line-too-long)
+32:0: C0301: Line too long (105/100) (line-too-long)
+33:0: C0301: Line too long (101/100) (line-too-long)
+34:0: C0301: Line too long (108/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+17:4: R0913: Too many arguments (7/5) (too-many-arguments)
+17:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.structs
+3:0: C0301: Line too long (104/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.arena.base_arena.arena_zones.stuff_zone
+36:0: C0301: Line too long (105/100) (line-too-long)
+37:0: C0301: Line too long (101/100) (line-too-long)
+38:0: C0301: Line too long (108/100) (line-too-long)
+39:0: C0301: Line too long (134/100) (line-too-long)
+93:0: C0301: Line too long (105/100) (line-too-long)
+111:0: C0301: Line too long (115/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+22:4: R0913: Too many arguments (7/5) (too-many-arguments)
+22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+108:20: W0108: Lambda may not be necessary (unnecessary-lambda)
+84:8: W0613: Unused argument 'team_color' (unused-argument)
+74:14: E0203: Access to member 'accessibility' before its definition line 75 (access-member-before-definition)
+75:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.arena.base_arena.arena_zones
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone
+44:0: C0301: Line too long (139/100) (line-too-long)
+46:0: C0301: Line too long (109/100) (line-too-long)
+47:0: C0301: Line too long (107/100) (line-too-long)
+51:0: C0301: Line too long (134/100) (line-too-long)
+72:0: C0301: Line too long (110/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+25:4: R0913: Too many arguments (11/5) (too-many-arguments)
+25:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
+97:11: E0203: Access to member 'accessibility' before its definition line 98 (access-member-before-definition)
+98:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone
+37:0: C0301: Line too long (105/100) (line-too-long)
+38:0: C0301: Line too long (101/100) (line-too-long)
+39:0: C0301: Line too long (108/100) (line-too-long)
+40:0: C0301: Line too long (134/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+23:4: R0913: Too many arguments (7/5) (too-many-arguments)
+23:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones.yellow_reserved_zone
+2:0: C0301: Line too long (101/100) (line-too-long)
+37:0: C0301: Line too long (105/100) (line-too-long)
+38:0: C0301: Line too long (101/100) (line-too-long)
+39:0: C0301: Line too long (108/100) (line-too-long)
+40:0: C0301: Line too long (134/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+23:4: R0913: Too many arguments (7/5) (too-many-arguments)
+23:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone
+2:0: C0301: Line too long (112/100) (line-too-long)
+3:0: C0301: Line too long (117/100) (line-too-long)
+4:0: C0301: Line too long (116/100) (line-too-long)
+25:0: C0301: Line too long (101/100) (line-too-long)
+55:0: C0301: Line too long (103/100) (line-too-long)
+57:0: C0301: Line too long (101/100) (line-too-long)
+58:0: C0301: Line too long (109/100) (line-too-long)
+59:0: C0301: Line too long (101/100) (line-too-long)
+60:0: C0301: Line too long (111/100) (line-too-long)
+190:0: C0301: Line too long (113/100) (line-too-long)
+191:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+30:4: R0913: Too many arguments (14/5) (too-many-arguments)
+30:4: R0917: Too many positional arguments (14/5) (too-many-positional-arguments)
+128:46: C1805: "distance != 0" can be simplified to "distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+130:11: C1805: "speed == 0" can be simplified to "not speed", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.enemy_zone
+9:0: C0301: Line too long (114/100) (line-too-long)
+37:0: C0301: Line too long (103/100) (line-too-long)
+38:0: C0301: Line too long (103/100) (line-too-long)
+39:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+22:4: R0913: Too many arguments (7/5) (too-many-arguments)
+22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.__init__
+1:0: C0301: Line too long (114/100) (line-too-long)
+************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.arena.show_arena.arena
+1:0: C0114: Missing module docstring (missing-module-docstring)
+16:0: C0115: Missing class docstring (missing-class-docstring)
+17:4: R0913: Too many arguments (10/5) (too-many-arguments)
+17:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+17:4: R0914: Too many local variables (21/15) (too-many-locals)
+************* Module common.arena.show_arena
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.geometry.helpers
+1:0: C0114: Missing module docstring (missing-module-docstring)
+5:0: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.geometry.oriented_point
+6:0: C0301: Line too long (118/100) (line-too-long)
+17:0: C0301: Line too long (101/100) (line-too-long)
+45:0: C0301: Line too long (156/100) (line-too-long)
+66:0: C0301: Line too long (107/100) (line-too-long)
+156:0: C0301: Line too long (104/100) (line-too-long)
+29:0: C0115: Missing class docstring (missing-class-docstring)
+38:4: W0231: __init__ method from base class 'Point' is not called (super-init-not-called)
+123:4: C0116: Missing function or method docstring (missing-function-docstring)
+123:4: C0103: Method name "from_Point" doesn't conform to snake_case naming style (invalid-name)
+************* Module common.geometry
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.GPIO.gpio
+29:0: C0301: Line too long (107/100) (line-too-long)
+83:0: C0301: Line too long (116/100) (line-too-long)
+************* Module common.GPIO
+1:0: C0103: Module name "GPIO" doesn't conform to snake_case naming style (invalid-name)
+************* Module common.navigation
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.avoidance_factory
+21:0: C0301: Line too long (102/100) (line-too-long)
+32:0: C0301: Line too long (111/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+10:0: W0611: Unused BackAvoidanceParams imported from navigation.avoidance.back_avoidance (unused-import)
+12:0: W0611: Unused NoAvoidanceParams imported from navigation.avoidance.no_avoidance (unused-import)
+13:0: W0611: Unused StopAndWaitAvoidanceParams imported from navigation.avoidance.stop_and_wait_avoidance (unused-import)
+************* Module common.navigation.avoidance.structs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.navigation.avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.acs_detection_profile_factory
+3:0: C0301: Line too long (107/100) (line-too-long)
+19:0: C0301: Line too long (102/100) (line-too-long)
+27:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+3:0: W0611: Unused AngularRestrictProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile (unused-import)
+11:0: W0611: Unused NoAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile (unused-import)
+15:0: W0611: Unused NoProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile (unused-import)
+19:0: W0611: Unused RectangularProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile (unused-import)
+************* Module common.navigation.avoidance.acs_detection_profiles.struct
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.__init__
+16:0: C0301: Line too long (102/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile
+4:0: C0301: Line too long (164/100) (line-too-long)
+24:0: C0301: Line too long (142/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+17:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.__init__
+1:0: C0301: Line too long (157/100) (line-too-long)
+4:0: C0301: Line too long (164/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profils.base_acs_detection_profils
+7:0: C0301: Line too long (118/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+11:0: C0103: Type variable name "ParamsType" doesn't conform to predefined naming style (invalid-name)
+32:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profils.base_acs_detection_profils_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profils.__init__
+1:0: C0301: Line too long (111/100) (line-too-long)
+4:0: C0301: Line too long (118/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profils
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile
+7:0: C0301: Line too long (114/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+15:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+25:4: C0116: Missing function or method docstring (missing-function-docstring)
+25:31: W0613: Unused argument 'ally_zone' (unused-argument)
+25:52: W0613: Unused argument 'enemy_zone' (unused-argument)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.__init__
+1:0: C0301: Line too long (107/100) (line-too-long)
+4:0: C0301: Line too long (114/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile
+7:0: C0301: Line too long (136/100) (line-too-long)
+25:0: C0301: Line too long (115/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+17:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+31:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.__init__
+1:0: C0301: Line too long (129/100) (line-too-long)
+4:0: C0301: Line too long (136/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile
+10:0: C0301: Line too long (154/100) (line-too-long)
+28:0: C0301: Line too long (133/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+20:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+58:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.__init__
+1:0: C0301: Line too long (147/100) (line-too-long)
+4:0: C0301: Line too long (154/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.back_avoidance.back_avoidance
+51:0: C0301: Line too long (111/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+77:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
+81:74: E0203: Access to member 'state' before its definition line 116 (access-member-before-definition)
+92:16: E0203: Access to member 'state' before its definition line 116 (access-member-before-definition)
+116:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+166:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.navigation.avoidance.back_avoidance.back_avoidance_params
+2:0: C0301: Line too long (107/100) (line-too-long)
+3:0: C0301: Line too long (106/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.back_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.base_avoidance.base_avoidance
+3:0: C0301: Line too long (104/100) (line-too-long)
+5:0: C0301: Line too long (101/100) (line-too-long)
+97:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+33:0: C0103: Type variable name "ParamsType" doesn't conform to predefined naming style (invalid-name)
+83:12: C0415: Import outside toplevel (copy) (import-outside-toplevel)
+147:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
+************* Module common.navigation.avoidance.base_avoidance.base_avoidance_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.base_avoidance.states
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.base_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.no_avoidance.no_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+33:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+54:8: W0613: Unused argument 'ally_zone' (unused-argument)
+55:8: W0613: Unused argument 'enemy_zone' (unused-argument)
+************* Module common.navigation.avoidance.no_avoidance.no_avoidance_params
+2:0: C0301: Line too long (104/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.no_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+39:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+74:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
+78:74: E0203: Access to member 'state' before its definition line 99 (access-member-before-definition)
+89:16: E0203: Access to member 'state' before its definition line 99 (access-member-before-definition)
+99:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+126:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params
+2:0: C0301: Line too long (101/100) (line-too-long)
+3:0: C0301: Line too long (106/100) (line-too-long)
+23:0: C0301: Line too long (106/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.stop_and_wait_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.debug_functions.navigator
+23:0: C0301: Line too long (133/100) (line-too-long)
+34:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+18:0: R0914: Too many local variables (19/15) (too-many-locals)
+18:0: R0915: Too many statements (79/50) (too-many-statements)
+************* Module common.navigation.debug_functions.speed_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.debug_functions.trajectory_planer
+4:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+17:0: R0914: Too many local variables (20/15) (too-many-locals)
+104:57: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+120:63: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+17:0: R0915: Too many statements (68/50) (too-many-statements)
+************* Module common.navigation.debug_functions
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.core.navigator
+63:0: C0301: Line too long (125/100) (line-too-long)
+93:0: C0301: Line too long (143/100) (line-too-long)
+126:0: C0301: Line too long (122/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.core.states
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.core
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.signals.dispatcher
+1:0: C0114: Missing module docstring (missing-module-docstring)
+43:8: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.navigation.navigator.signals.signals_enum
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.signals
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.task.navigator_task
+2:0: C0301: Line too long (101/100) (line-too-long)
+4:0: C0301: Line too long (103/100) (line-too-long)
+5:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+43:8: C0415: Import outside toplevel (navigation.avoidance.AvoidanceFactory, navigation.avoidance.BaseAvoidance) (import-outside-toplevel)
+107:4: C0116: Missing function or method docstring (missing-function-docstring)
+107:4: R0911: Too many return statements (8/6) (too-many-return-statements)
+************* Module common.navigation.navigator.task.navigator_task_params
+32:0: C0301: Line too long (111/100) (line-too-long)
+35:0: C0301: Line too long (119/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+12:4: R0913: Too many arguments (9/5) (too-many-arguments)
+12:4: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
+************* Module common.navigation.navigator.task.states
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.task
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.path_planner_factory
+30:0: C0301: Line too long (101/100) (line-too-long)
+44:0: C0301: Line too long (102/100) (line-too-long)
+48:0: C0301: Line too long (115/100) (line-too-long)
+23:1: W0511: TODO: implement AStarPathPlanner and add it to the factory (fixme)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+13:0: W0611: Unused BasicPathPlannerParams imported from navigation.path_planner.basic_path_planner (unused-import)
+17:0: W0611: Unused DeltaPathPlannerParams imported from navigation.path_planner.delta_path_planner (unused-import)
+************* Module common.navigation.path_planner.path_planner_path_plan_params_factory
+2:0: C0301: Line too long (101/100) (line-too-long)
+38:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.structs
+2:0: C0301: Line too long (104/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.astar_path_planner.astar_path_planner
+2:0: C0301: Line too long (101/100) (line-too-long)
+23:0: C0301: Line too long (101/100) (line-too-long)
+110:0: C0301: Line too long (113/100) (line-too-long)
+220:0: C0301: Line too long (108/100) (line-too-long)
+289:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+271:24: W0613: Unused argument 'params' (unused-argument)
+************* Module common.navigation.path_planner.astar_path_planner.astar_path_planner_params
+33:0: C0301: Line too long (141/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+16:4: R0913: Too many arguments (7/5) (too-many-arguments)
+16:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.navigation.path_planner.astar_path_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.base_path_planner.base_path_planner
+4:0: C0301: Line too long (103/100) (line-too-long)
+65:0: C0301: Line too long (103/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+19:0: C0103: Type variable name "ParamsType" doesn't conform to predefined naming style (invalid-name)
+20:0: C0103: Type variable name "PlanPathParamsType" doesn't conform to predefined naming style (invalid-name)
+42:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.navigation.path_planner.base_path_planner.base_path_planner_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+22:0: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.navigation.path_planner.base_path_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.basic_path_planner.basic_path_planner
+2:0: C0301: Line too long (105/100) (line-too-long)
+3:0: C0301: Line too long (101/100) (line-too-long)
+63:0: C0301: Line too long (106/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+28:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.path_planner.basic_path_planner.basic_path_planner_params
+2:0: C0301: Line too long (106/100) (line-too-long)
+3:0: C0301: Line too long (106/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.basic_path_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner
+2:0: C0301: Line too long (103/100) (line-too-long)
+80:0: C0301: Line too long (110/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+27:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+89:11: C1805: "self.params.distance != 0.0" can be simplified to "self.params.distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+95:11: C1805: "self.params.rotation != 0.0" can be simplified to "self.params.rotation", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner_params
+2:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+36:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.path_planner.delta_path_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.structs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.trajectory_planner_factory
+2:0: C0301: Line too long (102/100) (line-too-long)
+21:0: C0301: Line too long (107/100) (line-too-long)
+37:0: C0301: Line too long (115/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+12:0: W0611: Unused SequentialTrajectoryPlannerParams imported from navigation.trajectory_planner.sequential_trajectory_planner (unused-import)
+************* Module common.navigation.trajectory_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner
+2:0: C0301: Line too long (109/100) (line-too-long)
+3:0: C0301: Line too long (106/100) (line-too-long)
+4:0: C0301: Line too long (116/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+21:0: C0103: Type variable name "ParamsType" doesn't conform to predefined naming style (invalid-name)
+127:4: C0116: Missing function or method docstring (missing-function-docstring)
+130:4: C0116: Missing function or method docstring (missing-function-docstring)
+133:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params
+24:0: C0301: Line too long (116/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.base_trajectory_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.common
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.common.segments.base_segment
+2:0: C0301: Line too long (117/100) (line-too-long)
+3:0: C0301: Line too long (115/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.common.segments.rotation_segment
+4:0: C0301: Line too long (120/100) (line-too-long)
+21:0: C0301: Line too long (110/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+13:4: R0913: Too many arguments (6/5) (too-many-arguments)
+13:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module common.navigation.trajectory_planner.common.segments.segment_mapper
+2:0: C0301: Line too long (117/100) (line-too-long)
+3:0: C0301: Line too long (119/100) (line-too-long)
+53:0: C0301: Line too long (161/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.common.segments.smooth_segment
+2:0: C0301: Line too long (115/100) (line-too-long)
+3:0: C0301: Line too long (118/100) (line-too-long)
+27:0: C0301: Line too long (121/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+12:4: R0913: Too many arguments (6/5) (too-many-arguments)
+12:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module common.navigation.trajectory_planner.common.segments.stop_segment
+2:0: C0301: Line too long (122/100) (line-too-long)
+29:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+19:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.trajectory_planner.common.segments.straight_segment
+2:0: C0301: Line too long (110/100) (line-too-long)
+3:0: C0301: Line too long (109/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.common.segments
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner
+2:0: C0301: Line too long (102/100) (line-too-long)
+5:0: C0301: Line too long (105/100) (line-too-long)
+24:0: C0301: Line too long (110/100) (line-too-long)
+34:0: C0301: Line too long (111/100) (line-too-long)
+35:0: C0301: Line too long (101/100) (line-too-long)
+261:0: C0301: Line too long (102/100) (line-too-long)
+275:0: C0301: Line too long (103/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params
+31:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.__init__
+1:0: C0301: Line too long (103/100) (line-too-long)
+4:0: C0301: Line too long (110/100) (line-too-long)
+************* Module common.navigation.trajectory_planner.sequential_trajectory_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.speed_profile.base_speed_profile
+41:0: C0301: Line too long (108/100) (line-too-long)
+42:0: C0301: Line too long (117/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.speed_profile.basic_speed_profile
+2:0: C0301: Line too long (105/100) (line-too-long)
+3:0: C0301: Line too long (110/100) (line-too-long)
+4:0: C0301: Line too long (112/100) (line-too-long)
+43:0: C0301: Line too long (101/100) (line-too-long)
+68:0: C0301: Line too long (101/100) (line-too-long)
+91:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+34:8: W0613: Unused argument 'distance' (unused-argument)
+35:8: W0613: Unused argument 'departure_speed' (unused-argument)
+36:8: W0613: Unused argument 'arrival_speed' (unused-argument)
+59:8: W0613: Unused argument 'distance' (unused-argument)
+60:8: W0613: Unused argument 'departure_speed' (unused-argument)
+61:8: W0613: Unused argument 'arrival_speed' (unused-argument)
+84:8: W0613: Unused argument 'departure_speed' (unused-argument)
+85:8: W0613: Unused argument 'arrival_speed' (unused-argument)
+************* Module common.navigation.trajectory_planner.speed_profile.linear_ramped_speed_profile
+18:0: C0301: Line too long (102/100) (line-too-long)
+96:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+89:4: R0911: Too many return statements (11/6) (too-many-return-statements)
+165:4: R0914: Too many local variables (17/15) (too-many-locals)
+165:4: R0911: Too many return statements (11/6) (too-many-return-statements)
+************* Module common.navigation.trajectory_planner.speed_profile.sigmoid_ramped_speed_profile
+1:1: W0511: TODO: to implement (fixme)
+************* Module common.navigation.trajectory_planner.speed_profile.speed_profiler
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.speed_profile.__init__
+12:0: C0301: Line too long (112/100) (line-too-long)
+11:1: W0511: TODO: to implement (fixme)
+************* Module common.navigation.trajectory_planner.speed_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.base_game_context
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.strategy.core.graph_runner
+91:0: C0301: Line too long (112/100) (line-too-long)
+104:0: C0301: Line too long (133/100) (line-too-long)
+128:0: C0301: Line too long (124/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+99:49: W0640: Cell variable prev_node defined in loop (cell-var-from-loop)
+************* Module common.strategy.core
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.builders.subgraph_builder
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.builders
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.sub_graphs.base_sub_graph
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0115: Missing class docstring (missing-class-docstring)
+17:4: C0116: Missing function or method docstring (missing-function-docstring)
+20:4: C0116: Missing function or method docstring (missing-function-docstring)
+23:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.sub_graphs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.tasks.base_navigation_task
+38:0: C0301: Line too long (107/100) (line-too-long)
+41:0: C0301: Line too long (111/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+20:0: C0115: Missing class docstring (missing-class-docstring)
+21:4: R0913: Too many arguments (10/5) (too-many-arguments)
+21:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+80:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.tasks.base_task
+1:0: C0114: Missing module docstring (missing-module-docstring)
+27:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.tasks.fake_task
+1:0: C0114: Missing module docstring (missing-module-docstring)
+5:0: C0115: Missing class docstring (missing-class-docstring)
+6:4: C0116: Missing function or method docstring (missing-function-docstring)
+6:21: W0613: Unused argument 'ctx' (unused-argument)
+************* Module common.strategy.core.tasks.status
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.strategy.core.tasks
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.task_nodes.base_task_node
+34:0: C0301: Line too long (137/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+93:55: W0613: Unused argument 'ctx' (unused-argument)
+104:54: W0613: Unused argument 'ctx' (unused-argument)
+161:19: W0718: Catching too general exception Exception (broad-exception-caught)
+136:8: W0612: Unused variable 'all_done' (unused-variable)
+************* Module common.strategy.core.task_nodes.timeout_task_node
+33:0: C0301: Line too long (137/100) (line-too-long)
+40:0: C0301: Line too long (101/100) (line-too-long)
+82:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+43:25: W0613: Unused argument 'ctx' (unused-argument)
+69:11: E0203: Access to member 'status' before its definition line 80 (access-member-before-definition)
+71:79: E0203: Access to member 'status' before its definition line 80 (access-member-before-definition)
+78:11: E0203: Access to member 'start_time' before its definition line 79 (access-member-before-definition)
+79:12: W0201: Attribute 'start_time' defined outside __init__ (attribute-defined-outside-init)
+80:12: W0201: Attribute 'status' defined outside __init__ (attribute-defined-outside-init)
+95:12: W0201: Attribute 'status' defined outside __init__ (attribute-defined-outside-init)
+96:12: W0201: Attribute 'end_time' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.strategy.core.task_nodes
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions.base_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+11:0: C0115: Missing class docstring (missing-class-docstring)
+13:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions.constant_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+14:0: C0115: Missing class docstring (missing-class-docstring)
+18:4: C0116: Missing function or method docstring (missing-function-docstring)
+20:8: W0613: Unused argument 'prev_node' (unused-argument)
+21:8: W0613: Unused argument 'current_node' (unused-argument)
+22:8: W0613: Unused argument 'ctx' (unused-argument)
+************* Module common.strategy.core.task_nodes.scoring_functions.default_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+14:0: C0115: Missing class docstring (missing-class-docstring)
+15:4: C0116: Missing function or method docstring (missing-function-docstring)
+17:8: W0613: Unused argument 'prev_node' (unused-argument)
+18:8: W0613: Unused argument 'current_node' (unused-argument)
+19:8: W0613: Unused argument 'ctx' (unused-argument)
+************* Module common.strategy.core.task_nodes.scoring_functions.navigation_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+14:0: C0115: Missing class docstring (missing-class-docstring)
+18:4: C0116: Missing function or method docstring (missing-function-docstring)
+20:8: W0613: Unused argument 'prev_node' (unused-argument)
+21:8: W0613: Unused argument 'current_node' (unused-argument)
+************* Module common.strategy.core.task_nodes.scoring_functions
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.base_transition
+2:0: C0301: Line too long (103/100) (line-too-long)
+3:0: C0301: Line too long (106/100) (line-too-long)
+37:0: C0301: Line too long (108/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.direct_transition
+2:0: C0301: Line too long (110/100) (line-too-long)
+3:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+22:26: W0613: Unused argument 'from_node' (unused-argument)
+22:51: W0613: Unused argument 'ctx' (unused-argument)
+************* Module common.strategy.core.transitions
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition.conditional_transition
+2:0: C0301: Line too long (107/100) (line-too-long)
+3:0: C0301: Line too long (112/100) (line-too-long)
+32:0: C0301: Line too long (108/100) (line-too-long)
+43:0: C0301: Line too long (101/100) (line-too-long)
+46:0: C0301: Line too long (103/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition
+2:0: C0301: Line too long (108/100) (line-too-long)
+3:0: C0301: Line too long (103/100) (line-too-long)
+4:0: C0301: Line too long (101/100) (line-too-long)
+34:0: C0301: Line too long (109/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.from_function_transition_condition
+4:0: C0301: Line too long (104/100) (line-too-long)
+11:0: C0301: Line too long (110/100) (line-too-long)
+32:0: C0301: Line too long (142/100) (line-too-long)
+51:0: C0301: Line too long (112/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.zone_accessibility_transition_condition
+3:0: C0301: Line too long (101/100) (line-too-long)
+12:0: C0301: Line too long (110/100) (line-too-long)
+51:0: C0301: Line too long (121/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+39:8: W0613: Unused argument 'from_node' (unused-argument)
+************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.__init__
+1:0: C0301: Line too long (110/100) (line-too-long)
+4:0: C0301: Line too long (119/100) (line-too-long)
+7:0: C0301: Line too long (124/100) (line-too-long)
+************* Module common.strategy.core.transitions.conditional_transition.transitions_condition
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.tools.visualize
+3:0: C0301: Line too long (102/100) (line-too-long)
+4:0: C0301: Line too long (107/100) (line-too-long)
+28:0: C0301: Line too long (107/100) (line-too-long)
+96:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+79:8: C0415: Import outside toplevel (webbrowser) (import-outside-toplevel)
+145:8: C0415: Import outside toplevel (webbrowser) (import-outside-toplevel)
+************* Module common.strategy.tools
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.teensy.base_teensy
+15:0: C0301: Line too long (111/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+17:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+17:4: R0913: Too many arguments (8/5) (too-many-arguments)
+17:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+************* Module common.teensy.gpio_teensy
+25:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+15:4: R0913: Too many arguments (8/5) (too-many-arguments)
+15:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+************* Module common.teensy
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.teensy.tools
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.teensy.tools.gpio_manager.actuators_type
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.teensy.tools.gpio_manager.gpio_manager
+52:0: C0301: Line too long (106/100) (line-too-long)
+56:0: C0301: Line too long (113/100) (line-too-long)
+59:0: C0301: Line too long (110/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.teensy.tools.gpio_manager
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.messages
+4:0: C0301: Line too long (111/100) (line-too-long)
+9:0: C0301: Line too long (112/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.com.com
+67:0: C0301: Line too long (108/100) (line-too-long)
+125:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+29:4: R0913: Too many arguments (8/5) (too-many-arguments)
+29:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+176:19: W0718: Catching too general exception Exception (broad-exception-caught)
+172:23: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module common.usb_com.python.com.dummy
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.com.exceptions
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.com
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.tools.get_serial_number
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.usb_com.python.tools
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.utils.utils
+1:0: C0114: Missing module docstring (missing-module-docstring)
+6:0: C0115: Missing class docstring (missing-class-docstring)
+80:12: W0702: No exception type(s) specified (bare-except)
+************* Module common.utils
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.video.server
+1:0: C0114: Missing module docstring (missing-module-docstring)
+6:0: C0103: Constant name "img_path" doesn't conform to UPPER_CASE naming style (invalid-name)
+9:0: C0115: Missing class docstring (missing-class-docstring)
+12:4: C0116: Missing function or method docstring (missing-function-docstring)
+27:4: C0116: Missing function or method docstring (missing-function-docstring)
+27:4: C0103: Method name "do_GET" doesn't conform to snake_case naming style (invalid-name)
+49:23: W0718: Catching too general exception Exception (broad-exception-caught)
+43:59: C2801: Unnecessarily calls dunder method __len__. Use len built-in function. (unnecessary-dunder-call)
+61:0: C0116: Missing function or method docstring (missing-function-docstring)
+74:0: C0116: Missing function or method docstring (missing-function-docstring)
+75:4: C0415: Import outside toplevel (threading) (import-outside-toplevel)
+80:11: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module common.video
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module docs.source.conf
+1:0: C0114: Missing module docstring (missing-module-docstring)
+17:0: W0622: Redefining built-in 'copyright' (redefined-builtin)
+16:0: C0103: Constant name "project" doesn't conform to UPPER_CASE naming style (invalid-name)
+17:0: C0103: Constant name "copyright" doesn't conform to UPPER_CASE naming style (invalid-name)
+18:0: C0103: Constant name "author" doesn't conform to UPPER_CASE naming style (invalid-name)
+28:0: C0103: Constant name "napoleon_google_docstring" doesn't conform to UPPER_CASE naming style (invalid-name)
+29:0: C0103: Constant name "napoleon_numpy_docstring" doesn't conform to UPPER_CASE naming style (invalid-name)
+30:0: C0103: Constant name "napoleon_include_init_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
+31:0: C0103: Constant name "napoleon_include_private_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
+32:0: C0103: Constant name "napoleon_include_special_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
+33:0: C0103: Constant name "napoleon_use_admonition_for_examples" doesn't conform to UPPER_CASE naming style (invalid-name)
+34:0: C0103: Constant name "napoleon_use_admonition_for_notes" doesn't conform to UPPER_CASE naming style (invalid-name)
+35:0: C0103: Constant name "napoleon_use_admonition_for_references" doesn't conform to UPPER_CASE naming style (invalid-name)
+36:0: C0103: Constant name "napoleon_use_ivar" doesn't conform to UPPER_CASE naming style (invalid-name)
+37:0: C0103: Constant name "napoleon_use_param" doesn't conform to UPPER_CASE naming style (invalid-name)
+38:0: C0103: Constant name "napoleon_use_rtype" doesn't conform to UPPER_CASE naming style (invalid-name)
+39:0: C0103: Constant name "napoleon_preprocess_types" doesn't conform to UPPER_CASE naming style (invalid-name)
+40:0: C0103: Constant name "napoleon_type_aliases" doesn't conform to UPPER_CASE naming style (invalid-name)
+41:0: C0103: Constant name "napoleon_attr_annotations" doesn't conform to UPPER_CASE naming style (invalid-name)
+46:0: C0103: Constant name "language" doesn't conform to UPPER_CASE naming style (invalid-name)
+51:0: C0103: Constant name "html_theme" doesn't conform to UPPER_CASE naming style (invalid-name)
+************* Module PAMI.lib.ota.ui.convert
+25:0: C0103: Constant name "byte_array" doesn't conform to UPPER_CASE naming style (invalid-name)
+************* Module robot1.rasp.main
+89:0: C0301: Line too long (111/100) (line-too-long)
+143:0: C0301: Line too long (116/100) (line-too-long)
+89:9: W0511: ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,  # TODO: To fix, this feature is not working (fixme)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp._config_loader
+163:0: I0011: Locally disabling import-outside-toplevel (C0415) (locally-disabled)
+163:0: I0023: 'C0415' is cryptic: use '# pylint: disable=import-outside-toplevel' instead (use-symbolic-message-instead)
+66:0: C0301: Line too long (139/100) (line-too-long)
+67:0: C0301: Line too long (114/100) (line-too-long)
+68:0: C0301: Line too long (106/100) (line-too-long)
+82:0: C0301: Line too long (101/100) (line-too-long)
+85:0: C0301: Line too long (101/100) (line-too-long)
+110:0: C0301: Line too long (113/100) (line-too-long)
+143:0: C0301: Line too long (154/100) (line-too-long)
+144:0: C0301: Line too long (150/100) (line-too-long)
+145:0: C0301: Line too long (128/100) (line-too-long)
+147:0: C0301: Line too long (110/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+163:0: I0020: Suppressed 'import-outside-toplevel' (from line 163) (suppressed-message)
+************* Module robot1.rasp.boombot_strategy.show_game_context
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.base_strategy
+78:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.basic_strategy
+31:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.debug_strategy
+30:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.only_banner_strategy
+27:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy
+2:0: C0301: Line too long (107/100) (line-too-long)
+33:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.tower_rush_strategy
+2:0: C0301: Line too long (107/100) (line-too-long)
+33:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.banner_deployment
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.construct
+20:0: C0301: Line too long (102/100) (line-too-long)
+25:0: C0301: Line too long (124/100) (line-too-long)
+95:0: C0301: Line too long (102/100) (line-too-long)
+100:0: C0301: Line too long (124/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.pickup
+21:0: C0301: Line too long (104/100) (line-too-long)
+23:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.push_one_floor_to_wall
+45:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+23:0: R0914: Too many local variables (16/15) (too-many-locals)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.wall_pickup
+27:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.tasks.actuator_task
+15:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+87:0: C0115: Missing class docstring (missing-class-docstring)
+88:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone
+8:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.go_to_stuff_zone
+2:0: C0301: Line too long (102/100) (line-too-long)
+16:0: C0301: Line too long (102/100) (line-too-long)
+24:0: C0301: Line too long (104/100) (line-too-long)
+25:0: C0301: Line too long (105/100) (line-too-long)
+26:0: C0301: Line too long (103/100) (line-too-long)
+43:0: C0301: Line too long (104/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver
+24:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+110:8: W0201: Attribute '_is_initialized' defined outside __init__ (attribute-defined-outside-init)
+122:8: W0201: Attribute 'navigator_task' defined outside __init__ (attribute-defined-outside-init)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.navigation_task
+1:0: C0114: Missing module docstring (missing-module-docstring)
+6:0: C0115: Missing class docstring (missing-class-docstring)
+7:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.odometrie
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.brains.main_brain
+18:1: W0511: TODO: automatiser tous les dummys grâce aux fichiers __init__.py comme le PIN (fixme)
+19:1: W0511: TODO: automatiser tous les dummys comme les actuators, com, etc. Avec le config_loader (fixme)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+25:4: R0913: Too many arguments (7/5) (too-many-arguments)
+25:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+78:4: W0105: String statement has no effect (pointless-string-statement)
+82:4: W0105: String statement has no effect (pointless-string-statement)
+115:8: C0415: Import outside toplevel (boombot_strategy.ShowGameContext) (import-outside-toplevel)
+116:8: C0415: Import outside toplevel (boombot_strategy.strategies.OnlyBannerStrategy) (import-outside-toplevel)
+230:30: W0123: Use of eval (eval-used)
+232:24: W0123: Use of eval (eval-used)
+************* Module robot1.rasp.brains
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.controllers
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.controllers.actuators.actuators_dummy
+121:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+13:4: R0913: Too many arguments (7/5) (too-many-arguments)
+13:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+71:4: R0913: Too many arguments (6/5) (too-many-arguments)
+71:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module robot1.rasp.controllers.actuators.actuators_show
+41:0: C0301: Line too long (106/100) (line-too-long)
+42:0: C0301: Line too long (110/100) (line-too-long)
+60:0: C0301: Line too long (115/100) (line-too-long)
+63:0: C0301: Line too long (113/100) (line-too-long)
+64:0: C0301: Line too long (101/100) (line-too-long)
+65:0: C0301: Line too long (105/100) (line-too-long)
+175:0: C0301: Line too long (105/100) (line-too-long)
+195:0: C0301: Line too long (101/100) (line-too-long)
+362:0: C0301: Line too long (116/100) (line-too-long)
+426:0: C0301: Line too long (120/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+11:0: C0115: Missing class docstring (missing-class-docstring)
+18:0: C0115: Missing class docstring (missing-class-docstring)
+23:0: C0115: Missing class docstring (missing-class-docstring)
+28:0: C0115: Missing class docstring (missing-class-docstring)
+33:0: C0115: Missing class docstring (missing-class-docstring)
+46:4: R0913: Too many arguments (8/5) (too-many-arguments)
+46:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+303:4: C0116: Missing function or method docstring (missing-function-docstring)
+327:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+339:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+419:4: C0116: Missing function or method docstring (missing-function-docstring)
+429:4: C0116: Missing function or method docstring (missing-function-docstring)
+440:4: C0116: Missing function or method docstring (missing-function-docstring)
+460:4: C0116: Missing function or method docstring (missing-function-docstring)
+470:4: C0116: Missing function or method docstring (missing-function-docstring)
+479:4: C0116: Missing function or method docstring (missing-function-docstring)
+328:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+340:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+422:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+462:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+472:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+40:0: R0904: Too many public methods (24/20) (too-many-public-methods)
+************* Module robot1.rasp.controllers.actuators
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.controllers.actuators.base.actuators
+35:0: C0301: Line too long (115/100) (line-too-long)
+38:0: C0301: Line too long (113/100) (line-too-long)
+39:0: C0301: Line too long (101/100) (line-too-long)
+40:0: C0301: Line too long (105/100) (line-too-long)
+140:0: C0301: Line too long (116/100) (line-too-long)
+202:0: C0301: Line too long (112/100) (line-too-long)
+203:0: C0301: Line too long (112/100) (line-too-long)
+205:0: C0301: Line too long (107/100) (line-too-long)
+230:0: C0301: Line too long (122/100) (line-too-long)
+20:5: W0511: TODO : move to common and handle config properly, not the prority yet (fixme)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+21:4: R0913: Too many arguments (8/5) (too-many-arguments)
+21:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+193:8: C0103: Argument name "use_I2C" doesn't conform to snake_case naming style (invalid-name)
+183:4: R0913: Too many arguments (8/5) (too-many-arguments)
+183:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+255:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis
+18:0: C0301: Line too long (105/100) (line-too-long)
+19:0: C0301: Line too long (104/100) (line-too-long)
+37:0: C0301: Line too long (120/100) (line-too-long)
+40:0: C0301: Line too long (113/100) (line-too-long)
+41:0: C0301: Line too long (101/100) (line-too-long)
+42:0: C0301: Line too long (105/100) (line-too-long)
+184:0: C0301: Line too long (133/100) (line-too-long)
+292:0: C0301: Line too long (129/100) (line-too-long)
+335:0: C0301: Line too long (129/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+23:4: R0913: Too many arguments (8/5) (too-many-arguments)
+23:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+312:15: W0718: Catching too general exception Exception (broad-exception-caught)
+355:15: W0718: Catching too general exception Exception (broad-exception-caught)
+382:15: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module robot1.rasp.controllers.rolling_basis.pids
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.controllers.rolling_basis.rolling_basis
+17:0: C0301: Line too long (105/100) (line-too-long)
+36:0: C0301: Line too long (120/100) (line-too-long)
+39:0: C0301: Line too long (113/100) (line-too-long)
+40:0: C0301: Line too long (101/100) (line-too-long)
+41:0: C0301: Line too long (105/100) (line-too-long)
+203:0: C0301: Line too long (129/100) (line-too-long)
+246:0: C0301: Line too long (129/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+22:4: R0913: Too many arguments (8/5) (too-many-arguments)
+22:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+223:15: W0718: Catching too general exception Exception (broad-exception-caught)
+266:15: W0718: Catching too general exception Exception (broad-exception-caught)
+293:15: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module robot1.rasp.controllers.rolling_basis.rolling_basis_dummy
+14:0: C0301: Line too long (105/100) (line-too-long)
+32:0: C0301: Line too long (120/100) (line-too-long)
+35:0: C0301: Line too long (113/100) (line-too-long)
+36:0: C0301: Line too long (101/100) (line-too-long)
+124:0: C0301: Line too long (129/100) (line-too-long)
+167:0: C0301: Line too long (129/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+19:4: R0913: Too many arguments (7/5) (too-many-arguments)
+19:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+144:15: W0718: Catching too general exception Exception (broad-exception-caught)
+187:15: W0718: Catching too general exception Exception (broad-exception-caught)
+212:15: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module robot1.rasp.controllers.rolling_basis
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.sensors
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.sensors.inputs.inputs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.sensors.inputs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.sensors.lidar.lidar
+24:0: C0301: Line too long (113/100) (line-too-long)
+54:0: C0301: Line too long (110/100) (line-too-long)
+55:0: C0301: Line too long (122/100) (line-too-long)
+106:0: C0301: Line too long (105/100) (line-too-long)
+115:0: C0301: Line too long (101/100) (line-too-long)
+152:0: C0301: Line too long (116/100) (line-too-long)
+238:0: C0301: Line too long (104/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+13:0: C0103: Type variable name "TLidar" doesn't conform to predefined naming style (invalid-name)
+32:4: R0913: Too many arguments (8/5) (too-many-arguments)
+32:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+86:12: C0415: Import outside toplevel (pysicktim) (import-outside-toplevel)
+121:23: W0718: Catching too general exception Exception (broad-exception-caught)
+146:11: C1805: "n == 0" can be simplified to "not n", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+157:11: C1805: "centered_polars.size == 0" can be simplified to "not centered_polars.size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+230:12: W0707: Consider explicitly re-raising using 'raise Exception(f'Error while scanning, LiDAR is disconnected ? [{error}]') from error' (raise-missing-from)
+230:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+61:8: W0238: Unused private member `Lidar.__angle_unit` (unused-private-member)
+************* Module robot1.rasp.sensors.lidar.lidar_dummy
+32:0: C0301: Line too long (110/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+14:4: R0913: Too many arguments (8/5) (too-many-arguments)
+14:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+191:8: W0612: Unused variable 'valid_polars' (unused-variable)
+37:8: W0238: Unused private member `LidarDummy.__min_angle` (unused-private-member)
+38:8: W0238: Unused private member `LidarDummy.__max_angle` (unused-private-member)
+39:8: W0238: Unused private member `LidarDummy.__angle_unit` (unused-private-member)
+************* Module robot1.rasp.sensors.lidar
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.tests.config_loader
+64:0: C0301: Line too long (139/100) (line-too-long)
+65:0: C0301: Line too long (114/100) (line-too-long)
+66:0: C0301: Line too long (106/100) (line-too-long)
+80:0: C0301: Line too long (101/100) (line-too-long)
+83:0: C0301: Line too long (101/100) (line-too-long)
+95:0: C0301: Line too long (103/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+23:4: W0706: The except handler raises immediately (try-except-raise)
+21:13: W1514: Using open without explicitly specifying an encoding (unspecified-encoding)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[246:387]
+==robot1.rasp.controllers.rolling_basis.rolling_basis:[156:307]
+        msg = (
+            Messages.SET_ODOMETRIE.to_bytes()
+            + struct.pack("<d", odometrie.x)
+            + struct.pack("<d", odometrie.y)
+            + struct.pack("<d", odometrie.theta)
+        )
+
+        self.send_bytes(msg)
+
+    @log(
+        param_logger="RollingBasis",
+        log_level=LogLevels.INFO,
+    )
+    def _send_pid(self, pid_id: int, pid: PID) -> None:
+        """Internal method to send PID configuration data to the Teensy.
+
+        Args:
+            pid_id (int): The identifier for the PID controller.
+            pid (PID): The PID controller parameters.
+
+        """
+        msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
+        self.send_bytes(msg)
+
+    # ====== PID Configuration Methods ======
+
+    @overload
+    def set_linear_position_pid(self, *args: float) -> None: ...
+    @overload
+    def set_linear_position_pid(self, pid_values: dict[str, float]) -> None: ...
+    @overload
+    def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
+    def set_linear_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
+        """Configure the PID values for linear position control.
+
+        Overloads:
+            - set_linear_position_pid(float, float, float) → None
+            - set_linear_position_pid(dict[str, float]) → None
+            - set_linear_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+
+        Raises:
+            ValueError: If the arguments do not match any expected format.
+
+        """
+        try:
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+                pid = PID(*args)  # type: ignore[reportArgumentType]
+            elif len(args) == 1 and isinstance(args[0], dict):
+                pid = PID.from_dict(args[0])
+            elif kwargs:
+                pid = PID.from_dict(kwargs)
+            else:
+                raise ValueError(
+                    "Invalid arguments for linear position PID configuration.",
+                )
+            self.linear_position_pid = pid
+            self._send_pid(PidID.LINEAR_POSITION.value, pid)
+        except Exception as e:
+            self.logger.error(f"Failed to set linear position PID: {e}")
+
+    @overload
+    def set_angular_position_pid(self, *args: float) -> None: ...
+    @overload
+    def set_angular_position_pid(self, pid_values: dict[str, float]) -> None: ...
+    @overload
+    def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
+    def set_angular_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
+        """Configure the PID values for angular position control.
+
+        Overloads:
+            - set_angular_position_pid(float, float, float) → None
+            - set_angular_position_pid(dict[str, float]) → None
+            - set_angular_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+
+        Raises:
+            ValueError: If the arguments do not match any expected format.
+
+        """
+        try:
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+                pid = PID(*args)  # type: ignore[reportArgumentType]
+            elif len(args) == 1 and isinstance(args[0], dict):
+                pid = PID.from_dict(args[0])
+            elif kwargs:
+                pid = PID.from_dict(kwargs)
+            else:
+                raise ValueError(
+                    "Invalid arguments for angular position PID configuration.",
+                )
+            self.angular_position_pid = pid
+            self._send_pid(PidID.ANGULAR_POSITION.value, pid)
+        except Exception as e:
+            self.logger.error(f"Failed to set angular position PID: {e}")
+
+    def set_pids(
+        self,
+        linear_position_pid: dict[str, float],
+        angular_position_pid: dict[str, float],
+    ) -> None:
+        """Configure all PID controllers using dictionaries for each.
+
+        Args:
+            linear_position_pid (dict[str, float]): PID configuration for linear position.
+            angular_position_pid (dict[str, float]): PID configuration for angular position.
+
+        """
+        self.set_linear_position_pid(**linear_position_pid)
+        time.sleep(0.1)  # Ensure the Teensy has time to process the first PID
+        self.set_angular_position_pid(**angular_position_pid)
+        time.sleep(0.1)  # Ensure the Teensy has time to process the second PID
+
+    def initialize_pids(self) -> None:
+        """Initialize PID controllers from the configuration."""
+        try:
+            self.set_pids(
+                linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
+                angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to initialize PIDs: {e}")
+
+    # ====== Comparison ======
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two RollingBasis instances.
+
+        Args:
+            other (object): The other object to compare against.
+
+        Returns:
+            bool: ``True`` if the objects are equal, ``False`` otherwise.
+
+        """ (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[272:370]
+==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[104:202]
+    def set_linear_position_pid(self, *args: float) -> None: ...
+    @overload
+    def set_linear_position_pid(self, pid_values: dict[str, float]) -> None: ...
+    @overload
+    def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
+    def set_linear_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
+        """Configure the PID values for linear position control.
+
+        Overloads:
+            - set_linear_position_pid(float, float, float) → None
+            - set_linear_position_pid(dict[str, float]) → None
+            - set_linear_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+
+        Raises:
+            ValueError: If the arguments do not match any expected format.
+
+        """
+        try:
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+                pid = PID(*args)  # type: ignore[reportArgumentType]
+            elif len(args) == 1 and isinstance(args[0], dict):
+                pid = PID.from_dict(args[0])
+            elif kwargs:
+                pid = PID.from_dict(kwargs)
+            else:
+                raise ValueError(
+                    "Invalid arguments for linear position PID configuration.",
+                )
+            self.linear_position_pid = pid
+            self._send_pid(PidID.LINEAR_POSITION.value, pid)
+        except Exception as e:
+            self.logger.error(f"Failed to set linear position PID: {e}")
+
+    @overload
+    def set_angular_position_pid(self, *args: float) -> None: ...
+    @overload
+    def set_angular_position_pid(self, pid_values: dict[str, float]) -> None: ...
+    @overload
+    def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
+    def set_angular_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
+        """Configure the PID values for angular position control.
+
+        Overloads:
+            - set_angular_position_pid(float, float, float) → None
+            - set_angular_position_pid(dict[str, float]) → None
+            - set_angular_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+
+        Raises:
+            ValueError: If the arguments do not match any expected format.
+
+        """
+        try:
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+                pid = PID(*args)  # type: ignore[reportArgumentType]
+            elif len(args) == 1 and isinstance(args[0], dict):
+                pid = PID.from_dict(args[0])
+            elif kwargs:
+                pid = PID.from_dict(kwargs)
+            else:
+                raise ValueError(
+                    "Invalid arguments for angular position PID configuration.",
+                )
+            self.angular_position_pid = pid
+            self._send_pid(PidID.ANGULAR_POSITION.value, pid)
+        except Exception as e:
+            self.logger.error(f"Failed to set angular position PID: {e}")
+
+    def set_pids(
+        self,
+        linear_position_pid: dict[str, float],
+        angular_position_pid: dict[str, float],
+    ) -> None:
+        """Configure all PID controllers.
+
+        Args:
+            linear_position_pid (dict[str, float]): PID values for linear position control.
+            angular_position_pid (dict[str, float]): PID values for angular position control.
+
+        """
+        self.set_linear_position_pid(**linear_position_pid) (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.boombot_strategy.sub_graphs.pickup:[32:66]
+==robot1.rasp.boombot_strategy.sub_graphs.wall_pickup:[29:63]
+    subgraph = SubGraphBuilder()
+
+    # Node: Ready to approach the pickup zone
+    node_ready = f"[Pickup] Ready to approach zone {pickup_zone_id}"
+    subgraph.add_node(
+        node_ready,
+        BaseTaskNode(name=node_ready, tasks=ReadyToApproachToPickUp()),
+    )
+
+    # Node: Navigate to the pickup zone
+    node_navigate = f"[Pickup] Navigate to zone {pickup_zone_id}"
+    subgraph.add_node(
+        node_navigate,
+        BaseTaskNode(name=node_navigate, tasks=GoToStuffZoneToPickUp(pickup_zone_id)),
+    )
+
+    # Node: Prepare to pick up the item
+    node_prepare = f"[Pickup] Prepare to pick up at zone {pickup_zone_id}"
+    subgraph.add_node(
+        node_prepare,
+        BaseTaskNode(name=node_prepare, tasks=PrepareToPickUp()),
+    )
+
+    # Node: Move forward to the pickup point
+    node_forward = f"[Pickup] Advance to pickup point at zone {pickup_zone_id}"
+    subgraph.add_node(
+        node_forward,
+        BaseTaskNode(name=node_forward, tasks=GoCentroidOfZone(pickup_zone_id)),
+    )
+
+    # Node: Execute the pickup
+    node_pickup = f"[Pickup] Pick up item at zone {pickup_zone_id}"
+    subgraph.add_node(
+        node_pickup, (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.navigation.avoidance.back_avoidance.back_avoidance:[147:178]
+==common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance:[108:138]
+        ):
+            self.logger.info("Obstacle cleared. Replanning trajectory.")
+
+            # Obstacle is no longer detected, replan from current position
+            last_params = current_navigator_task.path_planner.last_plan_path_params
+            last_params.start = position  # Update start position to current location
+
+            self.logger.debug(f"Replanning from updated start: {position}")
+
+            new_path = current_navigator_task.path_planner.plan_path(last_params)
+            current_navigator_task.trajectory_planner.plan_trajectory(new_path)
+            current_navigator_task.trajectory_planner.start_planning()  # Reset internal clock
+
+            self.logger.debug("Trajectory planner reset internal clock.")
+            # reset timer just for logging/manure measurement
+            self._reset_timer()
+            self.logger.debug("Timer reset after avoidance completion.")
+
+            self.state = AvoidanceState.IDLE
+            current_navigator_task.state = NavigatorTaskState.IN_PROGRESS
+
+            self.logger.info("Avoidance complete. Resuming normal operation.")
+            return (
+                current_navigator_task.current_trajectory_command
+            )  # Avoidance complete, continue as normal
+
+        # 4. Continue with current command
+        self.logger.debug(
+            "No avoidance action required. Continuing original trajectory.",
+        )
+        return current_navigator_task.current_trajectory_command (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp._config_loader:[231:252]
+==robot1.rasp.tests.config_loader:[181:202]
+    LOGGER_COLORS: str = LOGGER_CONFIG["colors"]
+    LOGGER_PATH: str = LOGGER_CONFIG["path"]
+    LOGGER_DECORATOR_LOG_LEVEL: str = LOGGER_CONFIG["decorator_log_level"]
+    LOGGER_PRINT_LOG_LEVEL: str = LOGGER_CONFIG["print_log_level"]
+    LOGGER_FILE_LOG_LEVEL: str = LOGGER_CONFIG["file_log_level"]
+    LOGGER_PRINT_LOG: bool = LOGGER_CONFIG["print_log"]
+    LOGGER_WRITE_TO_FILE: bool = LOGGER_CONFIG["write_to_file"]
+    LOGGER_DISPLAY_MONITORING: bool = LOGGER_CONFIG["display_monitoring"]
+    LOGGER_FILES_MONITORING: bool = LOGGER_CONFIG["files_monitoring"]
+    LOGGER_FILE_SIZE_UNIT: str = LOGGER_CONFIG["file_size_unit"]
+    LOGGER_DISK_ALERT_THRESHOLD_PERCENT: float = LOGGER_CONFIG[
+        "disk_alert_threshold_percent"
+    ]
+    LOGGER_FILES_SIZE_ALERT_THRESHOLD_PERCENT: float = LOGGER_CONFIG[
+        "log_files_size_alert_threshold_percent"
+    ]
+    LOGGER_MAX_LOG_FILE_SIZE: float = LOGGER_CONFIG["max_log_file_size"]
+    LOGGER_IDENTIFIER_MAX_WIDTH: float = LOGGER_CONFIG["identifier_max_width"]
+    LOGGER_FILENAME_LINENO_MAX_WIDTH: float = LOGGER_CONFIG["filename_lineno_max_width"]
+
+    # Team config (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.boombot_strategy.sub_graphs.pickup:[67:88]
+==robot1.rasp.boombot_strategy.sub_graphs.wall_pickup:[64:85]
+    )
+
+    # Node: extract from pickup zone
+    node_extract = f"[Pickup] Extract from zone {pickup_zone_id}"
+    subgraph.add_node(
+        node_extract,
+        BaseTaskNode(name=node_extract, tasks=RelativeBackward(20)),
+    )
+
+    # Define transitions between nodes
+    subgraph.connect(node_ready, DirectTransition(subgraph.nodes[node_navigate]))
+    subgraph.connect(node_navigate, DirectTransition(subgraph.nodes[node_prepare]))
+    subgraph.connect(node_prepare, DirectTransition(subgraph.nodes[node_forward]))
+    subgraph.connect(node_forward, DirectTransition(subgraph.nodes[node_pickup]))
+    subgraph.connect(node_pickup, DirectTransition(subgraph.nodes[node_extract]))
+
+    # Return the finalized subgraph with defined entry and exit nodes
+    return subgraph.build(
+        entry=node_ready,
+        exits=node_extract,
+    ) (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.navigation.avoidance.back_avoidance.back_avoidance:[78:94]
+==common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance:[75:91]
+        position: OrientedPoint = ally_zone.point
+        self.logger.debug(
+            f"Handling avoidance at position: {position}, current state: {self.state}",
+        )
+
+        # 1. Timeout check
+        if self._has_timed_out():
+            self.logger.warning("Avoidance timed out. Aborting task.")
+            return self._abort(current_navigator_task, position)
+
+        # 2. Obstacle detected: begin avoidance
+        if (
+            self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
+            and self.state == AvoidanceState.IDLE
+        ):
+            self.logger.info( (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy:[68:82]
+==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[56:70]
+        )
+
+        # Step 6: Move to the backstage zone to finish the game
+        go_to_backstage = BaseTaskNode(
+            name="[End] Go to backstage",
+            tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
+        )
+
+        # Connect the subgraphs in execution order
+        self._auto_build_transitions(
+            deploy_banner_subgraph,
+            first_pickup_subgraph,
+            first_construct_subgraph,
+            second_pickup_subgraph, (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.grid_manager:[447:460]
+==common.arena.base_arena.grid_manager_2:[260:272]
+        fig, ax = plt.subplots(figsize=(12, 6))
+
+        for y in range(self.grid_height):
+            for x in range(self.grid_width):
+                if not grid_to_visualize.node(x, y).walkable:
+                    ax.add_patch(plt.Rectangle((x, y), 1, 1, color="black"))
+
+        if path:
+            for i in range(len(path) - 1):
+                ax.plot(
+                    [path[i].x, path[i + 1].x],
+                    [path[i].y, path[i + 1].y], (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.grid_manager:[156:168]
+==common.arena.base_arena.grid_manager_2:[90:101]
+        min_col = max(
+            0,
+            int((self.grid_width * self.chunk_size - maxx) // self.chunk_size),
+        )
+        max_col = min(
+            self.grid_width,
+            int((self.grid_width * self.chunk_size - minx) // self.chunk_size) + 1,
+        )
+        min_row = max(0, int(miny // self.chunk_size))
+        max_row = min(self.grid_height, int(maxy // self.chunk_size) + 1)
+
+        # Build STRtree with geometries (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[341:350]
+==robot1.rasp.controllers.rolling_basis.rolling_basis:[209:218]
+        try:
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+                pid = PID(*args)  # type: ignore[reportArgumentType]
+            elif len(args) == 1 and isinstance(args[0], dict):
+                pid = PID.from_dict(args[0])
+            elif kwargs:
+                pid = PID.from_dict(kwargs)
+            else:
+                raise ValueError( (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[298:307]
+==robot1.rasp.controllers.rolling_basis.rolling_basis:[252:261]
+        try:
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+                pid = PID(*args)  # type: ignore[reportArgumentType]
+            elif len(args) == 1 and isinstance(args[0], dict):
+                pid = PID.from_dict(args[0])
+            elif kwargs:
+                pid = PID.from_dict(kwargs)
+            else:
+                raise ValueError( (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.actuators.base.actuators:[43:54]
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[51:62]
+        super().__init__(
+            logger,
+            serial_number,
+            vid,
+            pid,
+            baudrate,
+            enable_crc,
+            enable_dummy,
+        )
+
+        # PID controllers (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.actuators.actuators_dummy:[33:43]
+==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[39:50]
+        super().__init__(
+            logger,
+            serial_number,
+            vid,
+            pid,
+            baudrate,
+            enable_crc,
+            enable_dummy=True,
+        )
+
+        # Robot state (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy:[85:96]
+==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[70:81]
+            go_to_backstage,
+        )
+
+        # Create the graph runner starting from the first subgraph
+        self.runner = GraphRunner(
+            logger=Logger(
+                identifier="TowerRushStrategyRunner",
+                follow_logger_manager_rules=True,
+            ),
+            start=deploy_banner_subgraph.get_entry(),
+        ) (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.boombot_strategy.strategies.basic_strategy:[48:71]
+==robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy:[68:81]
+        )
+
+        # # Step 4: Navigate to the second pickup zone
+        # second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
+        #
+        # # Step 5: Navigate to the second construction zone
+        # second_construct_subgraph = get_construct_subgraph(
+        #     self.zones["second_build_zone"], back_offset=15
+        # )
+
+        # Step 6: Move to the backstage zone to finish the game
+        go_to_backstage = BaseTaskNode(
+            name="[End] Go to backstage",
+            tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
+        )
+
+        # Connect the subgraphs in execution order
+        self._auto_build_transitions(
+            deploy_banner_subgraph,
+            first_pickup_subgraph,
+            first_construct_subgraph,
+            # second_pickup_subgraph,
+            # second_construct_subgraph, (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.boombot_strategy.strategies.basic_strategy:[71:82]
+==robot1.rasp.boombot_strategy.strategies.debug_strategy:[53:64]
+            go_to_backstage,
+        )
+
+        # Create the graph runner starting from the first subgraph
+        self.runner = GraphRunner(
+            logger=Logger(
+                identifier="BasicStrategyRunner",
+                follow_logger_manager_rules=True,
+            ),
+            start=deploy_banner_subgraph.get_entry(),
+        ) (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp._config_loader:[329:340]
+==robot1.rasp.tests.config_loader:[232:243]
+    LIDAR_ANGLES_UNIT: str = LIDAR_CONFIG["angles_unit"]
+    LIDAR_DISTANCES_UNIT: str = LIDAR_CONFIG["distances_unit"]
+    LIDAR_MIN_ANGLE: float = LIDAR_CONFIG["min_angle"]
+    LIDAR_MAX_ANGLE: float = LIDAR_CONFIG["max_angle"]
+    LIDAR_MIN_DISTANCE_DETECTION: float = LIDAR_CONFIG["min_distance_detection"]
+    LIDAR_FRONTAL_DETECTION_ANGLE: float = LIDAR_CONFIG["frontal_detection_angle"]
+    LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE: float = LIDAR_CONFIG[
+        "semi_circular_detection_angle"
+    ]
+
+    # Arena (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp._config_loader:[220:230]
+==robot1.rasp.tests.config_loader:[170:180]
+    LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER: bool = (
+        LOGGER_MANAGER_CONFIG["enable_files_logs_monitoring_only_for_one_logger"]
+    )
+    LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE: bool = LOGGER_MANAGER_CONFIG[
+        "enable_dynamic_config_update"
+    ]
+    LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER: bool = LOGGER_MANAGER_CONFIG[
+        "enable_unique_logger_identifier"
+    ]
+ (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.teensy.base_teensy:[38:50]
+==common.teensy.gpio_teensy:[45:54]
+        super().__init__(
+            logger,
+            serial_number,
+            vid,
+            pid,
+            baudrate,
+            enable_crc,
+            enable_dummy,
+        )
+
+    def reset(self) -> None:
+        """Resets the Teensy device by sending a reset command.""" (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.strategy.core.tasks.base_navigation_task:[68:79]
+==robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver:[124:133]
+                timeout=self.timeout,
+                path_planner_params=self.path_planner_params,
+                trajectory_planner_params=self.trajectory_planner_params,
+                speed_profiler=self.speed_profiler,
+                avoidance_params=self.avoidance_params,
+                acs_detection_profile_params=self.acs_detection_profile_params,
+                stabilization_delay=self.stabilization_delay,
+            ),
+        ) (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.grid_manager:[172:183]
+==common.arena.base_arena.grid_manager_2:[101:111]
+        for row in range(min_row, max_row):
+            for col in range(min_col, max_col):
+                actual_col = self.grid_width - 1 - col
+                cell = box(
+                    actual_col * self.chunk_size,
+                    row * self.chunk_size,
+                    (actual_col + 1) * self.chunk_size,
+                    (row + 1) * self.chunk_size,
+                )
+
+                # Check if the polygon intersects the grid cell (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.__init__:[19:28]
+==common.arena.base_arena.__init__:[16:25]
+__all__ = [
+    "AllyZone",
+    "BaseArena",
+    "BaseArenaZone",
+    "BlueReservedZone",
+    "BorderZone",
+    "EnemyZone",
+    "ForbiddenZone",
+    "GridManager", (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.sensors.lidar.lidar:[196:205]
+==robot1.rasp.sensors.lidar.lidar_dummy:[109:118]
+        if unit == "mm":
+            return 1000
+        if unit == "cm":
+            return 100
+        if unit == "m":
+            return 1
+        if unit == "inch":
+            return 0.0254
+ (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[62:73]
+==robot1.rasp.controllers.rolling_basis.rolling_basis:[59:77]
+        self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
+        self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
+
+        # Register message handlers
+        self.add_callback(self.rcv_print, Messages.PRINT.value)
+        self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
+        self.add_callback(
+            self.rcv_rolling_basis_state,
+            Messages.UPDATE_ROLLING_BASIS.value,
+        )
+ (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.navigation.trajectory_planner.common.__init__:[9:17]
+==common.navigation.trajectory_planner.common.segments.__init__:[11:19]
+__all__ = [
+    "BaseSegment",
+    "RotationSegment",
+    "SegmentMapper",
+    "SmoothSegment",
+    "StopSegment",
+    "StraightSegment",
+] (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone:[46:54]
+==common.arena.base_arena.arena_zones.stuff_zone:[44:67]
+            accessibility=ZoneAccessibility.RESTRICTED,
+            buffer_size=buffer_size,
+            polygon=polygon,
+            buffered_polygon=buffered_polygon,
+            update_callback=update_callback,
+            zone_color="#097D8D",
+            go_to_positions=go_to_positions,
+        ) (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.arena_zones.base_arena_zone:[173:207]
+==common.arena.base_arena.arena_zones.stuff_zone:[105:114]
+        nearest_position = min(
+            self.go_to_positions,
+            key=lambda p: ally_position.distance(p),
+        )
+        self.logger.debug(
+            f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]",
+        )
+        return nearest_position
+
+    """ Update methods """
+
+    def update(
+        self,
+        team_color: TeamColor,
+        ally_position: Point | OrientedPoint,
+        enemy_position: Point | OrientedPoint,
+    ) -> None:
+        """Update the zone based on the positions of allies and enemies.
+
+        Args:
+            team_color (TeamColor): The color of the team.
+            ally_position (Point | OrientedPoint): Position of ally.
+            enemy_position (Point | OrientedPoint): Position of enemy.
+
+        """
+        # Update visit counts
+        # if self.polygon.contains(enemy_position):  # Don't consider the buffer
+        #     self.enemy_visits += 1
+        #     self.logger.debug(f"Enemy visited {self.zone_type} zone")
+        #
+        # if self.polygon.contains(enemy_position):  # Don't consider the buffer
+        #     self.ally_visits += 1
+        #     self.logger.debug(f"Ally visited {self.zone_type} zone")
+ (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.grid_manager:[373:419]
+==common.arena.base_arena.grid_manager_2:[198:244]
+        return (
+            node.x * self.chunk_size + self.half_chunk_size,
+            node.y * self.chunk_size + self.half_chunk_size,
+        )
+
+    def absolute_coords_to_grid_coords(self, point: OrientedPoint | Point) -> GridNode:
+        """Convert absolute coordinates to grid coordinates.
+
+        Args:
+            point (OrientedPoint | Point): Absolute point to convert.
+
+        Returns:
+            GridNode: Corresponding node in the grid.
+
+        """
+        return GridNode(int(point.x / self.chunk_size), int(point.y / self.chunk_size))
+
+    def grid_coords_to_absolute_coords(self, node: GridNode) -> Point:
+        """Convert grid coordinates to absolute coordinates.
+
+        Args:
+            node (GridNode): Grid node to convert.
+
+        Returns:
+            Point: Absolute center point of the node.
+
+        """
+        x, y = self.get_grid_node_center(node)
+        return Point(x, y)
+
+    def get_static_grid(self) -> Grid:
+        """Return the static grid used for pathfinding.
+
+        Returns:
+            Grid: Grid containing only static obstacles.
+
+        """
+        return self.static_grid
+
+    def get_static_and_dynamic_grid(self) -> Grid:
+        """Return the grid with both static and dynamic obstacles.
+
+        Returns:
+            Grid: Combined grid.
+
+        """ (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[376:387]
+==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[206:226]
+        try:
+            self.set_pids(
+                linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
+                angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to initialize PIDs: {e}")
+
+    # ====== Equality Comparison ======
+
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two RollingBasis instances.
+
+        Args:
+            other (object): The other object to compare against.
+
+        Returns:
+            bool: ``True`` if the objects are equal, ``False`` otherwise.
+
+        """ (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[388:397]
+==robot1.rasp.controllers.rolling_basis.rolling_basis:[308:326]
+            return NotImplemented
+        return (
+            self.odometrie == other.odometrie
+            and self.linear_position_pid == other.linear_position_pid
+            and self.angular_position_pid == other.angular_position_pid
+        )
+
+    def __ne__(self, other: object) -> bool:
+        return not self.__eq__(other) (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[135:150]
+==robot1.rasp.controllers.rolling_basis.rolling_basis:[137:156]
+        msg = (
+            Messages.SET_TARGET_POSITION.to_bytes()
+            + struct.pack("<d", target_position.x)
+            + struct.pack("<d", target_position.y)
+            + struct.pack("<d", target_position.theta)
+        )
+
+        # Send the composed message to the Teensy
+        # https://docs.python.org/3/library/struct.html#format-characters
+        self.send_bytes(msg)
+
+    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
+    def set_odometrie(self, odometrie: OrientedPoint) -> None:
+        """Sends a message to set the odometrie of the rolling basis.
+
+        Args:
+            odometrie (OrientedPoint): The new odometrie values.
+
+        """ (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[84:108]
+==robot1.rasp.controllers.rolling_basis.rolling_basis:[89:122]
+        self.logger.info(
+            "Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore"),
+        )
+
+    def rcv_rolling_basis_state(self, msg: bytes) -> None:
+        """Handles rolling basis state update messages from the Teensy.
+
+        The message contains:
+        - float x: X-coordinate of the position (4 bytes).
+        - float y: Y-coordinate of the position (4 bytes).
+        - float theta: Orientation (4 bytes).
+        - float current_linear_speed: Current linear speed (4 bytes).
+        - float current_angular_speed: Current angular speed (4 bytes).
+
+        Args:
+            msg (bytes): The received message bytes.
+
+        """
+        # Position / odometrie
+        self.odometrie = OrientedPoint(
+            (struct.unpack("<d", msg[0:8])[0], struct.unpack("<d", msg[8:16])[0]),
+            struct.unpack("<d", msg[16:24])[0],
+        )
+
+    def rcv_unknown_msg(self, msg: bytes) -> None:
+        """Handles unknown messages from the Teensy.
+
+        Logs a warning indicating that the message type is not recognized.
+
+        Args:
+            msg (bytes): The received message bytes.
+
+        """ (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.boombot_strategy.strategies.basic_strategy:[36:59]
+==robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy:[38:53]
+        super().__init__(ctx)
+
+        # Step 1: Deploy the banner
+        deploy_banner_subgraph = get_banner_deployment_subgraph()
+
+        # Step 2: Navigate to the first pickup zone
+        first_pickup_subgraph = get_pickup_subgraph(self.zones["first_pickup_zone"])
+
+        # Step 3: Navigate to the first construction zone
+        first_construct_subgraph = get_construct_subgraph(
+            self.zones["first_build_zone"],
+            back_offset=5,
+        )
+
+        # # Step 4: Navigate to the second pickup zone
+        # second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
+        #
+        # # Step 5: Navigate to the second construction zone
+        # second_construct_subgraph = get_construct_subgraph(
+        #     self.zones["second_build_zone"], back_offset=15
+        # )
+
+        # Step 6: Move to the backstage zone to finish the game (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.boombot_strategy.strategies.basic_strategy:[59:68]
+==robot1.rasp.boombot_strategy.strategies.debug_strategy:[44:53]
+        go_to_backstage = BaseTaskNode(
+            name="[End] Go to backstage",
+            tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
+        )
+
+        # Connect the subgraphs in execution order
+        self._auto_build_transitions(
+            deploy_banner_subgraph,
+            first_pickup_subgraph, (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.teensy.gpio_teensy:[45:52]
+==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[39:46]
+        super().__init__(
+            logger,
+            serial_number,
+            vid,
+            pid,
+            baudrate,
+            enable_crc, (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.teensy.base_teensy:[38:45]
+==robot1.rasp.controllers.actuators.actuators_dummy:[33:40]
+        super().__init__(
+            logger,
+            serial_number,
+            vid,
+            pid,
+            baudrate,
+            enable_crc, (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.sensors.lidar.lidar:[57:64]
+==robot1.rasp.sensors.lidar.lidar_dummy:[35:41]
+        self._logger = logger
+        self.__min_angle = min_angle
+        self.__max_angle = max_angle
+        self.__angle_unit = self.__init_angles_unit(unit_angle)
+        self.__distance_unit = self.__init_distances_unit(unit_distance)
+        self._min_distance = min_distance (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.navigation.__init__:[69:75]
+==common.navigation.navigator.__init__:[9:15]
+    "Navigator",
+    "NavigatorSignalsEnum",
+    "NavigatorState",
+    "NavigatorTask",
+    "NavigatorTaskParams",
+    "NavigatorTaskState", (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.arena_zones.border_zone:[38:44]
+==common.arena.base_arena.arena_zones.forbidden_zone:[40:46]
+            buffer_size=buffer_size,
+            polygon=polygon,
+            buffered_polygon=buffered_polygon,
+            update_callback=update_callback,
+            zone_color="#2b2b2b",
+        ) (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.__init__:[29:35]
+==common.arena.base_arena.__init__:[25:31]
+    "StuffZone",
+    "TeamColor",
+    "YellowReservedZone",
+    "ZoneAccessibility",
+    "ZoneType",
+] (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.boombot_strategy.strategies.basic_strategy:[36:47]
+==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[38:49]
+        super().__init__(ctx)
+
+        # Step 1: Deploy the banner
+        deploy_banner_subgraph = get_banner_deployment_subgraph()
+
+        # Step 2: Navigate to the first pickup zone
+        first_pickup_subgraph = get_pickup_subgraph(self.zones["first_pickup_zone"])
+
+        # Step 3: Navigate to the first construction zone
+        first_construct_subgraph = get_construct_subgraph(
+            self.zones["first_build_zone"], (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp._config_loader:[184:191]
+==robot1.rasp.tests.config_loader:[143:150]
+    TEENSY_VID: int = GENERAL_TEENSY_CONFIG["vid"]
+    TEENSY_PID: int = GENERAL_TEENSY_CONFIG["pid"]
+    TEENSY_BAUDRATE: int = GENERAL_TEENSY_CONFIG["baudrate"]
+    TEENSY_CRC: bool = GENERAL_TEENSY_CONFIG["crc"]
+    TEENSY_DUMMY: bool = GENERAL_TEENSY_CONFIG["dummy"]
+
+    # Specific config (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone:[55:60]
+==common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone:[78:83]
+        super().__init__(
+            logger=logger,
+            zone_type=zone_type,
+            accessibility=accessibility,
+            buffer_size=buffer_size, (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone:[47:52]
+==common.arena.base_arena.arena_zones.forbidden_zone:[40:45]
+            buffer_size=buffer_size,
+            polygon=polygon,
+            buffered_polygon=buffered_polygon,
+            update_callback=update_callback,
+            zone_color="#2b2b2b", (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone:[58:63]
+==common.arena.base_arena.arena_zones.forbidden_zone:[39:44]
+            accessibility=accessibility,
+            buffer_size=buffer_size,
+            polygon=polygon,
+            buffered_polygon=buffered_polygon,
+            update_callback=update_callback, (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.arena_zones.border_zone:[38:43]
+==common.arena.base_arena.arena_zones.stuff_zone:[45:50]
+            buffer_size=buffer_size,
+            polygon=polygon,
+            buffered_polygon=buffered_polygon,
+            update_callback=update_callback,
+            zone_color="#0FEE9C", (duplicate-code)
+
+------------------------------------------------------------------
+Your code has been rated at 7.95/10 (previous run: 7.95/10, +0.01)
+

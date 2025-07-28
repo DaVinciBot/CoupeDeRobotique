@@ -7,18 +7,9 @@
 from typing import cast
 
 from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
-from navigation.avoidance.back_avoidance import (
-    BackAvoidance,
-    BackAvoidanceParams,
-)
-from navigation.avoidance.base_avoidance import (
-    BaseAvoidance,
-    BaseAvoidanceParams,
-)
-from navigation.avoidance.no_avoidance import (
-    NoAvoidance,
-    NoAvoidanceParams,
-)
+from navigation.avoidance.back_avoidance import BackAvoidance, BackAvoidanceParams
+from navigation.avoidance.base_avoidance import BaseAvoidance, BaseAvoidanceParams
+from navigation.avoidance.no_avoidance import NoAvoidance, NoAvoidanceParams
 from navigation.avoidance.stop_and_wait_avoidance import (
     StopAndWaitAvoidance,
     StopAndWaitAvoidanceParams,

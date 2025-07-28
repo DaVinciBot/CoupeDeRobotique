@@ -67,9 +67,8 @@ class Actuators(
     def __str__(self) -> str:
         return self.__class__.__name__
 
-    ####################################
-    # Message Receiving Handlers       #
-    ####################################
+    # ====== Message Receiving Handlers ======
+
     def rcv_print(self, msg: bytes) -> None:
         """Handles PRINT messages from the Teensy.
 

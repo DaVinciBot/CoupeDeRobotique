@@ -4,6 +4,7 @@
 # Methods include creating border zones, adding buffers to zones, handling zone accessibility, visualizing the arena,
 # and computing enemy or robot positions based on various inputs.
 
+
 from abc import ABC, abstractmethod
 from typing import cast, override
 
@@ -11,12 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from loggerplusplus import Logger, time_tracker
 
-from arena.base_arena.arena_zones import (
-    AllyZone,
-    BaseArenaZone,
-    BorderZone,
-    EnemyZone,
-)
+from arena.base_arena.arena_zones import AllyZone, BaseArenaZone, BorderZone, EnemyZone
 from arena.base_arena.grid_manager import GridManager
 from arena.base_arena.team_color import TeamColor
 from geometry import (

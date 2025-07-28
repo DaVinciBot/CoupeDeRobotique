@@ -8,16 +8,11 @@ from loggerplusplus import Logger
 
 from boombot_strategy import ShowGameContext
 from boombot_strategy.strategies.base_strategy import BaseStrategy
-from boombot_strategy.sub_graphs import (
-    get_banner_deployment_subgraph,
-)
+from boombot_strategy.sub_graphs import get_banner_deployment_subgraph
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
-from strategy.core import (
-    BaseTaskNode,
-    GraphRunner,
-)
+from strategy.core import BaseTaskNode, GraphRunner
 
 
 class OnlyBannerStrategy(BaseStrategy):

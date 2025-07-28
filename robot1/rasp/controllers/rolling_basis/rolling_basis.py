@@ -77,9 +77,8 @@ class RollingBasis(BaseComTeensy):
         # self.initialize_pids()
         time.sleep(0.01)  # Avoid overload
 
-    ####################################
-    # Message Receiving Handlers       #
-    ####################################
+    # ====== Message Receiving Handlers ======
+
     def rcv_print(self, msg: bytes) -> None:
         """Handles PRINT messages from the Teensy.
 
@@ -123,9 +122,8 @@ class RollingBasis(BaseComTeensy):
         """
         self.logger.warning(f"Teensy Motors does not know the message {msg.hex()}")
 
-    ####################################
-    # Message Sending Methods          #
-    ####################################
+    # ====== Message Sending Methods ======
+
     # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_target_position(
         self,
@@ -180,9 +178,8 @@ class RollingBasis(BaseComTeensy):
         msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
         self.send_bytes(msg)
 
-    ####################################
-    # PID Configuration Methods        #
-    ####################################
+    # ====== PID Configuration Methods ======
+
     @overload
     def set_linear_position_pid(self, *args: float) -> None: ...
     @overload
