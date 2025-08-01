@@ -11,9 +11,7 @@ from boombot_strategy.tasks.navigation_tasks.maneuver import (
     RelativeForward,
 )
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
-from boombot_strategy.tasks.navigation_tasks.odometrie import (
-    SetOdometrie,
-)
+from boombot_strategy.tasks.navigation_tasks.odometrie import SetOdometrie
 
 __all__ = [
     "GoCentroidOfZone",

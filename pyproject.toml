@@ -3,8 +3,7 @@ build-backend = "setuptools.build_meta"
 requires = ["setuptools", "wheel"]
 
 [tool.isort]
-force_grid_wrap = 0
-include_trailing_comma = true
+profile = "black"
 known_first_party = [
     "GPIO",
     "a_config_loader",
@@ -34,15 +33,11 @@ known_first_party = [
     "utils",
     "video",
 ]
-line_length = 88
-multi_line_output = 3
-profile = "black"
 skip_glob = [
     "**/common/navigation/avoidance/__init__.py",
     "**/common/navigation/path_planner/__init__.py",
     "**/robot1/rasp/controllers/actuators/__init__.py",
 ]
-use_parentheses = true
 
 [tool.mypy]
 check_untyped_defs = true
@@ -78,6 +73,8 @@ disable = [
     "W0613", # unused-argument -> Best management with ruff
     "W1113", # keyword-arg-before-vararg -> Best management with ruff
 ]
+msg-template = "{line}:{column}: {msg_id}: {msg} ({symbol})"
+output-format = "text"
 
 [tool.ruff]
 exclude = ["*.ipynb"]

@@ -11,9 +11,7 @@ from strategy.core import (
     GraphRunner,
     SubGraphBuilder,
 )
-from strategy.tools import (
-    visualize_task_graph,
-)
+from strategy.tools import visualize_task_graph
 
 
 class BaseStrategy(ABC):

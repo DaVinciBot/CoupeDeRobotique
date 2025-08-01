@@ -8,9 +8,7 @@ from strategy.core.tasks import BaseTask, TaskStatus
 
 if TYPE_CHECKING:
     from strategy.core.base_game_context import BaseGameContext
-    from strategy.core.task_nodes.scoring_functions import (
-        BaseScoringFunction,
-    )
+    from strategy.core.task_nodes.scoring_functions import BaseScoringFunction
 
 
 class TimeoutTaskNode(BaseTaskNode):

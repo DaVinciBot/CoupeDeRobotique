@@ -10,11 +10,8 @@ from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
 from arena import ShowArena, TeamColor
-from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
-from controllers.rolling_basis import (
-    RollingBasis,
-    RollingBasisDummy,
-)
+from controllers.actuators import ActuatorsShow
+from controllers.rolling_basis import RollingBasis
 from geometry import OrientedPoint
 from sensors import Inputs, Lidar, LidarDummy
 

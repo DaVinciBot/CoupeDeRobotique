@@ -5,12 +5,7 @@ from pathfinding.core.grid import Grid
 from shapely import distance
 
 from arena.base_arena.arena import Arena
-from geometry import (
-    OrientedPoint,
-    Point,
-    Polygon,
-    create_straight_rectangle,
-)
+from geometry import OrientedPoint, Point, Polygon, create_straight_rectangle
 
 
 class Plants_zone:

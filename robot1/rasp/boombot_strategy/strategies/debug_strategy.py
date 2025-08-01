@@ -15,10 +15,7 @@ from boombot_strategy.sub_graphs import (
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
-from strategy.core import (
-    BaseTaskNode,
-    GraphRunner,
-)
+from strategy.core import BaseTaskNode, GraphRunner
 
 
 class DebugStrategy(BaseStrategy):

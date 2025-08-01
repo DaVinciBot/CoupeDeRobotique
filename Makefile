@@ -16,6 +16,10 @@ lint:
 	-ruff check . --fix > ruff-baseline.txt
 	@echo "▶ Linting avec pydoclint..."
 	pydoclint .
+	@echo "▶ Linting avec pylint..."
+	-pylint --output=pylint-baseline.txt .
+	@echo "▶ Linting avec pyright..."
+	-pyright --outputjson > pyright-baseline.json
 
 typecheck:
 	@echo "▶ Analyse statique avec mypy..."

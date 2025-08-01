@@ -6,10 +6,7 @@ import matplotlib.pyplot as plt
 from loggerplusplus import Logger, LogLevels, log
 
 from a_config_loader import CONFIG
-from controllers.rolling_basis.pids import (
-    PID,
-    PidID,
-)
+from controllers.rolling_basis.pids import PID, PidID
 from geometry import OrientedPoint
 from teensy import BaseComTeensy
 from usb_com.python import Messages
@@ -76,9 +73,8 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         self._initialize_pids()
 
-    ####################################
-    # Message Receiving Handlers       #
-    ####################################
+    # ====== Message Receiving Handlers ======
+
     def rcv_print(self, msg: bytes) -> None:
         """Handles PRINT messages from the Teensy.
 
@@ -121,9 +117,8 @@ class AsservissementRollingBasis(BaseComTeensy):
         """
         self.logger.warning(f"Teensy Motors does not know the message {msg.hex()}")
 
-    ####################################
-    # Message Sending Methods          #
-    ####################################
+    # ====== Message Sending Methods  ======
+
     def set_target_position(
         self,
         target_position: OrientedPoint,
@@ -146,9 +141,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         )
         self.send_bytes(msg)
 
-        ####################################
-        # Plotting Method                  #
-        ####################################
+        # ====== Plotting Method ======
 
     def plot_logs(self) -> None:
         """Plot target vs actual odometry for X, Y, and Theta using stored logs.
@@ -188,7 +181,9 @@ class AsservissementRollingBasis(BaseComTeensy):
                 target_th,
                 actual_th,
             )
-        ), f"Inconsistent log lengths: {[len(lst) for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)]}"
+        ), (
+            f"Inconsistent log lengths: {[len(lst) for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)]}"
+        )
 
         # Plot
         _, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
@@ -212,9 +207,8 @@ class AsservissementRollingBasis(BaseComTeensy):
         plt.tight_layout()
         plt.show()
 
-    ####################################
-    # Logging Methods                  #
-    ####################################
+    # ====== Logging Methods ======
+
     def _log_entry(self) -> None:
         """Internal: record timestamp, last target, and latest odometry."""
         entry = {
@@ -260,9 +254,8 @@ class AsservissementRollingBasis(BaseComTeensy):
         )
         self.send_bytes(msg)
 
-    ####################################
-    # PID Configuration Methods        #
-    ####################################
+    # ====== PID Configuration Methods ======
+
     @log(
         param_logger="RollingBasis",
         log_level=LogLevels.INFO,
@@ -391,9 +384,8 @@ class AsservissementRollingBasis(BaseComTeensy):
         except Exception as e:
             self.logger.error(f"Failed to initialize PIDs: {e}")
 
-    ####################################
-    # Equality Comparison              #
-    ####################################
+    # ====== Equality Comparison ======
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, AsservissementRollingBasis):
             return NotImplemented

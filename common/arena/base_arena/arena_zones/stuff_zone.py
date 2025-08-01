@@ -10,11 +10,7 @@ from loggerplusplus import Logger
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 from arena.base_arena.team_color import TeamColor
-from geometry import (
-    OrientedPoint,
-    Point,
-    Polygon,
-)
+from geometry import OrientedPoint, Point, Polygon
 
 if TYPE_CHECKING:
     from arena.base_arena.grid_manager import GridManager

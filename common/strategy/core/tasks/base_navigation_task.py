@@ -12,9 +12,7 @@ from navigation import (
     NavigatorTaskParams,
     SpeedProfiler,
 )
-from navigation.avoidance.acs_detection_profiles import (
-    BaseAcsDetectionProfileParams,
-)
+from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
 from strategy.core.base_game_context import BaseGameContext
 from strategy.core.tasks.base_task import BaseTask
 

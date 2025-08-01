@@ -1,7 +1,5 @@
 from boombot_strategy.show_game_context import ShowGameContext
-from navigation import (
-    TrajectoryPlanCommand,
-)
+from navigation import TrajectoryPlanCommand
 from strategy.core import BaseNavigationTask
 
 

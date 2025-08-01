@@ -10,12 +10,7 @@ from arena.base_arena.arena_zones import (
     StuffZone,
     YellowReservedZone,
 )
-from geometry import (
-    OrientedPoint,
-    Point,
-    Polygon,
-    create_straight_rectangle,
-)
+from geometry import OrientedPoint, Point, Polygon, create_straight_rectangle
 
 
 class ShowArena(BaseArena):
