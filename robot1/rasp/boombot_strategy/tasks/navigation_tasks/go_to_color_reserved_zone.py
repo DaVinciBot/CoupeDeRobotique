@@ -1,4 +1,4 @@
-from _config_loader import CONFIG
+from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from navigation import (
     BasicPathPlannerParams,

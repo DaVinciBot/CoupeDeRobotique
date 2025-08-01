@@ -5,7 +5,7 @@ from typing import Any, overload
 import matplotlib.pyplot as plt
 from loggerplusplus import Logger, LogLevels, log
 
-from _config_loader import CONFIG
+from a_config_loader import CONFIG
 from controllers.rolling_basis.pids import (
     PID,
     PidID,

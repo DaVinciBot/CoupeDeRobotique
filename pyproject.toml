@@ -7,7 +7,7 @@ force_grid_wrap = 0
 include_trailing_comma = true
 known_first_party = [
     "GPIO",
-    "_config_loader",
+    "a_config_loader",
     "arena",
     "avoidance",
     "boombot_strategy",
@@ -75,6 +75,7 @@ disable = [
     "R0902", # too-many-instance-attributes
     "R0903", # too-few-public-methods
     "W0212", # protected-access -> Best management with ruff
+    "W0613", # unused-argument -> Best management with ruff
     "W1113", # keyword-arg-before-vararg -> Best management with ruff
 ]
 
@@ -96,7 +97,7 @@ quote-style = "double"
 [tool.ruff.lint.isort]
 known-first-party = [
     "GPIO",
-    "_config_loader",
+    "a_config_loader",
     "arena",
     "avoidance",
     "boombot_strategy",
@@ -128,7 +129,7 @@ known-first-party = [
 select = ["ALL"]
 ignore = [
     "CPY001",  # missing-copyright-notice
-    "D103",    # missing-module-docstring
+    "D103",    # missing-module-docstring -> temporaire
     "E501",    # line-too-long -> temporaire le temps de faire le reste
     "ERA001",  # commented-out-code -> temporaire
     "FBT001",  # boolean-type-hint-positional-argument -> temporaire

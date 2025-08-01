@@ -4,7 +4,7 @@ from typing import overload
 
 from loggerplusplus import Logger, LogLevels, log
 
-from _config_loader import CONFIG
+from a_config_loader import CONFIG
 from controllers.rolling_basis.pids import PID, PidID
 from geometry import OrientedPoint
 from teensy import BaseComTeensy

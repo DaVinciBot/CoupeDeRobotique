@@ -13,6 +13,7 @@ class AngularRestrictProjectionAcsDetectionProfileParams(BaseAcsDetectionProfile
         Args:
             acs_distance (float): The distance in centimeters for the ACS detection.
             angle_view (float): The angle view in radians for the ACS detection.
+
         """
         self.angle_view: float = angle_view
         self.half_angle_view: float = angle_view / 2

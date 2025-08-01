@@ -21,9 +21,7 @@ def load_json_file(file_path: pathlib.Path) -> dict[str, Any]:
         dict[str, Any]: The content of the JSON file as a dictionary.
 
     """
-    with open(file_path, encoding="utf-8") as config:
-        file_json: dict[str, Any] = json.load(config)
-    return file_json
+    return json.load(file_path.open(encoding="utf-8"))
 
 
 class CONFIG:
@@ -165,7 +163,7 @@ class CONFIG:
         str(COMMON_DIR),
     )  # Add common directory to the path (to be able to import common modules)
     CONFIG_STORE: dict[str, Any] = load_json_file(ROOT_DIR / "config.json")
-    from navigation import (  # pylint: disable=C0415
+    from navigation import (  # pylint: disable=C0415 # noqa: PLC0415
         BaseAcsDetectionProfileParams,
         BasicSpeedProfile,
         LinearRampedSpeedProfile,

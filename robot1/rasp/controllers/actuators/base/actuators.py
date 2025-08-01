@@ -3,7 +3,7 @@ import time
 
 from loggerplusplus import Logger, log
 
-from _config_loader import CONFIG
+from a_config_loader import CONFIG
 from teensy import ActuatorType, GPIOComTeensy
 from usb_com.python import Messages
 

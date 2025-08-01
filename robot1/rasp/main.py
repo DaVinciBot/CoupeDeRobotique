@@ -4,12 +4,12 @@ from loggerplusplus import Logger, LogLevels
 from taskbrain import DictProxyAccessor
 from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 
-from _config_loader import CONFIG
+from a_config_loader import CONFIG
 from arena import AllyZone, ShowArena
 from brains import MainBrain
 from geometry import OrientedPoint
 from navigation import NavigatorTaskParams
-from sensors import Inputs, Lidar
+from sensors import Inputs, Lidar, LidarDummy
 
 # ====== Main ======
 if __name__ == "__main__":

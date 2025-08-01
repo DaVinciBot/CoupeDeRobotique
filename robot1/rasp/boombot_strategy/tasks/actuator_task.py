@@ -6,7 +6,7 @@
 import time
 from typing import override
 
-from _config_loader import CONFIG
+from a_config_loader import CONFIG
 from boombot_strategy.show_game_context import ShowGameContext
 from strategy.core import BaseTask
 

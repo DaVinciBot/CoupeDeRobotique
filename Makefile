@@ -1,4 +1,4 @@
-.PHONY: format lint typecheck docs check all
+.PHONY: format lint typecheck check docs auto all
 
 SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
@@ -26,5 +26,9 @@ check: lint format typecheck
 docs:
 	@echo "▶ Generation de la documentation..."
 	$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+auto:
+	make all
+	make auto
 
 all: check docs
