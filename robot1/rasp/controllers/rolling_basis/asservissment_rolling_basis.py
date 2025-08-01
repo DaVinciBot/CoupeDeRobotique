@@ -181,9 +181,7 @@ class AsservissementRollingBasis(BaseComTeensy):
                 target_th,
                 actual_th,
             )
-        ), (
-            f"Inconsistent log lengths: {[len(lst) for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)]}"
-        )
+        ), f"Inconsistent log lengths: {[len(lst) for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)]}"
 
         # Plot
         _, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
