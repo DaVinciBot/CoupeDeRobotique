@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1753629305708",
+    "time": "1754094292656",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\GPIO\\dummy_gpio.py",
@@ -1203,22 +1203,6 @@
             "rule": "reportArgumentType"
         },
         {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\strategy\\core\\graph_runner.py",
-            "severity": "error",
-            "message": "Argument of type \"BaseTaskNode | None\" cannot be assigned to parameter \"from_node\" of type \"BaseTaskNode\" in function \"can_transit\"\n  Type \"BaseTaskNode | None\" is not assignable to type \"BaseTaskNode\"\n    \"None\" is not assignable to \"BaseTaskNode\"",
-            "range": {
-                "start": {
-                    "line": 77,
-                    "character": 43
-                },
-                "end": {
-                    "line": 77,
-                    "character": 52
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
             "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\base_task_node.py",
             "severity": "error",
             "message": "Argument of type \"BaseTaskNode | None\" cannot be assigned to parameter \"prev_node\" of type \"BaseTaskNode\" in function \"compute\"\n  Type \"BaseTaskNode | None\" is not assignable to type \"BaseTaskNode\"\n    \"None\" is not assignable to \"BaseTaskNode\"",
@@ -1411,16 +1395,16 @@
             "rule": "reportMissingImports"
         },
         {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\robot1\\rasp\\_config_loader.py",
+            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\robot1\\rasp\\a_config_loader.py",
             "severity": "error",
             "message": "Import \"navigation\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 162,
+                    "line": 160,
                     "character": 9
                 },
                 "end": {
-                    "line": 162,
+                    "line": 160,
                     "character": 19
                 }
             },
@@ -2437,58 +2421,26 @@
         {
             "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
             "severity": "error",
-            "message": "Type \"str\" is not assignable to declared type \"Path\"\n  \"str\" is not assignable to \"Path\"",
+            "message": "Import \"navigation\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 123,
-                    "character": 31
+                    "line": 165,
+                    "character": 9
                 },
                 "end": {
-                    "line": 123,
-                    "character": 63
+                    "line": 165,
+                    "character": 19
                 }
             },
-            "rule": "reportAssignmentType"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
-            "severity": "error",
-            "message": "Argument of type \"Path\" cannot be assigned to parameter \"object\" of type \"str\" in function \"append\"\n  \"Path\" is not assignable to \"str\"",
-            "range": {
-                "start": {
-                    "line": 125,
-                    "character": 8
-                },
-                "end": {
-                    "line": 125,
-                    "character": 18
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
-            "severity": "error",
-            "message": "Argument of type \"str\" cannot be assigned to parameter \"file_path\" of type \"Path\" in function \"load_json_file\"\n  \"str\" is not assignable to \"Path\"",
-            "range": {
-                "start": {
-                    "line": 127,
-                    "character": 40
-                },
-                "end": {
-                    "line": 127,
-                    "character": 77
-                }
-            },
-            "rule": "reportArgumentType"
+            "rule": "reportMissingImports"
         }
     ],
     "summary": {
         "filesAnalyzed": 220,
-        "errorCount": 150,
+        "errorCount": 147,
         "warningCount": 5,
         "informationCount": 0,
-        "timeInSec": 2.18
+        "timeInSec": 3.465
     }
 }
 

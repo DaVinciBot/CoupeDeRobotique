@@ -70,6 +70,7 @@ disable = [
     "R0902", # too-many-instance-attributes
     "R0903", # too-few-public-methods
     "W0212", # protected-access -> Best management with ruff
+    "W0511", # fixme
     "W0613", # unused-argument -> Best management with ruff
     "W1113", # keyword-arg-before-vararg -> Best management with ruff
 ]

@@ -65,13 +65,13 @@ class BaseArena(ABC):
         self.width: int = width
         self.height: int = height
 
-        if border_buffer % chunk_size != 0:
+        if border_buffer % chunk_size:
             self.logger.warning(
                 "The border buffer is not a multiple of the chunk size -> "
                 "the not walkable area will not be aligned with the grid",
             )
 
-        if obstacle_buffer % chunk_size != 0:
+        if obstacle_buffer % chunk_size:
             self.logger.warning(
                 "The obstacle buffer is not a multiple of the chunk size -> "
                 "the not walkable area will not be aligned with the grid",

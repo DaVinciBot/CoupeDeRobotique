@@ -1,5 +1,4 @@
 #include "pid.h"
-#include <algorithm>
 
 PID::PID(float kp, float ki, float kd, float dtSeconds)
     : _kp(kp),

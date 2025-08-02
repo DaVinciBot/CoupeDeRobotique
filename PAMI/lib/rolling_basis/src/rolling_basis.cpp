@@ -28,8 +28,7 @@ RollingBasis::RollingBasis(Motor* leftMotor,
     _leftMotor->setAcceleration(200.0f * 3);
     _rightMotor->setAcceleration(200.0f);
 }
-// TODO: refactor this constructor pour pouvoir paramétrer la vitesse angulaire
-// et linéaire
+// TODO: refactor this constructor pour pouvoir paramétrer la vitesse et l'accélération angulaire et linéaire dans le config BIEN PRECISER L'UNITE
 
 void RollingBasis::setCommand(const Point& target) {
     float dx = target.x - _currentPose.x;
@@ -77,7 +76,8 @@ void RollingBasis::update() {
             _phase = Phase::Forwarding;
             Serial.print("Rotation done, switching to Forwarding phase. ");
         }
-    } else if (_phase == Phase::Forwarding) {
+    }
+    if (_phase == Phase::Forwarding) {
         if (elapsed < _forwardDuration) {
             _sendWheelSpeeds(_linearSpeed, 0.0f);
         } else {
@@ -107,7 +107,7 @@ void RollingBasis::update() {
     // // Serial.print(" bear=");
     // // Serial.println(bearErr);
 
-    // if (distErr < POSITION_TOLERANCE_MM && std::fabs(bearErr) <
+    // if (distErr < POSITION_TOLERANCE_MM && _wrapToPi(bearErr) <
     // ANGLE_TOLERANCE_RAD) {
     //     stop();
     //     return;
@@ -202,9 +202,9 @@ void RollingBasis::update() {
 //     // Serial.print(cmdAng);
 //     // Serial.println(" rad/s");
 
-//     float halfBase = _wheelBaseMm * 0.5f;
-//     float leftSpeedMmPerSec = cmdLin - cmdAng * halfBase;
-//     float rightSpeedMmPerSec = cmdLin + cmdAng * halfBase;
+//     float halfBaseMm = _wheelBaseMm * 0.5f;
+//     float leftSpeedMmPerSec = cmdLin - cmdAng * halfBaseMm;
+//     float rightSpeedMmPerSec = cmdLin + cmdAng * halfBaseMm;
 
 //     float circumference = M_PI * _wheelDiameterMm;
 //     float leftSpeedStepsPerSec = (leftSpeedMmPerSec / circumference) *
@@ -229,9 +229,9 @@ float RollingBasis::_wrapToPi(float ang) const {
 }
 
 void RollingBasis::_sendWheelSpeeds(float v, float w) {
-    float halfBase = _wheelBaseMm * 0.5f;
-    float leftMm = v - w * halfBase;
-    float rightMm = v + w * halfBase;
+    float halfBaseMm = _wheelBaseMm * 0.5f;
+    float leftMm = v - w * halfBaseMm;
+    float rightMm = v + w * halfBaseMm;
     float circumference = M_PI * _wheelDiameterMm;
     float leftSteps = leftMm / circumference * _leftMotor->getStepsPerRev();
     float rightSteps = rightMm / circumference * _rightMotor->getStepsPerRev();

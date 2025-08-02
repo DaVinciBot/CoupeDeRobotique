@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr" class="dark">
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>CustomOTA</title>
-    <script type="module" crossorigin="">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>CustomOTA</title>
+        <script type="module" crossorigin>
         (function () { const f = document.createElement("link").relList; if (f && f.supports && f.supports("modulepreload")) return; for (const a of document.querySelectorAll('link[rel="modulepreload"]')) d(a); new MutationObserver(a => { for (const c of a) if (c.type === "childList") for (const i of c.addedNodes) i.tagName === "LINK" && i.rel === "modulepreload" && d(i) }).observe(document, { childList: !0, subtree: !0 }); function s(a) { const c = {}; return a.integrity && (c.integrity = a.integrity), a.referrerPolicy && (c.referrerPolicy = a.referrerPolicy), a.crossOrigin === "use-credentials" ? c.credentials = "include" : a.crossOrigin === "anonymous" ? c.credentials = "omit" : c.credentials = "same-origin", c } function d(a) { if (a.ep) return; a.ep = !0; const c = s(a); fetch(a.href, c) } })(); localStorage.theme === "dark" || !("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches ? (document.documentElement.classList.add("dark"), document.getElementById("darkModeCheckbox").checked = !0) : (document.documentElement.classList.remove("dark"), document.getElementById("darkModeCheckbox").checked = !1); document.getElementById("darkModeCheckbox").addEventListener("click", function () { document.getElementById("darkModeCheckbox").checked ? (document.documentElement.classList.add("dark"), localStorage.theme = "dark") : (document.documentElement.classList.remove("dark"), localStorage.theme = "light") }); function A(l) { return l && l.__esModule && Object.prototype.hasOwnProperty.call(l, "default") ? l.default : l } var L = { exports: {} }, x = { exports: {} }; (function () { var l = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", f = { rotl: function (s, d) { return s << d | s >>> 32 - d }, rotr: function (s, d) { return s << 32 - d | s >>> d }, endian: function (s) { if (s.constructor == Number) return f.rotl(s, 8) & 16711935 | f.rotl(s, 24) & 4278255360; for (var d = 0; d < s.length; d++)s[d] = f.endian(s[d]); return s }, randomBytes: function (s) { for (var d = []; s > 0; s--)d.push(Math.floor(Math.random() * 256)); return d }, bytesToWords: function (s) { for (var d = [], a = 0, c = 0; a < s.length; a++, c += 8)d[c >>> 5] |= s[a] << 24 - c % 32; return d }, wordsToBytes: function (s) { for (var d = [], a = 0; a < s.length * 32; a += 8)d.push(s[a >>> 5] >>> 24 - a % 32 & 255); return d }, bytesToHex: function (s) { for (var d = [], a = 0; a < s.length; a++)d.push((s[a] >>> 4).toString(16)), d.push((s[a] & 15).toString(16)); return d.join("") }, hexToBytes: function (s) { for (var d = [], a = 0; a < s.length; a += 2)d.push(parseInt(s.substr(a, 2), 16)); return d }, bytesToBase64: function (s) { for (var d = [], a = 0; a < s.length; a += 3)for (var c = s[a] << 16 | s[a + 1] << 8 | s[a + 2], i = 0; i < 4; i++)a * 8 + i * 6 <= s.length * 8 ? d.push(l.charAt(c >>> 6 * (3 - i) & 63)) : d.push("="); return d.join("") }, base64ToBytes: function (s) { s = s.replace(/[^A-Z0-9+\/]/ig, ""); for (var d = [], a = 0, c = 0; a < s.length; c = ++a % 4)c != 0 && d.push((l.indexOf(s.charAt(a - 1)) & Math.pow(2, -2 * c + 8) - 1) << c * 2 | l.indexOf(s.charAt(a)) >>> 6 - c * 2); return d } }; x.exports = f })(); var H = x.exports, F = { utf8: { stringToBytes: function (l) { return F.bin.stringToBytes(unescape(encodeURIComponent(l))) }, bytesToString: function (l) { return decodeURIComponent(escape(F.bin.bytesToString(l))) } }, bin: { stringToBytes: function (l) { for (var f = [], s = 0; s < l.length; s++)f.push(l.charCodeAt(s) & 255); return f }, bytesToString: function (l) { for (var f = [], s = 0; s < l.length; s++)f.push(String.fromCharCode(l[s])); return f.join("") } } }, I = F;/*!
  * Determine if an object is a Buffer
  *
@@ -14,7 +14,7 @@
  */var O = function (l) { return l != null && (M(l) || P(l) || !!l._isBuffer) }; function M(l) { return !!l.constructor && typeof l.constructor.isBuffer == "function" && l.constructor.isBuffer(l) } function P(l) { return typeof l.readFloatLE == "function" && typeof l.slice == "function" && M(l.slice(0, 0)) } (function () { var l = H, f = I.utf8, s = O, d = I.bin, a = function (c, i) { c.constructor == String ? i && i.encoding === "binary" ? c = d.stringToBytes(c) : c = f.stringToBytes(c) : s(c) ? c = Array.prototype.slice.call(c, 0) : !Array.isArray(c) && c.constructor !== Uint8Array && (c = c.toString()); for (var r = l.bytesToWords(c), p = c.length * 8, n = 1732584193, e = -271733879, o = -1732584194, t = 271733878, u = 0; u < r.length; u++)r[u] = (r[u] << 8 | r[u] >>> 24) & 16711935 | (r[u] << 24 | r[u] >>> 8) & 4278255360; r[p >>> 5] |= 128 << p % 32, r[(p + 64 >>> 9 << 4) + 14] = p; for (var m = a._ff, g = a._gg, h = a._hh, y = a._ii, u = 0; u < r.length; u += 16) { var C = n, S = e, k = o, _ = t; n = m(n, e, o, t, r[u + 0], 7, -680876936), t = m(t, n, e, o, r[u + 1], 12, -389564586), o = m(o, t, n, e, r[u + 2], 17, 606105819), e = m(e, o, t, n, r[u + 3], 22, -1044525330), n = m(n, e, o, t, r[u + 4], 7, -176418897), t = m(t, n, e, o, r[u + 5], 12, 1200080426), o = m(o, t, n, e, r[u + 6], 17, -1473231341), e = m(e, o, t, n, r[u + 7], 22, -45705983), n = m(n, e, o, t, r[u + 8], 7, 1770035416), t = m(t, n, e, o, r[u + 9], 12, -1958414417), o = m(o, t, n, e, r[u + 10], 17, -42063), e = m(e, o, t, n, r[u + 11], 22, -1990404162), n = m(n, e, o, t, r[u + 12], 7, 1804603682), t = m(t, n, e, o, r[u + 13], 12, -40341101), o = m(o, t, n, e, r[u + 14], 17, -1502002290), e = m(e, o, t, n, r[u + 15], 22, 1236535329), n = g(n, e, o, t, r[u + 1], 5, -165796510), t = g(t, n, e, o, r[u + 6], 9, -1069501632), o = g(o, t, n, e, r[u + 11], 14, 643717713), e = g(e, o, t, n, r[u + 0], 20, -373897302), n = g(n, e, o, t, r[u + 5], 5, -701558691), t = g(t, n, e, o, r[u + 10], 9, 38016083), o = g(o, t, n, e, r[u + 15], 14, -660478335), e = g(e, o, t, n, r[u + 4], 20, -405537848), n = g(n, e, o, t, r[u + 9], 5, 568446438), t = g(t, n, e, o, r[u + 14], 9, -1019803690), o = g(o, t, n, e, r[u + 3], 14, -187363961), e = g(e, o, t, n, r[u + 8], 20, 1163531501), n = g(n, e, o, t, r[u + 13], 5, -1444681467), t = g(t, n, e, o, r[u + 2], 9, -51403784), o = g(o, t, n, e, r[u + 7], 14, 1735328473), e = g(e, o, t, n, r[u + 12], 20, -1926607734), n = h(n, e, o, t, r[u + 5], 4, -378558), t = h(t, n, e, o, r[u + 8], 11, -2022574463), o = h(o, t, n, e, r[u + 11], 16, 1839030562), e = h(e, o, t, n, r[u + 14], 23, -35309556), n = h(n, e, o, t, r[u + 1], 4, -1530992060), t = h(t, n, e, o, r[u + 4], 11, 1272893353), o = h(o, t, n, e, r[u + 7], 16, -155497632), e = h(e, o, t, n, r[u + 10], 23, -1094730640), n = h(n, e, o, t, r[u + 13], 4, 681279174), t = h(t, n, e, o, r[u + 0], 11, -358537222), o = h(o, t, n, e, r[u + 3], 16, -722521979), e = h(e, o, t, n, r[u + 6], 23, 76029189), n = h(n, e, o, t, r[u + 9], 4, -640364487), t = h(t, n, e, o, r[u + 12], 11, -421815835), o = h(o, t, n, e, r[u + 15], 16, 530742520), e = h(e, o, t, n, r[u + 2], 23, -995338651), n = y(n, e, o, t, r[u + 0], 6, -198630844), t = y(t, n, e, o, r[u + 7], 10, 1126891415), o = y(o, t, n, e, r[u + 14], 15, -1416354905), e = y(e, o, t, n, r[u + 5], 21, -57434055), n = y(n, e, o, t, r[u + 12], 6, 1700485571), t = y(t, n, e, o, r[u + 3], 10, -1894986606), o = y(o, t, n, e, r[u + 10], 15, -1051523), e = y(e, o, t, n, r[u + 1], 21, -2054922799), n = y(n, e, o, t, r[u + 8], 6, 1873313359), t = y(t, n, e, o, r[u + 15], 10, -30611744), o = y(o, t, n, e, r[u + 6], 15, -1560198380), e = y(e, o, t, n, r[u + 13], 21, 1309151649), n = y(n, e, o, t, r[u + 4], 6, -145523070), t = y(t, n, e, o, r[u + 11], 10, -1120210379), o = y(o, t, n, e, r[u + 2], 15, 718787259), e = y(e, o, t, n, r[u + 9], 21, -343485551), n = n + C >>> 0, e = e + S >>> 0, o = o + k >>> 0, t = t + _ >>> 0 } return l.endian([n, e, o, t]) }; a._ff = function (c, i, r, p, n, e, o) { var t = c + (i & r | ~i & p) + (n >>> 0) + o; return (t << e | t >>> 32 - e) + i }, a._gg = function (c, i, r, p, n, e, o) { var t = c + (i & p | r & ~p) + (n >>> 0) + o; return (t << e | t >>> 32 - e) + i }, a._hh = function (c, i, r, p, n, e, o) { var t = c + (i ^ r ^ p) + (n >>> 0) + o; return (t << e | t >>> 32 - e) + i }, a._ii = function (c, i, r, p, n, e, o) { var t = c + (r ^ (i | ~p)) + (n >>> 0) + o; return (t << e | t >>> 32 - e) + i }, a._blocksize = 16, a._digestsize = 16, L.exports = function (c, i) { if (c == null) throw new Error("Illegal argument " + c); var r = l.wordsToBytes(a(c, i)); return i && i.asBytes ? r : i && i.asString ? d.bytesToString(r) : l.bytesToHex(r) } })(); var U = L.exports; const R = A(U), v = l => { document.getElementById(l).classList.remove("hidden") }, B = l => { document.getElementById(l).classList.add("hidden") }, w = l => { document.getElementById("progressTitle").innerHTML = l }, E = l => { document.getElementById("errorTitle").innerHTML = l }, T = l => { document.getElementById("errorReason").innerHTML = l }, D = async l => new Promise((f, s) => { let d = "", a = new FileReader; a.onload = function (c) { d = R(c.target.result), f(d) }, a.readAsArrayBuffer(l) }), N = async l => { B("uploadColumn"), B("settingsColumn"), v("progressColumn"); let f = document.getElementById("otaMode").value; try { let s = await D(l); w("Starting OTA Process"); const d = await fetch(`/ota/start?mode=${f}&hash=${s}`); if (!d.ok) throw new Error("Start OTA process failed"); const a = await d.text(); console.log("Start OTA response:", a); const c = new FormData; let i = new XMLHttpRequest; i.open("POST", "/ota/upload"), i.upload.addEventListener("progress", function (r) { let p = Math.round(r.loaded / r.total * 100); document.getElementById("progressBar").style.width = p + "%", document.getElementById("progressValue").innerHTML = p + "%" }, !1), i.upload.onprogress = function (r) { if (r.lengthComputable) { let p = Math.round(r.loaded / r.total * 100); document.getElementById("progressBar").style.width = p + "%", document.getElementById("progressValue").innerHTML = p + "%" } }, i.onreadystatechange = function () { if (i.readyState == 4) if (i.status == 200) document.getElementById("progressBar").style.width = "100%", document.getElementById("progressBar").innerHTML = "100%", B("progressColumn"), v("successColumn"); else if (i.status == 400) { document.getElementById("progressBar").style.width = "100%", document.getElementById("progressBar").innerHTML = "100%", B("progressColumn"), v("errorColumn"), E("Upload failed"); let r = i.responseText; T(r) } else document.getElementById("progressBar").style.width = "100%", document.getElementById("progressBar").innerHTML = "100%", B("progressColumn"), v("errorColumn"), E("Upload failed"), T("Server returned status code " + i.status) }, c.append("file", l, l.name), i.send(c), w("Uploading " + l.name) } catch (s) { B("progressColumn"), v("errorColumn"), E("Upload failed"), T(s.message) } }, V = l => l.length > 1 && !multiple ? (alert("You can only upload one (.bin) file at a time."), !1) : l[0].name.split(".").pop() != "bin" ? (alert("You can only upload (.bin) files."), !1) : !0; var q = document.getElementById("uploadButton"), $ = document.getElementById("fileInput"); q.addEventListener("click", function (l) { l.preventDefault(), $.click() }); function z(l) { if (!V(l)) return !1; N(l[0]) } function G() { window.location.reload() } window.onFileInput = z; window.resetView = G;
 
     </script>
-    <style>
+        <style>
         *,
         :before,
         :after {
@@ -1029,143 +1029,167 @@
             --tw-ring-color: rgb(22 101 52 / var(--tw-ring-opacity))
         }
     </style>
-</head>
+    </head>
 
-<body class="dark:bg-[#18191a] bg-white dark:text-[#e4e6eb] px-6">
-    <div class="flex flex-col items-center mt-12 mb-16">
-        <svg width="596" height="114" viewBox="0 0 596 114" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <mask id="mask0_195_674" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="1" y="0" width="595"
-                height="114">
-                <path d="M596 0H1V114H596V0Z" fill="white" />
-            </mask>
-            <g mask="url(#mask0_195_674)">
-                <g class="dark:fill-white fill-main-blue">
+    <body class="dark:bg-[#18191a] bg-white dark:text-[#e4e6eb] px-6">
+        <div class="flex flex-col items-center mt-12 mb-16">
+            <svg width="596" height="114" viewBox="0 0 596 114" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <mask id="mask0_195_674" style="mask-type:luminance"
+                    maskUnits="userSpaceOnUse" x="1" y="0" width="595"
+                    height="114">
+                    <path d="M596 0H1V114H596V0Z" fill="white" />
+                </mask>
+                <g mask="url(#mask0_195_674)">
+                    <g class="dark:fill-white fill-main-blue">
+                        <path
+                            d="M93.082 66.0211C93.082 67.8035 91.644 69.2483 89.87 69.2483H75.313C73.54 69.2483 72.102 67.8035 72.102 66.0211V51.3929C72.102 49.6105 73.54 48.1657 75.313 48.1657H89.87C91.644 48.1657 93.082 49.6105 93.082 51.3929V66.0211ZM106.184 73.59V43.824C106.184 38.9497 102.252 35 97.403 35H67.781C62.93 35 59 38.9514 59 43.824V73.59C59 78.4643 62.932 82.4141 67.781 82.4141H97.403C102.253 82.4141 106.184 78.4643 106.184 73.59Z"
+                            fill="currentColor" />
+
+                        <path
+                            d="M481.198 55.6238C481.995 53.3015 483.143 51.2734 484.637 49.5449C486.131 47.8151 487.969 46.4585 490.146 45.4737C492.321 44.4903 494.773 44 497.499 44C500.226 44 502.718 44.4903 504.879 45.4737C507.039 46.4585 508.866 47.8138 510.363 49.5449C511.859 51.2734 513.005 53.3015 513.804 55.6238C514.599 57.9461 515 60.4645 515 63.1764C515 65.8896 514.6 68.2882 513.804 70.5792C513.005 72.8688 511.859 74.8628 510.363 76.5586C508.866 78.253 507.039 79.5864 504.879 80.5508C502.718 81.5165 500.258 82 497.499 82C494.74 82 492.323 81.5165 490.146 80.5508C487.969 79.5837 486.131 78.253 484.637 76.5586C483.143 74.8628 481.995 72.8715 481.198 70.5792C480.4 68.2909 480 65.8229 480 63.1764C480 60.5313 480.4 57.9461 481.198 55.6238ZM488.351 67.6303C488.701 69.0714 489.256 70.3667 490.021 71.5203C490.787 72.674 491.781 73.5988 493.013 74.2935C494.242 74.9895 495.738 75.3368 497.499 75.3368C499.261 75.3368 500.758 74.9895 501.988 74.2935C503.217 73.5988 504.212 72.674 504.979 71.5203C505.744 70.3694 506.3 69.0714 506.646 67.6303C506.996 66.1865 507.171 64.7046 507.171 63.1764C507.171 61.6495 506.996 60.0409 506.646 58.5495C506.298 57.0553 505.741 55.7232 504.979 54.5559C504.215 53.3846 503.217 52.4529 501.988 51.7596C500.758 51.065 499.261 50.7149 497.499 50.7149C495.738 50.7149 494.241 51.065 493.013 51.7596C491.783 52.4529 490.787 53.3846 490.021 54.5559C489.256 55.7259 488.701 57.0567 488.351 58.5495C488.001 60.0409 487.828 61.5828 487.828 63.1764C487.828 64.7713 488.004 66.1865 488.351 67.6303Z"
+                            fill="currentColor" />
+                        <path
+                            d="M533.609 51.1563H523.5V45.5H551.5V51.1563H541.391H540.891V51.6563V80.5H534.109V51.6563V51.1563H533.609Z"
+                            fill="currentColor" stroke="currentColor" />
+                        <path
+                            d="M574.671 45L589 81H583.607L579.602 70.161H564.091L559.982 81H555L569.278 45H574.671ZM578.06 66.1272L571.947 49.3362H571.845L565.631 66.1272H578.06Z"
+                            fill="currentColor" stroke="currentColor"
+                            stroke-width="1.75" />
+                    </g>
                     <path
-                        d="M93.082 66.0211C93.082 67.8035 91.644 69.2483 89.87 69.2483H75.313C73.54 69.2483 72.102 67.8035 72.102 66.0211V51.3929C72.102 49.6105 73.54 48.1657 75.313 48.1657H89.87C91.644 48.1657 93.082 49.6105 93.082 51.3929V66.0211ZM106.184 73.59V43.824C106.184 38.9497 102.252 35 97.403 35H67.781C62.93 35 59 38.9514 59 43.824V73.59C59 78.4643 62.932 82.4141 67.781 82.4141H97.403C102.253 82.4141 106.184 78.4643 106.184 73.59Z"
+                        d="M154.643 66.6881C159.336 66.6881 163.141 62.8649 163.141 58.1488C163.141 53.4327 159.336 49.6096 154.643 49.6096H141.06V40.5887H154.643C159.336 40.5887 163.141 36.7655 163.141 32.0494C163.141 27.3333 159.336 23.5102 154.643 23.5102H141.06V22.5891C141.06 10.1142 130.995 0 118.579 0H47.8084C35.3923 0 25.3272 10.1142 25.3272 22.5909V23.5119H11.4978C6.8046 23.5119 3 27.3351 3 32.0512C3 36.7673 6.8046 40.5904 11.4978 40.5904H25.3272V49.6113H11.4978C6.8046 49.6113 3 53.4345 3 58.1506C3 62.8667 6.8046 66.6898 11.4978 66.6898H25.3272V75.7107H11.4978C6.8046 75.7107 3 79.5339 3 84.25C3 88.966 6.8046 92.7892 11.4978 92.7892H25.3272V93.7103C25.3272 106.187 35.3923 116.301 47.8084 116.301H118.579C130.995 116.301 141.06 106.187 141.06 93.7103V92.7892H154.643C159.336 92.7892 163.141 88.966 163.141 84.25C163.141 79.5339 159.336 75.7107 154.643 75.7107H141.06V66.6898H154.643V66.6881ZM123.34 88.8096C123.34 94.1567 119.027 98.4914 113.705 98.4914H52.6835C47.3623 98.4914 43.0487 94.1567 43.0487 88.8096V27.4898C43.0487 22.1426 47.3623 17.808 52.6835 17.808H113.705C119.027 17.808 123.34 22.1426 123.34 27.4898V88.8096Z"
+                        fill="currentColor" />
+                    <path
+                        d="M194.499 44.9017C200.113 44.9017 204.431 46.3138 207.459 49.1378C210.487 51.9619 212 56.2628 212 62.0432C212 65.0684 211.661 67.7507 210.979 70.0847C210.297 72.4228 209.246 74.387 207.814 75.9839C206.386 77.5809 204.568 78.7985 202.356 79.6382C200.145 80.4806 197.527 80.899 194.499 80.899H182V44.899H194.499V44.9017ZM194.907 76.8695C195.45 76.8695 196.132 76.8263 196.948 76.7413C197.765 76.6576 198.632 76.4564 199.549 76.1365C200.469 75.8152 201.376 75.3549 202.279 74.7501C203.18 74.1453 203.989 73.3219 204.702 72.2797C205.416 71.2389 206.004 69.9362 206.463 68.3717C206.921 66.8112 207.149 64.9199 207.149 62.6979C207.149 60.4773 206.938 58.6238 206.513 56.9256C206.088 55.2287 205.391 53.7829 204.421 52.5896C203.451 51.399 202.2 50.4905 200.67 49.8655C199.141 49.2445 197.253 48.934 195.006 48.934H186.848V76.8668H194.91L194.907 76.8695Z"
+                        fill="currentColor" />
+                    <path
+                        d="M237.671 44.899L252 80.899H246.607L242.602 70.06H227.091L222.982 80.899H218L232.278 44.899H237.671ZM241.06 66.0263L234.947 49.2352H234.845L228.631 66.0263H241.06Z"
+                        fill="currentColor" />
+                    <path
+                        d="M266.692 80.899L254 44.899H259.157L269.474 76.1107H269.576L279.993 44.899H285L272.156 80.899H266.694H266.692Z"
                         fill="currentColor" />
 
+                    <path d="M299 44.899V80.899H294V44.899H299Z" fill="currentColor" />
                     <path
-                        d="M481.198 55.6238C481.995 53.3015 483.143 51.2734 484.637 49.5449C486.131 47.8151 487.969 46.4585 490.146 45.4737C492.321 44.4903 494.773 44 497.499 44C500.226 44 502.718 44.4903 504.879 45.4737C507.039 46.4585 508.866 47.8138 510.363 49.5449C511.859 51.2734 513.005 53.3015 513.804 55.6238C514.599 57.9461 515 60.4645 515 63.1764C515 65.8896 514.6 68.2882 513.804 70.5792C513.005 72.8688 511.859 74.8628 510.363 76.5586C508.866 78.253 507.039 79.5864 504.879 80.5508C502.718 81.5165 500.258 82 497.499 82C494.74 82 492.323 81.5165 490.146 80.5508C487.969 79.5837 486.131 78.253 484.637 76.5586C483.143 74.8628 481.995 72.8715 481.198 70.5792C480.4 68.2909 480 65.8229 480 63.1764C480 60.5313 480.4 57.9461 481.198 55.6238ZM488.351 67.6303C488.701 69.0714 489.256 70.3667 490.021 71.5203C490.787 72.674 491.781 73.5988 493.013 74.2935C494.242 74.9895 495.738 75.3368 497.499 75.3368C499.261 75.3368 500.758 74.9895 501.988 74.2935C503.217 73.5988 504.212 72.674 504.979 71.5203C505.744 70.3694 506.3 69.0714 506.646 67.6303C506.996 66.1865 507.171 64.7046 507.171 63.1764C507.171 61.6495 506.996 60.0409 506.646 58.5495C506.298 57.0553 505.741 55.7232 504.979 54.5559C504.215 53.3846 503.217 52.4529 501.988 51.7596C500.758 51.065 499.261 50.7149 497.499 50.7149C495.738 50.7149 494.241 51.065 493.013 51.7596C491.783 52.4529 490.787 53.3846 490.021 54.5559C489.256 55.7259 488.701 57.0567 488.351 58.5495C488.001 60.0409 487.828 61.5828 487.828 63.1764C487.828 64.7713 488.004 66.1865 488.351 67.6303Z"
+                        d="M317.148 44.899L336.312 74.0938H336.414V44.899H341V80.899H335.701L316.69 52.0081H316.589V80.899H312V44.899H317.148Z"
                         fill="currentColor" />
                     <path
-                        d="M533.609 51.1563H523.5V45.5H551.5V51.1563H541.391H540.891V51.6563V80.5H534.109V51.6563V51.1563H533.609Z"
-                        fill="currentColor" stroke="currentColor" />
+                        d="M375.36 49.8991C373.541 48.6119 371.38 47.9649 368.874 47.9649C366.738 47.9649 364.91 48.3722 363.392 49.1854C361.872 49.9999 360.62 51.0937 359.635 52.4681C358.65 53.8424 357.924 55.4116 357.455 57.1728C356.986 58.938 356.756 60.7701 356.756 62.6675C356.756 64.7365 356.989 66.6952 357.455 68.5436C357.924 70.392 358.648 72.0006 359.635 73.375C360.62 74.7494 361.881 75.8431 363.416 76.6577C364.952 77.4695 366.788 77.8795 368.926 77.8795C370.496 77.8795 371.888 77.618 373.107 77.0908C374.325 76.565 375.376 75.8363 376.262 74.9033C377.146 73.9689 377.839 72.8601 378.341 71.5702C378.841 70.2817 379.143 68.8909 379.241 67.3994H384C383.531 71.9788 381.98 75.5394 379.342 78.0824C376.703 80.6255 373.099 81.899 368.525 81.899C365.756 81.899 363.334 81.4155 361.264 80.4498C359.195 79.4827 357.474 78.1519 356.107 76.4561C354.738 74.7616 353.711 72.7593 353.027 70.4547C352.341 68.1486 352 65.6723 352 63.0271C352 60.3819 352.366 57.896 353.102 55.5736C353.835 53.2513 354.913 51.2258 356.332 49.4946C357.75 47.7661 359.518 46.4012 361.639 45.3987C363.758 44.3976 366.187 43.899 368.926 43.899C370.795 43.899 372.564 44.1537 374.233 44.6605C375.901 45.1685 377.389 45.9149 378.69 46.8997C379.99 47.8832 381.078 49.1145 381.944 50.587C382.812 52.0621 383.38 53.7661 383.646 55.699H378.888C378.355 53.1219 377.177 51.1877 375.357 49.8991H375.36Z"
+                        fill="currentColor" />
+                    <path d="M400 44.899V80.899H395V44.899H400Z" fill="currentColor" />
                     <path
-                        d="M574.671 45L589 81H583.607L579.602 70.161H564.091L559.982 81H555L569.278 45H574.671ZM578.06 66.1272L571.947 49.3362H571.845L565.631 66.1272H578.06Z"
-                        fill="currentColor" stroke="currentColor" stroke-width="1.75" />
+                        d="M429.857 44.9017C431.561 44.9017 433.117 45.0543 434.522 45.3553C435.928 45.6591 437.131 46.1531 438.134 46.8403C439.138 47.5314 439.915 48.4467 440.468 49.5887C441.017 50.7321 441.294 52.1441 441.294 53.8234C441.294 55.6391 440.885 57.151 440.063 58.3606C439.242 59.5715 438.033 60.5623 436.428 61.3358C438.635 61.9743 440.28 63.0921 441.37 64.6891C442.455 66.286 443 68.211 443 70.4627C443 72.2784 442.649 73.8483 441.946 75.178C441.244 76.5064 440.298 77.5904 439.111 78.4287C437.925 79.271 436.57 79.8893 435.049 80.2929C433.526 80.6966 431.963 80.899 430.357 80.899H413V44.899H429.855L429.857 44.9017ZM428.854 59.4743C430.259 59.4743 431.41 59.1395 432.314 58.4659C433.217 57.7909 433.669 56.7002 433.669 55.1882C433.669 54.3486 433.52 53.6574 433.219 53.1215C432.919 52.5829 432.518 52.163 432.015 51.862C431.513 51.5596 430.936 51.349 430.284 51.2329C429.632 51.1141 428.955 51.0547 428.252 51.0547H420.878V59.4756H428.854V59.4743ZM429.305 74.7501C430.074 74.7501 430.808 74.6745 431.513 74.522C432.216 74.3708 432.834 74.1197 433.368 73.7673C433.904 73.415 434.331 72.9344 434.648 72.3297C434.964 71.7249 435.124 70.9541 435.124 70.0118C435.124 68.1638 434.605 66.8436 433.571 66.0538C432.534 65.2641 431.163 64.8672 429.458 64.8672H420.881V74.7501H429.31H429.305Z"
+                        fill="currentColor" />
                 </g>
-                <path
-                    d="M154.643 66.6881C159.336 66.6881 163.141 62.8649 163.141 58.1488C163.141 53.4327 159.336 49.6096 154.643 49.6096H141.06V40.5887H154.643C159.336 40.5887 163.141 36.7655 163.141 32.0494C163.141 27.3333 159.336 23.5102 154.643 23.5102H141.06V22.5891C141.06 10.1142 130.995 0 118.579 0H47.8084C35.3923 0 25.3272 10.1142 25.3272 22.5909V23.5119H11.4978C6.8046 23.5119 3 27.3351 3 32.0512C3 36.7673 6.8046 40.5904 11.4978 40.5904H25.3272V49.6113H11.4978C6.8046 49.6113 3 53.4345 3 58.1506C3 62.8667 6.8046 66.6898 11.4978 66.6898H25.3272V75.7107H11.4978C6.8046 75.7107 3 79.5339 3 84.25C3 88.966 6.8046 92.7892 11.4978 92.7892H25.3272V93.7103C25.3272 106.187 35.3923 116.301 47.8084 116.301H118.579C130.995 116.301 141.06 106.187 141.06 93.7103V92.7892H154.643C159.336 92.7892 163.141 88.966 163.141 84.25C163.141 79.5339 159.336 75.7107 154.643 75.7107H141.06V66.6898H154.643V66.6881ZM123.34 88.8096C123.34 94.1567 119.027 98.4914 113.705 98.4914H52.6835C47.3623 98.4914 43.0487 94.1567 43.0487 88.8096V27.4898C43.0487 22.1426 47.3623 17.808 52.6835 17.808H113.705C119.027 17.808 123.34 22.1426 123.34 27.4898V88.8096Z"
-                    fill="currentColor" />
-                <path
-                    d="M194.499 44.9017C200.113 44.9017 204.431 46.3138 207.459 49.1378C210.487 51.9619 212 56.2628 212 62.0432C212 65.0684 211.661 67.7507 210.979 70.0847C210.297 72.4228 209.246 74.387 207.814 75.9839C206.386 77.5809 204.568 78.7985 202.356 79.6382C200.145 80.4806 197.527 80.899 194.499 80.899H182V44.899H194.499V44.9017ZM194.907 76.8695C195.45 76.8695 196.132 76.8263 196.948 76.7413C197.765 76.6576 198.632 76.4564 199.549 76.1365C200.469 75.8152 201.376 75.3549 202.279 74.7501C203.18 74.1453 203.989 73.3219 204.702 72.2797C205.416 71.2389 206.004 69.9362 206.463 68.3717C206.921 66.8112 207.149 64.9199 207.149 62.6979C207.149 60.4773 206.938 58.6238 206.513 56.9256C206.088 55.2287 205.391 53.7829 204.421 52.5896C203.451 51.399 202.2 50.4905 200.67 49.8655C199.141 49.2445 197.253 48.934 195.006 48.934H186.848V76.8668H194.91L194.907 76.8695Z"
-                    fill="currentColor" />
-                <path
-                    d="M237.671 44.899L252 80.899H246.607L242.602 70.06H227.091L222.982 80.899H218L232.278 44.899H237.671ZM241.06 66.0263L234.947 49.2352H234.845L228.631 66.0263H241.06Z"
-                    fill="currentColor" />
-                <path
-                    d="M266.692 80.899L254 44.899H259.157L269.474 76.1107H269.576L279.993 44.899H285L272.156 80.899H266.694H266.692Z"
-                    fill="currentColor" />
-
-                <path d="M299 44.899V80.899H294V44.899H299Z" fill="currentColor" />
-                <path
-                    d="M317.148 44.899L336.312 74.0938H336.414V44.899H341V80.899H335.701L316.69 52.0081H316.589V80.899H312V44.899H317.148Z"
-                    fill="currentColor" />
-                <path
-                    d="M375.36 49.8991C373.541 48.6119 371.38 47.9649 368.874 47.9649C366.738 47.9649 364.91 48.3722 363.392 49.1854C361.872 49.9999 360.62 51.0937 359.635 52.4681C358.65 53.8424 357.924 55.4116 357.455 57.1728C356.986 58.938 356.756 60.7701 356.756 62.6675C356.756 64.7365 356.989 66.6952 357.455 68.5436C357.924 70.392 358.648 72.0006 359.635 73.375C360.62 74.7494 361.881 75.8431 363.416 76.6577C364.952 77.4695 366.788 77.8795 368.926 77.8795C370.496 77.8795 371.888 77.618 373.107 77.0908C374.325 76.565 375.376 75.8363 376.262 74.9033C377.146 73.9689 377.839 72.8601 378.341 71.5702C378.841 70.2817 379.143 68.8909 379.241 67.3994H384C383.531 71.9788 381.98 75.5394 379.342 78.0824C376.703 80.6255 373.099 81.899 368.525 81.899C365.756 81.899 363.334 81.4155 361.264 80.4498C359.195 79.4827 357.474 78.1519 356.107 76.4561C354.738 74.7616 353.711 72.7593 353.027 70.4547C352.341 68.1486 352 65.6723 352 63.0271C352 60.3819 352.366 57.896 353.102 55.5736C353.835 53.2513 354.913 51.2258 356.332 49.4946C357.75 47.7661 359.518 46.4012 361.639 45.3987C363.758 44.3976 366.187 43.899 368.926 43.899C370.795 43.899 372.564 44.1537 374.233 44.6605C375.901 45.1685 377.389 45.9149 378.69 46.8997C379.99 47.8832 381.078 49.1145 381.944 50.587C382.812 52.0621 383.38 53.7661 383.646 55.699H378.888C378.355 53.1219 377.177 51.1877 375.357 49.8991H375.36Z"
-                    fill="currentColor" />
-                <path d="M400 44.899V80.899H395V44.899H400Z" fill="currentColor" />
-                <path
-                    d="M429.857 44.9017C431.561 44.9017 433.117 45.0543 434.522 45.3553C435.928 45.6591 437.131 46.1531 438.134 46.8403C439.138 47.5314 439.915 48.4467 440.468 49.5887C441.017 50.7321 441.294 52.1441 441.294 53.8234C441.294 55.6391 440.885 57.151 440.063 58.3606C439.242 59.5715 438.033 60.5623 436.428 61.3358C438.635 61.9743 440.28 63.0921 441.37 64.6891C442.455 66.286 443 68.211 443 70.4627C443 72.2784 442.649 73.8483 441.946 75.178C441.244 76.5064 440.298 77.5904 439.111 78.4287C437.925 79.271 436.57 79.8893 435.049 80.2929C433.526 80.6966 431.963 80.899 430.357 80.899H413V44.899H429.855L429.857 44.9017ZM428.854 59.4743C430.259 59.4743 431.41 59.1395 432.314 58.4659C433.217 57.7909 433.669 56.7002 433.669 55.1882C433.669 54.3486 433.52 53.6574 433.219 53.1215C432.919 52.5829 432.518 52.163 432.015 51.862C431.513 51.5596 430.936 51.349 430.284 51.2329C429.632 51.1141 428.955 51.0547 428.252 51.0547H420.878V59.4756H428.854V59.4743ZM429.305 74.7501C430.074 74.7501 430.808 74.6745 431.513 74.522C432.216 74.3708 432.834 74.1197 433.368 73.7673C433.904 73.415 434.331 72.9344 434.648 72.3297C434.964 71.7249 435.124 70.9541 435.124 70.0118C435.124 68.1638 434.605 66.8436 433.571 66.0538C432.534 65.2641 431.163 64.8672 429.458 64.8672H420.881V74.7501H429.31H429.305Z"
-                    fill="currentColor" />
-            </g>
-        </svg>
-
-
-        
-        <div id="uploadColumn" class="flex flex-col justify-center mt-12 mb-4">
-            <form><button id="uploadButton"
-                    class="dark:text-white bg-gray-50 border border-[#b0b3b8] border-opacity-40 hover:bg-gray-200 text-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 rounded-full px-5 py-3 mr-2 flex flex-row gap-3 items-center dark:bg-[#242526] dark:hover:bg-[#3a3b3c] dark:focus:ring-[#3a3b3c] dark:border-[#3a3b3c]"><svg
-                        xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-file-up">
-                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                        <path d="M12 12v6"></path>
-                        <path d="m15 15-3-3-3 3"></path>
-                    </svg> <span>Select File</span></button> <input type="file" id="fileInput" class="hidden"
-                    accept=".bin,.bin.gz" onchange="onFileInput(files)"></form>
-        </div>
-        <div id="progressColumn" class="flex flex-col justify-center mt-14 mb-10 hidden">
-            <p id="progressTitle" class="text-center mb-2 text-sm dark:text-[#b0b3b8]"></p>
-            <div class="flex flex-row items-center gap-4 w-[280px]">
-                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-[#242526]">
-                    <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full" style="width:0%"></div>
-                </div>
-                <p id="progressValue" class="text-sm">0%</p>
-            </div>
-        </div>
-        <div id="successColumn" class="flex flex-col items-center gap-4 mt-12 hidden"><svg
-                xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="text-green-500">
-                <path
-                    d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z">
-                </path>
-                <path d="m9 12 2 2 4-4"></path>
             </svg>
-            <p>Update Successful</p><button onclick="resetView()" type="button"
-                class="dark:text-white bg-gray-50 border border-[#b0b3b8] border-opacity-40 hover:bg-gray-200 text-gray-700 text-xs focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full px-4 py-2 mr-2 mt-2 flex flex-row gap-2 items-center dark:bg-[#242526] dark:hover:bg-[#3a3b3c] dark:focus:ring-[#3a3b3c] dark:border-[#3a3b3c]"><svg
-                    xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-arrow-left">
-                    <path d="m12 19-7-7 7-7"></path>
-                    <path d="M19 12H5"></path>
-                </svg> Go Back</button>
-        </div>
-        <div id="errorColumn" class="flex flex-col items-center gap-2 mt-12 hidden"><svg
-                xmlns="http://www.w3.org/2000/svg" width="42" height="42" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="text-red-500">
-                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-                <path d="M12 9v4"></path>
-                <path d="M12 17h.01"></path>
-            </svg>
-            <p id="errorTitle" class="mt-2">Unexpected Error</p>
-            <p id="errorReason" class="text-xs dark:text-[#b0b3b8]">Please try again</p><button onclick="resetView()"
-                type="button"
-                class="dark:text-white bg-gray-50 border border-[#b0b3b8] border-opacity-40 hover:bg-gray-200 text-gray-700 text-xs focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full px-4 py-2 mr-2 mt-4 flex flex-row gap-2 items-center dark:bg-[#242526] dark:hover:bg-[#3a3b3c] dark:focus:ring-[#3a3b3c] dark:border-[#3a3b3c]"><svg
-                    xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-arrow-left">
-                    <path d="m12 19-7-7 7-7"></path>
-                    <path d="M19 12H5"></path>
-                </svg> Go Back</button>
-        </div>
-        <div id="settingsColumn" class="flex flex-col justify-center mt-10">
-            <div class="flex flex-row justify-center items-center gap-1 uppercase text-xs select-none">
-                <p class="dark:text-[#b0b3b8] transition-colors">Settings</p>
-            </div>
-            <div id="settingsContent" class="flex flex-col gap-4 mt-6 w-[300px]">
-                <div class="flex flex-row justify-between items-center gap-4">
-                    <p>OTA Mode</p><select id="otaMode"
-                        class="block appearance-none py-1 px-2 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-[#242526] dark:border-[#242526] dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                        <option value="fr" selected="">Firmware</option>
-                        <option value="fs">LittleFS / SPIFFS</option>
-                    </select>
-                </div>
-                <div class="flex flex-row justify-between items-center gap-4">
-                    <p>Dark UI</p><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox"
-                            id="darkModeCheckbox" class="sr-only peer">
-                        <div
-                            class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[&#39;&#39;] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
-                        </div>
-                    </label>
-                </div>
 
+            <div id="uploadColumn" class="flex flex-col justify-center mt-12 mb-4">
+                <form><button id="uploadButton"
+                        class="dark:text-white bg-gray-50 border border-[#b0b3b8] border-opacity-40 hover:bg-gray-200 text-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 rounded-full px-5 py-3 mr-2 flex flex-row gap-3 items-center dark:bg-[#242526] dark:hover:bg-[#3a3b3c] dark:focus:ring-[#3a3b3c] dark:border-[#3a3b3c]"><svg
+                            xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                            viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round"
+                            class="lucide lucide-file-up">
+                            <path
+                                d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <path d="M12 12v6"></path>
+                            <path d="m15 15-3-3-3 3"></path>
+                        </svg> <span>Select File</span></button> <input type="file"
+                        id="fileInput" class="hidden"
+                        accept=".bin,.bin.gz" onchange="onFileInput(files)"></form>
+            </div>
+            <div id="progressColumn"
+                class="flex flex-col justify-center mt-14 mb-10 hidden">
+                <p id="progressTitle"
+                    class="text-center mb-2 text-sm dark:text-[#b0b3b8]"></p>
+                <div class="flex flex-row items-center gap-4 w-[280px]">
+                    <div
+                        class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-[#242526]">
+                        <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full"
+                            style="width:0%"></div>
+                    </div>
+                    <p id="progressValue" class="text-sm">0%</p>
+                </div>
+            </div>
+            <div id="successColumn"
+                class="flex flex-col items-center gap-4 mt-12 hidden"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="42" height="42"
+                    viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="text-green-500">
+                    <path
+                        d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z">
+                    </path>
+                    <path d="m9 12 2 2 4-4"></path>
+                </svg>
+                <p>Update Successful</p><button onclick="resetView()" type="button"
+                    class="dark:text-white bg-gray-50 border border-[#b0b3b8] border-opacity-40 hover:bg-gray-200 text-gray-700 text-xs focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full px-4 py-2 mr-2 mt-2 flex flex-row gap-2 items-center dark:bg-[#242526] dark:hover:bg-[#3a3b3c] dark:focus:ring-[#3a3b3c] dark:border-[#3a3b3c]"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                        viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-arrow-left">
+                        <path d="m12 19-7-7 7-7"></path>
+                        <path d="M19 12H5"></path>
+                    </svg> Go Back</button>
+            </div>
+            <div id="errorColumn"
+                class="flex flex-col items-center gap-2 mt-12 hidden"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="42" height="42"
+                    viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="text-red-500">
+                    <path
+                        d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+                    <path d="M12 9v4"></path>
+                    <path d="M12 17h.01"></path>
+                </svg>
+                <p id="errorTitle" class="mt-2">Unexpected Error</p>
+                <p id="errorReason" class="text-xs dark:text-[#b0b3b8]">Please try
+                    again</p><button onclick="resetView()"
+                    type="button"
+                    class="dark:text-white bg-gray-50 border border-[#b0b3b8] border-opacity-40 hover:bg-gray-200 text-gray-700 text-xs focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-full px-4 py-2 mr-2 mt-4 flex flex-row gap-2 items-center dark:bg-[#242526] dark:hover:bg-[#3a3b3c] dark:focus:ring-[#3a3b3c] dark:border-[#3a3b3c]"><svg
+                        xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                        viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-arrow-left">
+                        <path d="m12 19-7-7 7-7"></path>
+                        <path d="M19 12H5"></path>
+                    </svg> Go Back</button>
+            </div>
+            <div id="settingsColumn" class="flex flex-col justify-center mt-10">
+                <div
+                    class="flex flex-row justify-center items-center gap-1 uppercase text-xs select-none">
+                    <p class="dark:text-[#b0b3b8] transition-colors">Settings</p>
+                </div>
+                <div id="settingsContent" class="flex flex-col gap-4 mt-6 w-[300px]">
+                    <div class="flex flex-row justify-between items-center gap-4">
+                        <p>OTA Mode</p><select id="otaMode"
+                            class="block appearance-none py-1 px-2 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-[#242526] dark:border-[#242526] dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <option value="fr" selected>Firmware</option>
+                            <option value="fs">LittleFS / SPIFFS</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-row justify-between items-center gap-4">
+                        <p>Dark UI</p><label
+                            class="relative inline-flex items-center cursor-pointer"><input
+                                type="checkbox"
+                                id="darkModeCheckbox" class="sr-only peer">
+                            <div
+                                class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[&#39;&#39;] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
+                            </div>
+                        </label>
+                    </div>
+
+                </div>
             </div>
         </div>
-    </div>
-</body>
+    </body>
 
 </html>
