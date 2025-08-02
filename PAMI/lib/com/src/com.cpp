@@ -1,4 +1,5 @@
 #include <com.h>
+#include "spdlog/spdlog.h"
 
 Com::Com() {
     memcpy(this->signature, END_BYTES_SIGNATURE, sizeof(this->signature));
@@ -13,28 +14,28 @@ Com::~Com() {}
 bool Com::begin(int8_t nss, int8_t reset, int8_t busy) {
     // Begin LoRa radio and set NSS, reset, busy, txen, and rxen pin with
     // connected Arduino pins
-    Serial.println("Begin LoRa radio");
+    spdlog::info("Begin LoRa radio");
     if (!LoRa.begin(nss, reset, busy)) {
-        Serial.println("Something wrong, can't begin LoRa radio");
+        spdlog::error("Something wrong, can't begin LoRa radio");
         return false;
     }
 
-    Serial.println("Set frequency to 915 MHz");
+    spdlog::info("Set frequency to 915 MHz");
     LoRa.setFrequency(915000000);
 
-    Serial.println("Set TX power to +17 dBm");
+    spdlog::info("Set TX power to +17 dBm");
     LoRa.setTxPower(17, SX126X_TX_POWER_SX1262);
 
-    Serial.println("Set modulation parameters");
+    spdlog::info("Set modulation parameters");
     LoRa.setLoRaModulation(sf, bw, cr);
 
-    Serial.println("Set packet parameters");
+    spdlog::info("Set packet parameters");
     LoRa.setLoRaPacket(headerType, preambleLength, message_len, crcType);
 
-    Serial.println("Set synchronize word");
+    spdlog::info("Set synchronize word");
     LoRa.setSyncWord(syncWord);
 
-    Serial.println("\n-- LORA TRANSMITTER / RECEIVER --\n");
+    spdlog::info("\n-- LORA TRANSMITTER / RECEIVER --\n");
     return true;
 }
 
