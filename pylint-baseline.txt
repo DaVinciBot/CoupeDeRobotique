@@ -1,217 +1,80 @@
 ************* Module common.arena.2024_mars_arena.arena_old
-38:0: C0301: Line too long (111/100) (line-too-long)
-40:0: C0301: Line too long (106/100) (line-too-long)
-59:0: C0301: Line too long (102/100) (line-too-long)
-77:0: C0301: Line too long (104/100) (line-too-long)
-114:0: C0301: Line too long (148/100) (line-too-long)
-131:0: C0301: Line too long (106/100) (line-too-long)
-162:0: C0301: Line too long (120/100) (line-too-long)
-206:0: C0301: Line too long (125/100) (line-too-long)
-207:0: C0301: Line too long (114/100) (line-too-long)
-248:0: C0301: Line too long (143/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-24:4: R0913: Too many arguments (7/5) (too-many-arguments)
-68:4: C0116: Missing function or method docstring (missing-function-docstring)
-87:4: C0116: Missing function or method docstring (missing-function-docstring)
-94:4: C0116: Missing function or method docstring (missing-function-docstring)
-160:11: C1805: "delta == 0" can be simplified to "not delta", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-141:4: R0912: Too many branches (16/12) (too-many-branches)
-247:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
-263:4: C0116: Missing function or method docstring (missing-function-docstring)
-264:8: W0621: Redefining name 'distance' from outer scope (line 6) (redefined-outer-name)
-275:4: C0116: Missing function or method docstring (missing-function-docstring)
+69:0: C0301: Line too long (102/100) (line-too-long)
+30:4: R0913: Too many arguments (7/5) (too-many-arguments)
 ************* Module common.arena.2024_mars_arena.mars_arena_old
-56:0: C0325: Unnecessary parens after 'not' keyword (superfluous-parens)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-11:0: C0115: Missing class docstring (missing-class-docstring)
-11:0: C0103: Class name "Plants_zone" doesn't conform to PascalCase naming style (invalid-name)
-23:4: C0116: Missing function or method docstring (missing-function-docstring)
-26:4: C0116: Missing function or method docstring (missing-function-docstring)
-29:4: C0116: Missing function or method docstring (missing-function-docstring)
-67:15: C1805: "self.start_zone_id % 2 == 0" can be simplified to "not self.start_zone_id % 2", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-129:11: C1805: "self.start_zone_id % 2 == 0" can be simplified to "not self.start_zone_id % 2", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-145:4: C0116: Missing function or method docstring (missing-function-docstring)
-146:22: C1805: "self.start_zone_id % 2 == 0" can be simplified to "not self.start_zone_id % 2", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-148:4: C0116: Missing function or method docstring (missing-function-docstring)
-148:4: R0913: Too many arguments (6/5) (too-many-arguments)
-148:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-172:4: C0116: Missing function or method docstring (missing-function-docstring)
-195:4: C0116: Missing function or method docstring (missing-function-docstring)
-218:4: C0116: Missing function or method docstring (missing-function-docstring)
-234:4: C0116: Missing function or method docstring (missing-function-docstring)
-241:4: C0116: Missing function or method docstring (missing-function-docstring)
+98:0: C0325: Unnecessary parens after 'not' keyword (superfluous-parens)
+113:15: C1805: "self.start_zone_id % 2 == 0" can be simplified to "not self.start_zone_id % 2", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+171:11: C1805: "self.start_zone_id % 2 == 0" can be simplified to "not self.start_zone_id % 2", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+194:22: C1805: "self.start_zone_id % 2 == 0" can be simplified to "not self.start_zone_id % 2", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
 ************* Module common.arena.2024_mars_arena
 1:0: C0103: Module name "2024_mars_arena" doesn't conform to snake_case naming style (invalid-name)
 ************* Module common.arena.base_arena.arena
-3:0: C0301: Line too long (109/100) (line-too-long)
-4:0: C0301: Line too long (117/100) (line-too-long)
-58:0: C0301: Line too long (118/100) (line-too-long)
-114:0: C0301: Line too long (116/100) (line-too-long)
-120:0: C0301: Line too long (102/100) (line-too-long)
-253:0: C0301: Line too long (114/100) (line-too-long)
-298:0: C0301: Line too long (114/100) (line-too-long)
-305:0: C0301: Line too long (123/100) (line-too-long)
-363:0: C0301: Line too long (102/100) (line-too-long)
-426:0: C0301: Line too long (108/100) (line-too-long)
-433:0: C0301: Line too long (125/100) (line-too-long)
-570:0: C0301: Line too long (123/100) (line-too-long)
-662:0: C0301: Line too long (108/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-35:4: R0913: Too many arguments (10/5) (too-many-arguments)
-35:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-100:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
-335:4: C0116: Missing function or method docstring (missing-function-docstring)
-358:11: R1701: Consider merging these isinstance calls to isinstance(goal, (OrientedPoint, Point)) (consider-merging-isinstance)
-464:4: R0913: Too many arguments (6/5) (too-many-arguments)
-464:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-549:4: R0913: Too many arguments (7/5) (too-many-arguments)
-549:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-579:11: C1805: "len(polygon.interiors) == 0" can be simplified to "not len(polygon.interiors)", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-599:4: R0913: Too many arguments (7/5) (too-many-arguments)
-599:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-692:4: C0116: Missing function or method docstring (missing-function-docstring)
-692:4: R0913: Too many arguments (10/5) (too-many-arguments)
-692:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-692:4: R0912: Too many branches (13/12) (too-many-branches)
+60:0: C0301: Line too long (118/100) (line-too-long)
+116:0: C0301: Line too long (116/100) (line-too-long)
+122:0: C0301: Line too long (102/100) (line-too-long)
+259:0: C0301: Line too long (114/100) (line-too-long)
+305:0: C0301: Line too long (114/100) (line-too-long)
+312:0: C0301: Line too long (123/100) (line-too-long)
+381:0: C0301: Line too long (102/100) (line-too-long)
+687:0: C0301: Line too long (108/100) (line-too-long)
+37:4: R0913: Too many arguments (10/5) (too-many-arguments)
+37:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+102:8: C0200: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+484:4: R0913: Too many arguments (6/5) (too-many-arguments)
+484:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+571:4: R0913: Too many arguments (7/5) (too-many-arguments)
+571:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+603:11: C1805: "len(polygon.interiors) == 0" can be simplified to "not len(polygon.interiors)", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+623:4: R0913: Too many arguments (7/5) (too-many-arguments)
+735:4: R0913: Too many arguments (7/5) (too-many-arguments)
+870:4: R0913: Too many arguments (10/5) (too-many-arguments)
 ************* Module common.arena.base_arena.grid_manager
-2:0: C0301: Line too long (114/100) (line-too-long)
-3:0: C0301: Line too long (102/100) (line-too-long)
-4:0: C0301: Line too long (118/100) (line-too-long)
-5:0: C0301: Line too long (118/100) (line-too-long)
-7:0: C0301: Line too long (118/100) (line-too-long)
-211:0: C0301: Line too long (104/100) (line-too-long)
-212:0: C0301: Line too long (106/100) (line-too-long)
-213:0: C0301: Line too long (116/100) (line-too-long)
-325:0: C0301: Line too long (109/100) (line-too-long)
-432:0: C0301: Line too long (107/100) (line-too-long)
-435:0: C0301: Line too long (106/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-34:4: R0913: Too many arguments (6/5) (too-many-arguments)
-34:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-57:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-57:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-95:4: R0914: Too many local variables (16/15) (too-many-locals)
-117:27: R1729: Use a generator instead 'any(polygon.intersects(cell) for polygon in self.static_forbidden_zones)' (use-a-generator)
-137:4: R0914: Too many local variables (19/15) (too-many-locals)
-254:4: R0911: Too many return statements (11/6) (too-many-return-statements)
-137:4: W0238: Unused private member `GridManager.__optimized_mark_zone(self, grid: Grid, polygon_to_mark: Polygon, walkable: bool)` (unused-private-member)
+26:4: R0913: Too many arguments (6/5) (too-many-arguments)
+26:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+49:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+49:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+87:4: R0914: Too many local variables (16/15) (too-many-locals)
+133:4: R0914: Too many local variables (19/15) (too-many-locals)
+133:4: W0238: Unused private member `GridManager.__optimized_mark_zone(self, grid: Grid, polygon_to_mark: Polygon, *, walkable: bool)` (unused-private-member)
 ************* Module common.arena.base_arena.grid_manager_2
-255:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-44:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-44:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-76:4: R0914: Too many local variables (17/15) (too-many-locals)
-261:8: W0612: Unused variable 'fig' (unused-variable)
-************* Module common.arena.base_arena.team_color
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.arena.base_arena
-1:0: C0114: Missing module docstring (missing-module-docstring)
+46:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+46:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+81:4: R0914: Too many local variables (17/15) (too-many-locals)
 ************* Module common.arena.base_arena.arena_zones.ally_zone
-2:0: C0301: Line too long (112/100) (line-too-long)
-4:0: C0301: Line too long (120/100) (line-too-long)
-5:0: C0301: Line too long (117/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-66:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
+69:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
 ************* Module common.arena.base_arena.arena_zones.base_arena_zone
-2:0: C0301: Line too long (112/100) (line-too-long)
-4:0: C0301: Line too long (120/100) (line-too-long)
-48:0: C0301: Line too long (105/100) (line-too-long)
-49:0: C0301: Line too long (101/100) (line-too-long)
-50:0: C0301: Line too long (108/100) (line-too-long)
-52:0: C0301: Line too long (134/100) (line-too-long)
-136:0: C0301: Line too long (101/100) (line-too-long)
-179:0: C0301: Line too long (111/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-28:4: R0913: Too many arguments (11/5) (too-many-arguments)
-28:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
-82:4: C0116: Missing function or method docstring (missing-function-docstring)
-112:4: W0105: String statement has no effect (pointless-string-statement)
-176:16: W0108: Lambda may not be necessary (unnecessary-lambda)
-183:4: W0105: String statement has no effect (pointless-string-statement)
-210:4: W0105: String statement has no effect (pointless-string-statement)
-223:12: R1701: Consider merging these isinstance calls to isinstance(self, (other, type(other))) (consider-merging-isinstance)
+203:0: C0301: Line too long (111/100) (line-too-long)
+30:4: R0913: Too many arguments (11/5) (too-many-arguments)
+30:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
 ************* Module common.arena.base_arena.arena_zones.border_zone
-30:0: C0301: Line too long (105/100) (line-too-long)
-31:0: C0301: Line too long (101/100) (line-too-long)
-32:0: C0301: Line too long (108/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-17:4: R0913: Too many arguments (6/5) (too-many-arguments)
-17:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+15:4: R0913: Too many arguments (6/5) (too-many-arguments)
+15:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
 ************* Module common.arena.base_arena.arena_zones.forbidden_zone
-2:0: C0301: Line too long (107/100) (line-too-long)
-3:0: C0301: Line too long (103/100) (line-too-long)
-30:0: C0301: Line too long (124/100) (line-too-long)
-32:0: C0301: Line too long (105/100) (line-too-long)
-33:0: C0301: Line too long (101/100) (line-too-long)
-34:0: C0301: Line too long (108/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-17:4: R0913: Too many arguments (7/5) (too-many-arguments)
-17:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.structs
-3:0: C0301: Line too long (104/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
+15:4: R0913: Too many arguments (7/5) (too-many-arguments)
+15:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
 ************* Module common.arena.base_arena.arena_zones.stuff_zone
-36:0: C0301: Line too long (105/100) (line-too-long)
-37:0: C0301: Line too long (101/100) (line-too-long)
-38:0: C0301: Line too long (108/100) (line-too-long)
-39:0: C0301: Line too long (134/100) (line-too-long)
-93:0: C0301: Line too long (105/100) (line-too-long)
-111:0: C0301: Line too long (115/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
+96:0: C0301: Line too long (105/100) (line-too-long)
+120:0: C0301: Line too long (115/100) (line-too-long)
+20:4: R0913: Too many arguments (7/5) (too-many-arguments)
+20:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+77:14: E0203: Access to member 'accessibility' before its definition line 78 (access-member-before-definition)
+78:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone
+23:4: R0913: Too many arguments (11/5) (too-many-arguments)
+23:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
+104:11: E0203: Access to member 'accessibility' before its definition line 105 (access-member-before-definition)
+105:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone
 22:4: R0913: Too many arguments (7/5) (too-many-arguments)
 22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-108:20: W0108: Lambda may not be necessary (unnecessary-lambda)
-74:14: E0203: Access to member 'accessibility' before its definition line 75 (access-member-before-definition)
-75:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.arena.base_arena.arena_zones
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone
-44:0: C0301: Line too long (139/100) (line-too-long)
-46:0: C0301: Line too long (109/100) (line-too-long)
-47:0: C0301: Line too long (107/100) (line-too-long)
-51:0: C0301: Line too long (134/100) (line-too-long)
-72:0: C0301: Line too long (110/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-25:4: R0913: Too many arguments (11/5) (too-many-arguments)
-25:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
-97:11: E0203: Access to member 'accessibility' before its definition line 98 (access-member-before-definition)
-98:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone
-37:0: C0301: Line too long (105/100) (line-too-long)
-38:0: C0301: Line too long (101/100) (line-too-long)
-39:0: C0301: Line too long (108/100) (line-too-long)
-40:0: C0301: Line too long (134/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-23:4: R0913: Too many arguments (7/5) (too-many-arguments)
-23:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
 ************* Module common.arena.base_arena.arena_zones.color_reserved_zones.yellow_reserved_zone
-2:0: C0301: Line too long (101/100) (line-too-long)
-37:0: C0301: Line too long (105/100) (line-too-long)
-38:0: C0301: Line too long (101/100) (line-too-long)
-39:0: C0301: Line too long (108/100) (line-too-long)
-40:0: C0301: Line too long (134/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-23:4: R0913: Too many arguments (7/5) (too-many-arguments)
-23:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones
-1:0: C0114: Missing module docstring (missing-module-docstring)
+22:4: R0913: Too many arguments (7/5) (too-many-arguments)
+22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
 ************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone
-2:0: C0301: Line too long (112/100) (line-too-long)
-3:0: C0301: Line too long (117/100) (line-too-long)
-4:0: C0301: Line too long (116/100) (line-too-long)
-25:0: C0301: Line too long (101/100) (line-too-long)
-55:0: C0301: Line too long (103/100) (line-too-long)
-57:0: C0301: Line too long (101/100) (line-too-long)
-58:0: C0301: Line too long (109/100) (line-too-long)
-59:0: C0301: Line too long (101/100) (line-too-long)
-60:0: C0301: Line too long (111/100) (line-too-long)
-190:0: C0301: Line too long (113/100) (line-too-long)
-191:0: C0301: Line too long (101/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-30:4: R0913: Too many arguments (14/5) (too-many-arguments)
-30:4: R0917: Too many positional arguments (14/5) (too-many-positional-arguments)
-128:46: C1805: "distance != 0" can be simplified to "distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-130:11: C1805: "speed == 0" can be simplified to "not speed", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+26:4: R0913: Too many arguments (14/5) (too-many-arguments)
+26:4: R0917: Too many positional arguments (14/5) (too-many-positional-arguments)
+135:46: C1805: "distance != 0" can be simplified to "distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+137:11: C1805: "speed == 0" can be simplified to "not speed", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
 ************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.enemy_zone
 9:0: C0301: Line too long (114/100) (line-too-long)
 37:0: C0301: Line too long (103/100) (line-too-long)
@@ -220,38 +83,14 @@
 1:0: C0114: Missing module docstring (missing-module-docstring)
 22:4: R0913: Too many arguments (7/5) (too-many-arguments)
 22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.__init__
-1:0: C0301: Line too long (114/100) (line-too-long)
-************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones
-1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.arena.show_arena.arena
 1:0: C0114: Missing module docstring (missing-module-docstring)
 16:0: C0115: Missing class docstring (missing-class-docstring)
 17:4: R0913: Too many arguments (10/5) (too-many-arguments)
 17:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
 17:4: R0914: Too many local variables (21/15) (too-many-locals)
-************* Module common.arena.show_arena
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.geometry.helpers
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: C0116: Missing function or method docstring (missing-function-docstring)
 ************* Module common.geometry.oriented_point
-6:0: C0301: Line too long (118/100) (line-too-long)
-17:0: C0301: Line too long (101/100) (line-too-long)
-45:0: C0301: Line too long (156/100) (line-too-long)
-66:0: C0301: Line too long (107/100) (line-too-long)
-156:0: C0301: Line too long (104/100) (line-too-long)
-29:0: C0115: Missing class docstring (missing-class-docstring)
-38:4: W0231: __init__ method from base class 'Point' is not called (super-init-not-called)
-123:4: C0116: Missing function or method docstring (missing-function-docstring)
-123:4: C0103: Method name "from_Point" doesn't conform to snake_case naming style (invalid-name)
-************* Module common.geometry
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.GPIO.gpio
-29:0: C0301: Line too long (107/100) (line-too-long)
-83:0: C0301: Line too long (116/100) (line-too-long)
-************* Module common.GPIO
-1:0: C0103: Module name "GPIO" doesn't conform to snake_case naming style (invalid-name)
+28:4: W0231: __init__ method from base class 'Point' is not called (super-init-not-called)
 ************* Module common.navigation
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.navigation.avoidance.avoidance_factory
@@ -1813,7 +1652,6 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             current_navigator_task.trajectory_planner.start_planning()  # Reset internal clock
 
             self.logger.debug("Trajectory planner reset internal clock.")
-            # reset timer just for logging/manure measurement
             self._reset_timer()
             self.logger.debug("Timer reset after avoidance completion.")
 
@@ -1825,7 +1663,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
                 current_navigator_task.current_trajectory_command
             )  # Avoidance complete, continue as normal
 
-        # 4. Continue with current command
+        # 4. Continue with original trajectory
         self.logger.debug(
             "No avoidance action required. Continuing original trajectory.",
         )
@@ -1878,7 +1716,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[56:70]
         )
 
-        # Step 6: Move to the backstage zone to finish the game
+        # Step 8 Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
             name="[End] Go to backstage",
             tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
@@ -1891,24 +1729,8 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             first_construct_subgraph,
             second_pickup_subgraph, (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.grid_manager:[447:460]
-==common.arena.base_arena.grid_manager_2:[260:272]
-            fig, ax = plt.subplots(figsize=(12, 6))
-
-        for y in range(self.grid_height):
-            for x in range(self.grid_width):
-                if not grid_to_visualize.node(x, y).walkable:
-                    ax.add_patch(plt.Rectangle((x, y), 1, 1, color="black"))
-
-        if path:
-            for i in range(len(path) - 1):
-                # Draw a line connecting the current node to the next node
-                ax.plot(
-                    [path[i].x, path[i + 1].x],
-                    [path[i].y, path[i + 1].y], (duplicate-code)
-1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.grid_manager:[156:168]
-==common.arena.base_arena.grid_manager_2:[90:101]
+==common.arena.base_arena.grid_manager:[153:165]
+==common.arena.base_arena.grid_manager_2:[101:112]
             min_col = max(
                 0,
                 int((self.grid_width * self.chunk_size - maxx) // self.chunk_size),
@@ -1968,9 +1790,10 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             pid,
             baudrate,
             enable_crc,
-            enable_dummy=True,  # dummy hardware flag
+            enable_dummy=True,
         )
-        # Default elevator position at bottom (duplicate-code)
+
+        # Robot state (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy:[85:96]
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[70:81]
@@ -1990,15 +1813,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy:[68:81]
         )
 
-        # # Step 4: Navigate to the second pickup zone
-        # second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
-        #
-        # # Step 5: Navigate to the second construction zone
-        # second_construct_subgraph = get_construct_subgraph(
-        #     self.zones["second_build_zone"], back_offset=15
-        # )
-
-        # Step 6: Move to the backstage zone to finish the game
+        # Step 8 Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
             name="[End] Go to backstage",
             tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
@@ -2008,9 +1823,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
         self._auto_build_transitions(
             deploy_banner_subgraph,
             first_pickup_subgraph,
-            first_construct_subgraph,
-            # second_pickup_subgraph,
-            # second_construct_subgraph, (duplicate-code)
+            first_construct_subgraph, (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.basic_strategy:[71:82]
 ==robot1.rasp.boombot_strategy.strategies.debug_strategy:[53:64]
@@ -2036,10 +1849,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             baudrate,
             enable_crc,
             enable_dummy,
-        )
-
-    def reset(self) -> None:
-        """Resets the Teensy device by sending a reset command.""" (duplicate-code)
+        ) (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.strategy.core.tasks.base_navigation_task:[68:79]
 ==robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver:[124:133]
@@ -2051,10 +1861,26 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
                 acs_detection_profile_params=self.acs_detection_profile_params,
                 stabilization_delay=self.stabilization_delay,
             ),
-        ) (duplicate-code)
+        )
+
+    @abstractmethod (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.grid_manager:[172:183]
-==common.arena.base_arena.grid_manager_2:[101:111]
+==common.arena.base_arena.grid_manager:[458:469]
+==common.arena.base_arena.grid_manager_2:[276:286]
+        for y in range(self.grid_height):
+            for x in range(self.grid_width):
+                if not grid_to_visualize.node(x, y).walkable:
+                    ax.add_patch(plt.Rectangle((x, y), 1, 1, color="black"))
+
+        if path:
+            for i in range(len(path) - 1):
+                # Draw a line connecting the current node to the next node
+                ax.plot(
+                    [path[i].x, path[i + 1].x],
+                    [path[i].y, path[i + 1].y], (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.arena.base_arena.grid_manager:[169:180]
+==common.arena.base_arena.grid_manager_2:[112:122]
             for row in range(min_row, max_row):
                 for col in range(min_col, max_col):
                     actual_col = self.grid_width - 1 - col
@@ -2067,7 +1893,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
  (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.__init__:[19:28]
-==common.arena.base_arena.__init__:[16:25]
+==common.arena.base_arena.__init__:[18:27]
 __all__ = [
     "AllyZone",
     "BaseArena",
@@ -2095,6 +1921,11 @@ __all__ = [
         self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
 
+        """
+        This is used to match a handling function to a message type.
+        add_callback can also be used.
+
+        """
         # Register message handlers
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
@@ -2102,7 +1933,9 @@ __all__ = [
             self.rcv_rolling_basis_state,
             Messages.UPDATE_ROLLING_BASIS.value,
         )
- (duplicate-code)
+
+        # Initialize PID controllers from configuration
+        # self.initialize_pids() (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.navigation.trajectory_planner.common.__init__:[9:17]
 ==common.navigation.trajectory_planner.common.segments.__init__:[11:19]
@@ -2115,8 +1948,8 @@ __all__ = [
     "StraightSegment",
 ] (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone:[46:54]
-==common.arena.base_arena.arena_zones.stuff_zone:[44:67]
+==common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone:[50:58]
+==common.arena.base_arena.arena_zones.stuff_zone:[47:70]
             accessibility=ZoneAccessibility.RESTRICTED,
             buffer_size=buffer_size,
             polygon=polygon,
@@ -2141,11 +1974,11 @@ __all__ = [
 
         """ (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.arena_zones.base_arena_zone:[173:207]
-==common.arena.base_arena.arena_zones.stuff_zone:[105:114]
+==common.arena.base_arena.arena_zones.base_arena_zone:[197:222]
+==common.arena.base_arena.arena_zones.stuff_zone:[114:123]
             nearest_position = min(
                 self.go_to_positions,
-                key=lambda p: ally_position.distance(p),
+                key=ally_position.distance,
             )
             self.logger.debug(
                 f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]",
@@ -2153,8 +1986,8 @@ __all__ = [
             return nearest_position
  (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.grid_manager:[373:419]
-==common.arena.base_arena.grid_manager_2:[198:244]
+==common.arena.base_arena.grid_manager:[377:423]
+==common.arena.base_arena.grid_manager_2:[209:255]
         return (
             node.x * self.chunk_size + self.half_chunk_size,
             node.y * self.chunk_size + self.half_chunk_size,
@@ -2214,16 +2047,7 @@ __all__ = [
 
     # ====== Equality Comparison ======
 
-    def __eq__(self, other: object) -> bool:
-        """Check equality between two RollingBasis instances.
-
-        Args:
-            other (object): The other object to compare against.
-
-        Returns:
-            bool: ``True`` if the objects are equal, ``False`` otherwise.
-
-        """ (duplicate-code)
+    def __eq__(self, other: object) -> bool: (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[388:397]
 ==robot1.rasp.controllers.rolling_basis.rolling_basis:[308:326]
@@ -2275,12 +2099,21 @@ __all__ = [
             msg (bytes): The received message bytes.
 
         """
-        # Unpack new odometry
+        # Position / odometrie
         self.odometrie = OrientedPoint(
             (struct.unpack("<d", msg[0:8])[0], struct.unpack("<d", msg[8:16])[0]),
             struct.unpack("<d", msg[16:24])[0],
         )
-        # After receiving actual state, log entry (duplicate-code)
+
+    def rcv_unknown_msg(self, msg: bytes) -> None:
+        """Handles unknown messages from the Teensy.
+
+        Logs a warning indicating that the message type is not recognized.
+
+        Args:
+            msg (bytes): The received message bytes.
+
+        """ (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.basic_strategy:[36:59]
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy:[38:53]
@@ -2298,7 +2131,15 @@ __all__ = [
             back_offset=5,
         )
 
-        # Step 4: Navigate to the second pickup zone (duplicate-code)
+        # # Step 4: Navigate to the second pickup zone
+        # second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
+        #
+        # # Step 5: Navigate to the second construction zone
+        # second_construct_subgraph = get_construct_subgraph(
+        #     self.zones["second_build_zone"], back_offset=15
+        # )
+
+        # Step 6: Move to the backstage zone to finish the game (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.basic_strategy:[59:68]
 ==robot1.rasp.boombot_strategy.strategies.debug_strategy:[44:53]
@@ -2339,6 +2180,7 @@ __all__ = [
         self.__max_angle = max_angle
         self.__angle_unit = self.__init_angles_unit(unit_angle)
         self.__distance_unit = self.__init_distances_unit(unit_distance)
+
         self._min_distance = min_distance (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.navigation.__init__:[69:75]
@@ -2350,17 +2192,17 @@ __all__ = [
     "NavigatorTaskParams",
     "NavigatorTaskState", (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.arena_zones.border_zone:[38:44]
-==common.arena.base_arena.arena_zones.forbidden_zone:[40:46]
+==common.arena.base_arena.arena_zones.border_zone:[40:46]
+==common.arena.base_arena.arena_zones.forbidden_zone:[43:49]
             buffer_size=buffer_size,
             polygon=polygon,
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
-            zone_color="#2b2b2b",
+            zone_color="#EF0D0D",
         ) (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.__init__:[29:35]
-==common.arena.base_arena.__init__:[25:31]
+==common.arena.base_arena.__init__:[27:33]
     "StuffZone",
     "TeamColor",
     "YellowReservedZone",
@@ -2382,38 +2224,38 @@ __all__ = [
         first_construct_subgraph = get_construct_subgraph(
             self.zones["first_build_zone"], (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone:[55:60]
-==common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone:[78:83]
+==common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone:[59:64]
+==common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone:[82:87]
         super().__init__(
             logger=logger,
             zone_type=zone_type,
             accessibility=accessibility,
             buffer_size=buffer_size, (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone:[47:52]
-==common.arena.base_arena.arena_zones.forbidden_zone:[40:45]
+==common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone:[51:56]
+==common.arena.base_arena.arena_zones.forbidden_zone:[43:48]
             buffer_size=buffer_size,
             polygon=polygon,
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
             zone_color="#097D8D", (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone:[58:63]
-==common.arena.base_arena.arena_zones.forbidden_zone:[39:44]
+==common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone:[62:67]
+==common.arena.base_arena.arena_zones.forbidden_zone:[42:47]
             accessibility=accessibility,
             buffer_size=buffer_size,
             polygon=polygon,
             buffered_polygon=buffered_polygon,
             update_callback=update_callback, (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.arena_zones.border_zone:[38:43]
-==common.arena.base_arena.arena_zones.stuff_zone:[45:50]
+==common.arena.base_arena.arena_zones.border_zone:[40:45]
+==common.arena.base_arena.arena_zones.stuff_zone:[48:53]
             buffer_size=buffer_size,
             polygon=polygon,
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
-            zone_color="#0FEE9C", (duplicate-code)
+            zone_color="#EF0D0D", (duplicate-code)
 
 ------------------------------------------------------------------
-Your code has been rated at 8.06/10 (previous run: 7.97/10, +0.09)
+Your code has been rated at 8.37/10 (previous run: 8.35/10, +0.02)
 

@@ -1,11 +1,4 @@
-# ====== Code Summary ======
-# This implementation defines the GridManager class, which manages a grid for pathfinding and collision detection.
-# Imports are organized into standard library, third-party, and internal project sections for clarity.
-# Private methods handle grid generation, coordinate conversions, and marking forbidden zones, ensuring encapsulation.
-# Public methods allow adding/removing static zones, updating dynamic zones, converting coordinates, and retrieving or
-# visualizing grids.
-# The visualization method uses matplotlib for clear grid rendering, showing obstacles and walkable areas effectively.
-
+"""Grid management utilities for pathfinding and obstacle handling."""
 
 import copy
 from typing import Any, override
@@ -24,7 +17,6 @@ class GridManager:
     """Manages a grid for pathfinding and collision detection.
     Includes static and dynamic forbidden zones and grid visualization.
 
-    Notes:
     - The grid uses a coordinate system where the origin is in the bottom-right corner.
     - X-axis increases towards the left, while Y-axis increases upwards.
     - This reference frame affects calculations and visualization; adjustments ensure alignment.
@@ -92,7 +84,13 @@ class GridManager:
         )
 
     @time_tracker(lambda self: self.logger)
-    def __mark_zone(self, grid: Grid, polygon_to_mark: Polygon, walkable: bool) -> Grid:
+    def __mark_zone(
+        self,
+        grid: Grid,
+        polygon_to_mark: Polygon,
+        *,
+        walkable: bool,
+    ) -> Grid:
         grid = copy.deepcopy(grid)
         minx, miny, maxx, maxy = polygon_to_mark.bounds
 
@@ -115,10 +113,8 @@ class GridManager:
                 if polygon_to_mark.intersects(cell):
                     if walkable:
                         if any(
-                            [
-                                polygon.intersects(cell)
-                                for polygon in self.static_forbidden_zones
-                            ],
+                            polygon.intersects(cell)
+                            for polygon in self.static_forbidden_zones
                         ):
                             continue
 
@@ -138,6 +134,7 @@ class GridManager:
         self,
         grid: Grid,
         polygon_to_mark: Polygon,
+        *,
         walkable: bool,
     ) -> Grid:
         """Marks cells in the grid as forbidden based on intersection with a polygon.
@@ -205,12 +202,16 @@ class GridManager:
         update_dynamic_zones: bool = False,
         clear_grid: bool = False,
     ) -> None:
-        """Updates the grids for static and dynamic zones.
+        """Update the grids for static and dynamic zones.
 
         Args:
-            update_static_zones (bool, optional): Whether to update static zones. Defaults to ``False``.
-            update_dynamic_zones (bool, optional): Whether to update dynamic zones. Defaults to ``False``.
-            clear_grid (bool, optional): If ``True``, regenerate empty grids before updating. Defaults to ``False``.
+            update_static_zones (bool, optional):
+                Whether to update static zones. Defaults to ``False``.
+            update_dynamic_zones (bool, optional):
+                Whether to update dynamic zones. Defaults to ``False``.
+            clear_grid (bool, optional):
+                If ``True``, regenerate empty grids before updating.
+                Defaults to ``False``.
 
         """
         if clear_grid:
@@ -255,56 +256,58 @@ class GridManager:
         if not isinstance(other, GridManager):
             return False
 
-        # Compare simple attributes
-        if self.chunk_size != other.chunk_size:
-            return False
-        if self.absolute_width != other.absolute_width:
-            return False
-        if self.absolute_height != other.absolute_height:
-            return False
-        if self.grid_width != other.grid_width or self.grid_height != other.grid_height:
-            return False
-        if self.forbidden_cover_threshold != other.forbidden_cover_threshold:
-            return False
-        if self.static_forbidden_zones != other.static_forbidden_zones:
-            return False
-        if self.not_updated_forbidden_zones != other.not_updated_forbidden_zones:
-            return False
-
-        # Define a helper function to convert a grid to a NumPy array of booleans
         def grid_to_numpy(grid: Grid) -> np.ndarray[Any, np.dtype[np.bool_]]:
             return np.array(
                 [[1 if node.walkable else 0 for node in row] for row in grid.nodes],
                 dtype=bool,
             )
 
-        # Compare the grids using np.array_equal for high performance.
-        if not np.array_equal(
-            grid_to_numpy(self.static_grid),
-            grid_to_numpy(other.static_grid),
-        ):
-            return False
-        if not np.array_equal(
-            grid_to_numpy(self.static_and_dynamic_grid),
-            grid_to_numpy(other.static_and_dynamic_grid),
-        ):
-            return False
-
-        return True
+        return (
+            self.chunk_size == other.chunk_size
+            and self.absolute_width == other.absolute_width
+            and self.absolute_height == other.absolute_height
+            and self.grid_width == other.grid_width
+            and self.grid_height == other.grid_height
+            and self.forbidden_cover_threshold == other.forbidden_cover_threshold
+            and self.static_forbidden_zones == other.static_forbidden_zones
+            and self.not_updated_forbidden_zones == other.not_updated_forbidden_zones
+            and np.array_equal(
+                grid_to_numpy(self.static_grid),
+                grid_to_numpy(other.static_grid),
+            )
+            and np.array_equal(
+                grid_to_numpy(self.static_and_dynamic_grid),
+                grid_to_numpy(other.static_and_dynamic_grid),
+            )
+        )
 
     @override
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
+
+    @override
+    def __hash__(self) -> int:
+        """Return a hash based on grid dimensions and chunk size."""
+        return hash(
+            (
+                self.chunk_size,
+                self.absolute_width,
+                self.absolute_height,
+                self.grid_width,
+                self.grid_height,
+            ),
+        )
 
     @time_tracker(lambda self: self.logger)
     def add_forbidden_static_zone(
         self,
         forbidden_zones: Polygon | list[Polygon],
     ) -> None:
-        """Adds static forbidden zones to the grid.
+        """Add static forbidden zones to the grid.
 
         Args:
-            forbidden_zones (Polygon | list[Polygon]): Zones to mark as static forbidden areas.
+            forbidden_zones (Polygon | list[Polygon]):
+                Zones to mark as static forbidden areas.
 
         """
         if not isinstance(forbidden_zones, list):
@@ -319,10 +322,11 @@ class GridManager:
         self,
         forbidden_zones_to_remove: Polygon | list[Polygon],
     ) -> None:
-        """Removes static forbidden zones from the grid.
+        """Remove static forbidden zones from the grid.
 
         Args:
-            forbidden_zones_to_remove (Polygon | list[Polygon]): Zones to remove from static forbidden areas.
+            forbidden_zones_to_remove (Polygon | list[Polygon]):
+                Zones to remove from static forbidden areas.
 
         """
         if not isinstance(forbidden_zones_to_remove, list):
@@ -421,6 +425,7 @@ class GridManager:
 
     def visualize(
         self,
+        *,
         only_static_grid: bool = False,
         path: list | None = None,
         show: bool = True,
@@ -429,10 +434,14 @@ class GridManager:
         """Visualize the grid using matplotlib.
 
         Args:
-            only_static_grid (bool, optional): Whether to show only the static grid. Defaults to ``False``.
-            path (list | None, optional): Path to draw on the grid, if provided. Defaults to None.
-            show (bool, optional): Whether to display the plot. Defaults to ``True``.
-            plot (tuple[plt.Axes, plt.Figure] | None, optional): Existing plot to reuse. Defaults to None.
+            only_static_grid (bool, optional):
+                Whether to show only the static grid. Defaults to ``False``.
+            path (list | None, optional):
+                Path to draw on the grid, if provided. Defaults to None.
+            show (bool, optional):
+                Whether to display the plot. Defaults to ``True``.
+            plot (tuple[plt.Axes, plt.Figure] | None, optional):
+                Existing plot to reuse. Defaults to None.
 
         Returns:
             tuple[plt.Axes, plt.Figure]: Axis and figure of the plot.

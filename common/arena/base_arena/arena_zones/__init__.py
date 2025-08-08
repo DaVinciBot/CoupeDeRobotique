@@ -1,3 +1,10 @@
+"""Common arena zone classes exported for convenience.
+
+This package exposes the core zone implementations used by arenas, such as
+ally, enemy, border, and forbidden zones.
+
+"""
+
 from arena.base_arena.arena_zones.ally_zone import AllyZone
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 from arena.base_arena.arena_zones.border_zone import BorderZone

@@ -4,9 +4,9 @@ common
 .. toctree::
    :maxdepth: 4
 
-   GPIO
    arena
    geometry
+   gpio
    led_strip
    navigation
    teensy

@@ -1,7 +1,4 @@
-# ====== Code Summary ======
-# This module defines enumerations and data classes for managing zones and movement within an arena.
-# It includes zone types, accessibility levels, and structures for tracking positions and speed vectors.
-
+"""Enumerations and records describing arena zones and movement."""
 
 from dataclasses import dataclass
 from enum import Enum, auto

@@ -1,3 +1,5 @@
+"""Convenience imports for geometry primitives and helpers."""
+
 # Native shapely geometry
 from shapely import (
     BufferCapStyle,
@@ -35,7 +37,6 @@ __all__ = [
     "box",
     "create_straight_rectangle",
     "distance",
-    "is_empty",
     "is_empty",
     "nearest_points",
     "prepare",

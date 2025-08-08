@@ -1,9 +1,11 @@
-# ====== Code Summary ======
-# This module defines the BaseArenaZone class, which serves as an abstract base class for zones within an arena.
-# It includes attributes for zone geometry, type, accessibility, and visit tracking.
-# Additionally, it provides methods for checking accessibility, updating zone status, and handling built-in comparisons.
-# The AllyZone class extends BaseArenaZone to represent zones dynamically assigned to allies based on their position.
+"""Dynamic zone representing the ally robot.
 
+The :class:`AllyZone` is recalculated based on the ally position and is used to
+track its current location within the arena.
+
+"""
+
+from typing import override
 
 from loggerplusplus import Logger
 
@@ -48,6 +50,7 @@ class AllyZone(BaseArenaZone):
             zone_color="#2ea100",
         )
 
+    @override
     def update(
         self,
         team_color: TeamColor,
@@ -65,10 +68,15 @@ class AllyZone(BaseArenaZone):
         super().update(team_color, ally_position, enemy_position)
         self.__init__(
             logger=self.logger,
-            point=ally_position,
+            point=(
+                ally_position
+                if isinstance(ally_position, OrientedPoint)
+                else OrientedPoint.from_point(ally_position)
+            ),
             robot_size=self.robot_size,
         )
 
+    @override
     def __eq__(self, other: object) -> bool:
         """Return ``True`` if zones represent the same oriented point.
 
@@ -84,6 +92,7 @@ class AllyZone(BaseArenaZone):
             return False
         return self.point == other.point
 
+    @override
     def __ne__(self, other: object) -> bool:
         """Return ``True`` if zones do not represent the same oriented point.
 
@@ -95,3 +104,13 @@ class AllyZone(BaseArenaZone):
 
         """
         return not self.__eq__(other)
+
+    @override
+    def __hash__(self) -> int:
+        """Return a hash based on the zone's position and size.
+
+        Returns:
+            int: Hash of the ally zone.
+
+        """
+        return hash((self.point.x, self.point.y, self.point.theta, self.robot_size))

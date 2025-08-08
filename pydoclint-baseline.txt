@@ -1,0 +1,21 @@
+common/arena/2024_mars_arena/arena_old.py
+    DOC105: Method `Arena.__init__`: Argument names match, but type hints in these args do not match: game_borders
+    DOC101: Method `Arena._shift_inside`: Docstring contains fewer arguments than in function signature.
+    DOC103: Method `Arena._shift_inside`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [borders: Polygon, point: Point].
+--------------------
+common/arena/base_arena/arena_zones/base_arena_zone.py
+    DOC605: Class `BaseArenaZone`: Attribute names match, but type hints in these attributes do not match: zones_uid  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+--------------------
+common/arena/base_arena/arena_zones/speed_vector_auto_calculate_zones/base_speed_vector_auto_calculate_zone.py
+    DOC105: Method `BaseSpeedVectorAutoCalculateZone.__init__`: Argument names match, but type hints in these args do not match: positions_recorded
+--------------------
+common/arena/base_arena/grid_manager.py
+    DOC201: Method `GridManager.__hash__` does not have a return section in docstring
+    DOC203: Method `GridManager.__hash__` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
+--------------------
+common/geometry/oriented_point.py
+    DOC601: Class `OrientedPoint`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+    DOC603: Class `OrientedPoint`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [theta: float]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+    DOC101: Method `OrientedPoint.__new__`: Docstring contains fewer arguments than in function signature.
+    DOC103: Method `OrientedPoint.__new__`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [*_args: float].
+--------------------

@@ -2,7 +2,10 @@ import asyncio
 
 from loggerplusplus import Logger
 
-from GPIO import PIN
+from gpio import PIN
+
+CONSECUTIVE_TRIGGER_THRESHOLD = 5
+CONSECUTIVE_PLUG_THRESHOLD = 5
 
 
 class Inputs:
@@ -19,7 +22,8 @@ class Inputs:
         Args:
             pin_jack (int): GPIO pin number for the jack input.
             pin_bau (int): GPIO pin number for the BAU input.
-            logger (Logger | None, optional): Logger instance for logging. Defaults to None.
+            logger (Logger | None, optional):
+                Logger instance for logging. Defaults to None.
 
         """
         self.logger = logger or Logger(
@@ -42,7 +46,7 @@ class Inputs:
         """
         false_jacks_in_a_row = 0
         self.logger.info("Wait jack trigger...")
-        while false_jacks_in_a_row < 5:
+        while false_jacks_in_a_row < CONSECUTIVE_TRIGGER_THRESHOLD:
             if self.jack.safe_digital_read():
                 false_jacks_in_a_row = 0
             else:
@@ -62,7 +66,7 @@ class Inputs:
         """
         true_jacks_in_a_row = 0
         self.logger.info("Waiting for jack to be plugged in...")
-        while true_jacks_in_a_row < 5:
+        while true_jacks_in_a_row < CONSECUTIVE_PLUG_THRESHOLD:
             if self.jack.safe_digital_read():
                 true_jacks_in_a_row += 1
             else:

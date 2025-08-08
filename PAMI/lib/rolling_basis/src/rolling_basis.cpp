@@ -2,6 +2,7 @@
 #include <math.h>
 #include "spdlog/spdlog.h"
 
+
 #define POSITION_TOLERANCE_MM 1.0f  // 1 mm
 #define ANGLE_TOLERANCE_RAD 0.01f   // env. 0.57°
 
@@ -29,7 +30,8 @@ RollingBasis::RollingBasis(Motor* leftMotor,
     _leftMotor->setAcceleration(200.0f * 3);
     _rightMotor->setAcceleration(200.0f);
 }
-// TODO: refactor this constructor pour pouvoir paramétrer la vitesse et l'accélération angulaire et linéaire dans le config BIEN PRECISER L'UNITE
+// TODO: refactor this constructor pour pouvoir paramétrer la vitesse et
+// l'accélération angulaire et linéaire dans le config BIEN PRECISER L'UNITE
 
 void RollingBasis::setCommand(const Point& target) {
     float dx = target.x - _currentPose.x;
@@ -47,8 +49,10 @@ void RollingBasis::setCommand(const Point& target) {
     _startTime = std::chrono::steady_clock::now();
     _phase = (_rotateDuration > 0 ? Phase::Rotating : Phase::Forwarding);
 
-    // spdlog::info("[Command] New target set: x={}, y={}, theta={}", _cmdPosition.x, _cmdPosition.y, _cmdPosition.theta);
-    spdlog::debug("Rotate duration: {} s, Forward duration: {} s", _rotateDuration, _forwardDuration);
+    // spdlog::info("[Command] New target set: x={}, y={}, theta={}",
+    // _cmdPosition.x, _cmdPosition.y, _cmdPosition.theta);
+    spdlog::debug("Rotate duration: {} s, Forward duration: {} s",
+                  _rotateDuration, _forwardDuration);
 }
 
 void RollingBasis::update() {

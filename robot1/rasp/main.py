@@ -9,7 +9,7 @@ from arena import AllyZone, ShowArena
 from brains import MainBrain
 from geometry import OrientedPoint
 from navigation import NavigatorTaskParams
-from sensors import Inputs, Lidar, LidarDummy
+from sensors import Inputs, Lidar
 
 # ====== Main ======
 if __name__ == "__main__":

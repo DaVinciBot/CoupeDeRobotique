@@ -8,13 +8,13 @@ logger = Logger(
 )
 
 try:
-    from GPIO.gpio import PIN
+    from gpio.gpio import PIN
 except ImportError:
     logger.warning(
         "Failed to import GPIO module. "
         "Ensure the GPIO library is installed and accessible.",
     )
     logger.info("Falling back to dummy PIN class.")
-    from GPIO.dummy_gpio import PIN
+    from gpio.dummy_gpio import PIN
 
 __all__ = ["PIN"]

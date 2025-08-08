@@ -1,6 +1,4 @@
-# ====== Code Summary ======
-# This module defines the YellowReservedZone class, a specialized zone restricted to the yellow team.
-# It inherits from BaseColorReservedZone and manages accessibility based on predefined conditions.
+"""Zone reserved exclusively for the yellow team."""
 
 from collections.abc import Callable
 
@@ -15,8 +13,9 @@ from geometry import OrientedPoint, Point, Polygon
 
 
 class YellowReservedZone(BaseColorReservedZone):
-    """A reserved zone specifically for the yellow team.
-    This class ensures that only blue team members have access based on predefined conditions.
+    """Reserved zone specifically for the yellow team.
+
+    Only yellow team members have access based on predefined conditions.
 
     """
 
@@ -29,15 +28,20 @@ class YellowReservedZone(BaseColorReservedZone):
         update_callback: Callable | None = None,
         go_to_positions: list[OrientedPoint | Point] | None = None,
     ) -> None:
-        """Initializes the YellowReservedZone with geometry and accessibility settings.
+        """Initialize the YellowReservedZone with geometry and accessibility.
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            buffer_size (float, optional): Buffer size for geometric adjustments (defaults to 0.0).
-            polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
-            buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
-            update_callback (Callable | None, optional): Function to be called on updates. Defaults to None.
-            go_to_positions (list[OrientedPoint | Point] | None, optional): List of go-to positions within the zone. Defaults to None.
+            buffer_size (float, optional):
+                Buffer size for geometric adjustments. Defaults to 0.0.
+            polygon (Polygon | None, optional):
+                Polygon representing the zone geometry. Defaults to None.
+            buffered_polygon (Polygon | None, optional):
+                Buffered polygon geometry. Defaults to None.
+            update_callback (Callable | None, optional):
+                Function to be called on updates. Defaults to None.
+            go_to_positions (list[OrientedPoint | Point] | None, optional):
+                List of go-to positions within the zone. Defaults to None.
 
         """
         super().__init__(

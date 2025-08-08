@@ -1,21 +1,21 @@
-GPIO package
+gpio package
 ============
 
 Submodules
 ----------
 
-GPIO.dummy\_gpio module
+gpio.dummy\_gpio module
 -----------------------
 
-.. automodule:: GPIO.dummy_gpio
+.. automodule:: gpio.dummy_gpio
    :members:
    :show-inheritance:
    :undoc-members:
 
-GPIO.gpio module
+gpio.gpio module
 ----------------
 
-.. automodule:: GPIO.gpio
+.. automodule:: gpio.gpio
    :members:
    :show-inheritance:
    :undoc-members:
@@ -23,7 +23,7 @@ GPIO.gpio module
 Module contents
 ---------------
 
-.. automodule:: GPIO
+.. automodule:: gpio
    :members:
    :show-inheritance:
    :undoc-members:

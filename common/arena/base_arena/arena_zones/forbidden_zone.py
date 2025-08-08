@@ -1,6 +1,4 @@
-# ====== Code Summary ======
-# This module defines the ForbiddenZone class, which represents a strictly restricted zone within an arena.
-# The class extends BaseArenaZone and ensures that access remains forbidden unless explicitly modified.
+"""Strictly forbidden arena zone."""
 
 from collections.abc import Callable
 
@@ -23,15 +21,20 @@ class ForbiddenZone(BaseArenaZone):
         buffered_polygon: Polygon | None = None,
         update_callback: Callable | None = None,
     ) -> None:
-        """Initializes a ForbiddenZone with the specified parameters.
+        """Initialize a ForbiddenZone with the specified parameters.
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            accessibility (ZoneAccessibility, optional): Accessibility of the zone. Defaults to ZoneAccessibility.FORBIDDEN.
-            buffer_size (float, optional): Buffer size for geometric adjustments. Defaults to 0.0.
-            polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
-            buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
-            update_callback (Callable | None, optional): Function to be called on updates. Defaults to None.
+            accessibility (ZoneAccessibility, optional): Accessibility of the
+                zone. Defaults to ZoneAccessibility.FORBIDDEN.
+            buffer_size (float, optional):
+                Buffer size for geometric adjustments. Defaults to 0.0.
+            polygon (Polygon | None, optional):
+                Polygon representing the zone geometry. Defaults to None.
+            buffered_polygon (Polygon | None, optional):
+                Buffered polygon geometry. Defaults to None.
+            update_callback (Callable | None, optional):
+                Function to be called on updates. Defaults to None.
 
         """
         super().__init__(

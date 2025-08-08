@@ -1,6 +1,4 @@
-# ====== Code Summary ======
-# This module defines the BorderZone class, representing the outer boundaries of the arena.
-# It extends BaseArenaZone and is characterized by its restricted accessibility.
+"""Arena border zone definitions."""
 
 from collections.abc import Callable
 
@@ -12,7 +10,7 @@ from geometry import Polygon
 
 
 class BorderZone(BaseArenaZone):
-    """Represents the border zone of the arena, which is typically inaccessible."""
+    """Represent the border zone of the arena, which is typically inaccessible."""
 
     def __init__(
         self,
@@ -22,14 +20,18 @@ class BorderZone(BaseArenaZone):
         buffered_polygon: Polygon | None = None,
         update_callback: Callable | None = None,
     ) -> None:
-        """Initializes the BorderZone with its geometry and accessibility settings.
+        """Initialize the border zone with geometry and accessibility.
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            buffer_size (float, optional): Buffer size for geometric adjustments. Defaults to 0.0.
-            polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
-            buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
-            update_callback (Callable | None, optional): Function to be called on updates. Defaults to None.
+            buffer_size (float, optional):
+                Buffer size for geometric adjustments. Defaults to 0.0.
+            polygon (Polygon | None, optional):
+                Polygon representing the zone geometry. Defaults to None.
+            buffered_polygon (Polygon | None, optional):
+                Buffered polygon geometry. Defaults to None.
+            update_callback (Callable | None, optional):
+                Function to be called on updates. Defaults to None.
 
         """
         super().__init__(

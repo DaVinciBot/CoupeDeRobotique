@@ -1,3 +1,5 @@
+"""Core arena abstractions and zoning helpers."""
+
 from arena.base_arena.arena import BaseArena
 from arena.base_arena.arena_zones import (
     AllyZone,

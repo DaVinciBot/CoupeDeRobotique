@@ -1,11 +1,7 @@
-# ====== Code Summary ======
-# This module defines the ColorReservedZone class, which represents a restricted zone
-# in an arena. The accessibility of this zone depends on a predefined team color. The class
-# extends BaseArenaZone and dynamically updates zone accessibility based on detected enemy
-# movement and team color conditions.
-
+"""Base class for zones restricted to a specific team color."""
 
 from collections.abc import Callable
+from typing import override
 
 from loggerplusplus import Logger
 
@@ -17,8 +13,10 @@ from geometry import OrientedPoint, Point, Polygon
 
 
 class BaseColorReservedZone(BaseArenaZone):
-    """Represents a zone restricted to a specific team color.
-    The zone becomes accessible if the team's color matches the predefined color values.
+    """Represent a zone restricted to a specific team color.
+
+    The zone becomes accessible if the team's color matches the predefined color
+    values.
 
     """
 
@@ -35,20 +33,26 @@ class BaseColorReservedZone(BaseArenaZone):
         zone_color: str = "#9e9e9e",
         go_to_positions: list[OrientedPoint | Point] | None = None,
     ) -> None:
-        """Initializes the ColorReservedZone.
+        """Initialize the ColorReservedZone.
 
         Args:
             logger (Logger): Logger instance for debugging and tracking.
             zone_type (ZoneType): Type of the zone.
             color (TeamColor): Primary color determining access.
-            accessibility (ZoneAccessibility, optional): Initial accessibility state of the zone. Defaults to ZoneAccessibility.RESTRICTED.
-            buffer_size (float, optional): Size of the buffer for zone expansion. Defaults to 0.0.
-            polygon (Polygon | None, optional): The base polygon defining the zone's shape. Defaults to None.
-            buffered_polygon (Polygon | None, optional): Buffered version of the polygon. Defaults to None.
+            accessibility (ZoneAccessibility, optional): Initial accessibility of
+                the zone. Defaults to ZoneAccessibility.RESTRICTED.
+            buffer_size (float, optional):
+                Size of the buffer for zone expansion. Defaults to 0.0.
+            polygon (Polygon | None, optional):
+                Polygon defining the zone's shape. Defaults to None.
+            buffered_polygon (Polygon | None, optional):
+                Buffered version of the polygon. Defaults to None.
             update_callback (Callable[[], GridManager] | None, optional):
                 Function returning the grid manager instance. Defaults to None.
-            zone_color (str, optional): Hex code representing the zone color. Defaults to "#9e9e9e".
-            go_to_positions (list[OrientedPoint | Point] | None, optional): List of go-to positions within the zone. Defaults to None.
+            zone_color (str, optional):
+                Hex code representing the zone color. Defaults to "#9e9e9e".
+            go_to_positions (list[OrientedPoint | Point] | None, optional):
+                List of go-to positions within the zone. Defaults to None.
 
         """
         self.color: TeamColor = color
@@ -65,11 +69,13 @@ class BaseColorReservedZone(BaseArenaZone):
             go_to_positions=go_to_positions,
         )
 
+    @override
     def is_accessible(self, team_color: TeamColor = TeamColor.UNDEFINED) -> bool:
-        """Determines if the zone is accessible based on the team color.
+        """Determine if the zone is accessible based on the team color.
 
         Args:
-            team_color (TeamColor, optional): The color assigned to the team. Defaults to TeamColor.UNDEFINED.
+            team_color (TeamColor, optional): Color assigned to the team.
+                Defaults to TeamColor.UNDEFINED.
 
         Returns:
             bool: ``True`` if the zone is accessible, ``False`` otherwise.
@@ -77,18 +83,19 @@ class BaseColorReservedZone(BaseArenaZone):
         """
         return super().is_accessible() and self.color == team_color
 
+    @override
     def update(
         self,
         team_color: TeamColor,
         ally_position: Point | OrientedPoint,
         enemy_position: Point | OrientedPoint,
     ) -> None:
-        """Updates the zone state based on detected enemy movement and team color validation.
+        """Update the zone state based on enemy movement and team color.
 
         Args:
-            team_color (TeamColor): The color assigned to the team.
-            ally_position (Point | OrientedPoint): The position of the ally.
-            enemy_position (Point | OrientedPoint): The position of the enemy.
+            team_color (TeamColor): Color assigned to the team.
+            ally_position (Point | OrientedPoint): Position of the ally.
+            enemy_position (Point | OrientedPoint): Position of the enemy.
 
         """
         super().update(team_color, ally_position, enemy_position)

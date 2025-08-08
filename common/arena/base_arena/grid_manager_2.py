@@ -1,3 +1,5 @@
+"""Legacy grid manager used for experimental pathfinding."""
+
 import copy
 
 import matplotlib.pyplot as plt
@@ -43,7 +45,10 @@ class GridManager:
 
         if width % chunk_size != 0 or height % chunk_size != 0:
             self.logger.log(
-                "[GRID] width and height must be multiples of chunk_size. Adjusting chunk size.",
+                (
+                    "[GRID] width and height must be multiples of chunk_size. "
+                    "Adjusting chunk size."
+                ),
                 LogLevels.WARNING,
             )
             chunk_size = min(width, height, key=lambda x: abs(x - chunk_size))
@@ -73,7 +78,13 @@ class GridManager:
         """Updates the spatial index for static forbidden zones."""
         self.spatial_index = STRtree(self.static_forbidden_zones)
 
-    def __mark_zone(self, grid: Grid, zones: list[Polygon], walkable: bool) -> Grid:
+    def __mark_zone(
+        self,
+        grid: Grid,
+        zones: list[Polygon],
+        *,
+        walkable: bool,
+    ) -> Grid:
         """Marks cells in the grid as walkable or non-walkable based on zones.
 
         Args:
@@ -246,19 +257,22 @@ class GridManager:
 
     def visualize(
         self,
+        *,
         only_static_grid: bool = False,
         path: list[GridNode] | None = None,
     ) -> None:
         """Visualize the grid using matplotlib.
 
         Args:
-            only_static_grid (bool, optional): If ``True`` show only static zones. Defaults to ``False``.
-            path (list[GridNode] | None, optional): Path to draw over the grid. Defaults to None.
+            only_static_grid (bool, optional):
+                If ``True`` show only static zones. Defaults to ``False``.
+            path (list[GridNode] | None, optional):
+                Path to draw over the grid. Defaults to ``None``.
 
         """
         grid_to_visualize = self.static_grid if only_static_grid else self.dynamic_grid
 
-        fig, ax = plt.subplots(figsize=(12, 6))
+        _fig, ax = plt.subplots(figsize=(12, 6))
 
         for y in range(self.grid_height):
             for x in range(self.grid_width):

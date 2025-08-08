@@ -50,7 +50,9 @@ void Navigation::update() {
         //     stop(); // fin de la séquence
         // }
         _lastSendMs = now;
-        spdlog::info("[Navigation] Sending command to basis: {}, {}, {}", _waypoints[_wpIndex].x, _waypoints[_wpIndex].y, _waypoints[_wpIndex].theta);
+        spdlog::info("[Navigation] Sending command to basis: {}, {}, {}",
+                     _waypoints[_wpIndex].x, _waypoints[_wpIndex].y,
+                     _waypoints[_wpIndex].theta);
     }
 
     _basis->update();

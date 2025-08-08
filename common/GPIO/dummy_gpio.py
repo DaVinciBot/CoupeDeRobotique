@@ -40,13 +40,18 @@ class PIN:
         self.device: DummyDevice | None = None
         self.count: int = 0
 
-    def setup(self, mode: str, reverse_state: bool = False) -> None:
+    def setup(
+        self,
+        mode: str,
+        *,
+        reverse_state: bool = False,
+    ) -> None:
         """Set up the pin with a mode and optional reverse state.
 
         Args:
             mode (str): Mode of the pin, e.g., 'input' or 'output'.
-            reverse_state (bool, optional): If True, reverses the state of the pin.
-                Defaults to False.
+            reverse_state (bool, optional): If ``True``, reverses the state of the pin.
+                Defaults to ``False``.
 
         """
         self.mode = mode.lower()

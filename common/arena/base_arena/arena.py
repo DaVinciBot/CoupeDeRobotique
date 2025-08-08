@@ -1,9 +1,11 @@
-# ====== Code Summary ======
-# The BaseArena class models a physical arena with zones, border buffers, and obstacles.
-# It initializes a list of zones with added buffers and includes a GridManager for managing grid-based zones.
-# Methods include creating border zones, adding buffers to zones, handling zone accessibility, visualizing the arena,
-# and computing enemy or robot positions based on various inputs.
+"""Base arena representation and visualization utilities.
 
+The :class:`BaseArena` class models a physical arena with zones, border buffers, and
+obstacles. It provides helpers for creating border zones, managing a grid-based
+view of the arena, handling zone accessibility, and rendering the arena for
+debug or user interfaces.
+
+"""
 
 from abc import ABC, abstractmethod
 from typing import cast, override
@@ -152,6 +154,7 @@ class BaseArena(ABC):
     # ====== Private Methods ======
     def __create_arena_border_zone(self) -> BorderZone:
         """Create a border zone around the arena with a specified buffer width.
+
         Prevents the robot from approaching too close to the arena edges.
 
         Returns:
@@ -176,6 +179,7 @@ class BaseArena(ABC):
 
     def __prepare_zones(self) -> None:
         """Prepare all zones that could be used for calculations.
+
         It will improve the computing performance.
 
         """
@@ -198,7 +202,8 @@ class BaseArena(ABC):
         """Converts polar coordinates to absolute Cartesian coordinates.
 
         Args:
-            polars (np.ndarray): Array of polar coordinates in the form of (angle, distance).
+            polars (np.ndarray):
+                Array of polar coordinates in the form of (angle, distance).
 
         Returns:
             MultiPoint: Array of absolute Cartesian coordinates.
@@ -242,6 +247,7 @@ class BaseArena(ABC):
         self,
         ally_position: OrientedPoint,
         lidar_scan_polars: np.ndarray,  # Polars coordinates issued from the lidar scan
+        *,
         optimized_update: bool = True,
         _enemy_position: Point | None = None,  # Only for testing and simulation purpose
     ) -> None:
@@ -289,6 +295,7 @@ class BaseArena(ABC):
         self,
         lidar_scan_polars: np.ndarray,
         ally_position: OrientedPoint,
+        *,
         _start_time: int = -1,
         _numb_enemy: bool = False,
     ) -> Point | OrientedPoint:
@@ -336,6 +343,17 @@ class BaseArena(ABC):
         self,
         goal: int | BaseArenaZone | OrientedPoint | Point,
     ) -> OrientedPoint | Point | None:
+        """Compute a goal position based on zone or point information.
+
+        Args:
+            goal (int | BaseArenaZone | OrientedPoint | Point): Zone identifier
+                or direct destination.
+
+        Returns:
+            OrientedPoint | Point | None: Computed destination or ``None`` if the
+            goal type is invalid.
+
+        """
         # 1. If goal is defined as int, it's a zone ID
         if isinstance(goal, int):
             if goal > len(self.zones):
@@ -355,7 +373,7 @@ class BaseArena(ABC):
             )
 
         # 3. If goal is an OrientedPoint or Point, return it as is
-        if isinstance(goal, OrientedPoint) or isinstance(goal, Point):
+        if isinstance(goal, (OrientedPoint, Point)):
             return goal
 
         # 4. If goal is not recognized, log an error
@@ -384,10 +402,12 @@ class BaseArena(ABC):
         """Find the zone that contains a given location.
 
         Args:
-            location (int | BaseArenaZone | Point | OrientedPoint): The location to check.
+            location (int | BaseArenaZone | Point | OrientedPoint):
+                The location to check.
 
         Returns:
-            BaseArenaZone | None: The zone containing the location, or None if not found.
+            BaseArenaZone | None:
+                The zone containing the location, or None if not found.
 
         """
         if isinstance(location, int):
@@ -423,14 +443,15 @@ class BaseArena(ABC):
 
     # We check if an element intersects with at least one zone of the specified type
     def zone_intersects(self, accessibility: str, element: Geometry) -> bool:
-        """Check if a given geometric element intersects with any zone that has the specified accessibility.
+        """Check if a geometric element intersects zones of a given accessibility.
 
         Args:
-            accessibility (str): The accessibility type to check for zones.
-            element (Geometry): The geometric element to check for intersection.
+            accessibility (str): Accessibility level to filter zones by.
+            element (Geometry): Geometric element to test for intersection.
 
         Returns:
-            bool: ``True`` if the element intersects with any zone that has the specified accessibility, ``False`` otherwise.
+            bool:
+                ``True`` if a matching zone intersects ``element``, ``False`` otherwise.
 
         Raises:
             ValueError: If no zones have the specified accessibility.
@@ -438,21 +459,20 @@ class BaseArena(ABC):
         """
         zones_to_check = self.find_zone_accessibility(accessibility)
         if not zones_to_check:
-            raise ValueError(f"No zones has accessibility: '{accessibility}'.")
+            msg = f"No zones has accessibility: '{accessibility}'."
+            raise ValueError(msg)
 
-        for zone in zones_to_check:
-            if zone and zone.polygon.intersects(element):
-                return True
-        return False
+        return any(zone.polygon.intersects(element) for zone in zones_to_check)
 
     def contains(self, element: Geometry) -> bool:
-        """Check if a point is in the arena bounds
+        """Check if a point is in the arena bounds.
 
         Args:
-            element (Geometry): The point to check. Points, Polygons etc. are all Geometries.
+            element (Geometry): The point to check. Points, polygons, etc. are all
+                ``Geometry`` instances.
 
         Returns:
-            bool: ``True`` if the element is entirely in the arena, ``False`` otherwise
+            bool: ``True`` if the element is entirely in the arena, ``False`` otherwise.
 
         """
         return self.bounding_area.contains(element)
@@ -476,8 +496,10 @@ class BaseArena(ABC):
             point (OrientedPoint): Oriented point (x, y, theta) with position and angle.
             norm (float): Length of the arrow. Defaults to 5.0.
             color (str): Color of the arrow. Defaults to '#000000'.
-            head_width (float | None): Width of the arrow head. Defaults to None -> norm * 0.2.
-            head_length (float | None): Length of the arrow head. Defaults to None -> norm * 0.3.
+            head_width (float | None): Width of the arrow head.
+                Defaults to None -> norm * 0.2.
+            head_length (float | None): Length of the arrow head.
+                Defaults to None -> norm * 0.3.
 
         """
         if head_width is None:
@@ -555,7 +577,7 @@ class BaseArena(ABC):
         hatch: str | None = None,
         hatch_color: str | None = None,
     ) -> None:
-        """Plot a polygon or multipolygon on a matplotlib axis.
+        r"""Plot a polygon or multipolygon on a matplotlib axis.
 
         - Fills polygons without holes, optionally with hatching.
         - Draws only outlines (dashed) for polygons with holes.
@@ -567,8 +589,10 @@ class BaseArena(ABC):
             color (str): Fill color of the polygon.
             label (str | None, optional): Legend label. Defaults to None.
             alpha (float, optional): Transparency factor. Defaults to 1.0.
-            hatch (str | None, optional): Matplotlib hatching pattern, e.g., '/' or '\\'. Defaults to None for no hatching.
-            hatch_color (str | None, optional): Color of the hatching lines. Defaults to None.
+            hatch (str | None, optional): Matplotlib hatching pattern,
+                e.g., ``/`` or ``\\``. Defaults to None for no hatching.
+            hatch_color (str | None, optional): Color of the hatching lines.
+                Defaults to None.
 
         """
         # Avoid duplicate labels
@@ -600,6 +624,7 @@ class BaseArena(ABC):
         self,
         ax: plt.Axes,
         zone: BaseArenaZone,
+        *,
         show_buffer: bool,
         show_ally_direction: bool,
         display_zones_go_to_positions: bool,
@@ -688,70 +713,77 @@ class BaseArena(ABC):
                     norm=zone.robot_size + 10,
                 )
 
-    # ====== Public Methods ======
-    def visualize(
-        self,
-        # Visualization options
-        show_buffer: bool = True,
-        trajectory: list[OrientedPoint] | None = None,
-        transparency_factor: float = 1.0,
-        display_zones_go_to_positions: bool = True,
-        show_ally_direction: bool = True,
-        # Plot options
-        show: bool = True,
-        plot: tuple[plt.Axes, plt.Figure] | None = None,
-        # Additional options
-        additional_zones: list[BaseArenaZone] | None = None,
-        additional_points: list[Point | OrientedPoint] | None = None,
+    @staticmethod
+    def _init_plot(
+        plot: tuple[plt.Axes, plt.Figure] | None,
     ) -> tuple[plt.Axes, plt.Figure]:
-        # 1.Define the figure and axis
+        """Return the axis and figure used for visualization.
+
+        Args:
+            plot (tuple[plt.Axes, plt.Figure] | None): Existing axis and figure to
+                reuse.
+
+        Returns:
+            tuple[plt.Axes, plt.Figure]: Axis and figure for plotting.
+
+        """
         if plot:
-            ax, fig = plot
-        else:
-            fig, ax = plt.subplots(figsize=(20, 12))
+            return plot
+        fig, ax = plt.subplots(figsize=(20, 12))
+        return ax, fig
 
-        # 2. Draw the arena boundary
-        self.__plot_polygon(ax, self.bounding_area, color="#f0f0f0", label="Arena")
+    def _plot_zones(
+        self,
+        ax: plt.Axes,
+        *,
+        show_buffer: bool,
+        display_zones_go_to_positions: bool,
+        show_ally_direction: bool,
+        transparency_factor: float,
+        additional_zones: list[BaseArenaZone] | None,
+    ) -> None:
+        """Plot all arena zones and optional extra zones.
 
-        # 3. Plot zones and their buffers
-        # 3.1 Border zone
+        Args:
+            ax (plt.Axes): Axis on which to draw.
+            show_buffer (bool): Whether to display buffer polygons.
+            display_zones_go_to_positions (bool): Draw go-to positions if any.
+            show_ally_direction (bool): Draw an arrow for the ally direction.
+            transparency_factor (float): Alpha multiplier for polygons.
+            additional_zones (list[BaseArenaZone] | None): Extra zones to draw.
+
+        """
         self.__plot_zone(
             ax,
             self.border_zone,
-            show_buffer,
+            show_buffer=show_buffer,
             show_ally_direction=False,
             display_zones_go_to_positions=False,
             transparency_factor=transparency_factor,
         )
-
-        # 3.2 All zones (stored in self.zones)
         for zone in self.zones:
             self.__plot_zone(
                 ax,
                 zone,
-                show_buffer,
+                show_buffer=show_buffer,
                 show_ally_direction=False,
                 display_zones_go_to_positions=display_zones_go_to_positions,
                 transparency_factor=transparency_factor,
             )
-
-        # 3.3 Additional zones (if provided)
         if additional_zones:
             for zone in additional_zones:
                 self.__plot_zone(
                     ax,
                     zone,
-                    show_buffer,
+                    show_buffer=show_buffer,
                     show_ally_direction=False,
                     display_zones_go_to_positions=display_zones_go_to_positions,
                     transparency_factor=transparency_factor,
                 )
-
-        # 3.4 Ally and Enemy zones
         self.__plot_zone(
             ax,
             self.enemy_zone,
-            show_buffer,
+            show_buffer=show_buffer,
             show_ally_direction=False,
             display_zones_go_to_positions=False,
             transparency_factor=transparency_factor,
@@ -759,58 +791,134 @@ class BaseArena(ABC):
         self.__plot_zone(
             ax,
             self.ally_zone,
-            show_buffer,
-            show_ally_direction,
+            show_buffer=show_buffer,
+            show_ally_direction=show_ally_direction,
             display_zones_go_to_positions=False,
             transparency_factor=transparency_factor,
         )
 
-        # 4 Additional points (if provided)
-        if additional_points:
-            for p in additional_points:
-                if isinstance(p, Point):
-                    ax.plot(p.x, p.y, "ro")
-                elif isinstance(p, OrientedPoint):
-                    self.__plot_oriented_arrow(
-                        ax,
-                        p,
-                        color="red",
-                        norm=5,
-                        head_width=4,
-                        head_length=3,
-                    )
-                else:
-                    self.logger.error(f"Invalid point type: {type(p)}")
+    def _plot_additional_points(
+        self,
+        ax: plt.Axes,
+        points: list[Point | OrientedPoint] | None,
+    ) -> None:
+        """Plot additional points or oriented points on the arena.
 
-        # 5. Plot trajectory
-        if trajectory:
-            for i in range(len(trajectory) - 1):
-                # Draw a line connecting the current point to the next point
-                ax.plot(
-                    [trajectory[i].x, trajectory[i + 1].x],
-                    [trajectory[i].y, trajectory[i + 1].y],
-                    color="purple",
-                    linewidth=1,
-                    alpha=0.2,
+        Args:
+            ax (plt.Axes): Axis on which to draw.
+            points (list[Point | OrientedPoint] | None): Points to display.
+
+        """
+        if not points:
+            return
+        for p in points:
+            if isinstance(p, OrientedPoint):
+                self.__plot_oriented_arrow(
+                    ax,
+                    p,
+                    color="red",
+                    norm=5,
+                    head_width=4,
+                    head_length=3,
                 )
+            elif isinstance(p, Point):
+                ax.plot(p.x, p.y, "ro")
+            else:
+                self.logger.error(f"Invalid point type: {type(p)}")
 
-        # 6. Set plot properties
-        ax.set_xlim(self.width, 0)  # Reverse x-axis
-        ax.set_ylim(0, self.height)  # Keep y-axis normal
-        ax.spines["top"].set_visible(False)  # Hide top frame line
-        ax.spines["right"].set_visible(False)  # Hide right frame line
-        ax.spines["left"].set_position(("axes", 1))  # Move y-axis to the right
-        ax.yaxis.tick_right()  # Move y-axis labels to the right
+    @staticmethod
+    def _plot_trajectory(
+        ax: plt.Axes,
+        trajectory: list[OrientedPoint],
+    ) -> None:
+        """Plot a trajectory connecting oriented points.
+
+        Args:
+            ax (plt.Axes): Axis on which to draw.
+            trajectory (list[OrientedPoint]): Path to draw.
+
+        """
+        for i in range(len(trajectory) - 1):
+            ax.plot(
+                [trajectory[i].x, trajectory[i + 1].x],
+                [trajectory[i].y, trajectory[i + 1].y],
+                color="purple",
+                linewidth=1,
+                alpha=0.2,
+            )
+
+    def _finalize_plot(self, ax: plt.Axes) -> None:
+        """Finalize axis properties and legend positioning.
+
+        Args:
+            ax (plt.Axes): Axis to configure.
+
+        """
+        ax.set_xlim(self.width, 0)
+        ax.set_ylim(0, self.height)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.spines["left"].set_position(("axes", 1))
+        ax.yaxis.tick_right()
         ax.yaxis.set_label_position("right")
-
         ax.set_aspect("equal", adjustable="box")
         ax.set_title("Arena Visualization")
-
-        # Place legend on the right
         plt.legend(loc="center right", bbox_to_anchor=(-0.1, 0.5))
-
-        # 6. Show or return the plot
         plt.tight_layout()
+
+    # ====== Public Methods ======
+    def visualize(
+        self,
+        *,
+        show_buffer: bool = True,
+        trajectory: list[OrientedPoint] | None = None,
+        transparency_factor: float = 1.0,
+        display_zones_go_to_positions: bool = True,
+        show_ally_direction: bool = True,
+        show: bool = True,
+        plot: tuple[plt.Axes, plt.Figure] | None = None,
+        additional_zones: list[BaseArenaZone] | None = None,
+        additional_points: list[Point | OrientedPoint] | None = None,
+    ) -> tuple[plt.Axes, plt.Figure]:
+        """Visualize the arena and optionally display the plot.
+
+        Args:
+            show_buffer (bool, optional): Whether to display buffered polygons.
+                Defaults to ``True``.
+            trajectory (list[OrientedPoint] | None, optional): Trajectory to draw.
+                Defaults to ``None``.
+            transparency_factor (float, optional): Alpha multiplier. Defaults to 1.0.
+            display_zones_go_to_positions (bool, optional): Plot go-to positions.
+                Defaults to ``True``.
+            show_ally_direction (bool, optional): Draw ally orientation arrow.
+                Defaults to ``True``.
+            show (bool, optional): If ``True``, display the plot immediately.
+                Defaults to ``True``.
+            plot (tuple[plt.Axes, plt.Figure] | None, optional):
+                Existing axis and figure. Defaults to ``None``.
+            additional_zones (list[BaseArenaZone] | None, optional):
+                Extra zones to draw. Defaults to ``None``.
+            additional_points (list[Point | OrientedPoint] | None, optional):
+                Extra points to draw. Defaults to ``None``.
+
+        Returns:
+            tuple[plt.Axes, plt.Figure]: Axis and figure containing the visualization.
+
+        """
+        ax, fig = self._init_plot(plot)
+        self.__plot_polygon(ax, self.bounding_area, color="#f0f0f0", label="Arena")
+        self._plot_zones(
+            ax,
+            show_buffer=show_buffer,
+            display_zones_go_to_positions=display_zones_go_to_positions,
+            show_ally_direction=show_ally_direction,
+            transparency_factor=transparency_factor,
+            additional_zones=additional_zones,
+        )
+        self._plot_additional_points(ax, additional_points)
+        if trajectory:
+            self._plot_trajectory(ax, trajectory)
+        self._finalize_plot(ax)
         if show:
             plt.show()
         return ax, fig
@@ -825,3 +933,13 @@ class BaseArena(ABC):
     @abstractmethod
     def __ne__(self, other: object) -> bool:
         pass
+
+    @override
+    def __hash__(self) -> int:
+        """Return a unique hash based on the instance identity.
+
+        Returns:
+            int: Hash of the arena instance.
+
+        """
+        return id(self)

@@ -1,6 +1,4 @@
-# ====== Code Summary ======
-# This module defines the StuffZone class, a zone designated for storage or item placement.
-# It extends BaseArenaZone and updates its accessibility based on the presence of allies or enemies.
+"""Zone designated for storing or placing items during matches."""
 
 from collections.abc import Callable
 from typing import TYPE_CHECKING
@@ -32,11 +30,16 @@ class StuffZone(BaseArenaZone):
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            buffer_size (float, optional): Buffer size for geometric adjustments. Defaults to 0.0.
-            polygon (Polygon | None, optional): Polygon representing the zone geometry. Defaults to None.
-            buffered_polygon (Polygon | None, optional): Buffered polygon geometry. Defaults to None.
-            update_callback (Callable | None, optional): Function to be called on updates. Defaults to None.
-            go_to_positions (list[OrientedPoint | Point] | None, optional): List of go-to positions within the zone. Defaults to None.
+            buffer_size (float, optional):
+                Buffer size for geometric adjustments. Defaults to 0.0.
+            polygon (Polygon | None, optional):
+                Polygon representing the zone geometry. Defaults to None.
+            buffered_polygon (Polygon | None, optional):
+                Buffered polygon geometry. Defaults to None.
+            update_callback (Callable | None, optional):
+                Function to be called on updates. Defaults to None.
+            go_to_positions (list[OrientedPoint | Point] | None, optional):
+                List of go-to positions within the zone. Defaults to None.
 
         """
         super().__init__(
@@ -93,6 +96,12 @@ class StuffZone(BaseArenaZone):
             OrientedPoint | Point | None: The best go-to position, or None if the zone is not accessible.
 
         """
+        if not self.is_accessible(team_color):
+            self.logger.debug(
+                f"GoTo position request: Zone {self.zone_type} is not accessible.",
+            )
+            return None
+
         # If no go-to positions are defined, return the centroid of the zone
         if self.go_to_positions is None:
             self.logger.debug(
@@ -105,7 +114,7 @@ class StuffZone(BaseArenaZone):
         if self.go_to_positions:
             nearest_position = min(
                 self.go_to_positions,
-                key=lambda p: ally_position.distance(p),
+                key=ally_position.distance,
             )
             self.logger.debug(
                 f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]",

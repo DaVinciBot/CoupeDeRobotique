@@ -1,3 +1,5 @@
+"""Enumerations for identifying robot team colors."""
+
 from enum import Enum
 
 

@@ -1,3 +1,5 @@
+"""Legacy Mars 2024 arena and zone utilities."""
+
 from sys import maxsize
 
 from old_logger import Logger
@@ -7,31 +9,70 @@ from shapely import distance
 from arena.base_arena.arena import Arena
 from geometry import OrientedPoint, Point, Polygon, create_straight_rectangle
 
+MIN_START_ZONE_ID = 0
+MAX_START_ZONE_ID = 5
+ARENA_WIDTH_CM = 300
+ARENA_HEIGHT_CM = 200
 
-class Plants_zone:
+
+class PlantsZone:
+    """Track plant counts and visitation state for a zone."""
+
     def __init__(self, zone: Polygon, nb_plant: int = 0) -> None:
+        """Initialize a plant zone.
+
+        Args:
+            zone (Polygon): Polygon representing the zone bounds.
+            nb_plant (int, optional): Number of plants in the zone. Defaults to 0.
+
+        """
         self.zone: Polygon = zone
         self.nb_plant: int = nb_plant
         self.visited = False
 
     def __str__(self) -> str:
-        return f"zone : {self.zone.__str__()}, nb_plant {self.nb_plant}"
+        """Return a readable representation of the zone.
+
+        Returns:
+            str: Description of the zone and plant count.
+
+        """
+        return f"zone : {self.zone}, nb_plant {self.nb_plant}"
 
     def __repr__(self) -> str:
+        """Return a string representation for debugging.
+
+        Returns:
+            str: Debug-friendly representation of the zone.
+
+        """
         return self.__str__()
 
     def take_plants(self, nb: int) -> None:
+        """Remove plants from the zone.
+
+        Args:
+            nb (int): Number of plants to remove.
+
+        """
         self.nb_plant -= nb
 
     def drop_plants(self, nb: int) -> None:
+        """Add plants to the zone.
+
+        Args:
+            nb (int): Number of plants to add.
+
+        """
         self.nb_plant += nb
 
     def visit(self) -> None:
+        """Mark the zone as visited."""
         self.visited = True
 
 
 class MarsArena(Arena):
-    """Represent the arena of the +CDR 2023-2024"""
+    """Arena layout and zone helpers for the 2024 Mars challenge."""
 
     def __init__(
         self,
@@ -50,11 +91,16 @@ class MarsArena(Arena):
             robot_buffer (float): Safety buffer around moving robots.
 
         Raises:
-            ValueError: If ``start_zone_id`` is not between ``0`` and ``5``.
+            ValueError: If ``start_zone_id`` is not between ``MIN_START_ZONE_ID`` and
+                ``MAX_START_ZONE_ID``.
 
         """
-        if not (0 <= start_zone_id <= 5):
-            raise ValueError("start_zone must be between 0 and 5")
+        if not (MIN_START_ZONE_ID <= start_zone_id <= MAX_START_ZONE_ID):
+            msg = (
+                f"start_zone must be between {MIN_START_ZONE_ID} "
+                f"and {MAX_START_ZONE_ID}"
+            )
+            raise ValueError(msg)
 
         origin = Point(0, 0)
         opposite_corner = Point(200, 300)
@@ -68,63 +114,59 @@ class MarsArena(Arena):
             else [300 - val for val in solar_panels_distances]
         )
 
-        self.drop_zones: list[Plants_zone] = [
-            Plants_zone(
+        self.drop_zones: list[PlantsZone] = [
+            PlantsZone(
                 create_straight_rectangle(Point(45, 0), Point(0, 45)),
             ),  # 0 - Blue (Possible forbidden area)
-            Plants_zone(
+            PlantsZone(
                 create_straight_rectangle(Point(77.5, 0), Point(122.5, 45)),
             ),  # 1 - Yellow
-            Plants_zone(
+            PlantsZone(
                 create_straight_rectangle(Point(155, 0), Point(200, 45)),
             ),  # 2 - Blue
-            Plants_zone(
+            PlantsZone(
                 create_straight_rectangle(Point(0, 255), Point(45, 300)),
             ),  # 3 - Yellow (Possible forbidden area)
-            Plants_zone(
+            PlantsZone(
                 create_straight_rectangle(Point(122.5, 255), Point(77.5, 300)),
             ),  # 4 - Blue
-            Plants_zone(
+            PlantsZone(
                 create_straight_rectangle(Point(200, 255), Point(155, 300)),
             ),  # 5 - Yellow
         ]
 
-        self.pickup_zones: list[Plants_zone] = [
-            Plants_zone(Point(70, 100).buffer(12.5), 6),
-            Plants_zone(Point(130, 100).buffer(12.5), 6),
-            Plants_zone(Point(150, 150).buffer(12.5), 6),
-            Plants_zone(Point(130, 200).buffer(12.5), 6),
-            Plants_zone(Point(70, 200).buffer(12.5), 6),
-            Plants_zone(Point(50, 150).buffer(12.5), 6),
+        self.pickup_zones: list[PlantsZone] = [
+            PlantsZone(Point(70, 100).buffer(12.5), 6),
+            PlantsZone(Point(130, 100).buffer(12.5), 6),
+            PlantsZone(Point(150, 150).buffer(12.5), 6),
+            PlantsZone(Point(130, 200).buffer(12.5), 6),
+            PlantsZone(Point(70, 200).buffer(12.5), 6),
+            PlantsZone(Point(50, 150).buffer(12.5), 6),
         ]
 
-        self.gardeners: list[Plants_zone] = [
+        self.gardeners: list[PlantsZone] = [
             (
-                Plants_zone(
+                PlantsZone(
                     create_straight_rectangle(Point(45, -15), Point(77.5, -3)),
                 )
             ),  # 0 - Blue
             (
-                Plants_zone(
+                PlantsZone(
                     create_straight_rectangle(Point(122.5, -15), Point(155, -3)),
                 )
             ),  # 1 - Yellow
+            (PlantsZone(create_straight_rectangle(Point(203, 60), Point(215, 92.5)))),
+            (PlantsZone(create_straight_rectangle(Point(45, 315), Point(77.5, 303)))),
             (
-                Plants_zone(create_straight_rectangle(Point(203, 60), Point(215, 92.5)))
-            ),  # 2 - Yellow
-            (
-                Plants_zone(create_straight_rectangle(Point(45, 315), Point(77.5, 303)))
-            ),  # 3 - Yellow
-            (
-                Plants_zone(
+                PlantsZone(
                     create_straight_rectangle(Point(122.5, 315), Point(155, 303)),
                 )
-            ),  # 4 - Blue
+            ),
             (
-                Plants_zone(
+                PlantsZone(
                     create_straight_rectangle(Point(203, 240), Point(215, 207.5)),
                 )
-            ),  # 5 - Blue
+            ),
         ]
         if self.start_zone_id % 2 == 0:
             forbidden = self.drop_zones[3].zone
@@ -143,39 +185,70 @@ class MarsArena(Arena):
 
     @property
     def team(self) -> str:
+        """Return ``'y'`` for yellow or ``'b'`` for blue based on start zone.
+
+        Returns:
+            str: Team color identifier.
+
+        """
         return "y" if self.start_zone_id % 2 == 0 else "b"
 
+    @staticmethod
     def sort_plant_zones(
-        self,
-        zones_to_sort: list[Plants_zone],
+        *,
+        zones_to_sort: list[PlantsZone],
         actual_position: OrientedPoint,
         mini_plants: int = -1,
         maxi_plants: int = maxsize,
         reverse: bool = False,
-    ) -> list[Plants_zone]:
-        zones: list[Plants_zone] = []
+    ) -> list[PlantsZone]:
+        """Sort plant zones by number of plants and distance.
 
+        Args:
+            zones_to_sort (list[PlantsZone]): Zones to sort.
+            actual_position (OrientedPoint): Reference position for distance.
+            mini_plants (int, optional): Minimum number of plants per zone.
+                Defaults to -1.
+            maxi_plants (int, optional): Maximum number of plants per zone. Defaults to
+                ``sys.maxsize``.
+            reverse (bool, optional): If ``True``, sort from farthest to nearest.
+                Defaults to ``False``.
+
+        Returns:
+            list[PlantsZone]: Sorted list of plant zones.
+
+        """
         zones = [
-            zone
-            for zone in zones_to_sort
-            if zone.nb_plant > mini_plants and zone.nb_plant < maxi_plants
+            zone for zone in zones_to_sort if mini_plants < zone.nb_plant < maxi_plants
         ]
-
-        zones = sorted(
+        return sorted(
             zones,
             key=lambda x: distance(x.zone, Point(actual_position.x, actual_position.y)),
             reverse=reverse,
-        )  # sort according to the required bound and by distance
-
-        return zones
+        )
 
     def sort_gardener(
         self,
         actual_position: OrientedPoint,
+        *,
         friendly_only: bool = True,
         maxi: int = 6,
         reverse: bool = False,
-    ) -> list[Plants_zone]:
+    ) -> list[PlantsZone]:
+        """Sort gardener zones according to filters.
+
+        Args:
+            actual_position (OrientedPoint): Reference position for distance.
+            friendly_only (bool, optional): If ``True``, consider only friendly zones.
+                Defaults to ``True``.
+            maxi (int, optional): Maximum number of plants in a zone. Defaults to 6.
+            reverse (bool, optional): If ``True``, sort from farthest to nearest.
+                Defaults to ``False``.
+
+        Returns:
+            list[PlantsZone]: Sorted gardener zones.
+
+        """
         zones_to_sort = (
             [
                 self.gardeners[i]
@@ -185,9 +258,9 @@ class MarsArena(Arena):
             if friendly_only
             else self.gardeners
         )
-        return self.sort_plant_zones(
-            actual_position=actual_position,
+        return MarsArena.sort_plant_zones(
             zones_to_sort=zones_to_sort,
+            actual_position=actual_position,
             maxi_plants=maxi,
             reverse=reverse,
         )
@@ -195,10 +268,26 @@ class MarsArena(Arena):
     def sort_drop_zone(
         self,
         actual_position: OrientedPoint,
+        *,
         friendly_only: bool = True,
         maxi_plants: int = 6,
         reverse: bool = False,
-    ) -> list[Plants_zone]:
+    ) -> list[PlantsZone]:
+        """Sort drop zones according to filters.
+
+        Args:
+            actual_position (OrientedPoint): Reference position for distance.
+            friendly_only (bool, optional): If ``True``, consider only friendly zones.
+                Defaults to ``True``.
+            maxi_plants (int, optional):
+                Maximum number of plants in a zone. Defaults to 6.
+            reverse (bool, optional): If ``True``, sort from farthest to nearest.
+                Defaults to ``False``.
+
+        Returns:
+            list[PlantsZone]: Sorted drop zones.
+
+        """
         zones_to_sort = (
             [
                 self.drop_zones[i]
@@ -208,9 +297,9 @@ class MarsArena(Arena):
             if friendly_only
             else self.drop_zones
         )
-        return self.sort_plant_zones(
-            actual_position=actual_position,
+        return MarsArena.sort_plant_zones(
             zones_to_sort=zones_to_sort,
+            actual_position=actual_position,
             maxi_plants=maxi_plants,
             reverse=reverse,
         )
@@ -218,34 +307,67 @@ class MarsArena(Arena):
     def sort_pickup_zone(
         self,
         actual_position: OrientedPoint,
+        *,
         mini_plants: int = 2,
         reverse: bool = False,
-    ) -> list[Plants_zone]:
-        return self.sort_plant_zones(
-            actual_position=actual_position,
+    ) -> list[PlantsZone]:
+        """Sort pickup zones according to filters.
+
+        Args:
+            actual_position (OrientedPoint): Reference position for distance.
+            mini_plants (int, optional): Minimum number of plants in a zone.
+                Defaults to 2.
+            reverse (bool, optional): If ``True``, sort from farthest to nearest.
+                Defaults to ``False``.
+
+        Returns:
+            list[PlantsZone]: Sorted pickup zones.
+
+        """
+        return MarsArena.sort_plant_zones(
             zones_to_sort=self.pickup_zones,
+            actual_position=actual_position,
             mini_plants=mini_plants,
             reverse=reverse,
         )
 
     def __str__(self) -> str:
+        """Return the class name.
+
+        Returns:
+            str: Name of the class.
+
+        """
         return "MarsArena"
 
     def display(self) -> str:
-        return f"""MarsArena: \n
-        \tArea : {self.game_borders}
-        \tForbidden area : {self.zones["forbidden"]}
-        \tHome : {self.zones["home"]}
+        """Return a readable description of arena zones.
+
+        Returns:
+            str: Summary of the arena layout.
+
         """
+        return (
+            f"MarsArena: \n"
+            f"\tArea : {self.game_borders}\n"
+            f"\tForbidden area : {self.zones['forbidden']}\n"
+            f"\tHome : {self.zones['home']}\n"
+        )
 
     def to_grid(self, chunk_size_cm: int) -> Grid:
-        width_cm = 300
-        height_cm = 200
+        """Convert the arena into a grid representation.
 
-        width = width_cm // chunk_size_cm
-        height = height_cm // chunk_size_cm
+        Args:
+            chunk_size_cm (int): Size of each grid cell in centimeters.
 
-        # ALl the grid is filled with 1 -> authorized area
+        Returns:
+            Grid: Grid where ``0`` marks forbidden cells.
+
+        """
+        width = ARENA_WIDTH_CM // chunk_size_cm
+        height = ARENA_HEIGHT_CM // chunk_size_cm
+
+        # All the grid is filled with 1 -> authorized area
         grid = [[1 for _ in range(width)] for _ in range(height)]
 
         # Forbidden area
