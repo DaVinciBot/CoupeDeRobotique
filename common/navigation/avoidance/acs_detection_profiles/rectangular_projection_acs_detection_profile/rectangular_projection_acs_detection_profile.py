@@ -4,7 +4,7 @@ from loggerplusplus import Logger
 
 from arena import AllyZone, EnemyZone
 from geometry import Polygon, rotate, translate
-from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
+from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
     BaseAcsDetectionProfile,
 )
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile_params import (

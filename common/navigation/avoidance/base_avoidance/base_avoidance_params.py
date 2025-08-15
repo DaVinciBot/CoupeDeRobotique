@@ -25,7 +25,8 @@ class BaseAvoidanceParams:
 
         Args:
             avoidance_strategy (AvoidanceStrategy): The selected avoidance strategy.
-            timeout (float | None, optional): Optional timeout for the avoidance procedure.
+            timeout (float | None, optional):
+                Optional timeout for the avoidance procedure.
 
         """
         self.avoidance_strategy: AvoidanceStrategy = avoidance_strategy

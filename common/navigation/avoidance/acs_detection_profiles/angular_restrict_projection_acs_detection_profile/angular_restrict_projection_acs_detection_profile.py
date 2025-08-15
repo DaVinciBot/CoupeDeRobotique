@@ -1,10 +1,11 @@
+"""ACS detection profile using angular restriction to trigger avoidance."""
+
 from math import atan2
+from typing import override
 
 from arena import AllyZone, EnemyZone
-from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile_params import (
+from navigation.avoidance.acs_detection_profiles import (
     AngularRestrictProjectionAcsDetectionProfileParams,
-)
-from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
     BaseAcsDetectionProfile,
 )
 
@@ -21,11 +22,13 @@ class AngularRestrictProjectionAcsDetectionProfile(
         """Initializes the AngularRestrictProjectionAcsDetectionProfile.
 
         Args:
-            params (AngularRestrictProjectionAcsDetectionProfileParams): Parameters for the angular restrict projection ACS detection profile.
+            params (AngularRestrictProjectionAcsDetectionProfileParams):
+                Parameters for the angular restrict projection ACS detection profile.
 
         """
         super().__init__(params)
 
+    @override
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
         """Check if the ACS is triggered.
 
@@ -45,8 +48,9 @@ class AngularRestrictProjectionAcsDetectionProfile(
             - ally_zone.point.theta
         )
         if abs(angle) <= self.params.half_angle_view:
+            distance = ally_zone.point.distance(enemy_zone.point)
             self.logger.info(
-                f"ACS triggered. Distance: {ally_zone.point.distance(enemy_zone.point)}",
+                f"ACS triggered. Distance: {distance}",
             )
             return True
         return False

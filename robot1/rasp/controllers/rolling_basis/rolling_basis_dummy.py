@@ -1,4 +1,4 @@
-from typing import overload
+from typing import overload, override
 
 from loggerplusplus import Logger, log
 
@@ -179,9 +179,8 @@ class RollingBasisDummy(BaseComTeensy):
             elif kwargs:
                 pid = PID.from_dict(kwargs)
             else:
-                raise ValueError(
-                    "Invalid arguments for angular position PID configuration.",
-                )
+                msg = "Invalid arguments for angular position PID configuration."
+                raise ValueError(msg)
             self.angular_position_pid = pid
             self._send_pid(PidID.ANGULAR_POSITION.value, pid)
         except Exception as e:
@@ -214,6 +213,7 @@ class RollingBasisDummy(BaseComTeensy):
 
     # ====== Equality Comparison ======
 
+    @override
     def __eq__(self, other: object) -> bool:
         """Check equality between two RollingBasis instances.
 
@@ -236,6 +236,7 @@ class RollingBasisDummy(BaseComTeensy):
             and self.angular_position_pid == other.angular_position_pid
         )
 
+    @override
     def __ne__(self, other: object) -> bool:
         """Check inequality between two RollingBasis instances.
 

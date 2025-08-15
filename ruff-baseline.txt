@@ -183,26 +183,11 @@ common\led_strip\led_strip.py:
   199:1  ERA001 Found commented-out code
   200:1  ERA001 Found commented-out code
 
-common\navigation\__init__.py:
-  1:1 D104 Missing docstring in public package
-
-common\navigation\avoidance\__init__.py:
-  1:1 D104 Missing docstring in public package
-
-common\navigation\avoidance\acs_detection_profiles\__init__.py:
-   1:1  D104 Missing docstring in public package
-  12:89 E501 Line too long (93 > 88)
-  16:89 E501 Line too long (102 > 88)
-
 common\navigation\avoidance\acs_detection_profiles\acs_detection_profile_factory.py:
-   1:1  D100 Missing docstring in public module
-   3:89 E501 Line too long (107 > 88)
-  15:89 E501 Line too long (93 > 88)
-  19:89 E501 Line too long (102 > 88)
-  27:89 E501 Line too long (102 > 88)
-  34:89 E501 Line too long (94 > 88)
-  63:15 TRY003 Avoid specifying long messages outside the exception class
-  63:26 EM102 Exception must not use an f-string literal, assign to variable first
+  24:89 E501 Line too long (102 > 88)
+  31:89 E501 Line too long (94 > 88)
+  60:15 TRY003 Avoid specifying long messages outside the exception class
+  60:26 EM102 Exception must not use an f-string literal, assign to variable first
 
 common\navigation\avoidance\acs_detection_profiles\angular_restrict_projection_acs_detection_profile\__init__.py:
   1:1  D104 Missing docstring in public package
@@ -212,28 +197,25 @@ common\navigation\avoidance\acs_detection_profiles\angular_restrict_projection_a
 common\navigation\avoidance\acs_detection_profiles\angular_restrict_projection_acs_detection_profile\angular_restrict_projection_acs_detection_profile.py:
    1:1  D100 Missing docstring in public module
    4:89 E501 Line too long (164 > 88)
-  24:89 E501 Line too long (142 > 88)
-  49:89 E501 Line too long (89 > 88)
+  50:89 E501 Line too long (89 > 88)
 
 common\navigation\avoidance\acs_detection_profiles\angular_restrict_projection_acs_detection_profile\angular_restrict_projection_acs_detection_profile_params.py:
   1:1 D100 Missing docstring in public module
 
-common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profils\__init__.py:
+common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profiles\__init__.py:
   1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (111 > 88)
-  4:89 E501 Line too long (118 > 88)
+  1:89 E501 Line too long (112 > 88)
+  4:89 E501 Line too long (119 > 88)
 
-common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profils\base_acs_detection_profils.py:
+common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profiles\base_acs_detection_profils.py:
    1:1  D100 Missing docstring in public module
-   7:89 E501 Line too long (118 > 88)
   14:36 UP046 Generic class `BaseAcsDetectionProfile` uses `Generic` subclass instead of type parameters
   22:89 E501 Line too long (94 > 88)
   32:9  D102 Missing docstring in public method
 
-common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profils\base_acs_detection_profils_params.py:
+common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profiles\base_acs_detection_profils_params.py:
    1:1  D100 Missing docstring in public module
-  15:89 E501 Line too long (91 > 88)
-  28:89 E501 Line too long (98 > 88)
+  29:89 E501 Line too long (98 > 88)
 
 common\navigation\avoidance\acs_detection_profiles\no_acs_detection_profile\__init__.py:
   1:1  D104 Missing docstring in public package
@@ -329,11 +311,10 @@ common\navigation\avoidance\base_avoidance\base_avoidance.py:
   147:9  PLC0415 `import` should be at the top-level of a file
 
 common\navigation\avoidance\base_avoidance\base_avoidance_params.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (92 > 88)
-   3:89 E501 Line too long (92 > 88)
-   4:89 E501 Line too long (92 > 88)
-  28:89 E501 Line too long (91 > 88)
+  1:1  D100 Missing docstring in public module
+  2:89 E501 Line too long (92 > 88)
+  3:89 E501 Line too long (92 > 88)
+  4:89 E501 Line too long (92 > 88)
 
 common\navigation\avoidance\base_avoidance\states.py:
   1:1 D100 Missing docstring in public module
@@ -389,7 +370,6 @@ common\navigation\debug_functions\navigator.py:
    1:1  D100 Missing docstring in public module
    2:89 E501 Line too long (92 > 88)
    3:89 E501 Line too long (90 > 88)
-   5:85 RUF003 Comment contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
   18:5  PLR0915 Too many statements (82 > 50)
   18:5  PLR0914 Too many local variables (16/15)
   21:24 PT028 Test function parameter `time_step` has default argument
@@ -685,26 +665,12 @@ common\navigation\trajectory_planner\sequential_trajectory_planner\sequential_tr
     3:89 E501 Line too long (96 > 88)
     4:89 E501 Line too long (98 > 88)
     5:89 E501 Line too long (105 > 88)
-   14:89 E501 Line too long (91 > 88)
-   24:89 E501 Line too long (110 > 88)
-   34:5  D205 1 blank line required between summary line and description
-   34:89 E501 Line too long (111 > 88)
-   35:89 E501 Line too long (101 > 88)
-   50:89 E501 Line too long (94 > 88)
-   70:9  D205 1 blank line required between summary line and description
-   70:56 RUF002 Docstring contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
-   86:89 E501 Line too long (89 > 88)
-  108:9  D205 1 blank line required between summary line and description
-  108:56 RUF002 Docstring contains ambiguous `’` (RIGHT SINGLE QUOTATION MARK). Did you mean ``` (GRAVE ACCENT)?
-  211:89 E501 Line too long (96 > 88)
-  248:19 TRY003 Avoid specifying long messages outside the exception class
-  248:32 EM101 Exception must not use a string literal, assign to variable first
-  261:89 E501 Line too long (102 > 88)
-  275:89 E501 Line too long (103 > 88)
-  321:19 TRY003 Avoid specifying long messages outside the exception class
-  322:17 EM102 Exception must not use an f-string literal, assign to variable first
-  343:19 TRY003 Avoid specifying long messages outside the exception class
-  343:32 EM101 Exception must not use a string literal, assign to variable first
+   75:9  D205 1 blank line required between summary line and description
+   91:89 E501 Line too long (89 > 88)
+  113:9  D205 1 blank line required between summary line and description
+  216:89 E501 Line too long (96 > 88)
+  267:89 E501 Line too long (102 > 88)
+  281:89 E501 Line too long (103 > 88)
 
 common\navigation\trajectory_planner\sequential_trajectory_planner\sequential_trajectory_planner_params.py:
    1:1  D100 Missing docstring in public module
@@ -1143,7 +1109,6 @@ common\video\server.py:
    1:1  D100 Missing docstring in public module
    9:7  D101 Missing docstring in public class
   12:9  D102 Missing docstring in public method
-  27:9  N802 Function name `do_GET` should be lowercase
   27:9  D102 Missing docstring in public method
   38:25 T201 `print` found
   43:60 PLC2801 Unnecessary dunder call to `__len__`. Use `len()` builtin.
@@ -1161,7 +1126,6 @@ common\video\server.py:
 docs\source\conf.py:
    1:1 INP001 File `docs\source\conf.py` is part of an implicit namespace package. Add an `__init__.py`.
    1:1 D100 Missing docstring in public module
-  10:5 PTH100 `os.path.abspath()` should be replaced by `Path.resolve()`
   17:1 A001 Variable `copyright` is shadowing a Python builtin
 
 robot1\__init__.py:
@@ -1387,9 +1351,9 @@ robot1\rasp\brains\main_brain.py:
   247:13 ERA001 Found commented-out code
   250:13 ERA001 Found commented-out code
   255:5  ERA001 Found commented-out code
-  262:9  ASYNC110 Use `anyio.Event` instead of awaiting `anyio.sleep` in a `while` loop
+  262:9  ASYNC110 Use `asyncio.Event` instead of awaiting `asyncio.sleep` in a `while` loop
   266:89 E501 Line too long (94 > 88)
-  272:9  ASYNC110 Use `anyio.Event` instead of awaiting `anyio.sleep` in a `while` loop
+  272:9  ASYNC110 Use `asyncio.Event` instead of awaiting `asyncio.sleep` in a `while` loop
   287:9  ERA001 Found commented-out code
 
 robot1\rasp\controllers\__init__.py:
@@ -1628,15 +1592,13 @@ robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
   145:13 TRY400 Use `logging.exception` instead of `logging.error`
   167:89 E501 Line too long (129 > 88)
   175:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  182:17 TRY301 Abstract `raise` to an inner function
-  182:23 TRY003 Avoid specifying long messages outside the exception class
-  183:21 EM101 Exception must not use a string literal, assign to variable first
-  187:16 BLE001 Do not catch blind exception: `Exception`
-  188:13 TRY400 Use `logging.exception` instead of `logging.error`
-  198:89 E501 Line too long (90 > 88)
-  199:89 E501 Line too long (92 > 88)
-  212:16 BLE001 Do not catch blind exception: `Exception`
-  213:13 TRY400 Use `logging.exception` instead of `logging.error`
+  183:17 TRY301 Abstract `raise` to an inner function
+  186:16 BLE001 Do not catch blind exception: `Exception`
+  187:13 TRY400 Use `logging.exception` instead of `logging.error`
+  197:89 E501 Line too long (90 > 88)
+  198:89 E501 Line too long (92 > 88)
+  211:16 BLE001 Do not catch blind exception: `Exception`
+  212:13 TRY400 Use `logging.exception` instead of `logging.error`
 
 robot1\rasp\main.py:
     1:1  D100 Missing docstring in public module
@@ -1737,4 +1699,4 @@ robot1\rasp\tests\config_loader.py:
   151:89 E501 Line too long (96 > 88)
   325:46 RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
 
-Found 1345 errors.
+Found 1313 errors.

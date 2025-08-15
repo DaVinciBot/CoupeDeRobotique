@@ -1,0 +1,29 @@
+name: autofix.ci
+on:
+  pull_request:
+  push:
+    branches: ["main", "dev"]
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: mhils/workflows/checkout@03ded8ba339159d99d08c21a4b0d1c38f3f52c3b
+      - uses: mhils/workflows/setup-python@03ded8ba339159d99d08c21a4b0d1c38f3f52c3b
+      - uses: mhils/workflows/setup-uv@03ded8ba339159d99d08c21a4b0d1c38f3f52c3b
+
+      - run: uv lock
+
+      - run: uv run ruff check --fix-only .
+      - run: uv run ruff format .
+
+      - run: uv run test/test_snapshot.py
+
+      - uses: mhils/add-pr-ref-in-changelog@6df8cd5a0c4d0a8c0353b663153d4a36384054f4
+
+      - uses: autofix-ci/action@635ffb0c9798bd160680f18fd73371e355b85f27

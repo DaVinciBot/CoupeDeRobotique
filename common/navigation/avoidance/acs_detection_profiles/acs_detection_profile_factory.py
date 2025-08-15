@@ -1,22 +1,19 @@
-from typing import cast
+"""Factory for ACS detection profiles.
 
-from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile import (
+This module selects a concrete profile implementation based on parameters.
+"""
+
+from typing import Any, cast
+
+from navigation.avoidance.acs_detection_profiles import (
     AngularRestrictProjectionAcsDetectionProfile,
     AngularRestrictProjectionAcsDetectionProfileParams,
-)
-from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
     BaseAcsDetectionProfile,
     BaseAcsDetectionProfileParams,
-)
-from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfile,
     NoAcsDetectionProfileParams,
-)
-from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile import (
     NoProjectionAcsDetectionProfile,
     NoProjectionAcsDetectionProfileParams,
-)
-from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (
     RectangularProjectionAcsDetectionProfile,
     RectangularProjectionAcsDetectionProfileParams,
 )
@@ -27,11 +24,14 @@ class AcsDetectionProfileFactory:
     """Factory class to instantiate the appropriate obstacle avoidance component based on strategy."""
 
     @staticmethod
-    def instantiate(params: BaseAcsDetectionProfileParams) -> BaseAcsDetectionProfile:
+    def instantiate(
+        params: BaseAcsDetectionProfileParams,
+    ) -> BaseAcsDetectionProfile[Any]:
         """Create an ACS detection profile instance based on strategy parameters.
 
         Args:
-            params (BaseAcsDetectionProfileParams): Parameters describing the desired profile.
+            params (BaseAcsDetectionProfileParams):
+                Parameters describing the desired profile.
 
         Returns:
             BaseAcsDetectionProfile: The instantiated detection profile.
@@ -60,4 +60,5 @@ class AcsDetectionProfileFactory:
                 cast("AngularRestrictProjectionAcsDetectionProfileParams", params),
             )
 
-        raise ValueError(f"Unsupported acs detection profile: {profile}")
+        message = f"Unsupported acs detection profile: {profile}"
+        raise ValueError(message)

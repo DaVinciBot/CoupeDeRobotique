@@ -1,3 +1,8 @@
+"""Parameter base class for ACS detection profiles.
+
+Stores the profile type and detection distance.
+"""
+
 from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
 
 
@@ -9,10 +14,11 @@ class BaseAcsDetectionProfileParams:
         acs_detection_profile: AcsDetectionProfile,
         acs_distance: float,
     ) -> None:
-        """Initializes the BaseAcsDetectionProfileParams.
+        """Initialize the parameters for an ACS detection profile.
 
         Args:
-            acs_detection_profile (AcsDetectionProfile): The type of ACS detection profile.
+            acs_detection_profile (AcsDetectionProfile):
+                The type of ACS detection profile.
             acs_distance (float): The distance to the obstacle.
 
         """
@@ -25,7 +31,7 @@ class BaseAcsDetectionProfileParams:
         acs_detection_profile: str,
         acs_distance: float,
     ) -> "BaseAcsDetectionProfileParams":
-        """Create a :class:``BaseAcsDetectionProfileParams`` instance from a configuration string.
+        """Create parameters from textual configuration.
 
         Args:
             acs_detection_profile (str): The name of the ACS detection profile.

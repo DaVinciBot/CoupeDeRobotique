@@ -1,4 +1,4 @@
-from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
+from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
     BaseAcsDetectionProfileParams,
 )
 from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile

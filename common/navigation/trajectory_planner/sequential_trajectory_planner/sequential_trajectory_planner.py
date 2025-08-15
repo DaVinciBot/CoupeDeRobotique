@@ -11,7 +11,7 @@ from loggerplusplus import Logger
 
 from geometry import OrientedPoint
 from navigation.path_planner import Direction
-from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import (
+from navigation.trajectory_planner.base_trajectory_planner import (
     BaseTrajectoryPlanner,
 )
 from navigation.trajectory_planner.common import (
@@ -21,7 +21,7 @@ from navigation.trajectory_planner.common import (
     StopSegment,
     StraightSegment,
 )
-from navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params import (
+from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
 from navigation.trajectory_planner.speed_profile import SpeedProfiler
@@ -31,8 +31,12 @@ from navigation.trajectory_planner.structs import TrajectoryPlanCommand
 class SequentialTrajectoryPlanner(
     BaseTrajectoryPlanner[SequentialTrajectoryPlannerParams],
 ):
-    """Planner that constructs a sequential series of trajectory segments (rotate, move straight, rotate, stop)
-    from a path of oriented points. Supports time-based segment retrieval to provide motion commands.
+    """Planner that constructs a sequential series of trajectory segments.
+
+    This planner decomposes a given path of oriented waypoints into a sequence of
+    trajectory segments (rotate, move straight, rotate, stop) from a path of oriented
+    points.
+    Supports time-based segment retrieval to provide motion commands.
 
     """
 
@@ -47,7 +51,8 @@ class SequentialTrajectoryPlanner(
         Args:
             params (SequentialTrajectoryPlannerParams): Planning parameters.
             speed_profiler (SpeedProfiler): Speed profiler to control segment durations.
-            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to None.
 
         """
         super().__init__(params, speed_profiler, logger)
@@ -67,7 +72,7 @@ class SequentialTrajectoryPlanner(
         start: OrientedPoint,
         target: OrientedPoint,
     ) -> RotationSegment:
-        """Compute a rotation segment so that the robot’s driving direction
+        """Compute a rotation segment so that the robot's driving direction
         (front in forward mode, back in reverse mode) points toward the next waypoint.
 
         Args:
@@ -105,7 +110,7 @@ class SequentialTrajectoryPlanner(
         start: OrientedPoint,
         target: OrientedPoint,
     ) -> RotationSegment:
-        """Compute a rotation segment so that the robot’s final orientation
+        """Compute a rotation segment so that the robot's final orientation
         (front in forward mode, back in reverse mode) matches the target.theta.
 
         Args:
@@ -245,7 +250,8 @@ class SequentialTrajectoryPlanner(
 
         # Get the active segment
         if self.segments_mapper is None:
-            raise RuntimeError("Trajectory has not been planned yet.")
+            msg = "Trajectory has not been planned yet."
+            raise RuntimeError(msg)
         segment, local_time = self.segments_mapper.get_segment_at_time(time_elapsed)
 
         # If no segment is found -> plan is over -> stop the robot at the end path
@@ -318,10 +324,9 @@ class SequentialTrajectoryPlanner(
             )
 
         else:
-            raise TypeError(
-                f"Unsupported segment type: {type(segment)}. "
-                "Expected RotationSegment, StraightSegment, or StopSegment.",
-            )
+            msg = f"Unsupported segment type: {type(segment)}.\n"
+            msg += "Expected RotationSegment, StraightSegment, or StopSegment."
+            raise TypeError(msg)
 
         # Save the last call time
         self._last_call_time: float = time_elapsed
@@ -340,5 +345,6 @@ class SequentialTrajectoryPlanner(
 
         """
         if self.segments_mapper is None:
-            raise RuntimeError("Trajectory has not been planned yet.")
+            msg = "Trajectory has not been planned yet."
+            raise RuntimeError(msg)
         return self.segments_mapper.cumulative_durations[-1]

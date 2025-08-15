@@ -1,6 +1,9 @@
-from navigation.avoidance.acs_detection_profiles.base_acs_detection_profils import (
-    BaseAcsDetectionProfileParams,
-)
+"""Parameters for the angular restrict projection ACS detection profile.
+
+Defines the viewing angle and distance used to trigger the avoidance system.
+"""
+
+from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
 from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
 
 

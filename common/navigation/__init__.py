@@ -1,3 +1,8 @@
+"""Navigation components for path planning and obstacle avoidance.
+
+This package re-exports the primary classes used by the navigation stack.
+"""
+
 from navigation.avoidance import (
     AvoidanceState,
     AvoidanceStrategy,

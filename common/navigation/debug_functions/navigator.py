@@ -2,7 +2,7 @@
 # This script defines a function to test and visualize the execution of a navigation system.
 # It simulates a navigator executing its task in an arena, logging the robot's trajectory,
 # speed, task states, avoidance states, and the distance to the enemy over time.
-# After the task is completed, the script generates multiple plots showing the robot’s
+# After the task is completed, the script generates multiple plots showing the robot's
 # spatial path, temporal evolution of motion parameters, and categorical state changes.
 
 import time

@@ -91,8 +91,6 @@
 17:4: R0914: Too many local variables (21/15) (too-many-locals)
 ************* Module common.geometry.oriented_point
 28:4: W0231: __init__ method from base class 'Point' is not called (super-init-not-called)
-************* Module common.navigation
-1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.navigation.avoidance.avoidance_factory
 21:0: C0301: Line too long (102/100) (line-too-long)
 32:0: C0301: Line too long (111/100) (line-too-long)
@@ -103,27 +101,17 @@
 ************* Module common.navigation.avoidance.structs
 1:0: C0114: Missing module docstring (missing-module-docstring)
 4:0: C0115: Missing class docstring (missing-class-docstring)
-************* Module common.navigation.avoidance
-1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.navigation.avoidance.acs_detection_profiles.acs_detection_profile_factory
-3:0: C0301: Line too long (107/100) (line-too-long)
-19:0: C0301: Line too long (102/100) (line-too-long)
-27:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: W0611: Unused AngularRestrictProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile (unused-import)
-11:0: W0611: Unused NoAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile (unused-import)
-15:0: W0611: Unused NoProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile (unused-import)
-19:0: W0611: Unused RectangularProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile (unused-import)
+24:0: C0301: Line too long (102/100) (line-too-long)
+8:0: W0611: Unused AngularRestrictProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles (unused-import)
+8:0: W0611: Unused NoAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles (unused-import)
+8:0: W0611: Unused NoProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles (unused-import)
+8:0: W0611: Unused RectangularProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles (unused-import)
 ************* Module common.navigation.avoidance.acs_detection_profiles.struct
 1:0: C0114: Missing module docstring (missing-module-docstring)
 4:0: C0115: Missing class docstring (missing-class-docstring)
-************* Module common.navigation.avoidance.acs_detection_profiles.__init__
-16:0: C0301: Line too long (102/100) (line-too-long)
-************* Module common.navigation.avoidance.acs_detection_profiles
-1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile
 4:0: C0301: Line too long (164/100) (line-too-long)
-24:0: C0301: Line too long (142/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
 17:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
 ************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile_params
@@ -133,17 +121,16 @@
 4:0: C0301: Line too long (164/100) (line-too-long)
 ************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile
 1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profils.base_acs_detection_profils
-7:0: C0301: Line too long (118/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profils
 1:0: C0114: Missing module docstring (missing-module-docstring)
 11:0: C0103: Type variable name "ParamsType" doesn't conform to predefined naming style (invalid-name)
 32:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profils.base_acs_detection_profils_params
+************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profils_params
 1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profils.__init__
-1:0: C0301: Line too long (111/100) (line-too-long)
-4:0: C0301: Line too long (118/100) (line-too-long)
-************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profils
+************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.__init__
+1:0: C0301: Line too long (112/100) (line-too-long)
+4:0: C0301: Line too long (119/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile
 7:0: C0301: Line too long (114/100) (line-too-long)
@@ -416,11 +403,8 @@
 ************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner
 2:0: C0301: Line too long (102/100) (line-too-long)
 5:0: C0301: Line too long (105/100) (line-too-long)
-24:0: C0301: Line too long (110/100) (line-too-long)
-34:0: C0301: Line too long (111/100) (line-too-long)
-35:0: C0301: Line too long (101/100) (line-too-long)
-261:0: C0301: Line too long (102/100) (line-too-long)
-275:0: C0301: Line too long (103/100) (line-too-long)
+267:0: C0301: Line too long (102/100) (line-too-long)
+281:0: C0301: Line too long (103/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params
 31:0: C0301: Line too long (102/100) (line-too-long)
@@ -651,6 +635,7 @@
 27:4: C0116: Missing function or method docstring (missing-function-docstring)
 27:4: C0103: Method name "do_GET" doesn't conform to snake_case naming style (invalid-name)
 49:23: W0718: Catching too general exception Exception (broad-exception-caught)
+40:26: E1101: Module 'cv2' has no 'imencode' member (no-member)
 43:59: C2801: Unnecessarily calls dunder method __len__. Use len built-in function. (unnecessary-dunder-call)
 61:0: C0116: Missing function or method docstring (missing-function-docstring)
 74:0: C0116: Missing function or method docstring (missing-function-docstring)
@@ -894,8 +879,8 @@
 19:4: R0913: Too many arguments (7/5) (too-many-arguments)
 19:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
 144:15: W0718: Catching too general exception Exception (broad-exception-caught)
-187:15: W0718: Catching too general exception Exception (broad-exception-caught)
-212:15: W0718: Catching too general exception Exception (broad-exception-caught)
+186:15: W0718: Catching too general exception Exception (broad-exception-caught)
+211:15: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module robot1.rasp.controllers.rolling_basis
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.sensors
@@ -1498,8 +1483,8 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 
     def __eq__(self, other: object) -> bool: (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[272:370]
-==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[104:202]
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[272:349]
+==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[104:181]
     def set_linear_position_pid(self, *args: float) -> None: ...
     @overload
     def set_linear_position_pid(self, pid_values: dict[str, float]) -> None: ...
@@ -1576,28 +1561,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
                 pid = PID.from_dict(args[0])
             elif kwargs:
                 pid = PID.from_dict(kwargs)
-            else:
-                raise ValueError(
-                    "Invalid arguments for angular position PID configuration.",
-                )
-            self.angular_position_pid = pid
-            self._send_pid(PidID.ANGULAR_POSITION.value, pid)
-        except Exception as e:
-            self.logger.error(f"Failed to set angular position PID: {e}")
-
-    def set_pids(
-        self,
-        linear_position_pid: dict[str, float],
-        angular_position_pid: dict[str, float],
-    ) -> None:
-        """Configure all PID controllers.
-
-        Args:
-            linear_position_pid (dict[str, float]): PID values for linear position control.
-            angular_position_pid (dict[str, float]): PID values for angular position control.
-
-        """
-        self.set_linear_position_pid(**linear_position_pid) (duplicate-code)
+            else: (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.sub_graphs.pickup:[32:66]
 ==robot1.rasp.boombot_strategy.sub_graphs.wall_pickup:[29:63]
@@ -1705,7 +1669,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             self.logger.warning("Avoidance timed out. Aborting task.")
             return self._abort(current_navigator_task, position)
 
-        # 2. Obstacle detected → init backward task
+        # 2. Obstacle detected: begin avoidance
         if (
             self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
             and self.state == AvoidanceState.IDLE
@@ -1716,7 +1680,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[56:70]
         )
 
-        # Step 8 Move to the backstage zone to finish the game
+        # Step 6: Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
             name="[End] Go to backstage",
             tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
@@ -1779,7 +1743,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             enable_dummy,
         )
 
-        # Admit that default elevator position is at the bottom (duplicate-code)
+        # PID controllers (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.controllers.actuators.actuators_dummy:[33:43]
 ==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[39:50]
@@ -1790,10 +1754,9 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             pid,
             baudrate,
             enable_crc,
-            enable_dummy=True,
+            enable_dummy=True,  # dummy hardware flag
         )
-
-        # Robot state (duplicate-code)
+        # Default elevator position at bottom (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy:[85:96]
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[70:81]
@@ -1861,9 +1824,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
                 acs_detection_profile_params=self.acs_detection_profile_params,
                 stabilization_delay=self.stabilization_delay,
             ),
-        )
-
-    @abstractmethod (duplicate-code)
+        ) (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.base_arena.grid_manager:[458:469]
 ==common.arena.base_arena.grid_manager_2:[276:286]
@@ -1881,16 +1842,17 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 1:0: R0801: Similar lines in 2 files
 ==common.arena.base_arena.grid_manager:[169:180]
 ==common.arena.base_arena.grid_manager_2:[112:122]
-            for row in range(min_row, max_row):
-                for col in range(min_col, max_col):
-                    actual_col = self.grid_width - 1 - col
-                    cell = box(
-                        actual_col * self.chunk_size,
-                        row * self.chunk_size,
-                        (actual_col + 1) * self.chunk_size,
-                        (row + 1) * self.chunk_size,
-                    )
- (duplicate-code)
+        for row in range(min_row, max_row):
+            for col in range(min_col, max_col):
+                actual_col = self.grid_width - 1 - col
+                cell = box(
+                    actual_col * self.chunk_size,
+                    row * self.chunk_size,
+                    (actual_col + 1) * self.chunk_size,
+                    (row + 1) * self.chunk_size,
+                )
+
+                # Check if the polygon intersects the grid cell (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.__init__:[19:28]
 ==common.arena.base_arena.__init__:[18:27]
@@ -1916,16 +1878,22 @@ __all__ = [
             return 0.0254
  (duplicate-code)
 1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[298:306]
+==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[173:181]
+        try:
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+                pid = PID(*args)  # type: ignore[reportArgumentType]
+            elif len(args) == 1 and isinstance(args[0], dict):
+                pid = PID.from_dict(args[0])
+            elif kwargs:
+                pid = PID.from_dict(kwargs)
+            else: (duplicate-code)
+1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[62:73]
 ==robot1.rasp.controllers.rolling_basis.rolling_basis:[59:77]
         self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
 
-        """
-        This is used to match a handling function to a message type.
-        add_callback can also be used.
-
-        """
         # Register message handlers
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
@@ -1933,9 +1901,7 @@ __all__ = [
             self.rcv_rolling_basis_state,
             Messages.UPDATE_ROLLING_BASIS.value,
         )
-
-        # Initialize PID controllers from configuration
-        # self.initialize_pids() (duplicate-code)
+ (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.navigation.trajectory_planner.common.__init__:[9:17]
 ==common.navigation.trajectory_planner.common.segments.__init__:[11:19]
@@ -1976,15 +1942,31 @@ __all__ = [
 1:0: R0801: Similar lines in 2 files
 ==common.arena.base_arena.arena_zones.base_arena_zone:[197:222]
 ==common.arena.base_arena.arena_zones.stuff_zone:[114:123]
-            nearest_position = min(
-                self.go_to_positions,
-                key=ally_position.distance,
-            )
-            self.logger.debug(
-                f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]",
-            )
-            return nearest_position
- (duplicate-code)
+        nearest_position = min(
+            self.go_to_positions,
+            key=ally_position.distance,
+        )
+        self.logger.debug(
+            f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]",
+        )
+        return nearest_position
+
+    # ====== Update methods ======
+
+    def update(
+        self,
+        team_color: TeamColor,
+        ally_position: Point | OrientedPoint,
+        enemy_position: Point | OrientedPoint,
+    ) -> None:
+        """Update the zone based on the positions of allies and enemies.
+
+        Args:
+            team_color (TeamColor): Color of the team.
+            ally_position (Point | OrientedPoint): Position of the ally.
+            enemy_position (Point | OrientedPoint): Position of the enemy.
+
+        """ (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.base_arena.grid_manager:[377:423]
 ==common.arena.base_arena.grid_manager_2:[209:255]
@@ -1997,7 +1979,7 @@ __all__ = [
         """Convert absolute coordinates to grid coordinates.
 
         Args:
-            point (OrientedPoint | Point): Absolute point to convert.
+            point (OrientedPoint | Point): Point in world coordinates.
 
         Returns:
             GridNode: Corresponding node in the grid.
@@ -2012,7 +1994,7 @@ __all__ = [
             node (GridNode): Grid node to convert.
 
         Returns:
-            Point: Absolute center point of the node.
+            Point: Center of the node in world coordinates.
 
         """
         x, y = self.get_grid_node_center(node)
@@ -2022,21 +2004,21 @@ __all__ = [
         """Return the static grid used for pathfinding.
 
         Returns:
-            Grid: Grid containing only static obstacles.
+            Grid: The grid containing only static forbidden zones.
 
         """
         return self.static_grid
 
-    def get_static_and_dynamic_grid(self) -> Grid:
-        """Return the grid with both static and dynamic obstacles.
+    def get_dynamic_grid(self) -> Grid:
+        """Return the grid combining static and dynamic forbidden zones.
 
         Returns:
-            Grid: Combined grid.
+            Grid: The grid including both static and dynamic updates.
 
         """ (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[376:387]
-==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[206:226]
+==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[205:226]
         try:
             self.set_pids(
                 linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
@@ -2059,6 +2041,15 @@ __all__ = [
         )
 
     def __ne__(self, other: object) -> bool:
+        """Check inequality between two RollingBasis instances.
+
+        Args:
+            other (object): The other object to compare against.
+
+        Returns:
+            bool: ``True`` if the objects are not equal, ``False`` otherwise.
+
+        """
         return not self.__eq__(other) (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[135:150]
@@ -2069,13 +2060,17 @@ __all__ = [
             + struct.pack("<d", target_position.y)
             + struct.pack("<d", target_position.theta)
         )
+
+        # Send the composed message to the Teensy
+        # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
 
-        # ====== Plotting Method ======
+    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
+    def set_odometrie(self, odometrie: OrientedPoint) -> None:
+        """Sends a message to set the odometrie of the rolling basis.
 
-    def plot_logs(self) -> None:
-        """Plot target vs actual odometry for X, Y, and Theta using stored logs.
-        Ensures all series have the same length before plotting.
+        Args:
+            odometrie (OrientedPoint): The new odometrie values.
 
         """ (duplicate-code)
 1:0: R0801: Similar lines in 2 files
@@ -2099,21 +2094,12 @@ __all__ = [
             msg (bytes): The received message bytes.
 
         """
-        # Position / odometrie
+        # Unpack new odometry
         self.odometrie = OrientedPoint(
             (struct.unpack("<d", msg[0:8])[0], struct.unpack("<d", msg[8:16])[0]),
             struct.unpack("<d", msg[16:24])[0],
         )
-
-    def rcv_unknown_msg(self, msg: bytes) -> None:
-        """Handles unknown messages from the Teensy.
-
-        Logs a warning indicating that the message type is not recognized.
-
-        Args:
-            msg (bytes): The received message bytes.
-
-        """ (duplicate-code)
+        # After receiving actual state, log entry (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.basic_strategy:[36:59]
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy:[38:53]
@@ -2131,15 +2117,7 @@ __all__ = [
             back_offset=5,
         )
 
-        # # Step 4: Navigate to the second pickup zone
-        # second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
-        #
-        # # Step 5: Navigate to the second construction zone
-        # second_construct_subgraph = get_construct_subgraph(
-        #     self.zones["second_build_zone"], back_offset=15
-        # )
-
-        # Step 6: Move to the backstage zone to finish the game (duplicate-code)
+        # Step 4: Navigate to the second pickup zone (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.basic_strategy:[59:68]
 ==robot1.rasp.boombot_strategy.strategies.debug_strategy:[44:53]
@@ -2180,10 +2158,9 @@ __all__ = [
         self.__max_angle = max_angle
         self.__angle_unit = self.__init_angles_unit(unit_angle)
         self.__distance_unit = self.__init_distances_unit(unit_distance)
-
         self._min_distance = min_distance (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.navigation.__init__:[69:75]
+==common.navigation.__init__:[74:80]
 ==common.navigation.navigator.__init__:[9:15]
     "Navigator",
     "NavigatorSignalsEnum",
@@ -2198,7 +2175,7 @@ __all__ = [
             polygon=polygon,
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
-            zone_color="#EF0D0D",
+            zone_color="#2b2b2b",
         ) (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.__init__:[29:35]
@@ -2209,6 +2186,27 @@ __all__ = [
     "ZoneAccessibility",
     "ZoneType",
 ] (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[352:370]
+==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[183:201]
+            self.angular_position_pid = pid
+            self._send_pid(PidID.ANGULAR_POSITION.value, pid)
+        except Exception as e:
+            self.logger.error(f"Failed to set angular position PID: {e}")
+
+    def set_pids(
+        self,
+        linear_position_pid: dict[str, float],
+        angular_position_pid: dict[str, float],
+    ) -> None:
+        """Configure all PID controllers using dictionaries for each.
+
+        Args:
+            linear_position_pid (dict[str, float]): PID configuration for linear position.
+            angular_position_pid (dict[str, float]): PID configuration for angular position.
+
+        """
+        self.set_linear_position_pid(**linear_position_pid) (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.basic_strategy:[36:47]
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[38:49]
@@ -2238,7 +2236,7 @@ __all__ = [
             polygon=polygon,
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
-            zone_color="#097D8D", (duplicate-code)
+            zone_color="#2b2b2b", (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone:[62:67]
 ==common.arena.base_arena.arena_zones.forbidden_zone:[42:47]
@@ -2257,5 +2255,5 @@ __all__ = [
             zone_color="#EF0D0D", (duplicate-code)
 
 ------------------------------------------------------------------
-Your code has been rated at 8.37/10 (previous run: 8.35/10, +0.02)
+Your code has been rated at 8.38/10 (previous run: 8.38/10, +0.00)
 
