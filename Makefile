@@ -17,7 +17,7 @@ lint:
 	@echo "▶ Linting avec pydoclint..."
 	pydoclint .
 	@echo "▶ Linting avec pylint..."
-	-pylint --output=pylint-baseline.txt .
+	-pylint --output=pylint-baseline.txt --enable=all .
 	@echo "▶ Linting avec pyright..."
 	-pyright --outputjson > pyright-baseline.json
 

@@ -1,7 +1,7 @@
 """Zone designated for storing or placing items during matches."""
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from loggerplusplus import Logger
 
@@ -54,6 +54,7 @@ class StuffZone(BaseArenaZone):
             go_to_positions=go_to_positions,
         )
 
+    @override
     def update(
         self,
         team_color: TeamColor,
@@ -81,11 +82,12 @@ class StuffZone(BaseArenaZone):
 
             self.logger.debug(f"{self.zone_type} zone is now accessible")
 
+    @override
     def get_go_to_position(
         self,
         ally_position: OrientedPoint,
         team_color: TeamColor,
-    ) -> OrientedPoint | Point | None:
+    ) -> OrientedPoint | None:
         """Determines the best go-to position for an ally in the given zone.
 
         Args:
@@ -93,7 +95,8 @@ class StuffZone(BaseArenaZone):
             team_color (TeamColor): The team color to check accessibility.
 
         Returns:
-            OrientedPoint | Point | None: The best go-to position, or None if the zone is not accessible.
+            OrientedPoint | None:
+                The best go-to position, or None if the zone is not accessible.
 
         """
         if not self.is_accessible(team_color):
@@ -104,11 +107,12 @@ class StuffZone(BaseArenaZone):
 
         # If no go-to positions are defined, return the centroid of the zone
         if self.go_to_positions is None:
-            self.logger.debug(
-                f"GoTo position request: No go-to positions defined for zone {self.zone_type}, "
-                f"returning centroid [{self.polygon.centroid}]",
+            msg = (
+                f"GoTo position request: No go-to positions defined for zone "
+                f"{self.zone_type}, returning centroid [{self.polygon.centroid}]"
             )
-            return self.polygon.centroid
+            self.logger.debug(msg)
+            return OrientedPoint.from_point(self.polygon.centroid)
 
         # Find the nearest go-to position to the ally if positions are available
         if self.go_to_positions:
@@ -116,10 +120,12 @@ class StuffZone(BaseArenaZone):
                 self.go_to_positions,
                 key=ally_position.distance,
             )
-            self.logger.debug(
-                f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]",
+            msg = (
+                f"GoTo position request: Nearest go-to position to ally "
+                f"[{ally_position}] is [{nearest_position}]"
             )
-            return nearest_position
+            self.logger.debug(msg)
+            return OrientedPoint.from_point(nearest_position)
 
         self.logger.debug(
             "GoTo position request: Unknown case encountered, returning None.",

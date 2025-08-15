@@ -1,6 +1,7 @@
 """Legacy Mars 2024 arena and zone utilities."""
 
 from sys import maxsize
+from typing import override
 
 from old_logger import Logger
 from pathfinding.core.grid import Grid
@@ -30,6 +31,7 @@ class PlantsZone:
         self.nb_plant: int = nb_plant
         self.visited = False
 
+    @override
     def __str__(self) -> str:
         """Return a readable representation of the zone.
 
@@ -39,6 +41,7 @@ class PlantsZone:
         """
         return f"zone : {self.zone}, nb_plant {self.nb_plant}"
 
+    @override
     def __repr__(self) -> str:
         """Return a string representation for debugging.
 
@@ -95,7 +98,7 @@ class MarsArena(Arena):
                 ``MAX_START_ZONE_ID``.
 
         """
-        if not (MIN_START_ZONE_ID <= start_zone_id <= MAX_START_ZONE_ID):
+        if not MIN_START_ZONE_ID <= start_zone_id <= MAX_START_ZONE_ID:
             msg = (
                 f"start_zone must be between {MIN_START_ZONE_ID} "
                 f"and {MAX_START_ZONE_ID}"
@@ -110,7 +113,7 @@ class MarsArena(Arena):
         solar_panels_distances: list[float] = [27.5, 50, 72.5, 127.5, 150]
         self.solar_panels_y: list[float] = (
             solar_panels_distances
-            if self.start_zone_id % 2 == 0
+            if not self.start_zone_id % 2
             else [300 - val for val in solar_panels_distances]
         )
 
@@ -168,7 +171,7 @@ class MarsArena(Arena):
                 )
             ),
         ]
-        if self.start_zone_id % 2 == 0:
+        if not self.start_zone_id % 2:
             forbidden = self.drop_zones[3].zone
         else:
             forbidden = self.drop_zones[0].zone
@@ -191,7 +194,7 @@ class MarsArena(Arena):
             str: Team color identifier.
 
         """
-        return "y" if self.start_zone_id % 2 == 0 else "b"
+        return "y" if not self.start_zone_id % 2 else "b"
 
     @staticmethod
     def sort_plant_zones(
@@ -331,6 +334,7 @@ class MarsArena(Arena):
             reverse=reverse,
         )
 
+    @override
     def __str__(self) -> str:
         """Return the class name.
 

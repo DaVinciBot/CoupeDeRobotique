@@ -16,7 +16,7 @@
 }
 
 .button_div{
-    display: flex;    
+    display: flex;
     flex-direction: row-reverse;
 }
 .button{

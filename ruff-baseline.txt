@@ -1,30 +1,6 @@
 common\arena\2024_mars_arena\arena_old.py:
   69:89 E501 Line too long (102 > 88)
 
-common\arena\base_arena\arena.py:
-   49:89 E501 Line too long (99 > 88)
-   55:89 E501 Line too long (89 > 88)
-   59:89 E501 Line too long (91 > 88)
-   60:89 E501 Line too long (118 > 88)
-  101:89 E501 Line too long (90 > 88)
-  116:89 E501 Line too long (116 > 88)
-  122:89 E501 Line too long (102 > 88)
-  254:89 E501 Line too long (93 > 88)
-  259:89 E501 Line too long (114 > 88)
-  260:89 E501 Line too long (99 > 88)
-  263:89 E501 Line too long (93 > 88)
-  292:9  ERA001 Found commented-out code
-  302:89 E501 Line too long (89 > 88)
-  304:89 E501 Line too long (89 > 88)
-  305:89 E501 Line too long (114 > 88)
-  312:89 E501 Line too long (123 > 88)
-  313:89 E501 Line too long (95 > 88)
-  381:89 E501 Line too long (102 > 88)
-  393:89 E501 Line too long (91 > 88)
-  641:89 E501 Line too long (91 > 88)
-  665:89 E501 Line too long (97 > 88)
-  687:89 E501 Line too long (108 > 88)
-
 common\arena\base_arena\arena_zones\base_arena_zone.py:
    20:7  B024 `BaseArenaZone` is an abstract base class, but it has no abstract methods or properties
   203:89 E501 Line too long (111 > 88)
@@ -44,11 +20,6 @@ common\arena\base_arena\arena_zones\speed_vector_auto_calculate_zones\enemy_zone
   37:89 E501 Line too long (103 > 88)
   38:89 E501 Line too long (103 > 88)
   39:89 E501 Line too long (105 > 88)
-
-common\arena\base_arena\arena_zones\stuff_zone.py:
-   96:89 E501 Line too long (105 > 88)
-  108:89 E501 Line too long (96 > 88)
-  120:89 E501 Line too long (115 > 88)
 
 common\arena\base_arena\grid_manager.py:
    17:5  D205 1 blank line required between summary line and description
@@ -185,42 +156,6 @@ common\led_strip\led_strip.py:
 
 common\navigation\avoidance\acs_detection_profiles\acs_detection_profile_factory.py:
   24:89 E501 Line too long (102 > 88)
-  31:89 E501 Line too long (94 > 88)
-  60:15 TRY003 Avoid specifying long messages outside the exception class
-  60:26 EM102 Exception must not use an f-string literal, assign to variable first
-
-common\navigation\avoidance\acs_detection_profiles\angular_restrict_projection_acs_detection_profile\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (157 > 88)
-  4:89 E501 Line too long (164 > 88)
-
-common\navigation\avoidance\acs_detection_profiles\angular_restrict_projection_acs_detection_profile\angular_restrict_projection_acs_detection_profile.py:
-   1:1  D100 Missing docstring in public module
-   4:89 E501 Line too long (164 > 88)
-  50:89 E501 Line too long (89 > 88)
-
-common\navigation\avoidance\acs_detection_profiles\angular_restrict_projection_acs_detection_profile\angular_restrict_projection_acs_detection_profile_params.py:
-  1:1 D100 Missing docstring in public module
-
-common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profiles\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (112 > 88)
-  4:89 E501 Line too long (119 > 88)
-
-common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profiles\base_acs_detection_profils.py:
-   1:1  D100 Missing docstring in public module
-  14:36 UP046 Generic class `BaseAcsDetectionProfile` uses `Generic` subclass instead of type parameters
-  22:89 E501 Line too long (94 > 88)
-  32:9  D102 Missing docstring in public method
-
-common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profiles\base_acs_detection_profils_params.py:
-   1:1  D100 Missing docstring in public module
-  29:89 E501 Line too long (98 > 88)
-
-common\navigation\avoidance\acs_detection_profiles\no_acs_detection_profile\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (107 > 88)
-  4:89 E501 Line too long (114 > 88)
 
 common\navigation\avoidance\acs_detection_profiles\no_acs_detection_profile\no_acs_detection_profile.py:
    1:1  D100 Missing docstring in public module
@@ -238,9 +173,7 @@ common\navigation\avoidance\acs_detection_profiles\no_projection_acs_detection_p
 common\navigation\avoidance\acs_detection_profiles\no_projection_acs_detection_profile\no_projection_acs_detection_profile.py:
    1:1  D100 Missing docstring in public module
    7:89 E501 Line too long (136 > 88)
-  25:89 E501 Line too long (115 > 88)
-  26:89 E501 Line too long (94 > 88)
-  31:9  D102 Missing docstring in public method
+  33:9  D102 Missing docstring in public method
 
 common\navigation\avoidance\acs_detection_profiles\no_projection_acs_detection_profile\no_projection_acs_detection_profile_params.py:
   1:1 D100 Missing docstring in public module
@@ -600,8 +533,8 @@ common\navigation\trajectory_planner\base_trajectory_planner\base_trajectory_pla
    27:89 E501 Line too long (90 > 88)
    44:89 E501 Line too long (94 > 88)
   127:9  D102 Missing docstring in public method
-  130:9  D102 Missing docstring in public method
-  133:9  D102 Missing docstring in public method
+  131:9  D102 Missing docstring in public method
+  135:9  D102 Missing docstring in public method
 
 common\navigation\trajectory_planner\base_trajectory_planner\base_trajectory_planner_params.py:
    1:1  D100 Missing docstring in public module
@@ -1514,26 +1447,26 @@ robot1\rasp\controllers\rolling_basis\asservissment_rolling_basis.py:
   147:9  D205 1 blank line required between summary line and description
   173:9  S101 Use of `assert` detected
   184:89 E501 Line too long (133 > 88)
-  292:89 E501 Line too long (129 > 88)
-  300:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  307:17 TRY301 Abstract `raise` to an inner function
-  307:23 TRY003 Avoid specifying long messages outside the exception class
-  308:21 EM101 Exception must not use a string literal, assign to variable first
-  312:16 BLE001 Do not catch blind exception: `Exception`
-  313:13 TRY400 Use `logging.exception` instead of `logging.error`
-  335:89 E501 Line too long (129 > 88)
-  343:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  350:17 TRY301 Abstract `raise` to an inner function
-  350:23 TRY003 Avoid specifying long messages outside the exception class
-  351:21 EM101 Exception must not use a string literal, assign to variable first
-  355:16 BLE001 Do not catch blind exception: `Exception`
-  356:13 TRY400 Use `logging.exception` instead of `logging.error`
-  366:89 E501 Line too long (91 > 88)
-  367:89 E501 Line too long (93 > 88)
-  382:16 BLE001 Do not catch blind exception: `Exception`
-  383:13 TRY400 Use `logging.exception` instead of `logging.error`
-  387:9  D105 Missing docstring in magic method
-  396:9  D105 Missing docstring in magic method
+  297:89 E501 Line too long (129 > 88)
+  305:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  312:17 TRY301 Abstract `raise` to an inner function
+  312:23 TRY003 Avoid specifying long messages outside the exception class
+  313:21 EM101 Exception must not use a string literal, assign to variable first
+  317:16 BLE001 Do not catch blind exception: `Exception`
+  318:13 TRY400 Use `logging.exception` instead of `logging.error`
+  345:89 E501 Line too long (129 > 88)
+  353:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  360:17 TRY301 Abstract `raise` to an inner function
+  360:23 TRY003 Avoid specifying long messages outside the exception class
+  361:21 EM101 Exception must not use a string literal, assign to variable first
+  365:16 BLE001 Do not catch blind exception: `Exception`
+  366:13 TRY400 Use `logging.exception` instead of `logging.error`
+  376:89 E501 Line too long (91 > 88)
+  377:89 E501 Line too long (93 > 88)
+  392:16 BLE001 Do not catch blind exception: `Exception`
+  393:13 TRY400 Use `logging.exception` instead of `logging.error`
+  397:9  D105 Missing docstring in magic method
+  406:9  D105 Missing docstring in magic method
 
 robot1\rasp\controllers\rolling_basis\pids.py:
    1:1  D100 Missing docstring in public module
@@ -1553,24 +1486,24 @@ robot1\rasp\controllers\rolling_basis\rolling_basis.py:
    41:89 E501 Line too long (105 > 88)
    77:9  ERA001 Found commented-out code
    91:13 G003 Logging statement uses `+`
-  203:89 E501 Line too long (129 > 88)
-  211:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  218:17 TRY301 Abstract `raise` to an inner function
-  218:23 TRY003 Avoid specifying long messages outside the exception class
-  219:21 EM101 Exception must not use a string literal, assign to variable first
-  223:16 BLE001 Do not catch blind exception: `Exception`
-  224:13 TRY400 Use `logging.exception` instead of `logging.error`
-  246:89 E501 Line too long (129 > 88)
-  254:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  261:17 TRY301 Abstract `raise` to an inner function
-  261:23 TRY003 Avoid specifying long messages outside the exception class
-  262:21 EM101 Exception must not use a string literal, assign to variable first
-  266:16 BLE001 Do not catch blind exception: `Exception`
-  267:13 TRY400 Use `logging.exception` instead of `logging.error`
-  277:89 E501 Line too long (90 > 88)
-  278:89 E501 Line too long (92 > 88)
-  293:16 BLE001 Do not catch blind exception: `Exception`
-  294:13 TRY400 Use `logging.exception` instead of `logging.error`
+  208:89 E501 Line too long (129 > 88)
+  216:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  223:17 TRY301 Abstract `raise` to an inner function
+  223:23 TRY003 Avoid specifying long messages outside the exception class
+  224:21 EM101 Exception must not use a string literal, assign to variable first
+  228:16 BLE001 Do not catch blind exception: `Exception`
+  229:13 TRY400 Use `logging.exception` instead of `logging.error`
+  256:89 E501 Line too long (129 > 88)
+  264:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  271:17 TRY301 Abstract `raise` to an inner function
+  271:23 TRY003 Avoid specifying long messages outside the exception class
+  272:21 EM101 Exception must not use a string literal, assign to variable first
+  276:16 BLE001 Do not catch blind exception: `Exception`
+  277:13 TRY400 Use `logging.exception` instead of `logging.error`
+  287:89 E501 Line too long (90 > 88)
+  288:89 E501 Line too long (92 > 88)
+  303:16 BLE001 Do not catch blind exception: `Exception`
+  304:13 TRY400 Use `logging.exception` instead of `logging.error`
 
 robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
     1:1  D100 Missing docstring in public module
@@ -1583,22 +1516,22 @@ robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
    35:89 E501 Line too long (113 > 88)
    36:89 E501 Line too long (101 > 88)
    62:9  ERA001 Found commented-out code
-  124:89 E501 Line too long (129 > 88)
-  132:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  139:17 TRY301 Abstract `raise` to an inner function
-  139:23 TRY003 Avoid specifying long messages outside the exception class
-  140:21 EM101 Exception must not use a string literal, assign to variable first
-  144:16 BLE001 Do not catch blind exception: `Exception`
-  145:13 TRY400 Use `logging.exception` instead of `logging.error`
-  167:89 E501 Line too long (129 > 88)
-  175:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  183:17 TRY301 Abstract `raise` to an inner function
-  186:16 BLE001 Do not catch blind exception: `Exception`
-  187:13 TRY400 Use `logging.exception` instead of `logging.error`
-  197:89 E501 Line too long (90 > 88)
-  198:89 E501 Line too long (92 > 88)
-  211:16 BLE001 Do not catch blind exception: `Exception`
-  212:13 TRY400 Use `logging.exception` instead of `logging.error`
+  129:89 E501 Line too long (129 > 88)
+  137:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  144:17 TRY301 Abstract `raise` to an inner function
+  144:23 TRY003 Avoid specifying long messages outside the exception class
+  145:21 EM101 Exception must not use a string literal, assign to variable first
+  149:16 BLE001 Do not catch blind exception: `Exception`
+  150:13 TRY400 Use `logging.exception` instead of `logging.error`
+  177:89 E501 Line too long (129 > 88)
+  185:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
+  193:17 TRY301 Abstract `raise` to an inner function
+  196:16 BLE001 Do not catch blind exception: `Exception`
+  197:13 TRY400 Use `logging.exception` instead of `logging.error`
+  207:89 E501 Line too long (90 > 88)
+  208:89 E501 Line too long (92 > 88)
+  221:16 BLE001 Do not catch blind exception: `Exception`
+  222:13 TRY400 Use `logging.exception` instead of `logging.error`
 
 robot1\rasp\main.py:
     1:1  D100 Missing docstring in public module
@@ -1652,13 +1585,10 @@ robot1\rasp\sensors\lidar\lidar.py:
   210:89 E501 Line too long (91 > 88)
   220:16 BLE001 Do not catch blind exception: `Exception`
   222:13 TRY400 Use `logging.exception` instead of `logging.error`
-  230:13 B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
-  230:19 TRY002 Create your own exception
-  230:19 TRY003 Avoid specifying long messages outside the exception class
-  230:29 EM102 Exception must not use an f-string literal, assign to variable first
-  234:28 FBT001 Boolean-typed positional argument in function definition
-  234:28 FBT002 Boolean default positional argument in function definition
-  238:89 E501 Line too long (104 > 88)
+  231:13 B904 Within an `except` clause, raise exceptions with `raise ... from err` or `raise ... from None` to distinguish them from errors in exception handling
+  231:19 TRY002 Create your own exception
+  235:28 FBT001 Boolean-typed positional argument in function definition
+  235:28 FBT002 Boolean default positional argument in function definition
 
 robot1\rasp\sensors\lidar\lidar_dummy.py:
     1:1  D100 Missing docstring in public module
@@ -1699,4 +1629,4 @@ robot1\rasp\tests\config_loader.py:
   151:89 E501 Line too long (96 > 88)
   325:46 RUF012 Mutable class attributes should be annotated with `typing.ClassVar`
 
-Found 1313 errors.
+Found 1261 errors.

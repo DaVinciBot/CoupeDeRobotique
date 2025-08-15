@@ -6,12 +6,12 @@ class WebSocketManager {
         this.user = user;
     }
 
-    #create_trame(msg, data) { 
+    #create_trame(msg, data) {
         let ts = Date.now();
         let usr = this.user;
         return JSON.stringify({ usr, msg, data, ts })
     }
-    
+
     #ws_connect(route) {
         return new WebSocket(`ws://${this.host}:${this.port}/${route}?sender=${this.user}`)
     }

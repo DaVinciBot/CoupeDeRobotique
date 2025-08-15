@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1755226347311",
+    "time": "1755232119692",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\arena_old.py",
@@ -88,11 +88,11 @@
             "message": "Import \"old_logger\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 4,
+                    "line": 5,
                     "character": 5
                 },
                 "end": {
-                    "line": 4,
+                    "line": 5,
                     "character": 15
                 }
             },
@@ -104,11 +104,11 @@
             "message": "Type of \"Logger\" is unknown",
             "range": {
                 "start": {
-                    "line": 4,
+                    "line": 5,
                     "character": 23
                 },
                 "end": {
-                    "line": 4,
+                    "line": 5,
                     "character": 29
                 }
             },
@@ -120,11 +120,11 @@
             "message": "Type of \"distance\" is partially unknown\n  Type of \"distance\" is \"Overload[(a: Geometry | None, b: Geometry | None, **kwargs: Unknown) -> float64, (a: Buffer | SupportsArray[dtype[Any]] | Sequence[SupportsArray[dtype[Any]]] | Sequence[Sequence[SupportsArray[dtype[Any]]]] | Sequence[Sequence[Sequence[SupportsArray[dtype[Any]]]]] | Sequence[Geometry | None] | Sequence[Sequence[Geometry | None]] | Sequence[Sequence[Sequence[Geometry | None]]], b: Geometry | Buffer | SupportsArray[dtype[Any]] | Sequence[SupportsArray[dtype[Any]]] | Sequence[Sequence[SupportsArray[dtype[Any]]]] | Sequence[Sequence[Sequence[SupportsArray[dtype[Any]]]]] | Sequence[Geometry | None] | Sequence[Sequence[Geometry | None]] | Sequence[Sequence[Sequence[Geometry | None]]] | None, **kwargs: Unknown) -> ndarray[tuple[int, ...], dtype[float64]], (a: Geometry | Buffer | SupportsArray[dtype[Any]] | Sequence[SupportsArray[dtype[Any]]] | Sequence[Sequence[SupportsArray[dtype[Any]]]] | Sequence[Sequence[Sequence[SupportsArray[dtype[Any]]]]] | Sequence[Geometry | None] | Sequence[Sequence[Geometry | None]] | Sequence[Sequence[Sequence[Geometry | None]]] | None, b: Buffer | SupportsArray[dtype[Any]] | Sequence[SupportsArray[dtype[Any]]] | Sequence[Sequence[SupportsArray[dtype[Any]]]] | Sequence[Sequence[Sequence[SupportsArray[dtype[Any]]]]] | Sequence[Geometry | None] | Sequence[Sequence[Geometry | None]] | Sequence[Sequence[Sequence[Geometry | None]]], **kwargs: Unknown) -> ndarray[tuple[int, ...], dtype[float64]]]\"",
             "range": {
                 "start": {
-                    "line": 6,
+                    "line": 7,
                     "character": 20
                 },
                 "end": {
-                    "line": 6,
+                    "line": 7,
                     "character": 28
                 }
             },
@@ -136,11 +136,11 @@
             "message": "\"Arena\" is unknown import symbol",
             "range": {
                 "start": {
-                    "line": 8,
+                    "line": 9,
                     "character": 35
                 },
                 "end": {
-                    "line": 8,
+                    "line": 9,
                     "character": 40
                 }
             },
@@ -152,11 +152,11 @@
             "message": "Type of \"Arena\" is unknown",
             "range": {
                 "start": {
-                    "line": 8,
+                    "line": 9,
                     "character": 35
                 },
                 "end": {
-                    "line": 8,
+                    "line": 9,
                     "character": 40
                 }
             },
@@ -164,47 +164,15 @@
         },
         {
             "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\mars_arena_old.py",
-            "severity": "information",
-            "message": "Method \"__str__\" is not marked as override but is overriding a method in class \"object\"",
-            "range": {
-                "start": {
-                    "line": 32,
-                    "character": 8
-                },
-                "end": {
-                    "line": 32,
-                    "character": 15
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\mars_arena_old.py",
-            "severity": "information",
-            "message": "Method \"__repr__\" is not marked as override but is overriding a method in class \"object\"",
-            "range": {
-                "start": {
-                    "line": 41,
-                    "character": 8
-                },
-                "end": {
-                    "line": 41,
-                    "character": 16
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\mars_arena_old.py",
             "severity": "error",
             "message": "Base class type is unknown, obscuring type of derived class",
             "range": {
                 "start": {
-                    "line": 73,
+                    "line": 76,
                     "character": 16
                 },
                 "end": {
-                    "line": 73,
+                    "line": 76,
                     "character": 21
                 }
             },
@@ -216,11 +184,11 @@
             "message": "No overloads for \"sorted\" match the provided arguments",
             "range": {
                 "start": {
-                    "line": 223,
+                    "line": 226,
                     "character": 15
                 },
                 "end": {
-                    "line": 227,
+                    "line": 230,
                     "character": 9
                 }
             },
@@ -232,11 +200,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 223,
+                    "line": 226,
                     "character": 15
                 },
                 "end": {
-                    "line": 227,
+                    "line": 230,
                     "character": 9
                 }
             },
@@ -248,31 +216,15 @@
             "message": "Return type of lambda is unknown",
             "range": {
                 "start": {
-                    "line": 225,
+                    "line": 228,
                     "character": 26
                 },
                 "end": {
-                    "line": 225,
+                    "line": 228,
                     "character": 87
                 }
             },
             "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\mars_arena_old.py",
-            "severity": "information",
-            "message": "Method \"__str__\" is not marked as override but is overriding a method in class \"object\"",
-            "range": {
-                "start": {
-                    "line": 333,
-                    "character": 8
-                },
-                "end": {
-                    "line": 333,
-                    "character": 15
-                }
-            },
-            "rule": "reportImplicitOverride"
         },
         {
             "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\base_arena\\arena.py",
@@ -328,11 +280,11 @@
             "message": "Expected type arguments for generic class \"ndarray\"",
             "range": {
                 "start": {
-                    "line": 200,
+                    "line": 203,
                     "character": 39
                 },
                 "end": {
-                    "line": 200,
+                    "line": 203,
                     "character": 49
                 }
             },
@@ -344,11 +296,11 @@
             "message": "Type of parameter \"self\" is unknown",
             "range": {
                 "start": {
-                    "line": 224,
+                    "line": 227,
                     "character": 25
                 },
                 "end": {
-                    "line": 224,
+                    "line": 227,
                     "character": 29
                 }
             },
@@ -360,11 +312,11 @@
             "message": "Return type of lambda is unknown",
             "range": {
                 "start": {
-                    "line": 224,
+                    "line": 227,
                     "character": 31
                 },
                 "end": {
-                    "line": 224,
+                    "line": 227,
                     "character": 42
                 }
             },
@@ -376,11 +328,11 @@
             "message": "Type of parameter \"self\" is unknown",
             "range": {
                 "start": {
-                    "line": 244,
+                    "line": 247,
                     "character": 25
                 },
                 "end": {
-                    "line": 244,
+                    "line": 247,
                     "character": 29
                 }
             },
@@ -392,11 +344,11 @@
             "message": "Return type of lambda is unknown",
             "range": {
                 "start": {
-                    "line": 244,
+                    "line": 247,
                     "character": 31
                 },
                 "end": {
-                    "line": 244,
+                    "line": 247,
                     "character": 42
                 }
             },
@@ -408,11 +360,11 @@
             "message": "Expected type arguments for generic class \"ndarray\"",
             "range": {
                 "start": {
-                    "line": 248,
+                    "line": 251,
                     "character": 27
                 },
                 "end": {
-                    "line": 248,
+                    "line": 251,
                     "character": 37
                 }
             },
@@ -424,11 +376,11 @@
             "message": "Expected type arguments for generic class \"ndarray\"",
             "range": {
                 "start": {
-                    "line": 295,
+                    "line": 300,
                     "character": 27
                 },
                 "end": {
-                    "line": 295,
+                    "line": 300,
                     "character": 37
                 }
             },
@@ -437,46 +389,14 @@
         {
             "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\base_arena\\arena.py",
             "severity": "information",
-            "message": "Unnecessary isinstance call; \"OrientedPoint | Point\" is always an instance of \"OrientedPoint | Point\"",
-            "range": {
-                "start": {
-                    "line": 375,
-                    "character": 11
-                },
-                "end": {
-                    "line": 375,
-                    "character": 51
-                }
-            },
-            "rule": "reportUnnecessaryIsInstance"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\base_arena\\arena.py",
-            "severity": "warning",
-            "message": "Type analysis indicates code is unreachable",
-            "range": {
-                "start": {
-                    "line": 379,
-                    "character": 8
-                },
-                "end": {
-                    "line": 379,
-                    "character": 12
-                }
-            },
-            "rule": "reportUnreachable"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\base_arena\\arena.py",
-            "severity": "information",
             "message": "Unnecessary isinstance call; \"Point\" is always an instance of \"Point\"",
             "range": {
                 "start": {
-                    "line": 697,
+                    "line": 700,
                     "character": 29
                 },
                 "end": {
-                    "line": 697,
+                    "line": 700,
                     "character": 62
                 }
             },
@@ -488,11 +408,11 @@
             "message": "Unnecessary isinstance call; \"Point\" is always an instance of \"Point\"",
             "range": {
                 "start": {
-                    "line": 823,
+                    "line": 826,
                     "character": 17
                 },
                 "end": {
-                    "line": 823,
+                    "line": 826,
                     "character": 37
                 }
             },
@@ -821,30 +741,14 @@
         {
             "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\stuff_zone.py",
             "severity": "information",
-            "message": "Method \"update\" is not marked as override but is overriding a method in class \"BaseArenaZone\"",
-            "range": {
-                "start": {
-                    "line": 56,
-                    "character": 8
-                },
-                "end": {
-                    "line": 56,
-                    "character": 14
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\stuff_zone.py",
-            "severity": "information",
             "message": "Type of \"grid_manager\" is unknown",
             "range": {
                 "start": {
-                    "line": 78,
+                    "line": 79,
                     "character": 12
                 },
                 "end": {
-                    "line": 78,
+                    "line": 79,
                     "character": 24
                 }
             },
@@ -856,47 +760,15 @@
             "message": "Object of type \"None\" cannot be called",
             "range": {
                 "start": {
-                    "line": 78,
+                    "line": 79,
                     "character": 40
                 },
                 "end": {
-                    "line": 78,
+                    "line": 79,
                     "character": 62
                 }
             },
             "rule": "reportOptionalCall"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\stuff_zone.py",
-            "severity": "error",
-            "message": "Method \"get_go_to_position\" overrides class \"BaseArenaZone\" in an incompatible manner\n  Return type mismatch: base method returns type \"OrientedPoint | None\", override returns type \"OrientedPoint | Point | None\"\n    Type \"OrientedPoint | Point | None\" is not assignable to type \"OrientedPoint | None\"\n      Type \"Point\" is not assignable to type \"OrientedPoint | None\"\n        \"Point\" is not assignable to \"OrientedPoint\"\n        \"Point\" is not assignable to \"None\"",
-            "range": {
-                "start": {
-                    "line": 83,
-                    "character": 8
-                },
-                "end": {
-                    "line": 83,
-                    "character": 26
-                }
-            },
-            "rule": "reportIncompatibleMethodOverride"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\stuff_zone.py",
-            "severity": "information",
-            "message": "Method \"get_go_to_position\" is not marked as override but is overriding a method in class \"BaseArenaZone\"",
-            "range": {
-                "start": {
-                    "line": 83,
-                    "character": 8
-                },
-                "end": {
-                    "line": 83,
-                    "character": 26
-                }
-            },
-            "rule": "reportImplicitOverride"
         },
         {
             "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
@@ -1937,41 +1809,21 @@
             "rule": "reportImportCycles"
         },
         {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\acs_detection_profile_factory.py",
-            "severity": "information",
-            "message": "Expected type arguments for generic class \"BaseAcsDetectionProfile\"",
-            "range": {
-                "start": {
-                    "line": 26,
-                    "character": 62
-                },
-                "end": {
-                    "line": 26,
-                    "character": 85
-                }
-            },
-            "rule": "reportMissingTypeArgument"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\angular_restrict_projection_acs_detection_profile\\angular_restrict_projection_acs_detection_profile.py",
-            "severity": "information",
-            "message": "Method \"is_acs_triggered\" is not marked as override but is overriding a method in class \"BaseAcsDetectionProfile[AngularRestrictProjectionAcsDetectionProfileParams]\"",
-            "range": {
-                "start": {
-                    "line": 29,
-                    "character": 8
-                },
-                "end": {
-                    "line": 29,
-                    "character": 24
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\base_acs_detection_profiles\\__init__.py",
+            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\__init__.py",
             "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\base_acs_detection_profiles\\__init__.py\n  c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\base_acs_detection_profiles\\base_acs_detection_profils.py",
+            "message": "Cycle detected in import chain\n  c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\__init__.py\n  c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\angular_restrict_projection_acs_detection_profile\\__init__.py\n  c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\angular_restrict_projection_acs_detection_profile\\angular_restrict_projection_acs_detection_profile.py",
+            "rule": "reportImportCycles"
+        },
+        {
+            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\__init__.py",
+            "severity": "warning",
+            "message": "Cycle detected in import chain\n  c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\__init__.py\n  c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\angular_restrict_projection_acs_detection_profile\\__init__.py\n  c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\angular_restrict_projection_acs_detection_profile\\angular_restrict_projection_acs_detection_profile_params.py",
+            "rule": "reportImportCycles"
+        },
+        {
+            "file": "c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\__init__.py",
+            "severity": "warning",
+            "message": "Cycle detected in import chain\n  c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\__init__.py\n  c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\base_acs_detection_profiles\\__init__.py\n  c:\\Users\\austin\\CodeProjects\\ForkCdr\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\base_acs_detection_profiles\\base_acs_detection_profiles.py",
             "rule": "reportImportCycles"
         },
         {
@@ -1980,11 +1832,11 @@
             "message": "Method \"is_acs_triggered\" is not marked as override but is overriding a method in class \"BaseAcsDetectionProfile[NoProjectionAcsDetectionProfileParams]\"",
             "range": {
                 "start": {
-                    "line": 30,
+                    "line": 32,
                     "character": 8
                 },
                 "end": {
-                    "line": 30,
+                    "line": 32,
                     "character": 24
                 }
             },
@@ -2846,11 +2698,11 @@
             "message": "Method \"get_total_duration\" is not marked as override but is overriding a method in class \"BaseSpeedProfile\"",
             "range": {
                 "start": {
-                    "line": 258,
+                    "line": 261,
                     "character": 8
                 },
                 "end": {
-                    "line": 258,
+                    "line": 261,
                     "character": 26
                 }
             },
@@ -7186,11 +7038,11 @@
             "message": "Method \"__eq__\" is not marked as override but is overriding a method in class \"object\"",
             "range": {
                 "start": {
-                    "line": 386,
+                    "line": 396,
                     "character": 8
                 },
                 "end": {
-                    "line": 386,
+                    "line": 396,
                     "character": 14
                 }
             },
@@ -7202,11 +7054,11 @@
             "message": "Return type, \"Unknown | bool\", is partially unknown",
             "range": {
                 "start": {
-                    "line": 389,
+                    "line": 399,
                     "character": 15
                 },
                 "end": {
-                    "line": 393,
+                    "line": 403,
                     "character": 9
                 }
             },
@@ -7218,11 +7070,11 @@
             "message": "Method \"__ne__\" is not marked as override but is overriding a method in class \"object\"",
             "range": {
                 "start": {
-                    "line": 395,
+                    "line": 405,
                     "character": 8
                 },
                 "end": {
-                    "line": 395,
+                    "line": 405,
                     "character": 14
                 }
             },
@@ -7410,11 +7262,11 @@
             "message": "Method \"__eq__\" is not marked as override but is overriding a method in class \"object\"",
             "range": {
                 "start": {
-                    "line": 297,
+                    "line": 307,
                     "character": 8
                 },
                 "end": {
-                    "line": 297,
+                    "line": 307,
                     "character": 14
                 }
             },
@@ -7426,11 +7278,11 @@
             "message": "Return type, \"Unknown | bool\", is partially unknown",
             "range": {
                 "start": {
-                    "line": 309,
+                    "line": 319,
                     "character": 15
                 },
                 "end": {
-                    "line": 313,
+                    "line": 323,
                     "character": 9
                 }
             },
@@ -7442,11 +7294,11 @@
             "message": "Method \"__ne__\" is not marked as override but is overriding a method in class \"object\"",
             "range": {
                 "start": {
-                    "line": 315,
+                    "line": 325,
                     "character": 8
                 },
                 "end": {
-                    "line": 315,
+                    "line": 325,
                     "character": 14
                 }
             },
@@ -7554,11 +7406,11 @@
             "message": "Return type, \"Unknown | bool\", is partially unknown",
             "range": {
                 "start": {
-                    "line": 228,
+                    "line": 238,
                     "character": 15
                 },
                 "end": {
-                    "line": 236,
+                    "line": 246,
                     "character": 9
                 }
             },
@@ -7874,11 +7726,11 @@
             "message": "\"scan\" is not a known attribute of \"None\"",
             "range": {
                 "start": {
-                    "line": 258,
+                    "line": 260,
                     "character": 38
                 },
                 "end": {
-                    "line": 258,
+                    "line": 260,
                     "character": 42
                 }
             },
@@ -7890,11 +7742,11 @@
             "message": "Cannot access attribute \"distances\" for class \"FunctionType\"\n  Attribute \"distances\" is unknown",
             "range": {
                 "start": {
-                    "line": 258,
+                    "line": 260,
                     "character": 43
                 },
                 "end": {
-                    "line": 258,
+                    "line": 260,
                     "character": 52
                 }
             },
@@ -7906,11 +7758,11 @@
             "message": "No overloads for \"column_stack\" match the provided arguments",
             "range": {
                 "start": {
-                    "line": 272,
+                    "line": 274,
                     "character": 15
                 },
                 "end": {
-                    "line": 272,
+                    "line": 274,
                     "character": 70
                 }
             },
@@ -7922,11 +7774,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 272,
+                    "line": 274,
                     "character": 15
                 },
                 "end": {
-                    "line": 272,
+                    "line": 274,
                     "character": 70
                 }
             },
@@ -7938,11 +7790,11 @@
             "message": "Argument of type \"tuple[None, NDArray[float32]]\" cannot be assigned to parameter \"tup\" of type \"Sequence[ArrayLike]\" in function \"column_stack\"\n  Type \"None\" is not assignable to type \"ArrayLike\"\n    \"None\" is incompatible with protocol \"Buffer\"\n      \"__buffer__\" is not present\n    \"None\" is incompatible with protocol \"_SupportsArray[dtype[Any]]\"\n      \"__array__\" is not present\n    \"None\" is incompatible with protocol \"_NestedSequence[_SupportsArray[dtype[Any]]]\"\n      \"__len__\" is not present\n      \"__getitem__\" is not present",
             "range": {
                 "start": {
-                    "line": 272,
+                    "line": 274,
                     "character": 32
                 },
                 "end": {
-                    "line": 272,
+                    "line": 274,
                     "character": 52
                 }
             },
@@ -8351,10 +8203,9 @@
     ],
     "summary": {
         "filesAnalyzed": 218,
-        "errorCount": 95,
-        "warningCount": 93,
-        "informationCount": 343,
-        "timeInSec": 4.18
+        "errorCount": 94,
+        "warningCount": 94,
+        "informationCount": 335,
+        "timeInSec": 6.547
     }
 }
-

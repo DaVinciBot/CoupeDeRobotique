@@ -28,7 +28,7 @@
 @keyframes bad {
     0%{
         transform: translate(800px, 500px);
-    }    
+    }
     50% {
         transform: translate(1100px, 700px);
     }

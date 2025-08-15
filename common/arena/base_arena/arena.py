@@ -46,18 +46,21 @@ class BaseArena(ABC):
         chunk_size: int = 10,
         grid_manager_logger: Logger | None = None,
     ) -> None:
-        """Initializes the BaseArena instance with dimensions, zones, and configuration parameters.
+        """Initializes an instance with dimensions, zones, and configuration parameters.
 
         Args:
             logger (Logger): Logger instance for general arena logging.
             width (int): Width of the arena in centimeters.
             height (int): Height of the arena in centimeters.
-            forbidden_cover_threshold (float): Threshold for forbidden cover in the grid.
+            forbidden_cover_threshold (float):
+                Threshold for forbidden cover in the grid.
             border_buffer (float): Buffer distance for the arena border.
             obstacle_buffer (float): Buffer distance for obstacles.
             zones (list[BaseArenaZone]): List of pre-defined zones in the arena.
-            chunk_size (int, optional): Size of chunks in the grid manager. Defaults to 10.
-            grid_manager_logger (Logger | None, optional): Logger instance for grid manager logging. Defaults to None.
+            chunk_size (int, optional):
+                Size of chunks in the grid manager. Defaults to 10.
+            grid_manager_logger (Logger | None, optional):
+                Logger instance for grid manager logging. Defaults to None.
 
         """
         # ====== Initialized constructor based attributes ======
@@ -98,9 +101,9 @@ class BaseArena(ABC):
         # 5. Zones
         self.zones: list[BaseArenaZone] = zones
 
-        # Give to each zone the grid manager to do a callback when they update their state
-        for i in range(len(self.zones)):
-            self.zones[i].update_callback = self._get_grid_manager
+        # Give to each zone the grid manager to do a callback when they update state
+        for zone in self.zones:
+            zone.update_callback = self._get_grid_manager
 
         # Add forbidden and border zones to the grid manager
         for zone in self.zones:
@@ -113,13 +116,13 @@ class BaseArena(ABC):
 
         # 2. Additional zones: Border, Ally and Enemy
         # 2.1 Border zone
-        # We don't need to add the border zone to self.zones, it's not a zone that need to be updated -> 100% static
+        # We don't need to add the border zone to self.zones, it's a 100% static zone
         self.border_zone: BorderZone = self.__create_arena_border_zone()
         self.grid_manager.add_forbidden_static_zone(self.border_zone.buffered_polygon)
 
         # 2.2 Ally and Enemy zones
         # Don't need to add these zones to self.zones, they have their own update method
-        # Don't need to add these zones to the grid manager, they are not static zones -> 100% dynamic
+        # Don't need to add these zones to the grid manager, they are 100% dynamic zones
         # Don't add them now as dynamic forbidden zones because they are not updated yet
         #   -> default position for now (wait BaseArena.update method for update)
         self.ally_zone: AllyZone = AllyZone(
@@ -251,16 +254,18 @@ class BaseArena(ABC):
         optimized_update: bool = True,
         _enemy_position: Point | None = None,  # Only for testing and simulation purpose
     ) -> None:
-        """Updates the state of the arena, zones, and grid based on ally and enemy positions.
+        """Updates the state of the arena, zones, and grid.
 
         Args:
             ally_position (OrientedPoint): Current position of the ally robot.
             lidar_scan_polars (np.ndarray): Lidar scan data in polar coordinates.
-            optimized_update (bool, optional): If ``True``, only updates intersecting zones. Defaults to ``True``.
-            _enemy_position (Point | None, optional): Pre-defined enemy position. Defaults to None.
+            optimized_update (bool, optional):
+                If ``True``, only updates intersecting zones. Defaults to ``True``.
+            _enemy_position (Point | None, optional):
+                Pre-defined enemy position. Defaults to None.
 
         """
-        # 1.Compute enemy position if not directly provided in absolute cartesian coordinates
+        # 1.Compute enemy position if not directly provided in absolute coordinates
         if not _enemy_position:
             # Compute enemy position based on lidar scans -> match situation
             enemy_position = self.compute_enemy_position(
@@ -289,7 +294,7 @@ class BaseArena(ABC):
                 )
 
         # 4.Update Grid Manager dynamic forbidden zones (only enemy zone)
-        # self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon])
+        # self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon]) #noqa: ERA001, E501 #FIX
 
     def compute_enemy_position(
         self,
@@ -299,18 +304,21 @@ class BaseArena(ABC):
         _start_time: int = -1,
         _numb_enemy: bool = False,
     ) -> Point | OrientedPoint:
-        """Computes the position of the enemy based on lidar scans and updates the arena.
+        """Computes the position of the enemy and updates the arena.
 
-        This function calculates the position of the enemy by processing the lidar scans.
-        It removes any obstacles that are outside the arena, and then determines the closest obstacle as the enemy
-        position.
+        This function calculates the position of the enemy by processing the
+        lidar scans.
+        It removes any obstacles that are outside the arena, and then determines
+        the closest obstacle as the enemy position.
         If the enemy position is within a stuff zone, it marks that zone as FORBIDDEN.
 
         Args:
             lidar_scan_polars (np.ndarray): Detection points from the LIDAR scan.
             ally_position (OrientedPoint): Current ally position.
-            _start_time (int, optional): Starting timestamp for the computation. Defaults to -1 for no specific start time.
-            _numb_enemy (bool, optional): Whether the enemy is inactive. Defaults to ``False``.
+            _start_time (int, optional):
+                Starting timestamp for the computation. Defaults to -1.
+            _numb_enemy (bool, optional):
+                Whether the enemy is inactive. Defaults to ``False``.
 
         Returns:
             Point | OrientedPoint: The computed enemy position.
@@ -373,14 +381,7 @@ class BaseArena(ABC):
             )
 
         # 3. If goal is an OrientedPoint or Point, return it as is
-        if isinstance(goal, (OrientedPoint, Point)):
-            return goal
-
-        # 4. If goal is not recognized, log an error
-        self.logger.error(
-            f"Invalid goal type: {type(goal)}. Expected int, BaseArenaZone, OrientedPoint, or Point.",
-        )
-        return None
+        return goal
 
     # TODO: Check if this function is still needed, test them (last year code)
     def valid_position(self, pos: Point) -> bool:
@@ -390,7 +391,8 @@ class BaseArena(ABC):
             pos (Point): The position to check.
 
         Returns:
-            bool: ``True`` if the position is within the playing area, ``False`` otherwise.
+            bool: ``True`` if the position is within the playing area,
+                ``False`` otherwise.
 
         """
         return self.playable_area.contains(pos) or self.playable_area.touches(pos)
@@ -600,7 +602,7 @@ class BaseArena(ABC):
         if label is not None and label in existing_labels:
             label = None
 
-        if len(polygon.interiors) == 0:
+        if not polygon.interiors:
             # Polygon without holes
             x, y = polygon.exterior.xy
             ax.fill(
@@ -638,7 +640,8 @@ class BaseArena(ABC):
             show_buffer (bool): Whether to plot the buffered polygon.
             show_ally_direction (bool): Draw an arrow for the ally direction.
             display_zones_go_to_positions (bool): Draw go-to positions if any.
-            transparency_factor (float, optional): Alpha value multiplier. Defaults to 1.0.
+            transparency_factor (float, optional):
+                Alpha value multiplier. Defaults to 1.0.
 
         """
         if show_buffer:
@@ -662,7 +665,7 @@ class BaseArena(ABC):
             hatch_params = self.__get_hatch_parameters(zone)
 
             # 2. Plot zone uid
-            # Don't plot uid for ally and enemy zones (they continuously increase at each update)
+            # Don't plot uid for ally and enemy zones (they increase at each update)
             if not isinstance(zone, AllyZone) and not isinstance(zone, EnemyZone):
                 self.__plot_zone_uid(ax, zone)
 
@@ -684,7 +687,7 @@ class BaseArena(ABC):
                     team_color=self.team_color,
                 )
                 for go_to_position in zone.go_to_positions:
-                    # Plot nearest go-to position as green arrow (if oriented point) or green dot (if point)
+                    # Plot nearest go-to position as green arrow or green dot
                     if go_to_position == nearest_point:
                         if isinstance(go_to_position, OrientedPoint):
                             self.__plot_oriented_arrow(

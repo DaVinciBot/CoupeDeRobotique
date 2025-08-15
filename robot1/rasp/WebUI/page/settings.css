@@ -33,7 +33,7 @@ input{
     background-color: white;
     border-radius: var(--roundness);
     color: black !important;
-    padding: 5px 15px;   
+    padding: 5px 15px;
 }
 
 .sushi div:nth-child(2){
