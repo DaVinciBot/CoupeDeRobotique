@@ -181,16 +181,13 @@ class RollingBasis(BaseComTeensy):
     # ====== PID Configuration Methods ======
 
     @overload
-    def set_linear_position_pid(self, *args: float) -> None:
-        ...
+    def set_linear_position_pid(self, *args: float) -> None: ...
 
     @overload
-    def set_linear_position_pid(self, pid_values: dict[str, float]) -> None:
-        ...
+    def set_linear_position_pid(self, pid_values: dict[str, float]) -> None: ...
 
     @overload
-    def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None:
-        ...
+    def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
 
     def set_linear_position_pid(
         self,
@@ -229,16 +226,13 @@ class RollingBasis(BaseComTeensy):
             self.logger.error(f"Failed to set linear position PID: {e}")
 
     @overload
-    def set_angular_position_pid(self, *args: float) -> None:
-        ...
+    def set_angular_position_pid(self, *args: float) -> None: ...
 
     @overload
-    def set_angular_position_pid(self, pid_values: dict[str, float]) -> None:
-        ...
+    def set_angular_position_pid(self, pid_values: dict[str, float]) -> None: ...
 
     @overload
-    def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None:
-        ...
+    def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
 
     def set_angular_position_pid(
         self,
