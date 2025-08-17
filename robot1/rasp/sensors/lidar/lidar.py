@@ -227,7 +227,8 @@ class Lidar:
                 self.__is_connected = False
                 self.__threading_init_lidar()
 
-            raise Exception(f"Error while scanning, LiDAR is disconnected ? [{error}]")
+            msg = f"Error while scanning, LiDAR is disconnected ? [{error}]"
+            raise Exception(msg)
 
     # ====== Public methods and properties ======
 
@@ -235,7 +236,8 @@ class Lidar:
         """Check if the lidar is connected.
 
         Args:
-            force_check (bool, optional): Force a check of the connection status. Defaults to ``False``.
+            force_check (bool, optional):
+                Force a check of the connection status. Defaults to ``False``.
 
         Returns:
             bool: ``True`` if the lidar is connected, ``False`` otherwise.

@@ -1,3 +1,5 @@
+"""Module for managing the asservissement of the rolling basis of the robot."""
+
 import struct
 import time
 from typing import Any, overload
@@ -15,8 +17,10 @@ from usb_com.python import Messages
 class AsservissementRollingBasis(BaseComTeensy):
     """Represents the rolling basis of the robot.
 
-    Inherits from Teensy to manage low-level communications and adds logic specific to the robot's state,
-    PID configuration, and message messaging. Automatically logs target vs actual odometry on each send.
+    Inherits from Teensy to manage low-level communications and adds logic specific
+    to the robot's state,
+    PID configuration, and message messaging.
+    Automatically logs target vs actual odometry on each send.
 
     """
 
@@ -34,12 +38,18 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         Args:
             logger (Logger): The logger instance for logging.
-            serial_number (int, optional): The serial number of the Teensy. Defaults to CONFIG.ROLLING_BASIS_TEENSY_SER.
-            vid (int, optional): The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
-            pid (int, optional): The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
-            baudrate (int, optional): The baud rate for serial communication. Defaults to CONFIG.TEENSY_BAUDRATE.
-            enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
-            enable_dummy (bool, optional): Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+            serial_number (int, optional): The serial number of the Teensy.
+                Defaults to CONFIG.ROLLING_BASIS_TEENSY_SER.
+            vid (int, optional):
+                The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
+            pid (int, optional):
+                The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
+            baudrate (int, optional): The baud rate for serial communication.
+                Defaults to CONFIG.TEENSY_BAUDRATE.
+            enable_crc (bool, optional):
+                Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
+            enable_dummy (bool, optional):
+                Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
 
         """
         # Initialize state and log storage
@@ -83,7 +93,7 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         """
         self.logger.info(
-            "Teensy Rolling Basis says: " + msg.decode("ascii", errors="ignore"),
+            f"Teensy Rolling Basis says: {msg.decode('ascii', errors='ignore')}",
         )
 
     def rcv_rolling_basis_state(self, msg: bytes) -> None:
@@ -145,6 +155,7 @@ class AsservissementRollingBasis(BaseComTeensy):
 
     def plot_logs(self) -> None:
         """Plot target vs actual odometry for X, Y, and Theta using stored logs.
+
         Ensures all series have the same length before plotting.
 
         """
@@ -170,7 +181,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         actual_th = [logs[i]["actual_theta"] for i in range(n)]
 
         # Optional sanity check
-        assert all(
+        if not all(
             len(lst) == n
             for lst in (
                 times,
@@ -181,7 +192,22 @@ class AsservissementRollingBasis(BaseComTeensy):
                 target_th,
                 actual_th,
             )
-        ), f"Inconsistent log lengths: {[len(lst) for lst in (times, target_x, actual_x, target_y, actual_y, target_th, actual_th)]}"
+        ):
+            log_lengths = [
+                len(lst)
+                for lst in (
+                    times,
+                    target_x,
+                    actual_x,
+                    target_y,
+                    actual_y,
+                    target_th,
+                    actual_th,
+                )
+            ]
+            self.logger.warning(
+                f"Inconsistent log lengths: {log_lengths}",
+            )
 
         # Plot
         _, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
@@ -270,11 +296,16 @@ class AsservissementRollingBasis(BaseComTeensy):
         self.send_bytes(msg)
 
     @overload
-    def set_linear_position_pid(self, *args: float) -> None: ...
+    def set_linear_position_pid(self, *args: float) -> None:
+        ...
+
     @overload
-    def set_linear_position_pid(self, pid_values: dict[str, float]) -> None: ...
+    def set_linear_position_pid(self, pid_values: dict[str, float]) -> None:
+        ...
+
     @overload
-    def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+    def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None:
+        ...
 
     def set_linear_position_pid(
         self,
@@ -289,7 +320,8 @@ class AsservissementRollingBasis(BaseComTeensy):
             - set_linear_position_pid(kp=float, ki=float, kd=float) → None
 
         Args:
-            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
@@ -297,7 +329,9 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         """
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+            if len(args) == 3 and all(
+                isinstance(arg, float) for arg in args
+            ):  # noqa: PLR2004
                 pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -313,11 +347,16 @@ class AsservissementRollingBasis(BaseComTeensy):
             self.logger.error(f"Failed to set linear position PID: {e}")
 
     @overload
-    def set_angular_position_pid(self, *args: float) -> None: ...
+    def set_angular_position_pid(self, *args: float) -> None:
+        ...
+
     @overload
-    def set_angular_position_pid(self, pid_values: dict[str, float]) -> None: ...
+    def set_angular_position_pid(self, pid_values: dict[str, float]) -> None:
+        ...
+
     @overload
-    def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+    def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None:
+        ...
 
     def set_angular_position_pid(
         self,
@@ -332,7 +371,8 @@ class AsservissementRollingBasis(BaseComTeensy):
             - set_angular_position_pid(kp=float, ki=float, kd=float) → None
 
         Args:
-            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
@@ -340,7 +380,9 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         """
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+            if len(args) == 3 and all(
+                isinstance(arg, float) for arg in args
+            ):  # noqa: PLR2004
                 pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -363,8 +405,10 @@ class AsservissementRollingBasis(BaseComTeensy):
         """Configure all PID controllers.
 
         Args:
-            linear_position_pid (dict[str, float]): PID values for linear position control.
-            angular_position_pid (dict[str, float]): PID values for angular position control.
+            linear_position_pid (dict[str, float]):
+                PID values for linear position control.
+            angular_position_pid (dict[str, float]):
+                PID values for angular position control.
 
         """
         self.set_linear_position_pid(**linear_position_pid)
@@ -384,7 +428,30 @@ class AsservissementRollingBasis(BaseComTeensy):
 
     # ====== Equality Comparison ======
 
+    def __hash__(self) -> int:
+        """Compute a hash for the AsservissementRollingBasis instance.
+
+        Returns:
+            int: The hash value.
+        """
+        return hash(
+            (
+                self.odometrie,
+                self.linear_position_pid,
+                self.angular_position_pid,
+            )
+        )
+
     def __eq__(self, other: object) -> bool:
+        """Check equality of two AsservissementRollingBasis instances.
+
+        Args:
+            other (object): The other instance to compare against.
+
+        Returns:
+            bool: ``True`` if the instances are equal, ``False`` otherwise.
+
+        """
         if not isinstance(other, AsservissementRollingBasis):
             return NotImplemented
         return (
@@ -394,4 +461,13 @@ class AsservissementRollingBasis(BaseComTeensy):
         )
 
     def __ne__(self, other: object) -> bool:
+        """Check inequality of two AsservissementRollingBasis instances.
+
+        Args:
+            other (object): The other instance to compare against.
+
+        Returns:
+            bool: ``True`` if the instances are not equal, ``False`` otherwise.
+
+        """
         return not self.__eq__(other)
