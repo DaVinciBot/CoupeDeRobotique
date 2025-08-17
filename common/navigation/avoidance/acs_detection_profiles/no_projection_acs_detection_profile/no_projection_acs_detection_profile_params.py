@@ -1,3 +1,5 @@
+"""No Projection ACS Detection Profile Parameters Module."""
+
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
     BaseAcsDetectionProfileParams,
 )
