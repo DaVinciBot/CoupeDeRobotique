@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module defines the NoAvoidanceParams class, a configuration class used when no obstacle avoidance
-# strategy is needed in a navigation system. It inherits from BaseAvoidanceParams and specifies a
-# "NO_AVOIDANCE" strategy with zero avoidance distance.
-
+"""Parameters for the no-op avoidance strategy."""
 
 from navigation.avoidance.base_avoidance import BaseAvoidanceParams
 from navigation.avoidance.structs import AvoidanceStrategy

@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module defines the StopAndWaitAvoidanceParams class, which configures a stop-and-wait strategy
-# for obstacle avoidance in a navigation system. It specifies the distance at which avoidance is triggered
-# and the duration to wait before re-evaluating the path.
-
+"""Parameters for the stop-and-wait avoidance strategy."""
 
 from navigation.avoidance.base_avoidance import BaseAvoidanceParams
 from navigation.avoidance.structs import AvoidanceStrategy
@@ -20,10 +16,11 @@ class StopAndWaitAvoidanceParams(BaseAvoidanceParams):
         self,
         timeout: float,
     ) -> None:
-        """Initializes StopAndWaitAvoidanceParams with specific avoidance distance and timeout in seconds.
+        """Initializes parameters with a timeout in seconds.
 
         Args:
-            timeout (float): Time to wait after stopping before checking again in seconds.
+            timeout (float):
+                Time to wait after stopping before checking again in seconds.
 
         """
         super().__init__(AvoidanceStrategy.STOP_AND_WAIT, timeout * 1000.0)

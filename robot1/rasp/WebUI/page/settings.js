@@ -9,44 +9,40 @@ let range = document.querySelector("#power");
 
 let current_maki = null;
 
-
 for (let i = 0; i < maki.length; i++) {
-    maki[i].addEventListener("click", () => {
-        focus_maki(maki[i]);
-    })
+  maki[i].addEventListener("click", () => {
+    focus_maki(maki[i]);
+  });
 }
 
 function focus_maki(c_maki) {
-    for (let i = 0; i < maki.length; i++) {
-        maki[i].classList.remove("active");
-    }
-    c_maki.classList.add("active");
-    current_maki = c_maki;
-    input.value = c_maki.children[0].innerText;
+  for (let i = 0; i < maki.length; i++) {
+    maki[i].classList.remove("active");
+  }
+  c_maki.classList.add("active");
+  current_maki = c_maki;
+  input.value = c_maki.children[0].innerText;
 }
 
 plus.addEventListener("click", () => {
-    if (current_maki != null) {
-        let value = parseFloat(input.value);
-        value += parseFloat(range.value);
-        value = Math.round(value * 100) / 100;
-        input.value = value;
-        current_maki.children[0].innerText = value;
-    }
-})
+  if (current_maki != null) {
+    let value = parseFloat(input.value);
+    value += parseFloat(range.value);
+    value = Math.round(value * 100) / 100;
+    input.value = value;
+    current_maki.children[0].innerText = value;
+  }
+});
 
 minus.addEventListener("click", () => {
-    if (current_maki != null) {
-        let value = parseFloat(input.value);
-        value -= parseFloat(range.value)
-        value = Math.round(value * 100) / 100;
-        input.value = value;
-        current_maki.children[0].innerText = value;
-    }
-})
-
-
-
+  if (current_maki != null) {
+    let value = parseFloat(input.value);
+    value -= parseFloat(range.value);
+    value = Math.round(value * 100) / 100;
+    input.value = value;
+    current_maki.children[0].innerText = value;
+  }
+});
 
 let kp = document.querySelector("#kp");
 let ki = document.querySelector("#ki");
@@ -70,6 +66,14 @@ let theta = document.querySelector("#theta");
 let send = document.querySelector("#send");
 
 send.addEventListener("click", () => {
-    ws.send("cmd", "eval", `self.rolling_basis.set_pid(${kp.value}, ${ki.value}, ${kd.value})`);
-    ws.send("cmd", "eval", `self.rolling_basis.go_to(Point(${x.value}, ${y.value}), forward=True, max_speed=${max_speed.value}, next_position_delay=${timeout.value}, action_error_auth=${allowed_error.value}, traj_precision=${precision.value}, correction_trajectory_speed=${correction_speed.value}, acceleration_start_speed=${start_speed.value}, acceleration_distance=${start_distance.value}, deceleration_end_speed=${end_speed.value}, deceleration_distance=${end_distance.value})`);
-})
+  ws.send(
+    "cmd",
+    "eval",
+    `self.rolling_basis.set_pid(${kp.value}, ${ki.value}, ${kd.value})`
+  );
+  ws.send(
+    "cmd",
+    "eval",
+    `self.rolling_basis.go_to(Point(${x.value}, ${y.value}), forward=True, max_speed=${max_speed.value}, next_position_delay=${timeout.value}, action_error_auth=${allowed_error.value}, traj_precision=${precision.value}, correction_trajectory_speed=${correction_speed.value}, acceleration_start_speed=${start_speed.value}, acceleration_distance=${start_distance.value}, deceleration_end_speed=${end_speed.value}, deceleration_distance=${end_distance.value})`
+  );
+});

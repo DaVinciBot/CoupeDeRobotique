@@ -22,3 +22,19 @@ common/geometry/oriented_point.py
 common/navigation/avoidance/acs_detection_profiles/acs_detection_profile_factory.py
     DOC203: Method `AcsDetectionProfileFactory.instantiate` return type(s) in docstring not consistent with the return annotation. Return annotation types: ['BaseAcsDetectionProfile[Any]']; docstring return section types: ['BaseAcsDetectionProfile']
 --------------------
+common/navigation/avoidance/base_avoidance/states.py
+    DOC601: Class `AvoidanceState`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+    DOC603: Class `AvoidanceState`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [ABORTED: , AVOIDING: , IDLE: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+--------------------
+common/navigation/avoidance/structs.py
+    DOC601: Class `AvoidanceStrategy`: Class docstring contains fewer class attributes than actual class attributes.  (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+    DOC603: Class `AvoidanceStrategy`: Class docstring attributes are different from actual class attributes. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Attributes in the class definition but not in the docstring: [BACK: , NO_AVOIDANCE: , STOP_AND_WAIT: ]. (Please read https://jsh9.github.io/pydoclint/checking_class_attributes.html on how to correctly document class attributes.)
+--------------------
+common/navigation/trajectory_planner/base_trajectory_planner/base_trajectory_planner.py
+    DOC101: Method `BaseTrajectoryPlanner.plan_trajectory`: Docstring contains fewer arguments than in function signature.
+    DOC103: Method `BaseTrajectoryPlanner.plan_trajectory`: Docstring arguments are different from function arguments. (Or could be other formatting issues: https://jsh9.github.io/pydoclint/violation_codes.html#notes-on-doc103 ). Arguments in the function signature but not in the docstring: [path: list[OrientedPoint]].
+    DOC201: Method `BaseTrajectoryPlanner.get_plan` does not have a return section in docstring
+    DOC203: Method `BaseTrajectoryPlanner.get_plan` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
+    DOC201: Method `BaseTrajectoryPlanner.get_total_duration` does not have a return section in docstring
+    DOC203: Method `BaseTrajectoryPlanner.get_total_duration` return type(s) in docstring not consistent with the return annotation. Return annotation has 1 type(s); docstring return section has 0 type(s).
+--------------------

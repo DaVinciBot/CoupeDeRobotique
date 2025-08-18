@@ -1,13 +1,9 @@
-# ====== Code Summary ======
-# This module defines an abstract base class ``BaseTrajectoryPlanner`` designed to manage trajectory planning
-# in navigation systems. It provides lifecycle control (start/stop), time tracking utilities, and enforces
-# implementation of a planning method in subclasses. The class is generic and supports parameterization and logging.
+"""Abstract base class for trajectory planning components."""
 
 import functools
 import time
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import Generic, TypeVar
 
 from loggerplusplus import Logger
 
@@ -18,37 +14,37 @@ from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_plann
 from navigation.trajectory_planner.speed_profile import SpeedProfiler
 from navigation.trajectory_planner.structs import TrajectoryPlanCommand
 
-ParamsType = TypeVar("ParamsType", bound=BaseTrajectoryPlannerParams)
 
-
-class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
+class BaseTrajectoryPlanner[PARAMS: BaseTrajectoryPlannerParams](ABC):
     """Abstract base class for all trajectory planners.
 
-    Provides lifecycle control (start/stop), time-tracking utilities, and logging support.
-    Subclasses must implement specific planning logic and expose a method to retrieve
-    the current trajectory command and total duration.
+    Provides lifecycle control (start/stop), time-tracking utilities, and
+    logging support. Subclasses must implement specific planning logic and
+    expose a method to retrieve the current trajectory command and total
+    duration.
 
     """
 
     def __init__(
         self,
-        params: ParamsType,
+        params: PARAMS,
         speed_profiler: SpeedProfiler,
         logger: Logger | None = None,
     ) -> None:
         """Initialize the base trajectory planner.
 
         Args:
-            params (ParamsType): Planner configuration parameters.
+            params (PARAMS): Planner configuration parameters.
             speed_profiler (SpeedProfiler): Speed profile manager.
-            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to ``None``.
 
         """
         self.logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )
-        self.params: ParamsType = params
+        self.params: PARAMS = params
         self.speed_profiler: SpeedProfiler = speed_profiler
 
         # Attributes dedicated to the trajectory planning process
@@ -75,6 +71,15 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
             - self._start_trajectory_timestamp
             + self._start_trajectory_elapsed_time_checkpoint
         )
+
+    def get_trajectory_time_elapsed(self) -> float:
+        """Return the elapsed planning time.
+
+        Returns:
+            float: Elapsed time in seconds.
+
+        """
+        return self._get_trajectory_time_elapsed()
 
     # ====== Internal Utilities ======
     @staticmethod
@@ -124,10 +129,13 @@ class BaseTrajectoryPlanner(ABC, Generic[ParamsType]):
 
     # ====== Abstract Methods ======
     @abstractmethod
-    def plan_trajectory(self, path: list[OrientedPoint]) -> None: ...
+    def plan_trajectory(self, path: list[OrientedPoint]) -> None:
+        """Plan a trajectory for the provided path."""
 
     @abstractmethod
-    def get_plan(self) -> TrajectoryPlanCommand: ...
+    def get_plan(self) -> TrajectoryPlanCommand:
+        """Return the current trajectory command."""
 
     @abstractmethod
-    def get_total_duration(self) -> float: ...
+    def get_total_duration(self) -> float:
+        """Return the total duration of the planned trajectory."""

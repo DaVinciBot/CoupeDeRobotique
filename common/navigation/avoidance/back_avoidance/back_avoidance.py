@@ -1,3 +1,5 @@
+"""Backward obstacle avoidance strategy."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -48,8 +50,10 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
 
         Args:
             params (BackAvoidanceParams): Configuration parameters.
-            acs_detection_profile_params (BaseAcsDetectionProfileParams): Parameters for ACS detection profile.
-            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            acs_detection_profile_params (BaseAcsDetectionProfileParams):
+                Parameters for ACS detection profile.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to None.
 
         """
         super().__init__(params, acs_detection_profile_params, logger)
@@ -63,15 +67,17 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
-        """Main handler to process avoidance logic based on current zones and navigation state.
+        """Process avoidance logic based on current zones and navigation state.
 
         Args:
-            current_navigator_task (NavigatorTask): The current navigation task instance.
+            current_navigator_task (NavigatorTask):
+                The current navigation task instance.
             ally_zone (AllyZone): Ally zone providing positional data.
             enemy_zone (EnemyZone): Enemy zone used for obstacle detection.
 
         Returns:
-            TrajectoryPlanCommand: The trajectory command after processing avoidance logic.
+            TrajectoryPlanCommand:
+            The trajectory command after processing avoidance logic.
 
         """
         from navigation.navigator.task.states import NavigatorTaskState
@@ -92,12 +98,12 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             and self.state == AvoidanceState.IDLE
         ):
             self.logger.info(
-                f"Obstacle detected. starting backward avoidance. "
+                "Obstacle detected. starting backward avoidance. "
                 f"Distance: {ally_zone.point.distance(enemy_zone.point)}",
             )
 
             # Create backward navigator task
-            self.backward_navigator_task: NavigatorTask = NavigatorTask(
+            self.backward_navigator_task = NavigatorTask(
                 NavigatorTaskParams(
                     goal=None,
                     timeout=None,
@@ -156,7 +162,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
 
             new_path = current_navigator_task.path_planner.plan_path(last_params)
             current_navigator_task.trajectory_planner.plan_trajectory(new_path)
-            current_navigator_task.trajectory_planner.start_planning()  # Reset internal clock
+            current_navigator_task.trajectory_planner.start_planning()
 
             self.logger.debug("Trajectory planner reset internal clock.")
             # reset timer just for logging/manure measurement

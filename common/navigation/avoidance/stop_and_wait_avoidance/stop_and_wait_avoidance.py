@@ -1,9 +1,4 @@
-# ====== Code Summary ======
-# This module defines the StopAndWaitAvoidance class, which implements a stop-and-wait strategy
-# for obstacle avoidance in a robotic navigation system. When an obstacle is detected using ACS,
-# the robot halts and waits for the obstacle to clear or a timeout to occur. Upon clearance,
-# it replans the path; if a timeout happens first, it aborts and issues a stop command.
-
+"""Stop-and-wait obstacle avoidance strategy."""
 
 from __future__ import annotations
 
@@ -48,7 +43,8 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             params (StopAndWaitAvoidanceParams): Configuration parameters.
             acs_detection_profile_params (BaseAcsDetectionProfileParams):
                 Parameters for the ACS detection profile.
-            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to None.
 
         """
         super().__init__(params, acs_detection_profile_params, logger)
@@ -63,12 +59,14 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         """Handle the stop-and-wait avoidance logic.
 
         Args:
-            current_navigator_task (NavigatorTask): The current navigation task instance.
+            current_navigator_task (NavigatorTask):
+                The current navigation task instance.
             ally_zone (AllyZone): Ally zone providing positional data.
             enemy_zone (EnemyZone): Enemy zone used for obstacle detection.
 
         Returns:
-            TrajectoryPlanCommand: The trajectory command after processing avoidance logic.
+            TrajectoryPlanCommand:
+                The trajectory command after processing avoidance logic.
 
         """
         from navigation.navigator.task.states import NavigatorTaskState
@@ -111,13 +109,13 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
 
             # Obstacle is no longer detected, replan from current position
             last_params = current_navigator_task.path_planner.last_plan_path_params
-            last_params.start = position  # Update start position to current location
+            last_params.start = position
 
             self.logger.debug(f"Replanning from updated start: {position}")
 
             new_path = current_navigator_task.path_planner.plan_path(last_params)
             current_navigator_task.trajectory_planner.plan_trajectory(new_path)
-            current_navigator_task.trajectory_planner.start_planning()  # Reset internal clock
+            current_navigator_task.trajectory_planner.start_planning()
 
             self.logger.debug("Trajectory planner reset internal clock.")
             self._reset_timer()

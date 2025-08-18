@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module defines the NoAvoidance class, an implementation of the BaseAvoidance strategy
-# used when no obstacle avoidance is required. It inherits from BaseAvoidance and simply
-# returns the current trajectory command without performing any additional checks or logic.
-
+"""No-op avoidance strategy that leaves the trajectory unchanged."""
 
 from __future__ import annotations
 
@@ -42,7 +38,8 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
             params (NoAvoidanceParams): Configuration parameters.
             acs_detection_profile_params (BaseAcsDetectionProfileParams):
                 Parameters for the ACS detection profile.
-            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to None.
 
         """
         super().__init__(params, acs_detection_profile_params, logger)
@@ -51,18 +48,18 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
     def handle(  # noqa: PLR6301
         self,
         current_navigator_task: NavigatorTask,
-        ally_zone: AllyZone,
-        enemy_zone: EnemyZone,
+        _ally_zone: AllyZone,
+        _enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
         """Handle method for no avoidance logic.
 
-        Since this strategy does not perform any avoidance, it simply returns the current
-        trajectory command as-is.
+        Since this strategy does not perform any avoidance,
+        it simply returns the current trajectory command as-is.
 
         Args:
             current_navigator_task (NavigatorTask): The current navigation task.
-            ally_zone (AllyZone): Ally zone data.
-            enemy_zone (EnemyZone): Enemy zone data.
+            _ally_zone (AllyZone): Ally zone data.
+            _enemy_zone (EnemyZone): Enemy zone data.
 
         Returns:
             TrajectoryPlanCommand: The current trajectory command without changes.

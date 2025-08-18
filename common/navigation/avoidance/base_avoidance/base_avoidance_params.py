@@ -1,9 +1,4 @@
-# ====== Code Summary ======
-# This module defines the BaseAvoidanceParams class, which encapsulates common configuration
-# parameters shared across different obstacle avoidance strategies. It includes the selected
-# avoidance strategy, the ACS (Automatic Collision System) trigger distance, and an optional
-# timeout value for avoidance procedures.
-
+"""Base parameters shared by avoidance strategies."""
 
 from navigation.avoidance.structs import AvoidanceStrategy
 
@@ -11,8 +6,8 @@ from navigation.avoidance.structs import AvoidanceStrategy
 class BaseAvoidanceParams:
     """Base class for common parameters used in avoidance strategies.
 
-    This class serves as a container for configuration values such as the avoidance
-    strategy type, the ACS detection distance, and a timeout duration.
+    This class serves as a container for configuration values such as the
+    avoidance strategy type and an optional timeout duration.
 
     """
 
@@ -24,7 +19,8 @@ class BaseAvoidanceParams:
         """Initialize the base avoidance parameters.
 
         Args:
-            avoidance_strategy (AvoidanceStrategy): The selected avoidance strategy.
+            avoidance_strategy (AvoidanceStrategy):
+                The selected avoidance strategy.
             timeout (float | None, optional):
                 Optional timeout for the avoidance procedure.
 

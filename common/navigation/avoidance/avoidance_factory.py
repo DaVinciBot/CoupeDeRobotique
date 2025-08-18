@@ -1,8 +1,9 @@
-# ====== Code Summary ======
-# This module defines a factory class ``AvoidanceFactory`` that creates instances of different
-# obstacle avoidance modules based on the specified strategy in the provided parameters.
-# It currently supports instantiation of ``StopAndWaitAvoidance``.
+"""Factory for creating obstacle avoidance components based on strategy.
 
+The factory inspects the provided parameters and returns the appropriate
+``BaseAvoidance`` implementation. Supported strategies include "no avoidance",
+"stop and wait", and "backward" avoidance.
+"""
 
 from typing import cast
 
@@ -18,7 +19,7 @@ from navigation.avoidance.structs import AvoidanceStrategy
 
 
 class AvoidanceFactory:
-    """Factory class to instantiate the appropriate obstacle avoidance component based on strategy."""
+    """Instantiate the appropriate obstacle avoidance component."""
 
     @staticmethod
     def instantiate(
@@ -28,8 +29,10 @@ class AvoidanceFactory:
         """Create an avoidance module based on the given parameters.
 
         Args:
-            params (BaseAvoidanceParams): Parameters including the desired avoidance strategy.
-            acs_detection_profile_params (BaseAcsDetectionProfileParams): Parameters for ACS detection profile.
+            params (BaseAvoidanceParams):
+                Parameters including the desired avoidance strategy.
+            acs_detection_profile_params (BaseAcsDetectionProfileParams):
+                Parameters for ACS detection profile.
 
         Returns:
             BaseAvoidance: A specific implementation of an obstacle avoidance module.
@@ -58,4 +61,5 @@ class AvoidanceFactory:
                 acs_detection_profile_params,
             )
 
-        raise ValueError(f"Unsupported avoidance strategy: {strategy}")
+        msg = f"Unsupported avoidance strategy: {strategy}"
+        raise ValueError(msg)
