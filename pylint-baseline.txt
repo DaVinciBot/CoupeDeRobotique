@@ -385,8 +385,6 @@
 43:8: C0115: Missing class docstring (missing-class-docstring)
 ************* Module common.navigation.navigator.signals
 1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.GPIO
-1:0: C0103: Module name "GPIO" doesn't conform to snake_case naming style (invalid-name)
 ************* Module common.arena.show_arena.arena
 1:0: C0114: Missing module docstring (missing-module-docstring)
 16:0: C0115: Missing class docstring (missing-class-docstring)
@@ -1468,8 +1466,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             - set_linear_position_pid(kp=float, ki=float, kd=float) → None
 
         Args:
-            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
-                single dictionary with keys 'kp', 'ki', 'kd'.
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
@@ -1477,7 +1474,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 
         """
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
                 pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -1514,8 +1511,8 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             - set_angular_position_pid(kp=float, ki=float, kd=float) → None
 
         Args:
-            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
-                single dictionary with keys 'kp', 'ki', 'kd'.
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or
+                a single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
@@ -1523,7 +1520,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 
         """
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
                 pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -1584,6 +1581,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             current_navigator_task.trajectory_planner.start_planning()  # Reset internal clock
 
             self.logger.debug("Trajectory planner reset internal clock.")
+            # reset timer just for logging/manure measurement
             self._reset_timer()
             self.logger.debug("Timer reset after avoidance completion.")
 
@@ -1595,7 +1593,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
                 current_navigator_task.current_trajectory_command
             )  # Avoidance complete, continue as normal
 
-        # 4. Continue with original trajectory
+        # 4. Continue with current command
         self.logger.debug(
             "No avoidance action required. Continuing original trajectory.",
         )
@@ -1637,7 +1635,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             self.logger.warning("Avoidance timed out. Aborting task.")
             return self._abort(current_navigator_task, position)
 
-        # 2. Obstacle detected → init backward task
+        # 2. Obstacle detected: begin avoidance
         if (
             self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
             and self.state == AvoidanceState.IDLE
@@ -1648,7 +1646,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[56:70]
         )
 
-        # Step 8 Move to the backstage zone to finish the game
+        # Step 6: Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
             name="[End] Go to backstage",
             tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
@@ -1712,7 +1710,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             enable_dummy,
         )
 
-        # PID controllers (duplicate-code)
+        # Admit that default elevator position is at the bottom (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.controllers.actuators.actuators_dummy:[33:43]
 ==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[39:50]
@@ -1723,10 +1721,9 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             pid,
             baudrate,
             enable_crc,
-            enable_dummy=True,
+            enable_dummy=True,  # dummy hardware flag
         )
-
-        # Robot state (duplicate-code)
+        # Default elevator position at bottom (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy:[85:96]
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[70:81]
@@ -1746,14 +1743,6 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[56:69]
         )
 
-        # # Step 4: Navigate to the second pickup zone
-        # second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
-        #
-        # # Step 5: Navigate to the second construction zone
-        # second_construct_subgraph = get_construct_subgraph(
-        #     self.zones["second_build_zone"], back_offset=15
-        # )
-
         # Step 6: Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
             name="[End] Go to backstage",
@@ -1764,9 +1753,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
         self._auto_build_transitions(
             deploy_banner_subgraph,
             first_pickup_subgraph,
-            first_construct_subgraph,
-            # second_pickup_subgraph,
-            # second_construct_subgraph, (duplicate-code)
+            first_construct_subgraph, (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.basic_strategy:[71:82]
 ==robot1.rasp.boombot_strategy.strategies.debug_strategy:[53:64]
@@ -1792,7 +1779,10 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             baudrate,
             enable_crc,
             enable_dummy,
-        ) (duplicate-code)
+        )
+
+    def reset(self) -> None:
+        """Resets the Teensy device by sending a reset command.""" (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.strategy.core.tasks.base_navigation_task:[68:79]
 ==robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver:[124:133]
@@ -1815,23 +1805,23 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 
         if path:
             for i in range(len(path) - 1):
-                # Draw a line connecting the current node to the next node
                 ax.plot(
                     [path[i].x, path[i + 1].x],
                     [path[i].y, path[i + 1].y], (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.base_arena.grid_manager:[169:180]
 ==common.arena.base_arena.grid_manager_2:[112:122]
-            for row in range(min_row, max_row):
-                for col in range(min_col, max_col):
-                    actual_col = self.grid_width - 1 - col
-                    cell = box(
-                        actual_col * self.chunk_size,
-                        row * self.chunk_size,
-                        (actual_col + 1) * self.chunk_size,
-                        (row + 1) * self.chunk_size,
-                    )
- (duplicate-code)
+        for row in range(min_row, max_row):
+            for col in range(min_col, max_col):
+                actual_col = self.grid_width - 1 - col
+                cell = box(
+                    actual_col * self.chunk_size,
+                    row * self.chunk_size,
+                    (actual_col + 1) * self.chunk_size,
+                    (row + 1) * self.chunk_size,
+                )
+
+                # Check if the polygon intersects the grid cell (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.__init__:[19:28]
 ==common.arena.base_arena.__init__:[18:27]
@@ -1874,7 +1864,7 @@ __all__ = [
 ==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[327:335]
 ==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[178:186]
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
                 pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -1963,13 +1953,13 @@ __all__ = [
         )
 
     def __ne__(self, other: object) -> bool:
-        """Check inequality between two RollingBasis instances.
+        """Check inequality of two AsservissementRollingBasis instances.
 
         Args:
-            other (object): The other object to compare against.
+            other (object): The other instance to compare against.
 
         Returns:
-            bool: ``True`` if the objects are not equal, ``False`` otherwise.
+            bool: ``True`` if the instances are not equal, ``False`` otherwise.
 
         """
         return not self.__eq__(other) (duplicate-code)
@@ -2033,7 +2023,15 @@ __all__ = [
             back_offset=5,
         )
 
-        # Step 4: Navigate to the second pickup zone (duplicate-code)
+        # # Step 4: Navigate to the second pickup zone
+        # second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
+        #
+        # # Step 5: Navigate to the second construction zone
+        # second_construct_subgraph = get_construct_subgraph(
+        #     self.zones["second_build_zone"], back_offset=15
+        # )
+
+        # Step 6: Move to the backstage zone to finish the game (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.debug_strategy:[44:53]
 ==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[59:68]

@@ -1,11 +1,3 @@
-common/GPIO/__init__.py:
-  1:1 N999 Invalid module name: 'GPIO'
-
-common/GPIO/dummy_gpio.py:
-  61:29 FBT001 Boolean-typed positional argument in function definition
-  93:25 PLR2004 Magic value used in comparison, consider replacing `1500` with a constant variable
-  98:31 FBT001 Boolean-typed positional argument in function definition
-
 common/arena/2024_mars_arena/arena_old.py:
   69:89 E501 Line too long (102 > 88)
 
@@ -56,6 +48,11 @@ common/arena/show_arena/arena.py:
 
 common/geometry/oriented_point.py:
   249:89 E501 Line too long (94 > 88)
+
+common/gpio/dummy_gpio.py:
+  61:29 FBT001 Boolean-typed positional argument in function definition
+  93:25 PLR2004 Magic value used in comparison, consider replacing `1500` with a constant variable
+  98:31 FBT001 Boolean-typed positional argument in function definition
 
 common/led_strip/__init__.py:
   3:1 ERA001 Found commented-out code
@@ -1596,4 +1593,4 @@ robot1/rasp/tests/config_loader.py:
   358:89 E501 Line too long (132 > 88)
   361:89 E501 Line too long (130 > 88)
 
-Found 1230 errors.
+Found 1229 errors.
