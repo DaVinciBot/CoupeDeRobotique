@@ -1,15 +1,14 @@
-# ====== Code Summary ======
-# This module defines the ``SpeedProfiler`` data class, which groups together
-# linear and angular speed profiles used for motion planning. Each profile is
-# an implementation of the ``BaseSpeedProfile`` interface, allowing flexible configuration
-# of movement characteristics.
+"""Container for linear and angular speed profiles."""
 
+from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
-from navigation.trajectory_planner.speed_profile.base_speed_profile import (
-    BaseSpeedProfile,
-)
+if TYPE_CHECKING:
+    from navigation.trajectory_planner.speed_profile.base_speed_profile import (
+        BaseSpeedProfile,
+    )
 
 
 @dataclass
@@ -18,7 +17,8 @@ class SpeedProfiler:
 
     Attributes:
         linear_speed_profile (BaseSpeedProfile): Speed profile used for linear motion.
-        angular_speed_profile (BaseSpeedProfile): Speed profile used for rotational motion.
+        angular_speed_profile (BaseSpeedProfile):
+            Speed profile used for rotational motion.
 
     """
 

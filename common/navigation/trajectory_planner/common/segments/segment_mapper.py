@@ -1,11 +1,14 @@
-# ====== Code Summary ======
-# This module defines the SegmentMapper class, which maps a global time value to its corresponding trajectory segment
-# and computes the local time within that segment. It uses cumulative durations and binary search for efficient lookup.
-# The class supports retrieving a segment by time and accessing the last segment.
+"""Utilities for mapping global time to trajectory segments."""
+
+from __future__ import annotations
 
 import bisect
+from typing import TYPE_CHECKING
 
-from navigation.trajectory_planner.common.segments.base_segment import BaseSegment
+if TYPE_CHECKING:
+    from navigation.trajectory_planner.common.segments.base_segment import (
+        BaseSegment,
+    )
 
 
 class SegmentMapper:
@@ -16,10 +19,10 @@ class SegmentMapper:
     """
 
     def __init__(self, segments: list[BaseSegment]) -> None:
-        """Initialize the SegmentMapper with a list of segments and compute cumulative durations.
+        """Initialize the mapper and compute cumulative durations.
 
         Args:
-            segments (list[BaseSegment]): List of trajectory segments to be managed.
+            segments (list[BaseSegment]): Trajectory segments to manage.
 
         """
         self.segments = segments
@@ -44,13 +47,15 @@ class SegmentMapper:
         return self.cumulative_durations[index - 1] if index > 0 else 0.0
 
     def get_segment_at_time(self, t: float) -> tuple[BaseSegment | None, float | None]:
-        """Given an overall time t, returns the active segment and local time within that segment.
+        """Return the segment active at ``t`` and the local time within it.
 
         Args:
             t (float): Overall elapsed time.
 
         Returns:
-            tuple[BaseSegment | None, float | None]: Tuple containing the segment and the local time within it. Returns (None, None) if t is out of valid bounds.
+            tuple[BaseSegment | None, float | None]:
+                Tuple containing the segment and the local time within it.
+                Returns (None, None) if t is out of valid bounds.
 
         """
         if t < 0:

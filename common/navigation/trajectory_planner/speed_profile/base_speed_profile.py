@@ -1,19 +1,12 @@
-# ====== Code Summary ======
-# This module defines ``BaseSpeedProfile``, an abstract base class
-# for speed profile strategies used in trajectory planning.
-# It specifies the interface for calculating speed, distance
-# traveled, and total duration based on motion parameters.
+"""Base interfaces for speed profile strategies."""
+
+from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
 
 class BaseSpeedProfile(ABC):
-    """Abstract base class for speed profile models.
-
-    Defines an interface for retrieving dynamic motion properties such as speed,
-    distance traveled, and time duration, based on elapsed time and path distance.
-
-    """
+    """Interface to compute speed and distance along a path."""
 
     def __init__(self, max_speed: float) -> None:
         """Initialize the base speed profile with a maximum speed.
@@ -38,10 +31,14 @@ class BaseSpeedProfile(ABC):
         to calculate the current speed at a given point in the trajectory.
 
         Args:
-            time_elapsed (float | None, optional): Time since motion started (in seconds). Defaults to None.
-            distance (float | None, optional): Total path distance (in meters or appropriate unit). Defaults to None.
-            departure_speed (float, optional): Speed at the start of motion. Defaults to 0.0.
-            arrival_speed (float, optional): Speed at the end of motion. Defaults to 0.0.
+            time_elapsed (float | None, optional):
+                Time since motion started (in seconds). Defaults to None.
+            distance (float | None, optional):
+                Total path distance (in meters or appropriate unit). Defaults to None.
+            departure_speed (float, optional):
+                Speed at the start of motion. Defaults to 0.0.
+            arrival_speed (float, optional):
+                Speed at the end of motion. Defaults to 0.0.
 
         Returns:
             float: Speed at the current time/distance.
@@ -63,9 +60,12 @@ class BaseSpeedProfile(ABC):
 
         Args:
             time_elapsed (float | None): Elapsed time in seconds. Defaults to None.
-            distance (float | None, optional): Total path distance (optional). Defaults to None.
-            departure_speed (float, optional): Speed at the beginning of motion. Defaults to 0.0.
-            arrival_speed (float, optional): Speed at the end of motion. Defaults to 0.0.
+            distance (float | None, optional):
+                Total path distance (optional). Defaults to None.
+            departure_speed (float, optional):
+                Speed at the beginning of motion. Defaults to 0.0.
+            arrival_speed (float, optional):
+                Speed at the end of motion. Defaults to 0.0.
 
         Returns:
             float: Distance traveled so far.
@@ -86,8 +86,10 @@ class BaseSpeedProfile(ABC):
 
         Args:
             distance (float): Distance to travel.
-            departure_speed (float, optional): Speed at the beginning of motion. Defaults to 0.0.
-            arrival_speed (float, optional): Speed at the end of motion. Defaults to 0.0.
+            departure_speed (float, optional):
+                Speed at the beginning of motion. Defaults to 0.0.
+            arrival_speed (float, optional):
+                Speed at the end of motion. Defaults to 0.0.
 
         Returns:
             float: Time needed to complete the distance.

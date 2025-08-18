@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1755531814170",
+    "time": "1755541326403",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\GPIO\\__init__.py",
@@ -2636,28 +2636,12 @@
             "message": "Method \"get_speed\" is not marked as override but is overriding a method in class \"BaseSpeedProfile\"",
             "range": {
                 "start": {
-                    "line": 88,
+                    "line": 239,
                     "character": 8
                 },
                 "end": {
-                    "line": 88,
+                    "line": 239,
                     "character": 17
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\trajectory_planner\\speed_profile\\linear_ramped_speed_profile.py",
-            "severity": "information",
-            "message": "Method \"get_total_duration\" is not marked as override but is overriding a method in class \"BaseSpeedProfile\"",
-            "range": {
-                "start": {
-                    "line": 258,
-                    "character": 8
-                },
-                "end": {
-                    "line": 258,
-                    "character": 26
                 }
             },
             "rule": "reportImplicitOverride"
@@ -2668,11 +2652,11 @@
             "message": "Expected type arguments for generic class \"BaseTrajectoryPlanner\"",
             "range": {
                 "start": {
-                    "line": 26,
+                    "line": 27,
                     "character": 9
                 },
                 "end": {
-                    "line": 26,
+                    "line": 27,
                     "character": 30
                 }
             },
@@ -2684,11 +2668,11 @@
             "message": "Argument of type \"BaseTaskNode | None\" cannot be assigned to parameter \"from_node\" of type \"BaseTaskNode\" in function \"can_transit\"\n  Type \"BaseTaskNode | None\" is not assignable to type \"BaseTaskNode\"\n    \"None\" is not assignable to \"BaseTaskNode\"",
             "range": {
                 "start": {
-                    "line": 77,
+                    "line": 83,
                     "character": 43
                 },
                 "end": {
-                    "line": 77,
+                    "line": 83,
                     "character": 52
                 }
             },
@@ -8191,8 +8175,8 @@
         "filesAnalyzed": 218,
         "errorCount": 92,
         "warningCount": 92,
-        "informationCount": 335,
-        "timeInSec": 18.805
+        "informationCount": 334,
+        "timeInSec": 17.64
     }
 }
 

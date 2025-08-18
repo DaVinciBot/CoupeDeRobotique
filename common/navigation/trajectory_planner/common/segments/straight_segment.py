@@ -1,9 +1,13 @@
-# ====== Code Summary ======
-# This module defines the StraightSegment class, a subclass of BaseSegment, representing straight-line motion.
-# It stores trajectory data such as start and end positions, duration, and the total distance to be traveled.
+"""Straight-line trajectory segment."""
 
-from geometry import OrientedPoint
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from navigation.trajectory_planner.common.segments.base_segment import BaseSegment
+
+if TYPE_CHECKING:
+    from geometry import OrientedPoint
 
 
 class StraightSegment(BaseSegment):

@@ -183,93 +183,34 @@
 95:11: C1805: "self.params.rotation != 0.0" can be simplified to "self.params.rotation", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
 ************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner_params
 34:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-************* Module common.navigation.trajectory_planner.structs
-1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.navigation.trajectory_planner.trajectory_planner_factory
-2:0: C0301: Line too long (102/100) (line-too-long)
-21:0: C0301: Line too long (107/100) (line-too-long)
-37:0: C0301: Line too long (115/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-12:0: W0611: Unused SequentialTrajectoryPlannerParams imported from navigation.trajectory_planner.sequential_trajectory_planner (unused-import)
+7:0: W0611: Unused SequentialTrajectoryPlannerParams imported from navigation.trajectory_planner.sequential_trajectory_planner (unused-import)
 ************* Module common.navigation.trajectory_planner.common.segments.rotation_segment
 10:4: R0913: Too many arguments (6/5) (too-many-arguments)
 10:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-************* Module common.navigation.trajectory_planner.common.segments.segment_mapper
-2:0: C0301: Line too long (117/100) (line-too-long)
-3:0: C0301: Line too long (119/100) (line-too-long)
-53:0: C0301: Line too long (161/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.navigation.trajectory_planner.common.segments.smooth_segment
-2:0: C0301: Line too long (115/100) (line-too-long)
-3:0: C0301: Line too long (118/100) (line-too-long)
-27:0: C0301: Line too long (121/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-12:4: R0913: Too many arguments (6/5) (too-many-arguments)
-12:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+16:4: R0913: Too many arguments (6/5) (too-many-arguments)
+16:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
 ************* Module common.navigation.trajectory_planner.common.segments.stop_segment
-2:0: C0301: Line too long (122/100) (line-too-long)
-29:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-19:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-************* Module common.navigation.trajectory_planner.common.segments.straight_segment
-2:0: C0301: Line too long (110/100) (line-too-long)
-3:0: C0301: Line too long (109/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
+16:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
 ************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner
-2:0: C0301: Line too long (102/100) (line-too-long)
-5:0: C0301: Line too long (105/100) (line-too-long)
-24:0: C0301: Line too long (124/100) (line-too-long)
-267:0: C0301: Line too long (102/100) (line-too-long)
-281:0: C0301: Line too long (103/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params
-31:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
+22:0: C0301: Line too long (124/100) (line-too-long)
 ************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.__init__
-1:0: C0301: Line too long (103/100) (line-too-long)
-4:0: C0301: Line too long (110/100) (line-too-long)
-************* Module common.navigation.trajectory_planner.sequential_trajectory_planner
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.trajectory_planner.speed_profile.base_speed_profile
-41:0: C0301: Line too long (108/100) (line-too-long)
-42:0: C0301: Line too long (117/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.trajectory_planner.speed_profile.basic_speed_profile
-2:0: C0301: Line too long (105/100) (line-too-long)
-3:0: C0301: Line too long (110/100) (line-too-long)
-4:0: C0301: Line too long (112/100) (line-too-long)
-43:0: C0301: Line too long (101/100) (line-too-long)
-68:0: C0301: Line too long (101/100) (line-too-long)
-91:0: C0301: Line too long (101/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
+3:0: C0301: Line too long (103/100) (line-too-long)
+6:0: C0301: Line too long (110/100) (line-too-long)
 ************* Module common.navigation.trajectory_planner.speed_profile.linear_ramped_speed_profile
-18:0: C0301: Line too long (102/100) (line-too-long)
-96:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-89:4: R0911: Too many return statements (11/6) (too-many-return-statements)
-165:4: R0914: Too many local variables (17/15) (too-many-locals)
-165:4: R0911: Too many return statements (11/6) (too-many-return-statements)
-************* Module common.navigation.trajectory_planner.speed_profile.speed_profiler
-1:0: C0114: Missing module docstring (missing-module-docstring)
+84:4: R0913: Too many arguments (6/5) (too-many-arguments)
+84:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+101:4: R0913: Too many arguments (9/5) (too-many-arguments)
+101:4: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
+150:4: R0913: Too many arguments (8/5) (too-many-arguments)
+150:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+176:4: R0913: Too many arguments (9/5) (too-many-arguments)
+176:4: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
 ************* Module common.navigation.trajectory_planner.speed_profile.__init__
-12:0: C0301: Line too long (112/100) (line-too-long)
-************* Module common.navigation.trajectory_planner.speed_profile
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.strategy.core.base_game_context
-1:0: C0114: Missing module docstring (missing-module-docstring)
-4:0: C0115: Missing class docstring (missing-class-docstring)
+14:0: C0301: Line too long (112/100) (line-too-long)
 ************* Module common.strategy.core.graph_runner
-91:0: C0301: Line too long (112/100) (line-too-long)
-104:0: C0301: Line too long (133/100) (line-too-long)
-128:0: C0301: Line too long (124/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-99:49: W0640: Cell variable prev_node defined in loop (cell-var-from-loop)
-************* Module common.strategy.core
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.strategy.core.builders.subgraph_builder
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.strategy.core.builders
-1:0: C0114: Missing module docstring (missing-module-docstring)
+106:49: W0640: Cell variable prev_node defined in loop (cell-var-from-loop)
 ************* Module common.strategy.core.sub_graphs.base_sub_graph
 1:0: C0114: Missing module docstring (missing-module-docstring)
 4:0: C0115: Missing class docstring (missing-class-docstring)
@@ -740,5 +681,5 @@
 166:0: I0020: Suppressed 'import-outside-toplevel' (from line 166) (suppressed-message)
 
 ------------------------------------------------------------------
-Your code has been rated at 8.80/10 (previous run: 8.80/10, +0.00)
+Your code has been rated at 8.90/10 (previous run: 8.80/10, +0.10)
 

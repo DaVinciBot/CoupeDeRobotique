@@ -1,3 +1,5 @@
+"""Speed profile utilities."""
+
 from navigation.trajectory_planner.speed_profile.base_speed_profile import (
     BaseSpeedProfile,
 )

@@ -1,3 +1,5 @@
+"""Sequential trajectory planner package."""
+
 from navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlanner,
 )

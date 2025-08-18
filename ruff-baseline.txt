@@ -250,172 +250,19 @@ common\navigation\trajectory_planner\base_trajectory_planner\__init__.py:
 common\navigation\trajectory_planner\base_trajectory_planner\base_trajectory_planner.py:
   11:89 E501 Line too long (98 > 88)
 
-common\navigation\trajectory_planner\common\segments\segment_mapper.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (117 > 88)
-   3:89 E501 Line too long (119 > 88)
-  19:89 E501 Line too long (97 > 88)
-  47:89 E501 Line too long (98 > 88)
-  53:89 E501 Line too long (161 > 88)
-
-common\navigation\trajectory_planner\common\segments\smooth_segment.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (115 > 88)
-   3:89 E501 Line too long (118 > 88)
-  20:9  D205 1 blank line required between summary line and description
-  20:89 E501 Line too long (89 > 88)
-  27:89 E501 Line too long (121 > 88)
-
-common\navigation\trajectory_planner\common\segments\stop_segment.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (122 > 88)
-   3:89 E501 Line too long (90 > 88)
-  25:89 E501 Line too long (91 > 88)
-  29:89 E501 Line too long (105 > 88)
-
-common\navigation\trajectory_planner\common\segments\straight_segment.py:
-  1:1  D100 Missing docstring in public module
-  2:89 E501 Line too long (110 > 88)
-  3:89 E501 Line too long (109 > 88)
-
 common\navigation\trajectory_planner\sequential_trajectory_planner\__init__.py:
-  1:1  D104 Missing docstring in public package
-  1:89 E501 Line too long (103 > 88)
-  4:89 E501 Line too long (110 > 88)
+  3:89 E501 Line too long (103 > 88)
+  6:89 E501 Line too long (110 > 88)
 
 common\navigation\trajectory_planner\sequential_trajectory_planner\sequential_trajectory_planner.py:
-    1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (102 > 88)
-    3:89 E501 Line too long (96 > 88)
-    4:89 E501 Line too long (98 > 88)
-    5:89 E501 Line too long (105 > 88)
-   75:9  D205 1 blank line required between summary line and description
-   91:89 E501 Line too long (89 > 88)
-  113:9  D205 1 blank line required between summary line and description
-  216:89 E501 Line too long (96 > 88)
-  267:89 E501 Line too long (102 > 88)
-  281:89 E501 Line too long (103 > 88)
+  8:28 TC002 Move third-party import `loggerplusplus.Logger` into a type-checking block
 
 common\navigation\trajectory_planner\sequential_trajectory_planner\sequential_trajectory_planner_params.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (90 > 88)
-   3:89 E501 Line too long (96 > 88)
-   7:89 E501 Line too long (98 > 88)
-  20:9  FBT001 Boolean-typed positional argument in function definition
-  20:9  FBT002 Boolean default positional argument in function definition
-  21:9  FBT001 Boolean-typed positional argument in function definition
-  21:9  FBT002 Boolean default positional argument in function definition
-  26:89 E501 Line too long (91 > 88)
-  28:89 E501 Line too long (98 > 88)
-  30:89 E501 Line too long (89 > 88)
-  31:89 E501 Line too long (102 > 88)
-  32:89 E501 Line too long (89 > 88)
+  6:89 E501 Line too long (98 > 88)
 
 common\navigation\trajectory_planner\speed_profile\__init__.py:
-   1:1  D104 Missing docstring in public package
-  12:1  ERA001 Found commented-out code
-  12:89 E501 Line too long (112 > 88)
-
-common\navigation\trajectory_planner\speed_profile\base_speed_profile.py:
-   1:1  D100 Missing docstring in public module
-  41:89 E501 Line too long (108 > 88)
-  42:89 E501 Line too long (117 > 88)
-  43:89 E501 Line too long (93 > 88)
-  44:89 E501 Line too long (89 > 88)
-  66:89 E501 Line too long (96 > 88)
-  67:89 E501 Line too long (97 > 88)
-  68:89 E501 Line too long (89 > 88)
-  89:89 E501 Line too long (97 > 88)
-  90:89 E501 Line too long (89 > 88)
-
-common\navigation\trajectory_planner\speed_profile\basic_speed_profile.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (105 > 88)
-   3:89 E501 Line too long (110 > 88)
-   4:89 E501 Line too long (112 > 88)
-   5:89 E501 Line too long (96 > 88)
-  17:89 E501 Line too long (89 > 88)
-  43:89 E501 Line too long (101 > 88)
-  44:89 E501 Line too long (99 > 88)
-  68:89 E501 Line too long (101 > 88)
-  69:89 E501 Line too long (99 > 88)
-  91:89 E501 Line too long (101 > 88)
-  92:89 E501 Line too long (99 > 88)
-
-common\navigation\trajectory_planner\speed_profile\linear_ramped_speed_profile.py:
-    1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (92 > 88)
-    3:89 E501 Line too long (90 > 88)
-    5:89 E501 Line too long (91 > 88)
-    6:89 E501 Line too long (91 > 88)
-   18:5  D205 1 blank line required between summary line and description
-   18:89 E501 Line too long (102 > 88)
-   32:89 E501 Line too long (90 > 88)
-   34:89 E501 Line too long (90 > 88)
-   89:9  C901 `get_speed` is too complex (11 > 10)
-   89:9  PLR0911 Too many return statements (11 > 6)
-   96:89 E501 Line too long (105 > 88)
-   99:89 E501 Line too long (95 > 88)
-  100:89 E501 Line too long (90 > 88)
-  165:9  C901 `get_distance` is too complex (11 > 10)
-  165:9  PLR0911 Too many return statements (11 > 6)
-
-common\navigation\trajectory_planner\speed_profile\sigmoid_ramped_speed_profile.py:
-  1:1 D100 Missing docstring in public module
-
-common\navigation\trajectory_planner\speed_profile\speed_profiler.py:
-   1:1  D100 Missing docstring in public module
-   4:89 E501 Line too long (90 > 88)
-  21:89 E501 Line too long (91 > 88)
-
-common\navigation\trajectory_planner\structs.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (98 > 88)
-   3:89 E501 Line too long (97 > 88)
-   4:89 E501 Line too long (96 > 88)
-  50:89 E501 Line too long (92 > 88)
-
-common\navigation\trajectory_planner\trajectory_planner_factory.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (102 > 88)
-  21:89 E501 Line too long (107 > 88)
-  30:89 E501 Line too long (91 > 88)
-  31:89 E501 Line too long (93 > 88)
-  36:89 E501 Line too long (97 > 88)
-  37:89 E501 Line too long (115 > 88)
-  54:15 TRY003 Avoid specifying long messages outside the exception class
-  54:26 EM102 Exception must not use an f-string literal, assign to variable first
-
-common\strategy\core\__init__.py:
-  1:1 D104 Missing docstring in public package
-
-common\strategy\core\base_game_context.py:
-  1:1 D100 Missing docstring in public module
-  4:1 B903 Class could be dataclass or namedtuple
-  4:7 D101 Missing docstring in public class
-  5:9 D107 Missing docstring in `__init__`
-
-common\strategy\core\builders\__init__.py:
-  1:1 D104 Missing docstring in public package
-
-common\strategy\core\builders\subgraph_builder.py:
-    1:1  D100 Missing docstring in public module
-   15:5  D205 1 blank line required between summary line and description
-   20:9  D107 Missing docstring in `__init__`
-  102:89 E501 Line too long (93 > 88)
-  144:89 E501 Line too long (96 > 88)
-
-common\strategy\core\graph_runner.py:
-    1:1  D100 Missing docstring in public module
-   19:9  FBT001 Boolean-typed positional argument in function definition
-   19:9  FBT002 Boolean default positional argument in function definition
-   25:89 E501 Line too long (94 > 88)
-   38:89 E501 Line too long (96 > 88)
-   91:89 E501 Line too long (112 > 88)
-  104:89 E501 Line too long (133 > 88)
-  116:89 E501 Line too long (96 > 88)
-  122:89 E501 Line too long (94 > 88)
-  128:89 E501 Line too long (124 > 88)
+  14:1  ERA001 Found commented-out code
+  14:89 E501 Line too long (112 > 88)
 
 common\strategy\core\sub_graphs\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1291,4 +1138,4 @@ robot1\rasp\tests\config_loader.py:
   358:89 E501 Line too long (132 > 88)
   361:89 E501 Line too long (130 > 88)
 
-Found 1015 errors.
+Found 894 errors.

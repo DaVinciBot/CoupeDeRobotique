@@ -1,9 +1,13 @@
-# ====== Code Summary ======
-# This module defines the SmoothSegment class, a subclass of BaseSegment, representing a curved trajectory segment.
-# It encapsulates metadata such as start and end positions, duration, sampled intermediate points, and total distance.
+"""Curved trajectory segment built from sampled points."""
 
-from geometry import OrientedPoint
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from navigation.trajectory_planner.common.segments.base_segment import BaseSegment
+
+if TYPE_CHECKING:
+    from geometry import OrientedPoint
 
 
 class SmoothSegment(BaseSegment):
@@ -17,14 +21,14 @@ class SmoothSegment(BaseSegment):
         sampled_points: list[OrientedPoint],
         total_distance: float,
     ) -> None:
-        """Initialize a curved trajectory segment with its start and end poses, duration,
-        sampled path points, and the total distance.
+        """Create a curved trajectory segment.
 
         Args:
             start_position (OrientedPoint): Start pose of the segment.
             end_position (OrientedPoint): End pose of the segment.
             duration (float): Duration of the segment.
-            sampled_points (list[OrientedPoint]): Points sampled along the trajectory for interpolation or visualization.
+            sampled_points (list[OrientedPoint]):
+                Points sampled along the trajectory for interpolation or visualization.
             total_distance (float): The total traveled distance of this segment.
 
         """

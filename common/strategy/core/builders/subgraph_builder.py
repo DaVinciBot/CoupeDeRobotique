@@ -1,3 +1,5 @@
+"""Tools for assembling strategy subgraphs."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -12,12 +14,15 @@ if TYPE_CHECKING:
 
 
 class SubGraphBuilder:
-    """Builder for BaseSubGraph: assemble nodes and transitions, merge subgraphs,
-    and produce a standalone subgraph ready for execution.
+    """Build a :class:`BaseSubGraph` from nodes and transitions.
+
+    The builder can merge subgraphs and produce a standalone subgraph ready for
+    execution.
 
     """
 
     def __init__(self) -> None:
+        """Initialize empty builder and logger."""
         self.logger = Logger(
             identifier="SubGraphBuilder",
             follow_logger_manager_rules=True,
@@ -98,9 +103,12 @@ class SubGraphBuilder:
                     continue
                 new_transition = type(t)(mapping[t.target])
                 from_new.add_transition(new_transition)
-                self.logger.debug(
-                    f"Recreated transition: '{from_new.name}' -> '{mapping[t.target].name}'",
+                msg = (
+                    f"Recreated transition: '{from_new.name}' -> "
+                    f"'{mapping[t.target].name}'"
                 )
+                self.logger.debug(msg)
+
         return self
 
     def build(
@@ -133,16 +141,17 @@ class SubGraphBuilder:
         for from_name, transition in self._transitions:
             node = self.nodes[from_name]
             node.add_transition(transition)
-            self.logger.debug(f"Connected '{from_name}' -> '{transition.target.name}'")
+            msg = f"Connected '{from_name}' -> '{transition.target.name}'"
+            self.logger.debug(msg)
         # Validate
         missing = [n for n in exit_nodes if n.name not in self.nodes]
         if missing:
             msg = f"Exit nodes not registered: {[n.name for n in missing]}"
             self.logger.error(msg)
             raise KeyError(msg)
-        self.logger.info(
-            f"Building subgraph entry='{entry_node.name}' exits={[n.name for n in exit_nodes]}",
-        )
+        exits_names = [n.name for n in exit_nodes]
+        msg = f"Building subgraph entry='{entry_node.name}' exits={exits_names}"
+        self.logger.info(msg)
         return BaseSubGraph(
             entry_node=entry_node,
             exit_nodes=exit_nodes,

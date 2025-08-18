@@ -1,12 +1,13 @@
-# ====== Code Summary ======
-# This module defines the ``TrajectoryPlanCommand`` dataclass, which encapsulates a single command
-# for a robot's motion. It includes the robot's target position, linear speed, and angular speed.
-# It also provides utility methods to create a stop command and retrieve the command as a tuple.
+"""Container for linear and angular speed profiles."""
+
+from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum, auto
+from typing import TYPE_CHECKING
 
-from geometry import OrientedPoint
+if TYPE_CHECKING:
+    from geometry import OrientedPoint
 
 
 class TrajectoryPlannerStrategy(Enum):
@@ -46,8 +47,8 @@ class TrajectoryPlanCommand:
     def create_stop_command(
         cls,
         current_position: OrientedPoint,
-    ) -> "TrajectoryPlanCommand":
-        """Create a stop command that holds the robot at the given position with zero speed.
+    ) -> TrajectoryPlanCommand:
+        """Create a stop command that holds ``current_position``.
 
         Args:
             current_position (OrientedPoint): Current pose to hold.
@@ -63,7 +64,7 @@ class TrajectoryPlanCommand:
         )
 
     def get_full_command(self) -> tuple[float, float, OrientedPoint]:
-        """Retrieve the command as a tuple for control interfaces.
+        """Return ``(linear_speed, angular_speed, position)``.
 
         Returns:
             tuple[float, float, OrientedPoint]:
@@ -74,7 +75,7 @@ class TrajectoryPlanCommand:
         return self.linear_speed, self.angular_speed, self.position
 
     def get_position_command(self) -> OrientedPoint:
-        """Retrieve the position command.
+        """Retrieve the target position.
 
         Returns:
             OrientedPoint: The target position of the robot.
