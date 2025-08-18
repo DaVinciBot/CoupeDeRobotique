@@ -68,7 +68,7 @@ jobs:
         continue-on-error: true
 
       - name: Pylint baseline
-        run: pylint --output=pylint-baseline.txt --enable=all .
+        run: pylint --output=pylint-baseline.txt .
         continue-on-error: true
 
       - name: Pyright baseline (JSON)

@@ -1,3 +1,609 @@
+************* Module common.arena.2024_mars_arena.arena_old
+69:0: C0301: Line too long (102/100) (line-too-long)
+30:4: R0913: Too many arguments (7/5) (too-many-arguments)
+************* Module common.arena.2024_mars_arena
+1:0: C0103: Module name "2024_mars_arena" doesn't conform to snake_case naming style (invalid-name)
+************* Module common.arena.base_arena.arena
+297:0: C0301: Line too long (110/100) (line-too-long)
+37:4: R0913: Too many arguments (10/5) (too-many-arguments)
+37:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+486:4: R0913: Too many arguments (6/5) (too-many-arguments)
+486:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+573:4: R0913: Too many arguments (7/5) (too-many-arguments)
+573:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+625:4: R0913: Too many arguments (7/5) (too-many-arguments)
+738:4: R0913: Too many arguments (7/5) (too-many-arguments)
+873:4: R0913: Too many arguments (10/5) (too-many-arguments)
+************* Module common.arena.base_arena.grid_manager
+26:4: R0913: Too many arguments (6/5) (too-many-arguments)
+26:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+49:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+49:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+87:4: R0914: Too many local variables (16/15) (too-many-locals)
+133:4: R0914: Too many local variables (19/15) (too-many-locals)
+133:4: W0238: Unused private member `GridManager.__optimized_mark_zone(self, grid: Grid, polygon_to_mark: Polygon, *, walkable: bool)` (unused-private-member)
+************* Module common.arena.base_arena.grid_manager_2
+46:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+46:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+81:4: R0914: Too many local variables (17/15) (too-many-locals)
+************* Module common.arena.base_arena.arena_zones.ally_zone
+69:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
+************* Module common.arena.base_arena.arena_zones.base_arena_zone
+203:0: C0301: Line too long (111/100) (line-too-long)
+30:4: R0913: Too many arguments (11/5) (too-many-arguments)
+30:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.border_zone
+15:4: R0913: Too many arguments (6/5) (too-many-arguments)
+15:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.forbidden_zone
+15:4: R0913: Too many arguments (7/5) (too-many-arguments)
+15:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.stuff_zone
+20:4: R0913: Too many arguments (7/5) (too-many-arguments)
+20:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+78:14: E0203: Access to member 'accessibility' before its definition line 79 (access-member-before-definition)
+79:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone
+23:4: R0913: Too many arguments (11/5) (too-many-arguments)
+23:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
+104:11: E0203: Access to member 'accessibility' before its definition line 105 (access-member-before-definition)
+105:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone
+22:4: R0913: Too many arguments (7/5) (too-many-arguments)
+22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones.yellow_reserved_zone
+22:4: R0913: Too many arguments (7/5) (too-many-arguments)
+22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone
+26:4: R0913: Too many arguments (14/5) (too-many-arguments)
+26:4: R0917: Too many positional arguments (14/5) (too-many-positional-arguments)
+135:46: C1805: "distance != 0" can be simplified to "distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+137:11: C1805: "speed == 0" can be simplified to "not speed", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.enemy_zone
+9:0: C0301: Line too long (114/100) (line-too-long)
+37:0: C0301: Line too long (103/100) (line-too-long)
+38:0: C0301: Line too long (103/100) (line-too-long)
+39:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+22:4: R0913: Too many arguments (7/5) (too-many-arguments)
+22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.arena.show_arena.arena
+1:0: C0114: Missing module docstring (missing-module-docstring)
+16:0: C0115: Missing class docstring (missing-class-docstring)
+17:4: R0913: Too many arguments (10/5) (too-many-arguments)
+17:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+17:4: R0914: Too many local variables (21/15) (too-many-locals)
+************* Module common.geometry.oriented_point
+28:4: W0231: __init__ method from base class 'Point' is not called (super-init-not-called)
+************* Module common.navigation.avoidance.avoidance_factory
+21:0: C0301: Line too long (102/100) (line-too-long)
+32:0: C0301: Line too long (111/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+10:0: W0611: Unused BackAvoidanceParams imported from navigation.avoidance.back_avoidance (unused-import)
+12:0: W0611: Unused NoAvoidanceParams imported from navigation.avoidance.no_avoidance (unused-import)
+13:0: W0611: Unused StopAndWaitAvoidanceParams imported from navigation.avoidance.stop_and_wait_avoidance (unused-import)
+************* Module common.navigation.avoidance.structs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.acs_detection_profile_factory
+8:0: C0301: Line too long (121/100) (line-too-long)
+20:0: C0301: Line too long (107/100) (line-too-long)
+24:0: C0301: Line too long (116/100) (line-too-long)
+32:0: C0301: Line too long (102/100) (line-too-long)
+8:0: W0611: Unused AngularRestrictProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile (unused-import)
+16:0: W0611: Unused NoAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile (unused-import)
+20:0: W0611: Unused NoProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile (unused-import)
+24:0: W0611: Unused RectangularProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile (unused-import)
+************* Module common.navigation.avoidance.acs_detection_profiles.struct
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile
+7:0: C0301: Line too long (178/100) (line-too-long)
+20:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profiles
+8:0: C0301: Line too long (134/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile
+7:0: C0301: Line too long (114/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+15:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+25:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile
+11:0: C0301: Line too long (150/100) (line-too-long)
+21:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.__init__
+1:0: C0301: Line too long (129/100) (line-too-long)
+4:0: C0301: Line too long (136/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile
+10:0: C0301: Line too long (154/100) (line-too-long)
+28:0: C0301: Line too long (133/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+20:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+58:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.__init__
+1:0: C0301: Line too long (147/100) (line-too-long)
+4:0: C0301: Line too long (154/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.back_avoidance.back_avoidance
+51:0: C0301: Line too long (111/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+77:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
+81:74: E0203: Access to member 'state' before its definition line 116 (access-member-before-definition)
+92:16: E0203: Access to member 'state' before its definition line 116 (access-member-before-definition)
+116:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+166:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.navigation.avoidance.back_avoidance.back_avoidance_params
+2:0: C0301: Line too long (107/100) (line-too-long)
+3:0: C0301: Line too long (106/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.back_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.base_avoidance.base_avoidance
+3:0: C0301: Line too long (104/100) (line-too-long)
+5:0: C0301: Line too long (101/100) (line-too-long)
+97:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+33:0: C0103: Type variable name "ParamsType" doesn't conform to predefined naming style (invalid-name)
+83:12: C0415: Import outside toplevel (copy) (import-outside-toplevel)
+147:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
+************* Module common.navigation.avoidance.base_avoidance.base_avoidance_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.base_avoidance.states
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.base_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.no_avoidance.no_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+33:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.avoidance.no_avoidance.no_avoidance_params
+2:0: C0301: Line too long (104/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.no_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+39:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+74:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
+78:74: E0203: Access to member 'state' before its definition line 99 (access-member-before-definition)
+89:16: E0203: Access to member 'state' before its definition line 99 (access-member-before-definition)
+99:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+126:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params
+2:0: C0301: Line too long (101/100) (line-too-long)
+3:0: C0301: Line too long (106/100) (line-too-long)
+23:0: C0301: Line too long (106/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.stop_and_wait_avoidance
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.debug_functions.navigator
+23:0: C0301: Line too long (133/100) (line-too-long)
+34:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+18:0: R0914: Too many local variables (19/15) (too-many-locals)
+18:0: R0915: Too many statements (79/50) (too-many-statements)
+************* Module common.navigation.debug_functions.speed_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.debug_functions.trajectory_planer
+4:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+17:0: R0914: Too many local variables (20/15) (too-many-locals)
+104:57: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+120:63: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+17:0: R0915: Too many statements (68/50) (too-many-statements)
+************* Module common.navigation.debug_functions
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.core.navigator
+63:0: C0301: Line too long (125/100) (line-too-long)
+93:0: C0301: Line too long (143/100) (line-too-long)
+126:0: C0301: Line too long (122/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.core.states
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.core
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.signals.dispatcher
+1:0: C0114: Missing module docstring (missing-module-docstring)
+43:8: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.navigation.navigator.signals.signals_enum
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.signals
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.task.navigator_task
+2:0: C0301: Line too long (101/100) (line-too-long)
+4:0: C0301: Line too long (103/100) (line-too-long)
+5:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+43:8: C0415: Import outside toplevel (navigation.avoidance.AvoidanceFactory, navigation.avoidance.BaseAvoidance) (import-outside-toplevel)
+107:4: C0116: Missing function or method docstring (missing-function-docstring)
+107:4: R0911: Too many return statements (8/6) (too-many-return-statements)
+************* Module common.navigation.navigator.task.navigator_task_params
+32:0: C0301: Line too long (111/100) (line-too-long)
+35:0: C0301: Line too long (119/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+12:4: R0913: Too many arguments (9/5) (too-many-arguments)
+12:4: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
+************* Module common.navigation.navigator.task.states
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.task
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.path_planner_factory
+30:0: C0301: Line too long (101/100) (line-too-long)
+44:0: C0301: Line too long (102/100) (line-too-long)
+48:0: C0301: Line too long (115/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+13:0: W0611: Unused BasicPathPlannerParams imported from navigation.path_planner.basic_path_planner (unused-import)
+17:0: W0611: Unused DeltaPathPlannerParams imported from navigation.path_planner.delta_path_planner (unused-import)
+************* Module common.navigation.path_planner.path_planner_path_plan_params_factory
+2:0: C0301: Line too long (101/100) (line-too-long)
+38:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.structs
+2:0: C0301: Line too long (104/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.astar_path_planner.astar_path_planner
+2:0: C0301: Line too long (101/100) (line-too-long)
+23:0: C0301: Line too long (101/100) (line-too-long)
+110:0: C0301: Line too long (113/100) (line-too-long)
+220:0: C0301: Line too long (108/100) (line-too-long)
+289:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.astar_path_planner.astar_path_planner_params
+33:0: C0301: Line too long (141/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+16:4: R0913: Too many arguments (7/5) (too-many-arguments)
+16:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.navigation.path_planner.astar_path_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.base_path_planner.base_path_planner
+4:0: C0301: Line too long (103/100) (line-too-long)
+65:0: C0301: Line too long (103/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+19:0: C0103: Type variable name "ParamsType" doesn't conform to predefined naming style (invalid-name)
+20:0: C0103: Type variable name "PlanPathParamsType" doesn't conform to predefined naming style (invalid-name)
+42:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.navigation.path_planner.base_path_planner.base_path_planner_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+22:0: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.navigation.path_planner.base_path_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.basic_path_planner.basic_path_planner
+2:0: C0301: Line too long (105/100) (line-too-long)
+3:0: C0301: Line too long (101/100) (line-too-long)
+63:0: C0301: Line too long (106/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+28:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.path_planner.basic_path_planner.basic_path_planner_params
+2:0: C0301: Line too long (106/100) (line-too-long)
+3:0: C0301: Line too long (106/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.basic_path_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner
+2:0: C0301: Line too long (103/100) (line-too-long)
+80:0: C0301: Line too long (110/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+27:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+89:11: C1805: "self.params.distance != 0.0" can be simplified to "self.params.distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+95:11: C1805: "self.params.rotation != 0.0" can be simplified to "self.params.rotation", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner_params
+2:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+36:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.path_planner.delta_path_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.structs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.trajectory_planner_factory
+2:0: C0301: Line too long (102/100) (line-too-long)
+21:0: C0301: Line too long (107/100) (line-too-long)
+37:0: C0301: Line too long (115/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+12:0: W0611: Unused SequentialTrajectoryPlannerParams imported from navigation.trajectory_planner.sequential_trajectory_planner (unused-import)
+************* Module common.navigation.trajectory_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner
+2:0: C0301: Line too long (109/100) (line-too-long)
+3:0: C0301: Line too long (106/100) (line-too-long)
+4:0: C0301: Line too long (116/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+21:0: C0103: Type variable name "ParamsType" doesn't conform to predefined naming style (invalid-name)
+127:4: C0116: Missing function or method docstring (missing-function-docstring)
+130:4: C0116: Missing function or method docstring (missing-function-docstring)
+133:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params
+24:0: C0301: Line too long (116/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.base_trajectory_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.common
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.common.segments.base_segment
+2:0: C0301: Line too long (117/100) (line-too-long)
+3:0: C0301: Line too long (115/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.common.segments.rotation_segment
+4:0: C0301: Line too long (120/100) (line-too-long)
+21:0: C0301: Line too long (110/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+13:4: R0913: Too many arguments (6/5) (too-many-arguments)
+13:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module common.navigation.trajectory_planner.common.segments.segment_mapper
+2:0: C0301: Line too long (117/100) (line-too-long)
+3:0: C0301: Line too long (119/100) (line-too-long)
+53:0: C0301: Line too long (161/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.common.segments.smooth_segment
+2:0: C0301: Line too long (115/100) (line-too-long)
+3:0: C0301: Line too long (118/100) (line-too-long)
+27:0: C0301: Line too long (121/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+12:4: R0913: Too many arguments (6/5) (too-many-arguments)
+12:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module common.navigation.trajectory_planner.common.segments.stop_segment
+2:0: C0301: Line too long (122/100) (line-too-long)
+29:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+19:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.trajectory_planner.common.segments.straight_segment
+2:0: C0301: Line too long (110/100) (line-too-long)
+3:0: C0301: Line too long (109/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.common.segments
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner
+2:0: C0301: Line too long (102/100) (line-too-long)
+5:0: C0301: Line too long (105/100) (line-too-long)
+24:0: C0301: Line too long (124/100) (line-too-long)
+267:0: C0301: Line too long (102/100) (line-too-long)
+281:0: C0301: Line too long (103/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params
+31:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.__init__
+1:0: C0301: Line too long (103/100) (line-too-long)
+4:0: C0301: Line too long (110/100) (line-too-long)
+************* Module common.navigation.trajectory_planner.sequential_trajectory_planner
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.speed_profile.base_speed_profile
+41:0: C0301: Line too long (108/100) (line-too-long)
+42:0: C0301: Line too long (117/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.speed_profile.basic_speed_profile
+2:0: C0301: Line too long (105/100) (line-too-long)
+3:0: C0301: Line too long (110/100) (line-too-long)
+4:0: C0301: Line too long (112/100) (line-too-long)
+43:0: C0301: Line too long (101/100) (line-too-long)
+68:0: C0301: Line too long (101/100) (line-too-long)
+91:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.speed_profile.linear_ramped_speed_profile
+18:0: C0301: Line too long (102/100) (line-too-long)
+96:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+89:4: R0911: Too many return statements (11/6) (too-many-return-statements)
+165:4: R0914: Too many local variables (17/15) (too-many-locals)
+165:4: R0911: Too many return statements (11/6) (too-many-return-statements)
+************* Module common.navigation.trajectory_planner.speed_profile.speed_profiler
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.trajectory_planner.speed_profile.__init__
+12:0: C0301: Line too long (112/100) (line-too-long)
+************* Module common.navigation.trajectory_planner.speed_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.base_game_context
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.strategy.core.graph_runner
+91:0: C0301: Line too long (112/100) (line-too-long)
+104:0: C0301: Line too long (133/100) (line-too-long)
+128:0: C0301: Line too long (124/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+99:49: W0640: Cell variable prev_node defined in loop (cell-var-from-loop)
+************* Module common.strategy.core
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.builders.subgraph_builder
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.builders
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.sub_graphs.base_sub_graph
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0115: Missing class docstring (missing-class-docstring)
+17:4: C0116: Missing function or method docstring (missing-function-docstring)
+20:4: C0116: Missing function or method docstring (missing-function-docstring)
+23:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.sub_graphs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.tasks.base_navigation_task
+38:0: C0301: Line too long (107/100) (line-too-long)
+41:0: C0301: Line too long (111/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+20:0: C0115: Missing class docstring (missing-class-docstring)
+21:4: R0913: Too many arguments (10/5) (too-many-arguments)
+21:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+80:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.tasks.base_task
+1:0: C0114: Missing module docstring (missing-module-docstring)
+27:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.tasks.fake_task
+1:0: C0114: Missing module docstring (missing-module-docstring)
+5:0: C0115: Missing class docstring (missing-class-docstring)
+6:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.tasks.status
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.strategy.core.tasks
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.task_nodes.base_task_node
+34:0: C0301: Line too long (137/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+161:19: W0718: Catching too general exception Exception (broad-exception-caught)
+136:8: W0612: Unused variable 'all_done' (unused-variable)
+************* Module common.strategy.core.task_nodes.timeout_task_node
+33:0: C0301: Line too long (137/100) (line-too-long)
+40:0: C0301: Line too long (101/100) (line-too-long)
+82:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+69:11: E0203: Access to member 'status' before its definition line 80 (access-member-before-definition)
+71:79: E0203: Access to member 'status' before its definition line 80 (access-member-before-definition)
+78:11: E0203: Access to member 'start_time' before its definition line 79 (access-member-before-definition)
+79:12: W0201: Attribute 'start_time' defined outside __init__ (attribute-defined-outside-init)
+80:12: W0201: Attribute 'status' defined outside __init__ (attribute-defined-outside-init)
+95:12: W0201: Attribute 'status' defined outside __init__ (attribute-defined-outside-init)
+96:12: W0201: Attribute 'end_time' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.strategy.core.task_nodes
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions.base_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+11:0: C0115: Missing class docstring (missing-class-docstring)
+13:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions.constant_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+14:0: C0115: Missing class docstring (missing-class-docstring)
+18:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions.default_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+14:0: C0115: Missing class docstring (missing-class-docstring)
+15:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions.navigation_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+14:0: C0115: Missing class docstring (missing-class-docstring)
+18:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.base_transition
+2:0: C0301: Line too long (103/100) (line-too-long)
+3:0: C0301: Line too long (106/100) (line-too-long)
+37:0: C0301: Line too long (108/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.direct_transition
+2:0: C0301: Line too long (110/100) (line-too-long)
+3:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition.conditional_transition
+2:0: C0301: Line too long (107/100) (line-too-long)
+3:0: C0301: Line too long (112/100) (line-too-long)
+32:0: C0301: Line too long (108/100) (line-too-long)
+43:0: C0301: Line too long (101/100) (line-too-long)
+46:0: C0301: Line too long (103/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition
+2:0: C0301: Line too long (108/100) (line-too-long)
+3:0: C0301: Line too long (103/100) (line-too-long)
+4:0: C0301: Line too long (101/100) (line-too-long)
+34:0: C0301: Line too long (109/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.from_function_transition_condition
+4:0: C0301: Line too long (104/100) (line-too-long)
+11:0: C0301: Line too long (110/100) (line-too-long)
+32:0: C0301: Line too long (142/100) (line-too-long)
+51:0: C0301: Line too long (112/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.zone_accessibility_transition_condition
+3:0: C0301: Line too long (101/100) (line-too-long)
+12:0: C0301: Line too long (110/100) (line-too-long)
+51:0: C0301: Line too long (121/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.__init__
+1:0: C0301: Line too long (110/100) (line-too-long)
+4:0: C0301: Line too long (119/100) (line-too-long)
+7:0: C0301: Line too long (124/100) (line-too-long)
+************* Module common.strategy.core.transitions.conditional_transition.transitions_condition
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.tools.visualize
+3:0: C0301: Line too long (102/100) (line-too-long)
+4:0: C0301: Line too long (107/100) (line-too-long)
+28:0: C0301: Line too long (107/100) (line-too-long)
+96:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+79:8: C0415: Import outside toplevel (webbrowser) (import-outside-toplevel)
+145:8: C0415: Import outside toplevel (webbrowser) (import-outside-toplevel)
+************* Module common.strategy.tools
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.teensy.base_teensy
+15:0: C0301: Line too long (111/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+17:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+17:4: R0913: Too many arguments (8/5) (too-many-arguments)
+17:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+************* Module common.teensy.gpio_teensy
+25:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+15:4: R0913: Too many arguments (8/5) (too-many-arguments)
+15:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+************* Module common.teensy
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.teensy.tools
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.teensy.tools.gpio_manager.actuators_type
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.teensy.tools.gpio_manager.gpio_manager
+52:0: C0301: Line too long (106/100) (line-too-long)
+56:0: C0301: Line too long (113/100) (line-too-long)
+59:0: C0301: Line too long (110/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.teensy.tools.gpio_manager
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.messages
+4:0: C0301: Line too long (111/100) (line-too-long)
+9:0: C0301: Line too long (112/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.com.com
+67:0: C0301: Line too long (108/100) (line-too-long)
+125:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+29:4: R0913: Too many arguments (8/5) (too-many-arguments)
+29:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+176:19: W0718: Catching too general exception Exception (broad-exception-caught)
+172:23: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module common.usb_com.python.com.dummy
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.com.exceptions
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.com
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.tools.get_serial_number
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.usb_com.python.tools
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.utils.utils
+1:0: C0114: Missing module docstring (missing-module-docstring)
+6:0: C0115: Missing class docstring (missing-class-docstring)
+80:12: W0702: No exception type(s) specified (bare-except)
+************* Module common.utils
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.video.server
+1:0: C0114: Missing module docstring (missing-module-docstring)
+6:0: C0103: Constant name "img_path" doesn't conform to UPPER_CASE naming style (invalid-name)
+9:0: C0115: Missing class docstring (missing-class-docstring)
+12:4: C0116: Missing function or method docstring (missing-function-docstring)
+27:4: C0116: Missing function or method docstring (missing-function-docstring)
+27:4: C0103: Method name "do_GET" doesn't conform to snake_case naming style (invalid-name)
+49:23: W0718: Catching too general exception Exception (broad-exception-caught)
+40:26: E1101: Module 'cv2' has no 'imencode' member (no-member)
+43:59: C2801: Unnecessarily calls dunder method __len__. Use len built-in function. (unnecessary-dunder-call)
+61:0: C0116: Missing function or method docstring (missing-function-docstring)
+74:0: C0116: Missing function or method docstring (missing-function-docstring)
+75:4: C0415: Import outside toplevel (threading) (import-outside-toplevel)
+80:11: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module common.video
+1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module docs.source.conf
 1:0: C0114: Missing module docstring (missing-module-docstring)
 17:0: W0622: Redefining built-in 'copyright' (redefined-builtin)
@@ -20,1215 +626,8 @@
 41:0: C0103: Constant name "napoleon_attr_annotations" doesn't conform to UPPER_CASE naming style (invalid-name)
 46:0: C0103: Constant name "language" doesn't conform to UPPER_CASE naming style (invalid-name)
 51:0: C0103: Constant name "html_theme" doesn't conform to UPPER_CASE naming style (invalid-name)
-************* Module common.video.server
-1:0: C0114: Missing module docstring (missing-module-docstring)
-4:0: E0401: Unable to import 'cv2' (import-error)
-6:0: C0103: Constant name "img_path" doesn't conform to UPPER_CASE naming style (invalid-name)
-9:0: C0115: Missing class docstring (missing-class-docstring)
-12:4: C0116: Missing function or method docstring (missing-function-docstring)
-27:4: C0116: Missing function or method docstring (missing-function-docstring)
-27:4: C0103: Method name "do_GET" doesn't conform to snake_case naming style (invalid-name)
-49:23: W0718: Catching too general exception Exception (broad-exception-caught)
-43:59: C2801: Unnecessarily calls dunder method __len__. Use len built-in function. (unnecessary-dunder-call)
-61:0: C0116: Missing function or method docstring (missing-function-docstring)
-74:0: C0116: Missing function or method docstring (missing-function-docstring)
-75:4: C0415: Import outside toplevel (threading) (import-outside-toplevel)
-80:11: W0718: Catching too general exception Exception (broad-exception-caught)
-************* Module common.video
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'video.server' (import-error)
-************* Module common.usb_com.python.messages
-4:0: C0301: Line too long (111/100) (line-too-long)
-9:0: C0301: Line too long (112/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.usb_com.python
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'usb_com.python.com' (import-error)
-2:0: E0401: Unable to import 'usb_com.python.messages' (import-error)
-3:0: E0401: Unable to import 'usb_com.python.tools' (import-error)
-************* Module common.usb_com.python.tools.get_serial_number
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'serial.tools.list_ports' (import-error)
-4:0: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.usb_com.python.tools
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'usb_com.python.tools.get_serial_number' (import-error)
-************* Module common.usb_com.python.com.exceptions
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.usb_com.python.com.com
-67:0: C0301: Line too long (108/100) (line-too-long)
-125:0: C0301: Line too long (107/100) (line-too-long)
-184:71: W0511: UNUSED (fixme)
-196:23: W0511: UNUSED (fixme)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-13:0: E0401: Unable to import 'crc8' (import-error)
-14:0: E0401: Unable to import 'serial' (import-error)
-15:0: E0401: Unable to import 'serial.tools.list_ports' (import-error)
-16:0: E0401: Unable to import 'loggerplusplus' (import-error)
-18:0: E0401: Unable to import 'usb_com.python.com.dummy' (import-error)
-19:0: E0401: Unable to import 'usb_com.python.com.exceptions' (import-error)
-20:0: E0401: Unable to import 'usb_com.python.messages' (import-error)
-23:0: R0902: Too many instance attributes (12/7) (too-many-instance-attributes)
-29:4: R0913: Too many arguments (8/5) (too-many-arguments)
-29:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-176:19: W0718: Catching too general exception Exception (broad-exception-caught)
-172:23: W0718: Catching too general exception Exception (broad-exception-caught)
-************* Module common.usb_com.python.com.dummy
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.usb_com.python.com
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'usb_com.python.com.com' (import-error)
-2:0: E0401: Unable to import 'usb_com.python.com.dummy' (import-error)
-3:0: E0401: Unable to import 'usb_com.python.com.exceptions' (import-error)
-************* Module common.navigation
-6:0: E0401: Unable to import 'navigation.avoidance' (import-error)
-17:0: E0401: Unable to import 'navigation.navigator' (import-error)
-25:0: E0401: Unable to import 'navigation.path_planner' (import-error)
-40:0: E0401: Unable to import 'navigation.trajectory_planner' (import-error)
-************* Module common.navigation.avoidance.avoidance_factory
-21:0: C0301: Line too long (102/100) (line-too-long)
-32:0: C0301: Line too long (111/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles' (import-error)
-10:0: E0401: Unable to import 'navigation.avoidance.back_avoidance' (import-error)
-11:0: E0401: Unable to import 'navigation.avoidance.base_avoidance' (import-error)
-12:0: E0401: Unable to import 'navigation.avoidance.no_avoidance' (import-error)
-13:0: E0401: Unable to import 'navigation.avoidance.stop_and_wait_avoidance' (import-error)
-17:0: E0401: Unable to import 'navigation.avoidance.structs' (import-error)
-20:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-10:0: W0611: Unused BackAvoidanceParams imported from navigation.avoidance.back_avoidance (unused-import)
-12:0: W0611: Unused NoAvoidanceParams imported from navigation.avoidance.no_avoidance (unused-import)
-13:0: W0611: Unused StopAndWaitAvoidanceParams imported from navigation.avoidance.stop_and_wait_avoidance (unused-import)
-************* Module common.navigation.avoidance.structs
-1:0: C0114: Missing module docstring (missing-module-docstring)
-4:0: C0115: Missing class docstring (missing-class-docstring)
-************* Module common.navigation.avoidance
-6:0: E0401: Unable to import 'navigation.avoidance.avoidance_factory' (import-error)
-7:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles' (import-error)
-11:0: E0401: Unable to import 'navigation.avoidance.base_avoidance' (import-error)
-16:0: E0401: Unable to import 'navigation.avoidance.no_avoidance' (import-error)
-17:0: E0401: Unable to import 'navigation.avoidance.stop_and_wait_avoidance' (import-error)
-21:0: E0401: Unable to import 'navigation.avoidance.structs' (import-error)
-************* Module common.navigation.avoidance.acs_detection_profiles.struct
-1:0: C0114: Missing module docstring (missing-module-docstring)
-4:0: C0115: Missing class docstring (missing-class-docstring)
-************* Module common.navigation.avoidance.acs_detection_profiles.acs_detection_profile_factory
-8:0: C0301: Line too long (121/100) (line-too-long)
-20:0: C0301: Line too long (107/100) (line-too-long)
-24:0: C0301: Line too long (116/100) (line-too-long)
-32:0: C0301: Line too long (102/100) (line-too-long)
-8:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile' (import-error)
-12:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles' (import-error)
-16:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.no_acs_detection_profile' (import-error)
-20:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile' (import-error)
-24:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile' (import-error)
-28:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.struct' (import-error)
-31:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-8:0: W0611: Unused AngularRestrictProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile (unused-import)
-16:0: W0611: Unused NoAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile (unused-import)
-20:0: W0611: Unused NoProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile (unused-import)
-24:0: W0611: Unused RectangularProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile (unused-import)
-************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile
-10:0: C0301: Line too long (154/100) (line-too-long)
-28:0: C0301: Line too long (133/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'loggerplusplus' (import-error)
-5:0: E0401: Unable to import 'arena' (import-error)
-6:0: E0401: Unable to import 'geometry' (import-error)
-7:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles' (import-error)
-10:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile_params' (import-error)
-20:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-58:4: C0116: Missing function or method docstring (missing-function-docstring)
-15:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile_params
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles' (import-error)
-4:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.struct' (import-error)
-7:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.__init__
-1:0: C0301: Line too long (147/100) (line-too-long)
-4:0: C0301: Line too long (154/100) (line-too-long)
-************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile' (import-error)
-4:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile_params' (import-error)
-************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile_params
-6:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles' (import-error)
-9:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.struct' (import-error)
-12:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile
-7:0: C0301: Line too long (178/100) (line-too-long)
-6:0: E0401: Unable to import 'arena' (import-error)
-7:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile_params' (import-error)
-10:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles' (import-error)
-20:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-15:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile
-11:0: C0301: Line too long (150/100) (line-too-long)
-5:0: E0401: Unable to import 'loggerplusplus' (import-error)
-7:0: E0401: Unable to import 'arena' (import-error)
-8:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles' (import-error)
-11:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile_params' (import-error)
-21:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-16:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile_params
-3:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles' (import-error)
-6:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.struct' (import-error)
-9:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.__init__
-1:0: C0301: Line too long (129/100) (line-too-long)
-4:0: C0301: Line too long (136/100) (line-too-long)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile' (import-error)
-4:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile_params' (import-error)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile
-7:0: C0301: Line too long (114/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'arena' (import-error)
-4:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles' (import-error)
-7:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile_params' (import-error)
-15:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-25:4: C0116: Missing function or method docstring (missing-function-docstring)
-25:31: W0613: Unused argument 'ally_zone' (unused-argument)
-25:52: W0613: Unused argument 'enemy_zone' (unused-argument)
-12:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile_params
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles' (import-error)
-4:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.struct' (import-error)
-7:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profiles
-8:0: C0301: Line too long (134/100) (line-too-long)
-5:0: E0401: Unable to import 'loggerplusplus' (import-error)
-7:0: E0401: Unable to import 'arena' (import-error)
-8:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profiles_params' (import-error)
-13:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profiles_params
-6:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.struct' (import-error)
-9:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params
-2:0: C0301: Line too long (101/100) (line-too-long)
-3:0: C0301: Line too long (106/100) (line-too-long)
-23:0: C0301: Line too long (106/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'navigation.avoidance.base_avoidance' (import-error)
-8:0: E0401: Unable to import 'navigation.avoidance.structs' (import-error)
-11:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance
-1:0: C0114: Missing module docstring (missing-module-docstring)
-12:0: E0401: Unable to import 'navigation.avoidance.base_avoidance' (import-error)
-13:0: E0401: Unable to import 'navigation.avoidance.base_avoidance.states' (import-error)
-14:0: E0401: Unable to import 'navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params' (import-error)
-17:0: E0401: Unable to import 'navigation.trajectory_planner' (import-error)
-39:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-74:8: E0401: Unable to import 'navigation.navigator.task.states' (import-error)
-74:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
-78:74: E0203: Access to member 'state' before its definition line 99 (access-member-before-definition)
-89:16: E0203: Access to member 'state' before its definition line 99 (access-member-before-definition)
-99:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-126:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-30:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.stop_and_wait_avoidance
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance' (import-error)
-4:0: E0401: Unable to import 'navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params' (import-error)
-************* Module common.navigation.avoidance.base_avoidance.states
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.avoidance.base_avoidance.base_avoidance_params
-1:0: C0114: Missing module docstring (missing-module-docstring)
-8:0: E0401: Unable to import 'navigation.avoidance.structs' (import-error)
-11:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.base_avoidance.base_avoidance
-3:0: C0301: Line too long (104/100) (line-too-long)
-5:0: C0301: Line too long (101/100) (line-too-long)
-97:0: C0301: Line too long (101/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-16:0: E0401: Unable to import 'loggerplusplus' (import-error)
-18:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles' (import-error)
-22:0: E0401: Unable to import 'navigation.avoidance.base_avoidance.base_avoidance_params' (import-error)
-25:0: E0401: Unable to import 'navigation.avoidance.base_avoidance.states' (import-error)
-26:0: E0401: Unable to import 'navigation.trajectory_planner' (import-error)
-33:0: C0103: Type variable name "ParamsType" doesn't conform to predefined naming style (invalid-name)
-83:12: C0415: Import outside toplevel (copy) (import-outside-toplevel)
-108:12: W0212: Access to a protected member _store_original_task of a client class (protected-access)
-147:8: E0401: Unable to import 'navigation.navigator.task.states' (import-error)
-147:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
-************* Module common.navigation.avoidance.base_avoidance
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.avoidance.base_avoidance.base_avoidance' (import-error)
-2:0: E0401: Unable to import 'navigation.avoidance.base_avoidance.base_avoidance_params' (import-error)
-5:0: E0401: Unable to import 'navigation.avoidance.base_avoidance.states' (import-error)
-************* Module common.navigation.avoidance.no_avoidance.no_avoidance_params
-2:0: C0301: Line too long (104/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'navigation.avoidance.base_avoidance' (import-error)
-8:0: E0401: Unable to import 'navigation.avoidance.structs' (import-error)
-11:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.no_avoidance.no_avoidance
-1:0: C0114: Missing module docstring (missing-module-docstring)
-11:0: E0401: Unable to import 'navigation.avoidance.base_avoidance' (import-error)
-12:0: E0401: Unable to import 'navigation.avoidance.no_avoidance.no_avoidance_params' (import-error)
-33:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-54:8: W0613: Unused argument 'ally_zone' (unused-argument)
-55:8: W0613: Unused argument 'enemy_zone' (unused-argument)
-25:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.no_avoidance
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.avoidance.no_avoidance.no_avoidance' (import-error)
-2:0: E0401: Unable to import 'navigation.avoidance.no_avoidance.no_avoidance_params' (import-error)
-************* Module common.navigation.avoidance.back_avoidance.back_avoidance
-51:0: C0301: Line too long (111/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles' (import-error)
-9:0: E0401: Unable to import 'navigation.avoidance.back_avoidance.back_avoidance_params' (import-error)
-12:0: E0401: Unable to import 'navigation.avoidance.base_avoidance' (import-error)
-13:0: E0401: Unable to import 'navigation.avoidance.base_avoidance.states' (import-error)
-14:0: E0401: Unable to import 'navigation.avoidance.no_avoidance' (import-error)
-15:0: E0401: Unable to import 'navigation.navigator.task.navigator_task' (import-error)
-16:0: E0401: Unable to import 'navigation.navigator.task.navigator_task_params' (import-error)
-17:0: E0401: Unable to import 'navigation.path_planner' (import-error)
-18:0: E0401: Unable to import 'navigation.trajectory_planner' (import-error)
-77:8: E0401: Unable to import 'navigation.navigator.task.states' (import-error)
-77:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
-81:74: E0203: Access to member 'state' before its definition line 116 (access-member-before-definition)
-92:16: E0203: Access to member 'state' before its definition line 116 (access-member-before-definition)
-116:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-166:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-31:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.back_avoidance.back_avoidance_params
-2:0: C0301: Line too long (107/100) (line-too-long)
-3:0: C0301: Line too long (106/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'navigation.avoidance.base_avoidance' (import-error)
-8:0: E0401: Unable to import 'navigation.avoidance.structs' (import-error)
-9:0: E0401: Unable to import 'navigation.trajectory_planner' (import-error)
-12:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.avoidance.back_avoidance
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.avoidance.back_avoidance.back_avoidance' (import-error)
-2:0: E0401: Unable to import 'navigation.avoidance.back_avoidance.back_avoidance_params' (import-error)
-************* Module common.navigation.path_planner.path_planner_factory
-30:0: C0301: Line too long (101/100) (line-too-long)
-44:0: C0301: Line too long (102/100) (line-too-long)
-48:0: C0301: Line too long (115/100) (line-too-long)
-23:1: W0511: TODO: implement AStarPathPlanner and add it to the factory (fixme)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'navigation.path_planner.base_path_planner' (import-error)
-13:0: E0401: Unable to import 'navigation.path_planner.basic_path_planner' (import-error)
-17:0: E0401: Unable to import 'navigation.path_planner.delta_path_planner' (import-error)
-21:0: E0401: Unable to import 'navigation.path_planner.structs' (import-error)
-29:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-13:0: W0611: Unused BasicPathPlannerParams imported from navigation.path_planner.basic_path_planner (unused-import)
-17:0: W0611: Unused DeltaPathPlannerParams imported from navigation.path_planner.delta_path_planner (unused-import)
-************* Module common.navigation.path_planner.structs
-2:0: C0301: Line too long (104/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.path_planner.path_planner_path_plan_params_factory
-2:0: C0301: Line too long (101/100) (line-too-long)
-38:0: C0301: Line too long (101/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'geometry' (import-error)
-8:0: E0401: Unable to import 'navigation.path_planner' (import-error)
-16:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.path_planner
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.path_planner.structs' (import-error)
-5:0: E0401: Unable to import 'navigation.path_planner.astar_path_planner' (import-error)
-10:0: E0401: Unable to import 'navigation.path_planner.base_path_planner' (import-error)
-15:0: E0401: Unable to import 'navigation.path_planner.basic_path_planner' (import-error)
-20:0: E0401: Unable to import 'navigation.path_planner.delta_path_planner' (import-error)
-25:0: E0401: Unable to import 'navigation.path_planner.path_planner_factory' (import-error)
-26:0: E0401: Unable to import 'navigation.path_planner.path_planner_path_plan_params_factory' (import-error)
-************* Module common.navigation.path_planner.basic_path_planner.basic_path_planner_params
-2:0: C0301: Line too long (106/100) (line-too-long)
-3:0: C0301: Line too long (106/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'geometry' (import-error)
-7:0: E0401: Unable to import 'navigation.path_planner.base_path_planner.base_path_planner_params' (import-error)
-11:0: E0401: Unable to import 'navigation.path_planner.structs' (import-error)
-14:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-27:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.path_planner.basic_path_planner.basic_path_planner
-2:0: C0301: Line too long (105/100) (line-too-long)
-3:0: C0301: Line too long (101/100) (line-too-long)
-63:0: C0301: Line too long (106/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-8:0: E0401: Unable to import 'loggerplusplus' (import-error)
-10:0: E0401: Unable to import 'geometry' (import-error)
-11:0: E0401: Unable to import 'navigation.path_planner.base_path_planner.base_path_planner' (import-error)
-12:0: E0401: Unable to import 'navigation.path_planner.basic_path_planner.basic_path_planner_params' (import-error)
-16:0: E0401: Unable to import 'navigation.path_planner.structs' (import-error)
-28:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-19:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.path_planner.basic_path_planner
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.path_planner.basic_path_planner.basic_path_planner' (import-error)
-4:0: E0401: Unable to import 'navigation.path_planner.basic_path_planner.basic_path_planner_params' (import-error)
-************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner_params
-2:0: C0301: Line too long (101/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'geometry' (import-error)
-6:0: E0401: Unable to import 'navigation.path_planner.base_path_planner.base_path_planner_params' (import-error)
-10:0: E0401: Unable to import 'navigation.path_planner.structs' (import-error)
-13:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-36:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-33:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner
-2:0: C0301: Line too long (103/100) (line-too-long)
-80:0: C0301: Line too long (110/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-8:0: E0401: Unable to import 'loggerplusplus' (import-error)
-10:0: E0401: Unable to import 'geometry' (import-error)
-11:0: E0401: Unable to import 'navigation.path_planner.base_path_planner.base_path_planner' (import-error)
-12:0: E0401: Unable to import 'navigation.path_planner.delta_path_planner.delta_path_planner_params' (import-error)
-27:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-89:11: C1805: "self.params.distance != 0.0" can be simplified to "self.params.distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-95:11: C1805: "self.params.rotation != 0.0" can be simplified to "self.params.rotation", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-18:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.path_planner.delta_path_planner
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.path_planner.delta_path_planner.delta_path_planner' (import-error)
-4:0: E0401: Unable to import 'navigation.path_planner.delta_path_planner.delta_path_planner_params' (import-error)
-************* Module common.navigation.path_planner.astar_path_planner.astar_path_planner
-2:0: C0301: Line too long (101/100) (line-too-long)
-23:0: C0301: Line too long (101/100) (line-too-long)
-110:0: C0301: Line too long (113/100) (line-too-long)
-220:0: C0301: Line too long (108/100) (line-too-long)
-289:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-8:0: E0401: Unable to import 'loggerplusplus' (import-error)
-9:0: E0401: Unable to import 'pathfinding.core.grid' (import-error)
-11:0: E0401: Unable to import 'geometry' (import-error)
-12:0: E0401: Unable to import 'navigation.path_planner.astar_path_planner.astar_path_planner_params' (import-error)
-16:0: E0401: Unable to import 'navigation.path_planner.base_path_planner.base_path_planner' (import-error)
-17:0: E0401: Unable to import 'navigation.path_planner.structs' (import-error)
-271:24: W0613: Unused argument 'params' (unused-argument)
-************* Module common.navigation.path_planner.astar_path_planner.astar_path_planner_params
-33:0: C0301: Line too long (141/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'pathfinding.core.diagonal_movement' (import-error)
-2:0: E0401: Unable to import 'pathfinding.core.grid' (import-error)
-3:0: E0401: Unable to import 'pathfinding.finder.a_star' (import-error)
-5:0: E0401: Unable to import 'geometry' (import-error)
-6:0: E0401: Unable to import 'navigation.path_planner.base_path_planner.base_path_planner_params' (import-error)
-10:0: E0401: Unable to import 'navigation.path_planner.structs' (import-error)
-13:0: R0902: Too many instance attributes (14/7) (too-many-instance-attributes)
-16:4: R0913: Too many arguments (7/5) (too-many-arguments)
-16:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-13:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-65:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.path_planner.astar_path_planner
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.path_planner.astar_path_planner.astar_path_planner' (import-error)
-4:0: E0401: Unable to import 'navigation.path_planner.astar_path_planner.astar_path_planner_params' (import-error)
-************* Module common.navigation.path_planner.base_path_planner.base_path_planner_params
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'geometry' (import-error)
-6:0: E0401: Unable to import 'navigation.path_planner.structs' (import-error)
-9:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-22:0: C0115: Missing class docstring (missing-class-docstring)
-22:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.path_planner.base_path_planner.base_path_planner
-4:0: C0301: Line too long (103/100) (line-too-long)
-65:0: C0301: Line too long (103/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-11:0: E0401: Unable to import 'loggerplusplus' (import-error)
-13:0: E0401: Unable to import 'geometry' (import-error)
-14:0: E0401: Unable to import 'navigation.path_planner.base_path_planner.base_path_planner_params' (import-error)
-19:0: C0103: Type variable name "ParamsType" doesn't conform to predefined naming style (invalid-name)
-20:0: C0103: Type variable name "PlanPathParamsType" doesn't conform to predefined naming style (invalid-name)
-42:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.navigation.path_planner.base_path_planner
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.path_planner.base_path_planner.base_path_planner' (import-error)
-2:0: E0401: Unable to import 'navigation.path_planner.base_path_planner.base_path_planner_params' (import-error)
-************* Module common.navigation.trajectory_planner.trajectory_planner_factory
-2:0: C0301: Line too long (102/100) (line-too-long)
-21:0: C0301: Line too long (107/100) (line-too-long)
-37:0: C0301: Line too long (115/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-8:0: E0401: Unable to import 'navigation.trajectory_planner.base_trajectory_planner' (import-error)
-12:0: E0401: Unable to import 'navigation.trajectory_planner.sequential_trajectory_planner' (import-error)
-16:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile.speed_profiler' (import-error)
-17:0: E0401: Unable to import 'navigation.trajectory_planner.structs' (import-error)
-20:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-12:0: W0611: Unused SequentialTrajectoryPlannerParams imported from navigation.trajectory_planner.sequential_trajectory_planner (unused-import)
-************* Module common.navigation.trajectory_planner.structs
-1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'geometry' (import-error)
-************* Module common.navigation.trajectory_planner
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.path_planner' (import-error)
-2:0: E0401: Unable to import 'navigation.trajectory_planner.base_trajectory_planner' (import-error)
-6:0: E0401: Unable to import 'navigation.trajectory_planner.sequential_trajectory_planner' (import-error)
-10:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile' (import-error)
-16:0: E0401: Unable to import 'navigation.trajectory_planner.structs' (import-error)
-20:0: E0401: Unable to import 'navigation.trajectory_planner.trajectory_planner_factory' (import-error)
-************* Module common.navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner
-2:0: C0301: Line too long (109/100) (line-too-long)
-3:0: C0301: Line too long (106/100) (line-too-long)
-4:0: C0301: Line too long (116/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-12:0: E0401: Unable to import 'loggerplusplus' (import-error)
-14:0: E0401: Unable to import 'geometry' (import-error)
-15:0: E0401: Unable to import 'navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params' (import-error)
-18:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile' (import-error)
-19:0: E0401: Unable to import 'navigation.trajectory_planner.structs' (import-error)
-21:0: C0103: Type variable name "ParamsType" doesn't conform to predefined naming style (invalid-name)
-127:4: C0116: Missing function or method docstring (missing-function-docstring)
-130:4: C0116: Missing function or method docstring (missing-function-docstring)
-133:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params
-24:0: C0301: Line too long (116/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'navigation.path_planner' (import-error)
-6:0: E0401: Unable to import 'navigation.trajectory_planner.structs' (import-error)
-9:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.trajectory_planner.base_trajectory_planner
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner' (import-error)
-4:0: E0401: Unable to import 'navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params' (import-error)
-************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params
-31:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'navigation.path_planner' (import-error)
-7:0: E0401: Unable to import 'navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params' (import-error)
-10:0: E0401: Unable to import 'navigation.trajectory_planner.structs' (import-error)
-13:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner
-2:0: C0301: Line too long (102/100) (line-too-long)
-5:0: C0301: Line too long (105/100) (line-too-long)
-24:0: C0301: Line too long (124/100) (line-too-long)
-267:0: C0301: Line too long (102/100) (line-too-long)
-281:0: C0301: Line too long (103/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-10:0: E0401: Unable to import 'loggerplusplus' (import-error)
-12:0: E0401: Unable to import 'geometry' (import-error)
-13:0: E0401: Unable to import 'navigation.path_planner' (import-error)
-14:0: E0401: Unable to import 'navigation.trajectory_planner.base_trajectory_planner' (import-error)
-17:0: E0401: Unable to import 'navigation.trajectory_planner.common' (import-error)
-24:0: E0401: Unable to import 'navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params' (import-error)
-27:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile' (import-error)
-28:0: E0401: Unable to import 'navigation.trajectory_planner.structs' (import-error)
-************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.__init__
-1:0: C0301: Line too long (103/100) (line-too-long)
-4:0: C0301: Line too long (110/100) (line-too-long)
-************* Module common.navigation.trajectory_planner.sequential_trajectory_planner
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner' (import-error)
-4:0: E0401: Unable to import 'navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params' (import-error)
-************* Module common.navigation.trajectory_planner.common
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments' (import-error)
-************* Module common.navigation.trajectory_planner.common.segments.segment_mapper
-2:0: C0301: Line too long (117/100) (line-too-long)
-3:0: C0301: Line too long (119/100) (line-too-long)
-53:0: C0301: Line too long (161/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-8:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments.base_segment' (import-error)
-************* Module common.navigation.trajectory_planner.common.segments.base_segment
-2:0: C0301: Line too long (117/100) (line-too-long)
-3:0: C0301: Line too long (115/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'geometry' (import-error)
-8:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.trajectory_planner.common.segments.stop_segment
-2:0: C0301: Line too long (122/100) (line-too-long)
-29:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'geometry' (import-error)
-6:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments.base_segment' (import-error)
-19:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-9:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.trajectory_planner.common.segments.rotation_segment
-4:0: C0301: Line too long (120/100) (line-too-long)
-21:0: C0301: Line too long (110/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'geometry' (import-error)
-7:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments.base_segment' (import-error)
-13:4: R0913: Too many arguments (6/5) (too-many-arguments)
-13:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-10:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.trajectory_planner.common.segments.straight_segment
-2:0: C0301: Line too long (110/100) (line-too-long)
-3:0: C0301: Line too long (109/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'geometry' (import-error)
-6:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments.base_segment' (import-error)
-9:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.trajectory_planner.common.segments.smooth_segment
-2:0: C0301: Line too long (115/100) (line-too-long)
-3:0: C0301: Line too long (118/100) (line-too-long)
-27:0: C0301: Line too long (121/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'geometry' (import-error)
-6:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments.base_segment' (import-error)
-12:4: R0913: Too many arguments (6/5) (too-many-arguments)
-12:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-9:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.trajectory_planner.common.segments
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments.base_segment' (import-error)
-2:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments.rotation_segment' (import-error)
-5:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments.segment_mapper' (import-error)
-6:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments.smooth_segment' (import-error)
-7:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments.stop_segment' (import-error)
-8:0: E0401: Unable to import 'navigation.trajectory_planner.common.segments.straight_segment' (import-error)
-************* Module common.navigation.trajectory_planner.speed_profile.speed_profiler
-1:0: C0114: Missing module docstring (missing-module-docstring)
-10:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile.base_speed_profile' (import-error)
-************* Module common.navigation.trajectory_planner.speed_profile.linear_ramped_speed_profile
-18:0: C0301: Line too long (102/100) (line-too-long)
-96:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-12:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile.base_speed_profile' (import-error)
-89:4: R0911: Too many return statements (11/6) (too-many-return-statements)
-165:4: R0914: Too many local variables (17/15) (too-many-locals)
-165:4: R0911: Too many return statements (11/6) (too-many-return-statements)
-************* Module common.navigation.trajectory_planner.speed_profile.basic_speed_profile
-2:0: C0301: Line too long (105/100) (line-too-long)
-3:0: C0301: Line too long (110/100) (line-too-long)
-4:0: C0301: Line too long (112/100) (line-too-long)
-43:0: C0301: Line too long (101/100) (line-too-long)
-68:0: C0301: Line too long (101/100) (line-too-long)
-91:0: C0301: Line too long (101/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile.base_speed_profile' (import-error)
-34:8: W0613: Unused argument 'distance' (unused-argument)
-35:8: W0613: Unused argument 'departure_speed' (unused-argument)
-36:8: W0613: Unused argument 'arrival_speed' (unused-argument)
-59:8: W0613: Unused argument 'distance' (unused-argument)
-60:8: W0613: Unused argument 'departure_speed' (unused-argument)
-61:8: W0613: Unused argument 'arrival_speed' (unused-argument)
-84:8: W0613: Unused argument 'departure_speed' (unused-argument)
-85:8: W0613: Unused argument 'arrival_speed' (unused-argument)
-************* Module common.navigation.trajectory_planner.speed_profile.sigmoid_ramped_speed_profile
-1:1: W0511: TODO: to implement (fixme)
-************* Module common.navigation.trajectory_planner.speed_profile.__init__
-12:0: C0301: Line too long (112/100) (line-too-long)
-11:1: W0511: TODO: to implement (fixme)
-************* Module common.navigation.trajectory_planner.speed_profile
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile.base_speed_profile' (import-error)
-4:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile.basic_speed_profile' (import-error)
-7:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile.linear_ramped_speed_profile' (import-error)
-13:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile.speed_profiler' (import-error)
-************* Module common.navigation.trajectory_planner.speed_profile.base_speed_profile
-41:0: C0301: Line too long (108/100) (line-too-long)
-42:0: C0301: Line too long (117/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.debug_functions.navigator
-23:0: C0301: Line too long (133/100) (line-too-long)
-34:0: C0301: Line too long (101/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-10:0: E0401: Unable to import 'matplotlib.pyplot' (import-error)
-11:0: E0401: Unable to import 'numpy' (import-error)
-13:0: E0401: Unable to import 'arena' (import-error)
-14:0: E0401: Unable to import 'geometry' (import-error)
-15:0: E0401: Unable to import 'navigation.navigator' (import-error)
-18:0: R0914: Too many local variables (19/15) (too-many-locals)
-84:16: W0212: Access to a protected member _get_trajectory_time_elapsed of a client class (protected-access)
-18:0: R0915: Too many statements (79/50) (too-many-statements)
-************* Module common.navigation.debug_functions.trajectory_planer
-4:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-8:0: E0401: Unable to import 'numpy' (import-error)
-9:0: E0401: Unable to import 'matplotlib' (import-error)
-11:0: E0401: Unable to import 'geometry' (import-error)
-12:0: E0401: Unable to import 'navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner' (import-error)
-17:0: R0914: Too many local variables (20/15) (too-many-locals)
-104:57: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-120:63: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-17:0: R0915: Too many statements (68/50) (too-many-statements)
-************* Module common.navigation.debug_functions.speed_profile
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'matplotlib' (import-error)
-8:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile.base_speed_profile' (import-error)
-************* Module common.navigation.debug_functions
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.debug_functions.navigator' (import-error)
-2:0: E0401: Unable to import 'navigation.debug_functions.speed_profile' (import-error)
-3:0: E0401: Unable to import 'navigation.debug_functions.trajectory_planer' (import-error)
-************* Module common.navigation.navigator
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.navigator.core' (import-error)
-2:0: E0401: Unable to import 'navigation.navigator.signals' (import-error)
-3:0: E0401: Unable to import 'navigation.navigator.task' (import-error)
-************* Module common.navigation.navigator.core.states
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.navigator.core.navigator
-63:0: C0301: Line too long (125/100) (line-too-long)
-93:0: C0301: Line too long (143/100) (line-too-long)
-126:0: C0301: Line too long (122/100) (line-too-long)
-32:12: W0511: UNUSED (fixme)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'loggerplusplus' (import-error)
-5:0: E0401: Unable to import 'arena' (import-error)
-6:0: E0401: Unable to import 'navigation.avoidance.base_avoidance' (import-error)
-7:0: E0401: Unable to import 'navigation.navigator.signals' (import-error)
-8:0: E0401: Unable to import 'navigation.navigator.task' (import-error)
-13:0: E0401: Unable to import 'navigation.trajectory_planner' (import-error)
-************* Module common.navigation.navigator.core
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.navigator.core.navigator' (import-error)
-2:0: E0401: Unable to import 'navigation.navigator.core.states' (import-error)
-************* Module common.navigation.navigator.task.states
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.navigator.task.navigator_task
-2:0: C0301: Line too long (101/100) (line-too-long)
-4:0: C0301: Line too long (103/100) (line-too-long)
-5:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-11:0: E0401: Unable to import 'arena' (import-error)
-12:0: E0401: Unable to import 'navigation.navigator.task.navigator_task_params' (import-error)
-13:0: E0401: Unable to import 'navigation.navigator.task.states' (import-error)
-14:0: E0401: Unable to import 'navigation.path_planner' (import-error)
-20:0: E0401: Unable to import 'navigation.trajectory_planner' (import-error)
-30:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
-43:8: E0401: Unable to import 'navigation.avoidance' (import-error)
-43:8: C0415: Import outside toplevel (navigation.avoidance.AvoidanceFactory, navigation.avoidance.BaseAvoidance) (import-outside-toplevel)
-107:4: C0116: Missing function or method docstring (missing-function-docstring)
-107:4: R0911: Too many return statements (8/6) (too-many-return-statements)
-30:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.navigation.navigator.task.navigator_task_params
-32:0: C0301: Line too long (111/100) (line-too-long)
-35:0: C0301: Line too long (119/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'geometry' (import-error)
-2:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles' (import-error)
-3:0: E0401: Unable to import 'navigation.avoidance.base_avoidance' (import-error)
-4:0: E0401: Unable to import 'navigation.path_planner' (import-error)
-5:0: E0401: Unable to import 'navigation.trajectory_planner' (import-error)
-6:0: E0401: Unable to import 'navigation.trajectory_planner.speed_profile' (import-error)
-9:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
-12:4: R0913: Too many arguments (9/5) (too-many-arguments)
-12:4: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
-9:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.navigator.task
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.navigator.task.navigator_task' (import-error)
-2:0: E0401: Unable to import 'navigation.navigator.task.navigator_task_params' (import-error)
-3:0: E0401: Unable to import 'navigation.navigator.task.states' (import-error)
-************* Module common.navigation.navigator.signals.signals_enum
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.navigator.signals.dispatcher
-16:36: W0511: UNUSED (fixme)
-93:23: W0511: UNUSED (fixme)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-10:0: E0401: Unable to import 'events' (import-error)
-11:0: E0401: Unable to import 'loggerplusplus' (import-error)
-13:0: E0401: Unable to import 'navigation.navigator.signals.signals_enum' (import-error)
-43:8: C0115: Missing class docstring (missing-class-docstring)
-43:8: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.navigation.navigator.signals
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'navigation.navigator.signals.dispatcher' (import-error)
-2:0: E0401: Unable to import 'navigation.navigator.signals.signals_enum' (import-error)
-************* Module common.GPIO.gpio
-3:0: E0401: Unable to import 'gpiozero' (import-error)
-4:0: E0401: Unable to import 'gpiozero.pins.lgpio' (import-error)
-************* Module common.GPIO
-1:0: C0103: Module name "GPIO" doesn't conform to snake_case naming style (invalid-name)
-3:0: E0401: Unable to import 'loggerplusplus' (import-error)
-************* Module common.arena
-3:0: E0401: Unable to import 'arena.base_arena' (import-error)
-16:0: E0401: Unable to import 'arena.base_arena.grid_manager' (import-error)
-17:0: E0401: Unable to import 'arena.base_arena.team_color' (import-error)
-18:0: E0401: Unable to import 'arena.show_arena' (import-error)
-************* Module common.arena.show_arena
-3:0: E0401: Unable to import 'arena.show_arena.arena' (import-error)
-************* Module common.arena.show_arena.arena
-1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'loggerplusplus' (import-error)
-5:0: E0401: Unable to import 'arena.base_arena.arena' (import-error)
-6:0: E0401: Unable to import 'arena.base_arena.arena_zones' (import-error)
-13:0: E0401: Unable to import 'geometry' (import-error)
-16:0: C0115: Missing class docstring (missing-class-docstring)
-17:4: R0913: Too many arguments (10/5) (too-many-arguments)
-17:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-17:4: R0914: Too many local variables (21/15) (too-many-locals)
-************* Module common.arena.2024_mars_arena.arena_old
-69:0: C0301: Line too long (102/100) (line-too-long)
-5:0: E0401: Unable to import 'old_logger' (import-error)
-6:0: E0401: Unable to import 'shapely.affinity' (import-error)
-8:0: E0401: Unable to import 'geometry' (import-error)
-27:0: R0902: Too many instance attributes (8/7) (too-many-instance-attributes)
-30:4: R0913: Too many arguments (7/5) (too-many-arguments)
-************* Module common.arena.2024_mars_arena.mars_arena_old
-6:0: E0401: Unable to import 'old_logger' (import-error)
-7:0: E0401: Unable to import 'pathfinding.core.grid' (import-error)
-8:0: E0401: Unable to import 'shapely' (import-error)
-10:0: E0401: Unable to import 'arena.base_arena.arena' (import-error)
-11:0: E0401: Unable to import 'geometry' (import-error)
-************* Module common.arena.2024_mars_arena
-1:0: C0103: Module name "2024_mars_arena" doesn't conform to snake_case naming style (invalid-name)
-************* Module common.arena.base_arena.grid_manager_2
-5:0: E0401: Unable to import 'matplotlib.pyplot' (import-error)
-6:0: E0401: Unable to import 'old_logger' (import-error)
-7:0: E0401: Unable to import 'pathfinding.core.grid' (import-error)
-8:0: E0401: Unable to import 'shapely.geometry' (import-error)
-9:0: E0401: Unable to import 'shapely.strtree' (import-error)
-11:0: E0401: Unable to import 'geometry' (import-error)
-14:0: R0902: Too many instance attributes (12/7) (too-many-instance-attributes)
-46:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-46:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-81:4: R0914: Too many local variables (17/15) (too-many-locals)
-************* Module common.arena.base_arena.grid_manager
-133:33: W0511: QUESTION: Useless ? (fixme)
-6:0: E0401: Unable to import 'matplotlib.pyplot' (import-error)
-7:0: E0401: Unable to import 'numpy' (import-error)
-8:0: E0401: Unable to import 'loggerplusplus' (import-error)
-9:0: E0401: Unable to import 'matplotlib.ticker' (import-error)
-10:0: E0401: Unable to import 'pathfinding.core.grid' (import-error)
-11:0: E0401: Unable to import 'shapely.strtree' (import-error)
-13:0: E0401: Unable to import 'geometry' (import-error)
-16:0: R0902: Too many instance attributes (12/7) (too-many-instance-attributes)
-26:4: R0913: Too many arguments (6/5) (too-many-arguments)
-26:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-49:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-49:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-87:4: R0914: Too many local variables (16/15) (too-many-locals)
-133:4: R0914: Too many local variables (19/15) (too-many-locals)
-259:41: E1136: Value 'np.ndarray' is unsubscriptable (unsubscriptable-object)
-133:4: W0238: Unused private member `GridManager.__optimized_mark_zone(self, grid: Grid, polygon_to_mark: Polygon, *, walkable: bool)` (unused-private-member)
-************* Module common.arena.base_arena
-3:0: E0401: Unable to import 'arena.base_arena.arena' (import-error)
-4:0: E0401: Unable to import 'arena.base_arena.arena_zones' (import-error)
-16:0: E0401: Unable to import 'arena.base_arena.grid_manager' (import-error)
-17:0: E0401: Unable to import 'arena.base_arena.team_color' (import-error)
-************* Module common.arena.base_arena.arena
-297:0: C0301: Line too long (110/100) (line-too-long)
-297:9: W0511: self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon]) #noqa: ERA001, E501 #FIX (fixme)
-386:5: W0511: TODO: Check if this function is still needed, test them (last year code) (fixme)
-13:0: E0401: Unable to import 'matplotlib.pyplot' (import-error)
-14:0: E0401: Unable to import 'numpy' (import-error)
-15:0: E0401: Unable to import 'loggerplusplus' (import-error)
-17:0: E0401: Unable to import 'arena.base_arena.arena_zones' (import-error)
-18:0: E0401: Unable to import 'arena.base_arena.grid_manager' (import-error)
-19:0: E0401: Unable to import 'arena.base_arena.team_color' (import-error)
-20:0: E0401: Unable to import 'geometry' (import-error)
-34:0: R0902: Too many instance attributes (13/7) (too-many-instance-attributes)
-37:4: R0913: Too many arguments (10/5) (too-many-arguments)
-37:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-486:4: R0913: Too many arguments (6/5) (too-many-arguments)
-486:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-573:4: R0913: Too many arguments (7/5) (too-many-arguments)
-573:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-625:4: R0913: Too many arguments (7/5) (too-many-arguments)
-738:4: R0913: Too many arguments (7/5) (too-many-arguments)
-873:4: R0913: Too many arguments (10/5) (too-many-arguments)
-************* Module common.arena.base_arena.arena_zones.forbidden_zone
-5:0: E0401: Unable to import 'loggerplusplus' (import-error)
-7:0: E0401: Unable to import 'arena.base_arena.arena_zones.base_arena_zone' (import-error)
-8:0: E0401: Unable to import 'arena.base_arena.arena_zones.structs' (import-error)
-9:0: E0401: Unable to import 'geometry' (import-error)
-15:4: R0913: Too many arguments (7/5) (too-many-arguments)
-15:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-12:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.arena.base_arena.arena_zones.ally_zone
-10:0: E0401: Unable to import 'loggerplusplus' (import-error)
-12:0: E0401: Unable to import 'arena.base_arena.arena_zones.base_arena_zone' (import-error)
-13:0: E0401: Unable to import 'arena.base_arena.arena_zones.structs' (import-error)
-14:0: E0401: Unable to import 'arena.base_arena.team_color' (import-error)
-15:0: E0401: Unable to import 'geometry' (import-error)
-69:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
-************* Module common.arena.base_arena.arena_zones.border_zone
-5:0: E0401: Unable to import 'loggerplusplus' (import-error)
-7:0: E0401: Unable to import 'arena.base_arena.arena_zones.base_arena_zone' (import-error)
-8:0: E0401: Unable to import 'arena.base_arena.arena_zones.structs' (import-error)
-9:0: E0401: Unable to import 'geometry' (import-error)
-15:4: R0913: Too many arguments (6/5) (too-many-arguments)
-15:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-12:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.arena.base_arena.arena_zones.structs
-6:0: E0401: Unable to import 'geometry' (import-error)
-************* Module common.arena.base_arena.arena_zones.stuff_zone
-6:0: E0401: Unable to import 'loggerplusplus' (import-error)
-8:0: E0401: Unable to import 'arena.base_arena.arena_zones.base_arena_zone' (import-error)
-9:0: E0401: Unable to import 'arena.base_arena.arena_zones.structs' (import-error)
-10:0: E0401: Unable to import 'arena.base_arena.team_color' (import-error)
-11:0: E0401: Unable to import 'geometry' (import-error)
-20:4: R0913: Too many arguments (7/5) (too-many-arguments)
-20:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-78:14: E0203: Access to member 'accessibility' before its definition line 79 (access-member-before-definition)
-79:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.arena.base_arena.arena_zones.base_arena_zone
-203:0: C0301: Line too long (111/100) (line-too-long)
-12:0: E0401: Unable to import 'loggerplusplus' (import-error)
-14:0: E0401: Unable to import 'arena.base_arena.arena_zones.structs' (import-error)
-15:0: E0401: Unable to import 'arena.base_arena.team_color' (import-error)
-16:0: E0401: Unable to import 'geometry' (import-error)
-17:0: E0401: Unable to import 'utils' (import-error)
-20:0: R0902: Too many instance attributes (13/7) (too-many-instance-attributes)
-30:4: R0913: Too many arguments (11/5) (too-many-arguments)
-30:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones
-8:0: E0401: Unable to import 'arena.base_arena.arena_zones.ally_zone' (import-error)
-9:0: E0401: Unable to import 'arena.base_arena.arena_zones.base_arena_zone' (import-error)
-10:0: E0401: Unable to import 'arena.base_arena.arena_zones.border_zone' (import-error)
-11:0: E0401: Unable to import 'arena.base_arena.arena_zones.color_reserved_zones' (import-error)
-16:0: E0401: Unable to import 'arena.base_arena.arena_zones.forbidden_zone' (import-error)
-17:0: E0401: Unable to import 'arena.base_arena.arena_zones.speed_vector_auto_calculate_zones' (import-error)
-21:0: E0401: Unable to import 'arena.base_arena.arena_zones.structs' (import-error)
-22:0: E0401: Unable to import 'arena.base_arena.arena_zones.stuff_zone' (import-error)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone
-5:0: E0401: Unable to import 'loggerplusplus' (import-error)
-7:0: E0401: Unable to import 'arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone' (import-error)
-10:0: E0401: Unable to import 'arena.base_arena.arena_zones.structs' (import-error)
-11:0: E0401: Unable to import 'arena.base_arena.team_color' (import-error)
-12:0: E0401: Unable to import 'geometry' (import-error)
-22:4: R0913: Too many arguments (7/5) (too-many-arguments)
-22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-15:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones.yellow_reserved_zone
-5:0: E0401: Unable to import 'loggerplusplus' (import-error)
-7:0: E0401: Unable to import 'arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone' (import-error)
-10:0: E0401: Unable to import 'arena.base_arena.arena_zones.structs' (import-error)
-11:0: E0401: Unable to import 'arena.base_arena.team_color' (import-error)
-12:0: E0401: Unable to import 'geometry' (import-error)
-22:4: R0913: Too many arguments (7/5) (too-many-arguments)
-22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-15:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone
-6:0: E0401: Unable to import 'loggerplusplus' (import-error)
-8:0: E0401: Unable to import 'arena.base_arena.arena_zones.base_arena_zone' (import-error)
-9:0: E0401: Unable to import 'arena.base_arena.arena_zones.structs' (import-error)
-10:0: E0401: Unable to import 'arena.base_arena.grid_manager' (import-error)
-11:0: E0401: Unable to import 'arena.base_arena.team_color' (import-error)
-12:0: E0401: Unable to import 'geometry' (import-error)
-23:4: R0913: Too many arguments (11/5) (too-many-arguments)
-23:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
-104:11: E0203: Access to member 'accessibility' before its definition line 105 (access-member-before-definition)
-105:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone
-7:0: E0401: Unable to import 'loggerplusplus' (import-error)
-9:0: E0401: Unable to import 'arena.base_arena.arena_zones.base_arena_zone' (import-error)
-10:0: E0401: Unable to import 'arena.base_arena.arena_zones.structs' (import-error)
-16:0: E0401: Unable to import 'arena.base_arena.team_color' (import-error)
-17:0: E0401: Unable to import 'geometry' (import-error)
-18:0: E0401: Unable to import 'utils' (import-error)
-26:4: R0913: Too many arguments (14/5) (too-many-arguments)
-26:4: R0917: Too many positional arguments (14/5) (too-many-positional-arguments)
-135:46: C1805: "distance != 0" can be simplified to "distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-137:11: C1805: "speed == 0" can be simplified to "not speed", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.enemy_zone
-9:0: C0301: Line too long (114/100) (line-too-long)
-37:0: C0301: Line too long (103/100) (line-too-long)
-38:0: C0301: Line too long (103/100) (line-too-long)
-39:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'loggerplusplus' (import-error)
-9:0: E0401: Unable to import 'arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone' (import-error)
-12:0: E0401: Unable to import 'arena.base_arena.arena_zones.structs' (import-error)
-13:0: E0401: Unable to import 'geometry' (import-error)
-22:4: R0913: Too many arguments (7/5) (too-many-arguments)
-22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-16:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.strategy.core.graph_runner
-91:0: C0301: Line too long (112/100) (line-too-long)
-104:0: C0301: Line too long (133/100) (line-too-long)
-128:0: C0301: Line too long (124/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'loggerplusplus' (import-error)
-99:49: W0640: Cell variable prev_node defined in loop (cell-var-from-loop)
-************* Module common.strategy.core.base_game_context
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'arena' (import-error)
-4:0: C0115: Missing class docstring (missing-class-docstring)
-4:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.strategy.core
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.core.base_game_context' (import-error)
-2:0: E0401: Unable to import 'strategy.core.builders' (import-error)
-3:0: E0401: Unable to import 'strategy.core.graph_runner' (import-error)
-4:0: E0401: Unable to import 'strategy.core.sub_graphs' (import-error)
-5:0: E0401: Unable to import 'strategy.core.task_nodes' (import-error)
-13:0: E0401: Unable to import 'strategy.core.tasks' (import-error)
-14:0: E0401: Unable to import 'strategy.core.transitions' (import-error)
-************* Module common.strategy.core.builders.subgraph_builder
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'loggerplusplus' (import-error)
-7:0: E0401: Unable to import 'strategy.core.sub_graphs' (import-error)
-************* Module common.strategy.core.builders
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.core.builders.subgraph_builder' (import-error)
-************* Module common.strategy.core.tasks.base_task
-1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'loggerplusplus' (import-error)
-5:0: E0401: Unable to import 'strategy.core.base_game_context' (import-error)
-27:4: C0116: Missing function or method docstring (missing-function-docstring)
-8:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.tasks.fake_task
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.core.base_game_context' (import-error)
-2:0: E0401: Unable to import 'strategy.core.tasks.base_task' (import-error)
-5:0: C0115: Missing class docstring (missing-class-docstring)
-6:4: C0116: Missing function or method docstring (missing-function-docstring)
-6:21: W0613: Unused argument 'ctx' (unused-argument)
-5:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.tasks.base_navigation_task
-38:0: C0301: Line too long (107/100) (line-too-long)
-41:0: C0301: Line too long (111/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'loggerplusplus' (import-error)
-5:0: E0401: Unable to import 'arena' (import-error)
-6:0: E0401: Unable to import 'geometry' (import-error)
-7:0: E0401: Unable to import 'navigation' (import-error)
-15:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles' (import-error)
-16:0: E0401: Unable to import 'strategy.core.base_game_context' (import-error)
-17:0: E0401: Unable to import 'strategy.core.tasks.base_task' (import-error)
-20:0: C0115: Missing class docstring (missing-class-docstring)
-20:0: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
-21:4: R0913: Too many arguments (10/5) (too-many-arguments)
-21:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-80:4: C0116: Missing function or method docstring (missing-function-docstring)
-20:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.tasks.status
-1:0: C0114: Missing module docstring (missing-module-docstring)
-4:0: C0115: Missing class docstring (missing-class-docstring)
-************* Module common.strategy.core.tasks
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.core.tasks.base_navigation_task' (import-error)
-2:0: E0401: Unable to import 'strategy.core.tasks.base_task' (import-error)
-3:0: E0401: Unable to import 'strategy.core.tasks.fake_task' (import-error)
-4:0: E0401: Unable to import 'strategy.core.tasks.status' (import-error)
-************* Module common.strategy.core.sub_graphs.base_sub_graph
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.core.task_nodes.base_task_node' (import-error)
-4:0: C0115: Missing class docstring (missing-class-docstring)
-17:4: C0116: Missing function or method docstring (missing-function-docstring)
-20:4: C0116: Missing function or method docstring (missing-function-docstring)
-23:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.strategy.core.sub_graphs
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.core.sub_graphs.base_sub_graph' (import-error)
-************* Module common.strategy.core.transitions.base_transition
-2:0: C0301: Line too long (103/100) (line-too-long)
-3:0: C0301: Line too long (106/100) (line-too-long)
-37:0: C0301: Line too long (108/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'strategy.core.base_game_context' (import-error)
-10:0: E0401: Unable to import 'strategy.core.task_nodes.base_task_node' (import-error)
-13:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.transitions.direct_transition
-2:0: C0301: Line too long (110/100) (line-too-long)
-3:0: C0301: Line too long (107/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'strategy.core.base_game_context' (import-error)
-8:0: E0401: Unable to import 'strategy.core.task_nodes.base_task_node' (import-error)
-9:0: E0401: Unable to import 'strategy.core.transitions.base_transition' (import-error)
-22:26: W0613: Unused argument 'from_node' (unused-argument)
-22:51: W0613: Unused argument 'ctx' (unused-argument)
-12:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.transitions
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.core.transitions.base_transition' (import-error)
-2:0: E0401: Unable to import 'strategy.core.transitions.conditional_transition' (import-error)
-8:0: E0401: Unable to import 'strategy.core.transitions.direct_transition' (import-error)
-************* Module common.strategy.core.transitions.conditional_transition.conditional_transition
-2:0: C0301: Line too long (107/100) (line-too-long)
-3:0: C0301: Line too long (112/100) (line-too-long)
-32:0: C0301: Line too long (108/100) (line-too-long)
-43:0: C0301: Line too long (101/100) (line-too-long)
-46:0: C0301: Line too long (103/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'strategy.core.base_game_context' (import-error)
-8:0: E0401: Unable to import 'strategy.core.task_nodes.base_task_node' (import-error)
-9:0: E0401: Unable to import 'strategy.core.transitions.base_transition' (import-error)
-10:0: E0401: Unable to import 'strategy.core.transitions.conditional_transition.transitions_condition' (import-error)
-15:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.transitions.conditional_transition
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.core.transitions.conditional_transition.conditional_transition' (import-error)
-4:0: E0401: Unable to import 'strategy.core.transitions.conditional_transition.transitions_condition' (import-error)
-************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.from_function_transition_condition
-4:0: C0301: Line too long (104/100) (line-too-long)
-11:0: C0301: Line too long (110/100) (line-too-long)
-32:0: C0301: Line too long (142/100) (line-too-long)
-51:0: C0301: Line too long (112/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'strategy.core.base_game_context' (import-error)
-10:0: E0401: Unable to import 'strategy.core.task_nodes.base_task_node' (import-error)
-11:0: E0401: Unable to import 'strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition' (import-error)
-16:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition
-2:0: C0301: Line too long (108/100) (line-too-long)
-3:0: C0301: Line too long (103/100) (line-too-long)
-4:0: C0301: Line too long (101/100) (line-too-long)
-34:0: C0301: Line too long (109/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'strategy.core.base_game_context' (import-error)
-10:0: E0401: Unable to import 'strategy.core.task_nodes.base_task_node' (import-error)
-13:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.zone_accessibility_transition_condition
-3:0: C0301: Line too long (101/100) (line-too-long)
-12:0: C0301: Line too long (110/100) (line-too-long)
-51:0: C0301: Line too long (121/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'strategy.core.base_game_context' (import-error)
-10:0: E0401: Unable to import 'strategy.core.task_nodes.base_task_node' (import-error)
-11:0: E0401: Unable to import 'strategy.core.tasks' (import-error)
-12:0: E0401: Unable to import 'strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition' (import-error)
-39:8: W0613: Unused argument 'from_node' (unused-argument)
-20:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.__init__
-1:0: C0301: Line too long (110/100) (line-too-long)
-4:0: C0301: Line too long (119/100) (line-too-long)
-7:0: C0301: Line too long (124/100) (line-too-long)
-************* Module common.strategy.core.transitions.conditional_transition.transitions_condition
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition' (import-error)
-4:0: E0401: Unable to import 'strategy.core.transitions.conditional_transition.transitions_condition.from_function_transition_condition' (import-error)
-7:0: E0401: Unable to import 'strategy.core.transitions.conditional_transition.transitions_condition.zone_accessibility_transition_condition' (import-error)
-************* Module common.strategy.core.task_nodes.timeout_task_node
-33:0: C0301: Line too long (137/100) (line-too-long)
-40:0: C0301: Line too long (101/100) (line-too-long)
-82:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'strategy.core.task_nodes.base_task_node' (import-error)
-7:0: E0401: Unable to import 'strategy.core.tasks' (import-error)
-43:25: W0613: Unused argument 'ctx' (unused-argument)
-69:11: E0203: Access to member 'status' before its definition line 80 (access-member-before-definition)
-71:79: E0203: Access to member 'status' before its definition line 80 (access-member-before-definition)
-78:11: E0203: Access to member 'start_time' before its definition line 79 (access-member-before-definition)
-79:12: W0201: Attribute 'start_time' defined outside __init__ (attribute-defined-outside-init)
-80:12: W0201: Attribute 'status' defined outside __init__ (attribute-defined-outside-init)
-95:12: W0201: Attribute 'status' defined outside __init__ (attribute-defined-outside-init)
-96:12: W0201: Attribute 'end_time' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.strategy.core.task_nodes.base_task_node
-34:0: C0301: Line too long (137/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'loggerplusplus' (import-error)
-9:0: E0401: Unable to import 'strategy.core.task_nodes.scoring_functions' (import-error)
-13:0: E0401: Unable to import 'strategy.core.tasks' (import-error)
-20:0: R0902: Too many instance attributes (13/7) (too-many-instance-attributes)
-93:55: W0613: Unused argument 'ctx' (unused-argument)
-104:54: W0613: Unused argument 'ctx' (unused-argument)
-161:19: W0718: Catching too general exception Exception (broad-exception-caught)
-136:8: W0612: Unused variable 'all_done' (unused-variable)
-************* Module common.strategy.core.task_nodes
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.core.task_nodes.base_task_node' (import-error)
-2:0: E0401: Unable to import 'strategy.core.task_nodes.scoring_functions' (import-error)
-8:0: E0401: Unable to import 'strategy.core.task_nodes.timeout_task_node' (import-error)
-************* Module common.strategy.core.task_nodes.scoring_functions.constant_scoring_function
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'strategy.core.task_nodes.scoring_functions.base_scoring_function' (import-error)
-14:0: C0115: Missing class docstring (missing-class-docstring)
-18:4: C0116: Missing function or method docstring (missing-function-docstring)
-20:8: W0613: Unused argument 'prev_node' (unused-argument)
-21:8: W0613: Unused argument 'current_node' (unused-argument)
-22:8: W0613: Unused argument 'ctx' (unused-argument)
-14:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.task_nodes.scoring_functions.base_scoring_function
-1:0: C0114: Missing module docstring (missing-module-docstring)
-11:0: C0115: Missing class docstring (missing-class-docstring)
-13:4: C0116: Missing function or method docstring (missing-function-docstring)
-11:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.task_nodes.scoring_functions.navigation_scoring_function
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'strategy.core.task_nodes.scoring_functions.base_scoring_function' (import-error)
-14:0: C0115: Missing class docstring (missing-class-docstring)
-18:4: C0116: Missing function or method docstring (missing-function-docstring)
-20:8: W0613: Unused argument 'prev_node' (unused-argument)
-21:8: W0613: Unused argument 'current_node' (unused-argument)
-14:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.task_nodes.scoring_functions.default_scoring_function
-1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'strategy.core.task_nodes.scoring_functions.base_scoring_function' (import-error)
-14:0: C0115: Missing class docstring (missing-class-docstring)
-15:4: C0116: Missing function or method docstring (missing-function-docstring)
-17:8: W0613: Unused argument 'prev_node' (unused-argument)
-18:8: W0613: Unused argument 'current_node' (unused-argument)
-19:8: W0613: Unused argument 'ctx' (unused-argument)
-14:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.strategy.core.task_nodes.scoring_functions
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.core.task_nodes.scoring_functions.base_scoring_function' (import-error)
-4:0: E0401: Unable to import 'strategy.core.task_nodes.scoring_functions.constant_scoring_function' (import-error)
-7:0: E0401: Unable to import 'strategy.core.task_nodes.scoring_functions.default_scoring_function' (import-error)
-10:0: E0401: Unable to import 'strategy.core.task_nodes.scoring_functions.navigation_scoring_function' (import-error)
-************* Module common.strategy.tools.visualize
-3:0: C0301: Line too long (102/100) (line-too-long)
-4:0: C0301: Line too long (107/100) (line-too-long)
-28:0: C0301: Line too long (107/100) (line-too-long)
-96:0: C0301: Line too long (107/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-8:0: E0401: Unable to import 'matplotlib.pyplot' (import-error)
-9:0: E0401: Unable to import 'networkx' (import-error)
-10:0: E0401: Unable to import 'graphviz' (import-error)
-12:0: E0401: Unable to import 'strategy.core.sub_graphs' (import-error)
-13:0: E0401: Unable to import 'strategy.core.task_nodes.base_task_node' (import-error)
-14:0: E0401: Unable to import 'strategy.core.tasks.base_task' (import-error)
-15:0: E0401: Unable to import 'strategy.core.tasks.status' (import-error)
-79:8: C0415: Import outside toplevel (webbrowser) (import-outside-toplevel)
-145:8: C0415: Import outside toplevel (webbrowser) (import-outside-toplevel)
-************* Module common.strategy.tools
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'strategy.tools.visualize' (import-error)
-************* Module common.utils.utils
-1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'shapely' (import-error)
-6:0: C0115: Missing class docstring (missing-class-docstring)
-80:12: W0702: No exception type(s) specified (bare-except)
-************* Module common.utils
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'utils.utils' (import-error)
-************* Module common.teensy.base_teensy
-15:0: C0301: Line too long (111/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-8:0: E0401: Unable to import 'loggerplusplus' (import-error)
-10:0: E0401: Unable to import 'usb_com.python' (import-error)
-11:0: E0401: Unable to import 'usb_com.python.messages' (import-error)
-17:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-17:4: R0913: Too many arguments (8/5) (too-many-arguments)
-17:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-14:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module common.teensy.gpio_teensy
-25:0: C0301: Line too long (101/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'loggerplusplus' (import-error)
-8:0: E0401: Unable to import 'teensy.tools' (import-error)
-9:0: E0401: Unable to import 'usb_com.python' (import-error)
-15:4: R0913: Too many arguments (8/5) (too-many-arguments)
-15:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-12:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module common.teensy
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'teensy.base_teensy' (import-error)
-2:0: E0401: Unable to import 'teensy.gpio_teensy' (import-error)
-3:0: E0401: Unable to import 'teensy.tools' (import-error)
-************* Module common.teensy.tools
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'teensy.tools.gpio_manager' (import-error)
-************* Module common.teensy.tools.gpio_manager.actuators_type
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.teensy.tools.gpio_manager.gpio_manager
-52:0: C0301: Line too long (106/100) (line-too-long)
-56:0: C0301: Line too long (113/100) (line-too-long)
-59:0: C0301: Line too long (110/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'loggerplusplus' (import-error)
-8:0: E0401: Unable to import 'teensy.tools.gpio_manager.actuators_type' (import-error)
-************* Module common.teensy.tools.gpio_manager
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'teensy.tools.gpio_manager.actuators_type' (import-error)
-2:0: E0401: Unable to import 'teensy.tools.gpio_manager.gpio_manager' (import-error)
-************* Module common.geometry.oriented_point
-18:0: E0401: Unable to import 'shapely' (import-error)
-51:4: W1113: Keyword argument before variable positional arguments list in the definition of __new__ function (keyword-arg-before-vararg)
-74:20: E1121: Too many positional arguments for classmethod call (too-many-function-args)
-************* Module common.geometry.helpers
-3:0: E0401: Unable to import 'shapely' (import-error)
-4:0: E0401: Unable to import 'shapely.geometry' (import-error)
-************* Module common.geometry
-4:0: E0401: Unable to import 'shapely' (import-error)
-18:0: E0401: Unable to import 'shapely.affinity' (import-error)
-19:0: E0401: Unable to import 'shapely.geometry' (import-error)
-20:0: E0401: Unable to import 'shapely.ops' (import-error)
-23:0: E0401: Unable to import 'geometry.helpers' (import-error)
-24:0: E0401: Unable to import 'geometry.oriented_point' (import-error)
+************* Module PAMI.lib.ota.ui.convert
+25:0: C0103: Constant name "byte_array" doesn't conform to UPPER_CASE naming style (invalid-name)
 ************* Module robot1.rasp.a_config_loader
 161:0: I0011: Locally disabling import-outside-toplevel (C0415) (locally-disabled)
 161:0: I0023: 'C0415' is cryptic: use '# pylint: disable=import-outside-toplevel' instead (use-symbolic-message-instead)
@@ -1245,78 +644,66 @@
 353:0: C0301: Line too long (132/100) (line-too-long)
 356:0: C0301: Line too long (130/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'loggerplusplus' (import-error)
-161:4: E0401: Unable to import 'navigation' (import-error)
-22:0: R0903: Too few public methods (0/2) (too-few-public-methods)
 161:0: I0020: Suppressed 'import-outside-toplevel' (from line 161) (suppressed-message)
 ************* Module robot1.rasp.main
 89:0: C0301: Line too long (111/100) (line-too-long)
 143:0: C0301: Line too long (116/100) (line-too-long)
-89:9: W0511: ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,  # TODO: To fix, this feature is not working (fixme)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'loggerplusplus' (import-error)
-4:0: E0401: Unable to import 'taskbrain' (import-error)
-5:0: E0401: Unable to import 'ws_comms' (import-error)
-7:0: E0401: Unable to import 'a_config_loader' (import-error)
-8:0: E0401: Unable to import 'arena' (import-error)
-9:0: E0401: Unable to import 'brains' (import-error)
-10:0: E0401: Unable to import 'geometry' (import-error)
-11:0: E0401: Unable to import 'navigation' (import-error)
-12:0: E0401: Unable to import 'sensors' (import-error)
 ************* Module robot1.rasp.boombot_strategy.show_game_context
 1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'arena' (import-error)
-2:0: E0401: Unable to import 'controllers' (import-error)
-8:0: E0401: Unable to import 'strategy.core' (import-error)
-11:0: R0903: Too few public methods (0/2) (too-few-public-methods)
 ************* Module robot1.rasp.boombot_strategy
 1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'boombot_strategy.show_game_context' (import-error)
+************* Module robot1.rasp.boombot_strategy.strategies.base_strategy
+78:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.basic_strategy
+31:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.debug_strategy
+30:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.only_banner_strategy
+27:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy
+2:0: C0301: Line too long (107/100) (line-too-long)
+33:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.tower_rush_strategy
+2:0: C0301: Line too long (107/100) (line-too-long)
+33:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.banner_deployment
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.construct
+20:0: C0301: Line too long (102/100) (line-too-long)
+25:0: C0301: Line too long (124/100) (line-too-long)
+95:0: C0301: Line too long (102/100) (line-too-long)
+100:0: C0301: Line too long (124/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.pickup
+21:0: C0301: Line too long (104/100) (line-too-long)
+23:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.push_one_floor_to_wall
+45:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+23:0: R0914: Too many local variables (16/15) (too-many-locals)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.wall_pickup
+27:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs
+1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.boombot_strategy.tasks.actuator_task
 15:0: C0301: Line too long (101/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'a_config_loader' (import-error)
-10:0: E0401: Unable to import 'boombot_strategy.show_game_context' (import-error)
-11:0: E0401: Unable to import 'strategy.core' (import-error)
-14:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-31:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-49:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-67:0: R0903: Too few public methods (1/2) (too-few-public-methods)
 87:0: C0115: Missing class docstring (missing-class-docstring)
 88:4: C0116: Missing function or method docstring (missing-function-docstring)
-87:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-95:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-112:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-129:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver
-24:0: C0301: Line too long (102/100) (line-too-long)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone
+8:0: C0301: Line too long (102/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-8:0: E0401: Unable to import 'a_config_loader' (import-error)
-9:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.navigation_task' (import-error)
-10:0: E0401: Unable to import 'geometry' (import-error)
-11:0: E0401: Unable to import 'navigation' (import-error)
-21:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.no_acs_detection_profile' (import-error)
-24:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile' (import-error)
-27:0: E0401: Unable to import 'strategy.core' (import-error)
-30:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-55:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-110:8: W0201: Attribute '_is_initialized' defined outside __init__ (attribute-defined-outside-init)
-122:8: W0201: Attribute 'navigator_task' defined outside __init__ (attribute-defined-outside-init)
-76:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.navigation_task
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'boombot_strategy.show_game_context' (import-error)
-2:0: E0401: Unable to import 'navigation' (import-error)
-3:0: E0401: Unable to import 'strategy.core' (import-error)
-6:0: C0115: Missing class docstring (missing-class-docstring)
-7:4: C0116: Missing function or method docstring (missing-function-docstring)
-6:0: R0903: Too few public methods (1/2) (too-few-public-methods)
-************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.odometrie
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'boombot_strategy.show_game_context' (import-error)
-7:0: E0401: Unable to import 'geometry' (import-error)
-8:0: E0401: Unable to import 'strategy.core.tasks.base_task' (import-error)
-11:0: R0903: Too few public methods (1/2) (too-few-public-methods)
 ************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.go_to_stuff_zone
 2:0: C0301: Line too long (102/100) (line-too-long)
 16:0: C0301: Line too long (102/100) (line-too-long)
@@ -1325,144 +712,36 @@
 26:0: C0301: Line too long (103/100) (line-too-long)
 43:0: C0301: Line too long (104/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'a_config_loader' (import-error)
-10:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.navigation_task' (import-error)
-11:0: E0401: Unable to import 'navigation' (import-error)
-16:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile' (import-error)
-21:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone
-8:0: C0301: Line too long (102/100) (line-too-long)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver
+24:0: C0301: Line too long (102/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'a_config_loader' (import-error)
-2:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.navigation_task' (import-error)
-3:0: E0401: Unable to import 'navigation' (import-error)
-8:0: E0401: Unable to import 'navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile' (import-error)
-13:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-37:0: R0903: Too few public methods (0/2) (too-few-public-methods)
+110:8: W0201: Attribute '_is_initialized' defined outside __init__ (attribute-defined-outside-init)
+122:8: W0201: Attribute 'navigator_task' defined outside __init__ (attribute-defined-outside-init)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.navigation_task
+1:0: C0114: Missing module docstring (missing-module-docstring)
+6:0: C0115: Missing class docstring (missing-class-docstring)
+7:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.odometrie
+1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks
 1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone' (import-error)
-5:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.go_to_stuff_zone' (import-error)
-8:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.maneuver' (import-error)
-13:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.navigation_task' (import-error)
-14:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.odometrie' (import-error)
-************* Module robot1.rasp.boombot_strategy.sub_graphs.construct
-20:0: C0301: Line too long (102/100) (line-too-long)
-25:0: C0301: Line too long (124/100) (line-too-long)
-95:0: C0301: Line too long (102/100) (line-too-long)
-100:0: C0301: Line too long (124/100) (line-too-long)
+************* Module robot1.rasp.brains.main_brain
 1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'boombot_strategy.tasks.actuator_task' (import-error)
-10:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks' (import-error)
-11:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone' (import-error)
-14:0: E0401: Unable to import 'strategy.core' (import-error)
-************* Module robot1.rasp.boombot_strategy.sub_graphs.banner_deployment
+25:4: R0913: Too many arguments (7/5) (too-many-arguments)
+25:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+78:4: W0105: String statement has no effect (pointless-string-statement)
+82:4: W0105: String statement has no effect (pointless-string-statement)
+115:8: C0415: Import outside toplevel (boombot_strategy.ShowGameContext) (import-outside-toplevel)
+116:8: C0415: Import outside toplevel (boombot_strategy.strategies.TowerRushAltStrategy) (import-outside-toplevel)
+230:30: W0123: Use of eval (eval-used)
+232:24: W0123: Use of eval (eval-used)
+************* Module robot1.rasp.brains
 1:0: C0114: Missing module docstring (missing-module-docstring)
-9:0: E0401: Unable to import 'boombot_strategy.tasks.actuator_task' (import-error)
-10:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks' (import-error)
-15:0: E0401: Unable to import 'strategy.core' (import-error)
-************* Module robot1.rasp.boombot_strategy.sub_graphs.wall_pickup
-27:0: C0301: Line too long (107/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'boombot_strategy.tasks.actuator_task' (import-error)
-12:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks' (import-error)
-17:0: E0401: Unable to import 'strategy.core' (import-error)
-************* Module robot1.rasp.boombot_strategy.sub_graphs.pickup
-21:0: C0301: Line too long (104/100) (line-too-long)
-23:0: C0301: Line too long (107/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'boombot_strategy.tasks.actuator_task' (import-error)
-12:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks' (import-error)
-17:0: E0401: Unable to import 'strategy.core' (import-error)
-************* Module robot1.rasp.boombot_strategy.sub_graphs.push_one_floor_to_wall
-45:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-8:0: E0401: Unable to import 'boombot_strategy.tasks.actuator_task' (import-error)
-14:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks' (import-error)
-20:0: E0401: Unable to import 'strategy.core' (import-error)
-23:0: R0914: Too many local variables (16/15) (too-many-locals)
-************* Module robot1.rasp.boombot_strategy.sub_graphs
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'boombot_strategy.sub_graphs.banner_deployment' (import-error)
-2:0: E0401: Unable to import 'boombot_strategy.sub_graphs.construct' (import-error)
-6:0: E0401: Unable to import 'boombot_strategy.sub_graphs.pickup' (import-error)
-7:0: E0401: Unable to import 'boombot_strategy.sub_graphs.push_one_floor_to_wall' (import-error)
-************* Module robot1.rasp.boombot_strategy.strategies.debug_strategy
-30:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'loggerplusplus' (import-error)
-9:0: E0401: Unable to import 'boombot_strategy' (import-error)
-10:0: E0401: Unable to import 'boombot_strategy.strategies.base_strategy' (import-error)
-11:0: E0401: Unable to import 'boombot_strategy.sub_graphs' (import-error)
-15:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone' (import-error)
-18:0: E0401: Unable to import 'strategy.core' (import-error)
-21:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module robot1.rasp.boombot_strategy.strategies.base_strategy
-78:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'loggerplusplus' (import-error)
-5:0: E0401: Unable to import 'a_config_loader' (import-error)
-6:0: E0401: Unable to import 'strategy.core' (import-error)
-14:0: E0401: Unable to import 'strategy.tools' (import-error)
-************* Module robot1.rasp.boombot_strategy.strategies.tower_rush_strategy
-2:0: C0301: Line too long (107/100) (line-too-long)
-33:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'loggerplusplus' (import-error)
-9:0: E0401: Unable to import 'boombot_strategy' (import-error)
-10:0: E0401: Unable to import 'boombot_strategy.strategies.base_strategy' (import-error)
-11:0: E0401: Unable to import 'boombot_strategy.sub_graphs' (import-error)
-17:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone' (import-error)
-20:0: E0401: Unable to import 'strategy.core' (import-error)
-23:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module robot1.rasp.boombot_strategy.strategies.basic_strategy
-31:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'loggerplusplus' (import-error)
-9:0: E0401: Unable to import 'boombot_strategy' (import-error)
-10:0: E0401: Unable to import 'boombot_strategy.strategies.base_strategy' (import-error)
-11:0: E0401: Unable to import 'boombot_strategy.sub_graphs' (import-error)
-16:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone' (import-error)
-19:0: E0401: Unable to import 'strategy.core' (import-error)
-22:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy
-2:0: C0301: Line too long (107/100) (line-too-long)
-33:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'loggerplusplus' (import-error)
-9:0: E0401: Unable to import 'boombot_strategy' (import-error)
-10:0: E0401: Unable to import 'boombot_strategy.strategies.base_strategy' (import-error)
-11:0: E0401: Unable to import 'boombot_strategy.sub_graphs' (import-error)
-17:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone' (import-error)
-20:0: E0401: Unable to import 'strategy.core' (import-error)
-23:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module robot1.rasp.boombot_strategy.strategies.only_banner_strategy
-27:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-7:0: E0401: Unable to import 'loggerplusplus' (import-error)
-9:0: E0401: Unable to import 'boombot_strategy' (import-error)
-10:0: E0401: Unable to import 'boombot_strategy.strategies.base_strategy' (import-error)
-11:0: E0401: Unable to import 'boombot_strategy.sub_graphs' (import-error)
-12:0: E0401: Unable to import 'boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone' (import-error)
-15:0: E0401: Unable to import 'strategy.core' (import-error)
-18:0: R0903: Too few public methods (0/2) (too-few-public-methods)
-************* Module robot1.rasp.boombot_strategy.strategies
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'boombot_strategy.strategies.basic_strategy' (import-error)
-2:0: E0401: Unable to import 'boombot_strategy.strategies.debug_strategy' (import-error)
-3:0: E0401: Unable to import 'boombot_strategy.strategies.only_banner_strategy' (import-error)
-4:0: E0401: Unable to import 'boombot_strategy.strategies.tower_rush_alt_strategy' (import-error)
-5:0: E0401: Unable to import 'boombot_strategy.strategies.tower_rush_strategy' (import-error)
 ************* Module robot1.rasp.controllers
 1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'controllers.actuators' (import-error)
-2:0: E0401: Unable to import 'controllers.rolling_basis' (import-error)
 ************* Module robot1.rasp.controllers.actuators.actuators_dummy
 121:0: C0301: Line too long (107/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'loggerplusplus' (import-error)
-3:0: E0401: Unable to import 'a_config_loader' (import-error)
-4:0: E0401: Unable to import 'controllers.actuators.actuators_show' (import-error)
 13:4: R0913: Too many arguments (7/5) (too-many-arguments)
 13:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
 71:4: R0913: Too many arguments (6/5) (too-many-arguments)
@@ -1475,9 +754,6 @@
 366:0: C0301: Line too long (116/100) (line-too-long)
 430:0: C0301: Line too long (120/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-4:0: E0401: Unable to import 'loggerplusplus' (import-error)
-6:0: E0401: Unable to import 'a_config_loader' (import-error)
-7:0: E0401: Unable to import 'controllers.actuators' (import-error)
 11:0: C0115: Missing class docstring (missing-class-docstring)
 18:0: C0115: Missing class docstring (missing-class-docstring)
 23:0: C0115: Missing class docstring (missing-class-docstring)
@@ -1502,9 +778,6 @@
 40:0: R0904: Too many public methods (24/20) (too-many-public-methods)
 ************* Module robot1.rasp.controllers.actuators
 1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'controllers.actuators.base.actuators' (import-error)
-2:0: E0401: Unable to import 'controllers.actuators.actuators_dummy' (import-error)
-3:0: E0401: Unable to import 'controllers.actuators.actuators_show' (import-error)
 ************* Module robot1.rasp.controllers.actuators.base.actuators
 35:0: C0301: Line too long (115/100) (line-too-long)
 38:0: C0301: Line too long (113/100) (line-too-long)
@@ -1515,50 +788,21 @@
 203:0: C0301: Line too long (112/100) (line-too-long)
 205:0: C0301: Line too long (107/100) (line-too-long)
 228:0: C0301: Line too long (131/100) (line-too-long)
-20:5: W0511: TODO : move to common and handle config properly, not the prority yet (fixme)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-4:0: E0401: Unable to import 'loggerplusplus' (import-error)
-6:0: E0401: Unable to import 'a_config_loader' (import-error)
-7:0: E0401: Unable to import 'teensy' (import-error)
-8:0: E0401: Unable to import 'usb_com.python' (import-error)
 21:4: R0913: Too many arguments (8/5) (too-many-arguments)
 21:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
 193:8: C0103: Argument name "use_I2C" doesn't conform to snake_case naming style (invalid-name)
 183:4: R0913: Too many arguments (8/5) (too-many-arguments)
 183:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
 253:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module robot1.rasp.controllers.rolling_basis.pids
-1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis
-7:0: E0401: Unable to import 'matplotlib.pyplot' (import-error)
-8:0: E0401: Unable to import 'loggerplusplus' (import-error)
-10:0: E0401: Unable to import 'a_config_loader' (import-error)
-11:0: E0401: Unable to import 'controllers.rolling_basis.pids' (import-error)
-12:0: E0401: Unable to import 'geometry' (import-error)
-13:0: E0401: Unable to import 'teensy' (import-error)
-14:0: E0401: Unable to import 'usb_com.python' (import-error)
 27:4: R0913: Too many arguments (8/5) (too-many-arguments)
 27:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
 341:15: W0718: Catching too general exception Exception (broad-exception-caught)
 387:15: W0718: Catching too general exception Exception (broad-exception-caught)
 416:15: W0718: Catching too general exception Exception (broad-exception-caught)
-************* Module robot1.rasp.controllers.rolling_basis.rolling_basis_dummy
-14:0: C0301: Line too long (105/100) (line-too-long)
-32:0: C0301: Line too long (120/100) (line-too-long)
-35:0: C0301: Line too long (113/100) (line-too-long)
-36:0: C0301: Line too long (101/100) (line-too-long)
-126:0: C0301: Line too long (129/100) (line-too-long)
+************* Module robot1.rasp.controllers.rolling_basis.pids
 1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'loggerplusplus' (import-error)
-5:0: E0401: Unable to import 'a_config_loader' (import-error)
-6:0: E0401: Unable to import 'controllers.rolling_basis.pids' (import-error)
-7:0: E0401: Unable to import 'geometry' (import-error)
-8:0: E0401: Unable to import 'teensy' (import-error)
-19:4: R0913: Too many arguments (7/5) (too-many-arguments)
-19:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-146:15: W0718: Catching too general exception Exception (broad-exception-caught)
-191:15: W0718: Catching too general exception Exception (broad-exception-caught)
-216:15: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module robot1.rasp.controllers.rolling_basis.rolling_basis
 17:0: C0301: Line too long (105/100) (line-too-long)
 36:0: C0301: Line too long (120/100) (line-too-long)
@@ -1568,22 +812,60 @@
 205:0: C0301: Line too long (129/100) (line-too-long)
 250:0: C0301: Line too long (129/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-5:0: E0401: Unable to import 'loggerplusplus' (import-error)
-7:0: E0401: Unable to import 'a_config_loader' (import-error)
-8:0: E0401: Unable to import 'controllers.rolling_basis.pids' (import-error)
-9:0: E0401: Unable to import 'geometry' (import-error)
-10:0: E0401: Unable to import 'teensy' (import-error)
-11:0: E0401: Unable to import 'usb_com.python' (import-error)
 22:4: R0913: Too many arguments (8/5) (too-many-arguments)
 22:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
 225:15: W0718: Catching too general exception Exception (broad-exception-caught)
 270:15: W0718: Catching too general exception Exception (broad-exception-caught)
 297:15: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module robot1.rasp.controllers.rolling_basis.rolling_basis_dummy
+14:0: C0301: Line too long (105/100) (line-too-long)
+32:0: C0301: Line too long (120/100) (line-too-long)
+35:0: C0301: Line too long (113/100) (line-too-long)
+36:0: C0301: Line too long (101/100) (line-too-long)
+126:0: C0301: Line too long (129/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+19:4: R0913: Too many arguments (7/5) (too-many-arguments)
+19:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+146:15: W0718: Catching too general exception Exception (broad-exception-caught)
+191:15: W0718: Catching too general exception Exception (broad-exception-caught)
+216:15: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module robot1.rasp.controllers.rolling_basis
 1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'controllers.rolling_basis.asservissment_rolling_basis' (import-error)
-4:0: E0401: Unable to import 'controllers.rolling_basis.rolling_basis' (import-error)
-5:0: E0401: Unable to import 'controllers.rolling_basis.rolling_basis_dummy' (import-error)
+************* Module robot1.rasp.sensors
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.sensors.inputs.inputs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.sensors.inputs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.sensors.lidar.lidar
+24:0: C0301: Line too long (113/100) (line-too-long)
+54:0: C0301: Line too long (110/100) (line-too-long)
+55:0: C0301: Line too long (122/100) (line-too-long)
+106:0: C0301: Line too long (105/100) (line-too-long)
+115:0: C0301: Line too long (101/100) (line-too-long)
+152:0: C0301: Line too long (116/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+13:0: C0103: Type variable name "TLidar" doesn't conform to predefined naming style (invalid-name)
+32:4: R0913: Too many arguments (8/5) (too-many-arguments)
+32:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+86:12: C0415: Import outside toplevel (pysicktim) (import-outside-toplevel)
+121:23: W0718: Catching too general exception Exception (broad-exception-caught)
+146:11: C1805: "n == 0" can be simplified to "not n", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+157:11: C1805: "centered_polars.size == 0" can be simplified to "not centered_polars.size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+231:12: W0707: Consider explicitly re-raising using 'raise Exception(msg) from error' (raise-missing-from)
+231:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+61:8: W0238: Unused private member `Lidar.__angle_unit` (unused-private-member)
+************* Module robot1.rasp.sensors.lidar.lidar_dummy
+32:0: C0301: Line too long (110/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+14:4: R0913: Too many arguments (8/5) (too-many-arguments)
+14:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+191:8: W0612: Unused variable 'valid_polars' (unused-variable)
+37:8: W0238: Unused private member `LidarDummy.__min_angle` (unused-private-member)
+38:8: W0238: Unused private member `LidarDummy.__max_angle` (unused-private-member)
+39:8: W0238: Unused private member `LidarDummy.__angle_unit` (unused-private-member)
+************* Module robot1.rasp.sensors.lidar
+1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.tests.config_loader
 166:0: I0011: Locally disabling import-outside-toplevel (C0415) (locally-disabled)
 166:0: I0023: 'C0415' is cryptic: use '# pylint: disable=import-outside-toplevel' instead (use-symbolic-message-instead)
@@ -1600,92 +882,7 @@
 358:0: C0301: Line too long (132/100) (line-too-long)
 361:0: C0301: Line too long (130/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'loggerplusplus' (import-error)
-166:4: E0401: Unable to import 'navigation' (import-error)
-27:0: R0903: Too few public methods (0/2) (too-few-public-methods)
 166:0: I0020: Suppressed 'import-outside-toplevel' (from line 166) (suppressed-message)
-************* Module robot1.rasp.brains.main_brain
-18:1: W0511: TODO: automatiser tous les dummys grâce aux fichiers __init__.py comme le PIN (fixme)
-19:1: W0511: TODO: automatiser tous les dummys comme les actuators, com, etc. Avec le config_loader (fixme)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'matplotlib.pyplot' (import-error)
-7:0: E0401: Unable to import 'numpy' (import-error)
-8:0: E0401: Unable to import 'loggerplusplus' (import-error)
-9:0: E0401: Unable to import 'taskbrain' (import-error)
-10:0: E0401: Unable to import 'ws_comms' (import-error)
-12:0: E0401: Unable to import 'arena' (import-error)
-13:0: E0401: Unable to import 'controllers.actuators' (import-error)
-14:0: E0401: Unable to import 'controllers.rolling_basis' (import-error)
-15:0: E0401: Unable to import 'geometry' (import-error)
-16:0: E0401: Unable to import 'sensors' (import-error)
-22:0: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
-25:4: R0913: Too many arguments (7/5) (too-many-arguments)
-25:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-78:4: W0105: String statement has no effect (pointless-string-statement)
-82:4: W0105: String statement has no effect (pointless-string-statement)
-115:8: E0401: Unable to import 'boombot_strategy' (import-error)
-115:8: C0415: Import outside toplevel (boombot_strategy.ShowGameContext) (import-outside-toplevel)
-116:8: E0401: Unable to import 'boombot_strategy.strategies' (import-error)
-116:8: C0415: Import outside toplevel (boombot_strategy.strategies.TowerRushAltStrategy) (import-outside-toplevel)
-230:30: W0123: Use of eval (eval-used)
-232:24: W0123: Use of eval (eval-used)
-************* Module robot1.rasp.brains
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'brains.main_brain' (import-error)
-************* Module robot1.rasp.sensors
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'sensors.inputs' (import-error)
-2:0: E0401: Unable to import 'sensors.lidar' (import-error)
-************* Module robot1.rasp.sensors.lidar.lidar
-24:0: C0301: Line too long (113/100) (line-too-long)
-54:0: C0301: Line too long (110/100) (line-too-long)
-55:0: C0301: Line too long (122/100) (line-too-long)
-106:0: C0301: Line too long (105/100) (line-too-long)
-115:0: C0301: Line too long (101/100) (line-too-long)
-152:0: C0301: Line too long (116/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: E0401: Unable to import 'numpy' (import-error)
-7:0: E0401: Unable to import 'loggerplusplus' (import-error)
-8:0: E0401: Unable to import 'numpy.typing' (import-error)
-13:0: C0103: Type variable name "TLidar" doesn't conform to predefined naming style (invalid-name)
-16:0: R0902: Too many instance attributes (10/7) (too-many-instance-attributes)
-32:4: R0913: Too many arguments (8/5) (too-many-arguments)
-32:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-86:12: C0415: Import outside toplevel (pysicktim) (import-outside-toplevel)
-86:12: E0401: Unable to import 'pysicktim' (import-error)
-121:23: W0718: Catching too general exception Exception (broad-exception-caught)
-146:11: C1805: "n == 0" can be simplified to "not n", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-157:11: C1805: "centered_polars.size == 0" can be simplified to "not centered_polars.size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-231:12: W0707: Consider explicitly re-raising using 'raise Exception(msg) from error' (raise-missing-from)
-231:12: W0719: Raising too general exception: Exception (broad-exception-raised)
-61:8: W0238: Unused private member `Lidar.__angle_unit` (unused-private-member)
-************* Module robot1.rasp.sensors.lidar.lidar_dummy
-32:0: C0301: Line too long (110/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'numpy' (import-error)
-4:0: E0401: Unable to import 'loggerplusplus' (import-error)
-7:0: R0902: Too many instance attributes (9/7) (too-many-instance-attributes)
-14:4: R0913: Too many arguments (8/5) (too-many-arguments)
-14:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-191:8: W0612: Unused variable 'valid_polars' (unused-variable)
-37:8: W0238: Unused private member `LidarDummy.__min_angle` (unused-private-member)
-38:8: W0238: Unused private member `LidarDummy.__max_angle` (unused-private-member)
-39:8: W0238: Unused private member `LidarDummy.__angle_unit` (unused-private-member)
-************* Module robot1.rasp.sensors.lidar
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'sensors.lidar.lidar' (import-error)
-2:0: E0401: Unable to import 'sensors.lidar.lidar_dummy' (import-error)
-************* Module robot1.rasp.sensors.inputs.inputs
-1:0: C0114: Missing module docstring (missing-module-docstring)
-3:0: E0401: Unable to import 'loggerplusplus' (import-error)
-5:0: E0401: Unable to import 'gpio' (import-error)
-************* Module robot1.rasp.sensors.inputs
-1:0: C0114: Missing module docstring (missing-module-docstring)
-1:0: E0401: Unable to import 'sensors.inputs.inputs' (import-error)
-************* Module PAMI.lib.ota.ui.convert
-6:0: E0401: Unable to import 'loggerplusplus' (import-error)
-25:0: C0103: Constant name "byte_array" doesn't conform to UPPER_CASE naming style (invalid-name)
-************* Module PAMI.lib.ota.ui.__init__
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.a_config_loader:[18:415]
 ==robot1.rasp.tests.config_loader:[23:420]
@@ -2267,7 +1464,8 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             - set_linear_position_pid(kp=float, ki=float, kd=float) → None
 
         Args:
-            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
@@ -2275,7 +1473,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 
         """
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
                 pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -2312,8 +1510,8 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             - set_angular_position_pid(kp=float, ki=float, kd=float) → None
 
         Args:
-            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or
-                a single dictionary with keys 'kp', 'ki', 'kd'.
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:
@@ -2321,7 +1519,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 
         """
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
                 pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -2382,6 +1580,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             current_navigator_task.trajectory_planner.start_planning()  # Reset internal clock
 
             self.logger.debug("Trajectory planner reset internal clock.")
+            # reset timer just for logging/manure measurement
             self._reset_timer()
             self.logger.debug("Timer reset after avoidance completion.")
 
@@ -2393,7 +1592,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
                 current_navigator_task.current_trajectory_command
             )  # Avoidance complete, continue as normal
 
-        # 4. Continue with original trajectory
+        # 4. Continue with current command
         self.logger.debug(
             "No avoidance action required. Continuing original trajectory.",
         )
@@ -2474,10 +1673,10 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 
         # Build STRtree with geometries (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[327:336]
-==robot1.rasp.controllers.rolling_basis.rolling_basis:[256:265]
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[373:382]
+==robot1.rasp.controllers.rolling_basis.rolling_basis:[211:220]
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
                 pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -2486,8 +1685,8 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             else:
                 raise ValueError( (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[373:382]
-==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[132:141]
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[327:336]
+==robot1.rasp.controllers.rolling_basis.rolling_basis:[256:265]
         try:
             if len(args) == 3 and all(isinstance(arg, float) for arg in args):
                 pid = PID(*args)  # type: ignore[reportArgumentType]
@@ -2541,10 +1740,10 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
         ) (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.boombot_strategy.strategies.basic_strategy:[48:71]
-==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[56:69]
+==robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy:[68:81]
         )
 
-        # Step 6: Move to the backstage zone to finish the game
+        # Step 8 Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
             name="[End] Go to backstage",
             tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
@@ -2580,10 +1779,7 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
             baudrate,
             enable_crc,
             enable_dummy,
-        )
-
-    def reset(self) -> None:
-        """Resets the Teensy device by sending a reset command.""" (duplicate-code)
+        ) (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.strategy.core.tasks.base_navigation_task:[68:79]
 ==robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver:[124:133]
@@ -2595,7 +1791,9 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
                 acs_detection_profile_params=self.acs_detection_profile_params,
                 stabilization_delay=self.stabilization_delay,
             ),
-        ) (duplicate-code)
+        )
+
+    @abstractmethod (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.base_arena.grid_manager:[458:469]
 ==common.arena.base_arena.grid_manager_2:[276:286]
@@ -2606,7 +1804,6 @@ LoggerManager.global_config = LoggerConfig.from_kwargs(
 
         if path:
             for i in range(len(path) - 1):
-                # Draw a line connecting the current node to the next node
                 ax.plot(
                     [path[i].x, path[i + 1].x],
                     [path[i].y, path[i + 1].y], (duplicate-code)
@@ -2648,16 +1845,22 @@ __all__ = [
             return 0.0254
  (duplicate-code)
 1:0: R0801: Similar lines in 2 files
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[327:335]
+==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[178:186]
+        try:
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
+                pid = PID(*args)  # type: ignore[reportArgumentType]
+            elif len(args) == 1 and isinstance(args[0], dict):
+                pid = PID.from_dict(args[0])
+            elif kwargs:
+                pid = PID.from_dict(kwargs)
+            else: (duplicate-code)
+1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[72:83]
 ==robot1.rasp.controllers.rolling_basis.rolling_basis:[59:77]
         self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
 
-        """
-        This is used to match a handling function to a message type.
-        add_callback can also be used.
-
-        """
         # Register message handlers
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
@@ -2665,20 +1868,18 @@ __all__ = [
             self.rcv_rolling_basis_state,
             Messages.UPDATE_ROLLING_BASIS.value,
         )
-
-        # Initialize PID controllers from configuration
-        # self.initialize_pids() (duplicate-code)
+ (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[327:335]
-==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[178:186]
-        try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
-                pid = PID(*args)  # type: ignore[reportArgumentType]
-            elif len(args) == 1 and isinstance(args[0], dict):
-                pid = PID.from_dict(args[0])
-            elif kwargs:
-                pid = PID.from_dict(kwargs)
-            else: (duplicate-code)
+==common.navigation.trajectory_planner.common.__init__:[9:17]
+==common.navigation.trajectory_planner.common.segments.__init__:[11:19]
+__all__ = [
+    "BaseSegment",
+    "RotationSegment",
+    "SegmentMapper",
+    "SmoothSegment",
+    "StopSegment",
+    "StraightSegment",
+] (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone:[50:58]
 ==common.arena.base_arena.arena_zones.stuff_zone:[47:71]
@@ -2687,9 +1888,25 @@ __all__ = [
             polygon=polygon,
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
-            zone_color="#097D8D",
+            zone_color="#0FEE9C",
             go_to_positions=go_to_positions,
-        ) (duplicate-code)
+        )
+
+    @override
+    def update(
+        self,
+        team_color: TeamColor,
+        ally_position: Point | OrientedPoint,
+        enemy_position: Point | OrientedPoint,
+    ) -> None:
+        """Updates the zone accessibility based on the positions of allies and enemies.
+
+        Args:
+            team_color (TeamColor): The color of the team.
+            ally_position (Point | OrientedPoint): Position of an ally.
+            enemy_position (Point | OrientedPoint): Position of an enemy.
+
+        """ (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.base_arena.grid_manager:[377:423]
 ==common.arena.base_arena.grid_manager_2:[209:255]
@@ -2740,16 +1957,29 @@ __all__ = [
 
         """ (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.navigation.trajectory_planner.common.__init__:[9:17]
-==common.navigation.trajectory_planner.common.segments.__init__:[11:19]
-__all__ = [
-    "BaseSegment",
-    "RotationSegment",
-    "SegmentMapper",
-    "SmoothSegment",
-    "StopSegment",
-    "StraightSegment",
-] (duplicate-code)
+==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[410:426]
+==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[210:231]
+        try:
+            self.set_pids(
+                linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
+                angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to initialize PIDs: {e}")
+
+    # ====== Equality Comparison ======
+
+    @override
+    def __eq__(self, other: object) -> bool:
+        """Check equality between two RollingBasis instances.
+
+        Args:
+            other (object): The other object to compare against.
+
+        Returns:
+            bool: ``True`` if the objects are equal, ``False`` otherwise.
+
+        """ (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[443:461]
 ==robot1.rasp.controllers.rolling_basis.rolling_basis:[312:330]
@@ -2780,38 +2010,17 @@ __all__ = [
             + struct.pack("<d", target_position.y)
             + struct.pack("<d", target_position.theta)
         )
+
+        # Send the composed message to the Teensy
+        # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
 
-        # ====== Plotting Method ======
-
-    def plot_logs(self) -> None:
-        """Plot target vs actual odometry for X, Y, and Theta using stored logs.
-
-        Ensures all series have the same length before plotting.
-
-        """ (duplicate-code)
-1:0: R0801: Similar lines in 2 files
-==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[410:426]
-==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[210:231]
-        try:
-            self.set_pids(
-                linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
-                angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
-            )
-        except Exception as e:
-            self.logger.error(f"Failed to initialize PIDs: {e}")
-
-    # ====== Equality Comparison ======
-
-    @override
-    def __eq__(self, other: object) -> bool:
-        """Check equality between two RollingBasis instances.
+    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
+    def set_odometrie(self, odometrie: OrientedPoint) -> None:
+        """Sends a message to set the odometrie of the rolling basis.
 
         Args:
-            other (object): The other object to compare against.
-
-        Returns:
-            bool: ``True`` if the objects are equal, ``False`` otherwise.
+            odometrie (OrientedPoint): The new odometrie values.
 
         """ (duplicate-code)
 1:0: R0801: Similar lines in 2 files
@@ -2841,8 +2050,8 @@ __all__ = [
 
         # Step 6: Move to the backstage zone to finish the game (duplicate-code)
 1:0: R0801: Similar lines in 2 files
+==robot1.rasp.boombot_strategy.strategies.basic_strategy:[59:68]
 ==robot1.rasp.boombot_strategy.strategies.debug_strategy:[44:53]
-==robot1.rasp.boombot_strategy.strategies.tower_rush_strategy:[59:68]
         go_to_backstage = BaseTaskNode(
             name="[End] Go to backstage",
             tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
@@ -2880,8 +2089,16 @@ __all__ = [
         self.__max_angle = max_angle
         self.__angle_unit = self.__init_angles_unit(unit_angle)
         self.__distance_unit = self.__init_distances_unit(unit_distance)
-
         self._min_distance = min_distance (duplicate-code)
+1:0: R0801: Similar lines in 2 files
+==common.navigation.__init__:[74:80]
+==common.navigation.navigator.__init__:[9:15]
+    "Navigator",
+    "NavigatorSignalsEnum",
+    "NavigatorState",
+    "NavigatorTask",
+    "NavigatorTaskParams",
+    "NavigatorTaskState", (duplicate-code)
 1:0: R0801: Similar lines in 2 files
 ==common.arena.base_arena.arena_zones.border_zone:[40:46]
 ==common.arena.base_arena.arena_zones.forbidden_zone:[43:49]
@@ -2901,15 +2118,6 @@ __all__ = [
     "ZoneType",
 ] (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.navigation.__init__:[74:80]
-==common.navigation.navigator.__init__:[9:15]
-    "Navigator",
-    "NavigatorSignalsEnum",
-    "NavigatorState",
-    "NavigatorTask",
-    "NavigatorTaskParams",
-    "NavigatorTaskState", (duplicate-code)
-1:0: R0801: Similar lines in 2 files
 ==robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis:[384:404]
 ==robot1.rasp.controllers.rolling_basis.rolling_basis_dummy:[188:206]
             self.angular_position_pid = pid
@@ -2922,11 +2130,13 @@ __all__ = [
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
     ) -> None:
-        """Configure all PID controllers using dictionaries for each.
+        """Configure all PID controllers.
 
         Args:
-            linear_position_pid (dict[str, float]): PID configuration for linear position.
-            angular_position_pid (dict[str, float]): PID configuration for angular position.
+            linear_position_pid (dict[str, float]):
+                PID values for linear position control.
+            angular_position_pid (dict[str, float]):
+                PID values for angular position control.
 
         """
         self.set_linear_position_pid(**linear_position_pid) (duplicate-code)
@@ -2953,8 +2163,8 @@ __all__ = [
             accessibility=accessibility,
             buffer_size=buffer_size, (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.arena_zones.border_zone:[40:45]
 ==common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone:[51:56]
+==common.arena.base_arena.arena_zones.forbidden_zone:[43:48]
             buffer_size=buffer_size,
             polygon=polygon,
             buffered_polygon=buffered_polygon,
@@ -2969,14 +2179,13 @@ __all__ = [
             buffered_polygon=buffered_polygon,
             update_callback=update_callback, (duplicate-code)
 1:0: R0801: Similar lines in 2 files
-==common.arena.base_arena.arena_zones.forbidden_zone:[43:48]
+==common.arena.base_arena.arena_zones.border_zone:[40:45]
 ==common.arena.base_arena.arena_zones.stuff_zone:[48:53]
             buffer_size=buffer_size,
             polygon=polygon,
             buffered_polygon=buffered_polygon,
             update_callback=update_callback,
-            zone_color="#2b2b2b", (duplicate-code)
+            zone_color="#EF0D0D", (duplicate-code)
 
------------------------------------
-Your code has been rated at 1.79/10
-
+------------------------------------------------------------------
+Your code has been rated at 8.47/10 (previous run: 2.87/10, +5.59)

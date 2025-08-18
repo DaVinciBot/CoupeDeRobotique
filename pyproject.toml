@@ -210,6 +210,7 @@ quote-style = "double"
 [tool.ruff.lint]
 ignore = [
   "CPY001", # missing-copyright-notice
+  "EXE002", # shebang-missing-executable-file
   "FIX002", # line-contains-todo
   "FIX004", # line-contains-hack
   "G004", # logging-f-string
