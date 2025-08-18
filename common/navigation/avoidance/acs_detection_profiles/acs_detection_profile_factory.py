@@ -5,15 +5,23 @@ This module selects a concrete profile implementation based on parameters.
 
 from typing import Any, cast
 
-from navigation.avoidance.acs_detection_profiles import (
+from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile import (  # noqa: E501
     AngularRestrictProjectionAcsDetectionProfile,
     AngularRestrictProjectionAcsDetectionProfileParams,
+)
+from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
     BaseAcsDetectionProfile,
     BaseAcsDetectionProfileParams,
+)
+from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfile,
     NoAcsDetectionProfileParams,
+)
+from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile import (  # noqa: E501
     NoProjectionAcsDetectionProfile,
     NoProjectionAcsDetectionProfileParams,
+)
+from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfile,
     RectangularProjectionAcsDetectionProfileParams,
 )

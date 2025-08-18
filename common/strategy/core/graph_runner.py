@@ -54,11 +54,6 @@ class GraphRunner:
         next_active: list[BaseTaskNode] = []
         for node in self.active:
             prev_node = self.prev.get(node)
-            if prev_node is None:
-                self.logger.warning(
-                    f"Node '{node.name}' has no previous node; skipping execution.",
-                )
-                continue
 
             # Log entry if first time
             if not node.entered:

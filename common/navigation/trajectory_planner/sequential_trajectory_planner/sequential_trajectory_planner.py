@@ -21,7 +21,7 @@ from navigation.trajectory_planner.common import (
     StopSegment,
     StraightSegment,
 )
-from navigation.trajectory_planner.sequential_trajectory_planner import (
+from navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner_params import (  # noqa: E501
     SequentialTrajectoryPlannerParams,
 )
 from navigation.trajectory_planner.speed_profile import SpeedProfiler

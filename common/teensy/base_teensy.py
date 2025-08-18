@@ -32,8 +32,10 @@ class BaseComTeensy(Com):
             vid (int): Vendor ID of the device.
             pid (int): Product ID of the device.
             baudrate (int): Baud rate for communication.
-            enable_crc (bool, optional): Enables CRC error checking. Defaults to ``True``.
-            enable_dummy (bool, optional): Enables dummy packet handling. Defaults to ``False``.
+            enable_crc (bool, optional):
+                Enables CRC error checking. Defaults to ``True``.
+            enable_dummy (bool, optional):
+                Enables dummy packet handling. Defaults to ``False``.
 
         """
         super().__init__(

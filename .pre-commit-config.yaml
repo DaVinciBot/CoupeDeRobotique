@@ -10,8 +10,4 @@ repos:
     hooks:
     -   id: ruff-check
         args: [ --select=SLOT000 ]
-    # -   id: ruff-format
--   repo: https://github.com/psf/black
-    rev: 22.10.0
-    hooks:
-    -   id: black
+    -   id: ruff-format

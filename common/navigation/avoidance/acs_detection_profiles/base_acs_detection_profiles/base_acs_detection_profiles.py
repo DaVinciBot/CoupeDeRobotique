@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 from loggerplusplus import Logger
 
 from arena import AllyZone, EnemyZone
-from navigation.avoidance.acs_detection_profiles import (
+from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profiles_params import (  # noqa: E501
     BaseAcsDetectionProfileParams,
 )
 

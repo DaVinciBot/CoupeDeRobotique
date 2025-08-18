@@ -168,7 +168,8 @@ class RollingBasisDummy(BaseComTeensy):
             - set_angular_position_pid(kp=float, ki=float, kd=float) → None
 
         Args:
-            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or
+                a single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Raises:

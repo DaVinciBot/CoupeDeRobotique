@@ -3,7 +3,9 @@
 Defines the viewing angle and distance used to trigger the avoidance system.
 """
 
-from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
+from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
+    BaseAcsDetectionProfileParams,
+)
 from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
 
 

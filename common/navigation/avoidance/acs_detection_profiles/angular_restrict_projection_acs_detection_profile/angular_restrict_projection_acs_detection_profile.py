@@ -4,8 +4,10 @@ from math import atan2
 from typing import override
 
 from arena import AllyZone, EnemyZone
-from navigation.avoidance.acs_detection_profiles import (
+from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile_params import (  # noqa: E501
     AngularRestrictProjectionAcsDetectionProfileParams,
+)
+from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
     BaseAcsDetectionProfile,
 )
 

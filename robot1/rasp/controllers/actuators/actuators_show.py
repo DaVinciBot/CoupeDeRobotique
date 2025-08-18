@@ -37,7 +37,7 @@ class Stepper:
     speed: int
 
 
-class ActuatorsShow(Actuators):
+class ActuatorsShow(Actuators):  # noqa: PLR0904
     """ActuatorsShow is a subclass of Actuators that provides a specific implementation for the show mode.
     It inherits from the Actuators class and overrides its methods to provide functionality for the show mode.
 
@@ -57,12 +57,18 @@ class ActuatorsShow(Actuators):
 
         Args:
             logger (Logger): The logger instance for logging.
-            serial_number (int, optional): The serial number of the Teensy. Defaults to CONFIG.ACTUATOR_TEENSY_SER.
-            vid (int, optional): The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
-            pid (int, optional): The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
-            baudrate (int, optional): The baud rate for serial communication. Defaults to CONFIG.TEENSY_BAUDRATE.
-            enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
-            enable_dummy (bool, optional): Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+            serial_number (int, optional):
+                The serial number of the Teensy. Defaults to CONFIG.ACTUATOR_TEENSY_SER.
+            vid (int, optional):
+                The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
+            pid (int, optional):
+                The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
+            baudrate (int, optional): The baud rate for serial communication.
+                Defaults to CONFIG.TEENSY_BAUDRATE.
+            enable_crc (bool, optional):
+                Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
+            enable_dummy (bool, optional):
+                Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
 
         """
         super().__init__(
@@ -355,9 +361,7 @@ class ActuatorsShow(Actuators):
 
     def build_floors(
         self,
-    ) -> (
-        None
-    ):  # Ask if I should use time.sleep or asyncio.sleep and thus making this method async
+    ) -> None:  # Ask if I should use time.sleep or asyncio.sleep and thus making this method async
         """Builds the floors by deploying the servos and moving the elevator to the top position.
         This method is used to build the floors by deploying the servos and moving the elevator to the top position.
 
