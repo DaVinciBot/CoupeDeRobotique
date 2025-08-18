@@ -13,6 +13,10 @@ class ActuatorType(Enum):
     """
 
     UNKNOWN = auto()
+    """Default undefined actuator type."""
     SERVO = auto()
+    """Represents a servo motor."""
     STEPPER = auto()
+    """Represents a stepper motor."""
     LCD = auto()
+    """Represents an LCD-display."""

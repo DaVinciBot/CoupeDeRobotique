@@ -1,9 +1,4 @@
-# ====== Code Summary ======
-# This module defines the NavigatorTask class, which orchestrates path planning, trajectory planning,
-# and obstacle avoidance for autonomous navigation. Based on provided configuration parameters,
-# it dynamically instantiates components like planners (Delta, Basic, Sequential) and the stop-and-wait
-# avoidance strategy. It manages the navigation lifecycle through methods for planning, timeout handling,
-# completion detection, and reactive avoidance execution.
+"""Navigator task handling planning, avoidance, and stabilization."""
 
 import time
 from typing import TYPE_CHECKING
@@ -28,10 +23,7 @@ if TYPE_CHECKING:
 
 
 class NavigatorTask:
-    """A task responsible for executing autonomous navigation including path planning,
-    trajectory generation, obstacle avoidance, and a stabilization timer after reaching the goal.
-
-    """
+    """Execute autonomous navigation, including path planning and avoidance."""
 
     def __init__(self, params: NavigatorTaskParams) -> None:
         """Initialize the NavigatorTask.
@@ -89,7 +81,7 @@ class NavigatorTask:
         return (
             False
             if self.params.timeout is None or self._start_time is None
-            else (self._get_elapsed_time() > self.params.timeout)
+            else self._get_elapsed_time() > self.params.timeout
         )
 
     def _abort(self) -> TrajectoryPlanCommand:
@@ -109,37 +101,40 @@ class NavigatorTask:
         ally_zone: AllyZone,
         enemy_zone: EnemyZone,
     ) -> TrajectoryPlanCommand:
-        # 1. Initial planning
+        """Advance the task and return the next trajectory command.
+
+        Args:
+            ally_zone (AllyZone): The ally zone information.
+            enemy_zone (EnemyZone): The enemy zone information.
+
+        Returns:
+            TrajectoryPlanCommand: Next trajectory command.
+
+        """
         if self.state == NavigatorTaskState.NOT_PLANNED:
             self._plan_task(ally_zone)
             return self.trajectory_planner.get_plan()
 
-        # 2. Timeout check
         if self._has_timed_out():
             return self._abort()
 
-        # 3. Completion detection
+        cmd = self.trajectory_planner.get_plan()
+
         if self._is_finished() and self.state != NavigatorTaskState.STABILIZING:
-            # Start stabilization timer
             if self.params.stabilization_delay > 0:
                 self._stabilization_start_time = time.time()
                 self.state = NavigatorTaskState.STABILIZING
-                # keep last trajectory command
-                return self.trajectory_planner.get_plan()
+            else:
+                self.state = NavigatorTaskState.FINISHED
 
-            # No stabilization: finish immediately with stop
-            self.state = NavigatorTaskState.FINISHED
-            return self.trajectory_planner.get_plan()
-
-        # 4. Stabilization period: replay last trajectory command
         if self.state == NavigatorTaskState.STABILIZING:
             if self._get_stabilization_elapsed() < self.params.stabilization_delay:
-                return self.trajectory_planner.get_plan()
-            # Timer expired: finish and send stop
+                return cmd
             self.state = NavigatorTaskState.FINISHED
-            return self.trajectory_planner.get_plan()
 
-        # 5. Obstacle avoidance
+        if self.state == NavigatorTaskState.FINISHED:
+            return cmd
+
         avoidance_cmd = self.avoidance.handle(
             current_navigator_task=self,
             ally_zone=ally_zone,
@@ -148,6 +143,5 @@ class NavigatorTask:
         if self.state == NavigatorTaskState.AVOIDING:
             return avoidance_cmd
 
-        # 6. Continue normal trajectory
-        self.current_trajectory_command = self.trajectory_planner.get_plan()
+        self.current_trajectory_command = cmd
         return self.current_trajectory_command

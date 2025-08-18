@@ -42,7 +42,7 @@ class AcsDetectionProfileFactory:
                 Parameters describing the desired profile.
 
         Returns:
-            BaseAcsDetectionProfile: The instantiated detection profile.
+            BaseAcsDetectionProfile[Any]: The instantiated detection profile.
 
         Raises:
             ValueError: If the avoidance strategy is not supported.
@@ -68,5 +68,5 @@ class AcsDetectionProfileFactory:
                 cast("AngularRestrictProjectionAcsDetectionProfileParams", params),
             )
 
-        message = f"Unsupported acs detection profile: {profile}"
-        raise ValueError(message)
+        msg = f"Unsupported acs detection profile: {profile}"
+        raise ValueError(msg)

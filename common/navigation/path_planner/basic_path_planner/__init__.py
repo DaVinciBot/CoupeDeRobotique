@@ -1,3 +1,5 @@
+"""Basic path planner implementation."""
+
 from navigation.path_planner.basic_path_planner.basic_path_planner import (
     BasicPathPlanner,
 )

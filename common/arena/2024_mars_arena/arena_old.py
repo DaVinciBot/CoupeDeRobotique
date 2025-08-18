@@ -43,7 +43,7 @@ class Arena:
             logger (Logger): Logger to use.
             safe_collision_distance (float, optional):
                 Safety distance for collision detection. Defaults to 30.
-            game_borders (Polygon, optional):
+            game_borders (Polygon | None, optional):
                 Game field borders. Defaults to a 200x300 rectangle.
             zones (dict[str, MultiPolygon] | None, optional):
                 Dictionary of arena zones. Defaults to None.
@@ -75,7 +75,7 @@ class Arena:
         for zone in self.zones.values():
             prepare(zone)
 
-    def valide_position(self, pos: Point) -> bool:
+    def validate_position(self, pos: Point) -> bool:
         """Validate the position of a robot within the arena.
 
         Args:
@@ -181,6 +181,10 @@ class Arena:
     def _shift_inside(self, point: Point, borders: Polygon) -> Point:
         """Shift ``point`` inside ``borders`` to avoid collisions.
 
+        Args:
+            point (Point): The point to shift.
+            borders (Polygon): The borders to stay within.
+
         Returns:
             Point: Adjusted point within the borders.
 
@@ -227,10 +231,10 @@ class Arena:
                 "to avoid collision with the border"
             )
             self.logger.log(msg, LogLevels.DEBUG)
-            if self.valide_position(center):
+            if self.validate_position(center):
                 return center
             center = self._shift_inside(center, borders)
-            if not self.valide_position(center):
+            if not self.validate_position(center):
                 center = self._shift_inside(center, borders)
             return center
 

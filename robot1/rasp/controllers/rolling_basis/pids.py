@@ -13,7 +13,9 @@ class PidID(Enum):
     """
 
     LINEAR_POSITION = 0
+    """Identifier for linear position PID control."""
     ANGULAR_POSITION = 1
+    """Identifier for angular position PID control."""
 
 
 @dataclass
@@ -28,8 +30,11 @@ class PID:
     """
 
     kp: float
+    """Proportional coefficient."""
     ki: float
+    """Integral coefficient."""
     kd: float
+    """Derivative coefficient."""
 
     def to_bytes(self) -> bytes:
         """Serialize the PID parameters into bytes.
@@ -58,7 +63,8 @@ class PID:
         """Initialize a PID instance from a tuple.
 
         Args:
-            pid_tuple (tuple[float, float, float]): A tuple containing PID parameters (kp, ki, kd).
+            pid_tuple (tuple[float, float, float]):
+                A tuple containing PID parameters (kp, ki, kd).
 
         Returns:
             PID: An instance of the PID class.

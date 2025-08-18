@@ -1,3 +1,5 @@
+"""Common utilities for trajectory planning."""
+
 from navigation.trajectory_planner.common.segments import (
     BaseSegment,
     RotationSegment,

@@ -1,3 +1,5 @@
+"""Parameters for the A* path planner."""
+
 from pathfinding.core.diagonal_movement import DiagonalMovement
 from pathfinding.core.grid import Grid, GridNode
 from pathfinding.finder.a_star import AStarFinder
@@ -30,7 +32,8 @@ class AStarPathPlannerParams(BasePathPlannerParams):
             chunk_size (int): Size of each grid chunk.
             start (OrientedPoint): Starting point of the path.
             goal (OrientedPoint): Goal point of the path.
-            direction (Direction, optional): Indicates whether the path should be planned FORWARD or BACKWARD. Defaults to Direction.FORWARD.
+            direction (Direction, optional): Indicates whether the path should
+                be planned FORWARD or BACKWARD. Defaults to Direction.FORWARD.
 
         """
         # Direction parameter

@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module defines the NavigatorSignalsDispatcher class, a robust event dispatcher
-# for navigator signals using the Events library. It dynamically generates signal handlers
-# based on NavigatorSignalsEnum, and provides methods to connect, disconnect, and emit signals.
-# Integrated logging helps track and debug signal activity.
+"""Dispatcher managing navigator signals using the Events library."""
 
 from collections.abc import Callable
 from typing import Any
@@ -14,14 +10,7 @@ from navigation.navigator.signals.signals_enum import NavigatorSignalsEnum
 
 
 class NavigatorSignalsDispatcher:  # UNUSED
-    """Production-grade dispatcher for navigator signals using the Events library.
-
-    This class dynamically creates event handlers for all defined signals in
-    NavigatorSignalsEnum. It allows the connection, disconnection, and emission
-    of these signals with optional arguments. Logging is used extensively for
-    debugging and traceability.
-
-    """
+    """Dispatcher for navigator signals."""
 
     def __init__(self, logger: Logger | None = None) -> None:
         """Initialize the NavigatorSignalsDispatcher.
@@ -29,7 +18,8 @@ class NavigatorSignalsDispatcher:  # UNUSED
         Dynamically creates an Events subclass with all signal names for internal use.
 
         Args:
-            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to None.
 
         """
         self.logger = logger or Logger(
@@ -57,7 +47,8 @@ class NavigatorSignalsDispatcher:  # UNUSED
 
         Args:
             signal (NavigatorSignalsEnum): The signal to connect to.
-            callback (Callable[..., Any]): The callback function to attach to the signal.
+            callback (Callable[..., Any]):
+                The callback function to attach to the signal.
 
         """
         try:

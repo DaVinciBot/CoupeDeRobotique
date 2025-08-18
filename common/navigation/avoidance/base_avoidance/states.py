@@ -4,7 +4,14 @@ from enum import Enum, auto
 
 
 class AvoidanceState(Enum):
-    """State of the avoidance process."""
+    """State of the avoidance process.
+
+    Attributes:
+        IDLE: No avoidance in progress.
+        AVOIDING: Avoidance in progress.
+        ABORTED: Avoidance aborted: error, timeout, etc.
+
+    """
 
     IDLE = auto()
     """No avoidance in progress"""

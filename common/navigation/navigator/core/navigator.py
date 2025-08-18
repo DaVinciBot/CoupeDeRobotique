@@ -1,3 +1,5 @@
+"""Navigator task queue and execution management."""
+
 from collections import deque
 
 from loggerplusplus import Logger
@@ -20,7 +22,8 @@ class Navigator:
         """Initialize the Navigator.
 
         Args:
-            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to ``None``.
 
         """
         self.logger = logger or Logger(
@@ -39,7 +42,7 @@ class Navigator:
         """Fetch the next task from the queue.
 
         Returns:
-            bool: ``True`` if a new task was fetched, ``False`` if the queue is empty.
+            bool: ``True`` if a new task was fetched, ``False`` otherwise.
 
         """
         if self._tasks_queue:
@@ -54,13 +57,17 @@ class Navigator:
     def add_navigation_task(
         self,
         navigator_task_params: NavigatorTaskParams,
+        *,
         skip_queue: bool = False,
     ) -> None:
         """Add a navigation task to the queue.
 
         Args:
-            navigator_task_params (NavigatorTaskParams): The parameters for the navigation task.
-            skip_queue (bool, optional): If ``True``, skip the queue and execute the task immediately. Defaults to ``False``.
+            navigator_task_params (NavigatorTaskParams):
+                The parameters for the navigation task.
+            skip_queue (bool, optional):
+                If ``True``, skip the queue and execute the task immediately.
+                Defaults to ``False``.
 
         """
         if skip_queue:
@@ -90,9 +97,11 @@ class Navigator:
             TrajectoryPlanCommand: The trajectory plan command.
 
         """
-        # besoins: ally_position_zone, enemy_position_zone, grid, dynamic_grid (comment déclancher sa mis à jour que quand l'ennemi est proche)
+        # besoins: ally_position_zone, enemy_position_zone, grid, dynamic_grid
+        # (comment déclancher sa mis à jour que quand l'ennemi est proche)
 
-        # No current task -> do nothing (current task can't be none if there are tasks in the queue)
+        # No current task -> do nothing
+        # (current task can't be none if there are tasks in the queue)
         if self.current_task is None:
             return TrajectoryPlanCommand.create_stop_command(
                 current_position=ally_zone.point,
@@ -119,7 +128,7 @@ class Navigator:
 
         return task_cmd
 
-    def abort(self, affect_all_tasks: bool = False) -> None:
+    def abort(self, *, affect_all_tasks: bool = False) -> None:
         """Abort the current task and all tasks in the queue.
 
         Args:

@@ -57,7 +57,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
                 records. Defaults to 3.
             no_detection_timeout (float, optional): Timeout before considering no
                 detection. Defaults to 4.0.
-            positions_recorded (Deque[Record] | None, optional): Queue storing
+            positions_recorded (deque[Record] | None, optional): Queue storing
                 recorded positions. Defaults to None.
             speed_vector (SpeedVector | None, optional): Current speed vector.
                 Defaults to None.

@@ -287,7 +287,12 @@ class GridManager:
 
     @override
     def __hash__(self) -> int:
-        """Return a hash based on grid dimensions and chunk size."""
+        """Return a hash based on grid dimensions and chunk size.
+
+        Returns:
+            int: Hash value representing the grid state.
+
+        """
         return hash(
             (
                 self.chunk_size,

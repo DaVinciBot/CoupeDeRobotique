@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1755523675148",
+    "time": "1755531814170",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\GPIO\\__init__.py",
@@ -1192,11 +1192,11 @@
             "message": "Type of parameter \"self\" is unknown",
             "range": {
                 "start": {
-                    "line": 300,
+                    "line": 305,
                     "character": 25
                 },
                 "end": {
-                    "line": 300,
+                    "line": 305,
                     "character": 29
                 }
             },
@@ -1208,11 +1208,11 @@
             "message": "Return type of lambda is unknown",
             "range": {
                 "start": {
-                    "line": 300,
+                    "line": 305,
                     "character": 31
                 },
                 "end": {
-                    "line": 300,
+                    "line": 305,
                     "character": 42
                 }
             },
@@ -1224,11 +1224,11 @@
             "message": "Type of parameter \"self\" is unknown",
             "range": {
                 "start": {
-                    "line": 319,
+                    "line": 324,
                     "character": 25
                 },
                 "end": {
-                    "line": 319,
+                    "line": 324,
                     "character": 29
                 }
             },
@@ -1240,11 +1240,11 @@
             "message": "Return type of lambda is unknown",
             "range": {
                 "start": {
-                    "line": 319,
+                    "line": 324,
                     "character": 31
                 },
                 "end": {
-                    "line": 319,
+                    "line": 324,
                     "character": 42
                 }
             },
@@ -1256,11 +1256,11 @@
             "message": "Type of parameter \"self\" is unknown",
             "range": {
                 "start": {
-                    "line": 353,
+                    "line": 358,
                     "character": 25
                 },
                 "end": {
-                    "line": 353,
+                    "line": 358,
                     "character": 29
                 }
             },
@@ -1272,11 +1272,11 @@
             "message": "Return type of lambda is unknown",
             "range": {
                 "start": {
-                    "line": 353,
+                    "line": 358,
                     "character": 31
                 },
                 "end": {
-                    "line": 353,
+                    "line": 358,
                     "character": 42
                 }
             },
@@ -1288,11 +1288,11 @@
             "message": "Unnecessary isinstance call; \"list[Polygon]\" is always an instance of \"list[Unknown]\"",
             "range": {
                 "start": {
-                    "line": 361,
+                    "line": 366,
                     "character": 15
                 },
                 "end": {
-                    "line": 361,
+                    "line": 366,
                     "character": 48
                 }
             },
@@ -1304,11 +1304,11 @@
             "message": "Type analysis indicates code is unreachable",
             "range": {
                 "start": {
-                    "line": 362,
+                    "line": 367,
                     "character": 12
                 },
                 "end": {
-                    "line": 362,
+                    "line": 367,
                     "character": 27
                 }
             },
@@ -1320,11 +1320,11 @@
             "message": "Expected type arguments for generic class \"list\"",
             "range": {
                 "start": {
-                    "line": 429,
+                    "line": 434,
                     "character": 14
                 },
                 "end": {
-                    "line": 429,
+                    "line": 434,
                     "character": 18
                 }
             },
@@ -1768,11 +1768,11 @@
             "message": "Type of \"__slots__\" is unknown",
             "range": {
                 "start": {
-                    "line": 24,
+                    "line": 28,
                     "character": 4
                 },
                 "end": {
-                    "line": 24,
+                    "line": 28,
                     "character": 13
                 }
             },
@@ -1784,11 +1784,11 @@
             "message": "Cannot access attribute \"__slots__\" for class \"type[Point]\"\n  Attribute \"__slots__\" is unknown",
             "range": {
                 "start": {
-                    "line": 24,
+                    "line": 28,
                     "character": 22
                 },
                 "end": {
-                    "line": 24,
+                    "line": 28,
                     "character": 31
                 }
             },
@@ -1800,11 +1800,11 @@
             "message": "Instance variable \"theta\" is not initialized in the class body or __init__ method",
             "range": {
                 "start": {
-                    "line": 25,
+                    "line": 29,
                     "character": 4
                 },
                 "end": {
-                    "line": 25,
+                    "line": 29,
                     "character": 9
                 }
             },
@@ -1816,11 +1816,11 @@
             "message": "Mismatch between signature of __new__ and __init__ in class \"OrientedPoint\"\n  Signature of __init__ is \"(x_or_coords: float | tuple[float, float], y_or_theta: float | None = None, theta: float = 0) -> None\"\n  Signature of __new__ is \"(x_or_coords: float | tuple[float, float], y: float | None = None, *_args: float) -> OrientedPoint\"",
             "range": {
                 "start": {
-                    "line": 27,
+                    "line": 31,
                     "character": 8
                 },
                 "end": {
-                    "line": 27,
+                    "line": 31,
                     "character": 16
                 }
             },
@@ -1832,11 +1832,11 @@
             "message": "Method \"__hash__\" is not marked as override but is overriding a method in class \"BaseGeometry\"",
             "range": {
                 "start": {
-                    "line": 195,
+                    "line": 200,
                     "character": 8
                 },
                 "end": {
-                    "line": 195,
+                    "line": 200,
                     "character": 16
                 }
             },
@@ -2246,11 +2246,11 @@
             "message": "Expected type arguments for generic class \"BasePathPlanner\"",
             "range": {
                 "start": {
-                    "line": 45,
+                    "line": 37,
                     "character": 27
                 },
                 "end": {
-                    "line": 45,
+                    "line": 37,
                     "character": 42
                 }
             },
@@ -2262,11 +2262,11 @@
             "message": "Expected type arguments for generic class \"BaseTrajectoryPlanner\"",
             "range": {
                 "start": {
-                    "line": 48,
+                    "line": 40,
                     "character": 33
                 },
                 "end": {
-                    "line": 48,
+                    "line": 40,
                     "character": 54
                 }
             },
@@ -2278,11 +2278,11 @@
             "message": "Expected type arguments for generic class \"BaseAvoidance\"",
             "range": {
                 "start": {
-                    "line": 54,
+                    "line": 46,
                     "character": 24
                 },
                 "end": {
-                    "line": 54,
+                    "line": 46,
                     "character": 37
                 }
             },
@@ -2294,11 +2294,11 @@
             "message": "Argument of type \"OrientedPoint | None\" cannot be assigned to parameter \"goal\" of type \"OrientedPoint\" in function \"instantiate\"\n  Type \"OrientedPoint | None\" is not assignable to type \"OrientedPoint\"\n    \"None\" is not assignable to \"OrientedPoint\"",
             "range": {
                 "start": {
-                    "line": 79,
+                    "line": 71,
                     "character": 21
                 },
                 "end": {
-                    "line": 79,
+                    "line": 71,
                     "character": 37
                 }
             },
@@ -2310,11 +2310,11 @@
             "message": "Condition will always evaluate to False since the types \"float\" and \"None\" have no overlap",
             "range": {
                 "start": {
-                    "line": 90,
+                    "line": 82,
                     "character": 15
                 },
                 "end": {
-                    "line": 90,
+                    "line": 82,
                     "character": 42
                 }
             },
@@ -2326,11 +2326,11 @@
             "message": "Argument of type \"OrientedPoint | None\" cannot be assigned to parameter \"current_position\" of type \"OrientedPoint\" in function \"create_stop_command\"\n  Type \"OrientedPoint | None\" is not assignable to type \"OrientedPoint\"\n    \"None\" is not assignable to \"OrientedPoint\"",
             "range": {
                 "start": {
-                    "line": 97,
+                    "line": 89,
                     "character": 29
                 },
                 "end": {
-                    "line": 97,
+                    "line": 89,
                     "character": 45
                 }
             },
@@ -2342,11 +2342,11 @@
             "message": "Cannot assign to attribute \"timeout\" for class \"NavigatorTaskParams*\"\n  Type \"float | None\" is not assignable to type \"float\"\n    \"None\" is not assignable to \"float\"",
             "range": {
                 "start": {
-                    "line": 48,
+                    "line": 53,
                     "character": 30
                 },
                 "end": {
-                    "line": 48,
+                    "line": 53,
                     "character": 37
                 }
             },
@@ -2364,11 +2364,11 @@
             "message": "Type of \"time_tracker\" is partially unknown\n  Type of \"time_tracker\" is \"(param_logger: Logger | str | ((...) -> Unknown) = None, log_level: LogLevels = LogLevels.DEBUG) -> ((func: ((...) -> Unknown)) -> _Wrapped[..., Unknown, ..., Unknown])\"",
             "range": {
                 "start": {
-                    "line": 7,
+                    "line": 4,
                     "character": 35
                 },
                 "end": {
-                    "line": 7,
+                    "line": 4,
                     "character": 47
                 }
             },
@@ -2380,11 +2380,11 @@
             "message": "Return type, \"Unknown | list[GridNode]\", is partially unknown",
             "range": {
                 "start": {
-                    "line": 116,
+                    "line": 114,
                     "character": 15
                 },
                 "end": {
-                    "line": 116,
+                    "line": 114,
                     "character": 37
                 }
             },
@@ -2396,11 +2396,11 @@
             "message": "Argument of type \"float\" cannot be assigned to parameter \"x\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
             "range": {
                 "start": {
-                    "line": 158,
+                    "line": 157,
                     "character": 16
                 },
                 "end": {
-                    "line": 158,
+                    "line": 157,
                     "character": 63
                 }
             },
@@ -2412,11 +2412,11 @@
             "message": "Argument of type \"float\" cannot be assigned to parameter \"y\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
             "range": {
                 "start": {
-                    "line": 158,
+                    "line": 157,
                     "character": 16
                 },
                 "end": {
-                    "line": 158,
+                    "line": 157,
                     "character": 63
                 }
             },
@@ -2428,11 +2428,11 @@
             "message": "Argument of type \"GridNode | Point\" cannot be assigned to parameter \"node\" of type \"GridNode\" in function \"__get_grid_node_center\"\n  Type \"GridNode | Point\" is not assignable to type \"GridNode\"\n    \"Point\" is not assignable to \"GridNode\"",
             "range": {
                 "start": {
-                    "line": 158,
+                    "line": 157,
                     "character": 54
                 },
                 "end": {
-                    "line": 158,
+                    "line": 157,
                     "character": 61
                 }
             },
@@ -2444,11 +2444,11 @@
             "message": "Argument of type \"float\" cannot be assigned to parameter \"x\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
             "range": {
                 "start": {
-                    "line": 163,
+                    "line": 162,
                     "character": 16
                 },
                 "end": {
-                    "line": 163,
+                    "line": 162,
                     "character": 67
                 }
             },
@@ -2460,11 +2460,11 @@
             "message": "Argument of type \"float\" cannot be assigned to parameter \"y\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
             "range": {
                 "start": {
-                    "line": 163,
+                    "line": 162,
                     "character": 16
                 },
                 "end": {
-                    "line": 163,
+                    "line": 162,
                     "character": 67
                 }
             },
@@ -2476,11 +2476,11 @@
             "message": "Argument of type \"GridNode | Point\" cannot be assigned to parameter \"node\" of type \"GridNode\" in function \"__get_grid_node_center\"\n  Type \"GridNode | Point\" is not assignable to type \"GridNode\"\n    \"Point\" is not assignable to \"GridNode\"",
             "range": {
                 "start": {
-                    "line": 163,
+                    "line": 162,
                     "character": 54
                 },
                 "end": {
-                    "line": 163,
+                    "line": 162,
                     "character": 65
                 }
             },
@@ -2492,11 +2492,11 @@
             "message": "Argument of type \"float\" cannot be assigned to parameter \"x\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
             "range": {
                 "start": {
-                    "line": 175,
+                    "line": 177,
                     "character": 12
                 },
                 "end": {
-                    "line": 175,
+                    "line": 177,
                     "character": 60
                 }
             },
@@ -2508,11 +2508,11 @@
             "message": "Argument of type \"float\" cannot be assigned to parameter \"y\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
             "range": {
                 "start": {
-                    "line": 175,
+                    "line": 177,
                     "character": 12
                 },
                 "end": {
-                    "line": 175,
+                    "line": 177,
                     "character": 60
                 }
             },
@@ -2524,11 +2524,11 @@
             "message": "Argument of type \"GridNode | Point\" cannot be assigned to parameter \"node\" of type \"GridNode\" in function \"__get_grid_node_center\"\n  Type \"GridNode | Point\" is not assignable to type \"GridNode\"\n    \"Point\" is not assignable to \"GridNode\"",
             "range": {
                 "start": {
-                    "line": 175,
+                    "line": 177,
                     "character": 50
                 },
                 "end": {
-                    "line": 175,
+                    "line": 177,
                     "character": 58
                 }
             },
@@ -2540,11 +2540,11 @@
             "message": "Type of parameter \"self\" is unknown",
             "range": {
                 "start": {
-                    "line": 269,
+                    "line": 274,
                     "character": 25
                 },
                 "end": {
-                    "line": 269,
+                    "line": 274,
                     "character": 29
                 }
             },
@@ -2556,11 +2556,11 @@
             "message": "Return type of lambda is unknown",
             "range": {
                 "start": {
-                    "line": 269,
+                    "line": 274,
                     "character": 31
                 },
                 "end": {
-                    "line": 269,
+                    "line": 274,
                     "character": 42
                 }
             },
@@ -2572,11 +2572,11 @@
             "message": "Cannot assign to attribute \"oriented_path_found\" for class \"AStarPathPlannerParams\"\n  \"list[Point | OrientedPoint]\" is not assignable to \"list[OrientedPoint]\"\n    Type parameter \"_T@list\" is invariant, but \"Point | OrientedPoint\" is not the same as \"OrientedPoint\"\n    Consider switching from \"list\" to \"Sequence\" which is covariant",
             "range": {
                 "start": {
-                    "line": 290,
+                    "line": 298,
                     "character": 42
                 },
                 "end": {
-                    "line": 299,
+                    "line": 308,
                     "character": 9
                 }
             },
@@ -2588,11 +2588,11 @@
             "message": "Argument of type \"list[OrientedPoint]\" cannot be assigned to parameter \"path\" of type \"list[Point]\" in function \"__add_path_extremities_point\"\n  \"list[OrientedPoint]\" is not assignable to \"list[Point]\"\n    Type parameter \"_T@list\" is invariant, but \"OrientedPoint\" is not the same as \"Point\"\n    Consider switching from \"list\" to \"Sequence\" which is covariant",
             "range": {
                 "start": {
-                    "line": 294,
+                    "line": 303,
                     "character": 16
                 },
                 "end": {
-                    "line": 297,
+                    "line": 306,
                     "character": 17
                 }
             },
@@ -2604,47 +2604,31 @@
             "message": "Expected type arguments for generic class \"BasePathPlanner\"",
             "range": {
                 "start": {
-                    "line": 34,
+                    "line": 29,
                     "character": 9
                 },
                 "end": {
-                    "line": 34,
+                    "line": 29,
                     "character": 24
                 }
             },
             "rule": "reportMissingTypeArgument"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\trajectory_planner\\base_trajectory_planner\\base_trajectory_planner.py",
-            "severity": "error",
-            "message": "\"ParamsType\" is not defined",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\path_planner_path_plan_params_factory.py",
+            "severity": "warning",
+            "message": "Type analysis indicates code is unreachable",
             "range": {
                 "start": {
-                    "line": 99,
-                    "character": 48
+                    "line": 55,
+                    "character": 8
                 },
                 "end": {
-                    "line": 99,
-                    "character": 58
+                    "line": 55,
+                    "character": 11
                 }
             },
-            "rule": "reportUndefinedVariable"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\trajectory_planner\\base_trajectory_planner\\base_trajectory_planner.py",
-            "severity": "information",
-            "message": "Return type, \"_Wrapped[..., TrajectoryPlanCommand, (self: BaseTrajectoryPlanner[Unknown]), TrajectoryPlanCommand]\", is partially unknown",
-            "range": {
-                "start": {
-                    "line": 107,
-                    "character": 15
-                },
-                "end": {
-                    "line": 107,
-                    "character": 22
-                }
-            },
-            "rule": "reportUnknownVariableType"
+            "rule": "reportUnreachable"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\trajectory_planner\\speed_profile\\linear_ramped_speed_profile.py",
@@ -8205,10 +8189,10 @@
     ],
     "summary": {
         "filesAnalyzed": 218,
-        "errorCount": 93,
-        "warningCount": 91,
-        "informationCount": 336,
-        "timeInSec": 7.385
+        "errorCount": 92,
+        "warningCount": 92,
+        "informationCount": 335,
+        "timeInSec": 18.805
     }
 }
 

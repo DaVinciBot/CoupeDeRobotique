@@ -1,3 +1,5 @@
+"""A* path planner export package."""
+
 from navigation.path_planner.astar_path_planner.astar_path_planner import (
     AStarPathPlanner,
 )

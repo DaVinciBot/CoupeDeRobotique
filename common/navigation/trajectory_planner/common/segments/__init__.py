@@ -1,3 +1,5 @@
+"""Segment primitives for trajectory planning."""
+
 from navigation.trajectory_planner.common.segments.base_segment import BaseSegment
 from navigation.trajectory_planner.common.segments.rotation_segment import (
     RotationSegment,

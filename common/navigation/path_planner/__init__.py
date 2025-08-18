@@ -1,3 +1,5 @@
+"""Path planner implementations and utilities."""
+
 from navigation.path_planner.structs import (  # noqa: I001
     Direction,
     PathPlanningStrategy,

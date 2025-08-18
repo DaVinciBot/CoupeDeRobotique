@@ -14,5 +14,8 @@ class TeamColor(Enum):
     """
 
     YELLOW = "yellow"
+    """Yellow team."""
     BLUE = "blue"
+    """Blue team."""
     UNDEFINED = "undefined"
+    """Team color not set."""

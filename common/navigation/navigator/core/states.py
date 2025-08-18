@@ -1,3 +1,5 @@
+"""Navigator high-level states."""
+
 from enum import Enum, auto
 
 
@@ -17,12 +19,21 @@ class NavigatorState(Enum):
 
     """
 
-    IDLE = auto()  # Aucun déplacement en cours
-    PLANNING = auto()  # Génération du chemin + trajectoire
-    READY = auto()  # Prêt à bouger (trajectoire prête mais pas lancée)
-    MOVING = auto()  # Exécution du mouvement en cours
-    PAUSED = auto()  # Mouvement temporairement interrompu
-    FINISHED = auto()  # Objectif atteint
-    STOPPED = auto()  # Mouvement interrompu manuellement
-    REPLANNING = auto()  # Recalcul du chemin/trajectoire
-    ERROR = auto()  # Échec ou événement bloquant (obstacle, timeout...)
+    IDLE = auto()
+    """No movement in progress."""
+    PLANNING = auto()
+    """Path generation and trajectory planning."""
+    READY = auto()
+    """Ready to move (trajectory ready but not started)."""
+    MOVING = auto()
+    """Execution of the movement in progress."""
+    PAUSED = auto()
+    """Movement temporarily interrupted."""
+    FINISHED = auto()
+    """Goal reached."""
+    STOPPED = auto()
+    """Movement manually interrupted."""
+    REPLANNING = auto()
+    """Recalculating path/trajectory."""
+    ERROR = auto()
+    """Failure or blocking event (obstacle, timeout, etc.)."""

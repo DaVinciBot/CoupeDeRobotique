@@ -1,3 +1,5 @@
+"""Trajectory planner package exposing public classes."""
+
 from navigation.path_planner import Direction
 from navigation.trajectory_planner.base_trajectory_planner import (
     BaseTrajectoryPlanner,

@@ -1,7 +1,4 @@
-# ====== Code Summary ======
-# This module defines the RotationSegment class, a subclass of BaseSegment,
-# used to represent in-place rotational motion.
-# It includes metadata such as total rotation angle and rotation direction (sign), in addition to standard segment data.
+"""Segment representing in-place rotational motion."""
 
 from geometry import OrientedPoint
 from navigation.trajectory_planner.common.segments.base_segment import BaseSegment
@@ -18,7 +15,7 @@ class RotationSegment(BaseSegment):
         rotation: float,
         sign: int,
     ) -> None:
-        """Initialize a rotation segment with its start and end pose, duration, rotation angle, and direction.
+        """Initialize a rotation segment with pose, duration, rotation, and direction.
 
         Args:
             start_position (OrientedPoint): Pose at the beginning of the rotation.

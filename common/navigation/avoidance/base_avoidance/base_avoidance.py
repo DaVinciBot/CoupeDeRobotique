@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from navigation.navigator.task.navigator_task import NavigatorTask
 
 
-class BaseAvoidance[PARAMS: BaseAvoidanceParams](ABC):
+class BaseAvoidance[PARAMSTYPE: BaseAvoidanceParams](ABC):
     """Abstract base class providing shared utilities for avoidance strategies.
 
     This class encapsulates ACS-based obstacle detection, timeout-based abort
@@ -38,14 +38,14 @@ class BaseAvoidance[PARAMS: BaseAvoidanceParams](ABC):
 
     def __init__(
         self,
-        params: PARAMS,
+        params: PARAMSTYPE,
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
         logger: Logger | None = None,
     ) -> None:
         """Initialize the base avoidance class.
 
         Args:
-            params (PARAMS): Parameters for the avoidance strategy.
+            params (PARAMSTYPE): Parameters for the avoidance strategy.
             acs_detection_profile_params (BaseAcsDetectionProfileParams):
                 Parameters for the ACS detection profile.
             logger (Logger | None, optional): Logger instance for debugging.
@@ -56,7 +56,7 @@ class BaseAvoidance[PARAMS: BaseAvoidanceParams](ABC):
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )
-        self.params: PARAMS = params
+        self.params: PARAMSTYPE = params
 
         self.acs_detector = AcsDetectionProfileFactory.instantiate(
             params=acs_detection_profile_params,
@@ -94,7 +94,7 @@ class BaseAvoidance[PARAMS: BaseAvoidanceParams](ABC):
 
         @functools.wraps(method)
         def wrapper(
-            self: BaseAvoidance[PARAMS],
+            self: BaseAvoidance[PARAMSTYPE],
             current_navigator_task: NavigatorTask,
             ally_zone: AllyZone,
             enemy_zone: EnemyZone,

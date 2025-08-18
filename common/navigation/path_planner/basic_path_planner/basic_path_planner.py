@@ -1,7 +1,4 @@
-# ====== Code Summary ======
-# This module implements ``BasicPathPlanner``, a simple path planner that returns a direct two-point path
-# from start to goal. If the direction is set to BACKWARD, the planner adjusts the orientation of the
-# start and goal points by π radians to reflect the reverse motion requirement.
+"""Direct two-point path planner."""
 
 import math
 
@@ -34,7 +31,8 @@ class BasicPathPlanner(
 
         Args:
             params (BasicPathPlannerParams): Parameters including motion direction.
-            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to None.
 
         """
         super().__init__(params, logger)
@@ -57,10 +55,12 @@ class BasicPathPlanner(
         """Plan a basic two-point path from start to goal.
 
         Args:
-            params (BasicPathPlannerPlanPathParams): Parameters including start and goal points.
+            params (BasicPathPlannerPlanPathParams):
+                Parameters including start and goal points.
 
         Returns:
-            list[OrientedPoint]: List containing start and goal, possibly reversed for backward direction.
+            list[OrientedPoint]: List containing start and goal, possibly reversed
+                for backward direction.
 
         """
         return [

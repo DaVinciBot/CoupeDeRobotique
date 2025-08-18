@@ -19,7 +19,9 @@ class TrajectoryPlannerStrategy(Enum):
     """
 
     BASIC = auto()
+    """Use basic trajectory planner."""
     SEQUENTIAL = auto()
+    """Use sequential trajectory planner."""
 
 
 @dataclass
@@ -34,8 +36,11 @@ class TrajectoryPlanCommand:
     """
 
     position: OrientedPoint
+    """Target pose of the robot."""
     linear_speed: float
+    """Linear velocity component."""
     angular_speed: float
+    """Angular velocity component."""
 
     @classmethod
     def create_stop_command(

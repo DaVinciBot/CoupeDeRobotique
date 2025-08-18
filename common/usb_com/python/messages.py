@@ -39,33 +39,48 @@ class Messages(Enum):
 
     # Rolling Basis
     SET_TARGET_POSITION = 0
+    """Command to set the rolling basis target position."""
     SET_PID = 1
+    """Update PID coefficients for the rolling basis."""
     SET_ODOMETRIE = 2
+    """Reset the odometry."""
 
     # Actuators
     SET_SERVO_ANGLE_I2C = 3
+    """Set a servo angle over I2C."""
     STEPPER_STEP = 4
+    """Move a stepper motor."""
     SET_SERVO_ANGLE_DETACH = 5
+    """Move a servo then detach it."""
     ATTACH_SWITCH = 6
+    """Attach a switch on the actuators board."""
     SET_SERVO_ANGLE = 7
+    """Set a servo angle."""
     SET_STEPPER_DRIVER_ACTIVATION_STATE = 8
+    """Enable or disable the stepper driver."""
 
     # Common (Rolling Basis + Actuators)
     RESET_TEENSY = 126
+    """Reset the Teensy board."""
 
     # two ways : 127 (Convention)
     NACK = 127
+    """Notification of an invalid command."""
 
     # teensy -> rasp : 128-255 (Convention)
     # Rolling Basis
     UPDATE_ROLLING_BASIS = 128
+    """Send odometry data from the Teensy."""
 
     # Actuators
     SWITCH_STATE_RETURN = 129
+    """Report the state of a switch."""
 
     # Common (Rolling Basis + Actuators)
     PRINT = 254
+    """Print a message from the Teensy."""
     UNKNOWN_MSG_TYPE = 255
+    """Unknown command identifier."""
 
     # To use for message creation
     def to_bytes(self) -> bytes:

@@ -22,12 +22,19 @@ class ZoneType(Enum):
     """
 
     YELLOW_RESERVED = auto()
+    """Reserved for the yellow team."""
     BLUE_RESERVED = auto()
+    """Reserved for the blue team."""
     FORBIDDEN = auto()
+    """Zone that cannot be accessed."""
     STUFF_ZONE = auto()
+    """Designated for storage or items."""
     ENEMY = auto()
+    """Zone associated with enemy activity."""
     ALLY = auto()
+    """Zone associated with ally activity."""
     BORDER_ZONE = auto()
+    """Represents arena borders."""
 
 
 class ZoneAccessibility(Enum):
@@ -41,8 +48,11 @@ class ZoneAccessibility(Enum):
     """
 
     FREE = auto()
+    """Free to navigate."""
     RESTRICTED = auto()
+    """Restricted access."""
     FORBIDDEN = auto()
+    """Completely inaccessible."""
 
 
 # ====== Data Classes ======
@@ -57,7 +67,9 @@ class Record:
     """
 
     timestamp: float
+    """Time of the record."""
     position: Point
+    """The position recorded."""
 
 
 @dataclass
@@ -73,9 +85,13 @@ class SpeedVector:
     """
 
     speed: float
+    """Magnitude of the speed."""
     dx: float
+    """Change in x-direction."""
     dy: float
+    """Change in y-direction."""
     factor: float = 1.0
+    """Scaling factor for direction components."""
 
     @property
     def factored_dx(self) -> float:

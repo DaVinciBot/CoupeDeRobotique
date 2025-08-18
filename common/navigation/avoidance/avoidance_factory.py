@@ -29,8 +29,8 @@ class AvoidanceFactory:
         """Create an avoidance module based on the given parameters.
 
         Args:
-            params (BaseAvoidanceParams):
-                Parameters including the desired avoidance strategy.
+            params (BaseAvoidanceParams): Parameters including the desired
+                avoidance strategy.
             acs_detection_profile_params (BaseAcsDetectionProfileParams):
                 Parameters for ACS detection profile.
 

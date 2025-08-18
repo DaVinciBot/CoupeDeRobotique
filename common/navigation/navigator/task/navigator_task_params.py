@@ -1,3 +1,5 @@
+"""Parameter container for a navigation task."""
+
 from geometry import OrientedPoint
 from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
 from navigation.avoidance.base_avoidance import BaseAvoidanceParams
@@ -28,11 +30,14 @@ class NavigatorTaskParams:
             goal (OrientedPoint | None): The goal to reach.
             timeout (float | None): The timeout for the task.
             stabilization_delay (float): The stabilization delay.
-            path_planner_params (BasePathPlannerParams): The parameters for the path planner.
-            trajectory_planner_params (BaseTrajectoryPlannerParams): The parameters for the trajectory planner.
+            path_planner_params (BasePathPlannerParams):
+                The parameters for the path planner.
+            trajectory_planner_params (BaseTrajectoryPlannerParams):
+                The parameters for the trajectory planner.
             speed_profiler (SpeedProfiler): The speed profiler.
             avoidance_params (BaseAvoidanceParams): The parameters for the avoidance.
-            acs_detection_profile_params (BaseAcsDetectionProfileParams): The parameters for the ACS detection profile.
+            acs_detection_profile_params (BaseAcsDetectionProfileParams):
+                The parameters for the ACS detection profile.
 
         """
         self.path_planner_params: BasePathPlannerParams = path_planner_params

@@ -21,7 +21,7 @@ class BaseArenaZone(ABC):
     """Represent a zone within an arena with geometry, type, and accessibility.
 
     Attributes:
-        zones_uid (list[int]): Sequence of used identifiers for zones.
+        zones_uid (ClassVar[list[int]]): Sequence of used identifiers for zones.
 
     """
 

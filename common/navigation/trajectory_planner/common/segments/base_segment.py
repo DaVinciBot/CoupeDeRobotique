@@ -1,6 +1,4 @@
-# ====== Code Summary ======
-# This module defines the BaseSegment class, which acts as an abstract base for various types of trajectory segments.
-# It encapsulates core attributes such as start and end poses, and duration, which are common to all segment types.
+"""Base segment primitive for trajectory planning."""
 
 from geometry import OrientedPoint
 

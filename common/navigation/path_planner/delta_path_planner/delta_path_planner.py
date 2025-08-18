@@ -1,7 +1,4 @@
-# ====== Code Summary ======
-# This module defines the ``DeltaPathPlanner``, a path planner that creates a path by applying a linear
-# displacement and/or angular rotation relative to the starting point. It is useful for incremental
-# motion planning in local navigation scenarios.
+"""Path planner applying relative displacement and rotation."""
 
 import math
 
@@ -18,7 +15,7 @@ from navigation.path_planner.delta_path_planner.delta_path_planner_params import
 class DeltaPathPlanner(
     BasePathPlanner[DeltaPathPlannerParams, DeltaPathPlannerPlanPathParams],
 ):
-    """Path planner that applies a relative displacement and rotation to the start position.
+    """Apply a relative displacement and rotation to the start position.
 
     Generates a two-point path based on linear distance and rotational delta.
 
@@ -33,7 +30,8 @@ class DeltaPathPlanner(
 
         Args:
             params (DeltaPathPlannerParams): Parameters for delta-based path planning.
-            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to None.
 
         """
         super().__init__(params, logger)
@@ -50,7 +48,8 @@ class DeltaPathPlanner(
             distance (float): Distance to move forward.
 
         Returns:
-            tuple[float, float]: Displacement vector (dx, dy) based on the start orientation.
+            tuple[float, float]:
+                Displacement vector (dx, dy) based on the start orientation.
 
         """
         return (
@@ -74,10 +73,11 @@ class DeltaPathPlanner(
 
     @BasePathPlanner.store_plan_path_params
     def plan_path(self, params: DeltaPathPlannerPlanPathParams) -> list[OrientedPoint]:
-        """Generate a path from the start point using relative displacement and rotation.
+        """Generate a path using relative displacement and rotation.
 
         Args:
-            params (DeltaPathPlannerPlanPathParams): Parameters including start point, distance, and rotation.
+            params (DeltaPathPlannerPlanPathParams):
+                Parameters including start point, distance, and rotation.
 
         Returns:
             list[OrientedPoint]: List containing the start and resulting goal pose.

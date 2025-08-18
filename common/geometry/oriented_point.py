@@ -19,7 +19,11 @@ from shapely import Point
 
 
 class OrientedPoint(Point):
-    """Point with an additional ``theta`` orientation attribute."""
+    """Point with an additional ``theta`` orientation attribute.
+
+    Attributes:
+        theta (float): Orientation angle in radians.
+    """
 
     _id_to_attrs: ClassVar[dict[str, Any]] = {}
     __slots__ = Point.__slots__
@@ -60,6 +64,7 @@ class OrientedPoint(Point):
             x_or_coords (float | tuple[float, float]): X coordinate or coordinate tuple.
             y (float | None, optional):
                 Y coordinate when providing separate values. Defaults to ``None``.
+            *_args (float): Additional arguments for future use.
 
         Returns:
             OrientedPoint: Newly created oriented point.

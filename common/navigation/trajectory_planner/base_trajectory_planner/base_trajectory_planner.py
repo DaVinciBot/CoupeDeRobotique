@@ -15,7 +15,7 @@ from navigation.trajectory_planner.speed_profile import SpeedProfiler
 from navigation.trajectory_planner.structs import TrajectoryPlanCommand
 
 
-class BaseTrajectoryPlanner[PARAMS: BaseTrajectoryPlannerParams](ABC):
+class BaseTrajectoryPlanner[PARAMSTYPE: BaseTrajectoryPlannerParams](ABC):
     """Abstract base class for all trajectory planners.
 
     Provides lifecycle control (start/stop), time-tracking utilities, and
@@ -27,14 +27,14 @@ class BaseTrajectoryPlanner[PARAMS: BaseTrajectoryPlannerParams](ABC):
 
     def __init__(
         self,
-        params: PARAMS,
+        params: PARAMSTYPE,
         speed_profiler: SpeedProfiler,
         logger: Logger | None = None,
     ) -> None:
         """Initialize the base trajectory planner.
 
         Args:
-            params (PARAMS): Planner configuration parameters.
+            params (PARAMSTYPE): Planner configuration parameters.
             speed_profiler (SpeedProfiler): Speed profile manager.
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to ``None``.
@@ -44,7 +44,7 @@ class BaseTrajectoryPlanner[PARAMS: BaseTrajectoryPlannerParams](ABC):
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )
-        self.params: PARAMS = params
+        self.params: PARAMSTYPE = params
         self.speed_profiler: SpeedProfiler = speed_profiler
 
         # Attributes dedicated to the trajectory planning process
@@ -97,7 +97,7 @@ class BaseTrajectoryPlanner[PARAMS: BaseTrajectoryPlannerParams](ABC):
         """
 
         @functools.wraps(method)
-        def wrapper(self: BaseTrajectoryPlanner[ParamsType]) -> TrajectoryPlanCommand:
+        def wrapper(self: BaseTrajectoryPlanner[PARAMSTYPE]) -> TrajectoryPlanCommand:
             # Start planning if not already started
             if not self.is_planning_started():
                 self.start_planning()
@@ -130,12 +130,25 @@ class BaseTrajectoryPlanner[PARAMS: BaseTrajectoryPlannerParams](ABC):
     # ====== Abstract Methods ======
     @abstractmethod
     def plan_trajectory(self, path: list[OrientedPoint]) -> None:
-        """Plan a trajectory for the provided path."""
+        """Plan a trajectory for the provided path.
+
+        Args:
+            path (list[OrientedPoint]): The path to follow.
+
+        """
 
     @abstractmethod
     def get_plan(self) -> TrajectoryPlanCommand:
-        """Return the current trajectory command."""
+        """Return the current trajectory command.
+
+        Returns:
+            TrajectoryPlanCommand: The current trajectory command.
+        """
 
     @abstractmethod
     def get_total_duration(self) -> float:
-        """Return the total duration of the planned trajectory."""
+        """Return the total duration of the planned trajectory.
+
+        Returns:
+            float: Total duration in seconds.
+        """
