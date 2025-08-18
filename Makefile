@@ -8,8 +8,8 @@ BUILDDIR      = docs/build
 format:
 	@echo "▶ Formatage avec Ruff, puis Black et isort..."
 	isort .
-	ruff format
 	black .
+	ruff format
 
 lint:
 	@echo "▶ Linting avec Ruff..."
