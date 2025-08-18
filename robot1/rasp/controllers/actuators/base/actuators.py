@@ -225,9 +225,7 @@ class Actuators(
                         f"{self.gpio_manager.get_type_gpio(pin)!s}",
                     )
                     return
-                if (
-                    use_I2C
-                ):  # prevent I2C overload. Without during the test, servos where taking wrong angles when called too fast
+                if use_I2C:  # prevent I2C overload. Without during the test, servos where taking wrong angles when called too fast
                     t = time.time()
                     if t - self.t_set_servo_angle_i2c < 0.03:
                         time.sleep(0.03 - (t - self.t_set_servo_angle_i2c))

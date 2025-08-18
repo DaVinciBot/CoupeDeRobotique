@@ -355,14 +355,10 @@ class CONFIG:
 
     # ACS Detection Profiles
     ACS_PROFILES_CONFIG: dict[str, Any] = MOVEMENT_MANAGER_CONFIG["acs_profiles"]
-    ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME: (
-        BaseAcsDetectionProfileParams
-    ) = BaseAcsDetectionProfileParams.from_config(
+    ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME: BaseAcsDetectionProfileParams = BaseAcsDetectionProfileParams.from_config(
         **ACS_PROFILES_CONFIG["go_to_color_reserved_zone_to_finish_game"],
     )
-    ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT: (
-        BaseAcsDetectionProfileParams
-    ) = BaseAcsDetectionProfileParams.from_config(
+    ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT: BaseAcsDetectionProfileParams = BaseAcsDetectionProfileParams.from_config(
         **ACS_PROFILES_CONFIG["go_to_color_reserved_zone_to_construct"],
     )
     ACS_PROFILE_GO_TO_STUFF_ZONE_TO_PICK_UP: BaseAcsDetectionProfileParams = (

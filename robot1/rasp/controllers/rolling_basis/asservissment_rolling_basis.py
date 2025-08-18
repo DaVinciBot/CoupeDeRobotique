@@ -326,9 +326,7 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         """
         try:
-            if len(args) == 3 and all(
-                isinstance(arg, float) for arg in args
-            ):  # noqa: PLR2004
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
                 pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -374,9 +372,7 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         """
         try:
-            if len(args) == 3 and all(
-                isinstance(arg, float) for arg in args
-            ):  # noqa: PLR2004
+            if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
                 pid = PID(*args)  # type: ignore[reportArgumentType]
             elif len(args) == 1 and isinstance(args[0], dict):
                 pid = PID.from_dict(args[0])
@@ -428,13 +424,11 @@ class AsservissementRollingBasis(BaseComTeensy):
         Returns:
             int: The hash value.
         """
-        return hash(
-            (
-                self.odometrie,
-                self.linear_position_pid,
-                self.angular_position_pid,
-            )
-        )
+        return hash((
+            self.odometrie,
+            self.linear_position_pid,
+            self.angular_position_pid,
+        ))
 
     def __eq__(self, other: object) -> bool:
         """Check equality of two AsservissementRollingBasis instances.
