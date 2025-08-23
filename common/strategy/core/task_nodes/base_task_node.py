@@ -31,7 +31,8 @@ class BaseTaskNode:
         Args:
             name (str): The node name.
             tasks (BaseTask | list[BaseTask]): Single task or list of tasks to execute.
-            scoring_function (BaseScoringFunction | None, optional): Scoring function used when evaluating transitions. Defaults to None.
+            scoring_function (BaseScoringFunction | None, optional):
+                Scoring function used when evaluating transitions. Defaults to None.
 
         """
         self.name: str = name
