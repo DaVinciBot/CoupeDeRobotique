@@ -1,5 +1,6 @@
 import struct
 import time
+from typing import override
 
 from loggerplusplus import Logger, log
 
@@ -32,12 +33,19 @@ class Actuators(
 
         Args:
             logger (Logger): The logger instance for logging.
-            serial_number (int, optional): The serial number of the Teensy. Defaults to CONFIG.ACTUATOR_TEENSY_SER.
-            vid (int, optional): The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
-            pid (int, optional): The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
-            baudrate (int, optional): The baud rate for serial communication. Defaults to CONFIG.TEENSY_BAUDRATE.
-            enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
-            enable_dummy (bool, optional): Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+            serial_number (int, optional):
+                The serial number of the Teensy. Defaults to CONFIG.ACTUATOR_TEENSY_SER.
+            vid (int, optional):
+                The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
+            pid (int, optional):
+                The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
+            baudrate (int, optional):
+                The baud rate for serial communication.
+                Defaults to CONFIG.TEENSY_BAUDRATE.
+            enable_crc (bool, optional):
+                Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
+            enable_dummy (bool, optional):
+                Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
 
         """
         # Initialize the parent-GPIOComTeensy class
@@ -64,6 +72,7 @@ class Actuators(
             Messages.SWITCH_STATE_RETURN.value,
         )
 
+    @override
     def __str__(self) -> str:
         return self.__class__.__name__
 
@@ -115,11 +124,14 @@ class Actuators(
     ) -> None:
         """Sets the activation state of a stepper motor driver through its enable pin.
 
-        Note: The enable pin is active LOW, meaning True will output LOW to enable the driver
+        Note:
+            The enable pin is active LOW,
+            meaning True will output LOW to enable the driver
 
         Args:
             pin_enable (int): The pin number connected to the driver's enable input
-            enable_driver (bool): ``True`` to enable the driver, ``False`` to disable it.
+            enable_driver (bool):
+                ``True`` to enable the driver, ``False`` to disable it.
 
         """
         msg = (
@@ -132,15 +144,14 @@ class Actuators(
     @log("Actuators")
     def stepper_step(self, steps: int, speed: int, disable_driver: bool = True) -> None:
         """Moves the stepper motor a specified number of steps.
+
         Note that the number of motor pin can change depending on the motor.
 
         Args:
             steps (int): The number of steps to move the motor.
             speed (int): The speed at which to move the motor.
-            disable_driver (bool, optional): Whether to disable the driver after the movement. Defaults to ``True``.
-
-        Returns:
-            None: This method does not return anything.
+            disable_driver (bool, optional):
+                Whether to disable the driver after the movement. Defaults to ``True``.
 
         """
         # Update elevator theorical steps
@@ -197,12 +208,18 @@ class Actuators(
         Args:
             pin (int): The pin-number of the servo.
             angle (int): The angle to set for the servo.
-            min_angle (int, optional): The minimum angle allowed for the servo. Defaults to 0.
-            max_angle (int, optional): The maximum angle allowed for the servo. Defaults to 180.
-            detach (bool, optional): Whether to detach the servo after setting the angle. Defaults to ``False``.
-            detach_delay (int, optional): The time in milliseconds to keep the servo detached. Defaults to 1000.
+            min_angle (int, optional):
+                The minimum angle allowed for the servo. Defaults to 0.
+            max_angle (int, optional):
+                The maximum angle allowed for the servo. Defaults to 180.
+            detach (bool, optional):
+                Whether to detach the servo after setting the angle.
+                Defaults to ``False``.
+            detach_delay (int, optional):
+                The time in milliseconds to keep the servo detached. Defaults to 1000.
              Ignored if detach is ``False``.
-            use_I2C (bool, optional): Whether to use I2C communication for the servo. Defaults to ``True``.
+            use_I2C (bool, optional):
+                Whether to use I2C communication for the servo. Defaults to ``True``.
 
         """
         if min_angle <= angle <= max_angle:

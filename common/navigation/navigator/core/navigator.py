@@ -132,7 +132,9 @@ class Navigator:
         """Abort the current task and all tasks in the queue.
 
         Args:
-            affect_all_tasks (bool, optional): If ``True``, all tasks in the queue will be aborted. Defaults to ``False``.
+            affect_all_tasks (bool, optional):
+                If ``True``, all tasks in the queue will be aborted.
+                Defaults to ``False``.
 
         """
         if affect_all_tasks:

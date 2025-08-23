@@ -24,5 +24,4 @@ class BaseTask(ABC):
         )
 
     @abstractmethod
-    def handle(self, ctx: BaseGameContext) -> bool:
-        pass
+    def handle(self, ctx: BaseGameContext) -> bool: ...

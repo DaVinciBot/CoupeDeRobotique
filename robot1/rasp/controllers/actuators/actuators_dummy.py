@@ -1,3 +1,5 @@
+from typing import override
+
 from loggerplusplus import Logger, log
 
 from a_config_loader import CONFIG
@@ -43,6 +45,7 @@ class ActuatorsShowDummy(ActuatorsShow):
         # Default elevator position at bottom
         self.elevator_ticks: int = 0
 
+    @override
     def __str__(self) -> str:
         return self.__class__.__name__
 

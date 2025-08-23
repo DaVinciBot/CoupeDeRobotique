@@ -36,26 +36,24 @@ common\arena\base_arena\grid_manager.py:
 
 common\arena\show_arena\arena.py:
     1:1  D100 Missing docstring in public module
-   16:7  PLW1641 Object does not implement `__hash__` method
-   16:7  D101 Missing docstring in public class
-   17:9  D107 Missing docstring in `__init__`
-  207:21 ERA001 Found commented-out code
-  207:89 E501 Line too long (90 > 88)
-  265:21 ERA001 Found commented-out code
-  265:89 E501 Line too long (89 > 88)
-  286:13 PERF401 Use a list comprehension to create a transformed list
-  294:76 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  299:13 PERF401 Use `list.extend` to create a transformed list
-  307:76 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  312:13 PERF401 Use `list.extend` to create a transformed list
-  320:76 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
-  325:13 PERF401 Use `list.extend` to create a transformed list
-  354:9  FURB113 Use `zones.extend(...)` instead of repeatedly calling `zones.append()`
-  401:9  D105 Missing docstring in magic method
-  411:9  D105 Missing docstring in magic method
+   17:7  PLW1641 Object does not implement `__hash__` method
+   17:7  D101 Missing docstring in public class
+   18:9  D107 Missing docstring in `__init__`
+  208:21 ERA001 Found commented-out code
+  208:89 E501 Line too long (90 > 88)
+  266:21 ERA001 Found commented-out code
+  266:89 E501 Line too long (89 > 88)
+  287:13 PERF401 Use a list comprehension to create a transformed list
+  295:76 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+  300:13 PERF401 Use `list.extend` to create a transformed list
+  308:76 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+  313:13 PERF401 Use `list.extend` to create a transformed list
+  321:76 PLR2004 Magic value used in comparison, consider replacing `2` with a constant variable
+  326:13 PERF401 Use `list.extend` to create a transformed list
+  355:9  FURB113 Use `zones.extend(...)` instead of repeatedly calling `zones.append()`
 
 common\geometry\oriented_point.py:
-  254:89 E501 Line too long (94 > 88)
+  255:89 E501 Line too long (94 > 88)
 
 common\led_strip\__init__.py:
   3:1 ERA001 Found commented-out code
@@ -180,11 +178,10 @@ common\navigation\avoidance\acs_detection_profiles\rectangular_projection_acs_de
 
 common\navigation\avoidance\acs_detection_profiles\rectangular_projection_acs_detection_profile\rectangular_projection_acs_detection_profile.py:
    1:1  D100 Missing docstring in public module
-  10:89 E501 Line too long (154 > 88)
-  28:89 E501 Line too long (133 > 88)
-  29:89 E501 Line too long (94 > 88)
-  58:9  D102 Missing docstring in public method
-  62:89 E501 Line too long (89 > 88)
+  11:89 E501 Line too long (154 > 88)
+  29:89 E501 Line too long (133 > 88)
+  30:89 E501 Line too long (94 > 88)
+  64:89 E501 Line too long (89 > 88)
 
 common\navigation\avoidance\acs_detection_profiles\rectangular_projection_acs_detection_profile\rectangular_projection_acs_detection_profile_params.py:
   1:1 D100 Missing docstring in public module
@@ -236,9 +233,6 @@ common\navigation\debug_functions\trajectory_planer.py:
   20:24 PT028 Test function parameter `time_step` has default argument
   25:89 E501 Line too long (92 > 88)
   30:5  T201 `print` found
-
-common\navigation\navigator\core\navigator.py:
-  135:89 E501 Line too long (122 > 88)
 
 common\navigation\navigator\task\navigator_task.py:
   35:9 PLC0415 `import` should be at the top-level of a file
@@ -302,53 +296,32 @@ common\strategy\core\task_nodes\scoring_functions\constant_scoring_function.py:
    1:1 D100 Missing docstring in public module
   14:7 D101 Missing docstring in public class
   15:9 D107 Missing docstring in `__init__`
-  18:9 D102 Missing docstring in public method
-  20:9 ARG002 Unused method argument: `prev_node`
-  21:9 ARG002 Unused method argument: `current_node`
-  22:9 ARG002 Unused method argument: `ctx`
 
 common\strategy\core\task_nodes\scoring_functions\default_scoring_function.py:
    1:1 D100 Missing docstring in public module
   14:7 D101 Missing docstring in public class
-  15:9 D102 Missing docstring in public method
-  15:9 PLR6301 Method `compute` could be a function, class method, or static method
-  17:9 ARG002 Unused method argument: `prev_node`
-  18:9 ARG002 Unused method argument: `current_node`
-  19:9 ARG002 Unused method argument: `ctx`
 
 common\strategy\core\task_nodes\scoring_functions\navigation_scoring_function.py:
    1:1 D100 Missing docstring in public module
   14:7 D101 Missing docstring in public class
   15:9 D107 Missing docstring in `__init__`
-  18:9 D102 Missing docstring in public method
-  20:9 ARG002 Unused method argument: `prev_node`
-  21:9 ARG002 Unused method argument: `current_node`
 
 common\strategy\core\task_nodes\timeout_task_node.py:
    1:1  D100 Missing docstring in public module
   15:5  D205 1 blank line required between summary line and description
   15:89 E501 Line too long (91 > 88)
-  33:89 E501 Line too long (137 > 88)
-  40:89 E501 Line too long (101 > 88)
-  43:26 ARG002 Unused method argument: `ctx`
-  71:89 E501 Line too long (98 > 88)
-  82:89 E501 Line too long (105 > 88)
-  87:89 E501 Line too long (94 > 88)
+  43:89 E501 Line too long (101 > 88)
+  46:26 ARG002 Unused method argument: `ctx`
+  75:89 E501 Line too long (98 > 88)
+  86:89 E501 Line too long (105 > 88)
+  91:89 E501 Line too long (94 > 88)
 
 common\strategy\core\tasks\__init__.py:
   1:1 D104 Missing docstring in public package
 
 common\strategy\core\tasks\base_navigation_task.py:
-   1:1  D100 Missing docstring in public module
-  20:7  D101 Missing docstring in public class
-  36:89 E501 Line too long (91 > 88)
-  37:89 E501 Line too long (89 > 88)
-  38:89 E501 Line too long (107 > 88)
-  41:89 E501 Line too long (111 > 88)
-  42:89 E501 Line too long (89 > 88)
-  43:89 E501 Line too long (96 > 88)
-  44:89 E501 Line too long (94 > 88)
-  80:9  D102 Missing docstring in public method
+   1:1 D100 Missing docstring in public module
+  18:7 D101 Missing docstring in public class
 
 common\strategy\core\tasks\base_task.py:
    1:1 D100 Missing docstring in public module
@@ -356,11 +329,8 @@ common\strategy\core\tasks\base_task.py:
   27:9 D102 Missing docstring in public method
 
 common\strategy\core\tasks\fake_task.py:
-  1:1  D100 Missing docstring in public module
-  5:7  D101 Missing docstring in public class
-  6:9  D102 Missing docstring in public method
-  6:9  PLR6301 Method `handle` could be a function, class method, or static method
-  6:22 ARG002 Unused method argument: `ctx`
+  1:1 D100 Missing docstring in public module
+  7:7 D101 Missing docstring in public class
 
 common\strategy\core\tasks\status.py:
   1:1 D100 Missing docstring in public module
@@ -384,11 +354,8 @@ common\strategy\core\transitions\conditional_transition\conditional_transition.p
    1:1  D100 Missing docstring in public module
    2:89 E501 Line too long (107 > 88)
    3:89 E501 Line too long (112 > 88)
-  18:89 E501 Line too long (93 > 88)
-  32:89 E501 Line too long (108 > 88)
-  39:89 E501 Line too long (89 > 88)
-  43:89 E501 Line too long (101 > 88)
-  46:89 E501 Line too long (103 > 88)
+  19:89 E501 Line too long (93 > 88)
+  42:89 E501 Line too long (89 > 88)
 
 common\strategy\core\transitions\conditional_transition\transitions_condition\__init__.py:
   1:1  D104 Missing docstring in public package
@@ -411,11 +378,9 @@ common\strategy\core\transitions\conditional_transition\transitions_condition\fr
    2:89 E501 Line too long (95 > 88)
    3:89 E501 Line too long (98 > 88)
    4:89 E501 Line too long (104 > 88)
-  11:89 E501 Line too long (110 > 88)
-  19:89 E501 Line too long (94 > 88)
-  20:89 E501 Line too long (92 > 88)
-  32:89 E501 Line too long (142 > 88)
-  51:89 E501 Line too long (112 > 88)
+  12:89 E501 Line too long (110 > 88)
+  20:89 E501 Line too long (94 > 88)
+  21:89 E501 Line too long (92 > 88)
 
 common\strategy\core\transitions\conditional_transition\transitions_condition\zone_accessibility_transition_condition.py:
    1:1  D100 Missing docstring in public module
@@ -428,18 +393,11 @@ common\strategy\core\transitions\conditional_transition\transitions_condition\zo
   24:89 E501 Line too long (89 > 88)
   28:24 FBT001 Boolean-typed positional argument in function definition
   28:24 FBT002 Boolean default positional argument in function definition
-  32:89 E501 Line too long (100 > 88)
-  39:9  ARG002 Unused method argument: `from_node`
-  48:89 E501 Line too long (90 > 88)
-  51:89 E501 Line too long (121 > 88)
 
 common\strategy\core\transitions\direct_transition.py:
-   1:1  D100 Missing docstring in public module
-   2:89 E501 Line too long (110 > 88)
-   3:89 E501 Line too long (107 > 88)
-  22:9  PLR6301 Method `can_transit` could be a function, class method, or static method
-  22:27 ARG002 Unused method argument: `from_node`
-  22:52 ARG002 Unused method argument: `ctx`
+  1:1  D100 Missing docstring in public module
+  2:89 E501 Line too long (110 > 88)
+  3:89 E501 Line too long (107 > 88)
 
 common\strategy\tools\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -498,13 +456,8 @@ common\teensy\tools\gpio_manager\gpio_manager.py:
    1:1  D100 Missing docstring in public module
    2:89 E501 Line too long (96 > 88)
    3:89 E501 Line too long (98 > 88)
-  27:89 E501 Line too long (89 > 88)
-  42:89 E501 Line too long (90 > 88)
-  52:89 E501 Line too long (106 > 88)
-  56:89 E501 Line too long (113 > 88)
-  59:89 E501 Line too long (110 > 88)
-  73:89 E501 Line too long (97 > 88)
-  95:89 E501 Line too long (90 > 88)
+  30:89 E501 Line too long (89 > 88)
+  56:89 E501 Line too long (106 > 88)
 
 common\usb_com\python\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -635,8 +588,7 @@ robot1\rasp\boombot_strategy\__init__.py:
   1:1 D104 Missing docstring in public package
 
 robot1\rasp\boombot_strategy\show_game_context.py:
-   1:1  D100 Missing docstring in public module
-  29:89 E501 Line too long (93 > 88)
+  1:1 D100 Missing docstring in public module
 
 robot1\rasp\boombot_strategy\strategies\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -754,20 +706,12 @@ robot1\rasp\boombot_strategy\tasks\__init__.py:
   1:1 D104 Missing docstring in public package
 
 robot1\rasp\boombot_strategy\tasks\actuator_task.py:
-    1:1  D100 Missing docstring in public module
-    2:89 E501 Line too long (93 > 88)
-    3:89 E501 Line too long (93 > 88)
-    4:89 E501 Line too long (92 > 88)
-   15:89 E501 Line too long (101 > 88)
-   17:9  PLR6301 Method `handle` could be a function, class method, or static method
-   34:9  PLR6301 Method `handle` could be a function, class method, or static method
-   52:9  PLR6301 Method `handle` could be a function, class method, or static method
-   87:7  D101 Missing docstring in public class
-   88:9  D102 Missing docstring in public method
-   88:9  PLR6301 Method `handle` could be a function, class method, or static method
-   98:9  PLR6301 Method `handle` could be a function, class method, or static method
-  115:9  PLR6301 Method `handle` could be a function, class method, or static method
-  132:9  PLR6301 Method `handle` could be a function, class method, or static method
+   1:1  D100 Missing docstring in public module
+   2:89 E501 Line too long (93 > 88)
+   3:89 E501 Line too long (93 > 88)
+   4:89 E501 Line too long (92 > 88)
+  15:89 E501 Line too long (101 > 88)
+  90:7  D101 Missing docstring in public class
 
 robot1\rasp\boombot_strategy\tasks\navigation_tasks\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -835,16 +779,15 @@ robot1\rasp\controllers\actuators\__init__.py:
 
 robot1\rasp\controllers\actuators\actuators_dummy.py:
     1:1  D100 Missing docstring in public module
-    8:5  D205 1 blank line required between summary line and description
-    8:89 E501 Line too long (98 > 88)
-   20:9  FBT001 Boolean-typed positional argument in function definition
-   46:9  D105 Missing docstring in magic method
-   54:9  FBT001 Boolean-typed positional argument in function definition
-   54:9  FBT002 Boolean default positional argument in function definition
-   76:9  FBT001 Boolean-typed positional argument in function definition
-   76:9  FBT002 Boolean default positional argument in function definition
-  117:89 E501 Line too long (96 > 88)
-  121:89 E501 Line too long (107 > 88)
+   10:5  D205 1 blank line required between summary line and description
+   10:89 E501 Line too long (98 > 88)
+   22:9  FBT001 Boolean-typed positional argument in function definition
+   57:9  FBT001 Boolean-typed positional argument in function definition
+   57:9  FBT002 Boolean default positional argument in function definition
+   79:9  FBT001 Boolean-typed positional argument in function definition
+   79:9  FBT002 Boolean default positional argument in function definition
+  120:89 E501 Line too long (96 > 88)
+  124:89 E501 Line too long (107 > 88)
 
 robot1\rasp\controllers\actuators\actuators_show.py:
     1:1  D100 Missing docstring in public module
@@ -923,40 +866,23 @@ robot1\rasp\controllers\actuators\actuators_show.py:
 robot1\rasp\controllers\actuators\base\actuators.py:
     1:1  INP001 File `robot1\rasp\controllers\actuators\base\actuators.py` is part of an implicit namespace package. Add an `__init__.py`.
     1:1  D100 Missing docstring in public module
-   28:9  FBT001 Boolean-typed positional argument in function definition
    29:9  FBT001 Boolean-typed positional argument in function definition
-   35:89 E501 Line too long (115 > 88)
-   36:89 E501 Line too long (92 > 88)
-   37:89 E501 Line too long (93 > 88)
-   38:89 E501 Line too long (113 > 88)
-   39:89 E501 Line too long (101 > 88)
-   40:89 E501 Line too long (105 > 88)
-   67:9  D105 Missing docstring in magic method
-   80:13 G003 Logging statement uses `+`
-  114:9  FBT001 Boolean-typed positional argument in function definition
-  118:89 E501 Line too long (93 > 88)
-  122:89 E501 Line too long (89 > 88)
-  133:52 FBT001 Boolean-typed positional argument in function definition
-  133:52 FBT002 Boolean default positional argument in function definition
-  134:9  D205 1 blank line required between summary line and description
-  134:9  DOC202 Docstring should not have a returns section because the function doesn't return anything
-  140:89 E501 Line too long (116 > 88)
-  150:89 E501 Line too long (92 > 88)
-  167:9  ERA001 Found commented-out code
-  189:9  FBT001 Boolean-typed positional argument in function definition
-  189:9  FBT002 Boolean default positional argument in function definition
-  193:9  FBT001 Boolean-typed positional argument in function definition
-  193:9  FBT002 Boolean default positional argument in function definition
-  193:9  N803 Argument name `use_I2C` should be lowercase
-  200:89 E501 Line too long (94 > 88)
-  201:89 E501 Line too long (96 > 88)
-  202:89 E501 Line too long (112 > 88)
-  203:89 E501 Line too long (112 > 88)
-  205:89 E501 Line too long (107 > 88)
-  224:89 E501 Line too long (92 > 88)
-  228:89 E501 Line too long (131 > 88)
-  230:57 PLR2004 Magic value used in comparison, consider replacing `0.03` with a constant variable
-  253:9  D102 Missing docstring in public method
+   30:9  FBT001 Boolean-typed positional argument in function definition
+   89:13 G003 Logging statement uses `+`
+  123:9  FBT001 Boolean-typed positional argument in function definition
+  145:52 FBT001 Boolean-typed positional argument in function definition
+  145:52 FBT002 Boolean default positional argument in function definition
+  161:89 E501 Line too long (92 > 88)
+  178:9  ERA001 Found commented-out code
+  200:9  FBT001 Boolean-typed positional argument in function definition
+  200:9  FBT002 Boolean default positional argument in function definition
+  204:9  FBT001 Boolean-typed positional argument in function definition
+  204:9  FBT002 Boolean default positional argument in function definition
+  204:9  N803 Argument name `use_I2C` should be lowercase
+  241:89 E501 Line too long (92 > 88)
+  245:89 E501 Line too long (131 > 88)
+  247:57 PLR2004 Magic value used in comparison, consider replacing `0.03` with a constant variable
+  270:9  D102 Missing docstring in public method
 
 robot1\rasp\controllers\rolling_basis\__init__.py:
   1:1 D104 Missing docstring in public package
@@ -964,18 +890,12 @@ robot1\rasp\controllers\rolling_basis\__init__.py:
 robot1\rasp\controllers\rolling_basis\asservissment_rolling_basis.py:
    34:9  FBT001 Boolean-typed positional argument in function definition
    35:9  FBT001 Boolean-typed positional argument in function definition
-  336:17 TRY301 Abstract `raise` to an inner function
-  336:23 TRY003 Avoid specifying long messages outside the exception class
-  337:21 EM101 Exception must not use a string literal, assign to variable first
-  341:16 BLE001 Do not catch blind exception: `Exception`
-  342:13 TRY400 Use `logging.exception` instead of `logging.error`
-  382:17 TRY301 Abstract `raise` to an inner function
-  382:23 TRY003 Avoid specifying long messages outside the exception class
-  383:21 EM101 Exception must not use a string literal, assign to variable first
-  387:16 BLE001 Do not catch blind exception: `Exception`
-  388:13 TRY400 Use `logging.exception` instead of `logging.error`
-  416:16 BLE001 Do not catch blind exception: `Exception`
-  417:13 TRY400 Use `logging.exception` instead of `logging.error`
+  364:16 BLE001 Do not catch blind exception: `Exception`
+  365:13 TRY400 Use `logging.exception` instead of `logging.error`
+  398:16 BLE001 Do not catch blind exception: `Exception`
+  399:13 TRY400 Use `logging.exception` instead of `logging.error`
+  427:16 BLE001 Do not catch blind exception: `Exception`
+  428:13 TRY400 Use `logging.exception` instead of `logging.error`
 
 robot1\rasp\controllers\rolling_basis\pids.py:
   1:1 D100 Missing docstring in public module
@@ -994,24 +914,13 @@ robot1\rasp\controllers\rolling_basis\rolling_basis.py:
    41:89 E501 Line too long (105 > 88)
    77:9  ERA001 Found commented-out code
    91:13 G003 Logging statement uses `+`
-  205:89 E501 Line too long (129 > 88)
-  213:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  220:17 TRY301 Abstract `raise` to an inner function
-  220:23 TRY003 Avoid specifying long messages outside the exception class
-  221:21 EM101 Exception must not use a string literal, assign to variable first
-  225:16 BLE001 Do not catch blind exception: `Exception`
-  226:13 TRY400 Use `logging.exception` instead of `logging.error`
-  250:89 E501 Line too long (129 > 88)
-  258:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  265:17 TRY301 Abstract `raise` to an inner function
-  265:23 TRY003 Avoid specifying long messages outside the exception class
-  266:21 EM101 Exception must not use a string literal, assign to variable first
-  270:16 BLE001 Do not catch blind exception: `Exception`
-  271:13 TRY400 Use `logging.exception` instead of `logging.error`
-  281:89 E501 Line too long (90 > 88)
-  282:89 E501 Line too long (92 > 88)
-  297:16 BLE001 Do not catch blind exception: `Exception`
-  298:13 TRY400 Use `logging.exception` instead of `logging.error`
+  240:89 E501 Line too long (129 > 88)
+  248:16 BLE001 Do not catch blind exception: `Exception`
+  249:13 TRY400 Use `logging.exception` instead of `logging.error`
+  282:16 BLE001 Do not catch blind exception: `Exception`
+  283:13 TRY400 Use `logging.exception` instead of `logging.error`
+  311:16 BLE001 Do not catch blind exception: `Exception`
+  312:13 TRY400 Use `logging.exception` instead of `logging.error`
 
 robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
     1:1  D100 Missing docstring in public module
@@ -1024,21 +933,13 @@ robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
    35:89 E501 Line too long (113 > 88)
    36:89 E501 Line too long (101 > 88)
    62:9  ERA001 Found commented-out code
-  126:89 E501 Line too long (129 > 88)
-  134:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  141:17 TRY301 Abstract `raise` to an inner function
-  141:23 TRY003 Avoid specifying long messages outside the exception class
-  142:21 EM101 Exception must not use a string literal, assign to variable first
-  146:16 BLE001 Do not catch blind exception: `Exception`
-  147:13 TRY400 Use `logging.exception` instead of `logging.error`
-  180:29 PLR2004 Magic value used in comparison, consider replacing `3` with a constant variable
-  188:17 TRY301 Abstract `raise` to an inner function
-  191:16 BLE001 Do not catch blind exception: `Exception`
-  192:13 TRY400 Use `logging.exception` instead of `logging.error`
-  202:89 E501 Line too long (90 > 88)
-  203:89 E501 Line too long (92 > 88)
-  216:16 BLE001 Do not catch blind exception: `Exception`
-  217:13 TRY400 Use `logging.exception` instead of `logging.error`
+  161:89 E501 Line too long (129 > 88)
+  169:16 BLE001 Do not catch blind exception: `Exception`
+  170:13 TRY400 Use `logging.exception` instead of `logging.error`
+  203:16 BLE001 Do not catch blind exception: `Exception`
+  204:13 TRY400 Use `logging.exception` instead of `logging.error`
+  230:16 BLE001 Do not catch blind exception: `Exception`
+  231:13 TRY400 Use `logging.exception` instead of `logging.error`
 
 robot1\rasp\main.py:
     1:1  D100 Missing docstring in public module
@@ -1138,4 +1039,4 @@ robot1\rasp\tests\config_loader.py:
   358:89 E501 Line too long (132 > 88)
   361:89 E501 Line too long (130 > 88)
 
-Found 894 errors.
+Found 797 errors.

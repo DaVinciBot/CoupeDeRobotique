@@ -3,6 +3,8 @@
 # It keeps track of declared GPIOs and their associated actuator types, ensuring proper validation
 # and management of pin assignments.
 
+from typing import override
+
 from loggerplusplus import Logger
 
 from teensy.tools.gpio_manager.actuators_type import ActuatorType
@@ -23,6 +25,7 @@ class GPIOManager:
         self.nb_pin: int = nb_pin
         self.gpios: dict[int, ActuatorType] = {}
 
+    @override
     def __str__(self) -> str:
         """Returns a string representation of the GPIO manager, showing the mapped GPIOs.
 
@@ -39,7 +42,8 @@ class GPIOManager:
             pin (int): The GPIO pin-number to check.
 
         Returns:
-            bool: ``True`` if the pin is declared (currently in use), ``False`` otherwise.
+            bool:
+                ``True`` if the pin is declared (currently in use), ``False`` otherwise.
 
         """
         return pin in self.gpios
@@ -53,10 +57,13 @@ class GPIOManager:
 
         Args:
             pin (int): The GPIO pin-number to validate.
-            type_actuator (ActuatorType, optional): The expected actuator type. Defaults to ActuatorType.UNKNOWN.
+            type_actuator (ActuatorType, optional):
+                The expected actuator type. Defaults to ActuatorType.UNKNOWN.
 
         Returns:
-            bool: ``True`` if the pin is declared and matches the expected actuator type, ``False`` otherwise.
+            bool:
+                ``True`` if the pin is declared and matches the expected actuator type,
+                ``False`` otherwise.
 
         """
         return pin in self.gpios and self.gpios[pin] == type_actuator
@@ -70,7 +77,8 @@ class GPIOManager:
 
         Args:
             pin (int): The GPIO pin-number to add.
-            type_actuator (ActuatorType, optional): The type of actuator associated with the pin.
+            type_actuator (ActuatorType, optional):
+                The type of actuator associated with the pin.
                 Defaults to ActuatorType.UNKNOWN.
 
         Returns:
@@ -92,7 +100,8 @@ class GPIOManager:
             pin (int): The GPIO pin-number to query.
 
         Returns:
-            ActuatorType | None: The actuator type if the pin is declared, None otherwise.
+            ActuatorType | None:
+                The actuator type if the pin is declared, None otherwise.
 
         """
         type_found: ActuatorType | None = self.gpios.get(pin, None)

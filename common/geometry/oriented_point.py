@@ -198,6 +198,7 @@ class OrientedPoint(Point):
 
         return NotImplemented
 
+    @override
     def __hash__(self) -> int:
         """Return a hash based on coordinates and orientation.
 

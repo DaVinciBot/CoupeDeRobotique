@@ -3,6 +3,7 @@
 # that is governed by a specific condition. It extends ``BaseTransition`` and uses a ``BaseTransitionCondition``
 # to evaluate whether the transition is allowed based on the current game context.
 
+from typing import override
 
 from strategy.core.base_game_context import BaseGameContext
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
@@ -29,21 +30,26 @@ class ConditionalTransition(BaseTransition):
 
         Args:
             target (BaseTaskNode): The target node to transition to.
-            condition (BaseTransitionCondition): The condition that must be met for the transition to occur.
+            condition (BaseTransitionCondition):
+                The condition that must be met for the transition to occur.
 
         """
         super().__init__(target)
         self.condition = condition
 
+    @override
     def can_transit(self, from_node: BaseTaskNode, ctx: BaseGameContext) -> bool:
         """Determine if the transition can occur based on the condition and game context.
 
         Args:
             from_node (BaseTaskNode): The node transitioning from.
-            ctx (BaseGameContext): The current game context providing necessary state for evaluation.
+            ctx (BaseGameContext):
+                The current game context providing necessary state for evaluation.
 
         Returns:
-            bool: ``True`` if the condition is satisfied and transition can occur, ``False`` otherwise.
+            bool:
+                ``True`` if the condition is satisfied and transition can occur,
+                ``False`` otherwise.
 
         """
         return self.condition.check(from_node, self.target, ctx)

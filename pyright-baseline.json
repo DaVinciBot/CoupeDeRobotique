@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1755541326403",
+    "time": "1755980672667",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\GPIO\\__init__.py",
@@ -1572,31 +1572,15 @@
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\show_arena\\arena.py",
-            "severity": "error",
-            "message": "Expression of type \"None\" cannot be assigned to parameter of type \"Logger\"\n  \"None\" is not assignable to \"Logger\"",
-            "range": {
-                "start": {
-                    "line": 26,
-                    "character": 38
-                },
-                "end": {
-                    "line": 26,
-                    "character": 42
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\show_arena\\arena.py",
             "severity": "information",
             "message": "Type of \"stuff_zones_points\" is partially unknown\n  Type of \"stuff_zones_points\" is \"list[Unknown]\"",
             "range": {
                 "start": {
-                    "line": 47,
+                    "line": 48,
                     "character": 8
                 },
                 "end": {
-                    "line": 47,
+                    "line": 48,
                     "character": 26
                 }
             },
@@ -1608,11 +1592,11 @@
             "message": "Type of \"corner_point\" is unknown",
             "range": {
                 "start": {
-                    "line": 284,
+                    "line": 285,
                     "character": 12
                 },
                 "end": {
-                    "line": 284,
+                    "line": 285,
                     "character": 24
                 }
             },
@@ -1624,11 +1608,11 @@
             "message": "Argument of type \"list[OrientedPoint] | None\" cannot be assigned to parameter \"go_to_positions\" of type \"list[OrientedPoint | Point] | None\" in function \"__init__\"\n  Type \"list[OrientedPoint] | None\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n    Type \"list[OrientedPoint]\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n      \"list[OrientedPoint]\" is not assignable to \"list[OrientedPoint | Point]\"\n        Type parameter \"_T@list\" is invariant, but \"OrientedPoint\" is not the same as \"OrientedPoint | Point\"\n        Consider switching from \"list\" to \"Sequence\" which is covariant\n      \"list[OrientedPoint]\" is not assignable to \"None\"",
             "range": {
                 "start": {
-                    "line": 306,
+                    "line": 307,
                     "character": 36
                 },
                 "end": {
-                    "line": 306,
+                    "line": 307,
                     "character": 86
                 }
             },
@@ -1640,11 +1624,11 @@
             "message": "Argument of type \"list[OrientedPoint] | None\" cannot be assigned to parameter \"go_to_positions\" of type \"list[OrientedPoint | Point] | None\" in function \"__init__\"\n  Type \"list[OrientedPoint] | None\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n    Type \"list[OrientedPoint]\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n      \"list[OrientedPoint]\" is not assignable to \"list[OrientedPoint | Point]\"\n        Type parameter \"_T@list\" is invariant, but \"OrientedPoint\" is not the same as \"OrientedPoint | Point\"\n        Consider switching from \"list\" to \"Sequence\" which is covariant\n      \"list[OrientedPoint]\" is not assignable to \"None\"",
             "range": {
                 "start": {
-                    "line": 319,
+                    "line": 320,
                     "character": 36
                 },
                 "end": {
-                    "line": 319,
+                    "line": 320,
                     "character": 86
                 }
             },
@@ -1656,11 +1640,11 @@
             "message": "Type of \"corner_point\" is unknown",
             "range": {
                 "start": {
-                    "line": 323,
+                    "line": 324,
                     "character": 12
                 },
                 "end": {
-                    "line": 323,
+                    "line": 324,
                     "character": 24
                 }
             },
@@ -1672,47 +1656,15 @@
             "message": "Type analysis indicates code is unreachable",
             "range": {
                 "start": {
-                    "line": 386,
+                    "line": 387,
                     "character": 12
                 },
                 "end": {
-                    "line": 386,
+                    "line": 387,
                     "character": 17
                 }
             },
             "rule": "reportUnreachable"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\show_arena\\arena.py",
-            "severity": "information",
-            "message": "Method \"__eq__\" is not marked as override but is overriding a method in class \"BaseArena\"",
-            "range": {
-                "start": {
-                    "line": 400,
-                    "character": 8
-                },
-                "end": {
-                    "line": 400,
-                    "character": 14
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\show_arena\\arena.py",
-            "severity": "information",
-            "message": "Method \"__ne__\" is not marked as override but is overriding a method in class \"BaseArena\"",
-            "range": {
-                "start": {
-                    "line": 410,
-                    "character": 8
-                },
-                "end": {
-                    "line": 410,
-                    "character": 14
-                }
-            },
-            "rule": "reportImplicitOverride"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\geometry\\__init__.py",
@@ -1827,22 +1779,6 @@
             "rule": "reportInconsistentConstructor"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\geometry\\oriented_point.py",
-            "severity": "information",
-            "message": "Method \"__hash__\" is not marked as override but is overriding a method in class \"BaseGeometry\"",
-            "range": {
-                "start": {
-                    "line": 200,
-                    "character": 8
-                },
-                "end": {
-                    "line": 200,
-                    "character": 16
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\__init__.py",
             "severity": "warning",
             "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance_params.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
@@ -1865,22 +1801,6 @@
             "severity": "warning",
             "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\no_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\no_avoidance\\no_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
             "rule": "reportImportCycles"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\acs_detection_profiles\\rectangular_projection_acs_detection_profile\\rectangular_projection_acs_detection_profile.py",
-            "severity": "information",
-            "message": "Method \"is_acs_triggered\" is not marked as override but is overriding a method in class \"BaseAcsDetectionProfile[RectangularProjectionAcsDetectionProfileParams]\"",
-            "range": {
-                "start": {
-                    "line": 57,
-                    "character": 8
-                },
-                "end": {
-                    "line": 57,
-                    "character": 24
-                }
-            },
-            "rule": "reportImplicitOverride"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py",
@@ -2631,22 +2551,6 @@
             "rule": "reportUnreachable"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\trajectory_planner\\speed_profile\\linear_ramped_speed_profile.py",
-            "severity": "information",
-            "message": "Method \"get_speed\" is not marked as override but is overriding a method in class \"BaseSpeedProfile\"",
-            "range": {
-                "start": {
-                    "line": 239,
-                    "character": 8
-                },
-                "end": {
-                    "line": 239,
-                    "character": 17
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\trajectory_planner\\trajectory_planner_factory.py",
             "severity": "information",
             "message": "Expected type arguments for generic class \"BaseTrajectoryPlanner\"",
@@ -2719,212 +2623,20 @@
             "rule": "reportArgumentType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\scoring_functions\\constant_scoring_function.py",
-            "severity": "information",
-            "message": "Method \"compute\" is not marked as override but is overriding a method in class \"BaseScoringFunction\"",
-            "range": {
-                "start": {
-                    "line": 17,
-                    "character": 8
-                },
-                "end": {
-                    "line": 17,
-                    "character": 15
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\scoring_functions\\default_scoring_function.py",
-            "severity": "information",
-            "message": "Method \"compute\" is not marked as override but is overriding a method in class \"BaseScoringFunction\"",
-            "range": {
-                "start": {
-                    "line": 14,
-                    "character": 8
-                },
-                "end": {
-                    "line": 14,
-                    "character": 15
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\scoring_functions\\navigation_scoring_function.py",
-            "severity": "information",
-            "message": "Method \"compute\" is not marked as override but is overriding a method in class \"BaseScoringFunction\"",
-            "range": {
-                "start": {
-                    "line": 17,
-                    "character": 8
-                },
-                "end": {
-                    "line": 17,
-                    "character": 15
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\timeout_task_node.py",
-            "severity": "information",
-            "message": "Method \"execute\" is not marked as override but is overriding a method in class \"BaseTaskNode\"",
-            "range": {
-                "start": {
-                    "line": 56,
-                    "character": 8
-                },
-                "end": {
-                    "line": 56,
-                    "character": 15
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\tasks\\base_navigation_task.py",
-            "severity": "error",
-            "message": "Declaration \"navigator_task\" is obscured by a declaration of the same name",
-            "range": {
-                "start": {
-                    "line": 58,
-                    "character": 13
-                },
-                "end": {
-                    "line": 58,
-                    "character": 27
-                }
-            },
-            "rule": "reportRedeclaration"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\tasks\\base_navigation_task.py",
-            "severity": "error",
-            "message": "Cannot assign to attribute \"navigator_task\" for class \"BaseNavigationTask*\"\n  \"None\" is not assignable to \"NavigatorTask\"",
-            "range": {
-                "start": {
-                    "line": 58,
-                    "character": 52
-                },
-                "end": {
-                    "line": 58,
-                    "character": 56
-                }
-            },
-            "rule": "reportAttributeAccessIssue"
-        },
-        {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\tasks\\base_navigation_task.py",
             "severity": "error",
             "message": "Argument of type \"OrientedPoint | Point | None\" cannot be assigned to parameter \"goal\" of type \"OrientedPoint | None\" in function \"__init__\"\n  Type \"OrientedPoint | Point | None\" is not assignable to type \"OrientedPoint | None\"\n    Type \"Point\" is not assignable to type \"OrientedPoint | None\"\n      \"Point\" is not assignable to \"OrientedPoint\"\n      \"Point\" is not assignable to \"None\"",
             "range": {
                 "start": {
-                    "line": 65,
+                    "line": 71,
                     "character": 21
                 },
                 "end": {
-                    "line": 67,
+                    "line": 73,
                     "character": 17
                 }
             },
             "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\tasks\\base_navigation_task.py",
-            "severity": "information",
-            "message": "Method \"handle\" is not marked as override but is overriding a method in class \"BaseTask\"",
-            "range": {
-                "start": {
-                    "line": 79,
-                    "character": 8
-                },
-                "end": {
-                    "line": 79,
-                    "character": 14
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\tasks\\fake_task.py",
-            "severity": "information",
-            "message": "Method \"handle\" is not marked as override but is overriding a method in class \"BaseTask\"",
-            "range": {
-                "start": {
-                    "line": 5,
-                    "character": 8
-                },
-                "end": {
-                    "line": 5,
-                    "character": 14
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\transitions\\conditional_transition\\conditional_transition.py",
-            "severity": "information",
-            "message": "Method \"can_transit\" is not marked as override but is overriding a method in class \"BaseTransition\"",
-            "range": {
-                "start": {
-                    "line": 37,
-                    "character": 8
-                },
-                "end": {
-                    "line": 37,
-                    "character": 19
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\transitions\\conditional_transition\\transitions_condition\\from_function_transition_condition.py",
-            "severity": "information",
-            "message": "Method \"check\" is not marked as override but is overriding a method in class \"BaseTransitionCondition\"",
-            "range": {
-                "start": {
-                    "line": 36,
-                    "character": 8
-                },
-                "end": {
-                    "line": 36,
-                    "character": 13
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\transitions\\conditional_transition\\transitions_condition\\zone_accessibility_transition_condition.py",
-            "severity": "information",
-            "message": "Method \"check\" is not marked as override but is overriding a method in class \"BaseTransitionCondition\"",
-            "range": {
-                "start": {
-                    "line": 36,
-                    "character": 8
-                },
-                "end": {
-                    "line": 36,
-                    "character": 13
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\transitions\\direct_transition.py",
-            "severity": "information",
-            "message": "Method \"can_transit\" is not marked as override but is overriding a method in class \"BaseTransition\"",
-            "range": {
-                "start": {
-                    "line": 21,
-                    "character": 8
-                },
-                "end": {
-                    "line": 21,
-                    "character": 19
-                }
-            },
-            "rule": "reportImplicitOverride"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\tools\\visualize.py",
@@ -2989,22 +2701,6 @@
                 }
             },
             "rule": "reportUnknownVariableType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\teensy\\tools\\gpio_manager\\gpio_manager.py",
-            "severity": "information",
-            "message": "Method \"__str__\" is not marked as override but is overriding a method in class \"object\"",
-            "range": {
-                "start": {
-                    "line": 25,
-                    "character": 8
-                },
-                "end": {
-                    "line": 25,
-                    "character": 15
-                }
-            },
-            "rule": "reportImplicitOverride"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\utils\\utils.py",
@@ -5185,62 +4881,14 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
             "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 30,
-                    "character": 22
-                },
-                "end": {
-                    "line": 30,
-                    "character": 30
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 48,
-                    "character": 13
-                },
-                "end": {
-                    "line": 48,
-                    "character": 21
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 66,
-                    "character": 12
-                },
-                "end": {
-                    "line": 66,
-                    "character": 20
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
             "message": "Method \"handle\" is marked as override, but no base method of same name is present",
             "range": {
                 "start": {
-                    "line": 70,
+                    "line": 17,
                     "character": 8
                 },
                 "end": {
-                    "line": 70,
+                    "line": 17,
                     "character": 14
                 }
             },
@@ -5252,11 +4900,107 @@
             "message": "Base class type is unknown, obscuring type of derived class",
             "range": {
                 "start": {
-                    "line": 86,
+                    "line": 31,
+                    "character": 22
+                },
+                "end": {
+                    "line": 31,
+                    "character": 30
+                }
+            },
+            "rule": "reportUntypedBaseClass"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
+            "severity": "error",
+            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
+            "range": {
+                "start": {
+                    "line": 35,
+                    "character": 8
+                },
+                "end": {
+                    "line": 35,
+                    "character": 14
+                }
+            },
+            "rule": "reportGeneralTypeIssues"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
+            "severity": "error",
+            "message": "Base class type is unknown, obscuring type of derived class",
+            "range": {
+                "start": {
+                    "line": 50,
+                    "character": 13
+                },
+                "end": {
+                    "line": 50,
+                    "character": 21
+                }
+            },
+            "rule": "reportUntypedBaseClass"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
+            "severity": "error",
+            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
+            "range": {
+                "start": {
+                    "line": 54,
+                    "character": 8
+                },
+                "end": {
+                    "line": 54,
+                    "character": 14
+                }
+            },
+            "rule": "reportGeneralTypeIssues"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
+            "severity": "error",
+            "message": "Base class type is unknown, obscuring type of derived class",
+            "range": {
+                "start": {
+                    "line": 69,
+                    "character": 12
+                },
+                "end": {
+                    "line": 69,
+                    "character": 20
+                }
+            },
+            "rule": "reportUntypedBaseClass"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
+            "severity": "error",
+            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
+            "range": {
+                "start": {
+                    "line": 73,
+                    "character": 8
+                },
+                "end": {
+                    "line": 73,
+                    "character": 14
+                }
+            },
+            "rule": "reportGeneralTypeIssues"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
+            "severity": "error",
+            "message": "Base class type is unknown, obscuring type of derived class",
+            "range": {
+                "start": {
+                    "line": 89,
                     "character": 14
                 },
                 "end": {
-                    "line": 86,
+                    "line": 89,
                     "character": 22
                 }
             },
@@ -5265,14 +5009,30 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
             "severity": "error",
+            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
+            "range": {
+                "start": {
+                    "line": 91,
+                    "character": 8
+                },
+                "end": {
+                    "line": 91,
+                    "character": 14
+                }
+            },
+            "rule": "reportGeneralTypeIssues"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
+            "severity": "error",
             "message": "Base class type is unknown, obscuring type of derived class",
             "range": {
                 "start": {
-                    "line": 94,
+                    "line": 98,
                     "character": 18
                 },
                 "end": {
-                    "line": 94,
+                    "line": 98,
                     "character": 26
                 }
             },
@@ -5281,14 +5041,30 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
             "severity": "error",
+            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
+            "range": {
+                "start": {
+                    "line": 102,
+                    "character": 8
+                },
+                "end": {
+                    "line": 102,
+                    "character": 14
+                }
+            },
+            "rule": "reportGeneralTypeIssues"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
+            "severity": "error",
             "message": "Base class type is unknown, obscuring type of derived class",
             "range": {
                 "start": {
-                    "line": 111,
+                    "line": 116,
                     "character": 26
                 },
                 "end": {
-                    "line": 111,
+                    "line": 116,
                     "character": 34
                 }
             },
@@ -5297,18 +5073,50 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
             "severity": "error",
+            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
+            "range": {
+                "start": {
+                    "line": 120,
+                    "character": 8
+                },
+                "end": {
+                    "line": 120,
+                    "character": 14
+                }
+            },
+            "rule": "reportGeneralTypeIssues"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
+            "severity": "error",
             "message": "Base class type is unknown, obscuring type of derived class",
             "range": {
                 "start": {
-                    "line": 128,
+                    "line": 134,
                     "character": 24
                 },
                 "end": {
-                    "line": 128,
+                    "line": 134,
                     "character": 32
                 }
             },
             "rule": "reportUntypedBaseClass"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
+            "severity": "error",
+            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
+            "range": {
+                "start": {
+                    "line": 138,
+                    "character": 8
+                },
+                "end": {
+                    "line": 138,
+                    "character": 14
+                }
+            },
+            "rule": "reportGeneralTypeIssues"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\go_to_color_reserved_zone.py",
@@ -6480,11 +6288,11 @@
             "message": "Type of \"log\" is partially unknown\n  Type of \"log\" is \"(param_logger: Logger | str | ((...) -> Unknown) = None, log_level: LogLevels = LogLevels.DEBUG) -> ((func: ((...) -> Unknown)) -> _Wrapped[..., Unknown, ..., Unknown])\"",
             "range": {
                 "start": {
-                    "line": 0,
+                    "line": 2,
                     "character": 35
                 },
                 "end": {
-                    "line": 0,
+                    "line": 2,
                     "character": 38
                 }
             },
@@ -6493,30 +6301,14 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\actuators_dummy.py",
             "severity": "information",
-            "message": "Method \"__str__\" is not marked as override but is overriding a method in class \"Actuators\"",
-            "range": {
-                "start": {
-                    "line": 45,
-                    "character": 8
-                },
-                "end": {
-                    "line": 45,
-                    "character": 15
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\actuators_dummy.py",
-            "severity": "information",
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 46,
+                    "line": 49,
                     "character": 15
                 },
                 "end": {
-                    "line": 46,
+                    "line": 49,
                     "character": 38
                 }
             },
@@ -6528,11 +6320,11 @@
             "message": "Type of \"pin_exceptions\" is partially unknown\n  Type of \"pin_exceptions\" is \"dict[int, Unknown]\"",
             "range": {
                 "start": {
-                    "line": 101,
+                    "line": 104,
                     "character": 8
                 },
                 "end": {
-                    "line": 101,
+                    "line": 104,
                     "character": 22
                 }
             },
@@ -6544,11 +6336,11 @@
             "message": "Type of \"min_angle\" is unknown",
             "range": {
                 "start": {
-                    "line": 106,
+                    "line": 109,
                     "character": 8
                 },
                 "end": {
-                    "line": 106,
+                    "line": 109,
                     "character": 17
                 }
             },
@@ -6576,11 +6368,11 @@
             "message": "Type of \"log\" is partially unknown\n  Type of \"log\" is \"(param_logger: Logger | str | ((...) -> Unknown) = None, log_level: LogLevels = LogLevels.DEBUG) -> ((func: ((...) -> Unknown)) -> _Wrapped[..., Unknown, ..., Unknown])\"",
             "range": {
                 "start": {
-                    "line": 3,
+                    "line": 4,
                     "character": 35
                 },
                 "end": {
-                    "line": 3,
+                    "line": 4,
                     "character": 38
                 }
             },
@@ -6592,11 +6384,11 @@
             "message": "Import \"teensy\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 6,
+                    "line": 7,
                     "character": 5
                 },
                 "end": {
-                    "line": 6,
+                    "line": 7,
                     "character": 11
                 }
             },
@@ -6608,11 +6400,11 @@
             "message": "Type of \"ActuatorType\" is unknown",
             "range": {
                 "start": {
-                    "line": 6,
+                    "line": 7,
                     "character": 19
                 },
                 "end": {
-                    "line": 6,
+                    "line": 7,
                     "character": 31
                 }
             },
@@ -6624,11 +6416,11 @@
             "message": "Type of \"GPIOComTeensy\" is unknown",
             "range": {
                 "start": {
-                    "line": 6,
+                    "line": 7,
                     "character": 33
                 },
                 "end": {
-                    "line": 6,
+                    "line": 7,
                     "character": 46
                 }
             },
@@ -6640,11 +6432,11 @@
             "message": "Import \"usb_com.python\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 7,
+                    "line": 8,
                     "character": 5
                 },
                 "end": {
-                    "line": 7,
+                    "line": 8,
                     "character": 19
                 }
             },
@@ -6656,11 +6448,11 @@
             "message": "Type of \"Messages\" is unknown",
             "range": {
                 "start": {
-                    "line": 7,
+                    "line": 8,
                     "character": 27
                 },
                 "end": {
-                    "line": 7,
+                    "line": 8,
                     "character": 35
                 }
             },
@@ -6672,11 +6464,11 @@
             "message": "Base class type is unknown, obscuring type of derived class",
             "range": {
                 "start": {
-                    "line": 11,
+                    "line": 12,
                     "character": 4
                 },
                 "end": {
-                    "line": 11,
+                    "line": 12,
                     "character": 17
                 }
             },
@@ -6685,30 +6477,14 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\base\\actuators.py",
             "severity": "information",
-            "message": "Method \"__str__\" is not marked as override but is overriding a method in class \"object\"",
-            "range": {
-                "start": {
-                    "line": 66,
-                    "character": 8
-                },
-                "end": {
-                    "line": 66,
-                    "character": 15
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\base\\actuators.py",
-            "severity": "information",
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 67,
+                    "line": 76,
                     "character": 15
                 },
                 "end": {
-                    "line": 67,
+                    "line": 76,
                     "character": 38
                 }
             },
@@ -6720,11 +6496,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 124,
+                    "line": 136,
                     "character": 8
                 },
                 "end": {
-                    "line": 124,
+                    "line": 136,
                     "character": 11
                 }
             },
@@ -6736,11 +6512,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 154,
+                    "line": 165,
                     "character": 8
                 },
                 "end": {
-                    "line": 154,
+                    "line": 165,
                     "character": 11
                 }
             },
@@ -6752,11 +6528,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 209,
+                    "line": 226,
                     "character": 16
                 },
                 "end": {
-                    "line": 209,
+                    "line": 226,
                     "character": 19
                 }
             },
@@ -6768,11 +6544,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 232,
+                    "line": 249,
                     "character": 16
                 },
                 "end": {
-                    "line": 232,
+                    "line": 249,
                     "character": 19
                 }
             },
@@ -6784,11 +6560,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 253,
+                    "line": 270,
                     "character": 8
                 },
                 "end": {
-                    "line": 253,
+                    "line": 270,
                     "character": 11
                 }
             },
@@ -6989,66 +6765,18 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\asservissment_rolling_basis.py",
             "severity": "information",
-            "message": "Method \"__hash__\" is not marked as override but is overriding a method in class \"object\"",
-            "range": {
-                "start": {
-                    "line": 420,
-                    "character": 8
-                },
-                "end": {
-                    "line": 420,
-                    "character": 16
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\asservissment_rolling_basis.py",
-            "severity": "information",
-            "message": "Method \"__eq__\" is not marked as override but is overriding a method in class \"object\"",
-            "range": {
-                "start": {
-                    "line": 432,
-                    "character": 8
-                },
-                "end": {
-                    "line": 432,
-                    "character": 14
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\asservissment_rolling_basis.py",
-            "severity": "information",
             "message": "Return type, \"Unknown | bool\", is partially unknown",
             "range": {
                 "start": {
-                    "line": 444,
+                    "line": 457,
                     "character": 15
                 },
                 "end": {
-                    "line": 448,
+                    "line": 461,
                     "character": 9
                 }
             },
             "rule": "reportUnknownVariableType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\asservissment_rolling_basis.py",
-            "severity": "information",
-            "message": "Method \"__ne__\" is not marked as override but is overriding a method in class \"object\"",
-            "range": {
-                "start": {
-                    "line": 450,
-                    "character": 8
-                },
-                "end": {
-                    "line": 450,
-                    "character": 14
-                }
-            },
-            "rule": "reportImplicitOverride"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis.py",
@@ -7229,50 +6957,18 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis.py",
             "severity": "information",
-            "message": "Method \"__eq__\" is not marked as override but is overriding a method in class \"object\"",
-            "range": {
-                "start": {
-                    "line": 301,
-                    "character": 8
-                },
-                "end": {
-                    "line": 301,
-                    "character": 14
-                }
-            },
-            "rule": "reportImplicitOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis.py",
-            "severity": "information",
             "message": "Return type, \"Unknown | bool\", is partially unknown",
             "range": {
                 "start": {
-                    "line": 313,
+                    "line": 328,
                     "character": 15
                 },
                 "end": {
-                    "line": 317,
+                    "line": 332,
                     "character": 9
                 }
             },
             "rule": "reportUnknownVariableType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis.py",
-            "severity": "information",
-            "message": "Method \"__ne__\" is not marked as override but is overriding a method in class \"object\"",
-            "range": {
-                "start": {
-                    "line": 319,
-                    "character": 8
-                },
-                "end": {
-                    "line": 319,
-                    "character": 14
-                }
-            },
-            "rule": "reportImplicitOverride"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis_dummy.py",
@@ -7376,11 +7072,11 @@
             "message": "Return type, \"Unknown | bool\", is partially unknown",
             "range": {
                 "start": {
-                    "line": 233,
+                    "line": 247,
                     "character": 15
                 },
                 "end": {
-                    "line": 241,
+                    "line": 255,
                     "character": 9
                 }
             },
@@ -8173,10 +7869,10 @@
     ],
     "summary": {
         "filesAnalyzed": 218,
-        "errorCount": 92,
+        "errorCount": 96,
         "warningCount": 92,
-        "informationCount": 334,
-        "timeInSec": 17.64
+        "informationCount": 311,
+        "timeInSec": 12.275
     }
 }
 

@@ -237,6 +237,7 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             )
         return distance
 
+    @override
     def get_speed(
         self,
         time_elapsed: float | None = None,

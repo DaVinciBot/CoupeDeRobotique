@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from strategy.core.task_nodes.scoring_functions.base_scoring_function import (
     BaseScoringFunction,
@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 
 
 class DefaultScoringFunction(BaseScoringFunction):
+    @override
     def compute(
         self,
         prev_node: BaseTaskNode,

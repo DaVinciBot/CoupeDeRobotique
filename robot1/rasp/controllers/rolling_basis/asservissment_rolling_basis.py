@@ -2,7 +2,7 @@
 
 import struct
 import time
-from typing import Any, overload
+from typing import Any, overload, override
 
 import matplotlib.pyplot as plt
 from loggerplusplus import Logger, LogLevels, log
@@ -295,6 +295,41 @@ class AsservissementRollingBasis(BaseComTeensy):
         msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
         self.send_bytes(msg)
 
+    @staticmethod
+    def _load_pid(
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> PID:
+        """Load the PID values.
+
+        Overloads:
+            - set_linear_position_pid(float, float, float) → None
+            - set_linear_position_pid(dict[str, float]) → None
+            - set_linear_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+
+        Returns:
+            PID: The PID. #TODO: refaire ce comment
+
+        Raises:
+            ValueError: If the arguments do not match any expected format.
+
+        """
+        if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
+            pid = PID(*args)  # type: ignore[reportArgumentType]
+        elif len(args) == 1 and isinstance(args[0], dict):
+            pid = PID.from_dict(args[0])
+        elif kwargs:
+            pid = PID.from_dict(kwargs)
+        else:
+            msg = "Invalid arguments for PID configuration."
+            raise ValueError(msg)
+        return pid
+
     @overload
     def set_linear_position_pid(self, *args: float) -> None: ...
 
@@ -321,21 +356,9 @@ class AsservissementRollingBasis(BaseComTeensy):
                 single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
-        Raises:
-            ValueError: If the arguments do not match any expected format.
-
         """
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
-                pid = PID(*args)  # type: ignore[reportArgumentType]
-            elif len(args) == 1 and isinstance(args[0], dict):
-                pid = PID.from_dict(args[0])
-            elif kwargs:
-                pid = PID.from_dict(kwargs)
-            else:
-                raise ValueError(
-                    "Invalid arguments for linear position PID configuration.",
-                )
+            pid = self._load_pid(*args, **kwargs)
             self.linear_position_pid = pid
             self._send_pid(PidID.LINEAR_POSITION.value, pid)
         except Exception as e:
@@ -367,21 +390,9 @@ class AsservissementRollingBasis(BaseComTeensy):
                 single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
-        Raises:
-            ValueError: If the arguments do not match any expected format.
-
         """
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
-                pid = PID(*args)  # type: ignore[reportArgumentType]
-            elif len(args) == 1 and isinstance(args[0], dict):
-                pid = PID.from_dict(args[0])
-            elif kwargs:
-                pid = PID.from_dict(kwargs)
-            else:
-                raise ValueError(
-                    "Invalid arguments for angular position PID configuration.",
-                )
+            pid = self._load_pid(*args, **kwargs)
             self.angular_position_pid = pid
             self._send_pid(PidID.ANGULAR_POSITION.value, pid)
         except Exception as e:
@@ -418,6 +429,7 @@ class AsservissementRollingBasis(BaseComTeensy):
 
     # ====== Equality Comparison ======
 
+    @override
     def __hash__(self) -> int:
         """Compute a hash for the AsservissementRollingBasis instance.
 
@@ -430,6 +442,7 @@ class AsservissementRollingBasis(BaseComTeensy):
             self.angular_position_pid,
         ))
 
+    @override
     def __eq__(self, other: object) -> bool:
         """Check equality of two AsservissementRollingBasis instances.
 
@@ -448,6 +461,7 @@ class AsservissementRollingBasis(BaseComTeensy):
             and self.angular_position_pid == other.angular_position_pid
         )
 
+    @override
     def __ne__(self, other: object) -> bool:
         """Check inequality of two AsservissementRollingBasis instances.
 

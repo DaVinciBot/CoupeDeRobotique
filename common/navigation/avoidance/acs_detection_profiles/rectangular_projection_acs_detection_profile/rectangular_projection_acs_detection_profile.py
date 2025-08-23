@@ -1,4 +1,5 @@
 import math
+from typing import override
 
 from loggerplusplus import Logger
 
@@ -55,6 +56,7 @@ class RectangularProjectionAcsDetectionProfile(
         )
         return translate(rotated_rectangle, xoff=dx, yoff=dy)
 
+    @override
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
         projection = self._create_rectangular_projection(ally_zone)
         if projection.contains(enemy_zone.point):

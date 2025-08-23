@@ -1,4 +1,5 @@
 from math import pi
+from typing import override
 
 from loggerplusplus import Logger
 
@@ -17,6 +18,7 @@ class ShowArena(BaseArena):
     def __init__(
         self,
         logger: Logger,
+        grid_manager_logger: Logger,
         border_buffer: float,
         obstacle_buffer: float,
         chunk_size: int = 2,
@@ -24,7 +26,6 @@ class ShowArena(BaseArena):
         distance_between_robot_and_pickup_zone: float = 25,
         distance_between_robot_and_big_construct_zone: float = 0,
         distance_between_robot_and_small_construct_zone: float = 22,
-        grid_manager_logger: Logger = None,
     ) -> None:
         stuff_zone_logger = Logger(
             identifier="StuffZone",
@@ -398,6 +399,7 @@ class ShowArena(BaseArena):
         self.logger.info("ShowArena initialized.")
         self.logger.debug(f"Width: {self.width}, Height: {self.height}")
 
+    @override
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ShowArena):
             return False
@@ -408,5 +410,6 @@ class ShowArena(BaseArena):
             and self.grid_manager == other.grid_manager
         )
 
+    @override
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)

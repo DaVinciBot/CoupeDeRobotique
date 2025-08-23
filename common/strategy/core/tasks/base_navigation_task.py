@@ -1,5 +1,3 @@
-from abc import abstractmethod
-
 from loggerplusplus import Logger
 
 from arena import BaseArenaZone
@@ -33,15 +31,23 @@ class BaseNavigationTask(BaseTask):
         """Initializes the BaseNavigationTask with navigation and planning parameters.
 
         Args:
-            goal (int | BaseArenaZone | OrientedPoint | Point | None): The navigation goal.
-            path_planner_params (BasePathPlannerParams): Parameters for the path planner.
-            trajectory_planner_params (BaseTrajectoryPlannerParams): Parameters for the trajectory planner.
+            goal (int | BaseArenaZone | OrientedPoint | Point | None):
+                The navigation goal.
+            path_planner_params (BasePathPlannerParams):
+                Parameters for the path planner.
+            trajectory_planner_params (BaseTrajectoryPlannerParams):
+                Parameters for the trajectory planner.
             speed_profiler (SpeedProfiler): Speed profile manager.
-            avoidance_params (BaseAvoidanceParams): Parameters for obstacle avoidance.
-            acs_detection_profile_params (BaseAcsDetectionProfileParams): Parameters for ACS detection profile.
-            stabilization_delay (float): Delay for stabilization after reaching the goal.
-            timeout (float | None, optional): Timeout for the navigation task. Defaults to None.
-            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            avoidance_params (BaseAvoidanceParams):
+                Parameters for obstacle avoidance.
+            acs_detection_profile_params (BaseAcsDetectionProfileParams):
+                Parameters for ACS detection profile.
+            stabilization_delay (float):
+                Delay for stabilization after reaching the goal.
+            timeout (float | None, optional):
+                Timeout for the navigation task. Defaults to None.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to None.
 
         """
         super().__init__(logger=logger)
@@ -61,7 +67,7 @@ class BaseNavigationTask(BaseTask):
     def _initialize(self, ctx: BaseGameContext) -> None:
         self._is_initialized = True
 
-        self.navigator_task: NavigatorTask = NavigatorTask(
+        self.navigator_task = NavigatorTask(
             params=NavigatorTaskParams(
                 goal=(
                     ctx.arena.compute_goal_position(self.goal) if self.goal else None
@@ -75,6 +81,3 @@ class BaseNavigationTask(BaseTask):
                 stabilization_delay=self.stabilization_delay,
             ),
         )
-
-    @abstractmethod
-    def handle(self, ctx: BaseGameContext) -> bool: ...

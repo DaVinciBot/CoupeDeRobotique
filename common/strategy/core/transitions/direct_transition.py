@@ -4,6 +4,8 @@
 # for transitioning between task nodes.
 
 
+from typing import override
+
 from strategy.core.base_game_context import BaseGameContext
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.transitions.base_transition import BaseTransition
@@ -19,6 +21,7 @@ class DirectTransition(BaseTransition):
 
     """
 
+    @override
     def can_transit(self, from_node: BaseTaskNode, ctx: BaseGameContext) -> bool:
         """Always allow the transition to occur.
 

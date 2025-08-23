@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.tasks import BaseTask, TaskStatus
@@ -30,12 +30,15 @@ class TimeoutTaskNode(BaseTaskNode):
             name (str): Node name.
             tasks (BaseTask | list[BaseTask]): Task or tasks to execute.
             timeout_seconds (float): Duration in seconds before timeout occurs.
-            scoring_function (BaseScoringFunction | None, optional): Scoring strategy used when evaluating transitions. Defaults to None.
+            scoring_function (BaseScoringFunction | None, optional):
+                Scoring strategy used when evaluating transitions. Defaults to None.
 
         """
         super().__init__(name, tasks, scoring_function)
         self.timeout_seconds: float = timeout_seconds
         self._timeout_triggered: bool = False
+        self.status = TaskStatus.PENDING
+        self.start_time = None
         self.logger.info(
             f"Initialized TimeoutTaskNode '{self.name}' with timeout set to {self.timeout_seconds}s",
         )
@@ -54,6 +57,7 @@ class TimeoutTaskNode(BaseTaskNode):
             f"Timeout reached for node '{self.name}' after {self.timeout_seconds:.2f}s",
         )
 
+    @override
     def execute(self, ctx: BaseGameContext) -> bool:
         """Execute tasks but enforce a maximum duration.
 

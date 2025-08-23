@@ -101,6 +101,41 @@ class RollingBasisDummy(BaseComTeensy):
 
     # ====== PID Configuration Methods ======
 
+    @staticmethod
+    def _load_pid(
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> PID:
+        """Load the PID values.
+
+        Overloads:
+            - set_linear_position_pid(float, float, float) → None
+            - set_linear_position_pid(dict[str, float]) → None
+            - set_linear_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+
+        Returns:
+            PID: The PID. #TODO: refaire ce comment
+
+        Raises:
+            ValueError: If the arguments do not match any expected format.
+
+        """
+        if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
+            pid = PID(*args)  # type: ignore[reportArgumentType]
+        elif len(args) == 1 and isinstance(args[0], dict):
+            pid = PID.from_dict(args[0])
+        elif kwargs:
+            pid = PID.from_dict(kwargs)
+        else:
+            msg = "Invalid arguments for PID configuration."
+            raise ValueError(msg)
+        return pid
+
     @overload
     def set_linear_position_pid(self, *args: float) -> None: ...
 
@@ -126,21 +161,9 @@ class RollingBasisDummy(BaseComTeensy):
             *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
-        Raises:
-            ValueError: If the arguments do not match any expected format.
-
         """
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
-                pid = PID(*args)  # type: ignore[reportArgumentType]
-            elif len(args) == 1 and isinstance(args[0], dict):
-                pid = PID.from_dict(args[0])
-            elif kwargs:
-                pid = PID.from_dict(kwargs)
-            else:
-                raise ValueError(
-                    "Invalid arguments for linear position PID configuration.",
-                )
+            pid = self._load_pid(*args, **kwargs)
             self.linear_position_pid = pid
             self._send_pid(PidID.LINEAR_POSITION.value, pid)
         except Exception as e:
@@ -172,20 +195,9 @@ class RollingBasisDummy(BaseComTeensy):
                 a single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
-        Raises:
-            ValueError: If the arguments do not match any expected format.
-
         """
         try:
-            if len(args) == 3 and all(isinstance(arg, float) for arg in args):
-                pid = PID(*args)  # type: ignore[reportArgumentType]
-            elif len(args) == 1 and isinstance(args[0], dict):
-                pid = PID.from_dict(args[0])
-            elif kwargs:
-                pid = PID.from_dict(kwargs)
-            else:
-                msg = "Invalid arguments for angular position PID configuration."
-                raise ValueError(msg)
+            pid = self._load_pid(*args, **kwargs)
             self.angular_position_pid = pid
             self._send_pid(PidID.ANGULAR_POSITION.value, pid)
         except Exception as e:
@@ -199,8 +211,10 @@ class RollingBasisDummy(BaseComTeensy):
         """Configure all PID controllers using dictionaries for each.
 
         Args:
-            linear_position_pid (dict[str, float]): PID configuration for linear position.
-            angular_position_pid (dict[str, float]): PID configuration for angular position.
+            linear_position_pid (dict[str, float]):
+                PID configuration for linear position.
+            angular_position_pid (dict[str, float]):
+                PID configuration for angular position.
 
         """
         self.set_linear_position_pid(**linear_position_pid)

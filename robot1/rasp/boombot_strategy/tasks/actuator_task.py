@@ -14,6 +14,7 @@ from strategy.core import BaseTask
 class ReadyToApproachToPickUp(BaseTask):
     """Task to activate the actuator's approach mechanism in preparation for picking up an object."""
 
+    @override
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to get ready to approach and pick up an object.
 
@@ -31,6 +32,7 @@ class ReadyToApproachToPickUp(BaseTask):
 class PrepareToPickUp(BaseTask):
     """Task to prepare the actuator for picking up an object."""
 
+    @override
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to prepare for a pickup, then wait briefly.
 
@@ -49,6 +51,7 @@ class PrepareToPickUp(BaseTask):
 class PickUp(BaseTask):
     """Task to perform the pickup action using the actuator."""
 
+    @override
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to pick up an object, then wait briefly.
 
@@ -85,6 +88,7 @@ class Build(BaseTask):
 
 
 class Deposit(BaseTask):
+    @override
     def handle(self, ctx: ShowGameContext) -> bool:
         ctx.actuators.demagnetize_all()
         ctx.score += CONFIG.BUILD_ONE_FLOOR
@@ -95,6 +99,7 @@ class Deposit(BaseTask):
 class BlockBanner(BaseTask):
     """Task to activate the banner-blocking actuator."""
 
+    @override
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to block the banner.
 
@@ -112,6 +117,7 @@ class BlockBanner(BaseTask):
 class DeplacementPosition(BaseTask):
     """Task to adjust the actuator to a predefined displacement position."""
 
+    @override
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to move to a displacement position.
 
@@ -129,6 +135,7 @@ class DeplacementPosition(BaseTask):
 class DeplacementObject(BaseTask):
     """Task to adjust the actuator to a predefined displacement position."""
 
+    @override
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the actuator command to move to a displacement position.
 

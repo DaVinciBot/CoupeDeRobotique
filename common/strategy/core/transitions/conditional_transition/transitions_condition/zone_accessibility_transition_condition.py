@@ -4,7 +4,7 @@
 # on the accessibility of a specific zone within the arena. The condition can be reversed if needed.
 
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from strategy.core.base_game_context import BaseGameContext
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
@@ -29,11 +29,13 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
         """Initialize the condition with optional reversal.
 
         Args:
-            reverse (bool, optional): Whether to reverse the condition logic. Defaults to ``False``.
+            reverse (bool, optional):
+                Whether to reverse the condition logic. Defaults to ``False``.
 
         """
         self.reverse = reverse
 
+    @override
     def check(
         self,
         from_node: BaseTaskNode,
@@ -45,10 +47,13 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
         Args:
             from_node (BaseTaskNode): The current task node.
             next_node (BaseTaskNode): The proposed next task node.
-            ctx (BaseGameContext): The game context, including arena and team information.
+            ctx (BaseGameContext):
+                The game context, including arena and team information.
 
         Returns:
-            bool: ``True`` if the condition is met (zone is accessible or not based on ``reverse``), ``False`` otherwise.
+            bool:
+                ``True`` if the condition is met (zone is accessible or not based
+                on ``reverse``), ``False`` otherwise.
 
         """
         navigation_tasks: list[BaseNavigationTask] = [
