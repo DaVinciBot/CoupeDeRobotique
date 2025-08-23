@@ -1,6 +1,6 @@
 {
-    "version": "1.1.403",
-    "time": "1755541439203",
+    "version": "1.1.404",
+    "time": "1755957233389",
     "generalDiagnostics": [
         {
             "file": "/home/runner/work/CoupeDeRobotique/CoupeDeRobotique/common/arena/2024_mars_arena/arena_old.py",
@@ -5396,11 +5396,11 @@
             "message": "Argument of type \"BaseTaskNode | None\" cannot be assigned to parameter \"prev_node\" of type \"BaseTaskNode\" in function \"compute\"\n  Type \"BaseTaskNode | None\" is not assignable to type \"BaseTaskNode\"\n    \"None\" is not assignable to \"BaseTaskNode\"",
             "range": {
                 "start": {
-                    "line": 82,
+                    "line": 83,
                     "character": 22
                 },
                 "end": {
-                    "line": 82,
+                    "line": 83,
                     "character": 31
                 }
             },
@@ -13088,7 +13088,7 @@
         "errorCount": 94,
         "warningCount": 184,
         "informationCount": 547,
-        "timeInSec": 4.82
+        "timeInSec": 5.213
     }
 }
 

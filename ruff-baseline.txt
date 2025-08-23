@@ -277,15 +277,14 @@ common/strategy/core/task_nodes/__init__.py:
 
 common/strategy/core/task_nodes/base_task_node.py:
     1:1  D100 Missing docstring in public module
-   34:89 E501 Line too long (137 > 88)
-   89:89 E501 Line too long (95 > 88)
-   93:56 ARG002 Unused method argument: `ctx`
-  104:55 ARG002 Unused method argument: `ctx`
-  115:9  C901 `execute` is too complex (11 > 10)
-  154:21 F841 Local variable `all_done` is assigned to but never used
-  161:20 BLE001 Do not catch blind exception: `Exception`
-  165:17 TRY400 Use `logging.exception` instead of `logging.error`
-  182:89 E501 Line too long (96 > 88)
+   90:89 E501 Line too long (95 > 88)
+   94:56 ARG002 Unused method argument: `ctx`
+  105:55 ARG002 Unused method argument: `ctx`
+  116:9  C901 `execute` is too complex (11 > 10)
+  155:21 F841 Local variable `all_done` is assigned to but never used
+  162:20 BLE001 Do not catch blind exception: `Exception`
+  166:17 TRY400 Use `logging.exception` instead of `logging.error`
+  183:89 E501 Line too long (96 > 88)
 
 common/strategy/core/task_nodes/scoring_functions/__init__.py:
   1:1 D104 Missing docstring in public package
@@ -1135,4 +1134,4 @@ robot1/rasp/tests/config_loader.py:
   358:89 E501 Line too long (132 > 88)
   361:89 E501 Line too long (130 > 88)
 
-Found 893 errors.
+Found 892 errors.

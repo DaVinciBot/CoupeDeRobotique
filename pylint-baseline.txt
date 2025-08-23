@@ -354,10 +354,9 @@
 95:12: W0201: Attribute 'status' defined outside __init__ (attribute-defined-outside-init)
 96:12: W0201: Attribute 'end_time' defined outside __init__ (attribute-defined-outside-init)
 ************* Module common.strategy.core.task_nodes.base_task_node
-34:0: C0301: Line too long (137/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-161:19: W0718: Catching too general exception Exception (broad-exception-caught)
-136:8: W0612: Unused variable 'all_done' (unused-variable)
+162:19: W0718: Catching too general exception Exception (broad-exception-caught)
+137:8: W0612: Unused variable 'all_done' (unused-variable)
 ************* Module common.strategy.core.task_nodes
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.strategy.core.task_nodes.scoring_functions.constant_scoring_function
