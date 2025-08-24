@@ -1,88 +1,73 @@
-************* Module common.arena.2024_mars_arena.arena_old
-69:0: C0301: Line too long (102/100) (line-too-long)
-30:4: R0913: Too many arguments (7/5) (too-many-arguments)
-************* Module common.arena.2024_mars_arena
-1:0: C0103: Module name "2024_mars_arena" doesn't conform to snake_case naming style (invalid-name)
-************* Module common.arena.base_arena.arena
-297:0: C0301: Line too long (110/100) (line-too-long)
-37:4: R0913: Too many arguments (10/5) (too-many-arguments)
-37:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-486:4: R0913: Too many arguments (6/5) (too-many-arguments)
-486:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-573:4: R0913: Too many arguments (7/5) (too-many-arguments)
-573:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-625:4: R0913: Too many arguments (7/5) (too-many-arguments)
-738:4: R0913: Too many arguments (7/5) (too-many-arguments)
-873:4: R0913: Too many arguments (10/5) (too-many-arguments)
-************* Module common.arena.base_arena.grid_manager
-26:4: R0913: Too many arguments (6/5) (too-many-arguments)
-26:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-49:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-49:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-87:4: R0914: Too many local variables (16/15) (too-many-locals)
-133:4: R0914: Too many local variables (19/15) (too-many-locals)
-133:4: W0238: Unused private member `GridManager.__optimized_mark_zone(self, grid: Grid, polygon_to_mark: Polygon, *, walkable: bool)` (unused-private-member)
-************* Module common.arena.base_arena.grid_manager_2
-46:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-46:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-81:4: R0914: Too many local variables (17/15) (too-many-locals)
-************* Module common.arena.base_arena.arena_zones.ally_zone
-69:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
-************* Module common.arena.base_arena.arena_zones.base_arena_zone
-203:0: C0301: Line too long (111/100) (line-too-long)
-30:4: R0913: Too many arguments (11/5) (too-many-arguments)
-30:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.border_zone
-15:4: R0913: Too many arguments (6/5) (too-many-arguments)
-15:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.forbidden_zone
-15:4: R0913: Too many arguments (7/5) (too-many-arguments)
-15:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.stuff_zone
-20:4: R0913: Too many arguments (7/5) (too-many-arguments)
-20:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-78:14: E0203: Access to member 'accessibility' before its definition line 79 (access-member-before-definition)
-79:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone
-23:4: R0913: Too many arguments (11/5) (too-many-arguments)
-23:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
-104:11: E0203: Access to member 'accessibility' before its definition line 105 (access-member-before-definition)
-105:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone
-22:4: R0913: Too many arguments (7/5) (too-many-arguments)
-22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones.yellow_reserved_zone
-22:4: R0913: Too many arguments (7/5) (too-many-arguments)
-22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone
-26:4: R0913: Too many arguments (14/5) (too-many-arguments)
-26:4: R0917: Too many positional arguments (14/5) (too-many-positional-arguments)
-135:46: C1805: "distance != 0" can be simplified to "distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-137:11: C1805: "speed == 0" can be simplified to "not speed", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.enemy_zone
-9:0: C0301: Line too long (114/100) (line-too-long)
-37:0: C0301: Line too long (103/100) (line-too-long)
-38:0: C0301: Line too long (103/100) (line-too-long)
-39:0: C0301: Line too long (105/100) (line-too-long)
+************* Module docs.source.conf
 1:0: C0114: Missing module docstring (missing-module-docstring)
-22:4: R0913: Too many arguments (7/5) (too-many-arguments)
-22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.arena.show_arena.arena
+17:0: W0622: Redefining built-in 'copyright' (redefined-builtin)
+16:0: C0103: Constant name "project" doesn't conform to UPPER_CASE naming style (invalid-name)
+17:0: C0103: Constant name "copyright" doesn't conform to UPPER_CASE naming style (invalid-name)
+18:0: C0103: Constant name "author" doesn't conform to UPPER_CASE naming style (invalid-name)
+28:0: C0103: Constant name "napoleon_google_docstring" doesn't conform to UPPER_CASE naming style (invalid-name)
+29:0: C0103: Constant name "napoleon_numpy_docstring" doesn't conform to UPPER_CASE naming style (invalid-name)
+30:0: C0103: Constant name "napoleon_include_init_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
+31:0: C0103: Constant name "napoleon_include_private_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
+32:0: C0103: Constant name "napoleon_include_special_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
+33:0: C0103: Constant name "napoleon_use_admonition_for_examples" doesn't conform to UPPER_CASE naming style (invalid-name)
+34:0: C0103: Constant name "napoleon_use_admonition_for_notes" doesn't conform to UPPER_CASE naming style (invalid-name)
+35:0: C0103: Constant name "napoleon_use_admonition_for_references" doesn't conform to UPPER_CASE naming style (invalid-name)
+36:0: C0103: Constant name "napoleon_use_ivar" doesn't conform to UPPER_CASE naming style (invalid-name)
+37:0: C0103: Constant name "napoleon_use_param" doesn't conform to UPPER_CASE naming style (invalid-name)
+38:0: C0103: Constant name "napoleon_use_rtype" doesn't conform to UPPER_CASE naming style (invalid-name)
+39:0: C0103: Constant name "napoleon_preprocess_types" doesn't conform to UPPER_CASE naming style (invalid-name)
+40:0: C0103: Constant name "napoleon_type_aliases" doesn't conform to UPPER_CASE naming style (invalid-name)
+41:0: C0103: Constant name "napoleon_attr_annotations" doesn't conform to UPPER_CASE naming style (invalid-name)
+46:0: C0103: Constant name "language" doesn't conform to UPPER_CASE naming style (invalid-name)
+51:0: C0103: Constant name "html_theme" doesn't conform to UPPER_CASE naming style (invalid-name)
+************* Module common.video.server
 1:0: C0114: Missing module docstring (missing-module-docstring)
-17:0: C0115: Missing class docstring (missing-class-docstring)
-18:4: R0913: Too many arguments (10/5) (too-many-arguments)
-18:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-18:4: R0914: Too many local variables (21/15) (too-many-locals)
-************* Module common.geometry.oriented_point
-32:4: W0231: __init__ method from base class 'Point' is not called (super-init-not-called)
-************* Module common.GPIO
-1:0: C0103: Module name "GPIO" doesn't conform to snake_case naming style (invalid-name)
+6:0: C0103: Constant name "img_path" doesn't conform to UPPER_CASE naming style (invalid-name)
+9:0: C0115: Missing class docstring (missing-class-docstring)
+12:4: C0116: Missing function or method docstring (missing-function-docstring)
+27:4: C0116: Missing function or method docstring (missing-function-docstring)
+27:4: C0103: Method name "do_GET" doesn't conform to snake_case naming style (invalid-name)
+49:23: W0718: Catching too general exception Exception (broad-exception-caught)
+43:59: C2801: Unnecessarily calls dunder method __len__. Use len built-in function. (unnecessary-dunder-call)
+61:0: C0116: Missing function or method docstring (missing-function-docstring)
+74:0: C0116: Missing function or method docstring (missing-function-docstring)
+75:4: C0415: Import outside toplevel (threading) (import-outside-toplevel)
+80:11: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module common.video
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.messages
+4:0: C0301: Line too long (111/100) (line-too-long)
+9:0: C0301: Line too long (112/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.tools.get_serial_number
+1:0: C0114: Missing module docstring (missing-module-docstring)
+4:0: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.usb_com.python.tools
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.com.exceptions
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.com.com
+67:0: C0301: Line too long (108/100) (line-too-long)
+125:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+29:4: R0913: Too many arguments (8/5) (too-many-arguments)
+29:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+176:19: W0718: Catching too general exception Exception (broad-exception-caught)
+172:23: W0718: Catching too general exception Exception (broad-exception-caught)
+************* Module common.usb_com.python.com.dummy
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.usb_com.python.com
+1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.navigation.avoidance.avoidance_factory
 11:0: W0611: Unused BackAvoidanceParams imported from navigation.avoidance.back_avoidance (unused-import)
 13:0: W0611: Unused NoAvoidanceParams imported from navigation.avoidance.no_avoidance (unused-import)
 14:0: W0611: Unused StopAndWaitAvoidanceParams imported from navigation.avoidance.stop_and_wait_avoidance (unused-import)
 ************* Module common.navigation.avoidance.structs
 20:0: C0301: Line too long (107/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.struct
+1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.navigation.avoidance.acs_detection_profiles.acs_detection_profile_factory
 8:0: C0301: Line too long (121/100) (line-too-long)
 20:0: C0301: Line too long (107/100) (line-too-long)
@@ -92,28 +77,6 @@
 16:0: W0611: Unused NoAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile (unused-import)
 20:0: W0611: Unused NoProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile (unused-import)
 24:0: W0611: Unused RectangularProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile (unused-import)
-************* Module common.navigation.avoidance.acs_detection_profiles.struct
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile
-7:0: C0301: Line too long (178/100) (line-too-long)
-20:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profiles
-8:0: C0301: Line too long (134/100) (line-too-long)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile
-7:0: C0301: Line too long (114/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-15:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-25:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile_params
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile
-11:0: C0301: Line too long (150/100) (line-too-long)
-21:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.__init__
-1:0: C0301: Line too long (129/100) (line-too-long)
-4:0: C0301: Line too long (136/100) (line-too-long)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile
-1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile
 11:0: C0301: Line too long (154/100) (line-too-long)
 29:0: C0301: Line too long (133/100) (line-too-long)
@@ -127,14 +90,26 @@
 4:0: C0301: Line too long (154/100) (line-too-long)
 ************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile
 1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.avoidance.back_avoidance.back_avoidance
-83:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
-87:74: E0203: Access to member 'state' before its definition line 122 (access-member-before-definition)
-98:16: E0203: Access to member 'state' before its definition line 122 (access-member-before-definition)
-122:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-172:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.navigation.avoidance.no_avoidance.no_avoidance
-29:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile
+7:0: C0301: Line too long (178/100) (line-too-long)
+20:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile
+11:0: C0301: Line too long (150/100) (line-too-long)
+21:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.__init__
+1:0: C0301: Line too long (129/100) (line-too-long)
+4:0: C0301: Line too long (136/100) (line-too-long)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile
+7:0: C0301: Line too long (114/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+15:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+25:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile_params
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profiles
+8:0: C0301: Line too long (134/100) (line-too-long)
 ************* Module common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance
 34:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
 72:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
@@ -144,58 +119,44 @@
 124:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
 ************* Module common.navigation.avoidance.stop_and_wait_avoidance.__init__
 6:0: C0301: Line too long (103/100) (line-too-long)
-************* Module common.navigation.debug_functions.navigator
-23:0: C0301: Line too long (133/100) (line-too-long)
-34:0: C0301: Line too long (101/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-18:0: R0914: Too many local variables (19/15) (too-many-locals)
-18:0: R0915: Too many statements (79/50) (too-many-statements)
-************* Module common.navigation.debug_functions.speed_profile
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.navigation.debug_functions.trajectory_planer
-4:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-17:0: R0914: Too many local variables (20/15) (too-many-locals)
-104:57: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-120:63: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-17:0: R0915: Too many statements (68/50) (too-many-statements)
-************* Module common.navigation.navigator.signals.dispatcher
-33:8: C0115: Missing class docstring (missing-class-docstring)
-************* Module common.navigation.navigator.task.navigator_task
-35:8: C0415: Import outside toplevel (navigation.avoidance.AvoidanceFactory, navigation.avoidance.BaseAvoidance) (import-outside-toplevel)
-************* Module common.navigation.navigator.task.navigator_task_params
-14:4: R0913: Too many arguments (9/5) (too-many-arguments)
-14:4: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
+************* Module common.navigation.avoidance.no_avoidance.no_avoidance
+29:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.avoidance.back_avoidance.back_avoidance
+83:8: C0415: Import outside toplevel (navigation.navigator.task.states.NavigatorTaskState) (import-outside-toplevel)
+87:74: E0203: Access to member 'state' before its definition line 122 (access-member-before-definition)
+98:16: E0203: Access to member 'state' before its definition line 122 (access-member-before-definition)
+122:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+172:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
 ************* Module common.navigation.path_planner.path_planner_factory
 5:0: W0611: Unused AStarPathPlannerParams imported from navigation.path_planner.astar_path_planner (unused-import)
 13:0: W0611: Unused BasicPathPlannerParams imported from navigation.path_planner.basic_path_planner (unused-import)
 17:0: W0611: Unused DeltaPathPlannerParams imported from navigation.path_planner.delta_path_planner (unused-import)
-************* Module common.navigation.path_planner.astar_path_planner.astar_path_planner_params
-18:4: R0913: Too many arguments (7/5) (too-many-arguments)
-18:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
 ************* Module common.navigation.path_planner.basic_path_planner.basic_path_planner
 25:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner_params
+34:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
 ************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner
 24:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
 89:11: C1805: "self.params.distance != 0.0" can be simplified to "self.params.distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
 95:11: C1805: "self.params.rotation != 0.0" can be simplified to "self.params.rotation", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner_params
-34:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+************* Module common.navigation.path_planner.astar_path_planner.astar_path_planner_params
+18:4: R0913: Too many arguments (7/5) (too-many-arguments)
+18:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
 ************* Module common.navigation.trajectory_planner.trajectory_planner_factory
 7:0: W0611: Unused SequentialTrajectoryPlannerParams imported from navigation.trajectory_planner.sequential_trajectory_planner (unused-import)
+************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner
+22:0: C0301: Line too long (124/100) (line-too-long)
+************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.__init__
+3:0: C0301: Line too long (103/100) (line-too-long)
+6:0: C0301: Line too long (110/100) (line-too-long)
+************* Module common.navigation.trajectory_planner.common.segments.stop_segment
+16:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
 ************* Module common.navigation.trajectory_planner.common.segments.rotation_segment
 10:4: R0913: Too many arguments (6/5) (too-many-arguments)
 10:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
 ************* Module common.navigation.trajectory_planner.common.segments.smooth_segment
 16:4: R0913: Too many arguments (6/5) (too-many-arguments)
 16:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-************* Module common.navigation.trajectory_planner.common.segments.stop_segment
-16:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.sequential_trajectory_planner
-22:0: C0301: Line too long (124/100) (line-too-long)
-************* Module common.navigation.trajectory_planner.sequential_trajectory_planner.__init__
-3:0: C0301: Line too long (103/100) (line-too-long)
-6:0: C0301: Line too long (110/100) (line-too-long)
 ************* Module common.navigation.trajectory_planner.speed_profile.linear_ramped_speed_profile
 84:4: R0913: Too many arguments (6/5) (too-many-arguments)
 84:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
@@ -207,21 +168,106 @@
 176:4: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
 ************* Module common.navigation.trajectory_planner.speed_profile.__init__
 14:0: C0301: Line too long (112/100) (line-too-long)
+************* Module common.navigation.debug_functions.navigator
+23:0: C0301: Line too long (133/100) (line-too-long)
+34:0: C0301: Line too long (101/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+18:0: R0914: Too many local variables (19/15) (too-many-locals)
+18:0: R0915: Too many statements (79/50) (too-many-statements)
+************* Module common.navigation.debug_functions.trajectory_planer
+4:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+17:0: R0914: Too many local variables (20/15) (too-many-locals)
+104:57: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+120:63: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+17:0: R0915: Too many statements (68/50) (too-many-statements)
+************* Module common.navigation.debug_functions.speed_profile
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.navigation.navigator.task.navigator_task
+35:8: C0415: Import outside toplevel (navigation.avoidance.AvoidanceFactory, navigation.avoidance.BaseAvoidance) (import-outside-toplevel)
+************* Module common.navigation.navigator.task.navigator_task_params
+14:4: R0913: Too many arguments (9/5) (too-many-arguments)
+14:4: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
+************* Module common.navigation.navigator.signals.dispatcher
+33:8: C0115: Missing class docstring (missing-class-docstring)
+************* Module common.arena.show_arena.arena
+1:0: C0114: Missing module docstring (missing-module-docstring)
+17:0: C0115: Missing class docstring (missing-class-docstring)
+18:4: R0913: Too many arguments (10/5) (too-many-arguments)
+18:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+18:4: R0914: Too many local variables (21/15) (too-many-locals)
+************* Module common.arena.2024_mars_arena.arena_old
+69:0: C0301: Line too long (102/100) (line-too-long)
+30:4: R0913: Too many arguments (7/5) (too-many-arguments)
+************* Module common.arena.2024_mars_arena
+1:0: C0103: Module name "2024_mars_arena" doesn't conform to snake_case naming style (invalid-name)
+************* Module common.arena.base_arena.grid_manager_2
+46:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+46:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+81:4: R0914: Too many local variables (17/15) (too-many-locals)
+************* Module common.arena.base_arena.grid_manager
+26:4: R0913: Too many arguments (6/5) (too-many-arguments)
+26:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+49:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+49:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+87:4: R0914: Too many local variables (16/15) (too-many-locals)
+133:4: R0914: Too many local variables (19/15) (too-many-locals)
+259:41: E1136: Value 'np.ndarray' is unsubscriptable (unsubscriptable-object)
+133:4: W0238: Unused private member `GridManager.__optimized_mark_zone(self, grid: Grid, polygon_to_mark: Polygon, *, walkable: bool)` (unused-private-member)
+************* Module common.arena.base_arena.arena
+297:0: C0301: Line too long (110/100) (line-too-long)
+37:4: R0913: Too many arguments (10/5) (too-many-arguments)
+37:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+486:4: R0913: Too many arguments (6/5) (too-many-arguments)
+486:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+573:4: R0913: Too many arguments (7/5) (too-many-arguments)
+573:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+625:4: R0913: Too many arguments (7/5) (too-many-arguments)
+738:4: R0913: Too many arguments (7/5) (too-many-arguments)
+873:4: R0913: Too many arguments (10/5) (too-many-arguments)
+************* Module common.arena.base_arena.arena_zones.forbidden_zone
+15:4: R0913: Too many arguments (7/5) (too-many-arguments)
+15:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.ally_zone
+69:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
+************* Module common.arena.base_arena.arena_zones.border_zone
+15:4: R0913: Too many arguments (6/5) (too-many-arguments)
+15:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.stuff_zone
+20:4: R0913: Too many arguments (7/5) (too-many-arguments)
+20:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+78:14: E0203: Access to member 'accessibility' before its definition line 79 (access-member-before-definition)
+79:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.arena.base_arena.arena_zones.base_arena_zone
+203:0: C0301: Line too long (111/100) (line-too-long)
+30:4: R0913: Too many arguments (11/5) (too-many-arguments)
+30:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone
+22:4: R0913: Too many arguments (7/5) (too-many-arguments)
+22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones.yellow_reserved_zone
+22:4: R0913: Too many arguments (7/5) (too-many-arguments)
+22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+************* Module common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone
+23:4: R0913: Too many arguments (11/5) (too-many-arguments)
+23:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
+104:11: E0203: Access to member 'accessibility' before its definition line 105 (access-member-before-definition)
+105:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone
+26:4: R0913: Too many arguments (14/5) (too-many-arguments)
+26:4: R0917: Too many positional arguments (14/5) (too-many-positional-arguments)
+135:46: C1805: "distance != 0" can be simplified to "distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+137:11: C1805: "speed == 0" can be simplified to "not speed", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.enemy_zone
+9:0: C0301: Line too long (114/100) (line-too-long)
+37:0: C0301: Line too long (103/100) (line-too-long)
+38:0: C0301: Line too long (103/100) (line-too-long)
+39:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+22:4: R0913: Too many arguments (7/5) (too-many-arguments)
+22:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
 ************* Module common.strategy.core.graph_runner
 106:49: W0640: Cell variable prev_node defined in loop (cell-var-from-loop)
-************* Module common.strategy.core.sub_graphs.base_sub_graph
-1:0: C0114: Missing module docstring (missing-module-docstring)
-4:0: C0115: Missing class docstring (missing-class-docstring)
-17:4: C0116: Missing function or method docstring (missing-function-docstring)
-20:4: C0116: Missing function or method docstring (missing-function-docstring)
-23:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.strategy.core.sub_graphs
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.strategy.core.tasks.base_navigation_task
-1:0: C0114: Missing module docstring (missing-module-docstring)
-18:0: C0115: Missing class docstring (missing-class-docstring)
-19:4: R0913: Too many arguments (10/5) (too-many-arguments)
-19:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
 ************* Module common.strategy.core.tasks.base_task
 1:0: C0114: Missing module docstring (missing-module-docstring)
 27:4: C0116: Missing function or method docstring (missing-function-docstring)
@@ -229,39 +275,23 @@
 1:0: C0114: Missing module docstring (missing-module-docstring)
 7:0: C0115: Missing class docstring (missing-class-docstring)
 9:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.tasks.base_navigation_task
+1:0: C0114: Missing module docstring (missing-module-docstring)
+18:0: C0115: Missing class docstring (missing-class-docstring)
+19:4: R0913: Too many arguments (10/5) (too-many-arguments)
+19:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
 ************* Module common.strategy.core.tasks.status
 1:0: C0114: Missing module docstring (missing-module-docstring)
 4:0: C0115: Missing class docstring (missing-class-docstring)
 ************* Module common.strategy.core.tasks
 1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.strategy.core.task_nodes.base_task_node
+************* Module common.strategy.core.sub_graphs.base_sub_graph
 1:0: C0114: Missing module docstring (missing-module-docstring)
-162:19: W0718: Catching too general exception Exception (broad-exception-caught)
-137:8: W0612: Unused variable 'all_done' (unused-variable)
-************* Module common.strategy.core.task_nodes.timeout_task_node
-43:0: C0301: Line too long (101/100) (line-too-long)
-86:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-100:12: W0201: Attribute 'end_time' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.strategy.core.task_nodes
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.strategy.core.task_nodes.scoring_functions.base_scoring_function
-1:0: C0114: Missing module docstring (missing-module-docstring)
-11:0: C0115: Missing class docstring (missing-class-docstring)
-13:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.strategy.core.task_nodes.scoring_functions.constant_scoring_function
-1:0: C0114: Missing module docstring (missing-module-docstring)
-14:0: C0115: Missing class docstring (missing-class-docstring)
-19:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.strategy.core.task_nodes.scoring_functions.default_scoring_function
-1:0: C0114: Missing module docstring (missing-module-docstring)
-14:0: C0115: Missing class docstring (missing-class-docstring)
-16:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.strategy.core.task_nodes.scoring_functions.navigation_scoring_function
-1:0: C0114: Missing module docstring (missing-module-docstring)
-14:0: C0115: Missing class docstring (missing-class-docstring)
-19:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.strategy.core.task_nodes.scoring_functions
+4:0: C0115: Missing class docstring (missing-class-docstring)
+17:4: C0116: Missing function or method docstring (missing-function-docstring)
+20:4: C0116: Missing function or method docstring (missing-function-docstring)
+23:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.sub_graphs
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.strategy.core.transitions.base_transition
 2:0: C0301: Line too long (103/100) (line-too-long)
@@ -280,15 +310,15 @@
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.strategy.core.transitions.conditional_transition
 1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.from_function_transition_condition
+4:0: C0301: Line too long (104/100) (line-too-long)
+12:0: C0301: Line too long (110/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition
 2:0: C0301: Line too long (108/100) (line-too-long)
 3:0: C0301: Line too long (103/100) (line-too-long)
 4:0: C0301: Line too long (101/100) (line-too-long)
 34:0: C0301: Line too long (109/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.from_function_transition_condition
-4:0: C0301: Line too long (104/100) (line-too-long)
-12:0: C0301: Line too long (110/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.strategy.core.transitions.conditional_transition.transitions_condition.zone_accessibility_transition_condition
 3:0: C0301: Line too long (101/100) (line-too-long)
@@ -300,6 +330,35 @@
 7:0: C0301: Line too long (124/100) (line-too-long)
 ************* Module common.strategy.core.transitions.conditional_transition.transitions_condition
 1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.task_nodes.timeout_task_node
+43:0: C0301: Line too long (101/100) (line-too-long)
+86:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+100:12: W0201: Attribute 'end_time' defined outside __init__ (attribute-defined-outside-init)
+************* Module common.strategy.core.task_nodes.base_task_node
+1:0: C0114: Missing module docstring (missing-module-docstring)
+162:19: W0718: Catching too general exception Exception (broad-exception-caught)
+137:8: W0612: Unused variable 'all_done' (unused-variable)
+************* Module common.strategy.core.task_nodes
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions.constant_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+14:0: C0115: Missing class docstring (missing-class-docstring)
+19:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions.base_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+11:0: C0115: Missing class docstring (missing-class-docstring)
+13:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions.navigation_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+14:0: C0115: Missing class docstring (missing-class-docstring)
+19:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions.default_scoring_function
+1:0: C0114: Missing module docstring (missing-module-docstring)
+14:0: C0115: Missing class docstring (missing-class-docstring)
+16:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module common.strategy.core.task_nodes.scoring_functions
+1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.strategy.tools.visualize
 3:0: C0301: Line too long (102/100) (line-too-long)
 4:0: C0301: Line too long (107/100) (line-too-long)
@@ -309,6 +368,12 @@
 79:8: C0415: Import outside toplevel (webbrowser) (import-outside-toplevel)
 145:8: C0415: Import outside toplevel (webbrowser) (import-outside-toplevel)
 ************* Module common.strategy.tools
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module common.utils.utils
+1:0: C0114: Missing module docstring (missing-module-docstring)
+6:0: C0115: Missing class docstring (missing-class-docstring)
+80:12: W0702: No exception type(s) specified (bare-except)
+************* Module common.utils
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.teensy.base_teensy
 15:0: C0301: Line too long (111/100) (line-too-long)
@@ -332,77 +397,8 @@
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.teensy.tools.gpio_manager
 1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.usb_com.python.messages
-4:0: C0301: Line too long (111/100) (line-too-long)
-9:0: C0301: Line too long (112/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.usb_com.python
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.usb_com.python.com.com
-67:0: C0301: Line too long (108/100) (line-too-long)
-125:0: C0301: Line too long (107/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-29:4: R0913: Too many arguments (8/5) (too-many-arguments)
-29:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-176:19: W0718: Catching too general exception Exception (broad-exception-caught)
-172:23: W0718: Catching too general exception Exception (broad-exception-caught)
-************* Module common.usb_com.python.com.dummy
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.usb_com.python.com.exceptions
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.usb_com.python.com
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.usb_com.python.tools.get_serial_number
-1:0: C0114: Missing module docstring (missing-module-docstring)
-4:0: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.usb_com.python.tools
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.utils.utils
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: C0115: Missing class docstring (missing-class-docstring)
-80:12: W0702: No exception type(s) specified (bare-except)
-************* Module common.utils
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module common.video.server
-1:0: C0114: Missing module docstring (missing-module-docstring)
-6:0: C0103: Constant name "img_path" doesn't conform to UPPER_CASE naming style (invalid-name)
-9:0: C0115: Missing class docstring (missing-class-docstring)
-12:4: C0116: Missing function or method docstring (missing-function-docstring)
-27:4: C0116: Missing function or method docstring (missing-function-docstring)
-27:4: C0103: Method name "do_GET" doesn't conform to snake_case naming style (invalid-name)
-49:23: W0718: Catching too general exception Exception (broad-exception-caught)
-40:26: E1101: Module 'cv2' has no 'imencode' member (no-member)
-43:59: C2801: Unnecessarily calls dunder method __len__. Use len built-in function. (unnecessary-dunder-call)
-61:0: C0116: Missing function or method docstring (missing-function-docstring)
-74:0: C0116: Missing function or method docstring (missing-function-docstring)
-75:4: C0415: Import outside toplevel (threading) (import-outside-toplevel)
-80:11: W0718: Catching too general exception Exception (broad-exception-caught)
-************* Module common.video
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module docs.source.conf
-1:0: C0114: Missing module docstring (missing-module-docstring)
-17:0: W0622: Redefining built-in 'copyright' (redefined-builtin)
-16:0: C0103: Constant name "project" doesn't conform to UPPER_CASE naming style (invalid-name)
-17:0: C0103: Constant name "copyright" doesn't conform to UPPER_CASE naming style (invalid-name)
-18:0: C0103: Constant name "author" doesn't conform to UPPER_CASE naming style (invalid-name)
-28:0: C0103: Constant name "napoleon_google_docstring" doesn't conform to UPPER_CASE naming style (invalid-name)
-29:0: C0103: Constant name "napoleon_numpy_docstring" doesn't conform to UPPER_CASE naming style (invalid-name)
-30:0: C0103: Constant name "napoleon_include_init_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
-31:0: C0103: Constant name "napoleon_include_private_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
-32:0: C0103: Constant name "napoleon_include_special_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
-33:0: C0103: Constant name "napoleon_use_admonition_for_examples" doesn't conform to UPPER_CASE naming style (invalid-name)
-34:0: C0103: Constant name "napoleon_use_admonition_for_notes" doesn't conform to UPPER_CASE naming style (invalid-name)
-35:0: C0103: Constant name "napoleon_use_admonition_for_references" doesn't conform to UPPER_CASE naming style (invalid-name)
-36:0: C0103: Constant name "napoleon_use_ivar" doesn't conform to UPPER_CASE naming style (invalid-name)
-37:0: C0103: Constant name "napoleon_use_param" doesn't conform to UPPER_CASE naming style (invalid-name)
-38:0: C0103: Constant name "napoleon_use_rtype" doesn't conform to UPPER_CASE naming style (invalid-name)
-39:0: C0103: Constant name "napoleon_preprocess_types" doesn't conform to UPPER_CASE naming style (invalid-name)
-40:0: C0103: Constant name "napoleon_type_aliases" doesn't conform to UPPER_CASE naming style (invalid-name)
-41:0: C0103: Constant name "napoleon_attr_annotations" doesn't conform to UPPER_CASE naming style (invalid-name)
-46:0: C0103: Constant name "language" doesn't conform to UPPER_CASE naming style (invalid-name)
-51:0: C0103: Constant name "html_theme" doesn't conform to UPPER_CASE naming style (invalid-name)
-************* Module PAMI.lib.ota.ui.convert
-25:0: C0103: Constant name "byte_array" doesn't conform to UPPER_CASE naming style (invalid-name)
+************* Module common.geometry.oriented_point
+79:20: E1121: Too many positional arguments for classmethod call (too-many-function-args)
 ************* Module robot1.rasp.a_config_loader
 161:0: I0011: Locally disabling import-outside-toplevel (C0415) (locally-disabled)
 161:0: I0023: 'C0415' is cryptic: use '# pylint: disable=import-outside-toplevel' instead (use-symbolic-message-instead)
@@ -428,65 +424,11 @@
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.boombot_strategy
 1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.strategies.base_strategy
-78:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.strategies.basic_strategy
-31:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.strategies.debug_strategy
-30:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.strategies.only_banner_strategy
-27:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy
-2:0: C0301: Line too long (107/100) (line-too-long)
-33:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.strategies.tower_rush_strategy
-2:0: C0301: Line too long (107/100) (line-too-long)
-33:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.strategies
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.sub_graphs.banner_deployment
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.sub_graphs.construct
-20:0: C0301: Line too long (102/100) (line-too-long)
-25:0: C0301: Line too long (124/100) (line-too-long)
-95:0: C0301: Line too long (102/100) (line-too-long)
-100:0: C0301: Line too long (124/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.sub_graphs.pickup
-21:0: C0301: Line too long (104/100) (line-too-long)
-23:0: C0301: Line too long (107/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.sub_graphs.push_one_floor_to_wall
-45:0: C0301: Line too long (105/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-23:0: R0914: Too many local variables (16/15) (too-many-locals)
-************* Module robot1.rasp.boombot_strategy.sub_graphs.wall_pickup
-27:0: C0301: Line too long (107/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.sub_graphs
-1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.boombot_strategy.tasks.actuator_task
 15:0: C0301: Line too long (101/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
 90:0: C0115: Missing class docstring (missing-class-docstring)
 92:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone
-8:0: C0301: Line too long (102/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.go_to_stuff_zone
-2:0: C0301: Line too long (102/100) (line-too-long)
-16:0: C0301: Line too long (102/100) (line-too-long)
-24:0: C0301: Line too long (104/100) (line-too-long)
-25:0: C0301: Line too long (105/100) (line-too-long)
-26:0: C0301: Line too long (103/100) (line-too-long)
-43:0: C0301: Line too long (104/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver
 24:0: C0301: Line too long (102/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
@@ -498,19 +440,61 @@
 7:4: C0116: Missing function or method docstring (missing-function-docstring)
 ************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.odometrie
 1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.go_to_stuff_zone
+2:0: C0301: Line too long (102/100) (line-too-long)
+16:0: C0301: Line too long (102/100) (line-too-long)
+24:0: C0301: Line too long (104/100) (line-too-long)
+25:0: C0301: Line too long (105/100) (line-too-long)
+26:0: C0301: Line too long (103/100) (line-too-long)
+43:0: C0301: Line too long (104/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone
+8:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks
 1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.brains.main_brain
+************* Module robot1.rasp.boombot_strategy.sub_graphs.construct
+20:0: C0301: Line too long (102/100) (line-too-long)
+25:0: C0301: Line too long (124/100) (line-too-long)
+95:0: C0301: Line too long (102/100) (line-too-long)
+100:0: C0301: Line too long (124/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-25:4: R0913: Too many arguments (7/5) (too-many-arguments)
-25:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-78:4: W0105: String statement has no effect (pointless-string-statement)
-82:4: W0105: String statement has no effect (pointless-string-statement)
-115:8: C0415: Import outside toplevel (boombot_strategy.ShowGameContext) (import-outside-toplevel)
-116:8: C0415: Import outside toplevel (boombot_strategy.strategies.TowerRushAltStrategy) (import-outside-toplevel)
-230:30: W0123: Use of eval (eval-used)
-232:24: W0123: Use of eval (eval-used)
-************* Module robot1.rasp.brains
+************* Module robot1.rasp.boombot_strategy.sub_graphs.banner_deployment
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.wall_pickup
+27:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.pickup
+21:0: C0301: Line too long (104/100) (line-too-long)
+23:0: C0301: Line too long (107/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.sub_graphs.push_one_floor_to_wall
+45:0: C0301: Line too long (105/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+23:0: R0914: Too many local variables (16/15) (too-many-locals)
+************* Module robot1.rasp.boombot_strategy.sub_graphs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.debug_strategy
+30:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.base_strategy
+78:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.tower_rush_strategy
+2:0: C0301: Line too long (107/100) (line-too-long)
+33:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.basic_strategy
+31:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.tower_rush_alt_strategy
+2:0: C0301: Line too long (107/100) (line-too-long)
+33:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies.only_banner_strategy
+27:0: C0301: Line too long (102/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.boombot_strategy.strategies
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.controllers
 1:0: C0114: Missing module docstring (missing-module-docstring)
@@ -562,14 +546,26 @@
 194:4: R0913: Too many arguments (8/5) (too-many-arguments)
 194:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
 270:4: C0116: Missing function or method docstring (missing-function-docstring)
+************* Module robot1.rasp.controllers.rolling_basis.pids
+1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis
 27:4: R0913: Too many arguments (8/5) (too-many-arguments)
 27:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
 364:15: W0718: Catching too general exception Exception (broad-exception-caught)
 398:15: W0718: Catching too general exception Exception (broad-exception-caught)
 427:15: W0718: Catching too general exception Exception (broad-exception-caught)
-************* Module robot1.rasp.controllers.rolling_basis.pids
+************* Module robot1.rasp.controllers.rolling_basis.rolling_basis_dummy
+14:0: C0301: Line too long (105/100) (line-too-long)
+32:0: C0301: Line too long (120/100) (line-too-long)
+35:0: C0301: Line too long (113/100) (line-too-long)
+36:0: C0301: Line too long (101/100) (line-too-long)
+161:0: C0301: Line too long (129/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
+19:4: R0913: Too many arguments (7/5) (too-many-arguments)
+19:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+169:15: W0718: Catching too general exception Exception (broad-exception-caught)
+203:15: W0718: Catching too general exception Exception (broad-exception-caught)
+230:15: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module robot1.rasp.controllers.rolling_basis.rolling_basis
 17:0: C0301: Line too long (105/100) (line-too-long)
 36:0: C0301: Line too long (120/100) (line-too-long)
@@ -583,25 +579,38 @@
 248:15: W0718: Catching too general exception Exception (broad-exception-caught)
 282:15: W0718: Catching too general exception Exception (broad-exception-caught)
 311:15: W0718: Catching too general exception Exception (broad-exception-caught)
-************* Module robot1.rasp.controllers.rolling_basis.rolling_basis_dummy
-14:0: C0301: Line too long (105/100) (line-too-long)
-32:0: C0301: Line too long (120/100) (line-too-long)
-35:0: C0301: Line too long (113/100) (line-too-long)
-36:0: C0301: Line too long (101/100) (line-too-long)
-161:0: C0301: Line too long (129/100) (line-too-long)
-1:0: C0114: Missing module docstring (missing-module-docstring)
-19:4: R0913: Too many arguments (7/5) (too-many-arguments)
-19:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-169:15: W0718: Catching too general exception Exception (broad-exception-caught)
-203:15: W0718: Catching too general exception Exception (broad-exception-caught)
-230:15: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module robot1.rasp.controllers.rolling_basis
 1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module robot1.rasp.tests.config_loader
+166:0: I0011: Locally disabling import-outside-toplevel (C0415) (locally-disabled)
+166:0: I0023: 'C0415' is cryptic: use '# pylint: disable=import-outside-toplevel' instead (use-symbolic-message-instead)
+69:0: C0301: Line too long (139/100) (line-too-long)
+70:0: C0301: Line too long (114/100) (line-too-long)
+71:0: C0301: Line too long (106/100) (line-too-long)
+85:0: C0301: Line too long (101/100) (line-too-long)
+88:0: C0301: Line too long (101/100) (line-too-long)
+113:0: C0301: Line too long (113/100) (line-too-long)
+146:0: C0301: Line too long (154/100) (line-too-long)
+147:0: C0301: Line too long (150/100) (line-too-long)
+148:0: C0301: Line too long (128/100) (line-too-long)
+150:0: C0301: Line too long (110/100) (line-too-long)
+358:0: C0301: Line too long (132/100) (line-too-long)
+361:0: C0301: Line too long (130/100) (line-too-long)
+1:0: C0114: Missing module docstring (missing-module-docstring)
+166:0: I0020: Suppressed 'import-outside-toplevel' (from line 166) (suppressed-message)
+************* Module robot1.rasp.brains.main_brain
+1:0: C0114: Missing module docstring (missing-module-docstring)
+25:4: R0913: Too many arguments (7/5) (too-many-arguments)
+25:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+78:4: W0105: String statement has no effect (pointless-string-statement)
+82:4: W0105: String statement has no effect (pointless-string-statement)
+115:8: C0415: Import outside toplevel (boombot_strategy.ShowGameContext) (import-outside-toplevel)
+116:8: C0415: Import outside toplevel (boombot_strategy.strategies.TowerRushAltStrategy) (import-outside-toplevel)
+230:30: W0123: Use of eval (eval-used)
+232:24: W0123: Use of eval (eval-used)
+************* Module robot1.rasp.brains
+1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.sensors
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.sensors.inputs.inputs
-1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.sensors.inputs
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.sensors.lidar.lidar
 24:0: C0301: Line too long (113/100) (line-too-long)
@@ -632,24 +641,13 @@
 39:8: W0238: Unused private member `LidarDummy.__angle_unit` (unused-private-member)
 ************* Module robot1.rasp.sensors.lidar
 1:0: C0114: Missing module docstring (missing-module-docstring)
-************* Module robot1.rasp.tests.config_loader
-166:0: I0011: Locally disabling import-outside-toplevel (C0415) (locally-disabled)
-166:0: I0023: 'C0415' is cryptic: use '# pylint: disable=import-outside-toplevel' instead (use-symbolic-message-instead)
-69:0: C0301: Line too long (139/100) (line-too-long)
-70:0: C0301: Line too long (114/100) (line-too-long)
-71:0: C0301: Line too long (106/100) (line-too-long)
-85:0: C0301: Line too long (101/100) (line-too-long)
-88:0: C0301: Line too long (101/100) (line-too-long)
-113:0: C0301: Line too long (113/100) (line-too-long)
-146:0: C0301: Line too long (154/100) (line-too-long)
-147:0: C0301: Line too long (150/100) (line-too-long)
-148:0: C0301: Line too long (128/100) (line-too-long)
-150:0: C0301: Line too long (110/100) (line-too-long)
-358:0: C0301: Line too long (132/100) (line-too-long)
-361:0: C0301: Line too long (130/100) (line-too-long)
+************* Module robot1.rasp.sensors.inputs.inputs
 1:0: C0114: Missing module docstring (missing-module-docstring)
-166:0: I0020: Suppressed 'import-outside-toplevel' (from line 166) (suppressed-message)
+************* Module robot1.rasp.sensors.inputs
+1:0: C0114: Missing module docstring (missing-module-docstring)
+************* Module PAMI.lib.ota.ui.convert
+25:0: C0103: Constant name "byte_array" doesn't conform to UPPER_CASE naming style (invalid-name)
 
-------------------------------------------------------------------
-Your code has been rated at 8.98/10 (previous run: 8.98/10, +0.00)
+-----------------------------------
+Your code has been rated at 8.98/10
 
