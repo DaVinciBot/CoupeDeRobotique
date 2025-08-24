@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1755980672667",
+    "time": "1755995279958",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\GPIO\\__init__.py",
@@ -2612,11 +2612,11 @@
             "message": "Argument of type \"BaseTaskNode | None\" cannot be assigned to parameter \"prev_node\" of type \"BaseTaskNode\" in function \"compute\"\n  Type \"BaseTaskNode | None\" is not assignable to type \"BaseTaskNode\"\n    \"None\" is not assignable to \"BaseTaskNode\"",
             "range": {
                 "start": {
-                    "line": 82,
+                    "line": 83,
                     "character": 22
                 },
                 "end": {
-                    "line": 82,
+                    "line": 83,
                     "character": 31
                 }
             },
@@ -7872,7 +7872,7 @@
         "errorCount": 96,
         "warningCount": 92,
         "informationCount": 311,
-        "timeInSec": 12.275
+        "timeInSec": 12.654
     }
 }
 

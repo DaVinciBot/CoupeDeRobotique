@@ -235,10 +235,9 @@
 ************* Module common.strategy.core.tasks
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module common.strategy.core.task_nodes.base_task_node
-34:0: C0301: Line too long (137/100) (line-too-long)
 1:0: C0114: Missing module docstring (missing-module-docstring)
-161:19: W0718: Catching too general exception Exception (broad-exception-caught)
-136:8: W0612: Unused variable 'all_done' (unused-variable)
+162:19: W0718: Catching too general exception Exception (broad-exception-caught)
+137:8: W0612: Unused variable 'all_done' (unused-variable)
 ************* Module common.strategy.core.task_nodes.timeout_task_node
 43:0: C0301: Line too long (101/100) (line-too-long)
 86:0: C0301: Line too long (105/100) (line-too-long)
@@ -652,5 +651,5 @@
 166:0: I0020: Suppressed 'import-outside-toplevel' (from line 166) (suppressed-message)
 
 ------------------------------------------------------------------
-Your code has been rated at 8.98/10 (previous run: 8.96/10, +0.02)
+Your code has been rated at 8.98/10 (previous run: 8.98/10, +0.00)
 
