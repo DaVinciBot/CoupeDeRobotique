@@ -1,3 +1,5 @@
+"""Conditional transitions that evaluate predicates before moving between nodes."""
+
 from strategy.core.transitions.conditional_transition.conditional_transition import (
     ConditionalTransition,
 )

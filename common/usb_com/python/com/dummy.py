@@ -1,7 +1,4 @@
-# ====== Code Summary ======
-# This class, DummySerial, simulates a serial communication interface.
-# It provides methods to write data to an output buffer, read data from an input buffer,
-# and manage both buffers for testing purposes.
+"""Serial port stub used for testing without hardware."""
 
 
 class DummySerial:

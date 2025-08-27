@@ -1,9 +1,4 @@
-# ====== Code Summary ======
-# This module defines a function ``get_push_one_floor_to_wall_subgraph`` which constructs a subgraph
-# representing a series of robot actions to push a floor element to a wall in a given zone.
-# The subgraph includes tasks such as preparing to approach, navigating, pushing forward,
-# optionally resetting odometry, and retracting afterward. The sequence is constructed
-# using task nodes and transitions within a subgraph builder.
+"""Subgraph for pushing a floor element against a wall."""
 
 from boombot_strategy.tasks.actuator_task import (
     Build,

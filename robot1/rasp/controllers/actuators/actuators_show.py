@@ -1,3 +1,5 @@
+"""Hardware actuator implementation used during demonstrations."""
+
 import time
 from dataclasses import dataclass
 
@@ -9,37 +11,59 @@ from controllers.actuators import Actuators
 
 @dataclass
 class Servo:
+    """Description of a generic servo angle configuration."""
+
     deploy_angle: int
+    """Angle to deploy the servo (in degrees)."""
     fold_angle: int
+    """Angle to fold the servo (in degrees)."""
     max_angle: int
+    """Maximum angle for the servo (in degrees)."""
 
 
 @dataclass
 class ServoDocking(Servo):
-    docking: int = 0  # Angle for special movement such as docking
+    """Servo with an extra docking angle."""
+
+    docking: int = 0
+    """Angle for special movement such as docking."""
 
 
 @dataclass
 class ServoArm(Servo):
+    """Servo controlling an arm mechanism."""
+
     docking: int
+    """Angle for special movement such as docking."""
 
 
 @dataclass
 class ServoPlank(Servo):
+    """Servo dedicated to plank maintenance."""
+
     maintain_plank: int
+    """Angle to maintain the plank position (in degrees)."""
 
 
 @dataclass
 class Stepper:
+    """Parameters for a stepper motor."""
+
     top_steps: int
+    """Number of steps to reach the top position."""
     folded_steps: int
+    """Number of steps to reach the folded position."""
     bottom_steps: int
+    """Number of steps to reach the bottom position."""
     speed: int
+    """Speed of the stepper motor."""
 
 
 class ActuatorsShow(Actuators):  # noqa: PLR0904
-    """ActuatorsShow is a subclass of Actuators that provides a specific implementation for the show mode.
-    It inherits from the Actuators class and overrides its methods to provide functionality for the show mode.
+    """Implementation of actuators for the show mode.
+
+    Inherits from :class:`Actuators` and overrides its methods to provide
+    hardware-specific functionality.
 
     """
 
@@ -159,16 +183,20 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
 
     # Private methods
     def __move_to_save_folded_position(self) -> None:
-        """Moves the elevator to a safe folded position before deploying the servo arm.
-        This method ensures that the elevator is in a safe position before deploying the servo arm.
+        """Move the elevator to a safe folded position.
+
+        This method ensures that the elevator is in a safe state before the
+        servo arm is deployed.
 
         """
         steps_to_move = self.stepper.folded_steps - self.elevator_ticks + 20
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
 
     def __align_dropping_cans(self) -> None:
-        """Aligns the dropping cans by setting the servos to specific angles.
-        This method sets the angles of the servos to predefined values for the dropping cans.
+        """Align the dropping cans by setting the servos to specific angles.
+
+        This method sets the angles of the servos to predefined values for the
+        dropping cans.
 
         """
         self.set_servo_angle(pin=4, angle=160, max_angle=270)
@@ -177,8 +205,10 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
     # Public methods
 
     def deploy(self, pins: int | list[int]) -> None:
-        """Deploys the specified servos to their deploy angle.
-        This method sets the specified servos to their deploy angle, effectively deploying the servo arm.
+        """Deploy the specified servos to their deploy angle.
+
+        This method sets the given servos to their deploy angle, effectively
+        extending the servo arm.
 
         Args:
             pins (int | list[int]): The pin number or a list of pin numbers to deploy.
@@ -197,8 +227,10 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
                 )
 
     def fold(self, pins: int | list[int]) -> None:
-        """Folds the specified servos to their fold angle.
-        This method sets the specified servos to their fold angle, effectively folding the servo arm.
+        """Fold the specified servos to their fold angle.
+
+        This method sets the specified servos to their fold angle, effectively
+        retracting the servo arm.
 
         Args:
             pins (int | list[int]): The pin number or a list of pin numbers to fold.
@@ -218,8 +250,10 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
                 )
 
     def deploy_all(self) -> None:
-        """Deploys all servos to their deploy angle.
-        This method sets all servos to their deploy angle, effectively deploying the servo arm.
+        """Deploy all servos to their deploy angle.
+
+        This method sets all servos to their deploy angle, effectively
+        deploying the servo arm.
 
         """
         if 8 in self.servos:
@@ -230,8 +264,10 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
                 self.deploy(i)
 
     def deploy_all_pickup(self) -> None:
-        """Deploys all servos and moves the elevator to a safe position for pickup.
-        This method ensures that the elevator is in a safe position before deploying the servo arm.
+        """Deploy all servos and move the elevator to a safe pickup position.
+
+        This method ensures that the elevator is in a safe position before the
+        servo arm is deployed.
 
         """
         self.folded = False
@@ -242,8 +278,10 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
                 self.deploy(i)
 
     def fold_all(self) -> None:
-        """Folds all servos to their fold angle.
-        This method sets all servos to their fold angle, effectively folding the servo arm.
+        """Fold all servos to their fold angle.
+
+        This method sets all servos to their fold angle, effectively folding the
+        servo arm.
 
         """
         for i in self.servos.keys():
@@ -254,9 +292,10 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
             self.fold(8)
 
     def demagnetize_all(self) -> None:
-        """Demagnetizes the servos by setting them to their fold angle.
-        This is useful for ensuring that the servos are not holding any position
-        when they are not in use.
+        """Demagnetize servos by setting them to their fold angle.
+
+        This is useful for ensuring that the servos are not holding any
+        position when they are not in use.
 
         """
         pins = [1, 3, 5, 7]
@@ -269,7 +308,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
                 )
 
     def magnetize_all(self) -> None:
-        """Magnetizes the servos by setting them to their deploy angle.
+        """Magnetize servos by setting them to their deploy angle.
+
         This is useful for ensuring that the servos are holding their position
         when they are in use.
 
@@ -307,18 +347,22 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
                     )
 
     def deploy_banner(self) -> None:
+        """Deploy the banner by extending servos 0 and 2."""
         self.deploy([0, 2])
 
     def place_upper_cans(self) -> None:
-        """Places the upper cans by setting the servos to specific angles.
-        This method sets the angles of the servos to predefined values for the upper cans.
+        """Place the upper cans by setting servos to specific angles.
+
+        This sets the angles of the servos to predefined values for the upper
+        cans.
 
         """
         self.set_servo_angle(pin=4, angle=160, max_angle=270)
         self.set_servo_angle(pin=6, angle=90, max_angle=270)
 
     def raise_plank(self) -> None:
-        """Raises the plank by moving the elevator to the top position.
+        """Raise the plank by moving the elevator to the top position.
+
         This method is used to raise the plank to its top position.
 
         """
@@ -326,7 +370,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         self.stepper_step(steps_to_move, self.stepper.speed)
 
     def go_to_top(self) -> None:
-        """Moves the elevator to the top position.
+        """Move the elevator to the top position.
+
         If the elevator is folded, it will move to the folded position first.
 
         """
@@ -338,7 +383,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         self.logger.info(f"Steps current: {self.elevator_ticks}")
 
     def elevator_drop_top(self) -> None:
-        """Moves the elevator to the top position.
+        """Move the elevator to the top position.
+
         If the elevator is folded, it will move to the folded position first.
 
         """
@@ -350,7 +396,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         self.logger.info(f"Steps current: {self.elevator_ticks}")
 
     def go_to_bottom(self) -> None:
-        """Moves the elevator to the bottom position.
+        """Move the elevator to the bottom position.
+
         If the elevator is folded, it will move to the folded position first.
 
         """
@@ -362,8 +409,10 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
     def build_floors(
         self,
     ) -> None:  # Ask if I should use time.sleep or asyncio.sleep and thus making this method async
-        """Builds the floors by deploying the servos and moving the elevator to the top position.
-        This method is used to build the floors by deploying the servos and moving the elevator to the top position.
+        """Build the floors by deploying the servos and moving the elevator.
+
+        This method deploys servos and raises the elevator to construct the
+        floors.
 
         """
         self.go_to_top()
@@ -394,14 +443,14 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
     #     )
 
     def ready_to_pickup(self) -> None:
-        """Preparation and magnetization of all servos."""
+        """Prepare and magnetize all servos."""
         # Prep and go magnetized
         self.deploy_all_pickup()  # Magnetize
         time.sleep(1)
         self.deploy(8)
 
     def pick_up(self) -> None:
-        """Catch cans and plank"""
+        """Catch cans and plank."""
         # Catch and raise cans and plank
         self.pickup_planck()
         self.fold(9)
@@ -414,13 +463,14 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         time.sleep(0.5)
 
     def deplacement_object(self) -> None:
-        """Catch cans and plank"""
+        """Catch cans and plank."""
         # Catch and raise cans and plank
         self.pickup_planck()
         self.fold(9)
         time.sleep(0.1)
 
     def ready_to_approach_to_pickup(self) -> None:
+        """Prepare servos for approaching a pickup point."""
         self.magnetize_all()
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
@@ -431,6 +481,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         self.deploy(9)
 
     def pickup_planck(self) -> None:
+        """Perform a sequence to grip the plank securely."""
+
         def _pickup() -> None:
             self.deploy(9)
             self.deploy(8)
@@ -442,6 +494,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         _pickup()
 
     def build(self) -> None:
+        """Execute the full building routine."""
         self.fold(4)
         self.fold(6)
         time.sleep(1.5)
@@ -462,6 +515,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         time.sleep(0.1)
 
     def start_position(self) -> None:
+        """Move actuators to the default start position."""
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
         self.set_servo_angle(8, angle=35, max_angle=270)
@@ -472,6 +526,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         self.fold(6)
 
     def block_banner(self) -> None:
+        """Block the banner by moving servos to holding positions."""
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
         self.set_servo_angle(8, angle=35, max_angle=270)
@@ -481,6 +536,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         self.set_servo_angle(2, angle=171, max_angle=270)
 
     def deplacement_position(self) -> None:
+        """Put actuators in position for displacement."""
         time.sleep(0.5)
         self.demagnetize_all()
         self.fold(4)

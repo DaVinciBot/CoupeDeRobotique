@@ -1,3 +1,5 @@
+"""Wrapper around the Sick TiM LiDAR used on the robot."""
+
 import math
 import threading
 import time

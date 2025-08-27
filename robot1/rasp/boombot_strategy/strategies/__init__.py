@@ -1,3 +1,5 @@
+"""Collection of high-level gameplay strategies."""
+
 from boombot_strategy.strategies.basic_strategy import BasicStrategy
 from boombot_strategy.strategies.debug_strategy import DebugStrategy
 from boombot_strategy.strategies.only_banner_strategy import OnlyBannerStrategy

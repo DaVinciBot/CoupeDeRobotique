@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module implements the ``FromFunctionTransitionCondition`` class, which inherits from the
-# ``BaseTransitionCondition`` abstract base class. It allows defining custom transition conditions
-# using a user-provided function. The function determines if a transition between task nodes is allowed,
-# based on the current game context.
+"""Transition condition backed by a user-provided callable."""
 
 from collections.abc import Callable
 from typing import override

@@ -1,7 +1,4 @@
-# ====== Code Summary ======
-# This module defines a task class ``SetOdometrie`` that updates the robot's odometry
-# based on optionally provided coordinates (x, y, theta). If any coordinate is not
-# provided, it defaults to the current position from the game context.
+"""Tasks for resetting or adjusting robot odometry."""
 
 from boombot_strategy.show_game_context import ShowGameContext
 from geometry import OrientedPoint

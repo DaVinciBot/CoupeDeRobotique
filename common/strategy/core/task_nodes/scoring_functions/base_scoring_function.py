@@ -1,3 +1,5 @@
+"""Interfaces for scoring how desirable a task node is."""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -9,10 +11,23 @@ if TYPE_CHECKING:
 
 
 class BaseScoringFunction(ABC):
+    """Protocol for computing scores used in node selection."""
+
     @abstractmethod
     def compute(
         self,
         prev_node: BaseTaskNode,
         current_node: BaseTaskNode,
         ctx: BaseGameContext,
-    ) -> float: ...
+    ) -> float:
+        """Compute a score for the current node based on the previous node and context.
+
+        Args:
+            prev_node (BaseTaskNode): The entry node.
+            current_node (BaseTaskNode): The current node.
+            ctx (BaseGameContext): The game context.
+
+        Returns:
+            float: The computed score.
+
+        """

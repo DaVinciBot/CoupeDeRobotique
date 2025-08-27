@@ -1,3 +1,5 @@
+"""Utility helpers for strategy development and debugging."""
+
 from strategy.tools.visualize import (
     visualize_entire_subgraph,
     visualize_task_graph,

@@ -1,9 +1,13 @@
+"""Miscellaneous time and geometry utilities."""
+
 from datetime import datetime
 
 from shapely import Geometry, Point
 
 
 class Utils:
+    """Collection of static helper methods."""
+
     @staticmethod
     def get_date() -> datetime:
         """Get the current date and time.

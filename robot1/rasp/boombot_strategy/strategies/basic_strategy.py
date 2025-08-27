@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module defines the ``BasicStrategy`` class, which extends ``BaseStrategy`` and orchestrates
-# the full game flow for a robot. The strategy consists of deploying a banner, picking up items,
-# constructing structures, and finally moving to a backstage zone to complete the game.
-# It uses task subgraphs and direct transitions to sequence actions through a ``GraphRunner``.
+"""Simple showcase strategy performing banner deployment and pickups."""
 
 from loggerplusplus import Logger
 
@@ -20,7 +16,8 @@ from strategy.core import BaseTaskNode, GraphRunner
 
 
 class BasicStrategy(BaseStrategy):
-    """Defines a basic game strategy by sequencing multiple subgraphs:
+    """Define a basic game strategy by sequencing multiple subgraphs.
+
     - Deploy banner
     - Perform two pickup and construction cycles
     - Navigate to backstage zone to finish the game

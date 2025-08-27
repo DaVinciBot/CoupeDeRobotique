@@ -1,9 +1,4 @@
-# ====== Code Summary ======
-# This module provides utilities for visualizing task graphs using both Graphviz and NetworkX.
-# It includes functions to visualize individual task flows from a starting node or an entire subgraph.
-# Nodes are rendered with their names and associated task types, and transitions are labeled by class name.
-# Node statuses are visually encoded when using NetworkX visualizations.
-
+"""Visualize task graphs using Graphviz or NetworkX."""
 
 import matplotlib.pyplot as plt
 import networkx as nx

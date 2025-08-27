@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module defines the EnemyZone class, which extends BaseSpeedVectorAutoCalculateZone.
-# EnemyZone represents a restricted area in an arena where an enemy's movement is tracked,
-# and a speed vector is automatically calculated based on recorded positions.
-
+"""Enemy zone with automatic speed vector calculation."""
 
 from loggerplusplus import Logger
 
@@ -15,6 +11,7 @@ from geometry import OrientedPoint, Point
 
 class EnemyZone(BaseSpeedVectorAutoCalculateZone):
     """Represents an enemy zone in the arena where enemy movements are tracked.
+
     The zone calculates and updates a speed vector based on detected enemy positions.
 
     """

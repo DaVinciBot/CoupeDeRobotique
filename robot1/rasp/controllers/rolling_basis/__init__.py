@@ -1,3 +1,5 @@
+"""Rolling basis control modules."""
+
 from controllers.rolling_basis.asservissment_rolling_basis import (
     AsservissementRollingBasis,
 )

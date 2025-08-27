@@ -1,3 +1,5 @@
+"""Task node enforcing a maximum execution time for its tasks."""
+
 from __future__ import annotations
 
 import time
@@ -12,10 +14,7 @@ if TYPE_CHECKING:
 
 
 class TimeoutTaskNode(BaseTaskNode):
-    """A task node with a hard timeout: if tasks do not complete within the given duration,
-    the node triggers a timeout and stops execution.
-
-    """
+    """A task node that stops execution after a fixed duration."""
 
     def __init__(
         self,

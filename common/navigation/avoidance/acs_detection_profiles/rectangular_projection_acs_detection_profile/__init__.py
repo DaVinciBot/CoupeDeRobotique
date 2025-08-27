@@ -1,3 +1,5 @@
+"""ACS detection profile using a rectangular projection."""
+
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile import (
     RectangularProjectionAcsDetectionProfile,
 )

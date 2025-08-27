@@ -1,3 +1,5 @@
+"""Input handling for physical sensors such as jack and plug."""
+
 import asyncio
 
 from loggerplusplus import Logger

@@ -1,3 +1,5 @@
+"""Link task nodes together through transition definitions."""
+
 from strategy.core.transitions.base_transition import BaseTransition
 from strategy.core.transitions.conditional_transition import (
     BaseTransitionCondition,

@@ -1,3 +1,5 @@
+"""Base classes for constructing robot strategies."""
+
 from abc import ABC
 
 from loggerplusplus import Logger

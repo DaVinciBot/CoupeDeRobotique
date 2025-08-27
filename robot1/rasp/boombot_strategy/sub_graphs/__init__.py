@@ -1,3 +1,5 @@
+"""Reusable subgraphs used in Boombot strategies."""
+
 from boombot_strategy.sub_graphs.banner_deployment import get_banner_deployment_subgraph
 from boombot_strategy.sub_graphs.construct import (
     get_construct_one_floor_subgraph,

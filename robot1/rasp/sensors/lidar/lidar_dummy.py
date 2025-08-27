@@ -1,3 +1,5 @@
+"""Simulated LiDAR readings for development and testing."""
+
 import math
 
 import numpy as np

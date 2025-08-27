@@ -15,6 +15,7 @@ from geometry import OrientedPoint, Point, Polygon, box
 
 class GridManager:
     """Manages a grid for pathfinding and collision detection.
+
     Includes static and dynamic forbidden zones and grid visualization.
 
     - The grid uses a coordinate system where the origin is in the bottom-right corner.

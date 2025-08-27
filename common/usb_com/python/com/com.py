@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This class manages USB communication with a microcontroller.
-# It initializes a serial connection, handles message reception via a thread,
-# verifies CRC8 checksums, and provides message-sending and callback mechanisms.
-# Dummy mode is available for testing purposes without actual hardware.
+"""USB communication helper with optional CRC and dummy mode."""
 
 import threading
 import time
@@ -21,7 +17,8 @@ from usb_com.python.messages import END_BYTES_SIGNATURE, Messages
 
 
 class Com:
-    """Handles USB communication with a Teensy microcontroller.
+    """Handle USB exchanges with a Teensy microcontroller.
+
     Supports message transmission, CRC8 verification, and callback mechanisms.
 
     """
@@ -36,7 +33,7 @@ class Com:
         enable_crc: bool = True,
         enable_dummy: bool = False,
     ) -> None:
-        """Initializes the USB communication instance.
+        """Initialize the USB communication instance.
 
         Args:
             logger (Logger): Logger instance for logging messages.
@@ -116,13 +113,10 @@ class Com:
         return receiver
 
     def __receiver__(self) -> None:
-        """This is started as a thread, handles the data according to the decided format :
+        """Run in a thread and dispatch messages based on the protocol format.
 
-        format: msg_type | msg_data   | msg_length | CRC8 | MSG_END_BYTES
-        size  :    1     | msg_length |     1      |   1  |      4
-
-        The size is in bytes.
-        This function is responsible for calling the right callback function according to the message type.
+        Format: ``msg_type | msg_data | msg_length | CRC8 | MSG_END_BYTES``
+        with sizes ``1 | msg_length | 1 | 1 | 4`` bytes.
 
         """
         while True:

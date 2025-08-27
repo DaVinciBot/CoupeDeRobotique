@@ -1,7 +1,4 @@
-# ====== Code Summary ======
-# This module defines the ``ConditionalTransition`` class, which represents a transition between task nodes
-# that is governed by a specific condition. It extends ``BaseTransition`` and uses a ``BaseTransitionCondition``
-# to evaluate whether the transition is allowed based on the current game context.
+"""Transition implementation guarded by a runtime condition."""
 
 from typing import override
 

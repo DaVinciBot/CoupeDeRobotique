@@ -1,3 +1,5 @@
+"""Execution unit that runs tasks and handles transitions."""
+
 from __future__ import annotations
 
 import time

@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module defines an enumeration (Messages) representing command types exchanged
-# between a Raspberry Pi and a Teensy microcontroller over USB communication.
-# Commands are categorized based on direction (Raspberry Pi -> Teensy: 0-127, Teensy -> Raspberry Pi: 128-255).
-# The module also includes a signature constant used for USB communication integrity.
+"""Message identifiers and constants for Teensy USB communication."""
 
 from enum import Enum
 

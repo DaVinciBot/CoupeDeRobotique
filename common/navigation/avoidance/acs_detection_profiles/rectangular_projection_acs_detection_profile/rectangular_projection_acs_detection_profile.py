@@ -1,3 +1,5 @@
+"""ACS detection profile based on a rectangular projection ahead of the robot."""
+
 import math
 from typing import override
 

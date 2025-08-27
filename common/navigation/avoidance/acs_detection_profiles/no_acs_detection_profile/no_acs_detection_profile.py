@@ -1,3 +1,5 @@
+"""ACS detection profile that never triggers avoidance."""
+
 from typing import override
 
 from arena import AllyZone, EnemyZone

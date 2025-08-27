@@ -1,3 +1,5 @@
+"""Scoring function returning a constant value."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, override
@@ -12,7 +14,15 @@ if TYPE_CHECKING:
 
 
 class ConstantScoringFunction(BaseScoringFunction):
+    """Return a fixed score regardless of context."""
+
     def __init__(self, score: float) -> None:
+        """Store the constant score value.
+
+        Args:
+            score (float): The constant score value.
+
+        """
         self.score: float = score
 
     @override
@@ -22,4 +32,15 @@ class ConstantScoringFunction(BaseScoringFunction):
         current_node: BaseTaskNode,
         ctx: BaseGameContext,
     ) -> float:
+        """Return the preset score.
+
+        Args:
+            prev_node (BaseTaskNode): The previous task node.
+            current_node (BaseTaskNode): The current task node.
+            ctx (BaseGameContext): The game context.
+
+        Returns:
+            float: The constant score.
+
+        """
         return self.score

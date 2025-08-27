@@ -1,3 +1,5 @@
+"""Demo arena with predefined zones for visualization and testing."""
+
 from math import pi
 from typing import override
 
@@ -15,6 +17,8 @@ from geometry import OrientedPoint, Point, Polygon, create_straight_rectangle
 
 
 class ShowArena(BaseArena):
+    """Arena configuration used to display the competition setup."""
+
     def __init__(
         self,
         logger: Logger,
@@ -27,6 +31,20 @@ class ShowArena(BaseArena):
         distance_between_robot_and_big_construct_zone: float = 0,
         distance_between_robot_and_small_construct_zone: float = 22,
     ) -> None:
+        """Initialize the arena with fixed zones.
+
+        Args:
+            logger (Logger): Logger used for zone loggers.
+            grid_manager_logger (Logger): Logger for the grid manager.
+            border_buffer (float): Arena border safety buffer.
+            obstacle_buffer (float): Margin around obstacles.
+            chunk_size (int): Size of grid chunks in centimeters.
+            forbidden_cover_threshold (float): Coverage ratio to mark cells forbidden.
+            distance_between_robot_and_pickup_zone (float): Offset for pickup zones.
+            distance_between_robot_and_big_construct_zone (float): Offset for big constructs.
+            distance_between_robot_and_small_construct_zone (float): Offset for small constructs.
+
+        """
         stuff_zone_logger = Logger(
             identifier="StuffZone",
             follow_logger_manager_rules=True,
@@ -401,6 +419,14 @@ class ShowArena(BaseArena):
 
     @override
     def __eq__(self, other: object) -> bool:
+        """Checks equality between two ShowArena instances.
+
+        Args:
+            other (object): The other instance to compare against.
+
+        Returns:
+            bool: ``True`` if the instances are equal, ``False`` otherwise.
+        """
         if not isinstance(other, ShowArena):
             return False
 

@@ -1,3 +1,5 @@
+"""Navigation task implementations for Boombot strategies."""
+
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToConstruct,
     GoToColorReservedZoneToFinishGame,

@@ -1,7 +1,4 @@
-# ====== Code Summary ======
-# This module defines several actuator control tasks for a robot, such as picking up objects,
-# preparing to pick up, building structures, and adjusting position. Each task interacts with
-# the actuator subsystem through the provided game context and optionally updates the score.
+"""Actuator-related task implementations for the Boombot strategy."""
 
 import time
 from typing import override
@@ -88,8 +85,19 @@ class Build(BaseTask):
 
 
 class Deposit(BaseTask):
+    """Release carried items and update score."""
+
     @override
     def handle(self, ctx: ShowGameContext) -> bool:
+        """Demagnetize all actuators and update score.
+
+        Args:
+            ctx (ShowGameContext): The current game context.
+
+        Returns:
+            bool: Always returns ``True`` after executing the action and delay.
+
+        """
         ctx.actuators.demagnetize_all()
         ctx.score += CONFIG.BUILD_ONE_FLOOR
         time.sleep(1)

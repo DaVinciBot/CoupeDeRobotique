@@ -1,7 +1,4 @@
-# ====== Code Summary ======
-# This module defines the GPIOComTeensy class, which extends the Com class to provide
-# GPIO management functionality specifically for the Teensy microcontroller. It initializes
-# I2C pins and integrates a GPIO manager to handle up to 41 GPIO pins.
+"""Communication helper adding GPIO control for a Teensy device."""
 
 from loggerplusplus import Logger
 

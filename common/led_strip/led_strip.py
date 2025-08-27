@@ -1,3 +1,5 @@
+"""Placeholder utilities for controlling an addressable LED strip."""
+
 # from rpi_ws281x import PixelStrip, Color, RGBW
 # from old_logger.log_tools import LogLevels
 # from old.old_logger.logger import Logger

@@ -1,3 +1,5 @@
+"""Main entry point to run the Boombot demo on the Raspberry Pi."""
+
 import subprocess
 
 from loggerplusplus import Logger, LogLevels

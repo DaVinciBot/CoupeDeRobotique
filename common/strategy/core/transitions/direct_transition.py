@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module implements the ``DirectTransition`` class, a concrete subclass of ``BaseTransition`` that always
-# allows a transition to occur unconditionally. It is used when no specific condition needs to be evaluated
-# for transitioning between task nodes.
-
+"""Transition that always allows moving to the target node."""
 
 from typing import override
 

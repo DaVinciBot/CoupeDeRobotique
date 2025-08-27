@@ -1,3 +1,5 @@
+"""Hardware controllers for robot1."""
+
 from controllers.actuators import Actuators, ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import (
     AsservissementRollingBasis,

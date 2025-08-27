@@ -1,10 +1,4 @@
-# ====== Code Summary ======
-# This code defines a navigation task class ``GoToStuffZoneToPickUp`` that extends ``NavigationTask``.
-# The class is designed to direct a robot to a designated "stuff zone" where it is intended to
-# perform a pickup operation.
-# It configures specific path planning, trajectory planning, avoidance behavior, speed profiling,
-# and ACS detection settings
-# necessary for safe and efficient navigation in a robotics environment.
+"""Navigation task directing the robot to a stuff zone for pickup."""
 
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask

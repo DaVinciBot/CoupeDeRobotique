@@ -1,3 +1,5 @@
+"""PID constants and identifiers for the rolling basis controller."""
+
 import struct
 from dataclasses import dataclass
 from enum import Enum

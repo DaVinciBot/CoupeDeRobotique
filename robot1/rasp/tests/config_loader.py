@@ -1,3 +1,5 @@
+"""Utilities for testing the configuration loader."""
+
 import json
 import pathlib
 import sys

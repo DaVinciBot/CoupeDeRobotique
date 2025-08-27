@@ -1,3 +1,5 @@
+"""Entry point for running the robot's main brain."""
+
 import asyncio
 import time
 from math import pi

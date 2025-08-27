@@ -1,3 +1,5 @@
+"""Tasks that drive the robot to a goal using planning components."""
+
 from loggerplusplus import Logger
 
 from arena import BaseArenaZone
@@ -16,6 +18,8 @@ from strategy.core.tasks.base_task import BaseTask
 
 
 class BaseNavigationTask(BaseTask):
+    """Common functionality for tasks that navigate through the arena."""
+
     def __init__(
         self,
         goal: int | BaseArenaZone | OrientedPoint | Point | None,
@@ -65,6 +69,12 @@ class BaseNavigationTask(BaseTask):
         self.navigator_task: NavigatorTask | None = None
 
     def _initialize(self, ctx: BaseGameContext) -> None:
+        """Initialize the navigation task.
+
+        Args:
+            ctx (BaseGameContext): The game context.
+
+        """
         self._is_initialized = True
 
         self.navigator_task = NavigatorTask(

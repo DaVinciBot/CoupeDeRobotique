@@ -1,3 +1,5 @@
+"""Dummy actuators controller used for testing without hardware."""
+
 from typing import override
 
 from loggerplusplus import Logger, log
@@ -7,8 +9,10 @@ from controllers.actuators.actuators_show import ActuatorsShow
 
 
 class ActuatorsShowDummy(ActuatorsShow):
-    """Dummy version of ActuatorsShow that simulates all actuator and stepper actions via logging,
-    without any real hardware interaction.
+    """Dummy version of ActuatorsShow that actions via logging.
+
+    This class is used for testing purposes and simulates all actuator and stepper
+    actions via logging, without any real hardware interaction.
 
     """
 
@@ -47,6 +51,7 @@ class ActuatorsShowDummy(ActuatorsShow):
 
     @override
     def __str__(self) -> str:
+        """Return the class name for logging."""
         return self.__class__.__name__
 
     @log("DummyActuatorsShow")

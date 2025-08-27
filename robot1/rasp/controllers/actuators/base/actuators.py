@@ -1,3 +1,5 @@
+"""Base classes for Teensy-driven actuators."""
+
 import struct
 import time
 from typing import override
@@ -74,6 +76,7 @@ class Actuators(
 
     @override
     def __str__(self) -> str:
+        """Return class name for debugging."""
         return self.__class__.__name__
 
     # ====== Message Receiving Handlers ======
@@ -268,5 +271,6 @@ class Actuators(
 
     @log("Actuators")
     def attach_switch(self, pin: int) -> None:
+        """Attach a switch to the specified GPIO ``pin``."""
         msg = Messages.ATTACH_SWITCH.to_bytes() + struct.pack("<B", pin)
         self.send_bytes(msg)

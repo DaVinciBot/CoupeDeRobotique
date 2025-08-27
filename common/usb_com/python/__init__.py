@@ -1,3 +1,5 @@
+"""High-level USB communication utilities."""
+
 from usb_com.python.com import Com
 from usb_com.python.messages import END_BYTES_SIGNATURE, Messages
 from usb_com.python.tools import get_all_serial_number

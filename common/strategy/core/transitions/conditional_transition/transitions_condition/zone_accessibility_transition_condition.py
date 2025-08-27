@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module implements the ``ZoneAccessibilityTransitionCondition`` class, a concrete subclass of
-# ``BaseTransitionCondition``. It determines whether a transition between task nodes is allowed based
-# on the accessibility of a specific zone within the arena. The condition can be reversed if needed.
-
+"""Transition condition checking if a zone is accessible for the team."""
 
 from typing import TYPE_CHECKING, override
 

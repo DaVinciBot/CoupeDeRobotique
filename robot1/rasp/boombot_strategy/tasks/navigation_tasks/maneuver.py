@@ -1,9 +1,4 @@
-# ====== Code Summary ======
-# This module defines three specialized navigation tasks:
-# - ``RelativeBackward``: Moves the robot a specified distance backward.
-# - ``RelativeForward``: Moves the robot a specified distance forward.
-# - ``GoCentroidOfZone``: Navigates the robot to the centroid of a specified arena zone,
-#   initializing a navigator task with customized planning and avoidance parameters.
+"""Generic maneuver tasks such as relative moves and zone centroids."""
 
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask

@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module defines the abstract base class ``BaseTransition``, which represents a generic transition
-# between task nodes in a strategy-based application. Subclasses must implement the ``can_transit`` method
-# to determine if a transition should occur based on the current game context.
-
+"""Abstract base class for transitions between task nodes."""
 
 from abc import ABC, abstractmethod
 

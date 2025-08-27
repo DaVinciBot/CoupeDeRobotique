@@ -1,9 +1,4 @@
-# ====== Code Summary ======
-# This module defines the ``BaseComTeensy`` class, which extends ``Com`` to provide
-# communication functionality with a Teensy microcontroller over USB.
-# It initializes communication settings, including serial number, VID, PID, baud rate,
-# and optional CRC and dummy packet support.
-
+"""Base communication class for interacting with a Teensy over USB."""
 
 from loggerplusplus import Logger
 

@@ -1,3 +1,5 @@
+"""Rolling basis controller interfacing with the Teensy board."""
+
 import struct
 import time
 from typing import overload, override

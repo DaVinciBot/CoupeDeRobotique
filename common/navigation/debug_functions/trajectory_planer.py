@@ -1,7 +1,4 @@
-# ====== Code Summary ======
-# This module provides a utility function to test a trajectory planner by simulating its execution
-# over time and visualizing the result. It compares the expected path with the executed positions
-# and plots various metrics such as linear speed, angular speed, and position evolution using matplotlib.
+"""Helper utilities to simulate and plot a trajectory planner's behavior."""
 
 import time
 

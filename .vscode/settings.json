@@ -42,29 +42,21 @@
   "python.analysis.autoFormatStrings": true,
   "python.analysis.diagnosticMode": "workspace",
   "todo-tree.general.tagGroups": {
-    "FIXME": ["FIXME", "FIXIT", "FIX"]
+    "FIXME": ["FIXME", "FIXIT", "FIX"],
+    "HACK": ["HACK", "ENHANCE"]
   },
   "todo-tree.general.tags": [
     "BUG",
-    "FIX",
-    "FIXIT",
-    "FIXME",
     "HACK",
-    "QUESTION",
+    "ENHANCE",
+    "FIXME",
+    "FIXIT",
+    "FIX",
     "TODO",
-    "UNUSED",
+    "TOTEST",
+    "QUESTION",
     "[ ]",
     "[x]"
-  ],
-  "todo-tree.highlights.backgroundColourScheme": [
-    "red",
-    "orange",
-    "yellow",
-    "green",
-    "blue",
-    "indigo",
-    "violet",
-    "cyan"
   ],
   "todo-tree.highlights.customHighlight": {
     "BUG": {
@@ -84,10 +76,9 @@
     "TODO": {
       "foreground": "cyan"
     },
-    "UNUSED": {
-      "foreground": "grey",
-      "icon": "eye-closed",
-      "iconColour": "grey"
+    "TOTEST": {
+      "foreground": "lime",
+      "icon": "codescan-checkmark"
     }
   },
   "todo-tree.highlights.defaultHighlight": {

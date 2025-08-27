@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module defines the ``TowerRushStrategy`` class, which extends ``TowerRushStrategy`` and orchestrates
-# the full game flow for a robot. The strategy consists of deploying a banner, picking up items,
-# constructing structures, and finally moving to a backstage zone to complete the game.
-# It uses task subgraphs and direct transitions to sequence actions through a ``GraphRunner``.
+"""Primary tower rush strategy focusing on rapid construction."""
 
 from loggerplusplus import Logger
 
@@ -21,7 +17,8 @@ from strategy.core import BaseTaskNode, GraphRunner
 
 
 class TowerRushStrategy(BaseStrategy):
-    """Defines the tower rush game strategy by sequencing multiple subgraphs:
+    """Execute a tower rush with pick-up, build, and push phases.
+
     - Deploy banner
     - Perform one pickup and construction cycle
     - Perform one pickup-to-placement cycle

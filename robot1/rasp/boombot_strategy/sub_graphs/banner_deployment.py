@@ -1,8 +1,4 @@
-# ====== Code Summary ======
-# This module defines a function ``get_banner_deployment_subgraph`` that builds a subgraph
-# for deploying a banner in a robotics context. The process involves locking the mechanism,
-# moving to the deployment point, releasing the mechanism, resetting orientation, retracting,
-# and finally positioning the robot for subsequent actions.
+"""Subgraph for handling banner deployment actions."""
 
 import math
 

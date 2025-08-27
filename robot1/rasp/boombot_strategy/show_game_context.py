@@ -1,3 +1,5 @@
+"""Game context used by the demo strategies."""
+
 from arena import ShowArena
 from controllers import (
     ActuatorsShow,

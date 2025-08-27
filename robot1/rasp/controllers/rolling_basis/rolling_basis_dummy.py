@@ -1,3 +1,5 @@
+"""Dummy rolling basis control for tests without hardware."""
+
 from typing import overload, override
 
 from loggerplusplus import Logger, log

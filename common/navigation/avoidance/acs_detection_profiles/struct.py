@@ -1,3 +1,5 @@
+"""Enumeration of available ACS detection profile strategies."""
+
 from enum import Enum, auto
 
 

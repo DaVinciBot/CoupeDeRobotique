@@ -1,7 +1,4 @@
-# ====== Code Summary ======
-# This class, GPIOManager, is responsible for managing GPIO (General Purpose Input/Output) pins.
-# It keeps track of declared GPIOs and their associated actuator types, ensuring proper validation
-# and management of pin assignments.
+"""Utility to track and validate Teensy GPIO pin usage."""
 
 from typing import override
 

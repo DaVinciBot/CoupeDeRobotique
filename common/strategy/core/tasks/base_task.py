@@ -1,3 +1,5 @@
+"""Base class for tasks executed by the strategy system."""
+
 from abc import ABC, abstractmethod
 
 from loggerplusplus import Logger
@@ -6,10 +8,7 @@ from strategy.core.base_game_context import BaseGameContext
 
 
 class BaseTask(ABC):
-    """A minimal atomic task to be executed within the strategy graph.
-    Must return ``True`` when the task is complete.
-
-    """
+    """Atomic unit of work executed within the strategy graph."""
 
     def __init__(self, logger: Logger | None = None) -> None:
         """Initialize the task.
@@ -24,4 +23,13 @@ class BaseTask(ABC):
         )
 
     @abstractmethod
-    def handle(self, ctx: BaseGameContext) -> bool: ...
+    def handle(self, ctx: BaseGameContext) -> bool:
+        """Execute the task and return ``True`` when complete.
+
+        Args:
+            ctx (BaseGameContext): The game context.
+
+        Returns:
+            bool: ``True`` if the task is complete, ``False`` otherwise.
+
+        """
