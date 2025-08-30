@@ -5,7 +5,7 @@ from collections import deque
 from loggerplusplus import Logger
 
 from arena import AllyZone, EnemyZone
-from navigation.avoidance.base_avoidance import AvoidanceState
+from navigation.avoidance.base_avoidance.states import AvoidanceState
 from navigation.navigator.signals import NavigatorSignalsDispatcher
 from navigation.navigator.task import (
     NavigatorTask,

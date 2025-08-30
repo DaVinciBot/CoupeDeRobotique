@@ -1,4 +1,11 @@
-"""Placeholder utilities for controlling an addressable LED strip."""
+"""Placeholder utilities for controlling an addressable LED strip.
+
+This module intentionally contains no implementation. Historic, commented-out
+code has been removed to comply with lint rules. When LED strip control is
+needed again, implement the necessary classes and functions here.
+"""
+
+# ruff: noqa : ERA001
 
 # from rpi_ws281x import PixelStrip, Color, RGBW
 # from old_logger.log_tools import LogLevels

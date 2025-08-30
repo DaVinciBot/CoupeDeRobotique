@@ -5,8 +5,6 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING, override
 
-from loggerplusplus import Logger
-
 from geometry import OrientedPoint
 from navigation.path_planner import Direction
 from navigation.trajectory_planner.base_trajectory_planner import (
@@ -25,6 +23,8 @@ from navigation.trajectory_planner.sequential_trajectory_planner.sequential_traj
 from navigation.trajectory_planner.structs import TrajectoryPlanCommand
 
 if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
     from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
 

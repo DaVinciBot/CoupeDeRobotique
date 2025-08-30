@@ -66,7 +66,8 @@ class Arena:
         else:
             self.zones = {}
 
-        self.prepare_zones()  # Not necessary but should optimize future intersection calulations etc.
+        # Precompute prepared geometries for faster future intersections
+        self.prepare_zones()
 
     def prepare_zones(self) -> None:
         """Prepare all values of self.zones, to optimize later calculations."""

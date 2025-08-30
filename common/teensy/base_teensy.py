@@ -16,6 +16,7 @@ class BaseComTeensy(Com):
         vid: int,
         pid: int,
         baudrate: int,
+        *,
         enable_crc: bool = True,
         enable_dummy: bool = False,
     ) -> None:
@@ -39,8 +40,8 @@ class BaseComTeensy(Com):
             vid,
             pid,
             baudrate,
-            enable_crc,
-            enable_dummy,
+            enable_crc=enable_crc,
+            enable_dummy=enable_dummy,
         )
 
     def reset(self) -> None:

@@ -8,7 +8,7 @@ from collections.abc import Callable
 from loggerplusplus import Logger
 
 from geometry import OrientedPoint
-from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params import (
+from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params import (  # noqa: E501
     BaseTrajectoryPlannerParams,
 )
 from navigation.trajectory_planner.speed_profile import SpeedProfiler

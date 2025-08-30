@@ -21,7 +21,7 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
 
     """
 
-    def __init__(self, reverse: bool = False) -> None:
+    def __init__(self, *, reverse: bool = False) -> None:
         """Initialize the condition with optional reversal.
 
         Args:

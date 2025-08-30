@@ -74,6 +74,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         vid: int = CONFIG.TEENSY_VID,
         pid: int = CONFIG.TEENSY_PID,
         baudrate: int = CONFIG.TEENSY_BAUDRATE,
+        *,
         enable_crc: bool = CONFIG.TEENSY_CRC,
         enable_dummy: bool = CONFIG.TEENSY_DUMMY,
     ) -> None:
@@ -259,7 +260,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         if 8 in self.servos:
             self.deploy(8)
 
-        for i in self.servos.keys():
+        for i in self.servos:
             if i != 8:
                 self.deploy(i)
 
@@ -273,7 +274,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         self.folded = False
         self.docking([0, 2])
 
-        for i in self.servos.keys():
+        for i in self.servos:
             if i != 8:
                 self.deploy(i)
 
@@ -284,7 +285,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         servo arm.
 
         """
-        for i in self.servos.keys():
+        for i in self.servos:
             if i != 8:
                 self.fold(i)
 
@@ -337,7 +338,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
                 servo = self.servos[pin]
                 if not isinstance(servo, (ServoDocking, ServoArm)):
                     self.logger.warning(
-                        f"Pin {pin} is not a ServoDocking or ServoArm, cannot perform docking.",
+                        f"Pin {pin} is not a ServoDocking or ServoArm,"
+                        " cannot perform docking.",
                     )
                 else:
                     self.set_servo_angle(

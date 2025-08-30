@@ -118,6 +118,8 @@ style = 'google'
 
 [tool.pylint.main]
 disable = [
+  "C0301", # line-too-long -> Best management with ruff
+  "C0415", # import-outside-toplevel -> Best management with ruff
   "E0401", # import-error -> False positive
   "R0801", # duplicate-code
   "R0902", # too-many-instance-attributes
@@ -220,6 +222,7 @@ ignore = [
   "TD001", # invalid-todo-tag
   "TD002", # missing-todo-author
   "TD003", # missing-todo-link
+  "TRY400", # error-instead-of-exception
 ]
 select = ["ALL"]
 

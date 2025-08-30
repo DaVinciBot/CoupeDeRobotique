@@ -258,7 +258,11 @@ class OrientedPoint(Point):
         """
         coords = cast("tuple[float, float]", next(iter(self.coords)))
         theta = self.theta
-        return (self.__class__, ((coords, theta)), {"theta": theta})
+        return (
+            self.__class__,
+            ((coords, theta)),
+            {"theta": theta},
+        )
 
     def __setstate__(self, state: dict[str, float]) -> None:
         """Restore the extra state for the :class:`OrientedPoint` during unpickling.

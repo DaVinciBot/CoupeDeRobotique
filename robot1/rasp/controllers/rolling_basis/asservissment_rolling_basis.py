@@ -313,7 +313,7 @@ class AsservissementRollingBasis(BaseComTeensy):
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Returns:
-            PID: The PID. #TODO: refaire ce comment
+            PID: The configured PID instance.
 
         Raises:
             ValueError: If the arguments do not match any expected format.

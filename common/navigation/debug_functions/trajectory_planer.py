@@ -1,4 +1,5 @@
 """Helper utilities to simulate and plot a trajectory planner's behavior."""
+# ruff: noqa: T201, PT028
 
 import time
 
@@ -19,7 +20,8 @@ def test_trajectory_planning(
     """Simulates and visualizes the performance of a trajectory planner.
 
     Args:
-        trajectory_planner (BaseTrajectoryPlanner): The trajectory planner instance to test.
+        trajectory_planner (BaseTrajectoryPlanner):
+            The trajectory planner instance to test.
         path (list[OrientedPoint]): List of waypoints to follow.
         time_step (float, optional): Sampling interval for simulation. Defaults to 0.1.
 

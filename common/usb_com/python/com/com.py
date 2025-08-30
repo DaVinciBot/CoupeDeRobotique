@@ -7,9 +7,9 @@ from functools import wraps
 from typing import Any
 
 import crc8
-import serial
-import serial.tools.list_ports
 from loggerplusplus import Logger
+from serial import Serial
+from serial.tools.list_ports import comports
 
 from usb_com.python.com.dummy import DummySerial
 from usb_com.python.com.exceptions import ComException
@@ -30,6 +30,7 @@ class Com:
         vid: int,
         pid: int,
         baudrate: int,
+        *,
         enable_crc: bool = True,
         enable_dummy: bool = False,
     ) -> None:
@@ -41,8 +42,10 @@ class Com:
             vid (int): Vendor ID of the USB device.
             pid (int): Product ID of the USB device.
             baudrate (int): Baud rate for serial communication.
-            enable_crc (bool, optional): Enables CRC8 checksum verification. Defaults to ``True``.
-            enable_dummy (bool, optional): Enables dummy mode for testing. Defaults to ``False``.
+            enable_crc (bool, optional):
+                Enables CRC8 checksum verification. Defaults to ``True``.
+            enable_dummy (bool, optional):
+                Enables dummy mode for testing. Defaults to ``False``.
 
         """
         # Initialize init variables
@@ -55,7 +58,7 @@ class Com:
         self.enable_dummy: bool = enable_dummy
 
         # Initialize usb com variables
-        self._device: serial.Serial | DummySerial = self._get_serial()
+        self._device: Serial | DummySerial = self._get_serial()
         self._crc8: crc8.crc8 = crc8.crc8()
 
         self.last_message: bytes | None = None
@@ -65,26 +68,27 @@ class Com:
         self._receiver_thread: threading.Thread | None = self._start_receiver()
 
     # ======= Private methods =======
-    def _get_serial(self) -> serial.Serial | DummySerial:
+    def _get_serial(self) -> Serial | DummySerial:
         """Detect and initialize the serial device or dummy mode.
 
         Returns:
-            serial.Serial | DummySerial: Initialized serial connection or dummy instance.
+            Serial | DummySerial:
+                Initialized serial connection or dummy instance.
 
         Raises:
             ComException: If no device is found and dummy mode is disabled.
 
         """
-        device_found: serial.Serial | DummySerial | None = None
+        device_found: Serial | DummySerial | None = None
 
-        for port in serial.tools.list_ports.comports():
+        for port in comports():
             if (
                 port.vid == self.vid
                 and port.pid == self.pid
                 and port.serial_number is not None
                 and port.serial_number == str(self.serial_number)
             ):
-                device_found = serial.Serial(port.device, baudrate=self.baudrate)
+                device_found = Serial(port.device, baudrate=self.baudrate)
                 break
 
         if device_found is None:
@@ -182,7 +186,8 @@ class Com:
             func (Callable[..., Any]): Function to wrap.
 
         Returns:
-            Callable[..., Any]: Wrapped function that returns ``None`` if dummy mode is enabled.
+            Callable[..., Any]:
+                Wrapped function that returns ``None`` if dummy mode is enabled.
 
         """
 

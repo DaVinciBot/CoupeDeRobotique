@@ -13,14 +13,17 @@ from strategy.core.tasks.status import TaskStatus
 def visualize_task_graph(
     start_node: BaseTaskNode,
     filename: str = "task_graph",
+    *,
     view: bool = False,
 ) -> Digraph:
     """Recursively traverses a TaskNode graph and generates a Graphviz visual (.png).
 
     Args:
         start_node (BaseTaskNode): Entry point of the task graph.
-        filename (str, optional): Output filename without extension. Defaults to "task_graph".
-        view (bool, optional): If ``True``, automatically opens the generated image. Defaults to ``False``.
+        filename (str, optional):
+            Output filename without extension. Defaults to "task_graph".
+        view (bool, optional):
+            If ``True``, automatically opens the generated image. Defaults to ``False``.
 
     Returns:
         Digraph: The generated Graphviz graph object.
@@ -81,14 +84,17 @@ def visualize_task_graph(
 def visualize_entire_subgraph(
     subgraph: BaseSubGraph,
     filename: str = "full_graph",
+    *,
     view: bool = False,
 ) -> Digraph:
     """Generates a full Graphviz visualization for a given subgraph.
 
     Args:
         subgraph (BaseSubGraph): Subgraph containing all task nodes.
-        filename (str, optional): Output filename without extension. Defaults to "full_graph".
-        view (bool, optional): If ``True``, automatically opens the generated image. Defaults to ``False``.
+        filename (str, optional):
+            Output filename without extension. Defaults to "full_graph".
+        view (bool, optional):
+            If ``True``, automatically opens the generated image. Defaults to ``False``.
 
     Returns:
         Digraph: The generated Graphviz graph object.

@@ -89,27 +89,28 @@ class BaseTaskNode:
         )
         prev_name = prev_node.name if prev_node else "<None>"
         self.logger.debug(
-            f"Node '{self.name}' scored {score_value:.4f} against previous node '{prev_name}'",
+            f"Node '{self.name}' scored {score_value:.4f} against previous"
+            f" node '{prev_name}'",
         )
         return score_value
 
-    def on_enter(self, prev_node: BaseTaskNode | None, ctx: BaseGameContext) -> None:
+    def on_enter(self, prev_node: BaseTaskNode | None, _ctx: BaseGameContext) -> None:
         """Hook called when entering this node.
 
         Args:
             prev_node (BaseTaskNode | None): The node we are coming from.
-            ctx (BaseGameContext): The current game context.
+            _ctx (BaseGameContext): The current game context.
 
         """
         prev_name = prev_node.name if prev_node else "<None>"
         self.logger.info(f"Entering node '{self.name}' from '{prev_name}'")
 
-    def on_exit(self, next_node: BaseTaskNode | None, ctx: BaseGameContext) -> None:
+    def on_exit(self, next_node: BaseTaskNode | None, _ctx: BaseGameContext) -> None:
         """Hook called when exiting this node.
 
         Args:
             next_node (BaseTaskNode | None): The node that will be executed next.
-            ctx (BaseGameContext): The current game context.
+            _ctx (BaseGameContext): The current game context.
 
         """
         next_name = next_node.name if next_node else "<None>"
@@ -136,43 +137,50 @@ class BaseTaskNode:
             self.status = TaskStatus.IN_PROGRESS
             self.logger.info(f"Started execution of node '{self.name}'")
 
-        all_done = True
-        any_failed = False
-        any_timeout = False
+        # Handle only the first incomplete task per cycle
+        try:
+            next_idx = next(i for i, done in enumerate(self.task_done) if not done)
+        except StopIteration:
+            next_idx = None
 
-        # Sequential execution: handle only the first incomplete task per cycle
-        for idx, task in enumerate(self.tasks):
-            if self.task_done[idx]:
-                continue
-            self.logger.debug(f"Handling task {idx} of node '{self.name}'")
+        if next_idx is not None:
+            task = self.tasks[next_idx]
+            self.logger.debug(f"Handling task {next_idx} of node '{self.name}'")
             try:
                 done = task.handle(ctx)
-                self.results[idx] = done
+                self.results[next_idx] = done
                 if done:
-                    self.task_done[idx] = True
+                    self.task_done[next_idx] = True
                     self.logger.info(
-                        f"Task {idx} in node '{self.name}' completed successfully",
+                        f"Task {next_idx} in node '{self.name}' completed successfully",
                     )
                 else:
-                    all_done = False
-                    self.logger.debug(f"Task {idx} in node '{self.name}' not done yet")
+                    self.logger.debug(
+                        f"Task {next_idx} in node '{self.name}' not done yet",
+                    )
             except TimeoutError as e:
-                self.exceptions[idx] = e
-                self.task_done[idx] = True
-                any_timeout = True
-                self.logger.warning(f"Task {idx} in node '{self.name}' timed out: {e}")
+                self.exceptions[next_idx] = e
+                self.task_done[next_idx] = True
+                self.logger.warning(
+                    f"Task {next_idx} in node '{self.name}' timed out: {e}",
+                )
             except Exception as e:
-                self.exceptions[idx] = e
-                self.task_done[idx] = True
-                any_failed = True
+                self.exceptions[next_idx] = e
+                self.task_done[next_idx] = True
                 self.logger.error(
-                    f"Task {idx} in node '{self.name}' failed: {e}', "
+                    f"Task {next_idx} in node '{self.name}' failed: {e}', "
                     f"traceback {traceback.format_exc()}",
                 )
-            break
 
         if all(self.task_done):
             self.end_time = time.time()
+            any_failed = any(
+                (ex is not None) and not isinstance(ex, TimeoutError)
+                for ex in self.exceptions
+            )
+            any_timeout = any(
+                isinstance(ex, TimeoutError) for ex in self.exceptions if ex is not None
+            )
             if any_failed:
                 self.status = TaskStatus.FAILED
             elif any_timeout:
@@ -182,7 +190,8 @@ class BaseTaskNode:
 
             elapsed = self.end_time - self.start_time
             self.logger.info(
-                f"Finished node '{self.name}' with status {self.status.name} in {elapsed:.2f}s",
+                f"Finished node '{self.name}' with status {self.status.name}"
+                f" in {elapsed:.2f}s",
             )
             return True
 

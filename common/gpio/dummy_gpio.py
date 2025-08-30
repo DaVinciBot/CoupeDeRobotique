@@ -1,6 +1,8 @@
 """Dummy GPIO implementation used when real hardware is unavailable."""
 
 MAJORITY_RATIO = 0.5
+COUNT_RESET_THRESHOLD = 1300
+COUNT_RESET_TO = 1150
 
 
 class DummyDevice:
@@ -58,14 +60,14 @@ class PIN:
         self.reverse_state = reverse_state
         self.device = DummyDevice()
 
-    def digital_write(self, state: bool) -> None:
+    def digital_write(self, *, state: bool) -> None:
         """Set the pin output state.
 
         Args:
             state (bool): Desired state of the pin (True for high, False for low).
 
         """
-        corrected: bool = self.__correct_state(state)
+        corrected: bool = self.__correct_state(state=state)
         self.device.value = corrected
 
     def digital_read(self) -> bool:
@@ -76,8 +78,8 @@ class PIN:
 
         """
         if self.mode == "output":
-            return self.__correct_state(self.device.value)
-        return self.__correct_state(self.device.is_pressed)
+            return self.__correct_state(state=self.device.value)
+        return self.__correct_state(state=self.device.is_pressed)
 
     def safe_digital_read(self, n: int = 5) -> bool:
         """Read the digital value multiple times and return the majority value.
@@ -90,12 +92,12 @@ class PIN:
 
         """
         self.count += 1
-        if self.count > 1500:
-            self.count = 1000
+        if self.count > COUNT_RESET_THRESHOLD:
+            self.count = COUNT_RESET_TO
             self.device.toggle_input()
         return sum(self.digital_read() for _ in range(n)) / n >= MAJORITY_RATIO
 
-    def __correct_state(self, state: bool) -> bool:
+    def __correct_state(self, *, state: bool) -> bool:
         """Return the state adjusted for ``reverse_state``.
 
         Args:

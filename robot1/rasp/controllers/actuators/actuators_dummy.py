@@ -23,6 +23,7 @@ class ActuatorsShowDummy(ActuatorsShow):
         vid: int = CONFIG.TEENSY_VID,
         pid: int = CONFIG.TEENSY_PID,
         baudrate: int = CONFIG.TEENSY_BAUDRATE,
+        *,
         enable_crc: bool = CONFIG.TEENSY_CRC,
     ) -> None:
         """Initialize the dummy actuators wrapper.
@@ -43,7 +44,7 @@ class ActuatorsShowDummy(ActuatorsShow):
             vid,
             pid,
             baudrate,
-            enable_crc,
+            enable_crc=enable_crc,
             enable_dummy=True,  # dummy hardware flag
         )
         # Default elevator position at bottom
@@ -59,6 +60,7 @@ class ActuatorsShowDummy(ActuatorsShow):
         self,
         steps: int,
         speed: int,
+        *,
         disable_driver: bool = False,
     ) -> None:
         """Simulate moving the stepper motor.
@@ -81,6 +83,7 @@ class ActuatorsShowDummy(ActuatorsShow):
         pin: int,
         angle: int,
         max_angle: int = 180,
+        *,
         detach: bool = False,
         detach_delay: int = 1000,
     ) -> None:
@@ -122,9 +125,11 @@ class ActuatorsShowDummy(ActuatorsShow):
                 )
             else:
                 self.logger.info(
-                    f"DummyActuatorsShow: Simulating set_servo_angle: pin={pin}, angle={angle}",
+                    "DummyActuatorsShow: Simulating set_servo_angle: "
+                    f"pin={pin}, angle={angle}",
                 )
         else:
             self.logger.error(
-                f"DummyActuatorsShow: Angle {angle}° out of range [{min_angle},{max_angle}] for pin {pin}",
+                f"DummyActuatorsShow: Angle {angle}° out of range"
+                f" [{min_angle},{max_angle}] for pin {pin}",
             )

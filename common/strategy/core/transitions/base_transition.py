@@ -9,10 +9,9 @@ from strategy.core.task_nodes.base_task_node import BaseTaskNode
 class BaseTransition(ABC):
     """Abstract base class for representing a transition between task nodes.
 
-    This class defines a common interface for all transition types. Subclasses must implement
-    the ``can_transit`` method, which determines whether a transition is allowed based on the
-    originating node and the game context.
-
+    This class defines a common interface for all transition types. Subclasses
+    must implement the ``can_transit`` method, which determines whether a
+    transition is allowed based on the originating node and the game context.
     """
 
     def __init__(self, target: BaseTaskNode) -> None:
@@ -29,8 +28,10 @@ class BaseTransition(ABC):
         """Determine whether the transition should occur.
 
         Args:
-            from_node (BaseTaskNode): The current task node attempting to transition.
-            ctx (BaseGameContext): The current game context, which may include relevant state or conditions.
+            from_node (BaseTaskNode):
+                The current task node attempting to transition.
+            ctx (BaseGameContext): The current game context, which may include
+                relevant state or conditions.
 
         Returns:
             bool: ``True`` if the transition should occur, ``False`` otherwise.

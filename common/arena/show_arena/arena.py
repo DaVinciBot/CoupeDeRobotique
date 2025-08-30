@@ -281,7 +281,6 @@ class ShowArena(BaseArena):
                         45 + distance_between_robot_and_big_construct_zone,
                         -pi / 2,
                     ),
-                    # OrientedPoint(100 - distance_between_robot_and_work_zone, 22.5, 0),
                 ],
             ),
             (
@@ -301,8 +300,8 @@ class ShowArena(BaseArena):
 
         zones: list[BaseArenaZone] = []
 
-        for corner_point in stuff_zones_points:
-            zones.append(
+        zones.extend(
+            [
                 StuffZone(
                     logger=stuff_zone_logger,
                     buffer_size=obstacle_buffer,
@@ -310,12 +309,16 @@ class ShowArena(BaseArena):
                         Point(*corner_point[0]),
                         Point(*corner_point[1]),
                     ),
-                    go_to_positions=corner_point[2] if len(corner_point) > 2 else None,
-                ),
-            )
+                    go_to_positions=(
+                        corner_point[2] if len(corner_point) > 2 else None
+                    ),
+                )
+                for corner_point in stuff_zones_points
+            ],
+        )
 
-        for corner_point in yellow_reserved_zones_points:
-            zones.append(
+        zones.extend(
+            [
                 YellowReservedZone(
                     logger=yellow_reserved_zone_logger,
                     buffer_size=obstacle_buffer,
@@ -323,12 +326,16 @@ class ShowArena(BaseArena):
                         Point(*corner_point[0]),
                         Point(*corner_point[1]),
                     ),
-                    go_to_positions=corner_point[2] if len(corner_point) > 2 else None,
-                ),
-            )
+                    go_to_positions=(
+                        corner_point[2] if len(corner_point) > 2 else None
+                    ),
+                )
+                for corner_point in yellow_reserved_zones_points
+            ],
+        )
 
-        for corner_point in blue_reserved_zones_points:
-            zones.append(
+        zones.extend(
+            [
                 BlueReservedZone(
                     logger=blue_reserved_zone_logger,
                     buffer_size=obstacle_buffer,
@@ -336,9 +343,13 @@ class ShowArena(BaseArena):
                         Point(*corner_point[0]),
                         Point(*corner_point[1]),
                     ),
-                    go_to_positions=corner_point[2] if len(corner_point) > 2 else None,
-                ),
-            )
+                    go_to_positions=(
+                        corner_point[2] if len(corner_point) > 2 else None
+                    ),
+                )
+                for corner_point in blue_reserved_zones_points
+            ],
+        )
 
         for corner_point in forbidden_zones_points:
             zones.append(
@@ -439,3 +450,11 @@ class ShowArena(BaseArena):
     @override
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
+
+    @override
+    def __hash__(self) -> int:
+        return hash((
+            self.ally_zone,
+            self.enemy_zone,
+            self.grid_manager,
+        ))

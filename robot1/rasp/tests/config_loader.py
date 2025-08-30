@@ -68,9 +68,12 @@ class CONFIG:
 
         LOG_CONFIG (dict[str, Any]): Logging configuration settings.
         LOGGER_MANAGER_CONFIG (dict[str, Any]): Logger manager configuration settings.
-        LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER (bool): Whether to enable file logs monitoring for one logger only.
-        LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE (bool): Whether to enable dynamic config update for the logger
-        LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER (bool): Whether to enable unique logger identifier.
+        LOGGER_MANAGER_ENABLE_FILES_LOGS_MONITORING_ONLY_FOR_ONE_LOGGER (bool):
+            Whether to enable file logs monitoring for one logger only.
+        LOGGER_MANAGER_ENABLE_DYNAMIC_CONFIG_UPDATE (bool):
+            Whether to enable dynamic config update for the logger
+        LOGGER_MANAGER_ENABLE_UNIQUE_LOGGER_IDENTIFIER (bool):
+            Whether to enable unique logger identifier.
 
         LOGGER_CONFIG (dict[str, Any]): Logger configuration settings.
         LOGGER_COLORS (str): Logger colors configuration.
@@ -84,10 +87,12 @@ class CONFIG:
         LOGGER_FILES_MONITORING (bool): Whether to monitor log files.
         LOGGER_FILE_SIZE_UNIT (str): Unit for file size in logs.
         LOGGER_DISK_ALERT_THRESHOLD_PERCENT (float): Disk alert threshold percentage.
-        LOGGER_FILES_SIZE_ALERT_THRESHOLD_PERCENT (float): Log files size alert threshold percentage.
+        LOGGER_FILES_SIZE_ALERT_THRESHOLD_PERCENT (float):
+            Log files size alert threshold percentage.
         LOGGER_MAX_LOG_FILE_SIZE (float): Maximum size for log files.
         LOGGER_IDENTIFIER_MAX_WIDTH (float): Maximum width for logger identifier.
-        LOGGER_FILENAME_LINENO_MAX_WIDTH (float): Maximum width for filename and line number in logs.
+        LOGGER_FILENAME_LINENO_MAX_WIDTH (float):
+            Maximum width for filename and line number in logs.
 
         TEAM_CONFIG (dict[str, Any]): Team configuration settings.
         DEFAULT_TEAM (str): Default team color.
@@ -108,11 +113,15 @@ class CONFIG:
         ROLLING_BASIS_CONFIG (dict[str, Any]): Rolling basis configuration settings.
         ROLLING_BASIS_TEENSY_SER (int): Serial number for the rolling basis Teensy.
 
-        ROLLING_BASIS_PIDS_CONFIG (dict[str, Any]): PID configuration for the rolling basis.
-        ROLLING_BASIS_PIDS_LINEAR_POSITION (dict[str, float]): PID settings for linear position
-        ROLLING_BASIS_PIDS_ANGULAR_POSITION (dict[str, float]): PID settings for angular position.
+        ROLLING_BASIS_PIDS_CONFIG (dict[str, Any]):
+            PID configuration for the rolling basis.
+        ROLLING_BASIS_PIDS_LINEAR_POSITION (dict[str, float]):
+            PID settings for linear position
+        ROLLING_BASIS_PIDS_ANGULAR_POSITION (dict[str, float]):
+            PID settings for angular position.
 
-        ROLLING_BASIS_SPEED_PROFILES_CONFIG (dict[str, Any]): Speed profiles configuration for the rolling basis.
+        ROLLING_BASIS_SPEED_PROFILES_CONFIG (dict[str, Any]):
+            Speed profiles configuration for the rolling basis.
         ROLLING_BASIS_SPEED_PROFILES_LINEAR (dict[str, Any]): Linear speed profiles.
         ROLLING_BASIS_SPEED_PROFILES_ANGULAR (dict[str, Any]): Angular speed profiles.
 
@@ -123,7 +132,8 @@ class CONFIG:
         ACTUATORS_CONFIG (dict[str, Any]): Actuators configuration settings.
         ACTUATOR_TEENSY_SER (int): Serial number for the actuators Teensy
         ACTUATOR_SERVOS_CONFIG (dict[int, Any]): Servos configuration for the actuators
-        ACTUATOR_ELEVATOR_CONFIG (dict[str, Any]): Elevator configuration for the actuators
+        ACTUATOR_ELEVATOR_CONFIG (dict[str, Any]):
+            Elevator configuration for the actuators
         ACTUATOR_DELAY (float): Delay for the actuators
 
         LIDAR_CONFIG (dict[str, Any]): Lidar configuration settings.
@@ -133,24 +143,35 @@ class CONFIG:
         LIDAR_MAX_ANGLE (float): Maximum angle for lidar detection.
         LIDAR_MIN_DISTANCE_DETECTION (float): Minimum distance for lidar detection.
         LIDAR_FRONTAL_DETECTION_ANGLE (float): Frontal detection angle for lidar
-        LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE (float): Semi-circular detection angle for lidar.
+        LIDAR_SEMI_CIRCULAR_DETECTION_ANGLE (float):
+            Semi-circular detection angle for lidar.
 
         ARENA_CONFIG (dict[str, Any]): Arena configuration settings.
         ARENA_BORDER_BUFFER (float): Buffer size for arena borders.
         ARENA_OBSTACLE_BUFFER (float): Buffer size for arena obstacles.
         ARENA_CHUNK_SIZE (int): Size of the arena chunks.
-        ARENA_FORBIDDEN_COVER_THRESHOLD (float): Threshold for forbidden cover in the arena.
+        ARENA_FORBIDDEN_COVER_THRESHOLD (float):
+            Threshold for forbidden cover in the arena.
 
-        MOVEMENT_MANAGER_CONFIG (dict[str, Any]): Movement manager configuration settings.
-        MOVEMENT_MANAGER_MOVEMENT_RESOLUTION (float): Movement resolution for the movement manager.
+        MOVEMENT_MANAGER_CONFIG (dict[str, Any]):
+            Movement manager configuration settings.
+        MOVEMENT_MANAGER_MOVEMENT_RESOLUTION (float):
+            Movement resolution for the movement manager.
 
-        ACS_PROFILES_CONFIG (dict[str, Any]): ACS profiles configuration for the movement manager.
-        ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME (BaseAcsDetectionProfileParams): ACS profile for going to color reserved zone to finish game.
-        ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT (BaseAcsDetectionProfileParams): ACS profile for going to color reserved zone to construct.
-        ACS_PROFILE_GO_TO_STUFF_ZONE_TO_PICK_UP (BaseAcsDetectionProfileParams): ACS profile for going to stuff zone to pick up.
-        ACS_PROFILE_BACKWARD (BaseAcsDetectionProfileParams): ACS profile for backward movement.
-        ACS_PROFILE_PRECISE_FORWARD (BaseAcsDetectionProfileParams): ACS profile for precise forward movement.
-        ACS_PROFILE_START_TASK (BaseAcsDetectionProfileParams): ACS profile for starting a task.
+        ACS_PROFILES_CONFIG (dict[str, Any]):
+            ACS profiles configuration for the movement manager.
+        ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME (BaseAcsDetectionProfileParams):
+            ACS profile for going to color reserved zone to finish game.
+        ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT (BaseAcsDetectionProfileParams):
+            ACS profile for going to color reserved zone to construct.
+        ACS_PROFILE_GO_TO_STUFF_ZONE_TO_PICK_UP (BaseAcsDetectionProfileParams):
+            ACS profile for going to stuff zone to pick up.
+        ACS_PROFILE_BACKWARD (BaseAcsDetectionProfileParams):
+            ACS profile for backward movement.
+        ACS_PROFILE_PRECISE_FORWARD (BaseAcsDetectionProfileParams):
+            ACS profile for precise forward movement.
+        ACS_PROFILE_START_TASK (BaseAcsDetectionProfileParams):
+            ACS profile for starting a task.
 
         JACK_PIN (int): Pin number for the jack.
         BAU_PIN (int): Pin number for the BAU.
@@ -165,7 +186,7 @@ class CONFIG:
         str(COMMON_DIR),
     )  # Add common directory to the path (to be able to import common modules)
     CONFIG_STORE: dict[str, Any] = load_json_file(ROOT_DIR / "config.json")
-    from navigation import (  # pylint: disable=C0415 # noqa: PLC0415
+    from navigation import (  # noqa: PLC0415
         BaseAcsDetectionProfileParams,
         BasicSpeedProfile,
         LinearRampedSpeedProfile,

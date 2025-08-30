@@ -111,8 +111,8 @@ void stepper_step(byte* msg, byte size) {
         stepper->step(1, stepper_step_msg->steps);
     else
         stepper->step(0, stepper_step_msg->steps);
-    // digitalWrite(stepper_step_msg->enable_pin_driver, HIGH); // TODO:
-    // Implement a way to disable the driver after the step is done, to prevent
+    // digitalWrite(stepper_step_msg->enable_pin_driver, HIGH);
+    // TODO: Implement a way to disable the driver after the step is done, to prevent
     // heating
 }
 

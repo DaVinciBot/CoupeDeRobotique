@@ -18,9 +18,11 @@ class GridManager:
 
     Includes static and dynamic forbidden zones and grid visualization.
 
-    - The grid uses a coordinate system where the origin is in the bottom-right corner.
+    - The grid uses a coordinate system where the origin is in the
+      bottom-right corner.
     - X-axis increases towards the left, while Y-axis increases upwards.
-    - This reference frame affects calculations and visualization; adjustments ensure alignment.
+    - This reference frame affects calculations and visualization;
+      adjustments ensure alignment.
 
     """
 

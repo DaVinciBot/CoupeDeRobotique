@@ -16,6 +16,7 @@ class GPIOComTeensy(Com):
         vid: int,
         pid: int,
         baudrate: int,
+        *,
         enable_crc: bool = True,
         enable_dummy: bool = False,
     ) -> None:
@@ -27,8 +28,10 @@ class GPIOComTeensy(Com):
             vid (int): Vendor ID of the Teensy device.
             pid (int): Product ID of the Teensy device.
             baudrate (int): Baud rate for serial communication.
-            enable_crc (bool, optional): Enables cyclic redundancy check. Defaults to ``True``.
-            enable_dummy (bool, optional): Enables dummy mode for testing. Defaults to ``False``.
+            enable_crc (bool, optional):
+                Enables cyclic redundancy check. Defaults to ``True``.
+            enable_dummy (bool, optional):
+                Enables dummy mode for testing. Defaults to ``False``.
 
         """
         # Initialize variables dedicated to Teensy's GPIO management
@@ -46,6 +49,6 @@ class GPIOComTeensy(Com):
             vid,
             pid,
             baudrate,
-            enable_crc,
-            enable_dummy,
+            enable_crc=enable_crc,
+            enable_dummy=enable_dummy,
         )

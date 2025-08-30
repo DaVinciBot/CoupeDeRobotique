@@ -28,6 +28,7 @@ class Actuators(
         vid: int = CONFIG.TEENSY_VID,
         pid: int = CONFIG.TEENSY_PID,
         baudrate: int = CONFIG.TEENSY_BAUDRATE,
+        *,
         enable_crc: bool = CONFIG.TEENSY_CRC,
         enable_dummy: bool = CONFIG.TEENSY_DUMMY,
     ) -> None:
@@ -57,8 +58,8 @@ class Actuators(
             vid,
             pid,
             baudrate,
-            enable_crc,
-            enable_dummy,
+            enable_crc=enable_crc,
+            enable_dummy=enable_dummy,
         )
 
         # Admit that default elevator position is at the bottom
@@ -123,6 +124,7 @@ class Actuators(
     def set_stepper_driver_activation_state(
         self,
         pin_enable: int,
+        *,
         enable_driver: bool,
     ) -> None:
         """Sets the activation state of a stepper motor driver through its enable pin.
@@ -145,7 +147,13 @@ class Actuators(
         self.send_bytes(msg)
 
     @log("Actuators")
-    def stepper_step(self, steps: int, speed: int, disable_driver: bool = True) -> None:
+    def stepper_step(
+        self,
+        steps: int,
+        speed: int,
+        *,
+        disable_driver: bool = True,
+    ) -> None:
         """Moves the stepper motor a specified number of steps.
 
         Note that the number of motor pin can change depending on the motor.
@@ -200,11 +208,12 @@ class Actuators(
         angle: int,
         min_angle: int = 0,
         max_angle: int = 180,
+        *,
         detach: bool = False,
         # If True, the servo will detach after setting the angle,
         # DO NOT USE DETACH = TRUE AND DETACH = FALSE ON THE SAME SERVO
         detach_delay: int = 1000,
-        use_I2C: bool = True,
+        use_i2c: bool = True,
     ) -> None:
         """Set the angle of the servo at the given pin.
 
@@ -221,7 +230,7 @@ class Actuators(
             detach_delay (int, optional):
                 The time in milliseconds to keep the servo detached. Defaults to 1000.
              Ignored if detach is ``False``.
-            use_I2C (bool, optional):
+            use_i2c (bool, optional):
                 Whether to use I2C communication for the servo. Defaults to ``True``.
 
         """
@@ -245,7 +254,7 @@ class Actuators(
                         f"{self.gpio_manager.get_type_gpio(pin)!s}",
                     )
                     return
-                if use_I2C:  # prevent I2C overload. Without during the test, servos where taking wrong angles when called too fast
+                if use_i2c:  # prevent I2C overload. Without during the test, servos where taking wrong angles when called too fast
                     t = time.time()
                     if t - self.t_set_servo_angle_i2c < 0.03:
                         time.sleep(0.03 - (t - self.t_set_servo_angle_i2c))
@@ -253,7 +262,7 @@ class Actuators(
                 msg = (
                     (
                         Messages.SET_SERVO_ANGLE_I2C.to_bytes()
-                        if use_I2C
+                        if use_i2c
                         else Messages.SET_SERVO_ANGLE.to_bytes()
                     )
                     + struct.pack("<B", pin)

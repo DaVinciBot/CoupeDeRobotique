@@ -25,17 +25,23 @@ class RollingBasisDummy(BaseComTeensy):
         vid: int = CONFIG.TEENSY_VID,
         pid: int = CONFIG.TEENSY_PID,
         baudrate: int = CONFIG.TEENSY_BAUDRATE,
+        *,
         enable_crc: bool = CONFIG.TEENSY_CRC,
     ) -> None:
         """Initializes the RollingBasisDummy class.
 
         Args:
             logger (Logger): The logger instance for logging.
-            serial_number (int, optional): The serial number of the Teensy. Defaults to CONFIG.ROLLING_BASIS_TEENSY_SER.
-            vid (int, optional): The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
-            pid (int, optional): The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
-            baudrate (int, optional): The baud rate for serial communication. Defaults to CONFIG.TEENSY_BAUDRATE.
-            enable_crc (bool, optional): Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
+            serial_number (int, optional): The serial number of the Teensy.
+                Defaults to CONFIG.ROLLING_BASIS_TEENSY_SER.
+            vid (int, optional):
+                The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
+            pid (int, optional):
+                The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
+            baudrate (int, optional): The baud rate for serial communication.
+                Defaults to CONFIG.TEENSY_BAUDRATE.
+            enable_crc (bool, optional):
+                Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
 
         """
         # Initialize the parent-BaseComTeensy class
@@ -45,7 +51,7 @@ class RollingBasisDummy(BaseComTeensy):
             vid,
             pid,
             baudrate,
-            enable_crc,
+            enable_crc=enable_crc,
             enable_dummy=True,
         )
 
@@ -121,7 +127,7 @@ class RollingBasisDummy(BaseComTeensy):
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         Returns:
-            PID: The PID. #TODO: refaire ce comment
+            PID: The configured PID instance.
 
         Raises:
             ValueError: If the arguments do not match any expected format.
@@ -160,7 +166,8 @@ class RollingBasisDummy(BaseComTeensy):
             - set_linear_position_pid(kp=float, ki=float, kd=float) → None
 
         Args:
-            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a single dictionary with keys 'kp', 'ki', 'kd'.
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
 
         """

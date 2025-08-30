@@ -1,4 +1,8 @@
-"""Debug function to simulate and visualize the navigator's behavior over time."""
+"""Debug function to simulate and visualize the navigator's behavior.
+
+This module is intended for offline debugging and plotting only.
+"""
+# ruff: noqa: T201, PT028, SLF001
 
 import time
 
@@ -26,12 +30,14 @@ def test_navigator_execution(
         - Avoidance state enumeration
         - Distance to the enemy
 
-    It then visualizes this data using line plots, a 2D trajectory plot, and categorical state plots.
+    It then visualizes this data using line plots, a 2D trajectory plot, and
+    categorical state plots.
 
     Args:
         navigator (Navigator): The navigator object controlling the robot's movement.
         arena (BaseArena): The arena where navigation is simulated.
-        time_step (float, optional): The delay between iterations in seconds. Defaults to 0.1.
+        time_step (float, optional):
+            The delay between iterations in seconds. Defaults to 0.1.
 
     """
     # 1) Prepare storage for logging metrics

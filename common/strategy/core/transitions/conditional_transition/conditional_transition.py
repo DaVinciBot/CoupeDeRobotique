@@ -13,9 +13,9 @@ from strategy.core.transitions.conditional_transition.transitions_condition impo
 class ConditionalTransition(BaseTransition):
     """A transition that occurs only if a specified condition is met.
 
-    This class allows for conditional logic in determining whether a transition from one task
-    node to another is valid, using an instance of ``BaseTransitionCondition``.
-
+    This class allows for conditional logic when determining whether a
+    transition from one task node to another is valid, using an instance of
+    ``BaseTransitionCondition``.
     """
 
     def __init__(
@@ -36,7 +36,7 @@ class ConditionalTransition(BaseTransition):
 
     @override
     def can_transit(self, from_node: BaseTaskNode, ctx: BaseGameContext) -> bool:
-        """Determine if the transition can occur based on the condition and game context.
+        """Determine if transition can occur based on condition and context.
 
         Args:
             from_node (BaseTaskNode): The node transitioning from.

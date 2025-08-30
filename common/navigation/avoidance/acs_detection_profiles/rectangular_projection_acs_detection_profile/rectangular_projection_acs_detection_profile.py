@@ -28,8 +28,10 @@ class RectangularProjectionAcsDetectionProfile(
         """Initializes the RectangularProjectionAcsDetectionProfile.
 
         Args:
-            params (RectangularProjectionAcsDetectionProfileParams): Parameters for the rectangular projection ACS detection profile.
-            logger (Logger | None, optional): Logger instance for debugging. Defaults to None.
+            params (RectangularProjectionAcsDetectionProfileParams):
+                Parameters for the rectangular projection ACS detection profile.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to None.
 
         """
         super().__init__(params, logger)
@@ -62,8 +64,9 @@ class RectangularProjectionAcsDetectionProfile(
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
         projection = self._create_rectangular_projection(ally_zone)
         if projection.contains(enemy_zone.point):
+            distance = ally_zone.point.distance(enemy_zone.point)
             self.logger.info(
-                f"ACS triggered. Distance: {ally_zone.point.distance(enemy_zone.point)}",
+                f"ACS triggered. Distance: {distance}",
             )
             return True
         return False

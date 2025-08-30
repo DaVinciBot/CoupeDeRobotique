@@ -23,7 +23,8 @@ class Lidar:
             -> 90° is the left of the robot
             -> -90° is the right of the robot
     * The distances are in centimeters.
-    * the unities of angles and distances can be changed by changing the default values of the _init_ parameters.
+    * the unities of angles and distances can be changed by changing the default values
+    of the _init_ parameters.
     * The lidar is a SICK TIM 571.
     * The angle and distance are stored in a numpy array (type float32).
 
@@ -45,7 +46,8 @@ class Lidar:
 
         It also tests the lidar connection.
 
-        WARNING: The min & max angle have to be given in the trigonometric way and in degrees !
+        WARNING: The min & max angle have to be given in the trigonometric way and
+        in degrees !
 
         Args:
             logger (Logger): Logger instance for logging events.
@@ -53,8 +55,10 @@ class Lidar:
             max_angle (float): Maximum angle of the lidar (min angle at right).
             unit_angle (str, optional): Unit of the angles. Defaults to "deg".
             unit_distance (str, optional): Unit of the distances. Defaults to "cm".
-            min_distance (float, optional): Minimum distance to consider a distance as valid. Defaults to 5.0.
-            initialization_fail_refresh_rate (float, optional): Refresh rate for initialization failures. Defaults to 0.5.
+            min_distance (float, optional):
+                Minimum distance to consider a distance as valid. Defaults to 5.0.
+            initialization_fail_refresh_rate (float, optional):
+                Refresh rate for initialization failures. Defaults to 0.5.
 
         """
         self._logger = logger
@@ -157,8 +161,9 @@ class Lidar:
             centered_polars[i] = -((max_angle - min_angle) / 2) + i * angle_step
 
         if centered_polars.size == 0:
-            self._logger.critical("Error while initializing polars")
-            raise ValueError("Error while initializing polars !")
+            msg = "Error while initializing polars"
+            self._logger.critical(msg)
+            raise ValueError(msg)
 
         return centered_polars
 
@@ -180,8 +185,9 @@ class Lidar:
         if unit == "rad":
             return math.pi / 180
 
-        self._logger.critical(f"unit of angles not recognized [{unit}] !")
-        raise ValueError(f"unit of angles not recognized [{unit}] !")
+        msg = f"unit of angles not recognized [{unit}] !"
+        self._logger.critical(msg)
+        raise ValueError(msg)
 
     def __init_distances_unit(self, unit: str) -> float:
         """Initialize the unit of the distances.
@@ -205,8 +211,9 @@ class Lidar:
         if unit == "inch":
             return 0.0254
 
-        self._logger.critical(f"unit of distances not recognized [{unit}] !")
-        raise ValueError(f"unit of distances not recognized [{unit}] !")
+        msg = f"unit of distances not recognized [{unit}] !"
+        self._logger.critical(msg)
+        raise ValueError(msg)
 
     def __scan(self) -> None:
         """Scan the environment with the lidar and store the distances in the lidar object.
@@ -234,7 +241,7 @@ class Lidar:
 
     # ====== Public methods and properties ======
 
-    def is_connected(self, force_check: bool = False) -> bool:
+    def is_connected(self, *, force_check: bool = False) -> bool:
         """Check if the lidar is connected.
 
         Args:

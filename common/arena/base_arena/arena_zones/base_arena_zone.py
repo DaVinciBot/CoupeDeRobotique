@@ -2,7 +2,6 @@
 
 Provides utilities to manage zone geometry, accessibility, visit tracking, and
 common built-in comparisons.
-
 """
 
 from abc import ABC
@@ -208,27 +207,26 @@ class BaseArenaZone(ABC):
 
     def update(
         self,
-        team_color: TeamColor,
+        _team_color: TeamColor,
         ally_position: Point | OrientedPoint,
         enemy_position: Point | OrientedPoint,
     ) -> None:
         """Update the zone based on the positions of allies and enemies.
 
         Args:
-            team_color (TeamColor): Color of the team.
+            _team_color (TeamColor): Color of the team.
             ally_position (Point | OrientedPoint): Position of the ally.
             enemy_position (Point | OrientedPoint): Position of the enemy.
 
         """
-        del team_color, ally_position, enemy_position
         # Update visit counts
-        # if self.polygon.contains(enemy_position):  # Don't consider the buffer
-        #     self.enemy_visits += 1
-        #     self.logger.debug(f"Enemy visited {self.zone_type} zone")
-        #
-        # if self.polygon.contains(enemy_position):  # Don't consider the buffer
-        #     self.ally_visits += 1
-        #     self.logger.debug(f"Ally visited {self.zone_type} zone")
+        if self.polygon.contains(enemy_position):  # Don't consider the buffer
+            self.enemy_visits += 1
+            self.logger.debug(f"Enemy visited {self.zone_type} zone")
+
+        if self.polygon.contains(ally_position):  # Don't consider the buffer
+            self.ally_visits += 1
+            self.logger.debug(f"Ally visited {self.zone_type} zone")
 
         self.last_update_time = Utils.get_ts()
 
@@ -289,9 +287,10 @@ class BaseArenaZone(ABC):
 
         """
         return (
-            f"{self.zone_type}: {self.buffered_polygon.centroid} -> {self.accessibility}, "
-            f"ally visits: {self.ally_visits}, enemy visits: {self.enemy_visits}, "
-            f"last update: {self.last_update_time}, go-to positions: {self.go_to_positions}"
+            f"{self.zone_type}: {self.buffered_polygon.centroid} -> "
+            f"{self.accessibility}, ally visits: {self.ally_visits}, "
+            f"enemy visits: {self.enemy_visits}, last update: {self.last_update_time}, "
+            f"go-to positions: {self.go_to_positions}"
         )
 
     @override

@@ -1,4 +1,5 @@
 """Utilities to plot speed and distance for a given speed profile."""
+# ruff: noqa: T201, PT028
 
 from matplotlib import pyplot as plt
 
@@ -18,8 +19,10 @@ def test_speed_profile(
 
     Args:
         profile (BaseSpeedProfile): The speed profile to test.
-        distance (float | None, optional): Target distance to simulate. Defaults to None.
-        step_time (float, optional): Time interval for sampling the profile. Defaults to 0.1.
+        distance (float | None, optional):
+            Target distance to simulate. Defaults to None.
+        step_time (float, optional):
+            Time interval for sampling the profile. Defaults to 0.1.
         departure_speed (float, optional): Initial speed at departure. Defaults to 0.0.
         arrival_speed (float, optional): Final speed at arrival. Defaults to 0.0.
 
