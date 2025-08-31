@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
-from navigation.avoidance.base_avoidance.base_avoidance import BaseAvoidance
-from navigation.avoidance.base_avoidance.states import AvoidanceState
+from navigation.avoidance.base_avoidance import AvoidanceState, BaseAvoidance
 from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params import (
     StopAndWaitAvoidanceParams,
 )
@@ -19,7 +18,8 @@ if TYPE_CHECKING:
     from navigation.avoidance.acs_detection_profiles import (
         BaseAcsDetectionProfileParams,
     )
-    from navigation.navigator.task.navigator_task import NavigatorTask
+    from navigation.navigator.task import NavigatorTask
+    from navigation.path_planner import BasePathPlannerPlanPathParams
 
 
 class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
@@ -108,7 +108,10 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self.logger.info("Obstacle cleared. Replanning trajectory.")
 
             # Obstacle is no longer detected, replan from current position
-            last_params = current_navigator_task.path_planner.last_plan_path_params
+            last_params = cast(
+                "BasePathPlannerPlanPathParams",
+                current_navigator_task.path_planner.last_plan_path_params,
+            )
             last_params.start = position
 
             self.logger.debug(f"Replanning from updated start: {position}")
@@ -125,12 +128,16 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             current_navigator_task.state = NavigatorTaskState.IN_PROGRESS
 
             self.logger.info("Avoidance complete. Resuming normal operation.")
-            return (
-                current_navigator_task.current_trajectory_command
+            return cast(
+                "TrajectoryPlanCommand",
+                current_navigator_task.current_trajectory_command,
             )  # Avoidance complete, continue as normal
 
         # 4. Continue with original trajectory
         self.logger.debug(
             "No avoidance action required. Continuing original trajectory.",
         )
-        return current_navigator_task.current_trajectory_command
+        return cast(
+            "TrajectoryPlanCommand",
+            current_navigator_task.current_trajectory_command,
+        )

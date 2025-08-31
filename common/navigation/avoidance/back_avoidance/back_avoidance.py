@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from navigation.avoidance.acs_detection_profiles import (
     BaseAcsDetectionProfileParams,
@@ -11,13 +11,8 @@ from navigation.avoidance.acs_detection_profiles import (
 from navigation.avoidance.back_avoidance.back_avoidance_params import (
     BackAvoidanceParams,
 )
-from navigation.avoidance.base_avoidance.base_avoidance import BaseAvoidance
-from navigation.avoidance.base_avoidance.states import AvoidanceState
+from navigation.avoidance.base_avoidance import AvoidanceState, BaseAvoidance
 from navigation.avoidance.no_avoidance import NoAvoidanceParams
-from navigation.navigator.task.navigator_task import (
-    NavigatorTask,
-)
-from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
 from navigation.path_planner import DeltaPathPlannerParams
 from navigation.trajectory_planner import (
     Direction,
@@ -30,6 +25,8 @@ if TYPE_CHECKING:
 
     from arena import AllyZone, EnemyZone
     from geometry import OrientedPoint
+    from navigation.navigator.task import NavigatorTask
+    from navigation.path_planner import BasePathPlannerPlanPathParams
 
 
 class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
@@ -82,6 +79,10 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             The trajectory command after processing avoidance logic.
 
         """
+        from navigation.navigator.task import (  # noqa: PLC0415
+            NavigatorTask,
+            NavigatorTaskParams,
+        )
         from navigation.navigator.task.states import NavigatorTaskState  # noqa: PLC0415
 
         position: OrientedPoint = ally_zone.point
@@ -109,6 +110,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
                 NavigatorTaskParams(
                     goal=None,
                     timeout=None,
+                    stabilization_delay=0.0,
                     path_planner_params=DeltaPathPlannerParams(
                         distance=self.params.backward_distance,
                     ),
@@ -157,7 +159,10 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             self.logger.info("Obstacle cleared. Replanning trajectory.")
 
             # Obstacle is no longer detected, replan from current position
-            last_params = current_navigator_task.path_planner.last_plan_path_params
+            last_params = cast(
+                "BasePathPlannerPlanPathParams",
+                current_navigator_task.path_planner.last_plan_path_params,
+            )
             last_params.start = position  # Update start position to current location
 
             self.logger.debug(f"Replanning from updated start: {position}")
@@ -175,12 +180,16 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             current_navigator_task.state = NavigatorTaskState.IN_PROGRESS
 
             self.logger.info("Avoidance complete. Resuming normal operation.")
-            return (
-                current_navigator_task.current_trajectory_command
+            return cast(
+                "TrajectoryPlanCommand",
+                current_navigator_task.current_trajectory_command,
             )  # Avoidance complete, continue as normal
 
         # 4. Continue with current command
         self.logger.debug(
             "No avoidance action required. Continuing original trajectory.",
         )
-        return current_navigator_task.current_trajectory_command
+        return cast(
+            "TrajectoryPlanCommand",
+            current_navigator_task.current_trajectory_command,
+        )

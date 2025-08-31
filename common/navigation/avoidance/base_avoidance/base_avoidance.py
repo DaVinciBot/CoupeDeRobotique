@@ -67,7 +67,10 @@ class BaseAvoidance[PARAMSTYPE: BaseAvoidanceParams](ABC):
         self._original_task: NavigatorTask | None = None
         # Storage for original navigation task
 
-    def _store_original_task(self, current_navigator_task: NavigatorTask) -> None:
+    def _store_original_task(
+        self,
+        current_navigator_task: NavigatorTask,
+    ) -> None:
         """Store a deep copy of the original navigation task if not already stored.
 
         Args:

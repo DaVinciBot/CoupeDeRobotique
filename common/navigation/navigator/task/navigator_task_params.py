@@ -53,5 +53,5 @@ class NavigatorTaskParams:
         )
 
         self.goal: OrientedPoint | None = goal
-        self.timeout: float = timeout
+        self.timeout: float | None = timeout
         self.stabilization_delay: float = stabilization_delay

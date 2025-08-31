@@ -1,10 +1,10 @@
 """Navigator task handling planning, avoidance, and stabilization."""
 
-import time
-from typing import TYPE_CHECKING
+from __future__ import annotations
 
-from arena import AllyZone, EnemyZone
-from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
+import time
+from typing import TYPE_CHECKING, cast
+
 from navigation.navigator.task.states import NavigatorTaskState
 from navigation.path_planner import (
     BasePathPlanner,
@@ -19,7 +19,10 @@ from navigation.trajectory_planner import (
 )
 
 if TYPE_CHECKING:
+    from arena import AllyZone, EnemyZone
     from geometry import OrientedPoint
+    from navigation.avoidance.base_avoidance import BaseAvoidance
+    from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
 
 
 class NavigatorTask:
@@ -33,7 +36,6 @@ class NavigatorTask:
 
         """
         from navigation.avoidance.avoidance_factory import AvoidanceFactory
-        from navigation.avoidance.base_avoidance.base_avoidance import BaseAvoidance
 
         self.params = params
         self.path_planner: BasePathPlanner = PathPlannerFactory.instantiate(
@@ -70,7 +72,7 @@ class NavigatorTask:
             PathPlannerPathPlanParamsFactory.instantiate(
                 strategy=self.params.path_planner_params.path_finding_strategy,
                 current_position=ally_zone.point,
-                goal=self.params.goal,
+                goal=cast("OrientedPoint", self.params.goal),
             )
         )
         path: list[OrientedPoint] = self.path_planner.plan_path(plan_path_params)
@@ -88,7 +90,7 @@ class NavigatorTask:
     def _abort(self) -> TrajectoryPlanCommand:
         self.state = NavigatorTaskState.ABORT
         self.current_trajectory_command = TrajectoryPlanCommand.create_stop_command(
-            current_position=self.params.goal,
+            current_position=cast("OrientedPoint", self.params.goal),
         )
         return self.current_trajectory_command
 

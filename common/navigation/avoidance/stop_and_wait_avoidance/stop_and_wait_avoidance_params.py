@@ -1,8 +1,6 @@
 """Parameters for the stop-and-wait avoidance strategy."""
 
-from navigation.avoidance.base_avoidance.base_avoidance_params import (
-    BaseAvoidanceParams,
-)
+from navigation.avoidance.base_avoidance import BaseAvoidanceParams
 from navigation.avoidance.structs import AvoidanceStrategy
 
 

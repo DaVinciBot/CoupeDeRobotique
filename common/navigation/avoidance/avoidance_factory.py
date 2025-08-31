@@ -5,16 +5,11 @@ The factory inspects the provided parameters and returns the appropriate
 "stop and wait", and "backward" avoidance.
 """
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, cast
 
-from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
 from navigation.avoidance.back_avoidance.back_avoidance import BackAvoidance
-from navigation.avoidance.base_avoidance.base_avoidance import (
-    BaseAvoidance,
-)
-from navigation.avoidance.base_avoidance.base_avoidance_params import (
-    BaseAvoidanceParams,
-)
 from navigation.avoidance.no_avoidance.no_avoidance import NoAvoidance
 from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance import (
     StopAndWaitAvoidance,
@@ -22,13 +17,20 @@ from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance import
 from navigation.avoidance.structs import AvoidanceStrategy
 
 if TYPE_CHECKING:
+    from navigation.avoidance.acs_detection_profiles import (
+        BaseAcsDetectionProfileParams,
+    )
     from navigation.avoidance.back_avoidance.back_avoidance_params import (
         BackAvoidanceParams,
     )
-    from navigation.avoidance.no_avoidance.no_avoidance_params import NoAvoidanceParams
-    from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params import (
-        StopAndWaitAvoidanceParams,
+    from navigation.avoidance.base_avoidance.base_avoidance import (
+        BaseAvoidance,
     )
+    from navigation.avoidance.base_avoidance.base_avoidance_params import (
+        BaseAvoidanceParams,
+    )
+    from navigation.avoidance.no_avoidance.no_avoidance_params import NoAvoidanceParams
+    from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
 
 
 class AvoidanceFactory:
