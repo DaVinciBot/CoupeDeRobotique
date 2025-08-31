@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1756645869510",
+    "time": "1756648101599",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\arena_old.py",
@@ -1721,27 +1721,27 @@
             "rule": "reportAttributeAccessIssue"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\__init__.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py",
             "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance_params.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
+            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
             "rule": "reportImportCycles"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\__init__.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py",
             "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance_params.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
+            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\no_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\no_avoidance\\no_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
             "rule": "reportImportCycles"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\__init__.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py",
             "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
+            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
             "rule": "reportImportCycles"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\__init__.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py",
             "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\no_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\no_avoidance\\no_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
+            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\stop_and_wait_avoidance\\stop_and_wait_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
             "rule": "reportImportCycles"
         },
         {
@@ -1750,11 +1750,11 @@
             "message": "Expected type arguments for generic class \"BaseAvoidance\"",
             "range": {
                 "start": {
-                    "line": 27,
+                    "line": 40,
                     "character": 9
                 },
                 "end": {
-                    "line": 27,
+                    "line": 40,
                     "character": 22
                 }
             },
@@ -1766,11 +1766,11 @@
             "message": "Argument missing for parameter \"stabilization_delay\"",
             "range": {
                 "start": {
-                    "line": 106,
+                    "line": 108,
                     "character": 16
                 },
                 "end": {
-                    "line": 118,
+                    "line": 120,
                     "character": 17
                 }
             },
@@ -1782,11 +1782,11 @@
             "message": "Type of \"last_params\" is partially unknown\n  Type of \"last_params\" is \"Unknown | None\"",
             "range": {
                 "start": {
-                    "line": 157,
+                    "line": 159,
                     "character": 12
                 },
                 "end": {
-                    "line": 157,
+                    "line": 159,
                     "character": 23
                 }
             },
@@ -1798,11 +1798,11 @@
             "message": "\"start\" is not a known attribute of \"None\"",
             "range": {
                 "start": {
-                    "line": 158,
+                    "line": 160,
                     "character": 24
                 },
                 "end": {
-                    "line": 158,
+                    "line": 160,
                     "character": 29
                 }
             },
@@ -1814,11 +1814,11 @@
             "message": "Type \"TrajectoryPlanCommand | None\" is not assignable to return type \"TrajectoryPlanCommand\"\n  Type \"TrajectoryPlanCommand | None\" is not assignable to type \"TrajectoryPlanCommand\"\n    \"None\" is not assignable to \"TrajectoryPlanCommand\"",
             "range": {
                 "start": {
-                    "line": 175,
+                    "line": 177,
                     "character": 19
                 },
                 "end": {
-                    "line": 177,
+                    "line": 179,
                     "character": 13
                 }
             },
@@ -1830,15 +1830,21 @@
             "message": "Type \"TrajectoryPlanCommand | None\" is not assignable to return type \"TrajectoryPlanCommand\"\n  Type \"TrajectoryPlanCommand | None\" is not assignable to type \"TrajectoryPlanCommand\"\n    \"None\" is not assignable to \"TrajectoryPlanCommand\"",
             "range": {
                 "start": {
-                    "line": 183,
+                    "line": 185,
                     "character": 15
                 },
                 "end": {
-                    "line": 183,
+                    "line": 185,
                     "character": 64
                 }
             },
             "rule": "reportReturnType"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py",
+            "severity": "warning",
+            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
+            "rule": "reportImportCycles"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\stop_and_wait_avoidance\\stop_and_wait_avoidance.py",
@@ -2102,11 +2108,11 @@
             "message": "Expected type arguments for generic class \"BasePathPlanner\"",
             "range": {
                 "start": {
-                    "line": 37,
+                    "line": 38,
                     "character": 27
                 },
                 "end": {
-                    "line": 37,
+                    "line": 38,
                     "character": 42
                 }
             },
@@ -2118,11 +2124,11 @@
             "message": "Expected type arguments for generic class \"BaseTrajectoryPlanner\"",
             "range": {
                 "start": {
-                    "line": 40,
+                    "line": 41,
                     "character": 33
                 },
                 "end": {
-                    "line": 40,
+                    "line": 41,
                     "character": 54
                 }
             },
@@ -2134,11 +2140,11 @@
             "message": "Expected type arguments for generic class \"BaseAvoidance\"",
             "range": {
                 "start": {
-                    "line": 46,
+                    "line": 47,
                     "character": 24
                 },
                 "end": {
-                    "line": 46,
+                    "line": 47,
                     "character": 37
                 }
             },
@@ -2150,11 +2156,11 @@
             "message": "Argument of type \"OrientedPoint | None\" cannot be assigned to parameter \"goal\" of type \"OrientedPoint\" in function \"instantiate\"\n  Type \"OrientedPoint | None\" is not assignable to type \"OrientedPoint\"\n    \"None\" is not assignable to \"OrientedPoint\"",
             "range": {
                 "start": {
-                    "line": 71,
+                    "line": 72,
                     "character": 21
                 },
                 "end": {
-                    "line": 71,
+                    "line": 72,
                     "character": 37
                 }
             },
@@ -2166,11 +2172,11 @@
             "message": "Condition will always evaluate to False since the types \"float\" and \"None\" have no overlap",
             "range": {
                 "start": {
-                    "line": 82,
+                    "line": 83,
                     "character": 15
                 },
                 "end": {
-                    "line": 82,
+                    "line": 83,
                     "character": 42
                 }
             },
@@ -2182,11 +2188,11 @@
             "message": "Argument of type \"OrientedPoint | None\" cannot be assigned to parameter \"current_position\" of type \"OrientedPoint\" in function \"create_stop_command\"\n  Type \"OrientedPoint | None\" is not assignable to type \"OrientedPoint\"\n    \"None\" is not assignable to \"OrientedPoint\"",
             "range": {
                 "start": {
-                    "line": 89,
+                    "line": 90,
                     "character": 29
                 },
                 "end": {
-                    "line": 89,
+                    "line": 90,
                     "character": 45
                 }
             },
@@ -7806,9 +7812,9 @@
     "summary": {
         "filesAnalyzed": 219,
         "errorCount": 96,
-        "warningCount": 90,
+        "warningCount": 91,
         "informationCount": 309,
-        "timeInSec": 14.236
+        "timeInSec": 19.412
     }
 }
 

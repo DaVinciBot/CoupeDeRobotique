@@ -65,10 +65,6 @@
 24:4: R0914: Too many local variables (20/15) (too-many-locals)
 ************* Module common.geometry.oriented_point
 32:4: W0231: __init__ method from base class 'Point' is not called (super-init-not-called)
-************* Module common.navigation.avoidance.avoidance_factory
-11:0: W0611: Unused BackAvoidanceParams imported from navigation.avoidance.back_avoidance (unused-import)
-13:0: W0611: Unused NoAvoidanceParams imported from navigation.avoidance.no_avoidance (unused-import)
-14:0: W0611: Unused StopAndWaitAvoidanceParams imported from navigation.avoidance.stop_and_wait_avoidance (unused-import)
 ************* Module common.navigation.avoidance.acs_detection_profiles.acs_detection_profile_factory
 8:0: W0611: Unused AngularRestrictProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile (unused-import)
 16:0: W0611: Unused NoAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile (unused-import)
@@ -85,10 +81,10 @@
 23:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
 64:4: C0116: Missing function or method docstring (missing-function-docstring)
 ************* Module common.navigation.avoidance.back_avoidance.back_avoidance
-87:74: E0203: Access to member 'state' before its definition line 122 (access-member-before-definition)
-98:16: E0203: Access to member 'state' before its definition line 122 (access-member-before-definition)
-122:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-172:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+89:74: E0203: Access to member 'state' before its definition line 124 (access-member-before-definition)
+100:16: E0203: Access to member 'state' before its definition line 124 (access-member-before-definition)
+124:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+174:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
 ************* Module common.navigation.avoidance.no_avoidance.no_avoidance
 29:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
 ************* Module common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance
@@ -269,5 +265,5 @@
 41:8: W0238: Unused private member `LidarDummy.__angle_unit` (unused-private-member)
 
 ------------------------------------------------------------------
-Your code has been rated at 9.56/10 (previous run: 9.56/10, +0.00)
+Your code has been rated at 9.56/10 (previous run: 9.54/10, +0.02)
 

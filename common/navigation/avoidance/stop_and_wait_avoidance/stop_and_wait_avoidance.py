@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from navigation.avoidance.base_avoidance import BaseAvoidance
+from navigation.avoidance.base_avoidance.base_avoidance import BaseAvoidance
 from navigation.avoidance.base_avoidance.states import AvoidanceState
 from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params import (
     StopAndWaitAvoidanceParams,
@@ -69,7 +69,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
                 The trajectory command after processing avoidance logic.
 
         """
-        from navigation.navigator.task.states import NavigatorTaskState
+        from navigation.navigator.task.states import NavigatorTaskState  # noqa: PLC0415
 
         position: OrientedPoint = ally_zone.point
         self.logger.debug(

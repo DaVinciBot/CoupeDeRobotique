@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
-from navigation.avoidance.base_avoidance import BaseAvoidance
+from navigation.avoidance.base_avoidance.base_avoidance import BaseAvoidance
 from navigation.avoidance.no_avoidance.no_avoidance_params import NoAvoidanceParams
 
 if TYPE_CHECKING:

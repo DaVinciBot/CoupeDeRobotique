@@ -32,7 +32,8 @@ class NavigatorTask:
             params (NavigatorTaskParams): The parameters for the navigation task.
 
         """
-        from navigation.avoidance import AvoidanceFactory, BaseAvoidance
+        from navigation.avoidance.avoidance_factory import AvoidanceFactory
+        from navigation.avoidance.base_avoidance.base_avoidance import BaseAvoidance
 
         self.params = params
         self.path_planner: BasePathPlanner = PathPlannerFactory.instantiate(
