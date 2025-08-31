@@ -199,7 +199,10 @@ class BaseArenaZone(ABC):
             key=ally_position.distance,
         )
         self.logger.debug(
-            f"GoTo position request: Nearest go-to position to ally [{ally_position}] is [{nearest_position}]",
+            (
+                "GoTo position request: Nearest go-to position to ally "
+                f"[{ally_position}] is [{nearest_position}]"
+            ),
         )
         return nearest_position
 

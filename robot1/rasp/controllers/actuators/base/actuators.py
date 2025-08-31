@@ -77,7 +77,12 @@ class Actuators(
 
     @override
     def __str__(self) -> str:
-        """Return class name for debugging."""
+        """Return class name for debugging.
+
+        Returns:
+            str: The class name.
+
+        """
         return self.__class__.__name__
 
     # ====== Message Receiving Handlers ======

@@ -6,7 +6,7 @@ from arena import AllyZone, EnemyZone
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
     BaseAcsDetectionProfile,
 )
-from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile_params import (
+from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile_params import (  # noqa: E501
     NoAcsDetectionProfileParams,
 )
 
@@ -18,7 +18,8 @@ class NoAcsDetectionProfile(BaseAcsDetectionProfile[NoAcsDetectionProfileParams]
         """Initializes the NoAcsDetectionProfile.
 
         Args:
-            params (NoAcsDetectionProfileParams): Parameters for the no ACS detection profile.
+            params (NoAcsDetectionProfileParams):
+                Parameters for the no ACS detection profile.
 
         """
         super().__init__(params)

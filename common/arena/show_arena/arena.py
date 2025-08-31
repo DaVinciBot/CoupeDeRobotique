@@ -15,6 +15,8 @@ from arena.base_arena.arena_zones import (
 )
 from geometry import OrientedPoint, Point, Polygon, create_straight_rectangle
 
+GO_TO_POSITIONS_INDEX = 2
+
 
 class ShowArena(BaseArena):
     """Arena configuration used to display the competition setup."""
@@ -39,10 +41,14 @@ class ShowArena(BaseArena):
             border_buffer (float): Arena border safety buffer.
             obstacle_buffer (float): Margin around obstacles.
             chunk_size (int): Size of grid chunks in centimeters.
-            forbidden_cover_threshold (float): Coverage ratio to mark cells forbidden.
-            distance_between_robot_and_pickup_zone (float): Offset for pickup zones.
-            distance_between_robot_and_big_construct_zone (float): Offset for big constructs.
-            distance_between_robot_and_small_construct_zone (float): Offset for small constructs.
+            forbidden_cover_threshold (float):
+                Coverage ratio to mark cells forbidden.
+            distance_between_robot_and_pickup_zone (float):
+                Offset for pickup zones.
+            distance_between_robot_and_big_construct_zone (float):
+                Offset for big constructs.
+            distance_between_robot_and_small_construct_zone (float):
+                Offset for small constructs.
 
         """
         stuff_zone_logger = Logger(
@@ -223,7 +229,8 @@ class ShowArena(BaseArena):
                         45 + distance_between_robot_and_big_construct_zone,
                         -pi / 2,
                     ),
-                    # OrientedPoint(200 + distance_between_robot_and_work_zone, 22.5, pi),
+                    # OrientedPoint(200 + distance_between_robot_and_work_zone,
+                    #               22.5, pi),
                 ],
             ),
             (
@@ -301,67 +308,67 @@ class ShowArena(BaseArena):
         zones: list[BaseArenaZone] = []
 
         zones.extend(
-            [
-                StuffZone(
-                    logger=stuff_zone_logger,
-                    buffer_size=obstacle_buffer,
-                    polygon=create_straight_rectangle(
-                        Point(*corner_point[0]),
-                        Point(*corner_point[1]),
-                    ),
-                    go_to_positions=(
-                        corner_point[2] if len(corner_point) > 2 else None
-                    ),
-                )
-                for corner_point in stuff_zones_points
-            ],
-        )
-
-        zones.extend(
-            [
-                YellowReservedZone(
-                    logger=yellow_reserved_zone_logger,
-                    buffer_size=obstacle_buffer,
-                    polygon=create_straight_rectangle(
-                        Point(*corner_point[0]),
-                        Point(*corner_point[1]),
-                    ),
-                    go_to_positions=(
-                        corner_point[2] if len(corner_point) > 2 else None
-                    ),
-                )
-                for corner_point in yellow_reserved_zones_points
-            ],
-        )
-
-        zones.extend(
-            [
-                BlueReservedZone(
-                    logger=blue_reserved_zone_logger,
-                    buffer_size=obstacle_buffer,
-                    polygon=create_straight_rectangle(
-                        Point(*corner_point[0]),
-                        Point(*corner_point[1]),
-                    ),
-                    go_to_positions=(
-                        corner_point[2] if len(corner_point) > 2 else None
-                    ),
-                )
-                for corner_point in blue_reserved_zones_points
-            ],
-        )
-
-        for corner_point in forbidden_zones_points:
-            zones.append(
-                ForbiddenZone(
-                    logger=forbidden_zone_logger,
-                    buffer_size=obstacle_buffer,
-                    polygon=create_straight_rectangle(
-                        Point(*corner_point[0]),
-                        Point(*corner_point[1]),
-                    ),
+            StuffZone(
+                logger=stuff_zone_logger,
+                buffer_size=obstacle_buffer,
+                polygon=create_straight_rectangle(
+                    Point(*corner_point[0]),
+                    Point(*corner_point[1]),
+                ),
+                go_to_positions=(
+                    corner_point[GO_TO_POSITIONS_INDEX]
+                    if len(corner_point) > GO_TO_POSITIONS_INDEX
+                    else None
                 ),
             )
+            for corner_point in stuff_zones_points
+        )
+
+        zones.extend(
+            YellowReservedZone(
+                logger=yellow_reserved_zone_logger,
+                buffer_size=obstacle_buffer,
+                polygon=create_straight_rectangle(
+                    Point(*corner_point[0]),
+                    Point(*corner_point[1]),
+                ),
+                go_to_positions=(
+                    corner_point[GO_TO_POSITIONS_INDEX]
+                    if len(corner_point) > GO_TO_POSITIONS_INDEX
+                    else None
+                ),
+            )
+            for corner_point in yellow_reserved_zones_points
+        )
+
+        zones.extend(
+            BlueReservedZone(
+                logger=blue_reserved_zone_logger,
+                buffer_size=obstacle_buffer,
+                polygon=create_straight_rectangle(
+                    Point(*corner_point[0]),
+                    Point(*corner_point[1]),
+                ),
+                go_to_positions=(
+                    corner_point[GO_TO_POSITIONS_INDEX]
+                    if len(corner_point) > GO_TO_POSITIONS_INDEX
+                    else None
+                ),
+            )
+            for corner_point in blue_reserved_zones_points
+        )
+
+        zones.extend(
+            ForbiddenZone(
+                logger=forbidden_zone_logger,
+                buffer_size=obstacle_buffer,
+                polygon=create_straight_rectangle(
+                    Point(*corner_point[0]),
+                    Point(*corner_point[1]),
+                ),
+            )
+            for corner_point in forbidden_zones_points
+        )
 
         # This is the scene for the rockstar
         rockstar_stage = ForbiddenZone(
@@ -381,25 +388,22 @@ class ShowArena(BaseArena):
                 ),
             ),
         )
-        zones.append(rockstar_stage)
 
-        zones.append(
+        zones.extend((
+            rockstar_stage,
             BlueReservedZone(
                 logger=blue_reserved_zone_logger,
                 buffer_size=obstacle_buffer,
                 polygon=create_straight_rectangle(Point((15, 155)), Point((60, 200))),
                 go_to_positions=[OrientedPoint(37.5, 150.5, pi / 2)],
             ),
-        )
-
-        zones.append(
             YellowReservedZone(
                 logger=yellow_reserved_zone_logger,
                 buffer_size=obstacle_buffer,
                 polygon=create_straight_rectangle(Point((285, 155)), Point((240, 200))),
                 go_to_positions=[OrientedPoint(262.5, 150.5, pi / 2)],
             ),
-        )
+        ))
 
         if grid_manager_logger:
             super().__init__(

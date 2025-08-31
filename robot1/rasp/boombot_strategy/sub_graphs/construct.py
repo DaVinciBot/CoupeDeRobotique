@@ -18,10 +18,13 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
 
     Args:
         zone_id (int): Identifier for the target construction zone.
-        back_offset (int, optional): Distance already covered behind the zone, used to adjust forward motion. Defaults to 0.
+        back_offset (int, optional):
+            Distance already covered behind the zone, used to adjust forward motion.
+            Defaults to 0.
 
     Returns:
-        BaseSubGraph: A compiled subgraph that defines the sequence of construction-related tasks.
+        BaseSubGraph: A compiled subgraph that defines the sequence of
+            construction-related tasks.
 
     """
     subgraph = SubGraphBuilder()
@@ -93,10 +96,13 @@ def get_construct_one_floor_subgraph(
 
     Args:
         zone_id (int): Identifier for the target construction zone.
-        back_offset (int, optional): Distance already covered behind the zone, used to adjust forward motion. Defaults to 0.
+        back_offset (int, optional):
+            Distance already covered behind the zone, used to adjust forward motion.
+            Defaults to 0.
 
     Returns:
-        BaseSubGraph: A compiled subgraph that defines the sequence of construction-related tasks.
+        BaseSubGraph: A compiled subgraph that defines the sequence of
+            construction-related tasks.
 
     """
     subgraph = SubGraphBuilder()

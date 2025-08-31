@@ -27,8 +27,8 @@
 ************* Module common.arena.base_arena.arena_zones.ally_zone
 69:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
 ************* Module common.arena.base_arena.arena_zones.base_arena_zone
-29:4: R0913: Too many arguments (11/5) (too-many-arguments)
-29:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
+28:4: R0913: Too many arguments (11/5) (too-many-arguments)
+28:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
 ************* Module common.arena.base_arena.arena_zones.border_zone
 15:4: R0913: Too many arguments (6/5) (too-many-arguments)
 15:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
@@ -60,9 +60,9 @@
 19:4: R0913: Too many arguments (7/5) (too-many-arguments)
 19:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
 ************* Module common.arena.show_arena.arena
-22:4: R0913: Too many arguments (10/5) (too-many-arguments)
-22:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-22:4: R0914: Too many local variables (21/15) (too-many-locals)
+24:4: R0913: Too many arguments (10/5) (too-many-arguments)
+24:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
+24:4: R0914: Too many local variables (20/15) (too-many-locals)
 ************* Module common.geometry.oriented_point
 32:4: W0231: __init__ method from base class 'Point' is not called (super-init-not-called)
 ************* Module common.navigation.avoidance.avoidance_factory
@@ -78,7 +78,7 @@
 20:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
 ************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile
 17:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-27:4: C0116: Missing function or method docstring (missing-function-docstring)
+28:4: C0116: Missing function or method docstring (missing-function-docstring)
 ************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile
 21:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
 ************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile
@@ -163,8 +163,8 @@
 ************* Module common.usb_com.python.com.com
 26:4: R0913: Too many arguments (8/5) (too-many-arguments)
 26:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-174:19: W0718: Catching too general exception Exception (broad-exception-caught)
-170:23: W0718: Catching too general exception Exception (broad-exception-caught)
+176:19: W0718: Catching too general exception Exception (broad-exception-caught)
+172:23: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module common.utils.utils
 84:12: W0702: No exception type(s) specified (bare-except)
 ************* Module common.video.server
@@ -196,9 +196,9 @@
 ************* Module PAMI.lib.ota.ui.convert
 25:0: C0103: Constant name "byte_array" doesn't conform to UPPER_CASE naming style (invalid-name)
 ************* Module robot1.rasp.a_config_loader
-163:0: I0011: Locally disabling import-outside-toplevel (C0415) (locally-disabled)
-163:0: I0023: 'C0415' is cryptic: use '# pylint: disable=import-outside-toplevel' instead (use-symbolic-message-instead)
-163:0: I0020: Suppressed 'import-outside-toplevel' (from line 163) (suppressed-message)
+185:0: I0011: Locally disabling import-outside-toplevel (C0415) (locally-disabled)
+185:0: I0023: 'C0415' is cryptic: use '# pylint: disable=import-outside-toplevel' instead (use-symbolic-message-instead)
+185:0: I0020: Suppressed 'import-outside-toplevel' (from line 185) (suppressed-message)
 ************* Module robot1.rasp.boombot_strategy.sub_graphs.push_one_floor_to_wall
 18:0: R0914: Too many local variables (16/15) (too-many-locals)
 ************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver
@@ -214,22 +214,22 @@
 ************* Module robot1.rasp.controllers.actuators.actuators_dummy
 19:4: R0913: Too many arguments (7/5) (too-many-arguments)
 19:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-81:4: R0913: Too many arguments (6/5) (too-many-arguments)
+86:4: R0913: Too many arguments (6/5) (too-many-arguments)
 ************* Module robot1.rasp.controllers.actuators.actuators_show
-70:4: R0913: Too many arguments (8/5) (too-many-arguments)
-70:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-380:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-393:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-381:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-394:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-478:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-522:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-533:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-62:0: R0904: Too many public methods (24/20) (too-many-public-methods)
+100:4: R0913: Too many arguments (8/5) (too-many-arguments)
+100:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+410:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+423:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+411:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+424:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+508:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+552:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+563:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+92:0: R0904: Too many public methods (24/20) (too-many-public-methods)
 ************* Module robot1.rasp.controllers.actuators.base.actuators
 24:4: R0913: Too many arguments (8/5) (too-many-arguments)
 24:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-205:4: R0913: Too many arguments (8/5) (too-many-arguments)
+210:4: R0913: Too many arguments (8/5) (too-many-arguments)
 ************* Module robot1.rasp.controllers.actuators.base
 1:0: C0114: Missing module docstring (missing-module-docstring)
 ************* Module robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis
@@ -255,10 +255,10 @@
 35:4: R0913: Too many arguments (8/5) (too-many-arguments)
 35:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
 127:23: W0718: Catching too general exception Exception (broad-exception-caught)
-152:11: C1805: "n == 0" can be simplified to "not n", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-163:11: C1805: "centered_polars.size == 0" can be simplified to "not centered_polars.size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-240:12: W0707: Consider explicitly re-raising using 'raise Exception(msg) from error' (raise-missing-from)
-240:12: W0719: Raising too general exception: Exception (broad-exception-raised)
+153:11: C1805: "n == 0" can be simplified to "not n", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+164:11: C1805: "centered_polars.size == 0" can be simplified to "not centered_polars.size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+241:12: W0707: Consider explicitly re-raising using 'raise Exception(msg) from error' (raise-missing-from)
+241:12: W0719: Raising too general exception: Exception (broad-exception-raised)
 67:8: W0238: Unused private member `Lidar.__angle_unit` (unused-private-member)
 ************* Module robot1.rasp.sensors.lidar.lidar_dummy
 16:4: R0913: Too many arguments (8/5) (too-many-arguments)

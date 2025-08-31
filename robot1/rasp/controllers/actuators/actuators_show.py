@@ -11,7 +11,14 @@ from controllers.actuators import Actuators
 
 @dataclass
 class Servo:
-    """Description of a generic servo angle configuration."""
+    """Description of a generic servo angle configuration.
+
+    Attributes:
+        deploy_angle (int): Angle to deploy the servo (in degrees).
+        fold_angle (int): Angle to fold the servo (in degrees).
+        max_angle (int): Maximum angle for the servo (in degrees).
+
+    """
 
     deploy_angle: int
     """Angle to deploy the servo (in degrees)."""
@@ -23,7 +30,12 @@ class Servo:
 
 @dataclass
 class ServoDocking(Servo):
-    """Servo with an extra docking angle."""
+    """Servo with an extra docking angle.
+
+    Attributes:
+        docking (int): Angle for special movement such as docking.
+
+    """
 
     docking: int = 0
     """Angle for special movement such as docking."""
@@ -31,7 +43,12 @@ class ServoDocking(Servo):
 
 @dataclass
 class ServoArm(Servo):
-    """Servo controlling an arm mechanism."""
+    """Servo controlling an arm mechanism.
+
+    Attributes:
+        docking (int): Angle for special movement such as docking.
+
+    """
 
     docking: int
     """Angle for special movement such as docking."""
@@ -39,7 +56,12 @@ class ServoArm(Servo):
 
 @dataclass
 class ServoPlank(Servo):
-    """Servo dedicated to plank maintenance."""
+    """Servo dedicated to plank maintenance.
+
+    Attributes:
+        maintain_plank (int): Angle to maintain the plank position (in degrees).
+
+    """
 
     maintain_plank: int
     """Angle to maintain the plank position (in degrees)."""
@@ -47,7 +69,15 @@ class ServoPlank(Servo):
 
 @dataclass
 class Stepper:
-    """Parameters for a stepper motor."""
+    """Parameters for a stepper motor.
+
+    Attributes:
+        top_steps (int): Number of steps to reach the top position.
+        folded_steps (int): Number of steps to reach the folded position.
+        bottom_steps (int): Number of steps to reach the bottom position.
+        speed (int): Speed of the stepper motor.
+
+    """
 
     top_steps: int
     """Number of steps to reach the top position."""

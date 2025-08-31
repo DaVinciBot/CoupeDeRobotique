@@ -64,7 +64,8 @@ class Com:
         self.last_message: bytes | None = None
         self.message_id_callback: dict[int, Callable[[bytes], None]] = {}
 
-        # Start the receiver thread (if not in dummy mode), it is responsible for handling the received data
+        # Start the receiver thread (if not in dummy mode),
+        # it is responsible for handling the received data
         self._receiver_thread: threading.Thread | None = self._start_receiver()
 
     # ======= Private methods =======
@@ -96,8 +97,9 @@ class Com:
                 self.logger.info("Dummy mode")
                 device_found = DummySerial()
             else:
-                self.logger.critical("No Device found !")
-                raise ComException("No Device found!")
+                msg = "No Device found!"
+                self.logger.critical(msg)
+                raise ComException(msg)
 
         return device_found
 
@@ -199,8 +201,7 @@ class Com:
         ) -> Any:  # noqa: ANN401
             # Check if the self.enable_dummy attribute is disabled (False)
             if self.enable_dummy:
-                # Print a message indicating that execution is canceled
-                print(f"[DUMMY] {func.__name__} was called")
+                self.logger.debug(f"[DUMMY] {func.__name__} was called")
                 return None  # Prevents the function from executing
 
             # Execute the function normally

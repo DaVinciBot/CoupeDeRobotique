@@ -231,7 +231,8 @@ class GridManager:
                     polygon_to_mark=zone_to_update,
                     walkable=zone_to_update not in self.static_forbidden_zones,
                 )
-                # 1.1.2 Also update the static_and_dynamic grid (only static part of the grid)
+                # 1.1.2 Also update the static_and_dynamic grid
+                #       (only static part of the grid)
                 self.static_and_dynamic_grid = self.__mark_zone(
                     grid=self.static_and_dynamic_grid,
                     polygon_to_mark=zone_to_update,

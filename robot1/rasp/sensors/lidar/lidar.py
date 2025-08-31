@@ -126,7 +126,8 @@ class Lidar:
                     self.__is_connected = True
                 except Exception as error:
                     self._logger.warning(
-                        f"[init_lidar_in_thread] Error while initializing lidar [{error}] "
+                        "[init_lidar_in_thread] Error while initializing lidar "
+                        f"[{error}] "
                         f"retry in {self.__initialization_fail_refresh_rate}s ...",
                     )
                     time.sleep(self.__initialization_fail_refresh_rate)

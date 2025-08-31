@@ -152,7 +152,10 @@ needed again, implement the necessary classes and functions here.
 
 #     def set_team(self, team):
 #         # print(f"Set team to {team}")
-#         self.set_pillars(Colors.YELLOW if team == "y" else Colors.BLUE, self.team_index)
+#         self.set_pillars(
+#             Colors.YELLOW if team == "y" else Colors.BLUE,
+#             self.team_index,
+#         )
 
 #     def set_lidar_info(
 #         self,

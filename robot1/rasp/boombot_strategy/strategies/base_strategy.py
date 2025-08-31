@@ -63,10 +63,13 @@ class BaseStrategy(ABC):
         Accepts any number of arguments of type BaseTaskNode or BaseSubGraph.
 
         Args:
-            *elements (BaseTaskNode | BaseSubGraph): A variable number of nodes or subgraphs.
+            *elements (BaseTaskNode | BaseSubGraph):
+                A variable number of nodes or subgraphs.
 
         Returns:
-            bool: ``True`` if the transitions were built successfully, ``False`` otherwise.
+            bool:
+                ``True`` if the transitions were built successfully,
+                ``False`` otherwise.
 
         """
         if not elements:
@@ -79,15 +82,14 @@ class BaseStrategy(ABC):
         for i in range(len(entry_points) - 1):
             # Create a direct transition from the exit of the current element to the entry of the next
             self.logger.debug(
-                f"Creating transition from {exit_points[i].name} to {entry_points[i + 1].name}",
+                f"Creating transition from {exit_points[i].name}"
+                f" to {entry_points[i + 1].name}",
             )
             exit_points[i].add_transition(DirectTransition(entry_points[i + 1]))
         return True
 
-    def _resolve_for_entry(
-        self,
-        element: BaseTaskNode | BaseSubGraph,
-    ) -> BaseTaskNode:
+    @staticmethod
+    def _resolve_for_entry(element: BaseTaskNode | BaseSubGraph) -> BaseTaskNode:
         """Resolve a TaskNode or SubGraph to its entry point.
 
         Args:
@@ -101,10 +103,8 @@ class BaseStrategy(ABC):
             return element.get_entry()
         return element
 
-    def _resolve_for_exits(
-        self,
-        element: BaseTaskNode | BaseSubGraph,
-    ) -> BaseTaskNode:
+    @staticmethod
+    def _resolve_for_exits(element: BaseTaskNode | BaseSubGraph) -> BaseTaskNode:
         """Resolve a TaskNode or SubGraph to its exit points.
 
         Args:

@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1756588125977",
+    "time": "1756645869510",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\arena_old.py",
@@ -424,11 +424,11 @@
             "message": "Expected type arguments for generic class \"Callable\"",
             "range": {
                 "start": {
-                    "line": 36,
+                    "line": 35,
                     "character": 25
                 },
                 "end": {
-                    "line": 36,
+                    "line": 35,
                     "character": 33
                 }
             },
@@ -440,11 +440,11 @@
             "message": "Cannot assign to attribute \"polygon\" for class \"BaseArenaZone*\"\n  Type \"Polygon | None\" is not assignable to type \"Polygon\"\n    \"None\" is not assignable to \"Polygon\"",
             "range": {
                 "start": {
-                    "line": 75,
+                    "line": 74,
                     "character": 32
                 },
                 "end": {
-                    "line": 75,
+                    "line": 74,
                     "character": 39
                 }
             },
@@ -456,11 +456,11 @@
             "message": "Cannot assign to attribute \"buffered_polygon\" for class \"BaseArenaZone*\"\n  Type \"Polygon | None\" is not assignable to type \"Polygon\"\n    \"None\" is not assignable to \"Polygon\"",
             "range": {
                 "start": {
-                    "line": 76,
+                    "line": 75,
                     "character": 41
                 },
                 "end": {
-                    "line": 76,
+                    "line": 75,
                     "character": 57
                 }
             },
@@ -472,11 +472,11 @@
             "message": "Type \"Point\" is not assignable to return type \"OrientedPoint | None\"\n  Type \"Point\" is not assignable to type \"OrientedPoint | None\"\n    \"Point\" is not assignable to \"OrientedPoint\"\n    \"Point\" is not assignable to \"None\"",
             "range": {
                 "start": {
-                    "line": 193,
+                    "line": 192,
                     "character": 19
                 },
                 "end": {
-                    "line": 193,
+                    "line": 192,
                     "character": 40
                 }
             },
@@ -488,11 +488,11 @@
             "message": "Type \"OrientedPoint | Point\" is not assignable to return type \"OrientedPoint | None\"\n  Type \"OrientedPoint | Point\" is not assignable to type \"OrientedPoint | None\"\n    Type \"Point\" is not assignable to type \"OrientedPoint | None\"\n      \"Point\" is not assignable to \"OrientedPoint\"\n      \"Point\" is not assignable to \"None\"",
             "range": {
                 "start": {
-                    "line": 203,
+                    "line": 205,
                     "character": 15
                 },
                 "end": {
-                    "line": 203,
+                    "line": 205,
                     "character": 31
                 }
             },
@@ -990,11 +990,11 @@
             "message": "Cannot access attribute \"walkable\" for class \"int\"\n  Attribute \"walkable\" is unknown",
             "range": {
                 "start": {
-                    "line": 263,
+                    "line": 264,
                     "character": 28
                 },
                 "end": {
-                    "line": 263,
+                    "line": 264,
                     "character": 36
                 }
             },
@@ -1006,11 +1006,11 @@
             "message": "Type of \"node\" is partially unknown\n  Type of \"node\" is \"int | Unknown\"",
             "range": {
                 "start": {
-                    "line": 263,
+                    "line": 264,
                     "character": 48
                 },
                 "end": {
-                    "line": 263,
+                    "line": 264,
                     "character": 52
                 }
             },
@@ -1022,11 +1022,11 @@
             "message": "Type of \"row\" is partially unknown\n  Type of \"row\" is \"GridNode | list[Unknown]\"",
             "range": {
                 "start": {
-                    "line": 263,
+                    "line": 264,
                     "character": 65
                 },
                 "end": {
-                    "line": 263,
+                    "line": 264,
                     "character": 68
                 }
             },
@@ -1038,11 +1038,11 @@
             "message": "Type of parameter \"self\" is unknown",
             "range": {
                 "start": {
-                    "line": 308,
+                    "line": 309,
                     "character": 25
                 },
                 "end": {
-                    "line": 308,
+                    "line": 309,
                     "character": 29
                 }
             },
@@ -1054,11 +1054,11 @@
             "message": "Return type of lambda is unknown",
             "range": {
                 "start": {
-                    "line": 308,
+                    "line": 309,
                     "character": 31
                 },
                 "end": {
-                    "line": 308,
+                    "line": 309,
                     "character": 42
                 }
             },
@@ -1070,11 +1070,11 @@
             "message": "Type of parameter \"self\" is unknown",
             "range": {
                 "start": {
-                    "line": 327,
+                    "line": 328,
                     "character": 25
                 },
                 "end": {
-                    "line": 327,
+                    "line": 328,
                     "character": 29
                 }
             },
@@ -1086,11 +1086,11 @@
             "message": "Return type of lambda is unknown",
             "range": {
                 "start": {
-                    "line": 327,
+                    "line": 328,
                     "character": 31
                 },
                 "end": {
-                    "line": 327,
+                    "line": 328,
                     "character": 42
                 }
             },
@@ -1102,11 +1102,11 @@
             "message": "Type of parameter \"self\" is unknown",
             "range": {
                 "start": {
-                    "line": 361,
+                    "line": 362,
                     "character": 25
                 },
                 "end": {
-                    "line": 361,
+                    "line": 362,
                     "character": 29
                 }
             },
@@ -1118,11 +1118,11 @@
             "message": "Return type of lambda is unknown",
             "range": {
                 "start": {
-                    "line": 361,
+                    "line": 362,
                     "character": 31
                 },
                 "end": {
-                    "line": 361,
+                    "line": 362,
                     "character": 42
                 }
             },
@@ -1134,11 +1134,11 @@
             "message": "Unnecessary isinstance call; \"list[Polygon]\" is always an instance of \"list[Unknown]\"",
             "range": {
                 "start": {
-                    "line": 369,
+                    "line": 370,
                     "character": 15
                 },
                 "end": {
-                    "line": 369,
+                    "line": 370,
                     "character": 48
                 }
             },
@@ -1150,11 +1150,11 @@
             "message": "Type analysis indicates code is unreachable",
             "range": {
                 "start": {
-                    "line": 370,
+                    "line": 371,
                     "character": 12
                 },
                 "end": {
-                    "line": 370,
+                    "line": 371,
                     "character": 27
                 }
             },
@@ -1166,11 +1166,11 @@
             "message": "Expected type arguments for generic class \"list\"",
             "range": {
                 "start": {
-                    "line": 437,
+                    "line": 438,
                     "character": 14
                 },
                 "end": {
-                    "line": 437,
+                    "line": 438,
                     "character": 18
                 }
             },
@@ -1422,11 +1422,11 @@
             "message": "Type of \"stuff_zones_points\" is partially unknown\n  Type of \"stuff_zones_points\" is \"list[Unknown]\"",
             "range": {
                 "start": {
-                    "line": 66,
+                    "line": 72,
                     "character": 8
                 },
                 "end": {
-                    "line": 66,
+                    "line": 72,
                     "character": 26
                 }
             },
@@ -1438,12 +1438,12 @@
             "message": "Type of \"corner_point\" is unknown",
             "range": {
                 "start": {
-                    "line": 315,
-                    "character": 20
+                    "line": 323,
+                    "character": 16
                 },
                 "end": {
-                    "line": 315,
-                    "character": 32
+                    "line": 323,
+                    "character": 28
                 }
             },
             "rule": "reportUnknownVariableType"
@@ -1454,12 +1454,12 @@
             "message": "Argument of type \"list[OrientedPoint] | None\" cannot be assigned to parameter \"go_to_positions\" of type \"list[OrientedPoint | Point] | None\" in function \"__init__\"\n  Type \"list[OrientedPoint] | None\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n    Type \"list[OrientedPoint]\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n      \"list[OrientedPoint]\" is not assignable to \"list[OrientedPoint | Point]\"\n        Type parameter \"_T@list\" is invariant, but \"OrientedPoint\" is not the same as \"OrientedPoint | Point\"\n        Consider switching from \"list\" to \"Sequence\" which is covariant\n      \"list[OrientedPoint]\" is not assignable to \"None\"",
             "range": {
                 "start": {
-                    "line": 328,
-                    "character": 36
+                    "line": 334,
+                    "character": 32
                 },
                 "end": {
-                    "line": 330,
-                    "character": 21
+                    "line": 338,
+                    "character": 17
                 }
             },
             "rule": "reportArgumentType"
@@ -1470,12 +1470,12 @@
             "message": "Argument of type \"list[OrientedPoint] | None\" cannot be assigned to parameter \"go_to_positions\" of type \"list[OrientedPoint | Point] | None\" in function \"__init__\"\n  Type \"list[OrientedPoint] | None\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n    Type \"list[OrientedPoint]\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n      \"list[OrientedPoint]\" is not assignable to \"list[OrientedPoint | Point]\"\n        Type parameter \"_T@list\" is invariant, but \"OrientedPoint\" is not the same as \"OrientedPoint | Point\"\n        Consider switching from \"list\" to \"Sequence\" which is covariant\n      \"list[OrientedPoint]\" is not assignable to \"None\"",
             "range": {
                 "start": {
-                    "line": 345,
-                    "character": 36
+                    "line": 351,
+                    "character": 32
                 },
                 "end": {
-                    "line": 347,
-                    "character": 21
+                    "line": 355,
+                    "character": 17
                 }
             },
             "rule": "reportArgumentType"
@@ -1486,12 +1486,12 @@
             "message": "Type of \"corner_point\" is unknown",
             "range": {
                 "start": {
-                    "line": 353,
-                    "character": 12
+                    "line": 369,
+                    "character": 16
                 },
                 "end": {
-                    "line": 353,
-                    "character": 24
+                    "line": 369,
+                    "character": 28
                 }
             },
             "rule": "reportUnknownVariableType"
@@ -1502,11 +1502,11 @@
             "message": "Type analysis indicates code is unreachable",
             "range": {
                 "start": {
-                    "line": 416,
+                    "line": 420,
                     "character": 12
                 },
                 "end": {
-                    "line": 416,
+                    "line": 420,
                     "character": 17
                 }
             },
@@ -2676,11 +2676,11 @@
             "message": "Import \"navigation\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 162,
+                    "line": 184,
                     "character": 9
                 },
                 "end": {
-                    "line": 162,
+                    "line": 184,
                     "character": 19
                 }
             },
@@ -2692,11 +2692,11 @@
             "message": "Type of \"BaseAcsDetectionProfileParams\" is unknown",
             "range": {
                 "start": {
-                    "line": 163,
+                    "line": 185,
                     "character": 8
                 },
                 "end": {
-                    "line": 163,
+                    "line": 185,
                     "character": 37
                 }
             },
@@ -2708,11 +2708,11 @@
             "message": "Type of \"BasicSpeedProfile\" is unknown",
             "range": {
                 "start": {
-                    "line": 164,
+                    "line": 186,
                     "character": 8
                 },
                 "end": {
-                    "line": 164,
+                    "line": 186,
                     "character": 25
                 }
             },
@@ -2724,11 +2724,11 @@
             "message": "Type of \"LinearRampedSpeedProfile\" is unknown",
             "range": {
                 "start": {
-                    "line": 165,
+                    "line": 187,
                     "character": 8
                 },
                 "end": {
-                    "line": 165,
+                    "line": 187,
                     "character": 32
                 }
             },
@@ -2740,11 +2740,11 @@
             "message": "Type of \"SpeedProfiler\" is unknown",
             "range": {
                 "start": {
-                    "line": 166,
+                    "line": 188,
                     "character": 8
                 },
                 "end": {
-                    "line": 166,
+                    "line": 188,
                     "character": 21
                 }
             },
@@ -2756,11 +2756,11 @@
             "message": "Type of \"ROLLING_BASIS_DEFAULT_SPEED_PROFILER\" is unknown",
             "range": {
                 "start": {
-                    "line": 293,
+                    "line": 315,
                     "character": 4
                 },
                 "end": {
-                    "line": 293,
+                    "line": 315,
                     "character": 40
                 }
             },
@@ -2772,11 +2772,11 @@
             "message": "Type of \"ROLLING_BASIS_SLOW_SPEED_PROFILER\" is unknown",
             "range": {
                 "start": {
-                    "line": 301,
+                    "line": 323,
                     "character": 4
                 },
                 "end": {
-                    "line": 301,
+                    "line": 323,
                     "character": 37
                 }
             },
@@ -2788,11 +2788,11 @@
             "message": "Type of \"ROLLING_BASIS_SPEED_PROFILER_PID\" is unknown",
             "range": {
                 "start": {
-                    "line": 309,
+                    "line": 331,
                     "character": 4
                 },
                 "end": {
-                    "line": 309,
+                    "line": 331,
                     "character": 36
                 }
             },
@@ -2804,11 +2804,11 @@
             "message": "Type of \"ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME\" is unknown",
             "range": {
                 "start": {
-                    "line": 354,
+                    "line": 376,
                     "character": 4
                 },
                 "end": {
-                    "line": 354,
+                    "line": 376,
                     "character": 56
                 }
             },
@@ -2820,11 +2820,11 @@
             "message": "Type of \"ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT\" is unknown",
             "range": {
                 "start": {
-                    "line": 357,
+                    "line": 379,
                     "character": 4
                 },
                 "end": {
-                    "line": 357,
+                    "line": 379,
                     "character": 54
                 }
             },
@@ -2836,11 +2836,11 @@
             "message": "Type of \"ACS_PROFILE_GO_TO_STUFF_ZONE_TO_PICK_UP\" is unknown",
             "range": {
                 "start": {
-                    "line": 360,
+                    "line": 382,
                     "character": 4
                 },
                 "end": {
-                    "line": 360,
+                    "line": 382,
                     "character": 43
                 }
             },
@@ -2852,11 +2852,11 @@
             "message": "Type of \"ACS_PROFILE_BACKWARD\" is unknown",
             "range": {
                 "start": {
-                    "line": 365,
+                    "line": 387,
                     "character": 4
                 },
                 "end": {
-                    "line": 365,
+                    "line": 387,
                     "character": 24
                 }
             },
@@ -2868,11 +2868,11 @@
             "message": "Type of \"ACS_PROFILE_PRECISE_FORWARD\" is unknown",
             "range": {
                 "start": {
-                    "line": 368,
+                    "line": 390,
                     "character": 4
                 },
                 "end": {
-                    "line": 368,
+                    "line": 390,
                     "character": 31
                 }
             },
@@ -2884,11 +2884,11 @@
             "message": "Type of \"ACS_PROFILE_START_TASK\" is unknown",
             "range": {
                 "start": {
-                    "line": 373,
+                    "line": 395,
                     "character": 4
                 },
                 "end": {
-                    "line": 373,
+                    "line": 395,
                     "character": 26
                 }
             },
@@ -3156,11 +3156,11 @@
             "message": "Type of \"entry_points\" is partially unknown\n  Type of \"entry_points\" is \"list[Unknown]\"",
             "range": {
                 "start": {
-                    "line": 76,
+                    "line": 79,
                     "character": 8
                 },
                 "end": {
-                    "line": 76,
+                    "line": 79,
                     "character": 20
                 }
             },
@@ -3172,11 +3172,11 @@
             "message": "Type of \"el\" is unknown",
             "range": {
                 "start": {
-                    "line": 76,
+                    "line": 79,
                     "character": 56
                 },
                 "end": {
-                    "line": 76,
+                    "line": 79,
                     "character": 58
                 }
             },
@@ -3188,11 +3188,11 @@
             "message": "Type of \"exit_points\" is partially unknown\n  Type of \"exit_points\" is \"list[Unknown]\"",
             "range": {
                 "start": {
-                    "line": 77,
+                    "line": 80,
                     "character": 8
                 },
                 "end": {
-                    "line": 77,
+                    "line": 80,
                     "character": 19
                 }
             },
@@ -3204,11 +3204,11 @@
             "message": "Type of \"el\" is unknown",
             "range": {
                 "start": {
-                    "line": 77,
+                    "line": 80,
                     "character": 55
                 },
                 "end": {
-                    "line": 77,
+                    "line": 80,
                     "character": 57
                 }
             },
@@ -3220,11 +3220,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 100,
+                    "line": 102,
                     "character": 19
                 },
                 "end": {
-                    "line": 100,
+                    "line": 102,
                     "character": 38
                 }
             },
@@ -3236,11 +3236,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 101,
+                    "line": 103,
                     "character": 15
                 },
                 "end": {
-                    "line": 101,
+                    "line": 103,
                     "character": 22
                 }
             },
@@ -3380,11 +3380,11 @@
             "message": "Type of \"deploy_banner_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 36,
+                    "line": 37,
                     "character": 8
                 },
                 "end": {
-                    "line": 36,
+                    "line": 37,
                     "character": 30
                 }
             },
@@ -3396,11 +3396,11 @@
             "message": "Type of \"first_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 39,
+                    "line": 40,
                     "character": 8
                 },
                 "end": {
-                    "line": 39,
+                    "line": 40,
                     "character": 29
                 }
             },
@@ -3412,11 +3412,11 @@
             "message": "Type of \"first_construct_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 42,
+                    "line": 43,
                     "character": 8
                 },
                 "end": {
-                    "line": 42,
+                    "line": 43,
                     "character": 32
                 }
             },
@@ -3428,11 +3428,11 @@
             "message": "Type of \"go_to_backstage\" is unknown",
             "range": {
                 "start": {
-                    "line": 56,
+                    "line": 57,
                     "character": 8
                 },
                 "end": {
-                    "line": 56,
+                    "line": 57,
                     "character": 23
                 }
             },
@@ -3524,11 +3524,11 @@
             "message": "Type of \"deploy_banner_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 35,
+                    "line": 36,
                     "character": 8
                 },
                 "end": {
-                    "line": 35,
+                    "line": 36,
                     "character": 30
                 }
             },
@@ -3540,11 +3540,11 @@
             "message": "Type of \"first_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 38,
+                    "line": 39,
                     "character": 8
                 },
                 "end": {
-                    "line": 38,
+                    "line": 39,
                     "character": 29
                 }
             },
@@ -3556,11 +3556,11 @@
             "message": "Type of \"go_to_backstage\" is unknown",
             "range": {
                 "start": {
-                    "line": 41,
+                    "line": 42,
                     "character": 8
                 },
                 "end": {
-                    "line": 41,
+                    "line": 42,
                     "character": 23
                 }
             },
@@ -3636,11 +3636,11 @@
             "message": "Type of \"deploy_banner_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 26,
+                    "line": 27,
                     "character": 8
                 },
                 "end": {
-                    "line": 26,
+                    "line": 27,
                     "character": 30
                 }
             },
@@ -3652,11 +3652,11 @@
             "message": "Type of \"go_to_backstage\" is unknown",
             "range": {
                 "start": {
-                    "line": 29,
+                    "line": 30,
                     "character": 8
                 },
                 "end": {
-                    "line": 29,
+                    "line": 30,
                     "character": 23
                 }
             },
@@ -3780,11 +3780,11 @@
             "message": "Type of \"deploy_banner_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 38,
+                    "line": 39,
                     "character": 8
                 },
                 "end": {
-                    "line": 38,
+                    "line": 39,
                     "character": 30
                 }
             },
@@ -3796,11 +3796,11 @@
             "message": "Type of \"first_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 41,
+                    "line": 42,
                     "character": 8
                 },
                 "end": {
-                    "line": 41,
+                    "line": 42,
                     "character": 29
                 }
             },
@@ -3812,11 +3812,11 @@
             "message": "Type of \"first_construct_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 44,
+                    "line": 45,
                     "character": 8
                 },
                 "end": {
-                    "line": 44,
+                    "line": 45,
                     "character": 32
                 }
             },
@@ -3828,11 +3828,11 @@
             "message": "Type of \"second_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 50,
+                    "line": 51,
                     "character": 8
                 },
                 "end": {
-                    "line": 50,
+                    "line": 51,
                     "character": 30
                 }
             },
@@ -3844,11 +3844,11 @@
             "message": "Type of \"second_construct_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 53,
+                    "line": 54,
                     "character": 8
                 },
                 "end": {
-                    "line": 53,
+                    "line": 54,
                     "character": 33
                 }
             },
@@ -3860,11 +3860,11 @@
             "message": "Type of \"third_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 59,
+                    "line": 60,
                     "character": 8
                 },
                 "end": {
-                    "line": 59,
+                    "line": 60,
                     "character": 29
                 }
             },
@@ -3876,11 +3876,11 @@
             "message": "Type of \"third_construct_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 62,
+                    "line": 63,
                     "character": 8
                 },
                 "end": {
-                    "line": 62,
+                    "line": 63,
                     "character": 32
                 }
             },
@@ -3892,11 +3892,11 @@
             "message": "Type of \"go_to_backstage\" is unknown",
             "range": {
                 "start": {
-                    "line": 68,
+                    "line": 69,
                     "character": 8
                 },
                 "end": {
-                    "line": 68,
+                    "line": 69,
                     "character": 23
                 }
             },
@@ -4020,11 +4020,11 @@
             "message": "Type of \"deploy_banner_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 38,
+                    "line": 39,
                     "character": 8
                 },
                 "end": {
-                    "line": 38,
+                    "line": 39,
                     "character": 30
                 }
             },
@@ -4036,11 +4036,11 @@
             "message": "Type of \"first_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 41,
+                    "line": 42,
                     "character": 8
                 },
                 "end": {
-                    "line": 41,
+                    "line": 42,
                     "character": 29
                 }
             },
@@ -4052,11 +4052,11 @@
             "message": "Type of \"first_construct_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 44,
+                    "line": 45,
                     "character": 8
                 },
                 "end": {
-                    "line": 44,
+                    "line": 45,
                     "character": 32
                 }
             },
@@ -4068,11 +4068,11 @@
             "message": "Type of \"second_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 50,
+                    "line": 51,
                     "character": 8
                 },
                 "end": {
-                    "line": 50,
+                    "line": 51,
                     "character": 30
                 }
             },
@@ -4084,11 +4084,11 @@
             "message": "Type of \"go_to_backstage\" is unknown",
             "range": {
                 "start": {
-                    "line": 56,
+                    "line": 57,
                     "character": 8
                 },
                 "end": {
-                    "line": 56,
+                    "line": 57,
                     "character": 23
                 }
             },
@@ -4372,11 +4372,11 @@
             "message": "Type of \"subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 26,
+                    "line": 29,
                     "character": 4
                 },
                 "end": {
-                    "line": 26,
+                    "line": 29,
                     "character": 12
                 }
             },
@@ -4388,11 +4388,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 78,
+                    "line": 81,
                     "character": 11
                 },
                 "end": {
-                    "line": 81,
+                    "line": 84,
                     "character": 5
                 }
             },
@@ -4404,11 +4404,11 @@
             "message": "Type of \"subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 101,
+                    "line": 107,
                     "character": 4
                 },
                 "end": {
-                    "line": 101,
+                    "line": 107,
                     "character": 12
                 }
             },
@@ -4420,11 +4420,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 143,
+                    "line": 149,
                     "character": 11
                 },
                 "end": {
-                    "line": 146,
+                    "line": 152,
                     "character": 5
                 }
             },
@@ -6240,11 +6240,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 55,
+                    "line": 60,
                     "character": 15
                 },
                 "end": {
-                    "line": 55,
+                    "line": 60,
                     "character": 38
                 }
             },
@@ -6256,11 +6256,11 @@
             "message": "Type of \"pin_exceptions\" is partially unknown\n  Type of \"pin_exceptions\" is \"dict[int, Unknown]\"",
             "range": {
                 "start": {
-                    "line": 112,
+                    "line": 117,
                     "character": 8
                 },
                 "end": {
-                    "line": 112,
+                    "line": 117,
                     "character": 22
                 }
             },
@@ -6272,11 +6272,11 @@
             "message": "Type of \"min_angle\" is unknown",
             "range": {
                 "start": {
-                    "line": 117,
+                    "line": 122,
                     "character": 8
                 },
                 "end": {
-                    "line": 117,
+                    "line": 122,
                     "character": 17
                 }
             },
@@ -6288,11 +6288,11 @@
             "message": "Condition will always evaluate to False since the types \"Servo | ServoArm | ServoPlank | ServoDocking\" and \"None\" have no overlap",
             "range": {
                 "start": {
-                    "line": 179,
+                    "line": 209,
                     "character": 37
                 },
                 "end": {
-                    "line": 179,
+                    "line": 209,
                     "character": 61
                 }
             },
@@ -6416,11 +6416,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 80,
+                    "line": 85,
                     "character": 15
                 },
                 "end": {
-                    "line": 80,
+                    "line": 85,
                     "character": 38
                 }
             },
@@ -6432,11 +6432,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 141,
+                    "line": 146,
                     "character": 8
                 },
                 "end": {
-                    "line": 141,
+                    "line": 146,
                     "character": 11
                 }
             },
@@ -6448,11 +6448,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 176,
+                    "line": 181,
                     "character": 8
                 },
                 "end": {
-                    "line": 176,
+                    "line": 181,
                     "character": 11
                 }
             },
@@ -6464,11 +6464,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 238,
+                    "line": 243,
                     "character": 16
                 },
                 "end": {
-                    "line": 238,
+                    "line": 243,
                     "character": 19
                 }
             },
@@ -6480,11 +6480,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 261,
+                    "line": 266,
                     "character": 16
                 },
                 "end": {
-                    "line": 261,
+                    "line": 266,
                     "character": 19
                 }
             },
@@ -6496,11 +6496,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 283,
+                    "line": 288,
                     "character": 8
                 },
                 "end": {
-                    "line": 283,
+                    "line": 288,
                     "character": 11
                 }
             },
@@ -7296,11 +7296,11 @@
             "message": "Expected type arguments for generic class \"ndarray\"",
             "range": {
                 "start": {
-                    "line": 136,
+                    "line": 137,
                     "character": 73
                 },
                 "end": {
-                    "line": 136,
+                    "line": 137,
                     "character": 83
                 }
             },
@@ -7312,11 +7312,11 @@
             "message": "\"scan\" is not a known attribute of \"None\"",
             "range": {
                 "start": {
-                    "line": 227,
+                    "line": 228,
                     "character": 29
                 },
                 "end": {
-                    "line": 227,
+                    "line": 228,
                     "character": 33
                 }
             },
@@ -7328,11 +7328,11 @@
             "message": "\"scan\" is not a known attribute of \"None\"",
             "range": {
                 "start": {
-                    "line": 269,
+                    "line": 270,
                     "character": 38
                 },
                 "end": {
-                    "line": 269,
+                    "line": 270,
                     "character": 42
                 }
             },
@@ -7344,11 +7344,11 @@
             "message": "Cannot access attribute \"distances\" for class \"FunctionType\"\n  Attribute \"distances\" is unknown",
             "range": {
                 "start": {
-                    "line": 269,
+                    "line": 270,
                     "character": 43
                 },
                 "end": {
-                    "line": 269,
+                    "line": 270,
                     "character": 52
                 }
             },
@@ -7360,11 +7360,11 @@
             "message": "No overloads for \"column_stack\" match the provided arguments",
             "range": {
                 "start": {
-                    "line": 283,
+                    "line": 284,
                     "character": 15
                 },
                 "end": {
-                    "line": 283,
+                    "line": 284,
                     "character": 70
                 }
             },
@@ -7376,11 +7376,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 283,
+                    "line": 284,
                     "character": 15
                 },
                 "end": {
-                    "line": 283,
+                    "line": 284,
                     "character": 70
                 }
             },
@@ -7392,11 +7392,11 @@
             "message": "Argument of type \"tuple[None, NDArray[float32]]\" cannot be assigned to parameter \"tup\" of type \"Sequence[ArrayLike]\" in function \"column_stack\"\n  Type \"None\" is not assignable to type \"ArrayLike\"\n    \"None\" is incompatible with protocol \"Buffer\"\n      \"__buffer__\" is not present\n    \"None\" is incompatible with protocol \"_SupportsArray[dtype[Any]]\"\n      \"__array__\" is not present\n    \"None\" is incompatible with protocol \"_NestedSequence[_SupportsArray[dtype[Any]]]\"\n      \"__len__\" is not present\n      \"__getitem__\" is not present",
             "range": {
                 "start": {
-                    "line": 283,
+                    "line": 284,
                     "character": 32
                 },
                 "end": {
-                    "line": 283,
+                    "line": 284,
                     "character": 52
                 }
             },
@@ -7808,7 +7808,7 @@
         "errorCount": 96,
         "warningCount": 90,
         "informationCount": 309,
-        "timeInSec": 16.383
+        "timeInSec": 14.236
     }
 }
 

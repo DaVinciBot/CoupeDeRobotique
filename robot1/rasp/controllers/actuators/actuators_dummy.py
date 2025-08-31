@@ -52,7 +52,12 @@ class ActuatorsShowDummy(ActuatorsShow):
 
     @override
     def __str__(self) -> str:
-        """Return the class name for logging."""
+        """Return the class name for logging.
+
+        Returns:
+            str: The class name.
+
+        """
         return self.__class__.__name__
 
     @log("DummyActuatorsShow")

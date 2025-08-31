@@ -18,7 +18,8 @@ class OnlyBannerStrategy(BaseStrategy):
         """Initialize the strategy with the required task flow using subgraphs and direct transitions.
 
         Args:
-            ctx (ShowGameContext): Game context containing game-specific configurations and zones.
+            ctx (ShowGameContext):
+                Game context containing game-specific configurations and zones.
 
         """
         super().__init__(ctx)
