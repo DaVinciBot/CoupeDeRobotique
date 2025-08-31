@@ -1,5 +1,7 @@
 """USB communication exception types."""
 
+from __future__ import annotations
+
 
 class ComException(Exception):
     """Custom exception for communication-related errors.

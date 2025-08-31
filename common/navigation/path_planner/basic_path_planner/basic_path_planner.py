@@ -1,8 +1,9 @@
 """Direct two-point path planner."""
 
-import math
+from __future__ import annotations
 
-from loggerplusplus import Logger
+import math
+from typing import TYPE_CHECKING
 
 from geometry import OrientedPoint
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
@@ -11,6 +12,9 @@ from navigation.path_planner.basic_path_planner.basic_path_planner_params import
     BasicPathPlannerPlanPathParams,
 )
 from navigation.path_planner.structs import Direction
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class BasicPathPlanner(

@@ -1,9 +1,14 @@
 """Communication helper adding GPIO control for a Teensy device."""
 
-from loggerplusplus import Logger
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from teensy.tools import GPIOManager
 from usb_com.python import Com
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class GPIOComTeensy(Com):

@@ -1,5 +1,7 @@
 """Convert HTML file to gzipped C array format."""
 
+from __future__ import annotations
+
 import gzip
 from pathlib import Path
 

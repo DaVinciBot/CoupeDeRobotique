@@ -1,10 +1,13 @@
 """Utility to track and validate Teensy GPIO pin usage."""
 
-from typing import override
+from __future__ import annotations
 
-from loggerplusplus import Logger
+from typing import TYPE_CHECKING, override
 
 from teensy.tools.gpio_manager.actuators_type import ActuatorType
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class GPIOManager:

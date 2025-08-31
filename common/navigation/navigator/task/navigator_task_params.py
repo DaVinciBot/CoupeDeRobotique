@@ -1,13 +1,20 @@
 """Parameter container for a navigation task."""
 
-from geometry import OrientedPoint
-from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
-from navigation.avoidance.base_avoidance.base_avoidance_params import (
-    BaseAvoidanceParams,
-)
-from navigation.path_planner import BasePathPlannerParams
-from navigation.trajectory_planner import BaseTrajectoryPlannerParams
-from navigation.trajectory_planner.speed_profile import SpeedProfiler
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from geometry import OrientedPoint
+    from navigation.avoidance.acs_detection_profiles import (
+        BaseAcsDetectionProfileParams,
+    )
+    from navigation.avoidance.base_avoidance.base_avoidance_params import (
+        BaseAvoidanceParams,
+    )
+    from navigation.path_planner import BasePathPlannerParams
+    from navigation.trajectory_planner import BaseTrajectoryPlannerParams
+    from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
 
 class NavigatorTaskParams:

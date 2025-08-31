@@ -1,9 +1,11 @@
 """Entry point for running the robot's main brain."""
 
+from __future__ import annotations
+
 import asyncio
 import time
 from math import pi
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,10 +14,12 @@ from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
 from arena import ShowArena, TeamColor
-from controllers.actuators import ActuatorsShow
-from controllers.rolling_basis import RollingBasis
+from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
+from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
-from sensors import Inputs, Lidar, LidarDummy
+
+if TYPE_CHECKING:
+    from sensors import Inputs, Lidar, LidarDummy
 
 # TODO: automatiser tous les dummys grâce aux fichiers __init__.py comme le PIN
 # TODO: automatiser tous les dummys comme les actuators, com, etc. Avec le config_loader
@@ -94,13 +98,13 @@ class MainBrain(Brain):
         """Runs the main control loop for the robot."""
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
-        rolling_basis = RollingBasis(
+        rolling_basis: RollingBasis | RollingBasisDummy = RollingBasis(
             logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True),
         )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
 
-        actuators = ActuatorsShow(
+        actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShow(
             logger=Logger(identifier="Actuators", follow_logger_manager_rules=True),
         )
         actuators.deplacement_position()
@@ -233,7 +237,7 @@ class MainBrain(Brain):
                     else:
                         eval(instruction)
             elif ui.msg == "team change":
-                if ui.data["team"] in ["yellow", "blue"]:
+                if ui.data["team"] in {"yellow", "blue"}:
                     self.arena.set_team_color(TeamColor[ui.data["team"].upper()])
                     self.logger.info(f"Team color set to {ui.data['team']}")
                 else:
@@ -246,8 +250,7 @@ class MainBrain(Brain):
         """Updates the arena with the current position of the robot."""
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            # lidar_scan_polars=np.array([]),
-            lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
+            lidar_scan_polars=self.lidar.scan_to_polars(),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )

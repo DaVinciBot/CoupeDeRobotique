@@ -1,10 +1,9 @@
 """Zones that compute speed vectors from enemy movement records."""
 
-from collections import deque
-from collections.abc import Callable
-from typing import override
+from __future__ import annotations
 
-from loggerplusplus import Logger
+from collections import deque
+from typing import TYPE_CHECKING, override
 
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 from arena.base_arena.arena_zones.structs import (
@@ -13,9 +12,15 @@ from arena.base_arena.arena_zones.structs import (
     ZoneAccessibility,
     ZoneType,
 )
-from arena.base_arena.team_color import TeamColor
 from geometry import LineString, OrientedPoint, Point
 from utils import Utils
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from loggerplusplus import Logger
+
+    from arena.base_arena.team_color import TeamColor
 
 MIN_RECORDS_FOR_VECTOR = 2
 

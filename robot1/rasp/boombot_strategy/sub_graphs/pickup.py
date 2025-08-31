@@ -1,5 +1,7 @@
 """Subgraph guiding the robot through object pickup actions."""
 
+from __future__ import annotations
+
 from boombot_strategy.tasks.actuator_task import (
     DeplacementObject,
     PrepareToPickUp,

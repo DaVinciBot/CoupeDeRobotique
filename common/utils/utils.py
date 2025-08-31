@@ -1,5 +1,7 @@
 """Miscellaneous time and geometry utilities."""
 
+from __future__ import annotations
+
 from datetime import datetime
 
 from shapely import Geometry, Point

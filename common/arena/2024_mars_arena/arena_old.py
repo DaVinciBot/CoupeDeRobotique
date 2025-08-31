@@ -1,5 +1,7 @@
 """Utilities for checking motion within the 2024 Mars arena."""
 
+from __future__ import annotations
+
 from math import cos, radians, sin
 
 from old_logger import Logger, LogLevels

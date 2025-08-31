@@ -1,13 +1,17 @@
 """Transition implementation guarded by a runtime condition."""
 
-from typing import override
+from __future__ import annotations
 
-from strategy.core.base_game_context import BaseGameContext
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
+from typing import TYPE_CHECKING, override
+
 from strategy.core.transitions.base_transition import BaseTransition
-from strategy.core.transitions.conditional_transition.transitions_condition import (
-    BaseTransitionCondition,
-)
+
+if TYPE_CHECKING:
+    from strategy.core.base_game_context import BaseGameContext
+    from strategy.core.task_nodes.base_task_node import BaseTaskNode
+    from strategy.core.transitions.conditional_transition.transitions_condition import (
+        BaseTransitionCondition,
+    )
 
 
 class ConditionalTransition(BaseTransition):

@@ -1,18 +1,24 @@
 """Abstract base class for trajectory planning components."""
 
+from __future__ import annotations
+
 import functools
 import time
 from abc import ABC, abstractmethod
-from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from loggerplusplus import Logger
 
-from geometry import OrientedPoint
 from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params import (  # noqa: E501
     BaseTrajectoryPlannerParams,
 )
-from navigation.trajectory_planner.speed_profile import SpeedProfiler
-from navigation.trajectory_planner.structs import TrajectoryPlanCommand
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from geometry import OrientedPoint
+    from navigation.trajectory_planner.speed_profile import SpeedProfiler
+    from navigation.trajectory_planner.structs import TrajectoryPlanCommand
 
 
 class BaseTrajectoryPlanner[PARAMSTYPE: BaseTrajectoryPlannerParams](ABC):

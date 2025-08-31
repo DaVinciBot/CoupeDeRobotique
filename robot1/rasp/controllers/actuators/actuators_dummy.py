@@ -1,5 +1,7 @@
 """Dummy actuators controller used for testing without hardware."""
 
+from __future__ import annotations
+
 from typing import override
 
 from loggerplusplus import Logger, log

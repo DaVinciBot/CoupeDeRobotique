@@ -1,9 +1,13 @@
 """Parameter containers for path planners."""
 
-from dataclasses import dataclass
+from __future__ import annotations
 
-from geometry import OrientedPoint
-from navigation.path_planner.structs import PathPlanningStrategy
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from geometry import OrientedPoint
+    from navigation.path_planner.structs import PathPlanningStrategy
 
 
 class BasePathPlannerParams:

@@ -1,8 +1,10 @@
 """Dummy GPIO implementation used when real hardware is unavailable."""
 
+from __future__ import annotations
+
 MAJORITY_RATIO = 0.5
-COUNT_RESET_THRESHOLD = 1300
-COUNT_RESET_TO = 1150
+COUNT_RESET_THRESHOLD = 1000
+COUNT_RESET_TO = 995
 
 
 class DummyDevice:

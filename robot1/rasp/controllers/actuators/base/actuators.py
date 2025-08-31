@@ -1,5 +1,7 @@
 """Base classes for Teensy-driven actuators."""
 
+from __future__ import annotations
+
 import struct
 import time
 from typing import override

@@ -1,5 +1,7 @@
 """Enumeration of all events used in the navigation system."""
 
+from __future__ import annotations
+
 from enum import Enum, auto
 
 

@@ -1,5 +1,7 @@
 """Input handling for physical sensors such as jack and plug."""
 
+from __future__ import annotations
+
 import asyncio
 
 from loggerplusplus import Logger

@@ -1,7 +1,13 @@
 """Helper functions for creating simple geometric shapes."""
 
-from shapely import Point, Polygon
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from shapely.geometry import box
+
+if TYPE_CHECKING:
+    from shapely import Point, Polygon
 
 
 def create_straight_rectangle(p1: Point, p2: Point) -> Polygon:

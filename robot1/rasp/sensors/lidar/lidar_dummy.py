@@ -1,9 +1,14 @@
 """Simulated LiDAR readings for development and testing."""
 
+from __future__ import annotations
+
 import math
+from typing import TYPE_CHECKING
 
 import numpy as np
-from loggerplusplus import Logger
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class LidarDummy:
@@ -31,8 +36,10 @@ class LidarDummy:
             max_angle (float): Maximum angle of the lidar (min angle at right).
             unit_angle (str, optional): Unit of the angles. Defaults to "deg".
             unit_distance (str, optional): Unit of the distances. Defaults to "cm".
-            min_distance (float, optional): Minimum distance to consider a distance as valid. Defaults to 5.0.
-            num_points (int, optional): Number of points to simulate in a scan. Defaults to 360.
+            min_distance (float, optional):
+                Minimum distance to consider a distance as valid. Defaults to 5.0.
+            num_points (int, optional):
+                Number of points to simulate in a scan. Defaults to 360.
 
         """
         self._logger = logger
@@ -94,7 +101,8 @@ class LidarDummy:
             return math.pi / 180
 
         self._logger.critical(f"[LidarDummy] Unit of angles not recognized [{unit}]!")
-        raise ValueError(f"Unit of angles not recognized [{unit}]!")
+        msg = f"Unit of angles not recognized [{unit}]!"
+        raise ValueError(msg)
 
     def __init_distances_unit(self, unit: str) -> float:
         """Initialize the unit of the distances.
@@ -121,7 +129,8 @@ class LidarDummy:
         self._logger.critical(
             f"[LidarDummy] Unit of distances not recognized [{unit}]!",
         )
-        raise ValueError(f"Unit of distances not recognized [{unit}]!")
+        msg = f"Unit of distances not recognized [{unit}]!"
+        raise ValueError(msg)
 
     def scan_to_distances(self) -> np.ndarray:
         """Simulate a lidar scan and return fake distance data.
@@ -190,7 +199,7 @@ class LidarDummy:
         """
         distances = self.scan_to_distances()
         polars = np.column_stack((self.__polars_angles, distances))
-        valid_polars = polars[polars[:, 1] > self._min_distance]
+        polars[polars[:, 1] > self._min_distance]
 
         self._logger.debug("[LidarDummy] Simulated polar coordinates generated.")
         # return valid_polars

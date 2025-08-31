@@ -1,5 +1,7 @@
 """Demo arena with predefined zones for visualization and testing."""
 
+from __future__ import annotations
+
 from math import pi
 from typing import override
 

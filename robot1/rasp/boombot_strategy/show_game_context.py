@@ -1,13 +1,19 @@
 """Game context used by the demo strategies."""
 
-from arena import ShowArena
-from controllers import (
-    ActuatorsShow,
-    ActuatorsShowDummy,
-    RollingBasis,
-    RollingBasisDummy,
-)
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from strategy.core import BaseGameContext
+
+if TYPE_CHECKING:
+    from arena import ShowArena
+    from controllers import (
+        ActuatorsShow,
+        ActuatorsShowDummy,
+        RollingBasis,
+        RollingBasisDummy,
+    )
 
 
 class ShowGameContext(BaseGameContext):

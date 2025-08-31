@@ -1,5 +1,7 @@
 """Parameters for the null ACS detection profile."""
 
+from __future__ import annotations
+
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
     BaseAcsDetectionProfileParams,
 )

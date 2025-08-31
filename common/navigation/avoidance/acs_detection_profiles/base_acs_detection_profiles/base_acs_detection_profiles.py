@@ -1,13 +1,18 @@
 """Base classes for ACS detection profiles."""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from loggerplusplus import Logger
 
-from arena import AllyZone, EnemyZone
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profiles_params import (  # noqa: E501
     BaseAcsDetectionProfileParams,
 )
+
+if TYPE_CHECKING:
+    from arena import AllyZone, EnemyZone
 
 
 class BaseAcsDetectionProfile[PARAMSTYPE: BaseAcsDetectionProfileParams](ABC):

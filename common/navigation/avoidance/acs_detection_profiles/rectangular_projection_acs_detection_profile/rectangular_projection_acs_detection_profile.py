@@ -1,11 +1,10 @@
 """ACS detection profile based on a rectangular projection ahead of the robot."""
 
+from __future__ import annotations
+
 import math
-from typing import override
+from typing import TYPE_CHECKING, override
 
-from loggerplusplus import Logger
-
-from arena import AllyZone, EnemyZone
 from geometry import Polygon, rotate, translate
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
     BaseAcsDetectionProfile,
@@ -13,6 +12,11 @@ from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles imp
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile_params import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
 )
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
+    from arena import AllyZone, EnemyZone
 
 
 class RectangularProjectionAcsDetectionProfile(

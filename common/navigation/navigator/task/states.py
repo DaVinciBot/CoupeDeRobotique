@@ -1,5 +1,7 @@
 """States for a navigation task."""
 
+from __future__ import annotations
+
 from enum import Enum, auto
 
 

@@ -1,12 +1,18 @@
 """Enemy zone with automatic speed vector calculation."""
 
-from loggerplusplus import Logger
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones import (
     base_speed_vector_auto_calculate_zone as _base_zone,
 )
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
-from geometry import OrientedPoint, Point
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
+    from geometry import OrientedPoint, Point
 
 
 class EnemyZone(_base_zone.BaseSpeedVectorAutoCalculateZone):

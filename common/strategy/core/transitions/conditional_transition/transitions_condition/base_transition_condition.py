@@ -1,9 +1,13 @@
 """Abstract interfaces for conditions used by conditional transitions."""
 
-from abc import ABC, abstractmethod
+from __future__ import annotations
 
-from strategy.core.base_game_context import BaseGameContext
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from strategy.core.base_game_context import BaseGameContext
+    from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
 
 class BaseTransitionCondition(ABC):

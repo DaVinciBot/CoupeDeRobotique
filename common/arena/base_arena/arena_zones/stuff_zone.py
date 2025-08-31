@@ -1,17 +1,20 @@
 """Zone designated for storing or placing items during matches."""
 
-from collections.abc import Callable
-from typing import TYPE_CHECKING, override
+from __future__ import annotations
 
-from loggerplusplus import Logger
+from typing import TYPE_CHECKING, override
 
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
-from arena.base_arena.team_color import TeamColor
 from geometry import OrientedPoint, Point, Polygon
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from loggerplusplus import Logger
+
     from arena.base_arena.grid_manager import GridManager
+    from arena.base_arena.team_color import TeamColor
 
 
 class StuffZone(BaseArenaZone):

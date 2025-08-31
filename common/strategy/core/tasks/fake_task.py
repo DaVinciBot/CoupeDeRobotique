@@ -1,9 +1,13 @@
 """Simple task implementation used for testing."""
 
-from typing import override
+from __future__ import annotations
 
-from strategy.core.base_game_context import BaseGameContext
+from typing import TYPE_CHECKING, override
+
 from strategy.core.tasks.base_task import BaseTask
+
+if TYPE_CHECKING:
+    from strategy.core.base_game_context import BaseGameContext
 
 
 class FakeTask(BaseTask):

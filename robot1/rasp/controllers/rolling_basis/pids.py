@@ -1,5 +1,7 @@
 """PID constants and identifiers for the rolling basis controller."""
 
+from __future__ import annotations
+
 import struct
 from dataclasses import dataclass
 from enum import Enum
@@ -48,7 +50,7 @@ class PID:
         return struct.pack("<fff", self.kp, self.ki, self.kd)
 
     @classmethod
-    def from_dict(cls, pid_dict: dict[str, float]) -> "PID":
+    def from_dict(cls, pid_dict: dict[str, float]) -> PID:
         """Initialize a PID instance from a dictionary.
 
         Args:
@@ -61,7 +63,7 @@ class PID:
         return cls(**pid_dict)
 
     @classmethod
-    def from_tuple(cls, pid_tuple: tuple[float, float, float]) -> "PID":
+    def from_tuple(cls, pid_tuple: tuple[float, float, float]) -> PID:
         """Initialize a PID instance from a tuple.
 
         Args:
@@ -75,7 +77,7 @@ class PID:
         return cls(*pid_tuple)
 
     @classmethod
-    def from_list(cls, pid_list: list[float]) -> "PID":
+    def from_list(cls, pid_list: list[float]) -> PID:
         """Initialize a PID instance from a list.
 
         Args:

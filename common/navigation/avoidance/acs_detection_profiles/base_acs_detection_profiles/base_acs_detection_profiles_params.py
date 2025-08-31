@@ -3,6 +3,8 @@
 Stores the profile type and detection distance.
 """
 
+from __future__ import annotations
+
 from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
 
 
@@ -30,7 +32,7 @@ class BaseAcsDetectionProfileParams:
         cls,
         acs_detection_profile: str,
         acs_distance: float,
-    ) -> "BaseAcsDetectionProfileParams":
+    ) -> BaseAcsDetectionProfileParams:
         """Create parameters from textual configuration.
 
         Args:

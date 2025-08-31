@@ -1,5 +1,7 @@
 """Base classes for constructing robot strategies."""
 
+from __future__ import annotations
+
 from abc import ABC
 
 from loggerplusplus import Logger

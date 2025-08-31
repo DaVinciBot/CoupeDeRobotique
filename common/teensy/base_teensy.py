@@ -1,9 +1,14 @@
 """Base communication class for interacting with a Teensy over USB."""
 
-from loggerplusplus import Logger
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from usb_com.python import Com
 from usb_com.python.messages import Messages
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class BaseComTeensy(Com):

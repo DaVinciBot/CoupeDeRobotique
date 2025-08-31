@@ -1,5 +1,7 @@
 """Subgraph to handle construction sequences within a zone."""
 
+from __future__ import annotations
+
 import time
 
 from boombot_strategy.tasks.actuator_task import Build, Deposit, PickUp

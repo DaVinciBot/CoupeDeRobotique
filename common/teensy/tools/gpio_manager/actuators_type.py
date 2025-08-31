@@ -1,5 +1,7 @@
 """Enumeration of supported actuator types for Teensy GPIO pins."""
 
+from __future__ import annotations
+
 from enum import Enum, auto
 
 

@@ -1,14 +1,12 @@
 """Factory to instantiate the appropriate path planner."""
 
-from typing import cast
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, cast
 
 from navigation.path_planner.astar_path_planner import (
     AStarPathPlanner,
     AStarPathPlannerParams,
-)
-from navigation.path_planner.base_path_planner import (
-    BasePathPlanner,
-    BasePathPlannerParams,
 )
 from navigation.path_planner.basic_path_planner import (
     BasicPathPlanner,
@@ -19,6 +17,12 @@ from navigation.path_planner.delta_path_planner import (
     DeltaPathPlannerParams,
 )
 from navigation.path_planner.structs import PathPlanningStrategy
+
+if TYPE_CHECKING:
+    from navigation.path_planner.base_path_planner import (
+        BasePathPlanner,
+        BasePathPlannerParams,
+    )
 
 
 class PathPlannerFactory:

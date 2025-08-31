@@ -1,6 +1,9 @@
 """Factory to create plan parameters for path planners."""
 
-from geometry import OrientedPoint
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from navigation.path_planner import (
     AStarPathPlannerPlanPathParams,
     BasePathPlannerPlanPathParams,
@@ -8,6 +11,9 @@ from navigation.path_planner import (
     DeltaPathPlannerPlanPathParams,
     PathPlanningStrategy,
 )
+
+if TYPE_CHECKING:
+    from geometry import OrientedPoint
 
 
 class PathPlannerPathPlanParamsFactory:

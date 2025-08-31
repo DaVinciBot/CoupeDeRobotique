@@ -1,5 +1,7 @@
 """Abstractions for groups of task nodes forming a sub-graph."""
 
+from __future__ import annotations
+
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
 

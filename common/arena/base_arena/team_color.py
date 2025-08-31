@@ -1,5 +1,7 @@
 """Enumerations for identifying robot team colors."""
 
+from __future__ import annotations
+
 from enum import Enum
 
 

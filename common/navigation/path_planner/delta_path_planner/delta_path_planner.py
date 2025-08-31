@@ -1,8 +1,9 @@
 """Path planner applying relative displacement and rotation."""
 
-import math
+from __future__ import annotations
 
-from loggerplusplus import Logger
+import math
+from typing import TYPE_CHECKING
 
 from geometry import OrientedPoint
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
@@ -10,6 +11,9 @@ from navigation.path_planner.delta_path_planner.delta_path_planner_params import
     DeltaPathPlannerParams,
     DeltaPathPlannerPlanPathParams,
 )
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class DeltaPathPlanner(

@@ -1,17 +1,22 @@
 """Core interfaces for path planners."""
 
+from __future__ import annotations
+
 import functools
 from abc import ABC, abstractmethod
-from collections.abc import Callable
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from loggerplusplus import Logger
 
-from geometry import OrientedPoint
 from navigation.path_planner.base_path_planner.base_path_planner_params import (
     BasePathPlannerParams,
     BasePathPlannerPlanPathParams,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from geometry import OrientedPoint
 
 
 class BasePathPlanner[

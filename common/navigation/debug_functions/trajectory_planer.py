@@ -1,15 +1,19 @@
 """Helper utilities to simulate and plot a trajectory planner's behavior."""
+
 # ruff: noqa: T201, PT028
+from __future__ import annotations
 
 import time
+from typing import TYPE_CHECKING
 
 import numpy as np
 from matplotlib import pyplot as plt
 
-from geometry import OrientedPoint
-from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import (
-    BaseTrajectoryPlanner,
-)
+if TYPE_CHECKING:
+    from geometry import OrientedPoint
+    from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import (
+        BaseTrajectoryPlanner,
+    )
 
 
 def test_trajectory_planning(

@@ -1,12 +1,18 @@
 """Strictly forbidden arena zone."""
 
-from collections.abc import Callable
+from __future__ import annotations
 
-from loggerplusplus import Logger
+from typing import TYPE_CHECKING
 
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
-from geometry import Polygon
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from loggerplusplus import Logger
+
+    from geometry import Polygon
 
 
 class ForbiddenZone(BaseArenaZone):

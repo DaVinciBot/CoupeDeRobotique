@@ -1,5 +1,7 @@
 """Grid management utilities for pathfinding and obstacle handling."""
 
+from __future__ import annotations
+
 import copy
 from typing import Any, override
 

@@ -1,10 +1,12 @@
 """Navigator task queue and execution management."""
 
+from __future__ import annotations
+
 from collections import deque
+from typing import TYPE_CHECKING
 
 from loggerplusplus import Logger
 
-from arena import AllyZone, EnemyZone
 from navigation.avoidance.base_avoidance.states import AvoidanceState
 from navigation.navigator.signals import NavigatorSignalsDispatcher
 from navigation.navigator.task import (
@@ -13,6 +15,9 @@ from navigation.navigator.task import (
     NavigatorTaskState,
 )
 from navigation.trajectory_planner import TrajectoryPlanCommand
+
+if TYPE_CHECKING:
+    from arena import AllyZone, EnemyZone
 
 
 class Navigator:

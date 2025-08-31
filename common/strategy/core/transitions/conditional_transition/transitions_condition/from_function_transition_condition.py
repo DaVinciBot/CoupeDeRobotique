@@ -1,13 +1,18 @@
 """Transition condition backed by a user-provided callable."""
 
-from collections.abc import Callable
-from typing import override
+from __future__ import annotations
 
-from strategy.core.base_game_context import BaseGameContext
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
+from typing import TYPE_CHECKING, override
+
 from strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition import (
     BaseTransitionCondition,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from strategy.core.base_game_context import BaseGameContext
+    from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
 
 class FromFunctionTransitionCondition(BaseTransitionCondition):

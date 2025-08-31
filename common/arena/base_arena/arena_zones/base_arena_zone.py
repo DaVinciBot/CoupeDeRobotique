@@ -4,16 +4,20 @@ Provides utilities to manage zone geometry, accessibility, visit tracking, and
 common built-in comparisons.
 """
 
-from abc import ABC
-from collections.abc import Callable
-from typing import ClassVar, override
+from __future__ import annotations
 
-from loggerplusplus import Logger
+from abc import ABC
+from typing import TYPE_CHECKING, ClassVar, override
 
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 from arena.base_arena.team_color import TeamColor
 from geometry import BufferCapStyle, BufferJoinStyle, OrientedPoint, Point, Polygon
 from utils import Utils
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from loggerplusplus import Logger
 
 
 class BaseArenaZone(ABC):

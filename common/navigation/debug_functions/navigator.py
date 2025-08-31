@@ -2,16 +2,21 @@
 
 This module is intended for offline debugging and plotting only.
 """
+
 # ruff: noqa: T201, PT028, SLF001
+from __future__ import annotations
 
 import time
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from arena import BaseArena
 from geometry import Point
-from navigation.navigator import Navigator
+
+if TYPE_CHECKING:
+    from arena import BaseArena
+    from navigation.navigator import Navigator
 
 
 def test_navigator_execution(

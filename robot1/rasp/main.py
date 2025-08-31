@@ -1,5 +1,7 @@
 """Main entry point to run the Boombot demo on the Raspberry Pi."""
 
+from __future__ import annotations
+
 import subprocess
 
 from loggerplusplus import Logger, LogLevels
@@ -167,7 +169,7 @@ if __name__ == "__main__":
         """Kill all running Python processes using pkill -9 python."""
         cmd = "pkill -9 python"
         subprocess.run(cmd, check=False)
-        print("All Python processes killed.")
+        logger_brain.fatal("All Python processes killed.")
 
     ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()

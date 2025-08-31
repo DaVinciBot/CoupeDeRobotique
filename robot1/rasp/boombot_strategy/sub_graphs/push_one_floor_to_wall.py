@@ -1,5 +1,7 @@
 """Subgraph for pushing a floor element against a wall."""
 
+from __future__ import annotations
+
 from boombot_strategy.tasks.actuator_task import (
     Build,
     DeplacementObject,

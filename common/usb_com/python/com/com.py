@@ -1,19 +1,24 @@
 """USB communication helper with optional CRC and dummy mode."""
 
+from __future__ import annotations
+
 import threading
 import time
-from collections.abc import Callable
 from functools import wraps
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import crc8
-from loggerplusplus import Logger
 from serial import Serial
 from serial.tools.list_ports import comports
 
 from usb_com.python.com.dummy import DummySerial
 from usb_com.python.com.exceptions import ComException
 from usb_com.python.messages import END_BYTES_SIGNATURE, Messages
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from loggerplusplus import Logger
 
 
 class Com:
@@ -195,7 +200,7 @@ class Com:
 
         @wraps(func)
         def wrapper(  # UNUSED
-            self: "Com",
+            self: Com,
             *args: Any,  # noqa: ANN401
             **kwargs: Any,  # noqa: ANN401
         ) -> Any:  # noqa: ANN401

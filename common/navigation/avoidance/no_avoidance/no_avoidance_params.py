@@ -1,5 +1,7 @@
 """Parameters for the no-op avoidance strategy."""
 
+from __future__ import annotations
+
 from navigation.avoidance.base_avoidance import BaseAvoidanceParams
 from navigation.avoidance.structs import AvoidanceStrategy
 

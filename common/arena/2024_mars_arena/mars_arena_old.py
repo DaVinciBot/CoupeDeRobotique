@@ -1,14 +1,18 @@
 """Legacy Mars 2024 arena and zone utilities."""
 
-from sys import maxsize
-from typing import override
+from __future__ import annotations
 
-from old_logger import Logger
+from sys import maxsize
+from typing import TYPE_CHECKING, override
+
 from pathfinding.core.grid import Grid
 from shapely import distance
 
 from arena.base_arena.arena import Arena
 from geometry import OrientedPoint, Point, Polygon, create_straight_rectangle
+
+if TYPE_CHECKING:
+    from old_logger import Logger
 
 MIN_START_ZONE_ID = 0
 MAX_START_ZONE_ID = 5

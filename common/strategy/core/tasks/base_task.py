@@ -1,10 +1,14 @@
 """Base class for tasks executed by the strategy system."""
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
 from loggerplusplus import Logger
 
-from strategy.core.base_game_context import BaseGameContext
+if TYPE_CHECKING:
+    from strategy.core.base_game_context import BaseGameContext
 
 
 class BaseTask(ABC):

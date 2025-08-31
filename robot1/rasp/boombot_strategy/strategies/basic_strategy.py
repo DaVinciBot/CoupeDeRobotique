@@ -1,8 +1,11 @@
 """Simple showcase strategy performing banner deployment and pickups."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from loggerplusplus import Logger
 
-from boombot_strategy import ShowGameContext
 from boombot_strategy.strategies.base_strategy import BaseStrategy
 from boombot_strategy.sub_graphs import (
     get_banner_deployment_subgraph,
@@ -13,6 +16,9 @@ from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
 from strategy.core import BaseTaskNode, GraphRunner
+
+if TYPE_CHECKING:
+    from boombot_strategy import ShowGameContext
 
 
 class BasicStrategy(BaseStrategy):

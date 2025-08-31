@@ -1,15 +1,21 @@
 """Zone reserved exclusively for the blue team."""
 
-from collections.abc import Callable
+from __future__ import annotations
 
-from loggerplusplus import Logger
+from typing import TYPE_CHECKING
 
 from arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone import (
     BaseColorReservedZone,
 )
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 from arena.base_arena.team_color import TeamColor
-from geometry import OrientedPoint, Point, Polygon
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from loggerplusplus import Logger
+
+    from geometry import OrientedPoint, Point, Polygon
 
 
 class BlueReservedZone(BaseColorReservedZone):

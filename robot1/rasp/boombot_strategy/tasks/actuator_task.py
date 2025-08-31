@@ -1,11 +1,15 @@
 """Actuator-related task implementations for the Boombot strategy."""
 
+from __future__ import annotations
+
 import time
-from typing import override
+from typing import TYPE_CHECKING, override
 
 from a_config_loader import CONFIG
-from boombot_strategy.show_game_context import ShowGameContext
 from strategy.core import BaseTask
+
+if TYPE_CHECKING:
+    from boombot_strategy.show_game_context import ShowGameContext
 
 
 class ReadyToApproachToPickUp(BaseTask):

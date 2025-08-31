@@ -1,5 +1,7 @@
 """Enumerations describing the execution status of a task."""
 
+from __future__ import annotations
+
 from enum import Enum, auto
 
 

@@ -6,6 +6,7 @@ needed again, implement the necessary classes and functions here.
 """
 
 # ruff: noqa : ERA001
+# from __future__ import annotations
 
 # from rpi_ws281x import PixelStrip, Color, RGBW
 # from old_logger.log_tools import LogLevels

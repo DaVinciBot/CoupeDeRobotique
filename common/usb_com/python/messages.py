@@ -1,5 +1,7 @@
 """Message identifiers and constants for Teensy USB communication."""
 
+from __future__ import annotations
+
 from enum import Enum
 
 # This signature must be exactly the same on both sides (Raspberry Pi and Teensy) to ensure valid communication.

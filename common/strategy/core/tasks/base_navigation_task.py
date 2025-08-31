@@ -1,9 +1,9 @@
 """Tasks that drive the robot to a goal using planning components."""
 
-from loggerplusplus import Logger
+from __future__ import annotations
 
-from arena import BaseArenaZone
-from geometry import OrientedPoint, Point
+from typing import TYPE_CHECKING
+
 from navigation import (
     BaseAvoidanceParams,
     BasePathPlannerParams,
@@ -12,9 +12,17 @@ from navigation import (
     NavigatorTaskParams,
     SpeedProfiler,
 )
-from navigation.avoidance.acs_detection_profiles import BaseAcsDetectionProfileParams
-from strategy.core.base_game_context import BaseGameContext
 from strategy.core.tasks.base_task import BaseTask
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
+    from arena import BaseArenaZone
+    from geometry import OrientedPoint, Point
+    from navigation.avoidance.acs_detection_profiles import (
+        BaseAcsDetectionProfileParams,
+    )
+    from strategy.core.base_game_context import BaseGameContext
 
 
 class BaseNavigationTask(BaseTask):

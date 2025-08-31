@@ -1,5 +1,7 @@
 """Structures and enums for avoidance strategies."""
 
+from __future__ import annotations
+
 from enum import Enum, auto
 
 

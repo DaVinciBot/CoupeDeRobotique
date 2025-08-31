@@ -1,5 +1,9 @@
 """Generic maneuver tasks such as relative moves and zone centroids."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from geometry import OrientedPoint, Point
@@ -19,7 +23,9 @@ from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (
     RectangularProjectionAcsDetectionProfileParams,
 )
-from strategy.core import BaseGameContext
+
+if TYPE_CHECKING:
+    from strategy.core import BaseGameContext
 
 
 class RelativeBackward(NavigationTask):

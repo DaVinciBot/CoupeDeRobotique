@@ -1,5 +1,7 @@
 """Subgraph for retrieving elements located on the arena wall."""
 
+from __future__ import annotations
+
 from boombot_strategy.tasks.actuator_task import (
     PickUp,
     PrepareToPickUp,

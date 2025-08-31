@@ -1,15 +1,19 @@
 """ACS detection profile using angular restriction to trigger avoidance."""
 
-from math import atan2
-from typing import override
+from __future__ import annotations
 
-from arena import AllyZone, EnemyZone
+from math import atan2
+from typing import TYPE_CHECKING, override
+
 from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile_params import (  # noqa: E501
     AngularRestrictProjectionAcsDetectionProfileParams,
 )
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
     BaseAcsDetectionProfile,
 )
+
+if TYPE_CHECKING:
+    from arena import AllyZone, EnemyZone
 
 
 class AngularRestrictProjectionAcsDetectionProfile(

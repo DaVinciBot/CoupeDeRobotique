@@ -1,9 +1,9 @@
 """Transition condition checking if a zone is accessible for the team."""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, override
 
-from strategy.core.base_game_context import BaseGameContext
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.tasks import BaseNavigationTask
 from strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition import (
     BaseTransitionCondition,
@@ -11,6 +11,8 @@ from strategy.core.transitions.conditional_transition.transitions_condition.base
 
 if TYPE_CHECKING:
     from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+    from strategy.core.base_game_context import BaseGameContext
+    from strategy.core.task_nodes.base_task_node import BaseTaskNode
 
 
 class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):

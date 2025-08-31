@@ -1,16 +1,18 @@
 """Wrapper around the Sick TiM LiDAR used on the robot."""
 
+from __future__ import annotations
+
 import math
 import threading
 import time
 from typing import TYPE_CHECKING, TypeVar
 
 import numpy as np
-from loggerplusplus import Logger
-from numpy.typing import NDArray
 
 if TYPE_CHECKING:
     import pysicktim
+    from loggerplusplus import Logger
+    from numpy.typing import NDArray
 
 TLidar = TypeVar("TLidar", bound="pysicktim")
 
@@ -93,20 +95,23 @@ class Lidar:
 
             if lidar is None:
                 self._logger.critical("[init_lidar] Lidar is not connected !")
-                raise ConnectionError("Lidar is not connected !")
+                msg = "Lidar is not connected !"
+                raise ConnectionError(msg)
             self._logger.info("[init_lidar] Lidar is connected !")
 
             # Test lidar connection by testing scan function
             lidar.scan()
             if lidar.scan.distances is None or lidar.scan.distances == []:
                 self._logger.critical("[init_lidar] Lidar doesn't work correctly")
-                raise ConnectionError("Lidar doesn't work correctly !")
+                msg = "Lidar doesn't work correctly !"
+                raise ConnectionError(msg)
 
             return lidar
 
         except Exception as error:
             self._logger.critical(f"[init_lidar] Error while importing lidar [{error}]")
-            raise ImportError(f"Error while importing lidar [{error}] !") from error
+            msg = f"Error while importing lidar [{error}] !"
+            raise ImportError(msg) from error
 
     def __threading_init_lidar(self) -> None:
         """Initialize the lidar in a thread. It will retry to initialize the lidar until is connected."""

@@ -1,5 +1,7 @@
 """Serial port stub used for testing without hardware."""
 
+from __future__ import annotations
+
 
 class DummySerial:
     """A dummy serial communication class for testing purposes.

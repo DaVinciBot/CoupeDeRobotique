@@ -1,11 +1,16 @@
 """Utilities to plot speed and distance for a given speed profile."""
+
 # ruff: noqa: T201, PT028
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from matplotlib import pyplot as plt
 
-from navigation.trajectory_planner.speed_profile.base_speed_profile import (
-    BaseSpeedProfile,
-)
+if TYPE_CHECKING:
+    from navigation.trajectory_planner.speed_profile.base_speed_profile import (
+        BaseSpeedProfile,
+    )
 
 
 def test_speed_profile(

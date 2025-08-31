@@ -1,5 +1,7 @@
 """A* path planner returning oriented paths."""
 
+from __future__ import annotations
+
 import math
 
 from loggerplusplus import Logger, time_tracker

@@ -1,6 +1,11 @@
 """Base parameters shared by avoidance strategies."""
 
-from navigation.avoidance.structs import AvoidanceStrategy
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from navigation.avoidance.structs import AvoidanceStrategy
 
 
 class BaseAvoidanceParams:

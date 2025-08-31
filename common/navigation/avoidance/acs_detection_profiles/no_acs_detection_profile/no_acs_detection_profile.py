@@ -1,14 +1,18 @@
 """ACS detection profile that never triggers avoidance."""
 
-from typing import override
+from __future__ import annotations
 
-from arena import AllyZone, EnemyZone
+from typing import TYPE_CHECKING, override
+
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
     BaseAcsDetectionProfile,
 )
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile_params import (  # noqa: E501
     NoAcsDetectionProfileParams,
 )
+
+if TYPE_CHECKING:
+    from arena import AllyZone, EnemyZone
 
 
 class NoAcsDetectionProfile(BaseAcsDetectionProfile[NoAcsDetectionProfileParams]):

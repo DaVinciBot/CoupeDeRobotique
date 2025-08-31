@@ -1,9 +1,13 @@
 """Enumerations and records describing arena zones and movement."""
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import Enum, auto
+from typing import TYPE_CHECKING
 
-from geometry import Point
+if TYPE_CHECKING:
+    from geometry import Point
 
 
 # ====== Enums ======

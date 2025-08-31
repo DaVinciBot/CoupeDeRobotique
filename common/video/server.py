@@ -1,5 +1,7 @@
 """Minimal MJPEG streaming server used for debugging video feeds."""
 
+from __future__ import annotations
+
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 

@@ -1,8 +1,14 @@
 """Tasks for resetting or adjusting robot odometry."""
 
-from boombot_strategy.show_game_context import ShowGameContext
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from geometry import OrientedPoint
 from strategy.core.tasks.base_task import BaseTask
+
+if TYPE_CHECKING:
+    from boombot_strategy.show_game_context import ShowGameContext
 
 
 class SetOdometrie(BaseTask):

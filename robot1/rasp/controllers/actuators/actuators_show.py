@@ -1,12 +1,16 @@
 """Hardware actuator implementation used during demonstrations."""
 
+from __future__ import annotations
+
 import time
 from dataclasses import dataclass
-
-from loggerplusplus import Logger
+from typing import TYPE_CHECKING
 
 from a_config_loader import CONFIG
 from controllers.actuators import Actuators
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 @dataclass
@@ -188,7 +192,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         # 9 : Folded = Catch plank
 
         stepper_config = CONFIG.ACTUATOR_ELEVATOR_CONFIG
-        print(stepper_config)
+        self.logger.info(stepper_config)
         self.stepper = Stepper(
             stepper_config["top_steps"],
             stepper_config["folded_steps"],

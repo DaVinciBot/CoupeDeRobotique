@@ -1,5 +1,7 @@
 """GPIO wrapper built upon gpiozero."""
 
+from __future__ import annotations
+
 from gpiozero import LED, Button
 from gpiozero.pins.lgpio import LGPIOFactory
 

@@ -1,5 +1,7 @@
 """Module for managing the asservissement of the rolling basis of the robot."""
 
+from __future__ import annotations
+
 import struct
 import time
 from typing import Any, overload, override

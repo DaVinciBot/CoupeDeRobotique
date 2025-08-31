@@ -1,5 +1,7 @@
 """Subgraph for handling banner deployment actions."""
 
+from __future__ import annotations
+
 import math
 
 from boombot_strategy.tasks.actuator_task import BlockBanner, DeplacementPosition

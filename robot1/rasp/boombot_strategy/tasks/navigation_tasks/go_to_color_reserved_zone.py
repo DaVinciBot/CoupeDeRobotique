@@ -1,5 +1,7 @@
 """Navigation task to reach a color-reserved zone."""
 
+from __future__ import annotations
+
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from navigation import (

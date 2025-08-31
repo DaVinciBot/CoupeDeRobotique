@@ -13,6 +13,8 @@ Key Features:
 - Includes explicit ``str`` conversions to reduce IDE warnings and improve code clarity.
 """
 
+from __future__ import annotations
+
 from typing import Any, ClassVar, cast, override
 
 from shapely import Point
@@ -57,7 +59,7 @@ class OrientedPoint(Point):
         x_or_coords: float | tuple[float, float],
         y: float | None = None,
         *_args: float,
-    ) -> "OrientedPoint":
+    ) -> OrientedPoint:
         """Create a new oriented point instance.
 
         Args:
@@ -158,7 +160,7 @@ class OrientedPoint(Point):
             return False
         return self.x == other.x and self.y == other.y and self.theta == other.theta
 
-    def __add__(self, other: object) -> "OrientedPoint":
+    def __add__(self, other: object) -> OrientedPoint:
         """Add two points or a point and a vector.
 
         Args:
@@ -178,7 +180,7 @@ class OrientedPoint(Point):
         return NotImplemented
 
     @override
-    def __sub__(self, other: object) -> "OrientedPoint":  # type: ignore[override]
+    def __sub__(self, other: object) -> OrientedPoint:  # type: ignore[override]
         """Subtract coordinates or another oriented point.
 
         Args:
@@ -209,7 +211,7 @@ class OrientedPoint(Point):
         return hash((self.x, self.y, self.theta))
 
     @classmethod
-    def from_point(cls, point: Point, theta: float = 0.0) -> "OrientedPoint":
+    def from_point(cls, point: Point, theta: float = 0.0) -> OrientedPoint:
         """Create an :class:`OrientedPoint` from a :class:`Point`.
 
         Args:
@@ -245,7 +247,7 @@ class OrientedPoint(Point):
     def __reduce__(
         self,
     ) -> tuple[
-        type["OrientedPoint"],
+        type[OrientedPoint],
         tuple[tuple[float, float], float],
         dict[str, float],
     ]:

@@ -1,16 +1,20 @@
 """No Projection ACS Detection Profile Module."""
 
-from typing import override
+from __future__ import annotations
 
-from loggerplusplus import Logger
+from typing import TYPE_CHECKING, override
 
-from arena import AllyZone, EnemyZone
 from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
     BaseAcsDetectionProfile,
 )
 from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile_params import (  # noqa: E501
     NoProjectionAcsDetectionProfileParams,
 )
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
+    from arena import AllyZone, EnemyZone
 
 
 class NoProjectionAcsDetectionProfile(

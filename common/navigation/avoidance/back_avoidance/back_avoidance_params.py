@@ -1,8 +1,14 @@
 """Parameters for the backward avoidance strategy."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from navigation.avoidance.base_avoidance import BaseAvoidanceParams
 from navigation.avoidance.structs import AvoidanceStrategy
-from navigation.trajectory_planner import SpeedProfiler
+
+if TYPE_CHECKING:
+    from navigation.trajectory_planner import SpeedProfiler
 
 
 class BackAvoidanceParams(BaseAvoidanceParams):

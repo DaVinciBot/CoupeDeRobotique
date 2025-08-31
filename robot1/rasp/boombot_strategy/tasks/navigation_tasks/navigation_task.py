@@ -1,8 +1,14 @@
 """Wrapper around generic navigation task for strategy use."""
 
-from boombot_strategy.show_game_context import ShowGameContext
-from navigation import TrajectoryPlanCommand
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from strategy.core import BaseNavigationTask
+
+if TYPE_CHECKING:
+    from boombot_strategy.show_game_context import ShowGameContext
+    from navigation import TrajectoryPlanCommand
 
 
 class NavigationTask(BaseNavigationTask):

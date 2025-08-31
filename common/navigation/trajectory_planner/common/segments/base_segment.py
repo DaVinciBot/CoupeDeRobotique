@@ -1,6 +1,11 @@
 """Base segment primitive for trajectory planning."""
 
-from geometry import OrientedPoint
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from geometry import OrientedPoint
 
 
 class BaseSegment:

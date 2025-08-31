@@ -1,5 +1,7 @@
 """Rolling basis controller interfacing with the Teensy board."""
 
+from __future__ import annotations
+
 import struct
 import time
 from typing import overload, override

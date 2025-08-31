@@ -1,5 +1,7 @@
 """Legacy grid manager used for experimental pathfinding."""
 
+from __future__ import annotations
+
 import copy
 
 import matplotlib.pyplot as plt

@@ -1,7 +1,12 @@
 """Base parameters for trajectory planners."""
 
-from navigation.path_planner import Direction
-from navigation.trajectory_planner.structs import TrajectoryPlannerStrategy
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from navigation.path_planner import Direction
+    from navigation.trajectory_planner.structs import TrajectoryPlannerStrategy
 
 
 class BaseTrajectoryPlannerParams:

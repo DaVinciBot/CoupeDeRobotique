@@ -5,14 +5,18 @@ track its current location within the arena.
 
 """
 
-from typing import override
+from __future__ import annotations
 
-from loggerplusplus import Logger
+from typing import TYPE_CHECKING, override
 
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
-from arena.base_arena.team_color import TeamColor
 from geometry import OrientedPoint, Point, create_straight_rectangle
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
+    from arena.base_arena.team_color import TeamColor
 
 
 class AllyZone(BaseArenaZone):

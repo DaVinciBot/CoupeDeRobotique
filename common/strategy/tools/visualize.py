@@ -1,13 +1,19 @@
 """Visualize task graphs using Graphviz or NetworkX."""
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
 import networkx as nx
 from graphviz import Digraph
 
-from strategy.core.sub_graphs import BaseSubGraph
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
-from strategy.core.tasks.base_task import BaseTask
 from strategy.core.tasks.status import TaskStatus
+
+if TYPE_CHECKING:
+    from strategy.core.sub_graphs import BaseSubGraph
+    from strategy.core.task_nodes.base_task_node import BaseTaskNode
+    from strategy.core.tasks.base_task import BaseTask
 
 
 def visualize_task_graph(
@@ -72,7 +78,6 @@ def visualize_task_graph(
     dfs(start_node)
 
     out_path = dot.render(filename, cleanup=True)
-    print(f"Graph rendered to {out_path}")
     if view:
         import webbrowser
 
@@ -141,7 +146,6 @@ def visualize_entire_subgraph(
         add_node(node)
 
     out_path = dot.render(filename, cleanup=True)
-    print(f"Graph rendered to {out_path}")
     if view:
         import webbrowser
 

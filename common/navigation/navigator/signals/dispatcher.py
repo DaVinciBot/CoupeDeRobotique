@@ -1,12 +1,16 @@
 """Dispatcher managing navigator signals using the Events library."""
 
-from collections.abc import Callable
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any
 
 from events import Events
 from loggerplusplus import Logger
 
 from navigation.navigator.signals.signals_enum import NavigatorSignalsEnum
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class NavigatorSignalsDispatcher:  # UNUSED

@@ -1,5 +1,7 @@
 """Dummy rolling basis control for tests without hardware."""
 
+from __future__ import annotations
+
 from typing import overload, override
 
 from loggerplusplus import Logger, log

@@ -1,5 +1,7 @@
 """Navigation task directing the robot to a stuff zone for pickup."""
 
+from __future__ import annotations
+
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from navigation import (

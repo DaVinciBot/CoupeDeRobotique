@@ -3,15 +3,13 @@
 This module selects a concrete profile implementation based on parameters.
 """
 
-from typing import Any, cast
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, cast
 
 from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile import (  # noqa: E501
     AngularRestrictProjectionAcsDetectionProfile,
     AngularRestrictProjectionAcsDetectionProfileParams,
-)
-from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
-    BaseAcsDetectionProfile,
-    BaseAcsDetectionProfileParams,
 )
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfile,
@@ -26,6 +24,12 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
     RectangularProjectionAcsDetectionProfileParams,
 )
 from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
+
+if TYPE_CHECKING:
+    from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
+        BaseAcsDetectionProfile,
+        BaseAcsDetectionProfileParams,
+    )
 
 
 class AcsDetectionProfileFactory:
