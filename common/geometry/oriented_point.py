@@ -15,7 +15,7 @@ Key Features:
 
 from __future__ import annotations
 
-from typing import Any, ClassVar, cast, override
+from typing import Any, ClassVar, Self, cast, override
 
 from shapely import Point
 
@@ -59,7 +59,7 @@ class OrientedPoint(Point):
         x_or_coords: float | tuple[float, float],
         y: float | None = None,
         *_args: float,
-    ) -> OrientedPoint:
+    ) -> Self:
         """Create a new oriented point instance.
 
         Args:
@@ -69,7 +69,7 @@ class OrientedPoint(Point):
             *_args (float): Additional arguments for future use.
 
         Returns:
-            OrientedPoint: Newly created oriented point.
+            Self: Newly created oriented point.
 
         Raises:
             ValueError: If coordinates are not provided correctly.

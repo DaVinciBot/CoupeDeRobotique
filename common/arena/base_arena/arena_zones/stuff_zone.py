@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, override
 
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
-from geometry import OrientedPoint, Point, Polygon
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -15,6 +14,7 @@ if TYPE_CHECKING:
 
     from arena.base_arena.grid_manager import GridManager
     from arena.base_arena.team_color import TeamColor
+    from geometry import OrientedPoint, Point, Polygon
 
 
 class StuffZone(BaseArenaZone):
@@ -90,47 +90,41 @@ class StuffZone(BaseArenaZone):
         self,
         ally_position: OrientedPoint,
         team_color: TeamColor,
-    ) -> OrientedPoint | None:
-        """Determines the best go-to position for an ally in the given zone.
+    ) -> OrientedPoint | Point | None:
+        """Determine the best go-to position for an ally in the given zone.
 
         Args:
-            ally_position (OrientedPoint): The position of the ally.
-            team_color (TeamColor): The team color to check accessibility.
+            ally_position (OrientedPoint): Position of the ally.
+            team_color (TeamColor): Color of the team.
 
         Returns:
-            OrientedPoint | None:
-                The best go-to position, or None if the zone is not accessible.
+            OrientedPoint | Point | None:
+                Best go-to position, or ``None`` if inaccessible.
 
         """
-        if not self.is_accessible(team_color):
+        if self.accessibility == ZoneAccessibility.FORBIDDEN:
             self.logger.debug(
                 f"GoTo position request: Zone {self.zone_type} is not accessible.",
             )
             return None
 
-        # If no go-to positions are defined, return the centroid of the zone
-        if self.go_to_positions is None:
-            msg = (
-                f"GoTo position request: No go-to positions defined for zone "
-                f"{self.zone_type}, returning centroid [{self.polygon.centroid}]"
+        # If no specific go-to positions are defined, return the centroid of the zone
+        if not self.go_to_positions:
+            self.logger.debug(
+                "GoTo position request: "
+                f"No defined go-to positions for zone {self.zone_type}, "
+                f"returning centroid [{self.polygon.centroid}]",
             )
-            self.logger.debug(msg)
-            return OrientedPoint.from_point(self.polygon.centroid)
+            return self.polygon.centroid
 
-        # Find the nearest go-to position to the ally if positions are available
-        if self.go_to_positions:
-            nearest_position = min(
-                self.go_to_positions,
-                key=ally_position.distance,
-            )
-            msg = (
-                f"GoTo position request: Nearest go-to position to ally "
-                f"[{ally_position}] is [{nearest_position}]"
-            )
-            self.logger.debug(msg)
-            return OrientedPoint.from_point(nearest_position)
-
-        self.logger.debug(
-            "GoTo position request: Unknown case encountered, returning None.",
+        nearest_position = min(
+            self.go_to_positions,
+            key=ally_position.distance,
         )
-        return None
+        msg = (
+            "GoTo position request: Nearest go-to position to ally "
+            f"[{ally_position}] is [{nearest_position}]"
+        )
+        self.logger.debug(msg)
+
+        return nearest_position

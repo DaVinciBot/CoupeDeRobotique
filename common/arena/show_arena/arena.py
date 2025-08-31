@@ -72,7 +72,9 @@ class ShowArena(BaseArena):
             identifier="ForbiddenZone",
             follow_logger_manager_rules=True,
         )
-        stuff_zones_points = [
+        stuff_zones_points: list[
+            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
+        ] = [
             (
                 (2.5, 20),
                 (12.5, 60),
@@ -189,7 +191,9 @@ class ShowArena(BaseArena):
             ),
         ]
 
-        yellow_reserved_zones_points = [
+        yellow_reserved_zones_points: list[
+            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
+        ] = [
             (
                 (0, 0),
                 (45, 15),
@@ -248,7 +252,9 @@ class ShowArena(BaseArena):
             ),
         ]
 
-        blue_reserved_zones_points = [
+        blue_reserved_zones_points: list[
+            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
+        ] = [
             (
                 (255, 0),
                 (300, 15),
@@ -305,7 +311,9 @@ class ShowArena(BaseArena):
             ),
         ]
 
-        forbidden_zones_points = []
+        forbidden_zones_points: list[
+            tuple[tuple[float, float], tuple[float, float]]
+        ] = []
 
         zones: list[BaseArenaZone] = []
 

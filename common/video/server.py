@@ -6,6 +6,9 @@ import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import cv2
+from loggerplusplus import Logger
+
+logger = Logger(identifier="MJPEGHandler", follow_logger_manager_rules=True)
 
 
 class MJPEGHandler(BaseHTTPRequestHandler):
@@ -41,7 +44,7 @@ class MJPEGHandler(BaseHTTPRequestHandler):
             while True:
                 try:
                     if self.current_img is None:
-                        print("No image to send")
+                        logger.warning("No image to send.")
                         continue
                     dat = cv2.imencode(".jpg", self.current_img)[1].tobytes()
                     self.wfile.write(b"--jpgboundary")
@@ -53,7 +56,7 @@ class MJPEGHandler(BaseHTTPRequestHandler):
                 except KeyboardInterrupt:
                     break
                 except Exception as e:  # noqa: BLE001
-                    print(e)
+                    logger.error(f"Error occurred while streaming: {e}")
                     break
             return
         if self.path.endswith(".html"):
@@ -66,7 +69,7 @@ class MJPEGHandler(BaseHTTPRequestHandler):
 
 def start_video_server() -> None:
     """Start the MJPEG HTTP server in the foreground."""
-    print("Starting video server")
+    logger.info("Starting video server on port 8001")
     MJPEGHandler.current_img = None
     httpd = HTTPServer(("0.0.0.0", 8001), MJPEGHandler)
 
@@ -75,7 +78,7 @@ def start_video_server() -> None:
         httpd.serve_forever()
     except KeyboardInterrupt:
         httpd.server_close()
-        print("Server stopped")
+        logger.info("Video server stopped.")
 
 
 def spawn_video_server() -> None:
@@ -86,7 +89,7 @@ def spawn_video_server() -> None:
     try:
         t.start()
     except Exception as e:  # noqa: BLE001
-        print(e)
+        logger.error(f"Error occurred while spawning video server: {e}")
         t.join(timeout=1)
 
 

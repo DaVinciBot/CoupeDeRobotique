@@ -133,18 +133,20 @@ class BaseArenaZone(ABC):
 
     # ====== Accessibility methods ======
 
-    def is_accessible(self, team_color: TeamColor = TeamColor.UNDEFINED) -> bool:
+    def is_accessible(
+        self,
+        team_color: TeamColor = TeamColor.UNDEFINED,  # noqa:ARG002
+    ) -> bool:
         """Determine if the zone is accessible for a given team color.
 
         Args:
-            team_color (TeamColor, optional): Color of the team.
-                Defaults to TeamColor.UNDEFINED.
+            team_color (TeamColor, optional):
+                Color of the team. Defaults to TeamColor.UNDEFINED.
 
         Returns:
             bool: ``True`` if accessible, ``False`` otherwise.
 
         """
-        del team_color
         return self.accessibility not in {
             ZoneAccessibility.FORBIDDEN,
             ZoneAccessibility.RESTRICTED,
@@ -152,7 +154,7 @@ class BaseArenaZone(ABC):
 
     def is_accessible_for_emergency(
         self,
-        team_color: TeamColor = TeamColor.UNDEFINED,
+        team_color: TeamColor = TeamColor.UNDEFINED,  # noqa: ARG002
     ) -> bool:
         """Determine if the zone is accessible in an emergency.
 
@@ -164,22 +166,22 @@ class BaseArenaZone(ABC):
             bool: ``True`` if accessible in emergencies, ``False`` otherwise.
 
         """
-        del team_color
         return self.accessibility != ZoneAccessibility.FORBIDDEN
 
     def get_go_to_position(
         self,
         ally_position: OrientedPoint,
         team_color: TeamColor,
-    ) -> OrientedPoint | None:
-        """Determine the best go-to position for an ally in the zone.
+    ) -> OrientedPoint | Point | None:
+        """Determine the best go-to position for an ally in the given zone.
 
         Args:
             ally_position (OrientedPoint): Position of the ally.
             team_color (TeamColor): Color of the team.
 
         Returns:
-            OrientedPoint | None: Best go-to position, or ``None`` if inaccessible.
+            OrientedPoint | Point | None:
+                Best go-to position, or ``None`` if inaccessible.
 
         """
         if not self.is_accessible(team_color):
@@ -197,31 +199,30 @@ class BaseArenaZone(ABC):
             )
             return self.polygon.centroid
 
-        # Find the nearest go-to position to the ally
         nearest_position = min(
             self.go_to_positions,
             key=ally_position.distance,
         )
-        self.logger.debug(
-            (
-                "GoTo position request: Nearest go-to position to ally "
-                f"[{ally_position}] is [{nearest_position}]"
-            ),
+        msg = (
+            "GoTo position request: Nearest go-to position to ally "
+            f"[{ally_position}] is [{nearest_position}]"
         )
+        self.logger.debug(msg)
+
         return nearest_position
 
     # ====== Update methods ======
 
     def update(
         self,
-        _team_color: TeamColor,
+        team_color: TeamColor,  # noqa:ARG002
         ally_position: Point | OrientedPoint,
         enemy_position: Point | OrientedPoint,
     ) -> None:
         """Update the zone based on the positions of allies and enemies.
 
         Args:
-            _team_color (TeamColor): Color of the team.
+            team_color (TeamColor): Color of the team.
             ally_position (Point | OrientedPoint): Position of the ally.
             enemy_position (Point | OrientedPoint): Position of the enemy.
 
