@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from navigation.path_planner import Direction
-from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params import (
+from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params import (  # noqa: E501
     BaseTrajectoryPlannerParams,
 )
 from navigation.trajectory_planner.structs import TrajectoryPlannerStrategy

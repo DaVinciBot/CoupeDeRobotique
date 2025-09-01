@@ -1,3 +1,4 @@
+# type: ignore[reportImportCycles]
 """Core classes for building avoidance strategies."""
 
 from navigation.avoidance.base_avoidance.base_avoidance import BaseAvoidance

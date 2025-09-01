@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1756683004817",
+    "time": "1756758706393",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\arena_old.py",
@@ -531,22 +531,6 @@
             "rule": "reportMissingTypeArgument"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\color_reserved_zones\\blue_reserved_zone.py",
-            "severity": "error",
-            "message": "Argument of type \"list[OrientedPoint] | None\" cannot be assigned to parameter \"go_to_positions\" of type \"list[OrientedPoint | Point] | None\" in function \"__init__\"\n  Type \"list[OrientedPoint] | None\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n    Type \"list[OrientedPoint]\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n      \"list[OrientedPoint]\" is not assignable to \"list[OrientedPoint | Point]\"\n        Type parameter \"_T@list\" is invariant, but \"OrientedPoint\" is not the same as \"OrientedPoint | Point\"\n        Consider switching from \"list\" to \"Sequence\" which is covariant\n      \"list[OrientedPoint]\" is not assignable to \"None\"",
-            "range": {
-                "start": {
-                    "line": 62,
-                    "character": 28
-                },
-                "end": {
-                    "line": 62,
-                    "character": 43
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\color_reserved_zones\\yellow_reserved_zone.py",
             "severity": "information",
             "message": "Expected type arguments for generic class \"Callable\"",
@@ -561,22 +545,6 @@
                 }
             },
             "rule": "reportMissingTypeArgument"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\color_reserved_zones\\yellow_reserved_zone.py",
-            "severity": "error",
-            "message": "Argument of type \"list[OrientedPoint] | None\" cannot be assigned to parameter \"go_to_positions\" of type \"list[OrientedPoint | Point] | None\" in function \"__init__\"\n  Type \"list[OrientedPoint] | None\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n    Type \"list[OrientedPoint]\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n      \"list[OrientedPoint]\" is not assignable to \"list[OrientedPoint | Point]\"\n        Type parameter \"_T@list\" is invariant, but \"OrientedPoint\" is not the same as \"OrientedPoint | Point\"\n        Consider switching from \"list\" to \"Sequence\" which is covariant\n      \"list[OrientedPoint]\" is not assignable to \"None\"",
-            "range": {
-                "start": {
-                    "line": 62,
-                    "character": 28
-                },
-                "end": {
-                    "line": 62,
-                    "character": 43
-                }
-            },
-            "rule": "reportArgumentType"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\forbidden_zone.py",
@@ -593,12 +561,6 @@
                 }
             },
             "rule": "reportMissingTypeArgument"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\speed_vector_auto_calculate_zones\\__init__.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\speed_vector_auto_calculate_zones\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\speed_vector_auto_calculate_zones\\enemy_zone.py",
-            "rule": "reportImportCycles"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\speed_vector_auto_calculate_zones\\base_speed_vector_auto_calculate_zone.py",
@@ -743,22 +705,6 @@
                 }
             },
             "rule": "reportMissingTypeArgument"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\stuff_zone.py",
-            "severity": "error",
-            "message": "Argument of type \"list[OrientedPoint] | None\" cannot be assigned to parameter \"go_to_positions\" of type \"list[OrientedPoint | Point] | None\" in function \"__init__\"\n  Type \"list[OrientedPoint] | None\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n    Type \"list[OrientedPoint]\" is not assignable to type \"list[OrientedPoint | Point] | None\"\n      \"list[OrientedPoint]\" is not assignable to \"list[OrientedPoint | Point]\"\n        Type parameter \"_T@list\" is invariant, but \"OrientedPoint\" is not the same as \"OrientedPoint | Point\"\n        Consider switching from \"list\" to \"Sequence\" which is covariant\n      \"list[OrientedPoint]\" is not assignable to \"None\"",
-            "range": {
-                "start": {
-                    "line": 56,
-                    "character": 28
-                },
-                "end": {
-                    "line": 56,
-                    "character": 43
-                }
-            },
-            "rule": "reportArgumentType"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\stuff_zone.py",
@@ -1438,11 +1384,11 @@
             "message": "Type analysis indicates code is unreachable",
             "range": {
                 "start": {
-                    "line": 426,
+                    "line": 430,
                     "character": 12
                 },
                 "end": {
-                    "line": 426,
+                    "line": 430,
                     "character": 17
                 }
             },
@@ -1657,50 +1603,20 @@
             "rule": "reportAttributeAccessIssue"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance_params.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
-            "rule": "reportImportCycles"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance_params.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
-            "rule": "reportImportCycles"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
-            "rule": "reportImportCycles"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\back_avoidance\\back_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\no_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\no_avoidance\\no_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
-            "rule": "reportImportCycles"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\avoidance_factory.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py",
             "severity": "information",
-            "message": "Expected type arguments for generic class \"BaseAvoidance\"",
+            "message": "Unnecessary \"# type: ignore\" comment",
             "range": {
                 "start": {
-                    "line": 42,
-                    "character": 9
+                    "line": 0,
+                    "character": 2
                 },
                 "end": {
-                    "line": 42,
-                    "character": 22
+                    "line": 0,
+                    "character": 34
                 }
             },
-            "rule": "reportMissingTypeArgument"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\avoidance\\base_avoidance\\base_avoidance.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\navigator\\task\\navigator_task.py",
-            "rule": "reportImportCycles"
+            "rule": "reportUnnecessaryTypeIgnoreComment"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\debug_functions\\__init__.py",
@@ -1941,12 +1857,6 @@
                 }
             },
             "rule": "reportMissingTypeArgument"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\__init__.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\path_planner_path_plan_params_factory.py",
-            "rule": "reportImportCycles"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
@@ -2210,11 +2120,11 @@
             "message": "Type analysis indicates code is unreachable",
             "range": {
                 "start": {
-                    "line": 61,
+                    "line": 67,
                     "character": 8
                 },
                 "end": {
-                    "line": 61,
+                    "line": 67,
                     "character": 11
                 }
             },
@@ -5941,18 +5851,6 @@
             "rule": "reportGeneralTypeIssues"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\__init__.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\actuators_dummy.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\actuators_show.py",
-            "rule": "reportImportCycles"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\__init__.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\actuators_show.py",
-            "rule": "reportImportCycles"
-        },
-        {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\actuators_dummy.py",
             "severity": "information",
             "message": "Type of \"log\" is partially unknown\n  Type of \"log\" is \"(param_logger: Logger | str | ((...) -> Unknown) = None, log_level: LogLevels = LogLevels.DEBUG) -> ((func: ((...) -> Unknown)) -> _Wrapped[..., Unknown, ..., Unknown])\"",
@@ -7523,10 +7421,10 @@
     ],
     "summary": {
         "filesAnalyzed": 219,
-        "errorCount": 85,
-        "warningCount": 91,
+        "errorCount": 82,
+        "warningCount": 82,
         "informationCount": 302,
-        "timeInSec": 21.519
+        "timeInSec": 15.197
     }
 }
 

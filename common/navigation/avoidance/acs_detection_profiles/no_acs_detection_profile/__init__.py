@@ -3,6 +3,8 @@
 Exports a profile that never triggers avoidance along with its parameters.
 """
 
+# ruff: noqa: E501
+
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile import (
     NoAcsDetectionProfile,
 )

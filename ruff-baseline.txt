@@ -1,30 +1,8 @@
 common\arena\base_arena\arena_zones\base_arena_zone.py:
   23:7 B024 `BaseArenaZone` is an abstract base class, but it has no abstract methods or properties
 
-common\arena\base_arena\arena_zones\speed_vector_auto_calculate_zones\__init__.py:
-  3:89 E501 Line too long (114 > 88)
-
 common\geometry\oriented_point.py:
   257:89 E501 Line too long (94 > 88)
-
-common\navigation\avoidance\acs_detection_profiles\__init__.py:
-  10:89 E501 Line too long (107 > 88)
-  22:89 E501 Line too long (93 > 88)
-  26:89 E501 Line too long (102 > 88)
-
-common\navigation\avoidance\acs_detection_profiles\acs_detection_profile_factory.py:
-  29:89 E501 Line too long (89 > 88)
-
-common\navigation\avoidance\acs_detection_profiles\base_acs_detection_profiles\__init__.py:
-  3:89 E501 Line too long (113 > 88)
-  6:89 E501 Line too long (120 > 88)
-
-common\navigation\avoidance\acs_detection_profiles\no_acs_detection_profile\__init__.py:
-  6:89 E501 Line too long (107 > 88)
-  9:89 E501 Line too long (114 > 88)
-
-common\navigation\avoidance\stop_and_wait_avoidance\stop_and_wait_avoidance.py:
-  8:89 E501 Line too long (89 > 88)
 
 common\navigation\debug_functions\navigator.py:
   22:5  PLR0915 Too many statements (82 > 50)
@@ -32,27 +10,14 @@ common\navigation\debug_functions\navigator.py:
   27:89 E501 Line too long (133 > 88)
 
 common\navigation\debug_functions\trajectory_planer.py:
-  14:89 E501 Line too long (95 > 88)
-  19:5  PLR0915 Too many statements (69 > 50)
-  19:5  PLR0914 Too many local variables (16/15)
+  19:5 PLR0915 Too many statements (69 > 50)
+  19:5 PLR0914 Too many local variables (16/15)
 
 common\navigation\navigator\task\navigator_task.py:
   38:9 PLC0415 `import` should be at the top-level of a file
 
-common\navigation\trajectory_planner\base_trajectory_planner\__init__.py:
-  3:89 E501 Line too long (91 > 88)
-  6:89 E501 Line too long (98 > 88)
-
-common\navigation\trajectory_planner\sequential_trajectory_planner\__init__.py:
-  3:89 E501 Line too long (103 > 88)
-  6:89 E501 Line too long (110 > 88)
-
-common\navigation\trajectory_planner\sequential_trajectory_planner\sequential_trajectory_planner_params.py:
-  6:89 E501 Line too long (98 > 88)
-
 common\navigation\trajectory_planner\speed_profile\__init__.py:
-  14:1  ERA001 Found commented-out code
-  14:89 E501 Line too long (112 > 88)
+  16:1 ERA001 Found commented-out code
 
 common\strategy\core\task_nodes\base_task_node.py:
   119:9  C901 `execute` is too complex (11 > 10)
@@ -62,12 +27,10 @@ common\strategy\core\transitions\conditional_transition\transitions_condition\ba
   16:89 E501 Line too long (91 > 88)
 
 common\strategy\core\transitions\conditional_transition\transitions_condition\from_function_transition_condition.py:
-   7:89 E501 Line too long (110 > 88)
   21:89 E501 Line too long (94 > 88)
   22:89 E501 Line too long (92 > 88)
 
 common\strategy\core\transitions\conditional_transition\transitions_condition\zone_accessibility_transition_condition.py:
-   8:89 E501 Line too long (110 > 88)
   19:89 E501 Line too long (92 > 88)
   21:89 E501 Line too long (89 > 88)
   22:89 E501 Line too long (89 > 88)
@@ -98,9 +61,6 @@ common\usb_com\python\com\com.py:
 common\usb_com\python\com\exceptions.py:
   6:7 N818 Exception name `ComException` should be named with an Error suffix
 
-common\usb_com\python\messages.py:
-  7:89 E501 Line too long (112 > 88)
-
 common\utils\utils.py:
   21:16 DTZ005 `datetime.datetime.now()` called without a `tz` argument
   28:89 E501 Line too long (92 > 88)
@@ -109,8 +69,8 @@ common\utils\utils.py:
   86:13 E722 Do not use bare `except`
 
 common\video\server.py:
-  68:25 S104 Possible binding to all interfaces
-  79:5  PLC0415 `import` should be at the top-level of a file
+  74:25 S104 Possible binding to all interfaces
+  86:5  PLC0415 `import` should be at the top-level of a file
 
 docs\source\conf.py:
    1:1 INP001 File `docs\source\conf.py` is part of an implicit namespace package. Add an `__init__.py`.
@@ -169,11 +129,7 @@ robot1\rasp\boombot_strategy\sub_graphs\wall_pickup.py:
 robot1\rasp\boombot_strategy\tasks\actuator_task.py:
   16:89 E501 Line too long (101 > 88)
 
-robot1\rasp\boombot_strategy\tasks\navigation_tasks\go_to_color_reserved_zone.py:
-  12:89 E501 Line too long (102 > 88)
-
 robot1\rasp\boombot_strategy\tasks\navigation_tasks\go_to_stuff_zone.py:
-  12:89 E501 Line too long (102 > 88)
   18:89 E501 Line too long (92 > 88)
   20:89 E501 Line too long (104 > 88)
   21:89 E501 Line too long (105 > 88)
@@ -297,4 +253,4 @@ robot1\rasp\tests\config_loader.py:
   383:89 E501 Line too long (132 > 88)
   386:89 E501 Line too long (130 > 88)
 
-Found 189 errors.
+Found 167 errors.

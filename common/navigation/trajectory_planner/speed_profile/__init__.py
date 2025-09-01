@@ -1,5 +1,7 @@
 """Speed profile utilities."""
 
+# ruff: noqa: E501
+
 from navigation.trajectory_planner.speed_profile.base_speed_profile import (
     BaseSpeedProfile,
 )

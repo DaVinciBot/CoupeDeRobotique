@@ -164,10 +164,10 @@
 ************* Module common.utils.utils
 86:12: W0702: No exception type(s) specified (bare-except)
 ************* Module common.video.server
-32:4: C0103: Method name "do_GET" doesn't conform to snake_case naming style (invalid-name)
-54:23: W0718: Catching too general exception Exception (broad-exception-caught)
-45:26: E1101: Module 'cv2' has no 'imencode' member (no-member)
-84:11: W0718: Catching too general exception Exception (broad-exception-caught)
+35:4: C0103: Method name "do_GET" doesn't conform to snake_case naming style (invalid-name)
+58:23: W0718: Catching too general exception Exception (broad-exception-caught)
+49:26: E1101: Module 'cv2' has no 'imencode' member (no-member)
+91:11: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module docs.source.conf
 19:0: W0622: Redefining built-in 'copyright' (redefined-builtin)
 18:0: C0103: Constant name "project" doesn't conform to UPPER_CASE naming style (invalid-name)
@@ -265,5 +265,5 @@
 48:8: W0238: Unused private member `LidarDummy.__angle_unit` (unused-private-member)
 
 ------------------------------------------------------------------
-Your code has been rated at 9.58/10 (previous run: 9.58/10, -0.00)
+Your code has been rated at 9.58/10 (previous run: 9.58/10, +0.00)
 

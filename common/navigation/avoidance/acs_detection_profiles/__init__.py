@@ -4,6 +4,8 @@ The subpackage groups concrete detection profiles and factories used to
 determine when an anti-collision system should trigger.
 """
 
+# ruff: noqa: E501
+
 from navigation.avoidance.acs_detection_profiles.acs_detection_profile_factory import (
     AcsDetectionProfileFactory,
 )

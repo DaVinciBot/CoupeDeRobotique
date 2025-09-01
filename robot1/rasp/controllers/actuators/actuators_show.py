@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from a_config_loader import CONFIG
-from controllers.actuators import Actuators
+from controllers.actuators.base.actuators import Actuators
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger

@@ -4,16 +4,22 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from navigation.path_planner import (
+from navigation.path_planner.astar_path_planner import (
     AStarPathPlannerPlanPathParams,
-    BasePathPlannerPlanPathParams,
-    BasicPathPlannerPlanPathParams,
-    DeltaPathPlannerPlanPathParams,
-    PathPlanningStrategy,
 )
+from navigation.path_planner.basic_path_planner import (
+    BasicPathPlannerPlanPathParams,
+)
+from navigation.path_planner.delta_path_planner import (
+    DeltaPathPlannerPlanPathParams,
+)
+from navigation.path_planner.structs import PathPlanningStrategy
 
 if TYPE_CHECKING:
     from geometry import OrientedPoint
+    from navigation.path_planner.base_path_planner import (
+        BasePathPlannerPlanPathParams,
+    )
 
 
 class PathPlannerPathPlanParamsFactory:

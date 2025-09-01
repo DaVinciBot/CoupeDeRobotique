@@ -3,10 +3,12 @@
 Provides the profile class and its parameter definition.
 """
 
-from .angular_restrict_projection_acs_detection_profile import (
+# ruff: noqa: E501
+
+from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile import (
     AngularRestrictProjectionAcsDetectionProfile,
 )
-from .angular_restrict_projection_acs_detection_profile_params import (
+from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile_params import (
     AngularRestrictProjectionAcsDetectionProfileParams,
 )
 

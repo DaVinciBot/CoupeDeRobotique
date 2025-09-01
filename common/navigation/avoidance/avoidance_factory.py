@@ -1,3 +1,4 @@
+# type: ignore[reportImportCycles]
 """Factory for creating obstacle avoidance components based on strategy.
 
 The factory inspects the provided parameters and returns the appropriate

@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, cast
 
 from navigation.avoidance.base_avoidance import AvoidanceState, BaseAvoidance
-from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params import (
+from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params import (  # noqa: E501
     StopAndWaitAvoidanceParams,
 )
 from navigation.trajectory_planner import TrajectoryPlanCommand

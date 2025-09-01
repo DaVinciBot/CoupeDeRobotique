@@ -1,5 +1,7 @@
 """Base trajectory planner interfaces."""
 
+# ruff: noqa: E501
+
 from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import (
     BaseTrajectoryPlanner,
 )

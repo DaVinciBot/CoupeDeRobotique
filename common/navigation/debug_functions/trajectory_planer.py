@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 
 if TYPE_CHECKING:
     from geometry import OrientedPoint
-    from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import (
+    from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import (  # noqa: E501
         BaseTrajectoryPlanner,
     )
 

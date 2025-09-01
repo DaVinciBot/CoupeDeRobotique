@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones import (
-    base_speed_vector_auto_calculate_zone as _base_zone,
+from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone import (  # noqa: E501
+    BaseSpeedVectorAutoCalculateZone,
 )
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from geometry import OrientedPoint, Point
 
 
-class EnemyZone(_base_zone.BaseSpeedVectorAutoCalculateZone):
+class EnemyZone(BaseSpeedVectorAutoCalculateZone):
     """Represents an enemy zone in the arena where enemy movements are tracked.
 
     The zone calculates and updates a speed vector based on detected enemy positions.

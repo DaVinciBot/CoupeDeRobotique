@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, override
 
 from strategy.core.tasks import BaseNavigationTask
-from strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition import (
+from strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition import (  # noqa: E501
     BaseTransitionCondition,
 )
 

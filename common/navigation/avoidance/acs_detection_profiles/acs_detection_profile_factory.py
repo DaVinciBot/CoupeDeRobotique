@@ -26,7 +26,7 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
 from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
 
 if TYPE_CHECKING:
-    from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (
+    from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501
         BaseAcsDetectionProfile,
         BaseAcsDetectionProfileParams,
     )

@@ -9,7 +9,7 @@ from navigation import (
     SequentialTrajectoryPlannerParams,
     StopAndWaitAvoidanceParams,
 )
-from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (
+from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
 )
 

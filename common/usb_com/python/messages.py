@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from enum import Enum
 
-# This signature must be exactly the same on both sides (Raspberry Pi and Teensy) to ensure valid communication.
+# This signature must be exactly the same on both sides (Raspberry Pi and Teensy)
+# to ensure valid communication.
 END_BYTES_SIGNATURE: bytes = b"\xba\xdd\x1c\xc5"
 
 
