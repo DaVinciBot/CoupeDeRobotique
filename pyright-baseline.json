@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1756758706393",
+    "time": "1757356206244",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\arena_old.py",
@@ -1220,22 +1220,6 @@
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
-            "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 136,
-                    "character": 5
-                },
-                "end": {
-                    "line": 136,
-                    "character": 43
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
             "severity": "warning",
             "message": "Type of parameter \"self\" is unknown",
             "range": {
@@ -1265,22 +1249,6 @@
                 }
             },
             "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
-            "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 159,
-                    "character": 5
-                },
-                "end": {
-                    "line": 159,
-                    "character": 43
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
@@ -1329,22 +1297,6 @@
                 }
             },
             "rule": "reportUnknownVariableType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
-            "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 185,
-                    "character": 5
-                },
-                "end": {
-                    "line": 185,
-                    "character": 43
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
@@ -5456,11 +5408,11 @@
             "message": "Import \"arena\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 15,
+                    "line": 16,
                     "character": 5
                 },
                 "end": {
-                    "line": 15,
+                    "line": 16,
                     "character": 10
                 }
             },
@@ -5472,11 +5424,11 @@
             "message": "Type of \"ShowArena\" is unknown",
             "range": {
                 "start": {
-                    "line": 15,
+                    "line": 16,
                     "character": 18
                 },
                 "end": {
-                    "line": 15,
+                    "line": 16,
                     "character": 27
                 }
             },
@@ -5488,11 +5440,11 @@
             "message": "Type of \"TeamColor\" is unknown",
             "range": {
                 "start": {
-                    "line": 15,
+                    "line": 16,
                     "character": 29
                 },
                 "end": {
-                    "line": 15,
+                    "line": 16,
                     "character": 38
                 }
             },
@@ -5504,11 +5456,11 @@
             "message": "Import \"geometry\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 18,
+                    "line": 19,
                     "character": 5
                 },
                 "end": {
-                    "line": 18,
+                    "line": 19,
                     "character": 13
                 }
             },
@@ -5520,11 +5472,11 @@
             "message": "Type of \"OrientedPoint\" is unknown",
             "range": {
                 "start": {
-                    "line": 18,
+                    "line": 19,
                     "character": 21
                 },
                 "end": {
-                    "line": 18,
+                    "line": 19,
                     "character": 34
                 }
             },
@@ -5533,30 +5485,14 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
             "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 89,
-                    "character": 5
-                },
-                "end": {
-                    "line": 95,
-                    "character": 5
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "error",
             "message": "\"handle\" is not a known attribute of \"None\"",
             "range": {
                 "start": {
-                    "line": 143,
+                    "line": 142,
                     "character": 24
                 },
                 "end": {
-                    "line": 143,
+                    "line": 142,
                     "character": 30
                 }
             },
@@ -5564,47 +5500,15 @@
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 151,
-                    "character": 5
-                },
-                "end": {
-                    "line": 157,
-                    "character": 5
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 184,
-                    "character": 5
-                },
-                "end": {
-                    "line": 189,
-                    "character": 5
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
             "severity": "information",
             "message": "Type of \"to_send\" is partially unknown\n  Type of \"to_send\" is \"dict[str, Unknown]\"",
             "range": {
                 "start": {
-                    "line": 199,
+                    "line": 198,
                     "character": 12
                 },
                 "end": {
-                    "line": 199,
+                    "line": 198,
                     "character": 19
                 }
             },
@@ -5612,31 +5516,15 @@
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 214,
-                    "character": 5
-                },
-                "end": {
-                    "line": 214,
-                    "character": 67
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
             "severity": "information",
             "message": "Type of \"instructions\" is partially unknown\n  Type of \"instructions\" is \"list[Unknown]\"",
             "range": {
                 "start": {
-                    "line": 231,
+                    "line": 230,
                     "character": 20
                 },
                 "end": {
-                    "line": 231,
+                    "line": 230,
                     "character": 32
                 }
             },
@@ -5648,11 +5536,11 @@
             "message": "Type of \"instruction\" is unknown",
             "range": {
                 "start": {
-                    "line": 233,
+                    "line": 232,
                     "character": 20
                 },
                 "end": {
-                    "line": 233,
+                    "line": 232,
                     "character": 31
                 }
             },
@@ -5660,86 +5548,6 @@
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 247,
-                    "character": 5
-                },
-                "end": {
-                    "line": 247,
-                    "character": 68
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 263,
-                    "character": 5
-                },
-                "end": {
-                    "line": 263,
-                    "character": 50
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 273,
-                    "character": 5
-                },
-                "end": {
-                    "line": 273,
-                    "character": 49
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 282,
-                    "character": 5
-                },
-                "end": {
-                    "line": 282,
-                    "character": 49
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "error",
-            "message": "Untyped function decorator obscures type of function; ignoring decorator",
-            "range": {
-                "start": {
-                    "line": 288,
-                    "character": 5
-                },
-                "end": {
-                    "line": 288,
-                    "character": 49
-                }
-            },
-            "rule": "reportUntypedFunctionDecorator"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
             "severity": "information",
             "message": "Type of \"start_position\" is unknown",
             "range": {
@@ -5833,22 +5641,6 @@
                 }
             },
             "rule": "reportUnknownVariableType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "error",
-            "message": "\"None\" is not awaitable\n  \"None\" is incompatible with protocol \"Awaitable[_T_co@Awaitable]\"\n    \"__await__\" is not present",
-            "range": {
-                "start": {
-                    "line": 323,
-                    "character": 14
-                },
-                "end": {
-                    "line": 323,
-                    "character": 24
-                }
-            },
-            "rule": "reportGeneralTypeIssues"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\actuators_dummy.py",
@@ -7421,10 +7213,10 @@
     ],
     "summary": {
         "filesAnalyzed": 219,
-        "errorCount": 82,
+        "errorCount": 69,
         "warningCount": 82,
         "informationCount": 302,
-        "timeInSec": 15.197
+        "timeInSec": 31.902
     }
 }
 

@@ -142,21 +142,17 @@ robot1\rasp\boombot_strategy\tasks\navigation_tasks\maneuver.py:
   105:89 E501 Line too long (93 > 88)
 
 robot1\rasp\brains\main_brain.py:
+  120:9  PLC0415 `import` should be at the top-level of a file
   121:9  PLC0415 `import` should be at the top-level of a file
-  122:9  PLC0415 `import` should be at the top-level of a file
+  132:9  ERA001 Found commented-out code
   133:9  ERA001 Found commented-out code
-  134:9  ERA001 Found commented-out code
-  169:13 ERA001 Found commented-out code
+  168:13 ERA001 Found commented-out code
+  175:13 ERA001 Found commented-out code
   176:13 ERA001 Found commented-out code
-  177:13 ERA001 Found commented-out code
-  177:89 E501 Line too long (91 > 88)
-  236:31 S307 Use of possibly insecure function; consider using `ast.literal_eval`
-  238:25 S307 Use of possibly insecure function; consider using `ast.literal_eval`
-  255:13 ERA001 Found commented-out code
-  260:5  ERA001 Found commented-out code
-  267:9  ASYNC110 Use `asyncio.Event` instead of awaiting `asyncio.sleep` in a `while` loop
-  271:89 E501 Line too long (94 > 88)
-  277:9  ASYNC110 Use `asyncio.Event` instead of awaiting `asyncio.sleep` in a `while` loop
+  176:89 E501 Line too long (91 > 88)
+  254:13 ERA001 Found commented-out code
+  259:5  ERA001 Found commented-out code
+  266:9  ASYNC110 Use `asyncio.Event` instead of awaiting `asyncio.sleep` in a `while` loop
   293:9  ERA001 Found commented-out code
 
 robot1\rasp\controllers\actuators\actuators_show.py:
@@ -253,4 +249,4 @@ robot1\rasp\tests\config_loader.py:
   383:89 E501 Line too long (132 > 88)
   386:89 E501 Line too long (130 > 88)
 
-Found 167 errors.
+Found 163 errors.

@@ -201,12 +201,8 @@
 111:8: W0201: Attribute '_is_initialized' defined outside __init__ (attribute-defined-outside-init)
 123:8: W0201: Attribute 'navigator_task' defined outside __init__ (attribute-defined-outside-init)
 ************* Module robot1.rasp.brains.main_brain
-31:4: R0913: Too many arguments (7/5) (too-many-arguments)
-31:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-84:4: W0105: String statement has no effect (pointless-string-statement)
-88:4: W0105: String statement has no effect (pointless-string-statement)
-236:30: W0123: Use of eval (eval-used)
-238:24: W0123: Use of eval (eval-used)
+32:4: R0913: Too many arguments (7/5) (too-many-arguments)
+32:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
 ************* Module robot1.rasp.controllers.actuators.actuators_dummy
 21:4: R0913: Too many arguments (7/5) (too-many-arguments)
 21:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
@@ -265,5 +261,5 @@
 48:8: W0238: Unused private member `LidarDummy.__angle_unit` (unused-private-member)
 
 ------------------------------------------------------------------
-Your code has been rated at 9.58/10 (previous run: 9.58/10, +0.00)
+Your code has been rated at 9.59/10 (previous run: 9.59/10, +0.00)
 

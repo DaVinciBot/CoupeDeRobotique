@@ -4,7 +4,7 @@ from __future__ import annotations
 
 MAJORITY_RATIO = 0.5
 COUNT_RESET_THRESHOLD = 1000
-COUNT_RESET_TO = 995
+COUNT_RESET_TO = 994
 
 
 class DummyDevice:

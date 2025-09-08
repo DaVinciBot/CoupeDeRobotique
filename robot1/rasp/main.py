@@ -13,7 +13,7 @@ from arena import AllyZone, ShowArena
 from brains import MainBrain
 from geometry import OrientedPoint
 from navigation import NavigatorTaskParams
-from sensors import Inputs, Lidar
+from sensors import Inputs, Lidar, LidarDummy
 
 # ====== Main ======
 if __name__ == "__main__":
@@ -114,7 +114,7 @@ if __name__ == "__main__":
 
     # Sensors
     # Lidar
-    lidar = Lidar(
+    lidar: Lidar | LidarDummy = Lidar(
         logger=logger_lidar,
         min_angle=CONFIG.LIDAR_MIN_ANGLE,
         max_angle=CONFIG.LIDAR_MAX_ANGLE,

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import asyncio
 import time
 from math import pi
@@ -81,11 +82,9 @@ class MainBrain(Brain):
         self.inputs: Inputs = inputs
         self.score: int
 
-    """
-    ### Secondary Processes ###
-    """
+    # ====== Secondary Processes =======
 
-    """ ### Routines ### """
+    # ====== Routines =======
 
     @Brain.task(
         process=True,
@@ -233,9 +232,9 @@ class MainBrain(Brain):
 
                 for instruction in instructions:
                     if instruction.startswith("await "):
-                        await eval(instruction.removeprefix("await "))
+                        await ast.literal_eval(instruction.removeprefix("await "))
                     else:
-                        eval(instruction)
+                        ast.literal_eval(instruction)
             elif ui.msg == "team change":
                 if ui.data["team"] in {"yellow", "blue"}:
                     self.arena.set_team_color(TeamColor[ui.data["team"].upper()])
@@ -268,13 +267,14 @@ class MainBrain(Brain):
             await asyncio.sleep(0.1)
 
         self.logger.info(
-            f"Team color is set to {self.arena.team_color.name.lower()}. Starting the brain.",
+            f"Team color is set to {self.arena.team_color.name.lower()}."
+            "Starting the brain.",
         )
 
     @Brain.task(process=False, run_on_start=True)
     async def wait_jack_trigger(self) -> None:
         """Wait for the jack to be triggered."""
-        while not self.jack_plugged:
+        while not self.jack_plugged:  # noqa: ASYNC110
             await asyncio.sleep(0.1)
         await self.inputs.wait_for_jack_trigger()
         self.jack_triggered = True
@@ -321,4 +321,4 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = start_position
         await asyncio.sleep(1)  # Allow time for the arena to update
-        await self.run()
+        await self.run()  # type: ignore[reportGeneralTypeIssues]
