@@ -37,9 +37,12 @@ def get_push_one_floor_to_wall_subgraph(
     Args:
         zone_id (int): The ID of the target zone.
         push_distance (int): The distance to push forward in millimeters.
-        new_x (float | None, optional): New X-coordinate for odometry reset. Defaults to None.
-        new_y (float | None, optional): New Y-coordinate for odometry reset. Defaults to None.
-        new_theta (float | None, optional): New orientation (theta) for odometry reset. Defaults to None.
+        new_x (float | None, optional):
+            New X-coordinate for odometry reset. Defaults to None.
+        new_y (float | None, optional):
+            New Y-coordinate for odometry reset. Defaults to None.
+        new_theta (float | None, optional):
+            New orientation (theta) for odometry reset. Defaults to None.
 
     Returns:
         BaseSubGraph: The constructed subgraph representing the task sequence.
@@ -108,7 +111,9 @@ def get_push_one_floor_to_wall_subgraph(
     )
 
     # 7) Retract after push
-    node_position_after_push = f"[Push][Zone{zone_id}] deplacement positiopn after push"
+    node_position_after_push = (
+        f"[Push][Zone{zone_id}] deplacement position after push",
+    )
     builder.add_node(
         node_position_after_push,
         BaseTaskNode(name=node_position_after_push, tasks=DeplacementPosition()),

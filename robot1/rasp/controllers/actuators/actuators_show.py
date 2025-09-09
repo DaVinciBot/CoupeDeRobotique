@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING
 from a_config_loader import CONFIG
 from controllers.actuators.base.actuators import Actuators
 
+ARM_SERVO_PIN = 8
+
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
@@ -146,7 +148,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         ] = {  # default servo with 2 position
             i: Servo(cfg["deploy_angle"], cfg["fold_angle"], cfg["max_angle"])
             for i, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items()
-            if i < 8
+            if i < ARM_SERVO_PIN
         }
 
         # Modify servos 0 and 2:
@@ -173,8 +175,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         # 6 : Exterior Left Arm
         # 7 : Exterior Left Magnet
 
-        servo_arm = CONFIG.ACTUATOR_SERVOS_CONFIG[8]
-        self.servos[8] = ServoArm(
+        servo_arm = CONFIG.ACTUATOR_SERVOS_CONFIG[ARM_SERVO_PIN]
+        self.servos[ARM_SERVO_PIN] = ServoArm(
             servo_arm["deploy_angle"],
             servo_arm["fold_angle"],
             servo_arm["max_angle"],
@@ -252,7 +254,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         if isinstance(pins, int):
             pins = [pins]
         for pin in pins:
-            if pin == 8:
+            if pin == ARM_SERVO_PIN:
                 self.folded = False
             if self._check_pin(pin):
                 self.set_servo_angle(
@@ -275,7 +277,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
             pins = [pins]
         for pin in pins:
             if self._check_pin(pin):
-                if pin == 8:
+                if pin == ARM_SERVO_PIN:
                     self.__move_to_save_folded_position()
                     self.folded = True
                 self.set_servo_angle(
@@ -291,11 +293,11 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         deploying the servo arm.
 
         """
-        if 8 in self.servos:
-            self.deploy(8)
+        if ARM_SERVO_PIN in self.servos:
+            self.deploy(ARM_SERVO_PIN)
 
         for i in self.servos:
-            if i != 8:
+            if i != ARM_SERVO_PIN:
                 self.deploy(i)
 
     def deploy_all_pickup(self) -> None:
@@ -309,7 +311,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         self.docking([0, 2])
 
         for i in self.servos:
-            if i != 8:
+            if i != ARM_SERVO_PIN:
                 self.deploy(i)
 
     def fold_all(self) -> None:
@@ -320,11 +322,11 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
 
         """
         for i in self.servos:
-            if i != 8:
+            if i != ARM_SERVO_PIN:
                 self.fold(i)
 
-        if 8 in self.servos:
-            self.fold(8)
+        if ARM_SERVO_PIN in self.servos:
+            self.fold(ARM_SERVO_PIN)
 
     def demagnetize_all(self) -> None:
         """Demagnetize servos by setting them to their fold angle.
@@ -444,7 +446,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
 
     def build_floors(
         self,
-    ) -> None:  # Ask if I should use time.sleep or asyncio.sleep and thus making this method async
+    ) -> None:
+        # Ask if I should use time.sleep or asyncio.sleep and making this method async
         """Build the floors by deploying the servos and moving the elevator.
 
         This method deploys servos and raises the elevator to construct the
@@ -458,7 +461,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         time.sleep(2)
 
         # Demagnetize and release plank
-        self.deploy(8)
+        self.deploy(ARM_SERVO_PIN)
         self.demagnetize_all()
         self.deploy(9)
 
@@ -467,7 +470,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         # Retrieve actuators
         self.fold(4)
         self.fold(6)
-        self.docking(8)
+        self.docking(ARM_SERVO_PIN)
 
     # def init_actuator(self):
     #     self.stepper_step(
@@ -483,7 +486,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         # Prep and go magnetized
         self.deploy_all_pickup()  # Magnetize
         time.sleep(1)
-        self.deploy(8)
+        self.deploy(ARM_SERVO_PIN)
 
     def pick_up(self) -> None:
         """Catch cans and plank."""
@@ -491,11 +494,10 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         self.pickup_planck()
         self.fold(9)
         time.sleep(0.1)
-        self.docking(8)
+        self.docking(ARM_SERVO_PIN)
         time.sleep(1)
         self.fold(4)
         self.fold(6)
-        # self.set_servo_angle(pin=9, angle=200, max_angle=270)  # On serre pour tester
         time.sleep(0.5)
 
     def deplacement_object(self) -> None:
@@ -512,8 +514,12 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         self.elevator_ticks = 0
         time.sleep(0.5)
         self.deploy_all_pickup()
-        # self.set_servo_angle(8, angle=35, max_angle=270)
-        self.set_servo_angle(8, angle=self.servos[8].docking, max_angle=270)  # type: ignore[reportAttributeAccessIssue]
+        # self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
+        self.set_servo_angle(
+            ARM_SERVO_PIN,
+            angle=self.servos[ARM_SERVO_PIN].docking,  # type: ignore[reportAttributeAccessIssue]
+            max_angle=270,
+        )
         self.deploy(9)
 
     def pickup_planck(self) -> None:
@@ -521,7 +527,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
 
         def _pickup() -> None:
             self.deploy(9)
-            self.deploy(8)
+            self.deploy(ARM_SERVO_PIN)
             time.sleep(0.3)
             self.fold(9)
 
@@ -547,14 +553,14 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         time.sleep(1)
         self.fold(4)
         self.fold(6)
-        self.set_servo_angle(8, angle=130, max_angle=270)
+        self.set_servo_angle(ARM_SERVO_PIN, angle=130, max_angle=270)
         time.sleep(0.1)
 
     def start_position(self) -> None:
         """Move actuators to the default start position."""
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
-        self.set_servo_angle(8, angle=35, max_angle=270)
+        self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
         time.sleep(0.5)
         self.deploy(0)
         self.deploy(2)
@@ -565,7 +571,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         """Block the banner by moving servos to holding positions."""
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
-        self.set_servo_angle(8, angle=35, max_angle=270)
+        self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
         # self.set_servo_angle(0, angle=105, max_angle=270)
         # self.set_servo_angle(2, angle=167, max_angle=270)
         self.set_servo_angle(0, angle=100, max_angle=270)
@@ -581,7 +587,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         self.deploy(0)
         self.go_to_bottom()
         time.sleep(2)
-        self.set_servo_angle(8, angle=35, max_angle=270)
+        self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
         self.fold(9)
 
     # def build(self):

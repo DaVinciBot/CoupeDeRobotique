@@ -15,16 +15,17 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
 
 
 class GoToStuffZoneToPickUp(NavigationTask):
-    """Navigation task to move the robot to a specified 'stuff zone' for a pickup operation.
+    """Navigate the robot to a specified stuff zone for a pickup.
 
-    This class configures the required navigation parameters such as path planning, trajectory planning,
-    speed profiling, and avoidance strategies. It utilizes a rectangular projection ACS detection profile
-    to avoid collisions and applies a stabilization delay for system readiness before performing tasks.
+    Configures path planning, trajectory planning, speed profiling, and
+    avoidance strategies. Uses a rectangular projection ACS detection profile to
+    avoid collisions and applies a stabilization delay for system readiness
+    before performing tasks.
 
     """
 
     def __init__(self, stuff_zone_id: int) -> None:
-        """Initialize the GoToStuffZoneToPickUp task with parameters for navigation and avoidance.
+        """Initialize navigation and avoidance parameters.
 
         Args:
             stuff_zone_id (int): Identifier for the target stuff zone location.
@@ -36,7 +37,8 @@ class GoToStuffZoneToPickUp(NavigationTask):
             trajectory_planner_params=SequentialTrajectoryPlannerParams(
                 step_sleep_delay=2,
             ),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,  # Use for pickup speed profiler
+            # Use for pickup speed profiler
+            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
                 acs_distance=55,

@@ -82,7 +82,8 @@ class BaseStrategy(ABC):
         entry_points = [self._resolve_for_entry(el) for el in elements]
         exit_points = [self._resolve_for_exits(el) for el in elements]
         for i in range(len(entry_points) - 1):
-            # Create a direct transition from the exit of the current element to the entry of the next
+            # Create a direct transition from the exit of the current element
+            # to the entry of the next
             self.logger.debug(
                 f"Creating transition from {exit_points[i].name}"
                 f" to {entry_points[i + 1].name}",

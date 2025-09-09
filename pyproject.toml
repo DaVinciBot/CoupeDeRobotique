@@ -118,6 +118,7 @@ style = 'google'
 
 [tool.pylint.main]
 disable = [
+  "C0114", # missing-module-docstring -> Best management with ruff
   "C0301", # line-too-long -> Best management with ruff
   "C0415", # import-outside-toplevel -> Best management with ruff
   "E0401", # import-error -> False positive
@@ -127,6 +128,7 @@ disable = [
   "W0212", # protected-access -> Best management with ruff
   "W0511", # fixme
   "W0613", # unused-argument -> Best management with ruff
+  "W0718", # broad-exception-caught -> Best management with ruff
   "W1113", # keyword-arg-before-vararg -> Best management with ruff
 ]
 enable = "all"
@@ -211,6 +213,7 @@ quote-style = "double"
 
 [tool.ruff.lint]
 ignore = [
+  "ASYNC110", # async-busy-wait
   "CPY001", # missing-copyright-notice
   "EXE002", # shebang-missing-executable-file
   "FIX002", # line-contains-todo
@@ -218,12 +221,17 @@ ignore = [
   "G004", # logging-f-string
   "PLR0917", # too-many-positional-arguments
   "PLR0913", # too-many-arguments
+  "S104", # hardcoded-bind-all-interfaces
+  "S404", # suspicious-subprocess-import
   "TD001", # invalid-todo-tag
   "TD002", # missing-todo-author
   "TD003", # missing-todo-link
   "TRY400", # error-instead-of-exception
 ]
 select = ["ALL"]
+exclude = [
+  "**/docs/**",
+]
 
 [tool.ruff.lint.isort]
 known-first-party = [

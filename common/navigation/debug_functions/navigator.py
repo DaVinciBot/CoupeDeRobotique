@@ -24,7 +24,9 @@ def test_navigator_execution(
     arena: BaseArena,
     time_step: float = 0.1,
 ) -> None:
-    """Simulate the navigator until its current task is finished, logging the navigation data and plotting the key metrics over time.
+    """Simulate the navigator until its current task is finished.
+
+    Logging the navigation data and plotting the key metrics over time.
 
     This function records at each timestep:
         - Time elapsed

@@ -17,11 +17,11 @@ from navigation import (
     SequentialTrajectoryPlannerParams,
     StopAndWaitAvoidanceParams,
 )
+from navigation.avoidance.acs_detection_profiles import (
+    RectangularProjectionAcsDetectionProfileParams,
+)
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
-)
-from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (
-    RectangularProjectionAcsDetectionProfileParams,
 )
 
 if TYPE_CHECKING:
@@ -102,7 +102,7 @@ class GoCentroidOfZone(NavigationTask):
         self.zone_id: int = zone_id
 
     def _initialize(self, ctx: BaseGameContext) -> None:
-        """Initialize the task by computing the target position based on the zone's centroid.
+        """Initialize by computing the target position from the zone centroid.
 
         Args:
             ctx (BaseGameContext): The game context providing arena information.

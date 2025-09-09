@@ -27,7 +27,7 @@ class GPIOManager:
 
     @override
     def __str__(self) -> str:
-        """Returns a string representation of the GPIO manager, showing the mapped GPIOs.
+        """Return a string representation of the mapped GPIOs.
 
         Returns:
             str: String representation of the GPIO manager.
@@ -53,7 +53,7 @@ class GPIOManager:
         pin: int,
         type_actuator: ActuatorType = ActuatorType.UNKNOWN,
     ) -> bool:
-        """Check if a GPIO pin is valid by ensuring it is declared and matches the expected actuator type.
+        """Check if a GPIO pin is valid and matches the expected actuator type.
 
         Args:
             pin (int): The GPIO pin-number to validate.

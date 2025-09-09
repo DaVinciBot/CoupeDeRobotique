@@ -35,7 +35,9 @@ class NavigatorTask:
             params (NavigatorTaskParams): The parameters for the navigation task.
 
         """
-        from navigation.avoidance.avoidance_factory import AvoidanceFactory
+        from navigation.avoidance.avoidance_factory import (  # noqa: PLC0415
+            AvoidanceFactory,
+        )
 
         self.params = params
         self.path_planner: BasePathPlanner = PathPlannerFactory.instantiate(

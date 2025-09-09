@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from loggerplusplus import Logger
 
 
-class BaseArenaZone(ABC):
+class BaseArenaZone(ABC):  # noqa: B024
     """Represent a zone within an arena with geometry, type, and accessibility.
 
     Attributes:

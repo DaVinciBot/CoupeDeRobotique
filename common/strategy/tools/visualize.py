@@ -79,7 +79,7 @@ def visualize_task_graph(
 
     out_path = dot.render(filename, cleanup=True)
     if view:
-        import webbrowser
+        import webbrowser  # noqa: PLC0415
 
         webbrowser.open(out_path)
 
@@ -147,7 +147,7 @@ def visualize_entire_subgraph(
 
     out_path = dot.render(filename, cleanup=True)
     if view:
-        import webbrowser
+        import webbrowser  # noqa: PLC0415
 
         webbrowser.open(out_path)
 
@@ -158,7 +158,7 @@ def visualize_task_graph_from_node(
     subgraph: BaseSubGraph,
     title: str = "Full Strategy Graph",
 ) -> None:
-    """Uses NetworkX and Matplotlib to visualize the task graph with color-coded node statuses.
+    """Visualize the task graph with color-coded node statuses.
 
     Args:
         subgraph (BaseSubGraph): Subgraph containing all task nodes.

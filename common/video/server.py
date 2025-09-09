@@ -83,12 +83,12 @@ def start_video_server() -> None:
 
 def spawn_video_server() -> None:
     """Launch the video server in a background thread."""
-    import threading
+    import threading  # noqa: PLC0415
 
     t = threading.Thread(target=start_video_server)
     try:
         t.start()
-    except Exception as e:  # noqa: BLE001
+    except RuntimeError as e:
         logger.error(f"Error occurred while spawning video server: {e}")
         t.join(timeout=1)
 

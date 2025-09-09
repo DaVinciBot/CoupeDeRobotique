@@ -16,10 +16,11 @@ from strategy.core import BaseSubGraph, BaseTaskNode, DirectTransition, SubGraph
 
 
 def get_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
-    """Build a subgraph that defines the sequence of tasks for picking up an object at a specified zone.
+    """Build a pickup subgraph for a specified zone.
 
-    The subgraph includes navigation to the zone, preparation steps, and execution of the pickup operation.
-    Nodes are connected linearly using direct transitions to ensure an ordered task flow.
+    The subgraph includes navigation, preparation steps, and execution of the
+    pickup operation. Nodes are connected linearly using direct transitions to
+    ensure an ordered task flow.
 
     Args:
         pickup_zone_id (int): Identifier for the pickup zone.

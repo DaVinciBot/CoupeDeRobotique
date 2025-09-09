@@ -116,6 +116,42 @@ class BaseTaskNode:
         next_name = next_node.name if next_node else "<None>"
         self.logger.info(f"Exiting node '{self.name}' to '{next_name}'")
 
+    def _handle_task(self, idx: int, ctx: BaseGameContext) -> None:
+        """Execute a single task and record its result.
+
+        Args:
+            idx (int): Index of the task to execute.
+            ctx (BaseGameContext): The current game context.
+
+        """
+        task = self.tasks[idx]
+        self.logger.debug(f"Handling task {idx} of node '{self.name}'")
+        try:
+            done = task.handle(ctx)
+            self.results[idx] = done
+            if done:
+                self.task_done[idx] = True
+                self.logger.info(
+                    f"Task {idx} in node '{self.name}' completed successfully",
+                )
+            else:
+                self.logger.debug(
+                    f"Task {idx} in node '{self.name}' not done yet",
+                )
+        except TimeoutError as e:
+            self.exceptions[idx] = e
+            self.task_done[idx] = True
+            self.logger.warning(
+                f"Task {idx} in node '{self.name}' timed out: {e}",
+            )
+        except Exception as e:  # noqa: BLE001
+            self.exceptions[idx] = e
+            self.task_done[idx] = True
+            self.logger.error(
+                f"Task {idx} in node '{self.name}' failed: {e}', "
+                f"traceback {traceback.format_exc()}",
+            )
+
     def execute(self, ctx: BaseGameContext) -> bool:
         """Execute tasks sequentially.
 
@@ -144,33 +180,7 @@ class BaseTaskNode:
             next_idx = None
 
         if next_idx is not None:
-            task = self.tasks[next_idx]
-            self.logger.debug(f"Handling task {next_idx} of node '{self.name}'")
-            try:
-                done = task.handle(ctx)
-                self.results[next_idx] = done
-                if done:
-                    self.task_done[next_idx] = True
-                    self.logger.info(
-                        f"Task {next_idx} in node '{self.name}' completed successfully",
-                    )
-                else:
-                    self.logger.debug(
-                        f"Task {next_idx} in node '{self.name}' not done yet",
-                    )
-            except TimeoutError as e:
-                self.exceptions[next_idx] = e
-                self.task_done[next_idx] = True
-                self.logger.warning(
-                    f"Task {next_idx} in node '{self.name}' timed out: {e}",
-                )
-            except Exception as e:
-                self.exceptions[next_idx] = e
-                self.task_done[next_idx] = True
-                self.logger.error(
-                    f"Task {next_idx} in node '{self.name}' failed: {e}', "
-                    f"traceback {traceback.format_exc()}",
-                )
+            self._handle_task(next_idx, ctx)
 
         if all(self.task_done):
             self.end_time = time.time()

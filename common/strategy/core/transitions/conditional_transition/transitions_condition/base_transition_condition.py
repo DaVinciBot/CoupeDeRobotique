@@ -13,8 +13,9 @@ if TYPE_CHECKING:
 class BaseTransitionCondition(ABC):
     """Abstract base class representing a transition condition.
 
-    Any subclass must implement the ``check`` method, which determines whether a transition
-    from one task node to another is permitted based on the provided game context.
+    Any subclass must implement the ``check`` method, which determines whether a
+    transition from one task node to another is permitted based on the provided
+    game context.
 
     """
 

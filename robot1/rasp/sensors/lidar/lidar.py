@@ -17,6 +17,10 @@ if TYPE_CHECKING:
 TLidar = TypeVar("TLidar", bound="pysicktim")
 
 
+class LidarError(Exception):
+    """Custom exception for LiDAR-related failures."""
+
+
 class Lidar:
     """This class is a wrapper for the lidar sensor.
 
@@ -91,30 +95,33 @@ class Lidar:
 
         """
         try:
-            import pysicktim as lidar
-
-            if lidar is None:
-                self._logger.critical("[init_lidar] Lidar is not connected !")
-                msg = "Lidar is not connected !"
-                raise ConnectionError(msg)
-            self._logger.info("[init_lidar] Lidar is connected !")
-
-            # Test lidar connection by testing scan function
-            lidar.scan()
-            if lidar.scan.distances is None or lidar.scan.distances == []:
-                self._logger.critical("[init_lidar] Lidar doesn't work correctly")
-                msg = "Lidar doesn't work correctly !"
-                raise ConnectionError(msg)
-
-            return lidar
-
+            import pysicktim as lidar  # noqa: PLC0415
         except Exception as error:
             self._logger.critical(f"[init_lidar] Error while importing lidar [{error}]")
-            msg = f"Error while importing lidar [{error}] !"
+            msg = f"Error while importing lidar [{error}]!"
             raise ImportError(msg) from error
 
+        if lidar is None:
+            self._logger.critical("[init_lidar] Lidar is not connected !")
+            msg = "Lidar is not connected !"
+            raise ConnectionError(msg)
+        self._logger.info("[init_lidar] Lidar is connected !")
+
+        # Test lidar connection by testing scan function
+        lidar.scan()
+        if lidar.scan.distances is None or lidar.scan.distances == []:
+            self._logger.critical("[init_lidar] Lidar doesn't work correctly")
+            msg = "Lidar doesn't work correctly !"
+            raise ConnectionError(msg)
+
+        return lidar
+
     def __threading_init_lidar(self) -> None:
-        """Initialize the lidar in a thread. It will retry to initialize the lidar until is connected."""
+        """Initialize the lidar in a thread.
+
+        It will retry to initialize the lidar until it is connected.
+
+        """
 
         def init() -> None:
             while not self.__is_connected:
@@ -123,13 +130,13 @@ class Lidar:
                         "[init_lidar_in_thread] Try to initialize lidar ...",
                     )
                     self.__lidar_obj = self.__init_lidar()
-                    # Initialize the polars angles depends on the lidar number of measurements points
+                    # Initialize polars based on the lidar measurement count
                     self.__polars_angles = self.__init_polars_angle(
                         self.__min_angle,
                         self.__max_angle,
                     )
                     self.__is_connected = True
-                except Exception as error:
+                except (ConnectionError, ImportError, ValueError) as error:
                     self._logger.warning(
                         "[init_lidar_in_thread] Error while initializing lidar "
                         f"[{error}] "
@@ -161,7 +168,8 @@ class Lidar:
 
         angle_step = abs(max_angle - min_angle) / n
 
-        # Init the polars array with zeros, then fill it with angles centered, so that the "front" of the lidar is 0
+        # Init the polars array with zeros.
+        # Then fill it with angles centered, so that the "front" of the lidar is 0
         centered_polars = np.zeros(n, dtype=np.float32)
         for i in range(n):
             centered_polars[i] = -((max_angle - min_angle) / 2) + i * angle_step
@@ -222,12 +230,12 @@ class Lidar:
         raise ValueError(msg)
 
     def __scan(self) -> None:
-        """Scan the environment with the lidar and store the distances in the lidar object.
+        """Scan the environment and store the distances.
 
         If the scan fails, it will try to reconnect the lidar.
 
         Raises:
-            Exception: If the lidar is disconnected or if the scan fails.
+            LidarError: If the lidar is disconnected or if the scan fails.
 
         """
         try:
@@ -243,7 +251,7 @@ class Lidar:
                 self.__threading_init_lidar()
 
             msg = f"Error while scanning, LiDAR is disconnected ? [{error}]"
-            raise Exception(msg)
+            raise LidarError(msg) from error
 
     # ====== Public methods and properties ======
 

@@ -15,8 +15,8 @@ from teensy import BaseComTeensy
 class RollingBasisDummy(BaseComTeensy):
     """Represents the rolling basis of the robot.
 
-    Inherits from Teensy to manage low-level communications and adds logic specific to the robot's state,
-    PID configuration, and message messaging.
+    Inherits from Teensy to manage low-level communications and adds logic
+    specific to the robot's state, PID configuration, and message messaging.
 
     """
 
@@ -177,7 +177,7 @@ class RollingBasisDummy(BaseComTeensy):
             pid = self._load_pid(*args, **kwargs)
             self.linear_position_pid = pid
             self._send_pid(PidID.LINEAR_POSITION.value, pid)
-        except Exception as e:
+        except (ValueError, TypeError) as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
     @overload
@@ -211,7 +211,7 @@ class RollingBasisDummy(BaseComTeensy):
             pid = self._load_pid(*args, **kwargs)
             self.angular_position_pid = pid
             self._send_pid(PidID.ANGULAR_POSITION.value, pid)
-        except Exception as e:
+        except (ValueError, TypeError) as e:
             self.logger.error(f"Failed to set angular position PID: {e}")
 
     def set_pids(
@@ -238,7 +238,7 @@ class RollingBasisDummy(BaseComTeensy):
                 linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
                 angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
             )
-        except Exception as e:
+        except (ValueError, TypeError) as e:
             self.logger.error(f"Failed to initialize PIDs: {e}")
 
     # ====== Equality Comparison ======
@@ -278,3 +278,13 @@ class RollingBasisDummy(BaseComTeensy):
 
         """
         return not self.__eq__(other)
+
+    @override
+    def __hash__(self) -> int:
+        """Return a hash based on object identity.
+
+        Returns:
+            int: The hash value of the object.
+
+        """
+        return object.__hash__(self)

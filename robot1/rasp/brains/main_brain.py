@@ -15,6 +15,8 @@ from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
 from arena import ShowArena, TeamColor
+from boombot_strategy import ShowGameContext
+from boombot_strategy.strategies import TowerRushAltStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
@@ -117,8 +119,6 @@ class MainBrain(Brain):
             time.sleep(0.1)
 
         # --- 3) Build the strategy --- #
-        from boombot_strategy import ShowGameContext
-        from boombot_strategy.strategies import TowerRushAltStrategy
 
         strategy = TowerRushAltStrategy(
             ShowGameContext(
@@ -173,7 +173,9 @@ class MainBrain(Brain):
             plot=(ax, fig),
             # Additional options
             # additional_zones=[self.th_ally_zone],
-            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
+            # additional_points=list(obstacles.geoms)
+            # if not is_empty(obstacles)
+            # else None,
         )
         plt.pause(0.01)
 
@@ -274,7 +276,7 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True)
     async def wait_jack_trigger(self) -> None:
         """Wait for the jack to be triggered."""
-        while not self.jack_plugged:  # noqa: ASYNC110
+        while not self.jack_plugged:
             await asyncio.sleep(0.1)
         await self.inputs.wait_for_jack_trigger()
         self.jack_triggered = True

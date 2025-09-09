@@ -12,6 +12,8 @@ from a_config_loader import CONFIG
 from teensy import ActuatorType, GPIOComTeensy
 from usb_com.python import Messages
 
+I2C_DELAY = 0.03
+
 
 class Actuators(
     GPIOComTeensy,
@@ -97,7 +99,7 @@ class Actuators(
 
         """
         self.logger.info(
-            "Teensy Actuators says: " + msg.decode("ascii", errors="ignore"),
+            f"Teensy Actuators says: {msg.decode('ascii', errors='ignore')}",
         )
 
     def rcv_unknown_msg(self, msg: bytes) -> None:
@@ -175,8 +177,8 @@ class Actuators(
         # Update elevator theorical steps
         self.elevator_ticks += steps
 
-        # WARNING: pin_driver is also defined in the C++ code,
-        # because it needs to receive a HIGH from the beginning, or it will start heating up
+        # WARNING: pin_driver is also defined in the C++ code
+        # It must receive a HIGH at startup to avoid overheating
         pin_dir = 15
         pin_step = 14
         pin_enable_driver = 13
@@ -257,14 +259,15 @@ class Actuators(
                     self.logger.info(f"Pin {pin} added as a servo pin")
                 elif not self.gpio_manager.is_valid_gpio(pin, ActuatorType.SERVO):
                     self.logger.error(
-                        f"Pin {pin} is not a valid servo pin because it is registered as a "
-                        f"{self.gpio_manager.get_type_gpio(pin)!s}",
+                        f"Pin {pin} is not a valid servo pin because it is registered "
+                        f"as a {self.gpio_manager.get_type_gpio(pin)!s}",
                     )
                     return
-                if use_i2c:  # prevent I2C overload. Without during the test, servos where taking wrong angles when called too fast
+                if use_i2c:  # prevent I2C overload
+                    # Without this delay, servos took wrong angles when called too fast
                     t = time.time()
-                    if t - self.t_set_servo_angle_i2c < 0.03:
-                        time.sleep(0.03 - (t - self.t_set_servo_angle_i2c))
+                    if t - self.t_set_servo_angle_i2c < I2C_DELAY:
+                        time.sleep(I2C_DELAY - (t - self.t_set_servo_angle_i2c))
                         self.t_set_servo_angle_i2c = t
                 msg = (
                     (

@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 class BaseComTeensy(Com):
-    """Extends the ``Com`` class to provide specialized communication handling for a Teensy microcontroller."""
+    """Communication helper tailored for a Teensy microcontroller."""
 
     def __init__(
         self,

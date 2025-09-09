@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import pathlib
 import sys
-from typing import Any
+from typing import Any, ClassVar
 
 from loggerplusplus import LoggerConfig, LoggerManager, LogLevels, logger_colors
 
@@ -129,7 +129,8 @@ class CONFIG:
 
         ACTUATORS_CONFIG (dict[str, Any]): Actuators configuration settings.
         ACTUATOR_TEENSY_SER (int): Serial number for the actuators Teensy
-        ACTUATOR_SERVOS_CONFIG (dict[int, Any]): Servos configuration for the actuators
+        ACTUATOR_SERVOS_CONFIG (ClassVar[dict[int, Any]]):
+            Servos configuration for the actuators
         ACTUATOR_ELEVATOR_CONFIG (dict[str, Any]):
             Elevator configuration for the actuators
         ACTUATOR_DELAY (float): Delay for the actuators
@@ -184,7 +185,7 @@ class CONFIG:
         str(COMMON_DIR),
     )  # Add common directory to the path (to be able to import common modules)
     CONFIG_STORE: dict[str, Any] = load_json_file(ROOT_DIR / "config.json")
-    from navigation import (  # pylint: disable=C0415 # noqa: PLC0415
+    from navigation import (  # noqa: PLC0415
         BaseAcsDetectionProfileParams,
         BasicSpeedProfile,
         LinearRampedSpeedProfile,
@@ -343,7 +344,7 @@ class CONFIG:
     # Actuators
     ACTUATORS_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["actuators"]
     ACTUATOR_TEENSY_SER: int = ACTUATORS_CONFIG["actuators_teensy_ser"]
-    ACTUATOR_SERVOS_CONFIG: dict[int, Any] = {
+    ACTUATOR_SERVOS_CONFIG: ClassVar[dict[int, Any]] = {
         int(k): v for k, v in ACTUATORS_CONFIG["servos_config"].items()
     }
     ACTUATOR_ELEVATOR_CONFIG: dict[str, Any] = ACTUATORS_CONFIG["elevator"]

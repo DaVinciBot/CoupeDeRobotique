@@ -16,10 +16,11 @@ if TYPE_CHECKING:
 
 
 class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
-    """A transition condition that checks the accessibility of a specific zone in the arena.
+    """Check whether a specific arena zone is accessible.
 
-    This condition is fulfilled if the designated zone is accessible to the current team.
-    An optional reverse flag allows inverting the condition to check for inaccessibility.
+    This condition is fulfilled if the designated zone is accessible to the
+    current team. An optional reverse flag allows inverting the condition to
+    check for inaccessibility.
 
     """
 

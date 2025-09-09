@@ -12,8 +12,10 @@ from serial import Serial
 from serial.tools.list_ports import comports
 
 from usb_com.python.com.dummy import DummySerial
-from usb_com.python.com.exceptions import ComException
+from usb_com.python.com.exceptions import ComError
 from usb_com.python.messages import END_BYTES_SIGNATURE, Messages
+
+NACK_ID = 127
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -82,7 +84,7 @@ class Com:
                 Initialized serial connection or dummy instance.
 
         Raises:
-            ComException: If no device is found and dummy mode is disabled.
+            ComError: If no device is found and dummy mode is disabled.
 
         """
         device_found: Serial | DummySerial | None = None
@@ -104,7 +106,7 @@ class Com:
             else:
                 msg = "No Device found!"
                 self.logger.critical(msg)
-                raise ComException(msg)
+                raise ComError(msg)
 
         return device_found
 
@@ -119,11 +121,11 @@ class Com:
         if self.enable_dummy:
             return None
 
-        receiver = threading.Thread(target=self.__receiver__, name="USBComReceiver")
+        receiver = threading.Thread(target=self.__receiver, name="USBComReceiver")
         receiver.start()
         return receiver
 
-    def __receiver__(self) -> None:
+    def __receiver(self) -> None:
         """Run in a thread and dispatch messages based on the protocol format.
 
         Format: ``msg_type | msg_data | msg_length | CRC8 | MSG_END_BYTES``
@@ -154,11 +156,11 @@ class Com:
                 if len_msg > len(msg):
                     self.logger.warning(
                         "Received Teensy message that does not match declared length "
-                        + msg.hex(sep=" "),
+                        f"{msg.hex(sep=' ')}",
                     )
                     continue
                 try:
-                    if msg[0] == 127:
+                    if msg[0] == NACK_ID:
                         self.logger.warning("Received a NACK")
                         if self.last_message is not None:
                             self.send_bytes(self.last_message)
@@ -174,11 +176,11 @@ class Com:
                             ),
                         )(msg[1:-1])
 
-                except Exception as e:
-                    self.logger.error("Received message handling crashed :\n" + str(e))
+                except Exception as e:  # noqa: BLE001
+                    self.logger.error(f"Received message handling crashed :\n{e}")
                     time.sleep(0.5)  # Wait to avoid spamming the logs
 
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 self.logger.critical(
                     f"Device connection seems to be closed, teensy crashed ? [{e}]",
                 )

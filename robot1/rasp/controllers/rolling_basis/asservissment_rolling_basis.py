@@ -33,6 +33,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         vid: int = CONFIG.TEENSY_VID,
         pid: int = CONFIG.TEENSY_PID,
         baudrate: int = CONFIG.TEENSY_BAUDRATE,
+        *,
         enable_crc: bool = CONFIG.TEENSY_CRC,
         enable_dummy: bool = CONFIG.TEENSY_DUMMY,
     ) -> None:
@@ -363,7 +364,7 @@ class AsservissementRollingBasis(BaseComTeensy):
             pid = self._load_pid(*args, **kwargs)
             self.linear_position_pid = pid
             self._send_pid(PidID.LINEAR_POSITION.value, pid)
-        except Exception as e:
+        except (ValueError, TypeError) as e:
             self.logger.error(f"Failed to set linear position PID: {e}")
 
     @overload
@@ -397,7 +398,7 @@ class AsservissementRollingBasis(BaseComTeensy):
             pid = self._load_pid(*args, **kwargs)
             self.angular_position_pid = pid
             self._send_pid(PidID.ANGULAR_POSITION.value, pid)
-        except Exception as e:
+        except (ValueError, TypeError) as e:
             self.logger.error(f"Failed to set angular position PID: {e}")
 
     def set_pids(
@@ -426,7 +427,7 @@ class AsservissementRollingBasis(BaseComTeensy):
                 linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
                 angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
             )
-        except Exception as e:
+        except (ValueError, TypeError) as e:
             self.logger.error(f"Failed to initialize PIDs: {e}")
 
     # ====== Equality Comparison ======

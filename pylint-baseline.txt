@@ -145,8 +145,6 @@
 ************* Module common.strategy.core.tasks.base_navigation_task
 31:4: R0913: Too many arguments (10/5) (too-many-arguments)
 31:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-************* Module common.strategy.core.task_nodes.base_task_node
-167:19: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module common.strategy.core.task_nodes.timeout_task_node
 114:12: W0201: Attribute 'end_time' defined outside __init__ (attribute-defined-outside-init)
 ************* Module common.teensy.base_teensy
@@ -157,17 +155,11 @@
 17:4: R0913: Too many arguments (8/5) (too-many-arguments)
 17:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
 ************* Module common.usb_com.python.com.com
-31:4: R0913: Too many arguments (8/5) (too-many-arguments)
-31:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-181:19: W0718: Catching too general exception Exception (broad-exception-caught)
-177:23: W0718: Catching too general exception Exception (broad-exception-caught)
-************* Module common.utils.utils
-86:12: W0702: No exception type(s) specified (bare-except)
+33:4: R0913: Too many arguments (8/5) (too-many-arguments)
+33:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
 ************* Module common.video.server
 35:4: C0103: Method name "do_GET" doesn't conform to snake_case naming style (invalid-name)
-58:23: W0718: Catching too general exception Exception (broad-exception-caught)
 49:26: E1101: Module 'cv2' has no 'imencode' member (no-member)
-91:11: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module docs.source.conf
 19:0: W0622: Redefining built-in 'copyright' (redefined-builtin)
 18:0: C0103: Constant name "project" doesn't conform to UPPER_CASE naming style (invalid-name)
@@ -191,67 +183,49 @@
 53:0: C0103: Constant name "html_theme" doesn't conform to UPPER_CASE naming style (invalid-name)
 ************* Module PAMI.lib.ota.ui.convert
 27:0: C0103: Constant name "byte_array" doesn't conform to UPPER_CASE naming style (invalid-name)
-************* Module robot1.rasp.a_config_loader
-187:0: I0011: Locally disabling import-outside-toplevel (C0415) (locally-disabled)
-187:0: I0023: 'C0415' is cryptic: use '# pylint: disable=import-outside-toplevel' instead (use-symbolic-message-instead)
-187:0: I0020: Suppressed 'import-outside-toplevel' (from line 187) (suppressed-message)
 ************* Module robot1.rasp.boombot_strategy.sub_graphs.push_one_floor_to_wall
 20:0: R0914: Too many local variables (16/15) (too-many-locals)
 ************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver
 111:8: W0201: Attribute '_is_initialized' defined outside __init__ (attribute-defined-outside-init)
 123:8: W0201: Attribute 'navigator_task' defined outside __init__ (attribute-defined-outside-init)
 ************* Module robot1.rasp.brains.main_brain
-32:4: R0913: Too many arguments (7/5) (too-many-arguments)
-32:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
+34:4: R0913: Too many arguments (7/5) (too-many-arguments)
+34:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
 ************* Module robot1.rasp.controllers.actuators.actuators_dummy
 21:4: R0913: Too many arguments (7/5) (too-many-arguments)
 21:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
 88:4: R0913: Too many arguments (6/5) (too-many-arguments)
 ************* Module robot1.rasp.controllers.actuators.actuators_show
-104:4: R0913: Too many arguments (8/5) (too-many-arguments)
-104:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-414:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-427:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-415:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-428:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-512:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-556:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-567:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-96:0: R0904: Too many public methods (24/20) (too-many-public-methods)
+106:4: R0913: Too many arguments (8/5) (too-many-arguments)
+106:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+416:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+429:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+417:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+430:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+514:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+562:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+573:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
+98:0: R0904: Too many public methods (24/20) (too-many-public-methods)
 ************* Module robot1.rasp.controllers.actuators.base.actuators
-26:4: R0913: Too many arguments (8/5) (too-many-arguments)
-26:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-212:4: R0913: Too many arguments (8/5) (too-many-arguments)
-************* Module robot1.rasp.controllers.actuators.base
-1:0: C0114: Missing module docstring (missing-module-docstring)
+28:4: R0913: Too many arguments (8/5) (too-many-arguments)
+28:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+214:4: R0913: Too many arguments (8/5) (too-many-arguments)
 ************* Module robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis
 29:4: R0913: Too many arguments (8/5) (too-many-arguments)
-29:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-366:15: W0718: Catching too general exception Exception (broad-exception-caught)
-400:15: W0718: Catching too general exception Exception (broad-exception-caught)
-429:15: W0718: Catching too general exception Exception (broad-exception-caught)
+29:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
 ************* Module robot1.rasp.controllers.rolling_basis.rolling_basis
 26:4: R0913: Too many arguments (8/5) (too-many-arguments)
 26:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-260:15: W0718: Catching too general exception Exception (broad-exception-caught)
-294:15: W0718: Catching too general exception Exception (broad-exception-caught)
-323:15: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module robot1.rasp.controllers.rolling_basis.rolling_basis_dummy
 23:4: R0913: Too many arguments (7/5) (too-many-arguments)
 23:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-180:15: W0718: Catching too general exception Exception (broad-exception-caught)
-214:15: W0718: Catching too general exception Exception (broad-exception-caught)
-241:15: W0718: Catching too general exception Exception (broad-exception-caught)
 ************* Module robot1.rasp.sensors.lidar.lidar
 17:0: C0103: Type variable name "TLidar" doesn't conform to predefined naming style (invalid-name)
-37:4: R0913: Too many arguments (8/5) (too-many-arguments)
-37:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-132:23: W0718: Catching too general exception Exception (broad-exception-caught)
-158:11: C1805: "n == 0" can be simplified to "not n", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-169:11: C1805: "centered_polars.size == 0" can be simplified to "not centered_polars.size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-246:12: W0707: Consider explicitly re-raising using 'raise Exception(msg) from error' (raise-missing-from)
-246:12: W0719: Raising too general exception: Exception (broad-exception-raised)
-69:8: W0238: Unused private member `Lidar.__angle_unit` (unused-private-member)
+41:4: R0913: Too many arguments (8/5) (too-many-arguments)
+41:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
+165:11: C1805: "n == 0" can be simplified to "not n", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+177:11: C1805: "centered_polars.size == 0" can be simplified to "not centered_polars.size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
+73:8: W0238: Unused private member `Lidar.__angle_unit` (unused-private-member)
 ************* Module robot1.rasp.sensors.lidar.lidar_dummy
 21:4: R0913: Too many arguments (8/5) (too-many-arguments)
 21:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
@@ -261,5 +235,5 @@
 48:8: W0238: Unused private member `LidarDummy.__angle_unit` (unused-private-member)
 
 ------------------------------------------------------------------
-Your code has been rated at 9.59/10 (previous run: 9.59/10, +0.00)
+Your code has been rated at 9.63/10 (previous run: 9.63/10, +0.00)
 

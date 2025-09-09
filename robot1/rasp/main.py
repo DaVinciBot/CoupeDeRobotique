@@ -90,7 +90,8 @@ if __name__ == "__main__":
         logger=logger_ws_server,
         host=CONFIG.WS_HOSTNAME,
         port=CONFIG.WS_PORT,
-        # ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,  # TODO: To fix, this feature is not working
+        # ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,
+        # TODO: To fix, this feature is not working
     )
     # Routes
     ws_cmd = WServerRouteManager(
@@ -144,7 +145,7 @@ if __name__ == "__main__":
     # All rolling basis part is executed in another process so define inside this part
 
     # Brain
-    # Add all object type which need to be shared between processes in the DictProxyAccessor serializable types list
+    # Register object types that must be shared between processes
     DictProxyAccessor.add_serializable_type(ShowArena, arena)
     DictProxyAccessor.add_serializable_type(OrientedPoint)
     DictProxyAccessor.add_serializable_type(NavigatorTaskParams)
@@ -167,8 +168,7 @@ if __name__ == "__main__":
 
     def force_kill_all_python() -> None:
         """Kill all running Python processes using pkill -9 python."""
-        cmd = "pkill -9 python"
-        subprocess.run(cmd, check=False)
+        subprocess.run(["pkill", "-9", "python"], check=False)  # noqa: S607
         logger_brain.fatal("All Python processes killed.")
 
     ws_server.add_shutdown_task(force_kill_all_python)

@@ -21,7 +21,9 @@ class OnlyBannerStrategy(BaseStrategy):
     """Deploy the banner then move directly to the backstage zone."""
 
     def __init__(self, ctx: ShowGameContext) -> None:
-        """Initialize the strategy with the required task flow using subgraphs and direct transitions.
+        """Initialize the strategy.
+
+        Build the task flow using subgraphs and direct transitions.
 
         Args:
             ctx (ShowGameContext):

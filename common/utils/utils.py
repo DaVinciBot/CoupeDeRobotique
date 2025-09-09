@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from shapely import Geometry, Point
 
@@ -18,20 +18,21 @@ class Utils:
             datetime: The current date and time.
 
         """
-        return datetime.now()
+        return datetime.now(tz=UTC)
 
     @staticmethod
     def get_str_date(str_format: str = "%H:%M:%S.%f") -> str:
         """Get the current date as a formatted string.
 
         Args:
-            str_format (str, optional): The format string to use. Defaults to "%H:%M:%S.%f".
+            str_format (str, optional):
+                The format string to use. Defaults to "%H:%M:%S.%f".
 
         Returns:
             str: The formatted date string.
 
         """
-        return datetime.now().strftime(str_format)
+        return datetime.now(tz=UTC).strftime(str_format)
 
     @staticmethod
     def get_ts() -> float:
@@ -41,7 +42,7 @@ class Utils:
             float: The current timestamp.
 
         """
-        return datetime.timestamp(datetime.now())
+        return datetime.now(tz=UTC).timestamp()
 
     @staticmethod
     def time_since(ts: float) -> float:
@@ -83,7 +84,7 @@ class Utils:
                     )
                     + "]"
                 )
-            except:
+            except Exception:  # noqa: BLE001
                 r = str(geom)
 
         return r

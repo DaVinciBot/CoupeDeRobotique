@@ -18,9 +18,10 @@ if TYPE_CHECKING:
 class FromFunctionTransitionCondition(BaseTransitionCondition):
     """A transition condition that delegates its logic to a user-provided function.
 
-    This class enables flexible, reusable logic for determining transitions between task nodes
-    by passing a function during instantiation. The function is expected to return a boolean
-    indicating whether the transition should be allowed.
+    This class enables flexible, reusable logic for determining transitions
+    between task nodes by passing a function during instantiation. The function
+    is expected to return a boolean indicating whether the transition should be
+    allowed.
 
     """
 

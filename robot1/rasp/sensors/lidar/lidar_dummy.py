@@ -59,8 +59,8 @@ class LidarDummy:
 
         self._logger.info("[LidarDummy] Initialized successfully.")
 
+    @staticmethod
     def __init_polars_angle(
-        self,
         min_angle: float,
         max_angle: float,
         num_points: int,

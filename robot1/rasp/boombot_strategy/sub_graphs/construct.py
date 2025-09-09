@@ -13,10 +13,11 @@ from strategy.core import BaseSubGraph, BaseTaskNode, DirectTransition, SubGraph
 
 
 def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
-    """Construct a subgraph for a robot to perform a construction task at a specified zone.
+    """Create a construction subgraph for a specific zone.
 
-    The subgraph includes navigation to the zone, positioning forward, item placement using actuators,
-    and a backward maneuver for precise alignment or disengagement.
+    The subgraph includes navigation to the zone, positioning forward,
+    item placement using actuators, and a backward maneuver for alignment or
+    disengagement.
 
     Args:
         zone_id (int): Identifier for the target construction zone.
@@ -91,10 +92,11 @@ def get_construct_one_floor_subgraph(
     zone_id: int,
     back_offset: int = 0,
 ) -> BaseSubGraph:
-    """Construct a subgraph for a robot to perform a construction task at a specified zone.
+    """Create a one-floor construction subgraph for a given zone.
 
-    The subgraph includes navigation to the zone, positioning forward, item placement using actuators,
-    and a backward maneuver for precise alignment or disengagement.
+    The subgraph includes navigation to the zone, positioning forward,
+    item placement using actuators, and a backward maneuver for alignment or
+    disengagement.
 
     Args:
         zone_id (int): Identifier for the target construction zone.

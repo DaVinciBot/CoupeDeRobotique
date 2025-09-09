@@ -296,7 +296,7 @@ class BaseArena(ABC):
                 )
 
         # 4.Update Grid Manager dynamic forbidden zones (only enemy zone)
-        # self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon]) #noqa: ERA001, E501 #FIX
+        # self.grid_manager.update_dynamic_forbidden_zones([self.enemy_zone.polygon])
 
     def compute_enemy_position(
         self,

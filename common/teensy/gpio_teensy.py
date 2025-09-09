@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 class GPIOComTeensy(Com):
-    """Extends the Com class to provide GPIO management for a Teensy microcontroller."""
+    """Provide GPIO management for a Teensy microcontroller."""
 
     def __init__(
         self,
@@ -25,7 +25,7 @@ class GPIOComTeensy(Com):
         enable_crc: bool = True,
         enable_dummy: bool = False,
     ) -> None:
-        """Initializes GPIO management for the Teensy microcontroller and its communication settings.
+        """Initialize GPIO management for the Teensy and its communication settings.
 
         Args:
             logger (Logger): Logger instance for debugging and event tracking.

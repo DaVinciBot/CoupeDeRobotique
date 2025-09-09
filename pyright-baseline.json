@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1757356206244",
+    "time": "1757444094264",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\arena_old.py",
@@ -1768,11 +1768,11 @@
             "message": "Expected type arguments for generic class \"BasePathPlanner\"",
             "range": {
                 "start": {
-                    "line": 40,
+                    "line": 42,
                     "character": 27
                 },
                 "end": {
-                    "line": 40,
+                    "line": 42,
                     "character": 42
                 }
             },
@@ -1784,11 +1784,11 @@
             "message": "Expected type arguments for generic class \"BaseTrajectoryPlanner\"",
             "range": {
                 "start": {
-                    "line": 43,
+                    "line": 45,
                     "character": 33
                 },
                 "end": {
-                    "line": 43,
+                    "line": 45,
                     "character": 54
                 }
             },
@@ -1800,11 +1800,11 @@
             "message": "Expected type arguments for generic class \"BaseAvoidance\"",
             "range": {
                 "start": {
-                    "line": 49,
+                    "line": 51,
                     "character": 24
                 },
                 "end": {
-                    "line": 49,
+                    "line": 51,
                     "character": 37
                 }
             },
@@ -2240,11 +2240,11 @@
             "message": "Type of \"smaller_geom\" is unknown",
             "range": {
                 "start": {
-                    "line": 80,
+                    "line": 81,
                     "character": 32
                 },
                 "end": {
-                    "line": 80,
+                    "line": 81,
                     "character": 44
                 }
             },
@@ -2256,11 +2256,11 @@
             "message": "Cannot access attribute \"geoms\" for class \"Geometry\"\n  Attribute \"geoms\" is unknown",
             "range": {
                 "start": {
-                    "line": 80,
+                    "line": 81,
                     "character": 53
                 },
                 "end": {
-                    "line": 80,
+                    "line": 81,
                     "character": 58
                 }
             },
@@ -2272,11 +2272,11 @@
             "message": "Import \"navigation\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 186,
+                    "line": 187,
                     "character": 9
                 },
                 "end": {
-                    "line": 186,
+                    "line": 187,
                     "character": 19
                 }
             },
@@ -2288,11 +2288,11 @@
             "message": "Type of \"BaseAcsDetectionProfileParams\" is unknown",
             "range": {
                 "start": {
-                    "line": 187,
+                    "line": 188,
                     "character": 8
                 },
                 "end": {
-                    "line": 187,
+                    "line": 188,
                     "character": 37
                 }
             },
@@ -2304,11 +2304,11 @@
             "message": "Type of \"BasicSpeedProfile\" is unknown",
             "range": {
                 "start": {
-                    "line": 188,
+                    "line": 189,
                     "character": 8
                 },
                 "end": {
-                    "line": 188,
+                    "line": 189,
                     "character": 25
                 }
             },
@@ -2320,11 +2320,11 @@
             "message": "Type of \"LinearRampedSpeedProfile\" is unknown",
             "range": {
                 "start": {
-                    "line": 189,
+                    "line": 190,
                     "character": 8
                 },
                 "end": {
-                    "line": 189,
+                    "line": 190,
                     "character": 32
                 }
             },
@@ -2336,11 +2336,11 @@
             "message": "Type of \"SpeedProfiler\" is unknown",
             "range": {
                 "start": {
-                    "line": 190,
+                    "line": 191,
                     "character": 8
                 },
                 "end": {
-                    "line": 190,
+                    "line": 191,
                     "character": 21
                 }
             },
@@ -2352,11 +2352,11 @@
             "message": "Type of \"ROLLING_BASIS_DEFAULT_SPEED_PROFILER\" is unknown",
             "range": {
                 "start": {
-                    "line": 317,
+                    "line": 318,
                     "character": 4
                 },
                 "end": {
-                    "line": 317,
+                    "line": 318,
                     "character": 40
                 }
             },
@@ -2368,11 +2368,11 @@
             "message": "Type of \"ROLLING_BASIS_SLOW_SPEED_PROFILER\" is unknown",
             "range": {
                 "start": {
-                    "line": 325,
+                    "line": 326,
                     "character": 4
                 },
                 "end": {
-                    "line": 325,
+                    "line": 326,
                     "character": 37
                 }
             },
@@ -2384,11 +2384,11 @@
             "message": "Type of \"ROLLING_BASIS_SPEED_PROFILER_PID\" is unknown",
             "range": {
                 "start": {
-                    "line": 333,
+                    "line": 334,
                     "character": 4
                 },
                 "end": {
-                    "line": 333,
+                    "line": 334,
                     "character": 36
                 }
             },
@@ -2400,11 +2400,11 @@
             "message": "Type of \"ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME\" is unknown",
             "range": {
                 "start": {
-                    "line": 378,
+                    "line": 379,
                     "character": 4
                 },
                 "end": {
-                    "line": 378,
+                    "line": 379,
                     "character": 56
                 }
             },
@@ -2416,11 +2416,11 @@
             "message": "Type of \"ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT\" is unknown",
             "range": {
                 "start": {
-                    "line": 381,
+                    "line": 382,
                     "character": 4
                 },
                 "end": {
-                    "line": 381,
+                    "line": 382,
                     "character": 54
                 }
             },
@@ -2432,11 +2432,11 @@
             "message": "Type of \"ACS_PROFILE_GO_TO_STUFF_ZONE_TO_PICK_UP\" is unknown",
             "range": {
                 "start": {
-                    "line": 384,
+                    "line": 385,
                     "character": 4
                 },
                 "end": {
-                    "line": 384,
+                    "line": 385,
                     "character": 43
                 }
             },
@@ -2448,11 +2448,11 @@
             "message": "Type of \"ACS_PROFILE_BACKWARD\" is unknown",
             "range": {
                 "start": {
-                    "line": 389,
+                    "line": 390,
                     "character": 4
                 },
                 "end": {
-                    "line": 389,
+                    "line": 390,
                     "character": 24
                 }
             },
@@ -2464,11 +2464,11 @@
             "message": "Type of \"ACS_PROFILE_PRECISE_FORWARD\" is unknown",
             "range": {
                 "start": {
-                    "line": 392,
+                    "line": 393,
                     "character": 4
                 },
                 "end": {
-                    "line": 392,
+                    "line": 393,
                     "character": 31
                 }
             },
@@ -2480,11 +2480,11 @@
             "message": "Type of \"ACS_PROFILE_START_TASK\" is unknown",
             "range": {
                 "start": {
-                    "line": 397,
+                    "line": 398,
                     "character": 4
                 },
                 "end": {
-                    "line": 397,
+                    "line": 398,
                     "character": 26
                 }
             },
@@ -2816,11 +2816,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 104,
+                    "line": 105,
                     "character": 19
                 },
                 "end": {
-                    "line": 104,
+                    "line": 105,
                     "character": 38
                 }
             },
@@ -2832,11 +2832,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 105,
+                    "line": 106,
                     "character": 15
                 },
                 "end": {
-                    "line": 105,
+                    "line": 106,
                     "character": 22
                 }
             },
@@ -2848,11 +2848,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 119,
+                    "line": 120,
                     "character": 19
                 },
                 "end": {
-                    "line": 119,
+                    "line": 120,
                     "character": 41
                 }
             },
@@ -2864,11 +2864,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 120,
+                    "line": 121,
                     "character": 15
                 },
                 "end": {
-                    "line": 120,
+                    "line": 121,
                     "character": 22
                 }
             },
@@ -2976,11 +2976,11 @@
             "message": "Type of \"deploy_banner_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 43,
+                    "line": 45,
                     "character": 8
                 },
                 "end": {
-                    "line": 43,
+                    "line": 45,
                     "character": 30
                 }
             },
@@ -2992,11 +2992,11 @@
             "message": "Type of \"first_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 46,
+                    "line": 48,
                     "character": 8
                 },
                 "end": {
-                    "line": 46,
+                    "line": 48,
                     "character": 29
                 }
             },
@@ -3008,11 +3008,11 @@
             "message": "Type of \"first_construct_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 49,
+                    "line": 51,
                     "character": 8
                 },
                 "end": {
-                    "line": 49,
+                    "line": 51,
                     "character": 32
                 }
             },
@@ -3024,11 +3024,11 @@
             "message": "Type of \"go_to_backstage\" is unknown",
             "range": {
                 "start": {
-                    "line": 63,
+                    "line": 65,
                     "character": 8
                 },
                 "end": {
-                    "line": 63,
+                    "line": 65,
                     "character": 23
                 }
             },
@@ -3120,11 +3120,11 @@
             "message": "Type of \"deploy_banner_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 42,
+                    "line": 45,
                     "character": 8
                 },
                 "end": {
-                    "line": 42,
+                    "line": 45,
                     "character": 30
                 }
             },
@@ -3136,11 +3136,11 @@
             "message": "Type of \"first_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 45,
+                    "line": 48,
                     "character": 8
                 },
                 "end": {
-                    "line": 45,
+                    "line": 48,
                     "character": 29
                 }
             },
@@ -3152,11 +3152,11 @@
             "message": "Type of \"go_to_backstage\" is unknown",
             "range": {
                 "start": {
-                    "line": 48,
+                    "line": 51,
                     "character": 8
                 },
                 "end": {
-                    "line": 48,
+                    "line": 51,
                     "character": 23
                 }
             },
@@ -3232,11 +3232,11 @@
             "message": "Type of \"deploy_banner_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 33,
+                    "line": 35,
                     "character": 8
                 },
                 "end": {
-                    "line": 33,
+                    "line": 35,
                     "character": 30
                 }
             },
@@ -3248,11 +3248,11 @@
             "message": "Type of \"go_to_backstage\" is unknown",
             "range": {
                 "start": {
-                    "line": 36,
+                    "line": 38,
                     "character": 8
                 },
                 "end": {
-                    "line": 36,
+                    "line": 38,
                     "character": 23
                 }
             },
@@ -3376,11 +3376,11 @@
             "message": "Type of \"deploy_banner_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 45,
+                    "line": 47,
                     "character": 8
                 },
                 "end": {
-                    "line": 45,
+                    "line": 47,
                     "character": 30
                 }
             },
@@ -3392,11 +3392,11 @@
             "message": "Type of \"first_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 48,
+                    "line": 50,
                     "character": 8
                 },
                 "end": {
-                    "line": 48,
+                    "line": 50,
                     "character": 29
                 }
             },
@@ -3408,11 +3408,11 @@
             "message": "Type of \"first_construct_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 51,
+                    "line": 53,
                     "character": 8
                 },
                 "end": {
-                    "line": 51,
+                    "line": 53,
                     "character": 32
                 }
             },
@@ -3424,11 +3424,11 @@
             "message": "Type of \"second_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 57,
+                    "line": 59,
                     "character": 8
                 },
                 "end": {
-                    "line": 57,
+                    "line": 59,
                     "character": 30
                 }
             },
@@ -3440,11 +3440,11 @@
             "message": "Type of \"second_construct_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 60,
+                    "line": 62,
                     "character": 8
                 },
                 "end": {
-                    "line": 60,
+                    "line": 62,
                     "character": 33
                 }
             },
@@ -3456,11 +3456,11 @@
             "message": "Type of \"third_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 66,
+                    "line": 68,
                     "character": 8
                 },
                 "end": {
-                    "line": 66,
+                    "line": 68,
                     "character": 29
                 }
             },
@@ -3472,11 +3472,11 @@
             "message": "Type of \"third_construct_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 69,
+                    "line": 71,
                     "character": 8
                 },
                 "end": {
-                    "line": 69,
+                    "line": 71,
                     "character": 32
                 }
             },
@@ -3488,11 +3488,11 @@
             "message": "Type of \"go_to_backstage\" is unknown",
             "range": {
                 "start": {
-                    "line": 75,
+                    "line": 77,
                     "character": 8
                 },
                 "end": {
-                    "line": 75,
+                    "line": 77,
                     "character": 23
                 }
             },
@@ -3616,11 +3616,11 @@
             "message": "Type of \"deploy_banner_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 45,
+                    "line": 47,
                     "character": 8
                 },
                 "end": {
-                    "line": 45,
+                    "line": 47,
                     "character": 30
                 }
             },
@@ -3632,11 +3632,11 @@
             "message": "Type of \"first_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 48,
+                    "line": 50,
                     "character": 8
                 },
                 "end": {
-                    "line": 48,
+                    "line": 50,
                     "character": 29
                 }
             },
@@ -3648,11 +3648,11 @@
             "message": "Type of \"first_construct_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 51,
+                    "line": 53,
                     "character": 8
                 },
                 "end": {
-                    "line": 51,
+                    "line": 53,
                     "character": 32
                 }
             },
@@ -3664,11 +3664,11 @@
             "message": "Type of \"second_pickup_subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 57,
+                    "line": 59,
                     "character": 8
                 },
                 "end": {
-                    "line": 57,
+                    "line": 59,
                     "character": 30
                 }
             },
@@ -3680,11 +3680,11 @@
             "message": "Type of \"go_to_backstage\" is unknown",
             "range": {
                 "start": {
-                    "line": 63,
+                    "line": 65,
                     "character": 8
                 },
                 "end": {
-                    "line": 63,
+                    "line": 65,
                     "character": 23
                 }
             },
@@ -3968,11 +3968,11 @@
             "message": "Type of \"subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 31,
+                    "line": 32,
                     "character": 4
                 },
                 "end": {
-                    "line": 31,
+                    "line": 32,
                     "character": 12
                 }
             },
@@ -3984,11 +3984,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 83,
+                    "line": 84,
                     "character": 11
                 },
                 "end": {
-                    "line": 86,
+                    "line": 87,
                     "character": 5
                 }
             },
@@ -4000,11 +4000,11 @@
             "message": "Type of \"subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 109,
+                    "line": 111,
                     "character": 4
                 },
                 "end": {
-                    "line": 109,
+                    "line": 111,
                     "character": 12
                 }
             },
@@ -4016,11 +4016,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 151,
+                    "line": 153,
                     "character": 11
                 },
                 "end": {
-                    "line": 154,
+                    "line": 156,
                     "character": 5
                 }
             },
@@ -4112,11 +4112,11 @@
             "message": "Type of \"subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 30,
+                    "line": 31,
                     "character": 4
                 },
                 "end": {
-                    "line": 30,
+                    "line": 31,
                     "character": 12
                 }
             },
@@ -4128,11 +4128,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 82,
+                    "line": 83,
                     "character": 11
                 },
                 "end": {
-                    "line": 85,
+                    "line": 86,
                     "character": 5
                 }
             },
@@ -4224,11 +4224,11 @@
             "message": "Type of \"builder\" is unknown",
             "range": {
                 "start": {
-                    "line": 48,
+                    "line": 51,
                     "character": 4
                 },
                 "end": {
-                    "line": 48,
+                    "line": 51,
                     "character": 11
                 }
             },
@@ -4240,11 +4240,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 136,
+                    "line": 141,
                     "character": 11
                 },
                 "end": {
-                    "line": 139,
+                    "line": 144,
                     "character": 5
                 }
             },
@@ -4336,11 +4336,11 @@
             "message": "Type of \"subgraph\" is unknown",
             "range": {
                 "start": {
-                    "line": 27,
+                    "line": 28,
                     "character": 4
                 },
                 "end": {
-                    "line": 27,
+                    "line": 28,
                     "character": 12
                 }
             },
@@ -4352,11 +4352,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 79,
+                    "line": 80,
                     "character": 11
                 },
                 "end": {
-                    "line": 82,
+                    "line": 83,
                     "character": 5
                 }
             },
@@ -5037,7 +5037,7 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
             "severity": "warning",
-            "message": "Import \"navigation.avoidance.acs_detection_profiles.no_acs_detection_profile\" could not be resolved",
+            "message": "Import \"navigation.avoidance.acs_detection_profiles\" could not be resolved",
             "range": {
                 "start": {
                     "line": 19,
@@ -5045,6 +5045,38 @@
                 },
                 "end": {
                     "line": 19,
+                    "character": 48
+                }
+            },
+            "rule": "reportMissingImports"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
+            "severity": "information",
+            "message": "Type of \"RectangularProjectionAcsDetectionProfileParams\" is unknown",
+            "range": {
+                "start": {
+                    "line": 20,
+                    "character": 4
+                },
+                "end": {
+                    "line": 20,
+                    "character": 50
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
+            "severity": "warning",
+            "message": "Import \"navigation.avoidance.acs_detection_profiles.no_acs_detection_profile\" could not be resolved",
+            "range": {
+                "start": {
+                    "line": 22,
+                    "character": 5
+                },
+                "end": {
+                    "line": 22,
                     "character": 73
                 }
             },
@@ -5056,44 +5088,12 @@
             "message": "Type of \"NoAcsDetectionProfileParams\" is unknown",
             "range": {
                 "start": {
-                    "line": 20,
+                    "line": 23,
                     "character": 4
                 },
                 "end": {
-                    "line": 20,
+                    "line": 23,
                     "character": 31
-                }
-            },
-            "rule": "reportUnknownVariableType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
-            "severity": "warning",
-            "message": "Import \"navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 22,
-                    "character": 5
-                },
-                "end": {
-                    "line": 22,
-                    "character": 93
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
-            "severity": "information",
-            "message": "Type of \"RectangularProjectionAcsDetectionProfileParams\" is unknown",
-            "range": {
-                "start": {
-                    "line": 23,
-                    "character": 4
-                },
-                "end": {
-                    "line": 23,
-                    "character": 50
                 }
             },
             "rule": "reportUnknownVariableType"
@@ -5456,11 +5456,11 @@
             "message": "Import \"geometry\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 19,
+                    "line": 21,
                     "character": 5
                 },
                 "end": {
-                    "line": 19,
+                    "line": 21,
                     "character": 13
                 }
             },
@@ -5472,11 +5472,11 @@
             "message": "Type of \"OrientedPoint\" is unknown",
             "range": {
                 "start": {
-                    "line": 19,
+                    "line": 21,
                     "character": 21
                 },
                 "end": {
-                    "line": 19,
+                    "line": 21,
                     "character": 34
                 }
             },
@@ -5504,11 +5504,11 @@
             "message": "Type of \"to_send\" is partially unknown\n  Type of \"to_send\" is \"dict[str, Unknown]\"",
             "range": {
                 "start": {
-                    "line": 198,
+                    "line": 200,
                     "character": 12
                 },
                 "end": {
-                    "line": 198,
+                    "line": 200,
                     "character": 19
                 }
             },
@@ -5520,11 +5520,11 @@
             "message": "Type of \"instructions\" is partially unknown\n  Type of \"instructions\" is \"list[Unknown]\"",
             "range": {
                 "start": {
-                    "line": 230,
+                    "line": 232,
                     "character": 20
                 },
                 "end": {
-                    "line": 230,
+                    "line": 232,
                     "character": 32
                 }
             },
@@ -5536,11 +5536,11 @@
             "message": "Type of \"instruction\" is unknown",
             "range": {
                 "start": {
-                    "line": 232,
+                    "line": 234,
                     "character": 20
                 },
                 "end": {
-                    "line": 232,
+                    "line": 234,
                     "character": 31
                 }
             },
@@ -5552,11 +5552,11 @@
             "message": "Type of \"start_position\" is unknown",
             "range": {
                 "start": {
-                    "line": 294,
+                    "line": 296,
                     "character": 8
                 },
                 "end": {
-                    "line": 294,
+                    "line": 296,
                     "character": 22
                 }
             },
@@ -5568,11 +5568,11 @@
             "message": "Type of \"enemy_position\" is unknown",
             "range": {
                 "start": {
-                    "line": 295,
+                    "line": 297,
                     "character": 8
                 },
                 "end": {
-                    "line": 295,
+                    "line": 297,
                     "character": 22
                 }
             },
@@ -5584,11 +5584,11 @@
             "message": "Type of \"start_position\" is unknown",
             "range": {
                 "start": {
-                    "line": 298,
+                    "line": 300,
                     "character": 12
                 },
                 "end": {
-                    "line": 298,
+                    "line": 300,
                     "character": 26
                 }
             },
@@ -5600,11 +5600,11 @@
             "message": "Type of \"enemy_position\" is unknown",
             "range": {
                 "start": {
-                    "line": 299,
+                    "line": 301,
                     "character": 12
                 },
                 "end": {
-                    "line": 299,
+                    "line": 301,
                     "character": 26
                 }
             },
@@ -5616,11 +5616,11 @@
             "message": "Type of \"start_position\" is unknown",
             "range": {
                 "start": {
-                    "line": 302,
+                    "line": 304,
                     "character": 12
                 },
                 "end": {
-                    "line": 302,
+                    "line": 304,
                     "character": 26
                 }
             },
@@ -5632,11 +5632,11 @@
             "message": "Type of \"enemy_position\" is unknown",
             "range": {
                 "start": {
-                    "line": 303,
+                    "line": 305,
                     "character": 12
                 },
                 "end": {
-                    "line": 303,
+                    "line": 305,
                     "character": 26
                 }
             },
@@ -5712,11 +5712,11 @@
             "message": "Condition will always evaluate to False since the types \"Servo | ServoArm | ServoPlank | ServoDocking\" and \"None\" have no overlap",
             "range": {
                 "start": {
-                    "line": 213,
+                    "line": 215,
                     "character": 37
                 },
                 "end": {
-                    "line": 213,
+                    "line": 215,
                     "character": 61
                 }
             },
@@ -5824,11 +5824,11 @@
             "message": "Base class type is unknown, obscuring type of derived class",
             "range": {
                 "start": {
-                    "line": 16,
+                    "line": 18,
                     "character": 4
                 },
                 "end": {
-                    "line": 16,
+                    "line": 18,
                     "character": 17
                 }
             },
@@ -5840,11 +5840,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 87,
+                    "line": 89,
                     "character": 15
                 },
                 "end": {
-                    "line": 87,
+                    "line": 89,
                     "character": 38
                 }
             },
@@ -5856,11 +5856,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 148,
+                    "line": 150,
                     "character": 8
                 },
                 "end": {
-                    "line": 148,
+                    "line": 150,
                     "character": 11
                 }
             },
@@ -5872,11 +5872,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 183,
+                    "line": 185,
                     "character": 8
                 },
                 "end": {
-                    "line": 183,
+                    "line": 185,
                     "character": 11
                 }
             },
@@ -5888,11 +5888,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 245,
+                    "line": 247,
                     "character": 16
                 },
                 "end": {
-                    "line": 245,
+                    "line": 247,
                     "character": 19
                 }
             },
@@ -5904,11 +5904,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 268,
+                    "line": 271,
                     "character": 16
                 },
                 "end": {
-                    "line": 268,
+                    "line": 271,
                     "character": 19
                 }
             },
@@ -5920,11 +5920,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 290,
+                    "line": 293,
                     "character": 8
                 },
                 "end": {
-                    "line": 290,
+                    "line": 293,
                     "character": 11
                 }
             },
@@ -6064,11 +6064,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 147,
+                    "line": 148,
                     "character": 8
                 },
                 "end": {
-                    "line": 147,
+                    "line": 148,
                     "character": 11
                 }
             },
@@ -6080,11 +6080,11 @@
             "message": "Type of \"entry\" is partially unknown\n  Type of \"entry\" is \"dict[str, Unknown]\"",
             "range": {
                 "start": {
-                    "line": 239,
+                    "line": 240,
                     "character": 8
                 },
                 "end": {
-                    "line": 239,
+                    "line": 240,
                     "character": 13
                 }
             },
@@ -6096,11 +6096,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 274,
+                    "line": 275,
                     "character": 8
                 },
                 "end": {
-                    "line": 274,
+                    "line": 275,
                     "character": 11
                 }
             },
@@ -6112,11 +6112,11 @@
             "message": "Type of \"msg\" is unknown",
             "range": {
                 "start": {
-                    "line": 296,
+                    "line": 297,
                     "character": 8
                 },
                 "end": {
-                    "line": 296,
+                    "line": 297,
                     "character": 11
                 }
             },
@@ -6128,11 +6128,11 @@
             "message": "Return type, \"Unknown | bool\", is partially unknown",
             "range": {
                 "start": {
-                    "line": 459,
+                    "line": 460,
                     "character": 15
                 },
                 "end": {
-                    "line": 463,
+                    "line": 464,
                     "character": 9
                 }
             },
@@ -6560,11 +6560,11 @@
             "message": "Type of \"arena\" is unknown",
             "range": {
                 "start": {
-                    "line": 127,
+                    "line": 128,
                     "character": 4
                 },
                 "end": {
-                    "line": 127,
+                    "line": 128,
                     "character": 9
                 }
             },
@@ -6576,11 +6576,11 @@
             "message": "Type of \"routine\" is unknown",
             "range": {
                 "start": {
-                    "line": 164,
+                    "line": 165,
                     "character": 8
                 },
                 "end": {
-                    "line": 164,
+                    "line": 165,
                     "character": 15
                 }
             },
@@ -6624,11 +6624,11 @@
             "message": "Type variable \"TLidar\" has no meaning in this context",
             "range": {
                 "start": {
-                    "line": 75,
+                    "line": 79,
                     "character": 26
                 },
                 "end": {
-                    "line": 75,
+                    "line": 79,
                     "character": 32
                 }
             },
@@ -6640,11 +6640,11 @@
             "message": "TypeVar \"TLidar\" appears only once in generic function signature\n  Use \"Module(\"pysicktim\")\" instead",
             "range": {
                 "start": {
-                    "line": 81,
+                    "line": 85,
                     "character": 30
                 },
                 "end": {
-                    "line": 81,
+                    "line": 85,
                     "character": 36
                 }
             },
@@ -6656,12 +6656,12 @@
             "message": "Condition will always evaluate to False since the types \"Module(\"pysicktim\")\" and \"None\" have no overlap",
             "range": {
                 "start": {
-                    "line": 95,
-                    "character": 15
+                    "line": 103,
+                    "character": 11
                 },
                 "end": {
-                    "line": 95,
-                    "character": 28
+                    "line": 103,
+                    "character": 24
                 }
             },
             "rule": "reportUnnecessaryComparison"
@@ -6672,12 +6672,12 @@
             "message": "Cannot access attribute \"distances\" for class \"FunctionType\"\n  Attribute \"distances\" is unknown",
             "range": {
                 "start": {
-                    "line": 103,
-                    "character": 26
+                    "line": 111,
+                    "character": 22
                 },
                 "end": {
-                    "line": 103,
-                    "character": 35
+                    "line": 111,
+                    "character": 31
                 }
             },
             "rule": "reportFunctionMemberAccess"
@@ -6688,12 +6688,12 @@
             "message": "Cannot access attribute \"distances\" for class \"FunctionType\"\n  Attribute \"distances\" is unknown",
             "range": {
                 "start": {
-                    "line": 103,
-                    "character": 58
+                    "line": 111,
+                    "character": 54
                 },
                 "end": {
-                    "line": 103,
-                    "character": 67
+                    "line": 111,
+                    "character": 63
                 }
             },
             "rule": "reportFunctionMemberAccess"
@@ -6704,12 +6704,12 @@
             "message": "Type \"Module(\"pysicktim\")\" is not assignable to return type \"TLidar@__init_lidar\"\n  Type \"Module(\"pysicktim\")\" is not assignable to type \"TLidar@__init_lidar\"",
             "range": {
                 "start": {
-                    "line": 108,
-                    "character": 19
+                    "line": 116,
+                    "character": 15
                 },
                 "end": {
-                    "line": 108,
-                    "character": 24
+                    "line": 116,
+                    "character": 20
                 }
             },
             "rule": "reportReturnType"
@@ -6720,11 +6720,11 @@
             "message": "Expected type arguments for generic class \"ndarray\"",
             "range": {
                 "start": {
-                    "line": 142,
+                    "line": 149,
                     "character": 73
                 },
                 "end": {
-                    "line": 142,
+                    "line": 149,
                     "character": 83
                 }
             },
@@ -6736,11 +6736,11 @@
             "message": "\"scan\" is not a known attribute of \"None\"",
             "range": {
                 "start": {
-                    "line": 233,
+                    "line": 241,
                     "character": 29
                 },
                 "end": {
-                    "line": 233,
+                    "line": 241,
                     "character": 33
                 }
             },
@@ -6752,11 +6752,11 @@
             "message": "\"scan\" is not a known attribute of \"None\"",
             "range": {
                 "start": {
-                    "line": 275,
+                    "line": 283,
                     "character": 38
                 },
                 "end": {
-                    "line": 275,
+                    "line": 283,
                     "character": 42
                 }
             },
@@ -6768,11 +6768,11 @@
             "message": "Cannot access attribute \"distances\" for class \"FunctionType\"\n  Attribute \"distances\" is unknown",
             "range": {
                 "start": {
-                    "line": 275,
+                    "line": 283,
                     "character": 43
                 },
                 "end": {
-                    "line": 275,
+                    "line": 283,
                     "character": 52
                 }
             },
@@ -6784,11 +6784,11 @@
             "message": "No overloads for \"column_stack\" match the provided arguments",
             "range": {
                 "start": {
-                    "line": 289,
+                    "line": 297,
                     "character": 15
                 },
                 "end": {
-                    "line": 289,
+                    "line": 297,
                     "character": 70
                 }
             },
@@ -6800,11 +6800,11 @@
             "message": "Return type is unknown",
             "range": {
                 "start": {
-                    "line": 289,
+                    "line": 297,
                     "character": 15
                 },
                 "end": {
-                    "line": 289,
+                    "line": 297,
                     "character": 70
                 }
             },
@@ -6816,11 +6816,11 @@
             "message": "Argument of type \"tuple[None, NDArray[float32]]\" cannot be assigned to parameter \"tup\" of type \"Sequence[ArrayLike]\" in function \"column_stack\"\n  Type \"None\" is not assignable to type \"ArrayLike\"\n    \"None\" is incompatible with protocol \"Buffer\"\n      \"__buffer__\" is not present\n    \"None\" is incompatible with protocol \"_SupportsArray[dtype[Any]]\"\n      \"__array__\" is not present\n    \"None\" is incompatible with protocol \"_NestedSequence[_SupportsArray[dtype[Any]]]\"\n      \"__len__\" is not present\n      \"__getitem__\" is not present",
             "range": {
                 "start": {
-                    "line": 289,
+                    "line": 297,
                     "character": 32
                 },
                 "end": {
-                    "line": 289,
+                    "line": 297,
                     "character": 52
                 }
             },
@@ -6987,224 +6987,224 @@
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "warning",
             "message": "Import \"navigation\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 190,
+                    "line": 187,
                     "character": 9
                 },
                 "end": {
-                    "line": 190,
+                    "line": 187,
                     "character": 19
                 }
             },
             "rule": "reportMissingImports"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"BaseAcsDetectionProfileParams\" is unknown",
             "range": {
                 "start": {
-                    "line": 191,
+                    "line": 188,
                     "character": 8
                 },
                 "end": {
-                    "line": 191,
+                    "line": 188,
                     "character": 37
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"BasicSpeedProfile\" is unknown",
             "range": {
                 "start": {
-                    "line": 192,
+                    "line": 189,
                     "character": 8
                 },
                 "end": {
-                    "line": 192,
+                    "line": 189,
                     "character": 25
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"LinearRampedSpeedProfile\" is unknown",
             "range": {
                 "start": {
-                    "line": 193,
+                    "line": 190,
                     "character": 8
                 },
                 "end": {
-                    "line": 193,
+                    "line": 190,
                     "character": 32
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"SpeedProfiler\" is unknown",
             "range": {
                 "start": {
-                    "line": 194,
+                    "line": 191,
                     "character": 8
                 },
                 "end": {
-                    "line": 194,
+                    "line": 191,
                     "character": 21
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"ROLLING_BASIS_DEFAULT_SPEED_PROFILER\" is unknown",
             "range": {
                 "start": {
-                    "line": 321,
+                    "line": 318,
                     "character": 4
                 },
                 "end": {
-                    "line": 321,
+                    "line": 318,
                     "character": 40
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"ROLLING_BASIS_SLOW_SPEED_PROFILER\" is unknown",
             "range": {
                 "start": {
-                    "line": 329,
+                    "line": 326,
                     "character": 4
                 },
                 "end": {
-                    "line": 329,
+                    "line": 326,
                     "character": 37
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"ROLLING_BASIS_SPEED_PROFILER_PID\" is unknown",
             "range": {
                 "start": {
-                    "line": 337,
+                    "line": 334,
                     "character": 4
                 },
                 "end": {
-                    "line": 337,
+                    "line": 334,
                     "character": 36
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME\" is unknown",
             "range": {
                 "start": {
-                    "line": 382,
+                    "line": 379,
                     "character": 4
                 },
                 "end": {
-                    "line": 382,
+                    "line": 379,
                     "character": 56
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT\" is unknown",
             "range": {
                 "start": {
-                    "line": 385,
+                    "line": 382,
                     "character": 4
                 },
                 "end": {
-                    "line": 385,
+                    "line": 382,
                     "character": 54
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"ACS_PROFILE_GO_TO_STUFF_ZONE_TO_PICK_UP\" is unknown",
             "range": {
                 "start": {
-                    "line": 388,
+                    "line": 385,
                     "character": 4
                 },
                 "end": {
-                    "line": 388,
+                    "line": 385,
                     "character": 43
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"ACS_PROFILE_BACKWARD\" is unknown",
             "range": {
                 "start": {
-                    "line": 393,
+                    "line": 390,
                     "character": 4
                 },
                 "end": {
-                    "line": 393,
+                    "line": 390,
                     "character": 24
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"ACS_PROFILE_PRECISE_FORWARD\" is unknown",
             "range": {
                 "start": {
-                    "line": 396,
+                    "line": 393,
                     "character": 4
                 },
                 "end": {
-                    "line": 396,
+                    "line": 393,
                     "character": 31
                 }
             },
             "rule": "reportUnknownVariableType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\config_loader.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
             "severity": "information",
             "message": "Type of \"ACS_PROFILE_START_TASK\" is unknown",
             "range": {
                 "start": {
-                    "line": 401,
+                    "line": 398,
                     "character": 4
                 },
                 "end": {
-                    "line": 401,
+                    "line": 398,
                     "character": 26
                 }
             },
@@ -7216,7 +7216,7 @@
         "errorCount": 69,
         "warningCount": 82,
         "informationCount": 302,
-        "timeInSec": 31.902
+        "timeInSec": 12.327
     }
 }
 

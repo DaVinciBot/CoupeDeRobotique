@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 class ReadyToApproachToPickUp(BaseTask):
-    """Task to activate the actuator's approach mechanism in preparation for picking up an object."""
+    """Activate the actuator's approach mechanism to prepare for pickup."""
 
     @override
     def handle(self, ctx: ShowGameContext) -> bool:
