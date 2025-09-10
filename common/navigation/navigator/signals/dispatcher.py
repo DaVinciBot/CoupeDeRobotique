@@ -35,6 +35,8 @@ class NavigatorSignalsDispatcher:  # UNUSED
         event_names = tuple(signal.name for signal in NavigatorSignalsEnum)
 
         class NavigatorEvents(Events):
+            """Dynamic Events subclass for navigator signals."""
+
             __events__ = event_names
 
         self._signals = NavigatorEvents()

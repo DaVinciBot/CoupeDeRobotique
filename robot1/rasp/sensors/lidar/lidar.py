@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from loggerplusplus import Logger
     from numpy.typing import NDArray
 
-TLidar = TypeVar("TLidar", bound="pysicktim")
+Tlidar = TypeVar("Tlidar", bound="pysicktim")
 
 
 class LidarError(Exception):
@@ -77,17 +77,17 @@ class Lidar:
         self.__initialization_fail_refresh_rate = initialization_fail_refresh_rate
 
         self.__is_connected = False
-        self.__lidar_obj: TLidar | None = None
+        self.__lidar_obj: Tlidar | None = None
         self.__polars_angles = None
         self.__threading_init_lidar()
 
     # ====== Private methods ======
 
-    def __init_lidar(self) -> TLidar:
+    def __init_lidar(self) -> Tlidar:
         """Initialize the lidar object and test the connection.
 
         Returns:
-            TLidar: the lidar object
+            Tlidar: the lidar object
 
         Raises:
             ConnectionError: If the lidar is not connected or does not work correctly.
@@ -162,7 +162,7 @@ class Lidar:
 
         """
         n = len(self.distances)  # Number of distances
-        if n == 0:
+        if not n:
             self.__scan()
             n = len(self.distances)  # Number of distances
 
@@ -174,7 +174,7 @@ class Lidar:
         for i in range(n):
             centered_polars[i] = -((max_angle - min_angle) / 2) + i * angle_step
 
-        if centered_polars.size == 0:
+        if not centered_polars.size:
             msg = "Error while initializing polars"
             self._logger.critical(msg)
             raise ValueError(msg)

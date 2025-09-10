@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING
 
 from geometry import OrientedPoint
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
@@ -12,8 +11,7 @@ from navigation.path_planner.delta_path_planner.delta_path_planner_params import
     DeltaPathPlannerPlanPathParams,
 )
 
-if TYPE_CHECKING:
-    from loggerplusplus import Logger
+EPSILON = 1e-14
 
 
 class DeltaPathPlanner(
@@ -24,21 +22,6 @@ class DeltaPathPlanner(
     Generates a two-point path based on linear distance and rotational delta.
 
     """
-
-    def __init__(
-        self,
-        params: DeltaPathPlannerParams,
-        logger: Logger | None = None,
-    ) -> None:
-        """Initialize the delta path planner.
-
-        Args:
-            params (DeltaPathPlannerParams): Parameters for delta-based path planning.
-            logger (Logger | None, optional):
-                Logger instance for debugging. Defaults to None.
-
-        """
-        super().__init__(params, logger)
 
     @staticmethod
     def _compute_displacement(
@@ -90,13 +73,13 @@ class DeltaPathPlanner(
         x, y, theta = params.start.x, params.start.y, params.start.theta
 
         # 1. Apply displacement
-        if self.params.distance != 0.0:
+        if abs(self.params.distance) > EPSILON:
             dx, dy = self._compute_displacement(params.start, self.params.distance)
             x += dx
             y += dy
 
         # 2. Apply rotation
-        if self.params.rotation != 0.0:
+        if abs(self.params.rotation) > EPSILON:
             theta = self._compute_rotation(params.start, self.params.rotation)
 
         return [params.start, OrientedPoint(x, y, theta)]

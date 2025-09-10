@@ -18,16 +18,16 @@ if TYPE_CHECKING:
 class NoAcsDetectionProfile(BaseAcsDetectionProfile[NoAcsDetectionProfileParams]):
     """No ACS detection profile."""
 
-    def __init__(self, params: NoAcsDetectionProfileParams) -> None:
-        """Initializes the NoAcsDetectionProfile.
-
-        Args:
-            params (NoAcsDetectionProfileParams):
-                Parameters for the no ACS detection profile.
-
-        """
-        super().__init__(params)
-
     @override
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
+        """Determine if the anti-collision system should engage.
+
+        Args:
+            ally_zone (AllyZone): The robot's current zone.
+            enemy_zone (EnemyZone): The detected enemy zone.
+
+        Returns:
+            bool: ``True`` if avoidance should be triggered, ``False`` otherwise.
+
+        """
         return False

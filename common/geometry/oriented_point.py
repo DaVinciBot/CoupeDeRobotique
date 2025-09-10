@@ -53,6 +53,7 @@ class OrientedPoint(Point):
                 else (0.0 if y_or_theta is None else y_or_theta)
             ),
         }
+        super().__init__()
 
     def __new__(
         cls,

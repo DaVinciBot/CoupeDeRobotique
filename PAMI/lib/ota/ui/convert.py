@@ -24,13 +24,13 @@ with INPUT_FILE.open("rb") as f_in, gzip.open(COMPRESSED_FILE, "wb") as f_out:
 compressed_data = COMPRESSED_FILE.read_bytes()
 
 # Création du tableau en C
-byte_array = ", ".join(f"{b}" for b in compressed_data)
-const_array = (
-    f"const uint8_t ELEGANT_HTML[{len(compressed_data)}] PROGMEM = {{ {byte_array} }};"
+BYTE_ARRAY = ", ".join(f"{b}" for b in compressed_data)
+CONST_ARRAY = (
+    f"const uint8_t ELEGANT_HTML[{len(compressed_data)}] PROGMEM = {{ {BYTE_ARRAY} }};"
 )
 
 # Sauvegarde dans un fichier
-OUTPUT_FILE.write_text(const_array, encoding="utf-8")
+OUTPUT_FILE.write_text(CONST_ARRAY, encoding="utf-8")
 
 # Étape 3 : Nettoyage
 COMPRESSED_FILE.unlink()

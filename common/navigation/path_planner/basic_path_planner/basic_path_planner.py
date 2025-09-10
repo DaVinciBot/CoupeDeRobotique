@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import math
-from typing import TYPE_CHECKING
 
 from geometry import OrientedPoint
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
@@ -12,9 +11,6 @@ from navigation.path_planner.basic_path_planner.basic_path_planner_params import
     BasicPathPlannerPlanPathParams,
 )
 from navigation.path_planner.structs import Direction
-
-if TYPE_CHECKING:
-    from loggerplusplus import Logger
 
 
 class BasicPathPlanner(
@@ -25,21 +21,6 @@ class BasicPathPlanner(
     If the direction is set to BACKWARD, the orientations are flipped by π radians.
 
     """
-
-    def __init__(
-        self,
-        params: BasicPathPlannerParams,
-        logger: Logger | None = None,
-    ) -> None:
-        """Initialize the basic path planner.
-
-        Args:
-            params (BasicPathPlannerParams): Parameters including motion direction.
-            logger (Logger | None, optional):
-                Logger instance for debugging. Defaults to None.
-
-        """
-        super().__init__(params, logger)
 
     @staticmethod
     def _compute_backward_position(goal: OrientedPoint) -> OrientedPoint:

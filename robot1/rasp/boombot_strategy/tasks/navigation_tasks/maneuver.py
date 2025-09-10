@@ -98,8 +98,9 @@ class GoCentroidOfZone(NavigationTask):
             ),
             stabilization_delay=0.5,
         )
-
         self.zone_id: int = zone_id
+        self._is_initialized: bool = False
+        self.navigator_task: NavigatorTask | None = None
 
     def _initialize(self, ctx: BaseGameContext) -> None:
         """Initialize by computing the target position from the zone centroid.
@@ -120,7 +121,7 @@ class GoCentroidOfZone(NavigationTask):
         )
 
         # Create a NavigatorTask using the calculated goal
-        self.navigator_task: NavigatorTask = NavigatorTask(
+        self.navigator_task = NavigatorTask(
             params=NavigatorTaskParams(
                 goal=centroid_with_theta,
                 timeout=self.timeout,

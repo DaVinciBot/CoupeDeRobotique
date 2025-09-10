@@ -104,7 +104,7 @@ def test_trajectory_planning(
 
     # Plot original path with orientation arrows
     for idx, point in enumerate(path):
-        plt.plot(point.x, point.y, "bo", label="Path" if idx == 0 else "")
+        plt.plot(point.x, point.y, "bo", label="Path" if not idx else "")
         dx = np.cos(point.theta)
         dy = np.sin(point.theta)
         plt.arrow(
@@ -120,7 +120,7 @@ def test_trajectory_planning(
 
     # Plot simulated trajectory with orientation arrows
     for idx, point in enumerate(positions[::2]):
-        plt.plot(point.x, point.y, "ro", label="Simulation" if idx == 0 else "")
+        plt.plot(point.x, point.y, "ro", label="Simulation" if not idx else "")
         dx = np.cos(point.theta) * 0.5
         dy = np.sin(point.theta) * 0.5
         plt.arrow(

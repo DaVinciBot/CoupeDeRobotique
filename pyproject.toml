@@ -122,18 +122,26 @@ disable = [
   "C0301", # line-too-long -> Best management with ruff
   "C0415", # import-outside-toplevel -> Best management with ruff
   "E0401", # import-error -> False positive
+  "E1101", # no-member -> False positive
+  "I0011", # locally-disabled
+  "I0020", # suppressed-message
   "R0801", # duplicate-code
   "R0902", # too-many-instance-attributes
   "R0903", # too-few-public-methods
+  "R0913", # too-many-arguments
+  "R0914", # too-many-locals
+  "R0915", # too-many-statements
+  "R0917", # too-many-positional-arguments
   "W0212", # protected-access -> Best management with ruff
   "W0511", # fixme
+  "W0611", # unused-import -> Best management with pyright and ruff
   "W0613", # unused-argument -> Best management with ruff
   "W0718", # broad-exception-caught -> Best management with ruff
   "W1113", # keyword-arg-before-vararg -> Best management with ruff
 ]
 enable = "all"
 exit-zero = true
-ignore = ".venv"
+ignore = [".venv", "docs"]
 msg-template = "{line}:{column}: {msg_id}: {msg} ({symbol})"
 output-format = "text"
 

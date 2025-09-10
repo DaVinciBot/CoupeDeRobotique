@@ -8,16 +8,12 @@ from navigation.avoidance.base_avoidance import AvoidanceState, BaseAvoidance
 from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params import (  # noqa: E501
     StopAndWaitAvoidanceParams,
 )
+from navigation.navigator.task.states import NavigatorTaskState
 from navigation.trajectory_planner import TrajectoryPlanCommand
 
 if TYPE_CHECKING:
-    from loggerplusplus import Logger
-
     from arena import AllyZone, EnemyZone
     from geometry import OrientedPoint
-    from navigation.avoidance.acs_detection_profiles import (
-        BaseAcsDetectionProfileParams,
-    )
     from navigation.navigator.task import NavigatorTask
     from navigation.path_planner import BasePathPlannerPlanPathParams
 
@@ -30,24 +26,6 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
     avoidance procedure is aborted.
 
     """
-
-    def __init__(
-        self,
-        params: StopAndWaitAvoidanceParams,
-        acs_detection_profile_params: BaseAcsDetectionProfileParams,
-        logger: Logger | None = None,
-    ) -> None:
-        """Initialize the stop-and-wait strategy.
-
-        Args:
-            params (StopAndWaitAvoidanceParams): Configuration parameters.
-            acs_detection_profile_params (BaseAcsDetectionProfileParams):
-                Parameters for the ACS detection profile.
-            logger (Logger | None, optional):
-                Logger instance for debugging. Defaults to None.
-
-        """
-        super().__init__(params, acs_detection_profile_params, logger)
 
     @BaseAvoidance.ensure_original_task_storage
     def handle(
@@ -69,8 +47,6 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
                 The trajectory command after processing avoidance logic.
 
         """
-        from navigation.navigator.task.states import NavigatorTaskState  # noqa: PLC0415
-
         position: OrientedPoint = ally_zone.point
         self.logger.debug(
             f"Handling avoidance at position: {position}, current state: {self.state}",

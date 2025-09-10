@@ -38,6 +38,7 @@ class TimeoutTaskNode(BaseTaskNode):
         self._timeout_triggered: bool = False
         self.status = TaskStatus.PENDING
         self.start_time = None
+        self.end_time: float | None = None
         self.logger.info(
             (
                 f"Initialized TimeoutTaskNode '{self.name}' with timeout set to "

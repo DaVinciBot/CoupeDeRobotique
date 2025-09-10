@@ -45,7 +45,7 @@ class GridManager:
         self.grid_width = width // chunk_size
         self.grid_height = height // chunk_size
 
-        if width % chunk_size != 0 or height % chunk_size != 0:
+        if width % chunk_size or height % chunk_size:
             self.logger.log(
                 (
                     "[GRID] width and height must be multiples of chunk_size. "

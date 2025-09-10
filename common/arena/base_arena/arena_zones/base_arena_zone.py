@@ -19,6 +19,8 @@ if TYPE_CHECKING:
 
     from loggerplusplus import Logger
 
+    from arena.base_arena.grid_manager import GridManager
+
 
 class BaseArenaZone(ABC):  # noqa: B024
     """Represent a zone within an arena with geometry, type, and accessibility.
@@ -237,6 +239,13 @@ class BaseArenaZone(ABC):  # noqa: B024
             self.logger.debug(f"Ally visited {self.zone_type} zone")
 
         self.last_update_time = Utils.get_ts()
+
+    def _make_accessible(self) -> None:
+        """Mark the zone as accessible and update the grid manager."""
+        self.accessibility = ZoneAccessibility.FREE
+        grid_manager: GridManager = self.update_callback()
+        grid_manager.remove_forbidden_static_zone(self.buffered_polygon)
+        self.logger.debug(f"{self.zone_type} zone is now accessible")
 
     # ====== Built-in methods ======
 

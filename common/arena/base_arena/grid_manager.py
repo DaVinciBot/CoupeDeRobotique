@@ -51,7 +51,7 @@ class GridManager:
         self.forbidden_cover_threshold: float = forbidden_cover_threshold
 
         # Validate chunk size
-        if width % chunk_size != 0 or height % chunk_size != 0:
+        if width % chunk_size or height % chunk_size:
             self.logger.log(
                 "[GRID] width and height must be multiples of chunk_size. "
                 "Chunk size will be adjusted to the nearest multiple.",

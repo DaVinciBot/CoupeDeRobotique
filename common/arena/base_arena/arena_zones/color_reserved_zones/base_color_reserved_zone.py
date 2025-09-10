@@ -107,10 +107,4 @@ class BaseColorReservedZone(BaseArenaZone):
 
         # Update accessibility based on team color
         if self.accessibility != ZoneAccessibility.FREE and self.color == team_color:
-            self.accessibility = ZoneAccessibility.FREE
-
-            # Get grid manager from arena callback function
-            grid_manager: GridManager = self.update_callback()
-            grid_manager.remove_forbidden_static_zone(self.buffered_polygon)
-
-            self.logger.debug(f"{self.zone_type} zone is now accessible")
+            self._make_accessible()

@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 
     from loggerplusplus import Logger
 
-    from arena.base_arena.grid_manager import GridManager
     from arena.base_arena.team_color import TeamColor
     from geometry import OrientedPoint, Point, Polygon
 
@@ -79,11 +78,7 @@ class StuffZone(BaseArenaZone):
             self.buffered_polygon.contains(ally_position)
             or self.buffered_polygon.contains(enemy_position)
         ) and self.accessibility != ZoneAccessibility.FREE:
-            self.accessibility = ZoneAccessibility.FREE
-            grid_manager: GridManager = self.update_callback()
-            grid_manager.remove_forbidden_static_zone(self.buffered_polygon)
-
-            self.logger.debug(f"{self.zone_type} zone is now accessible")
+            self._make_accessible()
 
     @override
     def get_go_to_position(

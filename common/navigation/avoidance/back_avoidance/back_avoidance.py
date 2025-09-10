@@ -13,6 +13,11 @@ from navigation.avoidance.back_avoidance.back_avoidance_params import (
 )
 from navigation.avoidance.base_avoidance import AvoidanceState, BaseAvoidance
 from navigation.avoidance.no_avoidance import NoAvoidanceParams
+from navigation.navigator.task import (
+    NavigatorTask,
+    NavigatorTaskParams,
+    NavigatorTaskState,
+)
 from navigation.path_planner import DeltaPathPlannerParams
 from navigation.trajectory_planner import (
     Direction,
@@ -25,7 +30,6 @@ if TYPE_CHECKING:
 
     from arena import AllyZone, EnemyZone
     from geometry import OrientedPoint
-    from navigation.navigator.task import NavigatorTask
     from navigation.path_planner import BasePathPlannerPlanPathParams
 
 
@@ -79,12 +83,6 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             The trajectory command after processing avoidance logic.
 
         """
-        from navigation.navigator.task import (  # noqa: PLC0415
-            NavigatorTask,
-            NavigatorTaskParams,
-        )
-        from navigation.navigator.task.states import NavigatorTaskState  # noqa: PLC0415
-
         position: OrientedPoint = ally_zone.point
         self.logger.debug(
             f"Handling avoidance at position: {position}, current state: {self.state}",

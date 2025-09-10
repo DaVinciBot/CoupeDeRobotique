@@ -95,7 +95,7 @@ class Stepper:
     """Speed of the stepper motor."""
 
 
-class ActuatorsShow(Actuators):  # noqa: PLR0904
+class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-public-methods
     """Implementation of actuators for the show mode.
 
     Inherits from :class:`Actuators` and overrides its methods to provide
@@ -142,6 +142,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
             enable_dummy=enable_dummy,
         )  # Call the parent constructor
         self.folded: bool = True  # Indicates if the actuators are folded
+        self.elevator_ticks: int = 0
         self.servos: dict[
             int,
             Servo | ServoArm | ServoPlank | ServoDocking,
@@ -413,7 +414,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         If the elevator is folded, it will move to the folded position first.
 
         """
-        if self.folded and self.elevator_ticks == 0:
+        if self.folded and not self.elevator_ticks:
             self.elevator_ticks = self.stepper.folded_steps
         steps_to_move = self.stepper.top_steps - self.elevator_ticks
         self.logger.info(f"Moving to top: {steps_to_move} steps")
@@ -426,7 +427,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904
         If the elevator is folded, it will move to the folded position first.
 
         """
-        if self.folded and self.elevator_ticks == 0:
+        if self.folded and not self.elevator_ticks:
             self.elevator_ticks = self.stepper.folded_steps
         steps_to_move = 600 - self.elevator_ticks
         self.logger.info(f"Moving to top: {steps_to_move} steps")

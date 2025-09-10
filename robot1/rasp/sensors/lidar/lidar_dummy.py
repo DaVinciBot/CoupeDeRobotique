@@ -199,10 +199,9 @@ class LidarDummy:
         """
         distances = self.scan_to_distances()
         polars = np.column_stack((self.__polars_angles, distances))
-        polars[polars[:, 1] > self._min_distance]
+        _valid_polars = polars[polars[:, 1] > self._min_distance]
 
         self._logger.debug("[LidarDummy] Simulated polar coordinates generated.")
-        # return valid_polars
         return np.array([])
 
     def is_connected(self) -> bool:

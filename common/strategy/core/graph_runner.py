@@ -103,7 +103,7 @@ class GraphRunner:
                 # Choose the transition leading to the highest-scoring node
                 best = max(
                     valid_transitions,
-                    key=lambda t: t.target.score(prev_node, ctx),
+                    key=lambda t, prev=prev_node: t.target.score(prev, ctx),
                 )
                 score_val = best.target.score(prev_node, ctx)
                 target = best.target

@@ -2,12 +2,11 @@ common\arena\base_arena\arena.py:
   299:9 ERA001 Found commented-out code
 
 common\geometry\oriented_point.py:
-  257:89 E501 Line too long (94 > 88)
+  258:89 E501 Line too long (94 > 88)
 
 common\navigation\debug_functions\navigator.py:
-  22:5  PLR0915 Too many statements (82 > 50)
-  22:5  PLR0914 Too many local variables (16/15)
-  27:89 E501 Line too long (133 > 88)
+  22:5 PLR0915 Too many statements (82 > 50)
+  22:5 PLR0914 Too many local variables (16/15)
 
 common\navigation\debug_functions\trajectory_planer.py:
   19:5 PLR0915 Too many statements (69 > 50)
@@ -42,18 +41,18 @@ robot1\rasp\brains\main_brain.py:
   295:9  ERA001 Found commented-out code
 
 robot1\rasp\controllers\actuators\actuators_show.py:
-  478:5 ERA001 Found commented-out code
   479:5 ERA001 Found commented-out code
-  482:5 ERA001 Found commented-out code
-  517:9 ERA001 Found commented-out code
-  575:9 ERA001 Found commented-out code
+  480:5 ERA001 Found commented-out code
+  483:5 ERA001 Found commented-out code
+  518:9 ERA001 Found commented-out code
   576:9 ERA001 Found commented-out code
-  594:5 ERA001 Found commented-out code
-  597:5 ERA001 Found commented-out code
+  577:9 ERA001 Found commented-out code
+  595:5 ERA001 Found commented-out code
   598:5 ERA001 Found commented-out code
   599:5 ERA001 Found commented-out code
-  602:5 ERA001 Found commented-out code
-  605:5 ERA001 Found commented-out code
+  600:5 ERA001 Found commented-out code
+  603:5 ERA001 Found commented-out code
+  606:5 ERA001 Found commented-out code
 
 robot1\rasp\controllers\actuators\base\actuators.py:
   198:9 ERA001 Found commented-out code
@@ -68,9 +67,6 @@ robot1\rasp\main.py:
    93:9 ERA001 Found commented-out code
   138:5 ERA001 Found commented-out code
 
-robot1\rasp\sensors\lidar\lidar_dummy.py:
-  205:9 ERA001 Found commented-out code
-
 robot1\rasp\tests\a_config_loader.py:
     1:1  INP001 File `robot1\rasp\tests\a_config_loader.py` is part of an implicit namespace package. Add an `__init__.py`.
   162:89 E501 Line too long (93 > 88)
@@ -78,4 +74,4 @@ robot1\rasp\tests\a_config_loader.py:
   380:89 E501 Line too long (132 > 88)
   383:89 E501 Line too long (130 > 88)
 
-Found 48 errors.
+Found 46 errors.

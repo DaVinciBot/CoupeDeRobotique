@@ -25,7 +25,7 @@ typecheck:
 	@echo "▶ Analyse statique avec mypy..."
 	-mypy .
 
-check: lint format typecheck
+check: format lint typecheck
 
 docs:
 	@echo "▶ Generation de la documentation..."

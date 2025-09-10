@@ -21,19 +21,6 @@ class AngularRestrictProjectionAcsDetectionProfile(
 ):
     """Angular restrict projection ACS detection profile."""
 
-    def __init__(
-        self,
-        params: AngularRestrictProjectionAcsDetectionProfileParams,
-    ) -> None:
-        """Initializes the AngularRestrictProjectionAcsDetectionProfile.
-
-        Args:
-            params (AngularRestrictProjectionAcsDetectionProfileParams):
-                Parameters for the angular restrict projection ACS detection profile.
-
-        """
-        super().__init__(params)
-
     @override
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
         """Check if the ACS is triggered.

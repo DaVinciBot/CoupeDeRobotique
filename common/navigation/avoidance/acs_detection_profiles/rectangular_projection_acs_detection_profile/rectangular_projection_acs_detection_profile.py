@@ -14,8 +14,6 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
 )
 
 if TYPE_CHECKING:
-    from loggerplusplus import Logger
-
     from arena import AllyZone, EnemyZone
 
 
@@ -24,23 +22,16 @@ class RectangularProjectionAcsDetectionProfile(
 ):
     """Rectangular projection ACS detection profile."""
 
-    def __init__(
-        self,
-        params: RectangularProjectionAcsDetectionProfileParams,
-        logger: Logger | None = None,
-    ) -> None:
-        """Initializes the RectangularProjectionAcsDetectionProfile.
+    def _create_rectangular_projection(self, ally_zone: AllyZone) -> Polygon:
+        """Creates a rectangular projection polygon based on the ally zone.
 
         Args:
-            params (RectangularProjectionAcsDetectionProfileParams):
-                Parameters for the rectangular projection ACS detection profile.
-            logger (Logger | None, optional):
-                Logger instance for debugging. Defaults to None.
+            ally_zone (AllyZone): The ally zone to base the projection on.
+
+        Returns:
+            Polygon: The rectangular projection polygon.
 
         """
-        super().__init__(params, logger)
-
-    def _create_rectangular_projection(self, ally_zone: AllyZone) -> Polygon:
         rectangle = Polygon(
             [
                 (-self.params.half_length_view, -self.params.half_width_view),
@@ -66,6 +57,16 @@ class RectangularProjectionAcsDetectionProfile(
 
     @override
     def is_acs_triggered(self, ally_zone: AllyZone, enemy_zone: EnemyZone) -> bool:
+        """Determine if the anti-collision system should engage.
+
+        Args:
+            ally_zone (AllyZone): The robot's current zone.
+            enemy_zone (EnemyZone): The detected enemy zone.
+
+        Returns:
+            bool: ``True`` if avoidance should be triggered, ``False`` otherwise.
+
+        """
         projection = self._create_rectangular_projection(ally_zone)
         if projection.contains(enemy_zone.point):
             distance = ally_zone.point.distance(enemy_zone.point)

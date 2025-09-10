@@ -1,6 +1,6 @@
 {
     "version": "1.1.403",
-    "time": "1757444094264",
+    "time": "1757506333162",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\arena_old.py",
@@ -424,11 +424,11 @@
             "message": "Expected type arguments for generic class \"Callable\"",
             "range": {
                 "start": {
-                    "line": 40,
+                    "line": 42,
                     "character": 25
                 },
                 "end": {
-                    "line": 40,
+                    "line": 42,
                     "character": 33
                 }
             },
@@ -440,11 +440,11 @@
             "message": "Cannot assign to attribute \"polygon\" for class \"BaseArenaZone*\"\n  Type \"Polygon | None\" is not assignable to type \"Polygon\"\n    \"None\" is not assignable to \"Polygon\"",
             "range": {
                 "start": {
-                    "line": 79,
+                    "line": 81,
                     "character": 32
                 },
                 "end": {
-                    "line": 79,
+                    "line": 81,
                     "character": 39
                 }
             },
@@ -456,15 +456,47 @@
             "message": "Cannot assign to attribute \"buffered_polygon\" for class \"BaseArenaZone*\"\n  Type \"Polygon | None\" is not assignable to type \"Polygon\"\n    \"None\" is not assignable to \"Polygon\"",
             "range": {
                 "start": {
-                    "line": 80,
+                    "line": 82,
                     "character": 41
                 },
                 "end": {
-                    "line": 80,
+                    "line": 82,
                     "character": 57
                 }
             },
             "rule": "reportAttributeAccessIssue"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\base_arena_zone.py",
+            "severity": "information",
+            "message": "Type of \"grid_manager\" is unknown",
+            "range": {
+                "start": {
+                    "line": 245,
+                    "character": 8
+                },
+                "end": {
+                    "line": 245,
+                    "character": 20
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\base_arena_zone.py",
+            "severity": "error",
+            "message": "Object of type \"None\" cannot be called",
+            "range": {
+                "start": {
+                    "line": 245,
+                    "character": 36
+                },
+                "end": {
+                    "line": 245,
+                    "character": 58
+                }
+            },
+            "rule": "reportOptionalCall"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\border_zone.py",
@@ -481,38 +513,6 @@
                 }
             },
             "rule": "reportMissingTypeArgument"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\color_reserved_zones\\base_color_reserved_zone.py",
-            "severity": "information",
-            "message": "Type of \"grid_manager\" is unknown",
-            "range": {
-                "start": {
-                    "line": 112,
-                    "character": 12
-                },
-                "end": {
-                    "line": 112,
-                    "character": 24
-                }
-            },
-            "rule": "reportUnknownVariableType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\color_reserved_zones\\base_color_reserved_zone.py",
-            "severity": "error",
-            "message": "Object of type \"None\" cannot be called",
-            "range": {
-                "start": {
-                    "line": 112,
-                    "character": 40
-                },
-                "end": {
-                    "line": 112,
-                    "character": 62
-                }
-            },
-            "rule": "reportOptionalCall"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\color_reserved_zones\\blue_reserved_zone.py",
@@ -696,47 +696,15 @@
             "message": "Expected type arguments for generic class \"Callable\"",
             "range": {
                 "start": {
-                    "line": 28,
+                    "line": 27,
                     "character": 25
                 },
                 "end": {
-                    "line": 28,
+                    "line": 27,
                     "character": 33
                 }
             },
             "rule": "reportMissingTypeArgument"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\stuff_zone.py",
-            "severity": "information",
-            "message": "Type of \"grid_manager\" is unknown",
-            "range": {
-                "start": {
-                    "line": 82,
-                    "character": 12
-                },
-                "end": {
-                    "line": 82,
-                    "character": 24
-                }
-            },
-            "rule": "reportUnknownVariableType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\stuff_zone.py",
-            "severity": "error",
-            "message": "Object of type \"None\" cannot be called",
-            "range": {
-                "start": {
-                    "line": 82,
-                    "character": 40
-                },
-                "end": {
-                    "line": 82,
-                    "character": 62
-                }
-            },
-            "rule": "reportOptionalCall"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
@@ -1592,11 +1560,11 @@
             "message": "Condition will always evaluate to True since the types \"NavigatorTask\" and \"None\" have no overlap",
             "range": {
                 "start": {
-                    "line": 87,
+                    "line": 89,
                     "character": 11
                 },
                 "end": {
-                    "line": 87,
+                    "line": 89,
                     "character": 45
                 }
             },
@@ -1608,11 +1576,11 @@
             "message": "\"_get_trajectory_time_elapsed\" is protected and used outside of the class in which it is declared",
             "range": {
                 "start": {
-                    "line": 89,
+                    "line": 91,
                     "character": 58
                 },
                 "end": {
-                    "line": 89,
+                    "line": 91,
                     "character": 86
                 }
             },
@@ -5136,11 +5104,11 @@
             "message": "Type of \"go_to_position\" is unknown",
             "range": {
                 "start": {
-                    "line": 113,
+                    "line": 114,
                     "character": 8
                 },
                 "end": {
-                    "line": 113,
+                    "line": 114,
                     "character": 22
                 }
             },
@@ -5152,11 +5120,11 @@
             "message": "Type of \"centroid\" is unknown",
             "range": {
                 "start": {
-                    "line": 114,
+                    "line": 115,
                     "character": 8
                 },
                 "end": {
-                    "line": 114,
+                    "line": 115,
                     "character": 16
                 }
             },
@@ -5168,11 +5136,11 @@
             "message": "Type of \"centroid_with_theta\" is unknown",
             "range": {
                 "start": {
-                    "line": 115,
+                    "line": 116,
                     "character": 8
                 },
                 "end": {
-                    "line": 115,
+                    "line": 116,
                     "character": 27
                 }
             },
@@ -5712,11 +5680,11 @@
             "message": "Condition will always evaluate to False since the types \"Servo | ServoArm | ServoPlank | ServoDocking\" and \"None\" have no overlap",
             "range": {
                 "start": {
-                    "line": 215,
+                    "line": 216,
                     "character": 37
                 },
                 "end": {
-                    "line": 215,
+                    "line": 216,
                     "character": 61
                 }
             },
@@ -6621,7 +6589,7 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\sensors\\lidar\\lidar.py",
             "severity": "error",
-            "message": "Type variable \"TLidar\" has no meaning in this context",
+            "message": "Type variable \"Tlidar\" has no meaning in this context",
             "range": {
                 "start": {
                     "line": 79,
@@ -6637,7 +6605,7 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\sensors\\lidar\\lidar.py",
             "severity": "warning",
-            "message": "TypeVar \"TLidar\" appears only once in generic function signature\n  Use \"Module(\"pysicktim\")\" instead",
+            "message": "TypeVar \"Tlidar\" appears only once in generic function signature\n  Use \"Module(\"pysicktim\")\" instead",
             "range": {
                 "start": {
                     "line": 85,
@@ -6701,7 +6669,7 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\sensors\\lidar\\lidar.py",
             "severity": "error",
-            "message": "Type \"Module(\"pysicktim\")\" is not assignable to return type \"TLidar@__init_lidar\"\n  Type \"Module(\"pysicktim\")\" is not assignable to type \"TLidar@__init_lidar\"",
+            "message": "Type \"Module(\"pysicktim\")\" is not assignable to return type \"Tlidar@__init_lidar\"\n  Type \"Module(\"pysicktim\")\" is not assignable to type \"Tlidar@__init_lidar\"",
             "range": {
                 "start": {
                     "line": 116,
@@ -6909,14 +6877,30 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\sensors\\lidar\\lidar_dummy.py",
             "severity": "information",
+            "message": "Type of \"_valid_polars\" is partially unknown\n  Type of \"_valid_polars\" is \"ndarray[tuple[int, ...], dtype[Unknown]]\"",
+            "range": {
+                "start": {
+                    "line": 201,
+                    "character": 8
+                },
+                "end": {
+                    "line": 201,
+                    "character": 21
+                }
+            },
+            "rule": "reportUnknownVariableType"
+        },
+        {
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\sensors\\lidar\\lidar_dummy.py",
+            "severity": "information",
             "message": "Return type, \"ndarray[tuple[int, ...], dtype[Unknown]]\", is partially unknown",
             "range": {
                 "start": {
-                    "line": 205,
+                    "line": 204,
                     "character": 15
                 },
                 "end": {
-                    "line": 205,
+                    "line": 204,
                     "character": 27
                 }
             },
@@ -6928,11 +6912,11 @@
             "message": "Expected type arguments for generic class \"ndarray\"",
             "range": {
                 "start": {
-                    "line": 217,
+                    "line": 216,
                     "character": 27
                 },
                 "end": {
-                    "line": 217,
+                    "line": 216,
                     "character": 37
                 }
             },
@@ -6944,11 +6928,11 @@
             "message": "Return type, \"ndarray[Unknown, Unknown]\", is partially unknown",
             "range": {
                 "start": {
-                    "line": 224,
+                    "line": 223,
                     "character": 15
                 },
                 "end": {
-                    "line": 224,
+                    "line": 223,
                     "character": 39
                 }
             },
@@ -6960,11 +6944,11 @@
             "message": "Expected type arguments for generic class \"ndarray\"",
             "range": {
                 "start": {
-                    "line": 227,
+                    "line": 226,
                     "character": 24
                 },
                 "end": {
-                    "line": 227,
+                    "line": 226,
                     "character": 34
                 }
             },
@@ -6976,11 +6960,11 @@
             "message": "Return type, \"ndarray[Unknown, Unknown]\", is partially unknown",
             "range": {
                 "start": {
-                    "line": 234,
+                    "line": 233,
                     "character": 15
                 },
                 "end": {
-                    "line": 234,
+                    "line": 233,
                     "character": 36
                 }
             },
@@ -7213,10 +7197,10 @@
     ],
     "summary": {
         "filesAnalyzed": 219,
-        "errorCount": 69,
+        "errorCount": 68,
         "warningCount": 82,
         "informationCount": 302,
-        "timeInSec": 12.327
+        "timeInSec": 12.223
     }
 }
 

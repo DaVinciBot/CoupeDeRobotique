@@ -2,16 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from navigation.path_planner.base_path_planner.base_path_planner_params import (
     BasePathPlannerParams,
     BasePathPlannerPlanPathParams,
 )
 from navigation.path_planner.structs import PathPlanningStrategy
-
-if TYPE_CHECKING:
-    from geometry import OrientedPoint
 
 
 class DeltaPathPlannerParams(BasePathPlannerParams):
@@ -36,12 +31,3 @@ class DeltaPathPlannerParams(BasePathPlannerParams):
 
 class DeltaPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
     """Parameters for the delta path planner."""
-
-    def __init__(self, start: OrientedPoint) -> None:
-        """Initialize parameters for the delta path planner.
-
-        Args:
-            start (OrientedPoint): Starting point of the path.
-
-        """
-        super().__init__(start)

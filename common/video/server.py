@@ -32,7 +32,7 @@ class MJPEGHandler(BaseHTTPRequestHandler):
             """,
         )
 
-    def do_GET(self) -> None:
+    def do_GET(self) -> None:  # pylint: disable=invalid-name
         """Serve the MJPEG stream or index page depending on the path."""
         if self.path.endswith(".mjpg"):
             self.send_response(200)

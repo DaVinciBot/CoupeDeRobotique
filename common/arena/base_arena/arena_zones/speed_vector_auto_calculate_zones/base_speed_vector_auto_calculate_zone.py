@@ -137,9 +137,9 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             end_record.position.y - start_record.position.y,
         )
         distance = start_record.position.distance(end_record.position)
-        speed = distance / timestamp_delta if distance != 0 else 0
+        speed = distance / timestamp_delta if distance else 0
 
-        if speed == 0:
+        if not speed:
             self.logger.debug("No displacement detected. Returning zero vector.")
             return SpeedVector(0, 0, 0)
 

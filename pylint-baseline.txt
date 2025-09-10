@@ -1,239 +1,26 @@
-************* Module common.arena.2024_mars_arena.arena_old
-32:4: R0913: Too many arguments (7/5) (too-many-arguments)
 ************* Module common.arena.2024_mars_arena
 1:0: C0103: Module name "2024_mars_arena" doesn't conform to snake_case naming style (invalid-name)
-************* Module common.arena.base_arena.arena
-39:4: R0913: Too many arguments (10/5) (too-many-arguments)
-39:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-488:4: R0913: Too many arguments (6/5) (too-many-arguments)
-488:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-575:4: R0913: Too many arguments (7/5) (too-many-arguments)
-575:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-627:4: R0913: Too many arguments (7/5) (too-many-arguments)
-740:4: R0913: Too many arguments (7/5) (too-many-arguments)
-875:4: R0913: Too many arguments (10/5) (too-many-arguments)
 ************* Module common.arena.base_arena.grid_manager
-31:4: R0913: Too many arguments (6/5) (too-many-arguments)
-31:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-54:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-54:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-92:4: R0914: Too many local variables (16/15) (too-many-locals)
-138:4: R0914: Too many local variables (19/15) (too-many-locals)
 138:4: W0238: Unused private member `GridManager.__optimized_mark_zone(self, grid: Grid, polygon_to_mark: Polygon, *, walkable: bool)` (unused-private-member)
-************* Module common.arena.base_arena.grid_manager_2
-48:11: C1805: "width % chunk_size != 0" can be simplified to "width % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-48:38: C1805: "height % chunk_size != 0" can be simplified to "height % chunk_size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-83:4: R0914: Too many local variables (17/15) (too-many-locals)
 ************* Module common.arena.base_arena.arena_zones.ally_zone
 73:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
-************* Module common.arena.base_arena.arena_zones.base_arena_zone
-33:4: R0913: Too many arguments (11/5) (too-many-arguments)
-33:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.border_zone
-21:4: R0913: Too many arguments (6/5) (too-many-arguments)
-21:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.forbidden_zone
-21:4: R0913: Too many arguments (7/5) (too-many-arguments)
-21:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.stuff_zone
-23:4: R0913: Too many arguments (7/5) (too-many-arguments)
-23:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-81:14: E0203: Access to member 'accessibility' before its definition line 82 (access-member-before-definition)
-82:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone
-28:4: R0913: Too many arguments (11/5) (too-many-arguments)
-28:4: R0917: Too many positional arguments (11/5) (too-many-positional-arguments)
-109:11: E0203: Access to member 'accessibility' before its definition line 110 (access-member-before-definition)
-110:12: W0201: Attribute 'accessibility' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones.blue_reserved_zone
-28:4: R0913: Too many arguments (7/5) (too-many-arguments)
-28:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.color_reserved_zones.yellow_reserved_zone
-28:4: R0913: Too many arguments (7/5) (too-many-arguments)
-28:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.base_speed_vector_auto_calculate_zone
-31:4: R0913: Too many arguments (14/5) (too-many-arguments)
-31:4: R0917: Too many positional arguments (14/5) (too-many-positional-arguments)
-140:46: C1805: "distance != 0" can be simplified to "distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-142:11: C1805: "speed == 0" can be simplified to "not speed", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-************* Module common.arena.base_arena.arena_zones.speed_vector_auto_calculate_zones.enemy_zone
-25:4: R0913: Too many arguments (7/5) (too-many-arguments)
-25:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.arena.show_arena.arena
-26:4: R0913: Too many arguments (10/5) (too-many-arguments)
-26:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-26:4: R0914: Too many local variables (20/15) (too-many-locals)
-************* Module common.geometry.oriented_point
-34:4: W0231: __init__ method from base class 'Point' is not called (super-init-not-called)
-************* Module common.navigation.avoidance.acs_detection_profiles.acs_detection_profile_factory
-10:0: W0611: Unused AngularRestrictProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile (unused-import)
-14:0: W0611: Unused NoAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile (unused-import)
-18:0: W0611: Unused NoProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile (unused-import)
-22:0: W0611: Unused RectangularProjectionAcsDetectionProfileParams imported from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile (unused-import)
-************* Module common.navigation.avoidance.acs_detection_profiles.angular_restrict_projection_acs_detection_profile.angular_restrict_projection_acs_detection_profile
-24:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_acs_detection_profile.no_acs_detection_profile
-21:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-32:4: C0116: Missing function or method docstring (missing-function-docstring)
-************* Module common.navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_profile.no_projection_acs_detection_profile
-25:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-************* Module common.navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile.rectangular_projection_acs_detection_profile
-27:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-68:4: C0116: Missing function or method docstring (missing-function-docstring)
 ************* Module common.navigation.avoidance.back_avoidance.back_avoidance
-90:74: E0203: Access to member 'state' before its definition line 126 (access-member-before-definition)
-101:16: E0203: Access to member 'state' before its definition line 126 (access-member-before-definition)
-126:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-179:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.navigation.avoidance.no_avoidance.no_avoidance
-29:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
+88:74: E0203: Access to member 'state' before its definition line 124 (access-member-before-definition)
+99:16: E0203: Access to member 'state' before its definition line 124 (access-member-before-definition)
+124:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+177:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
 ************* Module common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance
-34:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-76:74: E0203: Access to member 'state' before its definition line 97 (access-member-before-definition)
-87:16: E0203: Access to member 'state' before its definition line 97 (access-member-before-definition)
-97:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-127:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.navigation.debug_functions.navigator
-22:0: R0914: Too many local variables (19/15) (too-many-locals)
-22:0: R0915: Too many statements (79/50) (too-many-statements)
-************* Module common.navigation.debug_functions.trajectory_planer
-19:0: R0914: Too many local variables (20/15) (too-many-locals)
-107:57: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-123:63: C1805: "idx == 0" can be simplified to "not idx", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-19:0: R0915: Too many statements (68/50) (too-many-statements)
-************* Module common.navigation.navigator.signals.dispatcher
-37:8: C0115: Missing class docstring (missing-class-docstring)
-************* Module common.navigation.navigator.task.navigator_task_params
-23:4: R0913: Too many arguments (9/5) (too-many-arguments)
-23:4: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
-************* Module common.navigation.path_planner.path_planner_factory
-7:0: W0611: Unused AStarPathPlannerParams imported from navigation.path_planner.astar_path_planner (unused-import)
-11:0: W0611: Unused BasicPathPlannerParams imported from navigation.path_planner.basic_path_planner (unused-import)
-15:0: W0611: Unused DeltaPathPlannerParams imported from navigation.path_planner.delta_path_planner (unused-import)
-************* Module common.navigation.path_planner.astar_path_planner.astar_path_planner_params
-24:4: R0913: Too many arguments (7/5) (too-many-arguments)
-24:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module common.navigation.path_planner.basic_path_planner.basic_path_planner
-29:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner
-28:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-93:11: C1805: "self.params.distance != 0.0" can be simplified to "self.params.distance", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-99:11: C1805: "self.params.rotation != 0.0" can be simplified to "self.params.rotation", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-************* Module common.navigation.path_planner.delta_path_planner.delta_path_planner_params
-40:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-************* Module common.navigation.trajectory_planner.trajectory_planner_factory
-7:0: W0611: Unused SequentialTrajectoryPlannerParams imported from navigation.trajectory_planner.sequential_trajectory_planner (unused-import)
-************* Module common.navigation.trajectory_planner.common.segments.rotation_segment
-16:4: R0913: Too many arguments (6/5) (too-many-arguments)
-16:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-************* Module common.navigation.trajectory_planner.common.segments.smooth_segment
-16:4: R0913: Too many arguments (6/5) (too-many-arguments)
-16:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-************* Module common.navigation.trajectory_planner.common.segments.stop_segment
-16:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-************* Module common.navigation.trajectory_planner.speed_profile.linear_ramped_speed_profile
-84:4: R0913: Too many arguments (6/5) (too-many-arguments)
-84:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-101:4: R0913: Too many arguments (9/5) (too-many-arguments)
-101:4: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
-150:4: R0913: Too many arguments (8/5) (too-many-arguments)
-150:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-176:4: R0913: Too many arguments (9/5) (too-many-arguments)
-176:4: R0917: Too many positional arguments (9/5) (too-many-positional-arguments)
-************* Module common.strategy.core.graph_runner
-106:49: W0640: Cell variable prev_node defined in loop (cell-var-from-loop)
-************* Module common.strategy.core.tasks.base_navigation_task
-31:4: R0913: Too many arguments (10/5) (too-many-arguments)
-31:4: R0917: Too many positional arguments (10/5) (too-many-positional-arguments)
-************* Module common.strategy.core.task_nodes.timeout_task_node
-114:12: W0201: Attribute 'end_time' defined outside __init__ (attribute-defined-outside-init)
-************* Module common.teensy.base_teensy
-17:4: W0246: Useless parent or super() delegation in method '__init__' (useless-parent-delegation)
-17:4: R0913: Too many arguments (8/5) (too-many-arguments)
-17:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-************* Module common.teensy.gpio_teensy
-17:4: R0913: Too many arguments (8/5) (too-many-arguments)
-17:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-************* Module common.usb_com.python.com.com
-33:4: R0913: Too many arguments (8/5) (too-many-arguments)
-33:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-************* Module common.video.server
-35:4: C0103: Method name "do_GET" doesn't conform to snake_case naming style (invalid-name)
-49:26: E1101: Module 'cv2' has no 'imencode' member (no-member)
-************* Module docs.source.conf
-19:0: W0622: Redefining built-in 'copyright' (redefined-builtin)
-18:0: C0103: Constant name "project" doesn't conform to UPPER_CASE naming style (invalid-name)
-19:0: C0103: Constant name "copyright" doesn't conform to UPPER_CASE naming style (invalid-name)
-20:0: C0103: Constant name "author" doesn't conform to UPPER_CASE naming style (invalid-name)
-30:0: C0103: Constant name "napoleon_google_docstring" doesn't conform to UPPER_CASE naming style (invalid-name)
-31:0: C0103: Constant name "napoleon_numpy_docstring" doesn't conform to UPPER_CASE naming style (invalid-name)
-32:0: C0103: Constant name "napoleon_include_init_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
-33:0: C0103: Constant name "napoleon_include_private_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
-34:0: C0103: Constant name "napoleon_include_special_with_doc" doesn't conform to UPPER_CASE naming style (invalid-name)
-35:0: C0103: Constant name "napoleon_use_admonition_for_examples" doesn't conform to UPPER_CASE naming style (invalid-name)
-36:0: C0103: Constant name "napoleon_use_admonition_for_notes" doesn't conform to UPPER_CASE naming style (invalid-name)
-37:0: C0103: Constant name "napoleon_use_admonition_for_references" doesn't conform to UPPER_CASE naming style (invalid-name)
-38:0: C0103: Constant name "napoleon_use_ivar" doesn't conform to UPPER_CASE naming style (invalid-name)
-39:0: C0103: Constant name "napoleon_use_param" doesn't conform to UPPER_CASE naming style (invalid-name)
-40:0: C0103: Constant name "napoleon_use_rtype" doesn't conform to UPPER_CASE naming style (invalid-name)
-41:0: C0103: Constant name "napoleon_preprocess_types" doesn't conform to UPPER_CASE naming style (invalid-name)
-42:0: C0103: Constant name "napoleon_type_aliases" doesn't conform to UPPER_CASE naming style (invalid-name)
-43:0: C0103: Constant name "napoleon_attr_annotations" doesn't conform to UPPER_CASE naming style (invalid-name)
-48:0: C0103: Constant name "language" doesn't conform to UPPER_CASE naming style (invalid-name)
-53:0: C0103: Constant name "html_theme" doesn't conform to UPPER_CASE naming style (invalid-name)
-************* Module PAMI.lib.ota.ui.convert
-27:0: C0103: Constant name "byte_array" doesn't conform to UPPER_CASE naming style (invalid-name)
-************* Module robot1.rasp.boombot_strategy.sub_graphs.push_one_floor_to_wall
-20:0: R0914: Too many local variables (16/15) (too-many-locals)
-************* Module robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver
-111:8: W0201: Attribute '_is_initialized' defined outside __init__ (attribute-defined-outside-init)
-123:8: W0201: Attribute 'navigator_task' defined outside __init__ (attribute-defined-outside-init)
-************* Module robot1.rasp.brains.main_brain
-34:4: R0913: Too many arguments (7/5) (too-many-arguments)
-34:4: R0917: Too many positional arguments (7/5) (too-many-positional-arguments)
-************* Module robot1.rasp.controllers.actuators.actuators_dummy
-21:4: R0913: Too many arguments (7/5) (too-many-arguments)
-21:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-88:4: R0913: Too many arguments (6/5) (too-many-arguments)
-************* Module robot1.rasp.controllers.actuators.actuators_show
-106:4: R0913: Too many arguments (8/5) (too-many-arguments)
-106:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-416:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-429:27: C1805: "self.elevator_ticks == 0" can be simplified to "not self.elevator_ticks", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-417:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-430:12: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-514:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-562:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-573:8: W0201: Attribute 'elevator_ticks' defined outside __init__ (attribute-defined-outside-init)
-98:0: R0904: Too many public methods (24/20) (too-many-public-methods)
-************* Module robot1.rasp.controllers.actuators.base.actuators
-28:4: R0913: Too many arguments (8/5) (too-many-arguments)
-28:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-214:4: R0913: Too many arguments (8/5) (too-many-arguments)
-************* Module robot1.rasp.controllers.rolling_basis.asservissment_rolling_basis
-29:4: R0913: Too many arguments (8/5) (too-many-arguments)
-29:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-************* Module robot1.rasp.controllers.rolling_basis.rolling_basis
-26:4: R0913: Too many arguments (8/5) (too-many-arguments)
-26:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
-************* Module robot1.rasp.controllers.rolling_basis.rolling_basis_dummy
-23:4: R0913: Too many arguments (7/5) (too-many-arguments)
-23:4: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+52:74: E0203: Access to member 'state' before its definition line 73 (access-member-before-definition)
+63:16: E0203: Access to member 'state' before its definition line 73 (access-member-before-definition)
+73:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+103:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
 ************* Module robot1.rasp.sensors.lidar.lidar
-17:0: C0103: Type variable name "TLidar" doesn't conform to predefined naming style (invalid-name)
-41:4: R0913: Too many arguments (8/5) (too-many-arguments)
-41:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-165:11: C1805: "n == 0" can be simplified to "not n", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
-177:11: C1805: "centered_polars.size == 0" can be simplified to "not centered_polars.size", if it is strictly an int, as 0 is falsey (use-implicit-booleaness-not-comparison-to-zero)
 73:8: W0238: Unused private member `Lidar.__angle_unit` (unused-private-member)
 ************* Module robot1.rasp.sensors.lidar.lidar_dummy
-21:4: R0913: Too many arguments (8/5) (too-many-arguments)
-21:4: R0917: Too many positional arguments (8/5) (too-many-positional-arguments)
-202:8: W0104: Statement seems to have no effect (pointless-statement)
 46:8: W0238: Unused private member `LidarDummy.__min_angle` (unused-private-member)
 47:8: W0238: Unused private member `LidarDummy.__max_angle` (unused-private-member)
 48:8: W0238: Unused private member `LidarDummy.__angle_unit` (unused-private-member)
 
 ------------------------------------------------------------------
-Your code has been rated at 9.63/10 (previous run: 9.63/10, +0.00)
+Your code has been rated at 9.94/10 (previous run: 9.94/10, +0.00)
 
