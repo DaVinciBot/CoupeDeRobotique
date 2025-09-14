@@ -1,9 +1,4 @@
-.PHONY: format lint typecheck check docs auto all
-
-SPHINXOPTS    ?=
-SPHINXBUILD   ?= sphinx-build
-SOURCEDIR     = docs/source
-BUILDDIR      = docs/build
+.PHONY: format lint typecheck check auto all
 
 format:
 	@echo "▶ Formatage avec Ruff, puis Black et isort..."
@@ -27,12 +22,8 @@ typecheck:
 
 check: format lint typecheck
 
-docs:
-	@echo "▶ Generation de la documentation..."
-	$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-
 auto:
 	make all
 	make auto
 
-all: check docs
+all: check
