@@ -7,6 +7,10 @@
     "ms-python.pylint",
     "ms-python.vscode-pylance",
     "platformio.platformio-ide",
-    "usernamehw.errorlens"
+    "usernamehw.errorlens",
+    "ms-vscode.cpptools-themes",
+    "ms-vscode.cpptools",
+    "jeff-hykin.better-cpp-syntax",
+    "xaver.clang-format"
   ]
 }

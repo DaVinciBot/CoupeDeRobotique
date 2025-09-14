@@ -1,49 +1,90 @@
 {
-	"folders": [
-		{
-			"path": "PAMI/"
-		},
-	],
-	"settings": {
-		"files.associations": {
-			"*.tcc": "cpp",
-			"exception": "cpp",
-			"iosfwd": "cpp",
-			"new": "cpp",
-			"ostream": "cpp",
-			"sstream": "cpp",
-			"streambuf": "cpp",
-			"array": "cpp",
-			"string_view": "cpp",
-			"initializer_list": "cpp",
-			"utility": "cpp",
-			"cmath": "cpp",
-			"limits": "cpp",
-			"chrono": "cpp",
-			"algorithm": "cpp",
-			"deque": "cpp",
-			"list": "cpp",
-			"string": "cpp",
-			"unordered_map": "cpp",
-			"unordered_set": "cpp",
-			"vector": "cpp",
-			"memory": "cpp",
-			"random": "cpp",
-			"regex": "cpp",
-			"bitset": "cpp",
-			"optional": "cpp"
-		}
-	},
-	"extensions": {
-		"recommendations": [
-			"platformio.platformio-ide",
-			"usernamehw.errorlens",
-			"ms-vscode.cpptools-themes",
-			"ms-vscode.cpptools",
-			"platformio.platformio-ide",
-			"jeff-hykin.better-cpp-syntax",
-			"eamodio.gitlens",
-			"github.copilot"
-		]
-	}
+  "folders": [
+    {
+      "path": "PAMI/"
+    }
+  ],
+  "settings": {
+    "editor.codeActionsOnSave": {
+      "source.convertImportFormat": "explicit",
+      "source.organizeImports": "explicit",
+      "source.sort.json": "explicit",
+      "source.unusedImports": "explicit"
+    },
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "errorLens.enabledDiagnosticLevels": ["error", "warning", "info", "hint"],
+    "files.associations": {
+      "*.tcc": "cpp",
+      "algorithm": "cpp",
+      "array": "cpp",
+      "bitset": "cpp",
+      "chrono": "cpp",
+      "cmath": "cpp",
+      "deque": "cpp",
+      "exception": "cpp",
+      "initializer_list": "cpp",
+      "iosfwd": "cpp",
+      "limits": "cpp",
+      "list": "cpp",
+      "memory": "cpp",
+      "new": "cpp",
+      "optional": "cpp",
+      "ostream": "cpp",
+      "random": "cpp",
+      "regex": "cpp",
+      "sstream": "cpp",
+      "streambuf": "cpp",
+      "string": "cpp",
+      "string_view": "cpp",
+      "unordered_map": "cpp",
+      "unordered_set": "cpp",
+      "utility": "cpp",
+      "vector": "cpp"
+    },
+    "todo-tree.general.tagGroups": {
+      "FIXME": ["FIXME", "FIXIT", "FIX"],
+      "HACK": ["HACK", "ENHANCE"]
+    },
+    "todo-tree.general.tags": [
+      "BUG",
+      "HACK",
+      "ENHANCE",
+      "FIXME",
+      "FIXIT",
+      "FIX",
+      "TODO",
+      "TOTEST",
+      "QUESTION",
+      "[ ]",
+      "[x]"
+    ],
+    "todo-tree.highlights.customHighlight": {
+      "BUG": {
+        "background": "white",
+        "foreground": "red",
+        "textDecoration": "underline"
+      },
+      "FIXME": {
+        "foreground": "orange",
+        "iconColour": "yellow"
+      },
+      "QUESTION": {
+        "foreground": "purple",
+        "icon": "question",
+        "iconColour": "purple"
+      },
+      "TODO": {
+        "foreground": "cyan"
+      },
+      "TOTEST": {
+        "foreground": "lime",
+        "icon": "codescan-checkmark"
+      }
+    },
+    "todo-tree.highlights.defaultHighlight": {
+      "gutterIcon": true,
+      "type": "text-and-comment"
+    }
+  }
 }
