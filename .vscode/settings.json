@@ -8,6 +8,8 @@
     "source.sort.json": "explicit",
     "source.unusedImports": "explicit"
   },
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
   "errorLens.enabledDiagnosticLevels": ["error", "warning", "info", "hint"],
   "files.associations": {
     "__availability": "cpp",

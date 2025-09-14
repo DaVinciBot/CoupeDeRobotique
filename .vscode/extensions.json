@@ -1,14 +1,12 @@
 {
-    "recommendations": [
-        "charliermarsh.ruff",
-        "donjayamanne.python-extension-pack",
-        "eamodio.gitlens",
-        "gruntfuggly.todo-tree",
-        "ms-python.black-formatter",
-        "ms-python.mypy-type-checker",
-        "ms-python.pylint",
-        "ms-python.vscode-pylance",
-        "platformio.platformio-ide",
-        "usernamehw.errorlens"
-    ]
+  "recommendations": [
+    "charliermarsh.ruff",
+    "donjayamanne.python-extension-pack",
+    "eamodio.gitlens",
+    "gruntfuggly.todo-tree",
+    "ms-python.pylint",
+    "ms-python.vscode-pylance",
+    "platformio.platformio-ide",
+    "usernamehw.errorlens"
+  ]
 }
