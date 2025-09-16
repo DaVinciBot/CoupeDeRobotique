@@ -8,7 +8,7 @@ from boombot_strategy.show_game_context import ShowGameContext
 from strategy.core import BaseNavigationTask
 
 if TYPE_CHECKING:
-    from navigation import TrajectoryPlanCommand
+    from navigation.trajectory_planner import TrajectoryPlanCommand
 
 
 class NavigationTask(BaseNavigationTask[ShowGameContext]):

@@ -7,14 +7,8 @@ from typing import TYPE_CHECKING
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from geometry import OrientedPoint, Point
-from navigation import (
-    BasicPathPlannerParams,
-    DeltaPathPlannerParams,
-    Direction,
-    NavigatorTask,
-    NavigatorTaskParams,
+from navigation.avoidance import (
     NoAvoidanceParams,
-    SequentialTrajectoryPlannerParams,
     StopAndWaitAvoidanceParams,
 )
 from navigation.avoidance.acs_detection_profiles import (
@@ -22,6 +16,18 @@ from navigation.avoidance.acs_detection_profiles import (
 )
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
+)
+from navigation.navigator import (
+    NavigatorTask,
+    NavigatorTaskParams,
+)
+from navigation.path_planner import (
+    BasicPathPlannerParams,
+    DeltaPathPlannerParams,
+    Direction,
+)
+from navigation.trajectory_planner import (
+    SequentialTrajectoryPlannerParams,
 )
 
 if TYPE_CHECKING:

@@ -18,8 +18,8 @@ common\navigation\trajectory_planner\speed_profile\__init__.py:
 robot1\rasp\a_config_loader.py:
   161:89 E501 Line too long (93 > 88)
   163:89 E501 Line too long (91 > 88)
-  378:89 E501 Line too long (132 > 88)
-  381:89 E501 Line too long (130 > 88)
+  380:89 E501 Line too long (132 > 88)
+  383:89 E501 Line too long (130 > 88)
 
 robot1\rasp\boombot_strategy\strategies\basic_strategy.py:
   56:9 ERA001 Found commented-out code
@@ -68,7 +68,7 @@ robot1\rasp\tests\a_config_loader.py:
     1:1  INP001 File `robot1\rasp\tests\a_config_loader.py` is part of an implicit namespace package. Add an `__init__.py`.
   161:89 E501 Line too long (93 > 88)
   163:89 E501 Line too long (91 > 88)
-  378:89 E501 Line too long (132 > 88)
-  381:89 E501 Line too long (130 > 88)
+  380:89 E501 Line too long (132 > 88)
+  383:89 E501 Line too long (130 > 88)
 
 Found 45 errors.

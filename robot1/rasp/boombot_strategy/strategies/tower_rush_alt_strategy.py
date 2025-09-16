@@ -19,7 +19,7 @@ from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
 from strategy.core import BaseTaskNode, GraphRunner
 
 if TYPE_CHECKING:
-    from boombot_strategy import ShowGameContext
+    from boombot_strategy.show_game_context import ShowGameContext
 
 
 class TowerRushAltStrategy(BaseStrategy):

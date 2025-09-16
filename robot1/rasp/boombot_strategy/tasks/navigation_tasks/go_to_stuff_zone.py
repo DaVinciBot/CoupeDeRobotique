@@ -4,14 +4,12 @@ from __future__ import annotations
 
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
-from navigation import (
-    BasicPathPlannerParams,
-    SequentialTrajectoryPlannerParams,
-    StopAndWaitAvoidanceParams,
-)
+from navigation.avoidance import StopAndWaitAvoidanceParams
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
 )
+from navigation.path_planner import BasicPathPlannerParams
+from navigation.trajectory_planner import SequentialTrajectoryPlannerParams
 
 
 class GoToStuffZoneToPickUp(NavigationTask):

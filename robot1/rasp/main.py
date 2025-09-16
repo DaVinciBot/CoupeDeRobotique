@@ -12,7 +12,7 @@ from a_config_loader import CONFIG
 from arena import AllyZone, ShowArena
 from brains import MainBrain
 from geometry import OrientedPoint
-from navigation import NavigatorTaskParams
+from navigation.navigator import NavigatorTaskParams
 from sensors import Inputs, Lidar, LidarDummy
 
 # ====== Main ======

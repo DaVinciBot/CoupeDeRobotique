@@ -4,14 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from navigation import (
-    BaseAvoidanceParams,
-    BasePathPlannerParams,
-    BaseTrajectoryPlannerParams,
-    NavigatorTask,
-    NavigatorTaskParams,
-    SpeedProfiler,
-)
+from navigation.navigator import NavigatorTask, NavigatorTaskParams
 from strategy.core.base_game_context import BaseGameContext
 from strategy.core.tasks.base_task import BaseTask
 
@@ -20,9 +13,12 @@ if TYPE_CHECKING:
 
     from arena import BaseArenaZone
     from geometry import OrientedPoint, Point
+    from navigation.avoidance import BaseAvoidanceParams
     from navigation.avoidance.acs_detection_profiles import (
         BaseAcsDetectionProfileParams,
     )
+    from navigation.path_planner import BasePathPlannerParams
+    from navigation.trajectory_planner import BaseTrajectoryPlannerParams, SpeedProfiler
 
 
 class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):

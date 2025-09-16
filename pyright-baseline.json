@@ -1,6 +1,6 @@
 {
     "version": "1.1.405",
-    "time": "1758045149189",
+    "time": "1758051892633",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\arena_old.py",
@@ -280,11 +280,11 @@
             "message": "Type \"OrientedPoint | Point | None\" is not assignable to declared type \"OrientedPoint\"\n  Type \"OrientedPoint | Point | None\" is not assignable to type \"OrientedPoint\"\n    \"Point\" is not assignable to \"OrientedPoint\"",
             "range": {
                 "start": {
-                    "line": 110,
+                    "line": 116,
                     "character": 40
                 },
                 "end": {
-                    "line": 110,
+                    "line": 116,
                     "character": 85
                 }
             },
@@ -296,11 +296,11 @@
             "message": "\"navigator_task\" overrides symbol of same name in class \"BaseNavigationTask\"\n  Variable is mutable so its type is invariant\n    Override type \"NavigatorTask | None\" is not the same as base type \"NavigatorTask\"",
             "range": {
                 "start": {
-                    "line": 119,
+                    "line": 125,
                     "character": 13
                 },
                 "end": {
-                    "line": 119,
+                    "line": 125,
                     "character": 27
                 }
             },
@@ -519,8 +519,8 @@
         "filesAnalyzed": 219,
         "errorCount": 26,
         "warningCount": 6,
-        "informationCount": 107,
-        "timeInSec": 38.372
+        "informationCount": 108,
+        "timeInSec": 37.87
     }
 }
 
