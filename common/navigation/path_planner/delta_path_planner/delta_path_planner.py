@@ -20,7 +20,6 @@ class DeltaPathPlanner(
     """Apply a relative displacement and rotation to the start position.
 
     Generates a two-point path based on linear distance and rotational delta.
-
     """
 
     @staticmethod
@@ -37,7 +36,6 @@ class DeltaPathPlanner(
         Returns:
             tuple[float, float]:
                 Displacement vector (dx, dy) based on the start orientation.
-
         """
         return (
             distance * math.cos(start.theta),  # dx
@@ -54,7 +52,6 @@ class DeltaPathPlanner(
 
         Returns:
             float: Final orientation angle.
-
         """
         return (start.theta + rotation) % (2 * math.pi)
 
@@ -68,7 +65,6 @@ class DeltaPathPlanner(
 
         Returns:
             list[OrientedPoint]: List containing the start and resulting goal pose.
-
         """
         x, y, theta = params.start.x, params.start.y, params.start.theta
 

@@ -30,7 +30,6 @@ def test_speed_profile(
             Time interval for sampling the profile. Defaults to 0.1.
         departure_speed (float, optional): Initial speed at departure. Defaults to 0.0.
         arrival_speed (float, optional): Final speed at arrival. Defaults to 0.0.
-
     """
     print("Testing profile:", profile)
     total_duration = profile.get_total_duration(

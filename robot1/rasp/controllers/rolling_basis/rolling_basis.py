@@ -20,7 +20,6 @@ class RollingBasis(BaseComTeensy):
 
     Inherits from Teensy to manage low-level communications and adds logic
     specific to the robot's state, PID configuration, and message messaging.
-
     """
 
     def __init__(
@@ -50,7 +49,6 @@ class RollingBasis(BaseComTeensy):
                 Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
             enable_dummy (bool, optional):
                 Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
-
         """
         self.flag = True
         # Initialize the parent-BaseComTeensy class
@@ -70,11 +68,9 @@ class RollingBasis(BaseComTeensy):
         # PID controllers
         self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
-
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
-
         """
         # Register message handlers
         self.add_callback(self.rcv_print, Messages.PRINT.value)
@@ -95,7 +91,6 @@ class RollingBasis(BaseComTeensy):
 
         Args:
             msg (bytes): The received message bytes.
-
         """
         # Temp to debug logs
         self.logger.info(
@@ -114,7 +109,6 @@ class RollingBasis(BaseComTeensy):
 
         Args:
             msg (bytes): The received message bytes.
-
         """
         # Position / odometrie
         self.odometrie = OrientedPoint(
@@ -129,7 +123,6 @@ class RollingBasis(BaseComTeensy):
 
         Args:
             msg (bytes): The received message bytes.
-
         """
         self.logger.warning(f"Teensy Motors does not know the message {msg.hex()}")
 
@@ -144,7 +137,6 @@ class RollingBasis(BaseComTeensy):
 
         Args:
             target_position (OrientedPoint): Desired position and orientation.
-
         """
         msg = (
             Messages.SET_TARGET_POSITION.to_bytes()
@@ -163,7 +155,6 @@ class RollingBasis(BaseComTeensy):
 
         Args:
             odometrie (OrientedPoint): The new odometrie values.
-
         """
         msg = (
             Messages.SET_ODOMETRIE.to_bytes()
@@ -184,7 +175,6 @@ class RollingBasis(BaseComTeensy):
         Args:
             pid_id (int): The identifier for the PID controller.
             pid (PID): The PID controller parameters.
-
         """
         msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
         self.send_bytes(msg)
@@ -213,7 +203,6 @@ class RollingBasis(BaseComTeensy):
 
         Raises:
             ValueError: If the arguments do not match any expected format.
-
         """
         if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
             pid = PID(*args)  # type: ignore[reportArgumentType]
@@ -251,7 +240,6 @@ class RollingBasis(BaseComTeensy):
             *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
                 single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
-
         """
         try:
             pid = self._load_pid(*args, **kwargs)
@@ -285,7 +273,6 @@ class RollingBasis(BaseComTeensy):
             *args (float | dict[str, float]): Either three floats (kp, ki, kd) or
                 a single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
-
         """
         try:
             pid = self._load_pid(*args, **kwargs)
@@ -306,7 +293,6 @@ class RollingBasis(BaseComTeensy):
                 PID configuration for linear position.
             angular_position_pid (dict[str, float]):
                 PID configuration for angular position.
-
         """
         self.set_linear_position_pid(**linear_position_pid)
         time.sleep(0.1)  # Ensure the Teensy has time to process the first PID
@@ -334,7 +320,6 @@ class RollingBasis(BaseComTeensy):
 
         Returns:
             bool: ``True`` if the objects are equal, ``False`` otherwise.
-
         """
         if not isinstance(other, RollingBasis):
             return NotImplemented
@@ -353,7 +338,6 @@ class RollingBasis(BaseComTeensy):
 
         Returns:
             bool: ``True`` if the objects are not equal, ``False`` otherwise.
-
         """
         return not self.__eq__(other)
 
@@ -363,6 +347,5 @@ class RollingBasis(BaseComTeensy):
 
         Returns:
             int: The hash value of the object.
-
         """
         return object.__hash__(self)

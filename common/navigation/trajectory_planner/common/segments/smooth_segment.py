@@ -30,7 +30,6 @@ class SmoothSegment(BaseSegment):
             sampled_points (list[OrientedPoint]):
                 Points sampled along the trajectory for interpolation or visualization.
             total_distance (float): The total traveled distance of this segment.
-
         """
         super().__init__(start_position, end_position, duration)
         self.sampled_points = (

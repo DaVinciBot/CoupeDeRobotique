@@ -82,7 +82,6 @@ if __name__ == "__main__":
     # Movement loggers
     # See ./brains/controllers_brain.py for more details
     # All rolling basis part is executed in another process so define inside this part
-
     """ Main object instances """
     # Websocket server
     # Websocket server

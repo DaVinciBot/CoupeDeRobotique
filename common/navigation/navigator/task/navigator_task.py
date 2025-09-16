@@ -33,7 +33,6 @@ class NavigatorTask:
 
         Args:
             params (NavigatorTaskParams): The parameters for the navigation task.
-
         """
         from navigation.avoidance.avoidance_factory import (  # noqa: PLC0415
             AvoidanceFactory,
@@ -114,7 +113,6 @@ class NavigatorTask:
 
         Returns:
             TrajectoryPlanCommand: Next trajectory command.
-
         """
         if self.state == NavigatorTaskState.NOT_PLANNED:
             self._plan_task(ally_zone)

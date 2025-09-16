@@ -26,7 +26,6 @@ def get_banner_deployment_subgraph() -> BaseSubGraph:
 
     Returns:
         BaseSubGraph: A structured subgraph representing the deployment sequence.
-
     """
     builder = SubGraphBuilder()
 

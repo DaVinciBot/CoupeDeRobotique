@@ -22,7 +22,6 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
     between task nodes by passing a function during instantiation. The function
     is expected to return a boolean indicating whether the transition should be
     allowed.
-
     """
 
     def __init__(
@@ -34,7 +33,6 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
         Args:
             func (Callable[[BaseTaskNode, BaseTaskNode, BaseGameContext], bool]):
                 A function that defines the logic for transition validation.
-
         """
         self.func = func
 
@@ -56,6 +54,5 @@ class FromFunctionTransitionCondition(BaseTransitionCondition):
             bool:
                 ``True`` if the transition is allowed according to the provided
                 function, ``False`` otherwise.
-
         """
         return self.func(from_node, next_node, ctx)

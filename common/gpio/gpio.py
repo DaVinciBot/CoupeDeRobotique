@@ -16,7 +16,6 @@ class PIN:
 
         Args:
             pin (int): The pin number.
-
         """
         self.pin = pin
         self.mode = None
@@ -30,7 +29,6 @@ class PIN:
             mode (str): The pin mode (output/input/input_pullup/input_pulldown).
             reverse_state (bool, optional):
                 Whether to reverse the state of the pin. Defaults to ``False``.
-
         """
         mode = mode.lower()
         self.mode = mode
@@ -62,7 +60,6 @@ class PIN:
 
         Raises:
             TypeError: If the pin is not set up for output mode.
-
         """
         if not isinstance(self.device, LED):
             msg = "Pin not set up for output mode."
@@ -77,7 +74,6 @@ class PIN:
 
         Raises:
             RuntimeError: If the pin is not set up.
-
         """
         if self.device is None:
             msg = "Pin not set up. Call setup() first."
@@ -99,7 +95,6 @@ class PIN:
             bool:
                 The averaged digital state.
                 ``True`` if the majority of samples are ``True``, otherwise ``False``.
-
         """
         return sum(self.digital_read() for _ in range(n)) / n >= MAJORITY_RATIO
 
@@ -111,6 +106,5 @@ class PIN:
 
         Returns:
             bool: The corrected state.
-
         """
         return not state if self.reverse_state else state

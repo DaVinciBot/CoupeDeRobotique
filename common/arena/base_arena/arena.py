@@ -63,7 +63,6 @@ class BaseArena(ABC):
                 Size of chunks in the grid manager. Defaults to 10.
             grid_manager_logger (Logger | None, optional):
                 Logger instance for grid manager logging. Defaults to None.
-
         """
         # ====== Initialized constructor based attributes ======
         # 1. Logger
@@ -164,7 +163,6 @@ class BaseArena(ABC):
 
         Returns:
             BorderZone: A zone representing the arena's border.
-
         """
         arena_polygon = box(0, 0, self.width, self.height)
         inner_polygon = BaseArenaZone.add_buffer_to_zone(
@@ -186,7 +184,6 @@ class BaseArena(ABC):
         """Prepare all zones that could be used for calculations.
 
         It will improve the computing performance.
-
         """
         prepare(self.bounding_area)
         prepare(self.playable_area)
@@ -199,7 +196,6 @@ class BaseArena(ABC):
 
         Returns:
             GridManager: The current grid manager.
-
         """
         return self.grid_manager
 
@@ -212,7 +208,6 @@ class BaseArena(ABC):
 
         Returns:
             MultiPoint: Array of absolute Cartesian coordinates.
-
         """
         return MultiPoint(
             [
@@ -233,7 +228,6 @@ class BaseArena(ABC):
 
         Args:
             team_color (TeamColor): The team's color.
-
         """
         if team_color not in {TeamColor.YELLOW, TeamColor.BLUE}:
             self.logger.error(
@@ -265,7 +259,6 @@ class BaseArena(ABC):
                 If ``True``, only updates intersecting zones. Defaults to ``True``.
             _enemy_position (Point | None, optional):
                 Pre-defined enemy position. Defaults to None.
-
         """
         # 1.Compute enemy position if not directly provided in absolute coordinates
         if not _enemy_position:
@@ -324,7 +317,6 @@ class BaseArena(ABC):
 
         Returns:
             Point | OrientedPoint: The computed enemy position.
-
         """
         obstacles: MultiPoint = self.remove_outside(
             self._pol_to_abs_cart(lidar_scan_polars),
@@ -345,7 +337,6 @@ class BaseArena(ABC):
 
         Returns:
             MultiPoint: The points that are within the playable area.
-
         """
         return cast("MultiPoint", self.playable_area.intersection(points))
 
@@ -362,7 +353,6 @@ class BaseArena(ABC):
         Returns:
             OrientedPoint | Point | None: Computed destination or ``None`` if the
             goal type is invalid.
-
         """
         # 1. If goal is defined as int, it's a zone ID
         if isinstance(goal, int):
@@ -395,7 +385,6 @@ class BaseArena(ABC):
         Returns:
             bool: ``True`` if the position is within the playing area,
                 ``False`` otherwise.
-
         """
         return self.playable_area.contains(pos) or self.playable_area.touches(pos)
 
@@ -412,7 +401,6 @@ class BaseArena(ABC):
         Returns:
             BaseArenaZone | None:
                 The zone containing the location, or None if not found.
-
         """
         if isinstance(location, int):
             if location >= len(self.zones):
@@ -437,7 +425,6 @@ class BaseArena(ABC):
         Returns:
             list[BaseArenaZone]: A list of BaseArenaZone objects that match the
                                  specified accessibility level.
-
         """
         return [
             zone
@@ -459,7 +446,6 @@ class BaseArena(ABC):
 
         Raises:
             ValueError: If no zones have the specified accessibility.
-
         """
         zones_to_check = self.find_zone_accessibility(accessibility)
         if not zones_to_check:
@@ -477,7 +463,6 @@ class BaseArena(ABC):
 
         Returns:
             bool: ``True`` if the element is entirely in the arena, ``False`` otherwise.
-
         """
         return self.bounding_area.contains(element)
 
@@ -504,7 +489,6 @@ class BaseArena(ABC):
                 Defaults to None -> norm * 0.2.
             head_length (float | None): Length of the arrow head.
                 Defaults to None -> norm * 0.3.
-
         """
         if head_width is None:
             head_width = norm * 0.2
@@ -542,7 +526,6 @@ class BaseArena(ABC):
             zone (BaseArenaZone): Zone to draw the UID for.
             color (str, optional): Color of the UID. Defaults to '#000000'.
             fontsize (int, optional): Font size of the UID. Defaults to 12.
-
         """
         ax.text(
             zone.polygon.centroid.x,
@@ -597,7 +580,6 @@ class BaseArena(ABC):
                 e.g., ``/`` or ``\\``. Defaults to None for no hatching.
             hatch_color (str | None, optional): Color of the hatching lines.
                 Defaults to None.
-
         """
         # Avoid duplicate labels
         existing_labels = ax.get_legend_handles_labels()[1]
@@ -644,7 +626,6 @@ class BaseArena(ABC):
             display_zones_go_to_positions (bool): Draw go-to positions if any.
             transparency_factor (float, optional):
                 Alpha value multiplier. Defaults to 1.0.
-
         """
         if show_buffer:
             # Plot buffer zone in transparent color
@@ -730,7 +711,6 @@ class BaseArena(ABC):
 
         Returns:
             tuple[plt.Axes, plt.Figure]: Axis and figure for plotting.
-
         """
         if plot:
             return plot
@@ -756,7 +736,6 @@ class BaseArena(ABC):
             show_ally_direction (bool): Draw an arrow for the ally direction.
             transparency_factor (float): Alpha multiplier for polygons.
             additional_zones (list[BaseArenaZone] | None): Extra zones to draw.
-
         """
         self.__plot_zone(
             ax,
@@ -812,7 +791,6 @@ class BaseArena(ABC):
         Args:
             ax (plt.Axes): Axis on which to draw.
             points (list[Point | OrientedPoint] | None): Points to display.
-
         """
         if not points:
             return
@@ -841,7 +819,6 @@ class BaseArena(ABC):
         Args:
             ax (plt.Axes): Axis on which to draw.
             trajectory (list[OrientedPoint]): Path to draw.
-
         """
         for i in range(len(trajectory) - 1):
             ax.plot(
@@ -857,7 +834,6 @@ class BaseArena(ABC):
 
         Args:
             ax (plt.Axes): Axis to configure.
-
         """
         ax.set_xlim(self.width, 0)
         ax.set_ylim(0, self.height)
@@ -908,7 +884,6 @@ class BaseArena(ABC):
 
         Returns:
             tuple[plt.Axes, plt.Figure]: Axis and figure containing the visualization.
-
         """
         ax, fig = self._init_plot(plot)
         self.__plot_polygon(ax, self.bounding_area, color="#f0f0f0", label="Arena")
@@ -945,6 +920,5 @@ class BaseArena(ABC):
 
         Returns:
             int: Hash of the arena instance.
-
         """
         return id(self)

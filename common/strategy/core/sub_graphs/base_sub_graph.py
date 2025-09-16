@@ -21,7 +21,6 @@ class BaseSubGraph:
             exit_nodes (BaseTaskNode | list[BaseTaskNode]):
                 Single node or list of nodes marking exits.
             all_nodes (list[BaseTaskNode]): Every node composing the sub-graph.
-
         """
         self.entry_node = entry_node
         self.exit_nodes = (
@@ -34,7 +33,6 @@ class BaseSubGraph:
 
         Returns:
             BaseTaskNode: The entry node.
-
         """
         return self.entry_node
 
@@ -43,7 +41,6 @@ class BaseSubGraph:
 
         Returns:
             list[BaseTaskNode]: The exit nodes.
-
         """
         return self.exit_nodes
 
@@ -52,6 +49,5 @@ class BaseSubGraph:
 
         Returns:
             list[BaseTaskNode]: All nodes in the sub-graph.
-
         """
         return self.all_nodes

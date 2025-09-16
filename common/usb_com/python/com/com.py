@@ -27,7 +27,6 @@ class Com:
     """Handle USB exchanges with a Teensy microcontroller.
 
     Supports message transmission, CRC8 verification, and callback mechanisms.
-
     """
 
     def __init__(
@@ -53,7 +52,6 @@ class Com:
                 Enables CRC8 checksum verification. Defaults to ``True``.
             enable_dummy (bool, optional):
                 Enables dummy mode for testing. Defaults to ``False``.
-
         """
         # Initialize init variables
         self.logger: Logger = logger
@@ -85,7 +83,6 @@ class Com:
 
         Raises:
             ComError: If no device is found and dummy mode is disabled.
-
         """
         device_found: Serial | DummySerial | None = None
 
@@ -115,7 +112,6 @@ class Com:
 
         Returns:
             threading.Thread | None: Receiver thread or None if dummy mode is enabled.
-
         """
         # If in dummy mode, do not start the receiver thread
         if self.enable_dummy:
@@ -130,7 +126,6 @@ class Com:
 
         Format: ``msg_type | msg_data | msg_length | CRC8 | MSG_END_BYTES``
         with sizes ``1 | msg_length | 1 | 1 | 4`` bytes.
-
         """
         while True:
             try:
@@ -197,7 +192,6 @@ class Com:
         Returns:
             Callable[..., Any]:
                 Wrapped function that returns ``None`` if dummy mode is enabled.
-
         """
 
         @wraps(func)
@@ -221,7 +215,6 @@ class Com:
 
         Args:
             data (bytes): Data to be transmitted.
-
         """
         self.last_message = data
 
@@ -242,7 +235,6 @@ class Com:
 
         Returns:
             bytes: Received data.
-
         """
         return self._device.read_until(END_BYTES_SIGNATURE)
 
@@ -252,7 +244,6 @@ class Com:
         Args:
             func (Callable[[bytes], None]): Callback function.
             iid (int): Message ID to associate with the callback.
-
         """
         if self.message_id_callback.get(iid) is not None:
             self.logger.warning(f"Callback for message id {iid} already exists !")

@@ -14,7 +14,6 @@ class TaskStatus(Enum):
         DONE: Task has been completed.
         FAILED: Task has failed.
         TIMEOUT: Task has timed out.
-
     """
 
     PENDING = auto()

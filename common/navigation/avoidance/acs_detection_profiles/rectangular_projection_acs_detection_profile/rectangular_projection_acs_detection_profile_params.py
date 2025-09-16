@@ -17,7 +17,6 @@ class RectangularProjectionAcsDetectionProfileParams(BaseAcsDetectionProfilePara
         Args:
             acs_distance (float): Distance to the obstacle.
             width_view (float): Width of the view.
-
         """
         self.width_view: float = width_view
         self.half_width_view: float = width_view / 2.0

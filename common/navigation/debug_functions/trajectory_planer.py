@@ -28,7 +28,6 @@ def test_trajectory_planning(
             The trajectory planner instance to test.
         path (list[OrientedPoint]): List of waypoints to follow.
         time_step (float, optional): Sampling interval for simulation. Defaults to 0.1.
-
     """
     print("Testing trajectory planner:", trajectory_planner)
     trajectory_planner.plan_trajectory(path)

@@ -16,7 +16,6 @@ class Utils:
 
         Returns:
             datetime: The current date and time.
-
         """
         return datetime.now(tz=UTC)
 
@@ -30,7 +29,6 @@ class Utils:
 
         Returns:
             str: The formatted date string.
-
         """
         return datetime.now(tz=UTC).strftime(str_format)
 
@@ -40,7 +38,6 @@ class Utils:
 
         Returns:
             float: The current timestamp.
-
         """
         return datetime.now(tz=UTC).timestamp()
 
@@ -53,7 +50,6 @@ class Utils:
 
         Returns:
             float: The time elapsed since the given timestamp.
-
         """
         return Utils.get_ts() - ts
 
@@ -66,7 +62,6 @@ class Utils:
 
         Returns:
             str: The string representation of the geometry.
-
         """
         r = ""
         if isinstance(geom, Point):

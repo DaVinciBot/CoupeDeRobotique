@@ -31,7 +31,6 @@ class TimeoutTaskNode(BaseTaskNode):
             timeout_seconds (float): Duration in seconds before timeout occurs.
             scoring_function (BaseScoringFunction | None, optional):
                 Scoring strategy used when evaluating transitions. Defaults to None.
-
         """
         super().__init__(name, tasks, scoring_function)
         self.timeout_seconds: float = timeout_seconds
@@ -54,7 +53,6 @@ class TimeoutTaskNode(BaseTaskNode):
 
         This method can be overridden in subclasses to implement custom
         behaviour when the timeout triggers.
-
         """
         self.logger.warning(
             (
@@ -73,7 +71,6 @@ class TimeoutTaskNode(BaseTaskNode):
         Returns:
             bool: ``True`` if all tasks completed or a timeout occurred,
             ``False`` otherwise.
-
         """
         # If already completed, no-op
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:

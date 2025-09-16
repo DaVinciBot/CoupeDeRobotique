@@ -22,7 +22,6 @@ class BlueReservedZone(BaseColorReservedZone):
     """Reserved zone specifically for the blue team.
 
     Only blue team members have access based on predefined conditions.
-
     """
 
     def __init__(
@@ -48,7 +47,6 @@ class BlueReservedZone(BaseColorReservedZone):
                 Function to be called on updates. Defaults to None.
             go_to_positions (list[OrientedPoint | Point] | None, optional):
                 List of go-to positions within the zone. Defaults to None.
-
         """
         super().__init__(
             logger=logger,

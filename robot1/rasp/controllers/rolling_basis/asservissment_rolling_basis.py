@@ -23,7 +23,6 @@ class AsservissementRollingBasis(BaseComTeensy):
     to the robot's state,
     PID configuration, and message messaging.
     Automatically logs target vs actual odometry on each send.
-
     """
 
     def __init__(
@@ -53,7 +52,6 @@ class AsservissementRollingBasis(BaseComTeensy):
                 Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
             enable_dummy (bool, optional):
                 Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
-
         """
         # Initialize state and log storage
         self.logger = logger
@@ -93,7 +91,6 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         Args:
             msg (bytes): The received message bytes.
-
         """
         self.logger.info(
             f"Teensy Rolling Basis says: {msg.decode('ascii', errors='ignore')}",
@@ -111,7 +108,6 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         Args:
             msg (bytes): The received message bytes.
-
         """
         # Unpack new odometry
         self.odometrie = OrientedPoint(
@@ -126,7 +122,6 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         Args:
             msg (bytes): The received message bytes.
-
         """
         self.logger.warning(f"Teensy Motors does not know the message {msg.hex()}")
 
@@ -140,7 +135,6 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         Args:
             target_position (OrientedPoint): Desired position and orientation.
-
         """
         # Store for logging
         self._last_target = target_position
@@ -160,7 +154,6 @@ class AsservissementRollingBasis(BaseComTeensy):
         """Plot target vs actual odometry for X, Y, and Theta using stored logs.
 
         Ensures all series have the same length before plotting.
-
         """
         logs = self.get_logs()
         if not logs:
@@ -257,7 +250,6 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         Returns:
             list[dict[str, Any]]: The stored log entries.
-
         """
         return self._logs
 
@@ -271,7 +263,6 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         Args:
             odometrie (OrientedPoint): The new odometrie values.
-
         """
         msg = (
             Messages.SET_ODOMETRIE.to_bytes()
@@ -293,7 +284,6 @@ class AsservissementRollingBasis(BaseComTeensy):
         Args:
             pid_id (int): The identifier for the PID controller.
             pid (PID): The PID controller parameters.
-
         """
         msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
         self.send_bytes(msg)
@@ -320,7 +310,6 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         Raises:
             ValueError: If the arguments do not match any expected format.
-
         """
         if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
             pid = PID(*args)  # type: ignore[reportArgumentType]
@@ -358,7 +347,6 @@ class AsservissementRollingBasis(BaseComTeensy):
             *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
                 single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
-
         """
         try:
             pid = self._load_pid(*args, **kwargs)
@@ -392,7 +380,6 @@ class AsservissementRollingBasis(BaseComTeensy):
             *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
                 single dictionary with keys 'kp', 'ki', 'kd'.
             **kwargs (float): Keyword arguments mapping PID fields to values.
-
         """
         try:
             pid = self._load_pid(*args, **kwargs)
@@ -413,7 +400,6 @@ class AsservissementRollingBasis(BaseComTeensy):
                 PID values for linear position control.
             angular_position_pid (dict[str, float]):
                 PID values for angular position control.
-
         """
         self.set_linear_position_pid(**linear_position_pid)
         time.sleep(0.1)  # Ensure the Teensy has time to process the first PID
@@ -454,7 +440,6 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         Returns:
             bool: ``True`` if the instances are equal, ``False`` otherwise.
-
         """
         if not isinstance(other, AsservissementRollingBasis):
             return NotImplemented
@@ -473,6 +458,5 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         Returns:
             bool: ``True`` if the instances are not equal, ``False`` otherwise.
-
         """
         return not self.__eq__(other)

@@ -12,7 +12,6 @@ class TeamColor(Enum):
         YELLOW: Yellow team.
         BLUE: Blue team.
         UNDEFINED: Team color not set.
-
     """
 
     YELLOW = "yellow"

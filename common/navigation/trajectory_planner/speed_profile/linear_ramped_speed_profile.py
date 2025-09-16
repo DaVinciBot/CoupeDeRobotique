@@ -27,7 +27,6 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             max_speed (float): The maximum allowed cruising speed.
             deceleration (float):
                 The constant deceleration during the deceleration phase.
-
         """
         super().__init__(max_speed=max_speed)
         self.acceleration = acceleration
@@ -48,7 +47,6 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
             tuple[float, float, float, float]: Time to accelerate, time to
                 decelerate, distance during acceleration and distance during
                 deceleration.
-
         """
         t_acc = (self._max_speed - departure_speed) / self.acceleration
         t_dec = (self._max_speed - arrival_speed) / self.deceleration
@@ -71,7 +69,6 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
 
         Returns:
             float: Peak speed reached in the triangular profile.
-
         """
         v_peak_denom = (1 / (2 * self.acceleration)) + (1 / (2 * self.deceleration))
         v_peak_sq = (
@@ -257,7 +254,6 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
 
         Returns:
             float: Speed at the specified time.
-
         """
         if time_elapsed is None or time_elapsed < 0:
             return departure_speed
@@ -313,7 +309,6 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
 
         Returns:
             float: Distance covered up to the specified time.
-
         """
         if time_elapsed is None or time_elapsed <= 0:
             return 0.0
@@ -369,7 +364,6 @@ class LinearRampedSpeedProfile(BaseSpeedProfile):
 
         Returns:
             float: Total duration of the motion profile.
-
         """
         t_acc, t_dec, d_acc, d_dec = self._compute_trapezoidal_params(
             departure_speed,

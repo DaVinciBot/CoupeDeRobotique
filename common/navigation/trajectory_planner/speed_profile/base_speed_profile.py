@@ -13,7 +13,6 @@ class BaseSpeedProfile(ABC):
 
         Args:
             max_speed (float): The maximum speed for the profile.
-
         """
         self._max_speed: float = max_speed
 
@@ -42,7 +41,6 @@ class BaseSpeedProfile(ABC):
 
         Returns:
             float: Speed at the current time/distance.
-
         """
 
     @abstractmethod
@@ -69,7 +67,6 @@ class BaseSpeedProfile(ABC):
 
         Returns:
             float: Distance traveled so far.
-
         """
 
     @abstractmethod
@@ -93,5 +90,4 @@ class BaseSpeedProfile(ABC):
 
         Returns:
             float: Time needed to complete the distance.
-
         """

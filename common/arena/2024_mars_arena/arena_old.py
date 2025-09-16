@@ -51,7 +51,6 @@ class Arena:
                 Dictionary of arena zones. Defaults to None.
             border_buffer (float): Buffer around the borders.
             robot_buffer (float): Buffer around the robot.
-
         """
         self.logger: Logger = logger
         if game_borders is None:
@@ -86,7 +85,6 @@ class Arena:
 
         Returns:
             bool: ``True`` if ``pos`` lies within the game borders, ``False`` otherwise.
-
         """
         rob_polygon = pos.buffer(self.robot_buffer)
         return self.game_borders.buffer(-ADJUST_EPSILON).contains(rob_polygon)
@@ -102,7 +100,6 @@ class Arena:
         Returns:
             bool: ``True`` if the element is entirely within the arena,
                 ``False`` otherwise.
-
         """
         if buffered_zone:
             return self.game_borders_buffered.contains(element)
@@ -120,7 +117,6 @@ class Arena:
 
         Raises:
             ValueError: If ``zone_name`` is unknown.
-
         """
         if zone_name not in self.zones:
             msg = "Unknown zone requested"
@@ -146,7 +142,6 @@ class Arena:
 
         Returns:
             bool: ``True`` if the move is allowed, ``False`` otherwise.
-
         """
         return self.enable_go_on_path(
             LineString([start, target]),
@@ -168,7 +163,6 @@ class Arena:
 
         Returns:
             bool: ``True`` if the path is allowed, ``False`` otherwise.
-
         """
         # define the area touched by the buffer, for example the sides of a robot moving
 
@@ -190,7 +184,6 @@ class Arena:
 
         Returns:
             Point: Adjusted point within the borders.
-
         """
         projected_point = borders.exterior.interpolate(
             borders.exterior.project(point),
@@ -224,7 +217,6 @@ class Arena:
 
         Raises:
             ValueError: If the intersection computation fails.
-
         """
         borders = self.game_borders
         center: Point = zone.centroid
@@ -280,7 +272,6 @@ class Arena:
 
         Returns:
             bool: ``True`` if a collision is detected, ``False`` otherwise.
-
         """
         for i, distance_to_check in enumerate(distances_to_check):
             if (
@@ -308,7 +299,6 @@ class Arena:
 
         Returns:
             Point: The absolute point in the game world.
-
         """
         return Point(
             pos_robot.x + dist * cos(radians(pos_robot.theta - 45 + relative_angle)),
@@ -323,6 +313,5 @@ class Arena:
 
         Returns:
             Geometry: The geometry of the points inside the game borders.
-
         """
         return self.game_borders_buffered.intersection(points)

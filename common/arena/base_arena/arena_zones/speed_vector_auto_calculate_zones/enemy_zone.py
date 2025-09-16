@@ -19,7 +19,6 @@ class EnemyZone(BaseSpeedVectorAutoCalculateZone):
     """Represents an enemy zone in the arena where enemy movements are tracked.
 
     The zone calculates and updates a speed vector based on detected enemy positions.
-
     """
 
     def __init__(
@@ -43,7 +42,6 @@ class EnemyZone(BaseSpeedVectorAutoCalculateZone):
                 Timeout for detecting no movement. Defaults to 4.0.
             vector_factor (float, optional):
                 Scaling factor for speed vector influence. Defaults to 25.0.
-
         """
         super().__init__(
             logger=logger,

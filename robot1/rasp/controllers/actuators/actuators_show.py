@@ -23,7 +23,6 @@ class Servo:
         deploy_angle (int): Angle to deploy the servo (in degrees).
         fold_angle (int): Angle to fold the servo (in degrees).
         max_angle (int): Maximum angle for the servo (in degrees).
-
     """
 
     deploy_angle: int
@@ -40,7 +39,6 @@ class ServoDocking(Servo):
 
     Attributes:
         docking (int): Angle for special movement such as docking.
-
     """
 
     docking: int = 0
@@ -53,7 +51,6 @@ class ServoArm(Servo):
 
     Attributes:
         docking (int): Angle for special movement such as docking.
-
     """
 
     docking: int
@@ -66,7 +63,6 @@ class ServoPlank(Servo):
 
     Attributes:
         maintain_plank (int): Angle to maintain the plank position (in degrees).
-
     """
 
     maintain_plank: int
@@ -82,7 +78,6 @@ class Stepper:
         folded_steps (int): Number of steps to reach the folded position.
         bottom_steps (int): Number of steps to reach the bottom position.
         speed (int): Speed of the stepper motor.
-
     """
 
     top_steps: int
@@ -100,7 +95,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
     Inherits from :class:`Actuators` and overrides its methods to provide
     hardware-specific functionality.
-
     """
 
     def __init__(
@@ -130,7 +124,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
                 Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
             enable_dummy (bool, optional):
                 Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
-
         """
         super().__init__(
             logger=logger,
@@ -212,7 +205,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         Returns:
             bool: ``True`` if the pin is a valid servo pin, ``False`` otherwise.
-
         """
         if pin not in self.servos or self.servos[pin] is None:
             self.logger.warning(f"Pin {pin} is not a servo")
@@ -225,7 +217,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         This method ensures that the elevator is in a safe state before the
         servo arm is deployed.
-
         """
         steps_to_move = self.stepper.folded_steps - self.elevator_ticks + 20
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
@@ -235,7 +226,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         This method sets the angles of the servos to predefined values for the
         dropping cans.
-
         """
         self.set_servo_angle(pin=4, angle=160, max_angle=270)
         self.set_servo_angle(pin=6, angle=90, max_angle=270)
@@ -250,7 +240,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         Args:
             pins (int | list[int]): The pin number or a list of pin numbers to deploy.
-
         """
         if isinstance(pins, int):
             pins = [pins]
@@ -272,7 +261,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         Args:
             pins (int | list[int]): The pin number or a list of pin numbers to fold.
-
         """
         if isinstance(pins, int):
             pins = [pins]
@@ -292,7 +280,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         This method sets all servos to their deploy angle, effectively
         deploying the servo arm.
-
         """
         if ARM_SERVO_PIN in self.servos:
             self.deploy(ARM_SERVO_PIN)
@@ -306,7 +293,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         This method ensures that the elevator is in a safe position before the
         servo arm is deployed.
-
         """
         self.folded = False
         self.docking([0, 2])
@@ -320,7 +306,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         This method sets all servos to their fold angle, effectively folding the
         servo arm.
-
         """
         for i in self.servos:
             if i != ARM_SERVO_PIN:
@@ -334,7 +319,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         This is useful for ensuring that the servos are not holding any
         position when they are not in use.
-
         """
         pins = [1, 3, 5, 7]
         for pin in pins:
@@ -350,7 +334,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         This is useful for ensuring that the servos are holding their position
         when they are in use.
-
         """
         pins = [1, 3, 5, 7]
         for pin in pins:
@@ -366,7 +349,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         Args:
             pins (int | list[int]): Pin or list of pins to move.
-
         """
         if isinstance(pins, int):
             pins = [pins]
@@ -394,7 +376,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         This sets the angles of the servos to predefined values for the upper
         cans.
-
         """
         self.set_servo_angle(pin=4, angle=160, max_angle=270)
         self.set_servo_angle(pin=6, angle=90, max_angle=270)
@@ -403,7 +384,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         """Raise the plank by moving the elevator to the top position.
 
         This method is used to raise the plank to its top position.
-
         """
         steps_to_move = self.stepper.top_steps
         self.stepper_step(steps_to_move, self.stepper.speed)
@@ -412,7 +392,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         """Move the elevator to the top position.
 
         If the elevator is folded, it will move to the folded position first.
-
         """
         if self.folded and not self.elevator_ticks:
             self.elevator_ticks = self.stepper.folded_steps
@@ -425,7 +404,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         """Move the elevator to the top position.
 
         If the elevator is folded, it will move to the folded position first.
-
         """
         if self.folded and not self.elevator_ticks:
             self.elevator_ticks = self.stepper.folded_steps
@@ -438,7 +416,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         """Move the elevator to the bottom position.
 
         If the elevator is folded, it will move to the folded position first.
-
         """
         steps_to_move = self.stepper.bottom_steps - self.elevator_ticks
         self.logger.info(f"Moving to bottom: {steps_to_move} steps")
@@ -453,7 +430,6 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
 
         This method deploys servos and raises the elevator to construct the
         floors.
-
         """
         self.go_to_top()
         time.sleep(2)

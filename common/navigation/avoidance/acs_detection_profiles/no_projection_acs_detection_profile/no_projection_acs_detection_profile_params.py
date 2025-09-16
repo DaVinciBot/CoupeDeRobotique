@@ -16,7 +16,6 @@ class NoProjectionAcsDetectionProfileParams(BaseAcsDetectionProfileParams):
 
         Args:
             acs_distance (float): Distance to the obstacle.
-
         """
         super().__init__(
             acs_detection_profile=AcsDetectionProfile.NO_PROJECTION,

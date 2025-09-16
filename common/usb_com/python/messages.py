@@ -31,7 +31,6 @@ class Messages(Enum):
         SWITCH_STATE_RETURN: Report the state of a switch.
         PRINT: Print a message from the Teensy.
         UNKNOWN_MSG_TYPE: Unknown command identifier.
-
     """
 
     # rasp -> teensy : 0-127 (Convention)
@@ -87,6 +86,5 @@ class Messages(Enum):
 
         Returns:
             bytes: Single-byte representation of the command.
-
         """
         return bytes([self.value])

@@ -40,7 +40,6 @@ class AStarPathPlannerParams(BasePathPlannerParams):
             goal (OrientedPoint): Goal point of the path.
             direction (Direction, optional): Indicates whether the path should
                 be planned FORWARD or BACKWARD. Defaults to Direction.FORWARD.
-
         """
         # Direction parameter
         self.direction: Direction = direction
@@ -80,7 +79,6 @@ class AStarPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
         Args:
             start (OrientedPoint): Starting point of the path.
             goal (OrientedPoint): Goal point of the path.
-
         """
         self.goal: OrientedPoint = goal
         super().__init__(start)

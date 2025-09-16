@@ -21,7 +21,6 @@ class Actuators(
     """Base class for actuators.
 
     This class is used to manage the actuators of the robot.
-
     """
 
     # TODO : move to common and handle config properly, not the prority yet
@@ -53,7 +52,6 @@ class Actuators(
                 Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
             enable_dummy (bool, optional):
                 Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
-
         """
         # Initialize the parent-GPIOComTeensy class
         super().__init__(
@@ -85,7 +83,6 @@ class Actuators(
 
         Returns:
             str: The class name.
-
         """
         return self.__class__.__name__
 
@@ -96,7 +93,6 @@ class Actuators(
 
         Args:
             msg (bytes): The received message bytes.
-
         """
         self.logger.info(
             f"Teensy Actuators says: {msg.decode('ascii', errors='ignore')}",
@@ -109,7 +105,6 @@ class Actuators(
 
         Args:
             msg (bytes): The received message bytes.
-
         """
         self.logger.warning(f"Teensy Actuators does not know the message {msg.hex()}")
 
@@ -118,7 +113,6 @@ class Actuators(
 
         Args:
             msg (bytes): The received message bytes.
-
         """
         self.logger.info(f"Switch state: {msg.hex()}")
         # Decode the message
@@ -146,7 +140,6 @@ class Actuators(
             pin_enable (int): The pin number connected to the driver's enable input
             enable_driver (bool):
                 ``True`` to enable the driver, ``False`` to disable it.
-
         """
         msg = (
             Messages.SET_STEPPER_DRIVER_ACTIVATION_STATE.to_bytes()
@@ -172,7 +165,6 @@ class Actuators(
             speed (int): The speed at which to move the motor.
             disable_driver (bool, optional):
                 Whether to disable the driver after the movement. Defaults to ``True``.
-
         """
         # Update elevator theorical steps
         self.elevator_ticks += steps
@@ -241,7 +233,6 @@ class Actuators(
              Ignored if detach is ``False``.
             use_i2c (bool, optional):
                 Whether to use I2C communication for the servo. Defaults to ``True``.
-
         """
         if min_angle <= angle <= max_angle:
             if detach:

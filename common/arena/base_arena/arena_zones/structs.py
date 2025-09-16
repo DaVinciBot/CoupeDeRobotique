@@ -22,7 +22,6 @@ class ZoneType(Enum):
         ENEMY: Zone associated with enemy activity.
         ALLY: Zone associated with ally activity.
         BORDER_ZONE: Represents arena borders.
-
     """
 
     YELLOW_RESERVED = auto()
@@ -48,7 +47,6 @@ class ZoneAccessibility(Enum):
         FREE: Free to navigate.
         RESTRICTED: Restricted access.
         FORBIDDEN: Completely inaccessible.
-
     """
 
     FREE = auto()
@@ -67,7 +65,6 @@ class Record:
     Attributes:
         timestamp (float): Time of the record.
         position (Point): The position recorded.
-
     """
 
     timestamp: float
@@ -85,7 +82,6 @@ class SpeedVector:
         dx (float): Change in x-direction.
         dy (float): Change in y-direction.
         factor (float): Scaling factor for direction components (defaults to 1.0).
-
     """
 
     speed: float

@@ -11,7 +11,6 @@ class StopAndWaitAvoidanceParams(BaseAvoidanceParams):
 
     This strategy stops the system when an obstacle is detected and waits for a
     defined timeout period before reassessing the situation.
-
     """
 
     def __init__(
@@ -23,6 +22,5 @@ class StopAndWaitAvoidanceParams(BaseAvoidanceParams):
         Args:
             timeout (float):
                 Time to wait after stopping before checking again in seconds.
-
         """
         super().__init__(AvoidanceStrategy.STOP_AND_WAIT, timeout * 1000.0)

@@ -22,12 +22,11 @@ if TYPE_CHECKING:
     from arena.base_arena.grid_manager import GridManager
 
 
-class BaseArenaZone(ABC):  # noqa: B024
+class BaseArenaZone(ABC):
     """Represent a zone within an arena with geometry, type, and accessibility.
 
     Attributes:
         zones_uid (ClassVar[list[int]]): Sequence of used identifiers for zones.
-
     """
 
     zones_uid: ClassVar[list[int]] = []
@@ -65,7 +64,6 @@ class BaseArenaZone(ABC):  # noqa: B024
                 List of go-to positions within the zone. Defaults to None.
             uid (int | None, optional):
                 Unique identifier for the zone instance. Defaults to None.
-
         """
         self.logger: Logger = logger
         self.zone_type: ZoneType = zone_type
@@ -101,7 +99,6 @@ class BaseArenaZone(ABC):  # noqa: B024
 
         Returns:
             int: Newly generated identifier.
-
         """
         if input_uid is not None:
             cls.zones_uid.append(input_uid)
@@ -125,7 +122,6 @@ class BaseArenaZone(ABC):  # noqa: B024
 
         Returns:
             Polygon: Buffered polygon.
-
         """
         return polygon.buffer(
             buffer,
@@ -147,7 +143,6 @@ class BaseArenaZone(ABC):  # noqa: B024
 
         Returns:
             bool: ``True`` if accessible, ``False`` otherwise.
-
         """
         return self.accessibility not in {
             ZoneAccessibility.FORBIDDEN,
@@ -166,7 +161,6 @@ class BaseArenaZone(ABC):  # noqa: B024
 
         Returns:
             bool: ``True`` if accessible in emergencies, ``False`` otherwise.
-
         """
         return self.accessibility != ZoneAccessibility.FORBIDDEN
 
@@ -184,7 +178,6 @@ class BaseArenaZone(ABC):  # noqa: B024
         Returns:
             OrientedPoint | Point | None:
                 Best go-to position, or ``None`` if inaccessible.
-
         """
         if not self.is_accessible(team_color):
             self.logger.debug(
@@ -227,7 +220,6 @@ class BaseArenaZone(ABC):  # noqa: B024
             team_color (TeamColor): Color of the team.
             ally_position (Point | OrientedPoint): Position of the ally.
             enemy_position (Point | OrientedPoint): Position of the enemy.
-
         """
         # Update visit counts
         if self.polygon.contains(enemy_position):  # Don't consider the buffer
@@ -257,7 +249,6 @@ class BaseArenaZone(ABC):  # noqa: B024
 
         Returns:
             bool: ``True`` if ``other`` shares this class type.
-
         """
         return type(self) is type(other) and (
             isinstance(self, type(other)) or isinstance(other, type(self))
@@ -272,7 +263,6 @@ class BaseArenaZone(ABC):  # noqa: B024
 
         Returns:
             bool: ``True`` if polygons and accessibility match.
-
         """
         if not isinstance(self, type(other)):
             return False
@@ -291,7 +281,6 @@ class BaseArenaZone(ABC):  # noqa: B024
 
         Returns:
             bool: ``True`` if zones are not equal.
-
         """
         return not self.__eq__(other)
 
@@ -301,7 +290,6 @@ class BaseArenaZone(ABC):  # noqa: B024
 
         Returns:
             str: Human-readable information about the zone.
-
         """
         return (
             f"{self.zone_type}: {self.buffered_polygon.centroid} -> "
@@ -316,7 +304,6 @@ class BaseArenaZone(ABC):  # noqa: B024
 
         Returns:
             str: Formal representation of the zone.
-
         """
         return self.__str__()
 
@@ -326,7 +313,6 @@ class BaseArenaZone(ABC):  # noqa: B024
 
         Returns:
             int: Hash value for the zone.
-
         """
         return hash(self.uid)
 
@@ -339,6 +325,5 @@ class BaseArenaZone(ABC):  # noqa: B024
 
         Returns:
             str: Formatted representation.
-
         """
         return self.__str__()

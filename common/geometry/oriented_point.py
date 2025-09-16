@@ -44,7 +44,6 @@ class OrientedPoint(Point):
             y_or_theta (float | None, optional):
                 Y coordinate or ``theta`` when using a tuple. Defaults to ``None``.
             theta (float, optional): Orientation angle. Defaults to ``0.0``.
-
         """
         self._id_to_attrs[str(id(self))] = {
             "theta": (
@@ -74,7 +73,6 @@ class OrientedPoint(Point):
 
         Raises:
             ValueError: If coordinates are not provided correctly.
-
         """
         if isinstance(x_or_coords, tuple):
             point = super().__new__(cls, x_or_coords)
@@ -105,7 +103,6 @@ class OrientedPoint(Point):
 
         Raises:
             AttributeError: If the attribute is not found.
-
         """
         try:
             return float(OrientedPoint._id_to_attrs[str(id(self))][name])
@@ -119,7 +116,6 @@ class OrientedPoint(Point):
 
         Returns:
             str: Readable representation of the point.
-
         """
         return f"{self.wkt}, theta: {self.theta}"
 
@@ -129,7 +125,6 @@ class OrientedPoint(Point):
 
         Returns:
             str: Debug representation of the point.
-
         """
         return f"{self.wkt}, theta: {self.theta}"
 
@@ -142,7 +137,6 @@ class OrientedPoint(Point):
 
         Returns:
             str: Formatted string representation.
-
         """
         return str(self)
 
@@ -155,7 +149,6 @@ class OrientedPoint(Point):
 
         Returns:
             bool: ``True`` if both points are equal.
-
         """
         if not isinstance(other, OrientedPoint):
             return False
@@ -169,7 +162,6 @@ class OrientedPoint(Point):
 
         Returns:
             OrientedPoint: Resulting oriented point.
-
         """
         if isinstance(other, OrientedPoint):
             return OrientedPoint(
@@ -189,7 +181,6 @@ class OrientedPoint(Point):
 
         Returns:
             OrientedPoint: Resulting oriented point.
-
         """
         if isinstance(other, OrientedPoint):
             return OrientedPoint(
@@ -207,7 +198,6 @@ class OrientedPoint(Point):
 
         Returns:
             int: Hash of the oriented point.
-
         """
         return hash((self.x, self.y, self.theta))
 
@@ -221,7 +211,6 @@ class OrientedPoint(Point):
 
         Returns:
             OrientedPoint: Oriented point with the same coordinates.
-
         """
         return cls((point.x, point.y), theta)
 
@@ -257,7 +246,6 @@ class OrientedPoint(Point):
         Returns:
             tuple[type["OrientedPoint"], tuple[tuple[float, float], float], dict[str, float]]:
                 A tuple describing how to reconstruct the object.
-
         """
         coords = cast("tuple[float, float]", next(iter(self.coords)))
         theta = self.theta
@@ -272,6 +260,5 @@ class OrientedPoint(Point):
 
         Args:
             state (dict[str, float]): State dictionary created by :py:meth:`__reduce__`.
-
         """
         OrientedPoint._id_to_attrs[str(id(self))] = {"theta": state.get("theta", 0.0)}

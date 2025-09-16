@@ -21,7 +21,6 @@ class NavigationScoringFunction(BaseScoringFunction):
 
         Args:
             goal (int): The navigation goal to reach.
-
         """
         self.goal = goal
 
@@ -41,7 +40,6 @@ class NavigationScoringFunction(BaseScoringFunction):
 
         Returns:
             float: The computed navigation score.
-
         """
         distance = ctx.arena.ally_zone.point.distance(
             ctx.arena.compute_goal_position(self.goal),

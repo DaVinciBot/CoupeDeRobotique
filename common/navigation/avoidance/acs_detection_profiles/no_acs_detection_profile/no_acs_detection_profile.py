@@ -28,6 +28,5 @@ class NoAcsDetectionProfile(BaseAcsDetectionProfile[NoAcsDetectionProfileParams]
 
         Returns:
             bool: ``True`` if avoidance should be triggered, ``False`` otherwise.
-
         """
         return False

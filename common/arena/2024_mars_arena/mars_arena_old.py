@@ -29,7 +29,6 @@ class PlantsZone:
         Args:
             zone (Polygon): Polygon representing the zone bounds.
             nb_plant (int, optional): Number of plants in the zone. Defaults to 0.
-
         """
         self.zone: Polygon = zone
         self.nb_plant: int = nb_plant
@@ -41,7 +40,6 @@ class PlantsZone:
 
         Returns:
             str: Description of the zone and plant count.
-
         """
         return f"zone : {self.zone}, nb_plant {self.nb_plant}"
 
@@ -51,7 +49,6 @@ class PlantsZone:
 
         Returns:
             str: Debug-friendly representation of the zone.
-
         """
         return self.__str__()
 
@@ -60,7 +57,6 @@ class PlantsZone:
 
         Args:
             nb (int): Number of plants to remove.
-
         """
         self.nb_plant -= nb
 
@@ -69,7 +65,6 @@ class PlantsZone:
 
         Args:
             nb (int): Number of plants to add.
-
         """
         self.nb_plant += nb
 
@@ -100,7 +95,6 @@ class MarsArena(Arena):
         Raises:
             ValueError: If ``start_zone_id`` is not between ``MIN_START_ZONE_ID`` and
                 ``MAX_START_ZONE_ID``.
-
         """
         if not MIN_START_ZONE_ID <= start_zone_id <= MAX_START_ZONE_ID:
             msg = (
@@ -196,7 +190,6 @@ class MarsArena(Arena):
 
         Returns:
             str: Team color identifier.
-
         """
         return "y" if not self.start_zone_id % 2 else "b"
 
@@ -223,7 +216,6 @@ class MarsArena(Arena):
 
         Returns:
             list[PlantsZone]: Sorted list of plant zones.
-
         """
         zones = [
             zone for zone in zones_to_sort if mini_plants < zone.nb_plant < maxi_plants
@@ -254,7 +246,6 @@ class MarsArena(Arena):
 
         Returns:
             list[PlantsZone]: Sorted gardener zones.
-
         """
         zones_to_sort = (
             [
@@ -293,7 +284,6 @@ class MarsArena(Arena):
 
         Returns:
             list[PlantsZone]: Sorted drop zones.
-
         """
         zones_to_sort = (
             [
@@ -329,7 +319,6 @@ class MarsArena(Arena):
 
         Returns:
             list[PlantsZone]: Sorted pickup zones.
-
         """
         return MarsArena.sort_plant_zones(
             zones_to_sort=self.pickup_zones,
@@ -344,7 +333,6 @@ class MarsArena(Arena):
 
         Returns:
             str: Name of the class.
-
         """
         return "MarsArena"
 
@@ -353,7 +341,6 @@ class MarsArena(Arena):
 
         Returns:
             str: Summary of the arena layout.
-
         """
         return (
             f"MarsArena: \n"

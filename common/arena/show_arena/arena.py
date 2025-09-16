@@ -51,7 +51,6 @@ class ShowArena(BaseArena):
                 Offset for big constructs.
             distance_between_robot_and_small_construct_zone (float):
                 Offset for small constructs.
-
         """
         stuff_zone_logger = Logger(
             identifier="StuffZone",

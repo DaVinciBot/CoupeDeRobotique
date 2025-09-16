@@ -17,7 +17,6 @@ class BasicSpeedProfile(BaseSpeedProfile):
 
         Args:
             speed (float): Constant speed value used for calculations.
-
         """
         super().__init__(max_speed=speed)
 
@@ -41,7 +40,6 @@ class BasicSpeedProfile(BaseSpeedProfile):
 
         Returns:
             float: The constant speed value.
-
         """
         if time_elapsed is None or time_elapsed <= 0:
             return 0.0
@@ -68,7 +66,6 @@ class BasicSpeedProfile(BaseSpeedProfile):
 
         Returns:
             float: Distance covered.
-
         """
         if time_elapsed is None or time_elapsed <= 0:
             return 0.0
@@ -93,6 +90,5 @@ class BasicSpeedProfile(BaseSpeedProfile):
 
         Returns:
             float: Duration of the motion.
-
         """
         return distance / self._max_speed

@@ -27,7 +27,6 @@ class StraightSegment(BaseSegment):
             end_position (OrientedPoint): Ending pose of the segment.
             duration (float): Duration of the segment motion.
             distance (float): Total distance covered in the segment.
-
         """
         super().__init__(start_position, end_position, duration)
         self.distance: float = distance  # Length of the straight-line path

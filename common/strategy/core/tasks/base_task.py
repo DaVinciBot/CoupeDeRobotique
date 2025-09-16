@@ -19,7 +19,6 @@ class BaseTask(ABC):
 
         Args:
             logger (Logger | None): Logger instance for debugging. Defaults to None.
-
         """
         self.logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
@@ -35,5 +34,4 @@ class BaseTask(ABC):
 
         Returns:
             bool: ``True`` if the task is complete, ``False`` otherwise.
-
         """

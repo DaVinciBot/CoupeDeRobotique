@@ -15,7 +15,6 @@ class LidarDummy:
     """A dummy Lidar class for testing purposes.
 
     Simulates the behavior of a real lidar sensor.
-
     """
 
     def __init__(
@@ -40,7 +39,6 @@ class LidarDummy:
                 Minimum distance to consider a distance as valid. Defaults to 5.0.
             num_points (int, optional):
                 Number of points to simulate in a scan. Defaults to 360.
-
         """
         self._logger = logger
         self.__min_angle = min_angle
@@ -74,7 +72,6 @@ class LidarDummy:
 
         Returns:
             np.ndarray: Array of angles.
-
         """
         angle_step = abs(max_angle - min_angle) / num_points
         return np.array(
@@ -93,7 +90,6 @@ class LidarDummy:
 
         Raises:
             ValueError: If the unit is not recognized.
-
         """
         if unit == "deg":
             return 1
@@ -115,7 +111,6 @@ class LidarDummy:
 
         Raises:
             ValueError: If the unit is not recognized.
-
         """
         if unit == "mm":
             return 1000
@@ -137,7 +132,6 @@ class LidarDummy:
 
         Returns:
             np.ndarray: numpy array of distances
-
         """
         # Initialize an array of distances
         distances = np.full(
@@ -195,7 +189,6 @@ class LidarDummy:
 
         Returns:
             np.ndarray: numpy array of [angle, distance] pairs
-
         """
         distances = self.scan_to_distances()
         polars = np.column_stack((self.__polars_angles, distances))
@@ -209,7 +202,6 @@ class LidarDummy:
 
         Returns:
             bool: connection status
-
         """
         return self.__is_connected
 
@@ -219,7 +211,6 @@ class LidarDummy:
 
         Returns:
             np.ndarray: numpy array of distances
-
         """
         return self.scan_to_distances()
 
@@ -229,6 +220,5 @@ class LidarDummy:
 
         Returns:
             np.ndarray: numpy array of [angle, distance] pairs
-
         """
         return self.scan_to_polars()

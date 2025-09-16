@@ -15,7 +15,6 @@ class NavigatorTaskState(Enum):
         ABORT: The task is aborted.
         STABILIZING: The task is stabilizing.
         FINISHED: The task is finished.
-
     """
 
     NOT_PLANNED = auto()
@@ -36,6 +35,5 @@ class NavigatorTaskState(Enum):
 
         Returns:
             bool: ``True`` if the task is finished, ``False`` otherwise.
-
         """
         return self in {NavigatorTaskState.FINISHED, NavigatorTaskState.ABORT}

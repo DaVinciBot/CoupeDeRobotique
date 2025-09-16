@@ -36,7 +36,6 @@ class AStarPathPlanner(
             params (AStarPathPlannerParams): Parameters including motion direction.
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to None.
-
         """
         super().__init__(params, logger)
 
@@ -57,7 +56,6 @@ class AStarPathPlanner(
 
         Returns:
             OrientedPoint: Flipped pose for backward motion.
-
         """
         return OrientedPoint(goal.x, goal.y, goal.theta + math.pi)
 
@@ -75,7 +73,6 @@ class AStarPathPlanner(
 
         Returns:
             float: Orientation angle in radians.
-
         """
         return math.atan2(
             next_point.y - current_point.y,
@@ -87,7 +84,6 @@ class AStarPathPlanner(
 
         Returns:
             list[GridNode]: List of nodes representing the found path.
-
         """
         grid = self.params.grid
 
@@ -124,7 +120,6 @@ class AStarPathPlanner(
 
         Returns:
             tuple[float, float]: Center of the grid node in absolute coordinates.
-
         """
         return (
             node.x * self.params.chunk_size + self.params.half_chunk_size,
@@ -145,7 +140,6 @@ class AStarPathPlanner(
 
         Returns:
             list[OrientedPoint]: Path with orientation included.
-
         """
         if not path:
             self.logger.debug(
@@ -198,7 +192,6 @@ class AStarPathPlanner(
 
         Returns:
             list[Point | OrientedPoint]: A reduced list containing key waypoints.
-
         """
         # If only 2 points in the path, conserve only the start and goal points
         if len(path) <= _TWO_POINTS:
@@ -242,7 +235,6 @@ class AStarPathPlanner(
 
         Returns:
             GridNode: Coordinates of the point within the grid.
-
         """
         return GridNode(
             int(point.x / self.params.chunk_size),
@@ -256,7 +248,6 @@ class AStarPathPlanner(
 
         Args:
             new_goal (OrientedPoint): New goal position in absolute coordinates.
-
         """
         self.params.absolute_goal = new_goal
         self.params.goal = self.__absolute_coords_to_grid_coords(new_goal)
@@ -266,7 +257,6 @@ class AStarPathPlanner(
 
         Args:
             new_position (OrientedPoint): New current position in absolute coordinates.
-
         """
         self.params.absolute_current_position = new_position
         self.params.current_position = self.__absolute_coords_to_grid_coords(
@@ -286,7 +276,6 @@ class AStarPathPlanner(
             list[OrientedPoint]:
                 List containing oriented path from the start to the goal,
                 possibly reversed for backward direction.
-
         """
         self.__find_path()
 

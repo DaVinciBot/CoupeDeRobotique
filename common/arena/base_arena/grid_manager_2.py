@@ -18,7 +18,6 @@ class GridManager:
 
     The manager builds static and dynamic grids to comply with the pathfinding
     library requirements and uses a spatial index for fast zone lookups.
-
     """
 
     def __init__(
@@ -35,7 +34,6 @@ class GridManager:
             chunk_size (int): Size of a grid cell in world units.
             width (int): Total width of the arena in world units.
             height (int): Total height of the arena in world units.
-
         """
         self.logger = logger
         self.chunk_size = chunk_size
@@ -68,7 +66,6 @@ class GridManager:
 
         Returns:
             Grid: A grid where every node is initially walkable.
-
         """
         return Grid(
             matrix=[
@@ -96,7 +93,6 @@ class GridManager:
 
         Returns:
             Grid: Updated grid.
-
         """
         for polygon in zones:
             minx, miny, maxx, maxy = polygon.bounds
@@ -144,7 +140,6 @@ class GridManager:
         Args:
             forbidden_zones (Polygon | list[Polygon]): Zone polygons that should
                 be marked as non-walkable permanently.
-
         """
         if not isinstance(forbidden_zones, list):
             forbidden_zones = [forbidden_zones]
@@ -167,7 +162,6 @@ class GridManager:
         Args:
             forbidden_zones (Polygon | list[Polygon]): Polygons to remove from
                 the set of static forbidden zones.
-
         """
         if not isinstance(forbidden_zones, list):
             forbidden_zones = [forbidden_zones]
@@ -190,7 +184,6 @@ class GridManager:
         Args:
             dynamic_zones (list[Polygon]): Zones that can change during runtime
                 and should be marked as non-walkable.
-
         """
         self.dynamic_forbidden_zones = dynamic_zones
         self.dynamic_grid = self.__mark_zone(
@@ -207,7 +200,6 @@ class GridManager:
 
         Returns:
             tuple[float, float]: Coordinates of the node center in world units.
-
         """
         return (
             node.x * self.chunk_size + self.half_chunk_size,
@@ -222,7 +214,6 @@ class GridManager:
 
         Returns:
             GridNode: Corresponding node in the grid.
-
         """
         return GridNode(int(point.x / self.chunk_size), int(point.y / self.chunk_size))
 
@@ -234,7 +225,6 @@ class GridManager:
 
         Returns:
             Point: Center of the node in world coordinates.
-
         """
         x, y = self.get_grid_node_center(node)
         return Point(x, y)
@@ -244,7 +234,6 @@ class GridManager:
 
         Returns:
             Grid: The grid containing only static forbidden zones.
-
         """
         return self.static_grid
 
@@ -253,7 +242,6 @@ class GridManager:
 
         Returns:
             Grid: The grid including both static and dynamic updates.
-
         """
         return self.dynamic_grid
 
@@ -270,7 +258,6 @@ class GridManager:
                 If ``True`` show only static zones. Defaults to ``False``.
             path (list[GridNode] | None, optional):
                 Path to draw over the grid. Defaults to ``None``.
-
         """
         grid_to_visualize = self.static_grid if only_static_grid else self.dynamic_grid
 

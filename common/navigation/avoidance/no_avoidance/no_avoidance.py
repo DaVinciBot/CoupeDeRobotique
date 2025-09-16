@@ -18,7 +18,6 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
 
     The navigation system proceeds with its task without applying any obstacle
     avoidance logic and simply returns the current trajectory command unchanged.
-
     """
 
     @BaseAvoidance.ensure_original_task_storage
@@ -40,7 +39,6 @@ class NoAvoidance(BaseAvoidance[NoAvoidanceParams]):
 
         Returns:
             TrajectoryPlanCommand: The current trajectory command without changes.
-
         """
         return cast(
             "TrajectoryPlanCommand",

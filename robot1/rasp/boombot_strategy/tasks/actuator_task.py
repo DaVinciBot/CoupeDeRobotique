@@ -24,7 +24,6 @@ class ReadyToApproachToPickUp(BaseTask):
 
         Returns:
             bool: Always returns True after executing the action.
-
         """
         ctx.actuators.ready_to_approach_to_pickup()
         return True
@@ -42,7 +41,6 @@ class PrepareToPickUp(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action and delay.
-
         """
         ctx.actuators.ready_to_pickup()
         time.sleep(1)
@@ -61,7 +59,6 @@ class PickUp(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action and delay.
-
         """
         ctx.actuators.pick_up()
         time.sleep(1)
@@ -80,7 +77,6 @@ class Build(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action and delay.
-
         """
         ctx.actuators.build_floors()
         ctx.score += CONFIG.BUILD_TWO_FLOORS
@@ -100,7 +96,6 @@ class Deposit(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action and delay.
-
         """
         ctx.actuators.demagnetize_all()
         ctx.score += CONFIG.BUILD_ONE_FLOOR
@@ -120,7 +115,6 @@ class BlockBanner(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action.
-
         """
         ctx.actuators.block_banner()
         return True
@@ -138,7 +132,6 @@ class DeplacementPosition(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action.
-
         """
         ctx.actuators.deplacement_position()
         return True
@@ -156,7 +149,6 @@ class DeplacementObject(BaseTask):
 
         Returns:
             bool: Always returns ``True`` after executing the action.
-
         """
         ctx.actuators.deplacement_object()
         return True

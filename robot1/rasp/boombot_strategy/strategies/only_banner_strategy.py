@@ -28,7 +28,6 @@ class OnlyBannerStrategy(BaseStrategy):
         Args:
             ctx (ShowGameContext):
                 Game context containing game-specific configurations and zones.
-
         """
         super().__init__(ctx)
 

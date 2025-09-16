@@ -24,7 +24,6 @@ def get_wall_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
     Returns:
         BaseSubGraph:
             Subgraph representing the pickup sequence at the target zone.
-
     """
     subgraph = SubGraphBuilder()
 

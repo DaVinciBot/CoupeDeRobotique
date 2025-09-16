@@ -60,7 +60,6 @@ class BaseNavigationTask(BaseTask):
                 Timeout for the navigation task. Defaults to None.
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to None.
-
         """
         super().__init__(logger=logger)
 
@@ -81,7 +80,6 @@ class BaseNavigationTask(BaseTask):
 
         Args:
             ctx (BaseGameContext): The game context.
-
         """
         self._is_initialized = True
 

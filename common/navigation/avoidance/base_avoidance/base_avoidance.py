@@ -50,7 +50,6 @@ class BaseAvoidance[PARAMSTYPE: BaseAvoidanceParams](ABC):
                 Parameters for the ACS detection profile.
             logger (Logger | None, optional): Logger instance for debugging.
                 Defaults to ``None``.
-
         """
         self.logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
@@ -75,7 +74,6 @@ class BaseAvoidance[PARAMSTYPE: BaseAvoidanceParams](ABC):
 
         Args:
             current_navigator_task (NavigatorTask): The current navigation task.
-
         """
         if self._original_task is None and self.state == AvoidanceState.IDLE:
             self._original_task = copy.deepcopy(current_navigator_task)
@@ -92,7 +90,6 @@ class BaseAvoidance[PARAMSTYPE: BaseAvoidanceParams](ABC):
         Returns:
             Callable[..., TrajectoryPlanCommand]:
                 Wrapped method that stores the original task first.
-
         """
 
         @functools.wraps(method)
@@ -120,7 +117,6 @@ class BaseAvoidance[PARAMSTYPE: BaseAvoidanceParams](ABC):
 
         Returns:
             bool: ``True`` if the elapsed time exceeds the timeout threshold.
-
         """
         if self._avoiding_start_time is None or self.params.timeout is None:
             return False
@@ -139,7 +135,6 @@ class BaseAvoidance[PARAMSTYPE: BaseAvoidanceParams](ABC):
 
         Returns:
             TrajectoryPlanCommand: A command instructing the system to stop.
-
         """
         self.state = AvoidanceState.ABORTED
         task.state = NavigatorTaskState.AVOIDING
@@ -166,5 +161,4 @@ class BaseAvoidance[PARAMSTYPE: BaseAvoidanceParams](ABC):
 
         Returns:
             TrajectoryPlanCommand: The appropriate trajectory command to execute.
-
         """

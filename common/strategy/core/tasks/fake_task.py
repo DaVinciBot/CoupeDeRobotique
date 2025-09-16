@@ -22,6 +22,5 @@ class FakeTask(BaseTask):
 
         Returns:
             bool: ``True``.
-
         """
         return True

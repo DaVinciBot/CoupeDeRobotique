@@ -23,7 +23,6 @@ class BaseTransition(ABC):
 
         Args:
             target (BaseTaskNode): The destination node of the transition.
-
         """
         self.target = target
 
@@ -39,5 +38,4 @@ class BaseTransition(ABC):
 
         Returns:
             bool: ``True`` if the transition should occur, ``False`` otherwise.
-
         """

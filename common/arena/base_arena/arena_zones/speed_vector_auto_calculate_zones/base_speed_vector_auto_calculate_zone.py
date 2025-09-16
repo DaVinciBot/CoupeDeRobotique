@@ -68,7 +68,6 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
                 Defaults to None.
             vector_factor (float, optional): Scaling factor for vector influence.
                 Defaults to 25.0.
-
         """
         self.point = point
         self.vector_width = vector_width
@@ -111,7 +110,6 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
 
         Returns:
             SpeedVector: Computed speed vector with magnitude and direction.
-
         """
         if len(self.__positions_recorded) < MIN_RECORDS_FOR_VECTOR:
             self.logger.debug(
@@ -158,7 +156,6 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             team_color (TeamColor, optional): The color of the team.
             ally_position (Point | OrientedPoint): Position of ally.
             enemy_position (Point | OrientedPoint): Position of enemy.
-
         """
         super().update(team_color, ally_position, enemy_position)
         self.point = enemy_position
@@ -184,7 +181,6 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
 
         Returns:
             str: Text describing the zone and its speed vector.
-
         """
         return (
             f"{super().__str__()} Speed: {self.speed_vector.speed}, "
@@ -197,7 +193,6 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
 
         Returns:
             str: Detailed state string including speed vector information.
-
         """
         return (
             f"{super().__repr__()} Speed: {self.speed_vector.speed}, "
@@ -218,6 +213,5 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
 
         Returns:
             str: Formatted representation.
-
         """
         return self.__str__()

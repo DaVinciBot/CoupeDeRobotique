@@ -13,7 +13,6 @@ class PidID(Enum):
     Attributes:
         LINEAR_POSITION: Identifier for linear position PID control.
         ANGULAR_POSITION: Identifier for angular position PID control.
-
     """
 
     LINEAR_POSITION = 0
@@ -30,7 +29,6 @@ class PID:
         kp (float): Proportional coefficient.
         ki (float): Integral coefficient.
         kd (float): Derivative coefficient.
-
     """
 
     kp: float
@@ -45,7 +43,6 @@ class PID:
 
         Returns:
             bytes: The serialized PID coefficients.
-
         """
         return struct.pack("<fff", self.kp, self.ki, self.kd)
 
@@ -58,7 +55,6 @@ class PID:
 
         Returns:
             PID: An instance of the PID class.
-
         """
         return cls(**pid_dict)
 
@@ -72,7 +68,6 @@ class PID:
 
         Returns:
             PID: An instance of the PID class.
-
         """
         return cls(*pid_tuple)
 
@@ -85,6 +80,5 @@ class PID:
 
         Returns:
             PID: An instance of the PID class.
-
         """
         return cls(*pid_list)

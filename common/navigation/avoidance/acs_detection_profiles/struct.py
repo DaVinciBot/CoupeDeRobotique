@@ -13,7 +13,6 @@ class AcsDetectionProfile(Enum):
         NO_PROJECTION: No projection.
         RECTANGULAR_PROJECTION: Rectangular projection.
         ANGULAR_RESTRICT_PROJECTION: Angular restrict projection.
-
     """
 
     NO = auto()

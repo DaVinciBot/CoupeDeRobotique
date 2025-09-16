@@ -13,7 +13,6 @@ class PathPlanningStrategy(Enum):
         BASIC: Use basic path finding algorithm: rotate face to target,
             move straight forward.
         DELTA: Do step replacement, no path finding -> rotate or move straight.
-
     """
 
     A_STAR = auto()
@@ -30,7 +29,6 @@ class Direction(Enum):
     Attributes:
         FORWARD: Move forward.
         BACKWARD: Move backward.
-
     """
 
     FORWARD = auto()

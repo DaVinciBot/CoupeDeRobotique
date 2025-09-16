@@ -23,7 +23,6 @@ class BaseTrajectoryPlannerParams:
             trajectory_planning_strategy (TrajectoryPlannerStrategy):
                 The strategy used for generating trajectories.
             direction (Direction): The direction of the trajectory.
-
         """
         self.trajectory_planning_strategy: TrajectoryPlannerStrategy = (
             trajectory_planning_strategy

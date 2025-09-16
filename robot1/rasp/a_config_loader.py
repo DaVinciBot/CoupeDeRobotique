@@ -18,7 +18,6 @@ def load_json_file(file_path: pathlib.Path) -> dict[str, Any]:
 
     Returns:
         dict[str, Any]: The content of the JSON file as a dictionary.
-
     """
     return json.load(file_path.open(encoding="utf-8"))
 
@@ -174,7 +173,6 @@ class CONFIG:
 
         JACK_PIN (int): Pin number for the jack.
         BAU_PIN (int): Pin number for the BAU.
-
     """
 
     # Directory path (dont't touch)

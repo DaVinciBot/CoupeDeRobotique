@@ -45,7 +45,6 @@ class TrajectoryPlannerFactory:
 
         Raises:
             ValueError: If the strategy specified in ``params`` is not supported.
-
         """
         strategy = params.trajectory_planning_strategy
 

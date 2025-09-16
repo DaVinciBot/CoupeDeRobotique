@@ -40,7 +40,6 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
     distance. If the obstacle disappears before the timeout expires, a new path
     is planned from the current position. When the timeout is reached, the
     avoidance is aborted.
-
     """
 
     def __init__(
@@ -57,7 +56,6 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
                 Parameters for ACS detection profile.
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to None.
-
         """
         super().__init__(params, acs_detection_profile_params, logger)
 
@@ -81,7 +79,6 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
         Returns:
             TrajectoryPlanCommand:
             The trajectory command after processing avoidance logic.
-
         """
         position: OrientedPoint = ally_zone.point
         self.logger.debug(

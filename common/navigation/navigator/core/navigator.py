@@ -29,7 +29,6 @@ class Navigator:
         Args:
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to ``None``.
-
         """
         self.logger = logger or Logger(
             identifier=self.__class__.__name__,
@@ -48,7 +47,6 @@ class Navigator:
 
         Returns:
             bool: ``True`` if a new task was fetched, ``False`` otherwise.
-
         """
         if self._tasks_queue:
             self.current_task = NavigatorTask(
@@ -73,7 +71,6 @@ class Navigator:
             skip_queue (bool, optional):
                 If ``True``, skip the queue and execute the task immediately.
                 Defaults to ``False``.
-
         """
         if skip_queue:
             self.abort(affect_all_tasks=False)
@@ -100,7 +97,6 @@ class Navigator:
 
         Returns:
             TrajectoryPlanCommand: The trajectory plan command.
-
         """
         # besoins: ally_position_zone, enemy_position_zone, grid, dynamic_grid
         # (comment déclancher sa mis à jour que quand l'ennemi est proche)
@@ -140,7 +136,6 @@ class Navigator:
             affect_all_tasks (bool, optional):
                 If ``True``, all tasks in the queue will be aborted.
                 Defaults to ``False``.
-
         """
         if affect_all_tasks:
             self._tasks_queue.clear()

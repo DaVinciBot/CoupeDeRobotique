@@ -21,7 +21,6 @@ class ConstantScoringFunction(BaseScoringFunction):
 
         Args:
             score (float): The constant score value.
-
         """
         self.score: float = score
 
@@ -41,6 +40,5 @@ class ConstantScoringFunction(BaseScoringFunction):
 
         Returns:
             float: The constant score.
-
         """
         return self.score

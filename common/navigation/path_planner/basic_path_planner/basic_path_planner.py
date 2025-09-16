@@ -19,7 +19,6 @@ class BasicPathPlanner(
     """A basic path planner that generates a direct path between start and goal points.
 
     If the direction is set to BACKWARD, the orientations are flipped by π radians.
-
     """
 
     @staticmethod
@@ -31,7 +30,6 @@ class BasicPathPlanner(
 
         Returns:
             OrientedPoint: Flipped pose for backward motion.
-
         """
         return OrientedPoint(goal.x, goal.y, goal.theta + math.pi)
 
@@ -46,7 +44,6 @@ class BasicPathPlanner(
         Returns:
             list[OrientedPoint]: List containing start and goal, possibly reversed
                 for backward direction.
-
         """
         return [
             (

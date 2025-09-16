@@ -13,7 +13,6 @@ class AvoidanceStrategy(Enum):
         STOP_AND_WAIT: The robot stops and waits for a defined timeout
             before re-evaluating the situation.
         BACK: The robot reverses its trajectory to avoid the obstacle.
-
     """
 
     NO_AVOIDANCE = auto()

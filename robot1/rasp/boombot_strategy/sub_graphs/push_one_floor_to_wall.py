@@ -46,7 +46,6 @@ def get_push_one_floor_to_wall_subgraph(
 
     Returns:
         BaseSubGraph: The constructed subgraph representing the task sequence.
-
     """
     odometrie_to_reset: bool = any(v is not None for v in (new_x, new_y, new_theta))
     builder = SubGraphBuilder()

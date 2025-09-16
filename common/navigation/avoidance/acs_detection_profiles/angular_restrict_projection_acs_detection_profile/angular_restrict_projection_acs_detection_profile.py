@@ -31,7 +31,6 @@ class AngularRestrictProjectionAcsDetectionProfile(
 
         Returns:
             bool: ``True`` if the ACS is triggered, ``False`` otherwise.
-
         """
         angle = (
             atan2(

@@ -37,7 +37,6 @@ class GPIOComTeensy(Com):
                 Enables cyclic redundancy check. Defaults to ``True``.
             enable_dummy (bool, optional):
                 Enables dummy mode for testing. Defaults to ``False``.
-
         """
         # Initialize variables dedicated to Teensy's GPIO management
         # I2C pins

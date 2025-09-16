@@ -22,7 +22,6 @@ class BaseColorReservedZone(BaseArenaZone):
 
     The zone becomes accessible if the team's color matches the predefined color
     values.
-
     """
 
     def __init__(
@@ -58,7 +57,6 @@ class BaseColorReservedZone(BaseArenaZone):
                 Hex code representing the zone color. Defaults to "#9e9e9e".
             go_to_positions (list[OrientedPoint | Point] | None, optional):
                 List of go-to positions within the zone. Defaults to None.
-
         """
         self.color: TeamColor = color
 
@@ -84,7 +82,6 @@ class BaseColorReservedZone(BaseArenaZone):
 
         Returns:
             bool: ``True`` if the zone is accessible, ``False`` otherwise.
-
         """
         return super().is_accessible() and self.color == team_color
 
@@ -101,7 +98,6 @@ class BaseColorReservedZone(BaseArenaZone):
             team_color (TeamColor): Color assigned to the team.
             ally_position (Point | OrientedPoint): Position of the ally.
             enemy_position (Point | OrientedPoint): Position of the enemy.
-
         """
         super().update(team_color, ally_position, enemy_position)
 

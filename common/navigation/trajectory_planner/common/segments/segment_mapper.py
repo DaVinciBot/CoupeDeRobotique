@@ -15,7 +15,6 @@ class SegmentMapper:
     """Maps trajectory segments to elapsed time using cumulative durations.
 
     Provides fast segment lookup using binary search.
-
     """
 
     def __init__(self, segments: list[BaseSegment]) -> None:
@@ -23,7 +22,6 @@ class SegmentMapper:
 
         Args:
             segments (list[BaseSegment]): Trajectory segments to manage.
-
         """
         self.segments = segments
         self.cumulative_durations: list[float] = []
@@ -42,7 +40,6 @@ class SegmentMapper:
 
         Returns:
             float: Cumulative time before the given index.
-
         """
         return self.cumulative_durations[index - 1] if index > 0 else 0.0
 
@@ -56,7 +53,6 @@ class SegmentMapper:
             tuple[BaseSegment | None, float | None]:
                 Tuple containing the segment and the local time within it.
                 Returns (None, None) if t is out of valid bounds.
-
         """
         if t < 0:
             return None, None
@@ -77,6 +73,5 @@ class SegmentMapper:
 
         Returns:
             BaseSegment: The last trajectory segment in the list.
-
         """
         return self.segments[-1]

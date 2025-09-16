@@ -13,7 +13,6 @@ class BaseAvoidanceParams:
 
     This class serves as a container for configuration values such as the
     avoidance strategy type and an optional timeout duration.
-
     """
 
     def __init__(
@@ -28,7 +27,6 @@ class BaseAvoidanceParams:
                 The selected avoidance strategy.
             timeout (float | None, optional):
                 Optional timeout for the avoidance procedure.
-
         """
         self.avoidance_strategy: AvoidanceStrategy = avoidance_strategy
         self.timeout: float | None = timeout

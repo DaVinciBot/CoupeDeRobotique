@@ -22,7 +22,6 @@ class NavigationTask(BaseNavigationTask):
 
         Returns:
             bool: ``True`` if the navigation task is finished, ``False`` otherwise.
-
         """
         if not self._is_initialized:
             self._initialize(ctx)

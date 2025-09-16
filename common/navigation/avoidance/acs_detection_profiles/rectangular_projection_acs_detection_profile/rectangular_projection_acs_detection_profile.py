@@ -30,7 +30,6 @@ class RectangularProjectionAcsDetectionProfile(
 
         Returns:
             Polygon: The rectangular projection polygon.
-
         """
         rectangle = Polygon(
             [
@@ -65,7 +64,6 @@ class RectangularProjectionAcsDetectionProfile(
 
         Returns:
             bool: ``True`` if avoidance should be triggered, ``False`` otherwise.
-
         """
         projection = self._create_rectangular_projection(ally_zone)
         if projection.contains(enemy_zone.point):

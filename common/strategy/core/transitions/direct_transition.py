@@ -18,7 +18,6 @@ class DirectTransition(BaseTransition):
     returning ``True`` from its ``can_transit`` method.
 
     This is useful for default or unconditional transitions.
-
     """
 
     @override
@@ -31,6 +30,5 @@ class DirectTransition(BaseTransition):
 
         Returns:
             bool: Always returns ``True``.
-
         """
         return True

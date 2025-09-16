@@ -36,7 +36,6 @@ class RelativeBackward(NavigationTask):
 
         Args:
             distance (float): The distance to move backward in millimeters.
-
         """
         super().__init__(
             goal=None,
@@ -61,7 +60,6 @@ class RelativeForward(NavigationTask):
 
         Args:
             distance (float): The distance to move forward in millimeters.
-
         """
         super().__init__(
             goal=None,
@@ -82,7 +80,6 @@ class GoCentroidOfZone(NavigationTask):
 
         Args:
             zone_id (int): The ID of the target zone.
-
         """
         super().__init__(
             goal=zone_id,
@@ -107,7 +104,6 @@ class GoCentroidOfZone(NavigationTask):
 
         Args:
             ctx (BaseGameContext): The game context providing arena information.
-
         """
         self._is_initialized = True
 

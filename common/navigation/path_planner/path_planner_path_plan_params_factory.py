@@ -46,7 +46,6 @@ class PathPlannerPathPlanParamsFactory:
 
         Raises:
             ValueError: If an unsupported strategy is provided.
-
         """
         if strategy == PathPlanningStrategy.DELTA:
             return DeltaPathPlannerPlanPathParams(

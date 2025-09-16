@@ -33,7 +33,6 @@ class ConditionalTransition(BaseTransition):
             target (BaseTaskNode): The target node to transition to.
             condition (BaseTransitionCondition):
                 The condition that must be met for the transition to occur.
-
         """
         super().__init__(target)
         self.condition = condition
@@ -51,6 +50,5 @@ class ConditionalTransition(BaseTransition):
             bool:
                 ``True`` if the condition is satisfied and transition can occur,
                 ``False`` otherwise.
-
         """
         return self.condition.check(from_node, self.target, ctx)

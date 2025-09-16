@@ -28,7 +28,6 @@ class NavigatorSignalsEnum(Enum):
         GOAL_NOT_REACHABLE: The target goal is determined to be unreachable.
         NAVIGATOR_ERROR: A system error has occurred.
         NAVIGATOR_READY: The navigator is ready for operation.
-
     """
 
     # ===== Path and Trajectory Planning =====

@@ -33,7 +33,6 @@ def visualize_task_graph(
 
     Returns:
         Digraph: The generated Graphviz graph object.
-
     """
     dot = Digraph(comment="Strategy Graph", format="png")
     seen = set()
@@ -46,7 +45,6 @@ def visualize_task_graph(
 
         Returns:
             str: The class name of the task or list of tasks.
-
         """
         if isinstance(task_list, list):
             return ", ".join([t.__class__.__name__ for t in task_list])
@@ -103,7 +101,6 @@ def visualize_entire_subgraph(
 
     Returns:
         Digraph: The generated Graphviz graph object.
-
     """
     dot = Digraph(comment="Full Strategy Graph", format="png")
     seen = set()
@@ -116,7 +113,6 @@ def visualize_entire_subgraph(
 
         Returns:
             str: The class name of the task or list of tasks.
-
         """
         if isinstance(task_list, list):
             return ", ".join([t.__class__.__name__ for t in task_list])
@@ -163,7 +159,6 @@ def visualize_task_graph_from_node(
     Args:
         subgraph (BaseSubGraph): Subgraph containing all task nodes.
         title (str): Title for the Matplotlib plot.
-
     """
     graph = nx.DiGraph()
 

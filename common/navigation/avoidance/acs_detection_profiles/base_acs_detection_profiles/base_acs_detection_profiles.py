@@ -25,7 +25,6 @@ class BaseAcsDetectionProfile[PARAMSTYPE: BaseAcsDetectionProfileParams](ABC):
             params (PARAMSTYPE): Parameters for the ACS detection profile.
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to None.
-
         """
         self.params: PARAMSTYPE = params
         self.logger: Logger = logger or Logger(
@@ -43,5 +42,4 @@ class BaseAcsDetectionProfile[PARAMSTYPE: BaseAcsDetectionProfileParams](ABC):
 
         Returns:
             bool: ``True`` if avoidance should be triggered, ``False`` otherwise.
-
         """

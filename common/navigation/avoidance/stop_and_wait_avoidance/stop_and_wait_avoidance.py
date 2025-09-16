@@ -24,7 +24,6 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
     When an obstacle is detected the robot stops. If the obstacle clears before
     a timeout, it replans a trajectory from its current position. Otherwise the
     avoidance procedure is aborted.
-
     """
 
     @BaseAvoidance.ensure_original_task_storage
@@ -45,7 +44,6 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         Returns:
             TrajectoryPlanCommand:
                 The trajectory command after processing avoidance logic.
-
         """
         position: OrientedPoint = ally_zone.point
         self.logger.debug(

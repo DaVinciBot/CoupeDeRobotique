@@ -32,6 +32,5 @@ class DefaultScoringFunction(BaseScoringFunction):
 
         Returns:
             float: Always returns ``0.0``.
-
         """
         return 0.0

@@ -29,5 +29,4 @@ class BaseScoringFunction(ABC):
 
         Returns:
             float: The computed score.
-
         """

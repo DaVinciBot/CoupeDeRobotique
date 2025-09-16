@@ -21,7 +21,6 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
     This condition is fulfilled if the designated zone is accessible to the
     current team. An optional reverse flag allows inverting the condition to
     check for inaccessibility.
-
     """
 
     def __init__(self, *, reverse: bool = False) -> None:
@@ -30,7 +29,6 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
         Args:
             reverse (bool, optional):
                 Whether to reverse the condition logic. Defaults to ``False``.
-
         """
         self.reverse = reverse
 
@@ -53,7 +51,6 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
             bool:
                 ``True`` if the condition is met (zone is accessible or not based
                 on ``reverse``), ``False`` otherwise.
-
         """
         navigation_tasks: list[BaseNavigationTask] = [
             task for task in next_node.tasks if isinstance(task, BaseNavigationTask)

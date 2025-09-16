@@ -27,7 +27,6 @@ def get_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:
 
     Returns:
         BaseSubGraph: A subgraph representing the complete pickup operation.
-
     """
     subgraph = SubGraphBuilder()
 

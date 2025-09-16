@@ -37,7 +37,6 @@ class SequentialTrajectoryPlanner(
     trajectory segments (rotate, move straight, rotate, stop) from a path of oriented
     points.
     Supports time-based segment retrieval to provide motion commands.
-
     """
 
     def __init__(
@@ -53,7 +52,6 @@ class SequentialTrajectoryPlanner(
             speed_profiler (SpeedProfiler): Speed profiler to control segment durations.
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to None.
-
         """
         super().__init__(params, speed_profiler, logger)
         self.segments_mapper: SegmentMapper | None = None
@@ -80,7 +78,6 @@ class SequentialTrajectoryPlanner(
 
         Returns:
             RotationSegment: Segment rotating in place to face the waypoint.
-
         """
         # Compute the absolute heading of the line from start to target
         path_heading = math.atan2(target.y - start.y, target.x - start.x)
@@ -117,7 +114,6 @@ class SequentialTrajectoryPlanner(
 
         Returns:
             RotationSegment: Segment rotating in place to align with target orientation.
-
         """
         # Desired final heading: target.theta plus π if reversing
         desired_theta = target.theta + (math.pi if self._is_backward else 0)
@@ -152,7 +148,6 @@ class SequentialTrajectoryPlanner(
 
         Returns:
             StraightSegment: Segment that moves in a straight line.
-
         """
         # Compute delta-distance
         delta_distance = start.distance(
@@ -177,7 +172,6 @@ class SequentialTrajectoryPlanner(
 
         Args:
             path (list[OrientedPoint]): List of oriented points representing the path.
-
         """
         # Initialize the segment list
         segments: list[BaseSegment] = []
@@ -241,7 +235,6 @@ class SequentialTrajectoryPlanner(
         Raises:
             RuntimeError: If the trajectory has not been planned yet.
             TypeError: If the segment type is unsupported.
-
         """
         # Get the current time elapsed
         time_elapsed = self._get_trajectory_time_elapsed()
@@ -340,7 +333,6 @@ class SequentialTrajectoryPlanner(
 
         Raises:
             RuntimeError: If the trajectory has not been planned yet.
-
         """
         if self.segments_mapper is None:
             msg = "Trajectory has not been planned yet."
