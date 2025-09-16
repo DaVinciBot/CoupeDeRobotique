@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from loggerplusplus import Logger
 
@@ -24,7 +24,6 @@ class BaseStrategy(ABC):
     This class provides a base implementation for all strategies.
     """
 
-    @abstractmethod
     def __init__(self, ctx: BaseGameContext) -> None:
         """Initialize the BaseStrategy.
 
@@ -43,7 +42,14 @@ class BaseStrategy(ABC):
         """Visualize the strategy.
 
         This method visualizes the strategy using the visualize_task_graph function.
+
+        Raises:
+            RuntimeError: If the strategy graph has not been built yet.
         """
+        if self.runner is None:
+            msg = "Strategy graph has not been built yet."
+            self.logger.error(f"No active graph to visualize. {msg}")
+            raise RuntimeError(msg)
         visualize_task_graph(start_node=self.runner.active[0])
 
     def get_graph_runner(self) -> GraphRunner:
@@ -51,7 +57,14 @@ class BaseStrategy(ABC):
 
         Returns:
             GraphRunner: The graph runner.
+
+        Raises:
+            RuntimeError: If the strategy graph has not been built yet.
         """
+        if self.runner is None:
+            msg = "Strategy graph has not been built yet."
+            self.logger.error(f"No active graph to retrieve. {msg}")
+            raise RuntimeError(msg)
         return self.runner
 
     def _auto_build_transitions(

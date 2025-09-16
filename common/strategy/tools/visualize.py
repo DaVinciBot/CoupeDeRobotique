@@ -183,7 +183,7 @@ def visualize_task_graph_from_node(
     ]
 
     plt.figure(figsize=(10, 7))
-    nx.draw_networkx_nodes(graph, pos, node_color=node_colors, node_size=800)
+    nx.draw(graph, pos, node_color=node_colors, node_size=800)
     nx.draw_networkx_labels(graph, pos, font_size=10, font_weight="bold")
     nx.draw_networkx_edges(graph, pos, arrowstyle="-|>", arrowsize=20)
     nx.draw_networkx_edge_labels(

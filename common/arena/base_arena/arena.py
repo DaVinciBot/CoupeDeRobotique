@@ -10,7 +10,7 @@ debug or user interfaces.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import cast, override
+from typing import TYPE_CHECKING, cast, override
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,6 +31,9 @@ from geometry import (
     nearest_points,
     prepare,
 )
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure as pltFigure
 
 
 class BaseArena(ABC):
@@ -701,16 +704,16 @@ class BaseArena(ABC):
 
     @staticmethod
     def _init_plot(
-        plot: tuple[plt.Axes, plt.Figure] | None,
-    ) -> tuple[plt.Axes, plt.Figure]:
+        plot: tuple[plt.Axes, pltFigure] | None,
+    ) -> tuple[plt.Axes, pltFigure]:
         """Return the axis and figure used for visualization.
 
         Args:
-            plot (tuple[plt.Axes, plt.Figure] | None): Existing axis and figure to
+            plot (tuple[plt.Axes, pltFigure] | None): Existing axis and figure to
                 reuse.
 
         Returns:
-            tuple[plt.Axes, plt.Figure]: Axis and figure for plotting.
+            tuple[plt.Axes, pltFigure]: Axis and figure for plotting.
         """
         if plot:
             return plot
@@ -857,10 +860,10 @@ class BaseArena(ABC):
         display_zones_go_to_positions: bool = True,
         show_ally_direction: bool = True,
         show: bool = True,
-        plot: tuple[plt.Axes, plt.Figure] | None = None,
+        plot: tuple[plt.Axes, pltFigure] | None = None,
         additional_zones: list[BaseArenaZone] | None = None,
         additional_points: list[Point | OrientedPoint] | None = None,
-    ) -> tuple[plt.Axes, plt.Figure]:
+    ) -> tuple[plt.Axes, pltFigure]:
         """Visualize the arena and optionally display the plot.
 
         Args:
@@ -875,7 +878,7 @@ class BaseArena(ABC):
                 Defaults to ``True``.
             show (bool, optional): If ``True``, display the plot immediately.
                 Defaults to ``True``.
-            plot (tuple[plt.Axes, plt.Figure] | None, optional):
+            plot (tuple[plt.Axes, pltFigure] | None, optional):
                 Existing axis and figure. Defaults to ``None``.
             additional_zones (list[BaseArenaZone] | None, optional):
                 Extra zones to draw. Defaults to ``None``.
@@ -883,7 +886,7 @@ class BaseArena(ABC):
                 Extra points to draw. Defaults to ``None``.
 
         Returns:
-            tuple[plt.Axes, plt.Figure]: Axis and figure containing the visualization.
+            tuple[plt.Axes, pltFigure]: Axis and figure containing the visualization.
         """
         ax, fig = self._init_plot(plot)
         self.__plot_polygon(ax, self.bounding_area, color="#f0f0f0", label="Arena")

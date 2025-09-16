@@ -39,7 +39,7 @@ class RectangularProjectionAcsDetectionProfile(
                 (-self.params.half_length_view, +self.params.half_width_view),
             ],
         )
-        rotated_rectangle = rotate(
+        rotated_rectangle: Polygon = rotate(
             rectangle,
             ally_zone.point.theta,
             origin=(0, 0),

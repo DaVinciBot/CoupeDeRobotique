@@ -112,14 +112,14 @@ class AStarPathPlanner(
 
         return self.params.path_found
 
-    def __get_grid_node_center(self, node: GridNode) -> tuple[float, float]:
+    def __get_grid_node_center(self, node: GridNode) -> tuple[int, int]:
         """Get the center of a grid node.
 
         Args:
             node (GridNode): The grid node.
 
         Returns:
-            tuple[float, float]: Center of the grid node in absolute coordinates.
+            tuple[int, int]: Center of the grid node in absolute coordinates.
         """
         return (
             node.x * self.params.chunk_size + self.params.half_chunk_size,
@@ -128,14 +128,14 @@ class AStarPathPlanner(
 
     def __path_to_absolute_oriented_path(
         self,
-        path: list[GridNode] | list[Point],
+        path: list[GridNode],
         *,
         is_grid_path: bool,
     ) -> list[OrientedPoint]:
         """Convert a path (grid or absolute) to an oriented path for the robot.
 
         Args:
-            path (list[GridNode] | list[Point]): Input path.
+            path (list[GridNode]): Input path.
             is_grid_path (bool): Indicates if the path is in grid coordinates.
 
         Returns:
@@ -183,12 +183,12 @@ class AStarPathPlanner(
 
     def __add_path_extremities_point(
         self,
-        path: list[Point],
+        path: list[Point | OrientedPoint],
     ) -> list[Point | OrientedPoint]:
         """Keep only significant extremity and intermediate points in the path.
 
         Args:
-            path (list[Point]): A list of points representing the path.
+            path (list[Point | OrientedPoint]): A list of points representing the path.
 
         Returns:
             list[Point | OrientedPoint]: A reduced list containing key waypoints.

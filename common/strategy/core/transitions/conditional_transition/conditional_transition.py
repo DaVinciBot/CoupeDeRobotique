@@ -38,11 +38,11 @@ class ConditionalTransition(BaseTransition):
         self.condition = condition
 
     @override
-    def can_transit(self, from_node: BaseTaskNode, ctx: BaseGameContext) -> bool:
+    def can_transit(self, from_node: BaseTaskNode | None, ctx: BaseGameContext) -> bool:
         """Determine if transition can occur based on condition and context.
 
         Args:
-            from_node (BaseTaskNode): The node transitioning from.
+            from_node (BaseTaskNode | None): The node transitioning from.
             ctx (BaseGameContext):
                 The current game context providing necessary state for evaluation.
 
@@ -51,4 +51,7 @@ class ConditionalTransition(BaseTransition):
                 ``True`` if the condition is satisfied and transition can occur,
                 ``False`` otherwise.
         """
+        if from_node is None:
+            return True
+
         return self.condition.check(from_node, self.target, ctx)

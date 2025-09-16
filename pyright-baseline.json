@@ -1,6 +1,6 @@
 {
-    "version": "1.1.403",
-    "time": "1757506553933",
+    "version": "1.1.405",
+    "time": "1758045149189",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\arena_old.py",
@@ -20,31 +20,15 @@
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\mars_arena_old.py",
-            "severity": "error",
-            "message": "\"Arena\" is unknown import symbol",
-            "range": {
-                "start": {
-                    "line": 10,
-                    "character": 35
-                },
-                "end": {
-                    "line": 10,
-                    "character": 40
-                }
-            },
-            "rule": "reportAttributeAccessIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\mars_arena_old.py",
             "severity": "warning",
             "message": "Import \"old_logger\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 14,
+                    "line": 15,
                     "character": 9
                 },
                 "end": {
-                    "line": 14,
+                    "line": 15,
                     "character": 19
                 }
             },
@@ -53,114 +37,18 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\mars_arena_old.py",
             "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
+            "message": "Argument of type \"dict[str, Polygon]\" cannot be assigned to parameter \"zones\" of type \"dict[str, MultiPolygon] | None\" in function \"__init__\"\n  Type \"dict[str, Polygon]\" is not assignable to type \"dict[str, MultiPolygon] | None\"\n    \"dict[str, Polygon]\" is not assignable to \"dict[str, MultiPolygon]\"\n      Type parameter \"_VT@dict\" is invariant, but \"Polygon\" is not the same as \"MultiPolygon\"\n      Consider switching from \"dict\" to \"Mapping\" which is covariant in the value type\n    \"dict[str, Polygon]\" is not assignable to \"None\"",
             "range": {
                 "start": {
-                    "line": 80,
-                    "character": 16
+                    "line": 179,
+                    "character": 18
                 },
                 "end": {
-                    "line": 80,
-                    "character": 21
+                    "line": 182,
+                    "character": 13
                 }
             },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\mars_arena_old.py",
-            "severity": "error",
-            "message": "No overloads for \"sorted\" match the provided arguments",
-            "range": {
-                "start": {
-                    "line": 230,
-                    "character": 15
-                },
-                "end": {
-                    "line": 234,
-                    "character": 9
-                }
-            },
-            "rule": "reportCallIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\mars_arena_old.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 232,
-                    "character": 26
-                },
-                "end": {
-                    "line": 232,
-                    "character": 87
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 229,
-                    "character": 25
-                },
-                "end": {
-                    "line": 229,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 229,
-                    "character": 31
-                },
-                "end": {
-                    "line": 229,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 249,
-                    "character": 25
-                },
-                "end": {
-                    "line": 249,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 249,
-                    "character": 31
-                },
-                "end": {
-                    "line": 249,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
+            "rule": "reportArgumentType"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\base_arena_zone.py",
@@ -168,11 +56,11 @@
             "message": "Cannot assign to attribute \"polygon\" for class \"BaseArenaZone*\"\n  Type \"Polygon | None\" is not assignable to type \"Polygon\"\n    \"None\" is not assignable to \"Polygon\"",
             "range": {
                 "start": {
-                    "line": 81,
+                    "line": 79,
                     "character": 32
                 },
                 "end": {
-                    "line": 81,
+                    "line": 79,
                     "character": 39
                 }
             },
@@ -184,11 +72,11 @@
             "message": "Cannot assign to attribute \"buffered_polygon\" for class \"BaseArenaZone*\"\n  Type \"Polygon | None\" is not assignable to type \"Polygon\"\n    \"None\" is not assignable to \"Polygon\"",
             "range": {
                 "start": {
-                    "line": 82,
+                    "line": 80,
                     "character": 41
                 },
                 "end": {
-                    "line": 82,
+                    "line": 80,
                     "character": 57
                 }
             },
@@ -200,11 +88,11 @@
             "message": "Object of type \"None\" cannot be called",
             "range": {
                 "start": {
-                    "line": 245,
+                    "line": 237,
                     "character": 36
                 },
                 "end": {
-                    "line": 245,
+                    "line": 237,
                     "character": 58
                 }
             },
@@ -212,47 +100,15 @@
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 90,
-                    "character": 25
-                },
-                "end": {
-                    "line": 90,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 90,
-                    "character": 31
-                },
-                "end": {
-                    "line": 90,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
             "severity": "error",
             "message": "\"__getitem__\" method not defined on type \"GridNode\"",
             "range": {
                 "start": {
-                    "line": 125,
+                    "line": 126,
                     "character": 24
                 },
                 "end": {
-                    "line": 125,
+                    "line": 126,
                     "character": 39
                 }
             },
@@ -264,11 +120,11 @@
             "message": "\"__getitem__\" method not defined on type \"GridNode\"",
             "range": {
                 "start": {
-                    "line": 132,
+                    "line": 133,
                     "character": 24
                 },
                 "end": {
-                    "line": 132,
+                    "line": 133,
                     "character": 39
                 }
             },
@@ -276,195 +132,19 @@
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 136,
-                    "character": 25
-                },
-                "end": {
-                    "line": 136,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 136,
-                    "character": 31
-                },
-                "end": {
-                    "line": 136,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
             "severity": "error",
             "message": "\"__getitem__\" method not defined on type \"GridNode\"",
             "range": {
                 "start": {
-                    "line": 197,
+                    "line": 199,
                     "character": 20
                 },
                 "end": {
-                    "line": 197,
+                    "line": 199,
                     "character": 35
                 }
             },
             "rule": "reportIndexIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 201,
-                    "character": 25
-                },
-                "end": {
-                    "line": 201,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 201,
-                    "character": 31
-                },
-                "end": {
-                    "line": 201,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "error",
-            "message": "Cannot access attribute \"walkable\" for class \"int\"\n  Attribute \"walkable\" is unknown",
-            "range": {
-                "start": {
-                    "line": 266,
-                    "character": 28
-                },
-                "end": {
-                    "line": 266,
-                    "character": 36
-                }
-            },
-            "rule": "reportAttributeAccessIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 311,
-                    "character": 25
-                },
-                "end": {
-                    "line": 311,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 311,
-                    "character": 31
-                },
-                "end": {
-                    "line": 311,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 330,
-                    "character": 25
-                },
-                "end": {
-                    "line": 330,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 330,
-                    "character": 31
-                },
-                "end": {
-                    "line": 330,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 364,
-                    "character": 25
-                },
-                "end": {
-                    "line": 364,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 364,
-                    "character": 31
-                },
-                "end": {
-                    "line": 364,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
@@ -504,111 +184,15 @@
             "message": "\"__getitem__\" method not defined on type \"GridNode\"",
             "range": {
                 "start": {
-                    "line": 130,
+                    "line": 126,
                     "character": 24
                 },
                 "end": {
-                    "line": 130,
+                    "line": 126,
                     "character": 39
                 }
             },
             "rule": "reportIndexIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 136,
-                    "character": 25
-                },
-                "end": {
-                    "line": 136,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 136,
-                    "character": 31
-                },
-                "end": {
-                    "line": 136,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 159,
-                    "character": 25
-                },
-                "end": {
-                    "line": 159,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 159,
-                    "character": 31
-                },
-                "end": {
-                    "line": 159,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 185,
-                    "character": 25
-                },
-                "end": {
-                    "line": 185,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 185,
-                    "character": 31
-                },
-                "end": {
-                    "line": 185,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\show_arena\\arena.py",
@@ -616,11 +200,11 @@
             "message": "Type analysis indicates code is unreachable",
             "range": {
                 "start": {
-                    "line": 430,
+                    "line": 429,
                     "character": 12
                 },
                 "end": {
-                    "line": 430,
+                    "line": 429,
                     "character": 17
                 }
             },
@@ -629,306 +213,18 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\geometry\\oriented_point.py",
             "severity": "error",
-            "message": "Cannot access attribute \"__slots__\" for class \"type[Point]\"\n  Attribute \"__slots__\" is unknown",
+            "message": "Method \"__sub__\" overrides class \"BaseGeometry\" in an incompatible manner\n  Return type mismatch: base method returns type \"GeoArray\", override returns type \"OrientedPoint\"\n    \"OrientedPoint\" is not assignable to \"ndarray[_Shape, dtype[object_]]\"",
             "range": {
                 "start": {
-                    "line": 30,
-                    "character": 22
+                    "line": 175,
+                    "character": 8
                 },
                 "end": {
-                    "line": 30,
-                    "character": 31
+                    "line": 175,
+                    "character": 15
                 }
             },
-            "rule": "reportAttributeAccessIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\gpio\\dummy_gpio.py",
-            "severity": "error",
-            "message": "\"value\" is not a known attribute of \"None\"",
-            "range": {
-                "start": {
-                    "line": 72,
-                    "character": 20
-                },
-                "end": {
-                    "line": 72,
-                    "character": 25
-                }
-            },
-            "rule": "reportOptionalMemberAccess"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\gpio\\dummy_gpio.py",
-            "severity": "error",
-            "message": "\"value\" is not a known attribute of \"None\"",
-            "range": {
-                "start": {
-                    "line": 82,
-                    "character": 58
-                },
-                "end": {
-                    "line": 82,
-                    "character": 63
-                }
-            },
-            "rule": "reportOptionalMemberAccess"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\gpio\\dummy_gpio.py",
-            "severity": "error",
-            "message": "\"is_pressed\" is not a known attribute of \"None\"",
-            "range": {
-                "start": {
-                    "line": 83,
-                    "character": 54
-                },
-                "end": {
-                    "line": 83,
-                    "character": 64
-                }
-            },
-            "rule": "reportOptionalMemberAccess"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\gpio\\dummy_gpio.py",
-            "severity": "error",
-            "message": "\"toggle_input\" is not a known attribute of \"None\"",
-            "range": {
-                "start": {
-                    "line": 98,
-                    "character": 24
-                },
-                "end": {
-                    "line": 98,
-                    "character": 36
-                }
-            },
-            "rule": "reportOptionalMemberAccess"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\gpio\\gpio.py",
-            "severity": "error",
-            "message": "Cannot access attribute \"is_pressed\" for class \"LED\"\n  Attribute \"is_pressed\" is unknown",
-            "range": {
-                "start": {
-                    "line": 88,
-                    "character": 56
-                },
-                "end": {
-                    "line": 88,
-                    "character": 66
-                }
-            },
-            "rule": "reportAttributeAccessIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\gpio\\gpio.py",
-            "severity": "error",
-            "message": "Cannot access attribute \"is_pressed\" for class \"Button\"\n  Attribute \"is_pressed\" is unknown",
-            "range": {
-                "start": {
-                    "line": 88,
-                    "character": 56
-                },
-                "end": {
-                    "line": 88,
-                    "character": 66
-                }
-            },
-            "rule": "reportAttributeAccessIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\debug_functions\\speed_profile.py",
-            "severity": "error",
-            "message": "Argument of type \"float | None\" cannot be assigned to parameter \"distance\" of type \"float\" in function \"get_total_duration\"\n  Type \"float | None\" is not assignable to type \"float\"\n    \"None\" is not assignable to \"float\"",
-            "range": {
-                "start": {
-                    "line": 36,
-                    "character": 17
-                },
-                "end": {
-                    "line": 36,
-                    "character": 25
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
-            "severity": "error",
-            "message": "Argument of type \"float\" cannot be assigned to parameter \"x\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
-            "range": {
-                "start": {
-                    "line": 159,
-                    "character": 16
-                },
-                "end": {
-                    "line": 159,
-                    "character": 63
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
-            "severity": "error",
-            "message": "Argument of type \"float\" cannot be assigned to parameter \"y\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
-            "range": {
-                "start": {
-                    "line": 159,
-                    "character": 16
-                },
-                "end": {
-                    "line": 159,
-                    "character": 63
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
-            "severity": "error",
-            "message": "Argument of type \"GridNode | Point\" cannot be assigned to parameter \"node\" of type \"GridNode\" in function \"__get_grid_node_center\"\n  Type \"GridNode | Point\" is not assignable to type \"GridNode\"\n    \"Point\" is not assignable to \"GridNode\"",
-            "range": {
-                "start": {
-                    "line": 159,
-                    "character": 54
-                },
-                "end": {
-                    "line": 159,
-                    "character": 61
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
-            "severity": "error",
-            "message": "Argument of type \"float\" cannot be assigned to parameter \"x\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
-            "range": {
-                "start": {
-                    "line": 164,
-                    "character": 16
-                },
-                "end": {
-                    "line": 164,
-                    "character": 67
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
-            "severity": "error",
-            "message": "Argument of type \"float\" cannot be assigned to parameter \"y\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
-            "range": {
-                "start": {
-                    "line": 164,
-                    "character": 16
-                },
-                "end": {
-                    "line": 164,
-                    "character": 67
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
-            "severity": "error",
-            "message": "Argument of type \"GridNode | Point\" cannot be assigned to parameter \"node\" of type \"GridNode\" in function \"__get_grid_node_center\"\n  Type \"GridNode | Point\" is not assignable to type \"GridNode\"\n    \"Point\" is not assignable to \"GridNode\"",
-            "range": {
-                "start": {
-                    "line": 164,
-                    "character": 54
-                },
-                "end": {
-                    "line": 164,
-                    "character": 65
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
-            "severity": "error",
-            "message": "Argument of type \"float\" cannot be assigned to parameter \"x\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
-            "range": {
-                "start": {
-                    "line": 179,
-                    "character": 12
-                },
-                "end": {
-                    "line": 179,
-                    "character": 60
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
-            "severity": "error",
-            "message": "Argument of type \"float\" cannot be assigned to parameter \"y\" of type \"int\" in function \"__init__\"\n  \"float\" is not assignable to \"int\"",
-            "range": {
-                "start": {
-                    "line": 179,
-                    "character": 12
-                },
-                "end": {
-                    "line": 179,
-                    "character": 60
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
-            "severity": "error",
-            "message": "Argument of type \"GridNode | Point\" cannot be assigned to parameter \"node\" of type \"GridNode\" in function \"__get_grid_node_center\"\n  Type \"GridNode | Point\" is not assignable to type \"GridNode\"\n    \"Point\" is not assignable to \"GridNode\"",
-            "range": {
-                "start": {
-                    "line": 179,
-                    "character": 50
-                },
-                "end": {
-                    "line": 179,
-                    "character": 58
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
-            "severity": "warning",
-            "message": "Type of parameter \"self\" is unknown",
-            "range": {
-                "start": {
-                    "line": 276,
-                    "character": 25
-                },
-                "end": {
-                    "line": 276,
-                    "character": 29
-                }
-            },
-            "rule": "reportUnknownLambdaType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
-            "severity": "warning",
-            "message": "Return type of lambda is unknown",
-            "range": {
-                "start": {
-                    "line": 276,
-                    "character": 31
-                },
-                "end": {
-                    "line": 276,
-                    "character": 42
-                }
-            },
-            "rule": "reportUnknownLambdaType"
+            "rule": "reportIncompatibleMethodOverride"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
@@ -936,11 +232,11 @@
             "message": "Cannot assign to attribute \"oriented_path_found\" for class \"AStarPathPlannerParams\"\n  \"list[Point | OrientedPoint]\" is not assignable to \"list[OrientedPoint]\"\n    Type parameter \"_T@list\" is invariant, but \"Point | OrientedPoint\" is not the same as \"OrientedPoint\"\n    Consider switching from \"list\" to \"Sequence\" which is covariant",
             "range": {
                 "start": {
-                    "line": 300,
+                    "line": 289,
                     "character": 42
                 },
                 "end": {
-                    "line": 310,
+                    "line": 299,
                     "character": 9
                 }
             },
@@ -949,102 +245,14 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\astar_path_planner\\astar_path_planner.py",
             "severity": "error",
-            "message": "Argument of type \"list[OrientedPoint]\" cannot be assigned to parameter \"path\" of type \"list[Point]\" in function \"__add_path_extremities_point\"\n  \"list[OrientedPoint]\" is not assignable to \"list[Point]\"\n    Type parameter \"_T@list\" is invariant, but \"OrientedPoint\" is not the same as \"Point\"\n    Consider switching from \"list\" to \"Sequence\" which is covariant",
+            "message": "Argument of type \"list[OrientedPoint]\" cannot be assigned to parameter \"path\" of type \"list[Point | OrientedPoint]\" in function \"__add_path_extremities_point\"\n  \"list[OrientedPoint]\" is not assignable to \"list[Point | OrientedPoint]\"\n    Type parameter \"_T@list\" is invariant, but \"OrientedPoint\" is not the same as \"Point | OrientedPoint\"\n    Consider switching from \"list\" to \"Sequence\" which is covariant",
             "range": {
                 "start": {
-                    "line": 305,
+                    "line": 294,
                     "character": 16
                 },
                 "end": {
-                    "line": 308,
-                    "character": 17
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\navigation\\path_planner\\path_planner_path_plan_params_factory.py",
-            "severity": "warning",
-            "message": "Type analysis indicates code is unreachable",
-            "range": {
-                "start": {
-                    "line": 67,
-                    "character": 8
-                },
-                "end": {
-                    "line": 67,
-                    "character": 11
-                }
-            },
-            "rule": "reportUnreachable"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\graph_runner.py",
-            "severity": "error",
-            "message": "Argument of type \"BaseTaskNode | None\" cannot be assigned to parameter \"from_node\" of type \"BaseTaskNode\" in function \"can_transit\"\n  Type \"BaseTaskNode | None\" is not assignable to type \"BaseTaskNode\"\n    \"None\" is not assignable to \"BaseTaskNode\"",
-            "range": {
-                "start": {
-                    "line": 83,
-                    "character": 43
-                },
-                "end": {
-                    "line": 83,
-                    "character": 52
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\base_task_node.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\base_task_node.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\scoring_functions\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\scoring_functions\\base_scoring_function.py",
-            "rule": "reportImportCycles"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\base_task_node.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\base_task_node.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\scoring_functions\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\scoring_functions\\constant_scoring_function.py",
-            "rule": "reportImportCycles"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\base_task_node.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\base_task_node.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\scoring_functions\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\scoring_functions\\default_scoring_function.py",
-            "rule": "reportImportCycles"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\base_task_node.py",
-            "severity": "warning",
-            "message": "Cycle detected in import chain\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\base_task_node.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\scoring_functions\\__init__.py\n  c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\scoring_functions\\navigation_scoring_function.py",
-            "rule": "reportImportCycles"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\task_nodes\\base_task_node.py",
-            "severity": "error",
-            "message": "Argument of type \"BaseTaskNode | None\" cannot be assigned to parameter \"prev_node\" of type \"BaseTaskNode\" in function \"compute\"\n  Type \"BaseTaskNode | None\" is not assignable to type \"BaseTaskNode\"\n    \"None\" is not assignable to \"BaseTaskNode\"",
-            "range": {
-                "start": {
-                    "line": 85,
-                    "character": 22
-                },
-                "end": {
-                    "line": 85,
-                    "character": 31
-                }
-            },
-            "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\strategy\\core\\tasks\\base_navigation_task.py",
-            "severity": "error",
-            "message": "Argument of type \"OrientedPoint | Point | None\" cannot be assigned to parameter \"goal\" of type \"OrientedPoint | None\" in function \"__init__\"\n  Type \"OrientedPoint | Point | None\" is not assignable to type \"OrientedPoint | None\"\n    Type \"Point\" is not assignable to type \"OrientedPoint | None\"\n      \"Point\" is not assignable to \"OrientedPoint\"\n      \"Point\" is not assignable to \"None\"",
-            "range": {
-                "start": {
-                    "line": 89,
-                    "character": 21
-                },
-                "end": {
-                    "line": 91,
+                    "line": 297,
                     "character": 17
                 }
             },
@@ -1056,831 +264,47 @@
             "message": "Cannot access attribute \"geoms\" for class \"Geometry\"\n  Attribute \"geoms\" is unknown",
             "range": {
                 "start": {
-                    "line": 81,
+                    "line": 76,
                     "character": 53
                 },
                 "end": {
-                    "line": 81,
+                    "line": 76,
                     "character": 58
                 }
             },
             "rule": "reportAttributeAccessIssue"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\a_config_loader.py",
-            "severity": "warning",
-            "message": "Import \"navigation\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 187,
-                    "character": 9
-                },
-                "end": {
-                    "line": 187,
-                    "character": 19
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\show_game_context.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 6,
-                    "character": 5
-                },
-                "end": {
-                    "line": 6,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\show_game_context.py",
-            "severity": "warning",
-            "message": "Import \"arena\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 9,
-                    "character": 9
-                },
-                "end": {
-                    "line": 9,
-                    "character": 14
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\show_game_context.py",
+            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
             "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 18,
-                    "character": 22
-                },
-                "end": {
-                    "line": 18,
-                    "character": 37
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\strategies\\base_strategy.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 9,
-                    "character": 5
-                },
-                "end": {
-                    "line": 9,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\strategies\\base_strategy.py",
-            "severity": "warning",
-            "message": "Import \"strategy.tools\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 17,
-                    "character": 5
-                },
-                "end": {
-                    "line": 17,
-                    "character": 19
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\strategies\\base_strategy.py",
-            "severity": "error",
-            "message": "\"active\" is not a known attribute of \"None\"",
-            "range": {
-                "start": {
-                    "line": 47,
-                    "character": 52
-                },
-                "end": {
-                    "line": 47,
-                    "character": 58
-                }
-            },
-            "rule": "reportOptionalMemberAccess"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\strategies\\basic_strategy.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 17,
-                    "character": 5
-                },
-                "end": {
-                    "line": 17,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\strategies\\debug_strategy.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 16,
-                    "character": 5
-                },
-                "end": {
-                    "line": 16,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\strategies\\only_banner_strategy.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 13,
-                    "character": 5
-                },
-                "end": {
-                    "line": 13,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\strategies\\tower_rush_alt_strategy.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 18,
-                    "character": 5
-                },
-                "end": {
-                    "line": 18,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\strategies\\tower_rush_strategy.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 18,
-                    "character": 5
-                },
-                "end": {
-                    "line": 18,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\sub_graphs\\banner_deployment.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 12,
-                    "character": 5
-                },
-                "end": {
-                    "line": 12,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\sub_graphs\\construct.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 11,
-                    "character": 5
-                },
-                "end": {
-                    "line": 11,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\sub_graphs\\pickup.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 14,
-                    "character": 5
-                },
-                "end": {
-                    "line": 14,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\sub_graphs\\push_one_floor_to_wall.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 16,
-                    "character": 5
-                },
-                "end": {
-                    "line": 16,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\sub_graphs\\wall_pickup.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 14,
-                    "character": 5
-                },
-                "end": {
-                    "line": 14,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 8,
-                    "character": 5
-                },
-                "end": {
-                    "line": 8,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 14,
-                    "character": 30
-                },
-                "end": {
-                    "line": 14,
-                    "character": 38
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
-            "range": {
-                "start": {
-                    "line": 18,
-                    "character": 8
-                },
-                "end": {
-                    "line": 18,
-                    "character": 14
-                }
-            },
-            "rule": "reportGeneralTypeIssues"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 32,
-                    "character": 22
-                },
-                "end": {
-                    "line": 32,
-                    "character": 30
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
-            "range": {
-                "start": {
-                    "line": 36,
-                    "character": 8
-                },
-                "end": {
-                    "line": 36,
-                    "character": 14
-                }
-            },
-            "rule": "reportGeneralTypeIssues"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 51,
-                    "character": 13
-                },
-                "end": {
-                    "line": 51,
-                    "character": 21
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
-            "range": {
-                "start": {
-                    "line": 55,
-                    "character": 8
-                },
-                "end": {
-                    "line": 55,
-                    "character": 14
-                }
-            },
-            "rule": "reportGeneralTypeIssues"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 70,
-                    "character": 12
-                },
-                "end": {
-                    "line": 70,
-                    "character": 20
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
-            "range": {
-                "start": {
-                    "line": 74,
-                    "character": 8
-                },
-                "end": {
-                    "line": 74,
-                    "character": 14
-                }
-            },
-            "rule": "reportGeneralTypeIssues"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 90,
-                    "character": 14
-                },
-                "end": {
-                    "line": 90,
-                    "character": 22
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
-            "range": {
-                "start": {
-                    "line": 94,
-                    "character": 8
-                },
-                "end": {
-                    "line": 94,
-                    "character": 14
-                }
-            },
-            "rule": "reportGeneralTypeIssues"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
+            "message": "Type \"OrientedPoint | Point | None\" is not assignable to declared type \"OrientedPoint\"\n  Type \"OrientedPoint | Point | None\" is not assignable to type \"OrientedPoint\"\n    \"Point\" is not assignable to \"OrientedPoint\"",
             "range": {
                 "start": {
                     "line": 110,
-                    "character": 18
+                    "character": 40
                 },
                 "end": {
                     "line": 110,
-                    "character": 26
+                    "character": 85
                 }
             },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
-            "range": {
-                "start": {
-                    "line": 114,
-                    "character": 8
-                },
-                "end": {
-                    "line": 114,
-                    "character": 14
-                }
-            },
-            "rule": "reportGeneralTypeIssues"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 128,
-                    "character": 26
-                },
-                "end": {
-                    "line": 128,
-                    "character": 34
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
-            "range": {
-                "start": {
-                    "line": 132,
-                    "character": 8
-                },
-                "end": {
-                    "line": 132,
-                    "character": 14
-                }
-            },
-            "rule": "reportGeneralTypeIssues"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 146,
-                    "character": 24
-                },
-                "end": {
-                    "line": 146,
-                    "character": 32
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\actuator_task.py",
-            "severity": "error",
-            "message": "Method \"handle\" is marked as override, but no base method of same name is present",
-            "range": {
-                "start": {
-                    "line": 150,
-                    "character": 8
-                },
-                "end": {
-                    "line": 150,
-                    "character": 14
-                }
-            },
-            "rule": "reportGeneralTypeIssues"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\go_to_color_reserved_zone.py",
-            "severity": "warning",
-            "message": "Import \"navigation\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 6,
-                    "character": 5
-                },
-                "end": {
-                    "line": 6,
-                    "character": 15
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\go_to_color_reserved_zone.py",
-            "severity": "warning",
-            "message": "Import \"navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 11,
-                    "character": 5
-                },
-                "end": {
-                    "line": 11,
-                    "character": 93
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\go_to_stuff_zone.py",
-            "severity": "warning",
-            "message": "Import \"navigation\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 6,
-                    "character": 5
-                },
-                "end": {
-                    "line": 6,
-                    "character": 15
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\go_to_stuff_zone.py",
-            "severity": "warning",
-            "message": "Import \"navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 11,
-                    "character": 5
-                },
-                "end": {
-                    "line": 11,
-                    "character": 93
-                }
-            },
-            "rule": "reportMissingImports"
+            "rule": "reportAssignmentType"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
-            "severity": "warning",
-            "message": "Import \"geometry\" could not be resolved",
+            "severity": "error",
+            "message": "\"navigator_task\" overrides symbol of same name in class \"BaseNavigationTask\"\n  Variable is mutable so its type is invariant\n    Override type \"NavigatorTask | None\" is not the same as base type \"NavigatorTask\"",
             "range": {
                 "start": {
-                    "line": 8,
-                    "character": 5
-                },
-                "end": {
-                    "line": 8,
+                    "line": 119,
                     "character": 13
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
-            "severity": "warning",
-            "message": "Import \"navigation\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 9,
-                    "character": 5
                 },
                 "end": {
-                    "line": 9,
-                    "character": 15
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
-            "severity": "warning",
-            "message": "Import \"navigation.avoidance.acs_detection_profiles\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 19,
-                    "character": 5
-                },
-                "end": {
-                    "line": 19,
-                    "character": 48
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
-            "severity": "warning",
-            "message": "Import \"navigation.avoidance.acs_detection_profiles.no_acs_detection_profile\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 22,
-                    "character": 5
-                },
-                "end": {
-                    "line": 22,
-                    "character": 73
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 27,
-                    "character": 9
-                },
-                "end": {
-                    "line": 27,
-                    "character": 22
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\navigation_task.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 6,
-                    "character": 5
-                },
-                "end": {
-                    "line": 6,
-                    "character": 18
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\navigation_task.py",
-            "severity": "warning",
-            "message": "Import \"navigation\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 10,
-                    "character": 9
-                },
-                "end": {
-                    "line": 10,
-                    "character": 19
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\navigation_task.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 13,
-                    "character": 21
-                },
-                "end": {
-                    "line": 13,
-                    "character": 39
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\odometrie.py",
-            "severity": "warning",
-            "message": "Import \"geometry\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 6,
-                    "character": 5
-                },
-                "end": {
-                    "line": 6,
-                    "character": 13
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\odometrie.py",
-            "severity": "warning",
-            "message": "Import \"strategy.core.tasks.base_task\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 7,
-                    "character": 5
-                },
-                "end": {
-                    "line": 7,
-                    "character": 34
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\odometrie.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 13,
-                    "character": 19
-                },
-                "end": {
-                    "line": 13,
+                    "line": 119,
                     "character": 27
                 }
             },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "warning",
-            "message": "Import \"arena\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 16,
-                    "character": 5
-                },
-                "end": {
-                    "line": 16,
-                    "character": 10
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "warning",
-            "message": "Import \"geometry\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 21,
-                    "character": 5
-                },
-                "end": {
-                    "line": 21,
-                    "character": 13
-                }
-            },
-            "rule": "reportMissingImports"
+            "rule": "reportIncompatibleVariableOverride"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
@@ -1888,315 +312,59 @@
             "message": "\"handle\" is not a known attribute of \"None\"",
             "range": {
                 "start": {
-                    "line": 142,
+                    "line": 141,
                     "character": 24
                 },
                 "end": {
-                    "line": 142,
+                    "line": 141,
                     "character": 30
                 }
             },
             "rule": "reportOptionalMemberAccess"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\base\\actuators.py",
-            "severity": "warning",
-            "message": "Import \"teensy\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 11,
-                    "character": 5
-                },
-                "end": {
-                    "line": 11,
-                    "character": 11
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\base\\actuators.py",
-            "severity": "warning",
-            "message": "Import \"usb_com.python\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 12,
-                    "character": 5
-                },
-                "end": {
-                    "line": 12,
-                    "character": 19
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\actuators\\base\\actuators.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 18,
-                    "character": 4
-                },
-                "end": {
-                    "line": 18,
-                    "character": 17
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\asservissment_rolling_basis.py",
-            "severity": "warning",
-            "message": "Import \"geometry\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 13,
-                    "character": 5
-                },
-                "end": {
-                    "line": 13,
-                    "character": 13
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\asservissment_rolling_basis.py",
-            "severity": "warning",
-            "message": "Import \"teensy\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 14,
-                    "character": 5
-                },
-                "end": {
-                    "line": 14,
-                    "character": 11
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\asservissment_rolling_basis.py",
-            "severity": "warning",
-            "message": "Import \"usb_com.python\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 15,
-                    "character": 5
-                },
-                "end": {
-                    "line": 15,
-                    "character": 19
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\asservissment_rolling_basis.py",
             "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
+            "message": "Expected 5 positional arguments",
             "range": {
                 "start": {
-                    "line": 18,
-                    "character": 33
+                    "line": 68,
+                    "character": 12
                 },
                 "end": {
-                    "line": 18,
-                    "character": 46
+                    "line": 68,
+                    "character": 22
                 }
             },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis.py",
-            "severity": "warning",
-            "message": "Import \"geometry\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 12,
-                    "character": 5
-                },
-                "end": {
-                    "line": 12,
-                    "character": 13
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis.py",
-            "severity": "warning",
-            "message": "Import \"teensy\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 13,
-                    "character": 5
-                },
-                "end": {
-                    "line": 13,
-                    "character": 11
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis.py",
-            "severity": "warning",
-            "message": "Import \"usb_com.python\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 14,
-                    "character": 5
-                },
-                "end": {
-                    "line": 14,
-                    "character": 19
-                }
-            },
-            "rule": "reportMissingImports"
+            "rule": "reportCallIssue"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis.py",
             "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
+            "message": "Expected 5 positional arguments",
             "range": {
                 "start": {
-                    "line": 17,
-                    "character": 19
+                    "line": 60,
+                    "character": 12
                 },
                 "end": {
-                    "line": 17,
-                    "character": 32
+                    "line": 60,
+                    "character": 22
                 }
             },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis_dummy.py",
-            "severity": "warning",
-            "message": "Import \"geometry\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 10,
-                    "character": 5
-                },
-                "end": {
-                    "line": 10,
-                    "character": 13
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis_dummy.py",
-            "severity": "warning",
-            "message": "Import \"teensy\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 11,
-                    "character": 5
-                },
-                "end": {
-                    "line": 11,
-                    "character": 11
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis_dummy.py",
-            "severity": "error",
-            "message": "Base class type is unknown, obscuring type of derived class",
-            "range": {
-                "start": {
-                    "line": 14,
-                    "character": 24
-                },
-                "end": {
-                    "line": 14,
-                    "character": 37
-                }
-            },
-            "rule": "reportUntypedBaseClass"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\main.py",
-            "severity": "warning",
-            "message": "Import \"arena\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 11,
-                    "character": 5
-                },
-                "end": {
-                    "line": 11,
-                    "character": 10
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\main.py",
-            "severity": "warning",
-            "message": "Import \"geometry\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 13,
-                    "character": 5
-                },
-                "end": {
-                    "line": 13,
-                    "character": 13
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\main.py",
-            "severity": "warning",
-            "message": "Import \"navigation\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 14,
-                    "character": 5
-                },
-                "end": {
-                    "line": 14,
-                    "character": 15
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\sensors\\inputs\\inputs.py",
-            "severity": "warning",
-            "message": "Import \"gpio\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 8,
-                    "character": 5
-                },
-                "end": {
-                    "line": 8,
-                    "character": 9
-                }
-            },
-            "rule": "reportMissingImports"
+            "rule": "reportCallIssue"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\sensors\\lidar\\lidar.py",
             "severity": "error",
-            "message": "Type variable \"Tlidar\" has no meaning in this context",
+            "message": "Type variable \"LidarT\" has no meaning in this context",
             "range": {
                 "start": {
-                    "line": 79,
+                    "line": 77,
                     "character": 26
                 },
                 "end": {
-                    "line": 79,
+                    "line": 77,
                     "character": 32
                 }
             },
@@ -2205,14 +373,14 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\sensors\\lidar\\lidar.py",
             "severity": "warning",
-            "message": "TypeVar \"Tlidar\" appears only once in generic function signature\n  Use \"Module(\"pysicktim\")\" instead",
+            "message": "TypeVar \"LidarT\" appears only once in generic function signature\n  Use \"Module(\"pysicktim\")\" instead",
             "range": {
                 "start": {
-                    "line": 85,
+                    "line": 83,
                     "character": 30
                 },
                 "end": {
-                    "line": 85,
+                    "line": 83,
                     "character": 36
                 }
             },
@@ -2224,11 +392,11 @@
             "message": "Cannot access attribute \"distances\" for class \"FunctionType\"\n  Attribute \"distances\" is unknown",
             "range": {
                 "start": {
-                    "line": 111,
+                    "line": 108,
                     "character": 22
                 },
                 "end": {
-                    "line": 111,
+                    "line": 108,
                     "character": 31
                 }
             },
@@ -2240,11 +408,11 @@
             "message": "Cannot access attribute \"distances\" for class \"FunctionType\"\n  Attribute \"distances\" is unknown",
             "range": {
                 "start": {
-                    "line": 111,
+                    "line": 108,
                     "character": 54
                 },
                 "end": {
-                    "line": 111,
+                    "line": 108,
                     "character": 63
                 }
             },
@@ -2253,14 +421,14 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\sensors\\lidar\\lidar.py",
             "severity": "error",
-            "message": "Type \"Module(\"pysicktim\")\" is not assignable to return type \"Tlidar@__init_lidar\"\n  Type \"Module(\"pysicktim\")\" is not assignable to type \"Tlidar@__init_lidar\"",
+            "message": "Type \"Module(\"pysicktim\")\" is not assignable to return type \"LidarT@__init_lidar\"\n  Type \"Module(\"pysicktim\")\" is not assignable to type \"LidarT@__init_lidar\"",
             "range": {
                 "start": {
-                    "line": 116,
+                    "line": 113,
                     "character": 15
                 },
                 "end": {
-                    "line": 116,
+                    "line": 113,
                     "character": 20
                 }
             },
@@ -2272,11 +440,11 @@
             "message": "\"scan\" is not a known attribute of \"None\"",
             "range": {
                 "start": {
-                    "line": 241,
+                    "line": 233,
                     "character": 29
                 },
                 "end": {
-                    "line": 241,
+                    "line": 233,
                     "character": 33
                 }
             },
@@ -2288,11 +456,11 @@
             "message": "\"scan\" is not a known attribute of \"None\"",
             "range": {
                 "start": {
-                    "line": 283,
+                    "line": 273,
                     "character": 38
                 },
                 "end": {
-                    "line": 283,
+                    "line": 273,
                     "character": 42
                 }
             },
@@ -2304,11 +472,11 @@
             "message": "Cannot access attribute \"distances\" for class \"FunctionType\"\n  Attribute \"distances\" is unknown",
             "range": {
                 "start": {
-                    "line": 283,
+                    "line": 273,
                     "character": 43
                 },
                 "end": {
-                    "line": 283,
+                    "line": 273,
                     "character": 52
                 }
             },
@@ -2320,11 +488,11 @@
             "message": "No overloads for \"column_stack\" match the provided arguments",
             "range": {
                 "start": {
-                    "line": 297,
+                    "line": 286,
                     "character": 15
                 },
                 "end": {
-                    "line": 297,
+                    "line": 286,
                     "character": 70
                 }
             },
@@ -2336,39 +504,23 @@
             "message": "Argument of type \"tuple[None, NDArray[float32]]\" cannot be assigned to parameter \"tup\" of type \"Sequence[ArrayLike]\" in function \"column_stack\"\n  Type \"None\" is not assignable to type \"ArrayLike\"\n    \"None\" is incompatible with protocol \"Buffer\"\n      \"__buffer__\" is not present\n    \"None\" is incompatible with protocol \"_SupportsArray[dtype[Any]]\"\n      \"__array__\" is not present\n    \"None\" is incompatible with protocol \"_NestedSequence[_SupportsArray[dtype[Any]]]\"\n      \"__len__\" is not present\n      \"__getitem__\" is not present",
             "range": {
                 "start": {
-                    "line": 297,
+                    "line": 286,
                     "character": 32
                 },
                 "end": {
-                    "line": 297,
+                    "line": 286,
                     "character": 52
                 }
             },
             "rule": "reportArgumentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\tests\\a_config_loader.py",
-            "severity": "warning",
-            "message": "Import \"navigation\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 187,
-                    "character": 9
-                },
-                "end": {
-                    "line": 187,
-                    "character": 19
-                }
-            },
-            "rule": "reportMissingImports"
         }
     ],
     "summary": {
         "filesAnalyzed": 219,
-        "errorCount": 68,
-        "warningCount": 82,
-        "informationCount": 302,
-        "timeInSec": 13.432
+        "errorCount": 26,
+        "warningCount": 6,
+        "informationCount": 107,
+        "timeInSec": 38.372
     }
 }
 

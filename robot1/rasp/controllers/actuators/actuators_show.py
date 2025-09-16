@@ -188,7 +188,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         # 9 : Folded = Catch plank
 
         stepper_config = CONFIG.ACTUATOR_ELEVATOR_CONFIG
-        self.logger.info(stepper_config)
+        self.logger.info(f"{stepper_config}")
         self.stepper = Stepper(
             stepper_config["top_steps"],
             stepper_config["folded_steps"],
@@ -494,7 +494,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         # self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
         self.set_servo_angle(
             ARM_SERVO_PIN,
-            angle=self.servos[ARM_SERVO_PIN].docking,  # type: ignore[reportAttributeAccessIssue]
+            angle=self.servos[ARM_SERVO_PIN].docking,  # pyright: ignore[reportAttributeAccessIssue] self.servos[ARM_SERVO_PIN] is ServoArm
             max_angle=270,
         )
         self.deploy(9)

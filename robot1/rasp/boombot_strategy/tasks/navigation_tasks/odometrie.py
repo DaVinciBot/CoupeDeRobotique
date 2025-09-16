@@ -2,16 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import override
 
+from boombot_strategy.show_game_context import ShowGameContext
 from geometry import OrientedPoint
 from strategy.core.tasks.base_task import BaseTask
 
-if TYPE_CHECKING:
-    from boombot_strategy.show_game_context import ShowGameContext
 
-
-class SetOdometrie(BaseTask):
+class SetOdometrie(BaseTask[ShowGameContext]):
     """Task to update the robot's odometry position.
 
     The task uses the provided ``x``, ``y`` and ``theta`` values if given;
@@ -37,6 +35,7 @@ class SetOdometrie(BaseTask):
 
         super().__init__()
 
+    @override
     def handle(self, ctx: ShowGameContext) -> bool:
         """Handle the execution of the odometry setting task.
 

@@ -1,4 +1,4 @@
-# type: ignore[reportImportCycles]
+# type: ignore[reportImportCycles] TYPE_CHECKING block => no import cycles at runtime
 """Core classes for building avoidance strategies."""
 
 from navigation.avoidance.base_avoidance.base_avoidance import BaseAvoidance

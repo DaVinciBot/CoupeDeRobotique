@@ -3,15 +3,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
 
 from loggerplusplus import Logger
 
-if TYPE_CHECKING:
-    from strategy.core.base_game_context import BaseGameContext
+from strategy.core.base_game_context import BaseGameContext
 
 
-class BaseTask(ABC):
+class BaseTask[GameContextT: BaseGameContext](ABC):
     """Atomic unit of work executed within the strategy graph."""
 
     def __init__(self, logger: Logger | None = None) -> None:
@@ -26,11 +24,11 @@ class BaseTask(ABC):
         )
 
     @abstractmethod
-    def handle(self, ctx: BaseGameContext) -> bool:
+    def handle(self, ctx: GameContextT) -> bool:
         """Execute the task and return ``True`` when complete.
 
         Args:
-            ctx (BaseGameContext): The game context.
+            ctx (GameContextT): The game context.
 
         Returns:
             bool: ``True`` if the task is complete, ``False`` otherwise.

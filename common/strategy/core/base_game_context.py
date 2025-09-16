@@ -12,7 +12,11 @@ if TYPE_CHECKING:
 
 @dataclass
 class BaseGameContext(ABC):
-    """Container for the competition arena."""
+    """Container for the competition arena.
+
+    Attributes:
+        arena (BaseArena): A reference to the competition arena.
+    """
 
     arena: BaseArena
     """A reference to the competition arena."""

@@ -1,9 +1,8 @@
-.PHONY: format lint typecheck check auto all
+.PHONY: format lint check auto all
 
 format:
 	@echo "▶ Formatage avec Ruff, puis Black et isort..."
 	isort .
-	black .
 	ruff format
 
 lint:
@@ -14,13 +13,9 @@ lint:
 	@echo "▶ Linting avec pylint..."
 	-pylint --output=pylint-baseline.txt .
 	@echo "▶ Linting avec pyright..."
-	-pyright --outputjson > pyright-baseline.json
+	-pyright --level warning --outputjson > pyright-baseline.json
 
-typecheck:
-	@echo "▶ Analyse statique avec mypy..."
-	-mypy .
-
-check: format lint typecheck
+check: format lint
 
 auto:
 	make all

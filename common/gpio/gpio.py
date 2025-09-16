@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from gpiozero import LED, Button
+from gpiozero import LED, Button, Device
 from gpiozero.pins.lgpio import LGPIOFactory
 
 MAJORITY_RATIO = 0.5
@@ -20,7 +20,7 @@ class PIN:
         self.pin = pin
         self.mode = None
         self.reverse_state = False
-        self.device = None
+        self.device: Device | None = None
 
     def setup(self, mode: str, *, reverse_state: bool = False) -> None:
         """Set up the pin.
@@ -82,7 +82,7 @@ class PIN:
         return (
             self.__correct_state(state=bool(self.device.value))
             if self.mode == "output"
-            else self.__correct_state(state=self.device.is_pressed)
+            else self.__correct_state(state=self.device.is_pressed)  # pyright: ignore[reportAttributeAccessIssue] self.device is Button
         )
 
     def safe_digital_read(self, n: int = 5) -> bool:

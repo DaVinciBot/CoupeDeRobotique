@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from typing import override
 
+from strategy.core.base_game_context import BaseGameContext
 from strategy.core.tasks.base_task import BaseTask
 
-if TYPE_CHECKING:
-    from strategy.core.base_game_context import BaseGameContext
 
-
-class FakeTask(BaseTask):
+class FakeTask(BaseTask[BaseGameContext]):
     """Trivial task that immediately succeeds."""
 
     @override

@@ -8,8 +8,9 @@ from typing import TYPE_CHECKING, override
 from pathfinding.core.grid import Grid
 from shapely import distance
 
-from arena.base_arena.arena import Arena
 from geometry import OrientedPoint, Point, Polygon, create_straight_rectangle
+
+from .arena_old import Arena
 
 if TYPE_CHECKING:
     from old_logger import Logger

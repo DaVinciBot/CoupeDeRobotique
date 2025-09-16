@@ -12,6 +12,7 @@ from navigation import (
     NavigatorTaskParams,
     SpeedProfiler,
 )
+from strategy.core.base_game_context import BaseGameContext
 from strategy.core.tasks.base_task import BaseTask
 
 if TYPE_CHECKING:
@@ -22,10 +23,9 @@ if TYPE_CHECKING:
     from navigation.avoidance.acs_detection_profiles import (
         BaseAcsDetectionProfileParams,
     )
-    from strategy.core.base_game_context import BaseGameContext
 
 
-class BaseNavigationTask(BaseTask):
+class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
     """Common functionality for tasks that navigate through the arena."""
 
     def __init__(
@@ -73,13 +73,13 @@ class BaseNavigationTask(BaseTask):
         self.acs_detection_profile_params = acs_detection_profile_params
 
         self._is_initialized: bool = False
-        self.navigator_task: NavigatorTask | None = None
+        self.navigator_task: NavigatorTask
 
-    def _initialize(self, ctx: BaseGameContext) -> None:
+    def _initialize(self, ctx: GameContextT) -> None:
         """Initialize the navigation task.
 
         Args:
-            ctx (BaseGameContext): The game context.
+            ctx (GameContextT): The game context.
         """
         self._is_initialized = True
 

@@ -110,9 +110,8 @@ def get_push_one_floor_to_wall_subgraph(
     )
 
     # 7) Retract after push
-    node_position_after_push = (
-        f"[Push][Zone{zone_id}] deplacement position after push",
-    )
+    node_position_after_push = f"[Push][Zone{zone_id}] deplacement position after push"
+
     builder.add_node(
         node_position_after_push,
         BaseTaskNode(name=node_position_after_push, tasks=DeplacementPosition()),

@@ -48,7 +48,7 @@ class AStarPathPlannerParams(BasePathPlannerParams):
         self.grid: Grid = grid
 
         self.chunk_size: int = chunk_size
-        self.half_chunk_size: float = self.chunk_size / 2
+        self.half_chunk_size: int = round(self.chunk_size / 2)
 
         self.grid_width: int = grid.width
         self.grid_height: int = grid.height

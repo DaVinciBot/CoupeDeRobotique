@@ -1,3 +1,4 @@
+# type: ignore[reportImportCycles] TYPE_CHECKING block => no import cycles at runtime
 """Execution unit that runs tasks and handles transitions."""
 
 from __future__ import annotations

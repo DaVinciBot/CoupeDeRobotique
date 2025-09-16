@@ -1,4 +1,4 @@
-# type: ignore[reportImportCycles]
+# type: ignore[reportImportCycles] TYPE_CHECKING block => no import cycles at runtime
 """Factory for creating obstacle avoidance components based on strategy.
 
 The factory inspects the provided parameters and returns the appropriate

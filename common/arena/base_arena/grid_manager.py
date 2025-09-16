@@ -3,16 +3,20 @@
 from __future__ import annotations
 
 import copy
-from typing import Any, override
+from typing import TYPE_CHECKING, Any, cast, override
 
 import matplotlib.pyplot as plt
 import numpy as np
 from loggerplusplus import Logger, LogLevels, time_tracker
+from matplotlib.patches import Rectangle as pltRectangle
 from matplotlib.ticker import MaxNLocator
 from pathfinding.core.grid import Grid, GridNode
 from shapely.strtree import STRtree
 
 from geometry import OrientedPoint, Point, Polygon, box
+
+if TYPE_CHECKING:
+    from matplotlib.figure import Figure as pltFigure
 
 
 class GridManager:
@@ -171,7 +175,7 @@ class GridManager:
         for row in range(min_row, max_row):
             for col in range(min_col, max_col):
                 actual_col = self.grid_width - 1 - col
-                cell = box(
+                cell: Polygon = box(
                     actual_col * self.chunk_size,
                     row * self.chunk_size,
                     (actual_col + 1) * self.chunk_size,
@@ -182,7 +186,9 @@ class GridManager:
                 if polygon_to_mark.intersects(cell):
                     # Check static forbidden zones if walkable
                     if walkable and self.static_forbidden_zones:
-                        overlapping_zones = static_zone_tree.query(cell)
+                        overlapping_zones: np.ndarray[Any, np.dtype[np.intp]] = (
+                            static_zone_tree.query(cell)
+                        )
                         # Cast the ndarray to a list of Polygons
                         overlapping_polygons = [
                             self.static_forbidden_zones[i] for i in overlapping_zones
@@ -259,7 +265,10 @@ class GridManager:
 
         def grid_to_numpy(grid: Grid) -> np.ndarray[Any, np.dtype[np.bool_]]:
             return np.array(
-                [[1 if node.walkable else 0 for node in row] for row in grid.nodes],
+                [
+                    [1 if node.walkable else 0 for node in row]
+                    for row in cast("list[list[GridNode]]", grid.nodes)
+                ],
                 dtype=bool,
             )
 
@@ -426,8 +435,8 @@ class GridManager:
         only_static_grid: bool = False,
         path: list | None = None,
         show: bool = True,
-        plot: tuple[plt.Axes, plt.Figure] | None = None,
-    ) -> tuple[plt.Axes, plt.Figure]:
+        plot: tuple[plt.Axes, pltFigure] | None = None,
+    ) -> tuple[plt.Axes, pltFigure]:
         """Visualize the grid using matplotlib.
 
         Args:
@@ -437,11 +446,11 @@ class GridManager:
                 Path to draw on the grid, if provided. Defaults to None.
             show (bool, optional):
                 Whether to display the plot. Defaults to ``True``.
-            plot (tuple[plt.Axes, plt.Figure] | None, optional):
+            plot (tuple[plt.Axes, pltFigure] | None, optional):
                 Existing plot to reuse. Defaults to None.
 
         Returns:
-            tuple[plt.Axes, plt.Figure]: Axis and figure of the plot.
+            tuple[plt.Axes, pltFigure]: Axis and figure of the plot.
         """
         grid_to_visualize = (
             self.static_grid if only_static_grid else self.static_and_dynamic_grid
@@ -455,7 +464,7 @@ class GridManager:
         for y in range(self.grid_height):
             for x in range(self.grid_width):
                 if not grid_to_visualize.node(x, y).walkable:
-                    ax.add_patch(plt.Rectangle((x, y), 1, 1, color="black"))
+                    ax.add_patch(pltRectangle((x, y), 1, 1, color="black"))
 
         if path:
             for i in range(len(path) - 1):

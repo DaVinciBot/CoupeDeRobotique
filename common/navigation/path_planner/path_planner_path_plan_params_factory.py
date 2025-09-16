@@ -64,5 +64,5 @@ class PathPlannerPathPlanParamsFactory:
                 goal=goal,
             )
 
-        msg = f"Unsupported path planning strategy: {strategy}"
+        msg = f"Unsupported path planning strategy: {strategy}"  # pyright: ignore[reportUnreachable] in case of future enum additions
         raise ValueError(msg)

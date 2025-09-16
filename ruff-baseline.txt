@@ -1,8 +1,8 @@
 common\arena\base_arena\arena.py:
-  299:9 ERA001 Found commented-out code
+  295:9 ERA001 Found commented-out code
 
 common\geometry\oriented_point.py:
-  258:89 E501 Line too long (94 > 88)
+  247:89 E501 Line too long (94 > 88)
 
 common\navigation\debug_functions\navigator.py:
   22:5 PLR0915 Too many statements (82 > 50)
@@ -16,62 +16,59 @@ common\navigation\trajectory_planner\speed_profile\__init__.py:
   16:1 ERA001 Found commented-out code
 
 robot1\rasp\a_config_loader.py:
-  162:89 E501 Line too long (93 > 88)
-  164:89 E501 Line too long (91 > 88)
-  380:89 E501 Line too long (132 > 88)
-  383:89 E501 Line too long (130 > 88)
-
-robot1\rasp\boombot_strategy\strategies\base_strategy.py:
-  21:7 B024 `BaseStrategy` is an abstract base class, but it has no abstract methods or properties
+  161:89 E501 Line too long (93 > 88)
+  163:89 E501 Line too long (91 > 88)
+  378:89 E501 Line too long (132 > 88)
+  381:89 E501 Line too long (130 > 88)
 
 robot1\rasp\boombot_strategy\strategies\basic_strategy.py:
-  58:9 ERA001 Found commented-out code
+  56:9 ERA001 Found commented-out code
+  59:9 ERA001 Found commented-out code
+  60:9 ERA001 Found commented-out code
   61:9 ERA001 Found commented-out code
-  62:9 ERA001 Found commented-out code
-  63:9 ERA001 Found commented-out code
 
 robot1\rasp\brains\main_brain.py:
+  131:9  ERA001 Found commented-out code
   132:9  ERA001 Found commented-out code
-  133:9  ERA001 Found commented-out code
-  168:13 ERA001 Found commented-out code
+  167:13 ERA001 Found commented-out code
+  174:13 ERA001 Found commented-out code
   175:13 ERA001 Found commented-out code
-  176:13 ERA001 Found commented-out code
-  256:13 ERA001 Found commented-out code
-  261:5  ERA001 Found commented-out code
-  295:9  ERA001 Found commented-out code
+  254:13 ERA001 Found commented-out code
+  259:5  ERA001 Found commented-out code
+  293:9  ERA001 Found commented-out code
 
 robot1\rasp\controllers\actuators\actuators_show.py:
-  479:5 ERA001 Found commented-out code
-  480:5 ERA001 Found commented-out code
-  483:5 ERA001 Found commented-out code
-  518:9 ERA001 Found commented-out code
-  576:9 ERA001 Found commented-out code
-  577:9 ERA001 Found commented-out code
-  595:5 ERA001 Found commented-out code
-  598:5 ERA001 Found commented-out code
-  599:5 ERA001 Found commented-out code
-  600:5 ERA001 Found commented-out code
-  603:5 ERA001 Found commented-out code
-  606:5 ERA001 Found commented-out code
+  455:5 ERA001 Found commented-out code
+  456:5 ERA001 Found commented-out code
+  459:5 ERA001 Found commented-out code
+  494:9 ERA001 Found commented-out code
+  552:9 ERA001 Found commented-out code
+  553:9 ERA001 Found commented-out code
+  571:5 ERA001 Found commented-out code
+  574:5 ERA001 Found commented-out code
+  575:5 ERA001 Found commented-out code
+  576:5 ERA001 Found commented-out code
+  579:5 ERA001 Found commented-out code
+  582:5 ERA001 Found commented-out code
 
 robot1\rasp\controllers\actuators\base\actuators.py:
-  198:9 ERA001 Found commented-out code
+  190:9 ERA001 Found commented-out code
 
 robot1\rasp\controllers\rolling_basis\rolling_basis.py:
-  88:9 ERA001 Found commented-out code
+  84:9 ERA001 Found commented-out code
 
 robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
-  72:9 ERA001 Found commented-out code
+  70:9 ERA001 Found commented-out code
 
 robot1\rasp\main.py:
-   93:9 ERA001 Found commented-out code
-  138:5 ERA001 Found commented-out code
+   92:9 ERA001 Found commented-out code
+  137:5 ERA001 Found commented-out code
 
 robot1\rasp\tests\a_config_loader.py:
     1:1  INP001 File `robot1\rasp\tests\a_config_loader.py` is part of an implicit namespace package. Add an `__init__.py`.
-  162:89 E501 Line too long (93 > 88)
-  164:89 E501 Line too long (91 > 88)
-  380:89 E501 Line too long (132 > 88)
-  383:89 E501 Line too long (130 > 88)
+  161:89 E501 Line too long (93 > 88)
+  163:89 E501 Line too long (91 > 88)
+  378:89 E501 Line too long (132 > 88)
+  381:89 E501 Line too long (130 > 88)
 
-Found 46 errors.
+Found 45 errors.

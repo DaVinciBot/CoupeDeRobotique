@@ -40,7 +40,7 @@ class PIN:
         self.pin = pin
         self.mode: str | None = None
         self.reverse_state: bool = False
-        self.device: DummyDevice | None = None
+        self.device: DummyDevice
         self.count: int = 0
 
     def setup(

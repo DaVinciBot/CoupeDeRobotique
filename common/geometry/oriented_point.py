@@ -173,7 +173,7 @@ class OrientedPoint(Point):
         return NotImplemented
 
     @override
-    def __sub__(self, other: object) -> OrientedPoint:  # type: ignore[override]
+    def __sub__(self, other: object) -> OrientedPoint:
         """Subtract coordinates or another oriented point.
 
         Args:

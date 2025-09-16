@@ -21,11 +21,11 @@ class DirectTransition(BaseTransition):
     """
 
     @override
-    def can_transit(self, from_node: BaseTaskNode, ctx: BaseGameContext) -> bool:
+    def can_transit(self, from_node: BaseTaskNode | None, ctx: BaseGameContext) -> bool:
         """Always allow the transition to occur.
 
         Args:
-            from_node (BaseTaskNode): The current task node (unused).
+            from_node (BaseTaskNode | None): The current task node (unused).
             ctx (BaseGameContext): The game context (unused).
 
         Returns:

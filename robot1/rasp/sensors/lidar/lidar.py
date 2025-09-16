@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from loggerplusplus import Logger
     from numpy.typing import NDArray
 
-Tlidar = TypeVar("Tlidar", bound="pysicktim")
+LidarT = TypeVar("LidarT", bound="pysicktim")
 
 
 class LidarError(Exception):
@@ -75,17 +75,17 @@ class Lidar:
         self.__initialization_fail_refresh_rate = initialization_fail_refresh_rate
 
         self.__is_connected = False
-        self.__lidar_obj: Tlidar | None = None
+        self.__lidar_obj: LidarT | None = None
         self.__polars_angles = None
         self.__threading_init_lidar()
 
     # ====== Private methods ======
 
-    def __init_lidar(self) -> Tlidar:
+    def __init_lidar(self) -> LidarT:
         """Initialize the lidar object and test the connection.
 
         Returns:
-            Tlidar: the lidar object
+            LidarT: the lidar object
 
         Raises:
             ConnectionError: If the lidar is not connected or does not work correctly.

@@ -2,18 +2,19 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
+from boombot_strategy.show_game_context import ShowGameContext
 from strategy.core import BaseNavigationTask
 
 if TYPE_CHECKING:
-    from boombot_strategy.show_game_context import ShowGameContext
     from navigation import TrajectoryPlanCommand
 
 
-class NavigationTask(BaseNavigationTask):
+class NavigationTask(BaseNavigationTask[ShowGameContext]):
     """Thin wrapper exposing navigation to the strategy graph."""
 
+    @override
     def handle(self, ctx: ShowGameContext) -> bool:
         """Execute the navigation plan and update the rolling basis.
 

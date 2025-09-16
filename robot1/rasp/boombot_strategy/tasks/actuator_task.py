@@ -3,16 +3,14 @@
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING, override
+from typing import override
 
 from a_config_loader import CONFIG
+from boombot_strategy.show_game_context import ShowGameContext
 from strategy.core import BaseTask
 
-if TYPE_CHECKING:
-    from boombot_strategy.show_game_context import ShowGameContext
 
-
-class ReadyToApproachToPickUp(BaseTask):
+class ReadyToApproachToPickUp(BaseTask[ShowGameContext]):
     """Activate the actuator's approach mechanism to prepare for pickup."""
 
     @override
@@ -29,7 +27,7 @@ class ReadyToApproachToPickUp(BaseTask):
         return True
 
 
-class PrepareToPickUp(BaseTask):
+class PrepareToPickUp(BaseTask[ShowGameContext]):
     """Task to prepare the actuator for picking up an object."""
 
     @override
@@ -47,7 +45,7 @@ class PrepareToPickUp(BaseTask):
         return True
 
 
-class PickUp(BaseTask):
+class PickUp(BaseTask[ShowGameContext]):
     """Task to perform the pickup action using the actuator."""
 
     @override
@@ -65,7 +63,7 @@ class PickUp(BaseTask):
         return True
 
 
-class Build(BaseTask):
+class Build(BaseTask[ShowGameContext]):
     """Task to execute a build operation and update the game score accordingly."""
 
     @override
@@ -84,7 +82,7 @@ class Build(BaseTask):
         return True
 
 
-class Deposit(BaseTask):
+class Deposit(BaseTask[ShowGameContext]):
     """Release carried items and update score."""
 
     @override
@@ -103,7 +101,7 @@ class Deposit(BaseTask):
         return True
 
 
-class BlockBanner(BaseTask):
+class BlockBanner(BaseTask[ShowGameContext]):
     """Task to activate the banner-blocking actuator."""
 
     @override
@@ -120,7 +118,7 @@ class BlockBanner(BaseTask):
         return True
 
 
-class DeplacementPosition(BaseTask):
+class DeplacementPosition(BaseTask[ShowGameContext]):
     """Task to adjust the actuator to a predefined displacement position."""
 
     @override
@@ -137,7 +135,7 @@ class DeplacementPosition(BaseTask):
         return True
 
 
-class DeplacementObject(BaseTask):
+class DeplacementObject(BaseTask[ShowGameContext]):
     """Task to adjust the actuator to a predefined displacement position."""
 
     @override

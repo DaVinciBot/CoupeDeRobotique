@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 def test_speed_profile(
     profile: BaseSpeedProfile,
-    distance: float | None = None,
+    distance: float,
     step_time: float = 0.1,
     departure_speed: float = 0.0,
     arrival_speed: float = 0.0,
@@ -24,8 +24,8 @@ def test_speed_profile(
 
     Args:
         profile (BaseSpeedProfile): The speed profile to test.
-        distance (float | None, optional):
-            Target distance to simulate. Defaults to None.
+        distance (float, optional):
+            Target distance to simulate.
         step_time (float, optional):
             Time interval for sampling the profile. Defaults to 0.1.
         departure_speed (float, optional): Initial speed at departure. Defaults to 0.0.

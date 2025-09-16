@@ -27,11 +27,11 @@ class BaseTransition(ABC):
         self.target = target
 
     @abstractmethod
-    def can_transit(self, from_node: BaseTaskNode, ctx: BaseGameContext) -> bool:
+    def can_transit(self, from_node: BaseTaskNode | None, ctx: BaseGameContext) -> bool:
         """Determine whether the transition should occur.
 
         Args:
-            from_node (BaseTaskNode):
+            from_node (BaseTaskNode | None):
                 The current task node attempting to transition.
             ctx (BaseGameContext): The current game context, which may include
                 relevant state or conditions.

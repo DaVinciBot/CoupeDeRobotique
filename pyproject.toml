@@ -41,16 +41,15 @@ version = "0.1.0"
 
 [dependency-groups]
 dev = [
-  "black>=25.1.0",
   "isort>=6.0.1",
   "mypy>=1.17.1",
   "pre-commit>=4.3.0",
   "pydoclint>=0.6.8",
   "pylint>=3.3.8",
-  "pyright",
+  "pyright>=1.1.405",
   "pytest>=8.4.1",
   "ruff>=0.12.8",
-  "sphinx>=8.2.3",
+  "types-shapely>=2.1.0.20250915",
 ]
 
 [tool.isort]
@@ -165,10 +164,11 @@ notes = [
 
 [tool.pyright]
 exclude = [
-  "**/node_modules",
-  "**/__pycache__",
   "**/.venv",
+  "**/__pycache__",
+  "**/node_modules",
 ]
+extraPaths = ["./.venv/Lib/site-packages", "common", "robot1"]
 include = ["common", "robot1"]
 reportCallInDefaultInitializer = "error"
 reportConstantRedefinition = "warning"
@@ -204,7 +204,12 @@ reportUnusedImport = "information"
 typeCheckingMode = "standard"
 
 [tool.ruff]
-exclude = ["*.ipynb"]
+exclude = [
+  "**/.venv/**",
+  "**/2024_mars_arena/**",
+  "**/docs/**",
+  "*.ipynb",
+]
 fix = true
 indent-width = 4
 line-length = 88
@@ -221,6 +226,7 @@ quote-style = "double"
 [tool.ruff.lint]
 ignore = [
   "ASYNC110", # async-busy-wait
+  "B024", # abstract-base-class-without-abstract-method
   "CPY001", # missing-copyright-notice
   "EXE002", # shebang-missing-executable-file
   "FIX002", # line-contains-todo
@@ -237,6 +243,8 @@ ignore = [
 ]
 select = ["ALL"]
 exclude = [
+  "**/.venv/**",
+  "**/2024_mars_arena/**",
   "**/docs/**",
 ]
 

@@ -281,6 +281,10 @@ class Actuators(
 
     @log("Actuators")
     def attach_switch(self, pin: int) -> None:
-        """Attach a switch to the specified GPIO ``pin``."""
+        """Attach a switch to the specified GPIO ``pin``.
+
+        Args:
+            pin (int): The GPIO pin number to which the switch is connected.
+        """
         msg = Messages.ATTACH_SWITCH.to_bytes() + struct.pack("<B", pin)
         self.send_bytes(msg)

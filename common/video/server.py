@@ -12,9 +12,14 @@ logger = Logger(identifier="MJPEGHandler", follow_logger_manager_rules=True)
 
 
 class MJPEGHandler(BaseHTTPRequestHandler):
-    """Serve MJPEG frames over HTTP."""
+    """Serve MJPEG frames over HTTP.
+
+    Attributes:
+        current_img: The current image frame to be served.
+    """
 
     current_img = None
+    """The current image frame to be served."""
 
     def send_index(self) -> None:
         """Send a basic HTML page embedding the MJPEG stream."""

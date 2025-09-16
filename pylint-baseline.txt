@@ -1,25 +1,25 @@
 ************* Module common.arena.2024_mars_arena
 1:0: C0103: Module name "2024_mars_arena" doesn't conform to snake_case naming style (invalid-name)
 ************* Module common.arena.base_arena.grid_manager
-138:4: W0238: Unused private member `GridManager.__optimized_mark_zone(self, grid: Grid, polygon_to_mark: Polygon, *, walkable: bool)` (unused-private-member)
+139:4: W0238: Unused private member `GridManager.__optimized_mark_zone(self, grid: Grid, polygon_to_mark: Polygon, *, walkable: bool)` (unused-private-member)
 ************* Module common.arena.base_arena.arena_zones.ally_zone
-73:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
+71:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
 ************* Module common.navigation.avoidance.back_avoidance.back_avoidance
-88:74: E0203: Access to member 'state' before its definition line 124 (access-member-before-definition)
-99:16: E0203: Access to member 'state' before its definition line 124 (access-member-before-definition)
-124:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-177:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+85:74: E0203: Access to member 'state' before its definition line 121 (access-member-before-definition)
+96:16: E0203: Access to member 'state' before its definition line 121 (access-member-before-definition)
+121:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+174:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
 ************* Module common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance
-52:74: E0203: Access to member 'state' before its definition line 73 (access-member-before-definition)
-63:16: E0203: Access to member 'state' before its definition line 73 (access-member-before-definition)
-73:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-103:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+50:74: E0203: Access to member 'state' before its definition line 71 (access-member-before-definition)
+61:16: E0203: Access to member 'state' before its definition line 71 (access-member-before-definition)
+71:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+101:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
 ************* Module robot1.rasp.sensors.lidar.lidar
-73:8: W0238: Unused private member `Lidar.__angle_unit` (unused-private-member)
+71:8: W0238: Unused private member `Lidar.__angle_unit` (unused-private-member)
 ************* Module robot1.rasp.sensors.lidar.lidar_dummy
-46:8: W0238: Unused private member `LidarDummy.__min_angle` (unused-private-member)
-47:8: W0238: Unused private member `LidarDummy.__max_angle` (unused-private-member)
-48:8: W0238: Unused private member `LidarDummy.__angle_unit` (unused-private-member)
+44:8: W0238: Unused private member `LidarDummy.__min_angle` (unused-private-member)
+45:8: W0238: Unused private member `LidarDummy.__max_angle` (unused-private-member)
+46:8: W0238: Unused private member `LidarDummy.__angle_unit` (unused-private-member)
 
 ------------------------------------------------------------------
 Your code has been rated at 9.94/10 (previous run: 9.94/10, +0.00)
