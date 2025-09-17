@@ -10,7 +10,6 @@
       "pid": 1155,
       "baudrate": 115200,
       "crc": true,
-      "dummy": false
     }
   },
   "rob": {

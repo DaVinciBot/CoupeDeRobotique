@@ -31,7 +31,7 @@ class RollingBasis(BaseComTeensy):
         baudrate: int = CONFIG.TEENSY_BAUDRATE,
         *,
         enable_crc: bool = CONFIG.TEENSY_CRC,
-        enable_dummy: bool = CONFIG.TEENSY_DUMMY,
+        enable_dummy: bool = CONFIG.ROLLING_BASIS_DUMMY,
     ) -> None:
         """Initializes the RollingBasis class.
 
@@ -48,7 +48,7 @@ class RollingBasis(BaseComTeensy):
             enable_crc (bool, optional):
                 Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
             enable_dummy (bool, optional):
-                Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+                Whether to enable dummy mode. Defaults to CONFIG.ROLLING_BASIS_DUMMY.
         """
         self.flag = True
         # Initialize the parent-BaseComTeensy class

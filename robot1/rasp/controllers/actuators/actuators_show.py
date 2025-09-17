@@ -106,7 +106,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         baudrate: int = CONFIG.TEENSY_BAUDRATE,
         *,
         enable_crc: bool = CONFIG.TEENSY_CRC,
-        enable_dummy: bool = CONFIG.TEENSY_DUMMY,
+        enable_dummy: bool = CONFIG.ACTUATORS_DUMMY,
     ) -> None:
         """Initialize the ``ActuatorsShow`` class.
 
@@ -123,7 +123,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
             enable_crc (bool, optional):
                 Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
             enable_dummy (bool, optional):
-                Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+                Whether to enable dummy mode. Defaults to CONFIG.ACTUATORS_DUMMY.
         """
         super().__init__(
             logger=logger,

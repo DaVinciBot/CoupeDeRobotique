@@ -34,7 +34,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         baudrate: int = CONFIG.TEENSY_BAUDRATE,
         *,
         enable_crc: bool = CONFIG.TEENSY_CRC,
-        enable_dummy: bool = CONFIG.TEENSY_DUMMY,
+        enable_dummy: bool = CONFIG.ROLLING_BASIS_DUMMY,
     ) -> None:
         """Initializes the AsservissementRollingBasis class.
 
@@ -51,7 +51,7 @@ class AsservissementRollingBasis(BaseComTeensy):
             enable_crc (bool, optional):
                 Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
             enable_dummy (bool, optional):
-                Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+                Whether to enable dummy mode. Defaults to CONFIG.ROLLING_BASIS_DUMMY.
         """
         # Initialize state and log storage
         self.logger = logger

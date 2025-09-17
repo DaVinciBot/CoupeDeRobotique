@@ -3,11 +3,15 @@
 from __future__ import annotations
 
 import json
+import os
 import pathlib
 import sys
 from typing import Any, ClassVar
 
+from dotenv import load_dotenv
 from loggerplusplus import LoggerConfig, LoggerManager, LogLevels, logger_colors
+
+load_dotenv()
 
 
 def load_json_file(file_path: pathlib.Path) -> dict[str, Any]:
@@ -20,6 +24,23 @@ def load_json_file(file_path: pathlib.Path) -> dict[str, Any]:
         dict[str, Any]: The content of the JSON file as a dictionary.
     """
     return json.load(file_path.open(encoding="utf-8"))
+
+
+def get_env_bool(
+    key: str,
+    *,
+    default: bool = False,
+) -> bool:
+    """Return a boolean loaded from the environment using ``keys`` priority order.
+
+    Args:
+        key (str):
+            The environment variable name to check.
+        default (bool):
+            The default value to return if the environment variable is not set.
+    """
+    raw_value = os.getenv(key, str(default))
+    return raw_value == "True"
 
 
 class CONFIG:
@@ -46,7 +67,6 @@ class CONFIG:
         TEENSY_PID (int): Teensy USB product ID.
         TEENSY_BAUDRATE (int): Baud rate for Teensy communication.
         TEENSY_CRC (bool): Whether to enable CRC for Teensy communication.
-        TEENSY_DUMMY (bool): Whether to enable dummy mode for Teensy communication.
 
         SPECIFIC_CONFIG (dict[str, Any]): Specific configuration settings for the robot.
         SPECIFIC_WS_CONFIG (dict[str, Any]): Specific WebSocket configuration settings.
@@ -173,6 +193,10 @@ class CONFIG:
 
         JACK_PIN (int): Pin number for the jack.
         BAU_PIN (int): Pin number for the BAU.
+
+        LIDAR_DUMMY (bool): Whether to enable dummy mode for the lidar sensor.
+        ROLLING_BASIS_DUMMY (bool): Whether to enable dummy mode for the rolling basis.
+        ACTUATORS_DUMMY (bool): Whether to enable dummy mode for the actuators.
     """
 
     # Directory path (dont't touch)
@@ -213,7 +237,6 @@ class CONFIG:
     TEENSY_PID: int = GENERAL_TEENSY_CONFIG["pid"]
     TEENSY_BAUDRATE: int = GENERAL_TEENSY_CONFIG["baudrate"]
     TEENSY_CRC: bool = GENERAL_TEENSY_CONFIG["crc"]
-    TEENSY_DUMMY: bool = GENERAL_TEENSY_CONFIG["dummy"]
 
     # Specific config
     SPECIFIC_CONFIG: dict[str, Any] = CONFIG_STORE[SPECIFIC_CONFIG_KEY]
@@ -407,6 +430,11 @@ class CONFIG:
 
     # BAU
     BAU_PIN: int = SPECIFIC_CONFIG["bau"]["pin"]
+
+    # Dummy modes
+    LIDAR_DUMMY: bool = get_env_bool("LIDAR_DUMMY")
+    ROLLING_BASIS_DUMMY: bool = get_env_bool("ROLLING_BASIS_DUMMY")
+    ACTUATORS_DUMMY: bool = get_env_bool("ACTUATORS_DUMMY")
 
 
 # Logger: LoggerManager + global configuration

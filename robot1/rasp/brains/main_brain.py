@@ -14,6 +14,7 @@ from loggerplusplus import Logger
 from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
+from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import ShowGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
@@ -24,9 +25,6 @@ from geometry import OrientedPoint
 if TYPE_CHECKING:
     from arena.show_arena import ShowArena
     from sensors import Inputs, Lidar, LidarDummy
-
-# TODO: automatiser tous les dummys grâce aux fichiers __init__.py comme le PIN
-# TODO: automatiser tous les dummys comme les actuators, com, etc. Avec le config_loader
 
 
 class MainBrain(Brain):
@@ -99,15 +97,37 @@ class MainBrain(Brain):
         """Runs the main control loop for the robot."""
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
-        rolling_basis: RollingBasis | RollingBasisDummy = RollingBasis(
-            logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True),
-        )
+        if CONFIG.ROLLING_BASIS_DUMMY:
+            rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
+                logger=Logger(
+                    identifier="RollingBasisDummy",
+                    follow_logger_manager_rules=True,
+                ),
+            )
+        else:
+            rolling_basis = RollingBasis(
+                logger=Logger(
+                    identifier="RollingBasis",
+                    follow_logger_manager_rules=True,
+                ),
+            )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
 
-        actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShow(
-            logger=Logger(identifier="Actuators", follow_logger_manager_rules=True),
-        )
+        if CONFIG.ACTUATORS_DUMMY:
+            actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
+                logger=Logger(
+                    identifier="Actuators",
+                    follow_logger_manager_rules=True,
+                ),
+            )
+        else:
+            actuators = ActuatorsShow(
+                logger=Logger(
+                    identifier="Actuators",
+                    follow_logger_manager_rules=True,
+                ),
+            )
         actuators.deplacement_position()
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
         while not self.jack_plugged:  # wait until cable is plugged
@@ -290,8 +310,13 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True)
     async def start(self) -> None:
         """Starts the main brain process."""
-        # self.arena.set_team_color(TeamColor.YELLOW)
-        await self.wait_for_team()
+        if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
+            self.logger.warning(
+                "All subsystems are in dummy mode. The robot will not move.",
+            )
+            self.arena.set_team_color(TeamColor.YELLOW)
+        else:
+            await self.wait_for_team()
 
         start_position = OrientedPoint(0, 0, 0)
         enemy_position = OrientedPoint(150, 200, -pi / 2)

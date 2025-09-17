@@ -33,7 +33,7 @@ class Actuators(
         baudrate: int = CONFIG.TEENSY_BAUDRATE,
         *,
         enable_crc: bool = CONFIG.TEENSY_CRC,
-        enable_dummy: bool = CONFIG.TEENSY_DUMMY,
+        enable_dummy: bool = CONFIG.ACTUATORS_DUMMY,
     ) -> None:
         """Initialize the Actuators class.
 
@@ -51,7 +51,7 @@ class Actuators(
             enable_crc (bool, optional):
                 Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
             enable_dummy (bool, optional):
-                Whether to enable dummy mode. Defaults to CONFIG.TEENSY_DUMMY.
+                Whether to enable dummy mode. Defaults to CONFIG.ACTUATORS_DUMMY.
         """
         # Initialize the parent-GPIOComTeensy class
         super().__init__(
