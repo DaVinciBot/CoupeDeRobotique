@@ -160,10 +160,10 @@ dmypy.json
 cython_debug/
 
 # Error baselines
-pydoclint-baseline.txt
-pylin-baseline.txt
-pyright-baseline.json
-ruff-baseline.txt
+./pydoclint-baseline.txt
+./pylin-baseline.txt
+./pyright-baseline.json
+./ruff-baseline.txt
 
 rasp/bot_venv/
 robot1/rasp/test_zones.py
