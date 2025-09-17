@@ -17,7 +17,7 @@ from navigation.navigator.task import (
 from navigation.trajectory_planner import TrajectoryPlanCommand
 
 if TYPE_CHECKING:
-    from arena.base_arena import AllyZone, EnemyZone
+    from arena.base_arena.arena_zones import AllyZone, EnemyZone
 
 
 class Navigator:

@@ -11,7 +11,7 @@ from strategy.core.tasks.base_task import BaseTask
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
-    from arena.base_arena import BaseArenaZone
+    from arena.base_arena.arena_zones import BaseArenaZone
     from geometry import OrientedPoint, Point
     from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501
         BaseAcsDetectionProfileParams,

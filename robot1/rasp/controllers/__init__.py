@@ -1,17 +1,8 @@
 """Hardware controllers for robot1."""
 
-from controllers.actuators import Actuators, ActuatorsShow, ActuatorsShowDummy
-from controllers.rolling_basis import (
-    AsservissementRollingBasis,
-    RollingBasis,
-    RollingBasisDummy,
-)
+from controllers import actuators, rolling_basis
 
 __all__ = [
-    "Actuators",
-    "ActuatorsShow",
-    "ActuatorsShowDummy",
-    "AsservissementRollingBasis",
-    "RollingBasis",
-    "RollingBasisDummy",
+    "actuators",
+    "rolling_basis",
 ]

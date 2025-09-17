@@ -21,7 +21,7 @@ from navigation.trajectory_planner import TrajectoryPlanCommand
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from arena.base_arena import AllyZone, EnemyZone
+    from arena.base_arena.arena_zones import AllyZone, EnemyZone
     from geometry import OrientedPoint
     from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501
         BaseAcsDetectionProfileParams,

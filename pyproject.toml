@@ -284,4 +284,24 @@ known-first-party = [
 convention = "google"
 
 [tool.setuptools]
-py-modules = ["common", "robot1"]
+packages = [
+  "a_config_loader",
+  "arena",
+  "boombot_strategy",
+  "brains",
+  "common",
+  "controllers",
+  "geometry",
+  "gpio",
+  "led_strip",
+  "navigation",
+  "rasp",
+  "robot1",
+  "sensors",
+  "strategy",
+  "teensy",
+  "usb_com",
+  "utils",
+  "video",
+]
+package-dir = { "common" = "common", "arena" = "common/arena", "geometry" = "common/geometry","gpio" = "common/gpio", "led_strip" = "common/led_strip", "navigation"= "common/navigation", "strategy" = "common/strategy", "teensy" = "common/teensy", "usb_com" = "common/usb_com", "utils" = "common/utils", "video" = "common/video", "rasp" = "robot1/rasp", "a_config_loader" = "robot1/rasp/a_config_loader", "boombot_strategy" = "robot1/rasp/boombot_strategy", "brains" = "robot1/rasp/brains", "controllers" = "robot1/rasp/controllers", "sensors" = "robot1/rasp/sensors" }

@@ -14,7 +14,7 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
 )
 
 if TYPE_CHECKING:
-    from arena.base_arena import AllyZone, EnemyZone
+    from arena.base_arena.arena_zones import AllyZone, EnemyZone
 
 
 class RectangularProjectionAcsDetectionProfile(

@@ -13,7 +13,7 @@ from navigation.trajectory_planner import (
 )
 
 if TYPE_CHECKING:
-    from arena.base_arena import AllyZone, EnemyZone
+    from arena.base_arena.arena_zones import AllyZone, EnemyZone
     from geometry import OrientedPoint
     from navigation.avoidance.base_avoidance import BaseAvoidance
     from navigation.navigator.task.navigator_task_params import NavigatorTaskParams

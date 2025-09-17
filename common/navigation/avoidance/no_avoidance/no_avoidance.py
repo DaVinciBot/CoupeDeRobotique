@@ -8,7 +8,7 @@ from navigation.avoidance.base_avoidance import BaseAvoidance
 from navigation.avoidance.no_avoidance.no_avoidance_params import NoAvoidanceParams
 
 if TYPE_CHECKING:
-    from arena.base_arena import AllyZone, EnemyZone
+    from arena.base_arena.arena_zones import AllyZone, EnemyZone
     from navigation.navigator.task import NavigatorTask
     from navigation.trajectory_planner import TrajectoryPlanCommand
 

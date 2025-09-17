@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from strategy.core import BaseGameContext
 
 if TYPE_CHECKING:
-    from arena import ShowArena
+    from arena.show_arena import ShowArena
     from controllers import (
         ActuatorsShow,
         ActuatorsShowDummy,

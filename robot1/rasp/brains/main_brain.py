@@ -14,7 +14,7 @@ from loggerplusplus import Logger
 from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
-from arena import ShowArena, TeamColor
+from arena.base_arena import TeamColor
 from boombot_strategy import ShowGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
@@ -22,6 +22,7 @@ from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 
 if TYPE_CHECKING:
+    from arena.show_arena import ShowArena
     from sensors import Inputs, Lidar, LidarDummy
 
 # TODO: automatiser tous les dummys grâce aux fichiers __init__.py comme le PIN

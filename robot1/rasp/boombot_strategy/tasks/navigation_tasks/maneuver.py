@@ -96,7 +96,7 @@ class GoCentroidOfZone(NavigationTask):
         )
         self.zone_id: int = zone_id
         self._is_initialized: bool = False
-        self.navigator_task: NavigatorTask | None = None
+        self.navigator_task: NavigatorTask
 
     def _initialize(self, ctx: BaseGameContext) -> None:
         """Initialize by computing the target position from the zone centroid.
