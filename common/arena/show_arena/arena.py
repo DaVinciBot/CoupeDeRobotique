@@ -405,7 +405,8 @@ class ShowArena(BaseArena):
                     logger=blue_reserved_zone_logger,
                     buffer_size=obstacle_buffer,
                     polygon=create_straight_rectangle(
-                        Point((15, 155)), Point((60, 200)),
+                        Point((15, 155)),
+                        Point((60, 200)),
                     ),
                     go_to_positions=[OrientedPoint(37.5, 150.5, pi / 2)],
                 ),
@@ -413,7 +414,8 @@ class ShowArena(BaseArena):
                     logger=yellow_reserved_zone_logger,
                     buffer_size=obstacle_buffer,
                     polygon=create_straight_rectangle(
-                        Point((285, 155)), Point((240, 200)),
+                        Point((285, 155)),
+                        Point((240, 200)),
                     ),
                     go_to_positions=[OrientedPoint(262.5, 150.5, pi / 2)],
                 ),
