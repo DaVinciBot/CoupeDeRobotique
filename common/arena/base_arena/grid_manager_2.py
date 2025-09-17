@@ -5,8 +5,8 @@ from __future__ import annotations
 import copy
 
 import matplotlib.pyplot as plt
+from loggerplusplus import Logger, LogLevels, time_tracker
 from matplotlib.patches import Rectangle as pltRectangle
-from old_logger import Logger, LogLevels, time_tracker
 from pathfinding.core.grid import Grid, GridNode
 from shapely.geometry import box
 from shapely.strtree import STRtree

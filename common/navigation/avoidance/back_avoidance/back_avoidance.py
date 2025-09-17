@@ -61,6 +61,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
         """
         super().__init__(params, acs_detection_profile_params, logger)
 
+        self.state: AvoidanceState = AvoidanceState.IDLE
         self.backward_navigator_task: NavigatorTask | None = None
 
     @BaseAvoidance.ensure_original_task_storage

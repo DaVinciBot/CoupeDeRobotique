@@ -628,8 +628,8 @@
 </span><span id="AsservissementRollingBasis-67"><a href="#AsservissementRollingBasis-67"><span class="linenos"> 67</span></a>            <span class="n">vid</span><span class="p">,</span>
 </span><span id="AsservissementRollingBasis-68"><a href="#AsservissementRollingBasis-68"><span class="linenos"> 68</span></a>            <span class="n">pid</span><span class="p">,</span>
 </span><span id="AsservissementRollingBasis-69"><a href="#AsservissementRollingBasis-69"><span class="linenos"> 69</span></a>            <span class="n">baudrate</span><span class="p">,</span>
-</span><span id="AsservissementRollingBasis-70"><a href="#AsservissementRollingBasis-70"><span class="linenos"> 70</span></a>            <span class="n">enable_crc</span><span class="p">,</span>
-</span><span id="AsservissementRollingBasis-71"><a href="#AsservissementRollingBasis-71"><span class="linenos"> 71</span></a>            <span class="n">enable_dummy</span><span class="p">,</span>
+</span><span id="AsservissementRollingBasis-70"><a href="#AsservissementRollingBasis-70"><span class="linenos"> 70</span></a>            <span class="n">enable_crc</span><span class="o">=</span><span class="n">enable_crc</span><span class="p">,</span>
+</span><span id="AsservissementRollingBasis-71"><a href="#AsservissementRollingBasis-71"><span class="linenos"> 71</span></a>            <span class="n">enable_dummy</span><span class="o">=</span><span class="n">enable_dummy</span><span class="p">,</span>
 </span><span id="AsservissementRollingBasis-72"><a href="#AsservissementRollingBasis-72"><span class="linenos"> 72</span></a>        <span class="p">)</span>
 </span><span id="AsservissementRollingBasis-73"><a href="#AsservissementRollingBasis-73"><span class="linenos"> 73</span></a>
 </span><span id="AsservissementRollingBasis-74"><a href="#AsservissementRollingBasis-74"><span class="linenos"> 74</span></a>        <span class="c1"># PID controllers</span>
@@ -838,7 +838,7 @@
 </span><span id="AsservissementRollingBasis-277"><a href="#AsservissementRollingBasis-277"><span class="linenos">277</span></a>
 </span><span id="AsservissementRollingBasis-278"><a href="#AsservissementRollingBasis-278"><span class="linenos">278</span></a>    <span class="nd">@log</span><span class="p">(</span>
 </span><span id="AsservissementRollingBasis-279"><a href="#AsservissementRollingBasis-279"><span class="linenos">279</span></a>        <span class="n">param_logger</span><span class="o">=</span><span class="s2">&quot;RollingBasis&quot;</span><span class="p">,</span>
-</span><span id="AsservissementRollingBasis-280"><a href="#AsservissementRollingBasis-280"><span class="linenos">280</span></a>        <span class="n">log_level</span><span class="o">=</span><span class="n">LogLevels</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+</span><span id="AsservissementRollingBasis-280"><a href="#AsservissementRollingBasis-280"><span class="linenos">280</span></a>        <span class="n">log_level</span><span class="o">=</span><span class="n">LogLevels</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
 </span><span id="AsservissementRollingBasis-281"><a href="#AsservissementRollingBasis-281"><span class="linenos">281</span></a>    <span class="p">)</span>
 </span><span id="AsservissementRollingBasis-282"><a href="#AsservissementRollingBasis-282"><span class="linenos">282</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_send_pid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pid</span><span class="p">:</span> <span class="n">PID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="AsservissementRollingBasis-283"><a href="#AsservissementRollingBasis-283"><span class="linenos">283</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Internal method to send PID configuration data to the Teensy.</span>
@@ -1085,8 +1085,8 @@ Automatically logs target vs actual odometry on each send.</p>
 </span><span id="AsservissementRollingBasis.__init__-67"><a href="#AsservissementRollingBasis.__init__-67"><span class="linenos">67</span></a>            <span class="n">vid</span><span class="p">,</span>
 </span><span id="AsservissementRollingBasis.__init__-68"><a href="#AsservissementRollingBasis.__init__-68"><span class="linenos">68</span></a>            <span class="n">pid</span><span class="p">,</span>
 </span><span id="AsservissementRollingBasis.__init__-69"><a href="#AsservissementRollingBasis.__init__-69"><span class="linenos">69</span></a>            <span class="n">baudrate</span><span class="p">,</span>
-</span><span id="AsservissementRollingBasis.__init__-70"><a href="#AsservissementRollingBasis.__init__-70"><span class="linenos">70</span></a>            <span class="n">enable_crc</span><span class="p">,</span>
-</span><span id="AsservissementRollingBasis.__init__-71"><a href="#AsservissementRollingBasis.__init__-71"><span class="linenos">71</span></a>            <span class="n">enable_dummy</span><span class="p">,</span>
+</span><span id="AsservissementRollingBasis.__init__-70"><a href="#AsservissementRollingBasis.__init__-70"><span class="linenos">70</span></a>            <span class="n">enable_crc</span><span class="o">=</span><span class="n">enable_crc</span><span class="p">,</span>
+</span><span id="AsservissementRollingBasis.__init__-71"><a href="#AsservissementRollingBasis.__init__-71"><span class="linenos">71</span></a>            <span class="n">enable_dummy</span><span class="o">=</span><span class="n">enable_dummy</span><span class="p">,</span>
 </span><span id="AsservissementRollingBasis.__init__-72"><a href="#AsservissementRollingBasis.__init__-72"><span class="linenos">72</span></a>        <span class="p">)</span>
 </span><span id="AsservissementRollingBasis.__init__-73"><a href="#AsservissementRollingBasis.__init__-73"><span class="linenos">73</span></a>
 </span><span id="AsservissementRollingBasis.__init__-74"><a href="#AsservissementRollingBasis.__init__-74"><span class="linenos">74</span></a>        <span class="c1"># PID controllers</span>
@@ -1817,8 +1817,8 @@ single dictionary with keys 'kp', 'ki', 'kd'.</li>
 </span><span id="RollingBasis-59"><a href="#RollingBasis-59"><span class="linenos"> 59</span></a>            <span class="n">vid</span><span class="p">,</span>
 </span><span id="RollingBasis-60"><a href="#RollingBasis-60"><span class="linenos"> 60</span></a>            <span class="n">pid</span><span class="p">,</span>
 </span><span id="RollingBasis-61"><a href="#RollingBasis-61"><span class="linenos"> 61</span></a>            <span class="n">baudrate</span><span class="p">,</span>
-</span><span id="RollingBasis-62"><a href="#RollingBasis-62"><span class="linenos"> 62</span></a>            <span class="n">enable_crc</span><span class="p">,</span>
-</span><span id="RollingBasis-63"><a href="#RollingBasis-63"><span class="linenos"> 63</span></a>            <span class="n">enable_dummy</span><span class="p">,</span>
+</span><span id="RollingBasis-62"><a href="#RollingBasis-62"><span class="linenos"> 62</span></a>            <span class="n">enable_crc</span><span class="o">=</span><span class="n">enable_crc</span><span class="p">,</span>
+</span><span id="RollingBasis-63"><a href="#RollingBasis-63"><span class="linenos"> 63</span></a>            <span class="n">enable_dummy</span><span class="o">=</span><span class="n">enable_dummy</span><span class="p">,</span>
 </span><span id="RollingBasis-64"><a href="#RollingBasis-64"><span class="linenos"> 64</span></a>        <span class="p">)</span>
 </span><span id="RollingBasis-65"><a href="#RollingBasis-65"><span class="linenos"> 65</span></a>
 </span><span id="RollingBasis-66"><a href="#RollingBasis-66"><span class="linenos"> 66</span></a>        <span class="c1"># Robot state</span>
@@ -1926,7 +1926,7 @@ single dictionary with keys 'kp', 'ki', 'kd'.</li>
 </span><span id="RollingBasis-168"><a href="#RollingBasis-168"><span class="linenos">168</span></a>
 </span><span id="RollingBasis-169"><a href="#RollingBasis-169"><span class="linenos">169</span></a>    <span class="nd">@log</span><span class="p">(</span>
 </span><span id="RollingBasis-170"><a href="#RollingBasis-170"><span class="linenos">170</span></a>        <span class="n">param_logger</span><span class="o">=</span><span class="s2">&quot;RollingBasis&quot;</span><span class="p">,</span>
-</span><span id="RollingBasis-171"><a href="#RollingBasis-171"><span class="linenos">171</span></a>        <span class="n">log_level</span><span class="o">=</span><span class="n">LogLevels</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+</span><span id="RollingBasis-171"><a href="#RollingBasis-171"><span class="linenos">171</span></a>        <span class="n">log_level</span><span class="o">=</span><span class="n">LogLevels</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
 </span><span id="RollingBasis-172"><a href="#RollingBasis-172"><span class="linenos">172</span></a>    <span class="p">)</span>
 </span><span id="RollingBasis-173"><a href="#RollingBasis-173"><span class="linenos">173</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_send_pid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">pid</span><span class="p">:</span> <span class="n">PID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="RollingBasis-174"><a href="#RollingBasis-174"><span class="linenos">174</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Internal method to send PID configuration data to the Teensy.</span>
@@ -2164,8 +2164,8 @@ specific to the robot's state, PID configuration, and message messaging.</p>
 </span><span id="RollingBasis.__init__-59"><a href="#RollingBasis.__init__-59"><span class="linenos">59</span></a>            <span class="n">vid</span><span class="p">,</span>
 </span><span id="RollingBasis.__init__-60"><a href="#RollingBasis.__init__-60"><span class="linenos">60</span></a>            <span class="n">pid</span><span class="p">,</span>
 </span><span id="RollingBasis.__init__-61"><a href="#RollingBasis.__init__-61"><span class="linenos">61</span></a>            <span class="n">baudrate</span><span class="p">,</span>
-</span><span id="RollingBasis.__init__-62"><a href="#RollingBasis.__init__-62"><span class="linenos">62</span></a>            <span class="n">enable_crc</span><span class="p">,</span>
-</span><span id="RollingBasis.__init__-63"><a href="#RollingBasis.__init__-63"><span class="linenos">63</span></a>            <span class="n">enable_dummy</span><span class="p">,</span>
+</span><span id="RollingBasis.__init__-62"><a href="#RollingBasis.__init__-62"><span class="linenos">62</span></a>            <span class="n">enable_crc</span><span class="o">=</span><span class="n">enable_crc</span><span class="p">,</span>
+</span><span id="RollingBasis.__init__-63"><a href="#RollingBasis.__init__-63"><span class="linenos">63</span></a>            <span class="n">enable_dummy</span><span class="o">=</span><span class="n">enable_dummy</span><span class="p">,</span>
 </span><span id="RollingBasis.__init__-64"><a href="#RollingBasis.__init__-64"><span class="linenos">64</span></a>        <span class="p">)</span>
 </span><span id="RollingBasis.__init__-65"><a href="#RollingBasis.__init__-65"><span class="linenos">65</span></a>
 </span><span id="RollingBasis.__init__-66"><a href="#RollingBasis.__init__-66"><span class="linenos">66</span></a>        <span class="c1"># Robot state</span>

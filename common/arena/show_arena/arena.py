@@ -26,7 +26,7 @@ class ShowArena(BaseArena):
     def __init__(
         self,
         logger: Logger,
-        grid_manager_logger: Logger,
+        grid_manager_logger: Logger | None,
         border_buffer: float,
         obstacle_buffer: float,
         chunk_size: int = 2,
@@ -39,7 +39,7 @@ class ShowArena(BaseArena):
 
         Args:
             logger (Logger): Logger used for zone loggers.
-            grid_manager_logger (Logger): Logger for the grid manager.
+            grid_manager_logger (Logger | None): Logger for the grid manager.
             border_buffer (float): Arena border safety buffer.
             obstacle_buffer (float): Margin around obstacles.
             chunk_size (int): Size of grid chunks in centimeters.
@@ -422,29 +422,17 @@ class ShowArena(BaseArena):
             ),
         )
 
-        if grid_manager_logger:
-            super().__init__(
-                logger,
-                width=300,
-                height=200,
-                border_buffer=border_buffer,
-                obstacle_buffer=obstacle_buffer,
-                zones=zones,
-                chunk_size=chunk_size,
-                forbidden_cover_threshold=forbidden_cover_threshold,
-                grid_manager_logger=grid_manager_logger,
-            )
-        else:
-            super().__init__(
-                logger,
-                width=300,
-                height=200,
-                border_buffer=border_buffer,
-                obstacle_buffer=obstacle_buffer,
-                zones=zones,
-                chunk_size=chunk_size,
-                forbidden_cover_threshold=forbidden_cover_threshold,
-            )
+        super().__init__(
+            logger,
+            width=300,
+            height=200,
+            border_buffer=border_buffer,
+            obstacle_buffer=obstacle_buffer,
+            zones=zones,
+            chunk_size=chunk_size,
+            forbidden_cover_threshold=forbidden_cover_threshold,
+            grid_manager_logger=grid_manager_logger,
+        )
 
         self.logger.info("ShowArena initialized.")
         self.logger.debug(f"Width: {self.width}, Height: {self.height}")

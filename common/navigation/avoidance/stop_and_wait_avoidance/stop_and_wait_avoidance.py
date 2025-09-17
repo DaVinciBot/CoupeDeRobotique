@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import (
+    TYPE_CHECKING,
+    cast,
+)
 
 from navigation.avoidance.base_avoidance import AvoidanceState, BaseAvoidance
 from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params import (  # noqa: E501
@@ -12,8 +15,13 @@ from navigation.navigator.task.states import NavigatorTaskState
 from navigation.trajectory_planner import TrajectoryPlanCommand
 
 if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
     from arena.base_arena.arena_zones import AllyZone, EnemyZone
     from geometry import OrientedPoint
+    from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles.base_acs_detection_profiles_params import (  # noqa: E501
+        BaseAcsDetectionProfileParams,
+    )
     from navigation.navigator.task import NavigatorTask
     from navigation.path_planner.base_path_planner import BasePathPlannerPlanPathParams
 
@@ -25,6 +33,24 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
     a timeout, it replans a trajectory from its current position. Otherwise the
     avoidance procedure is aborted.
     """
+
+    def __init__(
+        self,
+        params: StopAndWaitAvoidanceParams,
+        acs_detection_profile_params: BaseAcsDetectionProfileParams,
+        logger: Logger | None = None,
+    ) -> None:
+        """Initialize the stop-and-wait avoidance class.
+
+        Args:
+            params (StopAndWaitAvoidanceParams): Parameters for the avoidance strategy.
+            acs_detection_profile_params (BaseAcsDetectionProfileParams):
+                Parameters for the ACS detection profile.
+            logger (Logger | None, optional): Logger instance for debugging.
+                Defaults to ``None``.
+        """
+        super().__init__(params, acs_detection_profile_params, logger)
+        self.state: AvoidanceState = AvoidanceState.IDLE
 
     @BaseAvoidance.ensure_original_task_storage
     def handle(

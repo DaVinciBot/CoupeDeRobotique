@@ -80,24 +80,31 @@ class ActuatorsShowDummy(ActuatorsShow):
             f" speed={speed}, disable_driver={disable_driver}",
         )
 
+    @override
     @log("DummyActuatorsShow")
     def set_servo_angle(
         self,
         pin: int,
         angle: int,
+        min_angle: int = 0,
         max_angle: int = 180,
         *,
         detach: bool = False,
         detach_delay: int = 1000,
+        use_i2c: bool = False,
     ) -> None:
         """Simulate setting the servo angle.
 
         Args:
             pin (int): Servo pin number.
             angle (int): Desired angle in degrees.
+            min_angle (int, optional):
+                The minimum angle allowed for the servo. Defaults to 0.
             max_angle (int): Maximum allowed angle.
             detach (bool): Detach the servo after moving if ``True``.
             detach_delay (int): Delay before detaching in milliseconds.
+            use_i2c (bool): Whether to use I2C communication (not applicable here).
+                Defaults to ``False``.
         """
         # Check if pin is valid; if not, log and return
         if not self._check_pin(pin):

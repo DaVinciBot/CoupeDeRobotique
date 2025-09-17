@@ -8,12 +8,8 @@ from strategy.core import BaseGameContext
 
 if TYPE_CHECKING:
     from arena.show_arena import ShowArena
-    from controllers import (
-        ActuatorsShow,
-        ActuatorsShowDummy,
-        RollingBasis,
-        RollingBasisDummy,
-    )
+    from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
+    from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 
 
 class ShowGameContext(BaseGameContext):

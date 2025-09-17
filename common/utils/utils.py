@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from shapely import Geometry, Point
+from shapely import MultiPoint, Point
 
 
 class Utils:
@@ -54,32 +54,28 @@ class Utils:
         return Utils.get_ts() - ts
 
     @staticmethod
-    def geom_to_str(geom: Geometry) -> str:
+    def geom_to_str(geom: MultiPoint | Point) -> str:
         """Convert a Geometry object to a string representation.
 
         Args:
-            geom (Geometry): The geometry object to convert.
+            geom (MultiPoint | Point): The geometry object to convert.
 
         Returns:
             str: The string representation of the geometry.
         """
         r = ""
         if isinstance(geom, Point):
-            r = str((round(geom.x), round(geom.y)))
+            return str((round(geom.x), round(geom.y)))
 
-        else:
-            try:
-                r = (
-                    "["
-                    + ", ".join(
-                        [
-                            Utils.geom_to_str(smaller_geom)
-                            for smaller_geom in geom.geoms
-                        ],
-                    )
-                    + "]"
+        try:
+            r = (
+                "["
+                + ", ".join(
+                    [Utils.geom_to_str(smaller_geom) for smaller_geom in geom.geoms],
                 )
-            except Exception:  # noqa: BLE001
-                r = str(geom)
+                + "]"
+            )
+        except Exception:  # noqa: BLE001
+            r = str(geom)
 
         return r

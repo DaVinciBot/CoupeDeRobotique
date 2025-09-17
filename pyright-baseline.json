@@ -1,6 +1,6 @@
 {
     "version": "1.1.405",
-    "time": "1758076090103",
+    "time": "1758119253990",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\arena_old.py",
@@ -53,46 +53,14 @@
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\base_arena_zone.py",
             "severity": "error",
-            "message": "Cannot assign to attribute \"polygon\" for class \"BaseArenaZone*\"\n  Type \"Polygon | None\" is not assignable to type \"Polygon\"\n    \"None\" is not assignable to \"Polygon\"",
-            "range": {
-                "start": {
-                    "line": 79,
-                    "character": 32
-                },
-                "end": {
-                    "line": 79,
-                    "character": 39
-                }
-            },
-            "rule": "reportAttributeAccessIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\base_arena_zone.py",
-            "severity": "error",
-            "message": "Cannot assign to attribute \"buffered_polygon\" for class \"BaseArenaZone*\"\n  Type \"Polygon | None\" is not assignable to type \"Polygon\"\n    \"None\" is not assignable to \"Polygon\"",
-            "range": {
-                "start": {
-                    "line": 80,
-                    "character": 41
-                },
-                "end": {
-                    "line": 80,
-                    "character": 57
-                }
-            },
-            "rule": "reportAttributeAccessIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\arena_zones\\base_arena_zone.py",
-            "severity": "error",
             "message": "Object of type \"None\" cannot be called",
             "range": {
                 "start": {
-                    "line": 237,
+                    "line": 245,
                     "character": 36
                 },
                 "end": {
-                    "line": 237,
+                    "line": 245,
                     "character": 58
                 }
             },
@@ -147,38 +115,6 @@
             "rule": "reportIndexIssue"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager.py",
-            "severity": "warning",
-            "message": "Type analysis indicates code is unreachable",
-            "range": {
-                "start": {
-                    "line": 373,
-                    "character": 12
-                },
-                "end": {
-                    "line": 373,
-                    "character": 27
-                }
-            },
-            "rule": "reportUnreachable"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
-            "severity": "warning",
-            "message": "Import \"old_logger\" could not be resolved",
-            "range": {
-                "start": {
-                    "line": 8,
-                    "character": 5
-                },
-                "end": {
-                    "line": 8,
-                    "character": 15
-                }
-            },
-            "rule": "reportMissingImports"
-        },
-        {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\base_arena\\grid_manager_2.py",
             "severity": "error",
             "message": "\"__getitem__\" method not defined on type \"GridNode\"",
@@ -193,22 +129,6 @@
                 }
             },
             "rule": "reportIndexIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\show_arena\\arena.py",
-            "severity": "warning",
-            "message": "Type analysis indicates code is unreachable",
-            "range": {
-                "start": {
-                    "line": 435,
-                    "character": 12
-                },
-                "end": {
-                    "line": 435,
-                    "character": 17
-                }
-            },
-            "rule": "reportUnreachable"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\geometry\\oriented_point.py",
@@ -259,22 +179,6 @@
             "rule": "reportArgumentType"
         },
         {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\utils\\utils.py",
-            "severity": "error",
-            "message": "Cannot access attribute \"geoms\" for class \"Geometry\"\n  Attribute \"geoms\" is unknown",
-            "range": {
-                "start": {
-                    "line": 76,
-                    "character": 53
-                },
-                "end": {
-                    "line": 76,
-                    "character": 58
-                }
-            },
-            "rule": "reportAttributeAccessIssue"
-        },
-        {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
             "severity": "error",
             "message": "Type \"OrientedPoint | Point | None\" is not assignable to declared type \"OrientedPoint\"\n  Type \"OrientedPoint | Point | None\" is not assignable to type \"OrientedPoint\"\n    \"Point\" is not assignable to \"OrientedPoint\"",
@@ -289,70 +193,6 @@
                 }
             },
             "rule": "reportAssignmentType"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\boombot_strategy\\tasks\\navigation_tasks\\maneuver.py",
-            "severity": "error",
-            "message": "\"navigator_task\" overrides symbol of same name in class \"BaseNavigationTask\"\n  Variable is mutable so its type is invariant\n    Override type \"NavigatorTask | None\" is not the same as base type \"NavigatorTask\"",
-            "range": {
-                "start": {
-                    "line": 118,
-                    "character": 13
-                },
-                "end": {
-                    "line": 118,
-                    "character": 27
-                }
-            },
-            "rule": "reportIncompatibleVariableOverride"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\brains\\main_brain.py",
-            "severity": "error",
-            "message": "\"handle\" is not a known attribute of \"None\"",
-            "range": {
-                "start": {
-                    "line": 141,
-                    "character": 24
-                },
-                "end": {
-                    "line": 141,
-                    "character": 30
-                }
-            },
-            "rule": "reportOptionalMemberAccess"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\asservissment_rolling_basis.py",
-            "severity": "error",
-            "message": "Expected 5 positional arguments",
-            "range": {
-                "start": {
-                    "line": 68,
-                    "character": 12
-                },
-                "end": {
-                    "line": 68,
-                    "character": 22
-                }
-            },
-            "rule": "reportCallIssue"
-        },
-        {
-            "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\controllers\\rolling_basis\\rolling_basis.py",
-            "severity": "error",
-            "message": "Expected 5 positional arguments",
-            "range": {
-                "start": {
-                    "line": 60,
-                    "character": 12
-                },
-                "end": {
-                    "line": 60,
-                    "character": 22
-                }
-            },
-            "rule": "reportCallIssue"
         },
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\robot1\\rasp\\sensors\\lidar\\lidar.py",
@@ -516,11 +356,11 @@
         }
     ],
     "summary": {
-        "filesAnalyzed": 219,
-        "errorCount": 26,
-        "warningCount": 6,
-        "informationCount": 107,
-        "timeInSec": 22.539
+        "filesAnalyzed": 222,
+        "errorCount": 19,
+        "warningCount": 3,
+        "informationCount": 103,
+        "timeInSec": 31.622
     }
 }
 

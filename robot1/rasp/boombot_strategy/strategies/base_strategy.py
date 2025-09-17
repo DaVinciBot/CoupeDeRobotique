@@ -32,7 +32,7 @@ class BaseStrategy(ABC):
         """
         self.zones = CONFIG.INFO_BY_TEAM[ctx.arena.team_color.value]
         self.strategy = SubGraphBuilder()
-        self.runner: GraphRunner | None = None
+        self.runner: GraphRunner
         self.logger = Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
@@ -46,7 +46,7 @@ class BaseStrategy(ABC):
         Raises:
             RuntimeError: If the strategy graph has not been built yet.
         """
-        if self.runner is None:
+        if not self.runner:
             msg = "Strategy graph has not been built yet."
             self.logger.error(f"No active graph to visualize. {msg}")
             raise RuntimeError(msg)
@@ -61,7 +61,7 @@ class BaseStrategy(ABC):
         Raises:
             RuntimeError: If the strategy graph has not been built yet.
         """
-        if self.runner is None:
+        if not self.runner:
             msg = "Strategy graph has not been built yet."
             self.logger.error(f"No active graph to retrieve. {msg}")
             raise RuntimeError(msg)

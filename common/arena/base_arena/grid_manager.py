@@ -370,9 +370,6 @@ class GridManager:
         Args:
             forbidden_zones (list[Polygon]): Dynamic zones to add or update.
         """
-        if not isinstance(forbidden_zones, list):
-            forbidden_zones = [forbidden_zones]
-
         self.not_updated_forbidden_zones.extend(forbidden_zones)
         self.__update_grid(update_dynamic_zones=True)
 

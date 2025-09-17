@@ -58,8 +58,8 @@ class RollingBasis(BaseComTeensy):
             vid,
             pid,
             baudrate,
-            enable_crc,
-            enable_dummy,
+            enable_crc=enable_crc,
+            enable_dummy=enable_dummy,
         )
 
         # Robot state

@@ -66,8 +66,8 @@ class AsservissementRollingBasis(BaseComTeensy):
             vid,
             pid,
             baudrate,
-            enable_crc,
-            enable_dummy,
+            enable_crc=enable_crc,
+            enable_dummy=enable_dummy,
         )
 
         # PID controllers

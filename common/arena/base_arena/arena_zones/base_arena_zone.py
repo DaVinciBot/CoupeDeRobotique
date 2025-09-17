@@ -64,6 +64,9 @@ class BaseArenaZone(ABC):
                 List of go-to positions within the zone. Defaults to None.
             uid (int | None, optional):
                 Unique identifier for the zone instance. Defaults to None.
+
+        Raises:
+            ValueError: If neither polygon nor buffered_polygon is provided.
         """
         self.logger: Logger = logger
         self.zone_type: ZoneType = zone_type
@@ -71,10 +74,15 @@ class BaseArenaZone(ABC):
 
         if polygon is None and buffered_polygon is None:
             self.logger.error("No polygon provided for zone")
-        elif polygon is not None and buffered_polygon is None:
+            msg = "At least one of polygon or buffered_polygon must be provided"
+            raise ValueError(msg)
+        if polygon is not None and buffered_polygon is None:
             buffered_polygon = self.add_buffer_to_zone(polygon, buffer_size)
         elif polygon is None and buffered_polygon is not None:
             polygon = self.add_buffer_to_zone(buffered_polygon, -buffer_size)
+
+        assert polygon is not None, "Polygon should be defined here"  # noqa: S101
+        assert buffered_polygon is not None, "Buffered polygon should be defined here"  # noqa: S101
 
         self.buffer_size: float = buffer_size
         self.polygon: Polygon = polygon

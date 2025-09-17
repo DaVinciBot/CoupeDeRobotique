@@ -15,11 +15,11 @@ common\navigation\debug_functions\trajectory_planer.py:
 common\navigation\trajectory_planner\speed_profile\__init__.py:
   16:1 ERA001 Found commented-out code
 
-robot1\rasp\a_config_loader.py:
+robot1\rasp\a_config_loader\config_loader.py:
   161:89 E501 Line too long (93 > 88)
   163:89 E501 Line too long (91 > 88)
-  380:89 E501 Line too long (132 > 88)
-  383:89 E501 Line too long (130 > 88)
+  382:89 E501 Line too long (132 > 88)
+  385:89 E501 Line too long (130 > 88)
 
 robot1\rasp\boombot_strategy\strategies\basic_strategy.py:
   57:9 ERA001 Found commented-out code
@@ -28,14 +28,14 @@ robot1\rasp\boombot_strategy\strategies\basic_strategy.py:
   62:9 ERA001 Found commented-out code
 
 robot1\rasp\brains\main_brain.py:
-  131:9  ERA001 Found commented-out code
   132:9  ERA001 Found commented-out code
-  167:13 ERA001 Found commented-out code
-  174:13 ERA001 Found commented-out code
+  133:9  ERA001 Found commented-out code
+  168:13 ERA001 Found commented-out code
   175:13 ERA001 Found commented-out code
-  254:13 ERA001 Found commented-out code
-  259:5  ERA001 Found commented-out code
-  293:9  ERA001 Found commented-out code
+  176:13 ERA001 Found commented-out code
+  255:13 ERA001 Found commented-out code
+  260:5  ERA001 Found commented-out code
+  294:9  ERA001 Found commented-out code
 
 robot1\rasp\controllers\actuators\actuators_show.py:
   455:5 ERA001 Found commented-out code

@@ -143,35 +143,31 @@
 </span><span id="Utils-55"><a href="#Utils-55"><span class="linenos">55</span></a>        <span class="k">return</span> <span class="n">Utils</span><span class="o">.</span><span class="n">get_ts</span><span class="p">()</span> <span class="o">-</span> <span class="n">ts</span>
 </span><span id="Utils-56"><a href="#Utils-56"><span class="linenos">56</span></a>
 </span><span id="Utils-57"><a href="#Utils-57"><span class="linenos">57</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="Utils-58"><a href="#Utils-58"><span class="linenos">58</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">geom_to_str</span><span class="p">(</span><span class="n">geom</span><span class="p">:</span> <span class="n">Geometry</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Utils-58"><a href="#Utils-58"><span class="linenos">58</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">geom_to_str</span><span class="p">(</span><span class="n">geom</span><span class="p">:</span> <span class="n">MultiPoint</span> <span class="o">|</span> <span class="n">Point</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="Utils-59"><a href="#Utils-59"><span class="linenos">59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a Geometry object to a string representation.</span>
 </span><span id="Utils-60"><a href="#Utils-60"><span class="linenos">60</span></a>
 </span><span id="Utils-61"><a href="#Utils-61"><span class="linenos">61</span></a><span class="sd">        Args:</span>
-</span><span id="Utils-62"><a href="#Utils-62"><span class="linenos">62</span></a><span class="sd">            geom (Geometry): The geometry object to convert.</span>
+</span><span id="Utils-62"><a href="#Utils-62"><span class="linenos">62</span></a><span class="sd">            geom (MultiPoint | Point): The geometry object to convert.</span>
 </span><span id="Utils-63"><a href="#Utils-63"><span class="linenos">63</span></a>
 </span><span id="Utils-64"><a href="#Utils-64"><span class="linenos">64</span></a><span class="sd">        Returns:</span>
 </span><span id="Utils-65"><a href="#Utils-65"><span class="linenos">65</span></a><span class="sd">            str: The string representation of the geometry.</span>
 </span><span id="Utils-66"><a href="#Utils-66"><span class="linenos">66</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="Utils-67"><a href="#Utils-67"><span class="linenos">67</span></a>        <span class="n">r</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 </span><span id="Utils-68"><a href="#Utils-68"><span class="linenos">68</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
-</span><span id="Utils-69"><a href="#Utils-69"><span class="linenos">69</span></a>            <span class="n">r</span> <span class="o">=</span> <span class="nb">str</span><span class="p">((</span><span class="nb">round</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">y</span><span class="p">)))</span>
+</span><span id="Utils-69"><a href="#Utils-69"><span class="linenos">69</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">((</span><span class="nb">round</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">y</span><span class="p">)))</span>
 </span><span id="Utils-70"><a href="#Utils-70"><span class="linenos">70</span></a>
-</span><span id="Utils-71"><a href="#Utils-71"><span class="linenos">71</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Utils-72"><a href="#Utils-72"><span class="linenos">72</span></a>            <span class="k">try</span><span class="p">:</span>
-</span><span id="Utils-73"><a href="#Utils-73"><span class="linenos">73</span></a>                <span class="n">r</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="Utils-74"><a href="#Utils-74"><span class="linenos">74</span></a>                    <span class="s2">&quot;[&quot;</span>
-</span><span id="Utils-75"><a href="#Utils-75"><span class="linenos">75</span></a>                    <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-</span><span id="Utils-76"><a href="#Utils-76"><span class="linenos">76</span></a>                        <span class="p">[</span>
-</span><span id="Utils-77"><a href="#Utils-77"><span class="linenos">77</span></a>                            <span class="n">Utils</span><span class="o">.</span><span class="n">geom_to_str</span><span class="p">(</span><span class="n">smaller_geom</span><span class="p">)</span>
-</span><span id="Utils-78"><a href="#Utils-78"><span class="linenos">78</span></a>                            <span class="k">for</span> <span class="n">smaller_geom</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">geoms</span>
-</span><span id="Utils-79"><a href="#Utils-79"><span class="linenos">79</span></a>                        <span class="p">],</span>
-</span><span id="Utils-80"><a href="#Utils-80"><span class="linenos">80</span></a>                    <span class="p">)</span>
-</span><span id="Utils-81"><a href="#Utils-81"><span class="linenos">81</span></a>                    <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
-</span><span id="Utils-82"><a href="#Utils-82"><span class="linenos">82</span></a>                <span class="p">)</span>
-</span><span id="Utils-83"><a href="#Utils-83"><span class="linenos">83</span></a>            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-</span><span id="Utils-84"><a href="#Utils-84"><span class="linenos">84</span></a>                <span class="n">r</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
-</span><span id="Utils-85"><a href="#Utils-85"><span class="linenos">85</span></a>
-</span><span id="Utils-86"><a href="#Utils-86"><span class="linenos">86</span></a>        <span class="k">return</span> <span class="n">r</span>
+</span><span id="Utils-71"><a href="#Utils-71"><span class="linenos">71</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="Utils-72"><a href="#Utils-72"><span class="linenos">72</span></a>            <span class="n">r</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="Utils-73"><a href="#Utils-73"><span class="linenos">73</span></a>                <span class="s2">&quot;[&quot;</span>
+</span><span id="Utils-74"><a href="#Utils-74"><span class="linenos">74</span></a>                <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+</span><span id="Utils-75"><a href="#Utils-75"><span class="linenos">75</span></a>                    <span class="p">[</span><span class="n">Utils</span><span class="o">.</span><span class="n">geom_to_str</span><span class="p">(</span><span class="n">smaller_geom</span><span class="p">)</span> <span class="k">for</span> <span class="n">smaller_geom</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">geoms</span><span class="p">],</span>
+</span><span id="Utils-76"><a href="#Utils-76"><span class="linenos">76</span></a>                <span class="p">)</span>
+</span><span id="Utils-77"><a href="#Utils-77"><span class="linenos">77</span></a>                <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+</span><span id="Utils-78"><a href="#Utils-78"><span class="linenos">78</span></a>            <span class="p">)</span>
+</span><span id="Utils-79"><a href="#Utils-79"><span class="linenos">79</span></a>        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
+</span><span id="Utils-80"><a href="#Utils-80"><span class="linenos">80</span></a>            <span class="n">r</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
+</span><span id="Utils-81"><a href="#Utils-81"><span class="linenos">81</span></a>
+</span><span id="Utils-82"><a href="#Utils-82"><span class="linenos">82</span></a>        <span class="k">return</span> <span class="n">r</span>
 </span></pre></div>
 
 
@@ -340,42 +336,38 @@
                     <div class="decorator decorator-staticmethod">@staticmethod</div>
 
         <span class="def">def</span>
-        <span class="name">geom_to_str</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">geom</span><span class="p">:</span> <span class="n">shapely</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">Geometry</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+        <span class="name">geom_to_str</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">geom</span><span class="p">:</span> <span class="n">shapely</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">multipoint</span><span class="o">.</span><span class="n">MultiPoint</span> <span class="o">|</span> <span class="n">shapely</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">Point</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
 
                 <label class="view-source-button" for="Utils.geom_to_str-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#Utils.geom_to_str"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="Utils.geom_to_str-57"><a href="#Utils.geom_to_str-57"><span class="linenos">57</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="Utils.geom_to_str-58"><a href="#Utils.geom_to_str-58"><span class="linenos">58</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">geom_to_str</span><span class="p">(</span><span class="n">geom</span><span class="p">:</span> <span class="n">Geometry</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="Utils.geom_to_str-58"><a href="#Utils.geom_to_str-58"><span class="linenos">58</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">geom_to_str</span><span class="p">(</span><span class="n">geom</span><span class="p">:</span> <span class="n">MultiPoint</span> <span class="o">|</span> <span class="n">Point</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="Utils.geom_to_str-59"><a href="#Utils.geom_to_str-59"><span class="linenos">59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a Geometry object to a string representation.</span>
 </span><span id="Utils.geom_to_str-60"><a href="#Utils.geom_to_str-60"><span class="linenos">60</span></a>
 </span><span id="Utils.geom_to_str-61"><a href="#Utils.geom_to_str-61"><span class="linenos">61</span></a><span class="sd">        Args:</span>
-</span><span id="Utils.geom_to_str-62"><a href="#Utils.geom_to_str-62"><span class="linenos">62</span></a><span class="sd">            geom (Geometry): The geometry object to convert.</span>
+</span><span id="Utils.geom_to_str-62"><a href="#Utils.geom_to_str-62"><span class="linenos">62</span></a><span class="sd">            geom (MultiPoint | Point): The geometry object to convert.</span>
 </span><span id="Utils.geom_to_str-63"><a href="#Utils.geom_to_str-63"><span class="linenos">63</span></a>
 </span><span id="Utils.geom_to_str-64"><a href="#Utils.geom_to_str-64"><span class="linenos">64</span></a><span class="sd">        Returns:</span>
 </span><span id="Utils.geom_to_str-65"><a href="#Utils.geom_to_str-65"><span class="linenos">65</span></a><span class="sd">            str: The string representation of the geometry.</span>
 </span><span id="Utils.geom_to_str-66"><a href="#Utils.geom_to_str-66"><span class="linenos">66</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="Utils.geom_to_str-67"><a href="#Utils.geom_to_str-67"><span class="linenos">67</span></a>        <span class="n">r</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 </span><span id="Utils.geom_to_str-68"><a href="#Utils.geom_to_str-68"><span class="linenos">68</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">Point</span><span class="p">):</span>
-</span><span id="Utils.geom_to_str-69"><a href="#Utils.geom_to_str-69"><span class="linenos">69</span></a>            <span class="n">r</span> <span class="o">=</span> <span class="nb">str</span><span class="p">((</span><span class="nb">round</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">y</span><span class="p">)))</span>
+</span><span id="Utils.geom_to_str-69"><a href="#Utils.geom_to_str-69"><span class="linenos">69</span></a>            <span class="k">return</span> <span class="nb">str</span><span class="p">((</span><span class="nb">round</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">x</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">y</span><span class="p">)))</span>
 </span><span id="Utils.geom_to_str-70"><a href="#Utils.geom_to_str-70"><span class="linenos">70</span></a>
-</span><span id="Utils.geom_to_str-71"><a href="#Utils.geom_to_str-71"><span class="linenos">71</span></a>        <span class="k">else</span><span class="p">:</span>
-</span><span id="Utils.geom_to_str-72"><a href="#Utils.geom_to_str-72"><span class="linenos">72</span></a>            <span class="k">try</span><span class="p">:</span>
-</span><span id="Utils.geom_to_str-73"><a href="#Utils.geom_to_str-73"><span class="linenos">73</span></a>                <span class="n">r</span> <span class="o">=</span> <span class="p">(</span>
-</span><span id="Utils.geom_to_str-74"><a href="#Utils.geom_to_str-74"><span class="linenos">74</span></a>                    <span class="s2">&quot;[&quot;</span>
-</span><span id="Utils.geom_to_str-75"><a href="#Utils.geom_to_str-75"><span class="linenos">75</span></a>                    <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-</span><span id="Utils.geom_to_str-76"><a href="#Utils.geom_to_str-76"><span class="linenos">76</span></a>                        <span class="p">[</span>
-</span><span id="Utils.geom_to_str-77"><a href="#Utils.geom_to_str-77"><span class="linenos">77</span></a>                            <span class="n">Utils</span><span class="o">.</span><span class="n">geom_to_str</span><span class="p">(</span><span class="n">smaller_geom</span><span class="p">)</span>
-</span><span id="Utils.geom_to_str-78"><a href="#Utils.geom_to_str-78"><span class="linenos">78</span></a>                            <span class="k">for</span> <span class="n">smaller_geom</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">geoms</span>
-</span><span id="Utils.geom_to_str-79"><a href="#Utils.geom_to_str-79"><span class="linenos">79</span></a>                        <span class="p">],</span>
-</span><span id="Utils.geom_to_str-80"><a href="#Utils.geom_to_str-80"><span class="linenos">80</span></a>                    <span class="p">)</span>
-</span><span id="Utils.geom_to_str-81"><a href="#Utils.geom_to_str-81"><span class="linenos">81</span></a>                    <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
-</span><span id="Utils.geom_to_str-82"><a href="#Utils.geom_to_str-82"><span class="linenos">82</span></a>                <span class="p">)</span>
-</span><span id="Utils.geom_to_str-83"><a href="#Utils.geom_to_str-83"><span class="linenos">83</span></a>            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
-</span><span id="Utils.geom_to_str-84"><a href="#Utils.geom_to_str-84"><span class="linenos">84</span></a>                <span class="n">r</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
-</span><span id="Utils.geom_to_str-85"><a href="#Utils.geom_to_str-85"><span class="linenos">85</span></a>
-</span><span id="Utils.geom_to_str-86"><a href="#Utils.geom_to_str-86"><span class="linenos">86</span></a>        <span class="k">return</span> <span class="n">r</span>
+</span><span id="Utils.geom_to_str-71"><a href="#Utils.geom_to_str-71"><span class="linenos">71</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="Utils.geom_to_str-72"><a href="#Utils.geom_to_str-72"><span class="linenos">72</span></a>            <span class="n">r</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="Utils.geom_to_str-73"><a href="#Utils.geom_to_str-73"><span class="linenos">73</span></a>                <span class="s2">&quot;[&quot;</span>
+</span><span id="Utils.geom_to_str-74"><a href="#Utils.geom_to_str-74"><span class="linenos">74</span></a>                <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+</span><span id="Utils.geom_to_str-75"><a href="#Utils.geom_to_str-75"><span class="linenos">75</span></a>                    <span class="p">[</span><span class="n">Utils</span><span class="o">.</span><span class="n">geom_to_str</span><span class="p">(</span><span class="n">smaller_geom</span><span class="p">)</span> <span class="k">for</span> <span class="n">smaller_geom</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">geoms</span><span class="p">],</span>
+</span><span id="Utils.geom_to_str-76"><a href="#Utils.geom_to_str-76"><span class="linenos">76</span></a>                <span class="p">)</span>
+</span><span id="Utils.geom_to_str-77"><a href="#Utils.geom_to_str-77"><span class="linenos">77</span></a>                <span class="o">+</span> <span class="s2">&quot;]&quot;</span>
+</span><span id="Utils.geom_to_str-78"><a href="#Utils.geom_to_str-78"><span class="linenos">78</span></a>            <span class="p">)</span>
+</span><span id="Utils.geom_to_str-79"><a href="#Utils.geom_to_str-79"><span class="linenos">79</span></a>        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: BLE001</span>
+</span><span id="Utils.geom_to_str-80"><a href="#Utils.geom_to_str-80"><span class="linenos">80</span></a>            <span class="n">r</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
+</span><span id="Utils.geom_to_str-81"><a href="#Utils.geom_to_str-81"><span class="linenos">81</span></a>
+</span><span id="Utils.geom_to_str-82"><a href="#Utils.geom_to_str-82"><span class="linenos">82</span></a>        <span class="k">return</span> <span class="n">r</span>
 </span></pre></div>
 
 
@@ -384,7 +376,7 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>geom (Geometry):</strong>  The geometry object to convert.</li>
+<li><strong>geom (MultiPoint | Point):</strong>  The geometry object to convert.</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
