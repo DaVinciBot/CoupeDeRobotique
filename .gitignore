@@ -161,7 +161,7 @@ cython_debug/
 
 # Error baselines
 pydoclint-baseline.txt
-pylin-baseline.txt
+pylint-baseline.txt
 pyright-baseline.json
 ruff-baseline.txt
 
