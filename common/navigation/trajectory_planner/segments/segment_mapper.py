@@ -6,9 +6,7 @@ import bisect
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from navigation.trajectory_planner.segments.base_segment import (
-        BaseSegment,
-    )
+    from navigation.trajectory_planner.segments.base_segment import BaseSegment
 
 
 class SegmentMapper:

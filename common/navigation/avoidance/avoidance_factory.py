@@ -24,9 +24,7 @@ if TYPE_CHECKING:
     from navigation.avoidance.back_avoidance.back_avoidance_params import (
         BackAvoidanceParams,
     )
-    from navigation.avoidance.base_avoidance.base_avoidance import (
-        BaseAvoidance,
-    )
+    from navigation.avoidance.base_avoidance.base_avoidance import BaseAvoidance
     from navigation.avoidance.base_avoidance.base_avoidance_params import (
         BaseAvoidanceParams,
     )

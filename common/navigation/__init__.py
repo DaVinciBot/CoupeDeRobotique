@@ -3,12 +3,7 @@
 This package re-exports the primary classes used by the navigation stack.
 """
 
-from navigation import (
-    avoidance,
-    navigator,
-    path_planner,
-    trajectory_planner,
-)
+from navigation import avoidance, navigator, path_planner, trajectory_planner
 
 __all__ = [
     "avoidance",

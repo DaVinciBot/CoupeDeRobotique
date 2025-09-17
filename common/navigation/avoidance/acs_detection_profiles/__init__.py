@@ -14,9 +14,7 @@ from navigation.avoidance.acs_detection_profiles import (
 from navigation.avoidance.acs_detection_profiles.acs_detection_profile_factory import (
     AcsDetectionProfileFactory,
 )
-from navigation.avoidance.acs_detection_profiles.struct import (
-    AcsDetectionProfile,
-)
+from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
 
 __all__ = [
     "AcsDetectionProfile",

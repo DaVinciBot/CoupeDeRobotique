@@ -2,6 +2,7 @@
 
 format:
 	@echo "▶ Formatage avec isort et Ruff..."
+	isort --sl .
 	isort .
 	ruff format
 

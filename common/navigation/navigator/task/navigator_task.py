@@ -6,10 +6,7 @@ import time
 from typing import TYPE_CHECKING, cast
 
 from navigation.navigator.task.states import NavigatorTaskState
-from navigation.path_planner import (
-    PathPlannerFactory,
-    PathPlannerPathPlanParamsFactory,
-)
+from navigation.path_planner import PathPlannerFactory, PathPlannerPathPlanParamsFactory
 from navigation.trajectory_planner import (
     TrajectoryPlanCommand,
     TrajectoryPlannerFactory,

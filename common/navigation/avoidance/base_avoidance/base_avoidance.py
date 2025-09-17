@@ -10,9 +10,7 @@ from typing import TYPE_CHECKING
 
 from loggerplusplus import Logger
 
-from navigation.avoidance.acs_detection_profiles import (
-    AcsDetectionProfileFactory,
-)
+from navigation.avoidance.acs_detection_profiles import AcsDetectionProfileFactory
 from navigation.avoidance.base_avoidance.base_avoidance_params import (
     BaseAvoidanceParams,
 )

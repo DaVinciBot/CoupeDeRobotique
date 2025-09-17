@@ -14,10 +14,7 @@ from strategy.core.transitions import DirectTransition
 from strategy.tools import visualize_task_graph
 
 if TYPE_CHECKING:
-    from strategy.core import (
-        BaseGameContext,
-        GraphRunner,
-    )
+    from strategy.core import BaseGameContext, GraphRunner
     from strategy.core.task_nodes import BaseTaskNode
 
 
