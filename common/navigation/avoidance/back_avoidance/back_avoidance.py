@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
-from navigation.avoidance.acs_detection_profiles import (
-    BaseAcsDetectionProfileParams,
+from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
 )
 from navigation.avoidance.back_avoidance.back_avoidance_params import (
@@ -18,19 +17,22 @@ from navigation.navigator.task import (
     NavigatorTaskParams,
     NavigatorTaskState,
 )
-from navigation.path_planner import DeltaPathPlannerParams
-from navigation.trajectory_planner import (
-    Direction,
+from navigation.path_planner import Direction
+from navigation.path_planner.delta_path_planner import DeltaPathPlannerParams
+from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
-    TrajectoryPlanCommand,
 )
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
-    from arena import AllyZone, EnemyZone
+    from arena.base_arena import AllyZone, EnemyZone
     from geometry import OrientedPoint
-    from navigation.path_planner import BasePathPlannerPlanPathParams
+    from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501
+        BaseAcsDetectionProfileParams,
+    )
+    from navigation.path_planner.base_path_planner import BasePathPlannerPlanPathParams
+    from navigation.trajectory_planner import TrajectoryPlanCommand
 
 
 class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):

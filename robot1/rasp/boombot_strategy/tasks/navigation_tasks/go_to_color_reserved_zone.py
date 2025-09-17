@@ -4,12 +4,14 @@ from __future__ import annotations
 
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
-from navigation.avoidance import StopAndWaitAvoidanceParams
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
 )
-from navigation.path_planner import BasicPathPlannerParams
-from navigation.trajectory_planner import SequentialTrajectoryPlannerParams
+from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
+from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
+from navigation.trajectory_planner.sequential_trajectory_planner import (
+    SequentialTrajectoryPlannerParams,
+)
 
 
 class GoToColorReservedZoneToFinishGame(NavigationTask):

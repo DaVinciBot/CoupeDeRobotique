@@ -312,7 +312,7 @@ class AsservissementRollingBasis(BaseComTeensy):
             ValueError: If the arguments do not match any expected format.
         """
         if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
-            pid = PID(*args)  # type: ignore[reportArgumentType]
+            pid = PID(*args)  # pyright: ignore[reportArgumentType] args are all float
         elif len(args) == 1 and isinstance(args[0], dict):
             pid = PID.from_dict(args[0])
         elif kwargs:

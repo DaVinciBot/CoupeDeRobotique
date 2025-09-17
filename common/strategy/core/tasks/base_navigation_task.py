@@ -4,21 +4,24 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from navigation.navigator import NavigatorTask, NavigatorTaskParams
+from navigation.navigator.task import NavigatorTask, NavigatorTaskParams
 from strategy.core.base_game_context import BaseGameContext
 from strategy.core.tasks.base_task import BaseTask
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
-    from arena import BaseArenaZone
+    from arena.base_arena import BaseArenaZone
     from geometry import OrientedPoint, Point
-    from navigation.avoidance import BaseAvoidanceParams
-    from navigation.avoidance.acs_detection_profiles import (
+    from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501
         BaseAcsDetectionProfileParams,
     )
-    from navigation.path_planner import BasePathPlannerParams
-    from navigation.trajectory_planner import BaseTrajectoryPlannerParams, SpeedProfiler
+    from navigation.avoidance.base_avoidance import BaseAvoidanceParams
+    from navigation.path_planner.base_path_planner import BasePathPlannerParams
+    from navigation.trajectory_planner.base_trajectory_planner import (
+        BaseTrajectoryPlannerParams,
+    )
+    from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
 
 class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):

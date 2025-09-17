@@ -8,7 +8,7 @@ from navigation.avoidance.base_avoidance import BaseAvoidanceParams
 from navigation.avoidance.structs import AvoidanceStrategy
 
 if TYPE_CHECKING:
-    from navigation.trajectory_planner import SpeedProfiler
+    from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
 
 class BackAvoidanceParams(BaseAvoidanceParams):

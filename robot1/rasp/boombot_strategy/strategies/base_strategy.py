@@ -3,19 +3,22 @@
 from __future__ import annotations
 
 from abc import ABC
+from typing import TYPE_CHECKING
 
 from loggerplusplus import Logger
 
 from a_config_loader import CONFIG
-from strategy.core import (
-    BaseGameContext,
-    BaseSubGraph,
-    BaseTaskNode,
-    DirectTransition,
-    GraphRunner,
-    SubGraphBuilder,
-)
+from strategy.core.builders import SubGraphBuilder
+from strategy.core.sub_graphs import BaseSubGraph
+from strategy.core.transitions import DirectTransition
 from strategy.tools import visualize_task_graph
+
+if TYPE_CHECKING:
+    from strategy.core import (
+        BaseGameContext,
+        GraphRunner,
+    )
+    from strategy.core.task_nodes import BaseTaskNode
 
 
 class BaseStrategy(ABC):

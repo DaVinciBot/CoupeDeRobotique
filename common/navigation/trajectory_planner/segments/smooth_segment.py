@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from navigation.trajectory_planner.common.segments.base_segment import BaseSegment
+from navigation.trajectory_planner.segments.base_segment import BaseSegment
 
 if TYPE_CHECKING:
     from geometry import OrientedPoint

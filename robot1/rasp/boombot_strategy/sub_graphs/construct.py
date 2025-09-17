@@ -9,7 +9,9 @@ from boombot_strategy.tasks.navigation_tasks import RelativeBackward, RelativeFo
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToConstruct,
 )
-from strategy.core import BaseSubGraph, BaseTaskNode, DirectTransition, SubGraphBuilder
+from strategy.core import BaseSubGraph, SubGraphBuilder
+from strategy.core.task_nodes import BaseTaskNode
+from strategy.core.transitions import DirectTransition
 
 
 def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:

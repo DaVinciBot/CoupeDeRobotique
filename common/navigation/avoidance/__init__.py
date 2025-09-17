@@ -3,34 +3,22 @@
 This package exposes high-level interfaces to build avoidance behaviors.
 """
 
-from navigation.avoidance.acs_detection_profiles import (
-    BaseAcsDetectionProfile,
-    BaseAcsDetectionProfileParams,
+from navigation.avoidance import (
+    acs_detection_profiles,
+    back_avoidance,
+    base_avoidance,
+    no_avoidance,
+    stop_and_wait_avoidance,
 )
-from navigation.avoidance.back_avoidance import BackAvoidance, BackAvoidanceParams
-from navigation.avoidance.base_avoidance import (
-    AvoidanceState,
-    BaseAvoidance,
-    BaseAvoidanceParams,
-)
-from navigation.avoidance.no_avoidance import NoAvoidance, NoAvoidanceParams
-from navigation.avoidance.stop_and_wait_avoidance import (
-    StopAndWaitAvoidance,
-    StopAndWaitAvoidanceParams,
-)
+from navigation.avoidance.avoidance_factory import AvoidanceFactory
 from navigation.avoidance.structs import AvoidanceStrategy
 
 __all__ = [
-    "AvoidanceState",
+    "AvoidanceFactory",
     "AvoidanceStrategy",
-    "BackAvoidance",
-    "BackAvoidanceParams",
-    "BaseAcsDetectionProfile",
-    "BaseAcsDetectionProfileParams",
-    "BaseAvoidance",
-    "BaseAvoidanceParams",
-    "NoAvoidance",
-    "NoAvoidanceParams",
-    "StopAndWaitAvoidance",
-    "StopAndWaitAvoidanceParams",
+    "acs_detection_profiles",
+    "back_avoidance",
+    "base_avoidance",
+    "no_avoidance",
+    "stop_and_wait_avoidance",
 ]

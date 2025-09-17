@@ -12,7 +12,7 @@ from navigation.avoidance.acs_detection_profiles.no_projection_acs_detection_pro
 )
 
 if TYPE_CHECKING:
-    from arena import AllyZone, EnemyZone
+    from arena.base_arena import AllyZone, EnemyZone
 
 
 class NoProjectionAcsDetectionProfile(

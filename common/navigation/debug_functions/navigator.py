@@ -15,8 +15,8 @@ import numpy as np
 from geometry import Point
 
 if TYPE_CHECKING:
-    from arena import BaseArena
-    from navigation.navigator import Navigator
+    from arena.base_arena import BaseArena
+    from navigation.navigator.core import Navigator
 
 
 def test_navigator_execution(

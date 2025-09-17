@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, override
 
 from boombot_strategy.show_game_context import ShowGameContext
-from strategy.core import BaseNavigationTask
+from strategy.core.tasks import BaseNavigationTask
 
 if TYPE_CHECKING:
     from navigation.trajectory_planner import TrajectoryPlanCommand

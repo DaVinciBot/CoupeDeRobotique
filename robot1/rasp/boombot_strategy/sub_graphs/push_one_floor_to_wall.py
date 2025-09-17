@@ -14,7 +14,9 @@ from boombot_strategy.tasks.navigation_tasks import (
     RelativeForward,
     SetOdometrie,
 )
-from strategy.core import BaseSubGraph, BaseTaskNode, DirectTransition, SubGraphBuilder
+from strategy.core import BaseSubGraph, SubGraphBuilder
+from strategy.core.task_nodes import BaseTaskNode
+from strategy.core.transitions import DirectTransition
 
 
 def get_push_one_floor_to_wall_subgraph(

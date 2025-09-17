@@ -12,10 +12,10 @@ from navigation.navigator.task.states import NavigatorTaskState
 from navigation.trajectory_planner import TrajectoryPlanCommand
 
 if TYPE_CHECKING:
-    from arena import AllyZone, EnemyZone
+    from arena.base_arena import AllyZone, EnemyZone
     from geometry import OrientedPoint
     from navigation.navigator.task import NavigatorTask
-    from navigation.path_planner import BasePathPlannerPlanPathParams
+    from navigation.path_planner.base_path_planner import BasePathPlannerPlanPathParams
 
 
 class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):

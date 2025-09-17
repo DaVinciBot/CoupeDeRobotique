@@ -321,4 +321,4 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = start_position
         await asyncio.sleep(1)  # Allow time for the arena to update
-        await self.run()  # type: ignore[reportGeneralTypeIssues]
+        await self.run()  # pyright: ignore[reportGeneralTypeIssues] don't touch

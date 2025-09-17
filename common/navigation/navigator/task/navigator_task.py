@@ -7,22 +7,26 @@ from typing import TYPE_CHECKING, cast
 
 from navigation.navigator.task.states import NavigatorTaskState
 from navigation.path_planner import (
-    BasePathPlanner,
-    BasePathPlannerPlanPathParams,
     PathPlannerFactory,
     PathPlannerPathPlanParamsFactory,
 )
 from navigation.trajectory_planner import (
-    BaseTrajectoryPlanner,
     TrajectoryPlanCommand,
     TrajectoryPlannerFactory,
 )
 
 if TYPE_CHECKING:
-    from arena import AllyZone, EnemyZone
+    from arena.base_arena import AllyZone, EnemyZone
     from geometry import OrientedPoint
     from navigation.avoidance.base_avoidance import BaseAvoidance
     from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
+    from navigation.path_planner.base_path_planner import (
+        BasePathPlanner,
+        BasePathPlannerPlanPathParams,
+    )
+    from navigation.trajectory_planner.base_trajectory_planner import (
+        BaseTrajectoryPlanner,
+    )
 
 
 class NavigatorTask:

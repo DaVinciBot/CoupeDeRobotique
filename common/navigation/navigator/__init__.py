@@ -1,18 +1,13 @@
 """Navigator public API."""
 
-from navigation.navigator.core import Navigator, NavigatorState
-from navigation.navigator.signals import NavigatorSignalsEnum
-from navigation.navigator.task import (
-    NavigatorTask,
-    NavigatorTaskParams,
-    NavigatorTaskState,
+from navigation.navigator import (
+    core,
+    signals,
+    task,
 )
 
 __all__ = [
-    "Navigator",
-    "NavigatorSignalsEnum",
-    "NavigatorState",
-    "NavigatorTask",
-    "NavigatorTaskParams",
-    "NavigatorTaskState",
+    "core",
+    "signals",
+    "task",
 ]

@@ -12,7 +12,9 @@ from boombot_strategy.tasks.navigation_tasks import (
     GoToStuffZoneToPickUp,
     RelativeBackward,
 )
-from strategy.core import BaseSubGraph, BaseTaskNode, DirectTransition, SubGraphBuilder
+from strategy.core import BaseSubGraph, SubGraphBuilder
+from strategy.core.task_nodes import BaseTaskNode
+from strategy.core.transitions import DirectTransition
 
 
 def get_pickup_subgraph(pickup_zone_id: int) -> BaseSubGraph:

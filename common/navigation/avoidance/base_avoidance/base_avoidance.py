@@ -12,7 +12,6 @@ from loggerplusplus import Logger
 
 from navigation.avoidance.acs_detection_profiles import (
     AcsDetectionProfileFactory,
-    BaseAcsDetectionProfileParams,
 )
 from navigation.avoidance.base_avoidance.base_avoidance_params import (
     BaseAvoidanceParams,
@@ -24,8 +23,11 @@ from navigation.trajectory_planner import TrajectoryPlanCommand
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from arena import AllyZone, EnemyZone
+    from arena.base_arena import AllyZone, EnemyZone
     from geometry import OrientedPoint
+    from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501
+        BaseAcsDetectionProfileParams,
+    )
     from navigation.navigator.task.navigator_task import NavigatorTask
 
 

@@ -9,10 +9,11 @@ from taskbrain import DictProxyAccessor
 from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 
 from a_config_loader import CONFIG
-from arena import AllyZone, ShowArena
+from arena.base_arena import AllyZone
+from arena.show_arena import ShowArena
 from brains import MainBrain
 from geometry import OrientedPoint
-from navigation.navigator import NavigatorTaskParams
+from navigation.navigator.task import NavigatorTaskParams
 from sensors import Inputs, Lidar, LidarDummy
 
 # ====== Main ======

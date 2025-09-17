@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle as pltRectangle
 from old_logger import Logger, LogLevels, time_tracker
 from pathfinding.core.grid import Grid, GridNode
 from shapely.geometry import box
@@ -266,7 +267,7 @@ class GridManager:
         for y in range(self.grid_height):
             for x in range(self.grid_width):
                 if not grid_to_visualize.node(x, y).walkable:
-                    ax.add_patch(plt.Rectangle((x, y), 1, 1, color="black"))
+                    ax.add_patch(pltRectangle((x, y), 1, 1, color="black"))
 
         if path:
             for i in range(len(path) - 1):

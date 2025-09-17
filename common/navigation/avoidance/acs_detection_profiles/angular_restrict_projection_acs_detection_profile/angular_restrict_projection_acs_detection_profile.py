@@ -13,7 +13,7 @@ from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles imp
 )
 
 if TYPE_CHECKING:
-    from arena import AllyZone, EnemyZone
+    from arena.base_arena import AllyZone, EnemyZone
 
 
 class AngularRestrictProjectionAcsDetectionProfile(

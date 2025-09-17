@@ -22,10 +22,10 @@ robot1\rasp\a_config_loader.py:
   383:89 E501 Line too long (130 > 88)
 
 robot1\rasp\boombot_strategy\strategies\basic_strategy.py:
-  56:9 ERA001 Found commented-out code
-  59:9 ERA001 Found commented-out code
+  57:9 ERA001 Found commented-out code
   60:9 ERA001 Found commented-out code
   61:9 ERA001 Found commented-out code
+  62:9 ERA001 Found commented-out code
 
 robot1\rasp\brains\main_brain.py:
   131:9  ERA001 Found commented-out code
@@ -61,8 +61,8 @@ robot1\rasp\controllers\rolling_basis\rolling_basis_dummy.py:
   70:9 ERA001 Found commented-out code
 
 robot1\rasp\main.py:
-   92:9 ERA001 Found commented-out code
-  137:5 ERA001 Found commented-out code
+   93:9 ERA001 Found commented-out code
+  138:5 ERA001 Found commented-out code
 
 robot1\rasp\tests\a_config_loader.py:
     1:1  INP001 File `robot1\rasp\tests\a_config_loader.py` is part of an implicit namespace package. Add an `__init__.py`.

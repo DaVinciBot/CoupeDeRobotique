@@ -5,15 +5,17 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from geometry import OrientedPoint
-    from navigation.avoidance.acs_detection_profiles import (
+    from geometry import OrientedPoint, Point
+    from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501
         BaseAcsDetectionProfileParams,
     )
     from navigation.avoidance.base_avoidance.base_avoidance_params import (
         BaseAvoidanceParams,
     )
-    from navigation.path_planner import BasePathPlannerParams
-    from navigation.trajectory_planner import BaseTrajectoryPlannerParams
+    from navigation.path_planner.base_path_planner import BasePathPlannerParams
+    from navigation.trajectory_planner.base_trajectory_planner import (
+        BaseTrajectoryPlannerParams,
+    )
     from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
 
@@ -23,7 +25,7 @@ class NavigatorTaskParams:
     def __init__(
         self,
         # Attributes
-        goal: OrientedPoint | None,
+        goal: OrientedPoint | Point | None,
         timeout: float | None,
         stabilization_delay: float,
         # Parameters
@@ -36,7 +38,7 @@ class NavigatorTaskParams:
         """Initialize the NavigatorTaskParams.
 
         Args:
-            goal (OrientedPoint | None): The goal to reach.
+            goal (OrientedPoint | Point | None): The goal to reach.
             timeout (float | None): The timeout for the task.
             stabilization_delay (float): The stabilization delay.
             path_planner_params (BasePathPlannerParams):
@@ -58,6 +60,6 @@ class NavigatorTaskParams:
             acs_detection_profile_params
         )
 
-        self.goal: OrientedPoint | None = goal
+        self.goal: OrientedPoint | Point | None = goal
         self.timeout: float | None = timeout
         self.stabilization_delay: float = stabilization_delay

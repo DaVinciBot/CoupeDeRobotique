@@ -5,10 +5,10 @@
 ************* Module common.arena.base_arena.arena_zones.ally_zone
 71:8: C2801: Unnecessarily calls dunder method __init__. Instantiate class directly. (unnecessary-dunder-call)
 ************* Module common.navigation.avoidance.back_avoidance.back_avoidance
-85:74: E0203: Access to member 'state' before its definition line 121 (access-member-before-definition)
-96:16: E0203: Access to member 'state' before its definition line 121 (access-member-before-definition)
-121:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
-174:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+87:74: E0203: Access to member 'state' before its definition line 123 (access-member-before-definition)
+98:16: E0203: Access to member 'state' before its definition line 123 (access-member-before-definition)
+123:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
+176:12: W0201: Attribute 'state' defined outside __init__ (attribute-defined-outside-init)
 ************* Module common.navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance
 50:74: E0203: Access to member 'state' before its definition line 71 (access-member-before-definition)
 61:16: E0203: Access to member 'state' before its definition line 71 (access-member-before-definition)

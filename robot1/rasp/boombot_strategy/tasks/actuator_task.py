@@ -7,7 +7,7 @@ from typing import override
 
 from a_config_loader import CONFIG
 from boombot_strategy.show_game_context import ShowGameContext
-from strategy.core import BaseTask
+from strategy.core.tasks import BaseTask
 
 
 class ReadyToApproachToPickUp(BaseTask[ShowGameContext]):

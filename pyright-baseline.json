@@ -1,6 +1,6 @@
 {
     "version": "1.1.405",
-    "time": "1758051892633",
+    "time": "1758076090103",
     "generalDiagnostics": [
         {
             "file": "c:\\Users\\eliot\\CodeProjects\\ForkCDR\\CoupeDeRobotique\\common\\arena\\2024_mars_arena\\arena_old.py",
@@ -168,11 +168,11 @@
             "message": "Import \"old_logger\" could not be resolved",
             "range": {
                 "start": {
-                    "line": 7,
+                    "line": 8,
                     "character": 5
                 },
                 "end": {
-                    "line": 7,
+                    "line": 8,
                     "character": 15
                 }
             },
@@ -184,11 +184,11 @@
             "message": "\"__getitem__\" method not defined on type \"GridNode\"",
             "range": {
                 "start": {
-                    "line": 126,
+                    "line": 127,
                     "character": 24
                 },
                 "end": {
-                    "line": 126,
+                    "line": 127,
                     "character": 39
                 }
             },
@@ -200,11 +200,11 @@
             "message": "Type analysis indicates code is unreachable",
             "range": {
                 "start": {
-                    "line": 429,
+                    "line": 435,
                     "character": 12
                 },
                 "end": {
-                    "line": 429,
+                    "line": 435,
                     "character": 17
                 }
             },
@@ -280,11 +280,11 @@
             "message": "Type \"OrientedPoint | Point | None\" is not assignable to declared type \"OrientedPoint\"\n  Type \"OrientedPoint | Point | None\" is not assignable to type \"OrientedPoint\"\n    \"Point\" is not assignable to \"OrientedPoint\"",
             "range": {
                 "start": {
-                    "line": 116,
+                    "line": 109,
                     "character": 40
                 },
                 "end": {
-                    "line": 116,
+                    "line": 109,
                     "character": 85
                 }
             },
@@ -296,11 +296,11 @@
             "message": "\"navigator_task\" overrides symbol of same name in class \"BaseNavigationTask\"\n  Variable is mutable so its type is invariant\n    Override type \"NavigatorTask | None\" is not the same as base type \"NavigatorTask\"",
             "range": {
                 "start": {
-                    "line": 125,
+                    "line": 118,
                     "character": 13
                 },
                 "end": {
-                    "line": 125,
+                    "line": 118,
                     "character": 27
                 }
             },
@@ -519,8 +519,8 @@
         "filesAnalyzed": 219,
         "errorCount": 26,
         "warningCount": 6,
-        "informationCount": 108,
-        "timeInSec": 37.87
+        "informationCount": 107,
+        "timeInSec": 22.539
     }
 }
 

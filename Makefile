@@ -1,7 +1,7 @@
 .PHONY: format lint check docs auto all
 
 format:
-	@echo "▶ Formatage avec Ruff, puis Black et isort..."
+	@echo "▶ Formatage avec isort et Ruff..."
 	isort .
 	ruff format
 
@@ -19,7 +19,7 @@ check: format lint
 
 docs:
 	@echo "▶ Génération de la documentation avec pdoc..."
-	-pdoc --output-dir docs common/arena common/geometry common/gpio common/led_strip common/navigation common/strategy common/teensy common/usb_com/python common/utils common/video
+	-pdoc --output-dir docs -t docs/pdoc_templates common/arena common/geometry common/gpio common/led_strip common/navigation common/strategy common/teensy common/usb_com/python common/utils common/video
 # 	robot1/rasp/boombot_strategy robot1/rasp/brains robot1/rasp/controllers robot1/rasp/sensors
 
 auto:

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from navigation.trajectory_planner.common.segments.base_segment import BaseSegment
+from navigation.trajectory_planner.segments.base_segment import BaseSegment
 
 
 class StopSegment(BaseSegment):

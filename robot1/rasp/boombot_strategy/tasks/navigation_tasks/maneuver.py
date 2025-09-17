@@ -7,26 +7,19 @@ from typing import TYPE_CHECKING
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from geometry import OrientedPoint, Point
-from navigation.avoidance import (
-    NoAvoidanceParams,
-    StopAndWaitAvoidanceParams,
-)
-from navigation.avoidance.acs_detection_profiles import (
-    RectangularProjectionAcsDetectionProfileParams,
-)
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
 )
-from navigation.navigator import (
-    NavigatorTask,
-    NavigatorTaskParams,
+from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
+    RectangularProjectionAcsDetectionProfileParams,
 )
-from navigation.path_planner import (
-    BasicPathPlannerParams,
-    DeltaPathPlannerParams,
-    Direction,
-)
-from navigation.trajectory_planner import (
+from navigation.avoidance.no_avoidance import NoAvoidanceParams
+from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
+from navigation.navigator.task import NavigatorTask, NavigatorTaskParams
+from navigation.path_planner import Direction
+from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
+from navigation.path_planner.delta_path_planner import DeltaPathPlannerParams
+from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
 

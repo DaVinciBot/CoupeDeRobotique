@@ -10,7 +10,7 @@ from navigation.path_planner import Direction
 from navigation.trajectory_planner.base_trajectory_planner import (
     BaseTrajectoryPlanner,
 )
-from navigation.trajectory_planner.common import (
+from navigation.trajectory_planner.segments import (
     BaseSegment,
     RotationSegment,
     SegmentMapper,

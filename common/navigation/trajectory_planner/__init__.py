@@ -1,19 +1,10 @@
 """Trajectory planner package exposing public classes."""
 
-from navigation.path_planner import Direction
-from navigation.trajectory_planner.base_trajectory_planner import (
-    BaseTrajectoryPlanner,
-    BaseTrajectoryPlannerParams,
-)
-from navigation.trajectory_planner.sequential_trajectory_planner import (
-    SequentialTrajectoryPlanner,
-    SequentialTrajectoryPlannerParams,
-)
-from navigation.trajectory_planner.speed_profile import (
-    BaseSpeedProfile,
-    BasicSpeedProfile,
-    LinearRampedSpeedProfile,
-    SpeedProfiler,
+from navigation.trajectory_planner import (
+    base_trajectory_planner,
+    segments,
+    sequential_trajectory_planner,
+    speed_profile,
 )
 from navigation.trajectory_planner.structs import (
     TrajectoryPlanCommand,
@@ -24,16 +15,11 @@ from navigation.trajectory_planner.trajectory_planner_factory import (
 )
 
 __all__ = [
-    "BaseSpeedProfile",
-    "BaseTrajectoryPlanner",
-    "BaseTrajectoryPlannerParams",
-    "BasicSpeedProfile",
-    "Direction",
-    "LinearRampedSpeedProfile",
-    "SequentialTrajectoryPlanner",
-    "SequentialTrajectoryPlannerParams",
-    "SpeedProfiler",
     "TrajectoryPlanCommand",
     "TrajectoryPlannerFactory",
     "TrajectoryPlannerStrategy",
+    "base_trajectory_planner",
+    "segments",
+    "sequential_trajectory_planner",
+    "speed_profile",
 ]

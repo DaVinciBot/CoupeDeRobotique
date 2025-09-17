@@ -183,10 +183,10 @@ class CONFIG:
         str(COMMON_DIR),
     )  # Add common directory to the path (to be able to import common modules)
     CONFIG_STORE: dict[str, Any] = load_json_file(ROOT_DIR / "config.json")
-    from navigation.avoidance.acs_detection_profiles import (  # noqa: PLC0415
+    from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501, PLC0415
         BaseAcsDetectionProfileParams,
     )
-    from navigation.trajectory_planner import (  # noqa: PLC0415
+    from navigation.trajectory_planner.speed_profile import (  # noqa: PLC0415
         BasicSpeedProfile,
         LinearRampedSpeedProfile,
         SpeedProfiler,

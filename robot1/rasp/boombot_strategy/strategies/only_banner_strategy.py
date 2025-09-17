@@ -11,7 +11,8 @@ from boombot_strategy.sub_graphs import get_banner_deployment_subgraph
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
-from strategy.core import BaseTaskNode, GraphRunner
+from strategy.core import GraphRunner
+from strategy.core.task_nodes import BaseTaskNode
 
 if TYPE_CHECKING:
     from boombot_strategy.show_game_context import ShowGameContext

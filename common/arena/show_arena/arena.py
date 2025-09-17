@@ -398,21 +398,27 @@ class ShowArena(BaseArena):
             ),
         )
 
-        zones.extend((
-            rockstar_stage,
-            BlueReservedZone(
-                logger=blue_reserved_zone_logger,
-                buffer_size=obstacle_buffer,
-                polygon=create_straight_rectangle(Point((15, 155)), Point((60, 200))),
-                go_to_positions=[OrientedPoint(37.5, 150.5, pi / 2)],
+        zones.extend(
+            (
+                rockstar_stage,
+                BlueReservedZone(
+                    logger=blue_reserved_zone_logger,
+                    buffer_size=obstacle_buffer,
+                    polygon=create_straight_rectangle(
+                        Point((15, 155)), Point((60, 200)),
+                    ),
+                    go_to_positions=[OrientedPoint(37.5, 150.5, pi / 2)],
+                ),
+                YellowReservedZone(
+                    logger=yellow_reserved_zone_logger,
+                    buffer_size=obstacle_buffer,
+                    polygon=create_straight_rectangle(
+                        Point((285, 155)), Point((240, 200)),
+                    ),
+                    go_to_positions=[OrientedPoint(262.5, 150.5, pi / 2)],
+                ),
             ),
-            YellowReservedZone(
-                logger=yellow_reserved_zone_logger,
-                buffer_size=obstacle_buffer,
-                polygon=create_straight_rectangle(Point((285, 155)), Point((240, 200))),
-                go_to_positions=[OrientedPoint(262.5, 150.5, pi / 2)],
-            ),
-        ))
+        )
 
         if grid_manager_logger:
             super().__init__(
@@ -466,8 +472,10 @@ class ShowArena(BaseArena):
 
     @override
     def __hash__(self) -> int:
-        return hash((
-            self.ally_zone,
-            self.enemy_zone,
-            self.grid_manager,
-        ))
+        return hash(
+            (
+                self.ally_zone,
+                self.enemy_zone,
+                self.grid_manager,
+            ),
+        )
