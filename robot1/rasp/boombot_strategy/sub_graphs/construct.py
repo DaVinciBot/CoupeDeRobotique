@@ -1,112 +1,157 @@
-# ====== Local Project Imports ======
-from strategy.core import (
-    SubGraphBuilder,
-    BaseTaskNode,
-    DirectTransition,
-    BaseSubGraph,
-    DefaultScoringFunction,
-    ConstantScoringFunction,
-    NavigationScoringFunction,
-)
+"""Subgraph to handle construction sequences within a zone."""
 
-# ====== Internal Project Imports ======
-from config_loader import CONFIG
-from boombot_strategy import ShowGameContext
+from __future__ import annotations
+
+import time
+
+from boombot_strategy.tasks.actuator_task import Build, Deposit, PickUp
+from boombot_strategy.tasks.navigation_tasks import RelativeBackward, RelativeForward
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToConstruct,
 )
-from boombot_strategy.tasks.navigation_tasks.maneuver import Backward, PreciseForward
+from strategy.core import BaseSubGraph, SubGraphBuilder
+from strategy.core.task_nodes import BaseTaskNode
+from strategy.core.transitions import DirectTransition
 
-from boombot_strategy.tasks.actuator_task.actuator_task import Build
 
+def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
+    """Create a construction subgraph for a specific zone.
 
-def get_construct_sub_graph(
-    zone_construct_id: int, ctx: ShowGameContext, distance_from_back_of_zone: float = 0.0
-) -> BaseSubGraph:
-    """
-    Create a subgraph for navigating to a zone and performing a construction maneuver.
-
-    This function builds a task graph consisting of:
-    1. A node to navigate to the construction zone.
-    2. A node to execute a backward maneuver for construction placement.
-    The nodes are connected with a direct transition.
+    The subgraph includes navigation to the zone, positioning forward,
+    item placement using actuators, and a backward maneuver for alignment or
+    disengagement.
 
     Args:
-        zone_construct_id (int): The identifier for the construction zone.
+        zone_id (int): Identifier for the target construction zone.
+        back_offset (int, optional):
+            Distance already covered behind the zone, used to adjust forward motion.
+            Defaults to 0.
 
     Returns:
-        BaseSubGraph: A compiled subgraph with defined entry and exit points.
+        BaseSubGraph: A compiled subgraph that defines the sequence of
+            construction-related tasks.
     """
-    construct_sub_graph = SubGraphBuilder()
+    subgraph = SubGraphBuilder()
 
-    # Add node for navigating to the specified construction zone
-    construct_sub_graph.add_node(
-        f"[Construct] go to zone {zone_construct_id}",
+    # Node: Navigate to construction zone
+    node_navigate = f"[Construct] Navigate to zone {zone_id}"
+    subgraph.add_node(
+        node_navigate,
         BaseTaskNode(
-            name=f"[Construct] go to zone {zone_construct_id}",
-            tasks=GoToColorReservedZoneToConstruct(zone_construct_id),
-            scoring_function=NavigationScoringFunction(zone_construct_id),
+            name=node_navigate,
+            tasks=GoToColorReservedZoneToConstruct(zone_id),
         ),
     )
 
-    # Add node for preparing the construction at the specified zone
-    construct_sub_graph.add_node(
-        f"[Construct] prepare construction at zone {zone_construct_id}",
+    node_pickup = f"[Construct] Pickup at zone {zone_id}"
+    subgraph.add_node(
+        node_pickup,
         BaseTaskNode(
-            name=f"[Construct] prepare construction at zone {zone_construct_id}",
-            tasks=PreciseForward(18 - distance_from_back_of_zone),
-            scoring_function=DefaultScoringFunction(),
+            name=node_pickup,
+            tasks=PickUp(),
         ),
     )
 
-    # Add node for actuators action of placing item
-    construct_sub_graph.add_node(
-        f"[Construct] placing item at zone {zone_construct_id}",
+    # Node: Move forward to prepare for placement
+    node_prepare = f"[Construct] Position at zone {zone_id}"
+    subgraph.add_node(
+        node_prepare,
         BaseTaskNode(
-            name=f"[Construct] placing item at zone {zone_construct_id}",
-            tasks=Build(),
-            scoring_function=ConstantScoringFunction(CONFIG.BUILD_TWO_FLOORS),
+            name=node_prepare,
+            tasks=RelativeForward(18 - back_offset),
         ),
     )
 
-    # Add node for precise backward motion to perform construction
-    construct_sub_graph.add_node(
-        f"[Construct] backward maneuver at zone {zone_construct_id}",
+    # Node: Place item with actuators
+    node_place = f"[Construct] Place item at zone {zone_id}"
+    subgraph.add_node(
+        node_place,
+        BaseTaskNode(name=node_place, tasks=Build()),
+    )
+
+    # Node: Perform backward maneuver after placement
+    node_back = f"[Construct] Backward from zone {zone_id}"
+    subgraph.add_node(
+        node_back,
+        BaseTaskNode(name=node_back, tasks=RelativeBackward(20)),
+    )
+
+    # Transitions between nodes
+    subgraph.connect(node_navigate, DirectTransition(subgraph.nodes[node_pickup]))
+    subgraph.connect(node_pickup, DirectTransition(subgraph.nodes[node_prepare]))
+    subgraph.connect(node_prepare, DirectTransition(subgraph.nodes[node_place]))
+    subgraph.connect(node_place, DirectTransition(subgraph.nodes[node_back]))
+
+    # Return compiled subgraph with defined entry and exit
+    return subgraph.build(
+        entry=node_navigate,
+        exits=node_back,
+    )
+
+
+def get_construct_one_floor_subgraph(
+    zone_id: int,
+    back_offset: int = 0,
+) -> BaseSubGraph:
+    """Create a one-floor construction subgraph for a given zone.
+
+    The subgraph includes navigation to the zone, positioning forward,
+    item placement using actuators, and a backward maneuver for alignment or
+    disengagement.
+
+    Args:
+        zone_id (int): Identifier for the target construction zone.
+        back_offset (int, optional):
+            Distance already covered behind the zone, used to adjust forward motion.
+            Defaults to 0.
+
+    Returns:
+        BaseSubGraph: A compiled subgraph that defines the sequence of
+            construction-related tasks.
+    """
+    subgraph = SubGraphBuilder()
+
+    # Node: Navigate to construction zone
+    node_navigate = f"[Construct_One_Floor] Navigate to zone {zone_id}"
+    subgraph.add_node(
+        node_navigate,
         BaseTaskNode(
-            name=f"[Construct] backward maneuver at zone {zone_construct_id}",
-            tasks=Backward(16),
-            scoring_function=DefaultScoringFunction(),
+            name=node_navigate,
+            tasks=GoToColorReservedZoneToConstruct(zone_id),
+        ),
+    )
+    time.sleep(10)
+    # Node: Move forward to prepare for placement
+    node_prepare = f"[Construct_One_Floor] Position at zone {zone_id}"
+    subgraph.add_node(
+        node_prepare,
+        BaseTaskNode(
+            name=node_prepare,
+            tasks=RelativeForward(18 - back_offset),
         ),
     )
 
-    construct_sub_graph.connect(
-        f"[Construct] go to zone {zone_construct_id}",
-        DirectTransition(
-            construct_sub_graph.nodes[
-                f"[Construct] prepare construction at zone {zone_construct_id}"
-            ]
-        ),
+    # Node: Place item with actuators
+    node_place = f"[Construct_One_Floor] Place item at zone {zone_id}"
+    subgraph.add_node(
+        node_place,
+        BaseTaskNode(name=node_place, tasks=Deposit()),
     )
 
-    construct_sub_graph.connect(
-        f"[Construct] prepare construction at zone {zone_construct_id}",
-        DirectTransition(
-            construct_sub_graph.nodes[
-                f"[Construct] placing item at zone {zone_construct_id}"
-            ]
-        ),
+    # Node: Perform backward maneuver after placement
+    node_back = f"[Construct_One_Floor] Backward from zone {zone_id}"
+    subgraph.add_node(
+        node_back,
+        BaseTaskNode(name=node_back, tasks=RelativeBackward(20)),
     )
 
-    construct_sub_graph.connect(
-        f"[Construct] placing item at zone {zone_construct_id}",
-        DirectTransition(
-            construct_sub_graph.nodes[
-                f"[Construct] backward maneuver at zone {zone_construct_id}"
-            ]
-        ),
-    )
+    # Transitions between nodes
+    subgraph.connect(node_navigate, DirectTransition(subgraph.nodes[node_prepare]))
+    subgraph.connect(node_prepare, DirectTransition(subgraph.nodes[node_place]))
+    subgraph.connect(node_place, DirectTransition(subgraph.nodes[node_back]))
 
-    return construct_sub_graph.build(
-        entry=f"[Construct] go to zone {zone_construct_id}",
-        exits=f"[Construct] backward maneuver at zone {zone_construct_id}",
+    # Return compiled subgraph with defined entry and exit
+    return subgraph.build(
+        entry=node_navigate,
+        exits=node_back,
     )

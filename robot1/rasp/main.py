@@ -1,28 +1,26 @@
-# ====== Imports ======
-# Config
-from config_loader import CONFIG
-import os
+"""Main entry point to run the Boombot demo on the Raspberry Pi."""
+
+from __future__ import annotations
+
 import subprocess
 
 from loggerplusplus import Logger, LogLevels
+from taskbrain import DictProxyAccessor
+from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 
-# ====== Local Library Imports ======
-from ws_comms import WServer, WServerRouteManager, WSender, WSreceiver
-from arena import ShowArena, AllyZone
-from geometry import OrientedPoint
+from a_config_loader import CONFIG
+from arena.base_arena.arena_zones import AllyZone
+from arena.show_arena import ShowArena
 from brains import MainBrain
-from taskbrain import DictProxyAccessor, Brain
-from navigation import NavigatorTaskParams
-from sensors import Lidar, LidarDummy, Inputs
-from GPIO import PIN
+from geometry import OrientedPoint
+from navigation.navigator.task import NavigatorTaskParams
+from sensors import Inputs, Lidar, LidarDummy
 
 # ====== Main ======
 if __name__ == "__main__":
-    """
-    ###--- Initialization ---###
-    """
+    # region ====== Initialization ======
 
-    """ Loggers """
+    # Loggers
     # System-Part loggers
     logger_ws_server = Logger(
         identifier="WS_Server",
@@ -85,7 +83,6 @@ if __name__ == "__main__":
     # Movement loggers
     # See ./brains/controllers_brain.py for more details
     # All rolling basis part is executed in another process so define inside this part
-
     """ Main object instances """
     # Websocket server
     # Websocket server
@@ -93,7 +90,8 @@ if __name__ == "__main__":
         logger=logger_ws_server,
         host=CONFIG.WS_HOSTNAME,
         port=CONFIG.WS_PORT,
-        # ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,  # TODO: To fix, this feature is not working
+        # ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,
+        # TODO: To fix, this feature is not working
     )
     # Routes
     ws_cmd = WServerRouteManager(
@@ -117,24 +115,24 @@ if __name__ == "__main__":
 
     # Sensors
     # Lidar
-    lidar = Lidar(
-        logger=logger_lidar,
-        min_angle=CONFIG.LIDAR_MIN_ANGLE,
-        max_angle=CONFIG.LIDAR_MAX_ANGLE,
-        unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
-        unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
-        min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
-    )
-
-    # lidardummy = LidarDummy(
-    #     logger=logger_lidar,
-    #     min_angle=CONFIG.LIDAR_MIN_ANGLE,
-    #     max_angle=CONFIG.LIDAR_MAX_ANGLE,
-    #     unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
-    #     unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
-    #     min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
-    #     num_points=1
-    # )
+    if CONFIG.LIDAR_DUMMY:
+        lidar: Lidar | LidarDummy = LidarDummy(
+            logger=logger_lidar,
+            min_angle=CONFIG.LIDAR_MIN_ANGLE,
+            max_angle=CONFIG.LIDAR_MAX_ANGLE,
+            unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
+            unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
+            min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+        )
+    else:
+        lidar = Lidar(
+            logger=logger_lidar,
+            min_angle=CONFIG.LIDAR_MIN_ANGLE,
+            max_angle=CONFIG.LIDAR_MAX_ANGLE,
+            unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
+            unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
+            min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+        )
 
     # Environment
     # Arena
@@ -157,7 +155,7 @@ if __name__ == "__main__":
     # All rolling basis part is executed in another process so define inside this part
 
     # Brain
-    # Add all object type which need to be shared between processes in the DictProxyAccessor serializable types list
+    # Register object types that must be shared between processes
     DictProxyAccessor.add_serializable_type(ShowArena, arena)
     DictProxyAccessor.add_serializable_type(OrientedPoint)
     DictProxyAccessor.add_serializable_type(NavigatorTaskParams)
@@ -172,35 +170,20 @@ if __name__ == "__main__":
         inputs=inputs,
     )
 
-    """
-        ###--- Run ---###
-    """
+    # endregion
+
+    # region ====== Run ======
 
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
     for routine in brain.get_tasks():
         ws_server.add_background_task(routine)
 
-    def force_kill_all_python():
-        """
-        Kill all running Python processes using pkill -9 python
-        """
-        cmd = "pkill -9 python"
-        subprocess.run(cmd)
-        print("All Python processes killed.")
+    def force_kill_all_python() -> None:
+        """Kill all running Python processes using pkill -9 python."""
+        subprocess.run(["pkill", "-9", "python"], check=False)  # noqa: S607
+        logger_brain.fatal("All Python processes killed.")
 
     ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
 
-    # import cProfile
-
-    # profiler = cProfile.Profile()
-    # profiler.enable()
-    #
-    # try:
-    #     ws_server.run()
-    # except:
-    #     pass
-    #
-    # profiler.disable()
-    # profiler.print_stats()
-    # profiler.dump_stats("profiling_output.prof")
+    # endregion

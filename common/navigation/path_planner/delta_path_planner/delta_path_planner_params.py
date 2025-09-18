@@ -1,27 +1,26 @@
-# ====== Code Summary ======
-# This module defines `DeltaPathPlannerParams`, a configuration class for the `DeltaPathPlanner`.
-# It inherits from `BasePathPlannerParams` and initializes its strategy as DELTA.
+"""Parameters for the delta path planner."""
 
-# ====== Imports ======
-# Internal project imports
-from navigation.path_planner.structs import PathPlanningStrategy, Direction
+from __future__ import annotations
+
 from navigation.path_planner.base_path_planner.base_path_planner_params import (
     BasePathPlannerParams,
     BasePathPlannerPlanPathParams,
 )
-from geometry import OrientedPoint
+from navigation.path_planner.structs import PathPlanningStrategy
 
 
 class DeltaPathPlannerParams(BasePathPlannerParams):
-    """
-    Parameter class for DeltaPathPlanner.
+    """Parameter class for DeltaPathPlanner.
 
     Initializes the path finding strategy as DELTA.
     """
 
-    def __init__(self, distance: float = 0.0, rotation: float = 0.0):
-        """
-        Initialize delta-based path planner parameters with DELTA strategy.
+    def __init__(self, distance: float = 0.0, rotation: float = 0.0) -> None:
+        """Initialize delta-based path planner parameters with DELTA strategy.
+
+        Args:
+            distance (float, optional): Distance to travel. Defaults to 0.0.
+            rotation (float, optional): Rotation to apply. Defaults to 0.0.
         """
         self.distance: float = distance
         self.rotation: float = rotation
@@ -29,5 +28,4 @@ class DeltaPathPlannerParams(BasePathPlannerParams):
 
 
 class DeltaPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
-    def __init__(self, start: OrientedPoint):
-        super().__init__(start)
+    """Parameters for the delta path planner."""

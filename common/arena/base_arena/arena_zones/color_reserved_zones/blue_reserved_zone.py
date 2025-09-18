@@ -1,53 +1,53 @@
-# ====== Code Summary ======
-# This module defines the BlueReservedZone class, a specialized zone restricted to the blue team.
-# It inherits from BaseColorReservedZone and manages accessibility based on predefined conditions.
+"""Zone reserved exclusively for the blue team."""
 
-# ====== Imports ======
-# Standard library imports
-# ...
+from __future__ import annotations
 
-# Third-party imports
-from loggerplusplus import Logger
+from typing import TYPE_CHECKING
 
-# Local imports
-from geometry import Polygon, Point, OrientedPoint
-
-# Internal project imports
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
 from arena.base_arena.arena_zones.color_reserved_zones.base_color_reserved_zone import (
     BaseColorReservedZone,
 )
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 from arena.base_arena.team_color import TeamColor
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
-# ====== Blue Reserved Zone Class ======
+    from loggerplusplus import Logger
+
+    from geometry import OrientedPoint, Point, Polygon
+
+
 class BlueReservedZone(BaseColorReservedZone):
-    """
-    A reserved zone specifically for the blue team.
-    This class ensures that only blue team members have access based on predefined conditions.
+    """Reserved zone specifically for the blue team.
+
+    Only blue team members have access based on predefined conditions.
     """
 
     def __init__(
         self,
         logger: Logger,
         buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
-        go_to_positions: list[OrientedPoint | Point] = None,
+        polygon: Polygon | None = None,
+        buffered_polygon: Polygon | None = None,
+        update_callback: Callable | None = None,
+        go_to_positions: list[OrientedPoint | Point] | None = None,
     ) -> None:
-        """
-        Initializes the BlueReservedZone with geometry and accessibility settings.
+        """Initialize the BlueReservedZone with geometry and accessibility.
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            buffer_size (float, optional): Buffer size for geometric adjustments (defaults to 0.0).
-            polygon (Polygon, optional): Polygon representing the zone geometry.
-            buffered_polygon (Polygon, optional): Buffered polygon geometry.
-            update_callback (callable, optional): Function to be called on updates.
-            go_to_positions (list[OrientedPoint | Point], optional): List of go-to positions within the zone.
+            buffer_size (float, optional):
+                Buffer size for geometric adjustments. Defaults to 0.0.
+            polygon (Polygon | None, optional):
+                Polygon representing the zone geometry. Defaults to None.
+            buffered_polygon (Polygon | None, optional):
+                Buffered polygon geometry. Defaults to None.
+            update_callback (Callable | None, optional):
+                Function to be called on updates. Defaults to None.
+            go_to_positions (list[OrientedPoint | Point] | None, optional):
+                List of go-to positions within the zone. Defaults to None.
         """
-
         super().__init__(
             logger=logger,
             zone_type=ZoneType.BLUE_RESERVED,

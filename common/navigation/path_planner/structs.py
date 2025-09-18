@@ -1,28 +1,37 @@
-# ====== Code Summary ======
-# This module defines two enumerations used in path planning: `PathFindingStrategy` and `Direction`.
-# `PathFindingStrategy` specifies the algorithmic strategy for generating paths.
-# `Direction` indicates the intended direction of movement (FORWARD or BACKWARD).
+"""Enums used across path planning components."""
 
-# ====== Standard Library Imports ======
+from __future__ import annotations
+
 from enum import Enum, auto
 
 
 class PathPlanningStrategy(Enum):
-    """
-    Enumeration of available path finding strategies.
+    """Available algorithms for generating paths.
+
+    Attributes:
+        A_STAR: Use A* algorithm.
+        BASIC: Use basic path finding algorithm: rotate face to target,
+            move straight forward.
+        DELTA: Do step replacement, no path finding -> rotate or move straight.
     """
 
-    A_STAR = auto()  # Use A* algorithm
-    BASIC = (
-        auto()
-    )  # Use basic path finding algorithm: rotate face to target, move straight forward
-    DELTA = auto()  # Do step replacement, no path finding -> rotate or move straight
+    A_STAR = auto()
+    """Use A* algorithm."""
+    BASIC = auto()
+    """Use basic path finding algo: rotate face to target, move straight forward."""
+    DELTA = auto()
+    """Do step replacement, no path finding -> rotate or move straight."""
 
 
 class Direction(Enum):
-    """
-    Enumeration of motion directions for path planners.
+    """Motion direction for a planned path.
+
+    Attributes:
+        FORWARD: Move forward.
+        BACKWARD: Move backward.
     """
 
     FORWARD = auto()
+    """Move forward."""
     BACKWARD = auto()
+    """Move backward."""

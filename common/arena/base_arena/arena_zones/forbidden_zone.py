@@ -1,56 +1,46 @@
-# ====== Code Summary ======
-# This module defines the ForbiddenZone class, which represents a strictly restricted zone within an arena.
-# The class extends BaseArenaZone and ensures that access remains forbidden unless explicitly modified.
+"""Strictly forbidden arena zone."""
 
+from __future__ import annotations
 
-# ====== Imports ======
-# Standard library imports
-# ...
+from typing import TYPE_CHECKING
 
-# Third-party imports
-from loggerplusplus import Logger
-
-# Local imports
-from geometry import Polygon
-
-# Internal project imports
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from loggerplusplus import Logger
+
+    from geometry import Polygon
 
 
-# ====== Forbidden Zone Class ======
 class ForbiddenZone(BaseArenaZone):
-    """
-    Zone that is strictly forbidden.
-
-    Attributes:
-        logger (Logger): Logger instance for logging messages.
-        accessibility (ZoneAccessibility): Accessibility type of the zone (defaults to forbidden).
-        buffer_size (float): Buffer size for geometric adjustments.
-        polygon (Polygon): Polygon representing the zone geometry.
-        buffered_polygon (Polygon): Buffered polygon geometry.
-        update_callback (callable): Function to be called on updates.
-    """
+    """Zone that is strictly forbidden."""
 
     def __init__(
         self,
         logger: Logger,
         accessibility: ZoneAccessibility = ZoneAccessibility.FORBIDDEN,
         buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
+        polygon: Polygon | None = None,
+        buffered_polygon: Polygon | None = None,
+        update_callback: Callable | None = None,
     ) -> None:
-        """
-        Initializes a ForbiddenZone with the specified parameters.
+        """Initialize a ForbiddenZone with the specified parameters.
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            accessibility (ZoneAccessibility): Accessibility of the zone.
-            buffer_size (float): Buffer size for geometric adjustments.
-            polygon (Polygon): Polygon representing the zone geometry.
-            buffered_polygon (Polygon): Buffered polygon geometry.
-            update_callback (callable): Function to be called on updates.
+            accessibility (ZoneAccessibility, optional): Accessibility of the
+                zone. Defaults to ZoneAccessibility.FORBIDDEN.
+            buffer_size (float, optional):
+                Buffer size for geometric adjustments. Defaults to 0.0.
+            polygon (Polygon | None, optional):
+                Polygon representing the zone geometry. Defaults to None.
+            buffered_polygon (Polygon | None, optional):
+                Buffered polygon geometry. Defaults to None.
+            update_callback (Callable | None, optional):
+                Function to be called on updates. Defaults to None.
         """
         super().__init__(
             logger=logger,

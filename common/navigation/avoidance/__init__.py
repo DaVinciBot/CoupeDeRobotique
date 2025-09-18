@@ -1,18 +1,24 @@
-from navigation.avoidance.structs import AvoidanceStrategy
-from navigation.avoidance.base_avoidance import (
-    BaseAvoidanceParams,
-    BaseAvoidance,
-    AvoidanceState,
-)
-from navigation.avoidance.no_avoidance import NoAvoidanceParams, NoAvoidance
-from navigation.avoidance.stop_and_wait_avoidance import (
-    StopAndWaitAvoidance,
-    StopAndWaitAvoidanceParams,
-)
+"""Obstacle avoidance strategies and factory utilities.
 
+This package exposes high-level interfaces to build avoidance behaviors.
+"""
+
+from navigation.avoidance import (
+    acs_detection_profiles,
+    back_avoidance,
+    base_avoidance,
+    no_avoidance,
+    stop_and_wait_avoidance,
+)
 from navigation.avoidance.avoidance_factory import AvoidanceFactory
+from navigation.avoidance.structs import AvoidanceStrategy
 
-from navigation.avoidance.acs_detection_profiles import (
-    BaseAcsDetectionProfile,
-    BaseAcsDetectionProfileParams,
-)
+__all__ = [
+    "AvoidanceFactory",
+    "AvoidanceStrategy",
+    "acs_detection_profiles",
+    "back_avoidance",
+    "base_avoidance",
+    "no_avoidance",
+    "stop_and_wait_avoidance",
+]

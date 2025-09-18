@@ -1,36 +1,26 @@
-# ====== Code Summary ======
-# This module defines the BaseArenaZone class, which serves as an abstract base class for zones within an arena.
-# It includes attributes for zone geometry, type, accessibility, and visit tracking.
-# Additionally, it provides methods for checking accessibility, updating zone status, and handling built-in comparisons.
-# The AllyZone class extends BaseArenaZone to represent zones dynamically assigned to allies based on their position.
+"""Dynamic zone representing the ally robot.
 
-# ====== Imports ======
-# Standard library imports
-# ...
+The :class:`AllyZone` is recalculated based on the ally position and is used to
+track its current location within the arena.
 
-# Third-party imports
-from loggerplusplus import Logger
+"""
 
-# Local imports
-from geometry import Point, OrientedPoint, create_straight_rectangle
+from __future__ import annotations
 
-# Internal project imports
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
+from typing import TYPE_CHECKING, override
+
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
-from arena.base_arena.team_color import TeamColor
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
+from geometry import OrientedPoint, Point, create_straight_rectangle
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
+    from arena.base_arena.team_color import TeamColor
 
 
-# ====== Ally Zone Class ======
 class AllyZone(BaseArenaZone):
-    """
-    Zone designated for allies, dynamically updated based on their position.
-
-    Attributes:
-        logger (Logger): Logger instance for logging messages.
-        point (OrientedPoint): Position and orientation of the ally.
-        accessibility (ZoneAccessibility): Accessibility type of the zone (defaults to free).
-        robot_size (float): Size of the robot.
-    """
+    """Zone designated for allies, dynamically updated based on their position."""
 
     def __init__(
         self,
@@ -38,13 +28,12 @@ class AllyZone(BaseArenaZone):
         point: OrientedPoint,
         robot_size: float = 2,  # Assume the robot is a square 2/2 = 1 side length
     ) -> None:
-        """
-        Initializes the AllyZone with position, size, and accessibility.
+        """Initializes the AllyZone with position, size, and accessibility.
 
         Args:
             logger (Logger): Logger instance for logging messages.
             point (OrientedPoint): Position and orientation of the ally.
-            robot_size (float, optional): Size of the robot (defaults to 2).
+            robot_size (float, optional): Size of the robot. Defaults to 2.
         """
         position_based_polygon = create_straight_rectangle(
             Point(point.x - robot_size, point.y - robot_size),
@@ -64,14 +53,14 @@ class AllyZone(BaseArenaZone):
             zone_color="#2ea100",
         )
 
+    @override
     def update(
         self,
         team_color: TeamColor,
         ally_position: Point | OrientedPoint,
         enemy_position: Point | OrientedPoint,
     ) -> None:
-        """
-        Update the zone based on the positions of allies and enemies.
+        """Update the zone based on the positions of allies and enemies.
 
         Args:
             team_color (TeamColor, optional): The color of the team.
@@ -81,16 +70,46 @@ class AllyZone(BaseArenaZone):
         super().update(team_color, ally_position, enemy_position)
         self.__init__(
             logger=self.logger,
-            point=ally_position,
+            point=(
+                ally_position
+                if isinstance(ally_position, OrientedPoint)
+                else OrientedPoint.from_point(ally_position)
+            ),
             robot_size=self.robot_size,
         )
 
-    def __eq__(self, other) -> bool:
-        """Checks equality based on oriented point geometry."""
+    @override
+    def __eq__(self, other: object) -> bool:
+        """Return ``True`` if zones represent the same oriented point.
+
+        Args:
+            other (object): Object to compare against.
+
+        Returns:
+            bool: ``True`` if ``other`` is an :class:``AllyZone`` with the same
+            point.
+        """
         if not isinstance(other, AllyZone):
             return False
         return self.point == other.point
 
-    def __ne__(self, other) -> bool:
-        """Checks inequality based on oriented point geometry."""
+    @override
+    def __ne__(self, other: object) -> bool:
+        """Return ``True`` if zones do not represent the same oriented point.
+
+        Args:
+            other (object): Object to compare against.
+
+        Returns:
+            bool: ``True`` if ``other`` is not an equal :class:``AllyZone``.
+        """
         return not self.__eq__(other)
+
+    @override
+    def __hash__(self) -> int:
+        """Return a hash based on the zone's position and size.
+
+        Returns:
+            int: Hash of the ally zone.
+        """
+        return hash((self.point.x, self.point.y, self.point.theta, self.robot_size))

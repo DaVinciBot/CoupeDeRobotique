@@ -1,36 +1,32 @@
-# ====== Code Summary ======
-# This class, BaseSpeedVectorAutoCalculateZone, extends BaseArenaZone to model an arena zone where speed vectors
-# are automatically calculated based on enemy movement. It records enemy positions over time, computes speed vectors,
-# and updates the zone accordingly. The class utilizes the deque data structure for efficient position recording and
-# leverages geometric operations to maintain a buffered polygon representing the speed vector.
+"""Zones that compute speed vectors from enemy movement records."""
 
-# ====== Imports ======
-# Standard library imports
+from __future__ import annotations
+
 from collections import deque
+from typing import TYPE_CHECKING, override
 
-# Third-party imports
-from loggerplusplus import Logger
-
-# Local imports
-from utils import Utils
-from geometry import Point, OrientedPoint, LineString
-
-# Internal project imports
-from arena.base_arena.arena_zones.structs import (
-    ZoneType,
-    ZoneAccessibility,
-    SpeedVector,
-    Record,
-)
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
-from arena.base_arena.team_color import TeamColor
+from arena.base_arena.arena_zones.structs import (
+    Record,
+    SpeedVector,
+    ZoneAccessibility,
+    ZoneType,
+)
+from geometry import LineString, OrientedPoint, Point
+from utils import Utils
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from loggerplusplus import Logger
+
+    from arena.base_arena.team_color import TeamColor
+
+MIN_RECORDS_FOR_VECTOR = 2
 
 
 class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
-    """
-    Represents a special zone in the arena that automatically calculates and updates speed vectors
-    based on recorded enemy movements.
-    """
+    """Represent a zone that auto-calculates speed vectors from enemy movement."""
 
     def __init__(
         self,
@@ -40,36 +36,43 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         point: Point | OrientedPoint,
         vector_width: float,
         buffer_size: float = 0.0,
-        update_callback: callable = None,
+        update_callback: Callable | None = None,
         zone_color: str = "#9e9e9e",
         positions_record_size: int = 3,
         no_detection_timeout: float = 4.0,
-        positions_recorded: deque = None,
-        speed_vector: SpeedVector = SpeedVector(0.0, 0.0, 0.0),
+        positions_recorded: deque[Record] | None = None,
+        speed_vector: SpeedVector | None = None,
         vector_factor: float = 25.0,
     ) -> None:
-        """
-        Initializes the speed vector auto-calculate zone.
+        """Initialize the speed vector auto-calculate zone.
 
         Args:
             logger (Logger): Logger instance for debugging.
             zone_type (ZoneType): Type of the zone.
-            accessibility (ZoneAccessibility): Accessibility properties of the zone.
+            accessibility (ZoneAccessibility): Accessibility properties of the
+                zone.
             point (Point | OrientedPoint): Central point of the zone.
             vector_width (float): Width of the vector representation.
             buffer_size (float, optional): Buffer size. Defaults to 0.0.
-            update_callback (callable, optional): Function to call when zone updates. Defaults to None.
-            zone_color (str, optional): Color representation of the zone. Defaults to "#9e9e9e".
-            positions_record_size (int, optional): Maximum number of position records. Defaults to 3.
-            no_detection_timeout (float, optional): Timeout before considering no detection. Defaults to 4.0.
-            positions_recorded (deque, optional): Queue storing recorded positions. Defaults to None.
-            speed_vector (SpeedVector, optional): Current speed vector. Defaults to SpeedVector(0.0, 0.0, 0.0).
-            vector_factor (float, optional): Scaling factor for vector influence. Defaults to 25.0.
+            update_callback (Callable | None, optional): Function to call when the
+                zone updates. Defaults to None.
+            zone_color (str, optional): Color representation of the zone. Defaults
+                to "#9e9e9e".
+            positions_record_size (int, optional): Maximum number of position
+                records. Defaults to 3.
+            no_detection_timeout (float, optional): Timeout before considering no
+                detection. Defaults to 4.0.
+            positions_recorded (deque[Record] | None, optional): Queue storing
+                recorded positions. Defaults to None.
+            speed_vector (SpeedVector | None, optional): Current speed vector.
+                Defaults to None.
+            vector_factor (float, optional): Scaling factor for vector influence.
+                Defaults to 25.0.
         """
         self.point = point
         self.vector_width = vector_width
         self.no_detection_timeout = no_detection_timeout
-        self.speed_vector = speed_vector
+        self.speed_vector = speed_vector or SpeedVector(0.0, 0.0, 0.0)
         self.speed_vector.factor = vector_factor
         self.positions_record_size = positions_record_size
         self.__positions_recorded = (
@@ -99,19 +102,19 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
                     self.point.x + self.speed_vector.factored_dx,
                     self.point.y + self.speed_vector.factored_dy,
                 ),
-            ]
+            ],
         )
 
     def _compute_enemy_speed_vector(self) -> SpeedVector:
-        """
-        Computes the speed vector based on recorded enemy positions.
+        """Compute the speed vector based on recorded enemy positions.
 
         Returns:
             SpeedVector: Computed speed vector with magnitude and direction.
         """
-        if len(self.__positions_recorded) < 2:
+        if len(self.__positions_recorded) < MIN_RECORDS_FOR_VECTOR:
             self.logger.debug(
-                "Not enough positions recorded to compute speed vector. Returning zero vector."
+                "Not enough positions recorded to compute speed vector. "
+                "Returning zero vector.",
             )
             return SpeedVector(0, 0, 0)
 
@@ -122,7 +125,9 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         timestamp_delta = end_record.timestamp - start_record.timestamp
 
         if timestamp_delta <= 0 or timestamp_delta > self.no_detection_timeout:
-            self.logger.debug("Invalid or outdated time delta. Returning zero vector.")
+            self.logger.debug(
+                "Invalid or outdated time delta. Returning zero vector.",
+            )
             return SpeedVector(0, 0, 0)
 
         dx, dy = (
@@ -130,22 +135,22 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             end_record.position.y - start_record.position.y,
         )
         distance = start_record.position.distance(end_record.position)
-        speed = distance / timestamp_delta if distance != 0 else 0
+        speed = distance / timestamp_delta if distance else 0
 
-        if speed == 0:
+        if not speed:
             self.logger.debug("No displacement detected. Returning zero vector.")
             return SpeedVector(0, 0, 0)
 
         return SpeedVector(speed, dx / distance, dy / distance)
 
+    @override
     def update(
         self,
         team_color: TeamColor,
         ally_position: Point | OrientedPoint,
         enemy_position: Point | OrientedPoint,
     ) -> None:
-        """
-        Updates the zone state based on detected enemy movement.
+        """Update the zone state based on detected enemy movement.
 
         Args:
             team_color (TeamColor, optional): The color of the team.
@@ -170,23 +175,43 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             uid=self.uid,  # Avoid reassigning a new uid
         )
 
+    @override
     def __str__(self) -> str:
-        """Returns a string representation of the zone and its speed vector."""
+        """Return a human-readable description of the zone.
+
+        Returns:
+            str: Text describing the zone and its speed vector.
+        """
         return (
             f"{super().__str__()} Speed: {self.speed_vector.speed}, "
             f"Direction: ({self.speed_vector.dx}, {self.speed_vector.dy})"
         )
 
+    @override
     def __repr__(self) -> str:
-        """Returns a detailed string representation of the zone state."""
+        """Return an unambiguous representation of the zone state.
+
+        Returns:
+            str: Detailed state string including speed vector information.
+        """
         return (
             f"{super().__repr__()} Speed: {self.speed_vector.speed}, "
             f"Direction: ({self.speed_vector.dx}, {self.speed_vector.dy}) "
-            f"Vector Factor: {self.speed_vector.factor}, Positions Recorded: {list(self.__positions_recorded)}, "
-            f"Vector Width: {self.vector_width}, No Detection Timeout: {self.no_detection_timeout}, "
+            f"Vector Factor: {self.speed_vector.factor}, "
+            f"Positions Recorded: {list(self.__positions_recorded)}, "
+            f"Vector Width: {self.vector_width}, "
+            f"No Detection Timeout: {self.no_detection_timeout}, "
             f"Positions Recorded Size: {self.positions_record_size}"
         )
 
-    def __format__(self, format_spec):
-        """Formats the string representation of the zone."""
+    @override
+    def __format__(self, _format_spec: str) -> str:
+        """Format the string representation of the zone.
+
+        Args:
+            _format_spec (str): Format specification passed to :func:``format``.
+
+        Returns:
+            str: Formatted representation.
+        """
         return self.__str__()

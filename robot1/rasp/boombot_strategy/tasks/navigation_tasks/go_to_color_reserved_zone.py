@@ -1,58 +1,60 @@
-from config_loader import CONFIG
+"""Navigation task to reach a color-reserved zone."""
 
-from boombot_strategy.tasks.navigation_tasks import NavigationTask
-from navigation import (
-    StopAndWaitAvoidanceParams,
-    BasicPathPlannerParams,
-    SequentialTrajectoryPlannerParams,
-    Direction,
-    TrajectoryPlanCommand,
-)
-from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (
+from __future__ import annotations
+
+from a_config_loader import CONFIG
+from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
 )
-import time
+from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
+from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
+from navigation.trajectory_planner.sequential_trajectory_planner import (
+    SequentialTrajectoryPlannerParams,
+)
 
 
 class GoToColorReservedZoneToFinishGame(NavigationTask):
-    def __init__(self, color_reserved_zone_id: int):
+    """Task to navigate to a color reserved zone to finish the game."""
+
+    def __init__(self, color_reserved_zone_id: int) -> None:
+        """Initialize the GoToColorReservedZoneToFinishGame task.
+
+        Args:
+            color_reserved_zone_id (int): The ID of the target color reserved zone.
+        """
         super().__init__(
             goal=color_reserved_zone_id,
             path_planner_params=BasicPathPlannerParams(),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,  # Be fast to finish the game
+            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                acs_distance=50, width_view=40
+                acs_distance=50,
+                width_view=40,
             ),
+            stabilization_delay=0.5,
         )
 
 
 class GoToColorReservedZoneToConstruct(NavigationTask):
-    def __init__(self, color_reserved_zone_id: int):
+    """Task to navigate to a color reserved zone to construct."""
+
+    def __init__(self, color_reserved_zone_id: int) -> None:
+        """Initialize the GoToColorReservedZoneToConstruct task.
+
+        Args:
+            color_reserved_zone_id (int): The ID of the target color reserved zone.
+        """
         super().__init__(
             goal=color_reserved_zone_id,
             path_planner_params=BasicPathPlannerParams(),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,  # Be careful to construct
+            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                acs_distance=50, width_view=40
+                acs_distance=55,
+                width_view=40,
             ),
+            stabilization_delay=1,  # Delay to stabilize before construction
         )
-
-    def handle(self, ctx):
-        if not self._is_initialized:
-            self._initialize(ctx)
-
-        cmd: TrajectoryPlanCommand = self.navigator_task.handle(
-            ally_zone=ctx.arena.ally_zone,
-            enemy_zone=ctx.arena.enemy_zone,
-        )
-
-        ctx.rolling_basis.set_target_position(cmd.get_position_command())
-        if not self.navigator_task.state.is_finished():
-            return False
-        else:
-            time.sleep(1)
-            return True

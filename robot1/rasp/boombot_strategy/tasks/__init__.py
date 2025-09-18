@@ -1,8 +1,8 @@
-from boombot_strategy.tasks.navigation_tasks import (
-    NavigationTask,
-    GoToStuffZoneToPickUp,
-    GoToColorReservedZoneToConstruct,
-    GoToColorReservedZoneToFinishGame,
-    Backward,
-    PreciseForward,
-)
+"""Task definitions used by Boombot strategies."""
+
+from . import actuator_task, navigation_tasks
+
+__all__ = [
+    "actuator_task",
+    "navigation_tasks",
+]

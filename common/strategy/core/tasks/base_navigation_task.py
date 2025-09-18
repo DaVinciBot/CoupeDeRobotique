@@ -1,31 +1,32 @@
-from navigation import (
-    NavigatorTaskParams,
-    NavigatorTask,
-    TrajectoryPlanCommand,
-    NavigatorState,
-)
-from strategy.core.tasks.base_task import BaseTask
+"""Tasks that drive the robot to a goal using planning components."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from navigation.navigator.task import NavigatorTask, NavigatorTaskParams
 from strategy.core.base_game_context import BaseGameContext
-from abc import abstractmethod
+from strategy.core.tasks.base_task import BaseTask
 
-from arena import BaseArenaZone
-from geometry import OrientedPoint, Point
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
-from navigation import (
-    BaseAvoidanceParams,
-    BaseTrajectoryPlannerParams,
-    BasePathPlannerParams,
-    SpeedProfiler,
-)
-from navigation.avoidance.acs_detection_profiles import (
-    BaseAcsDetectionProfile,
-    BaseAcsDetectionProfileParams,
-)
+    from arena.base_arena.arena_zones import BaseArenaZone
+    from geometry import OrientedPoint, Point
+    from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501
+        BaseAcsDetectionProfileParams,
+    )
+    from navigation.avoidance.base_avoidance import BaseAvoidanceParams
+    from navigation.path_planner.base_path_planner import BasePathPlannerParams
+    from navigation.trajectory_planner.base_trajectory_planner import (
+        BaseTrajectoryPlannerParams,
+    )
+    from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
-from loggerplusplus import Logger
 
+class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
+    """Common functionality for tasks that navigate through the arena."""
 
-class BaseNavigationTask(BaseTask):
     def __init__(
         self,
         goal: int | BaseArenaZone | OrientedPoint | Point | None,
@@ -34,14 +35,36 @@ class BaseNavigationTask(BaseTask):
         speed_profiler: SpeedProfiler,
         avoidance_params: BaseAvoidanceParams,
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
+        stabilization_delay: float,
         timeout: float | None = None,
         logger: Logger | None = None,
-    ):
-        self.logger: Logger = logger or Logger(
-            identifier=self.__class__.__name__, follow_logger_manager_rules=True
-        )
+    ) -> None:
+        """Initializes the BaseNavigationTask with navigation and planning parameters.
+
+        Args:
+            goal (int | BaseArenaZone | OrientedPoint | Point | None):
+                The navigation goal.
+            path_planner_params (BasePathPlannerParams):
+                Parameters for the path planner.
+            trajectory_planner_params (BaseTrajectoryPlannerParams):
+                Parameters for the trajectory planner.
+            speed_profiler (SpeedProfiler): Speed profile manager.
+            avoidance_params (BaseAvoidanceParams):
+                Parameters for obstacle avoidance.
+            acs_detection_profile_params (BaseAcsDetectionProfileParams):
+                Parameters for ACS detection profile.
+            stabilization_delay (float):
+                Delay for stabilization after reaching the goal.
+            timeout (float | None, optional):
+                Timeout for the navigation task. Defaults to None.
+            logger (Logger | None, optional):
+                Logger instance for debugging. Defaults to None.
+        """
+        super().__init__(logger=logger)
+
         self.goal: int | BaseArenaZone | OrientedPoint | Point | None = goal
-        self.timeout: float | None = timeout * 1000 if timeout is not None else None
+        self.stabilization_delay: float = stabilization_delay
+        self.timeout: float | None = timeout
         self.path_planner_params = path_planner_params
         self.trajectory_planner_params = trajectory_planner_params
         self.speed_profiler = speed_profiler
@@ -49,12 +72,17 @@ class BaseNavigationTask(BaseTask):
         self.acs_detection_profile_params = acs_detection_profile_params
 
         self._is_initialized: bool = False
-        self.navigator_task: NavigatorTask | None = None
+        self.navigator_task: NavigatorTask
 
-    def _initialize(self, ctx: BaseGameContext) -> None:
+    def _initialize(self, ctx: GameContextT) -> None:
+        """Initialize the navigation task.
+
+        Args:
+            ctx (GameContextT): The game context.
+        """
         self._is_initialized = True
 
-        self.navigator_task: NavigatorTask = NavigatorTask(
+        self.navigator_task = NavigatorTask(
             params=NavigatorTaskParams(
                 goal=(
                     ctx.arena.compute_goal_position(self.goal) if self.goal else None
@@ -65,8 +93,6 @@ class BaseNavigationTask(BaseTask):
                 speed_profiler=self.speed_profiler,
                 avoidance_params=self.avoidance_params,
                 acs_detection_profile_params=self.acs_detection_profile_params,
-            )
+                stabilization_delay=self.stabilization_delay,
+            ),
         )
-
-    @abstractmethod
-    def handle(self, ctx: BaseGameContext) -> bool: ...

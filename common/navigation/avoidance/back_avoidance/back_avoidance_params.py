@@ -1,26 +1,22 @@
-# ====== Code Summary ======
-# This module defines the BackAndForwardAvoidanceParams class, which configures a back-and-forward strategy
-# for obstacle avoidance in a navigation system. It specifies the distance at which avoidance is triggered
-# and the duration to wait before re-evaluating the path.
+"""Parameters for the backward avoidance strategy."""
 
+from __future__ import annotations
 
-# ====== Internal Project Imports ======
-from navigation.avoidance.structs import AvoidanceStrategy
+from typing import TYPE_CHECKING
+
 from navigation.avoidance.base_avoidance import BaseAvoidanceParams
-from navigation.trajectory_planner import SpeedProfiler
+from navigation.avoidance.structs import AvoidanceStrategy
+
+if TYPE_CHECKING:
+    from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
 
 class BackAvoidanceParams(BaseAvoidanceParams):
-    """
-    Configuration class for the 'BACK_AND_FORWARD' obstacle avoidance strategy.
+    """Configuration for a backward avoidance strategy.
 
-    This strategy stops the system when an obstacle is detected within a specified distance
-    and waits for a defined timeout period before taking further action.
-
-    Attributes:
-        timeout (float): Duration (in seconds) to wait after stopping before reassessment.
-        backward_distance (float): Distance to move backward when an obstacle is detected.
-        backward_speed_profiler (SpeedProfiler): Speed profiler for backward movement.
+    This strategy stops the system when an obstacle is detected within a
+    specified distance and waits for a defined timeout period before taking
+    further action.
     """
 
     def __init__(
@@ -28,14 +24,17 @@ class BackAvoidanceParams(BaseAvoidanceParams):
         timeout: float,
         backward_distance: float,
         backward_speed_profiler: SpeedProfiler,
-    ):
-        """
-        Initializes StopAndWaitAvoidanceParams with specific avoidance distance and timeout in seconds.
+    ) -> None:
+        """Initialize parameters for backward avoidance.
 
         Args:
-            timeout (float): Time to wait after stopping before checking again in seconds.
+            timeout (float):
+                Time to wait after stopping before checking again in seconds.
+            backward_distance (float):
+                Distance to reverse when avoidance is triggered.
+            backward_speed_profiler (SpeedProfiler):
+                Profiler for the backward motion.
         """
-        self.timeout: float = timeout * 1000.0
         self.backward_distance: float = backward_distance
         self.backward_speed_profiler: SpeedProfiler = backward_speed_profiler
-        super().__init__(AvoidanceStrategy.BACK)
+        super().__init__(AvoidanceStrategy.BACK, timeout * 1000.0)

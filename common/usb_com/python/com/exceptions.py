@@ -1,9 +1,11 @@
-class ComException(Exception):
-    """
-    Custom exception for communication-related errors.
+"""USB communication exception types."""
 
-    This exception is intended to be raised when a communication
+from __future__ import annotations
+
+
+class ComError(Exception):
+    """Custom exception for communication-related errors.
+
+    This exception is raised when a communication
     failure or protocol error occurs.
     """
-
-    pass

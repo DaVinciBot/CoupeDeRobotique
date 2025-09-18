@@ -1,31 +1,35 @@
-# ====== Code Summary ======
-# This module provides utilities for visualizing task graphs using both Graphviz and NetworkX.
-# It includes functions to visualize individual task flows from a starting node or an entire subgraph.
-# Nodes are rendered with their names and associated task types, and transitions are labeled by class name.
-# Node statuses are visually encoded when using NetworkX visualizations.
+"""Visualize task graphs using Graphviz or NetworkX."""
 
-# ====== Standard Library Imports ======
-from typing import Optional, Set
+from __future__ import annotations
 
-# ====== Third-party Library Imports ======
-import networkx as nx
+from typing import TYPE_CHECKING
+
 import matplotlib.pyplot as plt
+import networkx as nx
 from graphviz import Digraph
 
-# ====== Internal Project Imports ======
-from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.tasks.status import TaskStatus
-from strategy.core.sub_graphs import BaseSubGraph
+
+if TYPE_CHECKING:
+    from strategy.core.sub_graphs import BaseSubGraph
+    from strategy.core.task_nodes.base_task_node import BaseTaskNode
+    from strategy.core.tasks.base_task import BaseTask
 
 
-def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=False):
-    """
-    Recursively traverses a TaskNode graph and generates a Graphviz visual (.png).
+def visualize_task_graph(
+    start_node: BaseTaskNode,
+    filename: str = "task_graph",
+    *,
+    view: bool = False,
+) -> Digraph:
+    """Recursively traverses a TaskNode graph and generates a Graphviz visual (.png).
 
     Args:
         start_node (BaseTaskNode): Entry point of the task graph.
-        filename (str): Output filename without extension.
-        view (bool): If True, automatically opens the generated image.
+        filename (str, optional):
+            Output filename without extension. Defaults to "task_graph".
+        view (bool, optional):
+            If ``True``, automatically opens the generated image. Defaults to ``False``.
 
     Returns:
         Digraph: The generated Graphviz graph object.
@@ -33,12 +37,20 @@ def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=F
     dot = Digraph(comment="Strategy Graph", format="png")
     seen = set()
 
-    def get_task_class_name(task_list):
+    def get_task_class_name(task_list: list[BaseTask] | BaseTask) -> str:
+        """Get the class name of a task or a list of tasks.
+
+        Args:
+            task_list (list[BaseTask] | BaseTask): The task or list of tasks.
+
+        Returns:
+            str: The class name of the task or list of tasks.
+        """
         if isinstance(task_list, list):
             return ", ".join([t.__class__.__name__ for t in task_list])
         return task_list.__class__.__name__
 
-    def dfs(node: BaseTaskNode):
+    def dfs(node: BaseTaskNode) -> None:
         nid = str(id(node))
         if nid in seen:
             return
@@ -48,7 +60,11 @@ def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=F
         label = f"{node.name}\\n<{task_name}>"
 
         dot.node(
-            nid, label=label, shape="box", style="rounded,filled", fillcolor="lightblue"
+            nid,
+            label=label,
+            shape="box",
+            style="rounded,filled",
+            fillcolor="lightblue",
         )
 
         for t in node.transitions:
@@ -60,9 +76,8 @@ def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=F
     dfs(start_node)
 
     out_path = dot.render(filename, cleanup=True)
-    print(f"Graph rendered to {out_path}")
     if view:
-        import webbrowser
+        import webbrowser  # noqa: PLC0415
 
         webbrowser.open(out_path)
 
@@ -70,15 +85,19 @@ def visualize_task_graph(start_node: BaseTaskNode, filename="task_graph", view=F
 
 
 def visualize_entire_subgraph(
-    subgraph: BaseSubGraph, filename="full_graph", view=False
-):
-    """
-    Generates a full Graphviz visualization for a given subgraph.
+    subgraph: BaseSubGraph,
+    filename: str = "full_graph",
+    *,
+    view: bool = False,
+) -> Digraph:
+    """Generates a full Graphviz visualization for a given subgraph.
 
     Args:
         subgraph (BaseSubGraph): Subgraph containing all task nodes.
-        filename (str): Output filename without extension.
-        view (bool): If True, automatically opens the generated image.
+        filename (str, optional):
+            Output filename without extension. Defaults to "full_graph".
+        view (bool, optional):
+            If ``True``, automatically opens the generated image. Defaults to ``False``.
 
     Returns:
         Digraph: The generated Graphviz graph object.
@@ -86,12 +105,20 @@ def visualize_entire_subgraph(
     dot = Digraph(comment="Full Strategy Graph", format="png")
     seen = set()
 
-    def get_task_class_name(task_list):
+    def get_task_class_name(task_list: list[BaseTask] | BaseTask) -> str:
+        """Get the class name of a task or a list of tasks.
+
+        Args:
+            task_list (list[BaseTask] | BaseTask): The task or list of tasks.
+
+        Returns:
+            str: The class name of the task or list of tasks.
+        """
         if isinstance(task_list, list):
             return ", ".join([t.__class__.__name__ for t in task_list])
         return task_list.__class__.__name__
 
-    def add_node(node: BaseTaskNode):
+    def add_node(node: BaseTaskNode) -> None:
         nid = str(id(node))
         if nid in seen:
             return
@@ -99,7 +126,11 @@ def visualize_entire_subgraph(
 
         label = f"{node.name}\\n<{get_task_class_name(node.tasks)}>"
         dot.node(
-            nid, label=label, shape="box", style="rounded,filled", fillcolor="lightblue"
+            nid,
+            label=label,
+            shape="box",
+            style="rounded,filled",
+            fillcolor="lightblue",
         )
 
         for t in node.transitions:
@@ -111,9 +142,8 @@ def visualize_entire_subgraph(
         add_node(node)
 
     out_path = dot.render(filename, cleanup=True)
-    print(f"Graph rendered to {out_path}")
     if view:
-        import webbrowser
+        import webbrowser  # noqa: PLC0415
 
         webbrowser.open(out_path)
 
@@ -121,10 +151,10 @@ def visualize_entire_subgraph(
 
 
 def visualize_task_graph_from_node(
-    subgraph: BaseSubGraph, title: str = "Full Strategy Graph"
-):
-    """
-    Uses NetworkX and Matplotlib to visualize the task graph with color-coded node statuses.
+    subgraph: BaseSubGraph,
+    title: str = "Full Strategy Graph",
+) -> None:
+    """Visualize the task graph with color-coded node statuses.
 
     Args:
         subgraph (BaseSubGraph): Subgraph containing all task nodes.
@@ -153,7 +183,7 @@ def visualize_task_graph_from_node(
     ]
 
     plt.figure(figsize=(10, 7))
-    nx.draw_networkx_nodes(graph, pos, node_color=node_colors, node_size=800)
+    nx.draw(graph, pos, node_color=node_colors, node_size=800)
     nx.draw_networkx_labels(graph, pos, font_size=10, font_weight="bold")
     nx.draw_networkx_edges(graph, pos, arrowstyle="-|>", arrowsize=20)
     nx.draw_networkx_edge_labels(

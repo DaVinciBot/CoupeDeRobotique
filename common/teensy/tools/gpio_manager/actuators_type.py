@@ -1,11 +1,12 @@
-# ====== Standard Library Imports ======
+"""Enumeration of supported actuator types for Teensy GPIO pins."""
+
+from __future__ import annotations
+
 from enum import Enum, auto
 
 
-# ====== Class Part ======
 class ActuatorType(Enum):
-    """
-    Enum representing different types of actuators.
+    """Enum representing different types of actuators.
 
     Attributes:
         UNKNOWN: Default undefined actuator type.
@@ -15,6 +16,10 @@ class ActuatorType(Enum):
     """
 
     UNKNOWN = auto()
+    """Default undefined actuator type."""
     SERVO = auto()
+    """Represents a servo motor."""
     STEPPER = auto()
+    """Represents a stepper motor."""
     LCD = auto()
+    """Represents an LCD-display."""

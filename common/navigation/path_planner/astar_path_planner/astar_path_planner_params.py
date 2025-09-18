@@ -1,37 +1,25 @@
-# ====== Code Summary ======
+"""Parameters for the A* path planner."""
 
-# ====== Internal Project Imports ======
-from navigation.path_planner.structs import PathPlanningStrategy, Direction
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from pathfinding.core.diagonal_movement import DiagonalMovement
+from pathfinding.core.grid import Grid, GridNode
+from pathfinding.finder.a_star import AStarFinder
+
 from navigation.path_planner.base_path_planner.base_path_planner_params import (
     BasePathPlannerParams,
     BasePathPlannerPlanPathParams,
 )
+from navigation.path_planner.structs import Direction, PathPlanningStrategy
 
-# Third-party imports
-from pathfinding.core.grid import Grid
-from pathfinding.core.grid import GridNode
-from pathfinding.core.diagonal_movement import DiagonalMovement
-from pathfinding.finder.a_star import AStarFinder
-
-from geometry import OrientedPoint
+if TYPE_CHECKING:
+    from geometry import OrientedPoint
 
 
 class AStarPathPlannerParams(BasePathPlannerParams):
-    """
-    Parameter class for the A* path planner.
-
-    Attributes:
-        direction (Direction): Indicates whether the path should be planned FORWARD or BACKWARD.
-        grid (Grid): Current grid for pathfinding.
-        path_resolution (float): Resolution for path smoothing.
-        absolute_current_position (OrientedPoint): Absolute position of the robot in the grid.
-        absolute_goal (OrientedPoint): Absolute goal position in the grid.
-        current_position (GridNode): Current position of the robot in grid coordinates.
-        goal (GridNode): Goal position in grid coordinates.
-        finder (AStarFinder): Instance of the A* pathfinding algorithm.
-        path_found (list[GridNode]): List of grid nodes representing the found path.
-        oriented_path_found (list[OrientedPoint]): List of oriented points representing the path with orientation.
-    """
+    """Parameter class for the A* path planner."""
 
     def __init__(
         self,
@@ -41,14 +29,17 @@ class AStarPathPlannerParams(BasePathPlannerParams):
         start: OrientedPoint,
         goal: OrientedPoint,
         direction: Direction = Direction.FORWARD,
-    ):
-        """
-        Initialize parameters for the A* path planner.
+    ) -> None:
+        """Initialize parameters for the A* path planner.
 
         Args:
-            direction (Direction): Indicates whether the path should be planned FORWARD or BACKWARD.
             grid (Grid): Current the grid for pathfinding.
             path_resolution (float): Resolution for path smoothing.
+            chunk_size (int): Size of each grid chunk.
+            start (OrientedPoint): Starting point of the path.
+            goal (OrientedPoint): Goal point of the path.
+            direction (Direction, optional): Indicates whether the path should
+                be planned FORWARD or BACKWARD. Defaults to Direction.FORWARD.
         """
         # Direction parameter
         self.direction: Direction = direction
@@ -57,7 +48,7 @@ class AStarPathPlannerParams(BasePathPlannerParams):
         self.grid: Grid = grid
 
         self.chunk_size: int = chunk_size
-        self.half_chunk_size: float = self.chunk_size / 2
+        self.half_chunk_size: int = round(self.chunk_size / 2)
 
         self.grid_width: int = grid.width
         self.grid_height: int = grid.height
@@ -80,14 +71,14 @@ class AStarPathPlannerParams(BasePathPlannerParams):
 
 
 class AStarPathPlannerPlanPathParams(BasePathPlannerPlanPathParams):
-    """
-    Parameters for planning a path using the A* algorithm.
+    """Parameters for planning a path using the A* algorithm."""
 
-    Attributes:
-        start (OrientedPoint): Starting point of the path.
-        goal (OrientedPoint): Goal point of the path.
-    """
+    def __init__(self, start: OrientedPoint, goal: OrientedPoint) -> None:
+        """Initialize plan parameters.
 
-    def __init__(self, start: OrientedPoint, goal: OrientedPoint):
+        Args:
+            start (OrientedPoint): Starting point of the path.
+            goal (OrientedPoint): Goal point of the path.
+        """
         self.goal: OrientedPoint = goal
         super().__init__(start)

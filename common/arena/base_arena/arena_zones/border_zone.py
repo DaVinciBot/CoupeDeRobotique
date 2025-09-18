@@ -1,53 +1,43 @@
-# ====== Code Summary ======
-# This module defines the BorderZone class, representing the outer boundaries of the arena.
-# It extends BaseArenaZone and is characterized by its restricted accessibility.
+"""Arena border zone definitions."""
 
-# ====== Imports ======
-# Standard library imports
-# ...
+from __future__ import annotations
 
-# Third-party imports
-from loggerplusplus import Logger
+from typing import TYPE_CHECKING
 
-# Local imports
-from geometry import Polygon
-
-# Internal project imports
-from arena.base_arena.arena_zones.structs import ZoneType, ZoneAccessibility
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
+from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from loggerplusplus import Logger
+
+    from geometry import Polygon
 
 
-# ====== Border Zone Class ======
 class BorderZone(BaseArenaZone):
-    """
-    Represents the border zone of the arena, which is typically inaccessible.
-    This class defines the zone's geometry and ensures it remains restricted.
-
-    Attributes:
-        logger (Logger): Logger instance for logging messages.
-        buffer_size (float): Buffer size for geometric adjustments.
-        polygon (Polygon): Polygon representing the zone geometry.
-        buffered_polygon (Polygon): Buffered polygon geometry.
-        update_callback (callable): Function to be called on updates.
-    """
+    """Represent the border zone of the arena, which is typically inaccessible."""
 
     def __init__(
         self,
         logger: Logger,
         buffer_size: float = 0.0,
-        polygon: Polygon = None,
-        buffered_polygon: Polygon = None,
-        update_callback: callable = None,
+        polygon: Polygon | None = None,
+        buffered_polygon: Polygon | None = None,
+        update_callback: Callable | None = None,
     ) -> None:
-        """
-        Initializes the BorderZone with its geometry and accessibility settings.
+        """Initialize the border zone with geometry and accessibility.
 
         Args:
             logger (Logger): Logger instance for logging messages.
-            buffer_size (float, optional): Buffer size for geometric adjustments (defaults to 0.0).
-            polygon (Polygon, optional): Polygon representing the zone geometry.
-            buffered_polygon (Polygon, optional): Buffered polygon geometry.
-            update_callback (callable, optional): Function to be called on updates.
+            buffer_size (float, optional):
+                Buffer size for geometric adjustments. Defaults to 0.0.
+            polygon (Polygon | None, optional):
+                Polygon representing the zone geometry. Defaults to None.
+            buffered_polygon (Polygon | None, optional):
+                Buffered polygon geometry. Defaults to None.
+            update_callback (Callable | None, optional):
+                Function to be called on updates. Defaults to None.
         """
         super().__init__(
             logger=logger,

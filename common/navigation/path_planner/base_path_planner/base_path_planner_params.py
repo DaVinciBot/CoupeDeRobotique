@@ -1,23 +1,20 @@
-# ====== Code Summary ======
-# This module defines `BasePathPlannerParams`, a base class for holding configuration parameters
-# related to path planning. It primarily stores the pathfinding strategy to be used by the planner.
+"""Parameter containers for path planners."""
 
-# ====== Internal Project Imports ======
-from navigation.path_planner.structs import PathPlanningStrategy, Direction
-from geometry import OrientedPoint
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from geometry import OrientedPoint
+    from navigation.path_planner.structs import PathPlanningStrategy
 
 
 class BasePathPlannerParams:
-    """
-    Base class for path planner parameter configurations.
+    """Base class for path planner parameter configurations."""
 
-    Attributes:
-        path_finding_strategy (PathPlanningStrategy): The strategy used for generating paths.
-    """
-
-    def __init__(self, path_finding_strategy: PathPlanningStrategy):
-        """
-        Initialize the base path planner parameters.
+    def __init__(self, path_finding_strategy: PathPlanningStrategy) -> None:
+        """Initialize the base path planner parameters.
 
         Args:
             path_finding_strategy (PathPlanningStrategy): Strategy for path finding.
@@ -25,6 +22,12 @@ class BasePathPlannerParams:
         self.path_finding_strategy: PathPlanningStrategy = path_finding_strategy
 
 
+@dataclass
 class BasePathPlannerPlanPathParams:
-    def __init__(self, start: OrientedPoint):
-        self.start: OrientedPoint = start
+    """Parameters passed to :meth:`BasePathPlanner.plan_path`.
+
+    Attributes:
+        start (OrientedPoint): The starting point of the path.
+    """
+
+    start: OrientedPoint

@@ -1,59 +1,40 @@
-import random
+"""Entry point for running the robot's main brain."""
 
-from config_loader import CONFIG
+from __future__ import annotations
 
-# ====== Standard Library Imports ======
-import numpy as np
-import matplotlib.pyplot as plt
+import ast
+import asyncio
 import time
 from math import pi
+from typing import TYPE_CHECKING, Any
 
-
-# ====== Third-party library imports ======
-from ws_comms import WSmsg, WSreceiver, WServerRouteManager, WSender
+import matplotlib.pyplot as plt
+import numpy as np
 from loggerplusplus import Logger
 from taskbrain import Brain
+from ws_comms import WServerRouteManager, WSmsg
 
-# ====== Local Library Imports ======
-from geometry import OrientedPoint, Point, is_empty
-from arena import ShowArena, BaseArenaZone
-from arena import AllyZone, TeamColor
-
-# ====== Internal Project Imports ======
-from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+from a_config_loader import CONFIG
+from arena.base_arena import TeamColor
+from boombot_strategy import ShowGameContext
+from boombot_strategy.strategies import TowerRushAltStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
-from sensors import Lidar, Inputs
+from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+from geometry import OrientedPoint
 
-from navigation import (
-    Navigator,
-    NavigatorTaskParams,
-    DeltaPathPlannerParams,
-    SequentialTrajectoryPlannerParams,
-    SpeedProfiler,
-    StopAndWaitAvoidanceParams,
-    BasicPathPlannerParams,
-    NoAvoidanceParams,
-)
-
-from navigation.avoidance.acs_detection_profiles import (
-    RectangularProjectionAcsDetectionProfileParams,
-    NoAcsDetectionProfileParams,
-)
-
-from navigation.trajectory_planner import Direction
-from usb_com.python.tools import get_all_serial_number
-
-from navigation.navigator.task import NavigatorTaskState
-
-import asyncio
+if TYPE_CHECKING:
+    from arena.show_arena import ShowArena
+    from sensors import Inputs, Lidar, LidarDummy
 
 
 class MainBrain(Brain):
+    """Main brain for the robot."""
+
     def __init__(
         self,
         logger: Logger,
         # Sensor
-        lidar: Lidar,
+        lidar: Lidar | LidarDummy,
         # Environment
         arena: ShowArena,
         # WS routes
@@ -62,14 +43,24 @@ class MainBrain(Brain):
         # Inputs
         inputs: Inputs,
     ) -> None:
-        self.lidar: Lidar = lidar
+        """Initializes the MainBrain with the necessary components.
+
+        Args:
+            logger (Logger): Logger instance for logging messages.
+            lidar (Lidar | LidarDummy): Lidar instance for distance measurements.
+            arena (ShowArena): Arena instance for representing the game arena.
+            ws_cmd (WServerRouteManager): WebSocket command route manager.
+            ws_ui (WServerRouteManager): WebSocket UI route manager.
+            inputs (Inputs): Inputs instance for handling sensor data.
+        """
+        self.lidar: Lidar | LidarDummy = lidar
         self.arena: ShowArena = arena
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
-        self.navigator_task: NavigatorTaskParams = None
+        self.score: int = 0
 
-        self.ui_state = {
+        self.ui_state: dict[str, Any] = {
             "jack_state": True,
             "bau_state": True,
             "odometrie_state": OrientedPoint(0, 0, 0),
@@ -83,7 +74,7 @@ class MainBrain(Brain):
         }
 
         self.jack_triggered: bool = False
-
+        self.jack_plugged: bool = False
         super().__init__(logger, self)
 
         self.ws_cmd: WServerRouteManager = ws_cmd
@@ -91,77 +82,89 @@ class MainBrain(Brain):
         self.inputs: Inputs = inputs
         self.score: int
 
-    """
-    ### Secondary Processes ###
-    """
+    # ====== Secondary Processes =======
 
-    """ ### Routines ### """
+    # region ====== Routines =======
 
     @Brain.task(
         process=True,
         run_on_start=False,
-        refresh_rate=0.001,
+        refresh_rate=0.01,  # 100Hz
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def run(self) -> None:
+        """Runs the main control loop for the robot."""
         # --- Initialization --- #
-        # from boombot_strategy import ShowGameContext
-        # from boombot_strategy.strategies.basic_strategy import BasicStrategy
-
-        # Rolling basis & Actuators
-        rolling_basis = RollingBasis(
-            logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True)
-        )
-        time.sleep(0.01)
-        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-
-        # actuators = ActuatorsShow(
-        #     logger=Logger(identifier="Actuators", follow_logger_manager_rules=True)
-        # )
-        #
-        # # Init position
-        # actuators.block_banner()
-
-        # while not self.jack_triggered:
-        #     time.sleep(0.1)
-        #
-        # strat = BasicStrategy(
-        #     ShowGameContext(
-        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
-        #     )
-        # )
-
-        #runner = strat.get_graph_runner()
-
-        navigator = Navigator()
-        navigator.add_navigation_task(
-            NavigatorTaskParams(
-                goal=None,
-                timeout=None,
-                path_planner_params=DeltaPathPlannerParams(rotation=pi, distance=40),
-                trajectory_planner_params=SequentialTrajectoryPlannerParams(),
-                speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
-                avoidance_params=NoAvoidanceParams(),
-                acs_detection_profile_params=NoAcsDetectionProfileParams()
+        # --- 1) Initialize subsystems --- #
+        if CONFIG.ROLLING_BASIS_DUMMY:
+            rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
+                logger=Logger(
+                    identifier="RollingBasisDummy",
+                    follow_logger_manager_rules=True,
+                ),
             )
+        else:
+            rolling_basis = RollingBasis(
+                logger=Logger(
+                    identifier="RollingBasis",
+                    follow_logger_manager_rules=True,
+                ),
+            )
+        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        rolling_basis.initialize_pids()
+
+        if CONFIG.ACTUATORS_DUMMY:
+            actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
+                logger=Logger(
+                    identifier="Actuators",
+                    follow_logger_manager_rules=True,
+                ),
+            )
+        else:
+            actuators = ActuatorsShow(
+                logger=Logger(
+                    identifier="Actuators",
+                    follow_logger_manager_rules=True,
+                ),
+            )
+        actuators.deplacement_position()
+        # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
+        while not self.jack_plugged:  # wait until cable is plugged
+            time.sleep(0.1)
+        actuators.block_banner()  # engage the banner blocker
+        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        rolling_basis.initialize_pids()
+        while not self.jack_triggered:  # wait for the trigger event
+            time.sleep(0.1)
+
+        # --- 3) Build the strategy --- #
+
+        strategy = TowerRushAltStrategy(
+            ShowGameContext(
+                arena=self.arena,
+                rolling_basis=rolling_basis,
+                actuators=actuators,
+                score=self.score,
+            ),
         )
 
-
+        # from strategy.tools import visualize_task_graph
+        # visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
-        # runner.handle(
-        #     ShowGameContext(
-        #         arena=self.arena, rolling_basis=rolling_basis, actuators=actuators
-        #     )
-        # )
-        if navigator.current_task is not None:
-            cmd = navigator.handle(
-                ally_zone=self.arena.ally_zone,
-                enemy_zone=self.arena.enemy_zone,
-            )
-            rolling_basis.set_target_position(cmd.get_position_command())
+        context = ShowGameContext(
+            arena=self.arena,
+            rolling_basis=rolling_basis,
+            actuators=actuators,
+            score=self.score,
+        )
 
+        strategy.runner.handle(context)
+
+        # Update the rolling basis odometrie from the context
+        self.score = context.score
+        self.ui_state["score"] = self.score
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = rolling_basis.odometrie
 
@@ -173,6 +176,7 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def visualize_arena(self) -> None:
+        """Visualizes the arena."""
         # --- Initialization --- #
         fig, ax = plt.subplots()
 
@@ -189,15 +193,17 @@ class MainBrain(Brain):
             plot=(ax, fig),
             # Additional options
             # additional_zones=[self.th_ally_zone],
-            # additional_points=list(obstacles.geoms) if not is_empty(obstacles) else None,
+            # additional_points=list(obstacles.geoms)
+            # if not is_empty(obstacles)
+            # else None,
         )
         plt.pause(0.01)
 
-    """
-    ### Main Process ###
-    """
+    # endregion
 
-    """ ### Routines ### """
+    # ====== Main Process ======
+
+    # region ====== Routines ======
 
     @Brain.task(
         process=False,
@@ -206,12 +212,12 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     async def update_ui(self) -> None:
+        """Updates the UI with the current state."""
         previous_state = self.ui_state.copy()
 
         # --- MetaProg is insane (loop) --- #
         current_state = self.ui_state.copy()
         current_state["jack_state"] = not self.jack_triggered
-        # current_state["score"] = self.ctx.score if self.ctx else 0
         if current_state != previous_state:
             previous_state = current_state
             to_send = {
@@ -226,13 +232,14 @@ class MainBrain(Brain):
                 "score": current_state["score"],
             }
             await self.ws_ui.sender.send(
-                WSmsg(sender="server", msg="update ui data", data=to_send)
+                WSmsg(sender="server", msg="update ui data", data=to_send),
             )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
-    async def receive_ui_data(self):
-        """
-        executes requests received by the server. Use Postman to send request to the server
+    async def receive_ui_data(self) -> None:
+        """Executes requests received by the server.
+
+        Use Postman to send request to the server
         Use eval and await eval to run the code you want. Code must be sent as a string
         """
         ui = await self.ws_ui.receiver.get()
@@ -248,11 +255,11 @@ class MainBrain(Brain):
 
                 for instruction in instructions:
                     if instruction.startswith("await "):
-                        await eval(instruction.removeprefix("await "))
+                        await ast.literal_eval(instruction.removeprefix("await "))
                     else:
-                        eval(instruction)
+                        ast.literal_eval(instruction)
             elif ui.msg == "team change":
-                if ui.data["team"] in ["yellow", "blue"]:
+                if ui.data["team"] in {"yellow", "blue"}:
                     self.arena.set_team_color(TeamColor[ui.data["team"].upper()])
                     self.logger.info(f"Team color set to {ui.data['team']}")
                 else:
@@ -262,54 +269,80 @@ class MainBrain(Brain):
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def update_arena(self) -> None:
-        # Update the arena with the new position of the robot
+        """Updates the arena with the current position of the robot."""
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            # lidar_scan_polars=np.array([]),
-            lidar_scan_polars=self.lidar.scan_to_polars(),  # np.array([]),
+            lidar_scan_polars=self.lidar.scan_to_polars(),
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.1)
-    async def print_odo(self) -> None:
-        self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
+    # @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
+    # async def print_odo(self) -> None:
+    #     self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
 
-    """ ### One-Shot Tasks ### """
+    # endregion
+
+    # region ====== One-Shot Tasks ======
 
     @Brain.task(process=False, run_on_start=False)
-    async def wait_for_team(self):
+    async def wait_for_team(self) -> None:
+        """Waits for the team color to be set before starting the brain."""
         while self.arena.team_color == TeamColor.UNDEFINED:
             await asyncio.sleep(0.1)
 
         self.logger.info(
-            f"Team color is set to {self.arena.team_color.name.lower()}. Starting the brain."
+            f"Team color is set to {self.arena.team_color.name.lower()}."
+            "Starting the brain.",
         )
 
     @Brain.task(process=False, run_on_start=True)
-    async def scan_jack(self):
+    async def wait_jack_trigger(self) -> None:
+        """Wait for the jack to be triggered."""
+        while not self.jack_plugged:
+            await asyncio.sleep(0.1)
         await self.inputs.wait_for_jack_trigger()
         self.jack_triggered = True
+        self.jack_plugged = False
 
     @Brain.task(process=False, run_on_start=True)
-    async def start(self):
-        # 1. Wait for the team color to be set
-        #self.arena.set_team_color(TeamColor.YELLOW)
-        #await self.wait_for_team()
+    async def wait_jack_plug(self) -> None:
+        """Wait for the jack to be plugged."""
+        await self.inputs.wait_for_jack_plugged()
+        self.jack_plugged = True
 
-        # 2. Define the starting position based on the team color
-        # start_position = OrientedPoint(0, 0, 0)
-        # if self.arena.team_color == TeamColor.YELLOW:
-        #     self.logger.info("Starting as YELLOW team.")
-        #     start_position = OrientedPoint(177.5, 21, -pi / 2)
-        # elif self.arena.team_color == TeamColor.BLUE:
-        #     self.logger.info("Starting as BLUE team.")
-        #     start_position = OrientedPoint(122.5, 21, -pi / 2)
+    @Brain.task(process=False, run_on_start=True)
+    async def start(self) -> None:
+        """Starts the main brain process."""
+        if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
+            self.logger.warning(
+                "All subsystems are in dummy mode. The robot will not move.",
+            )
+            self.arena.set_team_color(TeamColor.YELLOW)
+        else:
+            await self.wait_for_team()
 
         start_position = OrientedPoint(0, 0, 0)
+        enemy_position = OrientedPoint(150, 200, -pi / 2)
+        if self.arena.team_color == TeamColor.YELLOW:
+            self.logger.info("Starting as YELLOW team.")
+            start_position = OrientedPoint(177.5, 21, -pi / 2)
+            enemy_position = OrientedPoint(122.5, 21, -pi / 2)
+        elif self.arena.team_color == TeamColor.BLUE:
+            self.logger.info("Starting as BLUE team.")
+            start_position = OrientedPoint(122.5, 21, -pi / 2)
+            enemy_position = OrientedPoint(177.5, 21, -pi / 2)
+
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(
-            self.arena.team_color, start_position, Point(290, 190)
+            self.arena.team_color,
+            start_position,
+            enemy_position,
+        )
+        self.arena.ally_zone.update(
+            self.arena.team_color,
+            start_position,
+            enemy_position,
         )
         self.arena.update(
             ally_position=start_position,
@@ -317,4 +350,7 @@ class MainBrain(Brain):
             optimized_update=False,
         )
         self.rolling_basis_odometrie = start_position
-        await self.run()
+        await asyncio.sleep(1)  # Allow time for the arena to update
+        await self.run()  # pyright: ignore[reportGeneralTypeIssues] don't touch
+
+    # endregion

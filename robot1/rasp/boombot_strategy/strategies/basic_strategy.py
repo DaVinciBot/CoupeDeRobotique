@@ -1,127 +1,87 @@
+"""Simple showcase strategy performing banner deployment and pickups."""
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from loggerplusplus import Logger
-from boombot_strategy import ShowGameContext
-from boombot_strategy.sub_graphs import get_pickup_sub_graph, get_construct_sub_graph
-from boombot_strategy.strategies import BaseStrategy
+
+from boombot_strategy.strategies.base_strategy import BaseStrategy
+from boombot_strategy.sub_graphs import (
+    get_banner_deployment_subgraph,
+    get_construct_subgraph,
+    get_pickup_subgraph,
+)
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
+from strategy.core import GraphRunner
+from strategy.core.task_nodes import BaseTaskNode
 
-from boombot_strategy.tasks.navigation_tasks.maneuver import PreciseForward, Backward
-from boombot_strategy.tasks.actuator_task.actuator_task import BlockBanner, ReadyToApproachToPickUp
-from strategy.core import (
-    SubGraphBuilder,
-    BaseTaskNode,
-    DirectTransition,
-    BaseSubGraph,
-    GraphRunner,
-)
-
-from strategy.tools import (
-    visualize_task_graph_from_node,
-    visualize_task_graph,
-    visualize_entire_subgraph,
-)
+if TYPE_CHECKING:
+    from boombot_strategy.show_game_context import ShowGameContext
 
 
 class BasicStrategy(BaseStrategy):
-    def __init__(self, ctx: ShowGameContext):
+    """Define a basic game strategy by sequencing multiple subgraphs.
+
+    - Deploy banner
+    - Perform two pickup and construction cycles
+    - Navigate to backstage zone to finish the game
+    """
+
+    def __init__(self, ctx: ShowGameContext) -> None:
+        """Initialize the strategy.
+
+        Build the task flow using subgraphs and direct transitions.
+
+        Args:
+            ctx (ShowGameContext):
+                Game context containing game-specific configurations and zones.
+        """
         super().__init__(ctx)
 
-        block_banner = BaseTaskNode(
-            name="Block Banner",
-            tasks=BlockBanner(),
+        # Step 1: Deploy the banner
+        deploy_banner_subgraph = get_banner_deployment_subgraph()
+
+        # Step 2: Navigate to the first pickup zone
+        first_pickup_subgraph = get_pickup_subgraph(self.zones["first_pickup_zone"])
+
+        # Step 3: Navigate to the first construction zone
+        first_construct_subgraph = get_construct_subgraph(
+            self.zones["first_build_zone"],
+            back_offset=5,
         )
 
-        precise_forward_to_deploy_brand = BaseTaskNode(
-            name="Precise forward to deploy brand",
-            tasks=PreciseForward(7),
-        )
+        # # Step 4: Navigate to the second pickup zone
+        # second_pickup_subgraph = get_pickup_subgraph(self.zones["second_pickup_zone"])
+        #
+        # # Step 5: Navigate to the second construction zone
+        # second_construct_subgraph = get_construct_subgraph(
+        #     self.zones["second_build_zone"], back_offset=15
+        # )
 
-        ready_to_approach = BaseTaskNode(
-            name="Ready to Approach",
-            tasks=ReadyToApproachToPickUp(),
-        )
-
-        backward_to_extract_from_deploy_brand = BaseTaskNode(
-            name="Backward to extract from deploy brand",
-            tasks=Backward(15),
-        )
-
-        first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"], ctx)
-
-        first_build_zone = get_construct_sub_graph(
-            self.zones["first_build_zone"], ctx, 10
-        )
-
+        # Step 6: Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
-            name="Go to backstage",
+            name="[End] Go to backstage",
             tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
         )
 
-        block_banner.add_transition(DirectTransition(precise_forward_to_deploy_brand))
-        precise_forward_to_deploy_brand.add_transition(DirectTransition(ready_to_approach))
-        ready_to_approach.add_transition(DirectTransition(backward_to_extract_from_deploy_brand))
-        backward_to_extract_from_deploy_brand.add_transition(DirectTransition(first_pickup_zone.get_entry()))
-        first_pickup_zone.get_exits()[0].add_transition(DirectTransition(first_build_zone.get_entry()))
-        first_build_zone.get_exits()[0].add_transition(DirectTransition(go_to_backstage))
+        # Connect the subgraphs in execution order
+        self._auto_build_transitions(
+            deploy_banner_subgraph,
+            first_pickup_subgraph,
+            first_construct_subgraph,
+            # second_pickup_subgraph,
+            # second_construct_subgraph,
+            go_to_backstage,
+        )
 
-
-
-        # first_pickup_zone = get_pickup_sub_graph(self.zones["first_pickup_zone"], ctx)
-        # first_build_zone = get_construct_sub_graph(
-        #     self.zones["first_build_zone"], ctx, 6
-        # )
-        #
-        # backward_to_extract_from_deploy_brand.add_transition(
-        #     DirectTransition(first_pickup_zone.get_entry())
-        # )
-        #
-        # first_pickup_zone.get_exits()[0].add_transition(
-        #     DirectTransition(first_build_zone.get_entry())
-        # )
-        #
-        # second_pickup_zone = get_pickup_sub_graph(self.zones["second_pickup_zone"], ctx)
-        # second_build_zone = get_construct_sub_graph(
-        #     self.zones["second_build_zone"], ctx
-        # )
-        # second_pickup_zone.get_exits()[0].add_transition(
-        #     DirectTransition(second_build_zone.get_entry())
-        # )
-        #
-        # third_pickup_zone = get_pickup_sub_graph(self.zones["third_pickup_zone"], ctx)
-        # third_build_zone = get_construct_sub_graph(
-        #     self.zones["first_build_zone"], ctx, 0
-        # )
-        # third_pickup_zone.get_exits()[0].add_transition(
-        #     DirectTransition(third_build_zone.get_entry())
-        # )
-        #
-        # # fourth_pickup_zone = get_pickup_sub_graph(self.zones["fourth_pickup_zone"], ctx)
-        # # fourth_build_zone = get_construct_sub_graph(
-        # #     self.zones["first_build_zone"], ctx, -2.5
-        # # )
-        # # fourth_pickup_zone.get_exits()[0].add_transition(
-        # #     DirectTransition(fourth_build_zone.get_entry())
-        # # )
-        #
-        # go_to_backstage = BaseTaskNode(
-        #     name="Go to backstage",
-        #     tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
-        # )
-        #
-        # first_build_zone.get_exits()[0].add_transition(
-        #     DirectTransition(second_pickup_zone.get_entry())
-        # )
-        # second_build_zone.get_exits()[0].add_transition(
-        #     DirectTransition(third_pickup_zone.get_entry())
-        # )
-        # third_build_zone.get_exits()[0].add_transition(
-        #     DirectTransition(go_to_backstage)
-        # )
-
+        # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
             logger=Logger(
-                identifier="BasicStrategyRunner", follow_logger_manager_rules=True
+                identifier="BasicStrategyRunner",
+                follow_logger_manager_rules=True,
             ),
-            start=block_banner,
+            start=deploy_banner_subgraph.get_entry(),
         )

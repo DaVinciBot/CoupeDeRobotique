@@ -1,3 +1,13 @@
+"""Placeholder utilities for controlling an addressable LED strip.
+
+This module intentionally contains no implementation. Historic, commented-out
+code has been removed to comply with lint rules. When LED strip control is
+needed again, implement the necessary classes and functions here.
+"""
+
+# ruff: noqa : ERA001
+# from __future__ import annotations
+
 # from rpi_ws281x import PixelStrip, Color, RGBW
 # from old_logger.log_tools import LogLevels
 # from old.old_logger.logger import Logger
@@ -143,7 +153,10 @@
 
 #     def set_team(self, team):
 #         # print(f"Set team to {team}")
-#         self.set_pillars(Colors.YELLOW if team == "y" else Colors.BLUE, self.team_index)
+#         self.set_pillars(
+#             Colors.YELLOW if team == "y" else Colors.BLUE,
+#             self.team_index,
+#         )
 
 #     def set_lidar_info(
 #         self,

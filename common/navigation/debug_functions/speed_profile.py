@@ -1,40 +1,46 @@
-# ====== Code Summary ======
-# This module provides a test utility to visualize a given `BaseSpeedProfile` over time.
-# It plots both speed and distance with respect to time using matplotlib, allowing developers
-# to inspect the profile shape and dynamics (e.g., acceleration, cruising, deceleration).
+"""Utilities to plot speed and distance for a given speed profile."""
 
-# ====== Third-Party Library Imports ======
+# ruff: noqa: T201, PT028
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from matplotlib import pyplot as plt
 
-# ====== Internal Project Imports ======
-from navigation.trajectory_planner.speed_profile.base_speed_profile import (
-    BaseSpeedProfile,
-)
+if TYPE_CHECKING:
+    from navigation.trajectory_planner.speed_profile.base_speed_profile import (
+        BaseSpeedProfile,
+    )
 
 
 def test_speed_profile(
     profile: BaseSpeedProfile,
-    distance: float | None = None,
+    distance: float,
     step_time: float = 0.1,
     departure_speed: float = 0.0,
     arrival_speed: float = 0.0,
-):
-    """
-    Plot the speed and distance over time for a given speed profile.
+) -> None:
+    """Plot the speed and distance over time for a given speed profile.
 
     Args:
         profile (BaseSpeedProfile): The speed profile to test.
-        distance (float | None, optional): Target distance to simulate. Defaults to None.
-        step_time (float, optional): Time interval for sampling the profile. Defaults to 0.1.
+        distance (float, optional):
+            Target distance to simulate.
+        step_time (float, optional):
+            Time interval for sampling the profile. Defaults to 0.1.
+        departure_speed (float, optional): Initial speed at departure. Defaults to 0.0.
+        arrival_speed (float, optional): Final speed at arrival. Defaults to 0.0.
     """
     print("Testing profile:", profile)
     total_duration = profile.get_total_duration(
-        distance=distance, departure_speed=departure_speed, arrival_speed=arrival_speed
+        distance=distance,
+        departure_speed=departure_speed,
+        arrival_speed=arrival_speed,
     )
 
-    speeds = []
-    distances = []
-    times = []
+    speeds: list[float] = []
+    distances: list[float] = []
+    times: list[float] = []
 
     current_time = 0.0
     while current_time < total_duration:
@@ -44,7 +50,7 @@ def test_speed_profile(
                 distance=distance,
                 departure_speed=departure_speed,
                 arrival_speed=arrival_speed,
-            )
+            ),
         )
         speeds.append(
             profile.get_speed(
@@ -52,7 +58,7 @@ def test_speed_profile(
                 distance=distance,
                 departure_speed=departure_speed,
                 arrival_speed=arrival_speed,
-            )
+            ),
         )
         times.append(current_time)
         current_time += step_time
@@ -73,5 +79,5 @@ def test_speed_profile(
 
     plt.title("Vitesse et distance en fonction du temps")
     fig.tight_layout()
-    plt.grid(True)
+    plt.grid(visible=True)
     plt.show()
