@@ -84,7 +84,7 @@ class MainBrain(Brain):
 
     # ====== Secondary Processes =======
 
-    # ====== Routines =======
+    # region ====== Routines =======
 
     @Brain.task(
         process=True,
@@ -199,9 +199,11 @@ class MainBrain(Brain):
         )
         plt.pause(0.01)
 
+    # endregion
+
     # ====== Main Process ======
 
-    # ====== Routines ======
+    # region ====== Routines ======
 
     @Brain.task(
         process=False,
@@ -279,7 +281,9 @@ class MainBrain(Brain):
     # async def print_odo(self) -> None:
     #     self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
 
-    # ====== One-Shot Tasks ======
+    # endregion
+
+    # region ====== One-Shot Tasks ======
 
     @Brain.task(process=False, run_on_start=False)
     async def wait_for_team(self) -> None:
@@ -348,3 +352,5 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = start_position
         await asyncio.sleep(1)  # Allow time for the arena to update
         await self.run()  # pyright: ignore[reportGeneralTypeIssues] don't touch
+
+    # endregion

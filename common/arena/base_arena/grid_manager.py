@@ -75,7 +75,7 @@ class GridManager:
         self.static_grid: Grid = self.__generate_base_grid()
         self.static_and_dynamic_grid: Grid = self.__generate_base_grid()
 
-    # ====== Private Methods ======
+    # region ====== Private Methods ======
 
     def __generate_base_grid(self) -> Grid:
         """Generate a base grid with all cells walkable.
@@ -257,7 +257,9 @@ class GridManager:
 
         self.not_updated_forbidden_zones: list[Polygon] = []
 
-    # ====== Public Methods ======
+    # endregion
+
+    # region ====== Public Methods ======
     @override
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, GridManager):
@@ -493,3 +495,5 @@ class GridManager:
             plt.show()
 
         return ax, fig
+
+    # endregion

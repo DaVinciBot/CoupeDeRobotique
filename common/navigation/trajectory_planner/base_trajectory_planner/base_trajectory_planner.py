@@ -59,7 +59,7 @@ class BaseTrajectoryPlanner[PARAMSTYPE: BaseTrajectoryPlannerParams](ABC):
             0.0  # Time when current planning started
         )
 
-    # ====== Chrono Helpers ======
+    # region ====== Chrono Helpers ======
     def _get_trajectory_time_elapsed(self) -> float:
         """Compute the total elapsed time since the start of the planning session.
 
@@ -83,7 +83,9 @@ class BaseTrajectoryPlanner[PARAMSTYPE: BaseTrajectoryPlannerParams](ABC):
         """
         return self._get_trajectory_time_elapsed()
 
-    # ====== Internal Utilities ======
+    # endregion
+
+    # region ====== Internal Utilities ======
     @staticmethod
     def ensure_planning_started(
         method: Callable[..., TrajectoryPlanCommand],
@@ -108,7 +110,9 @@ class BaseTrajectoryPlanner[PARAMSTYPE: BaseTrajectoryPlannerParams](ABC):
 
         return wrapper
 
-    # ====== Public Methods ======
+    # endregion
+
+    # region ====== Public Methods ======
     def start_planning(self) -> None:
         """Start the trajectory planning session."""
         self._start_trajectory_timestamp = time.time()
@@ -127,7 +131,9 @@ class BaseTrajectoryPlanner[PARAMSTYPE: BaseTrajectoryPlannerParams](ABC):
         """
         return self._start_trajectory_timestamp > 0.0
 
-    # ====== Abstract Methods ======
+    # endregion
+
+    # region ====== Abstract Methods ======
     @abstractmethod
     def plan_trajectory(self, path: list[OrientedPoint]) -> None:
         """Plan a trajectory for the provided path.
@@ -151,3 +157,5 @@ class BaseTrajectoryPlanner[PARAMSTYPE: BaseTrajectoryPlannerParams](ABC):
         Returns:
             float: Total duration in seconds.
         """
+
+    # endregion

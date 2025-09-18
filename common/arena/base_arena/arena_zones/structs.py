@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from geometry import Point
 
 
-# ====== Enums ======
+# region ====== Enums ======
 class ZoneType(Enum):
     """Enumeration for different types of zones in the arena.
 
@@ -57,7 +57,10 @@ class ZoneAccessibility(Enum):
     """Completely inaccessible."""
 
 
-# ====== Data Classes ======
+# endregion
+
+
+# region ====== Data Classes ======
 @dataclass
 class Record:
     """Represents a timestamped position record.
@@ -102,3 +105,6 @@ class SpeedVector:
     def factored_dy(self) -> float:
         """Returns the scaled change in the y-direction."""
         return self.dy * self.factor
+
+
+# endregion

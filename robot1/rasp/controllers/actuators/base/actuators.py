@@ -86,7 +86,7 @@ class Actuators(
         """
         return self.__class__.__name__
 
-    # ====== Message Receiving Handlers ======
+    # region ====== Message Receiving Handlers ======
 
     def rcv_print(self, msg: bytes) -> None:
         """Handles PRINT messages from the Teensy.
@@ -121,7 +121,9 @@ class Actuators(
         # Save the switch state
         self.switches_states[pin] = state
 
-    # ====== Message Sending Methods ======
+    # endregion
+
+    # region ====== Message Sending Methods ======
 
     @log("Actuators")
     def set_stepper_driver_activation_state(
@@ -288,3 +290,5 @@ class Actuators(
         """
         msg = Messages.ATTACH_SWITCH.to_bytes() + struct.pack("<B", pin)
         self.send_bytes(msg)
+
+    # endregion

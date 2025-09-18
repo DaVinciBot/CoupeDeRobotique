@@ -137,7 +137,7 @@ class BaseArenaZone(ABC):
             join_style=BufferJoinStyle.mitre,
         )
 
-    # ====== Accessibility methods ======
+    # region ====== Accessibility methods ======
 
     def is_accessible(
         self,
@@ -214,7 +214,9 @@ class BaseArenaZone(ABC):
 
         return nearest_position
 
-    # ====== Update methods ======
+    # endregion
+
+    # region ====== Update methods ======
 
     def update(
         self,
@@ -247,7 +249,9 @@ class BaseArenaZone(ABC):
         grid_manager.remove_forbidden_static_zone(self.buffered_polygon)
         self.logger.debug(f"{self.zone_type} zone is now accessible")
 
-    # ====== Built-in methods ======
+    # endregion
+
+    # region ====== Built-in methods ======
 
     def __instancecheck__(self, other: object) -> bool:
         """Return ``True`` if ``other`` is an instance of the same class.
@@ -335,3 +339,5 @@ class BaseArenaZone(ABC):
             str: Formatted representation.
         """
         return self.__str__()
+
+    # endregion

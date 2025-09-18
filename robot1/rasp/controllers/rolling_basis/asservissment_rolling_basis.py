@@ -84,7 +84,7 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         self._initialize_pids()
 
-    # ====== Message Receiving Handlers ======
+    # region ====== Message Receiving Handlers ======
 
     def rcv_print(self, msg: bytes) -> None:
         """Handles PRINT messages from the Teensy.
@@ -125,7 +125,9 @@ class AsservissementRollingBasis(BaseComTeensy):
         """
         self.logger.warning(f"Teensy Motors does not know the message {msg.hex()}")
 
-    # ====== Message Sending Methods  ======
+    # endregion
+
+    # region ====== Message Sending Methods  ======
 
     def set_target_position(
         self,
@@ -148,7 +150,66 @@ class AsservissementRollingBasis(BaseComTeensy):
         )
         self.send_bytes(msg)
 
-        # ====== Plotting Method ======
+    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
+    def set_odometrie(self, odometrie: OrientedPoint) -> None:
+        """Sends a message to set the odometrie of the rolling basis.
+
+        Args:
+            odometrie (OrientedPoint): The new odometrie values.
+        """
+        msg = (
+            Messages.SET_ODOMETRIE.to_bytes()
+            + struct.pack("<d", odometrie.x)
+            + struct.pack("<d", odometrie.y)
+            + struct.pack("<d", odometrie.theta)
+        )
+        self.send_bytes(msg)
+
+    @log(
+        param_logger="RollingBasis",
+        log_level=LogLevels.INFO,
+    )
+    def _send_pid(self, pid_id: int, pid: PID) -> None:
+        """Internal method to send PID configuration data to the Teensy.
+
+        Args:
+            pid_id (int): The identifier for the PID controller.
+            pid (PID): The PID controller parameters.
+        """
+        msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
+        self.send_bytes(msg)
+
+    # endregion
+
+    # region ====== Logging Methods ======
+
+    def _log_entry(self) -> None:
+        """Internal: record timestamp, last target, and latest odometry."""
+        entry = {
+            "time": time.time(),
+            "target_x": self._last_target.x,
+            "target_y": self._last_target.y,
+            "target_theta": self._last_target.theta,
+            "actual_x": self.odometrie.x,
+            "actual_y": self.odometrie.y,
+            "actual_theta": self.odometrie.theta,
+        }
+        self._logs.append(entry)
+
+    def get_logs(self) -> list[dict[str, Any]]:
+        """Return the recorded log entries.
+
+        Each entry is a dictionary with keys ``time``, ``target_x``, ``target_y``,
+        ``target_theta``, ``actual_x``, ``actual_y`` and ``actual_theta``.
+
+        Returns:
+            list[dict[str, Any]]: The stored log entries.
+        """
+        return self._logs
+
+    def clear_logs(self) -> None:
+        """Clears the stored log entries."""
+        self._logs.clear()
 
     def plot_logs(self) -> None:
         """Plot target vs actual odometry for X, Y, and Theta using stored logs.
@@ -227,66 +288,9 @@ class AsservissementRollingBasis(BaseComTeensy):
         plt.tight_layout()
         plt.show()
 
-    # ====== Logging Methods ======
+    # endregion
 
-    def _log_entry(self) -> None:
-        """Internal: record timestamp, last target, and latest odometry."""
-        entry = {
-            "time": time.time(),
-            "target_x": self._last_target.x,
-            "target_y": self._last_target.y,
-            "target_theta": self._last_target.theta,
-            "actual_x": self.odometrie.x,
-            "actual_y": self.odometrie.y,
-            "actual_theta": self.odometrie.theta,
-        }
-        self._logs.append(entry)
-
-    def get_logs(self) -> list[dict[str, Any]]:
-        """Return the recorded log entries.
-
-        Each entry is a dictionary with keys ``time``, ``target_x``, ``target_y``,
-        ``target_theta``, ``actual_x``, ``actual_y`` and ``actual_theta``.
-
-        Returns:
-            list[dict[str, Any]]: The stored log entries.
-        """
-        return self._logs
-
-    def clear_logs(self) -> None:
-        """Clears the stored log entries."""
-        self._logs.clear()
-
-    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
-    def set_odometrie(self, odometrie: OrientedPoint) -> None:
-        """Sends a message to set the odometrie of the rolling basis.
-
-        Args:
-            odometrie (OrientedPoint): The new odometrie values.
-        """
-        msg = (
-            Messages.SET_ODOMETRIE.to_bytes()
-            + struct.pack("<d", odometrie.x)
-            + struct.pack("<d", odometrie.y)
-            + struct.pack("<d", odometrie.theta)
-        )
-        self.send_bytes(msg)
-
-    # ====== PID Configuration Methods ======
-
-    @log(
-        param_logger="RollingBasis",
-        log_level=LogLevels.INFO,
-    )
-    def _send_pid(self, pid_id: int, pid: PID) -> None:
-        """Internal method to send PID configuration data to the Teensy.
-
-        Args:
-            pid_id (int): The identifier for the PID controller.
-            pid (PID): The PID controller parameters.
-        """
-        msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
-        self.send_bytes(msg)
+    # region ====== PID Configuration Methods ======
 
     @staticmethod
     def _load_pid(
@@ -416,7 +420,9 @@ class AsservissementRollingBasis(BaseComTeensy):
         except (ValueError, TypeError) as e:
             self.logger.error(f"Failed to initialize PIDs: {e}")
 
-    # ====== Equality Comparison ======
+    # endregion
+
+    # region ====== Built-in methods ======
 
     @override
     def __hash__(self) -> int:
@@ -460,3 +466,5 @@ class AsservissementRollingBasis(BaseComTeensy):
             bool: ``True`` if the instances are not equal, ``False`` otherwise.
         """
         return not self.__eq__(other)
+
+    # endregion

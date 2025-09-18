@@ -67,7 +67,7 @@ class BaseArena(ABC):
             grid_manager_logger (Logger | None, optional):
                 Logger instance for grid manager logging. Defaults to None.
         """
-        # ====== Initialized constructor based attributes ======
+        # region ====== Initialized constructor based attributes ======
         # 1. Logger
         self.logger: Logger = logger
         # 2. Dimensions
@@ -114,7 +114,9 @@ class BaseArena(ABC):
             if not zone.is_accessible():
                 self.grid_manager.add_forbidden_static_zone(zone.buffered_polygon)
 
-        # ====== Initialized derivative attributes ======
+        # endregion
+
+        # region ====== Initialized derivative attributes ======
         # 1. Team color
         self.team_color: TeamColor = TeamColor.UNDEFINED
 
@@ -155,10 +157,12 @@ class BaseArena(ABC):
             self.border_zone.buffered_polygon,
         ).buffer(-self.obstacle_buffer)
 
+        # endregion
+
         # ====== Misc ======
         self.__prepare_zones()
 
-    # ====== Private Methods ======
+    # region ====== Private Methods ======
     def __create_arena_border_zone(self) -> BorderZone:
         """Create a border zone around the arena with a specified buffer width.
 
@@ -193,7 +197,9 @@ class BaseArena(ABC):
         for zone in self.zones:
             prepare(zone.polygon)
 
-    # ====== Protected Methods ======
+    # endregion
+
+    # region ====== Protected Methods ======
     def _get_grid_manager(self) -> GridManager:
         """Return the grid manager instance for zone callbacks.
 
@@ -224,7 +230,9 @@ class BaseArena(ABC):
             ],
         )
 
-    # ====== Public Methods ======
+    # endregion
+
+    # region ====== Public Methods ======
     @time_tracker(lambda self: self.logger)
     def set_team_color(self, team_color: TeamColor) -> None:
         """Set the team color and trigger updates to zones.
@@ -330,7 +338,7 @@ class BaseArena(ABC):
 
         return self.enemy_zone.point
 
-    # ====== Geometry helpers function part ======
+    # region ====== Geometry helpers function part ======
 
     def remove_outside(self, points: MultiPoint) -> MultiPoint:
         """Remove points that are outside the playable area of the arena.
@@ -469,9 +477,13 @@ class BaseArena(ABC):
         """
         return self.bounding_area.contains(element)
 
-    # ====== Visualisation part ======
+    # endregion
 
-    # ====== Private Methods: draw helpers ======
+    # endregion
+
+    # region ====== Visualisation part ======
+
+    # region ====== Private Methods: draw helpers ======
     @staticmethod
     def __plot_oriented_arrow(
         ax: plt.Axes,
@@ -850,7 +862,9 @@ class BaseArena(ABC):
         plt.legend(loc="center right", bbox_to_anchor=(-0.1, 0.5))
         plt.tight_layout()
 
-    # ====== Public Methods ======
+    # endregion
+
+    # region ====== Public Methods ======
     def visualize(
         self,
         *,
@@ -925,3 +939,7 @@ class BaseArena(ABC):
             int: Hash of the arena instance.
         """
         return id(self)
+
+    # endregion
+
+    # endregion

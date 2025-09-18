@@ -18,7 +18,7 @@ from sensors import Inputs, Lidar, LidarDummy
 
 # ====== Main ======
 if __name__ == "__main__":
-    # ====== Initialization ======
+    # region ====== Initialization ======
 
     # Loggers
     # System-Part loggers
@@ -170,7 +170,9 @@ if __name__ == "__main__":
         inputs=inputs,
     )
 
-    # ====== Run ======
+    # endregion
+
+    # region ====== Run ======
 
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
     for routine in brain.get_tasks():
@@ -183,3 +185,5 @@ if __name__ == "__main__":
 
     ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
+
+    # endregion

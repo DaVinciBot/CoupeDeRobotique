@@ -46,7 +46,7 @@ class AStarPathPlanner(
             self.params.absolute_goal,
         )
 
-    # ====== Protected Methods ======
+    # region ====== Protected Methods ======
     @staticmethod
     def _compute_backward_position(goal: OrientedPoint) -> OrientedPoint:
         """Compute the backward-facing pose by flipping orientation by π.
@@ -59,7 +59,9 @@ class AStarPathPlanner(
         """
         return OrientedPoint(goal.x, goal.y, goal.theta + math.pi)
 
-    # ====== Private Methods ======
+    # endregion
+
+    # region ====== Private Methods ======
     @staticmethod
     def __compute_orientation(
         current_point: GridNode | Point,
@@ -241,7 +243,9 @@ class AStarPathPlanner(
             int(point.y / self.params.chunk_size),
         )
 
-    # ====== Public Methods ======
+    # endregion
+
+    # region ====== Public Methods ======
 
     def update_goal(self, new_goal: OrientedPoint) -> None:
         """Update the goal position.
@@ -307,3 +311,5 @@ class AStarPathPlanner(
         # We don't need to call __set_path_extremities_correct_theta
         # because we already have the start and goal points with correct theta
         return self.params.oriented_path_found
+
+    # endregion

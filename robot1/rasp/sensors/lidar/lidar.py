@@ -79,7 +79,7 @@ class Lidar:
         self.__polars_angles = None
         self.__threading_init_lidar()
 
-    # ====== Private methods ======
+    # region ====== Private methods ======
 
     def __init_lidar(self) -> LidarT:
         """Initialize the lidar object and test the connection.
@@ -245,7 +245,9 @@ class Lidar:
             msg = f"Error while scanning, LiDAR is disconnected ? [{error}]"
             raise LidarError(msg) from error
 
-    # ====== Public methods and properties ======
+    # endregion
+
+    # region ====== Public methods and properties ======
 
     def is_connected(self, *, force_check: bool = False) -> bool:
         """Check if the lidar is connected.
@@ -303,3 +305,5 @@ class Lidar:
         """
         self.__scan()
         return self.polars[self.polars[:, 1] > self._min_distance]
+
+    # endregion

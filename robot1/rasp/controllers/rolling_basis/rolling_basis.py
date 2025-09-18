@@ -84,7 +84,7 @@ class RollingBasis(BaseComTeensy):
         # self.initialize_pids()
         time.sleep(0.01)  # Avoid overload
 
-    # ====== Message Receiving Handlers ======
+    # region ====== Message Receiving Handlers ======
 
     def rcv_print(self, msg: bytes) -> None:
         """Handles PRINT messages from the Teensy.
@@ -126,7 +126,9 @@ class RollingBasis(BaseComTeensy):
         """
         self.logger.warning(f"Teensy Motors does not know the message {msg.hex()}")
 
-    # ====== Message Sending Methods ======
+    # endregion
+
+    # region ====== Message Sending Methods ======
 
     # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_target_position(
@@ -179,7 +181,9 @@ class RollingBasis(BaseComTeensy):
         msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
         self.send_bytes(msg)
 
-    # ====== PID Configuration Methods ======
+    # endregion
+
+    # region ====== PID Configuration Methods ======
 
     @staticmethod
     def _load_pid(
@@ -309,7 +313,9 @@ class RollingBasis(BaseComTeensy):
         except (ValueError, TypeError) as e:
             self.logger.error(f"Failed to initialize PIDs: {e}")
 
-    # ====== Comparison ======
+    # endregion
+
+    # region ====== Built-in methods ======
 
     @override
     def __eq__(self, other: object) -> bool:
@@ -349,3 +355,5 @@ class RollingBasis(BaseComTeensy):
             int: The hash value of the object.
         """
         return object.__hash__(self)
+
+    # endregion

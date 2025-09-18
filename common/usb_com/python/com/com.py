@@ -73,7 +73,7 @@ class Com:
         # it is responsible for handling the received data
         self._receiver_thread: threading.Thread | None = self._start_receiver()
 
-    # ======= Private methods =======
+    # region ======= Private methods =======
     def _get_serial(self) -> Serial | DummySerial:
         """Detect and initialize the serial device or dummy mode.
 
@@ -181,7 +181,9 @@ class Com:
                 )
                 time.sleep(0.5)  # Wait to avoid spamming the logs
 
-    # ======= Public methods =======
+    # endregion
+
+    # region ======= Public methods =======
     @staticmethod
     def check_dummy(func: Callable[..., Any]) -> Callable[..., Any]:  # UNUSED
         """Decorator to cancel execution when in dummy mode.
@@ -249,3 +251,5 @@ class Com:
             self.logger.warning(f"Callback for message id {iid} already exists !")
 
         self.message_id_callback[iid] = func
+
+    # endregion

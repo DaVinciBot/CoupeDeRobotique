@@ -69,7 +69,7 @@ class RollingBasisDummy(BaseComTeensy):
         # Initialize PID controllers from configuration
         # self._initialize_pids()
 
-    # ====== Message Sending Methods ======
+    # region ====== Message Sending Methods ======
 
     @log(param_logger="RollingBasis")
     def set_target_position(
@@ -104,7 +104,9 @@ class RollingBasisDummy(BaseComTeensy):
         """
         self.logger.debug(f"[DUMMY] Set PID: {pid_id}, {pid}")
 
-    # ====== PID Configuration Methods ======
+    # endregion
+
+    # region ====== PID Configuration Methods ======
 
     @staticmethod
     def _load_pid(
@@ -232,7 +234,9 @@ class RollingBasisDummy(BaseComTeensy):
         except (ValueError, TypeError) as e:
             self.logger.error(f"Failed to initialize PIDs: {e}")
 
-    # ====== Equality Comparison ======
+    # endregion
+
+    # region ====== Built-in methods ======
 
     @override
     def __eq__(self, other: object) -> bool:
@@ -276,3 +280,5 @@ class RollingBasisDummy(BaseComTeensy):
             int: The hash value of the object.
         """
         return object.__hash__(self)
+
+    # endregion

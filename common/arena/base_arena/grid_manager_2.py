@@ -60,7 +60,7 @@ class GridManager:
         self.dynamic_forbidden_zones = []
         self.spatial_index = STRtree([])
 
-    # ====== Private Methods ======
+    # region ====== Private Methods ======
 
     def __generate_base_grid(self) -> Grid:
         """Generate a base grid with all cells walkable.
@@ -129,7 +129,9 @@ class GridManager:
 
         return grid
 
-    # ====== Public Methods ======
+    # endregion
+
+    # region ====== Public Methods ======
 
     @time_tracker(lambda self: self.logger)
     def add_forbidden_static_zone(
@@ -286,3 +288,5 @@ class GridManager:
 
         ax.grid(visible=True)
         plt.show()
+
+    # endregion
