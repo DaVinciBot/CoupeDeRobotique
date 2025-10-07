@@ -222,9 +222,9 @@ class BaseArena(ABC):
             [
                 (
                     self.ally_zone.point.x
-                    + np.cos(self.ally_zone.point.theta - polars[i, 0]) * polars[i, 1],
+                    + np.cos(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
                     self.ally_zone.point.y
-                    + np.sin(self.ally_zone.point.theta - polars[i, 0]) * polars[i, 1],
+                    + np.sin(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
                 )
                 for i in range(len(polars))
             ],
@@ -688,19 +688,26 @@ class BaseArena(ABC):
                     # Plot nearest go-to position as green arrow or green dot
                     if go_to_position == nearest_point:
                         if isinstance(go_to_position, OrientedPoint):
+                            ax.plot(
+                                go_to_position.x,
+                                go_to_position.y,
+                                "gx",
+                                markersize=5,
+                            )
                             self.__plot_oriented_arrow(
                                 ax,
                                 go_to_position,
                                 color="green",
                                 norm=5,
-                                head_width=4,
-                                head_length=3,
+                                head_width=3,
+                                head_length=1.5,
                             )
-                        elif isinstance(go_to_position, Point):
-                            ax.plot(go_to_position.x, go_to_position.y, "go")
                         else:
-                            self.logger.error(
-                                f"Invalid go-to position type: {type(go_to_position)}",
+                            ax.plot(
+                                go_to_position.x,
+                                go_to_position.y,
+                                "go",
+                                markersize=4,
                             )
                     else:
                         ax.plot(go_to_position.x, go_to_position.y, "rx", markersize=5)
@@ -850,13 +857,10 @@ class BaseArena(ABC):
         Args:
             ax (plt.Axes): Axis to configure.
         """
-        ax.set_xlim(self.width, 0)
+        ax.set_xlim(0, self.width)
         ax.set_ylim(0, self.height)
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
-        ax.spines["left"].set_position(("axes", 1))
-        ax.yaxis.tick_right()
-        ax.yaxis.set_label_position("right")
         ax.set_aspect("equal", adjustable="box")
         ax.set_title("Arena Visualization")
         plt.legend(loc="center right", bbox_to_anchor=(-0.1, 0.5))
