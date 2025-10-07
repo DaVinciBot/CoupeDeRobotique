@@ -9,7 +9,7 @@
       "vid": 5824,
       "pid": 1155,
       "baudrate": 115200,
-      "crc": true,
+      "crc": true
     }
   },
   "rob": {

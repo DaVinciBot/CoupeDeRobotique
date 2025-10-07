@@ -11,6 +11,7 @@
     "ms-vscode.cpptools-themes",
     "ms-vscode.cpptools",
     "jeff-hykin.better-cpp-syntax",
-    "xaver.clang-format"
+    "xaver.clang-format",
+    "mhutchie.git-graph"
   ]
 }
