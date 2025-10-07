@@ -37,7 +37,7 @@ Point Rolling_Basis::get_current_position() {
 
 // Constructor
 /**
- * @brief constructor of the Rolling Basis class
+ * @brief Constructor of the Rolling Basis class
  *
  * Initializes the parameters of the Rolling Basis
  */
@@ -118,7 +118,7 @@ void Rolling_Basis::odometrie_handle() {
     double delta_distance =
         (this->left_motor->distance + this->right_motor->distance) / 2.0f;
     double delta_theta =
-        (this->left_motor->distance - this->right_motor->distance) /
+        (this->right_motor->distance - this->left_motor->distance) /
         this->center_distance;
 
     // Determine the new cartesian position of the robot

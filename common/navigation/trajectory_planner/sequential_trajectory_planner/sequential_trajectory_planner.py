@@ -78,15 +78,15 @@ class SequentialTrajectoryPlanner(
             RotationSegment: Segment rotating in place to face the waypoint.
         """
         # Compute the absolute heading of the line from start to target
-        path_heading = math.atan2(target.y - start.y, target.x - start.x)
+        path_theta = math.atan2(target.y - start.y, target.x - start.x)
         # If reversing, we want the rear to face the target: add π to the heading
-        desired_heading = path_heading + (math.pi if self._is_backward else 0)
+        desired_theta = path_theta + (math.pi if self._is_backward else 0)
 
-        # Compute minimal rotation from current heading to ``desired_heading``
-        delta_theta = self._normalize_angle(desired_heading - start.theta)
+        # Compute minimal rotation from current heading to ``desired_theta``
+        delta_theta = self._normalize_angle(desired_theta - start.theta)
 
         # Build the intermediate oriented point after rotation
-        intermediate_pose = OrientedPoint(start.x, start.y, start.theta + delta_theta)
+        intermediate_pose = OrientedPoint(start.x, start.y, desired_theta)
 
         # Create and return the rotation segment
         return RotationSegment(
