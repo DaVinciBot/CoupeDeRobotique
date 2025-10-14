@@ -1,87 +1,110 @@
-import RPi.GPIO as GPIO
+"""GPIO wrapper built upon gpiozero."""
+
+from __future__ import annotations
+
+from gpiozero import LED, Button, Device
+from gpiozero.pins.lgpio import LGPIOFactory
+
+MAJORITY_RATIO = 0.5
 
 
 class PIN:
-    """
-    Represents a GPIO pin.
+    """Represent a GPIO pin."""
 
-    Args:
-        pin (int): The pin number.
+    def __init__(self, pin: int) -> None:
+        """Initialize the pin.
 
-    Attributes:
-        pin (int): The pin number.
-        mode (str): The pin mode (input/output).
-        reverse_state (bool): Whether to reverse the state of the pin.
-
-    """
-
-    def __init__(self, pin):
+        Args:
+            pin (int): The pin number.
+        """
         self.pin = pin
         self.mode = None
         self.reverse_state = False
+        self.device: Device | None = None
 
-    def setup(self, mode, reverse_state=False):
-        """
-        Set up the pin.
+    def setup(self, mode: str, *, reverse_state: bool = False) -> None:
+        """Set up the pin.
 
         Args:
-            mode (str): The pin mode (input/output).
-            reverse_state (bool, optional): Whether to reverse the state of the pin. Defaults to False.
-
+            mode (str): The pin mode (output/input/input_pullup/input_pulldown).
+            reverse_state (bool, optional):
+                Whether to reverse the state of the pin. Defaults to ``False``.
         """
         mode = mode.lower()
         self.mode = mode
         self.reverse_state = reverse_state
-        GPIO.setmode(GPIO.BCM)
 
         if mode == "output":
-            GPIO.setup(self.pin, GPIO.OUT)
+            self.device = LED(self.pin, pin_factory=LGPIOFactory())
+            self.device.off()
         elif mode == "input":
-            GPIO.setup(self.pin, GPIO.IN)
+            self.device = Button(self.pin, pin_factory=LGPIOFactory())
         elif mode == "input_pullup":
-            GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+            self.device = Button(
+                self.pin,
+                pull_up=True,
+                pin_factory=LGPIOFactory(),
+            )
         elif mode == "input_pulldown":
-            GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+            self.device = Button(
+                self.pin,
+                pull_up=False,
+                pin_factory=LGPIOFactory(),
+            )
 
-    def digital_write(self, state: bool):
-        """
-        Write a digital state to the pin.
+    def digital_write(self, *, state: bool) -> None:
+        """Write a digital state to the pin.
 
         Args:
-            state (bool): The state to write (True/False).
+            state (bool): The state to write (``True``/``False``).
 
+        Raises:
+            TypeError: If the pin is not set up for output mode.
         """
-        GPIO.output(self.pin, self.__correct_state(state))
+        if not isinstance(self.device, LED):
+            msg = "Pin not set up for output mode."
+            raise TypeError(msg)
+        self.device.value = self.__correct_state(state=state)
 
     def digital_read(self) -> bool:
-        """
-        Read the digital state of the pin.
+        """Read the digital state of the pin.
 
         Returns:
-            bool: The digital state of the pin (True/False).
+            bool: The digital state of the pin (``True``/``False``).
 
+        Raises:
+            RuntimeError: If the pin is not set up.
         """
-        return self.__correct_state(GPIO.input(self.pin))
+        if self.device is None:
+            msg = "Pin not set up. Call setup() first."
+            raise RuntimeError(msg)
 
-    def safe_digital_read(self, n=5) -> bool:
-        """
-        Read multiple time the digital state of the pin.
+        return (
+            self.__correct_state(state=bool(self.device.value))
+            if self.mode == "output"
+            else self.__correct_state(state=self.device.is_pressed)  # pyright: ignore[reportAttributeAccessIssue] self.device is Button
+        )
+
+    def safe_digital_read(self, n: int = 5) -> bool:
+        """Read multiple times the digital state of the pin and take a majority vote.
+
+        Args:
+            n (int, optional): Number of samples to read. Defaults to 5.
 
         Returns:
-            bool: The digital state of the pin (True/False).
-
+            bool:
+                The averaged digital state.
+                ``True`` if the majority of samples are ``True``, otherwise ``False``.
         """
-        return sum([self.digital_read() for _ in range(n)]) / n >= 0.5
+        return sum(self.digital_read() for _ in range(n)) / n >= MAJORITY_RATIO
 
-    def __correct_state(self, state: bool) -> bool:
-        """
-        Correct the state of the pin based on the reverse_state attribute.
+    def __correct_state(self, *, state: bool) -> bool:
+        """Correct the state of the pin based on the reverse_state attribute.
 
         Args:
             state (bool): The state to correct.
 
         Returns:
             bool: The corrected state.
-
         """
         return not state if self.reverse_state else state
