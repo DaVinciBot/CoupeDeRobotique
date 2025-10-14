@@ -37,7 +37,7 @@ Point Rolling_Basis::get_current_position() {
 
 // Constructor
 /**
- * @brief constructor of the Rolling Basis class
+ * @brief Constructor of the Rolling Basis class
  *
  * Initializes the parameters of the Rolling Basis
  */
@@ -118,7 +118,7 @@ void Rolling_Basis::odometrie_handle() {
     double delta_distance =
         (this->left_motor->distance + this->right_motor->distance) / 2.0f;
     double delta_theta =
-        (this->left_motor->distance - this->right_motor->distance) /
+        (this->right_motor->distance - this->left_motor->distance) /
         this->center_distance;
 
     // Determine the new cartesian position of the robot
@@ -143,9 +143,9 @@ void Rolling_Basis::handle(Point target_position, Com* com) {
     double yerr = target_position.y - this->Y;
 
     double distance_error = xerr * cosf(this->THETA) + yerr * sinf(this->THETA);
-    double mag = sqrt(pow(xerr, 2) + pow(yerr, 2));
+    double norm = sqrt(pow(xerr, 2) + pow(yerr, 2));
     double sign = (distance_error >= 0.0) ? +1.0 : -1.0;
-    distance_error = mag * sign;
+    distance_error = norm * sign;
 
     double theta_error = target_position.theta - this->THETA;
     /*+ Point::angle(
@@ -161,8 +161,8 @@ void Rolling_Basis::handle(Point target_position, Com* com) {
         this->linear_distance_pid.compute(distance_error);
     double angular_correction = this->angular_distance_pid.compute(theta_error);
 
-    double right_pwm = linear_correction - angular_correction;
-    double left_pwm = linear_correction + angular_correction;
+    double right_pwm = linear_correction + angular_correction;
+    double left_pwm = linear_correction - angular_correction;
 
     // static long ticks_counter = 0;
     // if (ticks_counter++ > 10) {

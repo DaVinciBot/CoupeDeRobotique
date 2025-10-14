@@ -15,6 +15,7 @@ Key Features:
 
 from __future__ import annotations
 
+import math
 from typing import Any, ClassVar, Self, cast, override
 
 from shapely import Point
@@ -49,7 +50,7 @@ class OrientedPoint(Point):
             "theta": (
                 theta
                 if not isinstance(x_or_coords, tuple)
-                else (0.0 if y_or_theta is None else y_or_theta)
+                else (0.0 if y_or_theta is None else self._normalize_angle(y_or_theta))
             ),
         }
         super().__init__()
@@ -213,6 +214,13 @@ class OrientedPoint(Point):
             OrientedPoint: Oriented point with the same coordinates.
         """
         return cls((point.x, point.y), theta)
+
+    @staticmethod
+    def _normalize_angle(angle: float) -> float:
+        angle = (angle + math.pi) % (2 * math.pi)
+        if angle < 0:
+            angle += 2 * math.pi
+        return angle - math.pi
 
     # ----------------------------------------------------------------------
     # Custom Serialization Methods

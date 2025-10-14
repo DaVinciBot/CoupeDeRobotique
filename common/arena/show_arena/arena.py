@@ -75,16 +75,82 @@ class ShowArena(BaseArena):
             tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
         ] = [
             (
+                (287.5, 20),
+                (297.5, 60),
+                [
+                    OrientedPoint(
+                        297.5 - distance_between_robot_and_pickup_zone,
+                        40,
+                        0,
+                    ),
+                ],
+            ),
+            (
+                (287.5, 112.5),
+                (297.5, 152.5),
+                [
+                    OrientedPoint(
+                        297.5 - distance_between_robot_and_pickup_zone,
+                        132.5,
+                        0,
+                    ),
+                ],
+            ),
+            (
+                (202.5, 20),
+                (242.5, 30),
+                [
+                    OrientedPoint(
+                        222.5,
+                        30 + distance_between_robot_and_pickup_zone,
+                        -pi / 2,
+                    ),
+                ],
+            ),
+            (
+                (197.5, 167.5),
+                (237.5, 177.5),
+                [
+                    OrientedPoint(
+                        217.5,
+                        167.5 - distance_between_robot_and_pickup_zone,
+                        pi / 2,
+                    ),
+                ],
+            ),
+            (
+                (170, 90),
+                (210, 100),
+                [
+                    OrientedPoint(
+                        190,
+                        90 - distance_between_robot_and_pickup_zone,
+                        pi / 2,
+                    ),
+                    OrientedPoint(
+                        190,
+                        100 + distance_between_robot_and_pickup_zone,
+                        -pi / 2,
+                    ),
+                ],
+            ),
+            (
                 (2.5, 20),
                 (12.5, 60),
-                [OrientedPoint(12.5 + distance_between_robot_and_pickup_zone, 40, pi)],
+                [
+                    OrientedPoint(
+                        2.5 + distance_between_robot_and_pickup_zone,
+                        40,
+                        pi,
+                    ),
+                ],
             ),
             (
                 (2.5, 112.5),
                 (12.5, 152.5),
                 [
                     OrientedPoint(
-                        12.5 + distance_between_robot_and_pickup_zone,
+                        2.5 + distance_between_robot_and_pickup_zone,
                         132.5,
                         pi,
                     ),
@@ -128,69 +194,68 @@ class ShowArena(BaseArena):
                     ),
                 ],
             ),
+        ]
+
+        yellow_reserved_zones_points: list[
+            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
+        ] = [
             (
-                (300 - 12.5, 20),
-                (300 - 2.5, 60),
+                (255, 0),
+                (300, 15),
                 [
                     OrientedPoint(
-                        300 - 12.5 - distance_between_robot_and_pickup_zone,
-                        40,
-                        0,
-                    ),
-                ],
-            ),
-            (
-                (300 - 12.5, 112.5),
-                (300 - 2.5, 152.5),
-                [
-                    OrientedPoint(
-                        300 - 12.5 - distance_between_robot_and_pickup_zone,
-                        132.5,
-                        0,
-                    ),
-                ],
-            ),
-            (
-                (300 - 97.5, 20),
-                (300 - 57.5, 30),
-                [
-                    OrientedPoint(
-                        300 - 77.5,
-                        30 + distance_between_robot_and_pickup_zone,
+                        277.5,
+                        15 + distance_between_robot_and_small_construct_zone,
                         -pi / 2,
                     ),
                 ],
             ),
             (
-                (300 - 102.5, 167.5),
-                (300 - 62.5, 177.5),
+                (255, 65),
+                (300, 110),
                 [
                     OrientedPoint(
-                        300 - 82.5,
-                        167.5 - distance_between_robot_and_pickup_zone,
+                        277.5,
+                        65 - distance_between_robot_and_big_construct_zone,
                         pi / 2,
+                    ),
+                    OrientedPoint(
+                        277.5,
+                        110 + distance_between_robot_and_big_construct_zone,
+                        -pi / 2,
+                    ),
+                    OrientedPoint(
+                        255 - distance_between_robot_and_big_construct_zone,
+                        87.5,
+                        0,
                     ),
                 ],
             ),
             (
-                (300 - 130, 90),
-                (300 - 90, 100),
+                (100, 0),
+                (145, 45),
                 [
                     OrientedPoint(
-                        300 - 110,
-                        90 - distance_between_robot_and_pickup_zone,
-                        pi / 2,
+                        122.5,
+                        45 + distance_between_robot_and_big_construct_zone,
+                        -pi / 2,
                     ),
+                ],
+            ),
+            (
+                (55, 0),
+                (100, 15),
+                [
                     OrientedPoint(
-                        300 - 110,
-                        100 + distance_between_robot_and_pickup_zone,
+                        77.5,
+                        15 + distance_between_robot_and_small_construct_zone,
                         -pi / 2,
                     ),
                 ],
             ),
         ]
 
-        yellow_reserved_zones_points: list[
+        blue_reserved_zones_points: list[
             tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
         ] = [
             (
@@ -244,65 +309,6 @@ class ShowArena(BaseArena):
                 [
                     OrientedPoint(
                         222.5,
-                        15 + distance_between_robot_and_small_construct_zone,
-                        -pi / 2,
-                    ),
-                ],
-            ),
-        ]
-
-        blue_reserved_zones_points: list[
-            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
-        ] = [
-            (
-                (255, 0),
-                (300, 15),
-                [
-                    OrientedPoint(
-                        277.5,
-                        15 + distance_between_robot_and_small_construct_zone,
-                        -pi / 2,
-                    ),
-                ],
-            ),
-            (
-                (255, 65),
-                (300, 110),
-                [
-                    OrientedPoint(
-                        277.5,
-                        65 - distance_between_robot_and_big_construct_zone,
-                        pi / 2,
-                    ),
-                    OrientedPoint(
-                        277.5,
-                        110 + distance_between_robot_and_big_construct_zone,
-                        -pi / 2,
-                    ),
-                    OrientedPoint(
-                        255 - distance_between_robot_and_big_construct_zone,
-                        87.5,
-                        0,
-                    ),
-                ],
-            ),
-            (
-                (100, 0),
-                (145, 45),
-                [
-                    OrientedPoint(
-                        122.5,
-                        45 + distance_between_robot_and_big_construct_zone,
-                        -pi / 2,
-                    ),
-                ],
-            ),
-            (
-                (55, 0),
-                (100, 15),
-                [
-                    OrientedPoint(
-                        77.5,
                         15 + distance_between_robot_and_small_construct_zone,
                         -pi / 2,
                     ),
@@ -385,15 +391,15 @@ class ShowArena(BaseArena):
             buffer_size=obstacle_buffer,
             polygon=Polygon(
                 (
-                    (65, 200),
-                    (65, 180),
-                    (105, 180),
-                    (105, 155),
-                    (195, 155),
-                    (195, 180),
-                    (235, 180),
                     (235, 200),
+                    (235, 180),
+                    (195, 180),
+                    (195, 155),
+                    (105, 155),
+                    (105, 180),
+                    (65, 180),
                     (65, 200),
+                    (235, 200),
                 ),
             ),
         )
@@ -405,19 +411,19 @@ class ShowArena(BaseArena):
                     logger=blue_reserved_zone_logger,
                     buffer_size=obstacle_buffer,
                     polygon=create_straight_rectangle(
-                        Point((15, 155)),
-                        Point((60, 200)),
+                        Point((285, 155)),
+                        Point((240, 200)),
                     ),
-                    go_to_positions=[OrientedPoint(37.5, 150.5, pi / 2)],
+                    go_to_positions=[OrientedPoint(262.5, 150.5, pi / 2)],
                 ),
                 YellowReservedZone(
                     logger=yellow_reserved_zone_logger,
                     buffer_size=obstacle_buffer,
                     polygon=create_straight_rectangle(
-                        Point((285, 155)),
-                        Point((240, 200)),
+                        Point((15, 155)),
+                        Point((60, 200)),
                     ),
-                    go_to_positions=[OrientedPoint(262.5, 150.5, pi / 2)],
+                    go_to_positions=[OrientedPoint(37.5, 150.5, pi / 2)],
                 ),
             ),
         )
