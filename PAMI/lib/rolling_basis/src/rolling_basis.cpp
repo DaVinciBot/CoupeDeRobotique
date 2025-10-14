@@ -1,6 +1,5 @@
 #include "rolling_basis.h"
 #include <math.h>
-#include "spdlog/spdlog.h"
 
 #define POSITION_TOLERANCE_MM 1.0f  // 1 mm
 #define ANGLE_TOLERANCE_RAD 0.01f   // env. 0.57°
@@ -48,9 +47,9 @@ void RollingBasis::setCommand(const Point& target) {
     _startTime = std::chrono::steady_clock::now();
     _phase = (_rotateDuration > 0 ? Phase::Rotating : Phase::Forwarding);
 
-    // spdlog::info("[Command] New target set: x={}, y={}, theta={}",
+    // Serial.printf("[Command] New target set: x=%f, y=%f, theta=%f\n",
     // _cmdPosition.x, _cmdPosition.y, _cmdPosition.theta);
-    spdlog::debug("Rotate duration: {} s, Forward duration: {} s",
+    Serial.printf("Rotate duration: %f s, Forward duration: %f s\n",
                   _rotateDuration, _forwardDuration);
 }
 
@@ -69,7 +68,7 @@ void RollingBasis::update() {
         } else {
             _startTime = now;
             _phase = Phase::Forwarding;
-            spdlog::info("Rotation done, switching to Forwarding phase.");
+            Serial.println("Rotation done, switching to Forwarding phase.");
         }
     }
     if (_phase == Phase::Forwarding) {
@@ -250,7 +249,7 @@ void RollingBasis::stop() {
     // _linDistPid.reset();
     // _angDistPid.reset();
     // _moving = false;
-    spdlog::info("RollingBasis stopped.");
+    Serial.println("RollingBasis stopped.");
 }
 
 Point RollingBasis::getPose() const {

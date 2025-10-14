@@ -1,8 +1,8 @@
 {
-  "description": "Library dedicated to the rolling basis",
-  "frameworks": "*",
-  "keywords": "rolling_basis",
-  "name": "rolling_basis",
-  "platforms": "*",
-  "version": "1.0.0"
-}
+    "name": "rolling_basis",
+    "version": "1.0.0",
+    "description": "Library dedicated to the rolling basis",
+    "keywords": "rolling_basis",
+    "frameworks": "*",
+    "platforms": "*"
+  }

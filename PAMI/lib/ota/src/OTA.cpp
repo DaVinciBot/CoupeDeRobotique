@@ -1,28 +1,27 @@
 #include "../include/OTA.h"
-#include "spdlog/spdlog.h"
 
 unsigned long ota_progress_millis = 0;
 
 void onOTAStart() {
     // Log when OTA has started
-    spdlog::info("OTA update started!");
+    Serial.println("OTA update started!");
 }
 
 void onOTAProgress(size_t current, size_t final) {
     // Log every 1 second
     if (millis() - ota_progress_millis > 1000) {
         ota_progress_millis = millis();
-        spdlog::info("OTA Progress Current: {} bytes, Final: {} bytes", current,
-                     final);
+        Serial.printf("OTA Progress Current: %d bytes, Final: %d bytes\n",
+                      current, final);
     }
 }
 
 void onOTAEnd(bool success) {
     // Log when OTA has finished
     if (success) {
-        spdlog::info("OTA update finished successfully!");
+        Serial.println("OTA update finished successfully!");
     } else {
-        spdlog::error("There was an error during OTA update!");
+        Serial.println("[ERROR] There was an error during OTA update!");
     }
     // <Add your own code here>
 }
@@ -32,25 +31,25 @@ void CustomOTA::begin() {
     // Connect to WiFi
     WiFi.begin(this->ssid, this->password);
     if (Serial) {
-        spdlog::info("Connecting to WiFi...");
-        spdlog::info("Connecting to {} with password {}", this->ssid,
-                     this->password);
+        Serial.println("Connecting to WiFi...");
+        Serial.printf("Connecting to %s with password %s\n", this->ssid,
+                      this->password);
     }
 
     // Wait for connection
     while (WiFi.status() != WL_CONNECTED) {
         if (_nb_try_wifi > 120) {
-            spdlog::error("Failed to connect to WiFi, rebooting...");
+            Serial.println("[ERROR] Failed to connect to WiFi, rebooting...");
             ESP.restart();
             break;
         }
         delay(500);
-        spdlog::info(".");
+        Serial.print(".");
         _nb_try_wifi++;
     }
     if (Serial) {
-        spdlog::info("Connected to WiFi!");
-        spdlog::info("IP address: {}", WiFi.localIP());
+        Serial.println("Connected to WiFi!");
+        Serial.printf("IP address: %s\n", WiFi.localIP().toString().c_str());
     }
 
     this->server->on("/", HTTP_GET, [](AsyncWebServerRequest* request) {

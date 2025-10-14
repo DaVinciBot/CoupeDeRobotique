@@ -35,7 +35,7 @@ Rolling_Basis* rolling_basis_ptr = new Rolling_Basis(ENCODER_RESOLUTION,
 // 2. Instanciate the Communication object
 Com* com;
 
-// c. Define the motors interrupt functionsF
+// c. Define the motors interrupt functions
 /******* Attach Interrupt *******/
 inline void left_motor_read_encoder() {
     if (digitalRead(L_ENCB))

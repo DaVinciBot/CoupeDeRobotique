@@ -39,7 +39,8 @@
     "vector": "cpp",
     "xhash": "cpp",
     "xstring": "cpp",
-    "xutility": "cpp"
+    "xutility": "cpp",
+    "ostream": "cpp"
   },
   "python.analysis.autoFormatStrings": true,
   "python.analysis.diagnosticMode": "workspace",
