@@ -156,13 +156,14 @@ void setup() {
 
 long lastTime = 0;  // Variable to store the last time the loop was executed
 void loop() {
-    if (millis() - lastTime > 2 &&
+    leftMotor->_doKSteps();
+    /*if (millis() - lastTime > 2 &&
         canStart)  // Check if 2ms have passed since the last navigation update
     {
         navigationUpdate();  // Call navigation update function
         lastTime = millis();
     }
-    lidar->loop();
+    lidar->loop();*/
 #if ENABLE_OTA
     ota.loop();
 #endif

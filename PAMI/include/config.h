@@ -25,7 +25,7 @@
 #define MAX_LINEAR_SPEED_MM_PER_S 10
 #define MAX_ANGULAR_SPEED_RAD_PER_S 1.0
 
-#define K 8.0f
+#define K 8.0f //        <==== ici on test de modifier
 
 // #------- PID CONFIGURATION -------#
 #define LINEAR_DISTANCE_KP 2000.0f
