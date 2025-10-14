@@ -1,5 +1,4 @@
 #include "lidar_pami.h"
-#include "spdlog/spdlog.h"
 
 lidar_pami::lidar_pami(HardwareSerial& serialPort,
                        int8_t rxPin,
@@ -19,7 +18,7 @@ void lidar_pami::begin(uint32_t baud) {
     delay(100);
     sendScanCommand();
 
-    spdlog::debug("lidar_pami: scan command sent");
+    Serial.println("lidar_pami: scan command sent");
 }
 
 void lidar_pami::sendScanCommand() {
@@ -66,7 +65,7 @@ bool lidar_pami::obstacleAhead(uint16_t distanceMin) {
         return false;  // no valid points
     mean /= validCount;
 
-    spdlog::debug("Mean distance: {}", mean);
+    Serial.printf("Mean distance: %f\n", mean);
 
     return mean < distanceMin;
 }
@@ -81,7 +80,7 @@ bool lidar_pami::isTiretteOn(uint16_t threshold) {
     }
     mean /= POINT_COUNT;
 
-    spdlog::debug("Mean distance: {}", mean);
+    Serial.printf("Mean distance: %f\n", mean);
 
     return mean < threshold;
 }
@@ -93,11 +92,11 @@ void lidar_pami::loop() {
                 _onReceiveCallback();  // call the user-defined callback
             }
             _onReceiveCallback();
-            spdlog::debug("lidar_pami: frame read");
+            Serial.println("lidar_pami: frame read");
         }
     }
 }
 void lidar_pami::onReceive(void (*callback)()) {
     _onReceiveCallback = callback;
-    spdlog::debug("lidar_pami: onReceive callback set");
+    Serial.println("lidar_pami: onReceive callback set");
 }

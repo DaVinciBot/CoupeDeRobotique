@@ -1,5 +1,4 @@
 #include "navigation.h"
-#include "spdlog/spdlog.h"
 
 Navigation::Navigation(RollingBasis* basis, uint32_t timeoutMs)
     : _basis(basis),
@@ -40,7 +39,7 @@ void Navigation::update() {
     // resend every interval
     if (_lastSendMs == 0 || now - _lastSendMs >= _sendIntervalMs) {
         if (_wpIndex >= _waypoints.size()) {
-            spdlog::warn("[Navigation] No more waypoints to send.");
+            Serial.println("[Navigation] No more waypoints to send.");
             return;  // no more waypoints to send
         }
         if (_wpIndex + 1 < _waypoints.size()) {
@@ -50,9 +49,9 @@ void Navigation::update() {
         //     stop(); // fin de la séquence
         // }
         _lastSendMs = now;
-        spdlog::info("[Navigation] Sending command to basis: {}, {}, {}",
-                     _waypoints[_wpIndex].x, _waypoints[_wpIndex].y,
-                     _waypoints[_wpIndex].theta);
+        Serial.printf("[Navigation] Sending command to basis: %d, %d, %d\n",
+                      _waypoints[_wpIndex].x, _waypoints[_wpIndex].y,
+                      _waypoints[_wpIndex].theta);
     }
 
     _basis->update();
