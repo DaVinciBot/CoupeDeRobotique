@@ -1,8 +1,8 @@
 i.icon {
   background-color: var(--background);
+  display: block;
   width: 24px !important;
   height: 24px !important;
-  display: block;
 }
 i.menu_icon {
   mask: url(../icons/home-05.svg) no-repeat center;
