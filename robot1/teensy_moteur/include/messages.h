@@ -6,8 +6,7 @@
 
 #include <Arduino.h>
 
-struct msg_Go_To
-{
+struct msg_Go_To {
     byte command = GO_TO;
     float x;
     float y;
@@ -23,14 +22,13 @@ struct msg_Go_To
     float deceleration_distance;
 };
 
-struct msg_Get_Orientation
-{
+struct msg_Get_Orientation {
     byte command = GET_ORIENTATION;
     float x;
     float y;
     bool forward;
     byte max_speed;
-    uint16_t next_position_delay; 
+    uint16_t next_position_delay;
     uint16_t action_error_auth;
     uint16_t traj_precision;
     byte correction_trajectory_speed;
@@ -40,8 +38,7 @@ struct msg_Get_Orientation
     float deceleration_distance;
 };
 
-struct msg_Curve_Go_To
-{
+struct msg_Curve_Go_To {
     byte command = CURVE_GO_TO;
     float target_x;
     float target_y;
@@ -55,57 +52,48 @@ struct msg_Curve_Go_To
     uint16_t traj_precision;
 };
 
-struct msg_Keep_Current_Position
-{
+struct msg_Keep_Current_Position {
     byte command = KEEP_CURRENT_POSITION;
 };
 
-struct msg_Disable_PIDs
-{
+struct msg_Disable_PIDs {
     byte command = DISABLE_PIDS;
 };
-struct msg_Enable_PIDs
-{
+struct msg_Enable_PIDs {
     byte command = ENABLE_PIDS;
 };
 
-struct msg_Update_Position
-{
+struct msg_Update_Position {
     byte command = UPDATE_POSITION;
     float x;
     float y;
     float theta;
 };
 
-struct msg_Set_Home
-{
+struct msg_Set_Home {
     byte command = SET_HOME;
     float x;
     float y;
     float theta;
 };
 
-struct msg_Action_Finished
-{
+struct msg_Action_Finished {
     byte command = ACTION_FINISHED;
     byte action_id;
 };
 
-struct msg_Set_PIDs
-{
+struct msg_Set_PIDs {
     byte command = SET_PIDS;
     float l_kp;
     float l_ki;
-    float l_kd; 
-    
+    float l_kd;
+
     float r_kp;
     float r_ki;
     float r_kd;
 };
 
-struct msg_String
-{
+struct msg_String {
     byte command = STRING;
-    char str[249]; // Max size is 256 - 6 (Intercom) - 1 (cmd ID)
+    char str[249];  // Max size is 256 - 6 (Intercom) - 1 (cmd ID)
 };
-

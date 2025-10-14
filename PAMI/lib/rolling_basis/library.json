@@ -1,0 +1,8 @@
+{
+  "description": "Library dedicated to the rooling basis",
+  "frameworks": "*",
+  "keywords": "position, motors_driver",
+  "name": "rolling_basis",
+  "platforms": "*",
+  "version": "1.0.0"
+}

@@ -1,46 +1,81 @@
-from datetime import datetime, timedelta
-from shapely import Geometry, Point
+"""Miscellaneous time and geometry utilities."""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime
+
+from shapely import MultiPoint, Point
 
 
 class Utils:
-    @staticmethod
-    def get_date() -> datetime:
-        return datetime.now()
+    """Collection of static helper methods."""
 
     @staticmethod
-    def get_str_date(format: str = "%H:%M:%S") -> str:
-        return datetime.now().strftime(format)
+    def get_date() -> datetime:
+        """Get the current date and time.
+
+        Returns:
+            datetime: The current date and time.
+        """
+        return datetime.now(tz=UTC)
+
+    @staticmethod
+    def get_str_date(str_format: str = "%H:%M:%S.%f") -> str:
+        """Get the current date as a formatted string.
+
+        Args:
+            str_format (str, optional):
+                The format string to use. Defaults to "%H:%M:%S.%f".
+
+        Returns:
+            str: The formatted date string.
+        """
+        return datetime.now(tz=UTC).strftime(str_format)
 
     @staticmethod
     def get_ts() -> float:
-        """
-        Get the current timestamp as a float.
+        """Get the current timestamp as a float.
 
         Returns:
             float: The current timestamp.
         """
-        return datetime.timestamp(datetime.now())
+        return datetime.now(tz=UTC).timestamp()
 
     @staticmethod
     def time_since(ts: float) -> float:
+        """Calculate the time elapsed since a given timestamp.
+
+        Args:
+            ts (float): The timestamp to compare against.
+
+        Returns:
+            float: The time elapsed since the given timestamp.
+        """
         return Utils.get_ts() - ts
 
     @staticmethod
-    def geom_to_str(geom: Geometry):
+    def geom_to_str(geom: MultiPoint | Point) -> str:
+        """Convert a Geometry object to a string representation.
+
+        Args:
+            geom (MultiPoint | Point): The geometry object to convert.
+
+        Returns:
+            str: The string representation of the geometry.
+        """
         r = ""
         if isinstance(geom, Point):
-            r = str((round(geom.x), round(geom.y)))
+            return str((round(geom.x), round(geom.y)))
 
-        else:
-            try:
-                r = (
-                    "["
-                    + ", ".join(
-                        [Utils.geom_to_str(smaller_geom) for smaller_geom in geom.geoms]
-                    )
-                    + "]"
+        try:
+            r = (
+                "["
+                + ", ".join(
+                    [Utils.geom_to_str(smaller_geom) for smaller_geom in geom.geoms],
                 )
-            except:
-                r = str(geom)
+                + "]"
+            )
+        except Exception:  # noqa: BLE001
+            r = str(geom)
 
         return r

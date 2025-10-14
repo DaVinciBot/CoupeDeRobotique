@@ -1,403 +1,245 @@
 {
+  "arena": {
+    "border_buffer": 5,
+    "chunk_size": 5,
+    "forbidden_cover_threshold": 0.1,
+    "obstacle_buffer": 10
+  },
   "general": {
-    "ws": {
-      "port": 8080,
-      "lidar_route": "/lidar",
-      "odometer_route": "/odometer",
-      "camera_route": "/camera",
-      "log_route": "/log",
-      "cmd_route": "/cmd",
-      "frame_route": "/frame",
-      "pami_route": "/pami"
-    },
     "teensy": {
-      "vid": 5824,
-      "pid": 1155,
       "baudrate": 115200,
       "crc": true,
-      "dummy": false
-    }
-  },
-  "computer": {
-    "ws": {
-      "sender_name": "computer",
-      "hostname": "0.0.0.0",
-      "ping_pong_interval": 1
+      "pid": 1155,
+      "vid": 5824
     },
-    "camera": {
-      "resolution": [
-        800,
-        800
-      ],
-      "chessboard_size": [
-        9,
-        6
-      ],
-      "chessboard_square_size": 0.044,
-      "distance_cam_table": 0.2,
-      "save_path": "|sensors|camera|images_save",
-      "calibration_path": "|sensors|camera|calibration_path",
-      "coefficients_path": "|sensors|camera|undistort_coef.json",
-      "aruco": {
-        "cam_obj_function_a": 1077.2,
-        "cam_obj_function_b": -0.809,
-        "aruco_dict_type": "DICT_4X4_100"
-      },
-      "color_object": {
-        "color": "green",
-        "hsv_min": [
-          30,
-          80,
-          80
-        ],
-        "hsv_max": [
-          90,
-          255,
-          255
-        ],
-        "clustering_eps": 40,
-        "clustering_min_samples": 100
-      },
-      "camera_pickup_zone_min_area": 1
+    "ws": {
+      "cmd_route": "/cmd",
+      "port": 8080,
+      "ui_route": "/ui"
     }
   },
   "rob": {
-    "ws": {
-      "sender_name": "rob",
-      "hostname": "0.0.0.0",
-      "ping_pong_interval": 1
-    },
-    "log_level": 0,
-    "print_log": true,
-    "acs": {
-      "stop_treshold": 70,
-      "anticollision_mode": 2,
-      "anticollision_handle": 3,
-      "anticollision_wait_and_fail_delay": 5,
-      "anticollision_wait_and_retry_delay": 2,
-      "anticollision_wait_and_retry_max_tries": 2,
-      "anticollision_wait_and_avoid_distance": 15,
-      "anticollision_wait_and_avoid_time_without_acs": 2,
-      "anticollision_wait_and_avoid_max_tries": 2
-    },
-    "zombie_mode": false,
-    "jack": {
-      "pin": 23
-    },
-    "team_config": {
-      "default_team": "y",
-      "start_info_by_team": {
-        "y": {
-          "start_zone_id": 0,
-          "start_x": 19.27,
-          "start_y": 15.75,
-          "start_theta": 1.5707963267948966
-        },
-        "b": {
-          "start_zone_id": 3,
-          "start_x": 19.27,
-          "start_y": 284.25,
-          "start_theta": -1.5707963267948966
-        }
-      }
-    },
-    "team_switch": {
-      "pin": 20,
-      "team_off": "b",
-      "team_on": "y"
-    },
-    "strip_led": {
-      "pin": 18,
-      "brightness": 30,
-      "num_leds": 96,
-      "frequency": 800000,
-      "led_indexes": {
-        "lidar": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7,
-          8,
-          9,
-          10,
-          11,
-          12
-        ],
-        "inside_front_right": [
-          13,
-          14,
-          15,
-          16,
-          17,
-          18,
-          19,
-          20,
-          21,
-          22,
-          23,
-          24,
-          25,
-          26,
-          27,
-          28
-        ],
-        "inside_back_right": [
-          44,
-          43,
-          42,
-          41,
-          40,
-          39,
-          38,
-          37,
-          36,
-          35,
-          34,
-          33,
-          32,
-          31,
-          30,
-          29
-        ],
-        "inside_back_left": [
-          45,
-          46,
-          47,
-          48,
-          49,
-          50,
-          51,
-          52,
-          53,
-          54,
-          55,
-          56,
-          57,
-          58,
-          59
-        ],
-        "inside_front_left": [
-          75,
-          74,
-          73,
-          72,
-          71,
-          70,
-          69,
-          68,
-          67,
-          66,
-          65,
-          64,
-          63,
-          62,
-          61,
-          60
-        ],
-        "score": {
-          "tens": [
-            76,
-            77,
-            78,
-            79,
-            80,
-            81,
-            82,
-            83,
-            84,
-            85
-          ],
-          "units": [
-            95,
-            94,
-            93,
-            92,
-            91,
-            90,
-            89,
-            88,
-            87,
-            86
-          ]
-        }
-      }
-    },
-    "rolling_basis": {
-      "rolling_basis_teensy_ser": 12675800,
-      "go_to_profiles": {
-        "precision": {
-          "high_precision": {
-            "next_position_delay": 100,
-            "action_error_auth": 15,
-            "traj_precision": 5
-          },
-          "classic_precision": {
-            "next_position_delay": 100,
-            "action_error_auth": 15,
-            "traj_precision": 15
-          },
-          "low_precision": {
-            "next_position_delay": 100,
-            "action_error_auth": 20,
-            "traj_precision": 30
-          }
-        },
-        "speed": {
-          "high_speed": {
-            "max_speed": 200,
-            "correction_trajectory_speed": 0,
-            "acceleration_start_speed": 160,
-            "acceleration_distance": 15,
-            "deceleration_end_speed": 160,
-            "deceleration_distance": 8
-          },
-          "cruise_speed": {
-            "max_speed": 180,
-            "correction_trajectory_speed": 160,
-            "acceleration_start_speed": 160,
-            "acceleration_distance": 15,
-            "deceleration_end_speed": 160,
-            "deceleration_distance": 5
-          },
-          "low_speed": {
-            "max_speed": 120,
-            "correction_trajectory_speed": 120,
-            "acceleration_start_speed": 120,
-            "acceleration_distance": 0,
-            "deceleration_end_speed": 120,
-            "deceleration_distance": 0
-          }
-        },
-        "slow_and_precise": {
-          "max_speed": 150,
-          "correction_trajectory_speed": 0,
-          "acceleration_start_speed": 150,
-          "acceleration_distance": 0,
-          "deceleration_end_speed": 130,
-          "deceleration_distance": 30,
-          "next_position_delay": 100,
-          "action_error_auth": 20,
-          "traj_precision": 10
-        },
-        "plant_approach": {
-          "max_speed": 180,
-          "correction_trajectory_speed": 0,
-          "acceleration_start_speed": 180,
-          "acceleration_distance": 0,
-          "deceleration_end_speed": 100,
-          "deceleration_distance": 30,
-          "next_position_delay": 90,
-          "action_error_auth": 20,
-          "traj_precision": 40
-        },
-        "plant_pickup": {
-          "max_speed": 110,
-          "correction_trajectory_speed": 0,
-          "acceleration_start_speed": 110,
-          "acceleration_distance": 0,
-          "deceleration_end_speed": 80,
-          "deceleration_distance": 20,
-          "next_position_delay": 100,
-          "action_error_auth": 80,
-          "traj_precision": 20
-        },
-        "garden_approach": {
-          "max_speed": 180,
-          "correction_trajectory_speed": 0,
-          "acceleration_start_speed": 180,
-          "acceleration_distance": 0,
-          "deceleration_end_speed": 100,
-          "deceleration_distance": 20,
-          "next_position_delay": 90,
-          "action_error_auth": 20,
-          "traj_precision": 40
-        },
-        "fast": {
-          "max_speed": 200,
-          "correction_trajectory_speed": 0,
-          "acceleration_start_speed": 180,
-          "acceleration_distance": 0,
-          "deceleration_end_speed": 120,
-          "deceleration_distance": 20,
-          "next_position_delay": 100,
-          "action_error_auth": 50,
-          "traj_precision": 80
-        }
-      }
-    },
     "actuators": {
-      "actuators_teensy_ser": 12678600,
-      "front_god_hand": {
-        "take_servo": [
-          {
-            "pin": 3,
-            "open_angle": 90,
-            "close_angle": 68
-          },
-          {
-            "pin": 4,
-            "open_angle": 90,
-            "close_angle": 68
-          },
-          {
-            "pin": 5,
-            "open_angle": 100,
-            "close_angle": 122
-          },
-          {
-            "pin": 6,
-            "open_angle": 95,
-            "close_angle": 117
-          }
-        ],
-        "deployment_servo": {
-          "pin": 7,
-          "deploy_angle": 140,
-          "undeploy_angle": 100,
-          "vertical_angle": 47
-        }
-      },
-      "solar_panel": {
-        "detach_delay": 200,
-        "right": {
-          "pin": 9,
-          "small_deploy_angle": 90,
-          "deploy_angle": 100,
-          "undeploy_angle": 12
-        },
-        "left": {
-          "pin": 8,
-          "small_deploy_angle": 10,
-          "deploy_angle": 0,
-          "undeploy_angle": 82
-        }
-      },
+      "actuators_teensy_ser": 14735440,
+      "delay": 0.02,
       "elevator": {
-        "top_steps": 400,
-        "intermediate_steps": 283,
-        "bottom_steps": 0,
-        "speed": 5000
+        "bottom_steps": 50,
+        "folded_steps": 360,
+        "speed": 2000,
+        "top_steps": 725
       },
-      "minimum_delay": 0.05
+      "servos_config": {
+        "0": {
+          "deploy_angle": 110,
+          "docking": 90,
+          "fold_angle": 20,
+          "max_angle": 270
+        },
+        "1": {
+          "deploy_angle": 180,
+          "fold_angle": 0,
+          "max_angle": 180
+        },
+        "2": {
+          "deploy_angle": 160,
+          "docking": 180,
+          "fold_angle": 250,
+          "max_angle": 270
+        },
+        "3": {
+          "deploy_angle": 0,
+          "fold_angle": 180,
+          "max_angle": 180
+        },
+        "4": {
+          "deploy_angle": 100,
+          "fold_angle": 10,
+          "max_angle": 270
+        },
+        "5": {
+          "deploy_angle": 180,
+          "fold_angle": 0,
+          "max_angle": 180
+        },
+        "6": {
+          "deploy_angle": 155,
+          "fold_angle": 250,
+          "max_angle": 270
+        },
+        "7": {
+          "deploy_angle": 0,
+          "fold_angle": 180,
+          "max_angle": 180
+        },
+        "8": {
+          "deploy_angle": 150,
+          "docking": 130,
+          "fold_angle": 240,
+          "max_angle": 270
+        },
+        "9": {
+          "deploy_angle": 90,
+          "fold_angle": 130,
+          "maintain_plank": 140,
+          "max_angle": 270
+        }
+      }
+    },
+    "bau": {
+      "pin": 16.0
+    },
+    "jack": {
+      "pin": 26.0
     },
     "lidar": {
-      "distances_unit": "cm",
       "angles_unit": "rad",
-      "min_angle": -0.785398,
-      "max_angle": 3.926991,
-      "min_distance_detection": 5.0,
+      "distances_unit": "cm",
       "frontal_detection_angle": 1.570796,
+      "max_angle": 3.926991,
+      "min_angle": -0.785398,
+      "min_distance_detection": 10.0,
       "semi_circular_detection_angle": 3.141592
-    }
-  },
-  "arena": {
-    "border_buffer": -10,
-    "robot_buffer": 18,
-    "robot_buffer_with_god_hand_deployed": 25,
-    "limit_plant_pickup": 3
+    },
+    "log": {
+      "logger": {
+        "colors": "ClassicColors",
+        "decorator_log_level": "DEBUG",
+        "disk_alert_threshold_percent": 0.8,
+        "display_monitoring": false,
+        "file_log_level": "DEBUG",
+        "file_size_unit": "Go",
+        "filename_lineno_max_width": 15,
+        "files_monitoring": false,
+        "identifier_max_width": 15,
+        "log_files_size_alert_threshold_percent": 0.2,
+        "max_log_file_size": 1.0,
+        "path": "logs",
+        "print_log": true,
+        "print_log_level": "INFO",
+        "write_to_file": true
+      },
+      "logger_manager": {
+        "enable_dynamic_config_update": false,
+        "enable_files_logs_monitoring_only_for_one_logger": true,
+        "enable_unique_logger_identifier": false
+      }
+    },
+    "movement_manager": {
+      "acs_profiles": {
+        "backward": {
+          "acs_detection_profile": "no",
+          "acs_distance": 0
+        },
+        "go_to_color_reserved_zone_to_construct": {
+          "acs_detection_profile": "rectangular_projection",
+          "acs_distance": 50
+        },
+        "go_to_color_reserved_zone_to_finish_game": {
+          "acs_detection_profile": "no_projection",
+          "acs_distance": 50
+        },
+        "go_to_stuff_zone_to_pick_up": {
+          "acs_detection_profile": "rectangular_projection",
+          "acs_distance": 50
+        },
+        "precise_forward": {
+          "acs_detection_profile": "no",
+          "acs_distance": 0
+        },
+        "start_task": {
+          "acs_detection_profile": "no_projection",
+          "acs_distance": 70
+        }
+      },
+      "movement_resolution": 1
+    },
+    "rolling_basis": {
+      "pids": {
+        "angular_position": {
+          "kd": 1000.0,
+          "ki": 15000,
+          "kp": 20000
+        },
+        "linear_position": {
+          "kd": 0,
+          "ki": 20,
+          "kp": 50
+        }
+      },
+      "rolling_basis_teensy_ser": 12678590,
+      "speed_profiles": {
+        "angular_speed": {
+          "default": {
+            "speed": 3.1415
+          },
+          "high": {
+            "speed": 5
+          },
+          "slow": {
+            "speed": 1
+          }
+        },
+        "linear_speed": {
+          "default": {
+            "acceleration": 30,
+            "deceleration": 20,
+            "max_speed": 40
+          },
+          "slow": {
+            "acceleration": 15,
+            "deceleration": 15,
+            "max_speed": 20
+          }
+        }
+      }
+    },
+    "score": {
+      "boombot": {
+        "banner": 20,
+        "build_one_floor": 4,
+        "build_two_floors": 8,
+        "go_to_backstage": 10
+      },
+      "pamis": {
+        "free_stage_zone": 15,
+        "occupied_zone": 5,
+        "partying": 10,
+        "superstar_on_stage": 5
+      }
+    },
+    "team_config": {
+      "default_team": "yellow",
+      "info_by_team": {
+        "blue": {
+          "backstage_zone": 19,
+          "first_build_zone": 16,
+          "first_pickup_zone": 4,
+          "fourth_pickup_zone": 1,
+          "second_build_zone": 17,
+          "second_pickup_zone": 2,
+          "third_pickup_zone": 0
+        },
+        "yellow": {
+          "backstage_zone": 20,
+          "first_build_zone": 12,
+          "first_pickup_zone": 9,
+          "fourth_pickup_zone": 6,
+          "second_build_zone": 13,
+          "second_pickup_zone": 7,
+          "third_pickup_zone": 5
+        }
+      }
+    },
+    "ws": {
+      "hostname": "0.0.0.0",
+      "ping_pong_interval": 1,
+      "sender_name": "rob"
+    },
+    "ws_ui": {
+      "hostname": "0.0.0.0",
+      "ping_pong_interval": 1,
+      "sender_name": "ui"
+    },
+    "zombie_mode": false
   }
 }

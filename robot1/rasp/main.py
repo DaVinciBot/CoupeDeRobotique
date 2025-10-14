@@ -1,133 +1,189 @@
-from config_loader import CONFIG
+"""Main entry point to run the Boombot demo on the Raspberry Pi."""
 
-import math
+from __future__ import annotations
 
-# Import from common
-from WS_comms import WServer, WServerRouteManager, WSender, WSreceiver, WSmsg
-from logger import Logger, LogLevels
-from geometry import OrientedPoint
-from led_strip import LEDStrip
-from arena import MarsArena
-from GPIO import PIN
+import subprocess
 
-# Import from local path
+from loggerplusplus import Logger, LogLevels
+from taskbrain import DictProxyAccessor
+from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
+
+from a_config_loader import CONFIG
+from arena.base_arena.arena_zones import AllyZone
+from arena.show_arena import ShowArena
 from brains import MainBrain
-from controllers import RollingBasis, Actuators
-from sensors import Lidar
+from geometry import OrientedPoint
+from navigation.navigator.task import NavigatorTaskParams
+from sensors import Inputs, Lidar, LidarDummy
 
+# ====== Main ======
 if __name__ == "__main__":
-    """
-    ###--- Initialization ---###
-    """
-    # State strip leds
-    leds = LEDStrip(**CONFIG.LED_STRIP_CONFIG)
+    # region ====== Initialization ======
 
     # Loggers
+    # System-Part loggers
     logger_ws_server = Logger(
-        identifier="ws_server",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
+        identifier="WS_Server",
+        follow_logger_manager_rules=True,
     )
-    logger_brain = Logger(
-        identifier="brain",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
+    logger_ws_cmd_route_manager = Logger(
+        identifier="WS_cmd_RouteManager",
+        follow_logger_manager_rules=True,
     )
-    logger_rolling_basis = Logger(
-        identifier="rolling_basis",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
+    logger_ws_cmd_sender = Logger(
+        identifier="WS_cmd_Sender",
+        follow_logger_manager_rules=True,
     )
-    logger_actuators = Logger(
-        identifier="actuators",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
-    )
-    logger_arena = Logger(
-        identifier="arena",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.DEBUG,
-        file_log_level=LogLevels.DEBUG,
-    )
-    logger_lidar = Logger(
-        identifier="lidar",
-        decorator_level=LogLevels.INFO,
-        print_log_level=LogLevels.CRITICAL,
-        file_log_level=LogLevels.DEBUG,
+    logger_ws_cmd_receiver = Logger(
+        identifier="WS_cmd_Receiver",
+        follow_logger_manager_rules=True,
     )
 
+    logger_ws_ui_route_manager = Logger(
+        identifier="WS_UI_RouteManager",
+        follow_logger_manager_rules=True,
+    )
+    logger_ws_ui_sender = Logger(
+        identifier="WS_UI_Sender",
+        follow_logger_manager_rules=True,
+    )
+    logger_ws_ui_receiver = Logger(
+        identifier="WS_UI_Receiver",
+        follow_logger_manager_rules=True,
+    )
+
+    logger_brain = Logger(
+        identifier="Brain",
+        # Only Brain manages monitoring
+        files_monitoring=False,
+        display_monitoring=False,
+        print_log_level=LogLevels.DEBUG,
+        follow_logger_manager_rules=True,
+    )
+    logger_lidar = Logger(
+        identifier="Lidar",
+        follow_logger_manager_rules=True,
+    )
+
+    # Controllers loggers
+    # See ./brains/controllers_brain.py for more details
+    # All rolling basis part is executed in another process so define inside this part
+
+    # Environment loggers
+    logger_grid_manager = Logger(
+        identifier="GridManager",
+        print_log_level=LogLevels.INFO,
+        follow_logger_manager_rules=True,
+    )
+    logger_show_arena = Logger(
+        identifier="ShowArena",
+        follow_logger_manager_rules=True,
+    )
+
+    # Movement loggers
+    # See ./brains/controllers_brain.py for more details
+    # All rolling basis part is executed in another process so define inside this part
+    """ Main object instances """
+    # Websocket server
     # Websocket server
     ws_server = WServer(
         logger=logger_ws_server,
         host=CONFIG.WS_HOSTNAME,
         port=CONFIG.WS_PORT,
-        ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,
+        # ping_pong_clients_interval=CONFIG.WS_PING_PONG_INTERVAL,
+        # TODO: To fix, this feature is not working
     )
-
     # Routes
     ws_cmd = WServerRouteManager(
-        WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
+        logger=logger_ws_cmd_route_manager,
+        receiver=WSreceiver(logger=logger_ws_cmd_receiver, use_queue=True),
+        sender=WSender(logger=logger_ws_cmd_sender, name=CONFIG.WS_SENDER_NAME),
     )
-    ws_pami = WServerRouteManager(
-        WSreceiver(use_queue=True), WSender(CONFIG.WS_SENDER_NAME)
-    )
-    ws_log = WServerRouteManager(WSreceiver(), WSender(CONFIG.WS_SENDER_NAME))
-
-    # Add routes
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
-    ws_server.add_route_handler(CONFIG.WS_PAMI_ROUTE, ws_pami)
-    ws_server.add_route_handler(CONFIG.WS_LOG_ROUTE, ws_log)
 
+    ws_ui = WServerRouteManager(
+        logger=logger_ws_ui_route_manager,
+        receiver=WSreceiver(logger=logger_ws_ui_receiver, use_queue=True),
+        sender=WSender(logger=logger_ws_ui_sender, name=CONFIG.WS_UI_SENDER_NAME),
+    )
+    ws_server.add_route_handler(CONFIG.WS_UI_ROUTE, ws_ui)
+
+    # Controllers
+    # Rolling Basis
+    # See ./brains/controllers_brain.py for more details
+    # All rolling basis part is executed in another process so define inside this part
+
+    # Sensors
     # Lidar
-    lidar = Lidar(
-        logger=logger_lidar,
-        min_angle=CONFIG.LIDAR_MIN_ANGLE,
-        max_angle=CONFIG.LIDAR_MAX_ANGLE,
-        unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
-        unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
-        min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+    if CONFIG.LIDAR_DUMMY:
+        lidar: Lidar | LidarDummy = LidarDummy(
+            logger=logger_lidar,
+            min_angle=CONFIG.LIDAR_MIN_ANGLE,
+            max_angle=CONFIG.LIDAR_MAX_ANGLE,
+            unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
+            unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
+            min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+        )
+    else:
+        lidar = Lidar(
+            logger=logger_lidar,
+            min_angle=CONFIG.LIDAR_MIN_ANGLE,
+            max_angle=CONFIG.LIDAR_MAX_ANGLE,
+            unit_angle=CONFIG.LIDAR_ANGLES_UNIT,
+            unit_distance=CONFIG.LIDAR_DISTANCES_UNIT,
+            min_distance=CONFIG.LIDAR_MIN_DISTANCE_DETECTION,
+        )
+
+    # Environment
+    # Arena
+    arena = ShowArena(
+        logger=logger_show_arena,
+        border_buffer=CONFIG.ARENA_BORDER_BUFFER,
+        obstacle_buffer=CONFIG.ARENA_OBSTACLE_BUFFER,
+        chunk_size=CONFIG.ARENA_CHUNK_SIZE,
+        forbidden_cover_threshold=CONFIG.ARENA_FORBIDDEN_COVER_THRESHOLD,
+        grid_manager_logger=logger_grid_manager,
     )
 
+    # os.chdir("/home/dvb/CoupeDeRobotique/robot1/rasp")
     # Jack
-    jack_pin = PIN(CONFIG.JACK_PIN)
-    jack_pin.setup("input_pulldown", reverse_state=True)
+    inputs = Inputs(pin_jack=CONFIG.JACK_PIN, pin_bau=CONFIG.BAU_PIN)
 
-    # Team switch
-    team_switch = PIN(CONFIG.TEAM_SWITCH_PIN)
-    team_switch.setup("input_pulldown", reverse_state=True)
-
-    # Robot
-    rolling_basis = RollingBasis(logger=logger_rolling_basis)
-    rolling_basis.stop_and_clear_queue()
-    rolling_basis.set_pids(30.0, 0.0, 0.4, 30.0, 0.0, 0.4)
-
-    # Actuators
-    actuators = Actuators(logger=logger_actuators)
+    # Movement
+    # Movement manager
+    # See ./brains/controllers_brain.py for more details
+    # All rolling basis part is executed in another process so define inside this part
 
     # Brain
-    leds.set_is_ready()
+    # Register object types that must be shared between processes
+    DictProxyAccessor.add_serializable_type(ShowArena, arena)
+    DictProxyAccessor.add_serializable_type(OrientedPoint)
+    DictProxyAccessor.add_serializable_type(NavigatorTaskParams)
+    DictProxyAccessor.add_serializable_type(AllyZone)
+
     brain = MainBrain(
-        actuators=actuators,
         logger=logger_brain,
-        ws_cmd=ws_cmd,
-        ws_pami=ws_pami,
-        rolling_basis=rolling_basis,
         lidar=lidar,
-        logger_arena=logger_arena,
-        jack=jack_pin,
-        team_switch=team_switch,
-        leds=leds,
+        arena=arena,
+        ws_cmd=ws_cmd,
+        ws_ui=ws_ui,
+        inputs=inputs,
     )
 
-    """
-        ###--- Run ---###
-    """
+    # endregion
+
+    # region ====== Run ======
+
     # Add background tasks, in format ws_server.add_background_task(func, func_params)
     for routine in brain.get_tasks():
         ws_server.add_background_task(routine)
 
+    def force_kill_all_python() -> None:
+        """Kill all running Python processes using pkill -9 python."""
+        subprocess.run(["pkill", "-9", "python"], check=False)  # noqa: S607
+        logger_brain.fatal("All Python processes killed.")
+
+    ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
+
+    # endregion

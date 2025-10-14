@@ -6,8 +6,7 @@
 
 #include <Arduino.h>
 
-struct msg_Go_To
-{
+struct msg_Go_To {
     byte command = GO_TO;
     float x;
     float y;
@@ -18,8 +17,7 @@ struct msg_Go_To
     uint16_t traj_precision;
 };
 
-struct msg_Curve_Go_To
-{
+struct msg_Curve_Go_To {
     byte command = CURVE_GO_TO;
     float target_x;
     float target_y;
@@ -33,36 +31,29 @@ struct msg_Curve_Go_To
     uint16_t traj_precision;
 };
 
-struct msg_Keep_Current_Position
-{
+struct msg_Keep_Current_Position {
     byte command = KEEP_CURRENT_POSITION;
 };
 
-struct msg_Disable_Pid
-{
+struct msg_Disable_Pid {
     byte command = DISABLE_PID;
 };
-struct msg_Enable_Pid
-{
+struct msg_Enable_Pid {
     byte command = ENABLE_PID;
 };
 
-struct msg_Update_Position
-{
+struct msg_Update_Position {
     byte command = UPDATE_POSITION;
     float x;
     float y;
     float theta;
 };
 
-struct msg_Action_Finished
-{
+struct msg_Action_Finished {
     byte command = ACTION_FINISHED;
     byte action_id;
 };
 
-struct msg_Stop_signal
-{
+struct msg_Stop_signal {
     byte command = STOP;
 };
-

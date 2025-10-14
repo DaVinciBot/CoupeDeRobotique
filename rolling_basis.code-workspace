@@ -1,28 +1,89 @@
 {
-	"folders": [
-		{
-			"path": "robot1/rasp"
-		},
-		{
-			"path": "robot1/teensy_moteur"
-		}
-	],
-	"settings": {
-		"files.associations": {
-			"*.tcc": "cpp",
-			"exception": "cpp",
-			"iosfwd": "cpp",
-			"new": "cpp",
-			"ostream": "cpp",
-			"sstream": "cpp",
-			"streambuf": "cpp",
-			"array": "cpp",
-			"string_view": "cpp",
-			"initializer_list": "cpp",
-			"utility": "cpp"
-		},
-		"[python]": {
-			"editor.defaultFormatter": "ms-python.black-formatter"
-		},
-	}
+  "folders": [
+    {
+      "path": "robot1/rasp"
+    },
+    {
+      "path": "robot1/teensy_moteur"
+    }
+  ],
+  "settings": {
+    "[python]": {
+      "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "editor.codeActionsOnSave": {
+      "source.convertImportFormat": "explicit",
+      "source.organizeImports": "explicit",
+      "source.sort.json": "explicit",
+      "source.unusedImports": "explicit"
+    },
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "errorLens.enabledDiagnosticLevels": ["error", "warning", "info", "hint"],
+    "files.associations": {
+      "*.tcc": "cpp",
+      "array": "cpp",
+      "charconv": "cpp",
+      "cmath": "cpp",
+      "exception": "cpp",
+      "initializer_list": "cpp",
+      "iosfwd": "cpp",
+      "new": "cpp",
+      "ostream": "cpp",
+      "random": "cpp",
+      "sstream": "cpp",
+      "streambuf": "cpp",
+      "string": "cpp",
+      "string_view": "cpp",
+      "utility": "cpp",
+      "xlocale": "cpp",
+      "xstring": "cpp"
+    },
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.diagnosticMode": "workspace",
+    "todo-tree.general.tagGroups": {
+      "FIXME": ["FIXME", "FIXIT", "FIX"],
+      "HACK": ["HACK", "ENHANCE"]
+    },
+    "todo-tree.general.tags": [
+      "BUG",
+      "HACK",
+      "ENHANCE",
+      "FIXME",
+      "FIXIT",
+      "FIX",
+      "TODO",
+      "TOTEST",
+      "QUESTION",
+      "[ ]",
+      "[x]"
+    ],
+    "todo-tree.highlights.customHighlight": {
+      "BUG": {
+        "background": "white",
+        "foreground": "red",
+        "textDecoration": "underline"
+      },
+      "FIXME": {
+        "foreground": "orange",
+        "iconColour": "yellow"
+      },
+      "QUESTION": {
+        "foreground": "purple",
+        "icon": "question",
+        "iconColour": "purple"
+      },
+      "TODO": {
+        "foreground": "cyan"
+      },
+      "TOTEST": {
+        "foreground": "lime",
+        "icon": "codescan-checkmark"
+      }
+    },
+    "todo-tree.highlights.defaultHighlight": {
+      "gutterIcon": true,
+      "type": "text-and-comment"
+    }
+  }
 }

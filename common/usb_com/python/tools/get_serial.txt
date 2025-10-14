@@ -1,0 +1,36 @@
+#include <Arduino.h>
+
+void setup() {
+  Serial.begin(9600);
+  while (!Serial) {
+    ; // Attendre que le port série soit prêt
+  }
+  delay(1000); // Attendre un moment pour la connexion USB
+}
+
+void loop() {
+  // Adresse de mémoire où est stocké le numéro de série pour Teensy 4.1
+  uint32_t serial0 = HW_OCOTP_CFG0;
+  uint32_t serial1 = HW_OCOTP_CFG1;
+  uint32_t serial2 = HW_OCOTP_CFG2;
+  uint32_t serial3 = HW_OCOTP_CFG3;
+search-ms:displayname=Résultats%20de%20la%20recherche%20dans%20Romain%20–%20De%20Vinci&crumb=System.Generic.String%3AESP&crumb=location:C%3A%5CUsers%5Cromai%5COneDrive%20-%20De%20Vinci\ESP8266
+  // Afficher le numéro de série
+  Serial.print("Numéro de série de la carte Teensy : ");
+  Serial.print(serial3, HEX);
+  Serial.print("-");
+  Serial.print(serial2, HEX);
+  Serial.print("-");
+  Serial.print(serial1, HEX);
+  Serial.print("-");
+  Serial.println(serial0, HEX);
+
+  // Afficher le numéro de série complet en une seule chaîne hexadécimale continue
+  Serial.print("Numéro de série complet en hexadécimal : ");
+  Serial.print(serial3, HEX);
+  Serial.print(serial2, HEX);
+  Serial.print(serial1, HEX);
+  Serial.println(serial0, HEX);
+
+  delay(1000); // Attendre 1 seconde avant de réécrire le numéro de série
+}

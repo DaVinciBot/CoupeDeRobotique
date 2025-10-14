@@ -1,13 +1,33 @@
-#include <rolling_basis.h>
+/**
+ * This is the implementation of the Rolling Basis class.
+ * The Rolling Basis class is the core of the Motor teensy code.
+ * It provides method to control the motors, the speed and the orientation.
+ * It computes the odometry and correct the motors error with the PID class.
+ */
+
 #include <Arduino.h>
+#include <rolling_basis.h>
 #include <util/atomic.h>
 
+double normalizeAngle(double theta) {
+    // shift by +PI, take modulo 2*PI, remap to [0,2*PI)
+    theta = fmodf(theta + PI, 2.0f * PI);
+    if (theta < 0.0f) {
+        theta += 2.0f * PI;
+    }
+    // shift back to [-PI, +PI)
+    return theta - PI;
+}
+
 // Properties
-Point Rolling_Basis::get_current_position()
-{
+/**
+ * @brief Get current position (X, Y and THETA) of the robot
+ *
+ * @return Current position
+ */
+Point Rolling_Basis::get_current_position() {
     Point position;
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-    {
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         position.x = this->X;
         position.y = this->Y;
         position.theta = this->THETA;
@@ -15,106 +35,142 @@ Point Rolling_Basis::get_current_position()
     return position;
 }
 
-Ticks Rolling_Basis::get_current_ticks()
-{
-    Ticks ticks;
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE)
-    {
-        ticks.left = this->left_motor->ticks;
-        ticks.right = this->right_motor->ticks;
-    }
-    return ticks;
-}
-
 // Constructor
-Rolling_Basis::Rolling_Basis(unsigned short encoder_resolution, float center_distance, float wheel_diameter)
-{
-    this->encoder_resolution = encoder_resolution;
-    this->center_distance = center_distance;
-    this->wheel_diameter = wheel_diameter;
-}
+/**
+ * @brief constructor of the Rolling Basis class
+ *
+ * Initializes the parameters of the Rolling Basis
+ */
+Rolling_Basis::Rolling_Basis(unsigned short encoder_resolution,
+                             double center_distance,
+                             double wheel_diameter,
+                             const PID& linear_distance_pid,
+                             const PID& angular_distance_pid)
+    : encoder_resolution(encoder_resolution),
+      center_distance(center_distance),
+      wheel_diameter(wheel_diameter),
+      linear_distance_pid(linear_distance_pid),
+      angular_distance_pid(angular_distance_pid) {}
 
 // Methods
 // Inits function
-void Rolling_Basis::init_right_motor(byte in1, byte in2, byte pwm, byte enca, byte encb, float kp, float kd, float ki, float correction_factor = 1.0, byte threshold_pwm_value = 0)
-{
-    this->right_motor = new Motor(in1, in2, pwm, enca, encb, kp, kd, ki, correction_factor, threshold_pwm_value);
+/**
+ * @brief Define right motor with pins, related encoders pin and properties of
+ * the wheel attached to the motor.
+ */
+void Rolling_Basis::define_right_motor(byte enca,
+                                       byte encb,
+                                       byte pwm,
+                                       byte in2,
+                                       byte in1,
+                                       byte max_pwm) {
+    this->right_motor = new Motor(in1, in2, pwm, enca, encb,
+                                  this->wheel_unit_tick_cm(), max_pwm);
 }
 
-void Rolling_Basis::init_left_motor(byte in1, byte in2, byte pwm, byte enca, byte encb, float kp, float kd, float ki, float correction_factor = 1.0, byte threshold_pwm_value = 0)
-{
-    this->left_motor = new Motor(in1, in2, pwm, enca, encb, kp, kd, ki, correction_factor, threshold_pwm_value);
+/**
+ * @brief Define left motor with pins, related encoders pin and properties of
+ * the wheel attached to the motor.
+ */
+void Rolling_Basis::define_left_motor(byte enca,
+                                      byte encb,
+                                      byte pwm,
+                                      byte in2,
+                                      byte in1,
+                                      byte max_pwm) {
+    this->left_motor = new Motor(in1, in2, pwm, enca, encb,
+                                 this->wheel_unit_tick_cm(), max_pwm);
 }
 
-void Rolling_Basis::init_motors()
-{
+/**
+ * @brief Initialize both motors
+ */
+void Rolling_Basis::init_motors() {
     this->right_motor->init();
     this->left_motor->init();
 }
 
-void Rolling_Basis::init_rolling_basis(float x, float y, float theta, long inactive_delay, byte standby_pwm)
-{
+/**
+ * @brief Initialize Rolling Basis state with starting position
+ */
+void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
     this->X = x;
     this->Y = y;
     this->THETA = theta;
-    this->inactive_delay = inactive_delay; 
-    this->standby_pwm = standby_pwm;
 }
 
 // Odometrie function
-void Rolling_Basis::odometrie_handle(){
-    /* Determine the position of the robot */
-    long delta_left  = this->left_motor->ticks - this->left_ticks;
-    this->left_ticks = this->left_ticks + delta_left;
-
-    long delta_right  = this->right_motor->ticks - this->right_ticks;
-    this->right_ticks = this->right_ticks + delta_right;
-    
-    float left_move  = delta_left * this->wheel_unit_tick_cm();
-    float right_move = delta_right * this->wheel_unit_tick_cm();
-
-    float movement_difference = right_move - left_move;
-    float movement_sum = (right_move + left_move) / 2;
-
-    THETA = THETA + (movement_difference / this->center_distance);
-    this->X = this->X + (cos(this->THETA) * movement_sum);
-    this->Y = this->Y + (sin(this->THETA) * movement_sum);
-}
-
-void Rolling_Basis::is_running_update(){
-    // Verify if the robot is running or no
-    if ((millis() - this->last_running_check) > 10){
-        this->last_running_check = millis();
-        long delta_right = abs(this->running_check_right - this->right_motor->ticks);
-        long delta_left = abs(this->running_check_left - this->left_motor->ticks);
-
-        if((delta_left > 3) || (delta_right > 3))
-            this->last_position_update = millis();
-        
-        this->running_check_right = this->right_motor->ticks;
-        this->running_check_left  = this->left_motor->ticks;
-
-        this->IS_RUNNING = ((millis() - this->last_position_update) < abs(this->inactive_delay));
+/**
+ * @brief Handle the odometry computation
+ *
+ * Update motors position sthen compute displacement of both motors.
+ * The with these results, estimate the robot position and orientation.
+ * Finally update the rolling basis state.
+ */
+void Rolling_Basis::odometrie_handle() {
+    /* Update motors positions by calling odometer_handle */
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        this->right_motor->handle_odometrie();
+        this->left_motor->handle_odometrie();
     }
+
+    /* Determine the delta of distance and rotation of the robot */
+    double delta_distance =
+        (this->left_motor->distance + this->right_motor->distance) / 2.0f;
+    double delta_theta =
+        (this->left_motor->distance - this->right_motor->distance) /
+        this->center_distance;
+
+    // Determine the new cartesian position of the robot
+    this->X += cosf(this->THETA + (delta_theta / 2.0f)) * delta_distance;
+    this->Y += sinf(this->THETA + (delta_theta / 2.0f)) * delta_distance;
+    this->THETA = normalizeAngle(this->THETA + delta_theta);
 }
 
-void Rolling_Basis::reset_position(){
-    // Reset the position of the robot
-    this->X = 0.0f;
-    this->Y = 0.0f;
-    this->THETA = 0.0f;
-    this->IS_RUNNING = false;
-}
+/**
+ * @brief Handle the correction computation
+ *
+ * Compute the distance and orientation error in terms of position.A0
+ * Compute the PID and set the motors new command.
+ */
+void Rolling_Basis::handle(Point target_position, Com* com) {
+    /* Position part */
+    // We already have the current robot's position with odometrie (X, Y, THETA)
 
-// Motors action function
-void Rolling_Basis::keep_position(long current_right_ticks, long current_left_ticks) {
-    this->right_motor->handle(current_right_ticks, this->standby_pwm);
-    this->left_motor->handle(current_left_ticks, this->standby_pwm);
-}
+    // Compute distance and orientation error (difference between target and
+    // real)
+    double xerr = target_position.x - this->X;
+    double yerr = target_position.y - this->Y;
 
-void Rolling_Basis::shutdown_motor()
-{
-    this->right_motor->set_motor(1, 0);
-    this->left_motor->set_motor(1, 0);
-}
+    double distance_error = xerr * cosf(this->THETA) + yerr * sinf(this->THETA);
+    double mag = sqrt(pow(xerr, 2) + pow(yerr, 2));
+    double sign = (distance_error >= 0.0) ? +1.0 : -1.0;
+    distance_error = mag * sign;
 
+    double theta_error = target_position.theta - this->THETA;
+    /*+ Point::angle(
+        Point(this->X, this->Y, this->THETA),
+        target_position
+    ) - this->THETA;*/
+
+    theta_error = normalizeAngle(theta_error);
+
+    // Consigne vitesse
+    // Compute PID output based on errors
+    double linear_correction =
+        this->linear_distance_pid.compute(distance_error);
+    double angular_correction = this->angular_distance_pid.compute(theta_error);
+
+    double right_pwm = linear_correction - angular_correction;
+    double left_pwm = linear_correction + angular_correction;
+
+    // static long ticks_counter = 0;
+    // if (ticks_counter++ > 10) {
+    //     ticks_counter = 0;
+    //     String pwms = "PWMs: " + String(right_pwm) + ", " + String(left_pwm);
+    //     com->print((char *)pwms.c_str());
+    // }
+
+    this->right_motor->set_motor(right_pwm);
+    this->left_motor->set_motor(left_pwm);
+}

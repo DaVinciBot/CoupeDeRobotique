@@ -1,20 +1,18 @@
 {
-    "cmake.configureOnOpen": false,
-    "cmake.sourceDirectory": "${workspaceFolder}/.pio/libdeps/teensy41/ArduinoJson/src",
-    "files.associations": {
-        "*.tcc": "cpp",
-        "exception": "cpp",
-        "iosfwd": "cpp",
-        "new": "cpp",
-        "ostream": "cpp",
-        "sstream": "cpp",
-        "streambuf": "cpp",
-        "array": "cpp",
-        "string_view": "cpp",
-        "initializer_list": "cpp",
-        "utility": "cpp",
-        "limits": "cpp",
-        "cstddef": "cpp"
-    },
-    "C_Cpp.errorSquiggles": "disabled"
+  "C_Cpp.errorSquiggles": "disabled",
+  "files.associations": {
+    "*.tcc": "cpp",
+    "array": "cpp",
+    "cstddef": "cpp",
+    "exception": "cpp",
+    "initializer_list": "cpp",
+    "iosfwd": "cpp",
+    "limits": "cpp",
+    "new": "cpp",
+    "ostream": "cpp",
+    "sstream": "cpp",
+    "streambuf": "cpp",
+    "string_view": "cpp",
+    "utility": "cpp"
+  }
 }

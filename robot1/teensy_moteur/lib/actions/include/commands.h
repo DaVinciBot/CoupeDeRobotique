@@ -23,11 +23,10 @@
 #define SEND_PID 131
 #define UNKNOWN_MSG_TYPE 255
 
-extern void (*functions[256])(byte *msg, byte size);
-extern void handle_callback(Com *com);
+extern void (*functions[256])(byte* msg, byte size);
+extern void handle_callback(Com* com);
 
-struct msg_Unknown_Msg_Type
-{
+struct msg_Unknown_Msg_Type {
     byte command = UNKNOWN_MSG_TYPE;
     byte type_id;
 };

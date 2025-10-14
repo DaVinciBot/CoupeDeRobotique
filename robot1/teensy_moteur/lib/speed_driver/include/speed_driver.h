@@ -2,16 +2,15 @@
 #include <motors_driver.h>
 #include <structures.h>
 
-class Speed_Driver
-{
-public:
+class Speed_Driver {
+   public:
     // Attributes
     byte max_speed;
     byte correction_speed;
     long end_ticks;
     bool next_move_correction = false;
 
-byte offset;
+    byte offset;
     float distance;
 
     // Acceleration params
@@ -23,13 +22,20 @@ byte offset;
     Speed_Driver() = default;
 
     // Methodes
-    void compute_acceleration_profile(Rolling_Basis_Params *rolling_basis_params, long end_ticks);
+    void compute_acceleration_profile(
+        Rolling_Basis_Params* rolling_basis_params,
+        long end_ticks);
     byte compute_local_speed(long ticks);
 };
 
-class Speed_Driver_From_Distance : public Speed_Driver
-{
-public:
-    // We only need to give distance and offset, the gamma is not used in this case (it's set to -1.0f by default and will be ingored if given)
-    Speed_Driver_From_Distance(byte max_speed, byte correction_speed, float acceleration_offset, float acceleration_distance, float deceleration_offset, float deceleration_distance);
+class Speed_Driver_From_Distance : public Speed_Driver {
+   public:
+    // We only need to give distance and offset, the gamma is not used in this
+    // case (it's set to -1.0f by default and will be ingored if given)
+    Speed_Driver_From_Distance(byte max_speed,
+                               byte correction_speed,
+                               float acceleration_offset,
+                               float acceleration_distance,
+                               float deceleration_offset,
+                               float deceleration_distance);
 };
