@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from geometry import OrientedPoint, Point
+    from geometry import OrientedPoint
     from navigation.avoidance.acs_detection_profiles.base_acs_detection_profiles import (  # noqa: E501
         BaseAcsDetectionProfileParams,
     )
@@ -25,7 +25,7 @@ class NavigatorTaskParams:
     def __init__(
         self,
         # Attributes
-        goal: OrientedPoint | Point | None,
+        goal: OrientedPoint | None,
         timeout: float | None,
         stabilization_delay: float,
         # Parameters
@@ -38,7 +38,7 @@ class NavigatorTaskParams:
         """Initialize the NavigatorTaskParams.
 
         Args:
-            goal (OrientedPoint | Point | None): The goal to reach.
+            goal (OrientedPoint | None): The goal to reach.
             timeout (float | None): The timeout for the task.
             stabilization_delay (float): The stabilization delay.
             path_planner_params (BasePathPlannerParams):
@@ -60,6 +60,6 @@ class NavigatorTaskParams:
             acs_detection_profile_params
         )
 
-        self.goal: OrientedPoint | Point | None = goal
+        self.goal: OrientedPoint | None = goal
         self.timeout: float | None = timeout
         self.stabilization_delay: float = stabilization_delay

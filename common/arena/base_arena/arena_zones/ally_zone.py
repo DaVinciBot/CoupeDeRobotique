@@ -57,15 +57,15 @@ class AllyZone(BaseArenaZone):
     def update(
         self,
         team_color: TeamColor,
-        ally_position: Point | OrientedPoint,
-        enemy_position: Point | OrientedPoint,
+        ally_position: OrientedPoint,
+        enemy_position: OrientedPoint,
     ) -> None:
         """Update the zone based on the positions of allies and enemies.
 
         Args:
             team_color (TeamColor, optional): The color of the team.
-            ally_position (Point | OrientedPoint): Position of ally.
-            enemy_position (Point | OrientedPoint): Position of enemy.
+            ally_position (OrientedPoint): Position of ally.
+            enemy_position (OrientedPoint): Position of enemy.
         """
         super().update(team_color, ally_position, enemy_position)
         self.__init__(

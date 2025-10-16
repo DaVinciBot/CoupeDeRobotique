@@ -30,7 +30,13 @@ class RectangularProjectionAcsDetectionProfile(
 
         Returns:
             Polygon: The rectangular projection polygon.
+
+        Raises:
+            ValueError: If `ally_zone.point.theta` is None.
         """
+        if ally_zone.point.theta is None:
+            msg = "ally_zone.point.theta must be defined."
+            raise ValueError(msg)
         rectangle = Polygon(
             [
                 (-self.params.half_length_view, -self.params.half_width_view),

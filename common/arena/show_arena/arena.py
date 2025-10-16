@@ -72,7 +72,7 @@ class ShowArena(BaseArena):
             follow_logger_manager_rules=True,
         )
         stuff_zones_points: list[
-            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
+            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint]]
         ] = [
             (
                 (287.5, 20),
@@ -197,7 +197,7 @@ class ShowArena(BaseArena):
         ]
 
         yellow_reserved_zones_points: list[
-            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
+            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint]]
         ] = [
             (
                 (255, 0),
@@ -256,7 +256,7 @@ class ShowArena(BaseArena):
         ]
 
         blue_reserved_zones_points: list[
-            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
+            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint]]
         ] = [
             (
                 (0, 0),

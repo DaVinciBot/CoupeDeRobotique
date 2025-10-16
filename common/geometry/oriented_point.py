@@ -25,18 +25,18 @@ class OrientedPoint(Point):
     """Point with an additional ``theta`` orientation attribute.
 
     Attributes:
-        theta (float): Orientation angle in radians.
+        theta (float | None): Orientation angle in radians.
     """
 
     _id_to_attrs: ClassVar[dict[str, Any]] = {}
     __slots__ = Point.__slots__
-    theta: float
+    theta: float | None
 
     def __init__(
         self,
         x_or_coords: float | tuple[float, float],
         y_or_theta: float | None = None,
-        theta: float = 0.0,
+        theta: float | None = None,
     ) -> None:
         """Initialize the oriented point.
 
@@ -44,13 +44,13 @@ class OrientedPoint(Point):
             x_or_coords (float | tuple[float, float]): X coordinate or coordinate tuple.
             y_or_theta (float | None, optional):
                 Y coordinate or ``theta`` when using a tuple. Defaults to ``None``.
-            theta (float, optional): Orientation angle. Defaults to ``0.0``.
+            theta (float | None, optional): Orientation angle. Defaults to ``None``.
         """
         self._id_to_attrs[str(id(self))] = {
             "theta": (
                 theta
                 if not isinstance(x_or_coords, tuple)
-                else (0.0 if y_or_theta is None else self._normalize_angle(y_or_theta))
+                else (None if y_or_theta is None else self._normalize_angle(y_or_theta))
             ),
         }
         super().__init__()
@@ -58,16 +58,16 @@ class OrientedPoint(Point):
     def __new__(
         cls,
         x_or_coords: float | tuple[float, float],
-        y: float | None = None,
-        *_args: float,
+        y_or_theta: float | None = None,
+        *_args: float | None,
     ) -> Self:
         """Create a new oriented point instance.
 
         Args:
             x_or_coords (float | tuple[float, float]): X coordinate or coordinate tuple.
-            y (float | None, optional):
+            y_or_theta (float | None, optional):
                 Y coordinate when providing separate values. Defaults to ``None``.
-            *_args (float): Additional arguments for future use.
+            *_args (float | None): Additional arguments for future use.
 
         Returns:
             Self: Newly created oriented point.
@@ -77,8 +77,8 @@ class OrientedPoint(Point):
         """
         if isinstance(x_or_coords, tuple):
             point = super().__new__(cls, x_or_coords)
-        elif y is not None:
-            point = super().__new__(cls, x_or_coords, y)
+        elif y_or_theta is not None:
+            point = super().__new__(cls, x_or_coords, y_or_theta)
         else:
             msg = (
                 "OrientedPoint must be initialized with either a tuple (x, y) "
@@ -93,20 +93,20 @@ class OrientedPoint(Point):
         """Remove stored attributes when the point is deleted."""
         del self._id_to_attrs[str(id(self))]
 
-    def __getattr__(self, name: str) -> float:
+    def __getattr__(self, name: str) -> float | None:
         """Retrieve extra attributes like ``theta`` dynamically.
 
         Args:
             name (str): Attribute name to fetch.
 
         Returns:
-            float: Value of the requested attribute.
+            float | None: Value of the requested attribute.
 
         Raises:
             AttributeError: If the attribute is not found.
         """
         try:
-            return float(OrientedPoint._id_to_attrs[str(id(self))][name])
+            return OrientedPoint._id_to_attrs[str(id(self))][name]
         except KeyError as e:
             msg = f"Attribute '{name}' not found, error: {e}"
             raise AttributeError(msg) from None
@@ -165,9 +165,15 @@ class OrientedPoint(Point):
             OrientedPoint: Resulting oriented point.
         """
         if isinstance(other, OrientedPoint):
+            if self.theta is None and other.theta is None:
+                theta = None
+            elif self.theta is not None and other.theta is not None:
+                theta = self._normalize_angle(self.theta + other.theta)
+            else:
+                theta = self.theta or other.theta
             return OrientedPoint(
                 (self.x + other.x, self.y + other.y),
-                self.theta + other.theta,
+                theta,
             )
         if isinstance(other, Point):
             return OrientedPoint((self.x + other.x, self.y + other.y), self.theta)
@@ -184,9 +190,15 @@ class OrientedPoint(Point):
             OrientedPoint: Resulting oriented point.
         """
         if isinstance(other, OrientedPoint):
+            if self.theta is None and other.theta is None:
+                theta = None
+            elif self.theta is not None and other.theta is not None:
+                theta = self._normalize_angle(self.theta - other.theta)
+            else:
+                theta = self.theta or other.theta
             return OrientedPoint(
                 (self.x - other.x, self.y - other.y),
-                self.theta - other.theta,
+                theta,
             )
         if isinstance(other, Point):
             return OrientedPoint((self.x - other.x, self.y - other.y), self.theta)
@@ -203,12 +215,12 @@ class OrientedPoint(Point):
         return hash((self.x, self.y, self.theta))
 
     @classmethod
-    def from_point(cls, point: Point, theta: float = 0.0) -> OrientedPoint:
+    def from_point(cls, point: Point, theta: float | None = None) -> OrientedPoint:
         """Create an :class:`OrientedPoint` from a :class:`Point`.
 
         Args:
             point (Point): Source point.
-            theta (float, optional): Orientation angle. Defaults to ``0.0``.
+            theta (float | None, optional): Orientation angle. Defaults to ``None``.
 
         Returns:
             OrientedPoint: Oriented point with the same coordinates.
@@ -246,13 +258,13 @@ class OrientedPoint(Point):
         self,
     ) -> tuple[
         type[OrientedPoint],
-        tuple[tuple[float, float], float],
-        dict[str, float],
+        tuple[tuple[float, float], float | None],
+        dict[str, float | None],
     ]:
         """Customize pickling for :class:`OrientedPoint`.
 
         Returns:
-            tuple[type["OrientedPoint"], tuple[tuple[float, float], float], dict[str, float]]:
+            tuple[type["OrientedPoint"], tuple[tuple[float, float], float | None], dict[str, float | None]]:
                 A tuple describing how to reconstruct the object.
         """
         coords = cast("tuple[float, float]", next(iter(self.coords)))
@@ -263,10 +275,11 @@ class OrientedPoint(Point):
             {"theta": theta},
         )
 
-    def __setstate__(self, state: dict[str, float]) -> None:
+    def __setstate__(self, state: dict[str, float | None]) -> None:
         """Restore the extra state for the :class:`OrientedPoint` during unpickling.
 
         Args:
-            state (dict[str, float]): State dictionary created by :py:meth:`__reduce__`.
+            state (dict[str, float | None]):
+                State dictionary created by :py:meth:`__reduce__`.
         """
         OrientedPoint._id_to_attrs[str(id(self))] = {"theta": state.get("theta", 0.0)}
