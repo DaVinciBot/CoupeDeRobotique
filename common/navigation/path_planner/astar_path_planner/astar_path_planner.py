@@ -46,23 +46,6 @@ class AStarPathPlanner(
             self.params.absolute_goal,
         )
 
-    # region ====== Protected Methods ======
-    @staticmethod
-    def _compute_backward_position(goal: OrientedPoint) -> OrientedPoint:
-        """Compute the backward-facing pose by flipping orientation by π.
-
-        Args:
-            goal (OrientedPoint): Original pose.
-
-        Returns:
-            OrientedPoint: Flipped pose for backward motion.
-        """
-        if goal.theta is None:
-            return OrientedPoint(goal.x, goal.y, None)
-        return OrientedPoint(goal.x, goal.y, goal.theta + math.pi)
-
-    # endregion
-
     # region ====== Private Methods ======
     @staticmethod
     def __compute_orientation(

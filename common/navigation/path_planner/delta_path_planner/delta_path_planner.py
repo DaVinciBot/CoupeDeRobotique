@@ -36,7 +36,13 @@ class DeltaPathPlanner(
         Returns:
             tuple[float, float]:
                 Displacement vector (dx, dy) based on the start orientation.
+
+        Raises:
+            ValueError: If `start.theta` is None.
         """
+        if start.theta is None:
+            msg = "Start orientation (theta) must be defined."
+            raise ValueError(msg)
         return (
             distance * math.cos(start.theta),  # dx
             distance * math.sin(start.theta),  # dy
@@ -52,7 +58,13 @@ class DeltaPathPlanner(
 
         Returns:
             float: Final orientation angle.
+
+        Raises:
+            ValueError: If `start.theta` is None.
         """
+        if start.theta is None:
+            msg = "Start orientation (theta) must be defined."
+            raise ValueError(msg)
         return (start.theta + rotation) % (2 * math.pi)
 
     @BasePathPlanner.store_plan_path_params
