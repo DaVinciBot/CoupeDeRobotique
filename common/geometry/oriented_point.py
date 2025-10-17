@@ -89,6 +89,17 @@ class OrientedPoint(Point):
         point.__class__ = cls  # Force the new instance to be an OrientedPoint
         return point
 
+    def angle(self, other: OrientedPoint) -> float:
+        """Compute angle to another oriented point.
+
+        Args:
+            other (OrientedPoint): Target oriented point.
+
+        Returns:
+            float: Angle in radians from this point to the other.
+        """
+        return math.atan2(other.y - self.y, other.x - self.x)
+
     def __del__(self) -> None:
         """Remove stored attributes when the point is deleted."""
         del self._id_to_attrs[str(id(self))]

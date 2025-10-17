@@ -414,7 +414,7 @@ class ShowArena(BaseArena):
                         Point((285, 155)),
                         Point((240, 200)),
                     ),
-                    go_to_positions=[OrientedPoint(262.5, 150.5, pi / 2)],
+                    go_to_positions=[OrientedPoint(262.5, 150.5, None)],
                 ),
                 YellowReservedZone(
                     logger=yellow_reserved_zone_logger,
@@ -423,7 +423,7 @@ class ShowArena(BaseArena):
                         Point((15, 155)),
                         Point((60, 200)),
                     ),
-                    go_to_positions=[OrientedPoint(37.5, 150.5, pi / 2)],
+                    go_to_positions=[OrientedPoint(37.5, 150.5, None)],
                 ),
             ),
         )

@@ -78,14 +78,14 @@ class SequentialTrajectoryPlanner(
             RotationSegment: Segment rotating in place to face the waypoint.
 
         Raises:
-            ValueError: If `start.theta` or `target.theta` is None.
+            ValueError: If `start.theta` is None.
         """
-        if start.theta is None or target.theta is None:
-            msg = "Start and target orientation (theta) must be defined."
+        if start.theta is None:
+            msg = "Start orientation (theta) must be defined."
             raise ValueError(msg)
 
         # Compute the absolute heading of the line from start to target
-        path_theta = math.atan2(target.y - start.y, target.x - start.x)
+        path_theta = start.angle(target)
         # If reversing, we want the rear to face the target: add π to the heading
         desired_theta = path_theta + (math.pi if self._is_backward else 0)
 
@@ -193,7 +193,10 @@ class SequentialTrajectoryPlanner(
             target = path[i + 1]
 
             # 1. Compute rotation to face the next waypoint
-            rotation_segment = self._compute_rotation_segment_to_be_front(start, target)
+            rotation_segment = self._compute_rotation_segment_to_be_front(
+                start,
+                target,
+            )
             segments.append(rotation_segment)
 
             # 2. Compute straight-line segment to reach the waypoint
@@ -227,6 +230,12 @@ class SequentialTrajectoryPlanner(
 
             # 4. Add a stop segment if a pause is configured
             if self.params.step_sleep_delay > 0:
+                if target.theta is None:
+                    target = OrientedPoint(
+                        target.x,
+                        target.y,
+                        straight_segment.end_position.theta,
+                    )
                 segments.append(
                     StopSegment(
                         start_position=target,
