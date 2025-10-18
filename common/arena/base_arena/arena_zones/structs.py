@@ -32,6 +32,10 @@ class ZoneType(Enum):
     """Zone that cannot be accessed."""
     STUFF_ZONE = auto()
     """Designated for storage or items."""
+    JENGA_ZONE = auto()
+    """Zone designated for picking up jenga blocks."""
+    DEPOSIT_ZONE = auto()
+    """Designated for depositing jenga blocks."""
     ENEMY = auto()
     """Zone associated with enemy activity."""
     ALLY = auto()
