@@ -13,7 +13,8 @@ class SetOdometrie(BaseTask[ShowGameContext]):
     """Task to update the robot's odometry position.
 
     The task uses the provided ``x``, ``y`` and ``theta`` values if given;
-    otherwise it falls back to the current values from the ally zone.
+    otherwise it falls back to the current values from the rolling basis.
+    After updating the odometry, the arena's ally zone is synchronized.
     """
 
     def __init__(
@@ -45,8 +46,9 @@ class SetOdometrie(BaseTask[ShowGameContext]):
         Returns:
             bool: Always returns ``True`` after setting the new odometry.
         """
-        # Get the current position from the ally zone
-        current_position: OrientedPoint = ctx.arena.ally_zone.point
+        # CRITICAL: Get current position from rolling_basis.odometrie
+        # (not arena.ally_zone.point) because arena.ally_zone.point may be outdated
+        current_position: OrientedPoint = ctx.rolling_basis.odometrie
 
         # Create new position using provided values or current ones as fallback
         new_position = OrientedPoint(
@@ -55,7 +57,14 @@ class SetOdometrie(BaseTask[ShowGameContext]):
             self.theta if self.theta is not None else current_position.theta,
         )
 
-        # Update odometry with the new position
+        # Update rolling basis odometry
         ctx.rolling_basis.set_odometrie(new_position)
+
+        # Synchronize arena.ally_zone with the new odometry
+        ctx.arena.ally_zone.update(
+            ctx.arena.team_color,
+            new_position,
+            ctx.arena.enemy_zone.point,
+        )
 
         return True
