@@ -12,7 +12,7 @@ from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
-    from geometry import OrientedPoint, Point
+    from geometry import OrientedPoint
 
 
 class EnemyZone(BaseSpeedVectorAutoCalculateZone):
@@ -24,7 +24,7 @@ class EnemyZone(BaseSpeedVectorAutoCalculateZone):
     def __init__(
         self,
         logger: Logger,
-        point: Point | OrientedPoint,
+        point: OrientedPoint,
         robot_size: float = 10,
         positions_record_size: int = 3,
         no_detection_timeout: float = 4.0,
@@ -34,7 +34,7 @@ class EnemyZone(BaseSpeedVectorAutoCalculateZone):
 
         Args:
             logger (Logger): Logger instance for debugging.
-            point (Point | OrientedPoint): The central point of the enemy zone.
+            point (OrientedPoint): The central point of the enemy zone.
             robot_size (float, optional): The assumed size of the robot. Defaults to 10.
             positions_record_size (int, optional):
                 Maximum number of recorded positions. Defaults to 3.

@@ -11,20 +11,21 @@ from matplotlib import pyplot as plt
 
 if TYPE_CHECKING:
     from geometry import OrientedPoint
-    from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner import (  # noqa: E501
+    from navigation.trajectory_planner.base_trajectory_planner import (
         BaseTrajectoryPlanner,
+        BaseTrajectoryPlannerParams,
     )
 
 
 def test_trajectory_planning(
-    trajectory_planner: BaseTrajectoryPlanner,
+    trajectory_planner: BaseTrajectoryPlanner[BaseTrajectoryPlannerParams],
     path: list[OrientedPoint],
     time_step: float = 0.1,
 ) -> None:
     """Simulates and visualizes the performance of a trajectory planner.
 
     Args:
-        trajectory_planner (BaseTrajectoryPlanner):
+        trajectory_planner (BaseTrajectoryPlanner[BaseTrajectoryPlannerParams]):
             The trajectory planner instance to test.
         path (list[OrientedPoint]): List of waypoints to follow.
         time_step (float, optional): Sampling interval for simulation. Defaults to 0.1.
@@ -35,7 +36,7 @@ def test_trajectory_planning(
 
     linear_speeds = []
     angular_speeds = []
-    positions = []
+    positions: list[OrientedPoint] = []
     times = []
 
     trajectory_planner.start_planning()
@@ -103,6 +104,8 @@ def test_trajectory_planning(
 
     # Plot original path with orientation arrows
     for idx, point in enumerate(path):
+        if point.theta is None:
+            continue
         plt.plot(point.x, point.y, "bo", label="Path" if not idx else "")
         dx = np.cos(point.theta)
         dy = np.sin(point.theta)
@@ -119,6 +122,8 @@ def test_trajectory_planning(
 
     # Plot simulated trajectory with orientation arrows
     for idx, point in enumerate(positions[::2]):
+        if point.theta is None:
+            continue
         plt.plot(point.x, point.y, "ro", label="Simulation" if not idx else "")
         dx = np.cos(point.theta) * 0.5
         dy = np.sin(point.theta) * 0.5

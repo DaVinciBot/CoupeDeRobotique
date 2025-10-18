@@ -162,11 +162,11 @@ class MainBrain(Brain):
 
         strategy.runner.handle(context)
 
-        # Update the rolling basis odometrie from the context
+        # Update shared state from the context
         self.score = context.score
         self.ui_state["score"] = self.score
         self.rolling_basis_odometrie = rolling_basis.odometrie
-        self.ui_state["odometrie_state"] = rolling_basis.odometrie
+        self.ui_state["odometrie_state"] = self.rolling_basis_odometrie
 
     @Brain.task(
         process=True,

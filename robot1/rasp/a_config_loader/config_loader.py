@@ -38,6 +38,9 @@ def get_env_bool(
             The environment variable name to check.
         default (bool):
             The default value to return if the environment variable is not set.
+
+    Returns:
+        bool: The boolean value of the environment variable.
     """
     raw_value = os.getenv(key, str(default))
     return raw_value == "True"

@@ -12,7 +12,7 @@ from arena.base_arena.arena_zones.structs import (
     ZoneAccessibility,
     ZoneType,
 )
-from geometry import LineString, OrientedPoint, Point
+from geometry import LineString, OrientedPoint
 from utils import Utils
 
 if TYPE_CHECKING:
@@ -33,7 +33,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         logger: Logger,
         zone_type: ZoneType,
         accessibility: ZoneAccessibility,
-        point: Point | OrientedPoint,
+        point: OrientedPoint,
         vector_width: float,
         buffer_size: float = 0.0,
         update_callback: Callable | None = None,
@@ -51,7 +51,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             zone_type (ZoneType): Type of the zone.
             accessibility (ZoneAccessibility): Accessibility properties of the
                 zone.
-            point (Point | OrientedPoint): Central point of the zone.
+            point (OrientedPoint): Central point of the zone.
             vector_width (float): Width of the vector representation.
             buffer_size (float, optional): Buffer size. Defaults to 0.0.
             update_callback (Callable | None, optional): Function to call when the
@@ -98,7 +98,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         return LineString(
             [
                 self.point,
-                Point(
+                OrientedPoint(
                     self.point.x + self.speed_vector.factored_dx,
                     self.point.y + self.speed_vector.factored_dy,
                 ),
@@ -147,15 +147,15 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
     def update(
         self,
         team_color: TeamColor,
-        ally_position: Point | OrientedPoint,
-        enemy_position: Point | OrientedPoint,
+        ally_position: OrientedPoint,
+        enemy_position: OrientedPoint,
     ) -> None:
         """Update the zone state based on detected enemy movement.
 
         Args:
             team_color (TeamColor, optional): The color of the team.
-            ally_position (Point | OrientedPoint): Position of ally.
-            enemy_position (Point | OrientedPoint): Position of enemy.
+            ally_position (OrientedPoint): Position of ally.
+            enemy_position (OrientedPoint): Position of enemy.
         """
         super().update(team_color, ally_position, enemy_position)
         self.point = enemy_position

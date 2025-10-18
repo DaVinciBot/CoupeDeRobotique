@@ -11,7 +11,7 @@ from pathfinding.core.grid import Grid, GridNode
 from shapely.geometry import box
 from shapely.strtree import STRtree
 
-from geometry import OrientedPoint, Point, Polygon
+from geometry import OrientedPoint, Polygon
 
 
 class GridManager:
@@ -209,28 +209,28 @@ class GridManager:
             node.y * self.chunk_size + self.half_chunk_size,
         )
 
-    def absolute_coords_to_grid_coords(self, point: OrientedPoint | Point) -> GridNode:
+    def absolute_coords_to_grid_coords(self, point: OrientedPoint) -> GridNode:
         """Convert absolute coordinates to grid coordinates.
 
         Args:
-            point (OrientedPoint | Point): Point in world coordinates.
+            point (OrientedPoint): OrientedPoint in world coordinates.
 
         Returns:
             GridNode: Corresponding node in the grid.
         """
         return GridNode(int(point.x / self.chunk_size), int(point.y / self.chunk_size))
 
-    def grid_coords_to_absolute_coords(self, node: GridNode) -> Point:
+    def grid_coords_to_absolute_coords(self, node: GridNode) -> OrientedPoint:
         """Convert grid coordinates to absolute coordinates.
 
         Args:
             node (GridNode): Grid node to convert.
 
         Returns:
-            Point: Center of the node in world coordinates.
+            OrientedPoint: Center of the node in world coordinates.
         """
         x, y = self.get_grid_node_center(node)
-        return Point(x, y)
+        return OrientedPoint(x, y)
 
     def get_static_grid(self) -> Grid:
         """Return the static grid used for pathfinding.

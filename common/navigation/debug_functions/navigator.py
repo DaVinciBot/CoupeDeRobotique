@@ -12,7 +12,7 @@ from typing import TYPE_CHECKING
 import matplotlib.pyplot as plt
 import numpy as np
 
-from geometry import Point
+from geometry import OrientedPoint
 
 if TYPE_CHECKING:
     from arena.base_arena import BaseArena
@@ -69,7 +69,7 @@ def test_navigator_execution(
             ally_position=cmd.position,
             lidar_scan_polars=np.array([]),  # Empty lidar scan for this test
             optimized_update=False,
-            _enemy_position=Point(
+            _enemy_position=OrientedPoint(
                 arena.enemy_zone.point.x - 10,
                 arena.enemy_zone.point.y,
             ),  # Enemy is positioned 10 units left
