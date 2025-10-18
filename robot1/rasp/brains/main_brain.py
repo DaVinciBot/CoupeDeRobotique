@@ -24,6 +24,7 @@ from geometry import OrientedPoint
 
 if TYPE_CHECKING:
     from arena.show_arena import ShowArena
+    from arena.winter_arena import WinterArena
     from sensors import Inputs, Lidar, LidarDummy
 
 
