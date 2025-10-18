@@ -89,9 +89,16 @@ class BasePathPlanner[
 
         Returns:
             OrientedPoint: Flipped pose for backward motion.
+
+        Raises:
+            ValueError: If goal.theta is None.
         """
         if goal.theta is None:
-            return OrientedPoint(goal.x, goal.y, None)
+            msg = (
+                f"Cannot compute backward position: theta must be defined, "
+                f"got None at position ({goal.x}, {goal.y})"
+            )
+            raise ValueError(msg)
         return OrientedPoint(goal.x, goal.y, goal.theta + math.pi)
 
     @override

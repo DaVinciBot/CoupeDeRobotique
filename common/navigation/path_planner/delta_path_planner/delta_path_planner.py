@@ -77,7 +77,17 @@ class DeltaPathPlanner(
 
         Returns:
             list[OrientedPoint]: List containing the start and resulting goal pose.
+
+        Raises:
+            ValueError: If start position theta is None.
         """
+        if params.start.theta is None:
+            msg = (
+                f"Start position theta must be defined for DeltaPathPlanner, "
+                f"got None at position ({params.start.x}, {params.start.y})"
+            )
+            raise ValueError(msg)
+
         x, y, theta = params.start.x, params.start.y, params.start.theta
 
         # 1. Apply displacement
