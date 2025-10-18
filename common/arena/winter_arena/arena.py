@@ -357,8 +357,8 @@ class WinterArena(BaseArena):
             buffer_size=obstacle_buffer,
             polygon=Polygon(
                 (
-                    (625, 2000),
-                    (2375, 1600),
+                    (600, 2000),
+                    (2400, 1650),
                 ),
             ),
         )
