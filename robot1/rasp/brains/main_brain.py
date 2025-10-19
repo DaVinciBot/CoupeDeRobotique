@@ -55,7 +55,7 @@ class MainBrain(Brain):
             inputs (Inputs): Inputs instance for handling sensor data.
         """
         self.lidar: Lidar | LidarDummy = lidar
-        self.arena: ShowArena = arena
+        self.arena: WinterArena = arena
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)

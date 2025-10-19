@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from geometry import OrientedPoint, Point, Polygon
 
 
-class DepositZone(BaseArenaZone):
+class DropZone(BaseArenaZone):
     """Zone designated for storage or placement of items."""
     def __init__(
             self,
