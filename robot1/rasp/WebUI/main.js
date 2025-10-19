@@ -2,47 +2,80 @@
 
 let log = new WebSocketManager();
 log.add_ws("ui");
-log.add_handler("ui", (event) => {
+function on_ws_close() {
+  log.on_ws_close("ui", async () => {
+    resetPage();
+    log.update_status("disconnected");
+    console.log("Websocket closed, attempting to reconnect...");
+    const intervalId = setInterval(async () => {
+      try {
+        if(log.status === "connected"){
+          clearInterval(intervalId);
+          on_ws_close();
+        }else{
+          log.add_ws("ui");
+          add_handler();
+          console.log("Reconnection attempt failed. Attempting again...");
+        }
+      } catch (error) {
+        console.log("Reconnection attempt failed. Attempting again...");
+      }
+    }, 2000); // Retry every 2000 milliseconds
+  });
+}
+on_ws_close();
+function add_handler() {
+  log.add_handler("ui", (event) => {
   // Parse the JSON message and display the console data
   let data = JSON.parse(event.data);
-  if (data.msg === "update ui data") {
-    // show_console_data(JSON.stringify(data.data), true);
+    if (data.msg === "update ui data") {
+      // show_console_data(JSON.stringify(data.data), true);
 
-    const jack_state = document.getElementById("jack_state");
-    jack_state.style.backgroundColor = data.data["jack_state"]
-      ? "limegreen"
-      : "red";
-    if (data.data["jack_state"]) {
-      jack_state.innerText = "Ready";
-    } else if (jack_state.innerText == "Ready") {
-      jack_state.innerText = "Not Ready";
-      startTimer();
-    }
+      const jack_state = document.getElementById("jack_state");
+      if(jack_state){
+        jack_state.style.backgroundColor = data.data["jack_state"]
+          ? "limegreen"
+          : "red";
+        if (data.data["jack_state"]) {
+          jack_state.innerText = "Ready";
+        } else if (jack_state.innerText == "Ready") {
+          jack_state.innerText = "Not Ready";
+          startTimer();
+        }
+      }
 
-    const bau_state = document.getElementById("bau_state");
-    bau_state.style.backgroundColor = data.data["BAU"] ? "limegreen" : "red";
-    bau_state.innerText = data.data["BAU"] ? "ON" : "ACTIVATED";
+      const bau_state = document.getElementById("bau_state");
+      if(bau_state){
+        bau_state.style.backgroundColor = data.data["BAU"] ? "limegreen" : "red";
+        bau_state.innerText = data.data["BAU"] ? "ON" : "ACTIVATED";
+      }
 
-    const score = document.getElementById("score");
-    //score.innerText = data.data["score"] ? data.data["score"] : "000";
+      const score = document.getElementById("score");
+      if(score){
+        score.innerText = data.data["score"] ? data.data["score"] : "0";
+      }
 
-    const pamis_states = document.getElementById("pami_states");
-    pamis_states.innerHTML = "";
-    for (let pami in data.data["pamis_states"]) {
-      const card = document.createElement("div");
-      card.dataset.id = `${pami}_state`;
-      card.style.backgroundColor = data.data["pamis_states"][pami]
-        ? "limegreen"
-        : "red";
-      card.style.padding = "10px";
-      card.style.borderRadius = "20px";
-      card.style.color = "white";
-      card.style.fontWeight = "bold";
-      card.innerHTML = pami;
-      pamis_states.append(card);
-    }
-  }
-});
+      const pamis_states = document.getElementById("pami_states");
+      if(pamis_states){
+        pamis_states.innerHTML = "";
+        for (let pami in data.data["pamis_states"]) {
+          const card = document.createElement("div");
+          card.dataset.id = `${pami}_state`;
+          card.style.backgroundColor = data.data["pamis_states"][pami]
+            ? "limegreen"
+            : "red";
+          card.style.padding = "10px";
+          card.style.borderRadius = "20px";
+          card.style.color = "white";
+          card.style.fontWeight = "bold";
+          card.innerHTML = pami;
+          pamis_states.append(card);
+        }
+      }
+    };
+  })
+};
+add_handler();
 
 let buttons = document.querySelectorAll(".button");
 buttons.forEach((button) => {
@@ -51,10 +84,56 @@ buttons.forEach((button) => {
   });
 });
 
+function resetPage(){
+  resetTimer();
+  const jack_state = document.getElementById("jack_state");
+  if(jack_state){
+    jack_state.style.backgroundColor = "limegreen";
+    jack_state.innerText = "Ready";
+  }
+
+  const bau_state = document.getElementById("bau_state");
+  if(bau_state){
+    bau_state.style.backgroundColor = "red";
+    bau_state.innerText = "ACTIVATED";
+  }
+
+  const score = document.getElementById("score");
+  if(score){
+    score.innerText = "0";
+  }
+
+  const pamis_states = document.getElementById("pami_states");
+  if(pamis_states){
+    pamis_states.innerHTML = "";
+  }
+
+  init_page();
+}
+
+let x = null;
+
+function resetTimer() {
+  const timer = document.getElementById("timer");
+  timer.style.backgroundColor = "limegreen";
+  timer.innerHTML = "1:40";
+
+  if (x) {
+    clearInterval(x);
+    x = null;
+  }
+} 
+
 function startTimer() {
   const timer = document.getElementById("timer");
   let countdown = new Date().getTime() + 1000 * 60 + 1000 * 40;
-  let x = setInterval(function () {
+
+  if (x) {
+    clearInterval(x);
+    x = null;
+  }
+
+  x = setInterval(function () {
     let now = new Date().getTime();
     let distance = countdown - now;
 
@@ -65,6 +144,7 @@ function startTimer() {
 
     if (distance < 0) {
       clearInterval(x);
+      x = null;
       timer.innerHTML = "FINISHED";
     } else if (distance < 1000 * 15) {
       timer.style.backgroundColor = "orange";

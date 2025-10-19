@@ -218,7 +218,11 @@ class MainBrain(Brain):
         # --- MetaProg is insane (loop) --- #
         current_state = self.ui_state.copy()
         current_state["jack_state"] = not self.jack_triggered
-        if current_state != previous_state:
+        if (
+            current_state != previous_state
+            and self.arena.team_color
+            and self.arena.team_color != TeamColor.UNDEFINED
+        ):
             previous_state = current_state
             to_send = {
                 "jack_state": current_state["jack_state"],
@@ -316,9 +320,9 @@ class MainBrain(Brain):
         """Starts the main brain process."""
         if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
             self.logger.warning(
-                "All subsystems are in dummy mode. The robot will not move.",
+                "All subsystems are in dummy mode. The robot will not move.\nWaiting for team color on IIHM...",
             )
-            self.arena.set_team_color(TeamColor.YELLOW)
+            await self.wait_for_team()
         else:
             await self.wait_for_team()
 
