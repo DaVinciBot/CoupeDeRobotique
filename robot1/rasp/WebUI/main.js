@@ -152,6 +152,16 @@ function resetPage(){
     pamis_states.innerHTML = "";
   }
 
+  const rob = document.querySelector(".rob");
+  if(rob){
+    rob.style.transform = `translate(200px, calc(-100vh / 2 + 30px)) rotate(0deg)`;
+  }
+  
+  const bad = document.querySelector(".bad");
+  if(bad){
+    bad.style.transform = `translate(450px, calc(-100vh / 2 + 30px)) rotate(0deg)`;
+  }
+
   init_page();
 }
 
