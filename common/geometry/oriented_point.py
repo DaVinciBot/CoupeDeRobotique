@@ -123,6 +123,22 @@ class OrientedPoint(Point):
             raise AttributeError(msg) from None
 
     @override
+    def __setattr__(self, name: str, value: float | None) -> None:
+        """Set extra attributes like ``theta`` with automatic normalization.
+
+        Args:
+            name (str): Attribute name to set.
+            value (float | None): Value to set for the attribute.
+        """
+        if name == "theta":
+            normalized_value = (
+                self._normalize_angle(value) if value is not None else None
+            )
+            OrientedPoint._id_to_attrs[str(id(self))][name] = normalized_value
+        else:
+            object.__setattr__(self, name, value)
+
+    @override
     def __str__(self) -> str:
         """Return WKT representation including ``theta``.
 
