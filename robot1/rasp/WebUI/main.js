@@ -72,10 +72,31 @@ function add_handler() {
           pamis_states.append(card);
         }
       }
+
+      const rob = document.querySelector(".rob");
+      if(rob){
+        let x = data.data["odometrie"].x;
+        let y = data.data["odometrie"].y;
+        let theta = data.data["odometrie"].theta;
+        let width = data.data["arena_info"].width;
+        let height = data.data["arena_info"].height;
+
+        [x, y, theta] = parse_pos(x, y, theta, width, height);
+
+        rob.style.transformOrigin = "bottom left";
+        rob.style.transform = `translate(${x}px, ${y}px) rotate(${theta}deg)`;
+      }
     };
   })
 };
 add_handler();
+
+function parse_pos(x, y, theta, width, height) {
+  x = x / width * document.querySelector('.map').clientWidth;
+  y = y / height * document.querySelector('.map').clientHeight;
+  theta = (theta * 180) / Math.PI + 90;
+  return [x, y, theta];
+}
 
 let buttons = document.querySelectorAll(".button");
 buttons.forEach((button) => {

@@ -24,6 +24,7 @@ class WebSocketManager {
     if (newStatus === "connected") {
       ws_status.style.display = "none";
       website.style.display = "grid";
+      init_page();
     } else {
       ws_status.style.display = "flex";
       website.style.display = "none";
@@ -130,4 +131,4 @@ function init_page() {
   currentPage = "main";
   set_page("main");
 }
-init_page();
+document.onload = init_page();

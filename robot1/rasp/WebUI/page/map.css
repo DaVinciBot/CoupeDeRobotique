@@ -1,6 +1,8 @@
 .map {
   background: url("../assets/playmat_2025_FINAL\ 2.png") no-repeat center;
   background-size: cover;
+  aspect-ratio: 3 / 2;
+  max-height: calc(100vh - 60px);
 }
 
 .map .rob {

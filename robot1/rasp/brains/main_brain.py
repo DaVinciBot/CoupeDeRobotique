@@ -167,6 +167,7 @@ class MainBrain(Brain):
 
         self.score = context.score
         self.odemetrie_state = context.arena.ally_zone.point
+        self.enemy_odemetrie_state = context.arena.enemy_zone.point
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
     @Brain.task(
@@ -209,7 +210,7 @@ class MainBrain(Brain):
     @Brain.task(
         process=False,
         run_on_start=True,
-        refresh_rate=1,
+        refresh_rate=0.5,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     async def update_ui(self) -> None:
@@ -230,6 +231,10 @@ class MainBrain(Brain):
                 "theta": self.enemy_odemetrie_state.theta,
             },
             "pamis_states": self.pamis_states,
+            "arena_info": {
+                "width": self.arena.width,
+                "height": self.arena.height,
+            },
             "score": self.score,
         }
         if self.arena.team_color and self.arena.team_color != TeamColor.UNDEFINED:
@@ -239,6 +244,7 @@ class MainBrain(Brain):
                 "odometrie": current_snapshot["odometrie"],
                 "enemy_odometrie": current_snapshot["enemy_odometrie"],
                 "pamis_states": current_snapshot["pamis_states"],
+                "arena_info": current_snapshot["arena_info"],
                 "score": current_snapshot["score"],
             }
             await self.ws_ui.sender.send(
