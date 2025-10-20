@@ -7,7 +7,7 @@ import math
 from loggerplusplus import Logger, time_tracker
 from pathfinding.core.grid import GridNode
 
-from geometry import OrientedPoint, Point
+from geometry import OrientedPoint
 from navigation.path_planner.astar_path_planner.astar_path_planner_params import (
     AStarPathPlannerParams,
     AStarPathPlannerPlanPathParams,
@@ -46,32 +46,17 @@ class AStarPathPlanner(
             self.params.absolute_goal,
         )
 
-    # region ====== Protected Methods ======
-    @staticmethod
-    def _compute_backward_position(goal: OrientedPoint) -> OrientedPoint:
-        """Compute the backward-facing pose by flipping orientation by π.
-
-        Args:
-            goal (OrientedPoint): Original pose.
-
-        Returns:
-            OrientedPoint: Flipped pose for backward motion.
-        """
-        return OrientedPoint(goal.x, goal.y, goal.theta + math.pi)
-
-    # endregion
-
     # region ====== Private Methods ======
     @staticmethod
     def __compute_orientation(
-        current_point: GridNode | Point,
-        next_point: GridNode | Point,
+        current_point: GridNode | OrientedPoint,
+        next_point: GridNode | OrientedPoint,
     ) -> float:
         """Compute orientation (angle in radians) from current point to next.
 
         Args:
-            current_point (GridNode | Point): Current point coordinates.
-            next_point (GridNode | Point): Next point coordinates.
+            current_point (GridNode | OrientedPoint): Current point coordinates.
+            next_point (GridNode | OrientedPoint): Next point coordinates.
 
         Returns:
             float: Orientation angle in radians.
@@ -185,15 +170,15 @@ class AStarPathPlanner(
 
     def __add_path_extremities_point(
         self,
-        path: list[Point | OrientedPoint],
-    ) -> list[Point | OrientedPoint]:
+        path: list[OrientedPoint],
+    ) -> list[OrientedPoint]:
         """Keep only significant extremity and intermediate points in the path.
 
         Args:
-            path (list[Point | OrientedPoint]): A list of points representing the path.
+            path (list[OrientedPoint]): A list of points representing the path.
 
         Returns:
-            list[Point | OrientedPoint]: A reduced list containing key waypoints.
+            list[OrientedPoint]: A reduced list containing key waypoints.
         """
         # If only 2 points in the path, conserve only the start and goal points
         if len(path) <= _TWO_POINTS:
@@ -228,12 +213,12 @@ class AStarPathPlanner(
 
     def __absolute_coords_to_grid_coords(
         self,
-        point: OrientedPoint | Point,
+        point: OrientedPoint,
     ) -> GridNode:
         """Convert absolute coordinates to grid coordinates.
 
         Args:
-            point (OrientedPoint | Point): Point in absolute coordinates.
+            point (OrientedPoint): OrientedPoint in absolute coordinates.
 
         Returns:
             GridNode: Coordinates of the point within the grid.

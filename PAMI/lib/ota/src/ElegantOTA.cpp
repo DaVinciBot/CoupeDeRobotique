@@ -122,6 +122,22 @@ void ElegantOTAClass::begin(ELEGANTOTA_WEBSERVER* server,
             (Update.hasError()) ? 400 : 200, "text/plain",
             (Update.hasError()) ? _update_error_str.c_str() : "OK");
     });
+    _server->on("/hid", HTTP_GET, [&](AsyncWebServerRequest* request) {
+        if (_authenticate &&
+            !request->authenticate(_username.c_str(), _password.c_str())) {
+            return request->requestAuthentication();
+        }
+        if (_hid.length() == 0) {
+            uint8_t mac[8];
+            esp_efuse_mac_get_default(mac);
+            _hid = "";
+            for (int i = 0; i < 8; i++) {
+                _hid += String(mac[i], HEX) + (i < 7 ? ":" : "");
+            }
+        }
+        request->send(200, "text/plain", _hid);
+    });
+
 #else
     _server->on("/ota/start", HTTP_GET, [&]() {
         if (_authenticate &&

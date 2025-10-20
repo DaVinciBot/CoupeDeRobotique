@@ -15,14 +15,16 @@ from navigation.trajectory_planner import (
 if TYPE_CHECKING:
     from arena.base_arena.arena_zones import AllyZone, EnemyZone
     from geometry import OrientedPoint
-    from navigation.avoidance.base_avoidance import BaseAvoidance
+    from navigation.avoidance.base_avoidance import BaseAvoidance, BaseAvoidanceParams
     from navigation.navigator.task.navigator_task_params import NavigatorTaskParams
     from navigation.path_planner.base_path_planner import (
         BasePathPlanner,
+        BasePathPlannerParams,
         BasePathPlannerPlanPathParams,
     )
     from navigation.trajectory_planner.base_trajectory_planner import (
         BaseTrajectoryPlanner,
+        BaseTrajectoryPlannerParams,
     )
 
 
@@ -40,18 +42,23 @@ class NavigatorTask:
         )
 
         self.params = params
-        self.path_planner: BasePathPlanner = PathPlannerFactory.instantiate(
+        self.path_planner: BasePathPlanner[
+            BasePathPlannerParams,
+            BasePathPlannerPlanPathParams,
+        ] = PathPlannerFactory.instantiate(
             params.path_planner_params,
         )
-        self.trajectory_planner: BaseTrajectoryPlanner = (
+        self.trajectory_planner: BaseTrajectoryPlanner[BaseTrajectoryPlannerParams] = (
             TrajectoryPlannerFactory.instantiate(
                 params.trajectory_planner_params,
                 params.speed_profiler,
             )
         )
-        self.avoidance: BaseAvoidance = AvoidanceFactory.instantiate(
-            params.avoidance_params,
-            params.acs_detection_profile_params,
+        self.avoidance: BaseAvoidance[BaseAvoidanceParams] = (
+            AvoidanceFactory.instantiate(
+                params.avoidance_params,
+                params.acs_detection_profile_params,
+            )
         )
         self.current_trajectory_command: TrajectoryPlanCommand | None = None
         self.state: NavigatorTaskState = NavigatorTaskState.NOT_PLANNED

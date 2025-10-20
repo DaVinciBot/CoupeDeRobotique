@@ -76,17 +76,24 @@ class SequentialTrajectoryPlanner(
 
         Returns:
             RotationSegment: Segment rotating in place to face the waypoint.
-        """
-        # Compute the absolute heading of the line from start to target
-        path_heading = math.atan2(target.y - start.y, target.x - start.x)
-        # If reversing, we want the rear to face the target: add π to the heading
-        desired_heading = path_heading + (math.pi if self._is_backward else 0)
 
-        # Compute minimal rotation from current heading to ``desired_heading``
-        delta_theta = self._normalize_angle(desired_heading - start.theta)
+        Raises:
+            ValueError: If `start.theta` is None.
+        """
+        if start.theta is None:
+            msg = "Start orientation (theta) must be defined."
+            raise ValueError(msg)
+
+        # Compute the absolute heading of the line from start to target
+        path_theta = start.angle(target)
+        # If reversing, we want the rear to face the target: add π to the heading
+        desired_theta = path_theta + (math.pi if self._is_backward else 0)
+
+        # Compute minimal rotation from current heading to ``desired_theta``
+        delta_theta = self._normalize_angle(desired_theta - start.theta)
 
         # Build the intermediate oriented point after rotation
-        intermediate_pose = OrientedPoint(start.x, start.y, start.theta + delta_theta)
+        intermediate_pose = OrientedPoint(start.x, start.y, desired_theta)
 
         # Create and return the rotation segment
         return RotationSegment(
@@ -112,7 +119,14 @@ class SequentialTrajectoryPlanner(
 
         Returns:
             RotationSegment: Segment rotating in place to align with target orientation.
+
+        Raises:
+            ValueError: If `start.theta` or `target.theta` is None.
         """
+        if start.theta is None or target.theta is None:
+            msg = "Start and target orientation (theta) must be defined."
+            raise ValueError(msg)
+
         # Desired final heading: target.theta plus π if reversing
         desired_theta = target.theta + (math.pi if self._is_backward else 0)
 
@@ -179,7 +193,10 @@ class SequentialTrajectoryPlanner(
             target = path[i + 1]
 
             # 1. Compute rotation to face the next waypoint
-            rotation_segment = self._compute_rotation_segment_to_be_front(start, target)
+            rotation_segment = self._compute_rotation_segment_to_be_front(
+                start,
+                target,
+            )
             segments.append(rotation_segment)
 
             # 2. Compute straight-line segment to reach the waypoint
@@ -192,8 +209,9 @@ class SequentialTrajectoryPlanner(
             # 3. Compute rotation to align with waypoint orientation
             # Apply to intermediates if ``respect_intermediate_orientation`` is set
             # or to the final goal if ``respect_goal_orientation`` is set
-            if self.params.respect_intermediate_orientation or (
-                self.params.respect_goal_orientation and i == len(path) - 2
+            if target.theta is not None and (
+                self.params.respect_intermediate_orientation
+                or (self.params.respect_goal_orientation and i == len(path) - 2)
             ):
                 rotation_segment = (
                     self._compute_rotation_segment_to_get_same_orientation(
@@ -212,6 +230,12 @@ class SequentialTrajectoryPlanner(
 
             # 4. Add a stop segment if a pause is configured
             if self.params.step_sleep_delay > 0:
+                if target.theta is None:
+                    target = OrientedPoint(
+                        target.x,
+                        target.y,
+                        straight_segment.end_position.theta,
+                    )
                 segments.append(
                     StopSegment(
                         start_position=target,
@@ -232,6 +256,7 @@ class SequentialTrajectoryPlanner(
 
         Raises:
             RuntimeError: If the trajectory has not been planned yet.
+            ValueError: If required orientation data is missing for segment computation.
             TypeError: If the segment type is unsupported.
         """
         # Get the current time elapsed
@@ -251,6 +276,10 @@ class SequentialTrajectoryPlanner(
 
         # If the segment is a rotation segment
         elif isinstance(segment, RotationSegment):
+            if segment.start_position.theta is None:
+                msg = "Segment start position theta must be defined for rotation."
+                raise ValueError(msg)
+
             th_rotation: float = self.speed_profiler.angular_speed_profile.get_distance(
                 time_elapsed=local_time,
                 distance=segment.rotation,
@@ -273,6 +302,12 @@ class SequentialTrajectoryPlanner(
 
         # If the segment is a straight segment
         elif isinstance(segment, StraightSegment):
+            if segment.start_position.theta is None:
+                msg = (
+                    "Segment start position theta must be defined for straight segment."
+                )
+                raise ValueError(msg)
+
             th_distance: float = self.speed_profiler.linear_speed_profile.get_distance(
                 time_elapsed=local_time,
                 distance=abs(

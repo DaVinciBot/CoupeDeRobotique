@@ -13,7 +13,6 @@ from geometry import (
     MultiPoint,
     MultiPolygon,
     OrientedPoint,
-    Point,
     Polygon,
     create_straight_rectangle,
     distance,
@@ -54,11 +53,11 @@ class Arena:
         """
         self.logger: Logger = logger
         if game_borders is None:
-            game_borders = create_straight_rectangle(Point(0, 0), Point(200, 300))
+            game_borders = create_straight_rectangle(OrientedPoint(0, 0), OrientedPoint(200, 300))
         self.game_borders: Polygon = game_borders
         self.game_borders_buffered: Polygon = self.game_borders.buffer(border_buffer)
         self.safe_collision_distance: float = safe_collision_distance
-        self.ennemy_position: Point | None = None
+        self.ennemy_position: OrientedPoint | None = None
         self.border_buffer = border_buffer
         self.robot_buffer = robot_buffer
 
@@ -77,11 +76,11 @@ class Arena:
         for zone in self.zones.values():
             prepare(zone)
 
-    def validate_position(self, pos: Point) -> bool:
+    def validate_position(self, pos: OrientedPoint) -> bool:
         """Validate the position of a robot within the arena.
 
         Args:
-            pos (Point): The position to validate.
+            pos (OrientedPoint): The position to validate.
 
         Returns:
             bool: ``True`` if ``pos`` lies within the game borders, ``False`` otherwise.
@@ -93,7 +92,7 @@ class Arena:
         """Check if an element is within the arena bounds.
 
         Args:
-            element (Geometry): The element to check (Point, Polygon, etc.).
+            element (Geometry): The element to check (OrientedPoint, Polygon, etc.).
             buffered_zone (bool, optional):
                 If ``True``, use the buffered border. Defaults to ``False``.
 
@@ -128,15 +127,15 @@ class Arena:
 
     def enable_go_to_point(
         self,
-        start: Point,
-        target: Point,
+        start: OrientedPoint,
+        target: OrientedPoint,
         forbidden_zone_name: str = "forbidden",
     ) -> bool:
         """Check if a direct move from ``start`` to ``target`` is allowed.
 
         Args:
-            start (Point): Starting point of the move.
-            target (Point): Target point of the move.
+            start (OrientedPoint): Starting point of the move.
+            target (OrientedPoint): Target point of the move.
             forbidden_zone_name (str, optional):
                 Name of the forbidden zone to check against. Defaults to "forbidden".
 
@@ -175,15 +174,15 @@ class Arena:
 
         return not self.zone_intersects(forbidden_zone_name, geometry_to_check)
 
-    def _shift_inside(self, point: Point, borders: Polygon) -> Point:
+    def _shift_inside(self, point: OrientedPoint, borders: Polygon) -> OrientedPoint:
         """Shift ``point`` inside ``borders`` to avoid collisions.
 
         Args:
-            point (Point): The point to shift.
+            point (OrientedPoint): The point to shift.
             borders (Polygon): The borders to stay within.
 
         Returns:
-            Point: Adjusted point within the borders.
+            OrientedPoint: Adjusted point within the borders.
         """
         projected_point = borders.exterior.interpolate(
             borders.exterior.project(point),
@@ -196,30 +195,30 @@ class Arena:
             y -= adjust
         else:
             y += adjust
-        return Point(x, y)
+        return OrientedPoint(x, y)
 
     def compute_go_to_destination(
         self,
-        start_point: Point,
+        start_point: OrientedPoint,
         zone: Polygon,
         delta: float = 0,
-    ) -> Point | None:
+    ) -> OrientedPoint | None:
         """Compute a destination point within a zone, considering an optional delta.
 
         Args:
-            start_point (Point): Starting point.
+            start_point (OrientedPoint): Starting point.
             zone (Polygon): Target zone.
             delta (float, optional):
                 Distance around the center of the zone. Defaults to 0.
 
         Returns:
-            Point | None: The computed point, or ``None`` if not reachable.
+            OrientedPoint | None: The computed point, or ``None`` if not reachable.
 
         Raises:
             ValueError: If the intersection computation fails.
         """
         borders = self.game_borders
-        center: Point = zone.centroid
+        center: OrientedPoint = OrientedPoint.from_point(zone.centroid)
         if not delta:
             msg = (
                 "delta == 0, returning as close as the centroid of zone as possible "
@@ -252,12 +251,12 @@ class Arena:
             raise ValueError(msg)
 
         if delta > 0:
-            return nearest_points(start_point, intersections)[1]
+            return OrientedPoint.from_point(nearest_points(start_point, intersections)[1])
 
         first, second = intersections.geoms
         if distance(start_point, first) <= distance(start_point, second):
-            return second
-        return first
+            return OrientedPoint.from_point(second)
+        return OrientedPoint.from_point(first)
 
     def check_collision_by_distances(
         self,
@@ -289,7 +288,7 @@ class Arena:
         dist: float,
         relative_angle: float,
         pos_robot: OrientedPoint,
-    ) -> Point:
+    ) -> OrientedPoint:
         """Convert relative polar coordinates to an absolute point.
 
         Args:
@@ -298,9 +297,15 @@ class Arena:
             pos_robot (OrientedPoint): The robot's position and orientation.
 
         Returns:
-            Point: The absolute point in the game world.
+            OrientedPoint: The absolute point in the game world.
+
+        Raises:
+            ValueError: If `pos_robot.theta` is None.
         """
-        return Point(
+        if pos_robot.theta is None:
+            Arena.logger.log("pos_robot.theta is None", LogLevels.ERROR)
+            raise ValueError("pos_robot.theta must be defined")
+        return OrientedPoint(
             pos_robot.x + dist * cos(radians(pos_robot.theta - 45 + relative_angle)),
             pos_robot.y + dist * sin(radians(pos_robot.theta - 45 + relative_angle)),
         )

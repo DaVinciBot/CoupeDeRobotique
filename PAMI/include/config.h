@@ -4,7 +4,6 @@
 #include "navigation.h"
 #include "rolling_basis.h"
 
-
 // #------- GENERAL CONFIGURATION -------#
 #define ACS_TRESHOLD 40  // Threshold for ACS activation in mm
 
