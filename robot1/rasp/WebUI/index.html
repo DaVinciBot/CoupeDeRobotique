@@ -19,14 +19,14 @@
     <div class="websocket_status" id="websocket_status">
       <div class="websocket_info">
         <span class="loading-spinner"></span>
-        <p>Connexion avec la websocket en cours...</p>
+        <p>En attente de connexion avec le serveur...</p>
       </div>
     </div>
     <div class="website" id="website">
       <!-- Sidebar -->
       <div class="menu sushi">
         <a onclick="set_page('main')" id="main_menu" class="item_menu active"><i class="menu_icon icon" aria-hidden="true"></i>Général</a>
-        <a onclick="set_page('map')" id="map_menu" class="item_menu"><i class="map_icon icon"></i>Map</a>
+        <a onclick="set_page('map_content')" id="map_content_menu" class="item_menu"><i class="map_icon icon"></i>Map</a>
         <a onclick="set_page('cam')" id="cam_menu" class="item_menu"><i class="cam_icon icon"></i>Caméra</a>
         <a onclick="set_page('start')" id="start_menu" class="item_menu"><i class="save_icon icon"></i>Start</a>
         <a onclick="set_page('settings')" id="settings_menu" class="item_menu"><i class="settings_icon icon"></i>Settings</a>
@@ -128,7 +128,7 @@
       </div>
       <div class="settings content" id="settings"></div>
       <div class="cam content" id="cam"></div>
-      <div class="map content" id="map"></div>
+      <div class="map_content content" id="map_content"></div>
       <div class="start content" id="start"></div>
     </div>
     <script src="main.js"></script>

@@ -6,7 +6,7 @@ import ast
 import asyncio
 import time
 from math import pi
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -60,19 +60,6 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
         self.score: int = 0
 
-        self.ui_state: dict[str, Any] = {
-            "jack_state": True,
-            "bau_state": True,
-            "odometrie_state": OrientedPoint(0, 0, 0),
-            "pamis_states": {
-                "superstar": False,
-                "groupie_1": False,
-                "groupie_2": False,
-                "groupie_3": False,
-            },
-            "score": 0.0,
-        }
-
         self.jack_triggered: bool = False
         self.jack_plugged: bool = False
         super().__init__(logger, self)
@@ -81,6 +68,16 @@ class MainBrain(Brain):
         self.ws_ui: WServerRouteManager = ws_ui
         self.inputs: Inputs = inputs
         self.score: int
+
+        self.bau_state: bool = True
+        self.odemetrie_state: OrientedPoint = OrientedPoint(0, 0, 0)
+        self.enemy_odemetrie_state: OrientedPoint = OrientedPoint(0, 0, 0)
+        self.pamis_states: dict[str, bool] = {
+            "superstar": False,
+            "groupie_1": False,
+            "groupie_2": False,
+            "groupie_3": False,
+        }
 
     # ====== Secondary Processes =======
 
@@ -93,7 +90,7 @@ class MainBrain(Brain):
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
-    def run(self) -> None:
+    async def run(self) -> None:
         """Runs the main control loop for the robot."""
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
@@ -130,8 +127,15 @@ class MainBrain(Brain):
             )
         actuators.deplacement_position()
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
-        while not self.jack_plugged:  # wait until cable is plugged
-            time.sleep(0.1)
+        if (
+            not CONFIG.LIDAR_DUMMY
+            or not CONFIG.ROLLING_BASIS_DUMMY
+            or not CONFIG.ACTUATORS_DUMMY
+        ):
+            while not self.jack_plugged:  # wait until cable is plugged
+                time.sleep(0.1)
+        else:
+            time.sleep(2)
         actuators.block_banner()  # engage the banner blocker
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
@@ -159,14 +163,11 @@ class MainBrain(Brain):
             actuators=actuators,
             score=self.score,
         )
-
         strategy.runner.handle(context)
 
-        # Update the rolling basis odometrie from the context
         self.score = context.score
-        self.ui_state["score"] = self.score
+        self.odemetrie_state = context.arena.ally_zone.point
         self.rolling_basis_odometrie = rolling_basis.odometrie
-        self.ui_state["odometrie_state"] = rolling_basis.odometrie
 
     @Brain.task(
         process=True,
@@ -213,27 +214,32 @@ class MainBrain(Brain):
     )
     async def update_ui(self) -> None:
         """Updates the UI with the current state."""
-        previous_state = self.ui_state.copy()
 
         # --- MetaProg is insane (loop) --- #
-        current_state = self.ui_state.copy()
-        current_state["jack_state"] = not self.jack_triggered
-        if (
-            current_state != previous_state
-            and self.arena.team_color
-            and self.arena.team_color != TeamColor.UNDEFINED
-        ):
-            previous_state = current_state
+        current_snapshot = {
+            "jack_state": not self.jack_triggered,
+            "bau_state": self.bau_state,
+            "odometrie": {
+                "x": self.odemetrie_state.x,
+                "y": self.odemetrie_state.y,
+                "theta": self.odemetrie_state.theta,
+            },
+            "enemy_odometrie": {
+                "x": self.enemy_odemetrie_state.x,
+                "y": self.enemy_odemetrie_state.y,
+                "theta": self.enemy_odemetrie_state.theta,
+            },
+            "pamis_states": self.pamis_states,
+            "score": self.score,
+        }
+        if self.arena.team_color and self.arena.team_color != TeamColor.UNDEFINED:
             to_send = {
-                "jack_state": current_state["jack_state"],
-                "bau_state": current_state["bau_state"],
-                "odometrie": {
-                    "x": current_state["odometrie_state"].x,
-                    "y": current_state["odometrie_state"].y,
-                    "theta": current_state["odometrie_state"].theta,
-                },
-                "pamis_states": current_state["pamis_states"],
-                "score": current_state["score"],
+                "jack_state": current_snapshot["jack_state"],
+                "bau_state": current_snapshot["bau_state"],
+                "odometrie": current_snapshot["odometrie"],
+                "enemy_odometrie": current_snapshot["enemy_odometrie"],
+                "pamis_states": current_snapshot["pamis_states"],
+                "score": current_snapshot["score"],
             }
             await self.ws_ui.sender.send(
                 WSmsg(sender="server", msg="update ui data", data=to_send),
@@ -348,6 +354,8 @@ class MainBrain(Brain):
             start_position,
             enemy_position,
         )
+        self.odemetrie_state = start_position
+        self.enemy_odemetrie_state = enemy_position
         self.arena.update(
             ally_position=start_position,
             lidar_scan_polars=np.array([]),
