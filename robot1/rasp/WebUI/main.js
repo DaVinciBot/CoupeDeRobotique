@@ -83,18 +83,41 @@ function add_handler() {
 
         [x, y, theta] = parse_pos(x, y, theta, width, height);
 
-        rob.style.transformOrigin = "bottom left";
         rob.style.transform = `translate(${x}px, ${y}px) rotate(${theta}deg)`;
       }
-    };
+
+      const bad = document.querySelector(".bad");
+      if(bad){
+        let x = data.data["enemy_odometrie"].x;
+        let y = data.data["enemy_odometrie"].y;
+        let theta = data.data["enemy_odometrie"].theta;
+        let width = data.data["arena_info"].width;
+        let height = data.data["arena_info"].height;
+
+        [x, y, theta] = parse_pos(x, y, theta, width, height);
+
+        bad.style.transform = `translate(${x}px, ${y}px) rotate(${theta}deg)`;
+      }
+    }
   })
 };
 add_handler();
 
+function normalize_angle(angle) {
+  angle = (angle + Math.PI) % (2 * Math.PI);
+  if (angle < 0) {
+    angle += 2 * Math.PI;
+  }
+  return angle - Math.PI;
+}
+
 function parse_pos(x, y, theta, width, height) {
-  x = x / width * document.querySelector('.map').clientWidth;
-  y = y / height * document.querySelector('.map').clientHeight;
-  theta = (theta * 180) / Math.PI + 90;
+  const mapWidth = document.querySelector('.map').clientWidth;
+  const mapHeight = document.querySelector('.map').clientHeight;
+
+  x = x / width * mapWidth;
+  y =  -(y / height * mapHeight);
+  theta = -(normalize_angle(theta - Math.PI / 2) * 180) / Math.PI;
   return [x, y, theta];
 }
 

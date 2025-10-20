@@ -3,18 +3,24 @@
   background-size: cover;
   aspect-ratio: 3 / 2;
   max-height: calc(100vh - 60px);
+  position: relative;
 }
 
 .map .rob {
-  position: relative;
-  transform: translate(200px, 500px) rotate(0deg);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: translate(200px, calc(-100vh / 2 + 30px));
   transition: all 0.5s linear;
+  transform-origin: center center !important;
   /*animation: rob 15s linear infinite;*/
 }
 .map .bad {
-  position: relative;
-  transform: translate(800px, 500px);
-  animation: bad 15s linear infinite;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  transform: translate(450px, calc(-100vh / 2 + 30px));
+  transform-origin: center center !important;
 }
 
 .rob,
@@ -31,10 +37,11 @@
 
 @keyframes bad {
   0% {
-    transform: translate(800px, 500px);
+    transform: translate(800px, -500px);
   }
+
   50% {
-    transform: translate(1100px, 700px);
+    transform: translate(1100px, -700px);
   }
 }
 
