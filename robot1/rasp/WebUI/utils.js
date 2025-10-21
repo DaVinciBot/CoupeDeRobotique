@@ -22,9 +22,9 @@ class WebSocketManager {
     const website   = document.getElementById("website");
     if (!ws_status || !website) return;
     if (newStatus === "connected") {
+      init_page();
       ws_status.style.display = "none";
       website.style.display = "grid";
-      init_page();
     } else {
       ws_status.style.display = "flex";
       website.style.display = "none";

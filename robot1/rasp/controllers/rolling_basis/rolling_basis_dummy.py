@@ -61,8 +61,6 @@ class RollingBasisDummy(BaseComTeensy):
         self.angular_speed: float = 0.0
 
         # PID controllers
-        self.linear_speed_pid: PID = PID(0.0, 0.0, 0.0)
-        self.angular_speed_pid: PID = PID(0.0, 0.0, 0.0)
         self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
 
@@ -274,8 +272,6 @@ class RollingBasisDummy(BaseComTeensy):
             self.odometrie == other.odometrie
             and self.linear_speed == other.linear_speed
             and self.angular_speed == other.angular_speed
-            and self.linear_speed_pid == other.linear_speed_pid
-            and self.angular_speed_pid == other.angular_speed_pid
             and self.linear_position_pid == other.linear_position_pid
             and self.angular_position_pid == other.angular_position_pid
         )

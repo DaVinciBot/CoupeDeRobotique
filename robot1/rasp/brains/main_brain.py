@@ -68,6 +68,7 @@ class MainBrain(Brain):
         self.ws_ui: WServerRouteManager = ws_ui
         self.inputs: Inputs = inputs
         self.score: int
+        self.should_send_start: bool = False
 
         self.bau_state: bool = True
         self.odemetrie_state: OrientedPoint = OrientedPoint(0, 0, 0)
@@ -144,14 +145,29 @@ class MainBrain(Brain):
 
         # --- 3) Build the strategy --- #
 
-        strategy = TowerRushAltStrategy(
-            ShowGameContext(
-                arena=self.arena,
-                rolling_basis=rolling_basis,
-                actuators=actuators,
-                score=self.score,
-            ),
-        )
+        # Choose strategy based on configuration
+        if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
+            # debug strategy on iihm
+            strategy = TowerRushAltStrategy(
+                ShowGameContext(
+                    arena=self.arena,
+                    rolling_basis=rolling_basis,
+                    actuators=actuators,
+                    score=self.score,
+                ),
+            )
+        else:
+            # real robot strategy
+            strategy = TowerRushAltStrategy(
+                ShowGameContext(
+                    arena=self.arena,
+                    rolling_basis=rolling_basis,
+                    actuators=actuators,
+                    score=self.score,
+                ),
+            )
+
+        self.should_send_start = True
 
         # from strategy.tools import visualize_task_graph
         # visualize_task_graph(strategy.runner.active[0])
@@ -251,6 +267,11 @@ class MainBrain(Brain):
             await self.ws_ui.sender.send(
                 WSmsg(sender="server", msg="update ui data", data=to_send),
             )
+            if self.should_send_start:
+                self.should_send_start = False
+                await self.ws_ui.sender.send(
+                    WSmsg(sender="server", msg="starting", data={}),
+                )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def receive_ui_data(self) -> None:
@@ -338,6 +359,10 @@ class MainBrain(Brain):
             await self.wait_for_team()
         else:
             await self.wait_for_team()
+
+        await self.ws_ui.sender.send(
+            WSmsg(sender="server", msg="initializing", data={}),
+        )
 
         start_position = OrientedPoint(0, 0, 0)
         enemy_position = OrientedPoint(150, 200, -pi / 2)

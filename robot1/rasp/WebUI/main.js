@@ -40,8 +40,12 @@ function add_handler() {
           jack_state.innerText = "Ready";
         } else if (jack_state.innerText == "Ready") {
           jack_state.innerText = "Not Ready";
-          startTimer();
         }
+      }
+
+      const info_coords = document.getElementById("info_coords");
+      if(info_coords){
+        info_coords.innerText = `${data.data["odometrie"].x.toFixed(2)}, ${data.data["odometrie"].y.toFixed(2)}, ${((normalize_angle(data.data["odometrie"].theta) * 180) / Math.PI).toFixed(2)}°`;
       }
 
       const bau_state = document.getElementById("bau_state");
@@ -98,6 +102,14 @@ function add_handler() {
 
         bad.style.transform = `translate(${x}px, ${y}px) rotate(${theta}deg)`;
       }
+    }else if(data.msg === "starting"){
+      startTimer();
+      const timer = document.getElementById("timer");
+      timer.style.backgroundColor = "limegreen";
+    }else if(data.msg === "initializing"){
+      const timer = document.getElementById("timer");
+      timer.style.backgroundColor = "grey";
+      timer.innerHTML = "Init...";
     }
   })
 };
@@ -221,3 +233,65 @@ function show_console_data(data, add = false) {
   }
 }
 console.scrollTop = console.scrollHeight;
+
+let maki = document.querySelectorAll(".maki");
+let plus = document.querySelector("#plus");
+let minus = document.querySelector("#minus");
+let input = document.querySelector("#input");
+let range = document.querySelector("#power");
+let current_maki = null;
+
+for (let i = 0; i < maki.length; i++) {
+  maki[i].addEventListener("click", () => {
+    focus_maki(maki[i]);
+  });
+}
+
+function focus_maki(c_maki) {
+  for (let i = 0; i < maki.length; i++) {
+    maki[i].classList.remove("active");
+  }
+  c_maki.classList.add("active");
+  current_maki = c_maki;
+  input.value = c_maki.children[0].innerText;
+}
+
+input.addEventListener("input", () => {
+  if (current_maki != null) {
+    let value = parseFloat(input.value);
+    value = Math.round(value * 100) / 100;
+    if(isNaN(value)){
+      value = 0;
+    }
+    input.value = value;
+    current_maki.children[0].innerText = value;
+  }else{
+    input.value = "";
+  }
+})
+
+plus.addEventListener("click", () => {
+  if (current_maki != null) {
+    let value = parseFloat(input.value);
+    value += parseFloat(range.value);
+    value = Math.round(value * 100) / 100;
+    if(isNaN(value)){
+      value = 0;
+    }
+    input.value = value;
+    current_maki.children[0].innerText = value;
+  }
+});
+
+minus.addEventListener("click", () => {
+  if (current_maki != null) {
+    let value = parseFloat(input.value);
+    value -= parseFloat(range.value);
+    value = Math.round(value * 100) / 100;
+    if(isNaN(value)){
+      value = 0;
+    }
+    input.value = value;
+    current_maki.children[0].innerText = value;
+  }
+});

@@ -16,8 +16,14 @@ i.map_icon {
 i.save_icon {
   mask: url(../icons/save-02.svg) no-repeat center;
 }
+i.star_icon {
+  mask: url(../icons/star-02.svg) no-repeat center;
+}
 i.eye_icon {
   mask: url(../icons/eye-open.png) no-repeat center;
+}
+i.grid_icon {
+  mask: url(../icons/grid-01.svg) no-repeat center;
 }
 i.compass_icon {
   mask: url(../icons/compass.svg) no-repeat center;
