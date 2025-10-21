@@ -9,6 +9,7 @@ from boombot_strategy.tasks.navigation_tasks.go_to_stuff_zone import (
 )
 from boombot_strategy.tasks.navigation_tasks.maneuver import (
     GoCentroidOfZone,
+    GoToOrientedPoint,
     RelativeBackward,
     RelativeForward,
 )
@@ -17,6 +18,7 @@ from boombot_strategy.tasks.navigation_tasks.odometrie import SetOdometrie
 
 __all__ = [
     "GoCentroidOfZone",
+    "GoToOrientedPoint",
     "GoToColorReservedZoneToConstruct",
     "GoToColorReservedZoneToFinishGame",
     "GoToStuffZoneToPickUp",

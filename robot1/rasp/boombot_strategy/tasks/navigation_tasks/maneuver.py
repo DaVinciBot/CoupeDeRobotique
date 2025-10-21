@@ -17,7 +17,9 @@ from navigation.avoidance.no_avoidance import NoAvoidanceParams
 from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
 from navigation.navigator.task import NavigatorTask, NavigatorTaskParams
 from navigation.path_planner import Direction
-from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
+from navigation.path_planner.basic_path_planner import (
+    BasicPathPlannerParams,
+)
 from navigation.path_planner.delta_path_planner import DeltaPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
@@ -115,6 +117,56 @@ class GoCentroidOfZone(NavigationTask):
         self.navigator_task = NavigatorTask(
             params=NavigatorTaskParams(
                 goal=centroid,
+                timeout=self.timeout,
+                path_planner_params=self.path_planner_params,
+                trajectory_planner_params=self.trajectory_planner_params,
+                speed_profiler=self.speed_profiler,
+                avoidance_params=self.avoidance_params,
+                acs_detection_profile_params=self.acs_detection_profile_params,
+                stabilization_delay=self.stabilization_delay,
+            ),
+        )
+
+
+class GoToOrientedPoint(NavigationTask):
+    """Navigation task to go to a specific oriented point."""
+
+    def __init__(self, target: OrientedPoint) -> None:
+        """Initialize the GoToOrientedPoint task.
+
+        Args:
+            target (OrientedPoint): The target position and orientation.
+        """
+        super().__init__(
+            goal=target,
+            path_planner_params=BasicPathPlannerParams(),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(
+                respect_goal_orientation=True,
+            ),
+            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+            avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
+            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                acs_distance=55,
+                width_view=40,
+            ),
+            stabilization_delay=0.5,
+        )
+        self.target: OrientedPoint = target
+        self._is_initialized: bool = False
+        self.navigator_task: NavigatorTask
+
+    def _initialize(self, ctx: BaseGameContext) -> None:
+        """Initialize the NavigatorTask with the target oriented point.
+
+        Args:
+            ctx (BaseGameContext): The game context providing arena information.
+        """
+        self._is_initialized = True
+
+        # Create a NavigatorTask using the specified target
+        self.navigator_task = NavigatorTask(
+            params=NavigatorTaskParams(
+                goal=self.target,
                 timeout=self.timeout,
                 path_planner_params=self.path_planner_params,
                 trajectory_planner_params=self.trajectory_planner_params,

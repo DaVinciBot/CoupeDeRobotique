@@ -118,6 +118,15 @@ function button_click_effect(button, server) {
     }
     server.send("ui", "mode change", { mode: mode });
   }
+  if (button.id.includes("send_coords")) {
+    let x = parseFloat(document.getElementById("x_coord").querySelector(".value").innerText);
+    let y = parseFloat(document.getElementById("y_coord").querySelector(".value").innerText);
+    let theta = parseFloat(document.getElementById("theta_coord").querySelector(".value").innerText);
+    theta = (theta * Math.PI) / 180.0; // convert to radians
+    while (theta > Math.PI) theta -= 2 * Math.PI; // normalize between -pi and pi
+    while (theta < -Math.PI) theta += 2 * Math.PI; // normalize between -pi and pi
+    server.send("ui", "action", { type: "go to point", data: { x: x, y: y, theta: theta } });
+  }
 }
 
 let currentPage = "main";

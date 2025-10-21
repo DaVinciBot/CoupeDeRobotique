@@ -17,13 +17,14 @@ from ws_comms import WServerRouteManager, WSmsg
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import ShowGameContext
-from boombot_strategy.strategies import BaseStrategy, TowerRushAltStrategy
-from boombot_strategy.tasks.navigation_tasks.odometrie import SetOdometrie
+from boombot_strategy.strategies import TowerRushAltStrategy
+from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint, SetOdometrie
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
+from strategy.core.tasks import BaseTask
 
 if TYPE_CHECKING:
     from arena.show_arena import ShowArena
@@ -64,6 +65,10 @@ class MainBrain(Brain):
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
         self.rolling_basis: RollingBasis | RollingBasisDummy = None  # type: ignore[assignment]
+        self.context: ShowGameContext = None  # type: ignore[assignment]
+        self.task_name: str = None  # type: ignore[assignment]
+        self.task_todo: list[BaseTask] = None  # type: ignore[assignment]
+        self.should_update_task: bool = False
         self.score: int = 0
 
         self.jack_triggered: bool = False
@@ -152,36 +157,26 @@ class MainBrain(Brain):
         # --- 3) Build the strategy --- #
 
         # Choose strategy based on configuration
+        strategy: TowerRushAltStrategy = None  # type: ignore[assignment]
+        action_holder: list[GraphRunner | None] = [None]
+
         if self.mode == "iihm":
             # debug strategy on iihm
-            strategy = BaseStrategy(
-                ShowGameContext(
-                    arena=self.arena,
-                    rolling_basis=rolling_basis,
-                    actuators=actuators,
-                    score=self.score,
-                ),
-            )
 
-            node_navigate = (
-                f"[Debug] Go To Point (100, 100, 50)" + time.time().__str__()
-            )
+            self.logger.info("IIHM mode: Waiting for first task...")
+            """node_navigate = f"[Debug] Go To Point (100, 100, 50)"
             step1 = BaseTaskNode(
                 name=node_navigate,
-                tasks=SetOdometrie(100, 100, pi / 2),
+                tasks=GoToOrientedPoint(OrientedPoint(100, 100, 50)),
             )
 
-            strategy._auto_build_transitions(
-                step1,
-            )
-
-            strategy.runner = GraphRunner(
+            action = GraphRunner(
                 logger=Logger(
                     identifier="IIHMRunner",
                     follow_logger_manager_rules=True,
                 ),
                 start=step1,
-            )
+            )"""
         else:
             # real robot strategy
             strategy = TowerRushAltStrategy(
@@ -207,10 +202,27 @@ class MainBrain(Brain):
             score=self.score,
         )
 
-        strategy.runner.handle(context)
+        if self.mode != "iihm":
+            strategy.runner.handle(context)
+        else:
+            if self.should_update_task:
+                action_holder[0] = GraphRunner(
+                    logger=Logger(
+                        identifier="IIHMRunner",
+                        follow_logger_manager_rules=True,
+                    ),
+                    start=BaseTaskNode(
+                        name=f"[Debug] {self.task_name}",
+                        tasks=self.task_todo,
+                    ),
+                )
+                self.should_update_task = False
+            if action_holder[0] is not None:
+                action_holder[0].handle(context)
 
         # Update shared state from the context
         self.score = context.score
+        self.context = context
         self.odemetrie_state = context.arena.ally_zone.point
         self.enemy_odemetrie_state = context.arena.enemy_zone.point
         self.rolling_basis_odometrie = rolling_basis.odometrie
@@ -375,6 +387,20 @@ class MainBrain(Brain):
                         },
                     ),
                 )
+            elif ui.msg == "action":
+                if ui.data["type"] == "go to point":
+                    x = ui.data["data"]["x"]
+                    y = ui.data["data"]["y"]
+                    theta = ui.data["data"]["theta"]
+                    self.task_name = f"Go to point ({x}, {y}, {theta})"
+                    self.task_todo = [
+                        GoToOrientedPoint(OrientedPoint(x, y, theta)),
+                        SetOdometrie(theta=theta),
+                    ]
+                    self.should_update_task = True
+                    self.logger.info(
+                        f"Set task to {self.task_name}",
+                    )
             else:
                 self.logger.warning(f"Command not implemented: {ui.msg} / {ui.data}")
 
