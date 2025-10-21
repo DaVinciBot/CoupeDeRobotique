@@ -31,9 +31,8 @@ class WebSocketManager {
     }
   }
 
-  #create_trame(msg, data) {
+  #create_trame(msg, data, usr = this.user) {
     let ts = Date.now();
-    let usr = this.user;
     return JSON.stringify({ usr, msg, data, ts });
   }
 
@@ -53,7 +52,7 @@ class WebSocketManager {
 
     ws.addEventListener("open",   () => {
       console.log(`${route} connected !`)
-      this.status = "connected";
+      ws.send(this.#create_trame("hello", {}, "ui"));
     });
     ws.addEventListener("close",  (e) => {
       console.log(`${route} closed`, e.code, e.reason)
@@ -106,7 +105,18 @@ function button_click_effect(button, server) {
     } else if (button.id === "yellow_team") {
       team = "yellow";
     }
+    config_data.team = team;
     server.send("ui", "team change", { team: team });
+  }
+  if (button.id.includes("_mode")) {
+    button.style.backgroundColor = "#FFFFFF";
+    let mode = "unknown";
+    if (button.id === "normal_mode") {
+      mode = "normal";
+    } else if (button.id === "iihm_mode") {
+      mode = "iihm";
+    }
+    server.send("ui", "mode change", { mode: mode });
   }
 }
 

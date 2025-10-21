@@ -1,5 +1,10 @@
 // let console_div = document.getElementById('log');
 
+let config_data = {
+  mode: null,
+  team: null,
+}
+
 let log = new WebSocketManager();
 log.add_ws("ui");
 function on_ws_close() {
@@ -106,10 +111,40 @@ function add_handler() {
       startTimer();
       const timer = document.getElementById("timer");
       timer.style.backgroundColor = "limegreen";
+      set_configuration("finished");
     }else if(data.msg === "initializing"){
       const timer = document.getElementById("timer");
       timer.style.backgroundColor = "grey";
       timer.innerHTML = "Init...";
+      set_configuration("finished");
+    }else if(data.msg === "status"){
+      let status = data.data.status;
+      let info = data.data.data;
+      log.update_status("connected");
+
+      if(status === "starting"){
+        startTimer();
+        const timer = document.getElementById("timer");
+        timer.style.backgroundColor = "limegreen";
+        config_data.mode = info.mode;
+        config_data.team = info.team;
+        set_configuration("finished");
+      }else if(status === "initializing"){
+        const timer = document.getElementById("timer");
+        timer.style.backgroundColor = "grey";
+        timer.innerHTML = "Init...";
+        config_data.mode = info.mode;
+        config_data.team = info.team;
+        set_configuration("finished");
+      }else if(status === "waiting for mode"){
+        set_configuration("mode");
+      }else if(status === "waiting for team color"){
+        set_configuration("team");
+        config_data.mode = info.mode;
+      }
+    }else if(data.msg === "mode set"){
+      set_configuration("team");
+      config_data.mode = data.data.mode;
     }
   })
 };
@@ -175,6 +210,9 @@ function resetPage(){
   }
 
   init_page();
+  set_configuration("mode");
+  config_data.mode = null;
+  config_data.team = null;
 }
 
 let x = null;
@@ -295,3 +333,21 @@ minus.addEventListener("click", () => {
     current_maki.children[0].innerText = value;
   }
 });
+
+function set_configuration(step){
+  if(step === "mode"){
+    document.getElementById("mode_selection").style.display = "grid";
+    document.getElementById("team_selection").style.display = "none";
+    document.getElementById("configuration_finished").style.display = "none";
+  }else if(step === "team"){
+    document.getElementById("mode_selection").style.display = "none";
+    document.getElementById("team_selection").style.display = "grid";
+    document.getElementById("configuration_finished").style.display = "none";
+  }else{
+    document.getElementById("mode_selection").style.display = "none";
+    document.getElementById("team_selection").style.display = "none";
+    document.getElementById("configuration_finished").style.display = "grid";
+    document.getElementById("config_mode").innerText = config_data.mode;
+    document.getElementById("config_team").innerText = config_data.team;
+  }
+}

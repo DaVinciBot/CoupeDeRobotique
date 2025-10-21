@@ -17,10 +17,13 @@ from ws_comms import WServerRouteManager, WSmsg
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import ShowGameContext
-from boombot_strategy.strategies import TowerRushAltStrategy
+from boombot_strategy.strategies import BaseStrategy, TowerRushAltStrategy
+from boombot_strategy.tasks.navigation_tasks.odometrie import SetOdometrie
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
+from strategy.core import GraphRunner
+from strategy.core.task_nodes import BaseTaskNode
 
 if TYPE_CHECKING:
     from arena.show_arena import ShowArena
@@ -55,9 +58,12 @@ class MainBrain(Brain):
         """
         self.lidar: Lidar | LidarDummy = lidar
         self.arena: ShowArena = arena
+        self.mode: str = None  # type: ignore[assignment]
+        self.status: str = "launching"
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
+        self.rolling_basis: RollingBasis | RollingBasisDummy = None  # type: ignore[assignment]
         self.score: int = 0
 
         self.jack_triggered: bool = False
@@ -146,15 +152,35 @@ class MainBrain(Brain):
         # --- 3) Build the strategy --- #
 
         # Choose strategy based on configuration
-        if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
+        if self.mode == "iihm":
             # debug strategy on iihm
-            strategy = TowerRushAltStrategy(
+            strategy = BaseStrategy(
                 ShowGameContext(
                     arena=self.arena,
                     rolling_basis=rolling_basis,
                     actuators=actuators,
                     score=self.score,
                 ),
+            )
+
+            node_navigate = (
+                f"[Debug] Go To Point (100, 100, 50)" + time.time().__str__()
+            )
+            step1 = BaseTaskNode(
+                name=node_navigate,
+                tasks=SetOdometrie(100, 100, pi / 2),
+            )
+
+            strategy._auto_build_transitions(
+                step1,
+            )
+
+            strategy.runner = GraphRunner(
+                logger=Logger(
+                    identifier="IIHMRunner",
+                    follow_logger_manager_rules=True,
+                ),
+                start=step1,
             )
         else:
             # real robot strategy
@@ -168,6 +194,7 @@ class MainBrain(Brain):
             )
 
         self.should_send_start = True
+        self.status = "starting"
 
         # from strategy.tools import visualize_task_graph
         # visualize_task_graph(strategy.runner.active[0])
@@ -179,6 +206,7 @@ class MainBrain(Brain):
             actuators=actuators,
             score=self.score,
         )
+
         strategy.runner.handle(context)
 
         # Update shared state from the context
@@ -186,6 +214,7 @@ class MainBrain(Brain):
         self.odemetrie_state = context.arena.ally_zone.point
         self.enemy_odemetrie_state = context.arena.enemy_zone.point
         self.rolling_basis_odometrie = rolling_basis.odometrie
+        self.rolling_basis = rolling_basis
 
     @Brain.task(
         process=True,
@@ -302,6 +331,50 @@ class MainBrain(Brain):
                     self.logger.info(f"Team color set to {ui.data['team']}")
                 else:
                     self.logger.warning(f"Invalid team color: {ui.data}")
+            elif ui.msg == "mode change":
+                if ui.data["mode"] in {"normal", "iihm"}:
+                    self.mode = ui.data["mode"]
+                    self.logger.info(f"Mode set to {ui.data['mode']}")
+                else:
+                    self.logger.warning(f"Invalid mode: {ui.data}")
+                await self.ws_ui.sender.send(
+                    WSmsg(
+                        sender="server",
+                        msg="mode set",
+                        data={"mode": self.mode},
+                    ),
+                )
+            elif ui.msg == "hello":
+                current_status = "unknown"
+                data = {}
+                if self.mode is None:
+                    current_status = "waiting for mode"
+                elif self.arena.team_color == TeamColor.UNDEFINED:
+                    current_status = "waiting for team color"
+                    data = {"mode": self.mode}
+                elif self.status == "initializing":
+                    current_status = "initializing"
+                    data = {
+                        "mode": self.mode,
+                        "team": self.arena.team_color.name.lower(),
+                    }
+                elif self.status == "starting":
+                    current_status = "starting"
+                    data = {
+                        "mode": self.mode,
+                        "team": self.arena.team_color.name.lower(),
+                    }
+
+                await self.ws_ui.sender.send(
+                    WSmsg(
+                        sender="server",
+                        msg="status",
+                        data={
+                            "status": current_status,
+                            "data": data,
+                        },
+                    ),
+                )
             else:
                 self.logger.warning(f"Command not implemented: {ui.msg} / {ui.data}")
 
@@ -322,6 +395,16 @@ class MainBrain(Brain):
     # endregion
 
     # region ====== One-Shot Tasks ======
+
+    @Brain.task(process=False, run_on_start=False)
+    async def wait_for_mode(self) -> None:
+        """Waits for the mode to be set before starting the brain."""
+        while self.mode is None:
+            await asyncio.sleep(0.1)
+
+        self.logger.info(
+            f"Mode is set to {self.mode}.Continuing.",
+        )
 
     @Brain.task(process=False, run_on_start=False)
     async def wait_for_team(self) -> None:
@@ -352,17 +435,26 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True)
     async def start(self) -> None:
         """Starts the main brain process."""
+
+        self.logger.info(
+            "Waiting for mode on IIHM...",
+        )
+        await self.wait_for_mode()
+        self.logger.info(
+            "Waiting for team color on IIHM...",
+        )
         if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
-            self.logger.warning(
-                "All subsystems are in dummy mode. The robot will not move.\nWaiting for team color on IIHM...",
-            )
             await self.wait_for_team()
+            self.logger.warning(
+                "All subsystems are in dummy mode. The robot will not move.",
+            )
         else:
             await self.wait_for_team()
 
         await self.ws_ui.sender.send(
             WSmsg(sender="server", msg="initializing", data={}),
         )
+        self.status = "initializing"
 
         start_position = OrientedPoint(0, 0, 0)
         enemy_position = OrientedPoint(150, 200, -pi / 2)

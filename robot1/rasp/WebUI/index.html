@@ -51,7 +51,7 @@
                                   </div>
                               </div> -->
         
-        <div class="sushi">
+        <div class="sushi" id="team_selection">
           <div class="pilule">Team</div>
           <div style="
                         margin-top: 40px;
@@ -81,6 +81,47 @@
                                   id="other_team"
                                   style="background-color: lightgray; padding: 65px; border-radius: 20px; color: black; font-weight: bold;">
                                   Autre</button> -->
+          </div>
+        </div>
+        <div class="sushi" id="mode_selection">
+          <div class="pilule">Mode</div>
+          <div style="
+                        margin-top: 40px;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 10px;
+                      ">
+            <button class="button" id="normal_mode" style="
+                          background-color: #a9a9a9;
+                          padding: 65px;
+                          border-radius: 20px;
+                          color: white;
+                          font-weight: bold;
+                        ">
+              Normal (Stratégie automatique)
+            </button>
+            <button class="button" id="iihm_mode" style="
+                          background-color: #ffd676;
+                          padding: 65px;
+                          border-radius: 20px;
+                          color: black;
+                          font-weight: bold;
+                        ">
+              IIHM (Aucune stratégie automatique)
+            </button>
+          </div>
+        </div>
+        <div class="sushi" id="configuration_finished">
+          <div class="pilule">Configuration</div>
+          <div style="
+                                margin-top: 40px;
+                                display: flex;
+                                flex-direction: column;
+                                gap: 10px;
+                              ">
+            <p>Configuration terminée !</p>
+            <p>Mode : <span id="config_mode">...</span></p>
+            <p>Équipe : <span id="config_team">...</span></p>
           </div>
         </div>
         
