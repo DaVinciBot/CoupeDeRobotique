@@ -20,6 +20,7 @@ from boombot_strategy import ShowGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
 from boombot_strategy.sub_graphs import (
     get_banner_deployment_subgraph,
+    get_construct_one_floor_subgraph,
     get_construct_subgraph,
     get_pickup_subgraph,
     get_push_one_floor_to_wall_subgraph,
@@ -205,6 +206,7 @@ class MainBrain(Brain):
             strategy.runner.handle(context)
         else:
             if self.should_update_task:
+                zone: int | None = self.arena.get_current_zone_id()
                 if self.task_type == "navigation":
                     action_holder[0] = GraphRunner(
                         logger=Logger(
@@ -224,35 +226,45 @@ class MainBrain(Brain):
                         ),
                         start=get_banner_deployment_subgraph().get_entry(),
                     )
-                elif self.task_type == "construct":
+                elif self.task_type == "construct" and zone is not None:
                     action_holder[0] = GraphRunner(
                         logger=Logger(
                             identifier="IIHMRunner",
                             follow_logger_manager_rules=True,
                         ),
                         start=get_construct_subgraph(
-                            self.arena.ally_zone.zones_uid[0]
+                            zone,
                         ).get_entry(),
                     )
-                elif self.task_type == "pickup":
+                elif self.task_type == "pickup" and zone is not None:
                     action_holder[0] = GraphRunner(
                         logger=Logger(
                             identifier="IIHMRunner",
                             follow_logger_manager_rules=True,
                         ),
                         start=get_pickup_subgraph(
-                            self.arena.ally_zone.zones_uid[0]
+                            zone,
                         ).get_entry(),
                     )
-                elif self.task_type == "push_floor":
+                elif self.task_type == "push_floor" and zone is not None:
                     action_holder[0] = GraphRunner(
                         logger=Logger(
                             identifier="IIHMRunner",
                             follow_logger_manager_rules=True,
                         ),
                         start=get_push_one_floor_to_wall_subgraph(
-                            self.arena.ally_zone.zones_uid[0],
-                            10,
+                            zone,
+                            30,
+                        ).get_entry(),
+                    )
+                elif self.task_type == "construct_one_floor" and zone is not None:
+                    action_holder[0] = GraphRunner(
+                        logger=Logger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=get_construct_one_floor_subgraph(
+                            zone,
                         ).get_entry(),
                     )
                 self.should_update_task = False
@@ -456,7 +468,7 @@ class MainBrain(Brain):
                     "construct",
                     "pickup",
                     "push_floor",
-                    "wall_pickup",
+                    "construct_one_floor",
                 }:
                     self.task_type = ui.data["type"]
                     self.should_update_task = True
