@@ -3,22 +3,28 @@
 from __future__ import annotations
 
 import functools
+import math
 import time
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 from loggerplusplus import Logger
 
+from geometry import OrientedPoint
+from navigation.path_planner import Direction
 from navigation.trajectory_planner.base_trajectory_planner.base_trajectory_planner_params import (  # noqa: E501
     BaseTrajectoryPlannerParams,
 )
+from navigation.trajectory_planner.structs import TrajectoryPlanCommand
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from geometry import OrientedPoint
+    from navigation.trajectory_planner.segments import (
+        RotationSegment,
+        StraightSegment,
+    )
     from navigation.trajectory_planner.speed_profile import SpeedProfiler
-    from navigation.trajectory_planner.structs import TrajectoryPlanCommand
 
 
 class BaseTrajectoryPlanner[PARAMSTYPE: BaseTrajectoryPlannerParams](ABC):
@@ -50,6 +56,7 @@ class BaseTrajectoryPlanner[PARAMSTYPE: BaseTrajectoryPlannerParams](ABC):
         )
         self.params: PARAMSTYPE = params
         self.speed_profiler: SpeedProfiler = speed_profiler
+        self._is_backward: bool = self.params.direction == Direction.BACKWARD
 
         # Attributes dedicated to the trajectory planning process
         self._start_trajectory_elapsed_time_checkpoint: float = (
@@ -109,6 +116,97 @@ class BaseTrajectoryPlanner[PARAMSTYPE: BaseTrajectoryPlannerParams](ABC):
             return method(self)
 
         return wrapper
+
+    def _get_rotation_command(
+        self,
+        segment: RotationSegment,
+        local_time: float | None,
+    ) -> TrajectoryPlanCommand:
+        """Get trajectory command for a rotation segment.
+
+        Args:
+            segment (RotationSegment): The rotation segment.
+            local_time (float | None): Time elapsed within this segment.
+
+        Returns:
+            TrajectoryPlanCommand: Command for rotation.
+
+        Raises:
+            ValueError: If segment start position theta is None.
+        """
+        if segment.start_position.theta is None:
+            msg = "Segment start position theta must be defined for rotation."
+            raise ValueError(msg)
+
+        rotation = self.speed_profiler.angular_speed_profile.get_distance(
+            time_elapsed=local_time,
+            distance=segment.rotation,
+        )
+
+        theta = segment.start_position.theta + rotation * segment.sign
+
+        return TrajectoryPlanCommand(
+            position=OrientedPoint(
+                segment.start_position.x,
+                segment.start_position.y,
+                theta,
+            ),
+            linear_speed=0.0,
+            angular_speed=self.speed_profiler.angular_speed_profile.get_speed(
+                time_elapsed=local_time,
+                distance=segment.rotation,
+            ),
+        )
+
+    def _get_straight_command(
+        self,
+        segment: StraightSegment,
+        local_time: float | None,
+    ) -> TrajectoryPlanCommand:
+        """Get trajectory command for a straight segment.
+
+        Args:
+            segment (StraightSegment): The straight segment.
+            local_time (float | None): Time elapsed within this segment.
+
+        Returns:
+            TrajectoryPlanCommand: Command for straight motion.
+
+        Raises:
+            ValueError: If segment start position theta is None.
+        """
+        if segment.start_position.theta is None:
+            msg = "Segment start position theta must be defined for straight."
+            raise ValueError(msg)
+
+        traveled_distance = self.speed_profiler.linear_speed_profile.get_distance(
+            time_elapsed=local_time,
+            distance=abs(segment.distance),
+        )
+
+        if self._is_backward:
+            x = segment.start_position.x - traveled_distance * math.cos(
+                segment.start_position.theta,
+            )
+            y = segment.start_position.y - traveled_distance * math.sin(
+                segment.start_position.theta,
+            )
+        else:
+            x = segment.start_position.x + traveled_distance * math.cos(
+                segment.start_position.theta,
+            )
+            y = segment.start_position.y + traveled_distance * math.sin(
+                segment.start_position.theta,
+            )
+
+        return TrajectoryPlanCommand(
+            position=OrientedPoint(x, y, segment.start_position.theta),
+            linear_speed=self.speed_profiler.linear_speed_profile.get_speed(
+                time_elapsed=local_time,
+                distance=abs(segment.distance),
+            ),
+            angular_speed=0.0,
+        )
 
     # endregion
 

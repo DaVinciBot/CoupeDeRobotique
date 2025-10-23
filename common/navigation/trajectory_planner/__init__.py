@@ -2,6 +2,7 @@
 
 from navigation.trajectory_planner import (
     base_trajectory_planner,
+    basic_trajectory_planner,
     segments,
     sequential_trajectory_planner,
     speed_profile,
@@ -19,6 +20,7 @@ __all__ = [
     "TrajectoryPlannerFactory",
     "TrajectoryPlannerStrategy",
     "base_trajectory_planner",
+    "basic_trajectory_planner",
     "segments",
     "sequential_trajectory_planner",
     "speed_profile",

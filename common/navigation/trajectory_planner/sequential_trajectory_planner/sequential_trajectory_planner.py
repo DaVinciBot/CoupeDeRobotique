@@ -6,7 +6,6 @@ import math
 from typing import TYPE_CHECKING, override
 
 from geometry import OrientedPoint
-from navigation.path_planner import Direction
 from navigation.trajectory_planner.base_trajectory_planner import BaseTrajectoryPlanner
 from navigation.trajectory_planner.segments import (
     BaseSegment,
@@ -54,7 +53,6 @@ class SequentialTrajectoryPlanner(
         super().__init__(params, speed_profiler, logger)
         self.segments_mapper: SegmentMapper | None = None
         self._last_call_time: float = 0.0
-        self._is_backward: bool = self.params.direction == Direction.BACKWARD
 
     @staticmethod
     def _normalize_angle(angle: float) -> float:
@@ -162,9 +160,7 @@ class SequentialTrajectoryPlanner(
             StraightSegment: Segment that moves in a straight line.
         """
         # Compute delta-distance
-        delta_distance = start.distance(
-            target,
-        )  # Use shapely method for more performance
+        delta_distance = start.distance(target)
 
         # Compute intermediate target position (start + distance)
         target = OrientedPoint(target.x, target.y, start.theta)
@@ -256,7 +252,6 @@ class SequentialTrajectoryPlanner(
 
         Raises:
             RuntimeError: If the trajectory has not been planned yet.
-            ValueError: If required orientation data is missing for segment computation.
             TypeError: If the segment type is unsupported.
         """
         # Get the current time elapsed
@@ -276,70 +271,11 @@ class SequentialTrajectoryPlanner(
 
         # If the segment is a rotation segment
         elif isinstance(segment, RotationSegment):
-            if segment.start_position.theta is None:
-                msg = "Segment start position theta must be defined for rotation."
-                raise ValueError(msg)
-
-            th_rotation: float = self.speed_profiler.angular_speed_profile.get_distance(
-                time_elapsed=local_time,
-                distance=segment.rotation,
-            )
-
-            th_theta = segment.start_position.theta + th_rotation * segment.sign
-
-            trajectory_plan_command = TrajectoryPlanCommand(
-                position=OrientedPoint(
-                    segment.start_position.x,
-                    segment.start_position.y,
-                    th_theta,
-                ),
-                linear_speed=0.0,
-                angular_speed=self.speed_profiler.angular_speed_profile.get_speed(
-                    time_elapsed=local_time,
-                    distance=segment.rotation,
-                ),
-            )
+            return self._get_rotation_command(segment, local_time)
 
         # If the segment is a straight segment
         elif isinstance(segment, StraightSegment):
-            if segment.start_position.theta is None:
-                msg = (
-                    "Segment start position theta must be defined for straight segment."
-                )
-                raise ValueError(msg)
-
-            th_distance: float = self.speed_profiler.linear_speed_profile.get_distance(
-                time_elapsed=local_time,
-                distance=abs(
-                    segment.distance,
-                ),  # IMPORTANT: Use distance parameter to get the th distance
-            )
-
-            if self._is_backward:
-                th_x = segment.start_position.x - th_distance * math.cos(
-                    segment.start_position.theta,
-                )
-                th_y = segment.start_position.y - th_distance * math.sin(
-                    segment.start_position.theta,
-                )
-            else:
-                th_x = segment.start_position.x + th_distance * math.cos(
-                    segment.start_position.theta,
-                )
-                th_y = segment.start_position.y + th_distance * math.sin(
-                    segment.start_position.theta,
-                )
-
-            trajectory_plan_command = TrajectoryPlanCommand(
-                position=OrientedPoint(th_x, th_y, segment.start_position.theta),
-                linear_speed=self.speed_profiler.linear_speed_profile.get_speed(
-                    time_elapsed=local_time,
-                    distance=abs(
-                        segment.distance,
-                    ),  # IMPORTANT: Use distance parameter to get the th speed
-                ),
-                angular_speed=0.0,
-            )
+            return self._get_straight_command(segment, local_time)
 
         # If the segment is a stop segment
         elif isinstance(segment, StopSegment):

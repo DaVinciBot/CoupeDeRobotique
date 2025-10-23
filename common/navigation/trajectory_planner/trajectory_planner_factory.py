@@ -4,6 +4,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, cast
 
+from navigation.trajectory_planner.basic_trajectory_planner import (
+    BasicTrajectoryPlanner,
+    BasicTrajectoryPlannerParams,
+)
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlanner,
     SequentialTrajectoryPlannerParams,
@@ -47,6 +51,12 @@ class TrajectoryPlannerFactory:
             ValueError: If the strategy specified in ``params`` is not supported.
         """
         strategy = params.trajectory_planning_strategy
+
+        if strategy == TrajectoryPlannerStrategy.BASIC:
+            return BasicTrajectoryPlanner(
+                cast("BasicTrajectoryPlannerParams", params),
+                speed_profiler,
+            )
 
         if strategy == TrajectoryPlannerStrategy.SEQUENTIAL:
             return SequentialTrajectoryPlanner(
