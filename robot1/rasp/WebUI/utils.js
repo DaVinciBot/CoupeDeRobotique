@@ -137,6 +137,11 @@ function button_click_effect(button, server) {
       server.send("ui", "pid update", { type: "angular", data: { kp: kp, ki: ki, kd: kd } });
     }
   }
+  if(button.id.includes("send_action")) {
+    let action = document.querySelector('input[name="action"]:checked').value;
+    let actionName = document.querySelector('input[name="action"]:checked').nextElementSibling.innerText;
+    server.send("ui", "action", { type: action, name: actionName });
+  }
 }
 
 let currentPage = "main";

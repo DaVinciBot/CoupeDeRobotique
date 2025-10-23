@@ -90,3 +90,8 @@ input {
 .settings {
   gap: 20px;
 }
+
+.settings .sushi input[type="radio"]:checked + .action_radio {
+  background-color: var(--primary);
+  color: white;
+}

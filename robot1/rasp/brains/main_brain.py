@@ -18,6 +18,12 @@ from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import ShowGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
+from boombot_strategy.sub_graphs import (
+    get_banner_deployment_subgraph,
+    get_construct_subgraph,
+    get_pickup_subgraph,
+    get_push_one_floor_to_wall_subgraph,
+)
 from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
@@ -68,6 +74,7 @@ class MainBrain(Brain):
         self.context: ShowGameContext = None  # type: ignore[assignment]
         self.task_name: str = None  # type: ignore[assignment]
         self.task_todo: list[BaseTask] = None  # type: ignore[assignment]
+        self.task_type: str = ""
         self.should_update_task: bool = False
         self.score: int = 0
 
@@ -168,22 +175,7 @@ class MainBrain(Brain):
         action_holder: list[GraphRunner | None] = [None]
 
         if self.mode == "iihm":
-            # debug strategy on iihm
-
             self.logger.info("IIHM mode: Waiting for first task...")
-            """node_navigate = f"[Debug] Go To Point (100, 100, 50)"
-            step1 = BaseTaskNode(
-                name=node_navigate,
-                tasks=GoToOrientedPoint(OrientedPoint(100, 100, 50)),
-            )
-
-            action = GraphRunner(
-                logger=Logger(
-                    identifier="IIHMRunner",
-                    follow_logger_manager_rules=True,
-                ),
-                start=step1,
-            )"""
         else:
             # real robot strategy
             strategy = TowerRushAltStrategy(
@@ -213,16 +205,56 @@ class MainBrain(Brain):
             strategy.runner.handle(context)
         else:
             if self.should_update_task:
-                action_holder[0] = GraphRunner(
-                    logger=Logger(
-                        identifier="IIHMRunner",
-                        follow_logger_manager_rules=True,
-                    ),
-                    start=BaseTaskNode(
-                        name=f"[Debug] {self.task_name}",
-                        tasks=self.task_todo,
-                    ),
-                )
+                if self.task_type == "navigation":
+                    action_holder[0] = GraphRunner(
+                        logger=Logger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=BaseTaskNode(
+                            name=f"[Debug] {self.task_name}",
+                            tasks=self.task_todo,
+                        ),
+                    )
+                elif self.task_type == "banner_deploy":
+                    action_holder[0] = GraphRunner(
+                        logger=Logger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=get_banner_deployment_subgraph().get_entry(),
+                    )
+                elif self.task_type == "construct":
+                    action_holder[0] = GraphRunner(
+                        logger=Logger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=get_construct_subgraph(
+                            self.arena.ally_zone.zones_uid[0]
+                        ).get_entry(),
+                    )
+                elif self.task_type == "pickup":
+                    action_holder[0] = GraphRunner(
+                        logger=Logger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=get_pickup_subgraph(
+                            self.arena.ally_zone.zones_uid[0]
+                        ).get_entry(),
+                    )
+                elif self.task_type == "push_floor":
+                    action_holder[0] = GraphRunner(
+                        logger=Logger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=get_push_one_floor_to_wall_subgraph(
+                            self.arena.ally_zone.zones_uid[0],
+                            10,
+                        ).get_entry(),
+                    )
                 self.should_update_task = False
             if action_holder[0] is not None:
                 action_holder[0].handle(context)
@@ -414,31 +446,40 @@ class MainBrain(Brain):
                     self.task_todo = [
                         GoToOrientedPoint(OrientedPoint(x, y, theta)),
                     ]
+                    self.task_type = "navigation"
                     self.should_update_task = True
                     self.logger.info(
                         f"Set task to {self.task_name}",
                     )
+                elif ui.data["type"] in {
+                    "banner_deploy",
+                    "construct",
+                    "pickup",
+                    "push_floor",
+                    "wall_pickup",
+                }:
+                    self.task_type = ui.data["type"]
+                    self.should_update_task = True
+                    self.logger.info(
+                        f"Set task to {self.task_name}",
+                    )
+                else:
+                    self.logger.warning(f"Unknown action type: {ui.data['type']}")
             elif ui.msg == "pid update":
+                kp: float = ui.data["data"]["kp"]
+                ki: float = ui.data["data"]["ki"]
+                kd: float = ui.data["data"]["kd"]
+                self.pid_kp = kp
+                self.pid_ki = ki
+                self.pid_kd = kd
                 self.logger.info(
-                    f"Updating {ui.data['type']} PID to Kp: {ui.data['data']['kp']}, Ki: {ui.data['data']['ki']}, Kd: {ui.data['data']['kd']}",
+                    f"Updating {ui.data['type']} PID to Kp: {kp}, Ki: {ki}, Kd: {kd}",
                 )
                 if ui.data["type"] == "linear":
-                    kp: float = ui.data["data"]["kp"]
-                    ki: float = ui.data["data"]["ki"]
-                    kd: float = ui.data["data"]["kd"]
                     self.pid_type = "linear"
-                    self.pid_kp = kp
-                    self.pid_ki = ki
-                    self.pid_kd = kd
                     self.should_update_pid = True
                 elif ui.data["type"] == "angular":
-                    kp: float = ui.data["data"]["kp"]
-                    ki: float = ui.data["data"]["ki"]
-                    kd: float = ui.data["data"]["kd"]
                     self.pid_type = "angular"
-                    self.pid_kp = kp
-                    self.pid_ki = ki
-                    self.pid_kd = kd
                     self.should_update_pid = True
             else:
                 self.logger.warning(f"Command not implemented: {ui.msg} / {ui.data}")
@@ -552,6 +593,6 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = start_position
         await asyncio.sleep(1)  # Allow time for the arena to update
-        await self.run()  # pyright: ignore[reportGeneralTypeIssues] don't touch
+        await self.run()  # pyright: ignore[reportGeneralTypeIssues] don't touch0
 
     # endregion
