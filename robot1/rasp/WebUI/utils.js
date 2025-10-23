@@ -127,6 +127,16 @@ function button_click_effect(button, server) {
     while (theta < -Math.PI) theta += 2 * Math.PI; // normalize between -pi and pi
     server.send("ui", "action", { type: "go to point", data: { x: x, y: y, theta: theta } });
   }
+  if(button.id.includes("_pid")) {
+    let kp = parseFloat(document.getElementById("kp").querySelector(".value").innerText);
+    let ki = parseFloat(document.getElementById("ki").querySelector(".value").innerText);
+    let kd = parseFloat(document.getElementById("kd").querySelector(".value").innerText);
+    if (button.id.includes("linear")) {
+      server.send("ui", "pid update", { type: "linear", data: { kp: kp, ki: ki, kd: kd } });
+    } else if (button.id.includes("angular")) {
+      server.send("ui", "pid update", { type: "angular", data: { kp: kp, ki: ki, kd: kd } });
+    }
+  }
 }
 
 let currentPage = "main";

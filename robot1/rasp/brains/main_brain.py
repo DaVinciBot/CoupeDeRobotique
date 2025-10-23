@@ -18,7 +18,7 @@ from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import ShowGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
-from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint, SetOdometrie
+from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
@@ -70,6 +70,12 @@ class MainBrain(Brain):
         self.task_todo: list[BaseTask] = None  # type: ignore[assignment]
         self.should_update_task: bool = False
         self.score: int = 0
+
+        self.should_update_pid: bool = False
+        self.pid_type: str = ""
+        self.pid_kp: float = 0.0
+        self.pid_ki: float = 0.0
+        self.pid_kd: float = 0.0
 
         self.jack_triggered: bool = False
         self.jack_plugged: bool = False
@@ -151,6 +157,7 @@ class MainBrain(Brain):
         actuators.block_banner()  # engage the banner blocker
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
+        self.rolling_basis = rolling_basis
         while not self.jack_triggered:  # wait for the trigger event
             time.sleep(0.1)
 
@@ -219,6 +226,17 @@ class MainBrain(Brain):
                 self.should_update_task = False
             if action_holder[0] is not None:
                 action_holder[0].handle(context)
+
+        if self.should_update_pid:
+            if self.pid_type == "linear":
+                rolling_basis.set_linear_position_pid(
+                    kp=self.pid_kp, ki=self.pid_ki, kd=self.pid_kd
+                )
+            elif self.pid_type == "angular":
+                rolling_basis.set_angular_position_pid(
+                    kp=self.pid_kp, ki=self.pid_ki, kd=self.pid_kd
+                )
+            self.should_update_pid = False
 
         # Update shared state from the context
         self.score = context.score
@@ -395,12 +413,33 @@ class MainBrain(Brain):
                     self.task_name = f"Go to point ({x}, {y}, {theta})"
                     self.task_todo = [
                         GoToOrientedPoint(OrientedPoint(x, y, theta)),
-                        SetOdometrie(theta=theta),
                     ]
                     self.should_update_task = True
                     self.logger.info(
                         f"Set task to {self.task_name}",
                     )
+            elif ui.msg == "pid update":
+                self.logger.info(
+                    f"Updating {ui.data['type']} PID to Kp: {ui.data['data']['kp']}, Ki: {ui.data['data']['ki']}, Kd: {ui.data['data']['kd']}",
+                )
+                if ui.data["type"] == "linear":
+                    kp: float = ui.data["data"]["kp"]
+                    ki: float = ui.data["data"]["ki"]
+                    kd: float = ui.data["data"]["kd"]
+                    self.pid_type = "linear"
+                    self.pid_kp = kp
+                    self.pid_ki = ki
+                    self.pid_kd = kd
+                    self.should_update_pid = True
+                elif ui.data["type"] == "angular":
+                    kp: float = ui.data["data"]["kp"]
+                    ki: float = ui.data["data"]["ki"]
+                    kd: float = ui.data["data"]["kd"]
+                    self.pid_type = "angular"
+                    self.pid_kp = kp
+                    self.pid_ki = ki
+                    self.pid_kd = kd
+                    self.should_update_pid = True
             else:
                 self.logger.warning(f"Command not implemented: {ui.msg} / {ui.data}")
 
