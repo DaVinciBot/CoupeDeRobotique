@@ -233,8 +233,7 @@ class Lidar:
         try:
             if self.__lidar_obj is not None:
                 self.__lidar_obj.scan()
-            else:
-                pass
+            
         except Exception as error:
             # LiDAR seems to be disconnected
             self._logger.error(
