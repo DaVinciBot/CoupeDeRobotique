@@ -3,7 +3,7 @@
 let config_data = {
   mode: null,
   team: null,
-}
+};
 
 let log = new WebSocketManager();
 log.add_ws("ui");
@@ -14,10 +14,10 @@ function on_ws_close() {
     console.log("Websocket closed, attempting to reconnect...");
     const intervalId = setInterval(async () => {
       try {
-        if(log.status === "connected"){
+        if (log.status === "connected") {
           clearInterval(intervalId);
           on_ws_close();
-        }else{
+        } else {
           log.add_ws("ui");
           add_handler();
           console.log("Reconnection attempt failed. Attempting again...");
@@ -31,13 +31,13 @@ function on_ws_close() {
 on_ws_close();
 function add_handler() {
   log.add_handler("ui", (event) => {
-  // Parse the JSON message and display the console data
-  let data = JSON.parse(event.data);
+    // Parse the JSON message and display the console data
+    let data = JSON.parse(event.data);
     if (data.msg === "update ui data") {
       // show_console_data(JSON.stringify(data.data), true);
 
       const jack_state = document.getElementById("jack_state");
-      if(jack_state){
+      if (jack_state) {
         jack_state.style.backgroundColor = data.data["jack_state"]
           ? "limegreen"
           : "red";
@@ -49,23 +49,30 @@ function add_handler() {
       }
 
       const info_coords = document.getElementById("info_coords");
-      if(info_coords){
-        info_coords.innerText = `${data.data["odometrie"].x.toFixed(2)}, ${data.data["odometrie"].y.toFixed(2)}, ${((normalize_angle(data.data["odometrie"].theta) * 180) / Math.PI).toFixed(2)}°`;
+      if (info_coords) {
+        info_coords.innerText = `${data.data["odometrie"].x.toFixed(
+          2
+        )}, ${data.data["odometrie"].y.toFixed(2)}, ${(
+          (normalize_angle(data.data["odometrie"].theta) * 180) /
+          Math.PI
+        ).toFixed(2)}°`;
       }
 
       const bau_state = document.getElementById("bau_state");
-      if(bau_state){
-        bau_state.style.backgroundColor = data.data["BAU"] ? "limegreen" : "red";
+      if (bau_state) {
+        bau_state.style.backgroundColor = data.data["BAU"]
+          ? "limegreen"
+          : "red";
         bau_state.innerText = data.data["BAU"] ? "ON" : "ACTIVATED";
       }
 
       const score = document.getElementById("score");
-      if(score){
+      if (score) {
         score.innerText = data.data["score"] ? data.data["score"] : "0";
       }
 
       const pamis_states = document.getElementById("pami_states");
-      if(pamis_states){
+      if (pamis_states) {
         pamis_states.innerHTML = "";
         for (let pami in data.data["pamis_states"]) {
           const card = document.createElement("div");
@@ -83,7 +90,7 @@ function add_handler() {
       }
 
       const rob = document.querySelector(".rob");
-      if(rob){
+      if (rob) {
         let x = data.data["odometrie"].x;
         let y = data.data["odometrie"].y;
         let theta = data.data["odometrie"].theta;
@@ -96,7 +103,7 @@ function add_handler() {
       }
 
       const bad = document.querySelector(".bad");
-      if(bad){
+      if (bad) {
         let x = data.data["enemy_odometrie"].x;
         let y = data.data["enemy_odometrie"].y;
         let theta = data.data["enemy_odometrie"].theta;
@@ -107,47 +114,47 @@ function add_handler() {
 
         bad.style.transform = `translate(${x}px, ${y}px) rotate(${theta}deg)`;
       }
-    }else if(data.msg === "starting"){
+    } else if (data.msg === "starting") {
       startTimer();
       const timer = document.getElementById("timer");
       timer.style.backgroundColor = "limegreen";
       set_configuration("finished");
-    }else if(data.msg === "initializing"){
+    } else if (data.msg === "initializing") {
       const timer = document.getElementById("timer");
       timer.style.backgroundColor = "grey";
       timer.innerHTML = "Init...";
       set_configuration("finished");
-    }else if(data.msg === "status"){
+    } else if (data.msg === "status") {
       let status = data.data.status;
       let info = data.data.data;
       log.update_status("connected");
 
-      if(status === "starting"){
+      if (status === "starting") {
         startTimer();
         const timer = document.getElementById("timer");
         timer.style.backgroundColor = "limegreen";
         config_data.mode = info.mode;
         config_data.team = info.team;
         set_configuration("finished");
-      }else if(status === "initializing"){
+      } else if (status === "initializing") {
         const timer = document.getElementById("timer");
         timer.style.backgroundColor = "grey";
         timer.innerHTML = "Init...";
         config_data.mode = info.mode;
         config_data.team = info.team;
         set_configuration("finished");
-      }else if(status === "waiting for mode"){
+      } else if (status === "waiting for mode") {
         set_configuration("mode");
-      }else if(status === "waiting for team color"){
+      } else if (status === "waiting for team color") {
         set_configuration("team");
         config_data.mode = info.mode;
       }
-    }else if(data.msg === "mode set"){
+    } else if (data.msg === "mode set") {
       set_configuration("team");
       config_data.mode = data.data.mode;
     }
-  })
-};
+  });
+}
 add_handler();
 
 function normalize_angle(angle) {
@@ -159,11 +166,11 @@ function normalize_angle(angle) {
 }
 
 function parse_pos(x, y, theta, width, height) {
-  const mapWidth = document.querySelector('.map').clientWidth;
-  const mapHeight = document.querySelector('.map').clientHeight;
+  const mapWidth = document.querySelector(".map").clientWidth;
+  const mapHeight = document.querySelector(".map").clientHeight;
 
-  x = x / width * mapWidth;
-  y =  -(y / height * mapHeight);
+  x = (x / width) * mapWidth;
+  y = -((y / height) * mapHeight);
   theta = -(normalize_angle(theta - Math.PI / 2) * 180) / Math.PI;
   return [x, y, theta];
 }
@@ -175,37 +182,37 @@ buttons.forEach((button) => {
   });
 });
 
-function resetPage(){
+function resetPage() {
   resetTimer();
   const jack_state = document.getElementById("jack_state");
-  if(jack_state){
+  if (jack_state) {
     jack_state.style.backgroundColor = "limegreen";
     jack_state.innerText = "Ready";
   }
 
   const bau_state = document.getElementById("bau_state");
-  if(bau_state){
+  if (bau_state) {
     bau_state.style.backgroundColor = "red";
     bau_state.innerText = "ACTIVATED";
   }
 
   const score = document.getElementById("score");
-  if(score){
+  if (score) {
     score.innerText = "0";
   }
 
   const pamis_states = document.getElementById("pami_states");
-  if(pamis_states){
+  if (pamis_states) {
     pamis_states.innerHTML = "";
   }
 
   const rob = document.querySelector(".rob");
-  if(rob){
+  if (rob) {
     rob.style.transform = `translate(200px, calc(-100vh / 2 + 30px)) rotate(0deg)`;
   }
-  
+
   const bad = document.querySelector(".bad");
-  if(bad){
+  if (bad) {
     bad.style.transform = `translate(450px, calc(-100vh / 2 + 30px)) rotate(0deg)`;
   }
 
@@ -226,7 +233,7 @@ function resetTimer() {
     clearInterval(x);
     x = null;
   }
-} 
+}
 
 function startTimer() {
   const timer = document.getElementById("timer");
@@ -298,22 +305,22 @@ input.addEventListener("input", () => {
   if (current_maki != null) {
     let value = parseFloat(input.value);
     value = Math.round(value * 100) / 100;
-    if(isNaN(value)){
+    if (isNaN(value)) {
       value = 0;
     }
     input.value = value;
     current_maki.children[0].innerText = value;
-  }else{
+  } else {
     input.value = "";
   }
-})
+});
 
 plus.addEventListener("click", () => {
   if (current_maki != null) {
     let value = parseFloat(input.value);
     value += parseFloat(range.value);
     value = Math.round(value * 100) / 100;
-    if(isNaN(value)){
+    if (isNaN(value)) {
       value = 0;
     }
     input.value = value;
@@ -326,7 +333,7 @@ minus.addEventListener("click", () => {
     let value = parseFloat(input.value);
     value -= parseFloat(range.value);
     value = Math.round(value * 100) / 100;
-    if(isNaN(value)){
+    if (isNaN(value)) {
       value = 0;
     }
     input.value = value;
@@ -334,16 +341,16 @@ minus.addEventListener("click", () => {
   }
 });
 
-function set_configuration(step){
-  if(step === "mode"){
+function set_configuration(step) {
+  if (step === "mode") {
     document.getElementById("mode_selection").style.display = "grid";
     document.getElementById("team_selection").style.display = "none";
     document.getElementById("configuration_finished").style.display = "none";
-  }else if(step === "team"){
+  } else if (step === "team") {
     document.getElementById("mode_selection").style.display = "none";
     document.getElementById("team_selection").style.display = "grid";
     document.getElementById("configuration_finished").style.display = "none";
-  }else{
+  } else {
     document.getElementById("mode_selection").style.display = "none";
     document.getElementById("team_selection").style.display = "none";
     document.getElementById("configuration_finished").style.display = "grid";

@@ -23,7 +23,7 @@ input {
   color: black;
 }
 
-.action_maki{
+.action_maki {
   background-color: var(--secondary);
   border-radius: var(--roundness);
   font-family: var(--font);
@@ -38,7 +38,8 @@ input {
   color: black;
 }
 
-.action_maki:hover, .maki:hover {
+.action_maki:hover,
+.maki:hover {
   background-color: var(--hover);
   cursor: pointer;
 }

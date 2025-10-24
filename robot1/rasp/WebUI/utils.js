@@ -1,25 +1,27 @@
 class WebSocketManager {
   #status = "disconnected";
-  
+
   constructor(host = "localhost", port = "8080", user = "ui") {
     this.websockets = {};
     this.host = host;
     this.port = port;
     this.user = user;
-    
+
     const ws_status = document.getElementById("websocket_status");
-    const website   = document.getElementById("website");
+    const website = document.getElementById("website");
     if (ws_status && website) {
       ws_status.style.display = "flex";
       website.style.display = "none";
     }
   }
 
-  get status() { return this.#status; }
+  get status() {
+    return this.#status;
+  }
   set status(newStatus) {
     this.#status = newStatus;
     const ws_status = document.getElementById("websocket_status");
-    const website   = document.getElementById("website");
+    const website = document.getElementById("website");
     if (!ws_status || !website) return;
     if (newStatus === "connected") {
       init_page();
@@ -45,20 +47,20 @@ class WebSocketManager {
   add_ws(route, { onopen, onmessage, onclose, onerror } = {}) {
     const ws = this.#ws_connect(route);
 
-    if (onopen)   ws.addEventListener("open", onopen);
-    if (onmessage)ws.addEventListener("message", onmessage);
-    if (onclose)  ws.addEventListener("close", onclose);
-    if (onerror)  ws.addEventListener("error", onerror);
+    if (onopen) ws.addEventListener("open", onopen);
+    if (onmessage) ws.addEventListener("message", onmessage);
+    if (onclose) ws.addEventListener("close", onclose);
+    if (onerror) ws.addEventListener("error", onerror);
 
-    ws.addEventListener("open",   () => {
-      console.log(`${route} connected !`)
+    ws.addEventListener("open", () => {
+      console.log(`${route} connected !`);
       ws.send(this.#create_trame("hello", {}, "ui"));
     });
-    ws.addEventListener("close",  (e) => {
-      console.log(`${route} closed`, e.code, e.reason)
+    ws.addEventListener("close", (e) => {
+      console.log(`${route} closed`, e.code, e.reason);
       this.status = "disconnected";
     });
-    ws.addEventListener("error",  (e) => console.error(`${route} error`, e));
+    ws.addEventListener("error", (e) => console.error(`${route} error`, e));
 
     this.websockets[route] = ws;
     return ws;
@@ -119,27 +121,49 @@ function button_click_effect(button, server) {
     server.send("ui", "mode change", { mode: mode });
   }
   if (button.id.includes("send_coords")) {
-    let x = parseFloat(document.getElementById("x_coord").querySelector(".value").innerText);
-    let y = parseFloat(document.getElementById("y_coord").querySelector(".value").innerText);
-    let theta = parseFloat(document.getElementById("theta_coord").querySelector(".value").innerText);
+    let x = parseFloat(
+      document.getElementById("x_coord").querySelector(".value").innerText
+    );
+    let y = parseFloat(
+      document.getElementById("y_coord").querySelector(".value").innerText
+    );
+    let theta = parseFloat(
+      document.getElementById("theta_coord").querySelector(".value").innerText
+    );
     theta = (theta * Math.PI) / 180.0; // convert to radians
     while (theta > Math.PI) theta -= 2 * Math.PI; // normalize between -pi and pi
     while (theta < -Math.PI) theta += 2 * Math.PI; // normalize between -pi and pi
-    server.send("ui", "action", { type: "go to point", data: { x: x, y: y, theta: theta } });
+    server.send("ui", "action", {
+      type: "go to point",
+      data: { x: x, y: y, theta: theta },
+    });
   }
-  if(button.id.includes("_pid")) {
-    let kp = parseFloat(document.getElementById("kp").querySelector(".value").innerText);
-    let ki = parseFloat(document.getElementById("ki").querySelector(".value").innerText);
-    let kd = parseFloat(document.getElementById("kd").querySelector(".value").innerText);
+  if (button.id.includes("_pid")) {
+    let kp = parseFloat(
+      document.getElementById("kp").querySelector(".value").innerText
+    );
+    let ki = parseFloat(
+      document.getElementById("ki").querySelector(".value").innerText
+    );
+    let kd = parseFloat(
+      document.getElementById("kd").querySelector(".value").innerText
+    );
     if (button.id.includes("linear")) {
-      server.send("ui", "pid update", { type: "linear", data: { kp: kp, ki: ki, kd: kd } });
+      server.send("ui", "pid update", {
+        type: "linear",
+        data: { kp: kp, ki: ki, kd: kd },
+      });
     } else if (button.id.includes("angular")) {
-      server.send("ui", "pid update", { type: "angular", data: { kp: kp, ki: ki, kd: kd } });
+      server.send("ui", "pid update", {
+        type: "angular",
+        data: { kp: kp, ki: ki, kd: kd },
+      });
     }
   }
-  if(button.id.includes("send_action")) {
+  if (button.id.includes("send_action")) {
     let action = document.querySelector('input[name="action"]:checked').value;
-    let actionName = document.querySelector('input[name="action"]:checked').nextElementSibling.innerText;
+    let actionName = document.querySelector('input[name="action"]:checked')
+      .nextElementSibling.innerText;
     server.send("ui", "action", { type: action, name: actionName });
   }
 }
@@ -148,7 +172,7 @@ let currentPage = "main";
 function set_page(page_id) {
   hide_all_pages();
   document.getElementById(page_id).style.display = "grid";
-  document.getElementById(page_id+"_menu").classList.add("active");
+  document.getElementById(page_id + "_menu").classList.add("active");
   currentPage = page_id;
 }
 function hide_all_pages() {
