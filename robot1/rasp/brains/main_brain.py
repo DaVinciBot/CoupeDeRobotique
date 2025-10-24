@@ -6,7 +6,7 @@ import ast
 import asyncio
 import time
 from math import pi
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -31,7 +31,9 @@ from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
-from strategy.core.tasks import BaseTask
+
+if TYPE_CHECKING:
+    from strategy.core.tasks import BaseTask
 
 if TYPE_CHECKING:
     from arena.show_arena import ShowArena
@@ -66,15 +68,15 @@ class MainBrain(Brain):
         """
         self.lidar: Lidar | LidarDummy = lidar
         self.arena: ShowArena = arena
-        self.mode: str = None  # type: ignore[assignment]
+        self.mode: str | None = None
         self.status: str = "launching"
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
-        self.rolling_basis: RollingBasis | RollingBasisDummy = None  # type: ignore[assignment]
-        self.context: ShowGameContext = None  # type: ignore[assignment]
-        self.task_name: str = None  # type: ignore[assignment]
-        self.task_todo: list[BaseTask] = None  # type: ignore[assignment]
+        self.rolling_basis: RollingBasis | RollingBasisDummy | None = None
+        self.context: ShowGameContext  # UNUSED ?
+        self.task_name: str = ""
+        self.task_todo: list[BaseTask[ShowGameContext]] = []
         self.task_type: str = ""
         self.should_update_task: bool = False
         self.score: int = 0
@@ -116,7 +118,7 @@ class MainBrain(Brain):
         define_loop_later=True,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
-    async def run(self) -> None:
+    def run(self) -> None:
         """Runs the main control loop for the robot."""
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
@@ -172,13 +174,12 @@ class MainBrain(Brain):
         # --- 3) Build the strategy --- #
 
         # Choose strategy based on configuration
-        strategy: TowerRushAltStrategy = None  # type: ignore[assignment]
+        strategy: TowerRushAltStrategy | None = None
         action_holder: list[GraphRunner | None] = [None]
 
         if self.mode == "iihm":
             self.logger.info("IIHM mode: Waiting for first task...")
         else:
-            # real robot strategy
             strategy = TowerRushAltStrategy(
                 ShowGameContext(
                     arena=self.arena,
@@ -202,7 +203,7 @@ class MainBrain(Brain):
             score=self.score,
         )
 
-        if self.mode != "iihm":
+        if strategy:
             strategy.runner.handle(context)
         else:
             if self.should_update_task:
@@ -274,11 +275,15 @@ class MainBrain(Brain):
         if self.should_update_pid:
             if self.pid_type == "linear":
                 rolling_basis.set_linear_position_pid(
-                    kp=self.pid_kp, ki=self.pid_ki, kd=self.pid_kd
+                    kp=self.pid_kp,
+                    ki=self.pid_ki,
+                    kd=self.pid_kd,
                 )
             elif self.pid_type == "angular":
                 rolling_basis.set_angular_position_pid(
-                    kp=self.pid_kp, ki=self.pid_ki, kd=self.pid_kd
+                    kp=self.pid_kp,
+                    ki=self.pid_ki,
+                    kd=self.pid_kd,
                 )
             self.should_update_pid = False
 
@@ -335,9 +340,8 @@ class MainBrain(Brain):
     )
     async def update_ui(self) -> None:
         """Updates the UI with the current state."""
-
         # --- MetaProg is insane (loop) --- #
-        current_snapshot = {
+        current_snapshot: dict[str, Any] = {
             "jack_state": not self.jack_triggered,
             "bau_state": self.bau_state,
             "odometrie": {
@@ -421,7 +425,7 @@ class MainBrain(Brain):
             elif ui.msg == "hello":
                 current_status = "unknown"
                 data = {}
-                if self.mode is None:
+                if not self.mode:
                     current_status = "waiting for mode"
                 elif self.arena.team_color == TeamColor.UNDEFINED:
                     current_status = "waiting for team color"
@@ -451,9 +455,9 @@ class MainBrain(Brain):
                 )
             elif ui.msg == "action":
                 if ui.data["type"] == "go to point":
-                    x = ui.data["data"]["x"]
-                    y = ui.data["data"]["y"]
-                    theta = ui.data["data"]["theta"]
+                    x = float(ui.data["data"]["x"])
+                    y = float(ui.data["data"]["y"])
+                    theta = float(ui.data["data"]["theta"])
                     self.task_name = f"Go to point ({x}, {y}, {theta})"
                     self.task_todo = [
                         GoToOrientedPoint(OrientedPoint(x, y, theta)),
@@ -478,9 +482,9 @@ class MainBrain(Brain):
                 else:
                     self.logger.warning(f"Unknown action type: {ui.data['type']}")
             elif ui.msg == "pid update":
-                kp: float = ui.data["data"]["kp"]
-                ki: float = ui.data["data"]["ki"]
-                kd: float = ui.data["data"]["kd"]
+                kp = float(ui.data["data"]["kp"])
+                ki = float(ui.data["data"]["ki"])
+                kd = float(ui.data["data"]["kd"])
                 self.pid_kp = kp
                 self.pid_ki = ki
                 self.pid_kd = kd
@@ -553,7 +557,6 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True)
     async def start(self) -> None:
         """Starts the main brain process."""
-
         self.logger.info(
             "Waiting for mode on IIHM...",
         )
@@ -605,6 +608,6 @@ class MainBrain(Brain):
         )
         self.rolling_basis_odometrie = start_position
         await asyncio.sleep(1)  # Allow time for the arena to update
-        await self.run()  # pyright: ignore[reportGeneralTypeIssues] don't touch0
+        await self.run()  # pyright: ignore[reportGeneralTypeIssues] don't touch
 
     # endregion
