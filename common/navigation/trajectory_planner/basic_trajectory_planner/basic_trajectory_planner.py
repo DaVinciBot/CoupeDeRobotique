@@ -96,27 +96,39 @@ class BasicTrajectoryPlanner(BaseTrajectoryPlanner[BasicTrajectoryPlannerParams]
         Returns:
             SmoothSegment: Curved trajectory segment.
         """
-        # Sample points along the curve using simple interpolation
-        # TODO: use Bezier curves or splines for better smoothness
-        num_samples = 10
+        # smoothness = 0: straight line, smoothness = 1: full bezier curve
+        smoothness = self.params.curve_smoothness
+
+        control_x = (
+            start.x
+            + (middle.x - start.x) * smoothness
+            + (end.x - start.x) * (1 - smoothness) * 0.5
+        )
+        control_y = (
+            start.y
+            + (middle.y - start.y) * smoothness
+            + (end.y - start.y) * (1 - smoothness) * 0.5
+        )
+
+        num_samples = 20
         sampled_points: list[OrientedPoint] = []
         total_distance = 0.0
 
         for i in range(num_samples + 1):
             t = i / num_samples
-            x = (1 - t) ** 2 * start.x + 2 * (1 - t) * t * middle.x + t**2 * end.x
-            y = (1 - t) ** 2 * start.y + 2 * (1 - t) * t * middle.y + t**2 * end.y
+            x = (1 - t) ** 2 * start.x + 2 * (1 - t) * t * control_x + t**2 * end.x
+            y = (1 - t) ** 2 * start.y + 2 * (1 - t) * t * control_y + t**2 * end.y
 
             if i < num_samples:
                 t_next = (i + 1) / num_samples
                 x_next = (
                     (1 - t_next) ** 2 * start.x
-                    + 2 * (1 - t_next) * t_next * middle.x
+                    + 2 * (1 - t_next) * t_next * control_x
                     + t_next**2 * end.x
                 )
                 y_next = (
                     (1 - t_next) ** 2 * start.y
-                    + 2 * (1 - t_next) * t_next * middle.y
+                    + 2 * (1 - t_next) * t_next * control_y
                     + t_next**2 * end.y
                 )
                 theta = math.atan2(y_next - y, x_next - x)
@@ -226,10 +238,28 @@ class BasicTrajectoryPlanner(BaseTrajectoryPlanner[BasicTrajectoryPlannerParams]
 
         segments: list[BaseSegment] = []
 
+        if path[0].theta is not None and len(path) > 1:
+            first_move_direction = path[0].angle(path[1])
+            if self._is_backward:
+                first_move_direction = self._normalize_angle(
+                    first_move_direction + math.pi,
+                )
+
+            initial_angle_diff = abs(
+                self._normalize_angle(first_move_direction - path[0].theta),
+            )
+
+            if initial_angle_diff > _FINAL_ORIENTATION_THRESHOLD:
+                rotation_segment = self._compute_rotation_segment(
+                    path[0],
+                    first_move_direction,
+                )
+                segments.append(rotation_segment)
+
         i = 0
         min_path_length_for_curve = _MIN_POINTS_FOR_CURVE + 1
         while i < len(path) - 1:
-            if i < len(path) - min_path_length_for_curve + 1 and self._can_create_curve(
+            if i <= len(path) - min_path_length_for_curve and self._can_create_curve(
                 path[i],
                 path[i + 1],
                 path[i + 2],
@@ -320,30 +350,45 @@ class BasicTrajectoryPlanner(BaseTrajectoryPlanner[BasicTrajectoryPlannerParams]
             target_point = segment.sampled_points[-1]
 
         angular_speed = 0.0
-        if len(segment.sampled_points) > 1:
+        linear_speed = self.speed_profiler.linear_speed_profile.get_speed(
+            time_elapsed=local_time,
+            distance=segment.total_distance,
+        )
+
+        if len(segment.sampled_points) > 1 and linear_speed > 0:
             idx = min(
                 int(
                     (traveled_distance / segment.total_distance)
-                    * len(segment.sampled_points),
+                    * (len(segment.sampled_points) - 1),
                 ),
                 len(segment.sampled_points) - 2,
             )
-            idx_point = segment.sampled_points[idx]
-            next_idx_point = segment.sampled_points[idx + 1]
-            if idx_point.theta is not None and next_idx_point.theta is not None:
-                angle_diff = self._normalize_angle(
-                    next_idx_point.theta - idx_point.theta,
-                )
-                time_diff = segment.duration / len(segment.sampled_points)
-                if time_diff > 0:
-                    angular_speed = angle_diff / time_diff
+
+            look_range = min(3, len(segment.sampled_points) // 10)
+            idx_start = max(0, idx - look_range)
+            idx_end = min(len(segment.sampled_points) - 1, idx + look_range)
+
+            if idx_end > idx_start:
+                point_start = segment.sampled_points[idx_start]
+                point_end = segment.sampled_points[idx_end]
+
+                if point_start.theta is not None and point_end.theta is not None:
+                    total_angle_diff = self._normalize_angle(
+                        point_end.theta - point_start.theta,
+                    )
+
+                    total_dist = 0.0
+                    for i in range(idx_start, idx_end):
+                        total_dist += segment.sampled_points[i].distance(
+                            segment.sampled_points[i + 1],
+                        )
+
+                    if total_dist > 0.001:
+                        angular_speed = (total_angle_diff / total_dist) * linear_speed
 
         return TrajectoryPlanCommand(
             position=target_point,
-            linear_speed=self.speed_profiler.linear_speed_profile.get_speed(
-                time_elapsed=local_time,
-                distance=segment.total_distance,
-            ),
+            linear_speed=linear_speed,
             angular_speed=angular_speed,
         )
 

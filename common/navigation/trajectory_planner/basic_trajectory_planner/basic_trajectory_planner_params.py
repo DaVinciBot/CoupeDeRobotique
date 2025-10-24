@@ -2,15 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
+from navigation.path_planner import Direction
 from navigation.trajectory_planner.base_trajectory_planner import (
     BaseTrajectoryPlannerParams,
 )
 from navigation.trajectory_planner.structs import TrajectoryPlannerStrategy
-
-if TYPE_CHECKING:
-    from navigation.path_planner import Direction
 
 
 class BasicTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
@@ -22,7 +18,7 @@ class BasicTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
 
     def __init__(
         self,
-        direction: Direction,
+        direction: Direction = Direction.FORWARD,
         curve_detection_angle_threshold: float = 0.5,
         curve_smoothness: float = 0.3,
         *,
@@ -31,9 +27,8 @@ class BasicTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
         """Initialize basic trajectory planner parameters.
 
         Args:
-            trajectory_planning_strategy (TrajectoryPlannerStrategy):
-                The strategy used for generating trajectories.
-            direction (Direction): The direction of the trajectory.
+            direction (Direction, optional):
+                The direction of the trajectory. Defaults to Direction.FORWARD.
             curve_detection_angle_threshold (float, optional):
                 Maximum angle change (in radians) between segments to be considered
                 for curve smoothing. Defaults to 0.5 (~28 degrees).
