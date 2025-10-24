@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
@@ -140,9 +140,7 @@ class GoToOrientedPoint(NavigationTask):
         super().__init__(
             goal=target,
             path_planner_params=BasicPathPlannerParams(),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(
-                respect_goal_orientation=True,
-            ),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
@@ -155,6 +153,7 @@ class GoToOrientedPoint(NavigationTask):
         self._is_initialized: bool = False
         self.navigator_task: NavigatorTask
 
+    @override
     def _initialize(self, ctx: BaseGameContext) -> None:
         """Initialize the NavigatorTask with the target oriented point.
 

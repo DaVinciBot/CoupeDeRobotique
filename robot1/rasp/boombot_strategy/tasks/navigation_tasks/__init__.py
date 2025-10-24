@@ -18,9 +18,9 @@ from boombot_strategy.tasks.navigation_tasks.odometrie import SetOdometrie
 
 __all__ = [
     "GoCentroidOfZone",
-    "GoToOrientedPoint",
     "GoToColorReservedZoneToConstruct",
     "GoToColorReservedZoneToFinishGame",
+    "GoToOrientedPoint",
     "GoToStuffZoneToPickUp",
     "NavigationTask",
     "RelativeBackward",
