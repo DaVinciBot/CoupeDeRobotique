@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import ast
 import asyncio
 import time
 from math import pi
@@ -73,8 +72,6 @@ class MainBrain(Brain):
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
-        self.rolling_basis: RollingBasis | RollingBasisDummy | None = None
-        self.context: ShowGameContext  # UNUSED ?
         self.task_name: str = ""
         self.task_todo: list[BaseTask[ShowGameContext]] = []
         self.task_type: str = ""
@@ -167,7 +164,6 @@ class MainBrain(Brain):
         actuators.block_banner()  # engage the banner blocker
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
-        self.rolling_basis = rolling_basis
         while not self.jack_triggered:  # wait for the trigger event
             time.sleep(0.1)
 
@@ -289,11 +285,9 @@ class MainBrain(Brain):
 
         # Update shared state from the context
         self.score = context.score
-        self.context = context
         self.odemetrie_state = context.arena.ally_zone.point
         self.enemy_odemetrie_state = context.arena.enemy_zone.point
         self.rolling_basis_odometrie = rolling_basis.odometrie
-        self.rolling_basis = rolling_basis
 
     @Brain.task(
         process=True,
@@ -391,19 +385,7 @@ class MainBrain(Brain):
 
         if ui != WSmsg():
             self.logger.info(f"UI instruction {ui.msg} received: {ui.data}")
-            if ui.msg == "eval":
-                instructions = []
-                if isinstance(ui.data, str):
-                    instructions.append(ui.data)
-                elif isinstance(ui.data, list):
-                    instructions = ui.data
-
-                for instruction in instructions:
-                    if instruction.startswith("await "):
-                        await ast.literal_eval(instruction.removeprefix("await "))
-                    else:
-                        ast.literal_eval(instruction)
-            elif ui.msg == "team change":
+            if ui.msg == "team change":
                 if ui.data["team"] in {"yellow", "blue"}:
                     self.arena.set_team_color(TeamColor[ui.data["team"].upper()])
                     self.logger.info(f"Team color set to {ui.data['team']}")
@@ -413,46 +395,17 @@ class MainBrain(Brain):
                 if ui.data["mode"] in {"normal", "iihm"}:
                     self.mode = ui.data["mode"]
                     self.logger.info(f"Mode set to {ui.data['mode']}")
+                    await self.ws_ui.sender.send(
+                        WSmsg(
+                            sender="server",
+                            msg="mode set",
+                            data={"mode": self.mode},
+                        ),
+                    )
                 else:
                     self.logger.warning(f"Invalid mode: {ui.data}")
-                await self.ws_ui.sender.send(
-                    WSmsg(
-                        sender="server",
-                        msg="mode set",
-                        data={"mode": self.mode},
-                    ),
-                )
             elif ui.msg == "hello":
-                current_status = "unknown"
-                data = {}
-                if not self.mode:
-                    current_status = "waiting for mode"
-                elif self.arena.team_color == TeamColor.UNDEFINED:
-                    current_status = "waiting for team color"
-                    data = {"mode": self.mode}
-                elif self.status == "initializing":
-                    current_status = "initializing"
-                    data = {
-                        "mode": self.mode,
-                        "team": self.arena.team_color.name.lower(),
-                    }
-                elif self.status == "starting":
-                    current_status = "starting"
-                    data = {
-                        "mode": self.mode,
-                        "team": self.arena.team_color.name.lower(),
-                    }
-
-                await self.ws_ui.sender.send(
-                    WSmsg(
-                        sender="server",
-                        msg="status",
-                        data={
-                            "status": current_status,
-                            "data": data,
-                        },
-                    ),
-                )
+                await self.receive_hello()
             elif ui.msg == "action":
                 if ui.data["type"] == "go to point":
                     x = float(ui.data["data"]["x"])
@@ -485,18 +438,15 @@ class MainBrain(Brain):
                 kp = float(ui.data["data"]["kp"])
                 ki = float(ui.data["data"]["ki"])
                 kd = float(ui.data["data"]["kd"])
+                pid_type: str = str(ui.data["type"])
                 self.pid_kp = kp
                 self.pid_ki = ki
                 self.pid_kd = kd
                 self.logger.info(
-                    f"Updating {ui.data['type']} PID to Kp: {kp}, Ki: {ki}, Kd: {kd}",
+                    f"Updating {pid_type} PID to Kp: {kp}, Ki: {ki}, Kd: {kd}",
                 )
-                if ui.data["type"] == "linear":
-                    self.pid_type = "linear"
-                    self.should_update_pid = True
-                elif ui.data["type"] == "angular":
-                    self.pid_type = "angular"
-                    self.should_update_pid = True
+                self.pid_type = pid_type
+                self.should_update_pid = True
             else:
                 self.logger.warning(f"Command not implemented: {ui.msg} / {ui.data}")
 
@@ -517,6 +467,40 @@ class MainBrain(Brain):
     # endregion
 
     # region ====== One-Shot Tasks ======
+
+    @Brain.task(process=False, run_on_start=False)
+    async def receive_hello(self) -> None:
+        """Sends the current status to the UI upon receiving a hello message."""
+        current_status = "unknown"
+        data = {}
+        if not self.mode:
+            current_status = "waiting for mode"
+        elif self.arena.team_color == TeamColor.UNDEFINED:
+            current_status = "waiting for team color"
+            data = {"mode": self.mode}
+        elif self.status == "initializing":
+            current_status = "initializing"
+            data = {
+                "mode": self.mode,
+                "team": self.arena.team_color.name.lower(),
+            }
+        elif self.status == "starting":
+            current_status = "starting"
+            data = {
+                "mode": self.mode,
+                "team": self.arena.team_color.name.lower(),
+            }
+
+        await self.ws_ui.sender.send(
+            WSmsg(
+                sender="server",
+                msg="status",
+                data={
+                    "status": current_status,
+                    "data": data,
+                },
+            ),
+        )
 
     @Brain.task(process=False, run_on_start=False)
     async def wait_for_mode(self) -> None:
