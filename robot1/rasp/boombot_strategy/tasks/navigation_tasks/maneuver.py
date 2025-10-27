@@ -100,6 +100,7 @@ class GoCentroidOfZone(NavigationTask):
         self._is_initialized: bool = False
         self.navigator_task: NavigatorTask
 
+    @override
     def _initialize(self, ctx: BaseGameContext) -> None:
         """Initialize by computing the target position from the zone centroid.
 
@@ -140,38 +141,14 @@ class GoToOrientedPoint(NavigationTask):
         super().__init__(
             goal=target,
             path_planner_params=BasicPathPlannerParams(),
-            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(
+                step_sleep_delay=2,
+            ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
                 acs_distance=55,
                 width_view=40,
             ),
-            stabilization_delay=0.5,
-        )
-        self.target: OrientedPoint = target
-        self._is_initialized: bool = False
-        self.navigator_task: NavigatorTask
-
-    @override
-    def _initialize(self, ctx: BaseGameContext) -> None:
-        """Initialize the NavigatorTask with the target oriented point.
-
-        Args:
-            ctx (BaseGameContext): The game context providing arena information.
-        """
-        self._is_initialized = True
-
-        # Create a NavigatorTask using the specified target
-        self.navigator_task = NavigatorTask(
-            params=NavigatorTaskParams(
-                goal=self.target,
-                timeout=self.timeout,
-                path_planner_params=self.path_planner_params,
-                trajectory_planner_params=self.trajectory_planner_params,
-                speed_profiler=self.speed_profiler,
-                avoidance_params=self.avoidance_params,
-                acs_detection_profile_params=self.acs_detection_profile_params,
-                stabilization_delay=self.stabilization_delay,
-            ),
+            stabilization_delay=2,
         )
