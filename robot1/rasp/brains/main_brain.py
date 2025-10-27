@@ -330,11 +330,9 @@ class MainBrain(Brain):
         process=False,
         run_on_start=True,
         refresh_rate=0.5,
-        start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     async def update_ui(self) -> None:
         """Updates the UI with the current state."""
-        # --- MetaProg is insane (loop) --- #
         current_snapshot: dict[str, Any] = {
             "jack_state": not self.jack_triggered,
             "bau_state": self.bau_state,
