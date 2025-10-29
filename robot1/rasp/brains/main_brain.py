@@ -305,7 +305,7 @@ class MainBrain(Brain):
         self.jack_triggered = True
         self.jack_plugged = False
 
-    @Brain.task(process=False, run_on_start=True)
+    @Brain.task(process=False, run_on_start=False)
     async def wait_jack_plug(self) -> None:
         """Wait for the jack to be plugged."""
         await self.inputs.wait_for_jack_plugged()
