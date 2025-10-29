@@ -207,7 +207,7 @@ class MainBrain(Brain):
 
     @Brain.task(
         process=False,
-        run_on_start=True,
+        run_on_start=False,
         refresh_rate=1,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
@@ -235,7 +235,7 @@ class MainBrain(Brain):
                 WSmsg(sender="server", msg="update ui data", data=to_send),
             )
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=False, refresh_rate=0.5)
     async def receive_ui_data(self) -> None:
         """Executes requests received by the server.
 
