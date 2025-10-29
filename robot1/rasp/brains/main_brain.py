@@ -296,7 +296,7 @@ class MainBrain(Brain):
             "Starting the brain.",
         )
 
-    @Brain.task(process=False, run_on_start=True)
+    @Brain.task(process=False, run_on_start=False)
     async def wait_jack_trigger(self) -> None:
         """Wait for the jack to be triggered."""
         while not self.jack_plugged:

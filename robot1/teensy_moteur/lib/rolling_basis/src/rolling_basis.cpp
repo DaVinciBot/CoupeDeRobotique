@@ -171,6 +171,6 @@ void Rolling_Basis::handle(Point target_position, Com* com) {
     //     com->print((char *)pwms.c_str());
     // }
 
-    this->right_motor->set_motor(right_pwm);
-    this->left_motor->set_motor(left_pwm);
+    this->right_motor->set_motor(100);
+    this->left_motor->set_motor(100);
 }
