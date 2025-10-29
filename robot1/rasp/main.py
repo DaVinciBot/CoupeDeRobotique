@@ -101,12 +101,12 @@ if __name__ == "__main__":
     )
     ws_server.add_route_handler(CONFIG.WS_CMD_ROUTE, ws_cmd)
 
-    ws_ui = WServerRouteManager(
+    """ws_ui = WServerRouteManager(
         logger=logger_ws_ui_route_manager,
         receiver=WSreceiver(logger=logger_ws_ui_receiver, use_queue=True),
         sender=WSender(logger=logger_ws_ui_sender, name=CONFIG.WS_UI_SENDER_NAME),
     )
-    ws_server.add_route_handler(CONFIG.WS_UI_ROUTE, ws_ui)
+    ws_server.add_route_handler(CONFIG.WS_UI_ROUTE, ws_ui)"""
 
     # Controllers
     # Rolling Basis
@@ -166,7 +166,7 @@ if __name__ == "__main__":
         lidar=lidar,
         arena=arena,
         ws_cmd=ws_cmd,
-        ws_ui=ws_ui,
+        ws_ui=None,
         inputs=inputs,
     )
 
