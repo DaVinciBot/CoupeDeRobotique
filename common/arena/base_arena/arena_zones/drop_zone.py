@@ -18,16 +18,17 @@ if TYPE_CHECKING:
 
 class DropZone(BaseArenaZone):
     """Zone designated for storage or placement of items."""
+
     def __init__(
-            self,
-            logger: Logger,
-            buffer_size: float = 0.0,
-            polygon: Polygon | None = None,
-            buffered_polygon: Polygon | None = None,
-            update_callback: Callable | None = None,
-            go_to_positions: list[OrientedPoint | Point] | None = None,
+        self,
+        logger: Logger,
+        buffer_size: float = 0.0,
+        polygon: Polygon | None = None,
+        buffered_polygon: Polygon | None = None,
+        update_callback: Callable | None = None,
+        go_to_positions: list[OrientedPoint | Point] | None = None,
     ) -> None:
-        """Initializes the StuffZone with geometry, buffer, and accessibility.
+        """Initializes the DropZone with geometry, buffer, and accessibility.
 
         Args:
             logger (Logger): Logger instance for logging messages.
@@ -56,10 +57,10 @@ class DropZone(BaseArenaZone):
 
     @override
     def update(
-            self,
-            team_color: TeamColor,
-            ally_position: Point | OrientedPoint,
-            enemy_position: Point | OrientedPoint,
+        self,
+        team_color: TeamColor,
+        ally_position: Point | OrientedPoint,
+        enemy_position: Point | OrientedPoint,
     ) -> None:
         """Updates the zone accessibility based on the positions of allies and enemies.
 
@@ -72,7 +73,7 @@ class DropZone(BaseArenaZone):
 
         # Update accessibility to free if an ally or enemy is within the zone
         if (
-                self.buffered_polygon.contains(ally_position)
-                or self.buffered_polygon.contains(enemy_position)
+            self.buffered_polygon.contains(ally_position)
+            or self.buffered_polygon.contains(enemy_position)
         ) and self.accessibility != ZoneAccessibility:
             self._restrict_accessibility()
