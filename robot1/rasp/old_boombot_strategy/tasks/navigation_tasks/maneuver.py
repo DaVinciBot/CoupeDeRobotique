@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from old_boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+
 from a_config_loader import CONFIG
-from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from geometry import OrientedPoint
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,

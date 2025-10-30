@@ -4,11 +4,15 @@ from __future__ import annotations
 
 import time
 
-from boombot_strategy.tasks.actuator_task import Build, Deposit, PickUp
-from boombot_strategy.tasks.navigation_tasks import RelativeBackward, RelativeForward
-from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
+from old_boombot_strategy.tasks.actuator_task import Build, Deposit, PickUp
+from old_boombot_strategy.tasks.navigation_tasks import (
+    RelativeBackward,
+    RelativeForward,
+)
+from old_boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToConstruct,
 )
+
 from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition

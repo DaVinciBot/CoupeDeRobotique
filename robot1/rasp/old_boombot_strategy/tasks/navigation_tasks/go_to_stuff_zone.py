@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from old_boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+
 from a_config_loader import CONFIG
-from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
 )
