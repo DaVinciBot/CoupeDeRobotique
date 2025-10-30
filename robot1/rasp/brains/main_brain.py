@@ -162,11 +162,11 @@ class MainBrain(Brain):
 
         strategy.runner.handle(context)
 
-        # Update the rolling basis odometrie from the context
+        # Update shared state from the context
         self.score = context.score
         self.ui_state["score"] = self.score
         self.rolling_basis_odometrie = rolling_basis.odometrie
-        self.ui_state["odometrie_state"] = rolling_basis.odometrie
+        self.ui_state["odometrie_state"] = self.rolling_basis_odometrie
 
     @Brain.task(
         process=True,
@@ -326,12 +326,12 @@ class MainBrain(Brain):
         enemy_position = OrientedPoint(150, 200, -pi / 2)
         if self.arena.team_color == TeamColor.YELLOW:
             self.logger.info("Starting as YELLOW team.")
-            start_position = OrientedPoint(177.5, 21, -pi / 2)
-            enemy_position = OrientedPoint(122.5, 21, -pi / 2)
-        elif self.arena.team_color == TeamColor.BLUE:
-            self.logger.info("Starting as BLUE team.")
             start_position = OrientedPoint(122.5, 21, -pi / 2)
             enemy_position = OrientedPoint(177.5, 21, -pi / 2)
+        elif self.arena.team_color == TeamColor.BLUE:
+            self.logger.info("Starting as BLUE team.")
+            start_position = OrientedPoint(177.5, 21, -pi / 2)
+            enemy_position = OrientedPoint(122.5, 21, -pi / 2)
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(

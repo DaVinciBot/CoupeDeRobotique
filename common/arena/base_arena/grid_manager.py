@@ -13,7 +13,7 @@ from matplotlib.ticker import MaxNLocator
 from pathfinding.core.grid import Grid, GridNode
 from shapely.strtree import STRtree
 
-from geometry import OrientedPoint, Point, Polygon, box
+from geometry import OrientedPoint, Polygon, box
 
 if TYPE_CHECKING:
     from matplotlib.figure import Figure as pltFigure
@@ -389,28 +389,28 @@ class GridManager:
             node.y * self.chunk_size + self.half_chunk_size,
         )
 
-    def absolute_coords_to_grid_coords(self, point: OrientedPoint | Point) -> GridNode:
+    def absolute_coords_to_grid_coords(self, point: OrientedPoint) -> GridNode:
         """Convert absolute coordinates to grid coordinates.
 
         Args:
-            point (OrientedPoint | Point): Absolute point to convert.
+            point (OrientedPoint): Absolute point to convert.
 
         Returns:
             GridNode: Corresponding node in the grid.
         """
         return GridNode(int(point.x / self.chunk_size), int(point.y / self.chunk_size))
 
-    def grid_coords_to_absolute_coords(self, node: GridNode) -> Point:
+    def grid_coords_to_absolute_coords(self, node: GridNode) -> OrientedPoint:
         """Convert grid coordinates to absolute coordinates.
 
         Args:
             node (GridNode): Grid node to convert.
 
         Returns:
-            Point: Absolute center point of the node.
+            OrientedPoint: Absolute center point of the node.
         """
         x, y = self.get_grid_node_center(node)
-        return Point(x, y)
+        return OrientedPoint(x, y)
 
     def get_static_grid(self) -> Grid:
         """Return the static grid used for pathfinding.

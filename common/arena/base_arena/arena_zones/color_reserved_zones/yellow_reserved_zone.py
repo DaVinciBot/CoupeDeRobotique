@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
     from loggerplusplus import Logger
 
-    from geometry import OrientedPoint, Point, Polygon
+    from geometry import OrientedPoint, Polygon
 
 
 class YellowReservedZone(BaseColorReservedZone):
@@ -31,7 +31,7 @@ class YellowReservedZone(BaseColorReservedZone):
         polygon: Polygon | None = None,
         buffered_polygon: Polygon | None = None,
         update_callback: Callable | None = None,
-        go_to_positions: list[OrientedPoint | Point] | None = None,
+        go_to_positions: list[OrientedPoint] | None = None,
     ) -> None:
         """Initialize the YellowReservedZone with geometry and accessibility.
 
@@ -45,7 +45,7 @@ class YellowReservedZone(BaseColorReservedZone):
                 Buffered polygon geometry. Defaults to None.
             update_callback (Callable | None, optional):
                 Function to be called on updates. Defaults to None.
-            go_to_positions (list[OrientedPoint | Point] | None, optional):
+            go_to_positions (list[OrientedPoint] | None, optional):
                 List of go-to positions within the zone. Defaults to None.
         """
         super().__init__(

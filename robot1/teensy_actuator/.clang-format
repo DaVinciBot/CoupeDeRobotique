@@ -1,0 +1,4 @@
+﻿---
+Language: Cpp
+BasedOnStyle: Chromium
+IndentWidth: "4"

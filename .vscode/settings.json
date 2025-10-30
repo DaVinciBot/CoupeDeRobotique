@@ -54,9 +54,10 @@
     "FIXME",
     "FIXIT",
     "FIX",
+    "QUESTION",
     "TODO",
     "TOTEST",
-    "QUESTION",
+    "UNUSED",
     "[ ]",
     "[x]"
   ],
@@ -81,6 +82,11 @@
     "TOTEST": {
       "foreground": "lime",
       "icon": "codescan-checkmark"
+    },
+    "UNUSED": {
+      "foreground": "grey",
+      "icon": "eye-closed",
+      "iconColour": "grey"
     }
   },
   "todo-tree.highlights.defaultHighlight": {

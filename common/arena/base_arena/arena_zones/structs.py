@@ -7,7 +7,7 @@ from enum import Enum, auto
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from geometry import Point
+    from geometry import OrientedPoint
 
 
 # region ====== Enums ======
@@ -67,12 +67,12 @@ class Record:
 
     Attributes:
         timestamp (float): Time of the record.
-        position (Point): The position recorded.
+        position (OrientedPoint): The position recorded.
     """
 
     timestamp: float
     """Time of the record."""
-    position: Point
+    position: OrientedPoint
     """The position recorded."""
 
 
