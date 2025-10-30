@@ -32,8 +32,8 @@ class WinterArena(BaseArena):
         obstacle_buffer: float,
         chunk_size: int = 2,
         forbidden_cover_threshold: float = 0.5,
-        distance_to_jenga_zone: float = 69,  # TODO : to adjust according to actual arena setup, 69 is a joke lol
-        distance_to_drop_zone: float = 69,  # TODO : to adjust according to actual arena setup, 69 is a joke lol
+        distance_to_jenga_zone: float = 10,  # TODO : to adjust
+        distance_to_drop_zone: float = 10,  # TODO : to adjust
     ) -> None:
         """Initialize the arena with fixed zones.
 
@@ -69,22 +69,21 @@ class WinterArena(BaseArena):
             follow_logger_manager_rules=True,
         )
 
-        forbidden_zone_logger = Logger(
-            identifier="ForbiddenZone",
+        ninja_stage_zone_logger = Logger(
+            identifier="NinjaStageZone",
             follow_logger_manager_rules=True,
         )
 
-        # TODO : adjust pickup angles, oskour y'a des angles ET en plus Eliott a changé l'orientation !!!
         jenga_zones_points: list[
-            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
+            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint]]
         ] = [
             (
                 (10, 130),
                 (25, 110),
                 [
-                    OrientedPoint(25, 120, pi),
-                    OrientedPoint(17.5, 130, -pi / 2),
-                    OrientedPoint(17.5, 110, pi / 2),
+                    OrientedPoint(25 + distance_to_jenga_zone, 120, pi),
+                    OrientedPoint(17.5, 130 + distance_to_jenga_zone, -pi / 2),
+                    OrientedPoint(17.5, 110 - distance_to_jenga_zone, pi / 2),
                 ],
             ),
             (
@@ -155,15 +154,15 @@ class WinterArena(BaseArena):
         ]
 
         drop_zones_points: list[
-            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint | Point]]
+            tuple[tuple[float, float], tuple[float, float], list[OrientedPoint]]
         ] = [
             (
-                (0, 90),
-                (20, 70),
+                (0, 70),
+                (20, 90),
                 [
-                    OrientedPoint(20, 80, pi),
-                    OrientedPoint(10, 90, -pi / 2),
-                    OrientedPoint(10, 70, pi / 2),
+                    OrientedPoint(20 + distance_to_drop_zone, 80, pi),
+                    OrientedPoint(10, 90 + distance_to_drop_zone, -pi / 2),
+                    OrientedPoint(10, 70 - distance_to_drop_zone, pi / 2),
                 ],
             ),
             (
@@ -252,27 +251,37 @@ class WinterArena(BaseArena):
             ),
         ]
 
-        yellow_reserved_zones_points: list[
-            tuple[tuple[float, float], tuple[float, float]]
-        ] = [
-            (
-                (0, 200),
-                (60, 155),
+        yellow_backstage_zone = YellowReservedZone(
+            logger=yellow_reserved_zone_logger,
+            buffer_size=obstacle_buffer,
+            polygon=create_straight_rectangle(
+                Point(0, 200),
+                Point(60, 155),
             ),
-        ]
+        )
 
-        blue_reserved_zones_points: list[
-            tuple[tuple[float, float], tuple[float, float]]
-        ] = [
-            (
-                (240, 200),
-                (300, 155),
+        blue_backstage_zone = BlueReservedZone(
+            logger=blue_reserved_zone_logger,
+            buffer_size=obstacle_buffer,
+            polygon=create_straight_rectangle(
+                Point(240, 200),
+                Point(300, 155),
             ),
-        ]
+        )
 
-        forbidden_zones_points: list[
-            tuple[tuple[float, float], tuple[float, float]]
-        ] = []
+        ninja_stage = ForbiddenZone(
+            logger=ninja_stage_zone_logger,
+            buffer_size=obstacle_buffer,
+            polygon=Polygon(
+                (
+                    (60, 200),
+                    (240, 200),
+                    (240, 165),
+                    (60, 165),
+                    (60, 200),
+                ),
+            ),
+        )
 
         zones: list[BaseArenaZone] = []
 
@@ -310,70 +319,7 @@ class WinterArena(BaseArena):
             for corner_point in drop_zones_points
         )
 
-        zones.extend(
-            YellowReservedZone(
-                logger=yellow_reserved_zone_logger,
-                buffer_size=obstacle_buffer,
-                polygon=create_straight_rectangle(
-                    Point(*corner_point[0]),
-                    Point(*corner_point[1]),
-                ),
-                go_to_positions=[
-                    (
-                        corner_point[GO_TO_POSITIONS_INDEX]
-                        if len(corner_point) > GO_TO_POSITIONS_INDEX
-                        else None
-                    ),
-                ],
-            )
-            for corner_point in yellow_reserved_zones_points
-        )
-
-        zones.extend(
-            BlueReservedZone(
-                logger=blue_reserved_zone_logger,
-                buffer_size=obstacle_buffer,
-                polygon=create_straight_rectangle(
-                    Point(*corner_point[0]),
-                    Point(*corner_point[1]),
-                ),
-                go_to_positions=(
-                    corner_point[GO_TO_POSITIONS_INDEX]
-                    if len(corner_point) > GO_TO_POSITIONS_INDEX
-                    else None
-                ),
-            )
-            for corner_point in blue_reserved_zones_points
-        )
-
-        zones.extend(
-            ForbiddenZone(
-                logger=forbidden_zone_logger,
-                buffer_size=obstacle_buffer,
-                polygon=create_straight_rectangle(
-                    Point(*corner_point[0]),
-                    Point(*corner_point[1]),
-                ),
-            )
-            for corner_point in forbidden_zones_points
-        )
-
-        # This is the scene for the ninjas
-        ninja_stage = ForbiddenZone(
-            logger=forbidden_zone_logger,
-            buffer_size=obstacle_buffer,
-            polygon=Polygon(
-                (
-                    (60, 200),
-                    (240, 200),
-                    (240, 165),
-                    (60, 165),
-                    (60, 200),
-                ),
-            ),
-        )
-
-        zones.extend([ninja_stage])
+        zones.extend([yellow_backstage_zone, blue_backstage_zone, ninja_stage])
 
         super().__init__(
             logger,
