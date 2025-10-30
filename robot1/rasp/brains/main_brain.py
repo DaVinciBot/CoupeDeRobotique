@@ -24,7 +24,7 @@ from boombot_strategy.sub_graphs import (
     get_pickup_subgraph,
     get_push_one_floor_to_wall_subgraph,
 )
-from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint
+from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint, SetOdometrie
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
@@ -264,6 +264,19 @@ class MainBrain(Brain):
                             zone,
                         ).get_entry(),
                     )
+                elif self.task_type == "reset_odometry":
+                    action_holder[0] = GraphRunner(
+                        logger=Logger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=BaseTaskNode(
+                            name="[Debug] Reset Odometry",
+                            tasks=[
+                                SetOdometrie(0, 0, 0),
+                            ],
+                        ),
+                    )
                 self.should_update_task = False
             if action_holder[0] is not None:
                 action_holder[0].handle(context)
@@ -424,6 +437,7 @@ class MainBrain(Brain):
                     "pickup",
                     "push_floor",
                     "construct_one_floor",
+                    "reset_odometry",
                 }:
                     self.task_type = ui.data["type"]
                     self.should_update_task = True

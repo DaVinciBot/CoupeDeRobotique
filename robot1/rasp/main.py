@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 
 from loggerplusplus import Logger, LogLevels
 from taskbrain import DictProxyAccessor
@@ -182,6 +183,18 @@ if __name__ == "__main__":
         """Kill all running Python processes using pkill -9 python."""
         subprocess.run(["pkill", "-9", "python"], check=False)  # noqa: S607
         logger_brain.fatal("All Python processes killed.")
+
+    args_launch = sys.argv
+    if "-i" in args_launch:
+        logger_brain.info("Opening iihm...")
+        try:
+            subprocess.Popen([
+                "chromium",
+                "--no-sandbox",
+                "/home/dvb/CoupeDeRobotique/robot1/rasp/WebUI/index.html",
+            ])
+        except FileNotFoundError:
+            logger_brain.warning("Chromium not found.")
 
     ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
