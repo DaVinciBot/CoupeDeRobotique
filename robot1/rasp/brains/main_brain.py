@@ -48,7 +48,7 @@ class MainBrain(Brain):
         Args:
             logger (Logger): Logger instance for logging messages.
             lidar (Lidar | LidarDummy): Lidar instance for distance measurements.
-            arena (ShowArena): Arena instance for representing the game arena.
+            arena (WinterArena): Arena instance for representing the game arena.
             ws_cmd (WServerRouteManager): WebSocket command route manager.
             ws_ui (WServerRouteManager): WebSocket UI route manager.
             inputs (Inputs): Inputs instance for handling sensor data.

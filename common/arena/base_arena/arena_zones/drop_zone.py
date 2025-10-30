@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from loggerplusplus import Logger
 
     from arena.base_arena.team_color import TeamColor
-    from geometry import OrientedPoint, Point, Polygon
+    from geometry import OrientedPoint, Polygon
 
 
 class DropZone(BaseArenaZone):
@@ -26,7 +26,7 @@ class DropZone(BaseArenaZone):
         polygon: Polygon | None = None,
         buffered_polygon: Polygon | None = None,
         update_callback: Callable | None = None,
-        go_to_positions: list[OrientedPoint | Point] | None = None,
+        go_to_positions: list[OrientedPoint] | None = None,
     ) -> None:
         """Initializes the DropZone with geometry, buffer, and accessibility.
 
@@ -40,7 +40,7 @@ class DropZone(BaseArenaZone):
                 Buffered polygon geometry. Defaults to None.
             update_callback (Callable | None, optional):
                 Function to be called on updates. Defaults to None.
-            go_to_positions (list[OrientedPoint | Point] | None, optional):
+            go_to_positions (list[OrientedPoint] | None, optional):
                 List of go-to positions within the zone. Defaults to None.
         """
         super().__init__(
@@ -59,15 +59,15 @@ class DropZone(BaseArenaZone):
     def update(
         self,
         team_color: TeamColor,
-        ally_position: Point | OrientedPoint,
-        enemy_position: Point | OrientedPoint,
+        ally_position: OrientedPoint,
+        enemy_position: OrientedPoint,
     ) -> None:
         """Updates the zone accessibility based on the positions of allies and enemies.
 
         Args:
             team_color (TeamColor): The color of the team.
-            ally_position (Point | OrientedPoint): Position of an ally.
-            enemy_position (Point | OrientedPoint): Position of an enemy.
+            ally_position (OrientedPoint): Position of an ally.
+            enemy_position (OrientedPoint): Position of an enemy.
         """
         super().update(team_color, ally_position, enemy_position)
 
@@ -75,5 +75,5 @@ class DropZone(BaseArenaZone):
         if (
             self.buffered_polygon.contains(ally_position)
             or self.buffered_polygon.contains(enemy_position)
-        ) and self.accessibility != ZoneAccessibility:
+        ) and self.accessibility != ZoneAccessibility.RESTRICTED:
             self._restrict_accessibility()
