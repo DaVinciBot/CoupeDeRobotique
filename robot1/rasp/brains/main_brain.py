@@ -16,7 +16,7 @@ from ws_comms import WServerRouteManager, WSmsg
 
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
-from boombot_strategy import ShowGameContext
+from boombot_strategy import WinterGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
@@ -141,7 +141,7 @@ class MainBrain(Brain):
         # --- 3) Build the strategy --- #
 
         strategy = TowerRushAltStrategy(
-            ShowGameContext(
+            WinterGameContext(
                 arena=self.arena,
                 rolling_basis=rolling_basis,
                 actuators=actuators,
@@ -153,7 +153,7 @@ class MainBrain(Brain):
         # visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
-        context = ShowGameContext(
+        context = WinterGameContext(
             arena=self.arena,
             rolling_basis=rolling_basis,
             actuators=actuators,

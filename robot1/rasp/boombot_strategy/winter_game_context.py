@@ -7,12 +7,12 @@ from typing import TYPE_CHECKING
 from strategy.core import BaseGameContext
 
 if TYPE_CHECKING:
-    from arena.show_arena import ShowArena
+    from arena.winter_arena import WinterArena
     from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
     from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 
 
-class ShowGameContext(BaseGameContext):
+class WinterGameContext(BaseGameContext):
     """Context class for the show game.
 
     This class is used to store the context of the show game.
@@ -20,15 +20,15 @@ class ShowGameContext(BaseGameContext):
 
     def __init__(
         self,
-        arena: ShowArena,
+        arena: WinterArena,
         rolling_basis: RollingBasis | RollingBasisDummy,
         actuators: ActuatorsShow | ActuatorsShowDummy,
         score: int = 0,
     ) -> None:
-        """Initialize the ShowGameContext.
+        """Initialize the WinterGameContext.
 
         Args:
-            arena (ShowArena): The arena of the game.
+            arena (WinterArena): The arena of the game.
             rolling_basis (RollingBasis | RollingBasisDummy):
                 The rolling basis of the robot.
             actuators (ActuatorsShow | ActuatorsShowDummy): The actuators of the robot.
