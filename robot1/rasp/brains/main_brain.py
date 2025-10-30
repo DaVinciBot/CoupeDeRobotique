@@ -184,7 +184,6 @@ class MainBrain(Brain):
                     score=self.score,
                 ),
             )
-        rolling_basis.set_odometrie(OrientedPoint(0, 0, 0))
 
         self.should_send_start = True
         self.status = "starting"
