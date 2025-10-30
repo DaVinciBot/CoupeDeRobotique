@@ -23,7 +23,6 @@ from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 
 if TYPE_CHECKING:
-    from arena.show_arena import ShowArena
     from arena.winter_arena import WinterArena
     from sensors import Inputs, Lidar, LidarDummy
 
@@ -37,7 +36,7 @@ class MainBrain(Brain):
         # Sensor
         lidar: Lidar | LidarDummy,
         # Environment
-        arena: ShowArena,
+        arena: WinterArena,
         # WS routes
         ws_cmd: WServerRouteManager,
         ws_ui: WServerRouteManager,
