@@ -432,7 +432,7 @@ class GridManager:
         self,
         *,
         only_static_grid: bool = False,
-        path: list | None = None,
+        path: list[OrientedPoint] | None = None,
         show: bool = True,
         plot: tuple[plt.Axes, pltFigure] | None = None,
     ) -> tuple[plt.Axes, pltFigure]:
@@ -441,7 +441,7 @@ class GridManager:
         Args:
             only_static_grid (bool, optional):
                 Whether to show only the static grid. Defaults to ``False``.
-            path (list | None, optional):
+            path (list[OrientedPoint] | None, optional):
                 Path to draw on the grid, if provided. Defaults to None.
             show (bool, optional):
                 Whether to display the plot. Defaults to ``True``.

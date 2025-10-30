@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, Any, override
 
 from strategy.core.tasks import BaseNavigationTask
 from strategy.core.transitions.conditional_transition.transitions_condition.base_transition_condition import (  # noqa: E501
@@ -52,7 +52,7 @@ class ZoneAccessibilityTransitionCondition(BaseTransitionCondition):
                 ``True`` if the condition is met (zone is accessible or not based
                 on ``reverse``), ``False`` otherwise.
         """
-        navigation_tasks: list[BaseNavigationTask] = [
+        navigation_tasks: list[BaseNavigationTask[Any]] = [
             task for task in next_node.tasks if isinstance(task, BaseNavigationTask)
         ]
         if not navigation_tasks:

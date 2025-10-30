@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from navigation.path_planner.astar_path_planner import (
     AStarPathPlanner,
@@ -31,7 +31,7 @@ class PathPlannerFactory:
     @staticmethod
     def instantiate(
         params: BasePathPlannerParams,
-    ) -> BasePathPlanner:
+    ) -> BasePathPlanner[Any, Any]:
         """Create a path planner based on the given parameters.
 
         This method inspects the ``path_finding_strategy`` attribute of the provided
@@ -44,7 +44,7 @@ class PathPlannerFactory:
                 including the desired path planning strategy.
 
         Returns:
-            BasePathPlanner: A specific implementation of the path planner,
+            BasePathPlanner[Any, Any]: A specific implementation of the path planner,
                 instantiated with the given parameters.
 
         Raises:
