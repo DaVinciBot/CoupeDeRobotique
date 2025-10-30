@@ -13,7 +13,7 @@ from arena.base_arena.arena_zones import (
     BlueReservedZone,
     DropZone,
     ForbiddenZone,
-    JengaZone,
+    StuffZone,
     YellowReservedZone,
 )
 from geometry import OrientedPoint, Point, Polygon, create_straight_rectangle
@@ -277,7 +277,7 @@ class WinterArena(BaseArena):
         zones: list[BaseArenaZone] = []
 
         zones.extend(
-            JengaZone(
+            StuffZone(
                 logger=jenga_zone_logger,
                 buffer_size=obstacle_buffer,
                 polygon=create_straight_rectangle(
@@ -318,11 +318,13 @@ class WinterArena(BaseArena):
                     Point(*corner_point[0]),
                     Point(*corner_point[1]),
                 ),
-                go_to_positions=(
-                    corner_point[GO_TO_POSITIONS_INDEX]
-                    if len(corner_point) > GO_TO_POSITIONS_INDEX
-                    else None
-                ),
+                go_to_positions=[
+                    (
+                        corner_point[GO_TO_POSITIONS_INDEX]
+                        if len(corner_point) > GO_TO_POSITIONS_INDEX
+                        else None
+                    ),
+                ],
             )
             for corner_point in yellow_reserved_zones_points
         )
