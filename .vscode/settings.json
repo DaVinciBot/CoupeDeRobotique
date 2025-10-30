@@ -2,6 +2,7 @@
   "[python]": {
     "editor.defaultFormatter": "charliermarsh.ruff"
   },
+  "clangd.enable": false,
   "editor.codeActionsOnSave": {
     "source.convertImportFormat": "explicit",
     "source.organizeImports": "explicit",

@@ -153,7 +153,7 @@ void setup() {
     // timer interrupt Serial.println("Setup complete, starting navigation...");
 }
 
-long lastTime = 0;  // Variable to store the last time the loop was executed
+long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
     leftMotor->_doKSteps();
     /*if (millis() - lastTime > 2 &&
@@ -162,7 +162,7 @@ void loop() {
         navigationUpdate();  // Call navigation update function
         lastTime = millis();
     }
-    lidar->loop();*/
+    lidar->update();*/
 #if ENABLE_OTA
     ota.loop();
 #endif
