@@ -94,25 +94,21 @@ class Motor {
     void resetStepCount();
 
    private:
-    uint8_t _stepPin;
-    uint8_t _dirPin;
-    uint8_t _enablePin;
-    float _factorK;
-    bool _invertDirection;
+    uint8_t _stepPin;       // Pin to control the stepping of the motor
+    uint8_t _dirPin;        // Pin to control the direction of the motor
+    uint8_t _enablePin;     // Pin to enable/disable the motor
+    float _factorK;         // Microstepping factor K
+    bool _invertDirection;  // Whether to invert the motor direction
 
-    unsigned int _stepsPerRevolution;
-    float _targetSpeedStepsPerSec;
-    float _currentSpeedStepsPerSec;
-    float _acceleration;
+    unsigned int _stepsPerRevolution;  // Steps per revolution divided by K
+    float _targetSpeedStepsPerSec;     // Target speed in steps per second
+    float _currentSpeedStepsPerSec;    // Current speed in steps per second
+    float _acceleration;  // Acceleration in steps per second squared
 
-    bool _moving;
-    unsigned long _lastStepTime;
-    /**
-     * @brief Time in microseconds between steps
-     *
-     */
-    float _usDelayBetweenKSteps;
-    long _stepCount;
+    bool _moving;                 // Whether the motor is currently moving
+    unsigned long _lastStepTime;  // Last time a step was taken
+    float _usDelayBetweenKSteps;  // Microseconds delay between K steps
+    long _stepCount;              // Total step count
 
     /**
      * @brief Set the direction of the motor
@@ -121,10 +117,7 @@ class Motor {
      *
      */
     void _setDirection(bool clockwise);
-    /**
-     * @brief Perform K steps of the motor
-     *
-     */
+    // Perform K steps
     void _doKSteps();
 };
 

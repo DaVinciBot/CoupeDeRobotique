@@ -106,35 +106,38 @@ class RollingBasis {
      */
     void _sendWheelSpeeds(float v, float w);
 
-    Motor* _leftMotor;
-    Motor* _rightMotor;
-    float _wheelDiameterMm;
-    float _wheelBaseMm;
+    Motor* _leftMotor;       // Pointer to the left motor
+    Motor* _rightMotor;      // Pointer to the right motor
+    float _wheelDiameterMm;  // Diameter of the wheels in millimeters
+    float _wheelBaseMm;      // Distance between the wheels in millimeters
 
-    // long _prevLeftSteps;
-    // long _prevRightSteps;
+    // long _prevLeftSteps;   // Previous left motor steps
+    // long _prevRightSteps;  // Previous right motor steps
 
-    Point _currentPose;
-    float _linearSpeed;
-    float _angularSpeed;
-    Phase _phase;
+    Point _currentPose;   // Current position and orientation of the robot
+    float _linearSpeed;   // Linear speed of the robot in mm/s
+    float _angularSpeed;  // Angular speed of the robot in rad/s
+    Phase _phase;         // Current phase of the rolling basis
 
-    float _rotateDuration;
-    float _forwardDuration;
+    float _rotateDuration;   // Duration of the rotation phase
+    float _forwardDuration;  // Duration of the forwarding phase
+    // Direction of the rotation (1 for clockwise, -1 for counter-clockwise)
     float _rotateDirection;
-    std::chrono::steady_clock::time_point _startTime;
+    std::chrono::steady_clock::time_point
+        _startTime;  // Start time of the current phase
 
-    // PID _linDistPid, _angDistPid;
+    // PID _linDistPid;  // PID controller for linear distance
+    // PID _angDistPid;  // PID controller for angular distance
 
-    // float _cmdLinSpeed;
-    // float _cmdAngSpeed;
-    // Point _cmdPosition;
+    // float _cmdLinSpeed;  // Commanded linear speed in mm/s
+    // float _cmdAngSpeed;  // Commanded angular speed in rad/s
+    // Point _cmdPosition;  // Target position and orientation
 
-    // float _measLinSpeed;
-    // float _measAngSpeed;
+    // float _measLinSpeed;  // Measured linear speed in mm/s
+    // float _measAngSpeed;  // Measured angular speed in rad/s
 
-    // std::chrono::steady_clock::time_point _lastTime;
-    // bool _moving;
+    // std::chrono::steady_clock::time_point _lastTime;  // Last update time
+    // bool _moving;  // Whether the rolling basis is currently moving
 };
 
 #endif
