@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from arena.base_arena.arena_zones import AllyZone, EnemyZone
 
 
-class Navigator:
+class Navigator:  # UNUSED
     """Navigator class."""
 
     def __init__(self, logger: Logger | None = None) -> None:

@@ -85,7 +85,7 @@ bool lidar_pami::isTiretteOn(uint16_t threshold) {
     return mean < threshold;
 }
 
-void lidar_pami::loop() {
+void lidar_pami::update() {
     if (_serial.available()) {
         if (readFrame()) {
             if (_onReceiveCallback != nullptr) {
@@ -96,6 +96,7 @@ void lidar_pami::loop() {
         }
     }
 }
+
 void lidar_pami::onReceive(void (*callback)()) {
     _onReceiveCallback = callback;
     Serial.println("lidar_pami: onReceive callback set");

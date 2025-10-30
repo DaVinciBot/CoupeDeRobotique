@@ -80,7 +80,17 @@ class RollingBasisDummy(BaseComTeensy):
 
         Args:
             target_position (OrientedPoint): Target position and orientation.
+
+        Raises:
+            ValueError: If target_position.theta is None.
         """
+        if target_position.theta is None:
+            msg = (
+                f"Target position theta must be defined, got None at "
+                f"position ({target_position.x}, {target_position.y})"
+            )
+            raise ValueError(msg)
+
         self.odometrie = target_position
 
         self.logger.debug(f"[DUMMY] Set speed and position: {target_position}")
@@ -91,7 +101,17 @@ class RollingBasisDummy(BaseComTeensy):
 
         Args:
             odometrie (OrientedPoint): The new odometrie values.
+
+        Raises:
+            ValueError: If odometrie.theta is None.
         """
+        if odometrie.theta is None:
+            msg = (
+                f"Odometrie theta must be defined, got None at "
+                f"position ({odometrie.x}, {odometrie.y})"
+            )
+            raise ValueError(msg)
+
         self.odometrie = odometrie
         self.logger.info(f"[DUMMY] Set odometrie: {odometrie}")
 

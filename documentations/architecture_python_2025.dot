@@ -1,0 +1,309 @@
+digraph RobotArchitecture {
+    // Graph settings - removed splines=ortho to avoid label warnings
+    graph [rankdir=TB, nodesep=0.8, ranksep=1.2, fontname="Arial", bgcolor="#f9f9f9"];
+    node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11];
+    edge [fontname="Arial", fontsize=9];
+
+    // Color scheme
+    subgraph cluster_legend {
+        label="Legend";
+        style=filled;
+        color=lightgrey;
+        node [shape=box];
+
+        entry [label="Entry Point", fillcolor="#ff6b6b", color="#c92a2a"];
+        brain_comp [label="Brain Layer", fillcolor="#4ecdc4", color="#0d7377"];
+        strategy_comp [label="Strategy Layer", fillcolor="#95e1d3", color="#38ada9"];
+        nav_comp [label="Navigation Layer", fillcolor="#ffd93d", color="#f9ca24"];
+        hw_comp [label="Hardware Layer", fillcolor="#a29bfe", color="#6c5ce7"];
+        comm_comp [label="Communication", fillcolor="#fd79a8", color="#e84393"];
+    }
+
+    // ==================== ENTRY POINT ====================
+    subgraph cluster_entry {
+        label="Entry Point";
+        style=filled;
+        fillcolor="#ffe0e0";
+
+        main [label="main.py\n(robot1/rasp/main.py)", fillcolor="#ff6b6b", color="#c92a2a"];
+    }
+
+    // ==================== BRAIN LAYER ====================
+    subgraph cluster_brain {
+        label="Brain Layer";
+        style=filled;
+        fillcolor="#d0f4f1";
+
+        mainbrain [label="MainBrain\n(Orchestrator)", fillcolor="#4ecdc4", color="#0d7377"];
+        brain_run [label="run()\nMain Control Loop", fillcolor="#4ecdc4", color="#0d7377"];
+        brain_vis [label="visualize_arena()\nRendering Process", fillcolor="#4ecdc4", color="#0d7377"];
+        brain_ui [label="update_ui()\nWebSocket Updates", fillcolor="#4ecdc4", color="#0d7377"];
+    }
+
+    // ==================== STRATEGY LAYER ====================
+    subgraph cluster_strategy {
+        label="Strategy Layer (common/strategy + robot1/rasp/boombot_strategy)";
+        style=filled;
+        fillcolor="#e8f9f5";
+
+        subgraph cluster_strategy_core {
+            label="Core Strategy System";
+
+            base_strategy [label="BaseStrategy", fillcolor="#95e1d3", color="#38ada9"];
+            strategy_instance [label="TowerRushAltStrategy\n(Concrete Strategy)", fillcolor="#95e1d3", color="#38ada9"];
+            graph_runner [label="GraphRunner\n- active: list[TaskNode]\n- prev: dict\n- handle(ctx)\n- run(ctx)", fillcolor="#95e1d3", color="#38ada9"];
+            subgraph_builder [label="SubGraphBuilder\n(Builds Transitions)", fillcolor="#95e1d3", color="#38ada9"];
+        }
+
+        subgraph cluster_task_nodes {
+            label="Task Nodes";
+
+            task_node [label="BaseTaskNode\n- name\n- tasks: list[Task]\n- transitions\n- status\n- scoring_function\n- execute()\n- handle()", fillcolor="#95e1d3", color="#38ada9"];
+        }
+
+        subgraph cluster_subgraphs {
+            label="Sub-Graphs (Reusable Sequences)";
+
+            subgraph_base [label="BaseSubGraph\n- entry_node\n- exit_nodes\n- all_nodes", fillcolor="#95e1d3", color="#38ada9"];
+            subgraph_examples [label="Examples:\n• DeployBannerSubGraph\n• PickupSubGraph\n• ConstructSubGraph", fillcolor="#95e1d3", color="#38ada9", shape=note];
+        }
+
+        subgraph cluster_tasks {
+            label="Tasks (Atomic Actions)";
+
+            base_task [label="BaseTask[GameContextT]\n- handle(ctx) -> bool", fillcolor="#95e1d3", color="#38ada9"];
+            nav_task [label="BaseNavigationTask", fillcolor="#95e1d3", color="#38ada9"];
+            actuator_task [label="ActuatorTask\n(Servo/Stepper Control)", fillcolor="#95e1d3", color="#38ada9"];
+        }
+
+        subgraph cluster_transitions {
+            label="Transitions";
+
+            base_transition [label="BaseTransition\n- can_transit(from, ctx)", fillcolor="#95e1d3", color="#38ada9"];
+            transition_examples [label="Examples:\n• DirectTransition\n• ConditionalTransition", fillcolor="#95e1d3", color="#38ada9", shape=note];
+        }
+
+        game_context [label="ShowGameContext\n- arena\n- rolling_basis\n- actuators\n- score", fillcolor="#95e1d3", color="#38ada9"];
+    }
+
+    // ==================== NAVIGATION LAYER ====================
+    subgraph cluster_navigation {
+        label="Navigation Layer (common/navigation)";
+        style=filled;
+        fillcolor="#fff8e1";
+
+        navigator_task [label="NavigatorTask\n- params\n- state: TaskState\n- plan_task()\n- handle()\n- is_finished()", fillcolor="#ffd93d", color="#f9ca24"];
+
+        subgraph cluster_trajectory {
+            label="Trajectory Planning";
+
+            traj_planner [label="BaseTrajectoryPlanner\n- speed_profiler\n- plan_trajectory(path)\n- get_plan() -> Command", fillcolor="#ffd93d", color="#f9ca24"];
+            segments [label="Trajectory Segments:\n- StraightSegment\n- RotationSegment\n- SmoothSegment\n- StopSegment", fillcolor="#ffd93d", color="#f9ca24"];
+        }
+
+        subgraph cluster_avoidance {
+            label="Avoidance System";
+
+            avoidance_base [label="BaseAvoidance\n- handle()", fillcolor="#ffd93d", color="#f9ca24"];
+            avoidance_examples [label="Implementations:\n• StopAndWaitAvoidance\n• BackAvoidance\n• NoAvoidance", fillcolor="#ffd93d", color="#f9ca24", shape=note];
+            acs_profile [label="AcsDetectionProfile\n(Obstacle Detection)", fillcolor="#ffd93d", color="#f9ca24"];
+        }
+
+        subgraph cluster_path_planning {
+            label="Path Planning";
+
+            path_planner_base [label="BasePathPlanner\n- plan_path(params)\n  -> list[OrientedPoint]", fillcolor="#ffd93d", color="#f9ca24"];
+            planner_examples [label="Implementations:\n• AStarPathPlanner\n• BasicPathPlanner\n• DeltaPathPlanner", fillcolor="#ffd93d", color="#f9ca24", shape=note];
+        }
+    }
+
+    // ==================== ARENA & GRID ====================
+    subgraph cluster_arena {
+        label="Arena & Grid Management (common/arena)";
+        style=filled;
+        fillcolor="#f3e5f5";
+
+        base_arena [label="BaseArena\n- width, height\n- border_buffer\n- grid_manager\n- zones: list", fillcolor="#ce93d8", color="#8e24aa"];
+        arena_impl [label="ShowArena\n(Implementation)", fillcolor="#ce93d8", color="#8e24aa"];
+
+        grid_manager [label="GridManager\n- Discretized grid\n- Walkability tracking\n- Path planning interface", fillcolor="#ce93d8", color="#8e24aa"];
+
+        subgraph cluster_zones {
+            label="Arena Zones";
+
+            zone_base [label="BaseArenaZone\n- update(team, ally, enemy)\n- is_accessible()", fillcolor="#ce93d8", color="#8e24aa"];
+            zone_examples [label="Zone Types:\n• AllyZone (dynamic)\n• EnemyZone (tracking)\n• StuffZone (pickups)\n• ForbiddenZone (obstacles)\n• ColorReservedZones (team)", fillcolor="#ce93d8", color="#8e24aa", shape=note];
+        }
+    }
+
+    // ==================== HARDWARE LAYER ====================
+    subgraph cluster_hardware {
+        label="Hardware Layer";
+        style=filled;
+        fillcolor="#e8eaf6";
+
+        subgraph cluster_sensors {
+            label="Sensors (robot1/rasp/sensors)";
+
+            lidar [label="Lidar (SICK TiM 571)\n- scan_to_polars()\n- scan_to_distances()\n- is_connected()", fillcolor="#a29bfe", color="#6c5ce7"];
+            inputs [label="Inputs (GPIO)\n- Jack (start)\n- BAU (emergency)", fillcolor="#a29bfe", color="#6c5ce7"];
+        }
+
+        subgraph cluster_controllers {
+            label="Controllers (robot1/rasp/controllers)";
+
+            rolling_basis [label="RollingBasis\n- odometrie: OrientedPoint\n- linear/angular PIDs\n- set_target_position()\n- set_odometrie()", fillcolor="#a29bfe", color="#6c5ce7"];
+
+            actuators [label="Actuators\n- elevator_ticks\n- switches_states\n- set_servo_angle()\n- stepper_step()", fillcolor="#a29bfe", color="#6c5ce7"];
+        }
+
+        subgraph cluster_teensy {
+            label="Teensy Microcontrollers";
+
+            teensy_motor [label="Teensy Motor\n(teensy_moteur)\n- Receives: SET_TARGET_POSITION\n- Sends: UPDATE_ROLLING_BASIS", fillcolor="#a29bfe", color="#6c5ce7"];
+            teensy_actuator [label="Teensy Actuator\n(teensy_actuator)\n- Receives: SET_SERVO_ANGLE\n- Sends: SWITCH_STATE_RETURN", fillcolor="#a29bfe", color="#6c5ce7"];
+        }
+
+        usb_com [label="USB Serial Protocol\n(common/usb_com)\n- Struct packing\n- Message types", fillcolor="#a29bfe", color="#6c5ce7"];
+    }
+
+    // ==================== COMMUNICATION ====================
+    subgraph cluster_communication {
+        label="Communication Layer";
+        style=filled;
+        fillcolor="#ffe0f0";
+
+        ws_server [label="WServer\n(WebSocket Server)", fillcolor="#fd79a8", color="#e84393"];
+
+        ws_cmd_route [label="/cmd Route\n(Commands)", fillcolor="#fd79a8", color="#e84393"];
+        ws_ui_route [label="/ui Route\n(UI Updates)", fillcolor="#fd79a8", color="#e84393"];
+
+        ws_sender [label="WSender\n(Outgoing)", fillcolor="#fd79a8", color="#e84393"];
+        ws_receiver [label="WSreceiver\n(Incoming Queue)", fillcolor="#fd79a8", color="#e84393"];
+
+        webui [label="WebUI\n(Monitoring/Control)", fillcolor="#fd79a8", color="#e84393"];
+    }
+
+    // ==================== CONFIGURATION ====================
+    subgraph cluster_config {
+        label="Configuration";
+        style=filled;
+        fillcolor="#f5f5f5";
+
+        config_loader [label="ConfigLoader\n(a_config_loader)", fillcolor="#bdbdbd", color="#757575"];
+        config_json [label="config.json\n- Team colors\n- PID parameters\n- Speed profiles\n- Servo configs", fillcolor="#bdbdbd", color="#757575"];
+    }
+
+    // ==================== MAIN FLOW EDGES ====================
+
+    // Entry point initialization
+    main -> ws_server [color="#333333", penwidth=2];
+    main -> lidar [color="#333333", penwidth=2];
+    main -> arena_impl [color="#333333", penwidth=2];
+    main -> inputs [color="#333333", penwidth=2];
+    main -> mainbrain [color="#333333", penwidth=2];
+    main -> config_loader [color="#666666"];
+
+    // MainBrain composition
+    mainbrain -> brain_run [color="#0d7377", penwidth=2];
+    mainbrain -> brain_vis [color="#0d7377"];
+    mainbrain -> brain_ui [color="#0d7377"];
+
+    mainbrain -> lidar [color="#666666", style=dashed];
+    mainbrain -> arena_impl [color="#666666", style=dashed];
+    mainbrain -> inputs [color="#666666", style=dashed];
+    mainbrain -> ws_cmd_route [color="#666666", style=dashed];
+    mainbrain -> ws_ui_route [color="#666666", style=dashed];
+
+    // Brain run loop
+    brain_run -> rolling_basis [color="#0d7377", penwidth=2];
+    brain_run -> actuators [color="#0d7377", penwidth=2];
+    brain_run -> game_context [color="#0d7377", penwidth=2];
+    brain_run -> strategy_instance [color="#0d7377", penwidth=2];
+    brain_run -> graph_runner [color="#0d7377", penwidth=3];
+
+    // Strategy architecture
+    strategy_instance -> base_strategy [color="#38ada9"];
+    base_strategy -> subgraph_builder [color="#38ada9"];
+    base_strategy -> graph_runner [color="#38ada9"];
+
+    strategy_instance -> subgraph_examples [color="#38ada9", style=dashed];
+
+    subgraph_builder -> task_node [color="#38ada9"];
+    subgraph_builder -> base_transition [color="#38ada9"];
+
+    graph_runner -> task_node [color="#38ada9", penwidth=2];
+
+    // Task node composition
+    task_node -> base_task [color="#38ada9"];
+    task_node -> base_transition [color="#38ada9"];
+
+    // Task inheritance
+    nav_task -> base_task [color="#38ada9"];
+    actuator_task -> base_task [color="#38ada9"];
+
+    // Sub-graphs
+    subgraph_base -> task_node [color="#38ada9"];
+
+    // Transitions
+    base_transition -> transition_examples [color="#38ada9", style=dashed];
+
+    // Game context
+    game_context -> arena_impl [color="#38ada9"];
+    game_context -> rolling_basis [color="#38ada9", penwidth=2];
+    game_context -> actuators [color="#38ada9", penwidth=2];
+
+
+    // Navigator architecture
+    nav_task -> navigator_task [color="#f9ca24", penwidth=2];
+    navigator_task -> path_planner_base [color="#f9ca24"];
+    navigator_task -> traj_planner [color="#f9ca24"];
+    navigator_task -> avoidance_base [color="#f9ca24"];
+
+    // Path planners
+    path_planner_base -> planner_examples [color="#f9ca24", style=dashed];
+    path_planner_base -> grid_manager [color="#f9ca24"];
+
+    // Trajectory planning
+    traj_planner -> segments [color="#f9ca24"];
+
+    // Avoidance
+    avoidance_base -> avoidance_examples [color="#f9ca24", style=dashed];
+    avoidance_base -> acs_profile [color="#f9ca24"];
+
+    // Arena architecture
+    arena_impl -> base_arena [color="#8e24aa"];
+    base_arena -> grid_manager [color="#8e24aa"];
+    base_arena -> zone_base [color="#8e24aa"];
+    zone_base -> zone_examples [color="#8e24aa", style=dashed];
+
+    // Sensor usage
+    brain_vis -> lidar [color="#6c5ce7"];
+    brain_vis -> arena_impl [color="#6c5ce7"];
+
+    // Controller architecture
+    rolling_basis -> teensy_motor [color="#6c5ce7", penwidth=2];
+    actuators -> teensy_actuator [color="#6c5ce7", penwidth=2];
+
+    teensy_motor -> usb_com [color="#6c5ce7"];
+    teensy_actuator -> usb_com [color="#6c5ce7"];
+    rolling_basis -> usb_com [color="#6c5ce7"];
+    actuators -> usb_com [color="#6c5ce7"];
+
+    // WebSocket architecture
+    ws_server -> ws_cmd_route [color="#e84393"];
+    ws_server -> ws_ui_route [color="#e84393"];
+
+    ws_cmd_route -> ws_sender [color="#e84393"];
+    ws_cmd_route -> ws_receiver [color="#e84393"];
+    ws_ui_route -> ws_sender [color="#e84393"];
+    ws_ui_route -> ws_receiver [color="#e84393"];
+
+    brain_ui -> ws_ui_route [color="#e84393", penwidth=2];
+    webui -> ws_server [color="#e84393"];
+
+    // Config
+    config_loader -> config_json [color="#757575"];
+    config_loader -> rolling_basis [color="#757575"];
+    config_loader -> actuators [color="#757575"];
+}
