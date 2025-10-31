@@ -21,7 +21,7 @@ from boombot_strategy.strategies import TowerRushAltStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
-from robot1.rasp.boombot_strategy.tasks.navigation_tasks.recalage import Recalage
+
 
 if TYPE_CHECKING:
     from arena.show_arena import ShowArena
@@ -95,6 +95,7 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def run(self) -> None:
+        from robot1.rasp.boombot_strategy.tasks.navigation_tasks.recalage import Recalage
         """Runs the main control loop for the robot."""
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
