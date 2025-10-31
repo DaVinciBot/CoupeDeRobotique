@@ -24,4 +24,5 @@ __all__ = [
     "RelativeBackward",
     "RelativeForward",
     "SetOdometrie",
+    "Recalage",
 ]

@@ -240,6 +240,8 @@
     "border_buffer": 5,
     "obstacle_buffer": 10,
     "chunk_size": 5,
-    "forbidden_cover_threshold": 0.1
+    "forbidden_cover_threshold": 0.1,
+    "width": 300,
+    "height": 200
   }
 }
