@@ -26,9 +26,9 @@ void ElegantOTAClass::begin(ELEGANTOTA_WEBSERVER* server,
     ASYNCWEBSERVER_VERSION_MAJOR >     \
         2  // This means we are using recommended fork of AsyncWebServer
         AsyncWebServerResponse* response = request->beginResponse(
-            200, "text/html", ELEGANT_HTML, sizeof(ELEGANT_HTML));
+            200, "text/html", ELEGANT_HTML, ELEGANT_HTML_LEN);
 #else
-        AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", ELEGANT_HTML, sizeof(ELEGANT_HTML));
+    AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", ELEGANT_HTML, ELEGANT_HTML_LEN);
 #endif
         response->addHeader("Content-Encoding", "gzip");
         request->send(response);
@@ -40,8 +40,8 @@ void ElegantOTAClass::begin(ELEGANTOTA_WEBSERVER* server,
             return _server->requestAuthentication();
         }
         _server->sendHeader("Content-Encoding", "gzip");
-        _server->send_P(200, "text/html", (const char*)ELEGANT_HTML,
-                        sizeof(ELEGANT_HTML));
+    _server->send_P(200, "text/html", (const char*)ELEGANT_HTML,
+            ELEGANT_HTML_LEN);
     });
 #endif
 

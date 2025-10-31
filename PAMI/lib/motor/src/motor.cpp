@@ -54,7 +54,7 @@ void Motor::_setDirection(bool clockwise) {
     digitalWrite(_dirPin, clockwise ? HIGH : LOW);
 }
 
-void Motor::_doKSteps() {
+void Motor::doKSteps() {
     for (int i = 0; i < _factorK; ++i) {
         digitalWrite(_stepPin, HIGH);
         delayMicroseconds(500);
@@ -98,7 +98,7 @@ void Motor::update() {
     _setDirection(clockwise);
 
     if (dt >= _usDelayBetweenKSteps) {
-        _doKSteps();
+        doKSteps();
         _lastStepTime = now;
     }
 

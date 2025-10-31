@@ -25,6 +25,7 @@ class Motor {
 
     long getStepCount() const;
     void resetStepCount();
+    void doKSteps();
 
    private:
     byte _stepPin;
@@ -44,7 +45,7 @@ class Motor {
     long _stepCount;
 
     void _setDirection(bool clockwise);
-    void _doKSteps();
+    
 };
 
 #endif

@@ -155,7 +155,7 @@ void setup() {
 
 long lastTime = 0;  // Variable to store the last time the loop was executed
 void loop() {
-    leftMotor->_doKSteps();
+    leftMotor->doKSteps();
     /*if (millis() - lastTime > 2 &&
         canStart)  // Check if 2ms have passed since the last navigation update
     {
