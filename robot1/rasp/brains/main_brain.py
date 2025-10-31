@@ -21,6 +21,7 @@ from boombot_strategy.strategies import TowerRushAltStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
+from robot1.rasp.boombot_strategy.tasks.navigation_tasks.recalage import Recalage
 
 if TYPE_CHECKING:
     from arena.show_arena import ShowArena
@@ -111,7 +112,7 @@ class MainBrain(Brain):
                     follow_logger_manager_rules=True,
                 ),
             )
-        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+        rolling_basis.set_odometrie(OrientedPoint(100, 100, 0))
         rolling_basis.initialize_pids()
 
         if CONFIG.ACTUATORS_DUMMY:
@@ -130,24 +131,22 @@ class MainBrain(Brain):
             )
         actuators.deplacement_position()
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
-        while not self.jack_plugged:  # wait until cable is plugged
-            time.sleep(0.1)
-        actuators.block_banner()  # engage the banner blocker
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
-        while not self.jack_triggered:  # wait for the trigger event
-            time.sleep(0.1)
+
 
         # --- 3) Build the strategy --- #
 
-        strategy = TowerRushAltStrategy(
+        """strategy = TowerRushAltStrategy(
             ShowGameContext(
                 arena=self.arena,
                 rolling_basis=rolling_basis,
                 actuators=actuators,
                 score=self.score,
             ),
-        )
+        )"""
+
+        recalage_task = Recalage()
 
         # from strategy.tools import visualize_task_graph
         # visualize_task_graph(strategy.runner.active[0])
@@ -160,7 +159,7 @@ class MainBrain(Brain):
             score=self.score,
         )
 
-        strategy.runner.handle(context)
+        recalage_task.handle(context)
 
         # Update shared state from the context
         self.score = context.score
@@ -207,7 +206,7 @@ class MainBrain(Brain):
 
     @Brain.task(
         process=False,
-        run_on_start=True,
+        run_on_start=False,
         refresh_rate=1,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
@@ -235,7 +234,7 @@ class MainBrain(Brain):
                 WSmsg(sender="server", msg="update ui data", data=to_send),
             )
 
-    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=False, refresh_rate=0.5)
     async def receive_ui_data(self) -> None:
         """Executes requests received by the server.
 
