@@ -10,6 +10,7 @@ debug or user interfaces.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from math import pi
 from typing import TYPE_CHECKING, cast, override
 
 import matplotlib.pyplot as plt
@@ -402,6 +403,52 @@ class BaseArena(ABC):
                 ``False`` otherwise.
         """
         return self.playable_area.contains(pos) or self.playable_area.touches(pos)
+
+    def get_closest_wall_goal(self) -> OrientedPoint:
+        """
+        Determine the closest accessible wall point in the arena.
+
+        Returns:
+            OrientedPoint: The closest accessible wall point.
+        """
+        robot_pos = self.ally_zone.point
+
+        arena_width = 300
+        arena_height = 200
+        arena_border = 5
+
+        closest_point: OrientedPoint | None = None
+        min_distance: float = float("inf")
+
+        walls = [
+            ("x", arena_border, range(0, arena_height + 1), 0),
+            ("x", arena_width - arena_border, range(0, arena_height + 1), pi),
+            ("y", arena_border, range(0, arena_width + 1), -pi / 2),
+            ("y", arena_height - arena_border, range(0, arena_width + 1), pi / 2),
+        ]
+
+        for axis, fixed, var_range, orientation in walls:
+            for var in var_range:
+                if axis == "x":
+                    candidate = OrientedPoint(fixed, var, orientation)
+                else:
+                    candidate = OrientedPoint(var, fixed, orientation)
+
+                zone = self.get_zone_by_location(candidate)
+                if zone is None:
+                    continue
+                if zone not in self.find_zone_accessibility("FREE"):
+                    continue
+
+                dx = candidate.x - robot_pos.x
+                dy = candidate.y - robot_pos.y
+                distance = (dx ** 2 + dy ** 2) ** 0.5
+
+                if distance < min_distance:
+                    min_distance = distance
+                    closest_point = candidate
+
+        return closest_point
 
     def get_zone_by_location(
         self,

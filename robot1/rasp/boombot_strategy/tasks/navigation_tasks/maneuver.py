@@ -130,15 +130,16 @@ class GoCentroidOfZone(NavigationTask):
         )
 
 
-# TODO : A poser a Eliott → pk que arena dans basecontext peut-on ajouter rolling basis et actuators ?
+# TODO : Ajouter les bons params et speed profiler
 class GoToClosestFreeWall(NavigationTask):
-    def __init__(self) -> None:
+    def __init__(self, goal: OrientedPoint) -> None:
         """
-        Initialize the GoToClosestFreeWall task..
+        Initialize the GoToClosestFreeWall task.
         """
+        self.goal = goal
 
         super().__init__(
-            goal=None,
+            goal=goal,
             path_planner_params=BasicPathPlannerParams(),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
@@ -149,78 +150,3 @@ class GoToClosestFreeWall(NavigationTask):
             ),
             stabilization_delay=2,
         )
-
-        self._is_initialized = False
-        self.navigator_task: Optional[NavigatorTask] = None
-        self.closest_wall_goal: Optional[OrientedPoint] = None
-
-    def get_closest_wall_goal(self, ctx: ShowGameContext) -> OrientedPoint:
-        """
-        Determine the closest accessible wall point in the arena.
-
-        Args:
-            ctx (ShowGameContext): The game context providing arena and robot info.
-        Returns:
-            OrientedPoint: The closest accessible wall point.
-        """
-        robot_pos = ctx.rolling_basis.odometrie
-        arena = ctx.arena
-
-        arena_width = CONFIG.ARENA_WIDTH
-        arena_height = CONFIG.ARENA_HEIGHT
-        arena_border = CONFIG.ARENA_BORDER_BUFFER
-
-        closest_point: OrientedPoint | None = None
-        min_distance: float = float("inf")
-
-        walls = [
-            ("x", arena_border, range(0, arena_height+1), 0),
-            ("x", arena_width-arena_border, range(0, arena_height+1), pi),
-            ("y", arena_border, range(0, arena_width+1), -pi/2),
-            ("y", arena_height-arena_border, range(0, arena_width+1), pi/2),
-        ]
-
-        for axis, fixed, var_range, orientation in walls:
-            for var in var_range:
-                if axis == "x":
-                    candidate = OrientedPoint(fixed, var, orientation)
-                else:
-                    candidate = OrientedPoint(var, fixed, orientation)
-
-                zone = arena.get_zone_by_location(candidate)
-                if zone is None:
-                    continue
-                if zone not in arena.find_zone_accessibility("FREE"):
-                    continue
-
-                dx = candidate.x - robot_pos.x
-                dy = candidate.y - robot_pos.y
-                distance = (dx ** 2 + dy ** 2) ** 0.5
-
-                if distance < min_distance:
-                    min_distance = distance
-                    closest_point = candidate
-
-        return closest_point
-
-    def _initialize(self, ctx: ShowGameContext) -> None:
-        """Initialize the recalage task by determining the closest wall goal."""
-
-        goal = self.get_closest_wall_goal(ctx)
-
-        self.closest_wall_goal = goal
-
-        params = NavigatorTaskParams(
-            goal=goal,
-            timeout=getattr(self, "timeout", None),
-            path_planner_params=self.path_planner_params,
-            trajectory_planner_params=self.trajectory_planner_params,
-            speed_profiler=self.speed_profiler,
-            avoidance_params=self.avoidance_params,
-            acs_detection_profile_params=self.acs_detection_profile_params,
-            stabilization_delay=self.stabilization_delay,
-        )
-
-        self.navigator_task = NavigatorTask(params=params)
-        self._is_initialized = True
-

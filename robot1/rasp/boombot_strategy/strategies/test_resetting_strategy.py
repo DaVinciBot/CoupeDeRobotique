@@ -57,7 +57,7 @@ class TestResettingStrategy(BaseStrategy):
         )
 
         # Step 4: Resetting after building
-        resetting_subgraph = get_resetting_subgraph()
+        resetting_subgraph = get_resetting_subgraph(ctx)
 
         # Step 5: Navigate to the second pickup zone
         second_pickup_subgraph = get_push_one_floor_to_wall_subgraph(
@@ -74,11 +74,8 @@ class TestResettingStrategy(BaseStrategy):
         # Connect the subgraphs in execution order
         self._auto_build_transitions(
             deploy_banner_subgraph,
-            first_pickup_subgraph,
-            first_construct_subgraph,
             resetting_subgraph,
-            second_pickup_subgraph,
-            go_to_backstage,
+
         )
 
         # Create the graph runner starting from the first subgraph
