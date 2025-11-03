@@ -4,16 +4,14 @@ Motor::Motor(byte stepPin,
              byte dirPin,
              byte enablePin,
              unsigned int stepsPerRevolution,
-             float k,
              bool invertDirection)
     : _stepPin(stepPin),
       _dirPin(dirPin),
       _enablePin(enablePin),
-      _factorK(k),
+      //_factorK(k),
       _invertDirection(invertDirection) {
     _stepsPerRevolution =
-        stepsPerRevolution /
-        k;  // Divide by k to get the actual steps per revolution
+        stepsPerRevolution ;
     _targetSpeedStepsPerSec = 0.0f;
     _currentSpeedStepsPerSec = 0.0f;
     _acceleration = 0.0f;
@@ -54,13 +52,13 @@ void Motor::_setDirection(bool clockwise) {
     digitalWrite(_dirPin, clockwise ? HIGH : LOW);
 }
 
-void Motor::doKSteps() {
-    for (int i = 0; i < _factorK; ++i) {
-        digitalWrite(_stepPin, HIGH);
-        delayMicroseconds(500);
-        digitalWrite(_stepPin, LOW);
-        delayMicroseconds(500);
-    }
+void Motor::doOneSteps() {
+    
+    digitalWrite(_stepPin, HIGH);
+    delayMicroseconds(500);
+    digitalWrite(_stepPin, LOW);
+    delayMicroseconds(500);
+    
 
     if (_currentSpeedStepsPerSec >= 0 && !_invertDirection ||
         _currentSpeedStepsPerSec < 0 && _invertDirection) {
@@ -91,15 +89,15 @@ void Motor::update() {
         _usDelayBetweenKSteps = 1e6f;
     } else {
         _usDelayBetweenKSteps =
-            (_factorK * 1e6f) / fabs(_currentSpeedStepsPerSec);
+            (1e6f) / fabs(_currentSpeedStepsPerSec);
     }
 
     bool clockwise = (_currentSpeedStepsPerSec >= 0);
     _setDirection(clockwise);
 
     if (dt >= _usDelayBetweenKSteps) {
-        doKSteps();
-        _lastStepTime = now;
+        doOneSteps();
+        
     }
 
     if (fabs(_targetSpeedStepsPerSec) < 1.0f &&
@@ -107,6 +105,7 @@ void Motor::update() {
         _moving = false;
         enableMotor(false);
     }
+    _lastStepTime = now;
 }
 
 bool Motor::isMoving() const {

@@ -35,7 +35,6 @@ class Motor {
      * @param enablePin Pin connected to the enable control of the motor driver
      * @param stepsPerRevolution Number of full-steps per revolution of the
      * motor (before applying microstepping factor `k`).
-     * @param k Microstepping factor: if `k` > 1 the driver executes k
      * micro-steps per full step. Typical values are 1 (full-step), 2, 4, 8, ...
      * @param invertDirection If true, the logical direction is inverted.
      *
@@ -47,7 +46,6 @@ class Motor {
           uint8_t dirPin,
           uint8_t enablePin,
           unsigned int stepsPerRevolution,
-          float k,
           bool invertDirection = false);
 
     /**
@@ -135,13 +133,13 @@ class Motor {
      * @brief Reset the internal step counter to zero.
      */
     void resetStepCount();
-    void doKSteps();
+    void doOneSteps();
 
    private:
     uint8_t _stepPin;       // Pin to control the stepping of the motor
     uint8_t _dirPin;        // Pin to control the direction of the motor
     uint8_t _enablePin;     // Pin to enable/disable the motor
-    float _factorK;         // Microstepping factor (K)
+    //float _factorK;         // Microstepping factor (K)
     bool _invertDirection;  // Whether to invert the motor direction
 
     unsigned int _stepsPerRevolution;  // Full-steps per revolution divided by K
@@ -167,7 +165,7 @@ class Motor {
      * This low-level helper toggles the step pin the required number of
      * times to perform microstepping according to `_factorK`.
      */
-    void _doKSteps();
+    void _doOneSteps();
 };
 
 #endif
