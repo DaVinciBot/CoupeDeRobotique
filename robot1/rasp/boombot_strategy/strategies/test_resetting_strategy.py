@@ -65,15 +65,27 @@ class TestResettingStrategy(BaseStrategy):
             push_distance=30,
         )
 
+        second_construct_subgraph = get_construct_subgraph(
+            self.zones["second_build_zone"],
+            back_offset=15,
+        )
+
         # Step 6: Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
             name="[End] Go to backstage",
             tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
         )
 
+        resetting_subgraph1 = get_resetting_subgraph(ctx)
+
         # Connect the subgraphs in execution order
         self._auto_build_transitions(
             deploy_banner_subgraph,
+            first_pickup_subgraph,
+            first_construct_subgraph,
+            second_pickup_subgraph,
+            second_construct_subgraph,
+            go_to_backstage,
             resetting_subgraph,
 
         )
