@@ -70,19 +70,19 @@ class BaseArena(ABC):
         """
         # region ====== Initialized constructor based attributes ======
         # 1. Logger
-        self.logger: Logger = logger
+        self._logger: Logger = logger
         # 2. Dimensions
         self.width: int = width
         self.height: int = height
 
         if border_buffer % chunk_size:
-            self.logger.warning(
+            self._logger.warning(
                 "The border buffer is not a multiple of the chunk size -> "
                 "the not walkable area will not be aligned with the grid",
             )
 
         if obstacle_buffer % chunk_size:
-            self.logger.warning(
+            self._logger.warning(
                 "The obstacle buffer is not a multiple of the chunk size -> "
                 "the not walkable area will not be aligned with the grid",
             )
@@ -245,7 +245,7 @@ class BaseArena(ABC):
             team_color (TeamColor): The team's color.
         """
         if team_color not in {TeamColor.YELLOW, TeamColor.BLUE}:
-            self.logger.error(
+            self._logger.error(
                 f"Invalid team color: {team_color}. Must be 'yellow' or 'blue'.",
             )
 
@@ -378,7 +378,7 @@ class BaseArena(ABC):
         # 1. If goal is defined as int, it's a zone ID
         if isinstance(goal, int):
             if goal > len(self.zones):
-                self.logger.error("Invalid zone ID given in trajectory parameters.")
+                self._logger.error("Invalid zone ID given in trajectory parameters.")
                 return None
 
             return self.zones[goal].get_go_to_position(
@@ -425,7 +425,7 @@ class BaseArena(ABC):
         """
         if isinstance(location, int):
             if location >= len(self.zones):
-                self.logger.error("Invalid zone ID given in trajectory parameters.")
+                self._logger.error("Invalid zone ID given in trajectory parameters.")
                 return None
             return self.zones[location]
         if isinstance(location, BaseArenaZone):

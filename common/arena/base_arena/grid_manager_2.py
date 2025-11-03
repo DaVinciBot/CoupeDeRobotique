@@ -36,7 +36,7 @@ class GridManager:
             width (int): Total width of the arena in world units.
             height (int): Total height of the arena in world units.
         """
-        self.logger = logger
+        self._logger = logger
         self.chunk_size = chunk_size
         self.half_chunk_size = chunk_size / 2
         self.absolute_width = width
@@ -45,7 +45,7 @@ class GridManager:
         self.grid_height = height // chunk_size
 
         if width % chunk_size or height % chunk_size:
-            self.logger.log(
+            self._logger.log(
                 (
                     "[GRID] width and height must be multiples of chunk_size. "
                     "Adjusting chunk size."

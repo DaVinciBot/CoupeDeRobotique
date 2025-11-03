@@ -25,7 +25,7 @@ class NavigatorSignalsDispatcher:  # UNUSED
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to None.
         """
-        self.logger = logger or Logger(
+        self._logger = logger or Logger(
             identifier="NavigatorSignalsDispatcher",
             follow_logger_manager_rules=True,
         )
@@ -39,7 +39,7 @@ class NavigatorSignalsDispatcher:  # UNUSED
             __events__ = event_names
 
         self._signals = NavigatorEvents()
-        self.logger.debug(
+        self._logger.debug(
             f"NavigatorSignalsDispatcher initialized with events: {event_names}",
         )
 
@@ -59,9 +59,9 @@ class NavigatorSignalsDispatcher:  # UNUSED
             # Connect callback to signal
             event = getattr(self._signals, signal.name)
             event += callback
-            self.logger.debug(f"Connected callback to signal: {signal.name}")
+            self._logger.debug(f"Connected callback to signal: {signal.name}")
         except AttributeError:
-            self.logger.warning(f"Attempted to connect to unknown signal: {signal}")
+            self._logger.warning(f"Attempted to connect to unknown signal: {signal}")
 
     def disconnect_signal(
         self,
@@ -78,9 +78,9 @@ class NavigatorSignalsDispatcher:  # UNUSED
             # Disconnect callback from signal
             event = getattr(self._signals, signal.name)
             event -= callback
-            self.logger.debug(f"Disconnected callback from signal: {signal.name}")
+            self._logger.debug(f"Disconnected callback from signal: {signal.name}")
         except AttributeError:
-            self.logger.warning(
+            self._logger.warning(
                 f"Attempted to disconnect from unknown signal: {signal}",
             )
 
@@ -98,9 +98,9 @@ class NavigatorSignalsDispatcher:  # UNUSED
             **kwargs(Any): Keyword arguments to pass to callbacks.
         """
         try:
-            self.logger.debug(
+            self._logger.debug(
                 f"Emitting signal: {signal.name} with args: {args}, kwargs: {kwargs}",
             )
             getattr(self._signals, signal.name)(*args, **kwargs)
         except AttributeError:
-            self.logger.warning(f"Attempted to emit unknown signal: {signal}")
+            self._logger.warning(f"Attempted to emit unknown signal: {signal}")

@@ -84,13 +84,13 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             The trajectory command after processing avoidance logic.
         """
         position: OrientedPoint = ally_zone.point
-        self.logger.debug(
+        self._logger.debug(
             f"Handling avoidance at position: {position}, current state: {self.state}",
         )
 
         # 1. Timeout check
         if self._has_timed_out():
-            self.logger.warning("Avoidance timed out. Aborting task.")
+            self._logger.warning("Avoidance timed out. Aborting task.")
             return self._abort(current_navigator_task, position)
 
         # 2. Obstacle detected → init backward task
@@ -98,7 +98,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
             and self.state == AvoidanceState.IDLE
         ):
-            self.logger.info(
+            self._logger.info(
                 "Obstacle detected. starting backward avoidance. "
                 f"Distance: {ally_zone.point.distance(enemy_zone.point)}",
             )
@@ -124,7 +124,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             self.state = AvoidanceState.AVOIDING
             current_navigator_task.state = NavigatorTaskState.AVOIDING
             self._start_timer()
-            self.logger.debug(f"Timer started at: {self._avoiding_start_time}")
+            self._logger.debug(f"Timer started at: {self._avoiding_start_time}")
 
             # Execute first backward command immediately
             cmd = self.backward_navigator_task.handle(ally_zone, enemy_zone)
@@ -136,7 +136,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             self.state == AvoidanceState.AVOIDING
             and self.backward_navigator_task is not None
         ):
-            self.logger.info("Executing backward avoidance maneuver.")
+            self._logger.info("Executing backward avoidance maneuver.")
             cmd: TrajectoryPlanCommand = self.backward_navigator_task.handle(
                 ally_zone,
                 enemy_zone,
@@ -154,7 +154,7 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             self.state == AvoidanceState.AVOIDING
             and self.backward_navigator_task is None
         ):
-            self.logger.info("Obstacle cleared. Replanning trajectory.")
+            self._logger.info("Obstacle cleared. Replanning trajectory.")
 
             # Obstacle is no longer detected, replan from current position
             last_params = cast(
@@ -163,28 +163,28 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             )
             last_params.start = position  # Update start position to current location
 
-            self.logger.debug(f"Replanning from updated start: {position}")
+            self._logger.debug(f"Replanning from updated start: {position}")
 
             new_path = current_navigator_task.path_planner.plan_path(last_params)
             current_navigator_task.trajectory_planner.plan_trajectory(new_path)
             current_navigator_task.trajectory_planner.start_planning()
 
-            self.logger.debug("Trajectory planner reset internal clock.")
+            self._logger.debug("Trajectory planner reset internal clock.")
             # reset timer just for logging/manure measurement
             self._reset_timer()
-            self.logger.debug("Timer reset after avoidance completion.")
+            self._logger.debug("Timer reset after avoidance completion.")
 
             self.state = AvoidanceState.IDLE
             current_navigator_task.state = NavigatorTaskState.IN_PROGRESS
 
-            self.logger.info("Avoidance complete. Resuming normal operation.")
+            self._logger.info("Avoidance complete. Resuming normal operation.")
             return cast(
                 "TrajectoryPlanCommand",
                 current_navigator_task.current_trajectory_command,
             )  # Avoidance complete, continue as normal
 
         # 4. Continue with current command
-        self.logger.debug(
+        self._logger.debug(
             "No avoidance action required. Continuing original trajectory.",
         )
         return cast(

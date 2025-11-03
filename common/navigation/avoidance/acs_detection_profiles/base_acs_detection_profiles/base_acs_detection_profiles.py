@@ -27,7 +27,7 @@ class BaseAcsDetectionProfile[PARAMSTYPE: BaseAcsDetectionProfileParams](ABC):
                 Logger instance for debugging. Defaults to None.
         """
         self.params: PARAMSTYPE = params
-        self.logger: Logger = logger or Logger(
+        self._logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )

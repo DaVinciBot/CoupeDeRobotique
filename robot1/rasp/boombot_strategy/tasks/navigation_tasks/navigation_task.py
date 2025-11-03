@@ -39,6 +39,6 @@ class NavigationTask(BaseNavigationTask[WinterGameContext]):
         )
 
         ctx.rolling_basis.set_target_position(cmd.get_position_command())
-        self.logger.debug(f"[Navigation Task] {cmd.get_full_command()}")
-        self.logger.debug(f"[Navigation Task] State = {self.navigator_task.state}")
+        self._logger.debug(f"[Navigation Task] {cmd.get_full_command()}")
+        self._logger.debug(f"[Navigation Task] State = {self.navigator_task.state}")
         return self.navigator_task.state.is_finished()

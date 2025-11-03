@@ -38,7 +38,7 @@ class TimeoutTaskNode(BaseTaskNode):
         self.status = TaskStatus.PENDING
         self.start_time = None
         self.end_time: float | None = None
-        self.logger.info(
+        self._logger.info(
             (
                 f"Initialized TimeoutTaskNode '{self.name}' with timeout set to "
                 f"{self.timeout_seconds}s"
@@ -54,7 +54,7 @@ class TimeoutTaskNode(BaseTaskNode):
         This method can be overridden in subclasses to implement custom
         behaviour when the timeout triggers.
         """
-        self.logger.warning(
+        self._logger.warning(
             (
                 f"Timeout reached for node '{self.name}' after "
                 f"{self.timeout_seconds:.2f}s"
@@ -74,7 +74,7 @@ class TimeoutTaskNode(BaseTaskNode):
         """
         # If already completed, no-op
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:
-            self.logger.debug(
+            self._logger.debug(
                 (
                     f"TimeoutTaskNode '{self.name}' already completed with status "
                     f"{self.status.name}"
@@ -88,7 +88,7 @@ class TimeoutTaskNode(BaseTaskNode):
         if self.start_time is None:
             self.start_time = now
             self.status = TaskStatus.IN_PROGRESS
-            self.logger.info(
+            self._logger.info(
                 (
                     f"Started TimeoutTaskNode '{self.name}'; will timeout after "
                     f"{self.timeout_seconds:.2f}s"
@@ -96,7 +96,7 @@ class TimeoutTaskNode(BaseTaskNode):
             )
 
         elapsed = now - self.start_time
-        self.logger.debug(
+        self._logger.debug(
             (
                 f"Node '{self.name}' elapsed time: {elapsed:.2f}s of "
                 f"{self.timeout_seconds:.2f}s"
@@ -110,7 +110,7 @@ class TimeoutTaskNode(BaseTaskNode):
                 self._timeout_triggered = True
             self.status = TaskStatus.TIMEOUT
             self.end_time = now
-            self.logger.info(
+            self._logger.info(
                 f"TimeoutTaskNode '{self.name}' status set to TIMEOUT",
             )
             return True

@@ -30,7 +30,7 @@ class Navigator:  # UNUSED
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to ``None``.
         """
-        self.logger = logger or Logger(
+        self._logger = logger or Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )
@@ -52,7 +52,7 @@ class Navigator:  # UNUSED
             self.current_task = NavigatorTask(
                 params=self._tasks_queue.popleft(),
             )
-            self.logger.info(f"Switched to new task: {self.current_task}")
+            self._logger.info(f"Switched to new task: {self.current_task}")
             return True
         self.current_task = None
         return False
@@ -75,14 +75,14 @@ class Navigator:  # UNUSED
         if skip_queue:
             self.abort(affect_all_tasks=False)
             self._fetch_next_task()
-            self.logger.info(f"Executing task immediately: {navigator_task_params}")
+            self._logger.info(f"Executing task immediately: {navigator_task_params}")
         else:
             self._tasks_queue.append(navigator_task_params)
-            self.logger.info(f"Added task to queue: {navigator_task_params}")
+            self._logger.info(f"Added task to queue: {navigator_task_params}")
 
         if self.current_task is None:
             self._fetch_next_task()
-            self.logger.info(f"Executing task: {self.current_task}")
+            self._logger.info(f"Executing task: {self.current_task}")
 
     def handle(
         self,
@@ -120,12 +120,12 @@ class Navigator:  # UNUSED
         ):
             self.abort()
             self._fetch_next_task()
-            self.logger.info("Avoidance aborted.")
+            self._logger.info("Avoidance aborted.")
 
         # If task is finished => fetch next task
         if self.current_task.state == NavigatorTaskState.FINISHED:
             self._fetch_next_task()
-            self.logger.info("Task finished.")
+            self._logger.info("Task finished.")
 
         return task_cmd
 
@@ -139,7 +139,7 @@ class Navigator:  # UNUSED
         """
         if affect_all_tasks:
             self._tasks_queue.clear()
-            self.logger.info("All tasks aborted.")
+            self._logger.info("All tasks aborted.")
 
         self.current_task = None
-        self.logger.info("Current task aborted.")
+        self._logger.info("Current task aborted.")

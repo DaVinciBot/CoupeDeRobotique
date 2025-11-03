@@ -54,7 +54,7 @@ class Com:
                 Enables dummy mode for testing. Defaults to ``False``.
         """
         # Initialize init variables
-        self.logger: Logger = logger
+        self._logger: Logger = logger
         self.serial_number: int = serial_number
         self.vid: int = vid
         self.pid: int = pid
@@ -98,11 +98,11 @@ class Com:
 
         if device_found is None:
             if self.enable_dummy:
-                self.logger.info("Dummy mode")
+                self._logger.info("Dummy mode")
                 device_found = DummySerial()
             else:
                 msg = "No Device found!"
-                self.logger.critical(msg)
+                self._logger.critical(msg)
                 raise ComError(msg)
 
         return device_found
@@ -137,7 +137,7 @@ class Com:
                     self._crc8.reset()
                     self._crc8.update(msg)
                     if self._crc8.digest() != crc:
-                        self.logger.warning(f"Invalid CRC8, sending NACK ... [{crc}]")
+                        self._logger.warning(f"Invalid CRC8, sending NACK ... [{crc}]")
                         self.send_bytes(Messages.NACK.to_bytes())  # send NACK
                         self._crc8.reset()
                         continue
@@ -149,34 +149,34 @@ class Com:
                 len_msg = msg[-1]
 
                 if len_msg > len(msg):
-                    self.logger.warning(
+                    self._logger.warning(
                         "Received Teensy message that does not match declared length "
                         f"{msg.hex(sep=' ')}",
                     )
                     continue
                 try:
                     if msg[0] == NACK_ID:
-                        self.logger.warning("Received a NACK")
+                        self._logger.warning("Received a NACK")
                         if self.last_message is not None:
                             self.send_bytes(self.last_message)
-                            self.logger.info(
+                            self._logger.info(
                                 f"Sending back message : {self.last_message[0]}",
                             )
                             self.last_message = None
                     else:
                         self.message_id_callback.get(
                             msg[0],
-                            lambda x: self.logger.error(
+                            lambda x: self._logger.error(
                                 f"Unknown message type ! msg: {x}",
                             ),
                         )(msg[1:-1])
 
                 except Exception as e:  # noqa: BLE001
-                    self.logger.error(f"Received message handling crashed :\n{e}")
+                    self._logger.error(f"Received message handling crashed :\n{e}")
                     time.sleep(0.5)  # Wait to avoid spamming the logs
 
             except Exception as e:  # noqa: BLE001
-                self.logger.critical(
+                self._logger.critical(
                     f"Device connection seems to be closed, teensy crashed ? [{e}]",
                 )
                 time.sleep(0.5)  # Wait to avoid spamming the logs
@@ -204,7 +204,7 @@ class Com:
         ) -> Any:  # noqa: ANN401
             # Check if the self.enable_dummy attribute is disabled (False)
             if self.enable_dummy:
-                self.logger.debug(f"[DUMMY] {func.__name__} was called")
+                self._logger.debug(f"[DUMMY] {func.__name__} was called")
                 return None  # Prevents the function from executing
 
             # Execute the function normally
@@ -248,7 +248,7 @@ class Com:
             iid (int): Message ID to associate with the callback.
         """
         if self.message_id_callback.get(iid) is not None:
-            self.logger.warning(f"Callback for message id {iid} already exists !")
+            self._logger.warning(f"Callback for message id {iid} already exists !")
 
         self.message_id_callback[iid] = func
 

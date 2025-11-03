@@ -20,7 +20,7 @@ class GPIOManager:
             logger (Logger): Logger instance for logging events.
             nb_pin (int): The maximum number of available GPIO pins.
         """
-        self.logger: Logger = logger
+        self._logger: Logger = logger
         self.nb_pin: int = nb_pin
         self.gpios: dict[int, ActuatorType] = {}
 
@@ -81,11 +81,13 @@ class GPIOManager:
             bool: ``True`` if the pin was successfully added, ``False`` otherwise.
         """
         if self.is_declared_gpio(pin) or pin < 0 or pin > self.nb_pin:
-            self.logger.warning(f"Failed to add pin {pin}: Invalid or already declared")
+            self._logger.warning(
+                f"Failed to add pin {pin}: Invalid or already declared"
+            )
             return False
 
         self.gpios[pin] = type_actuator
-        self.logger.info(f"Added pin {pin} with type {type_actuator}")
+        self._logger.info(f"Added pin {pin} with type {type_actuator}")
         return True
 
     def get_type_gpio(self, pin: int) -> ActuatorType | None:
@@ -101,6 +103,6 @@ class GPIOManager:
         type_found: ActuatorType | None = self.gpios.get(pin, None)
 
         if type_found is None:
-            self.logger.error(f"Pin {pin} is not used")
+            self._logger.error(f"Pin {pin} is not used")
 
         return type_found

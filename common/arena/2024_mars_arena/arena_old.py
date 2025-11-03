@@ -51,7 +51,7 @@ class Arena:
             border_buffer (float): Buffer around the borders.
             robot_buffer (float): Buffer around the robot.
         """
-        self.logger: Logger = logger
+        self._logger: Logger = logger
         if game_borders is None:
             game_borders = create_straight_rectangle(OrientedPoint(0, 0), OrientedPoint(200, 300))
         self.game_borders: Polygon = game_borders
@@ -224,7 +224,7 @@ class Arena:
                 "delta == 0, returning as close as the centroid of zone as possible "
                 "to avoid collision with the border"
             )
-            self.logger.log(msg, LogLevels.DEBUG)
+            self._logger.log(msg, LogLevels.DEBUG)
             if self.validate_position(center):
                 return center
             center = self._shift_inside(center, borders)
@@ -236,7 +236,7 @@ class Arena:
         disc_delta = center.buffer(abs_delta)
 
         if disc_delta.intersects(start_point):
-            self.logger.log("start_point is inside circle_delta", LogLevels.DEBUG)
+            self._logger.log("start_point is inside circle_delta", LogLevels.DEBUG)
             return None
 
         circle_delta = disc_delta.boundary
@@ -303,7 +303,7 @@ class Arena:
             ValueError: If `pos_robot.theta` is None.
         """
         if pos_robot.theta is None:
-            Arena.logger.log("pos_robot.theta is None", LogLevels.ERROR)
+            Arena._logger.log("pos_robot.theta is None", LogLevels.ERROR)
             raise ValueError("pos_robot.theta must be defined")
         return OrientedPoint(
             pos_robot.x + dist * cos(radians(pos_robot.theta - 45 + relative_angle)),

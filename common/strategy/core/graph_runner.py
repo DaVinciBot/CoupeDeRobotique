@@ -30,7 +30,7 @@ class GraphRunner:
             parallel (bool, optional): Execute all valid transitions in parallel when
                 ``True``. Defaults to ``False``.
         """
-        self.logger = logger or Logger(
+        self._logger = logger or Logger(
             identifier="GraphRunner",
             follow_logger_manager_rules=True,
         )
@@ -41,7 +41,7 @@ class GraphRunner:
             f"GraphRunner initialized with start node '{start.name}', "
             f"parallel={self.parallel}"
         )
-        self.logger.info(msg)
+        self._logger.info(msg)
 
     def handle(self, ctx: BaseGameContext) -> None:
         """Advance the graph execution by one step.
@@ -51,7 +51,7 @@ class GraphRunner:
         """
         if not self.active:
             msg = "No active nodes to execute; graph execution complete or not started."
-            self.logger.warning(msg)
+            self._logger.warning(msg)
             return
 
         next_active: list[BaseTaskNode] = []
@@ -62,18 +62,18 @@ class GraphRunner:
             if not node.entered:
                 task_name = node.tasks[0].__class__.__name__ if node.tasks else "NoTask"
                 msg = f"==> Entering node: {node.name} [{task_name}]"
-                self.logger.info(msg)
+                self._logger.info(msg)
 
             done = node.handle(ctx)
             if not done:
                 msg = f"... still executing: {node.name}"
-                self.logger.debug(msg)
+                self._logger.debug(msg)
                 next_active.append(node)
                 continue
 
             # Node completed
             msg = f"<== Finished node: {node.name} with status {node.status.name}"
-            self.logger.info(msg)
+            self._logger.info(msg)
 
             # Gather valid transitions
             valid_transitions = [
@@ -84,7 +84,7 @@ class GraphRunner:
             ]
             if not valid_transitions:
                 msg = f"    No valid transitions from '{node.name}'; branch ends here."
-                self.logger.info(msg)
+                self._logger.info(msg)
                 continue
 
             if self.parallel:
@@ -94,7 +94,7 @@ class GraphRunner:
                         f"    Transition: '{node.name}' -> '{target.name}' via "
                         f"{transition.__class__.__name__}"
                     )
-                    self.logger.info(msg)
+                    self._logger.info(msg)
                     next_active.append(target)
                     self.prev[target] = node
             else:
@@ -109,7 +109,7 @@ class GraphRunner:
                     f"    Chosen transition: '{node.name}' -> '{target.name}' via "
                     f"{best.__class__.__name__} (score={score_val:.2f})"
                 )
-                self.logger.info(msg)
+                self._logger.info(msg)
                 next_active.append(target)
                 self.prev[target] = node
 
@@ -127,7 +127,7 @@ class GraphRunner:
         while self.active and step < max_steps:
             active_names = [n.name for n in self.active]
             msg = f"GraphRunner step {step + 1}, active nodes: {active_names}"
-            self.logger.debug(msg)
+            self._logger.debug(msg)
             self.handle(ctx)
             step += 1
         if self.active:
@@ -136,6 +136,6 @@ class GraphRunner:
                 f"GraphRunner reached max_steps ({max_steps}) with active nodes "
                 f"remaining: {remaining}"
             )
-            self.logger.warning(msg)
+            self._logger.warning(msg)
         else:
-            self.logger.info("GraphRunner completed all nodes.")
+            self._logger.info("GraphRunner completed all nodes.")

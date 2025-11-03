@@ -42,7 +42,7 @@ class BaseTaskNode:
             [tasks] if isinstance(tasks, BaseTask) else tasks
         )
         self.scoring_function = scoring_function or DefaultScoringFunction()
-        self.logger = Logger(identifier=name, follow_logger_manager_rules=True)
+        self._logger = Logger(identifier=name, follow_logger_manager_rules=True)
 
         # Transitions to other nodes
         self.transitions: list[BaseTransition] = []
@@ -59,7 +59,7 @@ class BaseTaskNode:
         self.entered = False
         self._exited = False
 
-        self.logger.info(
+        self._logger.info(
             f"Initialized TaskNode '{self.name}' with {len(self.tasks)} task(s)",
         )
 
@@ -70,7 +70,7 @@ class BaseTaskNode:
             transition (BaseTransition): Transition leading out of this node.
         """
         self.transitions.append(transition)
-        self.logger.debug(f"Added transition '{transition}' to node '{self.name}'")
+        self._logger.debug(f"Added transition '{transition}' to node '{self.name}'")
 
     def score(self, prev_node: BaseTaskNode | None, ctx: BaseGameContext) -> float:
         """Compute a score for this node.
@@ -88,7 +88,7 @@ class BaseTaskNode:
             ctx=ctx,
         )
         prev_name = prev_node.name if prev_node else "<None>"
-        self.logger.debug(
+        self._logger.debug(
             f"Node '{self.name}' scored {score_value:.4f} against previous"
             f" node '{prev_name}'",
         )
@@ -102,7 +102,7 @@ class BaseTaskNode:
             _ctx (BaseGameContext): The current game context.
         """
         prev_name = prev_node.name if prev_node else "<None>"
-        self.logger.info(f"Entering node '{self.name}' from '{prev_name}'")
+        self._logger.info(f"Entering node '{self.name}' from '{prev_name}'")
 
     def on_exit(self, next_node: BaseTaskNode | None, _ctx: BaseGameContext) -> None:
         """Hook called when exiting this node.
@@ -112,7 +112,7 @@ class BaseTaskNode:
             _ctx (BaseGameContext): The current game context.
         """
         next_name = next_node.name if next_node else "<None>"
-        self.logger.info(f"Exiting node '{self.name}' to '{next_name}'")
+        self._logger.info(f"Exiting node '{self.name}' to '{next_name}'")
 
     def _handle_task(self, idx: int, ctx: BaseGameContext) -> None:
         """Execute a single task and record its result.
@@ -122,29 +122,29 @@ class BaseTaskNode:
             ctx (BaseGameContext): The current game context.
         """
         task = self.tasks[idx]
-        self.logger.debug(f"Handling task {idx} of node '{self.name}'")
+        self._logger.debug(f"Handling task {idx} of node '{self.name}'")
         try:
             done = task.handle(ctx)
             self.results[idx] = done
             if done:
                 self.task_done[idx] = True
-                self.logger.info(
+                self._logger.info(
                     f"Task {idx} in node '{self.name}' completed successfully",
                 )
             else:
-                self.logger.debug(
+                self._logger.debug(
                     f"Task {idx} in node '{self.name}' not done yet",
                 )
         except TimeoutError as e:
             self.exceptions[idx] = e
             self.task_done[idx] = True
-            self.logger.warning(
+            self._logger.warning(
                 f"Task {idx} in node '{self.name}' timed out: {e}",
             )
         except Exception as e:  # noqa: BLE001
             self.exceptions[idx] = e
             self.task_done[idx] = True
-            self.logger.error(
+            self._logger.error(
                 f"Task {idx} in node '{self.name}' failed: {e}', "
                 f"traceback {traceback.format_exc()}",
             )
@@ -159,7 +159,7 @@ class BaseTaskNode:
             bool: ``True`` when all tasks are completed, ``False`` otherwise.
         """
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:
-            self.logger.debug(
+            self._logger.debug(
                 f"Node '{self.name}' already completed with status {self.status.name}",
             )
             return True
@@ -167,7 +167,7 @@ class BaseTaskNode:
         if self.start_time is None:
             self.start_time = time.time()
             self.status = TaskStatus.IN_PROGRESS
-            self.logger.info(f"Started execution of node '{self.name}'")
+            self._logger.info(f"Started execution of node '{self.name}'")
 
         # Handle only the first incomplete task per cycle
         try:
@@ -195,7 +195,7 @@ class BaseTaskNode:
                 self.status = TaskStatus.DONE
 
             elapsed = self.end_time - self.start_time
-            self.logger.info(
+            self._logger.info(
                 f"Finished node '{self.name}' with status {self.status.name}"
                 f" in {elapsed:.2f}s",
             )

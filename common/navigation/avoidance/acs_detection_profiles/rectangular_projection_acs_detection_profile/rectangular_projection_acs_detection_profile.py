@@ -74,7 +74,7 @@ class RectangularProjectionAcsDetectionProfile(
         projection = self._create_rectangular_projection(ally_zone)
         if projection.contains(enemy_zone.point):
             distance = ally_zone.point.distance(enemy_zone.point)
-            self.logger.info(
+            self._logger.info(
                 f"ACS triggered. Distance: {distance}",
             )
             return True

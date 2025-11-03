@@ -2,7 +2,7 @@
 
 from loggerplusplus import Logger
 
-logger = Logger(
+_logger = Logger(
     identifier=__name__,
     follow_logger_manager_rules=True,
 )
@@ -10,11 +10,11 @@ logger = Logger(
 try:
     from gpio.gpio import PIN
 except ImportError:
-    logger.warning(
+    _logger.warning(
         "Failed to import GPIO module. "
         "Ensure the GPIO library is installed and accessible.",
     )
-    logger.info("Falling back to dummy PIN class.")
+    _logger.info("Falling back to dummy PIN class.")
     from gpio.dummy_gpio import PIN
 
 __all__ = ["PIN"]

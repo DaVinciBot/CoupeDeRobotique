@@ -94,7 +94,7 @@ class Actuators(
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.info(
+        self._logger.info(
             f"Teensy Actuators says: {msg.decode('ascii', errors='ignore')}",
         )
 
@@ -106,7 +106,7 @@ class Actuators(
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.warning(f"Teensy Actuators does not know the message {msg.hex()}")
+        self._logger.warning(f"Teensy Actuators does not know the message {msg.hex()}")
 
     def rcv_switch_state_return(self, msg: bytes) -> None:
         """Handles SWITCH_STATE_RETURN messages from the Teensy.
@@ -114,7 +114,7 @@ class Actuators(
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.info(f"Switch state: {msg.hex()}")
+        self._logger.info(f"Switch state: {msg.hex()}")
         # Decode the message
         pin: int = struct.unpack("<B", msg[0:1])[0]
         state: bool = struct.unpack("<?", msg[1:2])[0]
@@ -249,9 +249,9 @@ class Actuators(
             else:
                 if not self.gpio_manager.is_declared_gpio(pin):
                     self.gpio_manager.add_gpio(pin, ActuatorType.SERVO)
-                    self.logger.info(f"Pin {pin} added as a servo pin")
+                    self._logger.info(f"Pin {pin} added as a servo pin")
                 elif not self.gpio_manager.is_valid_gpio(pin, ActuatorType.SERVO):
-                    self.logger.error(
+                    self._logger.error(
                         f"Pin {pin} is not a valid servo pin because it is registered "
                         f"as a {self.gpio_manager.get_type_gpio(pin)!s}",
                     )
@@ -276,7 +276,7 @@ class Actuators(
                 self.send_bytes(msg)
 
         else:
-            self.logger.error(
+            self._logger.error(
                 f"You tried to write {angle}° on pin {pin}, whereas the angle "
                 f"must be between {min_angle} and {max_angle}°",
             )
