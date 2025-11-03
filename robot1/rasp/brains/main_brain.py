@@ -83,6 +83,7 @@ class MainBrain(Brain):
         self.inputs: Inputs = inputs
         self.score: int
 
+
     # ====== Secondary Processes =======
 
     # region ====== Routines =======
@@ -95,7 +96,7 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def run(self) -> None:
-        from robot1.rasp.boombot_strategy.tasks.navigation_tasks.recalage import Recalage
+        from robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver import GoToClosestFreeWall
         """Runs the main control loop for the robot."""
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
@@ -113,7 +114,7 @@ class MainBrain(Brain):
                     follow_logger_manager_rules=True,
                 ),
             )
-        rolling_basis.set_odometrie(OrientedPoint(100, 100, 0))
+        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
 
         if CONFIG.ACTUATORS_DUMMY:
@@ -132,6 +133,7 @@ class MainBrain(Brain):
             )
         actuators.deplacement_position()
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
+        self.rolling_basis_odometrie = OrientedPoint(30, 120, 0)
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
 
@@ -147,12 +149,19 @@ class MainBrain(Brain):
             ),
         )"""
 
-        recalage_task = Recalage()
+        recalage_task = GoToClosestFreeWall(
+
+            logger=Logger(
+                identifier="RecalageTask",
+                follow_logger_manager_rules=True,
+            )
+        )
 
         # from strategy.tools import visualize_task_graph
         # visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
+        self.logger.info("rolling basis odo : " f"{self.rolling_basis_odometrie}")
         context = ShowGameContext(
             arena=self.arena,
             rolling_basis=rolling_basis,

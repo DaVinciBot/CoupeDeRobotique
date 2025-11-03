@@ -1,11 +1,14 @@
 """Generic maneuver tasks such as relative moves and zone centroids."""
 
 from __future__ import annotations
+from math import pi
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+from loggerplusplus import Logger
+
 from geometry import OrientedPoint
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
@@ -22,6 +25,7 @@ from navigation.path_planner.delta_path_planner import DeltaPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
+from boombot_strategy.show_game_context import ShowGameContext
 
 if TYPE_CHECKING:
     from strategy.core import BaseGameContext
@@ -124,3 +128,99 @@ class GoCentroidOfZone(NavigationTask):
                 stabilization_delay=self.stabilization_delay,
             ),
         )
+
+
+# TODO : A poser a Eliott → pk que arena dans basecontext peut-on ajouter rolling basis et actuators ?
+class GoToClosestFreeWall(NavigationTask):
+    def __init__(self) -> None:
+        """
+        Initialize the GoToClosestFreeWall task..
+        """
+
+        super().__init__(
+            goal=None,
+            path_planner_params=BasicPathPlannerParams(),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+            avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
+            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                acs_distance=40,
+                width_view=30,
+            ),
+            stabilization_delay=2,
+        )
+
+        self._is_initialized = False
+        self.navigator_task: Optional[NavigatorTask] = None
+        self.closest_wall_goal: Optional[OrientedPoint] = None
+
+    def get_closest_wall_goal(self, ctx: ShowGameContext) -> OrientedPoint:
+        """
+        Determine the closest accessible wall point in the arena.
+
+        Args:
+            ctx (ShowGameContext): The game context providing arena and robot info.
+        Returns:
+            OrientedPoint: The closest accessible wall point.
+        """
+        robot_pos = ctx.rolling_basis.odometrie
+        arena = ctx.arena
+
+        arena_width = CONFIG.ARENA_WIDTH
+        arena_height = CONFIG.ARENA_HEIGHT
+        arena_border = CONFIG.ARENA_BORDER_BUFFER
+
+        closest_point: OrientedPoint | None = None
+        min_distance: float = float("inf")
+
+        walls = [
+            ("x", arena_border, range(0, arena_height+1), 0),
+            ("x", arena_width-arena_border, range(0, arena_height+1), pi),
+            ("y", arena_border, range(0, arena_width+1), -pi/2),
+            ("y", arena_height-arena_border, range(0, arena_width+1), pi/2),
+        ]
+
+        for axis, fixed, var_range, orientation in walls:
+            for var in var_range:
+                if axis == "x":
+                    candidate = OrientedPoint(fixed, var, orientation)
+                else:
+                    candidate = OrientedPoint(var, fixed, orientation)
+
+                zone = arena.get_zone_by_location(candidate)
+                if zone is None:
+                    continue
+                if zone not in arena.find_zone_accessibility("FREE"):
+                    continue
+
+                dx = candidate.x - robot_pos.x
+                dy = candidate.y - robot_pos.y
+                distance = (dx ** 2 + dy ** 2) ** 0.5
+
+                if distance < min_distance:
+                    min_distance = distance
+                    closest_point = candidate
+
+        return closest_point
+
+    def _initialize(self, ctx: ShowGameContext) -> None:
+        """Initialize the recalage task by determining the closest wall goal."""
+
+        goal = self.get_closest_wall_goal(ctx)
+
+        self.closest_wall_goal = goal
+
+        params = NavigatorTaskParams(
+            goal=goal,
+            timeout=getattr(self, "timeout", None),
+            path_planner_params=self.path_planner_params,
+            trajectory_planner_params=self.trajectory_planner_params,
+            speed_profiler=self.speed_profiler,
+            avoidance_params=self.avoidance_params,
+            acs_detection_profile_params=self.acs_detection_profile_params,
+            stabilization_delay=self.stabilization_delay,
+        )
+
+        self.navigator_task = NavigatorTask(params=params)
+        self._is_initialized = True
+
