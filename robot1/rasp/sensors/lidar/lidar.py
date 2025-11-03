@@ -143,7 +143,11 @@ class Lidar:
         thread = threading.Thread(target=init)
         thread.start()
 
-    def __init_polars_angle(self, min_angle: float, max_angle: float) -> np.ndarray:
+    def __init_polars_angle(
+        self,
+        min_angle: float,
+        max_angle: float,
+    ) -> NDArray[np.float32]:
         """Initialize the polar angles array.
 
         Args:
@@ -151,7 +155,7 @@ class Lidar:
             max_angle (float): Maximum angle of the lidar (min angle at right).
 
         Returns:
-            np.ndarray: numpy array of angles centered around 0°.
+            NDArray[np.float32]: numpy array of angles centered around 0°.
 
         Raises:
             ValueError: If the polars array cannot be initialized.

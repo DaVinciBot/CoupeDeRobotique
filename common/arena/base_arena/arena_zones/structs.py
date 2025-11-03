@@ -19,6 +19,7 @@ class ZoneType(Enum):
         BLUE_RESERVED: Reserved for the blue team.
         FORBIDDEN: Zone that cannot be accessed.
         STUFF_ZONE: Designated for storage or items.
+        DEPOSIT_ZONE: Designated for depositing jenga blocks.
         ENEMY: Zone associated with enemy activity.
         ALLY: Zone associated with ally activity.
         BORDER_ZONE: Represents arena borders.
@@ -32,6 +33,8 @@ class ZoneType(Enum):
     """Zone that cannot be accessed."""
     STUFF_ZONE = auto()
     """Designated for storage or items."""
+    DEPOSIT_ZONE = auto()
+    """Designated for depositing jenga blocks."""
     ENEMY = auto()
     """Zone associated with enemy activity."""
     ALLY = auto()

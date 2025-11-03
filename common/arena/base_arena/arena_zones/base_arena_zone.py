@@ -245,9 +245,16 @@ class BaseArenaZone(ABC):
     def _make_accessible(self) -> None:
         """Mark the zone as accessible and update the grid manager."""
         self.accessibility = ZoneAccessibility.FREE
-        grid_manager: GridManager = self.update_callback()
+        grid_manager: GridManager = self.update_callback()  # type: ignore[call-arg]
         grid_manager.remove_forbidden_static_zone(self.buffered_polygon)
         self.logger.debug(f"{self.zone_type} zone is now accessible")
+
+    def _restrict_accessibility(self) -> None:
+        """Mark the zone as restricted and update the grid manager."""
+        self.accessibility = ZoneAccessibility.RESTRICTED
+        grid_manager: GridManager = self.update_callback()  # type: ignore[call-arg]
+        grid_manager.add_forbidden_static_zone(self.buffered_polygon)
+        self.logger.debug(f"{self.zone_type} zone is now restricted")
 
     # endregion
 

@@ -2,18 +2,19 @@
 
 from __future__ import annotations
 
-from boombot_strategy.tasks.actuator_task import (
+from old_boombot_strategy.tasks.actuator_task import (
     Build,
     DeplacementObject,
     DeplacementPosition,
     ReadyToApproachToPickUp,
 )
-from boombot_strategy.tasks.navigation_tasks import (
+from old_boombot_strategy.tasks.navigation_tasks import (
     GoToStuffZoneToPickUp,
     RelativeBackward,
     RelativeForward,
     SetOdometrie,
 )
+
 from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition

@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import override
 
-from boombot_strategy.show_game_context import ShowGameContext
+from old_boombot_strategy.show_game_context import ShowGameContext
+
 from geometry import OrientedPoint
 from strategy.core.tasks.base_task import BaseTask
 

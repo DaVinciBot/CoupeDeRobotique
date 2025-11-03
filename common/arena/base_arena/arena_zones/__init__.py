@@ -13,6 +13,7 @@ from arena.base_arena.arena_zones.color_reserved_zones import (
     BlueReservedZone,
     YellowReservedZone,
 )
+from arena.base_arena.arena_zones.drop_zone import DropZone
 from arena.base_arena.arena_zones.forbidden_zone import ForbiddenZone
 from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones import (
     BaseSpeedVectorAutoCalculateZone,
@@ -28,6 +29,7 @@ __all__ = [
     "BaseSpeedVectorAutoCalculateZone",
     "BlueReservedZone",
     "BorderZone",
+    "DropZone",
     "EnemyZone",
     "ForbiddenZone",
     "StuffZone",

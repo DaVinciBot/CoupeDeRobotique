@@ -14,7 +14,7 @@ lint:
 	@echo "▶ Linting avec pylint..."
 	-pylint --output=pylint-baseline.txt .
 	@echo "▶ Linting avec pyright..."
-	-pyright --level warning --outputjson > pyright-baseline.json
+	-pyright --outputjson > pyright-baseline.json
 
 check: format lint
 

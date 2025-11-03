@@ -16,14 +16,14 @@ from ws_comms import WServerRouteManager, WSmsg
 
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
-from boombot_strategy import ShowGameContext
+from boombot_strategy import WinterGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 
 if TYPE_CHECKING:
-    from arena.show_arena import ShowArena
+    from arena.winter_arena import WinterArena
     from sensors import Inputs, Lidar, LidarDummy
 
 
@@ -36,7 +36,7 @@ class MainBrain(Brain):
         # Sensor
         lidar: Lidar | LidarDummy,
         # Environment
-        arena: ShowArena,
+        arena: WinterArena,
         # WS routes
         ws_cmd: WServerRouteManager,
         ws_ui: WServerRouteManager,
@@ -48,13 +48,13 @@ class MainBrain(Brain):
         Args:
             logger (Logger): Logger instance for logging messages.
             lidar (Lidar | LidarDummy): Lidar instance for distance measurements.
-            arena (ShowArena): Arena instance for representing the game arena.
+            arena (WinterArena): Arena instance for representing the game arena.
             ws_cmd (WServerRouteManager): WebSocket command route manager.
             ws_ui (WServerRouteManager): WebSocket UI route manager.
             inputs (Inputs): Inputs instance for handling sensor data.
         """
         self.lidar: Lidar | LidarDummy = lidar
-        self.arena: ShowArena = arena
+        self.arena: WinterArena = arena
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
@@ -141,7 +141,7 @@ class MainBrain(Brain):
         # --- 3) Build the strategy --- #
 
         strategy = TowerRushAltStrategy(
-            ShowGameContext(
+            WinterGameContext(
                 arena=self.arena,
                 rolling_basis=rolling_basis,
                 actuators=actuators,
@@ -153,7 +153,7 @@ class MainBrain(Brain):
         # visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
-        context = ShowGameContext(
+        context = WinterGameContext(
             arena=self.arena,
             rolling_basis=rolling_basis,
             actuators=actuators,
