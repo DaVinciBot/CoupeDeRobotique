@@ -90,4 +90,3 @@ class WallSetOdometrie(BaseTask[ShowGameContext]):
             return True
 
         return SetOdometrie(goal.x, goal.y, goal.theta).handle(ctx)
-    

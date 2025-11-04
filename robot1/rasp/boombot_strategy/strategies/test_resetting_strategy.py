@@ -45,15 +45,15 @@ class TestResettingStrategy(BaseStrategy):
         """
         super().__init__(ctx)
 
-        deplacement_subgraph = get_deplacement_subgraph(zone_id=1)
+        deplacement_subgraph = get_deplacement_subgraph(zone_id=9)
 
         resetting_subgraph = get_resetting_subgraph()
 
-        deplacement_subgraph1 = get_deplacement_subgraph(zone_id=2)
+        deplacement_subgraph1 = get_deplacement_subgraph(zone_id=20)
 
         resetting_subgraph1 = get_resetting_subgraph()
 
-        deplacement_subgraph2 = get_deplacement_subgraph(zone_id=3)
+        deplacement_subgraph2 = get_deplacement_subgraph(zone_id=11)
 
         resetting_subgraph2 = get_resetting_subgraph()
 

@@ -1,7 +1,6 @@
 """Subgraph for retrieving elements located on the arena wall."""
 
 from __future__ import annotations
-from math import pi
 
 
 from boombot_strategy.tasks.navigation_tasks import (
@@ -9,11 +8,11 @@ from boombot_strategy.tasks.navigation_tasks import (
     RelativeForward,
 )
 
-from boombot_strategy.show_game_context import ShowGameContext
 from boombot_strategy.tasks.navigation_tasks.odometrie import WallSetOdometrie
 from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
+
 
 def get_resetting_subgraph() -> BaseSubGraph:
     """
@@ -40,7 +39,7 @@ def get_resetting_subgraph() -> BaseSubGraph:
     )
 
     # Node: Reset odometry after resetting
-    node_reset_odometry = "[Resetting] Reset odometry after recalage"
+    node_reset_odometry = "[Resetting] Reset odometry after resetting"
     subgraph.add_node(
         node_reset_odometry,
         BaseTaskNode(
