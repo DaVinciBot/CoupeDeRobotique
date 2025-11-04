@@ -18,4 +18,5 @@ __all__ = [
     "get_pickup_subgraph",
     "get_push_one_floor_to_wall_subgraph",
     "get_resetting_subgraph",
+    "get_deplacement_subgraph",
 ]

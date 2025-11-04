@@ -82,11 +82,19 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         """
         self._is_initialized = True
 
+        if callable(self.goal):
+            try:
+                computed_goal = self.goal(ctx)
+            except TypeError:
+                computed_goal = self.goal()
+        else:
+            computed_goal = self.goal
+
         self.navigator_task = NavigatorTask(
             params=NavigatorTaskParams(
                 goal=(
-                    ctx.arena.compute_goal_position(self.goal) if self.goal else None
-                ),  # goal can be None when we use DeltaPathPlanner
+                    ctx.arena.compute_goal_position(computed_goal) if computed_goal else None),
+                # goal can be None when we use DeltaPathPlanner
                 timeout=self.timeout,
                 path_planner_params=self.path_planner_params,
                 trajectory_planner_params=self.trajectory_planner_params,

@@ -14,6 +14,7 @@ from boombot_strategy.sub_graphs import (
     get_push_one_floor_to_wall_subgraph,
 )
 from boombot_strategy.sub_graphs.resetting import get_resetting_subgraph
+from boombot_strategy.sub_graphs.deplacement import get_deplacement_subgraph
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
@@ -44,50 +45,26 @@ class TestResettingStrategy(BaseStrategy):
         """
         super().__init__(ctx)
 
-        # Step 1: Deploy the banner
-        deploy_banner_subgraph = get_banner_deployment_subgraph()
+        deplacement_subgraph = get_deplacement_subgraph(zone_id=1)
 
-        # Step 2: Navigate to the first pickup zone
-        first_pickup_subgraph = get_pickup_subgraph(self.zones["first_pickup_zone"])
+        resetting_subgraph = get_resetting_subgraph()
 
-        # Step 3: Navigate to the first construction zone
-        first_construct_subgraph = get_construct_subgraph(
-            self.zones["first_build_zone"],
-            back_offset=13,
-        )
+        deplacement_subgraph1 = get_deplacement_subgraph(zone_id=2)
 
-        # Step 4: Resetting after building
-        resetting_subgraph = get_resetting_subgraph(ctx)
+        resetting_subgraph1 = get_resetting_subgraph()
 
-        # Step 5: Navigate to the second pickup zone
-        second_pickup_subgraph = get_push_one_floor_to_wall_subgraph(
-            zone_id=self.zones["second_pickup_zone"],
-            push_distance=30,
-        )
+        deplacement_subgraph2 = get_deplacement_subgraph(zone_id=3)
 
-        second_construct_subgraph = get_construct_subgraph(
-            self.zones["second_build_zone"],
-            back_offset=15,
-        )
-
-        # Step 6: Move to the backstage zone to finish the game
-        go_to_backstage = BaseTaskNode(
-            name="[End] Go to backstage",
-            tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
-        )
-
-        resetting_subgraph1 = get_resetting_subgraph(ctx)
+        resetting_subgraph2 = get_resetting_subgraph()
 
         # Connect the subgraphs in execution order
         self._auto_build_transitions(
-            deploy_banner_subgraph,
-            first_pickup_subgraph,
-            first_construct_subgraph,
-            second_pickup_subgraph,
-            second_construct_subgraph,
-            go_to_backstage,
+            deplacement_subgraph,
             resetting_subgraph,
-
+            deplacement_subgraph1,
+            resetting_subgraph1,
+            deplacement_subgraph2,
+            resetting_subgraph2,
         )
 
         # Create the graph runner starting from the first subgraph
@@ -96,5 +73,5 @@ class TestResettingStrategy(BaseStrategy):
                 identifier="ResettingTestRunner",
                 follow_logger_manager_rules=True,
             ),
-            start=deploy_banner_subgraph.get_entry(),
+            start=deplacement_subgraph.get_entry(),
         )

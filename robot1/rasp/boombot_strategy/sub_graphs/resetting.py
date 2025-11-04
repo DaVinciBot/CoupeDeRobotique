@@ -9,15 +9,13 @@ from boombot_strategy.tasks.navigation_tasks import (
     RelativeForward,
 )
 
-from geometry import OrientedPoint
 from boombot_strategy.show_game_context import ShowGameContext
-from boombot_strategy.tasks.navigation_tasks.odometrie import SetOdometrie
+from boombot_strategy.tasks.navigation_tasks.odometrie import RuntimeSetOdometrie
 from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
 
-
-def get_resetting_subgraph(ctx: ShowGameContext) -> BaseSubGraph:
+def get_resetting_subgraph() -> BaseSubGraph:
     """
     Build a recalage subgraph to reposition the robot against the wall.
     Returns:
@@ -25,14 +23,15 @@ def get_resetting_subgraph(ctx: ShowGameContext) -> BaseSubGraph:
             Subgraph representing the recalage sequence.
     """
     subgraph = SubGraphBuilder()
-    goal = ctx.arena.get_closest_wall_goal()
 
     # Node: Navigate to the wall
     node_go_wall = "[Resetting] Go to closest free wall"
+    goal = lambda ctx: ctx.arena.get_closest_wall_goal()
     subgraph.add_node(
         node_go_wall,
         BaseTaskNode(name=node_go_wall, tasks=GoToClosestFreeWall(goal)),
     )
+
     # Node: Force contact with the wall
     node_forward = "[Resetting] Move forward to reset position"
     subgraph.add_node(
@@ -45,7 +44,7 @@ def get_resetting_subgraph(ctx: ShowGameContext) -> BaseSubGraph:
         node_reset_odometry,
         BaseTaskNode(
             name=node_reset_odometry,
-            tasks=SetOdometrie(goal.x, goal.y, goal.theta),
+            tasks=RuntimeSetOdometrie(),
         ),
     )
 

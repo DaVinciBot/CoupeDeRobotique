@@ -68,3 +68,19 @@ class SetOdometrie(BaseTask[ShowGameContext]):
         )
 
         return True
+
+
+class RuntimeSetOdometrie(BaseTask[ShowGameContext]):
+    """Task qui calcule le goal contre le mur au runtime et appelle SetOdometrie."""
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    @override
+    def handle(self, ctx: ShowGameContext) -> bool:
+        goal: OrientedPoint | None = ctx.arena.get_closest_wall_goal()
+        if goal is None:
+            ctx.logger.warning("[Resetting] get_closest_wall_goal returned None — skipping odometry reset")
+            return True
+
+        return SetOdometrie(goal.x, goal.y, goal.theta).handle(ctx)
