@@ -18,6 +18,7 @@ Public API: `arena`, `geometry`, `gpio`, `led_strip`, `navigation`,
 
 from . import (
     arena,
+    calcul_deporte,
     geometry,
     gpio,
     led_strip,
@@ -31,6 +32,7 @@ from . import (
 
 __all__ = [
     "arena",
+    "calcul_deporte",
     "geometry",
     "gpio",
     "led_strip",
