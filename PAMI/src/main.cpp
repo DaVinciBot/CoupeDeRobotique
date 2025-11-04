@@ -159,12 +159,82 @@ void setup() {
 
 long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
-    
-    // Fait tourner le moteur comme dans votre code original
-    
-    testMotor->doOneSteps(); //marche avec k=1          
-    delayMicroseconds(1e5);  // Même délai que votre code original
-    
+    // Test sequence state machine: exercises several Motor methods so you can
+    // observe their effects on the driver and on the logical step counter.
+    static int phase = 0;
+    static unsigned long phaseStart = 0;
+    unsigned long now = millis();
+
+    // Phases:
+    // 0 = single-step test (call doOneSteps slowly)
+    // 1 = enable/disable toggle
+    // 2 = forward with setTargetSpeed + acceleration
+    // 3 = reset counter and reverse briefly
+    // 4 = report and loop
+    if (phase == 0) {
+        if (phaseStart == 0) {
+            phaseStart = now;
+            Serial.println("Phase 0: single-step test (doOneSteps)");
+        }
+        testMotor->doOneSteps();
+        delayMicroseconds(100000);  // 100 ms between single steps
+        if (now - phaseStart >= 3000) {  // run this phase for 3s
+            Serial.printf("Counts after single-step phase: %ld\n", testMotor->getStepCount());
+            phaseStart = now;
+            phase = 1;
+        }
+    } else if (phase == 1) {
+        if (phaseStart == now) {
+            /* no-op */
+        }
+        Serial.println("Phase 1: toggling enable off then on");
+        testMotor->enableMotor(false);
+        delay(500);
+        testMotor->enableMotor(true);
+        Serial.println("Enable toggle complete");
+        phase = 2;
+        phaseStart = now;
+    } else if (phase == 2) {
+        if (phaseStart == now) {
+            Serial.println("Phase 2: forward run with setTargetSpeed(200)");
+            testMotor->setAcceleration(1000.0f);
+            testMotor->setTargetSpeed(200.0f);
+            phaseStart = now;
+        }
+        // let update() drive the motor for 3s
+        testMotor->update();
+        delay(2);
+        if (now - phaseStart >= 3000) {
+            testMotor->setTargetSpeed(0);
+            Serial.printf("Counts after forward run: %ld\n", testMotor->getStepCount());
+            phase = 3;
+            phaseStart = now;
+        }
+    } else if (phase == 3) {
+        Serial.println("Phase 3: reset counter and reverse briefly");
+        testMotor->resetStepCount();
+        Serial.printf("Count after reset: %ld\n", testMotor->getStepCount());
+        testMotor->setAcceleration(1000.0f);
+        testMotor->setTargetSpeed(-200.0f);
+        unsigned long end = millis() + 2000;
+        while (millis() < end) {
+            testMotor->update();
+            delay(2);
+        }
+        testMotor->setTargetSpeed(0);
+        Serial.printf("Counts after reverse run: %ld\n", testMotor->getStepCount());
+        phase = 4;
+        phaseStart = now;
+    } else if (phase == 4) {
+        Serial.println("Phase 4: report");
+        Serial.printf("Steps per rev (logical): %u\n", testMotor->getStepsPerRev());
+        Serial.printf("isMoving(): %d\n", testMotor->isMoving());
+        Serial.printf("Final step count: %ld\n", testMotor->getStepCount());
+        // loop back to phase 0 after short pause
+        delay(500);
+        phase = 0;
+        phaseStart = 0;
+    }
 #if ENABLE_OTA
     ota.loop();
 #endif
