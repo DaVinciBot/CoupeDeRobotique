@@ -70,8 +70,8 @@ class SetOdometrie(BaseTask[ShowGameContext]):
         return True
 
 
-class RuntimeSetOdometrie(BaseTask[ShowGameContext]):
-    """Task qui calcule le goal contre le mur au runtime et appelle SetOdometrie."""
+class WallSetOdometrie(BaseTask[ShowGameContext]):
+    """Task to reset odometry based on the closest wall goal at runtime."""
 
     def __init__(self) -> None:
         super().__init__()

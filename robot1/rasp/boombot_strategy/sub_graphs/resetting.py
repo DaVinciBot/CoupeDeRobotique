@@ -10,7 +10,7 @@ from boombot_strategy.tasks.navigation_tasks import (
 )
 
 from boombot_strategy.show_game_context import ShowGameContext
-from boombot_strategy.tasks.navigation_tasks.odometrie import RuntimeSetOdometrie
+from boombot_strategy.tasks.navigation_tasks.odometrie import WallSetOdometrie
 from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
@@ -39,12 +39,13 @@ def get_resetting_subgraph() -> BaseSubGraph:
         BaseTaskNode(name=node_forward, tasks=RelativeForward(8)),  # 8 arbitraire sa mère à tester
     )
 
+    # Node: Reset odometry after resetting
     node_reset_odometry = "[Resetting] Reset odometry after recalage"
     subgraph.add_node(
         node_reset_odometry,
         BaseTaskNode(
             name=node_reset_odometry,
-            tasks=RuntimeSetOdometrie(),
+            tasks=WallSetOdometrie(),
         ),
     )
 
