@@ -22,7 +22,6 @@ from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 
-
 if TYPE_CHECKING:
     from arena.show_arena import ShowArena
     from sensors import Inputs, Lidar, LidarDummy
@@ -83,7 +82,6 @@ class MainBrain(Brain):
         self.inputs: Inputs = inputs
         self.score: int
 
-
     # ====== Secondary Processes =======
 
     # region ====== Routines =======
@@ -96,7 +94,6 @@ class MainBrain(Brain):
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
     def run(self) -> None:
-        from robot1.rasp.boombot_strategy.tasks.navigation_tasks.maneuver import GoToClosestFreeWall
         """Runs the main control loop for the robot."""
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
@@ -133,10 +130,13 @@ class MainBrain(Brain):
             )
         actuators.deplacement_position()
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
-        # self.rolling_basis_odometrie = OrientedPoint(30, 120, 0)
+        while not self.jack_plugged:  # wait until cable is plugged
+            time.sleep(0.1)
+        actuators.block_banner()  # engage the banner blocker
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
-
+        while not self.jack_triggered:  # wait for the trigger event
+            time.sleep(0.1)
 
         # --- 3) Build the strategy --- #
 
@@ -149,12 +149,11 @@ class MainBrain(Brain):
             ),
         )
 
-
         # from strategy.tools import visualize_task_graph
         # visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
-        self.logger.info("rolling basis odo : " f"{self.rolling_basis_odometrie}")
+        self.logger.info(f"[CTRL:RB:Odometrie] : {self.rolling_basis_odometrie}")
         context = ShowGameContext(
             arena=self.arena,
             rolling_basis=rolling_basis,
@@ -209,7 +208,7 @@ class MainBrain(Brain):
 
     @Brain.task(
         process=False,
-        run_on_start=False,
+        run_on_start=True,
         refresh_rate=1,
         start_loop_marker="# --- MetaProg is insane (loop) --- #",
     )
@@ -237,7 +236,7 @@ class MainBrain(Brain):
                 WSmsg(sender="server", msg="update ui data", data=to_send),
             )
 
-    @Brain.task(process=False, run_on_start=False, refresh_rate=0.5)
+    @Brain.task(process=False, run_on_start=True, refresh_rate=0.5)
     async def receive_ui_data(self) -> None:
         """Executes requests received by the server.
 

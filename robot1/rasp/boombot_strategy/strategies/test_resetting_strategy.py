@@ -7,19 +7,9 @@ from typing import TYPE_CHECKING
 from loggerplusplus import Logger
 
 from boombot_strategy.strategies.base_strategy import BaseStrategy
-from boombot_strategy.sub_graphs import (
-    get_banner_deployment_subgraph,
-    get_construct_subgraph,
-    get_pickup_subgraph,
-    get_push_one_floor_to_wall_subgraph,
-)
-from boombot_strategy.sub_graphs.resetting import get_resetting_subgraph
 from boombot_strategy.sub_graphs.deplacement import get_deplacement_subgraph
-from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
-    GoToColorReservedZoneToFinishGame,
-)
+from boombot_strategy.sub_graphs.resetting import get_resetting_subgraph
 from strategy.core import GraphRunner
-from strategy.core.task_nodes import BaseTaskNode
 
 if TYPE_CHECKING:
     from boombot_strategy.show_game_context import ShowGameContext

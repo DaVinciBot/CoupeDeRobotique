@@ -93,7 +93,10 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         self.navigator_task = NavigatorTask(
             params=NavigatorTaskParams(
                 goal=(
-                    ctx.arena.compute_goal_position(computed_goal) if computed_goal else None),
+                    ctx.arena.compute_goal_position(computed_goal)
+                    if computed_goal
+                    else None
+                ),
                 # goal can be None when we use DeltaPathPlanner
                 timeout=self.timeout,
                 path_planner_params=self.path_planner_params,
