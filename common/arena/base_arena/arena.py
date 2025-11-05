@@ -404,7 +404,7 @@ class BaseArena(ABC):
         """
         return self.playable_area.contains(pos) or self.playable_area.touches(pos)
 
-    def get_closest_wall_goal(self) -> OrientedPoint:
+    def get_closest_wall_goal(self) -> OrientedPoint | None:
         """Determine the closest accessible wall point in the arena.
 
         Returns:
