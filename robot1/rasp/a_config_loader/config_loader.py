@@ -173,6 +173,8 @@ class CONFIG:
         ARENA_CHUNK_SIZE (int): Size of the arena chunks.
         ARENA_FORBIDDEN_COVER_THRESHOLD (float):
             Threshold for forbidden cover in the arena.
+        ARENA_WIDTH (float): Width of the arena.
+        ARENA_HEIGHT (float): Height of the arena.
 
         MOVEMENT_MANAGER_CONFIG (dict[str, Any]):
             Movement manager configuration settings.

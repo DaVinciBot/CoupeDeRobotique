@@ -404,9 +404,8 @@ class BaseArena(ABC):
         """
         return self.playable_area.contains(pos) or self.playable_area.touches(pos)
 
-    def get_closest_wall_goal(self) -> OrientedPoint | None:
-        """
-        Determine the closest accessible wall point in the arena.
+    def get_closest_wall_goal(self) -> OrientedPoint:
+        """Determine the closest accessible wall point in the arena.
 
         Returns:
             OrientedPoint: The closest accessible wall point.
@@ -420,11 +419,11 @@ class BaseArena(ABC):
         closest_point: OrientedPoint | None = None
         min_distance: float = float("inf")
 
-        walls = [
-            ("x", arena_border, range(0, arena_height + 1), 0),
-            ("x", arena_width - arena_border, range(0, arena_height + 1), pi),
-            ("y", arena_border, range(0, arena_width + 1), -pi / 2),
-            ("y", arena_height - arena_border, range(0, arena_width + 1), pi / 2),
+        walls: list[tuple[str, float, range, float]] = [
+            ("x", arena_border, range(arena_height + 1), 0),
+            ("x", arena_width - arena_border, range(arena_height + 1), pi),
+            ("y", arena_border, range(arena_width + 1), -pi / 2),
+            ("y", arena_height - arena_border, range(arena_width + 1), pi / 2),
         ]
 
         for axis, fixed, var_range, orientation in walls:
@@ -442,7 +441,7 @@ class BaseArena(ABC):
 
                 dx = candidate.x - robot_pos.x
                 dy = candidate.y - robot_pos.y
-                distance = (dx ** 2 + dy ** 2) ** 0.5
+                distance = (dx**2 + dy**2) ** 0.5
 
                 if distance < min_distance:
                     min_distance = distance

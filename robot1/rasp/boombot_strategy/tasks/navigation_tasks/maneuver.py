@@ -1,14 +1,11 @@
 """Generic maneuver tasks such as relative moves and zone centroids."""
 
 from __future__ import annotations
-from math import pi
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
-from loggerplusplus import Logger
-
 from geometry import OrientedPoint
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
@@ -25,7 +22,6 @@ from navigation.path_planner.delta_path_planner import DeltaPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
-from boombot_strategy.show_game_context import ShowGameContext
 
 if TYPE_CHECKING:
     from strategy.core import BaseGameContext
@@ -132,9 +128,13 @@ class GoCentroidOfZone(NavigationTask):
 
 # TODO : Ajouter les bons params et speed profiler
 class GoToClosestFreeWall(NavigationTask):
+    """Navigation task to go to the closest free wall position."""
+
     def __init__(self, goal: OrientedPoint) -> None:
-        """
-        Initialize the GoToClosestFreeWall task.
+        """Initialize the GoToClosestFreeWall task.
+
+        Args:
+            goal (OrientedPoint): The target position to navigate to.
         """
         self.goal = goal
 
