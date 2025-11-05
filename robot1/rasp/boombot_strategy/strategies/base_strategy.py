@@ -48,7 +48,7 @@ class BaseStrategy(ABC):
         """
         if not self.runner:
             msg = "Strategy graph has not been built yet."
-            self._logger.error(f"No active graph to visualize. {msg}")
+            self._logger.error(f"[STRATEGY] Cannot visualize - no active graph. {msg}")
             raise RuntimeError(msg)
         visualize_task_graph(start_node=self.runner.active[0])
 
@@ -63,7 +63,9 @@ class BaseStrategy(ABC):
         """
         if not self.runner:
             msg = "Strategy graph has not been built yet."
-            self._logger.error(f"No active graph to retrieve. {msg}")
+            self._logger.error(
+                f"[STRATEGY] Cannot retrieve runner - no active graph. {msg}",
+            )
             raise RuntimeError(msg)
         return self.runner
 

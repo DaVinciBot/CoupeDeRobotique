@@ -70,12 +70,12 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         """
         position: OrientedPoint = ally_zone.point
         self._logger.debug(
-            f"Handling avoidance at position: {position}, current state: {self.state}",
+            f"[NAV:Avoid] Handling avoidance at pos: {position}, state: {self.state}",
         )
 
         # 1. Timeout check
         if self._has_timed_out():
-            self._logger.warning("Avoidance timed out. Aborting task.")
+            self._logger.warning("[NAV:Avoid] Timeout reached - aborting task")
             return self._abort(current_navigator_task, position)
 
         # 2. Obstacle detected: begin avoidance
@@ -83,9 +83,9 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
             and self.state == AvoidanceState.IDLE
         ):
-            self._logger.info(
-                f"Obstacle detected. Stopping robot and initiating avoidance. "
-                f"Distance: {ally_zone.point.distance(enemy_zone.point)}",
+            distance = ally_zone.point.distance(enemy_zone.point)
+            self._logger.warning(
+                f"[NAV:Avoid] Obstacle detected at {distance:.1f}cm - stopping robot",
             )
 
             # Stop the robot and initiate avoidance procedure
@@ -94,7 +94,6 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self.state = AvoidanceState.AVOIDING
             current_navigator_task.state = NavigatorTaskState.AVOIDING
             self._start_timer()
-            self._logger.debug(f"Timer started at: {self._avoiding_start_time}")
             return cmd
 
         # 3. Obstacle cleared: finish avoidance
@@ -102,7 +101,7 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             self.state == AvoidanceState.AVOIDING
             and not self.acs_detector.is_acs_triggered(ally_zone, enemy_zone)
         ):
-            self._logger.info("Obstacle cleared. Replanning trajectory.")
+            self._logger.info("[NAV:Avoid] Obstacle cleared - replanning trajectory")
 
             # Obstacle is no longer detected, replan from current position
             last_params = cast(
@@ -111,29 +110,24 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
             )
             last_params.start = position
 
-            self._logger.debug(f"Replanning from updated start: {position}")
+            self._logger.debug(f"[NAV:Avoid] Replanning from updated start: {position}")
 
             new_path = current_navigator_task.path_planner.plan_path(last_params)
             current_navigator_task.trajectory_planner.plan_trajectory(new_path)
             current_navigator_task.trajectory_planner.start_planning()
 
-            self._logger.debug("Trajectory planner reset internal clock.")
             self._reset_timer()
-            self._logger.debug("Timer reset after avoidance completion.")
 
             self.state = AvoidanceState.IDLE
             current_navigator_task.state = NavigatorTaskState.IN_PROGRESS
 
-            self._logger.info("Avoidance complete. Resuming normal operation.")
+            self._logger.info("[NAV:Avoid] Resuming normal navigation")
             return cast(
                 "TrajectoryPlanCommand",
                 current_navigator_task.current_trajectory_command,
             )  # Avoidance complete, continue as normal
 
         # 4. Continue with original trajectory
-        self._logger.debug(
-            "No avoidance action required. Continuing original trajectory.",
-        )
         return cast(
             "TrajectoryPlanCommand",
             current_navigator_task.current_trajectory_command,

@@ -94,8 +94,8 @@ class Actuators(
         Args:
             msg (bytes): The received message bytes.
         """
-        self._logger.info(
-            f"Teensy Actuators says: {msg.decode('ascii', errors='ignore')}",
+        self._logger.debug(
+            f"[CTRL:ACT:Teensy] {msg.decode('ascii', errors='ignore')}",
         )
 
     def rcv_unknown_msg(self, msg: bytes) -> None:
@@ -106,7 +106,7 @@ class Actuators(
         Args:
             msg (bytes): The received message bytes.
         """
-        self._logger.warning(f"Teensy Actuators does not know the message {msg.hex()}")
+        self._logger.warning(f"[CTRL:ACT:Teensy] Unknown message type: {msg.hex()}")
 
     def rcv_switch_state_return(self, msg: bytes) -> None:
         """Handles SWITCH_STATE_RETURN messages from the Teensy.
@@ -114,7 +114,7 @@ class Actuators(
         Args:
             msg (bytes): The received message bytes.
         """
-        self._logger.info(f"Switch state: {msg.hex()}")
+        self._logger.debug(f"[CTRL:ACT] Switch state: {msg.hex()}")
         # Decode the message
         pin: int = struct.unpack("<B", msg[0:1])[0]
         state: bool = struct.unpack("<?", msg[1:2])[0]

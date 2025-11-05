@@ -85,7 +85,7 @@ class AStarPathPlanner(
 
         if not self.params.path_found:
             self._logger.warning(
-                "No path found! "
+                f"[NAV:Path] No path found"
                 f"Grid: [start=({self.params.current_position.x}, "
                 f"{self.params.current_position.y}), goal=({self.params.goal.x}, "
                 f"{self.params.goal.y})] "
@@ -130,7 +130,7 @@ class AStarPathPlanner(
         """
         if not path:
             self._logger.debug(
-                "[path to absolute oriented path] Path to convert is empty!",
+                "[NAV:Path] Path to convert is empty!",
             )
             return []
 

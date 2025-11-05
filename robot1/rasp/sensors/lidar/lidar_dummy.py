@@ -56,7 +56,7 @@ class LidarDummy:
         )
         self.__is_connected = True
 
-        self._logger.info("[LidarDummy] Initialized successfully.")
+        self._logger.info("[SENSOR:Lidar] Dummy mode initialized")
 
     @staticmethod
     def __init_polars_angle(
@@ -182,7 +182,9 @@ class LidarDummy:
             5.0,
         )  # Ensure distances are within sensor range
 
-        self._logger.debug("[LidarDummy] Simulated realistic distances generated.")
+        self._logger.debug(
+            "[SENSOR:Lidar:dummy] Simulated realistic distances generated.",
+        )
         return distances * self.__distance_unit
 
     def scan_to_polars(self) -> NDArray[np.float32]:
@@ -195,7 +197,9 @@ class LidarDummy:
         polars = np.column_stack((self.__polars_angles, distances))
         _valid_polars = polars[polars[:, 1] > self._min_distance]
 
-        self._logger.debug("[LidarDummy] Simulated polar coordinates generated.")
+        self._logger.debug(
+            "[SENSOR:Lidar:dummy] Simulated polar coordinates generated.",
+        )
         return np.array([])
 
     def is_connected(self) -> bool:

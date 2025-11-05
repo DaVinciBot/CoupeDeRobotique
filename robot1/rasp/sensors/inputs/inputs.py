@@ -47,17 +47,14 @@ class Inputs:
             wait_time (float, optional): Time to wait between checks. Defaults to 0.001.
         """
         false_jacks_in_a_row = 0
-        self._logger.info("Wait jack trigger...")
+        self._logger.info("[SENSOR:Jack] Waiting for jack trigger...")
         while false_jacks_in_a_row < CONSECUTIVE_TRIGGER_THRESHOLD:
             if self.jack.safe_digital_read():
                 false_jacks_in_a_row = 0
             else:
                 false_jacks_in_a_row += 1
-            self._logger.debug(
-                f"Jack trigger signal seems to be detected: {false_jacks_in_a_row}.",
-            )
             await asyncio.sleep(wait_time)
-        self._logger.info("Jack trigger detected !")
+        self._logger.info("[SENSOR:Jack] Trigger detected - starting match!")
 
     async def wait_for_jack_plugged(self, wait_time: float = 0.001) -> None:
         """Wait for the jack to be plugged in.
@@ -66,12 +63,11 @@ class Inputs:
             wait_time (float, optional): Time to wait between checks. Defaults to 0.001.
         """
         true_jacks_in_a_row = 0
-        self._logger.info("Waiting for jack to be plugged in...")
+        self._logger.info("[SENSOR:Jack] Waiting for jack plug...")
         while true_jacks_in_a_row < CONSECUTIVE_PLUG_THRESHOLD:
             if self.jack.safe_digital_read():
                 true_jacks_in_a_row += 1
             else:
                 true_jacks_in_a_row = 0
-            self._logger.debug(f"Jack plug presence count: {true_jacks_in_a_row}")
             await asyncio.sleep(wait_time)
-        self._logger.info("Jack plugged in!")
+        self._logger.info("[SENSOR:Jack] Jack plugged in - ready to start!")

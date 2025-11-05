@@ -52,7 +52,7 @@ class Navigator:  # UNUSED
             self.current_task = NavigatorTask(
                 params=self._tasks_queue.popleft(),
             )
-            self._logger.info(f"Switched to new task: {self.current_task}")
+            self._logger.info(f"[NAV:Task] Switched to new task: {self.current_task}")
             return True
         self.current_task = None
         return False
@@ -75,14 +75,16 @@ class Navigator:  # UNUSED
         if skip_queue:
             self.abort(affect_all_tasks=False)
             self._fetch_next_task()
-            self._logger.info(f"Executing task immediately: {navigator_task_params}")
+            self._logger.info(
+                f"[NAV:Task] Executing immediately: {navigator_task_params}",
+            )
         else:
             self._tasks_queue.append(navigator_task_params)
-            self._logger.info(f"Added task to queue: {navigator_task_params}")
+            self._logger.debug(f"[NAV:Task] Added to queue: {navigator_task_params}")
 
         if self.current_task is None:
             self._fetch_next_task()
-            self._logger.info(f"Executing task: {self.current_task}")
+            self._logger.info(f"[NAV:Task] Executing: {self.current_task}")
 
     def handle(
         self,
@@ -120,12 +122,12 @@ class Navigator:  # UNUSED
         ):
             self.abort()
             self._fetch_next_task()
-            self._logger.info("Avoidance aborted.")
+            self._logger.warning("[NAV:Avoid] Avoidance aborted, fetching next task")
 
         # If task is finished => fetch next task
         if self.current_task.state == NavigatorTaskState.FINISHED:
             self._fetch_next_task()
-            self._logger.info("Task finished.")
+            self._logger.info("[NAV:Task] Task completed successfully")
 
         return task_cmd
 
@@ -139,7 +141,7 @@ class Navigator:  # UNUSED
         """
         if affect_all_tasks:
             self._tasks_queue.clear()
-            self._logger.info("All tasks aborted.")
+            self._logger.warning("[NAV:Task] All tasks aborted")
 
         self.current_task = None
-        self._logger.info("Current task aborted.")
+        self._logger.warning("[NAV:Task] Current task aborted")

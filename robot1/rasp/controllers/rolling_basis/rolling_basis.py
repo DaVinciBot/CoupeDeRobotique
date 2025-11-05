@@ -92,9 +92,8 @@ class RollingBasis(BaseComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        # Temp to debug logs
-        self._logger.info(
-            f"Teensy Rolling Basis says: {msg.decode('ascii', errors='ignore')}",
+        self._logger.debug(
+            f"[CTRL:RB:Teensy] {msg.decode('ascii', errors='ignore')}",
         )
 
     def rcv_rolling_basis_state(self, msg: bytes) -> None:
@@ -124,7 +123,7 @@ class RollingBasis(BaseComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self._logger.warning(f"Teensy Motors does not know the message {msg.hex()}")
+        self._logger.warning(f"[CTRL:RB:Teensy] Unknown message type: {msg.hex()}")
 
     # endregion
 

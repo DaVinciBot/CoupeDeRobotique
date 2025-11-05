@@ -181,7 +181,10 @@ if __name__ == "__main__":
     def force_kill_all_python() -> None:
         """Kill all running Python processes using pkill -9 python."""
         subprocess.run(["pkill", "-9", "python"], check=False)  # noqa: S607
-        logger_brain.fatal("All Python processes killed.")
+        logger_brain.fatal("[SHUTDOWN] All Python processes killed.")
+
+    logger_brain.info("[INIT] All systems initialized successfully")
+    logger_brain.info("[INIT] Starting WebSocket server...")
 
     ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
