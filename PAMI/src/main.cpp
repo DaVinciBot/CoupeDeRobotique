@@ -103,6 +103,11 @@ void setup() {
     
     Serial.println("Moteur initialisé");
 
+    testMotor->setTargetSpeed(10.0f);
+    testMotor->setAcceleration(100.0f);
+    testMotor->_setDirection(false);
+   
+
     /*lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
     lidar->onReceive([]() {
         if (!canStart) {
@@ -162,9 +167,17 @@ void loop() {
     
     // Fait tourner le moteur comme dans votre code original
     
-    testMotor->doOneSteps(); //marche avec k=1          
-    delayMicroseconds(1e5);  // Même délai que votre code original
-    
+    /*testMotor->doOneSteps(); //marche avec k=1          
+    delayMicroseconds(5e2);  // Même délai que votre code original
+    */
+   
+   testMotor->update();
+   Serial.println(testMotor->getStepCount()); //jsp pk mais ne pas commanter, c important
+   /*bool i=false;
+   if(testMotor->getStepCount() > 1000 ){
+    i=not i;
+    testMotor->_setDirection(i);
+   }*/
 #if ENABLE_OTA
     ota.loop();
 #endif

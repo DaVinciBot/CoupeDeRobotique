@@ -10,7 +10,7 @@
 // #------- MOTOR CONFIGURATION -------#
 #define LEFT_DIR_PIN 18          // Direction pin for left motor
 #define LEFT_STEP_PIN 19        // Step pin for left motor
-#define LEFT_EN_PIN 9           // Enable pin for left motor
+#define LEFT_EN_PIN 17           // Enable pin for left motor
 #define LEFT_STEPS_PER_REV 400  // Steps per revolution for left motor
 
 #define RIGHT_DIR_PIN 21         // Direction pin for right motor

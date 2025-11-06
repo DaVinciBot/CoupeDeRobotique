@@ -27,6 +27,7 @@
  */
 class Motor {
    public:
+   void _setDirection(bool clockwise);
     /**
      * @brief Construct a new Motor object
      *
@@ -157,7 +158,7 @@ class Motor {
      *
      * @param clockwise True for clockwise, false for counter-clockwise
      */
-    void _setDirection(bool clockwise);
+    
 
     /**
      * @brief Perform K micro-steps in a single logical step operation.

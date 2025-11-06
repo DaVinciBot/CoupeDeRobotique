@@ -36,10 +36,13 @@ void Motor::enableMotor(bool enable) {
 void Motor::setTargetSpeed(float stepsPerSec) {
     if (_invertDirection) {
         stepsPerSec = -stepsPerSec;
+        Serial.println("inv ok");
     }
     _targetSpeedStepsPerSec = stepsPerSec * 1000.0f;
     _moving = (fabs(_targetSpeedStepsPerSec) >= 1.0f);
     enableMotor(_moving);
+    //Serial.print("_targetSpeedStepsPerSec = ");
+    //Serial.println(_targetSpeedStepsPerSec);
 }
 
 void Motor::setAcceleration(float stepsPerSec2) {
@@ -53,7 +56,7 @@ void Motor::_setDirection(bool clockwise) {
 }
 
 void Motor::doOneSteps() {
-    
+    //Serial.println("on appel one step");
     digitalWrite(_stepPin, HIGH);
     delayMicroseconds(500);
     digitalWrite(_stepPin, LOW);
@@ -69,13 +72,17 @@ void Motor::doOneSteps() {
 }
 
 void Motor::update() {
-    if (!_moving)
+    if (!_moving){
+        Serial.println("Ca bouge pas !");    
         return;
-
+    }
+        
+    //Serial.println("Ca bouge !");   
     unsigned long now = micros();
     unsigned long dt = now - _lastStepTime;
     float dtSec = dt * 1e-6f;
     float speedDiff = _acceleration * dtSec;
+    //Serial.println(speedDiff);
 
     if (fabs(_currentSpeedStepsPerSec - _targetSpeedStepsPerSec) < speedDiff) {
         _currentSpeedStepsPerSec = _targetSpeedStepsPerSec;
@@ -84,6 +91,8 @@ void Motor::update() {
     } else if (_currentSpeedStepsPerSec > _targetSpeedStepsPerSec) {
         _currentSpeedStepsPerSec -= speedDiff;
     }
+    //Serial.print("_currentSpeedStepsPerSec =");
+    //Serial.println(_currentSpeedStepsPerSec);
 
     if (fabs(_currentSpeedStepsPerSec) < 1.0f) {
         _usDelayBetweenKSteps = 1e6f;
@@ -95,8 +104,14 @@ void Motor::update() {
     bool clockwise = (_currentSpeedStepsPerSec >= 0);
     _setDirection(clockwise);
 
+    //Serial.print("dt = ");
+    //Serial.print(dt);
+    //Serial.print(", _usDelayBetweenKSteps = ");
+    //Serial.println(_usDelayBetweenKSteps);
+
     if (dt >= _usDelayBetweenKSteps) {
         doOneSteps();
+        //Serial.println("step !");
         
     }
 
