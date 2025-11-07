@@ -85,7 +85,7 @@ class WallSetOdometrie(BaseTask[ShowGameContext]):
         """
         goal: OrientedPoint | None = ctx.arena.get_closest_wall_goal()
         if goal is None:
-            ctx.logger.warning(
+            ctx.arena.logger.warning(
                 "[Resetting] get_closest_wall_goal returned None — skipping odometry reset"
             )
             return True
