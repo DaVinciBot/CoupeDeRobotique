@@ -412,18 +412,14 @@ class BaseArena(ABC):
         """
         robot_pos = self.ally_zone.point
 
-        arena_width = 300
-        arena_height = 200
-        arena_border = 5
-
         closest_point: OrientedPoint | None = None
         min_distance: float = float("inf")
 
         walls: list[tuple[str, float, range, float]] = [
-            ("x", arena_border, range(arena_height + 1), 0),
-            ("x", arena_width - arena_border, range(arena_height + 1), pi),
-            ("y", arena_border, range(arena_width + 1), -pi / 2),
-            ("y", arena_height - arena_border, range(arena_width + 1), pi / 2),
+            ("x", self.border_buffer, range(self.height + 1), 0),
+            ("x", self.width - self.border_buffer, range(self.height + 1), pi),
+            ("y", self.border_buffer, range(self.width + 1), -pi / 2),
+            ("y", self.height - self.border_buffer, range(self.width + 1), pi / 2),
         ]
 
         for axis, fixed, var_range, orientation in walls:
