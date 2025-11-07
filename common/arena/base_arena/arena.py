@@ -115,6 +115,9 @@ class BaseArena(ABC):
             if not zone.is_accessible():
                 self.grid_manager.add_forbidden_static_zone(zone.buffered_polygon)
 
+        # 6. Chunk size
+        self.chunk_size: int = chunk_size
+
         # endregion
 
         # region ====== Initialized derivative attributes ======
@@ -415,17 +418,26 @@ class BaseArena(ABC):
         closest_point: OrientedPoint | None = None
         min_distance: float = float("inf")
 
-        step = 5
         free_zones = set(self.find_zone_accessibility("FREE"))
 
         walls: list[tuple[str, float, range, float]] = [
-            ("x", self.border_buffer, range(0, self.height + 1, step), 0),
-            ("x", self.width - self.border_buffer, range(0, self.height + 1, step), pi),
-            ("y", self.border_buffer, range(0, self.width + 1, step), -pi / 2),
+            ("x", self.border_buffer, range(0, self.height + 1, self.chunk_size), 0),
+            (
+                "x",
+                self.width - self.border_buffer,
+                range(0, self.height + 1, self.chunk_size),
+                pi,
+            ),
+            (
+                "y",
+                self.border_buffer,
+                range(0, self.width + 1, self.chunk_size),
+                -pi / 2,
+            ),
             (
                 "y",
                 self.height - self.border_buffer,
-                range(0, self.width + 1, step),
+                range(0, self.width + 1, self.chunk_size),
                 pi / 2,
             ),
         ]
