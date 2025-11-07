@@ -415,11 +415,19 @@ class BaseArena(ABC):
         closest_point: OrientedPoint | None = None
         min_distance: float = float("inf")
 
+        step = 5
+        free_zones = set(self.find_zone_accessibility("FREE"))
+
         walls: list[tuple[str, float, range, float]] = [
-            ("x", self.border_buffer, range(self.height + 1), 0),
-            ("x", self.width - self.border_buffer, range(self.height + 1), pi),
-            ("y", self.border_buffer, range(self.width + 1), -pi / 2),
-            ("y", self.height - self.border_buffer, range(self.width + 1), pi / 2),
+            ("x", self.border_buffer, range(0, self.height + 1, step), 0),
+            ("x", self.width - self.border_buffer, range(0, self.height + 1, step), pi),
+            ("y", self.border_buffer, range(0, self.width + 1, step), -pi / 2),
+            (
+                "y",
+                self.height - self.border_buffer,
+                range(0, self.width + 1, step),
+                pi / 2,
+            ),
         ]
 
         for axis, fixed, var_range, orientation in walls:
@@ -430,9 +438,7 @@ class BaseArena(ABC):
                     candidate = OrientedPoint(var, fixed, orientation)
 
                 zone = self.get_zone_by_location(candidate)
-                if zone is None:
-                    continue
-                if zone not in self.find_zone_accessibility("FREE"):
+                if zone not in free_zones:
                     continue
 
                 dx = candidate.x - robot_pos.x
