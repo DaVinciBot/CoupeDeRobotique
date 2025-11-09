@@ -19,7 +19,6 @@ NACK_ID = 127
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-
     from loggerplusplus import Logger
 
 
