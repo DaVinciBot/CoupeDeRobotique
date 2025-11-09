@@ -1,6 +1,8 @@
 from __future__ import annotations
+from __future__ import annotations
 
-import struct
+import random
+from math import pi
 from typing import TYPE_CHECKING
 
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
@@ -11,7 +13,11 @@ if TYPE_CHECKING:
     from loggerplusplus import Logger
 
 
-class SpatialComputation:
+class SpatialComputationDummy:
+    """
+    Dummy version of SpatialComputation for testing without LoRa or RollingBasis.
+    All methods exist but return placeholder data.
+    """
     def __init__(
             self,
             logger: Logger,
@@ -63,52 +69,45 @@ class SpatialComputation:
     # Section full freestyle au cas où on envoie directement le lora d'ici, j'en sais rien ALED
     def send_data(self) -> None:
         """
-        Send data to the LoRa module.
-
-        This is a placeholder method and should be implemented with actual
-        LoRa communication logic.
+        Dummy method to send data to the LoRa module.
         """
-        data = struct.pack(
-            "<9f",
-            *self.get_robot_position(),
-            *self.get_enemy_position(),
-            *self.get_enemy_velocity(),
-        )
-
-        self.lora.send(data)  # Placeholder for sending data via LoRa
+        pass
 
     def receive_data(self) -> dict[str, object]:
         """
-        Receive data from the LoRa module.
-
-        This is a placeholder method and should be implemented with actual
-        LoRa communication logic.
+        Dummy method to receive data from the LoRa module.
 
         Returns:
             A dictionary containing the robot's position, enemy position,
             enemy velocity, and a list of crates with their positions and color IDs.
         """
-        data = self.lora.receive()
 
         num_crates = 48  # add to config loader
 
-        data_format = "<9f{}f".format(num_crates)
-        unpacked_data = struct.unpack(data_format, data)
+        # Simulate received data
 
         # Main Robot
-        robot_x, robot_y, robot_theta = unpacked_data[0:3]
+        robot_x = random.randint(0, self.arena.width)
+        robot_y = random.randint(0, self.arena.height)
+        robot_theta = random.randint(0, 360) * pi / 180
 
         # Enemy Position
-        enemy_x, enemy_y, enemy_t = unpacked_data[3:6]
+        enemy_x = random.randint(0, self.arena.width)
+        enemy_y = random.randint(0, self.arena.height)
+        enemy_t = random.randint(0, 360) * pi / 180
 
         # Enemy Velocity
-        enemy_dx, enemy_dy, enemy_speed = unpacked_data[6:9]
+        enemy_dx = random.randint(-20, 20)
+        enemy_dy = random.randint(-20, 20)
+        enemy_speed = int((enemy_dx ** 2 + enemy_dy ** 2) ** 0.5)
 
         # Crates
         crates = []
         for i in range(num_crates):
-            base = 9 + i * 4
-            crate_x, crate_y, crate_z, color_id = unpacked_data[base:base+4]
+            crate_x = random.randint(0, self.arena.width)
+            crate_y = random.randint(0, self.arena.height)
+            crate_z = random.randint(0, 3)
+            color_id = random.randint(0, 2)
             crates.append((crate_x, crate_y, crate_z, int(color_id)))
 
         return {
