@@ -32,6 +32,52 @@ class SpatialComputationDummy:
         self.rolling_basis = rolling_basis
         self.lora = lora  # Placeholder for LoRa module
 
+        self.crates_zones_points = [
+            ((10, 130), (25, 110)),
+            ((10, 50), (25, 30)),
+            ((100, 25), (120, 10)),
+            ((105, 87.5), (125, 72.5)),
+            ((290, 130), (275, 110)),
+            ((275, 50), (290, 30)),
+            ((200, 25), (180, 10)),
+            ((195, 87.5), (175, 72.5)),
+        ]
+
+        self.crates = self._generate_fixed_crates()
+
+    def _generate_fixed_crates(self):
+        """
+        Generate a fixed list of crate positions and color IDs.
+        Returns:
+            List of tuples containing (x, y, z, color_id) for each crate.
+        """
+        crates = []
+        crate_size_x = 15
+        crate_size_y = 5
+        for (p1, p2) in self.crates_zones_points:
+            x_min, x_max = min(p1[0], p2[0]), max(p1[0], p2[0])
+            y_min, y_max = min(p1[1], p2[1]), max(p1[1], p2[1])
+            color_ids = [0, 0, 1, 1]
+            random.shuffle(color_ids)
+
+            if (x_max - x_min) >= (y_max - y_min):
+                x_positions = [
+                    x_min + crate_size_x / 2 + i * crate_size_y
+                    for i in range(4)
+                ]
+                y_positions = [(y_min + y_max) / 2] * 4
+            else:
+                x_positions = [(x_min + x_max) / 2] * 4
+                y_positions = [
+                    y_min + crate_size_y / 2 + i * crate_size_y
+                    for i in range(4)
+                ]
+
+            for i in range(4):
+                crates.append((x_positions[i], y_positions[i], 0, color_ids[i]))
+
+        return crates
+
     def get_robot_position(self) -> tuple[float, float, float]:
         """
         Get the robot's current position in the global coordinate system.
@@ -81,9 +127,6 @@ class SpatialComputationDummy:
             A dictionary containing the robot's position, enemy position,
             enemy velocity, and a list of crates with their positions and color IDs.
         """
-
-        num_crates = 48  # add to config loader
-
         # Simulate received data
 
         # Main Robot
@@ -102,13 +145,7 @@ class SpatialComputationDummy:
         enemy_speed = int((enemy_dx ** 2 + enemy_dy ** 2) ** 0.5)
 
         # Crates
-        crates = []
-        for i in range(num_crates):
-            crate_x = random.randint(0, self.arena.width)
-            crate_y = random.randint(0, self.arena.height)
-            crate_z = random.randint(0, 3)
-            color_id = random.randint(0, 2)
-            crates.append((crate_x, crate_y, crate_z, int(color_id)))
+        crates = self.crates
 
         return {
             "robot_position": (robot_x, robot_y, robot_theta),
