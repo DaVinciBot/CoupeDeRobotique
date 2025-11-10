@@ -52,8 +52,7 @@ class SpatialComputationDummy:
             List of tuples containing (x, y, z, color_id) for each crate.
         """
         crates = []
-        crate_size_x = 15
-        crate_size_y = 5
+        crate_size = 5
         for (p1, p2) in self.crates_zones_points:
             x_min, x_max = min(p1[0], p2[0]), max(p1[0], p2[0])
             y_min, y_max = min(p1[1], p2[1]), max(p1[1], p2[1])
@@ -62,14 +61,14 @@ class SpatialComputationDummy:
 
             if (x_max - x_min) >= (y_max - y_min):
                 x_positions = [
-                    x_min + crate_size_x / 2 + i * crate_size_y
+                    x_min + crate_size / 2 + i * crate_size
                     for i in range(4)
                 ]
                 y_positions = [(y_min + y_max) / 2] * 4
             else:
                 x_positions = [(x_min + x_max) / 2] * 4
                 y_positions = [
-                    y_min + crate_size_y / 2 + i * crate_size_y
+                    y_min + crate_size / 2 + i * crate_size
                     for i in range(4)
                 ]
 
