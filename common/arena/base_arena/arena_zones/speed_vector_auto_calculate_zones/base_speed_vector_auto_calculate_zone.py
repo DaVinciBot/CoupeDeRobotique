@@ -113,8 +113,8 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         """
         if len(self.__positions_recorded) < MIN_RECORDS_FOR_VECTOR:
             self._logger.debug(
-                "Not enough positions recorded to compute speed vector. "
-                "Returning zero vector.",
+                "[ARENA:Zone:Vector] Not enough positions recorded, "
+                "returning zero vector",
             )
             return SpeedVector(0, 0, 0)
 
@@ -126,7 +126,8 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
 
         if timestamp_delta <= 0 or timestamp_delta > self.no_detection_timeout:
             self._logger.debug(
-                "Invalid or outdated time delta. Returning zero vector.",
+                "[ARENA:Zone:Vector] Invalid/outdated time delta, "
+                "returning zero vector",
             )
             return SpeedVector(0, 0, 0)
 
@@ -138,7 +139,9 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         speed = distance / timestamp_delta if distance else 0
 
         if not speed:
-            self._logger.debug("No displacement detected. Returning zero vector.")
+            self._logger.debug(
+                "[ARENA:Zone:Vector] No displacement detected, returning zero vector",
+            )
             return SpeedVector(0, 0, 0)
 
         return SpeedVector(speed, dx / distance, dy / distance)

@@ -77,14 +77,14 @@ class BaseArena(ABC):
 
         if border_buffer % chunk_size:
             self._logger.warning(
-                "The border buffer is not a multiple of the chunk size -> "
-                "the not walkable area will not be aligned with the grid",
+                "[ARENA:Grid] Border buffer not aligned with chunk size - "
+                "walkable area may not align with grid",
             )
 
         if obstacle_buffer % chunk_size:
             self._logger.warning(
-                "The obstacle buffer is not a multiple of the chunk size -> "
-                "the not walkable area will not be aligned with the grid",
+                "[ARENA:Grid] Obstacle buffer not aligned with chunk size - "
+                "walkable area may not align with grid",
             )
         # 3. Buffers
         self.border_buffer: float = border_buffer
@@ -246,7 +246,7 @@ class BaseArena(ABC):
         """
         if team_color not in {TeamColor.YELLOW, TeamColor.BLUE}:
             self._logger.error(
-                f"Invalid team color: {team_color}. Must be 'yellow' or 'blue'.",
+                f"[ARENA:Config] Invalid team color: {team_color} - must be YELLOW or BLUE",
             )
 
         self.team_color: TeamColor = team_color
@@ -378,7 +378,7 @@ class BaseArena(ABC):
         # 1. If goal is defined as int, it's a zone ID
         if isinstance(goal, int):
             if goal > len(self.zones):
-                self._logger.error("Invalid zone ID given in trajectory parameters.")
+                self._logger.error("[ARENA:Zone] Invalid zone ID in trajectory parameters")
                 return None
 
             return self.zones[goal].get_go_to_position(
@@ -425,7 +425,7 @@ class BaseArena(ABC):
         """
         if isinstance(location, int):
             if location >= len(self.zones):
-                self._logger.error("Invalid zone ID given in trajectory parameters.")
+                self._logger.error("[ARENA:Zone] Invalid zone ID in trajectory parameters")
                 return None
             return self.zones[location]
         if isinstance(location, BaseArenaZone):

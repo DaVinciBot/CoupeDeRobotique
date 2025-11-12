@@ -440,8 +440,8 @@ class ShowArena(BaseArena):
             grid_manager_logger=grid_manager_logger,
         )
 
-        self._logger.info("ShowArena initialized.")
-        self._logger.debug(f"Width: {self.width}, Height: {self.height}")
+        self._logger.info("[ARENA:Show] Initialized")
+        self._logger.debug(f"[ARENA:Show] Dimensions: {self.width}x{self.height}")
 
     @override
     def __eq__(self, other: object) -> bool:

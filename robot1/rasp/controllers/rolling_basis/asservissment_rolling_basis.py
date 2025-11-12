@@ -93,7 +93,7 @@ class AsservissementRollingBasis(BaseComTeensy):
             msg (bytes): The received message bytes.
         """
         self._logger.info(
-            f"Teensy Rolling Basis says: {msg.decode('ascii', errors='ignore')}",
+            f"[CTRL:RB] Teensy says: {msg.decode('ascii', errors='ignore')}",
         )
 
     def rcv_rolling_basis_state(self, msg: bytes) -> None:
@@ -123,7 +123,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self._logger.warning(f"Teensy Motors does not know the message {msg.hex()}")
+        self._logger.warning(f"[CTRL:RB] Teensy unknown message: {msg.hex()}")
 
     # endregion
 
@@ -219,7 +219,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         logs = self.get_logs()
         if not logs:
             self._logger.warning(
-                "No logs to plot. Ensure that set_target_position() has been called.",
+                "[CTRL:RB] No logs to plot, ensure set_target_position() was called",
             )
             return
 
@@ -263,7 +263,7 @@ class AsservissementRollingBasis(BaseComTeensy):
                 )
             ]
             self._logger.warning(
-                f"Inconsistent log lengths: {log_lengths}",
+                f"[CTRL:RB] Inconsistent log lengths: {log_lengths}",
             )
 
         # Plot
@@ -357,7 +357,7 @@ class AsservissementRollingBasis(BaseComTeensy):
             self.linear_position_pid = pid
             self._send_pid(PidID.LINEAR_POSITION.value, pid)
         except (ValueError, TypeError) as e:
-            self._logger.error(f"Failed to set linear position PID: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to set linear position PID: {e}")
 
     @overload
     def set_angular_position_pid(self, *args: float) -> None: ...
@@ -390,7 +390,7 @@ class AsservissementRollingBasis(BaseComTeensy):
             self.angular_position_pid = pid
             self._send_pid(PidID.ANGULAR_POSITION.value, pid)
         except (ValueError, TypeError) as e:
-            self._logger.error(f"Failed to set angular position PID: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to set angular position PID: {e}")
 
     def set_pids(
         self,
@@ -418,7 +418,7 @@ class AsservissementRollingBasis(BaseComTeensy):
                 angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
             )
         except (ValueError, TypeError) as e:
-            self._logger.error(f"Failed to initialize PIDs: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to initialize PIDs: {e}")
 
     # endregion
 

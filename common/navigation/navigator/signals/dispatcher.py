@@ -40,7 +40,7 @@ class NavigatorSignalsDispatcher:  # UNUSED
 
         self._signals = NavigatorEvents()
         self._logger.debug(
-            f"NavigatorSignalsDispatcher initialized with events: {event_names}",
+            f"[NAV:Signals] Dispatcher initialized with events: {event_names}",
         )
 
     def connect_signal(
@@ -59,9 +59,9 @@ class NavigatorSignalsDispatcher:  # UNUSED
             # Connect callback to signal
             event = getattr(self._signals, signal.name)
             event += callback
-            self._logger.debug(f"Connected callback to signal: {signal.name}")
+            self._logger.debug(f"[NAV:Signals] Connected callback to: {signal.name}")
         except AttributeError:
-            self._logger.warning(f"Attempted to connect to unknown signal: {signal}")
+            self._logger.warning(f"[NAV:Signals] Unknown signal: {signal}")
 
     def disconnect_signal(
         self,
@@ -78,11 +78,11 @@ class NavigatorSignalsDispatcher:  # UNUSED
             # Disconnect callback from signal
             event = getattr(self._signals, signal.name)
             event -= callback
-            self._logger.debug(f"Disconnected callback from signal: {signal.name}")
-        except AttributeError:
-            self._logger.warning(
-                f"Attempted to disconnect from unknown signal: {signal}",
+            self._logger.debug(
+                f"[NAV:Signals] Disconnected callback from: {signal.name}",
             )
+        except AttributeError:
+            self._logger.warning(f"[NAV:Signals] Unknown signal: {signal}")
 
     def emit_signal(  # UNUSED
         self,
@@ -99,8 +99,8 @@ class NavigatorSignalsDispatcher:  # UNUSED
         """
         try:
             self._logger.debug(
-                f"Emitting signal: {signal.name} with args: {args}, kwargs: {kwargs}",
+                f"[NAV:Signals] Emitting: {signal.name} args: {args}, kwargs: {kwargs}",
             )
             getattr(self._signals, signal.name)(*args, **kwargs)
         except AttributeError:
-            self._logger.warning(f"Attempted to emit unknown signal: {signal}")
+            self._logger.warning(f"[NAV:Signals] Unknown signal: {signal}")

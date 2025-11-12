@@ -38,7 +38,7 @@ class GraphRunner:
         self.active: list[BaseTaskNode] = [start]
         self.prev: dict[BaseTaskNode, BaseTaskNode | None] = {start: None}
         msg = (
-            f"GraphRunner initialized with start node '{start.name}', "
+            f"[STRAT] GraphRunner initialized with start: '{start.name}', "
             f"parallel={self.parallel}"
         )
         self._logger.info(msg)
@@ -50,7 +50,7 @@ class GraphRunner:
             ctx (BaseGameContext): Context passed to each node.
         """
         if not self.active:
-            msg = "No active nodes to execute; graph execution complete or not started."
+            msg = "[STRAT] No active nodes - execution complete or not started"
             self._logger.warning(msg)
             return
 
@@ -61,18 +61,18 @@ class GraphRunner:
             # Log entry if first time
             if not node.entered:
                 task_name = node.tasks[0].__class__.__name__ if node.tasks else "NoTask"
-                msg = f"==> Entering node: {node.name} [{task_name}]"
+                msg = f"[STRAT] ==> Entering: {node.name} [{task_name}]"
                 self._logger.info(msg)
 
             done = node.handle(ctx)
             if not done:
-                msg = f"... still executing: {node.name}"
+                msg = f"[STRAT] ... executing: {node.name}"
                 self._logger.debug(msg)
                 next_active.append(node)
                 continue
 
             # Node completed
-            msg = f"<== Finished node: {node.name} with status {node.status.name}"
+            msg = f"[STRAT] <== Finished: {node.name} with status {node.status.name}"
             self._logger.info(msg)
 
             # Gather valid transitions

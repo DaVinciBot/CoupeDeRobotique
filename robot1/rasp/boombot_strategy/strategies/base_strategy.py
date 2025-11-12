@@ -48,7 +48,7 @@ class BaseStrategy(ABC):
         """
         if not self.runner:
             msg = "Strategy graph has not been built yet."
-            self._logger.error(f"[STRATEGY] Cannot visualize - no active graph. {msg}")
+            self._logger.error(f"[STRAT] Cannot visualize - no active graph. {msg}")
             raise RuntimeError(msg)
         visualize_task_graph(start_node=self.runner.active[0])
 
@@ -64,7 +64,7 @@ class BaseStrategy(ABC):
         if not self.runner:
             msg = "Strategy graph has not been built yet."
             self._logger.error(
-                f"[STRATEGY] Cannot retrieve runner - no active graph. {msg}",
+                f"[STRAT] Cannot retrieve runner - no active graph. {msg}",
             )
             raise RuntimeError(msg)
         return self.runner
@@ -87,7 +87,7 @@ class BaseStrategy(ABC):
                 ``False`` otherwise.
         """
         if not elements:
-            self._logger.error("No elements provided for building the strategy.")
+            self._logger.error("[STRAT] No elements provided for building")
             return False
 
         # Resolve entry and exit points for each element
@@ -97,8 +97,8 @@ class BaseStrategy(ABC):
             # Create a direct transition from the exit of the current element
             # to the entry of the next
             self._logger.debug(
-                f"Creating transition from {exit_points[i].name}"
-                f" to {entry_points[i + 1].name}",
+                f"[STRAT] Creating transition: "
+                f"{exit_points[i].name} -> {entry_points[i + 1].name}",
             )
             exit_points[i].add_transition(DirectTransition(entry_points[i + 1]))
         return True

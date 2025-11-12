@@ -82,12 +82,12 @@ class GPIOManager:
         """
         if self.is_declared_gpio(pin) or pin < 0 or pin > self.nb_pin:
             self._logger.warning(
-                f"Failed to add pin {pin}: Invalid or already declared"
+                f"[GPIO] Failed to add pin {pin}: Invalid or already declared",
             )
             return False
 
         self.gpios[pin] = type_actuator
-        self._logger.info(f"Added pin {pin} with type {type_actuator}")
+        self._logger.info(f"[GPIO] Added pin {pin} with type {type_actuator}")
         return True
 
     def get_type_gpio(self, pin: int) -> ActuatorType | None:
@@ -103,6 +103,6 @@ class GPIOManager:
         type_found: ActuatorType | None = self.gpios.get(pin, None)
 
         if type_found is None:
-            self._logger.error(f"Pin {pin} is not used")
+            self._logger.error(f"[GPIO] Pin {pin} is not used")
 
         return type_found

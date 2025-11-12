@@ -33,6 +33,6 @@ class NoProjectionAcsDetectionProfile(
         """
         distance = ally_zone.point.distance(enemy_zone.point)
         if distance <= self.params.acs_distance:
-            self._logger.info(f"ACS triggered. Distance: {distance}")
+            self._logger.debug(f"[NAV:ACS] Triggered - distance: {distance:.1f}cm")
             return True
         return False
