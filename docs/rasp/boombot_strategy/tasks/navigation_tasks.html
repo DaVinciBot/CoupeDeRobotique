@@ -179,7 +179,7 @@
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">GoCentroidOfZone</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.show_game_context.ShowGameContext]</span>):
+    <span class="name">GoCentroidOfZone</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.winter_game_context.WinterGameContext]</span>):
 
                 <label class="view-source-button" for="GoCentroidOfZone-view-source"><span>View Source</span></label>
 
@@ -212,36 +212,33 @@
 </span><span id="GoCentroidOfZone-99"><a href="#GoCentroidOfZone-99"><span class="linenos"> 99</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_is_initialized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 </span><span id="GoCentroidOfZone-100"><a href="#GoCentroidOfZone-100"><span class="linenos">100</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="p">:</span> <span class="n">NavigatorTask</span>
 </span><span id="GoCentroidOfZone-101"><a href="#GoCentroidOfZone-101"><span class="linenos">101</span></a>
-</span><span id="GoCentroidOfZone-102"><a href="#GoCentroidOfZone-102"><span class="linenos">102</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">BaseGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="GoCentroidOfZone-103"><a href="#GoCentroidOfZone-103"><span class="linenos">103</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize by computing the target position from the zone centroid.</span>
-</span><span id="GoCentroidOfZone-104"><a href="#GoCentroidOfZone-104"><span class="linenos">104</span></a>
-</span><span id="GoCentroidOfZone-105"><a href="#GoCentroidOfZone-105"><span class="linenos">105</span></a><span class="sd">        Args:</span>
-</span><span id="GoCentroidOfZone-106"><a href="#GoCentroidOfZone-106"><span class="linenos">106</span></a><span class="sd">            ctx (BaseGameContext): The game context providing arena information.</span>
-</span><span id="GoCentroidOfZone-107"><a href="#GoCentroidOfZone-107"><span class="linenos">107</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="GoCentroidOfZone-108"><a href="#GoCentroidOfZone-108"><span class="linenos">108</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_is_initialized</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="GoCentroidOfZone-109"><a href="#GoCentroidOfZone-109"><span class="linenos">109</span></a>
-</span><span id="GoCentroidOfZone-110"><a href="#GoCentroidOfZone-110"><span class="linenos">110</span></a>        <span class="c1"># Compute the goal position with orientation</span>
-</span><span id="GoCentroidOfZone-111"><a href="#GoCentroidOfZone-111"><span class="linenos">111</span></a>        <span class="n">go_to_position</span><span class="p">:</span> <span class="n">OrientedPoint</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">compute_goal_position</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zone_id</span><span class="p">)</span>
-</span><span id="GoCentroidOfZone-112"><a href="#GoCentroidOfZone-112"><span class="linenos">112</span></a>        <span class="n">centroid</span><span class="p">:</span> <span class="n">Point</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">zone_id</span><span class="p">]</span><span class="o">.</span><span class="n">polygon</span><span class="o">.</span><span class="n">centroid</span>
-</span><span id="GoCentroidOfZone-113"><a href="#GoCentroidOfZone-113"><span class="linenos">113</span></a>        <span class="n">centroid_with_theta</span><span class="p">:</span> <span class="n">OrientedPoint</span> <span class="o">=</span> <span class="n">OrientedPoint</span><span class="p">(</span>
-</span><span id="GoCentroidOfZone-114"><a href="#GoCentroidOfZone-114"><span class="linenos">114</span></a>            <span class="n">centroid</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
-</span><span id="GoCentroidOfZone-115"><a href="#GoCentroidOfZone-115"><span class="linenos">115</span></a>            <span class="n">centroid</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
-</span><span id="GoCentroidOfZone-116"><a href="#GoCentroidOfZone-116"><span class="linenos">116</span></a>            <span class="n">go_to_position</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
-</span><span id="GoCentroidOfZone-117"><a href="#GoCentroidOfZone-117"><span class="linenos">117</span></a>        <span class="p">)</span>
-</span><span id="GoCentroidOfZone-118"><a href="#GoCentroidOfZone-118"><span class="linenos">118</span></a>
-</span><span id="GoCentroidOfZone-119"><a href="#GoCentroidOfZone-119"><span class="linenos">119</span></a>        <span class="c1"># Create a NavigatorTask using the calculated goal</span>
-</span><span id="GoCentroidOfZone-120"><a href="#GoCentroidOfZone-120"><span class="linenos">120</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span> <span class="o">=</span> <span class="n">NavigatorTask</span><span class="p">(</span>
-</span><span id="GoCentroidOfZone-121"><a href="#GoCentroidOfZone-121"><span class="linenos">121</span></a>            <span class="n">params</span><span class="o">=</span><span class="n">NavigatorTaskParams</span><span class="p">(</span>
-</span><span id="GoCentroidOfZone-122"><a href="#GoCentroidOfZone-122"><span class="linenos">122</span></a>                <span class="n">goal</span><span class="o">=</span><span class="n">centroid_with_theta</span><span class="p">,</span>
-</span><span id="GoCentroidOfZone-123"><a href="#GoCentroidOfZone-123"><span class="linenos">123</span></a>                <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
-</span><span id="GoCentroidOfZone-124"><a href="#GoCentroidOfZone-124"><span class="linenos">124</span></a>                <span class="n">path_planner_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path_planner_params</span><span class="p">,</span>
-</span><span id="GoCentroidOfZone-125"><a href="#GoCentroidOfZone-125"><span class="linenos">125</span></a>                <span class="n">trajectory_planner_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_planner_params</span><span class="p">,</span>
-</span><span id="GoCentroidOfZone-126"><a href="#GoCentroidOfZone-126"><span class="linenos">126</span></a>                <span class="n">speed_profiler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">speed_profiler</span><span class="p">,</span>
-</span><span id="GoCentroidOfZone-127"><a href="#GoCentroidOfZone-127"><span class="linenos">127</span></a>                <span class="n">avoidance_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">avoidance_params</span><span class="p">,</span>
-</span><span id="GoCentroidOfZone-128"><a href="#GoCentroidOfZone-128"><span class="linenos">128</span></a>                <span class="n">acs_detection_profile_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">acs_detection_profile_params</span><span class="p">,</span>
-</span><span id="GoCentroidOfZone-129"><a href="#GoCentroidOfZone-129"><span class="linenos">129</span></a>                <span class="n">stabilization_delay</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stabilization_delay</span><span class="p">,</span>
-</span><span id="GoCentroidOfZone-130"><a href="#GoCentroidOfZone-130"><span class="linenos">130</span></a>            <span class="p">),</span>
-</span><span id="GoCentroidOfZone-131"><a href="#GoCentroidOfZone-131"><span class="linenos">131</span></a>        <span class="p">)</span>
+</span><span id="GoCentroidOfZone-102"><a href="#GoCentroidOfZone-102"><span class="linenos">102</span></a>    <span class="nd">@override</span>
+</span><span id="GoCentroidOfZone-103"><a href="#GoCentroidOfZone-103"><span class="linenos">103</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">BaseGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="GoCentroidOfZone-104"><a href="#GoCentroidOfZone-104"><span class="linenos">104</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize by computing the target position from the zone centroid.</span>
+</span><span id="GoCentroidOfZone-105"><a href="#GoCentroidOfZone-105"><span class="linenos">105</span></a>
+</span><span id="GoCentroidOfZone-106"><a href="#GoCentroidOfZone-106"><span class="linenos">106</span></a><span class="sd">        Args:</span>
+</span><span id="GoCentroidOfZone-107"><a href="#GoCentroidOfZone-107"><span class="linenos">107</span></a><span class="sd">            ctx (BaseGameContext): The game context providing arena information.</span>
+</span><span id="GoCentroidOfZone-108"><a href="#GoCentroidOfZone-108"><span class="linenos">108</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="GoCentroidOfZone-109"><a href="#GoCentroidOfZone-109"><span class="linenos">109</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_is_initialized</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="GoCentroidOfZone-110"><a href="#GoCentroidOfZone-110"><span class="linenos">110</span></a>
+</span><span id="GoCentroidOfZone-111"><a href="#GoCentroidOfZone-111"><span class="linenos">111</span></a>        <span class="c1"># Compute the goal position with orientation</span>
+</span><span id="GoCentroidOfZone-112"><a href="#GoCentroidOfZone-112"><span class="linenos">112</span></a>        <span class="n">centroid</span><span class="p">:</span> <span class="n">OrientedPoint</span> <span class="o">=</span> <span class="n">OrientedPoint</span><span class="o">.</span><span class="n">from_point</span><span class="p">(</span>
+</span><span id="GoCentroidOfZone-113"><a href="#GoCentroidOfZone-113"><span class="linenos">113</span></a>            <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">zone_id</span><span class="p">]</span><span class="o">.</span><span class="n">polygon</span><span class="o">.</span><span class="n">centroid</span><span class="p">,</span>
+</span><span id="GoCentroidOfZone-114"><a href="#GoCentroidOfZone-114"><span class="linenos">114</span></a>        <span class="p">)</span>
+</span><span id="GoCentroidOfZone-115"><a href="#GoCentroidOfZone-115"><span class="linenos">115</span></a>
+</span><span id="GoCentroidOfZone-116"><a href="#GoCentroidOfZone-116"><span class="linenos">116</span></a>        <span class="c1"># Create a NavigatorTask using the calculated goal</span>
+</span><span id="GoCentroidOfZone-117"><a href="#GoCentroidOfZone-117"><span class="linenos">117</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span> <span class="o">=</span> <span class="n">NavigatorTask</span><span class="p">(</span>
+</span><span id="GoCentroidOfZone-118"><a href="#GoCentroidOfZone-118"><span class="linenos">118</span></a>            <span class="n">params</span><span class="o">=</span><span class="n">NavigatorTaskParams</span><span class="p">(</span>
+</span><span id="GoCentroidOfZone-119"><a href="#GoCentroidOfZone-119"><span class="linenos">119</span></a>                <span class="n">goal</span><span class="o">=</span><span class="n">centroid</span><span class="p">,</span>
+</span><span id="GoCentroidOfZone-120"><a href="#GoCentroidOfZone-120"><span class="linenos">120</span></a>                <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+</span><span id="GoCentroidOfZone-121"><a href="#GoCentroidOfZone-121"><span class="linenos">121</span></a>                <span class="n">path_planner_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path_planner_params</span><span class="p">,</span>
+</span><span id="GoCentroidOfZone-122"><a href="#GoCentroidOfZone-122"><span class="linenos">122</span></a>                <span class="n">trajectory_planner_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectory_planner_params</span><span class="p">,</span>
+</span><span id="GoCentroidOfZone-123"><a href="#GoCentroidOfZone-123"><span class="linenos">123</span></a>                <span class="n">speed_profiler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">speed_profiler</span><span class="p">,</span>
+</span><span id="GoCentroidOfZone-124"><a href="#GoCentroidOfZone-124"><span class="linenos">124</span></a>                <span class="n">avoidance_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">avoidance_params</span><span class="p">,</span>
+</span><span id="GoCentroidOfZone-125"><a href="#GoCentroidOfZone-125"><span class="linenos">125</span></a>                <span class="n">acs_detection_profile_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">acs_detection_profile_params</span><span class="p">,</span>
+</span><span id="GoCentroidOfZone-126"><a href="#GoCentroidOfZone-126"><span class="linenos">126</span></a>                <span class="n">stabilization_delay</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stabilization_delay</span><span class="p">,</span>
+</span><span id="GoCentroidOfZone-127"><a href="#GoCentroidOfZone-127"><span class="linenos">127</span></a>            <span class="p">),</span>
+</span><span id="GoCentroidOfZone-128"><a href="#GoCentroidOfZone-128"><span class="linenos">128</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -324,7 +321,7 @@
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">GoToColorReservedZoneToConstruct</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.show_game_context.ShowGameContext]</span>):
+    <span class="name">GoToColorReservedZoneToConstruct</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.winter_game_context.WinterGameContext]</span>):
 
                 <label class="view-source-button" for="GoToColorReservedZoneToConstruct-view-source"><span>View Source</span></label>
 
@@ -406,7 +403,7 @@
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">GoToColorReservedZoneToFinishGame</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.show_game_context.ShowGameContext]</span>):
+    <span class="name">GoToColorReservedZoneToFinishGame</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.winter_game_context.WinterGameContext]</span>):
 
                 <label class="view-source-button" for="GoToColorReservedZoneToFinishGame-view-source"><span>View Source</span></label>
 
@@ -488,7 +485,7 @@
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">GoToStuffZoneToPickUp</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.show_game_context.ShowGameContext]</span>):
+    <span class="name">GoToStuffZoneToPickUp</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.winter_game_context.WinterGameContext]</span>):
 
                 <label class="view-source-button" for="GoToStuffZoneToPickUp-view-source"><span>View Source</span></label>
 
@@ -587,21 +584,21 @@ before performing tasks.</p>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">NavigationTask</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.show_game_context.ShowGameContext]</span>):
+    <span class="name">NavigationTask</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.winter_game_context.WinterGameContext]</span>):
 
                 <label class="view-source-button" for="NavigationTask-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#NavigationTask"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="NavigationTask-15"><a href="#NavigationTask-15"><span class="linenos">15</span></a><span class="k">class</span><span class="w"> </span><span class="nc">NavigationTask</span><span class="p">(</span><span class="n">BaseNavigationTask</span><span class="p">[</span><span class="n">ShowGameContext</span><span class="p">]):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="NavigationTask-15"><a href="#NavigationTask-15"><span class="linenos">15</span></a><span class="k">class</span><span class="w"> </span><span class="nc">NavigationTask</span><span class="p">(</span><span class="n">BaseNavigationTask</span><span class="p">[</span><span class="n">WinterGameContext</span><span class="p">]):</span>
 </span><span id="NavigationTask-16"><a href="#NavigationTask-16"><span class="linenos">16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Thin wrapper exposing navigation to the strategy graph.&quot;&quot;&quot;</span>
 </span><span id="NavigationTask-17"><a href="#NavigationTask-17"><span class="linenos">17</span></a>
 </span><span id="NavigationTask-18"><a href="#NavigationTask-18"><span class="linenos">18</span></a>    <span class="nd">@override</span>
-</span><span id="NavigationTask-19"><a href="#NavigationTask-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="NavigationTask-19"><a href="#NavigationTask-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="NavigationTask-20"><a href="#NavigationTask-20"><span class="linenos">20</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the navigation plan and update the rolling basis.</span>
 </span><span id="NavigationTask-21"><a href="#NavigationTask-21"><span class="linenos">21</span></a>
 </span><span id="NavigationTask-22"><a href="#NavigationTask-22"><span class="linenos">22</span></a><span class="sd">        Args:</span>
-</span><span id="NavigationTask-23"><a href="#NavigationTask-23"><span class="linenos">23</span></a><span class="sd">            ctx (ShowGameContext): The current game context.</span>
+</span><span id="NavigationTask-23"><a href="#NavigationTask-23"><span class="linenos">23</span></a><span class="sd">            ctx (WinterGameContext): The current game context.</span>
 </span><span id="NavigationTask-24"><a href="#NavigationTask-24"><span class="linenos">24</span></a>
 </span><span id="NavigationTask-25"><a href="#NavigationTask-25"><span class="linenos">25</span></a><span class="sd">        Returns:</span>
 </span><span id="NavigationTask-26"><a href="#NavigationTask-26"><span class="linenos">26</span></a><span class="sd">            bool: ``True`` if the navigation task is finished, ``False`` otherwise.</span>
@@ -609,14 +606,21 @@ before performing tasks.</p>
 </span><span id="NavigationTask-28"><a href="#NavigationTask-28"><span class="linenos">28</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_initialized</span><span class="p">:</span>
 </span><span id="NavigationTask-29"><a href="#NavigationTask-29"><span class="linenos">29</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 </span><span id="NavigationTask-30"><a href="#NavigationTask-30"><span class="linenos">30</span></a>
-</span><span id="NavigationTask-31"><a href="#NavigationTask-31"><span class="linenos">31</span></a>        <span class="n">cmd</span><span class="p">:</span> <span class="n">TrajectoryPlanCommand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span>
-</span><span id="NavigationTask-32"><a href="#NavigationTask-32"><span class="linenos">32</span></a>            <span class="n">ally_zone</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">ally_zone</span><span class="p">,</span>
-</span><span id="NavigationTask-33"><a href="#NavigationTask-33"><span class="linenos">33</span></a>            <span class="n">enemy_zone</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">enemy_zone</span><span class="p">,</span>
-</span><span id="NavigationTask-34"><a href="#NavigationTask-34"><span class="linenos">34</span></a>        <span class="p">)</span>
-</span><span id="NavigationTask-35"><a href="#NavigationTask-35"><span class="linenos">35</span></a>
-</span><span id="NavigationTask-36"><a href="#NavigationTask-36"><span class="linenos">36</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">set_target_position</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_position_command</span><span class="p">())</span>
-</span><span id="NavigationTask-37"><a href="#NavigationTask-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Navigation Task] State = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="NavigationTask-38"><a href="#NavigationTask-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_finished</span><span class="p">()</span>
+</span><span id="NavigationTask-31"><a href="#NavigationTask-31"><span class="linenos">31</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">ally_zone</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+</span><span id="NavigationTask-32"><a href="#NavigationTask-32"><span class="linenos">32</span></a>            <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">team_color</span><span class="p">,</span>
+</span><span id="NavigationTask-33"><a href="#NavigationTask-33"><span class="linenos">33</span></a>            <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">odometrie</span><span class="p">,</span>
+</span><span id="NavigationTask-34"><a href="#NavigationTask-34"><span class="linenos">34</span></a>            <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">enemy_zone</span><span class="o">.</span><span class="n">point</span><span class="p">,</span>
+</span><span id="NavigationTask-35"><a href="#NavigationTask-35"><span class="linenos">35</span></a>        <span class="p">)</span>
+</span><span id="NavigationTask-36"><a href="#NavigationTask-36"><span class="linenos">36</span></a>
+</span><span id="NavigationTask-37"><a href="#NavigationTask-37"><span class="linenos">37</span></a>        <span class="n">cmd</span><span class="p">:</span> <span class="n">TrajectoryPlanCommand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span>
+</span><span id="NavigationTask-38"><a href="#NavigationTask-38"><span class="linenos">38</span></a>            <span class="n">ally_zone</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">ally_zone</span><span class="p">,</span>
+</span><span id="NavigationTask-39"><a href="#NavigationTask-39"><span class="linenos">39</span></a>            <span class="n">enemy_zone</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">enemy_zone</span><span class="p">,</span>
+</span><span id="NavigationTask-40"><a href="#NavigationTask-40"><span class="linenos">40</span></a>        <span class="p">)</span>
+</span><span id="NavigationTask-41"><a href="#NavigationTask-41"><span class="linenos">41</span></a>
+</span><span id="NavigationTask-42"><a href="#NavigationTask-42"><span class="linenos">42</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">set_target_position</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_position_command</span><span class="p">())</span>
+</span><span id="NavigationTask-43"><a href="#NavigationTask-43"><span class="linenos">43</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK:Nav] </span><span class="si">{</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_full_command</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="NavigationTask-44"><a href="#NavigationTask-44"><span class="linenos">44</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK:Nav] State: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="NavigationTask-45"><a href="#NavigationTask-45"><span class="linenos">45</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_finished</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -630,18 +634,18 @@ before performing tasks.</p>
                     <div class="decorator decorator-override">@override</div>
 
         <span class="def">def</span>
-        <span class="name">handle</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">show_game_context</span><span class="o">.</span><span class="n">ShowGameContext</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+        <span class="name">handle</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">winter_game_context</span><span class="o">.</span><span class="n">WinterGameContext</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
 
                 <label class="view-source-button" for="NavigationTask.handle-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#NavigationTask.handle"></a>
             <div class="pdoc-code codehilite"><pre><span></span><span id="NavigationTask.handle-18"><a href="#NavigationTask.handle-18"><span class="linenos">18</span></a>    <span class="nd">@override</span>
-</span><span id="NavigationTask.handle-19"><a href="#NavigationTask.handle-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="NavigationTask.handle-19"><a href="#NavigationTask.handle-19"><span class="linenos">19</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 </span><span id="NavigationTask.handle-20"><a href="#NavigationTask.handle-20"><span class="linenos">20</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Execute the navigation plan and update the rolling basis.</span>
 </span><span id="NavigationTask.handle-21"><a href="#NavigationTask.handle-21"><span class="linenos">21</span></a>
 </span><span id="NavigationTask.handle-22"><a href="#NavigationTask.handle-22"><span class="linenos">22</span></a><span class="sd">        Args:</span>
-</span><span id="NavigationTask.handle-23"><a href="#NavigationTask.handle-23"><span class="linenos">23</span></a><span class="sd">            ctx (ShowGameContext): The current game context.</span>
+</span><span id="NavigationTask.handle-23"><a href="#NavigationTask.handle-23"><span class="linenos">23</span></a><span class="sd">            ctx (WinterGameContext): The current game context.</span>
 </span><span id="NavigationTask.handle-24"><a href="#NavigationTask.handle-24"><span class="linenos">24</span></a>
 </span><span id="NavigationTask.handle-25"><a href="#NavigationTask.handle-25"><span class="linenos">25</span></a><span class="sd">        Returns:</span>
 </span><span id="NavigationTask.handle-26"><a href="#NavigationTask.handle-26"><span class="linenos">26</span></a><span class="sd">            bool: ``True`` if the navigation task is finished, ``False`` otherwise.</span>
@@ -649,14 +653,21 @@ before performing tasks.</p>
 </span><span id="NavigationTask.handle-28"><a href="#NavigationTask.handle-28"><span class="linenos">28</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_initialized</span><span class="p">:</span>
 </span><span id="NavigationTask.handle-29"><a href="#NavigationTask.handle-29"><span class="linenos">29</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_initialize</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
 </span><span id="NavigationTask.handle-30"><a href="#NavigationTask.handle-30"><span class="linenos">30</span></a>
-</span><span id="NavigationTask.handle-31"><a href="#NavigationTask.handle-31"><span class="linenos">31</span></a>        <span class="n">cmd</span><span class="p">:</span> <span class="n">TrajectoryPlanCommand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span>
-</span><span id="NavigationTask.handle-32"><a href="#NavigationTask.handle-32"><span class="linenos">32</span></a>            <span class="n">ally_zone</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">ally_zone</span><span class="p">,</span>
-</span><span id="NavigationTask.handle-33"><a href="#NavigationTask.handle-33"><span class="linenos">33</span></a>            <span class="n">enemy_zone</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">enemy_zone</span><span class="p">,</span>
-</span><span id="NavigationTask.handle-34"><a href="#NavigationTask.handle-34"><span class="linenos">34</span></a>        <span class="p">)</span>
-</span><span id="NavigationTask.handle-35"><a href="#NavigationTask.handle-35"><span class="linenos">35</span></a>
-</span><span id="NavigationTask.handle-36"><a href="#NavigationTask.handle-36"><span class="linenos">36</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">set_target_position</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_position_command</span><span class="p">())</span>
-</span><span id="NavigationTask.handle-37"><a href="#NavigationTask.handle-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Navigation Task] State = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="NavigationTask.handle-38"><a href="#NavigationTask.handle-38"><span class="linenos">38</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_finished</span><span class="p">()</span>
+</span><span id="NavigationTask.handle-31"><a href="#NavigationTask.handle-31"><span class="linenos">31</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">ally_zone</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+</span><span id="NavigationTask.handle-32"><a href="#NavigationTask.handle-32"><span class="linenos">32</span></a>            <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">team_color</span><span class="p">,</span>
+</span><span id="NavigationTask.handle-33"><a href="#NavigationTask.handle-33"><span class="linenos">33</span></a>            <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">odometrie</span><span class="p">,</span>
+</span><span id="NavigationTask.handle-34"><a href="#NavigationTask.handle-34"><span class="linenos">34</span></a>            <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">enemy_zone</span><span class="o">.</span><span class="n">point</span><span class="p">,</span>
+</span><span id="NavigationTask.handle-35"><a href="#NavigationTask.handle-35"><span class="linenos">35</span></a>        <span class="p">)</span>
+</span><span id="NavigationTask.handle-36"><a href="#NavigationTask.handle-36"><span class="linenos">36</span></a>
+</span><span id="NavigationTask.handle-37"><a href="#NavigationTask.handle-37"><span class="linenos">37</span></a>        <span class="n">cmd</span><span class="p">:</span> <span class="n">TrajectoryPlanCommand</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span>
+</span><span id="NavigationTask.handle-38"><a href="#NavigationTask.handle-38"><span class="linenos">38</span></a>            <span class="n">ally_zone</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">ally_zone</span><span class="p">,</span>
+</span><span id="NavigationTask.handle-39"><a href="#NavigationTask.handle-39"><span class="linenos">39</span></a>            <span class="n">enemy_zone</span><span class="o">=</span><span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">enemy_zone</span><span class="p">,</span>
+</span><span id="NavigationTask.handle-40"><a href="#NavigationTask.handle-40"><span class="linenos">40</span></a>        <span class="p">)</span>
+</span><span id="NavigationTask.handle-41"><a href="#NavigationTask.handle-41"><span class="linenos">41</span></a>
+</span><span id="NavigationTask.handle-42"><a href="#NavigationTask.handle-42"><span class="linenos">42</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">set_target_position</span><span class="p">(</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_position_command</span><span class="p">())</span>
+</span><span id="NavigationTask.handle-43"><a href="#NavigationTask.handle-43"><span class="linenos">43</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK:Nav] </span><span class="si">{</span><span class="n">cmd</span><span class="o">.</span><span class="n">get_full_command</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="NavigationTask.handle-44"><a href="#NavigationTask.handle-44"><span class="linenos">44</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[TASK:Nav] State: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="NavigationTask.handle-45"><a href="#NavigationTask.handle-45"><span class="linenos">45</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">navigator_task</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_finished</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -665,7 +676,7 @@ before performing tasks.</p>
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>ctx (ShowGameContext):</strong>  The current game context.</li>
+<li><strong>ctx (WinterGameContext):</strong>  The current game context.</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
@@ -683,7 +694,7 @@ before performing tasks.</p>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">RelativeBackward</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.show_game_context.ShowGameContext]</span>):
+    <span class="name">RelativeBackward</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.winter_game_context.WinterGameContext]</span>):
 
                 <label class="view-source-button" for="RelativeBackward-view-source"><span>View Source</span></label>
 
@@ -767,7 +778,7 @@ before performing tasks.</p>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">RelativeForward</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.show_game_context.ShowGameContext]</span>):
+    <span class="name">RelativeForward</span><wbr>(<span class="base">strategy.core.tasks.base_navigation_task.BaseNavigationTask[boombot_strategy.winter_game_context.WinterGameContext]</span>):
 
                 <label class="view-source-button" for="RelativeForward-view-source"><span>View Source</span></label>
 
@@ -843,69 +854,79 @@ before performing tasks.</p>
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">SetOdometrie</span><wbr>(<span class="base">strategy.core.tasks.base_task.BaseTask[boombot_strategy.show_game_context.ShowGameContext]</span>):
+    <span class="name">SetOdometrie</span><wbr>(<span class="base">strategy.core.tasks.base_task.BaseTask[boombot_strategy.winter_game_context.WinterGameContext]</span>):
 
                 <label class="view-source-button" for="SetOdometrie-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#SetOdometrie"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SetOdometrie-13"><a href="#SetOdometrie-13"><span class="linenos">13</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SetOdometrie</span><span class="p">(</span><span class="n">BaseTask</span><span class="p">[</span><span class="n">ShowGameContext</span><span class="p">]):</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SetOdometrie-13"><a href="#SetOdometrie-13"><span class="linenos">13</span></a><span class="k">class</span><span class="w"> </span><span class="nc">SetOdometrie</span><span class="p">(</span><span class="n">BaseTask</span><span class="p">[</span><span class="n">WinterGameContext</span><span class="p">]):</span>
 </span><span id="SetOdometrie-14"><a href="#SetOdometrie-14"><span class="linenos">14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Task to update the robot&#39;s odometry position.</span>
 </span><span id="SetOdometrie-15"><a href="#SetOdometrie-15"><span class="linenos">15</span></a>
 </span><span id="SetOdometrie-16"><a href="#SetOdometrie-16"><span class="linenos">16</span></a><span class="sd">    The task uses the provided ``x``, ``y`` and ``theta`` values if given;</span>
-</span><span id="SetOdometrie-17"><a href="#SetOdometrie-17"><span class="linenos">17</span></a><span class="sd">    otherwise it falls back to the current values from the ally zone.</span>
-</span><span id="SetOdometrie-18"><a href="#SetOdometrie-18"><span class="linenos">18</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="SetOdometrie-19"><a href="#SetOdometrie-19"><span class="linenos">19</span></a>
-</span><span id="SetOdometrie-20"><a href="#SetOdometrie-20"><span class="linenos">20</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-</span><span id="SetOdometrie-21"><a href="#SetOdometrie-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="SetOdometrie-22"><a href="#SetOdometrie-22"><span class="linenos">22</span></a>        <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="SetOdometrie-23"><a href="#SetOdometrie-23"><span class="linenos">23</span></a>        <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="SetOdometrie-24"><a href="#SetOdometrie-24"><span class="linenos">24</span></a>        <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="SetOdometrie-25"><a href="#SetOdometrie-25"><span class="linenos">25</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="SetOdometrie-26"><a href="#SetOdometrie-26"><span class="linenos">26</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the SetOdometrie task with optional position values.</span>
-</span><span id="SetOdometrie-27"><a href="#SetOdometrie-27"><span class="linenos">27</span></a>
-</span><span id="SetOdometrie-28"><a href="#SetOdometrie-28"><span class="linenos">28</span></a><span class="sd">        Args:</span>
-</span><span id="SetOdometrie-29"><a href="#SetOdometrie-29"><span class="linenos">29</span></a><span class="sd">            x (float | None, optional): X coordinate. Defaults to None.</span>
-</span><span id="SetOdometrie-30"><a href="#SetOdometrie-30"><span class="linenos">30</span></a><span class="sd">            y (float | None, optional): Y coordinate. Defaults to None.</span>
-</span><span id="SetOdometrie-31"><a href="#SetOdometrie-31"><span class="linenos">31</span></a><span class="sd">            theta (float | None, optional): Orientation in radians. Defaults to None.</span>
-</span><span id="SetOdometrie-32"><a href="#SetOdometrie-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SetOdometrie-33"><a href="#SetOdometrie-33"><span class="linenos">33</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">x</span>
-</span><span id="SetOdometrie-34"><a href="#SetOdometrie-34"><span class="linenos">34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">y</span>
-</span><span id="SetOdometrie-35"><a href="#SetOdometrie-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">theta</span>
-</span><span id="SetOdometrie-36"><a href="#SetOdometrie-36"><span class="linenos">36</span></a>
-</span><span id="SetOdometrie-37"><a href="#SetOdometrie-37"><span class="linenos">37</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-</span><span id="SetOdometrie-38"><a href="#SetOdometrie-38"><span class="linenos">38</span></a>
-</span><span id="SetOdometrie-39"><a href="#SetOdometrie-39"><span class="linenos">39</span></a>    <span class="nd">@override</span>
-</span><span id="SetOdometrie-40"><a href="#SetOdometrie-40"><span class="linenos">40</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="SetOdometrie-41"><a href="#SetOdometrie-41"><span class="linenos">41</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle the execution of the odometry setting task.</span>
-</span><span id="SetOdometrie-42"><a href="#SetOdometrie-42"><span class="linenos">42</span></a>
-</span><span id="SetOdometrie-43"><a href="#SetOdometrie-43"><span class="linenos">43</span></a><span class="sd">        Args:</span>
-</span><span id="SetOdometrie-44"><a href="#SetOdometrie-44"><span class="linenos">44</span></a><span class="sd">            ctx (ShowGameContext): Context containing game state and arena info.</span>
-</span><span id="SetOdometrie-45"><a href="#SetOdometrie-45"><span class="linenos">45</span></a>
-</span><span id="SetOdometrie-46"><a href="#SetOdometrie-46"><span class="linenos">46</span></a><span class="sd">        Returns:</span>
-</span><span id="SetOdometrie-47"><a href="#SetOdometrie-47"><span class="linenos">47</span></a><span class="sd">            bool: Always returns ``True`` after setting the new odometry.</span>
-</span><span id="SetOdometrie-48"><a href="#SetOdometrie-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SetOdometrie-49"><a href="#SetOdometrie-49"><span class="linenos">49</span></a>        <span class="c1"># Get the current position from the ally zone</span>
-</span><span id="SetOdometrie-50"><a href="#SetOdometrie-50"><span class="linenos">50</span></a>        <span class="n">current_position</span><span class="p">:</span> <span class="n">OrientedPoint</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">ally_zone</span><span class="o">.</span><span class="n">point</span>
-</span><span id="SetOdometrie-51"><a href="#SetOdometrie-51"><span class="linenos">51</span></a>
-</span><span id="SetOdometrie-52"><a href="#SetOdometrie-52"><span class="linenos">52</span></a>        <span class="c1"># Create new position using provided values or current ones as fallback</span>
-</span><span id="SetOdometrie-53"><a href="#SetOdometrie-53"><span class="linenos">53</span></a>        <span class="n">new_position</span> <span class="o">=</span> <span class="n">OrientedPoint</span><span class="p">(</span>
-</span><span id="SetOdometrie-54"><a href="#SetOdometrie-54"><span class="linenos">54</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
-</span><span id="SetOdometrie-55"><a href="#SetOdometrie-55"><span class="linenos">55</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
-</span><span id="SetOdometrie-56"><a href="#SetOdometrie-56"><span class="linenos">56</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
-</span><span id="SetOdometrie-57"><a href="#SetOdometrie-57"><span class="linenos">57</span></a>        <span class="p">)</span>
-</span><span id="SetOdometrie-58"><a href="#SetOdometrie-58"><span class="linenos">58</span></a>
-</span><span id="SetOdometrie-59"><a href="#SetOdometrie-59"><span class="linenos">59</span></a>        <span class="c1"># Update odometry with the new position</span>
-</span><span id="SetOdometrie-60"><a href="#SetOdometrie-60"><span class="linenos">60</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">set_odometrie</span><span class="p">(</span><span class="n">new_position</span><span class="p">)</span>
-</span><span id="SetOdometrie-61"><a href="#SetOdometrie-61"><span class="linenos">61</span></a>
-</span><span id="SetOdometrie-62"><a href="#SetOdometrie-62"><span class="linenos">62</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="SetOdometrie-17"><a href="#SetOdometrie-17"><span class="linenos">17</span></a><span class="sd">    otherwise it falls back to the current values from the rolling basis.</span>
+</span><span id="SetOdometrie-18"><a href="#SetOdometrie-18"><span class="linenos">18</span></a><span class="sd">    After updating the odometry, the arena&#39;s ally zone is synchronized.</span>
+</span><span id="SetOdometrie-19"><a href="#SetOdometrie-19"><span class="linenos">19</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="SetOdometrie-20"><a href="#SetOdometrie-20"><span class="linenos">20</span></a>
+</span><span id="SetOdometrie-21"><a href="#SetOdometrie-21"><span class="linenos">21</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="SetOdometrie-22"><a href="#SetOdometrie-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="SetOdometrie-23"><a href="#SetOdometrie-23"><span class="linenos">23</span></a>        <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="SetOdometrie-24"><a href="#SetOdometrie-24"><span class="linenos">24</span></a>        <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="SetOdometrie-25"><a href="#SetOdometrie-25"><span class="linenos">25</span></a>        <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="SetOdometrie-26"><a href="#SetOdometrie-26"><span class="linenos">26</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SetOdometrie-27"><a href="#SetOdometrie-27"><span class="linenos">27</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the SetOdometrie task with optional position values.</span>
+</span><span id="SetOdometrie-28"><a href="#SetOdometrie-28"><span class="linenos">28</span></a>
+</span><span id="SetOdometrie-29"><a href="#SetOdometrie-29"><span class="linenos">29</span></a><span class="sd">        Args:</span>
+</span><span id="SetOdometrie-30"><a href="#SetOdometrie-30"><span class="linenos">30</span></a><span class="sd">            x (float | None, optional): X coordinate. Defaults to None.</span>
+</span><span id="SetOdometrie-31"><a href="#SetOdometrie-31"><span class="linenos">31</span></a><span class="sd">            y (float | None, optional): Y coordinate. Defaults to None.</span>
+</span><span id="SetOdometrie-32"><a href="#SetOdometrie-32"><span class="linenos">32</span></a><span class="sd">            theta (float | None, optional): Orientation in radians. Defaults to None.</span>
+</span><span id="SetOdometrie-33"><a href="#SetOdometrie-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SetOdometrie-34"><a href="#SetOdometrie-34"><span class="linenos">34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">x</span>
+</span><span id="SetOdometrie-35"><a href="#SetOdometrie-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">y</span>
+</span><span id="SetOdometrie-36"><a href="#SetOdometrie-36"><span class="linenos">36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">theta</span>
+</span><span id="SetOdometrie-37"><a href="#SetOdometrie-37"><span class="linenos">37</span></a>
+</span><span id="SetOdometrie-38"><a href="#SetOdometrie-38"><span class="linenos">38</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+</span><span id="SetOdometrie-39"><a href="#SetOdometrie-39"><span class="linenos">39</span></a>
+</span><span id="SetOdometrie-40"><a href="#SetOdometrie-40"><span class="linenos">40</span></a>    <span class="nd">@override</span>
+</span><span id="SetOdometrie-41"><a href="#SetOdometrie-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="SetOdometrie-42"><a href="#SetOdometrie-42"><span class="linenos">42</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle the execution of the odometry setting task.</span>
+</span><span id="SetOdometrie-43"><a href="#SetOdometrie-43"><span class="linenos">43</span></a>
+</span><span id="SetOdometrie-44"><a href="#SetOdometrie-44"><span class="linenos">44</span></a><span class="sd">        Args:</span>
+</span><span id="SetOdometrie-45"><a href="#SetOdometrie-45"><span class="linenos">45</span></a><span class="sd">            ctx (WinterGameContext): Context containing game state and arena info.</span>
+</span><span id="SetOdometrie-46"><a href="#SetOdometrie-46"><span class="linenos">46</span></a>
+</span><span id="SetOdometrie-47"><a href="#SetOdometrie-47"><span class="linenos">47</span></a><span class="sd">        Returns:</span>
+</span><span id="SetOdometrie-48"><a href="#SetOdometrie-48"><span class="linenos">48</span></a><span class="sd">            bool: Always returns ``True`` after setting the new odometry.</span>
+</span><span id="SetOdometrie-49"><a href="#SetOdometrie-49"><span class="linenos">49</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SetOdometrie-50"><a href="#SetOdometrie-50"><span class="linenos">50</span></a>        <span class="c1"># CRITICAL: Get current position from rolling_basis.odometrie</span>
+</span><span id="SetOdometrie-51"><a href="#SetOdometrie-51"><span class="linenos">51</span></a>        <span class="c1"># (not arena.ally_zone.point) because arena.ally_zone.point may be outdated</span>
+</span><span id="SetOdometrie-52"><a href="#SetOdometrie-52"><span class="linenos">52</span></a>        <span class="n">current_position</span><span class="p">:</span> <span class="n">OrientedPoint</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">odometrie</span>
+</span><span id="SetOdometrie-53"><a href="#SetOdometrie-53"><span class="linenos">53</span></a>
+</span><span id="SetOdometrie-54"><a href="#SetOdometrie-54"><span class="linenos">54</span></a>        <span class="c1"># Create new position using provided values or current ones as fallback</span>
+</span><span id="SetOdometrie-55"><a href="#SetOdometrie-55"><span class="linenos">55</span></a>        <span class="n">new_position</span> <span class="o">=</span> <span class="n">OrientedPoint</span><span class="p">(</span>
+</span><span id="SetOdometrie-56"><a href="#SetOdometrie-56"><span class="linenos">56</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+</span><span id="SetOdometrie-57"><a href="#SetOdometrie-57"><span class="linenos">57</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+</span><span id="SetOdometrie-58"><a href="#SetOdometrie-58"><span class="linenos">58</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
+</span><span id="SetOdometrie-59"><a href="#SetOdometrie-59"><span class="linenos">59</span></a>        <span class="p">)</span>
+</span><span id="SetOdometrie-60"><a href="#SetOdometrie-60"><span class="linenos">60</span></a>
+</span><span id="SetOdometrie-61"><a href="#SetOdometrie-61"><span class="linenos">61</span></a>        <span class="c1"># Update rolling basis odometry</span>
+</span><span id="SetOdometrie-62"><a href="#SetOdometrie-62"><span class="linenos">62</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">set_odometrie</span><span class="p">(</span><span class="n">new_position</span><span class="p">)</span>
+</span><span id="SetOdometrie-63"><a href="#SetOdometrie-63"><span class="linenos">63</span></a>
+</span><span id="SetOdometrie-64"><a href="#SetOdometrie-64"><span class="linenos">64</span></a>        <span class="c1"># Synchronize arena.ally_zone with the new odometry</span>
+</span><span id="SetOdometrie-65"><a href="#SetOdometrie-65"><span class="linenos">65</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">ally_zone</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+</span><span id="SetOdometrie-66"><a href="#SetOdometrie-66"><span class="linenos">66</span></a>            <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">team_color</span><span class="p">,</span>
+</span><span id="SetOdometrie-67"><a href="#SetOdometrie-67"><span class="linenos">67</span></a>            <span class="n">new_position</span><span class="p">,</span>
+</span><span id="SetOdometrie-68"><a href="#SetOdometrie-68"><span class="linenos">68</span></a>            <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">enemy_zone</span><span class="o">.</span><span class="n">point</span><span class="p">,</span>
+</span><span id="SetOdometrie-69"><a href="#SetOdometrie-69"><span class="linenos">69</span></a>        <span class="p">)</span>
+</span><span id="SetOdometrie-70"><a href="#SetOdometrie-70"><span class="linenos">70</span></a>
+</span><span id="SetOdometrie-71"><a href="#SetOdometrie-71"><span class="linenos">71</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Task to update the robot's odometry position.</p>
 
 <p>The task uses the provided <code><a href="#SetOdometrie.x">x</a></code>, <code><a href="#SetOdometrie.y">y</a></code> and <code><a href="#SetOdometrie.theta">theta</a></code> values if given;
-otherwise it falls back to the current values from the ally zone.</p>
+otherwise it falls back to the current values from the rolling basis.
+After updating the odometry, the arena's ally zone is synchronized.</p>
 </div>
 
 
@@ -919,24 +940,24 @@ otherwise it falls back to the current values from the ally zone.</p>
 
     </div>
     <a class="headerlink" href="#SetOdometrie.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SetOdometrie.__init__-20"><a href="#SetOdometrie.__init__-20"><span class="linenos">20</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-</span><span id="SetOdometrie.__init__-21"><a href="#SetOdometrie.__init__-21"><span class="linenos">21</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="SetOdometrie.__init__-22"><a href="#SetOdometrie.__init__-22"><span class="linenos">22</span></a>        <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="SetOdometrie.__init__-23"><a href="#SetOdometrie.__init__-23"><span class="linenos">23</span></a>        <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="SetOdometrie.__init__-24"><a href="#SetOdometrie.__init__-24"><span class="linenos">24</span></a>        <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="SetOdometrie.__init__-25"><a href="#SetOdometrie.__init__-25"><span class="linenos">25</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="SetOdometrie.__init__-26"><a href="#SetOdometrie.__init__-26"><span class="linenos">26</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the SetOdometrie task with optional position values.</span>
-</span><span id="SetOdometrie.__init__-27"><a href="#SetOdometrie.__init__-27"><span class="linenos">27</span></a>
-</span><span id="SetOdometrie.__init__-28"><a href="#SetOdometrie.__init__-28"><span class="linenos">28</span></a><span class="sd">        Args:</span>
-</span><span id="SetOdometrie.__init__-29"><a href="#SetOdometrie.__init__-29"><span class="linenos">29</span></a><span class="sd">            x (float | None, optional): X coordinate. Defaults to None.</span>
-</span><span id="SetOdometrie.__init__-30"><a href="#SetOdometrie.__init__-30"><span class="linenos">30</span></a><span class="sd">            y (float | None, optional): Y coordinate. Defaults to None.</span>
-</span><span id="SetOdometrie.__init__-31"><a href="#SetOdometrie.__init__-31"><span class="linenos">31</span></a><span class="sd">            theta (float | None, optional): Orientation in radians. Defaults to None.</span>
-</span><span id="SetOdometrie.__init__-32"><a href="#SetOdometrie.__init__-32"><span class="linenos">32</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SetOdometrie.__init__-33"><a href="#SetOdometrie.__init__-33"><span class="linenos">33</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">x</span>
-</span><span id="SetOdometrie.__init__-34"><a href="#SetOdometrie.__init__-34"><span class="linenos">34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">y</span>
-</span><span id="SetOdometrie.__init__-35"><a href="#SetOdometrie.__init__-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">theta</span>
-</span><span id="SetOdometrie.__init__-36"><a href="#SetOdometrie.__init__-36"><span class="linenos">36</span></a>
-</span><span id="SetOdometrie.__init__-37"><a href="#SetOdometrie.__init__-37"><span class="linenos">37</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SetOdometrie.__init__-21"><a href="#SetOdometrie.__init__-21"><span class="linenos">21</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+</span><span id="SetOdometrie.__init__-22"><a href="#SetOdometrie.__init__-22"><span class="linenos">22</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="SetOdometrie.__init__-23"><a href="#SetOdometrie.__init__-23"><span class="linenos">23</span></a>        <span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="SetOdometrie.__init__-24"><a href="#SetOdometrie.__init__-24"><span class="linenos">24</span></a>        <span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="SetOdometrie.__init__-25"><a href="#SetOdometrie.__init__-25"><span class="linenos">25</span></a>        <span class="n">theta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="SetOdometrie.__init__-26"><a href="#SetOdometrie.__init__-26"><span class="linenos">26</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="SetOdometrie.__init__-27"><a href="#SetOdometrie.__init__-27"><span class="linenos">27</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the SetOdometrie task with optional position values.</span>
+</span><span id="SetOdometrie.__init__-28"><a href="#SetOdometrie.__init__-28"><span class="linenos">28</span></a>
+</span><span id="SetOdometrie.__init__-29"><a href="#SetOdometrie.__init__-29"><span class="linenos">29</span></a><span class="sd">        Args:</span>
+</span><span id="SetOdometrie.__init__-30"><a href="#SetOdometrie.__init__-30"><span class="linenos">30</span></a><span class="sd">            x (float | None, optional): X coordinate. Defaults to None.</span>
+</span><span id="SetOdometrie.__init__-31"><a href="#SetOdometrie.__init__-31"><span class="linenos">31</span></a><span class="sd">            y (float | None, optional): Y coordinate. Defaults to None.</span>
+</span><span id="SetOdometrie.__init__-32"><a href="#SetOdometrie.__init__-32"><span class="linenos">32</span></a><span class="sd">            theta (float | None, optional): Orientation in radians. Defaults to None.</span>
+</span><span id="SetOdometrie.__init__-33"><a href="#SetOdometrie.__init__-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SetOdometrie.__init__-34"><a href="#SetOdometrie.__init__-34"><span class="linenos">34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">x</span>
+</span><span id="SetOdometrie.__init__-35"><a href="#SetOdometrie.__init__-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">y</span>
+</span><span id="SetOdometrie.__init__-36"><a href="#SetOdometrie.__init__-36"><span class="linenos">36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">theta</span>
+</span><span id="SetOdometrie.__init__-37"><a href="#SetOdometrie.__init__-37"><span class="linenos">37</span></a>
+</span><span id="SetOdometrie.__init__-38"><a href="#SetOdometrie.__init__-38"><span class="linenos">38</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -992,36 +1013,44 @@ otherwise it falls back to the current values from the ally zone.</p>
                     <div class="decorator decorator-override">@override</div>
 
         <span class="def">def</span>
-        <span class="name">handle</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">show_game_context</span><span class="o">.</span><span class="n">ShowGameContext</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+        <span class="name">handle</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">winter_game_context</span><span class="o">.</span><span class="n">WinterGameContext</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
 
                 <label class="view-source-button" for="SetOdometrie.handle-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#SetOdometrie.handle"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="SetOdometrie.handle-39"><a href="#SetOdometrie.handle-39"><span class="linenos">39</span></a>    <span class="nd">@override</span>
-</span><span id="SetOdometrie.handle-40"><a href="#SetOdometrie.handle-40"><span class="linenos">40</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="SetOdometrie.handle-41"><a href="#SetOdometrie.handle-41"><span class="linenos">41</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle the execution of the odometry setting task.</span>
-</span><span id="SetOdometrie.handle-42"><a href="#SetOdometrie.handle-42"><span class="linenos">42</span></a>
-</span><span id="SetOdometrie.handle-43"><a href="#SetOdometrie.handle-43"><span class="linenos">43</span></a><span class="sd">        Args:</span>
-</span><span id="SetOdometrie.handle-44"><a href="#SetOdometrie.handle-44"><span class="linenos">44</span></a><span class="sd">            ctx (ShowGameContext): Context containing game state and arena info.</span>
-</span><span id="SetOdometrie.handle-45"><a href="#SetOdometrie.handle-45"><span class="linenos">45</span></a>
-</span><span id="SetOdometrie.handle-46"><a href="#SetOdometrie.handle-46"><span class="linenos">46</span></a><span class="sd">        Returns:</span>
-</span><span id="SetOdometrie.handle-47"><a href="#SetOdometrie.handle-47"><span class="linenos">47</span></a><span class="sd">            bool: Always returns ``True`` after setting the new odometry.</span>
-</span><span id="SetOdometrie.handle-48"><a href="#SetOdometrie.handle-48"><span class="linenos">48</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="SetOdometrie.handle-49"><a href="#SetOdometrie.handle-49"><span class="linenos">49</span></a>        <span class="c1"># Get the current position from the ally zone</span>
-</span><span id="SetOdometrie.handle-50"><a href="#SetOdometrie.handle-50"><span class="linenos">50</span></a>        <span class="n">current_position</span><span class="p">:</span> <span class="n">OrientedPoint</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">ally_zone</span><span class="o">.</span><span class="n">point</span>
-</span><span id="SetOdometrie.handle-51"><a href="#SetOdometrie.handle-51"><span class="linenos">51</span></a>
-</span><span id="SetOdometrie.handle-52"><a href="#SetOdometrie.handle-52"><span class="linenos">52</span></a>        <span class="c1"># Create new position using provided values or current ones as fallback</span>
-</span><span id="SetOdometrie.handle-53"><a href="#SetOdometrie.handle-53"><span class="linenos">53</span></a>        <span class="n">new_position</span> <span class="o">=</span> <span class="n">OrientedPoint</span><span class="p">(</span>
-</span><span id="SetOdometrie.handle-54"><a href="#SetOdometrie.handle-54"><span class="linenos">54</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
-</span><span id="SetOdometrie.handle-55"><a href="#SetOdometrie.handle-55"><span class="linenos">55</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
-</span><span id="SetOdometrie.handle-56"><a href="#SetOdometrie.handle-56"><span class="linenos">56</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
-</span><span id="SetOdometrie.handle-57"><a href="#SetOdometrie.handle-57"><span class="linenos">57</span></a>        <span class="p">)</span>
-</span><span id="SetOdometrie.handle-58"><a href="#SetOdometrie.handle-58"><span class="linenos">58</span></a>
-</span><span id="SetOdometrie.handle-59"><a href="#SetOdometrie.handle-59"><span class="linenos">59</span></a>        <span class="c1"># Update odometry with the new position</span>
-</span><span id="SetOdometrie.handle-60"><a href="#SetOdometrie.handle-60"><span class="linenos">60</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">set_odometrie</span><span class="p">(</span><span class="n">new_position</span><span class="p">)</span>
-</span><span id="SetOdometrie.handle-61"><a href="#SetOdometrie.handle-61"><span class="linenos">61</span></a>
-</span><span id="SetOdometrie.handle-62"><a href="#SetOdometrie.handle-62"><span class="linenos">62</span></a>        <span class="k">return</span> <span class="kc">True</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="SetOdometrie.handle-40"><a href="#SetOdometrie.handle-40"><span class="linenos">40</span></a>    <span class="nd">@override</span>
+</span><span id="SetOdometrie.handle-41"><a href="#SetOdometrie.handle-41"><span class="linenos">41</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="SetOdometrie.handle-42"><a href="#SetOdometrie.handle-42"><span class="linenos">42</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle the execution of the odometry setting task.</span>
+</span><span id="SetOdometrie.handle-43"><a href="#SetOdometrie.handle-43"><span class="linenos">43</span></a>
+</span><span id="SetOdometrie.handle-44"><a href="#SetOdometrie.handle-44"><span class="linenos">44</span></a><span class="sd">        Args:</span>
+</span><span id="SetOdometrie.handle-45"><a href="#SetOdometrie.handle-45"><span class="linenos">45</span></a><span class="sd">            ctx (WinterGameContext): Context containing game state and arena info.</span>
+</span><span id="SetOdometrie.handle-46"><a href="#SetOdometrie.handle-46"><span class="linenos">46</span></a>
+</span><span id="SetOdometrie.handle-47"><a href="#SetOdometrie.handle-47"><span class="linenos">47</span></a><span class="sd">        Returns:</span>
+</span><span id="SetOdometrie.handle-48"><a href="#SetOdometrie.handle-48"><span class="linenos">48</span></a><span class="sd">            bool: Always returns ``True`` after setting the new odometry.</span>
+</span><span id="SetOdometrie.handle-49"><a href="#SetOdometrie.handle-49"><span class="linenos">49</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="SetOdometrie.handle-50"><a href="#SetOdometrie.handle-50"><span class="linenos">50</span></a>        <span class="c1"># CRITICAL: Get current position from rolling_basis.odometrie</span>
+</span><span id="SetOdometrie.handle-51"><a href="#SetOdometrie.handle-51"><span class="linenos">51</span></a>        <span class="c1"># (not arena.ally_zone.point) because arena.ally_zone.point may be outdated</span>
+</span><span id="SetOdometrie.handle-52"><a href="#SetOdometrie.handle-52"><span class="linenos">52</span></a>        <span class="n">current_position</span><span class="p">:</span> <span class="n">OrientedPoint</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">odometrie</span>
+</span><span id="SetOdometrie.handle-53"><a href="#SetOdometrie.handle-53"><span class="linenos">53</span></a>
+</span><span id="SetOdometrie.handle-54"><a href="#SetOdometrie.handle-54"><span class="linenos">54</span></a>        <span class="c1"># Create new position using provided values or current ones as fallback</span>
+</span><span id="SetOdometrie.handle-55"><a href="#SetOdometrie.handle-55"><span class="linenos">55</span></a>        <span class="n">new_position</span> <span class="o">=</span> <span class="n">OrientedPoint</span><span class="p">(</span>
+</span><span id="SetOdometrie.handle-56"><a href="#SetOdometrie.handle-56"><span class="linenos">56</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+</span><span id="SetOdometrie.handle-57"><a href="#SetOdometrie.handle-57"><span class="linenos">57</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+</span><span id="SetOdometrie.handle-58"><a href="#SetOdometrie.handle-58"><span class="linenos">58</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">current_position</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
+</span><span id="SetOdometrie.handle-59"><a href="#SetOdometrie.handle-59"><span class="linenos">59</span></a>        <span class="p">)</span>
+</span><span id="SetOdometrie.handle-60"><a href="#SetOdometrie.handle-60"><span class="linenos">60</span></a>
+</span><span id="SetOdometrie.handle-61"><a href="#SetOdometrie.handle-61"><span class="linenos">61</span></a>        <span class="c1"># Update rolling basis odometry</span>
+</span><span id="SetOdometrie.handle-62"><a href="#SetOdometrie.handle-62"><span class="linenos">62</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">rolling_basis</span><span class="o">.</span><span class="n">set_odometrie</span><span class="p">(</span><span class="n">new_position</span><span class="p">)</span>
+</span><span id="SetOdometrie.handle-63"><a href="#SetOdometrie.handle-63"><span class="linenos">63</span></a>
+</span><span id="SetOdometrie.handle-64"><a href="#SetOdometrie.handle-64"><span class="linenos">64</span></a>        <span class="c1"># Synchronize arena.ally_zone with the new odometry</span>
+</span><span id="SetOdometrie.handle-65"><a href="#SetOdometrie.handle-65"><span class="linenos">65</span></a>        <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">ally_zone</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+</span><span id="SetOdometrie.handle-66"><a href="#SetOdometrie.handle-66"><span class="linenos">66</span></a>            <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">team_color</span><span class="p">,</span>
+</span><span id="SetOdometrie.handle-67"><a href="#SetOdometrie.handle-67"><span class="linenos">67</span></a>            <span class="n">new_position</span><span class="p">,</span>
+</span><span id="SetOdometrie.handle-68"><a href="#SetOdometrie.handle-68"><span class="linenos">68</span></a>            <span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">enemy_zone</span><span class="o">.</span><span class="n">point</span><span class="p">,</span>
+</span><span id="SetOdometrie.handle-69"><a href="#SetOdometrie.handle-69"><span class="linenos">69</span></a>        <span class="p">)</span>
+</span><span id="SetOdometrie.handle-70"><a href="#SetOdometrie.handle-70"><span class="linenos">70</span></a>
+</span><span id="SetOdometrie.handle-71"><a href="#SetOdometrie.handle-71"><span class="linenos">71</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -1030,7 +1059,7 @@ otherwise it falls back to the current values from the ally zone.</p>
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>ctx (ShowGameContext):</strong>  Context containing game state and arena info.</li>
+<li><strong>ctx (WinterGameContext):</strong>  Context containing game state and arena info.</li>
 </ul>
 
 <h6 id="returns">Returns:</h6>
