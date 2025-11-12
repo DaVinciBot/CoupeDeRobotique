@@ -205,7 +205,7 @@ class Com:
         ) -> Any:  # noqa: ANN401
             # Check if the self.enable_dummy attribute is disabled (False)
             if self.enable_dummy:
-                self._logger.debug(f"[USB_COM:DUMMY] {func.__name__} called")
+                self._logger.debug(f"[USB_COM:Dummy] {func.__name__} called")
                 return None  # Prevents the function from executing
 
             # Execute the function normally
@@ -250,7 +250,7 @@ class Com:
         """
         if self.message_id_callback.get(iid) is not None:
             self._logger.warning(
-                f"[USB_COM] Callback for message ID {iid} already exists"
+                f"[USB_COM] Callback for message ID {iid} already exists",
             )
 
         self.message_id_callback[iid] = func

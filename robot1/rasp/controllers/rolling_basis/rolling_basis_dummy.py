@@ -93,7 +93,7 @@ class RollingBasisDummy(BaseComTeensy):
 
         self.odometrie = target_position
 
-        self._logger.debug(f"[CTRL:RB:DUMMY] Set target position: {target_position}")
+        self._logger.debug(f"[CTRL:RB:Dummy] Set target position: {target_position}")
 
     @log("RollingBasis")
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
@@ -113,7 +113,7 @@ class RollingBasisDummy(BaseComTeensy):
             raise ValueError(msg)
 
         self.odometrie = odometrie
-        self._logger.info(f"[CTRL:RB:DUMMY] Set odometry: {odometrie}")
+        self._logger.info(f"[CTRL:RB:Dummy] Set odometry: {odometrie}")
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
         """Internal method to send PID configuration data to the Teensy.
@@ -122,7 +122,7 @@ class RollingBasisDummy(BaseComTeensy):
             pid_id (int): The identifier for the PID controller.
             pid (PID): The PID controller parameters.
         """
-        self._logger.debug(f"[CTRL:RB:DUMMY] Set PID {pid_id}: {pid}")
+        self._logger.debug(f"[CTRL:RB:Dummy] Set PID {pid_id}: {pid}")
 
     # endregion
 

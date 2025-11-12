@@ -269,7 +269,7 @@ class RollingBasis(BaseComTeensy):
             self.linear_position_pid = pid
             self._send_pid(PidID.LINEAR_POSITION.value, pid)
         except (ValueError, TypeError) as e:
-            self._logger.error(f"Failed to set linear position PID: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to set linear position PID: {e}")
 
     @overload
     def set_angular_position_pid(self, *args: float) -> None: ...
@@ -302,7 +302,7 @@ class RollingBasis(BaseComTeensy):
             self.angular_position_pid = pid
             self._send_pid(PidID.ANGULAR_POSITION.value, pid)
         except (ValueError, TypeError) as e:
-            self._logger.error(f"Failed to set angular position PID: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to set angular position PID: {e}")
 
     def set_pids(
         self,
@@ -330,7 +330,7 @@ class RollingBasis(BaseComTeensy):
                 angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
             )
         except (ValueError, TypeError) as e:
-            self._logger.error(f"Failed to initialize PIDs: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to initialize PIDs: {e}")
 
     # endregion
 

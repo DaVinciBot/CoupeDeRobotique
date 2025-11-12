@@ -270,7 +270,7 @@ class AStarPathPlanner(
 
         # If no path found, return an empty list
         if not self.params.path_found:
-            self._logger.warning("No path found!")
+            self._logger.warning("[NAV:Path] No path found")
             return []
 
         # Add real robot position as start point and goal as end point

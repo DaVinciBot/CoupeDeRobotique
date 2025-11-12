@@ -95,7 +95,7 @@ class Lidar:
             import pysicktim as lidar  # noqa: PLC0415
         except Exception as error:
             self._logger.critical(
-                f"[SENSOR:Lidar:Init] Failed to import pysicktim: {error},"
+                f"[SENSOR:Lidar:Init] Failed to import pysicktim: {error},",
             )
             msg = f"Error while importing lidar [{error}]!"
             raise ImportError(msg) from error
@@ -175,7 +175,7 @@ class Lidar:
             centered_polars[i] = -((max_angle - min_angle) / 2) + i * angle_step
 
         if not centered_polars.size:
-            msg = "Error while initializing polars"
+            msg = "[SENSOR:Lidar:Init] Error while initializing polars"
             self._logger.critical(msg)
             raise ValueError(msg)
 
@@ -198,7 +198,7 @@ class Lidar:
         if unit == "rad":
             return math.pi / 180
 
-        msg = f"unit of angles not recognized [{unit}] !"
+        msg = f"[SENSOR:Lidar:Init] Unit of angles not recognized: {unit}"
         self._logger.critical(msg)
         raise ValueError(msg)
 
@@ -223,7 +223,7 @@ class Lidar:
         if unit == "inch":
             return 0.0254
 
-        msg = f"unit of distances not recognized [{unit}] !"
+        msg = f"[SENSOR:Lidar:Init] Unit of distances not recognized: {unit}"
         self._logger.critical(msg)
         raise ValueError(msg)
 

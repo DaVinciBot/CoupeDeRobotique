@@ -268,7 +268,7 @@ class MainBrain(Brain):
                     self.logger.warning(f"[WS:UI] Invalid team color: {ui.data}")
             else:
                 self.logger.warning(
-                    f"[WS:UI] Command not implemented: {ui.msg} / {ui.data}"
+                    f"[WS:UI] Command not implemented: {ui.msg} / {ui.data}",
                 )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
@@ -283,7 +283,7 @@ class MainBrain(Brain):
 
     # @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     # async def print_odo(self) -> None:
-    #     self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
+    #     self.logger.info(f"[CTRL:RB] Rolling basis odometrie: {self.rolling_basis_odometrie}")
 
     # endregion
 

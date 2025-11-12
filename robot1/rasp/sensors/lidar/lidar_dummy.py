@@ -97,7 +97,9 @@ class LidarDummy:
         if unit == "rad":
             return math.pi / 180
 
-        self._logger.critical(f"[LidarDummy] Unit of angles not recognized [{unit}]!")
+        self._logger.critical(
+            f"[SENSOR:Lidar:Dummy] Unit of angles not recognized: {unit}",
+        )
         msg = f"Unit of angles not recognized [{unit}]!"
         raise ValueError(msg)
 
@@ -123,7 +125,7 @@ class LidarDummy:
             return 0.0254
 
         self._logger.critical(
-            f"[LidarDummy] Unit of distances not recognized [{unit}]!",
+            f"[SENSOR:Lidar:Dummy] Unit of distances not recognized: {unit}",
         )
         msg = f"Unit of distances not recognized [{unit}]!"
         raise ValueError(msg)
@@ -183,7 +185,7 @@ class LidarDummy:
         )  # Ensure distances are within sensor range
 
         self._logger.debug(
-            "[SENSOR:Lidar:dummy] Simulated realistic distances generated.",
+            "[SENSOR:Lidar:Dummy] Simulated realistic distances generated.",
         )
         return distances * self.__distance_unit
 
@@ -198,7 +200,7 @@ class LidarDummy:
         _valid_polars = polars[polars[:, 1] > self._min_distance]
 
         self._logger.debug(
-            "[SENSOR:Lidar:dummy] Simulated polar coordinates generated.",
+            "[SENSOR:Lidar:Dummy] Simulated polar coordinates generated.",
         )
         return np.array([])
 

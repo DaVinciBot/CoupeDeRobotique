@@ -246,7 +246,8 @@ class BaseArena(ABC):
         """
         if team_color not in {TeamColor.YELLOW, TeamColor.BLUE}:
             self._logger.error(
-                f"[ARENA:Config] Invalid team color: {team_color} - must be YELLOW or BLUE",
+                f"[ARENA:Config] Invalid team color: {team_color} "
+                "- must be YELLOW or BLUE",
             )
 
         self.team_color: TeamColor = team_color
@@ -378,7 +379,9 @@ class BaseArena(ABC):
         # 1. If goal is defined as int, it's a zone ID
         if isinstance(goal, int):
             if goal > len(self.zones):
-                self._logger.error("[ARENA:Zone] Invalid zone ID in trajectory parameters")
+                self._logger.error(
+                    "[ARENA:Zone] Invalid zone ID in trajectory parameters",
+                )
                 return None
 
             return self.zones[goal].get_go_to_position(
@@ -425,7 +428,9 @@ class BaseArena(ABC):
         """
         if isinstance(location, int):
             if location >= len(self.zones):
-                self._logger.error("[ARENA:Zone] Invalid zone ID in trajectory parameters")
+                self._logger.error(
+                    "[ARENA:Zone] Invalid zone ID in trajectory parameters",
+                )
                 return None
             return self.zones[location]
         if isinstance(location, BaseArenaZone):

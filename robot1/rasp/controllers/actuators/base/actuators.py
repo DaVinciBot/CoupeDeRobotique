@@ -249,11 +249,11 @@ class Actuators(
             else:
                 if not self.gpio_manager.is_declared_gpio(pin):
                     self.gpio_manager.add_gpio(pin, ActuatorType.SERVO)
-                    self._logger.info(f"Pin {pin} added as a servo pin")
+                    self._logger.info(f"[CTRL:ACT] Pin {pin} added as servo")
                 elif not self.gpio_manager.is_valid_gpio(pin, ActuatorType.SERVO):
                     self._logger.error(
-                        f"Pin {pin} is not a valid servo pin because it is registered "
-                        f"as a {self.gpio_manager.get_type_gpio(pin)!s}",
+                        f"[CTRL:ACT] Pin {pin} invalid - registered as "
+                        f"{self.gpio_manager.get_type_gpio(pin)!s}",
                     )
                     return
                 if use_i2c:  # prevent I2C overload
@@ -277,8 +277,8 @@ class Actuators(
 
         else:
             self._logger.error(
-                f"You tried to write {angle}° on pin {pin}, whereas the angle "
-                f"must be between {min_angle} and {max_angle}°",
+                f"[CTRL:ACT] Angle {angle}° out of range [{min_angle}-{max_angle}°] "
+                f"for pin {pin}",
             )
 
     @log("Actuators")

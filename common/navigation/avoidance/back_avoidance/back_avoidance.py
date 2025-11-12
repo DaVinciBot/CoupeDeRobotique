@@ -99,7 +99,8 @@ class BackAvoidance(BaseAvoidance[BackAvoidanceParams]):
             and self.state == AvoidanceState.IDLE
         ):
             self._logger.info(
-                f"[NAV:Avoid] Obstacle detected at {ally_zone.point.distance(enemy_zone.point):.1f}cm - "
+                "[NAV:Avoid] Obstacle detected at "
+                f"{ally_zone.point.distance(enemy_zone.point):.1f}cm - "
                 "initiating backward avoidance",
             )
 

@@ -11,10 +11,9 @@ try:
     from gpio.gpio import PIN
 except ImportError:
     _logger.warning(
-        "Failed to import GPIO module. "
-        "Ensure the GPIO library is installed and accessible.",
+        "[GPIO] Failed to import GPIO module - ensure library is installed",
     )
-    _logger.info("Falling back to dummy PIN class.")
+    _logger.info("[GPIO] Falling back to dummy PIN class")
     from gpio.dummy_gpio import PIN
 
 __all__ = ["PIN"]

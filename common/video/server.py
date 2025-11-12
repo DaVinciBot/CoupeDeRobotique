@@ -49,7 +49,7 @@ class MJPEGHandler(BaseHTTPRequestHandler):
             while True:
                 try:
                     if self.current_img is None:
-                        _logger.warning("No image to send.")
+                        _logger.warning("[VIDEO] No image to send")
                         continue
                     dat = cv2.imencode(".jpg", self.current_img)[1].tobytes()
                     self.wfile.write(b"--jpgboundary")
@@ -61,7 +61,7 @@ class MJPEGHandler(BaseHTTPRequestHandler):
                 except KeyboardInterrupt:
                     break
                 except Exception as e:  # noqa: BLE001
-                    _logger.error(f"Error occurred while streaming: {e}")
+                    _logger.error(f"[VIDEO] Streaming error: {e}")
                     break
             return
         if self.path.endswith(".html"):
@@ -74,7 +74,7 @@ class MJPEGHandler(BaseHTTPRequestHandler):
 
 def start_video_server() -> None:
     """Start the MJPEG HTTP server in the foreground."""
-    _logger.info("Starting video server on port 8001")
+    _logger.info("[VIDEO] Starting server on port 8001")
     MJPEGHandler.current_img = None
     httpd = HTTPServer(("0.0.0.0", 8001), MJPEGHandler)
 
@@ -83,7 +83,7 @@ def start_video_server() -> None:
         httpd.serve_forever()
     except KeyboardInterrupt:
         httpd.server_close()
-        _logger.info("Video server stopped.")
+        _logger.info("[VIDEO] Server stopped")
 
 
 def spawn_video_server() -> None:
@@ -94,7 +94,7 @@ def spawn_video_server() -> None:
     try:
         t.start()
     except RuntimeError as e:
-        _logger.error(f"Error occurred while spawning video server: {e}")
+        _logger.error(f"[VIDEO] Failed to spawn server: {e}")
         t.join(timeout=1)
 
 
