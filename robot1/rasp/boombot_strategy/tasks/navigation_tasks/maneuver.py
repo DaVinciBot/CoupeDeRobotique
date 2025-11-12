@@ -24,6 +24,8 @@ from navigation.trajectory_planner.sequential_trajectory_planner import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from strategy.core import BaseGameContext
 
 
@@ -131,14 +133,12 @@ class GoCentroidOfZone(NavigationTask):
 class GoToClosestFreeWall(NavigationTask):
     """Navigation task to go to the closest free wall position."""
 
-    def __init__(self, goal: OrientedPoint) -> None:
+    def __init__(self, goal: Callable[[BaseGameContext], OrientedPoint]) -> None:
         """Initialize the GoToClosestFreeWall task.
 
         Args:
             goal (OrientedPoint): The target position to navigate to.
         """
-        self.goal = goal
-
         super().__init__(
             goal=goal,
             path_planner_params=BasicPathPlannerParams(),

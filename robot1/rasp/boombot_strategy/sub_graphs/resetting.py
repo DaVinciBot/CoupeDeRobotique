@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from boombot_strategy.tasks.navigation_tasks import (
     GoToClosestFreeWall,
     RelativeForward,
@@ -10,6 +12,10 @@ from boombot_strategy.tasks.navigation_tasks.odometrie import WallSetOdometrie
 from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
+
+if TYPE_CHECKING:
+    from geometry.oriented_point import OrientedPoint
+    from strategy.core.base_game_context import BaseGameContext
 
 
 def get_resetting_subgraph() -> BaseSubGraph:
@@ -22,8 +28,10 @@ def get_resetting_subgraph() -> BaseSubGraph:
     subgraph = SubGraphBuilder()
 
     # Node: Navigate to the wall
+    def goal(ctx: BaseGameContext) -> OrientedPoint:
+        return ctx.arena.get_closest_wall_goal()
+
     node_go_wall = "[Resetting] Go to closest free wall"
-    goal = lambda ctx: ctx.arena.get_closest_wall_goal()
     subgraph.add_node(
         node_go_wall,
         BaseTaskNode(name=node_go_wall, tasks=GoToClosestFreeWall(goal)),
