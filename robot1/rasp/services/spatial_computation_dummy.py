@@ -1,32 +1,30 @@
 from __future__ import annotations
-from __future__ import annotations
 
 import random
 from math import pi
 from typing import TYPE_CHECKING
 
-from controllers.rolling_basis import RollingBasis, RollingBasisDummy
-from common.arena.base_arena.arena import BaseArena
-from geometry import OrientedPoint
-
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
+    from common.arena.base_arena.arena import BaseArena
+    from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+    from geometry import OrientedPoint
+
 
 class SpatialComputationDummy:
-    """
-    Dummy version of SpatialComputation for testing without LoRa or RollingBasis.
+    """Dummy version of SpatialComputation for testing without LoRa or RollingBasis.
+
     All methods exist but return placeholder data.
     """
+
     def __init__(
-            self,
-            logger: Logger,
-            arena: BaseArena,
-            rolling_basis: RollingBasis | RollingBasisDummy,
-            lora: None = None,  # Lora parameters maybe added later
-
+        self,
+        logger: Logger,
+        arena: BaseArena,
+        rolling_basis: RollingBasis | RollingBasisDummy,
+        lora: None = None,  # Lora parameters maybe added later
     ) -> None:
-
         self.logger = logger
         self.arena = arena
         self.rolling_basis = rolling_basis
@@ -45,15 +43,16 @@ class SpatialComputationDummy:
 
         self.crates = self._generate_fixed_crates()
 
-    def _generate_fixed_crates(self):
-        """
-        Generate a fixed list of crate positions and color IDs.
+    def _generate_fixed_crates(self) -> list[tuple[float, float, float, int]]:
+        """Generate a fixed list of crate positions and color IDs.
+
         Returns:
-            List of tuples containing (x, y, z, color_id) for each crate.
+            list[tuple[float, float, float, int]]:
+                List of tuples containing (x, y, z, color_id) for each crate.
         """
         crates = []
         crate_size = 5
-        for (p1, p2) in self.crates_zones_points:
+        for p1, p2 in self.crates_zones_points:
             x_min, x_max = min(p1[0], p2[0]), max(p1[0], p2[0])
             y_min, y_max = min(p1[1], p2[1]), max(p1[1], p2[1])
             color_ids = [0, 0, 1, 1]
@@ -61,15 +60,13 @@ class SpatialComputationDummy:
 
             if (x_max - x_min) >= (y_max - y_min):
                 x_positions = [
-                    x_min + crate_size / 2 + i * crate_size
-                    for i in range(4)
+                    x_min + crate_size / 2 + i * crate_size for i in range(4)
                 ]
                 y_positions = [(y_min + y_max) / 2] * 4
             else:
                 x_positions = [(x_min + x_max) / 2] * 4
                 y_positions = [
-                    y_min + crate_size / 2 + i * crate_size
-                    for i in range(4)
+                    y_min + crate_size / 2 + i * crate_size for i in range(4)
                 ]
 
             for i in range(4):
@@ -78,8 +75,7 @@ class SpatialComputationDummy:
         return crates
 
     def get_robot_position(self) -> tuple[float, float, float]:
-        """
-        Get the robot's current position in the global coordinate system.
+        """Get the robot's current position in the global coordinate system.
 
         Returns:
             A tuple containing the (x, y, theta) coordinates of the robot.
@@ -88,8 +84,7 @@ class SpatialComputationDummy:
         return robot_odometrie.x, robot_odometrie.y, robot_odometrie.theta
 
     def get_enemy_position(self) -> tuple[float, float, float]:
-        """
-        Get the enemy robot's current position in the global coordinate system.
+        """Get the enemy robot's current position in the global coordinate system.
 
         Returns:
             A tuple containing the (x, y) coordinates of the enemy robot.
@@ -98,8 +93,7 @@ class SpatialComputationDummy:
         return enemy_point.x, enemy_point.y, enemy_point.theta
 
     def get_enemy_velocity(self) -> tuple[float, float, float]:
-        """
-        Get the enemy robot's current velocity.
+        """Get the enemy robot's current velocity.
 
         Returns:
             The velocity of the enemy robot.
@@ -113,18 +107,15 @@ class SpatialComputationDummy:
 
     # Section full freestyle au cas où on envoie directement le lora d'ici, j'en sais rien ALED
     def send_data(self) -> None:
-        """
-        Dummy method to send data to the LoRa module.
-        """
-        pass
+        """Dummy method to send data to the LoRa module."""
 
     def receive_data(self) -> dict[str, object]:
-        """
-        Dummy method to receive data from the LoRa module.
+        """Dummy method to receive data from the LoRa module.
 
         Returns:
-            A dictionary containing the robot's position, enemy position,
-            enemy velocity, and a list of crates with their positions and color IDs.
+            dict[str, object]:
+                A dictionary containing the robot's position, enemy position,
+                enemy velocity, and a list of crates with their positions and color IDs.
         """
         # Simulate received data
 
@@ -141,7 +132,7 @@ class SpatialComputationDummy:
         # Enemy Velocity
         enemy_dx = random.randint(-20, 20)
         enemy_dy = random.randint(-20, 20)
-        enemy_speed = int((enemy_dx ** 2 + enemy_dy ** 2) ** 0.5)
+        enemy_speed = int((enemy_dx**2 + enemy_dy**2) ** 0.5)
 
         # Crates
         crates = self.crates

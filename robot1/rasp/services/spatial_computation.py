@@ -3,32 +3,29 @@ from __future__ import annotations
 import struct
 from typing import TYPE_CHECKING
 
-from controllers.rolling_basis import RollingBasis, RollingBasisDummy
-from common.arena.base_arena.arena import BaseArena
-from geometry import OrientedPoint
-
 if TYPE_CHECKING:
     from loggerplusplus import Logger
+
+    from common.arena.base_arena.arena import BaseArena
+    from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+    from geometry import OrientedPoint
 
 
 class SpatialComputation:
     def __init__(
-            self,
-            logger: Logger,
-            arena: BaseArena,
-            rolling_basis: RollingBasis | RollingBasisDummy,
-            lora: None = None,  # Lora parameters maybe added later
-
+        self,
+        logger: Logger,
+        arena: BaseArena,
+        rolling_basis: RollingBasis | RollingBasisDummy,
+        lora: None = None,  # Lora parameters maybe added later
     ) -> None:
-
         self.logger = logger
         self.arena = arena
         self.rolling_basis = rolling_basis
         self.lora = lora  # Placeholder for LoRa module
 
     def get_robot_position(self) -> tuple[float, float, float]:
-        """
-        Get the robot's current position in the global coordinate system.
+        """Get the robot's current position in the global coordinate system.
 
         Returns:
             A tuple containing the (x, y, theta) coordinates of the robot.
@@ -37,8 +34,7 @@ class SpatialComputation:
         return robot_odometrie.x, robot_odometrie.y, robot_odometrie.theta
 
     def get_enemy_position(self) -> tuple[float, float, float]:
-        """
-        Get the enemy robot's current position in the global coordinate system.
+        """Get the enemy robot's current position in the global coordinate system.
 
         Returns:
             A tuple containing the (x, y) coordinates of the enemy robot.
@@ -47,8 +43,7 @@ class SpatialComputation:
         return enemy_point.x, enemy_point.y, enemy_point.theta
 
     def get_enemy_velocity(self) -> tuple[float, float, float]:
-        """
-        Get the enemy robot's current velocity.
+        """Get the enemy robot's current velocity.
 
         Returns:
             The velocity of the enemy robot.
@@ -62,8 +57,7 @@ class SpatialComputation:
 
     # Section full freestyle au cas où on envoie directement le lora d'ici, j'en sais rien ALED
     def send_data(self) -> None:
-        """
-        Send data to the LoRa module.
+        """Send data to the LoRa module.
 
         This is a placeholder method and should be implemented with actual
         LoRa communication logic.
@@ -78,8 +72,7 @@ class SpatialComputation:
         self.lora.send(data)  # Placeholder for sending data via LoRa
 
     def receive_data(self) -> dict[str, object]:
-        """
-        Receive data from the LoRa module.
+        """Receive data from the LoRa module.
 
         This is a placeholder method and should be implemented with actual
         LoRa communication logic.
@@ -108,7 +101,7 @@ class SpatialComputation:
         crates = []
         for i in range(num_crates):
             base = 9 + i * 4
-            crate_x, crate_y, crate_z, color_id = unpacked_data[base:base+4]
+            crate_x, crate_y, crate_z, color_id = unpacked_data[base : base + 4]
             crates.append((crate_x, crate_y, crate_z, int(color_id)))
 
         return {
