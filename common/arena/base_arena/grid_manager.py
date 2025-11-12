@@ -89,7 +89,7 @@ class GridManager:
             ],
         )
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def __mark_zone(
         self,
         grid: Grid,
@@ -135,7 +135,7 @@ class GridManager:
 
         return grid
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def __optimized_mark_zone(  # QUESTION: Useless ?
         self,
         grid: Grid,
@@ -201,7 +201,7 @@ class GridManager:
 
         return grid
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def __update_grid(
         self,
         *,
@@ -314,7 +314,7 @@ class GridManager:
             ),
         )
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def add_forbidden_static_zone(
         self,
         forbidden_zones: Polygon | list[Polygon],
@@ -332,7 +332,7 @@ class GridManager:
         self.not_updated_forbidden_zones.extend(forbidden_zones)
         self.__update_grid(update_static_zones=True)
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def remove_forbidden_static_zone(
         self,
         forbidden_zones_to_remove: Polygon | list[Polygon],
@@ -365,7 +365,7 @@ class GridManager:
         self.not_updated_forbidden_zones.extend(forbidden_zones_to_remove)
         self.__update_grid(update_static_zones=True)
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def update_dynamic_forbidden_zones(self, forbidden_zones: list[Polygon]) -> None:
         """Updates dynamic forbidden zones in the grid.
 

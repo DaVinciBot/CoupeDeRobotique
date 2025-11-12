@@ -133,7 +133,7 @@ class GridManager:
 
     # region ====== Public Methods ======
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def add_forbidden_static_zone(
         self,
         forbidden_zones: Polygon | list[Polygon],
@@ -155,7 +155,7 @@ class GridManager:
             walkable=False,
         )
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def remove_forbidden_static_zone(
         self,
         forbidden_zones: Polygon | list[Polygon],
@@ -180,7 +180,7 @@ class GridManager:
             walkable=False,
         )
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def update_dynamic_forbidden_zones(self, dynamic_zones: list[Polygon]) -> None:
         """Update the list of dynamic forbidden zones.
 
