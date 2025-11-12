@@ -245,7 +245,9 @@ class MainBrain(Brain):
         ui = await self.ws_ui.receiver.get()
 
         if ui != WSmsg():
-            self.logger.info(f"UI instruction {ui.msg} received: {ui.data}")
+            self.logger.info(
+                f"[WS:UI] Instruction received: {ui.msg} | data: {ui.data}",
+            )
             if ui.msg == "eval":
                 instructions = []
                 if isinstance(ui.data, str):
@@ -261,11 +263,13 @@ class MainBrain(Brain):
             elif ui.msg == "team change":
                 if ui.data["team"] in {"yellow", "blue"}:
                     self.arena.set_team_color(TeamColor[ui.data["team"].upper()])
-                    self.logger.info(f"Team color set to {ui.data['team']}")
+                    self.logger.info(f"[WS:UI] Team color set to {ui.data['team']}")
                 else:
-                    self.logger.warning(f"Invalid team color: {ui.data}")
+                    self.logger.warning(f"[WS:UI] Invalid team color: {ui.data}")
             else:
-                self.logger.warning(f"Command not implemented: {ui.msg} / {ui.data}")
+                self.logger.warning(
+                    f"[WS:UI] Command not implemented: {ui.msg} / {ui.data}",
+                )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def update_arena(self) -> None:
@@ -279,7 +283,7 @@ class MainBrain(Brain):
 
     # @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     # async def print_odo(self) -> None:
-    #     self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
+    #     self.logger.info(f"[CTRL:RB] Rolling basis odometrie: {self.rolling_basis_odometrie}")
 
     # endregion
 
@@ -292,8 +296,8 @@ class MainBrain(Brain):
             await asyncio.sleep(0.1)
 
         self.logger.info(
-            f"Team color is set to {self.arena.team_color.name.lower()}."
-            "Starting the brain.",
+            f"[BRAIN:Init] Team color set to {self.arena.team_color.name.lower()}. "
+            "Starting brain.",
         )
 
     @Brain.task(process=False, run_on_start=True)
@@ -316,7 +320,7 @@ class MainBrain(Brain):
         """Starts the main brain process."""
         if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
             self.logger.warning(
-                "All subsystems are in dummy mode. The robot will not move.",
+                "[BRAIN:Init] All subsystems in DUMMY mode - robot will not move",
             )
             self.arena.set_team_color(TeamColor.YELLOW)
         else:
@@ -325,11 +329,11 @@ class MainBrain(Brain):
         start_position = OrientedPoint(0, 0, 0)
         enemy_position = OrientedPoint(150, 200, -pi / 2)
         if self.arena.team_color == TeamColor.YELLOW:
-            self.logger.info("Starting as YELLOW team.")
+            self.logger.info("[BRAIN:Init] Starting as YELLOW team")
             start_position = OrientedPoint(122.5, 21, -pi / 2)
             enemy_position = OrientedPoint(177.5, 21, -pi / 2)
         elif self.arena.team_color == TeamColor.BLUE:
-            self.logger.info("Starting as BLUE team.")
+            self.logger.info("[BRAIN:Init] Starting as BLUE team")
             start_position = OrientedPoint(177.5, 21, -pi / 2)
             enemy_position = OrientedPoint(122.5, 21, -pi / 2)
 

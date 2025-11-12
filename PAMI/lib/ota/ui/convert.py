@@ -7,7 +7,7 @@ from pathlib import Path
 
 from loggerplusplus import Logger
 
-logger = Logger(
+_logger = Logger(
     identifier=__name__,
     follow_logger_manager_rules=True,
 )
@@ -35,4 +35,4 @@ OUTPUT_FILE.write_text(CONST_ARRAY, encoding="utf-8")
 # Étape 3 : Nettoyage
 COMPRESSED_FILE.unlink()
 
-logger.info(f"Conversion terminée. Tableau sauvegardé dans {OUTPUT_FILE}.")
+_logger.info(f"Conversion terminée. Tableau sauvegardé dans {OUTPUT_FILE}.")

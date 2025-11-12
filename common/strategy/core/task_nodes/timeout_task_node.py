@@ -38,11 +38,9 @@ class TimeoutTaskNode(BaseTaskNode):
         self.status = TaskStatus.PENDING
         self.start_time = None
         self.end_time: float | None = None
-        self.logger.info(
-            (
-                f"Initialized TimeoutTaskNode '{self.name}' with timeout set to "
-                f"{self.timeout_seconds}s"
-            ),
+        self._logger.info(
+            "[STRAT] Initialized TimeoutTaskNode: "
+            f"'{self.name}' (timeout: {self.timeout_seconds}s)",
         )
 
     def on_timeout(self, _ctx: BaseGameContext) -> None:
@@ -54,11 +52,8 @@ class TimeoutTaskNode(BaseTaskNode):
         This method can be overridden in subclasses to implement custom
         behaviour when the timeout triggers.
         """
-        self.logger.warning(
-            (
-                f"Timeout reached for node '{self.name}' after "
-                f"{self.timeout_seconds:.2f}s"
-            ),
+        self._logger.warning(
+            f"[STRAT] Timeout reached: '{self.name}' ({self.timeout_seconds:.2f}s)",
         )
 
     @override
@@ -74,11 +69,9 @@ class TimeoutTaskNode(BaseTaskNode):
         """
         # If already completed, no-op
         if self.status in {TaskStatus.DONE, TaskStatus.FAILED, TaskStatus.TIMEOUT}:
-            self.logger.debug(
-                (
-                    f"TimeoutTaskNode '{self.name}' already completed with status "
-                    f"{self.status.name}"
-                ),
+            self._logger.debug(
+                f"[STRAT] TimeoutTaskNode '{self.name}' "
+                f"already completed: {self.status.name}",
             )
             return True
 
@@ -88,19 +81,15 @@ class TimeoutTaskNode(BaseTaskNode):
         if self.start_time is None:
             self.start_time = now
             self.status = TaskStatus.IN_PROGRESS
-            self.logger.info(
-                (
-                    f"Started TimeoutTaskNode '{self.name}'; will timeout after "
-                    f"{self.timeout_seconds:.2f}s"
-                ),
+            self._logger.info(
+                f"[STRAT] Started TimeoutTaskNode: '{self.name}' "
+                f"(timeout: {self.timeout_seconds:.2f}s)",
             )
 
         elapsed = now - self.start_time
-        self.logger.debug(
-            (
-                f"Node '{self.name}' elapsed time: {elapsed:.2f}s of "
-                f"{self.timeout_seconds:.2f}s"
-            ),
+        self._logger.debug(
+            f"[STRAT] Node '{self.name}' "
+            f"elapsed: {elapsed:.2f}s / {self.timeout_seconds:.2f}s",
         )
 
         # Check for timeout
@@ -110,8 +99,8 @@ class TimeoutTaskNode(BaseTaskNode):
                 self._timeout_triggered = True
             self.status = TaskStatus.TIMEOUT
             self.end_time = now
-            self.logger.info(
-                f"TimeoutTaskNode '{self.name}' status set to TIMEOUT",
+            self._logger.info(
+                f"[STRAT] TimeoutTaskNode '{self.name}' status: TIMEOUT",
             )
             return True
 

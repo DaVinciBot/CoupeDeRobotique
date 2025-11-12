@@ -75,9 +75,9 @@ class ActuatorsShowDummy(ActuatorsShow):
             disable_driver (bool): Whether to disable the driver afterwards.
         """
         self.elevator_ticks += steps
-        self.logger.info(
-            f"DummyActuatorsShow: Simulating stepper move: steps={steps},"
-            f" speed={speed}, disable_driver={disable_driver}",
+        self._logger.info(
+            f"[CTRL:ACT:Dummy] Stepper move: {steps} steps at speed {speed}, "
+            f"disable_driver={disable_driver}",
         )
 
     @override
@@ -128,17 +128,16 @@ class ActuatorsShowDummy(ActuatorsShow):
 
         if min_angle <= angle <= max_angle:
             if detach:
-                self.logger.info(
-                    f"DummyActuatorsShow: Simulating set_servo_angle with detach:"
-                    f" pin={pin}, angle={angle}, detach_delay={detach_delay}ms",
+                self._logger.info(
+                    f"[CTRL:ACT:Dummy] Servo pin {pin} angle {angle}° "
+                    f"with detach delay {detach_delay}ms",
                 )
             else:
-                self.logger.info(
-                    "DummyActuatorsShow: Simulating set_servo_angle: "
-                    f"pin={pin}, angle={angle}",
+                self._logger.info(
+                    f"[CTRL:ACT:Dummy] Servo pin {pin} angle {angle}°",
                 )
         else:
-            self.logger.error(
-                f"DummyActuatorsShow: Angle {angle}° out of range"
-                f" [{min_angle},{max_angle}] for pin {pin}",
+            self._logger.error(
+                f"[CTRL:ACT:Dummy] Angle {angle}° out of range "
+                f"[{min_angle},{max_angle}] for pin {pin}",
             )

@@ -49,12 +49,12 @@ class GridManager:
             forbidden_cover_threshold (float, optional): Minimum coverage ratio
                 for a cell to be marked as forbidden. Defaults to 0.5.
         """
-        self.logger: Logger = logger
+        self._logger: Logger = logger
         self.forbidden_cover_threshold: float = forbidden_cover_threshold
 
         # Validate chunk size
         if width % chunk_size or height % chunk_size:
-            self.logger.log(
+            self._logger.log(
                 "[GRID] width and height must be multiples of chunk_size. "
                 "Chunk size will be adjusted to the nearest multiple.",
                 LogLevels.ERROR,
@@ -357,7 +357,7 @@ class GridManager:
             self.static_forbidden_zones,
         )
         if not removed_zones:
-            self.logger.log(
+            self._logger.log(
                 "Call remove zone but no zone removed. Check if you use buffer.",
                 LogLevels.WARNING,
             )

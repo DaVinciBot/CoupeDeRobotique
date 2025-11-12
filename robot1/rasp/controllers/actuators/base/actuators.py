@@ -94,8 +94,8 @@ class Actuators(
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.info(
-            f"Teensy Actuators says: {msg.decode('ascii', errors='ignore')}",
+        self._logger.debug(
+            f"[CTRL:ACT:Teensy] {msg.decode('ascii', errors='ignore')}",
         )
 
     def rcv_unknown_msg(self, msg: bytes) -> None:
@@ -106,7 +106,7 @@ class Actuators(
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.warning(f"Teensy Actuators does not know the message {msg.hex()}")
+        self._logger.warning(f"[CTRL:ACT:Teensy] Unknown message type: {msg.hex()}")
 
     def rcv_switch_state_return(self, msg: bytes) -> None:
         """Handles SWITCH_STATE_RETURN messages from the Teensy.
@@ -114,7 +114,7 @@ class Actuators(
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.info(f"Switch state: {msg.hex()}")
+        self._logger.debug(f"[CTRL:ACT] Switch state: {msg.hex()}")
         # Decode the message
         pin: int = struct.unpack("<B", msg[0:1])[0]
         state: bool = struct.unpack("<?", msg[1:2])[0]
@@ -249,11 +249,11 @@ class Actuators(
             else:
                 if not self.gpio_manager.is_declared_gpio(pin):
                     self.gpio_manager.add_gpio(pin, ActuatorType.SERVO)
-                    self.logger.info(f"Pin {pin} added as a servo pin")
+                    self._logger.info(f"[CTRL:ACT] Pin {pin} added as servo")
                 elif not self.gpio_manager.is_valid_gpio(pin, ActuatorType.SERVO):
-                    self.logger.error(
-                        f"Pin {pin} is not a valid servo pin because it is registered "
-                        f"as a {self.gpio_manager.get_type_gpio(pin)!s}",
+                    self._logger.error(
+                        f"[CTRL:ACT] Pin {pin} invalid - registered as "
+                        f"{self.gpio_manager.get_type_gpio(pin)!s}",
                     )
                     return
                 if use_i2c:  # prevent I2C overload
@@ -276,9 +276,9 @@ class Actuators(
                 self.send_bytes(msg)
 
         else:
-            self.logger.error(
-                f"You tried to write {angle}° on pin {pin}, whereas the angle "
-                f"must be between {min_angle} and {max_angle}°",
+            self._logger.error(
+                f"[CTRL:ACT] Angle {angle}° out of range [{min_angle}-{max_angle}°] "
+                f"for pin {pin}",
             )
 
     @log("Actuators")

@@ -22,13 +22,13 @@ class SubGraphBuilder:
 
     def __init__(self) -> None:
         """Initialize empty builder and logger."""
-        self.logger = Logger(
+        self._logger = Logger(
             identifier="SubGraphBuilder",
             follow_logger_manager_rules=True,
         )
         self.nodes: dict[str, BaseTaskNode] = {}
         self._transitions: list[tuple[str, BaseTransition]] = []
-        self.logger.info("Initialized SubGraphBuilder")
+        self._logger.info("[STRAT:Builder] Initialized")
 
     def add_node(self, name: str, node: BaseTaskNode) -> SubGraphBuilder:
         """Register a task node.
@@ -44,11 +44,11 @@ class SubGraphBuilder:
             KeyError: If ``name`` already exists in the builder.
         """
         if name in self.nodes:
-            msg = f"Node name '{name}' already registered"
-            self.logger.error(msg)
+            msg = f"[STRAT:Builder] Node '{name}' already registered"
+            self._logger.error(msg)
             raise KeyError(msg)
         self.nodes[name] = node
-        self.logger.debug(f"Added node '{name}'")
+        self._logger.debug(f"[STRAT:Builder] Added node: '{name}'")
         return self
 
     def connect(self, from_name: str, transition: BaseTransition) -> SubGraphBuilder:
@@ -65,11 +65,13 @@ class SubGraphBuilder:
             KeyError: If ``from_name`` is not registered.
         """
         if from_name not in self.nodes:
-            msg = f"Source node '{from_name}' not found for transition"
-            self.logger.error(msg)
+            msg = f"[STRAT:Builder] Source node '{from_name}' not found"
+            self._logger.error(msg)
             raise KeyError(msg)
         self._transitions.append((from_name, transition))
-        self.logger.debug(f"Queued transition on '{from_name}' -> {transition}")
+        self._logger.debug(
+            f"[STRAT:Builder] Queued transition: '{from_name}' -> {transition}",
+        )
         return self
 
     def add_subgraph(self, subgraph: BaseSubGraph, prefix: str = "") -> SubGraphBuilder:
@@ -99,11 +101,10 @@ class SubGraphBuilder:
                     continue
                 new_transition = type(t)(mapping[t.target])
                 from_new.add_transition(new_transition)
-                msg = (
-                    f"Recreated transition: '{from_new.name}' -> "
-                    f"'{mapping[t.target].name}'"
+                self._logger.debug(
+                    f"[STRAT:Builder] Recreated transition: '{from_new.name}' -> "
+                    f"'{mapping[t.target].name}'",
                 )
-                self.logger.debug(msg)
 
         return self
 
@@ -136,17 +137,24 @@ class SubGraphBuilder:
         for from_name, transition in self._transitions:
             node = self.nodes[from_name]
             node.add_transition(transition)
-            msg = f"Connected '{from_name}' -> '{transition.target.name}'"
-            self.logger.debug(msg)
+            self._logger.debug(
+                "[STRAT:Builder] Connected: "
+                f"'{from_name}' -> '{transition.target.name}'",
+            )
         # Validate
         missing = [n for n in exit_nodes if n.name not in self.nodes]
         if missing:
-            msg = f"Exit nodes not registered: {[n.name for n in missing]}"
-            self.logger.error(msg)
+            msg = (
+                "[STRAT:Builder] Exit nodes not registered: "
+                f"{[n.name for n in missing]}"
+            )
+            self._logger.error(msg)
             raise KeyError(msg)
         exits_names = [n.name for n in exit_nodes]
-        msg = f"Building subgraph entry='{entry_node.name}' exits={exits_names}"
-        self.logger.info(msg)
+        self._logger.info(
+            "[STRAT:Builder] Building subgraph: "
+            f"entry='{entry_node.name}', exits={exits_names}",
+        )
         return BaseSubGraph(
             entry_node=entry_node,
             exit_nodes=exit_nodes,
@@ -156,8 +164,8 @@ class SubGraphBuilder:
     def _resolve(self, item: str | BaseTaskNode) -> BaseTaskNode:
         if isinstance(item, str):
             if item not in self.nodes:
-                msg = f"Node '{item}' not found"
-                self.logger.error(msg)
+                msg = f"[STRAT:Builder] Node '{item}' not found"
+                self._logger.error(msg)
                 raise KeyError(msg)
             return self.nodes[item]
         return item

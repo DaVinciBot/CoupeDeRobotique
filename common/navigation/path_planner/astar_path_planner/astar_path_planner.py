@@ -84,8 +84,8 @@ class AStarPathPlanner(
         )
 
         if not self.params.path_found:
-            self.logger.warning(
-                "No path found! "
+            self._logger.warning(
+                f"[NAV:Path] No path found"
                 f"Grid: [start=({self.params.current_position.x}, "
                 f"{self.params.current_position.y}), goal=({self.params.goal.x}, "
                 f"{self.params.goal.y})] "
@@ -129,8 +129,8 @@ class AStarPathPlanner(
             list[OrientedPoint]: Path with orientation included.
         """
         if not path:
-            self.logger.debug(
-                "[path to absolute oriented path] Path to convert is empty!",
+            self._logger.debug(
+                "[NAV:Path] Path to convert is empty!",
             )
             return []
 
@@ -270,7 +270,7 @@ class AStarPathPlanner(
 
         # If no path found, return an empty list
         if not self.params.path_found:
-            self.logger.warning("No path found!")
+            self._logger.warning("[NAV:Path] No path found")
             return []
 
         # Add real robot position as start point and goal as end point

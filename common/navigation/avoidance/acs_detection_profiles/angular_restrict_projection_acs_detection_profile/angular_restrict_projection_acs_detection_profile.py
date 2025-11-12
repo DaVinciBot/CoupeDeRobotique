@@ -38,8 +38,6 @@ class AngularRestrictProjectionAcsDetectionProfile(
         ) - (ally_zone.point.theta or 0.0)
         if abs(angle) <= self.params.half_angle_view:
             distance = ally_zone.point.distance(enemy_zone.point)
-            self.logger.info(
-                f"ACS triggered. Distance: {distance}",
-            )
+            self._logger.debug(f"[NAV:ACS] Triggered - distance: {distance:.1f}cm")
             return True
         return False

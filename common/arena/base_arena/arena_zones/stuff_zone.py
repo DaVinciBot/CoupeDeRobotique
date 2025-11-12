@@ -96,17 +96,16 @@ class StuffZone(BaseArenaZone):
                 Best go-to position, or ``None`` if inaccessible.
         """
         if self.accessibility == ZoneAccessibility.FORBIDDEN:
-            self.logger.debug(
-                f"GoTo position request: Zone {self.zone_type} is not accessible.",
+            self._logger.debug(
+                f"[ARENA:Zone:Stuff] GoTo request: {self.zone_type} not accessible",
             )
             return None
 
         # If no specific go-to positions are defined, return the centroid of the zone
         if not self.go_to_positions:
-            self.logger.debug(
-                "GoTo position request: "
-                f"No defined go-to positions for zone {self.zone_type}, "
-                f"returning centroid [{self.polygon.centroid}]",
+            self._logger.debug(
+                f"[ARENA:Zone:Stuff] GoTo request: No positions for {self.zone_type}, "
+                f"using centroid {self.polygon.centroid}",
             )
             return OrientedPoint.from_point(self.polygon.centroid)
 
@@ -114,10 +113,9 @@ class StuffZone(BaseArenaZone):
             self.go_to_positions,
             key=ally_position.distance,
         )
-        msg = (
-            "GoTo position request: Nearest go-to position to ally "
-            f"[{ally_position}] is [{nearest_position}]"
+        self._logger.debug(
+            f"[ARENA:Zone:Stuff] GoTo request: Nearest position {nearest_position} "
+            f"from ally at {ally_position}",
         )
-        self.logger.debug(msg)
 
         return nearest_position

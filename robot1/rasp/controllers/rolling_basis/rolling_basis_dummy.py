@@ -93,7 +93,7 @@ class RollingBasisDummy(BaseComTeensy):
 
         self.odometrie = target_position
 
-        self.logger.debug(f"[DUMMY] Set speed and position: {target_position}")
+        self._logger.debug(f"[CTRL:RB:Dummy] Set target position: {target_position}")
 
     @log("RollingBasis")
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
@@ -113,7 +113,7 @@ class RollingBasisDummy(BaseComTeensy):
             raise ValueError(msg)
 
         self.odometrie = odometrie
-        self.logger.info(f"[DUMMY] Set odometrie: {odometrie}")
+        self._logger.info(f"[CTRL:RB:Dummy] Set odometry: {odometrie}")
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
         """Internal method to send PID configuration data to the Teensy.
@@ -122,7 +122,7 @@ class RollingBasisDummy(BaseComTeensy):
             pid_id (int): The identifier for the PID controller.
             pid (PID): The PID controller parameters.
         """
-        self.logger.debug(f"[DUMMY] Set PID: {pid_id}, {pid}")
+        self._logger.debug(f"[CTRL:RB:Dummy] Set PID {pid_id}: {pid}")
 
     # endregion
 
@@ -193,7 +193,7 @@ class RollingBasisDummy(BaseComTeensy):
             self.linear_position_pid = pid
             self._send_pid(PidID.LINEAR_POSITION.value, pid)
         except (ValueError, TypeError) as e:
-            self.logger.error(f"Failed to set linear position PID: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to set linear position PID: {e}")
 
     @overload
     def set_angular_position_pid(self, *args: float) -> None: ...
@@ -226,7 +226,7 @@ class RollingBasisDummy(BaseComTeensy):
             self.angular_position_pid = pid
             self._send_pid(PidID.ANGULAR_POSITION.value, pid)
         except (ValueError, TypeError) as e:
-            self.logger.error(f"Failed to set angular position PID: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to set angular position PID: {e}")
 
     def set_pids(
         self,
@@ -252,7 +252,7 @@ class RollingBasisDummy(BaseComTeensy):
                 angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
             )
         except (ValueError, TypeError) as e:
-            self.logger.error(f"Failed to initialize PIDs: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to initialize PIDs: {e}")
 
     # endregion
 

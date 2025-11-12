@@ -18,7 +18,7 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
         Args:
             logger (Logger | None): Logger instance for debugging. Defaults to None.
         """
-        self.logger: Logger = logger or Logger(
+        self._logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )

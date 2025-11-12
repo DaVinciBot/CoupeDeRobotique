@@ -188,7 +188,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         # 9 : Folded = Catch plank
 
         stepper_config = CONFIG.ACTUATOR_ELEVATOR_CONFIG
-        self.logger.info(f"{stepper_config}")
+        self._logger.info(f"[CTRL:ACT] Stepper config: {stepper_config}")
         self.stepper = Stepper(
             stepper_config["top_steps"],
             stepper_config["folded_steps"],
@@ -207,7 +207,9 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
             bool: ``True`` if the pin is a valid servo pin, ``False`` otherwise.
         """
         if pin not in self.servos:
-            self.logger.warning(f"Pin {pin} is not a servo")
+            self._logger.warning(
+                f"[CTRL:ACT] Invalid servo pin {pin}, not configured",
+            )
             return False
         return True
 
@@ -356,9 +358,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
             if self._check_pin(pin):
                 servo = self.servos[pin]
                 if not isinstance(servo, (ServoDocking, ServoArm)):
-                    self.logger.warning(
-                        f"Pin {pin} is not a ServoDocking or ServoArm,"
-                        " cannot perform docking.",
+                    self._logger.warning(
+                        f"[CTRL:ACT] Pin {pin} not ServoDocking/ServoArm, cannot dock",
                     )
                 else:
                     self.set_servo_angle(
@@ -396,9 +397,11 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         if self.folded and not self.elevator_ticks:
             self.elevator_ticks = self.stepper.folded_steps
         steps_to_move = self.stepper.top_steps - self.elevator_ticks
-        self.logger.info(f"Moving to top: {steps_to_move} steps")
+        self._logger.info(f"[CTRL:ACT] Elevator to top: {steps_to_move} steps")
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
-        self.logger.info(f"Steps current: {self.elevator_ticks}")
+        self._logger.debug(
+            f"[CTRL:ACT] Elevator position: {self.elevator_ticks} steps",
+        )
 
     def elevator_drop_top(self) -> None:
         """Move the elevator to the top position.
@@ -408,9 +411,11 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         if self.folded and not self.elevator_ticks:
             self.elevator_ticks = self.stepper.folded_steps
         steps_to_move = 600 - self.elevator_ticks
-        self.logger.info(f"Moving to top: {steps_to_move} steps")
+        self._logger.info(f"[CTRL:ACT] Elevator drop to 600: {steps_to_move} steps")
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=False)
-        self.logger.info(f"Steps current: {self.elevator_ticks}")
+        self._logger.debug(
+            f"[CTRL:ACT] Elevator position: {self.elevator_ticks} steps",
+        )
 
     def go_to_bottom(self) -> None:
         """Move the elevator to the bottom position.
@@ -418,9 +423,11 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         If the elevator is folded, it will move to the folded position first.
         """
         steps_to_move = self.stepper.bottom_steps - self.elevator_ticks
-        self.logger.info(f"Moving to bottom: {steps_to_move} steps")
+        self._logger.info(f"[CTRL:ACT] Elevator to bottom: {steps_to_move} steps")
         self.stepper_step(steps_to_move, self.stepper.speed, disable_driver=True)
-        self.logger.info(f"Steps current: {self.elevator_ticks}")
+        self._logger.debug(
+            f"[CTRL:ACT] Elevator position: {self.elevator_ticks} steps",
+        )
 
     def build_floors(
         self,

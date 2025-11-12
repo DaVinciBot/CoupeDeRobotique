@@ -333,8 +333,8 @@ class WinterArena(BaseArena):
             grid_manager_logger=grid_manager_logger,
         )
 
-        self.logger.info("WinterArena initialized.")
-        self.logger.debug(f"Width: {self.width}, Height: {self.height}")
+        self._logger.info("[ARENA:Winter] Initialized")
+        self._logger.debug(f"[ARENA:Winter] Dimensions: {self.width}x{self.height}")
 
     @override
     def __eq__(self, other: object) -> bool:

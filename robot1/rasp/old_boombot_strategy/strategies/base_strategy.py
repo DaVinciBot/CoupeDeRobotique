@@ -33,7 +33,7 @@ class BaseStrategy(ABC):
         self.zones = CONFIG.INFO_BY_TEAM[ctx.arena.team_color.value]
         self.strategy = SubGraphBuilder()
         self.runner: GraphRunner
-        self.logger = Logger(
+        self._logger = Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )
@@ -48,7 +48,7 @@ class BaseStrategy(ABC):
         """
         if not self.runner:
             msg = "Strategy graph has not been built yet."
-            self.logger.error(f"No active graph to visualize. {msg}")
+            self._logger.error(f"No active graph to visualize. {msg}")
             raise RuntimeError(msg)
         visualize_task_graph(start_node=self.runner.active[0])
 
@@ -63,7 +63,7 @@ class BaseStrategy(ABC):
         """
         if not self.runner:
             msg = "Strategy graph has not been built yet."
-            self.logger.error(f"No active graph to retrieve. {msg}")
+            self._logger.error(f"No active graph to retrieve. {msg}")
             raise RuntimeError(msg)
         return self.runner
 
@@ -85,7 +85,7 @@ class BaseStrategy(ABC):
                 ``False`` otherwise.
         """
         if not elements:
-            self.logger.error("No elements provided for building the strategy.")
+            self._logger.error("No elements provided for building the strategy.")
             return False
 
         # Resolve entry and exit points for each element
@@ -94,7 +94,7 @@ class BaseStrategy(ABC):
         for i in range(len(entry_points) - 1):
             # Create a direct transition from the exit of the current element
             # to the entry of the next
-            self.logger.debug(
+            self._logger.debug(
                 f"Creating transition from {exit_points[i].name}"
                 f" to {entry_points[i + 1].name}",
             )
