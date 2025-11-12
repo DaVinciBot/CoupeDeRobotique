@@ -237,7 +237,7 @@ class BaseArena(ABC):
     # endregion
 
     # region ====== Public Methods ======
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def set_team_color(self, team_color: TeamColor) -> None:
         """Set the team color and trigger updates to zones.
 
@@ -257,7 +257,7 @@ class BaseArena(ABC):
             optimized_update=False,
         )  # Force to update all zones
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def update(
         self,
         ally_position: OrientedPoint,
