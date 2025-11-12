@@ -173,8 +173,6 @@ class CONFIG:
         ARENA_CHUNK_SIZE (int): Size of the arena chunks.
         ARENA_FORBIDDEN_COVER_THRESHOLD (float):
             Threshold for forbidden cover in the arena.
-        ARENA_WIDTH (float): Width of the arena.
-        ARENA_HEIGHT (float): Height of the arena.
 
         MOVEMENT_MANAGER_CONFIG (dict[str, Any]):
             Movement manager configuration settings.
@@ -398,8 +396,6 @@ class CONFIG:
     ARENA_OBSTACLE_BUFFER: float = ARENA_CONFIG["obstacle_buffer"]
     ARENA_CHUNK_SIZE: int = int(ARENA_CONFIG["chunk_size"])
     ARENA_FORBIDDEN_COVER_THRESHOLD: float = ARENA_CONFIG["forbidden_cover_threshold"]
-    ARENA_WIDTH: float = ARENA_CONFIG["width"]
-    ARENA_HEIGHT: float = ARENA_CONFIG["height"]
 
     # Movement manager
     MOVEMENT_MANAGER_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["movement_manager"]
