@@ -206,7 +206,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         Returns:
             bool: ``True`` if the pin is a valid servo pin, ``False`` otherwise.
         """
-        if pin not in self.servos or self.servos[pin] is None:
+        if pin not in self.servos:
             self.logger.warning(f"Pin {pin} is not a servo")
             return False
         return True

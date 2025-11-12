@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING, override
+from typing import TYPE_CHECKING, Any, override
 
 from strategy.core.task_nodes.base_task_node import BaseTaskNode
 from strategy.core.tasks import BaseTask, TaskStatus
@@ -19,7 +19,7 @@ class TimeoutTaskNode(BaseTaskNode):
     def __init__(
         self,
         name: str,
-        tasks: BaseTask | list[BaseTask],
+        tasks: BaseTask[Any] | list[BaseTask[Any]],
         timeout_seconds: float,
         scoring_function: BaseScoringFunction | None = None,
     ) -> None:
@@ -27,7 +27,7 @@ class TimeoutTaskNode(BaseTaskNode):
 
         Args:
             name (str): Node name.
-            tasks (BaseTask | list[BaseTask]): Task or tasks to execute.
+            tasks (BaseTask[Any] | list[BaseTask[Any]]): Task or tasks to execute.
             timeout_seconds (float): Duration in seconds before timeout occurs.
             scoring_function (BaseScoringFunction | None, optional):
                 Scoring strategy used when evaluating transitions. Defaults to None.

@@ -75,7 +75,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         self.speed_vector = speed_vector or SpeedVector(0.0, 0.0, 0.0)
         self.speed_vector.factor = vector_factor
         self.positions_record_size = positions_record_size
-        self.__positions_recorded = (
+        self.__positions_recorded: deque[Record] = (
             deque(maxlen=positions_record_size)
             if positions_recorded is None
             else positions_recorded

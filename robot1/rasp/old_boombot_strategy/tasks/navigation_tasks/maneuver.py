@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
+
+from old_boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 
 from a_config_loader import CONFIG
-from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from geometry import OrientedPoint
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
@@ -98,6 +99,7 @@ class GoCentroidOfZone(NavigationTask):
         self._is_initialized: bool = False
         self.navigator_task: NavigatorTask
 
+    @override
     def _initialize(self, ctx: BaseGameContext) -> None:
         """Initialize by computing the target position from the zone centroid.
 

@@ -56,8 +56,8 @@ class GridManager:
 
         self.static_grid = self.__generate_base_grid()
         self.dynamic_grid = self.__generate_base_grid()
-        self.static_forbidden_zones = []
-        self.dynamic_forbidden_zones = []
+        self.static_forbidden_zones: list[Polygon] = []
+        self.dynamic_forbidden_zones: list[Polygon] = []
         self.spatial_index = STRtree([])
 
     # region ====== Private Methods ======

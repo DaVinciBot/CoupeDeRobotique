@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import math
 
-from boombot_strategy.tasks.actuator_task import BlockBanner, DeplacementPosition
-from boombot_strategy.tasks.navigation_tasks import (
+from old_boombot_strategy.tasks.actuator_task import BlockBanner, DeplacementPosition
+from old_boombot_strategy.tasks.navigation_tasks import (
     RelativeBackward,
     RelativeForward,
     SetOdometrie,
 )
+
 from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition

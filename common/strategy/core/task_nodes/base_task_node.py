@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import time
 import traceback
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from loggerplusplus import Logger
 
@@ -38,7 +38,9 @@ class BaseTaskNode:
                 Scoring function used when evaluating transitions. Defaults to None.
         """
         self.name: str = name
-        self.tasks: list[BaseTask] = [tasks] if isinstance(tasks, BaseTask) else tasks
+        self.tasks: list[BaseTask[Any]] = (
+            [tasks] if isinstance(tasks, BaseTask) else tasks
+        )
         self.scoring_function = scoring_function or DefaultScoringFunction()
         self.logger = Logger(identifier=name, follow_logger_manager_rules=True)
 

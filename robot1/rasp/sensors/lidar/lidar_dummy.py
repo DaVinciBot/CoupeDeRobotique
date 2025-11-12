@@ -9,6 +9,7 @@ import numpy as np
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
+    from numpy.typing import NDArray
 
 
 class LidarDummy:
@@ -62,7 +63,7 @@ class LidarDummy:
         min_angle: float,
         max_angle: float,
         num_points: int,
-    ) -> np.ndarray:
+    ) -> NDArray[np.float32]:
         """Initialize the polar angles array for the dummy lidar.
 
         Args:
@@ -71,7 +72,7 @@ class LidarDummy:
             num_points (int): Number of points to simulate in a scan.
 
         Returns:
-            np.ndarray: Array of angles.
+            NDArray[np.float32]: Array of angles.
         """
         angle_step = abs(max_angle - min_angle) / num_points
         return np.array(
@@ -127,11 +128,11 @@ class LidarDummy:
         msg = f"Unit of distances not recognized [{unit}]!"
         raise ValueError(msg)
 
-    def scan_to_distances(self) -> np.ndarray:
+    def scan_to_distances(self) -> NDArray[np.float32]:
         """Simulate a lidar scan and return fake distance data.
 
         Returns:
-            np.ndarray: numpy array of distances
+            NDArray[np.float32]: numpy array of distances
         """
         # Initialize an array of distances
         distances = np.full(
@@ -184,11 +185,11 @@ class LidarDummy:
         self._logger.debug("[LidarDummy] Simulated realistic distances generated.")
         return distances * self.__distance_unit
 
-    def scan_to_polars(self) -> np.ndarray:
+    def scan_to_polars(self) -> NDArray[np.float32]:
         """Simulate a lidar scan and return fake polar coordinates.
 
         Returns:
-            np.ndarray: numpy array of [angle, distance] pairs
+            NDArray[np.float32]: numpy array of [angle, distance] pairs
         """
         distances = self.scan_to_distances()
         polars = np.column_stack((self.__polars_angles, distances))
@@ -206,19 +207,19 @@ class LidarDummy:
         return self.__is_connected
 
     @property
-    def distances(self) -> np.ndarray:
+    def distances(self) -> NDArray[np.float32]:
         """Get the last simulated distances.
 
         Returns:
-            np.ndarray: numpy array of distances
+            NDArray[np.float32]: numpy array of distances
         """
         return self.scan_to_distances()
 
     @property
-    def polars(self) -> np.ndarray:
+    def polars(self) -> NDArray[np.float32]:
         """Get the last simulated polar coordinates.
 
         Returns:
-            np.ndarray: numpy array of [angle, distance] pairs
+            NDArray[np.float32]: numpy array of [angle, distance] pairs
         """
         return self.scan_to_polars()

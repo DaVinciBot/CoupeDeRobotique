@@ -35,6 +35,7 @@ from geometry import (
 
 if TYPE_CHECKING:
     from matplotlib.figure import Figure as pltFigure
+    from numpy.typing import NDArray
 
 
 class BaseArena(ABC):
@@ -212,27 +213,30 @@ class BaseArena(ABC):
         """
         return self.grid_manager
 
-    def _pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:
+    def _pol_to_abs_cart(self, polars: NDArray[np.float64]) -> MultiPoint:
         """Converts polar coordinates to absolute Cartesian coordinates.
 
         Args:
-            polars (np.ndarray):
+            polars (NDArray[np.float64]):
                 Array of polar coordinates in the form of (angle, distance).
 
         Returns:
             MultiPoint: Array of absolute Cartesian coordinates.
         """
-        return MultiPoint(
-            [
-                (
-                    self.ally_zone.point.x
-                    + np.cos(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
-                    self.ally_zone.point.y
-                    + np.sin(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
-                )
-                for i in range(len(polars))
-            ],
-        )
+        polars = np.asarray(polars, dtype=float)
+        if not polars.size:
+            return MultiPoint([])
+
+        points = [
+            (
+                self.ally_zone.point.x
+                + np.cos(self.ally_zone.point.theta + angle) * dist,
+                self.ally_zone.point.y
+                + np.sin(self.ally_zone.point.theta + angle) * dist,
+            )
+            for angle, dist in polars
+        ]
+        return MultiPoint(points)
 
     # endregion
 
@@ -260,7 +264,7 @@ class BaseArena(ABC):
     def update(
         self,
         ally_position: OrientedPoint,
-        lidar_scan_polars: np.ndarray,  # Polars coordinates issued from the lidar scan
+        lidar_scan_polars: NDArray[np.float64],  # Polars coordinates
         *,
         optimized_update: bool = True,
         _enemy_position: OrientedPoint
@@ -270,7 +274,8 @@ class BaseArena(ABC):
 
         Args:
             ally_position (OrientedPoint): Current position of the ally robot.
-            lidar_scan_polars (np.ndarray): Lidar scan data in polar coordinates.
+            lidar_scan_polars (NDArray[np.float64]):
+                Lidar scan data in polar coordinates.
             optimized_update (bool, optional):
                 If ``True``, only updates intersecting zones. Defaults to ``True``.
             _enemy_position (OrientedPoint | None, optional):
@@ -312,7 +317,7 @@ class BaseArena(ABC):
 
     def compute_enemy_position(
         self,
-        lidar_scan_polars: np.ndarray,
+        lidar_scan_polars: NDArray[np.float64],
         ally_position: OrientedPoint,
         *,
         _start_time: int = -1,
@@ -327,7 +332,8 @@ class BaseArena(ABC):
         If the enemy position is within a stuff zone, it marks that zone as FORBIDDEN.
 
         Args:
-            lidar_scan_polars (np.ndarray): Detection points from the LIDAR scan.
+            lidar_scan_polars (NDArray[np.float64]):
+                Detection points from the LIDAR scan.
             ally_position (OrientedPoint): Current ally position.
             _start_time (int, optional):
                 Starting timestamp for the computation. Defaults to -1.

@@ -5,6 +5,7 @@
     }
   ],
   "settings": {
+    "clangd.enable": false,
     "editor.codeActionsOnSave": {
       "source.convertImportFormat": "explicit",
       "source.organizeImports": "explicit",

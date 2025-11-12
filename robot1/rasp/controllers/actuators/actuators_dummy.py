@@ -119,7 +119,7 @@ class ActuatorsShowDummy(ActuatorsShow):
         )
 
         # Pin-specific exceptions
-        pin_exceptions = {
+        pin_exceptions: dict[int, int] = {
             8: getattr(servo, "docking_angle", 0),
             6: 90,
         }

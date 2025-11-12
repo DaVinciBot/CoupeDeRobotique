@@ -5,8 +5,9 @@ from __future__ import annotations
 import time
 from typing import override
 
+from old_boombot_strategy.show_game_context import ShowGameContext
+
 from a_config_loader import CONFIG
-from boombot_strategy.show_game_context import ShowGameContext
 from strategy.core.tasks import BaseTask
 
 
