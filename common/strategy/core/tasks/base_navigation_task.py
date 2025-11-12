@@ -9,6 +9,8 @@ from strategy.core.base_game_context import BaseGameContext
 from strategy.core.tasks.base_task import BaseTask
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from loggerplusplus import Logger
 
     from arena.base_arena.arena_zones import BaseArenaZone
@@ -23,13 +25,15 @@ if TYPE_CHECKING:
     )
     from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
+    NavigationGoal = int | BaseArenaZone | OrientedPoint
+
 
 class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
     """Common functionality for tasks that navigate through the arena."""
 
     def __init__(
         self,
-        goal: int | BaseArenaZone | OrientedPoint | None,
+        goal: NavigationGoal | Callable[[GameContextT], NavigationGoal] | None,
         path_planner_params: BasePathPlannerParams,
         trajectory_planner_params: BaseTrajectoryPlannerParams,
         speed_profiler: SpeedProfiler,
@@ -42,7 +46,7 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         """Initializes the BaseNavigationTask with navigation and planning parameters.
 
         Args:
-            goal (int | BaseArenaZone | OrientedPoint | None):
+            goal (NavigationGoal | Callable[[GameContextT], NavigationGoal] | None):
                 The navigation goal.
             path_planner_params (BasePathPlannerParams):
                 Parameters for the path planner.
@@ -62,7 +66,9 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         """
         super().__init__(logger=logger)
 
-        self.goal: int | BaseArenaZone | OrientedPoint | None = goal
+        self.goal: NavigationGoal | Callable[[GameContextT], NavigationGoal] | None = (
+            goal
+        )
         self.stabilization_delay: float = stabilization_delay
         self.timeout: float | None = timeout
         self.path_planner_params = path_planner_params
@@ -82,13 +88,7 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         """
         self._is_initialized = True
 
-        if callable(self.goal):
-            try:
-                computed_goal = self.goal(ctx)
-            except TypeError:
-                computed_goal = self.goal()
-        else:
-            computed_goal = self.goal
+        computed_goal = self.goal(ctx) if callable(self.goal) else self.goal
 
         self.navigator_task = NavigatorTask(
             params=NavigatorTaskParams(
