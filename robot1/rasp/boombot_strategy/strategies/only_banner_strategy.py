@@ -15,19 +15,19 @@ from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 
 if TYPE_CHECKING:
-    from boombot_strategy.winter_game_context import WinterGameContext
+    from strategy.core.base_game_context import BaseGameContext
 
 
 class OnlyBannerStrategy(BaseStrategy):
     """Deploy the banner then move directly to the backstage zone."""
 
-    def __init__(self, ctx: WinterGameContext) -> None:
+    def __init__(self, ctx: BaseGameContext) -> None:
         """Initialize the strategy.
 
         Build the task flow using subgraphs and direct transitions.
 
         Args:
-            ctx (WinterGameContext):
+            ctx (BaseGameContext):
                 Game context containing game-specific configurations and zones.
         """
         super().__init__(ctx)

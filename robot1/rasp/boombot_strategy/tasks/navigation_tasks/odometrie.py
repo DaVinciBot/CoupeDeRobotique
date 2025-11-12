@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from typing import override
 
-from boombot_strategy.winter_game_context import WinterGameContext
 from geometry import OrientedPoint
+from strategy.core.base_game_context import BaseGameContext
 from strategy.core.tasks.base_task import BaseTask
 
 
-class SetOdometrie(BaseTask[WinterGameContext]):
+class SetOdometrie[GameContextT: BaseGameContext](BaseTask[GameContextT]):
     """Task to update the robot's odometry position.
 
     The task uses the provided ``x``, ``y`` and ``theta`` values if given;
@@ -37,11 +37,11 @@ class SetOdometrie(BaseTask[WinterGameContext]):
         super().__init__()
 
     @override
-    def handle(self, ctx: WinterGameContext) -> bool:
+    def handle(self, ctx: GameContextT) -> bool:
         """Handle the execution of the odometry setting task.
 
         Args:
-            ctx (WinterGameContext): Context containing game state and arena info.
+            ctx (GameContextT): Context containing game state and arena info.
 
         Returns:
             bool: Always returns ``True`` after setting the new odometry.
@@ -70,15 +70,15 @@ class SetOdometrie(BaseTask[WinterGameContext]):
         return True
 
 
-class WallSetOdometrie(BaseTask[ShowGameContext]):
+class WallSetOdometrie[GameContextT: BaseGameContext](BaseTask[GameContextT]):
     """Task to reset odometry based on the closest wall goal at runtime."""
 
     @override
-    def handle(self, ctx: ShowGameContext) -> bool:
+    def handle(self, ctx: GameContextT) -> bool:
         """Handle the execution of the wall-based odometry reset task.
 
         Args:
-            ctx (ShowGameContext): Context containing game state and arena info.
+            ctx (GameContextT): Context containing game state and arena info.
 
         Returns:
             bool: Returns SetOdometrie task result or True if no wall goal found.

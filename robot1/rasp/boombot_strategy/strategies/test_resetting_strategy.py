@@ -12,7 +12,7 @@ from boombot_strategy.sub_graphs.resetting import get_resetting_subgraph
 from strategy.core import GraphRunner
 
 if TYPE_CHECKING:
-    from boombot_strategy.show_game_context import ShowGameContext
+    from strategy.core.base_game_context import BaseGameContext
 
 
 class TestResettingStrategy(BaseStrategy):
@@ -24,13 +24,13 @@ class TestResettingStrategy(BaseStrategy):
     - Navigate to backstage zone to finish the game
     """
 
-    def __init__(self, ctx: ShowGameContext) -> None:
+    def __init__(self, ctx: BaseGameContext) -> None:
         """Initialize the strategy.
 
         Build the task flow using subgraphs and direct transitions.
 
         Args:
-            ctx (ShowGameContext):
+            ctx (BaseGameContext):
                 Game context containing game-specific configurations and zones.
         """
         super().__init__(ctx)
