@@ -39,7 +39,7 @@ void Motor::setTargetSpeed(float stepsPerSec) {
         Serial.println("inv ok");
     }
     _targetSpeedStepsPerSec = stepsPerSec * 1000.0f;
-    _moving = (fabs(_targetSpeedStepsPerSec) >= 1.0f);
+    _moving = (fabs(_targetSpeedStepsPerSec) >= 1.0f); //pose pb
     enableMotor(_moving);
     //Serial.print("_targetSpeedStepsPerSec = ");
     //Serial.println(_targetSpeedStepsPerSec);
@@ -117,6 +117,7 @@ void Motor::update() {
 
     if (fabs(_targetSpeedStepsPerSec) < 1.0f &&
         fabs(_currentSpeedStepsPerSec) < 1.0f) {
+            //Serial.println("eh oh c ici");
         _moving = false;
         enableMotor(false);
     }

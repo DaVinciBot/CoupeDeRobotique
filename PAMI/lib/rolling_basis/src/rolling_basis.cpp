@@ -14,8 +14,8 @@ RollingBasis::RollingBasis(Motor* leftMotor,
       _wheelDiameterMm(wheelDiameterMm),
       _wheelBaseMm(wheelBaseMm),
       _currentPose(initialPosition),
-      _linearSpeed(20.0f),
-      _angularSpeed(0.1f),
+      _linearSpeed(20.0f),//baissée pour test, de base a 20.0f 
+      _angularSpeed(0.1f),//de base a 0.1f on pourrait clairement augmenter
       _phase(Phase::Idle),
       _rotateDuration(0.0f),
       _forwardDuration(0.0f),
@@ -25,15 +25,15 @@ RollingBasis::RollingBasis(Motor* leftMotor,
     _rightMotor->init();
     _leftMotor->resetStepCount();
     _rightMotor->resetStepCount();
-    _leftMotor->setAcceleration(200.0f * 3);
+    _leftMotor->setAcceleration(200.0f);
     _rightMotor->setAcceleration(200.0f);
 }
 // TODO: refactor this constructor pour pouvoir paramétrer la vitesse et
 // l'accélération angulaire et linéaire dans le config BIEN PRECISER L'UNITE
 
 void RollingBasis::setCommand(const Point& target) {
-    float dx = target.x - _currentPose.x;
-    float dy = target.y - _currentPose.y;
+    float dx = target.x - _currentPose.x; //distance a faire selon x
+    float dy = target.y - _currentPose.y; //distance a faire selon y
     float desiredTheta = atan2f(dy, dx);
     float dTheta = _wrapToPi(desiredTheta - _currentPose.theta);
     _rotateDuration = fabsf(dTheta) / _angularSpeed;
@@ -55,8 +55,17 @@ void RollingBasis::setCommand(const Point& target) {
 
 void RollingBasis::update() {
     using namespace std::chrono;
+    
+    // Affiche la phase actuelle
+    //const char* phaseNames[] = {"Idle", "Rotating", "Forwarding", "Done"};
+    //Serial.printf("Phase: %s\n", phaseNames[(int)_phase]);
+
+
     if (_phase == Phase::Idle || _phase == Phase::Done)
+    {
+        //Serial.println("Robot est idle ou done.");
         return;
+    }    
 
     auto now = steady_clock::now();
     float elapsed = duration<float>(now - _startTime).count();
@@ -64,20 +73,27 @@ void RollingBasis::update() {
     if (_phase == Phase::Rotating) {
         if (elapsed < _rotateDuration) {
             float w = _angularSpeed * _rotateDirection;
-            _sendWheelSpeeds(0.0f, w);
+            //_sendWheelSpeeds(0.0f, w);
+            _sendWheelSpeeds(w,0.0f);
+            Serial.println(elapsed);
         } else {
             _startTime = now;
             _phase = Phase::Forwarding;
             Serial.println("Rotation done, switching to Forwarding phase.");
+            //stop(); ca marche
         }
     }
-    if (_phase == Phase::Forwarding) {
-        if (elapsed < _forwardDuration) {
-            _sendWheelSpeeds(_linearSpeed, 0.0f);
+    else if (_phase == Phase::Forwarding) {
+        if (elapsed < _forwardDuration) {            
+            //_sendWheelSpeeds(_linearSpeed, 0.0f);
+            _sendWheelSpeeds(0.0f,_linearSpeed);
+            Serial.println("on forward");
         } else {
             _leftMotor->setTargetSpeed(0);
             _rightMotor->setTargetSpeed(0);
             _phase = Phase::Done;
+            Serial.println("On a bien bossé");
+            Serial.println(elapsed);
         }
     }
 
@@ -229,7 +245,8 @@ void RollingBasis::_sendWheelSpeeds(float v, float w) {
     float circumference = M_PI * _wheelDiameterMm;
     float leftSteps = leftMm / circumference * _leftMotor->getStepsPerRev();
     float rightSteps = rightMm / circumference * _rightMotor->getStepsPerRev();
-    _leftMotor->setTargetSpeed(leftSteps * 8);
+    //Serial.println(leftSteps);
+    _leftMotor->setTargetSpeed(leftSteps ); //on avait *8 avant
     _rightMotor->setTargetSpeed(rightSteps);
 }
 

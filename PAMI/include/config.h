@@ -10,12 +10,12 @@
 // #------- MOTOR CONFIGURATION -------#
 #define LEFT_DIR_PIN 18          // Direction pin for left motor
 #define LEFT_STEP_PIN 19        // Step pin for left motor
-#define LEFT_EN_PIN 17           // Enable pin for left motor
+#define LEFT_EN_PIN 32           // Enable pin for left motor
 #define LEFT_STEPS_PER_REV 400  // Steps per revolution for left motor
 
 #define RIGHT_DIR_PIN 16         // Direction pin for right motor
 #define RIGHT_STEP_PIN 17        // Step pin for right motor
-#define RIGHT_EN_PIN 48          // Enable pin for right motor
+#define RIGHT_EN_PIN 33          // Enable pin for right motor
 #define RIGHT_STEPS_PER_REV 400  // Steps per revolution for right motor
 
 #define WHEEL_DIAMETER_MM 60.0f  // Wheel diameter in mm

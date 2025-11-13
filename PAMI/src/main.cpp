@@ -6,8 +6,8 @@ Motor* leftMotor = new Motor(LEFT_STEP_PIN,  // Broche 19
                           200,             // Steps par tour (typique pour un NEMA)
                           false);
 
-Motor* rightMotor = new Motor(RIGHT_STEP_PIN,  // Broche 19
-                          RIGHT_DIR_PIN,    // Broche 18
+Motor* rightMotor = new Motor(RIGHT_STEP_PIN,  // Broche 17
+                          RIGHT_DIR_PIN,    // Broche 16
                           RIGHT_EN_PIN,     // Broche enable
                           200,             // Steps par tour (typique pour un NEMA)
                           false);                          
@@ -98,18 +98,19 @@ void lidarUpdate() {
 }*/
 
 void setup() {
+    delay(5000);//pour le serial monitor
     Serial.begin(115200);
     Serial.println("\n-- Test Moteur --\n");
     Serial.printf("STEP_PIN: %d, DIR_PIN: %d, EN_PIN: %d\n", 
                  LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN);
     
     // Configuration des broches
-    leftMotor->init();
+    /*leftMotor->init();
     leftMotor->enableMotor(true);  // Active le moteur
     
     Serial.println("Moteur initialisé");
 
-    leftMotor->setTargetSpeed(-10.0f);
+    leftMotor->setTargetSpeed(10.0f);
     leftMotor->setAcceleration(100.0f);
     
     rightMotor->init();
@@ -117,31 +118,12 @@ void setup() {
     
     Serial.println("Moteur initialisé");
 
-    rightMotor->setTargetSpeed(10.0f);
-    rightMotor->setAcceleration(100.0f);
-    
-   
+    rightMotor->setTargetSpeed(-10.0f);
+    rightMotor->setAcceleration(100.0f);*/
 
-    /*lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
-    lidar->onReceive([]() {
-        if (!canStart) {
-            t_two = t_one;
-            t_one = tirette;                   // Update tirette state
-            tirette = lidar->isTiretteOn();    // Check if tirette is on
-            if (!(tirette || t_one || t_two))  // Check if tirette is on
-            {
-                // canStartTimer = true; // Set canStart to true if tirette is
-                // on
-                canStart = true;
-                Serial.println("Tirette activated, starting navigation.");
-            }
-            Serial.println("Waiting for tirette activation...");
-        } else {
-            lidarUpdate();  // Call lidar update function when data is received
-        }
-    });*/
-    Serial.println("LIDAR initialized");
-    delay(100);  // Wait for LIDAR to stabilize
+    // Test : avancer 100 mm
+    rollingBasis->setCommand(Point{100.0f, 100.0f, 0.0f});
+      
 #if ENABLE_OTA
     Serial.println("OTA enabled");
     ota.begin();
@@ -179,22 +161,10 @@ void setup() {
 long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
     
-    // Fait tourner le moteur comme dans votre code original
+    rollingBasis->update();
     
-    /*testMotor->doOneSteps(); //marche avec k=1          
-    delayMicroseconds(5e2);  // Même délai que votre code original
-    */
-   
-   leftMotor->update();
-   rightMotor->update();
-   Serial.println(leftMotor->getStepCount()); //jsp pk mais ne pas commanter, c important
-
-   
-   /*bool i=false;
-   if(testMotor->getStepCount() > 1000 ){
-    i=not i;
-    testMotor->_setDirection(i);
-   }*/
+    //rightMotor->update();
+    //leftMotor->update();
 #if ENABLE_OTA
     ota.loop();
 #endif
