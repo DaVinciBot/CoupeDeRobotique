@@ -5,6 +5,10 @@
     }
   ],
   "settings": {
+    "[python]": {
+      "editor.defaultFormatter": "charliermarsh.ruff"
+    },
+    "clangd.enable": false,
     "editor.codeActionsOnSave": {
       "source.convertImportFormat": "explicit",
       "source.organizeImports": "explicit",
@@ -14,6 +18,8 @@
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
     "errorLens.enabledDiagnosticLevels": ["error", "warning", "info", "hint"],
+    "python.analysis.autoFormatStrings": true,
+    "python.analysis.diagnosticMode": "workspace",
     "todo-tree.general.tagGroups": {
       "FIXME": ["FIXME", "FIXIT", "FIX"],
       "HACK": ["HACK", "ENHANCE"]
@@ -25,9 +31,10 @@
       "FIXME",
       "FIXIT",
       "FIX",
+      "QUESTION",
       "TODO",
       "TOTEST",
-      "QUESTION",
+      "UNUSED",
       "[ ]",
       "[x]"
     ],
@@ -52,6 +59,11 @@
       "TOTEST": {
         "foreground": "lime",
         "icon": "codescan-checkmark"
+      },
+      "UNUSED": {
+        "foreground": "grey",
+        "icon": "eye-closed",
+        "iconColour": "grey"
       }
     },
     "todo-tree.highlights.defaultHighlight": {
