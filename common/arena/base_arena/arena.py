@@ -424,7 +424,7 @@ class BaseArena(ABC):
         closest_point: OrientedPoint | None = None
         min_distance: float = float("inf")
 
-        free_zones = set(self.find_zone_accessibility("FREE"))
+        banned_zones = set(self.find_zone_accessibility("RESTRICTED") + self.find_zone_accessibility("FORBIDDEN"))
 
         walls: list[tuple[str, float, range, float]] = [
             ("x", self.border_buffer, range(0, self.height + 1, self.chunk_size), 0),
@@ -456,7 +456,7 @@ class BaseArena(ABC):
                     candidate = OrientedPoint(var, fixed, orientation)
 
                 zone = self.get_zone_by_location(candidate)
-                if zone not in free_zones:
+                if zone in banned_zones:
                     continue
 
                 dx = candidate.x - robot_pos.x

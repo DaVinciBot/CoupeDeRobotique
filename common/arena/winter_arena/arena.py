@@ -6,6 +6,7 @@ from math import pi
 from typing import override
 
 from loggerplusplus import Logger
+from shapely import box
 
 from arena.base_arena.arena import BaseArena
 from arena.base_arena.arena_zones import (
@@ -13,6 +14,7 @@ from arena.base_arena.arena_zones import (
     BlueReservedZone,
     DropZone,
     ForbiddenZone,
+    ResettingZone,
     StuffZone,
     YellowReservedZone,
 )
@@ -50,6 +52,7 @@ class WinterArena(BaseArena):
             distance_to_drop_zone (float):
                 Distance to maintain from Deposit zones.
         """
+        self.border_buffer = border_buffer
         jenga_zone_logger = Logger(
             identifier="JengaZone",
             follow_logger_manager_rules=True,
@@ -73,6 +76,12 @@ class WinterArena(BaseArena):
             identifier="NinjaStageZone",
             follow_logger_manager_rules=True,
         )
+
+        resetting_zone_logger = Logger(
+            identifier="ResettingZone",
+            follow_logger_manager_rules=True,
+        )
+
 
         jenga_zones_points: list[
             tuple[tuple[float, float], tuple[float, float], list[OrientedPoint]]
@@ -283,6 +292,30 @@ class WinterArena(BaseArena):
             ),
         )
 
+        resetting_buffer: float = 0.1
+
+        left = self.border_buffer
+        right = 300 - self.border_buffer
+        bottom = self.border_buffer
+        top = 200 - self.border_buffer
+
+        outer_rect = box(left, bottom, right, top)
+
+        inner_rect = box(
+            left + resetting_buffer,
+            bottom + resetting_buffer,
+            right - resetting_buffer,
+            top - resetting_buffer,
+        )
+
+        ring_polygon = outer_rect.difference(inner_rect)
+
+        resetting_zone = ResettingZone(
+            logger=resetting_zone_logger,
+            buffer_size=obstacle_buffer,
+            polygon=ring_polygon,
+        )
+
         zones: list[BaseArenaZone] = []
 
         zones.extend(
@@ -319,7 +352,7 @@ class WinterArena(BaseArena):
             for corner_point in drop_zones_points
         )
 
-        zones.extend([yellow_backstage_zone, blue_backstage_zone, ninja_stage])
+        zones.extend([yellow_backstage_zone, blue_backstage_zone, ninja_stage, resetting_zone])
 
         super().__init__(
             logger,

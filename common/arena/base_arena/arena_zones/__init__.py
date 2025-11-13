@@ -21,6 +21,7 @@ from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones import (
 )
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 from arena.base_arena.arena_zones.stuff_zone import StuffZone
+from arena.base_arena.arena_zones.resetting_zone import ResettingZone
 
 __all__ = [
     "AllyZone",
@@ -33,6 +34,7 @@ __all__ = [
     "EnemyZone",
     "ForbiddenZone",
     "StuffZone",
+    "ResettingZone",
     "YellowReservedZone",
     "ZoneAccessibility",
     "ZoneType",
