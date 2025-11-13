@@ -78,27 +78,17 @@ class LogIndexer:
             "line_offset": offset,
         }
 
-    def _detect_execution_boundary(self, line: str) -> bool:
+    @staticmethod
+    def _detect_execution_boundary(line: str) -> bool:
         """Detect if a log line indicates a new execution start.
 
         Args:
             line: Log line to check
 
         Returns:
-            True if this is an execution boundary
+            bool: True if this is an execution boundary
         """
-        markers = [
-            "[BRAIN:Init]",
-            "Starting brain",
-            "Team color set to",
-            "WS_Server.*Initialized",
-        ]
-
-        for marker in markers:
-            if marker in line:
-                return True
-
-        return False
+        return "Initialized with host: 0.0.0.0, port: 8080" in line
 
     def index_log_file(
         self,
@@ -120,12 +110,13 @@ class LogIndexer:
         """
         log_path = Path(log_file)
         if not log_path.exists():
-            raise FileNotFoundError(f"Log file not found: {log_path}")
+            msg = f"Log file not found: {log_path}"
+            raise FileNotFoundError(msg)
 
         # Extract date from filename (e.g., 2025-11-06.log)
         self.current_date = log_path.stem
 
-        execution_counter = 1
+        execution_counter = 0
         entries_indexed = 0
         current_offset = 0
 
@@ -155,12 +146,14 @@ class LogIndexer:
 
                 # Ensure we have an execution_id
                 if not self.current_execution_id:
-                    self.current_execution_id = f"{self.current_date}_exec001"
+                    self.current_execution_id = f"{self.current_date}_exec000"
                     self.db.add_execution(
                         execution_id=self.current_execution_id,
-                        start_time=datetime.now(),
+                        start_time=datetime.fromisoformat(
+                            f"{self.current_date} 00:00:00",
+                        ),
                         log_file=str(log_path),
-                        description="Execution 1",
+                        description="Execution 0",
                     )
 
                 # Parse and index the log line

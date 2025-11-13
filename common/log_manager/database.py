@@ -209,12 +209,12 @@ class LogDatabase:
                 """
                 SELECT * FROM executions
                 WHERE log_file = ?
-                ORDER BY start_time DESC
+                ORDER BY start_time
             """,
                 (log_file,),
             )
         else:
-            cursor.execute("SELECT * FROM executions ORDER BY start_time DESC")
+            cursor.execute("SELECT * FROM executions ORDER BY start_time")
 
         return [dict(row) for row in cursor.fetchall()]
 
@@ -249,8 +249,8 @@ class LogDatabase:
         params: list[Any] = []
 
         if execution_id:
-            query += " AND execution_id = ?"
-            params.append(execution_id)
+            query += " AND execution_id LIKE ?"
+            params.append(f"%{execution_id}")
 
         if level:
             query += " AND level = ?"

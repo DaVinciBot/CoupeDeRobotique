@@ -19,7 +19,7 @@ Aucune installation requise, tout est inclus dans le projet.
 ### 1. Indexer un fichier de logs
 
 ```bash
-python log_manager.py index 2025-11-06.log
+lgpp_manager index 2025-11-06.log
 ```
 
 Cela crée un fichier `logs/2025-11-06.db` contenant l'index SQLite.
@@ -27,7 +27,7 @@ Cela crée un fichier `logs/2025-11-06.db` contenant l'index SQLite.
 ### 2. Lister les exécutions
 
 ```bash
-python log_manager.py list-executions 2025-11-06.log
+lgpp_manager list-executions 2025-11-06.log
 ```
 
 Affiche toutes les exécutions détectées dans le fichier.
@@ -38,66 +38,66 @@ Affiche toutes les exécutions détectées dans le fichier.
 
 ```bash
 # Voir toutes les erreurs
-python log_manager.py show 2025-11-06.log --level ERROR
+lgpp_manager show 2025-11-06.log --level ERROR
 
 # Voir les warnings et erreurs
-python log_manager.py show 2025-11-06.log --level WARNING,ERROR
+lgpp_manager show 2025-11-06.log --level WARNING,ERROR
 ```
 
 #### Par exécution
 
 ```bash
 # Lister d'abord les exécutions
-python log_manager.py list-executions 2025-11-06.log
+lgpp_manager list-executions 2025-11-06.log
 
 # Voir une exécution spécifique
-python log_manager.py show 2025-11-06.log --execution 2025-11-06_exec002
+lgpp_manager show 2025-11-06.log --execution 2025-11-06_exec002
 ```
 
 #### Par catégorie (préfixes uniformisés)
 
 ```bash
 # Tous les logs de navigation
-python log_manager.py show 2025-11-06.log --category "NAV:"
+lgpp_manager show 2025-11-06.log --category "NAV:"
 
 # Logs du rolling basis
-python log_manager.py show 2025-11-06.log --category "CTRL:RB"
+lgpp_manager show 2025-11-06.log --category "CTRL:RB"
 
 # Logs du lidar
-python log_manager.py show 2025-11-06.log --category "SENSOR:Lidar"
+lgpp_manager show 2025-11-06.log --category "SENSOR:Lidar"
 ```
 
 #### Par logger
 
 ```bash
 # Logs du Navigator
-python log_manager.py show 2025-11-06.log --logger Navigator
+lgpp_manager show 2025-11-06.log --logger Navigator
 
 # Logs du WS_Server
-python log_manager.py show 2025-11-06.log --logger WS_Server
+lgpp_manager show 2025-11-06.log --logger WS_Server
 ```
 
 #### Par fichier source
 
 ```bash
 # Logs provenant de navigator.py
-python log_manager.py show 2025-11-06.log --file navigator.py
+lgpp_manager show 2025-11-06.log --file navigator.py
 
 # Logs provenant de tous les fichiers lidar
-python log_manager.py show 2025-11-06.log --file lidar
+lgpp_manager show 2025-11-06.log --file lidar
 ```
 
 #### Combinaison de filtres
 
 ```bash
 # Erreurs du Navigator dans l'exécution 2
-python log_manager.py show 2025-11-06.log \
+lgpp_manager show 2025-11-06.log \
     --execution 2025-11-06_exec002 \
     --logger Navigator \
     --level ERROR
 
 # Logs de navigation WARNING ou ERROR limités à 50 entrées
-python log_manager.py show 2025-11-06.log \
+lgpp_manager show 2025-11-06.log \
     --category "NAV:" \
     --level WARNING \
     --limit 50
@@ -107,14 +107,14 @@ python log_manager.py show 2025-11-06.log \
 
 ```bash
 # Exporter toutes les erreurs dans un fichier
-python log_manager.py export 2025-11-06.log -o errors.txt --level ERROR
+lgpp_manager export 2025-11-06.log -o errors.txt --level ERROR
 
 # Exporter les logs d'une exécution spécifique
-python log_manager.py export 2025-11-06.log -o exec2.txt \
+lgpp_manager export 2025-11-06.log -o exec2.txt \
     --execution 2025-11-06_exec002
 
 # Exporter les logs de rolling basis
-python log_manager.py export 2025-11-06.log -o rolling_basis.txt \
+lgpp_manager export 2025-11-06.log -o rolling_basis.txt \
     --category "CTRL:RB"
 ```
 
@@ -186,10 +186,10 @@ Chaque nouvelle exécution reçoit un ID unique : `{date}_exec{numéro:03d}`
 
 ```bash
 # 1. Trouver l'exécution
-python log_manager.py list-executions 2025-11-06.log
+lgpp_manager list-executions 2025-11-06.log
 
 # 2. Voir toutes les erreurs de cette exécution
-python log_manager.py show 2025-11-06.log \
+lgpp_manager show 2025-11-06.log \
     --execution 2025-11-06_exec005 \
     --level ERROR
 ```
@@ -198,12 +198,12 @@ python log_manager.py show 2025-11-06.log \
 
 ```bash
 # Voir tous les logs de navigation avec WARNING ou ERROR
-python log_manager.py show 2025-11-06.log \
+lgpp_manager show 2025-11-06.log \
     --category "NAV:" \
     --level WARNING
 
 # Exporter pour analyse
-python log_manager.py export 2025-11-06.log -o nav_issues.txt \
+lgpp_manager export 2025-11-06.log -o nav_issues.txt \
     --category "NAV:" \
     --level "WARNING,ERROR"
 ```
@@ -212,10 +212,10 @@ python log_manager.py export 2025-11-06.log -o nav_issues.txt \
 
 ```bash
 # Voir tous les logs du rolling basis
-python log_manager.py show 2025-11-06.log --category "CTRL:RB"
+lgpp_manager show 2025-11-06.log --category "CTRL:RB"
 
 # Voir les logs du lidar seulement
-python log_manager.py show 2025-11-06.log --category "SENSOR:Lidar"
+lgpp_manager show 2025-11-06.log --category "SENSOR:Lidar"
 ```
 
 ## Prochaines améliorations possibles

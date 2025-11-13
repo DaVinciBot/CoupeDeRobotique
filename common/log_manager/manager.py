@@ -95,6 +95,13 @@ class LogManager:
         if not db_path.exists():
             return []
 
+        if execution_id == "last":
+            executions = self.list_executions(log_file)
+            execution_id = executions[-1]["execution_id"] if executions else None
+        elif execution_id and len(execution_id) <= 3:
+            while len(execution_id) < 3:
+                execution_id = "0" + execution_id
+
         with LogDatabase(db_path) as db:
             return db.query_logs(
                 execution_id=execution_id,

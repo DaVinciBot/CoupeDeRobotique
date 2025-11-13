@@ -22,10 +22,10 @@ def cmd_index(args: argparse.Namespace) -> int:
     try:
         count = manager.index_log(args.log_file)
         print(f"[OK] Indexed {count} log entries from {args.log_file}")
-        return 0
     except Exception as e:
         print(f"[ERROR] Error indexing {args.log_file}: {e}", file=sys.stderr)
         return 1
+    return 0
 
 
 def cmd_list_executions(args: argparse.Namespace) -> int:
@@ -49,7 +49,7 @@ def cmd_list_executions(args: argparse.Namespace) -> int:
     print(f"\nExecutions in {args.log_file}:")
     print("-" * 80)
 
-    for i, exec_info in enumerate(executions, 1):
+    for i, exec_info in enumerate(executions):
         exec_id = exec_info["execution_id"]
         start = exec_info["start_time"]
         end = exec_info.get("end_time", "ongoing")
@@ -100,10 +100,10 @@ def cmd_show(args: argparse.Namespace) -> int:
             file=args.file,
             limit=args.limit,
         )
-        return 0
     except Exception as e:
         print(f"[ERROR] Error: {e}", file=sys.stderr)
         return 1
+    return 0
 
 
 def cmd_export(args: argparse.Namespace) -> int:
@@ -129,10 +129,10 @@ def cmd_export(args: argparse.Namespace) -> int:
             limit=args.limit,
         )
         print(f"[OK] Exported {count} entries to {args.output}")
-        return 0
     except Exception as e:
         print(f"[ERROR] Error: {e}", file=sys.stderr)
         return 1
+    return 0
 
 
 def main() -> int:
@@ -210,7 +210,7 @@ Examples:
     show_parser.add_argument(
         "-e",
         "--execution",
-        help="Filter by execution ID",
+        help="Filter by execution ID. Supports 'last' keyword.",
     )
     show_parser.add_argument(
         "-l",
@@ -260,7 +260,7 @@ Examples:
     export_parser.add_argument(
         "-e",
         "--execution",
-        help="Filter by execution ID",
+        help="Filter by execution ID. Supports 'last' keyword.",
     )
     export_parser.add_argument(
         "-l",
