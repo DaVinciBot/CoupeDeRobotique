@@ -283,7 +283,9 @@ class MainBrain(Brain):
 
     # @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     # async def print_odo(self) -> None:
-    #     self.logger.info(f"[CTRL:RB] Rolling basis odometrie: {self.rolling_basis_odometrie}")
+    #     self.logger.info(
+    #         f"[CTRL:RB] Rolling basis odometrie: {self.rolling_basis_odometrie}"
+    #     )
 
     # endregion
 

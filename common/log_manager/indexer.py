@@ -12,25 +12,30 @@ if TYPE_CHECKING:
 
 
 class LogIndexer:
-    """Parses log files and indexes them in the database."""
+    """Parses log files and indexes them in the database.
 
-    # Log format: HH:MM:SS.ffffff -> [logger] [file:line] LEVEL | message
-    LOG_PATTERN = re.compile(
+    Attributes:
+        LOG_PATTERN (re.Pattern[str]): Regular expression pattern for log lines.
+        CATEGORY_PATTERN (re.Pattern[str]): Regular expression pattern for categories.
+    """
+
+    LOG_PATTERN: re.Pattern[str] = re.compile(
         r"(?P<time>\d{2}:\d{2}:\d{2}\.\d+)\s+->\s+"
         r"\[(?P<logger>[^\]]+)\]\s+"
         r"\[(?P<file>[^:]+):(?P<line>\d+)\]\s+"
         r"(?P<level>\w+)\s+\|\s+"
         r"(?P<message>.*)",
     )
+    """Log format: HH:MM:SS.ffffff -> [logger] [file:line] LEVEL | message"""
 
-    # Category pattern: [CATEGORY] or [CATEGORY:SubCategory]
-    CATEGORY_PATTERN = re.compile(r"\[([A-Z]+(?::[A-Za-z0-9:]+)?)\]")
+    CATEGORY_PATTERN: re.Pattern[str] = re.compile(r"\[([A-Z]+(?::[A-Za-z0-9:]+)?)\]")
+    """Category pattern: [CATEGORY] or [CATEGORY:SubCategory]"""
 
     def __init__(self, db: LogDatabase) -> None:
         """Initialize indexer.
 
         Args:
-            db: Database instance to use for indexing
+            db (LogDatabase): Database instance to use for indexing
         """
         self.db = db
         self.current_execution_id: str | None = None
@@ -43,10 +48,10 @@ class LogIndexer:
         """Parse a single log line.
 
         Args:
-            line: Log line to parse
+            line (str): Log line to parse
 
         Returns:
-            Parsed log entry or None if parse failed
+            dict[str, Any] | None: Parsed log entry or None if parse failed
         """
         match = self.LOG_PATTERN.match(line)
         if not match:
@@ -80,7 +85,7 @@ class LogIndexer:
         """Detect if a log line indicates a new execution start.
 
         Args:
-            line: Log line to check
+            line (str): Log line to check
 
         Returns:
             bool: True if this is an execution boundary
@@ -95,8 +100,8 @@ class LogIndexer:
         """Determine if a log entry should be skipped during incremental indexing.
 
         Args:
-            parsed: Currently parsed log entry
-            last_entry: Last indexed log entry from database
+            parsed (dict[str, Any]): Currently parsed log entry
+            last_entry (dict[str, Any] | None): Last indexed log entry from database
 
         Returns:
             tuple[bool, bool]: Tuple of (should_skip, should_exit_skip_mode):
@@ -132,8 +137,9 @@ class LogIndexer:
         """Index a log file into the database.
 
         Args:
-            log_file: Path to log file
-            force_reindex: If True, re-index even if already indexed
+            log_file (Path | str): Path to log file
+            force_reindex (bool):
+                If True, re-index even if already indexed. Defaults to False.
 
         Returns:
             int: Number of log entries indexed
@@ -240,14 +246,14 @@ class LogIndexer:
         """Index all log files in a directory.
 
         Args:
-            log_dir: Directory containing log files
-            pattern: Glob pattern for log files
+            log_dir (Path | str): Directory containing log files
+            pattern (str): Glob pattern for log files. Defaults to '*.log'.
 
         Returns:
-            Dictionary mapping filenames to number of entries indexed
+            dict[str, int]: Dictionary mapping filenames to number of entries indexed
         """
         log_path = Path(log_dir)
-        results = {}
+        results: dict[str, int] = {}
 
         for log_file in sorted(log_path.glob(pattern)):
             print(f"Indexing {log_file.name}...")
@@ -255,7 +261,7 @@ class LogIndexer:
                 count = self.index_log_file(log_file)
                 results[log_file.name] = count
                 print(f"  ✓ Indexed {count} entries")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001
                 print(f"  ✗ Error: {e}")
                 results[log_file.name] = 0
 

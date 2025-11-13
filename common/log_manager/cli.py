@@ -1,5 +1,6 @@
 """Command-line interface for log manager."""
 
+# ruff: noqa: T201
 from __future__ import annotations
 
 import argparse
@@ -12,17 +13,17 @@ def cmd_index(args: argparse.Namespace) -> int:
     """Index a log file.
 
     Args:
-        args: Parsed command-line arguments
+        args (argparse.Namespace): Parsed command-line arguments
 
     Returns:
-        Exit code
+        int: Exit code
     """
     manager = LogManager(args.logs_dir)
 
     try:
         count = manager.index_log(args.log_file)
         print(f"[OK] Indexed {count} log entries from {args.log_file}")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"[ERROR] Error indexing {args.log_file}: {e}", file=sys.stderr)
         return 1
     return 0
@@ -32,10 +33,10 @@ def cmd_list_executions(args: argparse.Namespace) -> int:
     """List all executions in a log file.
 
     Args:
-        args: Parsed command-line arguments
+        args (argparse.Namespace): Parsed command-line arguments
 
     Returns:
-        Exit code
+        int: Exit code
     """
     manager = LogManager(args.logs_dir)
 
@@ -69,10 +70,10 @@ def cmd_show(args: argparse.Namespace) -> int:
     """Show filtered logs.
 
     Args:
-        args: Parsed command-line arguments
+        args (argparse.Namespace): Parsed command-line arguments
 
     Returns:
-        Exit code
+        int: Exit code
     """
     manager = LogManager(args.logs_dir)
 
@@ -100,7 +101,7 @@ def cmd_show(args: argparse.Namespace) -> int:
             file=args.file,
             limit=args.limit,
         )
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"[ERROR] Error: {e}", file=sys.stderr)
         return 1
     return 0
@@ -110,10 +111,10 @@ def cmd_export(args: argparse.Namespace) -> int:
     """Export filtered logs to a file.
 
     Args:
-        args: Parsed command-line arguments
+        args (argparse.Namespace): Parsed command-line arguments
 
     Returns:
-        Exit code
+        int: Exit code
     """
     manager = LogManager(args.logs_dir)
 
@@ -129,7 +130,7 @@ def cmd_export(args: argparse.Namespace) -> int:
             limit=args.limit,
         )
         print(f"[OK] Exported {count} entries to {args.output}")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"[ERROR] Error: {e}", file=sys.stderr)
         return 1
     return 0
@@ -139,7 +140,7 @@ def main() -> int:
     """Main CLI entry point.
 
     Returns:
-        Exit code
+        int: Exit code
     """
     parser = argparse.ArgumentParser(
         description="Robot log manager - filter and analyze logs",

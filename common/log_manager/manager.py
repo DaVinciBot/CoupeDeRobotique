@@ -16,7 +16,7 @@ class LogManager:
         """Initialize log manager.
 
         Args:
-            logs_dir: Directory containing log files
+            logs_dir (Path | str): Directory containing log files. Defaults to 'logs'.
         """
         self.logs_dir = Path(logs_dir)
         self.logs_dir.mkdir(exist_ok=True)
@@ -25,10 +25,10 @@ class LogManager:
         """Get database path for a log file.
 
         Args:
-            log_file: Log filename (e.g., '2025-11-06.log')
+            log_file (str): Log filename (e.g., '2025-11-06.log')
 
         Returns:
-            Path to database file
+            Path: Path to database file
         """
         base_name = Path(log_file).stem
         return self.logs_dir / f"{base_name}.db"
@@ -37,10 +37,10 @@ class LogManager:
         """Index a specific log file.
 
         Args:
-            log_file: Log filename
+            log_file (str): Log filename
 
         Returns:
-            Number of entries indexed
+            int: Number of entries indexed
         """
         log_path = self.logs_dir / log_file
         db_path = self._get_db_path(log_file)
@@ -53,10 +53,10 @@ class LogManager:
         """List all executions in a log file.
 
         Args:
-            log_file: Log filename
+            log_file (str): Log filename
 
         Returns:
-            List of execution records
+            list[dict[str, Any]]: List of execution records
         """
         db_path = self._get_db_path(log_file)
 
@@ -79,16 +79,16 @@ class LogManager:
         """Filter logs with various criteria.
 
         Args:
-            log_file: Log filename
-            execution_id: Filter by execution ID
-            level: Filter by log level
-            logger: Filter by logger name
-            category: Filter by category
-            file: Filter by source file
-            limit: Maximum results
+            log_file (str): Log filename
+            execution_id (str | None): Filter by execution ID. Defaults to None.
+            level (str | None): Filter by log level. Defaults to None.
+            logger (str | None): Filter by logger name. Defaults to None.
+            category (str | None): Filter by category. Defaults to None.
+            file (str | None): Filter by source file. Defaults to None.
+            limit (int | None): Maximum results. Defaults to None.
 
         Returns:
-            List of matching log entries
+            list[dict[str, Any]]: List of matching log entries
         """
         db_path = self._get_db_path(log_file)
 
@@ -116,17 +116,17 @@ class LogManager:
         self,
         log_file: str,
         output_file: Path | str,
-        **filters: Any,
+        **filters: Any,  # noqa: ANN401
     ) -> int:
         """Export filtered logs to a file.
 
         Args:
-            log_file: Source log filename
-            output_file: Output file path
-            **filters: Filter criteria (same as filter_logs)
+            log_file (str): Source log filename
+            output_file (Path | str): Output file path
+            **filters (Any): Filter criteria (same as filter_logs)
 
         Returns:
-            Number of entries exported
+            int: Number of entries exported
         """
         logs = self.filter_logs(log_file, **filters)
 
@@ -142,14 +142,14 @@ class LogManager:
         log_file: str,
         *,
         colorize: bool = True,
-        **filters: Any,
+        **filters: Any,  # noqa: ANN401
     ) -> None:
         """Display filtered logs to console.
 
         Args:
-            log_file: Log filename
-            colorize: Whether to colorize output
-            **filters: Filter criteria
+            log_file (str): Log filename
+            colorize (bool): Whether to colorize output
+            **filters (Any): Filter criteria (same as filter_logs)
         """
         logs = self.filter_logs(log_file, **filters)
 

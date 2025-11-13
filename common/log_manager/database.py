@@ -17,7 +17,7 @@ class LogDatabase:
         """Initialize database connection.
 
         Args:
-            db_path: Path to SQLite database file
+            db_path (Path | str): Path to SQLite database file
         """
         self.db_path = Path(db_path)
         self.conn: sqlite3.Connection | None = None
@@ -90,10 +90,10 @@ class LogDatabase:
         """Register a new execution.
 
         Args:
-            execution_id: Unique identifier for this execution
-            start_time: When the execution started
-            log_file: Path to the log file
-            description: Optional description
+            execution_id (str): Unique identifier for this execution
+            start_time (datetime): When the execution started
+            log_file (str): Path to the log file
+            description (str | None): Optional description. Defaults to None.
         """
         if not self.conn:
             return
@@ -122,8 +122,8 @@ class LogDatabase:
         """Update the end time of an execution.
 
         Args:
-            execution_id: Execution identifier
-            end_time: When the execution ended
+            execution_id (str): Execution identifier
+            end_time (datetime): When the execution ended
         """
         if not self.conn:
             return
@@ -146,9 +146,9 @@ class LogDatabase:
         """Check if a log entry already exists in the database.
 
         Args:
-            timestamp: Log timestamp
-            file_name: Source file name
-            line_number: Source line number
+            timestamp (str): Log timestamp
+            file_name (str | None): Source file name
+            line_number (int | None): Source line number
 
         Returns:
             bool: True if an entry with same timestamp + file:line exists
@@ -183,15 +183,15 @@ class LogDatabase:
         """Add a log entry to the database.
 
         Args:
-            execution_id: Execution this log belongs to
-            timestamp: Log timestamp
-            level: Log level (INFO, WARNING, etc.)
-            logger_name: Name of the logger
-            message: Log message
-            raw_line: Original log line
-            file_name: Source file name
-            line_number: Source line number
-            category: Category prefix (e.g., NAV:Task)
+            execution_id (str): Execution this log belongs to
+            timestamp (str): Log timestamp
+            level (str): Log level (INFO, WARNING, etc.)
+            logger_name (str): Name of the logger
+            message (str): Log message
+            raw_line (str): Original log line
+            file_name (str | None): Source file name. Defaults to None.
+            line_number (int | None): Source line number. Defaults to None.
+            category (str | None): Category prefix (e.g., NAV:Task). Defaults to None.
         """
         if not self.conn:
             return
@@ -222,10 +222,10 @@ class LogDatabase:
         """Get all executions, optionally filtered by log file.
 
         Args:
-            log_file: Optional log file filter
+            log_file (str | None): Optional log file filter. Defaults to None.
 
         Returns:
-            List of execution dictionaries
+            list[dict[str, Any]]: List of execution dictionaries
         """
         if not self.conn:
             return []
@@ -250,10 +250,10 @@ class LogDatabase:
         """Get the last indexed log entry for a log file.
 
         Args:
-            log_file: Path to the log file
+            log_file (str): Path to the log file
 
         Returns:
-            Last log entry dict or None if no entries exist
+            dict[str, Any] | None: Last log entry dict or None if no entries exist
         """
         if not self.conn:
             return None
@@ -298,15 +298,15 @@ class LogDatabase:
         """Query logs with filters.
 
         Args:
-            execution_id: Filter by execution
-            level: Filter by log level
-            logger_name: Filter by logger name
-            category: Filter by category prefix
-            file_name: Filter by source file
-            limit: Maximum number of results
+            execution_id (str | None): Filter by execution. Defaults to None.
+            level (str | None): Filter by log level. Defaults to None.
+            logger_name (str | None): Filter by logger name. Defaults to None.
+            category (str | None): Filter by category prefix. Defaults to None.
+            file_name (str | None): Filter by source file. Defaults to None.
+            limit (int | None): Maximum number of results. Defaults to None.
 
         Returns:
-            List of log entry dictionaries
+            list[dict[str, Any]]: List of log entry dictionaries
         """
         if not self.conn:
             return []
@@ -359,5 +359,9 @@ class LogDatabase:
         return self
 
     def __exit__(self, *args: object) -> None:
-        """Context manager exit."""
+        """Context manager exit.
+
+        Args:
+            *args (object): Exception info (if any)
+        """
         self.close()
