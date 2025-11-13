@@ -133,7 +133,7 @@ class GoCentroidOfZone(NavigationTask):
 class GoToClosestFreeWall(NavigationTask):
     """Navigation task to go to the closest free wall position."""
 
-    def __init__(self, goal: Callable[[BaseGameContext], OrientedPoint]) -> None:
+    def __init__(self, goal: Callable[[BaseGameContext], OrientedPoint | None]) -> None:
         """Initialize the GoToClosestFreeWall task.
 
         Args:
@@ -149,5 +149,5 @@ class GoToClosestFreeWall(NavigationTask):
                 acs_distance=40,
                 width_view=30,
             ),
-            stabilization_delay=2,
+            stabilization_delay=1,
         )

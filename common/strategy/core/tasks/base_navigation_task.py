@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     )
     from navigation.trajectory_planner.speed_profile import SpeedProfiler
 
-    NavigationGoal = int | BaseArenaZone | OrientedPoint
+    NavigationGoal = int | BaseArenaZone | OrientedPoint | None
 
 
 class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
@@ -33,7 +33,7 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
 
     def __init__(
         self,
-        goal: NavigationGoal | Callable[[GameContextT], NavigationGoal] | None,
+        goal: NavigationGoal | Callable[[GameContextT], NavigationGoal],
         path_planner_params: BasePathPlannerParams,
         trajectory_planner_params: BaseTrajectoryPlannerParams,
         speed_profiler: SpeedProfiler,
@@ -46,7 +46,7 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         """Initializes the BaseNavigationTask with navigation and planning parameters.
 
         Args:
-            goal (NavigationGoal | Callable[[GameContextT], NavigationGoal] | None):
+            goal (NavigationGoal | Callable[[GameContextT], NavigationGoal]):
                 The navigation goal.
             path_planner_params (BasePathPlannerParams):
                 Parameters for the path planner.
@@ -66,9 +66,7 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         """
         super().__init__(logger=logger)
 
-        self.goal: NavigationGoal | Callable[[GameContextT], NavigationGoal] | None = (
-            goal
-        )
+        self.goal: NavigationGoal | Callable[[GameContextT], NavigationGoal] = goal
         self.stabilization_delay: float = stabilization_delay
         self.timeout: float | None = timeout
         self.path_planner_params = path_planner_params

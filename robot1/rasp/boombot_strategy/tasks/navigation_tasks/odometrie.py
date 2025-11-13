@@ -85,8 +85,8 @@ class WallSetOdometrie(BaseTask[WinterGameContext]):
         """
         goal: OrientedPoint | None = ctx.arena.get_closest_wall_goal()
         if goal is None:
-            ctx.arena.logger.warning(
-                "[Resetting] get_closest_wall_goal returned None",
+            ctx.arena.logger.error(
+                "[TASK:Reset] get_closest_wall_goal returned None",
             )
             return True
 
