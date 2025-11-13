@@ -39,13 +39,11 @@ class LogIndexer:
     def _parse_log_line(
         self,
         line: str,
-        offset: int,
     ) -> dict[str, Any] | None:
         """Parse a single log line.
 
         Args:
             line: Log line to parse
-            offset: Byte offset in file
 
         Returns:
             Parsed log entry or None if parse failed
@@ -75,7 +73,6 @@ class LogIndexer:
             "category": category,
             "message": data["message"],
             "raw_line": line.strip(),
-            "line_offset": offset,
         }
 
     @staticmethod
@@ -90,11 +87,47 @@ class LogIndexer:
         """
         return "Initialized with host: 0.0.0.0, port: 8080" in line
 
+    @staticmethod
+    def _should_skip_entry(
+        parsed: dict[str, Any],
+        last_entry: dict[str, Any] | None,
+    ) -> tuple[bool, bool]:
+        """Determine if a log entry should be skipped during incremental indexing.
+
+        Args:
+            parsed: Currently parsed log entry
+            last_entry: Last indexed log entry from database
+
+        Returns:
+            tuple[bool, bool]: Tuple of (should_skip, should_exit_skip_mode):
+                - should_skip: True if this entry should be skipped
+                - should_exit_skip_mode: True if we should exit skip mode after this
+        """
+        if not last_entry:
+            return (False, True)
+
+        current_ts = parsed["timestamp"]
+        last_ts = last_entry["timestamp"]
+
+        if current_ts < last_ts:
+            return (True, False)
+
+        if current_ts == last_ts:
+            current_location = f"{parsed['file_name']}:{parsed['line_number']}"
+            last_location = f"{last_entry['file_name']}:{last_entry['line_number']}"
+
+            if current_location == last_location:
+                return (True, True)
+
+            return (False, False)
+
+        return (False, True)
+
     def index_log_file(
         self,
         log_file: Path | str,
         *,
-        force_reindex: bool = False,
+        force_reindex: bool = False,  # TODO: argument cli
     ) -> int:
         """Index a log file into the database.
 
@@ -103,7 +136,7 @@ class LogIndexer:
             force_reindex: If True, re-index even if already indexed
 
         Returns:
-            Number of log entries indexed
+            int: Number of log entries indexed
 
         Raises:
             FileNotFoundError: If the log file does not exist
@@ -113,29 +146,54 @@ class LogIndexer:
             msg = f"Log file not found: {log_path}"
             raise FileNotFoundError(msg)
 
-        # Extract date from filename (e.g., 2025-11-06.log)
         self.current_date = log_path.stem
 
+        last_entry = (
+            None
+            if force_reindex
+            else self.db.get_last_log_entry(
+                str(log_path),
+            )
+        )
+
+        existing_executions = self.db.get_executions(str(log_path))
+        existing_exec_ids = {e["execution_id"] for e in existing_executions}
+
         execution_counter = 0
+        if existing_executions:
+            last_exec_id = existing_executions[-1]["execution_id"]
+            execution_counter = int(last_exec_id.split("_exec")[-1])
+            self.current_execution_id = last_exec_id
+
         entries_indexed = 0
-        current_offset = 0
+        skipping_mode = last_entry is not None
 
         with log_path.open("r", encoding="utf-8", errors="ignore") as f:
             for line in f:
-                # Track offset for later retrieval
-                line_start = current_offset
-                current_offset += len(line.encode("utf-8"))
+                parsed = self._parse_log_line(line)
+                if not parsed:
+                    continue
 
-                # Detect execution boundaries
+                if skipping_mode:
+                    should_skip, should_exit_skip_mode = self._should_skip_entry(
+                        parsed,
+                        last_entry,
+                    )
+                    if should_exit_skip_mode:
+                        skipping_mode = False
+                    if should_skip:
+                        continue
+
                 if self._detect_execution_boundary(line):
-                    execution_counter += 1
-                    self.current_execution_id = (
-                        f"{self.current_date}_exec{execution_counter:03d}"
+                    new_execution_counter = execution_counter + 1
+                    new_execution_id = (
+                        f"{self.current_date}_exec{new_execution_counter:03d}"
                     )
 
-                    # Register execution in database
-                    parsed = self._parse_log_line(line, line_start)
-                    if parsed:
+                    if new_execution_id not in existing_exec_ids:
+                        execution_counter = new_execution_counter
+                        self.current_execution_id = new_execution_id
+
                         start_time = datetime.fromisoformat(parsed["timestamp"])
                         self.db.add_execution(
                             execution_id=self.current_execution_id,
@@ -143,22 +201,29 @@ class LogIndexer:
                             log_file=str(log_path),
                             description=f"Execution {execution_counter}",
                         )
+                        existing_exec_ids.add(self.current_execution_id)
+                    else:
+                        execution_counter = new_execution_counter
+                        self.current_execution_id = new_execution_id
 
-                # Ensure we have an execution_id
                 if not self.current_execution_id:
                     self.current_execution_id = f"{self.current_date}_exec000"
-                    self.db.add_execution(
-                        execution_id=self.current_execution_id,
-                        start_time=datetime.fromisoformat(
-                            f"{self.current_date} 00:00:00",
-                        ),
-                        log_file=str(log_path),
-                        description="Execution 0",
-                    )
+                    if self.current_execution_id not in existing_exec_ids:
+                        self.db.add_execution(
+                            execution_id=self.current_execution_id,
+                            start_time=datetime.fromisoformat(
+                                f"{self.current_date} 00:00:00",
+                            ),
+                            log_file=str(log_path),
+                            description="Execution 0",
+                        )
+                        existing_exec_ids.add(self.current_execution_id)
 
-                # Parse and index the log line
-                parsed = self._parse_log_line(line, line_start)
-                if parsed:
+                if not self.db.log_entry_exists(
+                    parsed["timestamp"],
+                    parsed["file_name"],
+                    parsed["line_number"],
+                ):
                     self.db.add_log_entry(
                         execution_id=self.current_execution_id,
                         **parsed,

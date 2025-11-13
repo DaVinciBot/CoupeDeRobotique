@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import sqlite3
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Self
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -137,6 +137,37 @@ class LogDatabase:
         )
         self.conn.commit()
 
+    def log_entry_exists(
+        self,
+        timestamp: str,
+        file_name: str | None,
+        line_number: int | None,
+    ) -> bool:
+        """Check if a log entry already exists in the database.
+
+        Args:
+            timestamp: Log timestamp
+            file_name: Source file name
+            line_number: Source line number
+
+        Returns:
+            bool: True if an entry with same timestamp + file:line exists
+        """
+        if not self.conn:
+            return False
+
+        cursor = self.conn.cursor()
+        cursor.execute(
+            """
+            SELECT COUNT(*) as count FROM logs
+            WHERE timestamp = ? AND file_name = ? AND line_number = ?
+        """,
+            (timestamp, file_name, line_number),
+        )
+
+        result = cursor.fetchone()
+        return result["count"] > 0 if result else False
+
     def add_log_entry(
         self,
         execution_id: str,
@@ -145,7 +176,6 @@ class LogDatabase:
         logger_name: str,
         message: str,
         raw_line: str,
-        line_offset: int,
         file_name: str | None = None,
         line_number: int | None = None,
         category: str | None = None,
@@ -159,7 +189,6 @@ class LogDatabase:
             logger_name: Name of the logger
             message: Log message
             raw_line: Original log line
-            line_offset: Byte offset in log file
             file_name: Source file name
             line_number: Source line number
             category: Category prefix (e.g., NAV:Task)
@@ -172,8 +201,8 @@ class LogDatabase:
             """
             INSERT INTO logs
             (execution_id, timestamp, level, logger_name, file_name,
-             line_number, category, message, raw_line, line_offset)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             line_number, category, message, raw_line)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
             (
                 execution_id,
@@ -185,7 +214,6 @@ class LogDatabase:
                 category,
                 message,
                 raw_line,
-                line_offset,
             ),
         )
         self.conn.commit()
@@ -217,6 +245,46 @@ class LogDatabase:
             cursor.execute("SELECT * FROM executions ORDER BY start_time")
 
         return [dict(row) for row in cursor.fetchall()]
+
+    def get_last_log_entry(self, log_file: str) -> dict[str, Any] | None:
+        """Get the last indexed log entry for a log file.
+
+        Args:
+            log_file: Path to the log file
+
+        Returns:
+            Last log entry dict or None if no entries exist
+        """
+        if not self.conn:
+            return None
+
+        cursor = self.conn.cursor()
+
+        cursor.execute(
+            """
+            SELECT execution_id FROM executions
+            WHERE log_file = ?
+        """,
+            (log_file,),
+        )
+        exec_ids = [row["execution_id"] for row in cursor.fetchall()]
+
+        if not exec_ids:
+            return None
+
+        placeholders = ",".join("?" * len(exec_ids))
+        cursor.execute(
+            f"""
+            SELECT * FROM logs
+            WHERE execution_id IN ({placeholders})
+            ORDER BY timestamp DESC, id DESC
+            LIMIT 1
+        """,
+            exec_ids,
+        )
+
+        result = cursor.fetchone()
+        return dict(result) if result else None
 
     def query_logs(
         self,
@@ -282,10 +350,14 @@ class LogDatabase:
             self.conn.close()
             self.conn = None
 
-    def __enter__(self) -> LogDatabase:
-        """Context manager entry."""
+    def __enter__(self) -> Self:
+        """Context manager entry.
+
+        Returns:
+            Self: Self instance
+        """
         return self
 
-    def __exit__(self, *args: Any) -> None:
+    def __exit__(self, *args: object) -> None:
         """Context manager exit."""
         self.close()

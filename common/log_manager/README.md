@@ -168,9 +168,7 @@ Le schéma SQLite contient deux tables :
 
 Le système détecte automatiquement les nouvelles exécutions en cherchant des marqueurs comme :
 
-- `[BRAIN:Init]`
-- `Team color set to`
-- `WS_Server.*Initialized`
+- `Initialized with host: 0.0.0.0, port: 8080"`
 
 Chaque nouvelle exécution reçoit un ID unique : `{date}_exec{numéro:03d}`
 
@@ -190,7 +188,7 @@ lgpp_manager list-executions 2025-11-06.log
 
 # 2. Voir toutes les erreurs de cette exécution
 lgpp_manager show 2025-11-06.log \
-    --execution 2025-11-06_exec005 \
+    --execution 5 \
     --level ERROR
 ```
 
