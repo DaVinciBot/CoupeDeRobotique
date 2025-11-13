@@ -8,8 +8,8 @@ from functools import wraps
 from typing import TYPE_CHECKING, Any
 
 import crc8
-from serial import Serial
-from serial.tools.list_ports import comports
+import serial
+import serial.tools.list_ports
 
 from usb_com.python.com.dummy import DummySerial
 from usb_com.python.com.exceptions import ComError
@@ -63,7 +63,7 @@ class Com:
         self.enable_dummy: bool = enable_dummy
 
         # Initialize usb com variables
-        self._device: Serial | DummySerial = self._get_serial()
+        self._device: serial.Serial | DummySerial = self._get_serial()
         self._crc8: crc8.crc8 = crc8.crc8()
 
         self.last_message: bytes | None = None
@@ -74,26 +74,26 @@ class Com:
         self._receiver_thread: threading.Thread | None = self._start_receiver()
 
     # region ======= Private methods =======
-    def _get_serial(self) -> Serial | DummySerial:
+    def _get_serial(self) -> serial.Serial | DummySerial:
         """Detect and initialize the serial device or dummy mode.
 
         Returns:
-            Serial | DummySerial:
+            serial.Serial | DummySerial:
                 Initialized serial connection or dummy instance.
 
         Raises:
             ComError: If no device is found and dummy mode is disabled.
         """
-        device_found: Serial | DummySerial | None = None
+        device_found: serial.Serial | DummySerial | None = None
 
-        for port in comports():
+        for port in serial.tools.list_ports.comports():
             if (
                 port.vid == self.vid
                 and port.pid == self.pid
                 and port.serial_number is not None
                 and port.serial_number == str(self.serial_number)
             ):
-                device_found = Serial(port.device, baudrate=self.baudrate)
+                device_found = serial.Serial(port.device, baudrate=self.baudrate)
                 break
 
         if device_found is None:
@@ -117,11 +117,11 @@ class Com:
         if self.enable_dummy:
             return None
 
-        receiver = threading.Thread(target=self.__receiver__, name="USBComReceiver")
+        receiver = threading.Thread(target=self.__receiver, name="USBComReceiver")
         receiver.start()
         return receiver
 
-    def __receiver__(self) -> None:
+    def __receiver(self) -> None:
         """Run in a thread and dispatch messages based on the protocol format.
 
         Format: ``msg_type | msg_data | msg_length | CRC8 | MSG_END_BYTES``
