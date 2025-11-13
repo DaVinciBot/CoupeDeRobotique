@@ -82,7 +82,6 @@ class WinterArena(BaseArena):
             follow_logger_manager_rules=True,
         )
 
-
         jenga_zones_points: list[
             tuple[tuple[float, float], tuple[float, float], list[OrientedPoint]]
         ] = [

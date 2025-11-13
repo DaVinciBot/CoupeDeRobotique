@@ -417,14 +417,17 @@ class BaseArena(ABC):
         """Determine the closest accessible wall point in the arena.
 
         Returns:
-            OrientedPoint: The closest accessible wall point.
+            OrientedPoint | None: The closest accessible wall point.
         """
         robot_pos = self.ally_zone.point
 
         closest_point: OrientedPoint | None = None
         min_distance: float = float("inf")
 
-        banned_zones = set(self.find_zone_accessibility("RESTRICTED") + self.find_zone_accessibility("FORBIDDEN"))
+        banned_zones = set(
+            self.find_zone_accessibility("RESTRICTED")
+            + self.find_zone_accessibility("FORBIDDEN"),
+        )
 
         walls: list[tuple[str, float, range, float]] = [
             ("x", self.border_buffer, range(0, self.height + 1, self.chunk_size), 0),
@@ -459,9 +462,7 @@ class BaseArena(ABC):
                 if zone in banned_zones:
                     continue
 
-                dx = candidate.x - robot_pos.x
-                dy = candidate.y - robot_pos.y
-                distance = (dx**2 + dy**2) ** 0.5
+                distance = candidate.distance(robot_pos)
 
                 if distance < min_distance:
                     min_distance = distance

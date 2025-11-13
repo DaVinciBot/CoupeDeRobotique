@@ -19,7 +19,7 @@ def get_deplacement_subgraph(zone_id: int) -> BaseSubGraph:
         BaseSubGraph: The constructed subgraph for navigation.
     """
     subgraph = SubGraphBuilder()
-    node_navigate = f"[Push][Zone{zone_id}] NavigateToZone"
+    node_navigate = f"[GoTo][Zone{zone_id}] NavigateToZone"
     subgraph.add_node(
         node_navigate,
         BaseTaskNode(name=node_navigate, tasks=GoToStuffZoneToPickUp(zone_id)),
