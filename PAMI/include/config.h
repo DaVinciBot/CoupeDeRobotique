@@ -13,8 +13,8 @@
 #define LEFT_EN_PIN 17           // Enable pin for left motor
 #define LEFT_STEPS_PER_REV 400  // Steps per revolution for left motor
 
-#define RIGHT_DIR_PIN 21         // Direction pin for right motor
-#define RIGHT_STEP_PIN 47        // Step pin for right motor
+#define RIGHT_DIR_PIN 16         // Direction pin for right motor
+#define RIGHT_STEP_PIN 17        // Step pin for right motor
 #define RIGHT_EN_PIN 48          // Enable pin for right motor
 #define RIGHT_STEPS_PER_REV 400  // Steps per revolution for right motor
 

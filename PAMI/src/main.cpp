@@ -1,16 +1,22 @@
 #include "config.h"
 
-Motor* testMotor = new Motor(LEFT_STEP_PIN,  // Broche 19
+Motor* leftMotor = new Motor(LEFT_STEP_PIN,  // Broche 19
                           LEFT_DIR_PIN,    // Broche 18
                           LEFT_EN_PIN,     // Broche enable
                           200,             // Steps par tour (typique pour un NEMA)
                           false);
 
+Motor* rightMotor = new Motor(RIGHT_STEP_PIN,  // Broche 19
+                          RIGHT_DIR_PIN,    // Broche 18
+                          RIGHT_EN_PIN,     // Broche enable
+                          200,             // Steps par tour (typique pour un NEMA)
+                          false);                          
+
 // Pour debug
 const int numSteps = 800;  // Nombre de pas à faire
                               
 
-/*RollingBasis* rollingBasis = new RollingBasis(leftMotor,
+RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               rightMotor,
                                               WHEEL_DIAMETER_MM,
                                               WHEEL_+BASE_MM,
@@ -19,7 +25,7 @@ const int numSteps = 800;  // Nombre de pas à faire
 Navigation* navigation = new Navigation(
     rollingBasis,
     15000);  // Navigation object with 100ms interval and 15s timeout
-
+/*
 lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object*/
 
 #if ENABLE_OTA
@@ -98,14 +104,22 @@ void setup() {
                  LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN);
     
     // Configuration des broches
-    testMotor->init();
-    testMotor->enableMotor(true);  // Active le moteur
+    leftMotor->init();
+    leftMotor->enableMotor(true);  // Active le moteur
     
     Serial.println("Moteur initialisé");
 
-    testMotor->setTargetSpeed(10.0f);
-    testMotor->setAcceleration(100.0f);
-    testMotor->_setDirection(false);
+    leftMotor->setTargetSpeed(-10.0f);
+    leftMotor->setAcceleration(100.0f);
+    
+    rightMotor->init();
+    rightMotor->enableMotor(true);  // Active le moteur
+    
+    Serial.println("Moteur initialisé");
+
+    rightMotor->setTargetSpeed(10.0f);
+    rightMotor->setAcceleration(100.0f);
+    
    
 
     /*lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
@@ -167,9 +181,20 @@ void loop() {
     
     // Fait tourner le moteur comme dans votre code original
     
-    testMotor->doOneSteps(); //marche avec k=1          
-    delayMicroseconds(1e5);  // Même délai que votre code original
-    
+    /*testMotor->doOneSteps(); //marche avec k=1          
+    delayMicroseconds(5e2);  // Même délai que votre code original
+    */
+   
+   leftMotor->update();
+   rightMotor->update();
+   Serial.println(leftMotor->getStepCount()); //jsp pk mais ne pas commanter, c important
+
+   
+   /*bool i=false;
+   if(testMotor->getStepCount() > 1000 ){
+    i=not i;
+    testMotor->_setDirection(i);
+   }*/
 #if ENABLE_OTA
     ota.loop();
 #endif
