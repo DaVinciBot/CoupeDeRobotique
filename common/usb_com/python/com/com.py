@@ -117,11 +117,11 @@ class Com:
         if self.enable_dummy:
             return None
 
-        receiver = threading.Thread(target=self.__receiver, name="USBComReceiver")
+        receiver = threading.Thread(target=self.__receiver__, name="USBComReceiver")
         receiver.start()
         return receiver
 
-    def __receiver(self) -> None:
+    def __receiver__(self) -> None:
         """Run in a thread and dispatch messages based on the protocol format.
 
         Format: ``msg_type | msg_data | msg_length | CRC8 | MSG_END_BYTES``
