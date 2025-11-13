@@ -116,9 +116,6 @@ class BaseArena(ABC):
             if not zone.is_accessible():
                 self.grid_manager.add_forbidden_static_zone(zone.buffered_polygon)
 
-        # 6. Chunk size
-        self.chunk_size: int = chunk_size
-
         # endregion
 
         # region ====== Initialized derivative attributes ======
@@ -421,35 +418,39 @@ class BaseArena(ABC):
         """
         robot_pos = self.ally_zone.point
 
-        closest_point: OrientedPoint | None = None
-        min_distance: float = float("inf")
-
         banned_zones = set(
             self.find_zone_accessibility("RESTRICTED")
             + self.find_zone_accessibility("FORBIDDEN"),
         )
 
         walls: list[tuple[str, float, range, float]] = [
-            ("x", self.border_buffer, range(0, self.height + 1, self.chunk_size), 0),
+            (
+                "x",
+                self.border_buffer,
+                range(0, self.height + 1, self.grid_manager.chunk_size),
+                pi,
+            ),
             (
                 "x",
                 self.width - self.border_buffer,
-                range(0, self.height + 1, self.chunk_size),
-                pi,
+                range(0, self.height + 1, self.grid_manager.chunk_size),
+                0,
             ),
             (
                 "y",
                 self.border_buffer,
-                range(0, self.width + 1, self.chunk_size),
-                -pi / 2,
+                range(0, self.width + 1, self.grid_manager.chunk_size),
+                pi / 2,
             ),
             (
                 "y",
                 self.height - self.border_buffer,
-                range(0, self.width + 1, self.chunk_size),
-                pi / 2,
+                range(0, self.width + 1, self.grid_manager.chunk_size),
+                -pi / 2,
             ),
         ]
+
+        candidates: set[OrientedPoint] = set()
 
         for axis, fixed, var_range, orientation in walls:
             for var in var_range:
@@ -459,16 +460,12 @@ class BaseArena(ABC):
                     candidate = OrientedPoint(var, fixed, orientation)
 
                 zone = self.get_zone_by_location(candidate)
-                if zone in banned_zones:
+                if zone and zone in banned_zones:
                     continue
 
-                distance = candidate.distance(robot_pos)
+                candidates.add(candidate)
 
-                if distance < min_distance:
-                    min_distance = distance
-                    closest_point = candidate
-
-        return closest_point
+        return min(candidates, key=robot_pos.distance)
 
     def get_zone_by_location(
         self,
