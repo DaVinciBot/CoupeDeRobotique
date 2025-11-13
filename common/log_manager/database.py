@@ -288,7 +288,7 @@ class LogDatabase:
     def query_logs(
         self,
         execution_id: str | None = None,
-        level: str | None = None,
+        level: str | list[str] | None = None,
         logger_name: str | None = None,
         category: str | None = None,
         file_name: str | None = None,
@@ -299,7 +299,7 @@ class LogDatabase:
 
         Args:
             execution_id (str | None): Filter by execution. Defaults to None.
-            level (str | None): Filter by log level. Defaults to None.
+            level (str | list[str] | None): Filter by log level(s). Defaults to None.
             logger_name (str | None): Filter by logger name. Defaults to None.
             category (str | None): Filter by category prefix. Defaults to None.
             file_name (str | None): Filter by source file. Defaults to None.
@@ -322,8 +322,13 @@ class LogDatabase:
             params.append(f"%{execution_id}")
 
         if level:
-            query += " AND level = ?"
-            params.append(level)
+            if isinstance(level, list):
+                placeholders = ",".join("?" * len(level))
+                query += f" AND level IN ({placeholders})"
+                params.extend(level)
+            else:
+                query += " AND level = ?"
+                params.append(level)
 
         if logger_name:
             query += " AND logger_name LIKE ?"

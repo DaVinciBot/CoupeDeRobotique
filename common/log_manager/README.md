@@ -220,7 +220,5 @@ lgpp_manager show 2025-11-06.log --category "SENSOR:Lidar"
 
 - [ ] Hook en temps réel pour indexer pendant l'exécution (modifier loggerplusplus)
 - [ ] Interface web pour visualiser les logs @clement ???
-- [ ] Graphiques de distribution des niveaux de log
 - [ ] Recherche en texte intégral dans les messages
 - [ ] Export en JSON/CSV
-- [ ] Recherche pour une ligne spécifique (numéro de ligne)

@@ -82,14 +82,7 @@ def cmd_show(args: argparse.Namespace) -> int:
     level = None
     if args.level:
         levels = [lvl.strip().upper() for lvl in args.level.split(",")]
-        if len(levels) == 1:
-            level = levels[0]
-        else:
-            level = levels[0]
-            print(
-                f"Note: Multiple levels not yet supported, using {level}",
-                file=sys.stderr,
-            )
+        level = levels if len(levels) > 1 else levels[0]
 
     try:
         manager.show_logs(
@@ -120,12 +113,17 @@ def cmd_export(args: argparse.Namespace) -> int:
     """
     manager = LogManager(args.logs_dir)
 
+    level = None
+    if args.level:
+        levels = [lvl.strip().upper() for lvl in args.level.split(",")]
+        level = levels if len(levels) > 1 else levels[0]
+
     try:
         count = manager.export_logs(
             args.log_file,
             args.output,
             execution_id=args.execution,
-            level=args.level,
+            level=level,
             logger=args.logger,
             category=args.category,
             file=args.file,

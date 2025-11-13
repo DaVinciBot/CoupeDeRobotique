@@ -74,7 +74,7 @@ class LogManager:
         self,
         log_file: str,
         execution_id: str | None = None,
-        level: str | None = None,
+        level: str | list[str] | None = None,
         logger: str | None = None,
         category: str | None = None,
         file: str | None = None,
@@ -86,7 +86,7 @@ class LogManager:
         Args:
             log_file (str): Log filename
             execution_id (str | None): Filter by execution ID. Defaults to None.
-            level (str | None): Filter by log level. Defaults to None.
+            level (str | list[str] | None): Filter by log level(s). Defaults to None.
             logger (str | None): Filter by logger name. Defaults to None.
             category (str | None): Filter by category. Defaults to None.
             file (str | None): Filter by source file. Defaults to None.
