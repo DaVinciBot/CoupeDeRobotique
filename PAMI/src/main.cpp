@@ -19,7 +19,7 @@ const int numSteps = 800;  // Nombre de pas à faire
 RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               rightMotor,
                                               WHEEL_DIAMETER_MM,
-                                              WHEEL_BASE_MM,
+                                              WHEEL_+BASE_MM,
                                               Point{0, 0, 0});
 
 Navigation* navigation = new Navigation(
