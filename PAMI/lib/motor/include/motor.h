@@ -134,7 +134,16 @@ class Motor {
      * @brief Reset the internal step counter to zero.
      */
     void resetStepCount();
-    void doOneSteps();
+      /**
+       * @brief Perform a single step pulse (one high->low toggle).
+       *
+       * @param pulse_us Pulse high (and low) duration in microseconds. The
+       *                  implementation will hold the STEP pin HIGH for
+       *                  pulse_us microseconds then LOW for pulse_us
+       *                  microseconds. Default is 500us to preserve existing
+       *                  behavior.
+       */
+      void doOneSteps(unsigned int pulse_us = 500);
 
    private:
     uint8_t _stepPin;       // Pin to control the stepping of the motor

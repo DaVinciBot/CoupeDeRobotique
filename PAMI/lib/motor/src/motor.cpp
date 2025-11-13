@@ -55,14 +55,16 @@ void Motor::_setDirection(bool clockwise) {
     digitalWrite(_dirPin, clockwise ? HIGH : LOW);
 }
 
-void Motor::doOneSteps() {
-    //Serial.println("on appel one step");
-    digitalWrite(_stepPin, HIGH);
-    delayMicroseconds(500);
-    digitalWrite(_stepPin, LOW);
-    delayMicroseconds(500);
-    
 
+void Motor::doOneSteps(unsigned int pulse_us) {
+    // Single step: hold STEP high for pulse_us, then low for pulse_us
+    // Serial.println("on appel one step");
+    digitalWrite(_stepPin, HIGH);
+    delayMicroseconds(pulse_us);
+    digitalWrite(_stepPin, LOW);
+    delayMicroseconds(pulse_us);
+
+    // Update logical step counter according to current direction
     if (_currentSpeedStepsPerSec >= 0 && !_invertDirection ||
         _currentSpeedStepsPerSec < 0 && _invertDirection) {
         _stepCount++;
