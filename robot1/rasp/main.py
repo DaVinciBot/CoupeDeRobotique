@@ -16,8 +16,14 @@ from geometry import OrientedPoint
 from navigation.navigator.task import NavigatorTaskParams
 from sensors import Inputs, Lidar, LidarDummy
 
+_logger = Logger(
+    identifier="Main",
+    follow_logger_manager_rules=True,
+)
+
 # ====== Main ======
 if __name__ == "__main__":
+    _logger.info("[INIT] Initializing all systems...")
     # region ====== Initialization ======
 
     # Loggers

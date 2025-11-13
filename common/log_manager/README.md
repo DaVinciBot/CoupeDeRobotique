@@ -168,7 +168,7 @@ Le schéma SQLite contient deux tables :
 
 Le système détecte automatiquement les nouvelles exécutions en cherchant des marqueurs comme :
 
-- `Initialized with host: 0.0.0.0, port: 8080"`
+- `[INIT] Initializing all systems...`
 
 Chaque nouvelle exécution reçoit un ID unique : `{date}_exec{numéro:03d}`
 

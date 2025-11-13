@@ -85,7 +85,7 @@ class LogIndexer:
         Returns:
             bool: True if this is an execution boundary
         """
-        return "Initialized with host: 0.0.0.0, port: 8080" in line
+        return "[INIT] Initializing all systems..." in line
 
     @staticmethod
     def _should_skip_entry(
