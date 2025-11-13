@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, ClassVar, override
 
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
 from arena.base_arena.team_color import TeamColor
-from geometry import BufferCapStyle, BufferJoinStyle, OrientedPoint, Point, Polygon
+from geometry import BufferCapStyle, BufferJoinStyle, OrientedPoint, Polygon
 from utils import Utils
 
 if TYPE_CHECKING:
@@ -41,7 +41,7 @@ class BaseArenaZone(ABC):
         buffered_polygon: Polygon | None = None,
         update_callback: Callable | None = None,
         zone_color: str = "#9e9e9e",
-        go_to_positions: list[OrientedPoint | Point] | None = None,
+        go_to_positions: list[OrientedPoint] | None = None,
         uid: int | None = None,
     ) -> None:
         """Initialize the zone with geometry, type, color, and accessibility.
@@ -60,7 +60,7 @@ class BaseArenaZone(ABC):
                 Function called on updates. Defaults to None.
             zone_color (str, optional):
                 Color associated with the zone. Defaults to "#9e9e9e".
-            go_to_positions (list[OrientedPoint | Point] | None, optional):
+            go_to_positions (list[OrientedPoint] | None, optional):
                 List of go-to positions within the zone. Defaults to None.
             uid (int | None, optional):
                 Unique identifier for the zone instance. Defaults to None.
@@ -68,12 +68,12 @@ class BaseArenaZone(ABC):
         Raises:
             ValueError: If neither polygon nor buffered_polygon is provided.
         """
-        self.logger: Logger = logger
+        self._logger: Logger = logger
         self.zone_type: ZoneType = zone_type
         self.accessibility: ZoneAccessibility = accessibility
 
         if polygon is None and buffered_polygon is None:
-            self.logger.error("No polygon provided for zone")
+            self._logger.error("[ARENA:Zone] No polygon provided")
             msg = "At least one of polygon or buffered_polygon must be provided"
             raise ValueError(msg)
         if polygon is not None and buffered_polygon is None:
@@ -176,7 +176,7 @@ class BaseArenaZone(ABC):
         self,
         ally_position: OrientedPoint,
         team_color: TeamColor,
-    ) -> OrientedPoint | Point | None:
+    ) -> OrientedPoint | None:
         """Determine the best go-to position for an ally in the given zone.
 
         Args:
@@ -184,33 +184,31 @@ class BaseArenaZone(ABC):
             team_color (TeamColor): Color of the team.
 
         Returns:
-            OrientedPoint | Point | None:
+            OrientedPoint | None:
                 Best go-to position, or ``None`` if inaccessible.
         """
         if not self.is_accessible(team_color):
-            self.logger.debug(
-                f"GoTo position request: Zone {self.zone_type} is not accessible.",
+            self._logger.debug(
+                f"[ARENA:Zone] GoTo request: {self.zone_type} not accessible",
             )
             return None
 
         # If no specific go-to positions are defined, return the centroid of the zone
         if not self.go_to_positions:
-            self.logger.debug(
-                "GoTo position request: "
-                f"No defined go-to positions for zone {self.zone_type}, "
-                f"returning centroid [{self.polygon.centroid}]",
+            self._logger.debug(
+                f"[ARENA:Zone] GoTo request: No positions for {self.zone_type}, "
+                f"using centroid {self.polygon.centroid}",
             )
-            return self.polygon.centroid
+            return OrientedPoint.from_point(self.polygon.centroid)
 
         nearest_position = min(
             self.go_to_positions,
             key=ally_position.distance,
         )
-        msg = (
-            "GoTo position request: Nearest go-to position to ally "
-            f"[{ally_position}] is [{nearest_position}]"
+        self._logger.debug(
+            f"[ARENA:Zone] GoTo request: Nearest position {nearest_position} "
+            f"from ally at {ally_position}",
         )
-        self.logger.debug(msg)
 
         return nearest_position
 
@@ -220,34 +218,41 @@ class BaseArenaZone(ABC):
 
     def update(
         self,
-        team_color: TeamColor,  # noqa:ARG002
-        ally_position: Point | OrientedPoint,
-        enemy_position: Point | OrientedPoint,
+        team_color: TeamColor,  # noqa: ARG002
+        ally_position: OrientedPoint,
+        enemy_position: OrientedPoint,
     ) -> None:
         """Update the zone based on the positions of allies and enemies.
 
         Args:
             team_color (TeamColor): Color of the team.
-            ally_position (Point | OrientedPoint): Position of the ally.
-            enemy_position (Point | OrientedPoint): Position of the enemy.
+            ally_position (OrientedPoint): Position of the ally.
+            enemy_position (OrientedPoint): Position of the enemy.
         """
         # Update visit counts
         if self.polygon.contains(enemy_position):  # Don't consider the buffer
             self.enemy_visits += 1
-            self.logger.debug(f"Enemy visited {self.zone_type} zone")
+            self._logger.debug(f"[ARENA:Zone] Enemy visited {self.zone_type}")
 
         if self.polygon.contains(ally_position):  # Don't consider the buffer
             self.ally_visits += 1
-            self.logger.debug(f"Ally visited {self.zone_type} zone")
+            self._logger.debug(f"[ARENA:Zone] Ally visited {self.zone_type}")
 
         self.last_update_time = Utils.get_ts()
 
     def _make_accessible(self) -> None:
         """Mark the zone as accessible and update the grid manager."""
         self.accessibility = ZoneAccessibility.FREE
-        grid_manager: GridManager = self.update_callback()
+        grid_manager: GridManager = self.update_callback()  # type: ignore[call-arg]
         grid_manager.remove_forbidden_static_zone(self.buffered_polygon)
-        self.logger.debug(f"{self.zone_type} zone is now accessible")
+        self._logger.debug(f"[ARENA:Zone] {self.zone_type} now accessible")
+
+    def _restrict_accessibility(self) -> None:
+        """Mark the zone as restricted and update the grid manager."""
+        self.accessibility = ZoneAccessibility.RESTRICTED
+        grid_manager: GridManager = self.update_callback()  # type: ignore[call-arg]
+        grid_manager.add_forbidden_static_zone(self.buffered_polygon)
+        self._logger.debug(f"[ARENA:Zone] {self.zone_type} now restricted")
 
     # endregion
 

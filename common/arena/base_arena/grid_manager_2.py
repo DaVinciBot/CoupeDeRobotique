@@ -11,7 +11,7 @@ from pathfinding.core.grid import Grid, GridNode
 from shapely.geometry import box
 from shapely.strtree import STRtree
 
-from geometry import OrientedPoint, Point, Polygon
+from geometry import OrientedPoint, Polygon
 
 
 class GridManager:
@@ -36,7 +36,7 @@ class GridManager:
             width (int): Total width of the arena in world units.
             height (int): Total height of the arena in world units.
         """
-        self.logger = logger
+        self._logger = logger
         self.chunk_size = chunk_size
         self.half_chunk_size = chunk_size / 2
         self.absolute_width = width
@@ -45,7 +45,7 @@ class GridManager:
         self.grid_height = height // chunk_size
 
         if width % chunk_size or height % chunk_size:
-            self.logger.log(
+            self._logger.log(
                 (
                     "[GRID] width and height must be multiples of chunk_size. "
                     "Adjusting chunk size."
@@ -56,8 +56,8 @@ class GridManager:
 
         self.static_grid = self.__generate_base_grid()
         self.dynamic_grid = self.__generate_base_grid()
-        self.static_forbidden_zones = []
-        self.dynamic_forbidden_zones = []
+        self.static_forbidden_zones: list[Polygon] = []
+        self.dynamic_forbidden_zones: list[Polygon] = []
         self.spatial_index = STRtree([])
 
     # region ====== Private Methods ======
@@ -133,7 +133,7 @@ class GridManager:
 
     # region ====== Public Methods ======
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def add_forbidden_static_zone(
         self,
         forbidden_zones: Polygon | list[Polygon],
@@ -155,7 +155,7 @@ class GridManager:
             walkable=False,
         )
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def remove_forbidden_static_zone(
         self,
         forbidden_zones: Polygon | list[Polygon],
@@ -180,7 +180,7 @@ class GridManager:
             walkable=False,
         )
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def update_dynamic_forbidden_zones(self, dynamic_zones: list[Polygon]) -> None:
         """Update the list of dynamic forbidden zones.
 
@@ -209,28 +209,28 @@ class GridManager:
             node.y * self.chunk_size + self.half_chunk_size,
         )
 
-    def absolute_coords_to_grid_coords(self, point: OrientedPoint | Point) -> GridNode:
+    def absolute_coords_to_grid_coords(self, point: OrientedPoint) -> GridNode:
         """Convert absolute coordinates to grid coordinates.
 
         Args:
-            point (OrientedPoint | Point): Point in world coordinates.
+            point (OrientedPoint): OrientedPoint in world coordinates.
 
         Returns:
             GridNode: Corresponding node in the grid.
         """
         return GridNode(int(point.x / self.chunk_size), int(point.y / self.chunk_size))
 
-    def grid_coords_to_absolute_coords(self, node: GridNode) -> Point:
+    def grid_coords_to_absolute_coords(self, node: GridNode) -> OrientedPoint:
         """Convert grid coordinates to absolute coordinates.
 
         Args:
             node (GridNode): Grid node to convert.
 
         Returns:
-            Point: Center of the node in world coordinates.
+            OrientedPoint: Center of the node in world coordinates.
         """
         x, y = self.get_grid_node_center(node)
-        return Point(x, y)
+        return OrientedPoint(x, y)
 
     def get_static_grid(self) -> Grid:
         """Return the static grid used for pathfinding.

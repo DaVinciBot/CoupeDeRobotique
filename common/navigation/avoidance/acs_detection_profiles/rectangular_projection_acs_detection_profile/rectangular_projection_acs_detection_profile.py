@@ -30,7 +30,13 @@ class RectangularProjectionAcsDetectionProfile(
 
         Returns:
             Polygon: The rectangular projection polygon.
+
+        Raises:
+            ValueError: If `ally_zone.point.theta` is None.
         """
+        if ally_zone.point.theta is None:
+            msg = "ally_zone.point.theta must be defined."
+            raise ValueError(msg)
         rectangle = Polygon(
             [
                 (-self.params.half_length_view, -self.params.half_width_view),
@@ -68,8 +74,6 @@ class RectangularProjectionAcsDetectionProfile(
         projection = self._create_rectangular_projection(ally_zone)
         if projection.contains(enemy_zone.point):
             distance = ally_zone.point.distance(enemy_zone.point)
-            self.logger.info(
-                f"ACS triggered. Distance: {distance}",
-            )
+            self._logger.debug(f"[NAV:ACS] Triggered - distance: {distance:.1f}cm")
             return True
         return False

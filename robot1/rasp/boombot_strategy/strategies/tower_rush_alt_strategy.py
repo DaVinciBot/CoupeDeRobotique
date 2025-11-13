@@ -20,7 +20,7 @@ from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 
 if TYPE_CHECKING:
-    from boombot_strategy.show_game_context import ShowGameContext
+    from boombot_strategy.winter_game_context import WinterGameContext
 
 
 class TowerRushAltStrategy(BaseStrategy):
@@ -32,13 +32,13 @@ class TowerRushAltStrategy(BaseStrategy):
     - Navigate to backstage zone to finish the game
     """
 
-    def __init__(self, ctx: ShowGameContext) -> None:
+    def __init__(self, ctx: WinterGameContext) -> None:
         """Initialize the strategy.
 
         Build the task flow using subgraphs and direct transitions.
 
         Args:
-            ctx (ShowGameContext):
+            ctx (WinterGameContext):
                 Game context containing game-specific configurations and zones.
         """
         super().__init__(ctx)
@@ -67,7 +67,7 @@ class TowerRushAltStrategy(BaseStrategy):
         # Step 6: Navigate to the second pickup zone
         third_pickup_subgraph = get_pickup_subgraph(self.zones["third_pickup_zone"])
 
-        # Step 7: Navigate to the second construction zone
+        # Step 7: Navigate to the first construction zone
         third_construct_subgraph = get_construct_one_floor_subgraph(
             self.zones["first_build_zone"],
             back_offset=18,

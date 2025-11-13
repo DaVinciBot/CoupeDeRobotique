@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from loggerplusplus import Logger
 
     from arena.base_arena.grid_manager import GridManager
-    from geometry import OrientedPoint, Point, Polygon
+    from geometry import OrientedPoint, Polygon
 
 
 class BaseColorReservedZone(BaseArenaZone):
@@ -35,7 +35,7 @@ class BaseColorReservedZone(BaseArenaZone):
         buffered_polygon: Polygon | None = None,
         update_callback: Callable[[], GridManager] | None = None,
         zone_color: str = "#9e9e9e",
-        go_to_positions: list[OrientedPoint | Point] | None = None,
+        go_to_positions: list[OrientedPoint] | None = None,
     ) -> None:
         """Initialize the ColorReservedZone.
 
@@ -55,7 +55,7 @@ class BaseColorReservedZone(BaseArenaZone):
                 Function returning the grid manager instance. Defaults to None.
             zone_color (str, optional):
                 Hex code representing the zone color. Defaults to "#9e9e9e".
-            go_to_positions (list[OrientedPoint | Point] | None, optional):
+            go_to_positions (list[OrientedPoint] | None, optional):
                 List of go-to positions within the zone. Defaults to None.
         """
         self.color: TeamColor = color
@@ -89,15 +89,15 @@ class BaseColorReservedZone(BaseArenaZone):
     def update(
         self,
         team_color: TeamColor,
-        ally_position: Point | OrientedPoint,
-        enemy_position: Point | OrientedPoint,
+        ally_position: OrientedPoint,
+        enemy_position: OrientedPoint,
     ) -> None:
         """Update the zone state based on enemy movement and team color.
 
         Args:
             team_color (TeamColor): Color assigned to the team.
-            ally_position (Point | OrientedPoint): Position of the ally.
-            enemy_position (Point | OrientedPoint): Position of the enemy.
+            ally_position (OrientedPoint): Position of the ally.
+            enemy_position (OrientedPoint): Position of the enemy.
         """
         super().update(team_color, ally_position, enemy_position)
 

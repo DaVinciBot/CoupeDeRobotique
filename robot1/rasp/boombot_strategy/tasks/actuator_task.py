@@ -6,19 +6,19 @@ import time
 from typing import override
 
 from a_config_loader import CONFIG
-from boombot_strategy.show_game_context import ShowGameContext
+from boombot_strategy.winter_game_context import WinterGameContext
 from strategy.core.tasks import BaseTask
 
 
-class ReadyToApproachToPickUp(BaseTask[ShowGameContext]):
+class ReadyToApproachToPickUp(BaseTask[WinterGameContext]):
     """Activate the actuator's approach mechanism to prepare for pickup."""
 
     @override
-    def handle(self, ctx: ShowGameContext) -> bool:
+    def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator command to get ready to approach and pick up an object.
 
         Args:
-            ctx (ShowGameContext): The current game context.
+            ctx (WinterGameContext): The current game context.
 
         Returns:
             bool: Always returns True after executing the action.
@@ -27,15 +27,15 @@ class ReadyToApproachToPickUp(BaseTask[ShowGameContext]):
         return True
 
 
-class PrepareToPickUp(BaseTask[ShowGameContext]):
+class PrepareToPickUp(BaseTask[WinterGameContext]):
     """Task to prepare the actuator for picking up an object."""
 
     @override
-    def handle(self, ctx: ShowGameContext) -> bool:
+    def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator command to prepare for a pickup, then wait briefly.
 
         Args:
-            ctx (ShowGameContext): The current game context.
+            ctx (WinterGameContext): The current game context.
 
         Returns:
             bool: Always returns ``True`` after executing the action and delay.
@@ -45,15 +45,15 @@ class PrepareToPickUp(BaseTask[ShowGameContext]):
         return True
 
 
-class PickUp(BaseTask[ShowGameContext]):
+class PickUp(BaseTask[WinterGameContext]):
     """Task to perform the pickup action using the actuator."""
 
     @override
-    def handle(self, ctx: ShowGameContext) -> bool:
+    def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator command to pick up an object, then wait briefly.
 
         Args:
-            ctx (ShowGameContext): The current game context.
+            ctx (WinterGameContext): The current game context.
 
         Returns:
             bool: Always returns ``True`` after executing the action and delay.
@@ -63,15 +63,15 @@ class PickUp(BaseTask[ShowGameContext]):
         return True
 
 
-class Build(BaseTask[ShowGameContext]):
+class Build(BaseTask[WinterGameContext]):
     """Task to execute a build operation and update the game score accordingly."""
 
     @override
-    def handle(self, ctx: ShowGameContext) -> bool:
+    def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator build command and increment the score.
 
         Args:
-            ctx (ShowGameContext): The current game context.
+            ctx (WinterGameContext): The current game context.
 
         Returns:
             bool: Always returns ``True`` after executing the action and delay.
@@ -82,15 +82,15 @@ class Build(BaseTask[ShowGameContext]):
         return True
 
 
-class Deposit(BaseTask[ShowGameContext]):
+class Deposit(BaseTask[WinterGameContext]):
     """Release carried items and update score."""
 
     @override
-    def handle(self, ctx: ShowGameContext) -> bool:
+    def handle(self, ctx: WinterGameContext) -> bool:
         """Demagnetize all actuators and update score.
 
         Args:
-            ctx (ShowGameContext): The current game context.
+            ctx (WinterGameContext): The current game context.
 
         Returns:
             bool: Always returns ``True`` after executing the action and delay.
@@ -101,15 +101,15 @@ class Deposit(BaseTask[ShowGameContext]):
         return True
 
 
-class BlockBanner(BaseTask[ShowGameContext]):
+class BlockBanner(BaseTask[WinterGameContext]):
     """Task to activate the banner-blocking actuator."""
 
     @override
-    def handle(self, ctx: ShowGameContext) -> bool:
+    def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator command to block the banner.
 
         Args:
-            ctx (ShowGameContext): The current game context.
+            ctx (WinterGameContext): The current game context.
 
         Returns:
             bool: Always returns ``True`` after executing the action.
@@ -118,15 +118,15 @@ class BlockBanner(BaseTask[ShowGameContext]):
         return True
 
 
-class DeplacementPosition(BaseTask[ShowGameContext]):
+class DeplacementPosition(BaseTask[WinterGameContext]):
     """Task to adjust the actuator to a predefined displacement position."""
 
     @override
-    def handle(self, ctx: ShowGameContext) -> bool:
+    def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator command to move to a displacement position.
 
         Args:
-            ctx (ShowGameContext): The current game context.
+            ctx (WinterGameContext): The current game context.
 
         Returns:
             bool: Always returns ``True`` after executing the action.
@@ -135,15 +135,15 @@ class DeplacementPosition(BaseTask[ShowGameContext]):
         return True
 
 
-class DeplacementObject(BaseTask[ShowGameContext]):
+class DeplacementObject(BaseTask[WinterGameContext]):
     """Task to adjust the actuator to a predefined displacement position."""
 
     @override
-    def handle(self, ctx: ShowGameContext) -> bool:
+    def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator command to move to a displacement position.
 
         Args:
-            ctx (ShowGameContext): The current game context.
+            ctx (WinterGameContext): The current game context.
 
         Returns:
             bool: Always returns ``True`` after executing the action.

@@ -12,7 +12,7 @@ from arena.base_arena.arena_zones.structs import (
     ZoneAccessibility,
     ZoneType,
 )
-from geometry import LineString, OrientedPoint, Point
+from geometry import LineString, OrientedPoint
 from utils import Utils
 
 if TYPE_CHECKING:
@@ -33,7 +33,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         logger: Logger,
         zone_type: ZoneType,
         accessibility: ZoneAccessibility,
-        point: Point | OrientedPoint,
+        point: OrientedPoint,
         vector_width: float,
         buffer_size: float = 0.0,
         update_callback: Callable | None = None,
@@ -51,7 +51,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             zone_type (ZoneType): Type of the zone.
             accessibility (ZoneAccessibility): Accessibility properties of the
                 zone.
-            point (Point | OrientedPoint): Central point of the zone.
+            point (OrientedPoint): Central point of the zone.
             vector_width (float): Width of the vector representation.
             buffer_size (float, optional): Buffer size. Defaults to 0.0.
             update_callback (Callable | None, optional): Function to call when the
@@ -75,7 +75,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         self.speed_vector = speed_vector or SpeedVector(0.0, 0.0, 0.0)
         self.speed_vector.factor = vector_factor
         self.positions_record_size = positions_record_size
-        self.__positions_recorded = (
+        self.__positions_recorded: deque[Record] = (
             deque(maxlen=positions_record_size)
             if positions_recorded is None
             else positions_recorded
@@ -98,7 +98,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         return LineString(
             [
                 self.point,
-                Point(
+                OrientedPoint(
                     self.point.x + self.speed_vector.factored_dx,
                     self.point.y + self.speed_vector.factored_dy,
                 ),
@@ -112,9 +112,9 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             SpeedVector: Computed speed vector with magnitude and direction.
         """
         if len(self.__positions_recorded) < MIN_RECORDS_FOR_VECTOR:
-            self.logger.debug(
-                "Not enough positions recorded to compute speed vector. "
-                "Returning zero vector.",
+            self._logger.debug(
+                "[ARENA:Zone:Vector] Not enough positions recorded, "
+                "returning zero vector",
             )
             return SpeedVector(0, 0, 0)
 
@@ -125,8 +125,9 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         timestamp_delta = end_record.timestamp - start_record.timestamp
 
         if timestamp_delta <= 0 or timestamp_delta > self.no_detection_timeout:
-            self.logger.debug(
-                "Invalid or outdated time delta. Returning zero vector.",
+            self._logger.debug(
+                "[ARENA:Zone:Vector] Invalid/outdated time delta, "
+                "returning zero vector",
             )
             return SpeedVector(0, 0, 0)
 
@@ -138,7 +139,9 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         speed = distance / timestamp_delta if distance else 0
 
         if not speed:
-            self.logger.debug("No displacement detected. Returning zero vector.")
+            self._logger.debug(
+                "[ARENA:Zone:Vector] No displacement detected, returning zero vector",
+            )
             return SpeedVector(0, 0, 0)
 
         return SpeedVector(speed, dx / distance, dy / distance)
@@ -147,15 +150,15 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
     def update(
         self,
         team_color: TeamColor,
-        ally_position: Point | OrientedPoint,
-        enemy_position: Point | OrientedPoint,
+        ally_position: OrientedPoint,
+        enemy_position: OrientedPoint,
     ) -> None:
         """Update the zone state based on detected enemy movement.
 
         Args:
             team_color (TeamColor, optional): The color of the team.
-            ally_position (Point | OrientedPoint): Position of ally.
-            enemy_position (Point | OrientedPoint): Position of enemy.
+            ally_position (OrientedPoint): Position of ally.
+            enemy_position (OrientedPoint): Position of enemy.
         """
         super().update(team_color, ally_position, enemy_position)
         self.point = enemy_position
@@ -165,7 +168,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         vector_line = self._compute_vector_line()
 
         super().__init__(
-            logger=self.logger,
+            logger=self._logger,
             zone_type=self.zone_type,
             accessibility=self.accessibility,
             buffer_size=self.buffer_size,

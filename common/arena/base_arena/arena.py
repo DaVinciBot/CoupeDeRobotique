@@ -34,6 +34,7 @@ from geometry import (
 
 if TYPE_CHECKING:
     from matplotlib.figure import Figure as pltFigure
+    from numpy.typing import NDArray
 
 
 class BaseArena(ABC):
@@ -69,21 +70,21 @@ class BaseArena(ABC):
         """
         # region ====== Initialized constructor based attributes ======
         # 1. Logger
-        self.logger: Logger = logger
+        self._logger: Logger = logger
         # 2. Dimensions
         self.width: int = width
         self.height: int = height
 
         if border_buffer % chunk_size:
-            self.logger.warning(
-                "The border buffer is not a multiple of the chunk size -> "
-                "the not walkable area will not be aligned with the grid",
+            self._logger.warning(
+                "[ARENA:Grid] Border buffer not aligned with chunk size - "
+                "walkable area may not align with grid",
             )
 
         if obstacle_buffer % chunk_size:
-            self.logger.warning(
-                "The obstacle buffer is not a multiple of the chunk size -> "
-                "the not walkable area will not be aligned with the grid",
+            self._logger.warning(
+                "[ARENA:Grid] Obstacle buffer not aligned with chunk size - "
+                "walkable area may not align with grid",
             )
         # 3. Buffers
         self.border_buffer: float = border_buffer
@@ -208,32 +209,35 @@ class BaseArena(ABC):
         """
         return self.grid_manager
 
-    def _pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:
+    def _pol_to_abs_cart(self, polars: NDArray[np.float64]) -> MultiPoint:
         """Converts polar coordinates to absolute Cartesian coordinates.
 
         Args:
-            polars (np.ndarray):
+            polars (NDArray[np.float64]):
                 Array of polar coordinates in the form of (angle, distance).
 
         Returns:
             MultiPoint: Array of absolute Cartesian coordinates.
         """
-        return MultiPoint(
-            [
-                (
-                    self.ally_zone.point.x
-                    + np.cos(self.ally_zone.point.theta - polars[i, 0]) * polars[i, 1],
-                    self.ally_zone.point.y
-                    + np.sin(self.ally_zone.point.theta - polars[i, 0]) * polars[i, 1],
-                )
-                for i in range(len(polars))
-            ],
-        )
+        polars = np.asarray(polars, dtype=float)
+        if not polars.size:
+            return MultiPoint([])
+
+        points = [
+            (
+                self.ally_zone.point.x
+                + np.cos(self.ally_zone.point.theta + angle) * dist,
+                self.ally_zone.point.y
+                + np.sin(self.ally_zone.point.theta + angle) * dist,
+            )
+            for angle, dist in polars
+        ]
+        return MultiPoint(points)
 
     # endregion
 
     # region ====== Public Methods ======
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def set_team_color(self, team_color: TeamColor) -> None:
         """Set the team color and trigger updates to zones.
 
@@ -241,8 +245,9 @@ class BaseArena(ABC):
             team_color (TeamColor): The team's color.
         """
         if team_color not in {TeamColor.YELLOW, TeamColor.BLUE}:
-            self.logger.error(
-                f"Invalid team color: {team_color}. Must be 'yellow' or 'blue'.",
+            self._logger.error(
+                f"[ARENA:Config] Invalid team color: {team_color} "
+                "- must be YELLOW or BLUE",
             )
 
         self.team_color: TeamColor = team_color
@@ -252,23 +257,25 @@ class BaseArena(ABC):
             optimized_update=False,
         )  # Force to update all zones
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def update(
         self,
         ally_position: OrientedPoint,
-        lidar_scan_polars: np.ndarray,  # Polars coordinates issued from the lidar scan
+        lidar_scan_polars: NDArray[np.float64],  # Polars coordinates
         *,
         optimized_update: bool = True,
-        _enemy_position: Point | None = None,  # Only for testing and simulation purpose
+        _enemy_position: OrientedPoint
+        | None = None,  # Only for testing and simulation purpose
     ) -> None:
         """Updates the state of the arena, zones, and grid.
 
         Args:
             ally_position (OrientedPoint): Current position of the ally robot.
-            lidar_scan_polars (np.ndarray): Lidar scan data in polar coordinates.
+            lidar_scan_polars (NDArray[np.float64]):
+                Lidar scan data in polar coordinates.
             optimized_update (bool, optional):
                 If ``True``, only updates intersecting zones. Defaults to ``True``.
-            _enemy_position (Point | None, optional):
+            _enemy_position (OrientedPoint | None, optional):
                 Pre-defined enemy position. Defaults to None.
         """
         # 1.Compute enemy position if not directly provided in absolute coordinates
@@ -288,7 +295,10 @@ class BaseArena(ABC):
 
         # 3.Update all other zones
         # optimized: Update only the zones that intersect with the points
-        all_points: list[OrientedPoint | Point] = [ally_position, enemy_position]
+        all_points: list[OrientedPoint] = [
+            ally_position,
+            enemy_position,
+        ]
         for zone in self.zones:
             if not optimized_update or any(
                 zone.polygon.contains(pt) for pt in all_points
@@ -304,12 +314,12 @@ class BaseArena(ABC):
 
     def compute_enemy_position(
         self,
-        lidar_scan_polars: np.ndarray,
+        lidar_scan_polars: NDArray[np.float64],
         ally_position: OrientedPoint,
         *,
         _start_time: int = -1,
         _numb_enemy: bool = False,
-    ) -> Point | OrientedPoint:
+    ) -> OrientedPoint:
         """Computes the position of the enemy and updates the arena.
 
         This function calculates the position of the enemy by processing the
@@ -319,7 +329,8 @@ class BaseArena(ABC):
         If the enemy position is within a stuff zone, it marks that zone as FORBIDDEN.
 
         Args:
-            lidar_scan_polars (np.ndarray): Detection points from the LIDAR scan.
+            lidar_scan_polars (NDArray[np.float64]):
+                Detection points from the LIDAR scan.
             ally_position (OrientedPoint): Current ally position.
             _start_time (int, optional):
                 Starting timestamp for the computation. Defaults to -1.
@@ -327,14 +338,14 @@ class BaseArena(ABC):
                 Whether the enemy is inactive. Defaults to ``False``.
 
         Returns:
-            Point | OrientedPoint: The computed enemy position.
+            OrientedPoint: The computed enemy position.
         """
         obstacles: MultiPoint = self.remove_outside(
             self._pol_to_abs_cart(lidar_scan_polars),
         )
 
         if not is_empty(obstacles):
-            return nearest_points(ally_position, obstacles)[1]
+            return OrientedPoint.from_point(nearest_points(ally_position, obstacles)[1])
 
         return self.enemy_zone.point
 
@@ -353,22 +364,24 @@ class BaseArena(ABC):
 
     def compute_goal_position(
         self,
-        goal: int | BaseArenaZone | OrientedPoint | Point,
-    ) -> OrientedPoint | Point | None:
+        goal: int | BaseArenaZone | OrientedPoint,
+    ) -> OrientedPoint | None:
         """Compute a goal position based on zone or point information.
 
         Args:
-            goal (int | BaseArenaZone | OrientedPoint | Point): Zone identifier
+            goal (int | BaseArenaZone | OrientedPoint): Zone identifier
                 or direct destination.
 
         Returns:
-            OrientedPoint | Point | None: Computed destination or ``None`` if the
+            OrientedPoint | None: Computed destination or ``None`` if the
             goal type is invalid.
         """
         # 1. If goal is defined as int, it's a zone ID
         if isinstance(goal, int):
             if goal > len(self.zones):
-                self.logger.error("Invalid zone ID given in trajectory parameters.")
+                self._logger.error(
+                    "[ARENA:Zone] Invalid zone ID in trajectory parameters",
+                )
                 return None
 
             return self.zones[goal].get_go_to_position(
@@ -383,15 +396,15 @@ class BaseArena(ABC):
                 team_color=self.team_color,
             )
 
-        # 3. If goal is an OrientedPoint or Point, return it as is
+        # 3. If goal is an OrientedPoint, return it as is
         return goal
 
     # TODO: Check if this function is still needed, test them (last year code)
-    def valid_position(self, pos: Point) -> bool:
+    def valid_position(self, pos: OrientedPoint) -> bool:
         """Check if a given position is within the valid playing area.
 
         Args:
-            pos (Point): The position to check.
+            pos (OrientedPoint): The position to check.
 
         Returns:
             bool: ``True`` if the position is within the playing area,
@@ -401,12 +414,12 @@ class BaseArena(ABC):
 
     def get_zone_by_location(
         self,
-        location: int | BaseArenaZone | Point | OrientedPoint,
+        location: int | BaseArenaZone | OrientedPoint,
     ) -> BaseArenaZone | None:
         """Find the zone that contains a given location.
 
         Args:
-            location (int | BaseArenaZone | Point | OrientedPoint):
+            location (int | BaseArenaZone | OrientedPoint):
                 The location to check.
 
         Returns:
@@ -415,7 +428,9 @@ class BaseArena(ABC):
         """
         if isinstance(location, int):
             if location >= len(self.zones):
-                self.logger.error("Invalid zone ID given in trajectory parameters.")
+                self._logger.error(
+                    "[ARENA:Zone] Invalid zone ID in trajectory parameters",
+                )
                 return None
             return self.zones[location]
         if isinstance(location, BaseArenaZone):
@@ -504,7 +519,13 @@ class BaseArena(ABC):
                 Defaults to None -> norm * 0.2.
             head_length (float | None): Length of the arrow head.
                 Defaults to None -> norm * 0.3.
+
+        Raises:
+            ValueError: If `point.theta` is None.
         """
+        if point.theta is None:
+            msg = "point.theta must be defined to draw an oriented arrow."
+            raise ValueError(msg)
         if head_width is None:
             head_width = norm * 0.2
         if head_length is None:
@@ -687,20 +708,27 @@ class BaseArena(ABC):
                 for go_to_position in zone.go_to_positions:
                     # Plot nearest go-to position as green arrow or green dot
                     if go_to_position == nearest_point:
-                        if isinstance(go_to_position, OrientedPoint):
+                        if go_to_position.theta is not None:
+                            ax.plot(
+                                go_to_position.x,
+                                go_to_position.y,
+                                "gx",
+                                markersize=5,
+                            )
                             self.__plot_oriented_arrow(
                                 ax,
                                 go_to_position,
                                 color="green",
                                 norm=5,
-                                head_width=4,
-                                head_length=3,
+                                head_width=3,
+                                head_length=1.5,
                             )
-                        elif isinstance(go_to_position, Point):
-                            ax.plot(go_to_position.x, go_to_position.y, "go")
                         else:
-                            self.logger.error(
-                                f"Invalid go-to position type: {type(go_to_position)}",
+                            ax.plot(
+                                go_to_position.x,
+                                go_to_position.y,
+                                "go",
+                                markersize=4,
                             )
                     else:
                         ax.plot(go_to_position.x, go_to_position.y, "rx", markersize=5)
@@ -799,18 +827,18 @@ class BaseArena(ABC):
     def _plot_additional_points(
         self,
         ax: plt.Axes,
-        points: list[Point | OrientedPoint] | None,
+        points: list[OrientedPoint] | None,
     ) -> None:
         """Plot additional points or oriented points on the arena.
 
         Args:
             ax (plt.Axes): Axis on which to draw.
-            points (list[Point | OrientedPoint] | None): Points to display.
+            points (list[OrientedPoint] | None): Points to display.
         """
         if not points:
             return
         for p in points:
-            if isinstance(p, OrientedPoint):
+            if p.theta is not None:
                 self.__plot_oriented_arrow(
                     ax,
                     p,
@@ -819,10 +847,8 @@ class BaseArena(ABC):
                     head_width=4,
                     head_length=3,
                 )
-            elif isinstance(p, Point):
-                ax.plot(p.x, p.y, "ro")
             else:
-                self.logger.error(f"Invalid point type: {type(p)}")
+                ax.plot(p.x, p.y, "ro")
 
     @staticmethod
     def _plot_trajectory(
@@ -850,13 +876,10 @@ class BaseArena(ABC):
         Args:
             ax (plt.Axes): Axis to configure.
         """
-        ax.set_xlim(self.width, 0)
+        ax.set_xlim(0, self.width)
         ax.set_ylim(0, self.height)
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
-        ax.spines["left"].set_position(("axes", 1))
-        ax.yaxis.tick_right()
-        ax.yaxis.set_label_position("right")
         ax.set_aspect("equal", adjustable="box")
         ax.set_title("Arena Visualization")
         plt.legend(loc="center right", bbox_to_anchor=(-0.1, 0.5))
@@ -876,7 +899,7 @@ class BaseArena(ABC):
         show: bool = True,
         plot: tuple[plt.Axes, pltFigure] | None = None,
         additional_zones: list[BaseArenaZone] | None = None,
-        additional_points: list[Point | OrientedPoint] | None = None,
+        additional_points: list[OrientedPoint] | None = None,
     ) -> tuple[plt.Axes, pltFigure]:
         """Visualize the arena and optionally display the plot.
 
@@ -896,7 +919,7 @@ class BaseArena(ABC):
                 Existing axis and figure. Defaults to ``None``.
             additional_zones (list[BaseArenaZone] | None, optional):
                 Extra zones to draw. Defaults to ``None``.
-            additional_points (list[Point | OrientedPoint] | None, optional):
+            additional_points (list[OrientedPoint] | None, optional):
                 Extra points to draw. Defaults to ``None``.
 
         Returns:

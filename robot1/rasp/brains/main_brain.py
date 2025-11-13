@@ -16,14 +16,14 @@ from ws_comms import WServerRouteManager, WSmsg
 
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
-from boombot_strategy import ShowGameContext
+from boombot_strategy import WinterGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 
 if TYPE_CHECKING:
-    from arena.show_arena import ShowArena
+    from arena.winter_arena import WinterArena
     from sensors import Inputs, Lidar, LidarDummy
 
 
@@ -36,7 +36,7 @@ class MainBrain(Brain):
         # Sensor
         lidar: Lidar | LidarDummy,
         # Environment
-        arena: ShowArena,
+        arena: WinterArena,
         # WS routes
         ws_cmd: WServerRouteManager,
         ws_ui: WServerRouteManager,
@@ -48,13 +48,13 @@ class MainBrain(Brain):
         Args:
             logger (Logger): Logger instance for logging messages.
             lidar (Lidar | LidarDummy): Lidar instance for distance measurements.
-            arena (ShowArena): Arena instance for representing the game arena.
+            arena (WinterArena): Arena instance for representing the game arena.
             ws_cmd (WServerRouteManager): WebSocket command route manager.
             ws_ui (WServerRouteManager): WebSocket UI route manager.
             inputs (Inputs): Inputs instance for handling sensor data.
         """
         self.lidar: Lidar | LidarDummy = lidar
-        self.arena: ShowArena = arena
+        self.arena: WinterArena = arena
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
@@ -141,7 +141,7 @@ class MainBrain(Brain):
         # --- 3) Build the strategy --- #
 
         strategy = TowerRushAltStrategy(
-            ShowGameContext(
+            WinterGameContext(
                 arena=self.arena,
                 rolling_basis=rolling_basis,
                 actuators=actuators,
@@ -153,7 +153,7 @@ class MainBrain(Brain):
         # visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
-        context = ShowGameContext(
+        context = WinterGameContext(
             arena=self.arena,
             rolling_basis=rolling_basis,
             actuators=actuators,
@@ -162,11 +162,11 @@ class MainBrain(Brain):
 
         strategy.runner.handle(context)
 
-        # Update the rolling basis odometrie from the context
+        # Update shared state from the context
         self.score = context.score
         self.ui_state["score"] = self.score
         self.rolling_basis_odometrie = rolling_basis.odometrie
-        self.ui_state["odometrie_state"] = rolling_basis.odometrie
+        self.ui_state["odometrie_state"] = self.rolling_basis_odometrie
 
     @Brain.task(
         process=True,
@@ -245,7 +245,9 @@ class MainBrain(Brain):
         ui = await self.ws_ui.receiver.get()
 
         if ui != WSmsg():
-            self.logger.info(f"UI instruction {ui.msg} received: {ui.data}")
+            self.logger.info(
+                f"[WS:UI] Instruction received: {ui.msg} | data: {ui.data}",
+            )
             if ui.msg == "eval":
                 instructions = []
                 if isinstance(ui.data, str):
@@ -261,11 +263,13 @@ class MainBrain(Brain):
             elif ui.msg == "team change":
                 if ui.data["team"] in {"yellow", "blue"}:
                     self.arena.set_team_color(TeamColor[ui.data["team"].upper()])
-                    self.logger.info(f"Team color set to {ui.data['team']}")
+                    self.logger.info(f"[WS:UI] Team color set to {ui.data['team']}")
                 else:
-                    self.logger.warning(f"Invalid team color: {ui.data}")
+                    self.logger.warning(f"[WS:UI] Invalid team color: {ui.data}")
             else:
-                self.logger.warning(f"Command not implemented: {ui.msg} / {ui.data}")
+                self.logger.warning(
+                    f"[WS:UI] Command not implemented: {ui.msg} / {ui.data}",
+                )
 
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def update_arena(self) -> None:
@@ -279,7 +283,7 @@ class MainBrain(Brain):
 
     # @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     # async def print_odo(self) -> None:
-    #     self.logger.info(f"Rolling basis odometrie: {self.rolling_basis_odometrie}")
+    #     self.logger.info(f"[CTRL:RB] Rolling basis odometrie: {self.rolling_basis_odometrie}")
 
     # endregion
 
@@ -292,8 +296,8 @@ class MainBrain(Brain):
             await asyncio.sleep(0.1)
 
         self.logger.info(
-            f"Team color is set to {self.arena.team_color.name.lower()}."
-            "Starting the brain.",
+            f"[BRAIN:Init] Team color set to {self.arena.team_color.name.lower()}. "
+            "Starting brain.",
         )
 
     @Brain.task(process=False, run_on_start=True)
@@ -316,7 +320,7 @@ class MainBrain(Brain):
         """Starts the main brain process."""
         if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
             self.logger.warning(
-                "All subsystems are in dummy mode. The robot will not move.",
+                "[BRAIN:Init] All subsystems in DUMMY mode - robot will not move",
             )
             self.arena.set_team_color(TeamColor.YELLOW)
         else:
@@ -325,13 +329,13 @@ class MainBrain(Brain):
         start_position = OrientedPoint(0, 0, 0)
         enemy_position = OrientedPoint(150, 200, -pi / 2)
         if self.arena.team_color == TeamColor.YELLOW:
-            self.logger.info("Starting as YELLOW team.")
-            start_position = OrientedPoint(177.5, 21, -pi / 2)
-            enemy_position = OrientedPoint(122.5, 21, -pi / 2)
-        elif self.arena.team_color == TeamColor.BLUE:
-            self.logger.info("Starting as BLUE team.")
+            self.logger.info("[BRAIN:Init] Starting as YELLOW team")
             start_position = OrientedPoint(122.5, 21, -pi / 2)
             enemy_position = OrientedPoint(177.5, 21, -pi / 2)
+        elif self.arena.team_color == TeamColor.BLUE:
+            self.logger.info("[BRAIN:Init] Starting as BLUE team")
+            start_position = OrientedPoint(177.5, 21, -pi / 2)
+            enemy_position = OrientedPoint(122.5, 21, -pi / 2)
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(

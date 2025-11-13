@@ -10,7 +10,7 @@ from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 
 from a_config_loader import CONFIG
 from arena.base_arena.arena_zones import AllyZone
-from arena.show_arena import ShowArena
+from arena.winter_arena import WinterArena
 from brains import MainBrain
 from geometry import OrientedPoint
 from navigation.navigator.task import NavigatorTaskParams
@@ -136,7 +136,7 @@ if __name__ == "__main__":
 
     # Environment
     # Arena
-    arena = ShowArena(
+    arena = WinterArena(
         logger=logger_show_arena,
         border_buffer=CONFIG.ARENA_BORDER_BUFFER,
         obstacle_buffer=CONFIG.ARENA_OBSTACLE_BUFFER,
@@ -156,7 +156,7 @@ if __name__ == "__main__":
 
     # Brain
     # Register object types that must be shared between processes
-    DictProxyAccessor.add_serializable_type(ShowArena, arena)
+    DictProxyAccessor.add_serializable_type(WinterArena, arena)
     DictProxyAccessor.add_serializable_type(OrientedPoint)
     DictProxyAccessor.add_serializable_type(NavigatorTaskParams)
     DictProxyAccessor.add_serializable_type(AllyZone)
@@ -181,7 +181,10 @@ if __name__ == "__main__":
     def force_kill_all_python() -> None:
         """Kill all running Python processes using pkill -9 python."""
         subprocess.run(["pkill", "-9", "python"], check=False)  # noqa: S607
-        logger_brain.fatal("All Python processes killed.")
+        logger_brain.fatal("[SHUTDOWN] All Python processes killed.")
+
+    logger_brain.info("[INIT] All systems initialized successfully")
+    logger_brain.info("[INIT] Starting WebSocket server...")
 
     ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()

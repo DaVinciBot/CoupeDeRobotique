@@ -92,9 +92,8 @@ class RollingBasis(BaseComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        # Temp to debug logs
-        self.logger.info(
-            f"Teensy Rolling Basis says: {msg.decode('ascii', errors='ignore')}",
+        self._logger.debug(
+            f"[CTRL:RB:Teensy] {msg.decode('ascii', errors='ignore')}",
         )
 
     def rcv_rolling_basis_state(self, msg: bytes) -> None:
@@ -124,7 +123,7 @@ class RollingBasis(BaseComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self.logger.warning(f"Teensy Motors does not know the message {msg.hex()}")
+        self._logger.warning(f"[CTRL:RB:Teensy] Unknown message type: {msg.hex()}")
 
     # endregion
 
@@ -139,7 +138,17 @@ class RollingBasis(BaseComTeensy):
 
         Args:
             target_position (OrientedPoint): Desired position and orientation.
+
+        Raises:
+            ValueError: If target_position.theta is None.
         """
+        if target_position.theta is None:
+            msg = (
+                f"Target position theta must be defined, got None at "
+                f"position ({target_position.x}, {target_position.y})"
+            )
+            raise ValueError(msg)
+
         msg = (
             Messages.SET_TARGET_POSITION.to_bytes()
             + struct.pack("<d", target_position.x)
@@ -157,7 +166,17 @@ class RollingBasis(BaseComTeensy):
 
         Args:
             odometrie (OrientedPoint): The new odometrie values.
+
+        Raises:
+            ValueError: If odometrie.theta is None.
         """
+        if odometrie.theta is None:
+            msg = (
+                f"Odometrie theta must be defined, got None at "
+                f"position ({odometrie.x}, {odometrie.y})"
+            )
+            raise ValueError(msg)
+
         msg = (
             Messages.SET_ODOMETRIE.to_bytes()
             + struct.pack("<d", odometrie.x)
@@ -250,7 +269,7 @@ class RollingBasis(BaseComTeensy):
             self.linear_position_pid = pid
             self._send_pid(PidID.LINEAR_POSITION.value, pid)
         except (ValueError, TypeError) as e:
-            self.logger.error(f"Failed to set linear position PID: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to set linear position PID: {e}")
 
     @overload
     def set_angular_position_pid(self, *args: float) -> None: ...
@@ -283,7 +302,7 @@ class RollingBasis(BaseComTeensy):
             self.angular_position_pid = pid
             self._send_pid(PidID.ANGULAR_POSITION.value, pid)
         except (ValueError, TypeError) as e:
-            self.logger.error(f"Failed to set angular position PID: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to set angular position PID: {e}")
 
     def set_pids(
         self,
@@ -311,7 +330,7 @@ class RollingBasis(BaseComTeensy):
                 angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
             )
         except (ValueError, TypeError) as e:
-            self.logger.error(f"Failed to initialize PIDs: {e}")
+            self._logger.error(f"[CTRL:RB] Failed to initialize PIDs: {e}")
 
     # endregion
 

@@ -30,18 +30,17 @@ class GraphRunner:
             parallel (bool, optional): Execute all valid transitions in parallel when
                 ``True``. Defaults to ``False``.
         """
-        self.logger = logger or Logger(
+        self._logger = logger or Logger(
             identifier="GraphRunner",
             follow_logger_manager_rules=True,
         )
         self.parallel = parallel
         self.active: list[BaseTaskNode] = [start]
         self.prev: dict[BaseTaskNode, BaseTaskNode | None] = {start: None}
-        msg = (
-            f"GraphRunner initialized with start node '{start.name}', "
-            f"parallel={self.parallel}"
+        self._logger.info(
+            f"[STRAT] GraphRunner initialized with start: '{start.name}', "
+            f"parallel={self.parallel}",
         )
-        self.logger.info(msg)
 
     def handle(self, ctx: BaseGameContext) -> None:
         """Advance the graph execution by one step.
@@ -50,8 +49,9 @@ class GraphRunner:
             ctx (BaseGameContext): Context passed to each node.
         """
         if not self.active:
-            msg = "No active nodes to execute; graph execution complete or not started."
-            self.logger.warning(msg)
+            self._logger.warning(
+                "[STRAT] No active nodes - execution complete or not started",
+            )
             return
 
         next_active: list[BaseTaskNode] = []
@@ -61,19 +61,18 @@ class GraphRunner:
             # Log entry if first time
             if not node.entered:
                 task_name = node.tasks[0].__class__.__name__ if node.tasks else "NoTask"
-                msg = f"==> Entering node: {node.name} [{task_name}]"
-                self.logger.info(msg)
+                self._logger.info(f"[STRAT] ==> Entering: {node.name} [{task_name}]")
 
             done = node.handle(ctx)
             if not done:
-                msg = f"... still executing: {node.name}"
-                self.logger.debug(msg)
+                self._logger.debug(f"[STRAT] ... executing: {node.name}")
                 next_active.append(node)
                 continue
 
             # Node completed
-            msg = f"<== Finished node: {node.name} with status {node.status.name}"
-            self.logger.info(msg)
+            self._logger.info(
+                f"[STRAT] <== Finished: {node.name} with status {node.status.name}",
+            )
 
             # Gather valid transitions
             valid_transitions = [
@@ -83,18 +82,20 @@ class GraphRunner:
                 and t.target not in self.prev.items()
             ]
             if not valid_transitions:
-                msg = f"    No valid transitions from '{node.name}'; branch ends here."
-                self.logger.info(msg)
+                msg = (
+                    f"[STRAT]     No valid transitions from '{node.name}' - branch ends"
+                )
+                self._logger.info(msg)
                 continue
 
             if self.parallel:
                 for transition in valid_transitions:
                     target = transition.target
                     msg = (
-                        f"    Transition: '{node.name}' -> '{target.name}' via "
-                        f"{transition.__class__.__name__}"
+                        f"[STRAT]     Transition: '{node.name}' -> '{target.name}' "
+                        f"via {transition.__class__.__name__}"
                     )
-                    self.logger.info(msg)
+                    self._logger.info(msg)
                     next_active.append(target)
                     self.prev[target] = node
             else:
@@ -106,10 +107,10 @@ class GraphRunner:
                 score_val = best.target.score(prev_node, ctx)
                 target = best.target
                 msg = (
-                    f"    Chosen transition: '{node.name}' -> '{target.name}' via "
-                    f"{best.__class__.__name__} (score={score_val:.2f})"
+                    f"[STRAT]     Chosen: '{node.name}' -> '{target.name}' "
+                    f"via {best.__class__.__name__} (score={score_val:.2f})"
                 )
-                self.logger.info(msg)
+                self._logger.info(msg)
                 next_active.append(target)
                 self.prev[target] = node
 
@@ -126,16 +127,16 @@ class GraphRunner:
         step = 0
         while self.active and step < max_steps:
             active_names = [n.name for n in self.active]
-            msg = f"GraphRunner step {step + 1}, active nodes: {active_names}"
-            self.logger.debug(msg)
+            msg = f"[STRAT] Step {step + 1}, active: {active_names}"
+            self._logger.debug(msg)
             self.handle(ctx)
             step += 1
         if self.active:
             remaining = [n.name for n in self.active]
             msg = (
-                f"GraphRunner reached max_steps ({max_steps}) with active nodes "
-                f"remaining: {remaining}"
+                f"[STRAT] Max steps reached ({max_steps}) - "
+                f"active nodes remaining: {remaining}"
             )
-            self.logger.warning(msg)
+            self._logger.warning(msg)
         else:
-            self.logger.info("GraphRunner completed all nodes.")
+            self._logger.info("[STRAT] All nodes completed")

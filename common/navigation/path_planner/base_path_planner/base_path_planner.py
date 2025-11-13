@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import functools
+import math
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, override
 
 from loggerplusplus import Logger
 
+from geometry import OrientedPoint
 from navigation.path_planner.base_path_planner.base_path_planner_params import (
     BasePathPlannerParams,
     BasePathPlannerPlanPathParams,
@@ -15,8 +17,6 @@ from navigation.path_planner.base_path_planner.base_path_planner_params import (
 
 if TYPE_CHECKING:
     from collections.abc import Callable
-
-    from geometry import OrientedPoint
 
 
 class BasePathPlanner[
@@ -33,7 +33,7 @@ class BasePathPlanner[
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to None.
         """
-        self.logger: Logger = logger or Logger(
+        self._logger: Logger = logger or Logger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )
@@ -79,6 +79,27 @@ class BasePathPlanner[
         Returns:
             list[OrientedPoint]: A list of waypoints representing the planned path.
         """
+
+    @staticmethod
+    def _compute_backward_position(goal: OrientedPoint) -> OrientedPoint:
+        """Compute the backward-facing pose by flipping orientation by π.
+
+        Args:
+            goal (OrientedPoint): Original pose.
+
+        Returns:
+            OrientedPoint: Flipped pose for backward motion.
+
+        Raises:
+            ValueError: If goal.theta is None.
+        """
+        if goal.theta is None:
+            msg = (
+                f"Cannot compute backward position: theta must be defined, "
+                f"got None at position ({goal.x}, {goal.y})"
+            )
+            raise ValueError(msg)
+        return OrientedPoint(goal.x, goal.y, goal.theta + math.pi)
 
     @override
     def __str__(self) -> str:

@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
-from geometry import OrientedPoint, Point
+from geometry import OrientedPoint
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
 )
@@ -98,6 +98,7 @@ class GoCentroidOfZone(NavigationTask):
         self._is_initialized: bool = False
         self.navigator_task: NavigatorTask
 
+    @override
     def _initialize(self, ctx: BaseGameContext) -> None:
         """Initialize by computing the target position from the zone centroid.
 
@@ -107,18 +108,14 @@ class GoCentroidOfZone(NavigationTask):
         self._is_initialized = True
 
         # Compute the goal position with orientation
-        go_to_position: OrientedPoint = ctx.arena.compute_goal_position(self.zone_id)
-        centroid: Point = ctx.arena.zones[self.zone_id].polygon.centroid
-        centroid_with_theta: OrientedPoint = OrientedPoint(
-            centroid.x,
-            centroid.y,
-            go_to_position.theta,
+        centroid: OrientedPoint = OrientedPoint.from_point(
+            ctx.arena.zones[self.zone_id].polygon.centroid,
         )
 
         # Create a NavigatorTask using the calculated goal
         self.navigator_task = NavigatorTask(
             params=NavigatorTaskParams(
-                goal=centroid_with_theta,
+                goal=centroid,
                 timeout=self.timeout,
                 path_planner_params=self.path_planner_params,
                 trajectory_planner_params=self.trajectory_planner_params,

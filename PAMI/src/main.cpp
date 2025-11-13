@@ -1,5 +1,4 @@
 #include "config.h"
-#include "spdlog/spdlog.h"
 
 Motor* leftMotor = new Motor(LEFT_STEP_PIN,
                              LEFT_DIR_PIN,
@@ -63,7 +62,7 @@ void navigationUpdate() {
     if (ACS) {
         if (oldACS)
             return;
-        spdlog::info("ACS activated, stopping rolling basis.");
+        Serial.println("ACS activated, stopping rolling basis.");
         oldACS = ACS;    // Update oldACS to current ACS state
         currentIndex--;  // Decrement index if ACS is true
         if (currentIndex < 0) {
@@ -78,7 +77,7 @@ void navigationUpdate() {
             dt += millis() - lastTimerrrr;
             lastTimerrrr = millis();
         } else {
-            spdlog::info("All points navigated, stopping navigation.");
+            Serial.println("All points navigated, stopping navigation.");
             navigation->stop();  // Stop navigation if all points are navigated
                                  // start SERVO
         }
@@ -98,7 +97,7 @@ void setup() {
     setCpuFrequencyMhz(240);
 
     Serial.begin(115200);
-    spdlog::info("\n-- PAMI test --\n");
+    Serial.println("\n-- PAMI test --\n");
 
     lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
     lidar->onReceive([]() {
@@ -111,17 +110,17 @@ void setup() {
                 // canStartTimer = true; // Set canStart to true if tirette is
                 // on
                 canStart = true;
-                spdlog::info("Tirette activated, starting navigation.");
+                Serial.println("Tirette activated, starting navigation.");
             }
-            spdlog::info("Waiting for tirette activation...");
+            Serial.println("Waiting for tirette activation...");
         } else {
             lidarUpdate();  // Call lidar update function when data is received
         }
     });
-    spdlog::info("LIDAR initialized");
+    Serial.println("LIDAR initialized");
     delay(100);  // Wait for LIDAR to stabilize
 #if ENABLE_OTA
-    spdlog::info("OTA enabled");
+    Serial.println("OTA enabled");
     ota.begin();
     server.begin();
 #endif
@@ -129,12 +128,12 @@ void setup() {
     isInit = com->begin(SS, RST, BUSY);
     // initialize_callback_functions();
     if (isInit) {
-        spdlog::info("LoRa initialized");
+        Serial.println("LoRa initialized");
     } else {
-        spdlog::error("LoRa initialization failed");
+        Serial.println("[ERROR] LoRa initialization failed");
     }
 #else
-    spdlog::warn("LoRa not enabled");
+    Serial.println("LoRa not enabled");
 #endif
     // MovementTimer = timerBegin(0, 24000, true);                   // Create a
     // timer with 8000 prescaler (80MHz / 8000 = 10kHz)
@@ -151,10 +150,10 @@ void setup() {
     // timerAlarmWrite(lidarTimer, 1000, true);              // Count to 1000 in
     // order to trigger the interrupt. (10kHz / 1000 = 10Hz)
     // timerAlarmEnable(lidarTimer);                         // Enable the lidar
-    // timer interrupt spdlog::info("Setup complete, starting navigation...");
+    // timer interrupt Serial.println("Setup complete, starting navigation...");
 }
 
-long lastTime = 0;  // Variable to store the last time the loop was executed
+long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
     if (millis() - lastTime > 2 &&
         canStart)  // Check if 2ms have passed since the last navigation update
@@ -162,7 +161,7 @@ void loop() {
         navigationUpdate();  // Call navigation update function
         lastTime = millis();
     }
-    lidar->loop();
+    lidar->update();
 #if ENABLE_OTA
     ota.loop();
 #endif
@@ -172,9 +171,9 @@ void loop() {
     else {
         isInit = com->begin(SS, RST, BUSY);
         if (isInit) {
-            spdlog::info("LoRa re-initialized");
+            Serial.println("LoRa re-initialized");
         } else {
-            spdlog::error("LoRa re-initialization failed");
+            Serial.println("[ERROR] LoRa re-initialization failed");
         }
     }
 

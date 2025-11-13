@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, override
 
 from arena.base_arena.arena_zones.base_arena_zone import BaseArenaZone
 from arena.base_arena.arena_zones.structs import ZoneAccessibility, ZoneType
+from geometry import OrientedPoint
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -13,7 +14,7 @@ if TYPE_CHECKING:
     from loggerplusplus import Logger
 
     from arena.base_arena.team_color import TeamColor
-    from geometry import OrientedPoint, Point, Polygon
+    from geometry import Polygon
 
 
 class StuffZone(BaseArenaZone):
@@ -26,7 +27,7 @@ class StuffZone(BaseArenaZone):
         polygon: Polygon | None = None,
         buffered_polygon: Polygon | None = None,
         update_callback: Callable | None = None,
-        go_to_positions: list[OrientedPoint | Point] | None = None,
+        go_to_positions: list[OrientedPoint] | None = None,
     ) -> None:
         """Initializes the StuffZone with geometry, buffer, and accessibility.
 
@@ -40,7 +41,7 @@ class StuffZone(BaseArenaZone):
                 Buffered polygon geometry. Defaults to None.
             update_callback (Callable | None, optional):
                 Function to be called on updates. Defaults to None.
-            go_to_positions (list[OrientedPoint | Point] | None, optional):
+            go_to_positions (list[OrientedPoint] | None, optional):
                 List of go-to positions within the zone. Defaults to None.
         """
         super().__init__(
@@ -59,15 +60,15 @@ class StuffZone(BaseArenaZone):
     def update(
         self,
         team_color: TeamColor,
-        ally_position: Point | OrientedPoint,
-        enemy_position: Point | OrientedPoint,
+        ally_position: OrientedPoint,
+        enemy_position: OrientedPoint,
     ) -> None:
         """Updates the zone accessibility based on the positions of allies and enemies.
 
         Args:
             team_color (TeamColor): The color of the team.
-            ally_position (Point | OrientedPoint): Position of an ally.
-            enemy_position (Point | OrientedPoint): Position of an enemy.
+            ally_position (OrientedPoint): Position of an ally.
+            enemy_position (OrientedPoint): Position of an enemy.
         """
         super().update(team_color, ally_position, enemy_position)
 
@@ -83,7 +84,7 @@ class StuffZone(BaseArenaZone):
         self,
         ally_position: OrientedPoint,
         team_color: TeamColor,
-    ) -> OrientedPoint | Point | None:
+    ) -> OrientedPoint | None:
         """Determine the best go-to position for an ally in the given zone.
 
         Args:
@@ -91,32 +92,30 @@ class StuffZone(BaseArenaZone):
             team_color (TeamColor): Color of the team.
 
         Returns:
-            OrientedPoint | Point | None:
+            OrientedPoint | None:
                 Best go-to position, or ``None`` if inaccessible.
         """
         if self.accessibility == ZoneAccessibility.FORBIDDEN:
-            self.logger.debug(
-                f"GoTo position request: Zone {self.zone_type} is not accessible.",
+            self._logger.debug(
+                f"[ARENA:Zone:Stuff] GoTo request: {self.zone_type} not accessible",
             )
             return None
 
         # If no specific go-to positions are defined, return the centroid of the zone
         if not self.go_to_positions:
-            self.logger.debug(
-                "GoTo position request: "
-                f"No defined go-to positions for zone {self.zone_type}, "
-                f"returning centroid [{self.polygon.centroid}]",
+            self._logger.debug(
+                f"[ARENA:Zone:Stuff] GoTo request: No positions for {self.zone_type}, "
+                f"using centroid {self.polygon.centroid}",
             )
-            return self.polygon.centroid
+            return OrientedPoint.from_point(self.polygon.centroid)
 
         nearest_position = min(
             self.go_to_positions,
             key=ally_position.distance,
         )
-        msg = (
-            "GoTo position request: Nearest go-to position to ally "
-            f"[{ally_position}] is [{nearest_position}]"
+        self._logger.debug(
+            f"[ARENA:Zone:Stuff] GoTo request: Nearest position {nearest_position} "
+            f"from ally at {ally_position}",
         )
-        self.logger.debug(msg)
 
         return nearest_position
