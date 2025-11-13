@@ -15,7 +15,6 @@ from arena.base_arena.arena_zones.color_reserved_zones import (
 )
 from arena.base_arena.arena_zones.drop_zone import DropZone
 from arena.base_arena.arena_zones.forbidden_zone import ForbiddenZone
-from arena.base_arena.arena_zones.resetting_zone import ResettingZone
 from arena.base_arena.arena_zones.speed_vector_auto_calculate_zones import (
     BaseSpeedVectorAutoCalculateZone,
     EnemyZone,
@@ -33,7 +32,6 @@ __all__ = [
     "DropZone",
     "EnemyZone",
     "ForbiddenZone",
-    "ResettingZone",
     "StuffZone",
     "YellowReservedZone",
     "ZoneAccessibility",
