@@ -21,8 +21,9 @@ def cmd_index(args: argparse.Namespace) -> int:
     manager = LogManager(args.logs_dir)
 
     try:
-        count = manager.index_log(args.log_file)
-        print(f"[OK] Indexed {count} log entries from {args.log_file}")
+        count = manager.index_log(args.log_file, force_reindex=args.force_reindex)
+        action = "Re-indexed" if args.force_reindex else "Indexed"
+        print(f"[OK] {action} {count} log entries from {args.log_file}")
     except Exception as e:  # noqa: BLE001
         print(f"[ERROR] Error indexing {args.log_file}: {e}", file=sys.stderr)
         return 1
@@ -99,6 +100,7 @@ def cmd_show(args: argparse.Namespace) -> int:
             logger=args.logger,
             category=args.category,
             file=args.file,
+            line_number=args.line,
             limit=args.limit,
         )
     except Exception as e:  # noqa: BLE001
@@ -127,6 +129,7 @@ def cmd_export(args: argparse.Namespace) -> int:
             logger=args.logger,
             category=args.category,
             file=args.file,
+            line_number=args.line,
             limit=args.limit,
         )
         print(f"[OK] Exported {count} entries to {args.output}")
@@ -191,6 +194,13 @@ Examples:
         "log_file",
         help="Log file to index (e.g., 2025-11-06.log)",
     )
+    index_parser.add_argument(
+        "--force",
+        "-F",
+        dest="force_reindex",
+        action="store_true",
+        help="Force re-indexing even if already indexed",
+    )
     index_parser.set_defaults(func=cmd_index)
 
     # List executions command
@@ -232,6 +242,11 @@ Examples:
         "-f",
         "--file",
         help="Filter by source file (supports wildcards)",
+    )
+    show_parser.add_argument(
+        "--line",
+        type=int,
+        help="Filter by source line number",
     )
     show_parser.add_argument(
         "-n",
@@ -282,6 +297,11 @@ Examples:
         "-f",
         "--file",
         help="Filter by source file",
+    )
+    export_parser.add_argument(
+        "--line",
+        type=int,
+        help="Filter by source line number",
     )
     export_parser.add_argument(
         "-n",

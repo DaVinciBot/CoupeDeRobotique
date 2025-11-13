@@ -127,6 +127,7 @@ lgpp_manager export 2025-11-06.log -o rolling_basis.txt \
 | `--logger`    | `-L`  | Filtrer par nom de logger                                  |
 | `--category`  | `-c`  | Filtrer par catégorie (NAV:, CTRL:, SENSOR:, etc.)         |
 | `--file`      | `-f`  | Filtrer par fichier source                                 |
+| `--line`      |       | Filtrer par numéro de ligne source                         |
 | `--limit`     | `-n`  | Limiter le nombre de résultats                             |
 | `--no-color`  |       | Désactiver la colorisation                                 |
 
@@ -162,7 +163,6 @@ Le schéma SQLite contient deux tables :
 - `category` : Catégorie extraite ([NAV:Task], [CTRL:RB], etc.)
 - `message` : Message du log
 - `raw_line` : Ligne brute originale
-- `line_offset` : Position dans le fichier (pour récupération rapide)
 
 ## Détection d'exécutions
 

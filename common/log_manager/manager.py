@@ -33,11 +33,12 @@ class LogManager:
         base_name = Path(log_file).stem
         return self.logs_dir / f"{base_name}.db"
 
-    def index_log(self, log_file: str) -> int:
+    def index_log(self, log_file: str, *, force_reindex: bool) -> int:
         """Index a specific log file.
 
         Args:
             log_file (str): Log filename
+            force_reindex (bool): Force re-indexing even if already indexed
 
         Returns:
             int: Number of entries indexed
@@ -45,9 +46,12 @@ class LogManager:
         log_path = self.logs_dir / log_file
         db_path = self._get_db_path(log_file)
 
+        if force_reindex and db_path.exists():
+            db_path.unlink()
+
         with LogDatabase(db_path) as db:
             indexer = LogIndexer(db)
-            return indexer.index_log_file(log_path)
+            return indexer.index_log_file(log_path, force_reindex=force_reindex)
 
     def list_executions(self, log_file: str) -> list[dict[str, Any]]:
         """List all executions in a log file.
@@ -74,6 +78,7 @@ class LogManager:
         logger: str | None = None,
         category: str | None = None,
         file: str | None = None,
+        line_number: int | None = None,
         limit: int | None = None,
     ) -> list[dict[str, Any]]:
         """Filter logs with various criteria.
@@ -85,6 +90,7 @@ class LogManager:
             logger (str | None): Filter by logger name. Defaults to None.
             category (str | None): Filter by category. Defaults to None.
             file (str | None): Filter by source file. Defaults to None.
+            line_number (int | None): Filter by source line number. Defaults to None.
             limit (int | None): Maximum results. Defaults to None.
 
         Returns:
@@ -109,6 +115,7 @@ class LogManager:
                 logger_name=logger,
                 category=category,
                 file_name=file,
+                line_number=line_number,
                 limit=limit,
             )
 

@@ -55,7 +55,6 @@ class LogDatabase:
                 category TEXT,
                 message TEXT NOT NULL,
                 raw_line TEXT NOT NULL,
-                line_offset INTEGER NOT NULL,
                 FOREIGN KEY (execution_id) REFERENCES executions(execution_id)
             )
         """)
@@ -293,6 +292,7 @@ class LogDatabase:
         logger_name: str | None = None,
         category: str | None = None,
         file_name: str | None = None,
+        line_number: int | None = None,
         limit: int | None = None,
     ) -> list[dict[str, Any]]:
         """Query logs with filters.
@@ -303,6 +303,7 @@ class LogDatabase:
             logger_name (str | None): Filter by logger name. Defaults to None.
             category (str | None): Filter by category prefix. Defaults to None.
             file_name (str | None): Filter by source file. Defaults to None.
+            line_number (int | None): Filter by source line number. Defaults to None.
             limit (int | None): Maximum number of results. Defaults to None.
 
         Returns:
@@ -335,6 +336,10 @@ class LogDatabase:
         if file_name:
             query += " AND file_name LIKE ?"
             params.append(f"%{file_name}%")
+
+        if line_number is not None:
+            query += " AND line_number = ?"
+            params.append(line_number)
 
         query += " ORDER BY timestamp ASC"
 

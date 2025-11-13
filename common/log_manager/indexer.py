@@ -132,14 +132,14 @@ class LogIndexer:
         self,
         log_file: Path | str,
         *,
-        force_reindex: bool = False,  # TODO: argument cli
+        force_reindex: bool,
     ) -> int:
         """Index a log file into the database.
 
         Args:
             log_file (Path | str): Path to log file
             force_reindex (bool):
-                If True, re-index even if already indexed. Defaults to False.
+                If True, re-index even if already indexed.
 
         Returns:
             int: Number of log entries indexed
@@ -237,32 +237,3 @@ class LogIndexer:
                     entries_indexed += 1
 
         return entries_indexed
-
-    def index_directory(
-        self,
-        log_dir: Path | str,
-        pattern: str = "*.log",
-    ) -> dict[str, int]:
-        """Index all log files in a directory.
-
-        Args:
-            log_dir (Path | str): Directory containing log files
-            pattern (str): Glob pattern for log files. Defaults to '*.log'.
-
-        Returns:
-            dict[str, int]: Dictionary mapping filenames to number of entries indexed
-        """
-        log_path = Path(log_dir)
-        results: dict[str, int] = {}
-
-        for log_file in sorted(log_path.glob(pattern)):
-            print(f"Indexing {log_file.name}...")
-            try:
-                count = self.index_log_file(log_file)
-                results[log_file.name] = count
-                print(f"  ✓ Indexed {count} entries")
-            except Exception as e:  # noqa: BLE001
-                print(f"  ✗ Error: {e}")
-                results[log_file.name] = 0
-
-        return results
