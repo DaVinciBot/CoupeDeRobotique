@@ -140,7 +140,7 @@ class MainBrain(Brain):
 
         # --- 3) Build the strategy --- #
 
-        strategy = TowerRushStrategy(
+        strategy = TowerRushAltStrategy(
             WinterGameContext(
                 arena=self.arena,
                 rolling_basis=rolling_basis,
