@@ -4,28 +4,13 @@ from pathlib import Path
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-
-try:
-    from dotenv import load_dotenv
-except ImportError:
-
-    def load_dotenv(dotenv_path: Path | None = None) -> None:
-        """A minimal implementation of load_dotenv if python-dotenv is not installed."""
-        p = Path(dotenv_path or ".env")
-        if not p.exists():
-            return
-        for raw in p.read_text(encoding="utf-8").splitlines():
-            line = raw.strip()
-            if not line or line.startswith("#") or "=" not in line:
-                continue
-            k, v = line.split("=", 1)
-            os.environ.setdefault(k.strip(), v.strip().strip("'\""))
-
-
+from dotenv import load_dotenv
 from src.camera import Camera
 from src.detector import ArucoDetector
 
-load_dotenv(dotenv_path=Path(".env"))
+# Charger le fichier .env depuis le même répertoire que ce script
+_SCRIPT_DIR = Path(__file__).parent
+load_dotenv(dotenv_path=_SCRIPT_DIR / ".env")
 
 
 def parse_float_array(
@@ -49,7 +34,7 @@ def parse_float_array(
     try:
         arr = np.array([float(x) for x in v.split()], dtype=np.float64)
         return arr.reshape(shape) if shape else arr
-    except ImportError:
+    except Exception:
         return np.array(default, dtype=np.float64).reshape(shape) if default else None
 
 
@@ -65,11 +50,11 @@ def parse_int(name: str, default: int = 0) -> int | None:
     """
     try:
         return int(os.getenv(name, default))
-    except ImportError:
+    except Exception:
         return default
 
 
-def parse_bool(name: str, default: bool = True) -> bool | None:
+def parse_bool(name: str, default: bool = True) -> bool:
     """Parse a boolean from environment variables.
 
     Args:
@@ -77,17 +62,17 @@ def parse_bool(name: str, default: bool = True) -> bool | None:
         default (bool, optional): The default value if the variable is not set.
 
     Returns:
-        bool | None: The parsed boolean or the default value.
+        bool: The parsed boolean or the default value.
     """
-    try:
-        return bool(os.getenv(name, default))
-    except ImportError:
+    value = os.getenv(name)
+    if value is None:
         return default
+    return value.lower() in {"true", "1", "yes", "on"}
 
 
-SHOW_ARENA: bool | None = parse_bool("SHOW_ARENA", True)
-SHOW_CAMERA_FEED: bool | None = parse_bool("SHOW_CAMERA_FEED", True)
-CALIBRATE_MODE: bool | None = parse_bool("CALIBRATE_MODE", True)
+SHOW_ARENA: bool = parse_bool("SHOW_ARENA", default=True)
+SHOW_CAMERA_FEED: bool = parse_bool("SHOW_CAMERA_FEED", default=True)
+CALIBRATE_MODE: bool = parse_bool("CALIBRATE_MODE", default=False)
 
 CAMERA_ID: int | None = parse_int("CAMERA_ID", 0)
 CAMERA_WIDTH: int | None = parse_int("CAMERA_WIDTH", 1920)
@@ -147,14 +132,21 @@ def update_in_real_time() -> None:
         or ASSUMED_HFOV_DEG is None
     ):
         print("Erreur: une ou plusieurs variables nécessaires ne sont pas définies")
+        print(
+            str(CAMERA_ID)
+            + " "
+            + str(CAMERA_MATRIX)
+            + " "
+            + str(DIST_COEFFS)
+            + " "
+            + str(ASSUMED_HFOV_DEG)
+        )
         return
 
     if (
         MARKER_SIZE_CM is None
         or MARKER_SIZE_REF_CM is None
         or MARKER_SIZE_CRATE_CM is None
-        or SHOW_ARENA is None
-        or SHOW_CAMERA_FEED is None
     ):
         print("Erreur: une ou plusieurs variables nécessaires ne sont pas définies")
         return
@@ -192,6 +184,8 @@ def update_in_real_time() -> None:
             if SHOW_CAMERA_FEED:
                 cv2.imshow("ArUco Detection", annotated_frame)
 
+            if len(detected_world) == 0:
+                print("Aucun marqueur détecté")
             for marker in detected_world:
                 print(
                     f"ID Marker: {marker[0]}, Position (cm): {marker[1]}, "
@@ -205,7 +199,7 @@ def update_in_real_time() -> None:
         # nettoyer les ressources matplotlib
         try:
             plt.close("all")
-        except ImportError:
+        except Exception:
             print("Erreur: impossible de fermer les graphiques matplotlib.")
         camera.release()
         cv2.destroyAllWindows()
