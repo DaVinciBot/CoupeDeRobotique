@@ -43,6 +43,10 @@ class SpatialComputationDummy:
 
         self.crates = self._generate_fixed_crates()
 
+        self.robot_position: tuple[float, float, float] | None = None
+        self.enemy_position: tuple[float, float, float] | None = None
+        self.enemy_velocity: tuple[float, float, float] | None = None
+
     def _generate_fixed_crates(self) -> list[tuple[float, float, float, int]]:
         """Generate a fixed list of crate positions and color IDs.
 
@@ -81,7 +85,8 @@ class SpatialComputationDummy:
             A tuple containing the (x, y, theta) coordinates of the robot.
         """
         robot_odometrie: OrientedPoint = self.rolling_basis.odometrie
-        return robot_odometrie.x, robot_odometrie.y, robot_odometrie.theta
+        self.robot_position = (robot_odometrie.x, robot_odometrie.y, robot_odometrie.theta)
+        return self.robot_position
 
     def get_enemy_position(self) -> tuple[float, float, float]:
         """Get the enemy robot's current position in the global coordinate system.
@@ -90,7 +95,8 @@ class SpatialComputationDummy:
             A tuple containing the (x, y) coordinates of the enemy robot.
         """
         enemy_point: OrientedPoint = self.arena.enemy_zone.point
-        return enemy_point.x, enemy_point.y, enemy_point.theta
+        self.enemy_position = (enemy_point.x, enemy_point.y, enemy_point.theta)
+        return self.enemy_position
 
     def get_enemy_velocity(self) -> tuple[float, float, float]:
         """Get the enemy robot's current velocity.
@@ -99,13 +105,13 @@ class SpatialComputationDummy:
             The velocity of the enemy robot.
         """
         enemy_velocity = self.arena.enemy_zone.speed_vector
-        enemy_velocity_x = enemy_velocity.factored_dx
-        enemy_velocity_y = enemy_velocity.factored_dy
-        enemy_velocity_magnitude = enemy_velocity.speed
+        self.enemy_velocity = (
+            enemy_velocity.factored_dx,
+            enemy_velocity.factored_dy,
+            enemy_velocity.speed,
+        )
+        return self.enemy_velocity
 
-        return enemy_velocity_x, enemy_velocity_y, enemy_velocity_magnitude
-
-    # Section full freestyle au cas où on envoie directement le lora d'ici, j'en sais rien ALED
     def send_data(self) -> None:
         """Dummy method to send data to the LoRa module."""
 
@@ -120,26 +126,31 @@ class SpatialComputationDummy:
         # Simulate received data
 
         # Main Robot
-        robot_x = random.randint(0, self.arena.width)
-        robot_y = random.randint(0, self.arena.height)
-        robot_theta = random.randint(0, 360) * pi / 180
+        self.robot_position = (
+            random.randint(0, self.arena.width),
+            random.randint(0, self.arena.height),
+            random.randint(0, 360) * pi / 180,
+        )
 
         # Enemy Position
-        enemy_x = random.randint(0, self.arena.width)
-        enemy_y = random.randint(0, self.arena.height)
-        enemy_t = random.randint(0, 360) * pi / 180
+        self.enemy_position = (
+            random.randint(0, self.arena.width),
+            random.randint(0, self.arena.height),
+            random.randint(0, 360) * pi / 180,
+        )
 
         # Enemy Velocity
         enemy_dx = random.randint(-20, 20)
         enemy_dy = random.randint(-20, 20)
-        enemy_speed = int((enemy_dx**2 + enemy_dy**2) ** 0.5)
+        enemy_speed = int((enemy_dx ** 2 + enemy_dy ** 2) ** 0.5)
+        self.enemy_velocity = (enemy_dx, enemy_dy, enemy_speed)
 
         # Crates
-        crates = self.crates
+        # self.crates = self.crates
 
         return {
-            "robot_position": (robot_x, robot_y, robot_theta),
-            "enemy_position": (enemy_x, enemy_y, enemy_t),
-            "enemy_velocity": (enemy_dx, enemy_dy, enemy_speed),
-            "crates": crates,
+            "robot_position": self.robot_position,
+            "enemy_position": self.enemy_position,
+            "enemy_velocity": self.enemy_velocity,
+            "crates": self.crates,
         }
