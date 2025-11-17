@@ -13,6 +13,17 @@ _SCRIPT_DIR = Path(__file__).parent
 load_dotenv(dotenv_path=_SCRIPT_DIR / ".env")
 
 
+def detect_gpu():
+    try:
+        if not hasattr(cv2, "cuda"):
+            return False
+
+        count = cv2.cuda.getCudaEnabledDeviceCount()
+        return count > 0
+    except Exception:
+        return False
+
+
 def parse_float_array(
     name: str,
     default: np.ndarray | None = None,
@@ -206,6 +217,8 @@ def update_in_real_time() -> None:
 
 
 if __name__ == "__main__":
+    USE_GPU = detect_gpu()
+    print("USE_GPU =", USE_GPU)
     if CALIBRATE_MODE:
         calibrate_camera()
     else:

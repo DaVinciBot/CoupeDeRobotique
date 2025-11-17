@@ -1,27 +1,56 @@
+"""Module de détection ArUco pour Jetson."""
+
 import math
 
 import cv2
-import matplotlib
+import matplotlib as mpl
 import numpy as np
+from src.camera import Camera
 
-matplotlib.use("Agg")
+mpl.use("Agg")
 import matplotlib.lines as mlines
-import matplotlib.patches as patches
 import matplotlib.pyplot as plt
+from matplotlib import patches
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
+blue_team_ids = [1, 2, 3, 4, 5]
+yellow_team_ids = [6, 7, 8, 9, 10]
+marker_600_600_id = 22
+marker_600_1400_id = 20
+marker_2400_1400_id = 21
+marker_2400_600_id = 23
+blue_crate_id = 36
+yellow_crate_id = 47
+empty_crate_id = 41
+aire_and_elements_ids = list(range(11, 51))
+blue_reserve_ids = list(range(51, 71))
+yellow_reserve_ids = list(range(71, 91))
 
 
 class ArucoDetector:
+    """Classe de détection et de localisation des marqueurs ArUco."""
+
     def __init__(
         self,
-        cam,
+        cam: Camera,
         marker_size_cm: float,
         marker_size_ref_cm: float,
         marker_size_crate_cm: float,
         camera_matrix: np.ndarray | None = None,
         dist_coeffs: np.ndarray | None = None,
         assumed_hfov_deg: float = 60.0,
-    ):
+    ) -> None:
+        """Initialise l'instance de détection ArUco.
+
+        Args:
+            cam (Camera): La caméra utilisée pour la détection.
+            marker_size_cm (float): La taille du marqueur en centimètres.
+            marker_size_ref_cm (float): Taille du marqueur de référence en centimètres.
+            marker_size_crate_cm (float): La taille du marqueur de crate en centimètres.
+            camera_matrix (np.ndarray | None, optional): La matrice de la caméra.
+            dist_coeffs (np.ndarray | None, optional): Les coefficients de distorsion.
+            assumed_hfov_deg (float, optional): Champ vision horizontal supposé en deg.
+        """
         self.cam = cam
         self.marker_size_m = float(marker_size_cm) / 100.0
         self.marker_size_ref_m = float(marker_size_ref_cm) / 100.0
@@ -49,7 +78,7 @@ class ArucoDetector:
             w, h = self.cam.get_resolution()
             if w and h:
                 fx = fy = (w / 2.0) / math.tan(
-                    math.radians(self.assumed_hfov_deg) / 2.0
+                    math.radians(self.assumed_hfov_deg) / 2.0,
                 )
                 self.camera_matrix = np.array(
                     [[fx, 0.0, w / 2.0], [0.0, fy, h / 2.0], [0.0, 0.0, 1.0]],
@@ -79,49 +108,78 @@ class ArucoDetector:
         self.ref_cache_timeout = 20.0
 
     def get_marker_size(self, marker_id: int) -> float:
-        """Retourne la taille du marqueur selon son ID (défaut: marker_size_m)"""
+        """Retourne la taille du marqueur en mètres selon son ID.
+
+        Args:
+            marker_id (int): L'ID du marqueur.
+
+        Returns:
+            float: La taille du marqueur en mètres.
+        """
         return self.size_mapping.get(marker_id, self.marker_size_m)
 
-    def get_objp_for_marker(self, marker_id: int):
-        """Retourne les points 3D du marqueur selon son ID"""
+    def get_objp_for_marker(self, marker_id: int) -> np.ndarray:
+        """Retourne les points 3D du marqueur selon son ID.
+
+        Args:
+            marker_id (int): L'ID du marqueur.
+
+        Returns:
+            np.ndarray: Les points 3D du marqueur.
+        """
         size = self.get_marker_size(marker_id)
         s = size / 2.0
         return np.array(
-            [[-s, -s, 0.0], [s, -s, 0.0], [s, s, 0.0], [-s, s, 0.0]], dtype=np.float64
+            [[-s, -s, 0.0], [s, -s, 0.0], [s, s, 0.0], [-s, s, 0.0]],
+            dtype=np.float64,
         )
 
-    def convert_world_coords_mm(self, pos_world):
-        x_mm = int(round(float(pos_world[0]) * 1000.0))
-        y_mm = int(round(float(pos_world[1]) * 1000.0))
+    @staticmethod
+    def convert_world_coords_mm(pos_world: np.ndarray) -> str:
+        """Convertit les coordonnées du monde en millimètres.
+
+        Args:
+            pos_world (np.ndarray): Les coordonnées du monde en mètres.
+
+        Returns:
+            str: Les coordonnées formatées en millimètres.
+        """
+        x_mm = round(float(pos_world[0]) * 1000.0)
+        y_mm = round(float(pos_world[1]) * 1000.0)
         return f"{x_mm},{y_mm}"
 
     def convert_id_to_name(self, marker_id: int) -> str:
-        if not isinstance(marker_id, int):
-            return "ID invalide"
+        """Convertit un ID de marqueur en nom lisible.
 
-        if 1 <= marker_id <= 5:
+        Args:
+            marker_id (int): L'ID du marqueur.
+
+        Returns:
+            str: Le nom lisible du marqueur.
+        """
+        if marker_id in blue_team_ids:
             return "Equipe Bleue"
-        elif 6 <= marker_id <= 10:
+        if marker_id in yellow_team_ids:
             return "Equipe Jaune"
-        elif marker_id == 20:
+        if marker_id == marker_600_1400_id:
             return "Aire de jeu 600, 1400"
-        elif marker_id == 21:
+        if marker_id == marker_2400_1400_id:
             return "Aire de jeu 2400, 1400"
-        elif marker_id == 22:
+        if marker_id == marker_600_600_id:
             return "Aire de jeu 600, 600"
-        elif marker_id == 23:
+        if marker_id == marker_2400_600_id:
             return "Aire de jeu 2400, 600"
-        elif marker_id == 36:
+        if marker_id == blue_crate_id:
             return "Caisse bleue"
-        elif marker_id == 47:
+        if marker_id == yellow_crate_id:
             return "Caisse jaune"
-        elif marker_id == 41:
+        if marker_id == empty_crate_id:
             return "Caisse vide"
-        elif 11 <= marker_id <= 50:
+        if aire_and_elements_ids[0] <= marker_id <= aire_and_elements_ids[-1]:
             return "Aire de jeu et elements"
-        elif 51 <= marker_id <= 70:
+        if blue_reserve_ids[0] <= marker_id <= blue_reserve_ids[-1]:
             return "Reserves Equipe Bleue"
-        elif 71 <= marker_id <= 90:
+        if yellow_reserve_ids[0] <= marker_id <= yellow_reserve_ids[-1]:
             return "Reserves Equipe Jaune"
 
         return "ID invalide"
@@ -413,7 +471,7 @@ class ArucoDetector:
                     else:
                         yaw = 0.0
 
-                    coord_str = self.convert_world_coords_mm(pos_world)
+                    coord_str = ArucoDetector.convert_world_coords_mm(pos_world)
                     cache_indicator = ""
                     if mid in self.ref_markers_world:
                         visible_refs = [
