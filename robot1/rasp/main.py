@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import subprocess
 
-from loggerplusplus import Logger, LogLevels
+from loggerplusplus import LogLevels
 from taskbrain import DictProxyAccessor
 from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 
@@ -13,10 +13,11 @@ from arena.base_arena.arena_zones import AllyZone
 from arena.winter_arena import WinterArena
 from brains import MainBrain
 from geometry import OrientedPoint
+from log_manager import LogLogger
 from navigation.navigator.task import NavigatorTaskParams
 from sensors import Inputs, Lidar, LidarDummy
 
-_logger = Logger(
+_logger = LogLogger(
     identifier="Main",
     follow_logger_manager_rules=True,
 )
@@ -28,37 +29,37 @@ if __name__ == "__main__":
 
     # Loggers
     # System-Part loggers
-    logger_ws_server = Logger(
+    logger_ws_server = LogLogger(
         identifier="WS_Server",
         follow_logger_manager_rules=True,
     )
-    logger_ws_cmd_route_manager = Logger(
+    logger_ws_cmd_route_manager = LogLogger(
         identifier="WS_cmd_RouteManager",
         follow_logger_manager_rules=True,
     )
-    logger_ws_cmd_sender = Logger(
+    logger_ws_cmd_sender = LogLogger(
         identifier="WS_cmd_Sender",
         follow_logger_manager_rules=True,
     )
-    logger_ws_cmd_receiver = Logger(
+    logger_ws_cmd_receiver = LogLogger(
         identifier="WS_cmd_Receiver",
         follow_logger_manager_rules=True,
     )
 
-    logger_ws_ui_route_manager = Logger(
+    logger_ws_ui_route_manager = LogLogger(
         identifier="WS_UI_RouteManager",
         follow_logger_manager_rules=True,
     )
-    logger_ws_ui_sender = Logger(
+    logger_ws_ui_sender = LogLogger(
         identifier="WS_UI_Sender",
         follow_logger_manager_rules=True,
     )
-    logger_ws_ui_receiver = Logger(
+    logger_ws_ui_receiver = LogLogger(
         identifier="WS_UI_Receiver",
         follow_logger_manager_rules=True,
     )
 
-    logger_brain = Logger(
+    logger_brain = LogLogger(
         identifier="Brain",
         # Only Brain manages monitoring
         files_monitoring=False,
@@ -66,7 +67,7 @@ if __name__ == "__main__":
         print_log_level=LogLevels.DEBUG,
         follow_logger_manager_rules=True,
     )
-    logger_lidar = Logger(
+    logger_lidar = LogLogger(
         identifier="Lidar",
         follow_logger_manager_rules=True,
     )
@@ -76,12 +77,12 @@ if __name__ == "__main__":
     # All rolling basis part is executed in another process so define inside this part
 
     # Environment loggers
-    logger_grid_manager = Logger(
+    logger_grid_manager = LogLogger(
         identifier="GridManager",
         print_log_level=LogLevels.INFO,
         follow_logger_manager_rules=True,
     )
-    logger_show_arena = Logger(
+    logger_show_arena = LogLogger(
         identifier="ShowArena",
         follow_logger_manager_rules=True,
     )
