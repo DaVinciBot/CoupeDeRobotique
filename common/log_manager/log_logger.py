@@ -6,7 +6,7 @@ from typing import override
 
 from loggerplusplus import Logger
 
-from log_manager.realtime_handler import RealtimeDBHandler
+from log_manager.realtime_db_handler import RealtimeDBHandler
 
 
 class LogLogger(Logger):
