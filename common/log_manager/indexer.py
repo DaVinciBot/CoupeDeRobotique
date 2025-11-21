@@ -28,8 +28,8 @@ class LogIndexer:
     )
     """Log format: HH:MM:SS.ffffff -> [logger] [file:line] LEVEL | message"""
 
-    CATEGORY_PATTERN: re.Pattern[str] = re.compile(r"\[([A-Z]+(?::[A-Za-z0-9:]+)?)\]")
-    """Category pattern: [CATEGORY] or [CATEGORY:SubCategory]"""
+    CATEGORY_PATTERN: re.Pattern[str] = re.compile(r"\[([A-Z_]+(?::[A-Za-z0-9:]+)?)\]")
+    """Category pattern: [CATEGORY] or [CA_TEG_ORY:SubCategory]"""
 
     def __init__(self, db: LogDatabase) -> None:
         """Initialize indexer.

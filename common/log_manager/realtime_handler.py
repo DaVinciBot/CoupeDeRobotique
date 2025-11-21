@@ -11,7 +11,7 @@ import datetime
 import logging
 import re
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, override
 
 from log_manager.database import LogDatabase
 
@@ -30,7 +30,7 @@ class RealtimeDBHandler(logging.Handler):
     can use all the existing query and analysis tools.
     """
 
-    CATEGORY_PATTERN: re.Pattern[str] = re.compile(r"\[([A-Z]+(?::[A-Za-z0-9:]+)?)\]")
+    CATEGORY_PATTERN: re.Pattern[str] = re.compile(r"\[([A-Z_]+(?::[A-Za-z0-9:]+)?)\]")
     """Category pattern: [CATEGORY] or [CATEGORY:SubCategory]"""
 
     def __init__(
@@ -66,11 +66,10 @@ class RealtimeDBHandler(logging.Handler):
 
         existing_executions = self.db.get_executions(str(self.log_file_path))
 
+        exec_num = 0
         if existing_executions:
             last_exec_id = existing_executions[-1]["execution_id"]
             exec_num = int(last_exec_id.split("_exec")[-1])
-        else:
-            exec_num = 0
 
         self.current_execution_id = f"{self.current_date}_exec{exec_num:03d}"
 
@@ -148,6 +147,7 @@ class RealtimeDBHandler(logging.Handler):
         pathname = record.pathname.replace("\\", "/")
         return any(pattern in pathname for pattern in [".venv", "site-packages"])
 
+    @override
     def emit(self, record: LogRecord) -> None:
         """Emit a log record to the database.
 
@@ -201,6 +201,7 @@ class RealtimeDBHandler(logging.Handler):
         except Exception:
             self.handleError(record)
 
+    @override
     def close(self) -> None:
         """Close the database handler and update execution end time."""
         if self.db and self.current_execution_id:
