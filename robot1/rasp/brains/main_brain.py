@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Any
 
 import matplotlib.pyplot as plt
 import numpy as np
-from loggerplusplus import Logger
 from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
@@ -21,8 +20,11 @@ from boombot_strategy.strategies import TowerRushAltStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
+from log_manager import LogLogger
 
 if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
     from arena.winter_arena import WinterArena
     from sensors import Inputs, Lidar, LidarDummy
 
@@ -99,14 +101,14 @@ class MainBrain(Brain):
         # --- 1) Initialize subsystems --- #
         if CONFIG.ROLLING_BASIS_DUMMY:
             rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
-                logger=Logger(
+                logger=LogLogger(
                     identifier="RollingBasisDummy",
                     follow_logger_manager_rules=True,
                 ),
             )
         else:
             rolling_basis = RollingBasis(
-                logger=Logger(
+                logger=LogLogger(
                     identifier="RollingBasis",
                     follow_logger_manager_rules=True,
                 ),
@@ -116,14 +118,14 @@ class MainBrain(Brain):
 
         if CONFIG.ACTUATORS_DUMMY:
             actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
-                logger=Logger(
+                logger=LogLogger(
                     identifier="Actuators",
                     follow_logger_manager_rules=True,
                 ),
             )
         else:
             actuators = ActuatorsShow(
-                logger=Logger(
+                logger=LogLogger(
                     identifier="Actuators",
                     follow_logger_manager_rules=True,
                 ),
@@ -283,7 +285,9 @@ class MainBrain(Brain):
 
     # @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     # async def print_odo(self) -> None:
-    #     self.logger.info(f"[CTRL:RB] Rolling basis odometrie: {self.rolling_basis_odometrie}")
+    #     self.logger.info(
+    #         f"[CTRL:RB] Rolling basis odometrie: {self.rolling_basis_odometrie}"
+    #     )
 
     # endregion
 

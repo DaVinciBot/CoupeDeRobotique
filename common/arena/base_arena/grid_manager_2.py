@@ -3,15 +3,19 @@
 from __future__ import annotations
 
 import copy
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
-from loggerplusplus import Logger, LogLevels, time_tracker
+from loggerplusplus import LogLevels, time_tracker
 from matplotlib.patches import Rectangle as pltRectangle
 from pathfinding.core.grid import Grid, GridNode
 from shapely.geometry import box
 from shapely.strtree import STRtree
 
 from geometry import OrientedPoint, Polygon
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class GridManager:

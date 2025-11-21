@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 from math import pi
-from typing import override
-
-from loggerplusplus import Logger
+from typing import TYPE_CHECKING, override
 
 from arena.base_arena.arena import BaseArena
 from arena.base_arena.arena_zones import (
@@ -16,6 +14,10 @@ from arena.base_arena.arena_zones import (
     YellowReservedZone,
 )
 from geometry import OrientedPoint, Point, Polygon, create_straight_rectangle
+from log_manager import LogLogger
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 GO_TO_POSITIONS_INDEX = 2
 
@@ -52,22 +54,22 @@ class ShowArena(BaseArena):
             distance_between_robot_and_small_construct_zone (float):
                 Offset for small constructs.
         """
-        stuff_zone_logger = Logger(
+        stuff_zone_logger = LogLogger(
             identifier="StuffZone",
             follow_logger_manager_rules=True,
         )
 
-        yellow_reserved_zone_logger = Logger(
+        yellow_reserved_zone_logger = LogLogger(
             identifier="YellowReservedZone",
             follow_logger_manager_rules=True,
         )
 
-        blue_reserved_zone_logger = Logger(
+        blue_reserved_zone_logger = LogLogger(
             identifier="BlueReservedZone",
             follow_logger_manager_rules=True,
         )
 
-        forbidden_zone_logger = Logger(
+        forbidden_zone_logger = LogLogger(
             identifier="ForbiddenZone",
             follow_logger_manager_rules=True,
         )

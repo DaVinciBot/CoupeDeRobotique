@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from loggerplusplus import Logger
 from old_boombot_strategy.strategies.base_strategy import BaseStrategy
 from old_boombot_strategy.sub_graphs import get_banner_deployment_subgraph
 from old_boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
 
+from log_manager import LogLogger
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 
@@ -46,7 +46,7 @@ class OnlyBannerStrategy(BaseStrategy):
 
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
-            logger=Logger(
+            logger=LogLogger(
                 identifier="OnlyBannerStrategy",
                 follow_logger_manager_rules=True,
             ),

@@ -5,8 +5,7 @@ from __future__ import annotations
 from collections import deque
 from typing import TYPE_CHECKING
 
-from loggerplusplus import Logger
-
+from log_manager import LogLogger
 from navigation.avoidance.base_avoidance.states import AvoidanceState
 from navigation.navigator.signals import NavigatorSignalsDispatcher
 from navigation.navigator.task import (
@@ -17,6 +16,8 @@ from navigation.navigator.task import (
 from navigation.trajectory_planner import TrajectoryPlanCommand
 
 if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
     from arena.base_arena.arena_zones import AllyZone, EnemyZone
 
 
@@ -30,7 +31,7 @@ class Navigator:  # UNUSED
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to ``None``.
         """
-        self._logger = logger or Logger(
+        self._logger = logger or LogLogger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )

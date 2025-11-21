@@ -82,9 +82,6 @@
                                 <a class="function" href="#GPIOManager.__init__">GPIOManager</a>
                         </li>
                         <li>
-                                <a class="variable" href="#GPIOManager.logger">logger</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#GPIOManager.nb_pin">nb_pin</a>
                         </li>
                         <li>
@@ -483,7 +480,7 @@
 </span><span id="GPIOManager-21"><a href="#GPIOManager-21"><span class="linenos"> 21</span></a><span class="sd">            logger (Logger): Logger instance for logging events.</span>
 </span><span id="GPIOManager-22"><a href="#GPIOManager-22"><span class="linenos"> 22</span></a><span class="sd">            nb_pin (int): The maximum number of available GPIO pins.</span>
 </span><span id="GPIOManager-23"><a href="#GPIOManager-23"><span class="linenos"> 23</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="GPIOManager-24"><a href="#GPIOManager-24"><span class="linenos"> 24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span>
+</span><span id="GPIOManager-24"><a href="#GPIOManager-24"><span class="linenos"> 24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span>
 </span><span id="GPIOManager-25"><a href="#GPIOManager-25"><span class="linenos"> 25</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">nb_pin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">nb_pin</span>
 </span><span id="GPIOManager-26"><a href="#GPIOManager-26"><span class="linenos"> 26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">gpios</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ActuatorType</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 </span><span id="GPIOManager-27"><a href="#GPIOManager-27"><span class="linenos"> 27</span></a>
@@ -544,29 +541,31 @@
 </span><span id="GPIOManager-82"><a href="#GPIOManager-82"><span class="linenos"> 82</span></a><span class="sd">            bool: ``True`` if the pin was successfully added, ``False`` otherwise.</span>
 </span><span id="GPIOManager-83"><a href="#GPIOManager-83"><span class="linenos"> 83</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="GPIOManager-84"><a href="#GPIOManager-84"><span class="linenos"> 84</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_declared_gpio</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pin</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">pin</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_pin</span><span class="p">:</span>
-</span><span id="GPIOManager-85"><a href="#GPIOManager-85"><span class="linenos"> 85</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to add pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2">: Invalid or already declared&quot;</span><span class="p">)</span>
-</span><span id="GPIOManager-86"><a href="#GPIOManager-86"><span class="linenos"> 86</span></a>            <span class="k">return</span> <span class="kc">False</span>
-</span><span id="GPIOManager-87"><a href="#GPIOManager-87"><span class="linenos"> 87</span></a>
-</span><span id="GPIOManager-88"><a href="#GPIOManager-88"><span class="linenos"> 88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">gpios</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_actuator</span>
-</span><span id="GPIOManager-89"><a href="#GPIOManager-89"><span class="linenos"> 89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2"> with type </span><span class="si">{</span><span class="n">type_actuator</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="GPIOManager-90"><a href="#GPIOManager-90"><span class="linenos"> 90</span></a>        <span class="k">return</span> <span class="kc">True</span>
-</span><span id="GPIOManager-91"><a href="#GPIOManager-91"><span class="linenos"> 91</span></a>
-</span><span id="GPIOManager-92"><a href="#GPIOManager-92"><span class="linenos"> 92</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_type_gpio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActuatorType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="GPIOManager-93"><a href="#GPIOManager-93"><span class="linenos"> 93</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the actuator type associated with a GPIO pin.</span>
-</span><span id="GPIOManager-94"><a href="#GPIOManager-94"><span class="linenos"> 94</span></a>
-</span><span id="GPIOManager-95"><a href="#GPIOManager-95"><span class="linenos"> 95</span></a><span class="sd">        Args:</span>
-</span><span id="GPIOManager-96"><a href="#GPIOManager-96"><span class="linenos"> 96</span></a><span class="sd">            pin (int): The GPIO pin-number to query.</span>
-</span><span id="GPIOManager-97"><a href="#GPIOManager-97"><span class="linenos"> 97</span></a>
-</span><span id="GPIOManager-98"><a href="#GPIOManager-98"><span class="linenos"> 98</span></a><span class="sd">        Returns:</span>
-</span><span id="GPIOManager-99"><a href="#GPIOManager-99"><span class="linenos"> 99</span></a><span class="sd">            ActuatorType | None:</span>
-</span><span id="GPIOManager-100"><a href="#GPIOManager-100"><span class="linenos">100</span></a><span class="sd">                The actuator type if the pin is declared, None otherwise.</span>
-</span><span id="GPIOManager-101"><a href="#GPIOManager-101"><span class="linenos">101</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="GPIOManager-102"><a href="#GPIOManager-102"><span class="linenos">102</span></a>        <span class="n">type_found</span><span class="p">:</span> <span class="n">ActuatorType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="GPIOManager-103"><a href="#GPIOManager-103"><span class="linenos">103</span></a>
-</span><span id="GPIOManager-104"><a href="#GPIOManager-104"><span class="linenos">104</span></a>        <span class="k">if</span> <span class="n">type_found</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="GPIOManager-105"><a href="#GPIOManager-105"><span class="linenos">105</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2"> is not used&quot;</span><span class="p">)</span>
-</span><span id="GPIOManager-106"><a href="#GPIOManager-106"><span class="linenos">106</span></a>
-</span><span id="GPIOManager-107"><a href="#GPIOManager-107"><span class="linenos">107</span></a>        <span class="k">return</span> <span class="n">type_found</span>
+</span><span id="GPIOManager-85"><a href="#GPIOManager-85"><span class="linenos"> 85</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+</span><span id="GPIOManager-86"><a href="#GPIOManager-86"><span class="linenos"> 86</span></a>                <span class="sa">f</span><span class="s2">&quot;[GPIO] Failed to add pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2">: Invalid or already declared&quot;</span><span class="p">,</span>
+</span><span id="GPIOManager-87"><a href="#GPIOManager-87"><span class="linenos"> 87</span></a>            <span class="p">)</span>
+</span><span id="GPIOManager-88"><a href="#GPIOManager-88"><span class="linenos"> 88</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="GPIOManager-89"><a href="#GPIOManager-89"><span class="linenos"> 89</span></a>
+</span><span id="GPIOManager-90"><a href="#GPIOManager-90"><span class="linenos"> 90</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">gpios</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_actuator</span>
+</span><span id="GPIOManager-91"><a href="#GPIOManager-91"><span class="linenos"> 91</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[GPIO] Added pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2"> with type </span><span class="si">{</span><span class="n">type_actuator</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="GPIOManager-92"><a href="#GPIOManager-92"><span class="linenos"> 92</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="GPIOManager-93"><a href="#GPIOManager-93"><span class="linenos"> 93</span></a>
+</span><span id="GPIOManager-94"><a href="#GPIOManager-94"><span class="linenos"> 94</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_type_gpio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActuatorType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="GPIOManager-95"><a href="#GPIOManager-95"><span class="linenos"> 95</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the actuator type associated with a GPIO pin.</span>
+</span><span id="GPIOManager-96"><a href="#GPIOManager-96"><span class="linenos"> 96</span></a>
+</span><span id="GPIOManager-97"><a href="#GPIOManager-97"><span class="linenos"> 97</span></a><span class="sd">        Args:</span>
+</span><span id="GPIOManager-98"><a href="#GPIOManager-98"><span class="linenos"> 98</span></a><span class="sd">            pin (int): The GPIO pin-number to query.</span>
+</span><span id="GPIOManager-99"><a href="#GPIOManager-99"><span class="linenos"> 99</span></a>
+</span><span id="GPIOManager-100"><a href="#GPIOManager-100"><span class="linenos">100</span></a><span class="sd">        Returns:</span>
+</span><span id="GPIOManager-101"><a href="#GPIOManager-101"><span class="linenos">101</span></a><span class="sd">            ActuatorType | None:</span>
+</span><span id="GPIOManager-102"><a href="#GPIOManager-102"><span class="linenos">102</span></a><span class="sd">                The actuator type if the pin is declared, None otherwise.</span>
+</span><span id="GPIOManager-103"><a href="#GPIOManager-103"><span class="linenos">103</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="GPIOManager-104"><a href="#GPIOManager-104"><span class="linenos">104</span></a>        <span class="n">type_found</span><span class="p">:</span> <span class="n">ActuatorType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="GPIOManager-105"><a href="#GPIOManager-105"><span class="linenos">105</span></a>
+</span><span id="GPIOManager-106"><a href="#GPIOManager-106"><span class="linenos">106</span></a>        <span class="k">if</span> <span class="n">type_found</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="GPIOManager-107"><a href="#GPIOManager-107"><span class="linenos">107</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[GPIO] Pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2"> is not used&quot;</span><span class="p">)</span>
+</span><span id="GPIOManager-108"><a href="#GPIOManager-108"><span class="linenos">108</span></a>
+</span><span id="GPIOManager-109"><a href="#GPIOManager-109"><span class="linenos">109</span></a>        <span class="k">return</span> <span class="n">type_found</span>
 </span></pre></div>
 
 
@@ -591,7 +590,7 @@
 </span><span id="GPIOManager.__init__-21"><a href="#GPIOManager.__init__-21"><span class="linenos">21</span></a><span class="sd">            logger (Logger): Logger instance for logging events.</span>
 </span><span id="GPIOManager.__init__-22"><a href="#GPIOManager.__init__-22"><span class="linenos">22</span></a><span class="sd">            nb_pin (int): The maximum number of available GPIO pins.</span>
 </span><span id="GPIOManager.__init__-23"><a href="#GPIOManager.__init__-23"><span class="linenos">23</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="GPIOManager.__init__-24"><a href="#GPIOManager.__init__-24"><span class="linenos">24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span>
+</span><span id="GPIOManager.__init__-24"><a href="#GPIOManager.__init__-24"><span class="linenos">24</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span>
 </span><span id="GPIOManager.__init__-25"><a href="#GPIOManager.__init__-25"><span class="linenos">25</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">nb_pin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">nb_pin</span>
 </span><span id="GPIOManager.__init__-26"><a href="#GPIOManager.__init__-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">gpios</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">ActuatorType</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 </span></pre></div>
@@ -607,17 +606,6 @@
 </ul>
 </div>
 
-
-                            </div>
-                            <div id="GPIOManager.logger" class="classattr">
-                                <div class="attr variable">
-            <span class="name">logger</span><span class="annotation">: loggerplusplus.logger.Logger</span>
-
-        
-    </div>
-    <a class="headerlink" href="#GPIOManager.logger"></a>
-    
-    
 
                             </div>
                             <div id="GPIOManager.nb_pin" class="classattr">
@@ -765,12 +753,14 @@
 </span><span id="GPIOManager.add_gpio-82"><a href="#GPIOManager.add_gpio-82"><span class="linenos">82</span></a><span class="sd">            bool: ``True`` if the pin was successfully added, ``False`` otherwise.</span>
 </span><span id="GPIOManager.add_gpio-83"><a href="#GPIOManager.add_gpio-83"><span class="linenos">83</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="GPIOManager.add_gpio-84"><a href="#GPIOManager.add_gpio-84"><span class="linenos">84</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_declared_gpio</span><span class="p">(</span><span class="n">pin</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pin</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">pin</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_pin</span><span class="p">:</span>
-</span><span id="GPIOManager.add_gpio-85"><a href="#GPIOManager.add_gpio-85"><span class="linenos">85</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to add pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2">: Invalid or already declared&quot;</span><span class="p">)</span>
-</span><span id="GPIOManager.add_gpio-86"><a href="#GPIOManager.add_gpio-86"><span class="linenos">86</span></a>            <span class="k">return</span> <span class="kc">False</span>
-</span><span id="GPIOManager.add_gpio-87"><a href="#GPIOManager.add_gpio-87"><span class="linenos">87</span></a>
-</span><span id="GPIOManager.add_gpio-88"><a href="#GPIOManager.add_gpio-88"><span class="linenos">88</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">gpios</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_actuator</span>
-</span><span id="GPIOManager.add_gpio-89"><a href="#GPIOManager.add_gpio-89"><span class="linenos">89</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Added pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2"> with type </span><span class="si">{</span><span class="n">type_actuator</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="GPIOManager.add_gpio-90"><a href="#GPIOManager.add_gpio-90"><span class="linenos">90</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="GPIOManager.add_gpio-85"><a href="#GPIOManager.add_gpio-85"><span class="linenos">85</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+</span><span id="GPIOManager.add_gpio-86"><a href="#GPIOManager.add_gpio-86"><span class="linenos">86</span></a>                <span class="sa">f</span><span class="s2">&quot;[GPIO] Failed to add pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2">: Invalid or already declared&quot;</span><span class="p">,</span>
+</span><span id="GPIOManager.add_gpio-87"><a href="#GPIOManager.add_gpio-87"><span class="linenos">87</span></a>            <span class="p">)</span>
+</span><span id="GPIOManager.add_gpio-88"><a href="#GPIOManager.add_gpio-88"><span class="linenos">88</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="GPIOManager.add_gpio-89"><a href="#GPIOManager.add_gpio-89"><span class="linenos">89</span></a>
+</span><span id="GPIOManager.add_gpio-90"><a href="#GPIOManager.add_gpio-90"><span class="linenos">90</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">gpios</span><span class="p">[</span><span class="n">pin</span><span class="p">]</span> <span class="o">=</span> <span class="n">type_actuator</span>
+</span><span id="GPIOManager.add_gpio-91"><a href="#GPIOManager.add_gpio-91"><span class="linenos">91</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[GPIO] Added pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2"> with type </span><span class="si">{</span><span class="n">type_actuator</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="GPIOManager.add_gpio-92"><a href="#GPIOManager.add_gpio-92"><span class="linenos">92</span></a>        <span class="k">return</span> <span class="kc">True</span>
 </span></pre></div>
 
 
@@ -804,22 +794,22 @@ Defaults to <a href="#ActuatorType.UNKNOWN">ActuatorType.UNKNOWN</a>.</li>
 
     </div>
     <a class="headerlink" href="#GPIOManager.get_type_gpio"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="GPIOManager.get_type_gpio-92"><a href="#GPIOManager.get_type_gpio-92"><span class="linenos"> 92</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_type_gpio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActuatorType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="GPIOManager.get_type_gpio-93"><a href="#GPIOManager.get_type_gpio-93"><span class="linenos"> 93</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the actuator type associated with a GPIO pin.</span>
-</span><span id="GPIOManager.get_type_gpio-94"><a href="#GPIOManager.get_type_gpio-94"><span class="linenos"> 94</span></a>
-</span><span id="GPIOManager.get_type_gpio-95"><a href="#GPIOManager.get_type_gpio-95"><span class="linenos"> 95</span></a><span class="sd">        Args:</span>
-</span><span id="GPIOManager.get_type_gpio-96"><a href="#GPIOManager.get_type_gpio-96"><span class="linenos"> 96</span></a><span class="sd">            pin (int): The GPIO pin-number to query.</span>
-</span><span id="GPIOManager.get_type_gpio-97"><a href="#GPIOManager.get_type_gpio-97"><span class="linenos"> 97</span></a>
-</span><span id="GPIOManager.get_type_gpio-98"><a href="#GPIOManager.get_type_gpio-98"><span class="linenos"> 98</span></a><span class="sd">        Returns:</span>
-</span><span id="GPIOManager.get_type_gpio-99"><a href="#GPIOManager.get_type_gpio-99"><span class="linenos"> 99</span></a><span class="sd">            ActuatorType | None:</span>
-</span><span id="GPIOManager.get_type_gpio-100"><a href="#GPIOManager.get_type_gpio-100"><span class="linenos">100</span></a><span class="sd">                The actuator type if the pin is declared, None otherwise.</span>
-</span><span id="GPIOManager.get_type_gpio-101"><a href="#GPIOManager.get_type_gpio-101"><span class="linenos">101</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="GPIOManager.get_type_gpio-102"><a href="#GPIOManager.get_type_gpio-102"><span class="linenos">102</span></a>        <span class="n">type_found</span><span class="p">:</span> <span class="n">ActuatorType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-</span><span id="GPIOManager.get_type_gpio-103"><a href="#GPIOManager.get_type_gpio-103"><span class="linenos">103</span></a>
-</span><span id="GPIOManager.get_type_gpio-104"><a href="#GPIOManager.get_type_gpio-104"><span class="linenos">104</span></a>        <span class="k">if</span> <span class="n">type_found</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="GPIOManager.get_type_gpio-105"><a href="#GPIOManager.get_type_gpio-105"><span class="linenos">105</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2"> is not used&quot;</span><span class="p">)</span>
-</span><span id="GPIOManager.get_type_gpio-106"><a href="#GPIOManager.get_type_gpio-106"><span class="linenos">106</span></a>
-</span><span id="GPIOManager.get_type_gpio-107"><a href="#GPIOManager.get_type_gpio-107"><span class="linenos">107</span></a>        <span class="k">return</span> <span class="n">type_found</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="GPIOManager.get_type_gpio-94"><a href="#GPIOManager.get_type_gpio-94"><span class="linenos"> 94</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_type_gpio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pin</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActuatorType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="GPIOManager.get_type_gpio-95"><a href="#GPIOManager.get_type_gpio-95"><span class="linenos"> 95</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the actuator type associated with a GPIO pin.</span>
+</span><span id="GPIOManager.get_type_gpio-96"><a href="#GPIOManager.get_type_gpio-96"><span class="linenos"> 96</span></a>
+</span><span id="GPIOManager.get_type_gpio-97"><a href="#GPIOManager.get_type_gpio-97"><span class="linenos"> 97</span></a><span class="sd">        Args:</span>
+</span><span id="GPIOManager.get_type_gpio-98"><a href="#GPIOManager.get_type_gpio-98"><span class="linenos"> 98</span></a><span class="sd">            pin (int): The GPIO pin-number to query.</span>
+</span><span id="GPIOManager.get_type_gpio-99"><a href="#GPIOManager.get_type_gpio-99"><span class="linenos"> 99</span></a>
+</span><span id="GPIOManager.get_type_gpio-100"><a href="#GPIOManager.get_type_gpio-100"><span class="linenos">100</span></a><span class="sd">        Returns:</span>
+</span><span id="GPIOManager.get_type_gpio-101"><a href="#GPIOManager.get_type_gpio-101"><span class="linenos">101</span></a><span class="sd">            ActuatorType | None:</span>
+</span><span id="GPIOManager.get_type_gpio-102"><a href="#GPIOManager.get_type_gpio-102"><span class="linenos">102</span></a><span class="sd">                The actuator type if the pin is declared, None otherwise.</span>
+</span><span id="GPIOManager.get_type_gpio-103"><a href="#GPIOManager.get_type_gpio-103"><span class="linenos">103</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="GPIOManager.get_type_gpio-104"><a href="#GPIOManager.get_type_gpio-104"><span class="linenos">104</span></a>        <span class="n">type_found</span><span class="p">:</span> <span class="n">ActuatorType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gpios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pin</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+</span><span id="GPIOManager.get_type_gpio-105"><a href="#GPIOManager.get_type_gpio-105"><span class="linenos">105</span></a>
+</span><span id="GPIOManager.get_type_gpio-106"><a href="#GPIOManager.get_type_gpio-106"><span class="linenos">106</span></a>        <span class="k">if</span> <span class="n">type_found</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="GPIOManager.get_type_gpio-107"><a href="#GPIOManager.get_type_gpio-107"><span class="linenos">107</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[GPIO] Pin </span><span class="si">{</span><span class="n">pin</span><span class="si">}</span><span class="s2"> is not used&quot;</span><span class="p">)</span>
+</span><span id="GPIOManager.get_type_gpio-108"><a href="#GPIOManager.get_type_gpio-108"><span class="linenos">108</span></a>
+</span><span id="GPIOManager.get_type_gpio-109"><a href="#GPIOManager.get_type_gpio-109"><span class="linenos">109</span></a>        <span class="k">return</span> <span class="n">type_found</span>
 </span></pre></div>
 
 

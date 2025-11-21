@@ -7,9 +7,8 @@ import math
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, override
 
-from loggerplusplus import Logger
-
 from geometry import OrientedPoint
+from log_manager import LogLogger
 from navigation.path_planner.base_path_planner.base_path_planner_params import (
     BasePathPlannerParams,
     BasePathPlannerPlanPathParams,
@@ -17,6 +16,8 @@ from navigation.path_planner.base_path_planner.base_path_planner_params import (
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+    from loggerplusplus import Logger
 
 
 class BasePathPlanner[
@@ -33,7 +34,7 @@ class BasePathPlanner[
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to None.
         """
-        self._logger: Logger = logger or Logger(
+        self._logger: Logger = logger or LogLogger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )

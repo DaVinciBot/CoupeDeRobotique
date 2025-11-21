@@ -219,7 +219,7 @@
 </span><span id="PathPlannerFactory-32"><a href="#PathPlannerFactory-32"><span class="linenos">32</span></a>    <span class="nd">@staticmethod</span>
 </span><span id="PathPlannerFactory-33"><a href="#PathPlannerFactory-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">instantiate</span><span class="p">(</span>
 </span><span id="PathPlannerFactory-34"><a href="#PathPlannerFactory-34"><span class="linenos">34</span></a>        <span class="n">params</span><span class="p">:</span> <span class="n">BasePathPlannerParams</span><span class="p">,</span>
-</span><span id="PathPlannerFactory-35"><a href="#PathPlannerFactory-35"><span class="linenos">35</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BasePathPlanner</span><span class="p">:</span>
+</span><span id="PathPlannerFactory-35"><a href="#PathPlannerFactory-35"><span class="linenos">35</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BasePathPlanner</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 </span><span id="PathPlannerFactory-36"><a href="#PathPlannerFactory-36"><span class="linenos">36</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a path planner based on the given parameters.</span>
 </span><span id="PathPlannerFactory-37"><a href="#PathPlannerFactory-37"><span class="linenos">37</span></a>
 </span><span id="PathPlannerFactory-38"><a href="#PathPlannerFactory-38"><span class="linenos">38</span></a><span class="sd">        This method inspects the ``path_finding_strategy`` attribute of the provided</span>
@@ -232,7 +232,7 @@
 </span><span id="PathPlannerFactory-45"><a href="#PathPlannerFactory-45"><span class="linenos">45</span></a><span class="sd">                including the desired path planning strategy.</span>
 </span><span id="PathPlannerFactory-46"><a href="#PathPlannerFactory-46"><span class="linenos">46</span></a>
 </span><span id="PathPlannerFactory-47"><a href="#PathPlannerFactory-47"><span class="linenos">47</span></a><span class="sd">        Returns:</span>
-</span><span id="PathPlannerFactory-48"><a href="#PathPlannerFactory-48"><span class="linenos">48</span></a><span class="sd">            BasePathPlanner: A specific implementation of the path planner,</span>
+</span><span id="PathPlannerFactory-48"><a href="#PathPlannerFactory-48"><span class="linenos">48</span></a><span class="sd">            BasePathPlanner[Any, Any]: A specific implementation of the path planner,</span>
 </span><span id="PathPlannerFactory-49"><a href="#PathPlannerFactory-49"><span class="linenos">49</span></a><span class="sd">                instantiated with the given parameters.</span>
 </span><span id="PathPlannerFactory-50"><a href="#PathPlannerFactory-50"><span class="linenos">50</span></a>
 </span><span id="PathPlannerFactory-51"><a href="#PathPlannerFactory-51"><span class="linenos">51</span></a><span class="sd">        Raises:</span>
@@ -268,7 +268,7 @@
                     <div class="decorator decorator-staticmethod">@staticmethod</div>
 
         <span class="def">def</span>
-        <span class="name">instantiate</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">params</span><span class="p">:</span> <span class="n">navigation</span><span class="o">.</span><span class="n">path_planner</span><span class="o">.</span><span class="n">base_path_planner</span><span class="o">.</span><span class="n">base_path_planner_params</span><span class="o">.</span><span class="n">BasePathPlannerParams</span></span><span class="return-annotation">) -> <span class="n">navigation</span><span class="o">.</span><span class="n">path_planner</span><span class="o">.</span><span class="n">base_path_planner</span><span class="o">.</span><span class="n">base_path_planner</span><span class="o">.</span><span class="n">BasePathPlanner</span>:</span></span>
+        <span class="name">instantiate</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">params</span><span class="p">:</span> <span class="n">navigation</span><span class="o">.</span><span class="n">path_planner</span><span class="o">.</span><span class="n">base_path_planner</span><span class="o">.</span><span class="n">base_path_planner_params</span><span class="o">.</span><span class="n">BasePathPlannerParams</span></span><span class="return-annotation">) -> <span class="n">navigation</span><span class="o">.</span><span class="n">path_planner</span><span class="o">.</span><span class="n">base_path_planner</span><span class="o">.</span><span class="n">base_path_planner</span><span class="o">.</span><span class="n">BasePathPlanner</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Any</span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="PathPlannerFactory.instantiate-view-source"><span>View Source</span></label>
 
@@ -277,7 +277,7 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="PathPlannerFactory.instantiate-32"><a href="#PathPlannerFactory.instantiate-32"><span class="linenos">32</span></a>    <span class="nd">@staticmethod</span>
 </span><span id="PathPlannerFactory.instantiate-33"><a href="#PathPlannerFactory.instantiate-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">instantiate</span><span class="p">(</span>
 </span><span id="PathPlannerFactory.instantiate-34"><a href="#PathPlannerFactory.instantiate-34"><span class="linenos">34</span></a>        <span class="n">params</span><span class="p">:</span> <span class="n">BasePathPlannerParams</span><span class="p">,</span>
-</span><span id="PathPlannerFactory.instantiate-35"><a href="#PathPlannerFactory.instantiate-35"><span class="linenos">35</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BasePathPlanner</span><span class="p">:</span>
+</span><span id="PathPlannerFactory.instantiate-35"><a href="#PathPlannerFactory.instantiate-35"><span class="linenos">35</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BasePathPlanner</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 </span><span id="PathPlannerFactory.instantiate-36"><a href="#PathPlannerFactory.instantiate-36"><span class="linenos">36</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a path planner based on the given parameters.</span>
 </span><span id="PathPlannerFactory.instantiate-37"><a href="#PathPlannerFactory.instantiate-37"><span class="linenos">37</span></a>
 </span><span id="PathPlannerFactory.instantiate-38"><a href="#PathPlannerFactory.instantiate-38"><span class="linenos">38</span></a><span class="sd">        This method inspects the ``path_finding_strategy`` attribute of the provided</span>
@@ -290,7 +290,7 @@
 </span><span id="PathPlannerFactory.instantiate-45"><a href="#PathPlannerFactory.instantiate-45"><span class="linenos">45</span></a><span class="sd">                including the desired path planning strategy.</span>
 </span><span id="PathPlannerFactory.instantiate-46"><a href="#PathPlannerFactory.instantiate-46"><span class="linenos">46</span></a>
 </span><span id="PathPlannerFactory.instantiate-47"><a href="#PathPlannerFactory.instantiate-47"><span class="linenos">47</span></a><span class="sd">        Returns:</span>
-</span><span id="PathPlannerFactory.instantiate-48"><a href="#PathPlannerFactory.instantiate-48"><span class="linenos">48</span></a><span class="sd">            BasePathPlanner: A specific implementation of the path planner,</span>
+</span><span id="PathPlannerFactory.instantiate-48"><a href="#PathPlannerFactory.instantiate-48"><span class="linenos">48</span></a><span class="sd">            BasePathPlanner[Any, Any]: A specific implementation of the path planner,</span>
 </span><span id="PathPlannerFactory.instantiate-49"><a href="#PathPlannerFactory.instantiate-49"><span class="linenos">49</span></a><span class="sd">                instantiated with the given parameters.</span>
 </span><span id="PathPlannerFactory.instantiate-50"><a href="#PathPlannerFactory.instantiate-50"><span class="linenos">50</span></a>
 </span><span id="PathPlannerFactory.instantiate-51"><a href="#PathPlannerFactory.instantiate-51"><span class="linenos">51</span></a><span class="sd">        Raises:</span>
@@ -333,7 +333,7 @@ including the desired path planning strategy.</li>
 <h6 id="returns">Returns:</h6>
 
 <blockquote>
-  <p>BasePathPlanner: A specific implementation of the path planner,
+  <p>BasePathPlanner[Any, Any]: A specific implementation of the path planner,
       instantiated with the given parameters.</p>
 </blockquote>
 

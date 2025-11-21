@@ -2,14 +2,17 @@
 
 from __future__ import annotations
 
-from typing import overload, override
+from typing import TYPE_CHECKING, overload, override
 
-from loggerplusplus import Logger, log
+from loggerplusplus import log
 
 from a_config_loader import CONFIG
 from controllers.rolling_basis.pids import PID, PidID
 from geometry import OrientedPoint
 from teensy import BaseComTeensy
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class RollingBasisDummy(BaseComTeensy):

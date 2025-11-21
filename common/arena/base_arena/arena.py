@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, cast, override
 
 import matplotlib.pyplot as plt
 import numpy as np
-from loggerplusplus import Logger, time_tracker
+from loggerplusplus import time_tracker
 
 from arena.base_arena.arena_zones import AllyZone, BaseArenaZone, BorderZone, EnemyZone
 from arena.base_arena.grid_manager import GridManager
@@ -31,8 +31,10 @@ from geometry import (
     nearest_points,
     prepare,
 )
+from log_manager import LogLogger
 
 if TYPE_CHECKING:
+    from loggerplusplus import Logger
     from matplotlib.figure import Figure as pltFigure
     from numpy.typing import NDArray
 
@@ -93,7 +95,7 @@ class BaseArena(ABC):
         # 4. Grid Manager
         self.grid_manager: GridManager = GridManager(
             logger=grid_manager_logger
-            or Logger(
+            or LogLogger(
                 identifier="GridManager",
                 follow_logger_manager_rules=True,
             ),
@@ -133,7 +135,7 @@ class BaseArena(ABC):
         # Don't add them now as dynamic forbidden zones because they are not updated yet
         #   -> default position for now (wait BaseArena.update method for update)
         self.ally_zone: AllyZone = AllyZone(
-            logger=Logger(identifier="AllyZone", follow_logger_manager_rules=True),
+            logger=LogLogger(identifier="AllyZone", follow_logger_manager_rules=True),
             point=OrientedPoint(self.width / 2, self.height / 2, 0),
             robot_size=1,
             # The robot is in reality assimilated to a point of null size,
@@ -141,7 +143,7 @@ class BaseArena(ABC):
         )
 
         self.enemy_zone: EnemyZone = EnemyZone(
-            logger=Logger(identifier="EnemyZone", follow_logger_manager_rules=True),
+            logger=LogLogger(identifier="EnemyZone", follow_logger_manager_rules=True),
             point=OrientedPoint(self.width / 2, self.height / 2, 0),
             robot_size=15,
         )
@@ -180,7 +182,7 @@ class BaseArena(ABC):
         border_zone_polygon = cast("Polygon", arena_polygon.difference(inner_polygon))
 
         return BorderZone(
-            logger=Logger(
+            logger=LogLogger(
                 identifier="BorderZone",
                 follow_logger_manager_rules=True,
             ),

@@ -1,6 +1,6 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = ["setuptools", "wheel"]
+requires = ["setuptools", "setuptools-scm"]
 
 [project]
 dependencies = [
@@ -40,6 +40,9 @@ readme = "README.md"
 requires-python = ">=3.13"
 version = "0.1.0"
 
+[project.scripts]
+lgpp_manager = "log_manager.cli:main"
+
 [dependency-groups]
 dev = [
   "isort>=6.0.1",
@@ -67,6 +70,7 @@ known_first_party = [
   "geometry",
   "gpio",
   "led_strip",
+  "log_manager",
   "navigation",
   "navigator",
   "path_planner",
@@ -225,6 +229,11 @@ docstring-code-format = true
 quote-style = "double"
 
 [tool.ruff.lint]
+exclude = [
+  "**/.venv/**",
+  "**/2024_mars_arena/**",
+  "**/docs/**",
+]
 ignore = [
   "ASYNC110", # async-busy-wait
   "B024", # abstract-base-class-without-abstract-method
@@ -243,11 +252,6 @@ ignore = [
   "TRY400", # error-instead-of-exception
 ]
 select = ["ALL"]
-exclude = [
-  "**/.venv/**",
-  "**/2024_mars_arena/**",
-  "**/docs/**",
-]
 
 [tool.ruff.lint.isort]
 known-first-party = [
@@ -262,6 +266,7 @@ known-first-party = [
   "geometry",
   "gpio",
   "led_strip",
+  "log_manager",
   "navigation",
   "navigator",
   "path_planner",
@@ -284,6 +289,7 @@ known-first-party = [
 convention = "google"
 
 [tool.setuptools]
+package-dir = {"common" = "common", "arena" = "common/arena", "geometry" = "common/geometry", "gpio" = "common/gpio", "led_strip" = "common/led_strip", "log_manager" = "common/log_manager", "navigation" = "common/navigation", "strategy" = "common/strategy", "teensy" = "common/teensy", "usb_com" = "common/usb_com", "utils" = "common/utils", "video" = "common/video", "robot1" = "robot1", "rasp" = "robot1/rasp", "a_config_loader" = "robot1/rasp/a_config_loader", "boombot_strategy" = "robot1/rasp/boombot_strategy", "brains" = "robot1/rasp/brains", "controllers" = "robot1/rasp/controllers", "sensors" = "robot1/rasp/sensors"}
 packages = [
   "a_config_loader",
   "arena",
@@ -294,6 +300,7 @@ packages = [
   "geometry",
   "gpio",
   "led_strip",
+  "log_manager",
   "navigation",
   "rasp",
   "robot1",
@@ -304,4 +311,3 @@ packages = [
   "utils",
   "video",
 ]
-package-dir = { "common" = "common", "arena" = "common/arena", "geometry" = "common/geometry","gpio" = "common/gpio", "led_strip" = "common/led_strip", "navigation"= "common/navigation", "strategy" = "common/strategy", "teensy" = "common/teensy", "usb_com" = "common/usb_com", "utils" = "common/utils", "video" = "common/video", "rasp" = "robot1/rasp", "a_config_loader" = "robot1/rasp/a_config_loader", "boombot_strategy" = "robot1/rasp/boombot_strategy", "brains" = "robot1/rasp/brains", "controllers" = "robot1/rasp/controllers", "sensors" = "robot1/rasp/sensors" }

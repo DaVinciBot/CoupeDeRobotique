@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import serial.tools.list_ports
-from loggerplusplus import Logger
 
-_logger = Logger(identifier="GetSerialNumber", follow_logger_manager_rules=True)
+from log_manager import LogLogger
+
+_logger = LogLogger(identifier="GetSerialNumber", follow_logger_manager_rules=True)
 
 
 def get_all_serial_number() -> None:

@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from typing import override
+from typing import TYPE_CHECKING, override
 
-from loggerplusplus import Logger, log
+from loggerplusplus import log
 
 from a_config_loader import CONFIG
 from controllers.actuators.actuators_show import ActuatorsShow
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class ActuatorsShowDummy(ActuatorsShow):
