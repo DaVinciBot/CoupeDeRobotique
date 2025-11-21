@@ -3,16 +3,6 @@
 This module provides a logging handler that can be attached to any loggerplusplus
 Logger instance to automatically write logs to a SQLite database in real-time,
 without modifying the loggerplusplus library.
-
-Example:
-    from loggerplusplus import Logger
-    from log_manager.realtime_handler import RealtimeDBHandler
-
-    logger = Logger(identifier="my_logger", path="logs")
-    db_handler = RealtimeDBHandler.attach_to_logger(logger)
-
-    logger.info("[INIT] Initializing all systems...")
-    # Log is automatically written to database
 """
 
 from __future__ import annotations
@@ -27,8 +17,6 @@ from log_manager.database import LogDatabase
 
 if TYPE_CHECKING:
     from logging import LogRecord
-
-    from loggerplusplus import Logger
 
 
 class RealtimeDBHandler(logging.Handler):
@@ -225,45 +213,3 @@ class RealtimeDBHandler(logging.Handler):
             self.db = None
 
         super().close()
-
-    @classmethod
-    def attach_to_logger(
-        cls,
-        logger: Logger,
-        db_path: Path | str | None = None,
-    ) -> RealtimeDBHandler:
-        """Attach a realtime database handler to a loggerplusplus Logger.
-
-        This is a convenience method that automatically configures the handler
-        with the logger's settings.
-
-        Args:
-            logger: The loggerplusplus Logger instance
-            db_path (Path | str | None): Optional custom database path.
-                If None, uses {logger.config.path}/{date}.db
-
-        Returns:
-            RealtimeDBHandler: The attached handler instance
-
-        Raises:
-            ValueError:
-                If the logger does not have a valid config with full_path attribute
-        """
-        # Get the log file path from the logger
-        if not hasattr(logger, "config") or not hasattr(logger.config, "full_path"):
-            msg = "Logger must have a config with full_path attribute"
-            raise ValueError(msg)
-
-        log_file_path = logger.config.full_path
-
-        if db_path is None:
-            log_dir = Path(logger.config.path)
-            date_str = datetime.datetime.now().strftime("%Y-%m-%d")
-            db_path = log_dir / f"{date_str}.db"
-
-        handler = cls(db_path=db_path, log_file_path=log_file_path)
-        handler.setLevel(logging.DEBUG)
-
-        logger.logger.addHandler(handler)
-
-        return handler

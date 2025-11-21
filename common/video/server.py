@@ -6,9 +6,10 @@ import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import cv2
-from loggerplusplus import Logger
 
-_logger = Logger(identifier="MJPEGHandler", follow_logger_manager_rules=True)
+from log_manager import LogLogger
+
+_logger = LogLogger(identifier="MJPEGHandler", follow_logger_manager_rules=True)
 
 
 class MJPEGHandler(BaseHTTPRequestHandler):

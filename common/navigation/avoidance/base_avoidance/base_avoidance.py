@@ -8,8 +8,7 @@ import time
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from loggerplusplus import Logger
-
+from log_manager import LogLogger
 from navigation.avoidance.acs_detection_profiles import AcsDetectionProfileFactory
 from navigation.avoidance.base_avoidance.base_avoidance_params import (
     BaseAvoidanceParams,
@@ -20,6 +19,8 @@ from navigation.trajectory_planner import TrajectoryPlanCommand
 
 if TYPE_CHECKING:
     from collections.abc import Callable
+
+    from loggerplusplus import Logger
 
     from arena.base_arena.arena_zones import AllyZone, EnemyZone
     from geometry import OrientedPoint
@@ -51,7 +52,7 @@ class BaseAvoidance[PARAMSTYPE: BaseAvoidanceParams](ABC):
             logger (Logger | None, optional): Logger instance for debugging.
                 Defaults to ``None``.
         """
-        self._logger: Logger = logger or Logger(
+        self._logger: Logger = logger or LogLogger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )

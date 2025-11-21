@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 import asyncio
-
-from loggerplusplus import Logger
+from typing import TYPE_CHECKING
 
 from gpio import PIN
+from log_manager import LogLogger
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
+
 
 CONSECUTIVE_TRIGGER_THRESHOLD = 5
 CONSECUTIVE_PLUG_THRESHOLD = 5
@@ -29,7 +33,7 @@ class Inputs:
             logger (Logger | None, optional):
                 Logger instance for logging. Defaults to None.
         """
-        self._logger = logger or Logger(
+        self._logger = logger or LogLogger(
             identifier="Inputs",
             follow_logger_manager_rules=True,
         )

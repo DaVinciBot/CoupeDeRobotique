@@ -7,8 +7,7 @@ import time
 import traceback
 from typing import TYPE_CHECKING, Any
 
-from loggerplusplus import Logger
-
+from log_manager import LogLogger
 from strategy.core.task_nodes.scoring_functions import (
     BaseScoringFunction,
     DefaultScoringFunction,
@@ -42,7 +41,7 @@ class BaseTaskNode:
             [tasks] if isinstance(tasks, BaseTask) else tasks
         )
         self.scoring_function = scoring_function or DefaultScoringFunction()
-        self._logger = Logger(identifier=name, follow_logger_manager_rules=True)
+        self._logger = LogLogger(identifier=name, follow_logger_manager_rules=True)
 
         # Transitions to other nodes
         self.transitions: list[BaseTransition] = []
