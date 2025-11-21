@@ -164,12 +164,6 @@ class RealtimeDBHandler(logging.Handler):
             message = record.getMessage()
 
             if self._detect_execution_boundary(message):
-                if self.current_execution_id:
-                    self.db.update_execution_end_time(
-                        self.current_execution_id,
-                        datetime.datetime.now(),
-                    )
-
                 existing_executions = self.db.get_executions(str(self.log_file_path))
                 exec_num = len(existing_executions)
                 self.current_execution_id = f"{self.current_date}_exec{exec_num:03d}"
