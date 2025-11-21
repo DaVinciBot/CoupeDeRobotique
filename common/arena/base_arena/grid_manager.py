@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, cast, override
 
 import matplotlib.pyplot as plt
 import numpy as np
-from loggerplusplus import Logger, LogLevels, time_tracker
+from loggerplusplus import LogLevels, time_tracker
 from matplotlib.patches import Rectangle as pltRectangle
 from matplotlib.ticker import MaxNLocator
 from pathfinding.core.grid import Grid, GridNode
@@ -16,6 +16,7 @@ from shapely.strtree import STRtree
 from geometry import OrientedPoint, Polygon, box
 
 if TYPE_CHECKING:
+    from loggerplusplus import Logger
     from matplotlib.figure import Figure as pltFigure
 
 

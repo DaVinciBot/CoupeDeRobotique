@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import struct
 import time
-from typing import override
+from typing import TYPE_CHECKING, override
 
-from loggerplusplus import Logger, log
+from loggerplusplus import log
 
 from a_config_loader import CONFIG
 from teensy import ActuatorType, GPIOComTeensy
 from usb_com.python import Messages
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 I2C_DELAY = 0.03
 

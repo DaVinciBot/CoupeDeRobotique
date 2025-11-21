@@ -4,15 +4,18 @@ from __future__ import annotations
 
 import struct
 import time
-from typing import overload, override
+from typing import TYPE_CHECKING, overload, override
 
-from loggerplusplus import Logger, LogLevels, log
+from loggerplusplus import LogLevels, log
 
 from a_config_loader import CONFIG
 from controllers.rolling_basis.pids import PID, PidID
 from geometry import OrientedPoint
 from teensy import BaseComTeensy
 from usb_com.python import Messages
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class RollingBasis(BaseComTeensy):
