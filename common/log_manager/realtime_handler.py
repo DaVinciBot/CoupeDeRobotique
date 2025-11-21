@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, override
 
 from log_manager.database import LogDatabase
+from log_manager.utils import detect_execution_boundary, parse_log_line
 
 if TYPE_CHECKING:
     from logging import LogRecord
@@ -81,59 +82,6 @@ class RealtimeDBHandler(logging.Handler):
             description=f"Execution {exec_num}",
         )
 
-    def _extract_category(self, message: str) -> str | None:
-        """Extract category from message.
-
-        Args:
-            message (str): Log message
-
-        Returns:
-            str | None: Extracted category or None
-        """
-        match = self.CATEGORY_PATTERN.search(message)
-        return match.group(1) if match else None
-
-    def _format_timestamp(self, record: LogRecord) -> str:
-        """Format timestamp from LogRecord.
-
-        Args:
-            record (LogRecord): The log record
-
-        Returns:
-            str: Formatted timestamp
-        """
-        dt = datetime.datetime.fromtimestamp(record.created)
-        return dt.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # milliseconds precision
-
-    def _format_raw_line(self, record: LogRecord) -> str:
-        """Format the raw log line as it appears in the file.
-
-        Args:
-            record (LogRecord): The log record
-
-        Returns:
-            str: Formatted raw log line
-        """
-        dt = datetime.datetime.fromtimestamp(record.created)
-        time_str = dt.strftime("%H:%M:%S.%f")[:-3]  # HH:MM:SS.mmm
-
-        return (
-            f"{time_str} -> [{record.name}] "
-            f"[{record.filename}:{record.lineno}] "
-            f"{record.levelname} | {record.getMessage()}"
-        )
-
-    def _detect_execution_boundary(self, message: str) -> bool:
-        """Detect if a log message indicates a new execution start.
-
-        Args:
-            message (str): Log message
-
-        Returns:
-            bool: True if this is an execution boundary
-        """
-        return "[INIT] Initializing all systems..." in message
-
     @staticmethod
     def _should_exclude_record(record: LogRecord) -> bool:
         """Check if a log record should be excluded from database.
@@ -163,12 +111,12 @@ class RealtimeDBHandler(logging.Handler):
         try:
             message = record.getMessage()
 
-            if self._detect_execution_boundary(message):
+            if detect_execution_boundary(message):
                 existing_executions = self.db.get_executions(str(self.log_file_path))
                 exec_num = len(existing_executions)
                 self.current_execution_id = f"{self.current_date}_exec{exec_num:03d}"
 
-                start_time = datetime.datetime.now()
+                start_time = datetime.datetime.fromtimestamp(record.created)
                 self.db.add_execution(
                     execution_id=self.current_execution_id,
                     start_time=start_time,
@@ -176,23 +124,16 @@ class RealtimeDBHandler(logging.Handler):
                     description=f"Execution {exec_num}",
                 )
 
-            category = self._extract_category(message)
-            timestamp = self._format_timestamp(record)
-            raw_line = self._format_raw_line(record)
-
+            raw_line = self.format(record)
+            parsed = parse_log_line(raw_line, current_date=self.current_date)
+            if not parsed:
+                return
             self.db.add_log_entry(
                 execution_id=self.current_execution_id,
-                timestamp=timestamp,
-                level=record.levelname,
-                logger_name=record.name,
-                file_name=record.filename,
-                line_number=record.lineno,
-                category=category,
-                message=message,
-                raw_line=raw_line,
+                **parsed,
             )
 
-        except Exception:
+        except Exception:  # noqa: BLE001
             self.handleError(record)
 
     @override

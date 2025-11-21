@@ -2,34 +2,18 @@
 
 from __future__ import annotations
 
-import re
 from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
+
+from log_manager.utils import detect_execution_boundary, parse_log_line
 
 if TYPE_CHECKING:
     from log_manager.database import LogDatabase
 
 
 class LogIndexer:
-    """Parses log files and indexes them in the database.
-
-    Attributes:
-        LOG_PATTERN (re.Pattern[str]): Regular expression pattern for log lines.
-        CATEGORY_PATTERN (re.Pattern[str]): Regular expression pattern for categories.
-    """
-
-    LOG_PATTERN: re.Pattern[str] = re.compile(
-        r"(?P<time>\d{2}:\d{2}:\d{2}\.\d+)\s+->\s+"
-        r"\[(?P<logger>[^\]]+)\]\s+"
-        r"\[(?P<file>[^:]+):(?P<line>\d+)\]\s+"
-        r"(?P<level>\w+)\s+\|\s+"
-        r"(?P<message>.*)",
-    )
-    """Log format: HH:MM:SS.ffffff -> [logger] [file:line] LEVEL | message"""
-
-    CATEGORY_PATTERN: re.Pattern[str] = re.compile(r"\[([A-Z_]+(?::[A-Za-z0-9:]+)?)\]")
-    """Category pattern: [CATEGORY] or [CA_TEG_ORY:SubCategory]"""
+    """Parses log files and indexes them in the database."""
 
     def __init__(self, db: LogDatabase) -> None:
         """Initialize indexer.
@@ -40,57 +24,6 @@ class LogIndexer:
         self.db = db
         self.current_execution_id: str | None = None
         self.current_date: str | None = None
-
-    def _parse_log_line(
-        self,
-        line: str,
-    ) -> dict[str, Any] | None:
-        """Parse a single log line.
-
-        Args:
-            line (str): Log line to parse
-
-        Returns:
-            dict[str, Any] | None: Parsed log entry or None if parse failed
-        """
-        match = self.LOG_PATTERN.match(line)
-        if not match:
-            return None
-
-        data = match.groupdict()
-
-        category = None
-        category_match = self.CATEGORY_PATTERN.search(data["message"])
-        if category_match:
-            category = category_match.group(1)
-
-        if self.current_date:
-            timestamp = f"{self.current_date} {data['time']}"
-        else:
-            timestamp = data["time"]
-
-        return {
-            "timestamp": timestamp,
-            "level": data["level"],
-            "logger_name": data["logger"].strip(),
-            "file_name": data["file"].strip(),
-            "line_number": int(data["line"]),
-            "category": category,
-            "message": data["message"],
-            "raw_line": line.strip(),
-        }
-
-    @staticmethod
-    def _detect_execution_boundary(line: str) -> bool:
-        """Detect if a log line indicates a new execution start.
-
-        Args:
-            line (str): Log line to check
-
-        Returns:
-            bool: True if this is an execution boundary
-        """
-        return "[INIT] Initializing all systems..." in line
 
     @staticmethod
     def _should_skip_entry(
@@ -176,7 +109,7 @@ class LogIndexer:
 
         with log_path.open("r", encoding="utf-8", errors="ignore") as f:
             for line in f:
-                parsed = self._parse_log_line(line)
+                parsed = parse_log_line(line, current_date=self.current_date)
                 if not parsed:
                     continue
 
@@ -190,7 +123,7 @@ class LogIndexer:
                     if should_skip:
                         continue
 
-                if self._detect_execution_boundary(line):
+                if detect_execution_boundary(line):
                     new_execution_counter = execution_counter + 1
                     new_execution_id = (
                         f"{self.current_date}_exec{new_execution_counter:03d}"
