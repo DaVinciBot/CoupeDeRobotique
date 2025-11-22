@@ -33,8 +33,11 @@ void KF1D::set_Ts(double Ts) {
 
 void KF1D::predict(double u) {
     // (x, v)^T = F * (x, v)^T + G * u
-    _x = _F00 * _x + _F01 * _v + _G0 * u;
-    _v = _F10 * _x + _F11 * _v + _G1 * u;
+    double x_prev = _x;
+    double v_prev = _v;
+
+    _x = _F00 * x_prev + _F01 * v_prev + _G0 * u;
+    _v = _F10 * x_prev + _F11 * v_prev + _G1 * u;
 
     // P = FPF^T + Q
     double FP00 = _F00 * _P00 + _F01 * _P10;
@@ -80,6 +83,7 @@ bool KF1D::correct(double z) {
     double I_KH_01 = 0.0 - K0 * _H1;
     double I_KH_10 = 0.0 - K1 * _H0;
     double I_KH_11 = 1.0 - K1 * _H1;
+
     if (_use_joseph_form) {
         // Joseph form: P = (I - KH) P (I - KH)^T + KRK^T
         double T00 = I_KH_00 * _P00 + I_KH_01 * _P10;
@@ -93,10 +97,15 @@ bool KF1D::correct(double z) {
         _P11 = T10 * I_KH_10 + T11 * I_KH_11 + K1 * _R * K1;
     } else {
         // Standard form: P = (I - KH)P
-        _P00 = I_KH_00 * _P00 + I_KH_01 * _P10;
-        _P01 = I_KH_00 * _P01 + I_KH_01 * _P11;
-        _P10 = I_KH_10 * _P00 + I_KH_11 * _P10;
-        _P11 = I_KH_10 * _P01 + I_KH_11 * _P11;
+        double P00_prev = _P00;
+        double P01_prev = _P01;
+        double P10_prev = _P10;
+        double P11_prev = _P11;
+
+        _P00 = I_KH_00 * P00_prev + I_KH_01 * P10_prev;
+        _P01 = I_KH_00 * P01_prev + I_KH_01 * P11_prev;
+        _P10 = I_KH_10 * P00_prev + I_KH_11 * P10_prev;
+        _P11 = I_KH_10 * P01_prev + I_KH_11 * P11_prev;
     }
     return true;
 }
