@@ -1,5 +1,5 @@
-#include "kf1d.h"
 #include <Arduino.h>
+#include <kf1d.h>
 #include <cfloat>
 
 KF1D::KF1D(double Ts, double qa, double R)
@@ -51,7 +51,7 @@ void KF1D::predict(double u) {
     _P11 = FP10 * _F10 + FP11 * _F11 + _Q11;
 }
 
-bool KF1D::correct(double z) {
+bool KF1D::correct(double z, Com* com) {
     // Innovation : y = z - Hx
     double y = z - (_H0 * _x + _H1 * _v);  // Measurement residual
 
@@ -59,15 +59,14 @@ bool KF1D::correct(double z) {
     double HP0 = _H0 * _P00 + _H1 * _P10;
     double HP1 = _H0 * _P01 + _H1 * _P11;
     double S = HP0 * _H0 + HP1 * _H1 + _R;  // Residual covariance
-    if (S <= DBL_EPSILON)
+    if (S <= DBL_EPSILON && !isfinite(S))
         S = DBL_EPSILON;
 
     // Gate check
     if (_gate_Nsigma > 0.0) {
         double nsq = _gate_Nsigma * _gate_Nsigma;
-        if ((y * y) > (nsq * S)) {
+        if ((y * y) > (nsq * S))
             return false;
-        }
     }
 
     // Kalman gain K = PH^T S^-1
@@ -107,6 +106,10 @@ bool KF1D::correct(double z) {
         _P10 = I_KH_10 * P00_prev + I_KH_11 * P10_prev;
         _P11 = I_KH_10 * P01_prev + I_KH_11 * P11_prev;
     }
+
+    String pValues = "P: " + String(_P00) + ", " + String(_P01) + ", " +
+                     String(_P10) + ", " + String(_P11);
+    com->print((char*)pValues.c_str());
     return true;
 }
 

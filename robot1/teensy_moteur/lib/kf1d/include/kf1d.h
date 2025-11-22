@@ -2,6 +2,7 @@
 #define KF1D_H
 
 #include <Arduino.h>
+#include <com.h>  // Communication object to manage the communication between the teensy and the Raspberry Pi
 
 /**
  * @brief 1D Kalman filter
@@ -40,10 +41,31 @@ class KF1D {
      * measurement
      *
      * @param z Measurement (position) (m)
+     * @param com Communication object for debug output
      * @return true If the measurement is within the validation gate
      * @return false If the measurement is outside the validation gate
      */
-    bool correct(double z);
+    bool correct(double z, Com* com);
+
+    /**
+     * @brief Set the Gate object
+     *
+     * @param nsigma Number of standard deviations for the validation gate (0
+     * to disable)
+     */
+    inline void setGate(double nsigma) { _gate_Nsigma = nsigma; }
+    /**
+     * @brief Get the current state estimate (position)
+     *
+     * @return double Current position estimate (m)
+     */
+    inline double x() const { return _x; }
+    /**
+     * @brief Get the current state estimate (velocity)
+     *
+     * @return double Current velocity estimate (m/s)
+     */
+    inline double v() const { return _v; }
 
    private:
     double _x;  // State estimate (m)
