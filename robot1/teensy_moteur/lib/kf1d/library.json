@@ -1,0 +1,8 @@
+{
+  "name": "kf1d",
+  "version": "1.0.0",
+  "description": "Library dedicated to 1D Kalman filtering",
+  "keywords": "kalman",
+  "frameworks": "*",
+  "platforms": "*"
+}
