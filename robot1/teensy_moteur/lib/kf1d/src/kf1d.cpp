@@ -1,4 +1,4 @@
-#include "KF1D.h"
+#include "kf1d.h"
 #include <Arduino.h>
 #include <cfloat>
 
