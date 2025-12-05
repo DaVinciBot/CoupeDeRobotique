@@ -71,9 +71,9 @@ class ArucoDetector:
         self._arena_ax = None
         self._arena_canvas = None
 
+        # OpenCV 4.5.1 compatible API
         self.aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_100)
-        self.aruco_params = cv2.aruco.DetectorParameters()
-        self.detector = cv2.aruco.ArucoDetector(self.aruco_dict, self.aruco_params)
+        self.aruco_params = cv2.aruco.DetectorParameters_create()
 
         if self.camera_matrix is None:
             w, h = self.cam.get_resolution()
@@ -436,7 +436,10 @@ class ArucoDetector:
 
     def analyze_frame(self, frame, show_arena=True, arena_window_name="Arena"):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        corners, ids, _ = self.detector.detectMarkers(gray)
+        # OpenCV 4.5.1 compatible API: utiliser detectMarkers directement
+        corners, ids, _ = cv2.aruco.detectMarkers(
+            gray, self.aruco_dict, parameters=self.aruco_params
+        )
 
         if ids is None or len(ids) == 0:
             if show_arena:
