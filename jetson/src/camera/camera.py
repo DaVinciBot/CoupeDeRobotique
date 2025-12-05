@@ -125,16 +125,35 @@ class Camera:
         self.cam.set(cv2.CAP_PROP_FPS, fps)
         time.sleep(0.2)  # Temps de stabilisation
 
-        # Vérifier le FPS obtenu
-        actual_fps = self.cam.get(cv2.CAP_PROP_FPS)
-
         # Vider le buffer après changement
         for _ in range(5):
             self.cam.read()
             time.sleep(0.01)
 
-        if abs(actual_fps - fps) > 1:
-            print(f"   ⚠️  FPS demandé: {fps}, FPS obtenu: {actual_fps:.1f}")
+        # IMPORTANT: Mesurer le FPS RÉEL, pas celui que la caméra prétend avoir
+        # car cam.get(CAP_PROP_FPS) peut retourner une valeur théorique incorrecte
+        print(f"   📊 Mesure du FPS réel sur 2 secondes...")
+        frame_count = 0
+        start_time = time.time()
+        test_duration = 2.0
+
+        while time.time() - start_time < test_duration:
+            ret, _ = self.cam.read()
+            if ret:
+                frame_count += 1
+            else:
+                break
+
+        elapsed = time.time() - start_time
+        actual_fps = frame_count / elapsed if elapsed > 0 else 0
+
+        configured_fps = self.cam.get(cv2.CAP_PROP_FPS)
+        print(f"   📌 FPS configuré (get): {configured_fps:.1f}")
+        print(f"   📌 FPS réel (mesuré): {actual_fps:.1f}")
+
+        if abs(actual_fps - fps) > 2:
+            print(f"   ⚠️  FPS demandé: {fps}, FPS réel obtenu: {actual_fps:.1f}")
+            print(f"   💡 La caméra/driver ne supporte peut-être pas ce FPS")
             return False
         else:
             print(f"   ✅ FPS changé avec succès: {actual_fps:.1f}")
