@@ -44,8 +44,6 @@ class Camera:
         for backend in backends:
             self.cam = cv2.VideoCapture(camera_id, backend)
             if self.cam and self.cam.isOpened():
-                if fps:
-                    self.cam.set(cv2.CAP_PROP_FPS, fps)
                 break
             if self.cam:
                 self.cam.release()
@@ -53,14 +51,21 @@ class Camera:
         if self.cam is None or not self.is_opened():
             return
 
+        # Configuration de la résolution et FPS (UNE SEULE FOIS, après ouverture)
         if width and height:
             self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
             self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-            if fps:
-                self.cam.set(cv2.CAP_PROP_FPS, fps)
-            time.sleep(0.05)
-            for _ in range(3):
-                self.cam.read()
+
+        if fps:
+            # Essayer de définir le FPS (peut ne pas fonctionner sur toutes les caméras)
+            self.cam.set(cv2.CAP_PROP_FPS, fps)
+            actual_fps = self.cam.get(cv2.CAP_PROP_FPS)
+            if abs(actual_fps - fps) > 1:
+                print(f"⚠️  FPS demandé: {fps}, FPS obtenu: {actual_fps:.1f}")
+
+        time.sleep(0.05)
+        for _ in range(3):
+            self.cam.read()
 
     def is_opened(self) -> bool:
         """Check if the camera is opened.
