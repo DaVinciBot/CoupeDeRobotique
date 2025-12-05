@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import Optional, Tuple
 
 import cv2
 import matplotlib.pyplot as plt
@@ -26,9 +27,9 @@ def detect_gpu():
 
 def parse_float_array(
     name: str,
-    default: np.ndarray | None = None,
-    shape: tuple | None = None,
-) -> np.ndarray | None:
+    default: Optional[np.ndarray] = None,
+    shape: Optional[Tuple] = None,
+) -> Optional[np.ndarray]:
     """Parse a float array from environment variables.
 
     Args:
@@ -49,7 +50,7 @@ def parse_float_array(
         return np.array(default, dtype=np.float64).reshape(shape) if default else None
 
 
-def parse_int(name: str, default: int = 0) -> int | None:
+def parse_int(name: str, default: int = 0) -> Optional[int]:
     """Parse an integer from environment variables.
 
     Args:
@@ -85,21 +86,21 @@ SHOW_ARENA: bool = parse_bool("SHOW_ARENA", default=True)
 SHOW_CAMERA_FEED: bool = parse_bool("SHOW_CAMERA_FEED", default=True)
 CALIBRATE_MODE: bool = parse_bool("CALIBRATE_MODE", default=False)
 
-CAMERA_ID: int | None = parse_int("CAMERA_ID", 0)
-CAMERA_WIDTH: int | None = parse_int("CAMERA_WIDTH", 1920)
-CAMERA_HEIGHT: int | None = parse_int("CAMERA_HEIGHT", 1080)
+CAMERA_ID: Optional[int] = parse_int("CAMERA_ID", 0)
+CAMERA_WIDTH: Optional[int] = parse_int("CAMERA_WIDTH", 1920)
+CAMERA_HEIGHT: Optional[int] = parse_int("CAMERA_HEIGHT", 1080)
 
-MARKER_SIZE_CM: float | None = float(os.getenv("MARKER_SIZE_CM", "2.4"))
-MARKER_SIZE_REF_CM: float | None = float(os.getenv("MARKER_SIZE_REF_CM", "12.0"))
-MARKER_SIZE_CRATE_CM: float | None = float(os.getenv("MARKER_SIZE_CRATE_CM", "5.0"))
+MARKER_SIZE_CM: Optional[float] = float(os.getenv("MARKER_SIZE_CM", "2.4"))
+MARKER_SIZE_REF_CM: Optional[float] = float(os.getenv("MARKER_SIZE_REF_CM", "12.0"))
+MARKER_SIZE_CRATE_CM: Optional[float] = float(os.getenv("MARKER_SIZE_CRATE_CM", "5.0"))
 
-ASSUMED_HFOV_DEG: float | None = float(os.getenv("ASSUMED_HFOV_DEG", "90.0"))
-DIST_COEFFS: np.ndarray | None = parse_float_array("DIST_COEFFS", shape=(5,))
-CAMERA_MATRIX: np.ndarray | None = parse_float_array("CAMERA_MATRIX", shape=(3, 3))
-CHESSBOARD_ROWS: int | None = parse_int("CHESSBOARD_ROWS", 6)
-CHESSBOARD_COLS: int | None = parse_int("CHESSBOARD_COLS", 9)
-SQUARE_SIZE_CM: float | None = float(os.getenv("SQUARE_SIZE_CM", "1.0"))
-NUM_CALIB_IMAGES: int | None = parse_int("NUM_CALIB_IMAGES", 20)
+ASSUMED_HFOV_DEG: Optional[float] = float(os.getenv("ASSUMED_HFOV_DEG", "90.0"))
+DIST_COEFFS: Optional[np.ndarray] = parse_float_array("DIST_COEFFS", shape=(5,))
+CAMERA_MATRIX: Optional[np.ndarray] = parse_float_array("CAMERA_MATRIX", shape=(3, 3))
+CHESSBOARD_ROWS: Optional[int] = parse_int("CHESSBOARD_ROWS", 6)
+CHESSBOARD_COLS: Optional[int] = parse_int("CHESSBOARD_COLS", 9)
+SQUARE_SIZE_CM: Optional[float] = float(os.getenv("SQUARE_SIZE_CM", "1.0"))
+NUM_CALIB_IMAGES: Optional[int] = parse_int("NUM_CALIB_IMAGES", 20)
 
 
 def calibrate_camera() -> None:

@@ -1,7 +1,7 @@
 """Camera module for video capture and calibration."""
 
 import time
-from typing import Any
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import cv2
 import numpy as np
@@ -19,9 +19,9 @@ class Camera:
     def __init__(
         self,
         camera_id: int,
-        width: int | None = None,
-        height: int | None = None,
-        backends: list[int] | None = None,
+        width: Optional[int] = None,
+        height: Optional[int] = None,
+        backends: Optional[List[int]] = None,
     ) -> None:
         """Initialize the camera.
 
@@ -64,7 +64,7 @@ class Camera:
         """
         return self.cam is not None and self.cam.isOpened()
 
-    def get_resolution(self) -> tuple[int, int]:
+    def get_resolution(self) -> Tuple[int, int]:
         """Get the current resolution of the camera.
 
         Returns:
@@ -77,7 +77,7 @@ class Camera:
             int(self.cam.get(cv2.CAP_PROP_FRAME_HEIGHT)),
         )
 
-    def get_camera_info(self) -> dict[str, int | float]:
+    def get_camera_info(self) -> Dict[str, Union[int, float]]:
         """Get camera information.
 
         Returns:
@@ -88,7 +88,7 @@ class Camera:
         w, h = self.get_resolution()
         return {"width": w, "height": h, "fps": self.cam.get(cv2.CAP_PROP_FPS)}
 
-    def read_frame(self) -> np.ndarray[Any, Any] | None:
+    def read_frame(self) -> Optional[np.ndarray]:
         """Read a frame from the camera.
 
         Returns:
@@ -101,14 +101,14 @@ class Camera:
 
     def calibrate(
         self,
-        chessboard_size: tuple[int, int] = (9, 6),
+        chessboard_size: Tuple[int, int] = (9, 6),
         square_size: float = 1.0,
         num_images: int = 20,
-    ) -> tuple[
-        Any | None,
-        Any | None,
-        Any | None,
-        Any | None,
+    ) -> Tuple[
+        Optional[Any],
+        Optional[Any],
+        Optional[Any],
+        Optional[Any],
     ]:
         """Calibrate the camera using chessboard images.
 

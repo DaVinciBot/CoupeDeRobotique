@@ -1,6 +1,7 @@
 """Module de détection ArUco pour Jetson."""
 
 import math
+from typing import Optional
 
 import cv2
 import matplotlib as mpl
@@ -36,8 +37,8 @@ class ArucoDetector:
         marker_size_cm: float,
         marker_size_ref_cm: float,
         marker_size_crate_cm: float,
-        camera_matrix: np.ndarray | None = None,
-        dist_coeffs: np.ndarray | None = None,
+        camera_matrix: Optional[np.ndarray] = None,
+        dist_coeffs: Optional[np.ndarray] = None,
         assumed_hfov_deg: float = 60.0,
     ) -> None:
         """Initialise l'instance de détection ArUco.
