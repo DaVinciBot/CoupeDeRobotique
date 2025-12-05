@@ -92,7 +92,7 @@ DEBUG_MODE: bool = parse_bool("DEBUG_MODE", default=False)
 USE_THREADED_CAMERA: bool = parse_bool("USE_THREADED_CAMERA", default=True)
 
 CAMERA_ID: Optional[int] = parse_int("CAMERA_ID", 0)
-FPS: Optional[int] = parse_int("FPS", 15)
+FPS: Optional[float] = float(os.getenv("FPS", "15.0"))
 CAMERA_WIDTH: Optional[int] = parse_int("CAMERA_WIDTH", 1920)
 CAMERA_HEIGHT: Optional[int] = parse_int("CAMERA_HEIGHT", 1080)
 
