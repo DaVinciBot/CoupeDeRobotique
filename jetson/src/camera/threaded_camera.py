@@ -68,10 +68,14 @@ class ThreadedCamera(Camera):
                 )
                 print(f"📹 Caméra: Backend={backend}, FPS configuré={actual_fps:.1f}")
 
+            # Laisser la caméra se stabiliser complètement avant de lancer le thread
+            time.sleep(0.3)  # Temps de stabilisation supplémentaire
+
             self.thread = threading.Thread(target=self._update_frame, daemon=True)
             self.thread.start()
+
             # Attendre que la première frame soit disponible
-            time.sleep(0.1)
+            time.sleep(0.2)
 
     def _update_frame(self) -> None:
         """Background thread function that continuously reads frames."""

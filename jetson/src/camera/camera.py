@@ -63,9 +63,16 @@ class Camera:
             if abs(actual_fps - fps) > 1:
                 print(f"⚠️  FPS demandé: {fps}, FPS obtenu: {actual_fps:.1f}")
 
-        time.sleep(0.05)
-        for _ in range(3):
+            # IMPORTANT: Laisser la caméra se stabiliser après changement de FPS
+            # Certaines caméras ont besoin de temps pour ajuster leur buffer interne
+            time.sleep(0.2)  # 200ms de stabilisation
+        else:
+            time.sleep(0.05)
+
+        # Lire quelques frames pour vider le buffer initial
+        for _ in range(5):
             self.cam.read()
+            time.sleep(0.01)  # Petite pause entre chaque frame
 
     def is_opened(self) -> bool:
         """Check if the camera is opened.
@@ -108,7 +115,7 @@ class Camera:
         """
         if self.cam is None or not self.is_opened():
             return None
-        
+
         try:
             ret, frame = self.cam.read()
             if not ret:
