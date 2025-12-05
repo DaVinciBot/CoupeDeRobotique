@@ -23,7 +23,7 @@ class ThreadedCamera(Camera):
         height: Optional[int] = None,
         backends: Optional[list] = None,
         buffer_size: int = 1,
-        fps: Optional[int] = None,
+        fps: Optional[float] = None,
     ) -> None:
         """Initialize the threaded camera.
 

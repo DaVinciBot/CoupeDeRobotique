@@ -23,7 +23,7 @@ class Camera:
         width: Optional[int] = None,
         height: Optional[int] = None,
         backends: Optional[List[int]] = None,
-        fps: Optional[int] = None,
+        fps: Optional[float] = None,
     ) -> None:
         """Initialize the camera.
 
@@ -37,19 +37,43 @@ class Camera:
         self.cam: cv2.VideoCapture | None = None
 
         if backends is None:
-            backends = [
-                getattr(cv2, attr, cv2.CAP_ANY) for attr in ("CAP_DSHOW", "CAP_MSMF")
-            ] + [cv2.CAP_ANY]
+            # Backends par défaut selon la plateforme
+            # Linux/Jetson: CAP_V4L2
+            # Windows: CAP_DSHOW, CAP_MSMF
+            # macOS: CAP_ANY
+            if hasattr(cv2, "CAP_V4L2"):
+                # Linux/Jetson
+                backends = [cv2.CAP_V4L2, cv2.CAP_ANY]
+            else:
+                # Windows/Mac
+                backends = [
+                    getattr(cv2, attr, cv2.CAP_ANY)
+                    for attr in ("CAP_DSHOW", "CAP_MSMF")
+                ] + [cv2.CAP_ANY]
 
+        selected_backend = None
         for backend in backends:
             self.cam = cv2.VideoCapture(camera_id, backend)
             if self.cam and self.cam.isOpened():
+                selected_backend = backend
                 break
             if self.cam:
                 self.cam.release()
 
         if self.cam is None or not self.is_opened():
             return
+
+        # Afficher le backend sélectionné pour diagnostic
+        backend_names = {
+            cv2.CAP_V4L2: "V4L2 (Linux)",
+            cv2.CAP_DSHOW: "DSHOW (Windows)",
+            cv2.CAP_MSMF: "MSMF (Windows)",
+            cv2.CAP_ANY: "ANY (Auto)",
+        }
+        backend_name = backend_names.get(
+            selected_backend, f"Backend {selected_backend}"
+        )
+        print(f"🎥 Camera backend: {backend_name}")
 
         # Configuration de la résolution et FPS (UNE SEULE FOIS, après ouverture)
         if width and height:

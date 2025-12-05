@@ -96,6 +96,23 @@ FPS: Optional[float] = float(os.getenv("FPS", "15.0"))
 CAMERA_WIDTH: Optional[int] = parse_int("CAMERA_WIDTH", 1920)
 CAMERA_HEIGHT: Optional[int] = parse_int("CAMERA_HEIGHT", 1080)
 
+# Backend OpenCV (optionnel)
+CAMERA_BACKEND_STR: Optional[str] = os.getenv("CAMERA_BACKEND", "").strip().upper()
+CAMERA_BACKEND: Optional[list[int]] = None
+if CAMERA_BACKEND_STR:
+    backend_map = {
+        "V4L2": cv2.CAP_V4L2 if hasattr(cv2, "CAP_V4L2") else None,
+        "DSHOW": cv2.CAP_DSHOW if hasattr(cv2, "CAP_DSHOW") else None,
+        "MSMF": cv2.CAP_MSMF if hasattr(cv2, "CAP_MSMF") else None,
+        "ANY": cv2.CAP_ANY,
+    }
+    backend_id = backend_map.get(CAMERA_BACKEND_STR)
+    if backend_id is not None:
+        CAMERA_BACKEND = [backend_id]
+        print(f"🔧 Backend forcé: {CAMERA_BACKEND_STR}")
+    else:
+        print(f"⚠️  Backend inconnu: {CAMERA_BACKEND_STR}, utilisation auto")
+
 MARKER_SIZE_CM: Optional[float] = float(os.getenv("MARKER_SIZE_CM", "2.4"))
 MARKER_SIZE_REF_CM: Optional[float] = float(os.getenv("MARKER_SIZE_REF_CM", "12.0"))
 MARKER_SIZE_CRATE_CM: Optional[float] = float(os.getenv("MARKER_SIZE_CRATE_CM", "5.0"))
@@ -173,10 +190,20 @@ def update_in_real_time() -> None:
     if USE_THREADED_CAMERA:
         print("🚀 Mode THREADED activé pour améliorer les performances")
         camera = ThreadedCamera(
-            CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT, fps=FPS
+            CAMERA_ID,
+            width=CAMERA_WIDTH,
+            height=CAMERA_HEIGHT,
+            backends=CAMERA_BACKEND,
+            fps=FPS,
         )
     else:
-        camera = Camera(CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT, fps=FPS)
+        camera = Camera(
+            CAMERA_ID,
+            width=CAMERA_WIDTH,
+            height=CAMERA_HEIGHT,
+            backends=CAMERA_BACKEND,
+            fps=FPS,
+        )
 
     if not camera.is_opened():
         print("Erreur: impossible d'ouvrir la caméra")
