@@ -1,12 +1,14 @@
 """Module de détection ArUco pour Jetson."""
 
 import math
+import time
 from typing import Optional
 
 import cv2
 import matplotlib as mpl
 import numpy as np
 from src.camera import Camera
+from src.utils.timing import timer
 
 mpl.use("Agg")
 import matplotlib.lines as mlines
@@ -185,13 +187,12 @@ class ArucoDetector:
 
         return "ID invalide"
 
+    @timer
     def compute_transform_from_refs(self, corners, ids, use_cache=True):
         """
         Calcule la transformation image -> monde.
         Nécessite au moins 3 références (peut compléter depuis un cache).
         """
-        import time
-
         src_points = []
         dst_points = []
         current_time = time.time()
@@ -288,6 +289,7 @@ class ArucoDetector:
 
         return None
 
+    @timer
     def _init_arena_plot(self, arena_size_mm=(3000, 2000)):
         ARENA_W, ARENA_H = int(arena_size_mm[0]), int(arena_size_mm[1])
 
@@ -309,6 +311,7 @@ class ArucoDetector:
         plt.tight_layout()
         self._arena_canvas = FigureCanvas(self._arena_fig)
 
+    @timer
     def update_arena_display(
         self,
         detected_world=None,
@@ -434,6 +437,7 @@ class ArucoDetector:
         except Exception:
             pass
 
+    @timer
     def analyze_frame(self, frame, show_arena=True, arena_window_name="Arena"):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # OpenCV 4.5.1 compatible API: utiliser detectMarkers directement

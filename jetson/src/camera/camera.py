@@ -6,6 +6,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import cv2
 import numpy as np
 
+from src.utils.timing import timer
+
 sharpness_minimum_threshold: int = 50
 coverage_map_maximum_threshold: int = 2
 minimum_images_for_calibration: int = 10
@@ -88,6 +90,7 @@ class Camera:
         w, h = self.get_resolution()
         return {"width": w, "height": h, "fps": self.cam.get(cv2.CAP_PROP_FPS)}
 
+    @timer
     def read_frame(self) -> Optional[np.ndarray]:
         """Read a frame from the camera.
 

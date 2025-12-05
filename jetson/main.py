@@ -8,6 +8,7 @@ import numpy as np
 from dotenv import load_dotenv
 from src.camera import Camera
 from src.detector import ArucoDetector
+from src.utils.timing import set_debug_mode
 
 # Charger le fichier .env depuis le même répertoire que ce script
 _SCRIPT_DIR = Path(__file__).parent
@@ -85,6 +86,7 @@ def parse_bool(name: str, default: bool = True) -> bool:
 SHOW_ARENA: bool = parse_bool("SHOW_ARENA", default=True)
 SHOW_CAMERA_FEED: bool = parse_bool("SHOW_CAMERA_FEED", default=True)
 CALIBRATE_MODE: bool = parse_bool("CALIBRATE_MODE", default=False)
+DEBUG_MODE: bool = parse_bool("DEBUG_MODE", default=False)
 
 CAMERA_ID: Optional[int] = parse_int("CAMERA_ID", 0)
 CAMERA_WIDTH: Optional[int] = parse_int("CAMERA_WIDTH", 1920)
@@ -220,6 +222,12 @@ def update_in_real_time() -> None:
 if __name__ == "__main__":
     USE_GPU = detect_gpu()
     print("USE_GPU =", USE_GPU)
+    
+    # Activer le mode debug si demandé
+    set_debug_mode(DEBUG_MODE)
+    if DEBUG_MODE:
+        print("🐛 Mode DEBUG activé - Chronométrage des fonctions")
+    
     if CALIBRATE_MODE:
         calibrate_camera()
     else:
