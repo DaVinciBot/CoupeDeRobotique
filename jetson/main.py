@@ -1,4 +1,6 @@
+import math
 import os
+import time
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -6,7 +8,8 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from dotenv import load_dotenv
-from src.camera import Camera
+
+from src.camera import Camera, ThreadedCamera
 from src.detector import ArucoDetector
 from src.utils.timing import set_debug_mode
 
@@ -87,6 +90,7 @@ SHOW_ARENA: bool = parse_bool("SHOW_ARENA", default=True)
 SHOW_CAMERA_FEED: bool = parse_bool("SHOW_CAMERA_FEED", default=True)
 CALIBRATE_MODE: bool = parse_bool("CALIBRATE_MODE", default=False)
 DEBUG_MODE: bool = parse_bool("DEBUG_MODE", default=False)
+USE_THREADED_CAMERA: bool = parse_bool("USE_THREADED_CAMERA", default=True)
 
 CAMERA_ID: Optional[int] = parse_int("CAMERA_ID", 0)
 CAMERA_WIDTH: Optional[int] = parse_int("CAMERA_WIDTH", 1920)
@@ -165,7 +169,13 @@ def update_in_real_time() -> None:
         print("Erreur: une ou plusieurs variables nécessaires ne sont pas définies")
         return
 
-    camera = Camera(CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT)
+    # Utiliser ThreadedCamera si activé, sinon Camera standard
+    if USE_THREADED_CAMERA:
+        print("🚀 Mode THREADED activé pour améliorer les performances")
+        camera = ThreadedCamera(CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT)
+    else:
+        camera = Camera(CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT)
+    
     if not camera.is_opened():
         print("Erreur: impossible d'ouvrir la caméra")
         return
@@ -184,8 +194,15 @@ def update_in_real_time() -> None:
     cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
     cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
 
+    # Compteurs pour FPS
+    frame_count = 0
+    start_time = time.time()
+    fps_display = 0.0
+
     try:
         while True:
+            loop_start = time.time()
+            
             frame = camera.read_frame()
             if frame is None:
                 continue
@@ -195,20 +212,50 @@ def update_in_real_time() -> None:
                 show_arena=SHOW_ARENA,
                 arena_window_name="Arena",
             )
+            
+            # Calculer et afficher FPS
+            frame_count += 1
+            elapsed = time.time() - start_time
+            if elapsed >= 1.0:
+                fps_display = frame_count / elapsed
+                frame_count = 0
+                start_time = time.time()
+                
+                # Afficher stats si threaded camera
+                if USE_THREADED_CAMERA and hasattr(camera, 'get_stats'):
+                    stats = camera.get_stats()
+                    print(f"📊 FPS traitement: {fps_display:.1f} | FPS lecture caméra: {stats['read_fps']:.1f} | Frames droppées: {stats['frames_dropped']}")
+                else:
+                    print(f"📊 FPS: {fps_display:.1f}")
+            
+            # Afficher FPS sur l'image
             if SHOW_CAMERA_FEED:
+                cv2.putText(
+                    annotated_frame,
+                    f"FPS: {fps_display:.1f}",
+                    (10, 30),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1.0,
+                    (0, 255, 0),
+                    2,
+                )
                 cv2.imshow("ArUco Detection", annotated_frame)
 
-            if len(detected_world) == 0:
-                print("Aucun marqueur détecté")
-            for marker in detected_world:
-                print(
-                    f"ID Marker: {marker[0]}, Position (cm): {marker[1]}, "
-                    f"Orientation (deg): {marker[2]}",
-                )
-            print("\n----\n")
+            # Affichage des marqueurs détectés (moins verbose)
+            if DEBUG_MODE and len(detected_world) > 0:
+                for marker in detected_world:
+                    print(
+                        f"ID: {marker[0]}, Pos(m): ({marker[1][0]:.3f}, {marker[1][1]:.3f}), "
+                        f"Angle: {math.degrees(marker[2]):.1f}°",
+                    )
 
             if cv2.waitKey(1) & 0xFF in {27, ord("q")}:
                 break
+                
+            # Afficher temps de boucle en mode debug
+            if DEBUG_MODE:
+                loop_time = (time.time() - loop_start) * 1000
+                print(f"⏱️  Temps boucle totale: {loop_time:.2f} ms")
     finally:
         # nettoyer les ressources matplotlib
         try:
@@ -222,12 +269,12 @@ def update_in_real_time() -> None:
 if __name__ == "__main__":
     USE_GPU = detect_gpu()
     print("USE_GPU =", USE_GPU)
-    
+
     # Activer le mode debug si demandé
     set_debug_mode(DEBUG_MODE)
     if DEBUG_MODE:
         print("🐛 Mode DEBUG activé - Chronométrage des fonctions")
-    
+
     if CALIBRATE_MODE:
         calibrate_camera()
     else:
