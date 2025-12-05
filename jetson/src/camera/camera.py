@@ -106,6 +106,40 @@ class Camera:
         """
         return self.cam is not None and self.cam.isOpened()
 
+    def set_fps(self, fps: int) -> bool:
+        """Change le FPS de la caméra dynamiquement.
+
+        Args:
+            fps: Le nouveau FPS à définir
+
+        Returns:
+            bool: True si le changement a réussi, False sinon
+        """
+        if self.cam is None or not self.is_opened():
+            print("❌ Impossible de changer le FPS: caméra non ouverte")
+            return False
+
+        print(f"🔄 Changement du FPS vers {fps}...")
+
+        # Définir le nouveau FPS
+        self.cam.set(cv2.CAP_PROP_FPS, fps)
+        time.sleep(0.2)  # Temps de stabilisation
+
+        # Vérifier le FPS obtenu
+        actual_fps = self.cam.get(cv2.CAP_PROP_FPS)
+
+        # Vider le buffer après changement
+        for _ in range(5):
+            self.cam.read()
+            time.sleep(0.01)
+
+        if abs(actual_fps - fps) > 1:
+            print(f"   ⚠️  FPS demandé: {fps}, FPS obtenu: {actual_fps:.1f}")
+            return False
+        else:
+            print(f"   ✅ FPS changé avec succès: {actual_fps:.1f}")
+            return True
+
     def get_resolution(self) -> Tuple[int, int]:
         """Get the current resolution of the camera.
 

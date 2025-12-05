@@ -92,7 +92,12 @@ DEBUG_MODE: bool = parse_bool("DEBUG_MODE", default=False)
 USE_THREADED_CAMERA: bool = parse_bool("USE_THREADED_CAMERA", default=True)
 
 CAMERA_ID: Optional[int] = parse_int("CAMERA_ID", 0)
-FPS: Optional[float] = float(os.getenv("FPS", "15.0"))
+
+# Configuration FPS progressive
+STARTUP_FPS: int = parse_int("STARTUP_FPS", 5)  # FPS de démarrage
+TARGET_FPS: int = parse_int("TARGET_FPS", 15)   # FPS cible
+FPS_CHANGE_DELAY: float = float(os.getenv("FPS_CHANGE_DELAY", "3.0"))  # Délai en secondes
+
 CAMERA_WIDTH: Optional[int] = parse_int("CAMERA_WIDTH", 1920)
 CAMERA_HEIGHT: Optional[int] = parse_int("CAMERA_HEIGHT", 1080)
 
@@ -187,6 +192,10 @@ def update_in_real_time() -> None:
         return
 
     # Utiliser ThreadedCamera si activé, sinon Camera standard
+    # Initialiser avec le FPS de démarrage pour stabilité
+    print(f"🎥 Démarrage caméra avec FPS={STARTUP_FPS} (stabilité)")
+    print(f"   → Passage à FPS={TARGET_FPS} après {FPS_CHANGE_DELAY}s")
+    
     if USE_THREADED_CAMERA:
         print("🚀 Mode THREADED activé pour améliorer les performances")
         camera = ThreadedCamera(
@@ -194,7 +203,7 @@ def update_in_real_time() -> None:
             width=CAMERA_WIDTH,
             height=CAMERA_HEIGHT,
             backends=CAMERA_BACKEND,
-            fps=FPS,
+            fps=STARTUP_FPS,  # Démarrer avec FPS bas
         )
     else:
         camera = Camera(
@@ -202,7 +211,7 @@ def update_in_real_time() -> None:
             width=CAMERA_WIDTH,
             height=CAMERA_HEIGHT,
             backends=CAMERA_BACKEND,
-            fps=FPS,
+            fps=STARTUP_FPS,  # Démarrer avec FPS bas
         )
 
     if not camera.is_opened():
@@ -227,10 +236,22 @@ def update_in_real_time() -> None:
     frame_count = 0
     start_time = time.time()
     fps_display = 0.0
+    
+    # Système de changement de FPS progressif
+    fps_changed = False
+    startup_time = time.time()
 
     try:
         while True:
             loop_start = time.time()
+            
+            # Changer le FPS après le délai de stabilisation
+            if not fps_changed and (time.time() - startup_time) >= FPS_CHANGE_DELAY:
+                print("\n" + "=" * 60)
+                print("⏱️  Délai de stabilisation terminé!")
+                camera.set_fps(TARGET_FPS)  # Passer au FPS cible
+                fps_changed = True
+                print("=" * 60 + "\n")
 
             frame = camera.read_frame()
             if frame is None:
