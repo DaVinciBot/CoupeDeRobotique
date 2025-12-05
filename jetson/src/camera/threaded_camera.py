@@ -143,6 +143,44 @@ class ThreadedCamera(Camera):
                 return self.frame.copy()
             return None
 
+    def set_fps(self, fps: int) -> bool:
+        """Change le FPS de la caméra dynamiquement (version threadée).
+
+        Cette méthode arrête temporairement le thread de lecture,
+        change le FPS, puis redémarre le thread.
+
+        Args:
+            fps: Le nouveau FPS à définir
+
+        Returns:
+            bool: True si le changement a réussi
+        """
+        if not self.is_opened():
+            print("❌ Impossible de changer le FPS: caméra non ouverte")
+            return False
+
+        print(f"🔄 Changement du FPS vers {fps}... (arrêt thread)")
+
+        # Arrêter le thread de lecture
+        was_running = self.thread is not None and self.thread.is_alive()
+        if was_running:
+            self.stopped = True
+            self.thread.join(timeout=1.0)
+            print("   ⏸️  Thread de lecture arrêté")
+
+        # Appeler la méthode parent pour changer le FPS
+        success = super().set_fps(fps)
+
+        # Redémarrer le thread si il tournait
+        if was_running:
+            self.stopped = False
+            self.thread = threading.Thread(target=self._update_frame, daemon=True)
+            self.thread.start()
+            time.sleep(0.3)  # Stabilisation du thread
+            print("   ▶️  Thread de lecture redémarré")
+
+        return success
+
     def get_stats(self) -> dict:
         """Get camera performance statistics.
 
