@@ -8,7 +8,6 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from dotenv import load_dotenv
-
 from src.camera import Camera, ThreadedCamera
 from src.detector import ArucoDetector
 from src.utils.timing import set_debug_mode
@@ -93,6 +92,7 @@ DEBUG_MODE: bool = parse_bool("DEBUG_MODE", default=False)
 USE_THREADED_CAMERA: bool = parse_bool("USE_THREADED_CAMERA", default=True)
 
 CAMERA_ID: Optional[int] = parse_int("CAMERA_ID", 0)
+FPS: Optional[int] = parse_int("FPS", 15)
 CAMERA_WIDTH: Optional[int] = parse_int("CAMERA_WIDTH", 1920)
 CAMERA_HEIGHT: Optional[int] = parse_int("CAMERA_HEIGHT", 1080)
 
@@ -172,10 +172,12 @@ def update_in_real_time() -> None:
     # Utiliser ThreadedCamera si activé, sinon Camera standard
     if USE_THREADED_CAMERA:
         print("🚀 Mode THREADED activé pour améliorer les performances")
-        camera = ThreadedCamera(CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT)
+        camera = ThreadedCamera(
+            CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT, fps=FPS
+        )
     else:
         camera = Camera(CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT)
-    
+
     if not camera.is_opened():
         print("Erreur: impossible d'ouvrir la caméra")
         return
@@ -202,7 +204,7 @@ def update_in_real_time() -> None:
     try:
         while True:
             loop_start = time.time()
-            
+
             frame = camera.read_frame()
             if frame is None:
                 continue
@@ -212,7 +214,7 @@ def update_in_real_time() -> None:
                 show_arena=SHOW_ARENA,
                 arena_window_name="Arena",
             )
-            
+
             # Calculer et afficher FPS
             frame_count += 1
             elapsed = time.time() - start_time
@@ -220,14 +222,16 @@ def update_in_real_time() -> None:
                 fps_display = frame_count / elapsed
                 frame_count = 0
                 start_time = time.time()
-                
+
                 # Afficher stats si threaded camera
-                if USE_THREADED_CAMERA and hasattr(camera, 'get_stats'):
+                if USE_THREADED_CAMERA and hasattr(camera, "get_stats"):
                     stats = camera.get_stats()
-                    print(f"📊 FPS traitement: {fps_display:.1f} | FPS lecture caméra: {stats['read_fps']:.1f} | Frames droppées: {stats['frames_dropped']}")
+                    print(
+                        f"📊 FPS traitement: {fps_display:.1f} | FPS lecture caméra: {stats['read_fps']:.1f} | Frames droppées: {stats['frames_dropped']}"
+                    )
                 else:
                     print(f"📊 FPS: {fps_display:.1f}")
-            
+
             # Afficher FPS sur l'image
             if SHOW_CAMERA_FEED:
                 cv2.putText(
@@ -251,7 +255,7 @@ def update_in_real_time() -> None:
 
             if cv2.waitKey(1) & 0xFF in {27, ord("q")}:
                 break
-                
+
             # Afficher temps de boucle en mode debug
             if DEBUG_MODE:
                 loop_time = (time.time() - loop_start) * 1000

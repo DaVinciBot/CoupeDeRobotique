@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import cv2
 import numpy as np
-
 from src.utils.timing import timer
 
 sharpness_minimum_threshold: int = 50
@@ -24,6 +23,7 @@ class Camera:
         width: Optional[int] = None,
         height: Optional[int] = None,
         backends: Optional[List[int]] = None,
+        fps: Optional[int] = None,
     ) -> None:
         """Initialize the camera.
 
@@ -44,6 +44,8 @@ class Camera:
         for backend in backends:
             self.cam = cv2.VideoCapture(camera_id, backend)
             if self.cam and self.cam.isOpened():
+                if fps:
+                    self.cam.set(cv2.CAP_PROP_FPS, fps)
                 break
             if self.cam:
                 self.cam.release()
@@ -54,6 +56,8 @@ class Camera:
         if width and height:
             self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
             self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+            if fps:
+                self.cam.set(cv2.CAP_PROP_FPS, fps)
             time.sleep(0.05)
             for _ in range(3):
                 self.cam.read()
