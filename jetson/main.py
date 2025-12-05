@@ -2,7 +2,7 @@ import math
 import os
 import time
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
 import cv2
 import matplotlib.pyplot as plt
@@ -98,7 +98,7 @@ CAMERA_HEIGHT: Optional[int] = parse_int("CAMERA_HEIGHT", 1080)
 
 # Backend OpenCV (optionnel)
 CAMERA_BACKEND_STR: Optional[str] = os.getenv("CAMERA_BACKEND", "").strip().upper()
-CAMERA_BACKEND: Optional[list[int]] = None
+CAMERA_BACKEND: Optional[List[int]] = None
 if CAMERA_BACKEND_STR:
     backend_map = {
         "V4L2": cv2.CAP_V4L2 if hasattr(cv2, "CAP_V4L2") else None,
