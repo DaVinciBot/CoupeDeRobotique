@@ -108,8 +108,18 @@ class Camera:
         """
         if self.cam is None or not self.is_opened():
             return None
-        ret, frame = self.cam.read()
-        return frame if ret else None
+        
+        try:
+            ret, frame = self.cam.read()
+            if not ret:
+                # Vérifier si la caméra est toujours connectée
+                if not self.cam.isOpened():
+                    print("⚠️  Caméra déconnectée détectée dans read_frame()")
+                return None
+            return frame
+        except cv2.error as e:
+            print(f"❌ Erreur OpenCV lors de la lecture: {e}")
+            return None
 
     def calibrate(
         self,

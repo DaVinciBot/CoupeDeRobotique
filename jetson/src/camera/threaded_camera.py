@@ -75,30 +75,56 @@ class ThreadedCamera(Camera):
 
     def _update_frame(self) -> None:
         """Background thread function that continuously reads frames."""
+        consecutive_failures = 0
+        max_consecutive_failures = 5  # Arrêter après 5 échecs consécutifs
+
         while not self.stopped:
             if self.cam is None or not self.cam.isOpened():
+                print("⚠️  ThreadedCamera: Caméra fermée détectée")
                 break
 
-            ret, frame = self.cam.read()
+            try:
+                ret, frame = self.cam.read()
 
-            if ret:
-                with self.frame_lock:
-                    # Si la frame précédente n'a pas été lue, c'est un vrai drop
-                    if self.frame is not None and not self.frame_was_read:
-                        self.frames_dropped += 1
-                    self.frame = frame
-                    self.frame_was_read = False  # Nouvelle frame non encore lue
-                    self.frames_read += 1
+                if ret:
+                    consecutive_failures = 0  # Reset le compteur d'échecs
+                    with self.frame_lock:
+                        # Si la frame précédente n'a pas été lue, c'est un vrai drop
+                        if self.frame is not None and not self.frame_was_read:
+                            self.frames_dropped += 1
+                        self.frame = frame
+                        self.frame_was_read = False  # Nouvelle frame non encore lue
+                        self.frames_read += 1
 
-                # Calculer le FPS de lecture
-                current_time = time.time()
-                if current_time - self.last_fps_time >= 1.0:
-                    self.fps = self.frames_read / (current_time - self.last_fps_time)
-                    self.frames_read = 0
-                    self.last_fps_time = current_time
-            else:
-                # Petite pause si la lecture échoue
-                time.sleep(0.001)
+                    # Calculer le FPS de lecture
+                    current_time = time.time()
+                    if current_time - self.last_fps_time >= 1.0:
+                        self.fps = self.frames_read / (
+                            current_time - self.last_fps_time
+                        )
+                        self.frames_read = 0
+                        self.last_fps_time = current_time
+                else:
+                    # Échec de lecture
+                    consecutive_failures += 1
+                    if consecutive_failures >= max_consecutive_failures:
+                        print(
+                            f"❌ ThreadedCamera: {consecutive_failures} échecs consécutifs, arrêt du thread"
+                        )
+                        break
+                    # Petite pause si la lecture échoue
+                    time.sleep(0.01)
+
+            except cv2.error as e:
+                consecutive_failures += 1
+                print(f"❌ ThreadedCamera OpenCV error: {e}")
+                if consecutive_failures >= max_consecutive_failures:
+                    print("❌ Trop d'erreurs, arrêt du thread de lecture")
+                    break
+                time.sleep(0.01)
+            except Exception as e:
+                print(f"❌ ThreadedCamera unexpected error: {e}")
+                break
 
     def read_frame(self) -> Optional[np.ndarray]:
         """Read the latest frame from the buffer.
