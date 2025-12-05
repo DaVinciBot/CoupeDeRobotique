@@ -23,6 +23,7 @@ class ThreadedCamera(Camera):
         height: Optional[int] = None,
         backends: Optional[list] = None,
         buffer_size: int = 1,
+        fps: Optional[int] = None,
     ) -> None:
         """Initialize the threaded camera.
 
@@ -33,7 +34,7 @@ class ThreadedCamera(Camera):
             backends (list[int], optional): List of backend preferences.
             buffer_size (int): Number of frames to buffer (1 = latest only).
         """
-        super().__init__(camera_id, width, height, backends)
+        super().__init__(camera_id, width, height, backends, fps=fps)
 
         self.buffer_size = buffer_size
         self.frame = None

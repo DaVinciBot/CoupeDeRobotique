@@ -176,7 +176,7 @@ def update_in_real_time() -> None:
             CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT, fps=FPS
         )
     else:
-        camera = Camera(CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT)
+        camera = Camera(CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT, fps=FPS)
 
     if not camera.is_opened():
         print("Erreur: impossible d'ouvrir la caméra")
