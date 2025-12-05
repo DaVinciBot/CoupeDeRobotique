@@ -95,8 +95,10 @@ CAMERA_ID: Optional[int] = parse_int("CAMERA_ID", 0)
 
 # Configuration FPS progressive
 STARTUP_FPS: int = parse_int("STARTUP_FPS", 5)  # FPS de démarrage
-TARGET_FPS: int = parse_int("TARGET_FPS", 15)   # FPS cible
-FPS_CHANGE_DELAY: float = float(os.getenv("FPS_CHANGE_DELAY", "3.0"))  # Délai en secondes
+TARGET_FPS: int = parse_int("TARGET_FPS", 15)  # FPS cible
+FPS_CHANGE_DELAY: float = float(
+    os.getenv("FPS_CHANGE_DELAY", "3.0")
+)  # Délai en secondes
 
 CAMERA_WIDTH: Optional[int] = parse_int("CAMERA_WIDTH", 1920)
 CAMERA_HEIGHT: Optional[int] = parse_int("CAMERA_HEIGHT", 1080)
@@ -195,7 +197,7 @@ def update_in_real_time() -> None:
     # Initialiser avec le FPS de démarrage pour stabilité
     print(f"🎥 Démarrage caméra avec FPS={STARTUP_FPS} (stabilité)")
     print(f"   → Passage à FPS={TARGET_FPS} après {FPS_CHANGE_DELAY}s")
-    
+
     if USE_THREADED_CAMERA:
         print("🚀 Mode THREADED activé pour améliorer les performances")
         camera = ThreadedCamera(
@@ -236,7 +238,7 @@ def update_in_real_time() -> None:
     frame_count = 0
     start_time = time.time()
     fps_display = 0.0
-    
+
     # Système de changement de FPS progressif
     fps_changed = False
     startup_time = time.time()
@@ -244,7 +246,7 @@ def update_in_real_time() -> None:
     try:
         while True:
             loop_start = time.time()
-            
+
             # Changer le FPS après le délai de stabilisation
             if not fps_changed and (time.time() - startup_time) >= FPS_CHANGE_DELAY:
                 print("\n" + "=" * 60)
@@ -294,7 +296,7 @@ def update_in_real_time() -> None:
                 cv2.imshow("ArUco Detection", annotated_frame)
 
             # Affichage des marqueurs détectés (moins verbose)
-            if DEBUG_MODE and len(detected_world) > 0:
+            if len(detected_world) > 0:
                 for marker in detected_world:
                     print(
                         f"ID: {marker[0]}, Pos(m): ({marker[1][0]:.3f}, {marker[1][1]:.3f}), "
