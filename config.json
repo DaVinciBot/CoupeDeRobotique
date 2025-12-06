@@ -1,7 +1,7 @@
 {
   "general": {
     "ws": {
-      "port": 8080,
+      "port": 8081,
       "cmd_route": "/cmd",
       "ui_route": "/ui"
     },

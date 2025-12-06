@@ -23,3 +23,5 @@ class AcsDetectionProfile(Enum):
     """Rectangular projection."""
     ANGULAR_RESTRICT_PROJECTION = auto()
     """Angular restrict projection."""
+    SPEED = auto()
+    """Speed-based ACS detection profile using closest-approach / TTC."""

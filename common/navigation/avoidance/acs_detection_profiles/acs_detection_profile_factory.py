@@ -23,6 +23,12 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
     RectangularProjectionAcsDetectionProfile,
     RectangularProjectionAcsDetectionProfileParams,
 )
+
+from navigation.avoidance.acs_detection_profiles.speed_acs_detection_profile import (
+    SpeedAcsDetectionProfile,
+    SpeedAcsDetectionProfileParams,
+)
+
 from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfile
 
 if TYPE_CHECKING:
@@ -69,6 +75,11 @@ class AcsDetectionProfileFactory:
         if profile == AcsDetectionProfile.ANGULAR_RESTRICT_PROJECTION:
             return AngularRestrictProjectionAcsDetectionProfile(
                 cast("AngularRestrictProjectionAcsDetectionProfileParams", params),
+            )
+
+        if profile == AcsDetectionProfile.SPEED:
+            return SpeedAcsDetectionProfile(
+                cast("SpeedAcsDetectionProfileParams", params),
             )
 
         msg = f"Unsupported acs detection profile: {profile}"
