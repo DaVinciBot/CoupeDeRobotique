@@ -195,11 +195,11 @@ def update_in_real_time() -> None:
 
     # Utiliser ThreadedCamera si activé, sinon Camera standard
     # Initialiser avec le FPS de démarrage pour stabilité
-    print(f"🎥 Démarrage caméra avec FPS={STARTUP_FPS} (stabilité)")
+    print(f"🎥 Démarrage caméra avec FPS={STARTUP_FPS}")
     print(f"   → Passage à FPS={TARGET_FPS} après {FPS_CHANGE_DELAY}s")
 
     if USE_THREADED_CAMERA:
-        print("🚀 Mode THREADED activé pour améliorer les performances")
+        print("🚀 Mode THREADED activé")
         camera = ThreadedCamera(
             CAMERA_ID,
             width=CAMERA_WIDTH,
@@ -274,13 +274,14 @@ def update_in_real_time() -> None:
                 start_time = time.time()
 
                 # Afficher stats si threaded camera
-                if USE_THREADED_CAMERA and hasattr(camera, "get_stats"):
-                    stats = camera.get_stats()
-                    print(
-                        f"📊 FPS traitement: {fps_display:.1f} | FPS lecture caméra: {stats['read_fps']:.1f} | Frames droppées: {stats['frames_dropped']}"
-                    )
-                else:
-                    print(f"📊 FPS: {fps_display:.1f}")
+                if DEBUG_MODE:
+                    if USE_THREADED_CAMERA and hasattr(camera, "get_stats"):
+                        stats = camera.get_stats()
+                        print(
+                            f"📊 FPS traitement: {fps_display:.1f} | FPS lecture caméra: {stats['read_fps']:.1f} | Frames droppées: {stats['frames_dropped']}"
+                        )
+                    else:
+                        print(f"📊 FPS: {fps_display:.1f}")
 
             # Afficher FPS sur l'image
             if SHOW_CAMERA_FEED:
@@ -327,7 +328,7 @@ if __name__ == "__main__":
     # Activer le mode debug si demandé
     set_debug_mode(DEBUG_MODE)
     if DEBUG_MODE:
-        print("🐛 Mode DEBUG activé - Chronométrage des fonctions")
+        print("🐛 Mode DEBUG activé")
 
     if CALIBRATE_MODE:
         calibrate_camera()
