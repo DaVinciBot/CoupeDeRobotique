@@ -128,7 +128,7 @@ class SpeedAcsDetectionProfile(BaseAcsDetectionProfile[SpeedAcsDetectionProfileP
             self._logger.debug(f"[NAV:ACS] Triggered: - distance: {d_star: .1f} cm")
             return True
 
-        if t_star <= self.params.min_ttc_to_trigger:
+        if t_star <= self.params.acs_distance:
             self._logger.debug(f"[NAV:ACS] Triggered: - time to closest approach: {t_star: .2f} s")
             return True
 
