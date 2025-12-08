@@ -140,13 +140,14 @@ def calibrate_camera() -> None:
     ):
         print("Erreur: une ou plusieurs variables nécessaires ne sont pas définies")
         return
-    camera = Camera(
+    # Utiliser ThreadedCamera pour des performances fluides même en calibration
+    camera = ThreadedCamera(
         CAMERA_ID,
         width=CAMERA_WIDTH,
         height=CAMERA_HEIGHT,
         backends=CAMERA_BACKEND,
         use_mjpg=False,
-        fps=5,
+        fps=FPS,  # Utiliser le FPS configuré (15) au lieu de 5
     )
     if not camera.is_opened():
         print("Erreur: impossible d'ouvrir la caméra")

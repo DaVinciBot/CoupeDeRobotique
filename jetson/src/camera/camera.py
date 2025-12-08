@@ -225,19 +225,17 @@ class Camera:
         print("CONSEILS : Variez angles, distances et positions")
         print("Appuyez sur 'c' pour capturer, 'q' pour terminer.")
 
-        # Diagnostic: vérifier les propriétés de la caméra
+        # Diagnostic: vérifier les propriétés de la caméra (UNE FOIS)
         fourcc = self.cam.get(cv2.CAP_PROP_FOURCC)
         fourcc_str = "".join([chr((int(fourcc) >> 8 * i) & 0xFF) for i in range(4)])
         print(f"🔍 Codec actuel: {fourcc_str}")
         print(f"🔍 Résolution: {self.get_resolution()}")
+        print()  # Ligne vide pour séparer
 
         while captured < num_images:
             frame = self.read_frame()
             if frame is None:
-                print("⚠️  Frame None reçue")
                 continue
-
-            print(f"✓ Frame reçue: {frame.shape}")
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             ret, corners = cv2.findChessboardCorners(
