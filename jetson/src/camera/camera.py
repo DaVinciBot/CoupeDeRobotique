@@ -77,6 +77,8 @@ class Camera:
 
         # Configuration de la résolution et FPS (UNE SEULE FOIS, après ouverture)
         if width and height:
+            fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+            self.cam.set(cv2.CAP_PROP_FOURCC, fourcc)
             self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
             self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
