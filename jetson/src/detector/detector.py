@@ -77,6 +77,15 @@ class ArucoDetector:
         self.aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_100)
         self.aruco_params = cv2.aruco.DetectorParameters_create()
 
+        # Détection et initialisation CUDA (optionnelle)
+        self.use_cuda = False
+        try:
+            if cv2.cuda.getCudaEnabledDeviceCount() > 0:
+                self.use_cuda = True
+                print("⚡ CUDA activé pour le détecteur ArUco")
+        except Exception:
+            print("ℹ️  CUDA non disponible, utilisation CPU")
+
         if self.camera_matrix is None:
             w, h = self.cam.get_resolution()
             if w and h:
@@ -439,8 +448,18 @@ class ArucoDetector:
 
     @timer
     def analyze_frame(self, frame, show_arena=True, arena_window_name="Arena"):
-        # Conversion en niveaux de gris (optimisé avec le flag correct)
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # Conversion en niveaux de gris (avec CUDA si disponible)
+        if self.use_cuda:
+            try:
+                gpu_frame = cv2.cuda_GpuMat()
+                gpu_frame.upload(frame)
+                gpu_gray = cv2.cuda.cvtColor(gpu_frame, cv2.COLOR_BGR2GRAY)
+                gray = gpu_gray.download()
+            except Exception:
+                # Fallback CPU si erreur
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        else:
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # Détection ArUco - OpenCV 4.5.1 compatible
         corners, ids, _ = cv2.aruco.detectMarkers(

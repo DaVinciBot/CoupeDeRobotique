@@ -237,12 +237,25 @@ class Camera:
             if frame is None:
                 continue
 
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            # Réduire résolution pour accélérer findChessboardCorners (4x plus rapide)
+            scale = 0.5
+            small = cv2.resize(frame, None, fx=scale, fy=scale)
+            gray_small = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
+            
             ret, corners = cv2.findChessboardCorners(
-                gray,
+                gray_small,
                 chessboard_size,
                 cv2.CALIB_CB_ADAPTIVE_THRESH + cv2.CALIB_CB_NORMALIZE_IMAGE,
             )
+            
+            # Remettre les coins à l'échelle originale si détectés
+            if ret and corners is not None:
+                corners = corners / scale
+                # Affiner sur l'image PLEINE résolution pour la précision
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                corners = cv2.cornerSubPix(
+                    gray, corners, (11, 11), (-1, -1), criteria
+                )
 
             display = frame.copy()
 
@@ -296,9 +309,8 @@ class Camera:
             key = cv2.waitKey(1) & 0xFF
 
             if key == ord("c") and ret:
-                corners2 = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
-
-                center = np.mean(corners2, axis=0)[0]
+                # Les coins sont déjà affinés par cornerSubPix dans la boucle ci-dessus
+                center = np.mean(corners, axis=0)[0]
                 grid_x = int(center[0] / 20)
                 grid_y = int(center[1] / 20)
 
@@ -307,7 +319,7 @@ class Camera:
                     continue
 
                 objpoints.append(objp)
-                imgpoints.append(corners2)
+                imgpoints.append(corners)
                 coverage_map[grid_y, grid_x] += 1
                 captured += 1
                 print(
