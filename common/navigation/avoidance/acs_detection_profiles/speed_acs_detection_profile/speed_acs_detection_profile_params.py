@@ -11,7 +11,7 @@ from navigation.avoidance.acs_detection_profiles.struct import AcsDetectionProfi
 class SpeedAcsDetectionProfileParams(BaseAcsDetectionProfileParams):
     """Parameters for the speed ACS detection profile."""
 
-    def __init__(self, acs_distance: float, reaction_time: float, horizon: float, ) -> None:
+    def __init__(self, acs_distance: float, reaction_time: float, horizon: float, min_tcc) -> None:
         """
         Initialize SpeedAcsDetectionProfileParams.
         Args:
@@ -22,6 +22,7 @@ class SpeedAcsDetectionProfileParams(BaseAcsDetectionProfileParams):
         self.acs_distance = acs_distance
         self.reaction_time = reaction_time
         self.horizon = horizon
+        self.min_tcc = min_tcc
 
         super().__init__(
             acs_detection_profile=AcsDetectionProfile.SPEED,
