@@ -68,3 +68,26 @@ class SetOdometrie(BaseTask[WinterGameContext]):
         )
 
         return True
+
+
+class WallSetOdometrie(BaseTask[WinterGameContext]):
+    """Task to reset odometry based on the closest wall goal at runtime."""
+
+    @override
+    def handle(self, ctx: WinterGameContext) -> bool:
+        """Handle the execution of the wall-based odometry reset task.
+
+        Args:
+            ctx (WinterGameContext): Context containing game state and arena info.
+
+        Returns:
+            bool: Returns SetOdometrie task result or True if no wall goal found.
+        """
+        goal: OrientedPoint | None = ctx.arena.get_closest_wall_goal()
+        if goal is None:
+            ctx.arena.logger.error(
+                "[TASK:Reset] get_closest_wall_goal returned None",
+            )
+            return True
+
+        return SetOdometrie(goal.x, goal.y, goal.theta).handle(ctx)

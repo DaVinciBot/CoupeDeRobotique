@@ -23,6 +23,7 @@ class ZoneType(Enum):
         ENEMY: Zone associated with enemy activity.
         ALLY: Zone associated with ally activity.
         BORDER_ZONE: Represents arena borders.
+        RESETTING_ZONE: Zone designated for resetting positions.
     """
 
     YELLOW_RESERVED = auto()
@@ -41,6 +42,8 @@ class ZoneType(Enum):
     """Zone associated with ally activity."""
     BORDER_ZONE = auto()
     """Represents arena borders."""
+    RESETTING_ZONE = auto()
+    """Zone designated for resetting positions."""
 
 
 class ZoneAccessibility(Enum):

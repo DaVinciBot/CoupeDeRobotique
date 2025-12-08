@@ -76,6 +76,11 @@ class WinterArena(BaseArena):
             follow_logger_manager_rules=True,
         )
 
+        resetting_zone_logger = Logger(
+            identifier="ResettingZone",
+            follow_logger_manager_rules=True,
+        )
+
         jenga_zones_points: list[
             tuple[tuple[float, float], tuple[float, float], list[OrientedPoint]]
         ] = [
@@ -253,38 +258,6 @@ class WinterArena(BaseArena):
             ),
         ]
 
-        yellow_backstage_zone = YellowReservedZone(
-            logger=yellow_reserved_zone_logger,
-            buffer_size=obstacle_buffer,
-            polygon=create_straight_rectangle(
-                Point(0, 200),
-                Point(60, 155),
-            ),
-        )
-
-        blue_backstage_zone = BlueReservedZone(
-            logger=blue_reserved_zone_logger,
-            buffer_size=obstacle_buffer,
-            polygon=create_straight_rectangle(
-                Point(240, 200),
-                Point(300, 155),
-            ),
-        )
-
-        ninja_stage = ForbiddenZone(
-            logger=ninja_stage_zone_logger,
-            buffer_size=obstacle_buffer,
-            polygon=Polygon(
-                (
-                    (60, 200),
-                    (240, 200),
-                    (240, 165),
-                    (60, 165),
-                    (60, 200),
-                ),
-            ),
-        )
-
         zones: list[BaseArenaZone] = []
 
         zones.extend(
@@ -321,7 +294,43 @@ class WinterArena(BaseArena):
             for corner_point in drop_zones_points
         )
 
-        zones.extend([yellow_backstage_zone, blue_backstage_zone, ninja_stage])
+        yellow_nest_zone = YellowReservedZone(
+            logger=yellow_reserved_zone_logger,
+            buffer_size=obstacle_buffer,
+            polygon=create_straight_rectangle(
+                Point(0, 200),
+                Point(60, 155),
+            ),
+        )
+
+        blue_nest_zone = BlueReservedZone(
+            logger=blue_reserved_zone_logger,
+            buffer_size=obstacle_buffer,
+            polygon=create_straight_rectangle(
+                Point(240, 200),
+                Point(300, 155),
+            ),
+        )
+
+        ninja_stage = ForbiddenZone(
+            logger=ninja_stage_zone_logger,
+            buffer_size=obstacle_buffer,
+            polygon=Polygon(
+                (
+                    (60, 200),
+                    (240, 200),
+                    (240, 165),
+                    (60, 165),
+                    (60, 200),
+                ),
+            ),
+        )
+
+        zones.extend([
+            yellow_nest_zone,
+            blue_nest_zone,
+            ninja_stage,
+        ])
 
         super().__init__(
             logger,

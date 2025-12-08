@@ -10,6 +10,7 @@ debug or user interfaces.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from math import pi
 from typing import TYPE_CHECKING, cast, override
 
 import matplotlib.pyplot as plt
@@ -413,6 +414,63 @@ class BaseArena(ABC):
                 ``False`` otherwise.
         """
         return self.playable_area.contains(pos) or self.playable_area.touches(pos)
+
+    def get_closest_wall_goal(self) -> OrientedPoint | None:
+        """Determine the closest accessible wall point in the arena.
+
+        Returns:
+            OrientedPoint | None: The closest accessible wall point.
+        """
+        robot_pos = self.ally_zone.point
+
+        banned_zones = set(
+            self.find_zone_accessibility("RESTRICTED")
+            + self.find_zone_accessibility("FORBIDDEN"),
+        )
+
+        walls: list[tuple[str, float, range, float]] = [
+            (
+                "x",
+                self.border_buffer,
+                range(0, self.height + 1, self.grid_manager.chunk_size),
+                pi,
+            ),
+            (
+                "x",
+                self.width - self.border_buffer,
+                range(0, self.height + 1, self.grid_manager.chunk_size),
+                0,
+            ),
+            (
+                "y",
+                self.border_buffer,
+                range(0, self.width + 1, self.grid_manager.chunk_size),
+                pi / 2,
+            ),
+            (
+                "y",
+                self.height - self.border_buffer,
+                range(0, self.width + 1, self.grid_manager.chunk_size),
+                -pi / 2,
+            ),
+        ]
+
+        candidates: set[OrientedPoint] = set()
+
+        for axis, fixed, var_range, orientation in walls:
+            for var in var_range:
+                if axis == "x":
+                    candidate = OrientedPoint(fixed, var, orientation)
+                else:
+                    candidate = OrientedPoint(var, fixed, orientation)
+
+                zone = self.get_zone_by_location(candidate)
+                if zone and zone in banned_zones:
+                    continue
+
+                candidates.add(candidate)
+
+        return min(candidates, key=robot_pos.distance)
 
     def get_zone_by_location(
         self,
