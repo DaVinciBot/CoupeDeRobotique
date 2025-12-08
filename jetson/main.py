@@ -144,6 +144,7 @@ def calibrate_camera() -> None:
         CAMERA_ID,
         width=CAMERA_WIDTH,
         height=CAMERA_HEIGHT,
+        backends=CAMERA_BACKEND,
         use_mjpg=False,
         fps=5,
     )
