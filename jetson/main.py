@@ -140,7 +140,13 @@ def calibrate_camera() -> None:
     ):
         print("Erreur: une ou plusieurs variables nécessaires ne sont pas définies")
         return
-    camera = Camera(CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT, use_mjpg=False)
+    camera = Camera(
+        CAMERA_ID,
+        width=CAMERA_WIDTH,
+        height=CAMERA_HEIGHT,
+        use_mjpg=False,
+        fps=5,
+    )
     if not camera.is_opened():
         print("Erreur: impossible d'ouvrir la caméra")
         return

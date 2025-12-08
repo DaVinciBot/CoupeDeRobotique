@@ -82,7 +82,10 @@ class Camera:
             if use_mjpg:
                 fourcc = cv2.VideoWriter_fourcc(*"MJPG")
                 self.cam.set(cv2.CAP_PROP_FOURCC, fourcc)
-            
+            else:
+                yuyv = cv2.VideoWriter_fourcc(*"YUYV")
+                self.cam.set(cv2.CAP_PROP_FOURCC, yuyv)
+
             self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
             self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
