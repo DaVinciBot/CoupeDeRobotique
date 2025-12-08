@@ -93,12 +93,8 @@ USE_THREADED_CAMERA: bool = parse_bool("USE_THREADED_CAMERA", default=True)
 
 CAMERA_ID: Optional[int] = parse_int("CAMERA_ID", 0)
 
-# Configuration FPS progressive
-STARTUP_FPS: int = parse_int("STARTUP_FPS", 5)  # FPS de démarrage
-TARGET_FPS: int = parse_int("TARGET_FPS", 15)  # FPS cible
-FPS_CHANGE_DELAY: float = float(
-    os.getenv("FPS_CHANGE_DELAY", "3.0")
-)  # Délai en secondes
+# Configuration FPS
+FPS: int = parse_int("FPS", 15)  # FPS de la caméra
 
 CAMERA_WIDTH: Optional[int] = parse_int("CAMERA_WIDTH", 1920)
 CAMERA_HEIGHT: Optional[int] = parse_int("CAMERA_HEIGHT", 1080)
@@ -194,9 +190,7 @@ def update_in_real_time() -> None:
         return
 
     # Utiliser ThreadedCamera si activé, sinon Camera standard
-    # Initialiser avec le FPS de démarrage pour stabilité
-    print(f"🎥 Démarrage caméra avec FPS={STARTUP_FPS}")
-    print(f"   → Passage à FPS={TARGET_FPS} après {FPS_CHANGE_DELAY}s")
+    print(f"🎥 Démarrage caméra avec FPS={FPS}")
 
     if USE_THREADED_CAMERA:
         print("🚀 Mode THREADED activé")
@@ -205,7 +199,7 @@ def update_in_real_time() -> None:
             width=CAMERA_WIDTH,
             height=CAMERA_HEIGHT,
             backends=CAMERA_BACKEND,
-            fps=STARTUP_FPS,  # Démarrer avec FPS bas
+            fps=FPS,
         )
     else:
         camera = Camera(
@@ -213,7 +207,7 @@ def update_in_real_time() -> None:
             width=CAMERA_WIDTH,
             height=CAMERA_HEIGHT,
             backends=CAMERA_BACKEND,
-            fps=STARTUP_FPS,  # Démarrer avec FPS bas
+            fps=FPS,
         )
 
     if not camera.is_opened():
@@ -238,53 +232,49 @@ def update_in_real_time() -> None:
     frame_count = 0
     start_time = time.time()
     fps_display = 0.0
-
-    # Système de changement de FPS progressif
-    fps_changed = False
-    startup_time = time.time()
+    
+    # Pré-calculer les constantes pour éviter les lookups répétés
+    show_feed = SHOW_CAMERA_FEED
+    show_arena = SHOW_ARENA
+    debug_mode = DEBUG_MODE
+    use_threaded = USE_THREADED_CAMERA
 
     try:
         while True:
-            loop_start = time.time()
-
-            # Changer le FPS après le délai de stabilisation
-            if not fps_changed and (time.time() - startup_time) >= FPS_CHANGE_DELAY:
-                print("\n" + "=" * 60)
-                print("⏱️  Délai de stabilisation terminé!")
-                camera.set_fps(TARGET_FPS)  # Passer au FPS cible
-                fps_changed = True
-                print("=" * 60 + "\n")
-
+            # Lecture de frame (opération la plus critique)
             frame = camera.read_frame()
             if frame is None:
                 continue
 
+            # Détection et analyse (CPU intensif)
             annotated_frame, detected_world = detector.analyze_frame(
                 frame,
-                show_arena=SHOW_ARENA,
+                show_arena=show_arena,
                 arena_window_name="Arena",
             )
 
-            # Calculer et afficher FPS
+            # Calcul FPS (seulement toutes les secondes)
             frame_count += 1
-            elapsed = time.time() - start_time
+            current_time = time.time()
+            elapsed = current_time - start_time
+            
             if elapsed >= 1.0:
                 fps_display = frame_count / elapsed
                 frame_count = 0
-                start_time = time.time()
+                start_time = current_time
 
-                # Afficher stats si threaded camera
-                if DEBUG_MODE:
-                    if USE_THREADED_CAMERA and hasattr(camera, "get_stats"):
-                        stats = camera.get_stats()
-                        print(
-                            f"📊 FPS traitement: {fps_display:.1f} | FPS lecture caméra: {stats['read_fps']:.1f} | Frames droppées: {stats['frames_dropped']}"
-                        )
-                    else:
-                        print(f"📊 FPS: {fps_display:.1f}")
+                # Debug stats (seulement si DEBUG_MODE activé)
+                if debug_mode and use_threaded and hasattr(camera, "get_stats"):
+                    stats = camera.get_stats()
+                    print(
+                        f"📊 FPS: {fps_display:.1f} | "
+                        f"Lecture: {stats['read_fps']:.1f} | "
+                        f"Drops: {stats['frames_dropped']}"
+                    )
 
-            # Afficher FPS sur l'image
-            if SHOW_CAMERA_FEED:
+            # Affichage image (optimisé - une seule condition)
+            if show_feed:
+                # Texte FPS pré-formaté
                 cv2.putText(
                     annotated_frame,
                     f"FPS: {fps_display:.1f}",
@@ -296,21 +286,19 @@ def update_in_real_time() -> None:
                 )
                 cv2.imshow("ArUco Detection", annotated_frame)
 
-            # Affichage des marqueurs détectés (moins verbose)
-            if len(detected_world) > 0:
+            # Affichage markers (seulement si DEBUG et des markers détectés)
+            if debug_mode and detected_world:
                 for marker in detected_world:
                     print(
-                        f"ID: {marker[0]}, Pos(m): ({marker[1][0]:.3f}, {marker[1][1]:.3f}), "
-                        f"Angle: {math.degrees(marker[2]):.1f}°",
+                        f"ID: {marker[0]}, "
+                        f"Pos(m): ({marker[1][0]:.3f}, {marker[1][1]:.3f}), "
+                        f"Angle: {math.degrees(marker[2]):.1f}°"
                     )
 
-            if cv2.waitKey(1) & 0xFF in {27, ord("q")}:
+            # Vérifier sortie (Q ou ESC) - optimisé
+            key = cv2.waitKey(1) & 0xFF
+            if key == 27 or key == ord('q'):
                 break
-
-            # Afficher temps de boucle en mode debug
-            if DEBUG_MODE:
-                loop_time = (time.time() - loop_start) * 1000
-                print(f"⏱️  Temps boucle totale: {loop_time:.2f} ms")
     finally:
         # nettoyer les ressources matplotlib
         try:

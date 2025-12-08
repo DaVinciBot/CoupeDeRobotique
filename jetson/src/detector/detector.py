@@ -439,43 +439,54 @@ class ArucoDetector:
 
     @timer
     def analyze_frame(self, frame, show_arena=True, arena_window_name="Arena"):
+        # Conversion en niveaux de gris (optimisé avec le flag correct)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        # OpenCV 4.5.1 compatible API: utiliser detectMarkers directement
+        
+        # Détection ArUco - OpenCV 4.5.1 compatible
         corners, ids, _ = cv2.aruco.detectMarkers(
             gray, self.aruco_dict, parameters=self.aruco_params
         )
 
-        if ids is None or len(ids) == 0:
+        if ids is None:
             if show_arena:
                 self.update_arena_display(
                     detected_world=[], window_name=arena_window_name
                 )
             return frame, []
 
+        # Dessiner les marqueurs détectés
         cv2.aruco.drawDetectedMarkers(frame, corners, ids)
         self.compute_transform_from_refs(corners, ids, use_cache=True)
 
-        detected_world = []  # Liste au lieu de dictionnaire
+        detected_world = []
 
         if self.transform_computed:
-            for i in range(len(ids)):
+            # Pré-calcul des constantes
+            pi = math.pi
+            half_pi = pi / 2.0
+            two_pi = 2.0 * pi
+            
+            # Traitement en batch pour réduire les appels
+            num_markers = len(ids)
+            for i in range(num_markers):
                 mid = int(ids[i][0])
-                name = self.convert_id_to_name(mid)
-                center_img = np.mean(corners[i][0], axis=0)
-                center_display = center_img.astype(int)
+                
+                # Calcul du centre (optimisé avec mean direct)
+                center_img = corners[i][0].mean(axis=0)
+                
+                # Transformation monde
                 pos_world = self.transform_point_to_world(center_img)
 
                 if pos_world is not None:
+                    # Calculer yaw en une seule passe (optimisation)
                     corner0_world = self.transform_point_to_world(corners[i][0][0])
                     corner1_world = self.transform_point_to_world(corners[i][0][1])
 
                     if corner0_world is not None and corner1_world is not None:
                         vec_world = corner1_world - corner0_world
-                        yaw = math.atan2(vec_world[1], vec_world[0]) + math.pi / 2.0
-                        while yaw > math.pi:
-                            yaw -= 2 * math.pi
-                        while yaw < -math.pi:
-                            yaw += 2 * math.pi
+                        yaw = math.atan2(vec_world[1], vec_world[0]) + half_pi
+                        # Normalisation optimisée (modulo au lieu de boucle)
+                        yaw = ((yaw + pi) % two_pi) - pi
                     else:
                         yaw = 0.0
 

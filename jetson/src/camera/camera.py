@@ -115,51 +115,20 @@ class Camera:
             fps: Le nouveau FPS à définir
 
         Returns:
-            bool: True si le changement a réussi, False sinon
+            bool: True si le changement a réussi
         """
         if self.cam is None or not self.is_opened():
-            print("❌ Impossible de changer le FPS: caméra non ouverte")
             return False
-
-        print(f"🔄 Changement du FPS vers {fps}...")
 
         # Définir le nouveau FPS
         self.cam.set(cv2.CAP_PROP_FPS, fps)
-        time.sleep(0.2)  # Temps de stabilisation
+        time.sleep(0.1)  # Temps de stabilisation réduit
 
-        # Vider le buffer après changement
-        for _ in range(5):
+        # Vider le buffer (réduit à 3 frames pour optimisation)
+        for _ in range(3):
             self.cam.read()
-            time.sleep(0.01)
 
-        # IMPORTANT: Mesurer le FPS RÉEL, pas celui que la caméra prétend avoir
-        # car cam.get(CAP_PROP_FPS) peut retourner une valeur théorique incorrecte
-        print(f"   📊 Mesure du FPS réel sur 2 secondes...")
-        frame_count = 0
-        start_time = time.time()
-        test_duration = 2.0
-
-        while time.time() - start_time < test_duration:
-            ret, _ = self.cam.read()
-            if ret:
-                frame_count += 1
-            else:
-                break
-
-        elapsed = time.time() - start_time
-        actual_fps = frame_count / elapsed if elapsed > 0 else 0
-
-        configured_fps = self.cam.get(cv2.CAP_PROP_FPS)
-        print(f"   📌 FPS configuré (get): {configured_fps:.1f}")
-        print(f"   📌 FPS réel (mesuré): {actual_fps:.1f}")
-
-        if abs(actual_fps - fps) > 2:
-            print(f"   ⚠️  FPS demandé: {fps}, FPS réel obtenu: {actual_fps:.1f}")
-            print(f"   💡 La caméra/driver ne supporte peut-être pas ce FPS")
-            return False
-        else:
-            print(f"   ✅ FPS changé avec succès: {actual_fps:.1f}")
-            return True
+        return True
 
     def get_resolution(self) -> Tuple[int, int]:
         """Get the current resolution of the camera.
