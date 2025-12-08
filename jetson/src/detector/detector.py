@@ -77,14 +77,9 @@ class ArucoDetector:
         self.aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_100)
         self.aruco_params = cv2.aruco.DetectorParameters_create()
 
-        # Détection et initialisation CUDA (optionnelle)
+        # CUDA désactivé : overhead transfert CPU↔GPU > gains sur petites images
+        # Pour 1920x1080, le CPU est plus rapide que GPU+transferts
         self.use_cuda = False
-        try:
-            if cv2.cuda.getCudaEnabledDeviceCount() > 0:
-                self.use_cuda = True
-                print("⚡ CUDA activé pour le détecteur ArUco")
-        except Exception:
-            print("ℹ️  CUDA non disponible, utilisation CPU")
 
         if self.camera_matrix is None:
             w, h = self.cam.get_resolution()
