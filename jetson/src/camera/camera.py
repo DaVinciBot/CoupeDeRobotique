@@ -78,13 +78,11 @@ class Camera:
 
         # Configuration de la résolution et FPS (UNE SEULE FOIS, après ouverture)
         if width and height:
-            # MJPG pour performance (sauf calibration où ça peut causer problèmes d'affichage)
+            # MJPG pour performance (sauf calibration où on laisse le codec par défaut)
             if use_mjpg:
                 fourcc = cv2.VideoWriter_fourcc(*"MJPG")
                 self.cam.set(cv2.CAP_PROP_FOURCC, fourcc)
-            else:
-                yuyv = cv2.VideoWriter_fourcc(*"YUYV")
-                self.cam.set(cv2.CAP_PROP_FOURCC, yuyv)
+            # Sinon ne pas définir de codec (laisser le défaut d'OpenCV)
 
             self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
             self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
@@ -227,10 +225,19 @@ class Camera:
         print("CONSEILS : Variez angles, distances et positions")
         print("Appuyez sur 'c' pour capturer, 'q' pour terminer.")
 
+        # Diagnostic: vérifier les propriétés de la caméra
+        fourcc = self.cam.get(cv2.CAP_PROP_FOURCC)
+        fourcc_str = "".join([chr((int(fourcc) >> 8 * i) & 0xFF) for i in range(4)])
+        print(f"🔍 Codec actuel: {fourcc_str}")
+        print(f"🔍 Résolution: {self.get_resolution()}")
+
         while captured < num_images:
             frame = self.read_frame()
             if frame is None:
+                print("⚠️  Frame None reçue")
                 continue
+
+            print(f"✓ Frame reçue: {frame.shape}")
 
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             ret, corners = cv2.findChessboardCorners(
