@@ -24,6 +24,7 @@ class ThreadedCamera(Camera):
         backends: Optional[list] = None,
         buffer_size: int = 1,
         fps: Optional[float] = None,
+        use_mjpg: bool = True,
     ) -> None:
         """Initialize the threaded camera.
 
@@ -33,8 +34,11 @@ class ThreadedCamera(Camera):
             height (int, optional): The desired height of the camera feed.
             backends (list[int], optional): List of backend preferences.
             buffer_size (int): Number of frames to buffer (1 = latest only).
+            fps (float, optional): Desired frames per second.
+            use_mjpg (bool): Si True, utilise le codec MJPG pour performance.
+                Mettre False pour calibration (compatibilité cv2.imshow).
         """
-        super().__init__(camera_id, width, height, backends, fps=fps)
+        super().__init__(camera_id, width, height, backends, fps=fps, use_mjpg=use_mjpg)
 
         self.buffer_size = buffer_size
         self.frame = None

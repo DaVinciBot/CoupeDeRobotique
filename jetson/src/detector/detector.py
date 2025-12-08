@@ -191,7 +191,7 @@ class ArucoDetector:
     def compute_transform_from_refs(self, corners, ids, use_cache=True):
         """
         Calcule la transformation image -> monde.
-        Nécessite au moins 3 références (peut compléter depuis un cache).
+        Nécessite 4 références (peut compléter depuis un cache).
         """
         src_points = []
         dst_points = []
@@ -441,7 +441,7 @@ class ArucoDetector:
     def analyze_frame(self, frame, show_arena=True, arena_window_name="Arena"):
         # Conversion en niveaux de gris (optimisé avec le flag correct)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        
+
         # Détection ArUco - OpenCV 4.5.1 compatible
         corners, ids, _ = cv2.aruco.detectMarkers(
             gray, self.aruco_dict, parameters=self.aruco_params
@@ -465,15 +465,15 @@ class ArucoDetector:
             pi = math.pi
             half_pi = pi / 2.0
             two_pi = 2.0 * pi
-            
+
             # Traitement en batch pour réduire les appels
             num_markers = len(ids)
             for i in range(num_markers):
                 mid = int(ids[i][0])
-                
+
                 # Calcul du centre (optimisé avec mean direct)
                 center_img = corners[i][0].mean(axis=0)
-                
+
                 # Transformation monde
                 pos_world = self.transform_point_to_world(center_img)
 

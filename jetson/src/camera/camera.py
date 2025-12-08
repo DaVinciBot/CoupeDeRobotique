@@ -24,6 +24,7 @@ class Camera:
         height: Optional[int] = None,
         backends: Optional[List[int]] = None,
         fps: Optional[float] = None,
+        use_mjpg: bool = True,
     ) -> None:
         """Initialize the camera.
 
@@ -77,8 +78,11 @@ class Camera:
 
         # Configuration de la résolution et FPS (UNE SEULE FOIS, après ouverture)
         if width and height:
-            fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-            self.cam.set(cv2.CAP_PROP_FOURCC, fourcc)
+            # MJPG pour performance (sauf calibration où ça peut causer problèmes d'affichage)
+            if use_mjpg:
+                fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+                self.cam.set(cv2.CAP_PROP_FOURCC, fourcc)
+            
             self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
             self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 

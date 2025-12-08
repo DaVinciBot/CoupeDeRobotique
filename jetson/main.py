@@ -140,7 +140,7 @@ def calibrate_camera() -> None:
     ):
         print("Erreur: une ou plusieurs variables nécessaires ne sont pas définies")
         return
-    camera = Camera(CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT)
+    camera = Camera(CAMERA_ID, width=CAMERA_WIDTH, height=CAMERA_HEIGHT, use_mjpg=False)
     if not camera.is_opened():
         print("Erreur: impossible d'ouvrir la caméra")
         return
@@ -224,20 +224,22 @@ def update_in_real_time() -> None:
         assumed_hfov_deg=ASSUMED_HFOV_DEG,
     )
 
-    print(f"Caméra: {camera.get_camera_info()}")
-    cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
-    cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
-
+    print(f"🎥 Caméra: {camera.get_camera_info()}")
     # Compteurs pour FPS
     frame_count = 0
     start_time = time.time()
     fps_display = 0.0
-    
+
     # Pré-calculer les constantes pour éviter les lookups répétés
     show_feed = SHOW_CAMERA_FEED
     show_arena = SHOW_ARENA
     debug_mode = DEBUG_MODE
     use_threaded = USE_THREADED_CAMERA
+
+    if show_feed:
+        cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
+    if show_arena:
+        cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
 
     try:
         while True:
@@ -257,7 +259,7 @@ def update_in_real_time() -> None:
             frame_count += 1
             current_time = time.time()
             elapsed = current_time - start_time
-            
+
             if elapsed >= 1.0:
                 fps_display = frame_count / elapsed
                 frame_count = 0
@@ -267,7 +269,7 @@ def update_in_real_time() -> None:
                 if debug_mode and use_threaded and hasattr(camera, "get_stats"):
                     stats = camera.get_stats()
                     print(
-                        f"📊 FPS: {fps_display:.1f} | "
+                        f"📊 FPS | Traitement: {fps_display:.1f} | "
                         f"Lecture: {stats['read_fps']:.1f} | "
                         f"Drops: {stats['frames_dropped']}"
                     )
@@ -297,7 +299,7 @@ def update_in_real_time() -> None:
 
             # Vérifier sortie (Q ou ESC) - optimisé
             key = cv2.waitKey(1) & 0xFF
-            if key == 27 or key == ord('q'):
+            if key == 27 or key == ord("q"):
                 break
     finally:
         # nettoyer les ressources matplotlib
@@ -311,7 +313,8 @@ def update_in_real_time() -> None:
 
 if __name__ == "__main__":
     USE_GPU = detect_gpu()
-    print("USE_GPU =", USE_GPU)
+    if USE_GPU:
+        print("⚡️ Using CUDA acceleration")
 
     # Activer le mode debug si demandé
     set_debug_mode(DEBUG_MODE)
