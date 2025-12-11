@@ -6,6 +6,7 @@
  */
 
 #include <Arduino.h>
+#include <kf1d.h>
 #include <motors_driver.h>
 #include <pid.h>
 #include "structures.h"
@@ -41,6 +42,9 @@ class Rolling_Basis {
     double X = 0.0f;
     double Y = 0.0f;
     double THETA = 0.0f;
+    double last_linear_command = 0.0;
+    KF1D kalman_x;
+    KF1D kalman_y;
 
     // Rolling basis params
     unsigned short encoder_resolution;
@@ -57,7 +61,11 @@ class Rolling_Basis {
                   double center_distance,
                   double wheel_diameter,
                   const PID& linear_distance_pid,
-                  const PID& angular_distance_pid);
+                  const PID& angular_distance_pid,
+                  double kalman_Ts,
+                  double kalman_qa,
+                  double kalman_R,
+                  double kalman_gate_sigma);
 
     /**
      * @brief Destructor of Rolling Basis class
@@ -93,6 +101,10 @@ class Rolling_Basis {
      * @brief Initialize Rolling Basis state with starting position
      */
     void init_rolling_basis(double x, double y, double theta);
+    /**
+     * @brief Reset rolling basis pose and Kalman states
+     */
+    void reset_pose(double x, double y, double theta);
 
     // Odometrie function
     /**

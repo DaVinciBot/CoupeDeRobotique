@@ -45,12 +45,23 @@ Rolling_Basis::Rolling_Basis(unsigned short encoder_resolution,
                              double center_distance,
                              double wheel_diameter,
                              const PID& linear_distance_pid,
-                             const PID& angular_distance_pid)
+                             const PID& angular_distance_pid,
+                             double kalman_Ts,
+                             double kalman_qa,
+                             double kalman_R,
+                             double kalman_gate_sigma)
     : encoder_resolution(encoder_resolution),
       center_distance(center_distance),
       wheel_diameter(wheel_diameter),
       linear_distance_pid(linear_distance_pid),
-      angular_distance_pid(angular_distance_pid) {}
+      angular_distance_pid(angular_distance_pid),
+      right_motor(nullptr),
+      left_motor(nullptr),
+      kalman_x(kalman_Ts, kalman_qa, kalman_R),
+      kalman_y(kalman_Ts, kalman_qa, kalman_R) {
+    kalman_x.setGate(kalman_gate_sigma);
+    kalman_y.setGate(kalman_gate_sigma);
+}
 
 // Methods
 // Inits function
@@ -94,9 +105,18 @@ void Rolling_Basis::init_motors() {
  * @brief Initialize Rolling Basis state with starting position
  */
 void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
-    this->X = x;
-    this->Y = y;
-    this->THETA = theta;
+    this->reset_pose(x, y, theta);
+}
+
+void Rolling_Basis::reset_pose(double x, double y, double theta) {
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        this->X = x;
+        this->Y = y;
+        this->THETA = theta;
+        last_linear_command = 0.0;
+        kalman_x.reset(x, 0.0);
+        kalman_y.reset(y, 0.0);
+    }
 }
 
 // Odometrie function

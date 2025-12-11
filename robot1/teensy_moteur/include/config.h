@@ -55,6 +55,12 @@
 
 // Asservissement echantillonage fréquence
 #define ASSERVISSEMENT_FREQUENCY 5000
+#define ASSERVISSEMENT_PERIOD_S (ASSERVISSEMENT_FREQUENCY / 1000000.0)
+
+// Kalman filter parameters
+#define KALMAN_QA 0.05
+#define KALMAN_R 0.5
+#define KALMAN_GATE_SIGMA 3.0
 
 // Com baudrate
 #define BAUDRATE 115200

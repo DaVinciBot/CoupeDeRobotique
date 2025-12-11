@@ -30,7 +30,11 @@ Rolling_Basis* rolling_basis_ptr = new Rolling_Basis(ENCODER_RESOLUTION,
                                                      ENTRAXE,
                                                      WHEEL_DIAMETER,
                                                      linear_distance_pid,
-                                                     angular_distance_pid);
+                                                     angular_distance_pid,
+                                                     ASSERVISSEMENT_PERIOD_S,
+                                                     KALMAN_QA,
+                                                     KALMAN_R,
+                                                     KALMAN_GATE_SIGMA);
 
 // 2. Instanciate the Communication object
 Com* com;
@@ -89,9 +93,8 @@ void set_pid(byte* msg, byte size) {
 void set_odometrie(byte* msg, byte size) {
     msg_set_odometrie* odometrie = (msg_set_odometrie*)msg;
 
-    rolling_basis_ptr->X = odometrie->x;
-    rolling_basis_ptr->Y = odometrie->y;
-    rolling_basis_ptr->THETA = odometrie->theta;
+    rolling_basis_ptr->reset_pose(odometrie->x, odometrie->y,
+                                  odometrie->theta);
 
     // Update target position: avoid the usage of old stored target point
     target_position.x = odometrie->x;
