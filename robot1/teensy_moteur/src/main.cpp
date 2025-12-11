@@ -12,15 +12,15 @@
 
 // 1. Instanciate the Rolling Basis object
 // a. Define the PID controllers
-PID linear_distance_pid(KP_LINEAR_DISTANCE,
-                        KI_LINEAR_DISTANCE,
-                        KD_LINEAR_DISTANCE,
+PID linear_velocity_pid(KP_LINEAR_VELOCITY,
+                        KI_LINEAR_VELOCITY,
+                        KD_LINEAR_VELOCITY,
                         -240,
                         240,
                         5.0);
-PID angular_distance_pid(KP_ANGULAR_DISTANCE,
-                         KI_ANGULAR_DISTANCE,
-                         KD_ANGULAR_DISTANCE,
+PID angular_velocity_pid(KP_ANGULAR_VELOCITY,
+                         KI_ANGULAR_VELOCITY,
+                         KD_ANGULAR_VELOCITY,
                          -200,
                          200,
                          2.0);
@@ -29,8 +29,8 @@ PID angular_distance_pid(KP_ANGULAR_DISTANCE,
 Rolling_Basis* rolling_basis_ptr = new Rolling_Basis(ENCODER_RESOLUTION,
                                                      ENTRAXE,
                                                      WHEEL_DIAMETER,
-                                                     linear_distance_pid,
-                                                     angular_distance_pid);
+                                                     linear_velocity_pid,
+                                                     angular_velocity_pid);
 
 // 2. Instanciate the Communication object
 Com* com;
@@ -53,17 +53,18 @@ inline void right_motor_read_encoder() {
 
 // 3. Define all com callback functions
 // a. define globals variables to keep in memory callback functions updated
-Point target_position(START_X, START_Y, START_THETA);
+VelocityCommand target_velocity;
 
 // b. define the callback functions
-void set_target_position(byte* msg, byte size) {
-    msg_set_target_position* target_position_msg =
-        (msg_set_target_position*)msg;
+void set_target_velocity(byte* msg, byte size) {
+    msg_set_target_velocity* target_velocity_msg =
+        (msg_set_target_velocity*)msg;
 
-    // Update position
-    target_position.x = target_position_msg->target_position_x;
-    target_position.y = target_position_msg->target_position_y;
-    target_position.theta = target_position_msg->target_position_theta;
+    // Update velocity target atomically (used by interrupt handler)
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        target_velocity.linear = target_velocity_msg->linear_velocity;
+        target_velocity.angular = target_velocity_msg->angular_velocity;
+    }
 }
 
 void set_pid(byte* msg, byte size) {
@@ -71,11 +72,11 @@ void set_pid(byte* msg, byte size) {
     PID* pid = nullptr;
     bool is_valid_pid = true;
     switch (pid_msg->pid_type) {
-        case LINEAR_POSITION_PID_ID:
-            pid = &rolling_basis_ptr->linear_distance_pid;
+        case LINEAR_VELOCITY_PID_ID:
+            pid = &rolling_basis_ptr->linear_velocity_pid;
             break;
-        case ANGULAR_POSITION_PID_ID:
-            pid = &rolling_basis_ptr->angular_distance_pid;
+        case ANGULAR_VELOCITY_PID_ID:
+            pid = &rolling_basis_ptr->angular_velocity_pid;
             break;
         default:
             is_valid_pid = false;
@@ -89,14 +90,17 @@ void set_pid(byte* msg, byte size) {
 void set_odometrie(byte* msg, byte size) {
     msg_set_odometrie* odometrie = (msg_set_odometrie*)msg;
 
-    rolling_basis_ptr->X = odometrie->x;
-    rolling_basis_ptr->Y = odometrie->y;
-    rolling_basis_ptr->THETA = odometrie->theta;
+    unsigned long now = micros();
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        rolling_basis_ptr->X = odometrie->x;
+        rolling_basis_ptr->Y = odometrie->y;
+        rolling_basis_ptr->THETA = odometrie->theta;
 
-    // Update target position: avoid the usage of old stored target point
-    target_position.x = odometrie->x;
-    target_position.y = odometrie->y;
-    target_position.theta = odometrie->theta;
+        rolling_basis_ptr->linear_velocity = 0.0;
+        rolling_basis_ptr->angular_velocity = 0.0;
+        rolling_basis_ptr->last_odometrie_time = now;
+        target_velocity = VelocityCommand();
+    }
 }
 
 void reset_teensy(byte* msg, byte size) {
@@ -109,7 +113,7 @@ void reset_teensy(byte* msg, byte size) {
 void (*callback_functions[256])(byte* msg, byte size);
 
 void initialize_callback_functions() {
-    callback_functions[SET_TARGET_POSITION] = &set_target_position;
+    callback_functions[SET_TARGET_VELOCITY] = &set_target_velocity;
     callback_functions[SET_PID] = &set_pid;
     callback_functions[SET_ODOMETRIE] = &set_odometrie;
     callback_functions[RESET_TEENSY] = &reset_teensy;
@@ -119,7 +123,11 @@ void initialize_callback_functions() {
 // every 10ms, and which manage the robot position and speed: asservissement)
 void handle() {
     rolling_basis_ptr->odometrie_handle();
-    rolling_basis_ptr->handle(target_position, com);
+    VelocityCommand target;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        target = target_velocity;
+    }
+    rolling_basis_ptr->handle(target);
 }
 
 void setup() {

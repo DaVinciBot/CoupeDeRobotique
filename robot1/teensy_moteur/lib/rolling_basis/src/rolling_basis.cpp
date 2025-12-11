@@ -44,13 +44,13 @@ Point Rolling_Basis::get_current_position() {
 Rolling_Basis::Rolling_Basis(unsigned short encoder_resolution,
                              double center_distance,
                              double wheel_diameter,
-                             const PID& linear_distance_pid,
-                             const PID& angular_distance_pid)
+                             const PID& linear_velocity_pid,
+                             const PID& angular_velocity_pid)
     : encoder_resolution(encoder_resolution),
       center_distance(center_distance),
       wheel_diameter(wheel_diameter),
-      linear_distance_pid(linear_distance_pid),
-      angular_distance_pid(angular_distance_pid) {}
+      linear_velocity_pid(linear_velocity_pid),
+      angular_velocity_pid(angular_velocity_pid) {}
 
 // Methods
 // Inits function
@@ -97,6 +97,9 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
     this->X = x;
     this->Y = y;
     this->THETA = theta;
+    this->linear_velocity = 0.0f;
+    this->angular_velocity = 0.0f;
+    this->last_odometrie_time = micros();
 }
 
 // Odometrie function
@@ -108,6 +111,13 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
  * Finally update the rolling basis state.
  */
 void Rolling_Basis::odometrie_handle() {
+    unsigned long now = micros();
+    double dt = 0.0;
+    if (this->last_odometrie_time != 0UL) {
+        dt = (now - this->last_odometrie_time) * 1e-6;
+    }
+    this->last_odometrie_time = now;
+
     /* Update motors positions by calling odometer_handle */
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         this->right_motor->handle_odometrie();
@@ -125,51 +135,29 @@ void Rolling_Basis::odometrie_handle() {
     this->X += cosf(this->THETA + (delta_theta / 2.0f)) * delta_distance;
     this->Y += sinf(this->THETA + (delta_theta / 2.0f)) * delta_distance;
     this->THETA = normalizeAngle(this->THETA + delta_theta);
+
+    if (dt > 0.0) {
+        this->linear_velocity = delta_distance / dt;
+        this->angular_velocity = delta_theta / dt;
+    }
 }
 
 /**
  * @brief Handle the correction computation
  *
- * Compute the distance and orientation error in terms of position.A0
- * Compute the PID and set the motors new command.
+ * Compute the linear and angular velocity error then apply PID and set
+ * the motors new command.
  */
-void Rolling_Basis::handle(Point target_position, Com* com) {
-    /* Position part */
-    // We already have the current robot's position with odometrie (X, Y, THETA)
+void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
+    double linear_error = target_velocity.linear - this->linear_velocity;
+    double angular_error = target_velocity.angular - this->angular_velocity;
 
-    // Compute distance and orientation error (difference between target and
-    // real)
-    double xerr = target_position.x - this->X;
-    double yerr = target_position.y - this->Y;
-
-    double distance_error = xerr * cosf(this->THETA) + yerr * sinf(this->THETA);
-    double norm = sqrt(pow(xerr, 2) + pow(yerr, 2));
-    double sign = (distance_error >= 0.0) ? +1.0 : -1.0;
-    distance_error = norm * sign;
-
-    double theta_error = target_position.theta - this->THETA;
-    /*+ Point::angle(
-        Point(this->X, this->Y, this->THETA),
-        target_position
-    ) - this->THETA;*/
-
-    theta_error = normalizeAngle(theta_error);
-
-    // Consigne vitesse
-    // Compute PID output based on errors
-    double linear_correction =
-        this->linear_distance_pid.compute(distance_error);
-    double angular_correction = this->angular_distance_pid.compute(theta_error);
+    double linear_correction = this->linear_velocity_pid.compute(linear_error);
+    double angular_correction =
+        this->angular_velocity_pid.compute(angular_error);
 
     double right_pwm = linear_correction + angular_correction;
     double left_pwm = linear_correction - angular_correction;
-
-    // static long ticks_counter = 0;
-    // if (ticks_counter++ > 10) {
-    //     ticks_counter = 0;
-    //     String pwms = "PWMs: " + String(right_pwm) + ", " + String(left_pwm);
-    //     com->print((char *)pwms.c_str());
-    // }
 
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);

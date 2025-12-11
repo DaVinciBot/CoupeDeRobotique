@@ -15,8 +15,8 @@
 class Rolling_Basis {
    public:
     // PID controllers
-    PID linear_distance_pid;
-    PID angular_distance_pid;
+    PID linear_velocity_pid;
+    PID angular_velocity_pid;
 
     // Rolling basis's params
     inline double radius() { return this->center_distance / 2.0; };
@@ -41,6 +41,9 @@ class Rolling_Basis {
     double X = 0.0f;
     double Y = 0.0f;
     double THETA = 0.0f;
+    double linear_velocity = 0.0f;
+    double angular_velocity = 0.0f;
+    unsigned long last_odometrie_time = 0;
 
     // Rolling basis params
     unsigned short encoder_resolution;
@@ -56,8 +59,8 @@ class Rolling_Basis {
     Rolling_Basis(unsigned short encoder_resolution,
                   double center_distance,
                   double wheel_diameter,
-                  const PID& linear_distance_pid,
-                  const PID& angular_distance_pid);
+                  const PID& linear_velocity_pid,
+                  const PID& angular_velocity_pid);
 
     /**
      * @brief Destructor of Rolling Basis class
@@ -107,9 +110,9 @@ class Rolling_Basis {
      * @brief Handle the correction computation
      *
      * Compute the distance and orientation error in terms of position.A0
-     * Compute the PID and set the motors new command.
+     * Compute the PID based on velocity error and set the motors new command.
      */
-    void handle(Point target_position, Com* com);
+    void handle(const VelocityCommand& target_velocity);
 
     void pi_mod_signed(double theta);
 
