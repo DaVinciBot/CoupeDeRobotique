@@ -45,7 +45,15 @@ class KF1D {
      * @return true If the measurement is within the validation gate
      * @return false If the measurement is outside the validation gate
      */
-    bool correct(double z, Com* com);
+    bool correct(double z, Com* com = nullptr);
+
+    /**
+     * @brief Reset filter state and covariance
+     *
+     * @param x0 Initial position estimate
+     * @param v0 Initial velocity estimate
+     */
+    void reset(double x0, double v0 = 0.0);
 
     /**
      * @brief Set the Gate object

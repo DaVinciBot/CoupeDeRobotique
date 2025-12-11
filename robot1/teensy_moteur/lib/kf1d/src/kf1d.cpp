@@ -107,10 +107,22 @@ bool KF1D::correct(double z, Com* com) {
         _P11 = I_KH_10 * P01_prev + I_KH_11 * P11_prev;
     }
 
-    String pValues = "P: " + String(_P00) + ", " + String(_P01) + ", " +
-                     String(_P10) + ", " + String(_P11);
-    com->print((char*)pValues.c_str());
+    if (com != nullptr) {
+        String pValues = "P: " + String(_P00) + ", " + String(_P01) + ", " +
+                         String(_P10) + ", " + String(_P11);
+        com->print((char*)pValues.c_str());
+    }
     return true;
+}
+
+void KF1D::reset(double x0, double v0) {
+    _x = x0;
+    _v = v0;
+
+    _P00 = 1e3;
+    _P01 = 0.0;
+    _P10 = 0.0;
+    _P11 = 1e3;
 }
 
 void KF1D::_buildQ(double Ts) {
