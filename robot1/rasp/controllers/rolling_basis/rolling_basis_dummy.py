@@ -14,6 +14,8 @@ from teensy import BaseComTeensy
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
+    from navigation.trajectory_planner import TrajectoryPlanCommand
+
 
 class RollingBasisDummy(BaseComTeensy):
     """Represents the rolling basis of the robot.
@@ -70,28 +72,16 @@ class RollingBasisDummy(BaseComTeensy):
     # region ====== Message Sending Methods ======
 
     @log(param_logger="RollingBasis")
-    def set_target_position(
-        self,
-        target_position: OrientedPoint,
-    ) -> None:
+    def set_target_velocity(self, cmd: TrajectoryPlanCommand) -> None:
         """Sends a message to set the target speed and position of the rolling basis.
 
         Args:
-            target_position (OrientedPoint): Target position and orientation.
-
-        Raises:
-            ValueError: If target_position.theta is None.
+            cmd (TrajectoryPlanCommand): The command containing target velocities.
         """
-        if target_position.theta is None:
-            msg = (
-                f"Target position theta must be defined, got None at "
-                f"position ({target_position.x}, {target_position.y})"
-            )
-            raise ValueError(msg)
+        self.linear_speed, self.angular_speed = cmd.linear_speed, cmd.angular_speed
+        self.odometrie = cmd.position
 
-        self.odometrie = target_position
-
-        self._logger.debug(f"[CTRL:RB:Dummy] Set target position: {target_position}")
+        self._logger.debug(f"[CTRL:RB:Dummy] Set target velocity: {cmd}")
 
     @log("RollingBasis")
     def set_odometrie(self, odometrie: OrientedPoint) -> None:

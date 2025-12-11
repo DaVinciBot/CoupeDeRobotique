@@ -39,7 +39,7 @@ class NavigationTask(BaseNavigationTask[ShowGameContext]):
             enemy_zone=ctx.arena.enemy_zone,
         )
 
-        ctx.rolling_basis.set_target_position(cmd.get_position_command())
+        ctx.rolling_basis.set_target_velocity(cmd)
         self._logger.debug(f"[Navigation Task] {cmd.get_full_command()}")
         self._logger.debug(f"[Navigation Task] State = {self.navigator_task.state}")
         return self.navigator_task.state.is_finished()

@@ -17,6 +17,8 @@ from usb_com.python import Messages
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
+    from navigation.trajectory_planner import TrajectoryPlanCommand
+
 
 class RollingBasis(BaseComTeensy):
     """Represents the rolling basis of the robot.
@@ -97,7 +99,10 @@ class RollingBasis(BaseComTeensy):
             f"[CTRL:RB:Teensy] {msg.decode('ascii', errors='ignore')}",
         )
 
-    def rcv_rolling_basis_state(self, msg: bytes) -> None:
+    def rcv_rolling_basis_state(
+        self,
+        msg: bytes,
+    ) -> None:  # TODO: teensy send correct odometrie / speed
         """Handles rolling basis state update messages from the Teensy.
 
         The message contains:
@@ -131,30 +136,16 @@ class RollingBasis(BaseComTeensy):
     # region ====== Message Sending Methods ======
 
     # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
-    def set_target_position(
-        self,
-        target_position: OrientedPoint,
-    ) -> None:
-        """Send a command to set the target position of the rolling basis.
+    def set_target_velocity(self, cmd: TrajectoryPlanCommand) -> None:
+        """Send a command to set the target velocity of the rolling basis.
 
         Args:
-            target_position (OrientedPoint): Desired position and orientation.
-
-        Raises:
-            ValueError: If target_position.theta is None.
+            cmd (TrajectoryPlanCommand): The command containing target velocities.
         """
-        if target_position.theta is None:
-            msg = (
-                f"Target position theta must be defined, got None at "
-                f"position ({target_position.x}, {target_position.y})"
-            )
-            raise ValueError(msg)
-
         msg = (
-            Messages.SET_TARGET_POSITION.to_bytes()
-            + struct.pack("<d", target_position.x)
-            + struct.pack("<d", target_position.y)
-            + struct.pack("<d", target_position.theta)
+            Messages.SET_TARGET_VELOCITY.to_bytes()
+            + struct.pack("<d", cmd.linear_speed)
+            + struct.pack("<d", cmd.angular_speed)
         )
 
         # Send the composed message to the Teensy

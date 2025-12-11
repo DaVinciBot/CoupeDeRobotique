@@ -77,3 +77,11 @@ class TrajectoryPlanCommand:
             OrientedPoint: The target position of the robot.
         """
         return self.position
+
+    def get_velocity_command(self) -> tuple[float, float]:
+        """Retrieve the target linear and angular speeds.
+
+        Returns:
+            tuple[float, float]: The target linear and angular speeds.
+        """
+        return self.linear_speed, self.angular_speed
