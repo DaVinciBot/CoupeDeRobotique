@@ -139,9 +139,7 @@ class BaseAvoidance[PARAMSTYPE: BaseAvoidanceParams](ABC):
         """
         self.state = AvoidanceState.ABORTED
         task.state = NavigatorTaskState.AVOIDING
-        cmd = TrajectoryPlanCommand.create_stop_command(
-            current_position=position,
-        )
+        cmd = TrajectoryPlanCommand.create_stop_command(current_position=position)
         task.current_trajectory_command = cmd
         self._reset_timer()
         return cmd
