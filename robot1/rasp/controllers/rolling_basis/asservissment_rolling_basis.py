@@ -358,7 +358,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         try:
             pid = self._load_pid(*args, **kwargs)
             self.linear_position_pid = pid
-            self._send_pid(PidID.LINEAR_POSITION.value, pid)
+            self._send_pid(PidID.LINEAR_VELOCITY.value, pid)
         except (ValueError, TypeError) as e:
             self._logger.error(f"[CTRL:RB] Failed to set linear position PID: {e}")
 
@@ -391,7 +391,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         try:
             pid = self._load_pid(*args, **kwargs)
             self.angular_position_pid = pid
-            self._send_pid(PidID.ANGULAR_POSITION.value, pid)
+            self._send_pid(PidID.ANGULAR_VELOCITY.value, pid)
         except (ValueError, TypeError) as e:
             self._logger.error(f"[CTRL:RB] Failed to set angular position PID: {e}")
 
