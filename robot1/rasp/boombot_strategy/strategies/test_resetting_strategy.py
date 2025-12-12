@@ -49,12 +49,7 @@ class TestResettingStrategy(BaseStrategy):
 
         # Connect the subgraphs in execution order
         self._auto_build_transitions(
-            deplacement_subgraph,
             resetting_subgraph,
-            deplacement_subgraph1,
-            resetting_subgraph1,
-            deplacement_subgraph2,
-            resetting_subgraph2,
         )
 
         # Create the graph runner starting from the first subgraph
@@ -63,5 +58,5 @@ class TestResettingStrategy(BaseStrategy):
                 identifier="ResettingTestRunner",
                 follow_logger_manager_rules=True,
             ),
-            start=deplacement_subgraph.get_entry(),
+            start=resetting_subgraph.get_entry(),
         )
