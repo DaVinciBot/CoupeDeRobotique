@@ -4,23 +4,22 @@ Motor::Motor(byte stepPin,
              byte dirPin,
              byte enablePin,
              unsigned int stepsPerRevolution,
-             float k,
+             unsigned int pulse_us,
              bool invertDirection)
     : _stepPin(stepPin),
       _dirPin(dirPin),
       _enablePin(enablePin),
-      _factorK(k),
+      _pulse_us(pulse_us),
+      _stepsPerRevolution(stepsPerRevolution),
       _invertDirection(invertDirection) {
-    _stepsPerRevolution =
-        stepsPerRevolution /
-        k;  // Divide by k to get the actual steps per revolution
     _targetSpeedStepsPerSec = 0.0f;
     _currentSpeedStepsPerSec = 0.0f;
     _acceleration = 0.0f;
     _moving = false;
 
+    _lastUpdateTime = micros();
     _lastStepTime = 0;
-    _usDelayBetweenKSteps = 0.0f;
+    _usDelayBetweenStep = 0.0f;
     _stepCount = 0;
 }
 
@@ -33,6 +32,7 @@ void Motor::init() {
 
 void Motor::enableMotor(bool enable) {
     digitalWrite(_enablePin, enable ? LOW : HIGH);
+    _lastUpdateTime = micros();
 }
 
 void Motor::setTargetSpeed(float stepsPerSec) {
@@ -40,8 +40,10 @@ void Motor::setTargetSpeed(float stepsPerSec) {
         stepsPerSec = -stepsPerSec;
     }
     _targetSpeedStepsPerSec = stepsPerSec * 1000.0f;
-    _moving = (fabs(_targetSpeedStepsPerSec) >= 1.0f);
+    _moving = (fabs(_targetSpeedStepsPerSec) >= 1.0f);  // pose pb
     enableMotor(_moving);
+    // Serial.print("_targetSpeedStepsPerSec = ");
+    // Serial.println(_targetSpeedStepsPerSec);
 }
 
 void Motor::setAcceleration(float stepsPerSec2) {
@@ -54,13 +56,13 @@ void Motor::_setDirection(bool clockwise) {
     digitalWrite(_dirPin, clockwise ? HIGH : LOW);
 }
 
-void Motor::_doKSteps() {
-    for (int i = 0; i < _factorK; ++i) {
-        digitalWrite(_stepPin, HIGH);
-        delayMicroseconds(500);
-        digitalWrite(_stepPin, LOW);
-        delayMicroseconds(500);
-    }
+void Motor::_doOneStep() {
+    // Serial.println("Doing one step");
+    digitalWrite(_stepPin, HIGH);
+    delayMicroseconds(_pulse_us);
+    digitalWrite(_stepPin, LOW);
+    delayMicroseconds(_pulse_us);
+    _lastStepTime = micros();
 
     if (_currentSpeedStepsPerSec >= 0 && !_invertDirection ||
         _currentSpeedStepsPerSec < 0 && _invertDirection) {
@@ -71,13 +73,17 @@ void Motor::_doKSteps() {
 }
 
 void Motor::update() {
-    if (!_moving)
+    if (!_moving) {
+        Serial.println("Motor not moving");
         return;
+    }
 
+    // Serial.println("Motor is moving");
     unsigned long now = micros();
-    unsigned long dt = now - _lastStepTime;
+    unsigned long dt = now - _lastUpdateTime;
     float dtSec = dt * 1e-6f;
     float speedDiff = _acceleration * dtSec;
+    // Serial.println(speedDiff);
 
     if (fabs(_currentSpeedStepsPerSec - _targetSpeedStepsPerSec) < speedDiff) {
         _currentSpeedStepsPerSec = _targetSpeedStepsPerSec;
@@ -86,20 +92,25 @@ void Motor::update() {
     } else if (_currentSpeedStepsPerSec > _targetSpeedStepsPerSec) {
         _currentSpeedStepsPerSec -= speedDiff;
     }
+    // Serial.print("_currentSpeedStepsPerSec =");
+    // Serial.println(_currentSpeedStepsPerSec);
 
     if (fabs(_currentSpeedStepsPerSec) < 1.0f) {
-        _usDelayBetweenKSteps = 1e6f;
+        _usDelayBetweenStep = 1e6f;
     } else {
-        _usDelayBetweenKSteps =
-            (_factorK * 1e6f) / fabs(_currentSpeedStepsPerSec);
+        _usDelayBetweenStep = (1e6f) / fabs(_currentSpeedStepsPerSec);
     }
 
     bool clockwise = (_currentSpeedStepsPerSec >= 0);
     _setDirection(clockwise);
 
-    if (dt >= _usDelayBetweenKSteps) {
-        _doKSteps();
-        _lastStepTime = now;
+    // Serial.print("dt = ");
+    // Serial.print(dt);
+    // Serial.print(", _usDelayBetweenStep = ");
+    // Serial.println(_usDelayBetweenStep);
+
+    if (now - _lastStepTime >= _usDelayBetweenStep) {
+        _doOneStep();
     }
 
     if (fabs(_targetSpeedStepsPerSec) < 1.0f &&
@@ -107,6 +118,8 @@ void Motor::update() {
         _moving = false;
         enableMotor(false);
     }
+
+    _lastUpdateTime = now;
 }
 
 bool Motor::isMoving() const {

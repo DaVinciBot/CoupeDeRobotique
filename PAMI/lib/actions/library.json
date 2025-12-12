@@ -1,0 +1,18 @@
+{
+    "name": "actions",
+    "version": "0.1.0",
+    "description": "Collection of high-level robot actions (action interface, manager and example composite actions)",
+    "keywords": "robot,actions,behavior,task",
+    "authors": [
+        {
+            "name": "DaVinciBot",
+            "email": ""
+        }
+    ],
+    "frameworks": [
+        "arduino"
+    ],
+    "platforms": [
+        "espressif32"
+    ]
+}

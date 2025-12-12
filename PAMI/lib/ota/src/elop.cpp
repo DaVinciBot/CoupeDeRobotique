@@ -1,6 +1,6 @@
 #include "elop.h"
 
-const uint8_t ELEGANT_HTML[12889] PROGMEM = {
+const uint8_t ELEGANT_HTML[] PROGMEM = {
     31,  139, 8,   8,   98,  158, 184, 103, 2,   255, 116, 109, 112, 95,  117,
     105, 0,   237, 125, 253, 159, 211, 70,  146, 247, 239, 249, 43,  132, 115,
     217, 181, 55,  99,  141, 90,  239, 26,  24,  246, 192, 9,   59,  220, 65,
@@ -861,3 +861,7 @@ const uint8_t ELEGANT_HTML[12889] PROGMEM = {
     145, 77,  44,  215, 173, 251, 108, 207, 180, 154, 250, 10,  171, 156, 78,
     46,  233, 137, 237, 195, 89,  49,  79,  30,  254, 127, 162, 4,   58,  141,
     245, 200, 0,   0};
+
+// Export the length of the array so other translation units can use it
+// without applying sizeof() to an incomplete extern array.
+const size_t ELEGANT_HTML_LEN = sizeof(ELEGANT_HTML);

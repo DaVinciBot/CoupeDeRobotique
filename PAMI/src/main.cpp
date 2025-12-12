@@ -1,16 +1,18 @@
 #include "config.h"
 
-Motor* leftMotor = new Motor(LEFT_STEP_PIN,
-                             LEFT_DIR_PIN,
-                             LEFT_EN_PIN,
-                             LEFT_STEPS_PER_REV,
-                             K,
+Motor* leftMotor = new Motor(LEFT_STEP_PIN,       // Broche 19
+                             LEFT_DIR_PIN,        // Broche 18
+                             LEFT_EN_PIN,         // Broche enable
+                             LEFT_STEPS_PER_REV,  // Steps par tour
+                             PULSE_US,
                              true);
-Motor* rightMotor = new Motor(RIGHT_STEP_PIN,
-                              RIGHT_DIR_PIN,
-                              RIGHT_EN_PIN,
-                              RIGHT_STEPS_PER_REV,
-                              K);
+
+Motor* rightMotor = new Motor(RIGHT_STEP_PIN,       // Broche 17
+                              RIGHT_DIR_PIN,        // Broche 16
+                              RIGHT_EN_PIN,         // Broche enable
+                              RIGHT_STEPS_PER_REV,  // Steps par tour
+                              PULSE_US,
+                              false);
 
 RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               rightMotor,
@@ -30,7 +32,7 @@ AsyncWebServer server(80);
 CustomOTA ota("DVB", "davincibot", &server);
 #endif
 #if ENABLE_LORA
-#include "com.h"
+#include "com_pami.h"
 Com* com = new Com();  // LoRa object
 bool isInit = false;
 #endif
@@ -94,6 +96,7 @@ void lidarUpdate() {
 }
 
 void setup() {
+    delay(5000);  // pour le serial monitor
     setCpuFrequencyMhz(240);
 
     Serial.begin(115200);
