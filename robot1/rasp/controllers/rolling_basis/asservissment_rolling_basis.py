@@ -18,6 +18,8 @@ from usb_com.python import Messages
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
+    from navigation.trajectory_planner import TrajectoryPlanCommand
+
 
 class AsservissementRollingBasis(BaseComTeensy):
     """Represents the rolling basis of the robot.
@@ -132,24 +134,23 @@ class AsservissementRollingBasis(BaseComTeensy):
 
     # region ====== Message Sending Methods  ======
 
-    def set_target_position(
+    def set_target_velocity(
         self,
-        target_position: OrientedPoint,
+        cmd: TrajectoryPlanCommand,
     ) -> None:
         """Send a command to set the target position of the rolling basis.
 
         Args:
-            target_position (OrientedPoint): Desired position and orientation.
+            cmd (TrajectoryPlanCommand): Command containing desired position and orientation.
         """
         # Store for logging
-        self._last_target = target_position
+        self._last_target = cmd.position
 
         # Build and send message
         msg = (
-            Messages.SET_TARGET_POSITION.to_bytes()
-            + struct.pack("<d", target_position.x)
-            + struct.pack("<d", target_position.y)
-            + struct.pack("<d", target_position.theta)
+            Messages.SET_TARGET_VELOCITY.to_bytes()
+            + struct.pack("<d", cmd.linear_speed)
+            + struct.pack("<d", cmd.angular_speed)
         )
         self.send_bytes(msg)
 
