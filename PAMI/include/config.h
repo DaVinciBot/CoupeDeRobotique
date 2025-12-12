@@ -1,4 +1,4 @@
-#include <Arduino.h>
+#include "arduino_compat.h"
 #include "lidar_pami.h"
 #include "motor.h"
 #include "navigation.h"

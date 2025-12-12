@@ -1,6 +1,6 @@
 #include <unity.h>
 
-#include "Arduino.h"
+#include "arduino_compat.h"
 #include "motor.h"
 #include "pid.h"
 #include "point.h"
