@@ -1,8 +1,0 @@
-{
-  "name": "actuators",
-  "version": "1.0.0",
-  "description": "Library dedicated to actuator control",
-  "keywords": "servo, actuator, control",
-  "frameworks": "*",
-  "platforms": "*"
-}
