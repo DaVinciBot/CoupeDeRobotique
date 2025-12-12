@@ -1,4 +1,4 @@
-#include <com.h>
+#include <com_pami.h>
 
 Com::Com() {
     memcpy(this->signature, END_BYTES_SIGNATURE, sizeof(this->signature));

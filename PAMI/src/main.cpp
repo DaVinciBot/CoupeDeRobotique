@@ -32,7 +32,7 @@ AsyncWebServer server(80);
 CustomOTA ota("DVB", "davincibot", &server);
 #endif
 #if ENABLE_LORA
-#include "com.h"
+#include "com_pami.h"
 Com* com = new Com();  // LoRa object
 bool isInit = false;
 #endif
