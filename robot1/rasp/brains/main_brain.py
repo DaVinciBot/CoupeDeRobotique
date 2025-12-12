@@ -326,9 +326,8 @@ class MainBrain(Brain):
             self.logger.warning(
                 "[BRAIN:Init] All subsystems in DUMMY mode - robot will not move",
             )
-            self.arena.set_team_color(TeamColor.YELLOW)
-        else:
-            await self.wait_for_team()
+        self.arena.set_team_color(TeamColor.YELLOW)
+
 
         start_position = OrientedPoint(0, 0, 0)
         enemy_position = OrientedPoint(150, 200, -pi / 2)
