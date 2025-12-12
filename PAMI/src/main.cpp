@@ -1,25 +1,26 @@
 #include "config.h"
 
-Motor* leftMotor = new Motor(LEFT_STEP_PIN,  // Broche 19
-                          LEFT_DIR_PIN,    // Broche 18
-                          LEFT_EN_PIN,     // Broche enable
-                          200,             // Steps par tour (typique pour un NEMA)
-                          false);
+Motor* leftMotor = new Motor(LEFT_STEP_PIN,       // Broche 19
+                             LEFT_DIR_PIN,        // Broche 18
+                             LEFT_EN_PIN,         // Broche enable
+                             LEFT_STEPS_PER_REV,  // Steps par tour
+                             PULSE_US,
+                             true);
 
-Motor* rightMotor = new Motor(RIGHT_STEP_PIN,  // Broche 17
-                          RIGHT_DIR_PIN,    // Broche 16
-                          RIGHT_EN_PIN,     // Broche enable
-                          200,             // Steps par tour (typique pour un NEMA)
-                          false);                          
+Motor* rightMotor = new Motor(RIGHT_STEP_PIN,       // Broche 17
+                              RIGHT_DIR_PIN,        // Broche 16
+                              RIGHT_EN_PIN,         // Broche enable
+                              RIGHT_STEPS_PER_REV,  // Steps par tour
+                              PULSE_US,
+                              false);
 
 // Pour debug
 const int numSteps = 800;  // Nombre de pas à faire
-                              
 
 RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               rightMotor,
                                               WHEEL_DIAMETER_MM,
-                                              WHEEL_+BASE_MM,
+                                              WHEEL_ + BASE_MM,
                                               Point{0, 0, 0});
 
 Navigation* navigation = new Navigation(
@@ -98,24 +99,24 @@ void lidarUpdate() {
 }*/
 
 void setup() {
-    delay(5000);//pour le serial monitor
+    delay(5000);  // pour le serial monitor
     Serial.begin(115200);
     Serial.println("\n-- Test Moteur --\n");
-    Serial.printf("STEP_PIN: %d, DIR_PIN: %d, EN_PIN: %d\n", 
-                 LEFT_STEP_PIN, LEFT_DIR_PIN, LEFT_EN_PIN);
-    
+    Serial.printf("STEP_PIN: %d, DIR_PIN: %d, EN_PIN: %d\n", LEFT_STEP_PIN,
+                  LEFT_DIR_PIN, LEFT_EN_PIN);
+
     // Configuration des broches
     /*leftMotor->init();
     leftMotor->enableMotor(true);  // Active le moteur
-    
+
     Serial.println("Moteur initialisé");
 
     leftMotor->setTargetSpeed(10.0f);
     leftMotor->setAcceleration(100.0f);
-    
+
     rightMotor->init();
     rightMotor->enableMotor(true);  // Active le moteur
-    
+
     Serial.println("Moteur initialisé");
 
     rightMotor->setTargetSpeed(-10.0f);
@@ -123,7 +124,7 @@ void setup() {
 
     // Test : avancer 100 mm
     rollingBasis->setCommand(Point{100.0f, 100.0f, 0.0f});
-      
+
 #if ENABLE_OTA
     Serial.println("OTA enabled");
     ota.begin();
@@ -160,11 +161,10 @@ void setup() {
 
 long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
-    
     rollingBasis->update();
-    
-    //rightMotor->update();
-    //leftMotor->update();
+
+    // rightMotor->update();
+    // leftMotor->update();
 #if ENABLE_OTA
     ota.loop();
 #endif

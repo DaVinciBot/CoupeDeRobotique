@@ -8,9 +8,9 @@
 #define ACS_TRESHOLD 40  // Threshold for ACS activation in mm
 
 // #------- MOTOR CONFIGURATION -------#
-#define LEFT_DIR_PIN 18          // Direction pin for left motor
+#define LEFT_DIR_PIN 18         // Direction pin for left motor
 #define LEFT_STEP_PIN 19        // Step pin for left motor
-#define LEFT_EN_PIN 32           // Enable pin for left motor
+#define LEFT_EN_PIN 32          // Enable pin for left motor
 #define LEFT_STEPS_PER_REV 400  // Steps per revolution for left motor
 
 #define RIGHT_DIR_PIN 16         // Direction pin for right motor
@@ -18,13 +18,12 @@
 #define RIGHT_EN_PIN 33          // Enable pin for right motor
 #define RIGHT_STEPS_PER_REV 400  // Steps per revolution for right motor
 
+#define PULSE_US 500             // Pulse width in microseconds for motor steps
 #define WHEEL_DIAMETER_MM 60.0f  // Wheel diameter in mm
 #define WHEEL_BASE_MM 132.0f     // Distance between the two wheels in mm
 
 #define MAX_LINEAR_SPEED_MM_PER_S 10     // Maximum linear speed in mm/s
 #define MAX_ANGULAR_SPEED_RAD_PER_S 1.0  // Maximum angular speed in rad/s
-
-//#define K 8.0f  // Microstepping factor
 
 // #------- PID CONFIGURATION -------#
 #define LINEAR_DISTANCE_KP 2000.0f  // Proportional gain for linear distance
