@@ -40,8 +40,8 @@ void ElegantOTAClass::begin(ELEGANTOTA_WEBSERVER* server,
             return _server->requestAuthentication();
         }
         _server->sendHeader("Content-Encoding", "gzip");
-    _server->send_P(200, "text/html", (const char*)ELEGANT_HTML,
-            ELEGANT_HTML_LEN);
+        _server->send_P(200, "text/html", (const char*)ELEGANT_HTML,
+                        ELEGANT_HTML_LEN);
     });
 #endif
 

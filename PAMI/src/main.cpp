@@ -14,20 +14,17 @@ Motor* rightMotor = new Motor(RIGHT_STEP_PIN,       // Broche 17
                               PULSE_US,
                               false);
 
-// Pour debug
-const int numSteps = 800;  // Nombre de pas à faire
-
 RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               rightMotor,
                                               WHEEL_DIAMETER_MM,
-                                              WHEEL_ + BASE_MM,
+                                              WHEEL_BASE_MM,
                                               Point{0, 0, 0});
 
 Navigation* navigation = new Navigation(
     rollingBasis,
     15000);  // Navigation object with 100ms interval and 15s timeout
-/*
-lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object*/
+
+lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
 
 #if ENABLE_OTA
 #include "OTA.h"
@@ -61,7 +58,7 @@ bool canStart = false;  // Flag to indicate if navigation can start
 
 long dt = 0;
 long lastTimerrrr = 0;
-/*
+
 void navigationUpdate() {
     navigation->update();  // Update rolling basis
     if (ACS) {
@@ -96,35 +93,35 @@ void lidarUpdate() {
     } else {
         ACS = false;  // Deactivate ACS if no obstacle is detected
     }
-}*/
+}
 
 void setup() {
     delay(5000);  // pour le serial monitor
+    setCpuFrequencyMhz(240);
+
     Serial.begin(115200);
-    Serial.println("\n-- Test Moteur --\n");
-    Serial.printf("STEP_PIN: %d, DIR_PIN: %d, EN_PIN: %d\n", LEFT_STEP_PIN,
-                  LEFT_DIR_PIN, LEFT_EN_PIN);
+    Serial.println("\n-- PAMI test --\n");
 
-    // Configuration des broches
-    /*leftMotor->init();
-    leftMotor->enableMotor(true);  // Active le moteur
-
-    Serial.println("Moteur initialisé");
-
-    leftMotor->setTargetSpeed(10.0f);
-    leftMotor->setAcceleration(100.0f);
-
-    rightMotor->init();
-    rightMotor->enableMotor(true);  // Active le moteur
-
-    Serial.println("Moteur initialisé");
-
-    rightMotor->setTargetSpeed(-10.0f);
-    rightMotor->setAcceleration(100.0f);*/
-
-    // Test : avancer 100 mm
-    rollingBasis->setCommand(Point{100.0f, 100.0f, 0.0f});
-
+    lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
+    lidar->onReceive([]() {
+        if (!canStart) {
+            t_two = t_one;
+            t_one = tirette;                   // Update tirette state
+            tirette = lidar->isTiretteOn();    // Check if tirette is on
+            if (!(tirette || t_one || t_two))  // Check if tirette is on
+            {
+                // canStartTimer = true; // Set canStart to true if tirette is
+                // on
+                canStart = true;
+                Serial.println("Tirette activated, starting navigation.");
+            }
+            Serial.println("Waiting for tirette activation...");
+        } else {
+            lidarUpdate();  // Call lidar update function when data is received
+        }
+    });
+    Serial.println("LIDAR initialized");
+    delay(100);  // Wait for LIDAR to stabilize
 #if ENABLE_OTA
     Serial.println("OTA enabled");
     ota.begin();
@@ -161,10 +158,13 @@ void setup() {
 
 long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
-    rollingBasis->update();
-
-    // rightMotor->update();
-    // leftMotor->update();
+    if (millis() - lastTime > 2 &&
+        canStart)  // Check if 2ms have passed since the last navigation update
+    {
+        navigationUpdate();  // Call navigation update function
+        lastTime = millis();
+    }
+    lidar->update();
 #if ENABLE_OTA
     ota.loop();
 #endif
