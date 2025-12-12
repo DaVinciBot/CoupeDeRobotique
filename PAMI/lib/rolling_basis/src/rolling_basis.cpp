@@ -13,15 +13,14 @@ RollingBasis::RollingBasis(Motor* leftMotor,
       _rightMotor(rightMotor),
       _wheelDiameterMm(wheelDiameterMm),
       _wheelBaseMm(wheelBaseMm),
-      _currentPose(initialPosition),
-{
+      _currentPose(initialPosition) {
     _linearSpeed = 20.0f;
     _angularSpeed = 1.5f;
     _phase = Phase::Idle;
     _rotateDuration = 0.0f;
     _forwardDuration = 0.0f;
     _rotateDirection = 1.0f;
-    _startTime = micros();
+    _startTimeUs = micros();
 
     _leftMotor->init();
     _rightMotor->init();
@@ -46,7 +45,7 @@ void RollingBasis::setCommand(const Point& target) {
     _forwardDuration = distance / _linearSpeed;
 
     // timestamps
-    _startTime = micros();
+    _startTimeUs = micros();
     _phase = (_rotateDuration > 0 ? Phase::Rotating : Phase::Forwarding);
 
     // Serial.printf("[Command] New target set: x=%f, y=%f, theta=%f\n",
@@ -63,7 +62,7 @@ void RollingBasis::update() {
     }
 
     unsigned long now = micros();
-    float elapsed = (now - _startTime) * 1e-6f;
+    float elapsed = (now - _startTimeUs) * 1e-6f;
     Serial.println(elapsed);
 
     if (_phase == Phase::Rotating) {
@@ -73,7 +72,7 @@ void RollingBasis::update() {
             Serial.println("Rotating...");
         } else {
             _phase = Phase::Forwarding;
-            _startTime = now;
+            _startTimeUs = now;
             elapsed = 0.0f;
             Serial.println("Rotation done, switching to Forwarding phase.");
         }
