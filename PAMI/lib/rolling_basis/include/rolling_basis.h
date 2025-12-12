@@ -1,7 +1,6 @@
 #ifndef ROLLING_BASIS_H
 #define ROLLING_BASIS_H
 
-#include <chrono>
 #include "motor.h"
 #include "pid.h"
 #include "point.h"
@@ -178,20 +177,7 @@ class RollingBasis {
      */
     float _rotateDirection;
     // Start time of the current phase
-    std::chrono::steady_clock::time_point _startTime;
-
-    // PID _linDistPid;  // PID controller for linear distance
-    // PID _angDistPid;  // PID controller for angular distance
-
-    // float _cmdLinSpeed;  // Commanded linear speed in mm/s
-    // float _cmdAngSpeed;  // Commanded angular speed in rad/s
-    // Point _cmdPosition;  // Target position and orientation
-
-    // float _measLinSpeed;  // Measured linear speed in mm/s
-    // float _measAngSpeed;  // Measured angular speed in rad/s
-
-    // std::chrono::steady_clock::time_point _lastTime;  // Last update time
-    // bool _moving;  // Whether the rolling basis is currently moving
+    unsigned long _startTime;
 };
 
 #endif
