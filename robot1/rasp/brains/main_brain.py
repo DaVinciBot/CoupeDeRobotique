@@ -288,7 +288,7 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=False)
     async def wait_for_team(self) -> None:
         """Waits for the team color to be set before starting the brain."""
-        self.arena.team_color = TeamColor.BLUE
+        self.arena.team_color = TeamColor.YELLOW
 
         self.logger.info(
             f"Team color is set to {self.arena.team_color.name.lower()}."
