@@ -325,7 +325,7 @@ class MainBrain(Brain):
         enemy_position = OrientedPoint(150, 200, -pi / 2)
         if self.arena.team_color == TeamColor.YELLOW:
             self.logger.info("Starting as YELLOW team.")
-            start_position = OrientedPoint(122.5, 21, -pi / 2)
+            start_position = OrientedPoint(122.5, 50, -pi / 2)
             enemy_position = OrientedPoint(177.5, 21, -pi / 2)
         elif self.arena.team_color == TeamColor.BLUE:
             self.logger.info("Starting as BLUE team.")
