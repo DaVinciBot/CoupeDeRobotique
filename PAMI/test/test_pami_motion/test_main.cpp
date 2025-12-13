@@ -30,17 +30,17 @@ void test_motor_acceleration_ramp_and_steps() {
     motor.setAcceleration(1.0f);  // -> 100 steps/s^2
     motor.setTargetSpeed(5.0f);   // -> 5000 steps/s
 
-    advanceFakeMicros(50'000);  // 50 ms
+    advanceFakeMicros(50000);  // 50 ms
     motor.update();
     TEST_ASSERT_FLOAT_WITHIN(0.5f, 5.0f,
                              motor.getCurrentSpeedStepsPerSecForTest());
 
-    advanceFakeMicros(50'000);  // another 50 ms
+    advanceFakeMicros(50000);  // another 50 ms
     motor.update();
     TEST_ASSERT_FLOAT_WITHIN(0.5f, 10.0f,
                              motor.getCurrentSpeedStepsPerSecForTest());
 
-    advanceFakeMicros(200'000);  // ramp a bit more and allow a step to occur
+    advanceFakeMicros(200000);  // ramp a bit more and allow a step to occur
     motor.update();
     TEST_ASSERT_TRUE(motor.getStepCount() > 0);
 }
@@ -86,7 +86,7 @@ void test_rolling_basis_rotation_then_forward() {
     TEST_ASSERT_EQUAL(RollingBasis::Phase::Rotating, basis.getPhaseForTest());
 
     // During rotation the wheel speeds should be symmetric with opposite signs
-    advanceFakeMicros(500'000);  // 0.5 s < rotate duration
+    advanceFakeMicros(500000);  // 0.5 s < rotate duration
     basis.update();
 
     const float circumference = static_cast<float>(PI) * 60.0f;
@@ -101,7 +101,7 @@ void test_rolling_basis_rotation_then_forward() {
                              left.getTargetSpeedStepsPerSecForTest());
 
     // After the rotation time has elapsed, it should switch to forward motion
-    advanceFakeMicros(700'000);  // push total elapsed > rotateDuration
+    advanceFakeMicros(700000);  // push total elapsed > rotateDuration
     basis.update();
     TEST_ASSERT_EQUAL(RollingBasis::Phase::Forwarding, basis.getPhaseForTest());
     TEST_ASSERT_TRUE(left.getTargetSpeedStepsPerSecForTest() >
