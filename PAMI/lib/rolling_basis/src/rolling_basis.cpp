@@ -37,8 +37,10 @@ void RollingBasis::setCommand(const Point& target) {
     float dy = target.y - _currentPose.y;
     float desiredTheta = atan2f(dy, dx);
     float dTheta = _wrapToPi(desiredTheta - _currentPose.theta);
-    _rotateDuration = fabsf(dTheta) / _angularSpeed;
-    _rotateDirection = (dTheta >= 0 ? +1.0f : -1.0f);
+    float absTheta = fabsf(dTheta);
+    bool needsRotation = absTheta > ANGLE_TOLERANCE_RAD;
+    _rotateDuration = needsRotation ? absTheta / _angularSpeed : 0.0f;
+    _rotateDirection = needsRotation ? (dTheta >= 0 ? +1.0f : -1.0f) : 0.0f;
 
     // distance to travel
     float distance = sqrtf(dx * dx + dy * dy);
@@ -46,7 +48,7 @@ void RollingBasis::setCommand(const Point& target) {
 
     // timestamps
     _startTimeUs = micros();
-    _phase = (_rotateDuration > 0 ? Phase::Rotating : Phase::Forwarding);
+    _phase = (needsRotation ? Phase::Rotating : Phase::Forwarding);
 
     // Serial.printf("[Command] New target set: x=%f, y=%f, theta=%f\n",
     // _cmdPosition.x, _cmdPosition.y, _cmdPosition.theta);
