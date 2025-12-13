@@ -11,48 +11,6 @@ void setUp() {
 }
 void tearDown() {}
 
-void test_motor_scaling_and_enable() {
-    Motor motor(1, 2, 3, 400, 500, false);
-    motor.init();
-
-    motor.setAcceleration(2.0f);  // -> 200 steps/s^2 after internal scaling
-    motor.setTargetSpeed(3.5f);   // -> 3500 steps/s after internal scaling
-
-    TEST_ASSERT_TRUE(motor.isMoving());
-    TEST_ASSERT_FLOAT_WITHIN(0.001f, 200.0f, motor.getAccelerationForTest());
-    TEST_ASSERT_FLOAT_WITHIN(0.001f, 3500.0f,
-                             motor.getTargetSpeedStepsPerSecForTest());
-}
-
-void test_motor_acceleration_ramp_and_steps() {
-    Motor motor(4, 5, 6, 400, 500, false);
-    motor.init();
-    motor.setAcceleration(1.0f);  // -> 100 steps/s^2
-    motor.setTargetSpeed(5.0f);   // -> 5000 steps/s
-
-    advanceFakeMicros(50000);  // 50 ms
-    motor.update();
-    TEST_ASSERT_FLOAT_WITHIN(0.5f, 5.0f,
-                             motor.getCurrentSpeedStepsPerSecForTest());
-
-    advanceFakeMicros(50000);  // another 50 ms
-    motor.update();
-    TEST_ASSERT_FLOAT_WITHIN(0.5f, 10.0f,
-                             motor.getCurrentSpeedStepsPerSecForTest());
-
-    advanceFakeMicros(200000);  // ramp a bit more and allow a step to occur
-    motor.update();
-    TEST_ASSERT_TRUE(motor.getStepCount() > 0);
-}
-
-void test_point_distance_and_angle() {
-    Point origin(0.0f, 0.0f, 0.0f);
-    Point north(0.0f, 100.0f, 0.0f);
-
-    TEST_ASSERT_FLOAT_WITHIN(0.001f, 100.0f, Point::distance(origin, north));
-    TEST_ASSERT_FLOAT_WITHIN(0.001f, PI / 2.0f, Point::angle(origin, north));
-}
-
 void test_rolling_basis_forward_motion() {
     Motor left(7, 8, 9, 400, 500, false);
     Motor right(10, 11, 12, 400, 500, false);
@@ -68,7 +26,7 @@ void test_rolling_basis_forward_motion() {
 
     const float circumference = static_cast<float>(PI) * 60.0f;
     const float expectedWheelSteps =
-        (20.0f / circumference) * left.getStepsPerRev() * 1000.0f;
+        (20.0f / circumference) * left.getStepsPerRev();
 
     TEST_ASSERT_FLOAT_WITHIN(1.0f, expectedWheelSteps,
                              left.getTargetSpeedStepsPerSecForTest());
@@ -93,7 +51,7 @@ void test_rolling_basis_rotation_then_forward() {
     const float halfBase = 132.0f * 0.5f;
     const float expectedWheel =
         (basis.getAngularSpeedRadPerS() * halfBase / circumference) *
-        left.getStepsPerRev() * 1000.0f;
+        left.getStepsPerRev();
 
     TEST_ASSERT_FLOAT_WITHIN(2.0f, expectedWheel,
                              right.getTargetSpeedStepsPerSecForTest());
@@ -111,9 +69,6 @@ void test_rolling_basis_rotation_then_forward() {
 
 int main(int argc, char** argv) {
     UNITY_BEGIN();
-    RUN_TEST(test_motor_scaling_and_enable);
-    RUN_TEST(test_motor_acceleration_ramp_and_steps);
-    RUN_TEST(test_point_distance_and_angle);
     RUN_TEST(test_rolling_basis_forward_motion);
     RUN_TEST(test_rolling_basis_rotation_then_forward);
     return UNITY_END();

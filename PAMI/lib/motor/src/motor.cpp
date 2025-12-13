@@ -39,7 +39,7 @@ void Motor::setTargetSpeed(float stepsPerSec) {
     if (_invertDirection) {
         stepsPerSec = -stepsPerSec;
     }
-    _targetSpeedStepsPerSec = stepsPerSec * 1000.0f;
+    _targetSpeedStepsPerSec = stepsPerSec;
     _moving = (fabs(_targetSpeedStepsPerSec) >= 1.0f);  // pose pb
     enableMotor(_moving);
     // Serial.print("_targetSpeedStepsPerSec = ");
@@ -47,7 +47,7 @@ void Motor::setTargetSpeed(float stepsPerSec) {
 }
 
 void Motor::setAcceleration(float stepsPerSec2) {
-    _acceleration = max(0.0f, stepsPerSec2 * 100.0f);
+    _acceleration = max(0.0f, stepsPerSec2);
 }
 
 void Motor::_setDirection(bool clockwise) {
