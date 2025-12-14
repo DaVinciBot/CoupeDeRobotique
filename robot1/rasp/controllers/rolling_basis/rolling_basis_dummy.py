@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import math
+import threading
+import time
 from typing import TYPE_CHECKING, overload, override
 
 from loggerplusplus import log
@@ -33,6 +36,8 @@ class RollingBasisDummy(BaseComTeensy):
         baudrate: int = CONFIG.TEENSY_BAUDRATE,
         *,
         enable_crc: bool = CONFIG.TEENSY_CRC,
+        enable_realtime_simulation: bool = True,
+        realtime_period: float = 0.02,
     ) -> None:
         """Initializes the RollingBasisDummy class.
 
@@ -48,6 +53,11 @@ class RollingBasisDummy(BaseComTeensy):
                 Defaults to CONFIG.TEENSY_BAUDRATE.
             enable_crc (bool, optional):
                 Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
+            enable_realtime_simulation (bool, optional):
+                If ``True``, odometry is integrated continuously in a background loop.
+                Defaults to ``True``.
+            realtime_period (float, optional):
+                Sleep duration between realtime integration steps. Defaults to 0.02s.
         """
         # Initialize the parent-BaseComTeensy class
         super().__init__(
@@ -62,12 +72,28 @@ class RollingBasisDummy(BaseComTeensy):
 
         # Robot state
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
+        self.target_position: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
         self.linear_speed: float = 0.0
         self.angular_speed: float = 0.0
 
         # PID controllers
         self.linear_velocity_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_velocity_pid: PID = PID(0.0, 0.0, 0.0)
+
+        # Realtime simulation bookkeeping
+        self._enable_realtime_simulation = enable_realtime_simulation
+        self._realtime_period = realtime_period
+        self._stop_realtime = threading.Event()
+        self._lock = threading.Lock()
+        self._last_update_time = time.time()
+        self._realtime_thread: threading.Thread | None = None
+        if self._enable_realtime_simulation:
+            self._realtime_thread = threading.Thread(
+                target=self._realtime_loop,
+                name="RollingBasisDummyRealtime",
+                daemon=True,
+            )
+            self._realtime_thread.start()
 
     # region ====== Message Sending Methods ======
 
@@ -78,10 +104,68 @@ class RollingBasisDummy(BaseComTeensy):
         Args:
             cmd (TrajectoryPlanCommand): The command containing target velocities.
         """
-        self.linear_speed, self.angular_speed = cmd.linear_speed, cmd.angular_speed
-        self.odometrie = cmd.position
+        now = time.time()
+        with self._lock:
+            dt = now - self._last_update_time
+            if dt > 0.0:
+                self._simulate_step_unlocked(dt)
+
+            self.linear_speed, self.angular_speed = (
+                cmd.linear_speed,
+                cmd.angular_speed,
+            )
+            self.target_position = cmd.position
+            self._last_update_time = now
 
         self._logger.debug(f"[CTRL:RB:Dummy] Set target velocity: {cmd}")
+
+    def simulate_step(self, dt: float) -> None:
+        """Integrate the stored target speeds over a timestep to update odometry.
+
+        Mirrors the kinematics used in the Teensy C++ code: apply the linear and
+        angular speeds during ``dt`` to compute the new pose.
+
+        Args:
+            dt (float): Elapsed time in seconds. Non-positive values are ignored.
+
+        Raises:
+            ValueError: If odometrie.theta is None.
+        """
+        if dt <= 0.0:
+            return
+
+        with self._lock:
+            self._simulate_step_unlocked(dt)
+            self._last_update_time = time.time()
+
+    def _simulate_step_unlocked(self, dt: float) -> None:
+        """Integrate motion assuming the caller already holds the lock."""
+        if dt <= 0.0:
+            return
+
+        if self.odometrie.theta is None:
+            msg = "Cannot simulate motion with undefined theta."
+            raise ValueError(msg)
+
+        delta_distance = self.linear_speed * dt
+        delta_theta = self.angular_speed * dt
+
+        heading_mid = self.odometrie.theta + (delta_theta / 2.0)
+        new_x = self.odometrie.x + math.cos(heading_mid) * delta_distance
+        new_y = self.odometrie.y + math.sin(heading_mid) * delta_distance
+        new_theta = self._normalize_angle(self.odometrie.theta + delta_theta)
+
+        self.odometrie = OrientedPoint((new_x, new_y), new_theta)
+
+    def _realtime_loop(self) -> None:
+        """Background loop that keeps odometry up-to-date in realtime."""
+        while not self._stop_realtime.wait(self._realtime_period):
+            now = time.time()
+            with self._lock:
+                dt = now - self._last_update_time
+                if dt > 0.0:
+                    self._simulate_step_unlocked(dt)
+                    self._last_update_time = now
 
     @log("RollingBasis")
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
@@ -100,7 +184,9 @@ class RollingBasisDummy(BaseComTeensy):
             )
             raise ValueError(msg)
 
-        self.odometrie = odometrie
+        with self._lock:
+            self.odometrie = odometrie
+            self._last_update_time = time.time()
         self._logger.info(f"[CTRL:RB:Dummy] Set odometry: {odometrie}")
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
@@ -111,6 +197,32 @@ class RollingBasisDummy(BaseComTeensy):
             pid (PID): The PID controller parameters.
         """
         self._logger.debug(f"[CTRL:RB:Dummy] Set PID {pid_id}: {pid}")
+
+    @staticmethod
+    def _normalize_angle(angle: float) -> float:
+        """Normalize angle to [-pi, pi) similar to the C++ implementation.
+
+        Args:
+            angle (float): The angle in radians to normalize.
+
+        Returns:
+            float: The normalized angle in radians.
+        """
+        angle = math.fmod(angle + math.pi, 2.0 * math.pi)
+        if angle < 0.0:
+            angle += 2.0 * math.pi
+        return angle - math.pi
+
+    def stop_realtime_simulation(self) -> None:
+        """Stop the realtime simulation thread if running."""
+        if not self._enable_realtime_simulation or self._realtime_thread is None:
+            return
+        self._stop_realtime.set()
+        self._realtime_thread.join(timeout=1.0)
+
+    def __del__(self) -> None:
+        """Ensure background thread is stopped when the object is deleted."""
+        self.stop_realtime_simulation()
 
     # endregion
 

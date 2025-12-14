@@ -105,6 +105,7 @@ class MainBrain(Brain):
                     identifier="RollingBasisDummy",
                     follow_logger_manager_rules=True,
                 ),
+                enable_realtime_simulation=True,
             )
         else:
             rolling_basis = RollingBasis(
@@ -328,9 +329,6 @@ class MainBrain(Brain):
             )
         self.arena.set_team_color(TeamColor.YELLOW)
 
-
-        start_position = OrientedPoint(0, 0, 0)
-        enemy_position = OrientedPoint(150, 200, -pi / 2)
         if self.arena.team_color == TeamColor.YELLOW:
             self.logger.info("[BRAIN:Init] Starting as YELLOW team")
             start_position = OrientedPoint(122.5, 21, -pi / 2)
@@ -339,6 +337,9 @@ class MainBrain(Brain):
             self.logger.info("[BRAIN:Init] Starting as BLUE team")
             start_position = OrientedPoint(177.5, 21, -pi / 2)
             enemy_position = OrientedPoint(122.5, 21, -pi / 2)
+        else:
+            start_position = OrientedPoint(0, 0, 0)
+            enemy_position = OrientedPoint(150, 200, -pi / 2)
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(

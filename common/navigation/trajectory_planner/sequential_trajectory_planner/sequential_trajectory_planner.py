@@ -294,9 +294,12 @@ class SequentialTrajectoryPlanner(
                     th_theta,
                 ),
                 linear_speed=0.0,
-                angular_speed=self.speed_profiler.angular_speed_profile.get_speed(
-                    time_elapsed=local_time,
-                    distance=segment.rotation,
+                angular_speed=(
+                    self.speed_profiler.angular_speed_profile.get_speed(
+                        time_elapsed=local_time,
+                        distance=segment.rotation,
+                    )
+                    * segment.sign
                 ),
             )
 
@@ -332,11 +335,14 @@ class SequentialTrajectoryPlanner(
 
             trajectory_plan_command = TrajectoryPlanCommand(
                 position=OrientedPoint(th_x, th_y, segment.start_position.theta),
-                linear_speed=self.speed_profiler.linear_speed_profile.get_speed(
-                    time_elapsed=local_time,
-                    distance=abs(
-                        segment.distance,
-                    ),  # IMPORTANT: Use distance parameter to get the th speed
+                linear_speed=(
+                    self.speed_profiler.linear_speed_profile.get_speed(
+                        time_elapsed=local_time,
+                        distance=abs(
+                            segment.distance,
+                        ),  # IMPORTANT: Use distance parameter to get the th speed
+                    )
+                    * (-1 if self._is_backward else 1)
                 ),
                 angular_speed=0.0,
             )

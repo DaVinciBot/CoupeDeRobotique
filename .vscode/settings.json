@@ -44,6 +44,10 @@
   },
   "python.analysis.autoFormatStrings": true,
   "python.analysis.diagnosticMode": "workspace",
+  "python.testing.pytestArgs": ["tests"],
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestArgs": ["-v", "-s", "./tests", "-p", "test_*.py"],
+  "python.testing.unittestEnabled": false,
   "todo-tree.general.tagGroups": {
     "FIXME": ["FIXME", "FIXIT", "FIX"],
     "HACK": ["HACK", "ENHANCE"]
