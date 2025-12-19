@@ -3,7 +3,12 @@
 from __future__ import annotations
 
 from gpiozero import LED, Button, Device
-from gpiozero.pins.lgpio import LGPIOFactory
+
+try:
+    from gpiozero.pins.lgpio import LGPIOFactory
+except ModuleNotFoundError:
+    LGPIOFactory = None  # type: ignore[assignment]
+    from gpiozero.pins.mock import MockFactory
 
 MAJORITY_RATIO = 0.5
 
@@ -33,23 +38,24 @@ class PIN:
         mode = mode.lower()
         self.mode = mode
         self.reverse_state = reverse_state
+        factory = LGPIOFactory() if LGPIOFactory is not None else MockFactory()
 
         if mode == "output":
-            self.device = LED(self.pin, pin_factory=LGPIOFactory())
+            self.device = LED(self.pin, pin_factory=factory)
             self.device.off()
         elif mode == "input":
-            self.device = Button(self.pin, pin_factory=LGPIOFactory())
+            self.device = Button(self.pin, pin_factory=factory)
         elif mode == "input_pullup":
             self.device = Button(
                 self.pin,
                 pull_up=True,
-                pin_factory=LGPIOFactory(),
+                pin_factory=factory,
             )
         elif mode == "input_pulldown":
             self.device = Button(
                 self.pin,
                 pull_up=False,
-                pin_factory=LGPIOFactory(),
+                pin_factory=factory,
             )
 
     def digital_write(self, *, state: bool) -> None:
