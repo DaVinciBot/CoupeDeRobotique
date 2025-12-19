@@ -131,11 +131,9 @@ class MainBrain(Brain):
                     follow_logger_manager_rules=True,
                 ),
             )
-        actuators.deplacement_position()
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
         while not self.jack_plugged:  # wait until cable is plugged
             time.sleep(0.1)
-        actuators.block_banner()  # engage the banner blocker
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
         while not self.jack_triggered:  # wait for the trigger event
