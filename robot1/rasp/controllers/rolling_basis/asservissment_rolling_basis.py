@@ -21,7 +21,9 @@ if TYPE_CHECKING:
     from navigation.trajectory_planner import TrajectoryPlanCommand
 
 
-class AsservissementRollingBasis(BaseComTeensy):
+class AsservissementRollingBasis(
+    BaseComTeensy,
+):  # FIXME: à la fin de la tache, continue de tourner au lieu de s'arreter
     """Represents the rolling basis of the robot.
 
     Inherits from Teensy to manage low-level communications and adds logic specific
@@ -30,6 +32,7 @@ class AsservissementRollingBasis(BaseComTeensy):
     Automatically logs target vs actual odometry on each send.
     """
 
+    # TODO: teensy dit à rasp sa position régulièrement
     def __init__(
         self,
         logger: Logger,
