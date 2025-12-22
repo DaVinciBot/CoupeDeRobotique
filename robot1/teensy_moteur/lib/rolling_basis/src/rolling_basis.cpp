@@ -44,11 +44,19 @@ Point Rolling_Basis::get_current_position() {
 Rolling_Basis::Rolling_Basis(unsigned short encoder_resolution,
                              double center_distance,
                              double wheel_diameter,
+                             double min_pwm_linear,
+                             double min_pwm_angular,
+                             double linear_ff_pwm_per_cm_s,
+                             double angular_ff_pwm_per_rad_s,
                              const PID& linear_velocity_pid,
                              const PID& angular_velocity_pid)
     : encoder_resolution(encoder_resolution),
       center_distance(center_distance),
       wheel_diameter(wheel_diameter),
+      _min_pwm_linear(min_pwm_linear),
+      _min_pwm_angular(min_pwm_angular),
+      _linear_ff_pwm_per_cm_s(linear_ff_pwm_per_cm_s),
+      _angular_ff_pwm_per_rad_s(angular_ff_pwm_per_rad_s),
       linear_velocity_pid(linear_velocity_pid),
       angular_velocity_pid(angular_velocity_pid) {}
 
@@ -156,13 +164,32 @@ void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
     double angular_correction =
         this->angular_velocity_pid.compute(angular_error);
 
+    double linear_ff = target_velocity.linear * _linear_ff_pwm_per_cm_s;
+    double angular_ff = target_velocity.angular * _angular_ff_pwm_per_rad_s;
+
+    double linear_cmd = linear_correction + linear_ff;
+    double angular_cmd = angular_correction + angular_ff;
+
+    if (target_velocity.linear != 0.0 && fabs(linear_cmd) < _min_pwm_linear) {
+        double sign = (linear_cmd != 0.0) ? (linear_cmd > 0.0 ? 1.0 : -1.0)
+                                          : (linear_error > 0.0 ? 1.0 : -1.0);
+        linear_cmd = sign * _min_pwm_linear;
+    }
+
+    if (target_velocity.angular != 0.0 &&
+        fabs(angular_cmd) < _min_pwm_angular) {
+        double sign = (angular_cmd != 0.0) ? (angular_cmd > 0.0 ? 1.0 : -1.0)
+                                           : (angular_error > 0.0 ? 1.0 : -1.0);
+        angular_cmd = sign * _min_pwm_angular;
+    }
+
     this->last_linear_error = linear_error;
     this->last_angular_error = angular_error;
-    this->last_linear_correction = linear_correction;
-    this->last_angular_correction = angular_correction;
+    this->last_linear_correction = linear_cmd;
+    this->last_angular_correction = angular_cmd;
 
-    double right_pwm = linear_correction + angular_correction;
-    double left_pwm = linear_correction - angular_correction;
+    double right_pwm = linear_cmd + angular_cmd;
+    double left_pwm = linear_cmd - angular_cmd;
 
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);

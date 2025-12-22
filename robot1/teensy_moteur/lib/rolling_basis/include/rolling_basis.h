@@ -64,6 +64,10 @@ class Rolling_Basis {
     Rolling_Basis(unsigned short encoder_resolution,
                   double center_distance,
                   double wheel_diameter,
+                  double min_pwm_linear,
+                  double min_pwm_angular,
+                  double linear_ff_pwm_per_cm_s,
+                  double angular_ff_pwm_per_rad_s,
                   const PID& linear_velocity_pid,
                   const PID& angular_velocity_pid);
 
@@ -124,4 +128,10 @@ class Rolling_Basis {
     // Motors action function
     // void keep_position(long current_right_ticks, long current_left_ticks);
     // void shutdown_motor();
+
+   private:
+    double _min_pwm_linear;
+    double _min_pwm_angular;
+    double _linear_ff_pwm_per_cm_s;
+    double _angular_ff_pwm_per_rad_s;
 };

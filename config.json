@@ -88,13 +88,16 @@
       "speed_profiles": {
         "angular_speed": {
           "slow": {
-            "speed": 1
+            "speed": 1,
+            "min_speed": 0.8
           },
           "default": {
-            "speed": 1.8
+            "speed": 1.8,
+            "min_speed": 1.0
           },
           "high": {
-            "speed": 5
+            "speed": 5,
+            "min_speed": 1.5
           }
         },
         "linear_speed": {

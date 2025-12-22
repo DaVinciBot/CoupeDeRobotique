@@ -12,13 +12,18 @@ from navigation.trajectory_planner.speed_profile.base_speed_profile import (
 class BasicSpeedProfile(BaseSpeedProfile):
     """Basic speed profile assuming uniform velocity."""
 
-    def __init__(self, speed: float) -> None:
+    def __init__(self, speed: float, min_speed: float = 0.0) -> None:
         """Initialize with the constant ``speed``.
 
         Args:
             speed (float): Constant speed value used for calculations.
+            min_speed (float): Minimum absolute speed to enforce.
         """
         super().__init__(max_speed=speed)
+        self._min_speed: float = abs(min_speed)
+
+    def _effective_speed(self) -> float:
+        return max(abs(self._max_speed), self._min_speed)
 
     @override
     def get_speed(
@@ -44,7 +49,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
         if time_elapsed is None or time_elapsed <= 0:
             return 0.0
 
-        return self._max_speed
+        return self._effective_speed()
 
     @override
     def get_distance(
@@ -70,7 +75,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
         if time_elapsed is None or time_elapsed <= 0:
             return 0.0
 
-        return self._max_speed * time_elapsed
+        return self._effective_speed() * time_elapsed
 
     @override
     def get_total_duration(
@@ -91,4 +96,7 @@ class BasicSpeedProfile(BaseSpeedProfile):
         Returns:
             float: Duration of the motion.
         """
-        return distance / self._max_speed
+        speed = self._effective_speed()
+        if speed <= 0.0:
+            return 0.0
+        return distance / speed
