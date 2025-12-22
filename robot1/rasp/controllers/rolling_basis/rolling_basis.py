@@ -95,7 +95,7 @@ class RollingBasis(BaseComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self._logger.debug(
+        self._logger.info(
             f"[CTRL:RB:Teensy] {msg.decode('ascii', errors='ignore')}",
         )
 
