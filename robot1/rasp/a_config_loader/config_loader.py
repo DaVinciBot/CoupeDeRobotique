@@ -357,7 +357,7 @@ class CONFIG:
             **ROLLING_BASIS_SPEED_PROFILES_LINEAR["slow"],
         ),
         angular_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["slow"]["speed"],
+            20.0,
         ),
     )
     ROLLING_BASIS_SPEED_PROFILER_PID: SpeedProfiler = SpeedProfiler(
