@@ -23,7 +23,7 @@ PID angular_velocity_pid(KP_ANGULAR_VELOCITY,
                          KD_ANGULAR_VELOCITY,
                          -200,
                          200,
-                         2.0);
+                         0.001);
 
 // b. Instanciate the Rolling Basis object
 Rolling_Basis* rolling_basis_ptr = new Rolling_Basis(ENCODER_RESOLUTION,

@@ -80,9 +80,9 @@
           "kd": 0.0
         },
         "angular_velocity": {
-          "kp": 2.0,
-          "ki": 5.0,
-          "kd": 1.0
+          "kp": 4.0,
+          "ki": 0.1,
+          "kd": 0.2
         }
       },
       "speed_profiles": {
