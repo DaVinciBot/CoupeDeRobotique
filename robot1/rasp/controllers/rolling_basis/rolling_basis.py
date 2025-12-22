@@ -135,13 +135,17 @@ class RollingBasis(BaseComTeensy):
 
     # region ====== Message Sending Methods ======
 
-    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
+    # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_target_velocity(self, cmd: TrajectoryPlanCommand) -> None:
         """Send a command to set the target velocity of the rolling basis.
 
         Args:
             cmd (TrajectoryPlanCommand): The command containing target velocities.
         """
+        self._logger.info(
+            f"[CTRL:RB] Setting target velocities: "
+            f"linear_speed={cmd.linear_speed}, angular_speed={cmd.angular_speed}",
+        )
         msg = (
             Messages.SET_TARGET_VELOCITY.to_bytes()
             + struct.pack("<d", cmd.linear_speed)
