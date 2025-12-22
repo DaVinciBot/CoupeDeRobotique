@@ -1,6 +1,7 @@
 // Externe libraries used: Arduino, TimerOne, ATOMIC
 #include <Arduino.h>      // Arduino framework
 #include <TimerOne.h>     // Timer interrupt library
+#include <stdio.h>        // snprintf
 #include <util/atomic.h>  // Atomic block library
 
 // Custom libraries used: RollingBasis, Com
@@ -162,6 +163,21 @@ uint_fast32_t counter = 0;
 void loop() {
     // Handle the communication
     com->handle_callback(callback_functions);
+
+    static uint32_t last_pwm_log_ms = 0;
+    uint32_t now_ms = millis();
+    if (now_ms - last_pwm_log_ms >= 100) {
+        int16_t right_pwm = 0;
+        int16_t left_pwm = 0;
+        ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+            right_pwm = rolling_basis_ptr->right_motor->last_pwm;
+            left_pwm = rolling_basis_ptr->left_motor->last_pwm;
+        }
+        char msg[64];
+        snprintf(msg, sizeof(msg), "PWM L=%d R=%d", left_pwm, right_pwm);
+        com->print(msg);
+        last_pwm_log_ms = now_ms;
+    }
 
     // Send rolling basis state
     if (counter++ > 4096)  // 4096 = 2^12

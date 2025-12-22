@@ -23,6 +23,7 @@ class Motor {
 
    public:
     volatile long ticks = 0L;
+    volatile int16_t last_pwm = 0;
 
     // Motor description (it is the last data calculated by the motor odometer
     // handle method)

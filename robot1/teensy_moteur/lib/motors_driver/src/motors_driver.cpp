@@ -50,7 +50,9 @@ void Motor::init() {
  */
 void Motor::set_motor(int pwmVal) {
     int16_t dir = pwmVal > 0 ? 1 : -1;
+    int16_t sign = (pwmVal > 0) ? 1 : (pwmVal < 0 ? -1 : 0);
     pwmVal = constrain(abs(pwmVal), 0, this->max_pwm);
+    this->last_pwm = static_cast<int16_t>(sign * pwmVal);
     analogWrite(this->pin_pwm, pwmVal);
     if (dir == 1) {
         digitalWrite(this->pin_forward, HIGH);
