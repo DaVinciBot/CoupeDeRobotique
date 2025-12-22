@@ -71,6 +71,26 @@ class RelativeForward(NavigationTask):
         )
 
 
+class RelativeRotation(NavigationTask):
+    """Navigation task to rotate the robot by a specified angle."""
+
+    def __init__(self, angle: float) -> None:
+        """Initialize the RelativeRotation task.
+
+        Args:
+            angle (float): The angle to rotate in radians.
+        """
+        super().__init__(
+            goal=None,
+            path_planner_params=DeltaPathPlannerParams(rotation=angle),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+            speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
+            avoidance_params=NoAvoidanceParams(),
+            acs_detection_profile_params=NoAcsDetectionProfileParams(),
+            stabilization_delay=0.5,  # Delay to stabilize after moving forward
+        )
+
+
 class GoCentroidOfZone(NavigationTask):
     """Navigation task to go to the centroid of a given zone."""
 
