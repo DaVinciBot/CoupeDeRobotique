@@ -30,7 +30,7 @@ class TestStrategy(BaseStrategy):
         """
         super().__init__(ctx)
 
-        task = BaseTaskNode("rotation", RelativeRotation(1.57))
+        task = BaseTaskNode("rotation", RelativeRotation(angle=90.0))
 
         # Connect the subgraphs in execution order
         self._auto_build_transitions(
