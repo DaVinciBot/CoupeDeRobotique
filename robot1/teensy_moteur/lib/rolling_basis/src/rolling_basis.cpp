@@ -156,6 +156,11 @@ void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
     double angular_correction =
         this->angular_velocity_pid.compute(angular_error);
 
+    this->last_linear_error = linear_error;
+    this->last_angular_error = angular_error;
+    this->last_linear_correction = linear_correction;
+    this->last_angular_correction = angular_correction;
+
     double right_pwm = linear_correction + angular_correction;
     double left_pwm = linear_correction - angular_correction;
 

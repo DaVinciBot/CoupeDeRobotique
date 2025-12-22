@@ -86,6 +86,14 @@ void set_pid(byte* msg, byte size) {
     if (is_valid_pid) {
         pid->updateParameters(pid_msg->kp, pid_msg->ki, pid_msg->kd);
     }
+
+    char msg_buf[64];
+    int16_t kp = static_cast<int16_t>(pid_msg->kp * 1000);
+    int16_t ki = static_cast<int16_t>(pid_msg->ki * 1000);
+    int16_t kd = static_cast<int16_t>(pid_msg->kd * 1000);
+    snprintf(msg_buf, sizeof(msg_buf), "PID id=%d kp=%d ki=%d kd=%d",
+             pid_msg->pid_type, kp, ki, kd);
+    com->print(msg_buf);
 }
 
 void set_odometrie(byte* msg, byte size) {
@@ -169,12 +177,40 @@ void loop() {
     if (now_ms - last_pwm_log_ms >= 100) {
         int16_t right_pwm = 0;
         int16_t left_pwm = 0;
+        double target_lin = 0.0;
+        double target_ang = 0.0;
+        double v_lin = 0.0;
+        double v_ang = 0.0;
+        double err_lin = 0.0;
+        double err_ang = 0.0;
+        double corr_lin = 0.0;
+        double corr_ang = 0.0;
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
             right_pwm = rolling_basis_ptr->right_motor->last_pwm;
             left_pwm = rolling_basis_ptr->left_motor->last_pwm;
+            target_lin = target_velocity.linear;
+            target_ang = target_velocity.angular;
+            v_lin = rolling_basis_ptr->linear_velocity;
+            v_ang = rolling_basis_ptr->angular_velocity;
+            err_lin = rolling_basis_ptr->last_linear_error;
+            err_ang = rolling_basis_ptr->last_angular_error;
+            corr_lin = rolling_basis_ptr->last_linear_correction;
+            corr_ang = rolling_basis_ptr->last_angular_correction;
         }
-        char msg[64];
-        snprintf(msg, sizeof(msg), "PWM L=%d R=%d", left_pwm, right_pwm);
+        int16_t tv_lin = static_cast<int16_t>(target_lin * 100);
+        int16_t tv_ang = static_cast<int16_t>(target_ang * 100);
+        int16_t mv_lin = static_cast<int16_t>(v_lin * 100);
+        int16_t mv_ang = static_cast<int16_t>(v_ang * 100);
+        int16_t ev_lin = static_cast<int16_t>(err_lin * 100);
+        int16_t ev_ang = static_cast<int16_t>(err_ang * 100);
+        int16_t cv_lin = static_cast<int16_t>(corr_lin);
+        int16_t cv_ang = static_cast<int16_t>(corr_ang);
+
+        char msg[96];
+        snprintf(msg, sizeof(msg),
+                 "RB tv=%d/%d v=%d/%d e=%d/%d c=%d/%d pwm=%d/%d", tv_lin,
+                 tv_ang, mv_lin, mv_ang, ev_lin, ev_ang, cv_lin, cv_ang,
+                 left_pwm, right_pwm);
         com->print(msg);
         last_pwm_log_ms = now_ms;
     }

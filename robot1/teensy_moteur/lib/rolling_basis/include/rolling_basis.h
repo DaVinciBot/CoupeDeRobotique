@@ -45,6 +45,11 @@ class Rolling_Basis {
     double angular_velocity = 0.0f;
     unsigned long last_odometrie_time = 0;
 
+    volatile double last_linear_error = 0.0;
+    volatile double last_angular_error = 0.0;
+    volatile double last_linear_correction = 0.0;
+    volatile double last_angular_correction = 0.0;
+
     // Rolling basis params
     unsigned short encoder_resolution;
     double center_distance;
