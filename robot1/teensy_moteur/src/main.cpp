@@ -30,10 +30,6 @@ PID angular_velocity_pid(KP_ANGULAR_VELOCITY,
 Rolling_Basis* rolling_basis_ptr = new Rolling_Basis(ENCODER_RESOLUTION,
                                                      ENTRAXE,
                                                      WHEEL_DIAMETER,
-                                                     MIN_PWM_LINEAR,
-                                                     MIN_PWM_ANGULAR,
-                                                     LINEAR_FF_PWM_PER_CM_S,
-                                                     ANGULAR_FF_PWM_PER_RAD_S,
                                                      linear_velocity_pid,
                                                      angular_velocity_pid);
 

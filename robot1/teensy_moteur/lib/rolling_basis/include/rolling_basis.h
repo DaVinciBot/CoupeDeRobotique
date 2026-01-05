@@ -14,6 +14,23 @@
 
 class Rolling_Basis {
    public:
+    // Constructor
+    /**
+     * @brief constructor of the Rolling Basis class
+     *
+     * Initializes the parameters of the Rolling Basis
+     */
+    Rolling_Basis(unsigned short encoder_resolution,
+                  double center_distance,
+                  double wheel_diameter,
+                  const PID& linear_velocity_pid,
+                  const PID& angular_velocity_pid);
+
+    // Rolling basis params
+    unsigned short encoder_resolution;
+    double center_distance;
+    double wheel_diameter;
+
     // PID controllers
     PID linear_velocity_pid;
     PID angular_velocity_pid;
@@ -49,27 +66,6 @@ class Rolling_Basis {
     volatile double last_angular_error = 0.0;
     volatile double last_linear_correction = 0.0;
     volatile double last_angular_correction = 0.0;
-
-    // Rolling basis params
-    unsigned short encoder_resolution;
-    double center_distance;
-    double wheel_diameter;
-
-    // Constructor
-    /**
-     * @brief constructor of the Rolling Basis class
-     *
-     * Initializes the parameters of the Rolling Basis
-     */
-    Rolling_Basis(unsigned short encoder_resolution,
-                  double center_distance,
-                  double wheel_diameter,
-                  double min_pwm_linear,
-                  double min_pwm_angular,
-                  double linear_ff_pwm_per_cm_s,
-                  double angular_ff_pwm_per_rad_s,
-                  const PID& linear_velocity_pid,
-                  const PID& angular_velocity_pid);
 
     /**
      * @brief Destructor of Rolling Basis class
@@ -128,10 +124,4 @@ class Rolling_Basis {
     // Motors action function
     // void keep_position(long current_right_ticks, long current_left_ticks);
     // void shutdown_motor();
-
-   private:
-    double _min_pwm_linear;
-    double _min_pwm_angular;
-    double _linear_ff_pwm_per_cm_s;
-    double _angular_ff_pwm_per_rad_s;
 };
