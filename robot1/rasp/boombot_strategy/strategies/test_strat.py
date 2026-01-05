@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from boombot_strategy.strategies.base_strategy import BaseStrategy
 from boombot_strategy.tasks.navigation_tasks.maneuver import (
-    RelativeRotation,
+    RelativeForward,
 )
 from log_manager import LogLogger
 from strategy.core import GraphRunner
@@ -30,7 +30,7 @@ class TestStrategy(BaseStrategy):
         """
         super().__init__(ctx)
 
-        task = BaseTaskNode("rotation", RelativeRotation(angle=90.0))
+        task = BaseTaskNode("forward", RelativeForward(distance=90.0))
 
         # Connect the subgraphs in execution order
         self._auto_build_transitions(
