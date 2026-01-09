@@ -16,7 +16,7 @@ from ws_comms import WServerRouteManager, WSmsg
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import WinterGameContext
-from boombot_strategy.strategies import TowerRushAltStrategy
+from boombot_strategy.strategies import TowerRushAltStrategy, OnlyBannerStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
@@ -142,7 +142,7 @@ class MainBrain(Brain):
 
         # --- 3) Build the strategy --- #
 
-        strategy = TowerRushAltStrategy(
+        strategy = OnlyBannerStrategy(
             WinterGameContext(
                 arena=self.arena,
                 rolling_basis=rolling_basis,

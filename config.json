@@ -1,7 +1,7 @@
 {
   "general": {
     "ws": {
-      "port": 8080,
+      "port": 8081,
       "cmd_route": "/cmd",
       "ui_route": "/ui"
     },
@@ -54,7 +54,7 @@
         "blue": {
           "first_pickup_zone": 4,
           "second_pickup_zone": 2,
-          "third_pickup_zone": 0,
+          "third_pickup_zone": 20,
           "fourth_pickup_zone": 1,
           "first_build_zone": 16,
           "second_build_zone": 17,
@@ -67,7 +67,7 @@
           "fourth_pickup_zone": 6,
           "first_build_zone": 12,
           "second_build_zone": 13,
-          "backstage_zone": 20
+          "backstage_zone": 0
         }
       }
     },
