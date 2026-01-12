@@ -9,9 +9,12 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
 )
 from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
 from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
+from navigation.path_planner.astar_path_planner import AStarPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
+from navigation.path_planner.structs import Direction
+from boombot_strategy.winter_game_context import WinterGameContext as GameContext
 
 
 class GoToStuffZoneToPickUp(NavigationTask):
@@ -23,15 +26,27 @@ class GoToStuffZoneToPickUp(NavigationTask):
     before performing tasks.
     """
 
-    def __init__(self, stuff_zone_id: int) -> None:
+    def __init__(self, stuff_zone_id: int, ctx: GameContext) -> None:
         """Initialize navigation and avoidance parameters.
 
         Args:
             stuff_zone_id (int): Identifier for the target stuff zone location.
         """
+        grid = ctx.arena.grid_manager.get_static_and_dynamic_grid()
+        goal = ctx.arena.compute_goal_position(stuff_zone_id)
+
+        self.path_planner_params = AStarPathPlannerParams(
+            grid=grid,
+            path_resolution=10,
+            chunk_size=20,
+            start=ctx.arena.ally_zone.point,
+            goal=goal,
+            direction=Direction.FORWARD,
+        )
+
         super().__init__(
             goal=stuff_zone_id,
-            path_planner_params=BasicPathPlannerParams(),
+            path_planner_params=self.path_planner_params,
             trajectory_planner_params=SequentialTrajectoryPlannerParams(
                 step_sleep_delay=2,
             ),

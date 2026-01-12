@@ -260,6 +260,7 @@ class WinterArena(BaseArena):
                 Point(0, 200),
                 Point(60, 155),
             ),
+            go_to_positions=[OrientedPoint(25, 177.5, pi/2)]
         )
 
         blue_backstage_zone = BlueReservedZone(
@@ -269,6 +270,7 @@ class WinterArena(BaseArena):
                 Point(240, 200),
                 Point(300, 155),
             ),
+            go_to_positions=[OrientedPoint(275, 177.5, pi/2)]
         )
 
         ninja_stage = ForbiddenZone(
