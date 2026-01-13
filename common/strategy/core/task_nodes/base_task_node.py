@@ -27,6 +27,7 @@ class BaseTaskNode:
         name: str,
         tasks: BaseTask | list[BaseTask],
         scoring_function: BaseScoringFunction | None = None,
+        points: int = 0,
     ) -> None:
         """Initialize the task node.
 
@@ -35,6 +36,8 @@ class BaseTaskNode:
             tasks (BaseTask | list[BaseTask]): Single task or list of tasks to execute.
             scoring_function (BaseScoringFunction | None, optional):
                 Scoring function used when evaluating transitions. Defaults to None.
+            points (int, optional): Points awarded upon successful completion of all
+                tasks in this node. Defaults to 0.
         """
         self.name: str = name
         self.tasks: list[BaseTask[Any]] = (
@@ -57,6 +60,7 @@ class BaseTaskNode:
 
         self.entered = False
         self._exited = False
+        self.points = points
 
         self._logger.info(
             f"[STRAT:Task] Initialized '{self.name}' with {len(self.tasks)} task(s)",

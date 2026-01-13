@@ -27,6 +27,15 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
         )
 
     @abstractmethod
+    def points(self) -> int:
+        """Return the points awarded for completing this task.
+
+        Returns:
+            int: The number of points for this task.
+        """
+        return 0
+
+    @abstractmethod
     def handle(self, ctx: GameContextT) -> bool:
         """Execute the task and return ``True`` when complete.
 

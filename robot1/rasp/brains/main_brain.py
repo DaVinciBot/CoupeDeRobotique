@@ -147,7 +147,7 @@ class MainBrain(Brain):
                 arena=self.arena,
                 rolling_basis=rolling_basis,
                 actuators=actuators,
-                score=self.score,
+                point=self.score,
             ),
         )
 
@@ -159,13 +159,13 @@ class MainBrain(Brain):
             arena=self.arena,
             rolling_basis=rolling_basis,
             actuators=actuators,
-            score=self.score,
+            point=self.score,
         )
 
         strategy.runner.handle(context)
 
         # Update shared state from the context
-        self.score = context.score
+        self.score = context.point
         self.ui_state["score"] = self.score
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = self.rolling_basis_odometrie

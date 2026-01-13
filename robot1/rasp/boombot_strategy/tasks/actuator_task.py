@@ -24,6 +24,7 @@ class ReadyToApproachToPickUp(BaseTask[WinterGameContext]):
             bool: Always returns True after executing the action.
         """
         ctx.actuators.ready_to_approach_to_pickup()
+        ctx.point += self.points()
         return True
 
 
@@ -41,6 +42,7 @@ class PrepareToPickUp(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.ready_to_pickup()
+        ctx.point += self.points()
         time.sleep(1)
         return True
 
@@ -59,12 +61,22 @@ class PickUp(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.pick_up()
+        ctx.point += self.points()
         time.sleep(1)
         return True
 
 
 class Build(BaseTask[WinterGameContext]):
     """Task to execute a build operation and update the game score accordingly."""
+
+    @override
+    def points(self) -> int:
+        """Return the points awarded for completing this task.
+
+        Returns:
+            int: The number of points for this task.
+        """
+        return CONFIG.BUILD_TWO_FLOORS
 
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
@@ -77,13 +89,22 @@ class Build(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.build_floors()
-        ctx.score += CONFIG.BUILD_TWO_FLOORS
+        ctx.point += self.points()
         time.sleep(1)
         return True
 
 
 class Deposit(BaseTask[WinterGameContext]):
     """Release carried items and update score."""
+
+    @override
+    def points(self) -> int:
+        """Return the points awarded for completing this task.
+
+        Returns:
+            int: The number of points for this task.
+        """
+        return CONFIG.BUILD_ONE_FLOOR
 
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
@@ -96,7 +117,7 @@ class Deposit(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.demagnetize_all()
-        ctx.score += CONFIG.BUILD_ONE_FLOOR
+        ctx.point += self.points()
         time.sleep(1)
         return True
 
@@ -115,6 +136,7 @@ class BlockBanner(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action.
         """
         ctx.actuators.block_banner()
+        ctx.point += self.points()
         return True
 
 
@@ -132,6 +154,7 @@ class DeplacementPosition(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action.
         """
         ctx.actuators.deplacement_position()
+        ctx.point += self.points()
         return True
 
 
@@ -149,4 +172,5 @@ class DeplacementObject(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action.
         """
         ctx.actuators.deplacement_object()
+        ctx.point += self.points()
         return True

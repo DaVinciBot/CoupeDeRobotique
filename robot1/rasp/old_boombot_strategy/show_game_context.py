@@ -23,7 +23,7 @@ class ShowGameContext(BaseGameContext):
         arena: ShowArena,
         rolling_basis: RollingBasis | RollingBasisDummy,
         actuators: ActuatorsShow | ActuatorsShowDummy,
-        score: int = 0,
+        point: int = 0,
     ) -> None:
         """Initialize the ShowGameContext.
 
@@ -32,9 +32,9 @@ class ShowGameContext(BaseGameContext):
             rolling_basis (RollingBasis | RollingBasisDummy):
                 The rolling basis of the robot.
             actuators (ActuatorsShow | ActuatorsShowDummy): The actuators of the robot.
-            score (int, optional): The score of the robot. Defaults to 0.
+            point (int, optional): The point of the robot. Defaults to 0.
         """
         super().__init__(arena)
         self.rolling_basis: RollingBasis | RollingBasisDummy = rolling_basis
         self.actuators: ActuatorsShow | ActuatorsShowDummy = actuators
-        self.score = score
+        self.point = point
