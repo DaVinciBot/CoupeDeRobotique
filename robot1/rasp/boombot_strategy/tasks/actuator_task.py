@@ -13,6 +13,13 @@ from strategy.core.tasks import BaseTask
 class ReadyToApproachToPickUp(BaseTask[WinterGameContext]):
     """Activate the actuator's approach mechanism to prepare for pickup."""
 
+    def __init__(self) -> None:
+        """Initialize the ReadyToApproachToPickUp task."""
+        super().__init__(
+            points=0,
+            estimated_duration=2.5,
+        )
+
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator command to get ready to approach and pick up an object.
@@ -30,6 +37,13 @@ class ReadyToApproachToPickUp(BaseTask[WinterGameContext]):
 
 class PrepareToPickUp(BaseTask[WinterGameContext]):
     """Task to prepare the actuator for picking up an object."""
+
+    def __init__(self) -> None:
+        """Initialize the PrepareToPickUp task."""
+        super().__init__(
+            points=0,
+            estimated_duration=2.5,
+        )
 
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
@@ -50,6 +64,13 @@ class PrepareToPickUp(BaseTask[WinterGameContext]):
 class PickUp(BaseTask[WinterGameContext]):
     """Task to perform the pickup action using the actuator."""
 
+    def __init__(self) -> None:
+        """Initialize the PickUp task."""
+        super().__init__(
+            points=0,
+            estimated_duration=2.5,
+        )
+
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator command to pick up an object, then wait briefly.
@@ -69,14 +90,12 @@ class PickUp(BaseTask[WinterGameContext]):
 class Build(BaseTask[WinterGameContext]):
     """Task to execute a build operation and update the game score accordingly."""
 
-    @override
-    def points(self) -> int:
-        """Return the points awarded for completing this task.
-
-        Returns:
-            int: The number of points for this task.
-        """
-        return CONFIG.BUILD_TWO_FLOORS
+    def __init__(self) -> None:
+        """Initialize the Build task."""
+        super().__init__(
+            points=CONFIG.BUILD_TWO_FLOORS,
+            estimated_duration=2.5,
+        )
 
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
@@ -97,14 +116,12 @@ class Build(BaseTask[WinterGameContext]):
 class Deposit(BaseTask[WinterGameContext]):
     """Release carried items and update score."""
 
-    @override
-    def points(self) -> int:
-        """Return the points awarded for completing this task.
-
-        Returns:
-            int: The number of points for this task.
-        """
-        return CONFIG.BUILD_ONE_FLOOR
+    def __init__(self) -> None:
+        """Initialize the Deposit task."""
+        super().__init__(
+            points=CONFIG.BUILD_ONE_FLOOR,
+            estimated_duration=2.5,
+        )
 
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
@@ -125,6 +142,13 @@ class Deposit(BaseTask[WinterGameContext]):
 class BlockBanner(BaseTask[WinterGameContext]):
     """Task to activate the banner-blocking actuator."""
 
+    def __init__(self) -> None:
+        """Initialize the BlockBanner task."""
+        super().__init__(
+            points=0,
+            estimated_duration=2.5,
+        )
+
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator command to block the banner.
@@ -143,6 +167,13 @@ class BlockBanner(BaseTask[WinterGameContext]):
 class DeplacementPosition(BaseTask[WinterGameContext]):
     """Task to adjust the actuator to a predefined displacement position."""
 
+    def __init__(self) -> None:
+        """Initialize the DeplacementPosition task."""
+        super().__init__(
+            points=0,
+            estimated_duration=2.5,
+        )
+
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator command to move to a displacement position.
@@ -160,6 +191,13 @@ class DeplacementPosition(BaseTask[WinterGameContext]):
 
 class DeplacementObject(BaseTask[WinterGameContext]):
     """Task to adjust the actuator to a predefined displacement position."""
+
+    def __init__(self) -> None:
+        """Initialize the DeplacementObject task."""
+        super().__init__(
+            points=0,
+            estimated_duration=2.5,
+        )
 
     @override
     def handle(self, ctx: WinterGameContext) -> bool:

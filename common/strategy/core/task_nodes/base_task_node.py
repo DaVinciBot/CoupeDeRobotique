@@ -27,7 +27,8 @@ class BaseTaskNode:
         name: str,
         tasks: BaseTask | list[BaseTask],
         scoring_function: BaseScoringFunction | None = None,
-        points: int = 0,
+        points: int | None = None,
+        estimated_duration: float | None = None,
     ) -> None:
         """Initialize the task node.
 
@@ -36,8 +37,10 @@ class BaseTaskNode:
             tasks (BaseTask | list[BaseTask]): Single task or list of tasks to execute.
             scoring_function (BaseScoringFunction | None, optional):
                 Scoring function used when evaluating transitions. Defaults to None.
-            points (int, optional): Points awarded upon successful completion of all
-                tasks in this node. Defaults to 0.
+            points (int | None): Points awarded for completing this task node,
+                defaults to None.
+            estimated_duration (float | None): Estimated duration of the task node in
+                seconds, defaults to None.
         """
         self.name: str = name
         self.tasks: list[BaseTask[Any]] = (
@@ -58,9 +61,21 @@ class BaseTaskNode:
         self.start_time: float | None = None
         self.end_time: float | None = None
 
+        # Initialize points and estimated duration using tasks if not provided
+        if estimated_duration is None:
+            self.estimated_duration = sum(
+                task.estimated_duration for task in self.tasks
+            )
+        else:
+            self.estimated_duration = estimated_duration
+
+        if points is None:
+            self.points = sum(task.points for task in self.tasks)
+        else:
+            self.points = points
+
         self.entered = False
         self._exited = False
-        self.points = points
 
         self._logger.info(
             f"[STRAT:Task] Initialized '{self.name}' with {len(self.tasks)} task(s)",
