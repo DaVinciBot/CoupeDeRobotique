@@ -105,11 +105,49 @@ void test_rolling_basis_rotation_then_forward() {
                      0.0f);  // now both drive forward
     TEST_ASSERT_TRUE(right.getTargetSpeedStepsPerSecForTest() > 0.0f);
 }
+void test_stop_motion(){
+    Motor left(7, 8, 9, 400, 500, false);
+    Motor right(10, 11, 12, 400, 500, false);
+    RollingBasis basis(&left, &right, 60.0f, 132.0f);
+
+    basis.setCommand(Point(100.0f, 0.0f, 0.0f));  // start motion
+    basis.update();
+    TEST_ASSERT_EQUAL(RollingBasis::Phase::Forwarding, basis.getPhaseForTest());
+    basis.stop();  // stop motion
+    TEST_ASSERT_EQUAL(RollingBasis::Phase::Idle, basis.getPhaseForTest());
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f,
+                             left.getTargetSpeedStepsPerSecForTest());
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f,
+                             right.getTargetSpeedStepsPerSecForTest());
+    
+}
+
+void phase_after_movement(){
+    Motor left(7, 8, 9, 400, 500, false);
+    Motor right(10, 11, 12, 400, 500, false);
+    RollingBasis basis(&left, &right, 60.0f, 132.0f);
+
+    basis.setCommand(Point(100.0f, 0.0f, 0.0f));  // start motion
+    basis.update();
+    TEST_ASSERT_EQUAL(RollingBasis::Phase::Forwarding, basis.getPhaseForTest());
+
+    // Simulate time passing to complete the movement
+    advanceFakeMicros(6000000);  // advance time beyond forward duration
+    basis.update();
+
+    TEST_ASSERT_EQUAL(RollingBasis::Phase::Done, basis.getPhaseForTest());
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f,
+                             left.getTargetSpeedStepsPerSecForTest());
+    TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f,
+                             right.getTargetSpeedStepsPerSecForTest());
+}
 
 int main(int argc, char** argv) {
     UNITY_BEGIN();
     RUN_TEST(test_rolling_basis_forward_motion);
     RUN_TEST(test_rolling_basis_backward_motion);
     RUN_TEST(test_rolling_basis_rotation_then_forward);
+    RUN_TEST(test_stop_motion);
+    RUN_TEST(phase_after_movement);
     return UNITY_END();
 }
