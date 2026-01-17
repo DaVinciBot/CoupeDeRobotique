@@ -19,8 +19,6 @@ class EfficiencyScoringFunction(BaseScoringFunction):
     def __init__(
         self,
         k: float = 0.5,
-        point: float = 0.0,
-        time_taken: float = 6.9,
     ) -> None:
         """Initialize the efficiency scoring function.
 
@@ -30,8 +28,6 @@ class EfficiencyScoringFunction(BaseScoringFunction):
             time_taken (float): Base time taken value. Defaults to 6.9.
         """
         self.k = k
-        self.point = point
-        self.time_taken = time_taken
 
     @override
     def compute(
@@ -50,4 +46,7 @@ class EfficiencyScoringFunction(BaseScoringFunction):
         Returns:
             float: _description_
         """
-        return self.k * self.point + (1 - self.k) * self.time_taken
+        return (
+            self.k * current_node.points
+            + (1 - self.k) * current_node.estimated_duration
+        )

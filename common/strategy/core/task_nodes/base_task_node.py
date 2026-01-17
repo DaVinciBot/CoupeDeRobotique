@@ -62,6 +62,7 @@ class BaseTaskNode:
         self.end_time: float | None = None
 
         # Initialize points and estimated duration using tasks if not provided
+        self.estimated_duration: float = None
         if estimated_duration is None:
             self.estimated_duration = sum(
                 task.estimated_duration for task in self.tasks
@@ -69,6 +70,7 @@ class BaseTaskNode:
         else:
             self.estimated_duration = estimated_duration
 
+        self.points: float = None
         if points is None:
             self.points = sum(task.points for task in self.tasks)
         else:
