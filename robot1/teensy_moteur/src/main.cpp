@@ -86,14 +86,6 @@ void set_pid(byte* msg, byte size) {
     if (is_valid_pid) {
         pid->updateParameters(pid_msg->kp, pid_msg->ki, pid_msg->kd);
     }
-
-    char msg_buf[64];
-    int16_t kp = static_cast<int16_t>(pid_msg->kp * 1000);
-    int16_t ki = static_cast<int16_t>(pid_msg->ki * 1000);
-    int16_t kd = static_cast<int16_t>(pid_msg->kd * 1000);
-    snprintf(msg_buf, sizeof(msg_buf), "PID id=%d kp=%d ki=%d kd=%d",
-             pid_msg->pid_type, kp, ki, kd);
-    com->print(msg_buf);
 }
 
 void set_odometrie(byte* msg, byte size) {
