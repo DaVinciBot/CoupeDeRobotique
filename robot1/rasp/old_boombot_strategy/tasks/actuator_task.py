@@ -7,6 +7,7 @@ from typing import override
 
 from old_boombot_strategy.show_game_context import ShowGameContext
 
+from a_config_loader import CONFIG
 from strategy.core.tasks import BaseTask
 
 
@@ -77,6 +78,7 @@ class Build(BaseTask[ShowGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.build_floors()
+        ctx.score += CONFIG.BUILD_TWO_FLOORS
         time.sleep(1)
         return True
 
@@ -95,6 +97,7 @@ class Deposit(BaseTask[ShowGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.demagnetize_all()
+        ctx.score += CONFIG.BUILD_ONE_FLOOR
         time.sleep(1)
         return True
 

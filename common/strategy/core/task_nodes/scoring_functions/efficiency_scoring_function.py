@@ -16,16 +16,11 @@ if TYPE_CHECKING:
 class EfficiencyScoringFunction(BaseScoringFunction):
     """Score high for efficient task completion."""
 
-    def __init__(
-        self,
-        k: float = 0.5,
-    ) -> None:
+    def __init__(self, k: float = 0.5) -> None:
         """Initialize the efficiency scoring function.
 
         Args:
             k (float): Balancing factor between points and time. Defaults to 1.0.
-            point (float): Base point value. Defaults to 0.0.
-            time_taken (float): Base time taken value. Defaults to 6.9.
         """
         self.k = k
 

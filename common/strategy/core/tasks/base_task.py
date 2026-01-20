@@ -36,25 +36,16 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
             follow_logger_manager_rules=True,
         )
 
-    @abstractmethod
-    def set_points(self, points: int) -> None:
-        """Set the points awarded for completing this task.
+    @property
+    def points(self) -> int:
+        """Return the points awarded for completing this task.
 
-        Args:
-            points (int): The number of points for this task.
+        Returns:
+            int: The number of points for this task.
         """
-        self._points = points
+        return self._points
 
-    @abstractmethod
-    def set_estimated_duration(self, estimated_duration: float) -> None:
-        """Set the estimated duration of the task in seconds.
-
-        Args:
-            estimated_duration (float): Estimated duration in seconds.
-        """
-        self._estimated_duration = estimated_duration
-
-    @abstractmethod
+    @property
     def estimated_duration(self) -> float:
         """Return the estimated duration of the task in seconds.
 
@@ -63,14 +54,23 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
         """
         return self._estimated_duration
 
-    @abstractmethod
-    def points(self) -> int:
-        """Return the points awarded for completing this task.
+    @points.setter
+    def points(self, points: int) -> None:
+        """Set the points awarded for completing this task.
 
-        Returns:
-            int: The number of points for this task.
+        Args:
+            points (int): The number of points for this task.
         """
-        return self._points
+        self._points = points
+
+    @estimated_duration.setter
+    def estimated_duration(self, estimated_duration: float) -> None:
+        """Set the estimated duration of the task in seconds.
+
+        Args:
+            estimated_duration (float): Estimated duration in seconds.
+        """
+        self._estimated_duration = estimated_duration
 
     @abstractmethod
     def handle(self, ctx: GameContextT) -> bool:
