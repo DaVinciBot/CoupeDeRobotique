@@ -141,6 +141,8 @@ class RollingBasis(BaseComTeensy):
         self._logger.info("[CTRL:RB] Sending RESET_TEENSY")
         self.reset()
         time.sleep(delay_s)
+        if not self.reconnect():
+            return
         self.set_odometrie(OrientedPoint((0.0, 0.0), 0.0))
         msg = (
             Messages.SET_TARGET_VELOCITY.to_bytes()

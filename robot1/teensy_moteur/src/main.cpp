@@ -110,9 +110,8 @@ void set_odometrie(byte* msg, byte size) {
 }
 
 void reset_teensy(byte* msg, byte size) {
-    // TODO: reset the teensy, à tester !
-    void (*reboot)(void) = 0;
-    reboot();
+    volatile uint32_t* aircr = (volatile uint32_t*)0xE000ED0C;
+    *aircr = 0x05FA0004;
 }
 
 // c. assign the callback functions to the right message id
@@ -147,6 +146,12 @@ void handle() {
 
 void setup() {
     com = new Com(&Serial, BAUDRATE);
+
+    noInterrupts();
+    target_velocity = VelocityCommand();
+    last_command_us = 0;
+    long counter = 0;
+    interrupts();
 
     // Change pwm frequency
     analogWriteFrequency(R_PWM, PWM_FREQUENCY);

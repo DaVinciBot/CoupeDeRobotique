@@ -102,6 +102,8 @@ void Rolling_Basis::define_left_motor(byte enca,
 void Rolling_Basis::init_motors() {
     this->right_motor->init();
     this->left_motor->init();
+    this->right_motor->set_motor(0);
+    this->left_motor->set_motor(0);
 }
 
 /**
@@ -113,7 +115,25 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
     this->THETA = theta;
     this->linear_velocity = 0.0f;
     this->angular_velocity = 0.0f;
+    this->last_linear_error = 0.0;
+    this->last_angular_error = 0.0;
+    this->last_linear_correction = 0.0;
+    this->last_angular_correction = 0.0;
     this->last_odometrie_time = micros();
+    if (this->right_motor != nullptr) {
+        this->right_motor->ticks = 0L;
+        this->right_motor->last_ticks = 0L;
+        this->right_motor->distance = 0.0;
+        this->right_motor->set_motor(0);
+    }
+    if (this->left_motor != nullptr) {
+        this->left_motor->ticks = 0L;
+        this->left_motor->last_ticks = 0L;
+        this->left_motor->distance = 0.0;
+        this->left_motor->set_motor(0);
+    }
+    this->linear_velocity_pid.reset();
+    this->angular_velocity_pid.reset();
 }
 
 // Odometrie function

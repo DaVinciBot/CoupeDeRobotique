@@ -29,6 +29,9 @@ Motor::Motor(byte pin_forward,
     this->max_pwm = max_pwm;
 
     this->wheel_unit_tick_cm = wheel_unit_tick_cm;
+
+    this->ticks = 0;
+    this->last_ticks = 0;
 }
 
 /**
