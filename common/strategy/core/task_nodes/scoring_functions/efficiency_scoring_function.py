@@ -41,7 +41,6 @@ class EfficiencyScoringFunction(BaseScoringFunction):
         Returns:
             float: _description_
         """
-        return (
-            self.k * current_node.points
-            + (1 - self.k) * current_node.estimated_duration
+        return self.k * current_node.points + (1 - self.k) * (
+            1 / (current_node.estimated_duration + 1e-5)  # Avoid division by zero
         )
