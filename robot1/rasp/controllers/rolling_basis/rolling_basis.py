@@ -86,6 +86,7 @@ class RollingBasis(BaseComTeensy):
         )
 
         time.sleep(0.01)  # Avoid overload
+        self.reset_teensy_and_reinit()
 
     # region ====== Message Receiving Handlers ======
 
@@ -134,6 +135,19 @@ class RollingBasis(BaseComTeensy):
     # endregion
 
     # region ====== Message Sending Methods ======
+
+    def reset_teensy_and_reinit(self, *, delay_s: float = 0.8) -> None:
+        """Reset the Teensy and reinitialize rolling basis state."""
+        self._logger.info("[CTRL:RB] Sending RESET_TEENSY")
+        self.reset()
+        time.sleep(delay_s)
+        self.set_odometrie(OrientedPoint((0.0, 0.0), 0.0))
+        msg = (
+            Messages.SET_TARGET_VELOCITY.to_bytes()
+            + struct.pack("<d", 0.0)
+            + struct.pack("<d", 0.0)
+        )
+        self.send_bytes(msg)
 
     # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_target_velocity(self, cmd: TrajectoryPlanCommand) -> None:
