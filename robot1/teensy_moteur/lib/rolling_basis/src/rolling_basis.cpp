@@ -8,6 +8,20 @@
 #include <Arduino.h>
 #include <rolling_basis.h>
 #include <util/atomic.h>
+#include <cmath>
+
+#define M_S_TO_CM_S 100.0
+
+#define COMMAND_TIMEOUT_US 100000
+#define LINEAR_VELOCITY_ZERO_EPS 0.5
+#define ANGULAR_VELOCITY_ZERO_EPS 0.02
+
+#define MIN_PWM_LINEAR 30
+#define MIN_PWM_ANGULAR 60
+#define LINEAR_FF_PWM_PER_CM_S 6.0
+#define ANGULAR_FF_PWM_PER_RAD_S 35.0
+
+#define MAX_PWM 240
 
 double normalizeAngle(double theta) {
     // shift by +PI, take modulo 2*PI, remap to [0,2*PI)
@@ -149,6 +163,19 @@ void Rolling_Basis::odometrie_handle() {
  * the motors new command.
  */
 void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
+    if (fabs(target_velocity.linear) < LINEAR_VELOCITY_ZERO_EPS &&
+        fabs(target_velocity.angular) < ANGULAR_VELOCITY_ZERO_EPS) {
+        this->linear_velocity_pid.reset();
+        this->angular_velocity_pid.reset();
+        this->right_motor->set_motor(0);
+        this->left_motor->set_motor(0);
+        this->last_linear_error = 0.0;
+        this->last_angular_error = 0.0;
+        this->last_linear_correction = 0.0;
+        this->last_angular_correction = 0.0;
+        return;
+    }
+
     double linear_error = target_velocity.linear - this->linear_velocity;
     double angular_error = target_velocity.angular - this->angular_velocity;
 
@@ -156,11 +183,21 @@ void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
     double angular_correction =
         this->angular_velocity_pid.compute(angular_error);
 
-    double linear_ff = target_velocity.linear;
-    double angular_ff = target_velocity.angular;
+    double linear_ff = LINEAR_FF_PWM_PER_CM_S * target_velocity.linear;
+    double angular_ff = ANGULAR_FF_PWM_PER_RAD_S * target_velocity.angular;
 
     double linear_cmd = linear_correction + linear_ff;
     double angular_cmd = angular_correction + angular_ff;
+
+    if (fabs(linear_cmd) > 0.0 && fabs(linear_cmd) < MIN_PWM_LINEAR) {
+        linear_cmd = copysign(MIN_PWM_LINEAR, linear_cmd);
+    }
+    if (fabs(angular_cmd) > 0.0 && fabs(angular_cmd) < MIN_PWM_ANGULAR) {
+        angular_cmd = copysign(MIN_PWM_ANGULAR, angular_cmd);
+    }
+
+    linear_cmd = constrain(linear_cmd, -MAX_PWM, MAX_PWM);
+    angular_cmd = constrain(angular_cmd, -MAX_PWM, MAX_PWM);
 
     this->last_linear_error = linear_error;
     this->last_angular_error = angular_error;
@@ -169,6 +206,9 @@ void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
 
     double right_pwm = linear_cmd + angular_cmd;
     double left_pwm = linear_cmd - angular_cmd;
+
+    right_pwm = constrain(right_pwm, -MAX_PWM, MAX_PWM);
+    left_pwm = constrain(left_pwm, -MAX_PWM, MAX_PWM);
 
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);

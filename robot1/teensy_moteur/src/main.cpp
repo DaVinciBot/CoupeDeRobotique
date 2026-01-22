@@ -55,16 +55,21 @@ inline void right_motor_read_encoder() {
 // 3. Define all com callback functions
 // a. define globals variables to keep in memory callback functions updated
 VelocityCommand target_velocity;
+volatile unsigned long last_command_us = 0;
 
 // b. define the callback functions
 void set_target_velocity(byte* msg, byte size) {
     msg_set_target_velocity* target_velocity_msg =
         (msg_set_target_velocity*)msg;
 
+    unsigned long now = micros();
+
     // Update velocity target atomically (used by interrupt handler)
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        target_velocity.linear = target_velocity_msg->linear_velocity;
+        target_velocity.linear =
+            target_velocity_msg->linear_velocity * M_S_TO_CM_S;
         target_velocity.angular = target_velocity_msg->angular_velocity;
+        last_command_us = now;
     }
 }
 
@@ -124,9 +129,18 @@ void initialize_callback_functions() {
 // every 10ms, and which manage the robot position and speed: asservissement)
 void handle() {
     rolling_basis_ptr->odometrie_handle();
+    unsigned long now = micros();
     VelocityCommand target;
+    unsigned long last_cmd_us = 0;
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         target = target_velocity;
+        last_cmd_us = last_command_us;
+    }
+    if (last_cmd_us != 0 && now - last_cmd_us > COMMAND_TIMEOUT_US) {
+        target = VelocityCommand();
+        ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+            target_velocity = target;
+        }
     }
     rolling_basis_ptr->handle(target);
 }
@@ -169,6 +183,8 @@ void loop() {
     if (now_ms - last_pwm_log_ms >= 100) {
         int16_t right_pwm = 0;
         int16_t left_pwm = 0;
+        long right_ticks = 0;
+        long left_ticks = 0;
         double target_lin = 0.0;
         double target_ang = 0.0;
         double v_lin = 0.0;
@@ -180,6 +196,8 @@ void loop() {
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
             right_pwm = rolling_basis_ptr->right_motor->last_pwm;
             left_pwm = rolling_basis_ptr->left_motor->last_pwm;
+            right_ticks = rolling_basis_ptr->right_motor->ticks;
+            left_ticks = rolling_basis_ptr->left_motor->ticks;
             target_lin = target_velocity.linear;
             target_ang = target_velocity.angular;
             v_lin = rolling_basis_ptr->linear_velocity;
@@ -200,9 +218,9 @@ void loop() {
 
         char msg[96];
         snprintf(msg, sizeof(msg),
-                 "RB tv=%d/%d v=%d/%d e=%d/%d c=%d/%d pwm=%d/%d", tv_lin,
-                 tv_ang, mv_lin, mv_ang, ev_lin, ev_ang, cv_lin, cv_ang,
-                 left_pwm, right_pwm);
+                 "RB tv=%d/%d v=%d/%d e=%d/%d c=%d/%d pwm=%d/%d ticks=%ld/%ld",
+                 tv_lin, tv_ang, mv_lin, mv_ang, ev_lin, ev_ang, cv_lin, cv_ang,
+                 left_pwm, right_pwm, left_ticks, right_ticks);
         com->print(msg);
         last_pwm_log_ms = now_ms;
     }
