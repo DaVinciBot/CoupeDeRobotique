@@ -9,6 +9,8 @@ from strategy.core.base_game_context import BaseGameContext
 from strategy.core.tasks.base_task import BaseTask
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from loggerplusplus import Logger
 
     from arena.base_arena.arena_zones import BaseArenaZone
@@ -38,6 +40,8 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         stabilization_delay: float,
         timeout: float | None = None,
         logger: Logger | None = None,
+        points: int = 0,
+        estimated_duration: float | Callable[[GameContextT], float] = 0.0,
     ) -> None:
         """Initializes the BaseNavigationTask with navigation and planning parameters.
 
@@ -59,8 +63,16 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
                 Timeout for the navigation task. Defaults to None.
             logger (Logger | None, optional):
                 Logger instance for debugging. Defaults to None.
+            points (int, optional):
+                Points awarded for completing this task. Defaults to 0.
+            estimated_duration (float, optional):
+                Estimated duration of the task in seconds. Defaults to 0.0.
         """
-        super().__init__(logger=logger)
+        super().__init__(
+            logger=logger,
+            points=points,
+            estimated_duration=estimated_duration,
+        )
 
         self.goal: int | BaseArenaZone | OrientedPoint | None = goal
         self.stabilization_delay: float = stabilization_delay

@@ -9,6 +9,8 @@ from log_manager import LogLogger
 from strategy.core.base_game_context import BaseGameContext
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from loggerplusplus import Logger
 
 
@@ -19,7 +21,7 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
         self,
         logger: Logger | None = None,
         points: int = 0,
-        estimated_duration: float = 0.0,
+        estimated_duration: float | Callable[[GameContextT], float] = 0.0,
     ) -> None:
         """Initialize the task.
 
@@ -46,7 +48,7 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
         return self._points
 
     @property
-    def estimated_duration(self) -> float:
+    def estimated_duration(self) -> float | Callable[[GameContextT], float]:
         """Return the estimated duration of the task in seconds.
 
         Returns:
@@ -64,11 +66,15 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
         self._points = points
 
     @estimated_duration.setter
-    def estimated_duration(self, estimated_duration: float) -> None:
+    def estimated_duration(
+        self,
+        estimated_duration: float | Callable[[GameContextT], float],
+    ) -> None:
         """Set the estimated duration of the task in seconds.
 
         Args:
-            estimated_duration (float): Estimated duration in seconds.
+            estimated_duration (float | Callable[[GameContextT], float]):
+                Estimated duration in seconds.
         """
         self._estimated_duration = estimated_duration
 

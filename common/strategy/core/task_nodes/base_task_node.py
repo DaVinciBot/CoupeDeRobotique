@@ -15,6 +15,8 @@ from strategy.core.task_nodes.scoring_functions import (
 from strategy.core.tasks import BaseTask, TaskStatus
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from strategy.core.base_game_context import BaseGameContext
     from strategy.core.transitions import BaseTransition
 
@@ -28,7 +30,7 @@ class BaseTaskNode:
         tasks: BaseTask | list[BaseTask],
         scoring_function: BaseScoringFunction | None = None,
         points: int | None = None,
-        estimated_duration: float | None = None,
+        estimated_duration: float | Callable[[BaseGameContext], float] | None = None,
     ) -> None:
         """Initialize the task node.
 
@@ -62,7 +64,7 @@ class BaseTaskNode:
         self.end_time: float | None = None
 
         # Initialize points and estimated duration using tasks if not provided
-        self.estimated_duration: float = None
+        self.estimated_duration: float | Callable[[BaseGameContext], float] = None
         if estimated_duration is None:
             self.estimated_duration = sum(
                 task.estimated_duration for task in self.tasks
