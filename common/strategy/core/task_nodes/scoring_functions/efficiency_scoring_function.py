@@ -46,6 +46,11 @@ class EfficiencyScoringFunction(BaseScoringFunction):
             if callable(current_node.estimated_duration)
             else current_node.estimated_duration
         )
-        return self.k * current_node.points + (1 - self.k) * (
+        points = (
+            current_node.points(ctx)
+            if callable(current_node.points)
+            else current_node.points
+        )
+        return self.k * points + (1 - self.k) * (
             1 / (estimated_duration + 1e-5)  # Avoid division by zero
         )

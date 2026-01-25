@@ -20,16 +20,17 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
     def __init__(
         self,
         logger: Logger | None = None,
-        points: int = 0,
+        points: int | Callable[[GameContextT], int] = 0,
         estimated_duration: float | Callable[[GameContextT], float] = 0.0,
     ) -> None:
         """Initialize the task.
 
         Args:
             logger (Logger | None): Logger instance for debugging. Defaults to None.
-            points (int): Points awarded for completing this task. Defaults to 0.
-            estimated_duration (float): Estimated duration of the task in seconds,
-                defaults to 0.0.
+            points (int | Callable[[GameContextT], int]): Points awarded for completing
+                this task. Defaults to 0.
+            estimated_duration (float | Callable[[GameContextT], float]): Estimated
+                duration of the task in seconds, defaults to 0.0.
         """
         self._points = points
         self._estimated_duration = estimated_duration
@@ -39,11 +40,11 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
         )
 
     @property
-    def points(self) -> int:
+    def points(self) -> int | Callable[[GameContextT], int]:
         """Return the points awarded for completing this task.
 
         Returns:
-            int: The number of points for this task.
+            int | Callable[[GameContextT], int]: The number of points for this task.
         """
         return self._points
 
@@ -52,16 +53,17 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
         """Return the estimated duration of the task in seconds.
 
         Returns:
-            float: Estimated duration in seconds.
+            float | Callable[[GameContextT], float]: Estimated duration in seconds.
         """
         return self._estimated_duration
 
     @points.setter
-    def points(self, points: int) -> None:
+    def points(self, points: int | Callable[[GameContextT], int]) -> None:
         """Set the points awarded for completing this task.
 
         Args:
-            points (int): The number of points for this task.
+            points (int | Callable[[GameContextT], int]): The number of points for this
+                task.
         """
         self._points = points
 

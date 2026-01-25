@@ -15,7 +15,7 @@ class ReadyToApproachToPickUp(BaseTask[WinterGameContext]):
 
     def __init__(self) -> None:
         """Initialize the ReadyToApproachToPickUp task."""
-        super().__init__(points=0, estimated_duration=2.5)
+        super().__init__(estimated_duration=2.5, points=0)
 
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
@@ -28,7 +28,8 @@ class ReadyToApproachToPickUp(BaseTask[WinterGameContext]):
             bool: Always returns True after executing the action.
         """
         ctx.actuators.ready_to_approach_to_pickup()
-        ctx.point += self.points
+        p = self.points
+        ctx.point += p(ctx) if callable(p) else p
         return True
 
 
@@ -50,7 +51,8 @@ class PrepareToPickUp(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.ready_to_pickup()
-        ctx.point += self.points
+        p = self.points
+        ctx.point += p(ctx) if callable(p) else p
         time.sleep(1)
         return True
 
@@ -73,7 +75,8 @@ class PickUp(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.pick_up()
-        ctx.point += self.points
+        p = self.points
+        ctx.point += p(ctx) if callable(p) else p
         time.sleep(1)
         return True
 
@@ -96,7 +99,8 @@ class Build(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.build_floors()
-        ctx.point += self.points
+        p = self.points
+        ctx.point += p(ctx) if callable(p) else p
         time.sleep(1)
         return True
 
@@ -119,7 +123,8 @@ class Deposit(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.demagnetize_all()
-        ctx.point += self.points
+        p = self.points
+        ctx.point += p(ctx) if callable(p) else p
         time.sleep(1)
         return True
 
@@ -142,7 +147,8 @@ class BlockBanner(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action.
         """
         ctx.actuators.block_banner()
-        ctx.point += self.points
+        p = self.points
+        ctx.point += p(ctx) if callable(p) else p
         return True
 
 
@@ -164,7 +170,8 @@ class DeplacementPosition(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action.
         """
         ctx.actuators.deplacement_position()
-        ctx.point += self.points
+        p = self.points
+        ctx.point += p(ctx) if callable(p) else p
         return True
 
 
@@ -186,5 +193,6 @@ class DeplacementObject(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action.
         """
         ctx.actuators.deplacement_object()
-        ctx.point += self.points
+        p = self.points
+        ctx.point += p(ctx) if callable(p) else p
         return True

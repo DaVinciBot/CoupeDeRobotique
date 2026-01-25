@@ -29,7 +29,7 @@ class BaseTaskNode:
         name: str,
         tasks: BaseTask | list[BaseTask],
         scoring_function: BaseScoringFunction | None = None,
-        points: int | None = None,
+        points: int | Callable[[BaseGameContext], int] | None = None,
         estimated_duration: float | Callable[[BaseGameContext], float] | None = None,
     ) -> None:
         """Initialize the task node.
@@ -39,10 +39,10 @@ class BaseTaskNode:
             tasks (BaseTask | list[BaseTask]): Single task or list of tasks to execute.
             scoring_function (BaseScoringFunction | None, optional):
                 Scoring function used when evaluating transitions. Defaults to None.
-            points (int | None): Points awarded for completing this task node,
-                defaults to None.
-            estimated_duration (float | None): Estimated duration of the task node in
-                seconds, defaults to None.
+            points (int | Callable[[BaseGameContext], int] | None): Points awarded for
+                completing this task node, defaults to None.
+            estimated_duration (float | Callable[[BaseGameContext], float] | None):
+                Estimated duration of the task node in seconds, defaults to None.
         """
         self.name: str = name
         self.tasks: list[BaseTask[Any]] = (
@@ -72,7 +72,7 @@ class BaseTaskNode:
         else:
             self.estimated_duration = estimated_duration
 
-        self.points: float = None
+        self.points: int | Callable[[BaseGameContext], int] = None
         if points is None:
             self.points = sum(task.points for task in self.tasks)
         else:
