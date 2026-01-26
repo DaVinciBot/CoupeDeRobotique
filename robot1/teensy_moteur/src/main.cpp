@@ -147,12 +147,6 @@ void handle() {
 void setup() {
     com = new Com(&Serial, BAUDRATE);
 
-    noInterrupts();
-    target_velocity = VelocityCommand();
-    last_command_us = 0;
-    long counter = 0;
-    interrupts();
-
     // Change pwm frequency
     analogWriteFrequency(R_PWM, PWM_FREQUENCY);
     analogWriteFrequency(L_PWM, PWM_FREQUENCY);
