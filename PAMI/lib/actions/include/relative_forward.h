@@ -1,13 +1,13 @@
-#ifndef ACTIONS_ATOB_H
-#define ACTIONS_ATOB_H
+#ifndef ACTIONS_RELATIVE_FORWARD_H
+#define ACTIONS_RELATIVE_FORWARD_H
 
 #include "action.h"
 #include "rolling_basis.h"
 
-class AtoB : public Action {
+class RelativeForward : public Action {
    public:
-    AtoB(RollingBasis* rb, const Point& target);
-    ~AtoB() = default;
+    RelativeForward(RollingBasis* rb, const double distance);
+    ~RelativeForward() = default;
     void start() override;
     void update() override;
     void stop() override;
@@ -15,8 +15,9 @@ class AtoB : public Action {
     const char* name() const override;
 
    private:
+    const Point _target;
     RollingBasis* _rb;
-    Point _target;
+    const double _distance;
     unsigned long _startMs = 0;
     unsigned long _timeoutMs = 15000; // Ms
     float _arriveTolMm = 5.0f;

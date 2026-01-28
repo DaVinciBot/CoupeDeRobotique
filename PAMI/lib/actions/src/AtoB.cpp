@@ -1,18 +1,15 @@
 #include "AtoB.h"
 
-AtoB::AtoB(RollingBasis* rb) : _rb(rb) {
+AtoB::AtoB(RollingBasis* rb, const Point& target) : _rb(rb), _target(target) {
     // valeurs par défaut déjà initialisées inline dans le header,
     // mais on peut ré-initialiser ici si besoin
     _startMs = 0;
     _finished = false;
+    Serial.printf("AtoB: target set to x=%.1f y=%.1f theta=%.3f\n",
+                  _target.x, _target.y, _target.theta);
     // timeout et tolérance définis dans le header (_timeoutMs, _arriveTolMm)
 }
 
-void AtoB::setTarget(const Point& target) {
-    _target = target;
-    Serial.printf("AtoB: target set to x=%.1f y=%.1f theta=%.3f\n",
-                  _target.x, _target.y, _target.theta);
-}
 
 void AtoB::start() {
     Serial.println("AtoB started");
