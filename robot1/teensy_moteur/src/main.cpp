@@ -40,9 +40,9 @@ Com* com;
 /******* Attach Interrupt *******/
 inline void left_motor_read_encoder() {
     if (digitalRead(L_ENCB))
-        rolling_basis_ptr->left_motor->ticks--;
-    else
         rolling_basis_ptr->left_motor->ticks++;
+    else
+        rolling_basis_ptr->left_motor->ticks--;
 }
 
 inline void right_motor_read_encoder() {
@@ -179,7 +179,7 @@ void loop() {
 
     static uint32_t last_pwm_log_ms = 0;
     uint32_t now_ms = millis();
-    if (now_ms - last_pwm_log_ms >= 100) {
+    if (now_ms - last_pwm_log_ms >= 200) {
         int16_t right_pwm = 0;
         int16_t left_pwm = 0;
         long right_ticks = 0;
