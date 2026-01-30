@@ -34,7 +34,7 @@ class RelativeBackward(NavigationTask):
         """Initialize the RelativeBackward task.
 
         Args:
-            distance (float): The distance to move backward in millimeters.
+            distance (float): The distance to move backward in centimeters.
         """
         super().__init__(
             goal=None,
@@ -58,7 +58,7 @@ class RelativeForward(NavigationTask):
         """Initialize the RelativeForward task.
 
         Args:
-            distance (float): The distance to move forward in millimeters.
+            distance (float): The distance to move forward in centimeters.
         """
         super().__init__(
             goal=None,

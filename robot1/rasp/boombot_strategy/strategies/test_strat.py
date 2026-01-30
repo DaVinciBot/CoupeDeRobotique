@@ -30,7 +30,7 @@ class TestStrategy(BaseStrategy):
         """
         super().__init__(ctx)
 
-        task = BaseTaskNode("forward", RelativeForward(distance=1000.0))
+        task = BaseTaskNode("forward", RelativeForward(distance=100.0))
 
         # Connect the subgraphs in execution order
         self._auto_build_transitions(
