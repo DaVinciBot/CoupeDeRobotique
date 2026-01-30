@@ -30,7 +30,7 @@ class TestStrategy(BaseStrategy):
         """
         super().__init__(ctx)
 
-        task = BaseTaskNode("forward", RelativeForward(distance=90.0))
+        task = BaseTaskNode("forward", RelativeForward(distance=1000.0))
 
         # Connect the subgraphs in execution order
         self._auto_build_transitions(
@@ -40,7 +40,7 @@ class TestStrategy(BaseStrategy):
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
             logger=LogLogger(
-                identifier="TowerRushStrategyRunner",
+                identifier="TestStrategyRunner",
                 follow_logger_manager_rules=True,
             ),
             start=task,
