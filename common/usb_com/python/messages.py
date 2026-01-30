@@ -42,6 +42,10 @@ class Messages(Enum):
     """Update PID coefficients for the rolling basis."""
     SET_ODOMETRIE = 2
     """Reset the odometry."""
+    SET_CONTROL_MODE = 9
+    """Set rolling basis control mode (velocity/position)."""
+    SET_TARGET_POSE = 10
+    """Command to set the rolling basis target pose with feedforward."""
 
     # Actuators
     SET_SERVO_ANGLE_I2C = 3

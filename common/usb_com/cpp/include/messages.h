@@ -19,6 +19,8 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 #define SET_TARGET_VELOCITY 0
 #define SET_PID 1
 #define SET_ODOMETRIE 2
+#define SET_CONTROL_MODE 9
+#define SET_TARGET_POSE 10
 
 // Actuators
 #define SET_SERVO_ANGLE_I2C 3
@@ -68,6 +70,20 @@ struct msg_set_odometrie {
     double x;
     double y;
     double theta;
+};
+
+struct msg_set_control_mode {
+    byte command = SET_CONTROL_MODE;
+    byte mode;
+};
+
+struct msg_set_target_pose {
+    byte command = SET_TARGET_POSE;
+    double x;
+    double y;
+    double theta;
+    double linear_velocity;
+    double angular_velocity;
 };
 
 // Actuators

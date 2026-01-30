@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 import threading
 import time
+from enum import Enum
 from typing import TYPE_CHECKING, overload, override
 
 from loggerplusplus import log
@@ -75,6 +76,7 @@ class RollingBasisDummy(BaseComTeensy):
         self.target_position: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
         self.linear_speed: float = 0.0
         self.angular_speed: float = 0.0
+        self.control_mode = RollingBasisDummy.ControlMode.VELOCITY
 
         # PID controllers
         self.linear_velocity_pid: PID = PID(0.0, 0.0, 0.0)
@@ -97,6 +99,18 @@ class RollingBasisDummy(BaseComTeensy):
 
     # region ====== Message Sending Methods ======
 
+    class ControlMode(Enum):
+        VELOCITY = 0
+        POSITION = 1
+
+    def set_control_mode(self, mode: ControlMode | int) -> None:
+        """Set rolling basis control mode (velocity or position)."""
+        self.control_mode = (
+            mode
+            if isinstance(mode, RollingBasisDummy.ControlMode)
+            else RollingBasisDummy.ControlMode(int(mode))
+        )
+
     @log(param_logger="RollingBasis")
     def set_target_velocity(self, cmd: TrajectoryPlanCommand) -> None:
         """Sends a message to set the target speed and position of the rolling basis.
@@ -118,6 +132,29 @@ class RollingBasisDummy(BaseComTeensy):
             self._last_update_time = now
 
         self._logger.debug(f"[CTRL:RB:Dummy] Set target velocity: {cmd}")
+
+    def set_target_pose(
+        self,
+        pose: OrientedPoint,
+        *,
+        linear_speed: float = 0.0,
+        angular_speed: float = 0.0,
+    ) -> None:
+        """Set the target pose with optional feedforward speed."""
+        now = time.time()
+        with self._lock:
+            dt = now - self._last_update_time
+            if dt > 0.0:
+                self._simulate_step_unlocked(dt)
+
+            self.target_position = pose
+            self.linear_speed = linear_speed
+            self.angular_speed = angular_speed
+            self._last_update_time = now
+
+        self._logger.debug(
+            f"[CTRL:RB:Dummy] Set target pose: {pose} ff=({linear_speed}, {angular_speed})",
+        )
 
     def simulate_step(self, dt: float) -> None:
         """Integrate the stored target speeds over a timestep to update odometry.

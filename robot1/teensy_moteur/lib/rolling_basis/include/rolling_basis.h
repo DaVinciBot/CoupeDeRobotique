@@ -12,6 +12,9 @@
 
 #include <com.h>  // Communication object to manage the communication between the teensy and the Raspberry Pi
 
+#define CONTROL_MODE_VELOCITY 0
+#define CONTROL_MODE_POSITION 1
+
 class Rolling_Basis {
    public:
     // Constructor
@@ -24,7 +27,9 @@ class Rolling_Basis {
                   double center_distance,
                   double wheel_diameter,
                   const PID& linear_velocity_pid,
-                  const PID& angular_velocity_pid);
+                  const PID& angular_velocity_pid,
+                  const PID& linear_position_pid,
+                  const PID& angular_position_pid);
 
     // Rolling basis params
     unsigned short encoder_resolution;
@@ -34,6 +39,17 @@ class Rolling_Basis {
     // PID controllers
     PID linear_velocity_pid;
     PID angular_velocity_pid;
+    PID linear_position_pid;
+    PID angular_position_pid;
+
+    enum ControlMode : uint8_t {
+        VELOCITY = CONTROL_MODE_VELOCITY,
+        POSITION = CONTROL_MODE_POSITION,
+    };
+
+    ControlMode control_mode = ControlMode::VELOCITY;
+    Point target_pose;
+    VelocityCommand target_feedforward;
 
     // Rolling basis's params
     inline double radius() { return this->center_distance / 2.0; };
@@ -118,6 +134,9 @@ class Rolling_Basis {
      * Compute the PID based on velocity error and set the motors new command.
      */
     void handle(const VelocityCommand& target_velocity);
+
+    void set_control_mode(uint8_t mode);
+    void set_target_pose(const Point& pose, const VelocityCommand& feedforward);
 
     void pi_mod_signed(double theta);
 

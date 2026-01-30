@@ -23,6 +23,15 @@
 
 #define MAX_PWM 240
 
+#define HOLD_VEL_DEADBAND_LINEAR 0.2
+#define HOLD_VEL_DEADBAND_ANGULAR 0.01
+#define HOLD_VEL_MAX_PWM 80
+
+#define POSITION_MAX_LINEAR_CM_S 30.0
+#define POSITION_MAX_ANGULAR_RAD_S 2.0
+#define POSITION_LINEAR_DEADBAND 0.0
+#define POSITION_ANGULAR_DEADBAND 0.0
+
 double normalizeAngle(double theta) {
     // shift by +PI, take modulo 2*PI, remap to [0,2*PI)
     theta = fmodf(theta + PI, 2.0f * PI);
@@ -59,12 +68,16 @@ Rolling_Basis::Rolling_Basis(unsigned short encoder_resolution,
                              double center_distance,
                              double wheel_diameter,
                              const PID& linear_velocity_pid,
-                             const PID& angular_velocity_pid)
+                             const PID& angular_velocity_pid,
+                             const PID& linear_position_pid,
+                             const PID& angular_position_pid)
     : encoder_resolution(encoder_resolution),
       center_distance(center_distance),
       wheel_diameter(wheel_diameter),
       linear_velocity_pid(linear_velocity_pid),
-      angular_velocity_pid(angular_velocity_pid) {}
+      angular_velocity_pid(angular_velocity_pid),
+      linear_position_pid(linear_position_pid),
+      angular_position_pid(angular_position_pid) {}
 
 // Methods
 // Inits function
@@ -134,6 +147,29 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
     }
     this->linear_velocity_pid.reset();
     this->angular_velocity_pid.reset();
+    this->linear_position_pid.reset();
+    this->angular_position_pid.reset();
+    this->control_mode = ControlMode::VELOCITY;
+    this->target_pose = Point(x, y, theta);
+    this->target_feedforward = VelocityCommand();
+}
+
+void Rolling_Basis::set_control_mode(uint8_t mode) {
+    if (mode == ControlMode::POSITION) {
+        this->control_mode = ControlMode::POSITION;
+        this->linear_position_pid.reset();
+        this->angular_position_pid.reset();
+    } else {
+        this->control_mode = ControlMode::VELOCITY;
+        this->linear_velocity_pid.reset();
+        this->angular_velocity_pid.reset();
+    }
+}
+
+void Rolling_Basis::set_target_pose(const Point& pose,
+                                    const VelocityCommand& feedforward) {
+    this->target_pose = pose;
+    this->target_feedforward = feedforward;
 }
 
 // Odometrie function
@@ -186,28 +222,55 @@ void Rolling_Basis::odometrie_handle() {
  * the motors new command.
  */
 void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
-    if (fabs(target_velocity.linear) < LINEAR_VELOCITY_ZERO_EPS &&
-        fabs(target_velocity.angular) < ANGULAR_VELOCITY_ZERO_EPS) {
-        this->linear_velocity_pid.reset();
-        this->angular_velocity_pid.reset();
+    VelocityCommand velocity_cmd = target_velocity;
+    if (this->control_mode == ControlMode::POSITION) {
+        double dx = this->target_pose.x - this->X;
+        double dy = this->target_pose.y - this->Y;
+        double cos_th = cosf(this->THETA);
+        double sin_th = sinf(this->THETA);
+        double linear_error = cos_th * dx + sin_th * dy;
+        double angular_error =
+            normalizeAngle(this->target_pose.theta - this->THETA);
+
+        double linear_target = this->linear_position_pid.compute(linear_error);
+        double angular_target =
+            this->angular_position_pid.compute(angular_error);
+
+        velocity_cmd.linear = linear_target + this->target_feedforward.linear;
+        velocity_cmd.angular =
+            angular_target + this->target_feedforward.angular;
+
+        velocity_cmd.linear =
+            constrain(velocity_cmd.linear, -POSITION_MAX_LINEAR_CM_S,
+                      POSITION_MAX_LINEAR_CM_S);
+        velocity_cmd.angular =
+            constrain(velocity_cmd.angular, -POSITION_MAX_ANGULAR_RAD_S,
+                      POSITION_MAX_ANGULAR_RAD_S);
+    }
+
+    bool near_zero_cmd = fabs(velocity_cmd.linear) < LINEAR_VELOCITY_ZERO_EPS &&
+                         fabs(velocity_cmd.angular) < ANGULAR_VELOCITY_ZERO_EPS;
+
+    double linear_error = velocity_cmd.linear - this->linear_velocity;
+    double angular_error = velocity_cmd.angular - this->angular_velocity;
+
+    if (near_zero_cmd && fabs(linear_error) < HOLD_VEL_DEADBAND_LINEAR &&
+        fabs(angular_error) < HOLD_VEL_DEADBAND_ANGULAR) {
         this->right_motor->set_motor(0);
         this->left_motor->set_motor(0);
-        this->last_linear_error = 0.0;
-        this->last_angular_error = 0.0;
+        this->last_linear_error = linear_error;
+        this->last_angular_error = angular_error;
         this->last_linear_correction = 0.0;
         this->last_angular_correction = 0.0;
         return;
     }
 
-    double linear_error = target_velocity.linear - this->linear_velocity;
-    double angular_error = target_velocity.angular - this->angular_velocity;
-
     double linear_correction = this->linear_velocity_pid.compute(linear_error);
     double angular_correction =
         this->angular_velocity_pid.compute(angular_error);
 
-    double linear_ff = LINEAR_FF_PWM_PER_CM_S * target_velocity.linear;
-    double angular_ff = ANGULAR_FF_PWM_PER_RAD_S * target_velocity.angular;
+    double linear_ff = LINEAR_FF_PWM_PER_CM_S * velocity_cmd.linear;
+    double angular_ff = ANGULAR_FF_PWM_PER_RAD_S * velocity_cmd.angular;
 
     double linear_cmd = linear_correction + linear_ff;
     double angular_cmd = angular_correction + angular_ff;
@@ -219,8 +282,14 @@ void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
         angular_cmd = copysign(MIN_PWM_ANGULAR, angular_cmd);
     }
 
-    linear_cmd = constrain(linear_cmd, -MAX_PWM, MAX_PWM);
-    angular_cmd = constrain(angular_cmd, -MAX_PWM, MAX_PWM);
+    if (near_zero_cmd) {
+        linear_cmd = constrain(linear_cmd, -HOLD_VEL_MAX_PWM, HOLD_VEL_MAX_PWM);
+        angular_cmd =
+            constrain(angular_cmd, -HOLD_VEL_MAX_PWM, HOLD_VEL_MAX_PWM);
+    } else {
+        linear_cmd = constrain(linear_cmd, -MAX_PWM, MAX_PWM);
+        angular_cmd = constrain(angular_cmd, -MAX_PWM, MAX_PWM);
+    }
 
     this->last_linear_error = linear_error;
     this->last_angular_error = angular_error;

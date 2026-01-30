@@ -19,6 +19,10 @@ class PidID(Enum):
     """Identifier for linear velocity PID control."""
     ANGULAR_VELOCITY = 1
     """Identifier for angular velocity PID control."""
+    LINEAR_POSITION = 2
+    """Identifier for linear position PID control."""
+    ANGULAR_POSITION = 3
+    """Identifier for angular position PID control."""
 
 
 @dataclass

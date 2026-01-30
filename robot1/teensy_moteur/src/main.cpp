@@ -26,12 +26,27 @@ PID angular_velocity_pid(KP_ANGULAR_VELOCITY,
                          200,
                          0.001);
 
+PID linear_position_pid(KP_LINEAR_POSITION,
+                        KI_LINEAR_POSITION,
+                        KD_LINEAR_POSITION,
+                        -POSITION_MAX_LINEAR_CM_S,
+                        POSITION_MAX_LINEAR_CM_S,
+                        POSITION_LINEAR_DEADBAND);
+PID angular_position_pid(KP_ANGULAR_POSITION,
+                         KI_ANGULAR_POSITION,
+                         KD_ANGULAR_POSITION,
+                         -POSITION_MAX_ANGULAR_RAD_S,
+                         POSITION_MAX_ANGULAR_RAD_S,
+                         POSITION_ANGULAR_DEADBAND);
+
 // b. Instanciate the Rolling Basis object
 Rolling_Basis* rolling_basis_ptr = new Rolling_Basis(ENCODER_RESOLUTION,
                                                      ENTRAXE,
                                                      WHEEL_DIAMETER,
                                                      linear_velocity_pid,
-                                                     angular_velocity_pid);
+                                                     angular_velocity_pid,
+                                                     linear_position_pid,
+                                                     angular_position_pid);
 
 // 2. Instanciate the Communication object
 Com* com;
@@ -84,6 +99,12 @@ void set_pid(byte* msg, byte size) {
         case ANGULAR_VELOCITY_PID_ID:
             pid = &rolling_basis_ptr->angular_velocity_pid;
             break;
+        case LINEAR_POSITION_PID_ID:
+            pid = &rolling_basis_ptr->linear_position_pid;
+            break;
+        case ANGULAR_POSITION_PID_ID:
+            pid = &rolling_basis_ptr->angular_position_pid;
+            break;
         default:
             is_valid_pid = false;
             break;
@@ -109,6 +130,23 @@ void set_odometrie(byte* msg, byte size) {
     }
 }
 
+void set_control_mode(byte* msg, byte size) {
+    msg_set_control_mode* mode_msg = (msg_set_control_mode*)msg;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        rolling_basis_ptr->set_control_mode(mode_msg->mode);
+    }
+}
+
+void set_target_pose(byte* msg, byte size) {
+    msg_set_target_pose* pose_msg = (msg_set_target_pose*)msg;
+    Point pose(pose_msg->x, pose_msg->y, pose_msg->theta);
+    VelocityCommand feedforward(pose_msg->linear_velocity * M_S_TO_CM_S,
+                                pose_msg->angular_velocity);
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        rolling_basis_ptr->set_target_pose(pose, feedforward);
+    }
+}
+
 void reset_teensy(byte* msg, byte size) {
     volatile uint32_t* aircr = (volatile uint32_t*)0xE000ED0C;
     *aircr = 0x05FA0004;
@@ -122,6 +160,8 @@ void initialize_callback_functions() {
     callback_functions[SET_PID] = &set_pid;
     callback_functions[SET_ODOMETRIE] = &set_odometrie;
     callback_functions[RESET_TEENSY] = &reset_teensy;
+    callback_functions[SET_CONTROL_MODE] = &set_control_mode;
+    callback_functions[SET_TARGET_POSE] = &set_target_pose;
 }
 
 // 4. Define the timer interrupt handle function (this function will be called

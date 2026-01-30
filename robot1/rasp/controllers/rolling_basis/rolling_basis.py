@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import struct
 import time
+from enum import Enum
 from typing import TYPE_CHECKING, overload, override
 
 from loggerplusplus import LogLevels, log
@@ -136,6 +137,10 @@ class RollingBasis(BaseComTeensy):
 
     # region ====== Message Sending Methods ======
 
+    class ControlMode(Enum):
+        VELOCITY = 0
+        POSITION = 1
+
     def reset_teensy_and_reinit(self, *, delay_s: float = 0.8) -> None:
         """Reset the Teensy and reinitialize rolling basis state."""
         self._logger.info("[CTRL:RB] Sending RESET_TEENSY")
@@ -149,6 +154,14 @@ class RollingBasis(BaseComTeensy):
             + struct.pack("<d", 0.0)
             + struct.pack("<d", 0.0)
         )
+        self.send_bytes(msg)
+
+    def set_control_mode(self, mode: ControlMode | int) -> None:
+        """Set rolling basis control mode (velocity or position)."""
+        mode_value = (
+            mode.value if isinstance(mode, RollingBasis.ControlMode) else int(mode)
+        )
+        msg = Messages.SET_CONTROL_MODE.to_bytes() + bytes([mode_value])
         self.send_bytes(msg)
 
     # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
@@ -170,6 +183,23 @@ class RollingBasis(BaseComTeensy):
 
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
+        self.send_bytes(msg)
+
+    def set_target_pose(
+        self,
+        pose: OrientedPoint,
+        linear_speed: float = 0.0,
+        angular_speed: float = 0.0,
+    ) -> None:
+        """Send a command to set the target pose with optional feedforward."""
+        msg = (
+            Messages.SET_TARGET_POSE.to_bytes()
+            + struct.pack("<d", pose.x)
+            + struct.pack("<d", pose.y)
+            + struct.pack("<d", pose.theta)
+            + struct.pack("<d", linear_speed)
+            + struct.pack("<d", angular_speed)
+        )
         self.send_bytes(msg)
 
     @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
