@@ -30,6 +30,10 @@ class Motor {
     double distance = 0.0;  // Distance in cm
     long last_ticks = 0L;   // Ticks distance used to compute distance and speed
                             // (updated at the last odometer handle call)
+    double velocity_cm_s = 0.0;           // Raw velocity estimate (cm/s)
+    double filtered_velocity_cm_s = 0.0;  // Filtered velocity estimate (cm/s)
+    unsigned long last_tick_time_us = 0;
+    unsigned long last_odometrie_time_us = 0;
 
     // Constructor
     /**

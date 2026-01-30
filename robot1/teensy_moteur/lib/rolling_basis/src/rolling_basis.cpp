@@ -171,8 +171,11 @@ void Rolling_Basis::odometrie_handle() {
     this->THETA = normalizeAngle(this->THETA + delta_theta);
 
     if (dt > 0.0) {
-        this->linear_velocity = delta_distance / dt;
-        this->angular_velocity = delta_theta / dt;
+        double left_velocity = this->left_motor->filtered_velocity_cm_s;
+        double right_velocity = this->right_motor->filtered_velocity_cm_s;
+        this->linear_velocity = (left_velocity + right_velocity) / 2.0;
+        this->angular_velocity =
+            (right_velocity - left_velocity) / this->center_distance;
     }
 }
 
