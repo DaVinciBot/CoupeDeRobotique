@@ -1,11 +1,12 @@
 #include "carre.h"
 
-Carre::Carre(RollingBasis* rb, const double length, const double angle) : _rb(rb), _distance(length), _angle(angle) {
+Carre::Carre(RollingBasis* rb, const double length, const double angle) : _rb(rb), _distance(length) {
     // valeurs par défaut déjà initialisées inline dans le header,
     // mais on peut ré-initialiser ici si besoin
     _startMs = 0;
     _finished = false;
-    Serial.printf("Carre: length set to %.1f mm, angle set to %.1f rad\n", _distance, _angle);
+    _sideIndex = 0;
+    Serial.printf("Carre: length set to %.1f mm\n", _distance);
     // timeout et tolérance définis dans le header (_timeoutMs, _arriveTolMm)
 }
 
@@ -22,8 +23,8 @@ void Carre::start() {
     Point _target = cur;
     _target.x += _distance * cos(cur.theta);
     _target.y += _distance * sin(cur.theta);
-    _target.theta += _angle;
-    Serial.printf("Carre::start target=(%.1f,%.1f,%.3f)\n", _target.x, _target.y, _target.theta);
+    _target.theta += M_PI / 2; // tourner de 90 degrés pour le prochain côté
+    Serial.printf("Carre side %d target=(%.1f,%.1f,%.3f)\n", _sideIndex, _target.x, _target.y, _target.theta);
 
     // Envoyer la commande vers la cible B
     _rb->setCommand(_target);
@@ -54,7 +55,13 @@ void Carre::update() {
     if (dist <= _arriveTolMm || !_rb->isMoving()) {
         Serial.println("Carre: arrived or motors idle -> finishing");
         _rb->stop();
-        _finished = true;
+        _sideIndex++;
+        if (_sideIndex >= 4) {
+            _finished = true;
+            _sideIndex = 0;
+            return;
+        }
+        start();
     }
 }
 

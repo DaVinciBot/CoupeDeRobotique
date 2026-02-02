@@ -16,9 +16,9 @@ class Carre : public Action {
 
    private:
     const Point _target;
+    int _sideIndex = 0;   // 0 → 3
     RollingBasis* _rb;
     const double _distance;
-    const double _angle;
     unsigned long _startMs = 0;
     unsigned long _timeoutMs = 15000; // Ms
     float _arriveTolRad = 5.0f;
