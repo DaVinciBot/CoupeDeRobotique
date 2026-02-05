@@ -169,7 +169,8 @@ class RollingBasis(BaseComTeensy):
         """Send a command to set the target velocity of the rolling basis.
 
         Args:
-            cmd (TrajectoryPlanCommand): The command containing target velocities.
+            cmd (TrajectoryPlanCommand): The command containing target velocities
+                (linear in cm/s, angular in rad/s).
         """
         self._logger.info(
             f"[CTRL:RB] Setting target velocities: "

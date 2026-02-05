@@ -53,7 +53,7 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 // Rolling Basis
 struct msg_set_target_velocity {
     byte command = SET_TARGET_VELOCITY;
-    double linear_velocity;   // m/s (converted to cm/s on Teensy)
+    double linear_velocity;   // cm/s
     double angular_velocity;  // rad/s
 };
 
@@ -82,7 +82,7 @@ struct msg_set_target_pose {
     double x;
     double y;
     double theta;
-    double linear_velocity;
+    double linear_velocity;  // cm/s
     double angular_velocity;
 };
 

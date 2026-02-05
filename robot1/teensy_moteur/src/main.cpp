@@ -81,8 +81,7 @@ void set_target_velocity(byte* msg, byte size) {
 
     // Update velocity target atomically (used by interrupt handler)
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        target_velocity.linear =
-            target_velocity_msg->linear_velocity * M_S_TO_CM_S;
+        target_velocity.linear = target_velocity_msg->linear_velocity;
         target_velocity.angular = target_velocity_msg->angular_velocity;
         last_command_us = now;
     }
@@ -140,7 +139,7 @@ void set_control_mode(byte* msg, byte size) {
 void set_target_pose(byte* msg, byte size) {
     msg_set_target_pose* pose_msg = (msg_set_target_pose*)msg;
     Point pose(pose_msg->x, pose_msg->y, pose_msg->theta);
-    VelocityCommand feedforward(pose_msg->linear_velocity * M_S_TO_CM_S,
+    VelocityCommand feedforward(pose_msg->linear_velocity,
                                 pose_msg->angular_velocity);
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
         rolling_basis_ptr->set_target_pose(pose, feedforward);
@@ -246,20 +245,21 @@ void loop() {
             corr_lin = rolling_basis_ptr->last_linear_correction;
             corr_ang = rolling_basis_ptr->last_angular_correction;
         }
-        int16_t tv_lin = static_cast<int16_t>(target_lin * 100);
-        int16_t tv_ang = static_cast<int16_t>(target_ang * 100);
-        int16_t mv_lin = static_cast<int16_t>(v_lin * 100);
-        int16_t mv_ang = static_cast<int16_t>(v_ang * 100);
-        int16_t ev_lin = static_cast<int16_t>(err_lin * 100);
-        int16_t ev_ang = static_cast<int16_t>(err_ang * 100);
+        long tv_lin = static_cast<long>(target_lin * 100.0);
+        long tv_ang = static_cast<long>(target_ang * 100.0);
+        long mv_lin = static_cast<long>(v_lin * 100.0);
+        long mv_ang = static_cast<long>(v_ang * 100.0);
+        long ev_lin = static_cast<long>(err_lin * 100.0);
+        long ev_ang = static_cast<long>(err_ang * 100.0);
         int16_t cv_lin = static_cast<int16_t>(corr_lin);
         int16_t cv_ang = static_cast<int16_t>(corr_ang);
 
         char msg[96];
-        snprintf(msg, sizeof(msg),
-                 "RB tv=%d/%d v=%d/%d e=%d/%d c=%d/%d pwm=%d/%d ticks=%ld/%ld",
-                 tv_lin, tv_ang, mv_lin, mv_ang, ev_lin, ev_ang, cv_lin, cv_ang,
-                 left_pwm, right_pwm, left_ticks, right_ticks);
+        snprintf(
+            msg, sizeof(msg),
+            "RB tv=%ld/%ld v=%ld/%ld e=%ld/%ld c=%d/%d pwm=%d/%d ticks=%ld/%ld",
+            tv_lin, tv_ang, mv_lin, mv_ang, ev_lin, ev_ang, cv_lin, cv_ang,
+            left_pwm, right_pwm, left_ticks, right_ticks);
         com->print(msg);
         last_pwm_log_ms = now_ms;
     }

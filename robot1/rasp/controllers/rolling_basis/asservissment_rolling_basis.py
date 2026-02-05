@@ -171,7 +171,8 @@ class AsservissementRollingBasis(
         """Send a command to set the target position of the rolling basis.
 
         Args:
-            cmd (TrajectoryPlanCommand): Command containing desired position and orientation.
+            cmd (TrajectoryPlanCommand): Command containing desired position and
+                feedforward speeds (linear in cm/s, angular in rad/s).
         """
         # Store for logging
         self._last_target = cmd.position
@@ -189,7 +190,10 @@ class AsservissementRollingBasis(
         linear_speed: float = 0.0,
         angular_speed: float = 0.0,
     ) -> None:
-        """Send a command to set the target pose with optional feedforward."""
+        """Send a command to set the target pose with optional feedforward.
+
+        Linear speed is expressed in cm/s and angular speed in rad/s.
+        """
         msg = (
             Messages.SET_TARGET_POSE.to_bytes()
             + struct.pack("<d", pose.x)
