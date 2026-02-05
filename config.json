@@ -92,7 +92,7 @@
             "min_speed": 0.8
           },
           "default": {
-            "speed": 1.8,
+            "speed": 3.14,
             "min_speed": 1.0
           },
           "high": {
