@@ -10,13 +10,13 @@ from typing import TYPE_CHECKING, Any
 
 import matplotlib.pyplot as plt
 import numpy as np
+from old_boombot_strategy import ShowGameContext
+from old_boombot_strategy.strategies import TowerRushAltStrategy
 from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
-from boombot_strategy import WinterGameContext
-from boombot_strategy.strategies import TestStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
@@ -25,7 +25,7 @@ from log_manager import LogLogger
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
-    from arena.winter_arena import WinterArena
+    from arena.show_arena.arena import ShowArena
     from sensors import Inputs, Lidar, LidarDummy
 
 
@@ -38,7 +38,7 @@ class MainBrain(Brain):
         # Sensor
         lidar: Lidar | LidarDummy,
         # Environment
-        arena: WinterArena,
+        arena: ShowArena,
         # WS routes
         ws_cmd: WServerRouteManager,
         ws_ui: WServerRouteManager,
@@ -50,13 +50,13 @@ class MainBrain(Brain):
         Args:
             logger (Logger): Logger instance for logging messages.
             lidar (Lidar | LidarDummy): Lidar instance for distance measurements.
-            arena (WinterArena): Arena instance for representing the game arena.
+            arena (ShowArena): Arena instance for representing the game arena.
             ws_cmd (WServerRouteManager): WebSocket command route manager.
             ws_ui (WServerRouteManager): WebSocket UI route manager.
             inputs (Inputs): Inputs instance for handling sensor data.
         """
         self.lidar: Lidar | LidarDummy = lidar
-        self.arena: WinterArena = arena
+        self.arena: ShowArena = arena
 
         # Shared attributes
         self.rolling_basis_odometrie: OrientedPoint = OrientedPoint(0, 0, 0)
@@ -141,8 +141,8 @@ class MainBrain(Brain):
 
         # --- 3) Build the strategy --- #
 
-        strategy = TestStrategy(
-            WinterGameContext(
+        strategy = TowerRushAltStrategy(
+            ShowGameContext(
                 arena=self.arena,
                 rolling_basis=rolling_basis,
                 actuators=actuators,
@@ -154,7 +154,7 @@ class MainBrain(Brain):
         # visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
-        context = WinterGameContext(
+        context = ShowGameContext(
             arena=self.arena,
             rolling_basis=rolling_basis,
             actuators=actuators,
