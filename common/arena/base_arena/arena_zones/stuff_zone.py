@@ -73,11 +73,15 @@ class StuffZone(BaseArenaZone):
         super().update(team_color, ally_position, enemy_position)
 
         # Update accessibility to free if an ally or enemy is within the zone
-        if (
+
+        # Manage with computer vision or GameContext instead of robot position
+        # to avoid freeing the zone when the robot is close but not using actuators for jengas
+        # It's annoying for pathfinding : it creates false routes
+        """ if (
             self.buffered_polygon.contains(ally_position)
             or self.buffered_polygon.contains(enemy_position)
         ) and self.accessibility != ZoneAccessibility.FREE:
-            self._make_accessible()
+            self._make_accessible()"""
 
     @override
     def get_go_to_position(

@@ -289,6 +289,8 @@ class WinterArena(BaseArena):
 
         zones: list[BaseArenaZone] = []
 
+        zones.extend([yellow_backstage_zone, blue_backstage_zone, ninja_stage])
+
         zones.extend(
             StuffZone(
                 logger=jenga_zone_logger,
@@ -322,8 +324,6 @@ class WinterArena(BaseArena):
             )
             for corner_point in drop_zones_points
         )
-
-        zones.extend([yellow_backstage_zone, blue_backstage_zone, ninja_stage])
 
         super().__init__(
             logger,

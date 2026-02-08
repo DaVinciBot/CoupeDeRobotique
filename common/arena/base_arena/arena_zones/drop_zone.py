@@ -72,8 +72,12 @@ class DropZone(BaseArenaZone):
         super().update(team_color, ally_position, enemy_position)
 
         # Update accessibility to free if an ally or enemy is within the zone
-        if (
+
+        # Manage with computer vision or GameContext instead of robot position
+        # to avoid freeing the zone when the robot is close but not using actuators for jengas
+        # It's annoying for pathfinding : it creates false routes
+        """if (
             self.buffered_polygon.contains(ally_position)
             or self.buffered_polygon.contains(enemy_position)
         ) and self.accessibility != ZoneAccessibility.RESTRICTED:
-            self._restrict_accessibility()
+            self._restrict_accessibility()"""

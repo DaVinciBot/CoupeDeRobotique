@@ -32,21 +32,16 @@ class GoToStuffZoneToPickUp(NavigationTask):
         Args:
             stuff_zone_id (int): Identifier for the target stuff zone location.
         """
-        grid = ctx.arena.grid_manager.get_static_and_dynamic_grid()
         goal = ctx.arena.compute_goal_position(stuff_zone_id)
 
-        self.path_planner_params = AStarPathPlannerParams(
-            grid=grid,
-            path_resolution=10,
-            chunk_size=20,
-            start=ctx.arena.ally_zone.point,
-            goal=goal,
-            direction=Direction.FORWARD,
-        )
-
         super().__init__(
-            goal=stuff_zone_id,
-            path_planner_params=self.path_planner_params,
+            goal=goal,
+            path_planner_params=AStarPathPlannerParams(grid=ctx.arena.grid_manager.get_static_and_dynamic_grid(),
+                                                       path_resolution=5,
+                                                       chunk_size=CONFIG.ARENA_CHUNK_SIZE,
+                                                       start=ctx.arena.ally_zone.point,
+                                                       goal=goal,
+                                                       direction=Direction.FORWARD),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(
                 step_sleep_delay=2,
             ),

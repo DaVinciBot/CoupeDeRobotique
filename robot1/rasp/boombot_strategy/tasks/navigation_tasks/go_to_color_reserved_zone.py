@@ -19,6 +19,8 @@ from navigation.trajectory_planner.sequential_trajectory_planner import (
 from navigation.path_planner.structs import Direction
 from boombot_strategy.winter_game_context import WinterGameContext as GameContext
 
+from a_config_loader import CONFIG
+
 
 class GoToColorReservedZoneToFinishGame(NavigationTask):
     """Task to navigate to a color reserved zone to finish the game."""
@@ -29,24 +31,16 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
         Args:
             color_reserved_zone_id (int): The ID of the target color reserved zone.
         """
-        grid = ctx.arena.grid_manager.get_static_and_dynamic_grid()
-        goal = ctx.arena.compute_goal_position(1)
-        # goal = ctx.arena.compute_goal_position(color_reserved_zone_id)
-        # TODO : Redo all zones with proper IDs
-        # TODO : Check orientation in grid manager, i think it's swapped somewhere
-
-        self.path_planner_params = AStarPathPlannerParams(
-            grid=grid,
-            path_resolution=10,
-            chunk_size=20,
-            start=ctx.arena.ally_zone.point,
-            goal=goal,
-            direction=Direction.FORWARD,
-        )
+        goal = ctx.arena.compute_goal_position(color_reserved_zone_id)
 
         super().__init__(
             goal=goal,
-            path_planner_params=self.path_planner_params,
+            path_planner_params=AStarPathPlannerParams(grid=ctx.arena.grid_manager.get_static_and_dynamic_grid(),
+                                                       path_resolution=5,
+                                                       chunk_size=CONFIG.ARENA_CHUNK_SIZE,
+                                                       start=ctx.arena.ally_zone.point,
+                                                       goal=goal,
+                                                       direction=Direction.FORWARD),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
@@ -68,21 +62,16 @@ class GoToColorReservedZoneToConstruct(NavigationTask):
             color_reserved_zone_id (int): The ID of the target color reserved zone.
         """
 
-        grid = ctx.arena.grid_manager.get_static_and_dynamic_grid()
         goal = ctx.arena.compute_goal_position(color_reserved_zone_id)
 
-        self.path_planner_params = AStarPathPlannerParams(
-            grid=grid,
-            path_resolution=10,
-            chunk_size=20,
-            start=ctx.arena.ally_zone.point,
-            goal=goal,
-            direction=Direction.FORWARD,
-        )
-
         super().__init__(
-            goal=color_reserved_zone_id,
-            path_planner_params=self.path_planner_params,
+            goal=goal,
+            path_planner_params=AStarPathPlannerParams(grid=ctx.arena.grid_manager.get_static_and_dynamic_grid(),
+                                                       path_resolution=5,
+                                                       chunk_size=CONFIG.ARENA_CHUNK_SIZE,
+                                                       start=ctx.arena.ally_zone.point,
+                                                       goal=goal,
+                                                       direction=Direction.FORWARD),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
