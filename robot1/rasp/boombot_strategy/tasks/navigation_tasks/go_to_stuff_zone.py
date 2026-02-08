@@ -8,7 +8,6 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
     RectangularProjectionAcsDetectionProfileParams,
 )
 from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
-from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
 from navigation.path_planner.astar_path_planner import AStarPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,

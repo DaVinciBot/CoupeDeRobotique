@@ -4,22 +4,17 @@ from __future__ import annotations
 
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
-from pathfinding.core.grid import Grid
 
-from geometry import OrientedPoint
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
 )
 from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
-from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
 from navigation.path_planner.astar_path_planner import AStarPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
 from navigation.path_planner.structs import Direction
 from boombot_strategy.winter_game_context import WinterGameContext as GameContext
-
-from a_config_loader import CONFIG
 
 
 class GoToColorReservedZoneToFinishGame(NavigationTask):
