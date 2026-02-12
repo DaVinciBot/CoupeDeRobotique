@@ -282,7 +282,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         deploying the servo arm.
         """
         if ARM_SERVO_PIN in self.servos:
-            self.deploy(ARM_SERVO_PIN)
+            # self.deploy(ARM_SERVO_PIN)
+            pass
 
         for i in self.servos:
             if i != ARM_SERVO_PIN:
@@ -312,7 +313,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
                 self.fold(i)
 
         if ARM_SERVO_PIN in self.servos:
-            self.fold(ARM_SERVO_PIN)
+            # self.fold(ARM_SERVO_PIN)
+            pass
 
     def demagnetize_all(self) -> None:
         """Demagnetize servos by setting them to their fold angle.
@@ -438,16 +440,16 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         time.sleep(2)
 
         # Demagnetize and release plank
-        self.deploy(ARM_SERVO_PIN)
+        # self.deploy(ARM_SERVO_PIN)
         self.demagnetize_all()
-        self.deploy(9)
+        # self.deploy(9)
 
         time.sleep(2)
 
         # Retrieve actuators
         self.fold(4)
         self.fold(6)
-        self.docking(ARM_SERVO_PIN)
+        # self.docking(ARM_SERVO_PIN)
 
     # def init_actuator(self):
     #     self.stepper_step(
@@ -463,15 +465,15 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         # Prep and go magnetized
         self.deploy_all_pickup()  # Magnetize
         time.sleep(1)
-        self.deploy(ARM_SERVO_PIN)
+        # self.deploy(ARM_SERVO_PIN)
 
     def pick_up(self) -> None:
         """Catch cans and plank."""
         # Catch and raise cans and plank
         self.pickup_planck()
-        self.fold(9)
+        # self.fold(9)
         time.sleep(0.1)
-        self.docking(ARM_SERVO_PIN)
+        # self.docking(ARM_SERVO_PIN)
         time.sleep(1)
         self.fold(4)
         self.fold(6)
@@ -481,7 +483,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         """Catch cans and plank."""
         # Catch and raise cans and plank
         self.pickup_planck()
-        self.fold(9)
+        # self.fold(9)
         time.sleep(0.1)
 
     def ready_to_approach_to_pickup(self) -> None:
@@ -492,21 +494,21 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         time.sleep(0.5)
         self.deploy_all_pickup()
         # self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
-        self.set_servo_angle(
-            ARM_SERVO_PIN,
-            angle=self.servos[ARM_SERVO_PIN].docking,  # pyright: ignore[reportAttributeAccessIssue] self.servos[ARM_SERVO_PIN] is ServoArm
-            max_angle=270,
-        )
-        self.deploy(9)
+        # self.set_servo_angle(
+        #     ARM_SERVO_PIN,
+        #     angle=self.servos[ARM_SERVO_PIN].docking,  # pyright: ignore[reportAttributeAccessIssue] self.servos[ARM_SERVO_PIN] is ServoArm
+        #     max_angle=270,
+        # )
+        # self.deploy(9)
 
     def pickup_planck(self) -> None:
         """Perform a sequence to grip the plank securely."""
 
         def _pickup() -> None:
-            self.deploy(9)
-            self.deploy(ARM_SERVO_PIN)
+            # self.deploy(9)
+            # self.deploy(ARM_SERVO_PIN)
             time.sleep(0.3)
-            self.fold(9)
+            # self.fold(9)
 
         _pickup()
         time.sleep(0.2)
@@ -524,20 +526,20 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         time.sleep(2)
         self.elevator_drop_top()
         time.sleep(1)
-        self.deploy(9)
+        # self.deploy(9)
         time.sleep(1)
         self.demagnetize_all()
         time.sleep(1)
         self.fold(4)
         self.fold(6)
-        self.set_servo_angle(ARM_SERVO_PIN, angle=130, max_angle=270)
+        # self.set_servo_angle(ARM_SERVO_PIN, angle=130, max_angle=270)
         time.sleep(0.1)
 
     def start_position(self) -> None:
         """Move actuators to the default start position."""
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
-        self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
+        # self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
         time.sleep(0.5)
         self.deploy(0)
         self.deploy(2)
@@ -548,7 +550,7 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         """Block the banner by moving servos to holding positions."""
         self.set_stepper_driver_activation_state(13, enable_driver=False)
         self.elevator_ticks = 0
-        self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
+        # self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
         # self.set_servo_angle(0, angle=105, max_angle=270)
         # self.set_servo_angle(2, angle=167, max_angle=270)
         self.set_servo_angle(0, angle=100, max_angle=270)
@@ -564,8 +566,8 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         self.deploy(0)
         self.go_to_bottom()
         time.sleep(2)
-        self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
-        self.fold(9)
+        # self.set_servo_angle(ARM_SERVO_PIN, angle=35, max_angle=270)
+        # self.fold(9)
 
     # def build(self):
     #     self.fold(self.side_arms)
