@@ -1,182 +1,100 @@
 {
-  "arena": {
-    "border_buffer": 5,
-    "chunk_size": 5,
-    "forbidden_cover_threshold": 0.1,
-    "obstacle_buffer": 10
-  },
   "general": {
-    "teensy": {
-      "baudrate": 115200,
-      "crc": true,
-      "pid": 1155,
-      "vid": 5824
-    },
     "ws": {
-      "cmd_route": "/cmd",
       "port": 8080,
+      "cmd_route": "/cmd",
       "ui_route": "/ui"
+    },
+    "teensy": {
+      "vid": 5824,
+      "pid": 1155,
+      "baudrate": 115200,
+      "crc": true
     }
   },
   "rob": {
-    "actuators": {
-      "actuators_teensy_ser": 14735440,
-      "delay": 0.02,
-      "elevator": {
-        "bottom_steps": 50,
-        "folded_steps": 360,
-        "speed": 2000,
-        "top_steps": 725
-      },
-      "servos_config": {
-        "0": {
-          "deploy_angle": 110,
-          "docking": 90,
-          "fold_angle": 20,
-          "max_angle": 270
-        },
-        "1": {
-          "deploy_angle": 180,
-          "fold_angle": 0,
-          "max_angle": 180
-        },
-        "2": {
-          "deploy_angle": 160,
-          "docking": 180,
-          "fold_angle": 250,
-          "max_angle": 270
-        },
-        "3": {
-          "deploy_angle": 0,
-          "fold_angle": 180,
-          "max_angle": 180
-        },
-        "4": {
-          "deploy_angle": 100,
-          "fold_angle": 10,
-          "max_angle": 270
-        },
-        "5": {
-          "deploy_angle": 180,
-          "fold_angle": 0,
-          "max_angle": 180
-        },
-        "6": {
-          "deploy_angle": 155,
-          "fold_angle": 250,
-          "max_angle": 270
-        },
-        "7": {
-          "deploy_angle": 0,
-          "fold_angle": 180,
-          "max_angle": 180
-        },
-        "8": {
-          "deploy_angle": 150,
-          "docking": 130,
-          "fold_angle": 240,
-          "max_angle": 270
-        },
-        "9": {
-          "deploy_angle": 90,
-          "fold_angle": 130,
-          "maintain_plank": 140,
-          "max_angle": 270
-        }
-      }
+    "ws": {
+      "sender_name": "rob",
+      "hostname": "0.0.0.0",
+      "ping_pong_interval": 1
     },
-    "bau": {
-      "pin": 16.0
-    },
-    "jack": {
-      "pin": 26.0
-    },
-    "lidar": {
-      "angles_unit": "rad",
-      "distances_unit": "cm",
-      "frontal_detection_angle": 1.570796,
-      "max_angle": 3.926991,
-      "min_angle": -0.785398,
-      "min_distance_detection": 10.0,
-      "semi_circular_detection_angle": 3.141592
+    "ws_ui": {
+      "sender_name": "ui",
+      "hostname": "0.0.0.0",
+      "ping_pong_interval": 1
     },
     "log": {
+      "logger_manager": {
+        "enable_files_logs_monitoring_only_for_one_logger": true,
+        "enable_dynamic_config_update": false,
+        "enable_unique_logger_identifier": false
+      },
       "logger": {
         "colors": "ClassicColors",
+        "path": "logs",
         "decorator_log_level": "DEBUG",
-        "disk_alert_threshold_percent": 0.8,
-        "display_monitoring": false,
+        "print_log_level": "INFO",
         "file_log_level": "DEBUG",
-        "file_size_unit": "Go",
-        "filename_lineno_max_width": 15,
+        "print_log": true,
+        "write_to_file": true,
+        "display_monitoring": false,
         "files_monitoring": false,
-        "identifier_max_width": 15,
+        "file_size_unit": "Go",
+        "disk_alert_threshold_percent": 0.8,
         "log_files_size_alert_threshold_percent": 0.2,
         "max_log_file_size": 1.0,
-        "path": "logs",
-        "print_log": true,
-        "print_log_level": "INFO",
-        "write_to_file": true
-      },
-      "logger_manager": {
-        "enable_dynamic_config_update": false,
-        "enable_files_logs_monitoring_only_for_one_logger": true,
-        "enable_unique_logger_identifier": false
+        "identifier_max_width": 15,
+        "filename_lineno_max_width": 15
       }
     },
-    "movement_manager": {
-      "acs_profiles": {
-        "backward": {
-          "acs_detection_profile": "no",
-          "acs_distance": 0
+    "zombie_mode": false,
+    "team_config": {
+      "default_team": "yellow",
+      "info_by_team": {
+        "blue": {
+          "first_pickup_zone": 4,
+          "second_pickup_zone": 2,
+          "third_pickup_zone": 0,
+          "fourth_pickup_zone": 1,
+          "first_build_zone": 16,
+          "second_build_zone": 17,
+          "backstage_zone": 19
         },
-        "go_to_color_reserved_zone_to_construct": {
-          "acs_detection_profile": "rectangular_projection",
-          "acs_distance": 50
-        },
-        "go_to_color_reserved_zone_to_finish_game": {
-          "acs_detection_profile": "no_projection",
-          "acs_distance": 50
-        },
-        "go_to_stuff_zone_to_pick_up": {
-          "acs_detection_profile": "rectangular_projection",
-          "acs_distance": 50
-        },
-        "precise_forward": {
-          "acs_detection_profile": "no",
-          "acs_distance": 0
-        },
-        "start_task": {
-          "acs_detection_profile": "no_projection",
-          "acs_distance": 70
+        "yellow": {
+          "first_pickup_zone": 9,
+          "second_pickup_zone": 7,
+          "third_pickup_zone": 5,
+          "fourth_pickup_zone": 6,
+          "first_build_zone": 12,
+          "second_build_zone": 13,
+          "backstage_zone": 20
         }
-      },
-      "movement_resolution": 1
+      }
     },
     "rolling_basis": {
+      "rolling_basis_teensy_ser": 12678590,
       "pids": {
-        "angular_position": {
-          "kd": 0.0,
-          "ki": 0.0,
-          "kp": 2.0
-        },
         "linear_position": {
-          "kd": 0.0,
-          "ki": 0.0,
-          "kp": 2.0
+          "kp": 50,
+          "ki": 20,
+          "kd": 0
+        },
+        "angular_position": {
+          "kp": 20000,
+          "ki": 15000,
+          "kd": 1000.0
         }
       },
-      "rolling_basis_teensy_ser": 12678590,
       "speed_profiles": {
         "angular_speed": {
+          "slow": {
+            "speed": 1
+          },
           "default": {
             "speed": 3.1415
           },
           "high": {
             "speed": 5
-          },
-          "slow": {
-            "speed": 1
           }
         },
         "linear_speed": {
@@ -195,51 +113,133 @@
     },
     "score": {
       "boombot": {
-        "banner": 20,
         "build_one_floor": 4,
         "build_two_floors": 8,
-        "go_to_backstage": 10
+        "go_to_backstage": 10,
+        "banner": 20
       },
       "pamis": {
-        "free_stage_zone": 15,
         "occupied_zone": 5,
+        "superstar_on_stage": 5,
         "partying": 10,
-        "superstar_on_stage": 5
+        "free_stage_zone": 15
       }
     },
-    "team_config": {
-      "default_team": "yellow",
-      "info_by_team": {
-        "blue": {
-          "backstage_zone": 19,
-          "first_build_zone": 16,
-          "first_pickup_zone": 4,
-          "fourth_pickup_zone": 1,
-          "second_build_zone": 17,
-          "second_pickup_zone": 2,
-          "third_pickup_zone": 0
+    "actuators": {
+      "actuators_teensy_ser": 14735440,
+      "servos_config": {
+        "0": {
+          "fold_angle": 20,
+          "deploy_angle": 110,
+          "docking": 90,
+          "max_angle": 270
         },
-        "yellow": {
-          "backstage_zone": 20,
-          "first_build_zone": 12,
-          "first_pickup_zone": 9,
-          "fourth_pickup_zone": 6,
-          "second_build_zone": 13,
-          "second_pickup_zone": 7,
-          "third_pickup_zone": 5
+        "1": {
+          "fold_angle": 0,
+          "deploy_angle": 180,
+          "max_angle": 180
+        },
+        "2": {
+          "fold_angle": 250,
+          "deploy_angle": 160,
+          "docking": 180,
+          "max_angle": 270
+        },
+        "3": {
+          "fold_angle": 180,
+          "deploy_angle": 0,
+          "max_angle": 180
+        },
+        "4": {
+          "fold_angle": 10,
+          "deploy_angle": 100,
+          "max_angle": 270
+        },
+        "5": {
+          "fold_angle": 0,
+          "deploy_angle": 180,
+          "max_angle": 180
+        },
+        "6": {
+          "fold_angle": 250,
+          "deploy_angle": 155,
+          "max_angle": 270
+        },
+        "7": {
+          "fold_angle": 180,
+          "deploy_angle": 0,
+          "max_angle": 180
+        },
+        "8": {
+          "fold_angle": 240,
+          "deploy_angle": 150,
+          "docking": 130,
+          "max_angle": 270
+        },
+        "9": {
+          "fold_angle": 130,
+          "deploy_angle": 90,
+          "maintain_plank": 140,
+          "max_angle": 270
+        }
+      },
+      "elevator": {
+        "top_steps": 725,
+        "folded_steps": 360,
+        "bottom_steps": 50,
+        "speed": 2000
+      },
+      "delay": 0.02
+    },
+    "lidar": {
+      "distances_unit": "cm",
+      "angles_unit": "rad",
+      "min_angle": -0.785398,
+      "max_angle": 3.926991,
+      "min_distance_detection": 10.0,
+      "frontal_detection_angle": 1.570796,
+      "semi_circular_detection_angle": 3.141592
+    },
+    "movement_manager": {
+      "movement_resolution": 1,
+      "acs_profiles": {
+        "go_to_color_reserved_zone_to_finish_game": {
+          "acs_detection_profile": "no_projection",
+          "acs_distance": 50
+        },
+        "go_to_color_reserved_zone_to_construct": {
+          "acs_detection_profile": "rectangular_projection",
+          "acs_distance": 50
+        },
+        "go_to_stuff_zone_to_pick_up": {
+          "acs_detection_profile": "rectangular_projection",
+          "acs_distance": 50
+        },
+        "backward": {
+          "acs_detection_profile": "no",
+          "acs_distance": 0
+        },
+        "precise_forward": {
+          "acs_detection_profile": "no",
+          "acs_distance": 0
+        },
+        "start_task": {
+          "acs_detection_profile": "no_projection",
+          "acs_distance": 70
         }
       }
     },
-    "ws": {
-      "hostname": "0.0.0.0",
-      "ping_pong_interval": 1,
-      "sender_name": "rob"
+    "jack": {
+      "pin": 26.0
     },
-    "ws_ui": {
-      "hostname": "0.0.0.0",
-      "ping_pong_interval": 1,
-      "sender_name": "ui"
-    },
-    "zombie_mode": false
+    "bau": {
+      "pin": 16.0
+    }
+  },
+  "arena": {
+    "border_buffer": 5,
+    "obstacle_buffer": 10,
+    "chunk_size": 5,
+    "forbidden_cover_threshold": 0.1
   }
 }

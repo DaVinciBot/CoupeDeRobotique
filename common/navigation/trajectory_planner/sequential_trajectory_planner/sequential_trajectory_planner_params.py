@@ -15,7 +15,7 @@ class SequentialTrajectoryPlannerParams(BaseTrajectoryPlannerParams):
     def __init__(
         self,
         direction: Direction = Direction.FORWARD,
-        step_sleep_delay: float = 1.5,
+        step_sleep_delay: float = 0.0,
         *,
         respect_intermediate_orientation: bool = False,
         respect_goal_orientation: bool = True,
