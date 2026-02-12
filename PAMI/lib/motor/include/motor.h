@@ -35,8 +35,8 @@ class Motor {
      * @param enablePin Pin connected to the enable control of the motor driver
      * @param stepsPerRevolution Number of full-steps per revolution of the
      * motor (before applying microstepping factor `k`).
-     * @param k Microstepping factor: if `k` > 1 the driver executes k
      * micro-steps per full step. Typical values are 1 (full-step), 2, 4, 8, ...
+     * @param pulse_us Duration of the step pulse in microseconds.
      * @param invertDirection If true, the logical direction is inverted.
      *
      * @note
@@ -47,7 +47,7 @@ class Motor {
           uint8_t dirPin,
           uint8_t enablePin,
           unsigned int stepsPerRevolution,
-          float k,
+          unsigned int pulse_us,
           bool invertDirection = false);
 
     /**
@@ -137,21 +137,22 @@ class Motor {
     void resetStepCount();
 
    private:
-    uint8_t _stepPin;       // Pin to control the stepping of the motor
-    uint8_t _dirPin;        // Pin to control the direction of the motor
-    uint8_t _enablePin;     // Pin to enable/disable the motor
-    float _factorK;         // Microstepping factor (K)
-    bool _invertDirection;  // Whether to invert the motor direction
+    uint8_t _stepPin;        // Pin to control the stepping of the motor
+    uint8_t _dirPin;         // Pin to control the direction of the motor
+    uint8_t _enablePin;      // Pin to enable/disable the motor
+    bool _invertDirection;   // Whether to invert the motor direction
+    unsigned int _pulse_us;  // Microsecond pulse width for each step
 
     unsigned int _stepsPerRevolution;  // Full-steps per revolution divided by K
     float _targetSpeedStepsPerSec;     // Desired speed (steps/sec)
     float _currentSpeedStepsPerSec;    // Current speed (steps/sec)
     float _acceleration;               // Acceleration (steps/sec^2)
 
-    bool _moving;                 // Whether the motor is currently moving
-    unsigned long _lastStepTime;  // Last time (micros) a step was taken
-    float _usDelayBetweenKSteps;  // Microsecond delay between steps
-    long _stepCount;              // Total step count (signed)
+    bool _moving;                   // Whether the motor is currently moving
+    unsigned long _lastUpdateTime;  // Last time (micros) update() was called
+    unsigned long _lastStepTime;    // Last time (micros) a step was taken
+    float _usDelayBetweenStep;      // Microsecond delay between steps
+    long _stepCount;                // Total step count (signed)
 
     /**
      * @brief Set the logical direction output pin.
@@ -161,12 +162,10 @@ class Motor {
     void _setDirection(bool clockwise);
 
     /**
-     * @brief Perform K micro-steps in a single logical step operation.
+     * @brief Perform one step pulse (high-low toggle).
      *
-     * This low-level helper toggles the step pin the required number of
-     * times to perform microstepping according to `_factorK`.
      */
-    void _doKSteps();
+    void _doOneStep();
 };
 
 #endif

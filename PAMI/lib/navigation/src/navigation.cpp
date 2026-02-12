@@ -15,12 +15,13 @@ void Navigation::setCommand(const Point& targetPos) {
 
     _waypoints.clear();
     Point start = _basis->getPose();
+    float angle = start.theta + Point::angle(start, targetPos);
     for (size_t i = 1; i <= DEFAULT_SEGMENTS; ++i) {
         float t = float(i) / DEFAULT_SEGMENTS;
         Point wp;
         wp.x = start.x + t * (targetPos.x - start.x);
         wp.y = start.y + t * (targetPos.y - start.y);
-        wp.theta = start.theta + Point::angle(start, targetPos);
+        wp.theta = angle;
         _waypoints.push_back(wp);
     }
     _wpIndex = 0;
@@ -37,17 +38,14 @@ void Navigation::update() {
     }
 
     // resend every interval
-    if (_lastSendMs == 0 || now - _lastSendMs >= _sendIntervalMs) {
+    if (_lastSendMs == 0 || now - _lastSendMs >= _sendIntervalMs ||
+        _basis->isMoving() == false) {
         if (_wpIndex >= _waypoints.size()) {
             Serial.println("[Navigation] No more waypoints to send.");
             return;  // no more waypoints to send
-        }
-        if (_wpIndex + 1 < _waypoints.size()) {
+        } else if (_wpIndex + 1 < _waypoints.size()) {
             _basis->setCommand(_waypoints[++_wpIndex]);
         }
-        // else {
-        //     stop(); // fin de la séquence
-        // }
         _lastSendMs = now;
         Serial.printf("[Navigation] Sending command to basis: %d, %d, %d\n",
                       _waypoints[_wpIndex].x, _waypoints[_wpIndex].y,

@@ -1,9 +1,9 @@
-#ifndef COM_H
-#define COM_H
+#ifndef COM_PAMI_H
+#define COM_PAMI_H
 
 #include <SX126x.h>
 #include <crc.h>
-#include <messages.h>
+#include <messages_pami.h>
 #include <cstring>  // To use memcpy()
 
 /**

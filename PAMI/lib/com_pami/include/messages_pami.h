@@ -11,8 +11,8 @@
  * rasp)
  */
 
-#ifndef MESSAGES_H
-#define MESSAGES_H
+#ifndef MESSAGES_PAMI_H
+#define MESSAGES_PAMI_H
 
 #pragma pack(1)
 // Structures use 1-byte packing so that fields are laid out without

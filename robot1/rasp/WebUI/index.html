@@ -10,145 +10,446 @@
     <link rel="stylesheet" href="./assets/style/bento.css" />
     <link rel="stylesheet" href="./page/map.css" />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./page/cam.css" />
+    <link rel="stylesheet" href="./page/settings.css" />
     <link rel="shortcut icon" href="./assets/fav.ico" type="image/x-icon" />
     <title>CDR Dashboard</title>
     <script src="utils.js"></script>
   </head>
 
   <body>
-    <!-- Sidebar -->
-    <div class="menu sushi">
-      <a href="index.html" class="item_menu active"
-        ><i class="menu_icon icon"></i>Général</a
-      >
-      <a href="./page/map.html" class="item_menu"
-        ><i class="map_icon icon"></i>Map</a
-      >
-      <a href="./page/start.html" class="item_menu"
-        ><i class="save_icon icon"></i>Start</a
-      >
-      <a href="./page/cam.html" class="item_menu"
-        ><i class="cam_icon icon"></i>Caméra</a
-      >
-      <a href="./page/settings.html" class="item_menu"
-        ><i class="settings_icon icon"></i>Settings</a
-      >
-    </div>
-    <!-- <div class="subgrid">
-                    <div class="sushi">
-                        <div class="pilule">BAU</div>
-                        <div id="bau_state"
-                            style="margin-top: 40px; background-color: red; padding: 10px; border-radius: 20px; color: white; font-weight: bold; text-align: center;">
-                            ACTIVATED
-                        </div>
-                    </div>
-                </div>
-
-                <div class="sushi">
-                    <div class="pilule">PAMI</div>
-                    <div id="pami_states"
-                        style="margin-top: 40px; display: flex; flex-direction: column; gap: 10px;">
-                    </div>
-                </div> -->
-
-    <div class="sushi">
-      <div class="pilule">Team</div>
-      <div
-        style="
-          margin-top: 40px;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        "
-      >
-        <button
-          class="button"
-          id="blue_team"
-          style="
-            background-color: #005dff;
-            padding: 65px;
-            border-radius: 20px;
-            color: white;
-            font-weight: bold;
-          "
+    <div class="websocket_status" id="websocket_status">
+      <div class="websocket_info">
+        <span class="loading-spinner"></span>
+        <p>En attente de connexion avec le serveur...</p>
+      </div>
+      <div>
+        <small style="color: grey"
+          >Si le robot est allumé et que vous êtes encore sur cette page,
+          rafraichissez la page.</small
         >
-          Bleu
-        </button>
-        <button
-          class="button"
-          id="yellow_team"
-          style="
-            background-color: #ffe600;
-            padding: 65px;
-            border-radius: 20px;
-            color: black;
-            font-weight: bold;
-          "
+      </div>
+    </div>
+    <div class="website" id="website">
+      <!-- Sidebar -->
+      <div class="menu sushi">
+        <a onclick="set_page('main')" id="main_menu" class="item_menu active"
+          ><i class="menu_icon icon" aria-hidden="true"></i>Général</a
         >
-          Jaune
-        </button>
-        <!-- <button class="button"
-                    id="other_team"
-                    style="background-color: lightgray; padding: 65px; border-radius: 20px; color: black; font-weight: bold;">
-                    Autre</button> -->
+        <a
+          onclick="set_page('map_content')"
+          id="map_content_menu"
+          class="item_menu"
+          ><i class="map_icon icon"></i>Map</a
+        >
+        <a onclick="set_page('cam')" id="cam_menu" class="item_menu"
+          ><i class="cam_icon icon"></i>Caméra</a
+        >
+        <a onclick="set_page('start')" id="start_menu" class="item_menu"
+          ><i class="save_icon icon"></i>Start</a
+        >
+        <a onclick="set_page('settings')" id="settings_menu" class="item_menu"
+          ><i class="settings_icon icon"></i>Settings</a
+        >
+      </div>
+      <div class="main content" id="main">
+        <!-- <div class="subgrid">
+                                  <div class="sushi">
+                                      <div class="pilule">BAU</div>
+                                      <div id="bau_state"
+                                          style="margin-top: 40px; background-color: red; padding: 10px; border-radius: 20px; color: white; font-weight: bold; text-align: center;">
+                                          ACTIVATED
+                                      </div>
+                                  </div>
+                              </div>
+
+                              <div class="sushi">
+                                  <div class="pilule">PAMI</div>
+                                  <div id="pami_states"
+                                      style="margin-top: 40px; display: flex; flex-direction: column; gap: 10px;">
+                                  </div>
+                              </div> -->
+
+        <div class="sushi" id="team_selection">
+          <div class="pilule">Team</div>
+          <div
+            style="
+              margin-top: 40px;
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+            "
+          >
+            <button
+              class="button"
+              id="blue_team"
+              style="
+                background-color: #005dff;
+                padding: 65px;
+                border-radius: 20px;
+                color: white;
+                font-weight: bold;
+              "
+            >
+              Bleu
+            </button>
+            <button
+              class="button"
+              id="yellow_team"
+              style="
+                background-color: #ffe600;
+                padding: 65px;
+                border-radius: 20px;
+                color: black;
+                font-weight: bold;
+              "
+            >
+              Jaune
+            </button>
+            <!-- <button class="button"
+                                  id="other_team"
+                                  style="background-color: lightgray; padding: 65px; border-radius: 20px; color: black; font-weight: bold;">
+                                  Autre</button> -->
+          </div>
+        </div>
+        <div class="sushi" id="mode_selection">
+          <div class="pilule">Mode</div>
+          <div
+            style="
+              margin-top: 40px;
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+            "
+          >
+            <button
+              class="button"
+              id="normal_mode"
+              style="
+                background-color: #a9a9a9;
+                padding: 65px;
+                border-radius: 20px;
+                color: white;
+                font-weight: bold;
+              "
+            >
+              Normal (Stratégie automatique)
+            </button>
+            <button
+              class="button"
+              id="iihm_mode"
+              style="
+                background-color: #ffd676;
+                padding: 65px;
+                border-radius: 20px;
+                color: black;
+                font-weight: bold;
+              "
+            >
+              IIHM (Aucune stratégie automatique)
+            </button>
+          </div>
+        </div>
+        <div class="sushi" id="configuration_finished">
+          <div class="pilule">Configuration</div>
+          <div
+            style="
+              margin-top: 40px;
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+            "
+          >
+            <p>Configuration terminée !</p>
+            <p>Mode : <span id="config_mode">...</span></p>
+            <p>Équipe : <span id="config_team">...</span></p>
+          </div>
+        </div>
+
+        <div class="sushi">
+          <div class="pilule">Timer</div>
+          <div
+            id="timer"
+            class="make_center"
+            style="
+              margin-top: 40px;
+              font-size: 100px;
+              background: limegreen;
+              border-radius: 30px;
+              padding: 20px;
+              color: #010132;
+              font-weight: bold;
+              height: calc(100% - 40px);
+            "
+          >
+            1:40
+          </div>
+        </div>
+
+        <div class="sushi">
+          <div class="pilule">Score</div>
+          <div
+            id="score"
+            class="make_center"
+            style="
+              margin-top: 40px;
+              font-size: 100px;
+              font-weight: bold;
+              color: #010132;
+              height: calc(100% - 40px);
+            "
+          >
+            0
+          </div>
+        </div>
+
+        <div class="sushi">
+          <div class="pilule">Tirette</div>
+          <div
+            id="jack_state"
+            style="
+              margin-top: 40px;
+              background-color: limegreen;
+              padding: 10px;
+              border-radius: 20px;
+              color: white;
+              font-weight: bold;
+              text-align: center;
+            "
+          >
+            Ready
+          </div>
+        </div>
+      </div>
+      <div class="settings content" id="settings">
+        <div class="row">
+          <div class="sushi">
+            <div class="pilule">
+              <i class="star_icon icon"></i>
+              Informations
+            </div>
+            <div>
+              Coordonnées : (<span id="info_coords">..., ..., ...</span>)
+            </div>
+          </div>
+          <div class="sushi">
+            <div class="pilule">
+              <i class="grid_icon icon"></i>
+              Actions
+            </div>
+            <input
+              style="display: none"
+              type="radio"
+              id="banner_deploy"
+              name="action"
+              value="banner_deploy"
+            />
+            <label
+              class="action_maki action_radio"
+              for="banner_deploy"
+              style="margin-top: 50px"
+            >
+              Banner Deployement
+            </label>
+            <input
+              style="display: none"
+              type="radio"
+              id="construct"
+              name="action"
+              value="construct"
+            />
+            <label class="action_maki action_radio" for="construct">
+              Construct
+            </label>
+            <input
+              style="display: none"
+              type="radio"
+              id="construct_one_floor"
+              name="action"
+              value="construct_one_floor"
+            />
+            <label class="action_maki action_radio" for="construct_one_floor">
+              Construct One Floor
+            </label>
+            <input
+              style="display: none"
+              type="radio"
+              id="pickup"
+              name="action"
+              value="pickup"
+            />
+            <label class="action_maki action_radio" for="pickup">
+              Pickup
+            </label>
+            <input
+              style="display: none"
+              type="radio"
+              id="push_floor"
+              name="action"
+              value="push_floor"
+            />
+            <label class="action_maki action_radio" for="push_floor">
+              Push one floor to wall
+            </label>
+            <input 
+              style="display: none;"
+              type="radio"
+              id="reset_odometry"
+              name="action"
+              value="reset_odometry"
+            />
+            <label class="action_maki action_radio" for="reset_odometry">
+              Reset Odometry
+            </label>
+            <button
+              class="button"
+              id="send_action"
+              style="margin-top: auto; margin-left: auto; padding: 10px 20px"
+            >
+              Envoyer
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="sushi">
+            <div class="pilule">
+              <i class="compass_icon icon"></i>
+              Coordonnées
+            </div>
+            <div class="maki" id="x_coord">
+              X
+              <span class="value">100</span>
+            </div>
+            <div class="maki" id="y_coord">
+              Y
+              <span class="value">100</span>
+            </div>
+            <div class="maki" id="theta_coord">
+              Theta
+              <span class="value">50</span>
+            </div>
+            <button
+              class="button"
+              id="send_coords"
+              style="margin-top: auto; margin-left: auto; padding: 10px 20px"
+            >
+              Envoyer
+            </button>
+          </div>
+          <div class="sushi">
+            <div class="pilule">
+              <i class="save_icon icon"></i>
+              PID
+            </div>
+            <div class="maki" id="kp">
+              Kp
+              <span class="value">20</span>
+            </div>
+            <div class="maki" id="ki">
+              Ki
+              <span class="value">20</span>
+            </div>
+            <div class="maki" id="kd">
+              Kd
+              <span class="value">20</span>
+            </div>
+            <button
+              class="button"
+              id="send_linear_pid"
+              style="margin-top: auto; margin-left: auto; padding: 10px 20px"
+            >
+              Envoyer (PID Linéaire)
+            </button>
+            <button
+              class="button"
+              id="send_angular_pid"
+              style="margin-left: auto; padding: 10px 20px"
+            >
+              Envoyer (PID Angulaire)
+            </button>
+          </div>
+          <div class="sushi">
+            <div class="pilule">
+              <i class="save_icon icon"></i>
+              Modification
+            </div>
+            <div class="make_center button" id="plus">
+              <h1>+</h1>
+            </div>
+            <input type="number" id="input" />
+            <div class="make_center button" id="minus">
+              <h1>-</h1>
+            </div>
+            <div>
+              <input
+                type="range"
+                id="power"
+                list="tickmarks"
+                max="5"
+                min="0.1"
+                step="0.1"
+                value="1"
+              />
+              <datalist id="tickmarks">
+                <option value="0.1"></option>
+                <option value="0.5"></option>
+                <option value="1"></option>
+                <option value="1.5"></option>
+                <option value="2"></option>
+                <option value="2.5"></option>
+                <option value="3"></option>
+                <option value="3.5"></option>
+                <option value="4"></option>
+                <option value="4.5"></option>
+                <option value="5"></option>
+              </datalist>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cam content" id="cam">
+        <div class="cam_sushi sushi">
+          <div class="pilule">
+            <i class="icon cam_icon"></i>
+            Caméra
+          </div>
+          <div class="make_center">
+            <h1 style="color: white; font-weight: 800; font-size: 50px">
+              NO SIGNAL
+            </h1>
+          </div>
+        </div>
+      </div>
+      <div class="map_content content" id="map_content">
+        <div class="map sushi">
+          <div class="pilule">
+            <i class="icon map_icon"></i>
+            Map
+          </div>
+          <div class="rob">
+            <img src="./assets/rob.svg" alt="" />
+            <img src="./assets/Rob_logo.png" alt="" />
+          </div>
+          <div class="bad">
+            <img src="./assets/mechant.svg" alt="" />
+            <img src="./assets/Crane.svg" alt="" />
+          </div>
+        </div>
+      </div>
+      <div class="start content" id="start">
+        <div class="start_sushi sushi">
+          <div class="pilule">
+            <i class="icon compass_icon"></i>
+            Start
+          </div>
+          <div class="make_center">
+            <h1 style="color: black; font-weight: 500; font-size: 35px">
+              En construction...
+            </h1>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="sushi">
-      <div class="pilule">Timer</div>
-      <div
-        id="timer"
-        class="make_center"
-        style="
-          margin-top: 40px;
-          font-size: 100px;
-          background: limegreen;
-          border-radius: 30px;
-          padding: 20px;
-          color: #010132;
-          font-weight: bold;
-          height: calc(100% - 40px);
-        "
-      >
-        1:40
-      </div>
-    </div>
-
-    <div class="sushi">
-      <div class="pilule">Score</div>
-      <div
-        id="score"
-        class="make_center"
-        style="
-          margin-top: 40px;
-          font-size: 100px;
-          font-weight: bold;
-          color: #010132;
-          height: calc(100% - 40px);
-        "
-      >
-        31
-      </div>
-    </div>
-
-    <div class="sushi">
-      <div class="pilule">Tirette</div>
-      <div
-        id="jack_state"
-        style="
-          margin-top: 40px;
-          background-color: limegreen;
-          padding: 10px;
-          border-radius: 20px;
-          color: white;
-          font-weight: bold;
-          text-align: center;
-        "
-      >
-        Ready
-      </div>
-    </div>
-
     <script src="main.js"></script>
   </body>
 </html>
