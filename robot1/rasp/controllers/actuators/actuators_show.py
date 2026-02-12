@@ -10,6 +10,7 @@ from a_config_loader import CONFIG
 from controllers.actuators.base.actuators import Actuators
 
 ARM_SERVO_PIN = 8
+DISABLED_SERVOS = {8, 9}
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
@@ -139,10 +140,10 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         self.servos: dict[
             int,
             Servo | ServoArm | ServoPlank | ServoDocking,
-        ] = {  # default servo with 2 position
+        ] = {
             i: Servo(cfg["deploy_angle"], cfg["fold_angle"], cfg["max_angle"])
             for i, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items()
-            if i < ARM_SERVO_PIN
+            if i < ARM_SERVO_PIN and i not in DISABLED_SERVOS
         }
 
         # Modify servos 0 and 2:
@@ -169,21 +170,23 @@ class ActuatorsShow(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-publ
         # 6 : Exterior Left Arm
         # 7 : Exterior Left Magnet
 
-        servo_arm = CONFIG.ACTUATOR_SERVOS_CONFIG[ARM_SERVO_PIN]
-        self.servos[ARM_SERVO_PIN] = ServoArm(
-            servo_arm["deploy_angle"],
-            servo_arm["fold_angle"],
-            servo_arm["max_angle"],
-            servo_arm["docking"],
-        )
+        if ARM_SERVO_PIN not in DISABLED_SERVOS:
+            servo_arm = CONFIG.ACTUATOR_SERVOS_CONFIG[ARM_SERVO_PIN]
+            self.servos[ARM_SERVO_PIN] = ServoArm(
+                servo_arm["deploy_angle"],
+                servo_arm["fold_angle"],
+                servo_arm["max_angle"],
+                servo_arm["docking"],
+            )
 
-        servo_plank = CONFIG.ACTUATOR_SERVOS_CONFIG[9]
-        self.servos[9] = ServoPlank(
-            servo_plank["deploy_angle"],
-            servo_plank["fold_angle"],
-            servo_plank["max_angle"],
-            servo_plank["maintain_plank"],
-        )
+        if 9 not in DISABLED_SERVOS:
+            servo_plank = CONFIG.ACTUATOR_SERVOS_CONFIG[9]
+            self.servos[9] = ServoPlank(
+                servo_plank["deploy_angle"],
+                servo_plank["fold_angle"],
+                servo_plank["max_angle"],
+                servo_plank["maintain_plank"],
+            )
 
         # 9 : Folded = Catch plank
 
