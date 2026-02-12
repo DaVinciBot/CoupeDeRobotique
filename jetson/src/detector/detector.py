@@ -515,6 +515,10 @@ class ArucoDetector:
                         if len(visible_refs) < 3:
                             cache_indicator = " (cache)"
 
+                    # Convertir le centre en coordonnées entières pour l'affichage
+                    center_display = center_img.astype(int)
+                    name = self.convert_id_to_name(mid)
+
                     cv2.putText(
                         frame,
                         coord_str + cache_indicator,
