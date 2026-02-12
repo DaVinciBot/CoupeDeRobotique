@@ -90,6 +90,7 @@ SHOW_CAMERA_FEED: bool = parse_bool("SHOW_CAMERA_FEED", default=True)
 CALIBRATE_MODE: bool = parse_bool("CALIBRATE_MODE", default=False)
 DEBUG_MODE: bool = parse_bool("DEBUG_MODE", default=False)
 USE_THREADED_CAMERA: bool = parse_bool("USE_THREADED_CAMERA", default=True)
+USE_CSI_CAMERA: bool = parse_bool("USE_CSI_CAMERA", default=False)
 
 CAMERA_ID: Optional[int] = parse_int("CAMERA_ID", 0)
 
@@ -148,6 +149,7 @@ def calibrate_camera() -> None:
         backends=CAMERA_BACKEND,
         use_mjpg=False,
         fps=FPS,  # Utiliser le FPS configuré (15) au lieu de 5
+        use_csi=USE_CSI_CAMERA,
     )
     if not camera.is_opened():
         print("Erreur: impossible d'ouvrir la caméra")
@@ -208,6 +210,7 @@ def update_in_real_time() -> None:
             height=CAMERA_HEIGHT,
             backends=CAMERA_BACKEND,
             fps=FPS,
+            use_csi=USE_CSI_CAMERA,
         )
     else:
         camera = Camera(
@@ -216,6 +219,7 @@ def update_in_real_time() -> None:
             height=CAMERA_HEIGHT,
             backends=CAMERA_BACKEND,
             fps=FPS,
+            use_csi=USE_CSI_CAMERA,
         )
 
     if not camera.is_opened():

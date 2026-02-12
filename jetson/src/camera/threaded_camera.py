@@ -25,6 +25,7 @@ class ThreadedCamera(Camera):
         buffer_size: int = 1,
         fps: Optional[float] = None,
         use_mjpg: bool = True,
+        use_csi: bool = False,
     ) -> None:
         """Initialize the threaded camera.
 
@@ -37,8 +38,9 @@ class ThreadedCamera(Camera):
             fps (float, optional): Desired frames per second.
             use_mjpg (bool): Si True, utilise le codec MJPG pour performance.
                 Mettre False pour calibration (compatibilité cv2.imshow).
+            use_csi (bool): Use CSI camera (IMX219) with GStreamer pipeline.
         """
-        super().__init__(camera_id, width, height, backends, fps=fps, use_mjpg=use_mjpg)
+        super().__init__(camera_id, width, height, backends, fps=fps, use_mjpg=use_mjpg, use_csi=use_csi)
 
         self.buffer_size = buffer_size
         self.frame = None

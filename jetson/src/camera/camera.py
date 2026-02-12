@@ -25,6 +25,7 @@ class Camera:
         backends: Optional[List[int]] = None,
         fps: Optional[float] = None,
         use_mjpg: bool = True,
+        use_csi: bool = False,
     ) -> None:
         """Initialize the camera.
 
@@ -33,77 +34,112 @@ class Camera:
             width (int, optional): The desired width of the camera feed.
             height (int, optional): The desired height of the camera feed.
             backends (list[int], optional): List of backend preferences for the camera.
+            fps (float, optional): The desired frames per second.
+            use_mjpg (bool): Use MJPG codec for performance.
+            use_csi (bool): Use CSI camera (IMX219) with GStreamer pipeline.
         """
         self.camera_id = camera_id
         self.cam: cv2.VideoCapture | None = None
+        self.use_csi = use_csi
 
-        if backends is None:
-            # Backends par défaut selon la plateforme
-            # Linux/Jetson: CAP_V4L2
-            # Windows: CAP_DSHOW, CAP_MSMF
-            # macOS: CAP_ANY
-            if hasattr(cv2, "CAP_V4L2"):
-                # Linux/Jetson
-                backends = [cv2.CAP_V4L2, cv2.CAP_ANY]
+        # Si caméra CSI, utiliser GStreamer pipeline
+        if use_csi:
+            if width is None:
+                width = 1920
+            if height is None:
+                height = 1080
+            if fps is None:
+                fps = 30
+            
+            # Pipeline GStreamer optimisé pour IMX219 sur Jetson
+            gst_pipeline = (
+                f"nvarguscamerasrc sensor-id={camera_id} ! "
+                f"video/x-raw(memory:NVMM), width={width}, height={height}, "
+                f"format=NV12, framerate={int(fps)}/1 ! "
+                f"nvvidconv flip-method=0 ! "
+                f"video/x-raw, width={width}, height={height}, format=BGRx ! "
+                f"videoconvert ! "
+                f"video/x-raw, format=BGR ! "
+                f"appsink"
+            )
+            print(f"🎥 CSI Camera pipeline: {gst_pipeline}")
+            
+            self.cam = cv2.VideoCapture(gst_pipeline, cv2.CAP_GSTREAMER)
+            if self.cam is None or not self.cam.isOpened():
+                print("⚠️  Échec ouverture caméra CSI, tentative avec V4L2...")
+                self.use_csi = False
+                self.cam = None
+
+        # Si pas CSI ou échec CSI, utiliser les backends classiques
+        if not self.use_csi:
+            if backends is None:
+                # Backends par défaut selon la plateforme
+                # Linux/Jetson: CAP_V4L2
+                # Windows: CAP_DSHOW, CAP_MSMF
+                # macOS: CAP_ANY
+                if hasattr(cv2, "CAP_V4L2"):
+                    # Linux/Jetson
+                    backends = [cv2.CAP_V4L2, cv2.CAP_ANY]
+                else:
+                    # Windows/Mac
+                    backends = [
+                        getattr(cv2, attr, cv2.CAP_ANY)
+                        for attr in ("CAP_DSHOW", "CAP_MSMF")
+                    ] + [cv2.CAP_ANY]
+
+            selected_backend = None
+            for backend in backends:
+                self.cam = cv2.VideoCapture(camera_id, backend)
+                if self.cam and self.cam.isOpened():
+                    selected_backend = backend
+                    break
+                if self.cam:
+                    self.cam.release()
+
+            if self.cam is None or not self.is_opened():
+                return
+
+            # Afficher le backend sélectionné pour diagnostic
+            backend_names = {
+                cv2.CAP_V4L2: "V4L2 (Linux)",
+                cv2.CAP_DSHOW: "DSHOW (Windows)",
+                cv2.CAP_MSMF: "MSMF (Windows)",
+                cv2.CAP_ANY: "ANY (Auto)",
+            }
+            backend_name = backend_names.get(
+                selected_backend, f"Backend {selected_backend}"
+            )
+            print(f"🎥 Camera backend: {backend_name}")
+
+            # Configuration de la résolution et FPS (UNE SEULE FOIS, après ouverture)
+            if width and height:
+                # MJPG pour performance (sauf calibration où on laisse le codec par défaut)
+                if use_mjpg:
+                    fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+                    self.cam.set(cv2.CAP_PROP_FOURCC, fourcc)
+                # Sinon ne pas définir de codec (laisser le défaut d'OpenCV)
+
+                self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+                self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+
+            if fps:
+                # Essayer de définir le FPS (peut ne pas fonctionner sur toutes les caméras)
+                self.cam.set(cv2.CAP_PROP_FPS, fps)
+                actual_fps = self.cam.get(cv2.CAP_PROP_FPS)
+                if abs(actual_fps - fps) > 1:
+                    print(f"⚠️  FPS demandé: {fps}, FPS obtenu: {actual_fps:.1f}")
+
+                # IMPORTANT: Laisser la caméra se stabiliser après changement de FPS
+                # Certaines caméras ont besoin de temps pour ajuster leur buffer interne
+                time.sleep(0.2)  # 200ms de stabilisation
             else:
-                # Windows/Mac
-                backends = [
-                    getattr(cv2, attr, cv2.CAP_ANY)
-                    for attr in ("CAP_DSHOW", "CAP_MSMF")
-                ] + [cv2.CAP_ANY]
-
-        selected_backend = None
-        for backend in backends:
-            self.cam = cv2.VideoCapture(camera_id, backend)
-            if self.cam and self.cam.isOpened():
-                selected_backend = backend
-                break
-            if self.cam:
-                self.cam.release()
-
-        if self.cam is None or not self.is_opened():
-            return
-
-        # Afficher le backend sélectionné pour diagnostic
-        backend_names = {
-            cv2.CAP_V4L2: "V4L2 (Linux)",
-            cv2.CAP_DSHOW: "DSHOW (Windows)",
-            cv2.CAP_MSMF: "MSMF (Windows)",
-            cv2.CAP_ANY: "ANY (Auto)",
-        }
-        backend_name = backend_names.get(
-            selected_backend, f"Backend {selected_backend}"
-        )
-        print(f"🎥 Camera backend: {backend_name}")
-
-        # Configuration de la résolution et FPS (UNE SEULE FOIS, après ouverture)
-        if width and height:
-            # MJPG pour performance (sauf calibration où on laisse le codec par défaut)
-            if use_mjpg:
-                fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-                self.cam.set(cv2.CAP_PROP_FOURCC, fourcc)
-            # Sinon ne pas définir de codec (laisser le défaut d'OpenCV)
-
-            self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-            self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
-
-        if fps:
-            # Essayer de définir le FPS (peut ne pas fonctionner sur toutes les caméras)
-            self.cam.set(cv2.CAP_PROP_FPS, fps)
-            actual_fps = self.cam.get(cv2.CAP_PROP_FPS)
-            if abs(actual_fps - fps) > 1:
-                print(f"⚠️  FPS demandé: {fps}, FPS obtenu: {actual_fps:.1f}")
-
-            # IMPORTANT: Laisser la caméra se stabiliser après changement de FPS
-            # Certaines caméras ont besoin de temps pour ajuster leur buffer interne
-            time.sleep(0.2)  # 200ms de stabilisation
-        else:
-            time.sleep(0.05)
+                time.sleep(0.05)
 
         # Lire quelques frames pour vider le buffer initial
-        for _ in range(5):
-            self.cam.read()
-            time.sleep(0.01)  # Petite pause entre chaque frame
+        if self.cam and self.cam.isOpened():
+            for _ in range(5):
+                self.cam.read()
+                time.sleep(0.01)  # Petite pause entre chaque frame
 
     def is_opened(self) -> bool:
         """Check if the camera is opened.
