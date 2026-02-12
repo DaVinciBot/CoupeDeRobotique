@@ -52,5 +52,5 @@ class EfficiencyScoringFunction(BaseScoringFunction):
             else current_node.points
         )
         return self.k * points + (1 - self.k) * (
-            1 / (estimated_duration + 1e-5)  # Avoid division by zero
+            1 / (max(estimated_duration, 1e-5))  # Avoid division by zero
         )

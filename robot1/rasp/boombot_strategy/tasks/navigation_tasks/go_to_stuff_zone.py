@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from geometry import OrientedPoint, distance
@@ -13,7 +15,9 @@ from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
-from rasp.boombot_strategy import WinterGameContext
+
+if TYPE_CHECKING:
+    from rasp.boombot_strategy import WinterGameContext
 
 
 class GoToStuffZoneToPickUp(NavigationTask):

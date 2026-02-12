@@ -34,7 +34,7 @@ class BaseNavigationTask[GameContextT: BaseGameContext](BaseTask[GameContextT]):
         goal: int | BaseArenaZone | OrientedPoint | None,
         path_planner_params: BasePathPlannerParams,
         trajectory_planner_params: BaseTrajectoryPlannerParams,
-        speed_profiler: SpeedProfiler,  # TODO: via ça je pense que tu peux choper la durée totale
+        speed_profiler: SpeedProfiler,
         avoidance_params: BaseAvoidanceParams,
         acs_detection_profile_params: BaseAcsDetectionProfileParams,
         stabilization_delay: float,
