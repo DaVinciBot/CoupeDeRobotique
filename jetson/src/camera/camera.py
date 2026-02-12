@@ -44,13 +44,16 @@ class Camera:
 
         # Si caméra CSI, utiliser GStreamer pipeline
         if use_csi:
-            if width is None:
-                width = 1920
-            if height is None:
-                height = 1080
-            if fps is None:
-                fps = 30
-            
+            # Forcer 1080p @ 15fps pour éviter la 4K
+            # Ne pas utiliser les paramètres width/height/fps fournis si présents
+            width = 1920
+            height = 1080
+            fps = 15
+
+            print(
+                f"🎥 Configuration CSI forcée: {width}x{height} @ {fps} fps (pas de 4K)"
+            )
+
             # Pipeline GStreamer optimisé pour IMX219 sur Jetson
             gst_pipeline = (
                 f"nvarguscamerasrc sensor-id={camera_id} ! "
@@ -63,7 +66,7 @@ class Camera:
                 f"appsink"
             )
             print(f"🎥 CSI Camera pipeline: {gst_pipeline}")
-            
+
             self.cam = cv2.VideoCapture(gst_pipeline, cv2.CAP_GSTREAMER)
             if self.cam is None or not self.cam.isOpened():
                 print("⚠️  Échec ouverture caméra CSI, tentative avec V4L2...")
@@ -277,21 +280,19 @@ class Camera:
             scale = 0.5
             small = cv2.resize(frame, None, fx=scale, fy=scale)
             gray_small = cv2.cvtColor(small, cv2.COLOR_BGR2GRAY)
-            
+
             ret, corners = cv2.findChessboardCorners(
                 gray_small,
                 chessboard_size,
                 cv2.CALIB_CB_ADAPTIVE_THRESH + cv2.CALIB_CB_NORMALIZE_IMAGE,
             )
-            
+
             # Remettre les coins à l'échelle originale si détectés
             if ret and corners is not None:
                 corners = corners / scale
                 # Affiner sur l'image PLEINE résolution pour la précision
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                corners = cv2.cornerSubPix(
-                    gray, corners, (11, 11), (-1, -1), criteria
-                )
+                corners = cv2.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
 
             display = frame.copy()
 
