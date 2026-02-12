@@ -7,7 +7,7 @@ from typing import Optional
 import cv2
 import matplotlib as mpl
 import numpy as np
-from src.camera import Camera
+from src.camera import CSICamera
 from src.utils.timing import timer
 
 mpl.use("Agg")
@@ -35,18 +35,18 @@ class ArucoDetector:
 
     def __init__(
         self,
-        cam: Camera,
-        marker_size_cm: float,
-        marker_size_ref_cm: float,
-        marker_size_crate_cm: float,
-        camera_matrix: Optional[np.ndarray] = None,
-        dist_coeffs: Optional[np.ndarray] = None,
-        assumed_hfov_deg: float = 60.0,
-    ) -> None:
+        cam,  # type: CSICamera
+        marker_size_cm,  # type: float
+        marker_size_ref_cm,  # type: float
+        marker_size_crate_cm,  # type: float
+        camera_matrix=None,  # type: Optional[np.ndarray]
+        dist_coeffs=None,  # type: Optional[np.ndarray]
+        assumed_hfov_deg=60.0,  # type: float
+    ):  # type: (...) -> None
         """Initialise l'instance de détection ArUco.
 
         Args:
-            cam (Camera): La caméra utilisée pour la détection.
+            cam (CSICamera): La caméra utilisée pour la détection.
             marker_size_cm (float): La taille du marqueur en centimètres.
             marker_size_ref_cm (float): Taille du marqueur de référence en centimètres.
             marker_size_crate_cm (float): La taille du marqueur de crate en centimètres.
