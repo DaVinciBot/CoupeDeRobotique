@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from boombot_strategy.strategies.base_strategy import BaseStrategy
-from boombot_strategy.sub_graphs import get_banner_deployment_subgraph
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
@@ -42,7 +41,7 @@ class GoBackstageStrategy(BaseStrategy):
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
             logger=LogLogger(
-                identifier="OnlyBannerStrategy",
+                identifier="GoBackstageStrategy",
                 follow_logger_manager_rules=True,
             ),
             start=go_to_backstage,
