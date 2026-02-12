@@ -154,6 +154,7 @@ def detect_aruco() -> None:
                 frame,
                 show_arena=SHOW_ARENA,
                 arena_window_name="Arena",
+                show_video=SHOW_CAMERA_FEED,
             )
 
             # Calcul FPS (toutes les secondes)

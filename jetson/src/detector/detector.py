@@ -79,7 +79,7 @@ class ArucoDetector:
 
         # CUDA désactivé : overhead transfert CPU↔GPU > gains sur petites images
         # Pour 1920x1080, le CPU est plus rapide que GPU+transferts
-        self.use_cuda = True
+        self.use_cuda = False
 
         if self.camera_matrix is None:
             w, h = self.cam.get_resolution()
@@ -154,6 +154,49 @@ class ArucoDetector:
         x_mm = round(float(pos_world[0]) * 1000.0)
         y_mm = round(float(pos_world[1]) * 1000.0)
         return f"{x_mm},{y_mm}"
+
+    def _annotate_marker(
+        self,
+        frame,
+        center_img,
+        mid,
+        pos_world,
+        yaw,
+        ids,
+        cache_indicator="",
+    ):
+        """Ajoute les annotations visuelles pour un marqueur sur la frame."""
+        coord_str = ArucoDetector.convert_world_coords_mm(pos_world)
+        center_display = center_img.astype(int)
+        name = self.convert_id_to_name(mid)
+
+        cv2.putText(
+            frame,
+            coord_str + cache_indicator,
+            (center_display[0] - 50, center_display[1] + 12),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.45,
+            (10, 180, 10),
+            2,
+        )
+        cv2.putText(
+            frame,
+            f"{math.degrees(yaw):.1f}deg",
+            (center_display[0] - 50, center_display[1] + 26),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.45,
+            (10, 180, 10),
+            2,
+        )
+        cv2.putText(
+            frame,
+            f"{name}",
+            (center_display[0] - 50, center_display[1] - 25),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.5,
+            (0, 0, 150),
+            2,
+        )
 
     def convert_id_to_name(self, marker_id: int) -> str:
         """Convertit un ID de marqueur en nom lisible.
@@ -442,7 +485,9 @@ class ArucoDetector:
             pass
 
     @timer
-    def analyze_frame(self, frame, show_arena=True, arena_window_name="Arena"):
+    def analyze_frame(
+        self, frame, show_arena=True, arena_window_name="Arena", show_video=True
+    ):
         # Conversion en niveaux de gris (avec CUDA si disponible)
         if self.use_cuda:
             try:
@@ -458,18 +503,22 @@ class ArucoDetector:
 
         # Détection ArUco - OpenCV 4.5.1 compatible
         corners, ids, _ = cv2.aruco.detectMarkers(
-            gray, self.aruco_dict, parameters=self.aruco_params
+            gray,
+            self.aruco_dict,
+            parameters=self.aruco_params,
         )
 
         if ids is None:
             if show_arena:
                 self.update_arena_display(
-                    detected_world=[], window_name=arena_window_name
+                    detected_world=[],
+                    window_name=arena_window_name,
                 )
             return frame, []
 
-        # Dessiner les marqueurs détectés
-        cv2.aruco.drawDetectedMarkers(frame, corners, ids)
+        # Dessiner les marqueurs détectés seulement si affichage activé
+        if show_video:
+            cv2.aruco.drawDetectedMarkers(frame, corners, ids)
         self.compute_transform_from_refs(corners, ids, use_cache=True)
 
         detected_world = []
@@ -504,74 +553,55 @@ class ArucoDetector:
                     else:
                         yaw = 0.0
 
-                    coord_str = ArucoDetector.convert_world_coords_mm(pos_world)
-                    cache_indicator = ""
-                    if mid in self.ref_markers_world:
-                        visible_refs = [
-                            int(ids[j][0])
-                            for j in range(len(ids))
-                            if int(ids[j][0]) in self.ref_markers_world
-                        ]
-                        if len(visible_refs) < 3:
-                            cache_indicator = " (cache)"
+                    # Ajouter un tuple (ID, position, yaw)
+                    detected_world.append((mid, pos_world, yaw))
 
-                    # Convertir le centre en coordonnées entières pour l'affichage
-                    center_display = center_img.astype(int)
+                    # Annotations vidéo seulement si affichage activé
+                    if show_video:
+                        cache_indicator = ""
+                        if mid in self.ref_markers_world:
+                            visible_refs = [
+                                int(ids[j][0])
+                                for j in range(len(ids))
+                                if int(ids[j][0]) in self.ref_markers_world
+                            ]
+                            if len(visible_refs) < 3:
+                                cache_indicator = " (cache)"
+
+                        self._annotate_marker(
+                            frame,
+                            center_img,
+                            mid,
+                            pos_world,
+                            yaw,
+                            ids,
+                            cache_indicator,
+                        )
+        else:
+            # Si pas de transformation calculée, annotations seulement si affichage activé
+            if show_video:
+                for i in range(len(ids)):
+                    mid = int(ids[i][0])
                     name = self.convert_id_to_name(mid)
-
-                    cv2.putText(
-                        frame,
-                        coord_str + cache_indicator,
-                        (center_display[0] - 50, center_display[1] + 12),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        0.45,
-                        (10, 180, 10),
-                        2,
-                    )
-                    cv2.putText(
-                        frame,
-                        f"{math.degrees(yaw):.1f}deg",
-                        (center_display[0] - 50, center_display[1] + 26),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        0.45,
-                        (10, 180, 10),
-                        2,
-                    )
+                    center = np.mean(corners[i][0], axis=0).astype(int)
                     cv2.putText(
                         frame,
                         f"{name}",
-                        (center_display[0] - 50, center_display[1] - 25),
+                        (center[0] - 50, center[1] - 10),
                         cv2.FONT_HERSHEY_SIMPLEX,
                         0.5,
-                        (0, 0, 150),
+                        (0, 0, 255),
                         2,
                     )
-
-                    # Ajouter un tuple (ID, position, yaw)
-                    detected_world.append((mid, pos_world, yaw))
-        else:
-            for i in range(len(ids)):
-                mid = int(ids[i][0])
-                name = self.convert_id_to_name(mid)
-                center = np.mean(corners[i][0], axis=0).astype(int)
-                cv2.putText(
-                    frame,
-                    f"{name}",
-                    (center[0] - 50, center[1] - 10),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    (0, 0, 255),
-                    2,
-                )
-                cv2.putText(
-                    frame,
-                    "Need refs (min 3)",
-                    (center[0] - 60, center[1] + 10),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.4,
-                    (0, 0, 255),
-                    2,
-                )
+                    cv2.putText(
+                        frame,
+                        "Need refs (min 3)",
+                        (center[0] - 60, center[1] + 10),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.4,
+                        (0, 0, 255),
+                        2,
+                    )
 
         if show_arena:
             try:
