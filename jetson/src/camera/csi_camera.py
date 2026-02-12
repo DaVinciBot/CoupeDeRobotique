@@ -2,11 +2,10 @@
 
 import threading
 import time
-from typing import Any, Optional
+from typing import Any, Dict, Optional, Tuple, Union
 
 import cv2
 import numpy as np
-
 
 # Constantes de calibration
 SHARPNESS_MIN_THRESHOLD = 50
@@ -23,7 +22,7 @@ CSI_FPS = 15
 
 class CSICamera:
     """Caméra CSI threadée pour Jetson Nano (IMX219).
-    
+
     Configuration fixe: 1920x1080 @ 15fps avec GStreamer.
     La lecture des frames se fait en continu dans un thread séparé.
     """
@@ -35,14 +34,14 @@ class CSICamera:
             camera_id: ID de la caméra (0=CAM0, 1=CAM1 sur Jetson).
         """
         self.camera_id = camera_id
-        self.cam: cv2.VideoCapture | None = None
-        
+        self.cam = None  # type: Optional[cv2.VideoCapture]
+
         # Thread pour lecture continue
         self.frame = None
         self.frame_lock = threading.Lock()
         self.stopped = False
         self.thread = None
-        
+
         # Statistiques
         self.frames_read = 0
         self.frames_dropped = 0
@@ -60,20 +59,20 @@ class CSICamera:
             f"video/x-raw, format=BGR ! "
             f"appsink"
         )
-        
+
         print(f"🎥 CSI Camera {CSI_WIDTH}x{CSI_HEIGHT} @ {CSI_FPS}fps")
         print(f"🔧 Pipeline: {gst_pipeline}")
-        
+
         self.cam = cv2.VideoCapture(gst_pipeline, cv2.CAP_GSTREAMER)
-        
+
         if not self.is_opened():
             raise RuntimeError("❌ Échec ouverture caméra CSI")
-        
+
         # Vider le buffer initial
         for _ in range(5):
             self.cam.read()
             time.sleep(0.01)
-        
+
         # Démarrer le thread de lecture
         self._start_thread()
 
@@ -112,7 +111,9 @@ class CSICamera:
                     # Calcul FPS lecture (toutes les secondes)
                     current_time = time.time()
                     if current_time - last_stats_time >= 1.0:
-                        self.read_fps = frames_since_stats / (current_time - last_stats_time)
+                        self.read_fps = frames_since_stats / (
+                            current_time - last_stats_time
+                        )
                         frames_since_stats = 0
                         last_stats_time = current_time
                 else:
@@ -150,7 +151,7 @@ class CSICamera:
             # Copier la frame pour éviter les problèmes de concurrence
             return self.frame.copy()
 
-    def get_stats(self) -> dict:
+    def get_stats(self) -> Dict[str, Union[int, float]]:
         """Retourne les statistiques de performance."""
         return {
             "frames_read": self.frames_read,
@@ -158,11 +159,11 @@ class CSICamera:
             "read_fps": self.read_fps,
         }
 
-    def get_resolution(self) -> tuple[int, int]:
+    def get_resolution(self) -> Tuple[int, int]:
         """Retourne la résolution de la caméra."""
         return (CSI_WIDTH, CSI_HEIGHT)
 
-    def get_camera_info(self) -> dict[str, int | float]:
+    def get_camera_info(self) -> Dict[str, Union[int, float]]:
         """Retourne les informations de la caméra."""
         return {
             "width": CSI_WIDTH,
@@ -172,10 +173,10 @@ class CSICamera:
 
     def calibrate(
         self,
-        chessboard_size: tuple[int, int] = (9, 6),
-        square_size: float = 1.0,
-        num_images: int = 20,
-    ) -> tuple[Optional[Any], Optional[Any], Optional[Any], Optional[Any]]:
+        chessboard_size=(9, 6),  # type: Tuple[int, int]
+        square_size=1.0,  # type: float
+        num_images=20,  # type: int
+    ):  # type: (...) -> Tuple[Optional[Any], Optional[Any], Optional[Any], Optional[Any]]
         """Calibre la caméra avec un échiquier.
 
         Args:
@@ -243,8 +244,12 @@ class CSICamera:
 
                 # Mesure de netteté
                 sharpness = cv2.Laplacian(gray, cv2.CV_64F).var()
-                color = (0, 255, 0) if sharpness > SHARPNESS_MIN_THRESHOLD else (0, 165, 255)
-                
+                color = (
+                    (0, 255, 0)
+                    if sharpness > SHARPNESS_MIN_THRESHOLD
+                    else (0, 165, 255)
+                )
+
                 cv2.putText(
                     display,
                     f"✓ Detecte! Nettete: {sharpness:.0f}",
@@ -327,7 +332,9 @@ class CSICamera:
                     camera_matrix,
                     dist_coeffs,
                 )
-                error = cv2.norm(imgpoints[i], imgpoints2, cv2.NORM_L2) / len(imgpoints2)
+                error = cv2.norm(imgpoints[i], imgpoints2, cv2.NORM_L2) / len(
+                    imgpoints2
+                )
                 total_error += error
 
             mean_error = total_error / len(objpoints)
