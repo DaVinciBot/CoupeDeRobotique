@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, override
 
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
-from geometry import OrientedPoint
+from geometry import OrientedPoint, distance
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
 )
@@ -26,6 +26,7 @@ from navigation.trajectory_planner.sequential_trajectory_planner import (
 )
 
 if TYPE_CHECKING:
+    from boombot_strategy.winter_game_context import WinterGameContext
     from strategy.core import BaseGameContext
 
 
@@ -50,6 +51,12 @@ class RelativeBackward(NavigationTask):
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
             stabilization_delay=1,  # Delay to stabilize after moving backward
             timeout=20,
+            points=0,
+        )
+        self.estimated_duration = (
+            self.speed_profiler.linear_speed_profile.get_total_duration(
+                distance=abs(distance),
+            )
         )
 
 
@@ -70,6 +77,12 @@ class RelativeForward(NavigationTask):
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
             stabilization_delay=0.5,  # Delay to stabilize after moving forward
+            points=0,
+        )
+        self.estimated_duration = (
+            self.speed_profiler.linear_speed_profile.get_total_duration(
+                distance=abs(distance),
+            )
         )
 
 
@@ -95,10 +108,32 @@ class GoCentroidOfZone(NavigationTask):
                 width_view=40,
             ),
             stabilization_delay=0.5,
+            points=0,
         )
         self.zone_id: int = zone_id
         self._is_initialized: bool = False
         self.navigator_task: NavigatorTask
+        self.estimated_duration = self.compute_estimated_duration
+
+    def compute_estimated_duration(self, ctx: WinterGameContext) -> float:
+        """Estimate the duration to reach the centroid of the zone.
+
+        Args:
+            ctx (WinterGameContext): The game context providing arena information.
+
+        Returns:
+            float: Estimated duration in seconds.
+        """
+        centroid: OrientedPoint = OrientedPoint.from_point(
+            ctx.arena.zones[self.zone_id].polygon.centroid,
+        )
+        dist: float = float(distance(centroid, ctx.arena.ally_zone.point))
+        return (
+            self.speed_profiler.linear_speed_profile.get_total_duration(
+                distance=dist,
+            )
+            + self.stabilization_delay
+        )
 
     @override
     def _initialize(self, ctx: BaseGameContext) -> None:

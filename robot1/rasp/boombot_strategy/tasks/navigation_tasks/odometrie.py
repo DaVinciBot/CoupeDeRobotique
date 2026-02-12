@@ -34,7 +34,7 @@ class SetOdometrie(BaseTask[WinterGameContext]):
         self.y: float | None = y
         self.theta: float | None = theta
 
-        super().__init__()
+        super().__init__(points=0, estimated_duration=0)
 
     @override
     def handle(self, ctx: WinterGameContext) -> bool:

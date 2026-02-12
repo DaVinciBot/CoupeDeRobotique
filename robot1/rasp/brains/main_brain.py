@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any
 
 import matplotlib.pyplot as plt
 import numpy as np
+from loggerplusplus import Logger
 from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
@@ -32,8 +33,6 @@ from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 
 if TYPE_CHECKING:
-    from loggerplusplus import Logger
-
     from arena.winter_arena import WinterArena
     from sensors import Inputs, Lidar, LidarDummy
     from strategy.core.tasks import BaseTask
@@ -180,7 +179,7 @@ class MainBrain(Brain):
                     arena=self.arena,
                     rolling_basis=rolling_basis,
                     actuators=actuators,
-                    score=self.score,
+                    point=self.score,
                 ),
             )
 
@@ -195,7 +194,7 @@ class MainBrain(Brain):
             arena=self.arena,
             rolling_basis=rolling_basis,
             actuators=actuators,
-            score=self.score,
+            point=self.score,
         )
 
         if strategy:
@@ -296,7 +295,7 @@ class MainBrain(Brain):
             self.should_update_pid = False
 
         # Update shared state from the context
-        self.score = context.score
+        self.score = context.point
         self.odemetrie_state = context.arena.ally_zone.point
         self.enemy_odemetrie_state = context.arena.enemy_zone.point
         self.rolling_basis_odometrie = rolling_basis.odometrie

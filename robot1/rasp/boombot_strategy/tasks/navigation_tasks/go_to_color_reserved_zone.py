@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+from geometry import OrientedPoint, distance
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
 )
@@ -12,6 +15,9 @@ from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
+
+if TYPE_CHECKING:
+    from rasp.boombot_strategy.winter_game_context import WinterGameContext
 
 
 class GoToColorReservedZoneToFinishGame(NavigationTask):
@@ -34,6 +40,29 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
                 width_view=40,
             ),
             stabilization_delay=0.5,
+            points=0,
+        )
+        self.zone_id: int = color_reserved_zone_id
+        self.estimated_duration = self.compute_estimated_duration
+
+    def compute_estimated_duration(self, ctx: WinterGameContext) -> float:
+        """Estimate duration based on distance to the target color reserved zone.
+
+        Args:
+            ctx (WinterGameContext): The current game context.
+
+        Returns:
+            float: Estimated time to reach the color reserved zone in seconds.
+        """
+        centroid: OrientedPoint = OrientedPoint.from_point(
+            ctx.arena.zones[self.zone_id].polygon.centroid,
+        )
+        dist: float = float(distance(centroid, ctx.arena.ally_zone.point))
+        return (
+            self.speed_profiler.linear_speed_profile.get_total_duration(
+                distance=dist,
+            )
+            + self.stabilization_delay
         )
 
 
@@ -57,4 +86,27 @@ class GoToColorReservedZoneToConstruct(NavigationTask):
                 width_view=40,
             ),
             stabilization_delay=1,  # Delay to stabilize before construction
+            points=0,
+        )
+        self.zone_id: int = color_reserved_zone_id
+        self.estimated_duration = self.compute_estimated_duration
+
+    def compute_estimated_duration(self, ctx: WinterGameContext) -> float:
+        """Estimate duration based on distance to the target color reserved zone.
+
+        Args:
+            ctx (WinterGameContext): The current game context.
+
+        Returns:
+            float: Estimated time to reach the color reserved zone in seconds.
+        """
+        centroid: OrientedPoint = OrientedPoint.from_point(
+            ctx.arena.zones[self.zone_id].polygon.centroid,
+        )
+        dist: float = float(distance(centroid, ctx.arena.ally_zone.point))
+        return (
+            self.speed_profiler.linear_speed_profile.get_total_duration(
+                distance=dist,
+            )
+            + self.stabilization_delay
         )
