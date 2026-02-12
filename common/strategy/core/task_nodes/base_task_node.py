@@ -15,6 +15,8 @@ from strategy.core.task_nodes.scoring_functions import (
 from strategy.core.tasks import BaseTask, TaskStatus
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from strategy.core.base_game_context import BaseGameContext
     from strategy.core.transitions import BaseTransition
 
@@ -27,6 +29,8 @@ class BaseTaskNode:
         name: str,
         tasks: BaseTask | list[BaseTask],
         scoring_function: BaseScoringFunction | None = None,
+        points: int | Callable[[BaseGameContext], int] | None = None,
+        estimated_duration: float | Callable[[BaseGameContext], float] | None = None,
     ) -> None:
         """Initialize the task node.
 
@@ -35,6 +39,10 @@ class BaseTaskNode:
             tasks (BaseTask | list[BaseTask]): Single task or list of tasks to execute.
             scoring_function (BaseScoringFunction | None, optional):
                 Scoring function used when evaluating transitions. Defaults to None.
+            points (int | Callable[[BaseGameContext], int] | None): Points awarded for
+                completing this task node, defaults to None.
+            estimated_duration (float | Callable[[BaseGameContext], float] | None):
+                Estimated duration of the task node in seconds, defaults to None.
         """
         self.name: str = name
         self.tasks: list[BaseTask[Any]] = (
@@ -54,6 +62,21 @@ class BaseTaskNode:
 
         self.start_time: float | None = None
         self.end_time: float | None = None
+
+        # Initialize points and estimated duration using tasks if not provided
+        self.estimated_duration: float | Callable[[BaseGameContext], float] = None
+        if estimated_duration is None:
+            self.estimated_duration = sum(
+                task.estimated_duration for task in self.tasks
+            )
+        else:
+            self.estimated_duration = estimated_duration
+
+        self.points: int | Callable[[BaseGameContext], int] = None
+        if points is None:
+            self.points = sum(task.points for task in self.tasks)
+        else:
+            self.points = points
 
         self.entered = False
         self._exited = False

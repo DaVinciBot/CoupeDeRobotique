@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, override
 
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
-from geometry import OrientedPoint
+from geometry import OrientedPoint, distance
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
 )
@@ -17,13 +17,16 @@ from navigation.avoidance.no_avoidance import NoAvoidanceParams
 from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
 from navigation.navigator.task import NavigatorTask, NavigatorTaskParams
 from navigation.path_planner import Direction
-from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
+from navigation.path_planner.basic_path_planner import (
+    BasicPathPlannerParams,
+)
 from navigation.path_planner.delta_path_planner import DeltaPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
 
 if TYPE_CHECKING:
+    from boombot_strategy.winter_game_context import WinterGameContext
     from strategy.core import BaseGameContext
 
 
@@ -48,6 +51,12 @@ class RelativeBackward(NavigationTask):
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
             stabilization_delay=1,  # Delay to stabilize after moving backward
             timeout=20,
+            points=0,
+        )
+        self.estimated_duration = (
+            self.speed_profiler.linear_speed_profile.get_total_duration(
+                distance=abs(distance),
+            )
         )
 
 
@@ -68,6 +77,12 @@ class RelativeForward(NavigationTask):
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
             stabilization_delay=0.5,  # Delay to stabilize after moving forward
+            points=0,
+        )
+        self.estimated_duration = (
+            self.speed_profiler.linear_speed_profile.get_total_duration(
+                distance=abs(distance),
+            )
         )
 
 
@@ -93,10 +108,32 @@ class GoCentroidOfZone(NavigationTask):
                 width_view=40,
             ),
             stabilization_delay=0.5,
+            points=0,
         )
         self.zone_id: int = zone_id
         self._is_initialized: bool = False
         self.navigator_task: NavigatorTask
+        self.estimated_duration = self.compute_estimated_duration
+
+    def compute_estimated_duration(self, ctx: WinterGameContext) -> float:
+        """Estimate the duration to reach the centroid of the zone.
+
+        Args:
+            ctx (WinterGameContext): The game context providing arena information.
+
+        Returns:
+            float: Estimated duration in seconds.
+        """
+        centroid: OrientedPoint = OrientedPoint.from_point(
+            ctx.arena.zones[self.zone_id].polygon.centroid,
+        )
+        dist: float = float(distance(centroid, ctx.arena.ally_zone.point))
+        return (
+            self.speed_profiler.linear_speed_profile.get_total_duration(
+                distance=dist,
+            )
+            + self.stabilization_delay
+        )
 
     @override
     def _initialize(self, ctx: BaseGameContext) -> None:
@@ -124,4 +161,29 @@ class GoCentroidOfZone(NavigationTask):
                 acs_detection_profile_params=self.acs_detection_profile_params,
                 stabilization_delay=self.stabilization_delay,
             ),
+        )
+
+
+class GoToOrientedPoint(NavigationTask):
+    """Navigation task to go to a specific oriented point."""
+
+    def __init__(self, target: OrientedPoint) -> None:
+        """Initialize the GoToOrientedPoint task.
+
+        Args:
+            target (OrientedPoint): The target position and orientation.
+        """
+        super().__init__(
+            goal=target,
+            path_planner_params=BasicPathPlannerParams(),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(
+                step_sleep_delay=2,
+            ),
+            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+            avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
+            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                acs_distance=55,
+                width_view=40,
+            ),
+            stabilization_delay=2,
         )
