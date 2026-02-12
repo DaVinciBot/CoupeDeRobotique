@@ -79,7 +79,7 @@ class ArucoDetector:
 
         # CUDA désactivé : overhead transfert CPU↔GPU > gains sur petites images
         # Pour 1920x1080, le CPU est plus rapide que GPU+transferts
-        self.use_cuda = False
+        self.use_cuda = True
 
         if self.camera_matrix is None:
             w, h = self.cam.get_resolution()
