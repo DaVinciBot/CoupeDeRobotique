@@ -17,7 +17,9 @@ from navigation.avoidance.no_avoidance import NoAvoidanceParams
 from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
 from navigation.navigator.task import NavigatorTask, NavigatorTaskParams
 from navigation.path_planner import Direction
-from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
+from navigation.path_planner.basic_path_planner import (
+    BasicPathPlannerParams,
+)
 from navigation.path_planner.delta_path_planner import DeltaPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
@@ -124,4 +126,29 @@ class GoCentroidOfZone(NavigationTask):
                 acs_detection_profile_params=self.acs_detection_profile_params,
                 stabilization_delay=self.stabilization_delay,
             ),
+        )
+
+
+class GoToOrientedPoint(NavigationTask):
+    """Navigation task to go to a specific oriented point."""
+
+    def __init__(self, target: OrientedPoint) -> None:
+        """Initialize the GoToOrientedPoint task.
+
+        Args:
+            target (OrientedPoint): The target position and orientation.
+        """
+        super().__init__(
+            goal=target,
+            path_planner_params=BasicPathPlannerParams(),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(
+                step_sleep_delay=2,
+            ),
+            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+            avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
+            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                acs_distance=55,
+                width_view=40,
+            ),
+            stabilization_delay=2,
         )

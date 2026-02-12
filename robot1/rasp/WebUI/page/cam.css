@@ -1,10 +1,10 @@
-.cam {
-  grid-row: 1/3;
+.cam_sushi {
   background: url("../assets/no_signal.png") center;
   background-size: cover;
   animation: no_signal 10s linear infinite;
   /*hide overflowing child*/
   overflow: hidden;
+  border-radius: 40px;
 }
 
 #VideoStream {

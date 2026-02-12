@@ -460,6 +460,18 @@ class BaseArena(ABC):
             if zone.accessibility.name == accessibility.upper()
         ]
 
+    def get_current_zone_id(self) -> int | None:
+        """Get the zone ID (uid) of the zone containing the ally robot.
+
+        Returns:
+            int | None: The zone ID (uid) if the position is within a zone,
+                        None otherwise.
+        """
+        for zone in self.zones:
+            if zone.polygon.contains(self.ally_zone.point):
+                return zone.uid
+        return None
+
     # We check if an element intersects with at least one zone of the specified type
     def zone_intersects(self, accessibility: str, element: Geometry) -> bool:
         """Check if a geometric element intersects zones of a given accessibility.
