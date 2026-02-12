@@ -75,7 +75,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         self.speed_vector = speed_vector or SpeedVector(0.0, 0.0, 0.0)
         self.speed_vector.factor = vector_factor
         self.positions_record_size = positions_record_size
-        self.__positions_recorded = (
+        self.__positions_recorded: deque[Record] = (
             deque(maxlen=positions_record_size)
             if positions_recorded is None
             else positions_recorded
@@ -112,9 +112,9 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
             SpeedVector: Computed speed vector with magnitude and direction.
         """
         if len(self.__positions_recorded) < MIN_RECORDS_FOR_VECTOR:
-            self.logger.debug(
-                "Not enough positions recorded to compute speed vector. "
-                "Returning zero vector.",
+            self._logger.debug(
+                "[ARENA:Zone:Vector] Not enough positions recorded, "
+                "returning zero vector",
             )
             return SpeedVector(0, 0, 0)
 
@@ -125,8 +125,9 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         timestamp_delta = end_record.timestamp - start_record.timestamp
 
         if timestamp_delta <= 0 or timestamp_delta > self.no_detection_timeout:
-            self.logger.debug(
-                "Invalid or outdated time delta. Returning zero vector.",
+            self._logger.debug(
+                "[ARENA:Zone:Vector] Invalid/outdated time delta, "
+                "returning zero vector",
             )
             return SpeedVector(0, 0, 0)
 
@@ -138,7 +139,9 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         speed = distance / timestamp_delta if distance else 0
 
         if not speed:
-            self.logger.debug("No displacement detected. Returning zero vector.")
+            self._logger.debug(
+                "[ARENA:Zone:Vector] No displacement detected, returning zero vector",
+            )
             return SpeedVector(0, 0, 0)
 
         return SpeedVector(speed, dx / distance, dy / distance)
@@ -165,7 +168,7 @@ class BaseSpeedVectorAutoCalculateZone(BaseArenaZone):
         vector_line = self._compute_vector_line()
 
         super().__init__(
-            logger=self.logger,
+            logger=self._logger,
             zone_type=self.zone_type,
             accessibility=self.accessibility,
             buffer_size=self.buffer_size,

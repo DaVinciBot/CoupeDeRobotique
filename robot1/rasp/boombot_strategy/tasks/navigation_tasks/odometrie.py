@@ -4,12 +4,12 @@ from __future__ import annotations
 
 from typing import override
 
-from boombot_strategy.show_game_context import ShowGameContext
+from boombot_strategy.winter_game_context import WinterGameContext
 from geometry import OrientedPoint
 from strategy.core.tasks.base_task import BaseTask
 
 
-class SetOdometrie(BaseTask[ShowGameContext]):
+class SetOdometrie(BaseTask[WinterGameContext]):
     """Task to update the robot's odometry position.
 
     The task uses the provided ``x``, ``y`` and ``theta`` values if given;
@@ -37,11 +37,11 @@ class SetOdometrie(BaseTask[ShowGameContext]):
         super().__init__()
 
     @override
-    def handle(self, ctx: ShowGameContext) -> bool:
+    def handle(self, ctx: WinterGameContext) -> bool:
         """Handle the execution of the odometry setting task.
 
         Args:
-            ctx (ShowGameContext): Context containing game state and arena info.
+            ctx (WinterGameContext): Context containing game state and arena info.
 
         Returns:
             bool: Always returns ``True`` after setting the new odometry.

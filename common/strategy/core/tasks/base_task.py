@@ -3,10 +3,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
-from loggerplusplus import Logger
-
+from log_manager import LogLogger
 from strategy.core.base_game_context import BaseGameContext
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class BaseTask[GameContextT: BaseGameContext](ABC):
@@ -18,7 +21,7 @@ class BaseTask[GameContextT: BaseGameContext](ABC):
         Args:
             logger (Logger | None): Logger instance for debugging. Defaults to None.
         """
-        self.logger: Logger = logger or Logger(
+        self._logger: Logger = logger or LogLogger(
             identifier=self.__class__.__name__,
             follow_logger_manager_rules=True,
         )

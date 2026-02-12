@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -35,13 +35,13 @@ def visualize_task_graph(
         Digraph: The generated Graphviz graph object.
     """
     dot = Digraph(comment="Strategy Graph", format="png")
-    seen = set()
+    seen: set[str] = set()
 
-    def get_task_class_name(task_list: list[BaseTask] | BaseTask) -> str:
+    def get_task_class_name(task_list: list[BaseTask[Any]] | BaseTask[Any]) -> str:
         """Get the class name of a task or a list of tasks.
 
         Args:
-            task_list (list[BaseTask] | BaseTask): The task or list of tasks.
+            task_list (list[BaseTask[Any]] | BaseTask[Any]): The task or list of tasks.
 
         Returns:
             str: The class name of the task or list of tasks.
@@ -103,13 +103,13 @@ def visualize_entire_subgraph(
         Digraph: The generated Graphviz graph object.
     """
     dot = Digraph(comment="Full Strategy Graph", format="png")
-    seen = set()
+    seen: set[str] = set()
 
-    def get_task_class_name(task_list: list[BaseTask] | BaseTask) -> str:
+    def get_task_class_name(task_list: list[BaseTask[Any]] | BaseTask[Any]) -> str:
         """Get the class name of a task or a list of tasks.
 
         Args:
-            task_list (list[BaseTask] | BaseTask): The task or list of tasks.
+            task_list (list[BaseTask[Any]] | BaseTask[Any]): The task or list of tasks.
 
         Returns:
             str: The class name of the task or list of tasks.

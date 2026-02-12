@@ -37,9 +37,6 @@
                                 <a class="function" href="#BasePathPlanner.__init__">BasePathPlanner</a>
                         </li>
                         <li>
-                                <a class="variable" href="#BasePathPlanner.logger">logger</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#BasePathPlanner.params">params</a>
                         </li>
                         <li>
@@ -143,7 +140,7 @@
 </span><span id="BasePathPlanner-34"><a href="#BasePathPlanner-34"><span class="linenos"> 34</span></a><span class="sd">            logger (Logger | None, optional):</span>
 </span><span id="BasePathPlanner-35"><a href="#BasePathPlanner-35"><span class="linenos"> 35</span></a><span class="sd">                Logger instance for debugging. Defaults to None.</span>
 </span><span id="BasePathPlanner-36"><a href="#BasePathPlanner-36"><span class="linenos"> 36</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BasePathPlanner-37"><a href="#BasePathPlanner-37"><span class="linenos"> 37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span> <span class="ow">or</span> <span class="n">Logger</span><span class="p">(</span>
+</span><span id="BasePathPlanner-37"><a href="#BasePathPlanner-37"><span class="linenos"> 37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span> <span class="ow">or</span> <span class="n">Logger</span><span class="p">(</span>
 </span><span id="BasePathPlanner-38"><a href="#BasePathPlanner-38"><span class="linenos"> 38</span></a>            <span class="n">identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="BasePathPlanner-39"><a href="#BasePathPlanner-39"><span class="linenos"> 39</span></a>            <span class="n">follow_logger_manager_rules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="BasePathPlanner-40"><a href="#BasePathPlanner-40"><span class="linenos"> 40</span></a>        <span class="p">)</span>
@@ -190,23 +187,44 @@
 </span><span id="BasePathPlanner-81"><a href="#BasePathPlanner-81"><span class="linenos"> 81</span></a><span class="sd">            list[OrientedPoint]: A list of waypoints representing the planned path.</span>
 </span><span id="BasePathPlanner-82"><a href="#BasePathPlanner-82"><span class="linenos"> 82</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="BasePathPlanner-83"><a href="#BasePathPlanner-83"><span class="linenos"> 83</span></a>
-</span><span id="BasePathPlanner-84"><a href="#BasePathPlanner-84"><span class="linenos"> 84</span></a>    <span class="nd">@override</span>
-</span><span id="BasePathPlanner-85"><a href="#BasePathPlanner-85"><span class="linenos"> 85</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="BasePathPlanner-86"><a href="#BasePathPlanner-86"><span class="linenos"> 86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a human-readable string representation of the path planner.</span>
+</span><span id="BasePathPlanner-84"><a href="#BasePathPlanner-84"><span class="linenos"> 84</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="BasePathPlanner-85"><a href="#BasePathPlanner-85"><span class="linenos"> 85</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_backward_position</span><span class="p">(</span><span class="n">goal</span><span class="p">:</span> <span class="n">OrientedPoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrientedPoint</span><span class="p">:</span>
+</span><span id="BasePathPlanner-86"><a href="#BasePathPlanner-86"><span class="linenos"> 86</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the backward-facing pose by flipping orientation by π.</span>
 </span><span id="BasePathPlanner-87"><a href="#BasePathPlanner-87"><span class="linenos"> 87</span></a>
-</span><span id="BasePathPlanner-88"><a href="#BasePathPlanner-88"><span class="linenos"> 88</span></a><span class="sd">        Returns:</span>
-</span><span id="BasePathPlanner-89"><a href="#BasePathPlanner-89"><span class="linenos"> 89</span></a><span class="sd">            str: String representation with class name and parameters.</span>
-</span><span id="BasePathPlanner-90"><a href="#BasePathPlanner-90"><span class="linenos"> 90</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BasePathPlanner-91"><a href="#BasePathPlanner-91"><span class="linenos"> 91</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="si">}</span><span class="s2">)&quot;</span>
-</span><span id="BasePathPlanner-92"><a href="#BasePathPlanner-92"><span class="linenos"> 92</span></a>
-</span><span id="BasePathPlanner-93"><a href="#BasePathPlanner-93"><span class="linenos"> 93</span></a>    <span class="nd">@override</span>
-</span><span id="BasePathPlanner-94"><a href="#BasePathPlanner-94"><span class="linenos"> 94</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="BasePathPlanner-95"><a href="#BasePathPlanner-95"><span class="linenos"> 95</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an official string representation of the path planner.</span>
-</span><span id="BasePathPlanner-96"><a href="#BasePathPlanner-96"><span class="linenos"> 96</span></a>
-</span><span id="BasePathPlanner-97"><a href="#BasePathPlanner-97"><span class="linenos"> 97</span></a><span class="sd">        Returns:</span>
-</span><span id="BasePathPlanner-98"><a href="#BasePathPlanner-98"><span class="linenos"> 98</span></a><span class="sd">            str: The same as ``__str__`` for consistency in debugging and logging.</span>
-</span><span id="BasePathPlanner-99"><a href="#BasePathPlanner-99"><span class="linenos"> 99</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BasePathPlanner-100"><a href="#BasePathPlanner-100"><span class="linenos">100</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+</span><span id="BasePathPlanner-88"><a href="#BasePathPlanner-88"><span class="linenos"> 88</span></a><span class="sd">        Args:</span>
+</span><span id="BasePathPlanner-89"><a href="#BasePathPlanner-89"><span class="linenos"> 89</span></a><span class="sd">            goal (OrientedPoint): Original pose.</span>
+</span><span id="BasePathPlanner-90"><a href="#BasePathPlanner-90"><span class="linenos"> 90</span></a>
+</span><span id="BasePathPlanner-91"><a href="#BasePathPlanner-91"><span class="linenos"> 91</span></a><span class="sd">        Returns:</span>
+</span><span id="BasePathPlanner-92"><a href="#BasePathPlanner-92"><span class="linenos"> 92</span></a><span class="sd">            OrientedPoint: Flipped pose for backward motion.</span>
+</span><span id="BasePathPlanner-93"><a href="#BasePathPlanner-93"><span class="linenos"> 93</span></a>
+</span><span id="BasePathPlanner-94"><a href="#BasePathPlanner-94"><span class="linenos"> 94</span></a><span class="sd">        Raises:</span>
+</span><span id="BasePathPlanner-95"><a href="#BasePathPlanner-95"><span class="linenos"> 95</span></a><span class="sd">            ValueError: If goal.theta is None.</span>
+</span><span id="BasePathPlanner-96"><a href="#BasePathPlanner-96"><span class="linenos"> 96</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BasePathPlanner-97"><a href="#BasePathPlanner-97"><span class="linenos"> 97</span></a>        <span class="k">if</span> <span class="n">goal</span><span class="o">.</span><span class="n">theta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BasePathPlanner-98"><a href="#BasePathPlanner-98"><span class="linenos"> 98</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+</span><span id="BasePathPlanner-99"><a href="#BasePathPlanner-99"><span class="linenos"> 99</span></a>                <span class="sa">f</span><span class="s2">&quot;Cannot compute backward position: theta must be defined, &quot;</span>
+</span><span id="BasePathPlanner-100"><a href="#BasePathPlanner-100"><span class="linenos">100</span></a>                <span class="sa">f</span><span class="s2">&quot;got None at position (</span><span class="si">{</span><span class="n">goal</span><span class="o">.</span><span class="n">x</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">goal</span><span class="o">.</span><span class="n">y</span><span class="si">}</span><span class="s2">)&quot;</span>
+</span><span id="BasePathPlanner-101"><a href="#BasePathPlanner-101"><span class="linenos">101</span></a>            <span class="p">)</span>
+</span><span id="BasePathPlanner-102"><a href="#BasePathPlanner-102"><span class="linenos">102</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="BasePathPlanner-103"><a href="#BasePathPlanner-103"><span class="linenos">103</span></a>        <span class="k">return</span> <span class="n">OrientedPoint</span><span class="p">(</span><span class="n">goal</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">goal</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">goal</span><span class="o">.</span><span class="n">theta</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+</span><span id="BasePathPlanner-104"><a href="#BasePathPlanner-104"><span class="linenos">104</span></a>
+</span><span id="BasePathPlanner-105"><a href="#BasePathPlanner-105"><span class="linenos">105</span></a>    <span class="nd">@override</span>
+</span><span id="BasePathPlanner-106"><a href="#BasePathPlanner-106"><span class="linenos">106</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="BasePathPlanner-107"><a href="#BasePathPlanner-107"><span class="linenos">107</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a human-readable string representation of the path planner.</span>
+</span><span id="BasePathPlanner-108"><a href="#BasePathPlanner-108"><span class="linenos">108</span></a>
+</span><span id="BasePathPlanner-109"><a href="#BasePathPlanner-109"><span class="linenos">109</span></a><span class="sd">        Returns:</span>
+</span><span id="BasePathPlanner-110"><a href="#BasePathPlanner-110"><span class="linenos">110</span></a><span class="sd">            str: String representation with class name and parameters.</span>
+</span><span id="BasePathPlanner-111"><a href="#BasePathPlanner-111"><span class="linenos">111</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BasePathPlanner-112"><a href="#BasePathPlanner-112"><span class="linenos">112</span></a>        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="si">}</span><span class="s2">)&quot;</span>
+</span><span id="BasePathPlanner-113"><a href="#BasePathPlanner-113"><span class="linenos">113</span></a>
+</span><span id="BasePathPlanner-114"><a href="#BasePathPlanner-114"><span class="linenos">114</span></a>    <span class="nd">@override</span>
+</span><span id="BasePathPlanner-115"><a href="#BasePathPlanner-115"><span class="linenos">115</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="BasePathPlanner-116"><a href="#BasePathPlanner-116"><span class="linenos">116</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns an official string representation of the path planner.</span>
+</span><span id="BasePathPlanner-117"><a href="#BasePathPlanner-117"><span class="linenos">117</span></a>
+</span><span id="BasePathPlanner-118"><a href="#BasePathPlanner-118"><span class="linenos">118</span></a><span class="sd">        Returns:</span>
+</span><span id="BasePathPlanner-119"><a href="#BasePathPlanner-119"><span class="linenos">119</span></a><span class="sd">            str: The same as ``__str__`` for consistency in debugging and logging.</span>
+</span><span id="BasePathPlanner-120"><a href="#BasePathPlanner-120"><span class="linenos">120</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BasePathPlanner-121"><a href="#BasePathPlanner-121"><span class="linenos">121</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -232,7 +250,7 @@
 </span><span id="BasePathPlanner.__init__-34"><a href="#BasePathPlanner.__init__-34"><span class="linenos">34</span></a><span class="sd">            logger (Logger | None, optional):</span>
 </span><span id="BasePathPlanner.__init__-35"><a href="#BasePathPlanner.__init__-35"><span class="linenos">35</span></a><span class="sd">                Logger instance for debugging. Defaults to None.</span>
 </span><span id="BasePathPlanner.__init__-36"><a href="#BasePathPlanner.__init__-36"><span class="linenos">36</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BasePathPlanner.__init__-37"><a href="#BasePathPlanner.__init__-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span> <span class="ow">or</span> <span class="n">Logger</span><span class="p">(</span>
+</span><span id="BasePathPlanner.__init__-37"><a href="#BasePathPlanner.__init__-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span> <span class="ow">or</span> <span class="n">Logger</span><span class="p">(</span>
 </span><span id="BasePathPlanner.__init__-38"><a href="#BasePathPlanner.__init__-38"><span class="linenos">38</span></a>            <span class="n">identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="BasePathPlanner.__init__-39"><a href="#BasePathPlanner.__init__-39"><span class="linenos">39</span></a>            <span class="n">follow_logger_manager_rules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="BasePathPlanner.__init__-40"><a href="#BasePathPlanner.__init__-40"><span class="linenos">40</span></a>        <span class="p">)</span>
@@ -251,17 +269,6 @@
 </ul>
 </div>
 
-
-                            </div>
-                            <div id="BasePathPlanner.logger" class="classattr">
-                                <div class="attr variable">
-            <span class="name">logger</span><span class="annotation">: loggerplusplus.logger.Logger</span>
-
-        
-    </div>
-    <a class="headerlink" href="#BasePathPlanner.logger"></a>
-    
-    
 
                             </div>
                             <div id="BasePathPlanner.params" class="classattr">

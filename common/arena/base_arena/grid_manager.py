@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, cast, override
 
 import matplotlib.pyplot as plt
 import numpy as np
-from loggerplusplus import Logger, LogLevels, time_tracker
+from loggerplusplus import LogLevels, time_tracker
 from matplotlib.patches import Rectangle as pltRectangle
 from matplotlib.ticker import MaxNLocator
 from pathfinding.core.grid import Grid, GridNode
@@ -16,6 +16,7 @@ from shapely.strtree import STRtree
 from geometry import OrientedPoint, Polygon, box
 
 if TYPE_CHECKING:
+    from loggerplusplus import Logger
     from matplotlib.figure import Figure as pltFigure
 
 
@@ -49,12 +50,12 @@ class GridManager:
             forbidden_cover_threshold (float, optional): Minimum coverage ratio
                 for a cell to be marked as forbidden. Defaults to 0.5.
         """
-        self.logger: Logger = logger
+        self._logger: Logger = logger
         self.forbidden_cover_threshold: float = forbidden_cover_threshold
 
         # Validate chunk size
         if width % chunk_size or height % chunk_size:
-            self.logger.log(
+            self._logger.log(
                 "[GRID] width and height must be multiples of chunk_size. "
                 "Chunk size will be adjusted to the nearest multiple.",
                 LogLevels.ERROR,
@@ -89,7 +90,7 @@ class GridManager:
             ],
         )
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def __mark_zone(
         self,
         grid: Grid,
@@ -135,7 +136,7 @@ class GridManager:
 
         return grid
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def __optimized_mark_zone(  # QUESTION: Useless ?
         self,
         grid: Grid,
@@ -201,7 +202,7 @@ class GridManager:
 
         return grid
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def __update_grid(
         self,
         *,
@@ -314,7 +315,7 @@ class GridManager:
             ),
         )
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def add_forbidden_static_zone(
         self,
         forbidden_zones: Polygon | list[Polygon],
@@ -332,7 +333,7 @@ class GridManager:
         self.not_updated_forbidden_zones.extend(forbidden_zones)
         self.__update_grid(update_static_zones=True)
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def remove_forbidden_static_zone(
         self,
         forbidden_zones_to_remove: Polygon | list[Polygon],
@@ -357,7 +358,7 @@ class GridManager:
             self.static_forbidden_zones,
         )
         if not removed_zones:
-            self.logger.log(
+            self._logger.log(
                 "Call remove zone but no zone removed. Check if you use buffer.",
                 LogLevels.WARNING,
             )
@@ -365,7 +366,7 @@ class GridManager:
         self.not_updated_forbidden_zones.extend(forbidden_zones_to_remove)
         self.__update_grid(update_static_zones=True)
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def update_dynamic_forbidden_zones(self, forbidden_zones: list[Polygon]) -> None:
         """Updates dynamic forbidden zones in the grid.
 
@@ -432,7 +433,7 @@ class GridManager:
         self,
         *,
         only_static_grid: bool = False,
-        path: list | None = None,
+        path: list[OrientedPoint] | None = None,
         show: bool = True,
         plot: tuple[plt.Axes, pltFigure] | None = None,
     ) -> tuple[plt.Axes, pltFigure]:
@@ -441,7 +442,7 @@ class GridManager:
         Args:
             only_static_grid (bool, optional):
                 Whether to show only the static grid. Defaults to ``False``.
-            path (list | None, optional):
+            path (list[OrientedPoint] | None, optional):
                 Path to draw on the grid, if provided. Defaults to None.
             show (bool, optional):
                 Whether to display the plot. Defaults to ``True``.

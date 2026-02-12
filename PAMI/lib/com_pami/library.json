@@ -1,0 +1,8 @@
+{
+  "name": "com_pami",
+  "version": "1.0.0",
+  "description": "Library dedicated to LoRa communication",
+  "keywords": "lora, communication",
+  "frameworks": "*",
+  "platforms": "*"
+}

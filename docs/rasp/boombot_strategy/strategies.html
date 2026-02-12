@@ -46,9 +46,6 @@
                                 <a class="variable" href="#BaseStrategy.runner">runner</a>
                         </li>
                         <li>
-                                <a class="variable" href="#BaseStrategy.logger">logger</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#BaseStrategy.visualize_strategy">visualize_strategy</a>
                         </li>
                         <li>
@@ -187,7 +184,7 @@
 </span><span id="BaseStrategy-34"><a href="#BaseStrategy-34"><span class="linenos"> 34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="o">.</span><span class="n">INFO_BY_TEAM</span><span class="p">[</span><span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">team_color</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
 </span><span id="BaseStrategy-35"><a href="#BaseStrategy-35"><span class="linenos"> 35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">SubGraphBuilder</span><span class="p">()</span>
 </span><span id="BaseStrategy-36"><a href="#BaseStrategy-36"><span class="linenos"> 36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">:</span> <span class="n">GraphRunner</span>
-</span><span id="BaseStrategy-37"><a href="#BaseStrategy-37"><span class="linenos"> 37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span>
+</span><span id="BaseStrategy-37"><a href="#BaseStrategy-37"><span class="linenos"> 37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span>
 </span><span id="BaseStrategy-38"><a href="#BaseStrategy-38"><span class="linenos"> 38</span></a>            <span class="n">identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="BaseStrategy-39"><a href="#BaseStrategy-39"><span class="linenos"> 39</span></a>            <span class="n">follow_logger_manager_rules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="BaseStrategy-40"><a href="#BaseStrategy-40"><span class="linenos"> 40</span></a>        <span class="p">)</span>
@@ -202,7 +199,7 @@
 </span><span id="BaseStrategy-49"><a href="#BaseStrategy-49"><span class="linenos"> 49</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="BaseStrategy-50"><a href="#BaseStrategy-50"><span class="linenos"> 50</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">:</span>
 </span><span id="BaseStrategy-51"><a href="#BaseStrategy-51"><span class="linenos"> 51</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Strategy graph has not been built yet.&quot;</span>
-</span><span id="BaseStrategy-52"><a href="#BaseStrategy-52"><span class="linenos"> 52</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No active graph to visualize. </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="BaseStrategy-52"><a href="#BaseStrategy-52"><span class="linenos"> 52</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[STRAT] Cannot visualize - no active graph. </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="BaseStrategy-53"><a href="#BaseStrategy-53"><span class="linenos"> 53</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="BaseStrategy-54"><a href="#BaseStrategy-54"><span class="linenos"> 54</span></a>        <span class="n">visualize_task_graph</span><span class="p">(</span><span class="n">start_node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </span><span id="BaseStrategy-55"><a href="#BaseStrategy-55"><span class="linenos"> 55</span></a>
@@ -217,71 +214,73 @@
 </span><span id="BaseStrategy-64"><a href="#BaseStrategy-64"><span class="linenos"> 64</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="BaseStrategy-65"><a href="#BaseStrategy-65"><span class="linenos"> 65</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">:</span>
 </span><span id="BaseStrategy-66"><a href="#BaseStrategy-66"><span class="linenos"> 66</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Strategy graph has not been built yet.&quot;</span>
-</span><span id="BaseStrategy-67"><a href="#BaseStrategy-67"><span class="linenos"> 67</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No active graph to retrieve. </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="BaseStrategy-68"><a href="#BaseStrategy-68"><span class="linenos"> 68</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="BaseStrategy-69"><a href="#BaseStrategy-69"><span class="linenos"> 69</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span>
-</span><span id="BaseStrategy-70"><a href="#BaseStrategy-70"><span class="linenos"> 70</span></a>
-</span><span id="BaseStrategy-71"><a href="#BaseStrategy-71"><span class="linenos"> 71</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_auto_build_transitions</span><span class="p">(</span>
-</span><span id="BaseStrategy-72"><a href="#BaseStrategy-72"><span class="linenos"> 72</span></a>        <span class="bp">self</span><span class="p">,</span>
-</span><span id="BaseStrategy-73"><a href="#BaseStrategy-73"><span class="linenos"> 73</span></a>        <span class="o">*</span><span class="n">elements</span><span class="p">:</span> <span class="n">BaseTaskNode</span> <span class="o">|</span> <span class="n">BaseSubGraph</span><span class="p">,</span>
-</span><span id="BaseStrategy-74"><a href="#BaseStrategy-74"><span class="linenos"> 74</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="BaseStrategy-75"><a href="#BaseStrategy-75"><span class="linenos"> 75</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a subgraph using the provided TaskNodes or SubGraphs.</span>
-</span><span id="BaseStrategy-76"><a href="#BaseStrategy-76"><span class="linenos"> 76</span></a>
-</span><span id="BaseStrategy-77"><a href="#BaseStrategy-77"><span class="linenos"> 77</span></a><span class="sd">        Accepts any number of arguments of type BaseTaskNode or BaseSubGraph.</span>
+</span><span id="BaseStrategy-67"><a href="#BaseStrategy-67"><span class="linenos"> 67</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+</span><span id="BaseStrategy-68"><a href="#BaseStrategy-68"><span class="linenos"> 68</span></a>                <span class="sa">f</span><span class="s2">&quot;[STRAT] Cannot retrieve runner - no active graph. </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="BaseStrategy-69"><a href="#BaseStrategy-69"><span class="linenos"> 69</span></a>            <span class="p">)</span>
+</span><span id="BaseStrategy-70"><a href="#BaseStrategy-70"><span class="linenos"> 70</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="BaseStrategy-71"><a href="#BaseStrategy-71"><span class="linenos"> 71</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span>
+</span><span id="BaseStrategy-72"><a href="#BaseStrategy-72"><span class="linenos"> 72</span></a>
+</span><span id="BaseStrategy-73"><a href="#BaseStrategy-73"><span class="linenos"> 73</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_auto_build_transitions</span><span class="p">(</span>
+</span><span id="BaseStrategy-74"><a href="#BaseStrategy-74"><span class="linenos"> 74</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="BaseStrategy-75"><a href="#BaseStrategy-75"><span class="linenos"> 75</span></a>        <span class="o">*</span><span class="n">elements</span><span class="p">:</span> <span class="n">BaseTaskNode</span> <span class="o">|</span> <span class="n">BaseSubGraph</span><span class="p">,</span>
+</span><span id="BaseStrategy-76"><a href="#BaseStrategy-76"><span class="linenos"> 76</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="BaseStrategy-77"><a href="#BaseStrategy-77"><span class="linenos"> 77</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Build a subgraph using the provided TaskNodes or SubGraphs.</span>
 </span><span id="BaseStrategy-78"><a href="#BaseStrategy-78"><span class="linenos"> 78</span></a>
-</span><span id="BaseStrategy-79"><a href="#BaseStrategy-79"><span class="linenos"> 79</span></a><span class="sd">        Args:</span>
-</span><span id="BaseStrategy-80"><a href="#BaseStrategy-80"><span class="linenos"> 80</span></a><span class="sd">            *elements (BaseTaskNode | BaseSubGraph):</span>
-</span><span id="BaseStrategy-81"><a href="#BaseStrategy-81"><span class="linenos"> 81</span></a><span class="sd">                A variable number of nodes or subgraphs.</span>
-</span><span id="BaseStrategy-82"><a href="#BaseStrategy-82"><span class="linenos"> 82</span></a>
-</span><span id="BaseStrategy-83"><a href="#BaseStrategy-83"><span class="linenos"> 83</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseStrategy-84"><a href="#BaseStrategy-84"><span class="linenos"> 84</span></a><span class="sd">            bool:</span>
-</span><span id="BaseStrategy-85"><a href="#BaseStrategy-85"><span class="linenos"> 85</span></a><span class="sd">                ``True`` if the transitions were built successfully,</span>
-</span><span id="BaseStrategy-86"><a href="#BaseStrategy-86"><span class="linenos"> 86</span></a><span class="sd">                ``False`` otherwise.</span>
-</span><span id="BaseStrategy-87"><a href="#BaseStrategy-87"><span class="linenos"> 87</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseStrategy-88"><a href="#BaseStrategy-88"><span class="linenos"> 88</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">elements</span><span class="p">:</span>
-</span><span id="BaseStrategy-89"><a href="#BaseStrategy-89"><span class="linenos"> 89</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No elements provided for building the strategy.&quot;</span><span class="p">)</span>
-</span><span id="BaseStrategy-90"><a href="#BaseStrategy-90"><span class="linenos"> 90</span></a>            <span class="k">return</span> <span class="kc">False</span>
-</span><span id="BaseStrategy-91"><a href="#BaseStrategy-91"><span class="linenos"> 91</span></a>
-</span><span id="BaseStrategy-92"><a href="#BaseStrategy-92"><span class="linenos"> 92</span></a>        <span class="c1"># Resolve entry and exit points for each element</span>
-</span><span id="BaseStrategy-93"><a href="#BaseStrategy-93"><span class="linenos"> 93</span></a>        <span class="n">entry_points</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_resolve_for_entry</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">]</span>
-</span><span id="BaseStrategy-94"><a href="#BaseStrategy-94"><span class="linenos"> 94</span></a>        <span class="n">exit_points</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_resolve_for_exits</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">]</span>
-</span><span id="BaseStrategy-95"><a href="#BaseStrategy-95"><span class="linenos"> 95</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">entry_points</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-</span><span id="BaseStrategy-96"><a href="#BaseStrategy-96"><span class="linenos"> 96</span></a>            <span class="c1"># Create a direct transition from the exit of the current element</span>
-</span><span id="BaseStrategy-97"><a href="#BaseStrategy-97"><span class="linenos"> 97</span></a>            <span class="c1"># to the entry of the next</span>
-</span><span id="BaseStrategy-98"><a href="#BaseStrategy-98"><span class="linenos"> 98</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-</span><span id="BaseStrategy-99"><a href="#BaseStrategy-99"><span class="linenos"> 99</span></a>                <span class="sa">f</span><span class="s2">&quot;Creating transition from </span><span class="si">{</span><span class="n">exit_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
-</span><span id="BaseStrategy-100"><a href="#BaseStrategy-100"><span class="linenos">100</span></a>                <span class="sa">f</span><span class="s2">&quot; to </span><span class="si">{</span><span class="n">entry_points</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="BaseStrategy-101"><a href="#BaseStrategy-101"><span class="linenos">101</span></a>            <span class="p">)</span>
-</span><span id="BaseStrategy-102"><a href="#BaseStrategy-102"><span class="linenos">102</span></a>            <span class="n">exit_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add_transition</span><span class="p">(</span><span class="n">DirectTransition</span><span class="p">(</span><span class="n">entry_points</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
-</span><span id="BaseStrategy-103"><a href="#BaseStrategy-103"><span class="linenos">103</span></a>        <span class="k">return</span> <span class="kc">True</span>
-</span><span id="BaseStrategy-104"><a href="#BaseStrategy-104"><span class="linenos">104</span></a>
-</span><span id="BaseStrategy-105"><a href="#BaseStrategy-105"><span class="linenos">105</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="BaseStrategy-106"><a href="#BaseStrategy-106"><span class="linenos">106</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_for_entry</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n">BaseTaskNode</span> <span class="o">|</span> <span class="n">BaseSubGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseTaskNode</span><span class="p">:</span>
-</span><span id="BaseStrategy-107"><a href="#BaseStrategy-107"><span class="linenos">107</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve a TaskNode or SubGraph to its entry point.</span>
-</span><span id="BaseStrategy-108"><a href="#BaseStrategy-108"><span class="linenos">108</span></a>
-</span><span id="BaseStrategy-109"><a href="#BaseStrategy-109"><span class="linenos">109</span></a><span class="sd">        Args:</span>
-</span><span id="BaseStrategy-110"><a href="#BaseStrategy-110"><span class="linenos">110</span></a><span class="sd">            element (BaseTaskNode | BaseSubGraph): The element to resolve.</span>
-</span><span id="BaseStrategy-111"><a href="#BaseStrategy-111"><span class="linenos">111</span></a>
-</span><span id="BaseStrategy-112"><a href="#BaseStrategy-112"><span class="linenos">112</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseStrategy-113"><a href="#BaseStrategy-113"><span class="linenos">113</span></a><span class="sd">            BaseTaskNode: The entry point of the resolved element.</span>
-</span><span id="BaseStrategy-114"><a href="#BaseStrategy-114"><span class="linenos">114</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseStrategy-115"><a href="#BaseStrategy-115"><span class="linenos">115</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">BaseSubGraph</span><span class="p">):</span>
-</span><span id="BaseStrategy-116"><a href="#BaseStrategy-116"><span class="linenos">116</span></a>            <span class="k">return</span> <span class="n">element</span><span class="o">.</span><span class="n">get_entry</span><span class="p">()</span>
-</span><span id="BaseStrategy-117"><a href="#BaseStrategy-117"><span class="linenos">117</span></a>        <span class="k">return</span> <span class="n">element</span>
-</span><span id="BaseStrategy-118"><a href="#BaseStrategy-118"><span class="linenos">118</span></a>
-</span><span id="BaseStrategy-119"><a href="#BaseStrategy-119"><span class="linenos">119</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="BaseStrategy-120"><a href="#BaseStrategy-120"><span class="linenos">120</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_for_exits</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n">BaseTaskNode</span> <span class="o">|</span> <span class="n">BaseSubGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseTaskNode</span><span class="p">:</span>
-</span><span id="BaseStrategy-121"><a href="#BaseStrategy-121"><span class="linenos">121</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve a TaskNode or SubGraph to its exit points.</span>
-</span><span id="BaseStrategy-122"><a href="#BaseStrategy-122"><span class="linenos">122</span></a>
-</span><span id="BaseStrategy-123"><a href="#BaseStrategy-123"><span class="linenos">123</span></a><span class="sd">        Args:</span>
-</span><span id="BaseStrategy-124"><a href="#BaseStrategy-124"><span class="linenos">124</span></a><span class="sd">            element (BaseTaskNode | BaseSubGraph): The element to resolve.</span>
-</span><span id="BaseStrategy-125"><a href="#BaseStrategy-125"><span class="linenos">125</span></a>
-</span><span id="BaseStrategy-126"><a href="#BaseStrategy-126"><span class="linenos">126</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseStrategy-127"><a href="#BaseStrategy-127"><span class="linenos">127</span></a><span class="sd">            BaseTaskNode: The exit point of the resolved element.</span>
-</span><span id="BaseStrategy-128"><a href="#BaseStrategy-128"><span class="linenos">128</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseStrategy-129"><a href="#BaseStrategy-129"><span class="linenos">129</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">BaseSubGraph</span><span class="p">):</span>
-</span><span id="BaseStrategy-130"><a href="#BaseStrategy-130"><span class="linenos">130</span></a>            <span class="k">return</span> <span class="n">element</span><span class="o">.</span><span class="n">get_exits</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="BaseStrategy-131"><a href="#BaseStrategy-131"><span class="linenos">131</span></a>        <span class="k">return</span> <span class="n">element</span>
+</span><span id="BaseStrategy-79"><a href="#BaseStrategy-79"><span class="linenos"> 79</span></a><span class="sd">        Accepts any number of arguments of type BaseTaskNode or BaseSubGraph.</span>
+</span><span id="BaseStrategy-80"><a href="#BaseStrategy-80"><span class="linenos"> 80</span></a>
+</span><span id="BaseStrategy-81"><a href="#BaseStrategy-81"><span class="linenos"> 81</span></a><span class="sd">        Args:</span>
+</span><span id="BaseStrategy-82"><a href="#BaseStrategy-82"><span class="linenos"> 82</span></a><span class="sd">            *elements (BaseTaskNode | BaseSubGraph):</span>
+</span><span id="BaseStrategy-83"><a href="#BaseStrategy-83"><span class="linenos"> 83</span></a><span class="sd">                A variable number of nodes or subgraphs.</span>
+</span><span id="BaseStrategy-84"><a href="#BaseStrategy-84"><span class="linenos"> 84</span></a>
+</span><span id="BaseStrategy-85"><a href="#BaseStrategy-85"><span class="linenos"> 85</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseStrategy-86"><a href="#BaseStrategy-86"><span class="linenos"> 86</span></a><span class="sd">            bool:</span>
+</span><span id="BaseStrategy-87"><a href="#BaseStrategy-87"><span class="linenos"> 87</span></a><span class="sd">                ``True`` if the transitions were built successfully,</span>
+</span><span id="BaseStrategy-88"><a href="#BaseStrategy-88"><span class="linenos"> 88</span></a><span class="sd">                ``False`` otherwise.</span>
+</span><span id="BaseStrategy-89"><a href="#BaseStrategy-89"><span class="linenos"> 89</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseStrategy-90"><a href="#BaseStrategy-90"><span class="linenos"> 90</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">elements</span><span class="p">:</span>
+</span><span id="BaseStrategy-91"><a href="#BaseStrategy-91"><span class="linenos"> 91</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;[STRAT] No elements provided for building&quot;</span><span class="p">)</span>
+</span><span id="BaseStrategy-92"><a href="#BaseStrategy-92"><span class="linenos"> 92</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="BaseStrategy-93"><a href="#BaseStrategy-93"><span class="linenos"> 93</span></a>
+</span><span id="BaseStrategy-94"><a href="#BaseStrategy-94"><span class="linenos"> 94</span></a>        <span class="c1"># Resolve entry and exit points for each element</span>
+</span><span id="BaseStrategy-95"><a href="#BaseStrategy-95"><span class="linenos"> 95</span></a>        <span class="n">entry_points</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_resolve_for_entry</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">]</span>
+</span><span id="BaseStrategy-96"><a href="#BaseStrategy-96"><span class="linenos"> 96</span></a>        <span class="n">exit_points</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_resolve_for_exits</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">]</span>
+</span><span id="BaseStrategy-97"><a href="#BaseStrategy-97"><span class="linenos"> 97</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">entry_points</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+</span><span id="BaseStrategy-98"><a href="#BaseStrategy-98"><span class="linenos"> 98</span></a>            <span class="c1"># Create a direct transition from the exit of the current element</span>
+</span><span id="BaseStrategy-99"><a href="#BaseStrategy-99"><span class="linenos"> 99</span></a>            <span class="c1"># to the entry of the next</span>
+</span><span id="BaseStrategy-100"><a href="#BaseStrategy-100"><span class="linenos">100</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+</span><span id="BaseStrategy-101"><a href="#BaseStrategy-101"><span class="linenos">101</span></a>                <span class="sa">f</span><span class="s2">&quot;[STRAT] Creating transition: &quot;</span>
+</span><span id="BaseStrategy-102"><a href="#BaseStrategy-102"><span class="linenos">102</span></a>                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">exit_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">entry_points</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="BaseStrategy-103"><a href="#BaseStrategy-103"><span class="linenos">103</span></a>            <span class="p">)</span>
+</span><span id="BaseStrategy-104"><a href="#BaseStrategy-104"><span class="linenos">104</span></a>            <span class="n">exit_points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">add_transition</span><span class="p">(</span><span class="n">DirectTransition</span><span class="p">(</span><span class="n">entry_points</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+</span><span id="BaseStrategy-105"><a href="#BaseStrategy-105"><span class="linenos">105</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="BaseStrategy-106"><a href="#BaseStrategy-106"><span class="linenos">106</span></a>
+</span><span id="BaseStrategy-107"><a href="#BaseStrategy-107"><span class="linenos">107</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="BaseStrategy-108"><a href="#BaseStrategy-108"><span class="linenos">108</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_for_entry</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n">BaseTaskNode</span> <span class="o">|</span> <span class="n">BaseSubGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseTaskNode</span><span class="p">:</span>
+</span><span id="BaseStrategy-109"><a href="#BaseStrategy-109"><span class="linenos">109</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve a TaskNode or SubGraph to its entry point.</span>
+</span><span id="BaseStrategy-110"><a href="#BaseStrategy-110"><span class="linenos">110</span></a>
+</span><span id="BaseStrategy-111"><a href="#BaseStrategy-111"><span class="linenos">111</span></a><span class="sd">        Args:</span>
+</span><span id="BaseStrategy-112"><a href="#BaseStrategy-112"><span class="linenos">112</span></a><span class="sd">            element (BaseTaskNode | BaseSubGraph): The element to resolve.</span>
+</span><span id="BaseStrategy-113"><a href="#BaseStrategy-113"><span class="linenos">113</span></a>
+</span><span id="BaseStrategy-114"><a href="#BaseStrategy-114"><span class="linenos">114</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseStrategy-115"><a href="#BaseStrategy-115"><span class="linenos">115</span></a><span class="sd">            BaseTaskNode: The entry point of the resolved element.</span>
+</span><span id="BaseStrategy-116"><a href="#BaseStrategy-116"><span class="linenos">116</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseStrategy-117"><a href="#BaseStrategy-117"><span class="linenos">117</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">BaseSubGraph</span><span class="p">):</span>
+</span><span id="BaseStrategy-118"><a href="#BaseStrategy-118"><span class="linenos">118</span></a>            <span class="k">return</span> <span class="n">element</span><span class="o">.</span><span class="n">get_entry</span><span class="p">()</span>
+</span><span id="BaseStrategy-119"><a href="#BaseStrategy-119"><span class="linenos">119</span></a>        <span class="k">return</span> <span class="n">element</span>
+</span><span id="BaseStrategy-120"><a href="#BaseStrategy-120"><span class="linenos">120</span></a>
+</span><span id="BaseStrategy-121"><a href="#BaseStrategy-121"><span class="linenos">121</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="BaseStrategy-122"><a href="#BaseStrategy-122"><span class="linenos">122</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_for_exits</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n">BaseTaskNode</span> <span class="o">|</span> <span class="n">BaseSubGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseTaskNode</span><span class="p">:</span>
+</span><span id="BaseStrategy-123"><a href="#BaseStrategy-123"><span class="linenos">123</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolve a TaskNode or SubGraph to its exit points.</span>
+</span><span id="BaseStrategy-124"><a href="#BaseStrategy-124"><span class="linenos">124</span></a>
+</span><span id="BaseStrategy-125"><a href="#BaseStrategy-125"><span class="linenos">125</span></a><span class="sd">        Args:</span>
+</span><span id="BaseStrategy-126"><a href="#BaseStrategy-126"><span class="linenos">126</span></a><span class="sd">            element (BaseTaskNode | BaseSubGraph): The element to resolve.</span>
+</span><span id="BaseStrategy-127"><a href="#BaseStrategy-127"><span class="linenos">127</span></a>
+</span><span id="BaseStrategy-128"><a href="#BaseStrategy-128"><span class="linenos">128</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseStrategy-129"><a href="#BaseStrategy-129"><span class="linenos">129</span></a><span class="sd">            BaseTaskNode: The exit point of the resolved element.</span>
+</span><span id="BaseStrategy-130"><a href="#BaseStrategy-130"><span class="linenos">130</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseStrategy-131"><a href="#BaseStrategy-131"><span class="linenos">131</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">BaseSubGraph</span><span class="p">):</span>
+</span><span id="BaseStrategy-132"><a href="#BaseStrategy-132"><span class="linenos">132</span></a>            <span class="k">return</span> <span class="n">element</span><span class="o">.</span><span class="n">get_exits</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="BaseStrategy-133"><a href="#BaseStrategy-133"><span class="linenos">133</span></a>        <span class="k">return</span> <span class="n">element</span>
 </span></pre></div>
 
 
@@ -310,7 +309,7 @@
 </span><span id="BaseStrategy.__init__-34"><a href="#BaseStrategy.__init__-34"><span class="linenos">34</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">zones</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="o">.</span><span class="n">INFO_BY_TEAM</span><span class="p">[</span><span class="n">ctx</span><span class="o">.</span><span class="n">arena</span><span class="o">.</span><span class="n">team_color</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
 </span><span id="BaseStrategy.__init__-35"><a href="#BaseStrategy.__init__-35"><span class="linenos">35</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">strategy</span> <span class="o">=</span> <span class="n">SubGraphBuilder</span><span class="p">()</span>
 </span><span id="BaseStrategy.__init__-36"><a href="#BaseStrategy.__init__-36"><span class="linenos">36</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">:</span> <span class="n">GraphRunner</span>
-</span><span id="BaseStrategy.__init__-37"><a href="#BaseStrategy.__init__-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span>
+</span><span id="BaseStrategy.__init__-37"><a href="#BaseStrategy.__init__-37"><span class="linenos">37</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">(</span>
 </span><span id="BaseStrategy.__init__-38"><a href="#BaseStrategy.__init__-38"><span class="linenos">38</span></a>            <span class="n">identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="BaseStrategy.__init__-39"><a href="#BaseStrategy.__init__-39"><span class="linenos">39</span></a>            <span class="n">follow_logger_manager_rules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="BaseStrategy.__init__-40"><a href="#BaseStrategy.__init__-40"><span class="linenos">40</span></a>        <span class="p">)</span>
@@ -361,17 +360,6 @@
     
 
                             </div>
-                            <div id="BaseStrategy.logger" class="classattr">
-                                <div class="attr variable">
-            <span class="name">logger</span>
-
-        
-    </div>
-    <a class="headerlink" href="#BaseStrategy.logger"></a>
-    
-    
-
-                            </div>
                             <div id="BaseStrategy.visualize_strategy" class="classattr">
                                         <input id="BaseStrategy.visualize_strategy-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -393,7 +381,7 @@
 </span><span id="BaseStrategy.visualize_strategy-49"><a href="#BaseStrategy.visualize_strategy-49"><span class="linenos">49</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="BaseStrategy.visualize_strategy-50"><a href="#BaseStrategy.visualize_strategy-50"><span class="linenos">50</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">:</span>
 </span><span id="BaseStrategy.visualize_strategy-51"><a href="#BaseStrategy.visualize_strategy-51"><span class="linenos">51</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Strategy graph has not been built yet.&quot;</span>
-</span><span id="BaseStrategy.visualize_strategy-52"><a href="#BaseStrategy.visualize_strategy-52"><span class="linenos">52</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No active graph to visualize. </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="BaseStrategy.visualize_strategy-52"><a href="#BaseStrategy.visualize_strategy-52"><span class="linenos">52</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[STRAT] Cannot visualize - no active graph. </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </span><span id="BaseStrategy.visualize_strategy-53"><a href="#BaseStrategy.visualize_strategy-53"><span class="linenos">53</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </span><span id="BaseStrategy.visualize_strategy-54"><a href="#BaseStrategy.visualize_strategy-54"><span class="linenos">54</span></a>        <span class="n">visualize_task_graph</span><span class="p">(</span><span class="n">start_node</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">active</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 </span></pre></div>
@@ -434,9 +422,11 @@
 </span><span id="BaseStrategy.get_graph_runner-64"><a href="#BaseStrategy.get_graph_runner-64"><span class="linenos">64</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="BaseStrategy.get_graph_runner-65"><a href="#BaseStrategy.get_graph_runner-65"><span class="linenos">65</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span><span class="p">:</span>
 </span><span id="BaseStrategy.get_graph_runner-66"><a href="#BaseStrategy.get_graph_runner-66"><span class="linenos">66</span></a>            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Strategy graph has not been built yet.&quot;</span>
-</span><span id="BaseStrategy.get_graph_runner-67"><a href="#BaseStrategy.get_graph_runner-67"><span class="linenos">67</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No active graph to retrieve. </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="BaseStrategy.get_graph_runner-68"><a href="#BaseStrategy.get_graph_runner-68"><span class="linenos">68</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-</span><span id="BaseStrategy.get_graph_runner-69"><a href="#BaseStrategy.get_graph_runner-69"><span class="linenos">69</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span>
+</span><span id="BaseStrategy.get_graph_runner-67"><a href="#BaseStrategy.get_graph_runner-67"><span class="linenos">67</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+</span><span id="BaseStrategy.get_graph_runner-68"><a href="#BaseStrategy.get_graph_runner-68"><span class="linenos">68</span></a>                <span class="sa">f</span><span class="s2">&quot;[STRAT] Cannot retrieve runner - no active graph. </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="BaseStrategy.get_graph_runner-69"><a href="#BaseStrategy.get_graph_runner-69"><span class="linenos">69</span></a>            <span class="p">)</span>
+</span><span id="BaseStrategy.get_graph_runner-70"><a href="#BaseStrategy.get_graph_runner-70"><span class="linenos">70</span></a>            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</span><span id="BaseStrategy.get_graph_runner-71"><a href="#BaseStrategy.get_graph_runner-71"><span class="linenos">71</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">runner</span>
 </span></pre></div>
 
 
@@ -477,13 +467,13 @@
 </span><span id="BasicStrategy-31"><a href="#BasicStrategy-31"><span class="linenos">31</span></a><span class="sd">    - Navigate to backstage zone to finish the game</span>
 </span><span id="BasicStrategy-32"><a href="#BasicStrategy-32"><span class="linenos">32</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="BasicStrategy-33"><a href="#BasicStrategy-33"><span class="linenos">33</span></a>
-</span><span id="BasicStrategy-34"><a href="#BasicStrategy-34"><span class="linenos">34</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BasicStrategy-34"><a href="#BasicStrategy-34"><span class="linenos">34</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="BasicStrategy-35"><a href="#BasicStrategy-35"><span class="linenos">35</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the strategy.</span>
 </span><span id="BasicStrategy-36"><a href="#BasicStrategy-36"><span class="linenos">36</span></a>
 </span><span id="BasicStrategy-37"><a href="#BasicStrategy-37"><span class="linenos">37</span></a><span class="sd">        Build the task flow using subgraphs and direct transitions.</span>
 </span><span id="BasicStrategy-38"><a href="#BasicStrategy-38"><span class="linenos">38</span></a>
 </span><span id="BasicStrategy-39"><a href="#BasicStrategy-39"><span class="linenos">39</span></a><span class="sd">        Args:</span>
-</span><span id="BasicStrategy-40"><a href="#BasicStrategy-40"><span class="linenos">40</span></a><span class="sd">            ctx (ShowGameContext):</span>
+</span><span id="BasicStrategy-40"><a href="#BasicStrategy-40"><span class="linenos">40</span></a><span class="sd">            ctx (WinterGameContext):</span>
 </span><span id="BasicStrategy-41"><a href="#BasicStrategy-41"><span class="linenos">41</span></a><span class="sd">                Game context containing game-specific configurations and zones.</span>
 </span><span id="BasicStrategy-42"><a href="#BasicStrategy-42"><span class="linenos">42</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="BasicStrategy-43"><a href="#BasicStrategy-43"><span class="linenos">43</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -549,19 +539,19 @@
                                         <input id="BasicStrategy.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">BasicStrategy</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">show_game_context</span><span class="o">.</span><span class="n">ShowGameContext</span></span>)</span>
+        <span class="name">BasicStrategy</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">winter_game_context</span><span class="o">.</span><span class="n">WinterGameContext</span></span>)</span>
 
                 <label class="view-source-button" for="BasicStrategy.__init__-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#BasicStrategy.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BasicStrategy.__init__-34"><a href="#BasicStrategy.__init__-34"><span class="linenos">34</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BasicStrategy.__init__-34"><a href="#BasicStrategy.__init__-34"><span class="linenos">34</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="BasicStrategy.__init__-35"><a href="#BasicStrategy.__init__-35"><span class="linenos">35</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the strategy.</span>
 </span><span id="BasicStrategy.__init__-36"><a href="#BasicStrategy.__init__-36"><span class="linenos">36</span></a>
 </span><span id="BasicStrategy.__init__-37"><a href="#BasicStrategy.__init__-37"><span class="linenos">37</span></a><span class="sd">        Build the task flow using subgraphs and direct transitions.</span>
 </span><span id="BasicStrategy.__init__-38"><a href="#BasicStrategy.__init__-38"><span class="linenos">38</span></a>
 </span><span id="BasicStrategy.__init__-39"><a href="#BasicStrategy.__init__-39"><span class="linenos">39</span></a><span class="sd">        Args:</span>
-</span><span id="BasicStrategy.__init__-40"><a href="#BasicStrategy.__init__-40"><span class="linenos">40</span></a><span class="sd">            ctx (ShowGameContext):</span>
+</span><span id="BasicStrategy.__init__-40"><a href="#BasicStrategy.__init__-40"><span class="linenos">40</span></a><span class="sd">            ctx (WinterGameContext):</span>
 </span><span id="BasicStrategy.__init__-41"><a href="#BasicStrategy.__init__-41"><span class="linenos">41</span></a><span class="sd">                Game context containing game-specific configurations and zones.</span>
 </span><span id="BasicStrategy.__init__-42"><a href="#BasicStrategy.__init__-42"><span class="linenos">42</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="BasicStrategy.__init__-43"><a href="#BasicStrategy.__init__-43"><span class="linenos">43</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -620,7 +610,7 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>ctx (ShowGameContext):</strong>  Game context containing game-specific configurations and zones.</li>
+<li><strong>ctx (WinterGameContext):</strong>  Game context containing game-specific configurations and zones.</li>
 </ul>
 </div>
 
@@ -657,14 +647,14 @@
 </span><span id="DebugStrategy-30"><a href="#DebugStrategy-30"><span class="linenos">30</span></a><span class="sd">    - Navigate to backstage zone to finish the game</span>
 </span><span id="DebugStrategy-31"><a href="#DebugStrategy-31"><span class="linenos">31</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="DebugStrategy-32"><a href="#DebugStrategy-32"><span class="linenos">32</span></a>
-</span><span id="DebugStrategy-33"><a href="#DebugStrategy-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="DebugStrategy-33"><a href="#DebugStrategy-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="DebugStrategy-34"><a href="#DebugStrategy-34"><span class="linenos">34</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the strategy.</span>
 </span><span id="DebugStrategy-35"><a href="#DebugStrategy-35"><span class="linenos">35</span></a>
 </span><span id="DebugStrategy-36"><a href="#DebugStrategy-36"><span class="linenos">36</span></a><span class="sd">        Build the task flow using subgraphs and direct transitions.</span>
 </span><span id="DebugStrategy-37"><a href="#DebugStrategy-37"><span class="linenos">37</span></a>
 </span><span id="DebugStrategy-38"><a href="#DebugStrategy-38"><span class="linenos">38</span></a>
 </span><span id="DebugStrategy-39"><a href="#DebugStrategy-39"><span class="linenos">39</span></a><span class="sd">        Args:</span>
-</span><span id="DebugStrategy-40"><a href="#DebugStrategy-40"><span class="linenos">40</span></a><span class="sd">            ctx (ShowGameContext):</span>
+</span><span id="DebugStrategy-40"><a href="#DebugStrategy-40"><span class="linenos">40</span></a><span class="sd">            ctx (WinterGameContext):</span>
 </span><span id="DebugStrategy-41"><a href="#DebugStrategy-41"><span class="linenos">41</span></a><span class="sd">                Game context containing game-specific configurations and zones.</span>
 </span><span id="DebugStrategy-42"><a href="#DebugStrategy-42"><span class="linenos">42</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="DebugStrategy-43"><a href="#DebugStrategy-43"><span class="linenos">43</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -713,20 +703,20 @@
                                         <input id="DebugStrategy.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">DebugStrategy</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">show_game_context</span><span class="o">.</span><span class="n">ShowGameContext</span></span>)</span>
+        <span class="name">DebugStrategy</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">winter_game_context</span><span class="o">.</span><span class="n">WinterGameContext</span></span>)</span>
 
                 <label class="view-source-button" for="DebugStrategy.__init__-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#DebugStrategy.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="DebugStrategy.__init__-33"><a href="#DebugStrategy.__init__-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="DebugStrategy.__init__-33"><a href="#DebugStrategy.__init__-33"><span class="linenos">33</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="DebugStrategy.__init__-34"><a href="#DebugStrategy.__init__-34"><span class="linenos">34</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the strategy.</span>
 </span><span id="DebugStrategy.__init__-35"><a href="#DebugStrategy.__init__-35"><span class="linenos">35</span></a>
 </span><span id="DebugStrategy.__init__-36"><a href="#DebugStrategy.__init__-36"><span class="linenos">36</span></a><span class="sd">        Build the task flow using subgraphs and direct transitions.</span>
 </span><span id="DebugStrategy.__init__-37"><a href="#DebugStrategy.__init__-37"><span class="linenos">37</span></a>
 </span><span id="DebugStrategy.__init__-38"><a href="#DebugStrategy.__init__-38"><span class="linenos">38</span></a>
 </span><span id="DebugStrategy.__init__-39"><a href="#DebugStrategy.__init__-39"><span class="linenos">39</span></a><span class="sd">        Args:</span>
-</span><span id="DebugStrategy.__init__-40"><a href="#DebugStrategy.__init__-40"><span class="linenos">40</span></a><span class="sd">            ctx (ShowGameContext):</span>
+</span><span id="DebugStrategy.__init__-40"><a href="#DebugStrategy.__init__-40"><span class="linenos">40</span></a><span class="sd">            ctx (WinterGameContext):</span>
 </span><span id="DebugStrategy.__init__-41"><a href="#DebugStrategy.__init__-41"><span class="linenos">41</span></a><span class="sd">                Game context containing game-specific configurations and zones.</span>
 </span><span id="DebugStrategy.__init__-42"><a href="#DebugStrategy.__init__-42"><span class="linenos">42</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="DebugStrategy.__init__-43"><a href="#DebugStrategy.__init__-43"><span class="linenos">43</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -768,7 +758,7 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>ctx (ShowGameContext):</strong>  Game context containing game-specific configurations and zones.</li>
+<li><strong>ctx (WinterGameContext):</strong>  Game context containing game-specific configurations and zones.</li>
 </ul>
 </div>
 
@@ -800,13 +790,13 @@
             <div class="pdoc-code codehilite"><pre><span></span><span id="OnlyBannerStrategy-22"><a href="#OnlyBannerStrategy-22"><span class="linenos">22</span></a><span class="k">class</span><span class="w"> </span><span class="nc">OnlyBannerStrategy</span><span class="p">(</span><span class="n">BaseStrategy</span><span class="p">):</span>
 </span><span id="OnlyBannerStrategy-23"><a href="#OnlyBannerStrategy-23"><span class="linenos">23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Deploy the banner then move directly to the backstage zone.&quot;&quot;&quot;</span>
 </span><span id="OnlyBannerStrategy-24"><a href="#OnlyBannerStrategy-24"><span class="linenos">24</span></a>
-</span><span id="OnlyBannerStrategy-25"><a href="#OnlyBannerStrategy-25"><span class="linenos">25</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="OnlyBannerStrategy-25"><a href="#OnlyBannerStrategy-25"><span class="linenos">25</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="OnlyBannerStrategy-26"><a href="#OnlyBannerStrategy-26"><span class="linenos">26</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the strategy.</span>
 </span><span id="OnlyBannerStrategy-27"><a href="#OnlyBannerStrategy-27"><span class="linenos">27</span></a>
 </span><span id="OnlyBannerStrategy-28"><a href="#OnlyBannerStrategy-28"><span class="linenos">28</span></a><span class="sd">        Build the task flow using subgraphs and direct transitions.</span>
 </span><span id="OnlyBannerStrategy-29"><a href="#OnlyBannerStrategy-29"><span class="linenos">29</span></a>
 </span><span id="OnlyBannerStrategy-30"><a href="#OnlyBannerStrategy-30"><span class="linenos">30</span></a><span class="sd">        Args:</span>
-</span><span id="OnlyBannerStrategy-31"><a href="#OnlyBannerStrategy-31"><span class="linenos">31</span></a><span class="sd">            ctx (ShowGameContext):</span>
+</span><span id="OnlyBannerStrategy-31"><a href="#OnlyBannerStrategy-31"><span class="linenos">31</span></a><span class="sd">            ctx (WinterGameContext):</span>
 </span><span id="OnlyBannerStrategy-32"><a href="#OnlyBannerStrategy-32"><span class="linenos">32</span></a><span class="sd">                Game context containing game-specific configurations and zones.</span>
 </span><span id="OnlyBannerStrategy-33"><a href="#OnlyBannerStrategy-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="OnlyBannerStrategy-34"><a href="#OnlyBannerStrategy-34"><span class="linenos">34</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -842,19 +832,19 @@
                                         <input id="OnlyBannerStrategy.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">OnlyBannerStrategy</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">show_game_context</span><span class="o">.</span><span class="n">ShowGameContext</span></span>)</span>
+        <span class="name">OnlyBannerStrategy</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">winter_game_context</span><span class="o">.</span><span class="n">WinterGameContext</span></span>)</span>
 
                 <label class="view-source-button" for="OnlyBannerStrategy.__init__-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#OnlyBannerStrategy.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="OnlyBannerStrategy.__init__-25"><a href="#OnlyBannerStrategy.__init__-25"><span class="linenos">25</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="OnlyBannerStrategy.__init__-25"><a href="#OnlyBannerStrategy.__init__-25"><span class="linenos">25</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="OnlyBannerStrategy.__init__-26"><a href="#OnlyBannerStrategy.__init__-26"><span class="linenos">26</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the strategy.</span>
 </span><span id="OnlyBannerStrategy.__init__-27"><a href="#OnlyBannerStrategy.__init__-27"><span class="linenos">27</span></a>
 </span><span id="OnlyBannerStrategy.__init__-28"><a href="#OnlyBannerStrategy.__init__-28"><span class="linenos">28</span></a><span class="sd">        Build the task flow using subgraphs and direct transitions.</span>
 </span><span id="OnlyBannerStrategy.__init__-29"><a href="#OnlyBannerStrategy.__init__-29"><span class="linenos">29</span></a>
 </span><span id="OnlyBannerStrategy.__init__-30"><a href="#OnlyBannerStrategy.__init__-30"><span class="linenos">30</span></a><span class="sd">        Args:</span>
-</span><span id="OnlyBannerStrategy.__init__-31"><a href="#OnlyBannerStrategy.__init__-31"><span class="linenos">31</span></a><span class="sd">            ctx (ShowGameContext):</span>
+</span><span id="OnlyBannerStrategy.__init__-31"><a href="#OnlyBannerStrategy.__init__-31"><span class="linenos">31</span></a><span class="sd">            ctx (WinterGameContext):</span>
 </span><span id="OnlyBannerStrategy.__init__-32"><a href="#OnlyBannerStrategy.__init__-32"><span class="linenos">32</span></a><span class="sd">                Game context containing game-specific configurations and zones.</span>
 </span><span id="OnlyBannerStrategy.__init__-33"><a href="#OnlyBannerStrategy.__init__-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="OnlyBannerStrategy.__init__-34"><a href="#OnlyBannerStrategy.__init__-34"><span class="linenos">34</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -889,7 +879,7 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>ctx (ShowGameContext):</strong>  Game context containing game-specific configurations and zones.</li>
+<li><strong>ctx (WinterGameContext):</strong>  Game context containing game-specific configurations and zones.</li>
 </ul>
 </div>
 
@@ -927,13 +917,13 @@
 </span><span id="TowerRushAltStrategy-33"><a href="#TowerRushAltStrategy-33"><span class="linenos"> 33</span></a><span class="sd">    - Navigate to backstage zone to finish the game</span>
 </span><span id="TowerRushAltStrategy-34"><a href="#TowerRushAltStrategy-34"><span class="linenos"> 34</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="TowerRushAltStrategy-35"><a href="#TowerRushAltStrategy-35"><span class="linenos"> 35</span></a>
-</span><span id="TowerRushAltStrategy-36"><a href="#TowerRushAltStrategy-36"><span class="linenos"> 36</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="TowerRushAltStrategy-36"><a href="#TowerRushAltStrategy-36"><span class="linenos"> 36</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="TowerRushAltStrategy-37"><a href="#TowerRushAltStrategy-37"><span class="linenos"> 37</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the strategy.</span>
 </span><span id="TowerRushAltStrategy-38"><a href="#TowerRushAltStrategy-38"><span class="linenos"> 38</span></a>
 </span><span id="TowerRushAltStrategy-39"><a href="#TowerRushAltStrategy-39"><span class="linenos"> 39</span></a><span class="sd">        Build the task flow using subgraphs and direct transitions.</span>
 </span><span id="TowerRushAltStrategy-40"><a href="#TowerRushAltStrategy-40"><span class="linenos"> 40</span></a>
 </span><span id="TowerRushAltStrategy-41"><a href="#TowerRushAltStrategy-41"><span class="linenos"> 41</span></a><span class="sd">        Args:</span>
-</span><span id="TowerRushAltStrategy-42"><a href="#TowerRushAltStrategy-42"><span class="linenos"> 42</span></a><span class="sd">            ctx (ShowGameContext):</span>
+</span><span id="TowerRushAltStrategy-42"><a href="#TowerRushAltStrategy-42"><span class="linenos"> 42</span></a><span class="sd">            ctx (WinterGameContext):</span>
 </span><span id="TowerRushAltStrategy-43"><a href="#TowerRushAltStrategy-43"><span class="linenos"> 43</span></a><span class="sd">                Game context containing game-specific configurations and zones.</span>
 </span><span id="TowerRushAltStrategy-44"><a href="#TowerRushAltStrategy-44"><span class="linenos"> 44</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="TowerRushAltStrategy-45"><a href="#TowerRushAltStrategy-45"><span class="linenos"> 45</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -962,7 +952,7 @@
 </span><span id="TowerRushAltStrategy-68"><a href="#TowerRushAltStrategy-68"><span class="linenos"> 68</span></a>        <span class="c1"># Step 6: Navigate to the second pickup zone</span>
 </span><span id="TowerRushAltStrategy-69"><a href="#TowerRushAltStrategy-69"><span class="linenos"> 69</span></a>        <span class="n">third_pickup_subgraph</span> <span class="o">=</span> <span class="n">get_pickup_subgraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="s2">&quot;third_pickup_zone&quot;</span><span class="p">])</span>
 </span><span id="TowerRushAltStrategy-70"><a href="#TowerRushAltStrategy-70"><span class="linenos"> 70</span></a>
-</span><span id="TowerRushAltStrategy-71"><a href="#TowerRushAltStrategy-71"><span class="linenos"> 71</span></a>        <span class="c1"># Step 7: Navigate to the second construction zone</span>
+</span><span id="TowerRushAltStrategy-71"><a href="#TowerRushAltStrategy-71"><span class="linenos"> 71</span></a>        <span class="c1"># Step 7: Navigate to the first construction zone</span>
 </span><span id="TowerRushAltStrategy-72"><a href="#TowerRushAltStrategy-72"><span class="linenos"> 72</span></a>        <span class="n">third_construct_subgraph</span> <span class="o">=</span> <span class="n">get_construct_one_floor_subgraph</span><span class="p">(</span>
 </span><span id="TowerRushAltStrategy-73"><a href="#TowerRushAltStrategy-73"><span class="linenos"> 73</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="s2">&quot;first_build_zone&quot;</span><span class="p">],</span>
 </span><span id="TowerRushAltStrategy-74"><a href="#TowerRushAltStrategy-74"><span class="linenos"> 74</span></a>            <span class="n">back_offset</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
@@ -1012,19 +1002,19 @@
                                         <input id="TowerRushAltStrategy.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">TowerRushAltStrategy</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">show_game_context</span><span class="o">.</span><span class="n">ShowGameContext</span></span>)</span>
+        <span class="name">TowerRushAltStrategy</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">winter_game_context</span><span class="o">.</span><span class="n">WinterGameContext</span></span>)</span>
 
                 <label class="view-source-button" for="TowerRushAltStrategy.__init__-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#TowerRushAltStrategy.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="TowerRushAltStrategy.__init__-36"><a href="#TowerRushAltStrategy.__init__-36"><span class="linenos"> 36</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TowerRushAltStrategy.__init__-36"><a href="#TowerRushAltStrategy.__init__-36"><span class="linenos"> 36</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="TowerRushAltStrategy.__init__-37"><a href="#TowerRushAltStrategy.__init__-37"><span class="linenos"> 37</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the strategy.</span>
 </span><span id="TowerRushAltStrategy.__init__-38"><a href="#TowerRushAltStrategy.__init__-38"><span class="linenos"> 38</span></a>
 </span><span id="TowerRushAltStrategy.__init__-39"><a href="#TowerRushAltStrategy.__init__-39"><span class="linenos"> 39</span></a><span class="sd">        Build the task flow using subgraphs and direct transitions.</span>
 </span><span id="TowerRushAltStrategy.__init__-40"><a href="#TowerRushAltStrategy.__init__-40"><span class="linenos"> 40</span></a>
 </span><span id="TowerRushAltStrategy.__init__-41"><a href="#TowerRushAltStrategy.__init__-41"><span class="linenos"> 41</span></a><span class="sd">        Args:</span>
-</span><span id="TowerRushAltStrategy.__init__-42"><a href="#TowerRushAltStrategy.__init__-42"><span class="linenos"> 42</span></a><span class="sd">            ctx (ShowGameContext):</span>
+</span><span id="TowerRushAltStrategy.__init__-42"><a href="#TowerRushAltStrategy.__init__-42"><span class="linenos"> 42</span></a><span class="sd">            ctx (WinterGameContext):</span>
 </span><span id="TowerRushAltStrategy.__init__-43"><a href="#TowerRushAltStrategy.__init__-43"><span class="linenos"> 43</span></a><span class="sd">                Game context containing game-specific configurations and zones.</span>
 </span><span id="TowerRushAltStrategy.__init__-44"><a href="#TowerRushAltStrategy.__init__-44"><span class="linenos"> 44</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="TowerRushAltStrategy.__init__-45"><a href="#TowerRushAltStrategy.__init__-45"><span class="linenos"> 45</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -1053,7 +1043,7 @@
 </span><span id="TowerRushAltStrategy.__init__-68"><a href="#TowerRushAltStrategy.__init__-68"><span class="linenos"> 68</span></a>        <span class="c1"># Step 6: Navigate to the second pickup zone</span>
 </span><span id="TowerRushAltStrategy.__init__-69"><a href="#TowerRushAltStrategy.__init__-69"><span class="linenos"> 69</span></a>        <span class="n">third_pickup_subgraph</span> <span class="o">=</span> <span class="n">get_pickup_subgraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="s2">&quot;third_pickup_zone&quot;</span><span class="p">])</span>
 </span><span id="TowerRushAltStrategy.__init__-70"><a href="#TowerRushAltStrategy.__init__-70"><span class="linenos"> 70</span></a>
-</span><span id="TowerRushAltStrategy.__init__-71"><a href="#TowerRushAltStrategy.__init__-71"><span class="linenos"> 71</span></a>        <span class="c1"># Step 7: Navigate to the second construction zone</span>
+</span><span id="TowerRushAltStrategy.__init__-71"><a href="#TowerRushAltStrategy.__init__-71"><span class="linenos"> 71</span></a>        <span class="c1"># Step 7: Navigate to the first construction zone</span>
 </span><span id="TowerRushAltStrategy.__init__-72"><a href="#TowerRushAltStrategy.__init__-72"><span class="linenos"> 72</span></a>        <span class="n">third_construct_subgraph</span> <span class="o">=</span> <span class="n">get_construct_one_floor_subgraph</span><span class="p">(</span>
 </span><span id="TowerRushAltStrategy.__init__-73"><a href="#TowerRushAltStrategy.__init__-73"><span class="linenos"> 73</span></a>            <span class="bp">self</span><span class="o">.</span><span class="n">zones</span><span class="p">[</span><span class="s2">&quot;first_build_zone&quot;</span><span class="p">],</span>
 </span><span id="TowerRushAltStrategy.__init__-74"><a href="#TowerRushAltStrategy.__init__-74"><span class="linenos"> 74</span></a>            <span class="n">back_offset</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span>
@@ -1095,7 +1085,7 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>ctx (ShowGameContext):</strong>  Game context containing game-specific configurations and zones.</li>
+<li><strong>ctx (WinterGameContext):</strong>  Game context containing game-specific configurations and zones.</li>
 </ul>
 </div>
 
@@ -1133,13 +1123,13 @@
 </span><span id="TowerRushStrategy-33"><a href="#TowerRushStrategy-33"><span class="linenos">33</span></a><span class="sd">    - Navigate to backstage zone to finish the game</span>
 </span><span id="TowerRushStrategy-34"><a href="#TowerRushStrategy-34"><span class="linenos">34</span></a><span class="sd">    &quot;&quot;&quot;</span>
 </span><span id="TowerRushStrategy-35"><a href="#TowerRushStrategy-35"><span class="linenos">35</span></a>
-</span><span id="TowerRushStrategy-36"><a href="#TowerRushStrategy-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="TowerRushStrategy-36"><a href="#TowerRushStrategy-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="TowerRushStrategy-37"><a href="#TowerRushStrategy-37"><span class="linenos">37</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the strategy.</span>
 </span><span id="TowerRushStrategy-38"><a href="#TowerRushStrategy-38"><span class="linenos">38</span></a>
 </span><span id="TowerRushStrategy-39"><a href="#TowerRushStrategy-39"><span class="linenos">39</span></a><span class="sd">        Build the task flow using subgraphs and direct transitions.</span>
 </span><span id="TowerRushStrategy-40"><a href="#TowerRushStrategy-40"><span class="linenos">40</span></a>
 </span><span id="TowerRushStrategy-41"><a href="#TowerRushStrategy-41"><span class="linenos">41</span></a><span class="sd">        Args:</span>
-</span><span id="TowerRushStrategy-42"><a href="#TowerRushStrategy-42"><span class="linenos">42</span></a><span class="sd">            ctx (ShowGameContext):</span>
+</span><span id="TowerRushStrategy-42"><a href="#TowerRushStrategy-42"><span class="linenos">42</span></a><span class="sd">            ctx (WinterGameContext):</span>
 </span><span id="TowerRushStrategy-43"><a href="#TowerRushStrategy-43"><span class="linenos">43</span></a><span class="sd">                Game context containing game-specific configurations and zones.</span>
 </span><span id="TowerRushStrategy-44"><a href="#TowerRushStrategy-44"><span class="linenos">44</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="TowerRushStrategy-45"><a href="#TowerRushStrategy-45"><span class="linenos">45</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -1203,19 +1193,19 @@
                                         <input id="TowerRushStrategy.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">TowerRushStrategy</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">show_game_context</span><span class="o">.</span><span class="n">ShowGameContext</span></span>)</span>
+        <span class="name">TowerRushStrategy</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">ctx</span><span class="p">:</span> <span class="n">boombot_strategy</span><span class="o">.</span><span class="n">winter_game_context</span><span class="o">.</span><span class="n">WinterGameContext</span></span>)</span>
 
                 <label class="view-source-button" for="TowerRushStrategy.__init__-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#TowerRushStrategy.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="TowerRushStrategy.__init__-36"><a href="#TowerRushStrategy.__init__-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">ShowGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TowerRushStrategy.__init__-36"><a href="#TowerRushStrategy.__init__-36"><span class="linenos">36</span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">WinterGameContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 </span><span id="TowerRushStrategy.__init__-37"><a href="#TowerRushStrategy.__init__-37"><span class="linenos">37</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the strategy.</span>
 </span><span id="TowerRushStrategy.__init__-38"><a href="#TowerRushStrategy.__init__-38"><span class="linenos">38</span></a>
 </span><span id="TowerRushStrategy.__init__-39"><a href="#TowerRushStrategy.__init__-39"><span class="linenos">39</span></a><span class="sd">        Build the task flow using subgraphs and direct transitions.</span>
 </span><span id="TowerRushStrategy.__init__-40"><a href="#TowerRushStrategy.__init__-40"><span class="linenos">40</span></a>
 </span><span id="TowerRushStrategy.__init__-41"><a href="#TowerRushStrategy.__init__-41"><span class="linenos">41</span></a><span class="sd">        Args:</span>
-</span><span id="TowerRushStrategy.__init__-42"><a href="#TowerRushStrategy.__init__-42"><span class="linenos">42</span></a><span class="sd">            ctx (ShowGameContext):</span>
+</span><span id="TowerRushStrategy.__init__-42"><a href="#TowerRushStrategy.__init__-42"><span class="linenos">42</span></a><span class="sd">            ctx (WinterGameContext):</span>
 </span><span id="TowerRushStrategy.__init__-43"><a href="#TowerRushStrategy.__init__-43"><span class="linenos">43</span></a><span class="sd">                Game context containing game-specific configurations and zones.</span>
 </span><span id="TowerRushStrategy.__init__-44"><a href="#TowerRushStrategy.__init__-44"><span class="linenos">44</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="TowerRushStrategy.__init__-45"><a href="#TowerRushStrategy.__init__-45"><span class="linenos">45</span></a>        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
@@ -1271,7 +1261,7 @@
 <h6 id="arguments">Arguments:</h6>
 
 <ul>
-<li><strong>ctx (ShowGameContext):</strong>  Game context containing game-specific configurations and zones.</li>
+<li><strong>ctx (WinterGameContext):</strong>  Game context containing game-specific configurations and zones.</li>
 </ul>
 </div>
 

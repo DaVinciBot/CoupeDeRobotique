@@ -4,14 +4,17 @@
     "donjayamanne.python-extension-pack",
     "eamodio.gitlens",
     "gruntfuggly.todo-tree",
+    "jeff-hykin.better-cpp-syntax",
+    "llvm-vs-code-extensions.vscode-clangd",
+    "mhutchie.git-graph",
     "ms-python.pylint",
     "ms-python.vscode-pylance",
+    "ms-vscode.cpptools",
+    "ms-vscode.cpptools-themes",
+    "platformio.platformio-ide",
     "platformio.platformio-ide",
     "usernamehw.errorlens",
-    "ms-vscode.cpptools-themes",
-    "ms-vscode.cpptools",
-    "jeff-hykin.better-cpp-syntax",
-    "xaver.clang-format",
-    "mhutchie.git-graph"
-  ]
+    "xaver.clang-format"
+  ],
+  "unwantedRecommendations": ["ms-vscode.cpptools-extension-pack"]
 }

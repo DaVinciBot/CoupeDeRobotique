@@ -69,7 +69,7 @@ class AllyZone(BaseArenaZone):
         """
         super().update(team_color, ally_position, enemy_position)
         self.__init__(
-            logger=self.logger,
+            logger=self._logger,
             point=ally_position,
             robot_size=self.robot_size,
         )

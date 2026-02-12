@@ -4,22 +4,22 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, override
 
-from boombot_strategy.show_game_context import ShowGameContext
+from boombot_strategy.winter_game_context import WinterGameContext
 from strategy.core.tasks import BaseNavigationTask
 
 if TYPE_CHECKING:
     from navigation.trajectory_planner import TrajectoryPlanCommand
 
 
-class NavigationTask(BaseNavigationTask[ShowGameContext]):
+class NavigationTask(BaseNavigationTask[WinterGameContext]):
     """Thin wrapper exposing navigation to the strategy graph."""
 
     @override
-    def handle(self, ctx: ShowGameContext) -> bool:
+    def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the navigation plan and update the rolling basis.
 
         Args:
-            ctx (ShowGameContext): The current game context.
+            ctx (WinterGameContext): The current game context.
 
         Returns:
             bool: ``True`` if the navigation task is finished, ``False`` otherwise.
@@ -39,6 +39,6 @@ class NavigationTask(BaseNavigationTask[ShowGameContext]):
         )
 
         ctx.rolling_basis.set_target_position(cmd.get_position_command())
-        self.logger.debug(f"[Navigation Task] {cmd.get_full_command()}")
-        self.logger.debug(f"[Navigation Task] State = {self.navigator_task.state}")
+        self._logger.debug(f"[TASK:Nav] {cmd.get_full_command()}")
+        self._logger.debug(f"[TASK:Nav] State: {self.navigator_task.state}")
         return self.navigator_task.state.is_finished()

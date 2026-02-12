@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from loggerplusplus import Logger
-
 from boombot_strategy.strategies.base_strategy import BaseStrategy
 from boombot_strategy.sub_graphs import (
     get_banner_deployment_subgraph,
@@ -14,11 +12,12 @@ from boombot_strategy.sub_graphs import (
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
+from log_manager import LogLogger
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 
 if TYPE_CHECKING:
-    from boombot_strategy.show_game_context import ShowGameContext
+    from boombot_strategy.winter_game_context import WinterGameContext
 
 
 class DebugStrategy(BaseStrategy):
@@ -29,14 +28,14 @@ class DebugStrategy(BaseStrategy):
     - Navigate to backstage zone to finish the game
     """
 
-    def __init__(self, ctx: ShowGameContext) -> None:
+    def __init__(self, ctx: WinterGameContext) -> None:
         """Initialize the strategy.
 
         Build the task flow using subgraphs and direct transitions.
 
 
         Args:
-            ctx (ShowGameContext):
+            ctx (WinterGameContext):
                 Game context containing game-specific configurations and zones.
         """
         super().__init__(ctx)
@@ -62,7 +61,7 @@ class DebugStrategy(BaseStrategy):
 
         # Create the graph runner starting from the first subgraph
         self.runner = GraphRunner(
-            logger=Logger(
+            logger=LogLogger(
                 identifier="BasicStrategyRunner",
                 follow_logger_manager_rules=True,
             ),

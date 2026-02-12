@@ -4,7 +4,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, override
 
-from boombot_strategy.show_game_context import ShowGameContext
+from old_boombot_strategy.show_game_context import ShowGameContext
+
 from strategy.core.tasks import BaseNavigationTask
 
 if TYPE_CHECKING:
@@ -39,6 +40,6 @@ class NavigationTask(BaseNavigationTask[ShowGameContext]):
         )
 
         ctx.rolling_basis.set_target_position(cmd.get_position_command())
-        self.logger.debug(f"[Navigation Task] {cmd.get_full_command()}")
-        self.logger.debug(f"[Navigation Task] State = {self.navigator_task.state}")
+        self._logger.debug(f"[Navigation Task] {cmd.get_full_command()}")
+        self._logger.debug(f"[Navigation Task] State = {self.navigator_task.state}")
         return self.navigator_task.state.is_finished()

@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import math
+from typing import TYPE_CHECKING
 
-from loggerplusplus import Logger, time_tracker
+from loggerplusplus import time_tracker
 from pathfinding.core.grid import GridNode
 
 from geometry import OrientedPoint
@@ -14,6 +15,9 @@ from navigation.path_planner.astar_path_planner.astar_path_planner_params import
 )
 from navigation.path_planner.base_path_planner.base_path_planner import BasePathPlanner
 from navigation.path_planner.structs import Direction
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 _TWO_POINTS = 2
 _THREE_POINTS = 3
@@ -84,8 +88,8 @@ class AStarPathPlanner(
         )
 
         if not self.params.path_found:
-            self.logger.warning(
-                "No path found! "
+            self._logger.warning(
+                f"[NAV:Path] No path found"
                 f"Grid: [start=({self.params.current_position.x}, "
                 f"{self.params.current_position.y}), goal=({self.params.goal.x}, "
                 f"{self.params.goal.y})] "
@@ -129,8 +133,8 @@ class AStarPathPlanner(
             list[OrientedPoint]: Path with orientation included.
         """
         if not path:
-            self.logger.debug(
-                "[path to absolute oriented path] Path to convert is empty!",
+            self._logger.debug(
+                "[NAV:Path] Path to convert is empty!",
             )
             return []
 
@@ -253,7 +257,7 @@ class AStarPathPlanner(
         )
 
     @BasePathPlanner.store_plan_path_params
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def plan_path(self, _params: AStarPathPlannerPlanPathParams) -> list[OrientedPoint]:
         """Plan a list of oriented points path from start to goal.
 
@@ -270,7 +274,7 @@ class AStarPathPlanner(
 
         # If no path found, return an empty list
         if not self.params.path_found:
-            self.logger.warning("No path found!")
+            self._logger.warning("[NAV:Path] No path found")
             return []
 
         # Add real robot position as start point and goal as end point

@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, cast, override
 
 import matplotlib.pyplot as plt
 import numpy as np
-from loggerplusplus import Logger, time_tracker
+from loggerplusplus import time_tracker
 
 from arena.base_arena.arena_zones import AllyZone, BaseArenaZone, BorderZone, EnemyZone
 from arena.base_arena.grid_manager import GridManager
@@ -31,9 +31,12 @@ from geometry import (
     nearest_points,
     prepare,
 )
+from log_manager import LogLogger
 
 if TYPE_CHECKING:
+    from loggerplusplus import Logger
     from matplotlib.figure import Figure as pltFigure
+    from numpy.typing import NDArray
 
 
 class BaseArena(ABC):
@@ -69,21 +72,21 @@ class BaseArena(ABC):
         """
         # region ====== Initialized constructor based attributes ======
         # 1. Logger
-        self.logger: Logger = logger
+        self._logger: Logger = logger
         # 2. Dimensions
         self.width: int = width
         self.height: int = height
 
         if border_buffer % chunk_size:
-            self.logger.warning(
-                "The border buffer is not a multiple of the chunk size -> "
-                "the not walkable area will not be aligned with the grid",
+            self._logger.warning(
+                "[ARENA:Grid] Border buffer not aligned with chunk size - "
+                "walkable area may not align with grid",
             )
 
         if obstacle_buffer % chunk_size:
-            self.logger.warning(
-                "The obstacle buffer is not a multiple of the chunk size -> "
-                "the not walkable area will not be aligned with the grid",
+            self._logger.warning(
+                "[ARENA:Grid] Obstacle buffer not aligned with chunk size - "
+                "walkable area may not align with grid",
             )
         # 3. Buffers
         self.border_buffer: float = border_buffer
@@ -92,7 +95,7 @@ class BaseArena(ABC):
         # 4. Grid Manager
         self.grid_manager: GridManager = GridManager(
             logger=grid_manager_logger
-            or Logger(
+            or LogLogger(
                 identifier="GridManager",
                 follow_logger_manager_rules=True,
             ),
@@ -132,7 +135,7 @@ class BaseArena(ABC):
         # Don't add them now as dynamic forbidden zones because they are not updated yet
         #   -> default position for now (wait BaseArena.update method for update)
         self.ally_zone: AllyZone = AllyZone(
-            logger=Logger(identifier="AllyZone", follow_logger_manager_rules=True),
+            logger=LogLogger(identifier="AllyZone", follow_logger_manager_rules=True),
             point=OrientedPoint(self.width / 2, self.height / 2, 0),
             robot_size=1,
             # The robot is in reality assimilated to a point of null size,
@@ -140,7 +143,7 @@ class BaseArena(ABC):
         )
 
         self.enemy_zone: EnemyZone = EnemyZone(
-            logger=Logger(identifier="EnemyZone", follow_logger_manager_rules=True),
+            logger=LogLogger(identifier="EnemyZone", follow_logger_manager_rules=True),
             point=OrientedPoint(self.width / 2, self.height / 2, 0),
             robot_size=15,
         )
@@ -179,7 +182,7 @@ class BaseArena(ABC):
         border_zone_polygon = cast("Polygon", arena_polygon.difference(inner_polygon))
 
         return BorderZone(
-            logger=Logger(
+            logger=LogLogger(
                 identifier="BorderZone",
                 follow_logger_manager_rules=True,
             ),
@@ -208,32 +211,35 @@ class BaseArena(ABC):
         """
         return self.grid_manager
 
-    def _pol_to_abs_cart(self, polars: np.ndarray) -> MultiPoint:
+    def _pol_to_abs_cart(self, polars: NDArray[np.float64]) -> MultiPoint:
         """Converts polar coordinates to absolute Cartesian coordinates.
 
         Args:
-            polars (np.ndarray):
+            polars (NDArray[np.float64]):
                 Array of polar coordinates in the form of (angle, distance).
 
         Returns:
             MultiPoint: Array of absolute Cartesian coordinates.
         """
-        return MultiPoint(
-            [
-                (
-                    self.ally_zone.point.x
-                    + np.cos(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
-                    self.ally_zone.point.y
-                    + np.sin(self.ally_zone.point.theta + polars[i, 0]) * polars[i, 1],
-                )
-                for i in range(len(polars))
-            ],
-        )
+        polars = np.asarray(polars, dtype=float)
+        if not polars.size:
+            return MultiPoint([])
+
+        points = [
+            (
+                self.ally_zone.point.x
+                + np.cos(self.ally_zone.point.theta + angle) * dist,
+                self.ally_zone.point.y
+                + np.sin(self.ally_zone.point.theta + angle) * dist,
+            )
+            for angle, dist in polars
+        ]
+        return MultiPoint(points)
 
     # endregion
 
     # region ====== Public Methods ======
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def set_team_color(self, team_color: TeamColor) -> None:
         """Set the team color and trigger updates to zones.
 
@@ -241,8 +247,9 @@ class BaseArena(ABC):
             team_color (TeamColor): The team's color.
         """
         if team_color not in {TeamColor.YELLOW, TeamColor.BLUE}:
-            self.logger.error(
-                f"Invalid team color: {team_color}. Must be 'yellow' or 'blue'.",
+            self._logger.error(
+                f"[ARENA:Config] Invalid team color: {team_color} "
+                "- must be YELLOW or BLUE",
             )
 
         self.team_color: TeamColor = team_color
@@ -252,11 +259,11 @@ class BaseArena(ABC):
             optimized_update=False,
         )  # Force to update all zones
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def update(
         self,
         ally_position: OrientedPoint,
-        lidar_scan_polars: np.ndarray,  # Polars coordinates issued from the lidar scan
+        lidar_scan_polars: NDArray[np.float64],  # Polars coordinates
         *,
         optimized_update: bool = True,
         _enemy_position: OrientedPoint
@@ -266,7 +273,8 @@ class BaseArena(ABC):
 
         Args:
             ally_position (OrientedPoint): Current position of the ally robot.
-            lidar_scan_polars (np.ndarray): Lidar scan data in polar coordinates.
+            lidar_scan_polars (NDArray[np.float64]):
+                Lidar scan data in polar coordinates.
             optimized_update (bool, optional):
                 If ``True``, only updates intersecting zones. Defaults to ``True``.
             _enemy_position (OrientedPoint | None, optional):
@@ -308,7 +316,7 @@ class BaseArena(ABC):
 
     def compute_enemy_position(
         self,
-        lidar_scan_polars: np.ndarray,
+        lidar_scan_polars: NDArray[np.float64],
         ally_position: OrientedPoint,
         *,
         _start_time: int = -1,
@@ -323,7 +331,8 @@ class BaseArena(ABC):
         If the enemy position is within a stuff zone, it marks that zone as FORBIDDEN.
 
         Args:
-            lidar_scan_polars (np.ndarray): Detection points from the LIDAR scan.
+            lidar_scan_polars (NDArray[np.float64]):
+                Detection points from the LIDAR scan.
             ally_position (OrientedPoint): Current ally position.
             _start_time (int, optional):
                 Starting timestamp for the computation. Defaults to -1.
@@ -372,7 +381,9 @@ class BaseArena(ABC):
         # 1. If goal is defined as int, it's a zone ID
         if isinstance(goal, int):
             if goal > len(self.zones):
-                self.logger.error("Invalid zone ID given in trajectory parameters.")
+                self._logger.error(
+                    "[ARENA:Zone] Invalid zone ID in trajectory parameters",
+                )
                 return None
 
             return self.zones[goal].get_go_to_position(
@@ -419,7 +430,9 @@ class BaseArena(ABC):
         """
         if isinstance(location, int):
             if location >= len(self.zones):
-                self.logger.error("Invalid zone ID given in trajectory parameters.")
+                self._logger.error(
+                    "[ARENA:Zone] Invalid zone ID in trajectory parameters",
+                )
                 return None
             return self.zones[location]
         if isinstance(location, BaseArenaZone):

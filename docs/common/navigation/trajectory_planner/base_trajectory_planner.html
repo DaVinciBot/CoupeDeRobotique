@@ -37,9 +37,6 @@
                                 <a class="function" href="#BaseTrajectoryPlanner.__init__">BaseTrajectoryPlanner</a>
                         </li>
                         <li>
-                                <a class="variable" href="#BaseTrajectoryPlanner.logger">logger</a>
-                        </li>
-                        <li>
                                 <a class="variable" href="#BaseTrajectoryPlanner.params">params</a>
                         </li>
                         <li>
@@ -163,7 +160,7 @@
 </span><span id="BaseTrajectoryPlanner-45"><a href="#BaseTrajectoryPlanner-45"><span class="linenos"> 45</span></a><span class="sd">            logger (Logger | None, optional):</span>
 </span><span id="BaseTrajectoryPlanner-46"><a href="#BaseTrajectoryPlanner-46"><span class="linenos"> 46</span></a><span class="sd">                Logger instance for debugging. Defaults to ``None``.</span>
 </span><span id="BaseTrajectoryPlanner-47"><a href="#BaseTrajectoryPlanner-47"><span class="linenos"> 47</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner-48"><a href="#BaseTrajectoryPlanner-48"><span class="linenos"> 48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span> <span class="ow">or</span> <span class="n">Logger</span><span class="p">(</span>
+</span><span id="BaseTrajectoryPlanner-48"><a href="#BaseTrajectoryPlanner-48"><span class="linenos"> 48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span> <span class="ow">or</span> <span class="n">Logger</span><span class="p">(</span>
 </span><span id="BaseTrajectoryPlanner-49"><a href="#BaseTrajectoryPlanner-49"><span class="linenos"> 49</span></a>            <span class="n">identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="BaseTrajectoryPlanner-50"><a href="#BaseTrajectoryPlanner-50"><span class="linenos"> 50</span></a>            <span class="n">follow_logger_manager_rules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="BaseTrajectoryPlanner-51"><a href="#BaseTrajectoryPlanner-51"><span class="linenos"> 51</span></a>        <span class="p">)</span>
@@ -178,7 +175,7 @@
 </span><span id="BaseTrajectoryPlanner-60"><a href="#BaseTrajectoryPlanner-60"><span class="linenos"> 60</span></a>            <span class="mf">0.0</span>  <span class="c1"># Time when current planning started</span>
 </span><span id="BaseTrajectoryPlanner-61"><a href="#BaseTrajectoryPlanner-61"><span class="linenos"> 61</span></a>        <span class="p">)</span>
 </span><span id="BaseTrajectoryPlanner-62"><a href="#BaseTrajectoryPlanner-62"><span class="linenos"> 62</span></a>
-</span><span id="BaseTrajectoryPlanner-63"><a href="#BaseTrajectoryPlanner-63"><span class="linenos"> 63</span></a>    <span class="c1"># ====== Chrono Helpers ======</span>
+</span><span id="BaseTrajectoryPlanner-63"><a href="#BaseTrajectoryPlanner-63"><span class="linenos"> 63</span></a>    <span class="c1"># region ====== Chrono Helpers ======</span>
 </span><span id="BaseTrajectoryPlanner-64"><a href="#BaseTrajectoryPlanner-64"><span class="linenos"> 64</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_trajectory_time_elapsed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 </span><span id="BaseTrajectoryPlanner-65"><a href="#BaseTrajectoryPlanner-65"><span class="linenos"> 65</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the total elapsed time since the start of the planning session.</span>
 </span><span id="BaseTrajectoryPlanner-66"><a href="#BaseTrajectoryPlanner-66"><span class="linenos"> 66</span></a>
@@ -202,74 +199,82 @@
 </span><span id="BaseTrajectoryPlanner-84"><a href="#BaseTrajectoryPlanner-84"><span class="linenos"> 84</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span><span id="BaseTrajectoryPlanner-85"><a href="#BaseTrajectoryPlanner-85"><span class="linenos"> 85</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_trajectory_time_elapsed</span><span class="p">()</span>
 </span><span id="BaseTrajectoryPlanner-86"><a href="#BaseTrajectoryPlanner-86"><span class="linenos"> 86</span></a>
-</span><span id="BaseTrajectoryPlanner-87"><a href="#BaseTrajectoryPlanner-87"><span class="linenos"> 87</span></a>    <span class="c1"># ====== Internal Utilities ======</span>
-</span><span id="BaseTrajectoryPlanner-88"><a href="#BaseTrajectoryPlanner-88"><span class="linenos"> 88</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="BaseTrajectoryPlanner-89"><a href="#BaseTrajectoryPlanner-89"><span class="linenos"> 89</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ensure_planning_started</span><span class="p">(</span>
-</span><span id="BaseTrajectoryPlanner-90"><a href="#BaseTrajectoryPlanner-90"><span class="linenos"> 90</span></a>        <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">TrajectoryPlanCommand</span><span class="p">],</span>
-</span><span id="BaseTrajectoryPlanner-91"><a href="#BaseTrajectoryPlanner-91"><span class="linenos"> 91</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">TrajectoryPlanCommand</span><span class="p">]:</span>
-</span><span id="BaseTrajectoryPlanner-92"><a href="#BaseTrajectoryPlanner-92"><span class="linenos"> 92</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Decorator to ensure that planning has started before executing a method.</span>
-</span><span id="BaseTrajectoryPlanner-93"><a href="#BaseTrajectoryPlanner-93"><span class="linenos"> 93</span></a>
-</span><span id="BaseTrajectoryPlanner-94"><a href="#BaseTrajectoryPlanner-94"><span class="linenos"> 94</span></a><span class="sd">        Args:</span>
-</span><span id="BaseTrajectoryPlanner-95"><a href="#BaseTrajectoryPlanner-95"><span class="linenos"> 95</span></a><span class="sd">            method (Callable[..., TrajectoryPlanCommand]): The method to wrap.</span>
-</span><span id="BaseTrajectoryPlanner-96"><a href="#BaseTrajectoryPlanner-96"><span class="linenos"> 96</span></a>
-</span><span id="BaseTrajectoryPlanner-97"><a href="#BaseTrajectoryPlanner-97"><span class="linenos"> 97</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseTrajectoryPlanner-98"><a href="#BaseTrajectoryPlanner-98"><span class="linenos"> 98</span></a><span class="sd">            Callable[..., TrajectoryPlanCommand]: Wrapped method.</span>
-</span><span id="BaseTrajectoryPlanner-99"><a href="#BaseTrajectoryPlanner-99"><span class="linenos"> 99</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner-100"><a href="#BaseTrajectoryPlanner-100"><span class="linenos">100</span></a>
-</span><span id="BaseTrajectoryPlanner-101"><a href="#BaseTrajectoryPlanner-101"><span class="linenos">101</span></a>        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
-</span><span id="BaseTrajectoryPlanner-102"><a href="#BaseTrajectoryPlanner-102"><span class="linenos">102</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseTrajectoryPlanner</span><span class="p">[</span><span class="n">PARAMSTYPE</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TrajectoryPlanCommand</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner-103"><a href="#BaseTrajectoryPlanner-103"><span class="linenos">103</span></a>            <span class="c1"># Start planning if not already started</span>
-</span><span id="BaseTrajectoryPlanner-104"><a href="#BaseTrajectoryPlanner-104"><span class="linenos">104</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_planning_started</span><span class="p">():</span>
-</span><span id="BaseTrajectoryPlanner-105"><a href="#BaseTrajectoryPlanner-105"><span class="linenos">105</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">start_planning</span><span class="p">()</span>
-</span><span id="BaseTrajectoryPlanner-106"><a href="#BaseTrajectoryPlanner-106"><span class="linenos">106</span></a>
-</span><span id="BaseTrajectoryPlanner-107"><a href="#BaseTrajectoryPlanner-107"><span class="linenos">107</span></a>            <span class="c1"># Execute the method</span>
-</span><span id="BaseTrajectoryPlanner-108"><a href="#BaseTrajectoryPlanner-108"><span class="linenos">108</span></a>            <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span id="BaseTrajectoryPlanner-109"><a href="#BaseTrajectoryPlanner-109"><span class="linenos">109</span></a>
-</span><span id="BaseTrajectoryPlanner-110"><a href="#BaseTrajectoryPlanner-110"><span class="linenos">110</span></a>        <span class="k">return</span> <span class="n">wrapper</span>
+</span><span id="BaseTrajectoryPlanner-87"><a href="#BaseTrajectoryPlanner-87"><span class="linenos"> 87</span></a>    <span class="c1"># endregion</span>
+</span><span id="BaseTrajectoryPlanner-88"><a href="#BaseTrajectoryPlanner-88"><span class="linenos"> 88</span></a>
+</span><span id="BaseTrajectoryPlanner-89"><a href="#BaseTrajectoryPlanner-89"><span class="linenos"> 89</span></a>    <span class="c1"># region ====== Internal Utilities ======</span>
+</span><span id="BaseTrajectoryPlanner-90"><a href="#BaseTrajectoryPlanner-90"><span class="linenos"> 90</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="BaseTrajectoryPlanner-91"><a href="#BaseTrajectoryPlanner-91"><span class="linenos"> 91</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ensure_planning_started</span><span class="p">(</span>
+</span><span id="BaseTrajectoryPlanner-92"><a href="#BaseTrajectoryPlanner-92"><span class="linenos"> 92</span></a>        <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">TrajectoryPlanCommand</span><span class="p">],</span>
+</span><span id="BaseTrajectoryPlanner-93"><a href="#BaseTrajectoryPlanner-93"><span class="linenos"> 93</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">TrajectoryPlanCommand</span><span class="p">]:</span>
+</span><span id="BaseTrajectoryPlanner-94"><a href="#BaseTrajectoryPlanner-94"><span class="linenos"> 94</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Decorator to ensure that planning has started before executing a method.</span>
+</span><span id="BaseTrajectoryPlanner-95"><a href="#BaseTrajectoryPlanner-95"><span class="linenos"> 95</span></a>
+</span><span id="BaseTrajectoryPlanner-96"><a href="#BaseTrajectoryPlanner-96"><span class="linenos"> 96</span></a><span class="sd">        Args:</span>
+</span><span id="BaseTrajectoryPlanner-97"><a href="#BaseTrajectoryPlanner-97"><span class="linenos"> 97</span></a><span class="sd">            method (Callable[..., TrajectoryPlanCommand]): The method to wrap.</span>
+</span><span id="BaseTrajectoryPlanner-98"><a href="#BaseTrajectoryPlanner-98"><span class="linenos"> 98</span></a>
+</span><span id="BaseTrajectoryPlanner-99"><a href="#BaseTrajectoryPlanner-99"><span class="linenos"> 99</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseTrajectoryPlanner-100"><a href="#BaseTrajectoryPlanner-100"><span class="linenos">100</span></a><span class="sd">            Callable[..., TrajectoryPlanCommand]: Wrapped method.</span>
+</span><span id="BaseTrajectoryPlanner-101"><a href="#BaseTrajectoryPlanner-101"><span class="linenos">101</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner-102"><a href="#BaseTrajectoryPlanner-102"><span class="linenos">102</span></a>
+</span><span id="BaseTrajectoryPlanner-103"><a href="#BaseTrajectoryPlanner-103"><span class="linenos">103</span></a>        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+</span><span id="BaseTrajectoryPlanner-104"><a href="#BaseTrajectoryPlanner-104"><span class="linenos">104</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseTrajectoryPlanner</span><span class="p">[</span><span class="n">PARAMSTYPE</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TrajectoryPlanCommand</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner-105"><a href="#BaseTrajectoryPlanner-105"><span class="linenos">105</span></a>            <span class="c1"># Start planning if not already started</span>
+</span><span id="BaseTrajectoryPlanner-106"><a href="#BaseTrajectoryPlanner-106"><span class="linenos">106</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_planning_started</span><span class="p">():</span>
+</span><span id="BaseTrajectoryPlanner-107"><a href="#BaseTrajectoryPlanner-107"><span class="linenos">107</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">start_planning</span><span class="p">()</span>
+</span><span id="BaseTrajectoryPlanner-108"><a href="#BaseTrajectoryPlanner-108"><span class="linenos">108</span></a>
+</span><span id="BaseTrajectoryPlanner-109"><a href="#BaseTrajectoryPlanner-109"><span class="linenos">109</span></a>            <span class="c1"># Execute the method</span>
+</span><span id="BaseTrajectoryPlanner-110"><a href="#BaseTrajectoryPlanner-110"><span class="linenos">110</span></a>            <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </span><span id="BaseTrajectoryPlanner-111"><a href="#BaseTrajectoryPlanner-111"><span class="linenos">111</span></a>
-</span><span id="BaseTrajectoryPlanner-112"><a href="#BaseTrajectoryPlanner-112"><span class="linenos">112</span></a>    <span class="c1"># ====== Public Methods ======</span>
-</span><span id="BaseTrajectoryPlanner-113"><a href="#BaseTrajectoryPlanner-113"><span class="linenos">113</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">start_planning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner-114"><a href="#BaseTrajectoryPlanner-114"><span class="linenos">114</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the trajectory planning session.&quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner-115"><a href="#BaseTrajectoryPlanner-115"><span class="linenos">115</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-</span><span id="BaseTrajectoryPlanner-116"><a href="#BaseTrajectoryPlanner-116"><span class="linenos">116</span></a>
-</span><span id="BaseTrajectoryPlanner-117"><a href="#BaseTrajectoryPlanner-117"><span class="linenos">117</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">stop_planning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner-118"><a href="#BaseTrajectoryPlanner-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the planning session and accumulate elapsed time.&quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner-119"><a href="#BaseTrajectoryPlanner-119"><span class="linenos">119</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_elapsed_time_checkpoint</span> <span class="o">+=</span> <span class="p">(</span>
-</span><span id="BaseTrajectoryPlanner-120"><a href="#BaseTrajectoryPlanner-120"><span class="linenos">120</span></a>            <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span>
-</span><span id="BaseTrajectoryPlanner-121"><a href="#BaseTrajectoryPlanner-121"><span class="linenos">121</span></a>        <span class="p">)</span>
-</span><span id="BaseTrajectoryPlanner-122"><a href="#BaseTrajectoryPlanner-122"><span class="linenos">122</span></a>
-</span><span id="BaseTrajectoryPlanner-123"><a href="#BaseTrajectoryPlanner-123"><span class="linenos">123</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_planning_started</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner-124"><a href="#BaseTrajectoryPlanner-124"><span class="linenos">124</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if planning has been started.</span>
-</span><span id="BaseTrajectoryPlanner-125"><a href="#BaseTrajectoryPlanner-125"><span class="linenos">125</span></a>
-</span><span id="BaseTrajectoryPlanner-126"><a href="#BaseTrajectoryPlanner-126"><span class="linenos">126</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseTrajectoryPlanner-127"><a href="#BaseTrajectoryPlanner-127"><span class="linenos">127</span></a><span class="sd">            bool: ``True`` if planning is active, ``False`` otherwise.</span>
-</span><span id="BaseTrajectoryPlanner-128"><a href="#BaseTrajectoryPlanner-128"><span class="linenos">128</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner-129"><a href="#BaseTrajectoryPlanner-129"><span class="linenos">129</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
-</span><span id="BaseTrajectoryPlanner-130"><a href="#BaseTrajectoryPlanner-130"><span class="linenos">130</span></a>
-</span><span id="BaseTrajectoryPlanner-131"><a href="#BaseTrajectoryPlanner-131"><span class="linenos">131</span></a>    <span class="c1"># ====== Abstract Methods ======</span>
-</span><span id="BaseTrajectoryPlanner-132"><a href="#BaseTrajectoryPlanner-132"><span class="linenos">132</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseTrajectoryPlanner-133"><a href="#BaseTrajectoryPlanner-133"><span class="linenos">133</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">plan_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OrientedPoint</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner-134"><a href="#BaseTrajectoryPlanner-134"><span class="linenos">134</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Plan a trajectory for the provided path.</span>
-</span><span id="BaseTrajectoryPlanner-135"><a href="#BaseTrajectoryPlanner-135"><span class="linenos">135</span></a>
-</span><span id="BaseTrajectoryPlanner-136"><a href="#BaseTrajectoryPlanner-136"><span class="linenos">136</span></a><span class="sd">        Args:</span>
-</span><span id="BaseTrajectoryPlanner-137"><a href="#BaseTrajectoryPlanner-137"><span class="linenos">137</span></a><span class="sd">            path (list[OrientedPoint]): The path to follow.</span>
-</span><span id="BaseTrajectoryPlanner-138"><a href="#BaseTrajectoryPlanner-138"><span class="linenos">138</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner-139"><a href="#BaseTrajectoryPlanner-139"><span class="linenos">139</span></a>
-</span><span id="BaseTrajectoryPlanner-140"><a href="#BaseTrajectoryPlanner-140"><span class="linenos">140</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseTrajectoryPlanner-141"><a href="#BaseTrajectoryPlanner-141"><span class="linenos">141</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_plan</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrajectoryPlanCommand</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner-142"><a href="#BaseTrajectoryPlanner-142"><span class="linenos">142</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the current trajectory command.</span>
-</span><span id="BaseTrajectoryPlanner-143"><a href="#BaseTrajectoryPlanner-143"><span class="linenos">143</span></a>
-</span><span id="BaseTrajectoryPlanner-144"><a href="#BaseTrajectoryPlanner-144"><span class="linenos">144</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseTrajectoryPlanner-145"><a href="#BaseTrajectoryPlanner-145"><span class="linenos">145</span></a><span class="sd">            TrajectoryPlanCommand: The current trajectory command.</span>
-</span><span id="BaseTrajectoryPlanner-146"><a href="#BaseTrajectoryPlanner-146"><span class="linenos">146</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner-147"><a href="#BaseTrajectoryPlanner-147"><span class="linenos">147</span></a>
-</span><span id="BaseTrajectoryPlanner-148"><a href="#BaseTrajectoryPlanner-148"><span class="linenos">148</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseTrajectoryPlanner-149"><a href="#BaseTrajectoryPlanner-149"><span class="linenos">149</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_total_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner-150"><a href="#BaseTrajectoryPlanner-150"><span class="linenos">150</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the total duration of the planned trajectory.</span>
-</span><span id="BaseTrajectoryPlanner-151"><a href="#BaseTrajectoryPlanner-151"><span class="linenos">151</span></a>
-</span><span id="BaseTrajectoryPlanner-152"><a href="#BaseTrajectoryPlanner-152"><span class="linenos">152</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseTrajectoryPlanner-153"><a href="#BaseTrajectoryPlanner-153"><span class="linenos">153</span></a><span class="sd">            float: Total duration in seconds.</span>
-</span><span id="BaseTrajectoryPlanner-154"><a href="#BaseTrajectoryPlanner-154"><span class="linenos">154</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner-112"><a href="#BaseTrajectoryPlanner-112"><span class="linenos">112</span></a>        <span class="k">return</span> <span class="n">wrapper</span>
+</span><span id="BaseTrajectoryPlanner-113"><a href="#BaseTrajectoryPlanner-113"><span class="linenos">113</span></a>
+</span><span id="BaseTrajectoryPlanner-114"><a href="#BaseTrajectoryPlanner-114"><span class="linenos">114</span></a>    <span class="c1"># endregion</span>
+</span><span id="BaseTrajectoryPlanner-115"><a href="#BaseTrajectoryPlanner-115"><span class="linenos">115</span></a>
+</span><span id="BaseTrajectoryPlanner-116"><a href="#BaseTrajectoryPlanner-116"><span class="linenos">116</span></a>    <span class="c1"># region ====== Public Methods ======</span>
+</span><span id="BaseTrajectoryPlanner-117"><a href="#BaseTrajectoryPlanner-117"><span class="linenos">117</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">start_planning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner-118"><a href="#BaseTrajectoryPlanner-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the trajectory planning session.&quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner-119"><a href="#BaseTrajectoryPlanner-119"><span class="linenos">119</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</span><span id="BaseTrajectoryPlanner-120"><a href="#BaseTrajectoryPlanner-120"><span class="linenos">120</span></a>
+</span><span id="BaseTrajectoryPlanner-121"><a href="#BaseTrajectoryPlanner-121"><span class="linenos">121</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">stop_planning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner-122"><a href="#BaseTrajectoryPlanner-122"><span class="linenos">122</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the planning session and accumulate elapsed time.&quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner-123"><a href="#BaseTrajectoryPlanner-123"><span class="linenos">123</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_elapsed_time_checkpoint</span> <span class="o">+=</span> <span class="p">(</span>
+</span><span id="BaseTrajectoryPlanner-124"><a href="#BaseTrajectoryPlanner-124"><span class="linenos">124</span></a>            <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span>
+</span><span id="BaseTrajectoryPlanner-125"><a href="#BaseTrajectoryPlanner-125"><span class="linenos">125</span></a>        <span class="p">)</span>
+</span><span id="BaseTrajectoryPlanner-126"><a href="#BaseTrajectoryPlanner-126"><span class="linenos">126</span></a>
+</span><span id="BaseTrajectoryPlanner-127"><a href="#BaseTrajectoryPlanner-127"><span class="linenos">127</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_planning_started</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner-128"><a href="#BaseTrajectoryPlanner-128"><span class="linenos">128</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if planning has been started.</span>
+</span><span id="BaseTrajectoryPlanner-129"><a href="#BaseTrajectoryPlanner-129"><span class="linenos">129</span></a>
+</span><span id="BaseTrajectoryPlanner-130"><a href="#BaseTrajectoryPlanner-130"><span class="linenos">130</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseTrajectoryPlanner-131"><a href="#BaseTrajectoryPlanner-131"><span class="linenos">131</span></a><span class="sd">            bool: ``True`` if planning is active, ``False`` otherwise.</span>
+</span><span id="BaseTrajectoryPlanner-132"><a href="#BaseTrajectoryPlanner-132"><span class="linenos">132</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner-133"><a href="#BaseTrajectoryPlanner-133"><span class="linenos">133</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+</span><span id="BaseTrajectoryPlanner-134"><a href="#BaseTrajectoryPlanner-134"><span class="linenos">134</span></a>
+</span><span id="BaseTrajectoryPlanner-135"><a href="#BaseTrajectoryPlanner-135"><span class="linenos">135</span></a>    <span class="c1"># endregion</span>
+</span><span id="BaseTrajectoryPlanner-136"><a href="#BaseTrajectoryPlanner-136"><span class="linenos">136</span></a>
+</span><span id="BaseTrajectoryPlanner-137"><a href="#BaseTrajectoryPlanner-137"><span class="linenos">137</span></a>    <span class="c1"># region ====== Abstract Methods ======</span>
+</span><span id="BaseTrajectoryPlanner-138"><a href="#BaseTrajectoryPlanner-138"><span class="linenos">138</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseTrajectoryPlanner-139"><a href="#BaseTrajectoryPlanner-139"><span class="linenos">139</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">plan_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OrientedPoint</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner-140"><a href="#BaseTrajectoryPlanner-140"><span class="linenos">140</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Plan a trajectory for the provided path.</span>
+</span><span id="BaseTrajectoryPlanner-141"><a href="#BaseTrajectoryPlanner-141"><span class="linenos">141</span></a>
+</span><span id="BaseTrajectoryPlanner-142"><a href="#BaseTrajectoryPlanner-142"><span class="linenos">142</span></a><span class="sd">        Args:</span>
+</span><span id="BaseTrajectoryPlanner-143"><a href="#BaseTrajectoryPlanner-143"><span class="linenos">143</span></a><span class="sd">            path (list[OrientedPoint]): The path to follow.</span>
+</span><span id="BaseTrajectoryPlanner-144"><a href="#BaseTrajectoryPlanner-144"><span class="linenos">144</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner-145"><a href="#BaseTrajectoryPlanner-145"><span class="linenos">145</span></a>
+</span><span id="BaseTrajectoryPlanner-146"><a href="#BaseTrajectoryPlanner-146"><span class="linenos">146</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseTrajectoryPlanner-147"><a href="#BaseTrajectoryPlanner-147"><span class="linenos">147</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_plan</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrajectoryPlanCommand</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner-148"><a href="#BaseTrajectoryPlanner-148"><span class="linenos">148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the current trajectory command.</span>
+</span><span id="BaseTrajectoryPlanner-149"><a href="#BaseTrajectoryPlanner-149"><span class="linenos">149</span></a>
+</span><span id="BaseTrajectoryPlanner-150"><a href="#BaseTrajectoryPlanner-150"><span class="linenos">150</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseTrajectoryPlanner-151"><a href="#BaseTrajectoryPlanner-151"><span class="linenos">151</span></a><span class="sd">            TrajectoryPlanCommand: The current trajectory command.</span>
+</span><span id="BaseTrajectoryPlanner-152"><a href="#BaseTrajectoryPlanner-152"><span class="linenos">152</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner-153"><a href="#BaseTrajectoryPlanner-153"><span class="linenos">153</span></a>
+</span><span id="BaseTrajectoryPlanner-154"><a href="#BaseTrajectoryPlanner-154"><span class="linenos">154</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseTrajectoryPlanner-155"><a href="#BaseTrajectoryPlanner-155"><span class="linenos">155</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_total_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner-156"><a href="#BaseTrajectoryPlanner-156"><span class="linenos">156</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the total duration of the planned trajectory.</span>
+</span><span id="BaseTrajectoryPlanner-157"><a href="#BaseTrajectoryPlanner-157"><span class="linenos">157</span></a>
+</span><span id="BaseTrajectoryPlanner-158"><a href="#BaseTrajectoryPlanner-158"><span class="linenos">158</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseTrajectoryPlanner-159"><a href="#BaseTrajectoryPlanner-159"><span class="linenos">159</span></a><span class="sd">            float: Total duration in seconds.</span>
+</span><span id="BaseTrajectoryPlanner-160"><a href="#BaseTrajectoryPlanner-160"><span class="linenos">160</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner-161"><a href="#BaseTrajectoryPlanner-161"><span class="linenos">161</span></a>
+</span><span id="BaseTrajectoryPlanner-162"><a href="#BaseTrajectoryPlanner-162"><span class="linenos">162</span></a>    <span class="c1"># endregion</span>
 </span></pre></div>
 
 
@@ -306,7 +311,7 @@ duration.</p>
 </span><span id="BaseTrajectoryPlanner.__init__-45"><a href="#BaseTrajectoryPlanner.__init__-45"><span class="linenos">45</span></a><span class="sd">            logger (Logger | None, optional):</span>
 </span><span id="BaseTrajectoryPlanner.__init__-46"><a href="#BaseTrajectoryPlanner.__init__-46"><span class="linenos">46</span></a><span class="sd">                Logger instance for debugging. Defaults to ``None``.</span>
 </span><span id="BaseTrajectoryPlanner.__init__-47"><a href="#BaseTrajectoryPlanner.__init__-47"><span class="linenos">47</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner.__init__-48"><a href="#BaseTrajectoryPlanner.__init__-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span> <span class="ow">or</span> <span class="n">Logger</span><span class="p">(</span>
+</span><span id="BaseTrajectoryPlanner.__init__-48"><a href="#BaseTrajectoryPlanner.__init__-48"><span class="linenos">48</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">logger</span> <span class="ow">or</span> <span class="n">Logger</span><span class="p">(</span>
 </span><span id="BaseTrajectoryPlanner.__init__-49"><a href="#BaseTrajectoryPlanner.__init__-49"><span class="linenos">49</span></a>            <span class="n">identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
 </span><span id="BaseTrajectoryPlanner.__init__-50"><a href="#BaseTrajectoryPlanner.__init__-50"><span class="linenos">50</span></a>            <span class="n">follow_logger_manager_rules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 </span><span id="BaseTrajectoryPlanner.__init__-51"><a href="#BaseTrajectoryPlanner.__init__-51"><span class="linenos">51</span></a>        <span class="p">)</span>
@@ -334,17 +339,6 @@ duration.</p>
 </ul>
 </div>
 
-
-                            </div>
-                            <div id="BaseTrajectoryPlanner.logger" class="classattr">
-                                <div class="attr variable">
-            <span class="name">logger</span><span class="annotation">: loggerplusplus.logger.Logger</span>
-
-        
-    </div>
-    <a class="headerlink" href="#BaseTrajectoryPlanner.logger"></a>
-    
-    
 
                             </div>
                             <div id="BaseTrajectoryPlanner.params" class="classattr">
@@ -413,29 +407,29 @@ duration.</p>
 
     </div>
     <a class="headerlink" href="#BaseTrajectoryPlanner.ensure_planning_started"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.ensure_planning_started-88"><a href="#BaseTrajectoryPlanner.ensure_planning_started-88"><span class="linenos"> 88</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-89"><a href="#BaseTrajectoryPlanner.ensure_planning_started-89"><span class="linenos"> 89</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ensure_planning_started</span><span class="p">(</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-90"><a href="#BaseTrajectoryPlanner.ensure_planning_started-90"><span class="linenos"> 90</span></a>        <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">TrajectoryPlanCommand</span><span class="p">],</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-91"><a href="#BaseTrajectoryPlanner.ensure_planning_started-91"><span class="linenos"> 91</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">TrajectoryPlanCommand</span><span class="p">]:</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-92"><a href="#BaseTrajectoryPlanner.ensure_planning_started-92"><span class="linenos"> 92</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Decorator to ensure that planning has started before executing a method.</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-93"><a href="#BaseTrajectoryPlanner.ensure_planning_started-93"><span class="linenos"> 93</span></a>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-94"><a href="#BaseTrajectoryPlanner.ensure_planning_started-94"><span class="linenos"> 94</span></a><span class="sd">        Args:</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-95"><a href="#BaseTrajectoryPlanner.ensure_planning_started-95"><span class="linenos"> 95</span></a><span class="sd">            method (Callable[..., TrajectoryPlanCommand]): The method to wrap.</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-96"><a href="#BaseTrajectoryPlanner.ensure_planning_started-96"><span class="linenos"> 96</span></a>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-97"><a href="#BaseTrajectoryPlanner.ensure_planning_started-97"><span class="linenos"> 97</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-98"><a href="#BaseTrajectoryPlanner.ensure_planning_started-98"><span class="linenos"> 98</span></a><span class="sd">            Callable[..., TrajectoryPlanCommand]: Wrapped method.</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-99"><a href="#BaseTrajectoryPlanner.ensure_planning_started-99"><span class="linenos"> 99</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-100"><a href="#BaseTrajectoryPlanner.ensure_planning_started-100"><span class="linenos">100</span></a>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-101"><a href="#BaseTrajectoryPlanner.ensure_planning_started-101"><span class="linenos">101</span></a>        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-102"><a href="#BaseTrajectoryPlanner.ensure_planning_started-102"><span class="linenos">102</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseTrajectoryPlanner</span><span class="p">[</span><span class="n">PARAMSTYPE</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TrajectoryPlanCommand</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-103"><a href="#BaseTrajectoryPlanner.ensure_planning_started-103"><span class="linenos">103</span></a>            <span class="c1"># Start planning if not already started</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-104"><a href="#BaseTrajectoryPlanner.ensure_planning_started-104"><span class="linenos">104</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_planning_started</span><span class="p">():</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-105"><a href="#BaseTrajectoryPlanner.ensure_planning_started-105"><span class="linenos">105</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">start_planning</span><span class="p">()</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-106"><a href="#BaseTrajectoryPlanner.ensure_planning_started-106"><span class="linenos">106</span></a>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-107"><a href="#BaseTrajectoryPlanner.ensure_planning_started-107"><span class="linenos">107</span></a>            <span class="c1"># Execute the method</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-108"><a href="#BaseTrajectoryPlanner.ensure_planning_started-108"><span class="linenos">108</span></a>            <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-109"><a href="#BaseTrajectoryPlanner.ensure_planning_started-109"><span class="linenos">109</span></a>
-</span><span id="BaseTrajectoryPlanner.ensure_planning_started-110"><a href="#BaseTrajectoryPlanner.ensure_planning_started-110"><span class="linenos">110</span></a>        <span class="k">return</span> <span class="n">wrapper</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.ensure_planning_started-90"><a href="#BaseTrajectoryPlanner.ensure_planning_started-90"><span class="linenos"> 90</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-91"><a href="#BaseTrajectoryPlanner.ensure_planning_started-91"><span class="linenos"> 91</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">ensure_planning_started</span><span class="p">(</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-92"><a href="#BaseTrajectoryPlanner.ensure_planning_started-92"><span class="linenos"> 92</span></a>        <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">TrajectoryPlanCommand</span><span class="p">],</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-93"><a href="#BaseTrajectoryPlanner.ensure_planning_started-93"><span class="linenos"> 93</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">TrajectoryPlanCommand</span><span class="p">]:</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-94"><a href="#BaseTrajectoryPlanner.ensure_planning_started-94"><span class="linenos"> 94</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Decorator to ensure that planning has started before executing a method.</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-95"><a href="#BaseTrajectoryPlanner.ensure_planning_started-95"><span class="linenos"> 95</span></a>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-96"><a href="#BaseTrajectoryPlanner.ensure_planning_started-96"><span class="linenos"> 96</span></a><span class="sd">        Args:</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-97"><a href="#BaseTrajectoryPlanner.ensure_planning_started-97"><span class="linenos"> 97</span></a><span class="sd">            method (Callable[..., TrajectoryPlanCommand]): The method to wrap.</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-98"><a href="#BaseTrajectoryPlanner.ensure_planning_started-98"><span class="linenos"> 98</span></a>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-99"><a href="#BaseTrajectoryPlanner.ensure_planning_started-99"><span class="linenos"> 99</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-100"><a href="#BaseTrajectoryPlanner.ensure_planning_started-100"><span class="linenos">100</span></a><span class="sd">            Callable[..., TrajectoryPlanCommand]: Wrapped method.</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-101"><a href="#BaseTrajectoryPlanner.ensure_planning_started-101"><span class="linenos">101</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-102"><a href="#BaseTrajectoryPlanner.ensure_planning_started-102"><span class="linenos">102</span></a>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-103"><a href="#BaseTrajectoryPlanner.ensure_planning_started-103"><span class="linenos">103</span></a>        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-104"><a href="#BaseTrajectoryPlanner.ensure_planning_started-104"><span class="linenos">104</span></a>        <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">BaseTrajectoryPlanner</span><span class="p">[</span><span class="n">PARAMSTYPE</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TrajectoryPlanCommand</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-105"><a href="#BaseTrajectoryPlanner.ensure_planning_started-105"><span class="linenos">105</span></a>            <span class="c1"># Start planning if not already started</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-106"><a href="#BaseTrajectoryPlanner.ensure_planning_started-106"><span class="linenos">106</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_planning_started</span><span class="p">():</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-107"><a href="#BaseTrajectoryPlanner.ensure_planning_started-107"><span class="linenos">107</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">start_planning</span><span class="p">()</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-108"><a href="#BaseTrajectoryPlanner.ensure_planning_started-108"><span class="linenos">108</span></a>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-109"><a href="#BaseTrajectoryPlanner.ensure_planning_started-109"><span class="linenos">109</span></a>            <span class="c1"># Execute the method</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-110"><a href="#BaseTrajectoryPlanner.ensure_planning_started-110"><span class="linenos">110</span></a>            <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-111"><a href="#BaseTrajectoryPlanner.ensure_planning_started-111"><span class="linenos">111</span></a>
+</span><span id="BaseTrajectoryPlanner.ensure_planning_started-112"><a href="#BaseTrajectoryPlanner.ensure_planning_started-112"><span class="linenos">112</span></a>        <span class="k">return</span> <span class="n">wrapper</span>
 </span></pre></div>
 
 
@@ -467,9 +461,9 @@ duration.</p>
 
     </div>
     <a class="headerlink" href="#BaseTrajectoryPlanner.start_planning"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.start_planning-113"><a href="#BaseTrajectoryPlanner.start_planning-113"><span class="linenos">113</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">start_planning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner.start_planning-114"><a href="#BaseTrajectoryPlanner.start_planning-114"><span class="linenos">114</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the trajectory planning session.&quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner.start_planning-115"><a href="#BaseTrajectoryPlanner.start_planning-115"><span class="linenos">115</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.start_planning-117"><a href="#BaseTrajectoryPlanner.start_planning-117"><span class="linenos">117</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">start_planning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner.start_planning-118"><a href="#BaseTrajectoryPlanner.start_planning-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the trajectory planning session.&quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner.start_planning-119"><a href="#BaseTrajectoryPlanner.start_planning-119"><span class="linenos">119</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 </span></pre></div>
 
 
@@ -489,11 +483,11 @@ duration.</p>
 
     </div>
     <a class="headerlink" href="#BaseTrajectoryPlanner.stop_planning"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.stop_planning-117"><a href="#BaseTrajectoryPlanner.stop_planning-117"><span class="linenos">117</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">stop_planning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner.stop_planning-118"><a href="#BaseTrajectoryPlanner.stop_planning-118"><span class="linenos">118</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the planning session and accumulate elapsed time.&quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner.stop_planning-119"><a href="#BaseTrajectoryPlanner.stop_planning-119"><span class="linenos">119</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_elapsed_time_checkpoint</span> <span class="o">+=</span> <span class="p">(</span>
-</span><span id="BaseTrajectoryPlanner.stop_planning-120"><a href="#BaseTrajectoryPlanner.stop_planning-120"><span class="linenos">120</span></a>            <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span>
-</span><span id="BaseTrajectoryPlanner.stop_planning-121"><a href="#BaseTrajectoryPlanner.stop_planning-121"><span class="linenos">121</span></a>        <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.stop_planning-121"><a href="#BaseTrajectoryPlanner.stop_planning-121"><span class="linenos">121</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">stop_planning</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner.stop_planning-122"><a href="#BaseTrajectoryPlanner.stop_planning-122"><span class="linenos">122</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the planning session and accumulate elapsed time.&quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner.stop_planning-123"><a href="#BaseTrajectoryPlanner.stop_planning-123"><span class="linenos">123</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_elapsed_time_checkpoint</span> <span class="o">+=</span> <span class="p">(</span>
+</span><span id="BaseTrajectoryPlanner.stop_planning-124"><a href="#BaseTrajectoryPlanner.stop_planning-124"><span class="linenos">124</span></a>            <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span>
+</span><span id="BaseTrajectoryPlanner.stop_planning-125"><a href="#BaseTrajectoryPlanner.stop_planning-125"><span class="linenos">125</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -513,13 +507,13 @@ duration.</p>
 
     </div>
     <a class="headerlink" href="#BaseTrajectoryPlanner.is_planning_started"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.is_planning_started-123"><a href="#BaseTrajectoryPlanner.is_planning_started-123"><span class="linenos">123</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_planning_started</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner.is_planning_started-124"><a href="#BaseTrajectoryPlanner.is_planning_started-124"><span class="linenos">124</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if planning has been started.</span>
-</span><span id="BaseTrajectoryPlanner.is_planning_started-125"><a href="#BaseTrajectoryPlanner.is_planning_started-125"><span class="linenos">125</span></a>
-</span><span id="BaseTrajectoryPlanner.is_planning_started-126"><a href="#BaseTrajectoryPlanner.is_planning_started-126"><span class="linenos">126</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseTrajectoryPlanner.is_planning_started-127"><a href="#BaseTrajectoryPlanner.is_planning_started-127"><span class="linenos">127</span></a><span class="sd">            bool: ``True`` if planning is active, ``False`` otherwise.</span>
-</span><span id="BaseTrajectoryPlanner.is_planning_started-128"><a href="#BaseTrajectoryPlanner.is_planning_started-128"><span class="linenos">128</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="BaseTrajectoryPlanner.is_planning_started-129"><a href="#BaseTrajectoryPlanner.is_planning_started-129"><span class="linenos">129</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.is_planning_started-127"><a href="#BaseTrajectoryPlanner.is_planning_started-127"><span class="linenos">127</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_planning_started</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner.is_planning_started-128"><a href="#BaseTrajectoryPlanner.is_planning_started-128"><span class="linenos">128</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if planning has been started.</span>
+</span><span id="BaseTrajectoryPlanner.is_planning_started-129"><a href="#BaseTrajectoryPlanner.is_planning_started-129"><span class="linenos">129</span></a>
+</span><span id="BaseTrajectoryPlanner.is_planning_started-130"><a href="#BaseTrajectoryPlanner.is_planning_started-130"><span class="linenos">130</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseTrajectoryPlanner.is_planning_started-131"><a href="#BaseTrajectoryPlanner.is_planning_started-131"><span class="linenos">131</span></a><span class="sd">            bool: ``True`` if planning is active, ``False`` otherwise.</span>
+</span><span id="BaseTrajectoryPlanner.is_planning_started-132"><a href="#BaseTrajectoryPlanner.is_planning_started-132"><span class="linenos">132</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="BaseTrajectoryPlanner.is_planning_started-133"><a href="#BaseTrajectoryPlanner.is_planning_started-133"><span class="linenos">133</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_trajectory_timestamp</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
 </span></pre></div>
 
 
@@ -546,13 +540,13 @@ duration.</p>
 
     </div>
     <a class="headerlink" href="#BaseTrajectoryPlanner.plan_trajectory"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.plan_trajectory-132"><a href="#BaseTrajectoryPlanner.plan_trajectory-132"><span class="linenos">132</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseTrajectoryPlanner.plan_trajectory-133"><a href="#BaseTrajectoryPlanner.plan_trajectory-133"><span class="linenos">133</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">plan_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OrientedPoint</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner.plan_trajectory-134"><a href="#BaseTrajectoryPlanner.plan_trajectory-134"><span class="linenos">134</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Plan a trajectory for the provided path.</span>
-</span><span id="BaseTrajectoryPlanner.plan_trajectory-135"><a href="#BaseTrajectoryPlanner.plan_trajectory-135"><span class="linenos">135</span></a>
-</span><span id="BaseTrajectoryPlanner.plan_trajectory-136"><a href="#BaseTrajectoryPlanner.plan_trajectory-136"><span class="linenos">136</span></a><span class="sd">        Args:</span>
-</span><span id="BaseTrajectoryPlanner.plan_trajectory-137"><a href="#BaseTrajectoryPlanner.plan_trajectory-137"><span class="linenos">137</span></a><span class="sd">            path (list[OrientedPoint]): The path to follow.</span>
-</span><span id="BaseTrajectoryPlanner.plan_trajectory-138"><a href="#BaseTrajectoryPlanner.plan_trajectory-138"><span class="linenos">138</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.plan_trajectory-138"><a href="#BaseTrajectoryPlanner.plan_trajectory-138"><span class="linenos">138</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseTrajectoryPlanner.plan_trajectory-139"><a href="#BaseTrajectoryPlanner.plan_trajectory-139"><span class="linenos">139</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">plan_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">OrientedPoint</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner.plan_trajectory-140"><a href="#BaseTrajectoryPlanner.plan_trajectory-140"><span class="linenos">140</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Plan a trajectory for the provided path.</span>
+</span><span id="BaseTrajectoryPlanner.plan_trajectory-141"><a href="#BaseTrajectoryPlanner.plan_trajectory-141"><span class="linenos">141</span></a>
+</span><span id="BaseTrajectoryPlanner.plan_trajectory-142"><a href="#BaseTrajectoryPlanner.plan_trajectory-142"><span class="linenos">142</span></a><span class="sd">        Args:</span>
+</span><span id="BaseTrajectoryPlanner.plan_trajectory-143"><a href="#BaseTrajectoryPlanner.plan_trajectory-143"><span class="linenos">143</span></a><span class="sd">            path (list[OrientedPoint]): The path to follow.</span>
+</span><span id="BaseTrajectoryPlanner.plan_trajectory-144"><a href="#BaseTrajectoryPlanner.plan_trajectory-144"><span class="linenos">144</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -579,13 +573,13 @@ duration.</p>
 
     </div>
     <a class="headerlink" href="#BaseTrajectoryPlanner.get_plan"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.get_plan-140"><a href="#BaseTrajectoryPlanner.get_plan-140"><span class="linenos">140</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseTrajectoryPlanner.get_plan-141"><a href="#BaseTrajectoryPlanner.get_plan-141"><span class="linenos">141</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_plan</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrajectoryPlanCommand</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner.get_plan-142"><a href="#BaseTrajectoryPlanner.get_plan-142"><span class="linenos">142</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the current trajectory command.</span>
-</span><span id="BaseTrajectoryPlanner.get_plan-143"><a href="#BaseTrajectoryPlanner.get_plan-143"><span class="linenos">143</span></a>
-</span><span id="BaseTrajectoryPlanner.get_plan-144"><a href="#BaseTrajectoryPlanner.get_plan-144"><span class="linenos">144</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseTrajectoryPlanner.get_plan-145"><a href="#BaseTrajectoryPlanner.get_plan-145"><span class="linenos">145</span></a><span class="sd">            TrajectoryPlanCommand: The current trajectory command.</span>
-</span><span id="BaseTrajectoryPlanner.get_plan-146"><a href="#BaseTrajectoryPlanner.get_plan-146"><span class="linenos">146</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.get_plan-146"><a href="#BaseTrajectoryPlanner.get_plan-146"><span class="linenos">146</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseTrajectoryPlanner.get_plan-147"><a href="#BaseTrajectoryPlanner.get_plan-147"><span class="linenos">147</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_plan</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrajectoryPlanCommand</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner.get_plan-148"><a href="#BaseTrajectoryPlanner.get_plan-148"><span class="linenos">148</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the current trajectory command.</span>
+</span><span id="BaseTrajectoryPlanner.get_plan-149"><a href="#BaseTrajectoryPlanner.get_plan-149"><span class="linenos">149</span></a>
+</span><span id="BaseTrajectoryPlanner.get_plan-150"><a href="#BaseTrajectoryPlanner.get_plan-150"><span class="linenos">150</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseTrajectoryPlanner.get_plan-151"><a href="#BaseTrajectoryPlanner.get_plan-151"><span class="linenos">151</span></a><span class="sd">            TrajectoryPlanCommand: The current trajectory command.</span>
+</span><span id="BaseTrajectoryPlanner.get_plan-152"><a href="#BaseTrajectoryPlanner.get_plan-152"><span class="linenos">152</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -612,13 +606,13 @@ duration.</p>
 
     </div>
     <a class="headerlink" href="#BaseTrajectoryPlanner.get_total_duration"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.get_total_duration-148"><a href="#BaseTrajectoryPlanner.get_total_duration-148"><span class="linenos">148</span></a>    <span class="nd">@abstractmethod</span>
-</span><span id="BaseTrajectoryPlanner.get_total_duration-149"><a href="#BaseTrajectoryPlanner.get_total_duration-149"><span class="linenos">149</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_total_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-</span><span id="BaseTrajectoryPlanner.get_total_duration-150"><a href="#BaseTrajectoryPlanner.get_total_duration-150"><span class="linenos">150</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the total duration of the planned trajectory.</span>
-</span><span id="BaseTrajectoryPlanner.get_total_duration-151"><a href="#BaseTrajectoryPlanner.get_total_duration-151"><span class="linenos">151</span></a>
-</span><span id="BaseTrajectoryPlanner.get_total_duration-152"><a href="#BaseTrajectoryPlanner.get_total_duration-152"><span class="linenos">152</span></a><span class="sd">        Returns:</span>
-</span><span id="BaseTrajectoryPlanner.get_total_duration-153"><a href="#BaseTrajectoryPlanner.get_total_duration-153"><span class="linenos">153</span></a><span class="sd">            float: Total duration in seconds.</span>
-</span><span id="BaseTrajectoryPlanner.get_total_duration-154"><a href="#BaseTrajectoryPlanner.get_total_duration-154"><span class="linenos">154</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseTrajectoryPlanner.get_total_duration-154"><a href="#BaseTrajectoryPlanner.get_total_duration-154"><span class="linenos">154</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseTrajectoryPlanner.get_total_duration-155"><a href="#BaseTrajectoryPlanner.get_total_duration-155"><span class="linenos">155</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_total_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="BaseTrajectoryPlanner.get_total_duration-156"><a href="#BaseTrajectoryPlanner.get_total_duration-156"><span class="linenos">156</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the total duration of the planned trajectory.</span>
+</span><span id="BaseTrajectoryPlanner.get_total_duration-157"><a href="#BaseTrajectoryPlanner.get_total_duration-157"><span class="linenos">157</span></a>
+</span><span id="BaseTrajectoryPlanner.get_total_duration-158"><a href="#BaseTrajectoryPlanner.get_total_duration-158"><span class="linenos">158</span></a><span class="sd">        Returns:</span>
+</span><span id="BaseTrajectoryPlanner.get_total_duration-159"><a href="#BaseTrajectoryPlanner.get_total_duration-159"><span class="linenos">159</span></a><span class="sd">            float: Total duration in seconds.</span>
+</span><span id="BaseTrajectoryPlanner.get_total_duration-160"><a href="#BaseTrajectoryPlanner.get_total_duration-160"><span class="linenos">160</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 

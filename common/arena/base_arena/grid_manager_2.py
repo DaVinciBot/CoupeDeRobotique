@@ -3,15 +3,19 @@
 from __future__ import annotations
 
 import copy
+from typing import TYPE_CHECKING
 
 import matplotlib.pyplot as plt
-from loggerplusplus import Logger, LogLevels, time_tracker
+from loggerplusplus import LogLevels, time_tracker
 from matplotlib.patches import Rectangle as pltRectangle
 from pathfinding.core.grid import Grid, GridNode
 from shapely.geometry import box
 from shapely.strtree import STRtree
 
 from geometry import OrientedPoint, Polygon
+
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 
 class GridManager:
@@ -36,7 +40,7 @@ class GridManager:
             width (int): Total width of the arena in world units.
             height (int): Total height of the arena in world units.
         """
-        self.logger = logger
+        self._logger = logger
         self.chunk_size = chunk_size
         self.half_chunk_size = chunk_size / 2
         self.absolute_width = width
@@ -45,7 +49,7 @@ class GridManager:
         self.grid_height = height // chunk_size
 
         if width % chunk_size or height % chunk_size:
-            self.logger.log(
+            self._logger.log(
                 (
                     "[GRID] width and height must be multiples of chunk_size. "
                     "Adjusting chunk size."
@@ -56,8 +60,8 @@ class GridManager:
 
         self.static_grid = self.__generate_base_grid()
         self.dynamic_grid = self.__generate_base_grid()
-        self.static_forbidden_zones = []
-        self.dynamic_forbidden_zones = []
+        self.static_forbidden_zones: list[Polygon] = []
+        self.dynamic_forbidden_zones: list[Polygon] = []
         self.spatial_index = STRtree([])
 
     # region ====== Private Methods ======
@@ -133,7 +137,7 @@ class GridManager:
 
     # region ====== Public Methods ======
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def add_forbidden_static_zone(
         self,
         forbidden_zones: Polygon | list[Polygon],
@@ -155,7 +159,7 @@ class GridManager:
             walkable=False,
         )
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def remove_forbidden_static_zone(
         self,
         forbidden_zones: Polygon | list[Polygon],
@@ -180,7 +184,7 @@ class GridManager:
             walkable=False,
         )
 
-    @time_tracker(lambda self: self.logger)
+    @time_tracker(lambda self: self._logger)
     def update_dynamic_forbidden_zones(self, dynamic_zones: list[Polygon]) -> None:
         """Update the list of dynamic forbidden zones.
 

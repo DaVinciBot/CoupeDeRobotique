@@ -1,8 +1,8 @@
 """Provide a unified ``PIN`` interface for real or dummy GPIO access."""
 
-from loggerplusplus import Logger
+from log_manager import LogLogger
 
-logger = Logger(
+_logger = LogLogger(
     identifier=__name__,
     follow_logger_manager_rules=True,
 )
@@ -10,11 +10,10 @@ logger = Logger(
 try:
     from gpio.gpio import PIN
 except ImportError:
-    logger.warning(
-        "Failed to import GPIO module. "
-        "Ensure the GPIO library is installed and accessible.",
+    _logger.warning(
+        "[GPIO] Failed to import GPIO module - ensure library is installed",
     )
-    logger.info("Falling back to dummy PIN class.")
+    _logger.info("[GPIO] Falling back to dummy PIN class")
     from gpio.dummy_gpio import PIN
 
 __all__ = ["PIN"]

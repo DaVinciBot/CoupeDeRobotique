@@ -5,55 +5,62 @@ from __future__ import annotations
 import subprocess
 import sys
 
-from loggerplusplus import Logger, LogLevels
+from loggerplusplus import LogLevels
 from taskbrain import DictProxyAccessor
 from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 
 from a_config_loader import CONFIG
 from arena.base_arena.arena_zones import AllyZone
-from arena.show_arena import ShowArena
+from arena.winter_arena import WinterArena
 from brains import MainBrain
 from geometry import OrientedPoint
+from log_manager import LogLogger
 from navigation.navigator.task import NavigatorTaskParams
 from sensors import Inputs, Lidar, LidarDummy
 
+_logger = LogLogger(
+    identifier="Main",
+    follow_logger_manager_rules=True,
+)
+
 # ====== Main ======
 if __name__ == "__main__":
+    _logger.info("[INIT] Initializing all systems...")
     # region ====== Initialization ======
 
     # Loggers
     # System-Part loggers
-    logger_ws_server = Logger(
+    logger_ws_server = LogLogger(
         identifier="WS_Server",
         follow_logger_manager_rules=True,
     )
-    logger_ws_cmd_route_manager = Logger(
+    logger_ws_cmd_route_manager = LogLogger(
         identifier="WS_cmd_RouteManager",
         follow_logger_manager_rules=True,
     )
-    logger_ws_cmd_sender = Logger(
+    logger_ws_cmd_sender = LogLogger(
         identifier="WS_cmd_Sender",
         follow_logger_manager_rules=True,
     )
-    logger_ws_cmd_receiver = Logger(
+    logger_ws_cmd_receiver = LogLogger(
         identifier="WS_cmd_Receiver",
         follow_logger_manager_rules=True,
     )
 
-    logger_ws_ui_route_manager = Logger(
+    logger_ws_ui_route_manager = LogLogger(
         identifier="WS_UI_RouteManager",
         follow_logger_manager_rules=True,
     )
-    logger_ws_ui_sender = Logger(
+    logger_ws_ui_sender = LogLogger(
         identifier="WS_UI_Sender",
         follow_logger_manager_rules=True,
     )
-    logger_ws_ui_receiver = Logger(
+    logger_ws_ui_receiver = LogLogger(
         identifier="WS_UI_Receiver",
         follow_logger_manager_rules=True,
     )
 
-    logger_brain = Logger(
+    logger_brain = LogLogger(
         identifier="Brain",
         # Only Brain manages monitoring
         files_monitoring=False,
@@ -61,7 +68,7 @@ if __name__ == "__main__":
         print_log_level=LogLevels.DEBUG,
         follow_logger_manager_rules=True,
     )
-    logger_lidar = Logger(
+    logger_lidar = LogLogger(
         identifier="Lidar",
         follow_logger_manager_rules=True,
     )
@@ -71,12 +78,12 @@ if __name__ == "__main__":
     # All rolling basis part is executed in another process so define inside this part
 
     # Environment loggers
-    logger_grid_manager = Logger(
+    logger_grid_manager = LogLogger(
         identifier="GridManager",
         print_log_level=LogLevels.INFO,
         follow_logger_manager_rules=True,
     )
-    logger_show_arena = Logger(
+    logger_show_arena = LogLogger(
         identifier="ShowArena",
         follow_logger_manager_rules=True,
     )
@@ -137,7 +144,7 @@ if __name__ == "__main__":
 
     # Environment
     # Arena
-    arena = ShowArena(
+    arena = WinterArena(
         logger=logger_show_arena,
         border_buffer=CONFIG.ARENA_BORDER_BUFFER,
         obstacle_buffer=CONFIG.ARENA_OBSTACLE_BUFFER,
@@ -157,7 +164,7 @@ if __name__ == "__main__":
 
     # Brain
     # Register object types that must be shared between processes
-    DictProxyAccessor.add_serializable_type(ShowArena, arena)
+    DictProxyAccessor.add_serializable_type(WinterArena, arena)
     DictProxyAccessor.add_serializable_type(OrientedPoint)
     DictProxyAccessor.add_serializable_type(NavigatorTaskParams)
     DictProxyAccessor.add_serializable_type(AllyZone)
@@ -182,7 +189,10 @@ if __name__ == "__main__":
     def force_kill_all_python() -> None:
         """Kill all running Python processes using pkill -9 python."""
         subprocess.run(["pkill", "-9", "python"], check=False)  # noqa: S607
-        logger_brain.fatal("All Python processes killed.")
+        logger_brain.fatal("[SHUTDOWN] All Python processes killed.")
+
+    logger_brain.info("[INIT] All systems initialized successfully")
+    logger_brain.info("[INIT] Starting WebSocket server...")
 
     args_launch = sys.argv
     if "-i" in args_launch:

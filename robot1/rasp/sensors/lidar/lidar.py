@@ -94,20 +94,22 @@ class Lidar:
         try:
             import pysicktim as lidar  # noqa: PLC0415
         except Exception as error:
-            self._logger.critical(f"[init_lidar] Error while importing lidar [{error}]")
+            self._logger.critical(
+                f"[SENSOR:Lidar:Init] Failed to import pysicktim: {error},",
+            )
             msg = f"Error while importing lidar [{error}]!"
             raise ImportError(msg) from error
 
         if lidar is None:
-            self._logger.critical("[init_lidar] Lidar is not connected !")
+            self._logger.critical("[SENSOR:Lidar:Init] Not connected")
             msg = "Lidar is not connected !"
             raise ConnectionError(msg)
-        self._logger.info("[init_lidar] Lidar is connected !")
+        self._logger.info("[SENSOR:Lidar:Init] Connected successfully")
 
         # Test lidar connection by testing scan function
         lidar.scan()
         if lidar.scan.distances is None or lidar.scan.distances == []:
-            self._logger.critical("[init_lidar] Lidar doesn't work correctly")
+            self._logger.critical("[SENSOR:Lidar:Init] Scan test failed - no data")
             msg = "Lidar doesn't work correctly !"
             raise ConnectionError(msg)
 
@@ -123,7 +125,7 @@ class Lidar:
             while not self.__is_connected:
                 try:
                     self._logger.debug(
-                        "[init_lidar_in_thread] Try to initialize lidar ...",
+                        "[SENSOR:Lidar:Init] Try to initialize lidar in thread ...",
                     )
                     self.__lidar_obj = self.__init_lidar()
                     # Initialize polars based on the lidar measurement count
@@ -134,16 +136,19 @@ class Lidar:
                     self.__is_connected = True
                 except (ConnectionError, ImportError, ValueError) as error:
                     self._logger.warning(
-                        "[init_lidar_in_thread] Error while initializing lidar "
-                        f"[{error}] "
-                        f"retry in {self.__initialization_fail_refresh_rate}s ...",
+                        f"[SENSOR:Lidar:Init] Initialization failed: {error} "
+                        f"- retrying in {self.__initialization_fail_refresh_rate}s",
                     )
                     time.sleep(self.__initialization_fail_refresh_rate)
 
         thread = threading.Thread(target=init)
         thread.start()
 
-    def __init_polars_angle(self, min_angle: float, max_angle: float) -> np.ndarray:
+    def __init_polars_angle(
+        self,
+        min_angle: float,
+        max_angle: float,
+    ) -> NDArray[np.float32]:
         """Initialize the polar angles array.
 
         Args:
@@ -151,7 +156,7 @@ class Lidar:
             max_angle (float): Maximum angle of the lidar (min angle at right).
 
         Returns:
-            np.ndarray: numpy array of angles centered around 0°.
+            NDArray[np.float32]: numpy array of angles centered around 0°.
 
         Raises:
             ValueError: If the polars array cannot be initialized.
@@ -170,7 +175,7 @@ class Lidar:
             centered_polars[i] = -((max_angle - min_angle) / 2) + i * angle_step
 
         if not centered_polars.size:
-            msg = "Error while initializing polars"
+            msg = "[SENSOR:Lidar:Init] Error while initializing polars"
             self._logger.critical(msg)
             raise ValueError(msg)
 
@@ -193,7 +198,7 @@ class Lidar:
         if unit == "rad":
             return math.pi / 180
 
-        msg = f"unit of angles not recognized [{unit}] !"
+        msg = f"[SENSOR:Lidar:Init] Unit of angles not recognized: {unit}"
         self._logger.critical(msg)
         raise ValueError(msg)
 
@@ -218,7 +223,7 @@ class Lidar:
         if unit == "inch":
             return 0.0254
 
-        msg = f"unit of distances not recognized [{unit}] !"
+        msg = f"[SENSOR:Lidar:Init] Unit of distances not recognized: {unit}"
         self._logger.critical(msg)
         raise ValueError(msg)
 
@@ -235,7 +240,7 @@ class Lidar:
         except Exception as error:
             # LiDAR seems to be disconnected
             self._logger.error(
-                f"Error while scanning, LiDAR is disconnected ? [{error}]",
+                f"[SENSOR:Lidar] Scan failed - attempting reconnection: {error}",
             )
             # Try to reconnect LiDAR if it was connected before
             if self.__is_connected:

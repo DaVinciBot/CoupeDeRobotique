@@ -12,7 +12,7 @@ This package groups core building blocks reused by all robots:
 - utils: misc utilities
 - video: streaming/server utilities
 
-Public API: `arena`, `geometry`, `gpio`, `led_strip`, `navigation`,
+Public API: `arena`, `geometry`, `gpio`, `led_strip`, `log_manager`, `navigation`,
 `strategy`, `teensy`, `usb_com`, `utils`, `video`.
 """
 
@@ -21,6 +21,7 @@ from . import (
     geometry,
     gpio,
     led_strip,
+    log_manager,
     navigation,
     strategy,
     teensy,
@@ -34,6 +35,7 @@ __all__ = [
     "geometry",
     "gpio",
     "led_strip",
+    "log_manager",
     "navigation",
     "strategy",
     "teensy",
