@@ -3,6 +3,13 @@
 #include "motor.h"
 #include "navigation.h"
 #include "rolling_basis.h"
+#include "action.h"
+#include "AtoB.h"
+#include "relative_forward.h"
+#include "relative_turning.h" 
+#include "carre.h" 
+#include "triangle.h" 
+#include "actionneur.h"
 
 // #------- GENERAL CONFIGURATION -------#
 #define ACS_TRESHOLD 40  // Threshold for ACS activation in mm
