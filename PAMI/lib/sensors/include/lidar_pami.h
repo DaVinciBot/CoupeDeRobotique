@@ -56,6 +56,16 @@ class lidar_pami {
     bool obstacleAhead(uint16_t distanceMin = 100);
 
     /**
+     * @brief Convenience helper to determine if an obstacle is directly ahead.
+     * Averages 5 points at the center of the scan.
+     *
+     * @param distanceMin Threshold distance in millimetres (default 100 mm).
+     * @return true if an obstacle closer than `distanceMin` was detected
+     * @return false otherwise
+     */
+    bool obstacleDirectlyAhead(uint16_t distanceMin = 100);
+
+    /**
      * @brief Check a digital input (tirette/push) value from the LIDAR scanner.
      *
      * @param threshold Threshold to consider the tirette engaged
@@ -77,6 +87,13 @@ class lidar_pami {
      * provided accessors or capture required references in their callback.
      */
     void onReceive(void (*callback)());
+
+    /**
+     * @brief Print a visual radar representation of the current scan.
+     * Displays 32 segments from left (G) to right (D).
+     * # = obstacle close (<150mm), - = obstacle far, _ = empty
+     */
+    void printRadarVisual();
 
    private:
     static const uint16_t PACKET_SIZE = 331;   // Expected packet buffer size
