@@ -376,6 +376,9 @@ class CONFIG:
         int(k): v for k, v in ACTUATORS_CONFIG["servos_config"].items()
     }
     ACTUATOR_ELEVATOR_CONFIG: dict[str, Any] = ACTUATORS_CONFIG["elevator"]
+
+    ACTUATOR_LINEAR_CONFIG: dict[str, Any] = ACTUATORS_CONFIG["linear_actuators_config"]
+
     ACTUATOR_DELAY: float = ACTUATORS_CONFIG["delay"]
 
     # Lidar
