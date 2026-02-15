@@ -116,7 +116,13 @@
         "build_one_floor": 4,
         "build_two_floors": 8,
         "go_to_backstage": 10,
-        "banner": 20
+        "banner": 20,
+        "nest_jenga": 2,
+        "pantry_jenga": 3,
+        "majority_in_zone": 5,
+        "cursor": 10
+
+
       },
       "pamis": {
         "occupied_zone": 5,

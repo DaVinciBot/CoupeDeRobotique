@@ -315,6 +315,9 @@ class CONFIG:
     BUILD_TWO_FLOORS: int = SCORE_CONFIG["boombot"]["build_two_floors"]
     GO_TO_BACKSTAGE: int = SCORE_CONFIG["boombot"]["go_to_backstage"]
     BANNER: int = SCORE_CONFIG["boombot"]["banner"]
+    JENGA_IN_NEST: int = SCORE_CONFIG["boombot"]["nest_jenga"]
+    JENGA_IN_PANTRY: int = SCORE_CONFIG["boombot"]["pantry_jenga"]
+    CURSOR: int = SCORE_CONFIG["boombot"]["cursor"]
 
     # PAMIs
     OCCUPIED_ZONE: int = SCORE_CONFIG["pamis"]["occupied_zone"]
