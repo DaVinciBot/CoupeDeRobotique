@@ -74,7 +74,13 @@ class BaseTaskNode:
 
         self.points: int | Callable[[BaseGameContext], int] = None
         if points is None:
-            self.points = sum(task.points for task in self.tasks)
+            if all(isinstance(task.points, int) for task in self.tasks):
+                self.points = sum(task.points for task in self.tasks)
+            else:
+                self.points = lambda ctx: sum(
+                    task.points(ctx) if callable(task.points) else task.points
+                    for task in self.tasks
+                )
         else:
             self.points = points
 
