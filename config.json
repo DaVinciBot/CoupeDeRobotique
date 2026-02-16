@@ -153,6 +153,11 @@
           "retract_angle": 180,
           "rotate_angle": 180,
           "max_angle": 180
+        },
+        "4": {
+          "retract_angle": 0,
+          "deploy_angle": 180,
+          "max_angle": 180
         }
       },
       "linear_actuators_config":

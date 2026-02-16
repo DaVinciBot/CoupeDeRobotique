@@ -15,6 +15,7 @@ R_ARM_SERVO_PIN = 0
 L_ARM_SERVO_PIN = 1
 R_ROTATE_SERVO_PIN = 2
 L_ROTATE_SERVO_PIN = 3
+CURSOR_SERVO_PIN = 4
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
@@ -51,6 +52,13 @@ class ArmServo(Servo):
 class RotateServo(Servo):
 
     rotation_angle: int
+    """Angle to rotate the servo (in degrees)."""
+
+
+@dataclass
+class CursorServo(Servo):
+
+    deploy_angle: int
     """Angle to rotate the servo (in degrees)."""
 
 
@@ -147,6 +155,12 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
                     max_angle=cfg["max_angle"],
                     rotation_angle=cfg["rotate_angle"]
                 )
+            else:
+                self.servos[pin] = CursorServo(
+                    retract_angle=cfg["retract_angle"],
+                    max_angle=cfg["max_angle"],
+                    deploy_angle=cfg["deploy_angle"]
+                )
 
         stepper_config = CONFIG.ACTUATOR_ELEVATOR_CONFIG
         self._logger.info(f"[CTRL:ACT] Stepper config: {stepper_config}")
@@ -242,6 +256,20 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
         for i in self.servos:
             self.retract(i)
 
+    def deploy_cursor(self) -> None:
+        """Deploy the cursor by setting the specified servo to its deployment angle.
+
+        This method sets the specified servo to its deployment angle, effectively
+        deploying the cursor.
+        """
+        servo = self.servos[CURSOR_SERVO_PIN]
+        if isinstance(servo, CursorServo):
+            angle = servo.deploy_angle
+            self.set_servo_angle(
+                CURSOR_SERVO_PIN,
+                angle,
+                max_angle=self.servos[CURSOR_SERVO_PIN].max_angle)
+
     def rotate_gripper(self) -> None:
         """Rotate the gripper by setting the specified servos to their rotation angle.
 
@@ -322,6 +350,13 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
         self.rotate_gripper()
         self.release_jenga()
         self.unrotate_gripper()
+
+    def block_jenga(self) -> None:
+        """Block Jenga blocks by doing idk what
+        """
+        # J'ai pas capté comment on bloque les jengas pour les déplacer avec le moddé, je demande a Anais ou Adrien
+        self._logger.info("[CTRL:ACT] Blocking Jengas to move around.")
+
 
     def go_to_top(self) -> None:
         """Move the elevator to the top position.

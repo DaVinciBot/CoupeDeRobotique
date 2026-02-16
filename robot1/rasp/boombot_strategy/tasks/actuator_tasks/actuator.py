@@ -43,6 +43,20 @@ class RotateJenga(BaseTask[WinterGameContext]):
         return True
 
 
+class BlockJenga(BaseTask[WinterGameContext]):
+
+    def __init__(self) -> None:
+        super().__init__(points=0, estimated_duration=2.0)
+
+    @override
+    def handle(self, ctx: WinterGameContext) -> bool:
+        ctx.actuators.block_jenga()
+        p = self.points
+        ctx.point += p(ctx) if callable(p) else p
+        time.sleep(0.5)
+        return True
+
+
 class SafeRetractAll(BaseTask[WinterGameContext]):
 
     def __init__(self) -> None:
@@ -51,6 +65,20 @@ class SafeRetractAll(BaseTask[WinterGameContext]):
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
         ctx.actuators.retract_all()
+        p = self.points
+        ctx.point += p(ctx) if callable(p) else p
+        time.sleep(0.5)
+        return True
+
+
+class DeployCursor(BaseTask[WinterGameContext]):
+
+    def __init__(self) -> None:
+        super().__init__(points=0, estimated_duration=1.0)
+
+    @override
+    def handle(self, ctx: WinterGameContext) -> bool:
+        ctx.actuators.deploy_cursor()
         p = self.points
         ctx.point += p(ctx) if callable(p) else p
         time.sleep(0.5)
