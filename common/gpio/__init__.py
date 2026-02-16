@@ -7,7 +7,6 @@ _logger = LogLogger(
     follow_logger_manager_rules=True,
 )
 
-
 try:
     from gpio.gpio import PIN
 except ImportError:
