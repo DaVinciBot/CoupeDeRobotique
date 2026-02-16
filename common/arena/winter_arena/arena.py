@@ -260,6 +260,7 @@ class WinterArena(BaseArena):
                 Point(0, 200),
                 Point(60, 155),
             ),
+            go_to_positions=[OrientedPoint(25, 177.5, pi / 2)],
         )
 
         blue_backstage_zone = BlueReservedZone(
@@ -269,6 +270,7 @@ class WinterArena(BaseArena):
                 Point(240, 200),
                 Point(300, 155),
             ),
+            go_to_positions=[OrientedPoint(275, 177.5, pi / 2)],
         )
 
         ninja_stage = ForbiddenZone(
@@ -286,6 +288,8 @@ class WinterArena(BaseArena):
         )
 
         zones: list[BaseArenaZone] = []
+
+        zones.extend([yellow_backstage_zone, blue_backstage_zone, ninja_stage])
 
         zones.extend(
             StuffZone(
@@ -320,8 +324,6 @@ class WinterArena(BaseArena):
             )
             for corner_point in drop_zones_points
         )
-
-        zones.extend([yellow_backstage_zone, blue_backstage_zone, ninja_stage])
 
         super().__init__(
             logger,

@@ -11,7 +11,8 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
     RectangularProjectionAcsDetectionProfileParams,
 )
 from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
-from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
+from navigation.path_planner.astar_path_planner import AStarPathPlannerParams
+from navigation.path_planner.structs import Direction
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
@@ -23,15 +24,32 @@ if TYPE_CHECKING:
 class GoToColorReservedZoneToFinishGame(NavigationTask):
     """Task to navigate to a color reserved zone to finish the game."""
 
-    def __init__(self, color_reserved_zone_id: int) -> None:
+    def __init__(self, color_reserved_zone_id: int, ctx: WinterGameContext) -> None:
         """Initialize the GoToColorReservedZoneToFinishGame task.
 
         Args:
             color_reserved_zone_id (int): The ID of the target color reserved zone.
+            ctx (WinterGameContext): The current game context.
+
+        Raises:
+            ValueError: If the provided color_reserved_zone_id is invalid.
         """
+        goal = ctx.arena.compute_goal_position(color_reserved_zone_id)
+
+        if goal is None:
+            msg = f"Invalid color reserved zone ID: {color_reserved_zone_id}"
+            raise ValueError(msg)
+
         super().__init__(
-            goal=color_reserved_zone_id,
-            path_planner_params=BasicPathPlannerParams(),
+            goal=goal,
+            path_planner_params=AStarPathPlannerParams(
+                grid=ctx.arena.grid_manager.get_static_and_dynamic_grid(),
+                path_resolution=5,
+                chunk_size=CONFIG.ARENA_CHUNK_SIZE,
+                start=ctx.arena.ally_zone.point,
+                goal=goal,
+                direction=Direction.FORWARD,
+            ),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
@@ -69,15 +87,32 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
 class GoToColorReservedZoneToConstruct(NavigationTask):
     """Task to navigate to a color reserved zone to construct."""
 
-    def __init__(self, color_reserved_zone_id: int) -> None:
+    def __init__(self, color_reserved_zone_id: int, ctx: WinterGameContext) -> None:
         """Initialize the GoToColorReservedZoneToConstruct task.
 
         Args:
             color_reserved_zone_id (int): The ID of the target color reserved zone.
+            ctx (GameContext): The current game context.
+
+        Raises:
+            ValueError: If the provided color_reserved_zone_id is invalid.
         """
+        goal = ctx.arena.compute_goal_position(color_reserved_zone_id)
+
+        if goal is None:
+            msg = f"Invalid color reserved zone ID: {color_reserved_zone_id}"
+            raise ValueError(msg)
+
         super().__init__(
-            goal=color_reserved_zone_id,
-            path_planner_params=BasicPathPlannerParams(),
+            goal=goal,
+            path_planner_params=AStarPathPlannerParams(
+                grid=ctx.arena.grid_manager.get_static_and_dynamic_grid(),
+                path_resolution=5,
+                chunk_size=CONFIG.ARENA_CHUNK_SIZE,
+                start=ctx.arena.ally_zone.point,
+                goal=goal,
+                direction=Direction.FORWARD,
+            ),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
