@@ -72,8 +72,10 @@ class DropZone(BaseArenaZone):
         super().update(team_color, ally_position, enemy_position)
 
         # Update accessibility to free if an ally or enemy is within the zone
-        if (
-            self.buffered_polygon.contains(ally_position)
-            or self.buffered_polygon.contains(enemy_position)
-        ) and self.accessibility != ZoneAccessibility.RESTRICTED:
-            self._restrict_accessibility()
+
+        # if (
+        #     self.buffered_polygon.contains(ally_position)
+        #     or self.buffered_polygon.contains(enemy_position)
+        # ) and self.accessibility != ZoneAccessibility.RESTRICTED:
+        #     self._restrict_accessibility()
+        # TODO: mettre à jour cette logique dans l'arène de cette année

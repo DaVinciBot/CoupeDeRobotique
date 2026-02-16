@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 
 from loggerplusplus import LogLevels
 from taskbrain import DictProxyAccessor
@@ -192,6 +193,18 @@ if __name__ == "__main__":
 
     logger_brain.info("[INIT] All systems initialized successfully")
     logger_brain.info("[INIT] Starting WebSocket server...")
+
+    args_launch = sys.argv
+    if "-i" in args_launch:
+        logger_brain.info("Opening iihm...")
+        try:
+            subprocess.Popen([
+                "chromium",
+                "--no-sandbox",
+                "/home/dvb/CoupeDeRobotique/robot1/rasp/WebUI/index.html",
+            ])
+        except FileNotFoundError:
+            logger_brain.warning("Chromium not found.")
 
     ws_server.add_shutdown_task(force_kill_all_python)
     ws_server.run()
