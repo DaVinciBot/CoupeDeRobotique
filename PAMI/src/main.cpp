@@ -1,4 +1,5 @@
 #include "config.h"
+#include "strategy.h"
 
 Motor* leftMotor = new Motor(LEFT_STEP_PIN,       // Broche 19
                              LEFT_DIR_PIN,        // Broche 18
@@ -25,7 +26,7 @@ Navigation* navigation = new Navigation(
     15000);  // Navigation object with 100ms interval and 15s timeout
 
 lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
-
+Strategy* strategy = nullptr;
 #if ENABLE_OTA
 #include "OTA.h"
 AsyncWebServer server(80);
@@ -98,7 +99,7 @@ void lidarUpdate() {
 void setup() {
     delay(5000);  // pour le serial monitor
     setCpuFrequencyMhz(240);
-
+    strategy = new Strategy(rollingBasis);
     Serial.begin(115200);
     Serial.println("\n-- PAMI test --\n");
 
@@ -158,6 +159,10 @@ void setup() {
 
 long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
+    strategy->update();
+    if (strategy->isFinished()){
+    // les mouvements sont faits
+    }
     if (millis() - lastTime > 2 &&
         canStart)  // Check if 2ms have passed since the last navigation update
     {
