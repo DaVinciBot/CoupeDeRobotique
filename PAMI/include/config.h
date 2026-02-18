@@ -1,15 +1,15 @@
 #include <Arduino.h>
+#include "AtoB.h"
+#include "action.h"
+#include "actionneur.h"
+#include "carre.h"
 #include "lidar_pami.h"
 #include "motor.h"
 #include "navigation.h"
-#include "rolling_basis.h"
-#include "action.h"
-#include "AtoB.h"
 #include "relative_forward.h"
-#include "relative_turning.h" 
-#include "carre.h" 
-#include "triangle.h" 
-#include "actionneur.h"
+#include "relative_turning.h"
+#include "rolling_basis.h"
+#include "triangle.h"
 
 // #------- GENERAL CONFIGURATION -------#
 #define ACS_TRESHOLD 40  // Threshold for ACS activation in mm

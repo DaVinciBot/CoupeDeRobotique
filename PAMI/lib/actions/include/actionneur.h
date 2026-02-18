@@ -21,9 +21,8 @@ class Actionneur : public Action {
     uint16_t _currentAngle = 0;
     uint16_t _targetAngle = 0;
     unsigned long _startMs = 0;
-    unsigned long _timeoutMs = 5000; // Ms
+    unsigned long _timeoutMs = 5000;  // Ms
     bool _finished = false;
-
 };
 
 #endif

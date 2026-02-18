@@ -1,13 +1,13 @@
-#ifndef STRATEGY_H 
-#define STRATEGY_H 
+#ifndef STRATEGY_H
+#define STRATEGY_H
+#include "AtoB.h"
 #include "action.h"
-#include "rolling_basis.h" 
-#include "AtoB.h" 
-#include "relative_forward.h" 
-#include "relative_turning.h" 
-#include "carre.h" 
-#include "triangle.h" 
-#include "actionneur.h" 
+#include "actionneur.h"
+#include "carre.h"
+#include "relative_forward.h"
+#include "relative_turning.h"
+#include "rolling_basis.h"
+#include "triangle.h"
 
 class Strategy : public Action {
    public:
@@ -26,6 +26,5 @@ class Strategy : public Action {
     int _currentActionIndex = 0;
     int _actionCount = 0;
     void initActions();
-
 };
 #endif

@@ -15,7 +15,6 @@ void Actionneur::start() {
 }
 
 void Actionneur::update() {
-
     if (_finished) {
         return;
     }
@@ -57,4 +56,3 @@ bool Actionneur::isFinished() const {
 const char* Actionneur::name() const {
     return "Actionneur";
 }
-

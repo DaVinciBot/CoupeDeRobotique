@@ -1,6 +1,7 @@
 #include "relative_turning.h"
 
-RelativeTurning::RelativeTurning(RollingBasis* rb, const double angle) : _rb(rb), _angle(angle) {
+RelativeTurning::RelativeTurning(RollingBasis* rb, const double angle)
+    : _rb(rb), _angle(angle) {
     // valeurs par défaut déjà initialisées inline dans le header,
     // mais on peut ré-initialiser ici si besoin
     _startMs = 0;
@@ -16,11 +17,13 @@ void RelativeTurning::start() {
 
     // Lire la pose actuelle (A)
     Point cur = _rb->getPose();
-    Serial.printf("RelativeTurning::start cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y, cur.theta);
+    Serial.printf("RelativeTurning::start cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y,
+                  cur.theta);
     // Calculer la cible B en fonction de l'angle relatif
     Point _target = cur;
     _target.theta += _angle;
-    Serial.printf("RelativeTurning::start target=(%.1f,%.1f,%.3f)\n", _target.x, _target.y, _target.theta);
+    Serial.printf("RelativeTurning::start target=(%.1f,%.1f,%.3f)\n", _target.x,
+                  _target.y, _target.theta);
 
     // Envoyer la commande vers la cible B
     _rb->setCommand(_target);
@@ -42,8 +45,9 @@ void RelativeTurning::update() {
         _finished = true;
         return;
     }
-// a modifier : pas finis, le dist a changer, et regarder les éventuelles autres fonctions 
-    // read current pose (may be static if odometry is disabled)
+    // a modifier : pas finis, le dist a changer, et regarder les éventuelles
+    // autres fonctions read current pose (may be static if odometry is
+    // disabled)
     Point cur = _rb->getPose();
     float angleDiff = Point::angle(cur, _target);
     Serial.printf("RelativeTurning::update angle=%.1f rad\n", angleDiff);

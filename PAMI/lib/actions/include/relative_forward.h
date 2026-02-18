@@ -19,10 +19,9 @@ class RelativeForward : public Action {
     RollingBasis* _rb;
     const double _distance;
     unsigned long _startMs = 0;
-    unsigned long _timeoutMs = 15000; // Ms
+    unsigned long _timeoutMs = 15000;  // Ms
     float _arriveTolMm = 5.0f;
     bool _finished = false;
-
 };
 
 #endif

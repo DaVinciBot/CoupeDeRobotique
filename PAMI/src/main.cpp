@@ -160,8 +160,8 @@ void setup() {
 long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
     strategy->update();
-    if (strategy->isFinished()){
-    // les mouvements sont faits
+    if (strategy->isFinished()) {
+        // les mouvements sont faits
     }
     if (millis() - lastTime > 2 &&
         canStart)  // Check if 2ms have passed since the last navigation update

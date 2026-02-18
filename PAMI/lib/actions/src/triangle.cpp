@@ -1,6 +1,7 @@
 #include "triangle.h"
 
-Triangle::Triangle(RollingBasis* rb, const double length, const double angle) : _rb(rb), _distance(length) {
+Triangle::Triangle(RollingBasis* rb, const double length, const double angle)
+    : _rb(rb), _distance(length) {
     // valeurs par défaut déjà initialisées inline dans le header,
     // mais on peut ré-initialiser ici si besoin
     _startMs = 0;
@@ -17,14 +18,17 @@ void Triangle::start() {
 
     // Lire la pose actuelle (A)
     Point cur = _rb->getPose();
-    Serial.printf("Triangle::start cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y, cur.theta);
+    Serial.printf("Triangle::start cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y,
+                  cur.theta);
 
     // Calculer la cible B en fonction de la distance relative
     Point _target = cur;
     _target.x += _distance * cos(cur.theta);
     _target.y += _distance * sin(cur.theta);
-    _target.theta += 2*M_PI / 3; // tourner de 120 degrés pour le prochain côté
-    Serial.printf("Triangle side %d target=(%.1f,%.1f,%.3f)\n", _sideIndex, _target.x, _target.y, _target.theta);
+    _target.theta +=
+        2 * M_PI / 3;  // tourner de 120 degrés pour le prochain côté
+    Serial.printf("Triangle side %d target=(%.1f,%.1f,%.3f)\n", _sideIndex,
+                  _target.x, _target.y, _target.theta);
 
     // Envoyer la commande vers la cible B
     _rb->setCommand(_target);

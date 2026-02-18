@@ -16,15 +16,14 @@ class Triangle : public Action {
 
    private:
     const Point _target;
-    int _sideIndex = 0;   // 0 → 3
+    int _sideIndex = 0;  // 0 → 3
     RollingBasis* _rb;
     const double _distance;
     unsigned long _startMs = 0;
-    unsigned long _timeoutMs = 15000; // Ms
+    unsigned long _timeoutMs = 15000;  // Ms
     float _arriveTolRad = 5.0f;
     float _arriveTolMm = 5.0f;
     bool _finished = false;
-
 };
 
 #endif

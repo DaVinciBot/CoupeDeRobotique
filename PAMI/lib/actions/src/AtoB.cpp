@@ -5,11 +5,10 @@ AtoB::AtoB(RollingBasis* rb, const Point& target) : _rb(rb), _target(target) {
     // mais on peut ré-initialiser ici si besoin
     _startMs = 0;
     _finished = false;
-    Serial.printf("AtoB: target set to x=%.1f y=%.1f theta=%.3f\n",
-                  _target.x, _target.y, _target.theta);
+    Serial.printf("AtoB: target set to x=%.1f y=%.1f theta=%.3f\n", _target.x,
+                  _target.y, _target.theta);
     // timeout et tolérance définis dans le header (_timeoutMs, _arriveTolMm)
 }
-
 
 void AtoB::start() {
     Serial.println("AtoB started");
@@ -18,9 +17,11 @@ void AtoB::start() {
 
     // Lire la pose actuelle (A)
     Point cur = _rb->getPose();
-    Serial.printf("AtoB::start cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y, cur.theta);
+    Serial.printf("AtoB::start cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y,
+                  cur.theta);
 
-    // Envoyer la commande vers la cible B (doit avoir été définie via setTarget)
+    // Envoyer la commande vers la cible B (doit avoir été définie via
+    // setTarget)
     _rb->setCommand(_target);
     Serial.println("AtoB: command sent to rolling basis");
 }

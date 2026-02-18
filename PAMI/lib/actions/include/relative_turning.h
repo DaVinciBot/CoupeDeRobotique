@@ -19,10 +19,9 @@ class RelativeTurning : public Action {
     RollingBasis* _rb;
     const double _angle;
     unsigned long _startMs = 0;
-    unsigned long _timeoutMs = 15000; // Ms
+    unsigned long _timeoutMs = 15000;  // Ms
     float _arriveTolRad = 5.0f;
     bool _finished = false;
-
 };
 
 #endif
