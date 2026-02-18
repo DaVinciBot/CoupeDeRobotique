@@ -20,11 +20,11 @@ RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               WHEEL_BASE_MM,
                                               Point{0, 0, 0});
 
-Navigation* navigation = new Navigation(
+/*Navigation* navigation = new Navigation(
     rollingBasis,
     15000);  // Navigation object with 100ms interval and 15s timeout
-
-lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
+*/
+lidar_pami* lidar = new lidar_pami(Serial2);  // LIDAR object
 
 #if ENABLE_OTA
 #include "OTA.h"
@@ -60,7 +60,7 @@ long dt = 0;
 long lastTimerrrr = 0;
 
 void navigationUpdate() {
-    navigation->update();  // Update rolling basis
+    //navigation->update();  // Update rolling basis
     if (ACS) {
         if (oldACS)
             return;
@@ -70,7 +70,7 @@ void navigationUpdate() {
         if (currentIndex < 0) {
             currentIndex = 0;  // Prevent index from going negative
         }
-        navigation->stop();  // Stop rolling basis if ACS is true
+        //navigation->stop();  // Stop rolling basis if ACS is true
     } else {
         oldACS = ACS;  // Update oldACS to current ACS state
         if (dt < 20000) {
@@ -80,7 +80,7 @@ void navigationUpdate() {
             lastTimerrrr = millis();
         } else {
             Serial.println("All points navigated, stopping navigation.");
-            navigation->stop();  // Stop navigation if all points are navigated
+            //navigation->stop();  // Stop navigation if all points are navigated
                                  // start SERVO
         }
     }
