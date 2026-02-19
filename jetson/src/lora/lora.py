@@ -29,6 +29,8 @@ class LoRa:
                 parity=serial.PARITY_NONE,
                 stopbits=serial.STOPBITS_ONE,
                 timeout=1,
+                rtscts=False,
+                xonxoff=False,
             )
             time.sleep(1)
             print(f"✅ Connecté à la carte LoRa sur {self.port} à {self.baudrate} baud")
@@ -53,6 +55,7 @@ class LoRa:
         serial_data = data.encode("utf-8")
         if self.serial and self.serial.is_open:
             self.serial.write(serial_data)
+            self.serial.flush()
         else:
             print(
                 "Erreur: Le module LoRa n'est pas connecté.",
