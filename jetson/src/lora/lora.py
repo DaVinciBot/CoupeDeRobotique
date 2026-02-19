@@ -71,6 +71,7 @@ class LoRa:
         self.stop()
         try:
             if self.serial and self.serial.is_open:
+                self.serial.reset_output_buffer()
                 self.serial.close()
                 print("✅ Déconnecté de la carte LoRa")
         except Exception as e:
@@ -106,16 +107,15 @@ class LoRa:
 
     def _send_loop(self) -> None:
         """Boucle d'envoi en arrière-plan (thread séparé)."""
-        last_send_time = 0.0
-
         while not self._stop_event.is_set():
+            # Attend qu'une donnée soit disponible
             self._data_event.wait(timeout=0.5)
             self._data_event.clear()
 
             if self._stop_event.is_set():
                 break
 
-            # Récupère la donnée en attente (latest wins)
+            # Récupère la donnée la plus récente (latest wins)
             with self._data_lock:
                 data = self._pending_data
                 self._pending_data = None
@@ -123,15 +123,14 @@ class LoRa:
             if data is None:
                 continue
 
-            # Rate limiting
-            now = time.time()
-            elapsed = now - last_send_time
-            if elapsed < self._min_send_interval:
-                time.sleep(self._min_send_interval - elapsed)
-
             try:
-                self.send(data)
+                if self.serial and self.serial.is_open:
+                    # Purge le buffer série pour éviter l'accumulation
+                    self.serial.reset_output_buffer()
+                    self.serial.write(data.encode("utf-8"))
+                    self.serial.flush()
             except Exception as e:
                 print(f"Erreur envoi LoRa: {e}")
 
-            last_send_time = time.time()
+            # Intervalle minimum entre envois (interruptible)
+            self._stop_event.wait(timeout=self._min_send_interval)
