@@ -10,7 +10,10 @@ class LoRa:
     """Classe d'envoi de données via LoRa."""
 
     def __init__(
-        self, port: str, baudrate: int, min_send_interval: float = 1.0 / 15,
+        self,
+        port: str,
+        baudrate: int,
+        min_send_interval: float = 1.0 / 15,
     ) -> None:
         """Initialise la classe LoRa.
 
@@ -40,7 +43,7 @@ class LoRa:
                 bytesize=serial.EIGHTBITS,
                 parity=serial.PARITY_NONE,
                 stopbits=serial.STOPBITS_ONE,
-                timeout=1,
+                timeout=0,
                 rtscts=False,
                 xonxoff=False,
             )
