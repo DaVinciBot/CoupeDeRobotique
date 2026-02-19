@@ -136,6 +136,10 @@ def detect_aruco() -> None:
     start_time = time.time()
     fps_display = 0.0
 
+    # Timer envoi LoRa (évite de saturer le buffer du module)
+    lora_send_interval = 1.0  # secondes entre chaque envoi
+    last_lora_send = 0.0
+
     # Créer les fenêtres
     if SHOW_CAMERA_FEED:
         cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
@@ -200,17 +204,20 @@ def detect_aruco() -> None:
                         f"Angle={math.degrees(yaw):.1f}°",
                     )
 
-            # Formattage et envoi des données via LoRa
-            msg = f"{time.localtime().tm_hour}:{time.localtime().tm_min}:{time.localtime().tm_sec}[\r\n"
-            lora.send(msg)
-            for marker_id, pos, yaw in detected_world:
-                msg = (
-                    # Format: "ID|X|Y|Yaw", avec X et Y en mètres, Yaw en degrés
-                    f'"{marker_id}|{pos[0]:.3f}|{pos[1]:.3f}|{math.degrees(yaw):.1f}",\r\n'
-                )
+            # Formattage et envoi des données via LoRa (throttlé)
+            now = time.time()
+            if now - last_lora_send >= lora_send_interval:
+                last_lora_send = now
+                t = time.localtime()
+                msg = f"{t.tm_hour}:{t.tm_min}:{t.tm_sec}[\r\n"
+                for marker_id, pos, yaw in detected_world:
+                    deg = math.degrees(yaw)
+                    msg += (
+                        f'"{marker_id}|{pos[0]:.3f}'
+                        f"|{pos[1]:.3f}|{deg:.1f}\",\r\n"
+                    )
+                msg += "]\r\n"
                 lora.send(msg)
-            msg += "]\r\n"
-            lora.send(msg)
 
             # Gestion des touches
             key = cv2.waitKey(1) & 0xFF
