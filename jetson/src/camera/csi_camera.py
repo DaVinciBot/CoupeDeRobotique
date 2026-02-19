@@ -61,7 +61,6 @@ class CSICamera:
         )
 
         print(f"🎥 CSI Camera {CSI_WIDTH}x{CSI_HEIGHT} @ {CSI_FPS}fps")
-        print(f"🔧 Pipeline: {gst_pipeline}")
 
         self.cam = cv2.VideoCapture(gst_pipeline, cv2.CAP_GSTREAMER)
 
