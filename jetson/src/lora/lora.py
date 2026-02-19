@@ -52,6 +52,7 @@ class LoRa:
         serial_data = data.encode("utf-8")
         if self.serial and self.serial.is_open:
             self.serial.write(serial_data)
+            time.sleep(0.1)
         else:
             print(
                 "Erreur: Le module LoRa n'est pas connecté.",
