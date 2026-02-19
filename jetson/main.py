@@ -202,7 +202,8 @@ def detect_aruco() -> None:
                     )
 
             # Formattage et envoi des données via LoRa (non bloquant)
-            msg = f"CD_{time.localtime()}[\r\n"
+            t = time.localtime()
+            msg = f"CD_{t.tm_hour}:{t.tm_min}:{t.tm_sec}[\r\n"
             for marker_id, pos, yaw in detected_world:
                 deg = math.degrees(yaw)
                 msg += f'"{marker_id}|{pos[0]:.3f}|{pos[1]:.3f}|{deg:.1f}",\r\n'
