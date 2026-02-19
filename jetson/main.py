@@ -124,9 +124,6 @@ def detect_aruco() -> None:
     print("🔍 Initialisation du détecteur ArUco...")
     detector = ArucoDetector(
         camera,
-        marker_size_cm=1.0,  # Valeur factice, non utilisée
-        marker_size_ref_cm=1.0,  # Valeur factice, non utilisée
-        marker_size_crate_cm=1.0,  # Valeur factice, non utilisée
         camera_matrix=CAMERA_MATRIX,
         dist_coeffs=DIST_COEFFS,
         assumed_hfov_deg=ASSUMED_HFOV_DEG,
@@ -148,7 +145,7 @@ def detect_aruco() -> None:
     try:
         while True:
             # Lire la frame
-            frame = camera.read_frame()
+            frame = camera.read_frame(copy=SHOW_CAMERA_FEED)
             if frame is None:
                 continue
 
@@ -210,10 +207,11 @@ def detect_aruco() -> None:
             msg += "]\r\n"
             lora.queue_send(msg)
 
-            # Gestion des touches
-            key = cv2.waitKey(1) & 0xFF
-            if key == 27 or key == ord("q"):
-                break
+            # Gestion des touches (uniquement si fenêtres OpenCV ouvertes)
+            if SHOW_CAMERA_FEED or SHOW_ARENA:
+                key = cv2.waitKey(1) & 0xFF
+                if key == 27 or key == ord("q"):
+                    break
 
     finally:
         print("\n🛑 Arrêt de la détection")

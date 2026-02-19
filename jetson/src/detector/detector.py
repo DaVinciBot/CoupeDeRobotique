@@ -5,16 +5,9 @@ import time
 from typing import Optional
 
 import cv2
-import matplotlib as mpl
 import numpy as np
 from src.camera import CSICamera
 from src.utils.timing import timer
-
-mpl.use("Agg")
-import matplotlib.lines as mlines
-import matplotlib.pyplot as plt
-from matplotlib import patches
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 blue_team_ids = [1, 2, 3, 4, 5]
 yellow_team_ids = [6, 7, 8, 9, 10]
@@ -36,9 +29,6 @@ class ArucoDetector:
     def __init__(
         self,
         cam,  # type: CSICamera
-        marker_size_cm,  # type: float
-        marker_size_ref_cm,  # type: float
-        marker_size_crate_cm,  # type: float
         camera_matrix=None,  # type: Optional[np.ndarray]
         dist_coeffs=None,  # type: Optional[np.ndarray]
         assumed_hfov_deg=60.0,  # type: float
@@ -47,24 +37,11 @@ class ArucoDetector:
 
         Args:
             cam (CSICamera): La caméra utilisée pour la détection.
-            marker_size_cm (float): La taille du marqueur en centimètres.
-            marker_size_ref_cm (float): Taille du marqueur de référence en centimètres.
-            marker_size_crate_cm (float): La taille du marqueur de crate en centimètres.
             camera_matrix (np.ndarray | None, optional): La matrice de la caméra.
             dist_coeffs (np.ndarray | None, optional): Les coefficients de distorsion.
             assumed_hfov_deg (float, optional): Champ vision horizontal supposé en deg.
         """
         self.cam = cam
-        self.marker_size_m = float(marker_size_cm) / 100.0
-        self.marker_size_ref_m = float(marker_size_ref_cm) / 100.0
-        self.marker_size_crate_m = float(marker_size_crate_cm) / 100.0
-
-        self.size_mapping = {}
-        for mid in [20, 21, 22, 23]:
-            self.size_mapping[mid] = self.marker_size_ref_m
-        for mid in [36, 41, 47]:
-            self.size_mapping[mid] = self.marker_size_crate_m
-
         self.camera_matrix = camera_matrix
         self.dist_coeffs = dist_coeffs
         self.assumed_hfov_deg = float(assumed_hfov_deg)
@@ -113,33 +90,6 @@ class ArucoDetector:
 
         self.last_seen_refs = {}
         self.ref_cache_timeout = 20.0
-
-    def get_marker_size(self, marker_id: int) -> float:
-        """Retourne la taille du marqueur en mètres selon son ID.
-
-        Args:
-            marker_id (int): L'ID du marqueur.
-
-        Returns:
-            float: La taille du marqueur en mètres.
-        """
-        return self.size_mapping.get(marker_id, self.marker_size_m)
-
-    def get_objp_for_marker(self, marker_id: int) -> np.ndarray:
-        """Retourne les points 3D du marqueur selon son ID.
-
-        Args:
-            marker_id (int): L'ID du marqueur.
-
-        Returns:
-            np.ndarray: Les points 3D du marqueur.
-        """
-        size = self.get_marker_size(marker_id)
-        s = size / 2.0
-        return np.array(
-            [[-s, -s, 0.0], [s, -s, 0.0], [s, s, 0.0], [-s, s, 0.0]],
-            dtype=np.float64,
-        )
 
     @staticmethod
     def convert_world_coords_mm(pos_world: np.ndarray) -> str:
@@ -336,8 +286,41 @@ class ArucoDetector:
 
         return None
 
+    def transform_points_to_world_batch(self, points):
+        """Transforme N points image en coordonnées monde (m) en une seule opération.
+
+        Args:
+            points: np.ndarray de shape (N, 2) contenant les points image.
+
+        Returns:
+            np.ndarray de shape (N, 2) en mètres, ou None si pas de transformation.
+        """
+        if not self.transform_computed:
+            return None
+
+        N = points.shape[0]
+        ones = np.ones((N, 1), dtype=points.dtype)
+        pts = np.hstack([points, ones])  # (N, 3)
+
+        if self.transform_type == "homography" and self.homography_matrix is not None:
+            world_pts = (self.homography_matrix @ pts.T).T  # (N, 3)
+            world_pts = world_pts[:, :2] / world_pts[:, 2:3]
+        elif self.transform_type == "affine" and self.affine_matrix is not None:
+            world_pts = (self.affine_matrix @ pts.T).T  # (N, 2)
+        else:
+            return None
+
+        return world_pts / 1000.0
+
     @timer
     def _init_arena_plot(self, arena_size_mm=(3000, 2000)):
+        import matplotlib as mpl
+
+        mpl.use("Agg")
+        import matplotlib.pyplot as plt
+        from matplotlib import patches
+        from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
         ARENA_W, ARENA_H = int(arena_size_mm[0]), int(arena_size_mm[1])
 
         self._arena_fig = plt.figure(figsize=(10, 7), dpi=100)
@@ -362,10 +345,13 @@ class ArucoDetector:
     def update_arena_display(
         self,
         detected_world=None,
-        marker_size_mm=200.0,
         arrow_len_mm=300.0,
         window_name="Arena",
     ):
+        import matplotlib.lines as mlines
+        import matplotlib.pyplot as plt
+        from matplotlib import patches
+
         if self._arena_fig is None:
             self._init_arena_plot()
 
@@ -417,7 +403,7 @@ class ArucoDetector:
             ):
                 continue
 
-            s = marker_size_mm * 0.6
+            s = 120.0
             lower_left = (x_mm - s / 2.0, y_mm - s / 2.0)
             square = patches.Rectangle(
                 lower_left,
@@ -514,7 +500,7 @@ class ArucoDetector:
                     detected_world=[],
                     window_name=arena_window_name,
                 )
-            return frame, []
+            return (frame if show_video else None), []
 
         # Dessiner les marqueurs détectés seulement si affichage activé
         if show_video:
@@ -529,48 +515,52 @@ class ArucoDetector:
             half_pi = pi / 2.0
             two_pi = 2.0 * pi
 
-            # Traitement en batch pour réduire les appels
             num_markers = len(ids)
+
+            # Collecte de tous les points à transformer en un seul batch
+            # Pour chaque marqueur : centre, corner0, corner1 = 3 points
+            all_points = np.empty((num_markers * 3, 2), dtype=np.float32)
             for i in range(num_markers):
-                mid = int(ids[i][0])
-
-                # Calcul du centre (optimisé avec mean direct)
                 center_img = corners[i][0].mean(axis=0)
+                all_points[i * 3] = center_img
+                all_points[i * 3 + 1] = corners[i][0][0]
+                all_points[i * 3 + 2] = corners[i][0][1]
 
-                # Transformation monde
-                pos_world = self.transform_point_to_world(center_img)
+            # Transformation batch : une seule multiplication matricielle
+            all_world = self.transform_points_to_world_batch(all_points)
 
-                if pos_world is not None:
-                    # Calculer yaw en une seule passe (optimisation)
-                    corner0_world = self.transform_point_to_world(corners[i][0][0])
-                    corner1_world = self.transform_point_to_world(corners[i][0][1])
+            if all_world is not None:
+                # Pré-calcul du cache indicator pour les annotations vidéo
+                if show_video:
+                    visible_refs = [
+                        int(ids[j][0])
+                        for j in range(num_markers)
+                        if int(ids[j][0]) in self.ref_markers_world
+                    ]
+                    use_cache_indicator = len(visible_refs) < 3
 
-                    if corner0_world is not None and corner1_world is not None:
-                        vec_world = corner1_world - corner0_world
-                        yaw = math.atan2(vec_world[1], vec_world[0]) + half_pi
-                        # Normalisation optimisée (modulo au lieu de boucle)
-                        yaw = ((yaw + pi) % two_pi) - pi
-                    else:
-                        yaw = 0.0
+                for i in range(num_markers):
+                    mid = int(ids[i][0])
+                    pos_world = all_world[i * 3]
+                    corner0_world = all_world[i * 3 + 1]
+                    corner1_world = all_world[i * 3 + 2]
 
-                    # Ajouter un tuple (ID, position, yaw)
+                    # Calcul du yaw
+                    vec_world = corner1_world - corner0_world
+                    yaw = math.atan2(vec_world[1], vec_world[0]) + half_pi
+                    yaw = ((yaw + pi) % two_pi) - pi
+
                     detected_world.append((mid, pos_world, yaw))
 
                     # Annotations vidéo seulement si affichage activé
                     if show_video:
                         cache_indicator = ""
-                        if mid in self.ref_markers_world:
-                            visible_refs = [
-                                int(ids[j][0])
-                                for j in range(len(ids))
-                                if int(ids[j][0]) in self.ref_markers_world
-                            ]
-                            if len(visible_refs) < 3:
-                                cache_indicator = " (cache)"
+                        if use_cache_indicator and mid in self.ref_markers_world:
+                            cache_indicator = " (cache)"
 
                         self._annotate_marker(
                             frame,
-                            center_img,
+                            all_points[i * 3],
                             mid,
                             pos_world,
                             yaw,
@@ -611,4 +601,4 @@ class ArucoDetector:
             except Exception:
                 pass
 
-        return frame, detected_world
+        return (frame if show_video else None), detected_world

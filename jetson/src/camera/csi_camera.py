@@ -135,8 +135,13 @@ class CSICamera:
         """Vérifie si la caméra est ouverte."""
         return self.cam is not None and self.cam.isOpened()
 
-    def read_frame(self) -> Optional[np.ndarray]:
+    def read_frame(self, copy: bool = True) -> Optional[np.ndarray]:
         """Récupère la dernière frame disponible.
+
+        Args:
+            copy: Si True, retourne une copie de la frame (nécessaire si on
+                  dessine dessus). Si False, retourne la référence directe et
+                  marque la frame comme consommée (plus rapide, ~2-3ms économisés).
 
         Returns:
             La frame la plus récente ou None si non disponible.
@@ -147,8 +152,13 @@ class CSICamera:
         with self.frame_lock:
             if self.frame is None:
                 return None
-            # Copier la frame pour éviter les problèmes de concurrence
-            return self.frame.copy()
+            if copy:
+                return self.frame.copy()
+            # Swap atomique : on prend la référence, le thread caméra
+            # créera un nouvel objet numpy au prochain cam.read()
+            result = self.frame
+            self.frame = None
+            return result
 
     def get_stats(self) -> Dict[str, Union[int, float]]:
         """Retourne les statistiques de performance."""
