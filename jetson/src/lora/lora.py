@@ -71,7 +71,6 @@ class LoRa:
         self.stop()
         try:
             if self.serial and self.serial.is_open:
-                self.serial.reset_output_buffer()
                 self.serial.close()
                 print("✅ Déconnecté de la carte LoRa")
         except Exception as e:
@@ -124,13 +123,14 @@ class LoRa:
                 continue
 
             try:
+                serial_data = data.encode("utf-8")
                 if self.serial and self.serial.is_open:
-                    # Purge le buffer série pour éviter l'accumulation
-                    self.serial.reset_output_buffer()
-                    self.serial.write(data.encode("utf-8"))
-                    self.serial.flush()
+                    self.serial.write(serial_data)
+                    # Temps physique de transmission UART (10 bits/octet en 8N1)
+                    wire_time = len(serial_data) * 10.0 / self.baudrate
+                    # Attendre : transmission UART + silence pour le module
+                    self._stop_event.wait(
+                        timeout=wire_time + self._min_send_interval,
+                    )
             except Exception as e:
                 print(f"Erreur envoi LoRa: {e}")
-
-            # Intervalle minimum entre envois (interruptible)
-            self._stop_event.wait(timeout=self._min_send_interval)
