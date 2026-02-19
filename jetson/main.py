@@ -201,16 +201,18 @@ def detect_aruco() -> None:
                     )
 
             # Formattage des données à envoyer
-            msg = "["
+            msg = "[\r\n"
+            lora.send(msg)
             for marker_id, pos, yaw in detected_world:
-                msg += (
+                msg = (
                     # Format: "ID|X|Y|Yaw", avec X et Y en mètres, Yaw en degrés
-                    f'"{marker_id}|{pos[0]:.3f}|{pos[1]:.3f}|{math.degrees(yaw):.1f}",'
+                    f'"{marker_id}|{pos[0]:.3f}|{pos[1]:.3f}|{math.degrees(yaw):.1f}",\r\n'
                 )
+                lora.send(msg)
             msg += "]\r\n"
+            lora.send(msg)
 
             # Envoi des données via LoRa
-            lora.send(msg)
 
             # Gestion des touches
             key = cv2.waitKey(1) & 0xFF
