@@ -137,7 +137,7 @@ def detect_aruco() -> None:
     fps_display = 0.0
 
     # Timer envoi LoRa (évite de saturer le buffer du module)
-    lora_send_interval = 1.0  # secondes entre chaque envoi
+    lora_send_interval = 0.083  # secondes entre chaque envoi
     last_lora_send = 0.0
 
     # Créer les fenêtres
@@ -212,10 +212,7 @@ def detect_aruco() -> None:
                 msg = f"{t.tm_hour}:{t.tm_min}:{t.tm_sec}[\r\n"
                 for marker_id, pos, yaw in detected_world:
                     deg = math.degrees(yaw)
-                    msg += (
-                        f'"{marker_id}|{pos[0]:.3f}'
-                        f"|{pos[1]:.3f}|{deg:.1f}\",\r\n"
-                    )
+                    msg += f'"{marker_id}|{pos[0]:.3f}|{pos[1]:.3f}|{deg:.1f}",\r\n'
                 msg += "]\r\n"
                 lora.send(msg)
 
