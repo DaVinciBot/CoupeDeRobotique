@@ -138,7 +138,7 @@ void setup() {
     // initialize_callback_functions();
     if (isInit) {
         Serial.println("[OK] LoRa initialized successfully!");
-        Serial.println("Ready to send/receive messages");
+        Serial.println("Waiting for incoming messages...\n");
     } else {
         Serial.println("[ERROR] LoRa initialization failed");
         Serial.println("Check pin connections and module power");
@@ -180,13 +180,13 @@ void loop() {
         lastDebugTime = millis();
     }
 
-    if (millis() - lastTime > 2 &&
+    /*if (millis() - lastTime > 2 &&
         canStart)  // Check if 2ms have passed since the last navigation update
     {
         navigationUpdate();  // Call navigation update function
         lastTime = millis();
     }
-    lidar->update();
+    lidar->update();*/
 #if ENABLE_OTA
     ota.loop();
 #endif
@@ -204,13 +204,13 @@ void loop() {
             }
             lastLoraTest = millis();
             
-            // Send test message every 10 seconds
+            /* Send test message every 10 seconds
             static unsigned long lastSendTime = 0;
             if (millis() - lastSendTime > 10000) {
                 Serial.println("[LoRa] Sending test message...");
                 com->print("TEST_MSG");
                 lastSendTime = millis();
-            }
+            }*/
         }
     } else {
         // Try to re-initialize
