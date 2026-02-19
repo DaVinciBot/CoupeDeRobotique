@@ -1,4 +1,4 @@
-"""Main simplifié pour détection ArUco sur Jetson Nano avec caméra CSI."""
+"""Main pour détection ArUco sur Jetson Nano avec caméra CSI."""
 
 import math
 import os
@@ -12,6 +12,7 @@ import numpy as np
 from dotenv import load_dotenv
 from src.camera import CSICamera
 from src.detector import ArucoDetector
+from src.lora.lora import LoRa
 from src.utils.timing import set_debug_mode
 
 # Charger le fichier .env
@@ -117,6 +118,13 @@ def detect_aruco() -> None:
     camera = CSICamera(CAMERA_ID)
     print(f"📷 Caméra: {camera.get_camera_info()}\n")
 
+    # Initialiser LoRa
+    lora = LoRa(
+        port="/dev/ttyTHS1",
+        baudrate=115200,
+    )
+    lora.connect()
+
     # Initialiser le détecteur (sans tailles de marqueurs)
     detector = ArucoDetector(
         camera,
@@ -193,10 +201,22 @@ def detect_aruco() -> None:
             if DEBUG_MODE and detected_world:
                 for marker_id, pos, yaw in detected_world:
                     print(
-                        f"   ID={marker_id} | "
-                        f"Pos=({pos[0]:.3f}, {pos[1]:.3f})m | "
-                        f"Angle={math.degrees(yaw):.1f}°"
+                        f"   ID={marker_id} | ",
+                        f"Pos=({pos[0]:.3f}, {pos[1]:.3f})m | ",
+                        f"Angle={math.degrees(yaw):.1f}°",
                     )
+
+            # Formattage des données à envoyer
+            msg = "["
+            for marker_id, pos, yaw in detected_world:
+                msg += (
+                    # Format: "ID|X|Y|Yaw", avec X et Y en mètres, Yaw en degrés
+                    f'"{marker_id}|{pos[0]:.3f}|{pos[1]:.3f}|{math.degrees(yaw):.1f}",'
+                )
+            msg += "]"
+
+            # Envoi des données via LoRa
+            lora.send(msg)
 
             # Gestion des touches
             key = cv2.waitKey(1) & 0xFF
@@ -208,6 +228,7 @@ def detect_aruco() -> None:
         plt.close("all")
         camera.release()
         cv2.destroyAllWindows()
+        lora.disconnect()
 
 
 if __name__ == "__main__":
