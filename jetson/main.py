@@ -137,7 +137,7 @@ def detect_aruco() -> None:
     fps_display = 0.0
 
     # Timer envoi LoRa (évite de saturer le buffer du module)
-    lora_send_interval = 0.5  # secondes entre chaque envoi
+    lora_send_interval = 1.0  # secondes entre chaque envoi
     last_lora_send = 0.0
 
     # Créer les fenêtres
@@ -206,6 +206,7 @@ def detect_aruco() -> None:
 
             # Formattage et envoi des données via LoRa (throttlé)
             now = time.time()
+            print(now)
             if now - last_lora_send >= lora_send_interval:
                 last_lora_send = now
                 t = time.localtime()
