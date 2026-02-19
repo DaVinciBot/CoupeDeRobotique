@@ -207,7 +207,7 @@ def detect_aruco() -> None:
                     # Format: "ID|X|Y|Yaw", avec X et Y en mètres, Yaw en degrés
                     f'"{marker_id}|{pos[0]:.3f}|{pos[1]:.3f}|{math.degrees(yaw):.1f}",'
                 )
-            msg += "]\n"
+            msg += "]\r\n"
 
             # Envoi des données via LoRa
             lora.send(msg)
