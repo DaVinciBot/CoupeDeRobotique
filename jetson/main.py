@@ -81,7 +81,7 @@ NUM_CALIB_IMAGES = parse_int("NUM_CALIB_IMAGES", 50)
 
 def calibrate_camera() -> None:
     """Calibre la caméra avec un échiquier."""
-    print("\n🎯 === MODE CALIBRATION ===\n")
+    print("\n=== MODE CALIBRATION ===\n")
 
     camera = CSICamera(CAMERA_ID)
 
@@ -105,20 +105,14 @@ def calibrate_camera() -> None:
 
 def detect_aruco() -> None:
     """Détection ArUco en temps réel."""
-    print("\n🎯 === MODE DÉTECTION ARUCO ===\n")
-
-    # Vérifier que la calibration est disponible
-    if CAMERA_MATRIX is None or DIST_COEFFS is None:
-        print("⚠️  ATTENTION: Calibration non disponible")
-        print(f"   Utilisation HFOV estimé: {ASSUMED_HFOV_DEG}°")
-        print("   Pour de meilleurs résultats, lancez d'abord la calibration")
-        print("   (CALIBRATE_MODE=True dans .env)\n")
+    print("\n=== MODE DÉTECTION ===\n")
 
     # Initialiser la caméra
+    print("📷 Initialisation de la caméra...")
     camera = CSICamera(CAMERA_ID)
-    print(f"📷 Caméra: {camera.get_camera_info()}\n")
 
     # Initialiser LoRa
+    print("📡 Initialisation de la carte LoRa...")
     lora = LoRa(
         port="/dev/ttyTHS1",
         baudrate=115200,
@@ -126,6 +120,7 @@ def detect_aruco() -> None:
     lora.connect()
 
     # Initialiser le détecteur (sans tailles de marqueurs)
+    print("🔍 Initialisation du détecteur ArUco...")
     detector = ArucoDetector(
         camera,
         marker_size_cm=1.0,  # Valeur factice, non utilisée
@@ -147,8 +142,7 @@ def detect_aruco() -> None:
     if SHOW_ARENA:
         cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
 
-    print("🚀 Détection démarrée")
-    print("⌨️  'Q' ou 'ESC' pour quitter\n")
+    print("🚀 Démarrage de la détection...")
 
     try:
         while True:
@@ -236,7 +230,7 @@ if __name__ == "__main__":
     set_debug_mode(DEBUG_MODE)
 
     if DEBUG_MODE:
-        print("🐛 Mode DEBUG activé\n")
+        print("🐛 Démarrage en mode DEBUG")
 
     # Lancer calibration ou détection
     if CALIBRATE_MODE:

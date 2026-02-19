@@ -30,6 +30,7 @@ class LoRa:
                 stopbits=serial.STOPBITS_ONE,
             )
             time.sleep(1)
+            print(f"✅ Connecté à la carte LoRa sur {self.port} à {self.baudrate} baud")
         except Exception as e:
             print(f"Erreur de connexion à la carte LoRa: {e}")
 
@@ -38,6 +39,7 @@ class LoRa:
         try:
             if self.serial and self.serial.is_open:
                 self.serial.close()
+                print("✅ Déconnecté de la carte LoRa")
         except Exception as e:
             print(f"Erreur de déconnexion de la carte LoRa: {e}")
 
@@ -47,7 +49,7 @@ class LoRa:
         Args:
             data (str): Données à envoyer
         """
-        serial_data = data.encode("utf-8")
+        serial_data = data.encode()
         if self.serial and self.serial.is_open:
             self.serial.write(serial_data)
         else:
