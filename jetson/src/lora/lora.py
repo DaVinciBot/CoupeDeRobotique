@@ -49,7 +49,7 @@ class LoRa:
         Args:
             data (str): Données à envoyer
         """
-        serial_data = data.encode()
+        serial_data = data.encode("utf-8")
         if self.serial and self.serial.is_open:
             self.serial.write(serial_data)
         else:
