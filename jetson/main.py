@@ -201,7 +201,7 @@ def detect_aruco() -> None:
                     )
 
             # Formattage des données à envoyer
-            msg = "[\r\n"
+            msg = f"{time.time()}[\r\n"
             lora.send(msg)
             for marker_id, pos, yaw in detected_world:
                 msg = (
