@@ -1,128 +1,99 @@
 #ifndef COM_PAMI_H
 #define COM_PAMI_H
 
-#include <SX126x.h>
-#include <crc.h>
-#include <messages_pami.h>
-#include <cstring>  // To use memcpy()
+#include <Arduino.h>
+#include <HardwareSerial.h>
+#include <cstring>
 
 /**
- * @brief Structure holding the last sent/received message contents.
+ * @brief Communication (LoRa) helper class for DX-LR01 module.
  *
- * Used to store a copy of the last message for possible retransmission or
- * inspection. The fixed-size buffer mirrors the maximum expected message size.
- */
-struct last_message {
-    byte size;      ///< Size of the message in bytes
-    byte msg[256];  ///< Content of the message
-};
-
-/**
- * @brief Communication (LoRa) helper class.
+ * Encapsulates UART-based communication with the DX-LR01 LoRa module.
+ * The module communicates via Serial2 (GPIO16 RX, GPIO17 TX at 9600 baud).
  *
- * Encapsulates configuration and basic operations for the SX126x LoRa radio
- * used in this project. Responsibilities include radio initialization,
- * sending messages, printing text over the link, buffering incoming bytes,
- * and dispatching callbacks for received messages.
- *
- * @note This class holds an internal buffer and a pointer to a last_message
- * instance which are allocated when the object is constructed.
+ * Responsibilities include:
+ * - UART initialization
+ * - Sending messages over LoRa via UART
+ * - Receiving and buffering incoming LoRa data
+ * - Dispatching callbacks for received messages
  */
 class Com {
    public:
     /**
      * @brief Construct a new Com object
      *
-     * Initializes internal members. Radio hardware must still be started by
-     * calling begin().
-     *
+     * Initializes internal members.
      */
     Com();
 
     /**
      * @brief Destroy the Com object
-     *
      */
     ~Com();
 
     /**
-     * @brief Initialize the LoRa radio with given control pins.
+     * @brief Initialize the DX-LR01 LoRa module via UART.
      *
-     * @param nss Chip select pin for the SX126x
-     * @param reset Reset pin for the SX126x
-     * @param busy Busy pin for the SX126x
+     * Sets up Serial2 with the configure pins and baudrate.
+     * M0 and M1 pins should be set to GND before calling this.
+     *
+     * @param rx_pin GPIO pin for UART RX (TXD of DX-LR01)
+     * @param tx_pin GPIO pin for UART TX (RXD of DX-LR01)
+     * @param baud Baud rate (default 9600 for DX-LR01)
      * @return true on success
      * @return false on failure
      */
-    bool begin(int8_t nss, int8_t reset, int8_t busy);
+    bool begin(int8_t rx_pin, int8_t tx_pin, uint32_t baud = 9600);
 
     /**
      * @brief Send a raw message over LoRa.
      *
      * @param msg Pointer to the byte buffer to send
-     * @param size Number of bytes to send (must be <= 256)
-     * @param is_nack If true, mark this message as a NACK (negative ack)
+     * @param size Number of bytes to send
+     * @param is_nack If true, mark this message as a NACK (not used for DX-LR01)
      */
     void send_msg(byte* msg, byte size, bool is_nack = false);
 
     /**
-     * @brief Send a null-terminated text string over the radio.
-     *
-     * Convenience helper that wraps text into the radio message format.
+     * @brief Send a null-terminated text string over LoRa.
      *
      * @param text C-string to send
      */
     void print(char* text);
 
     /**
-     * @brief Install a callback table invoked on message reception.
+     * @brief Install a callback table for message reception.
      *
-     * The supplied array should contain function pointers indexed by message
-     * type (0..255). When a message is received, the appropriate callback is
-     * called with the message buffer and its size.
-     *
-     * @param functions Array of 256 function pointers taking (byte* msg, byte
-     * size)
+     * @param functions Array of 256 function pointers (byte* msg, byte size)
      */
     void handle_callback(void (*functions[256])(byte* msg, byte size));
 
+    /**
+     * @brief Process incoming UART data (call regularly from loop).
+     *
+     * @return Number of bytes processed
+     */
+    int update();
+
+    /**
+     * @brief Get the last received message.
+     *
+     * @param out_size Output parameter for message size
+     * @return Pointer to the received message buffer
+     */
+    byte* getLastMessage(int* out_size);
+
    private:
-    /**
-     * @brief Internal handler that processes radio events / incoming bytes.
-     *
-     * @return a status byte or the size of processed data depending on
-     * internal conventions.
-     */
-    byte handle();
+    HardwareSerial* loraSerial = nullptr;  // Serial2 for DX-LR01
+    bool initialized = false;
 
-    /**
-     * @brief Read bytes from the radio into the internal buffer and return
-     * a pointer to that buffer.
-     *
-     * @return pointer to internal buffer containing the latest received data
-     */
-    byte* read_buffer();
+    byte* buffer = new byte[256];  // RX buffer
+    int buffer_index = 0;
+    
+    byte* last_received = new byte[256];  // Last received message
+    int last_received_size = 0;  // Size of last received message
 
-    SX126x LoRa;  // Underlying radio object
-
-    /* Radio configuration parameters */
-    int sf = 7;               // LoRa spreading factor
-    int bw = 125000;          // Bandwidth
-    int cr = 5;               // Coding rate
-    int preambleLength = 12;  // Preamble length
-    bool crcType = true;      // CRC type
-
-    int message_len = 256;                        // Maximum message length
-    uint16_t syncWord = 0x3444;                   // Sync word
-    uint8_t headerType = SX126X_HEADER_EXPLICIT;  // Header type
-
-    byte* buffer = new byte[256];  // Internal buffer for storing received data
-    int pointer = 0;               // Pointer to the buffer
-    byte signature[4];  // Signature used to validate messages (default:
-                        // END_BYTES_SIGNATURE) initialized in the constructor
-
-    last_message* last_msg = new last_message();  // Pointer to the last sent
-                                                  // message for retransmission
+    void (*callbacks[256])(byte* msg, byte size) = {nullptr};  // Callback table
 };
 
 #endif

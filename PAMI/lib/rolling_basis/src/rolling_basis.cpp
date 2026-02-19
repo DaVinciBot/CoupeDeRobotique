@@ -13,7 +13,7 @@ RollingBasis::RollingBasis(Motor* leftMotor,
       _rightMotor(rightMotor),
       _wheelDiameterMm(wheelDiameterMm),
       _wheelBaseMm(wheelBaseMm),
-      _currentPose(initialPosition),
+      _currentPose(initialPosition)
 {
     _linearSpeed = 20.0f;
     _angularSpeed = 1.5f;

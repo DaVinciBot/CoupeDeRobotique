@@ -20,11 +20,11 @@ RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               WHEEL_BASE_MM,
                                               Point{0, 0, 0});
 
-Navigation* navigation = new Navigation(
+/*Navigation* navigation = new Navigation(
     rollingBasis,
     15000);  // Navigation object with 100ms interval and 15s timeout
-
-lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
+*/
+lidar_pami* lidar = new lidar_pami(Serial2);  // LIDAR object
 
 #if ENABLE_OTA
 #include "OTA.h"
@@ -60,7 +60,7 @@ long dt = 0;
 long lastTimerrrr = 0;
 
 void navigationUpdate() {
-    navigation->update();  // Update rolling basis
+    //navigation->update();  // Update rolling basis
     if (ACS) {
         if (oldACS)
             return;
@@ -70,7 +70,7 @@ void navigationUpdate() {
         if (currentIndex < 0) {
             currentIndex = 0;  // Prevent index from going negative
         }
-        navigation->stop();  // Stop rolling basis if ACS is true
+        //navigation->stop();  // Stop rolling basis if ACS is true
     } else {
         oldACS = ACS;  // Update oldACS to current ACS state
         if (dt < 20000) {
@@ -80,7 +80,7 @@ void navigationUpdate() {
             lastTimerrrr = millis();
         } else {
             Serial.println("All points navigated, stopping navigation.");
-            navigation->stop();  // Stop navigation if all points are navigated
+            //navigation->stop();  // Stop navigation if all points are navigated
                                  // start SERVO
         }
     }
@@ -128,15 +128,24 @@ void setup() {
     server.begin();
 #endif
 #if ENABLE_LORA
-    isInit = com->begin(SS, RST, BUSY);
+    Serial.println("\n=== LoRa Initialization ===");
+    Serial.println("RX Pin: " + String(LORA_RX_PIN));
+    Serial.println("TX Pin: " + String(LORA_TX_PIN));
+    Serial.println("Baud Rate: " + String(LORA_BAUD));
+    Serial.println("Attempting to initialize DX-LR01...");
+    
+    isInit = com->begin(LORA_RX_PIN, LORA_TX_PIN, LORA_BAUD);
     // initialize_callback_functions();
     if (isInit) {
-        Serial.println("LoRa initialized");
+        Serial.println("[OK] LoRa initialized successfully!");
+        Serial.println("Waiting for incoming messages...\n");
     } else {
         Serial.println("[ERROR] LoRa initialization failed");
+        Serial.println("Check pin connections and module power");
     }
+    Serial.println("=========================\n");
 #else
-    Serial.println("LoRa not enabled");
+    Serial.println("LoRa not enabled (ENABLE_LORA = false)");
 #endif
     // MovementTimer = timerBegin(0, 24000, true);                   // Create a
     // timer with 8000 prescaler (80MHz / 8000 = 10kHz)
@@ -158,27 +167,61 @@ void setup() {
 
 long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
-    if (millis() - lastTime > 2 &&
+    // Debug: Print loop status
+    static unsigned long lastDebugTime = 0;
+    if (millis() - lastDebugTime > 2000) {
+        Serial.println("\n=== Loop Status ===");
+        Serial.println("Time: " + String(millis()) + "ms");
+#if ENABLE_LORA
+        Serial.println("LoRa Initialized: " + String(isInit));
+#else
+        Serial.println("LoRa: DISABLED");
+#endif
+        lastDebugTime = millis();
+    }
+
+    /*if (millis() - lastTime > 2 &&
         canStart)  // Check if 2ms have passed since the last navigation update
     {
         navigationUpdate();  // Call navigation update function
         lastTime = millis();
     }
-    lidar->update();
+    lidar->update();*/
 #if ENABLE_OTA
     ota.loop();
 #endif
 #if ENABLE_LORA
+    static unsigned long lastLoraTest = 0;
+    
     if (isInit) {
-    }  // com->handle_callback(callback_functions);
-    else {
-        isInit = com->begin(SS, RST, BUSY);
+        // Process incoming LoRa UART data
+        int bytesRead = com->update();
+        
+        // Debug: Print every second or when data is received
+        if (bytesRead > 0 || millis() - lastLoraTest > 1000) {
+            if (bytesRead > 0) {
+                Serial.println("[LoRa] Bytes processed: " + String(bytesRead));
+            }
+            lastLoraTest = millis();
+            
+            /* Send test message every 10 seconds
+            static unsigned long lastSendTime = 0;
+            if (millis() - lastSendTime > 10000) {
+                Serial.println("[LoRa] Sending test message...");
+                com->print("TEST_MSG");
+                lastSendTime = millis();
+            }*/
+        }
+    } else {
+        // Try to re-initialize
+        Serial.println("[LoRa] Not initialized, attempting re-init...");
+        isInit = com->begin(LORA_RX_PIN, LORA_TX_PIN, LORA_BAUD);
         if (isInit) {
-            Serial.println("LoRa re-initialized");
+            Serial.println("[LoRa] Re-initialized successfully");
         } else {
             Serial.println("[ERROR] LoRa re-initialization failed");
+            delay(1000);  // Wait before retrying
         }
     }
-
 #endif
 }
