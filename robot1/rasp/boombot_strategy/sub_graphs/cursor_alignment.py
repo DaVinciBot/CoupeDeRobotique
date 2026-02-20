@@ -3,7 +3,7 @@ from __future__ import annotations
 from geometry import OrientedPoint
 
 from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward
-from boombot_strategy.tasks.actuator_task import DeployCursor
+from boombot_strategy.tasks.actuator_tasks import DeployCursor
 from boombot_strategy.tasks.navigation_tasks.go_to_cursor_start import (
     GoToCursorStart,
 )
@@ -12,6 +12,7 @@ from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
 
+# TODO : Ajouter le recalage une fois que c'est merge dans la branche main
 
 def get_cursor_alignment_forward_subgraph(
     target_pose: OrientedPoint,

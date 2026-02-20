@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from boombot_strategy.tasks.actuator_task import (
+from boombot_strategy.tasks.actuator_tasks import (
     PickUp,
     PrepareToPickUp,
     ReadyToApproachToPickUp,

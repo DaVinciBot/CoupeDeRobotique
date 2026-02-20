@@ -7,7 +7,7 @@ import time
 from boombot_strategy.tasks.actuator_task import Build, Deposit, PickUp
 from boombot_strategy.tasks.navigation_tasks import RelativeBackward, RelativeForward
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
-    GoToColorReservedZoneToConstruct,
+    GoToColorReservedZoneToDeposit,
 )
 from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
@@ -39,7 +39,7 @@ def get_construct_subgraph(zone_id: int, back_offset: int = 0) -> BaseSubGraph:
         node_navigate,
         BaseTaskNode(
             name=node_navigate,
-            tasks=GoToColorReservedZoneToConstruct(zone_id),
+            tasks=GoToColorReservedZoneToDeposit(zone_id),
         ),
     )
 

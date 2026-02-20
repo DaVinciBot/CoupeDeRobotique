@@ -4,7 +4,7 @@ from boombot_strategy.tasks.navigation_tasks import (
     GoToColorReservedZoneToDeposit,
     GoToDepositZone
 )
-from boombot_strategy.tasks.actuator_task import (
+from boombot_strategy.tasks.actuator_tasks import (
     PrepareRotation,
     RotateJenga,
     SafeRetractAll,

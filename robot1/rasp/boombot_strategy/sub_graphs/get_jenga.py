@@ -4,7 +4,7 @@ from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToDeposit,
 )
 from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward
-from boombot_strategy.tasks.actuator_task import (
+from boombot_strategy.tasks.actuator_tasks import (
     BlockJenga,
 )
 
@@ -16,7 +16,7 @@ from strategy.core.transitions import DirectTransition
 def get_pickup_jenga_subgraph(zone_id: int) -> BaseSubGraph:
     subgraph = SubGraphBuilder()
 
-    node_navigate = f"[Jenga] Navigate to zone {zone_id}"
+    node_navigate = f"[Pickup Jenga] Navigate to zone {zone_id}"
     subgraph.add_node(
         node_navigate,
         BaseTaskNode(
@@ -25,7 +25,7 @@ def get_pickup_jenga_subgraph(zone_id: int) -> BaseSubGraph:
         ),
     )
 
-    node_align = f"[Jenga] Align at zone {zone_id}"
+    node_align = f"[Pickup Jenga] Align at zone {zone_id}"
     subgraph.add_node(
         node_align,
         BaseTaskNode(
@@ -34,7 +34,7 @@ def get_pickup_jenga_subgraph(zone_id: int) -> BaseSubGraph:
         ),
     )
 
-    node_block = f"[Jenga] Block Jenga {zone_id}"
+    node_block = f"[Pickup Jenga] Block Jenga {zone_id}"
     subgraph.add_node(
         node_block,
         BaseTaskNode(
@@ -44,7 +44,7 @@ def get_pickup_jenga_subgraph(zone_id: int) -> BaseSubGraph:
     )
 
     subgraph.connect(node_navigate, DirectTransition(subgraph.nodes[node_align]))
-    subgraph.connect(node_align,DirectTransition(subgraph.nodes[node_block]))
+    subgraph.connect(node_align, DirectTransition(subgraph.nodes[node_block]))
 
     return subgraph.build(
         entry=node_navigate,

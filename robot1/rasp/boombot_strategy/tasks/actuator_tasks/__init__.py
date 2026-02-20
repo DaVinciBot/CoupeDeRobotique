@@ -3,6 +3,7 @@ from boombot_strategy.tasks.actuator_tasks.actuator import (
     PrepareRotation,
     RotateJenga,
     SafeRetractAll,
+    DeployCursor,
 )
 
 __all__ = [
@@ -10,4 +11,6 @@ __all__ = [
     "PrepareRotation",
     "RotateJenga",
     "SafeRetractAll",
+    "DeployCursor",
+
 ]
