@@ -25,7 +25,7 @@ from boombot_strategy.sub_graphs import (
     get_push_one_floor_to_wall_subgraph,
 )
 from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint, SetOdometrie
-from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
+from controllers.actuators import ActuatorsShow, ActuatorsShowDummy, ActuatorsWinter
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 from log_manager import LogLogger
@@ -136,37 +136,27 @@ class MainBrain(Brain):
         rolling_basis.initialize_pids()
 
         if CONFIG.ACTUATORS_DUMMY:
-            actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
+            actuators: ActuatorsWinter | ActuatorsShowDummy = ActuatorsShowDummy(
                 logger=LogLogger(
                     identifier="Actuators",
                     follow_logger_manager_rules=True,
                 ),
             )
         else:
-            actuators = ActuatorsShow(
+            actuators = ActuatorsWinter(
                 logger=LogLogger(
                     identifier="Actuators",
                     follow_logger_manager_rules=True,
                 ),
             )
-        actuators.deplacement_position()
-        # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
-        if (
-            not CONFIG.LIDAR_DUMMY
-            or not CONFIG.ROLLING_BASIS_DUMMY
-            or not CONFIG.ACTUATORS_DUMMY
-        ):
-            while not self.jack_plugged:  # wait until cable is plugged
-                time.sleep(0.1)
-        else:
-            time.sleep(2)
-        actuators.block_banner()  # engage the banner blocker
+
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
         while not self.jack_triggered:  # wait for the trigger event
             time.sleep(0.1)
 
         # --- 3) Build the strategy --- #
+        # commentaire chatgpt ou c'est comment, en revue pix la c'est 0
 
         # Choose strategy based on configuration
         strategy: TestStrategy | None = None
