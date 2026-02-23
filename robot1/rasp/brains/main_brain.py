@@ -16,7 +16,7 @@ from ws_comms import WServerRouteManager, WSmsg
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import WinterGameContext
-from boombot_strategy.strategies import TowerRushAltStrategy, TestStrategy
+from boombot_strategy.strategies import TowerRushAltStrategy, SmartZoneStrategy
 from boombot_strategy.sub_graphs import (
     get_banner_deployment_subgraph,
     get_construct_one_floor_subgraph,
@@ -170,12 +170,12 @@ class MainBrain(Brain):
         # commentaire chatgpt ou c'est comment, en revue pix la c'est 0
 
         # Choose strategy based on configuration
-        strategy: TestStrategy | None = None
+        strategy: SmartZoneStrategy | None = None
         action_holder: list[GraphRunner | None] = [None]
         if self.mode == "iihm":
             self.logger.info("IIHM mode: Waiting for first task...")
         else:
-            strategy = TestStrategy(
+            strategy = SmartZoneStrategy(
                 WinterGameContext(
                     arena=self.arena,
                     rolling_basis=rolling_basis,

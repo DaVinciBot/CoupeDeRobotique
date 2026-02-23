@@ -8,7 +8,7 @@ from boombot_strategy.strategies.only_banner_strategy import OnlyBannerStrategy
 from boombot_strategy.strategies.tower_rush_alt_strategy import TowerRushAltStrategy
 from boombot_strategy.strategies.tower_rush_strategy import TowerRushStrategy
 from boombot_strategy.strategies.test_strategy import TestStrategy
-
+from boombot_strategy.strategies.smart_zone_strategy import SmartZoneStrategy
 __all__ = [
     "BaseStrategy",
     "BasicStrategy",
@@ -18,4 +18,5 @@ __all__ = [
     "TowerRushAltStrategy",
     "TowerRushStrategy",
     "TestStrategy",
+    "SmartZoneStrategy",
 ]
