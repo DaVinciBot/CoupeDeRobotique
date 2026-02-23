@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
+from a_config_loader import CONFIG
 
 from boombot_strategy.strategies.base_strategy import BaseStrategy
 from boombot_strategy.sub_graphs import (
@@ -35,8 +36,13 @@ class TestStrategy(BaseStrategy):
                 Game context containing game-specific configurations and zones.
         """
         super().__init__(ctx)
+        self.pickup_zones = CONFIG.PICKUP_ZONES
+        self.pickup_zones_list = CONFIG.PICKUP_ZONES_LIST
+        self.deposit_zones = CONFIG.DEPOSIT_ZONES
+        self.deposit_zones_list = CONFIG.DEPOSIT_ZONES_LIST
+        self.color_zone = CONFIG.TEAM_SPECIFIC_ZONES[ctx.arena.team_color.value]
 
-        get_jenga_subgraph = get_pickup_jenga_subgraph(self.zones[0])
+        get_jenga_subgraph = get_pickup_jenga_subgraph(self.pickup_zones_list[0])
 
         self._auto_build_transitions(
                 get_jenga_subgraph,

@@ -25,7 +25,7 @@ from boombot_strategy.sub_graphs import (
     get_push_one_floor_to_wall_subgraph,
 )
 from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint, SetOdometrie
-from controllers.actuators import ActuatorsShow, ActuatorsShowDummy, ActuatorsWinter
+from controllers.actuators import ActuatorsShow, ActuatorsWinterDummy, ActuatorsWinter
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 from log_manager import LogLogger
@@ -136,7 +136,7 @@ class MainBrain(Brain):
         rolling_basis.initialize_pids()
 
         if CONFIG.ACTUATORS_DUMMY:
-            actuators: ActuatorsWinter | ActuatorsShowDummy = ActuatorsShowDummy(
+            actuators: ActuatorsWinter | ActuatorsWinterDummy = ActuatorsWinterDummy(
                 logger=LogLogger(
                     identifier="Actuators",
                     follow_logger_manager_rules=True,
@@ -149,6 +149,17 @@ class MainBrain(Brain):
                     follow_logger_manager_rules=True,
                 ),
             )
+
+        # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
+        if (
+                not CONFIG.LIDAR_DUMMY
+                or not CONFIG.ROLLING_BASIS_DUMMY
+                or not CONFIG.ACTUATORS_DUMMY
+        ):
+            while not self.jack_plugged:  # wait until cable is plugged
+                time.sleep(0.1)
+        else:
+            time.sleep(2)
 
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
