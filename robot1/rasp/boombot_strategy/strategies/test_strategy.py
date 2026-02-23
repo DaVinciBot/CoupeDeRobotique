@@ -12,9 +12,7 @@ from boombot_strategy.sub_graphs import (
     get_cursor_alignment_forward_subgraph,
 )
 
-from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
-    GoToColorReservedZoneToFinishGame,
-)
+from geometry import OrientedPoint
 from log_manager import LogLogger
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
@@ -42,10 +40,10 @@ class TestStrategy(BaseStrategy):
         self.deposit_zones_list = CONFIG.DEPOSIT_ZONES_LIST
         self.color_zone = CONFIG.TEAM_SPECIFIC_ZONES[ctx.arena.team_color.value]
 
-        get_jenga_subgraph = get_pickup_jenga_subgraph(self.pickup_zones_list[0])
+        deposit_subgraph = get_cursor_alignment_forward_subgraph(OrientedPoint(100, 100, 0),ctx)
 
         self._auto_build_transitions(
-                get_jenga_subgraph,
+                deposit_subgraph
         )
 
         self.runner = GraphRunner(
@@ -53,7 +51,7 @@ class TestStrategy(BaseStrategy):
                 identifier="TestStrategy",
                 follow_logger_manager_rules=True,
             ),
-            start=get_jenga_subgraph.get_entry(),
+            start=deposit_subgraph.get_entry(),
         )
 
 

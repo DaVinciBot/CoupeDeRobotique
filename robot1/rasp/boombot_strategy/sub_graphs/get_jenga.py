@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
-    GoToColorReservedZoneToDeposit,
-)
+from boombot_strategy.winter_game_context import WinterGameContext
+from boombot_strategy.tasks.navigation_tasks import GoToStuffZoneToPickUp
 from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward
 from boombot_strategy.tasks.actuator_tasks import (
     BlockJenga,
@@ -13,7 +12,7 @@ from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
 
 
-def get_pickup_jenga_subgraph(zone_id: int) -> BaseSubGraph:
+def get_pickup_jenga_subgraph(zone_id: int, ctx: WinterGameContext) -> BaseSubGraph:
     subgraph = SubGraphBuilder()
 
     node_navigate = f"[Pickup Jenga] Navigate to zone {zone_id}"
@@ -21,7 +20,7 @@ def get_pickup_jenga_subgraph(zone_id: int) -> BaseSubGraph:
         node_navigate,
         BaseTaskNode(
             name=node_navigate,
-            tasks=GoToColorReservedZoneToDeposit(zone_id),
+            tasks=GoToStuffZoneToPickUp(zone_id, ctx),
         ),
     )
 

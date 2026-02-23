@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+from a_config_loader import CONFIG
+
 from boombot_strategy.tasks.navigation_tasks import (
     GoToColorReservedZoneToDeposit,
     GoToDepositZone
@@ -14,16 +17,21 @@ from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
 
+if TYPE_CHECKING:
+    from rasp.boombot_strategy.winter_game_context import WinterGameContext
 
-def get_deposit_jenga_color_zone_subgraph(zone_id: int) -> BaseSubGraph:
+
+def get_deposit_jenga_color_zone_subgraph(ctx: WinterGameContext) -> BaseSubGraph:
     subgraph = SubGraphBuilder()
+
+    zone_id = CONFIG.TEAM_SPECIFIC_ZONES[ctx.arena.team_color.value]
 
     node_navigate = f"[Deposit_Jenga_Color] Navigate to zone {zone_id}"
     subgraph.add_node(
         node_navigate,
         BaseTaskNode(
             name=node_navigate,
-            tasks=GoToColorReservedZoneToDeposit(zone_id),
+            tasks=GoToColorReservedZoneToDeposit(zone_id, ctx),
         ),
     )
 
@@ -64,7 +72,7 @@ def get_deposit_jenga_color_zone_subgraph(zone_id: int) -> BaseSubGraph:
     )
 
 
-def get_deposit_jenga_deposit_zone_subgraph(zone_id: int) -> BaseSubGraph:
+def get_deposit_jenga_deposit_zone_subgraph(zone_id: int, ctx: WinterGameContext) -> BaseSubGraph:
     subgraph = SubGraphBuilder()
 
     node_navigate = f"[Deposit_Jenga_DepositZone] Navigate to zone {zone_id}"
@@ -72,7 +80,7 @@ def get_deposit_jenga_deposit_zone_subgraph(zone_id: int) -> BaseSubGraph:
         node_navigate,
         BaseTaskNode(
             name=node_navigate,
-            tasks=GoToDepositZone(zone_id),
+            tasks=GoToDepositZone(zone_id, ctx),
         ),
     )
 
