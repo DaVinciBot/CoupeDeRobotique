@@ -38,7 +38,7 @@ class GridManager:
         chunk_size: int,
         width: int,
         height: int,
-        forbidden_cover_threshold: float = 0.5,
+        forbidden_cover_threshold: float = 0,
     ) -> None:
         """Initializes the grid manager.
 
@@ -101,19 +101,18 @@ class GridManager:
         grid = copy.deepcopy(grid)
         minx, miny, maxx, maxy = polygon_to_mark.bounds
 
-        min_col, max_col = (
-            int((self.absolute_width - maxx) // self.chunk_size),
-            int((self.absolute_width - minx) // self.chunk_size),
-        )
-        min_row, max_row = int(miny // self.chunk_size), int(maxy // self.chunk_size)
+        min_col = max(0, int(minx // self.chunk_size))
+        max_col = min(self.grid_width - 1, int((maxx - 1e-9) // self.chunk_size))
+        min_row = max(0, int(miny // self.chunk_size))
+        max_row = min(self.grid_height - 1, int((maxy - 1e-9) // self.chunk_size))
 
         for row in range(max(min_row, 0), min(max_row + 1, self.grid_height)):
             for col in range(max(min_col, 0), min(max_col + 1, self.grid_width)):
-                actual_col = self.grid_width - 1 - col
+                actual_col = col
                 cell = box(
-                    (self.grid_width - 1 - col) * self.chunk_size,
+                    col * self.chunk_size,
                     row * self.chunk_size,
-                    (self.grid_width - col) * self.chunk_size,
+                    (col + 1) * self.chunk_size,
                     (row + 1) * self.chunk_size,
                 )
 
@@ -175,7 +174,7 @@ class GridManager:
         # Iterate over relevant grid cells
         for row in range(min_row, max_row):
             for col in range(min_col, max_col):
-                actual_col = self.grid_width - 1 - col
+                actual_col = col
                 cell: Polygon = box(
                     actual_col * self.chunk_size,
                     row * self.chunk_size,
@@ -480,7 +479,7 @@ class GridManager:
         ax.set_xticks(range(self.grid_width))
         ax.set_yticks(range(self.grid_height))
 
-        ax.set_xlim(self.grid_width, 0)
+        ax.set_xlim(0, self.grid_width)
         ax.set_ylim(0, self.grid_height)
 
         ax.xaxis.set_major_locator(MaxNLocator(integer=True, nbins=25))

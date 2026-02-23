@@ -73,11 +73,13 @@ class StuffZone(BaseArenaZone):
         super().update(team_color, ally_position, enemy_position)
 
         # Update accessibility to free if an ally or enemy is within the zone
-        if (
-            self.buffered_polygon.contains(ally_position)
-            or self.buffered_polygon.contains(enemy_position)
-        ) and self.accessibility != ZoneAccessibility.FREE:
-            self._make_accessible()
+
+        # if (
+        #     self.buffered_polygon.contains(ally_position)
+        #     or self.buffered_polygon.contains(enemy_position)
+        # ) and self.accessibility != ZoneAccessibility.FREE:
+        #     self._make_accessible()
+        # TODO: mettre à jour cette logique dans l'arène de cette année
 
     @override
     def get_go_to_position(

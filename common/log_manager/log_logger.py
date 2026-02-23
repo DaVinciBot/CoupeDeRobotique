@@ -6,8 +6,6 @@ from typing import override
 
 from loggerplusplus import Logger
 
-from log_manager.realtime_db_handler import RealtimeDBHandler
-
 
 class LogLogger(Logger):
     """Custom Logger that sets up additional DB handler."""
@@ -24,15 +22,6 @@ class LogLogger(Logger):
         if self.config.log_levels_config.write_to_file:
             self._set_handler(
                 logging.FileHandler(self.config.full_path),
-                self.config.log_levels_config.file_log_level,
-                colors=None,
-            )
-        if self.config.log_levels_config.write_to_file:
-            self._set_handler(
-                RealtimeDBHandler(
-                    self.config.full_path.replace(".log", ".db"),
-                    self.config.full_path,
-                ),
                 self.config.log_levels_config.file_log_level,
                 colors=None,
             )
