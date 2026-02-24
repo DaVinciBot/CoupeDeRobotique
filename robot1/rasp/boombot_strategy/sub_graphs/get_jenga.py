@@ -1,15 +1,20 @@
 from __future__ import annotations
 
-from boombot_strategy.winter_game_context import WinterGameContext
-from boombot_strategy.tasks.navigation_tasks import GoToStuffZoneToPickUp
-from boombot_strategy.tasks.navigation_tasks import RelativeForward, RelativeBackward
+from typing import TYPE_CHECKING
+
 from boombot_strategy.tasks.actuator_tasks import (
     BlockJenga,
 )
-
+from boombot_strategy.tasks.navigation_tasks import (
+    GoToStuffZoneToPickUp,
+    RelativeForward,
+)
 from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
+
+if TYPE_CHECKING:
+    from boombot_strategy.winter_game_context import WinterGameContext
 
 
 def get_pickup_jenga_subgraph(zone_id: int, ctx: WinterGameContext) -> BaseSubGraph:
@@ -43,9 +48,9 @@ def get_pickup_jenga_subgraph(zone_id: int, ctx: WinterGameContext) -> BaseSubGr
     )
 
     subgraph.connect(node_navigate, DirectTransition(subgraph.nodes[node_align]))
-    subgraph.connect(node_align, DirectTransition(subgraph.nodes[node_block]))
+    subgraph.connect(node_navigate, DirectTransition(subgraph.nodes[node_block]))
 
     return subgraph.build(
         entry=node_navigate,
-        exits=node_block,
+        exits=[node_block, node_align],
     )

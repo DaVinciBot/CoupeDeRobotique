@@ -308,11 +308,11 @@ class CONFIG:
     INFO_BY_TEAM: dict[str, Any] = TEAM_CONFIG["info_by_team"]
 
     # Zones
-    PICKUP_ZONES: dict[str, Any] = TEAM_CONFIG["zones"]["pickup"]
-    PICKUP_ZONES_LIST: dict[str, Any] = TEAM_CONFIG["zones"]["pickup_list"]
-    DEPOSIT_ZONES: dict[str, Any] = TEAM_CONFIG["zones"]["deposit"]
-    DEPOSIT_ZONES_LIST: dict[str, Any] = TEAM_CONFIG["zones"]["deposit_list"]
-    TEAM_SPECIFIC_ZONES: dict[str, Any] = TEAM_CONFIG["zones"]["team_specific"]
+    PICKUP_ZONES: dict[str, int] = TEAM_CONFIG["zones"]["pickup"]
+    PICKUP_ZONES_LIST: list[int] = TEAM_CONFIG["zones"]["pickup_list"]
+    DEPOSIT_ZONES: dict[str, int] = TEAM_CONFIG["zones"]["deposit"]
+    DEPOSIT_ZONES_LIST: list[int] = TEAM_CONFIG["zones"]["deposit_list"]
+    TEAM_SPECIFIC_ZONES: dict[str, int] = TEAM_CONFIG["zones"]["team_specific"]
 
     # Scoring System
     SCORE_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["score"]

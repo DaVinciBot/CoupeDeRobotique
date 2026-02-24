@@ -16,7 +16,7 @@ from ws_comms import WServerRouteManager, WSmsg
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import WinterGameContext
-from boombot_strategy.strategies import TowerRushAltStrategy, SmartZoneStrategy
+from boombot_strategy.strategies import SmartZoneStrategy
 from boombot_strategy.sub_graphs import (
     get_banner_deployment_subgraph,
     get_construct_one_floor_subgraph,
@@ -25,7 +25,7 @@ from boombot_strategy.sub_graphs import (
     get_push_one_floor_to_wall_subgraph,
 )
 from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint, SetOdometrie
-from controllers.actuators import ActuatorsShow, ActuatorsWinterDummy, ActuatorsWinter
+from controllers.actuators import ActuatorsWinter, ActuatorsWinterDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 from log_manager import LogLogger
@@ -152,9 +152,9 @@ class MainBrain(Brain):
 
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
         if (
-                not CONFIG.LIDAR_DUMMY
-                or not CONFIG.ROLLING_BASIS_DUMMY
-                or not CONFIG.ACTUATORS_DUMMY
+            not CONFIG.LIDAR_DUMMY
+            or not CONFIG.ROLLING_BASIS_DUMMY
+            or not CONFIG.ACTUATORS_DUMMY
         ):
             while not self.jack_plugged:  # wait until cable is plugged
                 time.sleep(0.1)
@@ -188,6 +188,7 @@ class MainBrain(Brain):
         self.status = "starting"
 
         # from strategy.tools import visualize_task_graph
+
         # visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
