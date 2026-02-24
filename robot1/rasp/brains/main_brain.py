@@ -16,7 +16,7 @@ from ws_comms import WServerRouteManager, WSmsg
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import WinterGameContext
-from boombot_strategy.strategies import TowerRushAltStrategy, TestStrategy
+from boombot_strategy.strategies import TowerRushAltStrategy, SmartZoneStrategy
 from boombot_strategy.sub_graphs import (
     get_banner_deployment_subgraph,
     get_construct_one_floor_subgraph,
@@ -170,12 +170,12 @@ class MainBrain(Brain):
         # commentaire chatgpt ou c'est comment, en revue pix la c'est 0
 
         # Choose strategy based on configuration
-        strategy: TestStrategy | None = None
+        strategy: SmartZoneStrategy | None = None
         action_holder: list[GraphRunner | None] = [None]
         if self.mode == "iihm":
             self.logger.info("IIHM mode: Waiting for first task...")
         else:
-            strategy = TestStrategy(
+            strategy = SmartZoneStrategy(
                 WinterGameContext(
                     arena=self.arena,
                     rolling_basis=rolling_basis,
@@ -580,12 +580,12 @@ class MainBrain(Brain):
         enemy_position = OrientedPoint(150, 200, -pi / 2)
         if self.arena.team_color == TeamColor.YELLOW:
             self.logger.info("[BRAIN:Init] Starting as YELLOW team")
-            start_position = OrientedPoint(122.5, 21, -pi / 2)
-            enemy_position = OrientedPoint(177.5, 21, -pi / 2)
+            start_position = OrientedPoint(30, 175, -pi / 2)
+            enemy_position = OrientedPoint(270, 175, -pi / 2)
         elif self.arena.team_color == TeamColor.BLUE:
             self.logger.info("[BRAIN:Init] Starting as BLUE team")
-            start_position = OrientedPoint(177.5, 21, -pi / 2)
-            enemy_position = OrientedPoint(122.5, 21, -pi / 2)
+            start_position = OrientedPoint(270, 175, -pi / 2)
+            enemy_position = OrientedPoint(30, 175, -pi / 2)
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(

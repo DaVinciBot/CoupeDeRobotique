@@ -12,10 +12,17 @@ from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from rasp.boombot_strategy.winter_game_context import WinterGameContext
+
 # TODO : Ajouter le recalage une fois que c'est merge dans la branche main
+
 
 def get_cursor_alignment_forward_subgraph(
     target_pose: OrientedPoint,
+    ctx: WinterGameContext,
     forward_distance: float = 20,
 ) -> BaseSubGraph:
 
@@ -26,7 +33,7 @@ def get_cursor_alignment_forward_subgraph(
         node_navigate,
         BaseTaskNode(
             name=node_navigate,
-            tasks=GoToCursorStart(target_pose),
+            tasks=GoToCursorStart(target_pose, ctx),
         ),
     )
 
@@ -52,13 +59,14 @@ def get_cursor_alignment_forward_subgraph(
     subgraph.connect(node_deploy, DirectTransition(subgraph.nodes[node_forward]))
 
     return subgraph.build(
-        entry=node_deploy,
+        entry=node_navigate,
         exits=node_forward,
     )
 
 
 def get_cursor_alignment_backward_subgraph(
         target_pose: OrientedPoint,
+        ctx: WinterGameContext,
         backward_distance: float = 20,
 ) -> BaseSubGraph:
     subgraph = SubGraphBuilder()
@@ -68,7 +76,7 @@ def get_cursor_alignment_backward_subgraph(
         node_navigate,
         BaseTaskNode(
             name=node_navigate,
-            tasks=GoToCursorStart(target_pose),
+            tasks=GoToCursorStart(target_pose, ctx),
         ),
     )
 
@@ -86,7 +94,7 @@ def get_cursor_alignment_backward_subgraph(
         node_backward,
         BaseTaskNode(
             name=node_backward,
-            tasks=RelativeForward(backward_distance),
+            tasks=RelativeBackward(backward_distance),
         ),
     )
 
@@ -94,6 +102,6 @@ def get_cursor_alignment_backward_subgraph(
     subgraph.connect(node_deploy, DirectTransition(subgraph.nodes[node_backward]))
 
     return subgraph.build(
-        entry=node_deploy,
+        entry=node_navigate,
         exits=node_backward,
     )
