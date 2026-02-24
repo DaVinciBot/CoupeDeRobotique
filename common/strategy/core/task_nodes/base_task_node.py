@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any
 from log_manager import LogLogger
 from strategy.core.task_nodes.scoring_functions import (
     BaseScoringFunction,
-    DefaultScoringFunction,
+    EfficiencyScoringFunction,
 )
 from strategy.core.tasks import BaseTask, TaskStatus
 
@@ -48,7 +48,7 @@ class BaseTaskNode:
         self.tasks: list[BaseTask[Any]] = (
             [tasks] if isinstance(tasks, BaseTask) else tasks
         )
-        self.scoring_function = scoring_function or DefaultScoringFunction()
+        self.scoring_function = scoring_function or EfficiencyScoringFunction()
         self._logger = LogLogger(identifier=name, follow_logger_manager_rules=True)
 
         # Transitions to other nodes
