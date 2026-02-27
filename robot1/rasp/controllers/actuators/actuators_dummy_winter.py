@@ -35,18 +35,17 @@ class ActuatorsWinterDummy(ActuatorsWinter):
     def __str__(self) -> str:
         return self.__class__.__name__
 
-
     @override
     def set_servo_angle(
-            self,
-            pin: int,
-            angle: int,
-            min_angle: int = 0,
-            max_angle: int = 180,
-            *,
-            detach: bool = False,
-            detach_delay: int = 1000,
-            use_i2c: bool = False,
+        self,
+        pin: int,
+        angle: int,
+        min_angle: int = 0,
+        max_angle: int = 180,
+        *,
+        detach: bool = False,
+        detach_delay: int = 1000,
+        use_i2c: bool = False,
     ) -> None:
         """Dummy simulation of servo movement with full validation logic."""
 
@@ -103,4 +102,3 @@ class ActuatorsWinterDummy(ActuatorsWinter):
             f"[CTRL:ACT:Dummy] Stepper {steps} steps @ {speed} "
             f"(disable_driver={disable_driver})"
         )
-

@@ -1,18 +1,17 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from a_config_loader import CONFIG
 
-from boombot_strategy.tasks.navigation_tasks import (
-    GoToColorReservedZoneToDeposit,
-    GoToDepositZone
-)
+from a_config_loader import CONFIG
 from boombot_strategy.tasks.actuator_tasks import (
     PrepareRotation,
     RotateJenga,
     SafeRetractAll,
 )
-
+from boombot_strategy.tasks.navigation_tasks import (
+    GoToColorReservedZoneToDeposit,
+    GoToDepositZone,
+)
 from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition
@@ -72,7 +71,9 @@ def get_deposit_jenga_color_zone_subgraph(ctx: WinterGameContext) -> BaseSubGrap
     )
 
 
-def get_deposit_jenga_deposit_zone_subgraph(zone_id: int, ctx: WinterGameContext) -> BaseSubGraph:
+def get_deposit_jenga_deposit_zone_subgraph(
+    zone_id: int, ctx: WinterGameContext
+) -> BaseSubGraph:
     subgraph = SubGraphBuilder()
 
     node_navigate = f"[Deposit_Jenga_DepositZone] Navigate to zone {zone_id}"

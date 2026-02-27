@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import time
-from enum import Enum, auto
 from dataclasses import dataclass
+from enum import Enum, auto
 from typing import TYPE_CHECKING
 
 from a_config_loader import CONFIG
 from controllers.actuators.base.actuators import Actuators
-
 
 R_ARM_SERVO_PIN = 0
 L_ARM_SERVO_PIN = 1
@@ -35,6 +34,7 @@ class Servo:
         retract_angle (int): Retract angle for the servo (in degrees).
         max_angle (int): Maximum angle for the servo (in degrees).
     """
+
     retract_angle: int
     """Default angle for the servo (in degrees)."""
 
@@ -50,14 +50,12 @@ class ArmServo(Servo):
 
 @dataclass
 class RotateServo(Servo):
-
     rotation_angle: int
     """Angle to rotate the servo (in degrees)."""
 
 
 @dataclass
 class CursorServo(Servo):
-
     deploy_angle: int
     """Angle to rotate the servo (in degrees)."""
 
@@ -147,19 +145,19 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
                 self.servos[pin] = ArmServo(
                     retract_angle=cfg["retract_angle"],
                     max_angle=cfg["max_angle"],
-                    extend_angle=cfg["extend_angle"]
+                    extend_angle=cfg["extend_angle"],
                 )
             elif "rotate_angle" in cfg:
                 self.servos[pin] = RotateServo(
                     retract_angle=cfg["retract_angle"],
                     max_angle=cfg["max_angle"],
-                    rotation_angle=cfg["rotate_angle"]
+                    rotation_angle=cfg["rotate_angle"],
                 )
             else:
                 self.servos[pin] = CursorServo(
                     retract_angle=cfg["retract_angle"],
                     max_angle=cfg["max_angle"],
-                    deploy_angle=cfg["deploy_angle"]
+                    deploy_angle=cfg["deploy_angle"],
                 )
 
         stepper_config = CONFIG.ACTUATOR_ELEVATOR_CONFIG
@@ -172,11 +170,13 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
         )
 
         linear_actuator_config = CONFIG.ACTUATOR_LINEAR_CONFIG
-        self._logger.info(f"[CTRL:ACT] Linear actuator config: {linear_actuator_config}")
+        self._logger.info(
+            f"[CTRL:ACT] Linear actuator config: {linear_actuator_config}"
+        )
 
         self.gripper = LinearActuator(
             linear_actuator_config["extend_time"],
-            linear_actuator_config["retract_time"]
+            linear_actuator_config["retract_time"],
         )
 
     # Protected methods
@@ -250,8 +250,8 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
     def retract_all(self) -> None:
         """Retract all servos to their retract angle.
 
-         This method sets all configured servos to their retract angle, effectively
-         retracting all servo arms."""
+        This method sets all configured servos to their retract angle, effectively
+        retracting all servo arms."""
         # A voir pour l'ordre extact des actionneurs pour que ça se pète pas mais osef je sors tout de mon cul la
         for i in self.servos:
             self.retract(i)
@@ -268,7 +268,8 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
             self.set_servo_angle(
                 CURSOR_SERVO_PIN,
                 angle,
-                max_angle=self.servos[CURSOR_SERVO_PIN].max_angle)
+                max_angle=self.servos[CURSOR_SERVO_PIN].max_angle,
+            )
 
     def rotate_gripper(self) -> None:
         """Rotate the gripper by setting the specified servos to their rotation angle.
@@ -281,10 +282,7 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
             servo = self.servos[pin]
             if isinstance(servo, RotateServo):
                 angle = servo.rotation_angle
-                self.set_servo_angle(
-                    pin,
-                    angle,
-                    max_angle=self.servos[pin].max_angle)
+                self.set_servo_angle(pin, angle, max_angle=self.servos[pin].max_angle)
 
     def unrotate_gripper(self) -> None:
         """Unrotate the gripper by setting the specified servos to their retract angle.
@@ -311,7 +309,7 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
         actuator.state = ActuatorState.STOPPED
 
     def release_jenga(self) -> None:
-        """ Release the Jenga block by retracting the linear actuator.
+        """Release the Jenga block by retracting the linear actuator.
 
         This method retracts the linear actuator to release the Jenga block, and then
         stops the actuator after the specified retract time.
@@ -342,8 +340,8 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
     def rotate_jenga(self):
         """Rotate the gripper by extending the linear actuator.
 
-         This method extends the linear actuator to rotate the gripper, and then
-         stops the actuator after the specified extend time."""
+        This method extends the linear actuator to rotate the gripper, and then
+        stops the actuator after the specified extend time."""
         # Pareil j'ai pas tout capté de la mécanique du truc mais osef, je sors tout de mon cul, on modif apres
         self._logger.info("[CTRL:ACT] Rotating Jenga (extending gripper)")
         self.grab_jenga()
@@ -352,11 +350,9 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
         self.unrotate_gripper()
 
     def block_jenga(self) -> None:
-        """Block Jenga blocks by doing idk what
-        """
+        """Block Jenga blocks by doing idk what"""
         # J'ai pas capté comment on bloque les jengas pour les déplacer avec le moddé, je demande a Anais ou Adrien
         self._logger.info("[CTRL:ACT] Blocking Jengas to move around.")
-
 
     def go_to_top(self) -> None:
         """Move the elevator to the top position.
@@ -383,7 +379,3 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
         self._logger.debug(
             f"[CTRL:ACT] Elevator position: {self.elevator_ticks} steps",
         )
-
-
-
-

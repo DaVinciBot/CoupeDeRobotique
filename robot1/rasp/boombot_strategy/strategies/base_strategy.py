@@ -29,7 +29,6 @@ class BaseStrategy(ABC):
         Args:
             ctx (BaseGameContext): The game context.
         """
-
         self.zones = CONFIG.INFO_BY_TEAM[ctx.arena.team_color.value]
         self.strategy = SubGraphBuilder()
         self.runner: GraphRunner

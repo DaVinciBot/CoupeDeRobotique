@@ -1,4 +1,5 @@
 """Actuator tasks for winter game."""
+
 from __future__ import annotations
 
 import time
@@ -10,6 +11,7 @@ from strategy.core.tasks import BaseTask
 
 class PrepareRotation(BaseTask[WinterGameContext]):
     """Task to prepare the actuator for rotation."""
+
     def __init__(self) -> None:
         """Initialize the PrepareRotation task."""
         super().__init__(points=0, estimated_duration=2.0)
@@ -18,7 +20,7 @@ class PrepareRotation(BaseTask[WinterGameContext]):
     def handle(self, ctx: WinterGameContext) -> bool:
         """Execute the actuator command to prepare for rotation, then wait briefly.
 
-         Args:
+        Args:
             ctx (WinterGameContext): The current game context.
 
         Returns:
@@ -31,7 +33,6 @@ class PrepareRotation(BaseTask[WinterGameContext]):
 
 
 class RotateJenga(BaseTask[WinterGameContext]):
-
     def __init__(self) -> None:
         super().__init__(points=0, estimated_duration=3.0)
 
@@ -44,7 +45,6 @@ class RotateJenga(BaseTask[WinterGameContext]):
 
 
 class BlockJenga(BaseTask[WinterGameContext]):
-
     def __init__(self) -> None:
         super().__init__(points=0, estimated_duration=2.0)
 
@@ -58,7 +58,6 @@ class BlockJenga(BaseTask[WinterGameContext]):
 
 
 class SafeRetractAll(BaseTask[WinterGameContext]):
-
     def __init__(self) -> None:
         super().__init__(points=0, estimated_duration=2.0)
 
@@ -72,7 +71,6 @@ class SafeRetractAll(BaseTask[WinterGameContext]):
 
 
 class DeployCursor(BaseTask[WinterGameContext]):
-
     def __init__(self) -> None:
         super().__init__(points=0, estimated_duration=1.0)
 

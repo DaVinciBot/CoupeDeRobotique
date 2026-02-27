@@ -10,9 +10,9 @@ from geometry import OrientedPoint, distance
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
 )
-from navigation.path_planner.structs import Direction
-from navigation.path_planner.astar_path_planner import AStarPathPlannerParams
 from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
+from navigation.path_planner.astar_path_planner import AStarPathPlannerParams
+from navigation.path_planner.structs import Direction
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
