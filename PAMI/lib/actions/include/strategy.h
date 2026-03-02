@@ -22,9 +22,8 @@ class Strategy : public Action {
 
    private:
     RollingBasis* _rb;
-    Action* _actions[10];
+    std::vector<Action*> _actions;
     int _currentActionIndex = 0;
-    int _actionCount = 0;
     void initActions();
 };
 #endif
