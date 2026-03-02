@@ -137,3 +137,11 @@ float RollingBasis::getLinearSpeedMmPerS() const {
 float RollingBasis::getAngularSpeedRadPerS() const {
     return _angularSpeed;
 }
+void RollingBasis::setSpeed(float linearMmPerS, float angularRadPerS) {
+    _sendWheelSpeeds(linearMmPerS, angularRadPerS);
+}
+
+void RollingBasis::updateMotors() {
+    _leftMotor->update();
+    _rightMotor->update();
+}
