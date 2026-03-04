@@ -72,10 +72,11 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
         Returns:
             float: Estimated time to reach the color reserved zone in seconds.
         """
-        centroid: OrientedPoint = OrientedPoint.from_point(
+        target_point: OrientedPoint = OrientedPoint.from_point(
             ctx.arena.zones[self.zone_id].polygon.centroid,
         )
-        dist: float = float(distance(centroid, ctx.arena.ally_zone.point))
+        current_position: OrientedPoint = ctx.rolling_basis.odometrie
+        dist: float = distance(current_position, target_point)
         return (
             self.speed_profiler.linear_speed_profile.get_total_duration(
                 distance=dist,
@@ -135,10 +136,11 @@ class GoToColorReservedZoneToDeposit(NavigationTask):
         Returns:
             float: Estimated time to reach the color reserved zone in seconds.
         """
-        centroid: OrientedPoint = OrientedPoint.from_point(
+        target_point: OrientedPoint = OrientedPoint.from_point(
             ctx.arena.zones[self.zone_id].polygon.centroid,
         )
-        dist: float = float(distance(centroid, ctx.arena.ally_zone.point))
+        current_position: OrientedPoint = ctx.rolling_basis.odometrie
+        dist: float = distance(current_position, target_point)
         return (
             self.speed_profiler.linear_speed_profile.get_total_duration(
                 distance=dist,
