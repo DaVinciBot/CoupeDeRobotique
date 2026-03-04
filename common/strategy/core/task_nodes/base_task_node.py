@@ -31,6 +31,8 @@ class BaseTaskNode:
         scoring_function: BaseScoringFunction | None = None,
         points: int | Callable[[BaseGameContext], int] | None = None,
         estimated_duration: float | Callable[[BaseGameContext], float] | None = None,
+        repeatable: bool = False,
+        max_visits: int | None = 1,
     ) -> None:
         """Initialize the task node.
 
@@ -43,12 +45,20 @@ class BaseTaskNode:
                 completing this task node, defaults to None.
             estimated_duration (float | Callable[[BaseGameContext], float] | None):
                 Estimated duration of the task node in seconds, defaults to None.
+            repeatable (bool, optional):
+                Whether this node can be re-entered after completion. Defaults to
+                False.
+            max_visits (int | None, optional):
+                Maximum number of completed visits allowed. ``None`` means unlimited.
+                Defaults to 1.
         """
         self.name: str = name
         self.tasks: list[BaseTask[Any]] = (
             [tasks] if isinstance(tasks, BaseTask) else tasks
         )
         self.scoring_function = scoring_function or EfficiencyScoringFunction()
+        self.repeatable = repeatable
+        self.max_visits = max_visits
         self._logger = LogLogger(identifier=name, follow_logger_manager_rules=True)
 
         # Transitions to other nodes
@@ -100,6 +110,32 @@ class BaseTaskNode:
         self._logger.info(
             f"[STRAT:Task] Initialized '{self.name}' with {len(self.tasks)} task(s)",
         )
+
+    def can_reenter(self, visit_count: int) -> bool:
+        """Return whether the node can be executed again.
+
+        Args:
+            visit_count (int): Number of completed visits so far.
+
+        Returns:
+            bool: ``True`` if another execution is allowed.
+        """
+        if not self.repeatable:
+            return visit_count < 1
+        if self.max_visits is None:
+            return True
+        return visit_count < self.max_visits
+
+    def reset_for_reentry(self) -> None:
+        """Reset internal state to allow a fresh execution cycle."""
+        self.status = TaskStatus.PENDING
+        self.exceptions = [None] * len(self.tasks)
+        self.results = [None] * len(self.tasks)
+        self.task_done = [False] * len(self.tasks)
+        self.start_time = None
+        self.end_time = None
+        self.entered = False
+        self._exited = False
 
     def add_transition(self, transition: BaseTransition) -> None:
         """Add a transition to another task node.

@@ -91,7 +91,7 @@ class Stepper:
     """Speed of the stepper motor."""
 
 
-class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-public-methods
+class ActuatorsWinter(Actuators):
     """Implementation of actuators for the winter mode.
 
     Inherits from :class:`Actuators` and overrides its methods to provide
@@ -109,7 +109,7 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
         enable_crc: bool = CONFIG.TEENSY_CRC,
         enable_dummy: bool = CONFIG.ACTUATORS_DUMMY,
     ) -> None:
-        """Initialize the ``ActuatorsShow`` class.
+        """Initialize the ``ActuatorsWinter`` class.
 
         Args:
             logger (Logger): The logger instance for logging.
@@ -171,7 +171,7 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
 
         linear_actuator_config = CONFIG.ACTUATOR_LINEAR_CONFIG
         self._logger.info(
-            f"[CTRL:ACT] Linear actuator config: {linear_actuator_config}"
+            f"[CTRL:ACT] Linear actuator config: {linear_actuator_config}",
         )
 
         self.gripper = LinearActuator(
@@ -217,7 +217,7 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
 
         self.set_servo_angle(pin, angle, max_angle=servo.max_angle)
 
-    def retract(self, pin):
+    def retract(self, pin: int) -> None:
         if self._check_pin(pin):
             self.set_servo_angle(
                 pin,
@@ -251,7 +251,8 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
         """Retract all servos to their retract angle.
 
         This method sets all configured servos to their retract angle, effectively
-        retracting all servo arms."""
+        retracting all servo arms.
+        """
         # A voir pour l'ordre extact des actionneurs pour que ça se pète pas mais osef je sors tout de mon cul la
         for i in self.servos:
             self.retract(i)
@@ -288,7 +289,8 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
         """Unrotate the gripper by setting the specified servos to their retract angle.
 
         This method sets the specified servos to their retract angle, effectively
-        unrotating the gripper."""
+        unrotating the gripper.
+        """
         pins = [R_ROTATE_SERVO_PIN, L_ROTATE_SERVO_PIN]
         for pin in pins:
             if isinstance(self.servos[pin], RotateServo):
@@ -325,8 +327,9 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
     def prepare_to_rotate(self) -> None:
         """Prepare the gripper for rotation by retracting the linear actuator.
 
-        This method retracts the linear actuator to prepare the gripper for rotation, and then
-        stops the actuator after the specified retract time."""
+        This method retracts the linear actuator to prepare the gripper for rotation,
+        and then stops the actuator after the specified retract time.
+        """
         self._logger.info("[CTRL:ACT] Preparing to rotate (retracting gripper)")
 
         self.extend_arm()
@@ -341,7 +344,8 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
         """Rotate the gripper by extending the linear actuator.
 
         This method extends the linear actuator to rotate the gripper, and then
-        stops the actuator after the specified extend time."""
+        stops the actuator after the specified extend time.
+        """
         # Pareil j'ai pas tout capté de la mécanique du truc mais osef, je sors tout de mon cul, on modif apres
         self._logger.info("[CTRL:ACT] Rotating Jenga (extending gripper)")
         self.grab_jenga()
@@ -350,7 +354,7 @@ class ActuatorsWinter(Actuators):  # noqa: PLR0904 # pylint: disable=too-many-pu
         self.unrotate_gripper()
 
     def block_jenga(self) -> None:
-        """Block Jenga blocks by doing idk what"""
+        """Block Jenga blocks by doing idk what."""
         # J'ai pas capté comment on bloque les jengas pour les déplacer avec le moddé, je demande a Anais ou Adrien
         self._logger.info("[CTRL:ACT] Blocking Jengas to move around.")
 

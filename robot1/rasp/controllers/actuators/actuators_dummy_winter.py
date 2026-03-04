@@ -2,8 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, override
 
+from loggerplusplus import log
+
 from a_config_loader import CONFIG
-from controllers.actuators.actuators_winter import ActuatorsWinter
+from controllers.actuators.actuators_winter import (
+    ActuatorsWinter,
+    ArmServo,
+    CursorServo,
+    RotateServo,
+)
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
@@ -36,6 +43,7 @@ class ActuatorsWinterDummy(ActuatorsWinter):
         return self.__class__.__name__
 
     @override
+    @log("Actuators")
     def set_servo_angle(
         self,
         pin: int,
@@ -48,17 +56,19 @@ class ActuatorsWinterDummy(ActuatorsWinter):
         use_i2c: bool = False,
     ) -> None:
         """Dummy simulation of servo movement with full validation logic."""
-
         if not self._check_pin(pin):
             return
 
         servo = self.servos.get(pin)
+        if servo is None:
+            self._logger.error(f"[CTRL:ACT:Dummy] No servo configured for pin {pin}")
+            return
 
-        if hasattr(servo, "extend_angle"):
+        if isinstance(servo, ArmServo):
             computed_min = min(servo.retract_angle, servo.extend_angle)
-        elif hasattr(servo, "rotation_angle"):
+        elif isinstance(servo, RotateServo):
             computed_min = min(servo.retract_angle, servo.rotation_angle)
-        elif hasattr(servo, "deploy_angle"):
+        elif isinstance(servo, CursorServo):
             computed_min = min(servo.retract_angle, servo.deploy_angle)
         else:
             computed_min = servo.retract_angle
@@ -76,20 +86,21 @@ class ActuatorsWinterDummy(ActuatorsWinter):
                 self._logger.info(
                     f"[CTRL:ACT:Dummy] Servo pin {pin} → {angle}° "
                     f"(range {computed_min}-{computed_max}) "
-                    f"[detach after {detach_delay}ms]"
+                    f"[detach after {detach_delay}ms]",
                 )
             else:
                 self._logger.info(
                     f"[CTRL:ACT:Dummy] Servo pin {pin} → {angle}° "
-                    f"(range {computed_min}-{computed_max})"
+                    f"(range {computed_min}-{computed_max})",
                 )
         else:
             self._logger.error(
                 f"[CTRL:ACT:Dummy] Angle {angle}° out of range "
-                f"[{computed_min},{computed_max}] for pin {pin}"
+                f"[{computed_min},{computed_max}] for pin {pin}",
             )
 
     @override
+    @log("Actuators")
     def stepper_step(
         self,
         steps: int,
@@ -100,5 +111,5 @@ class ActuatorsWinterDummy(ActuatorsWinter):
         self.elevator_ticks += steps
         self._logger.info(
             f"[CTRL:ACT:Dummy] Stepper {steps} steps @ {speed} "
-            f"(disable_driver={disable_driver})"
+            f"(disable_driver={disable_driver})",
         )
