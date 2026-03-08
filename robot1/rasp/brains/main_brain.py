@@ -20,6 +20,7 @@ from boombot_strategy import WinterGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+from services import SpatialComputation, SpatialComputationDummy
 from geometry import OrientedPoint
 
 if TYPE_CHECKING:
@@ -128,6 +129,25 @@ class MainBrain(Brain):
                     follow_logger_manager_rules=True,
                 ),
             )
+
+        if CONFIG.SPATIAL_COMPUTATION_DUMMY:
+            spatial_computation: SpatialComputation | SpatialComputationDummy = SpatialComputationDummy(
+                logger=Logger(
+                    identifier="SpatialComputationDummy",
+                    follow_logger_manager_rules=True,
+                ),
+                arena=self.arena,
+                rolling_basis=rolling_basis,
+            )
+        else:
+            spatial_computation = SpatialComputation(
+                logger=Logger(
+                    identifier="SpatialComputation",
+                    follow_logger_manager_rules=True,
+                ),
+                arena=self.arena,
+                rolling_basis=rolling_basis,
+            )
         actuators.deplacement_position()
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
         while not self.jack_plugged:  # wait until cable is plugged
@@ -145,6 +165,7 @@ class MainBrain(Brain):
                 arena=self.arena,
                 rolling_basis=rolling_basis,
                 actuators=actuators,
+                spatial_computation=spatial_computation,
                 score=self.score,
             ),
         )
@@ -157,6 +178,7 @@ class MainBrain(Brain):
             arena=self.arena,
             rolling_basis=rolling_basis,
             actuators=actuators,
+            spatial_computation=spatial_computation,
             score=self.score,
         )
 

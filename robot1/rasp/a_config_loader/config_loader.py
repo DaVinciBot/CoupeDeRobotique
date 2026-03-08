@@ -438,6 +438,7 @@ class CONFIG:
     LIDAR_DUMMY: bool = get_env_bool("LIDAR_DUMMY")
     ROLLING_BASIS_DUMMY: bool = get_env_bool("ROLLING_BASIS_DUMMY")
     ACTUATORS_DUMMY: bool = get_env_bool("ACTUATORS_DUMMY")
+    SPATIAL_COMPUTATION_DUMMY: bool = get_env_bool("SPATIAL_COMPUTATION_DUMMY")
 
 
 # Logger: LoggerManager + global configuration

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import struct
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, List
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
@@ -11,6 +11,17 @@ if TYPE_CHECKING:
     from geometry import OrientedPoint
 
 
+class Crate:
+    def __init__(self, global_id: int, zone_id: int, x: float, y: float, theta: float, color: int):
+        self.id = global_id
+        self.zone_id = zone_id
+        self.x = x
+        self.y = y
+        self.theta = theta
+        self.color = color
+        self.held = False
+
+
 class SpatialComputation:
     def __init__(
         self,
@@ -18,6 +29,7 @@ class SpatialComputation:
         arena: BaseArena,
         rolling_basis: RollingBasis | RollingBasisDummy,
         lora: None = None,  # Lora parameters maybe added later
+        enable_dummy: bool = False
     ) -> None:
         self.logger = logger
         self.arena = arena
@@ -27,7 +39,18 @@ class SpatialComputation:
         self.robot_position: tuple[float, float, float] | None = None
         self.enemy_position: tuple[float, float, float] | None = None
         self.enemy_velocity: tuple[float, float, float] | None = None
-        self.crates: list[tuple[float, float, float, int]] = []
+
+        self.crates: Dict[int, List[Crate]] = {}
+        self.held_crates: List[Crate] = []
+
+        crate_id = 1
+        crates_per_zone = 4
+        for zone_index in range(8):
+            self.crates[zone_index] = []
+            for i in range(crates_per_zone):
+                cid = i
+                self.crates[zone_index].append(Crate(crate_id, cid, 0.0, 0.0, 0.0, 0))
+                crate_id += 1
 
     def get_robot_position(self) -> tuple[float, float, float]:
         """Get the robot's current position in the global coordinate system.
@@ -63,6 +86,15 @@ class SpatialComputation:
         )
         return self.enemy_velocity
 
+    def pick_crates(self, zone_id: int) -> None:
+        pass
+
+    def drop_crates(self, zone_index: int) -> None:
+        pass
+
+    def reverse_crate(self, crate_id: str) -> None:
+        pass
+
     # Section full freestyle au cas où on envoie directement le lora d'ici, j'en sais rien ALED
     def send_data(self) -> None:
         """Send data to the LoRa module.
@@ -91,9 +123,9 @@ class SpatialComputation:
         """
         data = self.lora.receive()
 
-        num_crates = 48  # add to config loader
+        num_crates = 32  # add to config loader
 
-        data_format = "<9f{}f".format(num_crates)
+        data_format = "<9f{}f".format(num_crates * 4)
         unpacked_data = struct.unpack(data_format, data)
 
         # Main Robot
@@ -106,11 +138,16 @@ class SpatialComputation:
         self.enemy_velocity = tuple(unpacked_data[6:9])
 
         # Crates
-        self.crates = []
         for i in range(num_crates):
             base = 9 + i * 4
             crate_x, crate_y, crate_z, color_id = unpacked_data[base: base + 4]
-            self.crates.append((crate_x, crate_y, crate_z, int(color_id)))
+            zone_index = i // 4
+            crate_in_zone_index = i % 4
+            crate_obj = self.crates[zone_index][crate_in_zone_index]
+            crate_obj.x = crate_x
+            crate_obj.y = crate_y
+            crate_obj.theta = crate_z
+            crate_obj.color = int(color_id)
 
         return {
             "robot_position": self.robot_position,

@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
     from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
     from controllers.rolling_basis import RollingBasis, RollingBasisDummy
+    from services.spatial_computation import SpatialComputation, SpatialComputationDummy
 
 
 class WinterGameContext(BaseGameContext):
@@ -23,6 +24,7 @@ class WinterGameContext(BaseGameContext):
         arena: WinterArena,
         rolling_basis: RollingBasis | RollingBasisDummy,
         actuators: ActuatorsShow | ActuatorsShowDummy,
+        spatial_computation: SpatialComputation | SpatialComputationDummy,
         score: int = 0,
     ) -> None:
         """Initialize the WinterGameContext.
@@ -37,4 +39,5 @@ class WinterGameContext(BaseGameContext):
         super().__init__(arena)
         self.rolling_basis: RollingBasis | RollingBasisDummy = rolling_basis
         self.actuators: ActuatorsShow | ActuatorsShowDummy = actuators
+        self.spatial_computation: SpatialComputation | SpatialComputationDummy = spatial_computation
         self.score = score
