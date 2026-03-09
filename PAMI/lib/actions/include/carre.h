@@ -15,7 +15,7 @@ class Carre : public Action {
     const char* name() const override;
 
    private:
-    const Point _target;
+    Point _target;
     int _sideIndex = 0;  // 0 → 3
     RollingBasis* _rb;
     const double _distance;

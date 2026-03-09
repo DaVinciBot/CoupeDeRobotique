@@ -15,7 +15,7 @@ class RelativeTurning : public Action {
     const char* name() const override;
 
    private:
-    const Point _target;
+    Point _target;
     RollingBasis* _rb;
     const double _angle;
     unsigned long _startMs = 0;

@@ -20,7 +20,7 @@ void RelativeTurning::start() {
     Serial.printf("RelativeTurning::start cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y,
                   cur.theta);
     // Calculer la cible B en fonction de l'angle relatif
-    Point _target = cur;
+    _target = cur;
     _target.theta += _angle;
     Serial.printf("RelativeTurning::start target=(%.1f,%.1f,%.3f)\n", _target.x,
                   _target.y, _target.theta);

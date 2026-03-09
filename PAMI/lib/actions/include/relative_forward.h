@@ -15,7 +15,7 @@ class RelativeForward : public Action {
     const char* name() const override;
 
    private:
-    const Point _target;
+    Point _target;
     RollingBasis* _rb;
     const double _distance;
     unsigned long _startMs = 0;

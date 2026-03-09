@@ -22,7 +22,7 @@ void Triangle::start() {
                   cur.theta);
 
     // Calculer la cible B en fonction de la distance relative
-    Point _target = cur;
+    _target = cur;
     _target.x += _distance * cos(cur.theta);
     _target.y += _distance * sin(cur.theta);
     _target.theta +=
