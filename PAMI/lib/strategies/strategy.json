@@ -1,0 +1,18 @@
+{
+    "authors": [
+        {
+            "email": "",
+            "name": "DaVinciBot"
+        }
+    ],
+    "description": "coordinate all actions dynamically",
+    "frameworks": [
+        "arduino,c++"
+    ],
+    "keywords": "robot,strategy,coordinate,task",
+    "name": "strategy",
+    "platforms": [
+        "espressif32_jsp_ce_que_c"
+    ],
+    "version": "0.1.0"
+}
