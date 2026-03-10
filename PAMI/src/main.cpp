@@ -74,7 +74,7 @@ void navigationUpdate() {
     } else {
         oldACS = ACS;  // Update oldACS to current ACS state
         if (dt < 20000) {
-            leftMotor->setTargetSpeed(4000.0f * 3);
+            leftMotor->setTargetSpeed(4000.0f ); 
             rightMotor->setTargetSpeed(4000.0f);
             dt += millis() - lastTimerrrr;
             lastTimerrrr = millis();

@@ -1,7 +1,7 @@
-#include <Arduino.h>
 #include "AtoB.h"
 #include "action.h"
 #include "actionneur.h"
+#include "arduino_compat.h"
 #include "carre.h"
 #include "lidar_pami.h"
 #include "motor.h"
