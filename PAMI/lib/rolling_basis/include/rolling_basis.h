@@ -128,18 +128,6 @@ class RollingBasis {
      * @return float angular speed in radians per second
      */
     float getAngularSpeedRadPerS() const;
-    /**
-     * @brief defined the speed for the two motors
-     *
-     * @return an avancement (?)
-     */
-    void setSpeed(float linearMmPerS, float angularRadPerS);
-    /**
-     * @brief update the motors
-     *
-     * @return do the update
-     */
-    void updateMotors();
 
    private:
     // void _computeOdometry(float dt);
