@@ -3,14 +3,21 @@
 Strategy::Strategy(RollingBasis* rb)
     : _rb(rb), _currentIndex(0), _finished(false), _failed(false) {}
 
+Strategy::Strategy(RollingBasis* rb, std::vector<Action*> actions)
+    : _rb(rb),
+      _actions(actions),
+      _currentIndex(0),
+      _finished(false),
+      _failed(false) {}
+
 void Strategy::addAction(Action* action) {
     _actions.push_back(action);
-    Serial.printf("[Strategy] Action ajoutée : %s (total: %d)\n",
+    Serial.printf("[Strategy] Action ajoutée : %s (total: %lu)\n",
                   action->name(), _actions.size());
 }
 
 void Strategy::_startCurrentAction() {
-    Serial.printf("[Strategy:%s] Action %d/%d : %s\n", name(),
+    Serial.printf("[Strategy:%s] Action %lu/%lu : %s\n", name(),
                   _currentIndex + 1, _actions.size(),
                   _actions[_currentIndex]->name());
     _actions[_currentIndex]->start();
@@ -61,5 +68,5 @@ void Strategy::stop() {
 }
 
 bool Strategy::isFinished() const {
-    return _finished;
+    return _finished || _failed;
 }
