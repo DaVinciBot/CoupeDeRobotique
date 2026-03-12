@@ -6,7 +6,7 @@
 #elif defined(ESP32)
 #include <WiFi.h>
 #endif
-#include <AsyncTCP.h>
+//#include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include "ElegantOTA.h"
 

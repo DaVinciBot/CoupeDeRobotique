@@ -49,7 +49,6 @@ bool lidar_pami::readFrame() {
 bool lidar_pami::obstacleAhead(uint16_t distanceMin) {
     float mean = 0.0f;
     uint16_t validCount = 0;
-
     for (uint16_t i = 0; i < POINT_COUNT; ++i) {
         uint16_t idx = HEADER_LEN + ENV_LEN + i * 2;
         uint16_t distance = ((uint16_t)_buffer[idx + 1] << 8) | _buffer[idx];
@@ -65,9 +64,75 @@ bool lidar_pami::obstacleAhead(uint16_t distanceMin) {
         return false;  // no valid points
     mean /= validCount;
 
-    Serial.printf("Mean distance: %f\n", mean);
+    //Serial.printf("Mean distance: %f\n", mean);
 
     return mean < distanceMin;
+}
+
+bool lidar_pami::obstacleDirectlyAhead(uint16_t distanceMin) {
+    // On initialise le minimum à une valeur très haute (plus grande que la portée max de 300)
+    uint16_t minDistance = 1000; 
+    bool validPointFound = false;
+    
+    // On regarde le CENTRE (Index ~70 à ~90 sur les 160 points)
+    // Cela correspond au "nez" du robot
+    int startIdx = (POINT_COUNT / 2) - 10; 
+    int endIdx   = (POINT_COUNT / 2) + 10; 
+
+    for (int i = 0; i <= 20; ++i) {
+        
+        uint16_t idx = HEADER_LEN + ENV_LEN + (i * 2);
+        
+        // Reconstruction de la valeur sur 16 bits
+        uint16_t raw = _buffer[idx] | (_buffer[idx + 1] << 8);
+        uint16_t distance = raw & 0x01FF; // Masque 9 bits
+        
+        // --- LOGIQUE DE FILTRAGE ---
+        
+        // On ignore :
+        // 1. Les 0 (erreurs ou trop près)
+        // 2. Les valeurs > 300 (l'infini pour le GS2)
+        // 3. Les valeurs < 25 (zone aveugle du capteur)
+        if (distance > 25 && distance < 300) {
+            
+            // C'EST ICI QUE TOUT CHANGE :
+            // On cherche la distance la plus PETITE (l'objet le plus proche)
+            if (distance < minDistance) {
+                minDistance = distance;
+            }
+            validPointFound = true;
+        }
+    }
+    for (int i = 140; i <= 159; ++i) {
+        
+        uint16_t idx = HEADER_LEN + ENV_LEN + (i * 2);
+        
+        // Reconstruction de la valeur sur 16 bits
+        uint16_t raw = _buffer[idx] | (_buffer[idx + 1] << 8);
+        uint16_t distance = raw & 0x01FF; // Masque 9 bits
+        
+        // --- LOGIQUE DE FILTRAGE ---
+        
+        // On ignore :
+        // 1. Les 0 (erreurs ou trop près)
+        // 2. Les valeurs > 300 (l'infini pour le GS2)
+        // 3. Les valeurs < 25 (zone aveugle du capteur)
+        if (distance > 25 && distance < 300) {
+            
+            // C'EST ICI QUE TOUT CHANGE :
+            // On cherche la distance la plus PETITE (l'objet le plus proche)
+            if (distance < minDistance) {
+                minDistance = distance;
+            }
+            validPointFound = true;
+        }
+    }
+    
+    // Si le capteur n'a rien vu de valide dans cette zone (que du noir ou du vide total)
+    if (!validPointFound) return false; 
+    
+    // Si l'objet le plus proche est inférieur au seuil -> OBSTACLE !
+    return minDistance < distanceMin;
 }
 
 bool lidar_pami::isTiretteOn(uint16_t threshold) {
@@ -80,7 +145,7 @@ bool lidar_pami::isTiretteOn(uint16_t threshold) {
     }
     mean /= POINT_COUNT;
 
-    Serial.printf("Mean distance: %f\n", mean);
+    //Serial.printf("Mean distance: %f\n", mean);
 
     return mean < threshold;
 }
@@ -91,8 +156,7 @@ void lidar_pami::update() {
             if (_onReceiveCallback != nullptr) {
                 _onReceiveCallback();  // call the user-defined callback
             }
-            _onReceiveCallback();
-            Serial.println("lidar_pami: frame read");
+            //Serial.println("lidar_pami: frame read");
         }
     }
 }
@@ -100,4 +164,40 @@ void lidar_pami::update() {
 void lidar_pami::onReceive(void (*callback)()) {
     _onReceiveCallback = callback;
     Serial.println("lidar_pami: onReceive callback set");
+}
+
+void lidar_pami::printRadarVisual() {
+    // Divide 160 points into 32 segments of 5 points for display
+    // 32 characters fit on a console line
+    
+    Serial.print("[G] "); // Left (Index 0)
+
+    for (int segment = 0; segment < 32; segment++) {
+        int minInSegment = 1000;
+        
+        // Find the closest point in this segment of 5 pixels
+        for (int k = 0; k < 5; k++) {
+            int pixelIdx = (segment * 5) + k;
+            if (pixelIdx >= POINT_COUNT) break;
+
+            uint16_t idx = HEADER_LEN + ENV_LEN + (pixelIdx * 2);
+            uint16_t raw = _buffer[idx] | (_buffer[idx + 1] << 8);
+            uint16_t dist = raw & 0x01FF;
+
+            if (dist > 25 && dist < 300 && dist < minInSegment) { //les valeurs de distance sont raisonnables
+                minInSegment = dist;
+            }
+        }
+
+        // Display character based on distance
+        if (minInSegment < 200) {
+            Serial.print("#"); // CLOSE OBSTACLE!
+        } else if (minInSegment >=200 ) {
+            Serial.print("-"); // Distant obstacle
+        } else {
+            Serial.print("_"); // Nothing
+        }
+    }
+    
+    Serial.println(" [D]"); // Right (Index 159)
 }
