@@ -37,7 +37,7 @@ class OnlyBannerStrategy(BaseStrategy):
         # Step 2: Move to the backstage zone to finish the game
         go_to_backstage = BaseTaskNode(
             name="[End] Go to backstage",
-            tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"]),
+            tasks=GoToColorReservedZoneToFinishGame(self.zones["backstage_zone"], ctx),
         )
 
         # Connect the subgraphs in execution order

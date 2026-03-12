@@ -176,8 +176,35 @@ class RollingBasis {
      * Stored as float for convenience when multiplying with durations/speeds.
      */
     float _rotateDirection;
-    // Start time of the current phase
-    unsigned long _startTime;
+    // Start time of the current phase (in microseconds)
+    unsigned long _startTimeUs;
+
+    // PID _linDistPid;  // PID controller for linear distance
+    // PID _angDistPid;  // PID controller for angular distance
+
+    // float _cmdLinSpeed;  // Commanded linear speed in mm/s
+    // float _cmdAngSpeed;  // Commanded angular speed in rad/s
+    // Point _cmdPosition;  // Target position and orientation
+
+    // float _measLinSpeed;  // Measured linear speed in mm/s
+    // float _measAngSpeed;  // Measured angular speed in rad/s
+
+    // std::chrono::steady_clock::time_point _lastTime;  // Last update time
+    // bool _moving;  // Whether the rolling basis is currently moving
+
+#ifdef UNIT_TEST
+   public:
+    // Expose a few internals for deterministic unit testing
+    float getRotateDurationForTest() const {
+        return _rotateDuration;
+    }
+    float getForwardDurationForTest() const {
+        return _forwardDuration;
+    }
+    Phase getPhaseForTest() const {
+        return _phase;
+    }
+#endif
 };
 
 #endif

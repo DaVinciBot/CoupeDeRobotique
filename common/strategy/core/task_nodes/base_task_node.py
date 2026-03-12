@@ -66,15 +66,31 @@ class BaseTaskNode:
         # Initialize points and estimated duration using tasks if not provided
         self.estimated_duration: float | Callable[[BaseGameContext], float] = None
         if estimated_duration is None:
-            self.estimated_duration = sum(
-                task.estimated_duration for task in self.tasks
-            )
+            if all(
+                isinstance(task.estimated_duration, (int, float)) for task in self.tasks
+            ):
+                self.estimated_duration = sum(
+                    task.estimated_duration for task in self.tasks
+                )
+            else:
+                self.estimated_duration = lambda ctx: sum(
+                    task.estimated_duration(ctx)
+                    if callable(task.estimated_duration)
+                    else task.estimated_duration
+                    for task in self.tasks
+                )
         else:
             self.estimated_duration = estimated_duration
 
         self.points: int | Callable[[BaseGameContext], int] = None
         if points is None:
-            self.points = sum(task.points for task in self.tasks)
+            if all(isinstance(task.points, int) for task in self.tasks):
+                self.points = sum(task.points for task in self.tasks)
+            else:
+                self.points = lambda ctx: sum(
+                    task.points(ctx) if callable(task.points) else task.points
+                    for task in self.tasks
+                )
         else:
             self.points = points
 

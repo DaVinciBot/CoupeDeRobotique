@@ -11,7 +11,8 @@ from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_dete
     RectangularProjectionAcsDetectionProfileParams,
 )
 from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
-from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
+from navigation.path_planner.astar_path_planner import AStarPathPlannerParams
+from navigation.path_planner.structs import Direction
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
 )
@@ -29,15 +30,32 @@ class GoToStuffZoneToPickUp(NavigationTask):
     before performing tasks.
     """
 
-    def __init__(self, stuff_zone_id: int) -> None:
+    def __init__(self, stuff_zone_id: int, ctx: WinterGameContext) -> None:
         """Initialize navigation and avoidance parameters.
 
         Args:
             stuff_zone_id (int): Identifier for the target stuff zone location.
+            ctx (WinterGameContext): The current game context.
+
+        Raises:
+            ValueError: If the provided color_reserved_zone_id is invalid.
         """
+        goal = ctx.arena.compute_goal_position(stuff_zone_id)
+
+        if goal is None:
+            msg = f"Invalid stuff zone ID: {stuff_zone_id}"
+            raise ValueError(msg)
+
         super().__init__(
-            goal=stuff_zone_id,
-            path_planner_params=BasicPathPlannerParams(),
+            goal=goal,
+            path_planner_params=AStarPathPlannerParams(
+                grid=ctx.arena.grid_manager.get_static_and_dynamic_grid(),
+                path_resolution=5,
+                chunk_size=CONFIG.ARENA_CHUNK_SIZE,
+                start=ctx.arena.ally_zone.point,
+                goal=goal,
+                direction=Direction.FORWARD,
+            ),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(
                 step_sleep_delay=2,
             ),

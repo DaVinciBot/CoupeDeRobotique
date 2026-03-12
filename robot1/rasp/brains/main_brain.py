@@ -16,7 +16,7 @@ from ws_comms import WServerRouteManager, WSmsg
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import WinterGameContext
-from boombot_strategy.strategies import TowerRushAltStrategy
+from boombot_strategy.strategies import GoBackstageStrategy
 from boombot_strategy.sub_graphs import (
     get_banner_deployment_subgraph,
     get_construct_one_floor_subgraph,
@@ -169,12 +169,12 @@ class MainBrain(Brain):
         # --- 3) Build the strategy --- #
 
         # Choose strategy based on configuration
-        strategy: TowerRushAltStrategy | None = None
+        strategy: GoBackstageStrategy | None = None
         action_holder: list[GraphRunner | None] = [None]
         if self.mode == "iihm":
             self.logger.info("IIHM mode: Waiting for first task...")
         else:
-            strategy = TowerRushAltStrategy(
+            strategy = GoBackstageStrategy(
                 WinterGameContext(
                     arena=self.arena,
                     rolling_basis=rolling_basis,

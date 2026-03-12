@@ -1,7 +1,7 @@
 #ifndef MOTOR_H
 #define MOTOR_H
 
-#include <Arduino.h>
+#include "arduino_compat.h"
 #include <cstdint>
 
 /**
@@ -166,6 +166,22 @@ class Motor {
      *
      */
     void _doOneStep();
+
+#ifdef UNIT_TEST
+   public:
+    float getTargetSpeedStepsPerSecForTest() const {
+        return _targetSpeedStepsPerSec;
+    }
+    float getCurrentSpeedStepsPerSecForTest() const {
+        return _currentSpeedStepsPerSec;
+    }
+    float getAccelerationForTest() const {
+        return _acceleration;
+    }
+    float getUsDelayBetweenStepForTest() const {
+        return _usDelayBetweenStep;
+    }
+#endif
 };
 
 #endif

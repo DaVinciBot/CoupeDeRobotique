@@ -1,7 +1,7 @@
 #ifndef ACTIONS_ACTION_H
 #define ACTIONS_ACTION_H
 
-#include <Arduino.h>
+#include "arduino_compat.h"
 
 class Action {
    public:
