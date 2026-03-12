@@ -1,4 +1,7 @@
 #include "lidar_pami.h"
+#include "rolling_basis.h"
+#include "strategy.h"
+
 
 lidar_pami::lidar_pami(HardwareSerial& serialPort,
                        int8_t rxPin,
@@ -64,37 +67,36 @@ bool lidar_pami::obstacleAhead(uint16_t distanceMin) {
         return false;  // no valid points
     mean /= validCount;
 
-    //Serial.printf("Mean distance: %f\n", mean);
+    // Serial.printf("Mean distance: %f\n", mean);
 
     return mean < distanceMin;
 }
 
 bool lidar_pami::obstacleDirectlyAhead(uint16_t distanceMin) {
-    // On initialise le minimum à une valeur très haute (plus grande que la portée max de 300)
-    uint16_t minDistance = 1000; 
+    // On initialise le minimum à une valeur très haute (plus grande que la
+    // portée max de 300)
+    uint16_t minDistance = 1000;
     bool validPointFound = false;
-    
+
     // On regarde le CENTRE (Index ~70 à ~90 sur les 160 points)
     // Cela correspond au "nez" du robot
-    int startIdx = (POINT_COUNT / 2) - 10; 
-    int endIdx   = (POINT_COUNT / 2) + 10; 
+    int startIdx = (POINT_COUNT / 2) - 10;
+    int endIdx = (POINT_COUNT / 2) + 10;
 
     for (int i = 0; i <= 20; ++i) {
-        
         uint16_t idx = HEADER_LEN + ENV_LEN + (i * 2);
-        
+
         // Reconstruction de la valeur sur 16 bits
         uint16_t raw = _buffer[idx] | (_buffer[idx + 1] << 8);
-        uint16_t distance = raw & 0x01FF; // Masque 9 bits
-        
+        uint16_t distance = raw & 0x01FF;  // Masque 9 bits
+
         // --- LOGIQUE DE FILTRAGE ---
-        
+
         // On ignore :
         // 1. Les 0 (erreurs ou trop près)
         // 2. Les valeurs > 300 (l'infini pour le GS2)
         // 3. Les valeurs < 25 (zone aveugle du capteur)
         if (distance > 25 && distance < 300) {
-            
             // C'EST ICI QUE TOUT CHANGE :
             // On cherche la distance la plus PETITE (l'objet le plus proche)
             if (distance < minDistance) {
@@ -104,21 +106,19 @@ bool lidar_pami::obstacleDirectlyAhead(uint16_t distanceMin) {
         }
     }
     for (int i = 140; i <= 159; ++i) {
-        
         uint16_t idx = HEADER_LEN + ENV_LEN + (i * 2);
-        
+
         // Reconstruction de la valeur sur 16 bits
         uint16_t raw = _buffer[idx] | (_buffer[idx + 1] << 8);
-        uint16_t distance = raw & 0x01FF; // Masque 9 bits
-        
+        uint16_t distance = raw & 0x01FF;  // Masque 9 bits
+
         // --- LOGIQUE DE FILTRAGE ---
-        
+
         // On ignore :
         // 1. Les 0 (erreurs ou trop près)
         // 2. Les valeurs > 300 (l'infini pour le GS2)
         // 3. Les valeurs < 25 (zone aveugle du capteur)
         if (distance > 25 && distance < 300) {
-            
             // C'EST ICI QUE TOUT CHANGE :
             // On cherche la distance la plus PETITE (l'objet le plus proche)
             if (distance < minDistance) {
@@ -127,10 +127,12 @@ bool lidar_pami::obstacleDirectlyAhead(uint16_t distanceMin) {
             validPointFound = true;
         }
     }
-    
-    // Si le capteur n'a rien vu de valide dans cette zone (que du noir ou du vide total)
-    if (!validPointFound) return false; 
-    
+
+    // Si le capteur n'a rien vu de valide dans cette zone (que du noir ou du
+    // vide total)
+    if (!validPointFound)
+        return false;
+
     // Si l'objet le plus proche est inférieur au seuil -> OBSTACLE !
     return minDistance < distanceMin;
 }
@@ -145,7 +147,7 @@ bool lidar_pami::isTiretteOn(uint16_t threshold) {
     }
     mean /= POINT_COUNT;
 
-    //Serial.printf("Mean distance: %f\n", mean);
+    // Serial.printf("Mean distance: %f\n", mean);
 
     return mean < threshold;
 }
@@ -169,16 +171,17 @@ void lidar_pami::onReceive(void (*callback)()) {
 void lidar_pami::printRadarVisual() {
     // Divide 160 points into 32 segments of 5 points for display
     // 32 characters fit on a console line
-    
-    Serial.print("[G] "); // Left (Index 0)
+
+    Serial.print("[G] ");  // Left (Index 0)
 
     for (int segment = 0; segment < 32; segment++) {
         int minInSegment = 1000;
-        
+
         // Find the closest point in this segment of 5 pixels
         for (int k = 0; k < 5; k++) {
             int pixelIdx = (segment * 5) + k;
-            if (pixelIdx >= POINT_COUNT) break;
+            if (pixelIdx >= POINT_COUNT)
+                break;
 
             uint16_t idx = HEADER_LEN + ENV_LEN + (pixelIdx * 2);
             uint16_t raw = _buffer[idx] | (_buffer[idx + 1] << 8);
@@ -191,14 +194,91 @@ void lidar_pami::printRadarVisual() {
 
         // Display character based on distance
         if (minInSegment < 150) {
-            Serial.print("#"); // CLOSE OBSTACLE!
+            Serial.print("#");  // CLOSE OBSTACLE!
         } else if (minInSegment < 300) {
-            Serial.print("-"); // Distant obstacle
+            Serial.print("-");  // Distant obstacle
         } else {
-            Serial.print("_"); // Nothing
+            Serial.print("_");  // Nothing
         }
     }
-    
-    Serial.println(" [D]"); // Right (Index 159)
-}
 
+    Serial.println(" [D]");  // Right (Index 159)
+}
+void lidar_pami::ReactionObstacle() {
+    lidar.update();
+
+    if (strategy == nullptr || strategy->isFinished())
+        return;
+
+    bool obstacleAhead =
+        lidar.obstacleDirectlyAhead(OBSTACLE_FRONT_THRESHOLD_MM);
+
+    switch (avoidState) {
+        case AVOID_IDLE:
+            if (obstacleAhead) {
+                rb.stop();
+                avoidState = AVOID_WAITING;
+                obstacleDetectedAt = millis();
+                Serial.printf(
+                    "[Robot %d] Obstacle détecté — stratégie en pause\n",
+                    ID_ROBOT);
+            } else {
+                strategy->update();
+            }
+            break;
+
+        case AVOID_WAITING:
+            if (!obstacleAhead) {
+                // L'obstacle a disparu tout seul
+                avoidState = AVOID_IDLE;
+                Serial.printf("[Robot %d] Obstacle disparu — reprise\n",
+                              ID_ROBOT);
+                break;
+            }
+            if (isRightClear()) {
+                // Voie libre à droite : on tourne immédiatement
+                Serial.printf("[Robot %d] Droite libre — rotation\n", ID_ROBOT);
+                rb.rotate(-TURN_ANGLE_RAD);  // négatif = droite selon votre
+                                             // convention
+                avoidState = AVOID_TURNING;
+                break;
+            }
+            if (millis() - obstacleDetectedAt >= OBSTACLE_TIMEOUT_MS) {
+                // 3 secondes écoulées, droite toujours bloquée : on recule
+                Serial.printf("[Robot %d] Timeout 3s — recul forcé\n",
+                              ID_ROBOT);
+                rb.move(-REVERSE_DISTANCE_MM);  // recul
+                avoidState = AVOID_REVERSING;
+            }
+            // Sinon : on attend (ne rien faire = rb déjà stoppé)
+            break;
+
+        case AVOID_REVERSING:
+            // On attend que le recul soit terminé avant de tourner
+            rb.update();
+            if (rb.isFinished()) {
+                Serial.printf("[Robot %d] Recul terminé — rotation droite\n",
+                              ID_ROBOT);
+                rb.rotate(-TURN_ANGLE_RAD);
+                avoidState = AVOID_TURNING;
+            }
+            break;
+
+        case AVOID_TURNING:
+            // On attend que la rotation soit terminée avant de reprendre
+            rb.update();
+            if (rb.isFinished()) {
+                Serial.printf("[Robot %d] Rotation terminée — reprise\n",
+                              ID_ROBOT);
+                avoidState = AVOID_IDLE;
+            }
+            break;
+    }
+}
+uint16_t getDistance(uint16_t index) const {
+    if (index >= POINT_COUNT)
+        return 0;
+    uint16_t idx = HEADER_LEN + ENV_LEN + index * 2;
+    uint16_t raw = _buffer[idx] | (_buffer[idx + 1] << 8);
+    return raw & 0x01FF;
+}

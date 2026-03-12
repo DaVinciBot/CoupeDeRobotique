@@ -95,6 +95,14 @@ class lidar_pami {
      */
     void printRadarVisual();
 
+    /**
+     * @brief Retourne la distance brute (9 bits) du point à l'index donné.
+     *
+     * @param index Index du point (0 à POINT_COUNT-1)
+     * @return uint16_t Distance en mm, 0 si index invalide
+     */
+    uint16_t getDistance(uint16_t index) const;
+
    private:
     static const uint16_t PACKET_SIZE = 331;   // Expected packet buffer size
     static const uint8_t FRAME_HEADER = 0xA5;  // Frame header marker

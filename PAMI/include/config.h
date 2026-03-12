@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "lidar_pami.h"
 #include "motor.h"
-//#include "navigation.h"
+// #include "navigation.h"
 #include "rolling_basis.h"
 
 // #------- GENERAL CONFIGURATION -------#
@@ -45,3 +45,34 @@
 // #-------- DEV CONFIGURATION ---------#
 #define ENABLE_OTA false   // Enable OTA updates
 #define ENABLE_LORA false  // Enable LoRa communication
+
+// #------- ROBOT ID -------#
+
+#define ID_ROBOT 1
+// Give an identification to each pami (going 1 to 6)
+// to do it manually for each pami
+#ifndef ID_ROBOT
+#error "ID_ROBOT is not define "
+#endif
+
+// #------- OBSTACLE CONFIGURATION -------#
+#define OBSTACLE_FRONT_THRESHOLD_MM \
+    100  // Distance devant pour détecter un obstacle
+#define OBSTACLE_RIGHT_THRESHOLD_MM \
+    200  // Distance droite en dessous de laquelle la voie est bloquée
+#define TURN_ANGLE_RAD 0.5f        // Angle de rotation droite en radians
+#define REVERSE_DISTANCE_MM 80.0f  // Distance de recul avant de tourner
+#define OBSTACLE_TIMEOUT_MS 3000   // Délai avant recul forcé (ms)
+
+// Index des points lidar (sur 160 points, champ ~180°)
+// Droite : points 120 à 159
+#define SIDE_RIGHT_START 120
+#define SIDE_RIGHT_END 159
+
+// ------- ÉTAT D'ÉVITEMENT -------
+enum AvoidState {
+    AVOID_IDLE,       // Pas d'obstacle
+    AVOID_WAITING,    // Obstacle devant, on attend que la droite se libère
+    AVOID_REVERSING,  // Recul en cours (timeout dépassé)
+    AVOID_TURNING,    // Rotation droite en cours
+};
