@@ -1,21 +1,21 @@
 #include <Arduino.h>
 #include "lidar_pami.h"
 #include "motor.h"
-#include "navigation.h"
+//#include "navigation.h"
 #include "rolling_basis.h"
 
 // #------- GENERAL CONFIGURATION -------#
 #define ACS_TRESHOLD 40  // Threshold for ACS activation in mm
 
 // #------- MOTOR CONFIGURATION -------#
-#define LEFT_DIR_PIN 18         // Direction pin for left motor
-#define LEFT_STEP_PIN 19        // Step pin for left motor
-#define LEFT_EN_PIN 32          // Enable pin for left motor
+#define LEFT_DIR_PIN 3         // Direction pin for left motor
+#define LEFT_STEP_PIN 46        // Step pin for left motor
+#define LEFT_EN_PIN 9          // Enable pin for left motor 
 #define LEFT_STEPS_PER_REV 400  // Steps per revolution for left motor
 
-#define RIGHT_DIR_PIN 16         // Direction pin for right motor
-#define RIGHT_STEP_PIN 17        // Step pin for right motor
-#define RIGHT_EN_PIN 33          // Enable pin for right motor
+#define RIGHT_DIR_PIN 21         // Direction pin for right motor
+#define RIGHT_STEP_PIN 47        // Step pin for right motor
+#define RIGHT_EN_PIN 48          // Enable pin for right motor
 #define RIGHT_STEPS_PER_REV 400  // Steps per revolution for right motor
 
 #define PULSE_US 500             // Pulse width in microseconds for motor steps
@@ -37,11 +37,14 @@
 // #------- SERVO CONFIGURATION -------#
 #define SERVO_PIN 42  // Servo pin
 
-// #------- LORA CONFIGURATION -------#
-#define SS 10    // NSS pin
-#define RST 16   // RESET pin
-#define BUSY 15  // BUSY pin
+// #------- LORA CONFIGURATION (DX-LR01 UART) -------#
+#define LORA_RX_PIN 16   // RX2 - TXD du module DX-LR01
+#define LORA_TX_PIN 17   // TX2 - RXD du module DX-LR01
+#define LORA_BAUD 9600   // Baud rate du DX-LR01
+#define LORA_M0_PIN -1   // Mode pin M0 (connecté à GND = mode normal)
+#define LORA_M1_PIN -1   // Mode pin M1 (connecté à GND = mode normal)
+#define LORA_AUX_PIN 4  // AUX pin (non utilisé pour ce test)
 
 // #-------- DEV CONFIGURATION ---------#
 #define ENABLE_OTA false   // Enable OTA updates
-#define ENABLE_LORA false  // Enable LoRa communication
+#define ENABLE_LORA true   // Enable LoRa communication (DX-LR01 - UART based)
