@@ -91,7 +91,7 @@ void setup() {
     lidar->onReceive([]() {
         lidarUpdate();
     });
-
+    delay(10000);
     //il s'identifie (avant la 85eme s)
     String str_identifier="";
     int obstacle_compteur=0;
@@ -114,6 +114,8 @@ void setup() {
             str_identifier+="0";
         }
         Serial.println(str_identifier);
+        Serial.println("Turning 90 degrees");
+        delay(1000); // Simulate time taken to turn 90 degrees
         //on tourne de 90° pour le prochain coté
     }
     //mtn, on exploite son identifier pour savoir ou il est
