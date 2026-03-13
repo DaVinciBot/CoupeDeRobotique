@@ -6,6 +6,7 @@
 
 // #------- GENERAL CONFIGURATION -------#
 #define ACS_TRESHOLD 40  // Threshold for ACS activation in mm
+#define NUMBER_OF_PAMIS 6  // Number of PAMIs to use
 
 // #------- MOTOR CONFIGURATION -------#
 #define LEFT_DIR_PIN 18         // Direction pin for left motor

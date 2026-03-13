@@ -91,11 +91,8 @@ void setup() {
     lidar->onReceive([]() {
         lidarUpdate();
     });
-}
 
-
-void loop() {
-    lidar->update();
+    //il s'identifie (avant la 85eme s)
     String str_identifier="";
     int obstacle_compteur=0;
     for(int cote=0;cote<4;cote++){//boucle pour chaque coté
@@ -106,17 +103,55 @@ void loop() {
             if(ACS){
                 obstacle_compteur++;
             }
-            delay(5);//il met environ 1s par 5 de delay
+            delay(5);//il met environ 1s par boucle par 5 de delay
         }
-        if(obstacle_compteur>80){ //il y a un obstacle
-            Serial.println("Obstacle, on tourne");
+        if(obstacle_compteur>80){ //il est sur à 80% qu'il y a un obstacle
+            //Serial.println("Obstacle, on tourne");
             str_identifier+="1";
         }
         else{
-            Serial.println("c ok");
+            //Serial.println("c ok");
             str_identifier+="0";
         }
         Serial.println(str_identifier);
+        //on tourne de 90° pour le prochain coté
     }
+    //mtn, on exploite son identifier pour savoir ou il est
+    if(NUMBER_OF_PAMIS==6){ //on regarde de gauche à droite de haut en bas depuis mon dessin
+        if (str_identifier == "0011") {
+            Serial.println("PAMI 1");
+        } else if (str_identifier == "1011") {
+            Serial.println("PAMI 2");
+        } else if (str_identifier == "0111") {
+            Serial.println("PAMI 3");
+        } else if (str_identifier == "1111") {
+            Serial.println("PAMI 4");
+        } else if (str_identifier == "0110") {
+            Serial.println("PAMI 5");
+        } else if (str_identifier == "1110") {
+            Serial.println("PAMI 6");
+        } else {
+            Serial.println("Unknown PAMI identifier: " + str_identifier);
+        }
+    }
+    if(NUMBER_OF_PAMIS==4){ //on regarde de gauche à droite
+        if (str_identifier == "1110") {
+            Serial.println("PAMI 1");
+        } else if (str_identifier == "1111") {
+            Serial.println("PAMI 2");
+        } else if (str_identifier == "0110") {
+            Serial.println("PAMI 3");
+        } else if (str_identifier == "0111") {
+            Serial.println("PAMI 4");
+        } else {
+            Serial.println("Unknown PAMI identifier: " + str_identifier);
+        }
+    }
+}
+
+
+void loop() {
+    lidar->update();
+    
     
 }
