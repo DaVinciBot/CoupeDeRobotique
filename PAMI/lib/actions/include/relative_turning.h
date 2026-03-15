@@ -20,7 +20,7 @@ class RelativeTurning : public Action {
     const double _angle;
     unsigned long _startMs = 0;
     unsigned long _timeoutMs = 15000;  // Ms
-    float _arriveTolRad = 5.0f;
+    float _arriveTolRad = 3.0f;
     bool _finished = false;
 };
 

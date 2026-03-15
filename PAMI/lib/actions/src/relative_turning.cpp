@@ -49,7 +49,10 @@ void RelativeTurning::update() {
     // autres fonctions read current pose (may be static if odometry is
     // disabled)
     Point cur = _rb->getPose();
-    float angleDiff = Point::angle(cur, _target);
+    float angleDiff = _target.theta - cur.theta;
+
+    while (angleDiff > PI) angleDiff -= 2 * PI;
+    while (angleDiff < -PI) angleDiff += 2 * PI;
     Serial.printf("RelativeTurning::update angle=%.1f rad\n", angleDiff);
     // arrival condition: within tolerance OR base reports idle
     if (abs(angleDiff) <= _arriveTolRad || !_rb->isMoving()) {
