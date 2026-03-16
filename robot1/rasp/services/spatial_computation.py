@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from geometry import OrientedPoint
 
 NUM_CRATES = 32
-CRATE_FORMAT = "b3fB"  # Askip, j'avoue je suis pas calée : zone_id(int8), x, y, theta (float32), color(uint8)
+CRATE_FORMAT = "b3dB"  # Askip, j'avoue je suis pas calée : zone_id(int8), x, y, theta (float32), color(uint8)
 PACKET_FORMAT = "<9f" + CRATE_FORMAT * NUM_CRATES
 
 

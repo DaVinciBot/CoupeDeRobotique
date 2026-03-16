@@ -159,7 +159,7 @@ class SpatialComputationDummy(SpatialComputation):
         """
         self.logger.info("DummySpatialComputation: Simulating reversing crates not matching team color.")
 
-        team_color_int = 1 if self.arena.team_color == self.arena.TeamColor.YELLOW else 0
+        team_color_int = 1 if self.arena.team_color == self.arena.team_color.YELLOW else 0
 
         for crate in self.held_crates:
             if crate.color != team_color_int:
