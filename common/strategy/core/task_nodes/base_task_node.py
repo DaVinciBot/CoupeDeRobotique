@@ -31,6 +31,7 @@ class BaseTaskNode:
         scoring_function: BaseScoringFunction | None = None,
         points: int | Callable[[BaseGameContext], int] | None = None,
         estimated_duration: float | Callable[[BaseGameContext], float] | None = None,
+        *,
         repeatable: bool = False,
         max_visits: int | None = 1,
     ) -> None:

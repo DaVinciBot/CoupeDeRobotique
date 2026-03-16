@@ -187,9 +187,10 @@ class MainBrain(Brain):
         self.should_send_start = True
         self.status = "starting"
 
-        # from strategy.tools import visualize_task_graph
+        if strategy is not None:
+            from strategy.tools import visualize_task_graph
 
-        # visualize_task_graph(strategy.runner.active[0])
+            visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
         context = WinterGameContext(
