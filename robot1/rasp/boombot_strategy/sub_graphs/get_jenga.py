@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from boombot_strategy.tasks.actuator_tasks import (
-    BlockJenga,
-)
+from boombot_strategy.tasks.actuator_tasks import BlockJenga
 from boombot_strategy.tasks.navigation_tasks import (
     GoToStuffZoneToPickUp,
     RelativeForward,
