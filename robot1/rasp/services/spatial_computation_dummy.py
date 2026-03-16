@@ -75,7 +75,6 @@ class SpatialComputationDummy(SpatialComputation):
                                      representing the crates in each zone.
         """
         crates = {}
-        crate_id = 0
         crate_size = 5
 
         for zone_index, (p1, p2) in enumerate(self.crates_zones_points):
@@ -90,15 +89,10 @@ class SpatialComputationDummy(SpatialComputation):
                 y_positions = [y_min + crate_size / 2 + i * crate_size for i in range(4)]
 
             colors = [0, 0, 1, 1]
-
-            crates[zone_index] = []
-
-            for i in range(4):
-                cid = i
-                crates[zone_index].append(
-                    Crate(crate_id, cid, x_positions[i], y_positions[i], -pi, colors[i])
-                )
-                crate_id += 1
+            crates[zone_index] = [
+                Crate(zone_index, x_positions[i], y_positions[i], -pi, colors[i])
+                for i in range(4)
+            ]
 
         return crates
 
@@ -113,10 +107,11 @@ class SpatialComputationDummy(SpatialComputation):
             None
         """
         self.logger.info(f"DummySpatialComputation: Simulating picking crates from zone {zone_id}.")
-        zone_crates = [c for c in self.crates[zone_id] if not c.held]
+        zone_crates = [c for c in self.crates.get(zone_id, []) if not c.held]
         for c in zone_crates:
             c.held = True
             self.held_crates.append(c)
+        self.crates.pop(zone_id, None)
 
     @override
     @log("DummySpatialComputation")
@@ -149,32 +144,26 @@ class SpatialComputationDummy(SpatialComputation):
         for i, crate in enumerate(self.held_crates):
             crate.x = x_positions[i]
             crate.y = y_positions[i]
+            crate.zone_id = -1
             crate.held = False
 
         self.held_crates = []
 
     @override
     @log("DummySpatialComputation")
-    def reverse_crate(self, crate_id: str) -> None:
+    def reverse_crate(self) -> None:
         """
-        Reverse the color of a held crate by its ID.
-        Args:
-            crate_id (str): The unique identifier of the crate to reverse.
+        Reverse the color of held crates that don't match the team color.
         Returns:
             None
         """
-        self.logger.info(f"DummySpatialComputation: Simulating reversing crate with ID {crate_id}.")
+        self.logger.info("DummySpatialComputation: Simulating reversing crates not matching team color.")
 
-        crate = None
-        for held_crate in self.held_crates:
-            if held_crate.zone_id == crate_id:
-                crate = held_crate
-                break
-        if crate:
-            if crate.color == 0:
-                crate.color = 1
-            else:
-                crate.color = 0
+        team_color_int = 1 if self.arena.team_color == self.arena.TeamColor.YELLOW else 0
+
+        for crate in self.held_crates:
+            if crate.color != team_color_int:
+                crate.color = team_color_int
 
     @override
     def __str__(self) -> str:

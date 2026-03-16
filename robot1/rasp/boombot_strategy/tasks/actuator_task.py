@@ -79,7 +79,7 @@ class Build(BaseTask[WinterGameContext]):
         """
         ctx.actuators.build_floors()
         ctx.score += CONFIG.BUILD_TWO_FLOORS
-        ctx.spatial_computation.reverse_crate(crate_id=0)
+        ctx.spatial_computation.reverse_crate()
         time.sleep(1)
         return True
 
