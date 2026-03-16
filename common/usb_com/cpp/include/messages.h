@@ -26,6 +26,7 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 #define ATTACH_SWITCH 6
 #define SET_SERVO_ANGLE 7
 #define SET_STEPPER_DRIVER_ACTIVATION_STATE 8
+#define SET_LINEAR_ACTUATOR 9
 
 // Common (Rolling Basis + Actuators)
 #define RESET_TEENSY 126
@@ -129,6 +130,15 @@ struct msg_reset_teensy
     byte command = RESET_TEENSY;
 };
 
+struct msg_set_linear_actuator
+{
+    byte command = SET_LINEAR_ACTUATOR;
+    byte pin_enable;
+    byte pin_dir;
+    bool direction;
+    byte speed;
+};
+
 // teensy -> rasp : 128-255
 
 // Rolling Basis
@@ -154,3 +164,5 @@ struct msg_unknown_msg_type
     byte command = UNKNOWN_MSG_TYPE;
     byte type_id; // ID of the unknown message
 };
+
+

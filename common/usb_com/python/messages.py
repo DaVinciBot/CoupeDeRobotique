@@ -56,6 +56,8 @@ class Messages(Enum):
     """Set a servo angle."""
     SET_STEPPER_DRIVER_ACTIVATION_STATE = 8
     """Enable or disable the stepper driver."""
+    SET_LINEAR_ACTUATOR = 9
+    """Set a linear actuator position."""
 
     # Common (Rolling Basis + Actuators)
     RESET_TEENSY = 126

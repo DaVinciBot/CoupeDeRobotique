@@ -145,6 +145,27 @@ void attach_switch(byte* msg, byte size) {
                   sizeof(msg_switch_state_return));
 }
 
+void set_linear_actuator(byte* msg, byte size)
+{
+    msg_set_linear_actuator* lin_msg = (msg_set_linear_actuator*)msg;
+
+    String out1 = "Linear actuator enable pin: " + String(lin_msg->pin_enable);
+    String out2 = "Dir pin: " + String(lin_msg->pin_dir);
+    String out3 = "Direction: " + String(lin_msg->direction);
+    String out4 = "Speed: " + String(lin_msg->speed);
+    com->print((char*)out1.c_str());
+    com->print((char*)out2.c_str());
+    com->print((char*)out3.c_str());
+    com->print((char*)out4.c_str());
+
+    pinMode(lin_msg->pin_enable, OUTPUT);
+    pinMode(lin_msg->pin_dir, OUTPUT);
+
+    digitalWrite(lin_msg->pin_dir, lin_msg->direction ? HIGH : LOW);
+
+    analogWrite(lin_msg->pin_enable, lin_msg->speed);
+}
+
 // b. assign the callback functions to the right message id
 void (*callback_functions[256])(byte* msg, byte size);
 
@@ -156,6 +177,7 @@ void initilize_callback_functions() {
     callback_functions[SET_SERVO_ANGLE] = &set_servo_angle;
     callback_functions[SET_STEPPER_DRIVER_ACTIVATION_STATE] =
         &set_stepper_driver_activation_state;
+    callback_functions[SET_LINEAR_ACTUATOR] = &set_linear_actuator;
 }
 void setup() {
     pinMode(ENABLE_DRIVER_STEPPER_PIN,

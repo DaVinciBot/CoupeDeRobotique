@@ -144,3 +144,28 @@ class ActuatorsShowDummy(ActuatorsShow):
                 f"[CTRL:ACT:Dummy] Angle {angle}° out of range "
                 f"[{min_angle},{max_angle}] for pin {pin}",
             )
+
+
+    @override
+    @log("DummyActuatorsShow")
+    def set_linear_actuator(
+            self,
+            *,
+            pin_enable: int,
+            pin_dir: int,
+            direction: bool,
+            speed: int = 255
+    ) -> None:
+        """Simulate setting the linear actuator position.
+
+        Args:
+            pin_enable (int): Pin for enabling the actuator.
+            pin_dir (int): Pin for setting the direction.
+            direction (bool): Direction to move (True for forward, False for backward).
+            speed (int): Speed of the movement (0-255).
+        """
+        dir_str = "forward" if direction else "backward"
+        self._logger.info(
+            f"[CTRL:ACT:Dummy] Linear actuator on enable pin {pin_enable} "
+            f"and direction pin {pin_dir} moving {dir_str} at speed {speed}",
+        )

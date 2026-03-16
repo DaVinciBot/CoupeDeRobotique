@@ -294,4 +294,30 @@ class Actuators(
         msg = Messages.ATTACH_SWITCH.to_bytes() + struct.pack("<B", pin)
         self.send_bytes(msg)
 
+    @log("Actuators")
+    def set_linear_actuator(
+            self,
+            *,
+            pin_enable: int,
+            pin_dir: int,
+            direction: bool,
+            speed: int = 255
+    ) -> None:
+        """Commande un actionneur linéaire 12V.
+
+        Args:
+            pin_enable (int): Pin qui active l'actionneur.
+            pin_dir (int): Pin pour la direction (avance/recul).
+            direction (bool): True = avancer, False = reculer.
+            speed (int, optional): Vitesse (PWM 0-255). Defaults to 255.
+        """
+        msg = (
+                Messages.SET_LINEAR_ACTUATOR.to_bytes()  # Nouvel ID à définir côté Messages
+                + struct.pack("<B", pin_enable)
+                + struct.pack("<B", pin_dir)
+                + struct.pack("<?", direction)
+                + struct.pack("<B", speed)
+        )
+        self.send_bytes(msg)
+
     # endregion
