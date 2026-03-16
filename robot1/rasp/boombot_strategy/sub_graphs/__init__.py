@@ -13,9 +13,7 @@ from boombot_strategy.sub_graphs.deposit_jenga import (
     get_deposit_jenga_color_zone_subgraph,
     get_deposit_jenga_deposit_zone_subgraph,
 )
-from boombot_strategy.sub_graphs.get_jenga import (
-    get_pickup_jenga_subgraph,
-)
+from boombot_strategy.sub_graphs.get_jenga import get_pickup_jenga_subgraph
 from boombot_strategy.sub_graphs.pickup import get_pickup_subgraph
 from boombot_strategy.sub_graphs.push_one_floor_to_wall import (
     get_push_one_floor_to_wall_subgraph,

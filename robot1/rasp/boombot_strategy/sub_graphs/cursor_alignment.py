@@ -4,9 +4,7 @@ from typing import TYPE_CHECKING
 
 from boombot_strategy.tasks.actuator_tasks import DeployCursor
 from boombot_strategy.tasks.navigation_tasks import RelativeBackward, RelativeForward
-from boombot_strategy.tasks.navigation_tasks.go_to_cursor_start import (
-    GoToCursorStart,
-)
+from boombot_strategy.tasks.navigation_tasks.go_to_cursor_start import GoToCursorStart
 from strategy.core import BaseSubGraph, SubGraphBuilder
 from strategy.core.task_nodes import BaseTaskNode
 from strategy.core.transitions import DirectTransition

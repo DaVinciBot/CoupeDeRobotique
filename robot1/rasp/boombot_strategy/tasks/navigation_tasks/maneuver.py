@@ -17,9 +17,7 @@ from navigation.avoidance.no_avoidance import NoAvoidanceParams
 from navigation.avoidance.stop_and_wait_avoidance import StopAndWaitAvoidanceParams
 from navigation.navigator.task import NavigatorTask, NavigatorTaskParams
 from navigation.path_planner import Direction
-from navigation.path_planner.basic_path_planner import (
-    BasicPathPlannerParams,
-)
+from navigation.path_planner.basic_path_planner import BasicPathPlannerParams
 from navigation.path_planner.delta_path_planner import DeltaPathPlannerParams
 from navigation.trajectory_planner.sequential_trajectory_planner import (
     SequentialTrajectoryPlannerParams,
