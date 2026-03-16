@@ -4,9 +4,7 @@ from typing import TYPE_CHECKING
 
 from a_config_loader import CONFIG
 from boombot_strategy.strategies.base_strategy import BaseStrategy
-from boombot_strategy.sub_graphs import (
-    get_cursor_alignment_forward_subgraph,
-)
+from boombot_strategy.sub_graphs import get_cursor_alignment_forward_subgraph
 from geometry import OrientedPoint
 from log_manager import LogLogger
 from strategy.core import GraphRunner

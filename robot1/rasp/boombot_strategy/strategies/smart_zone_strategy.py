@@ -23,9 +23,7 @@ from boombot_strategy.tasks.navigation_tasks import (
 from boombot_strategy.tasks.navigation_tasks.go_to_color_reserved_zone import (
     GoToColorReservedZoneToFinishGame,
 )
-from boombot_strategy.tasks.navigation_tasks.go_to_cursor_start import (
-    GoToCursorStart,
-)
+from boombot_strategy.tasks.navigation_tasks.go_to_cursor_start import GoToCursorStart
 from geometry import OrientedPoint
 from log_manager import LogLogger
 from strategy.core import GraphRunner
