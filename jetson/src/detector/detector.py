@@ -50,15 +50,17 @@ class ArucoDetector:
         self._arena_ax = None
         self._arena_canvas = None
 
-        # OpenCV 4.5.1 compatible API
         self.aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_100)
-        self.aruco_params = cv2.aruco.DetectorParameters_create()
+        if hasattr(cv2.aruco, "DetectorParameters_create"):
+            self.aruco_params = cv2.aruco.DetectorParameters_create()
+        else:
+            self.aruco_params = cv2.aruco.DetectorParameters()
 
         # CUDA désactivé : overhead transfert CPU↔GPU > gains sur petites images
         # Pour 1920x1080, le CPU est plus rapide que GPU+transferts
         self.use_cuda = False
 
-        if self.camera_matrix is None:
+        if self.camera_matrix is None and self.cam is not None:
             w, h = self.cam.get_resolution()
             if w and h:
                 fx = fy = (w / 2.0) / math.tan(
@@ -176,11 +178,11 @@ class ArucoDetector:
         if marker_id == empty_crate_id:
             return "Caisse vide"
         if aire_and_elements_ids[0] <= marker_id <= aire_and_elements_ids[-1]:
-            return "Aire de jeu et elements"
+            return "Aire de jeu / elements"
         if blue_reserve_ids[0] <= marker_id <= blue_reserve_ids[-1]:
-            return "Reserves Equipe Bleue"
+            return "Reserves Bleue"
         if yellow_reserve_ids[0] <= marker_id <= yellow_reserve_ids[-1]:
-            return "Reserves Equipe Jaune"
+            return "Reserves Jaune"
 
         return "ID invalide"
 
@@ -350,6 +352,7 @@ class ArucoDetector:
     ):
         import matplotlib.lines as mlines
         import matplotlib.pyplot as plt
+        import matplotlib.transforms as mtransforms
         from matplotlib import patches
 
         if self._arena_fig is None:
@@ -384,12 +387,95 @@ class ArucoDetector:
         cmap = plt.get_cmap("tab10")
         legend_handles = []
 
+        crate_ids = {blue_crate_id, yellow_crate_id, empty_crate_id}
+        crate_colors = {
+            blue_crate_id: "#1E90FF",
+            yellow_crate_id: "#FFD700",
+            empty_crate_id: "#222222",
+        }
+
+        starting_zone_blue = patches.Rectangle(
+            (0, 0),
+            600,
+            450,
+            linewidth=1.5,
+            edgecolor="k",
+            facecolor=crate_colors[blue_crate_id],
+            alpha=0.30,
+        )
+        self._arena_ax.add_patch(starting_zone_blue)
+        starting_zone_yellow = patches.Rectangle(
+            (2400, 0),
+            600,
+            450,
+            linewidth=1.5,
+            edgecolor="k",
+            facecolor=crate_colors[yellow_crate_id],
+            alpha=0.30,
+        )
+        self._arena_ax.add_patch(starting_zone_yellow)
+        grenier_zone = patches.Rectangle(
+            (600, 0),
+            1800,
+            400,
+            linewidth=1.5,
+            edgecolor="k",
+            facecolor="#34281A",
+            alpha=0.30,
+        )
+        self._arena_ax.add_patch(grenier_zone)
+        starting_zone_ninja_blue = patches.Rectangle(
+            (600, 0),
+            200,
+            200,
+            linewidth=1.5,
+            edgecolor="k",
+            facecolor=crate_colors[blue_crate_id],
+            alpha=0.30,
+        )
+        self._arena_ax.add_patch(starting_zone_ninja_blue)
+        starting_zone_ninja_yellow = patches.Rectangle(
+            (2200, 0),
+            200,
+            200,
+            linewidth=1.5,
+            edgecolor="k",
+            facecolor=crate_colors[yellow_crate_id],
+            alpha=0.30,
+        )
+        self._arena_ax.add_patch(starting_zone_ninja_yellow)
+
+        # zone de depot
+        depot_zone_x = [2200, 1400, 600, 2800, 2100, 1400, 700, 0, 1650, 1150]
+        depot_zone_y = [1800, 1800, 1800, 1100, 1100, 1100, 1100, 1100, 450, 450]
+        for x, y in zip(depot_zone_x, depot_zone_y):
+            depot_zone = patches.Rectangle(
+                (x, y),
+                200,
+                200,
+                linewidth=1.5,
+                edgecolor="k",
+                facecolor="#295E24",
+                alpha=0.30,
+            )
+            self._arena_ax.add_patch(depot_zone)
+
+        CRATE_W, CRATE_H = 150.0, 50.0  # mm (vue du dessus)
+        ARUCO_SIZE = 40.0  # mm
+
         for idx, (mid, pos_m, yaw) in enumerate(detected_world):
             if mid in self.ref_markers_world:
-                color = "green"
-                alpha = 0.6
+                color = "black"
+                edgecolor = "white"
+                alpha = 1
             else:
-                color = cmap(idx % 10)
+                if mid in blue_team_ids or mid in blue_reserve_ids:
+                    color = crate_colors[blue_crate_id]
+                elif mid in yellow_team_ids or mid in yellow_reserve_ids:
+                    color = crate_colors[yellow_crate_id]
+                else:
+                    color = cmap(idx % 10)
+                edgecolor = "k"
                 alpha = 0.9
 
             x_mm = float(pos_m[0]) * 1000.0
@@ -403,42 +489,98 @@ class ArucoDetector:
             ):
                 continue
 
-            s = 120.0
-            lower_left = (x_mm - s / 2.0, y_mm - s / 2.0)
-            square = patches.Rectangle(
-                lower_left,
-                s,
-                s,
-                linewidth=1,
-                edgecolor="k",
-                facecolor=color,
-                alpha=alpha,
-            )
-            self._arena_ax.add_patch(square)
+            if mid in crate_ids:
+                # Dessiner la caisse comme un rectangle réaliste
+                crate_color = crate_colors[mid]
+                transform = (
+                    mtransforms.Affine2D().rotate_around(x_mm, y_mm, yaw)
+                    + self._arena_ax.transData
+                )
+
+                # Rectangle extérieur (la caisse)
+                crate_rect = patches.Rectangle(
+                    (x_mm - CRATE_W / 2, y_mm - CRATE_H / 2),
+                    CRATE_W,
+                    CRATE_H,
+                    linewidth=1.5,
+                    edgecolor="k",
+                    facecolor=crate_color,
+                    alpha=0.85,
+                    transform=transform,
+                )
+                self._arena_ax.add_patch(crate_rect)
+
+                # Carré blanc au centre (fond de l'ArUco)
+                aruco_bg = patches.Rectangle(
+                    (x_mm - ARUCO_SIZE / 2, y_mm - ARUCO_SIZE / 2),
+                    ARUCO_SIZE,
+                    ARUCO_SIZE,
+                    linewidth=0,
+                    facecolor="white",
+                    transform=transform,
+                )
+                self._arena_ax.add_patch(aruco_bg)
+
+                # Motif noir au centre (tag ArUco simplifié)
+                inner = ARUCO_SIZE * 0.6
+                aruco_fg = patches.Rectangle(
+                    (x_mm - inner / 2, y_mm - inner / 2),
+                    inner,
+                    inner,
+                    linewidth=0,
+                    facecolor="black",
+                    transform=transform,
+                )
+                self._arena_ax.add_patch(aruco_fg)
+            else:
+                # Marqueurs génériques : carré 120mm
+                s = 100.0
+                lower_left = (x_mm - s / 2.0, y_mm - s / 2.0)
+                square = patches.Rectangle(
+                    lower_left,
+                    s,
+                    s,
+                    linewidth=1,
+                    edgecolor=edgecolor,
+                    facecolor=color,
+                    alpha=alpha,
+                )
+                self._arena_ax.add_patch(square)
 
             dx = math.cos(yaw) * arrow_len_mm
             dy = math.sin(yaw) * arrow_len_mm
-            self._arena_ax.arrow(
-                x_mm,
-                y_mm,
-                dx,
-                dy,
-                head_width=60,
-                head_length=60,
-                fc="k",
-                ec="k",
-                length_includes_head=True,
-            )
+            if mid not in crate_ids and mid not in self.ref_markers_world:
+                self._arena_ax.arrow(
+                    x_mm,
+                    y_mm,
+                    dx,
+                    dy,
+                    head_width=60,
+                    head_length=60,
+                    fc="k",
+                    ec="k",
+                    length_includes_head=True,
+                )
 
             name = self.convert_id_to_name(mid)
-            self._arena_ax.text(
-                x_mm + s / 2 + 6,
-                y_mm - s / 2 - 3,
-                f"{mid}: {name}\n({x_mm:.0f}, {y_mm:.0f})",
-                fontsize=9,
-                color="black",
-                verticalalignment="bottom",
-            )
+            if mid not in crate_ids:
+                self._arena_ax.text(
+                    x_mm + s / 2 + 6,
+                    y_mm - s / 2 - 3,
+                    f"{mid}: {name}\n({x_mm:.0f}, {y_mm:.0f})",
+                    fontsize=9,
+                    color="black",
+                    verticalalignment="bottom",
+                )
+            else:
+                self._arena_ax.text(
+                    x_mm + s / 2 + 6,
+                    y_mm - s / 4,
+                    f"({x_mm:.0f}, {y_mm:.0f})",
+                    fontsize=9,
+                    color="black",
+                    verticalalignment="bottom",
+                )
 
             handle = mlines.Line2D(
                 [],

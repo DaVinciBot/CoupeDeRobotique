@@ -66,6 +66,9 @@ DEBUG_MODE = parse_bool("DEBUG_MODE", False)
 SHOW_ARENA = parse_bool("SHOW_ARENA", True)
 SHOW_CAMERA_FEED = parse_bool("SHOW_CAMERA_FEED", True)
 
+DUMMY_LORA = parse_bool("DUMMY_LORA", False)
+DUMMY_DETECTION = parse_bool("DUMMY_DETECTION", False)
+
 CAMERA_ID = parse_int("CAMERA_ID", 0)
 
 # Paramètres de calibration
@@ -77,6 +80,100 @@ CHESSBOARD_COLS = parse_int("CHESSBOARD_COLS", 9)
 CHESSBOARD_ROWS = parse_int("CHESSBOARD_ROWS", 6)
 SQUARE_SIZE_CM = parse_float("SQUARE_SIZE_CM", 2.45)
 NUM_CALIB_IMAGES = parse_int("NUM_CALIB_IMAGES", 50)
+
+
+def generate_fake_detected_world():
+    """Génère des données de détection fictives pour le mode DUMMY_DETECTION."""
+    fake_data = [
+        # === 4 marqueurs de référence (positions fixes sur la table) ===
+        (20, np.array([0.600, 1.400]), math.pi / 2),
+        (21, np.array([2.400, 1.400]), math.pi / 2),
+        (22, np.array([0.600, 0.600]), math.pi / 2),
+        (23, np.array([2.400, 0.600]), math.pi / 2),
+        # === Robot principal bleu (ID 1) — se déplace avec jitter ===
+        (1, np.array([0.800, 1.000]), math.pi),
+        # === Robot principal jaune (ID 6) — se déplace avec jitter ===
+        (6, np.array([2.200, 1.000]), 0.0),
+        # === Caisses dans les zones de ramassage (4 caisses par zone) ===
+        # Zone de ramassage gauche-bas (~x=400, y=800)
+        (36, np.array([0.175, 0.725]), 0.0),
+        (47, np.array([0.175, 0.775]), 0.0),
+        (36, np.array([0.175, 0.825]), 0.0),
+        (47, np.array([0.175, 0.875]), 0.0),
+        # Zone de ramassage gauche-haut (~x=400, y=1200)
+        (36, np.array([0.175, 1.525]), 0.0),
+        (47, np.array([0.175, 1.575]), 0.0),
+        (36, np.array([0.175, 1.625]), 0.0),
+        (47, np.array([0.175, 1.675]), 0.0),
+        # Zone de ramassage centre-droite-haut (~x=1350, y=1800)
+        (36, np.array([1.175, 1.800]), math.pi / 2),
+        (36, np.array([1.125, 1.800]), math.pi / 2),
+        (47, np.array([1.075, 1.800]), math.pi / 2),
+        (47, np.array([1.025, 1.800]), math.pi / 2),
+        # Zone de ramassage centre-gauche-haut (~x=1650, y=1800)
+        (47, np.array([1.825, 1.800]), math.pi / 2),
+        (36, np.array([1.875, 1.800]), math.pi / 2),
+        (36, np.array([1.925, 1.800]), math.pi / 2),
+        (47, np.array([1.975, 1.800]), math.pi / 2),
+        # Zone de ramassage centre-droite-bas (~x=1350, y=1150)
+        (47, np.array([1.225, 1.200]), math.pi / 2),
+        (36, np.array([1.175, 1.200]), math.pi / 2),
+        (36, np.array([1.125, 1.200]), math.pi / 2),
+        (47, np.array([1.075, 1.200]), math.pi / 2),
+        # Zone de ramassage centre-gauche-bas (~x=1650, y=1150)
+        (47, np.array([1.775, 1.200]), math.pi / 2),
+        (47, np.array([1.825, 1.200]), math.pi / 2),
+        (36, np.array([1.875, 1.200]), math.pi / 2),
+        (36, np.array([1.925, 1.200]), math.pi / 2),
+        # Zone de ramassage droite-bas (~x=2600, y=800)
+        (36, np.array([2.825, 0.725]), 0.0),
+        (47, np.array([2.825, 0.775]), 0.0),
+        (36, np.array([2.825, 0.825]), 0.0),
+        (47, np.array([2.825, 0.875]), 0.0),
+        # Zone de ramassage droite-haut (~x=2600, y=1200)
+        (36, np.array([2.825, 1.525]), 0.0),
+        (47, np.array([2.825, 1.575]), 0.0),
+        (36, np.array([2.825, 1.625]), 0.0),
+        (47, np.array([2.825, 1.675]), 0.0),
+        # === Caisses vides dans les zones de chargement (à côté du grenier) ===
+        # Zone de chargement gauche (~x=500, y=200)
+        (41, np.array([2.250, 0.325]), math.pi / 2),
+        (41, np.array([2.200, 0.325]), math.pi / 2),
+        (41, np.array([2.150, 0.325]), math.pi / 2),
+        # Zone de chargement droite (~x=2450, y=200)
+        (41, np.array([0.750, 0.325]), math.pi / 2),
+        (41, np.array([0.800, 0.325]), math.pi / 2),
+        (41, np.array([0.850, 0.325]), math.pi / 2),
+        # Frigo numero 1
+        (47, np.array([1.075, 0.275]), math.pi / 2),
+        (36, np.array([1.125, 0.275]), math.pi / 2),
+        # Frigo numero 2
+        (47, np.array([1.925, 0.275]), math.pi / 2),
+        (36, np.array([1.875, 0.275]), math.pi / 2),
+        # Frigo numero 3
+        (47, np.array([1.325, 0.225]), math.pi / 2),
+        (36, np.array([1.375, 0.225]), math.pi / 2),
+        # Frigo numero 4
+        (47, np.array([1.625, 0.225]), math.pi / 2),
+        (36, np.array([1.675, 0.225]), math.pi / 2),
+    ]
+    # === 6 PAMIs bleus (IDs 51-56) — dans le nid bleu (arrière gauche) ===
+    # Nid bleu : x=0..600, y=0..450
+    for i, pami_id in enumerate(range(51, 57)):
+        fake_data.append((
+            pami_id,
+            np.array([0.100 + i % 3 * 0.11, 0.050 + i % 2 * 0.11]),
+            math.pi / 2,
+        ))
+    # === 6 PAMIs jaunes (IDs 71-76) — dans le nid jaune (arrière droite) ===
+    # Nid jaune : x=2400..3000, y=0..450
+    for i, pami_id in enumerate(range(71, 77)):
+        fake_data.append((
+            pami_id,
+            np.array([2.900 - i % 3 * 0.11, 0.050 + i % 2 * 0.11]),
+            math.pi / 2,
+        ))
+    return fake_data
 
 
 def calibrate_camera() -> None:
@@ -107,27 +204,43 @@ def detect_aruco() -> None:
     """Détection ArUco en temps réel."""
     print("\n=== MODE DÉTECTION ===\n")
 
-    # Initialiser la caméra
-    print("📷 Initialisation de la caméra...")
-    camera = CSICamera(CAMERA_ID)
+    # Initialiser la caméra et le détecteur
+    camera = None
+    detector = None
+    if not DUMMY_DETECTION:
+        print("📷 Initialisation de la caméra...")
+        camera = CSICamera(CAMERA_ID)
+        print("🔍 Initialisation du détecteur ArUco...")
+        detector = ArucoDetector(
+            camera,
+            camera_matrix=CAMERA_MATRIX,
+            dist_coeffs=DIST_COEFFS,
+            assumed_hfov_deg=ASSUMED_HFOV_DEG,
+        )
+    else:
+        print("📷 Caméra/Détection désactivés (DUMMY_DETECTION=True)")
+
+    # Détecteur minimal pour l'affichage arena en mode dummy
+    arena_detector = None
+    if DUMMY_DETECTION and SHOW_ARENA:
+        arena_detector = ArucoDetector(
+            None,
+            camera_matrix=CAMERA_MATRIX,
+            dist_coeffs=DIST_COEFFS,
+        )
 
     # Initialiser LoRa
-    print("📡 Initialisation de la carte LoRa...")
-    lora = LoRa(
-        port="/dev/ttyTHS1",
-        baudrate=115200,
-    )
-    lora.connect()
-    lora.start()
-
-    # Initialiser le détecteur (sans tailles de marqueurs)
-    print("🔍 Initialisation du détecteur ArUco...")
-    detector = ArucoDetector(
-        camera,
-        camera_matrix=CAMERA_MATRIX,
-        dist_coeffs=DIST_COEFFS,
-        assumed_hfov_deg=ASSUMED_HFOV_DEG,
-    )
+    lora = None
+    if not DUMMY_LORA:
+        print("📡 Initialisation de la carte LoRa...")
+        lora = LoRa(
+            port="/dev/ttyTHS1",
+            baudrate=115200,
+        )
+        lora.connect()
+        lora.start()
+    else:
+        print("📡 LoRa désactivé (DUMMY_LORA=True)")
 
     # Compteurs FPS
     frame_count = 0
@@ -135,7 +248,7 @@ def detect_aruco() -> None:
     fps_display = 0.0
 
     # Créer les fenêtres
-    if SHOW_CAMERA_FEED:
+    if SHOW_CAMERA_FEED and not DUMMY_DETECTION:
         cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
     if SHOW_ARENA:
         cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
@@ -144,18 +257,30 @@ def detect_aruco() -> None:
 
     try:
         while True:
-            # Lire la frame
-            frame = camera.read_frame(copy=SHOW_CAMERA_FEED)
-            if frame is None:
-                continue
+            if not DUMMY_DETECTION:
+                # Lire la frame
+                frame = camera.read_frame(copy=SHOW_CAMERA_FEED)
+                if frame is None:
+                    continue
 
-            # Détection ArUco
-            annotated_frame, detected_world = detector.analyze_frame(
-                frame,
-                show_arena=SHOW_ARENA,
-                arena_window_name="Arena",
-                show_video=SHOW_CAMERA_FEED,
-            )
+                # Détection ArUco
+                annotated_frame, detected_world = detector.analyze_frame(
+                    frame,
+                    show_arena=SHOW_ARENA,
+                    arena_window_name="Arena",
+                    show_video=SHOW_CAMERA_FEED,
+                )
+            else:
+                # Données fictives
+                detected_world = generate_fake_detected_world()
+                annotated_frame = None
+                # Affichage arena avec les faux marqueurs
+                if SHOW_ARENA and arena_detector is not None:
+                    arena_detector.update_arena_display(
+                        detected_world=detected_world,
+                        window_name="Arena",
+                    )
+                time.sleep(1.0 / 15)  # Simuler ~15 FPS
 
             # Calcul FPS (toutes les secondes)
             frame_count += 1
@@ -167,8 +292,8 @@ def detect_aruco() -> None:
                 frame_count = 0
                 start_time = current_time
 
-                # Stats debug
-                if DEBUG_MODE:
+                # Stats debug (caméra réelle uniquement)
+                if DEBUG_MODE and camera is not None:
                     stats = camera.get_stats()
                     print(
                         f"📊 FPS: Traitement={fps_display:.1f} | "
@@ -176,8 +301,8 @@ def detect_aruco() -> None:
                         f"Drops={stats['frames_dropped']}"
                     )
 
-            # Affichage feed caméra
-            if SHOW_CAMERA_FEED:
+            # Affichage feed caméra (détection réelle uniquement)
+            if SHOW_CAMERA_FEED and annotated_frame is not None:
                 cv2.putText(
                     annotated_frame,
                     f"FPS: {fps_display:.1f}",
@@ -198,17 +323,22 @@ def detect_aruco() -> None:
                         f"Angle={math.degrees(yaw):.1f}°",
                     )
 
-            # Formattage et envoi des données via LoRa (non bloquant)
+            # Formattage du message LoRa
             t = time.localtime()
             msg = f"CD_{t.tm_hour}:{t.tm_min}:{t.tm_sec}[\r\n"
             for marker_id, pos, yaw in detected_world:
                 deg = math.degrees(yaw)
                 msg += f'"{marker_id}|{pos[0]:.3f}|{pos[1]:.3f}|{deg:.1f}",\r\n'
             msg += "]\r\n"
-            lora.queue_send(msg)
+
+            # Envoi via LoRa ou affichage debug
+            if lora is not None:
+                lora.queue_send(msg)
+            elif DEBUG_MODE:
+                print(f"📡 [DUMMY_LORA] {msg.strip()}")
 
             # Gestion des touches (uniquement si fenêtres OpenCV ouvertes)
-            if SHOW_CAMERA_FEED or SHOW_ARENA:
+            if (SHOW_CAMERA_FEED and not DUMMY_DETECTION) or SHOW_ARENA:
                 key = cv2.waitKey(1) & 0xFF
                 if key == 27 or key == ord("q"):
                     break
@@ -216,10 +346,12 @@ def detect_aruco() -> None:
     finally:
         print("\n🛑 Arrêt de la détection")
         plt.close("all")
-        camera.release()
+        if camera is not None:
+            camera.release()
         cv2.destroyAllWindows()
-        lora.stop()
-        lora.disconnect()
+        if lora is not None:
+            lora.stop()
+            lora.disconnect()
 
 
 if __name__ == "__main__":
