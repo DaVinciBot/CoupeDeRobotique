@@ -59,6 +59,10 @@ bool canStart = false;  // Flag to indicate if navigation can start
 long dt = 0;
 long lastTimerrrr = 0;
 
+// Test point lointain pour rolling basis (2000mm x 2000mm, 0 rad)
+Point targetPoint = {2000, 2000, 0};
+bool commandSent = false;
+
 void navigationUpdate() {
     //navigation->update();  // Update rolling basis
     if (ACS) {
@@ -159,12 +163,17 @@ void setup() {
 long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
 
-    if (millis() - lastTime > 2 &&
-        canStart)  // Check if 2ms have passed since the last navigation update
+    if (millis() - lastTime > 2)
     {
-        //navigationUpdate();  // Call navigation update function
-        leftMotor->_doOneStep();   // Call motor step function to execute one step for each motor
-        rightMotor->_doOneStep();
+        // Envoyer la commande au point distant une seule fois
+        if (!commandSent) {
+            rollingBasis->setCommand(targetPoint);
+            commandSent = true;
+            Serial.println("Navigating to distant point...");
+        }
+        
+        // Update rolling basis et les deux moteurs
+        rollingBasis->update();
         lastTime = millis();
     }
     //lidar->update();
