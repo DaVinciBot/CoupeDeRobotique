@@ -20,11 +20,11 @@ RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               WHEEL_BASE_MM,
                                               Point{0, 0, 0});
 
-Navigation* navigation = new Navigation(
-    rollingBasis,
-    15000);  // Navigation object with 100ms interval and 15s timeout
+//Navigation* navigation = new Navigation(
+//    rollingBasis,
+//    15000);  // Navigation object with 100ms interval and 15s timeout
 
-lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
+//lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
 
 #if ENABLE_OTA
 #include "OTA.h"
@@ -60,7 +60,7 @@ long dt = 0;
 long lastTimerrrr = 0;
 
 void navigationUpdate() {
-    navigation->update();  // Update rolling basis
+    //navigation->update();  // Update rolling basis
     if (ACS) {
         if (oldACS)
             return;
@@ -70,7 +70,7 @@ void navigationUpdate() {
         if (currentIndex < 0) {
             currentIndex = 0;  // Prevent index from going negative
         }
-        navigation->stop();  // Stop rolling basis if ACS is true
+        //navigation->stop();  // Stop rolling basis if ACS is true
     } else {
         oldACS = ACS;  // Update oldACS to current ACS state
         if (dt < 20000) {
@@ -80,20 +80,20 @@ void navigationUpdate() {
             lastTimerrrr = millis();
         } else {
             Serial.println("All points navigated, stopping navigation.");
-            navigation->stop();  // Stop navigation if all points are navigated
+            //navigation->stop();  // Stop navigation if all points are navigated
                                  // start SERVO
         }
     }
 }
 
-void lidarUpdate() {
+/*void lidarUpdate() {
     if (lidar->obstacleAhead(ACS_TRESHOLD))  // Check if an obstacle is ahead
     {
         ACS = true;  // Activate ACS if an obstacle is detected
     } else {
         ACS = false;  // Deactivate ACS if no obstacle is detected
     }
-}
+}*/
 
 void setup() {
     delay(5000);  // pour le serial monitor
@@ -102,7 +102,7 @@ void setup() {
     Serial.begin(115200);
     Serial.println("\n-- PAMI test --\n");
 
-    lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
+    /*lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
     lidar->onReceive([]() {
         if (!canStart) {
             t_two = t_one;
@@ -119,7 +119,7 @@ void setup() {
         } else {
             lidarUpdate();  // Call lidar update function when data is received
         }
-    });
+    });*/
     Serial.println("LIDAR initialized");
     delay(100);  // Wait for LIDAR to stabilize
 #if ENABLE_OTA
@@ -128,7 +128,7 @@ void setup() {
     server.begin();
 #endif
 #if ENABLE_LORA
-    isInit = com->begin(SS, RST, BUSY);
+    //isInit = com->begin(SS, RST, BUSY);
     // initialize_callback_functions();
     if (isInit) {
         Serial.println("LoRa initialized");
@@ -158,13 +158,16 @@ void setup() {
 
 long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
+
     if (millis() - lastTime > 2 &&
         canStart)  // Check if 2ms have passed since the last navigation update
     {
-        navigationUpdate();  // Call navigation update function
+        //navigationUpdate();  // Call navigation update function
+        leftMotor->_doOneStep();   // Call motor step function to execute one step for each motor
+        rightMotor->_doOneStep();
         lastTime = millis();
     }
-    lidar->update();
+    //lidar->update();
 #if ENABLE_OTA
     ota.loop();
 #endif
@@ -172,7 +175,7 @@ void loop() {
     if (isInit) {
     }  // com->handle_callback(callback_functions);
     else {
-        isInit = com->begin(SS, RST, BUSY);
+        //isInit = com->begin(SS, RST, BUSY);
         if (isInit) {
             Serial.println("LoRa re-initialized");
         } else {

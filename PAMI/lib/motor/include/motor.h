@@ -49,7 +49,11 @@ class Motor {
           unsigned int stepsPerRevolution,
           unsigned int pulse_us,
           bool invertDirection = false);
-
+/**
+     * @brief Perform one step pulse (high-low toggle).
+     *
+     */
+    void _doOneStep();
     /**
      * @brief Destroy the Motor object
      *
@@ -161,11 +165,7 @@ class Motor {
      */
     void _setDirection(bool clockwise);
 
-    /**
-     * @brief Perform one step pulse (high-low toggle).
-     *
-     */
-    void _doOneStep();
+    
 };
 
 #endif
