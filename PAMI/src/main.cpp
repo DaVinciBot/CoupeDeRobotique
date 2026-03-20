@@ -59,8 +59,7 @@ bool canStart = false;  // Flag to indicate if navigation can start
 long dt = 0;
 long lastTimerrrr = 0;
 
-// Test point pour navigation - aller à (0, 100)
-Point targetPoint = {100, 0, 0};
+
 
 void navigationUpdate() {
     //navigation->update();  // Update rolling basis
@@ -104,6 +103,8 @@ void setup() {
 
     Serial.begin(115200);
     Serial.println("\n-- PAMI test --\n");
+    // Test point pour navigation - aller à (100, 0) normalement tout droit
+    Point targetPoint = {100, 0, 0};
     navigation->setCommand(targetPoint);
 
     /*lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
@@ -167,7 +168,7 @@ void loop() {
     if (millis() - lastTime > 2)
     {
         
-        // Envoyer la commande au point (0, 100) une seule fois
+        
         
         // Update navigation
         navigation->update();

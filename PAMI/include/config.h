@@ -19,7 +19,7 @@
 #define RIGHT_STEPS_PER_REV 400  // Steps per revolution for right motor
 
 #define PULSE_US 500             // Pulse width in microseconds for motor steps
-#define WHEEL_DIAMETER_MM 60.0f  // Wheel diameter in mm
+#define WHEEL_DIAMETER_MM 62.0f  // Wheel diameter in mm
 #define WHEEL_BASE_MM 132.0f     // Distance between the two wheels in mm
 
 #define MAX_LINEAR_SPEED_MM_PER_S 10     // Maximum linear speed in mm/s
