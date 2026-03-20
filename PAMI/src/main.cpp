@@ -5,14 +5,14 @@ Motor* leftMotor = new Motor(LEFT_STEP_PIN,       // Broche 19
                              LEFT_EN_PIN,         // Broche enable
                              LEFT_STEPS_PER_REV,  // Steps par tour
                              PULSE_US,
-                             true);
+                             false);
 
 Motor* rightMotor = new Motor(RIGHT_STEP_PIN,       // Broche 17
                               RIGHT_DIR_PIN,        // Broche 16
                               RIGHT_EN_PIN,         // Broche enable
                               RIGHT_STEPS_PER_REV,  // Steps par tour
                               PULSE_US,
-                              false);
+                              true);
 
 RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               rightMotor,
@@ -20,9 +20,9 @@ RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               WHEEL_BASE_MM,
                                               Point{0, 0, 0});
 
-//Navigation* navigation = new Navigation(
-//    rollingBasis,
-//    15000);  // Navigation object with 100ms interval and 15s timeout
+Navigation* navigation = new Navigation(
+    rollingBasis,
+    15000);  // Navigation object with 100ms interval and 15s timeout
 
 //lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
 
@@ -59,16 +59,15 @@ bool canStart = false;  // Flag to indicate if navigation can start
 long dt = 0;
 long lastTimerrrr = 0;
 
-// Test point lointain pour rolling basis (2000mm x 2000mm, 0 rad)
-Point targetPoint = {2000, 2000, 0};
-bool commandSent = false;
+// Test point pour navigation - aller à (0, 100)
+Point targetPoint = {100, 0, 0};
 
 void navigationUpdate() {
     //navigation->update();  // Update rolling basis
     if (ACS) {
         if (oldACS)
             return;
-        Serial.println("ACS activated, stopping rolling basis.");
+        //Serial.println("ACS activated, stopping rolling basis.");
         oldACS = ACS;    // Update oldACS to current ACS state
         currentIndex--;  // Decrement index if ACS is true
         if (currentIndex < 0) {
@@ -78,7 +77,7 @@ void navigationUpdate() {
     } else {
         oldACS = ACS;  // Update oldACS to current ACS state
         if (dt < 20000) {
-            leftMotor->setTargetSpeed(4000.0f * 3);
+            leftMotor->setTargetSpeed(4000.0f);
             rightMotor->setTargetSpeed(4000.0f);
             dt += millis() - lastTimerrrr;
             lastTimerrrr = millis();
@@ -105,6 +104,7 @@ void setup() {
 
     Serial.begin(115200);
     Serial.println("\n-- PAMI test --\n");
+    navigation->setCommand(targetPoint);
 
     /*lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
     lidar->onReceive([]() {
@@ -162,18 +162,15 @@ void setup() {
 
 long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
+    
 
     if (millis() - lastTime > 2)
     {
-        // Envoyer la commande au point distant une seule fois
-        if (!commandSent) {
-            rollingBasis->setCommand(targetPoint);
-            commandSent = true;
-            Serial.println("Navigating to distant point...");
-        }
         
-        // Update rolling basis et les deux moteurs
-        rollingBasis->update();
+        // Envoyer la commande au point (0, 100) une seule fois
+        
+        // Update navigation
+        navigation->update();
         lastTime = millis();
     }
     //lidar->update();
@@ -186,9 +183,9 @@ void loop() {
     else {
         //isInit = com->begin(SS, RST, BUSY);
         if (isInit) {
-            Serial.println("LoRa re-initialized");
+            //Serial.println("LoRa re-initialized");
         } else {
-            Serial.println("[ERROR] LoRa re-initialization failed");
+            //Serial.println("[ERROR] LoRa re-initialization failed");
         }
     }
 

@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "lidar_pami.h"
 #include "motor.h"
-//#include "navigation.h"
+#include "navigation.h"
 #include "rolling_basis.h"
 
 // #------- GENERAL CONFIGURATION -------#
