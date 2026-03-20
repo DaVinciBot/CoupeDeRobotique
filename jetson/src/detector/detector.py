@@ -6,6 +6,7 @@ from typing import Optional
 
 import cv2
 import numpy as np
+from src.arena import arena_elements
 from src.camera import CSICamera
 from src.utils.timing import timer
 
@@ -395,22 +396,28 @@ class ArucoDetector:
         }
 
         starting_zone_blue = patches.Rectangle(
-            (0, 0),
-            600,
-            450,
+            (
+                arena_elements["starting_zone"]["blue"]["position"][0] * 1000,
+                arena_elements["starting_zone"]["blue"]["position"][1] * 1000,
+            ),
+            arena_elements["starting_zone"]["blue"]["width"] * 1000,
+            arena_elements["starting_zone"]["blue"]["height"] * 1000,
             linewidth=1.5,
             edgecolor="k",
-            facecolor=crate_colors[blue_crate_id],
+            facecolor=arena_elements["starting_zone"]["blue"]["color"],
             alpha=0.30,
         )
         self._arena_ax.add_patch(starting_zone_blue)
         starting_zone_yellow = patches.Rectangle(
-            (2400, 0),
-            600,
-            450,
+            (
+                arena_elements["starting_zone"]["yellow"]["position"][0] * 1000,
+                arena_elements["starting_zone"]["yellow"]["position"][1] * 1000,
+            ),
+            arena_elements["starting_zone"]["yellow"]["width"] * 1000,
+            arena_elements["starting_zone"]["yellow"]["height"] * 1000,
             linewidth=1.5,
             edgecolor="k",
-            facecolor=crate_colors[yellow_crate_id],
+            facecolor=arena_elements["starting_zone"]["yellow"]["color"],
             alpha=0.30,
         )
         self._arena_ax.add_patch(starting_zone_yellow)
@@ -446,19 +453,49 @@ class ArucoDetector:
         self._arena_ax.add_patch(starting_zone_ninja_yellow)
 
         # zone de depot
-        depot_zone_x = [2200, 1400, 600, 2800, 2100, 1400, 700, 0, 1650, 1150]
-        depot_zone_y = [1800, 1800, 1800, 1100, 1100, 1100, 1100, 1100, 450, 450]
-        for x, y in zip(depot_zone_x, depot_zone_y):
+        for zone in arena_elements["zone_depot"]:
             depot_zone = patches.Rectangle(
-                (x, y),
-                200,
-                200,
+                (zone["position"][0] * 1000, zone["position"][1] * 1000),
+                zone["width"] * 1000,
+                zone["height"] * 1000,
                 linewidth=1.5,
                 edgecolor="k",
-                facecolor="#295E24",
+                facecolor=zone["color"],
                 alpha=0.30,
             )
             self._arena_ax.add_patch(depot_zone)
+
+            self._arena_ax.text(
+                zone["position"][0] * 1000 + zone["width"] * 1000 / 2,
+                zone["position"][1] * 1000 + zone["height"] * 1000 / 2,
+                f"{zone['id_zone']}",
+                fontsize=15,
+                color="black",
+                ha="center",
+                va="center",
+            )
+
+        for zone in arena_elements["zone_ramassage"]:
+            zone_ramassage = patches.Rectangle(
+                (zone["position"][0] * 1000, zone["position"][1] * 1000),
+                zone["width"] * 1000,
+                zone["height"] * 1000,
+                linewidth=1.5,
+                edgecolor="k",
+                facecolor=zone["color"],
+                alpha=0.30,
+            )
+            self._arena_ax.add_patch(zone_ramassage)
+
+            self._arena_ax.text(
+                zone["position"][0] * 1000 + zone["width"] * 1000 / 2,
+                zone["position"][1] * 1000 + zone["height"] * 1000 / 2,
+                f"{zone['id_zone']}",
+                fontsize=15,
+                color="black",
+                ha="center",
+                va="center",
+            )
 
         CRATE_W, CRATE_H = 150.0, 50.0  # mm (vue du dessus)
         ARUCO_SIZE = 40.0  # mm
