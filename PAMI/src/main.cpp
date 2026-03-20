@@ -104,7 +104,7 @@ void setup() {
     Serial.begin(115200);
     Serial.println("\n-- PAMI test --\n");
     // Test point pour navigation - aller à (100, 0) normalement tout droit
-    Point targetPoint = {100, 0, 0};
+    Point targetPoint = {200, 0, 0};
     navigation->setCommand(targetPoint);
 
     /*lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR

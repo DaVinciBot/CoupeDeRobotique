@@ -15,7 +15,7 @@ RollingBasis::RollingBasis(Motor* leftMotor,
       _wheelBaseMm(wheelBaseMm),
       _currentPose(initialPosition)
 {
-    _linearSpeed = 20.0f;
+    _linearSpeed = 23.0f; //ne sert a rien a part pour déterminer le temps qu'il met pour avancer ?? dcp c un peu une valeur magique
     _angularSpeed = 1.5f;
     _phase = Phase::Idle;
     _rotateDuration = 0.0f;
