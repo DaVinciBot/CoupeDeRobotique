@@ -85,88 +85,86 @@ NUM_CALIB_IMAGES = parse_int("NUM_CALIB_IMAGES", 50)
 def generate_fake_detected_world():
     """Génère des données de détection fictives pour le mode DUMMY_DETECTION."""
     fake_data = [
-        # === 4 marqueurs de référence (positions fixes sur la table) ===
+        # === 4 marqueurs de référence ===
         (20, np.array([0.600, 1.400]), math.pi / 2),
         (21, np.array([2.400, 1.400]), math.pi / 2),
         (22, np.array([0.600, 0.600]), math.pi / 2),
         (23, np.array([2.400, 0.600]), math.pi / 2),
-        # === Robot principal bleu (ID 1) — se déplace avec jitter ===
+        # === Robot principal bleu (ID 1) ===
         (1, np.array([0.800, 1.000]), math.pi),
-        # === Robot principal jaune (ID 6) — se déplace avec jitter ===
+        # === Robot principal jaune (ID 6) ===
         (6, np.array([2.200, 1.000]), 0.0),
-        # === Caisses dans les zones de ramassage (4 caisses par zone) ===
-        # Zone de ramassage gauche-bas (~x=400, y=800)
+        # === Caisses dans les zones de ramassage ===
+        # Zone de ramassage
         (36, np.array([0.175, 0.725]), 0.0),
         (47, np.array([0.175, 0.775]), 0.0),
         (36, np.array([0.175, 0.825]), 0.0),
         (47, np.array([0.175, 0.875]), 0.0),
-        # Zone de ramassage gauche-haut (~x=400, y=1200)
+        # Zone de ramassage
         (36, np.array([0.175, 1.525]), 0.0),
         (47, np.array([0.175, 1.575]), 0.0),
         (36, np.array([0.175, 1.625]), 0.0),
         (47, np.array([0.175, 1.675]), 0.0),
-        # Zone de ramassage centre-droite-haut (~x=1350, y=1800)
+        # Zone de ramassage
         (36, np.array([1.175, 1.800]), math.pi / 2),
         (36, np.array([1.125, 1.800]), math.pi / 2),
         (47, np.array([1.075, 1.800]), math.pi / 2),
         (47, np.array([1.025, 1.800]), math.pi / 2),
-        # Zone de ramassage centre-gauche-haut (~x=1650, y=1800)
+        # Zone de ramassage
         (47, np.array([1.825, 1.800]), math.pi / 2),
         (36, np.array([1.875, 1.800]), math.pi / 2),
         (36, np.array([1.925, 1.800]), math.pi / 2),
         (47, np.array([1.975, 1.800]), math.pi / 2),
-        # Zone de ramassage centre-droite-bas (~x=1350, y=1150)
+        # Zone de ramassage
         (47, np.array([1.225, 1.200]), math.pi / 2),
         (36, np.array([1.175, 1.200]), math.pi / 2),
         (36, np.array([1.125, 1.200]), math.pi / 2),
         (47, np.array([1.075, 1.200]), math.pi / 2),
-        # Zone de ramassage centre-gauche-bas (~x=1650, y=1150)
+        # Zone de ramassage
         (47, np.array([1.775, 1.200]), math.pi / 2),
         (47, np.array([1.825, 1.200]), math.pi / 2),
         (36, np.array([1.875, 1.200]), math.pi / 2),
         (36, np.array([1.925, 1.200]), math.pi / 2),
-        # Zone de ramassage droite-bas (~x=2600, y=800)
+        # Zone de ramassage
         (36, np.array([2.825, 0.725]), 0.0),
         (47, np.array([2.825, 0.775]), 0.0),
         (36, np.array([2.825, 0.825]), 0.0),
         (47, np.array([2.825, 0.875]), 0.0),
-        # Zone de ramassage droite-haut (~x=2600, y=1200)
+        # Zone de ramassage
         (36, np.array([2.825, 1.525]), 0.0),
         (47, np.array([2.825, 1.575]), 0.0),
         (36, np.array([2.825, 1.625]), 0.0),
         (47, np.array([2.825, 1.675]), 0.0),
-        # === Caisses vides dans les zones de chargement (à côté du grenier) ===
-        # Zone de chargement gauche (~x=500, y=200)
+        # === Caisses vides dans les zones de chargement ===
+        # Zone de chargement
         (41, np.array([2.250, 0.325]), math.pi / 2),
         (41, np.array([2.200, 0.325]), math.pi / 2),
         (41, np.array([2.150, 0.325]), math.pi / 2),
-        # Zone de chargement droite (~x=2450, y=200)
+        # Zone de chargement
         (41, np.array([0.750, 0.325]), math.pi / 2),
         (41, np.array([0.800, 0.325]), math.pi / 2),
         (41, np.array([0.850, 0.325]), math.pi / 2),
-        # Frigo numero 1
+        # Zone de frigo
         (47, np.array([1.075, 0.275]), math.pi / 2),
         (36, np.array([1.125, 0.275]), math.pi / 2),
-        # Frigo numero 2
+        # Zone de frigo
         (47, np.array([1.925, 0.275]), math.pi / 2),
         (36, np.array([1.875, 0.275]), math.pi / 2),
-        # Frigo numero 3
+        # Zone de frigo
         (47, np.array([1.325, 0.225]), math.pi / 2),
         (36, np.array([1.375, 0.225]), math.pi / 2),
-        # Frigo numero 4
+        # Zone de frigo
         (47, np.array([1.625, 0.225]), math.pi / 2),
         (36, np.array([1.675, 0.225]), math.pi / 2),
     ]
-    # === 6 PAMIs bleus (IDs 51-56) — dans le nid bleu (arrière gauche) ===
-    # Nid bleu : x=0..600, y=0..450
+    # === 6 PAMIs bleus (IDs 51-56) — dans le nid bleu ===
     for i, pami_id in enumerate(range(51, 57)):
         fake_data.append((
             pami_id,
             np.array([0.100 + i % 3 * 0.11, 0.050 + i % 2 * 0.11]),
             math.pi / 2,
         ))
-    # === 6 PAMIs jaunes (IDs 71-76) — dans le nid jaune (arrière droite) ===
-    # Nid jaune : x=2400..3000, y=0..450
+    # === 6 PAMIs jaunes (IDs 71-76) — dans le nid jaune ===
     for i, pami_id in enumerate(range(71, 77)):
         fake_data.append((
             pami_id,
