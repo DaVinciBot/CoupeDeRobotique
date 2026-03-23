@@ -139,12 +139,36 @@ struct msg_reset_teensy {
 // teensy -> rasp : 128-255
 
 // Rolling Basis
+#pragma pack(push, 1)
 struct msg_update_rolling_basis {
-    byte command = UPDATE_ROLLING_BASIS;
+    byte command = UPDATE_ROLLING_BASIS; // UPDATE_ROLLING_BASIS
+
+    // Odométrie et Vitesses (8 octets par double sur Teensy 4.x)
     double x;
     double y;
     double theta;
+    double linear_speed;
+    double angular_speed;
+
+    // Erreurs et Corrections PID
+    double err_lin;
+    double err_ang;
+    double corr_lin;
+    double corr_ang;
+
+    // État des moteurs
+    double left_pwm;
+    double right_pwm;
+
+    // Consignes actuelles (pour un plot synchronisé !)
+    double target_lin;
+    double target_ang;
+
+    // Debug matériel
+    int32_t left_ticks;
+    int32_t right_ticks;
 };
+#pragma pack(pop)
 
 // Actuators
 struct msg_switch_state_return {

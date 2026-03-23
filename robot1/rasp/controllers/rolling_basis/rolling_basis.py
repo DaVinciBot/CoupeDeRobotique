@@ -15,6 +15,8 @@ from geometry import OrientedPoint
 from teensy import BaseComTeensy
 from usb_com.python import Messages
 
+from collections import deque
+
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
@@ -89,6 +91,26 @@ class RollingBasis(BaseComTeensy):
         time.sleep(0.01)  # Avoid overload
         self.reset_teensy_and_reinit()
 
+        self._logs = []
+
+        self.linear_velocity : float = 0
+        self.angular_velocity : float = 0
+        self.last_linear_error: float = 0.0
+        self.last_angular_error: float = 0.0
+        self.last_linear_correction: float = 0.0
+        self.last_angular_correction: float = 0.0
+        self.left_pwm: int = 0
+        self.right_pwm: int = 0
+        self.left_ticks: int = 0
+        self.right_ticks: int = 0
+
+        # On limite à 10 000 points (environ 8 min à 20Hz)
+        self._logs = deque(maxlen=10000)
+
+        # On stocke la dernière consigne envoyée pour l'associer au prochain feedback
+        self._current_target_lin = 0.0
+        self._current_target_ang = 0.0
+
     # region ====== Message Receiving Handlers ======
 
     def rcv_print(self, msg: bytes) -> None:
@@ -101,27 +123,41 @@ class RollingBasis(BaseComTeensy):
             f"[CTRL:RB:Teensy] {msg.decode('ascii', errors='ignore')}",
         )
 
-    def rcv_rolling_basis_state(
-        self,
-        msg: bytes,
-    ) -> None:  # TODO: teensy send correct odometrie / speed
-        """Handles rolling basis state update messages from the Teensy.
+    def rcv_rolling_basis_state(self, msg: bytes) -> None:
+        # Format : 1 byte (cmd) + 13 doubles (d) + 2 int32 (i)
+        # Taille totale attendue : 1 + (13 * 8) + (2 * 4) = 113 octets
+        expected_size = 113
 
-        The message contains:
-        - float x: X-coordinate of the position (4 bytes).
-        - float y: Y-coordinate of the position (4 bytes).
-        - float theta: Orientation (4 bytes).
-        - float current_linear_speed: Current linear speed (4 bytes).
-        - float current_angular_speed: Current angular speed (4 bytes).
+        if len(msg) < expected_size:
+            return
 
-        Args:
-            msg (bytes): The received message bytes.
-        """
-        # Position / odometrie
-        self.odometrie = OrientedPoint(
-            (struct.unpack("<d", msg[0:8])[0], struct.unpack("<d", msg[8:16])[0]),
-            struct.unpack("<d", msg[16:24])[0],
-        )
+        try:
+            # On unpack à partir de l'index 1 (on saute l'ID du message)
+            data = struct.unpack("<dddddddddddddii", msg[1:expected_size])
+
+            # Mise à jour des objets
+            self.odometrie = OrientedPoint((data[0], data[1]), data[2])
+            self.linear_velocity = data[3]
+            self.angular_velocity = data[4]
+            self.last_linear_error = data[5]
+            self.last_angular_error = data[6]
+            self.last_linear_correction = data[7]
+            self.last_angular_correction = data[8]
+            self.left_pwm = data[9]
+            self.right_pwm = data[10]
+
+            # On utilise les targets venant du feedback pour plus de précision
+            self._current_target_lin = data[11]
+            self._current_target_ang = data[12]
+
+            self.left_ticks = data[13]
+            self.right_ticks = data[14]
+
+            self._log_entry()
+
+        except struct.error as e:
+            self._logger.error(f"Erreur unpack: {e}")
+
 
     def rcv_unknown_msg(self, msg: bytes) -> None:
         """Handles unknown messages from the Teensy.
@@ -166,24 +202,15 @@ class RollingBasis(BaseComTeensy):
 
     # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_target_velocity(self, cmd: TrajectoryPlanCommand) -> None:
-        """Send a command to set the target velocity of the rolling basis.
+        """Envoi de consigne et mise à jour de la consigne locale."""
+        self._current_target_lin = cmd.linear_speed
+        self._current_target_ang = cmd.angular_speed
 
-        Args:
-            cmd (TrajectoryPlanCommand): The command containing target velocities
-                (linear in cm/s, angular in rad/s).
-        """
-        self._logger.info(
-            f"[CTRL:RB] Setting target velocities: "
-            f"linear_speed={cmd.linear_speed}, angular_speed={cmd.angular_speed}",
-        )
         msg = (
-            Messages.SET_TARGET_VELOCITY.to_bytes()
-            + struct.pack("<d", cmd.linear_speed)
-            + struct.pack("<d", cmd.angular_speed)
+                Messages.SET_TARGET_VELOCITY.to_bytes()
+                + struct.pack("<d", cmd.linear_speed)
+                + struct.pack("<d", cmd.angular_speed)
         )
-
-        # Send the composed message to the Teensy
-        # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
 
     def set_target_pose(
@@ -371,6 +398,86 @@ class RollingBasis(BaseComTeensy):
             self._logger.error(f"[CTRL:RB] Failed to initialize PIDs: {e}")
 
     # endregion
+
+    def _log_entry(self) -> None:
+        """Enregistre les données synchronisées avec le feedback du Teensy."""
+        entry = {
+            "time": time.time(),
+            "target_lin": self._current_target_lin,
+            "target_ang": self._current_target_ang,
+            "actual_x": self.odometrie.x,
+            "actual_y": self.odometrie.y,
+            "actual_theta": self.odometrie.theta,
+            "err_lin": self.last_linear_error,
+            "err_ang": self.last_angular_error,
+            "corr_lin": self.last_linear_correction,
+            "corr_ang": self.last_angular_correction,
+            "left_pwm": self.left_pwm,
+            "right_pwm": self.right_pwm,
+            "left_ticks": self.left_ticks,
+            "right_ticks": self.right_ticks,
+        }
+        self._logs.append(entry)
+
+    def plot_logs(self):
+        """Génère un dashboard complet pour le diagnostic du comportement du robot."""
+        if not self._logs:
+            self._logger.warning("[CTRL:RB] Aucun log à tracer.")
+            return
+
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        # Conversion en dictionnaire de listes pour manipulation facile
+        # On utilise list() car self._logs est une deque
+        data = {k: [d[k] for d in self._logs] for k in self._logs[0].keys()}
+
+        t0 = data["time"][0]
+        times = np.array(data["time"]) - t0
+
+        # Création de la figure avec une grille personnalisée
+        fig, axs = plt.subplots(4, 2, figsize=(15, 12), sharex=True)
+        fig.suptitle(f"Diagnostic Rolling Basis - {time.strftime('%H:%M:%S')}", fontsize=16)
+
+        # --- 1. VITESSE LINÉAIRE (Target vs Actual) ---
+        axs[0, 0].plot(times, data["target_lin"], 'r--', label="Consigne", alpha=0.8)
+        # Note: Assurez-vous que 'actual_lin' est bien envoyé par la Teensy
+        # Si non, on peut utiliser une approximation ou juste l'erreur.
+        axs[0, 0].set_title("Vitesse Linéaire (cm/s)")
+        axs[0, 0].legend()
+        axs[0, 0].grid(True, which='both', linestyle='--', alpha=0.5)
+
+        # --- 2. VITESSE ANGULAIRE (Target vs Actual) ---
+        axs[0, 1].plot(times, data["target_ang"], 'r--', label="Consigne", alpha=0.8)
+        axs[0, 1].set_title("Vitesse Angulaire (rad/s)")
+        axs[0, 1].legend()
+        axs[0, 1].grid(True, linestyle='--', alpha=0.5)
+
+        # --- 3. ERREURS PID ---
+        axs[1, 0].plot(times, data["err_lin"], color='tab:orange', label="Erreur Lin")
+        axs[1, 0].set_title("Erreur de suivi Linéaire")
+        axs[1, 0].axhline(0, color='black', lw=1)
+        axs[1, 0].legend()
+        axs[1, 0].grid(True)
+
+        axs[1, 1].plot(times, data["err_ang"], color='tab:purple', label="Erreur Ang")
+        axs[1, 1].set_title("Erreur de suivi Angulaire")
+        axs[1, 1].axhline(0, color='black', lw=1)
+        axs[1, 1].legend()
+        axs[1, 1].grid(True)
+
+        # --- 4. SORTIES PID (CORRECTIONS) ---
+        axs[2, 0].plot(times, data["corr_lin"], color='tab:green', label="Correction Lin")
+        axs[2, 0].set_title("Sortie PID Linéaire")
+        axs[2, 0].legend()
+        axs[2, 0].grid(True)
+
+        axs[2, 1].plot(times, data["corr_ang"], color='tab:olive', label="Correction Ang")
+        axs[2, 1].set_title("Sortie PID Angulaire")
+        axs[2, 1].legend()
+        axs[2, 1].grid(True)
+
+        # --- 5.
 
     # region ====== Built-in methods ======
 

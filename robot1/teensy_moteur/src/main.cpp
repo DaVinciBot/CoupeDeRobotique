@@ -218,32 +218,31 @@ void loop() {
 
     static uint32_t last_pwm_log_ms = 0;
     uint32_t now_ms = millis();
-    if (now_ms - last_pwm_log_ms >= 200) {
-        int16_t right_pwm = 0;
-        int16_t left_pwm = 0;
-        long right_ticks = 0;
-        long left_ticks = 0;
-        double target_lin = 0.0;
-        double target_ang = 0.0;
-        double v_lin = 0.0;
-        double v_ang = 0.0;
-        double err_lin = 0.0;
-        double err_ang = 0.0;
-        double corr_lin = 0.0;
-        double corr_ang = 0.0;
+    if (now_ms - last_pwm_log_ms >= 50) { // On peut monter à 20Hz (50ms) sans souci
+        msg_update_rolling_basis update_msg;
+
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-            right_pwm = rolling_basis_ptr->right_motor->last_pwm;
-            left_pwm = rolling_basis_ptr->left_motor->last_pwm;
-            right_ticks = rolling_basis_ptr->right_motor->ticks;
-            left_ticks = rolling_basis_ptr->left_motor->ticks;
-            target_lin = target_velocity.linear;
-            target_ang = target_velocity.angular;
-            v_lin = rolling_basis_ptr->linear_velocity;
-            v_ang = rolling_basis_ptr->angular_velocity;
-            err_lin = rolling_basis_ptr->last_linear_error;
-            err_ang = rolling_basis_ptr->last_angular_error;
-            corr_lin = rolling_basis_ptr->last_linear_correction;
-            corr_ang = rolling_basis_ptr->last_angular_correction;
+            msg.x = rolling_basis_ptr->X;
+            msg.y = rolling_basis_ptr->Y;
+            msg.theta = rolling_basis_ptr->THETA;
+            msg.linear_speed = rolling_basis_ptr->linear_velocity;
+            msg.angular_speed = rolling_basis_ptr->angular_velocity;
+            msg.err_lin = rolling_basis_ptr->last_linear_error;
+            msg.err_ang = rolling_basis_ptr->last_angular_error;
+            msg.corr_lin = rolling_basis_ptr->last_linear_correction;
+            msg.corr_ang = rolling_basis_ptr->last_angular_correction;
+            msg.left_pwm = (double)rolling_basis_ptr->left_motor->last_pwm;
+            msg.right_pwm = (double)rolling_basis_ptr->right_motor->last_pwm;
+
+            // On récupère les cibles directement sur la Teensy pour le plot
+            msg.target_lin = target_velocity.linear;
+            msg.target_ang = target_velocity.angular;
+
+            msg.left_ticks = (int32_t)rolling_basis_ptr->left_motor->ticks;
+            msg.right_ticks = (int32_t)rolling_basis_ptr->right_motor->ticks;
+        }
+        com->send_msg((byte*)&update_msg, sizeof(update_msg));
+        last_pwm_log_ms = now_ms;
         }
         long tv_lin = static_cast<long>(target_lin * 100.0);
         long tv_ang = static_cast<long>(target_ang * 100.0);
@@ -267,14 +266,20 @@ void loop() {
     // Send rolling basis state
     if (counter++ > 4096)  // 4096 = 2^12
     {
-        msg_update_rolling_basis rolling_basis_msg;
-        // Rolling Basis position
-        rolling_basis_msg.x = rolling_basis_ptr->X;
-        rolling_basis_msg.y = rolling_basis_ptr->Y;
-        rolling_basis_msg.theta = rolling_basis_ptr->THETA;
+        msg_update_rolling_basis msg;
+        msg.x = rolling_basis_ptr->X;
+        msg.y = rolling_basis_ptr->Y;
+        msg.theta = rolling_basis_ptr->THETA;
+        msg.err_lin = rolling_basis_ptr->last_linear_error;
+        msg.err_ang = rolling_basis_ptr->last_angular_error;
+        msg.corr_lin = rolling_basis_ptr->last_linear_correction;
+        msg.corr_ang = rolling_basis_ptr->last_angular_correction;
+        msg.left_pwm = rolling_basis_ptr->left_motor->last_pwm;
+        msg.right_pwm = rolling_basis_ptr->right_motor->last_pwm;
+        msg.left_ticks = rolling_basis_ptr->left_motor->ticks;
+        msg.right_ticks = rolling_basis_ptr->right_motor->ticks;
 
-        com->send_msg((byte*)&rolling_basis_msg,
-                      sizeof(msg_update_rolling_basis));
+        com->send_msg((byte*)&msg, sizeof(msg));
         counter = 0;
     }
 }
