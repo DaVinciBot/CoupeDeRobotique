@@ -11,6 +11,8 @@ from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 from a_config_loader import CONFIG
 from arena.base_arena.arena_zones import AllyZone
 from arena.winter_arena import WinterArena
+
+
 from brains import MainBrain
 from geometry import OrientedPoint
 from navigation.navigator.task import NavigatorTaskParams
@@ -78,6 +80,12 @@ if __name__ == "__main__":
     logger_show_arena = Logger(
         identifier="ShowArena",
         follow_logger_manager_rules=True,
+    )
+
+    logger_spatial_computation = Logger(
+        identifier="SpatialComputation",
+        level_file=LogLevels.INFO,
+        follow_logger_manager_rules=False,
     )
 
     # Movement loggers

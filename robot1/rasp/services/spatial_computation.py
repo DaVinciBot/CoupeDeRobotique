@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import struct
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING
+
+from a_config_loader import CONFIG
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
@@ -9,19 +11,11 @@ if TYPE_CHECKING:
     from controllers.rolling_basis import RollingBasis, RollingBasisDummy
     from geometry import OrientedPoint
 
-NUM_CRATES = 32
-CRATE_FORMAT = "b3dB"  # Askip, j'avoue je suis pas calée : zone_id(int8), x, y, theta (float32), color(uint8)
-PACKET_FORMAT = "<9f" + CRATE_FORMAT * NUM_CRATES
+HEADER_FORMAT = CONFIG.SPATIAL_COMPUTATION_HEADER["format"]
+HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
 
-
-class Crate:
-    def __init__(self, zone_id: int, x: float, y: float, theta: float, color: int):
-        self.zone_id = zone_id
-        self.x = x
-        self.y = y
-        self.theta = theta
-        self.color = color
-        self.held = False
+XY_FACTOR = CONFIG.SPATIAL_COMPUTATION_HEADER["xy_factor"]
+ANGLE_FACTOR = CONFIG.SPATIAL_COMPUTATION_HEADER["angle_factor"]
 
 
 class SpatialComputation:
@@ -29,25 +23,36 @@ class SpatialComputation:
         self,
         logger: Logger,
         arena: BaseArena,
-        rolling_basis: RollingBasis | RollingBasisDummy,
         lora: None = None,
-        enable_dummy: bool = False
+        enable_dummy: bool = False,
     ) -> None:
         self.logger = logger
         self.arena = arena
-        self.rolling_basis = rolling_basis
         self.lora = lora
 
         self.robot_position: tuple[float, float, float] | None = None
         self.enemy_position: tuple[float, float, float] | None = None
         self.enemy_velocity: tuple[float, float, float] | None = None
 
-        self.crates: Dict[int, List[Crate]] = {}
-        self.held_crates: List[Crate] = []
+    @staticmethod
+    def _enc_xy(v: float) -> int:
+        return int(round(v * XY_FACTOR))
+
+    @staticmethod
+    def _enc_angle(v: float) -> int:
+        return int(round(v * ANGLE_FACTOR))
+
+    @staticmethod
+    def _dec_xy(v: int) -> float:
+        return v / XY_FACTOR
+
+    @staticmethod
+    def _dec_angle(v: int) -> float:
+        return v / ANGLE_FACTOR
 
     def get_robot_position(self) -> tuple[float, float, float]:
-        robot_odometrie: OrientedPoint = self.rolling_basis.odometrie
-        self.robot_position = (robot_odometrie.x, robot_odometrie.y, robot_odometrie.theta)
+        robot_point: OrientedPoint = self.arena.ally_zone.point
+        self.robot_position = (robot_point.x, robot_point.y, robot_point.theta)
         return self.robot_position
 
     def get_enemy_position(self) -> tuple[float, float, float]:
@@ -64,46 +69,37 @@ class SpatialComputation:
         )
         return self.enemy_velocity
 
-    def pick_crates(self, zone_id: int) -> None:
-        pass
-
-    def drop_crates(self, zone_index: int) -> None:
-        pass
-
-    def reverse_crate(self) -> None:
-        pass
-
-    def send_data(self) -> None:
-        data = struct.pack(
-            "<9f",
-            *self.get_robot_position(),
-            *self.get_enemy_position(),
-            *self.get_enemy_velocity(),
+    def _pack_header(self) -> bytes:
+        rx, ry, rtheta = self.get_robot_position()
+        ex, ey, etheta = self.get_enemy_position()
+        evx, evy, espeed = self.get_enemy_velocity()
+        return struct.pack(
+            HEADER_FORMAT,
+            self._enc_xy(rx), self._enc_xy(ry), self._enc_angle(rtheta),
+            self._enc_xy(ex), self._enc_xy(ey), self._enc_angle(etheta),
+            self._enc_xy(evx), self._enc_xy(evy), self._enc_xy(espeed),
         )
-        self.lora.send(data)
 
-    def receive_data(self) -> dict[str, object]:
-        data = self.lora.receive()
-        unpacked = struct.unpack(PACKET_FORMAT, data)
-
-        self.robot_position = tuple(unpacked[0:3])
-        self.enemy_position = tuple(unpacked[3:6])
-        self.enemy_velocity = tuple(unpacked[6:9])
-
-        self.crates = {}
-        offset = 9
-        fields_per_crate = 5
-
-        for i in range(NUM_CRATES):
-            base = offset + i * fields_per_crate
-            zone_id, x, y, theta, color = unpacked[base:base + fields_per_crate]
-            zone_id = int(zone_id)
-            crate = Crate(zone_id, x, y, theta, int(color))
-            self.crates.setdefault(zone_id, []).append(crate)
-
+    def _unpack_header(self, unpacked: tuple) -> dict[str, object]:
+        self.robot_position = (
+            self._dec_xy(unpacked[0]), self._dec_xy(unpacked[1]), self._dec_angle(unpacked[2])
+        )
+        self.enemy_position = (
+            self._dec_xy(unpacked[3]), self._dec_xy(unpacked[4]), self._dec_angle(unpacked[5])
+        )
+        self.enemy_velocity = (
+            self._dec_xy(unpacked[6]), self._dec_xy(unpacked[7]), self._dec_xy(unpacked[8])
+        )
         return {
             "robot_position": self.robot_position,
             "enemy_position": self.enemy_position,
             "enemy_velocity": self.enemy_velocity,
-            "crates": self.crates,
         }
+
+    def send_data(self) -> None:
+        self.lora.send(self._pack_header())
+
+    def receive_data(self) -> dict[str, object]:
+        data = self.lora.receive()
+        unpacked = struct.unpack(HEADER_FORMAT, data)
+        return self._unpack_header(unpacked)

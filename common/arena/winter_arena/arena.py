@@ -336,6 +336,7 @@ class WinterArena(BaseArena):
         self.logger.info("WinterArena initialized.")
         self.logger.debug(f"Width: {self.width}, Height: {self.height}")
 
+
     @override
     def __eq__(self, other: object) -> bool:
         """Checks equality between two ShowArena instances.

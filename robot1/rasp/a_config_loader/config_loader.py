@@ -440,6 +440,10 @@ class CONFIG:
     ACTUATORS_DUMMY: bool = get_env_bool("ACTUATORS_DUMMY")
     SPATIAL_COMPUTATION_DUMMY: bool = get_env_bool("SPATIAL_COMPUTATION_DUMMY")
 
+    # Spatial Computation
+    SPATIAL_COMPUTATION_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["spatial_computation"]
+    SPATIAL_COMPUTATION_HEADER: [str, Any] = SPATIAL_COMPUTATION_CONFIG["header"]
+
 
 # Logger: LoggerManager + global configuration
 

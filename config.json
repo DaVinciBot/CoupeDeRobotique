@@ -47,6 +47,13 @@
         "filename_lineno_max_width": 15
       }
     },
+    "spatial_computation": {
+    "header": {
+            "format": "<9h",
+            "xy_factor": 10,
+            "angle_factor": 1000
+        }
+    },
     "zombie_mode": false,
     "team_config": {
       "default_team": "yellow",
@@ -242,4 +249,5 @@
     "chunk_size": 5,
     "forbidden_cover_threshold": 0.1
   }
+
 }

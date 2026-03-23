@@ -20,8 +20,9 @@ from boombot_strategy import WinterGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
-from services import SpatialComputation, SpatialComputationDummy
+from services import WinterSpatialComputation, WinterSpatialComputationDummy
 from geometry import OrientedPoint
+from common.stuff import CrateRenderer
 
 if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
@@ -76,12 +77,18 @@ class MainBrain(Brain):
 
         self.jack_triggered: bool = False
         self.jack_plugged: bool = False
+        self.shared_crates: dict = {}
+
+
         super().__init__(logger, self)
 
         self.ws_cmd: WServerRouteManager = ws_cmd
         self.ws_ui: WServerRouteManager = ws_ui
         self.inputs: Inputs = inputs
         self.score: int
+
+
+
 
     # ====== Secondary Processes =======
 
@@ -96,99 +103,98 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         """Runs the main control loop for the robot."""
+
+        def _crates_to_dict(crates):
+            return {
+                zone_id: [
+                    {"x": c.x, "y": c.y, "color": c.color, "color_id": c.color_id, "zone_id": c.zone_id}
+                    for c in lst
+                ]
+                for zone_id, lst in crates.items()
+            }
+
+
         # --- Initialization --- #
-        # --- 1) Initialize subsystems --- #
         if CONFIG.ROLLING_BASIS_DUMMY:
             rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
-                logger=Logger(
-                    identifier="RollingBasisDummy",
-                    follow_logger_manager_rules=True,
-                ),
+                logger=Logger(identifier="RollingBasisDummy", follow_logger_manager_rules=True),
             )
         else:
             rolling_basis = RollingBasis(
-                logger=Logger(
-                    identifier="RollingBasis",
-                    follow_logger_manager_rules=True,
-                ),
+                logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True),
             )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
 
         if CONFIG.ACTUATORS_DUMMY:
             actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
-                logger=Logger(
-                    identifier="Actuators",
-                    follow_logger_manager_rules=True,
-                ),
+                logger=Logger(identifier="Actuators", follow_logger_manager_rules=True),
             )
         else:
             actuators = ActuatorsShow(
-                logger=Logger(
-                    identifier="Actuators",
-                    follow_logger_manager_rules=True,
-                ),
+                logger=Logger(identifier="Actuators", follow_logger_manager_rules=True),
             )
 
         if CONFIG.SPATIAL_COMPUTATION_DUMMY:
-            spatial_computation: SpatialComputation | SpatialComputationDummy = SpatialComputationDummy(
-                logger=Logger(
-                    identifier="SpatialComputationDummy",
-                    follow_logger_manager_rules=True,
-                ),
+            sc: WinterSpatialComputation | WinterSpatialComputationDummy = WinterSpatialComputationDummy(
+                logger=Logger(identifier="SpatialComputationDummy", follow_logger_manager_rules=True),
                 arena=self.arena,
-                rolling_basis=rolling_basis,
             )
         else:
-            spatial_computation = SpatialComputation(
-                logger=Logger(
-                    identifier="SpatialComputation",
-                    follow_logger_manager_rules=True,
-                ),
+            sc = WinterSpatialComputation(
+                logger=Logger(identifier="SpatialComputation", follow_logger_manager_rules=True),
                 arena=self.arena,
-                rolling_basis=rolling_basis,
             )
+
+        self.shared_crates = _crates_to_dict(sc.crates)
+
         actuators.deplacement_position()
-        # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
-        while not self.jack_plugged:  # wait until cable is plugged
+
+        # --- 2) Wait for jack plug --- #
+        while not self.jack_plugged:
+            sc.receive_data()
             time.sleep(0.1)
-        actuators.block_banner()  # engage the banner blocker
+
+        actuators.block_banner()
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
-        while not self.jack_triggered:  # wait for the trigger event
+
+        # --- Wait for trigger --- #
+        while not self.jack_triggered:
+            sc.receive_data()
             time.sleep(0.1)
 
         # --- 3) Build the strategy --- #
-
         strategy = TowerRushAltStrategy(
             WinterGameContext(
                 arena=self.arena,
                 rolling_basis=rolling_basis,
                 actuators=actuators,
-                spatial_computation=spatial_computation,
+                spatial_computation=sc,
                 score=self.score,
             ),
         )
 
-        # from strategy.tools import visualize_task_graph
-        # visualize_task_graph(strategy.runner.active[0])
-
         # --- MetaProg is insane (loop) --- #
+        sc.receive_data()
+        self.shared_crates = _crates_to_dict(sc.crates)
+
         context = WinterGameContext(
             arena=self.arena,
             rolling_basis=rolling_basis,
             actuators=actuators,
-            spatial_computation=spatial_computation,
+            spatial_computation=sc,
             score=self.score,
         )
 
         strategy.runner.handle(context)
 
-        # Update shared state from the context
         self.score = context.score
         self.ui_state["score"] = self.score
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = self.rolling_basis_odometrie
+
+
 
     @Brain.task(
         process=True,
@@ -219,7 +225,11 @@ class MainBrain(Brain):
             # if not is_empty(obstacles)
             # else None,
         )
+
+        CrateRenderer.plot(ax, self.shared_crates)
+
         plt.pause(0.01)
+
 
     # endregion
 
@@ -298,6 +308,7 @@ class MainBrain(Brain):
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
+
 
     # @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     # async def print_odo(self) -> None:

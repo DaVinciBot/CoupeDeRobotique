@@ -32,6 +32,9 @@ from geometry import (
     prepare,
 )
 
+import matplotlib.patches as patches
+import matplotlib.transforms as transforms
+
 if TYPE_CHECKING:
     from matplotlib.figure import Figure as pltFigure
     from numpy.typing import NDArray
@@ -255,6 +258,7 @@ class BaseArena(ABC):
             lidar_scan_polars=np.array([]),
             optimized_update=False,
         )  # Force to update all zones
+
 
     @time_tracker(lambda self: self.logger)
     def update(
@@ -931,9 +935,11 @@ class BaseArena(ABC):
             additional_zones=additional_zones,
         )
         self._plot_additional_points(ax, additional_points)
+
         if trajectory:
             self._plot_trajectory(ax, trajectory)
         self._finalize_plot(ax)
+
         if show:
             plt.show()
         return ax, fig
