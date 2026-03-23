@@ -229,8 +229,6 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         self.enemy_position = self.get_enemy_position()
         self.enemy_velocity = self.get_enemy_velocity()
 
-        print("CRATES AVANT:", {k: len(v) for k, v in self.crates.items()})
-
         return {
             "robot_position": self.robot_position,
             "enemy_position": self.enemy_position,

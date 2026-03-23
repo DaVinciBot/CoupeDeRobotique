@@ -8,7 +8,6 @@ from a_config_loader import CONFIG
 if TYPE_CHECKING:
     from loggerplusplus import Logger
     from common.arena.base_arena.arena import BaseArena
-    from controllers.rolling_basis import RollingBasis, RollingBasisDummy
     from geometry import OrientedPoint
 
 HEADER_FORMAT = CONFIG.SPATIAL_COMPUTATION_HEADER["format"]
