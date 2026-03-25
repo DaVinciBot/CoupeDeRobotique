@@ -40,7 +40,7 @@ void Motor::setTargetSpeed(float stepsPerSec) {
         stepsPerSec = -stepsPerSec;
     }
     _targetSpeedStepsPerSec = stepsPerSec * 1000.0f;
-    _moving = (fabs(_targetSpeedStepsPerSec) >= 1.0f);  // pose pb
+    _moving = (fabsf(_targetSpeedStepsPerSec) >= 1.0f);  // pose pb
     enableMotor(_moving);
     // Serial.print("_targetSpeedStepsPerSec = ");
     // Serial.println(_targetSpeedStepsPerSec);
@@ -85,7 +85,7 @@ void Motor::update() {
     float speedDiff = _acceleration * dtSec;
     // Serial.println(speedDiff);
 
-    if (fabs(_currentSpeedStepsPerSec - _targetSpeedStepsPerSec) < speedDiff) {
+    if (fabsf(_currentSpeedStepsPerSec - _targetSpeedStepsPerSec) < speedDiff) {
         _currentSpeedStepsPerSec = _targetSpeedStepsPerSec;
     } else if (_currentSpeedStepsPerSec < _targetSpeedStepsPerSec) {
         _currentSpeedStepsPerSec += speedDiff;
@@ -95,10 +95,10 @@ void Motor::update() {
     // Serial.print("_currentSpeedStepsPerSec =");
     // Serial.println(_currentSpeedStepsPerSec);
 
-    if (fabs(_currentSpeedStepsPerSec) < 1.0f) {
+    if (fabsf(_currentSpeedStepsPerSec) < 1.0f) {
         _usDelayBetweenStep = 1e6f;
     } else {
-        _usDelayBetweenStep = (1e6f) / fabs(_currentSpeedStepsPerSec);
+        _usDelayBetweenStep = (1e6f) / fabsf(_currentSpeedStepsPerSec);
     }
 
     bool clockwise = (_currentSpeedStepsPerSec >= 0);
@@ -113,8 +113,8 @@ void Motor::update() {
         _doOneStep();
     }
 
-    if (fabs(_targetSpeedStepsPerSec) < 1.0f &&
-        fabs(_currentSpeedStepsPerSec) < 1.0f) {
+    if (fabsf(_targetSpeedStepsPerSec) < 1.0f &&
+        fabsf(_currentSpeedStepsPerSec) < 1.0f) {
         _moving = false;
         enableMotor(false);
     }
