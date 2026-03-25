@@ -8,6 +8,13 @@ class LoraCom:
     """
 
     def __init__(self, port="/dev/ttyAMA0", baudrate=9600, timeout=1):
+        """
+        Initialize the LoRa communication interface.
+        Args:
+            port (str): The serial port to which the LoRa module is connected. Defaults to "/dev/ttyAMA0".
+            baudrate (int): The baud rate for serial communication. Defaults to 9600.
+            timeout (int): The timeout for serial communication in seconds. Defaults to 1.
+        """
         self.ser = serial.Serial(
             port=port,
             baudrate=baudrate,
