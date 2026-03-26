@@ -104,8 +104,10 @@ void setup() {
     Serial.begin(115200);
     Serial.println("\n-- PAMI test --\n");
     // Test point pour navigation - aller à (100, 0) normalement tout droit
-    Point targetPoint = {200, 0, 0};
+    Point targetPoint = {50,50, 0};
     navigation->setCommand(targetPoint);
+    
+    
 
     /*lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
     lidar->onReceive([]() {
@@ -165,13 +167,12 @@ long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
     
 
-    if (millis() - lastTime > 2)
-    {
-        
-        
-        
-        // Update navigation
-        navigation->update();
+    leftMotor->update();
+    rightMotor->update();
+
+    // navigation : toutes les 5ms suffit
+    if (millis() - lastTime > 2) {
+        navigation->update();  // sans les motor->update() dedans
         lastTime = millis();
     }
     //lidar->update();

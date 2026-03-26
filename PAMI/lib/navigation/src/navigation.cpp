@@ -29,6 +29,7 @@ void Navigation::setCommand(const Point& targetPos) {
 }
 
 void Navigation::update() {
+    
     uint32_t now = millis();
 
     // force stop after timeout
@@ -51,7 +52,6 @@ void Navigation::update() {
                       _waypoints[_wpIndex].x, _waypoints[_wpIndex].y,
                       _waypoints[_wpIndex].theta);
     }
-
     _basis->update();
 }
 

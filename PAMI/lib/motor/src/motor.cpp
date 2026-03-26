@@ -9,7 +9,7 @@ Motor::Motor(byte stepPin,
     : _stepPin(stepPin),
       _dirPin(dirPin),
       _enablePin(enablePin),
-      _pulse_us(pulse_us),
+          _pulse_us(pulse_us),
       _stepsPerRevolution(stepsPerRevolution),
       _invertDirection(invertDirection) {
     _targetSpeedStepsPerSec = 0.0f;
@@ -75,15 +75,17 @@ void Motor::_doOneStep() {
 void Motor::update() {
     if (!_moving) {
         Serial.println("Motor not moving");
+        
         return;
     }
+    
 
     // Serial.println("Motor is moving");
     unsigned long now = micros();
     unsigned long dt = now - _lastUpdateTime;
     float dtSec = dt * 1e-6f;
     float speedDiff = _acceleration * dtSec;
-    // Serial.println(speedDiff);
+    // Serial.println(speedDiff); 
 
     if (fabs(_currentSpeedStepsPerSec - _targetSpeedStepsPerSec) < speedDiff) {
         _currentSpeedStepsPerSec = _targetSpeedStepsPerSec;
@@ -120,12 +122,13 @@ void Motor::update() {
     }
 
     _lastUpdateTime = now;
+    
 }
 
 bool Motor::isMoving() const {
     return _moving;
 }
-
+ 
 unsigned int Motor::getStepsPerRev() const {
     return _stepsPerRevolution;
 }
