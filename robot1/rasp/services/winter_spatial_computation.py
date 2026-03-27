@@ -1,16 +1,17 @@
 from __future__ import annotations
 
 import struct
-from typing import TYPE_CHECKING, Dict, List, override
+from typing import TYPE_CHECKING, override
 
 from services import SpatialComputation
-from common.stuff import Crate
-from common.lora_com import LoraCom
 
 from a_config_loader import CONFIG
+from common.lora_com import LoraCom
+from common.stuff import Crate
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
+
     from common.arena.base_arena.arena import BaseArena
 
 NUM_CRATES = 32
@@ -29,7 +30,7 @@ class WinterSpatialComputation(SpatialComputation):
         enable_dummy: bool = False,
     ) -> None:
         super().__init__(logger, arena, lora, enable_dummy)
-        self.crates: Dict[int, List[Crate]] = {}
+        self.crates: dict[int, list[Crate]] = {}
 
     def pick_crates(self, zone_id: int) -> None:
         pass
@@ -53,7 +54,7 @@ class WinterSpatialComputation(SpatialComputation):
 
         for i in range(NUM_CRATES):
             base = offset + i * fields_per_crate
-            zone_id, x_enc, y_enc, color = unpacked[base:base + fields_per_crate]
+            zone_id, x_enc, y_enc, color = unpacked[base : base + fields_per_crate]
             zone_id = int(zone_id)
             crate = Crate(zone_id, self._dec_xy(x_enc), self._dec_xy(y_enc), int(color))
             self.crates.setdefault(zone_id, []).append(crate)

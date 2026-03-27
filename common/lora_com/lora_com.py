@@ -10,7 +10,7 @@ class LoraCom:
             bytesize=serial.EIGHTBITS,
             parity=serial.PARITY_NONE,
             stopbits=serial.STOPBITS_ONE,
-            timeout=timeout
+            timeout=timeout,
         )
         self.logger = logger
 

@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Any
 import matplotlib.pyplot as plt
 import numpy as np
 from loggerplusplus import Logger
+from services import WinterSpatialComputation, WinterSpatialComputationDummy
 from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
@@ -18,12 +19,11 @@ from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import WinterGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
+from common.lora_com import LoraCom
+from common.stuff import CrateRenderer
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
-from services import WinterSpatialComputation, WinterSpatialComputationDummy
 from geometry import OrientedPoint
-from common.stuff import CrateRenderer
-from common.lora_com import LoraCom
 
 if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
@@ -80,16 +80,12 @@ class MainBrain(Brain):
         self.jack_plugged: bool = False
         self.shared_crates: dict = {}
 
-
         super().__init__(logger, self)
 
         self.ws_cmd: WServerRouteManager = ws_cmd
         self.ws_ui: WServerRouteManager = ws_ui
         self.inputs: Inputs = inputs
         self.score: int
-
-
-
 
     # ====== Secondary Processes =======
 
@@ -108,21 +104,30 @@ class MainBrain(Brain):
         def _crates_to_dict(crates):
             return {
                 zone_id: [
-                    {"x": c.x, "y": c.y, "color": c.color, "color_id": c.color_id, "zone_id": c.zone_id}
+                    {
+                        "x": c.x,
+                        "y": c.y,
+                        "color": c.color,
+                        "color_id": c.color_id,
+                        "zone_id": c.zone_id,
+                    }
                     for c in lst
                 ]
                 for zone_id, lst in crates.items()
             }
 
-
         # --- Initialization --- #
         if CONFIG.ROLLING_BASIS_DUMMY:
             rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
-                logger=Logger(identifier="RollingBasisDummy", follow_logger_manager_rules=True),
+                logger=Logger(
+                    identifier="RollingBasisDummy", follow_logger_manager_rules=True,
+                ),
             )
         else:
             rolling_basis = RollingBasis(
-                logger=Logger(identifier="RollingBasis", follow_logger_manager_rules=True),
+                logger=Logger(
+                    identifier="RollingBasis", follow_logger_manager_rules=True,
+                ),
             )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
@@ -137,13 +142,20 @@ class MainBrain(Brain):
             )
 
         if CONFIG.SPATIAL_COMPUTATION_DUMMY:
-            sc: WinterSpatialComputation | WinterSpatialComputationDummy = WinterSpatialComputationDummy(
-                logger=Logger(identifier="SpatialComputationDummy", follow_logger_manager_rules=True),
-                arena=self.arena,
+            sc: WinterSpatialComputation | WinterSpatialComputationDummy = (
+                WinterSpatialComputationDummy(
+                    logger=Logger(
+                        identifier="SpatialComputationDummy",
+                        follow_logger_manager_rules=True,
+                    ),
+                    arena=self.arena,
+                )
             )
         else:
             sc = WinterSpatialComputation(
-                logger=Logger(identifier="SpatialComputation", follow_logger_manager_rules=True),
+                logger=Logger(
+                    identifier="SpatialComputation", follow_logger_manager_rules=True,
+                ),
                 arena=self.arena,
             )
 
@@ -199,8 +211,6 @@ class MainBrain(Brain):
         self.rolling_basis_odometrie = rolling_basis.odometrie
         self.ui_state["odometrie_state"] = self.rolling_basis_odometrie
 
-
-
     @Brain.task(
         process=True,
         run_on_start=True,  # True to get visualization
@@ -234,7 +244,6 @@ class MainBrain(Brain):
         CrateRenderer.plot(ax, self.shared_crates)
 
         plt.pause(0.01)
-
 
     # endregion
 
@@ -313,7 +322,6 @@ class MainBrain(Brain):
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
-
 
     # @Brain.task(process=False, run_on_start=False, refresh_rate=0.1)
     # async def print_odo(self) -> None:

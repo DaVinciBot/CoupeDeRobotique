@@ -59,7 +59,9 @@ class PickUp(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.pick_up()
-        ctx.spatial_computation.pick_crates(zone_id=3)  # C'est pour l'exemple mais la on donne le zone id en parametre
+        ctx.spatial_computation.pick_crates(
+            zone_id=3,
+        )  # C'est pour l'exemple mais la on donne le zone id en parametre
         time.sleep(1)
         return True
 

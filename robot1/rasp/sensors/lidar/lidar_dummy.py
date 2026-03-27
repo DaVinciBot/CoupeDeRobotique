@@ -161,7 +161,8 @@ class LidarDummy:
             start_idx = int(max(0, center_angle - obstacle_width // 2))
             end_idx = int(min(self.__num_points, center_angle + obstacle_width // 2))
             distances[start_idx:end_idx] = (
-                np.random.default_rng()
+                np.random
+                .default_rng()
                 .uniform(
                     obstacle_distance - 0.1,
                     obstacle_distance + 0.1,
@@ -172,7 +173,8 @@ class LidarDummy:
 
         # Add noise for realism
         distances += (
-            np.random.default_rng()
+            np.random
+            .default_rng()
             .normal(0, 0.01, self.__num_points)
             .astype(np.float32)
         )

@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Dict, List, override
+from typing import TYPE_CHECKING, override
 
 from loggerplusplus import Logger, log
-
 from services import WinterSpatialComputation
+
 from common.stuff import Crate
 
 if TYPE_CHECKING:
@@ -66,23 +66,24 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
             ((140, 20), (160, 0)),
         ]
 
-        self.crates: Dict[int, List[Crate]] = self._generate_fixed_crates()
-        self.held_crates: List[Crate] = []
+        self.crates: dict[int, list[Crate]] = self._generate_fixed_crates()
+        self.held_crates: list[Crate] = []
 
-    def _generate_fixed_crates(self) -> Dict[int, List[Crate]]:
-        """
-        Generate a fixed set of crates for testing purposes.
+    def _generate_fixed_crates(self) -> dict[int, list[Crate]]:
+        """Generate a fixed set of crates for testing purposes.
+
             - For pickup zones (3 to 10), create 4 crates each, arranged in a line.
             - For deposit zones (11 to 20), start with no crates.
             - Alternate crate colors between blue (0) and yellow (1) for variety.
             - Log the initial crate distribution for debugging.
             - This setup allows testing of picking, dropping, and reversing crates without randomness.
             - Crate positions are determined based on the dimensions of the pickup zones to ensure they fit within the area.
-        Returns:
-            Dict[int, List[Crate]]: A dictionary mapping zone indices to lists of Crate objects.
-        """
 
-        crates: Dict[int, List[Crate]] = {}
+        Returns:
+            Dict[int, List[Crate]]:
+                A dictionary mapping zone indices to lists of Crate objects.
+        """
+        crates: dict[int, list[Crate]] = {}
 
         crate_size = 5
         zone_indices = range(3, 21)
@@ -91,16 +92,22 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         color_cycle = [0, 0, 1, 1]
 
         for zone_index in initial_fill_zones:
-            p1, p2 = self.crates_zones_points[(zone_index - 3) % len(self.crates_zones_points)]
+            p1, p2 = self.crates_zones_points[
+                (zone_index - 3) % len(self.crates_zones_points)
+            ]
             x_min, x_max = min(p1[0], p2[0]), max(p1[0], p2[0])
             y_min, y_max = min(p1[1], p2[1]), max(p1[1], p2[1])
 
             if (x_max - x_min) >= (y_max - y_min):
-                x_positions = [x_min + crate_size / 2 + i * crate_size for i in range(4)]
+                x_positions = [
+                    x_min + crate_size / 2 + i * crate_size for i in range(4)
+                ]
                 y_positions = [(y_min + y_max) / 2] * 4
             else:
                 x_positions = [(x_min + x_max) / 2] * 4
-                y_positions = [y_min + crate_size / 2 + i * crate_size for i in range(4)]
+                y_positions = [
+                    y_min + crate_size / 2 + i * crate_size for i in range(4)
+                ]
 
             crates[zone_index] = [
                 Crate(zone_index, x_positions[i], y_positions[i], color_cycle[i])
@@ -124,9 +131,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
             None
         """
         zone_crates = [c for c in self.crates.get(zone_id, []) if not c.held]
-        self.logger.info(
-            f"Picking {len(zone_crates)} crate(s) from zone {zone_id}."
-        )
+        self.logger.info(f"Picking {len(zone_crates)} crate(s) from zone {zone_id}.")
         for c in zone_crates:
             c.held = True
             c.zone_id = -1
@@ -134,7 +139,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         self.crates[zone_id] = []
         self.logger.info(
             f"Now holding {len(self.held_crates)} crate(s). "
-            f"Remaining zones: {list(self.crates.keys())}"
+            f"Remaining zones: {list(self.crates.keys())}",
         )
 
     @override
@@ -165,11 +170,15 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         orientation = DEPOSIT_ZONE_ORIENTATION.get(zone_index, "horizontal")
 
         if orientation == "horizontal":
-            x_positions = [x_min + crate_size / 2 + i * crate_size for i in range(num_crates)]
+            x_positions = [
+                x_min + crate_size / 2 + i * crate_size for i in range(num_crates)
+            ]
             y_positions = [(y_min + y_max) / 2] * num_crates
         else:
             x_positions = [(x_min + x_max) / 2] * num_crates
-            y_positions = [y_min + crate_size / 2 + i * crate_size for i in range(num_crates)]
+            y_positions = [
+                y_min + crate_size / 2 + i * crate_size for i in range(num_crates)
+            ]
 
         for i, crate in enumerate(self.held_crates):
             crate.x = x_positions[i]
@@ -180,7 +189,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
 
         self.logger.info(
             f"Dropped {num_crates} crate(s) in zone {zone_index}. "
-            f"Zone now has {len(self.crates[zone_index])} crate(s)."
+            f"Zone now has {len(self.crates[zone_index])} crate(s).",
         )
         self.held_crates = []
 
@@ -192,7 +201,9 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         Returns:
             None
         """
-        team_color_int = 1 if self.arena.team_color == self.arena.team_color.YELLOW else 0
+        team_color_int = (
+            1 if self.arena.team_color == self.arena.team_color.YELLOW else 0
+        )
         reversed_count = 0
 
         for crate in self.held_crates:
@@ -202,18 +213,16 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
 
         self.logger.info(
             f"Reversed {reversed_count} crate(s) to "
-            f"{'blue' if team_color_int == 0 else 'yellow'}."
+            f"{'blue' if team_color_int == 0 else 'yellow'}.",
         )
 
     @override
     @log("WinterSpatialComputationDummy")
     def send_data(self) -> None:
-        """Dummy method to send data. Logs the action without transmitting anything.
-
-        Returns:
-            None
-        """
-        self.logger.info("WinterSpatialComputationDummy: Simulating sending data to LoRa module.")
+        """Dummy method to send data. Logs the action without transmitting anything."""
+        self.logger.info(
+            "WinterSpatialComputationDummy: Simulating sending data to LoRa module.",
+        )
 
     @override
     @log("WinterSpatialComputationDummy")

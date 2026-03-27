@@ -11,8 +11,6 @@ from ws_comms import WSender, WServer, WServerRouteManager, WSreceiver
 from a_config_loader import CONFIG
 from arena.base_arena.arena_zones import AllyZone
 from arena.winter_arena import WinterArena
-
-
 from brains import MainBrain
 from geometry import OrientedPoint
 from navigation.navigator.task import NavigatorTaskParams

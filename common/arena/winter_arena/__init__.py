@@ -2,7 +2,6 @@
 
 from arena.winter_arena.arena import WinterArena
 
-
 __all__ = [
     "WinterArena",
 ]

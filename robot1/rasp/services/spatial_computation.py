@@ -7,6 +7,7 @@ from a_config_loader import CONFIG
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
+
     from common.arena.base_arena.arena import BaseArena
     from geometry import OrientedPoint
 
@@ -23,6 +24,7 @@ class SpatialComputation:
         logger: Logger,
         arena: BaseArena,
         lora: None = None,
+        *,
         enable_dummy: bool = False,
     ) -> None:
         self.logger = logger
@@ -74,20 +76,32 @@ class SpatialComputation:
         evx, evy, espeed = self.get_enemy_velocity()
         return struct.pack(
             HEADER_FORMAT,
-            self._enc_xy(rx), self._enc_xy(ry), self._enc_angle(rtheta),
-            self._enc_xy(ex), self._enc_xy(ey), self._enc_angle(etheta),
-            self._enc_xy(evx), self._enc_xy(evy), self._enc_xy(espeed),
+            self._enc_xy(rx),
+            self._enc_xy(ry),
+            self._enc_angle(rtheta),
+            self._enc_xy(ex),
+            self._enc_xy(ey),
+            self._enc_angle(etheta),
+            self._enc_xy(evx),
+            self._enc_xy(evy),
+            self._enc_xy(espeed),
         )
 
     def _unpack_header(self, unpacked: tuple) -> dict[str, object]:
         self.robot_position = (
-            self._dec_xy(unpacked[0]), self._dec_xy(unpacked[1]), self._dec_angle(unpacked[2])
+            self._dec_xy(unpacked[0]),
+            self._dec_xy(unpacked[1]),
+            self._dec_angle(unpacked[2]),
         )
         self.enemy_position = (
-            self._dec_xy(unpacked[3]), self._dec_xy(unpacked[4]), self._dec_angle(unpacked[5])
+            self._dec_xy(unpacked[3]),
+            self._dec_xy(unpacked[4]),
+            self._dec_angle(unpacked[5]),
         )
         self.enemy_velocity = (
-            self._dec_xy(unpacked[6]), self._dec_xy(unpacked[7]), self._dec_xy(unpacked[8])
+            self._dec_xy(unpacked[6]),
+            self._dec_xy(unpacked[7]),
+            self._dec_xy(unpacked[8]),
         )
         return {
             "robot_position": self.robot_position,
