@@ -118,6 +118,7 @@ class RollingBasis(BaseComTeensy):
         self._logger.info(f"[CTRL:RB:Teensy] {line}")
 
         self.update_live_plot_from_line(line)
+        self._logger.info(f"[CTRL:RB] Updated live plot with new data from Teensy log line.")
 
     def rcv_rolling_basis_state(
         self,
