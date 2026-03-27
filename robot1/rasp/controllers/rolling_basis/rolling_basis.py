@@ -7,6 +7,9 @@ import time
 from enum import Enum
 from typing import TYPE_CHECKING, overload, override
 
+import glob
+import os
+
 from loggerplusplus import LogLevels, log
 
 from a_config_loader import CONFIG
@@ -14,6 +17,10 @@ from controllers.rolling_basis.pids import PID, PidID
 from geometry import OrientedPoint
 from teensy import BaseComTeensy
 from usb_com.python import Messages
+
+import re
+import pandas as pd
+import matplotlib.pyplot as plt
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
@@ -56,7 +63,7 @@ class RollingBasis(BaseComTeensy):
             enable_dummy (bool, optional):
                 Whether to enable dummy mode. Defaults to CONFIG.ROLLING_BASIS_DUMMY.
         """
-        self.flag = True
+
         # Initialize the parent-BaseComTeensy class
         super().__init__(
             logger,
@@ -74,6 +81,14 @@ class RollingBasis(BaseComTeensy):
         # PID controllers
         self.linear_velocity_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_velocity_pid: PID = PID(0.0, 0.0, 0.0)
+
+        self._live_counter = None
+        self._live_data = None
+        self.flag = True
+        self._fig, self._axs = plt.subplots(4, 1, sharex=True)
+
+        self._lines = {}
+
         """
         This is used to match a handling function to a message type.
         add_callback can also be used.
@@ -97,9 +112,11 @@ class RollingBasis(BaseComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self._logger.info(
-            f"[CTRL:RB:Teensy] {msg.decode('ascii', errors='ignore')}",
-        )
+        line = msg.decode('ascii', errors='ignore')
+
+        self._logger.info(f"[CTRL:RB:Teensy] {line}")
+
+        self.update_live_plot_from_line(line)
 
     def rcv_rolling_basis_state(
         self,
@@ -414,3 +431,171 @@ class RollingBasis(BaseComTeensy):
         return object.__hash__(self)
 
     # endregion
+
+    # Temps functions do delete later
+
+    def init_live_plot(self) -> None:
+        self._live_data = {
+            "t": [],
+            "tv_lin": [],
+            "v_lin": [],
+            "e_lin": [],
+            "pwm_l": [],
+            "ticks_l": [],
+        }
+
+        self._live_counter = 0
+
+        plt.ion()
+
+
+        self._lines["tv_lin"], = self._axs[0].plot([], [], label="target")
+        self._lines["v_lin"], = self._axs[0].plot([], [], label="measured")
+        self._axs[0].legend()
+        self._axs[0].set_title("Velocity")
+
+        self._lines["e_lin"], = self._axs[1].plot([], [], label="error")
+        self._axs[1].legend()
+        self._axs[1].set_title("Error")
+
+        self._lines["pwm_l"], = self._axs[2].plot([], [], label="PWM")
+        self._axs[2].legend()
+        self._axs[2].set_title("PWM")
+
+        self._lines["ticks_l"], = self._axs[3].plot([], [], label="ticks")
+        self._axs[3].legend()
+        self._axs[3].set_title("Encoder")
+
+        plt.show()
+
+    def update_live_plot_from_line(self, line: str) -> None:
+        pattern = re.compile(
+            r"RB tv=(?P<tv_lin>-?\d+)/(?P<tv_ang>-?\d+)\s+"
+            r"v=(?P<v_lin>-?\d+)/(?P<v_ang>-?\d+)\s+"
+            r"e=(?P<e_lin>-?\d+)/(?P<e_ang>-?\d+)\s+"
+            r"c=(?P<c_lin>-?\d+)/(?P<c_ang>-?\d+)\s+"
+            r"pwm=(?P<pwm_l>-?\d+)/(?P<pwm_r>-?\d+)\s+"
+            r"ticks=(?P<ticks_l>-?\d+)/(?P<ticks_r>-?\d+)"
+        )
+
+        match = pattern.search(line)
+        if not match:
+            return
+
+        d = {k: int(v) for k, v in match.groupdict().items()}
+
+        self._live_counter += 1
+        t = self._live_counter
+
+        self._live_data["t"].append(t)
+        self._live_data["tv_lin"].append(d["tv_lin"])
+        self._live_data["v_lin"].append(d["v_lin"])
+        self._live_data["e_lin"].append(d["e_lin"])
+        self._live_data["pwm_l"].append(d["pwm_l"])
+        self._live_data["ticks_l"].append(d["ticks_l"])
+
+        # Update lines
+        for key in ["tv_lin", "v_lin", "e_lin", "pwm_l", "ticks_l"]:
+            self._lines[key].set_data(
+                self._live_data["t"],
+                self._live_data[key],
+            )
+
+        # Rescale
+        for ax in self._axs:
+            ax.relim()
+            ax.autoscale_view()
+
+        self._fig.canvas.draw()
+        self._fig.canvas.flush_events()
+
+    def plot_rb_logs(
+            self,
+            log_file: str,
+            *,
+            use_real_time: bool = False,
+    ) -> None:
+        """Parse and plot rolling basis debug logs from a file.
+
+        Args:
+            log_file (str): Path to the log file.
+            use_real_time (bool): If True, try to extract timestamps from logs.
+        """
+
+        pattern = re.compile(
+            r"RB tv=(?P<tv_lin>-?\d+)/(?P<tv_ang>-?\d+)\s+"
+            r"v=(?P<v_lin>-?\d+)/(?P<v_ang>-?\d+)\s+"
+            r"e=(?P<e_lin>-?\d+)/(?P<e_ang>-?\d+)\s+"
+            r"c=(?P<c_lin>-?\d+)/(?P<c_ang>-?\d+)\s+"
+            r"pwm=(?P<pwm_l>-?\d+)/(?P<pwm_r>-?\d+)\s+"
+            r"ticks=(?P<ticks_l>-?\d+)/(?P<ticks_r>-?\d+)"
+        )
+
+        data = []
+        timestamps = []
+
+        with open(log_file) as f:
+            for i, line in enumerate(f):
+                match = pattern.search(line)
+                if not match:
+                    continue
+
+                values = {k: int(v) for k, v in match.groupdict().items()}
+                data.append(values)
+
+                if use_real_time:
+                    # TODO: adapter si ton logger met un timestamp
+                    timestamps.append(i)
+                else:
+                    timestamps.append(i)
+
+        if not data:
+            self._logger.warning("[CTRL:RB] No RB logs found in file")
+            return
+
+        df = pd.DataFrame(data)
+        df["t"] = timestamps
+
+        # ===== PLOTS =====
+
+        fig, axs = plt.subplots(4, 1, sharex=True, figsize=(10, 8))
+
+        # Velocity tracking
+        axs[0].plot(df["t"], df["tv_lin"], label="target lin")
+        axs[0].plot(df["t"], df["v_lin"], label="measured lin")
+        axs[0].legend()
+        axs[0].set_title("Linear velocity tracking")
+
+        # Error
+        axs[1].plot(df["t"], df["e_lin"], label="error lin")
+        axs[1].plot(df["t"], df["e_ang"], label="error ang")
+        axs[1].legend()
+        axs[1].set_title("Error evolution")
+
+        # PWM
+        axs[2].plot(df["t"], df["pwm_l"], label="PWM left")
+        axs[2].plot(df["t"], df["pwm_r"], label="PWM right")
+        axs[2].legend()
+        axs[2].set_title("Motor command")
+
+        # Encoders
+        axs[3].plot(df["t"], df["ticks_l"], label="ticks left")
+        axs[3].plot(df["t"], df["ticks_r"], label="ticks right")
+        axs[3].legend()
+        axs[3].set_title("Encoder ticks")
+
+        plt.xlabel("time (index or timestamp)")
+        plt.tight_layout()
+        plt.show()
+
+        self._logger.info("[CTRL:RB] Log plots generated successfully")
+
+    def plot_latest_rb_log(self, log_dir: str = ".") -> None:
+        files = glob.glob(os.path.join(log_dir, "*.log"))
+        if not files:
+            self._logger.warning("[CTRL:RB] No log files found")
+            return
+
+        latest = max(files, key=os.path.getmtime)
+        self._logger.info(f"[CTRL:RB] Using latest log: {latest}")
+        self.plot_rb_logs(latest)
