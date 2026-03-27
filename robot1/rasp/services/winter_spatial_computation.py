@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Dict, List, override
 
 from services import SpatialComputation
 from common.stuff import Crate
+from common.lora_com import LoraCom
 
 from a_config_loader import CONFIG
 
@@ -24,7 +25,7 @@ class WinterSpatialComputation(SpatialComputation):
         self,
         logger: Logger,
         arena: BaseArena,
-        lora: None = None,
+        lora: LoraCom = None,
         enable_dummy: bool = False,
     ) -> None:
         super().__init__(logger, arena, lora, enable_dummy)

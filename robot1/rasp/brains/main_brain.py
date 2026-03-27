@@ -23,6 +23,7 @@ from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from services import WinterSpatialComputation, WinterSpatialComputationDummy
 from geometry import OrientedPoint
 from common.stuff import CrateRenderer
+from common.lora_com import LoraCom
 
 if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
@@ -147,6 +148,9 @@ class MainBrain(Brain):
             )
 
         self.shared_crates = _crates_to_dict(sc.crates)
+        lora = LoraCom(logger=self.logger)
+        lora.send(b"Hello from MainBrain!")
+        lora.receive()
 
         actuators.deplacement_position()
 

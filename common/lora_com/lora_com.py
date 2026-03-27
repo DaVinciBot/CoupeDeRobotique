@@ -1,5 +1,7 @@
 import serial
-
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from loggerplusplus import Logger
 
 class LoraCom:
     """
@@ -7,7 +9,7 @@ class LoraCom:
     It provides methods to send and receive data, as well as to manage the serial connection.
     """
 
-    def __init__(self, port="/dev/ttyAMA0", baudrate=9600, timeout=1):
+    def __init__(self, logger: Logger, port="/dev/ttyAMA0", baudrate=9600, timeout=1):
         """
         Initialize the LoRa communication interface.
         Args:
@@ -23,6 +25,7 @@ class LoraCom:
             stopbits=serial.STOPBITS_ONE,
             timeout=timeout
         )
+        self.logger = logger
 
     def send(self, data: bytes) -> bool:
         """
@@ -35,9 +38,10 @@ class LoraCom:
         try:
             written = self.ser.write(data)
             self.ser.flush()
+            self.logger.info(f"[LoraCom] Sent {written} bytes: {data.hex()}")
             return written == len(data)
         except Exception as e:
-            print(f"[LoraCom] Error send : {e}")
+            self.logger.info(f"[LoraCom] Error send : {e}")
             return False
 
     def receive(self, size: int = None) -> bytes | None:
@@ -51,9 +55,12 @@ class LoraCom:
         try:
             available = self.ser.in_waiting
             if size is None and available > 0:
+                self.logger.info(f"[LoraCom] Received {available} bytes: {self.ser.read(available).hex()}")
                 return self.ser.read(available)
             if size is not None and available >= size:
+                self.logger.info(f"[LoraCom] Received {size} bytes: {self.ser.read(size).hex()}")
                 return self.ser.read(size)
+            self.logger.info("[LoraCom] No data available to receive.")
             return None
         except Exception as e:
             print(f"[LoraCom] Error receive : {e}")
