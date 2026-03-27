@@ -90,6 +90,8 @@ class SubGraphBuilder:
                 name=new_name,
                 tasks=old.tasks,
                 scoring_function=old.scoring_function,
+                repeatable=old.repeatable,
+                max_visits=old.max_visits,
             )
             self.add_node(new_name, new_node)
             mapping[old] = new_node

@@ -178,3 +178,7 @@ server/server_venv/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 /server/computer/sensors/camera/undistort_coef.json
+
+.pio
+c_cpp_properties.json
+launch.json

@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from log_manager import LogLogger
+from strategy.core.tasks import TaskStatus
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
@@ -39,6 +40,7 @@ class GraphRunner:
         self.parallel = parallel
         self.active: list[BaseTaskNode] = [start]
         self.prev: dict[BaseTaskNode, BaseTaskNode | None] = {start: None}
+        self.visit_counts: dict[BaseTaskNode, int] = {}
         self._logger.info(
             f"[STRAT] GraphRunner initialized with start: '{start.name}', "
             f"parallel={self.parallel}",
@@ -75,13 +77,14 @@ class GraphRunner:
             self._logger.info(
                 f"[STRAT] <== Finished: {node.name} with status {node.status.name}",
             )
+            self.visit_counts[node] = self.visit_counts.get(node, 0) + 1
 
             # Gather valid transitions
             valid_transitions = [
                 t
                 for t in node.transitions
                 if t.can_transit(from_node=prev_node, ctx=ctx)
-                and t.target not in self.prev
+                and t.target.can_reenter(self.visit_counts.get(t.target, 0))
             ]
             if not valid_transitions:
                 msg = (
@@ -93,6 +96,12 @@ class GraphRunner:
             if self.parallel:
                 for transition in valid_transitions:
                     target = transition.target
+                    if target.status in {
+                        TaskStatus.DONE,
+                        TaskStatus.FAILED,
+                        TaskStatus.TIMEOUT,
+                    }:
+                        target.reset_for_reentry()
                     msg = (
                         f"[STRAT]     Transition: '{node.name}' -> '{target.name}' "
                         f"via {transition.__class__.__name__}"
@@ -108,6 +117,12 @@ class GraphRunner:
                 )
                 score_val = best.target.score(prev_node, ctx)
                 target = best.target
+                if target.status in {
+                    TaskStatus.DONE,
+                    TaskStatus.FAILED,
+                    TaskStatus.TIMEOUT,
+                }:
+                    target.reset_for_reentry()
                 msg = (
                     f"[STRAT]     Chosen: '{node.name}' -> '{target.name}' "
                     f"via {best.__class__.__name__} (score={score_val:.2f})"

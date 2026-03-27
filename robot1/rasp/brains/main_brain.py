@@ -16,7 +16,7 @@ from ws_comms import WServerRouteManager, WSmsg
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import WinterGameContext
-from boombot_strategy.strategies import GoBackstageStrategy
+from boombot_strategy.strategies import SmartZoneStrategy
 from boombot_strategy.sub_graphs import (
     get_banner_deployment_subgraph,
     get_construct_one_floor_subgraph,
@@ -25,7 +25,7 @@ from boombot_strategy.sub_graphs import (
     get_push_one_floor_to_wall_subgraph,
 )
 from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint, SetOdometrie
-from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
+from controllers.actuators import ActuatorsWinter, ActuatorsWinterDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 from log_manager import LogLogger
@@ -136,20 +136,20 @@ class MainBrain(Brain):
         rolling_basis.initialize_pids()
 
         if CONFIG.ACTUATORS_DUMMY:
-            actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
+            actuators: ActuatorsWinter | ActuatorsWinterDummy = ActuatorsWinterDummy(
                 logger=LogLogger(
                     identifier="Actuators",
                     follow_logger_manager_rules=True,
                 ),
             )
         else:
-            actuators = ActuatorsShow(
+            actuators = ActuatorsWinter(
                 logger=LogLogger(
                     identifier="Actuators",
                     follow_logger_manager_rules=True,
                 ),
             )
-        actuators.deplacement_position()
+
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
         if (
             not CONFIG.LIDAR_DUMMY
@@ -160,21 +160,22 @@ class MainBrain(Brain):
                 time.sleep(0.1)
         else:
             time.sleep(2)
-        actuators.block_banner()  # engage the banner blocker
+
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
         while not self.jack_triggered:  # wait for the trigger event
             time.sleep(0.1)
 
         # --- 3) Build the strategy --- #
+        # commentaire chatgpt ou c'est comment, en revue pix la c'est 0
 
         # Choose strategy based on configuration
-        strategy: GoBackstageStrategy | None = None
+        strategy: SmartZoneStrategy | None = None
         action_holder: list[GraphRunner | None] = [None]
         if self.mode == "iihm":
             self.logger.info("IIHM mode: Waiting for first task...")
         else:
-            strategy = GoBackstageStrategy(
+            strategy = SmartZoneStrategy(
                 WinterGameContext(
                     arena=self.arena,
                     rolling_basis=rolling_basis,
@@ -186,8 +187,10 @@ class MainBrain(Brain):
         self.should_send_start = True
         self.status = "starting"
 
-        # from strategy.tools import visualize_task_graph
-        # visualize_task_graph(strategy.runner.active[0])
+        if strategy is not None:
+            from strategy.tools import visualize_task_graph
+
+            visualize_task_graph(strategy.runner.active[0])
 
         # --- MetaProg is insane (loop) --- #
         context = WinterGameContext(
@@ -579,12 +582,12 @@ class MainBrain(Brain):
         enemy_position = OrientedPoint(150, 200, -pi / 2)
         if self.arena.team_color == TeamColor.YELLOW:
             self.logger.info("[BRAIN:Init] Starting as YELLOW team")
-            start_position = OrientedPoint(122.5, 21, -pi / 2)
-            enemy_position = OrientedPoint(177.5, 21, -pi / 2)
+            start_position = OrientedPoint(30, 175, -pi / 2)
+            enemy_position = OrientedPoint(270, 175, -pi / 2)
         elif self.arena.team_color == TeamColor.BLUE:
             self.logger.info("[BRAIN:Init] Starting as BLUE team")
-            start_position = OrientedPoint(177.5, 21, -pi / 2)
-            enemy_position = OrientedPoint(122.5, 21, -pi / 2)
+            start_position = OrientedPoint(270, 175, -pi / 2)
+            enemy_position = OrientedPoint(30, 175, -pi / 2)
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(

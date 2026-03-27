@@ -54,7 +54,7 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                acs_distance=50,
+                acs_distance=10,
                 width_view=40,
             ),
             stabilization_delay=0.5,
@@ -72,10 +72,11 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
         Returns:
             float: Estimated time to reach the color reserved zone in seconds.
         """
-        centroid: OrientedPoint = OrientedPoint.from_point(
+        target_point: OrientedPoint = OrientedPoint.from_point(
             ctx.arena.zones[self.zone_id].polygon.centroid,
         )
-        dist: float = float(distance(centroid, ctx.arena.ally_zone.point))
+        current_position: OrientedPoint = ctx.rolling_basis.odometrie
+        dist: float = distance(current_position, target_point)
         return (
             self.speed_profiler.linear_speed_profile.get_total_duration(
                 distance=dist,
@@ -84,8 +85,8 @@ class GoToColorReservedZoneToFinishGame(NavigationTask):
         )
 
 
-class GoToColorReservedZoneToConstruct(NavigationTask):
-    """Task to navigate to a color reserved zone to construct."""
+class GoToColorReservedZoneToDeposit(NavigationTask):
+    """Task to navigate to a color reserved zone to deposit jenga blocks."""
 
     def __init__(self, color_reserved_zone_id: int, ctx: WinterGameContext) -> None:
         """Initialize the GoToColorReservedZoneToConstruct task.
@@ -117,7 +118,7 @@ class GoToColorReservedZoneToConstruct(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=30),
             acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
-                acs_distance=55,
+                acs_distance=10,
                 width_view=40,
             ),
             stabilization_delay=1,  # Delay to stabilize before construction
@@ -135,10 +136,11 @@ class GoToColorReservedZoneToConstruct(NavigationTask):
         Returns:
             float: Estimated time to reach the color reserved zone in seconds.
         """
-        centroid: OrientedPoint = OrientedPoint.from_point(
+        target_point: OrientedPoint = OrientedPoint.from_point(
             ctx.arena.zones[self.zone_id].polygon.centroid,
         )
-        dist: float = float(distance(centroid, ctx.arena.ally_zone.point))
+        current_position: OrientedPoint = ctx.rolling_basis.odometrie
+        dist: float = distance(current_position, target_point)
         return (
             self.speed_profiler.linear_speed_profile.get_total_duration(
                 distance=dist,

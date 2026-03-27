@@ -307,6 +307,13 @@ class CONFIG:
     DEFAULT_TEAM: str = TEAM_CONFIG["default_team"]
     INFO_BY_TEAM: dict[str, Any] = TEAM_CONFIG["info_by_team"]
 
+    # Zones
+    PICKUP_ZONES: dict[str, int] = TEAM_CONFIG["zones"]["pickup"]
+    PICKUP_ZONES_LIST: list[int] = TEAM_CONFIG["zones"]["pickup_list"]
+    DEPOSIT_ZONES: dict[str, int] = TEAM_CONFIG["zones"]["deposit"]
+    DEPOSIT_ZONES_LIST: list[int] = TEAM_CONFIG["zones"]["deposit_list"]
+    TEAM_SPECIFIC_ZONES: dict[str, int] = TEAM_CONFIG["zones"]["team_specific"]
+
     # Scoring System
     SCORE_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["score"]
 
@@ -315,6 +322,9 @@ class CONFIG:
     BUILD_TWO_FLOORS: int = SCORE_CONFIG["boombot"]["build_two_floors"]
     GO_TO_BACKSTAGE: int = SCORE_CONFIG["boombot"]["go_to_backstage"]
     BANNER: int = SCORE_CONFIG["boombot"]["banner"]
+    JENGA_IN_NEST: int = SCORE_CONFIG["boombot"]["nest_jenga"]
+    JENGA_IN_PANTRY: int = SCORE_CONFIG["boombot"]["pantry_jenga"]
+    CURSOR: int = SCORE_CONFIG["boombot"]["cursor"]
 
     # PAMIs
     OCCUPIED_ZONE: int = SCORE_CONFIG["pamis"]["occupied_zone"]
@@ -376,6 +386,9 @@ class CONFIG:
         int(k): v for k, v in ACTUATORS_CONFIG["servos_config"].items()
     }
     ACTUATOR_ELEVATOR_CONFIG: dict[str, Any] = ACTUATORS_CONFIG["elevator"]
+
+    ACTUATOR_LINEAR_CONFIG: dict[str, Any] = ACTUATORS_CONFIG["linear_actuators_config"]
+
     ACTUATOR_DELAY: float = ACTUATORS_CONFIG["delay"]
 
     # Lidar
