@@ -590,7 +590,7 @@ class RollingBasis(BaseComTeensy):
 
         self._logger.info("[CTRL:RB] Log plots generated successfully")
 
-    def plot_latest_rb_log(self, log_dir: str = ".") -> None:
+    def plot_latest_rb_log(self, log_dir: str = "logs") -> None:
         files = glob.glob(os.path.join(log_dir, "*.log"))
         if not files:
             self._logger.warning("[CTRL:RB] No log files found")
