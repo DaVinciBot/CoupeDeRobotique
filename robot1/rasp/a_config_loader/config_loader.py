@@ -200,6 +200,12 @@ class CONFIG:
         LIDAR_DUMMY (bool): Whether to enable dummy mode for the lidar sensor.
         ROLLING_BASIS_DUMMY (bool): Whether to enable dummy mode for the rolling basis.
         ACTUATORS_DUMMY (bool): Whether to enable dummy mode for the actuators.
+        SPATIAL_COMPUTATION_DUMMY (bool):
+            Whether to enable dummy mode for spatial computation.
+        SPATIAL_COMPUTATION_CONFIG (dict[str, Any]):
+            Spatial computation configuration settings.
+        SPATIAL_COMPUTATION_HEADER (dict[str, Any]):
+            Header configuration for spatial computation.
     """
 
     # Directory path (dont't touch)
@@ -442,7 +448,7 @@ class CONFIG:
 
     # Spatial Computation
     SPATIAL_COMPUTATION_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["spatial_computation"]
-    SPATIAL_COMPUTATION_HEADER: [str, Any] = SPATIAL_COMPUTATION_CONFIG["header"]
+    SPATIAL_COMPUTATION_HEADER: dict[str, Any] = SPATIAL_COMPUTATION_CONFIG["header"]
 
 
 # Logger: LoggerManager + global configuration

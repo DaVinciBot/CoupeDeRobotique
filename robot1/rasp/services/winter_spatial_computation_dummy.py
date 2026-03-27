@@ -40,6 +40,15 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         lora: None = None,
         enable_dummy: bool = True,
     ) -> None:
+        """Initialize the dummy spatial computation service.
+
+        Args:
+            logger (Logger): Logger used to report simulated events.
+            arena (BaseArena): Arena used for position references.
+            lora (None, optional): Unused LoRa placeholder. Defaults to None.
+            enable_dummy (bool, optional): Whether to enable dummy mode.
+                Defaults to True.
+        """
         super().__init__(logger, arena, lora, enable_dummy)
 
         self.crates_zones_points = [
@@ -80,7 +89,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
             - Crate positions are determined based on the dimensions of the pickup zones to ensure they fit within the area.
 
         Returns:
-            Dict[int, List[Crate]]:
+            dict[int, list[Crate]]:
                 A dictionary mapping zone indices to lists of Crate objects.
         """
         crates: dict[int, list[Crate]] = {}
@@ -126,9 +135,6 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
 
         Args:
             zone_id (int): Index of the pickup zone from which to pick crates.
-
-        Returns:
-            None
         """
         zone_crates = [c for c in self.crates.get(zone_id, []) if not c.held]
         self.logger.info(f"Picking {len(zone_crates)} crate(s) from zone {zone_id}.")
@@ -151,9 +157,6 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
 
         Args:
             zone_index (int): Index of the deposit zone where crates should be dropped.
-
-        Returns:
-            None
         """
         if not self.held_crates:
             self.logger.info("No crates to drop.")
@@ -196,11 +199,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
     @override
     @log("WinterSpatialComputationDummy")
     def reverse_crate(self) -> None:
-        """Reverse the color of held crates that don't match the team color.
-
-        Returns:
-            None
-        """
+        """Reverse the color of held crates that don't match the team color."""
         team_color_int = (
             1 if self.arena.team_color == self.arena.team_color.YELLOW else 0
         )

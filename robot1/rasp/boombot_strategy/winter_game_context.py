@@ -35,6 +35,8 @@ class WinterGameContext(BaseGameContext):
             rolling_basis (RollingBasis | RollingBasisDummy):
                 The rolling basis of the robot.
             actuators (ActuatorsShow | ActuatorsShowDummy): The actuators of the robot.
+            spatial_computation (SpatialComputation | SpatialComputationDummy):
+                Spatial computation service used by the robot.
             score (int, optional): The score of the robot. Defaults to 0.
         """
         super().__init__(arena)
