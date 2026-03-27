@@ -1,7 +1,5 @@
 import serial
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from loggerplusplus import Logger
+from loggerplusplus import Logger
 
 class LoraCom:
     """

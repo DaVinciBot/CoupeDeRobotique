@@ -9,7 +9,6 @@ from common.stuff import Crate
 
 if TYPE_CHECKING:
     from common.arena.base_arena.arena import BaseArena
-    from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 
 
 DEPOSIT_ZONE_START_INDEX = 11
