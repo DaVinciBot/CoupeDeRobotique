@@ -27,7 +27,7 @@ class LoraCom:
             return False
 
     def receive(self, size: int = None) -> bytes | None:
-        self.logger.debug("[LoraCom] Checking for incoming data...")
+        self.logger.info("[LoraCom] Checking for incoming data...")
         try:
             available = self.ser.in_waiting
 
