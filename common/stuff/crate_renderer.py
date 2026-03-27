@@ -1,3 +1,5 @@
+"""Render crates and map items on a matplotlib axis."""
+
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
@@ -5,6 +7,8 @@ from matplotlib import patches, transforms
 
 
 class CrateRenderer:
+    """Plot crate items with zone-based rotation."""
+
     ZONE_ROTATIONS: ClassVar[dict[int, float]] = {
         3: 90,
         4: 90,
@@ -28,18 +32,22 @@ class CrateRenderer:
 
     @classmethod
     def plot(cls, ax: plt.Axes, stuff: dict[int, list[dict]]) -> None:
-        """Show crates and other items on the map, with rotation based on zone_id.
+        """Show crates and other items on the map, rotated by zone_id.
 
-        Each item is expected to have 'x', 'y', and 'color' keys. Crates will be drawn as rectangles with a QR code pattern, while other items will be plotted as points.
+        Each item is expected to have 'x', 'y', and 'color' keys. Crates are
+        drawn as rectangles with a QR code pattern, while other items are plotted
+        as points.
 
-        The rotation of each item is determined by its zone_id, using the ZONE_ROTATIONS mapping. If a zone_id is not found in the mapping, a default rotation of 0 degrees is applied.
+        The rotation of each item is determined by its zone_id using the
+        ZONE_ROTATIONS mapping. If a zone_id is not found, a default rotation of
+        0 degrees is applied.
 
         Args:
             ax (plt.Axes): The matplotlib Axes to plot on.
             stuff (dict[int, list[dict]]):
                 A dictionary mapping zone_id to a list of items, where each item
-                is a dictionary containing 'x', 'y', 'color', and optionally 'type'
-                keys.
+                is a dictionary containing 'x', 'y', 'color', and optionally
+                'type' keys.
         """
         for zone_id, items in stuff.items():
             rotation = cls.ZONE_ROTATIONS.get(zone_id, 0.0)
@@ -48,14 +56,20 @@ class CrateRenderer:
                 cls._plot_item(ax, item, rotation)
 
     @classmethod
-    def _plot_item(cls, ax: plt.Axes, item: dict[str, float], rotation: float) -> None:
-        """Plot a single item on the given Axes, applying rotation based on the specified angle.
+    def _plot_item(
+        cls,
+        ax: plt.Axes,
+        item: dict[str, float],
+        rotation: float,
+    ) -> None:
+        """Plot a single item on the given Axes, rotated by the specified angle.
 
         Args:
             ax (plt.Axes): The matplotlib Axes to plot on.
             item (dict[str, float]):
                 A dictionary containing 'x', 'y', 'color', and optionally 'type'
-                keys. The 'type' key determines how the item is rendered (e.g.,
+                keys.
+                The 'type' key determines how the item is rendered (e.g.,
                 'crate' for a crate, or any other value for a default point).
             rotation (float):
                 The angle in degrees to rotate the item around its (x, y) position.
@@ -68,7 +82,12 @@ class CrateRenderer:
             cls._plot_default(ax, item, rotation)
 
     @classmethod
-    def _plot_crate(cls, ax: plt.Axes, item: dict[str, float], rotation: float) -> None:
+    def _plot_crate(
+        cls,
+        ax: plt.Axes,
+        item: dict[str, float],
+        rotation: float,
+    ) -> None:
         x, y = item["x"], item["y"]
         color = item["color"]
 

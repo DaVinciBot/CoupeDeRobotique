@@ -1,3 +1,5 @@
+"""Dummy winter spatial computation for simulations."""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, override
@@ -28,7 +30,7 @@ DEPOSIT_ZONE_ORIENTATION: dict[int, str] = {
 
 
 class WinterSpatialComputationDummy(WinterSpatialComputation):
-    """Dummy version of WinterSpatialComputation for testing without LoRa or RollingBasis.
+    """Dummy version of WinterSpatialComputation for testing.
 
     Simulates crate positions and colors for the Winter Is Coming 2026 game.
     """
@@ -38,6 +40,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         logger: Logger,
         arena: BaseArena,
         lora: None = None,
+        *,
         enable_dummy: bool = True,
     ) -> None:
         """Initialize the dummy spatial computation service.
@@ -49,7 +52,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
             enable_dummy (bool, optional): Whether to enable dummy mode.
                 Defaults to True.
         """
-        super().__init__(logger, arena, lora, enable_dummy)
+        super().__init__(logger, arena, lora, enable_dummy=enable_dummy)
 
         self.crates_zones_points = [
             ((10, 130), (25, 110)),
@@ -81,12 +84,16 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
     def _generate_fixed_crates(self) -> dict[int, list[Crate]]:
         """Generate a fixed set of crates for testing purposes.
 
-            - For pickup zones (3 to 10), create 4 crates each, arranged in a line.
+            - For pickup zones (3 to 10), create 4 crates each, arranged in a
+              line.
             - For deposit zones (11 to 20), start with no crates.
-            - Alternate crate colors between blue (0) and yellow (1) for variety.
+            - Alternate crate colors between blue (0) and yellow (1) for
+              variety.
             - Log the initial crate distribution for debugging.
-            - This setup allows testing of picking, dropping, and reversing crates without randomness.
-            - Crate positions are determined based on the dimensions of the pickup zones to ensure they fit within the area.
+            - This setup allows testing of picking, dropping, and reversing crates
+              without randomness.
+            - Crate positions are determined based on pickup zone dimensions to
+              ensure they fit within the area.
 
         Returns:
             dict[int, list[Crate]]:
@@ -95,7 +102,6 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         crates: dict[int, list[Crate]] = {}
 
         crate_size = 5
-        zone_indices = range(3, 21)
         initial_fill_zones = range(3, 11)
 
         color_cycle = [0, 0, 1, 1]

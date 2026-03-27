@@ -27,6 +27,7 @@ from geometry import OrientedPoint
 
 if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
+    from common.stuff import Crate
     from sensors import Inputs, Lidar, LidarDummy
 
 
@@ -101,7 +102,9 @@ class MainBrain(Brain):
     def run(self) -> None:
         """Runs the main control loop for the robot."""
 
-        def _crates_to_dict(crates):
+        def _crates_to_dict(
+            crates: dict[int, list[Crate]],
+        ) -> dict[int, list[dict[str, object]]]:
             return {
                 zone_id: [
                     {
@@ -120,13 +123,15 @@ class MainBrain(Brain):
         if CONFIG.ROLLING_BASIS_DUMMY:
             rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
                 logger=Logger(
-                    identifier="RollingBasisDummy", follow_logger_manager_rules=True,
+                    identifier="RollingBasisDummy",
+                    follow_logger_manager_rules=True,
                 ),
             )
         else:
             rolling_basis = RollingBasis(
                 logger=Logger(
-                    identifier="RollingBasis", follow_logger_manager_rules=True,
+                    identifier="RollingBasis",
+                    follow_logger_manager_rules=True,
                 ),
             )
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
@@ -154,7 +159,8 @@ class MainBrain(Brain):
         else:
             sc = WinterSpatialComputation(
                 logger=Logger(
-                    identifier="SpatialComputation", follow_logger_manager_rules=True,
+                    identifier="SpatialComputation",
+                    follow_logger_manager_rules=True,
                 ),
                 arena=self.arena,
             )

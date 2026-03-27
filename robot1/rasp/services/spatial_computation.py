@@ -1,3 +1,5 @@
+"""Spatial computation service for packing and decoding LoRa data."""
+
 from __future__ import annotations
 
 import struct
@@ -19,6 +21,8 @@ ANGLE_FACTOR = CONFIG.SPATIAL_COMPUTATION_HEADER["angle_factor"]
 
 
 class SpatialComputation:
+    """Base spatial computation service shared by arena implementations."""
+
     def __init__(
         self,
         logger: Logger,
@@ -27,9 +31,19 @@ class SpatialComputation:
         *,
         enable_dummy: bool = False,
     ) -> None:
+        """Initialize the spatial computation service.
+
+        Args:
+            logger (Logger): Logger used for diagnostics.
+            arena (BaseArena): Arena used to retrieve positions.
+            lora (None, optional): LoRa communication handler. Defaults to None.
+            enable_dummy (bool, optional): Enable dummy mode when True.
+                Defaults to False.
+        """
         self.logger = logger
         self.arena = arena
         self.lora = lora
+        self.enable_dummy = enable_dummy
 
         self.robot_position: tuple[float, float, float] | None = None
         self.enemy_position: tuple[float, float, float] | None = None
@@ -37,11 +51,11 @@ class SpatialComputation:
 
     @staticmethod
     def _enc_xy(v: float) -> int:
-        return int(round(v * XY_FACTOR))
+        return round(v * XY_FACTOR)
 
     @staticmethod
     def _enc_angle(v: float) -> int:
-        return int(round(v * ANGLE_FACTOR))
+        return round(v * ANGLE_FACTOR)
 
     @staticmethod
     def _dec_xy(v: int) -> float:
@@ -52,16 +66,19 @@ class SpatialComputation:
         return v / ANGLE_FACTOR
 
     def get_robot_position(self) -> tuple[float, float, float]:
+        """Return the current robot position from the arena."""
         robot_point: OrientedPoint = self.arena.ally_zone.point
         self.robot_position = (robot_point.x, robot_point.y, robot_point.theta)
         return self.robot_position
 
     def get_enemy_position(self) -> tuple[float, float, float]:
+        """Return the current enemy position from the arena."""
         enemy_point: OrientedPoint = self.arena.enemy_zone.point
         self.enemy_position = (enemy_point.x, enemy_point.y, enemy_point.theta)
         return self.enemy_position
 
     def get_enemy_velocity(self) -> tuple[float, float, float]:
+        """Return the current enemy velocity from the arena."""
         enemy_velocity = self.arena.enemy_zone.speed_vector
         self.enemy_velocity = (
             enemy_velocity.factored_dx,
@@ -110,9 +127,11 @@ class SpatialComputation:
         }
 
     def send_data(self) -> None:
+        """Send the packed header over LoRa."""
         self.lora.send(self._pack_header())
 
     def receive_data(self) -> dict[str, object]:
+        """Receive and unpack header data from LoRa."""
         data = self.lora.receive()
         unpacked = struct.unpack(HEADER_FORMAT, data)
         return self._unpack_header(unpacked)
