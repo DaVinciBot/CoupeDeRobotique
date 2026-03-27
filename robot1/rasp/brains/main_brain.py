@@ -146,11 +146,12 @@ class MainBrain(Brain):
                 logger=Logger(identifier="SpatialComputation", follow_logger_manager_rules=True),
                 arena=self.arena,
             )
-            lora = LoraCom(logger=self.logger)
-            lora.send(b"Hello from MainBrain!")
-            lora.receive()
 
         self.shared_crates = _crates_to_dict(sc.crates)
+
+        lora = LoraCom(logger=self.logger)
+        lora.send(b"Hello from MainBrain!")
+        lora.receive()
 
         actuators.deplacement_position()
 
