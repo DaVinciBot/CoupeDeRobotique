@@ -5,16 +5,16 @@ from __future__ import annotations
 import struct
 from typing import TYPE_CHECKING, override
 
-from services import SpatialComputation
+from services.spatial_computation import SpatialComputation
+from stuff import Crate
 
 from a_config_loader import CONFIG
-from common.stuff import Crate
 
 if TYPE_CHECKING:
     from loggerplusplus import Logger
+    from lora_com import LoraCom
 
-    from common.arena.base_arena.arena import BaseArena
-    from common.lora_com import LoraCom
+    from arena.base_arena.arena import BaseArena
 
 NUM_CRATES = 32
 CRATE_FORMAT = "b2hB"
@@ -66,6 +66,11 @@ class WinterSpatialComputation(SpatialComputation):
 
     @override
     def receive_data(self) -> dict[str, object]:
+        """Receive, unpack, and store crate data from LoRa.
+
+        Returns:
+            dict[str, object]: Header data merged with decoded crate mapping.
+        """
         data = self.lora.receive()
         unpacked = struct.unpack(PACKET_FORMAT, data)
 

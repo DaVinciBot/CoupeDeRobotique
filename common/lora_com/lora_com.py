@@ -67,7 +67,7 @@ class LoraCom:
             available = self.ser.in_waiting
 
             if size is None:
-                if available == 0:
+                if not available:
                     self.logger.info("[LoraCom] No data available to read.")
                     return None
                 data = self.ser.read(available)

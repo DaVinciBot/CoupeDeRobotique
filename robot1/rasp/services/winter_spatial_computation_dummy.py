@@ -5,12 +5,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, override
 
 from loggerplusplus import Logger, log
-from services import WinterSpatialComputation
-
-from common.stuff import Crate
+from services.winter_spatial_computation import WinterSpatialComputation
+from stuff import Crate
 
 if TYPE_CHECKING:
-    from common.arena.base_arena.arena import BaseArena
+    from arena.base_arena.arena import BaseArena
 
 
 DEPOSIT_ZONE_START_INDEX = 11
@@ -80,6 +79,9 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
 
         self.crates: dict[int, list[Crate]] = self._generate_fixed_crates()
         self.held_crates: list[Crate] = []
+        self.robot_position: tuple[float, float, float] | None = None
+        self.enemy_position: tuple[float, float, float] | None = None
+        self.enemy_velocity: tuple[float, float, float] | None = None
 
     def _generate_fixed_crates(self) -> dict[int, list[Crate]]:
         """Generate a fixed set of crates for testing purposes.
@@ -218,7 +220,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
 
         self.logger.info(
             f"Reversed {reversed_count} crate(s) to "
-            f"{'blue' if team_color_int == 0 else 'yellow'}.",
+            f"{'blue' if not team_color_int else 'yellow'}.",
         )
 
     @override

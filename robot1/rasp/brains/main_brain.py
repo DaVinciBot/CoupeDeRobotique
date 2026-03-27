@@ -11,7 +11,9 @@ from typing import TYPE_CHECKING, Any
 import matplotlib.pyplot as plt
 import numpy as np
 from loggerplusplus import Logger
+from lora_com import LoraCom
 from services import WinterSpatialComputation, WinterSpatialComputationDummy
+from stuff import CrateRenderer
 from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
@@ -19,8 +21,6 @@ from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy import WinterGameContext
 from boombot_strategy.strategies import TowerRushAltStrategy
-from common.lora_com import LoraCom
-from common.stuff import CrateRenderer
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint

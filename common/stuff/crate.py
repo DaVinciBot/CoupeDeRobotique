@@ -24,4 +24,4 @@ class Crate:
     @property
     def color(self) -> str:
         """Return the display color hex for the crate."""
-        return "#005B8C" if self.color_id == 0 else "#F7B500"
+        return "#005B8C" if not self.color_id else "#F7B500"
