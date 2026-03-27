@@ -48,10 +48,18 @@ class WinterSpatialComputation(SpatialComputation):
         self.crates: dict[int, list[Crate]] = {}
 
     def pick_crates(self, zone_id: int) -> None:
-        """Pick up crates from a pickup zone."""
+        """Pick up crates from a pickup zone.
+
+        Args:
+            zone_id (int): Index of the pickup zone.
+        """
 
     def drop_crates(self, zone_index: int) -> None:
-        """Drop held crates into a deposit zone."""
+        """Drop held crates into a deposit zone.
+
+        Args:
+            zone_index (int): Index of the deposit zone.
+        """
 
     def reverse_crate(self) -> None:
         """Reverse held crates to match team color."""

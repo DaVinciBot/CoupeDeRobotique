@@ -66,19 +66,31 @@ class SpatialComputation:
         return v / ANGLE_FACTOR
 
     def get_robot_position(self) -> tuple[float, float, float]:
-        """Return the current robot position from the arena."""
+        """Return the current robot position from the arena.
+
+        Returns:
+            tuple[float, float, float]: Robot (x, y, theta) position.
+        """
         robot_point: OrientedPoint = self.arena.ally_zone.point
         self.robot_position = (robot_point.x, robot_point.y, robot_point.theta)
         return self.robot_position
 
     def get_enemy_position(self) -> tuple[float, float, float]:
-        """Return the current enemy position from the arena."""
+        """Return the current enemy position from the arena.
+
+        Returns:
+            tuple[float, float, float]: Enemy (x, y, theta) position.
+        """
         enemy_point: OrientedPoint = self.arena.enemy_zone.point
         self.enemy_position = (enemy_point.x, enemy_point.y, enemy_point.theta)
         return self.enemy_position
 
     def get_enemy_velocity(self) -> tuple[float, float, float]:
-        """Return the current enemy velocity from the arena."""
+        """Return the current enemy velocity from the arena.
+
+        Returns:
+            tuple[float, float, float]: Enemy velocity (dx, dy, speed).
+        """
         enemy_velocity = self.arena.enemy_zone.speed_vector
         self.enemy_velocity = (
             enemy_velocity.factored_dx,
@@ -131,7 +143,11 @@ class SpatialComputation:
         self.lora.send(self._pack_header())
 
     def receive_data(self) -> dict[str, object]:
-        """Receive and unpack header data from LoRa."""
+        """Receive and unpack header data from LoRa.
+
+        Returns:
+            dict[str, object]: Unpacked header fields as a dictionary.
+        """
         data = self.lora.receive()
         unpacked = struct.unpack(HEADER_FORMAT, data)
         return self._unpack_header(unpacked)

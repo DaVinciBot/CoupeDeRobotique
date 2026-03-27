@@ -7,7 +7,12 @@ from matplotlib import patches, transforms
 
 
 class CrateRenderer:
-    """Plot crate items with zone-based rotation."""
+    """Plot crate items with zone-based rotation.
+
+    Attributes:
+        ZONE_ROTATIONS (ClassVar[dict[int, float]]):
+            Mapping of zone identifiers to rotation angles in degrees.
+    """
 
     ZONE_ROTATIONS: ClassVar[dict[int, float]] = {
         3: 90,
