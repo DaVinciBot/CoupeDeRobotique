@@ -103,6 +103,7 @@ class RollingBasis(BaseComTeensy):
 
         time.sleep(0.01)  # Avoid overload
         self.reset_teensy_and_reinit()
+        self.init_live_plot()
 
     # region ====== Message Receiving Handlers ======
 
@@ -116,7 +117,7 @@ class RollingBasis(BaseComTeensy):
 
         self._logger.info(f"[CTRL:RB:Teensy] {line}")
 
-        #self.update_live_plot_from_line(line)
+        self.update_live_plot_from_line(line)
 
     def rcv_rolling_basis_state(
         self,
