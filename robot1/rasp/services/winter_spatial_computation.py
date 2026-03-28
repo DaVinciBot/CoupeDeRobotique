@@ -5,6 +5,7 @@ from __future__ import annotations
 import struct
 from typing import TYPE_CHECKING, override
 
+from loggerplusplus import LogLevels, log
 from services.spatial_computation import SpatialComputation
 from stuff import Crate
 
@@ -19,8 +20,7 @@ if TYPE_CHECKING:
 NUM_CRATES = 32
 CRATE_FORMAT = "b2hB"
 
-HEADER_FORMAT = CONFIG.SPATIAL_COMPUTATION_HEADER["format"]
-PACKET_FORMAT = HEADER_FORMAT + CRATE_FORMAT * NUM_CRATES
+PACKET_FORMAT = CONFIG.SPATIAL_COMPUTATION_HEADER_FORMAT + CRATE_FORMAT * NUM_CRATES
 
 
 class WinterSpatialComputation(SpatialComputation):
@@ -47,6 +47,7 @@ class WinterSpatialComputation(SpatialComputation):
         super().__init__(logger, arena, lora, enable_dummy=enable_dummy)
         self.crates: dict[int, list[Crate]] = {}
 
+    @log("WinterSpatialComputation", LogLevels.DEBUG)
     def pick_crates(self, zone_id: int) -> None:
         """Pick up crates from a pickup zone.
 
@@ -54,6 +55,7 @@ class WinterSpatialComputation(SpatialComputation):
             zone_id (int): Index of the pickup zone.
         """
 
+    @log("WinterSpatialComputation", LogLevels.DEBUG)
     def drop_crates(self, zone_index: int) -> None:
         """Drop held crates into a deposit zone.
 
@@ -61,10 +63,12 @@ class WinterSpatialComputation(SpatialComputation):
             zone_index (int): Index of the deposit zone.
         """
 
+    @log("WinterSpatialComputation", LogLevels.DEBUG)
     def reverse_crate(self) -> None:
         """Reverse held crates to match team color."""
 
     @override
+    @log("WinterSpatialComputation", LogLevels.DEBUG)
     def receive_data(self) -> dict[str, object]:
         """Receive, unpack, and store crate data from LoRa.
 

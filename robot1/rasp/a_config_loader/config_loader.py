@@ -206,6 +206,7 @@ class CONFIG:
             Spatial computation configuration settings.
         SPATIAL_COMPUTATION_HEADER (dict[str, Any]):
             Header configuration for spatial computation.
+        SPATIAL_COMPUTATION_HEADER_FORMAT (str): Header format for spatial computation.
     """
 
     # Directory path (dont't touch)
@@ -453,6 +454,7 @@ class CONFIG:
     # Spatial Computation
     SPATIAL_COMPUTATION_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["spatial_computation"]
     SPATIAL_COMPUTATION_HEADER: dict[str, Any] = SPATIAL_COMPUTATION_CONFIG["header"]
+    SPATIAL_COMPUTATION_HEADER_FORMAT: str = SPATIAL_COMPUTATION_HEADER["format"]
 
 
 # Logger: LoggerManager + global configuration

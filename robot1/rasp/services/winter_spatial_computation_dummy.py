@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, override
 
-from loggerplusplus import Logger, log
+from loggerplusplus import Logger, LogLevels, log
 from services.winter_spatial_computation import WinterSpatialComputation
 from stuff import Crate
 
@@ -53,7 +53,9 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         """
         super().__init__(logger, arena, lora, enable_dummy=enable_dummy)
 
-        self.crates_zones_points = [
+        self.crates_zones_points: list[
+            tuple[tuple[float, float], tuple[float, float]]
+        ] = [
             ((10, 130), (25, 110)),
             ((10, 50), (25, 30)),
             ((100, 25), (120, 10)),
@@ -64,7 +66,9 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
             ((195, 87.5), (175, 72.5)),
         ]
 
-        self.deposit_zone_points = [
+        self.deposit_zone_points: list[
+            tuple[tuple[float, float], tuple[float, float]]
+        ] = [
             ((0, 70), (20, 90)),
             ((60, 20), (80, 0)),
             ((115, 155), (135, 135)),
@@ -137,7 +141,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         return crates
 
     @override
-    @log("WinterSpatialComputationDummy")
+    @log("WinterSpatialComputationDummy", LogLevels.INFO)
     def pick_crates(self, zone_id: int) -> None:
         """Pick up crates from the specified pickup zone.
 
@@ -157,7 +161,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         )
 
     @override
-    @log("WinterSpatialComputationDummy")
+    @log("WinterSpatialComputationDummy", LogLevels.INFO)
     def drop_crates(self, zone_index: int) -> None:
         """Drop held crates in the specified deposit zone.
 
@@ -205,7 +209,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         self.held_crates = []
 
     @override
-    @log("WinterSpatialComputationDummy")
+    @log("WinterSpatialComputationDummy", LogLevels.INFO)
     def reverse_crate(self) -> None:
         """Reverse the color of held crates that don't match the team color."""
         team_color_int = (
@@ -224,7 +228,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         )
 
     @override
-    @log("WinterSpatialComputationDummy")
+    @log("WinterSpatialComputationDummy", LogLevels.INFO)
     def send_data(self) -> None:
         """Dummy method to send data. Logs the action without transmitting anything."""
         self.logger.info(
@@ -232,7 +236,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         )
 
     @override
-    @log("WinterSpatialComputationDummy")
+    @log("WinterSpatialComputationDummy", LogLevels.INFO)
     def receive_data(self) -> dict[str, object]:
         """Dummy method to receive data. Returns simulated header and crate data.
 

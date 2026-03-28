@@ -79,7 +79,7 @@ class MainBrain(Brain):
 
         self.jack_triggered: bool = False
         self.jack_plugged: bool = False
-        self.shared_crates: dict = {}
+        self.shared_crates: dict[int, list[dict[str, object]]] = {}
 
         super().__init__(logger, self)
 
@@ -120,6 +120,7 @@ class MainBrain(Brain):
             }
 
         # --- Initialization --- #
+        # --- 1) Initialize subsystems --- #
         if CONFIG.ROLLING_BASIS_DUMMY:
             rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
                 logger=Logger(

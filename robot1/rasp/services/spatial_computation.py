@@ -5,6 +5,8 @@ from __future__ import annotations
 import struct
 from typing import TYPE_CHECKING
 
+from loggerplusplus import LogLevels, log
+
 from a_config_loader import CONFIG
 
 if TYPE_CHECKING:
@@ -138,10 +140,12 @@ class SpatialComputation:
             "enemy_velocity": self.enemy_velocity,
         }
 
+    @log("SpatialComputation", LogLevels.DEBUG)
     def send_data(self) -> None:
         """Send the packed header over LoRa."""
         self.lora.send(self._pack_header())
 
+    @log("SpatialComputation", LogLevels.DEBUG)
     def receive_data(self) -> dict[str, object]:
         """Receive and unpack header data from LoRa.
 

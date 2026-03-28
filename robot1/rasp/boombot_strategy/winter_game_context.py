@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from strategy.core import BaseGameContext
 
 if TYPE_CHECKING:
-    from services.spatial_computation import SpatialComputation, SpatialComputationDummy
+    from services import WinterSpatialComputation, WinterSpatialComputationDummy
 
     from arena.winter_arena import WinterArena
     from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
@@ -25,7 +25,7 @@ class WinterGameContext(BaseGameContext):
         arena: WinterArena,
         rolling_basis: RollingBasis | RollingBasisDummy,
         actuators: ActuatorsShow | ActuatorsShowDummy,
-        spatial_computation: SpatialComputation | SpatialComputationDummy,
+        spatial_computation: WinterSpatialComputation | WinterSpatialComputationDummy,
         score: int = 0,
     ) -> None:
         """Initialize the WinterGameContext.
@@ -35,14 +35,14 @@ class WinterGameContext(BaseGameContext):
             rolling_basis (RollingBasis | RollingBasisDummy):
                 The rolling basis of the robot.
             actuators (ActuatorsShow | ActuatorsShowDummy): The actuators of the robot.
-            spatial_computation (SpatialComputation | SpatialComputationDummy):
+            spatial_computation (WinterSpatialComputation | WinterSpatialComputationDummy):
                 Spatial computation service used by the robot.
             score (int, optional): The score of the robot. Defaults to 0.
         """
         super().__init__(arena)
         self.rolling_basis: RollingBasis | RollingBasisDummy = rolling_basis
         self.actuators: ActuatorsShow | ActuatorsShowDummy = actuators
-        self.spatial_computation: SpatialComputation | SpatialComputationDummy = (
-            spatial_computation
-        )
+        self.spatial_computation: (
+            WinterSpatialComputation | WinterSpatialComputationDummy
+        ) = spatial_computation
         self.score = score
