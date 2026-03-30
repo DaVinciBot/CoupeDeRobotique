@@ -83,6 +83,11 @@ HAS_DISPLAY = bool(
     os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"),
 )
 
+# Résolution pour le writer GStreamer (doit correspondre à la caméra)
+GST_DISPLAY_WIDTH = 1920
+GST_DISPLAY_HEIGHT = 1080
+GST_DISPLAY_FPS = 15
+
 DUMMY_LORA = parse_bool("DUMMY_LORA", False)
 DUMMY_DETECTION = parse_bool("DUMMY_DETECTION", False)
 
@@ -269,9 +274,33 @@ def detect_aruco() -> None:
     start_time = time.time()
     fps_display = 0.0
 
-    # Créer les fenêtres
-    if HAS_DISPLAY and SHOW_CAMERA_FEED and not DUMMY_DETECTION:
-        cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
+    # Créer les fenêtres / writers GStreamer
+    gst_writer = None
+    if SHOW_CAMERA_FEED and not DUMMY_DETECTION:
+        if HAS_DISPLAY:
+            cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
+        else:
+            gst_pipeline = (
+                "appsrc ! videoconvert ! "
+                "video/x-raw, format=BGRx ! "
+                "nvvidconv ! "
+                "video/x-raw(memory:NVMM), format=NV12 ! "
+                "nv3dsink"
+            )
+            gst_writer = cv2.VideoWriter(
+                gst_pipeline,
+                cv2.CAP_GSTREAMER,
+                0,
+                GST_DISPLAY_FPS,
+                (GST_DISPLAY_WIDTH, GST_DISPLAY_HEIGHT),
+                True,
+            )
+            if not gst_writer.isOpened():
+                print(
+                    "⚠️  Impossible d'ouvrir le sink"
+                    " GStreamer nv3dsink",
+                )
+                gst_writer = None
     if HAS_DISPLAY and SHOW_ARENA:
         cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
 
@@ -324,7 +353,7 @@ def detect_aruco() -> None:
                     )
 
             # Affichage feed caméra (détection réelle uniquement)
-            if HAS_DISPLAY and SHOW_CAMERA_FEED and annotated_frame is not None:
+            if SHOW_CAMERA_FEED and annotated_frame is not None:
                 cv2.putText(
                     annotated_frame,
                     f"FPS: {fps_display:.1f}",
@@ -334,7 +363,10 @@ def detect_aruco() -> None:
                     (0, 255, 0),
                     2,
                 )
-                cv2.imshow("ArUco Detection", annotated_frame)
+                if HAS_DISPLAY:
+                    cv2.imshow("ArUco Detection", annotated_frame)
+                elif gst_writer is not None:
+                    gst_writer.write(annotated_frame)
 
             # Affichage markers debug
             if DEBUG_MODE and detected_world:
@@ -376,6 +408,8 @@ def detect_aruco() -> None:
             camera.release()
         if HAS_DISPLAY:
             cv2.destroyAllWindows()
+        if gst_writer is not None:
+            gst_writer.release()
         if lora is not None:
             lora.stop()
             lora.disconnect()
