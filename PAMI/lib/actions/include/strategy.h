@@ -1,5 +1,6 @@
 #ifndef STRATEGY_H
 #define STRATEGY_H
+#include <vector>
 #include "AtoB.h"
 #include "action.h"
 #include "actionneur.h"
