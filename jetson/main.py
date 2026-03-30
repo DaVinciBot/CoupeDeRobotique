@@ -280,27 +280,39 @@ def detect_aruco() -> None:
         if HAS_DISPLAY:
             cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
         else:
-            gst_pipeline = (
-                "appsrc ! videoconvert ! "
-                "video/x-raw, format=BGRx ! "
-                "nvvidconv ! "
-                "video/x-raw(memory:NVMM), format=NV12 ! "
-                "nv3dsink"
-            )
-            gst_writer = cv2.VideoWriter(
-                gst_pipeline,
-                cv2.CAP_GSTREAMER,
-                0,
-                GST_DISPLAY_FPS,
-                (GST_DISPLAY_WIDTH, GST_DISPLAY_HEIGHT),
-                True,
-            )
-            if not gst_writer.isOpened():
-                print(
-                    "⚠️  Impossible d'ouvrir le sink"
-                    " GStreamer nv3dsink",
+            gst_sinks = [
+                "nvdrmvideosink",
+                "nvoverlaysink",
+                "nv3dsink",
+            ]
+            for sink_name in gst_sinks:
+                gst_pipeline = (
+                    "appsrc ! videoconvert ! "
+                    f"video/x-raw, width={GST_DISPLAY_WIDTH},"
+                    f" height={GST_DISPLAY_HEIGHT},"
+                    f" framerate={GST_DISPLAY_FPS}/1,"
+                    " format=I420 ! "
+                    f"{sink_name}"
                 )
+                gst_writer = cv2.VideoWriter(
+                    gst_pipeline,
+                    cv2.CAP_GSTREAMER,
+                    0,
+                    GST_DISPLAY_FPS,
+                    (GST_DISPLAY_WIDTH, GST_DISPLAY_HEIGHT),
+                    True,
+                )
+                if gst_writer.isOpened():
+                    print(
+                        f"🖥️  Affichage via {sink_name}",
+                    )
+                    break
                 gst_writer = None
+            if gst_writer is None:
+                print(
+                    "⚠️  Aucun sink GStreamer"
+                    " disponible pour l'affichage",
+                )
     if HAS_DISPLAY and SHOW_ARENA:
         cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
 
