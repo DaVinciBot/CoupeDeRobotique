@@ -236,7 +236,8 @@ def detect_aruco() -> None:
     detector = None
     if not DUMMY_DETECTION:
         print("📷 Initialisation de la caméra...")
-        camera = CSICamera(CAMERA_ID)
+        use_grayscale = not SHOW_CAMERA_FEED
+        camera = CSICamera(CAMERA_ID, grayscale=use_grayscale)
         print("🔍 Initialisation du détecteur ArUco...")
         detector = ArucoDetector(
             camera,

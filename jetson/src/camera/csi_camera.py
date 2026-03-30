@@ -27,13 +27,20 @@ class CSICamera:
     La lecture des frames se fait en continu dans un thread séparé.
     """
 
-    def __init__(self, camera_id: int = 0) -> None:
+    def __init__(
+        self,
+        camera_id: int = 0,
+        grayscale: bool = False,
+    ) -> None:
         """Initialise la caméra CSI.
 
         Args:
             camera_id: ID de la caméra (0=CAM0, 1=CAM1 sur Jetson).
+            grayscale: Si True, sort en GRAY8 directement via
+                nvvidconv (GPU) au lieu de BGR (évite cvtColor CPU).
         """
         self.camera_id = camera_id
+        self.grayscale = grayscale
         self.cam = None  # type: Optional[cv2.VideoCapture]
 
         # Thread pour lecture continue
@@ -49,18 +56,36 @@ class CSICamera:
         self.read_fps = 0.0
 
         # Pipeline GStreamer pour IMX219
-        gst_pipeline = (
-            f"nvarguscamerasrc sensor-id={camera_id} ! "
-            f"video/x-raw(memory:NVMM), width={CSI_WIDTH}, height={CSI_HEIGHT}, "
-            f"format=NV12, framerate={CSI_FPS}/1 ! "
-            f"nvvidconv flip-method=0 ! "
-            f"video/x-raw, width={CSI_WIDTH}, height={CSI_HEIGHT}, format=BGRx ! "
-            f"videoconvert ! "
-            f"video/x-raw, format=BGR ! "
-            f"appsink"
-        )
+        if grayscale:
+            gst_pipeline = (
+                f"nvarguscamerasrc sensor-id={camera_id} ! "
+                f"video/x-raw(memory:NVMM), "
+                f"width={CSI_WIDTH}, height={CSI_HEIGHT}, "
+                f"format=NV12, framerate={CSI_FPS}/1 ! "
+                f"nvvidconv flip-method=0 ! "
+                f"video/x-raw, width={CSI_WIDTH}, "
+                f"height={CSI_HEIGHT}, format=GRAY8 ! "
+                f"appsink"
+            )
+        else:
+            gst_pipeline = (
+                f"nvarguscamerasrc sensor-id={camera_id} ! "
+                f"video/x-raw(memory:NVMM), "
+                f"width={CSI_WIDTH}, height={CSI_HEIGHT}, "
+                f"format=NV12, framerate={CSI_FPS}/1 ! "
+                f"nvvidconv flip-method=0 ! "
+                f"video/x-raw, width={CSI_WIDTH}, "
+                f"height={CSI_HEIGHT}, format=BGRx ! "
+                f"videoconvert ! "
+                f"video/x-raw, format=BGR ! "
+                f"appsink"
+            )
 
-        print(f"🎥 CSI Camera {CSI_WIDTH}x{CSI_HEIGHT} @ {CSI_FPS}fps")
+        mode = "GRAY8" if grayscale else "BGR"
+        print(
+            f"🎥 CSI Camera {CSI_WIDTH}x{CSI_HEIGHT}"
+            f" @ {CSI_FPS}fps ({mode})",
+        )
 
         self.cam = cv2.VideoCapture(gst_pipeline, cv2.CAP_GSTREAMER)
 

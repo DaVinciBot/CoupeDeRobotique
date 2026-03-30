@@ -57,9 +57,18 @@ class ArucoDetector:
         else:
             self.aruco_params = cv2.aruco.DetectorParameters()
 
-        # CUDA désactivé : overhead transfert CPU↔GPU > gains sur petites images
-        # Pour 1920x1080, le CPU est plus rapide que GPU+transferts
-        self.use_cuda = False
+        # Tuning pour petits marqueurs éloignés sur Orin Nano
+        # Réduire les passes de seuillage adaptatif (3 au lieu de ~7)
+        self.aruco_params.adaptiveThreshWinSizeMin = 5
+        self.aruco_params.adaptiveThreshWinSizeMax = 17
+        self.aruco_params.adaptiveThreshWinSizeStep = 6
+        # Accepter les très petits marqueurs (éloignés)
+        self.aruco_params.minMarkerPerimeterRate = 0.01
+        self.aruco_params.polygonalApproxAccuracyRate = 0.05
+        # Pas de raffinement sub-pixel (gain de temps)
+        self.aruco_params.cornerRefinementMethod = (
+            cv2.aruco.CORNER_REFINE_NONE
+        )
 
         if self.camera_matrix is None and self.cam is not None:
             w, h = self.cam.get_resolution()
@@ -653,18 +662,10 @@ class ArucoDetector:
     def analyze_frame(
         self, frame, show_arena=True, arena_window_name="Arena", show_video=True
     ):
-        # Conversion en niveaux de gris (avec CUDA si disponible)
-        if self.use_cuda:
-            try:
-                gpu_frame = cv2.cuda_GpuMat()
-                gpu_frame.upload(frame)
-                gpu_gray = cv2.cuda.cvtColor(gpu_frame, cv2.COLOR_BGR2GRAY)
-                gray = gpu_gray.download()
-            except Exception:
-                # Fallback CPU si erreur
-                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        else:
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # Conversion en niveaux de gris (skip si déjà grayscale)
+        gray = frame if frame.ndim == 2 else cv2.cvtColor(
+            frame, cv2.COLOR_BGR2GRAY,
+        )
 
         # Détection ArUco - OpenCV 4.5.1 compatible
         corners, ids, _ = cv2.aruco.detectMarkers(
