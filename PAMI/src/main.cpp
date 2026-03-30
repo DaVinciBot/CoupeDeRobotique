@@ -18,7 +18,7 @@ RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               rightMotor,
                                               WHEEL_DIAMETER_MM,
                                               WHEEL_BASE_MM,
-                                              Point{0, 0, 0});
+                                              Point{0, 0, 0});  // Initial position (x, y, theta)
 
 Navigation* navigation = new Navigation(
     rollingBasis,
@@ -47,7 +47,11 @@ int d_zero, d_on = 0;
 bool tirette, t_one, t_two = true;
 
 // Array to store points to navigate to
-Point strat[] = {{0, 100, 0}, {100, 100, 0}, {100, 0, 0}, {0, 0, 0}};
+// Définir la trajectoire
+std::vector<Point> strat = {
+    {100, 100, 0} 
+};
+
 int currentIndex = 0;  // Current index in the strats array
 bool ACS = false;
 bool oldACS = false;
@@ -62,29 +66,15 @@ long lastTimerrrr = 0;
 
 
 void navigationUpdate() {
-    //navigation->update();  // Update rolling basis
+    navigation->update();  // Navigation gère automatiquement tous les waypoints
+    
     if (ACS) {
-        if (oldACS)
-            return;
-        //Serial.println("ACS activated, stopping rolling basis.");
-        oldACS = ACS;    // Update oldACS to current ACS state
-        currentIndex--;  // Decrement index if ACS is true
-        if (currentIndex < 0) {
-            currentIndex = 0;  // Prevent index from going negative
-        }
-        //navigation->stop();  // Stop rolling basis if ACS is true
+        if (oldACS) return;
+        oldACS = ACS;
+        navigation->stop();
+        Serial.println("ACS activated - Navigation stopped!");
     } else {
-        oldACS = ACS;  // Update oldACS to current ACS state
-        if (dt < 20000) {
-            leftMotor->setTargetSpeed(4000.0f);
-            rightMotor->setTargetSpeed(4000.0f);
-            dt += millis() - lastTimerrrr;
-            lastTimerrrr = millis();
-        } else {
-            Serial.println("All points navigated, stopping navigation.");
-            //navigation->stop();  // Stop navigation if all points are navigated
-                                 // start SERVO
-        }
+        oldACS = ACS;
     }
 }
 
@@ -102,10 +92,10 @@ void setup() {
     setCpuFrequencyMhz(240);
 
     Serial.begin(115200);
+    delay(500);   // Attendre que le Serial soit vraiment prêt
     Serial.println("\n-- PAMI test --\n");
-    // Test point pour navigation - aller à (100, 0) normalement tout droit
-    Point targetPoint = {50,50, 0};
-    navigation->setCommand(targetPoint);
+    // Charger la trajectoire complète
+    navigation->setTrajectory(strat);
     
     
 
@@ -172,7 +162,7 @@ void loop() {
 
     // navigation : toutes les 5ms suffit
     if (millis() - lastTime > 2) {
-        navigation->update();  // sans les motor->update() dedans
+        navigationUpdate();  // Appel de navigationUpdate qui gère tout
         lastTime = millis();
     }
     //lidar->update();

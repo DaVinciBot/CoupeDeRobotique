@@ -74,7 +74,7 @@ void Motor::_doOneStep() {
 
 void Motor::update() {
     if (!_moving) {
-        Serial.println("Motor not moving");
+        //Serial.println("Motor not moving");
         
         return;
     }

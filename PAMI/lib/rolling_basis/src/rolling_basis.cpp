@@ -16,7 +16,7 @@ RollingBasis::RollingBasis(Motor* leftMotor,
       _currentPose(initialPosition)
 {
     _linearSpeed = 23.0f; //ne sert a rien a part pour déterminer le temps qu'il met pour avancer ?? dcp c un peu une valeur magique
-    _angularSpeed = 1.5f;
+    _angularSpeed = 1.38f; // encore une valeur magique pour faire tourner le robot a une vitesse raisonnable (environ 1.38 rad/s correspond a 80 deg/s)
     _phase = Phase::Idle;
     _rotateDuration = 0.0f;
     _forwardDuration = 0.0f;
@@ -38,6 +38,7 @@ void RollingBasis::setCommand(const Point& target) {
     float dy = target.y - _currentPose.y;
     float desiredTheta = atan2f(dy, dx);
     float dTheta = _wrapToPi(desiredTheta - _currentPose.theta);
+    
     _rotateDuration = fabsf(dTheta) / _angularSpeed;
     _rotateDirection = (dTheta >= 0 ? +1.0f : -1.0f);
 
@@ -71,6 +72,7 @@ void RollingBasis::update() {
             float w = _angularSpeed * _rotateDirection;
             _sendWheelSpeeds(0.0f, w);
             Serial.println("Rotating...");
+            Serial.print(w);
         } else {
             _phase = Phase::Forwarding;
             _startTime = now;

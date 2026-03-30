@@ -11,6 +11,8 @@ class Navigation {
 
     void setCommand(const Point& targetPos);
 
+    void setTrajectory(const std::vector<Point>& trajectory);
+
     void update();
 
     bool isMoving() const;
