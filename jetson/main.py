@@ -33,6 +33,19 @@ def parse_float_array(name, shape=None):
         return None
 
 
+def parse_int_array(name, shape=None):
+    # type: (str, Optional[tuple]) -> Optional[np.ndarray]
+    """Parse un tableau d'entiers depuis les variables d'environnement."""
+    v = os.getenv(name)
+    if not v:
+        return None
+    try:
+        arr = np.array([int(x) for x in v.split()], dtype=np.int32)
+        return arr.reshape(shape) if shape else arr
+    except Exception:
+        return None
+
+
 def parse_int(name, default=0):
     # type: (str, int) -> int
     """Parse un entier depuis les variables d'environnement."""
@@ -66,6 +79,10 @@ DEBUG_MODE = parse_bool("DEBUG_MODE", False)
 SHOW_ARENA = parse_bool("SHOW_ARENA", True)
 SHOW_CAMERA_FEED = parse_bool("SHOW_CAMERA_FEED", True)
 
+HAS_DISPLAY = bool(
+    os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"),
+)
+
 DUMMY_LORA = parse_bool("DUMMY_LORA", False)
 DUMMY_DETECTION = parse_bool("DUMMY_DETECTION", False)
 
@@ -80,6 +97,13 @@ CHESSBOARD_COLS = parse_int("CHESSBOARD_COLS", 9)
 CHESSBOARD_ROWS = parse_int("CHESSBOARD_ROWS", 6)
 SQUARE_SIZE_CM = parse_float("SQUARE_SIZE_CM", 2.45)
 NUM_CALIB_IMAGES = parse_int("NUM_CALIB_IMAGES", 50)
+
+ROBOT_MARKER_ID = parse_int("ROBOT_MARKER_ID", 6)
+ENEMY_MARKER_ID = parse_int("ENEMY_MARKER_ID", 1)
+REFERENCES_MARKER_IDS = parse_int_array("REFERENCES_MARKER_IDS")
+BLUE_CRATE_MARKER_ID = parse_int("BLUE_CRATE_MARKER_ID", 36)
+YELLOW_CRATE_MARKER_ID = parse_int("YELLOW_CRATE_MARKER_ID", 47)
+EMPTY_CRATE_MARKER_ID = parse_int("EMPTY_CRATE_MARKER_ID", 41)
 
 
 def generate_fake_detected_world():
@@ -246,9 +270,9 @@ def detect_aruco() -> None:
     fps_display = 0.0
 
     # Créer les fenêtres
-    if SHOW_CAMERA_FEED and not DUMMY_DETECTION:
+    if HAS_DISPLAY and SHOW_CAMERA_FEED and not DUMMY_DETECTION:
         cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
-    if SHOW_ARENA:
+    if HAS_DISPLAY and SHOW_ARENA:
         cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
 
     print("🚀 Démarrage de la détection...")
@@ -300,7 +324,7 @@ def detect_aruco() -> None:
                     )
 
             # Affichage feed caméra (détection réelle uniquement)
-            if SHOW_CAMERA_FEED and annotated_frame is not None:
+            if HAS_DISPLAY and SHOW_CAMERA_FEED and annotated_frame is not None:
                 cv2.putText(
                     annotated_frame,
                     f"FPS: {fps_display:.1f}",
@@ -321,6 +345,8 @@ def detect_aruco() -> None:
                         f"Angle={math.degrees(yaw):.1f}°",
                     )
 
+            # Determiner la vitesse des robots
+
             # Formattage du message LoRa
             t = time.localtime()
             msg = f"CD_{t.tm_hour}:{t.tm_min}:{t.tm_sec}[\r\n"
@@ -336,7 +362,9 @@ def detect_aruco() -> None:
                 print(f"📡 [DUMMY_LORA] {msg.strip()}")
 
             # Gestion des touches (uniquement si fenêtres OpenCV ouvertes)
-            if (SHOW_CAMERA_FEED and not DUMMY_DETECTION) or SHOW_ARENA:
+            if HAS_DISPLAY and (
+                (SHOW_CAMERA_FEED and not DUMMY_DETECTION) or SHOW_ARENA
+            ):
                 key = cv2.waitKey(1) & 0xFF
                 if key == 27 or key == ord("q"):
                     break
@@ -346,7 +374,8 @@ def detect_aruco() -> None:
         plt.close("all")
         if camera is not None:
             camera.release()
-        cv2.destroyAllWindows()
+        if HAS_DISPLAY:
+            cv2.destroyAllWindows()
         if lora is not None:
             lora.stop()
             lora.disconnect()
