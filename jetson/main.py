@@ -201,17 +201,44 @@ def build_lora_message(detected_world, robot_speeds, tolerance):
 
 
 def generate_fake_detected_world():
-    """Génère des données de détection fictives pour le mode DUMMY_DETECTION."""
+    """Génère des données de détection fictives pour le mode DUMMY_DETECTION.
+
+    Les robots font un aller-retour de 1m en boucle de 4 secondes:
+    0-2s: avance de 1m, 2-4s: demi-tour + avance de 1m (retour).
+    """
+    # Cycle de 4 secondes pour le mouvement des robots
+    cycle = time.time() % 4.0
+    if cycle < 2.0:
+        progress = cycle / 2.0  # 0 -> 1
+        robot1_angle = 0.0       # face droite
+        robot6_angle = math.pi   # face gauche
+    else:
+        progress = (cycle - 2.0) / 2.0  # 0 -> 1
+        robot1_angle = math.pi   # demi-tour
+        robot6_angle = 0.0       # demi-tour
+
+    # Robot bleu (ID 1): aller-retour sur X entre 0.8 et 1.8
+    if cycle < 2.0:
+        r1_x = 0.800 + progress * 1.0
+    else:
+        r1_x = 1.800 - progress * 1.0
+
+    # Robot jaune (ID 6): aller-retour sur X entre 1.2 et 2.2
+    if cycle < 2.0:
+        r6_x = 2.200 - progress * 1.0
+    else:
+        r6_x = 1.200 + progress * 1.0
+
     fake_data = [
         # === 4 marqueurs de référence ===
         (20, np.array([0.600, 1.400]), math.pi / 2),
         (21, np.array([2.400, 1.400]), math.pi / 2),
         (22, np.array([0.600, 0.600]), math.pi / 2),
         (23, np.array([2.400, 0.600]), math.pi / 2),
-        # === Robot principal bleu (ID 1) ===
-        (1, np.array([0.800, 1.000]), math.pi),
-        # === Robot principal jaune (ID 6) ===
-        (6, np.array([2.200, 1.000]), 0.0),
+        # === Robot principal bleu (ID 1) — mouvement dynamique ===
+        (1, np.array([r1_x, 1.000]), robot1_angle),
+        # === Robot principal jaune (ID 6) — mouvement dynamique ===
+        (6, np.array([r6_x, 1.000]), robot6_angle),
         # === Caisses dans les zones de ramassage ===
         # Zone de ramassage
         (36, np.array([0.175, 0.725]), 0.0),
