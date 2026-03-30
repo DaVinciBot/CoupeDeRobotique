@@ -3,6 +3,7 @@
 import math
 import os
 import time
+from collections import deque
 from pathlib import Path
 from typing import Optional
 
@@ -10,6 +11,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from dotenv import load_dotenv
+from src.arena import arena_elements
 from src.camera import CSICamera
 from src.detector import ArucoDetector
 from src.lora.lora import LoRa
@@ -109,6 +111,93 @@ REFERENCES_MARKER_IDS = parse_int_array("REFERENCES_MARKER_IDS")
 BLUE_CRATE_MARKER_ID = parse_int("BLUE_CRATE_MARKER_ID", 36)
 YELLOW_CRATE_MARKER_ID = parse_int("YELLOW_CRATE_MARKER_ID", 47)
 EMPTY_CRATE_MARKER_ID = parse_int("EMPTY_CRATE_MARKER_ID", 41)
+ZONE_TOLERANCE_M = parse_float("ZONE_TOLERANCE_CM", 5.0) / 100.0
+SPEED_HISTORY_SIZE = 15  # ~1 seconde à 15 FPS
+
+
+# === Zones combinées pour la recherche ===
+_ALL_ZONES = arena_elements["zone_depot"] + arena_elements["zone_ramassage"]
+
+
+def compute_speed(history):
+    """Calcule la vitesse en m/s depuis un historique de positions (deque)."""
+    if len(history) < 2:
+        return 0.0
+    t_old, x_old, y_old = history[0]
+    t_new, x_new, y_new = history[-1]
+    dt = t_new - t_old
+    if dt < 0.01:
+        return 0.0
+    dist = math.sqrt((x_new - x_old) ** 2 + (y_new - y_old) ** 2)
+    return dist / dt
+
+
+def find_zone_for_kapla(x, y, tolerance):
+    """Retourne l'id_zone si (x, y) est dans une zone (avec tolérance), sinon -1."""
+    for zone in _ALL_ZONES:
+        zx, zy = zone["position"]
+        if (zx - tolerance <= x <= zx + zone["width"] + tolerance
+                and zy - tolerance <= y <= zy + zone["height"] + tolerance):
+            return zone["id_zone"]
+    return -1
+
+
+def group_kapla_by_zone(detected_world, tolerance):
+    """Groupe les kapla par zone et couleur.
+
+    Returns:
+        zoned: dict {zone_id: {"B": [(x,y,deg), ...], "Y": [...]}}
+        unzoned: list [(x, y, deg), ...]
+    """
+    zoned = {}
+    unzoned = []
+
+    for marker_id, pos, yaw in detected_world:
+        if marker_id == BLUE_CRATE_MARKER_ID:
+            color = "B"
+        elif marker_id == YELLOW_CRATE_MARKER_ID:
+            color = "Y"
+        else:
+            continue
+
+        x, y = float(pos[0]), float(pos[1])
+        deg = math.degrees(yaw)
+        zone_id = find_zone_for_kapla(x, y, tolerance)
+
+        if zone_id == -1:
+            unzoned.append((x, y, deg))
+        else:
+            if zone_id not in zoned:
+                zoned[zone_id] = {"B": [], "Y": []}
+            zoned[zone_id][color].append((x, y, deg))
+
+    return zoned, unzoned
+
+
+def build_lora_message(detected_world, robot_speeds, tolerance):
+    """Construit le message LoRa structuré."""
+    t = time.localtime()
+    parts = [f"cd>robot|{t.tm_hour:02d}:{t.tm_min:02d}:{t.tm_sec:02d}"]
+
+    # Lignes robots
+    for marker_id, pos, yaw in detected_world:
+        if marker_id in (ROBOT_MARKER_ID, ENEMY_MARKER_ID):
+            speed = robot_speeds.get(marker_id, 0.0)
+            deg = math.degrees(yaw)
+            parts.append(
+                f"R|{marker_id}|{pos[0]:.3f}|{pos[1]:.3f}|{deg:.1f}|{speed:.2f}"
+            )
+
+    # Kapla groupés par zone
+    zoned, unzoned = group_kapla_by_zone(detected_world, tolerance)
+    for zone_id in sorted(zoned.keys()):
+        for color in ("B", "Y"):
+            for x, y, deg in zoned[zone_id][color]:
+                parts.append(f"Z|{zone_id}|{color}|{x:.3f}|{y:.3f}|{deg:.1f}")
+    for x, y, deg in unzoned:
+        parts.append(f"U|{x:.3f}|{y:.3f}|{deg:.1f}")
+
+    return "\n".join(parts) + "\n"
 
 
 def generate_fake_detected_world():
@@ -317,6 +406,12 @@ def detect_aruco() -> None:
     if HAS_DISPLAY and SHOW_ARENA:
         cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
 
+    # Historique des positions robots pour le calcul de vitesse
+    robot_position_history = {
+        ROBOT_MARKER_ID: deque(maxlen=SPEED_HISTORY_SIZE),
+        ENEMY_MARKER_ID: deque(maxlen=SPEED_HISTORY_SIZE),
+    }
+
     print("🚀 Démarrage de la détection...")
 
     try:
@@ -390,21 +485,25 @@ def detect_aruco() -> None:
                         f"Angle={math.degrees(yaw):.1f}°",
                     )
 
-            # Determiner la vitesse des robots
+            # Tracking vitesse robots
+            robot_speeds = {}
+            for marker_id, pos, _yaw in detected_world:
+                if marker_id in robot_position_history:
+                    robot_position_history[marker_id].append(
+                        (current_time, float(pos[0]), float(pos[1])),
+                    )
+                    robot_speeds[marker_id] = compute_speed(
+                        robot_position_history[marker_id],
+                    )
 
-            # Formattage du message LoRa
-            t = time.localtime()
-            msg = f"CD_{t.tm_hour}:{t.tm_min}:{t.tm_sec}[\r\n"
-            for marker_id, pos, yaw in detected_world:
-                deg = math.degrees(yaw)
-                msg += f'"{marker_id}|{pos[0]:.3f}|{pos[1]:.3f}|{deg:.1f}",\r\n'
-            msg += "]\r\n"
-
-            # Envoi via LoRa ou affichage debug
+            # Construction et envoi message LoRa
+            msg = build_lora_message(
+                detected_world, robot_speeds, ZONE_TOLERANCE_M,
+            )
             if lora is not None:
                 lora.queue_send(msg)
             elif DEBUG_MODE:
-                print(f"📡 [DUMMY_LORA] {msg.strip()}")
+                print(f"[DUMMY_LORA] {msg.strip()}")
 
             # Gestion des touches (uniquement si fenêtres OpenCV ouvertes)
             if HAS_DISPLAY and (
