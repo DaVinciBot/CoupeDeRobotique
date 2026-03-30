@@ -75,6 +75,10 @@ class WinterSpatialComputation(SpatialComputation):
         Returns:
             dict[str, object]: Header data merged with decoded crate mapping.
         """
+        if self.lora is None:
+            self.logger.warning("No LoRa module configured, cannot receive data.")
+            return {"crates": self.crates}
+
         data = self.lora.receive()
         unpacked = struct.unpack(PACKET_FORMAT, data)
 
@@ -86,7 +90,7 @@ class WinterSpatialComputation(SpatialComputation):
 
         for i in range(NUM_CRATES):
             base = offset + i * fields_per_crate
-            zone_id, x_enc, y_enc, color = unpacked[base : base + fields_per_crate]
+            zone_id, x_enc, y_enc, color = unpacked[base: base + fields_per_crate]
             zone_id = int(zone_id)
             crate = Crate(zone_id, self._dec_xy(x_enc), self._dec_xy(y_enc), int(color))
             self.crates.setdefault(zone_id, []).append(crate)

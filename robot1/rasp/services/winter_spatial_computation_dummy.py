@@ -231,9 +231,12 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
     @log("WinterSpatialComputationDummy", LogLevels.INFO)
     def send_data(self) -> None:
         """Dummy method to send data. Logs the action without transmitting anything."""
-        self.logger.info(
-            "WinterSpatialComputationDummy: Simulating sending data to LoRa module.",
-        )
+        if self.lora is not None:
+            self.lora.send(b"Hello from WinterSpatialComputationDummy!")
+        else:
+            self.logger.info(
+                "WinterSpatialComputationDummy: Simulating sending data to LoRa module.",
+            )
 
     @override
     @log("WinterSpatialComputationDummy", LogLevels.INFO)
@@ -244,6 +247,9 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
             dict[str, object]: A dictionary containing simulated robot position,
                                enemy position, enemy velocity, and crates.
         """
+        if self.lora is not None:
+            self.lora.receive()
+
         self.robot_position = self.get_robot_position()
         self.enemy_position = self.get_enemy_position()
         self.enemy_velocity = self.get_enemy_velocity()
