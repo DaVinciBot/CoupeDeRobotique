@@ -33,15 +33,15 @@ void Navigation::setTrajectory(const std::vector<Point>& trajectory) {
         Serial.println("[Navigation] Erreur: trajectoire vide!");
         return;
     }
-    
+
     _waypoints.clear();
-    Point start = _basis->getPose();  // Position actuelle du robot
-    
+    Point start = _basis->getPose();  // Position actuelle du robot (maintenant correctement mise à jour)
+
     // Pour chaque point de la trajectoire, créer les waypoints intermédiaires
     for (const Point& targetPos : trajectory) {
         // Utiliser l'angle fourni dans le point
         float angle = targetPos.theta;
-        
+
         // Créer les waypoints intermédiaires comme dans setCommand()
         for (size_t i = 1; i <= DEFAULT_SEGMENTS; ++i) {
             float t = float(i) / DEFAULT_SEGMENTS;
@@ -51,15 +51,16 @@ void Navigation::setTrajectory(const std::vector<Point>& trajectory) {
             wp.theta = angle;
             _waypoints.push_back(wp);
         }
-        
-        // Mettre à jour start avec le point atteint (pas la position réelle du robot, mais la cible)
-        start = targetPos;
+
+        // Mettre à jour start avec la position RÉELLE du robot (via getPose())
+        // Cela revient à supposer que le robot atteint précisément chaque waypoint
+        start = _basis->getPose();
     }
-    
+
     _wpIndex = 0;
     _startMs = millis();
     _lastSendMs = 0;
-    
+
     if (!_waypoints.empty()) {
         _basis->setCommand(_waypoints[0]);
         Serial.printf("[Navigation] Trajectoire chargée avec %d segments\n", _waypoints.size());

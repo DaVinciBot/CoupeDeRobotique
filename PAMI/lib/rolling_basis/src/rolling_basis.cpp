@@ -77,6 +77,8 @@ void RollingBasis::update() {
             _phase = Phase::Forwarding;
             _startTime = now;
             elapsed = 0.0f;
+            // Update orientation after rotation
+            _currentPose.theta += _rotateDuration * _angularSpeed * _rotateDirection;
             Serial.println("Rotation done, switching to Forwarding phase.");
         }
     }
@@ -87,6 +89,12 @@ void RollingBasis::update() {
         } else {
             _leftMotor->setTargetSpeed(0);
             _rightMotor->setTargetSpeed(0);
+
+            // Update position after forwarding
+            float distance = _forwardDuration * _linearSpeed;
+            _currentPose.x += distance * cosf(_currentPose.theta);
+            _currentPose.y += distance * sinf(_currentPose.theta);
+
             _phase = Phase::Done;
             Serial.println("Forwarding done, switching to Done phase.");
         }
