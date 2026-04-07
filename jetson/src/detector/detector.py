@@ -57,17 +57,44 @@ class ArucoDetector:
         else:
             self.aruco_params = cv2.aruco.DetectorParameters()
 
-        # Tuning pour petits marqueurs éloignés sur Orin Nano
-        # Réduire les passes de seuillage adaptatif (3 au lieu de ~7)
-        self.aruco_params.adaptiveThreshWinSizeMin = 5
-        self.aruco_params.adaptiveThreshWinSizeMax = 17
-        self.aruco_params.adaptiveThreshWinSizeStep = 6
+        # Tuning pour détection maximale de petits marqueurs (3-5cm à ~2m)
+        # 7 passes de seuillage adaptatif (au lieu de 3)
+        self.aruco_params.adaptiveThreshWinSizeMin = 3
+        self.aruco_params.adaptiveThreshWinSizeMax = 23
+        self.aruco_params.adaptiveThreshWinSizeStep = 3
         # Accepter les très petits marqueurs (éloignés)
-        self.aruco_params.minMarkerPerimeterRate = 0.01
-        self.aruco_params.polygonalApproxAccuracyRate = 0.05
-        # Pas de raffinement sub-pixel (gain de temps)
+        self.aruco_params.minMarkerPerimeterRate = 0.005
+        self.aruco_params.polygonalApproxAccuracyRate = 0.06
+        self.aruco_params.minCornerDistanceRate = 0.02
+        # Meilleure lecture des petits marqueurs
+        self.aruco_params.perspectiveRemovePixelPerCell = 6
+        self.aruco_params.perspectiveRemoveIgnoredMarginPerCell = 0.2
+        # Correction d'erreur bits plus tolérante
+        self.aruco_params.maxErrCorrectionRate = 0.6
+        # Raffinement sub-pixel (stabilise la détection frame-à-frame)
         self.aruco_params.cornerRefinementMethod = (
-            cv2.aruco.CORNER_REFINE_NONE
+            cv2.aruco.CORNER_REFINE_SUBPIX
+        )
+        self.aruco_params.cornerRefinementWinSize = 5
+        self.aruco_params.cornerRefinementMaxIterations = 30
+        self.aruco_params.cornerRefinementMinAccuracy = 0.1
+
+        # CLAHE pour normaliser le contraste (éclairage inégal)
+        self.clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+
+        # Multi-échelle : seuil de marqueurs pour déclencher les tuiles
+        self.multiscale_enabled = True
+        self.multiscale_min_markers = 50
+
+        # Lissage temporel : carry-forward pour marqueurs statiques
+        # {marker_id: (pos_world, yaw, last_seen_time, consecutive_misses)}
+        self.marker_history = {}
+        self.marker_carry_frames = 2  # Nombre de frames de carry-forward
+
+        # IDs à exclure du carry-forward (mobiles ou déjà cachés)
+        self._no_carry_ids = set(
+            list(range(1, 11))  # Robots (bleu 1-5, jaune 6-10)
+            + [20, 21, 22, 23]  # Références (ont leur propre cache)
         )
 
         if self.camera_matrix is None and self.cam is not None:
@@ -658,6 +685,72 @@ class ArucoDetector:
         except Exception:
             pass
 
+    def _detect_multiscale(self, gray):
+        """Détection multi-échelle : full-frame + tuiles 2x2 upscalées.
+
+        Returns:
+            (corners, ids, rejected) au format cv2.aruco.detectMarkers.
+        """
+        # Passe 1 : détection sur image complète
+        corners, ids, rejected = cv2.aruco.detectMarkers(
+            gray, self.aruco_dict, parameters=self.aruco_params,
+        )
+
+        num_found = 0 if ids is None else len(ids)
+
+        # Passe 2 : tuiles si pas assez de marqueurs détectés
+        if num_found < self.multiscale_min_markers:
+            h, w = gray.shape[:2]
+            overlap = 100  # pixels d'overlap entre tuiles
+            tile_w = w // 2 + overlap
+            tile_h = h // 2 + overlap
+
+            # Définition des 4 tuiles (x_start, y_start)
+            tile_offsets = [
+                (0, 0),
+                (w - tile_w, 0),
+                (0, h - tile_h),
+                (w - tile_w, h - tile_h),
+            ]
+
+            found_ids = set() if ids is None else {int(i[0]) for i in ids}
+            all_corners = list(corners) if corners is not None else []
+            all_ids = list(ids) if ids is not None else []
+
+            for ox, oy in tile_offsets:
+                tile = gray[oy:oy + tile_h, ox:ox + tile_w]
+                # Upscale 2x pour mieux résoudre les petits marqueurs
+                tile_up = cv2.resize(
+                    tile, None, fx=2.0, fy=2.0,
+                    interpolation=cv2.INTER_LINEAR,
+                )
+                t_corners, t_ids, _ = cv2.aruco.detectMarkers(
+                    tile_up, self.aruco_dict, parameters=self.aruco_params,
+                )
+
+                if t_ids is None:
+                    continue
+
+                for i, mid_arr in enumerate(t_ids):
+                    mid = int(mid_arr[0])
+                    if mid in found_ids:
+                        continue  # Déjà trouvé en passe 1
+                    # Re-projeter les corners : ÷2 (upscale) + offset tuile
+                    original_corners = t_corners[i] / 2.0
+                    original_corners[:, :, 0] += ox
+                    original_corners[:, :, 1] += oy
+                    all_corners.append(original_corners)
+                    all_ids.append(mid_arr)
+                    found_ids.add(mid)
+
+            if all_ids:
+                corners = tuple(all_corners)
+                ids = np.array(all_ids)
+            else:
+                corners, ids = (), None
+
+        return corners, ids, rejected
+
     @timer
     def analyze_frame(
         self, frame, show_arena=True, arena_window_name="Arena", show_video=True
@@ -667,12 +760,16 @@ class ArucoDetector:
             frame, cv2.COLOR_BGR2GRAY,
         )
 
-        # Détection ArUco - OpenCV 4.5.1 compatible
-        corners, ids, _ = cv2.aruco.detectMarkers(
-            gray,
-            self.aruco_dict,
-            parameters=self.aruco_params,
-        )
+        # Égalisation adaptative du contraste (CLAHE)
+        gray = self.clahe.apply(gray)
+
+        # Détection ArUco (multi-échelle si activée)
+        if self.multiscale_enabled:
+            corners, ids, _ = self._detect_multiscale(gray)
+        else:
+            corners, ids, _ = cv2.aruco.detectMarkers(
+                gray, self.aruco_dict, parameters=self.aruco_params,
+            )
 
         if ids is None:
             if show_arena:
@@ -772,6 +869,29 @@ class ArucoDetector:
                         (0, 0, 255),
                         2,
                     )
+
+        # Lissage temporel : carry-forward des marqueurs statiques manqués
+        current_time = time.time()
+        detected_ids = {mid for mid, _, _ in detected_world}
+
+        # Mettre à jour l'historique avec les marqueurs détectés
+        for mid, pos, yaw in detected_world:
+            if mid not in self._no_carry_ids:
+                self.marker_history[mid] = (pos, yaw, current_time, 0)
+
+        # Carry-forward des marqueurs manqués (statiques uniquement)
+        expired = []
+        for mid, (pos, yaw, _, misses) in self.marker_history.items():
+            if mid in detected_ids:
+                continue
+            misses += 1
+            if misses <= self.marker_carry_frames:
+                self.marker_history[mid] = (pos, yaw, current_time, misses)
+                detected_world.append((mid, pos, yaw))
+            else:
+                expired.append(mid)
+        for mid in expired:
+            del self.marker_history[mid]
 
         if show_arena:
             try:

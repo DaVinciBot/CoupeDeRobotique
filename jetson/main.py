@@ -319,16 +319,33 @@ def generate_fake_detected_world():
     return fake_data
 
 
+CALIBRATION_FILE = os.getenv("CALIBRATION_FILE", "calibration.npz")
+
+
+def load_calibration_file():
+    """Charge la calibration depuis un fichier .npz si disponible."""
+    path = _SCRIPT_DIR / CALIBRATION_FILE
+    if path.exists():
+        data = np.load(str(path))
+        cam_mtx = data["camera_matrix"]
+        dist = data["dist_coeffs"]
+        print(f"📂 Calibration chargée depuis {CALIBRATION_FILE}")
+        return cam_mtx, dist
+    return None, None
+
+
 def calibrate_camera() -> None:
-    """Calibre la caméra avec un échiquier."""
+    """Calibre la caméra avec un échiquier (auto-capture)."""
     print("\n=== MODE CALIBRATION ===\n")
 
     camera = CSICamera(CAMERA_ID)
 
+    save_path = str(_SCRIPT_DIR / CALIBRATION_FILE)
     camera_matrix, dist_coeffs, _, _ = camera.calibrate(
         chessboard_size=(CHESSBOARD_COLS, CHESSBOARD_ROWS),
         square_size=SQUARE_SIZE_CM,
         num_images=NUM_CALIB_IMAGES,
+        save_path=save_path,
     )
 
     camera.release()
@@ -354,13 +371,40 @@ def detect_aruco() -> None:
         print("📷 Initialisation de la caméra...")
         use_grayscale = not SHOW_CAMERA_FEED
         camera = CSICamera(CAMERA_ID, grayscale=use_grayscale)
+
+        # Charger calibration : .npz d'abord, puis .env en fallback
+        cam_matrix = CAMERA_MATRIX
+        dist_coeffs = DIST_COEFFS
+        file_mtx, file_dist = load_calibration_file()
+        if file_mtx is not None:
+            cam_matrix, dist_coeffs = file_mtx, file_dist
+
+        # Initialiser l'undistortion si calibration disponible
+        effective_camera_matrix = cam_matrix
+        if cam_matrix is not None and dist_coeffs is not None:
+            effective_camera_matrix = camera.init_undistort_maps(
+                cam_matrix, dist_coeffs,
+                alpha=parse_float("UNDISTORT_ALPHA", 0.0),
+            )
+
         print("🔍 Initialisation du détecteur ArUco...")
         detector = ArucoDetector(
             camera,
-            camera_matrix=CAMERA_MATRIX,
-            dist_coeffs=DIST_COEFFS,
+            camera_matrix=effective_camera_matrix,
+            dist_coeffs=None,  # Plus de distorsion après undistort
             assumed_hfov_deg=ASSUMED_HFOV_DEG,
         )
+        # Configuration détection avancée depuis .env
+        detector.multiscale_enabled = parse_bool("MULTISCALE_DETECTION", True)
+        detector.multiscale_min_markers = parse_int(
+            "MULTISCALE_MIN_MARKERS", 50,
+        )
+        if parse_bool("TEMPORAL_SMOOTHING", True):
+            detector.marker_carry_frames = parse_int(
+                "MARKER_CARRY_FRAMES", 2,
+            )
+        else:
+            detector.marker_carry_frames = 0
     else:
         print("📷 Caméra/Détection désactivés (DUMMY_DETECTION=True)")
 
@@ -444,10 +488,11 @@ def detect_aruco() -> None:
     try:
         while True:
             if not DUMMY_DETECTION:
-                # Lire la frame
+                # Lire la frame et corriger la distorsion
                 frame = camera.read_frame(copy=SHOW_CAMERA_FEED)
                 if frame is None:
                     continue
+                frame = camera.undistort_frame(frame)
 
                 # Détection ArUco
                 annotated_frame, detected_world = detector.analyze_frame(

@@ -43,6 +43,11 @@ class CSICamera:
         self.grayscale = grayscale
         self.cam = None  # type: Optional[cv2.VideoCapture]
 
+        # Undistortion maps (précalculées une fois)
+        self.undistort_map1 = None  # type: Optional[np.ndarray]
+        self.undistort_map2 = None  # type: Optional[np.ndarray]
+        self.new_camera_matrix = None  # type: Optional[np.ndarray]
+
         # Thread pour lecture continue
         self.frame = None
         self.frame_lock = threading.Lock()
@@ -160,6 +165,43 @@ class CSICamera:
         """Vérifie si la caméra est ouverte."""
         return self.cam is not None and self.cam.isOpened()
 
+    def init_undistort_maps(
+        self,
+        camera_matrix: np.ndarray,
+        dist_coeffs: np.ndarray,
+        alpha: float = 0.0,
+    ) -> np.ndarray:
+        """Précalcule les maps d'undistortion pour cv2.remap().
+
+        Args:
+            camera_matrix: Matrice caméra 3x3.
+            dist_coeffs: Coefficients de distorsion (5,).
+            alpha: 0.0 = crop max (pas de bords noirs),
+                   1.0 = garde tous les pixels.
+
+        Returns:
+            La nouvelle matrice caméra (après undistortion).
+        """
+        size = (CSI_WIDTH, CSI_HEIGHT)
+        self.new_camera_matrix, _ = cv2.getOptimalNewCameraMatrix(
+            camera_matrix, dist_coeffs, size, alpha,
+        )
+        self.undistort_map1, self.undistort_map2 = cv2.initUndistortRectifyMap(
+            camera_matrix, dist_coeffs, None,
+            self.new_camera_matrix, size, cv2.CV_16SC2,
+        )
+        print(f"✅ Undistortion maps précalculées (alpha={alpha})")
+        return self.new_camera_matrix
+
+    def undistort_frame(self, frame: np.ndarray) -> np.ndarray:
+        """Applique l'undistortion via maps précalculées (~3-5ms)."""
+        if self.undistort_map1 is None:
+            return frame
+        return cv2.remap(
+            frame, self.undistort_map1, self.undistort_map2,
+            cv2.INTER_LINEAR,
+        )
+
     def read_frame(self, copy: bool = True) -> Optional[np.ndarray]:
         """Récupère la dernière frame disponible.
 
@@ -209,14 +251,16 @@ class CSICamera:
         self,
         chessboard_size=(9, 6),  # type: Tuple[int, int]
         square_size=1.0,  # type: float
-        num_images=20,  # type: int
+        num_images=25,  # type: int
+        save_path=None,  # type: Optional[str]
     ):  # type: (...) -> Tuple[Optional[Any], Optional[Any], Optional[Any], Optional[Any]]
-        """Calibre la caméra avec un échiquier.
+        """Calibre la caméra avec un échiquier (auto-capture).
 
         Args:
             chessboard_size: Nombre de coins intérieurs (cols, rows).
             square_size: Taille d'un carré (unité de votre choix).
             num_images: Nombre d'images à capturer.
+            save_path: Chemin pour sauvegarder le fichier .npz (optionnel).
 
         Returns:
             (camera_matrix, dist_coeffs, rvecs, tvecs) ou (None, None, None, None).
@@ -239,9 +283,14 @@ class CSICamera:
         # Carte de couverture pour garantir diversité des angles
         coverage_map = np.zeros((CSI_HEIGHT // 20, CSI_WIDTH // 20))
 
-        print(f"\n📸 Capture de {num_images} images pour calibration")
-        print("💡 CONSEILS: Variez angles, distances et positions")
-        print("⌨️  'c' = capturer, 'q' = terminer\n")
+        # Auto-capture : délai minimum entre captures
+        auto_capture_delay = 1.0  # secondes
+        last_capture_time = 0.0
+
+        print(f"\n📸 Auto-capture de {num_images} images pour calibration")
+        print("💡 Déplacez l'échiquier lentement devant la caméra")
+        print("💡 Variez angles, distances et positions")
+        print("⌨️  'q' = terminer manuellement\n")
 
         while captured < num_images:
             frame = self.read_frame()
@@ -259,14 +308,29 @@ class CSICamera:
             )
 
             display = frame.copy()
+            now = time.time()
 
-            # Afficher la couverture
+            # Barre de progression
+            progress_pct = captured / num_images
+            bar_w = 400
+            cv2.rectangle(display, (10, 10), (10 + bar_w, 40), (50, 50, 50), -1)
+            cv2.rectangle(
+                display, (10, 10),
+                (10 + int(bar_w * progress_pct), 40), (0, 200, 0), -1,
+            )
+            cv2.putText(
+                display,
+                f"{captured}/{num_images} ({progress_pct * 100:.0f}%)",
+                (10 + bar_w + 10, 32),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2,
+            )
+
+            # Couverture minimap
             coverage_display = cv2.resize(coverage_map, (200, 150))
-            coverage_display = (
-                coverage_display * 255 / max(1, coverage_map.max())
-            ).astype(np.uint8)
+            cmax = max(1, coverage_map.max())
+            coverage_display = (coverage_display * 255 / cmax).astype(np.uint8)
             coverage_display = cv2.applyColorMap(coverage_display, cv2.COLORMAP_JET)
-            display[10:160, 10:210] = coverage_display
+            display[50:200, 10:210] = coverage_display
 
             if ret and corners is not None:
                 # Affiner les coins sur l'image pleine résolution
@@ -278,61 +342,48 @@ class CSICamera:
 
                 # Mesure de netteté
                 sharpness = cv2.Laplacian(gray, cv2.CV_64F).var()
-                color = (
-                    (0, 255, 0)
-                    if sharpness > SHARPNESS_MIN_THRESHOLD
-                    else (0, 165, 255)
-                )
+                sharp_ok = sharpness > SHARPNESS_MIN_THRESHOLD
+                color = (0, 255, 0) if sharp_ok else (0, 165, 255)
 
-                cv2.putText(
-                    display,
-                    f"✓ Detecte! Nettete: {sharpness:.0f}",
-                    (10, 180),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.6,
-                    color,
-                    2,
-                )
-                cv2.putText(
-                    display,
-                    f"'c' pour capturer ({captured}/{num_images})",
-                    (10, 210),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.6,
-                    (0, 255, 0),
-                    2,
-                )
-            else:
-                cv2.putText(
-                    display,
-                    "✗ Pas de motif detecte",
-                    (10, 180),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.6,
-                    (0, 0, 255),
-                    2,
-                )
-
-            cv2.imshow("Calibration", display)
-            key = cv2.waitKey(1) & 0xFF
-
-            if key == ord("c") and ret:
                 # Vérifier couverture
                 center = np.mean(corners, axis=0)[0]
                 grid_x = int(center[0] / 20)
                 grid_y = int(center[1] / 20)
+                coverage_ok = coverage_map[grid_y, grid_x] <= COVERAGE_MAX_THRESHOLD
 
-                if coverage_map[grid_y, grid_x] > COVERAGE_MAX_THRESHOLD:
-                    print("⚠️  Zone déjà capturée, variez la position")
-                    continue
+                # Délai auto-capture respecté ?
+                delay_ok = (now - last_capture_time) >= auto_capture_delay
 
-                objpoints.append(objp)
-                imgpoints.append(corners)
-                coverage_map[grid_y, grid_x] += 1
-                captured += 1
-                print(f"✓ Image {captured}/{num_images} capturée")
+                # Auto-capture si toutes les conditions sont remplies
+                if sharp_ok and coverage_ok and delay_ok:
+                    objpoints.append(objp)
+                    imgpoints.append(corners)
+                    coverage_map[grid_y, grid_x] += 1
+                    captured += 1
+                    last_capture_time = now
+                    print(f"✓ Image {captured}/{num_images} (auto)")
+                    # Flash vert
+                    cv2.rectangle(display, (0, 0), (CSI_WIDTH, CSI_HEIGHT), (0, 255, 0), 8)
 
-            elif key == ord("q"):
+                status = "AUTO-CAPTURE" if (sharp_ok and coverage_ok) else "En attente"
+                if not sharp_ok:
+                    status = "Trop flou"
+                elif not coverage_ok:
+                    status = "Zone saturee, bougez"
+
+                cv2.putText(
+                    display, f"{status} | Nettete: {sharpness:.0f}",
+                    (10, 220), cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2,
+                )
+            else:
+                cv2.putText(
+                    display, "Pas de motif detecte",
+                    (10, 220), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2,
+                )
+
+            cv2.imshow("Calibration", display)
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("q"):
                 break
 
         cv2.destroyAllWindows()
@@ -380,6 +431,15 @@ class CSICamera:
                 print("✅ Excellente calibration!")
             else:
                 print("✓ Calibration acceptable")
+
+            # Sauvegarde .npz si chemin fourni
+            if save_path:
+                np.savez(
+                    save_path,
+                    camera_matrix=camera_matrix,
+                    dist_coeffs=dist_coeffs,
+                )
+                print(f"💾 Calibration sauvegardée dans {save_path}")
 
         return (
             (camera_matrix, dist_coeffs, rvecs, tvecs)
