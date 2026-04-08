@@ -5,8 +5,8 @@ AtoB::AtoB(RollingBasis* rb, const Point& target) : _rb(rb), _target(target) {
     // mais on peut ré-initialiser ici si besoin
     _startMs = 0;
     _finished = false;
-    Serial.printf("AtoB: target set to x=%.1f y=%.1f theta=%.3f\n", _target.x,
-                  _target.y, _target.theta);
+    //Serial.printf("AtoB: target set to x=%.1f y=%.1f theta=%.3f\n", _target.x,
+                  //_target.y, _target.theta);
     // timeout et tolérance définis dans le header (_timeoutMs, _arriveTolMm)
 }
 

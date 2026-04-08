@@ -2,11 +2,11 @@
 #define ACTIONS_RELATIVE_BACKWARD_H
 
 #include "action.h"
-#include "rolling_basis.h"
+#include "navigation.h"
 
 class RelativeBackward : public Action {
    public:
-    RelativeBackward(RollingBasis* rb, const double distance);
+    RelativeBackward(Navigation* nav, const double distance);
     ~RelativeBackward() = default;
     void start() override;
     void update() override;
@@ -16,7 +16,7 @@ class RelativeBackward : public Action {
 
    private:
     Point _target;
-    RollingBasis* _rb;
+    Navigation* _navigation;
     const double _distance;
     unsigned long _startMs = 0;
     unsigned long _timeoutMs = 15000;  // Ms

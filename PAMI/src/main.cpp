@@ -1,5 +1,6 @@
 #include "config.h"
 #include "strategy.h"
+#include "relative_forward.h"
 
 Motor* leftMotor = new Motor(LEFT_STEP_PIN,       // Broche 19
                              LEFT_DIR_PIN,        // Broche 18
@@ -92,6 +93,7 @@ void setup() {
     setCpuFrequencyMhz(240);
     strategy = new Strategy(rollingBasis);
     Serial.begin(115200);
+    rollingBasis->setCommand({0, 50, 0});  // Ensure the robot is stopped at the beginning
     delay(500);  // Attendre que le Serial soit vraiment prêt
     Serial.println("\n-- PAMI test --\n");
     // Charger la trajectoire complète

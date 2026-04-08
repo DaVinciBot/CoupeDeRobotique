@@ -1,7 +1,7 @@
 #include "relative_forward.h"
 
-RelativeForward::RelativeForward(RollingBasis* rb, const double distance)
-    : _rb(rb), _distance(distance) {
+RelativeForward::RelativeForward(Navigation* nav, const double distance)
+    : _navigation(nav), _distance(distance) {
     // valeurs par défaut déjà initialisées inline dans le header,
     // mais on peut ré-initialiser ici si besoin
     _startMs = 0;
@@ -16,7 +16,7 @@ void RelativeForward::start() {
     _startMs = millis();
 
     // Lire la pose actuelle (A)
-    Point cur = _rb->getPose();
+    Point cur = _navigation->getPose();
     Serial.printf("RelativeForward::start cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y,
                   cur.theta);
 
@@ -28,13 +28,13 @@ void RelativeForward::start() {
                   _target.y, _target.theta);
 
     // Envoyer la commande vers la cible B
-    _rb->setCommand(_target);
-    Serial.println("RelativeForward: command sent to rolling basis");
+    _navigation->setCommand(_target); // ← via Navigation
+    Serial.println("RelativeForward: command sent to navigation");
 }
 
 void RelativeForward::update() {
     // tick the rolling basis controller
-    _rb->update();
+    _navigation->update();
 
     if (_finished) {
         return;
@@ -43,26 +43,26 @@ void RelativeForward::update() {
     // timeout check
     if (millis() - _startMs > _timeoutMs) {
         Serial.println("RelativeForward: timeout, stopping");
-        _rb->stop();
+        _navigation->stop();
         _finished = true;
         return;
     }
 
     // read current pose (may be static if odometry is disabled)
-    Point cur = _rb->getPose();
+    Point cur = _navigation->getPose();
     float dist = Point::distance(cur, _target);
     Serial.printf("RelativeForward::update dist=%.1f mm\n", dist);
     // arrival condition: within tolerance OR base reports idle
-    if (dist <= _arriveTolMm || !_rb->isMoving()) {
+    if (dist <= _arriveTolMm || !_navigation->isMoving()) {
         Serial.println("RelativeForward: arrived or motors idle -> finishing");
-        _rb->stop();
+        _navigation->stop();
         _finished = true;
     }
 }
 
 void RelativeForward::stop() {
     Serial.println("RelativeForward stopped");
-    _rb->stop();
+    _navigation->stop();
     _finished = true;
 }
 

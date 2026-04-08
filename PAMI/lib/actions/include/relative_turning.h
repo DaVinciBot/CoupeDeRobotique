@@ -2,11 +2,11 @@
 #define ACTIONS_RELATIVE_TURNING_H
 
 #include "action.h"
-#include "rolling_basis.h"
+#include "navigation.h"
 
 class RelativeTurning : public Action {
    public:
-    RelativeTurning(RollingBasis* rb, const double angle);
+    RelativeTurning(Navigation* nav, const double angle);
     ~RelativeTurning() = default;
     void start() override;
     void update() override;
@@ -16,7 +16,7 @@ class RelativeTurning : public Action {
 
    private:
     Point _target;
-    RollingBasis* _rb;
+    Navigation* _navigation;
     const double _angle;
     unsigned long _startMs = 0;
     unsigned long _timeoutMs = 15000;  // Ms

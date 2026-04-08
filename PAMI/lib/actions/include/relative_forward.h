@@ -2,11 +2,11 @@
 #define ACTIONS_RELATIVE_FORWARD_H
 
 #include "action.h"
-#include "rolling_basis.h"
+#include "navigation.h"
 
 class RelativeForward : public Action {
    public:
-    RelativeForward(RollingBasis* rb, const double distance);
+    RelativeForward(Navigation* nav, const double distance);
     ~RelativeForward() = default;
     void start() override;
     void update() override;
@@ -16,7 +16,7 @@ class RelativeForward : public Action {
 
    private:
     Point _target;
-    RollingBasis* _rb;
+    Navigation* _navigation;
     const double _distance;
     unsigned long _startMs = 0;
     unsigned long _timeoutMs = 15000;  // Ms
