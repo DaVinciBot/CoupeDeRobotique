@@ -169,7 +169,7 @@ class MainBrain(Brain):
 
         self.shared_crates = _crates_to_dict(sc.crates)
 
-        lora = LoraCom(self.logger)
+        #lora = LoraCom(self.logger)
 
         actuators.deplacement_position()
 
@@ -200,7 +200,7 @@ class MainBrain(Brain):
 
         # --- MetaProg is insane (loop) --- #
 
-        lora.receive()
+        #lora.receive()
         sc.receive_data()
         self.shared_crates = _crates_to_dict(sc.crates)
 
