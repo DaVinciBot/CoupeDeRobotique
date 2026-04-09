@@ -88,7 +88,7 @@ class MainBrain(Brain):
         self.ws_ui: WServerRouteManager = ws_ui
         self.inputs: Inputs = inputs
         self.score: int
-        #self.lora: LoraCom = LoraCom(self.logger)
+        self.lora: LoraCom = LoraCom(self.logger)
 
     # ====== Secondary Processes =======
 
@@ -170,9 +170,9 @@ class MainBrain(Brain):
 
         self.shared_crates = _crates_to_dict(sc.crates)
 
-        #a = self.lora.receive()
+        a = self.lora.receive()
 
-        #print(f"Received data from LoRa: {a}")
+        self.logger.error(f"Received data from LoRa: {a}")
 
         actuators.deplacement_position()
 
