@@ -201,6 +201,7 @@ class MainBrain(Brain):
         # --- MetaProg is insane (loop) --- #
 
         lora.receive()
+        self.logger.error("dans la bouvle")
         # sc.receive_data()
         self.shared_crates = _crates_to_dict(sc.crates)
 
