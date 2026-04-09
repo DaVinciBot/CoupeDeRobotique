@@ -201,7 +201,7 @@ class MainBrain(Brain):
         # --- MetaProg is insane (loop) --- #
 
         lora.receive()
-        sc.receive_data()
+        # sc.receive_data()
         self.shared_crates = _crates_to_dict(sc.crates)
 
         context = WinterGameContext(
