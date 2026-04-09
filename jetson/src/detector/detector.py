@@ -70,7 +70,7 @@ class ArucoDetector:
         self.aruco_params.perspectiveRemovePixelPerCell = 6
         self.aruco_params.perspectiveRemoveIgnoredMarginPerCell = 0.2
         # Correction d'erreur bits plus tolérante
-        self.aruco_params.maxErrCorrectionRate = 0.6
+        self.aruco_params.maxErroneousBitsInBorderRate = 0.6
         # Raffinement sub-pixel (stabilise la détection frame-à-frame)
         self.aruco_params.cornerRefinementMethod = (
             cv2.aruco.CORNER_REFINE_SUBPIX
