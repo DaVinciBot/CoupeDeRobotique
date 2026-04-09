@@ -239,7 +239,7 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
             )
 
     @override
-    @log("WinterSpatialComputationDummy", LogLevels.INFO)
+
     def receive_data(self) -> dict[str, object]:
         """Dummy method to receive data. Returns simulated header and crate data.
 
