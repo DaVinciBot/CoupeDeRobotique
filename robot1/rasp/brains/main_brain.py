@@ -171,7 +171,7 @@ class MainBrain(Brain):
 
         lora = LoraCom(self.logger)
 
-        lora.receive()
+        self.logger.error(str(lora.receive()))
         lora.send(b"Hello from MainBrain!")
 
         actuators.deplacement_position()
