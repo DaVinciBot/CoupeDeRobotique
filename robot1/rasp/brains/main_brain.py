@@ -169,6 +169,11 @@ class MainBrain(Brain):
 
         self.shared_crates = _crates_to_dict(sc.crates)
 
+        lora = LoraCom(self.logger)
+
+        lora.receive()
+        lora.send(b"Hello from MainBrain!")
+
         actuators.deplacement_position()
 
         # --- 2) Wait for jack plug --- #
