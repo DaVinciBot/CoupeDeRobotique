@@ -8,7 +8,7 @@ lidar_pami* lidar = new lidar_pami(Serial2,  // Port série UART
 bool ACS = false;
 
 // ===== COMMENTED OUT FOR LIDAR TESTING =====
-/*
+
 #if ENABLE_OTA
 #include "OTA.h"
 AsyncWebServer server(80);
@@ -40,9 +40,9 @@ long startTimer = 276447230;
 bool canStart = false;
 long dt = 0;
 long lastTimerrrr = 0;
-*/
 
-/*void navigationUpdate() {
+
+void navigationUpdate() {
     navigation->update();  // Update rolling basis
     if (ACS) {
         if (oldACS)
@@ -67,7 +67,7 @@ long lastTimerrrr = 0;
                                  // start SERVO
         }
     }
-}*/
+}
 
 void lidarUpdate() {
     // Print radar visualization
@@ -93,6 +93,7 @@ void setup() {
     });
     delay(10000);
     //il s'identifie (avant la 85eme s)
+    #if (IDENTIFIER_STRATEGY_CHOSEN == 0)
     String str_identifier="";
     int obstacle_compteur=0;
     for(int cote=0;cote<4;cote++){//boucle pour chaque coté
@@ -117,6 +118,15 @@ void setup() {
         Serial.println("Turning 90 degrees");
         delay(1000); // Simulate time taken to turn 90 degrees
         //on tourne de 90° pour le prochain coté
+        Point currentPose = rollingBasis->getPose();
+        Point targetPose = {currentPose.x, currentPose.y, currentPose.theta + (float)(M_PI / 2.0)};  // +90 degrés en radians
+        rollingBasis->setCommand(targetPose);
+
+        // Boucle bloquante pour attendre la fin de la rotation
+        while (rollingBasis->isMoving()) {
+            rollingBasis->update();
+            delay(10);  // Petit délai pour éviter la surcharge CPU
+        }
     }
     //mtn, on exploite son identifier pour savoir ou il est
     if(NUMBER_OF_PAMIS==6){ //on regarde de gauche à droite de haut en bas depuis mon dessin
@@ -149,6 +159,7 @@ void setup() {
             Serial.println("Unknown PAMI identifier: " + str_identifier);
         }
     }
+    #endif
 }
 
 

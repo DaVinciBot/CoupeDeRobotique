@@ -46,3 +46,6 @@
 // #-------- DEV CONFIGURATION ---------#
 #define ENABLE_OTA false   // Enable OTA updates
 #define ENABLE_LORA false  // Enable LoRa communication
+
+// #------- STRATEGY CONFIGURATION -------#
+#define IDENTIFIER_STRATEGY_CHOSEN 0 //0 : strategy using lidar, 1 : strategy using mac adress
