@@ -54,4 +54,4 @@
 
 // #-------- DEV CONFIGURATION ---------#
 #define ENABLE_OTA false   // Enable OTA updates
-#define ENABLE_LORA true   // Enable LoRa communication (DX-LR01 - UART based)
+#define ENABLE_LORA false   // Enable LoRa communication (DX-LR01 - UART based)

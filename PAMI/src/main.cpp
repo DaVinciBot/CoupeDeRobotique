@@ -1,6 +1,4 @@
 #include "config.h"
-#include "strategy.h"
-#include "relative_forward.h"
 
 Motor* leftMotor = new Motor(LEFT_STEP_PIN,       // Broche 19
                              LEFT_DIR_PIN,        // Broche 18
@@ -16,19 +14,17 @@ Motor* rightMotor = new Motor(RIGHT_STEP_PIN,       // Broche 17
                               PULSE_US,
                               true);
 
-RollingBasis* rollingBasis =
-    new RollingBasis(leftMotor,
-                     rightMotor,
-                     WHEEL_DIAMETER_MM,
-                     WHEEL_BASE_MM,
-                     Point{0, 0, 0});  // Initial position (x, y, theta)
+RollingBasis* rollingBasis = new RollingBasis(leftMotor,
+                                              rightMotor,
+                                              WHEEL_DIAMETER_MM,
+                                              WHEEL_BASE_MM,
+                                              Point{0, 0, 0});  // Initial position (x, y, theta)
 
 Navigation* navigation = new Navigation(
     rollingBasis,
     15000);  // Navigation object with 100ms interval and 15s timeout
 
-// lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
-Strategy* strategy = nullptr;
+//lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
 
 #if ENABLE_OTA
 #include "OTA.h"
@@ -52,7 +48,9 @@ bool tirette, t_one, t_two = true;
 
 // Array to store points to navigate to
 // Définir la trajectoire
-std::vector<Point> strat = {{100, 100, 0}};
+std::vector<Point> strat = {
+    {100, 100, 0} 
+};
 
 int currentIndex = 0;  // Current index in the strats array
 bool ACS = false;
@@ -65,12 +63,13 @@ bool canStart = false;  // Flag to indicate if navigation can start
 long dt = 0;
 long lastTimerrrr = 0;
 
+
+
 void navigationUpdate() {
     navigation->update();  // Navigation gère automatiquement tous les waypoints
-
+    
     if (ACS) {
-        if (oldACS)
-            return;
+        if (oldACS) return;
         oldACS = ACS;
         navigation->stop();
         Serial.println("ACS activated - Navigation stopped!");
@@ -91,15 +90,15 @@ void navigationUpdate() {
 void setup() {
     delay(5000);  // pour le serial monitor
     setCpuFrequencyMhz(240);
-    strategy = new Strategy(rollingBasis);
+
     Serial.begin(115200);
-    rollingBasis->setCommand({0, 50, 0});  // Ensure the robot is stopped at the beginning
-    delay(500);  // Attendre que le Serial soit vraiment prêt
+    delay(500);   // Attendre que le Serial soit vraiment prêt
     Serial.println("\n-- PAMI test --\n");
     // Charger la trajectoire complète
     navigation->setTrajectory(strat);
+    
+    
 
-    canStart = true;
     /*lidar->begin(lidar_pami::DEFAULT_BAUD);  // Initialize LIDAR
     lidar->onReceive([]() {
         if (!canStart) {
@@ -126,8 +125,8 @@ void setup() {
     server.begin();
 #endif
 #if ENABLE_LORA
-    // isInit = com->begin(SS, RST, BUSY);
-    //  initialize_callback_functions();
+    //isInit = com->begin(SS, RST, BUSY);
+    // initialize_callback_functions();
     if (isInit) {
         Serial.println("LoRa initialized");
     } else {
@@ -156,16 +155,17 @@ void setup() {
 
 long lastTime = 0;  // Variable to store the last time the update was executed
 void loop() {
+    
+
     leftMotor->update();
     rightMotor->update();
 
-    if (millis() - lastTime > 2 &&
-        canStart)  // Check if 2ms have passed since the last navigation update
-    {
-        navigationUpdate();  // Call navigation update function
+    // navigation : toutes les 5ms suffit
+    if (millis() - lastTime > 2) {
+        navigationUpdate();  // Appel de navigationUpdate qui gère tout
         lastTime = millis();
     }
-    // lidar->update();
+    //lidar->update();
 #if ENABLE_OTA
     ota.loop();
 #endif
@@ -173,11 +173,11 @@ void loop() {
     if (isInit) {
     }  // com->handle_callback(callback_functions);
     else {
-        // isInit = com->begin(SS, RST, BUSY);
+        //isInit = com->begin(SS, RST, BUSY);
         if (isInit) {
-            // Serial.println("LoRa re-initialized");
+            //Serial.println("LoRa re-initialized");
         } else {
-            // Serial.println("[ERROR] LoRa re-initialization failed");
+            //Serial.println("[ERROR] LoRa re-initialization failed");
         }
     }
 
