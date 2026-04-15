@@ -10,6 +10,7 @@
 #include "relative_turning.h"
 #include "rolling_basis.h"
 #include "triangle.h"
+#include "strategy.h"
 
 // #------- GENERAL CONFIGURATION -------#
 #define ACS_TRESHOLD 40  // Threshold for ACS activation in mm
@@ -31,6 +32,12 @@
 
 #define MAX_LINEAR_SPEED_MM_PER_S 10     // Maximum linear speed in mm/s
 #define MAX_ANGULAR_SPEED_RAD_PER_S 1.0  // Maximum angular speed in rad/s
+
+// #------- DISTANCE CALIBRATION -------#
+#define DISTANCE_CALIBRATION_FACTOR 0.4f  // Robot fait 2.5x la distance, donc on multiplie par 0.4
+
+// #------- ANGULAR CALIBRATION -------#
+#define ANGULAR_CALIBRATION_FACTOR 0.85f  // Robot tourne trop (~105° au lieu de 90°), donc on multiplie par 0.85
 
 // #------- PID CONFIGURATION -------#
 #define LINEAR_DISTANCE_KP 2000.0f  // Proportional gain for linear distance

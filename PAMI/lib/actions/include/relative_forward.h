@@ -4,6 +4,9 @@
 #include "action.h"
 #include "navigation.h"
 
+// Distance calibration factor (robot does 2.5x distance, so multiply by 0.4)
+#define DISTANCE_CALIBRATION_FACTOR 0.4f
+
 class RelativeForward : public Action {
    public:
     RelativeForward(Navigation* nav, const double distance);

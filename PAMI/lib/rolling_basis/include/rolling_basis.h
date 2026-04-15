@@ -129,6 +129,16 @@ class RollingBasis {
      */
     float getAngularSpeedRadPerS() const;
 
+    /**
+     * @brief Get pointer to left motor
+     */
+    Motor* getLeftMotor() const { return _leftMotor; }
+
+    /**
+     * @brief Get pointer to right motor
+     */
+    Motor* getRightMotor() const { return _rightMotor; }
+
    private:
     // void _computeOdometry(float dt);
     // void _applyControl(float dt);
@@ -176,6 +186,7 @@ class RollingBasis {
      * Stored as float for convenience when multiplying with durations/speeds.
      */
     float _rotateDirection;
+    float _targetDTheta;  // Target angle change (radians) AFTER calibration - used for odometry
     // Start time of the current phase
     unsigned long _startTime;
 };
