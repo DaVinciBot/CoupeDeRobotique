@@ -2,6 +2,7 @@
 
 import math
 import os
+import sys
 import time
 from collections import deque
 from pathlib import Path
@@ -14,6 +15,7 @@ from dotenv import load_dotenv
 from src.arena import arena_elements
 from src.camera import CSICamera
 from src.detector import ArucoDetector
+from src.game import MatchState
 from src.lora.lora import LoRa
 from src.utils.timing import set_debug_mode
 
@@ -175,29 +177,44 @@ def group_kapla_by_zone(detected_world, tolerance):
 
 
 def build_lora_message(detected_world, robot_speeds, tolerance):
-    """Construit le message LoRa structuré."""
-    t = time.localtime()
-    parts = [f"cd>robot|{t.tm_hour:02d}:{t.tm_min:02d}:{t.tm_sec:02d}"]
+    """Construit le message vision (cmd 5) sur une seule ligne.
 
-    # Lignes robots
+    Format: `5|R|id|x|y|deg|speed|...|Z|zone|c|x|y|deg|...|U|x|y|deg|...\\n`
+    Les tokens R/Z/U délimitent les enregistrements côté récepteur.
+    """
+    parts = ["5"]
+
+    # Robots
     for marker_id, pos, yaw in detected_world:
         if marker_id in (ROBOT_MARKER_ID, ENEMY_MARKER_ID):
             speed = robot_speeds.get(marker_id, 0.0)
             deg = math.degrees(yaw)
-            parts.append(
-                f"R|{marker_id}|{pos[0]:.3f}|{pos[1]:.3f}|{deg:.1f}|{speed:.2f}"
-            )
+            parts.extend([
+                "R",
+                str(marker_id),
+                f"{pos[0]:.3f}",
+                f"{pos[1]:.3f}",
+                f"{deg:.1f}",
+                f"{speed:.2f}",
+            ])
 
     # Kapla groupés par zone
     zoned, unzoned = group_kapla_by_zone(detected_world, tolerance)
     for zone_id in sorted(zoned.keys()):
         for color in ("B", "Y"):
             for x, y, deg in zoned[zone_id][color]:
-                parts.append(f"Z|{zone_id}|{color}|{x:.3f}|{y:.3f}|{deg:.1f}")
+                parts.extend([
+                    "Z",
+                    str(zone_id),
+                    color,
+                    f"{x:.3f}",
+                    f"{y:.3f}",
+                    f"{deg:.1f}",
+                ])
     for x, y, deg in unzoned:
-        parts.append(f"U|{x:.3f}|{y:.3f}|{deg:.1f}")
+        parts.extend(["U", f"{x:.3f}", f"{y:.3f}", f"{deg:.1f}"])
 
-    return "\n".join(parts) + "\n"
+    return "|".join(parts) + "\n"
 
 
 def generate_fake_detected_world():
@@ -419,13 +436,40 @@ def detect_aruco() -> None:
 
     # Initialiser LoRa
     lora = None
+    match_state = MatchState()
+
     if not DUMMY_LORA:
         print("📡 Initialisation de la carte LoRa...")
         lora = LoRa(
             port="/dev/ttyTHS1",
             baudrate=115200,
         )
-        lora.connect()
+        try:
+            lora.connect()
+        except RuntimeError as e:
+            print(f"❌ LoRa indisponible: {e}")
+            sys.exit(1)
+
+        if not lora.is_healthy:
+            print("❌ LoRa non sain après connect() — abandon.")
+            sys.exit(1)
+
+        # --- Handlers LoRa entrants ---
+        def on_id_request(_args):
+            pid = match_state.register_pami()
+            lora.queue_send(f"2|{pid}\n")
+            print(f"🤖 PAMI enregistré: id={pid}")
+
+        def on_match_start(args):
+            if not args:
+                print("msg 4 reçu sans couleur — ignoré")
+                return
+            if match_state.start_match(args[0]):
+                print(f"🏁 Match démarré, team={args[0]}")
+
+        lora.register_handler(1, on_id_request)
+        lora.register_handler(4, on_match_start)
+
         lora.start()
     else:
         print("📡 LoRa désactivé (DUMMY_LORA=True)")
@@ -568,14 +612,26 @@ def detect_aruco() -> None:
                         robot_position_history[marker_id],
                     )
 
-            # Construction et envoi message LoRa
-            msg = build_lora_message(
-                detected_world, robot_speeds, ZONE_TOLERANCE_M,
-            )
-            if lora is not None:
-                lora.queue_send(msg)
-            elif DEBUG_MODE:
-                print(f"[DUMMY_LORA] {msg.strip()}")
+            # Msg 3 : à T+90s, envoyer les attributions de dépôts aux PAMIs (une seule fois)
+            if match_state.should_send_pre_end():
+                assignments = match_state.compute_depot_assignments(arena_elements)
+                msg3 = MatchState.build_msg_3(assignments)
+                if lora is not None:
+                    lora.queue_send(msg3)
+                elif DEBUG_MODE:
+                    print(f"[DUMMY_LORA] {msg3.strip()}")
+                match_state.mark_pre_end_sent()
+                print(f"📨 msg 3 envoyé: {len(assignments)} PAMI(s) assignés")
+
+            # Msg 5 : envoi continu pendant le match uniquement
+            if match_state.match_started and not match_state.is_over():
+                msg = build_lora_message(
+                    detected_world, robot_speeds, ZONE_TOLERANCE_M,
+                )
+                if lora is not None:
+                    lora.queue_send(msg)
+                elif DEBUG_MODE:
+                    print(f"[DUMMY_LORA] {msg.strip()}")
 
             # Gestion des touches (uniquement si fenêtres OpenCV ouvertes)
             if HAS_DISPLAY and (
