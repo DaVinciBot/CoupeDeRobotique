@@ -1,4 +1,6 @@
 #include "config.h"
+#include "strategy.h"
+#include <vector>
 
 Motor* leftMotor = new Motor(LEFT_STEP_PIN,       // Broche 19
                              LEFT_DIR_PIN,        // Broche 18
@@ -154,7 +156,47 @@ void setup() {
 }
 
 long lastTime = 0;  // Variable to store the last time the update was executed
+
 void loop() {
+    static Strategy* strategy = nullptr;
+    static bool initialized = false;
+    static bool finished_printed = false;
+
+    if (!initialized) {
+        lastTime = millis();
+        
+        // Créer la stratégie avec une trajectoire de 3 points
+        strategy = new Strategy(rollingBasis);
+        
+        std::vector<Point> trajectory = {
+            Point{100000.0, 0.0, 0.0},      // Point 1
+            //Point{100.0, 100.0, 0.0},    // Point 2
+            //Point{0.0, 100.0, 0.0}       // Point 3
+        };
+        
+        // Utiliser la nouvelle fonction
+        strategy->creer_strategie(trajectory);
+        strategy->start();
+        Serial.println("=== Strategy with 3 points ===");
+        initialized = true;
+    }
+
+    rightMotor->update();
+    leftMotor->update();
+    if (millis() - lastTime > 2) {
+        // Utiliser la nouvelle fonction qui fait tout (moteurs + stratégie)
+        strategy->strategie_update();
+        lastTime = millis();
+    }
+
+    if (strategy->isFinished() && !finished_printed) {
+        strategy->stop();
+        Serial.println("=== Strategy FINISHED ===");
+        finished_printed = true;
+    }
+}
+
+/*void loop() {
     
 
     leftMotor->update();
@@ -182,4 +224,4 @@ void loop() {
     }
 
 #endif
-}
+}*/

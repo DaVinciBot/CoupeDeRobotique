@@ -5,25 +5,25 @@ AtoB::AtoB(RollingBasis* rb, const Point& target) : _rb(rb), _target(target) {
     // mais on peut ré-initialiser ici si besoin
     _startMs = 0;
     _finished = false;
-    //Serial.printf("AtoB: target set to x=%.1f y=%.1f theta=%.3f\n", _target.x,
-                  //_target.y, _target.theta);
+    Serial.printf("AtoB: target set to x=%.1f y=%.1f theta=%.3f\n", _target.x,
+                  _target.y, _target.theta);
     // timeout et tolérance définis dans le header (_timeoutMs, _arriveTolMm)
 }
 
 void AtoB::start() {
-    Serial.println("AtoB started");
+    Serial.println("[AtoB] START");
     _finished = false;
     _startMs = millis();
 
     // Lire la pose actuelle (A)
     Point cur = _rb->getPose();
-    Serial.printf("AtoB::start cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y,
-                  cur.theta);
+    Serial.printf("[AtoB] cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y, cur.theta);
 
-    // Envoyer la commande vers la cible B (doit avoir été définie via
-    // setTarget)
+    // Envoyer la commande vers la cible B (doit avoir été définie via setTarget)
     _rb->setCommand(_target);
-    Serial.println("AtoB: command sent to rolling basis");
+    Serial.printf("[AtoB] target=(%.1f,%.1f,%.3f)\n", _target.x, _target.y, _target.theta);
+    Serial.printf("[AtoB] RB isMoving after setCommand: %d\n", _rb->isMoving());
+    Serial.println("[AtoB] command sent to rolling basis");
 }
 
 void AtoB::update() {
@@ -36,8 +36,7 @@ void AtoB::update() {
 
     // timeout check
     if (millis() - _startMs > _timeoutMs) {
-        Serial.println("AtoB: timeout, stopping");
-        _rb->stop();
+        Serial.println("[AtoB] TIMEOUT!");
         _finished = true;
         return;
     }
@@ -45,12 +44,17 @@ void AtoB::update() {
     // read current pose (may be static if odometry is disabled)
     Point cur = _rb->getPose();
     float dist = Point::distance(cur, _target);
-    Serial.printf("AtoB::update dist=%.1f mm\n", dist);
+    
+    // Only print every 1 second to avoid spam
+    static unsigned long lastPrint = 0;
+    if (millis() - lastPrint > 1000) {
+        Serial.printf("[AtoB] dist=%.1f mm, isMoving=%d\n", dist, _rb->isMoving());
+        lastPrint = millis();
+    }
 
     // arrival condition: within tolerance OR base reports idle
     if (dist <= _arriveTolMm || !_rb->isMoving()) {
-        Serial.println("AtoB: arrived or motors idle -> finishing");
-        _rb->stop();
+        Serial.printf("[AtoB] ✓ ARRIVED or IDLE! (dist=%.1f, moving=%d)\n", dist, _rb->isMoving());
         _finished = true;
     }
 }

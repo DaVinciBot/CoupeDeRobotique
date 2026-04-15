@@ -1,12 +1,12 @@
 #include "relative_forward.h"
 
 RelativeForward::RelativeForward(Navigation* nav, const double distance)
-    : _navigation(nav), _distance(distance) {
+    : _navigation(nav), _distance(distance * DISTANCE_CALIBRATION_FACTOR) {
     // valeurs par défaut déjà initialisées inline dans le header,
     // mais on peut ré-initialiser ici si besoin
     _startMs = 0;
     _finished = false;
-    Serial.printf("RelativeForward: distance set to %.1f mm\n", _distance);
+    Serial.printf("RelativeForward: distance set to %.1f mm (calibrated from %.1f)\n", _distance, distance);
     // timeout et tolérance définis dans le header (_timeoutMs, _arriveTolMm)
 }
 
