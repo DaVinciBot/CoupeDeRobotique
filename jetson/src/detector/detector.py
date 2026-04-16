@@ -2,6 +2,7 @@
 
 import math
 import time
+from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
 import cv2
@@ -9,6 +10,14 @@ import numpy as np
 from src.arena import arena_elements
 from src.camera import CSICamera
 from src.utils.timing import timer
+
+# Détection CUDA au chargement du module
+_HAS_CUDA = False
+try:
+    if cv2.cuda.getCudaEnabledDeviceCount() > 0:
+        _HAS_CUDA = True
+except AttributeError:
+    pass
 
 blue_team_ids = [1, 2, 3, 4, 5]
 yellow_team_ids = [6, 7, 8, 9, 10]
@@ -72,15 +81,25 @@ class ArucoDetector:
         # Correction d'erreur bits plus tolérante
         self.aruco_params.maxErroneousBitsInBorderRate = 0.6
         # Raffinement sub-pixel (stabilise la détection frame-à-frame)
-        self.aruco_params.cornerRefinementMethod = (
-            cv2.aruco.CORNER_REFINE_SUBPIX
-        )
+        self.aruco_params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_SUBPIX
         self.aruco_params.cornerRefinementWinSize = 5
         self.aruco_params.cornerRefinementMaxIterations = 30
         self.aruco_params.cornerRefinementMinAccuracy = 0.1
 
         # CLAHE pour normaliser le contraste (éclairage inégal)
         self.clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+
+        # GPU acceleration (Jetson CUDA)
+        self.use_cuda = _HAS_CUDA
+        if self.use_cuda:
+            self.clahe_cuda = cv2.cuda.createCLAHE(
+                clipLimit=2.0,
+                tileGridSize=(8, 8),
+            )
+            self._gpu_mat = cv2.cuda_GpuMat()
+
+        # Thread pool pour détection parallèle des tuiles
+        self._tile_pool = ThreadPoolExecutor(max_workers=4)
 
         # Multi-échelle : seuil de marqueurs pour déclencher les tuiles
         self.multiscale_enabled = True
@@ -115,7 +134,7 @@ class ArucoDetector:
 
         # Positions de référence en mètres (centre des marqueurs)
         self.ref_markers_world = {
-            20: np.array([0.600, 1.400]),  # Sans Z
+            20: np.array([0.600, 1.400]),
             21: np.array([2.400, 1.400]),
             22: np.array([0.600, 0.600]),
             23: np.array([2.400, 0.600]),
@@ -685,27 +704,64 @@ class ArucoDetector:
         except Exception:
             pass
 
+    def _detect_single_tile(self, gray, ox, oy, tile_w, tile_h):
+        """Détecte les marqueurs sur une tuile upscalée (appelé en thread).
+
+        Returns:
+            Liste de (corners_reprojected, id_array) pour chaque marqueur trouvé.
+        """
+        tile = gray[oy : oy + tile_h, ox : ox + tile_w]
+        # Upscale 2x sur GPU si disponible, sinon CPU
+        if self.use_cuda:
+            gpu_tile = cv2.cuda_GpuMat()
+            gpu_tile.upload(tile)
+            gpu_up = cv2.cuda.resize(gpu_tile, (tile_w * 2, tile_h * 2))
+            tile_up = gpu_up.download()
+        else:
+            tile_up = cv2.resize(
+                tile,
+                None,
+                fx=2.0,
+                fy=2.0,
+                interpolation=cv2.INTER_LINEAR,
+            )
+        t_corners, t_ids, _ = cv2.aruco.detectMarkers(
+            tile_up,
+            self.aruco_dict,
+            parameters=self.aruco_params,
+        )
+        results = []
+        if t_ids is not None:
+            for i, mid_arr in enumerate(t_ids):
+                # Re-projeter : ÷2 (upscale) + offset tuile
+                original_corners = t_corners[i] / 2.0
+                original_corners[:, :, 0] += ox
+                original_corners[:, :, 1] += oy
+                results.append((original_corners, mid_arr))
+        return results
+
     def _detect_multiscale(self, gray):
-        """Détection multi-échelle : full-frame + tuiles 2x2 upscalées.
+        """Détection multi-échelle : full-frame + tuiles 2x2 en parallèle.
 
         Returns:
             (corners, ids, rejected) au format cv2.aruco.detectMarkers.
         """
         # Passe 1 : détection sur image complète
         corners, ids, rejected = cv2.aruco.detectMarkers(
-            gray, self.aruco_dict, parameters=self.aruco_params,
+            gray,
+            self.aruco_dict,
+            parameters=self.aruco_params,
         )
 
         num_found = 0 if ids is None else len(ids)
 
-        # Passe 2 : tuiles si pas assez de marqueurs détectés
+        # Passe 2 : tuiles en parallèle si pas assez de marqueurs détectés
         if num_found < self.multiscale_min_markers:
             h, w = gray.shape[:2]
-            overlap = 100  # pixels d'overlap entre tuiles
+            overlap = 100
             tile_w = w // 2 + overlap
             tile_h = h // 2 + overlap
 
-            # Définition des 4 tuiles (x_start, y_start)
             tile_offsets = [
                 (0, 0),
                 (w - tile_w, 0),
@@ -717,31 +773,26 @@ class ArucoDetector:
             all_corners = list(corners) if corners is not None else []
             all_ids = list(ids) if ids is not None else []
 
-            for ox, oy in tile_offsets:
-                tile = gray[oy:oy + tile_h, ox:ox + tile_w]
-                # Upscale 2x pour mieux résoudre les petits marqueurs
-                tile_up = cv2.resize(
-                    tile, None, fx=2.0, fy=2.0,
-                    interpolation=cv2.INTER_LINEAR,
+            # Lancer les 4 tuiles en parallèle
+            futures = [
+                self._tile_pool.submit(
+                    self._detect_single_tile,
+                    gray,
+                    ox,
+                    oy,
+                    tile_w,
+                    tile_h,
                 )
-                t_corners, t_ids, _ = cv2.aruco.detectMarkers(
-                    tile_up, self.aruco_dict, parameters=self.aruco_params,
-                )
+                for ox, oy in tile_offsets
+            ]
 
-                if t_ids is None:
-                    continue
-
-                for i, mid_arr in enumerate(t_ids):
+            for future in futures:
+                for original_corners, mid_arr in future.result():
                     mid = int(mid_arr[0])
-                    if mid in found_ids:
-                        continue  # Déjà trouvé en passe 1
-                    # Re-projeter les corners : ÷2 (upscale) + offset tuile
-                    original_corners = t_corners[i] / 2.0
-                    original_corners[:, :, 0] += ox
-                    original_corners[:, :, 1] += oy
-                    all_corners.append(original_corners)
-                    all_ids.append(mid_arr)
-                    found_ids.add(mid)
+                    if mid not in found_ids:
+                        all_corners.append(original_corners)
+                        all_ids.append(mid_arr)
+                        found_ids.add(mid)
 
             if all_ids:
                 corners = tuple(all_corners)
@@ -755,20 +806,34 @@ class ArucoDetector:
     def analyze_frame(
         self, frame, show_arena=True, arena_window_name="Arena", show_video=True
     ):
-        # Conversion en niveaux de gris (skip si déjà grayscale)
-        gray = frame if frame.ndim == 2 else cv2.cvtColor(
-            frame, cv2.COLOR_BGR2GRAY,
-        )
-
-        # Égalisation adaptative du contraste (CLAHE)
-        gray = self.clahe.apply(gray)
+        # Preprocessing GPU si disponible, sinon CPU
+        if self.use_cuda:
+            self._gpu_mat.upload(frame)
+            if frame.ndim == 3:
+                gpu_gray = cv2.cuda.cvtColor(self._gpu_mat, cv2.COLOR_BGR2GRAY)
+            else:
+                gpu_gray = self._gpu_mat
+            gpu_gray = self.clahe_cuda.apply(gpu_gray, cv2.cuda.Stream.Null())
+            gray = gpu_gray.download()
+        else:
+            gray = (
+                frame
+                if frame.ndim == 2
+                else cv2.cvtColor(
+                    frame,
+                    cv2.COLOR_BGR2GRAY,
+                )
+            )
+            gray = self.clahe.apply(gray)
 
         # Détection ArUco (multi-échelle si activée)
         if self.multiscale_enabled:
             corners, ids, _ = self._detect_multiscale(gray)
         else:
             corners, ids, _ = cv2.aruco.detectMarkers(
-                gray, self.aruco_dict, parameters=self.aruco_params,
+                gray,
+                self.aruco_dict,
+                parameters=self.aruco_params,
             )
 
         if ids is None:
