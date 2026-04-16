@@ -74,6 +74,16 @@ class LoRa:
         except Exception as e:
             print(f"LoRa: flush buffers échoué: {e}")
 
+        # Envoyer une trame vide pour purger les octets parasites
+        # générés par le reset DTR/RTS à l'ouverture du port série.
+        # Les récepteurs ignoreront cette ligne vide (pas de N° de commande).
+        try:
+            self.serial.write(b"\n")
+            time.sleep(0.1)
+            self.serial.reset_input_buffer()
+        except Exception as e:
+            print(f"LoRa: purge initiale échouée: {e}")
+
         self._healthy = True
         self._tx_errors = 0
         print(f"LoRa connecté sur {self.port} @ {self.baudrate} baud")
