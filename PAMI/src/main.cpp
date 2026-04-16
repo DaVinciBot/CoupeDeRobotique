@@ -169,9 +169,9 @@ void loop() {
         strategy = new Strategy(rollingBasis);
         
         std::vector<Point> trajectory = {
-            Point{100000.0, 0.0, 0.0},      // Point 1
-            //Point{100.0, 100.0, 0.0},    // Point 2
-            //Point{0.0, 100.0, 0.0}       // Point 3
+            Point{100.0, 0.0, 0.0},      // Point 1
+            Point{100.0, 100.0, 0.0},    // Point 2
+            Point{0.0, 100.0, 0.0}       // Point 3
         };
         
         // Utiliser la nouvelle fonction

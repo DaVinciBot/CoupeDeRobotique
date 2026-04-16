@@ -11,7 +11,7 @@ Navigation::Navigation(RollingBasis* basis, uint32_t timeoutMs)
 void Navigation::setCommand(const Point& targetPos) {
     _lastTarget = targetPos;
     _startMs = millis();
-    _lastSendMs = 0;
+    _lastSendMs = millis();
 
     _waypoints.clear();
     Point start = _basis->getPose();
@@ -59,7 +59,7 @@ void Navigation::setTrajectory(const std::vector<Point>& trajectory) {
 
     _wpIndex = 0;
     _startMs = millis();
-    _lastSendMs = 0;
+    _lastSendMs = millis();
 
     if (!_waypoints.empty()) {
         _basis->setCommand(_waypoints[0]);

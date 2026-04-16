@@ -30,7 +30,7 @@ RollingBasis::RollingBasis(Motor* leftMotor,
     _leftMotor->resetStepCount();
     _rightMotor->resetStepCount();
     _leftMotor->setAcceleration(1000.0f);//avec 200, le moteur met 1s a aller a la meme vitesse que l'autre moteur jsp pourquoi mais ca fixe ca a 1000
-    _rightMotor->setAcceleration(200.0f);
+    _rightMotor->setAcceleration(1000.0f);
 }
 // TODO: refactor this constructor pour pouvoir paramétrer la vitesse et
 // l'accélération angulaire et linéaire dans le config BIEN PRECISER L'UNITE
