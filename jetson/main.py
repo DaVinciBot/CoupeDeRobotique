@@ -2,8 +2,12 @@
 
 import math
 import os
+import select
 import sys
+import termios
+import threading
 import time
+import tty
 from collections import deque
 from pathlib import Path
 from typing import Optional
@@ -336,6 +340,59 @@ def generate_fake_detected_world():
     return fake_data
 
 
+def start_keyboard_thread(lora, match_state, get_detected_world, get_robot_speeds):
+    """Lance un thread clavier pour envoyer des commandes LoRa.
+
+    Touches : 2=ID PAMI, 3=dépôts, 5=vision.
+    1 et 4 sont reçues uniquement.
+    """
+    stop = threading.Event()
+
+    def _read_keys():
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setcbreak(fd)
+            while not stop.is_set():
+                if select.select([sys.stdin], [], [], 0.2)[0]:
+                    ch = sys.stdin.read(1)
+                    if ch == "2":
+                        pid = match_state.register_pami()
+                        msg = f"2|{pid}\n"
+                        lora.queue_send(msg)
+                        print(f"⌨️  [2] ID PAMI attribué: {pid}  →  {msg.strip()}")
+                    elif ch == "3":
+                        assignments = match_state.compute_depot_assignments(
+                            arena_elements,
+                        )
+                        msg = MatchState.build_msg_3(assignments)
+                        lora.queue_send(msg)
+                        print(
+                            f"⌨️  [3] Dépôts envoyés ({len(assignments)} PAMI)  →  "
+                            f"{msg.strip()}"
+                        )
+                    elif ch == "5":
+                        detected = get_detected_world()
+                        speeds = get_robot_speeds()
+                        msg = build_lora_message(
+                            detected,
+                            speeds,
+                            ZONE_TOLERANCE_M,
+                        )
+                        lora.queue_send(msg)
+                        print(f"⌨️  [5] Vision envoyée  →  {msg.strip()[:80]}...")
+                    elif ch == "1":
+                        print("⌨️  [1] Commande reçue uniquement (demande ID PAMI)")
+                    elif ch == "4":
+                        print("⌨️  [4] Commande reçue uniquement (démarrage match)")
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+    t = threading.Thread(target=_read_keys, daemon=True)
+    t.start()
+    return stop
+
+
 CALIBRATION_FILE = os.getenv("CALIBRATION_FILE", "calibration.npz")
 
 
@@ -527,6 +584,30 @@ def detect_aruco() -> None:
         ENEMY_MARKER_ID: deque(maxlen=SPEED_HISTORY_SIZE),
     }
 
+    # État partagé pour le thread clavier
+    latest_detected_world = []
+    latest_robot_speeds = {}
+    state_lock = threading.Lock()
+
+    def _get_detected_world():
+        with state_lock:
+            return list(latest_detected_world)
+
+    def _get_robot_speeds():
+        with state_lock:
+            return dict(latest_robot_speeds)
+
+    # Lancer le thread clavier si LoRa actif
+    kb_stop = None
+    if lora is not None:
+        kb_stop = start_keyboard_thread(
+            lora, match_state, _get_detected_world, _get_robot_speeds,
+        )
+        print(
+            "⌨️  Commandes clavier actives : "
+            "2=ID PAMI, 3=dépôts, 5=vision (1/4=réception seule)",
+        )
+
     print("🚀 Démarrage de la détection...")
 
     try:
@@ -612,6 +693,11 @@ def detect_aruco() -> None:
                         robot_position_history[marker_id],
                     )
 
+            # Mise à jour état partagé pour le thread clavier
+            with state_lock:
+                latest_detected_world = detected_world
+                latest_robot_speeds = robot_speeds
+
             # Msg 3 : à T+90s, envoyer les attributions de dépôts aux PAMIs (une seule fois)
             if match_state.should_send_pre_end():
                 assignments = match_state.compute_depot_assignments(arena_elements)
@@ -643,6 +729,8 @@ def detect_aruco() -> None:
 
     finally:
         print("\n🛑 Arrêt de la détection")
+        if kb_stop is not None:
+            kb_stop.set()
         plt.close("all")
         if camera is not None:
             camera.release()
