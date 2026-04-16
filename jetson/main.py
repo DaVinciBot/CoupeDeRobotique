@@ -362,6 +362,19 @@ def start_keyboard_thread(lora, match_state, get_detected_world, get_robot_speed
                         lora.queue_send(msg)
                         print(f"⌨️  [2] ID PAMI attribué: {pid}  →  {msg.strip()}")
                     elif ch == "3":
+                        if match_state.team_color is None:
+                            print(
+                                "⌨️  [3] Pas de couleur définie. "
+                                "Appuie sur B (bleu) ou Y (jaune) :",
+                            )
+                            while not stop.is_set():
+                                if select.select([sys.stdin], [], [], 0.5)[0]:
+                                    col = sys.stdin.read(1).upper()
+                                    if col in ("B", "Y"):
+                                        match_state.start_match(col)
+                                        print(f"⌨️  Couleur forcée: {col}")
+                                        break
+                                    print("⌨️  Touche invalide, B ou Y attendu")
                         assignments = match_state.compute_depot_assignments(
                             arena_elements,
                         )
