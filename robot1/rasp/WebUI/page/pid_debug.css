@@ -1,0 +1,89 @@
+.pid_debug {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-content: start;
+}
+
+.pid_debug_header {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 58px;
+}
+
+.pid_debug_meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.pid_debug_meta > div {
+  background-color: var(--secondary);
+  border-radius: 20px;
+  padding: 10px 14px;
+  color: black;
+}
+
+.pid_chart_card {
+  padding-top: 58px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pid_chart_card canvas {
+  width: 100%;
+  height: 230px;
+  background-color: #f6f8ff;
+  border-radius: 20px;
+  border: 1px solid #d7dfff;
+}
+
+.pid_legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.legend_item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #1d2242;
+}
+
+.legend_item::before {
+  content: "";
+  width: 14px;
+  height: 3px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.legend_item.target::before {
+  background-color: #1d7afc;
+}
+
+.legend_item.actual::before {
+  background-color: #ff6a00;
+}
+
+.legend_item.linear::before {
+  background-color: #00a86b;
+}
+
+.legend_item.angular::before {
+  background-color: #c84bff;
+}
+
+@media (max-width: 900px) {
+  .pid_debug_meta {
+    grid-template-columns: 1fr;
+  }
+
+  .pid_chart_card canvas {
+    height: 190px;
+  }
+}

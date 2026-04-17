@@ -2,14 +2,18 @@
 
 from __future__ import annotations
 
+import atexit
+import signal
 import struct
 import time
 from enum import Enum
+from pathlib import Path
 from typing import TYPE_CHECKING, overload, override
 
 from loggerplusplus import LogLevels, log
 
 from a_config_loader import CONFIG
+from controllers.rolling_basis.debug_recorder import RollingBasisDebugRecorder
 from controllers.rolling_basis.pids import PID, PidID
 from geometry import OrientedPoint
 from teensy import BaseComTeensy
@@ -57,6 +61,9 @@ class RollingBasis(BaseComTeensy):
                 Whether to enable dummy mode. Defaults to CONFIG.ROLLING_BASIS_DUMMY.
         """
         self.flag = True
+        self._debug_report_exported = False
+        self._previous_signal_handlers: dict[int, object] = {}
+
         # Initialize the parent-BaseComTeensy class
         super().__init__(
             logger,
@@ -67,6 +74,15 @@ class RollingBasis(BaseComTeensy):
             enable_crc=enable_crc,
             enable_dummy=enable_dummy,
         )
+
+        self._debug_recorder = RollingBasisDebugRecorder(
+            logger=logger,
+            output_dir=Path(CONFIG.LOGGER_PATH) / "pid_debug",
+            file_prefix="rolling_basis",
+            enabled=True,
+        )
+        atexit.register(self._export_debug_report_on_exit)
+        self._install_signal_handlers()
 
         # Robot state
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
@@ -97,9 +113,8 @@ class RollingBasis(BaseComTeensy):
         Args:
             msg (bytes): The received message bytes.
         """
-        self._logger.info(
-            f"[CTRL:RB:Teensy] {msg.decode('ascii', errors='ignore')}",
-        )
+        text = msg.decode("ascii", errors="ignore")
+        self._logger.info(f"[CTRL:RB:Teensy] {text}")
 
     def rcv_rolling_basis_state(
         self,
@@ -122,6 +137,8 @@ class RollingBasis(BaseComTeensy):
             (struct.unpack("<d", msg[0:8])[0], struct.unpack("<d", msg[8:16])[0]),
             struct.unpack("<d", msg[16:24])[0],
         )
+        self._debug_recorder.set_odometry(self.odometrie)
+        self._debug_recorder.add_sample(event="odometry_update")
 
     def rcv_unknown_msg(self, msg: bytes) -> None:
         """Handles unknown messages from the Teensy.
@@ -185,6 +202,12 @@ class RollingBasis(BaseComTeensy):
         # Send the composed message to the Teensy
         # https://docs.python.org/3/library/struct.html#format-characters
         self.send_bytes(msg)
+        self._debug_recorder.set_target(
+            linear_speed=cmd.linear_speed,
+            angular_speed=cmd.angular_speed,
+            target_pose=cmd.position,
+        )
+        self._debug_recorder.add_sample(event="target_velocity")
 
     def set_target_pose(
         self,
@@ -202,6 +225,12 @@ class RollingBasis(BaseComTeensy):
             + struct.pack("<d", angular_speed)
         )
         self.send_bytes(msg)
+        self._debug_recorder.set_target(
+            linear_speed=linear_speed,
+            angular_speed=angular_speed,
+            target_pose=pose,
+        )
+        self._debug_recorder.add_sample(event="target_pose")
 
     @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
@@ -228,6 +257,8 @@ class RollingBasis(BaseComTeensy):
         )
 
         self.send_bytes(msg)
+        self._debug_recorder.set_odometry(odometrie)
+        self._debug_recorder.add_sample(event="set_odometry", force=True)
 
     @log(
         param_logger="RollingBasis",
@@ -242,6 +273,57 @@ class RollingBasis(BaseComTeensy):
         """
         msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
         self.send_bytes(msg)
+        self._debug_recorder.add_sample(event=f"set_pid_{pid_id}", force=True)
+
+    def get_debug_snapshot(self) -> dict[str, float | int | str | None]:
+        """Return latest debug telemetry snapshot."""
+        return self._debug_recorder.get_live_snapshot()
+
+    def export_debug_report(self, *, reason: str = "manual") -> None:
+        """Export static debug files (CSV + metadata)."""
+        if self._debug_report_exported:
+            return
+
+        artifacts = self._debug_recorder.export_report(reason=reason)
+        if artifacts is None:
+            return
+
+        self._debug_report_exported = True
+        self._logger.info(f"[CTRL:RB:Debug] CSV exported: {artifacts['csv']}")
+        self._logger.info(
+            f"[CTRL:RB:Debug] Metadata exported: {artifacts['metadata']}",
+        )
+
+    def _export_debug_report_on_exit(self) -> None:
+        """Best effort debug export when process exits."""
+        self.export_debug_report(reason="process_exit")
+
+    def _install_signal_handlers(self) -> None:
+        """Install signal handlers to export debug artifacts on termination."""
+        for signum in (signal.SIGTERM, signal.SIGINT):
+            try:
+                previous = signal.getsignal(signum)
+                signal.signal(signum, self._handle_termination_signal)
+            except (OSError, ValueError):
+                continue
+            self._previous_signal_handlers[signum] = previous
+
+    def _handle_termination_signal(self, signum: int, _frame: object) -> None:
+        """Export debug artifacts and then terminate the process."""
+        try:
+            signal_name = signal.Signals(signum).name.lower()
+        except ValueError:
+            signal_name = str(signum)
+
+        self.export_debug_report(reason=f"signal_{signal_name}")
+
+        previous = self._previous_signal_handlers.get(signum)
+        if callable(previous):
+            previous(signum, _frame)
+            return
+        if previous == signal.SIG_IGN:
+            return
+        raise SystemExit(0)
 
     # endregion
 

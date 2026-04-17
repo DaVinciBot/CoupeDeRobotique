@@ -82,6 +82,22 @@ class MainBrain(Brain):
         self.pid_kp: float = 0.0
         self.pid_ki: float = 0.0
         self.pid_kd: float = 0.0
+        self.should_export_debug_report: bool = False
+        self.pid_debug_live: dict[str, float | int | str | None] = {
+            "enabled": 0,
+            "time_s": 0.0,
+            "last_event": "init",
+            "sample_count": 0,
+            "target_linear_cm_s": None,
+            "target_angular_rad_s": None,
+            "actual_linear_cm_s": None,
+            "actual_angular_rad_s": None,
+            "linear_error_cm_s": None,
+            "angular_error_rad_s": None,
+            "odom_x_cm": None,
+            "odom_y_cm": None,
+            "odom_theta_rad": None,
+        }
 
         self.jack_triggered: bool = False
         self.jack_plugged: bool = False
@@ -125,6 +141,7 @@ class MainBrain(Brain):
                     follow_logger_manager_rules=True,
                 ),
                 enable_realtime_simulation=True,
+                enable_debug_report=True,
             )
         else:
             rolling_basis = RollingBasis(
@@ -298,6 +315,11 @@ class MainBrain(Brain):
         self.odemetrie_state = context.arena.ally_zone.point
         self.enemy_odemetrie_state = context.arena.enemy_zone.point
         self.rolling_basis_odometrie = rolling_basis.odometrie
+        self.pid_debug_live = rolling_basis.get_debug_snapshot()
+
+        if self.should_export_debug_report:
+            rolling_basis.export_debug_report(reason="shutdown_request")
+            self.should_export_debug_report = False
 
     @Brain.task(
         process=True,
@@ -339,7 +361,7 @@ class MainBrain(Brain):
     @Brain.task(
         process=False,
         run_on_start=True,
-        refresh_rate=0.5,
+        refresh_rate=0.1,
     )
     async def update_ui(self) -> None:
         """Updates the UI with the current state."""
@@ -362,6 +384,7 @@ class MainBrain(Brain):
                 "height": self.arena.height,
             },
             "score": self.score,
+            "pid_debug": self.pid_debug_live,
         }
         if self.arena.team_color and self.arena.team_color != TeamColor.UNDEFINED:
             to_send = {
@@ -372,6 +395,7 @@ class MainBrain(Brain):
                 "pamis_states": current_snapshot["pamis_states"],
                 "arena_info": current_snapshot["arena_info"],
                 "score": current_snapshot["score"],
+                "pid_debug": current_snapshot["pid_debug"],
             }
             await self.ws_ui.sender.send(
                 WSmsg(sender="server", msg="update ui data", data=to_send),
@@ -564,7 +588,12 @@ class MainBrain(Brain):
         if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
             await self.wait_for_team()
             self.logger.warning(
-                "[BRAIN:Init] All subsystems in DUMMY mode - robot will not move",
+                "[BRAIN:Init] All subsystems in DUMMY mode.",
+            )
+            self.jack_plugged = True
+            self.jack_triggered = True
+            self.logger.info(
+                "[BRAIN:Init] Auto-triggering jack in full dummy mode.",
             )
         else:
             await self.wait_for_team()

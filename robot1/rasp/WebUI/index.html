@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="./page/cam.css" />
     <link rel="stylesheet" href="./page/settings.css" />
+    <link rel="stylesheet" href="./page/pid_debug.css" />
     <link rel="shortcut icon" href="./assets/fav.ico" type="image/x-icon" />
     <title>CDR Dashboard</title>
     <script src="utils.js"></script>
@@ -50,6 +51,9 @@
         >
         <a onclick="set_page('settings')" id="settings_menu" class="item_menu"
           ><i class="settings_icon icon"></i>Settings</a
+        >
+        <a onclick="set_page('pid_debug')" id="pid_debug_menu" class="item_menu"
+          ><i class="grid_icon icon"></i>PID Live</a
         >
       </div>
       <div class="main content" id="main">
@@ -446,6 +450,46 @@
             <h1 style="color: black; font-weight: 500; font-size: 35px">
               En construction...
             </h1>
+          </div>
+        </div>
+      </div>
+      <div class="pid_debug content" id="pid_debug">
+        <div class="sushi pid_debug_header">
+          <div class="pilule">
+            <i class="icon grid_icon"></i>
+            PID Live
+          </div>
+          <div class="pid_debug_meta">
+            <div><strong>Samples:</strong> <span id="pid_sample_count">0</span></div>
+            <div><strong>Dernier event:</strong> <span id="pid_last_event">init</span></div>
+            <div><strong>Temps:</strong> <span id="pid_time_s">0.00s</span></div>
+          </div>
+        </div>
+
+        <div class="sushi pid_chart_card">
+          <div class="pilule">Vitesse Linéaire (cm/s)</div>
+          <canvas id="pid_linear_chart"></canvas>
+          <div class="pid_legend">
+            <span class="legend_item target">Consigne</span>
+            <span class="legend_item actual">Mesure</span>
+          </div>
+        </div>
+
+        <div class="sushi pid_chart_card">
+          <div class="pilule">Vitesse Angulaire (rad/s)</div>
+          <canvas id="pid_angular_chart"></canvas>
+          <div class="pid_legend">
+            <span class="legend_item target">Consigne</span>
+            <span class="legend_item actual">Mesure</span>
+          </div>
+        </div>
+
+        <div class="sushi pid_chart_card">
+          <div class="pilule">Erreur</div>
+          <canvas id="pid_error_chart"></canvas>
+          <div class="pid_legend">
+            <span class="legend_item linear">Erreur Linéaire</span>
+            <span class="legend_item angular">Erreur Angulaire</span>
           </div>
         </div>
       </div>

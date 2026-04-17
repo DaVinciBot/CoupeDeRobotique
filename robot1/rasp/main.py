@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
+import time
 
 from loggerplusplus import LogLevels
 from taskbrain import DictProxyAccessor
@@ -187,9 +189,14 @@ if __name__ == "__main__":
         ws_server.add_background_task(routine)
 
     def force_kill_all_python() -> None:
-        """Kill all running Python processes using pkill -9 python."""
-        subprocess.run(["pkill", "-9", "python"], check=False)  # noqa: S607
-        logger_brain.fatal("[SHUTDOWN] All Python processes killed.")
+        """Gracefully stop child Python processes and keep parent alive."""
+        brain.should_export_debug_report = True
+        time.sleep(0.5)
+        parent_pid = str(os.getpid())
+        subprocess.run(["pkill", "-INT", "-P", parent_pid, "python"], check=False)  # noqa: S607
+        time.sleep(1.0)
+        subprocess.run(["pkill", "-TERM", "-P", parent_pid, "python"], check=False)  # noqa: S607
+        logger_brain.fatal("[SHUTDOWN] Child Python processes terminated.")
 
     logger_brain.info("[INIT] All systems initialized successfully")
     logger_brain.info("[INIT] Starting WebSocket server...")

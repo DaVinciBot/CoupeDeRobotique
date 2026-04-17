@@ -174,6 +174,9 @@ function set_page(page_id) {
   document.getElementById(page_id).style.display = "grid";
   document.getElementById(page_id + "_menu").classList.add("active");
   currentPage = page_id;
+  if (typeof drawPidCharts === "function") {
+    drawPidCharts();
+  }
 }
 function hide_all_pages() {
   let pagesButton = document.querySelectorAll(".item_menu");

@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+import atexit
 import math
+import signal
 import threading
 import time
 from enum import Enum
+from pathlib import Path
 from typing import TYPE_CHECKING, overload, override
 
 from loggerplusplus import log
 
 from a_config_loader import CONFIG
+from controllers.rolling_basis.debug_recorder import RollingBasisDebugRecorder
 from controllers.rolling_basis.pids import PID, PidID
 from geometry import OrientedPoint
 from teensy import BaseComTeensy
@@ -39,6 +43,7 @@ class RollingBasisDummy(BaseComTeensy):
         enable_crc: bool = CONFIG.TEENSY_CRC,
         enable_realtime_simulation: bool = True,
         realtime_period: float = 0.02,
+        enable_debug_report: bool = False,
     ) -> None:
         """Initializes the RollingBasisDummy class.
 
@@ -59,7 +64,12 @@ class RollingBasisDummy(BaseComTeensy):
                 Defaults to ``True``.
             realtime_period (float, optional):
                 Sleep duration between realtime integration steps. Defaults to 0.02s.
+            enable_debug_report (bool, optional):
+                Enables static telemetry export at process exit. Defaults to ``False``.
         """
+        self._debug_report_exported = False
+        self._previous_signal_handlers: dict[int, object] = {}
+
         # Initialize the parent-BaseComTeensy class
         super().__init__(
             logger,
@@ -70,6 +80,16 @@ class RollingBasisDummy(BaseComTeensy):
             enable_crc=enable_crc,
             enable_dummy=True,
         )
+
+        self._debug_recorder = RollingBasisDebugRecorder(
+            logger=logger,
+            output_dir=Path(CONFIG.LOGGER_PATH) / "pid_debug",
+            file_prefix="rolling_basis_dummy",
+            enabled=enable_debug_report,
+        )
+        if enable_debug_report:
+            atexit.register(self._export_debug_report_on_exit)
+            self._install_signal_handlers()
 
         # Robot state
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
@@ -131,7 +151,14 @@ class RollingBasisDummy(BaseComTeensy):
             self.target_position = cmd.position
             self._last_update_time = now
 
+            self._debug_recorder.set_target(
+                linear_speed=cmd.linear_speed,
+                angular_speed=cmd.angular_speed,
+                target_pose=cmd.position,
+            )
+
         self._logger.debug(f"[CTRL:RB:Dummy] Set target velocity: {cmd}")
+        self._debug_recorder.add_sample(event="target_velocity")
 
     def set_target_pose(
         self,
@@ -152,9 +179,16 @@ class RollingBasisDummy(BaseComTeensy):
             self.angular_speed = angular_speed
             self._last_update_time = now
 
+            self._debug_recorder.set_target(
+                linear_speed=linear_speed,
+                angular_speed=angular_speed,
+                target_pose=pose,
+            )
+
         self._logger.debug(
             f"[CTRL:RB:Dummy] Set target pose: {pose} ff=({linear_speed}, {angular_speed})",
         )
+        self._debug_recorder.add_sample(event="target_pose")
 
     def simulate_step(self, dt: float) -> None:
         """Integrate the stored target speeds over a timestep to update odometry.
@@ -193,6 +227,13 @@ class RollingBasisDummy(BaseComTeensy):
         new_theta = self._normalize_angle(self.odometrie.theta + delta_theta)
 
         self.odometrie = OrientedPoint((new_x, new_y), new_theta)
+        if self._debug_recorder.enabled:
+            self._debug_recorder.set_odometry(
+                self.odometrie,
+                measured_linear_speed=self.linear_speed,
+                measured_angular_speed=self.angular_speed,
+            )
+            self._debug_recorder.add_sample(event="simulation_step")
 
     def _realtime_loop(self) -> None:
         """Background loop that keeps odometry up-to-date in realtime."""
@@ -225,6 +266,8 @@ class RollingBasisDummy(BaseComTeensy):
             self.odometrie = odometrie
             self._last_update_time = time.time()
         self._logger.info(f"[CTRL:RB:Dummy] Set odometry: {odometrie}")
+        self._debug_recorder.set_odometry(odometrie)
+        self._debug_recorder.add_sample(event="set_odometry", force=True)
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
         """Internal method to send PID configuration data to the Teensy.
@@ -234,6 +277,57 @@ class RollingBasisDummy(BaseComTeensy):
             pid (PID): The PID controller parameters.
         """
         self._logger.debug(f"[CTRL:RB:Dummy] Set PID {pid_id}: {pid}")
+        self._debug_recorder.add_sample(event=f"set_pid_{pid_id}", force=True)
+
+    def export_debug_report(self, *, reason: str = "manual") -> None:
+        """Export static debug files (CSV + metadata)."""
+        if self._debug_report_exported:
+            return
+
+        artifacts = self._debug_recorder.export_report(reason=reason)
+        if artifacts is None:
+            return
+
+        self._debug_report_exported = True
+        self._logger.info(f"[CTRL:RB:Debug] CSV exported: {artifacts['csv']}")
+        self._logger.info(
+            f"[CTRL:RB:Debug] Metadata exported: {artifacts['metadata']}",
+        )
+
+    def get_debug_snapshot(self) -> dict[str, float | int | str | None]:
+        """Return latest debug telemetry snapshot."""
+        return self._debug_recorder.get_live_snapshot()
+
+    def _export_debug_report_on_exit(self) -> None:
+        """Best effort debug export when process exits."""
+        self.export_debug_report(reason="process_exit")
+
+    def _install_signal_handlers(self) -> None:
+        """Install signal handlers to export debug artifacts on termination."""
+        for signum in (signal.SIGTERM, signal.SIGINT):
+            try:
+                previous = signal.getsignal(signum)
+                signal.signal(signum, self._handle_termination_signal)
+            except (OSError, ValueError):
+                continue
+            self._previous_signal_handlers[signum] = previous
+
+    def _handle_termination_signal(self, signum: int, _frame: object) -> None:
+        """Export debug artifacts and then terminate the process."""
+        try:
+            signal_name = signal.Signals(signum).name.lower()
+        except ValueError:
+            signal_name = str(signum)
+
+        self.export_debug_report(reason=f"signal_{signal_name}")
+
+        previous = self._previous_signal_handlers.get(signum)
+        if callable(previous):
+            previous(signum, _frame)
+            return
+        if previous == signal.SIG_IGN:
+            return
+        raise SystemExit(0)
 
     @staticmethod
     def _normalize_angle(angle: float) -> float:
@@ -253,13 +347,16 @@ class RollingBasisDummy(BaseComTeensy):
     def stop_realtime_simulation(self) -> None:
         """Stop the realtime simulation thread if running."""
         if not self._enable_realtime_simulation or self._realtime_thread is None:
+            self.export_debug_report(reason="stop_realtime")
             return
         self._stop_realtime.set()
         self._realtime_thread.join(timeout=1.0)
+        self.export_debug_report(reason="stop_realtime")
 
     def __del__(self) -> None:
         """Ensure background thread is stopped when the object is deleted."""
         self.stop_realtime_simulation()
+        self.export_debug_report(reason="object_deleted")
 
     # endregion
 
