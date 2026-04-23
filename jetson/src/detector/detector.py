@@ -67,29 +67,22 @@ class ArucoDetector:
         else:
             self.aruco_params = cv2.aruco.DetectorParameters()
 
-        # Tuning pour détection maximale de petits marqueurs (3-5cm à ~2m)
-        # 5 passes de seuillage adaptatif (au lieu de 7) : couvre la même
-        # gamme 3..23 mais Step=5 au lieu de 3 → gain ~30% sans perte
+        # Tuning perf Jetson Nano : on privilégie la vitesse.
+        # 3 passes de seuillage au lieu de 7 (WinSizeStep=10)
         self.aruco_params.adaptiveThreshWinSizeMin = 3
         self.aruco_params.adaptiveThreshWinSizeMax = 23
-        self.aruco_params.adaptiveThreshWinSizeStep = 5
-        # Accepter les très petits marqueurs (éloignés)
-        self.aruco_params.minMarkerPerimeterRate = 0.005
+        self.aruco_params.adaptiveThreshWinSizeStep = 10
+        # Seuil de taille plus haut : moins de candidats à filtrer
+        self.aruco_params.minMarkerPerimeterRate = 0.02
         self.aruco_params.polygonalApproxAccuracyRate = 0.06
         self.aruco_params.minCornerDistanceRate = 0.02
-        # Meilleure lecture des petits marqueurs
-        self.aruco_params.perspectiveRemovePixelPerCell = 6
+        # Moins de pixels par cell = lecture plus rapide
+        self.aruco_params.perspectiveRemovePixelPerCell = 4
         self.aruco_params.perspectiveRemoveIgnoredMarginPerCell = 0.2
         # Correction d'erreur bits plus tolérante
         self.aruco_params.maxErroneousBitsInBorderRate = 0.6
-        # Raffinement sub-pixel APRILTAG : équivalent à SUBPIX en précision
-        # mais ~2-3x plus rapide (pas d'itérations, résolution analytique)
-        self.aruco_params.cornerRefinementMethod = (
-            cv2.aruco.CORNER_REFINE_APRILTAG
-        )
-        self.aruco_params.cornerRefinementWinSize = 5
-        self.aruco_params.cornerRefinementMaxIterations = 30
-        self.aruco_params.cornerRefinementMinAccuracy = 0.1
+        # Pas de raffinement sub-pixel (gain ~30-40% par frame)
+        self.aruco_params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_NONE
 
         # CLAHE pour normaliser le contraste (éclairage inégal)
         self.clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
@@ -109,6 +102,10 @@ class ArucoDetector:
         # Multi-échelle : seuil de marqueurs pour déclencher les tuiles
         self.multiscale_enabled = True
         self.multiscale_min_markers = 50
+
+        # Downscale de la frame avant détection : 2 = 960x540 au lieu de
+        # 1920x1080, ~4x plus rapide. Les coins sont reprojetés en sortie.
+        self.detect_downscale = 2
 
         # Lissage temporel : carry-forward pour marqueurs statiques
         # {marker_id: (pos_world, yaw, last_seen_time, consecutive_misses)}
@@ -846,17 +843,33 @@ class ArucoDetector:
             gray = self.clahe.apply(gray)
         mark("preproc (gray+CLAHE)")
 
+        # Downscale pour accélérer detectMarkers (coins reprojetés ensuite)
+        ds = max(1, int(self.detect_downscale))
+        if ds > 1:
+            gray_det = cv2.resize(
+                gray, None,
+                fx=1.0 / ds, fy=1.0 / ds,
+                interpolation=cv2.INTER_AREA,
+            )
+        else:
+            gray_det = gray
+        mark(f"downscale x{ds}")
+
         # Détection ArUco (multi-échelle si activée)
         if self.multiscale_enabled:
-            corners, ids, _ = self._detect_multiscale(gray)
+            corners, ids, _ = self._detect_multiscale(gray_det)
             mark("detect multiscale (full+tiles)")
         else:
             corners, ids, _ = cv2.aruco.detectMarkers(
-                gray,
+                gray_det,
                 self.aruco_dict,
                 parameters=self.aruco_params,
             )
             mark("detect single-scale")
+
+        # Reprojection des coins dans la résolution d'origine
+        if ds > 1 and corners:
+            corners = tuple(c * float(ds) for c in corners)
 
         if ids is None:
             if show_arena:
