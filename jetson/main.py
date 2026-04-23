@@ -590,12 +590,28 @@ def detect_aruco() -> None:
                 or xorg_running,
             )
             # Forcer DISPLAY si X tourne mais env var perdue (cas sudo)
+            sudo_user = os.environ.get("SUDO_USER")
             if has_x_session and not os.environ.get("DISPLAY"):
                 os.environ["DISPLAY"] = ":0"
-                xauth_user = os.environ.get("SUDO_USER", "dvb")
+            if has_x_session and sudo_user:
+                # Autoriser root à accéder au display de l'utilisateur
+                # (exécute xhost en tant que SUDO_USER).
+                for cmd in (
+                    ["sudo", "-u", sudo_user, "xhost", "+SI:localuser:root"],
+                    ["sudo", "-u", sudo_user, "xhost", "+local:root"],
+                ):
+                    try:
+                        subprocess.run(
+                            cmd,
+                            check=False,
+                            capture_output=True,
+                            timeout=2,
+                        )
+                    except (subprocess.SubprocessError, FileNotFoundError):
+                        pass
                 os.environ.setdefault(
                     "XAUTHORITY",
-                    f"/home/{xauth_user}/.Xauthority",
+                    f"/home/{sudo_user}/.Xauthority",
                 )
             if has_x_session:
                 gst_sinks = ["nv3dsink", "nvoverlaysink", "nvdrmvideosink"]
