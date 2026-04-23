@@ -1,7 +1,14 @@
 """Main pour détection ArUco sur Jetson Nano avec caméra CSI."""
 
-import math
 import os
+
+# Doit être défini AVANT import cv2 pour supprimer le warning
+# "Cannot query video position" sur flux caméra live GStreamer.
+os.environ.setdefault("OPENCV_LOG_LEVEL", "ERROR")
+os.environ.setdefault("GST_DEBUG", "0")
+
+import contextlib
+import math
 import select
 import sys
 import termios
@@ -13,6 +20,9 @@ from pathlib import Path
 from typing import Optional
 
 import cv2
+
+with contextlib.suppress(AttributeError):
+    cv2.utils.logging.setLogLevel(cv2.utils.logging.LOG_LEVEL_ERROR)
 import matplotlib.pyplot as plt
 import numpy as np
 from dotenv import load_dotenv

@@ -1,11 +1,23 @@
 """Simplified CSI camera module for Jetson Nano with IMX219."""
 
+import os
+# Suppress benign OpenCV/GStreamer warning "Cannot query video position"
+# on live camera sources. Must be set BEFORE importing cv2.
+os.environ.setdefault("OPENCV_LOG_LEVEL", "ERROR")
+os.environ.setdefault("GST_DEBUG", "0")
+
 import threading
 import time
 from typing import Any, Dict, Optional, Tuple, Union
 
 import cv2
 import numpy as np
+
+# Also set via API in case cv2 was imported elsewhere first
+try:
+    cv2.utils.logging.setLogLevel(cv2.utils.logging.LOG_LEVEL_ERROR)
+except AttributeError:
+    pass
 
 # Constantes de calibration
 SHARPNESS_MIN_THRESHOLD = 50
