@@ -116,6 +116,11 @@ GST_DISPLAY_WIDTH = 1920
 GST_DISPLAY_HEIGHT = 1080
 GST_DISPLAY_FPS = 15
 
+# Résolution d'affichage (downscale pour ximagesink/xvimagesink qui
+# rament en 1080p sur Jetson Nano). 4x moins de pixels = 4x plus rapide.
+GST_RENDER_WIDTH = 960
+GST_RENDER_HEIGHT = 540
+
 # Stream UDP H.264 vers un laptop distant (utile en SSH sans X).
 # Défini STREAM_HOST=192.168.0.245 dans .env pour activer.
 STREAM_HOST = os.environ.get("STREAM_HOST", "")
@@ -665,44 +670,52 @@ def detect_aruco() -> None:
                         )
                     except (subprocess.SubprocessError, FileNotFoundError):
                         pass
-            # Pipelines par sink. ximagesink accepte BGR directement (CPU).
-            # nv3dsink préfère NVMM/NV12 → on passe par nvvidconv.
-            # xvimagesink accepte YUY2/I420 via videoconvert.
+            # Pipelines par sink. On downscale avant le sink pour libérer
+            # la Jetson Nano (ximagesink en 1080p = ~2 FPS max).
             caps_in = (
                 f"video/x-raw, format=BGR,"
                 f" width={GST_DISPLAY_WIDTH},"
                 f" height={GST_DISPLAY_HEIGHT},"
                 f" framerate={GST_DISPLAY_FPS}/1"
             )
+            scale = (
+                f"videoscale ! video/x-raw,"
+                f" width={GST_RENDER_WIDTH},"
+                f" height={GST_RENDER_HEIGHT}"
+            )
             sink_pipelines = {
-                # ximagesink: BGR CPU direct, le plus fiable sous X
-                "ximagesink": (
-                    f"appsrc is-live=true format=time ! {caps_in} ! "
-                    "videoconvert ! video/x-raw, format=BGRx ! "
-                    "ximagesink sync=false"
-                ),
-                # xvimagesink: X video extension, YUV overlay
+                # xvimagesink: XVideo overlay hardware YUV (rapide)
                 "xvimagesink": (
                     f"appsrc is-live=true format=time ! {caps_in} ! "
-                    "videoconvert ! video/x-raw, format=I420 ! "
+                    f"videoconvert ! {scale} ! "
+                    "video/x-raw, format=I420 ! "
                     "xvimagesink sync=false"
                 ),
-                # nv3dsink: GL hardware, via nvvidconv pour NVMM
+                # nv3dsink: GL hardware via NVMM (le plus rapide si ça marche)
                 "nv3dsink": (
                     f"appsrc is-live=true format=time ! {caps_in} ! "
-                    "videoconvert ! video/x-raw, format=BGRx ! "
                     "nvvidconv ! "
-                    "video/x-raw(memory:NVMM), format=NV12 ! "
+                    f"video/x-raw(memory:NVMM), format=NV12,"
+                    f" width={GST_RENDER_WIDTH},"
+                    f" height={GST_RENDER_HEIGHT} ! "
                     "nv3dsink sync=false"
+                ),
+                # ximagesink: software X11 (fallback lent)
+                "ximagesink": (
+                    f"appsrc is-live=true format=time ! {caps_in} ! "
+                    f"videoconvert ! {scale} ! "
+                    "video/x-raw, format=BGRx ! "
+                    "ximagesink sync=false"
                 ),
                 "autovideosink": (
                     f"appsrc is-live=true format=time ! {caps_in} ! "
-                    "videoconvert ! autovideosink sync=false"
+                    f"videoconvert ! {scale} ! "
+                    "autovideosink sync=false"
                 ),
             }
             if has_x_session:
-                sink_order = ["ximagesink", "nv3dsink",
-                              "xvimagesink", "autovideosink"]
+                sink_order = ["xvimagesink", "nv3dsink",
+                              "ximagesink", "autovideosink"]
             else:
                 sink_order = ["nv3dsink", "autovideosink"]
             for sink_name in sink_order:
