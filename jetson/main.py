@@ -97,14 +97,24 @@ DEBUG_MODE = parse_bool("DEBUG_MODE", False)
 SHOW_ARENA = parse_bool("SHOW_ARENA", True)
 SHOW_CAMERA_FEED = parse_bool("SHOW_CAMERA_FEED", True)
 
-HAS_DISPLAY = bool(
+# cv2.imshow requiert GTK/Qt et échoue silencieusement quand root
+# utilise la session X d'un autre user (GDM). On force donc le chemin
+# GStreamer (nv3dsink) dès qu'on tourne en sudo, même si DISPLAY est set.
+_RUNNING_AS_ROOT = os.geteuid() == 0
+_DISPLAY_IN_ENV = bool(
     os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"),
 )
+HAS_DISPLAY = _DISPLAY_IN_ENV and not _RUNNING_AS_ROOT
 
 # Résolution pour le writer GStreamer (doit correspondre à la caméra)
 GST_DISPLAY_WIDTH = 1920
 GST_DISPLAY_HEIGHT = 1080
 GST_DISPLAY_FPS = 15
+
+# Stream UDP H.264 vers un laptop distant (utile en SSH sans X).
+# Défini STREAM_HOST=192.168.0.245 dans .env pour activer.
+STREAM_HOST = os.environ.get("STREAM_HOST", "")
+STREAM_PORT = parse_int("STREAM_PORT", 5000)
 
 DUMMY_LORA = parse_bool("DUMMY_LORA", False)
 DUMMY_DETECTION = parse_bool("DUMMY_DETECTION", False)
@@ -562,7 +572,37 @@ def detect_aruco() -> None:
     # Créer les fenêtres / writers GStreamer
     gst_writer = None
     if SHOW_CAMERA_FEED and not DUMMY_DETECTION:
-        if HAS_DISPLAY:
+        if STREAM_HOST:
+            # Stream UDP H.264 vers un host distant (SSH sans X)
+            udp_pipeline = (
+                "appsrc is-live=true format=time ! "
+                f"video/x-raw, format=BGR,"
+                f" width={GST_DISPLAY_WIDTH},"
+                f" height={GST_DISPLAY_HEIGHT},"
+                f" framerate={GST_DISPLAY_FPS}/1 ! "
+                "videoconvert ! video/x-raw, format=I420 ! "
+                "x264enc tune=zerolatency bitrate=2000 speed-preset=ultrafast"
+                " key-int-max=15 ! "
+                "rtph264pay config-interval=1 pt=96 ! "
+                f"udpsink host={STREAM_HOST} port={STREAM_PORT} sync=false"
+            )
+            gst_writer = cv2.VideoWriter(
+                udp_pipeline,
+                cv2.CAP_GSTREAMER,
+                0,
+                GST_DISPLAY_FPS,
+                (GST_DISPLAY_WIDTH, GST_DISPLAY_HEIGHT),
+                True,
+            )
+            if gst_writer.isOpened():
+                print(
+                    f"📡 Stream UDP H.264 vers "
+                    f"{STREAM_HOST}:{STREAM_PORT}",
+                )
+            else:
+                print("⚠️  Échec ouverture stream UDP")
+                gst_writer = None
+        elif HAS_DISPLAY:
             cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
         else:
             # Détection robuste d'une session X/Wayland (env vars perdues
@@ -589,10 +629,21 @@ def detect_aruco() -> None:
                 or x_socket_exists
                 or xorg_running,
             )
-            # Forcer DISPLAY si X tourne mais env var perdue (cas sudo)
+            # Forcer DISPLAY si X tourne mais env var perdue (cas sudo/SSH)
             sudo_user = os.environ.get("SUDO_USER")
+            target_user = sudo_user or os.environ.get("USER", "dvb")
             if has_x_session and not os.environ.get("DISPLAY"):
                 os.environ["DISPLAY"] = ":0"
+            # Localiser Xauthority: sous GDM3 il est dans /run/user/<uid>/gdm/
+            if has_x_session and not os.environ.get("XAUTHORITY"):
+                xauth_candidates = [
+                    "/run/user/1000/gdm/Xauthority",
+                    f"/home/{target_user}/.Xauthority",
+                ]
+                for xauth in xauth_candidates:
+                    if Path(xauth).exists():
+                        os.environ["XAUTHORITY"] = xauth
+                        break
             if has_x_session and sudo_user:
                 # Autoriser root à accéder au display de l'utilisateur
                 # (exécute xhost en tant que SUDO_USER).
@@ -609,14 +660,12 @@ def detect_aruco() -> None:
                         )
                     except (subprocess.SubprocessError, FileNotFoundError):
                         pass
-                os.environ.setdefault(
-                    "XAUTHORITY",
-                    f"/home/{sudo_user}/.Xauthority",
-                )
+            # nvdrmvideosink est hardcodé sur card0 qui n'a pas de sortie
+            # sur cette Jetson (seul card1-DP-1 est branché). On le retire.
             if has_x_session:
-                gst_sinks = ["nv3dsink", "nvoverlaysink", "nvdrmvideosink"]
+                gst_sinks = ["nv3dsink", "ximagesink", "autovideosink"]
             else:
-                gst_sinks = ["nvdrmvideosink", "nv3dsink", "nvoverlaysink"]
+                gst_sinks = ["nv3dsink", "autovideosink", "nvdrmvideosink"]
             # Frame de test pour valider que le sink accepte vraiment
             # des données (nvdrmvideosink ouvre OK mais fail au write).
             test_frame = np.zeros(
