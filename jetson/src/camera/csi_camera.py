@@ -72,26 +72,32 @@ class CSICamera:
         self.last_fps_time = time.time()
         self.read_fps = 0.0
 
-        # Pipeline GStreamer pour IMX219
+        # Pipeline GStreamer pour IMX219 en plein FOV 120°.
+        # sensor-mode=3 → 1640x1232 (binning 2x2) = capteur complet.
+        # On crop vertical à 1640x924 pour 16:9, puis scale à 1920x1080.
+        # Cela préserve le FOV horizontal 120° et évite l'étirement.
         if grayscale:
             gst_pipeline = (
-                f"nvarguscamerasrc sensor-id={camera_id} ! "
+                f"nvarguscamerasrc sensor-id={camera_id} sensor-mode=3 ! "
                 f"video/x-raw(memory:NVMM), "
-                f"width={CSI_WIDTH}, height={CSI_HEIGHT}, "
-                f"format=NV12, framerate={CSI_FPS}/1 ! "
-                f"nvvidconv flip-method=0 ! "
+                f"width=1640, height=1232, "
+                f"format=NV12, framerate=30/1 ! "
+                f"nvvidconv top=154 bottom=1078 flip-method=0 ! "
+                f"video/x-raw(memory:NVMM), width={CSI_WIDTH}, "
+                f"height={CSI_HEIGHT}, format=NV12 ! "
+                f"nvvidconv ! "
                 f"video/x-raw, width={CSI_WIDTH}, "
                 f"height={CSI_HEIGHT}, format=GRAY8 ! "
                 f"appsink max-buffers=1 drop=true sync=false"
             )
         else:
             gst_pipeline = (
-                f"nvarguscamerasrc sensor-id={camera_id} ! "
+                f"nvarguscamerasrc sensor-id={camera_id} sensor-mode=3 ! "
                 f"video/x-raw(memory:NVMM), "
-                f"width={CSI_WIDTH}, height={CSI_HEIGHT}, "
-                f"format=NV12, framerate={CSI_FPS}/1 ! "
-                f"nvvidconv flip-method=0 ! "
-                f"video/x-raw, width={CSI_WIDTH}, "
+                f"width=1640, height=1232, "
+                f"format=NV12, framerate=30/1 ! "
+                f"nvvidconv top=154 bottom=1078 flip-method=0 ! "
+                f"video/x-raw(memory:NVMM), width={CSI_WIDTH}, "
                 f"height={CSI_HEIGHT}, format=BGRx ! "
                 f"videoconvert ! "
                 f"video/x-raw, format=BGR ! "
