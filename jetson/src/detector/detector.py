@@ -101,9 +101,17 @@ class ArucoDetector:
         # Thread pool pour détection parallèle des tuiles
         self._tile_pool = ThreadPoolExecutor(max_workers=4)
 
-        # Multi-échelle : seuil de marqueurs pour déclencher les tuiles
+        # Multi-échelle : seuil de marqueurs pour déclencher les tuiles.
+        # Trop bas = tuiles tournent en permanence (4x détection sur 2160p
+        # upscalé = plusieurs secondes par frame sur Jetson Nano).
+        # On ne déclenche que si on voit < 3 marqueurs au premier passage.
         self.multiscale_enabled = True
-        self.multiscale_min_markers = 50
+        self.multiscale_min_markers = 3
+
+        # Throttle de update_arena_display (matplotlib canvas.draw lent).
+        # Rafraîchit l'affichage arena 1 frame sur N.
+        self.arena_refresh_every = 10
+        self._arena_frame_counter = 0
 
         # Lissage temporel : carry-forward pour marqueurs statiques
         # {marker_id: (pos_world, yaw, last_seen_time, consecutive_misses)}
@@ -836,8 +844,15 @@ class ArucoDetector:
                 parameters=self.aruco_params,
             )
 
+        # Throttle du refresh arena (matplotlib canvas.draw est lent)
+        self._arena_frame_counter += 1
+        arena_should_refresh = (
+            show_arena
+            and (self._arena_frame_counter % self.arena_refresh_every == 0)
+        )
+
         if ids is None:
-            if show_arena:
+            if arena_should_refresh:
                 self.update_arena_display(
                     detected_world=[],
                     window_name=arena_window_name,
@@ -958,7 +973,7 @@ class ArucoDetector:
         for mid in expired:
             del self.marker_history[mid]
 
-        if show_arena:
+        if arena_should_refresh:
             try:
                 self.update_arena_display(
                     detected_world=detected_world, window_name=arena_window_name
