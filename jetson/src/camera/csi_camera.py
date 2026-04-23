@@ -70,7 +70,7 @@ class CSICamera:
                 f"nvvidconv flip-method=0 ! "
                 f"video/x-raw, width={CSI_WIDTH}, "
                 f"height={CSI_HEIGHT}, format=GRAY8 ! "
-                f"appsink"
+                f"appsink max-buffers=1 drop=true sync=false"
             )
         else:
             gst_pipeline = (
@@ -83,7 +83,7 @@ class CSICamera:
                 f"height={CSI_HEIGHT}, format=BGRx ! "
                 f"videoconvert ! "
                 f"video/x-raw, format=BGR ! "
-                f"appsink"
+                f"appsink max-buffers=1 drop=true sync=false"
             )
 
         mode = "GRAY8" if grayscale else "BGR"
