@@ -97,14 +97,19 @@ DEBUG_MODE = parse_bool("DEBUG_MODE", False)
 SHOW_ARENA = parse_bool("SHOW_ARENA", True)
 SHOW_CAMERA_FEED = parse_bool("SHOW_CAMERA_FEED", True)
 
-# cv2.imshow requiert GTK/Qt et échoue silencieusement quand root
-# utilise la session X d'un autre user (GDM). On force donc le chemin
-# GStreamer (nv3dsink) dès qu'on tourne en sudo, même si DISPLAY est set.
+# Sur Jetson, OpenCV (JetPack) est souvent compilé sans GTK/Qt donc
+# cv2.imshow échoue silencieusement. On force systématiquement le
+# chemin GStreamer (nv3dsink / ximagesink) qui est plus fiable.
+# Mets USE_CV2_IMSHOW=True dans .env pour tester cv2.imshow si besoin.
 _RUNNING_AS_ROOT = os.geteuid() == 0
 _DISPLAY_IN_ENV = bool(
     os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"),
 )
-HAS_DISPLAY = _DISPLAY_IN_ENV and not _RUNNING_AS_ROOT
+HAS_DISPLAY = (
+    _DISPLAY_IN_ENV
+    and not _RUNNING_AS_ROOT
+    and parse_bool("USE_CV2_IMSHOW", False)
+)
 
 # Résolution pour le writer GStreamer (doit correspondre à la caméra)
 GST_DISPLAY_WIDTH = 1920
