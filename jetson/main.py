@@ -820,7 +820,14 @@ def detect_aruco() -> None:
                 if HAS_DISPLAY:
                     cv2.imshow("ArUco Detection", annotated_frame)
                 elif gst_writer is not None:
-                    gst_writer.write(annotated_frame)
+                    ok = gst_writer.write(annotated_frame)
+                    if frame_count % 30 == 0:
+                        print(
+                            f"[DBG] write ok={ok} "
+                            f"shape={annotated_frame.shape} "
+                            f"dtype={annotated_frame.dtype} "
+                            f"mean={annotated_frame.mean():.1f}",
+                        )
 
             # Affichage markers debug
             if DEBUG_MODE and detected_world:
