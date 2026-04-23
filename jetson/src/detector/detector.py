@@ -364,7 +364,11 @@ class ArucoDetector:
 
         if self.transform_type == "homography" and self.homography_matrix is not None:
             world_pts = (self.homography_matrix @ pts.T).T  # (N, 3)
-            world_pts = world_pts[:, :2] / world_pts[:, 2:3]
+            # Protection divide-by-zero : w≈0 = point à l'infini, on laisse
+            # NaN et le caller filtre plus loin.
+            w = world_pts[:, 2:3]
+            safe_w = np.where(np.abs(w) < 1e-9, np.nan, w)
+            world_pts = world_pts[:, :2] / safe_w
         elif self.transform_type == "affine" and self.affine_matrix is not None:
             world_pts = (self.affine_matrix @ pts.T).T  # (N, 2)
         else:
@@ -927,6 +931,15 @@ class ArucoDetector:
                     pos_world = all_world[i * 3]
                     corner0_world = all_world[i * 3 + 1]
                     corner1_world = all_world[i * 3 + 2]
+
+                    # Skip les marqueurs dont la projection homographique
+                    # a divergé (point à l'infini → NaN).
+                    if not (
+                        np.isfinite(pos_world).all()
+                        and np.isfinite(corner0_world).all()
+                        and np.isfinite(corner1_world).all()
+                    ):
+                        continue
 
                     # Calcul du yaw
                     vec_world = corner1_world - corner0_world
