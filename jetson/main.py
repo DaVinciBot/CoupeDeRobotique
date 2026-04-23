@@ -625,11 +625,13 @@ def detect_aruco() -> None:
             )
             for sink_name in gst_sinks:
                 gst_pipeline = (
-                    "appsrc ! videoconvert ! "
-                    f"video/x-raw, width={GST_DISPLAY_WIDTH},"
+                    "appsrc is-live=true format=time ! "
+                    f"video/x-raw, format=BGR,"
+                    f" width={GST_DISPLAY_WIDTH},"
                     f" height={GST_DISPLAY_HEIGHT},"
-                    f" framerate={GST_DISPLAY_FPS}/1,"
-                    " format=I420 ! "
+                    f" framerate={GST_DISPLAY_FPS}/1 ! "
+                    "videoconvert ! "
+                    "video/x-raw, format=I420 ! "
                     f"{sink_name} sync=false"
                 )
                 candidate = cv2.VideoWriter(
