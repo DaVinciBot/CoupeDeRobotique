@@ -565,11 +565,17 @@ def detect_aruco() -> None:
         if HAS_DISPLAY:
             cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
         else:
-            gst_sinks = [
-                "nvdrmvideosink",
-                "nvoverlaysink",
-                "nv3dsink",
-            ]
+            # Si un serveur d'affichage tourne (X/Wayland), nvdrmvideosink
+            # échoue car il ne peut pas devenir DRM master. On privilégie
+            # nv3dsink/nvoverlaysink (fenêtre X) dans ce cas.
+            has_x_session = bool(
+                os.environ.get("DISPLAY")
+                or os.environ.get("WAYLAND_DISPLAY"),
+            )
+            if has_x_session:
+                gst_sinks = ["nv3dsink", "nvoverlaysink", "nvdrmvideosink"]
+            else:
+                gst_sinks = ["nvdrmvideosink", "nv3dsink", "nvoverlaysink"]
             for sink_name in gst_sinks:
                 gst_pipeline = (
                     "appsrc ! videoconvert ! "
@@ -577,7 +583,7 @@ def detect_aruco() -> None:
                     f" height={GST_DISPLAY_HEIGHT},"
                     f" framerate={GST_DISPLAY_FPS}/1,"
                     " format=I420 ! "
-                    f"{sink_name}"
+                    f"{sink_name} sync=false"
                 )
                 gst_writer = cv2.VideoWriter(
                     gst_pipeline,
