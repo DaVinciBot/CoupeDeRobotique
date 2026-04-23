@@ -27,8 +27,10 @@ MEAN_EXCELLENT_CALIBRATION = 0.5
 MEAN_BAD_CALIBRATION = 1.0
 
 # Configuration CSI fixe (IMX219 sur Jetson Nano)
-CSI_WIDTH = 1920
-CSI_HEIGHT = 1080
+# Ratio 4:3 pour conserver le plein FOV du capteur (120° horizontal).
+# On capture en 3280x2464 (mode 0) et on downscale à 1640x1232 en HW.
+CSI_WIDTH = 1640
+CSI_HEIGHT = 1232
 CSI_FPS = 15
 
 
@@ -72,17 +74,16 @@ class CSICamera:
         self.last_fps_time = time.time()
         self.read_fps = 0.0
 
-        # Pipeline GStreamer pour IMX219 en plein FOV 120°.
-        # sensor-mode=3 → 1640x1232 (binning 2x2) = capteur complet.
-        # On crop vertical à 1640x924 pour 16:9, puis scale à 1920x1080.
-        # Cela préserve le FOV horizontal 120° et évite l'étirement.
+        # Pipeline GStreamer pour IMX219 en plein FOV 120° sans crop.
+        # sensor-mode=0 → 3280x2464 (capteur complet, FOV 120°H × 94°V).
+        # Downscale HW à 1640x1232 (4:3 préservé, aucun étirement).
         if grayscale:
             gst_pipeline = (
-                f"nvarguscamerasrc sensor-id={camera_id} sensor-mode=3 ! "
+                f"nvarguscamerasrc sensor-id={camera_id} sensor-mode=0 ! "
                 f"video/x-raw(memory:NVMM), "
-                f"width=1640, height=1232, "
-                f"format=NV12, framerate=30/1 ! "
-                f"nvvidconv top=154 bottom=1078 flip-method=0 ! "
+                f"width=3280, height=2464, "
+                f"format=NV12, framerate=21/1 ! "
+                f"nvvidconv flip-method=0 ! "
                 f"video/x-raw(memory:NVMM), width={CSI_WIDTH}, "
                 f"height={CSI_HEIGHT}, format=NV12 ! "
                 f"nvvidconv ! "
@@ -92,11 +93,11 @@ class CSICamera:
             )
         else:
             gst_pipeline = (
-                f"nvarguscamerasrc sensor-id={camera_id} sensor-mode=3 ! "
+                f"nvarguscamerasrc sensor-id={camera_id} sensor-mode=0 ! "
                 f"video/x-raw(memory:NVMM), "
-                f"width=1640, height=1232, "
-                f"format=NV12, framerate=30/1 ! "
-                f"nvvidconv top=154 bottom=1078 flip-method=0 ! "
+                f"width=3280, height=2464, "
+                f"format=NV12, framerate=21/1 ! "
+                f"nvvidconv flip-method=0 ! "
                 f"video/x-raw(memory:NVMM), width={CSI_WIDTH}, "
                 f"height={CSI_HEIGHT}, format=BGRx ! "
                 f"videoconvert ! "

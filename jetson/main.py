@@ -112,14 +112,15 @@ HAS_DISPLAY = (
 )
 
 # Résolution pour le writer GStreamer (doit correspondre à la caméra)
-GST_DISPLAY_WIDTH = 1920
-GST_DISPLAY_HEIGHT = 1080
+# Capteur IMX219 plein FOV 120° → 4:3 natif (1640x1232).
+GST_DISPLAY_WIDTH = 1640
+GST_DISPLAY_HEIGHT = 1232
 GST_DISPLAY_FPS = 15
 
 # Résolution d'affichage (downscale pour ximagesink/xvimagesink qui
-# rament en 1080p sur Jetson Nano). 4x moins de pixels = 4x plus rapide.
-GST_RENDER_WIDTH = 960
-GST_RENDER_HEIGHT = 540
+# rament en haute résolution sur Jetson Nano). Ratio 4:3 conservé.
+GST_RENDER_WIDTH = 820
+GST_RENDER_HEIGHT = 616
 
 # Stream UDP H.264 vers un laptop distant (utile en SSH sans X).
 # Défini STREAM_HOST=192.168.0.245 dans .env pour activer.
