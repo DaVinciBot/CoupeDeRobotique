@@ -565,17 +565,48 @@ def detect_aruco() -> None:
         if HAS_DISPLAY:
             cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
         else:
-            # Si un serveur d'affichage tourne (X/Wayland), nvdrmvideosink
-            # échoue car il ne peut pas devenir DRM master. On privilégie
-            # nv3dsink/nvoverlaysink (fenêtre X) dans ce cas.
+            # Détection robuste d'une session X/Wayland (env vars perdues
+            # via sudo). On vérifie aussi le socket et le process Xorg.
+            import subprocess  # noqa: PLC0415
+            x_socket_dir = Path("/tmp/.X11-unix")  # noqa: S108
+            x_socket_exists = (
+                any(x_socket_dir.glob("X*"))
+                if x_socket_dir.exists()
+                else False
+            )
+            try:
+                xorg_running = subprocess.run(
+                    ["pgrep", "-x", "Xorg"],
+                    check=False,
+                    capture_output=True,
+                    timeout=1,
+                ).returncode == 0
+            except (subprocess.SubprocessError, FileNotFoundError):
+                xorg_running = False
             has_x_session = bool(
                 os.environ.get("DISPLAY")
-                or os.environ.get("WAYLAND_DISPLAY"),
+                or os.environ.get("WAYLAND_DISPLAY")
+                or x_socket_exists
+                or xorg_running,
             )
+            # Forcer DISPLAY si X tourne mais env var perdue (cas sudo)
+            if has_x_session and not os.environ.get("DISPLAY"):
+                os.environ["DISPLAY"] = ":0"
+                xauth_user = os.environ.get("SUDO_USER", "dvb")
+                os.environ.setdefault(
+                    "XAUTHORITY",
+                    f"/home/{xauth_user}/.Xauthority",
+                )
             if has_x_session:
                 gst_sinks = ["nv3dsink", "nvoverlaysink", "nvdrmvideosink"]
             else:
                 gst_sinks = ["nvdrmvideosink", "nv3dsink", "nvoverlaysink"]
+            # Frame de test pour valider que le sink accepte vraiment
+            # des données (nvdrmvideosink ouvre OK mais fail au write).
+            test_frame = np.zeros(
+                (GST_DISPLAY_HEIGHT, GST_DISPLAY_WIDTH, 3),
+                dtype=np.uint8,
+            )
             for sink_name in gst_sinks:
                 gst_pipeline = (
                     "appsrc ! videoconvert ! "
@@ -585,7 +616,7 @@ def detect_aruco() -> None:
                     " format=I420 ! "
                     f"{sink_name} sync=false"
                 )
-                gst_writer = cv2.VideoWriter(
+                candidate = cv2.VideoWriter(
                     gst_pipeline,
                     cv2.CAP_GSTREAMER,
                     0,
@@ -593,12 +624,17 @@ def detect_aruco() -> None:
                     (GST_DISPLAY_WIDTH, GST_DISPLAY_HEIGHT),
                     True,
                 )
-                if gst_writer.isOpened():
-                    print(
-                        f"🖥️  Affichage via {sink_name}",
-                    )
+                if not candidate.isOpened():
+                    continue
+                # Test write - nvdrmvideosink échoue ici si DRM master pris
+                try:
+                    candidate.write(test_frame)
+                    time.sleep(0.2)
+                    gst_writer = candidate
+                    print(f"🖥️  Affichage via {sink_name}")
                     break
-                gst_writer = None
+                except cv2.error:
+                    candidate.release()
             if gst_writer is None:
                 print(
                     "⚠️  Aucun sink GStreamer"
