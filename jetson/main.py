@@ -665,29 +665,48 @@ def detect_aruco() -> None:
                         )
                     except (subprocess.SubprocessError, FileNotFoundError):
                         pass
-            # nvdrmvideosink est hardcodé sur card0 qui n'a pas de sortie
-            # sur cette Jetson (seul card1-DP-1 est branché). On le retire.
-            if has_x_session:
-                gst_sinks = ["nv3dsink", "ximagesink", "autovideosink"]
-            else:
-                gst_sinks = ["nv3dsink", "autovideosink", "nvdrmvideosink"]
-            # Frame de test pour valider que le sink accepte vraiment
-            # des données (nvdrmvideosink ouvre OK mais fail au write).
-            test_frame = np.zeros(
-                (GST_DISPLAY_HEIGHT, GST_DISPLAY_WIDTH, 3),
-                dtype=np.uint8,
+            # Pipelines par sink. ximagesink accepte BGR directement (CPU).
+            # nv3dsink préfère NVMM/NV12 → on passe par nvvidconv.
+            # xvimagesink accepte YUY2/I420 via videoconvert.
+            caps_in = (
+                f"video/x-raw, format=BGR,"
+                f" width={GST_DISPLAY_WIDTH},"
+                f" height={GST_DISPLAY_HEIGHT},"
+                f" framerate={GST_DISPLAY_FPS}/1"
             )
-            for sink_name in gst_sinks:
-                gst_pipeline = (
-                    "appsrc is-live=true format=time ! "
-                    f"video/x-raw, format=BGR,"
-                    f" width={GST_DISPLAY_WIDTH},"
-                    f" height={GST_DISPLAY_HEIGHT},"
-                    f" framerate={GST_DISPLAY_FPS}/1 ! "
-                    "videoconvert ! "
-                    "video/x-raw, format=I420 ! "
-                    f"{sink_name} sync=false"
-                )
+            sink_pipelines = {
+                # ximagesink: BGR CPU direct, le plus fiable sous X
+                "ximagesink": (
+                    f"appsrc is-live=true format=time ! {caps_in} ! "
+                    "videoconvert ! video/x-raw, format=BGRx ! "
+                    "ximagesink sync=false"
+                ),
+                # xvimagesink: X video extension, YUV overlay
+                "xvimagesink": (
+                    f"appsrc is-live=true format=time ! {caps_in} ! "
+                    "videoconvert ! video/x-raw, format=I420 ! "
+                    "xvimagesink sync=false"
+                ),
+                # nv3dsink: GL hardware, via nvvidconv pour NVMM
+                "nv3dsink": (
+                    f"appsrc is-live=true format=time ! {caps_in} ! "
+                    "videoconvert ! video/x-raw, format=BGRx ! "
+                    "nvvidconv ! "
+                    "video/x-raw(memory:NVMM), format=NV12 ! "
+                    "nv3dsink sync=false"
+                ),
+                "autovideosink": (
+                    f"appsrc is-live=true format=time ! {caps_in} ! "
+                    "videoconvert ! autovideosink sync=false"
+                ),
+            }
+            if has_x_session:
+                sink_order = ["ximagesink", "nv3dsink",
+                              "xvimagesink", "autovideosink"]
+            else:
+                sink_order = ["nv3dsink", "autovideosink"]
+            for sink_name in sink_order:
+                gst_pipeline = sink_pipelines[sink_name]
                 candidate = cv2.VideoWriter(
                     gst_pipeline,
                     cv2.CAP_GSTREAMER,
@@ -696,17 +715,10 @@ def detect_aruco() -> None:
                     (GST_DISPLAY_WIDTH, GST_DISPLAY_HEIGHT),
                     True,
                 )
-                if not candidate.isOpened():
-                    continue
-                # Test write - nvdrmvideosink échoue ici si DRM master pris
-                try:
-                    candidate.write(test_frame)
-                    time.sleep(0.2)
+                if candidate.isOpened():
                     gst_writer = candidate
                     print(f"🖥️  Affichage via {sink_name}")
                     break
-                except cv2.error:
-                    candidate.release()
             if gst_writer is None:
                 print(
                     "⚠️  Aucun sink GStreamer"
