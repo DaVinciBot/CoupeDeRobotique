@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import time
+import traceback
 from math import pi
 from typing import TYPE_CHECKING, Any
 
@@ -133,74 +134,93 @@ class MainBrain(Brain):
     def run(self) -> None:
         """Runs the main control loop for the robot."""
         # --- Initialization --- #
-        # --- 1) Initialize subsystems --- #
-        if CONFIG.ROLLING_BASIS_DUMMY:
-            rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
-                logger=LogLogger(
-                    identifier="RollingBasisDummy",
-                    follow_logger_manager_rules=True,
-                ),
-                enable_realtime_simulation=True,
-                enable_debug_report=True,
-            )
-        else:
-            rolling_basis = RollingBasis(
-                logger=LogLogger(
-                    identifier="RollingBasis",
-                    follow_logger_manager_rules=True,
-                ),
-            )
-        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        rolling_basis.initialize_pids()
-
-        if CONFIG.ACTUATORS_DUMMY:
-            actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
-                logger=LogLogger(
-                    identifier="Actuators",
-                    follow_logger_manager_rules=True,
-                ),
-            )
-        else:
-            actuators = ActuatorsShow(
-                logger=LogLogger(
-                    identifier="Actuators",
-                    follow_logger_manager_rules=True,
-                ),
-            )
-        # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
-        if (
-            not CONFIG.LIDAR_DUMMY
-            or not CONFIG.ROLLING_BASIS_DUMMY
-            or not CONFIG.ACTUATORS_DUMMY
-        ):
-            while not self.jack_plugged:  # wait until cable is plugged
-                time.sleep(0.1)
-        else:
-            time.sleep(2)
-        actuators.block_banner()  # engage the banner blocker
-        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        rolling_basis.initialize_pids()
-        while not self.jack_triggered:  # wait for the trigger event
-            time.sleep(0.1)
-
-        # --- 3) Build the strategy --- #
-
         strategy: GoBackstageStrategy | None = None
         action_holder: list[GraphRunner | None] = [None]
-        if self.mode == "iihm":
-            self.logger.info("IIHM mode: Waiting for first task...")
-        else:
-            strategy = GoBackstageStrategy(
-                WinterGameContext(
-                    arena=self.arena,
-                    rolling_basis=rolling_basis,
-                    actuators=actuators,
-                    point=self.score,
-                ),
-            )
+        init_stage = "rolling basis setup"
+        try:
+            # --- 1) Initialize subsystems --- #
+            if CONFIG.ROLLING_BASIS_DUMMY:
+                rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
+                    logger=LogLogger(
+                        identifier="RollingBasisDummy",
+                        follow_logger_manager_rules=True,
+                    ),
+                    enable_realtime_simulation=True,
+                    enable_debug_report=True,
+                )
+            else:
+                rolling_basis = RollingBasis(
+                    logger=LogLogger(
+                        identifier="RollingBasis",
+                        follow_logger_manager_rules=True,
+                    ),
+                )
 
-        self.should_send_start = True
-        self.status = "starting"
+            init_stage = "rolling basis PID initialization"
+            rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+            rolling_basis.initialize_pids()
+
+            init_stage = "actuators setup"
+            if CONFIG.ACTUATORS_DUMMY:
+                actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
+                    logger=LogLogger(
+                        identifier="Actuators",
+                        follow_logger_manager_rules=True,
+                    ),
+                )
+            else:
+                actuators = ActuatorsShow(
+                    logger=LogLogger(
+                        identifier="Actuators",
+                        follow_logger_manager_rules=True,
+                    ),
+                )
+
+            # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
+            init_stage = "jack plug wait"
+            if (
+                not CONFIG.LIDAR_DUMMY
+                or not CONFIG.ROLLING_BASIS_DUMMY
+                or not CONFIG.ACTUATORS_DUMMY
+            ):
+                while not self.jack_plugged:  # wait until cable is plugged
+                    time.sleep(0.1)
+            else:
+                time.sleep(2)
+
+            init_stage = "banner blocking"
+            actuators.block_banner()  # engage the banner blocker
+
+            init_stage = "rolling basis reinitialization"
+            rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+            rolling_basis.initialize_pids()
+
+            init_stage = "jack trigger wait"
+            while not self.jack_triggered:  # wait for the trigger event
+                time.sleep(0.1)
+
+            # --- 3) Build the strategy --- #
+            init_stage = "strategy creation"
+            if self.mode == "iihm":
+                self.logger.info("IIHM mode: Waiting for first task...")
+            else:
+                strategy = GoBackstageStrategy(
+                    WinterGameContext(
+                        arena=self.arena,
+                        rolling_basis=rolling_basis,
+                        actuators=actuators,
+                        point=self.score,
+                    ),
+                )
+
+            self.should_send_start = True
+            self.status = "starting"
+        except Exception:
+            self.logger.error(
+                f"[run] Initialization failed during {init_stage}: "
+                f"{traceback.format_exc()}"
+            )
+            raise
 
         # from strategy.tools import visualize_task_graph
         # visualize_task_graph(strategy.runner.active[0])
