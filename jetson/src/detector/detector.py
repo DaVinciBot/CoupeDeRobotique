@@ -80,11 +80,10 @@ class ArucoDetector:
         self.aruco_params.perspectiveRemoveIgnoredMarginPerCell = 0.2
         # Correction d'erreur bits plus tolérante
         self.aruco_params.maxErroneousBitsInBorderRate = 0.6
-        # Raffinement sub-pixel : COÛTEUX. Désactivé par défaut, activable
-        # via .env si la précision sub-pixel est critique.
-        self.aruco_params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_NONE
-        self.aruco_params.cornerRefinementWinSize = 3
-        self.aruco_params.cornerRefinementMaxIterations = 5
+        # Raffinement sub-pixel (stabilise la détection frame-à-frame)
+        self.aruco_params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_SUBPIX
+        self.aruco_params.cornerRefinementWinSize = 5
+        self.aruco_params.cornerRefinementMaxIterations = 30
         self.aruco_params.cornerRefinementMinAccuracy = 0.1
 
         # CLAHE pour normaliser le contraste (éclairage inégal)
@@ -102,22 +101,9 @@ class ArucoDetector:
         # Thread pool pour détection parallèle des tuiles
         self._tile_pool = ThreadPoolExecutor(max_workers=4)
 
-        # Multi-échelle : seuil de marqueurs pour déclencher les tuiles.
-        # Trop bas = tuiles tournent en permanence (4x détection sur 2160p
-        # upscalé = plusieurs secondes par frame sur Jetson Nano).
-        # On ne déclenche que si on voit < 3 marqueurs au premier passage.
+        # Multi-échelle : seuil de marqueurs pour déclencher les tuiles
         self.multiscale_enabled = True
-        self.multiscale_min_markers = 3
-
-        # Throttle de update_arena_display (matplotlib canvas.draw lent).
-        # Rafraîchit l'affichage arena 1 frame sur N.
-        self.arena_refresh_every = 10
-        self._arena_frame_counter = 0
-
-        # Facteur de downscale avant détection. 2 = detection en 960x540
-        # au lieu de 1920x1080 → ~4x plus rapide. Les coins sont
-        # re-projetés à l'échelle pleine ensuite.
-        self.detect_downscale = 2
+        self.multiscale_min_markers = 50
 
         # Lissage temporel : carry-forward pour marqueurs statiques
         # {marker_id: (pos_world, yaw, last_seen_time, consecutive_misses)}
@@ -840,40 +826,18 @@ class ArucoDetector:
             )
             gray = self.clahe.apply(gray)
 
-        # Downscale avant détection pour accélérer (coins reprojetés ensuite)
-        ds = self.detect_downscale
-        if ds > 1:
-            gray_detect = cv2.resize(
-                gray, None,
-                fx=1.0 / ds, fy=1.0 / ds,
-                interpolation=cv2.INTER_AREA,
-            )
-        else:
-            gray_detect = gray
-
         # Détection ArUco (multi-échelle si activée)
         if self.multiscale_enabled:
-            corners, ids, _ = self._detect_multiscale(gray_detect)
+            corners, ids, _ = self._detect_multiscale(gray)
         else:
             corners, ids, _ = cv2.aruco.detectMarkers(
-                gray_detect,
+                gray,
                 self.aruco_dict,
                 parameters=self.aruco_params,
             )
 
-        # Re-projeter les coins dans la résolution d'origine
-        if ds > 1 and corners:
-            corners = tuple(c * float(ds) for c in corners)
-
-        # Throttle du refresh arena (matplotlib canvas.draw est lent)
-        self._arena_frame_counter += 1
-        arena_should_refresh = (
-            show_arena
-            and (self._arena_frame_counter % self.arena_refresh_every == 0)
-        )
-
         if ids is None:
-            if arena_should_refresh:
+            if show_arena:
                 self.update_arena_display(
                     detected_world=[],
                     window_name=arena_window_name,
@@ -994,7 +958,7 @@ class ArucoDetector:
         for mid in expired:
             del self.marker_history[mid]
 
-        if arena_should_refresh:
+        if show_arena:
             try:
                 self.update_arena_display(
                     detected_world=detected_world, window_name=arena_window_name
