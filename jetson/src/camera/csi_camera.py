@@ -76,7 +76,8 @@ class CSICamera:
 
         # Pipeline GStreamer pour IMX219 en plein FOV 120° sans crop.
         # sensor-mode=0 → 3280x2464 (capteur complet, FOV 120°H × 94°V).
-        # Downscale HW à 1640x1232 (4:3 préservé, aucun étirement).
+        # Deux étages nvvidconv : (1) downscale NVMM NV12 en HW,
+        # (2) sortie CPU pour OpenCV.
         if grayscale:
             gst_pipeline = (
                 f"nvarguscamerasrc sensor-id={camera_id} sensor-mode=0 ! "
@@ -99,6 +100,9 @@ class CSICamera:
                 f"format=NV12, framerate=21/1 ! "
                 f"nvvidconv flip-method=0 ! "
                 f"video/x-raw(memory:NVMM), width={CSI_WIDTH}, "
+                f"height={CSI_HEIGHT}, format=NV12 ! "
+                f"nvvidconv ! "
+                f"video/x-raw, width={CSI_WIDTH}, "
                 f"height={CSI_HEIGHT}, format=BGRx ! "
                 f"videoconvert ! "
                 f"video/x-raw, format=BGR ! "
