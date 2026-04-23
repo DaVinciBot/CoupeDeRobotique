@@ -10,6 +10,7 @@ import numpy as np
 from src.arena import arena_elements
 from src.camera import CSICamera
 from src.utils.timing import timer
+from src.utils import timing as _timing_mod
 
 # Détection CUDA au chargement du module
 _HAS_CUDA = False
@@ -806,6 +807,20 @@ class ArucoDetector:
     def analyze_frame(
         self, frame, show_arena=True, arena_window_name="Arena", show_video=True
     ):
+        # Chronos fins : on bufferise et on print en fin de fonction pour
+        # ne pas polluer si DEBUG_MODE=False.
+        dbg = _timing_mod.DEBUG_MODE
+        marks = []
+        t0 = time.perf_counter()
+        t_prev = t0
+
+        def mark(label: str) -> None:
+            nonlocal t_prev
+            if dbg:
+                now = time.perf_counter()
+                marks.append((label, (now - t_prev) * 1000.0))
+                t_prev = now
+
         # Preprocessing GPU si disponible, sinon CPU
         if self.use_cuda:
             self._gpu_mat.upload(frame)
@@ -825,16 +840,19 @@ class ArucoDetector:
                 )
             )
             gray = self.clahe.apply(gray)
+        mark("preproc (gray+CLAHE)")
 
         # Détection ArUco (multi-échelle si activée)
         if self.multiscale_enabled:
             corners, ids, _ = self._detect_multiscale(gray)
+            mark("detect multiscale (full+tiles)")
         else:
             corners, ids, _ = cv2.aruco.detectMarkers(
                 gray,
                 self.aruco_dict,
                 parameters=self.aruco_params,
             )
+            mark("detect single-scale")
 
         if ids is None:
             if show_arena:
@@ -842,12 +860,17 @@ class ArucoDetector:
                     detected_world=[],
                     window_name=arena_window_name,
                 )
+                mark("arena (no ids)")
+            if dbg:
+                self._print_marks(marks, "analyze_frame[no_ids]")
             return (frame if show_video else None), []
 
         # Dessiner les marqueurs détectés seulement si affichage activé
         if show_video:
             cv2.aruco.drawDetectedMarkers(frame, corners, ids)
+            mark("drawDetectedMarkers")
         self.compute_transform_from_refs(corners, ids, use_cache=True)
+        mark("compute_transform_from_refs")
 
         detected_world = []
 
@@ -870,6 +893,7 @@ class ArucoDetector:
 
             # Transformation batch : une seule multiplication matricielle
             all_world = self.transform_points_to_world_batch(all_points)
+            mark("batch project points")
 
             if all_world is not None:
                 # Pré-calcul du cache indicator pour les annotations vidéo
@@ -935,6 +959,8 @@ class ArucoDetector:
                         2,
                     )
 
+        mark("annotate + project per-marker")
+
         # Lissage temporel : carry-forward des marqueurs statiques manqués
         current_time = time.time()
         detected_ids = {mid for mid, _, _ in detected_world}
@@ -957,6 +983,7 @@ class ArucoDetector:
                 expired.append(mid)
         for mid in expired:
             del self.marker_history[mid]
+        mark("carry-forward")
 
         if show_arena:
             try:
@@ -965,5 +992,19 @@ class ArucoDetector:
                 )
             except Exception:
                 pass
+            mark("update_arena_display")
+
+        if dbg:
+            self._print_marks(marks, "analyze_frame")
 
         return (frame if show_video else None), detected_world
+
+    @staticmethod
+    def _print_marks(marks, label: str) -> None:
+        """Affiche le détail des chronos accumulés pendant analyze_frame."""
+        if not marks:
+            return
+        total = sum(dt for _, dt in marks)
+        print(f"⏱️  [{label}] total={total:.1f} ms")
+        for name, dt in marks:
+            print(f"     ├─ {name}: {dt:.1f} ms")
