@@ -9,8 +9,8 @@ import cv2
 import numpy as np
 from src.arena import arena_elements
 from src.camera import CSICamera
-from src.utils.timing import timer
 from src.utils import timing as _timing_mod
+from src.utils.timing import timer
 
 # Détection CUDA au chargement du module
 _HAS_CUDA = False
@@ -105,7 +105,7 @@ class ArucoDetector:
 
         # Downscale de la frame avant détection : 2 = 960x540 au lieu de
         # 1920x1080, ~4x plus rapide. Les coins sont reprojetés en sortie.
-        self.detect_downscale = 2
+        self.detect_downscale = 1.5
 
         # Lissage temporel : carry-forward pour marqueurs statiques
         # {marker_id: (pos_world, yaw, last_seen_time, consecutive_misses)}
@@ -851,8 +851,10 @@ class ArucoDetector:
         ds = max(1, int(self.detect_downscale))
         if ds > 1:
             gray_det = cv2.resize(
-                gray, None,
-                fx=1.0 / ds, fy=1.0 / ds,
+                gray,
+                None,
+                fx=1.0 / ds,
+                fy=1.0 / ds,
                 interpolation=cv2.INTER_AREA,
             )
         else:
