@@ -105,7 +105,7 @@ class ArucoDetector:
 
         # Downscale de la frame avant détection : 2 = 960x540 au lieu de
         # 1920x1080, ~4x plus rapide. Les coins sont reprojetés en sortie.
-        self.detect_downscale = 1.5
+        self.detect_downscale = 1.65
 
         # Lissage temporel : carry-forward pour marqueurs statiques
         # {marker_id: (pos_world, yaw, last_seen_time, consecutive_misses)}
