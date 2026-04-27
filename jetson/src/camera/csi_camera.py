@@ -276,6 +276,7 @@ class CSICamera:
         square_size=1.0,  # type: float
         num_images=25,  # type: int
         save_path=None,  # type: Optional[str]
+        display_writer=None,  # type: Optional[cv2.VideoWriter]
     ):  # type: (...) -> Tuple[Optional[Any], Optional[Any], Optional[Any], Optional[Any]]
         """Calibre la caméra avec un échiquier (auto-capture).
 
@@ -284,6 +285,10 @@ class CSICamera:
             square_size: Taille d'un carré (unité de votre choix).
             num_images: Nombre d'images à capturer.
             save_path: Chemin pour sauvegarder le fichier .npz (optionnel).
+            display_writer: cv2.VideoWriter GStreamer pour afficher la
+                preview. Si None, fallback sur cv2.imshow (peut crasher
+                sur Jetson sans backend GTK fiable). Si fourni, le 'q'
+                early-exit est désactivé (pas de waitKey).
 
         Returns:
             (camera_matrix, dist_coeffs, rvecs, tvecs) ou (None, None, None, None).
@@ -314,21 +319,6 @@ class CSICamera:
         print("💡 Déplacez l'échiquier lentement devant la caméra")
         print("💡 Variez angles, distances et positions")
         print("⌨️  'q' = terminer manuellement\n")
-
-        # Détection mode headless : pas de DISPLAY/WAYLAND_DISPLAY ou
-        # backend GUI absent. On capture quand même (l'auto-capture ne
-        # dépend pas de l'affichage), juste sans imshow/waitKey.
-        gui_enabled = bool(
-            os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"),
-        )
-        if gui_enabled:
-            try:
-                cv2.namedWindow("Calibration", cv2.WINDOW_AUTOSIZE)
-            except cv2.error:
-                gui_enabled = False
-        if not gui_enabled:
-            print("⚠️  Pas d'affichage disponible — calibration en mode headless.")
-            print("    'q' désactivé, capture jusqu'à num_images.\n")
 
         while captured < num_images:
             frame = self.read_frame()
@@ -419,13 +409,15 @@ class CSICamera:
                     (10, 220), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2,
                 )
 
-            if gui_enabled:
+            if display_writer is not None:
+                display_writer.write(display)
+            else:
                 cv2.imshow("Calibration", display)
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord("q"):
                     break
 
-        if gui_enabled:
+        if display_writer is None:
             cv2.destroyAllWindows()
 
         if captured < MIN_IMAGES_FOR_CALIBRATION:

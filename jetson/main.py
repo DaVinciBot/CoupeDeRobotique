@@ -31,6 +31,7 @@ from src.camera import CSICamera
 from src.detector import ArucoDetector
 from src.game import MatchState
 from src.lora.lora import LoRa
+from src.utils.display import make_display_writer
 from src.utils.timing import set_debug_mode
 
 # Charger le fichier .env
@@ -458,13 +459,37 @@ def calibrate_camera() -> None:
 
     camera = CSICamera(CAMERA_ID)
 
+    # Utiliser le même mécanisme d'affichage que la détection : sur cette
+    # Jetson cv2.imshow plante (GTK init fail), on passe par un sink
+    # GStreamer. HAS_DISPLAY=True signifie que cv2.imshow a été
+    # explicitement validé via USE_CV2_IMSHOW.
+    display_writer = None
+    if not HAS_DISPLAY:
+        display_writer = make_display_writer(
+            GST_DISPLAY_WIDTH,
+            GST_DISPLAY_HEIGHT,
+            GST_DISPLAY_FPS,
+            render_width=GST_RENDER_WIDTH,
+            render_height=GST_RENDER_HEIGHT,
+        )
+        if display_writer is None:
+            print(
+                "⚠️  Aucun sink GStreamer pour l'affichage."
+                " Calibration sans preview.",
+            )
+
     save_path = str(_SCRIPT_DIR / CALIBRATION_FILE)
-    camera_matrix, dist_coeffs, _, _ = camera.calibrate(
-        chessboard_size=(CHESSBOARD_COLS, CHESSBOARD_ROWS),
-        square_size=SQUARE_SIZE_CM,
-        num_images=NUM_CALIB_IMAGES,
-        save_path=save_path,
-    )
+    try:
+        camera_matrix, dist_coeffs, _, _ = camera.calibrate(
+            chessboard_size=(CHESSBOARD_COLS, CHESSBOARD_ROWS),
+            square_size=SQUARE_SIZE_CM,
+            num_images=NUM_CALIB_IMAGES,
+            save_path=save_path,
+            display_writer=display_writer,
+        )
+    finally:
+        if display_writer is not None:
+            display_writer.release()
 
     camera.release()
 
@@ -616,123 +641,13 @@ def detect_aruco() -> None:
         elif HAS_DISPLAY:
             cv2.namedWindow("ArUco Detection", cv2.WINDOW_NORMAL)
         else:
-            # Détection robuste d'une session X/Wayland (env vars perdues
-            # via sudo). On vérifie aussi le socket et le process Xorg.
-            import subprocess  # noqa: PLC0415
-            x_socket_dir = Path("/tmp/.X11-unix")  # noqa: S108
-            x_socket_exists = (
-                any(x_socket_dir.glob("X*"))
-                if x_socket_dir.exists()
-                else False
+            gst_writer = make_display_writer(
+                GST_DISPLAY_WIDTH,
+                GST_DISPLAY_HEIGHT,
+                GST_DISPLAY_FPS,
+                render_width=GST_RENDER_WIDTH,
+                render_height=GST_RENDER_HEIGHT,
             )
-            try:
-                xorg_running = subprocess.run(
-                    ["pgrep", "-x", "Xorg"],
-                    check=False,
-                    capture_output=True,
-                    timeout=1,
-                ).returncode == 0
-            except (subprocess.SubprocessError, FileNotFoundError):
-                xorg_running = False
-            has_x_session = bool(
-                os.environ.get("DISPLAY")
-                or os.environ.get("WAYLAND_DISPLAY")
-                or x_socket_exists
-                or xorg_running,
-            )
-            # Forcer DISPLAY si X tourne mais env var perdue (cas sudo/SSH)
-            sudo_user = os.environ.get("SUDO_USER")
-            target_user = sudo_user or os.environ.get("USER", "dvb")
-            if has_x_session and not os.environ.get("DISPLAY"):
-                os.environ["DISPLAY"] = ":0"
-            # Localiser Xauthority: sous GDM3 il est dans /run/user/<uid>/gdm/
-            if has_x_session and not os.environ.get("XAUTHORITY"):
-                xauth_candidates = [
-                    "/run/user/1000/gdm/Xauthority",
-                    f"/home/{target_user}/.Xauthority",
-                ]
-                for xauth in xauth_candidates:
-                    if Path(xauth).exists():
-                        os.environ["XAUTHORITY"] = xauth
-                        break
-            if has_x_session and sudo_user:
-                # Autoriser root à accéder au display de l'utilisateur
-                # (exécute xhost en tant que SUDO_USER).
-                for cmd in (
-                    ["sudo", "-u", sudo_user, "xhost", "+SI:localuser:root"],
-                    ["sudo", "-u", sudo_user, "xhost", "+local:root"],
-                ):
-                    try:
-                        subprocess.run(
-                            cmd,
-                            check=False,
-                            capture_output=True,
-                            timeout=2,
-                        )
-                    except (subprocess.SubprocessError, FileNotFoundError):
-                        pass
-            # Pipelines par sink. On downscale avant le sink pour libérer
-            # la Jetson Nano (ximagesink en 1080p = ~2 FPS max).
-            caps_in = (
-                f"video/x-raw, format=BGR,"
-                f" width={GST_DISPLAY_WIDTH},"
-                f" height={GST_DISPLAY_HEIGHT},"
-                f" framerate={GST_DISPLAY_FPS}/1"
-            )
-            scale = (
-                f"videoscale ! video/x-raw,"
-                f" width={GST_RENDER_WIDTH},"
-                f" height={GST_RENDER_HEIGHT}"
-            )
-            sink_pipelines = {
-                # xvimagesink: XVideo overlay hardware YUV (rapide)
-                "xvimagesink": (
-                    f"appsrc is-live=true format=time ! {caps_in} ! "
-                    f"videoconvert ! {scale} ! "
-                    "video/x-raw, format=I420 ! "
-                    "xvimagesink sync=false"
-                ),
-                # nv3dsink: GL hardware via NVMM (le plus rapide si ça marche)
-                "nv3dsink": (
-                    f"appsrc is-live=true format=time ! {caps_in} ! "
-                    "nvvidconv ! "
-                    f"video/x-raw(memory:NVMM), format=NV12,"
-                    f" width={GST_RENDER_WIDTH},"
-                    f" height={GST_RENDER_HEIGHT} ! "
-                    "nv3dsink sync=false"
-                ),
-                # ximagesink: software X11 (fallback lent)
-                "ximagesink": (
-                    f"appsrc is-live=true format=time ! {caps_in} ! "
-                    f"videoconvert ! {scale} ! "
-                    "video/x-raw, format=BGRx ! "
-                    "ximagesink sync=false"
-                ),
-                "autovideosink": (
-                    f"appsrc is-live=true format=time ! {caps_in} ! "
-                    f"videoconvert ! {scale} ! "
-                    "autovideosink sync=false"
-                ),
-            }
-            if has_x_session:
-                sink_order = ["xvimagesink", "nv3dsink",
-                              "ximagesink", "autovideosink"]
-            else:
-                sink_order = ["nv3dsink", "autovideosink"]
-            for sink_name in sink_order:
-                gst_pipeline = sink_pipelines[sink_name]
-                candidate = cv2.VideoWriter(
-                    gst_pipeline,
-                    cv2.CAP_GSTREAMER,
-                    0,
-                    GST_DISPLAY_FPS,
-                    (GST_DISPLAY_WIDTH, GST_DISPLAY_HEIGHT),
-                    True,
-                )
-                if candidate.isOpened():
-                    gst_writer = candidate
-                    print(f"🖥️  Affichage via {sink_name}")
-                    break
             if gst_writer is None:
                 print(
                     "⚠️  Aucun sink GStreamer"
