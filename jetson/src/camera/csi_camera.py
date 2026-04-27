@@ -315,6 +315,21 @@ class CSICamera:
         print("💡 Variez angles, distances et positions")
         print("⌨️  'q' = terminer manuellement\n")
 
+        # Détection mode headless : pas de DISPLAY/WAYLAND_DISPLAY ou
+        # backend GUI absent. On capture quand même (l'auto-capture ne
+        # dépend pas de l'affichage), juste sans imshow/waitKey.
+        gui_enabled = bool(
+            os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"),
+        )
+        if gui_enabled:
+            try:
+                cv2.namedWindow("Calibration", cv2.WINDOW_AUTOSIZE)
+            except cv2.error:
+                gui_enabled = False
+        if not gui_enabled:
+            print("⚠️  Pas d'affichage disponible — calibration en mode headless.")
+            print("    'q' désactivé, capture jusqu'à num_images.\n")
+
         while captured < num_images:
             frame = self.read_frame()
             if frame is None:
@@ -404,12 +419,14 @@ class CSICamera:
                     (10, 220), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2,
                 )
 
-            cv2.imshow("Calibration", display)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("q"):
-                break
+            if gui_enabled:
+                cv2.imshow("Calibration", display)
+                key = cv2.waitKey(1) & 0xFF
+                if key == ord("q"):
+                    break
 
-        cv2.destroyAllWindows()
+        if gui_enabled:
+            cv2.destroyAllWindows()
 
         if captured < MIN_IMAGES_FOR_CALIBRATION:
             print(f"❌ Minimum {MIN_IMAGES_FOR_CALIBRATION} images nécessaires")
