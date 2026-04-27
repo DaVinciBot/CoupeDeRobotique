@@ -2,6 +2,7 @@
 
 import math
 import time
+from collections import deque
 from concurrent.futures import ThreadPoolExecutor
 from typing import Optional
 
@@ -105,7 +106,7 @@ class ArucoDetector:
 
         # Downscale de la frame avant détection : 2 = 960x540 au lieu de
         # 1920x1080, ~4x plus rapide. Les coins sont reprojetés en sortie.
-        self.detect_downscale = 1.65
+        self.detect_downscale = 1.7
 
         # Lissage temporel : carry-forward pour marqueurs statiques
         # {marker_id: (pos_world, yaw, last_seen_time, consecutive_misses)}
@@ -117,6 +118,8 @@ class ArucoDetector:
             list(range(1, 11))  # Robots (bleu 1-5, jaune 6-10)
             + [20, 21, 22, 23]  # Références (ont leur propre cache)
         )
+
+        self._init_warmup_state()
 
         if self.camera_matrix is None and self.cam is not None:
             w, h = self.cam.get_resolution()
@@ -150,6 +153,65 @@ class ArucoDetector:
 
         self.last_seen_refs = {}
         self.ref_cache_timeout = 20.0
+
+    def _init_warmup_state(self) -> None:
+        """Init du warm-up des détections.
+
+        Un marqueur doit être détecté warmup_min_hits fois sur
+        warmup_window frames avant d'être inclus dans detected_world.
+        Les kapla et références sont exemptés. Filtre les faux positifs
+        1-frame dus à la détection à basse sensibilité.
+        """
+        self.warmup_window = 3
+        self.warmup_min_hits = 2
+        self.warmup_history = {}  # {marker_id: deque[int] de frame indices}
+        self._frame_idx = 0
+        self._no_warmup_ids = {
+            blue_crate_id,
+            empty_crate_id,
+            yellow_crate_id,
+            20,
+            21,
+            22,
+            23,
+        }
+
+    def _apply_warmup_filter(self, detected_world: list) -> list:
+        """Filtre les détections non-fiables (hors kapla / refs).
+
+        Un marqueur doit avoir été détecté warmup_min_hits fois sur les
+        warmup_window dernières frames pour passer le filtre. Met à jour
+        l'historique et purge les entrées sorties de la fenêtre.
+
+        Args:
+            detected_world: liste de (mid, pos, yaw) issue de la détection.
+
+        Returns:
+            La liste filtrée.
+        """
+        self._frame_idx += 1
+        window_start = self._frame_idx - self.warmup_window + 1
+        filtered = []
+        for mid, pos, yaw in detected_world:
+            if mid in self._no_warmup_ids:
+                filtered.append((mid, pos, yaw))
+                continue
+            hist = self.warmup_history.get(mid)
+            if hist is None:
+                hist = deque(maxlen=self.warmup_window)
+                self.warmup_history[mid] = hist
+            hist.append(self._frame_idx)
+            hits = sum(1 for f in hist if f >= window_start)
+            if hits >= self.warmup_min_hits:
+                filtered.append((mid, pos, yaw))
+        expired = [
+            mid
+            for mid, h in self.warmup_history.items()
+            if not h or h[-1] < window_start
+        ]
+        for mid in expired:
+            del self.warmup_history[mid]
+        return filtered
 
     @staticmethod
     def convert_world_coords_mm(pos_world: np.ndarray) -> str:
@@ -992,6 +1054,9 @@ class ArucoDetector:
                     )
 
         mark("annotate + project per-marker")
+
+        detected_world = self._apply_warmup_filter(detected_world)
+        mark("warmup filter")
 
         # Lissage temporel : carry-forward des marqueurs statiques manqués
         current_time = time.time()
