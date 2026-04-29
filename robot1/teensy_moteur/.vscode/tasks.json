@@ -12,22 +12,30 @@
       "problemMatcher": []
     },
     {
-      "command": "ssh dvb@rob.local 'sudo teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex; exit'",
+      "command": "ssh dvb@${input:robot1Host} 'sudo teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex; exit'",
       "label": "Flash local hex robot1",
       "problemMatcher": [],
       "type": "shell"
     },
     {
+      "command": "uv run pio run -e teensy41",
       "label": "PlatformIO: Build",
-      "problemMatcher": ["$platformio"],
-      "task": "Build",
-      "type": "PlatformIO"
+      "problemMatcher": [],
+      "type": "shell"
     },
     {
-      "command": "scp .pio\\build\\teensy41\\firmware.hex dvb@rob.local:/tmp ",
+      "command": "scp .pio/build/teensy41/firmware.hex dvb@${input:robot1Host}:/tmp",
       "label": "Copy Hex on remote",
       "problemMatcher": [],
       "type": "shell"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "robot1Host",
+      "type": "promptString",
+      "description": "robot1 hostname or IP",
+      "default": "rob.local"
     }
   ],
   // See https://go.microsoft.com/fwlink/?LinkId=733558
