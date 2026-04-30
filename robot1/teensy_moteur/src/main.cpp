@@ -55,16 +55,16 @@ Com* com;
 /******* Attach Interrupt *******/
 inline void left_motor_read_encoder() {
     if (digitalRead(L_ENCB))
-        rolling_basis_ptr->left_motor->ticks++;
-    else
         rolling_basis_ptr->left_motor->ticks--;
+    else
+        rolling_basis_ptr->left_motor->ticks++;
 }
 
 inline void right_motor_read_encoder() {
     if (digitalRead(R_ENCB))
-        rolling_basis_ptr->right_motor->ticks--;
-    else
         rolling_basis_ptr->right_motor->ticks++;
+    else
+        rolling_basis_ptr->right_motor->ticks--;
 }
 
 // 3. Define all com callback functions
