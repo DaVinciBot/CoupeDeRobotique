@@ -112,6 +112,10 @@ class CONFIG:
 
         ROLLING_BASIS_PIDS_CONFIG (dict[str, Any]):
             PID configuration for the rolling basis.
+        ROLLING_BASIS_PIDS_LINEAR_VELOCITY (dict[str, float]):
+            PID settings for linear velocity.
+        ROLLING_BASIS_PIDS_ANGULAR_VELOCITY (dict[str, float]):
+            PID settings for angular velocity.
         ROLLING_BASIS_PIDS_LINEAR_POSITION (dict[str, float]):
             PID settings for linear position
         ROLLING_BASIS_PIDS_ANGULAR_POSITION (dict[str, float]):
@@ -299,6 +303,12 @@ class CONFIG:
     ROLLING_BASIS_TEENSY_SER: int = ROLLING_BASIS_CONFIG["rolling_basis_teensy_ser"]
 
     ROLLING_BASIS_PIDS_CONFIG: dict[str, Any] = ROLLING_BASIS_CONFIG["pids"]
+    ROLLING_BASIS_PIDS_LINEAR_VELOCITY: dict[str, float] = ROLLING_BASIS_PIDS_CONFIG[
+        "linear_velocity"
+    ]
+    ROLLING_BASIS_PIDS_ANGULAR_VELOCITY: dict[str, float] = ROLLING_BASIS_PIDS_CONFIG[
+        "angular_velocity"
+    ]
     ROLLING_BASIS_PIDS_LINEAR_POSITION: dict[str, float] = ROLLING_BASIS_PIDS_CONFIG[
         "linear_position"
     ]

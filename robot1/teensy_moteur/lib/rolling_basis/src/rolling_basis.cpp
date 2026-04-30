@@ -149,7 +149,7 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
     this->angular_velocity_pid.reset();
     this->linear_position_pid.reset();
     this->angular_position_pid.reset();
-    this->control_mode = ControlMode::VELOCITY;
+    this->control_mode = ControlMode::POSITION;
     this->target_pose = Point(x, y, theta);
     this->target_feedforward = VelocityCommand();
 }

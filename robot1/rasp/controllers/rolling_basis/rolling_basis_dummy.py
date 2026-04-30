@@ -96,11 +96,13 @@ class RollingBasisDummy(BaseComTeensy):
         self.target_position: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
         self.linear_speed: float = 0.0
         self.angular_speed: float = 0.0
-        self.control_mode = RollingBasisDummy.ControlMode.VELOCITY
+        self.control_mode = RollingBasisDummy.ControlMode.POSITION
 
         # PID controllers
         self.linear_velocity_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_velocity_pid: PID = PID(0.0, 0.0, 0.0)
+        self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
+        self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
 
         # Realtime simulation bookkeeping
         self._enable_realtime_simulation = enable_realtime_simulation
@@ -133,32 +135,17 @@ class RollingBasisDummy(BaseComTeensy):
 
     @log(param_logger="RollingBasis")
     def set_target_velocity(self, cmd: TrajectoryPlanCommand) -> None:
-        """Sends a message to set the target speed and position of the rolling basis.
+        """Set the target pose with optional feedforward speeds.
 
         Args:
-            cmd (TrajectoryPlanCommand): The command containing target velocities.
+            cmd (TrajectoryPlanCommand): Command containing target pose and
+                feedforward speeds.
         """
-        now = time.time()
-        with self._lock:
-            dt = now - self._last_update_time
-            if dt > 0.0:
-                self._simulate_step_unlocked(dt)
-
-            self.linear_speed, self.angular_speed = (
-                cmd.linear_speed,
-                cmd.angular_speed,
-            )
-            self.target_position = cmd.position
-            self._last_update_time = now
-
-            self._debug_recorder.set_target(
-                linear_speed=cmd.linear_speed,
-                angular_speed=cmd.angular_speed,
-                target_pose=cmd.position,
-            )
-
-        self._logger.debug(f"[CTRL:RB:Dummy] Set target velocity: {cmd}")
-        self._debug_recorder.add_sample(event="target_velocity")
+        self.set_target_pose(
+            cmd.position,
+            linear_speed=cmd.linear_speed,
+            angular_speed=cmd.angular_speed,
+        )
 
     def set_target_pose(
         self,
@@ -264,6 +251,9 @@ class RollingBasisDummy(BaseComTeensy):
 
         with self._lock:
             self.odometrie = odometrie
+            self.target_position = odometrie
+            self.linear_speed = 0.0
+            self.angular_speed = 0.0
             self._last_update_time = time.time()
         self._logger.info(f"[CTRL:RB:Dummy] Set odometry: {odometrie}")
         self._debug_recorder.set_odometry(odometrie)
@@ -349,6 +339,12 @@ class RollingBasisDummy(BaseComTeensy):
         if not self._enable_realtime_simulation or self._realtime_thread is None:
             self.export_debug_report(reason="stop_realtime")
             return
+        now = time.time()
+        with self._lock:
+            dt = now - self._last_update_time
+            if dt > 0.0:
+                self._simulate_step_unlocked(dt)
+                self._last_update_time = now
         self._stop_realtime.set()
         self._realtime_thread.join(timeout=1.0)
         self.export_debug_report(reason="stop_realtime")
@@ -457,10 +453,56 @@ class RollingBasisDummy(BaseComTeensy):
         except (ValueError, TypeError) as e:
             self._logger.error(f"[CTRL:RB] Failed to set angular velocity PID: {e}")
 
+    @overload
+    def set_linear_position_pid(self, *args: float) -> None: ...
+
+    @overload
+    def set_linear_position_pid(self, pid_values: dict[str, float]) -> None: ...
+
+    @overload
+    def set_linear_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
+    def set_linear_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
+        """Configure the PID values for linear position control."""
+        try:
+            pid = self._load_pid(*args, **kwargs)
+            self.linear_position_pid = pid
+            self._send_pid(PidID.LINEAR_POSITION.value, pid)
+        except (ValueError, TypeError) as e:
+            self._logger.error(f"[CTRL:RB] Failed to set linear position PID: {e}")
+
+    @overload
+    def set_angular_position_pid(self, *args: float) -> None: ...
+
+    @overload
+    def set_angular_position_pid(self, pid_values: dict[str, float]) -> None: ...
+
+    @overload
+    def set_angular_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
+    def set_angular_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
+        """Configure the PID values for angular position control."""
+        try:
+            pid = self._load_pid(*args, **kwargs)
+            self.angular_position_pid = pid
+            self._send_pid(PidID.ANGULAR_POSITION.value, pid)
+        except (ValueError, TypeError) as e:
+            self._logger.error(f"[CTRL:RB] Failed to set angular position PID: {e}")
+
     def set_pids(
         self,
         linear_velocity_pid: dict[str, float],
         angular_velocity_pid: dict[str, float],
+        linear_position_pid: dict[str, float],
+        angular_position_pid: dict[str, float],
     ) -> None:
         """Configure all PID controllers using dictionaries for each.
 
@@ -469,9 +511,15 @@ class RollingBasisDummy(BaseComTeensy):
                 PID configuration for linear velocity.
             angular_velocity_pid (dict[str, float]):
                 PID configuration for angular velocity.
+            linear_position_pid (dict[str, float]):
+                PID configuration for linear position.
+            angular_position_pid (dict[str, float]):
+                PID configuration for angular position.
         """
         self.set_linear_velocity_pid(**linear_velocity_pid)
         self.set_angular_velocity_pid(**angular_velocity_pid)
+        self.set_linear_position_pid(**linear_position_pid)
+        self.set_angular_position_pid(**angular_position_pid)
 
     def initialize_pids(self) -> None:
         """Initialize PID controllers from the configuration."""
@@ -479,6 +527,8 @@ class RollingBasisDummy(BaseComTeensy):
             self.set_pids(
                 linear_velocity_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_VELOCITY,
                 angular_velocity_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_VELOCITY,
+                linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
+                angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
             )
         except (ValueError, TypeError) as e:
             self._logger.error(f"[CTRL:RB] Failed to initialize PIDs: {e}")
@@ -505,6 +555,8 @@ class RollingBasisDummy(BaseComTeensy):
             and self.angular_speed == other.angular_speed
             and self.linear_velocity_pid == other.linear_velocity_pid
             and self.angular_velocity_pid == other.angular_velocity_pid
+            and self.linear_position_pid == other.linear_position_pid
+            and self.angular_position_pid == other.angular_position_pid
         )
 
     @override

@@ -125,6 +125,13 @@ void set_odometrie(byte* msg, byte size) {
         rolling_basis_ptr->linear_velocity = 0.0;
         rolling_basis_ptr->angular_velocity = 0.0;
         rolling_basis_ptr->last_odometrie_time = now;
+        rolling_basis_ptr->target_pose =
+            Point(odometrie->x, odometrie->y, odometrie->theta);
+        rolling_basis_ptr->target_feedforward = VelocityCommand();
+        rolling_basis_ptr->linear_velocity_pid.reset();
+        rolling_basis_ptr->angular_velocity_pid.reset();
+        rolling_basis_ptr->linear_position_pid.reset();
+        rolling_basis_ptr->angular_position_pid.reset();
         target_velocity = VelocityCommand();
     }
 }

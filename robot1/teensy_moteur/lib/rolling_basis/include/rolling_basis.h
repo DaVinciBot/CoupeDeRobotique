@@ -47,7 +47,7 @@ class Rolling_Basis {
         POSITION = CONTROL_MODE_POSITION,
     };
 
-    ControlMode control_mode = ControlMode::VELOCITY;
+    ControlMode control_mode = ControlMode::POSITION;
     Point target_pose;
     VelocityCommand target_feedforward;
 

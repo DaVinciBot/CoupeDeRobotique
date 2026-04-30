@@ -13,6 +13,8 @@ class PidID(Enum):
     Attributes:
         LINEAR_VELOCITY: Identifier for linear velocity PID control.
         ANGULAR_VELOCITY: Identifier for angular velocity PID control.
+        LINEAR_POSITION: Identifier for linear position PID control.
+        ANGULAR_POSITION: Identifier for angular position PID control.
     """
 
     LINEAR_VELOCITY = 0

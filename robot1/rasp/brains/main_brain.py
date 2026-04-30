@@ -312,13 +312,25 @@ class MainBrain(Brain):
                 action_holder[0].handle(context)
 
         if self.should_update_pid:
-            if self.pid_type == "linear":
+            if self.pid_type in {"linear", "linear_position"}:
+                rolling_basis.set_linear_position_pid(
+                    kp=self.pid_kp,
+                    ki=self.pid_ki,
+                    kd=self.pid_kd,
+                )
+            elif self.pid_type in {"angular", "angular_position"}:
+                rolling_basis.set_angular_position_pid(
+                    kp=self.pid_kp,
+                    ki=self.pid_ki,
+                    kd=self.pid_kd,
+                )
+            elif self.pid_type == "linear_velocity":
                 rolling_basis.set_linear_velocity_pid(
                     kp=self.pid_kp,
                     ki=self.pid_ki,
                     kd=self.pid_kd,
                 )
-            elif self.pid_type == "angular":
+            elif self.pid_type == "angular_velocity":
                 rolling_basis.set_angular_velocity_pid(
                     kp=self.pid_kp,
                     ki=self.pid_ki,
