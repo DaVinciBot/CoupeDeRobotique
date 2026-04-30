@@ -12,7 +12,7 @@
       "problemMatcher": []
     },
     {
-      "command": "ssh dvb@${input:robot1Host} 'sudo teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex; exit'",
+      "command": "ssh -tt dvb@${input:robot1Host} 'sudo teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex'",
       "label": "Flash local hex robot1",
       "problemMatcher": [],
       "type": "shell"
