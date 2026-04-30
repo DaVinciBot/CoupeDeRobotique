@@ -1,17 +1,38 @@
 #include "config.h"
 #include "strategy.h"
-#include "relative_forward.h"
 #include "navigation.h"
 #include "AtoB.h"
+#include <vector>
 
-Motor* leftMotor = nullptr;
-Motor* rightMotor = nullptr;
-RollingBasis* rollingBasis = nullptr;
-Navigation* navigation = nullptr;
-Strategy* strategy = nullptr;
+Motor* leftMotor = new Motor(LEFT_STEP_PIN,       // Broche 19
+                             LEFT_DIR_PIN,        // Broche 18
+                             LEFT_EN_PIN,         // Broche enable
+                             LEFT_STEPS_PER_REV,  // Steps par tour
+                             PULSE_US,
+                             false);
 
-AtoB* action = new AtoB(rollingBasis, {200, 0, 0});
-std::vector<Point> strat = {{0, 100, 0}};  
+Motor* rightMotor = new Motor(RIGHT_STEP_PIN,       // Broche 17
+                              RIGHT_DIR_PIN,        // Broche 16
+                              RIGHT_EN_PIN,         // Broche enable
+                              RIGHT_STEPS_PER_REV,  // Steps par tour
+                              PULSE_US,
+                              true);
+
+RollingBasis* rollingBasis = new RollingBasis(leftMotor,
+                                              rightMotor,
+                                              WHEEL_DIAMETER_MM,
+                                              WHEEL_BASE_MM,
+                                              Point{0, 0, 0});  // Initial position (x, y, theta)
+
+Navigation* navigation = new Navigation(
+    rollingBasis,
+    15000);  // Navigation object with 100ms interval and 15s timeout
+
+//lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
+
+
+Strategy* strategy = new Strategy(rollingBasis);
+
 #if ENABLE_OTA
 #include "OTA.h"
 AsyncWebServer server(80);
@@ -34,6 +55,9 @@ bool tirette, t_one, t_two = true;
 
 // Array to store points to navigate to
 // Définir la trajectoire
+std::vector<Point> strat = {
+    {100, 100, 0} 
+};
 
 int currentIndex = 0;  // Current index in the strats array
 bool ACS = false;
@@ -75,7 +99,7 @@ void setup() {
     delay(1000);
     Serial.println("\n--- DEBUG START ---");
     
-    action->start();  // AtoB direct, pas Strategy
+    //action->start();  // AtoB direct, pas Strategy
     canStart = true;
 }
 
