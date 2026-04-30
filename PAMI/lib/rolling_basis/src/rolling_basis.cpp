@@ -127,14 +127,19 @@ void RollingBasis::_sendWheelSpeeds(float v, float w) {
     float leftSteps = leftMm / circumference * _leftMotor->getStepsPerRev();
     float rightSteps = rightMm / circumference * _rightMotor->getStepsPerRev();
     // Serial.println(leftSteps);
-    _leftMotor->setTargetSpeed(leftSteps);
-    _rightMotor->setTargetSpeed(rightSteps);
+    Serial.printf("[RB] Sending wheel speeds -> Left: %.1f mm/s (%.1f steps/s), Right: %.1f mm/s (%.1f steps/s)\n",
+                  leftMm, leftSteps, rightMm, rightSteps);
+    _leftMotor->setTargetSpeed(-1.0f * leftSteps);
+    _rightMotor->setTargetSpeed(-1.0f * rightSteps);
 }
 
 bool RollingBasis::isMoving() const {
-    bool moving = (_phase == Phase::Rotating || _phase == Phase::Forwarding);
-    // Serial.printf("[RB:isMoving] Phase=%d -> %d\n", (int)_phase, moving);
-    return moving;
+    // Le robot bouge si sa phase mathématique est en cours...
+    bool phaseMoving = (_phase == Phase::Rotating || _phase == Phase::Forwarding);
+    // ... OU si les moteurs n'ont pas encore fini de freiner physiquement !
+    bool motorsMoving = _leftMotor->isMoving() || _rightMotor->isMoving();
+    
+    return (phaseMoving || motorsMoving);
 }
 
 void RollingBasis::stop() {
@@ -155,4 +160,74 @@ float RollingBasis::getLinearSpeedMmPerS() const {
 }
 float RollingBasis::getAngularSpeedRadPerS() const {
     return _angularSpeed;
+}
+
+void RollingBasis::moveForwardBlocking(float distanceMm) {
+    Serial.printf("[Test] Début de l'avancement bloquant de %.1f mm\n", distanceMm);
+    
+    _leftMotor->setAcceleration(3000.0f);
+    _rightMotor->setAcceleration(3000.0f);
+    
+    _linearSpeed = 57.5f; 
+    float duration = fabsf(distanceMm) / _linearSpeed;
+    float dir = (distanceMm >= 0) ? 1.0f : -1.0f;
+    unsigned long start = micros();
+
+    // CORRECTION : On donne l'ordre UNE SEULE FOIS ici
+    _sendWheelSpeeds(_linearSpeed * dir, 0.0f);
+
+    // La boucle ne sert plus qu'à faire tourner l'horloge des moteurs
+    while ((micros() - start) * 1e-6f < duration) {
+        _leftMotor->update();
+        _rightMotor->update();
+    }
+    
+    _leftMotor->setTargetSpeed(0);
+    _rightMotor->setTargetSpeed(0);
+    
+    unsigned long stopTime = millis();
+    while(millis() - stopTime < 1000) {
+        _leftMotor->update();
+        _rightMotor->update();
+    }
+    
+    _currentPose.x += distanceMm * cosf(_currentPose.theta);
+    _currentPose.y += distanceMm * sinf(_currentPose.theta);
+    Serial.println("[Test] Avancement terminé.");
+}
+
+void RollingBasis::turnBlocking(float angleRad) {
+    angleRad *=1.27f;
+    Serial.printf("[Test] Début de la rotation bloquante de %.3f rad\n", angleRad);
+    
+    _leftMotor->setAcceleration(3000.0f);
+    _rightMotor->setAcceleration(3000.0f);
+    
+    _angularSpeed = 1.38f;
+    float targetDTheta = angleRad * ANGULAR_CALIBRATION_FACTOR;
+    float duration = fabsf(targetDTheta) / _angularSpeed;
+    float dir = (targetDTheta >= 0) ? 1.0f : -1.0f;
+    
+    unsigned long start = micros();
+
+    // CORRECTION : On donne l'ordre UNE SEULE FOIS ici
+    _sendWheelSpeeds(0.0f, _angularSpeed * dir);
+
+    // La boucle ne sert plus qu'à faire tourner l'horloge des moteurs
+    while ((micros() - start) * 1e-6f < duration) {
+        _leftMotor->update();
+        _rightMotor->update();
+    }
+    
+    _leftMotor->setTargetSpeed(0);
+    _rightMotor->setTargetSpeed(0);
+
+    unsigned long stopTime = millis();
+    while(millis() - stopTime < 1000) {
+        _leftMotor->update();
+        _rightMotor->update();
+    }
+    
+    _currentPose.theta = _wrapToPi(_currentPose.theta + targetDTheta);
+    Serial.println("[Test] Rotation terminée.");
 }

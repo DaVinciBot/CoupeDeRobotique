@@ -30,6 +30,9 @@
  */
 class RollingBasis {
    public:
+   // Fonctions de test bloquantes (à utiliser dans le setup)
+    void moveForwardBlocking(float distanceMm);
+    void turnBlocking(float angleRad);
     /**
      * @brief Enumeration representing the different phases of motion.
      *

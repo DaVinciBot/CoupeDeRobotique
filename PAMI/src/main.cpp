@@ -1,8 +1,10 @@
 #include "config.h"
-#include "strategy.h"
-#include "navigation.h"
 #include "AtoB.h"
-#include <vector>
+
+// --- COMMENTE POUR LE TEST ---
+// #include "strategy.h"
+// #include "navigation.h"
+// #include <vector>
 
 Motor* leftMotor = new Motor(LEFT_STEP_PIN,       // Broche 19
                              LEFT_DIR_PIN,        // Broche 18
@@ -24,13 +26,16 @@ RollingBasis* rollingBasis = new RollingBasis(leftMotor,
                                               WHEEL_BASE_MM,
                                               Point{0, 0, 0});  // Initial position (x, y, theta)
 
-Navigation* navigation = new Navigation(
-    rollingBasis,
-    15000);  // Navigation object with 100ms interval and 15s timeout
 
-//lidar_pami* lidar = new lidar_pami(Serial0);  // LIDAR object
+// --- CREATION DE L'ACTION DE TEST ---
+// On crée une action AtoB ciblant 300mm en X, 0 en Y, et 0 en angle.
+AtoB* testAction = new AtoB(rollingBasis, Point{0.0, 300.0, 0.0});
 
 
+// --- TOUT CE BLOC EST COMMENTE POUR LE TEST ---
+/*
+Navigation* navigation = new Navigation(rollingBasis, 15000);  
+//lidar_pami* lidar = new lidar_pami(Serial0);  
 Strategy* strategy = new Strategy(rollingBasis);
 
 #if ENABLE_OTA
@@ -40,42 +45,37 @@ CustomOTA ota("DVB", "davincibot", &server);
 #endif
 #if ENABLE_LORA
 #include "com_pami.h"
-Com* com = new Com();  // LoRa object
+Com* com = new Com();  
 bool isInit = false;
 #endif
 
 hw_timer_t* MovementTimer = NULL;
 hw_timer_t* lidarTimer = NULL;
 
-TaskHandle_t MovementTask = NULL;  // Task handle for movement updates
-TaskHandle_t LidarTask = NULL;     // Task handle for movement updates
+TaskHandle_t MovementTask = NULL;  
+TaskHandle_t LidarTask = NULL;     
 
 int d_zero, d_on = 0;
 bool tirette, t_one, t_two = true;
 
-// Array to store points to navigate to
-// Définir la trajectoire
 std::vector<Point> strat = {
     {100, 100, 0} 
 };
 
-int currentIndex = 0;  // Current index in the strats array
+int currentIndex = 0;  
 bool ACS = false;
 bool oldACS = false;
 
 bool canStartTimer = true;
 long startTimer = 276447230;
-bool canStart = false;  // Flag to indicate if navigation can start
 
 long dt = 0;
 long lastTimerrrr = 0;
 
 void navigationUpdate() {
-    navigation->update();  // Navigation gère automatiquement tous les waypoints
-
+    navigation->update(); 
     if (ACS) {
-        if (oldACS)
-            return;
+        if (oldACS) return;
         oldACS = ACS;
         navigation->stop();
         Serial.println("ACS activated - Navigation stopped!");
@@ -83,39 +83,48 @@ void navigationUpdate() {
         oldACS = ACS;
     }
 }
+*/
+// ----------------------------------------------
 
-/*void lidarUpdate() {
-    if (lidar->obstacleAhead(ACS_TRESHOLD))  // Check if an obstacle is ahead
-    {
-        ACS = true;  // Activate ACS if an obstacle is detected
-    } else {
-        ACS = false;  // Deactivate ACS if no obstacle is detected
-    }
-}*/
+bool canStart = false; 
 
 void setup() {
     Serial.begin(115200);
     while (!Serial) { delay(100); }
-    delay(1000);
-    Serial.println("\n--- DEBUG START ---");
+    delay(2000); // Le temps de poser le robot
+    Serial.println("\n--- DEMARRAGE TEST BLOQUANT ---");
     
-    //action->start();  // AtoB direct, pas Strategy
-    canStart = true;
+    // TEST 1 : Avancer de 100 mm (10 cm)
+    rollingBasis->moveForwardBlocking(100.0f);
+    
+    // TEST 2 : Tourner de 90 degrés (PI / 2 radians)
+    // 1.5708 rad = 90°
+    rollingBasis->turnBlocking(1.5708f);
+    
+    // TEST 3 : Ré-avancer de 100 mm
+    rollingBasis->moveForwardBlocking(100.0f);
+    
+    Serial.println("\n--- FIN DES TESTS ---");
 }
 
-long lastTime = 0;  // Variable to store the last time the update was executed
+long lastTime = 0; 
 
 void loop() {
+    // Mise à jour vitale des moteurs à chaque boucle
     leftMotor->update();
     rightMotor->update();
 
+    // Mise à jour de la logique de déplacement toutes les 2ms
     if (millis() - lastTime > 2 && canStart) {
-        strategy->strategie_update();
+        
+        // On remplace strategy->strategie_update() par l'update de notre action simple
+        testAction->update();
         lastTime = millis();
 
-        if (strategy->isFinished()) {
-            Serial.println("Strategy finished!");
-            canStart = false;
+        // Vérifie si le robot est arrivé à destination
+        if (testAction->isFinished()) {
+            Serial.println("Test terminé : Le robot a parcouru ses 10 cm !");
+            canStart = false; // On stoppe les mises à jour de l'action
         }
     }
 }

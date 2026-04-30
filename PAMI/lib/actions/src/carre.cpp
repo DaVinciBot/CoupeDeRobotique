@@ -53,7 +53,7 @@ void Carre::update() {
     // read current pose (may be static if odometry is disabled)
     Point cur = _rb->getPose();
     float dist = Point::distance(cur, _target);
-    Serial.printf("Carre::update dist=%.1f mm\n", dist);
+    //Serial.printf("Carre::update dist=%.1f mm\n", dist);
     // arrival condition: within tolerance OR base reports idle
     if (dist <= _arriveTolMm || !_rb->isMoving()) {
         Serial.println("Carre: arrived or motors idle -> finishing");

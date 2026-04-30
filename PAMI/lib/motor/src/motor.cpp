@@ -39,14 +39,21 @@ void Motor::setTargetSpeed(float stepsPerSec) {
     if (_invertDirection) {
         stepsPerSec = -stepsPerSec;
     }
+    
     _targetSpeedStepsPerSec = stepsPerSec * 1000.0f;
-    _moving = (fabsf(_targetSpeedStepsPerSec) >= 1.0f);  // pose pb
-    enableMotor(_moving);
-    // Serial.print("_targetSpeedStepsPerSec = ");
-    // Serial.println(_targetSpeedStepsPerSec);
+
+    if (fabsf(_targetSpeedStepsPerSec) >= 1.0f) {
+        // CORRECTION : On ne réveille le moteur que s'il était à l'arrêt !
+        // Ça empêche le chrono de se faire réinitialiser en boucle.
+        if (!_moving) {
+            _moving = true;
+            enableMotor(true);
+        }
+    }
 }
 
 void Motor::setAcceleration(float stepsPerSec2) {
+    // On restaure aussi ce multiplicateur
     _acceleration = max(0.0f, stepsPerSec2 * 100.0f);
 }
 
