@@ -31,6 +31,13 @@ from src.camera import CSICamera
 from src.detector import ArucoDetector
 from src.game import MatchState
 from src.lora.lora import LoRa
+from src.spatial_sender import (
+    CrateInfo,
+    RobotState,
+    SpatialSender,
+    Velocity,
+    crates_from_detected_world,
+)
 from src.utils.display import make_display_writer
 from src.utils.timing import set_debug_mode
 
@@ -215,8 +222,9 @@ def group_kapla_by_zone(detected_world, tolerance):
 def build_lora_message(detected_world, robot_speeds, tolerance):
     """Construit le message vision (cmd 5) sur une seule ligne.
 
-    Format: `5|R|id|x|y|deg|speed|...|Z|zone|c|x|y|deg|...|U|x|y|deg|...\\n`
+    Format: `5|R|id|x|y|deg|speed|...|Z|zone|c|x|y|deg|...|U|x|y|deg|...\n`
     Les tokens R/Z/U délimitent les enregistrements côté récepteur.
+    N'effectue aucun envoi — se contente de construire la chaîne.
     """
     parts = ["5"]
 
@@ -253,116 +261,129 @@ def build_lora_message(detected_world, robot_speeds, tolerance):
     return "|".join(parts) + "\n"
 
 
+def send_spatial(spatial_sender, detected_world, robot_speeds):
+    """Envoie le paquet binaire spatial via SpatialSender si les deux robots
+    sont détectés. Ne fait rien si spatial_sender est None.
+
+    Args:
+        spatial_sender: instance SpatialSender ou None (mode DUMMY_LORA).
+        detected_world: liste de (marker_id, pos, yaw).
+        robot_speeds: dict {marker_id: speed_m_s}.
+    """
+    if spatial_sender is None:
+        return
+
+    robot_data = next(
+        ((p, y) for mid, p, y in detected_world if mid == ROBOT_MARKER_ID),
+        None,
+    )
+    enemy_data = next(
+        ((p, y) for mid, p, y in detected_world if mid == ENEMY_MARKER_ID),
+        None,
+    )
+
+    if robot_data is None or enemy_data is None:
+        return
+
+    spatial_sender.send(
+        robot=RobotState(float(robot_data[0][0]), float(robot_data[0][1]), float(robot_data[1])),
+        enemy=RobotState(float(enemy_data[0][0]), float(enemy_data[0][1]), float(enemy_data[1])),
+        enemy_vel=Velocity(0.0, 0.0, robot_speeds.get(ENEMY_MARKER_ID, 0.0)),
+        crates=crates_from_detected_world(
+            detected_world,
+            BLUE_CRATE_MARKER_ID,
+            YELLOW_CRATE_MARKER_ID,
+            EMPTY_CRATE_MARKER_ID,
+        ),
+    )
+
+
 def generate_fake_detected_world():
     """Génère des données de détection fictives pour le mode DUMMY_DETECTION.
 
     Les robots font un aller-retour de 1m en boucle de 4 secondes:
     0-2s: avance de 1m, 2-4s: demi-tour + avance de 1m (retour).
     """
-    # Cycle de 4 secondes pour le mouvement des robots
     cycle = time.time() % 4.0
     if cycle < 2.0:
-        progress = cycle / 2.0  # 0 -> 1
-        robot1_angle = 0.0       # face droite
-        robot6_angle = math.pi   # face gauche
+        progress = cycle / 2.0
+        robot1_angle = 0.0
+        robot6_angle = math.pi
     else:
-        progress = (cycle - 2.0) / 2.0  # 0 -> 1
-        robot1_angle = math.pi   # demi-tour
-        robot6_angle = 0.0       # demi-tour
+        progress = (cycle - 2.0) / 2.0
+        robot1_angle = math.pi
+        robot6_angle = 0.0
 
-    # Robot bleu (ID 1): aller-retour sur X entre 0.8 et 1.8
     if cycle < 2.0:
         r1_x = 0.800 + progress * 1.0
     else:
         r1_x = 1.800 - progress * 1.0
 
-    # Robot jaune (ID 6): aller-retour sur X entre 1.2 et 2.2
     if cycle < 2.0:
         r6_x = 2.200 - progress * 1.0
     else:
         r6_x = 1.200 + progress * 1.0
 
     fake_data = [
-        # === 4 marqueurs de référence ===
         (20, np.array([0.600, 1.400]), math.pi / 2),
         (21, np.array([2.400, 1.400]), math.pi / 2),
         (22, np.array([0.600, 0.600]), math.pi / 2),
         (23, np.array([2.400, 0.600]), math.pi / 2),
-        # === Robot principal bleu (ID 1) — mouvement dynamique ===
-        (1, np.array([r1_x, 1.000]), robot1_angle),
-        # === Robot principal jaune (ID 6) — mouvement dynamique ===
-        (6, np.array([r6_x, 1.000]), robot6_angle),
-        # === Caisses dans les zones de ramassage ===
-        # Zone de ramassage
+        (1,  np.array([r1_x,  1.000]), robot1_angle),
+        (6,  np.array([r6_x,  1.000]), robot6_angle),
         (36, np.array([0.175, 0.725]), 0.0),
         (47, np.array([0.175, 0.775]), 0.0),
         (36, np.array([0.175, 0.825]), 0.0),
         (47, np.array([0.175, 0.875]), 0.0),
-        # Zone de ramassage
         (36, np.array([0.175, 1.525]), 0.0),
         (47, np.array([0.175, 1.575]), 0.0),
         (36, np.array([0.175, 1.625]), 0.0),
         (47, np.array([0.175, 1.675]), 0.0),
-        # Zone de ramassage
         (36, np.array([1.175, 1.800]), math.pi / 2),
         (36, np.array([1.125, 1.800]), math.pi / 2),
         (47, np.array([1.075, 1.800]), math.pi / 2),
         (47, np.array([1.025, 1.800]), math.pi / 2),
-        # Zone de ramassage
         (47, np.array([1.825, 1.800]), math.pi / 2),
         (36, np.array([1.875, 1.800]), math.pi / 2),
         (36, np.array([1.925, 1.800]), math.pi / 2),
         (47, np.array([1.975, 1.800]), math.pi / 2),
-        # Zone de ramassage
         (47, np.array([1.225, 1.200]), math.pi / 2),
         (36, np.array([1.175, 1.200]), math.pi / 2),
         (36, np.array([1.125, 1.200]), math.pi / 2),
         (47, np.array([1.075, 1.200]), math.pi / 2),
-        # Zone de ramassage
         (47, np.array([1.775, 1.200]), math.pi / 2),
         (47, np.array([1.825, 1.200]), math.pi / 2),
         (36, np.array([1.875, 1.200]), math.pi / 2),
         (36, np.array([1.925, 1.200]), math.pi / 2),
-        # Zone de ramassage
         (36, np.array([2.825, 0.725]), 0.0),
         (47, np.array([2.825, 0.775]), 0.0),
         (36, np.array([2.825, 0.825]), 0.0),
         (47, np.array([2.825, 0.875]), 0.0),
-        # Zone de ramassage
         (36, np.array([2.825, 1.525]), 0.0),
         (47, np.array([2.825, 1.575]), 0.0),
         (36, np.array([2.825, 1.625]), 0.0),
         (47, np.array([2.825, 1.675]), 0.0),
-        # === Caisses vides dans les zones de chargement ===
-        # Zone de chargement
         (41, np.array([2.250, 0.325]), math.pi / 2),
         (41, np.array([2.200, 0.325]), math.pi / 2),
         (41, np.array([2.150, 0.325]), math.pi / 2),
-        # Zone de chargement
         (41, np.array([0.750, 0.325]), math.pi / 2),
         (41, np.array([0.800, 0.325]), math.pi / 2),
         (41, np.array([0.850, 0.325]), math.pi / 2),
-        # Zone de frigo
         (47, np.array([1.075, 0.275]), math.pi / 2),
         (36, np.array([1.125, 0.275]), math.pi / 2),
-        # Zone de frigo
         (47, np.array([1.925, 0.275]), math.pi / 2),
         (36, np.array([1.875, 0.275]), math.pi / 2),
-        # Zone de frigo
         (47, np.array([1.325, 0.225]), math.pi / 2),
         (36, np.array([1.375, 0.225]), math.pi / 2),
-        # Zone de frigo
         (47, np.array([1.625, 0.225]), math.pi / 2),
         (36, np.array([1.675, 0.225]), math.pi / 2),
     ]
-    # === 6 PAMIs bleus (IDs 51-56) — dans le nid bleu ===
     for i, pami_id in enumerate(range(51, 57)):
         fake_data.append((
             pami_id,
             np.array([0.100 + i % 3 * 0.11, 0.050 + i % 2 * 0.11]),
             math.pi / 2,
         ))
-    # === 6 PAMIs jaunes (IDs 71-76) — dans le nid jaune ===
     for i, pami_id in enumerate(range(71, 77)):
         fake_data.append((
             pami_id,
@@ -419,11 +440,7 @@ def start_keyboard_thread(lora, match_state, get_detected_world, get_robot_speed
                     elif ch == "5":
                         detected = get_detected_world()
                         speeds = get_robot_speeds()
-                        msg = build_lora_message(
-                            detected,
-                            speeds,
-                            ZONE_TOLERANCE_M,
-                        )
+                        msg = build_lora_message(detected, speeds, ZONE_TOLERANCE_M)
                         lora.queue_send(msg)
                         print(f"⌨️  [5] Vision envoyée  →  {msg.strip()[:80]}...")
                     elif ch == "1":
@@ -459,10 +476,6 @@ def calibrate_camera() -> None:
 
     camera = CSICamera(CAMERA_ID)
 
-    # Utiliser le même mécanisme d'affichage que la détection : sur cette
-    # Jetson cv2.imshow plante (GTK init fail), on passe par un sink
-    # GStreamer. HAS_DISPLAY=True signifie que cv2.imshow a été
-    # explicitement validé via USE_CV2_IMSHOW.
     display_writer = None
     if not HAS_DISPLAY:
         display_writer = make_display_writer(
@@ -515,14 +528,12 @@ def detect_aruco() -> None:
         use_grayscale = not SHOW_CAMERA_FEED
         camera = CSICamera(CAMERA_ID, grayscale=use_grayscale)
 
-        # Charger calibration : .npz d'abord, puis .env en fallback
         cam_matrix = CAMERA_MATRIX
         dist_coeffs = DIST_COEFFS
         file_mtx, file_dist = load_calibration_file()
         if file_mtx is not None:
             cam_matrix, dist_coeffs = file_mtx, file_dist
 
-        # Initialiser l'undistortion si calibration disponible
         effective_camera_matrix = cam_matrix
         if cam_matrix is not None and dist_coeffs is not None:
             effective_camera_matrix = camera.init_undistort_maps(
@@ -534,18 +545,13 @@ def detect_aruco() -> None:
         detector = ArucoDetector(
             camera,
             camera_matrix=effective_camera_matrix,
-            dist_coeffs=None,  # Plus de distorsion après undistort
+            dist_coeffs=None,
             assumed_hfov_deg=ASSUMED_HFOV_DEG,
         )
-        # Configuration détection avancée depuis .env
         detector.multiscale_enabled = parse_bool("MULTISCALE_DETECTION", True)
-        detector.multiscale_min_markers = parse_int(
-            "MULTISCALE_MIN_MARKERS", 50,
-        )
+        detector.multiscale_min_markers = parse_int("MULTISCALE_MIN_MARKERS", 50)
         if parse_bool("TEMPORAL_SMOOTHING", True):
-            detector.marker_carry_frames = parse_int(
-                "MARKER_CARRY_FRAMES", 2,
-            )
+            detector.marker_carry_frames = parse_int("MARKER_CARRY_FRAMES", 2)
         else:
             detector.marker_carry_frames = 0
     else:
@@ -560,8 +566,9 @@ def detect_aruco() -> None:
             dist_coeffs=DIST_COEFFS,
         )
 
-    # Initialiser LoRa
+    # Initialiser LoRa + SpatialSender
     lora = None
+    spatial_sender = None  # Toujours défini ici pour éviter tout NameError
     match_state = MatchState()
 
     if not DUMMY_LORA:
@@ -579,6 +586,10 @@ def detect_aruco() -> None:
         if not lora.is_healthy:
             print("❌ LoRa non sain après connect() — abandon.")
             sys.exit(1)
+
+        # SpatialSender instancié ici, dans le même scope que lora
+        spatial_sender = SpatialSender(lora)
+        print("📦 SpatialSender initialisé")
 
         # --- Handlers LoRa entrants ---
         def on_id_request(_args):
@@ -609,7 +620,6 @@ def detect_aruco() -> None:
     gst_writer = None
     if SHOW_CAMERA_FEED and not DUMMY_DETECTION:
         if STREAM_HOST:
-            # Stream UDP H.264 vers un host distant (SSH sans X)
             udp_pipeline = (
                 "appsrc is-live=true format=time ! "
                 f"video/x-raw, format=BGR,"
@@ -631,10 +641,7 @@ def detect_aruco() -> None:
                 True,
             )
             if gst_writer.isOpened():
-                print(
-                    f"📡 Stream UDP H.264 vers "
-                    f"{STREAM_HOST}:{STREAM_PORT}",
-                )
+                print(f"📡 Stream UDP H.264 vers {STREAM_HOST}:{STREAM_PORT}")
             else:
                 print("⚠️  Échec ouverture stream UDP")
                 gst_writer = None
@@ -649,10 +656,8 @@ def detect_aruco() -> None:
                 render_height=GST_RENDER_HEIGHT,
             )
             if gst_writer is None:
-                print(
-                    "⚠️  Aucun sink GStreamer"
-                    " disponible pour l'affichage",
-                )
+                print("⚠️  Aucun sink GStreamer disponible pour l'affichage")
+
     if HAS_DISPLAY and SHOW_ARENA:
         cv2.namedWindow("Arena", cv2.WINDOW_NORMAL)
 
@@ -691,13 +696,11 @@ def detect_aruco() -> None:
     try:
         while True:
             if not DUMMY_DETECTION:
-                # Lire la frame et corriger la distorsion
                 frame = camera.read_frame(copy=SHOW_CAMERA_FEED)
                 if frame is None:
                     continue
                 frame = camera.undistort_frame(frame)
 
-                # Détection ArUco
                 annotated_frame, detected_world = detector.analyze_frame(
                     frame,
                     show_arena=SHOW_ARENA,
@@ -705,16 +708,14 @@ def detect_aruco() -> None:
                     show_video=SHOW_CAMERA_FEED,
                 )
             else:
-                # Données fictives
                 detected_world = generate_fake_detected_world()
                 annotated_frame = None
-                # Affichage arena avec les faux marqueurs
                 if SHOW_ARENA and arena_detector is not None:
                     arena_detector.update_arena_display(
                         detected_world=detected_world,
                         window_name="Arena",
                     )
-                time.sleep(1.0 / 15)  # Simuler ~15 FPS
+                time.sleep(1.0 / 15)
 
             # Calcul FPS (toutes les secondes)
             frame_count += 1
@@ -726,7 +727,6 @@ def detect_aruco() -> None:
                 frame_count = 0
                 start_time = current_time
 
-                # Stats debug (caméra réelle uniquement)
                 if DEBUG_MODE and camera is not None:
                     stats = camera.get_stats()
                     print(
@@ -735,7 +735,7 @@ def detect_aruco() -> None:
                         f"Drops={stats['frames_dropped']}"
                     )
 
-            # Affichage feed caméra (détection réelle uniquement)
+            # Affichage feed caméra
             if SHOW_CAMERA_FEED and annotated_frame is not None:
                 cv2.putText(
                     annotated_frame,
@@ -788,21 +788,22 @@ def detect_aruco() -> None:
                 assignments = match_state.compute_depot_assignments(arena_elements)
                 msg3 = MatchState.build_msg_3(assignments)
                 if lora is not None:
-                    lora.queue_send(msg3)
+                    lora.queue_send("hello from jetson")
+                    #lora.queue_send(msg3)
                 elif DEBUG_MODE:
                     print(f"[DUMMY_LORA] {msg3.strip()}")
                 match_state.mark_pre_end_sent()
                 print(f"📨 msg 3 envoyé: {len(assignments)} PAMI(s) assignés")
 
-            # Msg 5 : envoi continu pendant le match uniquement
-            if match_state.match_started and not match_state.is_over():
-                msg = build_lora_message(
-                    detected_world, robot_speeds, ZONE_TOLERANCE_M,
-                )
+            # Msg 5 + paquet spatial : envoi continu pendant le match uniquement
+            """  if match_state.match_started and not match_state.is_over():
+                msg = build_lora_message(detected_world, robot_speeds, ZONE_TOLERANCE_M)
                 if lora is not None:
                     lora.queue_send(msg)
+                    send_spatial(spatial_sender, detected_world, robot_speeds)
                 elif DEBUG_MODE:
                     print(f"[DUMMY_LORA] {msg.strip()}")
+            """
 
             # Gestion des touches (uniquement si fenêtres OpenCV ouvertes)
             if HAS_DISPLAY and (
@@ -829,13 +830,11 @@ def detect_aruco() -> None:
 
 
 if __name__ == "__main__":
-    # Activer mode debug si demandé
     set_debug_mode(DEBUG_MODE)
 
     if DEBUG_MODE:
         print("🐛 Démarrage en mode DEBUG")
 
-    # Lancer calibration ou détection
     if CALIBRATE_MODE:
         calibrate_camera()
     else:
