@@ -83,3 +83,44 @@ def test_rotation_keeps_direction_sign() -> None:
     assert math.isclose(cmd.linear_speed, 0.0, abs_tol=1e-9), (
         "Linear speed should be zero during rotation"
     )
+
+
+def test_empty_path_returns_safe_stop_command() -> None:
+    """Empty paths must not crash and should return a stop command."""
+    params = SequentialTrajectoryPlannerParams(direction=Direction.FORWARD)
+    profiler = SpeedProfiler(
+        linear_speed_profile=BasicSpeedProfile(1.0),
+        angular_speed_profile=BasicSpeedProfile(1.0),
+    )
+    planner = SequentialTrajectoryPlanner(params, profiler)
+
+    planner.plan_trajectory([])
+    cmd = planner.get_plan()
+
+    assert math.isclose(cmd.linear_speed, 0.0, abs_tol=1e-9)
+    assert math.isclose(cmd.angular_speed, 0.0, abs_tol=1e-9)
+    assert math.isclose(cmd.position.x, 0.0, abs_tol=1e-9)
+    assert math.isclose(cmd.position.y, 0.0, abs_tol=1e-9)
+    assert math.isclose(cmd.position.theta or 0.0, 0.0, abs_tol=1e-9)
+
+
+def test_single_waypoint_path_stops_on_that_pose() -> None:
+    """A single-waypoint path should hold that waypoint instead of crashing."""
+    params = SequentialTrajectoryPlannerParams(direction=Direction.FORWARD)
+    profiler = SpeedProfiler(
+        linear_speed_profile=BasicSpeedProfile(1.0),
+        angular_speed_profile=BasicSpeedProfile(1.0),
+    )
+    planner = SequentialTrajectoryPlanner(params, profiler)
+
+    hold_pose = OrientedPoint((42.0, 13.0), math.pi / 4)
+    planner.plan_trajectory([hold_pose])
+    cmd = planner.get_plan()
+
+    assert math.isclose(cmd.linear_speed, 0.0, abs_tol=1e-9)
+    assert math.isclose(cmd.angular_speed, 0.0, abs_tol=1e-9)
+    assert math.isclose(cmd.position.x, hold_pose.x, abs_tol=1e-9)
+    assert math.isclose(cmd.position.y, hold_pose.y, abs_tol=1e-9)
+    assert cmd.position.theta is not None
+    assert hold_pose.theta is not None
+    assert math.isclose(cmd.position.theta, hold_pose.theta, abs_tol=1e-9)

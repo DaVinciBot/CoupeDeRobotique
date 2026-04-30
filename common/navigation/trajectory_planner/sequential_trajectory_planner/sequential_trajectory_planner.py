@@ -55,6 +55,8 @@ class SequentialTrajectoryPlanner(
         self.segments_mapper: SegmentMapper | None = None
         self._last_call_time: float = 0.0
         self._is_backward: bool = self.params.direction == Direction.BACKWARD
+        self._fallback_stop_pose: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
+        self._empty_path_warning_emitted: bool = False
 
     @staticmethod
     def _normalize_angle(angle: float) -> float:
@@ -185,6 +187,9 @@ class SequentialTrajectoryPlanner(
         Args:
             path (list[OrientedPoint]): List of oriented points representing the path.
         """
+        if path:
+            self._fallback_stop_pose = path[-1]
+
         # Initialize the segment list
         segments: list[BaseSegment] = []
         # Iterate over each pair of consecutive waypoints
@@ -246,6 +251,12 @@ class SequentialTrajectoryPlanner(
 
         # Store the mapped segments for execution
         self.segments_mapper = SegmentMapper(segments)
+        self._empty_path_warning_emitted = False
+
+        if not segments:
+            self._logger.warning(
+                "[NAV:Trajectory] Empty trajectory generated; robot will hold position.",
+            )
 
     @BaseTrajectoryPlanner.ensure_planning_started
     def get_plan(self) -> TrajectoryPlanCommand:
@@ -266,6 +277,19 @@ class SequentialTrajectoryPlanner(
         if self.segments_mapper is None:
             msg = "Trajectory has not been planned yet."
             raise RuntimeError(msg)
+
+        if not self.segments_mapper.segments:
+            if not self._empty_path_warning_emitted:
+                self._logger.warning(
+                    "[NAV:Trajectory] get_plan() called with no segments; "
+                    " returning stop command.",
+                )
+                self._empty_path_warning_emitted = True
+
+            return TrajectoryPlanCommand.create_stop_command(
+                current_position=self._fallback_stop_pose,
+            )
+
         segment, local_time = self.segments_mapper.get_segment_at_time(time_elapsed)
 
         # If no segment is found -> plan is over -> stop the robot at the end path
@@ -376,4 +400,8 @@ class SequentialTrajectoryPlanner(
         if self.segments_mapper is None:
             msg = "Trajectory has not been planned yet."
             raise RuntimeError(msg)
+
+        if not self.segments_mapper.cumulative_durations:
+            return 0.0
+
         return self.segments_mapper.cumulative_durations[-1]
