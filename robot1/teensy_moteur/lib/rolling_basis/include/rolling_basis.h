@@ -1,7 +1,7 @@
 /**
  * This is the Rolling Basis class header.
  * The Rolling Basis class is the core of the Motor teensy code.
- * It provides method to control the motors, the speed and the orientation.
+ * It provides methods to control the motors from pose errors.
  * It computes the odometry and correct the motors error with the PID class.
  */
 
@@ -11,9 +11,6 @@
 #include "structures.h"
 
 #include <com.h>  // Communication object to manage the communication between the teensy and the Raspberry Pi
-
-#define CONTROL_MODE_VELOCITY 0
-#define CONTROL_MODE_POSITION 1
 
 class Rolling_Basis {
    public:
@@ -27,8 +24,6 @@ class Rolling_Basis {
                   double center_distance,
                   double left_wheel_diameter,
                   double right_wheel_diameter,
-                  const PID& linear_velocity_pid,
-                  const PID& angular_velocity_pid,
                   const PID& linear_position_pid,
                   const PID& angular_position_pid);
 
@@ -39,19 +34,9 @@ class Rolling_Basis {
     double right_wheel_diameter;
 
     // PID controllers
-    PID linear_velocity_pid;
-    PID angular_velocity_pid;
     PID linear_position_pid;
     PID angular_position_pid;
-
-    enum ControlMode : uint8_t {
-        VELOCITY = CONTROL_MODE_VELOCITY,
-        POSITION = CONTROL_MODE_POSITION,
-    };
-
-    ControlMode control_mode = ControlMode::POSITION;
     Point target_pose;
-    VelocityCommand target_feedforward;
 
     // Rolling basis's params
     inline double radius() { return this->center_distance / 2.0; };
@@ -84,18 +69,12 @@ class Rolling_Basis {
     double X = 0.0f;
     double Y = 0.0f;
     double THETA = 0.0f;
-    double linear_velocity = 0.0f;
-    double angular_velocity = 0.0f;
     unsigned long last_odometrie_time = 0;
 
     volatile double last_linear_error = 0.0;
     volatile double last_angular_error = 0.0;
     volatile double last_linear_correction = 0.0;
     volatile double last_angular_correction = 0.0;
-    volatile double last_position_linear_error = 0.0;
-    volatile double last_position_angular_error = 0.0;
-    volatile double last_target_linear_velocity = 0.0;
-    volatile double last_target_angular_velocity = 0.0;
 
     /**
      * @brief Destructor of Rolling Basis class
@@ -144,13 +123,11 @@ class Rolling_Basis {
     /**
      * @brief Handle the correction computation
      *
-     * Compute the distance and orientation error in terms of position.A0
-     * Compute the PID based on velocity error and set the motors new command.
+     * Compute the distance and orientation error, then directly command PWM.
      */
-    void handle(const VelocityCommand& target_velocity);
+    void handle();
 
-    void set_control_mode(uint8_t mode);
-    void set_target_pose(const Point& pose, const VelocityCommand& feedforward);
+    void set_target_pose(const Point& pose);
 
     void pi_mod_signed(double theta);
 

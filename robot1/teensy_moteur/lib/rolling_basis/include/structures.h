@@ -51,12 +51,3 @@ class Point {
         return 2.0 * std::atan2(std::hypot(dx, dy), std::hypot(sx, sy));
     }
 };
-
-struct VelocityCommand {
-    double linear = 0.0;
-    double angular = 0.0;
-
-    VelocityCommand() = default;
-    VelocityCommand(double linear, double angular)
-        : linear(linear), angular(angular) {}
-};

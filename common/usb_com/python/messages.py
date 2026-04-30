@@ -16,7 +16,6 @@ class Messages(Enum):
     those from Teensy to Raspberry Pi are in ``128``-``255``.
 
     Attributes:
-        SET_TARGET_VELOCITY: Command to set the rolling basis target velocity.
         SET_PID: Update PID coefficients for the rolling basis.
         SET_ODOMETRIE: Reset the odometry.
         SET_SERVO_ANGLE_I2C: Set a servo angle over I\ :sub:``2``\ C.
@@ -36,16 +35,12 @@ class Messages(Enum):
     # rasp -> teensy : 0-127 (Convention)
 
     # Rolling Basis
-    SET_TARGET_VELOCITY = 0
-    """Command to set the rolling basis target velocity."""
     SET_PID = 1
     """Update PID coefficients for the rolling basis."""
     SET_ODOMETRIE = 2
     """Reset the odometry."""
-    SET_CONTROL_MODE = 9
-    """Set rolling basis control mode (velocity/position)."""
     SET_TARGET_POSE = 10
-    """Command to set the rolling basis target pose with feedforward."""
+    """Command to set the rolling basis target pose."""
 
     # Actuators
     SET_SERVO_ANGLE_I2C = 3

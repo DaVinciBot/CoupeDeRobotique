@@ -33,14 +33,14 @@ def test_recorder_exports_static_artifacts(tmp_path) -> None:
         angular_speed=1.2,
         target_pose=OrientedPoint((100.0, 200.0), 0.3),
     )
-    recorder.add_sample(event="target_velocity")
+    recorder.add_sample(event="target_pose", force=True)
 
     recorder.set_odometry(
         OrientedPoint((101.0, 200.0), 0.35),
         measured_linear_speed=9.0,
         measured_angular_speed=1.0,
     )
-    recorder.add_sample(event="odometry_update")
+    recorder.add_sample(event="odometry_update", force=True)
 
     artifacts = recorder.export_report(reason="pytest")
 

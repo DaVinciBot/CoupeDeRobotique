@@ -150,12 +150,12 @@ function button_click_effect(button, server) {
     );
     if (button.id.includes("linear")) {
       server.send("ui", "pid update", {
-        type: "linear",
+        type: "linear_position",
         data: { kp: kp, ki: ki, kd: kd },
       });
     } else if (button.id.includes("angular")) {
       server.send("ui", "pid update", {
-        type: "angular",
+        type: "angular_position",
         data: { kp: kp, ki: ki, kd: kd },
       });
     }

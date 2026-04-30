@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import struct
 import time
-from enum import Enum
 from typing import TYPE_CHECKING, Any, overload, override
 
 import matplotlib.pyplot as plt
@@ -33,7 +32,6 @@ class AsservissementRollingBasis(
     Automatically logs target vs actual odometry on each send.
     """
 
-    # TODO: teensy dit à rasp sa position régulièrement
     def __init__(
         self,
         logger: Logger,
@@ -139,10 +137,6 @@ class AsservissementRollingBasis(
 
     # region ====== Message Sending Methods  ======
 
-    class ControlMode(Enum):
-        VELOCITY = 0
-        POSITION = 1
-
     def reset_teensy_and_reinit(self, *, delay_s: float = 0.8) -> None:
         """Reset the Teensy and reinitialize rolling basis state."""
         self._logger.info("[CTRL:RB] Sending RESET_TEENSY")
@@ -151,56 +145,28 @@ class AsservissementRollingBasis(
         if not self.reconnect():
             return
         self.set_odometrie(OrientedPoint((0.0, 0.0), 0.0))
-        self.set_control_mode(AsservissementRollingBasis.ControlMode.POSITION)
         self.set_target_pose(OrientedPoint((0.0, 0.0), 0.0))
-
-    def set_control_mode(self, mode: ControlMode | int) -> None:
-        """Set rolling basis control mode (velocity or position)."""
-        mode_value = (
-            mode.value
-            if isinstance(mode, AsservissementRollingBasis.ControlMode)
-            else int(mode)
-        )
-        msg = Messages.SET_CONTROL_MODE.to_bytes() + bytes([mode_value])
-        self.send_bytes(msg)
-
-    def set_target_velocity(
-        self,
-        cmd: TrajectoryPlanCommand,
-    ) -> None:
-        """Send a command to set the target position of the rolling basis.
-
-        Args:
-            cmd (TrajectoryPlanCommand): Command containing desired position and
-                feedforward speeds (linear in cm/s, angular in rad/s).
-        """
-        # Store for logging
-        self._last_target = cmd.position
-
-        self.set_target_pose(
-            cmd.position,
-            linear_speed=cmd.linear_speed,
-            angular_speed=cmd.angular_speed,
-        )
 
     def set_target_pose(
         self,
         pose: OrientedPoint,
-        *,
-        linear_speed: float = 0.0,
-        angular_speed: float = 0.0,
     ) -> None:
-        """Send a command to set the target pose with optional feedforward.
+        """Send a command to set the target position of the rolling basis.
 
         Linear speed is expressed in cm/s and angular speed in rad/s.
+
+        Args:
+            pose (OrientedPoint): Desired position and orientation.
         """
+        # Store for logging
+        self._last_target = pose
+
+        # Build and send message
         msg = (
             Messages.SET_TARGET_POSE.to_bytes()
             + struct.pack("<d", pose.x)
             + struct.pack("<d", pose.y)
             + struct.pack("<d", pose.theta)
-            + struct.pack("<d", linear_speed)
-            + struct.pack("<d", angular_speed)
         )
         self.send_bytes(msg)
 

@@ -11,19 +11,13 @@ class PidID(Enum):
     """Identifiers for the different PID controllers.
 
     Attributes:
-        LINEAR_VELOCITY: Identifier for linear velocity PID control.
-        ANGULAR_VELOCITY: Identifier for angular velocity PID control.
         LINEAR_POSITION: Identifier for linear position PID control.
         ANGULAR_POSITION: Identifier for angular position PID control.
     """
 
-    LINEAR_VELOCITY = 0
-    """Identifier for linear velocity PID control."""
-    ANGULAR_VELOCITY = 1
-    """Identifier for angular velocity PID control."""
-    LINEAR_POSITION = 2
+    LINEAR_POSITION = 0
     """Identifier for linear position PID control."""
-    ANGULAR_POSITION = 3
+    ANGULAR_POSITION = 1
     """Identifier for angular position PID control."""
 
 

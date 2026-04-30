@@ -12,31 +12,17 @@
 #include <config.h>
 
 // 1. Instanciate the Rolling Basis object
-// a. Define the PID controllers
-PID linear_velocity_pid(KP_LINEAR_VELOCITY,
-                        KI_LINEAR_VELOCITY,
-                        KD_LINEAR_VELOCITY,
-                        -240,
-                        240,
-                        5.0);
-PID angular_velocity_pid(KP_ANGULAR_VELOCITY,
-                         KI_ANGULAR_VELOCITY,
-                         KD_ANGULAR_VELOCITY,
-                         -200,
-                         200,
-                         0.001);
-
 PID linear_position_pid(KP_LINEAR_POSITION,
                         KI_LINEAR_POSITION,
                         KD_LINEAR_POSITION,
-                        -POSITION_MAX_LINEAR_CM_S,
-                        POSITION_MAX_LINEAR_CM_S,
+                        -POSITION_MAX_LINEAR_PWM,
+                        POSITION_MAX_LINEAR_PWM,
                         POSITION_LINEAR_DEADBAND);
 PID angular_position_pid(KP_ANGULAR_POSITION,
                          KI_ANGULAR_POSITION,
                          KD_ANGULAR_POSITION,
-                         -POSITION_MAX_ANGULAR_RAD_S,
-                         POSITION_MAX_ANGULAR_RAD_S,
+                         -POSITION_MAX_ANGULAR_PWM,
+                         POSITION_MAX_ANGULAR_PWM,
                          POSITION_ANGULAR_DEADBAND);
 
 // b. Instanciate the Rolling Basis object
@@ -44,8 +30,6 @@ Rolling_Basis* rolling_basis_ptr = new Rolling_Basis(ENCODER_RESOLUTION,
                                                      ENTRAXE,
                                                      LEFT_WHEEL_DIAMETER,
                                                      RIGHT_WHEEL_DIAMETER,
-                                                     linear_velocity_pid,
-                                                     angular_velocity_pid,
                                                      linear_position_pid,
                                                      angular_position_pid);
 
@@ -69,36 +53,12 @@ inline void right_motor_read_encoder() {
 }
 
 // 3. Define all com callback functions
-// a. define globals variables to keep in memory callback functions updated
-VelocityCommand target_velocity;
-volatile unsigned long last_command_us = 0;
-
 // b. define the callback functions
-void set_target_velocity(byte* msg, byte size) {
-    msg_set_target_velocity* target_velocity_msg =
-        (msg_set_target_velocity*)msg;
-
-    unsigned long now = micros();
-
-    // Update velocity target atomically (used by interrupt handler)
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        target_velocity.linear = target_velocity_msg->linear_velocity;
-        target_velocity.angular = target_velocity_msg->angular_velocity;
-        last_command_us = now;
-    }
-}
-
 void set_pid(byte* msg, byte size) {
     msg_set_pid* pid_msg = (msg_set_pid*)msg;
     PID* pid = nullptr;
     bool is_valid_pid = true;
     switch (pid_msg->pid_type) {
-        case LINEAR_VELOCITY_PID_ID:
-            pid = &rolling_basis_ptr->linear_velocity_pid;
-            break;
-        case ANGULAR_VELOCITY_PID_ID:
-            pid = &rolling_basis_ptr->angular_velocity_pid;
-            break;
         case LINEAR_POSITION_PID_ID:
             pid = &rolling_basis_ptr->linear_position_pid;
             break;
@@ -123,56 +83,31 @@ void set_odometrie(byte* msg, byte size) {
         rolling_basis_ptr->Y = odometrie->y;
         rolling_basis_ptr->THETA = odometrie->theta;
 
-        rolling_basis_ptr->linear_velocity = 0.0;
-        rolling_basis_ptr->angular_velocity = 0.0;
         rolling_basis_ptr->last_odometrie_time = now;
         rolling_basis_ptr->last_linear_error = 0.0;
         rolling_basis_ptr->last_angular_error = 0.0;
         rolling_basis_ptr->last_linear_correction = 0.0;
         rolling_basis_ptr->last_angular_correction = 0.0;
-        rolling_basis_ptr->last_position_linear_error = 0.0;
-        rolling_basis_ptr->last_position_angular_error = 0.0;
-        rolling_basis_ptr->last_target_linear_velocity = 0.0;
-        rolling_basis_ptr->last_target_angular_velocity = 0.0;
         rolling_basis_ptr->target_pose =
             Point(odometrie->x, odometrie->y, odometrie->theta);
-        rolling_basis_ptr->target_feedforward = VelocityCommand();
         rolling_basis_ptr->right_motor->ticks = 0L;
         rolling_basis_ptr->right_motor->last_ticks = 0L;
         rolling_basis_ptr->right_motor->last_delta_ticks = 0L;
         rolling_basis_ptr->right_motor->distance = 0.0;
-        rolling_basis_ptr->right_motor->velocity_cm_s = 0.0;
-        rolling_basis_ptr->right_motor->filtered_velocity_cm_s = 0.0;
-        rolling_basis_ptr->right_motor->last_tick_time_us = 0UL;
         rolling_basis_ptr->left_motor->ticks = 0L;
         rolling_basis_ptr->left_motor->last_ticks = 0L;
         rolling_basis_ptr->left_motor->last_delta_ticks = 0L;
         rolling_basis_ptr->left_motor->distance = 0.0;
-        rolling_basis_ptr->left_motor->velocity_cm_s = 0.0;
-        rolling_basis_ptr->left_motor->filtered_velocity_cm_s = 0.0;
-        rolling_basis_ptr->left_motor->last_tick_time_us = 0UL;
-        rolling_basis_ptr->linear_velocity_pid.reset();
-        rolling_basis_ptr->angular_velocity_pid.reset();
         rolling_basis_ptr->linear_position_pid.reset();
         rolling_basis_ptr->angular_position_pid.reset();
-        target_velocity = VelocityCommand();
-    }
-}
-
-void set_control_mode(byte* msg, byte size) {
-    msg_set_control_mode* mode_msg = (msg_set_control_mode*)msg;
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        rolling_basis_ptr->set_control_mode(mode_msg->mode);
     }
 }
 
 void set_target_pose(byte* msg, byte size) {
     msg_set_target_pose* pose_msg = (msg_set_target_pose*)msg;
     Point pose(pose_msg->x, pose_msg->y, pose_msg->theta);
-    VelocityCommand feedforward(pose_msg->linear_velocity,
-                                pose_msg->angular_velocity);
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        rolling_basis_ptr->set_target_pose(pose, feedforward);
+        rolling_basis_ptr->set_target_pose(pose);
     }
 }
 
@@ -185,32 +120,16 @@ void reset_teensy(byte* msg, byte size) {
 void (*callback_functions[256])(byte* msg, byte size);
 
 void initialize_callback_functions() {
-    callback_functions[SET_TARGET_VELOCITY] = &set_target_velocity;
     callback_functions[SET_PID] = &set_pid;
     callback_functions[SET_ODOMETRIE] = &set_odometrie;
     callback_functions[RESET_TEENSY] = &reset_teensy;
-    callback_functions[SET_CONTROL_MODE] = &set_control_mode;
     callback_functions[SET_TARGET_POSE] = &set_target_pose;
 }
 
-// 4. Define the timer interrupt handle function (this function will be called
-// every 10ms, and which manage the robot position and speed: asservissement)
+// 4. Define the timer interrupt handle function.
 void handle() {
     rolling_basis_ptr->odometrie_handle();
-    unsigned long now = micros();
-    VelocityCommand target;
-    unsigned long last_cmd_us = 0;
-    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        target = target_velocity;
-        last_cmd_us = last_command_us;
-    }
-    if (last_cmd_us != 0 && now - last_cmd_us > COMMAND_TIMEOUT_US) {
-        target = VelocityCommand();
-        ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-            target_velocity = target;
-        }
-    }
-    rolling_basis_ptr->handle(target);
+    rolling_basis_ptr->handle();
 }
 
 void setup() {
@@ -253,21 +172,12 @@ void loop() {
         int16_t left_pwm = 0;
         long right_ticks = 0;
         long left_ticks = 0;
-        double target_lin = 0.0;
-        double target_ang = 0.0;
-        double cmd_lin = 0.0;
-        double cmd_ang = 0.0;
-        double v_lin = 0.0;
-        double v_ang = 0.0;
-        double pos_err_lin = 0.0;
-        double pos_err_ang = 0.0;
         double err_lin = 0.0;
         double err_ang = 0.0;
         double corr_lin = 0.0;
         double corr_ang = 0.0;
         long right_delta_ticks = 0;
         long left_delta_ticks = 0;
-        uint8_t control_mode = 0;
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
             right_pwm = rolling_basis_ptr->right_motor->last_pwm;
             left_pwm = rolling_basis_ptr->left_motor->last_pwm;
@@ -275,41 +185,22 @@ void loop() {
             left_ticks = rolling_basis_ptr->left_motor->ticks;
             right_delta_ticks = rolling_basis_ptr->right_motor->last_delta_ticks;
             left_delta_ticks = rolling_basis_ptr->left_motor->last_delta_ticks;
-            target_lin = rolling_basis_ptr->target_feedforward.linear;
-            target_ang = rolling_basis_ptr->target_feedforward.angular;
-            cmd_lin = rolling_basis_ptr->last_target_linear_velocity;
-            cmd_ang = rolling_basis_ptr->last_target_angular_velocity;
-            v_lin = rolling_basis_ptr->linear_velocity;
-            v_ang = rolling_basis_ptr->angular_velocity;
-            pos_err_lin = rolling_basis_ptr->last_position_linear_error;
-            pos_err_ang = rolling_basis_ptr->last_position_angular_error;
             err_lin = rolling_basis_ptr->last_linear_error;
             err_ang = rolling_basis_ptr->last_angular_error;
             corr_lin = rolling_basis_ptr->last_linear_correction;
             corr_ang = rolling_basis_ptr->last_angular_correction;
-            control_mode = static_cast<uint8_t>(rolling_basis_ptr->control_mode);
         }
-        long tv_lin = static_cast<long>(target_lin * 100.0);
-        long tv_ang = static_cast<long>(target_ang * 100.0);
-        long cmdv_lin = static_cast<long>(cmd_lin * 100.0);
-        long cmdv_ang = static_cast<long>(cmd_ang * 100.0);
-        long mv_lin = static_cast<long>(v_lin * 100.0);
-        long mv_ang = static_cast<long>(v_ang * 100.0);
-        long pe_lin = static_cast<long>(pos_err_lin * 100.0);
-        long pe_ang = static_cast<long>(pos_err_ang * 100.0);
         long ev_lin = static_cast<long>(err_lin * 100.0);
         long ev_ang = static_cast<long>(err_ang * 100.0);
         int16_t cv_lin = static_cast<int16_t>(corr_lin);
         int16_t cv_ang = static_cast<int16_t>(corr_ang);
 
-        char msg[180];
+        char msg[120];
         snprintf(
             msg, sizeof(msg),
-            "RB m=%u ff=%ld/%ld cmd=%ld/%ld v=%ld/%ld pe=%ld/%ld ve=%ld/%ld c=%d/%d pwm=%d/%d dt=%ld/%ld ticks=%ld/%ld",
-            control_mode, tv_lin, tv_ang, cmdv_lin, cmdv_ang, mv_lin, mv_ang,
-            pe_lin, pe_ang, ev_lin, ev_ang, cv_lin, cv_ang, left_pwm,
-            right_pwm, left_delta_ticks, right_delta_ticks, left_ticks,
-            right_ticks);
+            "RB e=%ld/%ld c=%d/%d pwm=%d/%d dt=%ld/%ld ticks=%ld/%ld",
+            ev_lin, ev_ang, cv_lin, cv_ang, left_pwm, right_pwm,
+            left_delta_ticks, right_delta_ticks, left_ticks, right_ticks);
         com->print(msg);
         last_pwm_log_ms = now_ms;
     }

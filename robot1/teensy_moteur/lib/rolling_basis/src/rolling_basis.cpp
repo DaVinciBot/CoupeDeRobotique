@@ -1,7 +1,7 @@
 /**
  * This is the implementation of the Rolling Basis class.
  * The Rolling Basis class is the core of the Motor teensy code.
- * It provides method to control the motors, the speed and the orientation.
+ * It provides methods to control the motors from pose errors.
  * It computes the odometry and correct the motors error with the PID class.
  */
 
@@ -10,27 +10,13 @@
 #include <util/atomic.h>
 #include <cmath>
 
-#define M_S_TO_CM_S 100.0
-
-#define COMMAND_TIMEOUT_US 100000
-#define LINEAR_VELOCITY_ZERO_EPS 0.5
-#define ANGULAR_VELOCITY_ZERO_EPS 0.02
-
 #define MIN_PWM_LINEAR 30
 #define MIN_PWM_ANGULAR 60
-#define LINEAR_FF_PWM_PER_CM_S 6.0
-#define ANGULAR_FF_PWM_PER_RAD_S 35.0
 
 #define MAX_PWM 240
 
-#define HOLD_VEL_DEADBAND_LINEAR 0.05
-#define HOLD_VEL_DEADBAND_ANGULAR 0.005
-#define HOLD_VEL_MAX_PWM 240
-
-#define POSITION_MAX_LINEAR_CM_S 30.0
-#define POSITION_MAX_ANGULAR_RAD_S 2.0
-#define POSITION_LINEAR_DEADBAND 0.0
-#define POSITION_ANGULAR_DEADBAND 0.0
+#define POSITION_MAX_LINEAR_PWM 240
+#define POSITION_MAX_ANGULAR_PWM 240
 
 double normalizeAngle(double theta) {
     // shift by +PI, take modulo 2*PI, remap to [0,2*PI)
@@ -68,16 +54,12 @@ Rolling_Basis::Rolling_Basis(unsigned short encoder_resolution,
                              double center_distance,
                              double left_wheel_diameter,
                              double right_wheel_diameter,
-                             const PID& linear_velocity_pid,
-                             const PID& angular_velocity_pid,
                              const PID& linear_position_pid,
                              const PID& angular_position_pid)
     : encoder_resolution(encoder_resolution),
       center_distance(center_distance),
       left_wheel_diameter(left_wheel_diameter),
       right_wheel_diameter(right_wheel_diameter),
-      linear_velocity_pid(linear_velocity_pid),
-      angular_velocity_pid(angular_velocity_pid),
       linear_position_pid(linear_position_pid),
       angular_position_pid(angular_position_pid) {}
 
@@ -128,25 +110,16 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
     this->X = x;
     this->Y = y;
     this->THETA = theta;
-    this->linear_velocity = 0.0f;
-    this->angular_velocity = 0.0f;
     this->last_linear_error = 0.0;
     this->last_angular_error = 0.0;
     this->last_linear_correction = 0.0;
     this->last_angular_correction = 0.0;
-    this->last_position_linear_error = 0.0;
-    this->last_position_angular_error = 0.0;
-    this->last_target_linear_velocity = 0.0;
-    this->last_target_angular_velocity = 0.0;
     this->last_odometrie_time = micros();
     if (this->right_motor != nullptr) {
         this->right_motor->ticks = 0L;
         this->right_motor->last_ticks = 0L;
         this->right_motor->last_delta_ticks = 0L;
         this->right_motor->distance = 0.0;
-        this->right_motor->velocity_cm_s = 0.0;
-        this->right_motor->filtered_velocity_cm_s = 0.0;
-        this->right_motor->last_tick_time_us = 0UL;
         this->right_motor->set_motor(0);
     }
     if (this->left_motor != nullptr) {
@@ -154,36 +127,15 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
         this->left_motor->last_ticks = 0L;
         this->left_motor->last_delta_ticks = 0L;
         this->left_motor->distance = 0.0;
-        this->left_motor->velocity_cm_s = 0.0;
-        this->left_motor->filtered_velocity_cm_s = 0.0;
-        this->left_motor->last_tick_time_us = 0UL;
         this->left_motor->set_motor(0);
     }
-    this->linear_velocity_pid.reset();
-    this->angular_velocity_pid.reset();
     this->linear_position_pid.reset();
     this->angular_position_pid.reset();
-    this->control_mode = ControlMode::POSITION;
     this->target_pose = Point(x, y, theta);
-    this->target_feedforward = VelocityCommand();
 }
 
-void Rolling_Basis::set_control_mode(uint8_t mode) {
-    if (mode == ControlMode::POSITION) {
-        this->control_mode = ControlMode::POSITION;
-        this->linear_position_pid.reset();
-        this->angular_position_pid.reset();
-    } else {
-        this->control_mode = ControlMode::VELOCITY;
-        this->linear_velocity_pid.reset();
-        this->angular_velocity_pid.reset();
-    }
-}
-
-void Rolling_Basis::set_target_pose(const Point& pose,
-                                    const VelocityCommand& feedforward) {
+void Rolling_Basis::set_target_pose(const Point& pose) {
     this->target_pose = pose;
-    this->target_feedforward = feedforward;
 }
 
 // Odometrie function
@@ -195,12 +147,7 @@ void Rolling_Basis::set_target_pose(const Point& pose,
  * Finally update the rolling basis state.
  */
 void Rolling_Basis::odometrie_handle() {
-    unsigned long now = micros();
-    double dt = 0.0;
-    if (this->last_odometrie_time != 0UL) {
-        dt = (now - this->last_odometrie_time) * 1e-6;
-    }
-    this->last_odometrie_time = now;
+    this->last_odometrie_time = micros();
 
     /* Update motors positions by calling odometer_handle */
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -219,63 +166,30 @@ void Rolling_Basis::odometrie_handle() {
     this->X += cosf(this->THETA + (delta_theta / 2.0f)) * delta_distance;
     this->Y += sinf(this->THETA + (delta_theta / 2.0f)) * delta_distance;
     this->THETA = normalizeAngle(this->THETA + delta_theta);
-
-    if (dt > 0.0) {
-        double left_velocity = this->left_motor->filtered_velocity_cm_s;
-        double right_velocity = this->right_motor->filtered_velocity_cm_s;
-        this->linear_velocity = (left_velocity + right_velocity) / 2.0;
-        this->angular_velocity =
-            (right_velocity - left_velocity) / this->center_distance;
-    }
 }
 
 /**
  * @brief Handle the correction computation
  *
- * Compute the linear and angular velocity error then apply PID and set
- * the motors new command.
+ * Compute the linear and angular position error then directly command motors.
  */
-void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
-    VelocityCommand velocity_cmd = target_velocity;
-    this->last_position_linear_error = 0.0;
-    this->last_position_angular_error = 0.0;
-    if (this->control_mode == ControlMode::POSITION) {
-        double dx = this->target_pose.x - this->X;
-        double dy = this->target_pose.y - this->Y;
-        double cos_th = cosf(this->THETA);
-        double sin_th = sinf(this->THETA);
-        double linear_error = cos_th * dx + sin_th * dy;
-        double angular_error =
-            normalizeAngle(this->target_pose.theta - this->THETA);
-        this->last_position_linear_error = linear_error;
-        this->last_position_angular_error = angular_error;
+void Rolling_Basis::handle() {
+    double dx = this->target_pose.x - this->X;
+    double dy = this->target_pose.y - this->Y;
+    double cos_th = cosf(this->THETA);
+    double sin_th = sinf(this->THETA);
+    double linear_error = cos_th * dx + sin_th * dy;
+    double angular_error = normalizeAngle(this->target_pose.theta - this->THETA);
 
-        double linear_target = this->linear_position_pid.compute(linear_error);
-        double angular_target =
-            this->angular_position_pid.compute(angular_error);
+    double linear_cmd = this->linear_position_pid.compute(linear_error);
+    double angular_cmd = this->angular_position_pid.compute(angular_error);
 
-        velocity_cmd.linear = linear_target + this->target_feedforward.linear;
-        velocity_cmd.angular =
-            angular_target + this->target_feedforward.angular;
+    linear_cmd =
+        constrain(linear_cmd, -POSITION_MAX_LINEAR_PWM, POSITION_MAX_LINEAR_PWM);
+    angular_cmd = constrain(angular_cmd, -POSITION_MAX_ANGULAR_PWM,
+                            POSITION_MAX_ANGULAR_PWM);
 
-        velocity_cmd.linear =
-            constrain(velocity_cmd.linear, -POSITION_MAX_LINEAR_CM_S,
-                      POSITION_MAX_LINEAR_CM_S);
-        velocity_cmd.angular =
-            constrain(velocity_cmd.angular, -POSITION_MAX_ANGULAR_RAD_S,
-                      POSITION_MAX_ANGULAR_RAD_S);
-    }
-    this->last_target_linear_velocity = velocity_cmd.linear;
-    this->last_target_angular_velocity = velocity_cmd.angular;
-
-    bool near_zero_cmd = fabs(velocity_cmd.linear) < LINEAR_VELOCITY_ZERO_EPS &&
-                         fabs(velocity_cmd.angular) < ANGULAR_VELOCITY_ZERO_EPS;
-
-    double linear_error = velocity_cmd.linear - this->linear_velocity;
-    double angular_error = velocity_cmd.angular - this->angular_velocity;
-
-    if (near_zero_cmd && fabs(linear_error) < HOLD_VEL_DEADBAND_LINEAR &&
-        fabs(angular_error) < HOLD_VEL_DEADBAND_ANGULAR) {
+    if (linear_cmd == 0.0 && angular_cmd == 0.0) {
         this->right_motor->set_motor(0);
         this->left_motor->set_motor(0);
         this->last_linear_error = linear_error;
@@ -285,16 +199,6 @@ void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
         return;
     }
 
-    double linear_correction = this->linear_velocity_pid.compute(linear_error);
-    double angular_correction =
-        this->angular_velocity_pid.compute(angular_error);
-
-    double linear_ff = LINEAR_FF_PWM_PER_CM_S * velocity_cmd.linear;
-    double angular_ff = ANGULAR_FF_PWM_PER_RAD_S * velocity_cmd.angular;
-
-    double linear_cmd = linear_correction + linear_ff;
-    double angular_cmd = angular_correction + angular_ff;
-
     if (fabs(linear_cmd) > 0.0 && fabs(linear_cmd) < MIN_PWM_LINEAR) {
         linear_cmd = copysign(MIN_PWM_LINEAR, linear_cmd);
     }
@@ -302,14 +206,8 @@ void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
         angular_cmd = copysign(MIN_PWM_ANGULAR, angular_cmd);
     }
 
-    if (near_zero_cmd) {
-        linear_cmd = constrain(linear_cmd, -HOLD_VEL_MAX_PWM, HOLD_VEL_MAX_PWM);
-        angular_cmd =
-            constrain(angular_cmd, -HOLD_VEL_MAX_PWM, HOLD_VEL_MAX_PWM);
-    } else {
-        linear_cmd = constrain(linear_cmd, -MAX_PWM, MAX_PWM);
-        angular_cmd = constrain(angular_cmd, -MAX_PWM, MAX_PWM);
-    }
+    linear_cmd = constrain(linear_cmd, -MAX_PWM, MAX_PWM);
+    angular_cmd = constrain(angular_cmd, -MAX_PWM, MAX_PWM);
 
     this->last_linear_error = linear_error;
     this->last_angular_error = angular_error;

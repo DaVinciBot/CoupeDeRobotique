@@ -6,7 +6,6 @@ import atexit
 import signal
 import struct
 import time
-from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, overload, override
 
@@ -26,11 +25,7 @@ if TYPE_CHECKING:
 
 
 class RollingBasis(BaseComTeensy):
-    """Represents the rolling basis of the robot.
-
-    Inherits from Teensy to manage low-level communications and adds logic
-    specific to the robot's state, PID configuration, and message messaging.
-    """
+    """Represents the rolling basis of the robot."""
 
     def __init__(
         self,
@@ -43,28 +38,11 @@ class RollingBasis(BaseComTeensy):
         enable_crc: bool = CONFIG.TEENSY_CRC,
         enable_dummy: bool = CONFIG.ROLLING_BASIS_DUMMY,
     ) -> None:
-        """Initializes the RollingBasis class.
-
-        Args:
-            logger (Logger): The logger instance for logging.
-            serial_number (int, optional): The serial number of the Teensy.
-                Defaults to CONFIG.ROLLING_BASIS_TEENSY_SER.
-            vid (int, optional):
-                The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
-            pid (int, optional):
-                The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
-            baudrate (int, optional): The baud rate for serial communication.
-                Defaults to CONFIG.TEENSY_BAUDRATE.
-            enable_crc (bool, optional):
-                Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
-            enable_dummy (bool, optional):
-                Whether to enable dummy mode. Defaults to CONFIG.ROLLING_BASIS_DUMMY.
-        """
+        """Initialize the rolling basis controller."""
         self.flag = True
         self._debug_report_exported = False
         self._previous_signal_handlers: dict[int, object] = {}
 
-        # Initialize the parent-BaseComTeensy class
         super().__init__(
             logger,
             serial_number,
@@ -84,19 +62,11 @@ class RollingBasis(BaseComTeensy):
         atexit.register(self._export_debug_report_on_exit)
         self._install_signal_handlers()
 
-        # Robot state
         self.odometrie: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
 
-        # PID controllers
-        self.linear_velocity_pid: PID = PID(0.0, 0.0, 0.0)
-        self.angular_velocity_pid: PID = PID(0.0, 0.0, 0.0)
         self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
-        """
-        This is used to match a handling function to a message type.
-        add_callback can also be used.
-        """
-        # Register message handlers
+
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
         self.add_callback(
@@ -104,37 +74,18 @@ class RollingBasis(BaseComTeensy):
             Messages.UPDATE_ROLLING_BASIS.value,
         )
 
-        time.sleep(0.01)  # Avoid overload
+        time.sleep(0.01)
         self.reset_teensy_and_reinit()
 
     # region ====== Message Receiving Handlers ======
 
     def rcv_print(self, msg: bytes) -> None:
-        """Handles PRINT messages from the Teensy.
-
-        Args:
-            msg (bytes): The received message bytes.
-        """
+        """Handle PRINT messages from the Teensy."""
         text = msg.decode("ascii", errors="ignore")
         self._logger.info(f"[CTRL:RB:Teensy] {text}")
 
-    def rcv_rolling_basis_state(
-        self,
-        msg: bytes,
-    ) -> None:  # TODO: teensy send correct odometrie / speed
-        """Handles rolling basis state update messages from the Teensy.
-
-        The message contains:
-        - float x: X-coordinate of the position (4 bytes).
-        - float y: Y-coordinate of the position (4 bytes).
-        - float theta: Orientation (4 bytes).
-        - float current_linear_speed: Current linear speed (4 bytes).
-        - float current_angular_speed: Current angular speed (4 bytes).
-
-        Args:
-            msg (bytes): The received message bytes.
-        """
-        # Position / odometrie
+    def rcv_rolling_basis_state(self, msg: bytes) -> None:
+        """Handle rolling basis odometry update messages from the Teensy."""
         self.odometrie = OrientedPoint(
             (struct.unpack("<d", msg[0:8])[0], struct.unpack("<d", msg[8:16])[0]),
             struct.unpack("<d", msg[16:24])[0],
@@ -143,22 +94,12 @@ class RollingBasis(BaseComTeensy):
         self._debug_recorder.add_sample(event="odometry_update")
 
     def rcv_unknown_msg(self, msg: bytes) -> None:
-        """Handles unknown messages from the Teensy.
-
-        Logs a warning indicating that the message type is not recognized.
-
-        Args:
-            msg (bytes): The received message bytes.
-        """
+        """Handle unknown messages from the Teensy."""
         self._logger.warning(f"[CTRL:RB:Teensy] Unknown message type: {msg.hex()}")
 
     # endregion
 
     # region ====== Message Sending Methods ======
-
-    class ControlMode(Enum):
-        VELOCITY = 0
-        POSITION = 1
 
     def reset_teensy_and_reinit(self, *, delay_s: float = 0.8) -> None:
         """Reset the Teensy and reinitialize rolling basis state."""
@@ -168,68 +109,32 @@ class RollingBasis(BaseComTeensy):
         if not self.reconnect():
             return
         self.set_odometrie(OrientedPoint((0.0, 0.0), 0.0))
-        self.set_control_mode(RollingBasis.ControlMode.POSITION)
         self.set_target_pose(OrientedPoint((0.0, 0.0), 0.0))
 
-    def set_control_mode(self, mode: ControlMode | int) -> None:
-        """Set rolling basis control mode (velocity or position)."""
-        mode_value = (
-            mode.value if isinstance(mode, RollingBasis.ControlMode) else int(mode)
-        )
-        msg = Messages.SET_CONTROL_MODE.to_bytes() + bytes([mode_value])
-        self.send_bytes(msg)
+    def set_trajectory_command(self, cmd: TrajectoryPlanCommand) -> None:
+        """Send the target pose from a trajectory command."""
+        self._logger.info(f"[CTRL:RB] Setting target pose: {cmd.position}")
+        self.set_target_pose(cmd.position)
 
-    # @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
-    def set_target_velocity(self, cmd: TrajectoryPlanCommand) -> None:
-        """Send a pose command with optional feedforward speeds.
-
-        Args:
-            cmd (TrajectoryPlanCommand): Command containing target pose and
-                feedforward speeds (linear in cm/s, angular in rad/s).
-        """
-        self._logger.info(
-            f"[CTRL:RB] Setting target pose: {cmd.position}, feedforward="
-            f"linear_speed={cmd.linear_speed}, angular_speed={cmd.angular_speed}",
-        )
-        self.set_target_pose(
-            cmd.position,
-            linear_speed=cmd.linear_speed,
-            angular_speed=cmd.angular_speed,
-        )
-
-    def set_target_pose(
-        self,
-        pose: OrientedPoint,
-        linear_speed: float = 0.0,
-        angular_speed: float = 0.0,
-    ) -> None:
-        """Send a command to set the target pose with optional feedforward."""
+    def set_target_pose(self, pose: OrientedPoint) -> None:
+        """Send a command to set the target pose."""
         msg = (
             Messages.SET_TARGET_POSE.to_bytes()
             + struct.pack("<d", pose.x)
             + struct.pack("<d", pose.y)
             + struct.pack("<d", pose.theta)
-            + struct.pack("<d", linear_speed)
-            + struct.pack("<d", angular_speed)
         )
         self.send_bytes(msg)
         self._debug_recorder.set_target(
-            linear_speed=linear_speed,
-            angular_speed=angular_speed,
+            linear_speed=0.0,
+            angular_speed=0.0,
             target_pose=pose,
         )
         self._debug_recorder.add_sample(event="target_pose")
 
     @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
-        """Sends a message to set the odometrie of the rolling basis.
-
-        Args:
-            odometrie (OrientedPoint): The new odometrie values.
-
-        Raises:
-            ValueError: If odometrie.theta is None.
-        """
+        """Send a command to set rolling basis odometry."""
         if odometrie.theta is None:
             msg = (
                 f"Odometrie theta must be defined, got None at "
@@ -248,17 +153,9 @@ class RollingBasis(BaseComTeensy):
         self._debug_recorder.set_odometry(odometrie)
         self._debug_recorder.add_sample(event="set_odometry", force=True)
 
-    @log(
-        param_logger="RollingBasis",
-        log_level=LogLevels.INFO,
-    )
+    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def _send_pid(self, pid_id: int, pid: PID) -> None:
-        """Internal method to send PID configuration data to the Teensy.
-
-        Args:
-            pid_id (int): The identifier for the PID controller.
-            pid (PID): The PID controller parameters.
-        """
+        """Send PID configuration data to the Teensy."""
         msg = Messages.SET_PID.to_bytes() + pid_id.to_bytes() + pid.to_bytes()
         self.send_bytes(msg)
         self._debug_recorder.add_sample(event=f"set_pid_{pid_id}", force=True)
@@ -322,21 +219,9 @@ class RollingBasis(BaseComTeensy):
         *args: float | dict[str, float],
         **kwargs: float,
     ) -> PID:
-        """Load the PID values.
-
-        Args:
-            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
-                single dictionary with keys 'kp', 'ki', 'kd'.
-            **kwargs (float): Keyword arguments mapping PID fields to values.
-
-        Returns:
-            PID: The configured PID instance.
-
-        Raises:
-            ValueError: If the arguments do not match any expected format.
-        """
+        """Load PID values from positional, dict, or keyword arguments."""
         if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
-            pid = PID(*args)  # pyright: ignore[reportArgumentType] args are all float
+            pid = PID(*args)  # pyright: ignore[reportArgumentType]
         elif len(args) == 1 and isinstance(args[0], dict):
             pid = PID.from_dict(args[0])
         elif kwargs:
@@ -345,72 +230,6 @@ class RollingBasis(BaseComTeensy):
             msg = "Invalid arguments for PID configuration."
             raise ValueError(msg)
         return pid
-
-    @overload
-    def set_linear_velocity_pid(self, *args: float) -> None: ...
-
-    @overload
-    def set_linear_velocity_pid(self, pid_values: dict[str, float]) -> None: ...
-
-    @overload
-    def set_linear_velocity_pid(self, kp: float, ki: float, kd: float) -> None: ...
-
-    def set_linear_velocity_pid(
-        self,
-        *args: float | dict[str, float],
-        **kwargs: float,
-    ) -> None:
-        """Configure the PID values for linear velocity control.
-
-        Overloads:
-            - set_linear_velocity_pid(float, float, float) → None
-            - set_linear_velocity_pid(dict[str, float]) → None
-            - set_linear_velocity_pid(kp=float, ki=float, kd=float) → None
-
-        Args:
-            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
-                single dictionary with keys 'kp', 'ki', 'kd'.
-            **kwargs (float): Keyword arguments mapping PID fields to values.
-        """
-        try:
-            pid = self._load_pid(*args, **kwargs)
-            self.linear_velocity_pid = pid
-            self._send_pid(PidID.LINEAR_VELOCITY.value, pid)
-        except (ValueError, TypeError) as e:
-            self._logger.error(f"[CTRL:RB] Failed to set linear velocity PID: {e}")
-
-    @overload
-    def set_angular_velocity_pid(self, *args: float) -> None: ...
-
-    @overload
-    def set_angular_velocity_pid(self, pid_values: dict[str, float]) -> None: ...
-
-    @overload
-    def set_angular_velocity_pid(self, kp: float, ki: float, kd: float) -> None: ...
-
-    def set_angular_velocity_pid(
-        self,
-        *args: float | dict[str, float],
-        **kwargs: float,
-    ) -> None:
-        """Configure the PID values for angular velocity control.
-
-        Overloads:
-            - set_angular_velocity_pid(float, float, float) → None
-            - set_angular_velocity_pid(dict[str, float]) → None
-            - set_angular_velocity_pid(kp=float, ki=float, kd=float) → None
-
-        Args:
-            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or
-                a single dictionary with keys 'kp', 'ki', 'kd'.
-            **kwargs (float): Keyword arguments mapping PID fields to values.
-        """
-        try:
-            pid = self._load_pid(*args, **kwargs)
-            self.angular_velocity_pid = pid
-            self._send_pid(PidID.ANGULAR_VELOCITY.value, pid)
-        except (ValueError, TypeError) as e:
-            self._logger.error(f"[CTRL:RB] Failed to set angular velocity PID: {e}")
 
     @overload
     def set_linear_position_pid(self, *args: float) -> None: ...
@@ -458,38 +277,19 @@ class RollingBasis(BaseComTeensy):
 
     def set_pids(
         self,
-        linear_velocity_pid: dict[str, float],
-        angular_velocity_pid: dict[str, float],
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
     ) -> None:
-        """Configure all PID controllers using dictionaries for each.
-
-        Args:
-            linear_velocity_pid (dict[str, float]):
-                PID configuration for linear velocity.
-            angular_velocity_pid (dict[str, float]):
-                PID configuration for angular velocity.
-            linear_position_pid (dict[str, float]):
-                PID configuration for linear position.
-            angular_position_pid (dict[str, float]):
-                PID configuration for angular position.
-        """
-        self.set_linear_velocity_pid(**linear_velocity_pid)
-        time.sleep(0.1)  # Ensure the Teensy has time to process the first PID
-        self.set_angular_velocity_pid(**angular_velocity_pid)
-        time.sleep(0.1)  # Ensure the Teensy has time to process the second PID
+        """Configure all rolling basis position PID controllers."""
         self.set_linear_position_pid(**linear_position_pid)
-        time.sleep(0.1)  # Ensure the Teensy has time to process the third PID
+        time.sleep(0.1)
         self.set_angular_position_pid(**angular_position_pid)
-        time.sleep(0.1)  # Ensure the Teensy has time to process the fourth PID
+        time.sleep(0.1)
 
     def initialize_pids(self) -> None:
         """Initialize PID controllers from the configuration."""
         try:
             self.set_pids(
-                linear_velocity_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_VELOCITY,
-                angular_velocity_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_VELOCITY,
                 linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
                 angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
             )
@@ -502,43 +302,23 @@ class RollingBasis(BaseComTeensy):
 
     @override
     def __eq__(self, other: object) -> bool:
-        """Check equality between two RollingBasis instances.
-
-        Args:
-            other (object): The other object to compare against.
-
-        Returns:
-            bool: ``True`` if the objects are equal, ``False`` otherwise.
-        """
+        """Check equality between two RollingBasis instances."""
         if not isinstance(other, RollingBasis):
             return NotImplemented
         return (
             self.odometrie == other.odometrie
-            and self.linear_velocity_pid == other.linear_velocity_pid
-            and self.angular_velocity_pid == other.angular_velocity_pid
             and self.linear_position_pid == other.linear_position_pid
             and self.angular_position_pid == other.angular_position_pid
         )
 
     @override
     def __ne__(self, other: object) -> bool:
-        """Check inequality between two RollingBasis instances.
-
-        Args:
-            other (object): The other object to compare against.
-
-        Returns:
-            bool: ``True`` if the objects are not equal, ``False`` otherwise.
-        """
+        """Check inequality between two RollingBasis instances."""
         return not self.__eq__(other)
 
     @override
     def __hash__(self) -> int:
-        """Return a hash based on object identity.
-
-        Returns:
-            int: The hash value of the object.
-        """
+        """Return a hash based on object identity."""
         return object.__hash__(self)
 
     # endregion

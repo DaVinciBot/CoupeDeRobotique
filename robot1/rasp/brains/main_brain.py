@@ -324,18 +324,6 @@ class MainBrain(Brain):
                     ki=self.pid_ki,
                     kd=self.pid_kd,
                 )
-            elif self.pid_type == "linear_velocity":
-                rolling_basis.set_linear_velocity_pid(
-                    kp=self.pid_kp,
-                    ki=self.pid_ki,
-                    kd=self.pid_kd,
-                )
-            elif self.pid_type == "angular_velocity":
-                rolling_basis.set_angular_velocity_pid(
-                    kp=self.pid_kp,
-                    ki=self.pid_ki,
-                    kd=self.pid_kd,
-                )
             self.should_update_pid = False
 
         # Update shared state from the context
