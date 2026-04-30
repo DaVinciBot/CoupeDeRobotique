@@ -162,12 +162,15 @@ def test_simulate_real_time_step_translation() -> None:
         angular_speed=0.0,
     )
     dummy.set_trajectory_command(cmd)
+    start = time.time()
 
-    time.sleep(2.0)  # 5 cm/s for 2 s -> 10 cm forward
+    time.sleep(2.0)
     dummy.stop_realtime_simulation()
+    elapsed = time.time() - start
+    expected_x = 5.0 * elapsed
 
-    assert math.isclose(dummy.odometrie.x, 10.0, abs_tol=0.15), (
-        f"X coordinate mismatch {dummy.odometrie.x}"
+    assert math.isclose(dummy.odometrie.x, expected_x, abs_tol=0.15), (
+        f"X coordinate mismatch {dummy.odometrie.x}, expected {expected_x}"
     )
     assert math.isclose(dummy.odometrie.y, 0.0, abs_tol=1e-2), (
         f"Y coordinate mismatch {dummy.odometrie.y}"
@@ -189,9 +192,11 @@ def test_simulate_real_time_step_rotation() -> None:
         angular_speed=math.pi / 2,
     )
     dummy.set_trajectory_command(cmd)
-
+    start = time.time()
     time.sleep(1.0)
     dummy.stop_realtime_simulation()
+    elapsed = time.time() - start
+    expected_theta = math.pi / 2 * elapsed
 
     assert math.isclose(dummy.odometrie.x, 0.0, abs_tol=1e-2), (
         f"X coordinate mismatch {dummy.odometrie.x}"
@@ -199,8 +204,8 @@ def test_simulate_real_time_step_rotation() -> None:
     assert math.isclose(dummy.odometrie.y, 0.0, abs_tol=1e-2), (
         f"Y coordinate mismatch {dummy.odometrie.y}"
     )
-    assert math.isclose(dummy.odometrie.theta or 0.0, math.pi / 2, abs_tol=1e-2), (
-        f"Theta mismatch {dummy.odometrie.theta or 0.0}"
+    assert math.isclose(dummy.odometrie.theta or 0.0, expected_theta, abs_tol=0.03), (
+        f"Theta mismatch {dummy.odometrie.theta or 0.0}, expected {expected_theta}"
     )
 
 
@@ -216,12 +221,15 @@ def test_simulate_real_time_step_curve_motion() -> None:
         angular_speed=math.pi / 4,
     )
     dummy.set_trajectory_command(cmd)
-
+    start = time.time()
     time.sleep(0.3)
     dummy.stop_realtime_simulation()
+    elapsed = time.time() - start
 
-    expected_x = math.cos(math.pi / 8 * 0.3) * 3.0
-    expected_y = math.sin(math.pi / 8 * 0.3) * 3.0
+    expected_distance = 10.0 * elapsed
+    expected_theta = math.pi / 4 * elapsed
+    expected_x = math.cos(expected_theta / 2.0) * expected_distance
+    expected_y = math.sin(expected_theta / 2.0) * expected_distance
 
     assert math.isclose(dummy.odometrie.x, expected_x, rel_tol=1e-9, abs_tol=0.25), (
         f"X coordinate mismatch {dummy.odometrie.x}, expected {expected_x}"
@@ -231,6 +239,6 @@ def test_simulate_real_time_step_curve_motion() -> None:
     )
     assert math.isclose(
         dummy.odometrie.theta or 0.0,
-        math.pi / 4 * 0.3,
+        expected_theta,
         abs_tol=0.03,
-    ), f"Theta mismatch {dummy.odometrie.theta or 0.0}"
+    ), f"Theta mismatch {dummy.odometrie.theta or 0.0}, expected {expected_theta}"

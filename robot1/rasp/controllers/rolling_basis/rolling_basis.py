@@ -66,6 +66,8 @@ class RollingBasis(BaseComTeensy):
 
         self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
+        self.left_wheel_position_pid: PID = PID(0.0, 0.0, 0.0)
+        self.right_wheel_position_pid: PID = PID(0.0, 0.0, 0.0)
 
         self.add_callback(self.rcv_print, Messages.PRINT.value)
         self.add_callback(self.rcv_unknown_msg, Messages.UNKNOWN_MSG_TYPE.value)
@@ -275,15 +277,65 @@ class RollingBasis(BaseComTeensy):
         except (ValueError, TypeError) as e:
             self._logger.error(f"[CTRL:RB] Failed to set angular position PID: {e}")
 
+    @overload
+    def set_left_wheel_position_pid(self, *args: float) -> None: ...
+
+    @overload
+    def set_left_wheel_position_pid(self, pid_values: dict[str, float]) -> None: ...
+
+    @overload
+    def set_left_wheel_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
+    def set_left_wheel_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
+        """Configure the PID values for left wheel position control."""
+        try:
+            pid = self._load_pid(*args, **kwargs)
+            self.left_wheel_position_pid = pid
+            self._send_pid(PidID.LEFT_WHEEL_POSITION.value, pid)
+        except (ValueError, TypeError) as e:
+            self._logger.error(f"[CTRL:RB] Failed to set left wheel PID: {e}")
+
+    @overload
+    def set_right_wheel_position_pid(self, *args: float) -> None: ...
+
+    @overload
+    def set_right_wheel_position_pid(self, pid_values: dict[str, float]) -> None: ...
+
+    @overload
+    def set_right_wheel_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
+    def set_right_wheel_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
+        """Configure the PID values for right wheel position control."""
+        try:
+            pid = self._load_pid(*args, **kwargs)
+            self.right_wheel_position_pid = pid
+            self._send_pid(PidID.RIGHT_WHEEL_POSITION.value, pid)
+        except (ValueError, TypeError) as e:
+            self._logger.error(f"[CTRL:RB] Failed to set right wheel PID: {e}")
+
     def set_pids(
         self,
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
+        left_wheel_position_pid: dict[str, float],
+        right_wheel_position_pid: dict[str, float],
     ) -> None:
         """Configure all rolling basis position PID controllers."""
         self.set_linear_position_pid(**linear_position_pid)
         time.sleep(0.1)
         self.set_angular_position_pid(**angular_position_pid)
+        time.sleep(0.1)
+        self.set_left_wheel_position_pid(**left_wheel_position_pid)
+        time.sleep(0.1)
+        self.set_right_wheel_position_pid(**right_wheel_position_pid)
         time.sleep(0.1)
 
     def initialize_pids(self) -> None:
@@ -292,6 +344,8 @@ class RollingBasis(BaseComTeensy):
             self.set_pids(
                 linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
                 angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
+                left_wheel_position_pid=CONFIG.ROLLING_BASIS_PIDS_LEFT_WHEEL_POSITION,
+                right_wheel_position_pid=CONFIG.ROLLING_BASIS_PIDS_RIGHT_WHEEL_POSITION,
             )
         except (ValueError, TypeError) as e:
             self._logger.error(f"[CTRL:RB] Failed to initialize PIDs: {e}")
@@ -309,6 +363,8 @@ class RollingBasis(BaseComTeensy):
             self.odometrie == other.odometrie
             and self.linear_position_pid == other.linear_position_pid
             and self.angular_position_pid == other.angular_position_pid
+            and self.left_wheel_position_pid == other.left_wheel_position_pid
+            and self.right_wheel_position_pid == other.right_wheel_position_pid
         )
 
     @override

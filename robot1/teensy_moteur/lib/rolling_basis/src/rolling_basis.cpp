@@ -10,13 +10,12 @@
 #include <util/atomic.h>
 #include <cmath>
 
-#define MIN_PWM_LINEAR 30
-#define MIN_PWM_ANGULAR 60
+#define MIN_PWM_WHEEL 30
 
 #define MAX_PWM 240
 
-#define POSITION_MAX_LINEAR_PWM 240
-#define POSITION_MAX_ANGULAR_PWM 240
+#define POSITION_MAX_LINEAR_STEP_CM 0.8
+#define POSITION_MAX_ANGULAR_STEP_CM 0.8
 
 double normalizeAngle(double theta) {
     // shift by +PI, take modulo 2*PI, remap to [0,2*PI)
@@ -55,13 +54,17 @@ Rolling_Basis::Rolling_Basis(unsigned short encoder_resolution,
                              double left_wheel_diameter,
                              double right_wheel_diameter,
                              const PID& linear_position_pid,
-                             const PID& angular_position_pid)
+                             const PID& angular_position_pid,
+                             const PID& left_wheel_position_pid,
+                             const PID& right_wheel_position_pid)
     : encoder_resolution(encoder_resolution),
       center_distance(center_distance),
       left_wheel_diameter(left_wheel_diameter),
       right_wheel_diameter(right_wheel_diameter),
       linear_position_pid(linear_position_pid),
-      angular_position_pid(angular_position_pid) {}
+      angular_position_pid(angular_position_pid),
+      left_wheel_position_pid(left_wheel_position_pid),
+      right_wheel_position_pid(right_wheel_position_pid) {}
 
 // Methods
 // Inits function
@@ -114,6 +117,10 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
     this->last_angular_error = 0.0;
     this->last_linear_correction = 0.0;
     this->last_angular_correction = 0.0;
+    this->last_left_wheel_error = 0.0;
+    this->last_right_wheel_error = 0.0;
+    this->left_wheel_target_cm = 0.0;
+    this->right_wheel_target_cm = 0.0;
     this->last_odometrie_time = micros();
     if (this->right_motor != nullptr) {
         this->right_motor->ticks = 0L;
@@ -131,6 +138,8 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
     }
     this->linear_position_pid.reset();
     this->angular_position_pid.reset();
+    this->left_wheel_position_pid.reset();
+    this->right_wheel_position_pid.reset();
     this->target_pose = Point(x, y, theta);
 }
 
@@ -171,7 +180,8 @@ void Rolling_Basis::odometrie_handle() {
 /**
  * @brief Handle the correction computation
  *
- * Compute the linear and angular position error then directly command motors.
+ * Compute the linear/angular position error, update wheel position targets,
+ * then let each wheel PID command its motor.
  */
 void Rolling_Basis::handle() {
     double dx = this->target_pose.x - this->X;
@@ -181,44 +191,43 @@ void Rolling_Basis::handle() {
     double linear_error = cos_th * dx + sin_th * dy;
     double angular_error = normalizeAngle(this->target_pose.theta - this->THETA);
 
-    double linear_cmd = this->linear_position_pid.compute(linear_error);
-    double angular_cmd = this->angular_position_pid.compute(angular_error);
+    double linear_step = this->linear_position_pid.compute(linear_error);
+    double angular_step = this->angular_position_pid.compute(angular_error);
 
-    linear_cmd =
-        constrain(linear_cmd, -POSITION_MAX_LINEAR_PWM, POSITION_MAX_LINEAR_PWM);
-    angular_cmd = constrain(angular_cmd, -POSITION_MAX_ANGULAR_PWM,
-                            POSITION_MAX_ANGULAR_PWM);
+    linear_step = constrain(linear_step, -POSITION_MAX_LINEAR_STEP_CM,
+                            POSITION_MAX_LINEAR_STEP_CM);
+    angular_step = constrain(angular_step, -POSITION_MAX_ANGULAR_STEP_CM,
+                             POSITION_MAX_ANGULAR_STEP_CM);
 
-    if (linear_cmd == 0.0 && angular_cmd == 0.0) {
-        this->right_motor->set_motor(0);
-        this->left_motor->set_motor(0);
-        this->last_linear_error = linear_error;
-        this->last_angular_error = angular_error;
-        this->last_linear_correction = 0.0;
-        this->last_angular_correction = 0.0;
-        return;
+    this->left_wheel_target_cm += linear_step - angular_step;
+    this->right_wheel_target_cm += linear_step + angular_step;
+
+    double left_distance_cm =
+        static_cast<double>(this->left_motor->ticks) * this->left_wheel_unit_tick_cm();
+    double right_distance_cm =
+        static_cast<double>(this->right_motor->ticks) * this->right_wheel_unit_tick_cm();
+    double left_wheel_error = this->left_wheel_target_cm - left_distance_cm;
+    double right_wheel_error = this->right_wheel_target_cm - right_distance_cm;
+
+    double left_pwm = this->left_wheel_position_pid.compute(left_wheel_error);
+    double right_pwm = this->right_wheel_position_pid.compute(right_wheel_error);
+
+    if (fabs(left_pwm) > 0.0 && fabs(left_pwm) < MIN_PWM_WHEEL) {
+        left_pwm = copysign(MIN_PWM_WHEEL, left_pwm);
+    }
+    if (fabs(right_pwm) > 0.0 && fabs(right_pwm) < MIN_PWM_WHEEL) {
+        right_pwm = copysign(MIN_PWM_WHEEL, right_pwm);
     }
 
-    if (fabs(linear_cmd) > 0.0 && fabs(linear_cmd) < MIN_PWM_LINEAR) {
-        linear_cmd = copysign(MIN_PWM_LINEAR, linear_cmd);
-    }
-    if (fabs(angular_cmd) > 0.0 && fabs(angular_cmd) < MIN_PWM_ANGULAR) {
-        angular_cmd = copysign(MIN_PWM_ANGULAR, angular_cmd);
-    }
-
-    linear_cmd = constrain(linear_cmd, -MAX_PWM, MAX_PWM);
-    angular_cmd = constrain(angular_cmd, -MAX_PWM, MAX_PWM);
+    left_pwm = constrain(left_pwm, -MAX_PWM, MAX_PWM);
+    right_pwm = constrain(right_pwm, -MAX_PWM, MAX_PWM);
 
     this->last_linear_error = linear_error;
     this->last_angular_error = angular_error;
-    this->last_linear_correction = linear_cmd;
-    this->last_angular_correction = angular_cmd;
-
-    double right_pwm = linear_cmd + angular_cmd;
-    double left_pwm = linear_cmd - angular_cmd;
-
-    right_pwm = constrain(right_pwm, -MAX_PWM, MAX_PWM);
-    left_pwm = constrain(left_pwm, -MAX_PWM, MAX_PWM);
+    this->last_linear_correction = linear_step;
+    this->last_angular_correction = angular_step;
+    this->last_left_wheel_error = left_wheel_error;
+    this->last_right_wheel_error = right_wheel_error;
 
     this->right_motor->set_motor(right_pwm);
     this->left_motor->set_motor(left_pwm);

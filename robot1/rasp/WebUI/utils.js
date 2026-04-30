@@ -158,6 +158,16 @@ function button_click_effect(button, server) {
         type: "angular_position",
         data: { kp: kp, ki: ki, kd: kd },
       });
+    } else if (button.id.includes("left_wheel")) {
+      server.send("ui", "pid update", {
+        type: "left_wheel_position",
+        data: { kp: kp, ki: ki, kd: kd },
+      });
+    } else if (button.id.includes("right_wheel")) {
+      server.send("ui", "pid update", {
+        type: "right_wheel_position",
+        data: { kp: kp, ki: ki, kd: kd },
+      });
     }
   }
   if (button.id.includes("send_action")) {

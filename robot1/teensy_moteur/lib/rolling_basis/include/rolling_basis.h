@@ -25,7 +25,9 @@ class Rolling_Basis {
                   double left_wheel_diameter,
                   double right_wheel_diameter,
                   const PID& linear_position_pid,
-                  const PID& angular_position_pid);
+                  const PID& angular_position_pid,
+                  const PID& left_wheel_position_pid,
+                  const PID& right_wheel_position_pid);
 
     // Rolling basis params
     unsigned short encoder_resolution;
@@ -36,6 +38,8 @@ class Rolling_Basis {
     // PID controllers
     PID linear_position_pid;
     PID angular_position_pid;
+    PID left_wheel_position_pid;
+    PID right_wheel_position_pid;
     Point target_pose;
 
     // Rolling basis's params
@@ -75,6 +79,10 @@ class Rolling_Basis {
     volatile double last_angular_error = 0.0;
     volatile double last_linear_correction = 0.0;
     volatile double last_angular_correction = 0.0;
+    volatile double last_left_wheel_error = 0.0;
+    volatile double last_right_wheel_error = 0.0;
+    volatile double left_wheel_target_cm = 0.0;
+    volatile double right_wheel_target_cm = 0.0;
 
     /**
      * @brief Destructor of Rolling Basis class

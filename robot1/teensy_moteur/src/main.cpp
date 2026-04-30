@@ -15,15 +15,27 @@
 PID linear_position_pid(KP_LINEAR_POSITION,
                         KI_LINEAR_POSITION,
                         KD_LINEAR_POSITION,
-                        -POSITION_MAX_LINEAR_PWM,
-                        POSITION_MAX_LINEAR_PWM,
+                        -POSITION_MAX_LINEAR_STEP_CM,
+                        POSITION_MAX_LINEAR_STEP_CM,
                         POSITION_LINEAR_DEADBAND);
 PID angular_position_pid(KP_ANGULAR_POSITION,
                          KI_ANGULAR_POSITION,
                          KD_ANGULAR_POSITION,
-                         -POSITION_MAX_ANGULAR_PWM,
-                         POSITION_MAX_ANGULAR_PWM,
+                         -POSITION_MAX_ANGULAR_STEP_CM,
+                         POSITION_MAX_ANGULAR_STEP_CM,
                          POSITION_ANGULAR_DEADBAND);
+PID left_wheel_position_pid(KP_LEFT_WHEEL_POSITION,
+                            KI_LEFT_WHEEL_POSITION,
+                            KD_LEFT_WHEEL_POSITION,
+                            -WHEEL_POSITION_MAX_PWM,
+                            WHEEL_POSITION_MAX_PWM,
+                            WHEEL_POSITION_DEADBAND_CM);
+PID right_wheel_position_pid(KP_RIGHT_WHEEL_POSITION,
+                             KI_RIGHT_WHEEL_POSITION,
+                             KD_RIGHT_WHEEL_POSITION,
+                             -WHEEL_POSITION_MAX_PWM,
+                             WHEEL_POSITION_MAX_PWM,
+                             WHEEL_POSITION_DEADBAND_CM);
 
 // b. Instanciate the Rolling Basis object
 Rolling_Basis* rolling_basis_ptr = new Rolling_Basis(ENCODER_RESOLUTION,
@@ -31,7 +43,9 @@ Rolling_Basis* rolling_basis_ptr = new Rolling_Basis(ENCODER_RESOLUTION,
                                                      LEFT_WHEEL_DIAMETER,
                                                      RIGHT_WHEEL_DIAMETER,
                                                      linear_position_pid,
-                                                     angular_position_pid);
+                                                     angular_position_pid,
+                                                     left_wheel_position_pid,
+                                                     right_wheel_position_pid);
 
 // 2. Instanciate the Communication object
 Com* com;
@@ -65,6 +79,12 @@ void set_pid(byte* msg, byte size) {
         case ANGULAR_POSITION_PID_ID:
             pid = &rolling_basis_ptr->angular_position_pid;
             break;
+        case LEFT_WHEEL_POSITION_PID_ID:
+            pid = &rolling_basis_ptr->left_wheel_position_pid;
+            break;
+        case RIGHT_WHEEL_POSITION_PID_ID:
+            pid = &rolling_basis_ptr->right_wheel_position_pid;
+            break;
         default:
             is_valid_pid = false;
             break;
@@ -88,6 +108,10 @@ void set_odometrie(byte* msg, byte size) {
         rolling_basis_ptr->last_angular_error = 0.0;
         rolling_basis_ptr->last_linear_correction = 0.0;
         rolling_basis_ptr->last_angular_correction = 0.0;
+        rolling_basis_ptr->last_left_wheel_error = 0.0;
+        rolling_basis_ptr->last_right_wheel_error = 0.0;
+        rolling_basis_ptr->left_wheel_target_cm = 0.0;
+        rolling_basis_ptr->right_wheel_target_cm = 0.0;
         rolling_basis_ptr->target_pose =
             Point(odometrie->x, odometrie->y, odometrie->theta);
         rolling_basis_ptr->right_motor->ticks = 0L;
@@ -100,6 +124,8 @@ void set_odometrie(byte* msg, byte size) {
         rolling_basis_ptr->left_motor->distance = 0.0;
         rolling_basis_ptr->linear_position_pid.reset();
         rolling_basis_ptr->angular_position_pid.reset();
+        rolling_basis_ptr->left_wheel_position_pid.reset();
+        rolling_basis_ptr->right_wheel_position_pid.reset();
     }
 }
 
@@ -176,6 +202,8 @@ void loop() {
         double err_ang = 0.0;
         double corr_lin = 0.0;
         double corr_ang = 0.0;
+        double left_wheel_error = 0.0;
+        double right_wheel_error = 0.0;
         long right_delta_ticks = 0;
         long left_delta_ticks = 0;
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
@@ -189,18 +217,23 @@ void loop() {
             err_ang = rolling_basis_ptr->last_angular_error;
             corr_lin = rolling_basis_ptr->last_linear_correction;
             corr_ang = rolling_basis_ptr->last_angular_correction;
+            left_wheel_error = rolling_basis_ptr->last_left_wheel_error;
+            right_wheel_error = rolling_basis_ptr->last_right_wheel_error;
         }
         long ev_lin = static_cast<long>(err_lin * 100.0);
         long ev_ang = static_cast<long>(err_ang * 100.0);
-        int16_t cv_lin = static_cast<int16_t>(corr_lin);
-        int16_t cv_ang = static_cast<int16_t>(corr_ang);
+        long cv_lin = static_cast<long>(corr_lin * 100.0);
+        long cv_ang = static_cast<long>(corr_ang * 100.0);
+        long ew_left = static_cast<long>(left_wheel_error * 100.0);
+        long ew_right = static_cast<long>(right_wheel_error * 100.0);
 
-        char msg[120];
+        char msg[160];
         snprintf(
             msg, sizeof(msg),
-            "RB e=%ld/%ld c=%d/%d pwm=%d/%d dt=%ld/%ld ticks=%ld/%ld",
-            ev_lin, ev_ang, cv_lin, cv_ang, left_pwm, right_pwm,
-            left_delta_ticks, right_delta_ticks, left_ticks, right_ticks);
+            "RB e=%ld/%ld step=%ld/%ld ew=%ld/%ld pwm=%d/%d dt=%ld/%ld ticks=%ld/%ld",
+            ev_lin, ev_ang, cv_lin, cv_ang, ew_left, ew_right, left_pwm,
+            right_pwm, left_delta_ticks, right_delta_ticks, left_ticks,
+            right_ticks);
         com->print(msg);
         last_pwm_log_ms = now_ms;
     }

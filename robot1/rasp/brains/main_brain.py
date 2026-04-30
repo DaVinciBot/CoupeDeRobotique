@@ -324,6 +324,18 @@ class MainBrain(Brain):
                     ki=self.pid_ki,
                     kd=self.pid_kd,
                 )
+            elif self.pid_type in {"left_wheel", "left_wheel_position"}:
+                rolling_basis.set_left_wheel_position_pid(
+                    kp=self.pid_kp,
+                    ki=self.pid_ki,
+                    kd=self.pid_kd,
+                )
+            elif self.pid_type in {"right_wheel", "right_wheel_position"}:
+                rolling_basis.set_right_wheel_position_pid(
+                    kp=self.pid_kp,
+                    ki=self.pid_ki,
+                    kd=self.pid_kd,
+                )
             self.should_update_pid = False
 
         # Update shared state from the context

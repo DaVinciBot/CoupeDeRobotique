@@ -13,12 +13,18 @@ class PidID(Enum):
     Attributes:
         LINEAR_POSITION: Identifier for linear position PID control.
         ANGULAR_POSITION: Identifier for angular position PID control.
+        LEFT_WHEEL_POSITION: Identifier for left wheel position PID control.
+        RIGHT_WHEEL_POSITION: Identifier for right wheel position PID control.
     """
 
     LINEAR_POSITION = 0
     """Identifier for linear position PID control."""
     ANGULAR_POSITION = 1
     """Identifier for angular position PID control."""
+    LEFT_WHEEL_POSITION = 2
+    """Identifier for left wheel position PID control."""
+    RIGHT_WHEEL_POSITION = 3
+    """Identifier for right wheel position PID control."""
 
 
 @dataclass
