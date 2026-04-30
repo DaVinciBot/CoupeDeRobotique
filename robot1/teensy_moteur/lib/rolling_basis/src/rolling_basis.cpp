@@ -132,17 +132,29 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
     this->last_angular_error = 0.0;
     this->last_linear_correction = 0.0;
     this->last_angular_correction = 0.0;
+    this->last_position_linear_error = 0.0;
+    this->last_position_angular_error = 0.0;
+    this->last_target_linear_velocity = 0.0;
+    this->last_target_angular_velocity = 0.0;
     this->last_odometrie_time = micros();
     if (this->right_motor != nullptr) {
         this->right_motor->ticks = 0L;
         this->right_motor->last_ticks = 0L;
+        this->right_motor->last_delta_ticks = 0L;
         this->right_motor->distance = 0.0;
+        this->right_motor->velocity_cm_s = 0.0;
+        this->right_motor->filtered_velocity_cm_s = 0.0;
+        this->right_motor->last_tick_time_us = 0UL;
         this->right_motor->set_motor(0);
     }
     if (this->left_motor != nullptr) {
         this->left_motor->ticks = 0L;
         this->left_motor->last_ticks = 0L;
+        this->left_motor->last_delta_ticks = 0L;
         this->left_motor->distance = 0.0;
+        this->left_motor->velocity_cm_s = 0.0;
+        this->left_motor->filtered_velocity_cm_s = 0.0;
+        this->left_motor->last_tick_time_us = 0UL;
         this->left_motor->set_motor(0);
     }
     this->linear_velocity_pid.reset();
@@ -223,6 +235,8 @@ void Rolling_Basis::odometrie_handle() {
  */
 void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
     VelocityCommand velocity_cmd = target_velocity;
+    this->last_position_linear_error = 0.0;
+    this->last_position_angular_error = 0.0;
     if (this->control_mode == ControlMode::POSITION) {
         double dx = this->target_pose.x - this->X;
         double dy = this->target_pose.y - this->Y;
@@ -231,6 +245,8 @@ void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
         double linear_error = cos_th * dx + sin_th * dy;
         double angular_error =
             normalizeAngle(this->target_pose.theta - this->THETA);
+        this->last_position_linear_error = linear_error;
+        this->last_position_angular_error = angular_error;
 
         double linear_target = this->linear_position_pid.compute(linear_error);
         double angular_target =
@@ -247,6 +263,8 @@ void Rolling_Basis::handle(const VelocityCommand& target_velocity) {
             constrain(velocity_cmd.angular, -POSITION_MAX_ANGULAR_RAD_S,
                       POSITION_MAX_ANGULAR_RAD_S);
     }
+    this->last_target_linear_velocity = velocity_cmd.linear;
+    this->last_target_angular_velocity = velocity_cmd.angular;
 
     bool near_zero_cmd = fabs(velocity_cmd.linear) < LINEAR_VELOCITY_ZERO_EPS &&
                          fabs(velocity_cmd.angular) < ANGULAR_VELOCITY_ZERO_EPS;

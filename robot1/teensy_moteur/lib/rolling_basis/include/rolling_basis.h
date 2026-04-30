@@ -82,6 +82,10 @@ class Rolling_Basis {
     volatile double last_angular_error = 0.0;
     volatile double last_linear_correction = 0.0;
     volatile double last_angular_correction = 0.0;
+    volatile double last_position_linear_error = 0.0;
+    volatile double last_position_angular_error = 0.0;
+    volatile double last_target_linear_velocity = 0.0;
+    volatile double last_target_angular_velocity = 0.0;
 
     /**
      * @brief Destructor of Rolling Basis class

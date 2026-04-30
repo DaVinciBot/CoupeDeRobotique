@@ -125,9 +125,31 @@ void set_odometrie(byte* msg, byte size) {
         rolling_basis_ptr->linear_velocity = 0.0;
         rolling_basis_ptr->angular_velocity = 0.0;
         rolling_basis_ptr->last_odometrie_time = now;
+        rolling_basis_ptr->last_linear_error = 0.0;
+        rolling_basis_ptr->last_angular_error = 0.0;
+        rolling_basis_ptr->last_linear_correction = 0.0;
+        rolling_basis_ptr->last_angular_correction = 0.0;
+        rolling_basis_ptr->last_position_linear_error = 0.0;
+        rolling_basis_ptr->last_position_angular_error = 0.0;
+        rolling_basis_ptr->last_target_linear_velocity = 0.0;
+        rolling_basis_ptr->last_target_angular_velocity = 0.0;
         rolling_basis_ptr->target_pose =
             Point(odometrie->x, odometrie->y, odometrie->theta);
         rolling_basis_ptr->target_feedforward = VelocityCommand();
+        rolling_basis_ptr->right_motor->ticks = 0L;
+        rolling_basis_ptr->right_motor->last_ticks = 0L;
+        rolling_basis_ptr->right_motor->last_delta_ticks = 0L;
+        rolling_basis_ptr->right_motor->distance = 0.0;
+        rolling_basis_ptr->right_motor->velocity_cm_s = 0.0;
+        rolling_basis_ptr->right_motor->filtered_velocity_cm_s = 0.0;
+        rolling_basis_ptr->right_motor->last_tick_time_us = 0UL;
+        rolling_basis_ptr->left_motor->ticks = 0L;
+        rolling_basis_ptr->left_motor->last_ticks = 0L;
+        rolling_basis_ptr->left_motor->last_delta_ticks = 0L;
+        rolling_basis_ptr->left_motor->distance = 0.0;
+        rolling_basis_ptr->left_motor->velocity_cm_s = 0.0;
+        rolling_basis_ptr->left_motor->filtered_velocity_cm_s = 0.0;
+        rolling_basis_ptr->left_motor->last_tick_time_us = 0UL;
         rolling_basis_ptr->linear_velocity_pid.reset();
         rolling_basis_ptr->angular_velocity_pid.reset();
         rolling_basis_ptr->linear_position_pid.reset();
@@ -232,41 +254,61 @@ void loop() {
         long left_ticks = 0;
         double target_lin = 0.0;
         double target_ang = 0.0;
+        double cmd_lin = 0.0;
+        double cmd_ang = 0.0;
         double v_lin = 0.0;
         double v_ang = 0.0;
+        double pos_err_lin = 0.0;
+        double pos_err_ang = 0.0;
         double err_lin = 0.0;
         double err_ang = 0.0;
         double corr_lin = 0.0;
         double corr_ang = 0.0;
+        long right_delta_ticks = 0;
+        long left_delta_ticks = 0;
+        uint8_t control_mode = 0;
         ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
             right_pwm = rolling_basis_ptr->right_motor->last_pwm;
             left_pwm = rolling_basis_ptr->left_motor->last_pwm;
             right_ticks = rolling_basis_ptr->right_motor->ticks;
             left_ticks = rolling_basis_ptr->left_motor->ticks;
-            target_lin = target_velocity.linear;
-            target_ang = target_velocity.angular;
+            right_delta_ticks = rolling_basis_ptr->right_motor->last_delta_ticks;
+            left_delta_ticks = rolling_basis_ptr->left_motor->last_delta_ticks;
+            target_lin = rolling_basis_ptr->target_feedforward.linear;
+            target_ang = rolling_basis_ptr->target_feedforward.angular;
+            cmd_lin = rolling_basis_ptr->last_target_linear_velocity;
+            cmd_ang = rolling_basis_ptr->last_target_angular_velocity;
             v_lin = rolling_basis_ptr->linear_velocity;
             v_ang = rolling_basis_ptr->angular_velocity;
+            pos_err_lin = rolling_basis_ptr->last_position_linear_error;
+            pos_err_ang = rolling_basis_ptr->last_position_angular_error;
             err_lin = rolling_basis_ptr->last_linear_error;
             err_ang = rolling_basis_ptr->last_angular_error;
             corr_lin = rolling_basis_ptr->last_linear_correction;
             corr_ang = rolling_basis_ptr->last_angular_correction;
+            control_mode = static_cast<uint8_t>(rolling_basis_ptr->control_mode);
         }
         long tv_lin = static_cast<long>(target_lin * 100.0);
         long tv_ang = static_cast<long>(target_ang * 100.0);
+        long cmdv_lin = static_cast<long>(cmd_lin * 100.0);
+        long cmdv_ang = static_cast<long>(cmd_ang * 100.0);
         long mv_lin = static_cast<long>(v_lin * 100.0);
         long mv_ang = static_cast<long>(v_ang * 100.0);
+        long pe_lin = static_cast<long>(pos_err_lin * 100.0);
+        long pe_ang = static_cast<long>(pos_err_ang * 100.0);
         long ev_lin = static_cast<long>(err_lin * 100.0);
         long ev_ang = static_cast<long>(err_ang * 100.0);
         int16_t cv_lin = static_cast<int16_t>(corr_lin);
         int16_t cv_ang = static_cast<int16_t>(corr_ang);
 
-        char msg[96];
+        char msg[180];
         snprintf(
             msg, sizeof(msg),
-            "RB tv=%ld/%ld v=%ld/%ld e=%ld/%ld c=%d/%d pwm=%d/%d ticks=%ld/%ld",
-            tv_lin, tv_ang, mv_lin, mv_ang, ev_lin, ev_ang, cv_lin, cv_ang,
-            left_pwm, right_pwm, left_ticks, right_ticks);
+            "RB m=%u ff=%ld/%ld cmd=%ld/%ld v=%ld/%ld pe=%ld/%ld ve=%ld/%ld c=%d/%d pwm=%d/%d dt=%ld/%ld ticks=%ld/%ld",
+            control_mode, tv_lin, tv_ang, cmdv_lin, cmdv_ang, mv_lin, mv_ang,
+            pe_lin, pe_ang, ev_lin, ev_ang, cv_lin, cv_ang, left_pwm,
+            right_pwm, left_delta_ticks, right_delta_ticks, left_ticks,
+            right_ticks);
         com->print(msg);
         last_pwm_log_ms = now_ms;
     }

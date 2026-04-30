@@ -39,6 +39,7 @@ Motor::Motor(byte pin_forward,
 
     this->ticks = 0;
     this->last_ticks = 0;
+    this->last_delta_ticks = 0;
     this->velocity_cm_s = 0.0;
     this->filtered_velocity_cm_s = 0.0;
     this->last_tick_time_us = 0;
@@ -88,6 +89,7 @@ void Motor::set_motor(int pwmVal) {
 void Motor::handle_odometrie() {
     // Update Ticks
     long delta_ticks = this->ticks - this->last_ticks;
+    this->last_delta_ticks = delta_ticks;
     this->last_ticks = this->ticks;
 
     // Compute new distance travelled
