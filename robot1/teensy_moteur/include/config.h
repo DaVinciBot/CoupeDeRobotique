@@ -28,8 +28,8 @@
 
 // Encoder
 #define ENCODER_RESOLUTION 1024
-#define ENTRAXE 29.5
-#define LEFT_WHEEL_DIAMETER 5.9
+#define ENTRAXE 30.9
+#define LEFT_WHEEL_DIAMETER 6.1
 #define RIGHT_WHEEL_DIAMETER 5.9
 
 #define M_S_TO_CM_S 100.0
