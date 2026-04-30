@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import asyncio
-import time
 import traceback
 from math import pi
 from typing import TYPE_CHECKING, Any
@@ -177,27 +176,24 @@ class MainBrain(Brain):
                 )
 
             # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
-            init_stage = "jack plug wait"
-            if (
-                not CONFIG.LIDAR_DUMMY
-                or not CONFIG.ROLLING_BASIS_DUMMY
-                or not CONFIG.ACTUATORS_DUMMY
-            ):
-                while not self.jack_plugged:  # wait until cable is plugged
-                    time.sleep(0.1)
-            else:
-                time.sleep(2)
-
-            init_stage = "banner blocking"
-            actuators.block_banner()  # engage the banner blocker
+            # init_stage = "jack plug wait"
+            # if (
+            #     not CONFIG.LIDAR_DUMMY
+            #     or not CONFIG.ROLLING_BASIS_DUMMY
+            #     or not CONFIG.ACTUATORS_DUMMY
+            # ):
+            #     while not self.jack_plugged:  # wait until cable is plugged
+            #         time.sleep(0.1)
+            # else:
+            #     time.sleep(2)
 
             init_stage = "rolling basis reinitialization"
             rolling_basis.set_odometrie(self.rolling_basis_odometrie)
             rolling_basis.initialize_pids()
 
-            init_stage = "jack trigger wait"
-            while not self.jack_triggered:  # wait for the trigger event
-                time.sleep(0.1)
+            # init_stage = "jack trigger wait"
+            # while not self.jack_triggered:  # wait for the trigger event
+            #     time.sleep(0.1)
 
             # --- 3) Build the strategy --- #
             init_stage = "strategy creation"
@@ -627,12 +623,12 @@ class MainBrain(Brain):
         enemy_position = OrientedPoint(150, 200, -pi / 2)
         if self.arena.team_color == TeamColor.YELLOW:
             self.logger.info("[BRAIN:Init] Starting as YELLOW team")
-            start_position = OrientedPoint(122.5, 21, -pi / 2)
-            enemy_position = OrientedPoint(177.5, 21, -pi / 2)
+            start_position = OrientedPoint(30, 180, -pi / 2)
+            enemy_position = OrientedPoint(270, 180, -pi / 2)
         elif self.arena.team_color == TeamColor.BLUE:
             self.logger.info("[BRAIN:Init] Starting as BLUE team")
-            start_position = OrientedPoint(177.5, 21, -pi / 2)
-            enemy_position = OrientedPoint(122.5, 21, -pi / 2)
+            start_position = OrientedPoint(270, 180, -pi / 2)
+            enemy_position = OrientedPoint(30, 180, -pi / 2)
         else:
             start_position = OrientedPoint(0, 0, 0)
             enemy_position = OrientedPoint(150, 200, -pi / 2)
