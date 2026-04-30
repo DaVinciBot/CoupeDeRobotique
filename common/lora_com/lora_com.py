@@ -32,6 +32,50 @@ class LoraCom:
             timeout=timeout,
         )
         self.logger = logger
+        self.test_lora()
+
+    def test_lora(self) -> bool:
+        results = {"port_open": self.ser.is_open}
+
+        self.logger.info(f"[LoraCom] [1/4] Port open: {results['port_open']}")
+
+        try:
+            results["port_readable"] = self.ser.readable()
+            results["port_writable"] = self.ser.writable()
+        except SerialException as exc:
+            self.logger.error(f"[LoraCom] [2/4] Port R/W check failed: {exc}")
+            results["port_readable"] = False
+            results["port_writable"] = False
+        self.logger.info(
+            f"[LoraCom] [2/4] Readable: {results['port_readable']} | Writable: {results['port_writable']}"
+        )
+
+        PING = b"\xAA\x55\x50\x49\x4E\x47"
+        try:
+            written = self.ser.write(PING)
+            self.ser.flush()
+            results["send_ok"] = written == len(PING)
+        except (SerialException, OSError) as exc:
+            self.logger.error(f"[LoraCom] [3/4] Send failed: {exc}")
+            results["send_ok"] = False
+        self.logger.info(f"[LoraCom] [3/4] Send OK: {results['send_ok']}")
+
+        results["config_ok"] = (
+                self.ser.baudrate == 9600
+                and self.ser.bytesize == serial.EIGHTBITS
+                and self.ser.parity == serial.PARITY_NONE
+                and self.ser.stopbits == serial.STOPBITS_ONE
+        )
+        self.logger.info(
+            f"[LoraCom] [4/4] Config OK: {results['config_ok']} "
+            f"(baudrate={self.ser.baudrate}, bytesize={self.ser.bytesize}, "
+            f"parity={self.ser.parity}, stopbits={self.ser.stopbits})"
+        )
+
+        all_ok = all(results.values())
+        self.logger.info(f"[LoraCom] Diagnostic: {results}")
+        self.logger.info(f"[LoraCom] Overall: {'PASS !' if all_ok else 'FAIL :('}")
+        return all_ok
 
     def send(self, data: bytes) -> bool:
         """Send data over the serial link.
