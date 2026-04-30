@@ -66,14 +66,16 @@ Point Rolling_Basis::get_current_position() {
  */
 Rolling_Basis::Rolling_Basis(unsigned short encoder_resolution,
                              double center_distance,
-                             double wheel_diameter,
+                             double left_wheel_diameter,
+                             double right_wheel_diameter,
                              const PID& linear_velocity_pid,
                              const PID& angular_velocity_pid,
                              const PID& linear_position_pid,
                              const PID& angular_position_pid)
     : encoder_resolution(encoder_resolution),
       center_distance(center_distance),
-      wheel_diameter(wheel_diameter),
+      left_wheel_diameter(left_wheel_diameter),
+      right_wheel_diameter(right_wheel_diameter),
       linear_velocity_pid(linear_velocity_pid),
       angular_velocity_pid(angular_velocity_pid),
       linear_position_pid(linear_position_pid),
@@ -92,7 +94,7 @@ void Rolling_Basis::define_right_motor(byte enca,
                                        byte in1,
                                        byte max_pwm) {
     this->right_motor = new Motor(in1, in2, pwm, enca, encb,
-                                  this->wheel_unit_tick_cm(), max_pwm);
+                                  this->right_wheel_unit_tick_cm(), max_pwm);
 }
 
 /**
@@ -106,7 +108,7 @@ void Rolling_Basis::define_left_motor(byte enca,
                                       byte in1,
                                       byte max_pwm) {
     this->left_motor = new Motor(in1, in2, pwm, enca, encb,
-                                 this->wheel_unit_tick_cm(), max_pwm);
+                                 this->left_wheel_unit_tick_cm(), max_pwm);
 }
 
 /**

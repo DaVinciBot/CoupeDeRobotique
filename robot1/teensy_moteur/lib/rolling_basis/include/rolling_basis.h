@@ -25,7 +25,8 @@ class Rolling_Basis {
      */
     Rolling_Basis(unsigned short encoder_resolution,
                   double center_distance,
-                  double wheel_diameter,
+                  double left_wheel_diameter,
+                  double right_wheel_diameter,
                   const PID& linear_velocity_pid,
                   const PID& angular_velocity_pid,
                   const PID& linear_position_pid,
@@ -34,7 +35,8 @@ class Rolling_Basis {
     // Rolling basis params
     unsigned short encoder_resolution;
     double center_distance;
-    double wheel_diameter;
+    double left_wheel_diameter;
+    double right_wheel_diameter;
 
     // PID controllers
     PID linear_velocity_pid;
@@ -53,9 +55,17 @@ class Rolling_Basis {
 
     // Rolling basis's params
     inline double radius() { return this->center_distance / 2.0; };
-    inline double wheel_perimeter() { return this->wheel_diameter * PI; };
-    inline double wheel_unit_tick_cm() {
-        return this->wheel_perimeter() / this->encoder_resolution;
+    inline double left_wheel_perimeter() {
+        return this->left_wheel_diameter * PI;
+    };
+    inline double right_wheel_perimeter() {
+        return this->right_wheel_diameter * PI;
+    };
+    inline double left_wheel_unit_tick_cm() {
+        return this->left_wheel_perimeter() / this->encoder_resolution;
+    };
+    inline double right_wheel_unit_tick_cm() {
+        return this->right_wheel_perimeter() / this->encoder_resolution;
     };
 
     // Properties
