@@ -2,7 +2,7 @@
 #include <math.h>
 #include "config.h"
 
-#define ANGULAR_CALIBRATION_FACTOR 0.75f  // Robot tourne trop (~120° au lieu de 90°), donc on multiplie par 0.75
+#define ANGULAR_CALIBRATION_FACTOR 0.9f  // Robot tourne trop (~120° au lieu de 90°), donc on multiplie par 0.75
 #define POSITION_TOLERANCE_MM 1.0f  // 1 mm
 #define ANGLE_TOLERANCE_RAD 0.01f   // env. 0.57°
 
@@ -17,7 +17,7 @@ RollingBasis::RollingBasis(Motor* leftMotor,
       _wheelBaseMm(wheelBaseMm),
       _currentPose(initialPosition)
 {
-    _linearSpeed = 23.0f; //ne sert a rien a part pour déterminer le temps qu'il met pour avancer ?? dcp c un peu une valeur magique
+    _linearSpeed = 45.0f; //ne sert a rien a part pour déterminer le temps qu'il met pour avancer ?? dcp c un peu une valeur magique
     _angularSpeed = 1.38f; // encore une valeur magique pour faire tourner le robot a une vitesse raisonnable (environ 1.38 rad/s correspond a 80 deg/s)
     _phase = Phase::Idle;
     _rotateDuration = 0.0f;
@@ -40,12 +40,8 @@ void RollingBasis::setCommand(const Point& target) {
                   target.x, target.y, target.theta, _currentPose.x, _currentPose.y, _currentPose.theta);
     
     // Restaurer les vitesses si elles ont été réinitialisées par stop()
-    if (_linearSpeed == 0.0f) {
-        _linearSpeed = 23.0f;
-    }
-    if (_angularSpeed == 0.0f) {
-        _angularSpeed = 1.38f;
-    }
+    _linearSpeed = 57.5f;
+    _angularSpeed = 1.38f;
     
     float dx = target.x - _currentPose.x;
     float dy = target.y - _currentPose.y;
@@ -59,7 +55,7 @@ void RollingBasis::setCommand(const Point& target) {
 
     // distance to travel
     float distance = sqrtf(dx * dx + dy * dy);
-    _forwardDuration = distance / _linearSpeed;
+    _forwardDuration = (distance < 1.0f) ? 0.0f : distance / _linearSpeed;
 
     // timestamps
     _startTime = micros();
@@ -113,9 +109,6 @@ void RollingBasis::update() {
             Serial.println("[RB] Forwarding done -> DONE phase");
         }
     }
-
-    _leftMotor->update();
-    _rightMotor->update();
 }
 
 float RollingBasis::_wrapToPi(float ang) const {
@@ -149,10 +142,9 @@ void RollingBasis::stop() {
     _leftMotor->setTargetSpeed(0);
     _rightMotor->setTargetSpeed(0);
     _phase = Phase::Idle;
-    _linearSpeed = 0.0f;
-    _angularSpeed = 0.0f;
     Serial.println("[RB:stop] RollingBasis STOPPED");
 }
+
 
 Point RollingBasis::getPose() const {
     return _currentPose;

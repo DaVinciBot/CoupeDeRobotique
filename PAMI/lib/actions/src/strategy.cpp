@@ -23,10 +23,9 @@ void Strategy::setPointTrajectory(const std::vector<Point>& points) {
     
     // Créer une action AtoB pour chaque point (avec calibration 0.4)
     for (const Point& p : points) {
-        Point calibrated = {p.x * 0.4f, p.y * 0.4f, p.theta};
-        _actions.push_back(new AtoB(_rb, calibrated));
-        Serial.printf("Strategy: Adding AtoB to point (%.1f, %.1f) - calibrated from (%.1f, %.1f)\n", 
-                      calibrated.x, calibrated.y, p.x, p.y);
+        _actions.push_back(new AtoB(_rb, p));  // coordonnées brutes
+        Serial.printf("Strategy: Added point (%.1f, %.1f) - calibrated from (%.1f, %.1f)\n", 
+                      p.x * 0.4f, p.y * 0.4f, p.x, p.y);
     }
     Serial.printf("Strategy: Trajectory set with %d points\n", _actions.size());
 }
@@ -41,21 +40,16 @@ void Strategy::creer_strategie(const std::vector<Point>& points) {
 
 // Ajoute un point à la stratégie (crée un AtoB pour ce point)
 void Strategy::ajoute_strategie(const Point& point) {
-    Point calibrated = {point.x * 0.4f, point.y * 0.4f, point.theta};
-    _actions.push_back(new AtoB(_rb, calibrated));
+    _actions.push_back(new AtoB(_rb, point));
     Serial.printf("Strategy: Added point (%.1f, %.1f) - calibrated from (%.1f, %.1f). Total actions: %d\n", 
-                  calibrated.x, calibrated.y, point.x, point.y, _actions.size());
+                  point.x * 0.4f, point.y * 0.4f, point.x, point.y, _actions.size());
 }
 
 // Update strategy + rolling basis movement
 void Strategy::strategie_update() {
-    // Update des moteurs d'abord
-    _rb->getLeftMotor()->update();
-    _rb->getRightMotor()->update();
-    
-    // Ensuite update la stratégie
     this->update();
 }
+
 
 void Strategy::start() {
     _currentActionIndex = 0;
@@ -87,20 +81,21 @@ void Strategy::update() {
     currentAction->update();
     
     if (currentAction->isFinished()) {
-        Serial.printf("[Strategy] ✓ Action %d FINISHED!\n", _currentActionIndex);
-        Serial.printf("[Strategy] RB isMoving before stop: %d\n", _rb->isMoving());
-        currentAction->stop();
-        Serial.printf("[Strategy] RB isMoving after stop: %d\n", _rb->isMoving());
-        _currentActionIndex++;
-        
-        if (_currentActionIndex < _actions.size()) {
-            _transitionDelay = millis();
-            _waitingBetweenActions = true;
-            Serial.printf("[Strategy] ⏸ Waiting before action %d...\n", _currentActionIndex);
-        } else {
-            Serial.println("[Strategy] ✓✓ ALL ACTIONS FINISHED!");
-        }
+    Serial.printf("[Strategy] ✓ Action %d FINISHED!\n", _currentActionIndex);
+
+    // Ne pas appeler stop() ici : l'action est déjà finie naturellement
+    _currentActionIndex++;
+
+    if (_currentActionIndex < _actions.size()) {
+        _transitionDelay = millis();
+        _waitingBetweenActions = true;
+        Serial.printf("[Strategy] ⏸ Waiting before action %d...\n", _currentActionIndex);
+    } else {
+        Serial.println("[Strategy] ✓✓ ALL ACTIONS FINISHED!");
     }
+}
+
+
 }
 
 void Strategy::stop() {

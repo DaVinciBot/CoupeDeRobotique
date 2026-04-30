@@ -19,7 +19,7 @@ class AtoB : public Action {
     Point _target;
     unsigned long _startMs = 0;
     unsigned long _timeoutMs = 15000;  // Ms
-    float _arriveTolMm = 5.0f;
+    float _arriveTolMm = 20.0f;
     bool _finished = false;
 };
 
