@@ -4,6 +4,17 @@
 #include "config.h"
 #include "strategy.h"
 
+#if ENABLE_OTA
+#include "OTA.h"
+AsyncWebServer server(80);
+CustomOTA ota(OTA_WIFI_SSID,
+              OTA_WIFI_PASSWORD,
+              OTA_HOSTNAME,
+              OTA_FALLBACK_AP_SSID,
+              OTA_FALLBACK_AP_PASSWORD,
+              &server);
+#endif
+
 Motor* leftMotor = new Motor(LEFT_STEP_PIN,
                              LEFT_DIR_PIN,
                              LEFT_EN_PIN,
@@ -92,6 +103,10 @@ void setup() {
     delay(2000);
     Serial.println("\n--- DEMARRAGE ---");
 
+#if ENABLE_OTA
+    ota.begin();
+#endif
+
     strategy->addAction(new AtoB(rollingBasis, Point{100.0f, 0.0f, 0.0f}));
     strategy->addAction(new AtoB(rollingBasis, Point{100.0f, 0.0f, 1.5708f}));
     strategy->addAction(new AtoB(rollingBasis, Point{100.0f, 100.0f, 1.5708f}));
@@ -101,6 +116,10 @@ void setup() {
 }
 
 void loop() {
+#if ENABLE_OTA
+    ota.loop();
+#endif
+
     leftMotor->update();
     rightMotor->update();
 

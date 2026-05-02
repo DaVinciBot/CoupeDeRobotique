@@ -18,8 +18,8 @@
 #define RIGHT_STEPS_PER_REV 400
 
 #define PULSE_US 500
-#define WHEEL_DIAMETER_MM 62.0f
-#define WHEEL_BASE_MM 132.0f
+#define WHEEL_DIAMETER_MM 59.0f
+#define WHEEL_BASE_MM 140.0f
 
 #define MAX_LINEAR_SPEED_MM_PER_S 57.5f
 #define MAX_ANGULAR_SPEED_RAD_PER_S 1.38f
@@ -52,5 +52,12 @@
 // Development toggles
 #define ENABLE_OTA false
 #define ENABLE_LORA false
+
+// OTA Wi-Fi credentials
+#define OTA_WIFI_SSID "DVB"
+#define OTA_WIFI_PASSWORD "davincibot"
+#define OTA_HOSTNAME "pami"
+#define OTA_FALLBACK_AP_SSID "PAMI-OTA"
+#define OTA_FALLBACK_AP_PASSWORD "pami-ota"
 
 #endif
