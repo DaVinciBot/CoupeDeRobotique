@@ -10,12 +10,12 @@
  * @param size The size of the data array (number of bytes).
  * @return The computed 8-bit CRC checksum.
  */
-byte CRC::digest(byte* data, byte size) {
+byte CRC::digest(const byte* data, size_t size) {
     // Initialize the CRC value to 0
     byte crc = 0;
 
     // Process each byte in the input data
-    for (byte i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         // Update the CRC using the lookup table
         crc = this->table[crc ^ data[i]];
     }

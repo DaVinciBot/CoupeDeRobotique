@@ -1,4 +1,8 @@
+#ifndef CRC_H
+#define CRC_H
+
 #include <Arduino.h>
+#include <stddef.h>
 
 /**
  * @brief CRC (Cyclic Redundancy Check) class for computing 8-bit CRC checksums.
@@ -52,5 +56,7 @@ class CRC {
      * @param size The size of the message array in bytes.
      * @return The computed 8-bit CRC checksum.
      */
-    byte digest(byte* msg, byte size);
+    byte digest(const byte* msg, size_t size);
 };
+
+#endif
