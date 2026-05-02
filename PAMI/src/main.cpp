@@ -1,7 +1,7 @@
-#include "AtoB.h"
 #include "blocking_forward.h"
 #include "blocking_turn.h"
 #include "config.h"
+#include "go_to.h"
 #include "strategy.h"
 
 #if ENABLE_OTA
@@ -107,9 +107,10 @@ void setup() {
     ota.begin();
 #endif
 
-    strategy->addAction(new AtoB(rollingBasis, Point{100.0f, 0.0f, 0.0f}));
-    strategy->addAction(new AtoB(rollingBasis, Point{100.0f, 0.0f, 1.5708f}));
-    strategy->addAction(new AtoB(rollingBasis, Point{100.0f, 100.0f, 1.5708f}));
+    // rollingBasis->moveForwardBlocking(100.0f);
+    strategy->addAction(new BlockingForward(rollingBasis, 100.0f));
+    strategy->addAction(new GoTo(rollingBasis, Point{100.0f, 0.0f, 1.5708f}));
+    strategy->addAction(new BlockingTurn(rollingBasis, -1.5708f));
     strategy->start();
 
     strategyRunning = true;
@@ -122,6 +123,10 @@ void loop() {
 
     leftMotor->update();
     rightMotor->update();
+
+    // Serial.printf("[Main loop] Pose: (%.1f, %.1f, %.3f) mm rad\n",
+    //               rollingBasis->getPose().x, rollingBasis->getPose().y,
+    //               rollingBasis->getPose().theta);
 
     if (!strategyRunning) {
         return;

@@ -16,8 +16,6 @@ class RelativeForward : public Action {
     const char* name() const override;
 
    private:
-    static constexpr float DISTANCE_CALIBRATION = DISTANCE_CALIBRATION_FACTOR;
-
     Point _target;
     Navigation* _navigation;
     double _distance;

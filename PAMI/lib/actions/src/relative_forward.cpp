@@ -3,7 +3,7 @@
 #include <math.h>
 
 RelativeForward::RelativeForward(Navigation* nav, double distance)
-    : _navigation(nav), _distance(distance * DISTANCE_CALIBRATION) {
+    : _navigation(nav), _distance(distance) {
     Serial.printf("[RelativeForward] distance=%.1f mm calibrated from %.1f\n",
                   _distance, distance);
 }

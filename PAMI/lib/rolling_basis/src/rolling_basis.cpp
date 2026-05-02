@@ -53,7 +53,7 @@ void RollingBasis::setCommand(const Point& target) {
         (distance < POSITION_TOLERANCE_MM) ? target.theta : atan2f(dy, dx);
     float dTheta = _wrapToPi(desiredTheta - _currentPose.theta);
 
-    _targetDTheta = dTheta * ANGULAR_CALIBRATION_FACTOR;
+    _targetDTheta = dTheta;
     _targetDistanceMm = distance;
     _rotateDuration = fabsf(_targetDTheta) / _angularSpeed;
     _rotateDirection = (_targetDTheta >= 0.0f) ? 1.0f : -1.0f;
@@ -249,7 +249,7 @@ void RollingBasis::turnBlocking(float angleRad) {
     _rightMotor->setAcceleration(MOTOR_ACCELERATION_STEPS_PER_S2);
 
     _angularSpeed = MAX_ANGULAR_SPEED_RAD_PER_S;
-    float targetDTheta = angleRad * ANGULAR_CALIBRATION_FACTOR;
+    float targetDTheta = angleRad;
     float duration = fabsf(targetDTheta) / _angularSpeed;
     float dir = (targetDTheta >= 0.0f) ? 1.0f : -1.0f;
     unsigned long start = micros();
