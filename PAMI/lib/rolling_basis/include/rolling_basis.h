@@ -171,9 +171,9 @@ class RollingBasis {
     float _phaseLinearTravelMm() const;
     float _phaseAngularTravelRad() const;
 
-    Motor* _leftMotor;       // Pointer to the left motor
-    Motor* _rightMotor;      // Pointer to the right motor
-    float _wheelDiameterMm;  // Wheel diameter in millimeters
+    Motor* _leftMotor;            // Pointer to the left motor
+    Motor* _rightMotor;           // Pointer to the right motor
+    float _wheelCircumferenceMm;  // Wheel circumference in millimeters
     float _wheelBaseMm;  // Distance between wheels (track width) in millimeters
 
     // long _prevLeftSteps;   // Previous left motor steps

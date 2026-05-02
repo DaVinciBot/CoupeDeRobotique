@@ -14,7 +14,7 @@ RollingBasis::RollingBasis(Motor* leftMotor,
                            const Point& initialPosition)
     : _leftMotor(leftMotor),
       _rightMotor(rightMotor),
-      _wheelDiameterMm(wheelDiameterMm),
+      _wheelCircumferenceMm(wheelDiameterMm * PI),
       _wheelBaseMm(wheelBaseMm),
       _currentPose(initialPosition),
       _linearSpeed(MAX_LINEAR_SPEED_MM_PER_S),
@@ -139,11 +139,10 @@ void RollingBasis::_sendWheelSpeeds(float v, float w) {
     float halfBaseMm = _wheelBaseMm * 0.5f;
     float leftMmPerSec = v - w * halfBaseMm;
     float rightMmPerSec = v + w * halfBaseMm;
-    float circumference = PI * _wheelDiameterMm;
     float leftStepsPerSec =
-        leftMmPerSec * _leftMotor->getStepsPerRev() / circumference;
+        leftMmPerSec * _leftMotor->getStepsPerRev() / _wheelCircumferenceMm;
     float rightStepsPerSec =
-        rightMmPerSec * _rightMotor->getStepsPerRev() / circumference;
+        rightMmPerSec * _rightMotor->getStepsPerRev() / _wheelCircumferenceMm;
 
     _leftMotor->setTargetSpeed(-leftStepsPerSec);
     _rightMotor->setTargetSpeed(-rightStepsPerSec);
@@ -151,9 +150,8 @@ void RollingBasis::_sendWheelSpeeds(float v, float w) {
 
 float RollingBasis::_stepsToWheelDistanceMm(long steps,
                                             const Motor* motor) const {
-    float circumference = PI * _wheelDiameterMm;
     return (static_cast<float>(steps) / motor->getStepsPerRev()) *
-           circumference;
+           _wheelCircumferenceMm;
 }
 
 float RollingBasis::_phaseLinearTravelMm() const {
@@ -239,9 +237,8 @@ void RollingBasis::moveForwardStepsBlocking(long steps) {
     }
 
     float dir = (steps >= 0) ? 1.0f : -1.0f;
-    float circumference = PI * _wheelDiameterMm;
     float stepsPerSec = MAX_LINEAR_SPEED_MM_PER_S *
-                        _leftMotor->getStepsPerRev() / circumference;
+                        _leftMotor->getStepsPerRev() / _wheelCircumferenceMm;
     unsigned long periodUs =
         static_cast<unsigned long>(1000000.0f / max(1.0f, stepsPerSec));
 
