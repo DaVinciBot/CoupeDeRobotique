@@ -27,8 +27,7 @@ class PID {
      * This method should be called at a fixed interval matching `dtSeconds`.
      *
      * @param error The current error (setpoint - measurement)
-     * @return float The controller output (unclamped; clamping behavior can be
-     *         implemented using `_outputMin`/`_outputMax` if desired).
+     * @return float The controller output (unclamped).
      */
     float compute(float error);
 
@@ -54,13 +53,12 @@ class PID {
     void setSampleTime(float dtSeconds);
 
    private:
-    float _kp;                     // Proportional gain
-    float _ki;                     // Integral gain
-    float _kd;                     // Derivative gain
-    float _dtSeconds;              // Sample time in seconds
-    float _integral;               // Integral accumulator
-    float _previousError;          // Previous error for derivative term
-    float _outputMin, _outputMax;  // Output clamping
+    float _kp;             // Proportional gain
+    float _ki;             // Integral gain
+    float _kd;             // Derivative gain
+    float _dtSeconds;      // Sample time in seconds
+    float _integral;       // Integral accumulator
+    float _previousError;  // Previous error for derivative term
 };
 
 #endif

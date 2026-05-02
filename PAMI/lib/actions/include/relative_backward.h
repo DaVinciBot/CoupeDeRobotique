@@ -1,6 +1,7 @@
 #ifndef ACTIONS_RELATIVE_BACKWARD_H
 #define ACTIONS_RELATIVE_BACKWARD_H
 
+#include "../../../include/config.h"
 #include "action.h"
 #include "navigation.h"
 
@@ -15,7 +16,7 @@ class RelativeBackward : public Action {
     const char* name() const override;
 
    private:
-    static constexpr float DISTANCE_CALIBRATION = 0.4f;
+    static constexpr float DISTANCE_CALIBRATION = DISTANCE_CALIBRATION_FACTOR;
 
     Point _target;
     Navigation* _navigation;

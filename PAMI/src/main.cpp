@@ -1,3 +1,4 @@
+#include "AtoB.h"
 #include "blocking_forward.h"
 #include "blocking_turn.h"
 #include "config.h"
@@ -91,9 +92,9 @@ void setup() {
     delay(2000);
     Serial.println("\n--- DEMARRAGE ---");
 
-    strategy->addAction(new BlockingForward(rollingBasis, 100.0f));
-    strategy->addAction(new BlockingTurn(rollingBasis, 1.5708f));
-    strategy->addAction(new BlockingForward(rollingBasis, 100.0f));
+    strategy->addAction(new AtoB(rollingBasis, Point{100.0f, 0.0f, 0.0f}));
+    strategy->addAction(new AtoB(rollingBasis, Point{100.0f, 0.0f, 1.5708f}));
+    strategy->addAction(new AtoB(rollingBasis, Point{100.0f, 100.0f, 1.5708f}));
     strategy->start();
 
     strategyRunning = true;

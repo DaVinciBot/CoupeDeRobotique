@@ -16,8 +16,8 @@ void Navigation::setCommand(const Point& targetPos) {
     _waypoints.clear();
     Point start = _basis->getPose();
     float distance = Point::distance(start, targetPos);
-    float angle = (distance < 1.0f) ? targetPos.theta
-                                    : Point::angle(start, targetPos);
+    float angle =
+        (distance < 1.0f) ? targetPos.theta : Point::angle(start, targetPos);
     for (size_t i = 1; i <= DEFAULT_SEGMENTS; ++i) {
         float t = float(i) / DEFAULT_SEGMENTS;
         Point wp;
@@ -37,7 +37,8 @@ void Navigation::setTrajectory(const std::vector<Point>& trajectory) {
     }
 
     _waypoints.clear();
-    Point start = _basis->getPose();  // Position actuelle du robot (maintenant correctement mise à jour)
+    Point start = _basis->getPose();  // Position actuelle du robot (maintenant
+                                      // correctement mise à jour)
 
     // Pour chaque point de la trajectoire, créer les waypoints intermédiaires
     for (const Point& targetPos : trajectory) {
@@ -55,8 +56,9 @@ void Navigation::setTrajectory(const std::vector<Point>& trajectory) {
         }
 
         // Mettre à jour start avec la position RÉELLE du robot (via getPose())
-        // Cela revient à supposer que le robot atteint précisément chaque waypoint
-        start = _basis->getPose();
+        // Cela revient à supposer que le robot atteint précisément chaque
+        // waypoint
+        start = targetPos;
     }
 
     _wpIndex = 0;
@@ -65,12 +67,12 @@ void Navigation::setTrajectory(const std::vector<Point>& trajectory) {
 
     if (!_waypoints.empty()) {
         _basis->setCommand(_waypoints[0]);
-        Serial.printf("[Navigation] Trajectoire chargée avec %d segments\n", _waypoints.size());
+        Serial.printf("[Navigation] Trajectoire chargée avec %d segments\n",
+                      _waypoints.size());
     }
 }
 
 void Navigation::update() {
-    
     uint32_t now = millis();
 
     // force stop after timeout
@@ -89,9 +91,10 @@ void Navigation::update() {
             _basis->setCommand(_waypoints[++_wpIndex]);
         }
         _lastSendMs = now;
-        Serial.printf("[Navigation] Sending command to basis: %.1f, %.1f, %.3f\n",
-                      _waypoints[_wpIndex].x, _waypoints[_wpIndex].y,
-                      _waypoints[_wpIndex].theta);
+        Serial.printf(
+            "[Navigation] Sending command to basis: %.1f, %.1f, %.3f\n",
+            _waypoints[_wpIndex].x, _waypoints[_wpIndex].y,
+            _waypoints[_wpIndex].theta);
     }
     _basis->update();
 }

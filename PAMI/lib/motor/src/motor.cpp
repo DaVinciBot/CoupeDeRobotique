@@ -9,7 +9,7 @@ Motor::Motor(byte stepPin,
     : _stepPin(stepPin),
       _dirPin(dirPin),
       _enablePin(enablePin),
-          _pulse_us(pulse_us),
+      _pulse_us(pulse_us),
       _stepsPerRevolution(stepsPerRevolution),
       _invertDirection(invertDirection) {
     _targetSpeedStepsPerSec = 0.0f;
@@ -39,8 +39,8 @@ void Motor::setTargetSpeed(float stepsPerSec) {
     if (_invertDirection) {
         stepsPerSec = -stepsPerSec;
     }
-    
-    _targetSpeedStepsPerSec = stepsPerSec * 1000.0f;
+
+    _targetSpeedStepsPerSec = stepsPerSec;
 
     if (fabsf(_targetSpeedStepsPerSec) >= 1.0f) {
         // CORRECTION : On ne réveille le moteur que s'il était à l'arrêt !
@@ -53,8 +53,7 @@ void Motor::setTargetSpeed(float stepsPerSec) {
 }
 
 void Motor::setAcceleration(float stepsPerSec2) {
-    // On restaure aussi ce multiplicateur
-    _acceleration = max(0.0f, stepsPerSec2 * 100.0f);
+    _acceleration = max(0.0f, stepsPerSec2);
 }
 
 void Motor::_setDirection(bool clockwise) {
@@ -81,18 +80,17 @@ void Motor::_doOneStep() {
 
 void Motor::update() {
     if (!_moving) {
-        //Serial.println("Motor not moving");
-        
+        // Serial.println("Motor not moving");
+
         return;
     }
-    
 
     // Serial.println("Motor is moving");
     unsigned long now = micros();
     unsigned long dt = now - _lastUpdateTime;
     float dtSec = dt * 1e-6f;
     float speedDiff = _acceleration * dtSec;
-    // Serial.println(speedDiff); 
+    // Serial.println(speedDiff);
 
     if (fabsf(_currentSpeedStepsPerSec - _targetSpeedStepsPerSec) < speedDiff) {
         _currentSpeedStepsPerSec = _targetSpeedStepsPerSec;
@@ -129,13 +127,12 @@ void Motor::update() {
     }
 
     _lastUpdateTime = now;
-    
 }
 
 bool Motor::isMoving() const {
     return _moving;
 }
- 
+
 unsigned int Motor::getStepsPerRev() const {
     return _stepsPerRevolution;
 }

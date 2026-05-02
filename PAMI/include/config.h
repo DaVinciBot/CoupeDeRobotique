@@ -1,67 +1,56 @@
-#include <Arduino.h>
-#include "AtoB.h"
-#include "action.h"
-#include "actionneur.h"
-#include "blocking_forward.h"
-#include "blocking_turn.h"
-#include "lidar_pami.h"
-#include "motor.h"
-#include "navigation.h"
-#include "relative_forward.h"
-#include "relative_turning.h"
-#include "rolling_basis.h"
-#include "strategy.h"
+#ifndef PAMI_CONFIG_H
+#define PAMI_CONFIG_H
 
-// #------- GENERAL CONFIGURATION -------#
+#include <Arduino.h>
+
+// General configuration
 #define ACS_TRESHOLD 40  // Threshold for ACS activation in mm
 
-// #------- MOTOR CONFIGURATION -------#
-#define LEFT_DIR_PIN 3          // Direction pin for left motor
-#define LEFT_STEP_PIN 46        // Step pin for left motor
-#define LEFT_EN_PIN 9           // Enable pin for left motor
-#define LEFT_STEPS_PER_REV 400  // Steps per revolution for left motor
+// Motor configuration
+#define LEFT_DIR_PIN 3
+#define LEFT_STEP_PIN 46
+#define LEFT_EN_PIN 9
+#define LEFT_STEPS_PER_REV 400
 
-#define RIGHT_DIR_PIN 21         // Direction pin for right motor
-#define RIGHT_STEP_PIN 47        // Step pin for right motor
-#define RIGHT_EN_PIN 48          // Enable pin for right motor
-#define RIGHT_STEPS_PER_REV 400  // Steps per revolution for right motor
+#define RIGHT_DIR_PIN 21
+#define RIGHT_STEP_PIN 47
+#define RIGHT_EN_PIN 48
+#define RIGHT_STEPS_PER_REV 400
 
-#define PULSE_US 500             // Pulse width in microseconds for motor steps
-#define WHEEL_DIAMETER_MM 62.0f  // Wheel diameter in mm
-#define WHEEL_BASE_MM 132.0f     // Distance between the two wheels in mm
+#define PULSE_US 500
+#define WHEEL_DIAMETER_MM 62.0f
+#define WHEEL_BASE_MM 132.0f
 
-#define MAX_LINEAR_SPEED_MM_PER_S 10     // Maximum linear speed in mm/s
-#define MAX_ANGULAR_SPEED_RAD_PER_S 1.0  // Maximum angular speed in rad/s
+#define MAX_LINEAR_SPEED_MM_PER_S 57.5f
+#define MAX_ANGULAR_SPEED_RAD_PER_S 1.38f
+#define MOTOR_ACCELERATION_STEPS_PER_S2 1000.0f
 
-// #------- DISTANCE CALIBRATION -------#
-#define DISTANCE_CALIBRATION_FACTOR \
-    0.4f  // Robot fait 2.5x la distance, donc on multiplie par 0.4
+// Calibration
+#define DISTANCE_CALIBRATION_FACTOR 0.4f
+#define ANGULAR_CALIBRATION_FACTOR 0.9f
 
-// #------- ANGULAR CALIBRATION -------#
-#define ANGULAR_CALIBRATION_FACTOR \
-    0.85f  // Robot tourne trop (~105° au lieu de 90°), donc on multiplie par
-           // 0.85
+// PID configuration
+#define LINEAR_DISTANCE_KP 2000.0f
+#define LINEAR_DISTANCE_KI 0.0f
+#define LINEAR_DISTANCE_KD 0.0f
 
-// #------- PID CONFIGURATION -------#
-#define LINEAR_DISTANCE_KP 2000.0f  // Proportional gain for linear distance
-#define LINEAR_DISTANCE_KI 0.0f     // Integral gain for linear distance
-#define LINEAR_DISTANCE_KD 0.0f     // Derivative gain for linear distance
+#define ANGULAR_DISTANCE_KP 1000.0f
+#define ANGULAR_DISTANCE_KI 10000.0f
+#define ANGULAR_DISTANCE_KD 0.0f
 
-#define ANGULAR_DISTANCE_KP 1000.0f   // Proportional gain for angular distance
-#define ANGULAR_DISTANCE_KI 10000.0f  // Integral gain for angular distance
-#define ANGULAR_DISTANCE_KD 0.0f      // Derivative gain for angular distance
+// Servo configuration
+#define SERVO_PIN 42
 
-// #------- SERVO CONFIGURATION -------#
-#define SERVO_PIN 42  // Servo pin
+// LoRa configuration
+#define LORA_RX_PIN 16
+#define LORA_TX_PIN 17
+#define LORA_BAUD 9600
+#define LORA_M0_PIN -1
+#define LORA_M1_PIN -1
+#define LORA_AUX_PIN 4
 
-// #------- LORA CONFIGURATION (DX-LR01 UART) -------#
-#define LORA_RX_PIN 16  // RX2 - TXD du module DX-LR01
-#define LORA_TX_PIN 17  // TX2 - RXD du module DX-LR01
-#define LORA_BAUD 9600  // Baud rate du DX-LR01
-#define LORA_M0_PIN -1  // Mode pin M0 (connecté à GND = mode normal)
-#define LORA_M1_PIN -1  // Mode pin M1 (connecté à GND = mode normal)
-#define LORA_AUX_PIN 4  // AUX pin (non utilisé pour ce test)
+// Development toggles
+#define ENABLE_OTA false
+#define ENABLE_LORA false
 
-// #-------- DEV CONFIGURATION ---------#
-#define ENABLE_OTA false   // Enable OTA updates
-#define ENABLE_LORA false  // Enable LoRa communication (DX-LR01 - UART based)
+#endif

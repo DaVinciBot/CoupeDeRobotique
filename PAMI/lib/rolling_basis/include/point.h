@@ -1,3 +1,6 @@
+#ifndef POINT_H
+#define POINT_H
+
 #include <math.h>
 
 /**
@@ -47,7 +50,7 @@ class Point {
      * @return true
      * @return false
      */
-    bool operator==(const Point& other) {
+    bool operator==(const Point& other) const {
         return x == other.x && y == other.y && theta == other.theta;
     }
 
@@ -59,7 +62,9 @@ class Point {
      * @return float
      */
     static float distance(Point p1, Point p2) {
-        return sqrtf(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2));
+        float dx = p2.x - p1.x;
+        float dy = p2.y - p1.y;
+        return sqrtf(dx * dx + dy * dy);
     }
     /**
      * @brief Calculate the angle in radians from p1 to p2
@@ -72,3 +77,5 @@ class Point {
         return atan2f(p2.y - p1.y, p2.x - p1.x);
     }
 };
+
+#endif

@@ -30,7 +30,6 @@
  */
 class RollingBasis {
    public:
-   // Fonctions de test bloquantes (à utiliser dans le setup)
     void moveForwardBlocking(float distanceMm);
     void turnBlocking(float angleRad);
     /**
@@ -167,6 +166,9 @@ class RollingBasis {
      * circumference.
      */
     void _sendWheelSpeeds(float v, float w);
+    float _stepsToWheelDistanceMm(long steps, const Motor* motor) const;
+    float _phaseLinearTravelMm() const;
+    float _phaseAngularTravelRad() const;
 
     Motor* _leftMotor;       // Pointer to the left motor
     Motor* _rightMotor;      // Pointer to the right motor
@@ -189,7 +191,11 @@ class RollingBasis {
      * Stored as float for convenience when multiplying with durations/speeds.
      */
     float _rotateDirection;
-    float _targetDTheta;  // Target angle change (radians) AFTER calibration - used for odometry
+    float _targetDTheta;  // Target angle change (radians) AFTER calibration -
+                          // used for odometry
+    float _targetDistanceMm;
+    long _phaseStartLeftSteps;
+    long _phaseStartRightSteps;
     // Start time of the current phase
     unsigned long _startTime;
 };
