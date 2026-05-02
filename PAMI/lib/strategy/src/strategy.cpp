@@ -1,72 +1,120 @@
 #include "strategy.h"
 
-Strategy::Strategy(RollingBasis* rb)
-    : _rb(rb), _currentIndex(0), _finished(false), _failed(false) {}
+Strategy::Strategy(RollingBasis* rb) : _rb(rb) {}
 
-Strategy::Strategy(RollingBasis* rb, std::vector<Action*> actions)
-    : _rb(rb),
-      _actions(actions),
-      _currentIndex(0),
-      _finished(false),
-      _failed(false) {}
+Strategy::Strategy(RollingBasis* rb, const std::vector<Action*>& actions)
+    : _rb(rb), _actions(actions) {}
 
-void Strategy::addAction(Action* action) {
-    _actions.push_back(action);
-    Serial.printf("[Strategy] Action ajoutée : %s (total: %lu)\n",
-                  action->name(), _actions.size());
+Strategy::~Strategy() {
+    clearActions();
 }
 
-void Strategy::_startCurrentAction() {
-    Serial.printf("[Strategy:%s] Action %lu/%lu : %s\n", name(),
-                  _currentIndex + 1, _actions.size(),
-                  _actions[_currentIndex]->name());
-    _actions[_currentIndex]->start();
+void Strategy::addAction(Action* action) {
+    if (action == nullptr) {
+        Serial.println("[Strategy] Ignored null action");
+        return;
+    }
+
+    _actions.push_back(action);
+    _finished = false;
+
+    Serial.printf("[Strategy] Action added: %s (total: %u)\n", action->name(),
+                  static_cast<unsigned>(_actions.size()));
+}
+
+void Strategy::clearActions() {
+    if (_started && !isFinished() && _currentIndex < _actions.size()) {
+        _actions[_currentIndex]->stop();
+    }
+
+    for (Action* action : _actions) {
+        delete action;
+    }
+
+    _actions.clear();
+    _currentIndex = 0;
+    _started = false;
+    _finished = false;
+    _stopped = false;
+}
+
+void Strategy::startCurrentAction() {
+    if (_currentIndex >= _actions.size()) {
+        _finished = true;
+        return;
+    }
+
+    Action* currentAction = _actions[_currentIndex];
+    Serial.printf("[Strategy] Starting action %u/%u: %s\n",
+                  static_cast<unsigned>(_currentIndex + 1),
+                  static_cast<unsigned>(_actions.size()),
+                  currentAction->name());
+    currentAction->start();
 }
 
 void Strategy::start() {
     _currentIndex = 0;
+    _started = true;
     _finished = false;
-    _failed = false;
+    _stopped = false;
 
     if (_actions.empty()) {
-        Serial.println("[Strategy] Aucune action dans la liste.");
+        Serial.println("[Strategy] No action to run");
         _finished = true;
         return;
     }
-    _startCurrentAction();
+
+    Serial.println("[Strategy] Started");
+    startCurrentAction();
 }
 
 void Strategy::update() {
-    if (_finished || _failed)
+    if (!_started || _finished || _stopped) {
         return;
-
-    Action* current = _actions[_currentIndex];
-    current->update();
-
-    if (current->isFinished()) {
-        current->stop();
-        Serial.printf("[Strategy:%s] Action terminée : %s\n", name(),
-                      current->name());
-        _currentIndex++;
-
-        if (_currentIndex >= _actions.size()) {
-            _finished = true;
-            Serial.printf("[Strategy:%s] Toutes les actions terminées.\n",
-                          name());
-        } else {
-            _startCurrentAction();
-        }
     }
+
+    if (_currentIndex >= _actions.size()) {
+        _finished = true;
+        return;
+    }
+
+    Action* currentAction = _actions[_currentIndex];
+    currentAction->update();
+
+    if (!currentAction->isFinished()) {
+        return;
+    }
+
+    Serial.printf("[Strategy] Finished action %u/%u: %s\n",
+                  static_cast<unsigned>(_currentIndex + 1),
+                  static_cast<unsigned>(_actions.size()),
+                  currentAction->name());
+
+    _currentIndex++;
+
+    if (_currentIndex >= _actions.size()) {
+        _finished = true;
+        Serial.println("[Strategy] All actions finished");
+        return;
+    }
+
+    startCurrentAction();
 }
 
 void Strategy::stop() {
     if (!_finished && _currentIndex < _actions.size()) {
         _actions[_currentIndex]->stop();
     }
-    _failed = true;
-    Serial.printf("[Strategy:%s] Arrêt forcé.\n", name());
+
+    _stopped = true;
+    _finished = true;
+    Serial.println("[Strategy] Stopped");
 }
 
 bool Strategy::isFinished() const {
-    return _finished || _failed;
+    return _finished || _stopped;
+}
+
+const char* Strategy::name() const {
+    return "Strategy";
 }

@@ -108,7 +108,7 @@ void loop() {
     }
 
     if (millis() - lastStrategyUpdateMs >= 2) {
-        strategy->strategie_update();
+        strategy->update();
         lastStrategyUpdateMs = millis();
     }
 
