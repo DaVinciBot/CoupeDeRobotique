@@ -109,6 +109,22 @@ class Motor {
     void update();
 
     /**
+     * @brief Emit exactly one step using a signed internal motor direction.
+     *
+     * This bypasses acceleration and speed ramping. It is intended for simple
+     * diagnostic moves where the requested number of STEP pulses matters.
+     *
+     * @param signedSpeedStepsPerSec Positive or negative value selecting the
+     * logical direction used by the existing step counter.
+     */
+    void stepOnceAtSignedSpeed(float signedSpeedStepsPerSec);
+
+    /**
+     * @brief Stop a diagnostic/manual stepping sequence immediately.
+     */
+    void stopManualStepping();
+
+    /**
      * @brief Get the number of micro-steps per revolution.
      *
      * This is equal to `stepsPerRevolution * k` (where `k` is the

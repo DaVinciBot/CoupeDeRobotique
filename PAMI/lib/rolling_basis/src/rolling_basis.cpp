@@ -230,6 +230,40 @@ void RollingBasis::moveForwardBlocking(float distanceMm) {
     Serial.println("[Test] Blocking forward done");
 }
 
+void RollingBasis::moveForwardStepsBlocking(long steps) {
+    Serial.printf("[Test] Blocking forward %ld steps\n", steps);
+
+    long targetSteps = labs(steps);
+    if (targetSteps == 0) {
+        return;
+    }
+
+    float dir = (steps >= 0) ? 1.0f : -1.0f;
+    float circumference = PI * _wheelDiameterMm;
+    float stepsPerSec = MAX_LINEAR_SPEED_MM_PER_S *
+                        _leftMotor->getStepsPerRev() / circumference;
+    unsigned long periodUs =
+        static_cast<unsigned long>(1000000.0f / max(1.0f, stepsPerSec));
+
+    for (long i = 0; i < targetSteps; ++i) {
+        unsigned long startUs = micros();
+
+        _leftMotor->stepOnceAtSignedSpeed(-dir);
+        _rightMotor->stepOnceAtSignedSpeed(dir);
+
+        unsigned long elapsedUs = micros() - startUs;
+        if (elapsedUs < periodUs) {
+            delayMicroseconds(periodUs - elapsedUs);
+        }
+    }
+
+    _leftMotor->stopManualStepping();
+    _rightMotor->stopManualStepping();
+
+    Serial.printf("[Test] Blocking forward steps done: left=%ld right=%ld\n",
+                  _leftMotor->getStepCount(), _rightMotor->getStepCount());
+}
+
 void RollingBasis::turnBlocking(float angleRad) {
     Serial.printf("[Test] Blocking turn %.3f rad\n", angleRad);
 

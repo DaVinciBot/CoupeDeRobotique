@@ -129,6 +129,29 @@ void Motor::update() {
     _lastUpdateTime = now;
 }
 
+void Motor::stepOnceAtSignedSpeed(float signedSpeedStepsPerSec) {
+    if (fabsf(signedSpeedStepsPerSec) < 1.0f) {
+        return;
+    }
+
+    if (!_moving) {
+        _moving = true;
+        enableMotor(true);
+    }
+
+    _targetSpeedStepsPerSec = signedSpeedStepsPerSec;
+    _currentSpeedStepsPerSec = signedSpeedStepsPerSec;
+    _setDirection(_currentSpeedStepsPerSec >= 0.0f);
+    _doOneStep();
+}
+
+void Motor::stopManualStepping() {
+    _targetSpeedStepsPerSec = 0.0f;
+    _currentSpeedStepsPerSec = 0.0f;
+    _moving = false;
+    enableMotor(false);
+}
+
 bool Motor::isMoving() const {
     return _moving;
 }

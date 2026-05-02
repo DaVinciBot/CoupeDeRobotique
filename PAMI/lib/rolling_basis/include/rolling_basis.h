@@ -31,6 +31,7 @@
 class RollingBasis {
    public:
     void moveForwardBlocking(float distanceMm);
+    void moveForwardStepsBlocking(long steps);
     void turnBlocking(float angleRad);
     /**
      * @brief Enumeration representing the different phases of motion.
