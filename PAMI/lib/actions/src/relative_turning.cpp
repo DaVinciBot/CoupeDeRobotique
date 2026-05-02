@@ -1,70 +1,69 @@
 #include "relative_turning.h"
 
-RelativeTurning::RelativeTurning(Navigation* nav, const double angle)
+#include <math.h>
+
+RelativeTurning::RelativeTurning(Navigation* nav, double angle)
     : _navigation(nav), _angle(angle) {
-    // valeurs par défaut déjà initialisées inline dans le header,
-    // mais on peut ré-initialiser ici si besoin
-    _startMs = 0;
-    _finished = false;
-    Serial.printf("RelativeTurning: angle set to %.1f rad\n", _angle);
-    // timeout et tolérance définis dans le header (_timeoutMs, _arriveTolMm)
+    Serial.printf("[RelativeTurning] angle=%.3f rad\n", _angle);
 }
 
 void RelativeTurning::start() {
-    Serial.println("RelativeTurning started");
+    _started = true;
     _finished = false;
     _startMs = millis();
+    _lastPrintMs = 0;
 
-    // Lire la pose actuelle (A)
     Point cur = _navigation->getPose();
-    Serial.printf("RelativeTurning::start cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y,
-                  cur.theta);
-    // Calculer la cible B en fonction de l'angle relatif
     _target = cur;
-    _target.theta += _angle;
-    Serial.printf("RelativeTurning::start target=(%.1f,%.1f,%.3f)\n", _target.x,
-                  _target.y, _target.theta);
+    _target.theta = cur.theta + _angle;
 
-    // Envoyer la commande vers la cible B
+    Serial.printf("[RelativeTurning] Start to %.3f rad\n", _target.theta);
     _navigation->setCommand(_target);
-    Serial.println("RelativeForward: command sent to rolling basis");
 }
 
-void RelativeTurning::update() {
-    // tick the rolling basis controller
-    _navigation->update();
-
-    if (_finished) {
-        return;
-    }
-
-    // timeout check
-    if (millis() - _startMs > _timeoutMs) {
-        Serial.println("RelativeTurning: timeout, stopping");
-        _navigation->stop();
-        _finished = true;
-        return;
-    }
-    // a modifier : pas finis, le dist a changer, et regarder les éventuelles
-    // autres fonctions read current pose (may be static if odometry is
-    // disabled)
+float RelativeTurning::angleErrorRad() const {
     Point cur = _navigation->getPose();
     float angleDiff = _target.theta - cur.theta;
 
-    while (angleDiff > PI) angleDiff -= 2 * PI;
-    while (angleDiff < -PI) angleDiff += 2 * PI;
-    Serial.printf("RelativeTurning::update angle=%.1f rad\n", angleDiff);
-    // arrival condition: within tolerance OR base reports idle
-    if (abs(angleDiff) <= _arriveTolRad || !_navigation->isMoving()) {
-        Serial.println("RelativeTurning: arrived or motors idle -> finishing");
-        _navigation->stop();
+    while (angleDiff > PI)
+        angleDiff -= 2.0f * PI;
+    while (angleDiff < -PI)
+        angleDiff += 2.0f * PI;
+
+    return angleDiff;
+}
+
+void RelativeTurning::update() {
+    if (!_started || _finished) {
+        return;
+    }
+
+    _navigation->update();
+
+    if (millis() - _startMs > _timeoutMs) {
+        Serial.println("[RelativeTurning] Timeout");
+        stop();
+        return;
+    }
+
+    float angleDiff = angleErrorRad();
+
+    if (millis() - _lastPrintMs > 1000) {
+        Serial.printf("[RelativeTurning] angle error=%.3f rad moving=%d\n",
+                      angleDiff, _navigation->isMoving());
+        _lastPrintMs = millis();
+    }
+
+    if (fabsf(angleDiff) <= _arriveTolRad || !_navigation->isMoving()) {
         _finished = true;
+        Serial.println("[RelativeTurning] Finished");
     }
 }
 
 void RelativeTurning::stop() {
-    Serial.println("RelativeTurning stopped");
-    _navigation->stop();
+    if (_started && !_finished) {
+        _navigation->stop();
+    }
     _finished = true;
 }
 

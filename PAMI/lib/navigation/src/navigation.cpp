@@ -15,7 +15,9 @@ void Navigation::setCommand(const Point& targetPos) {
 
     _waypoints.clear();
     Point start = _basis->getPose();
-    float angle = start.theta + Point::angle(start, targetPos);
+    float distance = Point::distance(start, targetPos);
+    float angle = (distance < 1.0f) ? targetPos.theta
+                                    : Point::angle(start, targetPos);
     for (size_t i = 1; i <= DEFAULT_SEGMENTS; ++i) {
         float t = float(i) / DEFAULT_SEGMENTS;
         Point wp;
@@ -87,7 +89,7 @@ void Navigation::update() {
             _basis->setCommand(_waypoints[++_wpIndex]);
         }
         _lastSendMs = now;
-        Serial.printf("[Navigation] Sending command to basis: %d, %d, %d\n",
+        Serial.printf("[Navigation] Sending command to basis: %.1f, %.1f, %.3f\n",
                       _waypoints[_wpIndex].x, _waypoints[_wpIndex].y,
                       _waypoints[_wpIndex].theta);
     }

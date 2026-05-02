@@ -6,8 +6,8 @@
 
 class RelativeBackward : public Action {
    public:
-    RelativeBackward(Navigation* nav, const double distance);
-    ~RelativeBackward() = default;
+    RelativeBackward(Navigation* nav, double distance);
+
     void start() override;
     void update() override;
     void stop() override;
@@ -15,12 +15,16 @@ class RelativeBackward : public Action {
     const char* name() const override;
 
    private:
+    static constexpr float DISTANCE_CALIBRATION = 0.4f;
+
     Point _target;
     Navigation* _navigation;
-    const double _distance;
+    double _distance;
     unsigned long _startMs = 0;
-    unsigned long _timeoutMs = 15000;  // Ms
+    unsigned long _lastPrintMs = 0;
+    unsigned long _timeoutMs = 15000;
     float _arriveTolMm = 5.0f;
+    bool _started = false;
     bool _finished = false;
 };
 

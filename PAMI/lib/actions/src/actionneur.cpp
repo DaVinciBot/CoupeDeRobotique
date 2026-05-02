@@ -5,11 +5,11 @@ Actionneur::Actionneur(uint8_t pin) : _pin(pin) {
     _currentAngle = 0;
     _targetAngle = 0;
     _finished = true;
-    Serial.printf("Actionneur: pin %d initialized\n", _pin);
+    Serial.printf("[Actionneur] pin %u initialized\n", _pin);
 }
 
 void Actionneur::start() {
-    Serial.printf("Actionneur started, moving to %d°\n", _targetAngle);
+    Serial.printf("[Actionneur] Start to %u deg\n", _targetAngle);
     _finished = false;
     _startMs = millis();
 }
@@ -19,9 +19,8 @@ void Actionneur::update() {
         return;
     }
 
-    // timeout check
     if (millis() - _startMs > _timeoutMs) {
-        Serial.println("Actionneur: timeout, stopping");
+        Serial.println("[Actionneur] Timeout");
         _finished = true;
         return;
     }
@@ -31,8 +30,10 @@ void Actionneur::update() {
     } else if (_currentAngle > _targetAngle) {
         _currentAngle--;
     } else {
-        _finished = true;  // Angle atteint
+        _finished = true;
+        return;
     }
+
     uint16_t pwm = 1000 + (_currentAngle * 1000 / 180);
     digitalWrite(_pin, HIGH);
     delayMicroseconds(pwm);
@@ -40,13 +41,16 @@ void Actionneur::update() {
 }
 
 void Actionneur::stop() {
-    Serial.println("Actionneur stopped");
     _finished = true;
 }
 
 void Actionneur::setAngle(uint16_t angle) {
-    _targetAngle = angle;
-    Serial.printf("Actionneur: target angle set to %d°\n", _targetAngle);
+    _targetAngle = constrain(angle, 0, 180);
+    Serial.printf("[Actionneur] target=%u deg\n", _targetAngle);
+}
+
+uint16_t Actionneur::getAngle() const {
+    return _currentAngle;
 }
 
 bool Actionneur::isFinished() const {

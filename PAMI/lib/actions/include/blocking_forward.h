@@ -1,13 +1,13 @@
-#ifndef ACTIONS_ATOB_H
-#define ACTIONS_ATOB_H
+#ifndef ACTIONS_BLOCKING_FORWARD_H
+#define ACTIONS_BLOCKING_FORWARD_H
 
 #include "action.h"
 #include "rolling_basis.h"
 
-class AtoB : public Action {
+class BlockingForward : public Action {
    public:
-    AtoB(RollingBasis* rb, const Point& target);
-    ~AtoB() = default;
+    BlockingForward(RollingBasis* rb, float distanceMm);
+
     void start() override;
     void update() override;
     void stop() override;
@@ -16,11 +16,7 @@ class AtoB : public Action {
 
    private:
     RollingBasis* _rb;
-    Point _target;
-    unsigned long _startMs = 0;
-    unsigned long _lastPrintMs = 0;
-    unsigned long _timeoutMs = 15000;  // Ms
-    float _arriveTolMm = 20.0f;
+    float _distanceMm;
     bool _started = false;
     bool _finished = false;
 };

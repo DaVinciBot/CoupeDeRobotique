@@ -6,8 +6,8 @@
 
 class RelativeTurning : public Action {
    public:
-    RelativeTurning(Navigation* nav, const double angle);
-    ~RelativeTurning() = default;
+    RelativeTurning(Navigation* nav, double angle);
+
     void start() override;
     void update() override;
     void stop() override;
@@ -17,11 +17,15 @@ class RelativeTurning : public Action {
    private:
     Point _target;
     Navigation* _navigation;
-    const double _angle;
+    double _angle;
     unsigned long _startMs = 0;
-    unsigned long _timeoutMs = 15000;  // Ms
-    float _arriveTolRad = 3.0f;
+    unsigned long _lastPrintMs = 0;
+    unsigned long _timeoutMs = 15000;
+    float _arriveTolRad = 0.05f;
+    bool _started = false;
     bool _finished = false;
+
+    float angleErrorRad() const;
 };
 
 #endif

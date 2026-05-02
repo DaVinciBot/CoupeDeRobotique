@@ -2,7 +2,9 @@
 #include <math.h>
 #include "config.h"
 
-#define ANGULAR_CALIBRATION_FACTOR 0.9f  // Robot tourne trop (~120° au lieu de 90°), donc on multiplie par 0.75
+#define ANGULAR_CALIBRATION_FACTOR \
+    0.9f  // Robot tourne trop (~120° au lieu de 90°), donc on multiplie par
+          // 0.75
 #define POSITION_TOLERANCE_MM 1.0f  // 1 mm
 #define ANGLE_TOLERANCE_RAD 0.01f   // env. 0.57°
 
@@ -15,10 +17,13 @@ RollingBasis::RollingBasis(Motor* leftMotor,
       _rightMotor(rightMotor),
       _wheelDiameterMm(wheelDiameterMm),
       _wheelBaseMm(wheelBaseMm),
-      _currentPose(initialPosition)
-{
-    _linearSpeed = 45.0f; //ne sert a rien a part pour déterminer le temps qu'il met pour avancer ?? dcp c un peu une valeur magique
-    _angularSpeed = 1.38f; // encore une valeur magique pour faire tourner le robot a une vitesse raisonnable (environ 1.38 rad/s correspond a 80 deg/s)
+      _currentPose(initialPosition) {
+    _linearSpeed =
+        45.0f;  // ne sert a rien a part pour déterminer le temps qu'il met pour
+                // avancer ?? dcp c un peu une valeur magique
+    _angularSpeed = 1.38f;  // encore une valeur magique pour faire tourner le
+                            // robot a une vitesse raisonnable (environ 1.38
+                            // rad/s correspond a 80 deg/s)
     _phase = Phase::Idle;
     _rotateDuration = 0.0f;
     _forwardDuration = 0.0f;
@@ -29,49 +34,57 @@ RollingBasis::RollingBasis(Motor* leftMotor,
     _rightMotor->init();
     _leftMotor->resetStepCount();
     _rightMotor->resetStepCount();
-    _leftMotor->setAcceleration(1000.0f);//avec 200, le moteur met 1s a aller a la meme vitesse que l'autre moteur jsp pourquoi mais ca fixe ca a 1000
+    _leftMotor->setAcceleration(
+        1000.0f);  // avec 200, le moteur met 1s a aller a la meme vitesse que
+                   // l'autre moteur jsp pourquoi mais ca fixe ca a 1000
     _rightMotor->setAcceleration(1000.0f);
 }
 // TODO: refactor this constructor pour pouvoir paramétrer la vitesse et
 // l'accélération angulaire et linéaire dans le config BIEN PRECISER L'UNITE
 
 void RollingBasis::setCommand(const Point& target) {
-    Serial.printf("[RB:setCommand] NEW TARGET (%.1f, %.1f, %.3f) from current (%.1f, %.1f, %.3f)\n",
-                  target.x, target.y, target.theta, _currentPose.x, _currentPose.y, _currentPose.theta);
-    
+    Serial.printf(
+        "[RB:setCommand] NEW TARGET (%.1f, %.1f, %.3f) from current (%.1f, "
+        "%.1f, %.3f)\n",
+        target.x, target.y, target.theta, _currentPose.x, _currentPose.y,
+        _currentPose.theta);
+
     // Restaurer les vitesses si elles ont été réinitialisées par stop()
     _linearSpeed = 57.5f;
     _angularSpeed = 1.38f;
-    
+
     float dx = target.x - _currentPose.x;
     float dy = target.y - _currentPose.y;
-    float desiredTheta = atan2f(dy, dx);
+    float distance = sqrtf(dx * dx + dy * dy);
+    float desiredTheta =
+        (distance < POSITION_TOLERANCE_MM) ? target.theta : atan2f(dy, dx);
     float dTheta = _wrapToPi(desiredTheta - _currentPose.theta);
-    
-    // Apply calibration: reduce the angle target to compensate for excessive actual rotation
+
+    // Apply calibration: reduce the angle target to compensate for excessive
+    // actual rotation
     _targetDTheta = dTheta * ANGULAR_CALIBRATION_FACTOR;
     _rotateDuration = fabsf(_targetDTheta) / _angularSpeed;
     _rotateDirection = (_targetDTheta >= 0 ? +1.0f : -1.0f);
 
-    // distance to travel
-    float distance = sqrtf(dx * dx + dy * dy);
     _forwardDuration = (distance < 1.0f) ? 0.0f : distance / _linearSpeed;
 
     // timestamps
     _startTime = micros();
     _phase = (_rotateDuration > 0 ? Phase::Rotating : Phase::Forwarding);
 
-    Serial.printf("[RB:setCommand] Rotate: %.3fs, Forward: %.3fs (speeds: lin=%.1f, ang=%.2f) -> Phase: %s\n",
-                  _rotateDuration, _forwardDuration, _linearSpeed, _angularSpeed,
-                  _phase == Phase::Rotating ? "ROTATING" : "FORWARDING");
+    Serial.printf(
+        "[RB:setCommand] Rotate: %.3fs, Forward: %.3fs (speeds: lin=%.1f, "
+        "ang=%.2f) -> Phase: %s\n",
+        _rotateDuration, _forwardDuration, _linearSpeed, _angularSpeed,
+        _phase == Phase::Rotating ? "ROTATING" : "FORWARDING");
 }
 
 void RollingBasis::update() {
     // Serial.printf("Phase: %s\n", phaseNames[(int)_phase]);
 
     if (_phase == Phase::Idle || _phase == Phase::Done) {
-        Serial.printf("[RB:update] Phase is %s, returning\n", 
-            _phase == Phase::Idle ? "IDLE" : "DONE");
+        Serial.printf("[RB:update] Phase is %s, returning\n",
+                      _phase == Phase::Idle ? "IDLE" : "DONE");
         return;
     }
 
@@ -82,20 +95,20 @@ void RollingBasis::update() {
         if (elapsed < _rotateDuration) {
             float w = _angularSpeed * _rotateDirection;
             _sendWheelSpeeds(0.0f, w);
-            //Serial.println("[RB] Rotating...");
+            // Serial.println("[RB] Rotating...");
         } else {
             _phase = Phase::Forwarding;
             _startTime = now;
             elapsed = 0.0f;
-            // Update orientation after rotation - use _targetDTheta (calibrated angle)
+            // Update orientation after rotation - use _targetDTheta (calibrated
+            // angle)
             _currentPose.theta += _targetDTheta;
             Serial.println("[RB] Rotation done -> Forwarding phase");
         }
-    }
-    else if (_phase == Phase::Forwarding) {  // ← MUST BE else if, not if!
+    } else if (_phase == Phase::Forwarding) {  // ← MUST BE else if, not if!
         if (elapsed < _forwardDuration) {
             _sendWheelSpeeds(_linearSpeed, 0.0f);
-            //Serial.println("[RB] Forwarding...");
+            // Serial.println("[RB] Forwarding...");
         } else {
             _leftMotor->setTargetSpeed(0);
             _rightMotor->setTargetSpeed(0);
@@ -127,18 +140,21 @@ void RollingBasis::_sendWheelSpeeds(float v, float w) {
     float leftSteps = leftMm / circumference * _leftMotor->getStepsPerRev();
     float rightSteps = rightMm / circumference * _rightMotor->getStepsPerRev();
     // Serial.println(leftSteps);
-    Serial.printf("[RB] Sending wheel speeds -> Left: %.1f mm/s (%.1f steps/s), Right: %.1f mm/s (%.1f steps/s)\n",
-                  leftMm, leftSteps, rightMm, rightSteps);
+    Serial.printf(
+        "[RB] Sending wheel speeds -> Left: %.1f mm/s (%.1f steps/s), Right: "
+        "%.1f mm/s (%.1f steps/s)\n",
+        leftMm, leftSteps, rightMm, rightSteps);
     _leftMotor->setTargetSpeed(-1.0f * leftSteps);
     _rightMotor->setTargetSpeed(-1.0f * rightSteps);
 }
 
 bool RollingBasis::isMoving() const {
     // Le robot bouge si sa phase mathématique est en cours...
-    bool phaseMoving = (_phase == Phase::Rotating || _phase == Phase::Forwarding);
+    bool phaseMoving =
+        (_phase == Phase::Rotating || _phase == Phase::Forwarding);
     // ... OU si les moteurs n'ont pas encore fini de freiner physiquement !
     bool motorsMoving = _leftMotor->isMoving() || _rightMotor->isMoving();
-    
+
     return (phaseMoving || motorsMoving);
 }
 
@@ -149,7 +165,6 @@ void RollingBasis::stop() {
     _phase = Phase::Idle;
     Serial.println("[RB:stop] RollingBasis STOPPED");
 }
-
 
 Point RollingBasis::getPose() const {
     return _currentPose;
@@ -163,12 +178,13 @@ float RollingBasis::getAngularSpeedRadPerS() const {
 }
 
 void RollingBasis::moveForwardBlocking(float distanceMm) {
-    Serial.printf("[Test] Début de l'avancement bloquant de %.1f mm\n", distanceMm);
-    
+    Serial.printf("[Test] Début de l'avancement bloquant de %.1f mm\n",
+                  distanceMm);
+
     _leftMotor->setAcceleration(3000.0f);
     _rightMotor->setAcceleration(3000.0f);
-    
-    _linearSpeed = 57.5f; 
+
+    _linearSpeed = 57.5f;
     float duration = fabsf(distanceMm) / _linearSpeed;
     float dir = (distanceMm >= 0) ? 1.0f : -1.0f;
     unsigned long start = micros();
@@ -181,33 +197,34 @@ void RollingBasis::moveForwardBlocking(float distanceMm) {
         _leftMotor->update();
         _rightMotor->update();
     }
-    
+
     _leftMotor->setTargetSpeed(0);
     _rightMotor->setTargetSpeed(0);
-    
+
     unsigned long stopTime = millis();
-    while(millis() - stopTime < 1000) {
+    while (millis() - stopTime < 1000) {
         _leftMotor->update();
         _rightMotor->update();
     }
-    
+
     _currentPose.x += distanceMm * cosf(_currentPose.theta);
     _currentPose.y += distanceMm * sinf(_currentPose.theta);
     Serial.println("[Test] Avancement terminé.");
 }
 
 void RollingBasis::turnBlocking(float angleRad) {
-    angleRad *=1.27f;
-    Serial.printf("[Test] Début de la rotation bloquante de %.3f rad\n", angleRad);
-    
+    angleRad *= 1.27f;
+    Serial.printf("[Test] Début de la rotation bloquante de %.3f rad\n",
+                  angleRad);
+
     _leftMotor->setAcceleration(3000.0f);
     _rightMotor->setAcceleration(3000.0f);
-    
+
     _angularSpeed = 1.38f;
     float targetDTheta = angleRad * ANGULAR_CALIBRATION_FACTOR;
     float duration = fabsf(targetDTheta) / _angularSpeed;
     float dir = (targetDTheta >= 0) ? 1.0f : -1.0f;
-    
+
     unsigned long start = micros();
 
     // CORRECTION : On donne l'ordre UNE SEULE FOIS ici
@@ -218,16 +235,16 @@ void RollingBasis::turnBlocking(float angleRad) {
         _leftMotor->update();
         _rightMotor->update();
     }
-    
+
     _leftMotor->setTargetSpeed(0);
     _rightMotor->setTargetSpeed(0);
 
     unsigned long stopTime = millis();
-    while(millis() - stopTime < 1000) {
+    while (millis() - stopTime < 1000) {
         _leftMotor->update();
         _rightMotor->update();
     }
-    
+
     _currentPose.theta = _wrapToPi(_currentPose.theta + targetDTheta);
     Serial.println("[Test] Rotation terminée.");
 }

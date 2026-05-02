@@ -1,112 +1,147 @@
 #include "strategy.h"
-#include <vector>
 
-Strategy::Strategy(RollingBasis* rb) : _rb(rb), _currentActionIndex(0) {
-    // valeurs par défaut déjà initialisées inline dans le header,
-    // mais on peut ré-initialiser ici si besoin
-    initActions();
+Strategy::Strategy(RollingBasis* rb) : _rb(rb) {}
+
+Strategy::~Strategy() {
+    clearActions();
 }
 
-void Strategy::initActions() {
-    _actions.push_back(new Carre(_rb, 200, 0));
-    _actions.push_back(new Triangle(_rb, 200, 0));
+void Strategy::addAction(Action* action) {
+    if (action == nullptr) {
+        Serial.println("[Strategy] Ignored null action");
+        return;
+    }
+
+    _actions.push_back(action);
+    _finished = false;
+
+    Serial.printf("[Strategy] Action added: %s (total: %u)\n", action->name(),
+                  static_cast<unsigned>(_actions.size()));
 }
 
-// Nouvelle méthode pour passer une trajectoire de points
-void Strategy::setPointTrajectory(const std::vector<Point>& points) {
-    // Vider les actions existantes
-    for (auto action : _actions) {
+void Strategy::clearActions() {
+    if (_started && !isFinished() && _currentActionIndex < _actions.size()) {
+        _actions[_currentActionIndex]->stop();
+    }
+
+    for (Action* action : _actions) {
         delete action;
     }
+
     _actions.clear();
     _currentActionIndex = 0;
-    
-    // Créer une action AtoB pour chaque point (avec calibration 0.4)
-    for (const Point& p : points) {
-        _actions.push_back(new AtoB(_rb, p));  // coordonnées brutes
-        Serial.printf("Strategy: Added point (%.1f, %.1f) - calibrated from (%.1f, %.1f)\n", 
-                      p.x * 0.4f, p.y * 0.4f, p.x, p.y);
-    }
-    Serial.printf("Strategy: Trajectory set with %d points\n", _actions.size());
+    _started = false;
+    _finished = false;
+    _stopped = false;
 }
 
-// === NOUVELLES FONCTIONS ===
+void Strategy::setPointTrajectory(const std::vector<Point>& points) {
+    clearActions();
 
-// Initialise la stratégie avec une liste de points
+    for (const Point& point : points) {
+        ajoute_strategie(point);
+    }
+
+    Serial.printf("[Strategy] Trajectory loaded with %u point(s)\n",
+                  static_cast<unsigned>(_actions.size()));
+}
+
 void Strategy::creer_strategie(const std::vector<Point>& points) {
-    Serial.printf("Strategy: Creating with %d points (will be calibrated by 0.4)\n", points.size());
     setPointTrajectory(points);
 }
 
-// Ajoute un point à la stratégie (crée un AtoB pour ce point)
 void Strategy::ajoute_strategie(const Point& point) {
-    _actions.push_back(new AtoB(_rb, point));
-    Serial.printf("Strategy: Added point (%.1f, %.1f) - calibrated from (%.1f, %.1f). Total actions: %d\n", 
-                  point.x * 0.4f, point.y * 0.4f, point.x, point.y, _actions.size());
+    addAction(new AtoB(_rb, point));
 }
 
-// Update strategy + rolling basis movement
 void Strategy::strategie_update() {
-    this->update();
+    update();
 }
 
+void Strategy::startCurrentAction() {
+    if (_currentActionIndex >= _actions.size()) {
+        _finished = true;
+        return;
+    }
+
+    Action* currentAction = _actions[_currentActionIndex];
+    Serial.printf("[Strategy] Starting action %u/%u: %s\n",
+                  static_cast<unsigned>(_currentActionIndex + 1),
+                  static_cast<unsigned>(_actions.size()),
+                  currentAction->name());
+    currentAction->start();
+}
 
 void Strategy::start() {
     _currentActionIndex = 0;
-    _waitingBetweenActions = false;
-    if (_actions.size() > 0) {
-        Serial.println("Strategy started");
-        _actions[_currentActionIndex]->start();
+    _started = true;
+    _finished = false;
+    _stopped = false;
+
+    if (_actions.empty()) {
+        Serial.println("[Strategy] No action to run");
+        _finished = true;
+        return;
     }
+
+    Serial.println("[Strategy] Started");
+    startCurrentAction();
+}
+
+void Strategy::updateCurrentAction() {
+    if (!_started || _finished || _stopped ||
+        _currentActionIndex >= _actions.size()) {
+        return;
+    }
+
+    _actions[_currentActionIndex]->update();
 }
 
 void Strategy::update() {
+    if (!_started || _finished || _stopped) {
+        return;
+    }
+
     if (_currentActionIndex >= _actions.size()) {
-        //Serial.println("[Strategy] All actions finished!");
+        _finished = true;
         return;
     }
-    
-    // Gère le délai entre deux actions
-    if (_waitingBetweenActions) {
-        if (millis() - _transitionDelay > 300) {  // 300ms de délai
-            _waitingBetweenActions = false;
-            Serial.printf("[Strategy] Transition complete -> Starting action %d\n", _currentActionIndex);
-            Serial.printf("[Strategy] RB isMoving before start: %d\n", _rb->isMoving());
-            _actions[_currentActionIndex]->start();
-        }
-        return;
-    }
-    
+
     Action* currentAction = _actions[_currentActionIndex];
     currentAction->update();
-    
-    if (currentAction->isFinished()) {
-    Serial.printf("[Strategy] ✓ Action %d FINISHED!\n", _currentActionIndex);
 
-    // Ne pas appeler stop() ici : l'action est déjà finie naturellement
+    if (!currentAction->isFinished()) {
+        return;
+    }
+
+    Serial.printf("[Strategy] Finished action %u/%u: %s\n",
+                  static_cast<unsigned>(_currentActionIndex + 1),
+                  static_cast<unsigned>(_actions.size()),
+                  currentAction->name());
+
     _currentActionIndex++;
 
-    if (_currentActionIndex < _actions.size()) {
-        _transitionDelay = millis();
-        _waitingBetweenActions = true;
-        Serial.printf("[Strategy] ⏸ Waiting before action %d...\n", _currentActionIndex);
-    } else {
-        Serial.println("[Strategy] ✓✓ ALL ACTIONS FINISHED!");
+    if (_currentActionIndex >= _actions.size()) {
+        _finished = true;
+        Serial.println("[Strategy] All actions finished");
+        return;
     }
-}
 
-
+    startCurrentAction();
 }
 
 void Strategy::stop() {
-    if (_currentActionIndex < _actions.size()) {
-        Serial.println("Strategy stopped");
+    if (!_finished && _currentActionIndex < _actions.size()) {
         _actions[_currentActionIndex]->stop();
     }
+
+    _stopped = true;
+    _finished = true;
+    Serial.println("[Strategy] Stopped");
 }
 
 bool Strategy::isFinished() const {
-    return _currentActionIndex >= _actions.size();
+    return _finished || _stopped;
 }
 
 const char* Strategy::name() const {

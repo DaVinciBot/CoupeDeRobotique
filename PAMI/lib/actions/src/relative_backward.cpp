@@ -1,68 +1,61 @@
 #include "relative_backward.h"
 
-RelativeBackward::RelativeBackward(Navigation* nav, const double distance)
-    : _navigation(nav), _distance(distance) {
-    // valeurs par défaut déjà initialisées inline dans le header,
-    // mais on peut ré-initialiser ici si besoin
-    _startMs = 0;
-    _finished = false;
-    Serial.printf("RelativeBackward: distance set to %.1f mm\n", _distance);
-    // timeout et tolérance définis dans le header (_timeoutMs, _arriveTolMm)
+#include <math.h>
+
+RelativeBackward::RelativeBackward(Navigation* nav, double distance)
+    : _navigation(nav), _distance(distance * DISTANCE_CALIBRATION) {
+    Serial.printf("[RelativeBackward] distance=%.1f mm calibrated from %.1f\n",
+                  _distance, distance);
 }
 
 void RelativeBackward::start() {
-    Serial.println("RelativeBackward started");
+    _started = true;
     _finished = false;
     _startMs = millis();
+    _lastPrintMs = 0;
 
-    // Lire la pose actuelle (A)
     Point cur = _navigation->getPose();
-    Serial.printf("RelativeBackward::start cur=(%.1f,%.1f,%.3f)\n", cur.x, cur.y,
-                  cur.theta);
-
-    // Calculer la cible B en fonction de la distance relative
     _target = cur;
-    _target.x -= _distance * cos(cur.theta);
-    _target.y -= _distance * sin(cur.theta);
-    Serial.printf("RelativeBackward::start target=(%.1f,%.1f,%.3f)\n", _target.x,
-                  _target.y, _target.theta);
+    _target.x -= _distance * cosf(cur.theta);
+    _target.y -= _distance * sinf(cur.theta);
 
-    // Envoyer la commande vers la cible B
+    Serial.printf("[RelativeBackward] Start to (%.1f, %.1f, %.3f)\n", _target.x,
+                  _target.y, _target.theta);
     _navigation->setCommand(_target);
-    Serial.println("RelativeBackward: command sent to rolling basis");
 }
 
 void RelativeBackward::update() {
-    // tick the rolling basis controller
+    if (!_started || _finished) {
+        return;
+    }
+
     _navigation->update();
 
-    if (_finished) {
-        return;
-    }
-
-    // timeout check
     if (millis() - _startMs > _timeoutMs) {
-        Serial.println("RelativeBackward: timeout, stopping");
-        _navigation->stop();
-        _finished = true;
+        Serial.println("[RelativeBackward] Timeout");
+        stop();
         return;
     }
 
-    // read current pose (may be static if odometry is disabled)
     Point cur = _navigation->getPose();
     float dist = Point::distance(cur, _target);
-    Serial.printf("RelativeBackward::update dist=%.1f mm\n", dist);
-    // arrival condition: within tolerance OR base reports idle
+
+    if (millis() - _lastPrintMs > 1000) {
+        Serial.printf("[RelativeBackward] dist=%.1f mm moving=%d\n", dist,
+                      _navigation->isMoving());
+        _lastPrintMs = millis();
+    }
+
     if (dist <= _arriveTolMm || !_navigation->isMoving()) {
-        Serial.println("RelativeBackward: arrived or motors idle -> finishing");
-        _navigation->stop();
         _finished = true;
+        Serial.println("[RelativeBackward] Finished");
     }
 }
 
 void RelativeBackward::stop() {
-    Serial.println("RelativeBackward stopped");
-    _navigation->stop();
+    if (_started && !_finished) {
+        _navigation->stop();
+    }
     _finished = true;
 }
 

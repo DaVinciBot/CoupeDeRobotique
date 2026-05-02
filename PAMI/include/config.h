@@ -2,23 +2,23 @@
 #include "AtoB.h"
 #include "action.h"
 #include "actionneur.h"
-#include "carre.h"
+#include "blocking_forward.h"
+#include "blocking_turn.h"
 #include "lidar_pami.h"
 #include "motor.h"
 #include "navigation.h"
 #include "relative_forward.h"
 #include "relative_turning.h"
 #include "rolling_basis.h"
-#include "triangle.h"
 #include "strategy.h"
 
 // #------- GENERAL CONFIGURATION -------#
 #define ACS_TRESHOLD 40  // Threshold for ACS activation in mm
 
 // #------- MOTOR CONFIGURATION -------#
-#define LEFT_DIR_PIN 3         // Direction pin for left motor
+#define LEFT_DIR_PIN 3          // Direction pin for left motor
 #define LEFT_STEP_PIN 46        // Step pin for left motor
-#define LEFT_EN_PIN 9          // Enable pin for left motor 
+#define LEFT_EN_PIN 9           // Enable pin for left motor
 #define LEFT_STEPS_PER_REV 400  // Steps per revolution for left motor
 
 #define RIGHT_DIR_PIN 21         // Direction pin for right motor
@@ -34,10 +34,13 @@
 #define MAX_ANGULAR_SPEED_RAD_PER_S 1.0  // Maximum angular speed in rad/s
 
 // #------- DISTANCE CALIBRATION -------#
-#define DISTANCE_CALIBRATION_FACTOR 0.4f  // Robot fait 2.5x la distance, donc on multiplie par 0.4
+#define DISTANCE_CALIBRATION_FACTOR \
+    0.4f  // Robot fait 2.5x la distance, donc on multiplie par 0.4
 
 // #------- ANGULAR CALIBRATION -------#
-#define ANGULAR_CALIBRATION_FACTOR 0.85f  // Robot tourne trop (~105° au lieu de 90°), donc on multiplie par 0.85
+#define ANGULAR_CALIBRATION_FACTOR \
+    0.85f  // Robot tourne trop (~105° au lieu de 90°), donc on multiplie par
+           // 0.85
 
 // #------- PID CONFIGURATION -------#
 #define LINEAR_DISTANCE_KP 2000.0f  // Proportional gain for linear distance
@@ -52,13 +55,13 @@
 #define SERVO_PIN 42  // Servo pin
 
 // #------- LORA CONFIGURATION (DX-LR01 UART) -------#
-#define LORA_RX_PIN 16   // RX2 - TXD du module DX-LR01
-#define LORA_TX_PIN 17   // TX2 - RXD du module DX-LR01
-#define LORA_BAUD 9600   // Baud rate du DX-LR01
-#define LORA_M0_PIN -1   // Mode pin M0 (connecté à GND = mode normal)
-#define LORA_M1_PIN -1   // Mode pin M1 (connecté à GND = mode normal)
+#define LORA_RX_PIN 16  // RX2 - TXD du module DX-LR01
+#define LORA_TX_PIN 17  // TX2 - RXD du module DX-LR01
+#define LORA_BAUD 9600  // Baud rate du DX-LR01
+#define LORA_M0_PIN -1  // Mode pin M0 (connecté à GND = mode normal)
+#define LORA_M1_PIN -1  // Mode pin M1 (connecté à GND = mode normal)
 #define LORA_AUX_PIN 4  // AUX pin (non utilisé pour ce test)
 
 // #-------- DEV CONFIGURATION ---------#
 #define ENABLE_OTA false   // Enable OTA updates
-#define ENABLE_LORA false   // Enable LoRa communication (DX-LR01 - UART based)
+#define ENABLE_LORA false  // Enable LoRa communication (DX-LR01 - UART based)

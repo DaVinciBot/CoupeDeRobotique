@@ -4,13 +4,10 @@
 #include "action.h"
 #include "navigation.h"
 
-// Distance calibration factor (robot does 2.5x distance, so multiply by 0.4)
-#define DISTANCE_CALIBRATION_FACTOR 0.4f
-
 class RelativeForward : public Action {
    public:
-    RelativeForward(Navigation* nav, const double distance);
-    ~RelativeForward() = default;
+    RelativeForward(Navigation* nav, double distance);
+
     void start() override;
     void update() override;
     void stop() override;
@@ -18,12 +15,16 @@ class RelativeForward : public Action {
     const char* name() const override;
 
    private:
+    static constexpr float DISTANCE_CALIBRATION = 0.4f;
+
     Point _target;
     Navigation* _navigation;
-    const double _distance;
+    double _distance;
     unsigned long _startMs = 0;
-    unsigned long _timeoutMs = 15000;  // Ms
+    unsigned long _lastPrintMs = 0;
+    unsigned long _timeoutMs = 15000;
     float _arriveTolMm = 5.0f;
+    bool _started = false;
     bool _finished = false;
 };
 
