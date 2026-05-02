@@ -91,7 +91,6 @@ void lidar_pami::update() {
             if (_onReceiveCallback != nullptr) {
                 _onReceiveCallback();  // call the user-defined callback
             }
-            _onReceiveCallback();
             Serial.println("lidar_pami: frame read");
         }
     }
