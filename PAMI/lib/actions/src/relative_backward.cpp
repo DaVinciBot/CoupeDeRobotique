@@ -3,7 +3,7 @@
 #include <math.h>
 
 RelativeBackward::RelativeBackward(Navigation* nav, double distance)
-    : _navigation(nav), _distance(distance * DISTANCE_CALIBRATION) {
+    : _navigation(nav), _distance(distance) {
     Serial.printf("[RelativeBackward] distance=%.1f mm calibrated from %.1f\n",
                   _distance, distance);
 }
