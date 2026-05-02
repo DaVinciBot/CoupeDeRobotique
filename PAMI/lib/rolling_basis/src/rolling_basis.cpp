@@ -199,30 +199,11 @@ float RollingBasis::getAngularSpeedRadPerS() const {
 void RollingBasis::moveForwardBlocking(float distanceMm) {
     Serial.printf("[Test] Blocking forward %.1f mm\n", distanceMm);
 
-    _leftMotor->setAcceleration(MOTOR_ACCELERATION_STEPS_PER_S2);
-    _rightMotor->setAcceleration(MOTOR_ACCELERATION_STEPS_PER_S2);
+    float stepsFloat =
+        distanceMm * _leftMotor->getStepsPerRev() / _wheelCircumferenceMm;
+    long steps = static_cast<long>(roundf(stepsFloat));
 
-    _linearSpeed = MAX_LINEAR_SPEED_MM_PER_S;
-    float duration = fabsf(distanceMm) / _linearSpeed;
-    float dir = (distanceMm >= 0.0f) ? 1.0f : -1.0f;
-    unsigned long start = micros();
-
-    _sendWheelSpeeds(_linearSpeed * dir, 0.0f);
-
-    while ((micros() - start) * 1e-6f < duration) {
-        _leftMotor->update();
-        _rightMotor->update();
-    }
-
-    _leftMotor->setTargetSpeed(0.0f);
-    _rightMotor->setTargetSpeed(0.0f);
-
-    unsigned long stopTime = millis();
-    while (millis() - stopTime < 1000) {
-        _leftMotor->update();
-        _rightMotor->update();
-    }
-
+    moveForwardStepsBlocking(steps);
     _currentPose.x += distanceMm * cosf(_currentPose.theta);
     _currentPose.y += distanceMm * sinf(_currentPose.theta);
     Serial.println("[Test] Blocking forward done");
