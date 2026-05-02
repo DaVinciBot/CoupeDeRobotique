@@ -137,14 +137,16 @@ float RollingBasis::_wrapToPi(float ang) const {
 
 void RollingBasis::_sendWheelSpeeds(float v, float w) {
     float halfBaseMm = _wheelBaseMm * 0.5f;
-    float leftMm = v - w * halfBaseMm;
-    float rightMm = v + w * halfBaseMm;
+    float leftMmPerSec = v - w * halfBaseMm;
+    float rightMmPerSec = v + w * halfBaseMm;
     float circumference = PI * _wheelDiameterMm;
-    float leftSteps = leftMm / circumference * _leftMotor->getStepsPerRev();
-    float rightSteps = rightMm / circumference * _rightMotor->getStepsPerRev();
+    float leftStepsPerSec =
+        leftMmPerSec * _leftMotor->getStepsPerRev() / circumference;
+    float rightStepsPerSec =
+        rightMmPerSec * _rightMotor->getStepsPerRev() / circumference;
 
-    _leftMotor->setTargetSpeed(-leftSteps);
-    _rightMotor->setTargetSpeed(-rightSteps);
+    _leftMotor->setTargetSpeed(-leftStepsPerSec);
+    _rightMotor->setTargetSpeed(-rightStepsPerSec);
 }
 
 float RollingBasis::_stepsToWheelDistanceMm(long steps,

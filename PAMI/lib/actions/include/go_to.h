@@ -1,13 +1,13 @@
-#ifndef ACTIONS_ATOB_H
-#define ACTIONS_ATOB_H
+#ifndef ACTIONS_GO_TO_H
+#define ACTIONS_GO_TO_H
 
 #include "action.h"
 #include "rolling_basis.h"
 
-class AtoB : public Action {
+class GoTo : public Action {
    public:
-    AtoB(RollingBasis* rb, const Point& target);
-    ~AtoB() = default;
+    GoTo(RollingBasis* rb, const Point& target);
+    ~GoTo() = default;
     void start() override;
     void update() override;
     void stop() override;

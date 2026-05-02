@@ -1,11 +1,11 @@
-#include "AtoB.h"
+#include "go_to.h"
 
-AtoB::AtoB(RollingBasis* rb, const Point& target) : _rb(rb), _target(target) {
-    Serial.printf("[AtoB] Target set to x=%.1f y=%.1f theta=%.3f\n", _target.x,
+GoTo::GoTo(RollingBasis* rb, const Point& target) : _rb(rb), _target(target) {
+    Serial.printf("[GoTo] Target set to x=%.1f y=%.1f theta=%.3f\n", _target.x,
                   _target.y, _target.theta);
 }
 
-void AtoB::start() {
+void GoTo::start() {
     _started = true;
     _finished = false;
     _startMs = millis();
@@ -13,13 +13,13 @@ void AtoB::start() {
 
     Point cur = _rb->getPose();
     Serial.printf(
-        "[AtoB] Start from (%.1f, %.1f, %.3f) to (%.1f, %.1f, %.3f)\n", cur.x,
+        "[GoTo] Start from (%.1f, %.1f, %.3f) to (%.1f, %.1f, %.3f)\n", cur.x,
         cur.y, cur.theta, _target.x, _target.y, _target.theta);
 
     _rb->setCommand(_target);
 }
 
-void AtoB::update() {
+void GoTo::update() {
     if (!_started || _finished) {
         return;
     }
@@ -27,7 +27,7 @@ void AtoB::update() {
     _rb->update();
 
     if (millis() - _startMs > _timeoutMs) {
-        Serial.println("[AtoB] Timeout");
+        Serial.println("[GoTo] Timeout");
         _rb->stop();
         _finished = true;
         return;
@@ -37,28 +37,28 @@ void AtoB::update() {
     float dist = Point::distance(cur, _target);
 
     if (millis() - _lastPrintMs > 1000) {
-        Serial.printf("[AtoB] dist=%.1f mm moving=%d\n", dist, _rb->isMoving());
+        Serial.printf("[GoTo] dist=%.1f mm moving=%d\n", dist, _rb->isMoving());
         _lastPrintMs = millis();
     }
 
     if (dist <= _arriveTolMm || !_rb->isMoving()) {
-        Serial.printf("[AtoB] Finished dist=%.1f moving=%d\n", dist,
+        Serial.printf("[GoTo] Finished dist=%.1f moving=%d\n", dist,
                       _rb->isMoving());
         _finished = true;
     }
 }
 
-void AtoB::stop() {
+void GoTo::stop() {
     if (_started && !_finished) {
         _rb->stop();
     }
     _finished = true;
 }
 
-bool AtoB::isFinished() const {
+bool GoTo::isFinished() const {
     return _finished;
 }
 
-const char* AtoB::name() const {
-    return "AtoB";
+const char* GoTo::name() const {
+    return "GoTo";
 }

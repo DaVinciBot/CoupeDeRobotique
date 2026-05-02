@@ -5,24 +5,25 @@
 
 // General configuration
 #define ACS_TRESHOLD 40  // Threshold for ACS activation in mm
+#define MICROSTEPPING_FACTOR 4
 
 // Motor configuration
 #define LEFT_DIR_PIN 3
 #define LEFT_STEP_PIN 46
 #define LEFT_EN_PIN 9
-#define LEFT_STEPS_PER_REV 400
+#define LEFT_STEPS_PER_REV 400 * MICROSTEPPING_FACTOR
 
 #define RIGHT_DIR_PIN 21
 #define RIGHT_STEP_PIN 47
 #define RIGHT_EN_PIN 48
-#define RIGHT_STEPS_PER_REV 400
+#define RIGHT_STEPS_PER_REV 400 * MICROSTEPPING_FACTOR
 
 #define PULSE_US 500
 #define WHEEL_DIAMETER_MM 59.0f
 #define WHEEL_BASE_MM 140.0f
 
-#define MAX_LINEAR_SPEED_MM_PER_S 57.5f
-#define MAX_ANGULAR_SPEED_RAD_PER_S 1.38f
+#define MAX_LINEAR_SPEED_MM_PER_S 20.0f
+#define MAX_ANGULAR_SPEED_RAD_PER_S 1.0f
 #define MOTOR_ACCELERATION_STEPS_PER_S2 1000.0f
 
 // Calibration
