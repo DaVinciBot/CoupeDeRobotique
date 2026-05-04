@@ -112,7 +112,7 @@ void set_odometrie(byte* msg, byte size) {
         rolling_basis_ptr->last_right_wheel_error = 0.0;
         rolling_basis_ptr->left_wheel_target_cm = 0.0;
         rolling_basis_ptr->right_wheel_target_cm = 0.0;
-        rolling_basis_ptr->target_pose =
+        rolling_basis_ptr->target_position =
             Point(odometrie->x, odometrie->y, odometrie->theta);
         rolling_basis_ptr->right_motor->ticks = 0L;
         rolling_basis_ptr->right_motor->last_ticks = 0L;
@@ -129,11 +129,13 @@ void set_odometrie(byte* msg, byte size) {
     }
 }
 
-void set_target_pose(byte* msg, byte size) {
-    msg_set_target_pose* pose_msg = (msg_set_target_pose*)msg;
-    Point pose(pose_msg->x, pose_msg->y, pose_msg->theta);
+void set_target_position(byte* msg, byte size) {
+    msg_set_target_position* position_msg = (msg_set_target_position*)msg;
+    Point position(position_msg->target_position_x,
+                   position_msg->target_position_y,
+                   position_msg->target_position_theta);
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        rolling_basis_ptr->set_target_pose(pose);
+        rolling_basis_ptr->set_target_position(position);
     }
 }
 
@@ -149,7 +151,7 @@ void initialize_callback_functions() {
     callback_functions[SET_PID] = &set_pid;
     callback_functions[SET_ODOMETRIE] = &set_odometrie;
     callback_functions[RESET_TEENSY] = &reset_teensy;
-    callback_functions[SET_TARGET_POSE] = &set_target_pose;
+    callback_functions[SET_TARGET_POSITION] = &set_target_position;
 }
 
 // 4. Define the timer interrupt handle function.
@@ -211,7 +213,8 @@ void loop() {
             left_pwm = rolling_basis_ptr->left_motor->last_pwm;
             right_ticks = rolling_basis_ptr->right_motor->ticks;
             left_ticks = rolling_basis_ptr->left_motor->ticks;
-            right_delta_ticks = rolling_basis_ptr->right_motor->last_delta_ticks;
+            right_delta_ticks =
+                rolling_basis_ptr->right_motor->last_delta_ticks;
             left_delta_ticks = rolling_basis_ptr->left_motor->last_delta_ticks;
             err_lin = rolling_basis_ptr->last_linear_error;
             err_ang = rolling_basis_ptr->last_angular_error;
@@ -228,12 +231,12 @@ void loop() {
         long ew_right = static_cast<long>(right_wheel_error * 100.0);
 
         char msg[160];
-        snprintf(
-            msg, sizeof(msg),
-            "RB e=%ld/%ld step=%ld/%ld ew=%ld/%ld pwm=%d/%d dt=%ld/%ld ticks=%ld/%ld",
-            ev_lin, ev_ang, cv_lin, cv_ang, ew_left, ew_right, left_pwm,
-            right_pwm, left_delta_ticks, right_delta_ticks, left_ticks,
-            right_ticks);
+        snprintf(msg, sizeof(msg),
+                 "RB e=%ld/%ld step=%ld/%ld ew=%ld/%ld pwm=%d/%d dt=%ld/%ld "
+                 "ticks=%ld/%ld",
+                 ev_lin, ev_ang, cv_lin, cv_ang, ew_left, ew_right, left_pwm,
+                 right_pwm, left_delta_ticks, right_delta_ticks, left_ticks,
+                 right_ticks);
         com->print(msg);
         last_pwm_log_ms = now_ms;
     }
@@ -252,13 +255,3 @@ void loop() {
         counter = 0;
     }
 }
-
-/*
-
- This code was realized by Florian BARRE
-    ____ __
-   / __// /___
-  / _/ / // _ \
- /_/  /_/ \___/
-
-*/

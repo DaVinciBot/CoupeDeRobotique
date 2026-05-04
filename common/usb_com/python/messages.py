@@ -35,12 +35,12 @@ class Messages(Enum):
     # rasp -> teensy : 0-127 (Convention)
 
     # Rolling Basis
+    SET_TARGET_POSITION = 0
+    """Command to set the rolling basis target position."""
     SET_PID = 1
     """Update PID coefficients for the rolling basis."""
     SET_ODOMETRIE = 2
     """Reset the odometry."""
-    SET_TARGET_POSE = 10
-    """Command to set the rolling basis target pose."""
 
     # Actuators
     SET_SERVO_ANGLE_I2C = 3

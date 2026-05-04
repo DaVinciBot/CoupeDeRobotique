@@ -16,9 +16,9 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 // rasp -> teensy : 0-127 (Convention)
 
 // Rolling Basis
+#define SET_TARGET_POSITION 0
 #define SET_PID 1
 #define SET_ODOMETRIE 2
-#define SET_TARGET_POSE 10
 
 // Actuators
 #define SET_SERVO_ANGLE_I2C 3
@@ -49,6 +49,12 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 // rasp -> teensy : 0-127
 
 // Rolling Basis
+struct msg_set_target_position {
+    byte command = SET_TARGET_POSITION;
+    double target_position_x;
+    double target_position_y;
+    double target_position_theta;
+};
 struct msg_set_pid {
     byte command = SET_PID;
     byte pid_type;
@@ -59,13 +65,6 @@ struct msg_set_pid {
 
 struct msg_set_odometrie {
     byte command = SET_ODOMETRIE;
-    double x;
-    double y;
-    double theta;
-};
-
-struct msg_set_target_pose {
-    byte command = SET_TARGET_POSE;
     double x;
     double y;
     double theta;
@@ -129,6 +128,25 @@ struct msg_update_rolling_basis {
     double x;
     double y;
     double theta;
+    double target_x;
+    double target_y;
+    double target_theta;
+    double linear_error;
+    double angular_error;
+    double linear_output;
+    double angular_output;
+    double left_wheel_target_cm;
+    double right_wheel_target_cm;
+    double left_wheel_position_cm;
+    double right_wheel_position_cm;
+    double left_wheel_error_cm;
+    double right_wheel_error_cm;
+    int16_t left_pwm;
+    int16_t right_pwm;
+    int32_t left_ticks;
+    int32_t right_ticks;
+    int32_t left_delta_ticks;
+    int32_t right_delta_ticks;
 };
 
 // Actuators

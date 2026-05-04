@@ -129,7 +129,7 @@ class RollingBasisDebugRecorder:
 
     def set_odometry(
         self,
-        pose: OrientedPoint,
+        position: OrientedPoint,
         *,
         measured_linear_speed: float | None = None,
         measured_angular_speed: float | None = None,
@@ -142,32 +142,34 @@ class RollingBasisDebugRecorder:
 
         linear_speed = measured_linear_speed
         angular_speed = measured_angular_speed
-        if self._last_pose is not None and self._last_pose_ts is not None:
-            dt = now - self._last_pose_ts
+        if self._last_position is not None and self._last_position_ts is not None:
+            dt = now - self._last_position_ts
             if dt > 0.0:
-                dx = pose.x - self._last_pose.x
-                dy = pose.y - self._last_pose.y
+                dx = position.x - self._last_position.x
+                dy = position.y - self._last_position.y
 
                 if linear_speed is None:
-                    if self._last_pose.theta is None:
+                    if self._last_position.theta is None:
                         linear_speed = math.hypot(dx, dy) / dt
                     else:
                         linear_speed = (
-                            math.cos(self._last_pose.theta) * dx
-                            + math.sin(self._last_pose.theta) * dy
+                            math.cos(self._last_position.theta) * dx
+                            + math.sin(self._last_position.theta) * dy
                         ) / dt
 
                 if (
                     angular_speed is None
-                    and pose.theta is not None
-                    and self._last_pose.theta is not None
+                    and position.theta is not None
+                    and self._last_position.theta is not None
                 ):
-                    dtheta = _normalize_angle(pose.theta - self._last_pose.theta)
+                    dtheta = _normalize_angle(
+                        position.theta - self._last_position.theta
+                    )
                     angular_speed = dtheta / dt
 
-        self._latest.odom_x_cm = pose.x
-        self._latest.odom_y_cm = pose.y
-        self._latest.odom_theta_rad = pose.theta
+        self._latest.odom_x_cm = position.x
+        self._latest.odom_y_cm = position.y
+        self._latest.odom_theta_rad = position.theta
 
         if linear_speed is not None:
             self._latest.actual_linear_cm_s = float(linear_speed)

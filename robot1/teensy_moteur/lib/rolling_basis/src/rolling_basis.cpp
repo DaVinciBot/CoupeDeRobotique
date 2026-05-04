@@ -140,11 +140,11 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
     this->angular_position_pid.reset();
     this->left_wheel_position_pid.reset();
     this->right_wheel_position_pid.reset();
-    this->target_pose = Point(x, y, theta);
+    this->target_position = Point(x, y, theta);
 }
 
-void Rolling_Basis::set_target_pose(const Point& pose) {
-    this->target_pose = pose;
+void Rolling_Basis::set_target_position(const Point& position) {
+    this->target_position = position;
 }
 
 // Odometrie function
@@ -184,12 +184,13 @@ void Rolling_Basis::odometrie_handle() {
  * then let each wheel PID command its motor.
  */
 void Rolling_Basis::handle() {
-    double dx = this->target_pose.x - this->X;
-    double dy = this->target_pose.y - this->Y;
+    double dx = this->target_position.x - this->X;
+    double dy = this->target_position.y - this->Y;
     double cos_th = cosf(this->THETA);
     double sin_th = sinf(this->THETA);
     double linear_error = cos_th * dx + sin_th * dy;
-    double angular_error = normalizeAngle(this->target_pose.theta - this->THETA);
+    double angular_error =
+        normalizeAngle(this->target_position.theta - this->THETA);
 
     double linear_step = this->linear_position_pid.compute(linear_error);
     double angular_step = this->angular_position_pid.compute(angular_error);
@@ -202,15 +203,16 @@ void Rolling_Basis::handle() {
     this->left_wheel_target_cm += linear_step - angular_step;
     this->right_wheel_target_cm += linear_step + angular_step;
 
-    double left_distance_cm =
-        static_cast<double>(this->left_motor->ticks) * this->left_wheel_unit_tick_cm();
-    double right_distance_cm =
-        static_cast<double>(this->right_motor->ticks) * this->right_wheel_unit_tick_cm();
+    double left_distance_cm = static_cast<double>(this->left_motor->ticks) *
+                              this->left_wheel_unit_tick_cm();
+    double right_distance_cm = static_cast<double>(this->right_motor->ticks) *
+                               this->right_wheel_unit_tick_cm();
     double left_wheel_error = this->left_wheel_target_cm - left_distance_cm;
     double right_wheel_error = this->right_wheel_target_cm - right_distance_cm;
 
     double left_pwm = this->left_wheel_position_pid.compute(left_wheel_error);
-    double right_pwm = this->right_wheel_position_pid.compute(right_wheel_error);
+    double right_pwm =
+        this->right_wheel_position_pid.compute(right_wheel_error);
 
     if (fabs(left_pwm) > 0.0 && fabs(left_pwm) < MIN_PWM_WHEEL) {
         left_pwm = copysign(MIN_PWM_WHEEL, left_pwm);

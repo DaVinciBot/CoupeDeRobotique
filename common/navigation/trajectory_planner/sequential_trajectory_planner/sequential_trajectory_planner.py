@@ -55,7 +55,7 @@ class SequentialTrajectoryPlanner(
         self.segments_mapper: SegmentMapper | None = None
         self._last_call_time: float = 0.0
         self._is_backward: bool = self.params.direction == Direction.BACKWARD
-        self._fallback_stop_pose: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
+        self._fallback_stop_position: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
         self._empty_path_warning_emitted: bool = False
 
     @staticmethod
@@ -95,12 +95,12 @@ class SequentialTrajectoryPlanner(
         delta_theta = self._normalize_angle(desired_theta - start.theta)
 
         # Build the intermediate oriented point after rotation
-        intermediate_pose = OrientedPoint(start.x, start.y, desired_theta)
+        intermediate_position = OrientedPoint(start.x, start.y, desired_theta)
 
         # Create and return the rotation segment
         return RotationSegment(
             start_position=start,
-            end_position=intermediate_pose,
+            end_position=intermediate_position,
             duration=self.speed_profiler.angular_speed_profile.get_total_duration(
                 abs(delta_theta),
             ),
@@ -136,12 +136,12 @@ class SequentialTrajectoryPlanner(
         delta_theta = self._normalize_angle(desired_theta - start.theta)
 
         # Build the intermediate oriented point after rotation
-        intermediate_pose = OrientedPoint(start.x, start.y, desired_theta)
+        intermediate_position = OrientedPoint(start.x, start.y, desired_theta)
 
         # Create and return the rotation segment
         return RotationSegment(
             start_position=start,
-            end_position=intermediate_pose,
+            end_position=intermediate_position,
             duration=self.speed_profiler.angular_speed_profile.get_total_duration(
                 abs(delta_theta),
             ),
@@ -188,7 +188,7 @@ class SequentialTrajectoryPlanner(
             path (list[OrientedPoint]): List of oriented points representing the path.
         """
         if path:
-            self._fallback_stop_pose = path[-1]
+            self._fallback_stop_position = path[-1]
 
         # Initialize the segment list
         segments: list[BaseSegment] = []
@@ -287,7 +287,7 @@ class SequentialTrajectoryPlanner(
                 self._empty_path_warning_emitted = True
 
             return TrajectoryPlanCommand.create_stop_command(
-                current_position=self._fallback_stop_pose,
+                current_position=self._fallback_stop_position,
             )
 
         segment, local_time = self.segments_mapper.get_segment_at_time(time_elapsed)

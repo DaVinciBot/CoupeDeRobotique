@@ -31,9 +31,9 @@ def test_recorder_exports_static_artifacts(tmp_path) -> None:
     recorder.set_target(
         linear_speed=10.0,
         angular_speed=1.2,
-        target_pose=OrientedPoint((100.0, 200.0), 0.3),
+        target_position=OrientedPoint((100.0, 200.0), 0.3),
     )
-    recorder.add_sample(event="target_pose", force=True)
+    recorder.add_sample(event="target_position", force=True)
 
     recorder.set_odometry(
         OrientedPoint((101.0, 200.0), 0.35),

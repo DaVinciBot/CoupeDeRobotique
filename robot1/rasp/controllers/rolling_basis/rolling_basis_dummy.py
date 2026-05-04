@@ -93,27 +93,27 @@ class RollingBasisDummy(BaseComTeensy):
     @log(param_logger="RollingBasis")
     def set_trajectory_command(self, cmd: TrajectoryPlanCommand) -> None:
         """Apply a trajectory command to the simulated robot."""
-        self.set_target_pose(
+        self.set_target_position(
             cmd.position,
             linear_speed=cmd.linear_speed,
             angular_speed=cmd.angular_speed,
         )
 
-    def set_target_pose(
+    def set_target_position(
         self,
-        pose: OrientedPoint,
+        position: OrientedPoint,
         *,
         linear_speed: float = 0.0,
         angular_speed: float = 0.0,
     ) -> None:
-        """Set the target pose and simulated motion command."""
+        """Set the target position and simulated motion command."""
         now = time.time()
         with self._lock:
             dt = now - self._last_update_time
             if dt > 0.0:
                 self._simulate_step_unlocked(dt)
 
-            self.target_position = pose
+            self.target_position = position
             self.linear_speed = linear_speed
             self.angular_speed = angular_speed
             self._last_update_time = now
@@ -121,13 +121,14 @@ class RollingBasisDummy(BaseComTeensy):
             self._debug_recorder.set_target(
                 linear_speed=linear_speed,
                 angular_speed=angular_speed,
-                target_pose=pose,
+                target_position=position,
             )
 
         self._logger.debug(
-            f"[CTRL:RB:Dummy] Set target pose: {pose} cmd=({linear_speed}, {angular_speed})",
+            f"[CTRL:RB:Dummy] Set target position: {position} "
+            f"cmd=({linear_speed}, {angular_speed})",
         )
-        self._debug_recorder.add_sample(event="target_pose")
+        self._debug_recorder.add_sample(event="target_position")
 
     def simulate_step(self, dt: float) -> None:
         """Integrate the stored trajectory command over a timestep."""

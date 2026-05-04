@@ -40,7 +40,7 @@ class Rolling_Basis {
     PID angular_position_pid;
     PID left_wheel_position_pid;
     PID right_wheel_position_pid;
-    Point target_pose;
+    Point target_position;
 
     // Rolling basis's params
     inline double radius() { return this->center_distance / 2.0; };
@@ -135,7 +135,7 @@ class Rolling_Basis {
      */
     void handle();
 
-    void set_target_pose(const Point& pose);
+    void set_target_position(const Point& position);
 
     void pi_mod_signed(double theta);
 

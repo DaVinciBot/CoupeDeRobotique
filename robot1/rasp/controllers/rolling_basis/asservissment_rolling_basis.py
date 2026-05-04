@@ -147,32 +147,32 @@ class AsservissementRollingBasis(
         if not self.reconnect():
             return
         self.set_odometrie(OrientedPoint((0.0, 0.0), 0.0))
-        self.set_target_pose(OrientedPoint((0.0, 0.0), 0.0))
+        self.set_target_position(OrientedPoint((0.0, 0.0), 0.0))
 
     def set_trajectory_command(self, cmd: TrajectoryPlanCommand) -> None:
-        """Send the target pose from a trajectory command."""
-        self.set_target_pose(cmd.position)
+        """Send the target position from a trajectory command."""
+        self.set_target_position(cmd.position)
 
-    def set_target_pose(
+    def set_target_position(
         self,
-        pose: OrientedPoint,
+        position: OrientedPoint,
     ) -> None:
         """Send a command to set the target position of the rolling basis.
 
         Linear speed is expressed in cm/s and angular speed in rad/s.
 
         Args:
-            pose (OrientedPoint): Desired position and orientation.
+            position (OrientedPoint): Desired position and orientation.
         """
         # Store for logging
-        self._last_target = pose
+        self._last_target = position
 
         # Build and send message
         msg = (
-            Messages.SET_TARGET_POSE.to_bytes()
-            + struct.pack("<d", pose.x)
-            + struct.pack("<d", pose.y)
-            + struct.pack("<d", pose.theta)
+            Messages.SET_TARGET_POSITION.to_bytes()
+            + struct.pack("<d", position.x)
+            + struct.pack("<d", position.y)
+            + struct.pack("<d", position.theta)
         )
         self.send_bytes(msg)
 

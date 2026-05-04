@@ -111,28 +111,28 @@ class RollingBasis(BaseComTeensy):
         if not self.reconnect():
             return
         self.set_odometrie(OrientedPoint((0.0, 0.0), 0.0))
-        self.set_target_pose(OrientedPoint((0.0, 0.0), 0.0))
+        self.set_target_position(OrientedPoint((0.0, 0.0), 0.0))
 
     def set_trajectory_command(self, cmd: TrajectoryPlanCommand) -> None:
-        """Send the target pose from a trajectory command."""
-        self._logger.info(f"[CTRL:RB] Setting target pose: {cmd.position}")
-        self.set_target_pose(cmd.position)
+        """Send the target position from a trajectory command."""
+        self._logger.info(f"[CTRL:RB] Setting target position: {cmd.position}")
+        self.set_target_position(cmd.position)
 
-    def set_target_pose(self, pose: OrientedPoint) -> None:
-        """Send a command to set the target pose."""
+    def set_target_position(self, position: OrientedPoint) -> None:
+        """Send a command to set the target position."""
         msg = (
-            Messages.SET_TARGET_POSE.to_bytes()
-            + struct.pack("<d", pose.x)
-            + struct.pack("<d", pose.y)
-            + struct.pack("<d", pose.theta)
+            Messages.SET_TARGET_POSITION.to_bytes()
+            + struct.pack("<d", position.x)
+            + struct.pack("<d", position.y)
+            + struct.pack("<d", position.theta)
         )
         self.send_bytes(msg)
         self._debug_recorder.set_target(
             linear_speed=0.0,
             angular_speed=0.0,
-            target_pose=pose,
+            target_position=position,
         )
-        self._debug_recorder.add_sample(event="target_pose")
+        self._debug_recorder.add_sample(event="target_position")
 
     @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_odometrie(self, odometrie: OrientedPoint) -> None:

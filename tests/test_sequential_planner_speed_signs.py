@@ -104,7 +104,7 @@ def test_empty_path_returns_safe_stop_command() -> None:
     assert math.isclose(cmd.position.theta or 0.0, 0.0, abs_tol=1e-9)
 
 
-def test_single_waypoint_path_stops_on_that_pose() -> None:
+def test_single_waypoint_path_stops_on_that_position() -> None:
     """A single-waypoint path should hold that waypoint instead of crashing."""
     params = SequentialTrajectoryPlannerParams(direction=Direction.FORWARD)
     profiler = SpeedProfiler(
@@ -113,14 +113,14 @@ def test_single_waypoint_path_stops_on_that_pose() -> None:
     )
     planner = SequentialTrajectoryPlanner(params, profiler)
 
-    hold_pose = OrientedPoint((42.0, 13.0), math.pi / 4)
-    planner.plan_trajectory([hold_pose])
+    hold_position = OrientedPoint((42.0, 13.0), math.pi / 4)
+    planner.plan_trajectory([hold_position])
     cmd = planner.get_plan()
 
     assert math.isclose(cmd.linear_speed, 0.0, abs_tol=1e-9)
     assert math.isclose(cmd.angular_speed, 0.0, abs_tol=1e-9)
-    assert math.isclose(cmd.position.x, hold_pose.x, abs_tol=1e-9)
-    assert math.isclose(cmd.position.y, hold_pose.y, abs_tol=1e-9)
+    assert math.isclose(cmd.position.x, hold_position.x, abs_tol=1e-9)
+    assert math.isclose(cmd.position.y, hold_position.y, abs_tol=1e-9)
     assert cmd.position.theta is not None
-    assert hold_pose.theta is not None
-    assert math.isclose(cmd.position.theta, hold_pose.theta, abs_tol=1e-9)
+    assert hold_position.theta is not None
+    assert math.isclose(cmd.position.theta, hold_position.theta, abs_tol=1e-9)
