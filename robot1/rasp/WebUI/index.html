@@ -477,12 +477,19 @@
             <div><strong>Samples:</strong> <span id="pid_sample_count">0</span></div>
             <div><strong>Dernier event:</strong> <span id="pid_last_event">init</span></div>
             <div><strong>Temps:</strong> <span id="pid_time_s">0.00s</span></div>
+            <div><strong>Etat:</strong> <span id="pid_live_status">En attente</span></div>
           </div>
         </div>
 
         <div class="sushi pid_chart_card">
-          <div class="pilule">Vitesse Linéaire (cm/s)</div>
-          <canvas id="pid_linear_chart"></canvas>
+          <div class="pilule">PID position lineaire</div>
+          <div class="pid_values">
+            <div>Consigne <strong id="pid_linear_position_target">--</strong></div>
+            <div>Mesure <strong id="pid_linear_position_actual">--</strong></div>
+            <div>Erreur <strong id="pid_linear_position_error">--</strong></div>
+            <div>Sortie <strong id="pid_linear_position_output">--</strong></div>
+          </div>
+          <canvas id="pid_linear_position_chart"></canvas>
           <div class="pid_legend">
             <span class="legend_item target">Consigne</span>
             <span class="legend_item actual">Mesure</span>
@@ -490,8 +497,14 @@
         </div>
 
         <div class="sushi pid_chart_card">
-          <div class="pilule">Vitesse Angulaire (rad/s)</div>
-          <canvas id="pid_angular_chart"></canvas>
+          <div class="pilule">PID position angulaire</div>
+          <div class="pid_values">
+            <div>Consigne <strong id="pid_angular_position_target">--</strong></div>
+            <div>Mesure <strong id="pid_angular_position_actual">--</strong></div>
+            <div>Erreur <strong id="pid_angular_position_error">--</strong></div>
+            <div>Sortie <strong id="pid_angular_position_output">--</strong></div>
+          </div>
+          <canvas id="pid_angular_position_chart"></canvas>
           <div class="pid_legend">
             <span class="legend_item target">Consigne</span>
             <span class="legend_item actual">Mesure</span>
@@ -499,11 +512,32 @@
         </div>
 
         <div class="sushi pid_chart_card">
-          <div class="pilule">Erreur</div>
-          <canvas id="pid_error_chart"></canvas>
+          <div class="pilule">PID roue gauche</div>
+          <div class="pid_values">
+            <div>Consigne <strong id="pid_left_wheel_position_target">--</strong></div>
+            <div>Mesure <strong id="pid_left_wheel_position_actual">--</strong></div>
+            <div>Erreur <strong id="pid_left_wheel_position_error">--</strong></div>
+            <div>Sortie <strong id="pid_left_wheel_position_output">--</strong></div>
+          </div>
+          <canvas id="pid_left_wheel_position_chart"></canvas>
           <div class="pid_legend">
-            <span class="legend_item linear">Erreur Linéaire</span>
-            <span class="legend_item angular">Erreur Angulaire</span>
+            <span class="legend_item target">Consigne</span>
+            <span class="legend_item actual">Mesure</span>
+          </div>
+        </div>
+
+        <div class="sushi pid_chart_card">
+          <div class="pilule">PID roue droite</div>
+          <div class="pid_values">
+            <div>Consigne <strong id="pid_right_wheel_position_target">--</strong></div>
+            <div>Mesure <strong id="pid_right_wheel_position_actual">--</strong></div>
+            <div>Erreur <strong id="pid_right_wheel_position_error">--</strong></div>
+            <div>Sortie <strong id="pid_right_wheel_position_output">--</strong></div>
+          </div>
+          <canvas id="pid_right_wheel_position_chart"></canvas>
+          <div class="pid_legend">
+            <span class="legend_item target">Consigne</span>
+            <span class="legend_item actual">Mesure</span>
           </div>
         </div>
       </div>

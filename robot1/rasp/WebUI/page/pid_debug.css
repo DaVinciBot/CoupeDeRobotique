@@ -1,11 +1,12 @@
 .pid_debug {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
   gap: 20px;
   align-content: start;
 }
 
 .pid_debug_header {
+  grid-column: 1 / -1;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -14,13 +15,13 @@
 
 .pid_debug_meta {
   display: grid;
-  grid-template-columns: repeat(3, minmax(180px, 1fr));
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
   gap: 12px;
 }
 
 .pid_debug_meta > div {
   background-color: var(--secondary);
-  border-radius: 20px;
+  border-radius: 8px;
   padding: 10px 14px;
   color: black;
 }
@@ -30,14 +31,39 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
+}
+
+.pid_values {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pid_values > div {
+  background: var(--secondary);
+  border-radius: 8px;
+  color: #16212f;
+  font-size: 12px;
+  min-width: 0;
+  padding: 8px 10px;
+}
+
+.pid_values strong {
+  display: block;
+  font-size: 15px;
+  margin-top: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pid_chart_card canvas {
   width: 100%;
-  height: 230px;
-  background-color: #f6f8ff;
-  border-radius: 20px;
-  border: 1px solid #d7dfff;
+  height: 260px;
+  background-color: #dcebf6;
+  border-radius: 8px;
+  border: 1px solid #b8cce0;
 }
 
 .pid_legend {
@@ -63,27 +89,27 @@
 }
 
 .legend_item.target::before {
-  background-color: #1d7afc;
+  background-color: #0a66b3;
 }
 
 .legend_item.actual::before {
-  background-color: #ff6a00;
-}
-
-.legend_item.linear::before {
-  background-color: #00a86b;
-}
-
-.legend_item.angular::before {
-  background-color: #c84bff;
+  background-color: #df1d25;
 }
 
 @media (max-width: 900px) {
-  .pid_debug_meta {
+  .pid_debug {
     grid-template-columns: 1fr;
   }
 
+  .pid_debug_meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pid_values {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .pid_chart_card canvas {
-    height: 190px;
+    height: 210px;
   }
 }

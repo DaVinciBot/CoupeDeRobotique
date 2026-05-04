@@ -83,7 +83,7 @@ class MainBrain(Brain):
         self.pid_ki: float = 0.0
         self.pid_kd: float = 0.0
         self.should_export_debug_report: bool = False
-        self.pid_debug_live: dict[str, float | int | str | None] = {
+        self.pid_debug_live: dict[str, Any] = {
             "enabled": 0,
             "time_s": 0.0,
             "last_event": "init",
@@ -97,6 +97,7 @@ class MainBrain(Brain):
             "odom_x_cm": None,
             "odom_y_cm": None,
             "odom_theta_rad": None,
+            "pids": {},
         }
 
         self.jack_triggered: bool = False
@@ -214,7 +215,7 @@ class MainBrain(Brain):
         except Exception:
             self.logger.error(
                 f"[run] Initialization failed during {init_stage}: "
-                f"{traceback.format_exc()}"
+                f"{traceback.format_exc()}",
             )
             raise
 

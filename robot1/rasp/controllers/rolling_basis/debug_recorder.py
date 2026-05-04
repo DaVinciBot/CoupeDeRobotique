@@ -10,7 +10,7 @@ import csv
 import json
 import math
 import time
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
 
@@ -34,12 +34,64 @@ _CSV_FIELDS = [
     "angular_cmd",
     "left_pwm",
     "right_pwm",
+    "linear_position_target",
+    "linear_position_actual",
+    "linear_position_error",
+    "linear_position_output",
+    "angular_position_target",
+    "angular_position_actual",
+    "angular_position_error",
+    "angular_position_output",
+    "left_wheel_position_target",
+    "left_wheel_position_actual",
+    "left_wheel_position_error",
+    "left_wheel_position_output",
+    "right_wheel_position_target",
+    "right_wheel_position_actual",
+    "right_wheel_position_error",
+    "right_wheel_position_output",
     "left_ticks",
     "right_ticks",
+    "left_delta_ticks",
+    "right_delta_ticks",
+    "target_x_cm",
+    "target_y_cm",
+    "target_theta_rad",
     "odom_x_cm",
     "odom_y_cm",
     "odom_theta_rad",
 ]
+
+_PID_CHANNELS = {
+    "linear_position": {
+        "label": "Position lineaire",
+        "unit": "cm",
+        "output_unit": "cm/cycle",
+    },
+    "angular_position": {
+        "label": "Position angulaire",
+        "unit": "rad",
+        "output_unit": "cm/cycle",
+    },
+    "left_wheel_position": {
+        "label": "Roue gauche",
+        "unit": "cm",
+        "output_unit": "PWM",
+    },
+    "right_wheel_position": {
+        "label": "Roue droite",
+        "unit": "cm",
+        "output_unit": "PWM",
+    },
+}
+
+
+@dataclass(slots=True)
+class _PidTelemetry:
+    target: float | None = None
+    actual: float | None = None
+    error: float | None = None
+    output: float | None = None
 
 
 @dataclass(slots=True)
@@ -56,9 +108,17 @@ class _LatestTelemetry:
     right_pwm: int | None = None
     left_ticks: int | None = None
     right_ticks: int | None = None
+    left_delta_ticks: int | None = None
+    right_delta_ticks: int | None = None
+    target_x_cm: float | None = None
+    target_y_cm: float | None = None
+    target_theta_rad: float | None = None
     odom_x_cm: float | None = None
     odom_y_cm: float | None = None
     odom_theta_rad: float | None = None
+    pids: dict[str, _PidTelemetry] = field(
+        default_factory=lambda: {key: _PidTelemetry() for key in _PID_CHANNELS},
+    )
 
 
 def _normalize_angle(angle: float) -> float:
@@ -102,8 +162,8 @@ class RollingBasisDebugRecorder:
         self._last_sample_time = 0.0
         self._last_event = "init"
 
-        self._last_pose: OrientedPoint | None = None
-        self._last_pose_ts: float | None = None
+        self._last_position: OrientedPoint | None = None
+        self._last_position_ts: float | None = None
 
     @property
     def enabled(self) -> bool:
@@ -115,7 +175,7 @@ class RollingBasisDebugRecorder:
         *,
         linear_speed: float,
         angular_speed: float,
-        target_pose: OrientedPoint,
+        target_position: OrientedPoint,
     ) -> None:
         """Update latest target command values."""
         if not self._enabled:
@@ -123,9 +183,9 @@ class RollingBasisDebugRecorder:
 
         self._latest.target_linear_cm_s = float(linear_speed)
         self._latest.target_angular_rad_s = float(angular_speed)
-
-        # Keep target_pose in signature for future extensions and call-site symmetry.
-        _ = target_pose
+        self._latest.target_x_cm = target_position.x
+        self._latest.target_y_cm = target_position.y
+        self._latest.target_theta_rad = target_position.theta
 
     def set_odometry(
         self,
@@ -163,7 +223,7 @@ class RollingBasisDebugRecorder:
                     and self._last_position.theta is not None
                 ):
                     dtheta = _normalize_angle(
-                        position.theta - self._last_position.theta
+                        position.theta - self._last_position.theta,
                     )
                     angular_speed = dtheta / dt
 
@@ -192,8 +252,71 @@ class RollingBasisDebugRecorder:
                 self._latest.target_angular_rad_s - self._latest.actual_angular_rad_s
             )
 
-        self._last_pose = pose
-        self._last_pose_ts = now
+        self._last_position = position
+        self._last_position_ts = now
+
+    def set_pid_telemetry(
+        self,
+        *,
+        target_position: OrientedPoint,
+        linear_error: float,
+        angular_error: float,
+        linear_output: float,
+        angular_output: float,
+        left_wheel_target_cm: float,
+        right_wheel_target_cm: float,
+        left_wheel_position_cm: float,
+        right_wheel_position_cm: float,
+        left_wheel_error_cm: float,
+        right_wheel_error_cm: float,
+        left_pwm: int,
+        right_pwm: int,
+        left_ticks: int,
+        right_ticks: int,
+        left_delta_ticks: int,
+        right_delta_ticks: int,
+    ) -> None:
+        """Update low-level PID telemetry from the rolling-basis board."""
+        if not self._enabled:
+            return
+
+        self._latest.target_x_cm = target_position.x
+        self._latest.target_y_cm = target_position.y
+        self._latest.target_theta_rad = target_position.theta
+
+        self._latest.linear_cmd = float(linear_output)
+        self._latest.angular_cmd = float(angular_output)
+        self._latest.left_pwm = int(left_pwm)
+        self._latest.right_pwm = int(right_pwm)
+        self._latest.left_ticks = int(left_ticks)
+        self._latest.right_ticks = int(right_ticks)
+        self._latest.left_delta_ticks = int(left_delta_ticks)
+        self._latest.right_delta_ticks = int(right_delta_ticks)
+
+        self._latest.pids["linear_position"] = _PidTelemetry(
+            target=0.0,
+            actual=-float(linear_error),
+            error=float(linear_error),
+            output=float(linear_output),
+        )
+        self._latest.pids["angular_position"] = _PidTelemetry(
+            target=0.0,
+            actual=-float(angular_error),
+            error=float(angular_error),
+            output=float(angular_output),
+        )
+        self._latest.pids["left_wheel_position"] = _PidTelemetry(
+            target=float(left_wheel_target_cm),
+            actual=float(left_wheel_position_cm),
+            error=float(left_wheel_error_cm),
+            output=float(left_pwm),
+        )
+        self._latest.pids["right_wheel_position"] = _PidTelemetry(
+            target=float(right_wheel_target_cm),
+            actual=float(right_wheel_position_cm),
+            error=float(right_wheel_error_cm),
+            output=float(right_pwm),
+        )
 
     def add_sample(self, *, event: str, force: bool = False) -> None:
         """Append a sample using the latest known values."""
@@ -220,8 +343,43 @@ class RollingBasisDebugRecorder:
             "angular_cmd": self._latest.angular_cmd,
             "left_pwm": self._latest.left_pwm,
             "right_pwm": self._latest.right_pwm,
+            "linear_position_target": self._latest.pids["linear_position"].target,
+            "linear_position_actual": self._latest.pids["linear_position"].actual,
+            "linear_position_error": self._latest.pids["linear_position"].error,
+            "linear_position_output": self._latest.pids["linear_position"].output,
+            "angular_position_target": self._latest.pids["angular_position"].target,
+            "angular_position_actual": self._latest.pids["angular_position"].actual,
+            "angular_position_error": self._latest.pids["angular_position"].error,
+            "angular_position_output": self._latest.pids["angular_position"].output,
+            "left_wheel_position_target": self._latest.pids[
+                "left_wheel_position"
+            ].target,
+            "left_wheel_position_actual": self._latest.pids[
+                "left_wheel_position"
+            ].actual,
+            "left_wheel_position_error": self._latest.pids["left_wheel_position"].error,
+            "left_wheel_position_output": self._latest.pids[
+                "left_wheel_position"
+            ].output,
+            "right_wheel_position_target": self._latest.pids[
+                "right_wheel_position"
+            ].target,
+            "right_wheel_position_actual": self._latest.pids[
+                "right_wheel_position"
+            ].actual,
+            "right_wheel_position_error": self._latest.pids[
+                "right_wheel_position"
+            ].error,
+            "right_wheel_position_output": self._latest.pids[
+                "right_wheel_position"
+            ].output,
             "left_ticks": self._latest.left_ticks,
             "right_ticks": self._latest.right_ticks,
+            "left_delta_ticks": self._latest.left_delta_ticks,
+            "right_delta_ticks": self._latest.right_delta_ticks,
+            "target_x_cm": self._latest.target_x_cm,
+            "target_y_cm": self._latest.target_y_cm,
+            "target_theta_rad": self._latest.target_theta_rad,
             "odom_x_cm": self._latest.odom_x_cm,
             "odom_y_cm": self._latest.odom_y_cm,
             "odom_theta_rad": self._latest.odom_theta_rad,
@@ -230,7 +388,23 @@ class RollingBasisDebugRecorder:
         if len(self._samples) > self._max_samples:
             self._samples.pop(0)
 
-    def get_live_snapshot(self) -> dict[str, float | int | str | None]:
+    def _get_pid_snapshot(self) -> dict[str, dict[str, float | str | None]]:
+        """Return PID telemetry in a UI-friendly shape."""
+        snapshot: dict[str, dict[str, float | str | None]] = {}
+        for pid_name, metadata in _PID_CHANNELS.items():
+            telemetry = self._latest.pids[pid_name]
+            snapshot[pid_name] = {
+                "label": metadata["label"],
+                "unit": metadata["unit"],
+                "output_unit": metadata["output_unit"],
+                "target": telemetry.target,
+                "actual": telemetry.actual,
+                "error": telemetry.error,
+                "output": telemetry.output,
+            }
+        return snapshot
+
+    def get_live_snapshot(self) -> dict[str, Any]:
         """Return latest telemetry values for live UI updates."""
         if not self._enabled:
             return {
@@ -244,9 +418,21 @@ class RollingBasisDebugRecorder:
                 "actual_angular_rad_s": None,
                 "linear_error_cm_s": None,
                 "angular_error_rad_s": None,
+                "linear_cmd": None,
+                "angular_cmd": None,
+                "left_pwm": None,
+                "right_pwm": None,
+                "left_ticks": None,
+                "right_ticks": None,
+                "left_delta_ticks": None,
+                "right_delta_ticks": None,
+                "target_x_cm": None,
+                "target_y_cm": None,
+                "target_theta_rad": None,
                 "odom_x_cm": None,
                 "odom_y_cm": None,
                 "odom_theta_rad": None,
+                "pids": self._get_pid_snapshot(),
             }
 
         return {
@@ -260,9 +446,21 @@ class RollingBasisDebugRecorder:
             "actual_angular_rad_s": self._latest.actual_angular_rad_s,
             "linear_error_cm_s": self._latest.linear_error_cm_s,
             "angular_error_rad_s": self._latest.angular_error_rad_s,
+            "linear_cmd": self._latest.linear_cmd,
+            "angular_cmd": self._latest.angular_cmd,
+            "left_pwm": self._latest.left_pwm,
+            "right_pwm": self._latest.right_pwm,
+            "left_ticks": self._latest.left_ticks,
+            "right_ticks": self._latest.right_ticks,
+            "left_delta_ticks": self._latest.left_delta_ticks,
+            "right_delta_ticks": self._latest.right_delta_ticks,
+            "target_x_cm": self._latest.target_x_cm,
+            "target_y_cm": self._latest.target_y_cm,
+            "target_theta_rad": self._latest.target_theta_rad,
             "odom_x_cm": self._latest.odom_x_cm,
             "odom_y_cm": self._latest.odom_y_cm,
             "odom_theta_rad": self._latest.odom_theta_rad,
+            "pids": self._get_pid_snapshot(),
         }
 
     def export_report(self, *, reason: str) -> dict[str, Path] | None:

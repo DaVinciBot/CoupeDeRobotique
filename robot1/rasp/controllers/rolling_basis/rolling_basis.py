@@ -7,7 +7,7 @@ import signal
 import struct
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING, overload, override
+from typing import TYPE_CHECKING, Any, overload, override
 
 from loggerplusplus import LogLevels, log
 
@@ -22,6 +22,34 @@ if TYPE_CHECKING:
     from loggerplusplus import Logger
 
     from navigation.trajectory_planner import TrajectoryPlanCommand
+
+
+_LEGACY_ROLLING_BASIS_STATE = struct.Struct("<ddd")
+_EXTENDED_ROLLING_BASIS_STATE = struct.Struct("<" + "d" * 16 + "hhiiii")
+_EXTENDED_ROLLING_BASIS_FIELDS = (
+    "x",
+    "y",
+    "theta",
+    "target_x",
+    "target_y",
+    "target_theta",
+    "linear_error",
+    "angular_error",
+    "linear_output",
+    "angular_output",
+    "left_wheel_target_cm",
+    "right_wheel_target_cm",
+    "left_wheel_position_cm",
+    "right_wheel_position_cm",
+    "left_wheel_error_cm",
+    "right_wheel_error_cm",
+    "left_pwm",
+    "right_pwm",
+    "left_ticks",
+    "right_ticks",
+    "left_delta_ticks",
+    "right_delta_ticks",
+)
 
 
 class RollingBasis(BaseComTeensy):
@@ -88,11 +116,50 @@ class RollingBasis(BaseComTeensy):
 
     def rcv_rolling_basis_state(self, msg: bytes) -> None:
         """Handle rolling basis odometry update messages from the Teensy."""
+        if len(msg) < _LEGACY_ROLLING_BASIS_STATE.size:
+            self._logger.warning(
+                f"[CTRL:RB:Teensy] Invalid rolling basis state size: {len(msg)}",
+            )
+            return
+
+        x, y, theta = _LEGACY_ROLLING_BASIS_STATE.unpack_from(msg)
         self.odometrie = OrientedPoint(
-            (struct.unpack("<d", msg[0:8])[0], struct.unpack("<d", msg[8:16])[0]),
-            struct.unpack("<d", msg[16:24])[0],
+            (x, y),
+            theta,
         )
         self._debug_recorder.set_odometry(self.odometrie)
+
+        if len(msg) >= _EXTENDED_ROLLING_BASIS_STATE.size:
+            telemetry = dict(
+                zip(
+                    _EXTENDED_ROLLING_BASIS_FIELDS,
+                    _EXTENDED_ROLLING_BASIS_STATE.unpack_from(msg),
+                    strict=True,
+                ),
+            )
+            self._debug_recorder.set_pid_telemetry(
+                target_position=OrientedPoint(
+                    (telemetry["target_x"], telemetry["target_y"]),
+                    telemetry["target_theta"],
+                ),
+                linear_error=telemetry["linear_error"],
+                angular_error=telemetry["angular_error"],
+                linear_output=telemetry["linear_output"],
+                angular_output=telemetry["angular_output"],
+                left_wheel_target_cm=telemetry["left_wheel_target_cm"],
+                right_wheel_target_cm=telemetry["right_wheel_target_cm"],
+                left_wheel_position_cm=telemetry["left_wheel_position_cm"],
+                right_wheel_position_cm=telemetry["right_wheel_position_cm"],
+                left_wheel_error_cm=telemetry["left_wheel_error_cm"],
+                right_wheel_error_cm=telemetry["right_wheel_error_cm"],
+                left_pwm=int(telemetry["left_pwm"]),
+                right_pwm=int(telemetry["right_pwm"]),
+                left_ticks=int(telemetry["left_ticks"]),
+                right_ticks=int(telemetry["right_ticks"]),
+                left_delta_ticks=int(telemetry["left_delta_ticks"]),
+                right_delta_ticks=int(telemetry["right_delta_ticks"]),
+            )
+
         self._debug_recorder.add_sample(event="odometry_update")
 
     def rcv_unknown_msg(self, msg: bytes) -> None:
@@ -162,7 +229,7 @@ class RollingBasis(BaseComTeensy):
         self.send_bytes(msg)
         self._debug_recorder.add_sample(event=f"set_pid_{pid_id}", force=True)
 
-    def get_debug_snapshot(self) -> dict[str, float | int | str | None]:
+    def get_debug_snapshot(self) -> dict[str, Any]:
         """Return latest debug telemetry snapshot."""
         return self._debug_recorder.get_live_snapshot()
 

@@ -245,10 +245,48 @@ void loop() {
     if (counter++ > 4096)  // 4096 = 2^12
     {
         msg_update_rolling_basis rolling_basis_msg;
-        // Rolling Basis position
-        rolling_basis_msg.x = rolling_basis_ptr->X;
-        rolling_basis_msg.y = rolling_basis_ptr->Y;
-        rolling_basis_msg.theta = rolling_basis_ptr->THETA;
+        ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+            rolling_basis_msg.x = rolling_basis_ptr->X;
+            rolling_basis_msg.y = rolling_basis_ptr->Y;
+            rolling_basis_msg.theta = rolling_basis_ptr->THETA;
+            rolling_basis_msg.target_x = rolling_basis_ptr->target_position.x;
+            rolling_basis_msg.target_y = rolling_basis_ptr->target_position.y;
+            rolling_basis_msg.target_theta =
+                rolling_basis_ptr->target_position.theta;
+            rolling_basis_msg.linear_error =
+                rolling_basis_ptr->last_linear_error;
+            rolling_basis_msg.angular_error =
+                rolling_basis_ptr->last_angular_error;
+            rolling_basis_msg.linear_output =
+                rolling_basis_ptr->last_linear_correction;
+            rolling_basis_msg.angular_output =
+                rolling_basis_ptr->last_angular_correction;
+            rolling_basis_msg.left_wheel_target_cm =
+                rolling_basis_ptr->left_wheel_target_cm;
+            rolling_basis_msg.right_wheel_target_cm =
+                rolling_basis_ptr->right_wheel_target_cm;
+            rolling_basis_msg.left_wheel_position_cm =
+                static_cast<double>(rolling_basis_ptr->left_motor->ticks) *
+                rolling_basis_ptr->left_wheel_unit_tick_cm();
+            rolling_basis_msg.right_wheel_position_cm =
+                static_cast<double>(rolling_basis_ptr->right_motor->ticks) *
+                rolling_basis_ptr->right_wheel_unit_tick_cm();
+            rolling_basis_msg.left_wheel_error_cm =
+                rolling_basis_ptr->last_left_wheel_error;
+            rolling_basis_msg.right_wheel_error_cm =
+                rolling_basis_ptr->last_right_wheel_error;
+            rolling_basis_msg.left_pwm =
+                rolling_basis_ptr->left_motor->last_pwm;
+            rolling_basis_msg.right_pwm =
+                rolling_basis_ptr->right_motor->last_pwm;
+            rolling_basis_msg.left_ticks = rolling_basis_ptr->left_motor->ticks;
+            rolling_basis_msg.right_ticks =
+                rolling_basis_ptr->right_motor->ticks;
+            rolling_basis_msg.left_delta_ticks =
+                rolling_basis_ptr->left_motor->last_delta_ticks;
+            rolling_basis_msg.right_delta_ticks =
+                rolling_basis_ptr->right_motor->last_delta_ticks;
+        }
 
         com->send_msg((byte*)&rolling_basis_msg,
                       sizeof(msg_update_rolling_basis));

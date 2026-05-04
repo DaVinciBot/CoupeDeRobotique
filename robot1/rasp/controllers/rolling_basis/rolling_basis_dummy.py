@@ -8,7 +8,7 @@ import signal
 import threading
 import time
 from pathlib import Path
-from typing import TYPE_CHECKING, overload, override
+from typing import TYPE_CHECKING, Any, overload, override
 
 from loggerplusplus import log
 
@@ -68,6 +68,10 @@ class RollingBasisDummy(BaseComTeensy):
         self.target_position: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
         self.linear_speed: float = 0.0
         self.angular_speed: float = 0.0
+        self.left_wheel_position_cm: float = 0.0
+        self.right_wheel_position_cm: float = 0.0
+        self.left_wheel_target_cm: float = 0.0
+        self.right_wheel_target_cm: float = 0.0
 
         self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
@@ -155,13 +159,49 @@ class RollingBasisDummy(BaseComTeensy):
         new_x = self.odometrie.x + math.cos(heading_mid) * delta_distance
         new_y = self.odometrie.y + math.sin(heading_mid) * delta_distance
         new_theta = self._normalize_angle(self.odometrie.theta + delta_theta)
+        left_wheel_delta_cm = delta_distance - (delta_theta * 15.45)
+        right_wheel_delta_cm = delta_distance + (delta_theta * 15.45)
 
         self.odometrie = OrientedPoint((new_x, new_y), new_theta)
+        assert self.odometrie.theta is not None
+        self.left_wheel_position_cm += left_wheel_delta_cm
+        self.right_wheel_position_cm += right_wheel_delta_cm
+        self.left_wheel_target_cm = self.left_wheel_position_cm
+        self.right_wheel_target_cm = self.right_wheel_position_cm
         if self._debug_recorder.enabled:
             self._debug_recorder.set_odometry(
                 self.odometrie,
                 measured_linear_speed=self.linear_speed,
                 measured_angular_speed=self.angular_speed,
+            )
+            dx = self.target_position.x - self.odometrie.x
+            dy = self.target_position.y - self.odometrie.y
+            linear_error = (
+                math.cos(self.odometrie.theta) * dx
+                + math.sin(self.odometrie.theta) * dy
+            )
+            target_theta = self.target_position.theta
+            if target_theta is None:
+                target_theta = self.odometrie.theta
+            angular_error = self._normalize_angle(target_theta - self.odometrie.theta)
+            self._debug_recorder.set_pid_telemetry(
+                target_position=self.target_position,
+                linear_error=linear_error,
+                angular_error=angular_error,
+                linear_output=delta_distance,
+                angular_output=delta_theta,
+                left_wheel_target_cm=self.left_wheel_target_cm,
+                right_wheel_target_cm=self.right_wheel_target_cm,
+                left_wheel_position_cm=self.left_wheel_position_cm,
+                right_wheel_position_cm=self.right_wheel_position_cm,
+                left_wheel_error_cm=0.0,
+                right_wheel_error_cm=0.0,
+                left_pwm=0,
+                right_pwm=0,
+                left_ticks=0,
+                right_ticks=0,
+                left_delta_ticks=0,
+                right_delta_ticks=0,
             )
             self._debug_recorder.add_sample(event="simulation_step")
 
@@ -190,6 +230,10 @@ class RollingBasisDummy(BaseComTeensy):
             self.target_position = odometrie
             self.linear_speed = 0.0
             self.angular_speed = 0.0
+            self.left_wheel_position_cm = 0.0
+            self.right_wheel_position_cm = 0.0
+            self.left_wheel_target_cm = 0.0
+            self.right_wheel_target_cm = 0.0
             self._last_update_time = time.time()
         self._logger.info(f"[CTRL:RB:Dummy] Set odometry: {odometrie}")
         self._debug_recorder.set_odometry(odometrie)
@@ -215,7 +259,7 @@ class RollingBasisDummy(BaseComTeensy):
             f"[CTRL:RB:Debug] Metadata exported: {artifacts['metadata']}",
         )
 
-    def get_debug_snapshot(self) -> dict[str, float | int | str | None]:
+    def get_debug_snapshot(self) -> dict[str, Any]:
         """Return latest debug telemetry snapshot."""
         return self._debug_recorder.get_live_snapshot()
 
