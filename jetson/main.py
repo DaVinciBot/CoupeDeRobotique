@@ -803,7 +803,7 @@ def detect_aruco() -> None:
                     send_spatial(spatial_sender, detected_world, robot_speeds)
                 elif DEBUG_MODE:
                     print(f"[DUMMY_LORA] {msg.strip()}")
-            """g
+            """
 
             # Gestion des touches (uniquement si fenêtres OpenCV ouvertes)
             if HAS_DISPLAY and (
