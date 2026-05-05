@@ -3,7 +3,7 @@
     {
       "dependsOn": [
         "PlatformIO: Build",
-        "Copy Hex on remote",
+        "Copy Hex to /tmp",
         "Flash local hex robot1"
       ],
       "dependsOrder": "sequence",
@@ -12,25 +12,23 @@
       "problemMatcher": []
     },
     {
-      "command": "ssh dvb@rob.local 'sudo teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex; exit'",
+      "command": "sudo teensy_loader_cli -w -s --mcu=teensy41 /tmp/firmware.hex",
       "label": "Flash local hex robot1",
       "problemMatcher": [],
       "type": "shell"
     },
     {
+      "command": "/home/dvb/.platformio/penv/bin/pio run -e teensy41",
       "label": "PlatformIO: Build",
       "problemMatcher": ["$platformio"],
-      "task": "Build",
-      "type": "PlatformIO"
+      "type": "shell"
     },
     {
-      "command": "scp .pio\\build\\teensy41\\firmware.hex dvb@rob.local:/tmp ",
-      "label": "Copy Hex on remote",
+      "command": "cp .pio/build/teensy41/firmware.hex /tmp/firmware.hex",
+      "label": "Copy Hex to /tmp",
       "problemMatcher": [],
       "type": "shell"
     }
   ],
-  // See https://go.microsoft.com/fwlink/?LinkId=733558
-  // for the documentation about the tasks.json format
   "version": "2.0.0"
 }
