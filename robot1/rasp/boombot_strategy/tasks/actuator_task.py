@@ -75,8 +75,14 @@ class PickUp(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.pick_up()
+<<<<<<< HEAD
         p = self.points
         ctx.point += p(ctx) if callable(p) else p
+=======
+        ctx.spatial_computation.pick_crates(
+            zone_id=3,
+        )  # C'est pour l'exemple mais la on donne le zone id en parametre
+>>>>>>> origin/dev-cd
         time.sleep(1)
         return True
 
@@ -99,8 +105,13 @@ class Build(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.build_floors()
+<<<<<<< HEAD
         p = self.points
         ctx.point += p(ctx) if callable(p) else p
+=======
+        ctx.score += CONFIG.BUILD_TWO_FLOORS
+        ctx.spatial_computation.reverse_crate()
+>>>>>>> origin/dev-cd
         time.sleep(1)
         return True
 
@@ -123,8 +134,14 @@ class Deposit(BaseTask[WinterGameContext]):
             bool: Always returns ``True`` after executing the action and delay.
         """
         ctx.actuators.demagnetize_all()
+<<<<<<< HEAD
         p = self.points
         ctx.point += p(ctx) if callable(p) else p
+=======
+        ctx.score += CONFIG.BUILD_ONE_FLOOR
+        ctx.spatial_computation.reverse_crate()
+        ctx.spatial_computation.drop_crates(zone_index=11)  # pareil c'est un exemple
+>>>>>>> origin/dev-cd
         time.sleep(1)
         return True
 

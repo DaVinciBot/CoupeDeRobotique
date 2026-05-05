@@ -10,6 +10,9 @@ from typing import TYPE_CHECKING, Any
 import matplotlib.pyplot as plt
 import numpy as np
 from loggerplusplus import Logger
+from lora_com import LoraCom
+from services import WinterSpatialComputation, WinterSpatialComputationDummy
+from stuff import CrateRenderer
 from taskbrain import Brain
 from ws_comms import WServerRouteManager, WSmsg
 
@@ -28,12 +31,17 @@ from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint, SetOdomet
 from controllers.actuators import ActuatorsWinter, ActuatorsWinterDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
+<<<<<<< HEAD
 from log_manager import LogLogger
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
+=======
+from common.stuff import Crate
+>>>>>>> origin/dev-cd
 
 if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
+    from common.stuff import Crate
     from sensors import Inputs, Lidar, LidarDummy
     from strategy.core.tasks import BaseTask
 
@@ -85,6 +93,8 @@ class MainBrain(Brain):
 
         self.jack_triggered: bool = False
         self.jack_plugged: bool = False
+        self.shared_crates: dict[int, list[dict[str, object]]] = {}
+
         super().__init__(logger, self)
 
         self.ws_cmd: WServerRouteManager = ws_cmd
@@ -116,6 +126,24 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         """Runs the main control loop for the robot."""
+
+        def _crates_to_dict(
+            crates: dict[int, list[Crate]],
+        ) -> dict[int, list[dict[str, object]]]:
+            return {
+                zone_id: [
+                    {
+                        "x": c.x,
+                        "y": c.y,
+                        "color": c.color,
+                        "color_id": c.color_id,
+                        "zone_id": c.zone_id,
+                    }
+                    for c in lst
+                ]
+                for zone_id, lst in crates.items()
+            }
+
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
         if CONFIG.ROLLING_BASIS_DUMMY:
@@ -136,6 +164,7 @@ class MainBrain(Brain):
         rolling_basis.initialize_pids()
 
         if CONFIG.ACTUATORS_DUMMY:
+<<<<<<< HEAD
             actuators: ActuatorsWinter | ActuatorsWinterDummy = ActuatorsWinterDummy(
                 logger=LogLogger(
                     identifier="Actuators",
@@ -146,10 +175,36 @@ class MainBrain(Brain):
             actuators = ActuatorsWinter(
                 logger=LogLogger(
                     identifier="Actuators",
-                    follow_logger_manager_rules=True,
-                ),
+=======
+            actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
+                logger=Logger(identifier="Actuators", follow_logger_manager_rules=True),
+            )
+        else:
+            actuators = ActuatorsShow(
+                logger=Logger(identifier="Actuators", follow_logger_manager_rules=True),
             )
 
+        if CONFIG.SPATIAL_COMPUTATION_DUMMY:
+            sc: WinterSpatialComputation | WinterSpatialComputationDummy = (
+                WinterSpatialComputationDummy(
+                    logger=Logger(
+                        identifier="SpatialComputationDummy",
+                        follow_logger_manager_rules=True,
+                    ),
+                    arena=self.arena,
+                )
+            )
+        else:
+            sc = WinterSpatialComputation(
+                logger=Logger(
+                    identifier="SpatialComputation",
+>>>>>>> origin/dev-cd
+                    follow_logger_manager_rules=True,
+                ),
+                arena=self.arena,
+            )
+
+<<<<<<< HEAD
         # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
         if (
             not CONFIG.LIDAR_DUMMY
@@ -161,12 +216,30 @@ class MainBrain(Brain):
         else:
             time.sleep(2)
 
+=======
+        self.shared_crates = _crates_to_dict(sc.crates)
+
+        #lora = LoraCom(self.logger)
+
+        actuators.deplacement_position()
+
+        # --- 2) Wait for jack plug --- #
+        while not self.jack_plugged:
+            sc.receive_data()
+            time.sleep(0.1)
+
+        actuators.block_banner()
+>>>>>>> origin/dev-cd
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
-        while not self.jack_triggered:  # wait for the trigger event
+
+        # --- Wait for trigger --- #
+        while not self.jack_triggered:
+            sc.receive_data()
             time.sleep(0.1)
 
         # --- 3) Build the strategy --- #
+<<<<<<< HEAD
         # commentaire chatgpt ou c'est comment, en revue pix la c'est 0
 
         # Choose strategy based on configuration
@@ -192,12 +265,34 @@ class MainBrain(Brain):
 
             visualize_task_graph(strategy.runner.active[0])
 
+=======
+        strategy = TowerRushAltStrategy(
+            WinterGameContext(
+                arena=self.arena,
+                rolling_basis=rolling_basis,
+                actuators=actuators,
+                spatial_computation=sc,
+                score=self.score,
+            ),
+        )
+
+>>>>>>> origin/dev-cd
         # --- MetaProg is insane (loop) --- #
+
+        #lora.receive()
+        sc.receive_data()
+        self.shared_crates = _crates_to_dict(sc.crates)
+
         context = WinterGameContext(
             arena=self.arena,
             rolling_basis=rolling_basis,
             actuators=actuators,
+<<<<<<< HEAD
             point=self.score,
+=======
+            spatial_computation=sc,
+            score=self.score,
+>>>>>>> origin/dev-cd
         )
 
         if strategy:
@@ -297,10 +392,15 @@ class MainBrain(Brain):
                 )
             self.should_update_pid = False
 
+<<<<<<< HEAD
         # Update shared state from the context
         self.score = context.point
         self.odemetrie_state = context.arena.ally_zone.point
         self.enemy_odemetrie_state = context.arena.enemy_zone.point
+=======
+        self.score = context.score
+        self.ui_state["score"] = self.score
+>>>>>>> origin/dev-cd
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
     @Brain.task(
@@ -332,6 +432,9 @@ class MainBrain(Brain):
             # if not is_empty(obstacles)
             # else None,
         )
+
+        CrateRenderer.plot(ax, self.shared_crates)
+
         plt.pause(0.01)
 
     # endregion

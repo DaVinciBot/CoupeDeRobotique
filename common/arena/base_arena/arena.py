@@ -950,9 +950,11 @@ class BaseArena(ABC):
             additional_zones=additional_zones,
         )
         self._plot_additional_points(ax, additional_points)
+
         if trajectory:
             self._plot_trajectory(ax, trajectory)
         self._finalize_plot(ax)
+
         if show:
             plt.show()
         return ax, fig

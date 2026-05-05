@@ -200,6 +200,13 @@ class CONFIG:
         LIDAR_DUMMY (bool): Whether to enable dummy mode for the lidar sensor.
         ROLLING_BASIS_DUMMY (bool): Whether to enable dummy mode for the rolling basis.
         ACTUATORS_DUMMY (bool): Whether to enable dummy mode for the actuators.
+        SPATIAL_COMPUTATION_DUMMY (bool):
+            Whether to enable dummy mode for spatial computation.
+        SPATIAL_COMPUTATION_CONFIG (dict[str, Any]):
+            Spatial computation configuration settings.
+        SPATIAL_COMPUTATION_HEADER (dict[str, Any]):
+            Header configuration for spatial computation.
+        SPATIAL_COMPUTATION_HEADER_FORMAT (str): Header format for spatial computation.
     """
 
     # Directory path (dont't touch)
@@ -418,10 +425,10 @@ class CONFIG:
 
     # ACS Detection Profiles
     ACS_PROFILES_CONFIG: dict[str, Any] = MOVEMENT_MANAGER_CONFIG["acs_profiles"]
-    ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME: BaseAcsDetectionProfileParams = BaseAcsDetectionProfileParams.from_config(
+    ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_FINISH_GAME: BaseAcsDetectionProfileParams = BaseAcsDetectionProfileParams.from_config(  # noqa: E501
         **ACS_PROFILES_CONFIG["go_to_color_reserved_zone_to_finish_game"],
     )
-    ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT: BaseAcsDetectionProfileParams = BaseAcsDetectionProfileParams.from_config(
+    ACS_PROFILE_GO_TO_COLOR_RESERVED_ZONE_TO_CONSTRUCT: BaseAcsDetectionProfileParams = BaseAcsDetectionProfileParams.from_config(  # noqa: E501
         **ACS_PROFILES_CONFIG["go_to_color_reserved_zone_to_construct"],
     )
     ACS_PROFILE_GO_TO_STUFF_ZONE_TO_PICK_UP: BaseAcsDetectionProfileParams = (
@@ -430,7 +437,9 @@ class CONFIG:
         )
     )
     ACS_PROFILE_BACKWARD: BaseAcsDetectionProfileParams = (
-        BaseAcsDetectionProfileParams.from_config(**ACS_PROFILES_CONFIG["backward"])
+        BaseAcsDetectionProfileParams.from_config(
+            **ACS_PROFILES_CONFIG["backward"],
+        )
     )
     ACS_PROFILE_PRECISE_FORWARD: BaseAcsDetectionProfileParams = (
         BaseAcsDetectionProfileParams.from_config(
@@ -438,7 +447,9 @@ class CONFIG:
         )
     )
     ACS_PROFILE_START_TASK: BaseAcsDetectionProfileParams = (
-        BaseAcsDetectionProfileParams.from_config(**ACS_PROFILES_CONFIG["start_task"])
+        BaseAcsDetectionProfileParams.from_config(
+            **ACS_PROFILES_CONFIG["start_task"],
+        )
     )
 
     # Jack
@@ -451,6 +462,12 @@ class CONFIG:
     LIDAR_DUMMY: bool = get_env_bool("LIDAR_DUMMY")
     ROLLING_BASIS_DUMMY: bool = get_env_bool("ROLLING_BASIS_DUMMY")
     ACTUATORS_DUMMY: bool = get_env_bool("ACTUATORS_DUMMY")
+    SPATIAL_COMPUTATION_DUMMY: bool = get_env_bool("SPATIAL_COMPUTATION_DUMMY")
+
+    # Spatial Computation
+    SPATIAL_COMPUTATION_CONFIG: dict[str, Any] = SPECIFIC_CONFIG["spatial_computation"]
+    SPATIAL_COMPUTATION_HEADER: dict[str, Any] = SPATIAL_COMPUTATION_CONFIG["header"]
+    SPATIAL_COMPUTATION_HEADER_FORMAT: str = SPATIAL_COMPUTATION_HEADER["format"]
 
 
 # Logger: LoggerManager + global configuration

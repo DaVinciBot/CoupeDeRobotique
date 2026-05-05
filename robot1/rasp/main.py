@@ -88,6 +88,12 @@ if __name__ == "__main__":
         follow_logger_manager_rules=True,
     )
 
+    logger_spatial_computation = Logger(
+        identifier="SpatialComputation",
+        level_file=LogLevels.INFO,
+        follow_logger_manager_rules=False,
+    )
+
     # Movement loggers
     # See ./brains/controllers_brain.py for more details
     # All rolling basis part is executed in another process so define inside this part
