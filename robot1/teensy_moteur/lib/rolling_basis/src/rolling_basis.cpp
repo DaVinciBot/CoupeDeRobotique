@@ -14,6 +14,7 @@
 
 #define POSITION_MAX_LINEAR_STEP_CM 0.8
 #define POSITION_MAX_ANGULAR_STEP_CM 0.8
+#define WHEEL_TARGET_MAX_ERROR_CM 10.0
 
 double normalizeAngle(double theta) {
     // shift by +PI, take modulo 2*PI, remap to [0,2*PI)
@@ -261,13 +262,23 @@ void Rolling_Basis::handle() {
     angular_step = constrain(angular_step, -POSITION_MAX_ANGULAR_STEP_CM,
                              POSITION_MAX_ANGULAR_STEP_CM);
 
-    this->left_wheel_target_cm += linear_step - angular_step;
-    this->right_wheel_target_cm += linear_step + angular_step;
-
     double left_distance_cm = static_cast<double>(this->left_motor->ticks) *
                               this->left_wheel_unit_tick_cm();
     double right_distance_cm = static_cast<double>(this->right_motor->ticks) *
                                this->right_wheel_unit_tick_cm();
+
+    this->left_wheel_target_cm += linear_step - angular_step;
+    this->right_wheel_target_cm += linear_step + angular_step;
+
+    this->left_wheel_target_cm =
+        constrain(this->left_wheel_target_cm,
+                  left_distance_cm - WHEEL_TARGET_MAX_ERROR_CM,
+                  left_distance_cm + WHEEL_TARGET_MAX_ERROR_CM);
+    this->right_wheel_target_cm =
+        constrain(this->right_wheel_target_cm,
+                  right_distance_cm - WHEEL_TARGET_MAX_ERROR_CM,
+                  right_distance_cm + WHEEL_TARGET_MAX_ERROR_CM);
+
     double left_wheel_error = this->left_wheel_target_cm - left_distance_cm;
     double right_wheel_error = this->right_wheel_target_cm - right_distance_cm;
 
