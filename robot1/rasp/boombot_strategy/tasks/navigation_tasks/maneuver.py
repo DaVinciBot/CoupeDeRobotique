@@ -100,8 +100,8 @@ class RelativeRotation(NavigationTask):
             points=0,
         )
         self.estimated_duration = (
-            self.speed_profiler.linear_speed_profile.get_total_duration(
-                distance=abs(distance),
+            self.speed_profiler.angular_speed_profile.get_total_duration(
+                distance=abs(angle),
             )
         )
 

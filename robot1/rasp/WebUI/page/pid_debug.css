@@ -26,6 +26,62 @@
   color: black;
 }
 
+.pid_tool_card {
+  padding-top: 58px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pid_tool_grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pid_tool_grid label {
+  color: #16212f;
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 6px;
+  min-width: 0;
+}
+
+.pid_tool_grid input,
+.pid_tool_grid select {
+  background: var(--secondary);
+  border: 1px solid #b8cce0;
+  border-radius: 8px;
+  color: #16212f;
+  font: 600 15px Inter, Roboto, sans-serif;
+  min-height: 42px;
+  min-width: 0;
+  padding: 8px 10px;
+}
+
+.pid_tool_actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pid_tool_actions .button {
+  background: #16212f;
+  border: 0;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font: 700 14px Inter, Roboto, sans-serif;
+  min-height: 44px;
+  padding: 10px 12px;
+}
+
+.pid_tool_actions .button.danger {
+  background: #a4161a;
+}
+
 .pid_chart_card {
   padding-top: 58px;
   display: flex;
@@ -103,6 +159,11 @@
 
   .pid_debug_meta {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pid_tool_grid,
+  .pid_tool_actions {
+    grid-template-columns: 1fr;
   }
 
   .pid_values {

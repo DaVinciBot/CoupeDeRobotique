@@ -134,6 +134,20 @@ class RollingBasisDummy(BaseComTeensy):
         )
         self._debug_recorder.add_sample(event="target_position")
 
+    def set_motors_pwm(
+        self,
+        *,
+        left_pwm: int,
+        right_pwm: int,
+        duration_ms: int,
+    ) -> None:
+        """Record a raw PWM request in dummy mode."""
+        self._logger.info(
+            "[CTRL:RB:Dummy] Direct PWM "
+            f"left={left_pwm}, right={right_pwm}, duration={duration_ms}ms",
+        )
+        self._debug_recorder.add_sample(event="set_motors_pwm", force=True)
+
     def simulate_step(self, dt: float) -> None:
         """Integrate the stored trajectory command over a timestep."""
         if dt <= 0.0:

@@ -121,6 +121,10 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
     this->last_right_wheel_error = 0.0;
     this->left_wheel_target_cm = 0.0;
     this->right_wheel_target_cm = 0.0;
+    this->manual_pwm_active = false;
+    this->manual_left_pwm = 0;
+    this->manual_right_pwm = 0;
+    this->manual_pwm_until_ms = 0;
     this->last_odometrie_time = micros();
     if (this->right_motor != nullptr) {
         this->right_motor->ticks = 0L;
@@ -145,6 +149,33 @@ void Rolling_Basis::init_rolling_basis(double x, double y, double theta) {
 
 void Rolling_Basis::set_target_position(const Point& position) {
     this->target_position = position;
+}
+
+void Rolling_Basis::set_motors_pwm(int16_t left_pwm,
+                                   int16_t right_pwm,
+                                   uint32_t duration_ms) {
+    this->manual_left_pwm = constrain(left_pwm, -MAX_PWM, MAX_PWM);
+    this->manual_right_pwm = constrain(right_pwm, -MAX_PWM, MAX_PWM);
+    this->manual_pwm_until_ms = millis() + duration_ms;
+    this->manual_pwm_active = duration_ms > 0 &&
+                              (this->manual_left_pwm != 0 ||
+                               this->manual_right_pwm != 0);
+
+    if (!this->manual_pwm_active) {
+        this->left_motor->set_motor(0);
+        this->right_motor->set_motor(0);
+        this->target_position = Point(this->X, this->Y, this->THETA);
+        this->left_wheel_target_cm =
+            static_cast<double>(this->left_motor->ticks) *
+            this->left_wheel_unit_tick_cm();
+        this->right_wheel_target_cm =
+            static_cast<double>(this->right_motor->ticks) *
+            this->right_wheel_unit_tick_cm();
+        this->linear_position_pid.reset();
+        this->angular_position_pid.reset();
+        this->left_wheel_position_pid.reset();
+        this->right_wheel_position_pid.reset();
+    }
 }
 
 // Odometrie function
@@ -184,6 +215,38 @@ void Rolling_Basis::odometrie_handle() {
  * then let each wheel PID command its motor.
  */
 void Rolling_Basis::handle() {
+    if (this->manual_pwm_active) {
+        if (millis() < this->manual_pwm_until_ms) {
+            this->last_linear_error = 0.0;
+            this->last_angular_error = 0.0;
+            this->last_linear_correction = 0.0;
+            this->last_angular_correction = 0.0;
+            this->last_left_wheel_error = 0.0;
+            this->last_right_wheel_error = 0.0;
+            this->left_motor->set_motor(this->manual_left_pwm);
+            this->right_motor->set_motor(this->manual_right_pwm);
+            return;
+        }
+
+        this->manual_pwm_active = false;
+        this->manual_left_pwm = 0;
+        this->manual_right_pwm = 0;
+        this->left_motor->set_motor(0);
+        this->right_motor->set_motor(0);
+        this->target_position = Point(this->X, this->Y, this->THETA);
+        this->left_wheel_target_cm =
+            static_cast<double>(this->left_motor->ticks) *
+            this->left_wheel_unit_tick_cm();
+        this->right_wheel_target_cm =
+            static_cast<double>(this->right_motor->ticks) *
+            this->right_wheel_unit_tick_cm();
+        this->linear_position_pid.reset();
+        this->angular_position_pid.reset();
+        this->left_wheel_position_pid.reset();
+        this->right_wheel_position_pid.reset();
+        return;
+    }
+
     double dx = this->target_position.x - this->X;
     double dy = this->target_position.y - this->Y;
     double cos_th = cosf(this->THETA);

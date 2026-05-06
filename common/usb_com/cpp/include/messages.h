@@ -19,6 +19,7 @@ const byte END_BYTES_SIGNATURE[4] = {0xBA, 0xDD, 0x1C, 0xC5};
 #define SET_TARGET_POSITION 0
 #define SET_PID 1
 #define SET_ODOMETRIE 2
+#define SET_MOTORS_PWM 9
 
 // Actuators
 #define SET_SERVO_ANGLE_I2C 3
@@ -68,6 +69,13 @@ struct msg_set_odometrie {
     double x;
     double y;
     double theta;
+};
+
+struct msg_set_motors_pwm {
+    byte command = SET_MOTORS_PWM;
+    int16_t left_pwm;
+    int16_t right_pwm;
+    uint32_t duration_ms;
 };
 
 // Actuators

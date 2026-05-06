@@ -41,6 +41,8 @@ class Messages(Enum):
     """Update PID coefficients for the rolling basis."""
     SET_ODOMETRIE = 2
     """Reset the odometry."""
+    SET_MOTORS_PWM = 9
+    """Temporarily command raw rolling-basis motor PWM."""
 
     # Actuators
     SET_SERVO_ANGLE_I2C = 3

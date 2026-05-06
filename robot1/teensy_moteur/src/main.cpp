@@ -139,6 +139,15 @@ void set_target_position(byte* msg, byte size) {
     }
 }
 
+void set_motors_pwm(byte* msg, byte size) {
+    msg_set_motors_pwm* pwm_msg = (msg_set_motors_pwm*)msg;
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+        rolling_basis_ptr->set_motors_pwm(pwm_msg->left_pwm,
+                                          pwm_msg->right_pwm,
+                                          pwm_msg->duration_ms);
+    }
+}
+
 void reset_teensy(byte* msg, byte size) {
     volatile uint32_t* aircr = (volatile uint32_t*)0xE000ED0C;
     *aircr = 0x05FA0004;
@@ -152,6 +161,7 @@ void initialize_callback_functions() {
     callback_functions[SET_ODOMETRIE] = &set_odometrie;
     callback_functions[RESET_TEENSY] = &reset_teensy;
     callback_functions[SET_TARGET_POSITION] = &set_target_position;
+    callback_functions[SET_MOTORS_PWM] = &set_motors_pwm;
 }
 
 // 4. Define the timer interrupt handle function.

@@ -201,6 +201,26 @@ class RollingBasis(BaseComTeensy):
         )
         self._debug_recorder.add_sample(event="target_position")
 
+    def set_motors_pwm(
+        self,
+        *,
+        left_pwm: int,
+        right_pwm: int,
+        duration_ms: int,
+    ) -> None:
+        """Temporarily command raw motor PWM on the rolling basis."""
+        safe_duration_ms = max(0, min(int(duration_ms), 5000))
+        safe_left_pwm = max(-240, min(int(left_pwm), 240))
+        safe_right_pwm = max(-240, min(int(right_pwm), 240))
+        msg = Messages.SET_MOTORS_PWM.to_bytes() + struct.pack(
+            "<hhI",
+            safe_left_pwm,
+            safe_right_pwm,
+            safe_duration_ms,
+        )
+        self.send_bytes(msg)
+        self._debug_recorder.add_sample(event="set_motors_pwm", force=True)
+
     @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
         """Send a command to set rolling basis odometry."""

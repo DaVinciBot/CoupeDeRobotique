@@ -83,6 +83,10 @@ class Rolling_Basis {
     volatile double last_right_wheel_error = 0.0;
     volatile double left_wheel_target_cm = 0.0;
     volatile double right_wheel_target_cm = 0.0;
+    volatile bool manual_pwm_active = false;
+    volatile int16_t manual_left_pwm = 0;
+    volatile int16_t manual_right_pwm = 0;
+    volatile uint32_t manual_pwm_until_ms = 0;
 
     /**
      * @brief Destructor of Rolling Basis class
@@ -136,6 +140,9 @@ class Rolling_Basis {
     void handle();
 
     void set_target_position(const Point& position);
+    void set_motors_pwm(int16_t left_pwm,
+                        int16_t right_pwm,
+                        uint32_t duration_ms);
 
     void pi_mod_signed(double theta);
 

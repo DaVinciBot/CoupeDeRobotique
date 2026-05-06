@@ -176,6 +176,74 @@ function button_click_effect(button, server) {
       .nextElementSibling.innerText;
     server.send("ui", "action", { type: action, name: actionName });
   }
+  if (button.id.includes("send_relative_")) {
+    send_relative_motion(button.id, server);
+  }
+  if (button.id.includes("send_direct_pwm")) {
+    send_direct_pwm(button.id, server);
+  }
+}
+
+function read_number_input(id, fallback, min = -Infinity, max = Infinity) {
+  const input = document.getElementById(id);
+  const value = parseFloat(input?.value);
+  const normalized = Number.isFinite(value) ? value : fallback;
+  return Math.min(Math.max(normalized, min), max);
+}
+
+function send_relative_motion(buttonId, server) {
+  if (buttonId.includes("forward")) {
+    const distance = read_number_input("relative_distance_cm", 20, 0, 1000);
+    server.send("ui", "action", {
+      type: "relative_forward",
+      data: { distance },
+    });
+  } else if (buttonId.includes("backward")) {
+    const distance = read_number_input("relative_distance_cm", 20, 0, 1000);
+    server.send("ui", "action", {
+      type: "relative_backward",
+      data: { distance },
+    });
+  } else if (buttonId.includes("turn")) {
+    const angleDeg = read_number_input("relative_angle_deg", 90, 0, 360);
+    const sign = buttonId.includes("right") ? -1 : 1;
+    server.send("ui", "action", {
+      type: "relative_turn",
+      data: { angle: sign * (angleDeg * Math.PI) / 180.0 },
+    });
+  }
+}
+
+function send_direct_pwm(buttonId, server) {
+  const motor = document.getElementById("direct_pwm_motor")?.value ?? "both";
+  const durationMs = Math.round(
+    read_number_input("direct_pwm_duration_ms", 500, 0, 5000)
+  );
+  let pwm = Math.round(read_number_input("direct_pwm_value", 80, 0, 240));
+
+  if (buttonId.includes("stop")) {
+    pwm = 0;
+  } else if (buttonId.includes("backward")) {
+    pwm = -pwm;
+  }
+
+  let leftPwm = 0;
+  let rightPwm = 0;
+  if (motor === "both" || motor === "left") {
+    leftPwm = pwm;
+  }
+  if (motor === "both" || motor === "right") {
+    rightPwm = pwm;
+  }
+
+  server.send("ui", "action", {
+    type: "direct_pwm",
+    data: {
+      left_pwm: leftPwm,
+      right_pwm: rightPwm,
+      duration_ms: buttonId.includes("stop") ? 0 : durationMs,
+    },
+  });
 }
 
 let currentPage = "main";

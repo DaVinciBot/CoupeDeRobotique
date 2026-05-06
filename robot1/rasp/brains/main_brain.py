@@ -24,7 +24,13 @@ from boombot_strategy.sub_graphs import (
     get_pickup_subgraph,
     get_push_one_floor_to_wall_subgraph,
 )
-from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint, SetOdometrie
+from boombot_strategy.tasks.navigation_tasks import (
+    GoToOrientedPoint,
+    RelativeBackward,
+    RelativeForward,
+    RelativeRotation,
+    SetOdometrie,
+)
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
@@ -74,6 +80,7 @@ class MainBrain(Brain):
         self.task_name: str = ""
         self.task_todo: list[BaseTask[WinterGameContext]] = []
         self.task_type: str = ""
+        self.task_data: dict[str, Any] = {}
         self.should_update_task: bool = False
         self.score: int = 0
 
@@ -83,6 +90,10 @@ class MainBrain(Brain):
         self.pid_ki: float = 0.0
         self.pid_kd: float = 0.0
         self.should_export_debug_report: bool = False
+        self.should_send_direct_pwm: bool = False
+        self.direct_pwm_left: int = 0
+        self.direct_pwm_right: int = 0
+        self.direct_pwm_duration_ms: int = 500
         self.pid_debug_live: dict[str, Any] = {
             "enabled": 0,
             "time_s": 0.0,
@@ -246,6 +257,42 @@ class MainBrain(Brain):
                             tasks=self.task_todo,
                         ),
                     )
+                elif self.task_type == "relative_forward":
+                    distance = float(self.task_data.get("distance", 0.0))
+                    action_holder[0] = GraphRunner(
+                        logger=LogLogger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=BaseTaskNode(
+                            name=f"[Debug] Relative forward {distance} cm",
+                            tasks=[RelativeForward(distance)],
+                        ),
+                    )
+                elif self.task_type == "relative_backward":
+                    distance = float(self.task_data.get("distance", 0.0))
+                    action_holder[0] = GraphRunner(
+                        logger=LogLogger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=BaseTaskNode(
+                            name=f"[Debug] Relative backward {distance} cm",
+                            tasks=[RelativeBackward(distance)],
+                        ),
+                    )
+                elif self.task_type == "relative_turn":
+                    angle = float(self.task_data.get("angle", 0.0))
+                    action_holder[0] = GraphRunner(
+                        logger=LogLogger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=BaseTaskNode(
+                            name=f"[Debug] Relative turn {angle} rad",
+                            tasks=[RelativeRotation(angle)],
+                        ),
+                    )
                 elif self.task_type == "banner_deploy":
                     action_holder[0] = GraphRunner(
                         logger=Logger(
@@ -311,6 +358,15 @@ class MainBrain(Brain):
                 self.should_update_task = False
             if action_holder[0] is not None:
                 action_holder[0].handle(context)
+
+        if self.should_send_direct_pwm:
+            action_holder[0] = None
+            rolling_basis.set_motors_pwm(
+                left_pwm=self.direct_pwm_left,
+                right_pwm=self.direct_pwm_right,
+                duration_ms=self.direct_pwm_duration_ms,
+            )
+            self.should_send_direct_pwm = False
 
         if self.should_update_pid:
             if self.pid_type in {"linear", "linear_position"}:
@@ -480,6 +536,31 @@ class MainBrain(Brain):
                     self.should_update_task = True
                     self.logger.info(
                         f"Set task to {self.task_name}",
+                    )
+                elif ui.data["type"] in {
+                    "relative_forward",
+                    "relative_backward",
+                    "relative_turn",
+                }:
+                    self.task_type = str(ui.data["type"])
+                    self.task_data = dict(ui.data.get("data", {}))
+                    self.task_name = self.task_type
+                    self.should_update_task = True
+                    self.logger.info(
+                        f"Set task to {self.task_type}: {self.task_data}",
+                    )
+                elif ui.data["type"] == "direct_pwm":
+                    self.direct_pwm_left = int(ui.data["data"].get("left_pwm", 0))
+                    self.direct_pwm_right = int(ui.data["data"].get("right_pwm", 0))
+                    self.direct_pwm_duration_ms = int(
+                        ui.data["data"].get("duration_ms", 500),
+                    )
+                    self.should_send_direct_pwm = True
+                    self.logger.info(
+                        "Direct PWM request: "
+                        f"left={self.direct_pwm_left}, "
+                        f"right={self.direct_pwm_right}, "
+                        f"duration={self.direct_pwm_duration_ms}ms",
                     )
                 elif ui.data["type"] in {
                     "banner_deploy",

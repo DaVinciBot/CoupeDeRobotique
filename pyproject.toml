@@ -237,6 +237,7 @@ exclude = [
 ignore = [
   "ASYNC110", # async-busy-wait
   "B024", # abstract-base-class-without-abstract-method
+  "COM812",
   "CPY001", # missing-copyright-notice
   "EXE002", # shebang-missing-executable-file
   "FIX002", # line-contains-todo

@@ -481,6 +481,53 @@
           </div>
         </div>
 
+        <div class="sushi pid_tool_card">
+          <div class="pilule">Mouvements relatifs</div>
+          <div class="pid_tool_grid">
+            <label>
+              Distance (cm)
+              <input id="relative_distance_cm" type="number" min="0" step="1" value="20" />
+            </label>
+            <label>
+              Angle (deg)
+              <input id="relative_angle_deg" type="number" min="0" step="1" value="90" />
+            </label>
+          </div>
+          <div class="pid_tool_actions">
+            <button class="button" id="send_relative_forward">Avancer</button>
+            <button class="button" id="send_relative_backward">Reculer</button>
+            <button class="button" id="send_relative_turn_left">Tourner gauche</button>
+            <button class="button" id="send_relative_turn_right">Tourner droite</button>
+          </div>
+        </div>
+
+        <div class="sushi pid_tool_card">
+          <div class="pilule">PWM direct</div>
+          <div class="pid_tool_grid">
+            <label>
+              Moteur
+              <select id="direct_pwm_motor">
+                <option value="both">Deux moteurs</option>
+                <option value="left">Gauche</option>
+                <option value="right">Droite</option>
+              </select>
+            </label>
+            <label>
+              PWM
+              <input id="direct_pwm_value" type="number" min="0" max="240" step="1" value="80" />
+            </label>
+            <label>
+              Duree (ms)
+              <input id="direct_pwm_duration_ms" type="number" min="0" max="5000" step="100" value="500" />
+            </label>
+          </div>
+          <div class="pid_tool_actions">
+            <button class="button" id="send_direct_pwm_forward">PWM avant</button>
+            <button class="button" id="send_direct_pwm_backward">PWM arriere</button>
+            <button class="button danger" id="send_direct_pwm_stop">Stop PWM</button>
+          </div>
+        </div>
+
         <div class="sushi pid_chart_card">
           <div class="pilule">PID position lineaire</div>
           <div class="pid_values">
