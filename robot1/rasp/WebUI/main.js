@@ -332,6 +332,9 @@ function updatePidDebugPanel(pidDebug) {
     resetPidDebugData();
   }
 
+  const pids = normalizePidPayload(pidDebug);
+  updatePidMetricNodes(pids);
+
   if (sampleCount === pidDebugState.lastSampleCount) {
     return;
   }
@@ -339,7 +342,6 @@ function updatePidDebugPanel(pidDebug) {
   pidDebugState.lastSampleCount = sampleCount;
   addPidValue(pidDebugState.timeline, currentTime);
 
-  const pids = normalizePidPayload(pidDebug);
   pidDebugChannels.forEach((channelDef) => {
     const channelState = pidDebugState.channels[channelDef.key];
     const payload = pids[channelDef.key] ?? {};
@@ -367,15 +369,25 @@ function latestPidValue(channelKey, seriesName) {
   return null;
 }
 
-function updatePidMetricNodes() {
+function updatePidMetricNodes(currentPids = null) {
   pidDebugChannels.forEach((channelDef) => {
     const state = pidDebugState.channels[channelDef.key];
-    const unit = state?.unit ?? channelDef.unit;
-    const outputUnit = state?.outputUnit ?? channelDef.outputUnit;
-    const target = latestPidValue(channelDef.key, "target");
-    const actual = latestPidValue(channelDef.key, "actual");
-    const error = latestPidValue(channelDef.key, "error");
-    const output = latestPidValue(channelDef.key, "output");
+    const currentPayload = currentPids?.[channelDef.key];
+    const unit = currentPayload?.unit ?? state?.unit ?? channelDef.unit;
+    const outputUnit =
+      currentPayload?.output_unit ?? state?.outputUnit ?? channelDef.outputUnit;
+    const target =
+      toFiniteNumber(currentPayload?.target) ??
+      latestPidValue(channelDef.key, "target");
+    const actual =
+      toFiniteNumber(currentPayload?.actual) ??
+      latestPidValue(channelDef.key, "actual");
+    const error =
+      toFiniteNumber(currentPayload?.error) ??
+      latestPidValue(channelDef.key, "error");
+    const output =
+      toFiniteNumber(currentPayload?.output) ??
+      latestPidValue(channelDef.key, "output");
 
     const targetNode = document.getElementById(
       `pid_${channelDef.key}_target`
