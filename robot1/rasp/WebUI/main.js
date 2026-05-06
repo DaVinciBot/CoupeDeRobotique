@@ -510,6 +510,14 @@ function drawLineChart(canvasId, seriesList) {
     ctx.stroke();
   }
 
+  ctx.font = "600 11px Inter, Roboto, sans-serif";
+  ctx.fillStyle = "rgba(10, 24, 42, 0.68)";
+  ctx.fillText(formatPidValue(maxY), 8, y0 + 4);
+  ctx.fillText(formatPidValue(minY), 8, y1 + 4);
+  if (minY <= 0 && maxY >= 0) {
+    ctx.fillText("0", 8, mapY(0) + 4);
+  }
+
   ctx.strokeStyle = "#16212f";
   ctx.fillStyle = "#16212f";
   ctx.lineWidth = 2;
@@ -538,6 +546,7 @@ function drawLineChart(canvasId, seriesList) {
     ctx.lineCap = "round";
     ctx.beginPath();
     let hasStarted = false;
+    let latestPoint = null;
 
     for (let i = 0; i < series.data.length; i++) {
       const value = series.data[i];
@@ -548,6 +557,7 @@ function drawLineChart(canvasId, seriesList) {
 
       const x = mapX(i);
       const y = mapY(value);
+      latestPoint = { x, y };
       if (!hasStarted) {
         ctx.moveTo(x, y);
         hasStarted = true;
@@ -557,6 +567,15 @@ function drawLineChart(canvasId, seriesList) {
     }
 
     ctx.stroke();
+    if (latestPoint) {
+      ctx.fillStyle = series.color;
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(latestPoint.x, latestPoint.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
   });
 }
 
