@@ -142,8 +142,7 @@ void set_target_position(byte* msg, byte size) {
 void set_motors_pwm(byte* msg, byte size) {
     msg_set_motors_pwm* pwm_msg = (msg_set_motors_pwm*)msg;
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-        rolling_basis_ptr->set_motors_pwm(pwm_msg->left_pwm,
-                                          pwm_msg->right_pwm,
+        rolling_basis_ptr->set_motors_pwm(pwm_msg->left_pwm, pwm_msg->right_pwm,
                                           pwm_msg->duration_ms);
     }
 }
@@ -178,9 +177,9 @@ void setup() {
     analogWriteFrequency(L_PWM, PWM_FREQUENCY);
 
     // Init Rolling Basis
-    rolling_basis_ptr->define_right_motor(R_ENCA, R_ENCB, R_PWM, R_IN2, R_IN1,
+    rolling_basis_ptr->define_right_motor(R_ENCA, R_ENCB, R_PWM, R_IN1, R_IN2,
                                           MAX_PWM);
-    rolling_basis_ptr->define_left_motor(L_ENCA, L_ENCB, L_PWM, L_IN2, L_IN1,
+    rolling_basis_ptr->define_left_motor(L_ENCA, L_ENCB, L_PWM, L_IN1, L_IN2,
                                          MAX_PWM);
     rolling_basis_ptr->init_motors();
 
