@@ -84,8 +84,6 @@ class WinterArena(BaseArena):
                 (25, 110),
                 [
                     OrientedPoint(25 + distance_to_jenga_zone, 120, pi),
-                    OrientedPoint(17.5, 130 + distance_to_jenga_zone, -pi / 2),
-                    OrientedPoint(17.5, 110 - distance_to_jenga_zone, pi / 2),
                 ],
             ),
             (
@@ -93,8 +91,6 @@ class WinterArena(BaseArena):
                 (25, 30),
                 [
                     OrientedPoint(25 + distance_to_jenga_zone, 40, pi),
-                    OrientedPoint(17.5, 50 + distance_to_jenga_zone, -pi / 2),
-                    OrientedPoint(17.5, 30 - distance_to_jenga_zone, pi / 2),
                 ],
             ),
             (
@@ -102,18 +98,14 @@ class WinterArena(BaseArena):
                 (120, 10),
                 [
                     OrientedPoint(110, 25 + distance_to_jenga_zone, -pi / 2),
-                    OrientedPoint(120 + distance_to_jenga_zone, 17.5, pi),
-                    OrientedPoint(100 - distance_to_jenga_zone, 17.5, 0),
                 ],
             ),
             (
                 (105, 87.5),
                 (125, 72.5),
                 [
-                    OrientedPoint(105 - distance_to_jenga_zone, 80, 0),
                     OrientedPoint(115, 87.5 + distance_to_jenga_zone, -pi / 2),
                     OrientedPoint(115, 72.5 - distance_to_jenga_zone, pi / 2),
-                    OrientedPoint(125 + distance_to_jenga_zone, 80, pi),
                 ],
             ),
             (
@@ -121,8 +113,6 @@ class WinterArena(BaseArena):
                 (275, 110),
                 [
                     OrientedPoint(275 - distance_to_jenga_zone, 120, 0),
-                    OrientedPoint(282.5, 130 + distance_to_jenga_zone, -pi / 2),
-                    OrientedPoint(282.5, 110 - distance_to_jenga_zone, pi / 2),
                 ],
             ),
             (
@@ -130,8 +120,6 @@ class WinterArena(BaseArena):
                 (290, 30),
                 [
                     OrientedPoint(275 - distance_to_jenga_zone, 40, 0),
-                    OrientedPoint(282.5, 50 + distance_to_jenga_zone, -pi / 2),
-                    OrientedPoint(282.5, 30 - distance_to_jenga_zone, pi / 2),
                 ],
             ),
             (
@@ -139,18 +127,14 @@ class WinterArena(BaseArena):
                 (180, 10),
                 [
                     OrientedPoint(190, 25 + distance_to_jenga_zone, -pi / 2),
-                    OrientedPoint(180 - distance_to_jenga_zone, 17.5, 0),
-                    OrientedPoint(200 + distance_to_jenga_zone, 17.5, pi),
                 ],
             ),
             (
                 (195, 87.5),
                 (175, 72.5),
                 [
-                    OrientedPoint(195 + distance_to_jenga_zone, 80, pi),
                     OrientedPoint(185, 87.5 + distance_to_jenga_zone, -pi / 2),
                     OrientedPoint(185, 72.5 - distance_to_jenga_zone, pi / 2),
-                    OrientedPoint(175 - distance_to_jenga_zone, 80, 0),
                 ],
             ),
         ]
@@ -163,25 +147,19 @@ class WinterArena(BaseArena):
                 (20, 90),
                 [
                     OrientedPoint(20 + distance_to_drop_zone, 80, pi),
-                    OrientedPoint(10, 90 + distance_to_drop_zone, -pi / 2),
-                    OrientedPoint(10, 70 - distance_to_drop_zone, pi / 2),
                 ],
             ),
             (
                 (60, 20),
                 (80, 0),
                 [
-                    OrientedPoint(80 + distance_to_drop_zone, 10, pi),
                     OrientedPoint(70, 20 + distance_to_drop_zone, -pi / 2),
-                    OrientedPoint(60 - distance_to_drop_zone, 10, 0),
                 ],
             ),
             (
                 (115, 155),
                 (135, 135),
                 [
-                    OrientedPoint(115 - distance_to_drop_zone, 145, 0),
-                    OrientedPoint(135 + distance_to_drop_zone, 145, pi),
                     OrientedPoint(125, 135 - distance_to_drop_zone, pi / 2),
                 ],
             ),
@@ -189,8 +167,6 @@ class WinterArena(BaseArena):
                 (70, 90),
                 (90, 70),
                 [
-                    OrientedPoint(70 - distance_to_drop_zone, 80, 0),
-                    OrientedPoint(90 + distance_to_drop_zone, 80, pi),
                     OrientedPoint(80, 70 - distance_to_drop_zone, pi / 2),
                     OrientedPoint(80, 90 + distance_to_drop_zone, -pi / 2),
                 ],
@@ -199,8 +175,6 @@ class WinterArena(BaseArena):
                 (300, 90),
                 (280, 70),
                 [
-                    OrientedPoint(290, 70 - distance_to_drop_zone, pi / 2),
-                    OrientedPoint(290, 90 + distance_to_drop_zone, -pi / 2),
                     OrientedPoint(280 - distance_to_drop_zone, 80, 0),
                 ],
             ),
@@ -208,17 +182,13 @@ class WinterArena(BaseArena):
                 (240, 20),
                 (220, 0),
                 [
-                    OrientedPoint(220 - distance_to_drop_zone, 10, 0),
                     OrientedPoint(230, 20 + distance_to_drop_zone, -pi / 2),
-                    OrientedPoint(240 + distance_to_drop_zone, 10, pi),
                 ],
             ),
             (
                 (185, 155),
                 (165, 135),
                 [
-                    OrientedPoint(185 + distance_to_drop_zone, 145, pi),
-                    OrientedPoint(165 - distance_to_drop_zone, 145, 0),
                     OrientedPoint(175, 135 - distance_to_drop_zone, pi / 2),
                 ],
             ),
@@ -226,8 +196,6 @@ class WinterArena(BaseArena):
                 (230, 90),
                 (210, 70),
                 [
-                    OrientedPoint(230 + distance_to_drop_zone, 80, pi),
-                    OrientedPoint(210 - distance_to_drop_zone, 80, 0),
                     OrientedPoint(220, 70 - distance_to_drop_zone, pi / 2),
                     OrientedPoint(220, 90 + distance_to_drop_zone, -pi / 2),
                 ],
@@ -236,8 +204,6 @@ class WinterArena(BaseArena):
                 (140, 90),
                 (160, 70),
                 [
-                    OrientedPoint(140 - distance_to_drop_zone, 80, 0),
-                    OrientedPoint(160 + distance_to_drop_zone, 80, pi),
                     OrientedPoint(150, 70 - distance_to_drop_zone, pi / 2),
                     OrientedPoint(150, 90 + distance_to_drop_zone, -pi / 2),
                 ],
@@ -246,9 +212,7 @@ class WinterArena(BaseArena):
                 (140, 20),
                 (160, 0),
                 [
-                    OrientedPoint(160 + distance_to_drop_zone, 10, pi),
                     OrientedPoint(150, 20 + distance_to_drop_zone, -pi / 2),
-                    OrientedPoint(140 - distance_to_drop_zone, 10, 0),
                 ],
             ),
         ]

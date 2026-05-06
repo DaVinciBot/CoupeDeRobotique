@@ -78,6 +78,12 @@ class GraphRunner:
                 f"[STRAT] <== Finished: {node.name} with status {node.status.name}",
             )
             self.visit_counts[node] = self.visit_counts.get(node, 0) + 1
+            if node.status != TaskStatus.DONE:
+                self._logger.warning(
+                    f"[STRAT]     '{node.name}' ended as {node.status.name}; "
+                    "branch stops",
+                )
+                continue
 
             # Gather valid transitions
             valid_transitions = [

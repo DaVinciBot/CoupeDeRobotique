@@ -85,6 +85,14 @@ class NavigatorTask:
             )
         )
         path: list[OrientedPoint] = self.path_planner.plan_path(plan_path_params)
+        if not path:
+            self.current_trajectory_command = (
+                TrajectoryPlanCommand.create_stop_command(
+                    current_position=ally_zone.point,
+                )
+            )
+            self.state = NavigatorTaskState.ABORT
+            return
         self.trajectory_planner.plan_trajectory(path)
         self.current_trajectory_command = self.trajectory_planner.get_plan()
         self.state = NavigatorTaskState.IN_PROGRESS
@@ -104,7 +112,10 @@ class NavigatorTask:
         return self.current_trajectory_command
 
     def _is_finished(self) -> bool:
-        if self._start_time is None or self.state == NavigatorTaskState.FINISHED:
+        if self._start_time is None or self.state in {
+            NavigatorTaskState.FINISHED,
+            NavigatorTaskState.AVOIDING,
+        }:
             return False
         return self._get_elapsed_time() > self.trajectory_planner.get_total_duration()
 
@@ -124,6 +135,8 @@ class NavigatorTask:
         """
         if self.state == NavigatorTaskState.NOT_PLANNED:
             self._plan_task(ally_zone)
+            if self.current_trajectory_command is not None:
+                return self.current_trajectory_command
             return self.trajectory_planner.get_plan()
 
         if self._has_timed_out():

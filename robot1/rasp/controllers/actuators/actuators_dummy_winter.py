@@ -84,13 +84,13 @@ class ActuatorsWinterDummy(ActuatorsWinter):
         if computed_min <= angle <= computed_max:
             if detach:
                 self._logger.info(
-                    f"[CTRL:ACT:Dummy] Servo pin {pin} → {angle}degrees "
+                    f"[CTRL:ACT:Dummy] Servo pin {pin} -> {angle}degrees "
                     f"(range {computed_min}-{computed_max}) "
                     f"[detach after {detach_delay}ms]",
                 )
             else:
                 self._logger.info(
-                    f"[CTRL:ACT:Dummy] Servo pin {pin} → {angle}degrees "
+                    f"[CTRL:ACT:Dummy] Servo pin {pin} -> {angle}degrees "
                     f"(range {computed_min}-{computed_max})",
                 )
         else:

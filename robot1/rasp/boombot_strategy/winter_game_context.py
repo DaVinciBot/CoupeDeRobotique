@@ -24,14 +24,12 @@ class WinterGameContext(BaseGameContext):
         self,
         arena: WinterArena,
         rolling_basis: RollingBasis | RollingBasisDummy,
-<<<<<<< HEAD
         actuators: ActuatorsWinter | ActuatorsWinterDummy,
-        point: int = 0,
-=======
-        actuators: ActuatorsShow | ActuatorsShowDummy,
-        spatial_computation: WinterSpatialComputation | WinterSpatialComputationDummy,
-        score: int = 0,
->>>>>>> origin/dev-cd
+        spatial_computation: (
+            WinterSpatialComputation | WinterSpatialComputationDummy | None
+        ) = None,
+        point: int | None = None,
+        score: int | None = None,
     ) -> None:
         """Initialize the WinterGameContext.
 
@@ -39,26 +37,35 @@ class WinterGameContext(BaseGameContext):
             arena (WinterArena): The arena of the game.
             rolling_basis (RollingBasis | RollingBasisDummy):
                 The rolling basis of the robot.
-<<<<<<< HEAD
             actuators (ActuatorsWinter | ActuatorsWinterDummy):
                 The actuators of the robot.
-            point (int, optional): The score of the robot. Defaults to 0.
-        """
-        super().__init__(arena)
-        self.rolling_basis: RollingBasis | RollingBasisDummy = rolling_basis
-        self.actuators: ActuatorsWinter | ActuatorsWinterDummy = actuators
-        self.point = point
-=======
-            actuators (ActuatorsShow | ActuatorsShowDummy): The actuators of the robot.
             spatial_computation (WinterSpatialComputation | WinterSpatialComputationDummy):
                 Spatial computation service used by the robot.
+            point (int | None, optional): The score of the robot.
             score (int, optional): The score of the robot. Defaults to 0.
         """
         super().__init__(arena)
         self.rolling_basis: RollingBasis | RollingBasisDummy = rolling_basis
-        self.actuators: ActuatorsShow | ActuatorsShowDummy = actuators
+        self.actuators: ActuatorsWinter | ActuatorsWinterDummy = actuators
         self.spatial_computation: (
-            WinterSpatialComputation | WinterSpatialComputationDummy
+            WinterSpatialComputation | WinterSpatialComputationDummy | None
         ) = spatial_computation
-        self.score = score
->>>>>>> origin/dev-cd
+        self._score = (
+            point if point is not None else (score if score is not None else 0)
+        )
+
+    @property
+    def point(self) -> int:
+        return self._score
+
+    @point.setter
+    def point(self, value: int) -> None:
+        self._score = value
+
+    @property
+    def score(self) -> int:
+        return self._score
+
+    @score.setter
+    def score(self, value: int) -> None:
+        self._score = value

@@ -442,6 +442,19 @@ class BaseArena(ABC):
                 return zone
         return None
 
+    def make_zone_accessible(self, location: int | BaseArenaZone | OrientedPoint) -> None:
+        zone = self.get_zone_by_location(location)
+        if zone is not None and not zone.is_accessible():
+            zone._make_accessible()
+
+    def restrict_zone_accessibility(
+        self,
+        location: int | BaseArenaZone | OrientedPoint,
+    ) -> None:
+        zone = self.get_zone_by_location(location)
+        if zone is not None and zone.is_accessible():
+            zone._restrict_accessibility()
+
     def find_zone_accessibility(self, accessibility: str) -> list[BaseArenaZone]:
         """Find and return a list of zones with the specified accessibility.
 

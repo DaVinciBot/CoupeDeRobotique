@@ -5,9 +5,6 @@ from boombot_strategy.strategies.basic_strategy import BasicStrategy
 from boombot_strategy.strategies.debug_strategy import DebugStrategy
 from boombot_strategy.strategies.go_backstage_strategy import GoBackstageStrategy
 from boombot_strategy.strategies.only_banner_strategy import OnlyBannerStrategy
-from boombot_strategy.strategies.simple_jenga_loop_strategy import (
-    SimpleJengaLoopStrategy,
-)
 from boombot_strategy.strategies.smart_zone_strategy import SmartZoneStrategy
 from boombot_strategy.strategies.test_strategy import TestStrategy
 from boombot_strategy.strategies.tower_rush_alt_strategy import TowerRushAltStrategy
@@ -19,7 +16,6 @@ __all__ = [
     "DebugStrategy",
     "GoBackstageStrategy",
     "OnlyBannerStrategy",
-    "SimpleJengaLoopStrategy",
     "SmartZoneStrategy",
     "TestStrategy",
     "TowerRushAltStrategy",

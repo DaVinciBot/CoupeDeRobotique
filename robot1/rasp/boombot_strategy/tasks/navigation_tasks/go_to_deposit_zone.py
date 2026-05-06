@@ -5,7 +5,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from a_config_loader import CONFIG
-from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+from boombot_strategy.tasks.navigation_tasks.navigation_task import (
+    NavigationTask,
+    simulation_delay,
+    simulation_step_sleep_delay,
+)
 from geometry import OrientedPoint, distance
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
@@ -43,7 +47,7 @@ class GoToDepositZone(NavigationTask):
                 direction=Direction.FORWARD,
             ),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(
-                step_sleep_delay=2,
+                step_sleep_delay=simulation_step_sleep_delay(2),
             ),
             # Use for pickup speed profiler
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
@@ -52,7 +56,7 @@ class GoToDepositZone(NavigationTask):
                 acs_distance=55,
                 width_view=40,
             ),
-            stabilization_delay=2,
+            stabilization_delay=simulation_delay(2),
             points=0,
         )
         self.zone_id: int = deposit_zone_id

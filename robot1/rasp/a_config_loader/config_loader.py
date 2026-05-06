@@ -360,29 +360,53 @@ class CONFIG:
     ROLLING_BASIS_SPEED_PROFILES_ANGULAR: dict[str, Any] = (
         ROLLING_BASIS_SPEED_PROFILES_CONFIG["angular_speed"]
     )
+    SIMULATION_SPEED_FACTOR: float = float(
+        os.getenv(
+            "SIMULATION_SPEED_FACTOR",
+            "4" if get_env_bool("ROLLING_BASIS_DUMMY") else "1",
+        ),
+    )
+    ROLLING_BASIS_DEFAULT_LINEAR_SPEED_PROFILE: dict[str, float] = dict(
+        ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"],
+    )
+    ROLLING_BASIS_SLOW_LINEAR_SPEED_PROFILE: dict[str, float] = dict(
+        ROLLING_BASIS_SPEED_PROFILES_LINEAR["slow"],
+    )
+    ROLLING_BASIS_DEFAULT_ANGULAR_SPEED: float = ROLLING_BASIS_SPEED_PROFILES_ANGULAR[
+        "default"
+    ]["speed"]
+    if SIMULATION_SPEED_FACTOR != 1:
+        for speed_profile in (
+            ROLLING_BASIS_DEFAULT_LINEAR_SPEED_PROFILE,
+            ROLLING_BASIS_SLOW_LINEAR_SPEED_PROFILE,
+        ):
+            speed_profile["acceleration"] *= SIMULATION_SPEED_FACTOR
+            speed_profile["deceleration"] *= SIMULATION_SPEED_FACTOR
+            speed_profile["max_speed"] *= SIMULATION_SPEED_FACTOR
+        ROLLING_BASIS_DEFAULT_ANGULAR_SPEED *= SIMULATION_SPEED_FACTOR
 
     ROLLING_BASIS_DEFAULT_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
         linear_speed_profile=LinearRampedSpeedProfile(
-            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"],
+            **ROLLING_BASIS_DEFAULT_LINEAR_SPEED_PROFILE,
         ),
         angular_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"],
+            ROLLING_BASIS_DEFAULT_ANGULAR_SPEED,
         ),
     )
     ROLLING_BASIS_SLOW_SPEED_PROFILER: SpeedProfiler = SpeedProfiler(
         linear_speed_profile=LinearRampedSpeedProfile(
-            **ROLLING_BASIS_SPEED_PROFILES_LINEAR["slow"],
+            **ROLLING_BASIS_SLOW_LINEAR_SPEED_PROFILE,
         ),
         angular_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"],
+            ROLLING_BASIS_DEFAULT_ANGULAR_SPEED,
         ),
     )
     ROLLING_BASIS_SPEED_PROFILER_PID: SpeedProfiler = SpeedProfiler(
         linear_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_LINEAR["default"]["max_speed"],
+            ROLLING_BASIS_DEFAULT_LINEAR_SPEED_PROFILE["max_speed"],
         ),
         angular_speed_profile=BasicSpeedProfile(
-            ROLLING_BASIS_SPEED_PROFILES_ANGULAR["default"]["speed"],
+            ROLLING_BASIS_DEFAULT_ANGULAR_SPEED,
         ),
     )
 

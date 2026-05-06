@@ -253,6 +253,19 @@ class BaseTaskNode:
 
         if next_idx is not None:
             self._handle_task(next_idx, ctx)
+            exception = self.exceptions[next_idx]
+            if exception is not None:
+                self.end_time = time.time()
+                self.status = (
+                    TaskStatus.TIMEOUT
+                    if isinstance(exception, TimeoutError)
+                    else TaskStatus.FAILED
+                )
+                self._logger.info(
+                    f"[STRAT:Task] Stopped '{self.name}' {self.status.name} "
+                    f"after task {next_idx}",
+                )
+                return True
 
         if all(self.task_done):
             self.end_time = time.time()

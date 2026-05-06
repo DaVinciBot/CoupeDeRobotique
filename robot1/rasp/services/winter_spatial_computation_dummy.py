@@ -18,12 +18,12 @@ DEPOSIT_ZONE_ORIENTATION: dict[int, str] = {
     11: "vertical",
     12: "horizontal",
     13: "horizontal",
-    14: "vertical",
+    14: "horizontal",
     15: "vertical",
     16: "horizontal",
     17: "horizontal",
-    18: "vertical",
-    19: "vertical",
+    18: "horizontal",
+    19: "horizontal",
     20: "horizontal",
 }
 

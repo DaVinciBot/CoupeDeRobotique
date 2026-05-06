@@ -5,7 +5,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, override
 
 from a_config_loader import CONFIG
-from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
+from boombot_strategy.tasks.navigation_tasks.navigation_task import (
+    NavigationTask,
+    simulation_delay,
+    simulation_step_sleep_delay,
+)
 from geometry import OrientedPoint, distance
 from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
     NoAcsDetectionProfileParams,
@@ -47,7 +51,7 @@ class RelativeBackward(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
-            stabilization_delay=1,  # Delay to stabilize after moving backward
+            stabilization_delay=simulation_delay(1),
             timeout=20,
             points=0,
         )
@@ -74,7 +78,7 @@ class RelativeForward(NavigationTask):
             speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
             acs_detection_profile_params=NoAcsDetectionProfileParams(),
-            stabilization_delay=0.5,  # Delay to stabilize after moving forward
+            stabilization_delay=simulation_delay(0.5),
             points=0,
         )
         self.estimated_duration = (
@@ -97,7 +101,7 @@ class GoCentroidOfZone(NavigationTask):
             goal=zone_id,
             path_planner_params=BasicPathPlannerParams(),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(
-                step_sleep_delay=2,
+                step_sleep_delay=simulation_step_sleep_delay(2),
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
@@ -105,7 +109,7 @@ class GoCentroidOfZone(NavigationTask):
                 acs_distance=55,
                 width_view=40,
             ),
-            stabilization_delay=0.5,
+            stabilization_delay=simulation_delay(0.5),
             points=0,
         )
         self.zone_id: int = zone_id
@@ -175,7 +179,7 @@ class GoToOrientedPoint(NavigationTask):
             goal=target,
             path_planner_params=BasicPathPlannerParams(),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(
-                step_sleep_delay=2,
+                step_sleep_delay=simulation_step_sleep_delay(2),
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=StopAndWaitAvoidanceParams(timeout=20),
@@ -183,5 +187,5 @@ class GoToOrientedPoint(NavigationTask):
                 acs_distance=55,
                 width_view=40,
             ),
-            stabilization_delay=2,
+            stabilization_delay=simulation_delay(2),
         )

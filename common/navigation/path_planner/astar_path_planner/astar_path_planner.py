@@ -270,6 +270,8 @@ class AStarPathPlanner(
                 List containing oriented path from the start to the goal,
                 possibly reversed for backward direction.
         """
+        self.update_current_position(_params.start)
+        self.update_goal(_params.goal)
         self.__find_path()
 
         # If no path found, return an empty list

@@ -18,6 +18,7 @@ from ws_comms import WServerRouteManager, WSmsg
 
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
+from arena.base_arena.arena_zones.structs import ZoneAccessibility
 from boombot_strategy import WinterGameContext
 from boombot_strategy.strategies import SmartZoneStrategy
 from boombot_strategy.sub_graphs import (
@@ -31,19 +32,45 @@ from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint, SetOdomet
 from controllers.actuators import ActuatorsWinter, ActuatorsWinterDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
-<<<<<<< HEAD
 from log_manager import LogLogger
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
-=======
-from common.stuff import Crate
->>>>>>> origin/dev-cd
 
 if TYPE_CHECKING:
     from arena.winter_arena import WinterArena
     from common.stuff import Crate
     from sensors import Inputs, Lidar, LidarDummy
     from strategy.core.tasks import BaseTask
+
+
+def crates_to_dict(
+    crates: dict[int, list[Crate]],
+) -> dict[int, list[dict[str, object]]]:
+    return {
+        zone_id: [
+            {
+                "x": c.x,
+                "y": c.y,
+                "color": c.color,
+                "color_id": c.color_id,
+                "zone_id": c.zone_id,
+            }
+            for c in lst
+        ]
+        for zone_id, lst in crates.items()
+    }
+
+
+def zones_accessibility_to_dict(arena: WinterArena) -> dict[int, str]:
+    return {zone.uid: zone.accessibility.name for zone in arena.zones}
+
+
+def apply_zones_accessibility(arena: WinterArena, accessibilities: dict[int, str]) -> None:
+    for zone in arena.zones:
+        accessibility_name = accessibilities.get(zone.uid)
+        if accessibility_name is None:
+            continue
+        zone.accessibility = ZoneAccessibility[accessibility_name]
 
 
 class MainBrain(Brain):
@@ -93,7 +120,19 @@ class MainBrain(Brain):
 
         self.jack_triggered: bool = False
         self.jack_plugged: bool = False
+        self.shared_zone_accessibility: dict[int, str] = zones_accessibility_to_dict(
+            self.arena,
+        )
         self.shared_crates: dict[int, list[dict[str, object]]] = {}
+        if CONFIG.SPATIAL_COMPUTATION_DUMMY:
+            preview_sc = WinterSpatialComputationDummy(
+                logger=LogLogger(
+                    identifier="SpatialComputationPreview",
+                    follow_logger_manager_rules=True,
+                ),
+                arena=self.arena,
+            )
+            self.shared_crates = crates_to_dict(preview_sc.crates)
 
         super().__init__(logger, self)
 
@@ -126,24 +165,6 @@ class MainBrain(Brain):
     )
     def run(self) -> None:
         """Runs the main control loop for the robot."""
-
-        def _crates_to_dict(
-            crates: dict[int, list[Crate]],
-        ) -> dict[int, list[dict[str, object]]]:
-            return {
-                zone_id: [
-                    {
-                        "x": c.x,
-                        "y": c.y,
-                        "color": c.color,
-                        "color_id": c.color_id,
-                        "zone_id": c.zone_id,
-                    }
-                    for c in lst
-                ]
-                for zone_id, lst in crates.items()
-            }
-
         # --- Initialization --- #
         # --- 1) Initialize subsystems --- #
         if CONFIG.ROLLING_BASIS_DUMMY:
@@ -164,7 +185,6 @@ class MainBrain(Brain):
         rolling_basis.initialize_pids()
 
         if CONFIG.ACTUATORS_DUMMY:
-<<<<<<< HEAD
             actuators: ActuatorsWinter | ActuatorsWinterDummy = ActuatorsWinterDummy(
                 logger=LogLogger(
                     identifier="Actuators",
@@ -175,19 +195,14 @@ class MainBrain(Brain):
             actuators = ActuatorsWinter(
                 logger=LogLogger(
                     identifier="Actuators",
-=======
-            actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
-                logger=Logger(identifier="Actuators", follow_logger_manager_rules=True),
-            )
-        else:
-            actuators = ActuatorsShow(
-                logger=Logger(identifier="Actuators", follow_logger_manager_rules=True),
+                    follow_logger_manager_rules=True,
+                ),
             )
 
         if CONFIG.SPATIAL_COMPUTATION_DUMMY:
             sc: WinterSpatialComputation | WinterSpatialComputationDummy = (
                 WinterSpatialComputationDummy(
-                    logger=Logger(
+                    logger=LogLogger(
                         identifier="SpatialComputationDummy",
                         follow_logger_manager_rules=True,
                     ),
@@ -196,40 +211,28 @@ class MainBrain(Brain):
             )
         else:
             sc = WinterSpatialComputation(
-                logger=Logger(
+                logger=LogLogger(
                     identifier="SpatialComputation",
->>>>>>> origin/dev-cd
                     follow_logger_manager_rules=True,
                 ),
                 arena=self.arena,
             )
 
-<<<<<<< HEAD
-        # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
+        self.shared_crates = crates_to_dict(sc.crates)
+        self.shared_zone_accessibility = zones_accessibility_to_dict(self.arena)
+
+        # --- 2) Wait for jack plug, then wait for trigger --- #
         if (
             not CONFIG.LIDAR_DUMMY
             or not CONFIG.ROLLING_BASIS_DUMMY
             or not CONFIG.ACTUATORS_DUMMY
         ):
             while not self.jack_plugged:  # wait until cable is plugged
+                sc.receive_data()
                 time.sleep(0.1)
         else:
             time.sleep(2)
 
-=======
-        self.shared_crates = _crates_to_dict(sc.crates)
-
-        #lora = LoraCom(self.logger)
-
-        actuators.deplacement_position()
-
-        # --- 2) Wait for jack plug --- #
-        while not self.jack_plugged:
-            sc.receive_data()
-            time.sleep(0.1)
-
-        actuators.block_banner()
->>>>>>> origin/dev-cd
         rolling_basis.set_odometrie(self.rolling_basis_odometrie)
         rolling_basis.initialize_pids()
 
@@ -239,9 +242,6 @@ class MainBrain(Brain):
             time.sleep(0.1)
 
         # --- 3) Build the strategy --- #
-<<<<<<< HEAD
-        # commentaire chatgpt ou c'est comment, en revue pix la c'est 0
-
         # Choose strategy based on configuration
         strategy: SmartZoneStrategy | None = None
         action_holder: list[GraphRunner | None] = [None]
@@ -253,6 +253,7 @@ class MainBrain(Brain):
                     arena=self.arena,
                     rolling_basis=rolling_basis,
                     actuators=actuators,
+                    spatial_computation=sc,
                     point=self.score,
                 ),
             )
@@ -260,39 +261,19 @@ class MainBrain(Brain):
         self.should_send_start = True
         self.status = "starting"
 
-        if strategy is not None:
-            from strategy.tools import visualize_task_graph
-
-            visualize_task_graph(strategy.runner.active[0])
-
-=======
-        strategy = TowerRushAltStrategy(
-            WinterGameContext(
-                arena=self.arena,
-                rolling_basis=rolling_basis,
-                actuators=actuators,
-                spatial_computation=sc,
-                score=self.score,
-            ),
-        )
-
->>>>>>> origin/dev-cd
         # --- MetaProg is insane (loop) --- #
 
         #lora.receive()
         sc.receive_data()
-        self.shared_crates = _crates_to_dict(sc.crates)
+        self.shared_crates = crates_to_dict(sc.crates)
+        self.shared_zone_accessibility = zones_accessibility_to_dict(self.arena)
 
         context = WinterGameContext(
             arena=self.arena,
             rolling_basis=rolling_basis,
             actuators=actuators,
-<<<<<<< HEAD
-            point=self.score,
-=======
             spatial_computation=sc,
-            score=self.score,
->>>>>>> origin/dev-cd
+            point=self.score,
         )
 
         if strategy:
@@ -377,6 +358,9 @@ class MainBrain(Brain):
             if action_holder[0] is not None:
                 action_holder[0].handle(context)
 
+        self.shared_crates = crates_to_dict(sc.crates)
+        self.shared_zone_accessibility = zones_accessibility_to_dict(self.arena)
+
         if self.should_update_pid:
             if self.pid_type == "linear":
                 rolling_basis.set_linear_position_pid(
@@ -392,15 +376,10 @@ class MainBrain(Brain):
                 )
             self.should_update_pid = False
 
-<<<<<<< HEAD
         # Update shared state from the context
         self.score = context.point
         self.odemetrie_state = context.arena.ally_zone.point
         self.enemy_odemetrie_state = context.arena.enemy_zone.point
-=======
-        self.score = context.score
-        self.ui_state["score"] = self.score
->>>>>>> origin/dev-cd
         self.rolling_basis_odometrie = rolling_basis.odometrie
 
     @Brain.task(
@@ -417,6 +396,7 @@ class MainBrain(Brain):
 
         # --- MetaProg is insane (loop) --- #
         ax.clear()
+        apply_zones_accessibility(self.arena, self.shared_zone_accessibility)
         self.arena.visualize(
             # Visualization options
             show_buffer=True,
