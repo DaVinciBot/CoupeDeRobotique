@@ -139,13 +139,13 @@ function button_click_effect(button, server) {
     });
   }
   if (button.id.includes("_pid")) {
-    let kp = parseFloat(
+    let kp = read_localized_number(
       document.getElementById("kp").querySelector(".value").innerText
     );
-    let ki = parseFloat(
+    let ki = read_localized_number(
       document.getElementById("ki").querySelector(".value").innerText
     );
-    let kd = parseFloat(
+    let kd = read_localized_number(
       document.getElementById("kd").querySelector(".value").innerText
     );
     if (button.id.includes("linear")) {
@@ -184,9 +184,15 @@ function button_click_effect(button, server) {
   }
 }
 
+function read_localized_number(value, fallback = 0) {
+  const normalizedValue = String(value ?? "").trim().replace(",", ".");
+  const parsedValue = parseFloat(normalizedValue);
+  return Number.isFinite(parsedValue) ? parsedValue : fallback;
+}
+
 function read_number_input(id, fallback, min = -Infinity, max = Infinity) {
   const input = document.getElementById(id);
-  const value = parseFloat(input?.value);
+  const value = read_localized_number(input?.value, fallback);
   const normalized = Number.isFinite(value) ? value : fallback;
   return Math.min(Math.max(normalized, min), max);
 }

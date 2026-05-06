@@ -720,13 +720,7 @@ function focus_maki(c_maki) {
 
 input.addEventListener("input", () => {
   if (current_maki != null) {
-    let value = parseFloat(input.value);
-    value = Math.round(value * 100) / 100;
-    if (isNaN(value)) {
-      value = 0;
-    }
-    input.value = value;
-    current_maki.children[0].innerText = value;
+    current_maki.children[0].innerText = input.value;
   } else {
     input.value = "";
   }
@@ -734,8 +728,8 @@ input.addEventListener("input", () => {
 
 plus.addEventListener("click", () => {
   if (current_maki != null) {
-    let value = parseFloat(input.value);
-    value += parseFloat(range.value);
+    let value = read_localized_number(input.value);
+    value += read_localized_number(range.value);
     value = Math.round(value * 100) / 100;
     if (isNaN(value)) {
       value = 0;
@@ -747,8 +741,8 @@ plus.addEventListener("click", () => {
 
 minus.addEventListener("click", () => {
   if (current_maki != null) {
-    let value = parseFloat(input.value);
-    value -= parseFloat(range.value);
+    let value = read_localized_number(input.value);
+    value -= read_localized_number(range.value);
     value = Math.round(value * 100) / 100;
     if (isNaN(value)) {
       value = 0;
