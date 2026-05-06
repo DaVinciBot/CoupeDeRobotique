@@ -268,12 +268,15 @@ function formatPidValue(value, unit = "") {
   return `${value.toFixed(decimals)}${unit ? ` ${unit}` : ""}`;
 }
 
-function normalizePidPayload(pidDebug) {
-  if (pidDebug?.pids) {
-    return pidDebug.pids;
-  }
+function hasPidValues(payload) {
+  if (!payload) return false;
+  return ["target", "actual", "error", "output"].some(
+    (key) => toFiniteNumber(payload[key]) !== null
+  );
+}
 
-  return {
+function normalizePidPayload(pidDebug) {
+  const legacyPids = {
     linear_position: {
       target: pidDebug?.target_linear_cm_s,
       actual: pidDebug?.actual_linear_cm_s,
@@ -291,6 +294,18 @@ function normalizePidPayload(pidDebug) {
       output_unit: "cmd",
     },
   };
+
+  if (!pidDebug?.pids) {
+    return legacyPids;
+  }
+
+  return pidDebugChannels.reduce((normalized, channelDef) => {
+    const pidPayload = pidDebug.pids[channelDef.key];
+    normalized[channelDef.key] = hasPidValues(pidPayload)
+      ? pidPayload
+      : legacyPids[channelDef.key] ?? {};
+    return normalized;
+  }, {});
 }
 
 function updatePidDebugPanel(pidDebug) {
