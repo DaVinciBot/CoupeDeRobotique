@@ -10,8 +10,6 @@
 #include <util/atomic.h>
 #include <cmath>
 
-#define MIN_PWM_WHEEL 30
-
 #define MAX_PWM 240
 
 #define POSITION_MAX_LINEAR_STEP_CM 0.8
@@ -276,13 +274,6 @@ void Rolling_Basis::handle() {
     double left_pwm = this->left_wheel_position_pid.compute(left_wheel_error);
     double right_pwm =
         this->right_wheel_position_pid.compute(right_wheel_error);
-
-    if (fabs(left_pwm) > 0.0 && fabs(left_pwm) < MIN_PWM_WHEEL) {
-        left_pwm = copysign(MIN_PWM_WHEEL, left_pwm);
-    }
-    if (fabs(right_pwm) > 0.0 && fabs(right_pwm) < MIN_PWM_WHEEL) {
-        right_pwm = copysign(MIN_PWM_WHEEL, right_pwm);
-    }
 
     left_pwm = constrain(left_pwm, -MAX_PWM, MAX_PWM);
     right_pwm = constrain(right_pwm, -MAX_PWM, MAX_PWM);
