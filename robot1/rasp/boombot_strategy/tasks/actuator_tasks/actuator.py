@@ -9,14 +9,6 @@ from boombot_strategy.winter_game_context import WinterGameContext
 from strategy.core.tasks import BaseTask
 
 
-def _restrict_zone_after_deposit(ctx: WinterGameContext, zone_id: int) -> None:
-    ctx.arena.restrict_zone_accessibility(zone_id)
-
-
-def _make_zone_free_after_pickup(ctx: WinterGameContext, zone_id: int) -> None:
-    ctx.arena.make_zone_accessible(zone_id)
-
-
 class PrepareRotation(BaseTask[WinterGameContext]):
     """Task to prepare the actuator for rotation."""
 
@@ -63,10 +55,8 @@ class BlockJenga(BaseTask[WinterGameContext]):
     def handle(self, ctx: WinterGameContext) -> bool:
         ctx.actuators.block_jenga()
         if self.zone_id is not None and ctx.spatial_computation is not None:
-            had_crates = bool(ctx.spatial_computation.crates.get(self.zone_id))
             ctx.spatial_computation.pick_crates(self.zone_id)
-            if had_crates:
-                _make_zone_free_after_pickup(ctx, self.zone_id)
+
         p = self.points
         ctx.point += p(ctx) if callable(p) else p
         time.sleep(0.5)
@@ -82,10 +72,8 @@ class SafeRetractAll(BaseTask[WinterGameContext]):
     def handle(self, ctx: WinterGameContext) -> bool:
         ctx.actuators.retract_all()
         if self.zone_id is not None and ctx.spatial_computation is not None:
-            had_crates = bool(getattr(ctx.spatial_computation, "held_crates", []))
             ctx.spatial_computation.drop_crates(self.zone_id)
-            if had_crates:
-                _restrict_zone_after_deposit(ctx, self.zone_id)
+
         p = self.points
         ctx.point += p(ctx) if callable(p) else p
         time.sleep(0.5)

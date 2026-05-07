@@ -47,10 +47,11 @@ if TYPE_CHECKING:
     from boombot_strategy.winter_game_context import WinterGameContext
 
 ACTION_DEADLINE_SECONDS = 85.0
+RETURN_TO_BASE_SECONDS = 75.0
 
 
 def _can_start_action(start_time: float) -> bool:
-    return time.time() - start_time < ACTION_DEADLINE_SECONDS
+    return time.time() - start_time < RETURN_TO_BASE_SECONDS
 
 
 def _pickup_zone_has_crates(ctx: WinterGameContext, zone_id: int) -> bool:

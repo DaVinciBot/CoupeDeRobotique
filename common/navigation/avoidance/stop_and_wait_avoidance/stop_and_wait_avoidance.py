@@ -11,6 +11,8 @@ from navigation.avoidance.stop_and_wait_avoidance.stop_and_wait_avoidance_params
 from navigation.navigator.task.states import NavigatorTaskState
 from navigation.trajectory_planner import TrajectoryPlanCommand
 
+TEMPORARILY_DISABLE_ENEMY_AVOIDANCE = True
+
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
@@ -72,6 +74,12 @@ class StopAndWaitAvoidance(BaseAvoidance[StopAndWaitAvoidanceParams]):
         self._logger.debug(
             f"[NAV:Avoid] Handling avoidance at pos: {position}, state: {self.state}",
         )
+
+        if TEMPORARILY_DISABLE_ENEMY_AVOIDANCE:
+            return cast(
+                "TrajectoryPlanCommand",
+                current_navigator_task.current_trajectory_command,
+            )
 
         # 1. Timeout check
         if self._has_timed_out():
