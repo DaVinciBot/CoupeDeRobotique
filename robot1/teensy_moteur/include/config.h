@@ -30,7 +30,7 @@
 #define ENCODER_RESOLUTION 1024
 #define ENTRAXE 30.9
 #define LEFT_WHEEL_DIAMETER 6.1
-#define RIGHT_WHEEL_DIAMETER 5.9
+#define RIGHT_WHEEL_DIAMETER 6.016
 
 // PIDs (position supervision)
 #define KP_LINEAR_POSITION 0.8
