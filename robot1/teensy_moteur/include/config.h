@@ -30,7 +30,9 @@
 #define ENCODER_RESOLUTION 1024
 #define ENTRAXE 30.9
 #define LEFT_WHEEL_DIAMETER 6.154
-#define RIGHT_WHEEL_DIAMETER 6.051
+#define RIGHT_WHEEL_DIAMETER \
+    3.026  // en attendant de changer la config de la roue encodeuse. Après
+           // : 6.051
 
 // PIDs (position supervision)
 #define KP_LINEAR_POSITION 0.8
