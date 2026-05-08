@@ -56,7 +56,7 @@ Les limites actuelles sont codees dans `rolling_basis.cpp` :
 - `linear_step` : `[-0.8 cm/cycle, 0.8 cm/cycle]`.
 - `angular_step` : `[-0.8 cm/cycle, 0.8 cm/cycle]`.
 - Ecart max entre consigne roue et position roue mesuree :
-  `WHEEL_TARGET_MAX_ERROR_CM = 10.0`.
+  `WHEEL_TARGET_MAX_ERROR_CM = 3.0`.
 
 Si une sortie reste collee a une limite, le PID est en saturation. Dans ce cas,
 il faut reduire le gain ou la consigne de test avant d'ajouter du `ki`.

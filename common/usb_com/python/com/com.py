@@ -259,6 +259,12 @@ class Com:
     def reconnect(self, *, timeout_s: float = 5.0, retry_delay_s: float = 0.5) -> bool:
         """Reconnect the serial device after a reset.
 
+        Args:
+            timeout_s (float):
+                Maximum time to wait for reconnection in seconds. Defaults to 5.0.
+            retry_delay_s (float):
+                Time to wait between reconnection attempts in seconds. Defaults to 0.5.
+
         Returns:
             bool: True if a device was found and reconnected.
         """
