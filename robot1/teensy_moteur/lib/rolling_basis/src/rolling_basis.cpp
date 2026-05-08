@@ -14,7 +14,7 @@
 
 #define POSITION_MAX_LINEAR_STEP_CM 0.8
 #define POSITION_MAX_ANGULAR_STEP_CM 0.8
-#define WHEEL_TARGET_MAX_ERROR_CM 10.0
+#define WHEEL_TARGET_MAX_ERROR_CM 15.0
 
 double normalizeAngle(double theta) {
     // shift by +PI, take modulo 2*PI, remap to [0,2*PI)
@@ -79,9 +79,9 @@ void Rolling_Basis::define_right_motor(byte enca,
                                        byte max_pwm,
                                        byte min_moving_pwm,
                                        byte pwm_slew_per_cycle) {
-    this->right_motor = new Motor(in1, in2, pwm, enca, encb,
-                                  this->right_wheel_unit_tick_cm(), max_pwm,
-                                  min_moving_pwm, pwm_slew_per_cycle);
+    this->right_motor =
+        new Motor(in1, in2, pwm, enca, encb, this->right_wheel_unit_tick_cm(),
+                  max_pwm, min_moving_pwm, pwm_slew_per_cycle);
 }
 
 /**
@@ -96,9 +96,9 @@ void Rolling_Basis::define_left_motor(byte enca,
                                       byte max_pwm,
                                       byte min_moving_pwm,
                                       byte pwm_slew_per_cycle) {
-    this->left_motor = new Motor(in1, in2, pwm, enca, encb,
-                                 this->left_wheel_unit_tick_cm(), max_pwm,
-                                 min_moving_pwm, pwm_slew_per_cycle);
+    this->left_motor =
+        new Motor(in1, in2, pwm, enca, encb, this->left_wheel_unit_tick_cm(),
+                  max_pwm, min_moving_pwm, pwm_slew_per_cycle);
 }
 
 /**
@@ -162,9 +162,8 @@ void Rolling_Basis::set_motors_pwm(int16_t left_pwm,
     this->manual_left_pwm = constrain(left_pwm, -MAX_PWM, MAX_PWM);
     this->manual_right_pwm = constrain(right_pwm, -MAX_PWM, MAX_PWM);
     this->manual_pwm_until_ms = millis() + duration_ms;
-    this->manual_pwm_active = duration_ms > 0 &&
-                              (this->manual_left_pwm != 0 ||
-                               this->manual_right_pwm != 0);
+    this->manual_pwm_active = duration_ms > 0 && (this->manual_left_pwm != 0 ||
+                                                  this->manual_right_pwm != 0);
 
     if (!this->manual_pwm_active) {
         this->left_motor->set_motor_raw(0);
