@@ -5,6 +5,7 @@ from __future__ import annotations
 import struct
 from dataclasses import dataclass
 from enum import Enum
+from typing import override
 
 
 class PidID(Enum):
@@ -88,3 +89,12 @@ class PID:
             PID: An instance of the PID class.
         """
         return cls(*pid_list)
+
+    @override
+    def __str__(self) -> str:
+        """String representation of the PID parameters.
+
+        Returns:
+            str: A string in the format "PID(kp=..., ki=..., kd=...)".
+        """
+        return f"PID(kp={self.kp}, ki={self.ki}, kd={self.kd})"

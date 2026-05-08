@@ -256,6 +256,14 @@ class OrientedPoint(Point):
 
     @staticmethod
     def _normalize_angle(angle: float) -> float:
+        """Normalize angle to [-pi, pi).
+
+        Args:
+            angle (float): Angle in radians.
+
+        Returns:
+            float: Normalized angle in radians.
+        """
         angle = (angle + math.pi) % (2 * math.pi)
         if angle < 0:
             angle += 2 * math.pi

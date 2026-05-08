@@ -40,7 +40,28 @@ class RollingBasisDummy(BaseComTeensy):
         realtime_period: float = 0.02,
         enable_debug_report: bool = False,
     ) -> None:
-        """Initialize the dummy rolling basis."""
+        """Initializes the RollingBasisDummy class.
+
+        Args:
+            logger (Logger): The logger instance for logging.
+            serial_number (int, optional): The serial number of the Teensy.
+                Defaults to CONFIG.ROLLING_BASIS_TEENSY_SER.
+            vid (int, optional):
+                The vendor ID of the Teensy. Defaults to CONFIG.TEENSY_VID.
+            pid (int, optional):
+                The product ID of the Teensy. Defaults to CONFIG.TEENSY_PID.
+            baudrate (int, optional): The baud rate for serial communication.
+                Defaults to CONFIG.TEENSY_BAUDRATE.
+            enable_crc (bool, optional):
+                Whether to enable CRC checks. Defaults to CONFIG.TEENSY_CRC.
+            enable_realtime_simulation (bool, optional):
+                Whether to run the simulation loop in real-time. Defaults to True.
+            realtime_period (float, optional):
+                The period (in seconds) for the real-time simulation loop.
+                Defaults to 0.02 (20ms).
+            enable_debug_report (bool, optional):
+                Whether to enable debug report generation. Defaults to False.
+        """
         self._debug_report_exported = False
         self._previous_signal_handlers: dict[int, object] = {}
 
@@ -73,6 +94,7 @@ class RollingBasisDummy(BaseComTeensy):
         self.left_wheel_target_cm: float = 0.0
         self.right_wheel_target_cm: float = 0.0
 
+        # PID controllers
         self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.left_wheel_position_pid: PID = PID(0.0, 0.0, 0.0)
@@ -96,7 +118,13 @@ class RollingBasisDummy(BaseComTeensy):
 
     @log(param_logger="RollingBasis")
     def set_trajectory_command(self, cmd: TrajectoryPlanCommand) -> None:
-        """Apply a trajectory command to the simulated robot."""
+        """Apply a trajectory command to the simulated robot.
+
+        Args:
+            cmd (TrajectoryPlanCommand):
+                The trajectory command containing the target position
+                and motion parameters.
+        """
         self.set_target_position(
             cmd.position,
             linear_speed=cmd.linear_speed,
@@ -110,7 +138,15 @@ class RollingBasisDummy(BaseComTeensy):
         linear_speed: float = 0.0,
         angular_speed: float = 0.0,
     ) -> None:
-        """Set the target position and simulated motion command."""
+        """Sends a message to set the target speed and position of the rolling basis.
+
+        Args:
+            position (OrientedPoint): Target position and orientation.
+            linear_speed (float, optional): Desired linear speed in cm/s.
+                Defaults to 0.0.
+            angular_speed (float, optional): Desired angular speed in rad/s.
+                Defaults to 0.0.
+        """
         now = time.time()
         with self._lock:
             dt = now - self._last_update_time
@@ -141,7 +177,13 @@ class RollingBasisDummy(BaseComTeensy):
         right_pwm: int,
         duration_ms: int,
     ) -> None:
-        """Record a raw PWM request in dummy mode."""
+        """Record a raw PWM request in dummy mode.
+
+        Args:
+            left_pwm (int): PWM value for the left motor (-255 to 255).
+            right_pwm (int): PWM value for the right motor (-255 to 255).
+            duration_ms (int): Duration to apply the PWM values in milliseconds.
+        """
         self._logger.info(
             "[CTRL:RB:Dummy] Direct PWM "
             f"left={left_pwm}, right={right_pwm}, duration={duration_ms}ms",
@@ -149,7 +191,11 @@ class RollingBasisDummy(BaseComTeensy):
         self._debug_recorder.add_sample(event="set_motors_pwm", force=True)
 
     def simulate_step(self, dt: float) -> None:
-        """Integrate the stored trajectory command over a timestep."""
+        """Integrate the stored trajectory command over a timestep.
+
+        Args:
+            dt (float): Time in seconds to simulate the motion for.
+        """
         if dt <= 0.0:
             return
 
@@ -158,7 +204,15 @@ class RollingBasisDummy(BaseComTeensy):
             self._last_update_time = time.time()
 
     def _simulate_step_unlocked(self, dt: float) -> None:
-        """Integrate motion assuming the caller already holds the lock."""
+        """Integrate motion assuming the caller already holds the lock.
+
+        Args:
+            dt (float): Time in seconds to simulate the motion for.
+
+        Raises:
+            ValueError:
+                If odometrie.theta is None, which is required for motion simulation.
+        """
         if dt <= 0.0:
             return
 
@@ -231,7 +285,14 @@ class RollingBasisDummy(BaseComTeensy):
 
     @log("RollingBasis")
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
-        """Set rolling basis odometry."""
+        """Sends a message to set the odometrie of the rolling basis.
+
+        Args:
+            odometrie (OrientedPoint): The new odometrie values.
+
+        Raises:
+            ValueError: If odometrie.theta is None.
+        """
         if odometrie.theta is None:
             msg = (
                 f"Odometrie theta must be defined, got None at "
@@ -254,12 +315,22 @@ class RollingBasisDummy(BaseComTeensy):
         self._debug_recorder.add_sample(event="set_odometry", force=True)
 
     def _send_pid(self, pid_id: int, pid: PID) -> None:
-        """Record PID configuration data in dummy mode."""
+        """Internal method to send PID configuration data to the Teensy.
+
+        Args:
+            pid_id (int): The identifier for the PID controller.
+            pid (PID): The PID controller parameters.
+        """
         self._logger.debug(f"[CTRL:RB:Dummy] Set PID {pid_id}: {pid}")
         self._debug_recorder.add_sample(event=f"set_pid_{pid_id}", force=True)
 
     def export_debug_report(self, *, reason: str = "manual") -> None:
-        """Export static debug files (CSV + metadata)."""
+        """Export static debug files (CSV + metadata).
+
+        Args:
+            reason (str, optional):
+                Reason for exporting the report, used for logging. Defaults to "manual".
+        """
         if self._debug_report_exported:
             return
 
@@ -274,7 +345,11 @@ class RollingBasisDummy(BaseComTeensy):
         )
 
     def get_debug_snapshot(self) -> dict[str, Any]:
-        """Return latest debug telemetry snapshot."""
+        """Return latest debug telemetry snapshot.
+
+        Returns:
+            dict[str, Any]: A dictionary containing the latest debug telemetry data.
+        """
         return self._debug_recorder.get_live_snapshot()
 
     def _export_debug_report_on_exit(self) -> None:
@@ -292,7 +367,17 @@ class RollingBasisDummy(BaseComTeensy):
             self._previous_signal_handlers[signum] = previous
 
     def _handle_termination_signal(self, signum: int, _frame: object) -> None:
-        """Export debug artifacts and then terminate the process."""
+        """Export debug artifacts and then terminate the process.
+
+        Args:
+            signum (int): The signal number received.
+            _frame (object): The current stack frame (unused).
+
+        Raises:
+            SystemExit:
+                After handling the signal and exporting debug data,
+                the process will exit.
+        """
         try:
             signal_name = signal.Signals(signum).name.lower()
         except ValueError:
@@ -310,7 +395,14 @@ class RollingBasisDummy(BaseComTeensy):
 
     @staticmethod
     def _normalize_angle(angle: float) -> float:
-        """Normalize angle to [-pi, pi)."""
+        """Normalize angle to [-pi, pi).
+
+        Args:
+            angle (float): Angle in radians.
+
+        Returns:
+            float: Normalized angle in radians.
+        """
         angle = math.fmod(angle + math.pi, 2.0 * math.pi)
         if angle < 0.0:
             angle += 2.0 * math.pi
@@ -345,9 +437,26 @@ class RollingBasisDummy(BaseComTeensy):
         *args: float | dict[str, float],
         **kwargs: float,
     ) -> PID:
-        """Load PID values from positional, dict, or keyword arguments."""
+        """Load the PID values.
+
+        Overloads:
+            - set_linear_position_pid(float, float, float) → None
+            - set_linear_position_pid(dict[str, float]) → None
+            - set_linear_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+
+        Returns:
+            PID: The configured PID instance.
+
+        Raises:
+            ValueError: If the arguments do not match any expected format.
+        """
         if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
-            pid = PID(*args)  # pyright: ignore[reportArgumentType]
+            pid = PID(*args)  # pyright: ignore[reportArgumentType] args are all float
         elif len(args) == 1 and isinstance(args[0], dict):
             pid = PID.from_dict(args[0])
         elif kwargs:
@@ -371,7 +480,18 @@ class RollingBasisDummy(BaseComTeensy):
         *args: float | dict[str, float],
         **kwargs: float,
     ) -> None:
-        """Configure the PID values for linear position control."""
+        """Configure the PID values for linear position control.
+
+        Overloads:
+            - set_linear_position_pid(float, float, float) → None
+            - set_linear_position_pid(dict[str, float]) → None
+            - set_linear_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+        """
         try:
             pid = self._load_pid(*args, **kwargs)
             self.linear_position_pid = pid
@@ -393,7 +513,18 @@ class RollingBasisDummy(BaseComTeensy):
         *args: float | dict[str, float],
         **kwargs: float,
     ) -> None:
-        """Configure the PID values for angular position control."""
+        """Configure the PID values for angular position control.
+
+        Overloads:
+            - set_angular_position_pid(float, float, float) → None
+            - set_angular_position_pid(dict[str, float]) → None
+            - set_angular_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or
+                a single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+        """
         try:
             pid = self._load_pid(*args, **kwargs)
             self.angular_position_pid = pid
@@ -415,7 +546,18 @@ class RollingBasisDummy(BaseComTeensy):
         *args: float | dict[str, float],
         **kwargs: float,
     ) -> None:
-        """Configure the PID values for left wheel position control."""
+        """Configure the PID values for left wheel position control.
+
+        Overloads:
+            - set_left_wheel_position_pid(float, float, float) → None
+            - set_left_wheel_position_pid(dict[str, float]) → None
+            - set_left_wheel_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+        """
         try:
             pid = self._load_pid(*args, **kwargs)
             self.left_wheel_position_pid = pid
@@ -437,7 +579,18 @@ class RollingBasisDummy(BaseComTeensy):
         *args: float | dict[str, float],
         **kwargs: float,
     ) -> None:
-        """Configure the PID values for right wheel position control."""
+        """Configure the PID values for right wheel position control.
+
+        Overloads:
+            - set_right_wheel_position_pid(float, float, float) → None
+            - set_right_wheel_position_pid(dict[str, float]) → None
+            - set_right_wheel_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+        """
         try:
             pid = self._load_pid(*args, **kwargs)
             self.right_wheel_position_pid = pid
@@ -452,7 +605,18 @@ class RollingBasisDummy(BaseComTeensy):
         left_wheel_position_pid: dict[str, float],
         right_wheel_position_pid: dict[str, float],
     ) -> None:
-        """Configure all rolling basis position PID controllers."""
+        """Configure all rolling basis position PID controllers.
+
+        Args:
+            linear_position_pid (dict[str, float]):
+                PID parameters for linear position control.
+            angular_position_pid (dict[str, float]):
+                PID parameters for angular position control.
+            left_wheel_position_pid (dict[str, float]):
+                PID parameters for left wheel position control.
+            right_wheel_position_pid (dict[str, float]):
+                PID parameters for right wheel position control.
+        """
         self.set_linear_position_pid(**linear_position_pid)
         self.set_angular_position_pid(**angular_position_pid)
         self.set_left_wheel_position_pid(**left_wheel_position_pid)
@@ -476,7 +640,14 @@ class RollingBasisDummy(BaseComTeensy):
 
     @override
     def __eq__(self, other: object) -> bool:
-        """Check equality between two RollingBasisDummy instances."""
+        """Check equality between two RollingBasis instances.
+
+        Args:
+            other (object): The other object to compare against.
+
+        Returns:
+            bool: ``True`` if the objects are equal, ``False`` otherwise.
+        """
         if not isinstance(other, RollingBasisDummy):
             return NotImplemented
         return (
@@ -491,12 +662,23 @@ class RollingBasisDummy(BaseComTeensy):
 
     @override
     def __ne__(self, other: object) -> bool:
-        """Check inequality between two RollingBasisDummy instances."""
+        """Check inequality between two RollingBasis instances.
+
+        Args:
+            other (object): The other object to compare against.
+
+        Returns:
+            bool: ``True`` if the objects are not equal, ``False`` otherwise.
+        """
         return not self.__eq__(other)
 
     @override
     def __hash__(self) -> int:
-        """Return a hash based on object identity."""
+        """Return a hash based on object identity.
+
+        Returns:
+            int: The hash value of the object.
+        """
         return object.__hash__(self)
 
     # endregion

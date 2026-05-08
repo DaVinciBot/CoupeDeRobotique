@@ -91,7 +91,7 @@ class AsservissementRollingBasis(
             Messages.UPDATE_ROLLING_BASIS.value,
         )
 
-        self.initialize_pids()
+        self._initialize_pids()
         self.reset_teensy_and_reinit()
 
     # region ====== Message Receiving Handlers ======
@@ -140,7 +140,12 @@ class AsservissementRollingBasis(
     # region ====== Message Sending Methods ======
 
     def reset_teensy_and_reinit(self, *, delay_s: float = 0.8) -> None:
-        """Reset the Teensy and reinitialize rolling basis state."""
+        """Reset the Teensy and reinitialize rolling basis state.
+
+        Args:
+            delay_s (float): Time to wait after resetting before trying to reconnect.
+                Defaults to 0.8.
+        """
         self._logger.info("[CTRL:RB] Sending RESET_TEENSY")
         self.reset()
         time.sleep(delay_s)
@@ -150,7 +155,12 @@ class AsservissementRollingBasis(
         self.set_target_position(OrientedPoint((0.0, 0.0), 0.0))
 
     def set_trajectory_command(self, cmd: TrajectoryPlanCommand) -> None:
-        """Send the target position from a trajectory command."""
+        """Send the target position from a trajectory command.
+
+        Args:
+            cmd (TrajectoryPlanCommand):
+                The trajectory command containing the target position.
+        """
         self.set_target_position(cmd.position)
 
     def set_target_position(
@@ -183,7 +193,13 @@ class AsservissementRollingBasis(
         right_pwm: int,
         duration_ms: int,
     ) -> None:
-        """Temporarily command raw motor PWM on the rolling basis."""
+        """Temporarily command raw motor PWM on the rolling basis.
+
+        Args:
+            left_pwm (int): PWM value for the left motor (-240 to 240).
+            right_pwm (int): PWM value for the right motor (-240 to 240).
+            duration_ms (int): Duration to apply the PWM in milliseconds (0 to 5000).
+        """
         safe_duration_ms = max(0, min(int(duration_ms), 5000))
         safe_left_pwm = max(-240, min(int(left_pwm), 240))
         safe_right_pwm = max(-240, min(int(right_pwm), 240))
@@ -431,7 +447,18 @@ class AsservissementRollingBasis(
         *args: float | dict[str, float],
         **kwargs: float,
     ) -> None:
-        """Configure the PID values for left wheel position control."""
+        """Configure the PID values for left wheel position control.
+
+        Overloads:
+            - set_left_wheel_position_pid(float, float, float) → None
+            - set_left_wheel_position_pid(dict[str, float]) → None
+            - set_left_wheel_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+        """
         try:
             pid = self._load_pid(*args, **kwargs)
             self.left_wheel_position_pid = pid
@@ -453,7 +480,18 @@ class AsservissementRollingBasis(
         *args: float | dict[str, float],
         **kwargs: float,
     ) -> None:
-        """Configure the PID values for right wheel position control."""
+        """Configure the PID values for right wheel position control.
+
+        Overloads:
+            - set_right_wheel_position_pid(float, float, float) → None
+            - set_right_wheel_position_pid(dict[str, float]) → None
+            - set_right_wheel_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+        """
         try:
             pid = self._load_pid(*args, **kwargs)
             self.right_wheel_position_pid = pid
@@ -475,6 +513,10 @@ class AsservissementRollingBasis(
                 PID values for linear position control.
             angular_position_pid (dict[str, float]):
                 PID values for angular position control.
+            left_wheel_position_pid (dict[str, float]):
+                PID values for left wheel position control.
+            right_wheel_position_pid (dict[str, float]):
+                PID values for right wheel position control.
         """
         self.set_linear_position_pid(**linear_position_pid)
         time.sleep(0.1)
@@ -485,7 +527,7 @@ class AsservissementRollingBasis(
         self.set_right_wheel_position_pid(**right_wheel_position_pid)
         time.sleep(0.1)
 
-    def initialize_pids(self) -> None:
+    def _initialize_pids(self) -> None:
         """Initialize PID controllers from the configuration."""
         try:
             self.set_pids(
@@ -496,10 +538,6 @@ class AsservissementRollingBasis(
             )
         except (ValueError, TypeError) as e:
             self._logger.error(f"[CTRL:RB] Failed to initialize PIDs: {e}")
-
-    def _initialize_pids(self) -> None:
-        """Backward-compatible alias for PID initialization."""
-        self.initialize_pids()
 
     # endregion
 
@@ -522,7 +560,14 @@ class AsservissementRollingBasis(
 
     @override
     def __eq__(self, other: object) -> bool:
-        """Check equality of two AsservissementRollingBasis instances."""
+        """Check equality of two AsservissementRollingBasis instances.
+
+        Args:
+            other (object): The other instance to compare against.
+
+        Returns:
+            bool: ``True`` if the instances are equal, ``False`` otherwise.
+        """
         if not isinstance(other, AsservissementRollingBasis):
             return NotImplemented
         return (

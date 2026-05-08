@@ -143,12 +143,22 @@ class Rolling_Basis {
      */
     void handle();
 
+    /**
+     * @brief Set the target position for the robot to reach (X, Y and THETA)
+     *
+     * @param position Target position to reach (X, Y and THETA)
+     */
     void set_target_position(const Point& position);
+    /**
+     * @brief Set the PWM values for both motors
+     *
+     * @param left_pwm Left motor PWM value
+     * @param right_pwm Right motor PWM value
+     * @param duration_ms Duration for which the PWM values should be applied
+     */
     void set_motors_pwm(int16_t left_pwm,
                         int16_t right_pwm,
                         uint32_t duration_ms);
-
-    void pi_mod_signed(double theta);
 
     // Motors action function
     // void keep_position(long current_right_ticks, long current_left_ticks);

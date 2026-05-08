@@ -19,7 +19,9 @@ class BaseComTeensy(Com):
         """Reset the Teensy and attempt to reconnect.
 
         Args:
-            delay_s (float): Time to wait after resetting before trying to reconnect.
+            delay_s (float):
+                Time to wait after resetting before trying to reconnect.
+                Defaults to 0.8.
 
         Returns:
             bool: True if reconnection was successful, False otherwise.

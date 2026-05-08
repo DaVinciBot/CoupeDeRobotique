@@ -11,7 +11,7 @@ import json
 import math
 import time
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -149,6 +149,21 @@ class RollingBasisDebugRecorder:
         sample_period_s: float = 0.02,
         max_samples: int = 120000,
     ) -> None:
+        """Initialize the debug recorder.
+
+        Args:
+            logger (Logger): Logger instance for recording debug information.
+            output_dir (Path):
+                Directory where exported CSV and metadata files will be saved.
+            file_prefix (str):
+                Prefix for generated file names to identify the source
+                or context of the data.
+            enabled (bool): Whether the recorder is active and should capture data.
+            sample_period_s (float, optional):
+                Time interval between samples in seconds. Defaults to 0.02.
+            max_samples (int, optional):
+                Maximum number of samples to store. Defaults to 120000.
+        """
         self._logger = logger
         self._enabled = enabled
         self._output_dir = output_dir
@@ -167,7 +182,11 @@ class RollingBasisDebugRecorder:
 
     @property
     def enabled(self) -> bool:
-        """Whether the recorder is enabled."""
+        """Whether the recorder is enabled.
+
+        Returns:
+            bool: True if the recorder is enabled, False otherwise.
+        """
         return self._enabled
 
     def set_target(
@@ -177,7 +196,13 @@ class RollingBasisDebugRecorder:
         angular_speed: float,
         target_position: OrientedPoint,
     ) -> None:
-        """Update latest target command values."""
+        """Update latest target command values.
+
+        Args:
+            linear_speed (float): Target linear speed in cm/s.
+            angular_speed (float): Target angular speed in rad/s.
+            target_position (OrientedPoint): Target position for the robot.
+        """
         if not self._enabled:
             return
 
@@ -194,7 +219,15 @@ class RollingBasisDebugRecorder:
         measured_linear_speed: float | None = None,
         measured_angular_speed: float | None = None,
     ) -> None:
-        """Update latest odometry and optionally compute estimated speeds."""
+        """Update latest odometry and optionally compute estimated speeds.
+
+        Args:
+            position (OrientedPoint): Current estimated position from odometry.
+            measured_linear_speed (float, optional):
+                Measured linear speed in cm/s. Defaults to None.
+            measured_angular_speed (float, optional):
+                Measured angular speed in rad/s. Defaults to None.
+        """
         if not self._enabled:
             return
 
@@ -276,7 +309,41 @@ class RollingBasisDebugRecorder:
         left_delta_ticks: int,
         right_delta_ticks: int,
     ) -> None:
-        """Update low-level PID telemetry from the rolling-basis board."""
+        """Update low-level PID telemetry from the rolling-basis board.
+
+        Args:
+            target_position (OrientedPoint): The current target position for the robot.
+            linear_error (float):
+                The error value for the linear position PID controller.
+            angular_error (float):
+                The error value for the angular position PID controller.
+            linear_output (float):
+                The output command from the linear position PID controller.
+            angular_output (float):
+                The output command from the angular position PID controller.
+            left_wheel_target_cm (float):
+                The target position for the left wheel in centimeters.
+            right_wheel_target_cm (float):
+                The target position for the right wheel in centimeters.
+            left_wheel_position_cm (float):
+                The actual position of the left wheel in centimeters.
+            right_wheel_position_cm (float):
+                The actual position of the right wheel in centimeters.
+            left_wheel_error_cm (float):
+                The error value for the left wheel position PID controller
+                in centimeters.
+            right_wheel_error_cm (float):
+                The error value for the right wheel position PID controller
+                in centimeters.
+            left_pwm (int): The PWM command sent to the left motor.
+            right_pwm (int): The PWM command sent to the right motor.
+            left_ticks (int): The current encoder ticks for the left wheel.
+            right_ticks (int): The current encoder ticks for the right wheel.
+            left_delta_ticks (int):
+                The change in encoder ticks for the left wheel since the last update.
+            right_delta_ticks (int):
+                The change in encoder ticks for the right wheel since the last update.
+        """
         if not self._enabled:
             return
 
@@ -319,14 +386,24 @@ class RollingBasisDebugRecorder:
         )
 
     def add_sample(self, *, event: str, force: bool = False) -> None:
-        """Append a sample using the latest known values."""
+        """Append a sample using the latest known values.
+
+        Args:
+            event (str): A string label describing the event or context of this sample.
+            force (bool, optional):
+                If True, add a sample regardless of the sample period.
+                Defaults to False.
+        """
         if not self._enabled:
             return
 
         now = time.time()
-        if not force and self._last_sample_time > 0.0:
-            if now - self._last_sample_time < self._sample_period_s:
-                return
+        if (
+            not force
+            and self._last_sample_time > 0.0
+            and now - self._last_sample_time < self._sample_period_s
+        ):
+            return
         self._last_sample_time = now
         self._last_event = event
 
@@ -389,7 +466,13 @@ class RollingBasisDebugRecorder:
             self._samples.pop(0)
 
     def _get_pid_snapshot(self) -> dict[str, dict[str, float | str | None]]:
-        """Return PID telemetry in a UI-friendly shape."""
+        """Return PID telemetry in a UI-friendly shape.
+
+        Returns:
+            dict[str, dict[str, float | str | None]]:
+                A dictionary containing PID telemetry values
+                along with labels and units for UI display.
+        """
         snapshot: dict[str, dict[str, float | str | None]] = {}
         for pid_name, metadata in _PID_CHANNELS.items():
             telemetry = self._latest.pids[pid_name]
@@ -405,7 +488,13 @@ class RollingBasisDebugRecorder:
         return snapshot
 
     def get_live_snapshot(self) -> dict[str, Any]:
-        """Return latest telemetry values for live UI updates."""
+        """Return latest telemetry values for live UI updates.
+
+        Returns:
+            dict[str, Any]:
+                A dictionary containing the latest telemetry values
+                and PID snapshots for live display in the UI.
+        """
         if not self._enabled:
             return {
                 "enabled": 0,
@@ -466,6 +555,10 @@ class RollingBasisDebugRecorder:
     def export_report(self, *, reason: str) -> dict[str, Path] | None:
         """Export CSV and metadata JSON files.
 
+        Args:
+            reason (str): A string describing the reason or context for the export,
+                e.g. "normal_shutdown", "error_occurred", etc.
+
         Returns:
             dict[str, Path] | None: Paths of generated artifacts, if any.
         """
@@ -473,7 +566,7 @@ class RollingBasisDebugRecorder:
             return None
 
         self._output_dir.mkdir(parents=True, exist_ok=True)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        timestamp = datetime.now(tz=UTC).strftime("%Y%m%d_%H%M%S_%f")
         stem = f"{self._file_prefix}_{timestamp}"
 
         csv_path = self._output_dir / f"{stem}.csv"

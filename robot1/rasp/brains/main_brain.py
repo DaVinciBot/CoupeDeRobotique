@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import time
 import traceback
 from math import pi
 from typing import TYPE_CHECKING, Any
@@ -188,24 +189,24 @@ class MainBrain(Brain):
                 )
 
             # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
-            # init_stage = "jack plug wait"
-            # if (
-            #     not CONFIG.LIDAR_DUMMY
-            #     or not CONFIG.ROLLING_BASIS_DUMMY
-            #     or not CONFIG.ACTUATORS_DUMMY
-            # ):
-            #     while not self.jack_plugged:  # wait until cable is plugged
-            #         time.sleep(0.1)
-            # else:
-            #     time.sleep(2)
+            init_stage = "jack plug wait"
+            if (
+                not CONFIG.LIDAR_DUMMY
+                or not CONFIG.ROLLING_BASIS_DUMMY
+                or not CONFIG.ACTUATORS_DUMMY
+            ):
+                while not self.jack_plugged:  # wait until cable is plugged
+                    time.sleep(0.1)
+            else:
+                time.sleep(2)
 
             init_stage = "rolling basis reinitialization"
             rolling_basis.set_odometrie(self.rolling_basis_odometrie)
             rolling_basis.initialize_pids()
 
-            # init_stage = "jack trigger wait"
-            # while not self.jack_triggered:  # wait for the trigger event
-            #     time.sleep(0.1)
+            init_stage = "jack trigger wait"
+            while not self.jack_triggered:  # wait for the trigger event
+                time.sleep(0.1)
 
             # --- 3) Build the strategy --- #
             init_stage = "strategy creation"

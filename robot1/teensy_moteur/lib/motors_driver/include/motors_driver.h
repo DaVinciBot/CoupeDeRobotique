@@ -63,6 +63,11 @@ class Motor {
      * @param pwmVal Power value of the motor
      */
     void set_motor(int pwmVal);
+    /**
+     * @brief Set motor PWM and direction (raw values)
+     *
+     * @param pwmVal Power value of the motor
+     */
     void set_motor_raw(int pwmVal);
 
     void handle_odometrie();
