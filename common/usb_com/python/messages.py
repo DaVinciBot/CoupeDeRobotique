@@ -19,6 +19,7 @@ class Messages(Enum):
         SET_TARGET_POSITION: Command to set the rolling basis target position.
         SET_PID: Update PID coefficients for the rolling basis.
         SET_ODOMETRIE: Reset the odometry.
+        SET_MOTORS_PWM: Temporarily command raw rolling-basis motor PWM.
         SET_SERVO_ANGLE_I2C: Set a servo angle over I\ :sub:``2``\ C.
         STEPPER_STEP: Move a stepper motor.
         SET_SERVO_ANGLE_DETACH: Move a servo then detach it.
@@ -42,6 +43,8 @@ class Messages(Enum):
     """Update PID coefficients for the rolling basis."""
     SET_ODOMETRIE = 2
     """Reset the odometry."""
+    SET_MOTORS_PWM = 9
+    """Temporarily command raw rolling-basis motor PWM."""
 
     # Actuators
     SET_SERVO_ANGLE_I2C = 3

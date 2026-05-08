@@ -5,6 +5,51 @@ let config_data = {
   team: null,
 };
 
+const pidDebugState = {
+  maxPoints: 240,
+  lastSampleCount: -1,
+  timeline: [],
+  channels: {},
+};
+
+const pidDebugChannels = [
+  {
+    key: "linear_position",
+    label: "Position lineaire",
+    unit: "cm",
+    outputUnit: "cm/cycle",
+  },
+  {
+    key: "angular_position",
+    label: "Position angulaire",
+    unit: "rad",
+    outputUnit: "cm/cycle",
+  },
+  {
+    key: "left_wheel_position",
+    label: "Roue gauche",
+    unit: "cm",
+    outputUnit: "PWM",
+  },
+  {
+    key: "right_wheel_position",
+    label: "Roue droite",
+    unit: "cm",
+    outputUnit: "PWM",
+  },
+];
+
+pidDebugChannels.forEach((channel) => {
+  pidDebugState.channels[channel.key] = {
+    target: [],
+    actual: [],
+    error: [],
+    output: [],
+    unit: channel.unit,
+    outputUnit: channel.outputUnit,
+  };
+});
+
 let log = new WebSocketManager();
 log.add_ws("ui");
 function on_ws_close() {
@@ -114,6 +159,8 @@ function add_handler() {
 
         bad.style.transform = `translate(${x}px, ${y}px) rotate(${theta}deg)`;
       }
+
+      updatePidDebugPanel(data.data["pid_debug"]);
     } else if (data.msg === "starting") {
       startTimer();
       const timer = document.getElementById("timer");
@@ -175,6 +222,375 @@ function parse_pos(x, y, theta, width, height) {
   return [x, y, theta];
 }
 
+function addPidValue(buffer, value) {
+  buffer.push(Number.isFinite(value) ? value : null);
+  if (buffer.length > pidDebugState.maxPoints) {
+    buffer.shift();
+  }
+}
+
+function resetPidDebugData() {
+  pidDebugState.lastSampleCount = -1;
+  pidDebugState.timeline = [];
+  Object.values(pidDebugState.channels).forEach((channel) => {
+    channel.target = [];
+    channel.actual = [];
+    channel.error = [];
+    channel.output = [];
+  });
+
+  const sampleCount = document.getElementById("pid_sample_count");
+  if (sampleCount) sampleCount.innerText = "0";
+  const lastEvent = document.getElementById("pid_last_event");
+  if (lastEvent) lastEvent.innerText = "init";
+  const timeS = document.getElementById("pid_time_s");
+  if (timeS) timeS.innerText = "0.00s";
+  const status = document.getElementById("pid_live_status");
+  if (status) status.innerText = "En attente";
+  updatePidMetricNodes();
+
+  drawPidCharts();
+}
+
+function toFiniteNumber(value) {
+  const numberValue = Number(value);
+  return Number.isFinite(numberValue) ? numberValue : null;
+}
+
+function formatPidValue(value, unit = "") {
+  if (value === null || value === undefined || !Number.isFinite(value)) {
+    return "--";
+  }
+  const absValue = Math.abs(value);
+  let decimals = 2;
+  if (absValue >= 100) decimals = 0;
+  else if (absValue >= 10) decimals = 1;
+  return `${value.toFixed(decimals)}${unit ? ` ${unit}` : ""}`;
+}
+
+function hasPidValues(payload) {
+  if (!payload) return false;
+  return ["target", "actual", "error", "output"].some(
+    (key) => toFiniteNumber(payload[key]) !== null
+  );
+}
+
+function normalizePidPayload(pidDebug) {
+  const legacyPids = {
+    linear_position: {
+      target: pidDebug?.target_linear_cm_s,
+      actual: pidDebug?.actual_linear_cm_s,
+      error: pidDebug?.linear_error_cm_s,
+      output: pidDebug?.linear_cmd,
+      unit: "cm/s",
+      output_unit: "cmd",
+    },
+    angular_position: {
+      target: pidDebug?.target_angular_rad_s,
+      actual: pidDebug?.actual_angular_rad_s,
+      error: pidDebug?.angular_error_rad_s,
+      output: pidDebug?.angular_cmd,
+      unit: "rad/s",
+      output_unit: "cmd",
+    },
+  };
+
+  if (!pidDebug?.pids) {
+    return legacyPids;
+  }
+
+  return pidDebugChannels.reduce((normalized, channelDef) => {
+    const pidPayload = pidDebug.pids[channelDef.key];
+    normalized[channelDef.key] = hasPidValues(pidPayload)
+      ? pidPayload
+      : legacyPids[channelDef.key] ?? {};
+    return normalized;
+  }, {});
+}
+
+function updatePidDebugPanel(pidDebug) {
+  if (!pidDebug || pidDebug.enabled !== 1) {
+    const status = document.getElementById("pid_live_status");
+    if (status) status.innerText = "Desactive";
+    return;
+  }
+
+  const sampleCount = Number(pidDebug.sample_count ?? 0);
+  const currentTime = Number(pidDebug.time_s ?? 0);
+  const lastEvent = String(pidDebug.last_event ?? "unknown");
+
+  const countNode = document.getElementById("pid_sample_count");
+  if (countNode) countNode.innerText = `${sampleCount}`;
+  const eventNode = document.getElementById("pid_last_event");
+  if (eventNode) eventNode.innerText = lastEvent;
+  const timeNode = document.getElementById("pid_time_s");
+  if (timeNode) timeNode.innerText = `${currentTime.toFixed(2)}s`;
+  const status = document.getElementById("pid_live_status");
+  if (status) status.innerText = "Live";
+
+  if (sampleCount < pidDebugState.lastSampleCount) {
+    resetPidDebugData();
+  }
+
+  const pids = normalizePidPayload(pidDebug);
+  updatePidMetricNodes(pids);
+
+  if (sampleCount === pidDebugState.lastSampleCount) {
+    return;
+  }
+
+  pidDebugState.lastSampleCount = sampleCount;
+  addPidValue(pidDebugState.timeline, currentTime);
+
+  pidDebugChannels.forEach((channelDef) => {
+    const channelState = pidDebugState.channels[channelDef.key];
+    const payload = pids[channelDef.key] ?? {};
+    channelState.unit = payload.unit ?? channelDef.unit;
+    channelState.outputUnit = payload.output_unit ?? channelDef.outputUnit;
+
+    addPidValue(channelState.target, toFiniteNumber(payload.target));
+    addPidValue(channelState.actual, toFiniteNumber(payload.actual));
+    addPidValue(channelState.error, toFiniteNumber(payload.error));
+    addPidValue(channelState.output, toFiniteNumber(payload.output));
+  });
+
+  updatePidMetricNodes();
+  drawPidCharts();
+}
+
+function latestPidValue(channelKey, seriesName) {
+  const series = pidDebugState.channels[channelKey]?.[seriesName] ?? [];
+  for (let index = series.length - 1; index >= 0; index--) {
+    const value = series[index];
+    if (value !== null && Number.isFinite(value)) {
+      return value;
+    }
+  }
+  return null;
+}
+
+function updatePidMetricNodes(currentPids = null) {
+  pidDebugChannels.forEach((channelDef) => {
+    const state = pidDebugState.channels[channelDef.key];
+    const currentPayload = currentPids?.[channelDef.key];
+    const unit = currentPayload?.unit ?? state?.unit ?? channelDef.unit;
+    const outputUnit =
+      currentPayload?.output_unit ?? state?.outputUnit ?? channelDef.outputUnit;
+    const target =
+      toFiniteNumber(currentPayload?.target) ??
+      latestPidValue(channelDef.key, "target");
+    const actual =
+      toFiniteNumber(currentPayload?.actual) ??
+      latestPidValue(channelDef.key, "actual");
+    const error =
+      toFiniteNumber(currentPayload?.error) ??
+      latestPidValue(channelDef.key, "error");
+    const output =
+      toFiniteNumber(currentPayload?.output) ??
+      latestPidValue(channelDef.key, "output");
+
+    const targetNode = document.getElementById(
+      `pid_${channelDef.key}_target`
+    );
+    if (targetNode) targetNode.innerText = formatPidValue(target, unit);
+
+    const actualNode = document.getElementById(
+      `pid_${channelDef.key}_actual`
+    );
+    if (actualNode) actualNode.innerText = formatPidValue(actual, unit);
+
+    const errorNode = document.getElementById(`pid_${channelDef.key}_error`);
+    if (errorNode) errorNode.innerText = formatPidValue(error, unit);
+
+    const outputNode = document.getElementById(`pid_${channelDef.key}_output`);
+    if (outputNode) {
+      outputNode.innerText = formatPidValue(output, outputUnit);
+    }
+  });
+}
+
+function drawPidCharts() {
+  pidDebugChannels.forEach((channelDef) => {
+    const channelState = pidDebugState.channels[channelDef.key];
+    drawLineChart(`pid_${channelDef.key}_chart`, [
+      {
+        data: channelState.target,
+        color: "#0a66b3",
+        lineWidth: 3,
+      },
+      {
+        data: channelState.actual,
+        color: "#df1d25",
+        lineWidth: 3,
+      },
+    ]);
+  });
+}
+
+function drawLineChart(canvasId, seriesList) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+
+  const rect = canvas.getBoundingClientRect();
+  if (rect.width <= 0 || rect.height <= 0) return;
+
+  const dpr = window.devicePixelRatio || 1;
+  const width = Math.floor(rect.width * dpr);
+  const height = Math.floor(rect.height * dpr);
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+  }
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
+
+  const chartWidth = rect.width;
+  const chartHeight = rect.height;
+  ctx.clearRect(0, 0, chartWidth, chartHeight);
+  ctx.fillStyle = "#dcebf6";
+  ctx.fillRect(0, 0, chartWidth, chartHeight);
+
+  const padding = { top: 24, right: 22, bottom: 34, left: 46 };
+  const x0 = padding.left;
+  const y0 = padding.top;
+  const x1 = chartWidth - padding.right;
+  const y1 = chartHeight - padding.bottom;
+  const innerW = Math.max(1, x1 - x0);
+  const innerH = Math.max(1, y1 - y0);
+
+  ctx.strokeStyle = "rgba(10, 24, 42, 0.12)";
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = y0 + (innerH * i) / 4;
+    ctx.beginPath();
+    ctx.moveTo(x0, y);
+    ctx.lineTo(x1, y);
+    ctx.stroke();
+  }
+
+  const allValues = [];
+  seriesList.forEach((series) => {
+    series.data.forEach((value) => {
+      if (typeof value === "number" && Number.isFinite(value)) {
+        allValues.push(value);
+      }
+    });
+  });
+
+  let minY = -1;
+  let maxY = 1;
+  if (allValues.length > 0) {
+    minY = Math.min(...allValues);
+    maxY = Math.max(...allValues);
+    if (Math.abs(maxY - minY) < 1e-6) {
+      minY -= 1;
+      maxY += 1;
+    } else {
+      const margin = (maxY - minY) * 0.1;
+      minY -= margin;
+      maxY += margin;
+    }
+  }
+
+  if (minY > 0) minY = 0;
+  if (maxY < 0) maxY = 0;
+
+  const pointCount = Math.max(
+    2,
+    pidDebugState.timeline.length,
+    ...seriesList.map((series) => series.data.length)
+  );
+
+  function mapX(index) {
+    return x0 + (innerW * index) / (pointCount - 1);
+  }
+
+  function mapY(value) {
+    return y1 - ((value - minY) / (maxY - minY)) * innerH;
+  }
+
+  if (minY <= 0 && maxY >= 0) {
+    const zeroY = mapY(0);
+    ctx.strokeStyle = "rgba(10, 24, 42, 0.18)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0, zeroY);
+    ctx.lineTo(x1, zeroY);
+    ctx.stroke();
+  }
+
+  ctx.font = "600 11px Inter, Roboto, sans-serif";
+  ctx.fillStyle = "rgba(10, 24, 42, 0.68)";
+  ctx.fillText(formatPidValue(maxY), 8, y0 + 4);
+  ctx.fillText(formatPidValue(minY), 8, y1 + 4);
+  if (minY <= 0 && maxY >= 0) {
+    ctx.fillText("0", 8, mapY(0) + 4);
+  }
+
+  ctx.strokeStyle = "#16212f";
+  ctx.fillStyle = "#16212f";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x0, y1);
+  ctx.lineTo(x1, y1);
+  ctx.lineTo(x1 - 9, y1 - 5);
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x1 - 9, y1 + 5);
+  ctx.moveTo(x0, y1);
+  ctx.lineTo(x0, y0);
+  ctx.lineTo(x0 - 5, y0 + 9);
+  ctx.moveTo(x0, y0);
+  ctx.lineTo(x0 + 5, y0 + 9);
+  ctx.stroke();
+
+  ctx.font = "700 12px Inter, Roboto, sans-serif";
+  ctx.fillText("Y", x0 - 28, y0 + 3);
+  ctx.font = "700 14px Inter, Roboto, sans-serif";
+  ctx.fillText("Temps", x1 - 48, y1 + 24);
+
+  seriesList.forEach((series) => {
+    ctx.strokeStyle = series.color;
+    ctx.lineWidth = series.lineWidth ?? 2;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    let hasStarted = false;
+    let latestPoint = null;
+
+    for (let i = 0; i < series.data.length; i++) {
+      const value = series.data[i];
+      if (typeof value !== "number" || !Number.isFinite(value)) {
+        hasStarted = false;
+        continue;
+      }
+
+      const x = mapX(i);
+      const y = mapY(value);
+      latestPoint = { x, y };
+      if (!hasStarted) {
+        ctx.moveTo(x, y);
+        hasStarted = true;
+      } else {
+        ctx.lineTo(x, y);
+      }
+    }
+
+    ctx.stroke();
+    if (latestPoint) {
+      ctx.fillStyle = series.color;
+      ctx.strokeStyle = "#ffffff";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(latestPoint.x, latestPoint.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+  });
+}
+
 let buttons = document.querySelectorAll(".button");
 buttons.forEach((button) => {
   button.addEventListener("click", () => {
@@ -217,6 +633,7 @@ function resetPage() {
   }
 
   init_page();
+  resetPidDebugData();
   set_configuration("mode");
   config_data.mode = null;
   config_data.team = null;
@@ -303,13 +720,7 @@ function focus_maki(c_maki) {
 
 input.addEventListener("input", () => {
   if (current_maki != null) {
-    let value = parseFloat(input.value);
-    value = Math.round(value * 100) / 100;
-    if (isNaN(value)) {
-      value = 0;
-    }
-    input.value = value;
-    current_maki.children[0].innerText = value;
+    current_maki.children[0].innerText = input.value;
   } else {
     input.value = "";
   }
@@ -317,8 +728,8 @@ input.addEventListener("input", () => {
 
 plus.addEventListener("click", () => {
   if (current_maki != null) {
-    let value = parseFloat(input.value);
-    value += parseFloat(range.value);
+    let value = read_localized_number(input.value);
+    value += read_localized_number(range.value);
     value = Math.round(value * 100) / 100;
     if (isNaN(value)) {
       value = 0;
@@ -330,8 +741,8 @@ plus.addEventListener("click", () => {
 
 minus.addEventListener("click", () => {
   if (current_maki != null) {
-    let value = parseFloat(input.value);
-    value -= parseFloat(range.value);
+    let value = read_localized_number(input.value);
+    value -= read_localized_number(range.value);
     value = Math.round(value * 100) / 100;
     if (isNaN(value)) {
       value = 0;
@@ -358,3 +769,6 @@ function set_configuration(step) {
     document.getElementById("config_team").innerText = config_data.team;
   }
 }
+
+window.addEventListener("resize", drawPidCharts);
+resetPidDebugData();

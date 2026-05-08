@@ -238,7 +238,7 @@ class BaseArenaZone(ABC):
             self.ally_visits += 1
             self._logger.debug(f"[ARENA:Zone] Ally visited {self.zone_type}")
 
-        self.last_update_time = Utils.get_ts()
+        self.last_update_time = Utils.get_ts()  # FIXME: update que si changement
 
     def _make_accessible(self) -> None:
         """Mark the zone as accessible and update the grid manager."""

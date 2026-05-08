@@ -17,19 +17,23 @@ class Motor {
     byte pin_encb;  // AttachInterrupt pin only !
 
     byte max_pwm;
+    byte min_moving_pwm;
+    byte pwm_slew_per_cycle;
+    int16_t current_pwm = 0;
 
     // Ticks distance
     double wheel_unit_tick_cm;
 
    public:
     volatile long ticks = 0L;
+    volatile int16_t last_pwm = 0;
 
     // Motor description (it is the last data calculated by the motor odometer
     // handle method)
     double distance = 0.0;  // Distance in cm
-    long last_ticks = 0L;   // Ticks distance used to compute distance and speed
+    long last_ticks = 0L;   // Ticks distance used to compute distance
                             // (updated at the last odometer handle call)
-
+    long last_delta_ticks = 0L;
     // Constructor
     /**
      * @brief Constructor of the Motor class
@@ -42,7 +46,9 @@ class Motor {
           byte pin_enca,
           byte pin_encb,
           double wheel_unit_tick_cm,
-          byte max_pwm);
+          byte max_pwm,
+          byte min_moving_pwm,
+          byte pwm_slew_per_cycle);
     ~Motor() = default;
 
     // Methods
@@ -57,6 +63,12 @@ class Motor {
      * @param pwmVal Power value of the motor
      */
     void set_motor(int pwmVal);
+    /**
+     * @brief Set motor PWM and direction (raw values)
+     *
+     * @param pwmVal Power value of the motor
+     */
+    void set_motor_raw(int pwmVal);
 
     void handle_odometrie();
 };

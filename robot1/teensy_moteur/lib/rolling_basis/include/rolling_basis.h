@@ -1,7 +1,7 @@
 /**
  * This is the Rolling Basis class header.
  * The Rolling Basis class is the core of the Motor teensy code.
- * It provides method to control the motors, the speed and the orientation.
+ * It provides methods to control the motors from pose errors.
  * It computes the odometry and correct the motors error with the PID class.
  */
 
@@ -14,15 +14,47 @@
 
 class Rolling_Basis {
    public:
+    // Constructor
+    /**
+     * @brief constructor of the Rolling Basis class
+     *
+     * Initializes the parameters of the Rolling Basis
+     */
+    Rolling_Basis(unsigned short encoder_resolution,
+                  double center_distance,
+                  double left_wheel_diameter,
+                  double right_wheel_diameter,
+                  const PID& linear_position_pid,
+                  const PID& angular_position_pid,
+                  const PID& left_wheel_position_pid,
+                  const PID& right_wheel_position_pid);
+
+    // Rolling basis params
+    unsigned short encoder_resolution;
+    double center_distance;
+    double left_wheel_diameter;
+    double right_wheel_diameter;
+
     // PID controllers
-    PID linear_distance_pid;
-    PID angular_distance_pid;
+    PID linear_position_pid;
+    PID angular_position_pid;
+    PID left_wheel_position_pid;
+    PID right_wheel_position_pid;
+    Point target_position;
 
     // Rolling basis's params
     inline double radius() { return this->center_distance / 2.0; };
-    inline double wheel_perimeter() { return this->wheel_diameter * PI; };
-    inline double wheel_unit_tick_cm() {
-        return this->wheel_perimeter() / this->encoder_resolution;
+    inline double left_wheel_perimeter() {
+        return this->left_wheel_diameter * PI;
+    };
+    inline double right_wheel_perimeter() {
+        return this->right_wheel_diameter * PI;
+    };
+    inline double left_wheel_unit_tick_cm() {
+        return this->left_wheel_perimeter() / this->encoder_resolution;
+    };
+    inline double right_wheel_unit_tick_cm() {
+        return this->right_wheel_perimeter() / this->encoder_resolution;
     };
 
     // Properties
@@ -41,23 +73,20 @@ class Rolling_Basis {
     double X = 0.0f;
     double Y = 0.0f;
     double THETA = 0.0f;
+    unsigned long last_odometrie_time = 0;
 
-    // Rolling basis params
-    unsigned short encoder_resolution;
-    double center_distance;
-    double wheel_diameter;
-
-    // Constructor
-    /**
-     * @brief constructor of the Rolling Basis class
-     *
-     * Initializes the parameters of the Rolling Basis
-     */
-    Rolling_Basis(unsigned short encoder_resolution,
-                  double center_distance,
-                  double wheel_diameter,
-                  const PID& linear_distance_pid,
-                  const PID& angular_distance_pid);
+    volatile double last_linear_error = 0.0;
+    volatile double last_angular_error = 0.0;
+    volatile double last_linear_correction = 0.0;
+    volatile double last_angular_correction = 0.0;
+    volatile double last_left_wheel_error = 0.0;
+    volatile double last_right_wheel_error = 0.0;
+    volatile double left_wheel_target_cm = 0.0;
+    volatile double right_wheel_target_cm = 0.0;
+    volatile bool manual_pwm_active = false;
+    volatile int16_t manual_left_pwm = 0;
+    volatile int16_t manual_right_pwm = 0;
+    volatile uint32_t manual_pwm_until_ms = 0;
 
     /**
      * @brief Destructor of Rolling Basis class
@@ -74,7 +103,9 @@ class Rolling_Basis {
                             byte pwm,
                             byte in2,
                             byte in1,
-                            byte max_pwm);
+                            byte max_pwm,
+                            byte min_moving_pwm,
+                            byte pwm_slew_per_cycle);
     /**
      * @brief Define left motor with pins, related encoders pin and properties
      * of the wheel attached to the motor.
@@ -84,7 +115,9 @@ class Rolling_Basis {
                            byte pwm,
                            byte in2,
                            byte in1,
-                           byte max_pwm);
+                           byte max_pwm,
+                           byte min_moving_pwm,
+                           byte pwm_slew_per_cycle);
     /**
      * @brief Initialize both motors
      */
@@ -106,12 +139,26 @@ class Rolling_Basis {
     /**
      * @brief Handle the correction computation
      *
-     * Compute the distance and orientation error in terms of position.A0
-     * Compute the PID and set the motors new command.
+     * Compute the distance and orientation error, then directly command PWM.
      */
-    void handle(Point target_position, Com* com);
+    void handle();
 
-    void pi_mod_signed(double theta);
+    /**
+     * @brief Set the target position for the robot to reach (X, Y and THETA)
+     *
+     * @param position Target position to reach (X, Y and THETA)
+     */
+    void set_target_position(const Point& position);
+    /**
+     * @brief Set the PWM values for both motors
+     *
+     * @param left_pwm Left motor PWM value
+     * @param right_pwm Right motor PWM value
+     * @param duration_ms Duration for which the PWM values should be applied
+     */
+    void set_motors_pwm(int16_t left_pwm,
+                        int16_t right_pwm,
+                        uint32_t duration_ms);
 
     // Motors action function
     // void keep_position(long current_right_ticks, long current_left_ticks);

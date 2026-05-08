@@ -18,8 +18,12 @@ from usb_com.python import Messages
 if TYPE_CHECKING:
     from loggerplusplus import Logger
 
+    from navigation.trajectory_planner import TrajectoryPlanCommand
 
-class AsservissementRollingBasis(BaseComTeensy):
+
+class AsservissementRollingBasis(
+    BaseComTeensy,
+):  # FIXME: à la fin de la tache, continue de tourner au lieu de s'arreter
     """Represents the rolling basis of the robot.
 
     Inherits from Teensy to manage low-level communications and adds logic specific
@@ -76,6 +80,8 @@ class AsservissementRollingBasis(BaseComTeensy):
         # PID controllers
         self.linear_position_pid: PID = PID(0.0, 0.0, 0.0)
         self.angular_position_pid: PID = PID(0.0, 0.0, 0.0)
+        self.left_wheel_position_pid: PID = PID(0.0, 0.0, 0.0)
+        self.right_wheel_position_pid: PID = PID(0.0, 0.0, 0.0)
 
         # Register message handlers
         self.add_callback(self.rcv_print, Messages.PRINT.value)
@@ -86,11 +92,12 @@ class AsservissementRollingBasis(BaseComTeensy):
         )
 
         self._initialize_pids()
+        self.reset_teensy_and_reinit()
 
     # region ====== Message Receiving Handlers ======
 
     def rcv_print(self, msg: bytes) -> None:
-        """Handles PRINT messages from the Teensy.
+        """Handle PRINT messages from the Teensy.
 
         Args:
             msg (bytes): The received message bytes.
@@ -100,7 +107,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         )
 
     def rcv_rolling_basis_state(self, msg: bytes) -> None:
-        """Handles rolling basis state update messages from the Teensy.
+        """Handle rolling basis odometry update messages from the Teensy.
 
         The message contains:
         - float x: X-coordinate of the position (4 bytes).
@@ -121,7 +128,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         self._log_entry()
 
     def rcv_unknown_msg(self, msg: bytes) -> None:
-        """Handles unknown messages from the Teensy.
+        """Handle unknown messages from the Teensy.
 
         Args:
             msg (bytes): The received message bytes.
@@ -130,36 +137,97 @@ class AsservissementRollingBasis(BaseComTeensy):
 
     # endregion
 
-    # region ====== Message Sending Methods  ======
+    # region ====== Message Sending Methods ======
+
+    def reset_teensy_and_reinit(self, *, delay_s: float = 0.8) -> None:
+        """Reset the Teensy and reinitialize rolling basis state.
+
+        Args:
+            delay_s (float): Time to wait after resetting before trying to reconnect.
+                Defaults to 0.8.
+        """
+        self._logger.info("[CTRL:RB] Sending RESET_TEENSY")
+        self.reset()
+        time.sleep(delay_s)
+        if not self.reconnect():
+            return
+        self.set_odometrie(OrientedPoint((0.0, 0.0), 0.0))
+        self.set_target_position(OrientedPoint((0.0, 0.0), 0.0))
+
+    def set_trajectory_command(self, cmd: TrajectoryPlanCommand) -> None:
+        """Send the target position from a trajectory command.
+
+        Args:
+            cmd (TrajectoryPlanCommand):
+                The trajectory command containing the target position.
+        """
+        self.set_target_position(cmd.position)
 
     def set_target_position(
         self,
-        target_position: OrientedPoint,
+        position: OrientedPoint,
     ) -> None:
         """Send a command to set the target position of the rolling basis.
 
+        Linear speed is expressed in cm/s and angular speed in rad/s.
+
         Args:
-            target_position (OrientedPoint): Desired position and orientation.
+            position (OrientedPoint): Desired position and orientation.
         """
         # Store for logging
-        self._last_target = target_position
+        self._last_target = position
 
         # Build and send message
         msg = (
             Messages.SET_TARGET_POSITION.to_bytes()
-            + struct.pack("<d", target_position.x)
-            + struct.pack("<d", target_position.y)
-            + struct.pack("<d", target_position.theta)
+            + struct.pack("<d", position.x)
+            + struct.pack("<d", position.y)
+            + struct.pack("<d", position.theta)
+        )
+        self.send_bytes(msg)
+
+    def set_motors_pwm(
+        self,
+        *,
+        left_pwm: int,
+        right_pwm: int,
+        duration_ms: int,
+    ) -> None:
+        """Temporarily command raw motor PWM on the rolling basis.
+
+        Args:
+            left_pwm (int): PWM value for the left motor (-240 to 240).
+            right_pwm (int): PWM value for the right motor (-240 to 240).
+            duration_ms (int): Duration to apply the PWM in milliseconds (0 to 5000).
+        """
+        safe_duration_ms = max(0, min(int(duration_ms), 5000))
+        safe_left_pwm = max(-240, min(int(left_pwm), 240))
+        safe_right_pwm = max(-240, min(int(right_pwm), 240))
+        msg = Messages.SET_MOTORS_PWM.to_bytes() + struct.pack(
+            "<hhI",
+            safe_left_pwm,
+            safe_right_pwm,
+            safe_duration_ms,
         )
         self.send_bytes(msg)
 
     @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def set_odometrie(self, odometrie: OrientedPoint) -> None:
-        """Sends a message to set the odometrie of the rolling basis.
+        """Send a message to set the odometrie of the rolling basis.
 
         Args:
             odometrie (OrientedPoint): The new odometrie values.
+
+        Raises:
+            ValueError: If odometrie.theta is None.
         """
+        if odometrie.theta is None:
+            msg = (
+                f"Odometrie theta must be defined, got None at "
+                f"position ({odometrie.x}, {odometrie.y})"
+            )
+            raise ValueError(msg)
+
         msg = (
             Messages.SET_ODOMETRIE.to_bytes()
             + struct.pack("<d", odometrie.x)
@@ -168,10 +236,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         )
         self.send_bytes(msg)
 
-    @log(
-        param_logger="RollingBasis",
-        log_level=LogLevels.INFO,
-    )
+    @log(param_logger="RollingBasis", log_level=LogLevels.INFO)
     def _send_pid(self, pid_id: int, pid: PID) -> None:
         """Internal method to send PID configuration data to the Teensy.
 
@@ -187,17 +252,18 @@ class AsservissementRollingBasis(BaseComTeensy):
     # region ====== Logging Methods ======
 
     def _log_entry(self) -> None:
-        """Internal: record timestamp, last target, and latest odometry."""
-        entry = {
-            "time": time.time(),
-            "target_x": self._last_target.x,
-            "target_y": self._last_target.y,
-            "target_theta": self._last_target.theta,
-            "actual_x": self.odometrie.x,
-            "actual_y": self.odometrie.y,
-            "actual_theta": self.odometrie.theta,
-        }
-        self._logs.append(entry)
+        """Record timestamp, last target, and latest odometry."""
+        self._logs.append(
+            {
+                "time": time.time(),
+                "target_x": self._last_target.x,
+                "target_y": self._last_target.y,
+                "target_theta": self._last_target.theta,
+                "actual_x": self.odometrie.x,
+                "actual_y": self.odometrie.y,
+                "actual_theta": self.odometrie.theta,
+            },
+        )
 
     def get_logs(self) -> list[dict[str, Any]]:
         """Return the recorded log entries.
@@ -211,7 +277,7 @@ class AsservissementRollingBasis(BaseComTeensy):
         return self._logs
 
     def clear_logs(self) -> None:
-        """Clears the stored log entries."""
+        """Clear stored log entries."""
         self._logs.clear()
 
     def plot_logs(self) -> None:
@@ -219,72 +285,44 @@ class AsservissementRollingBasis(BaseComTeensy):
 
         Ensures all series have the same length before plotting.
         """
-        logs = self.get_logs()
-        if not logs:
-            self._logger.warning(
-                "[CTRL:RB] No logs to plot, ensure set_target_position() was called",
-            )
+        if not self._logs:
+            self._logger.warning("[CTRL:RB] No position-control logs to plot")
             return
 
-        # Normalize time
-        t0 = logs[0]["time"]
-        # Determine number of entries
-        n = len(logs)
+        t0 = self._logs[0]["time"]
+        times = [entry["time"] - t0 for entry in self._logs]
 
-        # Build each series by index to guarantee equal length
-        times = [(logs[i]["time"] - t0) for i in range(n)]
-        target_x = [logs[i]["target_x"] for i in range(n)]
-        actual_x = [logs[i]["actual_x"] for i in range(n)]
-        target_y = [logs[i]["target_y"] for i in range(n)]
-        actual_y = [logs[i]["actual_y"] for i in range(n)]
-        target_th = [logs[i]["target_theta"] for i in range(n)]
-        actual_th = [logs[i]["actual_theta"] for i in range(n)]
-
-        # Optional sanity check
-        if not all(
-            len(lst) == n
-            for lst in (
-                times,
-                target_x,
-                actual_x,
-                target_y,
-                actual_y,
-                target_th,
-                actual_th,
-            )
-        ):
-            log_lengths = [
-                len(lst)
-                for lst in (
-                    times,
-                    target_x,
-                    actual_x,
-                    target_y,
-                    actual_y,
-                    target_th,
-                    actual_th,
-                )
-            ]
-            self._logger.warning(
-                f"[CTRL:RB] Inconsistent log lengths: {log_lengths}",
-            )
-
-        # Plot
         _, axs = plt.subplots(3, 1, figsize=(10, 8), sharex=True)
 
-        axs[0].plot(times, target_x, label="Consigne X")
-        axs[0].plot(times, actual_x, label="Réel X")
+        axs[0].plot(
+            times,
+            [entry["target_x"] for entry in self._logs],
+            label="Consigne X",
+        )
+        axs[0].plot(times, [entry["actual_x"] for entry in self._logs], label="Reel X")
         axs[0].set_ylabel("X (cm)")
         axs[0].legend()
 
-        axs[1].plot(times, target_y, label="Consigne Y")
-        axs[1].plot(times, actual_y, label="Réel Y")
+        axs[1].plot(
+            times,
+            [entry["target_y"] for entry in self._logs],
+            label="Consigne Y",
+        )
+        axs[1].plot(times, [entry["actual_y"] for entry in self._logs], label="Reel Y")
         axs[1].set_ylabel("Y (cm)")
         axs[1].legend()
 
-        axs[2].plot(times, target_th, label="Consigne θ")
-        axs[2].plot(times, actual_th, label="Réel θ")
-        axs[2].set_ylabel("θ (rad)")
+        axs[2].plot(
+            times,
+            [entry["target_theta"] for entry in self._logs],
+            label="Consigne theta",
+        )
+        axs[2].plot(
+            times,
+            [entry["actual_theta"] for entry in self._logs],
+            label="Reel theta",
+        )
+        axs[2].set_ylabel("theta (rad)")
         axs[2].set_xlabel("Temps (s)")
         axs[2].legend()
 
@@ -319,7 +357,7 @@ class AsservissementRollingBasis(BaseComTeensy):
             ValueError: If the arguments do not match any expected format.
         """
         if len(args) == 3 and all(isinstance(arg, float) for arg in args):  # noqa: PLR2004
-            pid = PID(*args)  # pyright: ignore[reportArgumentType] args are all float
+            pid = PID(*args)  # pyright: ignore[reportArgumentType]
         elif len(args) == 1 and isinstance(args[0], dict):
             pid = PID.from_dict(args[0])
         elif kwargs:
@@ -395,10 +433,78 @@ class AsservissementRollingBasis(BaseComTeensy):
         except (ValueError, TypeError) as e:
             self._logger.error(f"[CTRL:RB] Failed to set angular position PID: {e}")
 
+    @overload
+    def set_left_wheel_position_pid(self, *args: float) -> None: ...
+
+    @overload
+    def set_left_wheel_position_pid(self, pid_values: dict[str, float]) -> None: ...
+
+    @overload
+    def set_left_wheel_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
+    def set_left_wheel_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
+        """Configure the PID values for left wheel position control.
+
+        Overloads:
+            - set_left_wheel_position_pid(float, float, float) → None
+            - set_left_wheel_position_pid(dict[str, float]) → None
+            - set_left_wheel_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+        """
+        try:
+            pid = self._load_pid(*args, **kwargs)
+            self.left_wheel_position_pid = pid
+            self._send_pid(PidID.LEFT_WHEEL_POSITION.value, pid)
+        except (ValueError, TypeError) as e:
+            self._logger.error(f"[CTRL:RB] Failed to set left wheel PID: {e}")
+
+    @overload
+    def set_right_wheel_position_pid(self, *args: float) -> None: ...
+
+    @overload
+    def set_right_wheel_position_pid(self, pid_values: dict[str, float]) -> None: ...
+
+    @overload
+    def set_right_wheel_position_pid(self, kp: float, ki: float, kd: float) -> None: ...
+
+    def set_right_wheel_position_pid(
+        self,
+        *args: float | dict[str, float],
+        **kwargs: float,
+    ) -> None:
+        """Configure the PID values for right wheel position control.
+
+        Overloads:
+            - set_right_wheel_position_pid(float, float, float) → None
+            - set_right_wheel_position_pid(dict[str, float]) → None
+            - set_right_wheel_position_pid(kp=float, ki=float, kd=float) → None
+
+        Args:
+            *args (float | dict[str, float]): Either three floats (kp, ki, kd) or a
+                single dictionary with keys 'kp', 'ki', 'kd'.
+            **kwargs (float): Keyword arguments mapping PID fields to values.
+        """
+        try:
+            pid = self._load_pid(*args, **kwargs)
+            self.right_wheel_position_pid = pid
+            self._send_pid(PidID.RIGHT_WHEEL_POSITION.value, pid)
+        except (ValueError, TypeError) as e:
+            self._logger.error(f"[CTRL:RB] Failed to set right wheel PID: {e}")
+
     def set_pids(
         self,
         linear_position_pid: dict[str, float],
         angular_position_pid: dict[str, float],
+        left_wheel_position_pid: dict[str, float],
+        right_wheel_position_pid: dict[str, float],
     ) -> None:
         """Configure all PID controllers.
 
@@ -407,11 +513,19 @@ class AsservissementRollingBasis(BaseComTeensy):
                 PID values for linear position control.
             angular_position_pid (dict[str, float]):
                 PID values for angular position control.
+            left_wheel_position_pid (dict[str, float]):
+                PID values for left wheel position control.
+            right_wheel_position_pid (dict[str, float]):
+                PID values for right wheel position control.
         """
         self.set_linear_position_pid(**linear_position_pid)
-        time.sleep(0.1)  # Ensure the Teensy has time to process the first PID
+        time.sleep(0.1)
         self.set_angular_position_pid(**angular_position_pid)
-        time.sleep(0.1)  # Ensure the Teensy has time to process the second PID
+        time.sleep(0.1)
+        self.set_left_wheel_position_pid(**left_wheel_position_pid)
+        time.sleep(0.1)
+        self.set_right_wheel_position_pid(**right_wheel_position_pid)
+        time.sleep(0.1)
 
     def _initialize_pids(self) -> None:
         """Initialize PID controllers from the configuration."""
@@ -419,6 +533,8 @@ class AsservissementRollingBasis(BaseComTeensy):
             self.set_pids(
                 linear_position_pid=CONFIG.ROLLING_BASIS_PIDS_LINEAR_POSITION,
                 angular_position_pid=CONFIG.ROLLING_BASIS_PIDS_ANGULAR_POSITION,
+                left_wheel_position_pid=CONFIG.ROLLING_BASIS_PIDS_LEFT_WHEEL_POSITION,
+                right_wheel_position_pid=CONFIG.ROLLING_BASIS_PIDS_RIGHT_WHEEL_POSITION,
             )
         except (ValueError, TypeError) as e:
             self._logger.error(f"[CTRL:RB] Failed to initialize PIDs: {e}")
@@ -438,6 +554,8 @@ class AsservissementRollingBasis(BaseComTeensy):
             self.odometrie,
             self.linear_position_pid,
             self.angular_position_pid,
+            self.left_wheel_position_pid,
+            self.right_wheel_position_pid,
         ))
 
     @override
@@ -456,6 +574,8 @@ class AsservissementRollingBasis(BaseComTeensy):
             self.odometrie == other.odometrie
             and self.linear_position_pid == other.linear_position_pid
             and self.angular_position_pid == other.angular_position_pid
+            and self.left_wheel_position_pid == other.left_wheel_position_pid
+            and self.right_wheel_position_pid == other.right_wheel_position_pid
         )
 
     @override

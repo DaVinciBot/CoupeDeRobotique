@@ -139,23 +139,33 @@ function button_click_effect(button, server) {
     });
   }
   if (button.id.includes("_pid")) {
-    let kp = parseFloat(
+    let kp = read_localized_number(
       document.getElementById("kp").querySelector(".value").innerText
     );
-    let ki = parseFloat(
+    let ki = read_localized_number(
       document.getElementById("ki").querySelector(".value").innerText
     );
-    let kd = parseFloat(
+    let kd = read_localized_number(
       document.getElementById("kd").querySelector(".value").innerText
     );
     if (button.id.includes("linear")) {
       server.send("ui", "pid update", {
-        type: "linear",
+        type: "linear_position",
         data: { kp: kp, ki: ki, kd: kd },
       });
     } else if (button.id.includes("angular")) {
       server.send("ui", "pid update", {
-        type: "angular",
+        type: "angular_position",
+        data: { kp: kp, ki: ki, kd: kd },
+      });
+    } else if (button.id.includes("left_wheel")) {
+      server.send("ui", "pid update", {
+        type: "left_wheel_position",
+        data: { kp: kp, ki: ki, kd: kd },
+      });
+    } else if (button.id.includes("right_wheel")) {
+      server.send("ui", "pid update", {
+        type: "right_wheel_position",
         data: { kp: kp, ki: ki, kd: kd },
       });
     }
@@ -166,6 +176,80 @@ function button_click_effect(button, server) {
       .nextElementSibling.innerText;
     server.send("ui", "action", { type: action, name: actionName });
   }
+  if (button.id.includes("send_relative_")) {
+    send_relative_motion(button.id, server);
+  }
+  if (button.id.includes("send_direct_pwm")) {
+    send_direct_pwm(button.id, server);
+  }
+}
+
+function read_localized_number(value, fallback = 0) {
+  const normalizedValue = String(value ?? "").trim().replace(",", ".");
+  const parsedValue = parseFloat(normalizedValue);
+  return Number.isFinite(parsedValue) ? parsedValue : fallback;
+}
+
+function read_number_input(id, fallback, min = -Infinity, max = Infinity) {
+  const input = document.getElementById(id);
+  const value = read_localized_number(input?.value, fallback);
+  const normalized = Number.isFinite(value) ? value : fallback;
+  return Math.min(Math.max(normalized, min), max);
+}
+
+function send_relative_motion(buttonId, server) {
+  if (buttonId.includes("forward")) {
+    const distance = read_number_input("relative_distance_cm", 20, 0, 1000);
+    server.send("ui", "action", {
+      type: "relative_forward",
+      data: { distance },
+    });
+  } else if (buttonId.includes("backward")) {
+    const distance = read_number_input("relative_distance_cm", 20, 0, 1000);
+    server.send("ui", "action", {
+      type: "relative_backward",
+      data: { distance },
+    });
+  } else if (buttonId.includes("turn")) {
+    const angleDeg = read_number_input("relative_angle_deg", 90, 0, 360);
+    const sign = buttonId.includes("right") ? -1 : 1;
+    server.send("ui", "action", {
+      type: "relative_turn",
+      data: { angle: sign * (angleDeg * Math.PI) / 180.0 },
+    });
+  }
+}
+
+function send_direct_pwm(buttonId, server) {
+  const motor = document.getElementById("direct_pwm_motor")?.value ?? "both";
+  const durationMs = Math.round(
+    read_number_input("direct_pwm_duration_ms", 500, 0, 5000)
+  );
+  let pwm = Math.round(read_number_input("direct_pwm_value", 80, 0, 240));
+
+  if (buttonId.includes("stop")) {
+    pwm = 0;
+  } else if (buttonId.includes("backward")) {
+    pwm = -pwm;
+  }
+
+  let leftPwm = 0;
+  let rightPwm = 0;
+  if (motor === "both" || motor === "left") {
+    leftPwm = pwm;
+  }
+  if (motor === "both" || motor === "right") {
+    rightPwm = pwm;
+  }
+
+  server.send("ui", "action", {
+    type: "direct_pwm",
+    data: {
+      left_pwm: leftPwm,
+      right_pwm: rightPwm,
+      duration_ms: buttonId.includes("stop") ? 0 : durationMs,
+    },
+  });
 }
 
 let currentPage = "main";
@@ -174,6 +258,9 @@ function set_page(page_id) {
   document.getElementById(page_id).style.display = "grid";
   document.getElementById(page_id + "_menu").classList.add("active");
   currentPage = page_id;
+  if (typeof drawPidCharts === "function") {
+    drawPidCharts();
+  }
 }
 function hide_all_pages() {
   let pagesButton = document.querySelectorAll(".item_menu");

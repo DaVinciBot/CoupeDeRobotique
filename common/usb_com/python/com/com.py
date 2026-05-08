@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import threading
 import time
 from functools import wraps
@@ -254,5 +255,35 @@ class Com:
             )
 
         self.message_id_callback[iid] = func
+
+    def reconnect(self, *, timeout_s: float = 5.0, retry_delay_s: float = 0.5) -> bool:
+        """Reconnect the serial device after a reset.
+
+        Args:
+            timeout_s (float):
+                Maximum time to wait for reconnection in seconds. Defaults to 5.0.
+            retry_delay_s (float):
+                Time to wait between reconnection attempts in seconds. Defaults to 0.5.
+
+        Returns:
+            bool: True if a device was found and reconnected.
+        """
+        if self.enable_dummy:
+            return True
+
+        with contextlib.suppress(Exception):
+            self._device.close()
+
+        start_time = time.time()
+        while time.time() - start_time < timeout_s:
+            try:
+                self._device = self._get_serial()
+                self._logger.info("[USB_COM] Reconnected to Teensy")
+            except ComError:
+                time.sleep(retry_delay_s)
+            else:
+                return True
+        self._logger.critical("[USB_COM] Failed to reconnect to Teensy")
+        return False
 
     # endregion

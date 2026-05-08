@@ -37,7 +37,7 @@ class RelativeBackward(NavigationTask):
         """Initialize the RelativeBackward task.
 
         Args:
-            distance (float): The distance to move backward in millimeters.
+            distance (float): The distance to move backward in centimeters.
         """
         super().__init__(
             goal=None,
@@ -67,11 +67,31 @@ class RelativeForward(NavigationTask):
         """Initialize the RelativeForward task.
 
         Args:
-            distance (float): The distance to move forward in millimeters.
+            distance (float): The distance to move forward in centimeters.
         """
         super().__init__(
             goal=None,
             path_planner_params=DeltaPathPlannerParams(distance=distance),
+            trajectory_planner_params=SequentialTrajectoryPlannerParams(),
+            speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
+            avoidance_params=NoAvoidanceParams(),
+            acs_detection_profile_params=NoAcsDetectionProfileParams(),
+            stabilization_delay=0.5,  # Delay to stabilize after moving forward
+        )
+
+
+class RelativeRotation(NavigationTask):
+    """Navigation task to rotate the robot by a specified angle."""
+
+    def __init__(self, angle: float) -> None:
+        """Initialize the RelativeRotation task.
+
+        Args:
+            angle (float): The angle to rotate in radians.
+        """
+        super().__init__(
+            goal=None,
+            path_planner_params=DeltaPathPlannerParams(rotation=angle),
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
@@ -80,8 +100,8 @@ class RelativeForward(NavigationTask):
             points=0,
         )
         self.estimated_duration = (
-            self.speed_profiler.linear_speed_profile.get_total_duration(
-                distance=abs(distance),
+            self.speed_profiler.angular_speed_profile.get_total_duration(
+                distance=abs(angle),
             )
         )
 

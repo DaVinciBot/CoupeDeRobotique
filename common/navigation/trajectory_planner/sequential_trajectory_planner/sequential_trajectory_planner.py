@@ -55,9 +55,19 @@ class SequentialTrajectoryPlanner(
         self.segments_mapper: SegmentMapper | None = None
         self._last_call_time: float = 0.0
         self._is_backward: bool = self.params.direction == Direction.BACKWARD
+        self._fallback_stop_position: OrientedPoint = OrientedPoint((0.0, 0.0), 0.0)
+        self._empty_path_warning_emitted: bool = False
 
     @staticmethod
     def _normalize_angle(angle: float) -> float:
+        """Normalize angle to [-pi, pi).
+
+        Args:
+            angle (float): Angle in radians.
+
+        Returns:
+            float: Normalized angle in radians.
+        """
         angle = (angle + math.pi) % (2 * math.pi)
         if angle < 0:
             angle += 2 * math.pi
@@ -93,12 +103,12 @@ class SequentialTrajectoryPlanner(
         delta_theta = self._normalize_angle(desired_theta - start.theta)
 
         # Build the intermediate oriented point after rotation
-        intermediate_pose = OrientedPoint(start.x, start.y, desired_theta)
+        intermediate_position = OrientedPoint(start.x, start.y, desired_theta)
 
         # Create and return the rotation segment
         return RotationSegment(
             start_position=start,
-            end_position=intermediate_pose,
+            end_position=intermediate_position,
             duration=self.speed_profiler.angular_speed_profile.get_total_duration(
                 abs(delta_theta),
             ),
@@ -134,12 +144,12 @@ class SequentialTrajectoryPlanner(
         delta_theta = self._normalize_angle(desired_theta - start.theta)
 
         # Build the intermediate oriented point after rotation
-        intermediate_pose = OrientedPoint(start.x, start.y, desired_theta)
+        intermediate_position = OrientedPoint(start.x, start.y, desired_theta)
 
         # Create and return the rotation segment
         return RotationSegment(
             start_position=start,
-            end_position=intermediate_pose,
+            end_position=intermediate_position,
             duration=self.speed_profiler.angular_speed_profile.get_total_duration(
                 abs(delta_theta),
             ),
@@ -185,6 +195,9 @@ class SequentialTrajectoryPlanner(
         Args:
             path (list[OrientedPoint]): List of oriented points representing the path.
         """
+        if path:
+            self._fallback_stop_position = path[-1]
+
         # Initialize the segment list
         segments: list[BaseSegment] = []
         # Iterate over each pair of consecutive waypoints
@@ -246,6 +259,12 @@ class SequentialTrajectoryPlanner(
 
         # Store the mapped segments for execution
         self.segments_mapper = SegmentMapper(segments)
+        self._empty_path_warning_emitted = False
+
+        if not segments:
+            self._logger.warning(
+                "[NAV:Trajectory] Empty trajectory generated; robot will hold position.",
+            )
 
     @BaseTrajectoryPlanner.ensure_planning_started
     def get_plan(self) -> TrajectoryPlanCommand:
@@ -266,6 +285,19 @@ class SequentialTrajectoryPlanner(
         if self.segments_mapper is None:
             msg = "Trajectory has not been planned yet."
             raise RuntimeError(msg)
+
+        if not self.segments_mapper.segments:
+            if not self._empty_path_warning_emitted:
+                self._logger.warning(
+                    "[NAV:Trajectory] get_plan() called with no segments; "
+                    " returning stop command.",
+                )
+                self._empty_path_warning_emitted = True
+
+            return TrajectoryPlanCommand.create_stop_command(
+                current_position=self._fallback_stop_position,
+            )
+
         segment, local_time = self.segments_mapper.get_segment_at_time(time_elapsed)
 
         # If no segment is found -> plan is over -> stop the robot at the end path
@@ -294,9 +326,12 @@ class SequentialTrajectoryPlanner(
                     th_theta,
                 ),
                 linear_speed=0.0,
-                angular_speed=self.speed_profiler.angular_speed_profile.get_speed(
-                    time_elapsed=local_time,
-                    distance=segment.rotation,
+                angular_speed=(
+                    self.speed_profiler.angular_speed_profile.get_speed(
+                        time_elapsed=local_time,
+                        distance=segment.rotation,
+                    )
+                    * segment.sign
                 ),
             )
 
@@ -332,11 +367,14 @@ class SequentialTrajectoryPlanner(
 
             trajectory_plan_command = TrajectoryPlanCommand(
                 position=OrientedPoint(th_x, th_y, segment.start_position.theta),
-                linear_speed=self.speed_profiler.linear_speed_profile.get_speed(
-                    time_elapsed=local_time,
-                    distance=abs(
-                        segment.distance,
-                    ),  # IMPORTANT: Use distance parameter to get the th speed
+                linear_speed=(
+                    self.speed_profiler.linear_speed_profile.get_speed(
+                        time_elapsed=local_time,
+                        distance=abs(
+                            segment.distance,
+                        ),  # IMPORTANT: Use distance parameter to get the th speed
+                    )
+                    * (-1 if self._is_backward else 1)
                 ),
                 angular_speed=0.0,
             )
@@ -370,4 +408,8 @@ class SequentialTrajectoryPlanner(
         if self.segments_mapper is None:
             msg = "Trajectory has not been planned yet."
             raise RuntimeError(msg)
+
+        if not self.segments_mapper.cumulative_durations:
+            return 0.0
+
         return self.segments_mapper.cumulative_durations[-1]

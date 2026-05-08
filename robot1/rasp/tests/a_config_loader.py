@@ -116,6 +116,10 @@ class CONFIG:
             PID settings for linear position
         ROLLING_BASIS_PIDS_ANGULAR_POSITION (dict[str, float]):
             PID settings for angular position.
+        ROLLING_BASIS_PIDS_LEFT_WHEEL_POSITION (dict[str, float]):
+            PID settings for left wheel position.
+        ROLLING_BASIS_PIDS_RIGHT_WHEEL_POSITION (dict[str, float]):
+            PID settings for right wheel position.
 
         ROLLING_BASIS_SPEED_PROFILES_CONFIG (dict[str, Any]):
             Speed profiles configuration for the rolling basis.
@@ -305,6 +309,12 @@ class CONFIG:
     ROLLING_BASIS_PIDS_ANGULAR_POSITION: dict[str, float] = ROLLING_BASIS_PIDS_CONFIG[
         "angular_position"
     ]
+    ROLLING_BASIS_PIDS_LEFT_WHEEL_POSITION: dict[str, float] = (
+        ROLLING_BASIS_PIDS_CONFIG["left_wheel_position"]
+    )
+    ROLLING_BASIS_PIDS_RIGHT_WHEEL_POSITION: dict[str, float] = (
+        ROLLING_BASIS_PIDS_CONFIG["right_wheel_position"]
+    )
 
     ROLLING_BASIS_SPEED_PROFILES_CONFIG: dict[str, Any] = ROLLING_BASIS_CONFIG[
         "speed_profiles"

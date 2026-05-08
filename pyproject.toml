@@ -52,8 +52,9 @@ dev = [
   "pylint>=4.0.4",
   "pyright>=1.1.407",
   "pytest>=9.0.2",
+  "pytest-cov>=7.0.0",
   "ruff>=0.14.10",
-  "types-shapely>=2.1.0.20250917",
+  "types-shapely>=2.1.0.20250915",
 ]
 
 [tool.isort]
@@ -236,6 +237,7 @@ exclude = [
 ignore = [
   "ASYNC110", # async-busy-wait
   "B024", # abstract-base-class-without-abstract-method
+  "COM812",
   "CPY001", # missing-copyright-notice
   "EXE002", # shebang-missing-executable-file
   "FIX002", # line-contains-todo

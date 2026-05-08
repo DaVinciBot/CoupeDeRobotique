@@ -325,6 +325,8 @@ class WinterArena(BaseArena):
             for corner_point in drop_zones_points
         )
 
+        zones.extend([yellow_backstage_zone, blue_backstage_zone, ninja_stage])
+
         super().__init__(
             logger,
             width=300,

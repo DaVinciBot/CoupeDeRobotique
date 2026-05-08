@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import time
+import traceback
 from math import pi
 from typing import TYPE_CHECKING, Any
 
@@ -24,7 +25,13 @@ from boombot_strategy.sub_graphs import (
     get_pickup_subgraph,
     get_push_one_floor_to_wall_subgraph,
 )
-from boombot_strategy.tasks.navigation_tasks import GoToOrientedPoint, SetOdometrie
+from boombot_strategy.tasks.navigation_tasks import (
+    GoToOrientedPoint,
+    RelativeBackward,
+    RelativeForward,
+    RelativeRotation,
+    SetOdometrie,
+)
 from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
@@ -59,7 +66,7 @@ class MainBrain(Brain):
         Args:
             logger (Logger): Logger instance for logging messages.
             lidar (Lidar | LidarDummy): Lidar instance for distance measurements.
-            arena (WinterArena): Arena instance for representing the game arena.
+            arena (ShowArena): Arena instance for representing the game arena.
             ws_cmd (WServerRouteManager): WebSocket command route manager.
             ws_ui (WServerRouteManager): WebSocket UI route manager.
             inputs (Inputs): Inputs instance for handling sensor data.
@@ -74,6 +81,7 @@ class MainBrain(Brain):
         self.task_name: str = ""
         self.task_todo: list[BaseTask[WinterGameContext]] = []
         self.task_type: str = ""
+        self.task_data: dict[str, Any] = {}
         self.should_update_task: bool = False
         self.score: int = 0
 
@@ -82,6 +90,27 @@ class MainBrain(Brain):
         self.pid_kp: float = 0.0
         self.pid_ki: float = 0.0
         self.pid_kd: float = 0.0
+        self.should_export_debug_report: bool = False
+        self.should_send_direct_pwm: bool = False
+        self.direct_pwm_left: int = 0
+        self.direct_pwm_right: int = 0
+        self.direct_pwm_duration_ms: int = 500
+        self.pid_debug_live: dict[str, Any] = {
+            "enabled": 0,
+            "time_s": 0.0,
+            "last_event": "init",
+            "sample_count": 0,
+            "target_linear_cm_s": None,
+            "target_angular_rad_s": None,
+            "actual_linear_cm_s": None,
+            "actual_angular_rad_s": None,
+            "linear_error_cm_s": None,
+            "angular_error_rad_s": None,
+            "odom_x_cm": None,
+            "odom_y_cm": None,
+            "odom_theta_rad": None,
+            "pids": {},
+        }
 
         self.jack_triggered: bool = False
         self.jack_plugged: bool = False
@@ -117,74 +146,90 @@ class MainBrain(Brain):
     def run(self) -> None:
         """Runs the main control loop for the robot."""
         # --- Initialization --- #
-        # --- 1) Initialize subsystems --- #
-        if CONFIG.ROLLING_BASIS_DUMMY:
-            rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
-                logger=LogLogger(
-                    identifier="RollingBasisDummy",
-                    follow_logger_manager_rules=True,
-                ),
-            )
-        else:
-            rolling_basis = RollingBasis(
-                logger=LogLogger(
-                    identifier="RollingBasis",
-                    follow_logger_manager_rules=True,
-                ),
-            )
-        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        rolling_basis.initialize_pids()
-
-        if CONFIG.ACTUATORS_DUMMY:
-            actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
-                logger=LogLogger(
-                    identifier="Actuators",
-                    follow_logger_manager_rules=True,
-                ),
-            )
-        else:
-            actuators = ActuatorsShow(
-                logger=LogLogger(
-                    identifier="Actuators",
-                    follow_logger_manager_rules=True,
-                ),
-            )
-        actuators.deplacement_position()
-        # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
-        if (
-            not CONFIG.LIDAR_DUMMY
-            or not CONFIG.ROLLING_BASIS_DUMMY
-            or not CONFIG.ACTUATORS_DUMMY
-        ):
-            while not self.jack_plugged:  # wait until cable is plugged
-                time.sleep(0.1)
-        else:
-            time.sleep(2)
-        actuators.block_banner()  # engage the banner blocker
-        rolling_basis.set_odometrie(self.rolling_basis_odometrie)
-        rolling_basis.initialize_pids()
-        while not self.jack_triggered:  # wait for the trigger event
-            time.sleep(0.1)
-
-        # --- 3) Build the strategy --- #
-
-        # Choose strategy based on configuration
         strategy: GoBackstageStrategy | None = None
         action_holder: list[GraphRunner | None] = [None]
-        if self.mode == "iihm":
-            self.logger.info("IIHM mode: Waiting for first task...")
-        else:
-            strategy = GoBackstageStrategy(
-                WinterGameContext(
-                    arena=self.arena,
-                    rolling_basis=rolling_basis,
-                    actuators=actuators,
-                    point=self.score,
-                ),
-            )
+        init_stage = "rolling basis setup"
+        try:
+            # --- 1) Initialize subsystems --- #
+            if CONFIG.ROLLING_BASIS_DUMMY:
+                rolling_basis: RollingBasis | RollingBasisDummy = RollingBasisDummy(
+                    logger=LogLogger(
+                        identifier="RollingBasisDummy",
+                        follow_logger_manager_rules=True,
+                    ),
+                    enable_realtime_simulation=True,
+                    enable_debug_report=True,
+                )
+            else:
+                rolling_basis = RollingBasis(
+                    logger=LogLogger(
+                        identifier="RollingBasis",
+                        follow_logger_manager_rules=True,
+                    ),
+                )
 
-        self.should_send_start = True
-        self.status = "starting"
+            init_stage = "rolling basis PID initialization"
+            rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+            rolling_basis.initialize_pids()
+
+            init_stage = "actuators setup"
+            if CONFIG.ACTUATORS_DUMMY:
+                actuators: ActuatorsShow | ActuatorsShowDummy = ActuatorsShowDummy(
+                    logger=LogLogger(
+                        identifier="Actuators",
+                        follow_logger_manager_rules=True,
+                    ),
+                )
+            else:
+                actuators = ActuatorsShow(
+                    logger=LogLogger(
+                        identifier="Actuators",
+                        follow_logger_manager_rules=True,
+                    ),
+                )
+
+            # --- 2) Wait for jack plug ● Deploy banner block ● Wait for trigger --- #
+            init_stage = "jack plug wait"
+            if (
+                not CONFIG.LIDAR_DUMMY
+                or not CONFIG.ROLLING_BASIS_DUMMY
+                or not CONFIG.ACTUATORS_DUMMY
+            ):
+                while not self.jack_plugged:  # wait until cable is plugged
+                    time.sleep(0.1)
+            else:
+                time.sleep(2)
+
+            init_stage = "rolling basis reinitialization"
+            rolling_basis.set_odometrie(self.rolling_basis_odometrie)
+            rolling_basis.initialize_pids()
+
+            init_stage = "jack trigger wait"
+            while not self.jack_triggered:  # wait for the trigger event
+                time.sleep(0.1)
+
+            # --- 3) Build the strategy --- #
+            init_stage = "strategy creation"
+            if self.mode == "iihm":
+                self.logger.info("IIHM mode: Waiting for first task...")
+            else:
+                strategy = GoBackstageStrategy(
+                    WinterGameContext(
+                        arena=self.arena,
+                        rolling_basis=rolling_basis,
+                        actuators=actuators,
+                        point=self.score,
+                    ),
+                )
+
+            self.should_send_start = True
+            self.status = "starting"
+        except Exception:
+            self.logger.error(
+                f"[run] Initialization failed during {init_stage}: "
+                f"{traceback.format_exc()}",
+            )
+            raise
 
         # from strategy.tools import visualize_task_graph
         # visualize_task_graph(strategy.runner.active[0])
@@ -211,6 +256,42 @@ class MainBrain(Brain):
                         start=BaseTaskNode(
                             name=f"[Debug] {self.task_name}",
                             tasks=self.task_todo,
+                        ),
+                    )
+                elif self.task_type == "relative_forward":
+                    distance = float(self.task_data.get("distance", 0.0))
+                    action_holder[0] = GraphRunner(
+                        logger=LogLogger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=BaseTaskNode(
+                            name=f"[Debug] Relative forward {distance} cm",
+                            tasks=[RelativeForward(distance)],
+                        ),
+                    )
+                elif self.task_type == "relative_backward":
+                    distance = float(self.task_data.get("distance", 0.0))
+                    action_holder[0] = GraphRunner(
+                        logger=LogLogger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=BaseTaskNode(
+                            name=f"[Debug] Relative backward {distance} cm",
+                            tasks=[RelativeBackward(distance)],
+                        ),
+                    )
+                elif self.task_type == "relative_turn":
+                    angle = float(self.task_data.get("angle", 0.0))
+                    action_holder[0] = GraphRunner(
+                        logger=LogLogger(
+                            identifier="IIHMRunner",
+                            follow_logger_manager_rules=True,
+                        ),
+                        start=BaseTaskNode(
+                            name=f"[Debug] Relative turn {angle} rad",
+                            tasks=[RelativeRotation(angle)],
                         ),
                     )
                 elif self.task_type == "banner_deploy":
@@ -279,15 +360,36 @@ class MainBrain(Brain):
             if action_holder[0] is not None:
                 action_holder[0].handle(context)
 
+        if self.should_send_direct_pwm:
+            action_holder[0] = None
+            rolling_basis.set_motors_pwm(
+                left_pwm=self.direct_pwm_left,
+                right_pwm=self.direct_pwm_right,
+                duration_ms=self.direct_pwm_duration_ms,
+            )
+            self.should_send_direct_pwm = False
+
         if self.should_update_pid:
-            if self.pid_type == "linear":
+            if self.pid_type in {"linear", "linear_position"}:
                 rolling_basis.set_linear_position_pid(
                     kp=self.pid_kp,
                     ki=self.pid_ki,
                     kd=self.pid_kd,
                 )
-            elif self.pid_type == "angular":
+            elif self.pid_type in {"angular", "angular_position"}:
                 rolling_basis.set_angular_position_pid(
+                    kp=self.pid_kp,
+                    ki=self.pid_ki,
+                    kd=self.pid_kd,
+                )
+            elif self.pid_type in {"left_wheel", "left_wheel_position"}:
+                rolling_basis.set_left_wheel_position_pid(
+                    kp=self.pid_kp,
+                    ki=self.pid_ki,
+                    kd=self.pid_kd,
+                )
+            elif self.pid_type in {"right_wheel", "right_wheel_position"}:
+                rolling_basis.set_right_wheel_position_pid(
                     kp=self.pid_kp,
                     ki=self.pid_ki,
                     kd=self.pid_kd,
@@ -299,6 +401,11 @@ class MainBrain(Brain):
         self.odemetrie_state = context.arena.ally_zone.point
         self.enemy_odemetrie_state = context.arena.enemy_zone.point
         self.rolling_basis_odometrie = rolling_basis.odometrie
+        self.pid_debug_live = rolling_basis.get_debug_snapshot()
+
+        if self.should_export_debug_report:
+            rolling_basis.export_debug_report(reason="shutdown_request")
+            self.should_export_debug_report = False
 
     @Brain.task(
         process=True,
@@ -340,7 +447,7 @@ class MainBrain(Brain):
     @Brain.task(
         process=False,
         run_on_start=True,
-        refresh_rate=0.5,
+        refresh_rate=0.1,
     )
     async def update_ui(self) -> None:
         """Updates the UI with the current state."""
@@ -363,6 +470,7 @@ class MainBrain(Brain):
                 "height": self.arena.height,
             },
             "score": self.score,
+            "pid_debug": self.pid_debug_live,
         }
         if self.arena.team_color and self.arena.team_color != TeamColor.UNDEFINED:
             to_send = {
@@ -373,6 +481,7 @@ class MainBrain(Brain):
                 "pamis_states": current_snapshot["pamis_states"],
                 "arena_info": current_snapshot["arena_info"],
                 "score": current_snapshot["score"],
+                "pid_debug": current_snapshot["pid_debug"],
             }
             await self.ws_ui.sender.send(
                 WSmsg(sender="server", msg="update ui data", data=to_send),
@@ -430,6 +539,31 @@ class MainBrain(Brain):
                         f"Set task to {self.task_name}",
                     )
                 elif ui.data["type"] in {
+                    "relative_forward",
+                    "relative_backward",
+                    "relative_turn",
+                }:
+                    self.task_type = str(ui.data["type"])
+                    self.task_data = dict(ui.data.get("data", {}))
+                    self.task_name = self.task_type
+                    self.should_update_task = True
+                    self.logger.info(
+                        f"Set task to {self.task_type}: {self.task_data}",
+                    )
+                elif ui.data["type"] == "direct_pwm":
+                    self.direct_pwm_left = int(ui.data["data"].get("left_pwm", 0))
+                    self.direct_pwm_right = int(ui.data["data"].get("right_pwm", 0))
+                    self.direct_pwm_duration_ms = int(
+                        ui.data["data"].get("duration_ms", 500),
+                    )
+                    self.should_send_direct_pwm = True
+                    self.logger.info(
+                        "Direct PWM request: "
+                        f"left={self.direct_pwm_left}, "
+                        f"right={self.direct_pwm_right}, "
+                        f"duration={self.direct_pwm_duration_ms}ms",
+                    )
+                elif ui.data["type"] in {
                     "banner_deploy",
                     "construct",
                     "pickup",
@@ -456,7 +590,7 @@ class MainBrain(Brain):
                     f"Updating {pid_type} PID to Kp: {kp}, Ki: {ki}, Kd: {kd}",
                 )
                 self.pid_type = pid_type
-                self.should_update_pid
+                self.should_update_pid = True
             else:
                 self.logger.warning(
                     f"[WS:UI] Command not implemented: {ui.msg} / {ui.data}",
@@ -565,7 +699,12 @@ class MainBrain(Brain):
         if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
             await self.wait_for_team()
             self.logger.warning(
-                "[BRAIN:Init] All subsystems in DUMMY mode - robot will not move",
+                "[BRAIN:Init] All subsystems in DUMMY mode.",
+            )
+            self.jack_plugged = True
+            self.jack_triggered = True
+            self.logger.info(
+                "[BRAIN:Init] Auto-triggering jack in full dummy mode.",
             )
         else:
             await self.wait_for_team()
@@ -579,12 +718,15 @@ class MainBrain(Brain):
         enemy_position = OrientedPoint(150, 200, -pi / 2)
         if self.arena.team_color == TeamColor.YELLOW:
             self.logger.info("[BRAIN:Init] Starting as YELLOW team")
-            start_position = OrientedPoint(122.5, 21, -pi / 2)
-            enemy_position = OrientedPoint(177.5, 21, -pi / 2)
+            start_position = OrientedPoint(30, 180, -pi / 2)
+            enemy_position = OrientedPoint(270, 180, -pi / 2)
         elif self.arena.team_color == TeamColor.BLUE:
             self.logger.info("[BRAIN:Init] Starting as BLUE team")
-            start_position = OrientedPoint(177.5, 21, -pi / 2)
-            enemy_position = OrientedPoint(122.5, 21, -pi / 2)
+            start_position = OrientedPoint(270, 180, -pi / 2)
+            enemy_position = OrientedPoint(30, 180, -pi / 2)
+        else:
+            start_position = OrientedPoint(0, 0, 0)
+            enemy_position = OrientedPoint(150, 200, -pi / 2)
 
         # 3. Update the arena with the starting position
         self.arena.enemy_zone.update(

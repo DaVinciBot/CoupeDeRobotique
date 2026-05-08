@@ -12,6 +12,7 @@ from boombot_strategy.tasks.navigation_tasks.maneuver import (
     GoToOrientedPoint,
     RelativeBackward,
     RelativeForward,
+    RelativeRotation,
 )
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from boombot_strategy.tasks.navigation_tasks.odometrie import SetOdometrie
@@ -25,5 +26,6 @@ __all__ = [
     "NavigationTask",
     "RelativeBackward",
     "RelativeForward",
+    "RelativeRotation",
     "SetOdometrie",
 ]

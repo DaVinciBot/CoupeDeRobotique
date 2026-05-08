@@ -5,6 +5,7 @@ from __future__ import annotations
 import struct
 from dataclasses import dataclass
 from enum import Enum
+from typing import override
 
 
 class PidID(Enum):
@@ -13,12 +14,18 @@ class PidID(Enum):
     Attributes:
         LINEAR_POSITION: Identifier for linear position PID control.
         ANGULAR_POSITION: Identifier for angular position PID control.
+        LEFT_WHEEL_POSITION: Identifier for left wheel position PID control.
+        RIGHT_WHEEL_POSITION: Identifier for right wheel position PID control.
     """
 
     LINEAR_POSITION = 0
     """Identifier for linear position PID control."""
     ANGULAR_POSITION = 1
     """Identifier for angular position PID control."""
+    LEFT_WHEEL_POSITION = 2
+    """Identifier for left wheel position PID control."""
+    RIGHT_WHEEL_POSITION = 3
+    """Identifier for right wheel position PID control."""
 
 
 @dataclass
@@ -82,3 +89,12 @@ class PID:
             PID: An instance of the PID class.
         """
         return cls(*pid_list)
+
+    @override
+    def __str__(self) -> str:
+        """String representation of the PID parameters.
+
+        Returns:
+            str: A string in the format "PID(kp=..., ki=..., kd=...)".
+        """
+        return f"PID(kp={self.kp}, ki={self.ki}, kd={self.kd})"

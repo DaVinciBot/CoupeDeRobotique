@@ -3,7 +3,7 @@
  * The PID class compute the error for the servo-control of the motors.
  */
 
-#include "PID.h"
+#include "pid.h"
 #include <Arduino.h>
 
 PID::PID(double kp,

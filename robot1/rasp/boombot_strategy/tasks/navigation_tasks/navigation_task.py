@@ -38,7 +38,7 @@ class NavigationTask(BaseNavigationTask[WinterGameContext]):
             enemy_zone=ctx.arena.enemy_zone,
         )
 
-        ctx.rolling_basis.set_target_position(cmd.get_position_command())
+        ctx.rolling_basis.set_trajectory_command(cmd)
         self._logger.debug(f"[TASK:Nav] {cmd.get_full_command()}")
         self._logger.debug(f"[TASK:Nav] State: {self.navigator_task.state}")
         return self.navigator_task.state.is_finished()
