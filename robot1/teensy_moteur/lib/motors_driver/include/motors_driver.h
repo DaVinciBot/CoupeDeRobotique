@@ -17,6 +17,9 @@ class Motor {
     byte pin_encb;  // AttachInterrupt pin only !
 
     byte max_pwm;
+    byte min_moving_pwm;
+    byte pwm_slew_per_cycle;
+    int16_t current_pwm = 0;
 
     // Ticks distance
     double wheel_unit_tick_cm;
@@ -43,7 +46,9 @@ class Motor {
           byte pin_enca,
           byte pin_encb,
           double wheel_unit_tick_cm,
-          byte max_pwm);
+          byte max_pwm,
+          byte min_moving_pwm,
+          byte pwm_slew_per_cycle);
     ~Motor() = default;
 
     // Methods
@@ -58,6 +63,7 @@ class Motor {
      * @param pwmVal Power value of the motor
      */
     void set_motor(int pwmVal);
+    void set_motor_raw(int pwmVal);
 
     void handle_odometrie();
 };

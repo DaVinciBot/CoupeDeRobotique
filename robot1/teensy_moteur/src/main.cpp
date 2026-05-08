@@ -178,9 +178,11 @@ void setup() {
 
     // Init Rolling Basis
     rolling_basis_ptr->define_right_motor(R_ENCA, R_ENCB, R_PWM, R_IN1, R_IN2,
-                                          MAX_PWM);
+                                          MAX_PWM, R_MIN_MOVING_PWM,
+                                          MOTOR_PWM_SLEW_PER_CYCLE);
     rolling_basis_ptr->define_left_motor(L_ENCA, L_ENCB, L_PWM, L_IN1, L_IN2,
-                                         MAX_PWM);
+                                         MAX_PWM, L_MIN_MOVING_PWM,
+                                         MOTOR_PWM_SLEW_PER_CYCLE);
     rolling_basis_ptr->init_motors();
 
     rolling_basis_ptr->init_rolling_basis(START_X, START_Y, START_THETA);

@@ -76,9 +76,12 @@ void Rolling_Basis::define_right_motor(byte enca,
                                        byte pwm,
                                        byte in2,
                                        byte in1,
-                                       byte max_pwm) {
+                                       byte max_pwm,
+                                       byte min_moving_pwm,
+                                       byte pwm_slew_per_cycle) {
     this->right_motor = new Motor(in1, in2, pwm, enca, encb,
-                                  this->right_wheel_unit_tick_cm(), max_pwm);
+                                  this->right_wheel_unit_tick_cm(), max_pwm,
+                                  min_moving_pwm, pwm_slew_per_cycle);
 }
 
 /**
@@ -90,9 +93,12 @@ void Rolling_Basis::define_left_motor(byte enca,
                                       byte pwm,
                                       byte in2,
                                       byte in1,
-                                      byte max_pwm) {
+                                      byte max_pwm,
+                                      byte min_moving_pwm,
+                                      byte pwm_slew_per_cycle) {
     this->left_motor = new Motor(in1, in2, pwm, enca, encb,
-                                 this->left_wheel_unit_tick_cm(), max_pwm);
+                                 this->left_wheel_unit_tick_cm(), max_pwm,
+                                 min_moving_pwm, pwm_slew_per_cycle);
 }
 
 /**
@@ -161,8 +167,8 @@ void Rolling_Basis::set_motors_pwm(int16_t left_pwm,
                                this->manual_right_pwm != 0);
 
     if (!this->manual_pwm_active) {
-        this->left_motor->set_motor(0);
-        this->right_motor->set_motor(0);
+        this->left_motor->set_motor_raw(0);
+        this->right_motor->set_motor_raw(0);
         this->target_position = Point(this->X, this->Y, this->THETA);
         this->left_wheel_target_cm =
             static_cast<double>(this->left_motor->ticks) *
@@ -222,16 +228,16 @@ void Rolling_Basis::handle() {
             this->last_angular_correction = 0.0;
             this->last_left_wheel_error = 0.0;
             this->last_right_wheel_error = 0.0;
-            this->left_motor->set_motor(this->manual_left_pwm);
-            this->right_motor->set_motor(this->manual_right_pwm);
+            this->left_motor->set_motor_raw(this->manual_left_pwm);
+            this->right_motor->set_motor_raw(this->manual_right_pwm);
             return;
         }
 
         this->manual_pwm_active = false;
         this->manual_left_pwm = 0;
         this->manual_right_pwm = 0;
-        this->left_motor->set_motor(0);
-        this->right_motor->set_motor(0);
+        this->left_motor->set_motor_raw(0);
+        this->right_motor->set_motor_raw(0);
         this->target_position = Point(this->X, this->Y, this->THETA);
         this->left_wheel_target_cm =
             static_cast<double>(this->left_motor->ticks) *

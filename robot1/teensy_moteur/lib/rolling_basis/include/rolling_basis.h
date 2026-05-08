@@ -103,7 +103,9 @@ class Rolling_Basis {
                             byte pwm,
                             byte in2,
                             byte in1,
-                            byte max_pwm);
+                            byte max_pwm,
+                            byte min_moving_pwm,
+                            byte pwm_slew_per_cycle);
     /**
      * @brief Define left motor with pins, related encoders pin and properties
      * of the wheel attached to the motor.
@@ -113,7 +115,9 @@ class Rolling_Basis {
                            byte pwm,
                            byte in2,
                            byte in1,
-                           byte max_pwm);
+                           byte max_pwm,
+                           byte min_moving_pwm,
+                           byte pwm_slew_per_cycle);
     /**
      * @brief Initialize both motors
      */
