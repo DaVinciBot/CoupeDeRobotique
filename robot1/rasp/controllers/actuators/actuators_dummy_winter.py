@@ -99,17 +99,19 @@ class ActuatorsWinterDummy(ActuatorsWinter):
                 f"[{computed_min},{computed_max}] for pin {pin}",
             )
 
+
     @override
     @log("Actuators")
-    def stepper_step(
-        self,
-        steps: int,
-        speed: int,
-        *,
-        disable_driver: bool = False,
-    ) -> None:
-        self.elevator_ticks += steps
-        self._logger.info(
-            f"[CTRL:ACT:Dummy] Stepper {steps} steps @ {speed} "
-            f"(disable_driver={disable_driver})",
-        )
+    def suck(self, pin: int) -> None:
+        """
+        """
+
+        self._logger.info(f"[CTRL:ACT:Dummy] Suck Jenga on pin {pin}")
+
+    @override
+    @log("Actuators")
+    def release(self, pin: int) -> None:
+        """
+        """
+
+        self._logger.info(f"[CTRL:ACT:Dummy] Release Jenga on pin {pin}")

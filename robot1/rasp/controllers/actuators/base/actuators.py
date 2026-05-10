@@ -294,4 +294,16 @@ class Actuators(
         msg = Messages.ATTACH_SWITCH.to_bytes() + struct.pack("<B", pin)
         self.send_bytes(msg)
 
+    @log("Actuators")
+    def suck_jenga(self, pin: int) -> None:
+        """
+        """
+        return
+
+    @log("Actuators")
+    def release_jenga(self, pin: int) -> None:
+        """
+        """
+        return
+
     # endregion
