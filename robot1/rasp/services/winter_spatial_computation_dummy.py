@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import random
 from typing import TYPE_CHECKING, override
 
 from loggerplusplus import Logger, LogLevels, log
@@ -112,9 +113,10 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         crate_size = 5
         initial_fill_zones = range(3, 11)
 
-        color_cycle = [0, 0, 1, 1]
-
         for zone_index in initial_fill_zones:
+            color_cycle = [0, 0, 1, 1]
+            random.shuffle(color_cycle)
+
             p1, p2 = self.crates_zones_points[
                 (zone_index - 3) % len(self.crates_zones_points)
             ]

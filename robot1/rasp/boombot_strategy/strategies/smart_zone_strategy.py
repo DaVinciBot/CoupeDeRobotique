@@ -155,14 +155,14 @@ class SmartZoneStrategy(BaseStrategy):
         self.deposit_zones_list = CONFIG.DEPOSIT_ZONES_LIST
 
         if ctx.arena.team_color.name.lower() == "yellow":
-            goal = OrientedPoint(10, 10, 0)
+            goal = OrientedPoint(20, 10, 0)
             cursor_tasks = [
                 GoToCursorStart(goal, ctx),
                 DeployCursor(),
                 RelativeBackward(20),
             ]
         else:
-            goal = OrientedPoint(260, 10, pi)
+            goal = OrientedPoint(280, 10, pi)
             cursor_tasks = [
                 GoToCursorStart(goal, ctx),
                 DeployCursor(),

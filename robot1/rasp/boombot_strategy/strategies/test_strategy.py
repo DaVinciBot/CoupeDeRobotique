@@ -3,17 +3,27 @@
 from __future__ import annotations
 
 import copy
+from math import pi
 from typing import TYPE_CHECKING
 
 from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from boombot_strategy.strategies.base_strategy import BaseStrategy
-from boombot_strategy.tasks.actuator_tasks import DepositJenga, PickUpJenga
+from boombot_strategy.tasks.actuator_tasks import (
+    DepositJenga,
+    ExtendCursor,
+    PickUpJenga,
+    RetractCursor,
+)
 from boombot_strategy.tasks.navigation_tasks import (
+    GoToColorReservedZoneToFinishGame,
     GoToDepositZone,
     GoToOrientedPoint,
     GoToStuffZoneToPickUp,
+    RelativeBackward,
+    RelativeForward,
 )
+from boombot_strategy.tasks.navigation_tasks.go_to_cursor_start import GoToCursorStart
 from geometry import OrientedPoint, distance
 from log_manager import LogLogger
 from navigation.path_planner.astar_path_planner import (
@@ -45,6 +55,23 @@ class TestStrategy(BaseStrategy):
 
         used_pickup_zones: set[int] = set()
         current_position = ctx.rolling_basis.odometrie
+
+        if ctx.arena.team_color.name.lower() == "yellow":
+            goal = OrientedPoint(20, 10, pi)
+            cursor_tasks = [
+                GoToCursorStart(goal, ctx),
+                ExtendCursor(),
+                RelativeBackward(20),
+                RetractCursor(),
+            ]
+        else:
+            goal = OrientedPoint(280, 10, pi)
+            cursor_tasks = [
+                GoToCursorStart(goal, ctx),
+                ExtendCursor(),
+                RelativeForward(20),
+                RetractCursor(),
+            ]
 
         first_pickup_zone = self._nearest_pickup_zone(
             ctx,
@@ -82,6 +109,12 @@ class TestStrategy(BaseStrategy):
         final_deposit_zone = self._nearest_deposit_zone(ctx, RELEASE_POINT)
 
         nodes = [
+            BaseTaskNode(
+                name="[Cursor] Align",
+                tasks=cursor_tasks,
+                repeatable=False,
+                max_visits=1,
+            ),
             BaseTaskNode(
                 name=f"[Test] Pickup 1 team Jenga from zone {first_pickup_zone}",
                 tasks=[
@@ -149,6 +182,13 @@ class TestStrategy(BaseStrategy):
                     GoToDepositZone(final_deposit_zone, ctx),
                     DepositJenga(final_deposit_zone, color_id=team_color_id),
                 ],
+            ),
+            BaseTaskNode(
+                name="[Test] Go backstage",
+                tasks=GoToColorReservedZoneToFinishGame(
+                    self.zones["backstage_zone"],
+                    ctx,
+                ),
             ),
         ]
 
