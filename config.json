@@ -191,6 +191,11 @@
       {
           "pump_pins": [3, 4, 5, 6]
       },
+      "linear_actuators_config":
+      {
+          "extend_time": 0.67,
+          "retract_time": 0.69
+      },
       "elevator": {
         "top_steps": 725,
         "folded_steps": 360,

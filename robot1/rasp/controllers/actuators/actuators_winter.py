@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from enum import Enum, auto
 from typing import TYPE_CHECKING
 
 from a_config_loader import CONFIG
@@ -91,7 +90,7 @@ class ActuatorsWinter(Actuators):
             pin = int(pin_str)
             self.servos[pin] = Servo(
                 retract_angle=cfg["retract_angle"],
-                extend_angle=cfg["extend_angle"],
+                extend_angle=cfg.get("extend_angle", cfg.get("deploy_angle")),
                 max_angle=cfg["max_angle"],
             )
 
@@ -209,6 +208,10 @@ class ActuatorsWinter(Actuators):
             for pin in self.pumps:
                 self.suck(pin)
 
+    def suck(self, pin: int) -> None:
+        """Activate one pump pin."""
+        self.set_stepper_driver_activation_state(pin_enable=pin, enable_driver=True)
+
     def release_jenga(self, pins: int | list[int] | None = None) -> None:
         """Deactivate the suction mechanism to release Jenga pieces.
 
@@ -228,6 +231,10 @@ class ActuatorsWinter(Actuators):
         else:
             for pin in self.pumps:
                 self.release(pin)
+
+    def release(self, pin: int) -> None:
+        """Deactivate one pump pin."""
+        self.set_stepper_driver_activation_state(pin_enable=pin, enable_driver=False)
 
     def pickup(self, pins: int | list[int] | None = None) -> None:
         """

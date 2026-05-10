@@ -416,18 +416,10 @@ class CONFIG:
     ACTUATOR_SERVOS_CONFIG: ClassVar[dict[int, Any]] = {
         int(k): v for k, v in ACTUATORS_CONFIG["servos_config"].items()
     }
-    ACTUATOR_ARM_SERVO_PINS: list[int] = [
-        pin
-        for pin, servo_config in ACTUATOR_SERVOS_CONFIG.items()
-        if "extend_angle" in servo_config
-    ]
+    ACTUATOR_ARM_SERVO_PINS: list[int] = list(ACTUATOR_SERVOS_CONFIG)[:2]
     R_ARM_PIN: int = ACTUATOR_ARM_SERVO_PINS[0]
     L_ARM_PIN: int = ACTUATOR_ARM_SERVO_PINS[1]
-    CURSOR_PIN: int = next(
-        pin
-        for pin, servo_config in ACTUATOR_SERVOS_CONFIG.items()
-        if "deploy_angle" in servo_config
-    )
+    CURSOR_PIN: int = list(ACTUATOR_SERVOS_CONFIG)[2]
     ACTUATOR_PUMPS_CONFIG: dict[str, Any] = ACTUATORS_CONFIG["pumps_config"]
     ACTUATOR_PUMPS_PINS: list[int] = ACTUATOR_PUMPS_CONFIG["pump_pins"]
     ACTUATOR_ELEVATOR_CONFIG: dict[str, Any] = ACTUATORS_CONFIG["elevator"]

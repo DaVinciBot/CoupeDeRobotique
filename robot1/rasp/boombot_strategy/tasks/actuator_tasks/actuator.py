@@ -2,92 +2,173 @@
 
 from __future__ import annotations
 
-import time
-from typing import override
+from typing import TYPE_CHECKING, override
 
-from boombot_strategy.winter_game_context import WinterGameContext
 from strategy.core.tasks import BaseTask
 
-
-class PrepareRotation(BaseTask[WinterGameContext]):
-    """Task to prepare the actuator for rotation."""
-
-    def __init__(self) -> None:
-        """Initialize the PrepareRotation task."""
-        super().__init__(points=0, estimated_duration=2.0)
-
-    @override
-    def handle(self, ctx: WinterGameContext) -> bool:
-        """Execute the actuator command to prepare for rotation, then wait briefly.
-
-        Args:
-            ctx (WinterGameContext): The current game context.
-
-        Returns:
-            bool: Always returns True after executing the action.
-        """
-        ctx.actuators.prepare_to_rotate()
-        p = self.points
-        ctx.point += p(ctx) if callable(p) else p
-        return True
+if TYPE_CHECKING:
+    from boombot_strategy.winter_game_context import WinterGameContext
 
 
-class RotateJenga(BaseTask[WinterGameContext]):
-    def __init__(self) -> None:
-        super().__init__(points=0, estimated_duration=3.0)
+class BaseActuatorTask(BaseTask["WinterGameContext"]):
+    """Base class for actuator tasks that update the score."""
 
-    @override
-    def handle(self, ctx: WinterGameContext) -> bool:
-        ctx.actuators.rotate_jenga()
-        if ctx.spatial_computation is not None:
-            ctx.spatial_computation.reverse_crate()
-        p = self.points
-        ctx.point += p(ctx) if callable(p) else p
-        return True
+    def _add_points(self, ctx: WinterGameContext) -> None:
+        points = self.points
+        ctx.point += points(ctx) if callable(points) else points
 
 
-class BlockJenga(BaseTask[WinterGameContext]):
-    def __init__(self, zone_id: int | None = None) -> None:
-        super().__init__(points=0, estimated_duration=2.0)
-        self.zone_id = zone_id
+class ExtendCursor(BaseActuatorTask):
+    """Extend the cursor actuator."""
 
-    @override
-    def handle(self, ctx: WinterGameContext) -> bool:
-        ctx.actuators.block_jenga()
-        if self.zone_id is not None and ctx.spatial_computation is not None:
-            ctx.spatial_computation.pick_crates(self.zone_id)
-
-        p = self.points
-        ctx.point += p(ctx) if callable(p) else p
-        time.sleep(0.5)
-        return True
-
-
-class SafeRetractAll(BaseTask[WinterGameContext]):
-    def __init__(self, zone_id: int | None = None) -> None:
-        super().__init__(points=0, estimated_duration=2.0)
-        self.zone_id = zone_id
-
-    @override
-    def handle(self, ctx: WinterGameContext) -> bool:
-        ctx.actuators.retract_all()
-        if self.zone_id is not None and ctx.spatial_computation is not None:
-            ctx.spatial_computation.drop_crates(self.zone_id)
-
-        p = self.points
-        ctx.point += p(ctx) if callable(p) else p
-        time.sleep(0.5)
-        return True
-
-
-class DeployCursor(BaseTask[WinterGameContext]):
     def __init__(self) -> None:
         super().__init__(points=0, estimated_duration=1.0)
 
     @override
     def handle(self, ctx: WinterGameContext) -> bool:
-        ctx.actuators.deploy_cursor()
-        p = self.points
-        ctx.point += p(ctx) if callable(p) else p
-        time.sleep(0.5)
+        ctx.actuators.extend_cursor()
+        self._add_points(ctx)
         return True
+
+
+class RetractCursor(BaseActuatorTask):
+    """Retract the cursor actuator."""
+
+    def __init__(self) -> None:
+        super().__init__(points=0, estimated_duration=1.0)
+
+    @override
+    def handle(self, ctx: WinterGameContext) -> bool:
+        ctx.actuators.retract_cursor()
+        self._add_points(ctx)
+        return True
+
+
+class PickUpJenga(BaseActuatorTask):
+    """Pick up one, several, or all Jenga pieces from a zone."""
+
+    def __init__(
+        self,
+        zone_id: int | None = None,
+        pins: int | list[int] | None = None,
+        *,
+        count: int | None = None,
+        color_id: int | None = None,
+    ) -> None:
+        super().__init__(points=0, estimated_duration=2.0)
+        self.zone_id = zone_id
+        self.pins = pins
+        self.count = count
+        self.color_id = color_id
+
+    @override
+    def handle(self, ctx: WinterGameContext) -> bool:
+        ctx.actuators.pickup(self.pins)
+        if self.zone_id is not None and ctx.spatial_computation is not None:
+            try:
+                ctx.spatial_computation.pick_crates(
+                    self.zone_id,
+                    count=self.count,
+                    color_id=self.color_id,
+                )
+            except TypeError:
+                ctx.spatial_computation.pick_crates(self.zone_id)
+        self._add_points(ctx)
+        return True
+
+
+class DepositJenga(BaseActuatorTask):
+    """Deposit one, several, or all held Jenga pieces into a zone."""
+
+    def __init__(
+        self,
+        zone_id: int | None = None,
+        pins: int | list[int] | None = None,
+        *,
+        count: int | None = None,
+        color_id: int | None = None,
+        release_point: object | None = None,
+    ) -> None:
+        super().__init__(points=0, estimated_duration=2.0)
+        self.zone_id = zone_id
+        self.pins = pins
+        self.count = count
+        self.color_id = color_id
+        self.release_point = release_point
+
+    @override
+    def handle(self, ctx: WinterGameContext) -> bool:
+        ctx.actuators.deposit(self.pins)
+        if ctx.spatial_computation is not None and self.zone_id is None:
+            release_crates = getattr(ctx.spatial_computation, "release_crates", None)
+            if release_crates is not None:
+                release_crates(
+                    count=self.count,
+                    color_id=self.color_id,
+                    point=self.release_point,
+                )
+        elif self.zone_id is not None and ctx.spatial_computation is not None:
+            try:
+                ctx.spatial_computation.drop_crates(
+                    self.zone_id,
+                    count=self.count,
+                    color_id=self.color_id,
+                )
+            except TypeError:
+                ctx.spatial_computation.drop_crates(self.zone_id)
+        self._add_points(ctx)
+        return True
+
+
+class ExtendArm(BaseActuatorTask):
+    """Extend the arm servos."""
+
+    def __init__(self) -> None:
+        super().__init__(points=0, estimated_duration=1.0)
+
+    @override
+    def handle(self, ctx: WinterGameContext) -> bool:
+        ctx.actuators.extend_arm()
+        self._add_points(ctx)
+        return True
+
+
+class RetractArm(BaseActuatorTask):
+    """Retract the arm servos."""
+
+    def __init__(self) -> None:
+        super().__init__(points=0, estimated_duration=1.0)
+
+    @override
+    def handle(self, ctx: WinterGameContext) -> bool:
+        ctx.actuators.retract_arm()
+        self._add_points(ctx)
+        return True
+
+
+class PrepareRotation(ExtendArm):
+    """Compatibility task: there is no rotation anymore, only arm extension."""
+
+
+class RotateJenga(BaseActuatorTask):
+    """Compatibility task: no-op because Jengas no longer change color."""
+
+    def __init__(self) -> None:
+        super().__init__(points=0, estimated_duration=0.0)
+
+    @override
+    def handle(self, ctx: WinterGameContext) -> bool:
+        self._add_points(ctx)
+        return True
+
+
+class BlockJenga(PickUpJenga):
+    """Compatibility task for older pickup graphs."""
+
+
+class SafeRetractAll(DepositJenga):
+    """Compatibility task for older deposit graphs."""
+
+
+class DeployCursor(ExtendCursor):
+    """Compatibility task for older cursor graphs."""

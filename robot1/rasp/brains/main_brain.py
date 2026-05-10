@@ -20,7 +20,7 @@ from a_config_loader import CONFIG
 from arena.base_arena import TeamColor
 from arena.base_arena.arena_zones.structs import ZoneAccessibility
 from boombot_strategy import WinterGameContext
-from boombot_strategy.strategies import SmartZoneStrategy
+from boombot_strategy.strategies import SmartZoneStrategy, TestStrategy
 from boombot_strategy.sub_graphs import (
     get_banner_deployment_subgraph,
     get_construct_one_floor_subgraph,
@@ -243,12 +243,12 @@ class MainBrain(Brain):
 
         # --- 3) Build the strategy --- #
         # Choose strategy based on configuration
-        strategy: SmartZoneStrategy | None = None
+        strategy: SmartZoneStrategy | TestStrategy | None = None
         action_holder: list[GraphRunner | None] = [None]
         if self.mode == "iihm":
             self.logger.info("IIHM mode: Waiting for first task...")
         else:
-            strategy = SmartZoneStrategy(
+            strategy = TestStrategy(
                 WinterGameContext(
                     arena=self.arena,
                     rolling_basis=rolling_basis,

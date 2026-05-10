@@ -13,6 +13,8 @@ if TYPE_CHECKING:
 
 
 DEPOSIT_ZONE_START_INDEX = 11
+RELEASED_CRATES_ZONE_ID = -2
+DEFAULT_RELEASE_POINT = (150.0, 100.0)
 
 DEPOSIT_ZONE_ORIENTATION: dict[int, str] = {
     11: "vertical",
@@ -142,19 +144,35 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
 
     @override
     @log("WinterSpatialComputationDummy", LogLevels.INFO)
-    def pick_crates(self, zone_id: int) -> None:
+    def pick_crates(
+        self,
+        zone_id: int,
+        count: int | None = None,
+        color_id: int | None = None,
+    ) -> None:
         """Pick up crates from the specified pickup zone.
 
         Args:
             zone_id (int): Index of the pickup zone from which to pick crates.
+            count (int | None): Maximum number of crates to pick. ``None`` picks all.
+            color_id (int | None): Color filter. ``None`` accepts all colors.
         """
-        zone_crates = [c for c in self.crates.get(zone_id, []) if not c.held]
-        self.logger.info(f"Picking {len(zone_crates)} crate(s) from zone {zone_id}.")
-        for c in zone_crates:
+        available_crates = [c for c in self.crates.get(zone_id, []) if not c.held]
+        matching_crates = [
+            c for c in available_crates if color_id is None or c.color_id == color_id
+        ]
+        picked_crates = matching_crates[:count]
+        if count is None:
+            picked_crates = matching_crates
+
+        self.logger.info(
+            f"Picking {len(picked_crates)} crate(s) from zone {zone_id}.",
+        )
+        for c in picked_crates:
             c.held = True
             c.zone_id = -1
             self.held_crates.append(c)
-        self.crates[zone_id] = []
+        self.crates[zone_id] = [c for c in available_crates if c not in picked_crates]
         self.logger.info(
             f"Now holding {len(self.held_crates)} crate(s). "
             f"Remaining zones: {list(self.crates.keys())}",
@@ -162,16 +180,34 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
 
     @override
     @log("WinterSpatialComputationDummy", LogLevels.INFO)
-    def drop_crates(self, zone_index: int) -> None:
+    def drop_crates(
+        self,
+        zone_index: int,
+        count: int | None = None,
+        color_id: int | None = None,
+    ) -> None:
         """Drop held crates in the specified deposit zone.
 
         Crates are arranged in a line within the deposit zone, centered vertically.
 
         Args:
             zone_index (int): Index of the deposit zone where crates should be dropped.
+            count (int | None): Maximum number of crates to drop. ``None`` drops all.
+            color_id (int | None): Color filter. ``None`` accepts all colors.
         """
         if not self.held_crates:
             self.logger.info("No crates to drop.")
+            return
+
+        matching_crates = [
+            c for c in self.held_crates if color_id is None or c.color_id == color_id
+        ]
+        dropped_crates = matching_crates[:count]
+        if count is None:
+            dropped_crates = matching_crates
+
+        if not dropped_crates:
+            self.logger.info("No matching crates to drop.")
             return
 
         (p1, p2) = self.deposit_zone_points[zone_index - DEPOSIT_ZONE_START_INDEX]
@@ -179,53 +215,85 @@ class WinterSpatialComputationDummy(WinterSpatialComputation):
         x_min, x_max = min(p1[0], p2[0]), max(p1[0], p2[0])
         y_min, y_max = min(p1[1], p2[1]), max(p1[1], p2[1])
 
-        num_crates = len(self.held_crates)
+        num_crates = len(dropped_crates)
         crate_size = 5
+        zone_start_index = len(self.crates.setdefault(zone_index, []))
 
         orientation = DEPOSIT_ZONE_ORIENTATION.get(zone_index, "horizontal")
 
         if orientation == "horizontal":
             x_positions = [
-                x_min + crate_size / 2 + i * crate_size for i in range(num_crates)
+                x_min + crate_size / 2 + (zone_start_index + i) * crate_size
+                for i in range(num_crates)
             ]
             y_positions = [(y_min + y_max) / 2] * num_crates
         else:
             x_positions = [(x_min + x_max) / 2] * num_crates
             y_positions = [
-                y_min + crate_size / 2 + i * crate_size for i in range(num_crates)
+                y_min + crate_size / 2 + (zone_start_index + i) * crate_size
+                for i in range(num_crates)
             ]
 
-        for i, crate in enumerate(self.held_crates):
+        for i, crate in enumerate(dropped_crates):
             crate.x = x_positions[i]
             crate.y = y_positions[i]
             crate.zone_id = zone_index
             crate.held = False
-            self.crates.setdefault(zone_index, []).append(crate)
+            self.crates[zone_index].append(crate)
 
         self.logger.info(
             f"Dropped {num_crates} crate(s) in zone {zone_index}. "
             f"Zone now has {len(self.crates[zone_index])} crate(s).",
         )
-        self.held_crates = []
+        self.held_crates = [c for c in self.held_crates if c not in dropped_crates]
+
+    @log("WinterSpatialComputationDummy", LogLevels.INFO)
+    def release_crates(
+        self,
+        count: int | None = None,
+        color_id: int | None = None,
+        point: object | None = None,
+    ) -> None:
+        """Release held crates outside any deposit zone.
+
+        Args:
+            count (int | None): Maximum number of crates to release.
+            color_id (int | None): Color filter. ``None`` accepts all colors.
+            point (object | None): Optional point with ``x`` and ``y`` attributes.
+        """
+        matching_crates = [
+            c for c in self.held_crates if color_id is None or c.color_id == color_id
+        ]
+        released_crates = matching_crates[:count]
+        if count is None:
+            released_crates = matching_crates
+
+        if not released_crates:
+            self.logger.info("No matching crates to release.")
+            return
+
+        x_start = getattr(point, "x", DEFAULT_RELEASE_POINT[0])
+        y_start = getattr(point, "y", DEFAULT_RELEASE_POINT[1])
+        release_start_index = len(self.crates.setdefault(RELEASED_CRATES_ZONE_ID, []))
+        crate_size = 5
+
+        for i, crate in enumerate(released_crates):
+            crate.x = x_start + (release_start_index + i) * crate_size
+            crate.y = y_start
+            crate.zone_id = RELEASED_CRATES_ZONE_ID
+            crate.held = False
+            self.crates[RELEASED_CRATES_ZONE_ID].append(crate)
+
+        self.held_crates = [c for c in self.held_crates if c not in released_crates]
+        self.logger.info(
+            f"Released {len(released_crates)} crate(s) outside deposit zones.",
+        )
 
     @override
     @log("WinterSpatialComputationDummy", LogLevels.INFO)
     def reverse_crate(self) -> None:
-        """Reverse the color of held crates that don't match the team color."""
-        team_color_int = (
-            1 if self.arena.team_color == self.arena.team_color.YELLOW else 0
-        )
-        reversed_count = 0
-
-        for crate in self.held_crates:
-            if crate.color_id != team_color_int:
-                crate.color_id = team_color_int
-                reversed_count += 1
-
-        self.logger.info(
-            f"Reversed {reversed_count} crate(s) to "
-            f"{'blue' if not team_color_int else 'yellow'}.",
-        )
+        """No-op: winter actuator rotation no longer changes crate colors."""
+        self.logger.info("No crate color reversed in dummy simulation.")
 
     @override
     @log("WinterSpatialComputationDummy", LogLevels.INFO)
