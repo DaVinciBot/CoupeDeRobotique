@@ -174,7 +174,7 @@
         "0": {
           "retract_angle": 20,
           "extend_angle": 110,
-          "max_angle": 270
+          "max_angle": 180
         },
         "1": {
           "retract_angle": 0,
@@ -182,25 +182,14 @@
           "max_angle": 180
         },
         "2": {
-          "retract_angle": 25,
-          "rotate_angle": 180,
-          "max_angle": 270
-        },
-        "3": {
-          "retract_angle": 18,
-          "rotate_angle": 180,
-          "max_angle": 180
-        },
-        "4": {
           "retract_angle": 0,
-          "deploy_angle": 180,
+          "extend_angle": 180,
           "max_angle": 180
         }
       },
-      "linear_actuators_config":
+      "pumps_config":
       {
-          "extend_time": 0.67,
-          "retract_time": 0.69
+          "pump_pins": [3, 4, 5, 6]
       },
       "elevator": {
         "top_steps": 725,

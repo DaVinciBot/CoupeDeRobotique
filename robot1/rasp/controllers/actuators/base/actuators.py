@@ -295,13 +295,13 @@ class Actuators(
         self.send_bytes(msg)
 
     @log("Actuators")
-    def suck_jenga(self, pin: int) -> None:
+    def suck(self, pin: int) -> None:
         """
         """
         return
 
     @log("Actuators")
-    def release_jenga(self, pin: int) -> None:
+    def release(self, pin: int) -> None:
         """
         """
         return

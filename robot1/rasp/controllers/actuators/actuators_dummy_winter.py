@@ -7,9 +7,7 @@ from loggerplusplus import log
 from a_config_loader import CONFIG
 from controllers.actuators.actuators_winter import (
     ActuatorsWinter,
-    ArmServo,
-    CursorServo,
-    RotateServo,
+    Servo,
 )
 
 if TYPE_CHECKING:
@@ -64,21 +62,7 @@ class ActuatorsWinterDummy(ActuatorsWinter):
             self._logger.error(f"[CTRL:ACT:Dummy] No servo configured for pin {pin}")
             return
 
-        if isinstance(servo, ArmServo):
-            computed_min = min(servo.retract_angle, servo.extend_angle)
-        elif isinstance(servo, RotateServo):
-            computed_min = min(servo.retract_angle, servo.rotation_angle)
-        elif isinstance(servo, CursorServo):
-            computed_min = min(servo.retract_angle, servo.deploy_angle)
-        else:
-            computed_min = servo.retract_angle
-
-        pin_exceptions: dict[int, int] = {
-            6: 90,
-        }
-
-        computed_min = pin_exceptions.get(pin, computed_min)
-
+        computed_min = servo.retract_angle
         computed_max = servo.max_angle
 
         if computed_min <= angle <= computed_max:
@@ -104,6 +88,12 @@ class ActuatorsWinterDummy(ActuatorsWinter):
     @log("Actuators")
     def suck(self, pin: int) -> None:
         """
+        Simulate the action of sucking a Jenga block using the specified pin.
+        This method logs the action instead of performing any actual hardware interaction.
+        Args:
+            pin (int): The pin number of the servo to use for sucking.
+        Returns:
+            None
         """
 
         self._logger.info(f"[CTRL:ACT:Dummy] Suck Jenga on pin {pin}")
@@ -112,6 +102,12 @@ class ActuatorsWinterDummy(ActuatorsWinter):
     @log("Actuators")
     def release(self, pin: int) -> None:
         """
+        Release the Jenga block held by the specified pin.
+        This method simulates the release action by logging it, without performing any actual hardware interaction.
+        Args:
+            pin (int): The pin number of the servo to release.
+        Returns:
+            None
         """
 
         self._logger.info(f"[CTRL:ACT:Dummy] Release Jenga on pin {pin}")

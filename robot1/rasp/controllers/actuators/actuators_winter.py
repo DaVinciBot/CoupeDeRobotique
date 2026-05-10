@@ -14,9 +14,10 @@ if TYPE_CHECKING:
     from loggerplusplus import Logger
 
 
-R_ARM_SERVO_PIN = CONFIG.R_ARM_PIN # careful not coded yet, just a placeholder for the right arm servo pin, do same for the left arm and cursor servo pins
-L_ARM_SERVO_PIN = 1
-CURSOR_SERVO_PIN = 2
+R_ARM_SERVO_PIN = CONFIG.R_ARM_PIN
+L_ARM_SERVO_PIN = CONFIG.L_ARM_PIN
+CURSOR_SERVO_PIN = CONFIG.CURSOR_PIN
+
 
 @dataclass
 class Servo:
@@ -30,20 +31,11 @@ class Servo:
     retract_angle: int
     """Default angle for the servo (in degrees)."""
 
-    max_angle: int
-    """Maximum angle for the servo (in degrees)."""
-
-
-@dataclass
-class ArmServo(Servo):
     extend_angle: int
     """Angle to extend the servo (in degrees)."""
 
-
-@dataclass
-class CursorServo(Servo):
-    deploy_angle: int
-    """Angle to rotate the servo (in degrees)."""
+    max_angle: int
+    """Maximum angle for the servo (in degrees)."""
 
 
 class ActuatorsWinter(Actuators):
@@ -93,25 +85,16 @@ class ActuatorsWinter(Actuators):
         self.folded: bool = True  # Indicates if the actuators are folded
         self.elevator_ticks: int = 0
         self.servos: dict[int, Servo] = {}
-        self.pumps: list[int] = CONFIG.ACTUATOR_PUMPS_PINS # careful not coded yet, just a placeholder for the pump pins
+        self.pumps: list[int] = CONFIG.ACTUATOR_PUMPS_PINS
 
         for pin_str, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items():
             pin = int(pin_str)
-            if "extend_angle" in cfg:
-                self.servos[pin] = ArmServo(
-                    retract_angle=cfg["retract_angle"],
-                    max_angle=cfg["max_angle"],
-                    extend_angle=cfg["extend_angle"],
-                )
-            else:
-                self.servos[pin] = CursorServo(
-                    retract_angle=cfg["retract_angle"],
-                    max_angle=cfg["max_angle"],
-                    deploy_angle=cfg["deploy_angle"],
-                )
+            self.servos[pin] = Servo(
+                retract_angle=cfg["retract_angle"],
+                extend_angle=cfg["extend_angle"],
+                max_angle=cfg["max_angle"],
+            )
 
-
-    # Protected methods
     def _check_pin(self, pin: int) -> bool:
         """Checks if the specified pin is a valid servo pin.
 
@@ -135,19 +118,16 @@ class ActuatorsWinter(Actuators):
         Args:
             pin (int): The pin number of the servo to extend.
         """
-        if not self._check_pin(pin):
-            return
-
-        servo = self.servos[pin]
-
-        if isinstance(servo, ArmServo):
-            angle = servo.extend_angle
-        else:
-            return
-
-        self.set_servo_angle(pin, angle, max_angle=servo.max_angle)
+        if self._check_pin(pin):
+            self.set_servo_angle(pin, self.servos[pin].extend_angle, max_angle=self.servos[pin].max_angle)
 
     def retract(self, pin: int) -> None:
+        """Retract the servo connected to the specified pin.
+
+        Args:
+            pin (int): The pin number of the servo to retract.
+
+        """
         if self._check_pin(pin):
             self.set_servo_angle(
                 pin,
@@ -163,8 +143,7 @@ class ActuatorsWinter(Actuators):
         """
         pins = [R_ARM_SERVO_PIN, L_ARM_SERVO_PIN]
         for pin in pins:
-            if isinstance(self.servos[pin], ArmServo):
-                self.extend(pin)
+            self.extend(pin)
 
     def retract_arm(self) -> None:
         """Retract the specified servos to their retract angle.
@@ -174,8 +153,32 @@ class ActuatorsWinter(Actuators):
         """
         pins = [R_ARM_SERVO_PIN, L_ARM_SERVO_PIN]
         for pin in pins:
-            if isinstance(self.servos[pin], ArmServo):
-                self.retract(pin)
+            self.retract(pin)
+
+    def extend_cursor(self) -> None:
+        """Deploy the cursor by setting the specified servo to its deployment angle.
+
+        This method sets the specified servo to its deployment angle, effectively
+        deploying the cursor.
+        """
+        self.extend(CURSOR_SERVO_PIN)
+
+    def retract_cursor(self) -> None:
+        """Retract the cursor by setting the specified servo to its retract angle.
+
+        This method sets the specified servo to its retract angle, effectively
+        retracting the cursor.
+        """
+        self.retract(CURSOR_SERVO_PIN)
+
+    def extend_all(self) -> None:
+        """Extend all servos to their extend angle.
+
+        This method sets all configured servos to their extend angle, effectively
+        extending all servo arms.
+        """
+        for i in self.servos:
+            self.extend(i)
 
     def retract_all(self) -> None:
         """Retract all servos to their retract angle.
@@ -183,24 +186,8 @@ class ActuatorsWinter(Actuators):
         This method sets all configured servos to their retract angle, effectively
         retracting all servo arms.
         """
-        # A voir pour l'ordre extact des actionneurs pour que ça se pète pas mais osef je sors tout de mon cul la
         for i in self.servos:
             self.retract(i)
-
-    def deploy_cursor(self) -> None:
-        """Deploy the cursor by setting the specified servo to its deployment angle.
-
-        This method sets the specified servo to its deployment angle, effectively
-        deploying the cursor.
-        """
-        servo = self.servos[CURSOR_SERVO_PIN]
-        if isinstance(servo, CursorServo):
-            angle = servo.deploy_angle
-            self.set_servo_angle(
-                CURSOR_SERVO_PIN,
-                angle,
-                max_angle=self.servos[CURSOR_SERVO_PIN].max_angle,
-            )
 
     def suck_jenga(self, pins: int | list[int] | None = None) -> None:
         """Activate the suction mechanism to pick up Jenga pieces.
@@ -221,6 +208,26 @@ class ActuatorsWinter(Actuators):
         else:
             for pin in self.pumps:
                 self.suck(pin)
+
+    def release_jenga(self, pins: int | list[int] | None = None) -> None:
+        """Deactivate the suction mechanism to release Jenga pieces.
+
+        If specific pins are provided, the suction will be deactivated for those
+        pins. If no pins are provided, the suction will be deactivated for all
+        configured pump pins.
+
+        Args:
+            pins (int | list[int] | None): The pin(s) to deactivate for suction. Can
+                be a single integer, a list of integers, or None to deactivate all.
+        """
+        if pins is not None:
+            if isinstance(pins, int):
+                pins = [pins]
+            for pin in pins:
+                self.release(pin)
+        else:
+            for pin in self.pumps:
+                self.release(pin)
 
     def pickup(self, pins: int | list[int] | None = None) -> None:
         """
@@ -262,24 +269,3 @@ class ActuatorsWinter(Actuators):
         """
         self.extend_arm()
         self.release_jenga(pins)
-
-    def release_jenga(self, pins: int | list[int] | None = None) -> None:
-        """Deactivate the suction mechanism to release Jenga pieces.
-
-        If specific pins are provided, the suction will be deactivated for those
-        pins. If no pins are provided, the suction will be deactivated for all
-        configured pump pins.
-
-        Args:
-            pins (int | list[int] | None): The pin(s) to deactivate for suction. Can
-                be a single integer, a list of integers, or None to deactivate all.
-        """
-        if pins is not None:
-            if isinstance(pins, int):
-                pins = [pins]
-            for pin in pins:
-                self.release(pin)
-        else:
-            for pin in self.pumps:
-                self.release(pin)
-
