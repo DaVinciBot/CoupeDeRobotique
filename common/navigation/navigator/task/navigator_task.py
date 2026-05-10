@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import time
 from typing import TYPE_CHECKING, cast
 
@@ -11,6 +12,11 @@ from navigation.trajectory_planner import (
     TrajectoryPlanCommand,
     TrajectoryPlannerFactory,
 )
+
+TRACKING_LOOKAHEAD_S = 0.25
+POSITION_REACHED_TOLERANCE_CM = 1.0
+ANGLE_REACHED_TOLERANCE_RAD = 0.05
+SPEED_EPSILON = 1e-9
 
 if TYPE_CHECKING:
     from arena.base_arena.arena_zones import AllyZone, EnemyZone
@@ -64,6 +70,14 @@ class NavigatorTask:
         self.state: NavigatorTaskState = NavigatorTaskState.NOT_PLANNED
         self._start_time: float | None = None
         self._stabilization_start_time: float | None = None
+        self._planned_goal: OrientedPoint | None = None
+
+    @staticmethod
+    def _normalize_angle(angle: float) -> float:
+        angle = (angle + math.pi) % (2 * math.pi)
+        if angle < 0:
+            angle += 2 * math.pi
+        return angle - math.pi
 
     def _get_elapsed_time(self) -> float:
         if self._start_time is None:
@@ -85,6 +99,7 @@ class NavigatorTask:
             )
         )
         path: list[OrientedPoint] = self.path_planner.plan_path(plan_path_params)
+        self._planned_goal = path[-1] if path else ally_zone.point
         self.trajectory_planner.plan_trajectory(path)
         self.current_trajectory_command = self.trajectory_planner.get_plan()
         self.state = NavigatorTaskState.IN_PROGRESS
@@ -96,17 +111,107 @@ class NavigatorTask:
             else self._get_elapsed_time() > self.params.timeout
         )
 
-    def _abort(self) -> TrajectoryPlanCommand:
+    def _abort(self, current_position: OrientedPoint) -> TrajectoryPlanCommand:
         self.state = NavigatorTaskState.ABORT
         self.current_trajectory_command = TrajectoryPlanCommand.create_stop_command(
-            current_position=cast("OrientedPoint", self.params.goal),
+            current_position=current_position,
         )
         return self.current_trajectory_command
 
-    def _is_finished(self) -> bool:
+    def _is_goal_reached(self, current_position: OrientedPoint) -> bool:
+        goal = self._planned_goal or self.params.goal
+        if goal is None:
+            return False
+
+        if current_position.distance(goal) > POSITION_REACHED_TOLERANCE_CM:
+            return False
+
+        if current_position.theta is None or goal.theta is None:
+            return True
+
+        return (
+            abs(self._normalize_angle(goal.theta - current_position.theta))
+            <= ANGLE_REACHED_TOLERANCE_RAD
+        )
+
+    def _is_finished(self, current_position: OrientedPoint) -> bool:
         if self._start_time is None or self.state == NavigatorTaskState.FINISHED:
             return False
-        return self._get_elapsed_time() > self.trajectory_planner.get_total_duration()
+        return (
+            self._get_elapsed_time() > self.trajectory_planner.get_total_duration()
+            and self._is_goal_reached(current_position)
+        )
+
+    def _command_from_current_position(
+        self,
+        planned_cmd: TrajectoryPlanCommand,
+        current_position: OrientedPoint,
+    ) -> TrajectoryPlanCommand:
+        """Rebase the trajectory command on the measured robot pose.
+
+        The trajectory planner produces a time-indexed theoretical pose. The motor
+        controller, however, should chase a local target built from the real
+        odometry so a lagging robot does not keep receiving targets that run away
+        along the ideal trajectory.
+
+        Returns:
+            TrajectoryPlanCommand: Command rebased on the measured pose.
+        """
+        from geometry import OrientedPoint  # noqa: PLC0415
+
+        goal = self._planned_goal or planned_cmd.position
+        trajectory_is_over = (
+            self._get_elapsed_time() >= self.trajectory_planner.get_total_duration()
+        )
+        if trajectory_is_over:
+            return TrajectoryPlanCommand(
+                position=goal,
+                linear_speed=0.0,
+                angular_speed=0.0,
+            )
+
+        if current_position.theta is None:
+            return planned_cmd
+
+        target_theta = current_position.theta
+        has_angular_speed = abs(planned_cmd.angular_speed) > SPEED_EPSILON
+        has_linear_speed = abs(planned_cmd.linear_speed) > SPEED_EPSILON
+
+        if has_angular_speed:
+            target_theta = current_position.theta + (
+                planned_cmd.angular_speed * TRACKING_LOOKAHEAD_S
+            )
+        elif planned_cmd.position.theta is not None:
+            target_theta = planned_cmd.position.theta
+
+        dx = 0.0
+        dy = 0.0
+        if has_linear_speed:
+            heading = (
+                planned_cmd.position.theta
+                if planned_cmd.position.theta is not None
+                else current_position.theta
+            )
+            step = planned_cmd.linear_speed * TRACKING_LOOKAHEAD_S
+            max_step = current_position.distance(goal)
+            if abs(step) > max_step:
+                step = math.copysign(max_step, step)
+            dx = step * math.cos(heading)
+            dy = step * math.sin(heading)
+
+        if not has_linear_speed and not has_angular_speed:
+            target = current_position
+        else:
+            target = OrientedPoint(
+                (current_position.x + dx, current_position.y + dy),
+                target_theta,
+            )
+
+        return TrajectoryPlanCommand(
+            position=target,
+            linear_speed=planned_cmd.linear_speed,
+            angular_speed=planned_cmd.angular_speed,
+        )
 
     def handle(
         self,
@@ -124,14 +229,23 @@ class NavigatorTask:
         """
         if self.state == NavigatorTaskState.NOT_PLANNED:
             self._plan_task(ally_zone)
-            return self.trajectory_planner.get_plan()
+            planned_cmd = self.trajectory_planner.get_plan()
+            self.current_trajectory_command = self._command_from_current_position(
+                planned_cmd,
+                ally_zone.point,
+            )
+            return self.current_trajectory_command
 
         if self._has_timed_out():
-            return self._abort()
+            return self._abort(ally_zone.point)
 
-        cmd = self.trajectory_planner.get_plan()
+        planned_cmd = self.trajectory_planner.get_plan()
+        cmd = self._command_from_current_position(planned_cmd, ally_zone.point)
 
-        if self._is_finished() and self.state != NavigatorTaskState.STABILIZING:
+        if (
+            self._is_finished(ally_zone.point)
+            and self.state != NavigatorTaskState.STABILIZING
+        ):
             if self.params.stabilization_delay > 0:
                 self._stabilization_start_time = time.time()
                 self.state = NavigatorTaskState.STABILIZING
@@ -140,11 +254,21 @@ class NavigatorTask:
 
         if self.state == NavigatorTaskState.STABILIZING:
             if self._get_stabilization_elapsed() < self.params.stabilization_delay:
-                return cmd
+                self.current_trajectory_command = (
+                    TrajectoryPlanCommand.create_stop_command(
+                        current_position=ally_zone.point,
+                    )
+                )
+                return self.current_trajectory_command
             self.state = NavigatorTaskState.FINISHED
 
         if self.state == NavigatorTaskState.FINISHED:
-            return cmd
+            self.current_trajectory_command = TrajectoryPlanCommand.create_stop_command(
+                current_position=ally_zone.point,
+            )
+            return self.current_trajectory_command
+
+        self.current_trajectory_command = cmd
 
         avoidance_cmd = self.avoidance.handle(
             current_navigator_task=self,
@@ -154,5 +278,4 @@ class NavigatorTask:
         if self.state == NavigatorTaskState.AVOIDING:
             return avoidance_cmd
 
-        self.current_trajectory_command = cmd
         return self.current_trajectory_command
