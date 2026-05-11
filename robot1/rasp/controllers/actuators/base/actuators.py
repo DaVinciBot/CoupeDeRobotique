@@ -294,16 +294,61 @@ class Actuators(
         msg = Messages.ATTACH_SWITCH.to_bytes() + struct.pack("<B", pin)
         self.send_bytes(msg)
 
-    @log("Actuators")
-    def suck(self, pin: int) -> None:
+    def _check_pump_pin(self, pin: int) -> bool:
+        """Register and validate a pump command pin.
+
+        Returns:
+            bool: ``True`` if the pin can be used as a pump command pin.
         """
-        """
-        return
+        if not self.gpio_manager.is_declared_gpio(pin):
+            self.gpio_manager.add_gpio(pin, ActuatorType.PUMP)
+            self._logger.info(f"[CTRL:ACT] Pin {pin} added as pump")
+            return True
+
+        if self.gpio_manager.is_valid_gpio(pin, ActuatorType.PUMP):
+            return True
+
+        self._logger.error(
+            f"[CTRL:ACT] Pin {pin} invalid - registered as "
+            f"{self.gpio_manager.get_type_gpio(pin)!s}",
+        )
+        return False
 
     @log("Actuators")
-    def release(self, pin: int) -> None:
+    def set_pump_pin_state(self, pin: int, *, state: bool) -> None:
+        """Switch a relay-driven pump pin on or off.
+
+        Args:
+            pin (int): Teensy pin connected to the relay input.
+            state (bool): ``True`` powers the pump, ``False`` cuts it.
         """
+        if not self._check_pump_pin(pin):
+            return
+
+        msg = (
+            Messages.SET_PUMP_PIN_STATE.to_bytes()
+            + struct.pack("<B", pin)
+            + struct.pack("<?", state)
+        )
+        self.send_bytes(msg)
+
+    @log("Actuators")
+    def set_pump_mosfet_power(self, pin: int, power: int) -> None:
+        """Set the PWM power for a MOSFET-driven pump.
+
+        Args:
+            pin (int): Teensy PWM pin connected to the MOSFET gate.
+            power (int): PWM power from 0 to 255.
         """
-        return
+        if not self._check_pump_pin(pin):
+            return
+
+        clamped_power = max(0, min(255, power))
+        msg = (
+            Messages.SET_PUMP_MOSFET_POWER.to_bytes()
+            + struct.pack("<B", pin)
+            + struct.pack("<B", clamped_power)
+        )
+        self.send_bytes(msg)
 
     # endregion

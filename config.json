@@ -189,7 +189,9 @@
       },
       "pumps_config":
       {
-          "pump_pins": [3, 4, 5, 6]
+          "pump_pins": [3, 4, 5, 6],
+          "driver": "relay",
+          "mosfet_power": 255
       },
       "linear_actuators_config":
       {

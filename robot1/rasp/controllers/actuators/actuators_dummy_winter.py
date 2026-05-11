@@ -7,7 +7,6 @@ from loggerplusplus import log
 from a_config_loader import CONFIG
 from controllers.actuators.actuators_winter import (
     ActuatorsWinter,
-    Servo,
 )
 
 if TYPE_CHECKING:
@@ -83,31 +82,36 @@ class ActuatorsWinterDummy(ActuatorsWinter):
                 f"[{computed_min},{computed_max}] for pin {pin}",
             )
 
+    @override
+    @log("Actuators")
+    def suck(
+        self,
+        pin: int,
+        *,
+        use_mosfet: bool | None = None,
+        power: int | None = None,
+    ) -> None:
+        """Simulate pump activation."""
+        mode = (
+            "mosfet"
+            if self._use_pump_mosfet(use_mosfet=use_mosfet)
+            else "relay"
+        )
+        pump_power = self.pump_mosfet_power if power is None else power
+        self._logger.info(
+            f"[CTRL:ACT:Dummy] Suck Jenga on pin {pin} "
+            f"with {mode} mode and power {pump_power}",
+        )
 
     @override
     @log("Actuators")
-    def suck(self, pin: int) -> None:
-        """
-        Simulate the action of sucking a Jenga block using the specified pin.
-        This method logs the action instead of performing any actual hardware interaction.
-        Args:
-            pin (int): The pin number of the servo to use for sucking.
-        Returns:
-            None
-        """
-
-        self._logger.info(f"[CTRL:ACT:Dummy] Suck Jenga on pin {pin}")
-
-    @override
-    @log("Actuators")
-    def release(self, pin: int) -> None:
-        """
-        Release the Jenga block held by the specified pin.
-        This method simulates the release action by logging it, without performing any actual hardware interaction.
-        Args:
-            pin (int): The pin number of the servo to release.
-        Returns:
-            None
-        """
-
-        self._logger.info(f"[CTRL:ACT:Dummy] Release Jenga on pin {pin}")
+    def release(self, pin: int, *, use_mosfet: bool | None = None) -> None:
+        """Simulate pump deactivation."""
+        mode = (
+            "mosfet"
+            if self._use_pump_mosfet(use_mosfet=use_mosfet)
+            else "relay"
+        )
+        self._logger.info(
+            f"[CTRL:ACT:Dummy] Release Jenga on pin {pin} with {mode} mode",
+        )

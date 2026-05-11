@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import time
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -85,6 +84,11 @@ class ActuatorsWinter(Actuators):
         self.elevator_ticks: int = 0
         self.servos: dict[int, Servo] = {}
         self.pumps: list[int] = CONFIG.ACTUATOR_PUMPS_PINS
+        self.pump_driver: str = CONFIG.ACTUATOR_PUMPS_CONFIG.get("driver", "relay")
+        self.pump_mosfet_power: int = CONFIG.ACTUATOR_PUMPS_CONFIG.get(
+            "mosfet_power",
+            255,
+        )
 
         for pin_str, cfg in CONFIG.ACTUATOR_SERVOS_CONFIG.items():
             pin = int(pin_str)
@@ -208,9 +212,27 @@ class ActuatorsWinter(Actuators):
             for pin in self.pumps:
                 self.suck(pin)
 
-    def suck(self, pin: int) -> None:
+    def _use_pump_mosfet(self, *, use_mosfet: bool | None = None) -> bool:
+        """Return whether the pump should use MOSFET mode."""
+        if use_mosfet is not None:
+            return use_mosfet
+        return self.pump_driver == "mosfet"
+
+    def suck(
+        self,
+        pin: int,
+        *,
+        use_mosfet: bool | None = None,
+        power: int | None = None,
+    ) -> None:
         """Activate one pump pin."""
-        self.set_stepper_driver_activation_state(pin_enable=pin, enable_driver=True)
+        if self._use_pump_mosfet(use_mosfet=use_mosfet):
+            self.set_pump_mosfet_power(
+                pin,
+                self.pump_mosfet_power if power is None else power,
+            )
+        else:
+            self.set_pump_pin_state(pin, state=True)
 
     def release_jenga(self, pins: int | list[int] | None = None) -> None:
         """Deactivate the suction mechanism to release Jenga pieces.
@@ -232,13 +254,15 @@ class ActuatorsWinter(Actuators):
             for pin in self.pumps:
                 self.release(pin)
 
-    def release(self, pin: int) -> None:
+    def release(self, pin: int, *, use_mosfet: bool | None = None) -> None:
         """Deactivate one pump pin."""
-        self.set_stepper_driver_activation_state(pin_enable=pin, enable_driver=False)
+        if self._use_pump_mosfet(use_mosfet=use_mosfet):
+            self.set_pump_mosfet_power(pin, 0)
+        else:
+            self.set_pump_pin_state(pin, state=False)
 
     def pickup(self, pins: int | list[int] | None = None) -> None:
-        """
-        Perform the sequence to pick up Jenga pieces using the suction mechanism.
+        """Perform the sequence to pick up Jenga pieces using the suction mechanism.
         This method first releases any active suction, then extends the arm, and
         finally activates the suction for the specified pins. If no pins are
         provided, it activates suction for all configured pump pins.
@@ -246,6 +270,7 @@ class ActuatorsWinter(Actuators):
         Args:
             pins (int | list[int] | None): The pin(s) to activate for suction. Can be a
             single integer, a list of integers, or None to activate all.
+
         Returns:
             None
         """
@@ -262,8 +287,7 @@ class ActuatorsWinter(Actuators):
         self.retract_arm()
 
     def deposit(self, pins: int | list[int] | None = None) -> None:
-        """
-        Perform the sequence to deposit Jenga pieces using the suction mechanism.
+        """Perform the sequence to deposit Jenga pieces using the suction mechanism.
         This method first retracts the arm, then releases any active suction for
         the specified pins. If no pins are provided, it releases suction for all
         configured pump pins.
@@ -271,6 +295,7 @@ class ActuatorsWinter(Actuators):
         Args:
             pins (int | list[int] | None): The pin(s) to deactivate for suction. Can be a
             single integer, a list of integers, or None to deactivate all.
+
         Returns:
             None
         """

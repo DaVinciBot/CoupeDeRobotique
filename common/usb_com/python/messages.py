@@ -25,6 +25,8 @@ class Messages(Enum):
         ATTACH_SWITCH: Attach a switch on the actuators board.
         SET_SERVO_ANGLE: Set a servo angle.
         SET_STEPPER_DRIVER_ACTIVATION_STATE: Enable or disable the stepper driver.
+        SET_PUMP_PIN_STATE: Enable or disable a pump through a relay pin.
+        SET_PUMP_MOSFET_POWER: Set a pump MOSFET PWM power.
         RESET_TEENSY: Reset the Teensy board.
         NACK: Notification of an invalid command.
         UPDATE_ROLLING_BASIS: Send odometry data from the Teensy.
@@ -56,6 +58,10 @@ class Messages(Enum):
     """Set a servo angle."""
     SET_STEPPER_DRIVER_ACTIVATION_STATE = 8
     """Enable or disable the stepper driver."""
+    SET_PUMP_PIN_STATE = 9
+    """Enable or disable a pump through a relay pin."""
+    SET_PUMP_MOSFET_POWER = 10
+    """Set a pump MOSFET PWM power."""
 
     # Common (Rolling Basis + Actuators)
     RESET_TEENSY = 126

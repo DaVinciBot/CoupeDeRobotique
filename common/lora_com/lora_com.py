@@ -11,7 +11,7 @@ class LoraCom:
     def __init__(
         self,
         logger: Logger,
-        port: str = "/dev/ttyAMA0",
+        port: str = "/dev/ttyUSB0",
         baudrate: int = 9600,
         timeout: float = 1,
     ) -> None:

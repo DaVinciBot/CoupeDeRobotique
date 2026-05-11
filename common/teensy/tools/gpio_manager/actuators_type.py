@@ -13,6 +13,7 @@ class ActuatorType(Enum):
         SERVO: Represents a servo motor.
         STEPPER: Represents a stepper motor.
         LCD: Represents an LCD-display.
+        PUMP: Represents a pump command pin.
     """
 
     UNKNOWN = auto()
@@ -23,3 +24,5 @@ class ActuatorType(Enum):
     """Represents a stepper motor."""
     LCD = auto()
     """Represents an LCD-display."""
+    PUMP = auto()
+    """Represents a pump command pin."""

@@ -128,6 +128,28 @@ void set_stepper_driver_activation_state(byte* msg, byte size) {
                  stepper_driver_activation_msg->enable_driver_state);
 }
 
+void set_pump_pin_state(byte* msg, byte size) {
+    msg_set_pump_pin_state* pump_pin_state_msg = (msg_set_pump_pin_state*)msg;
+    String output = "pump relay pin:" + String(pump_pin_state_msg->pin);
+    String output2 = "state:" + String(pump_pin_state_msg->state);
+    com->print((char*)output.c_str());
+    com->print((char*)output2.c_str());
+    pinMode(pump_pin_state_msg->pin, OUTPUT);
+    digitalWrite(pump_pin_state_msg->pin,
+                 pump_pin_state_msg->state ? HIGH : LOW);
+}
+
+void set_pump_mosfet_power(byte* msg, byte size) {
+    msg_set_pump_mosfet_power* pump_mosfet_power_msg =
+        (msg_set_pump_mosfet_power*)msg;
+    String output = "pump mosfet pin:" + String(pump_mosfet_power_msg->pin);
+    String output2 = "power:" + String(pump_mosfet_power_msg->power);
+    com->print((char*)output.c_str());
+    com->print((char*)output2.c_str());
+    pinMode(pump_mosfet_power_msg->pin, OUTPUT);
+    analogWrite(pump_mosfet_power_msg->pin, pump_mosfet_power_msg->power);
+}
+
 void attach_switch(byte* msg, byte size) {
     msg_attach_switch* attach_switch_msg = (msg_attach_switch*)msg;
     switch_pins[attach_switch_msg->pin] = true;
@@ -156,6 +178,8 @@ void initilize_callback_functions() {
     callback_functions[SET_SERVO_ANGLE] = &set_servo_angle;
     callback_functions[SET_STEPPER_DRIVER_ACTIVATION_STATE] =
         &set_stepper_driver_activation_state;
+    callback_functions[SET_PUMP_PIN_STATE] = &set_pump_pin_state;
+    callback_functions[SET_PUMP_MOSFET_POWER] = &set_pump_mosfet_power;
 }
 void setup() {
     pinMode(ENABLE_DRIVER_STEPPER_PIN,
