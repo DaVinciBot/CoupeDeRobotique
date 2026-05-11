@@ -96,3 +96,45 @@ input {
   background-color: var(--primary);
   color: white;
 }
+
+.actuator_debug {
+  gap: 20px;
+}
+
+.actuator_panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.control_line {
+  align-items: center;
+  background-color: var(--secondary);
+  border-radius: var(--roundness);
+  display: flex;
+  font-family: var(--font);
+  font-weight: 500;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 12px 18px;
+}
+
+.control_line input,
+.control_line select {
+  border: 0;
+  border-radius: var(--roundness);
+  font-size: 18px;
+  min-width: 120px;
+  padding: 8px 10px;
+}
+
+.actuator_panel .button {
+  margin-top: 0;
+  padding: 12px 18px;
+}
+
+.hint_text {
+  color: #555;
+  font-family: var(--font);
+  line-height: 1.4;
+}

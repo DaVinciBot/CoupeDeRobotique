@@ -166,6 +166,71 @@ function button_click_effect(button, server) {
       .nextElementSibling.innerText;
     server.send("ui", "action", { type: action, name: actionName });
   }
+  if (button.id.includes("actuator_")) {
+    handle_actuator_debug_button(button.id, server);
+  }
+}
+
+function get_number_value(id, fallback = 0) {
+  const element = document.getElementById(id);
+  const value = parseFloat(element?.value);
+  return Number.isNaN(value) ? fallback : value;
+}
+
+function get_pump_debug_data() {
+  const driver = document.getElementById("actuator_pump_driver")?.value;
+  return {
+    use_mosfet: driver === "mosfet",
+    power: Math.max(0, Math.min(255, get_number_value("actuator_pump_power", 255))),
+  };
+}
+
+function send_actuator_debug(server, action, data = {}) {
+  server.send("ui", "actuator debug", { action, data });
+}
+
+function handle_actuator_debug_button(button_id, server) {
+  const pump = get_pump_debug_data();
+  if (button_id === "actuator_set_servo_angle") {
+    send_actuator_debug(server, "servo_angle", {
+      pin: get_number_value("actuator_servo_pin"),
+      angle: get_number_value("actuator_servo_angle"),
+      max_angle: get_number_value("actuator_servo_max", 180),
+      use_i2c: true,
+    });
+  } else if (button_id === "actuator_set_arm_angles") {
+    send_actuator_debug(server, "arm_angles", {
+      left_angle: get_number_value("actuator_left_arm_angle"),
+      right_angle: get_number_value("actuator_right_arm_angle"),
+      max_angle: get_number_value("actuator_arm_max", 180),
+    });
+  } else if (button_id === "actuator_extend_arm") {
+    send_actuator_debug(server, "extend_arm");
+  } else if (button_id === "actuator_retract_arm") {
+    send_actuator_debug(server, "retract_arm");
+  } else if (button_id === "actuator_extend_cursor") {
+    send_actuator_debug(server, "extend_cursor");
+  } else if (button_id === "actuator_retract_cursor") {
+    send_actuator_debug(server, "retract_cursor");
+  } else if (button_id === "actuator_suck") {
+    send_actuator_debug(server, "suck", {
+      pin: get_number_value("actuator_pump_pin"),
+      ...pump,
+    });
+  } else if (button_id === "actuator_release") {
+    send_actuator_debug(server, "release", {
+      pin: get_number_value("actuator_pump_pin"),
+      ...pump,
+    });
+  } else if (button_id === "actuator_suck_all") {
+    send_actuator_debug(server, "suck_all", pump);
+  } else if (button_id === "actuator_release_all") {
+    send_actuator_debug(server, "release_all", pump);
+  } else if (button_id === "actuator_pickup") {
+    send_actuator_debug(server, "pickup", pump);
+  } else if (button_id === "actuator_deposit") {
+    send_actuator_debug(server, "deposit", pump);
+  }
 }
 
 let currentPage = "main";

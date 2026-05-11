@@ -117,6 +117,8 @@ class MainBrain(Brain):
         self.pid_kp: float = 0.0
         self.pid_ki: float = 0.0
         self.pid_kd: float = 0.0
+        self.actuator_debug_command: dict[str, Any] = {}
+        self.should_update_actuator_debug: bool = False
 
         self.jack_triggered: bool = False
         self.jack_plugged: bool = False
@@ -223,9 +225,12 @@ class MainBrain(Brain):
 
         # --- 2) Wait for jack plug, then wait for trigger --- #
         if (
-            not CONFIG.LIDAR_DUMMY
-            or not CONFIG.ROLLING_BASIS_DUMMY
-            or not CONFIG.ACTUATORS_DUMMY
+            self.mode != "iihm"
+            and (
+                not CONFIG.LIDAR_DUMMY
+                or not CONFIG.ROLLING_BASIS_DUMMY
+                or not CONFIG.ACTUATORS_DUMMY
+            )
         ):
             while not self.jack_plugged:  # wait until cable is plugged
                 sc.receive_data()
@@ -237,9 +242,10 @@ class MainBrain(Brain):
         rolling_basis.initialize_pids()
 
         # --- Wait for trigger --- #
-        while not self.jack_triggered:
-            sc.receive_data()
-            time.sleep(0.1)
+        if self.mode != "iihm":
+            while not self.jack_triggered:
+                sc.receive_data()
+                time.sleep(0.1)
 
         # --- 3) Build the strategy --- #
         # Choose strategy based on configuration
@@ -357,6 +363,66 @@ class MainBrain(Brain):
                 self.should_update_task = False
             if action_holder[0] is not None:
                 action_holder[0].handle(context)
+
+        if self.should_update_actuator_debug:
+            command = self.actuator_debug_command
+            action = str(command.get("action", ""))
+            data = command.get("data", {})
+            try:
+                if action == "servo_angle":
+                    actuators.set_servo_angle(
+                        pin=int(data["pin"]),
+                        angle=int(data["angle"]),
+                        max_angle=int(data.get("max_angle", 180)),
+                        use_i2c=bool(data.get("use_i2c", True)),
+                    )
+                elif action == "arm_angles":
+                    actuators.set_arm_angles(
+                        left_angle=int(data["left_angle"]),
+                        right_angle=int(data["right_angle"]),
+                        max_angle=int(data.get("max_angle", 180)),
+                    )
+                elif action == "extend_arm":
+                    actuators.extend_arm()
+                elif action == "retract_arm":
+                    actuators.retract_arm()
+                elif action == "extend_cursor":
+                    actuators.extend_cursor()
+                elif action == "retract_cursor":
+                    actuators.retract_cursor()
+                elif action in {"suck", "release"}:
+                    pin = int(data["pin"])
+                    use_mosfet = bool(data.get("use_mosfet", False))
+                    if action == "suck":
+                        actuators.suck(
+                            pin,
+                            use_mosfet=use_mosfet,
+                            power=int(data.get("power", 255)),
+                        )
+                    else:
+                        actuators.release(pin, use_mosfet=use_mosfet)
+                elif action in {"suck_all", "release_all"}:
+                    use_mosfet = bool(data.get("use_mosfet", False))
+                    if action == "suck_all":
+                        actuators.suck_jenga(
+                            use_mosfet=use_mosfet,
+                            power=int(data.get("power", 255)),
+                        )
+                    else:
+                        actuators.release_jenga(use_mosfet=use_mosfet)
+                elif action == "pickup":
+                    actuators.pickup(
+                        use_mosfet=bool(data.get("use_mosfet", False)),
+                        power=int(data.get("power", 255)),
+                    )
+                elif action == "deposit":
+                    actuators.deposit(use_mosfet=bool(data.get("use_mosfet", False)))
+                else:
+                    self.logger.warning(f"Unknown actuator debug action: {action}")
+            except Exception as error:
+                self.logger.error(f"Actuator debug action failed: {error}")
+            finally:
+                self.should_update_actuator_debug = False
 
         self.shared_crates = crates_to_dict(sc.crates)
         self.shared_zone_accessibility = zones_accessibility_to_dict(self.arena)
@@ -542,7 +608,16 @@ class MainBrain(Brain):
                     f"Updating {pid_type} PID to Kp: {kp}, Ki: {ki}, Kd: {kd}",
                 )
                 self.pid_type = pid_type
-                self.should_update_pid
+                self.should_update_pid = True
+            elif ui.msg == "actuator debug":
+                self.actuator_debug_command = {
+                    "action": ui.data["action"],
+                    "data": ui.data.get("data", {}),
+                }
+                self.should_update_actuator_debug = True
+                self.logger.info(
+                    f"Queued actuator debug action: {self.actuator_debug_command}",
+                )
             else:
                 self.logger.warning(
                     f"[WS:UI] Command not implemented: {ui.msg} / {ui.data}",

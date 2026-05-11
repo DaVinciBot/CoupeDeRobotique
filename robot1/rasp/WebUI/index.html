@@ -45,6 +45,12 @@
         <a onclick="set_page('cam')" id="cam_menu" class="item_menu"
           ><i class="cam_icon icon"></i>Caméra</a
         >
+        <a
+          onclick="set_page('actuator_debug')"
+          id="actuator_debug_menu"
+          class="item_menu"
+          ><i class="grid_icon icon"></i>Actionneurs</a
+        >
         <a onclick="set_page('start')" id="start_menu" class="item_menu"
           ><i class="save_icon icon"></i>Start</a
         >
@@ -417,6 +423,94 @@
             <h1 style="color: white; font-weight: 800; font-size: 50px">
               NO SIGNAL
             </h1>
+          </div>
+        </div>
+      </div>
+      <div class="actuator_debug content" id="actuator_debug">
+        <div class="row">
+          <div class="sushi actuator_panel">
+            <div class="pilule">
+              <i class="grid_icon icon"></i>
+              Servos
+            </div>
+            <label class="control_line">
+              Pin servo
+              <input type="number" id="actuator_servo_pin" value="0" min="0" />
+            </label>
+            <label class="control_line">
+              Angle
+              <input type="number" id="actuator_servo_angle" value="90" min="0" />
+            </label>
+            <label class="control_line">
+              Angle max
+              <input type="number" id="actuator_servo_max" value="180" min="1" />
+            </label>
+            <button class="button" id="actuator_set_servo_angle">
+              Envoyer angle servo
+            </button>
+          </div>
+          <div class="sushi actuator_panel">
+            <div class="pilule">
+              <i class="compass_icon icon"></i>
+              Bras
+            </div>
+            <label class="control_line">
+              Bras gauche
+              <input type="number" id="actuator_left_arm_angle" value="90" min="0" />
+            </label>
+            <label class="control_line">
+              Bras droit
+              <input type="number" id="actuator_right_arm_angle" value="90" min="0" />
+            </label>
+            <label class="control_line">
+              Angle max
+              <input type="number" id="actuator_arm_max" value="180" min="1" />
+            </label>
+            <button class="button" id="actuator_set_arm_angles">
+              Envoyer angles bras
+            </button>
+            <button class="button" id="actuator_extend_arm">Extend arm</button>
+            <button class="button" id="actuator_retract_arm">Retract arm</button>
+            <button class="button" id="actuator_extend_cursor">Extend cursor</button>
+            <button class="button" id="actuator_retract_cursor">Retract cursor</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="sushi actuator_panel">
+            <div class="pilule">
+              <i class="save_icon icon"></i>
+              Pompes
+            </div>
+            <label class="control_line">
+              Pin pompe
+              <input type="number" id="actuator_pump_pin" value="3" min="0" />
+            </label>
+            <label class="control_line">
+              Mode
+              <select id="actuator_pump_driver">
+                <option value="relay">Relay / pin</option>
+                <option value="mosfet">MOSFET</option>
+              </select>
+            </label>
+            <label class="control_line">
+              Puissance
+              <input type="number" id="actuator_pump_power" value="255" min="0" max="255" />
+            </label>
+            <button class="button" id="actuator_suck">Suck pin</button>
+            <button class="button" id="actuator_release">Release pin</button>
+            <button class="button" id="actuator_suck_all">Suck toutes</button>
+            <button class="button" id="actuator_release_all">Release toutes</button>
+          </div>
+          <div class="sushi actuator_panel">
+            <div class="pilule">
+              <i class="play_icon icon"></i>
+              Sequences
+            </div>
+            <button class="button" id="actuator_pickup">Tester pickup</button>
+            <button class="button" id="actuator_deposit">Tester deposit</button>
+            <p class="hint_text">
+              Les sequences utilisent le mode pompe et la puissance selectionnes.
+            </p>
           </div>
         </div>
       </div>

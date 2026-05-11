@@ -148,6 +148,21 @@ class ActuatorsWinter(Actuators):
         for pin in pins:
             self.extend(pin)
 
+    def set_arm_angles(
+        self,
+        left_angle: int,
+        right_angle: int,
+        *,
+        max_angle: int | None = None,
+    ) -> None:
+        """Set both arm servos to explicit debug angles."""
+        for pin, angle in (
+            (L_ARM_SERVO_PIN, left_angle),
+            (R_ARM_SERVO_PIN, right_angle),
+        ):
+            servo_max_angle = max_angle or self.servos[pin].max_angle
+            self.set_servo_angle(pin, angle, max_angle=servo_max_angle)
+
     def retract_arm(self) -> None:
         """Retract the specified servos to their retract angle.
 
@@ -192,7 +207,13 @@ class ActuatorsWinter(Actuators):
         for i in self.servos:
             self.retract(i)
 
-    def suck_jenga(self, pins: int | list[int] | None = None) -> None:
+    def suck_jenga(
+        self,
+        pins: int | list[int] | None = None,
+        *,
+        use_mosfet: bool | None = None,
+        power: int | None = None,
+    ) -> None:
         """Activate the suction mechanism to pick up Jenga pieces.
 
         If specific pins are provided, the suction will be activated for those pins.
@@ -207,10 +228,10 @@ class ActuatorsWinter(Actuators):
             if isinstance(pins, int):
                 pins = [pins]
             for pin in pins:
-                self.suck(pin)
+                self.suck(pin, use_mosfet=use_mosfet, power=power)
         else:
             for pin in self.pumps:
-                self.suck(pin)
+                self.suck(pin, use_mosfet=use_mosfet, power=power)
 
     def _use_pump_mosfet(self, *, use_mosfet: bool | None = None) -> bool:
         """Return whether the pump should use MOSFET mode."""
@@ -234,7 +255,12 @@ class ActuatorsWinter(Actuators):
         else:
             self.set_pump_pin_state(pin, state=True)
 
-    def release_jenga(self, pins: int | list[int] | None = None) -> None:
+    def release_jenga(
+        self,
+        pins: int | list[int] | None = None,
+        *,
+        use_mosfet: bool | None = None,
+    ) -> None:
         """Deactivate the suction mechanism to release Jenga pieces.
 
         If specific pins are provided, the suction will be deactivated for those
@@ -249,10 +275,10 @@ class ActuatorsWinter(Actuators):
             if isinstance(pins, int):
                 pins = [pins]
             for pin in pins:
-                self.release(pin)
+                self.release(pin, use_mosfet=use_mosfet)
         else:
             for pin in self.pumps:
-                self.release(pin)
+                self.release(pin, use_mosfet=use_mosfet)
 
     def release(self, pin: int, *, use_mosfet: bool | None = None) -> None:
         """Deactivate one pump pin."""
@@ -261,7 +287,13 @@ class ActuatorsWinter(Actuators):
         else:
             self.set_pump_pin_state(pin, state=False)
 
-    def pickup(self, pins: int | list[int] | None = None) -> None:
+    def pickup(
+        self,
+        pins: int | list[int] | None = None,
+        *,
+        use_mosfet: bool | None = None,
+        power: int | None = None,
+    ) -> None:
         """Perform the sequence to pick up Jenga pieces using the suction mechanism.
         This method first releases any active suction, then extends the arm, and
         finally activates the suction for the specified pins. If no pins are
@@ -274,19 +306,24 @@ class ActuatorsWinter(Actuators):
         Returns:
             None
         """
-        self.release_jenga()
+        self.release_jenga(use_mosfet=use_mosfet)
         self.extend_arm()
         if pins is not None:
             if isinstance(pins, int):
                 pins = [pins]
             for pin in pins:
-                self.suck(pin)
+                self.suck(pin, use_mosfet=use_mosfet, power=power)
         else:
-            self.suck_jenga()
+            self.suck_jenga(use_mosfet=use_mosfet, power=power)
 
         self.retract_arm()
 
-    def deposit(self, pins: int | list[int] | None = None) -> None:
+    def deposit(
+        self,
+        pins: int | list[int] | None = None,
+        *,
+        use_mosfet: bool | None = None,
+    ) -> None:
         """Perform the sequence to deposit Jenga pieces using the suction mechanism.
         This method first retracts the arm, then releases any active suction for
         the specified pins. If no pins are provided, it releases suction for all
@@ -300,4 +337,4 @@ class ActuatorsWinter(Actuators):
             None
         """
         self.extend_arm()
-        self.release_jenga(pins)
+        self.release_jenga(pins, use_mosfet=use_mosfet)
