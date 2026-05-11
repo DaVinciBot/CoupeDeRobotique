@@ -266,10 +266,16 @@ class MainBrain(Brain):
 
         self.should_send_start = True
         self.status = "starting"
+        """lora = LoraCom(
+            logger=LogLogger(
+                identifier="LoraCom",
+                follow_logger_manager_rules=True,
+            ),
+        )"""
 
         # --- MetaProg is insane (loop) --- #
 
-        #lora.receive()
+        # lora.receive()
         sc.receive_data()
         self.shared_crates = crates_to_dict(sc.crates)
         self.shared_zone_accessibility = zones_accessibility_to_dict(self.arena)
