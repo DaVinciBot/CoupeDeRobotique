@@ -41,7 +41,7 @@
 // LoRa configuration
 #define LORA_RX_PIN 16
 #define LORA_TX_PIN 17
-#define LORA_BAUD 9600
+#define LORA_BAUD 115200
 #define LORA_M0_PIN -1
 #define LORA_M1_PIN -1
 #define LORA_AUX_PIN 4

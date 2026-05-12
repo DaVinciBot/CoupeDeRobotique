@@ -15,6 +15,13 @@ CustomOTA ota(OTA_WIFI_SSID,
               &server);
 #endif
 
+#if ENABLE_LORA
+HardwareSerial LoRaSerial(2);
+char loraRxBuffer[256];
+int loraRxPos = 0;
+int myPamiId = -1;
+#endif
+
 Motor* leftMotor = new Motor(LEFT_STEP_PIN,
                              LEFT_DIR_PIN,
                              LEFT_EN_PIN,
@@ -94,6 +101,102 @@ bool strategyDoneLogged = false;
 unsigned long lastStrategyUpdateMs = 0;
 bool canStart = false;
 
+#if ENABLE_LORA
+void purgeLoRa() {
+    LoRaSerial.print("\n");
+    LoRaSerial.flush();
+    delay(100);
+    while (LoRaSerial.available()) {
+        LoRaSerial.read();
+    }
+    loraRxPos = 0;
+}
+
+void sendIdRequest() {
+    Serial.println(">> LoRa: envoi demande d'ID (cmd 1)");
+    LoRaSerial.print("1\n");
+}
+
+void handleIdAttribution(char** tokens, int nbTokens) {
+    if (nbTokens < 2) return;
+    if (myPamiId != -1) {
+        Serial.printf("LoRa: ID deja attribue (%d), ignore.\n", myPamiId);
+        return;
+    }
+    myPamiId = atoi(tokens[1]);
+    Serial.printf(">> LoRa: ID attribue = %d\n", myPamiId);
+}
+
+void handleDepotAssignment(char** tokens, int nbTokens) {
+    if (myPamiId == -1) {
+        Serial.println("LoRa: cmd 3 recue mais pas d'ID -> ignoree");
+        return;
+    }
+
+    for (int i = 1; i + 2 < nbTokens; i += 3) {
+        int id = atoi(tokens[i]);
+        if (id == myPamiId) {
+            float x = atof(tokens[i + 1]);
+            float y = atof(tokens[i + 2]);
+
+            Serial.printf(">> LoRa: depot recu -> x=%.1f mm, y=%.1f mm\n", x,
+                          y);
+
+            strategy->clearActions();
+            strategy->addAction(
+                new GoTo(rollingBasis, Point{x, y, 0.0f}));
+            strategy->start();
+            strategyRunning = true;
+            strategyDoneLogged = false;
+
+            Serial.println(">> LoRa: nouvelle strategy GoTo lancee");
+            return;
+        }
+    }
+
+    Serial.println("LoRa: aucun depot pour mon ID dans cmd 3");
+}
+
+void parseLoRaMessage(char* msg) {
+    Serial.printf("[LoRa RX] %s\n", msg);
+
+    const int MAX_TOKENS = 64;
+    char* tokens[MAX_TOKENS];
+    int nbTokens = 0;
+
+    char* p = strtok(msg, "|");
+    while (p != NULL && nbTokens < MAX_TOKENS) {
+        tokens[nbTokens++] = p;
+        p = strtok(NULL, "|");
+    }
+    if (nbTokens == 0) return;
+
+    int cmd = atoi(tokens[0]);
+    switch (cmd) {
+        case 2: handleIdAttribution(tokens, nbTokens); break;
+        case 3: handleDepotAssignment(tokens, nbTokens); break;
+        default: break;
+    }
+}
+
+void handleLoRaInput() {
+    while (LoRaSerial.available()) {
+        char c = LoRaSerial.read();
+        if (c == '\n') {
+            loraRxBuffer[loraRxPos] = '\0';
+            if (loraRxPos > 0) parseLoRaMessage(loraRxBuffer);
+            loraRxPos = 0;
+        } else if (c == '\r') {
+            // ignore
+        } else if (loraRxPos < (int)sizeof(loraRxBuffer) - 1) {
+            loraRxBuffer[loraRxPos++] = c;
+        } else {
+            loraRxPos = 0;
+        }
+    }
+}
+#endif
+
 void setup() {
     Serial.begin(115200);
     while (!Serial) {
@@ -105,6 +208,18 @@ void setup() {
 
 #if ENABLE_OTA
     ota.begin();
+#endif
+
+#if ENABLE_LORA
+    LoRaSerial.begin(LORA_BAUD, SERIAL_8N1, LORA_RX_PIN, LORA_TX_PIN);
+    purgeLoRa();
+    Serial.println("LoRa: demande d'ID au Calcul Deporte...");
+    sendIdRequest();
+    while (myPamiId == -1) {
+        handleLoRaInput();
+        delay(10);
+    }
+    Serial.printf("LoRa: ID recu = %d, demarrage strategy.\n", myPamiId);
 #endif
 
     // rollingBasis->moveForwardBlocking(100.0f);
@@ -123,6 +238,10 @@ void loop() {
 
     leftMotor->update();
     rightMotor->update();
+
+#if ENABLE_LORA
+    handleLoRaInput();
+#endif
 
     // Serial.printf("[Main loop] Pose: (%.1f, %.1f, %.3f) mm rad\n",
     //               rollingBasis->getPose().x, rollingBasis->getPose().y,
