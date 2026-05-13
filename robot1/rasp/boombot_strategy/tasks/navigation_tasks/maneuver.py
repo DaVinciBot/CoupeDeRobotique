@@ -7,9 +7,6 @@ from typing import TYPE_CHECKING, override
 from a_config_loader import CONFIG
 from boombot_strategy.tasks.navigation_tasks.navigation_task import NavigationTask
 from geometry import OrientedPoint, distance
-from navigation.avoidance.acs_detection_profiles.no_acs_detection_profile import (
-    NoAcsDetectionProfileParams,
-)
 from navigation.avoidance.acs_detection_profiles.rectangular_projection_acs_detection_profile import (  # noqa: E501
     RectangularProjectionAcsDetectionProfileParams,
 )
@@ -48,7 +45,10 @@ class RelativeBackward(NavigationTask):
             ),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
-            acs_detection_profile_params=NoAcsDetectionProfileParams(),
+            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                10,
+                35,
+            ),
             stabilization_delay=1,  # Delay to stabilize after moving backward
             timeout=20,
             points=0,
@@ -75,7 +75,10 @@ class RelativeForward(NavigationTask):
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_DEFAULT_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
-            acs_detection_profile_params=NoAcsDetectionProfileParams(),
+            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                10,
+                35,
+            ),
             stabilization_delay=0.5,  # Delay to stabilize after moving forward
         )
 
@@ -95,7 +98,10 @@ class RelativeRotation(NavigationTask):
             trajectory_planner_params=SequentialTrajectoryPlannerParams(),
             speed_profiler=CONFIG.ROLLING_BASIS_SLOW_SPEED_PROFILER,
             avoidance_params=NoAvoidanceParams(),
-            acs_detection_profile_params=NoAcsDetectionProfileParams(),
+            acs_detection_profile_params=RectangularProjectionAcsDetectionProfileParams(
+                10,
+                35,
+            ),
             stabilization_delay=0.5,  # Delay to stabilize after moving forward
             points=0,
         )
