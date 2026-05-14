@@ -29,6 +29,7 @@ dependencies = [
   # "pyusb==1.2.1",
   # "pyyaml==6.0.1",
   # "scipy==1.15.2",
+  "pyusb>=1.3.1",
   "shapely==2.1.1",
   "taskbrain==0.1.8",
   "wscomms==0.1.6",

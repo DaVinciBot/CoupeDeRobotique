@@ -3,9 +3,14 @@
 from __future__ import annotations
 
 from gpiozero import LED, Button, Device
-from gpiozero.pins.lgpio import LGPIOFactory
+from gpiozero.exc import BadPinFactory
 
 MAJORITY_RATIO = 0.5
+GPIO_BACKEND_ERROR = (
+    "GPIO backend unavailable. Install/enable a Raspberry Pi GPIO backend "
+    "or run with access to /dev/gpiomem. On the robot, try running as root "
+    "or adding the user to the gpio group, then restart the session."
+)
 
 
 class PIN:
@@ -34,23 +39,24 @@ class PIN:
         self.mode = mode
         self.reverse_state = reverse_state
 
-        if mode == "output":
-            self.device = LED(self.pin, pin_factory=LGPIOFactory())
-            self.device.off()
-        elif mode == "input":
-            self.device = Button(self.pin, pin_factory=LGPIOFactory())
-        elif mode == "input_pullup":
-            self.device = Button(
-                self.pin,
-                pull_up=True,
-                pin_factory=LGPIOFactory(),
-            )
-        elif mode == "input_pulldown":
-            self.device = Button(
-                self.pin,
-                pull_up=False,
-                pin_factory=LGPIOFactory(),
-            )
+        try:
+            if mode == "output":
+                self.device = LED(self.pin)
+                self.device.off()
+            elif mode == "input":
+                self.device = Button(self.pin)
+            elif mode == "input_pullup":
+                self.device = Button(
+                    self.pin,
+                    pull_up=True,
+                )
+            elif mode == "input_pulldown":
+                self.device = Button(
+                    self.pin,
+                    pull_up=False,
+                )
+        except BadPinFactory:
+            raise RuntimeError(GPIO_BACKEND_ERROR) from None
 
     def digital_write(self, *, state: bool) -> None:
         """Write a digital state to the pin.

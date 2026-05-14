@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 import time
 import traceback
+from contextlib import suppress
 from math import pi
 from typing import TYPE_CHECKING, Any
 
@@ -36,6 +37,7 @@ from controllers.actuators import ActuatorsShow, ActuatorsShowDummy
 from controllers.rolling_basis import RollingBasis, RollingBasisDummy
 from geometry import OrientedPoint
 from log_manager import LogLogger
+from sensors import LidarError
 from strategy.core import GraphRunner
 from strategy.core.task_nodes import BaseTaskNode
 
@@ -599,9 +601,14 @@ class MainBrain(Brain):
     @Brain.task(process=False, run_on_start=True, refresh_rate=0.01)
     async def update_arena(self) -> None:
         """Updates the arena with the current position of the robot."""
+        lidar_scan_polars = np.empty((0, 2), dtype=np.float32)
+        if self.lidar.is_connected():
+            with suppress(LidarError):
+                lidar_scan_polars = self.lidar.scan_to_polars()
+
         self.arena.update(
             ally_position=self.rolling_basis_odometrie,
-            lidar_scan_polars=self.lidar.scan_to_polars(),
+            lidar_scan_polars=lidar_scan_polars,
             optimized_update=True,
             # _enemy_position=self.position_generator(),
         )
@@ -696,7 +703,7 @@ class MainBrain(Brain):
         self.logger.info(
             "Waiting for team color on IIHM...",
         )
-        if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY and CONFIG.ACTUATORS_DUMMY:
+        if CONFIG.LIDAR_DUMMY and CONFIG.ROLLING_BASIS_DUMMY:
             await self.wait_for_team()
             self.logger.warning(
                 "[BRAIN:Init] All subsystems in DUMMY mode.",

@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 import threading
 import time
+from importlib import reload
 from typing import TYPE_CHECKING, TypeVar
 
 import numpy as np
@@ -93,6 +94,7 @@ class Lidar:
         """
         try:
             import pysicktim as lidar  # noqa: PLC0415
+            lidar = reload(lidar)
         except Exception as error:
             self._logger.critical(
                 f"[SENSOR:Lidar:Init] Failed to import pysicktim: {error},",
@@ -100,19 +102,27 @@ class Lidar:
             msg = f"Error while importing lidar [{error}]!"
             raise ImportError(msg) from error
 
-        if lidar is None:
-            self._logger.critical("[SENSOR:Lidar:Init] Not connected")
-            msg = "Lidar is not connected !"
+        if getattr(lidar, "lidar", None) is None:
+            self._logger.warning("[SENSOR:Lidar:Init] USB device not found")
+            msg = "Lidar USB device not found !"
             raise ConnectionError(msg)
-        self._logger.info("[SENSOR:Lidar:Init] Connected successfully")
 
         # Test lidar connection by testing scan function
-        lidar.scan()
+        try:
+            lidar.scan()
+        except Exception as error:
+            self._logger.warning(
+                f"[SENSOR:Lidar:Init] Scan test failed: {error}",
+            )
+            msg = f"Lidar doesn't work correctly [{error}]!"
+            raise ConnectionError(msg) from error
+
         if lidar.scan.distances is None or lidar.scan.distances == []:
             self._logger.critical("[SENSOR:Lidar:Init] Scan test failed - no data")
             msg = "Lidar doesn't work correctly !"
             raise ConnectionError(msg)
 
+        self._logger.info("[SENSOR:Lidar:Init] Connected successfully")
         return lidar
 
     def __threading_init_lidar(self) -> None:
@@ -235,6 +245,10 @@ class Lidar:
         Raises:
             LidarError: If the lidar is disconnected or if the scan fails.
         """
+        if self.__lidar_obj is None:
+            msg = "LiDAR is not initialized yet"
+            raise LidarError(msg)
+
         try:
             self.__lidar_obj.scan()
         except Exception as error:
